@@ -42,24 +42,36 @@ qualified result becomes a private digest-bound profile for exact replay.
 
 ## Current zero-configuration evidence
 
-The latest automatic matrix uses installed development packages, public
-repositories, zero manual BuildOpt files, eight pairs when calibration runs,
-and a declared maximum payback of 30 matching builds.
+The table uses the newest retained automatic evidence for each public
+repository. Beam includes the later calibration-cost preflight; the other rows
+come from the initial matrix. All use installed development packages, zero
+manual BuildOpt files, eight pairs when calibration runs, and a declared
+maximum payback of 30 matching builds.
 
 | Repository / workflow | Projects | Native mean | BuildOpt mean | Direct effect | Current decision |
 | --- | ---: | ---: | ---: | ---: | --- |
 | Ktor `jvmJar` | 133 -> 10 | 33.595 s | 6.049 s | **27.546 s / 82.00% faster** | **Qualified; 27-build payback** |
 | Spring `classes` | 27 -> 21 | 10.135 s | 9.072 s | **1.063 s / 10.49% faster** | Native retained; 328-build payback |
-| Beam `classes` | 316 -> 6 | 20.396 s | 4.901 s | **15.495 s / 75.97% faster** | Native retained; 37-build payback |
+| Beam `classes` | 316 -> 6 | 61.916 s | 23.754 s | **38.162 s / 61.64% faster** | **Qualified preflight; 26-build payback** |
 | Groovy `classes` | 37 -> 30 | 61.497 s | 62.038 s | **0.542 s / 0.88% slower** | Native retained; value not proven |
 | Kafka `testClasses` | 66 -> 36 | 8.921 s | 11.671 s | **2.750 s / 30.83% slower** | Native retained; value not proven |
 | Micronaut `assemble` | unavailable | unavailable | unavailable | no timing claim | Native retained; output semantics ambiguous |
 
 Ktor, Spring and Beam improved in 8/8 pairs with positive intervals, lower p95,
 exact required outputs and successful full-graph fallback. Beam is the clearest
-new structural signal: the candidate reduces 316 projects to six and replay
-wall time by 75.97%. Its complete first-decision cost is 558.913 seconds,
-however, so repayment needs 37 matching builds rather than the allowed 30.
+new structural signal: the candidate reduces 316 projects to six and the latest
+preflight lowers mean wall time by 61.64%. The generic calibration work binds
+2.63 GB of dependencies by content, snapshots the native cache once and uses
+the first measured pair to establish exact task shapes. Against the comparable
+corrected protocol, learning cost falls from 1,097.547 to 988.145 seconds
+(-109.402 seconds / -9.97%) and repayment improves from 33 to 26 builds.
+
+The absolute 988.145-second learning cost is higher than the initial matrix's
+558.913 seconds because that older run did not use the authoritative dependency
+and measured-shape protocol. Those figures are not presented as a direct cost
+improvement. The value decision comes entirely from one internally consistent
+run: 61.916-second native mean, 23.754-second candidate mean, a positive
+33.325..45.879-second interval, 8/8 positive pairs and successful fallback.
 
 Groovy explains why automatic graph precision matters: the current project
 dependency graph keeps a large strongly connected component, so automatic
@@ -87,12 +99,14 @@ it; the corrected run passed all eight pairs and fallback.
 - Project count is diagnostic, not value. Only measured installed wall time,
   outputs, uncertainty, tails, fallback and payback can qualify a profile.
 
-It does **not** yet prove the desired general product experience. The terminal
-gate requires two economically qualified repository families from a published
-package and fresh install-to-decision captures. Current automatic count is
-**1/2**. OpenTelemetry is not included in this automatic matrix because its raw
-temporary result was not retained; historical reviewed-profile evidence remains
-versioned separately and is not substituted for missing current data.
+It does **not** yet prove the desired general product experience. Development
+preflight now has two economically qualified families: Ktor `DEPENDENCY_SOURCE`
+and Beam `LEAF_SOURCE`. The terminal gate still requires one immutable public
+package and fresh install-to-decision captures for both; that published count
+has not been rerun. OpenTelemetry is not included in this automatic matrix
+because its raw temporary result was not retained; historical reviewed-profile
+evidence remains versioned separately and is not substituted for missing
+current data.
 
 ## Historical feasibility versus current automation
 
@@ -107,11 +121,9 @@ onboarding decisions.
 
 ## Recommended next steps
 
-1. **Reduce generic first-decision cost.** Reuse immutable dependency snapshots
-   under exact content bindings, avoid repeated multi-gigabyte copying, and
-   reuse base-cache preparation only when repository/Wrapper/dependency inputs
-   prove equivalence. Beam needs at least 94.1 seconds removed to repay within
-   30 matching builds at the observed saving.
+1. **Repeat the terminal gate from a public package.** Publish one immutable
+   release, install it into fresh Ktor and Beam checkouts/homes, preserve every
+   raw result and require both families to repay within 30 builds.
 2. **Add an economic prequalification signal.** Use observed executed,
    from-cache, up-to-date and no-source task shapes to avoid expensive full
    calibration when graph reduction is unlikely to remove costly work, as in
@@ -119,10 +131,9 @@ onboarding decisions.
 3. **Improve graph precision generically.** Investigate task/variant and
    ABI-aware dependency relationships so Groovy SCCs and Micronaut root
    fan-out can be reduced without repository-specific rules.
-4. **Repeat the terminal gate only after two families qualify.** Publish one
-   immutable release, install it into fresh Ktor and Beam checkouts/homes, run
-   the same command, preserve every raw result and require 2/2 economics plus
-   at least one native-retained negative.
+4. **Preserve an honest negative in the terminal rerun.** Re-execute at least
+   one current native-retained workflow so package publication cannot turn a
+   two-positive demonstration into an unsupported universal claim.
 5. **Observe profile lifetime across commits.** Payback is a projection until
    exact graph/output applicability is measured over real follow-up changes.
 
@@ -130,6 +141,8 @@ onboarding decisions.
 
 - [Current automatic one-command matrix](../../benchmarks/results/poc-magic-end-to-end-value-v1/README.md)
 - [Machine-readable summary](../../benchmarks/results/poc-magic-end-to-end-value-v1/summary.json)
+- [Beam calibration-cost evidence](../../benchmarks/results/poc-magic-calibration-cost-v1/README.md)
+- [Beam calibration-cost dataset](../../benchmarks/results/poc-magic-calibration-cost-v1/summary.json)
 - [End-to-end value contract](../../specs/poc-magic-end-to-end-value-v1.md)
 - [One-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)

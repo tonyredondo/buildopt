@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [summary.json]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_summary=${1:-"${buildopt_root}/benchmarks/results/poc-magic-calibration-cost-v1/summary.json"}
+
+command -v jq >/dev/null || {
+    printf 'jq is required to validate calibration-cost evidence\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-magic-calibration-cost/v1" and
+  .workItem == "POC-MAGIC-CALIBRATION-COST-001" and
+  .subject.repositoryId == "apache/beam" and
+  .subject.workflow == "classes" and
+  .subject.changeFamily == "LEAF_SOURCE" and
+  .subject.graph == {
+    totalProjects: 316,
+    selectedProjects: 6,
+    omittedProjects: 310,
+    omittedRatio: 0.9810126582278481
+  } and
+  .protocol.name == "PAIRED_BOUND_CACHE_MEASURED_SHAPE_V1" and
+  .protocol == (.protocol + {
+    pairs: 8,
+    alternatingOrder: true,
+    controlWarmupCount: 1,
+    candidateUnmeasuredWarmupCount: 0,
+    firstMeasuredPairEstablishesTaskShape: true,
+    subsequentPairsRequireExactTaskShape: true,
+    exactRequiredOutputs: true,
+    fallbackSuccessful: true,
+    launcherOverheadIncluded: true,
+    maximumBreakEvenBuilds: 30
+  }) and
+  .immutableInputs.resolvedDependencies.binding == "AUTHORITATIVE_READ_ONLY_GRADLE_CACHE" and
+  .immutableInputs.resolvedDependencies.fileCount > 9000 and
+  .immutableInputs.resolvedDependencies.bytes > 2500000000 and
+  (.immutableInputs.resolvedDependencies.sha256 | test("^[0-9a-f]{64}$")) and
+  .immutableInputs.nativeBuildCacheSeed.binding == "ONE_IMMUTABLE_SNAPSHOT_HARD_LINKED_TO_PRIVATE_ARMS" and
+  (.pairs | length) == 8 and
+  ([.pairs[].pair] == [1,2,3,4,5,6,7,8]) and
+  ([.pairs[].order] == ["CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST"]) and
+  ([.pairs[] | select(.savedMs != (.controlMs - .candidateMs))] | length) == 0 and
+  ([.pairs[] | select(.savedMs <= 0)] | length) == 0 and
+  (([.pairs[].controlMs] | add / length) - .result.controlMeanMs | fabs) < 0.000001 and
+  (([.pairs[].candidateMs] | add / length) - .result.candidateMeanMs | fabs) < 0.000001 and
+  (([.pairs[].savedMs] | add / length) - .result.meanSavedMs | fabs) < 0.000001 and
+  (((.result.meanSavedMs / .result.controlMeanMs) - .result.reductionRatio) | fabs) < 0.000001 and
+  .result.interval95SavedMs[0] > 0 and
+  .result.controlP95Ms > .result.candidateP95Ms and
+  .result.positivePairs == 8 and
+  .result.calibrationCostMs == 988145 and
+  .result.breakEvenBuilds == ((.result.calibrationCostMs / .result.meanSavedMs) | ceil) and
+  .result.breakEvenBuilds <= .protocol.maximumBreakEvenBuilds and
+  .result.qualified and
+  .result.decision == "QUALIFIED_PROFILE_STORED" and
+  .delta.calibrationCostMs == (.result.calibrationCostMs - .comparableBaseline.calibrationCostMs) and
+  ((.delta.calibrationCostRatio - (.delta.calibrationCostMs / .comparableBaseline.calibrationCostMs)) | fabs) < 0.000000000001 and
+  .delta.breakEvenBuilds == (.result.breakEvenBuilds - .comparableBaseline.breakEvenBuilds) and
+  (-.delta.calibrationCostMs) >= .delta.minimumRequiredCostReductionMs and
+  .delta.costReductionGatePassed and .delta.economicGatePassed and
+  (.historicalAutomaticMatrix.comparable == false) and
+  .acceptance == {
+    decision: "CALIBRATION_ECONOMICS_QUALIFIED",
+    blockComplete: true,
+    publishedPackageUsed: false,
+    terminalEndToEndGateComplete: false,
+    nextWorkItem: "POC-MAGIC-END-TO-END-VALUE-001"
+  } and
+  .authority == {
+    proofOfConcept: true,
+    productionAuthorized: false,
+    soakRequired: false,
+    designPartnerRequired: false,
+    testOptimization: "OUT_OF_SCOPE"
+  }
+' "${buildopt_summary}" >/dev/null
+
+printf 'Magic calibration-cost evidence OK: -109402ms (-9.97%%), 8/8 positive pairs, 26-build payback\n'

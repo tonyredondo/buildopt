@@ -3721,6 +3721,7 @@ The one-command onboarding contract is validated separately:
 ./dev/check-magic-wow-report
 ./dev/check-magic-calibration
 ./dev/check-magic-end-to-end-value
+./dev/check-magic-calibration-cost
 ```
 
 The command contract fixes `buildopt optimize build`, private atomic
@@ -3752,6 +3753,12 @@ family under the declared 30-build maximum; Beam and Spring are directly
 positive but exceed that payback, Groovy and Kafka regress, and Micronaut makes
 no timing claim. The checker must not convert reviewed historical profiles or
 an unretained observation into current automatic evidence.
+The later calibration-cost checker independently recomputes the retained Beam
+preflight: authoritative read-only dependency binding, one immutable native
+cache seed, measured task-shape stabilization, eight positive alternating
+pairs, exact outputs, successful fallback, 109.402-second comparable cost
+reduction and 26-build payback. It does not rewrite the earlier matrix or claim
+that its different protocol has the same absolute learning cost.
 The CI onboarding checker then proves one command on GitHub and GitLab,
 provider-bound path-independent exact checkpoint reuse, cross-repository and
 revision rejection, exact argv, private checksummed review artifacts and child

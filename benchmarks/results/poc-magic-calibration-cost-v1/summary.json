@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-magic-calibration-cost/v1",
+  "workItem": "POC-MAGIC-CALIBRATION-COST-001",
+  "capturedAt": "2026-08-17T16:47:00.50215287Z",
+  "subject": {
+    "repositoryId": "apache/beam",
+    "baseRevision": "dd896e2b2395937201b7721251d9f66936f9340c",
+    "targetRevision": "db6daeecbd9b9a50a0dfc0d9118f312716e34f94",
+    "workflow": "classes",
+    "changeFamily": "LEAF_SOURCE",
+    "entrypoints": [
+      ":examples:java:twitter:classes"
+    ],
+    "requiredOutputs": [
+      "examples/java/twitter/build/classes/java/main/**"
+    ],
+    "graph": {
+      "totalProjects": 316,
+      "selectedProjects": 6,
+      "omittedProjects": 310,
+      "omittedRatio": 0.9810126582278481
+    }
+  },
+  "runner": {
+    "class": "LOCAL_POC_NON_GOLDEN",
+    "operatingSystem": "linux",
+    "architecture": "amd64",
+    "cpuCount": 12,
+    "gradleVersion": "8.14.3",
+    "javaMajor": 21
+  },
+  "implementation": {
+    "sourceRevision": "1746f35736ebc410d971556d95f2bc508160e486",
+    "version": "0.6.7-dev",
+    "executableSha256": "82015d817ea225c1b246f67aa9b4e4c4b7503c910262699bab2b6e79bdd6d57e",
+    "packageSha256": "09d0259470c958ab941eb043e8cd2afc711ee79737019e956c898f6c64331e82",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ]
+  },
+  "protocol": {
+    "name": "PAIRED_BOUND_CACHE_MEASURED_SHAPE_V1",
+    "pairs": 8,
+    "alternatingOrder": true,
+    "controlWarmupCount": 1,
+    "controlWarmupTask": "help",
+    "controlWarmupCostMs": 102588,
+    "candidateUnmeasuredWarmupCount": 0,
+    "firstMeasuredPairEstablishesTaskShape": true,
+    "subsequentPairsRequireExactTaskShape": true,
+    "exactRequiredOutputs": true,
+    "fallbackSuccessful": true,
+    "launcherOverheadIncluded": true,
+    "maximumBreakEvenBuilds": 30
+  },
+  "immutableInputs": {
+    "resolvedDependencies": {
+      "fileCount": 9256,
+      "bytes": 2628953663,
+      "sha256": "8ededfe2360e3aae406e87cc7f12467dd206b8fc4b217758d7563bb3b860bb74",
+      "binding": "AUTHORITATIVE_READ_ONLY_GRADLE_CACHE"
+    },
+    "nativeBuildCacheSeed": {
+      "fileCount": 722,
+      "bytes": 146277176,
+      "binding": "ONE_IMMUTABLE_SNAPSHOT_HARD_LINKED_TO_PRIVATE_ARMS"
+    }
+  },
+  "taskShapes": {
+    "control": {
+      "total": 1475,
+      "executed": 340,
+      "fromCache": 362,
+      "upToDate": 551,
+      "noSource": 222,
+      "skipped": 0,
+      "fingerprintSha256": "cfbff780cf40e925bfeab07c90957c572125dc778a328d9c775630bcd904a71b"
+    },
+    "candidate": {
+      "total": 65,
+      "executed": 29,
+      "fromCache": 21,
+      "upToDate": 13,
+      "noSource": 2,
+      "skipped": 0,
+      "fingerprintSha256": "fac866154e807e972c8498f73376941906b18e853c87f773817c53b3d731ea23"
+    }
+  },
+  "pairs": [
+    {"pair": 1, "order": "CONTROL_FIRST", "controlMs": 84245, "candidateMs": 21302, "savedMs": 62943},
+    {"pair": 2, "order": "CANDIDATE_FIRST", "controlMs": 52270, "candidateMs": 20363, "savedMs": 31907},
+    {"pair": 3, "order": "CONTROL_FIRST", "controlMs": 57202, "candidateMs": 26401, "savedMs": 30801},
+    {"pair": 4, "order": "CANDIDATE_FIRST", "controlMs": 60066, "candidateMs": 23009, "savedMs": 37057},
+    {"pair": 5, "order": "CONTROL_FIRST", "controlMs": 60566, "candidateMs": 24482, "savedMs": 36084},
+    {"pair": 6, "order": "CANDIDATE_FIRST", "controlMs": 58494, "candidateMs": 25276, "savedMs": 33218},
+    {"pair": 7, "order": "CONTROL_FIRST", "controlMs": 61747, "candidateMs": 25950, "savedMs": 35797},
+    {"pair": 8, "order": "CANDIDATE_FIRST", "controlMs": 60741, "candidateMs": 23249, "savedMs": 37492}
+  ],
+  "result": {
+    "controlMeanMs": 61916.375,
+    "candidateMeanMs": 23754,
+    "meanSavedMs": 38162.375,
+    "reductionRatio": 0.6163535090676739,
+    "interval95SavedMs": [
+      33324.875,
+      45879.125
+    ],
+    "controlP95Ms": 84245,
+    "candidateP95Ms": 26401,
+    "positivePairs": 8,
+    "calibrationCostMs": 988145,
+    "breakEvenBuilds": 26,
+    "qualified": true,
+    "decision": "QUALIFIED_PROFILE_STORED"
+  },
+  "comparableBaseline": {
+    "version": "0.6.6-dev",
+    "packageSha256": "db131e192151b0005e6790bcfb99126296e4fbec085307f1ee2a2d98e0ef12f4",
+    "executableSha256": "4d092f6d67f08dfdedd65775f123838410ee26411d81360b8f67822524e1ec67",
+    "calibrationCostMs": 1097547,
+    "controlMeanMs": 58681.875,
+    "candidateMeanMs": 24642.375,
+    "meanSavedMs": 34039.5,
+    "positivePairs": 8,
+    "breakEvenBuilds": 33,
+    "decision": "CALIBRATION_BREAK_EVEN_EXCEEDED"
+  },
+  "delta": {
+    "calibrationCostMs": -109402,
+    "calibrationCostRatio": -0.099678647019,
+    "breakEvenBuilds": -7,
+    "minimumRequiredCostReductionMs": 94100,
+    "costReductionGatePassed": true,
+    "economicGatePassed": true
+  },
+  "historicalAutomaticMatrix": {
+    "comparable": false,
+    "reason": "PREVIOUS_PROTOCOL_DID_NOT_BIND_AUTHORITATIVE_DEPENDENCIES_OR_REQUIRE_MEASURED_TASK_SHAPE_STABILITY",
+    "calibrationCostMs": 558913,
+    "meanSavedMs": 15494.875,
+    "breakEvenBuilds": 37
+  },
+  "acceptance": {
+    "decision": "CALIBRATION_ECONOMICS_QUALIFIED",
+    "blockComplete": true,
+    "publishedPackageUsed": false,
+    "terminalEndToEndGateComplete": false,
+    "nextWorkItem": "POC-MAGIC-END-TO-END-VALUE-001"
+  },
+  "authority": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

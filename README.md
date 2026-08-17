@@ -57,13 +57,16 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
 > **Current automatic status:** the zero-manual-file `buildopt optimize` matrix
 > is intentionally less mature than the reviewed profiles above. Ktor qualifies
-> at **82.00% lower measured wall time** with a 27-build payback. Beam shows
-> **75.97% lower replay wall time** and reduces 316 projects to six, but its
-> 37-build payback exceeds the declared maximum of 30. Spring is positive but
+> at **82.00% lower measured wall time** with a 27-build payback. A newer Beam
+> calibration preflight binds 2.63 GB of dependencies in place, preserves eight
+> measured pairs and stable task shapes, and measures **61.64% lower wall time**
+> with a 26-build payback. This provides two economically qualified development
+> families, but the terminal gate is still open until one published package
+> repeats both from fresh install-to-decision state. Spring is positive but
 > uneconomic; Groovy and Kafka are slower; Micronaut retains native before
-> timing because root `assemble` output semantics remain ambiguous. The current
-> terminal count is therefore **1/2 qualified families**, not a completed
-> general-product claim. See the [automatic matrix](./benchmarks/results/poc-magic-end-to-end-value-v1/README.md).
+> timing because root `assemble` output semantics remain ambiguous. See the
+> [automatic matrix](./benchmarks/results/poc-magic-end-to-end-value-v1/README.md)
+> and [Beam calibration economics](./benchmarks/results/poc-magic-calibration-cost-v1/README.md).
 
 > **POC onboarding north star:** install BuildOpt, open a Gradle repository and
 > run `buildopt optimize build`. The command now has a stable state/result,

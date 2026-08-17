@@ -32,10 +32,21 @@ declared maximum of 30. Spring is directly positive but uneconomic, Groovy and
 Kafka regress, and Micronaut retains native before timing. The terminal gate is
 therefore explicitly incomplete at 1/2 economically qualified families.
 
+A later [Beam calibration-cost preflight](./results/poc-magic-calibration-cost-v1/README.md)
+uses the stricter authoritative dependency/task-shape protocol. It reduces
+comparable learning cost from 1,097.547 to 988.145 seconds, measures a
+61.916-to-23.754-second direct effect across 8/8 positive pairs, and improves
+payback from 33 to 26 builds. The absolute cost is higher than the older
+558.913-second matrix observation because the protocols are not equivalent;
+the new run binds 2.63 GB of dependencies and requires stable measured task
+shapes. It makes Beam the second economically qualified development family,
+but does not replace the required fresh published-package terminal rerun.
+
 Validate the normalized summary and every retained raw result with:
 
 ```bash
 ./dev/check-magic-end-to-end-value
+./dev/check-magic-calibration-cost
 ```
 
 The reviewed-profile results below remain useful feasibility evidence. They
