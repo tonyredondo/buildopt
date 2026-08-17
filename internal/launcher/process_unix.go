@@ -3,6 +3,7 @@
 package launcher
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -12,6 +13,10 @@ import (
 	"syscall"
 	"time"
 )
+
+func notifyOptimizeLearningContext(parent context.Context) (context.Context, context.CancelFunc) {
+	return signal.NotifyContext(parent, os.Interrupt, syscall.SIGTERM)
+}
 
 func executeChild(childArgs []string, environmentOverrides map[string]string, stdin io.Reader, stdout, stderr io.Writer) childExecution {
 	command := exec.Command(childArgs[0], childArgs[1:]...)

@@ -365,6 +365,77 @@ jq -e '
     exit 1
 }
 
-printf 'Magic calibration and profile portfolio OK: family=LEAF_SOURCE profiles=1 mean saved=%sms reduction=%s%% positive=8/8 calibration=%sms break-even=%s builds selection=%sns; exact evidence/profile replayed, tamper rebuilt, and insufficient pair budget made no claim\n' \
+buildopt_cancel_tmp="${buildopt_temp}/cancel-tmp"
+buildopt_cancel_stdout="${buildopt_temp}/cancelled.json"
+buildopt_cancel_stderr="${buildopt_temp}/cancelled.log"
+mkdir -p -- "${buildopt_cancel_tmp}"
+(
+    cd -- "${buildopt_repository}"
+    exec env -u BUILDOPT_BYPASS \
+        -u GITHUB_EVENT_PATH -u GITHUB_REPOSITORY \
+        -u CI_MERGE_REQUEST_DIFF_BASE_SHA -u CI_COMMIT_BEFORE_SHA \
+        -u CI_PROJECT_PATH \
+        TMPDIR="${buildopt_cancel_tmp}" \
+        GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_binary}" optimize --json \
+        --state-dir .buildopt/optimize/cancelled \
+        --resume never --calibration-budget 5m \
+        --calibration-pairs 8 --max-break-even-builds 100 \
+        jar --offline \
+        >"${buildopt_cancel_stdout}" 2>"${buildopt_cancel_stderr}"
+) &
+buildopt_cancel_pid=$!
+buildopt_cancel_ready=false
+for _ in $(seq 1 240); do
+    if grep -Fq 'warming isolated control arm' "${buildopt_cancel_stderr}"; then
+        buildopt_cancel_ready=true
+        break
+    fi
+    if ! kill -0 "${buildopt_cancel_pid}" 2>/dev/null; then
+        break
+    fi
+    sleep 0.25
+done
+if [[ ${buildopt_cancel_ready} != true ]]; then
+    kill -TERM "${buildopt_cancel_pid}" 2>/dev/null || true
+    wait "${buildopt_cancel_pid}" 2>/dev/null || true
+    printf 'automatic calibration did not reach cancellable measurement readiness\n' >&2
+    sed -n '1,260p' "${buildopt_cancel_stderr}" >&2
+    exit 1
+fi
+kill -INT "${buildopt_cancel_pid}"
+set +e
+wait "${buildopt_cancel_pid}"
+buildopt_cancel_exit=$?
+set -e
+if ((buildopt_cancel_exit != 0)); then
+    printf 'cancelled automatic calibration returned %s, want authoritative build status 0\n' \
+        "${buildopt_cancel_exit}" >&2
+    sed -n '1,260p' "${buildopt_cancel_stderr}" >&2
+    exit 1
+fi
+jq -e '
+    .outcome == "NATIVE_RETAINED" and .phase == "NATIVE_RETAINED" and
+    .reason == "CALIBRATION_CANCELLED" and
+    .native == {authoritative: true, started: true, exitCode: 0} and
+    .execution == {mode: "OPTIMIZED_NATIVE", authoritative: true, started: true, exitCode: 0} and
+    .calibration.status == "NATIVE_RETAINED" and
+    .calibration.reason == "CALIBRATION_CANCELLED" and
+    .calibration.performed == false and .calibration.qualified == false and
+    .calibration.generatedFiles == [] and
+    .portfolio.status == "SKIPPED" and .selection.status == "SKIPPED" and
+    .productionAuthorized == false and .testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_cancel_stdout}" >/dev/null || {
+    printf 'cancelled automatic calibration did not retain native execution safely\n' >&2
+    jq . "${buildopt_cancel_stdout}" >&2
+    exit 1
+}
+if find "${buildopt_cancel_tmp}" -maxdepth 1 \
+    -name 'buildopt-structural-measurement-*' -print -quit | grep -q .; then
+    printf 'cancelled automatic calibration retained its measurement root\n' >&2
+    exit 1
+fi
+
+printf 'Magic calibration and profile portfolio OK: family=LEAF_SOURCE profiles=1 mean saved=%sms reduction=%s%% positive=8/8 calibration=%sms break-even=%s builds selection=%sns; exact evidence/profile replayed, tamper rebuilt, insufficient pair budget made no claim, and cancellation retained native with complete cleanup\n' \
     "${buildopt_first_saved}" "${buildopt_first_reduction}" \
     "${buildopt_first_cost}" "${buildopt_first_break_even}" "${buildopt_selection_ns}"

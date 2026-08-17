@@ -71,6 +71,7 @@ type structuralMeasurementConfig struct {
 	gradleSharedBuildCacheSeed   string
 	gradleMeasurementHome        string
 	deadline                     time.Time
+	parentContext                context.Context
 }
 
 type structuralMeasurementArm struct {
@@ -430,17 +431,23 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 		if err != nil {
 			return nil, false, err
 		}
+		sharedDaemonArm := newStructuralMeasurementArm(config, root, "control")
+		defer func() { _ = stopStructuralMeasurementArm(sharedDaemonArm) }()
 	}
 	control, err := prepareStructuralMeasurementArm(config, root, "control", false, "", progress)
 	if err != nil {
 		return nil, false, err
 	}
-	defer func() { _ = stopStructuralMeasurementArm(control) }()
+	if !config.pairedTargetStability {
+		defer func() { _ = stopStructuralMeasurementArm(control) }()
+	}
 	candidate, err := prepareStructuralMeasurementArm(config, root, "candidate", true, control.cacheSeed, progress)
 	if err != nil {
 		return nil, false, err
 	}
-	defer func() { _ = stopStructuralMeasurementArm(candidate) }()
+	if !config.pairedTargetStability {
+		defer func() { _ = stopStructuralMeasurementArm(candidate) }()
+	}
 	observations := make([]profilediscovery.StructuralMeasurementObservation, 0, measurementPairs)
 	stableOutputSHA := ""
 	stableOutputCount := 0
@@ -954,7 +961,7 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 	if err != nil {
 		return structuralArmResult{}, err
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	ctx, cancel := structuralMeasurementChildContext(config, timeout)
 	defer cancel()
 	cmd := exec.CommandContext(ctx, command[0], command[1:]...)
 	cmd.Dir = arm.workspace
@@ -996,6 +1003,14 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 		return result, errors.New("installed candidate did not select the analyzed structural alternative")
 	}
 	return result, nil
+}
+
+func structuralMeasurementChildContext(config structuralMeasurementConfig, timeout time.Duration) (context.Context, context.CancelFunc) {
+	parent := config.parentContext
+	if parent == nil {
+		parent = context.Background()
+	}
+	return context.WithTimeout(parent, timeout)
 }
 
 func checkStructuralMeasurementBudget(config structuralMeasurementConfig) error {

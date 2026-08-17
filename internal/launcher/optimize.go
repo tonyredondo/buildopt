@@ -596,8 +596,10 @@ func optimizeInvocationBudget(invocation optimizeInvocation) optimizeBudget {
 
 func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 	learningStarted := time.Now()
-	learningContext, cancel := context.WithTimeout(context.Background(), run.invocation.calibrationBudget)
-	defer cancel()
+	budgetContext, cancelBudget := context.WithTimeout(context.Background(), run.invocation.calibrationBudget)
+	defer cancelBudget()
+	learningContext, stopSignals := notifyOptimizeLearningContext(budgetContext)
+	defer stopSignals()
 	discovery, calibration, resumed := run.resumeCalibration()
 	if !resumed {
 		discovery = run.discover(learningContext, exitCode, stderr)

@@ -40,6 +40,19 @@ func TestStructuralMeasurementDeadlineBoundsEveryChildTimeout(t *testing.T) {
 	}
 }
 
+func TestStructuralMeasurementChildContextHonorsParentCancellation(t *testing.T) {
+	parent, cancelParent := context.WithCancel(context.Background())
+	cancelParent()
+	ctx, cancel := structuralMeasurementChildContext(
+		structuralMeasurementConfig{parentContext: parent},
+		time.Minute,
+	)
+	defer cancel()
+	if !errors.Is(ctx.Err(), context.Canceled) {
+		t.Fatalf("measurement context error = %v, want context cancellation", ctx.Err())
+	}
+}
+
 func TestHashMeasurementOutputsIsPathAndContentBound(t *testing.T) {
 	repository := t.TempDir()
 	for path, content := range map[string]string{

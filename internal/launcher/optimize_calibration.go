@@ -27,6 +27,7 @@ const (
 	optimizeCalibrationReasonBreakEven   = "CALIBRATION_BREAK_EVEN_EXCEEDED"
 	optimizeCalibrationReasonPairs       = "CALIBRATION_PAIR_BUDGET_INSUFFICIENT"
 	optimizeCalibrationReasonUnavailable = "CALIBRATION_EXECUTION_FAILED"
+	optimizeCalibrationReasonCancelled   = "CALIBRATION_CANCELLED"
 	optimizeCalibrationEvidenceFile      = "evidence.json"
 	optimizeRequiredCalibrationPairs     = 8
 )
@@ -185,6 +186,7 @@ func (run *optimizeRun) calibrate(
 		return result
 	}
 	config.pairedTargetStability = true
+	config.parentContext = ctx
 	if deadline, ok := ctx.Deadline(); ok {
 		config.deadline = deadline
 	}
@@ -198,7 +200,9 @@ func (run *optimizeRun) calibrate(
 	if err != nil {
 		_, _ = fmt.Fprintf(progress, "buildopt: calibration evidence unavailable: %v\n", err)
 		result.Status = optimizeCalibrationRetained
-		if errors.Is(err, context.DeadlineExceeded) || errors.Is(ctx.Err(), context.DeadlineExceeded) {
+		if errors.Is(err, context.Canceled) || errors.Is(ctx.Err(), context.Canceled) {
+			result.Reason = optimizeCalibrationReasonCancelled
+		} else if errors.Is(err, context.DeadlineExceeded) || errors.Is(ctx.Err(), context.DeadlineExceeded) {
 			result.Reason = "CALIBRATION_BUDGET_EXHAUSTED"
 		} else {
 			result.Reason = optimizeCalibrationReasonUnavailable

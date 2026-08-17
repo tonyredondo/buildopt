@@ -3,6 +3,7 @@
 package launcher
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -16,6 +17,10 @@ import (
 )
 
 const createNewProcessGroup = 0x00000200
+
+func notifyOptimizeLearningContext(parent context.Context) (context.Context, context.CancelFunc) {
+	return signal.NotifyContext(parent, os.Interrupt)
+}
 
 func executeChild(childArgs []string, environmentOverrides map[string]string, stdin io.Reader, stdout, stderr io.Writer) childExecution {
 	command := exec.Command(childArgs[0], childArgs[1:]...)
