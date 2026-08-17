@@ -66,7 +66,7 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`ONE-COMMAND END-TO-END POC VALUE QUALIFIED\`"
-    "**Current phase:** \`CENTRAL STORAGE CONTRACT NEXT\`"
+    "**Current phase:** \`CENTRAL STATE STORAGE NEXT\`"
     "| 75 | \`POC-GENERIC-MEASUREMENT-001\` | Collect eight isolated alternating optimized-native-versus-BuildOpt pairs"
     "| \`E-288\` | 2026-08-09 | \`POC-GENERIC-MEASUREMENT-001\`"
     "| 77 | \`POC-APACHE-GROOVY-GENERALIZATION-001\` | Apply the generic measurement workflow to Apache Groovy"
@@ -144,6 +144,9 @@ buildopt_required_tracker_text=(
     "| \`E-360\` | 2026-08-16 | \`POC-MAGIC-WOW-REPORT-001\`"
     "| \`E-361\` | 2026-08-17 | \`POC-MAGIC-END-TO-END-VALUE-001\` partial / \`POC-MAGIC-CALIBRATION-COST-001\` opening"
     "| \`E-363\` | 2026-08-17 | \`POC-MAGIC-END-TO-END-VALUE-001\`"
+    "| 115 | \`POC-CENTRAL-STORAGE-CONTRACT-001\` | Define versioned state schemas"
+    "| 116 | \`POC-CENTRAL-STATE-STORAGE-001\` | Extend existing content-addressed files and SQLite metadata with restart-safe portfolio"
+    "| \`E-364\` | 2026-08-17 | \`POC-CENTRAL-STORAGE-CONTRACT-001\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"

@@ -150,6 +150,11 @@ its recomputable JSON source and the exact machine result with checksums;
 cache loss or drift runs optimized native Gradle and no BuildOpt service is
 required. See the [CI integration guide](./docs/guides/ci-integration.md).
 
+An optional cross-machine cache/state service is the next POC direction. Its
+[storage contract](./specs/poc-central-storage-contract-v1.md) is executable,
+but the state store, HTTPS connection and remote profile reuse are not yet
+implemented and do not change this onboarding path.
+
 For a non-invasive evaluation, the GitHub Action's `profile-proposal` mode
 turns a checked-in workflow/output declaration and exact pull-request diff into
 a downloadable review artifact. It never measures or activates the candidate;

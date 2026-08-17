@@ -167,6 +167,12 @@ repository without trusting restored files or requiring a BuildOpt service.
 The [value-report contract](../../specs/poc-magic-wow-report-v1.md) defines the
 human explanation, recomputation formulas and POC boundary.
 
+No server is required for this flow. The optional cross-machine design now has
+an executable [storage contract](../../specs/poc-central-storage-contract-v1.md),
+but central state, `buildopt connect` and remote profile selection are not yet
+implemented. Until those later POC blocks close, `.buildopt/optimize/v1` and
+the CI-provider cache remain the only supported optimize-state persistence.
+
 ## Try the Build Impact accelerator
 
 The default Gradle command establishes compatibility; Build Impact is the POC

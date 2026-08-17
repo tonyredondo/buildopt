@@ -44,6 +44,18 @@ const TestValidationResultSchemaID = "https://schemas.buildopt.dev/test-validati
 // PatchBundleSchemaID is the canonical PATCH_BUNDLE v1 schema identifier.
 const PatchBundleSchemaID = "https://schemas.buildopt.dev/patch-bundle.v1.schema.json"
 
+// CentralStateManifestSchemaID is the canonical immutable central-state
+// manifest schema identifier.
+const CentralStateManifestSchemaID = "https://schemas.buildopt.dev/central-state-manifest.v1.schema.json"
+
+// CentralStateHeadSchemaID is the canonical central-state head schema
+// identifier.
+const CentralStateHeadSchemaID = "https://schemas.buildopt.dev/central-state-head.v1.schema.json"
+
+// CentralStateCASSchemaID is the canonical central-state compare-and-swap
+// request schema identifier.
+const CentralStateCASSchemaID = "https://schemas.buildopt.dev/central-state-cas.v1.schema.json"
+
 // ValidateBuildSessionV1 compiles the pinned Draft 2020-12 schema and validates
 // one JSON document with format assertions enabled.
 func ValidateBuildSessionV1(schemaPath string, instancePath string) error {

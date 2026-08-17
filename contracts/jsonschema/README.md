@@ -83,6 +83,34 @@ schema-validator Go module and is also executed by the base CI core lane.
 
 Future schemas must retain the same explicit identifier, compatibility, required-field, unknown-field, format, bound, and positive/negative fixture policy. Signed commands additionally fail closed on unknown fields.
 
+## Optional central state v1
+
+[`central-state-manifest.v1.schema.json`](./central-state-manifest.v1.schema.json),
+[`central-state-head.v1.schema.json`](./central-state-head.v1.schema.json), and
+[`central-state-cas.v1.schema.json`](./central-state-cas.v1.schema.json) define
+the POC-only state boundary for sharing BuildOpt learning across machines.
+
+- Immutable manifests bind one repository, kind, exact origin, compatibility,
+  artifacts, evidence references and retention class.
+- The head is the only mutable document and advances exactly one generation by
+  compare-and-swap.
+- The CAS request binds its precondition and idempotency key to the complete
+  next head. Replaying the same request is safe; changing it under the same key
+  is a conflict.
+- Every document requires local revalidation and explicitly denies production
+  authority. Gradle cache objects use a separate namespace and schema-free
+  opaque protocol.
+
+Run the schemas and stateful lifecycle vectors with:
+
+```bash
+./dev/check-central-storage-contract
+```
+
+The checker proves immutable publication before visibility, exact generation
+updates, namespace isolation, independent retention, and native fallback. It
+does not implement a server, HTTPS or client synchronization.
+
 ## Evidence, policy, and resource profile v1
 
 [`evidence-record.v1.schema.json`](./evidence-record.v1.schema.json),

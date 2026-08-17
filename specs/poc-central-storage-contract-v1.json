@@ -1,0 +1,172 @@
+{
+  "schemaVersion": "buildopt.poc/central-storage-contract/v1",
+  "workItem": "POC-CENTRAL-STORAGE-CONTRACT-001",
+  "planes": {
+    "gradleCache": {
+      "owner": "GRADLE",
+      "protocol": "GRADLE_HTTP_BUILD_CACHE",
+      "route": "/cache/{cacheKey}",
+      "methods": [
+        "GET",
+        "PUT"
+      ],
+      "mediaType": "application/octet-stream",
+      "identity": [
+        "TENANT_SCOPE",
+        "REPOSITORY_SCOPE",
+        "TRUST_DOMAIN",
+        "CACHE_COMPATIBILITY_CLASS",
+        "NAMESPACE_GENERATION",
+        "CACHE_KEY"
+      ],
+      "writeSemantics": "EXISTING_PENDING_THEN_ATOMIC_COMMIT",
+      "retention": "STABLE_30_DAY_BYTE_SLRU",
+      "evictionOutcome": "CACHE_MISS",
+      "outageOutcome": "LOCAL_CACHE_OR_NORMAL_TASK_EXECUTION",
+      "optimizationAuthority": false
+    },
+    "buildoptState": {
+      "owner": "BUILDOPT",
+      "protocol": "BUILDOPT_CENTRAL_STATE_V1",
+      "repositoryRoute": "/api/v1/repositories/{repositoryScope}",
+      "kinds": [
+        "PORTFOLIO",
+        "EVIDENCE",
+        "CHECKPOINT"
+      ],
+      "identity": [
+        "REPOSITORY_SCOPE",
+        "KIND",
+        "GENERATION",
+        "COMPATIBILITY_DIGEST"
+      ],
+      "physicalBlobDeduplicationAllowed": true,
+      "crossNamespaceVisibility": false,
+      "blobPresenceGrantsAuthority": false,
+      "selectionAlwaysRequiresLocalRevalidation": true
+    }
+  },
+  "stateRoutes": [
+    {
+      "method": "PUT",
+      "path": "/api/v1/repositories/{repositoryScope}/state/{kind}/objects/{sha256}",
+      "precondition": "If-None-Match: *",
+      "success": [
+        201,
+        204
+      ],
+      "purpose": "UPLOAD_IMMUTABLE_ARTIFACT"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repositories/{repositoryScope}/state/{kind}/objects/{sha256}",
+      "success": [
+        200
+      ],
+      "purpose": "READ_VERIFIED_NAMESPACED_ARTIFACT"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/repositories/{repositoryScope}/state/{kind}/manifests/{sha256}",
+      "precondition": "If-None-Match: *",
+      "success": [
+        201,
+        204
+      ],
+      "purpose": "UPLOAD_COMPLETE_IMMUTABLE_MANIFEST"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repositories/{repositoryScope}/state/{kind}/manifests/{sha256}",
+      "success": [
+        200
+      ],
+      "purpose": "READ_VERIFIED_NAMESPACED_MANIFEST"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/repositories/{repositoryScope}/state/{kind}/head",
+      "precondition": "If-None-Match: * FOR GENERATION 1; If-Match: sha256:<current-head> OTHERWISE",
+      "success": [
+        201,
+        200
+      ],
+      "purpose": "COMPARE_AND_SWAP_CURRENT_GENERATION"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repositories/{repositoryScope}/state/{kind}/head",
+      "success": [
+        200
+      ],
+      "purpose": "READ_CURRENT_GENERATION"
+    }
+  ],
+  "publication": {
+    "orderedSteps": [
+      "PUT_ALL_CONTENT_ADDRESSED_ARTIFACTS",
+      "PUT_SCHEMA_VALID_COMPLETE_MANIFEST",
+      "VERIFY_REFERENCED_ARTIFACTS_AND_MANIFESTS",
+      "CAS_HEAD_TO_EXACT_NEXT_GENERATION"
+    ],
+    "generationStartsAt": 1,
+    "generationStep": 1,
+    "stateDocumentDigest": "SHA256_OF_RFC8785_JCS",
+    "headETag": "SHA256_OF_CANONICAL_HEAD_JSON",
+    "identicalRetry": "IDEMPOTENT",
+    "sameIdempotencyKeyDifferentRequest": "409 IDEMPOTENCY_CONFLICT",
+    "staleHead": "412 STATE_PRECONDITION_FAILED",
+    "skippedGeneration": "409 GENERATION_CONFLICT",
+    "incompleteManifest": "422 MANIFEST_INCOMPLETE",
+    "partialPublicationReadable": false,
+    "interruptedOrRejectedAttemptCanBecomeAuthority": false
+  },
+  "retention": {
+    "PORTFOLIO": "CURRENT_PLUS_30_DAYS_AFTER_SUPERSEDED",
+    "EVIDENCE": "WHILE_REFERENCED_PLUS_30_DAYS",
+    "CHECKPOINT": "24_HOURS_FROM_CREATED_AT",
+    "UNREFERENCED_STAGED_STATE": "24_HOURS_FROM_UPLOAD",
+    "independentFromGradleCacheEviction": true,
+    "referencedEvidenceMayExpire": false,
+    "checkpointExpiryOutcome": "DISCARD_AND_RESTART_OR_RUN_NATIVE"
+  },
+  "failures": {
+    "gradleCacheMissOrOutage": "LOCAL_CACHE_OR_NORMAL_TASK_EXECUTION",
+    "stateReadOutageWithCompatibleVerifiedLocalSnapshot": "USE_LOCAL_SNAPSHOT_AFTER_EXACT_REVALIDATION",
+    "stateReadOutageWithoutCompatibleVerifiedLocalSnapshot": "RUN_OPTIMIZED_NATIVE_GRADLE",
+    "stateWriteFailureAfterGradleStarts": "DIAGNOSTIC_ONLY_PRESERVE_GRADLE_STATUS",
+    "corruptOrWrongNamespaceState": "REJECT_AND_RUN_OPTIMIZED_NATIVE_GRADLE",
+    "cacheObjectUsedAsState": "REJECT",
+    "stateObjectUsedAsGradleCacheHit": "MISS"
+  },
+  "capabilities": [
+    "CACHE_READ",
+    "CACHE_WRITE",
+    "STATE_READ",
+    "STATE_WRITE"
+  ],
+  "schemas": [
+    "contracts/jsonschema/central-state-manifest.v1.schema.json",
+    "contracts/jsonschema/central-state-head.v1.schema.json",
+    "contracts/jsonschema/central-state-cas.v1.schema.json"
+  ],
+  "vectors": "contracts/test-vectors/central-storage/central-storage.v1.json",
+  "authority": {
+    "proofOfConcept": true,
+    "serviceOptional": true,
+    "localOptimizeRemainsSupported": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "deferred": [
+    "STATE_STORAGE_IMPLEMENTATION",
+    "EXTERNAL_HTTPS_LISTENER",
+    "TOKEN_ISSUANCE_AND_AUTHORIZATION",
+    "CLIENT_CONNECT_AND_SYNC",
+    "REMOTE_PROFILE_SELECTION",
+    "TWO_MACHINE_VALUE_MEASUREMENT",
+    "PRODUCTION_HA_RBAC_KMS_BACKUPS"
+  ]
+}

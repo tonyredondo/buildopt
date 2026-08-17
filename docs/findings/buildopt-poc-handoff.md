@@ -35,7 +35,8 @@ binding falls back before Gradle starts.
 | **Automatic discovery and calibration** | Derives Git/Gradle ownership, outputs and graph; runs balanced native/candidate pairs; checks uncertainty, p95, outputs, fallback and payback. | Prevents a smaller task count from being mistaken for customer value. |
 | **Profile portfolio and replay** | Stores only qualified structural families under exact repository, Wrapper, workflow, graph, output, executable and evidence bindings. | POC-only automatic replay; drift retains native. |
 | **Safe local cache** | Isolates and verifies Gradle cache data by repository, Wrapper and platform. | Supporting safety; approximately at parity with an already warm native Gradle cache, not the current speed claim. |
-| **Shared / Edge cache** | Offers Gradle-compatible cache objects over HTTP/HTTPS and optional locality. | Separate experiment; its percentages are never added to Build Impact results. |
+| **Shared / Edge cache** | Offers Gradle-compatible opaque cache objects over HTTP/HTTPS and optional locality. | Separate experiment; its percentages are never added to Build Impact results. |
+| **Optional central state** | Defines how compatible portfolios, evidence and resumable checkpoints can move between machines without becoming optimization authority. | Contract and lifecycle vectors complete; storage, HTTPS and synchronization are not implemented yet. |
 | **Launcher, history and reports** | Preserves process behavior and reports graph reduction, wall time, uncertainty, p95, learning cost, payback and fallback. | Supporting infrastructure; launcher overhead is included in candidate timings. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier resource/state-reuse hypotheses. | Retired from the active POC after neutral, unstable or regressive evidence. |
 
@@ -105,9 +106,10 @@ but do not replace the zero-configuration Ktor/Beam result.
 
 ## Recommended next steps
 
-1. **Define the optional central storage contract.** Keep native Gradle cache
-   objects separate from BuildOpt portfolios/evidence/checkpoints, expose them
-   over HTTP/HTTPS, and preserve local operation when the service is absent.
+1. **Implement the optional central state store.** Reuse the existing
+   content-addressed files and SQLite foundation to persist the already defined
+   portfolio/evidence/checkpoint contract, proving restart, corruption,
+   concurrency and partial-publication behavior before adding HTTPS.
 2. **Measure profile lifetime across commits.** Replace projected payback with
    observed matching replays, invalidations and cumulative net saving.
 3. **Add generic economic prequalification.** Use task shapes and graph cost to
@@ -128,4 +130,5 @@ but do not replace the zero-configuration Ktor/Beam result.
 - [Historical automatic diagnostic matrix](../../benchmarks/results/poc-magic-end-to-end-value-v1/README.md)
 - [Comparable reviewed-profile matrix](../../benchmarks/results/poc-statistical-qualification-v2/README.md)
 - [One-command roadmap](../plans/one-command-onboarding-roadmap.md)
+- [Optional central storage contract](../../specs/poc-central-storage-contract-v1.md)
 - [Implementation tracker](../../implementation-tracker.md)

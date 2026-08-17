@@ -1,0 +1,407 @@
+{
+  "schemaVersion": "buildopt.contracts/central-storage/v1",
+  "repositoryScopeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "manifests": {
+    "evidence-v1": {
+      "schemaVersion": "buildopt.central/state-manifest/v1",
+      "recordType": "CENTRAL_STATE_MANIFEST",
+      "kind": "EVIDENCE",
+      "repositoryScopeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "generation": 1,
+      "compatibilitySha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "bindingsSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "origin": {
+        "baseRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "targetRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "buildoptExecutableSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "wrapperSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+        "gradleVersion": "9.6.1"
+      },
+      "artifacts": [
+        {
+          "role": "CALIBRATION_EVIDENCE",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "sizeBytes": 4096,
+          "payloadSchemaVersion": "buildopt.poc/structural-measurement/v1"
+        }
+      ],
+      "references": [],
+      "status": "COMPLETE",
+      "retentionClass": "WHILE_REFERENCED_PLUS_30_DAYS",
+      "createdAt": "2026-08-17T20:00:00Z",
+      "authority": {
+        "selectionRequiresLocalRevalidation": true,
+        "productionAuthorized": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    },
+    "portfolio-v1": {
+      "schemaVersion": "buildopt.central/state-manifest/v1",
+      "recordType": "CENTRAL_STATE_MANIFEST",
+      "kind": "PORTFOLIO",
+      "repositoryScopeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "generation": 1,
+      "compatibilitySha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "bindingsSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "origin": {
+        "baseRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "targetRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "buildoptExecutableSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "wrapperSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+        "gradleVersion": "9.6.1"
+      },
+      "artifacts": [
+        {
+          "role": "PORTFOLIO_INDEX",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "sizeBytes": 2048,
+          "payloadSchemaVersion": "buildopt.poc/optimize-profile-portfolio/v1"
+        },
+        {
+          "role": "PROFILE",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "sizeBytes": 8192,
+          "payloadSchemaVersion": "buildopt.poc/qualified-profile/v1"
+        }
+      ],
+      "references": [
+        {
+          "kind": "EVIDENCE",
+          "manifestSha256": "bc2221b04fb72c361711477d2d8b006e1d20287ba6ff9a6f21404f4e8ee19c7e",
+          "relation": "QUALIFICATION"
+        }
+      ],
+      "status": "COMPLETE",
+      "retentionClass": "CURRENT_PLUS_30_DAYS_AFTER_SUPERSEDED",
+      "createdAt": "2026-08-17T20:01:00Z",
+      "authority": {
+        "selectionRequiresLocalRevalidation": true,
+        "productionAuthorized": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    },
+    "portfolio-v2": {
+      "schemaVersion": "buildopt.central/state-manifest/v1",
+      "recordType": "CENTRAL_STATE_MANIFEST",
+      "kind": "PORTFOLIO",
+      "repositoryScopeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "generation": 2,
+      "compatibilitySha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "bindingsSha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "origin": {
+        "baseRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "targetRevision": "cccccccccccccccccccccccccccccccccccccccc",
+        "buildoptExecutableSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "wrapperSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+        "gradleVersion": "9.6.1"
+      },
+      "artifacts": [
+        {
+          "role": "PORTFOLIO_INDEX",
+          "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "sizeBytes": 2304,
+          "payloadSchemaVersion": "buildopt.poc/optimize-profile-portfolio/v1"
+        },
+        {
+          "role": "PROFILE",
+          "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "sizeBytes": 8448,
+          "payloadSchemaVersion": "buildopt.poc/qualified-profile/v1"
+        }
+      ],
+      "references": [
+        {
+          "kind": "EVIDENCE",
+          "manifestSha256": "bc2221b04fb72c361711477d2d8b006e1d20287ba6ff9a6f21404f4e8ee19c7e",
+          "relation": "QUALIFICATION"
+        }
+      ],
+      "status": "COMPLETE",
+      "retentionClass": "CURRENT_PLUS_30_DAYS_AFTER_SUPERSEDED",
+      "createdAt": "2026-08-17T20:02:00Z",
+      "authority": {
+        "selectionRequiresLocalRevalidation": true,
+        "productionAuthorized": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    },
+    "portfolio-v3": {
+      "schemaVersion": "buildopt.central/state-manifest/v1",
+      "recordType": "CENTRAL_STATE_MANIFEST",
+      "kind": "PORTFOLIO",
+      "repositoryScopeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "generation": 3,
+      "compatibilitySha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "bindingsSha256": "7777777777777777777777777777777777777777777777777777777777777777",
+      "origin": {
+        "baseRevision": "cccccccccccccccccccccccccccccccccccccccc",
+        "targetRevision": "dddddddddddddddddddddddddddddddddddddddd",
+        "buildoptExecutableSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "wrapperSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+        "gradleVersion": "9.6.1"
+      },
+      "artifacts": [
+        {
+          "role": "PORTFOLIO_INDEX",
+          "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+          "sizeBytes": 2560,
+          "payloadSchemaVersion": "buildopt.poc/optimize-profile-portfolio/v1"
+        }
+      ],
+      "references": [
+        {
+          "kind": "EVIDENCE",
+          "manifestSha256": "bc2221b04fb72c361711477d2d8b006e1d20287ba6ff9a6f21404f4e8ee19c7e",
+          "relation": "QUALIFICATION"
+        }
+      ],
+      "status": "COMPLETE",
+      "retentionClass": "CURRENT_PLUS_30_DAYS_AFTER_SUPERSEDED",
+      "createdAt": "2026-08-17T20:03:00Z",
+      "authority": {
+        "selectionRequiresLocalRevalidation": true,
+        "productionAuthorized": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    },
+    "checkpoint-v1": {
+      "schemaVersion": "buildopt.central/state-manifest/v1",
+      "recordType": "CENTRAL_STATE_MANIFEST",
+      "kind": "CHECKPOINT",
+      "repositoryScopeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "generation": 1,
+      "compatibilitySha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "bindingsSha256": "7777777777777777777777777777777777777777777777777777777777777777",
+      "origin": {
+        "baseRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "targetRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "buildoptExecutableSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "wrapperSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+        "gradleVersion": "9.6.1"
+      },
+      "artifacts": [
+        {
+          "role": "OPTIMIZE_STATE",
+          "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "sizeBytes": 1024,
+          "payloadSchemaVersion": "buildopt.poc/optimize-state/v1"
+        }
+      ],
+      "references": [],
+      "status": "RESUMABLE",
+      "retentionClass": "24_HOURS_FROM_CREATED_AT",
+      "createdAt": "2026-08-17T20:00:00Z",
+      "expiresAt": "2026-08-18T20:00:00Z",
+      "authority": {
+        "selectionRequiresLocalRevalidation": true,
+        "productionAuthorized": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    },
+    "evidence-missing-artifact": {
+      "schemaVersion": "buildopt.central/state-manifest/v1",
+      "recordType": "CENTRAL_STATE_MANIFEST",
+      "kind": "EVIDENCE",
+      "repositoryScopeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "generation": 1,
+      "compatibilitySha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "bindingsSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "origin": {
+        "baseRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "targetRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "buildoptExecutableSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "wrapperSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+        "gradleVersion": "9.6.1"
+      },
+      "artifacts": [
+        {
+          "role": "CALIBRATION_EVIDENCE",
+          "sha256": "0909090909090909090909090909090909090909090909090909090909090909",
+          "sizeBytes": 512,
+          "payloadSchemaVersion": "buildopt.poc/structural-measurement/v1"
+        }
+      ],
+      "references": [],
+      "status": "COMPLETE",
+      "retentionClass": "WHILE_REFERENCED_PLUS_30_DAYS",
+      "createdAt": "2026-08-17T20:00:00Z",
+      "authority": {
+        "selectionRequiresLocalRevalidation": true,
+        "productionAuthorized": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    }
+  },
+  "invalidManifests": {
+    "portfolio-wrong-retention": {
+      "schemaVersion": "buildopt.central/state-manifest/v1",
+      "recordType": "CENTRAL_STATE_MANIFEST",
+      "kind": "PORTFOLIO",
+      "repositoryScopeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "generation": 1,
+      "compatibilitySha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "bindingsSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "origin": {
+        "baseRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "targetRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "buildoptExecutableSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "wrapperSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+        "gradleVersion": "9.6.1"
+      },
+      "artifacts": [
+        {
+          "role": "PORTFOLIO_INDEX",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "sizeBytes": 2048,
+          "payloadSchemaVersion": "buildopt.poc/optimize-profile-portfolio/v1"
+        }
+      ],
+      "references": [
+        {
+          "kind": "EVIDENCE",
+          "manifestSha256": "bc2221b04fb72c361711477d2d8b006e1d20287ba6ff9a6f21404f4e8ee19c7e",
+          "relation": "QUALIFICATION"
+        }
+      ],
+      "status": "COMPLETE",
+      "retentionClass": "24_HOURS_FROM_CREATED_AT",
+      "createdAt": "2026-08-17T20:00:00Z",
+      "authority": {
+        "selectionRequiresLocalRevalidation": true,
+        "productionAuthorized": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    },
+    "checkpoint-direct-authority": {
+      "schemaVersion": "buildopt.central/state-manifest/v1",
+      "recordType": "CENTRAL_STATE_MANIFEST",
+      "kind": "CHECKPOINT",
+      "repositoryScopeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "generation": 1,
+      "compatibilitySha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "bindingsSha256": "7777777777777777777777777777777777777777777777777777777777777777",
+      "origin": {
+        "baseRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "targetRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "buildoptExecutableSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "wrapperSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+        "gradleVersion": "9.6.1"
+      },
+      "artifacts": [
+        {
+          "role": "OPTIMIZE_STATE",
+          "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "sizeBytes": 1024,
+          "payloadSchemaVersion": "buildopt.poc/optimize-state/v1"
+        }
+      ],
+      "references": [],
+      "status": "RESUMABLE",
+      "retentionClass": "24_HOURS_FROM_CREATED_AT",
+      "createdAt": "2026-08-17T20:00:00Z",
+      "expiresAt": "2026-08-18T20:00:00Z",
+      "authority": {
+        "selectionRequiresLocalRevalidation": false,
+        "productionAuthorized": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    }
+  },
+  "scenarios": [
+    {
+      "id": "gradle-object-eviction-is-not-authority",
+      "steps": [
+        {"action": "PUT_CACHE", "digest": "1212121212121212121212121212121212121212121212121212121212121212", "contentSha256": "1212121212121212121212121212121212121212121212121212121212121212", "expected": "APPLIED"},
+        {"action": "GET_CACHE", "digest": "1212121212121212121212121212121212121212121212121212121212121212", "expected": "HIT"},
+        {"action": "SELECT_CACHE", "digest": "1212121212121212121212121212121212121212121212121212121212121212", "expected": "NATIVE_RETAINED"},
+        {"action": "EVICT_CACHE", "digest": "1212121212121212121212121212121212121212121212121212121212121212", "expected": "APPLIED"},
+        {"action": "GET_CACHE", "digest": "1212121212121212121212121212121212121212121212121212121212121212", "expected": "MISS"}
+      ],
+      "expectedHeads": {}
+    },
+    {
+      "id": "portfolio-evidence-cas-and-concurrency",
+      "steps": [
+        {"action": "PUT_OBJECT", "kind": "EVIDENCE", "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "contentSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "expected": "APPLIED"},
+        {"action": "PUT_MANIFEST", "manifest": "evidence-v1", "expected": "APPLIED"},
+        {"action": "CAS_HEAD", "manifest": "evidence-v1", "expectedGeneration": 0, "commandId": "1010101010101010101010101010101010101010101010101010101010101010", "expected": "APPLIED"},
+        {"action": "PUT_OBJECT", "kind": "PORTFOLIO", "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "contentSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "expected": "APPLIED"},
+        {"action": "PUT_OBJECT", "kind": "PORTFOLIO", "digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "contentSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "expected": "APPLIED"},
+        {"action": "PUT_MANIFEST", "manifest": "portfolio-v1", "expected": "APPLIED"},
+        {"action": "CAS_HEAD", "manifest": "portfolio-v1", "expectedGeneration": 0, "commandId": "2020202020202020202020202020202020202020202020202020202020202020", "expected": "APPLIED"},
+        {"action": "PUT_OBJECT", "kind": "PORTFOLIO", "digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "contentSha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "expected": "APPLIED"},
+        {"action": "PUT_OBJECT", "kind": "PORTFOLIO", "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "contentSha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "expected": "APPLIED"},
+        {"action": "PUT_MANIFEST", "manifest": "portfolio-v2", "expected": "APPLIED"},
+        {"action": "CAS_HEAD", "manifest": "portfolio-v2", "expectedGeneration": 1, "commandId": "3030303030303030303030303030303030303030303030303030303030303030", "expected": "APPLIED"},
+        {"action": "CAS_HEAD", "manifest": "portfolio-v2", "expectedGeneration": 1, "commandId": "3030303030303030303030303030303030303030303030303030303030303030", "expected": "REPLAYED"},
+        {"action": "CAS_HEAD", "manifest": "portfolio-v1", "expectedGeneration": 1, "commandId": "3030303030303030303030303030303030303030303030303030303030303030", "expected": "IDEMPOTENCY_CONFLICT"},
+        {"action": "CAS_HEAD", "manifest": "portfolio-v1", "expectedGeneration": 1, "commandId": "4040404040404040404040404040404040404040404040404040404040404040", "expected": "STATE_PRECONDITION_FAILED"},
+        {"action": "SELECT_HEAD", "kind": "EVIDENCE", "expected": "NATIVE_RETAINED"},
+        {"action": "SELECT_HEAD", "kind": "PORTFOLIO", "expected": "LOCAL_REVALIDATION_REQUIRED"}
+      ],
+      "expectedHeads": {"EVIDENCE": 1, "PORTFOLIO": 2}
+    },
+    {
+      "id": "namespace-isolation",
+      "steps": [
+        {"action": "PUT_OBJECT", "kind": "EVIDENCE", "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "contentSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "expected": "APPLIED"},
+        {"action": "GET_OBJECT", "kind": "PORTFOLIO", "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "expected": "NOT_FOUND"},
+        {"action": "PUT_CACHE", "digest": "1212121212121212121212121212121212121212121212121212121212121212", "contentSha256": "1212121212121212121212121212121212121212121212121212121212121212", "expected": "APPLIED"},
+        {"action": "GET_OBJECT", "kind": "CHECKPOINT", "digest": "1212121212121212121212121212121212121212121212121212121212121212", "expected": "NOT_FOUND"},
+        {"action": "GET_CACHE", "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "expected": "MISS"}
+      ],
+      "expectedHeads": {}
+    },
+    {
+      "id": "checkpoint-expiry-and-outage",
+      "steps": [
+        {"action": "PUT_OBJECT", "kind": "CHECKPOINT", "digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "contentSha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "expected": "APPLIED"},
+        {"action": "PUT_MANIFEST", "manifest": "checkpoint-v1", "expected": "APPLIED"},
+        {"action": "CAS_HEAD", "manifest": "checkpoint-v1", "expectedGeneration": 0, "commandId": "5050505050505050505050505050505050505050505050505050505050505050", "expected": "APPLIED"},
+        {"action": "SELECT_HEAD", "kind": "CHECKPOINT", "expected": "NATIVE_RETAINED"},
+        {"action": "EXPIRE", "kind": "CHECKPOINT", "expected": "EXPIRED"},
+        {"action": "GET_HEAD", "kind": "CHECKPOINT", "expected": "NOT_FOUND"},
+        {"action": "STATE_OUTAGE", "localSnapshotCompatible": true, "expected": "VERIFIED_LOCAL_SNAPSHOT"},
+        {"action": "STATE_OUTAGE", "localSnapshotCompatible": false, "expected": "NATIVE_RETAINED"},
+        {"action": "CACHE_OUTAGE", "expected": "MISS"}
+      ],
+      "expectedHeads": {}
+    },
+    {
+      "id": "incomplete-invalid-and-skipped-state",
+      "steps": [
+        {"action": "PUT_MANIFEST", "manifest": "evidence-missing-artifact", "expected": "MANIFEST_INCOMPLETE"},
+        {"action": "PUT_INVALID_MANIFEST", "manifest": "portfolio-wrong-retention", "expected": "INVALID_MANIFEST"},
+        {"action": "PUT_INVALID_MANIFEST", "manifest": "checkpoint-direct-authority", "expected": "INVALID_MANIFEST"},
+        {"action": "PUT_OBJECT", "kind": "EVIDENCE", "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "contentSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "expected": "APPLIED"},
+        {"action": "PUT_MANIFEST", "manifest": "evidence-v1", "expected": "APPLIED"},
+        {"action": "CAS_HEAD", "manifest": "evidence-v1", "expectedGeneration": 0, "commandId": "6060606060606060606060606060606060606060606060606060606060606060", "expected": "APPLIED"},
+        {"action": "PUT_OBJECT", "kind": "PORTFOLIO", "digest": "8888888888888888888888888888888888888888888888888888888888888888", "contentSha256": "8888888888888888888888888888888888888888888888888888888888888888", "expected": "APPLIED"},
+        {"action": "PUT_MANIFEST", "manifest": "portfolio-v3", "expected": "APPLIED"},
+        {"action": "CAS_HEAD", "manifest": "portfolio-v3", "expectedGeneration": 0, "commandId": "7070707070707070707070707070707070707070707070707070707070707070", "expected": "GENERATION_CONFLICT"}
+      ],
+      "expectedHeads": {"EVIDENCE": 1}
+    },
+    {
+      "id": "referenced-evidence-retention",
+      "steps": [
+        {"action": "PUT_OBJECT", "kind": "EVIDENCE", "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "contentSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "expected": "APPLIED"},
+        {"action": "PUT_MANIFEST", "manifest": "evidence-v1", "expected": "APPLIED"},
+        {"action": "CAS_HEAD", "manifest": "evidence-v1", "expectedGeneration": 0, "commandId": "8080808080808080808080808080808080808080808080808080808080808080", "expected": "APPLIED"},
+        {"action": "PUT_OBJECT", "kind": "PORTFOLIO", "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "contentSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "expected": "APPLIED"},
+        {"action": "PUT_OBJECT", "kind": "PORTFOLIO", "digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "contentSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "expected": "APPLIED"},
+        {"action": "PUT_MANIFEST", "manifest": "portfolio-v1", "expected": "APPLIED"},
+        {"action": "CAS_HEAD", "manifest": "portfolio-v1", "expectedGeneration": 0, "commandId": "9090909090909090909090909090909090909090909090909090909090909090", "expected": "APPLIED"},
+        {"action": "EXPIRE", "kind": "EVIDENCE", "expected": "RETENTION_BLOCKED"}
+      ],
+      "expectedHeads": {"EVIDENCE": 1, "PORTFOLIO": 1}
+    }
+  ],
+  "authority": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/central-state-head.v1.schema.json",
+  "title": "BuildOpt CENTRAL_STATE_HEAD v1",
+  "description": "The sole mutable pointer for one repository and BuildOpt state kind. Its canonical SHA-256 is the HTTP ETag used by compare-and-swap.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "kind",
+    "repositoryScopeSha256",
+    "generation",
+    "manifestSha256",
+    "compatibilitySha256",
+    "updatedAt",
+    "authority"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "buildopt.central/state-head/v1"
+    },
+    "recordType": {
+      "const": "CENTRAL_STATE_HEAD"
+    },
+    "kind": {
+      "enum": [
+        "PORTFOLIO",
+        "EVIDENCE",
+        "CHECKPOINT"
+      ]
+    },
+    "repositoryScopeSha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "manifestSha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "previousManifestSha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "compatibilitySha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selectionRequiresLocalRevalidation",
+        "productionAuthorized",
+        "testOptimization"
+      ],
+      "properties": {
+        "selectionRequiresLocalRevalidation": {
+          "const": true
+        },
+        "productionAuthorized": {
+          "const": false
+        },
+        "testOptimization": {
+          "const": "OUT_OF_SCOPE"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "generation": {
+            "const": 1
+          }
+        },
+        "required": [
+          "generation"
+        ]
+      },
+      "then": {
+        "not": {
+          "required": [
+            "previousManifestSha256"
+          ]
+        }
+      },
+      "else": {
+        "required": [
+          "previousManifestSha256"
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

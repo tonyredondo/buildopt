@@ -20,6 +20,20 @@ local verifying gateway and content-addressed storage. It must not create a
 second cache implementation or store BuildOpt control documents as opaque
 Gradle cache entries.
 
+## Current status
+
+The storage contract is complete. The three versioned state schemas, exact
+HTTP/state semantics and executable lifecycle vectors are defined in the
+[central storage contract](../../specs/poc-central-storage-contract-v1.md).
+They keep Gradle objects opaque and evictable while portfolios, evidence and
+checkpoints use typed immutable manifests plus one CAS head. No central-state
+server, external listener, credential flow or synchronization exists yet.
+
+The next block is `POC-CENTRAL-STATE-STORAGE-001`: implement those exact state
+semantics on the existing content-addressed files and SQLite metadata, then
+prove restart, corruption, concurrency and partial-publication behavior before
+adding HTTPS.
+
 ## Target experience
 
 An owner prepares one server host:
@@ -86,8 +100,9 @@ authorization scopes, metadata and lifecycle rules remain separate.
 |---|---|---|---|
 | Task and transform outputs | Gradle | Opaque immutable objects keyed by Gradle cache key | Evictable by byte quota and recency |
 | Local cache mirror | Gradle | Gradle User Home on each machine | Gradle-owned cleanup |
-| Profile portfolio | BuildOpt | Versioned immutable snapshot plus current generation pointer | Durable until superseded or incompatible |
-| Calibration evidence | BuildOpt | Immutable digest-bound documents | Durable and auditable for the POC |
+| Profile portfolio | BuildOpt | Versioned immutable manifest plus CAS head | Current plus 30 days after supersession |
+| Calibration evidence | BuildOpt | Immutable digest-bound manifest and objects | While referenced, then 30 days |
+| Calibration checkpoint | BuildOpt | Immutable resumable state plus CAS head | 24 hours from creation |
 | Resumable checkpoints | BuildOpt | Exact input-bound temporary documents | Short-lived and safe to discard |
 | Applicability and invalidation | BuildOpt | Repository/workflow/graph/tool/output bindings | Durable while every binding matches |
 

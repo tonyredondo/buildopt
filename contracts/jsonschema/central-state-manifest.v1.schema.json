@@ -1,0 +1,369 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/central-state-manifest.v1.schema.json",
+  "title": "BuildOpt CENTRAL_STATE_MANIFEST v1",
+  "description": "One immutable, repository-scoped manifest for a BuildOpt portfolio, evidence set, or resumable checkpoint. Storage never turns this document into production authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "kind",
+    "repositoryScopeSha256",
+    "generation",
+    "compatibilitySha256",
+    "bindingsSha256",
+    "origin",
+    "artifacts",
+    "references",
+    "status",
+    "retentionClass",
+    "createdAt",
+    "authority"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "buildopt.central/state-manifest/v1"
+    },
+    "recordType": {
+      "const": "CENTRAL_STATE_MANIFEST"
+    },
+    "kind": {
+      "$ref": "#/$defs/kind"
+    },
+    "repositoryScopeSha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "compatibilitySha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "bindingsSha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "origin": {
+      "$ref": "#/$defs/origin"
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/artifact"
+      }
+    },
+    "references": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/reference"
+      }
+    },
+    "status": {
+      "enum": [
+        "COMPLETE",
+        "RESUMABLE"
+      ]
+    },
+    "retentionClass": {
+      "enum": [
+        "CURRENT_PLUS_30_DAYS_AFTER_SUPERSEDED",
+        "WHILE_REFERENCED_PLUS_30_DAYS",
+        "24_HOURS_FROM_CREATED_AT"
+      ]
+    },
+    "createdAt": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "expiresAt": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "authority": {
+      "$ref": "#/$defs/authority"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "PORTFOLIO"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "status": {
+            "const": "COMPLETE"
+          },
+          "retentionClass": {
+            "const": "CURRENT_PLUS_30_DAYS_AFTER_SUPERSEDED"
+          },
+          "artifacts": {
+            "contains": {
+              "properties": {
+                "role": {
+                  "const": "PORTFOLIO_INDEX"
+                }
+              },
+              "required": [
+                "role"
+              ]
+            },
+            "minContains": 1,
+            "maxContains": 1
+          },
+          "references": {
+            "contains": {
+              "properties": {
+                "kind": {
+                  "const": "EVIDENCE"
+                },
+                "relation": {
+                  "const": "QUALIFICATION"
+                }
+              },
+              "required": [
+                "kind",
+                "relation"
+              ]
+            },
+            "minContains": 1
+          }
+        },
+        "not": {
+          "required": [
+            "expiresAt"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "EVIDENCE"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "status": {
+            "const": "COMPLETE"
+          },
+          "retentionClass": {
+            "const": "WHILE_REFERENCED_PLUS_30_DAYS"
+          },
+          "artifacts": {
+            "contains": {
+              "properties": {
+                "role": {
+                  "const": "CALIBRATION_EVIDENCE"
+                }
+              },
+              "required": [
+                "role"
+              ]
+            },
+            "minContains": 1
+          },
+          "references": {
+            "maxItems": 0
+          }
+        },
+        "not": {
+          "required": [
+            "expiresAt"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "CHECKPOINT"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "expiresAt"
+        ],
+        "properties": {
+          "status": {
+            "const": "RESUMABLE"
+          },
+          "retentionClass": {
+            "const": "24_HOURS_FROM_CREATED_AT"
+          },
+          "artifacts": {
+            "contains": {
+              "properties": {
+                "role": {
+                  "const": "OPTIMIZE_STATE"
+                }
+              },
+              "required": [
+                "role"
+              ]
+            },
+            "minContains": 1,
+            "maxContains": 1
+          },
+          "references": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "kind": {
+      "enum": [
+        "PORTFOLIO",
+        "EVIDENCE",
+        "CHECKPOINT"
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "origin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "baseRevision",
+        "targetRevision",
+        "buildoptExecutableSha256",
+        "wrapperSha256",
+        "gradleVersion"
+      ],
+      "properties": {
+        "baseRevision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40,64}$"
+        },
+        "targetRevision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40,64}$"
+        },
+        "buildoptExecutableSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "wrapperSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "gradleVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:[-+][A-Za-z0-9.-]+)?$"
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "sha256",
+        "sizeBytes",
+        "payloadSchemaVersion"
+      ],
+      "properties": {
+        "role": {
+          "enum": [
+            "PORTFOLIO_INDEX",
+            "PROFILE",
+            "IMPACT_MANIFEST",
+            "IMPACT_GRAPH",
+            "GENERATED_MANIFEST",
+            "CALIBRATION_EVIDENCE",
+            "DISCOVERY_EVIDENCE",
+            "TASK_SHAPE_EVIDENCE",
+            "OUTPUT_MANIFEST",
+            "OPTIMIZE_STATE",
+            "DISCOVERY_SNAPSHOT",
+            "CALIBRATION_CHECKPOINT"
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16777216
+        },
+        "payloadSchemaVersion": {
+          "type": "string",
+          "pattern": "^buildopt\\.[a-z0-9.-]+/[a-z0-9.-]+/v[1-9][0-9]*$"
+        }
+      }
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "manifestSha256",
+        "relation"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "EVIDENCE"
+          ]
+        },
+        "manifestSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "relation": {
+          "enum": [
+            "QUALIFICATION"
+          ]
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selectionRequiresLocalRevalidation",
+        "productionAuthorized",
+        "testOptimization"
+      ],
+      "properties": {
+        "selectionRequiresLocalRevalidation": {
+          "const": true
+        },
+        "productionAuthorized": {
+          "const": false
+        },
+        "testOptimization": {
+          "const": "OUT_OF_SCOPE"
+        }
+      }
+    }
+  }
+}

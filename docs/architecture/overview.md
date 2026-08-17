@@ -169,6 +169,24 @@ KMS/HSM-backed keys, HA, and recovery objectives.
 | Build sessions | Server exporter | Atomic mode-`0600` immutable JSON plus bounded deterministic JSONL |
 | Patch staging | Java patcher | Private detached Git worktree; exact branch/ref publication only after all postimages match |
 
+### Optional cross-machine state boundary
+
+The local POC remains service-independent. A separately planned extension may
+reuse `buildopt-server` as one HTTPS endpoint with two logically isolated
+planes:
+
+| Plane | Contents | Visibility and failure |
+|---|---|---|
+| Gradle cache | Opaque, evictable objects addressed by native Gradle cache keys | `GET`/`PUT`; eviction or outage is an ordinary miss and grants no optimization authority |
+| BuildOpt state | Typed portfolio, evidence and checkpoint artifacts under a repository/kind namespace | Immutable artifact and manifest upload followed by exact next-generation head CAS; invalid or unavailable state retains optimized native Gradle |
+
+The executable [central storage contract](../../specs/poc-central-storage-contract-v1.md)
+fixes namespaces, retention, CAS and fallback before implementation. Physical
+blob bytes may be deduplicated, but metadata, authorization and visibility do
+not cross planes. Remote portfolio selection will still require exact local
+revalidation. The state store, HTTPS listener and client sync are not yet
+implemented.
+
 Linux checks a local filesystem allowlist. macOS requires `MNT_LOCAL` and a
 same-device boundary. Windows requires one local volume and rejects reparse
 traversal. Atomic file replacement is used on every platform; Unix additionally

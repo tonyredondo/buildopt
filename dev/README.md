@@ -371,6 +371,22 @@ rejection, exact idempotent replay after a lost response, payload-conflict
 rejection, cancellation, dead-owner reconciliation, and terminal-state
 safety.
 
+## Optional central storage contract validation
+
+Validate the POC boundary between Gradle cache objects and BuildOpt portfolio,
+evidence, and checkpoint state:
+
+```bash
+./dev/check-central-storage-contract
+```
+
+The checker compiles the three Draft 2020-12 state schemas and executes six
+language-neutral lifecycle scenarios. It covers ordered immutable publication,
+first and later generation CAS, exact idempotent replay, stale/skipped updates,
+namespace isolation, independent retention, interruption, outage, and native
+fallback. This is contract evidence only; it does not start a server or claim
+cross-machine performance.
+
 ## CI orchestration validation
 
 Validate the `F0-030` authoritative-job, protected validation queue,
