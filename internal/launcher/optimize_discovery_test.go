@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -34,6 +35,22 @@ func TestSplitOptimizeGradleWorkflow(t *testing.T) {
 		if _, _, got := splitOptimizeGradleWorkflow(test.arguments); got != test.reason {
 			t.Fatalf("arguments %v reason = %q, want %q", test.arguments, got, test.reason)
 		}
+	}
+}
+
+func TestSplitOptimizeGradleWorkflowAcceptsLargeRealWorkflowsWithinProposalBound(t *testing.T) {
+	arguments := make([]string, maximumStructuralAlternativeEntrypoints)
+	for index := range arguments {
+		arguments[index] = ":module" + strconv.Itoa(index) + ":testClasses"
+	}
+	entrypoints, options, reason := splitOptimizeGradleWorkflow(arguments)
+	if reason != "" || len(entrypoints) != maximumStructuralAlternativeEntrypoints || len(options) != 0 {
+		t.Fatalf("bounded workflow = %d entrypoints/%v/%q", len(entrypoints), options, reason)
+	}
+
+	arguments = append(arguments, ":one-too-many:testClasses")
+	if _, _, reason := splitOptimizeGradleWorkflow(arguments); reason != "WORKFLOW_ARGUMENTS_AMBIGUOUS" {
+		t.Fatalf("oversized workflow reason = %q", reason)
 	}
 }
 

@@ -229,7 +229,7 @@ func splitOptimizeGradleWorkflow(arguments []string) ([]string, []string, string
 		}
 		entrypoints = append(entrypoints, argument)
 	}
-	if len(entrypoints) == 0 || len(entrypoints) > 16 {
+	if len(entrypoints) == 0 || len(entrypoints) > maximumStructuralAlternativeEntrypoints {
 		return entrypoints, options, "WORKFLOW_ARGUMENTS_AMBIGUOUS"
 	}
 	if _, err := proposalTerminalSelectors(entrypoints); err != nil || !uniqueMeasurementStrings(entrypoints) {
