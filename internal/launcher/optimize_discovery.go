@@ -616,6 +616,12 @@ func optimizeRequiredOutputPatterns(candidates []outputContractCandidate, entryp
 func optimizeLifecycleOutput(selector, path string) bool {
 	normalized := "/" + strings.ToLower(filepath.ToSlash(path)) + "/"
 	switch strings.ToLower(selector) {
+	case "assemble":
+		// Assemble is a lifecycle task without outputs of its own. Preserve every
+		// observed output produced by the affected projects in its executed task
+		// graph; the output-contract preflight has already proved that each root
+		// exists, is repository-owned, and has one unambiguous project owner.
+		return true
 	case "classes":
 		return strings.Contains(normalized, "/build/classes/") || strings.Contains(normalized, "/build/resources/main/")
 	case "testclasses":

@@ -83,6 +83,7 @@ func TestOptimizeAffectedProjectsAndRequiredOutputs(t *testing.T) {
 
 	candidates := []outputContractCandidate{
 		{Pattern: "service/build/distributions/**", Path: "service/build/distributions/service.zip", FileCount: 1, OwnerProjects: []string{":service"}, ProducerTasks: []string{":service:distZip"}},
+		{Pattern: "service/build/publications/maven/pom-default.xml", Path: "service/build/publications/maven/pom-default.xml", FileCount: 1, OwnerProjects: []string{":service"}, ProducerTasks: []string{":service:generatePomFileForMavenPublication"}},
 		{Pattern: "library/build/classes/**", Path: "library/build/classes/java/test/Example.class", FileCount: 1, OwnerProjects: []string{":library"}, ProducerTasks: []string{":library:compileTestJava"}},
 		{Pattern: "unrelated/build/libs/**", Path: "unrelated/build/libs/unrelated.jar", FileCount: 1, OwnerProjects: []string{":unrelated"}, ProducerTasks: []string{":unrelated:jar"}},
 	}
@@ -94,6 +95,9 @@ func TestOptimizeAffectedProjectsAndRequiredOutputs(t *testing.T) {
 	}
 	if got := optimizeRequiredOutputPatterns(candidates, []string{"distZip", "testClasses"}, affected); !reflect.DeepEqual(got, []string{"library/build/classes/**", "service/build/distributions/**"}) {
 		t.Fatalf("multi-entrypoint output patterns = %v", got)
+	}
+	if got := optimizeRequiredOutputPatterns(candidates, []string{"assemble"}, affected); !reflect.DeepEqual(got, []string{"library/build/classes/**", "service/build/distributions/**", "service/build/publications/maven/pom-default.xml"}) {
+		t.Fatalf("assemble lifecycle output patterns = %v", got)
 	}
 }
 
