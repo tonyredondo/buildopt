@@ -659,7 +659,11 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 		if err := os.RemoveAll(cache); err != nil {
 			return arm, fmt.Errorf("replace %s native build cache: %w", name, err)
 		}
-		if err := linkMeasurementCacheSeed(sharedCacheSeed, cache); err != nil {
+		restoreSeed := copyMeasurementCacheSeed
+		if config.gradleSharedBuildCacheSeed != "" {
+			restoreSeed = linkMeasurementCacheSeed
+		}
+		if err := restoreSeed(sharedCacheSeed, cache); err != nil {
 			return arm, fmt.Errorf("share %s native build-cache seed: %w", name, err)
 		}
 		if err := linkMeasurementCacheSeed(sharedCacheSeed, arm.cacheSeed); err != nil {
@@ -1013,7 +1017,11 @@ func resetStructuralArm(config structuralMeasurementConfig, arm structuralMeasur
 		if err := os.RemoveAll(cache); err != nil {
 			return fmt.Errorf("clear isolated native build cache: %w", err)
 		}
-		if err := linkMeasurementCacheSeed(arm.cacheSeed, cache); err != nil {
+		restoreSeed := copyMeasurementCacheSeed
+		if config.gradleSharedBuildCacheSeed != "" {
+			restoreSeed = linkMeasurementCacheSeed
+		}
+		if err := restoreSeed(arm.cacheSeed, cache); err != nil {
 			return fmt.Errorf("restore isolated native build cache: %w", err)
 		}
 	}
@@ -1696,6 +1704,31 @@ func linkMeasurementCacheSeed(source, target string) error {
 			return errors.New("native build cache seed contains a writable entry")
 		}
 		return os.Link(candidate, destination)
+	})
+}
+
+func copyMeasurementCacheSeed(source, target string) error {
+	info, err := os.Lstat(source)
+	if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return errors.New("native build cache seed is unavailable")
+	}
+	return filepath.WalkDir(source, func(candidate string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		relative, err := filepath.Rel(source, candidate)
+		if err != nil {
+			return err
+		}
+		destination := filepath.Join(target, relative)
+		if entry.IsDir() {
+			return os.MkdirAll(destination, 0o700)
+		}
+		entryInfo, err := entry.Info()
+		if err != nil || !entryInfo.Mode().IsRegular() || entryInfo.Mode()&os.ModeSymlink != 0 {
+			return errors.New("native build cache seed contains a non-regular entry")
+		}
+		return copyMeasurementRegularFileWithMode(candidate, destination, 0o600)
 	})
 }
 

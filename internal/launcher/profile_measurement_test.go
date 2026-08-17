@@ -427,6 +427,22 @@ func TestSnapshotMeasurementCacheSeedExcludesTransientStateAndProtectsEntries(t 
 	if err != nil || !os.SameFile(info, linkedInfo) {
 		t.Fatalf("linked cache entry = %v/%v", linkedInfo, err)
 	}
+	writable := filepath.Join(t.TempDir(), "writable")
+	if err := copyMeasurementCacheSeed(target, writable); err != nil {
+		t.Fatal(err)
+	}
+	writableEntry := filepath.Join(writable, "entry")
+	writableInfo, err := os.Stat(writableEntry)
+	if err != nil || (runtime.GOOS != "windows" && writableInfo.Mode().Perm() != 0o600) || os.SameFile(info, writableInfo) {
+		t.Fatalf("private writable cache entry = %v/%v", writableInfo, err)
+	}
+	if err := os.WriteFile(writableEntry, []byte("updated cache entry"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile(filepath.Join(target, "entry"))
+	if err != nil || string(raw) != "cache entry" {
+		t.Fatalf("immutable cache seed changed through private restore = %q/%v", raw, err)
+	}
 }
 
 func TestHashMeasurementDependencyTreeRejectsNestedSymlink(t *testing.T) {
