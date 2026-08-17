@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -118,10 +119,13 @@ func TestCopyMeasurementInputRejectsSymlinkParent(t *testing.T) {
 func TestMeasurementEnvironmentRemovesExternalBuildOptState(t *testing.T) {
 	t.Setenv("BUILDOPT_SERVER_URL", "https://should-not-propagate.invalid")
 	t.Setenv("GRADLE_USER_HOME", "wrong")
-	environment := measurementEnvironment("isolated-home")
+	t.Setenv(gradleReadOnlyDependencyEnvironment, "wrong-dependency-cache")
+	environment := measurementEnvironment("isolated-home", "shared-readonly-dependencies")
 	joined := strings.Join(environment, "\n")
 	if strings.Contains(joined, "BUILDOPT_SERVER_URL=") || strings.Contains(joined, "GRADLE_USER_HOME=wrong") ||
-		!strings.Contains(joined, "GRADLE_USER_HOME=isolated-home") {
+		strings.Contains(joined, gradleReadOnlyDependencyEnvironment+"=wrong-dependency-cache") ||
+		!strings.Contains(joined, "GRADLE_USER_HOME=isolated-home") ||
+		!strings.Contains(joined, gradleReadOnlyDependencyEnvironment+"=shared-readonly-dependencies") {
 		t.Fatalf("measurement environment = %q", joined)
 	}
 }
@@ -167,6 +171,78 @@ func TestMeasurementGradleDistributionSeedRejectsSymlinks(t *testing.T) {
 	if err := copyMeasurementDistributionTree(seed, filepath.Join(t.TempDir(), "target")); err == nil ||
 		!strings.Contains(err.Error(), "non-regular") {
 		t.Fatalf("symlink seed error = %v", err)
+	}
+}
+
+func TestStructuralMeasurementSharesOnlyImmutableResolvedDependencies(t *testing.T) {
+	gradleHome := t.TempDir()
+	modulesRoot := filepath.Join(gradleHome, "caches", "modules-2")
+	artifact := filepath.Join(modulesRoot, "files-2.1", "example", "artifact.jar")
+	if err := os.MkdirAll(filepath.Dir(artifact), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(artifact, []byte("resolved dependency"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	for _, transient := range []string{
+		filepath.Join(modulesRoot, "modules-2.lock"),
+		filepath.Join(modulesRoot, "gc.properties"),
+	} {
+		if err := os.WriteFile(transient, []byte("transient"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	t.Setenv("GRADLE_USER_HOME", gradleHome)
+	seed, err := measurementGradleDependencySeed()
+	if err != nil || seed != modulesRoot {
+		t.Fatalf("dependency seed = %q/%v", seed, err)
+	}
+	measurementRoot := filepath.Join(t.TempDir(), "measurement")
+	if err := os.Mkdir(measurementRoot, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	defer cleanupStructuralMeasurementRoot(measurementRoot)
+	config, err := prepareStructuralDependencySnapshot(structuralMeasurementConfig{
+		gradleDependencySeed: seed,
+		timeout:              time.Minute,
+	}, measurementRoot, io.Discard)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if config.gradleReadOnlyDependencyRoot == "" {
+		t.Fatal("read-only dependency root was not prepared")
+	}
+	copied := filepath.Join(config.gradleReadOnlyDependencyRoot, "modules-2", "files-2.1", "example", "artifact.jar")
+	info, err := os.Stat(copied)
+	if err != nil || (runtime.GOOS != "windows" && info.Mode().Perm() != 0o400) {
+		t.Fatalf("copied dependency = %v/%v", info, err)
+	}
+	for _, transient := range []string{"modules-2.lock", "gc.properties"} {
+		if _, err := os.Stat(filepath.Join(config.gradleReadOnlyDependencyRoot, "modules-2", transient)); !os.IsNotExist(err) {
+			t.Fatalf("transient dependency state %q was copied: %v", transient, err)
+		}
+	}
+	control := strings.Join(measurementEnvironment("control-home", config.gradleReadOnlyDependencyRoot), "\n")
+	candidate := strings.Join(measurementEnvironment("candidate-home", config.gradleReadOnlyDependencyRoot), "\n")
+	if !strings.Contains(control, "GRADLE_USER_HOME=control-home") ||
+		!strings.Contains(candidate, "GRADLE_USER_HOME=candidate-home") ||
+		!strings.Contains(control, gradleReadOnlyDependencyEnvironment+"="+config.gradleReadOnlyDependencyRoot) ||
+		!strings.Contains(candidate, gradleReadOnlyDependencyEnvironment+"="+config.gradleReadOnlyDependencyRoot) {
+		t.Fatalf("isolated measurement environments = %q / %q", control, candidate)
+	}
+}
+
+func TestMeasurementGradleDependencySeedRejectsSymlinks(t *testing.T) {
+	gradleHome := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(gradleHome, "caches"), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(t.TempDir(), filepath.Join(gradleHome, "caches", "modules-2")); err != nil {
+		t.Skipf("symlink unavailable: %v", err)
+	}
+	t.Setenv("GRADLE_USER_HOME", gradleHome)
+	if _, err := measurementGradleDependencySeed(); err == nil || !strings.Contains(err.Error(), "real directory") {
+		t.Fatalf("symlink dependency seed error = %v", err)
 	}
 }
 

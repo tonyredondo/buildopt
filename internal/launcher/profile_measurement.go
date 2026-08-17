@@ -64,15 +64,18 @@ type structuralMeasurementConfig struct {
 	targetStabilityConfirmations int
 	adaptiveCandidateStability   bool
 	gradleDistributionSeed       string
+	gradleDependencySeed         string
+	gradleReadOnlyDependencyRoot string
 	deadline                     time.Time
 }
 
 type structuralMeasurementArm struct {
-	name       string
-	workspace  string
-	gradleHome string
-	cacheSeed  string
-	warmups    []profilediscovery.StructuralWarmupObservation
+	name                   string
+	workspace              string
+	gradleHome             string
+	cacheSeed              string
+	readOnlyDependencyRoot string
+	warmups                []profilediscovery.StructuralWarmupObservation
 }
 
 type structuralArmResult struct {
@@ -198,7 +201,11 @@ func calibrateStructuralProfile(config structuralMeasurementConfig, progress io.
 	if err != nil {
 		return nil, fmt.Errorf("create isolated calibration root: %w", err)
 	}
-	defer os.RemoveAll(root)
+	defer cleanupStructuralMeasurementRoot(root)
+	config, err = prepareStructuralDependencySnapshot(config, root, progress)
+	if err != nil {
+		return nil, err
+	}
 	candidate, err := prepareStructuralMeasurementArm(config, root, "candidate", true, progress)
 	if err != nil {
 		return nil, err
@@ -372,6 +379,10 @@ func prepareStructuralMeasurementConfig(
 	if err != nil {
 		return structuralMeasurementConfig{}, err
 	}
+	gradleDependencySeed, err := measurementGradleDependencySeed()
+	if err != nil {
+		return structuralMeasurementConfig{}, err
+	}
 	return structuralMeasurementConfig{
 		repositoryRoot: repositoryRoot, manifestPath: manifest, graphPath: graph,
 		generatedPath: generated, changesPath: changes,
@@ -387,6 +398,7 @@ func prepareStructuralMeasurementConfig(
 		targetStabilityConfirmations: targetStabilityConfirmations,
 		adaptiveCandidateStability:   adaptiveCandidateStability,
 		gradleDistributionSeed:       gradleDistributionSeed,
+		gradleDependencySeed:         gradleDependencySeed,
 	}, nil
 }
 
@@ -398,7 +410,11 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 	if err != nil {
 		return nil, false, fmt.Errorf("create isolated measurement root: %w", err)
 	}
-	defer os.RemoveAll(root)
+	defer cleanupStructuralMeasurementRoot(root)
+	config, err = prepareStructuralDependencySnapshot(config, root, progress)
+	if err != nil {
+		return nil, false, err
+	}
 	control, err := prepareStructuralMeasurementArm(config, root, "control", false, progress)
 	if err != nil {
 		return nil, false, err
@@ -548,10 +564,11 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	}
 	totalWarmups := 2 + config.targetStabilityConfirmations
 	arm := structuralMeasurementArm{
-		name:       name,
-		workspace:  filepath.Join(root, name+"-repository"),
-		gradleHome: filepath.Join(root, name+"-gradle-home"),
-		cacheSeed:  filepath.Join(root, name+"-build-cache-seed"),
+		name:                   name,
+		workspace:              filepath.Join(root, name+"-repository"),
+		gradleHome:             filepath.Join(root, name+"-gradle-home"),
+		cacheSeed:              filepath.Join(root, name+"-build-cache-seed"),
+		readOnlyDependencyRoot: config.gradleReadOnlyDependencyRoot,
 	}
 	if err := gitRun("", "clone", "--quiet", "--no-checkout", "--shared", "--", config.repositoryRoot, arm.workspace); err != nil {
 		return arm, fmt.Errorf("clone %s arm: %w", name, err)
@@ -809,7 +826,7 @@ func runStructuralArm(config structuralMeasurementConfig, arm structuralMeasurem
 	defer cancel()
 	cmd := exec.CommandContext(ctx, command[0], command[1:]...)
 	cmd.Dir = arm.workspace
-	cmd.Env = measurementEnvironment(arm.gradleHome)
+	cmd.Env = measurementEnvironment(arm.gradleHome, arm.readOnlyDependencyRoot)
 	var log bytes.Buffer
 	cmd.Stdout = &log
 	cmd.Stderr = &log
@@ -1073,23 +1090,27 @@ func stopStructuralMeasurementArm(arm structuralMeasurementArm) error {
 	command := measurementGradleCommand(arm.workspace, []string{"--stop"})
 	cmd := exec.CommandContext(ctx, command[0], command[1:]...)
 	cmd.Dir = arm.workspace
-	cmd.Env = measurementEnvironment(arm.gradleHome)
+	cmd.Env = measurementEnvironment(arm.gradleHome, arm.readOnlyDependencyRoot)
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("stop %s Gradle daemon: %w", arm.name, err)
 	}
 	return nil
 }
 
-func measurementEnvironment(gradleHome string) []string {
-	environment := make([]string, 0, len(os.Environ())+1)
+func measurementEnvironment(gradleHome, readOnlyDependencyRoot string) []string {
+	environment := make([]string, 0, len(os.Environ())+2)
 	for _, entry := range os.Environ() {
 		name, _, _ := strings.Cut(entry, "=")
-		if strings.HasPrefix(name, "BUILDOPT_") || name == "GRADLE_USER_HOME" {
+		if strings.HasPrefix(name, "BUILDOPT_") || name == "GRADLE_USER_HOME" || name == gradleReadOnlyDependencyEnvironment {
 			continue
 		}
 		environment = append(environment, entry)
 	}
-	return append(environment, "GRADLE_USER_HOME="+gradleHome)
+	environment = append(environment, "GRADLE_USER_HOME="+gradleHome)
+	if readOnlyDependencyRoot != "" {
+		environment = append(environment, gradleReadOnlyDependencyEnvironment+"="+readOnlyDependencyRoot)
+	}
+	return environment
 }
 
 func measurementGradleDistributionSeed() (string, error) {
@@ -1107,6 +1128,25 @@ func measurementGradleDistributionSeed() (string, error) {
 	}
 	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
 		return "", errors.New("Gradle distribution seed must be a real directory")
+	}
+	return candidate, nil
+}
+
+func measurementGradleDependencySeed() (string, error) {
+	gradleHome := os.Getenv("GRADLE_USER_HOME")
+	if gradleHome == "" {
+		return "", nil
+	}
+	candidate := filepath.Join(gradleHome, "caches", "modules-2")
+	info, err := os.Lstat(candidate)
+	if os.IsNotExist(err) {
+		return "", nil
+	}
+	if err != nil {
+		return "", fmt.Errorf("inspect Gradle dependency seed: %w", err)
+	}
+	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return "", errors.New("Gradle dependency seed must be a real directory")
 	}
 	return candidate, nil
 }
@@ -1371,6 +1411,110 @@ func copyMeasurementTree(source, target string) error {
 		}
 		return copyMeasurementRegularFile(candidate, destination)
 	})
+}
+
+// prepareStructuralDependencySnapshot makes the dependency artifacts resolved
+// by the authoritative native build available to both isolated measurement
+// arms. Only Gradle's modules-2 dependency store is shared, and it is copied
+// once into an immutable tree; writable build caches, daemon state,
+// Configuration Cache state, and repository outputs remain private per arm.
+func prepareStructuralDependencySnapshot(config structuralMeasurementConfig, root string, progress io.Writer) (structuralMeasurementConfig, error) {
+	if config.gradleDependencySeed == "" {
+		return config, nil
+	}
+	if err := checkStructuralMeasurementBudget(config); err != nil {
+		return config, err
+	}
+	dependencyRoot := filepath.Join(root, "readonly-dependencies")
+	modulesRoot := filepath.Join(dependencyRoot, "modules-2")
+	_, _ = fmt.Fprintln(progress, "buildopt: snapshotting resolved Gradle dependencies once for both isolated arms")
+	fileCount, byteCount, err := copyMeasurementDependencyTree(config.gradleDependencySeed, modulesRoot)
+	if err != nil {
+		return config, fmt.Errorf("snapshot resolved Gradle dependencies: %w", err)
+	}
+	if err := os.Chmod(dependencyRoot, 0o500); err != nil {
+		return config, fmt.Errorf("protect resolved Gradle dependency root: %w", err)
+	}
+	if err := validateReadOnlyDirectory(dependencyRoot); err != nil {
+		return config, fmt.Errorf("validate resolved Gradle dependency root: %w", err)
+	}
+	if err := validateReadOnlyDependencyTree(modulesRoot); err != nil {
+		return config, fmt.Errorf("validate resolved Gradle dependency snapshot: %w", err)
+	}
+	config.gradleReadOnlyDependencyRoot = dependencyRoot
+	_, _ = fmt.Fprintf(progress, "buildopt: shared immutable dependency snapshot ready (%d files, %d bytes)\n", fileCount, byteCount)
+	return config, nil
+}
+
+func copyMeasurementDependencyTree(source, target string) (int, int64, error) {
+	info, err := os.Lstat(source)
+	if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return 0, 0, errors.New("Gradle dependency seed is unavailable")
+	}
+	directories := make([]string, 0, 64)
+	fileCount := 0
+	var byteCount int64
+	err = filepath.WalkDir(source, func(candidate string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		relative, err := filepath.Rel(source, candidate)
+		if err != nil {
+			return err
+		}
+		destination := filepath.Join(target, relative)
+		entryInfo, err := entry.Info()
+		if err != nil {
+			return err
+		}
+		if entryInfo.Mode()&os.ModeSymlink != 0 {
+			return errors.New("Gradle dependency seed contains a symlink")
+		}
+		if entry.IsDir() {
+			if err := os.MkdirAll(destination, 0o700); err != nil {
+				return err
+			}
+			directories = append(directories, destination)
+			return nil
+		}
+		if !entryInfo.Mode().IsRegular() {
+			return errors.New("Gradle dependency seed contains a non-regular entry")
+		}
+		if entryInfo.Name() == "gc.properties" || strings.HasSuffix(entryInfo.Name(), ".lock") {
+			return nil
+		}
+		if err := copyMeasurementRegularFileWithMode(candidate, destination, 0o400); err != nil {
+			return err
+		}
+		fileCount++
+		byteCount += entryInfo.Size()
+		return nil
+	})
+	if err != nil {
+		return 0, 0, err
+	}
+	for index := len(directories) - 1; index >= 0; index-- {
+		if err := os.Chmod(directories[index], 0o500); err != nil {
+			return 0, 0, err
+		}
+	}
+	return fileCount, byteCount, nil
+}
+
+func cleanupStructuralMeasurementRoot(root string) {
+	dependencyRoot := filepath.Join(root, "readonly-dependencies")
+	_ = filepath.WalkDir(dependencyRoot, func(candidate string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return nil
+		}
+		if entry.IsDir() {
+			_ = os.Chmod(candidate, 0o700)
+		} else if info, err := entry.Info(); err == nil && info.Mode().IsRegular() {
+			_ = os.Chmod(candidate, 0o600)
+		}
+		return nil
+	})
+	_ = os.RemoveAll(root)
 }
 
 // copyMeasurementDistributionTree keeps each arm private while moving the
