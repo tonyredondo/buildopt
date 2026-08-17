@@ -23,6 +23,7 @@ const (
 	StructuralProfileSchema                       = "buildopt.poc/qualified-profile/v4"
 	StructuralProfileID                           = "qualified-structural-build-impact"
 	CandidateStabilizationAdaptiveExactTwoOfThree = "ADAPTIVE_EXACT_2_OF_3"
+	CandidateStabilizationPairedTargetShape       = "PAIRED_TARGET_SHAPE_V1"
 	structuralPairCount                           = 8
 	structuralMinimumSavedMS                      = 500.0
 	structuralMinimumRatio                        = 0.02
@@ -331,7 +332,9 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 	if options.CapturedAt.IsZero() || options.FallbackReason == "" || !options.FallbackSuccessful {
 		return nil, false, errors.New("structural measurement fallback is unproven")
 	}
-	if options.CandidateStabilization != "" && options.CandidateStabilization != CandidateStabilizationAdaptiveExactTwoOfThree {
+	if options.CandidateStabilization != "" &&
+		options.CandidateStabilization != CandidateStabilizationAdaptiveExactTwoOfThree &&
+		options.CandidateStabilization != CandidateStabilizationPairedTargetShape {
 		return nil, false, errors.New("structural candidate stabilization policy is invalid")
 	}
 	if options.CandidateStabilization == "" && len(options.ControlWarmups) != len(options.CandidateWarmups) {
@@ -340,6 +343,10 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 	if options.CandidateStabilization == CandidateStabilizationAdaptiveExactTwoOfThree &&
 		(len(options.ControlWarmups) != 5 || (len(options.CandidateWarmups) != 4 && len(options.CandidateWarmups) != 5)) {
 		return nil, false, errors.New("adaptive candidate stabilization requires five control and four or five candidate warm-ups")
+	}
+	if options.CandidateStabilization == CandidateStabilizationPairedTargetShape &&
+		(len(options.ControlWarmups) != 2 || len(options.CandidateWarmups) != 1) {
+		return nil, false, errors.New("paired target-shape stabilization requires two control and one candidate warm-up")
 	}
 	outputEquivalenceMode := ""
 	if options.OutputEquivalenceSHA256 != "" {
@@ -377,7 +384,7 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 			CandidateHostPressure:         observation.CandidateHostPressure,
 		}
 	}
-	if err := validateStructuralDiagnostics(options.ControlWarmups, options.CandidateWarmups, observations); err != nil {
+	if err := validateStructuralDiagnostics(options.CandidateStabilization, options.ControlWarmups, options.CandidateWarmups, observations); err != nil {
 		return nil, false, err
 	}
 	result, err := calculateStructuralResult(observations)
@@ -602,7 +609,7 @@ func validateStructuralCaptureEvidence(evidence structuralEvidence, analysis Ana
 	if !validStructuralWarmupCounts(evidence.Execution) {
 		return errors.New("structural qualification warm-up evidence is invalid")
 	}
-	if err := validateStructuralDiagnostics(evidence.Execution.ControlWarmups, evidence.Execution.CandidateWarmups, evidence.Observations); err != nil {
+	if err := validateStructuralDiagnostics(evidence.Execution.CandidateStabilization, evidence.Execution.ControlWarmups, evidence.Execution.CandidateWarmups, evidence.Observations); err != nil {
 		return err
 	}
 	calculated, err := calculateStructuralResult(evidence.Observations)
@@ -643,7 +650,7 @@ func validateStructuralCaptureEvidence(evidence structuralEvidence, analysis Ana
 	return nil
 }
 
-func validateStructuralDiagnostics(control, candidate []StructuralWarmupObservation, observations []structuralObservation) error {
+func validateStructuralDiagnostics(policy string, control, candidate []StructuralWarmupObservation, observations []structuralObservation) error {
 	if len(control) == 0 && len(candidate) == 0 {
 		for _, observation := range observations {
 			if observation.ControlLogSHA256 != "" || observation.CandidateLogSHA256 != "" ||
@@ -654,7 +661,9 @@ func validateStructuralDiagnostics(control, candidate []StructuralWarmupObservat
 		}
 		return nil
 	}
-	if !validStructuralWarmupLength(len(control)) || !validStructuralWarmupLength(len(candidate)) {
+	pairedTargetShape := policy == CandidateStabilizationPairedTargetShape
+	if (!validStructuralWarmupLength(len(control)) || !validStructuralWarmupLength(len(candidate))) &&
+		!(pairedTargetShape && len(control) == 2 && len(candidate) == 1) {
 		return errors.New("structural measurement requires complete two-, three-, four-, or five-phase warm-ups")
 	}
 	fingerprintPresent := false
@@ -673,8 +682,15 @@ func validateStructuralDiagnostics(control, candidate []StructuralWarmupObservat
 			pressurePresent = true
 		}
 	}
-	for _, warmups := range [][]StructuralWarmupObservation{control, candidate} {
+	for armIndex, warmups := range [][]StructuralWarmupObservation{control, candidate} {
 		expectedPhases := structuralWarmupPhases(len(warmups))
+		if pairedTargetShape {
+			if armIndex == 0 {
+				expectedPhases = []string{"CACHE_SEED", "TARGET_WORKLOAD_STABILIZATION"}
+			} else {
+				expectedPhases = []string{"TARGET_WORKLOAD_STABILIZATION"}
+			}
+		}
 		for index, warmup := range warmups {
 			if warmup.Phase != expectedPhases[index] || warmup.DurationMS <= 0 ||
 				!validSHA(warmup.LogSHA256) || !validStructuralTaskOutcomes(warmup.TaskOutcomes) ||
@@ -712,7 +728,7 @@ func equalStructuralWarmupCount(control, candidate []StructuralWarmupObservation
 }
 
 func adaptiveStructuralWarmupCount(policy string, count int) int {
-	if policy == CandidateStabilizationAdaptiveExactTwoOfThree {
+	if policy == CandidateStabilizationAdaptiveExactTwoOfThree || policy == CandidateStabilizationPairedTargetShape {
 		return count
 	}
 	return 0
@@ -728,7 +744,10 @@ func validStructuralWarmupCounts(execution structuralExecution) bool {
 	return execution.CandidateStabilization == CandidateStabilizationAdaptiveExactTwoOfThree &&
 		execution.WarmupsPerArm == 0 && execution.ControlWarmupCount == control &&
 		execution.CandidateWarmupCount == candidate && control == 5 &&
-		(candidate == 4 || candidate == 5)
+		(candidate == 4 || candidate == 5) ||
+		execution.CandidateStabilization == CandidateStabilizationPairedTargetShape &&
+			execution.WarmupsPerArm == 0 && execution.ControlWarmupCount == 2 &&
+			execution.CandidateWarmupCount == 1 && control == 2 && candidate == 1
 }
 
 func validStructuralWarmupLength(count int) bool {
@@ -958,11 +977,25 @@ func applyStructuralTargetWarmupShape(
 	control, candidate []StructuralWarmupObservation,
 	observations []structuralObservation,
 ) structuralResult {
-	if len(control) < 3 || len(control) > 5 || len(candidate) < 3 || len(candidate) > 5 || len(observations) == 0 {
+	pairedTargetShape := len(control) == 2 && len(candidate) == 1 &&
+		control[0].Phase == "CACHE_SEED" && control[1].Phase == "TARGET_WORKLOAD_STABILIZATION" &&
+		candidate[0].Phase == "TARGET_WORKLOAD_STABILIZATION"
+	if !pairedTargetShape && (len(control) < 3 || len(control) > 5 || len(candidate) < 3 || len(candidate) > 5 || len(observations) == 0) {
+		return result
+	}
+	if len(observations) == 0 {
 		return result
 	}
 	controlBaseline := structuralWarmupBaselineIndex(len(control))
 	candidateBaseline := structuralWarmupBaselineIndex(len(candidate))
+	controlComparisonStart := structuralWarmupComparisonStart()
+	candidateComparisonStart := structuralWarmupComparisonStart()
+	if pairedTargetShape {
+		controlBaseline = len(control) - 1
+		candidateBaseline = len(candidate) - 1
+		controlComparisonStart = len(control)
+		candidateComparisonStart = len(candidate)
+	}
 	controlFingerprint := control[controlBaseline].TaskOutcomes.FingerprintSHA256
 	candidateFingerprint := candidate[candidateBaseline].TaskOutcomes.FingerprintSHA256
 	if controlFingerprint == "" || candidateFingerprint == "" {
@@ -970,11 +1003,11 @@ func applyStructuralTargetWarmupShape(
 	}
 	result.TargetWarmupShapeObserved = true
 	result.TargetWarmupShapeStable = true
-	for _, warmup := range control[structuralWarmupComparisonStart():] {
+	for _, warmup := range control[controlComparisonStart:] {
 		result.TargetWarmupShapeStable = result.TargetWarmupShapeStable &&
 			warmup.TaskOutcomes.FingerprintSHA256 == controlFingerprint
 	}
-	for _, warmup := range candidate[structuralWarmupComparisonStart():] {
+	for _, warmup := range candidate[candidateComparisonStart:] {
 		result.TargetWarmupShapeStable = result.TargetWarmupShapeStable &&
 			warmup.TaskOutcomes.FingerprintSHA256 == candidateFingerprint
 	}

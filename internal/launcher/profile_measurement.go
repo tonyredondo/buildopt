@@ -63,6 +63,7 @@ type structuralMeasurementConfig struct {
 	outputEquivalence            *outputequivalence.Contract
 	targetStabilityConfirmations int
 	adaptiveCandidateStability   bool
+	pairedTargetStability        bool
 	gradleDistributionSeed       string
 	gradleDependencySeed         string
 	gradleReadOnlyDependencyRoot string
@@ -208,7 +209,7 @@ func calibrateStructuralProfile(config structuralMeasurementConfig, progress io.
 	if err != nil {
 		return nil, err
 	}
-	candidate, err := prepareStructuralMeasurementArm(config, root, "candidate", true, progress)
+	candidate, err := prepareStructuralMeasurementArm(config, root, "candidate", true, "", progress)
 	if err != nil {
 		return nil, err
 	}
@@ -422,12 +423,12 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 	if err != nil {
 		return nil, false, err
 	}
-	control, err := prepareStructuralMeasurementArm(config, root, "control", false, progress)
+	control, err := prepareStructuralMeasurementArm(config, root, "control", false, "", progress)
 	if err != nil {
 		return nil, false, err
 	}
 	defer func() { _ = stopStructuralMeasurementArm(control) }()
-	candidate, err := prepareStructuralMeasurementArm(config, root, "candidate", true, progress)
+	candidate, err := prepareStructuralMeasurementArm(config, root, "candidate", true, control.cacheSeed, progress)
 	if err != nil {
 		return nil, false, err
 	}
@@ -467,6 +468,11 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 		}
 		if err != nil {
 			return nil, false, fmt.Errorf("pair %d: %w", pair, err)
+		}
+		if config.pairedTargetStability {
+			if err := validateStructuralPairedTargetShape(control, candidate, controlResult, candidateResult); err != nil {
+				return nil, false, fmt.Errorf("pair %d: %w", pair, err)
+			}
 		}
 		firstResult, secondResult := controlResult, candidateResult
 		if order == "CANDIDATE_FIRST" {
@@ -563,7 +569,7 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 	})
 }
 
-func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, name string, candidate bool, progress io.Writer) (structuralMeasurementArm, error) {
+func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, name string, candidate bool, sharedCacheSeed string, progress io.Writer) (structuralMeasurementArm, error) {
 	if err := checkStructuralMeasurementBudget(config); err != nil {
 		return structuralMeasurementArm{}, err
 	}
@@ -593,6 +599,19 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 			return arm, fmt.Errorf("seed %s native build cache: %w", name, err)
 		}
 	}
+	if config.pairedTargetStability && sharedCacheSeed != "" {
+		cache := filepath.Join(arm.gradleHome, "caches", "build-cache-1")
+		if err := os.RemoveAll(cache); err != nil {
+			return arm, fmt.Errorf("replace %s native build cache: %w", name, err)
+		}
+		if err := copyMeasurementTree(sharedCacheSeed, cache); err != nil {
+			return arm, fmt.Errorf("share %s native build-cache seed: %w", name, err)
+		}
+		if err := copyMeasurementTree(sharedCacheSeed, arm.cacheSeed); err != nil {
+			return arm, fmt.Errorf("snapshot shared %s native build cache: %w", name, err)
+		}
+		return prepareStructuralPairedTargetWarmup(config, arm, candidate, 1, progress)
+	}
 	if err := resetStructuralArm(config, arm, config.baseRevision, false); err != nil {
 		return arm, fmt.Errorf("prepare %s baseline: %w", name, err)
 	}
@@ -607,6 +626,9 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	cache := filepath.Join(arm.gradleHome, "caches", "build-cache-1")
 	if err := copyMeasurementTree(cache, arm.cacheSeed); err != nil {
 		return arm, fmt.Errorf("snapshot %s native build cache: %w", name, err)
+	}
+	if config.pairedTargetStability {
+		return prepareStructuralPairedTargetWarmup(config, arm, candidate, 2, progress)
 	}
 	if err := resetStructuralArm(config, arm, config.baseRevision, true); err != nil {
 		return arm, fmt.Errorf("prepare %s daemon stabilization: %w", name, err)
@@ -665,6 +687,40 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	return arm, nil
 }
 
+func prepareStructuralPairedTargetWarmup(config structuralMeasurementConfig, arm structuralMeasurementArm, candidate bool, phaseIndex int, progress io.Writer) (structuralMeasurementArm, error) {
+	if err := resetStructuralArm(config, arm, config.targetRevision, true); err != nil {
+		return arm, fmt.Errorf("prepare %s paired target stabilization: %w", arm.name, err)
+	}
+	totalWarmups := 2
+	if candidate {
+		totalWarmups = 1
+	}
+	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s arm at %s (paired target stabilization %d/%d)\n",
+		arm.name, config.targetRevision, phaseIndex, totalWarmups)
+	result, err := runStructuralArm(config, arm, candidate, candidate, config.changesPath)
+	if err != nil {
+		return arm, fmt.Errorf("stabilize %s paired target workload: %w", arm.name, err)
+	}
+	arm.warmups = append(arm.warmups, structuralWarmupDiagnostic("TARGET_WORKLOAD_STABILIZATION", result))
+	_, _ = fmt.Fprintf(progress, "buildopt: warmed isolated %s paired target workload in %dms with %s\n",
+		arm.name, result.durationMS, formatStructuralTaskOutcomes(result.taskOutcomes))
+	return arm, nil
+}
+
+func validateStructuralPairedTargetShape(control, candidate structuralMeasurementArm, controlResult, candidateResult structuralArmResult) error {
+	if len(control.warmups) != 2 || len(candidate.warmups) != 1 {
+		return errors.New("paired target-shape warm-up evidence is incomplete")
+	}
+	controlFingerprint := control.warmups[len(control.warmups)-1].TaskOutcomes.FingerprintSHA256
+	candidateFingerprint := candidate.warmups[len(candidate.warmups)-1].TaskOutcomes.FingerprintSHA256
+	if controlFingerprint == "" || candidateFingerprint == "" ||
+		controlResult.taskOutcomes.FingerprintSHA256 != controlFingerprint ||
+		candidateResult.taskOutcomes.FingerprintSHA256 != candidateFingerprint {
+		return errors.New("measured task shape drifted from paired target stabilization")
+	}
+	return nil
+}
+
 func structuralTargetWarmupsConverged(warmups []profilediscovery.StructuralWarmupObservation) bool {
 	if len(warmups) < 4 {
 		return false
@@ -679,6 +735,9 @@ func shouldStopAdaptiveCandidateStabilization(candidate, adaptive bool, confirma
 }
 
 func structuralCandidateStabilizationPolicy(config structuralMeasurementConfig) string {
+	if config.pairedTargetStability {
+		return profilediscovery.CandidateStabilizationPairedTargetShape
+	}
 	if config.adaptiveCandidateStability {
 		return profilediscovery.CandidateStabilizationAdaptiveExactTwoOfThree
 	}

@@ -175,8 +175,8 @@ func (run *optimizeRun) calibrate(
 		evidencePath,
 		options,
 		run.invocation.calibrationBudget,
-		3,
-		true,
+		1,
+		false,
 		"",
 	)
 	if err != nil {
@@ -184,6 +184,7 @@ func (run *optimizeRun) calibrate(
 		result.Reason = optimizeCalibrationReasonUnavailable
 		return result
 	}
+	config.pairedTargetStability = true
 	if deadline, ok := ctx.Deadline(); ok {
 		config.deadline = deadline
 	}

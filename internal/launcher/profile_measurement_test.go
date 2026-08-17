@@ -402,6 +402,27 @@ func TestStructuralFallbackGradleOptionsReuseMeasuredSchedulingWithoutMutatingOp
 	}
 }
 
+func TestValidateStructuralPairedTargetShapeRequiresEveryPairToMatchWarmup(t *testing.T) {
+	controlFingerprint := strings.Repeat("1", 64)
+	candidateFingerprint := strings.Repeat("2", 64)
+	control := structuralMeasurementArm{warmups: []profilediscovery.StructuralWarmupObservation{
+		{Phase: "CACHE_SEED"},
+		{Phase: "TARGET_WORKLOAD_STABILIZATION", TaskOutcomes: profilediscovery.StructuralTaskOutcomes{FingerprintSHA256: controlFingerprint}},
+	}}
+	candidate := structuralMeasurementArm{warmups: []profilediscovery.StructuralWarmupObservation{
+		{Phase: "TARGET_WORKLOAD_STABILIZATION", TaskOutcomes: profilediscovery.StructuralTaskOutcomes{FingerprintSHA256: candidateFingerprint}},
+	}}
+	controlResult := structuralArmResult{taskOutcomes: profilediscovery.StructuralTaskOutcomes{FingerprintSHA256: controlFingerprint}}
+	candidateResult := structuralArmResult{taskOutcomes: profilediscovery.StructuralTaskOutcomes{FingerprintSHA256: candidateFingerprint}}
+	if err := validateStructuralPairedTargetShape(control, candidate, controlResult, candidateResult); err != nil {
+		t.Fatal(err)
+	}
+	candidateResult.taskOutcomes.FingerprintSHA256 = strings.Repeat("3", 64)
+	if err := validateStructuralPairedTargetShape(control, candidate, controlResult, candidateResult); err == nil {
+		t.Fatal("candidate task-shape drift was accepted")
+	}
+}
+
 func TestStructuralTargetWarmupsRequireTwoFinalMatchingFingerprints(t *testing.T) {
 	warmups := []profilediscovery.StructuralWarmupObservation{
 		{TaskOutcomes: profilediscovery.StructuralTaskOutcomes{FingerprintSHA256: strings.Repeat("1", 64)}},
