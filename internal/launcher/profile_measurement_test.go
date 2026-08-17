@@ -390,12 +390,13 @@ func TestStructuralPressureParsingAndDelta(t *testing.T) {
 	}
 }
 
-func TestStructuralFallbackGradleOptionsPreserveMeasuredSchedulingWithoutMutatingOptions(t *testing.T) {
+func TestStructuralFallbackGradleOptionsReuseMeasuredSchedulingWithoutMutatingOptions(t *testing.T) {
 	measured := []string{"--daemon", "--build-cache", "--parallel", "--no-configuration-cache", "--console=plain", "--no-scan", "--max-workers=12"}
 	fallback := structuralFallbackGradleOptions(measured)
-	if got := strings.Join(fallback, " "); got != "--build-cache --parallel --no-configuration-cache --console=plain --no-scan --max-workers=12 --no-daemon" {
+	if got := strings.Join(fallback, " "); got != "--daemon --build-cache --parallel --no-configuration-cache --console=plain --no-scan --max-workers=12" {
 		t.Fatalf("fallback options = %q", got)
 	}
+	fallback[0] = "--no-daemon"
 	if got := strings.Join(measured, " "); got != "--daemon --build-cache --parallel --no-configuration-cache --console=plain --no-scan --max-workers=12" {
 		t.Fatalf("measured options mutated = %q", got)
 	}

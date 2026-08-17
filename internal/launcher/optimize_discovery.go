@@ -492,6 +492,7 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		fallbackOutput:       filepath.Join(directory, "fallback-changes.txt"),
 		proposalOutput:       filepath.Join(directory, "proposal.json"),
 		changeSource:         "GIT_DIFF_BASE_TO_HEAD", timeout: invocation.calibrationBudget,
+		observedOutputSnapshot: &outputReport.snapshot,
 	}
 	report, documents, err := prepareStructuralProfileProposal(ctx, config)
 	if err != nil {

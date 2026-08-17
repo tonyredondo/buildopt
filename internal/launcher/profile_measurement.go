@@ -519,13 +519,11 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 			pair, formatStructuralTaskOutcomes(controlResult.taskOutcomes), formatStructuralTaskOutcomes(candidateResult.taskOutcomes))
 	}
 	// The fallback proves correctness; it is not part of the measured effect.
-	// Release both hot measurement daemons before running the full graph so a
-	// large repository cannot combine three JVM heaps and exhaust the host.
+	// Release the control daemon, then reuse the candidate arm's existing
+	// scheduling mode. This leaves at most one measurement JVM alive and avoids
+	// charging a cold third Gradle process to every onboarding calibration.
 	if err := stopStructuralMeasurementArm(control); err != nil {
 		return nil, false, fmt.Errorf("stop control daemon before fallback: %w", err)
-	}
-	if err := stopStructuralMeasurementArm(candidate); err != nil {
-		return nil, false, fmt.Errorf("stop candidate daemon before fallback: %w", err)
 	}
 	fallbackResult, fallbackReason, err := measureStructuralFallback(config, candidate, progress)
 	if err != nil {
@@ -760,7 +758,7 @@ func measureStructuralFallback(config structuralMeasurementConfig, arm structura
 	}
 	fallbackConfig := config
 	fallbackConfig.gradleOptions = structuralFallbackGradleOptions(config.gradleOptions)
-	_, _ = fmt.Fprintln(progress, "buildopt: validating full-graph fallback with --no-daemon and measured scheduling")
+	_, _ = fmt.Fprintln(progress, "buildopt: validating full-graph fallback with the candidate arm scheduling")
 	// The fallback still enters through BuildOpt, but it must reject the
 	// analyzed alternative and run the complete graph.
 	result, err := runStructuralArm(fallbackConfig, arm, true, false, config.fallbackChangesPath)
@@ -776,14 +774,7 @@ func measureStructuralFallback(config structuralMeasurementConfig, arm structura
 }
 
 func structuralFallbackGradleOptions(measured []string) []string {
-	options := make([]string, 0, len(measured)+1)
-	for _, option := range measured {
-		if option == "--daemon" || option == "--no-daemon" {
-			continue
-		}
-		options = append(options, option)
-	}
-	return append(options, "--no-daemon")
+	return append([]string(nil), measured...)
 }
 
 func resetStructuralArm(config structuralMeasurementConfig, arm structuralMeasurementArm, revision string, restoreCache bool) error {

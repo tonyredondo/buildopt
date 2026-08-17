@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -77,5 +78,48 @@ func TestOutputContractGradleArgumentsOwnDaemonAndConsoleWithoutDroppingOwnerPro
 	}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("output-contract Gradle arguments = %#v, want %#v", got, want)
+	}
+}
+
+func TestPrepareOutputContractReportReusesBoundSnapshot(t *testing.T) {
+	root := t.TempDir()
+	runOptimizeGit(t, root, "init", "--quiet")
+	runOptimizeGit(t, root, "config", "user.name", "BuildOpt Test")
+	runOptimizeGit(t, root, "config", "user.email", "buildopt@example.invalid")
+	if err := os.WriteFile(filepath.Join(root, "settings.gradle"), []byte("rootProject.name = 'fixture'\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	runOptimizeGit(t, root, "add", "settings.gradle")
+	runOptimizeGit(t, root, "commit", "--quiet", "-m", "fixture")
+	revision := strings.TrimSpace(runOptimizeGit(t, root, "rev-parse", "HEAD"))
+	if err := os.MkdirAll(filepath.Join(root, "build", "libs"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(root, "build", "libs", "fixture.jar"), []byte("jar"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	snapshot := outputContractSnapshot{
+		SchemaVersion: outputSnapshotSchema, GradleVersion: "9.6.1", Entrypoints: []string{"jar"},
+		Tasks: []outputContractTask{{
+			TaskPath: ":jar", ProjectPath: ":", ProjectDirectory: "",
+			Outputs: []outputContractRoot{{Path: "build/libs", Kind: "DIRECTORY", Exists: true, InsideRepository: true, FileCount: 1}},
+		}},
+	}
+	report, err := prepareOutputContractReportFromSnapshot(root, outputContractConfig{
+		repositoryID: "example/fixture", pipelineClass: "jar-change", repositoryRevision: revision,
+		entrypoints: []string{"jar"}, requiredOutputs: []string{"build/libs/**"},
+	}, snapshot)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.Decision != "VALIDATED_REQUIRED_OUTPUTS" || len(report.Validations) != 1 || report.Validations[0].MatchedFiles != 1 || report.snapshot.GradleVersion != "9.6.1" {
+		t.Fatalf("reused output report = %#v", report)
+	}
+	snapshot.Entrypoints = []string{"assemble"}
+	if _, err := prepareOutputContractReportFromSnapshot(root, outputContractConfig{
+		repositoryID: "example/fixture", pipelineClass: "jar-change", repositoryRevision: revision,
+		entrypoints: []string{"jar"}, requiredOutputs: []string{"build/libs/**"},
+	}, snapshot); err == nil {
+		t.Fatal("snapshot from a different owner workflow was reused")
 	}
 }

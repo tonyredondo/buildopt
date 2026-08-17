@@ -44,6 +44,7 @@ type outputContractConfig struct {
 }
 
 type outputContractReport struct {
+	snapshot             outputContractSnapshot     `json:"-"`
 	SchemaVersion        string                     `json:"schemaVersion"`
 	Decision             string                     `json:"decision"`
 	Reason               string                     `json:"reason"`
@@ -206,6 +207,37 @@ func prepareOutputContract(ctx context.Context, repositoryRoot string, config ou
 		return outputContractReport{}, errors.New("owner workflow modified tracked files during output-contract preflight")
 	}
 
+	return prepareOutputContractReportFromSnapshot(repositoryRoot, config, snapshot)
+}
+
+// prepareOutputContractReportFromSnapshot applies a new required-output view
+// to an already observed owner workflow. Automatic onboarding uses it to avoid
+// executing the same Gradle workflow twice while retaining the exact ownership
+// and file-level validation performed by the standalone output-contract path.
+func prepareOutputContractReportFromSnapshot(repositoryRoot string, config outputContractConfig, snapshot outputContractSnapshot) (outputContractReport, error) {
+	if !outputContractRepositoryPattern.MatchString(config.repositoryID) || !outputContractPipelinePattern.MatchString(config.pipelineClass) ||
+		len(config.entrypoints) == 0 || len(config.entrypoints) > 256 || !uniqueMeasurementStrings(config.entrypoints) ||
+		len(config.requiredOutputs) > 256 || !uniqueMeasurementStrings(config.requiredOutputs) ||
+		!validMeasurementRevision(config.repositoryRevision) {
+		return outputContractReport{}, errors.New("reused output-contract identity is invalid")
+	}
+	if _, err := proposalTerminalSelectors(config.entrypoints); err != nil {
+		return outputContractReport{}, err
+	}
+	for _, pattern := range config.requiredOutputs {
+		if !validOutputContractPattern(pattern) {
+			return outputContractReport{}, fmt.Errorf("declared output %q is not a safe repository-relative glob", pattern)
+		}
+	}
+	if snapshot.SchemaVersion != outputSnapshotSchema || snapshot.GradleVersion == "" || !sameStringSet(snapshot.Entrypoints, config.entrypoints) {
+		return outputContractReport{}, errors.New("reused output-contract snapshot is not bound to the owner workflow")
+	}
+	if head, err := gitOutput(repositoryRoot, "rev-parse", "HEAD"); err != nil || strings.TrimSpace(head) != config.repositoryRevision {
+		return outputContractReport{}, errors.New("repository revision changed after output-contract observation")
+	}
+	if dirty, err := gitOutput(repositoryRoot, "status", "--porcelain", "--untracked-files=no"); err != nil || strings.TrimSpace(dirty) != "" {
+		return outputContractReport{}, errors.New("tracked files changed after output-contract observation")
+	}
 	owners, candidates, err := collectOutputOwnership(repositoryRoot, snapshot)
 	if err != nil {
 		return outputContractReport{}, err
@@ -213,6 +245,7 @@ func prepareOutputContract(ctx context.Context, repositoryRoot string, config ou
 	sort.Strings(config.entrypoints)
 	sort.Strings(config.requiredOutputs)
 	report := outputContractReport{
+		snapshot:      snapshot,
 		SchemaVersion: outputContractSchema, Decision: "NATIVE_FULL_GRAPH",
 		Reason: "OUTPUTS_MISSING", RepositoryID: config.repositoryID,
 		PipelineClass: config.pipelineClass, RepositoryRevision: config.repositoryRevision,

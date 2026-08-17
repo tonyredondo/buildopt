@@ -226,6 +226,7 @@ type structuralProposalConfig struct {
 	changeSource                                                     string
 	discoveryCacheDir                                                string
 	timeout                                                          time.Duration
+	observedOutputSnapshot                                           *outputContractSnapshot
 }
 
 func prepareStructuralProfileProposal(ctx context.Context, config structuralProposalConfig) (profileProposalReport, map[string][]byte, error) {
@@ -305,7 +306,7 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 			return cachedReport, cachedDocuments, nil
 		}
 	}
-	outputReport, err := prepareOutputContract(ctx, root, outputContractConfig{
+	outputConfig := outputContractConfig{
 		repositoryID: config.repositoryID, pipelineClass: config.pipelineClass,
 		repositoryRevision: targetRevision,
 		entrypoints:        append([]string(nil), config.entrypoints...),
@@ -313,7 +314,13 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 		gradleCommand:      config.gradleCommand,
 		gradleOptions:      append([]string(nil), config.gradleOptions...),
 		timeout:            config.timeout,
-	})
+	}
+	var outputReport outputContractReport
+	if config.observedOutputSnapshot != nil {
+		outputReport, err = prepareOutputContractReportFromSnapshot(root, outputConfig, *config.observedOutputSnapshot)
+	} else {
+		outputReport, err = prepareOutputContract(ctx, root, outputConfig)
+	}
 	if err != nil {
 		return profileProposalReport{}, nil, err
 	}
