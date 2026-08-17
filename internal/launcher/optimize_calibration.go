@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"math"
 	"os"
 	"path/filepath"
@@ -194,6 +195,7 @@ func (run *optimizeRun) calibrate(
 	}
 	raw, _, err := measureStructuralProfile(config, progress)
 	if err != nil {
+		_, _ = fmt.Fprintf(progress, "buildopt: calibration evidence unavailable: %v\n", err)
 		result.Status = optimizeCalibrationRetained
 		if errors.Is(err, context.DeadlineExceeded) || errors.Is(ctx.Err(), context.DeadlineExceeded) {
 			result.Reason = "CALIBRATION_BUDGET_EXHAUSTED"
