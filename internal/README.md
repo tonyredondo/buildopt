@@ -67,7 +67,11 @@ opaque HTTP GET/PUT, quarantine, startup reconciliation, current
 local-authority records, and restart-safe typed portfolio/evidence/checkpoint
 state. It verifies complete bytes before returning a cache hit or state
 snapshot, persists no raw data-plane credential, rejects stale/rolled-back
-authority, and never derives authority from blob presence.
+authority, and never derives authority from blob presence. The optional central
+POC handler exposes those two logical planes only over TLS, authenticates four
+independent cache/state capabilities from domain-separated token digests, and
+checks expiry/revocation on every request. Automatic client forwarding remains
+outside this package boundary.
 
 `edgecache/` owns the optional MVP-C2 boundary. C2-001 adds the strict private
 single-node configuration, loopback listener and authenticated Shared-origin

@@ -53,7 +53,7 @@
       "precondition": "If-None-Match: *",
       "success": [
         201,
-        204
+        200
       ],
       "purpose": "UPLOAD_IMMUTABLE_ARTIFACT"
     },
@@ -71,7 +71,7 @@
       "precondition": "If-None-Match: *",
       "success": [
         201,
-        204
+        200
       ],
       "purpose": "UPLOAD_COMPLETE_IMMUTABLE_MANIFEST"
     },
@@ -84,8 +84,8 @@
       "purpose": "READ_VERIFIED_NAMESPACED_MANIFEST"
     },
     {
-      "method": "PUT",
-      "path": "/api/v1/repositories/{repositoryScope}/state/{kind}/head",
+      "method": "POST",
+      "path": "/api/v1/repositories/{repositoryScope}/state/{kind}/head:cas",
       "precondition": "If-None-Match: * FOR GENERATION 1; If-Match: sha256:<current-head> OTHERWISE",
       "success": [
         201,
@@ -161,8 +161,7 @@
     "testOptimization": "OUT_OF_SCOPE"
   },
   "deferred": [
-    "EXTERNAL_HTTPS_LISTENER",
-    "TOKEN_ISSUANCE_AND_AUTHORIZATION",
+    "GRADLE_GATEWAY_REMOTE_FORWARDING",
     "CLIENT_CONNECT_AND_SYNC",
     "REMOTE_PROFILE_SELECTION",
     "TWO_MACHINE_VALUE_MEASUREMENT",

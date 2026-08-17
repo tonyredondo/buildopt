@@ -78,10 +78,11 @@ immutable manifests and the CAS head. State responses use `Cache-Control:
 no-store`; payload routes use complete SHA-256 verification before returning
 bytes.
 
-The next HTTPS/authentication block will map the independent `CACHE_READ`,
-`CACHE_WRITE`, `STATE_READ` and `STATE_WRITE` capabilities to owner-issued POC
-credentials. This contract fixes those capabilities without implementing or
-pretending to validate the credential system early.
+The subsequent [HTTPS/authentication block](./poc-central-https-auth-v1.md) maps
+the independent `CACHE_READ`, `CACHE_WRITE`, `STATE_READ` and `STATE_WRITE`
+capabilities to owner-issued POC credentials. This storage contract fixes the
+plane semantics; the later contract and implementation own transport and
+credential validation.
 
 ## Failure behavior
 
@@ -122,4 +123,4 @@ semantics are now implemented by
 existing content-addressed/SQLite foundation. Production HA, multi-tenancy,
 RBAC administration, KMS/HSM, backup SLAs, soak and design partners remain out
 of scope. Test Optimization remains outside this product. The next block is
-`POC-CENTRAL-HTTPS-AUTH-001`.
+`POC-CENTRAL-GRADLE-CACHE-001`.

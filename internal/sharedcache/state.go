@@ -138,6 +138,9 @@ type StateObject struct {
 }
 
 // StateCASRequest advances one head by exactly one immutable generation.
+// ProposedHead is required by the external protocol so the client's canonical
+// document becomes the committed identity; nil retains the local-store helper
+// behavior that derives the equivalent head from verified inputs.
 type StateCASRequest struct {
 	RepositoryScopeSHA256 string
 	Kind                  StateKind
@@ -145,6 +148,7 @@ type StateCASRequest struct {
 	ExpectedGeneration    int64
 	ExpectedHeadSHA256    string
 	ManifestSHA256        string
+	ProposedHead          *StateHead
 }
 
 // StateCASResult records either the newly committed head or an exact replay.
@@ -431,6 +435,65 @@ WHERE repository_scope_sha256 = ? AND kind = ? AND manifest_digest = ?`,
 	return StateSnapshot{Manifest: manifest, ManifestSHA256: digest}, true, nil
 }
 
+// LoadStateManifest returns one fully verified immutable manifest. It does not
+// imply that the manifest is the current head or locally applicable.
+func (storage *Storage) LoadStateManifest(
+	ctx context.Context,
+	repositoryScopeSHA256 string,
+	kind StateKind,
+	manifestSHA256 string,
+) (StateSnapshot, error) {
+	if ctx == nil || !validSHA256(repositoryScopeSHA256) ||
+		!validStateKind(kind) || !validSHA256(manifestSHA256) {
+		return StateSnapshot{}, ErrStateInvalid
+	}
+	finish, err := storage.beginOperation()
+	if err != nil {
+		return StateSnapshot{}, err
+	}
+	defer finish()
+	storage.reconcileMutex.RLock()
+	defer storage.reconcileMutex.RUnlock()
+	transaction, err := storage.state.database.BeginTx(
+		ctx,
+		&sql.TxOptions{ReadOnly: true},
+	)
+	if err != nil {
+		return StateSnapshot{}, err
+	}
+	defer transaction.Rollback()
+	manifest, err := loadStateManifestTx(
+		ctx,
+		transaction,
+		repositoryScopeSHA256,
+		kind,
+		manifestSHA256,
+	)
+	if err != nil {
+		return StateSnapshot{}, err
+	}
+	if kind == StateKindCheckpoint {
+		expiresAt, _ := time.Parse(time.RFC3339Nano, manifest.ExpiresAt)
+		if !storage.now().Before(expiresAt) {
+			return StateSnapshot{}, ErrStateNotFound
+		}
+	}
+	if err := storage.verifyStateManifestForPublication(
+		ctx,
+		transaction,
+		manifest,
+		manifestSHA256,
+	); err != nil {
+		return StateSnapshot{}, err
+	}
+	if err := transaction.Commit(); err != nil {
+		return StateSnapshot{}, err
+	}
+	return StateSnapshot{
+		Manifest: manifest, ManifestSHA256: manifestSHA256,
+	}, nil
+}
+
 // CASStateHead publishes exactly the next complete generation. Idempotency and
 // the head update commit in one SQLite transaction.
 func (storage *Storage) CASStateHead(
@@ -444,6 +507,16 @@ func (storage *Storage) CASStateHead(
 		(request.ExpectedGeneration == 0 && request.ExpectedHeadSHA256 != "") ||
 		(request.ExpectedGeneration > 0 && !validSHA256(request.ExpectedHeadSHA256)) {
 		return StateCASResult{}, ErrStateInvalid
+	}
+	if request.ProposedHead != nil {
+		canonical, _, err := canonicalStateValue(*request.ProposedHead)
+		if err != nil {
+			return StateCASResult{}, ErrStateInvalid
+		}
+		decoded, err := decodeStateHead(canonical)
+		if err != nil || decoded != *request.ProposedHead {
+			return StateCASResult{}, ErrStateInvalid
+		}
 	}
 	finish, err := storage.beginOperation()
 	if err != nil {
@@ -555,23 +628,39 @@ FROM state_cas_requests WHERE idempotency_key = ?`,
 			return StateCASResult{}, ErrStateInvalid
 		}
 	}
-	head := StateHead{
-		SchemaVersion:         "buildopt.central/state-head/v1",
-		RecordType:            "CENTRAL_STATE_HEAD",
-		Kind:                  request.Kind,
-		RepositoryScopeSHA256: request.RepositoryScopeSHA256,
-		Generation:            manifest.Generation,
-		ManifestSHA256:        request.ManifestSHA256,
-		CompatibilitySHA256:   manifest.CompatibilitySHA256,
-		UpdatedAt:             now.Format(time.RFC3339Nano),
-		Authority: StateAuthority{
-			SelectionRequiresLocalRevalidation: true,
-			ProductionAuthorized:               false,
-			TestOptimization:                   "OUT_OF_SCOPE",
-		},
-	}
-	if exists {
-		head.PreviousManifestSHA256 = current.ManifestSHA256
+	head := StateHead{}
+	if request.ProposedHead != nil {
+		head = *request.ProposedHead
+		updatedAt, _ := time.Parse(time.RFC3339Nano, head.UpdatedAt)
+		if head.Kind != request.Kind ||
+			head.RepositoryScopeSHA256 != request.RepositoryScopeSHA256 ||
+			head.Generation != manifest.Generation ||
+			head.ManifestSHA256 != request.ManifestSHA256 ||
+			head.CompatibilitySHA256 != manifest.CompatibilitySHA256 ||
+			updatedAt.Before(createdAt) || updatedAt.After(now.Add(5*time.Minute)) ||
+			(!exists && head.PreviousManifestSHA256 != "") ||
+			(exists && head.PreviousManifestSHA256 != current.ManifestSHA256) {
+			return StateCASResult{}, ErrStateInvalid
+		}
+	} else {
+		head = StateHead{
+			SchemaVersion:         "buildopt.central/state-head/v1",
+			RecordType:            "CENTRAL_STATE_HEAD",
+			Kind:                  request.Kind,
+			RepositoryScopeSHA256: request.RepositoryScopeSHA256,
+			Generation:            manifest.Generation,
+			ManifestSHA256:        request.ManifestSHA256,
+			CompatibilitySHA256:   manifest.CompatibilitySHA256,
+			UpdatedAt:             now.Format(time.RFC3339Nano),
+			Authority: StateAuthority{
+				SelectionRequiresLocalRevalidation: true,
+				ProductionAuthorized:               false,
+				TestOptimization:                   "OUT_OF_SCOPE",
+			},
+		}
+		if exists {
+			head.PreviousManifestSHA256 = current.ManifestSHA256
+		}
 	}
 	headCanonical, headDigest, err := canonicalStateValue(head)
 	if err != nil {
@@ -1274,14 +1363,18 @@ func canonicalStateValue(value any) ([]byte, string, error) {
 }
 
 func stateCASFingerprint(request StateCASRequest) (string, error) {
-	_, digest, err := canonicalStateValue(map[string]any{
+	fields := map[string]any{
 		"expectedGeneration":    request.ExpectedGeneration,
 		"expectedHeadSha256":    nullableStateDigest(request.ExpectedHeadSHA256),
 		"idempotencyKey":        request.IdempotencyKey,
 		"kind":                  request.Kind,
 		"manifestSha256":        request.ManifestSHA256,
 		"repositoryScopeSha256": request.RepositoryScopeSHA256,
-	})
+	}
+	if request.ProposedHead != nil {
+		fields["proposedHead"] = *request.ProposedHead
+	}
+	_, digest, err := canonicalStateValue(fields)
 	return digest, err
 }
 

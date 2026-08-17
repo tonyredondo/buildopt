@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"errors"
 	"flag"
 	"fmt"
@@ -31,7 +32,7 @@ import (
 const (
 	exitUsage         = 64
 	exitConfiguration = 78
-	serverUsage       = "usage: buildopt-server serve [--self-hosted-config ABSOLUTE_PATH] [--listen 127.0.0.1:8042] [--export-dir PATH] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH] [--cache-token-auth] [--github-webhook-secret ABSOLUTE_PATH]\n       buildopt-server export --export-dir PATH [--format jsonl] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]]\n       buildopt-server data delete --data-root ABSOLUTE_PATH --deletion-id ID --tenant ID --repository ID --trust-domain ID --next-namespace-generation N --next-l1-security-generation N --token-key ABSOLUTE_PATH --token-key-version ID [--external-destination ID]\n       buildopt-server token issue --state-dir ABSOLUTE_PATH --tenant ID --repository ID --trust-domain ID --namespace ID --namespace-generation N --plane stable|quarantine|control --access read|read-write --expires-at RFC3339\n       buildopt-server token revoke --state-dir ABSOLUTE_PATH --token-id ID\n       buildopt-server authority inspect --authority ABSOLUTE_PATH --trust-root ABSOLUTE_PATH --credential ABSOLUTE_PATH\n"
+	serverUsage       = "usage: buildopt-server serve [--self-hosted-config ABSOLUTE_PATH] [--listen 127.0.0.1:8042] [--tls-cert ABSOLUTE_PATH --tls-key ABSOLUTE_PATH --central-auth] [--export-dir PATH] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]] [--state-dir ABSOLUTE_PATH] [--cache-authority ABSOLUTE_PATH --cache-trust-root ABSOLUTE_PATH --cache-credential ABSOLUTE_PATH] [--cache-token-auth] [--github-webhook-secret ABSOLUTE_PATH]\n       buildopt-server export --export-dir PATH [--format jsonl] [--export-profile summary|tasks|evidence|diagnostic --authorize-expanded-export [--diagnostic-until RFC3339]]\n       buildopt-server data delete --data-root ABSOLUTE_PATH --deletion-id ID --tenant ID --repository ID --trust-domain ID --next-namespace-generation N --next-l1-security-generation N --token-key ABSOLUTE_PATH --token-key-version ID [--external-destination ID]\n       buildopt-server token issue --state-dir ABSOLUTE_PATH --tenant ID --repository ID --trust-domain ID --namespace ID --namespace-generation N --plane stable|quarantine|control --access read|read-write --expires-at RFC3339\n       buildopt-server token revoke --state-dir ABSOLUTE_PATH --token-id ID\n       buildopt-server central-token issue --state-dir ABSOLUTE_PATH --repository-scope-sha256 SHA256 --tenant ID --repository ID --trust-domain ID --namespace ID --namespace-generation N --capabilities LIST --expires-at RFC3339\n       buildopt-server central-token revoke --state-dir ABSOLUTE_PATH --token-id ID\n       buildopt-server authority inspect --authority ABSOLUTE_PATH --trust-root ABSOLUTE_PATH --credential ABSOLUTE_PATH\n"
 )
 
 var (
@@ -76,6 +77,9 @@ func run(
 	if args[0] == "token" {
 		return runBetaToken(ctx, args[1:], stdout, stderr)
 	}
+	if args[0] == "central-token" {
+		return runCentralToken(ctx, args[1:], stdout, stderr)
+	}
 	if args[0] == "data" {
 		return runDataLifecycle(ctx, args[1:], stdout, stderr)
 	}
@@ -98,6 +102,21 @@ func run(
 		"listen",
 		"127.0.0.1:8042",
 		"loopback address for the WS-005 ingest server",
+	)
+	tlsCertificatePath := flags.String(
+		"tls-cert",
+		"",
+		"PEM certificate chain for the external HTTPS listener",
+	)
+	tlsKeyPath := flags.String(
+		"tls-key",
+		"",
+		"private PEM key for the external HTTPS listener",
+	)
+	centralAuthentication := flags.Bool(
+		"central-auth",
+		false,
+		"enable scoped central cache/state routes over HTTPS",
 	)
 	exportDirectory := flags.String(
 		"export-dir",
@@ -178,9 +197,23 @@ func run(
 			*githubWebhookSecretPath = deployment.GitHubQueue.WebhookSecretPath
 		}
 	}
-	if err := validateListenAddress(*listenAddress); err != nil {
+	tlsConfigured := *tlsCertificatePath != "" || *tlsKeyPath != ""
+	if (*tlsCertificatePath == "") != (*tlsKeyPath == "") {
+		_, _ = fmt.Fprintln(stderr, "buildopt-server: TLS requires both certificate and private key")
+		return exitConfiguration
+	}
+	if err := validateListenAddress(*listenAddress, tlsConfigured); err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt-server: invalid listen address: %v\n", err)
 		return exitConfiguration
+	}
+	var tlsConfiguration *tls.Config
+	if tlsConfigured {
+		configuredTLS, tlsErr := loadServerTLS(*tlsCertificatePath, *tlsKeyPath)
+		if tlsErr != nil {
+			_, _ = fmt.Fprintln(stderr, "buildopt-server: invalid TLS configuration")
+			return exitConfiguration
+		}
+		tlsConfiguration = configuredTLS
 	}
 
 	var exporter *buildsession.Exporter
@@ -276,6 +309,14 @@ func run(
 		)
 		return exitConfiguration
 	}
+	if *centralAuthentication &&
+		(!tlsConfigured || *stateDirectory == "" || cacheConfigured || selfHostedMode) {
+		_, _ = fmt.Fprintln(
+			stderr,
+			"buildopt-server: central authentication requires TLS, state directory, direct serve flags, and no local cache authority",
+		)
+		return exitConfiguration
+	}
 	if *githubWebhookSecretPath != "" && (*stateDirectory == "" || !filepath.IsAbs(*githubWebhookSecretPath)) {
 		_, _ = fmt.Fprintln(stderr, "buildopt-server: GitHub queue adapter requires state directory and absolute webhook secret path")
 		return exitConfiguration
@@ -297,55 +338,59 @@ func run(
 	ingestStore := sessioningest.NewStore()
 	logger := log.New(stdout, "buildopt-server: ", 0)
 	alerts := newOperationalAlertMonitor(time.Now)
-	rawIngestHandler, err := sessioningest.NewHandler(
-		getenv(sessioningest.ServerTokenEnvironment),
-		ingestStore,
-		func(record sessioningest.Record, result sessioningest.PutResult) {
-			action := "accepted"
-			if result == sessioningest.PutDuplicate {
-				action = "deduplicated"
-			}
-			logger.Printf(
-				"%s session %s outcome=%s exit=%d",
-				action,
-				record.SessionID,
-				record.Outcome,
-				record.ExitCode,
-			)
-			if exporter == nil {
-				return
-			}
-			alerts.exportStarted()
-			path, created, exportErr := exporter.Export(record)
-			alerts.exportFinished(exportErr)
-			if exportErr != nil {
+	var ingestHandler http.Handler
+	sessionToken := getenv(sessioningest.ServerTokenEnvironment)
+	if sessionToken != "" || !*centralAuthentication {
+		rawIngestHandler, ingestErr := sessioningest.NewHandler(
+			sessionToken,
+			ingestStore,
+			func(record sessioningest.Record, result sessioningest.PutResult) {
+				action := "accepted"
+				if result == sessioningest.PutDuplicate {
+					action = "deduplicated"
+				}
 				logger.Printf(
-					"BUILD_SESSION export unavailable for session %s: %v",
+					"%s session %s outcome=%s exit=%d",
+					action,
 					record.SessionID,
-					exportErr,
+					record.Outcome,
+					record.ExitCode,
 				)
-				return
-			}
-			exportAction := "retained"
-			if created {
-				exportAction = "published"
-			}
-			logger.Printf(
-				"%s BUILD_SESSION %s as %s",
-				exportAction,
-				record.SessionID,
-				filepath.Base(path),
-			)
-		},
-	)
-	if err != nil {
-		_, _ = fmt.Fprintln(
-			stderr,
-			"buildopt-server: invalid session ingest configuration",
+				if exporter == nil {
+					return
+				}
+				alerts.exportStarted()
+				path, created, exportErr := exporter.Export(record)
+				alerts.exportFinished(exportErr)
+				if exportErr != nil {
+					logger.Printf(
+						"BUILD_SESSION export unavailable for session %s: %v",
+						record.SessionID,
+						exportErr,
+					)
+					return
+				}
+				exportAction := "retained"
+				if created {
+					exportAction = "published"
+				}
+				logger.Printf(
+					"%s BUILD_SESSION %s as %s",
+					exportAction,
+					record.SessionID,
+					filepath.Base(path),
+				)
+			},
 		)
-		return exitConfiguration
+		if ingestErr != nil {
+			_, _ = fmt.Fprintln(
+				stderr,
+				"buildopt-server: invalid session ingest configuration",
+			)
+			return exitConfiguration
+		}
+		ingestHandler = alerts.instrumentAcceptance(rawIngestHandler)
 	}
-	ingestHandler := alerts.instrumentAcceptance(rawIngestHandler)
 
 	var sharedStorage *sharedcache.Storage
 	openConfiguredStorage := func(openStorage func(context.Context, string) (*sharedcache.Storage, error)) error {
@@ -398,17 +443,26 @@ func run(
 		IdleTimeout:       15 * time.Second,
 		MaxHeaderBytes:    16 << 10,
 		ErrorLog:          log.New(stderr, "buildopt-server: ", 0),
+		TLSConfig:         tlsConfiguration,
 	}
 	defer server.Close()
 	serveDone := make(chan error, 1)
 	go func() {
-		serveErr := server.Serve(listener)
+		serveListener := net.Listener(listener)
+		if tlsConfiguration != nil {
+			serveListener = tls.NewListener(listener, tlsConfiguration)
+		}
+		serveErr := server.Serve(serveListener)
 		if errors.Is(serveErr, http.ErrServerClosed) {
 			serveErr = nil
 		}
 		serveDone <- serveErr
 	}()
-	logger.Printf("listening on http://%s", listener.Addr())
+	scheme := "http"
+	if tlsConfiguration != nil {
+		scheme = "https"
+	}
+	logger.Printf("listening on %s://%s", scheme, listener.Addr())
 
 	if *stateDirectory != "" && sharedStorage == nil {
 		if storageErr := openConfiguredStorage(openSharedStorage); storageErr != nil {
@@ -462,6 +516,15 @@ func run(
 		cacheSwitch.set(loaded.handler)
 		cacheHandler = cacheSwitch
 	}
+	var centralHandler http.Handler
+	if *centralAuthentication {
+		configuredCentral, centralErr := sharedcache.NewCentralHTTPSHandler(sharedStorage)
+		if centralErr != nil {
+			_, _ = fmt.Fprintln(stderr, "buildopt-server: invalid central HTTPS configuration")
+			return exitConfiguration
+		}
+		centralHandler = configuredCentral
+	}
 
 	handler := http.NewServeMux()
 	if githubQueueHandler != nil {
@@ -475,7 +538,15 @@ func run(
 	if cacheHandler != nil {
 		handler.Handle("/cache/", cacheHandler)
 	}
-	handler.Handle("/", ingestHandler)
+	if centralHandler != nil {
+		handler.Handle("/cache/", centralHandler)
+		handler.Handle("/api/v1/repositories/", centralHandler)
+	}
+	if ingestHandler != nil {
+		handler.Handle("/", ingestHandler)
+	} else {
+		handler.Handle("/", http.NotFoundHandler())
+	}
 	operational.activate(handler)
 	reloadContext, cancelReload := context.WithCancel(ctx)
 	defer cancelReload()
@@ -502,12 +573,18 @@ func run(
 		)
 	}
 	if sharedStorage != nil {
-		if cacheHandler == nil {
+		switch {
+		case centralHandler != nil:
+			logger.Printf(
+				"single-node Shared storage initialized and reconciled with cache/control schema %d; central HTTPS cache/state routing enabled",
+				sharedcache.SchemaVersion,
+			)
+		case cacheHandler == nil:
 			logger.Printf(
 				"single-node Shared storage initialized and reconciled with cache/control schema %d; cache routing disabled without local authority",
 				sharedcache.SchemaVersion,
 			)
-		} else {
+		default:
 			logger.Printf(
 				"single-node Shared storage initialized and reconciled with cache/control schema %d; authenticated cache routing enabled",
 				sharedcache.SchemaVersion,
@@ -657,16 +734,50 @@ func parseExportPolicy(
 	return policy, nil
 }
 
-func validateListenAddress(address string) error {
+func validateListenAddress(address string, tlsConfigured bool) error {
 	host, portText, err := net.SplitHostPort(address)
-	if err != nil || host != "127.0.0.1" {
-		return errors.New("WS-005 requires canonical IPv4 loopback")
+	ip := net.ParseIP(host)
+	if err != nil || ip == nil || ip.To4() == nil || ip.String() != host {
+		return errors.New("listener requires a canonical IPv4 address")
+	}
+	if !tlsConfigured && host != "127.0.0.1" {
+		return errors.New("plaintext listener requires canonical IPv4 loopback")
 	}
 	port, err := strconv.Atoi(portText)
 	if err != nil || port < 0 || port > 65535 {
 		return errors.New("port must be between 0 and 65535")
 	}
 	return nil
+}
+
+func loadServerTLS(certificatePath, keyPath string) (*tls.Config, error) {
+	if !filepath.IsAbs(certificatePath) || filepath.Clean(certificatePath) != certificatePath ||
+		!filepath.IsAbs(keyPath) || filepath.Clean(keyPath) != keyPath {
+		return nil, errors.New("TLS paths must be absolute and canonical")
+	}
+	certificateInfo, err := os.Lstat(certificatePath)
+	if err != nil || !certificateInfo.Mode().IsRegular() || certificateInfo.Size() < 1 ||
+		certificateInfo.Size() > 1<<20 {
+		return nil, errors.New("TLS certificate must be a bounded regular file")
+	}
+	certificatePEM, err := os.ReadFile(certificatePath)
+	if err != nil {
+		return nil, err
+	}
+	keyPEM, err := localauthority.ReadPrivateFile(keyPath, 1<<20)
+	if err != nil {
+		return nil, err
+	}
+	defer clear(keyPEM)
+	pair, err := tls.X509KeyPair(certificatePEM, keyPEM)
+	if err != nil {
+		return nil, err
+	}
+	return &tls.Config{
+		MinVersion:   tls.VersionTLS13,
+		Certificates: []tls.Certificate{pair},
+		NextProtos:   []string{"http/1.1"},
+	}, nil
 }
 
 func isHelp(argument string) bool {

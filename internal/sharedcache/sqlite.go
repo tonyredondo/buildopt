@@ -241,6 +241,11 @@ ON storage_entries (
 		name:       "cache-v6",
 		statements: []string{`SELECT 1`},
 	}
+	versionSeven := schemaMigration{
+		version:    7,
+		name:       "cache-v7",
+		statements: []string{`SELECT 1`},
+	}
 	definition := metadataDefinition{
 		role: cacheMetadataRole,
 		path: path,
@@ -251,6 +256,7 @@ ON storage_entries (
 			versionFour,
 			versionFive,
 			versionSix,
+			versionSeven,
 		},
 	}
 	definition.objects = []schemaObject{
@@ -516,6 +522,45 @@ ON github_workflow_jobs (repository_id, run_id, run_attempt, job_id)`,
 ON github_webhook_deliveries (job_id, received_at_unix_ms)`,
 		},
 	}
+	versionSeven := schemaMigration{
+		version: 7,
+		name:    "control-v7",
+		statements: []string{
+			`CREATE TABLE central_access_tokens (
+    token_id TEXT PRIMARY KEY CHECK (length(token_id) = 32),
+    token_digest TEXT NOT NULL UNIQUE CHECK (
+        length(token_digest) = 71
+        AND substr(token_digest, 1, 7) = 'sha256:'
+        AND substr(token_digest, 8) NOT GLOB '*[^0-9a-f]*'
+    ),
+    repository_scope_sha256 TEXT NOT NULL CHECK (
+        length(repository_scope_sha256) = 64
+        AND repository_scope_sha256 NOT GLOB '*[^0-9a-f]*'
+    ),
+    tenant_id TEXT NOT NULL CHECK (length(tenant_id) BETWEEN 1 AND 256),
+    repository_id TEXT NOT NULL CHECK (length(repository_id) BETWEEN 1 AND 256),
+    trust_domain TEXT NOT NULL CHECK (length(trust_domain) BETWEEN 1 AND 256),
+    namespace TEXT NOT NULL CHECK (length(namespace) BETWEEN 1 AND 512),
+    namespace_generation INTEGER NOT NULL CHECK (namespace_generation > 0),
+    cache_read INTEGER NOT NULL CHECK (cache_read IN (0, 1)),
+    cache_write INTEGER NOT NULL CHECK (cache_write IN (0, 1)),
+    state_read INTEGER NOT NULL CHECK (state_read IN (0, 1)),
+    state_write INTEGER NOT NULL CHECK (state_write IN (0, 1)),
+    issued_at_unix_ms INTEGER NOT NULL CHECK (issued_at_unix_ms >= 0),
+    expires_at_unix_ms INTEGER NOT NULL CHECK (expires_at_unix_ms > issued_at_unix_ms),
+    revoked_at_unix_ms INTEGER,
+    CHECK (cache_read + cache_write + state_read + state_write > 0),
+    CHECK (revoked_at_unix_ms IS NULL OR revoked_at_unix_ms >= issued_at_unix_ms)
+) WITHOUT ROWID`,
+			`CREATE INDEX central_access_tokens_scope
+ON central_access_tokens (
+    repository_scope_sha256, tenant_id, repository_id, trust_domain,
+    namespace, namespace_generation
+)`,
+			`CREATE INDEX central_access_tokens_expires
+ON central_access_tokens (expires_at_unix_ms)`,
+		},
+	}
 	definition := metadataDefinition{
 		role: controlMetadataRole,
 		path: path,
@@ -526,6 +571,7 @@ ON github_webhook_deliveries (job_id, received_at_unix_ms)`,
 			versionFour,
 			versionFive,
 			versionSix,
+			versionSeven,
 		},
 	}
 	definition.objects = []schemaObject{
@@ -538,6 +584,16 @@ ON github_webhook_deliveries (job_id, received_at_unix_ms)`,
 			objectType: "index",
 			name:       "beta_cache_tokens_scope",
 			statement:  versionFive.statements[1],
+		},
+		{
+			objectType: "index",
+			name:       "central_access_tokens_expires",
+			statement:  versionSeven.statements[2],
+		},
+		{
+			objectType: "index",
+			name:       "central_access_tokens_scope",
+			statement:  versionSeven.statements[1],
 		},
 		{
 			objectType: "index",
@@ -578,6 +634,11 @@ ON github_webhook_deliveries (job_id, received_at_unix_ms)`,
 			objectType: "table",
 			name:       "beta_cache_tokens",
 			statement:  versionFive.statements[0],
+		},
+		{
+			objectType: "table",
+			name:       "central_access_tokens",
+			statement:  versionSeven.statements[0],
 		},
 		{
 			objectType: "table",

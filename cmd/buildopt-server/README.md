@@ -170,6 +170,46 @@ Each request consults `control.sqlite`, so revocation is effective before the
 next request/build. Stable, quarantine, and control tokens are not
 interchangeable; a read token cannot `PUT`.
 
+The optional central cache/state POC uses a separate TLS-only boundary and
+four independent capabilities. Start it with a certificate/key pair and no
+session-ingest token:
+
+```bash
+buildopt-server serve \
+    --listen 0.0.0.0:8042 \
+    --state-dir /absolute/private/buildopt-state \
+    --tls-cert /absolute/private/server-chain.pem \
+    --tls-key /absolute/private/server-key.pem \
+    --central-auth
+```
+
+Issue a short-lived token manually:
+
+```bash
+buildopt-server central-token issue \
+    --state-dir /absolute/private/buildopt-state \
+    --repository-scope-sha256 <64-lowercase-hex> \
+    --tenant tenant-7 \
+    --repository owner/repository \
+    --trust-domain owner-poc \
+    --namespace gradle-9.6.1/linux-amd64/jdk-21/project \
+    --namespace-generation 12 \
+    --capabilities cache-read,state-read \
+    --expires-at <RFC3339-within-30-days>
+```
+
+The response is the only place the raw token appears; `control.sqlite` stores
+only its domain-separated digest and exact scope. Central requests require TLS
+1.3, a trusted certificate and the corresponding Bearer token. `CACHE_READ`,
+`CACHE_WRITE`, `STATE_READ` and `STATE_WRITE` do not imply one another. Cache
+requests require `X-BuildOpt-Cache-Namespace` equal to the token namespace;
+cache writes additionally require the exact pending attempt. These upstream
+headers belong to the local gateway and are not exposed to Gradle. State
+publication uses immutable objects/manifests and a preconditioned head CAS.
+Revoke with `central-token revoke --state-dir ... --token-id ...`; the next
+request is rejected without restarting the server. See the
+[central HTTPS POC contract](../../specs/poc-central-https-auth-v1.md).
+
 `A1-004` makes SUMMARY the default export profile and HMAC-tokenizes
 repository, trust-domain, and task identities before JSON or JSONL reaches
 disk. TASKS/EVIDENCE require `--authorize-expanded-export`; DIAGNOSTIC also
@@ -197,8 +237,9 @@ and makes exact retries idempotent. Customer-controlled copies can be listed
 with repeated `--external-destination` flags; they retain their own
 tombstone-consumption obligation.
 
-Encrypted delivery retry/DLQ, deployed TLS termination and sinks, cache/policy
-APIs, hardened identity, and non-local profiles remain owned by later items.
+Encrypted delivery retry/DLQ, automatic certificate operations, client
+connection/forwarding, sinks, hardened identity, and remote profile selection
+remain owned by later POC or productization items.
 
 Validate the handler, concurrency, real launcher/server binaries, graceful
 shutdown, credential isolation, child outcomes, fail-open delivery, and local
@@ -210,6 +251,7 @@ bypass with:
 ./dev/check-shared-storage
 ./dev/check-pending-commit
 ./dev/check-local-authority
+./dev/check-central-https-auth
 ./dev/check-private-beta-data-lifecycle
 ```
 

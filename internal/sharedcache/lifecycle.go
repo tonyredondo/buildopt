@@ -1255,6 +1255,47 @@ func (storage *Storage) OpenCommitted(
 	return file, object, nil
 }
 
+// OpenCommittedScoped adds repository and trust-domain isolation to the
+// existing verified committed read used by the central HTTPS boundary.
+func (storage *Storage) OpenCommittedScoped(
+	ctx context.Context,
+	tenant string,
+	repository string,
+	trustDomain string,
+	namespaceGeneration int64,
+	key string,
+) (*os.File, CommittedObject, error) {
+	if ctx == nil || !validIdentifier(tenant) || !validIdentifier(repository) ||
+		!validIdentifier(trustDomain) || namespaceGeneration < 1 ||
+		!validCacheKey(key) {
+		return nil, CommittedObject{}, ErrCacheMiss
+	}
+	finish, err := storage.beginOperation()
+	if err != nil {
+		return nil, CommittedObject{}, err
+	}
+	var present int
+	err = storage.cache.database.QueryRowContext(
+		ctx,
+		`SELECT 1 FROM storage_entries
+WHERE tenant_id = ? AND repository_id = ? AND trust_domain = ?
+  AND namespace_generation = ? AND cache_key = ?`,
+		tenant,
+		repository,
+		trustDomain,
+		namespaceGeneration,
+		key,
+	).Scan(&present)
+	finish()
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, CommittedObject{}, ErrCacheMiss
+	}
+	if err != nil {
+		return nil, CommittedObject{}, err
+	}
+	return storage.OpenCommitted(ctx, tenant, namespaceGeneration, key)
+}
+
 func (storage *Storage) loadCommittedObjectReadLocked(
 	ctx context.Context,
 	tenant string,

@@ -172,9 +172,8 @@ KMS/HSM-backed keys, HA, and recovery objectives.
 
 ### Optional cross-machine state boundary
 
-The local POC remains service-independent. A separately planned extension may
-reuse `buildopt-server` as one HTTPS endpoint with two logically isolated
-planes:
+The local POC remains service-independent. `buildopt-server` can now expose one
+TLS 1.3 endpoint with two logically isolated planes:
 
 | Plane | Contents | Visibility and failure |
 |---|---|---|
@@ -186,9 +185,12 @@ fixes namespaces, retention, CAS and fallback. Its
 [local storage implementation](../../specs/poc-central-state-storage-v1.md)
 now uses the existing physical CAS plus independent `state.sqlite` metadata,
 reverifies every artifact on publication/read and preserves typed state across
-restart. Metadata, authorization and visibility do not cross planes. Remote
-portfolio selection will still require exact local revalidation; the HTTPS
-listener and client sync are not yet implemented.
+restart. The [central HTTPS contract](../../specs/poc-central-https-auth-v1.md)
+adds a real external TLS listener and four independent owner-issued
+capabilities. Only token digests persist and revocation is checked on every
+request. Metadata, authorization and visibility do not cross planes. Remote
+portfolio selection will still require exact local revalidation; gateway
+forwarding and client sync are not yet implemented.
 
 Linux checks a local filesystem allowlist. macOS requires `MNT_LOCAL` and a
 same-device boundary. Windows requires one local volume and rejects reparse

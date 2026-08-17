@@ -54,7 +54,7 @@ in `internal/`; cross-process representations belong in `contracts/` first.
 | `internal/buildsession` | `BUILD_SESSION v1` production, immutable JSON, JSONL, recovery | server export; data lifecycle specs |
 | `internal/buildhistory` | Redacted immutable history read model, API, embedded dashboard | `buildopt-server`; UX-F1 specs |
 | `internal/localauthority` | Canonical signed policy/revocation verification and anti-rollback state | launcher and Shared; local authority spec |
-| `internal/sharedcache` | Shared blobs, pending/commit CAS, independently governed Gradle-cache and typed BuildOpt-state SQLite lifecycles, quota, tokens, reconciliation | `buildopt-server`; A0/A1 cache and central-state specs |
+| `internal/sharedcache` | Shared blobs, pending/commit CAS, independently governed Gradle-cache and typed BuildOpt-state SQLite lifecycles, quota, scoped central tokens, HTTPS handlers, reconciliation | `buildopt-server`; A0/A1 cache and central-state/HTTPS specs |
 | `internal/edgecache` | Edge config, store, read-through, pending replication, quota, runtime status | `buildopt-edge`; C2/O1 specs |
 | `internal/taskintelligence` | Qualification state, trace coverage, quarantine evidence | task-intelligence specs |
 | `internal/buildimpact` | Manifest, graph discovery, validation, promotion, active selection | `buildopt-impact`; C3/BIA specs |
@@ -94,7 +94,7 @@ bytecode using the pinned Wrapper and repository-local JDK 21.
 | `contracts/proto/local-events/v1/` | JVM Gradle plugin | launcher event channel | `check-task-events-proto`, plugin handshake/correlation checks |
 | `contracts/openapi/buildopt-cache-control.v1.yaml` | server/control implementation | generated Go/Java clients | generated-client and compatibility checks |
 | `contracts/jsonschema/patch-bundle.v1.schema.json` | patch signer/workflow | Java patch verifier/applier | patch bundle, candidate, workflow, and recovery checks |
-| `contracts/jsonschema/central-state-*.v1.schema.json` | central-state clients and storage | `internal/sharedcache` typed state | `check-central-storage-contract`, `check-central-state-storage` |
+| `contracts/jsonschema/central-state-*.v1.schema.json` | central-state clients and storage | `internal/sharedcache` typed state and HTTPS routes | `check-central-storage-contract`, `check-central-state-storage`, `check-central-https-auth` |
 | `specs/build-impact-*.json` | Build Impact packages/CLI | CI and selection flow | Build Impact gate and automatic discovery checks |
 | `specs/platform-runtime-parity-v2.json` | native runtime and packaging | native CI | `check-platform-compatibility` |
 

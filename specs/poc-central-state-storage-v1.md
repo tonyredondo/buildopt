@@ -83,9 +83,11 @@ retention and checkpoint expiry.
 
 ## POC boundary
 
-The implementation creates no listener, token, client connection, remote
-selection or performance claim. Local `buildopt optimize` remains independent
-of this storage. State remains untrusted input that requires exact local
-revalidation, `productionAuthorized=false`, soak and design partners are not
-required, and Test Optimization remains out of scope. The next block is
-`POC-CENTRAL-HTTPS-AUTH-001`.
+This storage block itself created no listener, token, client connection, remote
+selection or performance claim. The subsequent
+[`POC-CENTRAL-HTTPS-AUTH-001`](./poc-central-https-auth-v1.md) block now exposes
+the same boundaries through scoped TLS without changing their persistence
+semantics. Local `buildopt optimize` remains independent of this storage. State
+remains untrusted input that requires exact local revalidation,
+`productionAuthorized=false`, soak and design partners are not required, and
+Test Optimization remains out of scope.

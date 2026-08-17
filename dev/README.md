@@ -395,13 +395,21 @@ Validate the concrete typed-state implementation over the existing Shared CAS:
 ./dev/check-central-state-storage
 ```
 
-The checker composes the central contract with race-enabled storage tests. It
-proves private independent `state.sqlite` migrations, restart persistence,
-repository/kind isolation, exact CAS replay, one-winner concurrent promotion,
-invisible partial publication, complete-byte corruption rejection and the
-portfolio/evidence/checkpoint retention rules. It does not open a network
-listener or claim cross-machine value; HTTPS/authentication remains the next
-POC block.
+Validate the owner-operated central TLS/token boundary, including the real
+TLS listener, untrusted-client rejection, capability isolation, live
+revocation, pending cache-write binding and typed-state CAS:
+
+```bash
+./dev/check-central-https-auth
+```
+
+The state-storage checker proves private independent `state.sqlite`
+migrations, restart persistence, repository/kind isolation, exact CAS replay,
+one-winner concurrent promotion, invisible partial publication,
+complete-byte corruption rejection and the portfolio/evidence/checkpoint
+retention rules. The HTTPS checker then exercises those semantics through a
+real trusted TLS listener with scoped credentials. Cross-machine Gradle cache
+consumption and its wall-time value remain the next POC block.
 
 ## CI orchestration validation
 

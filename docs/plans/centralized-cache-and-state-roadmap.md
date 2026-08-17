@@ -22,7 +22,7 @@ Gradle cache entries.
 
 ## Current status
 
-The storage contract and local persistence are complete. The three versioned
+The storage contract, local persistence and remote trust boundary are complete. The three versioned
 state schemas and lifecycle vectors are defined in the
 [central storage contract](../../specs/poc-central-storage-contract-v1.md).
 The [concrete store](../../specs/poc-central-state-storage-v1.md) adds an
@@ -30,11 +30,13 @@ independent `state.sqlite` lifecycle over the existing physical CAS and proves
 restart, corruption rejection, concurrent CAS, invisible partial publication
 and independent retention. Gradle objects remain opaque and evictable while
 portfolios, evidence and checkpoints use typed immutable manifests plus one
-head. No external listener, credential flow or synchronization exists yet.
+head. The [central HTTPS contract](../../specs/poc-central-https-auth-v1.md)
+adds an externally bindable TLS 1.3 listener, four independent capabilities,
+hash-only token persistence and live revocation.
 
-The next block is `POC-CENTRAL-HTTPS-AUTH-001`: expose the already proven cache
-and state boundaries through trusted HTTPS with separately scoped POC
-credentials, without yet selecting remote profiles automatically.
+The next block is `POC-CENTRAL-GRADLE-CACHE-001`: make the invocation-local
+gateway forward Gradle cache traffic to this boundary without passing the
+upstream token into Gradle or changing the offline/native fallback.
 
 ## Target experience
 
@@ -83,9 +85,9 @@ BuildOpt launcher and verifying gateway
 |   /cache/<gradle-cache-key>                      |
 |                                                  |
 | BuildOpt state control plane                     |
-|   /api/v1/repositories/<scope>/portfolios        |
-|   /api/v1/repositories/<scope>/evidence          |
-|   /api/v1/repositories/<scope>/checkpoints       |
+|   /api/v1/repositories/<scope>/state/portfolios  |
+|   /api/v1/repositories/<scope>/state/evidence    |
+|   /api/v1/repositories/<scope>/state/checkpoints |
 +--------------------------------------------------+
         |
         +-- immutable content-addressed blobs

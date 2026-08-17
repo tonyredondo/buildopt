@@ -150,12 +150,15 @@ its recomputable JSON source and the exact machine result with checksums;
 cache loss or drift runs optimized native Gradle and no BuildOpt service is
 required. See the [CI integration guide](./docs/guides/ci-integration.md).
 
-An optional cross-machine cache/state service is the next POC direction. Its
+An optional cross-machine cache/state service is the current POC direction. Its
 [storage contract](./specs/poc-central-storage-contract-v1.md) is executable,
 and the [restart-safe local state store](./specs/poc-central-state-storage-v1.md)
 now persists typed portfolios, evidence and checkpoints on the shared CAS with
-independent SQLite visibility. HTTPS connection and remote profile reuse are
-not yet implemented and do not change this onboarding path.
+independent SQLite visibility. The
+[central HTTPS boundary](./specs/poc-central-https-auth-v1.md) now adds a real
+TLS 1.3 listener plus independently scoped, live-revocable cache/state tokens.
+`buildopt gradle` does not consume that endpoint yet, so remote cache/profile
+reuse still does not change the default onboarding path.
 
 For a non-invasive evaluation, the GitHub Action's `profile-proposal` mode
 turns a checked-in workflow/output declaration and exact pull-request diff into

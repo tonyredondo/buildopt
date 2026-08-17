@@ -81,6 +81,9 @@ before running the product.
 - [Restart-safe typed central state](../specs/poc-central-state-storage-v1.md):
   local CAS/SQLite persistence, exact replay, corruption rejection and
   independent state retention before HTTPS or client synchronization.
+- [Central HTTPS and scoped access](../specs/poc-central-https-auth-v1.md):
+  TLS 1.3 listener, owner-issued capability tokens, live revocation and exact
+  cache/state namespace enforcement before client forwarding is enabled.
 
 ### Reference
 
