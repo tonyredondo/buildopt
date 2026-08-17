@@ -617,11 +617,14 @@ func optimizeLifecycleOutput(selector, path string) bool {
 	normalized := "/" + strings.ToLower(filepath.ToSlash(path)) + "/"
 	switch strings.ToLower(selector) {
 	case "assemble":
-		// Assemble is a lifecycle task without outputs of its own. Preserve every
-		// observed output produced by the affected projects in its executed task
-		// graph; the output-contract preflight has already proved that each root
-		// exists, is repository-owned, and has one unambiguous project owner.
-		return true
+		// Assemble is a lifecycle task without outputs of its own. Its customer
+		// contract is the terminal archives, distributions, and publication
+		// metadata produced by the affected projects, not compiler caches,
+		// incremental state, classes, documentation directories, or other
+		// intermediates that happen to exist after the task graph executes.
+		return strings.Contains(normalized, "/build/libs/") ||
+			strings.Contains(normalized, "/build/distributions/") ||
+			strings.Contains(normalized, "/build/publications/")
 	case "classes":
 		return strings.Contains(normalized, "/build/classes/") || strings.Contains(normalized, "/build/resources/main/")
 	case "testclasses":
