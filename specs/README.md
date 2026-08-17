@@ -85,7 +85,8 @@ the exact cross-component contract.
 | [`poc-magic-auto-replay-v1.md`](./poc-magic-auto-replay-v1.md) and [`poc-magic-auto-replay-v1.json`](./poc-magic-auto-replay-v1.json) | `POC-MAGIC-AUTO-REPLAY-001` |
 | [`poc-magic-ci-onboarding-v1.md`](./poc-magic-ci-onboarding-v1.md) and [`poc-magic-ci-onboarding-v1.json`](./poc-magic-ci-onboarding-v1.json) | `POC-MAGIC-CI-ONBOARDING-001` |
 | [`poc-magic-wow-report-v1.md`](./poc-magic-wow-report-v1.md) and [`poc-magic-wow-report-v1.json`](./poc-magic-wow-report-v1.json) | `POC-MAGIC-WOW-REPORT-001` |
-| [`poc-magic-end-to-end-value-v1.md`](./poc-magic-end-to-end-value-v1.md) and [`poc-magic-end-to-end-value-v1.json`](./poc-magic-end-to-end-value-v1.json) | `POC-MAGIC-END-TO-END-VALUE-001` partial evidence |
+| [`poc-magic-end-to-end-value-v1.md`](./poc-magic-end-to-end-value-v1.md) and [`poc-magic-end-to-end-value-v1.json`](./poc-magic-end-to-end-value-v1.json) | `POC-MAGIC-END-TO-END-VALUE-001` historical diagnostic evidence |
+| [`poc-magic-end-to-end-value-v2.md`](./poc-magic-end-to-end-value-v2.md) and [`poc-magic-end-to-end-value-v2.json`](./poc-magic-end-to-end-value-v2.json) | `POC-MAGIC-END-TO-END-VALUE-001` terminal public-package evidence |
 | [`poc-magic-calibration-cost-v1.md`](./poc-magic-calibration-cost-v1.md) | `POC-MAGIC-CALIBRATION-COST-001` |
 | [`poc-normal-build-tail-expansion-v1.md`](./poc-normal-build-tail-expansion-v1.md) and [`poc-normal-build-tail-expansion-v1.json`](./poc-normal-build-tail-expansion-v1.json) | `POC-NORMAL-BUILD-TAIL-EXPANSION-001` |
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |

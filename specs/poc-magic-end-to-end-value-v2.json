@@ -1,0 +1,44 @@
+{
+  "authority": {
+    "designPartnerRequired": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "evidence": {
+    "historicalDiagnostic": "benchmarks/results/poc-magic-end-to-end-value-v1/summary.json",
+    "summary": "benchmarks/results/poc-magic-end-to-end-value-v2/summary.json"
+  },
+  "negativeCase": {
+    "minimumNativeRetainedCases": 1,
+    "performanceClaimRequired": false
+  },
+  "package": {
+    "freshPrefixRequired": true,
+    "immutablePublishedReleaseRequired": true,
+    "sourceRevisionRequired": true
+  },
+  "qualification": {
+    "exactRequiredOutputs": true,
+    "fallbackSuccessful": true,
+    "freshBuildOptState": true,
+    "freshRepositoryCheckout": true,
+    "maximumBreakEvenBuilds": 30,
+    "minimumDifferentQualifiedFamilies": 2,
+    "minimumPairs": 8,
+    "nonRegressiveCandidateP95": true,
+    "positivePairedLowerBound": true,
+    "sharedGradleInputsMustBeIdenticalBetweenArms": true,
+    "zeroManualBuildOptFiles": true,
+    "zeroProductAttributableFailures": true
+  },
+  "recomputation": {
+    "breakEvenFormula": "CEIL(CALIBRATION_COST_MS / MEAN_SAVED_MS)",
+    "mechanismPercentagesAdded": false,
+    "reductionFormula": "MEAN_SAVED_MS / OPTIMIZED_NATIVE_MEAN_MS",
+    "repositoriesAveraged": false
+  },
+  "schemaVersion": "buildopt.poc/magic-end-to-end-value-contract/v2",
+  "workItem": "POC-MAGIC-END-TO-END-VALUE-001"
+}

@@ -1,0 +1,193 @@
+{
+  "attempt": 1,
+  "bindings": {
+    "completeness": "PROFILE_PORTFOLIO_COMPLETE",
+    "discoveryContextSha256": "eb429d493f65b7b859d1d34471e7b4010b173f7e53542a79760a319e36c66078",
+    "executableSha256": "f7cd46f3d9460090cd2e80398eca3c1e062a17f8cfe714b5446e1f14fc251101",
+    "invocationSha256": "a82a365139681553e76afcbd24a85cc00d5a48a33a7a5c338cb85b46f667c688",
+    "repositoryScopeSha256": "23140b53b8787bcf1f02a8fbb6e8474097bc201fb802791338d4e999461e1c52",
+    "sha256": "525696828cdac4a92926e3efe915887c1ce0ee016f607f83e3d1a7f1973e1727",
+    "wrapperSha256": "7e0821d895908883350587c74476b717016ab416320c44dc82a10def916c6fb5"
+  },
+  "budget": {
+    "maxBreakEvenBuilds": 30,
+    "pairs": 8,
+    "wallTimeSeconds": 7200
+  },
+  "calibration": {
+    "breakEvenBuilds": 28,
+    "calibrationCostMs": 1096653,
+    "candidateMeanMs": 24958.125,
+    "candidateP95Ms": 25946,
+    "controlMeanMs": 65080.875,
+    "controlP95Ms": 102621,
+    "discoverySha256": "6050dab2d36539e6d80e0a7c289cb5433b5a7704bbae182e07848baf4dfc305f",
+    "evidenceSha256": "ffd0a2a908ef934ca7232387bdafda1b9a597eea1f139a1ccde0d1e03f9a5504",
+    "fallbackSuccessful": true,
+    "generatedFiles": [
+      ".buildopt/optimize/public-v061/calibration/evidence.json"
+    ],
+    "interval95SavedMs": [
+      33867.125,
+      51469.5
+    ],
+    "maximumBreakEvenBuilds": 30,
+    "meanSavedMs": 40122.75,
+    "pairsMeasured": 8,
+    "pairsRequested": 8,
+    "performed": true,
+    "positivePairs": 8,
+    "productionAuthorized": false,
+    "qualified": true,
+    "reason": "CANDIDATE_CALIBRATION_QUALIFIED",
+    "reductionRatio": 0.6165060011869846,
+    "reused": false,
+    "status": "COMPLETE",
+    "testOptimization": "OUT_OF_SCOPE",
+    "valueGatePassed": true
+  },
+  "calibrationPerformed": true,
+  "completedAt": "2026-08-17T18:44:12.92200065Z",
+  "discovery": {
+    "baseRevision": "dd896e2b2395937201b7721251d9f66936f9340c",
+    "candidateEntrypoints": [
+      ":examples:java:twitter:classes"
+    ],
+    "changeFamily": "LEAF_SOURCE",
+    "changeSha256": "938c4c5fba8999b000e07dc9a0c8431ca19b30889eeef2208d9918fedc7b08ff",
+    "changedPathCount": 1,
+    "changedProjects": [
+      ":examples:java:twitter"
+    ],
+    "entrypoints": [
+      "classes"
+    ],
+    "generatedFiles": [
+      ".buildopt/optimize/public-v061/discovery/changes.txt",
+      ".buildopt/optimize/public-v061/discovery/fallback-changes.txt",
+      ".buildopt/optimize/public-v061/discovery/generated-manifest.json",
+      ".buildopt/optimize/public-v061/discovery/graph.json",
+      ".buildopt/optimize/public-v061/discovery/manifest.json",
+      ".buildopt/optimize/public-v061/discovery/output-contract.json",
+      ".buildopt/optimize/public-v061/discovery/proposal.json"
+    ],
+    "graph": {
+      "omittedProjects": 310,
+      "selectedProjects": 6,
+      "totalProjects": 316
+    },
+    "productionAuthorized": false,
+    "reason": "STRUCTURAL_CANDIDATE_DISCOVERED",
+    "repositoryId": "apache/beam",
+    "requiredOutputs": [
+      "examples/java/twitter/build/classes/java/main/**"
+    ],
+    "reviewRequired": true,
+    "source": "LOCAL_UPSTREAM",
+    "status": "COMPLETE",
+    "targetRevision": "db6daeecbd9b9a50a0dfc0d9118f312716e34f94",
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "durationMs": 1149941,
+  "execution": {
+    "authoritative": true,
+    "exitCode": 0,
+    "mode": "OPTIMIZED_NATIVE",
+    "started": true
+  },
+  "generatedFiles": {
+    "calibration": [
+      ".buildopt/optimize/public-v061/calibration/evidence.json"
+    ],
+    "discovery": [
+      ".buildopt/optimize/public-v061/discovery/changes.txt",
+      ".buildopt/optimize/public-v061/discovery/fallback-changes.txt",
+      ".buildopt/optimize/public-v061/discovery/generated-manifest.json",
+      ".buildopt/optimize/public-v061/discovery/graph.json",
+      ".buildopt/optimize/public-v061/discovery/manifest.json",
+      ".buildopt/optimize/public-v061/discovery/output-contract.json",
+      ".buildopt/optimize/public-v061/discovery/proposal.json"
+    ],
+    "portfolio": [
+      ".buildopt/optimize/public-v061/portfolio/portfolio.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/d80a0409631df654af8f64fe4a8b161c8f02a504feabbdc95dabff58c1daeef1/evidence.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/d80a0409631df654af8f64fe4a8b161c8f02a504feabbdc95dabff58c1daeef1/generated-manifest.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/d80a0409631df654af8f64fe4a8b161c8f02a504feabbdc95dabff58c1daeef1/graph.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/d80a0409631df654af8f64fe4a8b161c8f02a504feabbdc95dabff58c1daeef1/manifest.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/d80a0409631df654af8f64fe4a8b161c8f02a504feabbdc95dabff58c1daeef1/profile.json"
+    ],
+    "result": ".buildopt/optimize/public-v061/result.json",
+    "state": ".buildopt/optimize/public-v061/state.json",
+    "valueJson": ".buildopt/optimize/public-v061/value-report.json",
+    "valueMarkdown": ".buildopt/optimize/public-v061/value-report.md"
+  },
+  "generation": 1,
+  "manualFilesRequired": 0,
+  "native": {
+    "authoritative": true,
+    "exitCode": 0,
+    "started": true
+  },
+  "outcome": "LEARNING",
+  "phase": "QUALIFIED",
+  "portfolio": {
+    "changeFamily": "LEAF_SOURCE",
+    "familySha256": "d80a0409631df654af8f64fe4a8b161c8f02a504feabbdc95dabff58c1daeef1",
+    "generatedFiles": [
+      ".buildopt/optimize/public-v061/portfolio/portfolio.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/d80a0409631df654af8f64fe4a8b161c8f02a504feabbdc95dabff58c1daeef1/evidence.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/d80a0409631df654af8f64fe4a8b161c8f02a504feabbdc95dabff58c1daeef1/generated-manifest.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/d80a0409631df654af8f64fe4a8b161c8f02a504feabbdc95dabff58c1daeef1/graph.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/d80a0409631df654af8f64fe4a8b161c8f02a504feabbdc95dabff58c1daeef1/manifest.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/d80a0409631df654af8f64fe4a8b161c8f02a504feabbdc95dabff58c1daeef1/profile.json"
+    ],
+    "performed": true,
+    "portfolioFile": ".buildopt/optimize/public-v061/portfolio/portfolio.json",
+    "productionAuthorized": false,
+    "profileCount": 1,
+    "profileFile": ".buildopt/optimize/public-v061/portfolio/profiles/d80a0409631df654af8f64fe4a8b161c8f02a504feabbdc95dabff58c1daeef1/profile.json",
+    "profileSha256": "cae65b99979519fc5d7dc120b7f7ee60419d532a4aabffe90d3c6ea4bd5dbbcd",
+    "reason": "QUALIFIED_PROFILE_STORED",
+    "reused": false,
+    "selectionPerformed": false,
+    "status": "COMPLETE",
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "portfolioPerformed": true,
+  "productionAuthorized": false,
+  "reason": "QUALIFIED_PROFILE_STORED",
+  "resume": {
+    "accepted": false,
+    "checkpointFound": false,
+    "mode": "NEVER",
+    "reason": "RESUME_DISABLED"
+  },
+  "schemaVersion": "buildopt.poc/optimize-result/v1",
+  "selection": {
+    "changeFamily": "",
+    "completedBeforeGradle": true,
+    "durationNs": 371,
+    "failedBindings": [],
+    "familySha256": "",
+    "originalEntrypoints": [],
+    "performed": false,
+    "productionAuthorized": false,
+    "profileFile": "",
+    "profileSha256": "",
+    "reason": "NO_QUALIFIED_CHECKPOINT",
+    "selected": false,
+    "selectedEntrypoints": [],
+    "status": "SKIPPED",
+    "testOptimization": "OUT_OF_SCOPE",
+    "validatedBindings": []
+  },
+  "selectionPerformed": false,
+  "startedAt": "2026-08-17T18:25:02.98060515Z",
+  "testOptimization": "OUT_OF_SCOPE",
+  "value": {
+    "cumulativeSelectionOverheadMs": 0,
+    "matchingReplayCount": 0,
+    "projectedCumulativeNetSavedMs": -1096653,
+    "projectedGrossSavedMs": 0
+  }
+}

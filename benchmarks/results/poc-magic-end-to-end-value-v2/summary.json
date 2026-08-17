@@ -1,0 +1,146 @@
+{
+  "acceptance": {
+    "allFreshInstallToDecision": true,
+    "decision": "COMPLETE",
+    "exactRequiredOutputs": true,
+    "minimumDifferentQualifiedFamilies": 2,
+    "nativeRetainedCases": 1,
+    "publishedPackageUsed": true,
+    "qualifiedFamilies": 2,
+    "zeroManualBuildOptFiles": true,
+    "zeroProductAttributableFailures": true
+  },
+  "boundaries": {
+    "designPartnerRequired": false,
+    "mechanismPercentagesAdded": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositoriesAveraged": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "capturedAt": "2026-08-17T18:45:23Z",
+  "negativeCases": [
+    {
+      "calibrationPerformed": false,
+      "manualBuildOptFiles": 0,
+      "nativeAuthoritative": true,
+      "nativeExitCode": 0,
+      "performanceClaim": false,
+      "rawResult": "raw/ktor-native-retained.result.json",
+      "rawResultSha256": "b084924db2d519c1f9b20a906d8eb6a0376da3552fbedb9998ac69892a904ad4",
+      "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+      "repositoryId": "ktorio/ktor",
+      "targetRevision": "e24a9260b757876696a281246ebd61a86eff7025",
+      "workflow": "jvmJar --max-workers=12"
+    }
+  ],
+  "package": {
+    "asset": "buildopt-0.6.1-linux-amd64.tar.gz",
+    "assetSha256": "a543acda9ec47914f25f1b4994e9337aae5873fa89d32bedb807d078357307f9",
+    "executableSha256": "f7cd46f3d9460090cd2e80398eca3c1e062a17f8cfe714b5446e1f14fc251101",
+    "freshPrefix": true,
+    "installerSha256": "57d63b6a0dce7794a3a26123ef4326c2b0bbe63ca6e2964041e573452337a2ec",
+    "publicRelease": true,
+    "releaseRunId": 32053101651,
+    "releaseRunUrl": "https://github.com/tonyredondo/buildopt/actions/runs/32053101651",
+    "releaseUrl": "https://github.com/tonyredondo/buildopt/releases/tag/v0.6.1",
+    "sourceRevision": "a354e3ee7fffc7abe83b8abe0a125956b159e01a",
+    "tag": "v0.6.1",
+    "version": "0.6.1"
+  },
+  "protocol": {
+    "calibrationBudgetSeconds": 7200,
+    "freshBuildOptState": true,
+    "freshRepositoryCheckout": true,
+    "maximumBreakEvenBuilds": 30,
+    "pairs": 8,
+    "sharedGradleDependencyBinding": true,
+    "sharedNativeCacheSeededEqually": true,
+    "unmeasuredDaemonConfigurationWarmup": true
+  },
+  "rejectedAttempts": [
+    {
+      "accepted": false,
+      "classification": "SANDBOX_NETWORK_NAMESPACE",
+      "packageVersion": "0.6.0",
+      "rawResult": "raw/rejected-v060-sandbox-network.result.json",
+      "rawResultSha256": "a78051d6a989721c6e6c8854fe5b610048d676aa5b92c2267fa8773202f66a3f",
+      "reason": "NATIVE_BUILD_FAILED"
+    },
+    {
+      "accepted": false,
+      "classification": "CONFIGURATION_CACHE_OUTPUT_DISCOVERY_DEFECT",
+      "fixedByRevision": "a354e3ee7fffc7abe83b8abe0a125956b159e01a",
+      "packageVersion": "0.6.0",
+      "rawResult": "raw/rejected-v060-output-preflight.result.json",
+      "rawResultSha256": "e789ad9d236247bee904c280822e56763589965f0694cefe9baae910f46fb167",
+      "reason": "OUTPUT_PREFLIGHT_FAILED"
+    }
+  ],
+  "repositories": [
+    {
+      "baseRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+      "breakEvenBuilds": 26,
+      "calibrationCostMs": 784031,
+      "candidateMeanMs": 7830.375,
+      "candidateP95Ms": 11957,
+      "changeFamily": "DEPENDENCY_SOURCE",
+      "controlMeanMs": 38809.75,
+      "controlP95Ms": 61575,
+      "exactRequiredOutputs": true,
+      "fallbackSuccessful": true,
+      "gradleVersion": "9.5.1",
+      "graph": {"omittedProjects": 123, "selectedProjects": 10, "totalProjects": 133},
+      "interval95SavedMs": [24679.375, 38922],
+      "manualBuildOptFiles": 0,
+      "meanSavedMs": 30979.375,
+      "positivePairs": 8,
+      "qualificationSnapshot": "raw/ktor.qualification.json",
+      "qualificationSnapshotSha256": "efdf4c65942f893a6b4775edc867e6df34fd3d8e960393ee09dbbc112965cddf",
+      "rawQualificationEvidenceSha256": "e049515c18c872d78765cd8d63b975ddcb9ac498d6f23e133ec837e903b14a0d",
+      "rawResult": "raw/ktor.result.json",
+      "rawResultSha256": "7b0bdf8ef49faa471931c9c5ab7b53d2a4fd5d97f1bbc03803abddf667fc39aa",
+      "reductionRatio": 0.7982369121161563,
+      "repositoryId": "ktorio/ktor",
+      "targetRevision": "640e0bf3ccae96b35437272d99dd3d9c0b309da3",
+      "workflow": "jvmJar --max-workers=12"
+    },
+    {
+      "baseRevision": "dd896e2b2395937201b7721251d9f66936f9340c",
+      "breakEvenBuilds": 28,
+      "calibrationCostMs": 1096653,
+      "candidateMeanMs": 24958.125,
+      "candidateP95Ms": 25946,
+      "changeFamily": "LEAF_SOURCE",
+      "controlMeanMs": 65080.875,
+      "controlP95Ms": 102621,
+      "exactRequiredOutputs": true,
+      "fallbackSuccessful": true,
+      "gradleVersion": "8.14.3",
+      "graph": {"omittedProjects": 310, "selectedProjects": 6, "totalProjects": 316},
+      "interval95SavedMs": [33867.125, 51469.5],
+      "manualBuildOptFiles": 0,
+      "meanSavedMs": 40122.75,
+      "positivePairs": 8,
+      "qualificationSnapshot": "raw/beam.qualification.json",
+      "qualificationSnapshotSha256": "42cb94e065e55ecd8eee0bfd765eb4f3797a0f86d96a2bee772a773a6346363e",
+      "rawQualificationEvidenceSha256": "ffd0a2a908ef934ca7232387bdafda1b9a597eea1f139a1ccde0d1e03f9a5504",
+      "rawResult": "raw/beam.result.json",
+      "rawResultSha256": "8831961ad83bb5e39ae7083806e2f9630f57d062c6f72d9446bad1ebf0a08640",
+      "reductionRatio": 0.6165060011869846,
+      "repositoryId": "apache/beam",
+      "targetRevision": "db6daeecbd9b9a50a0dfc0d9118f312716e34f94",
+      "workflow": "classes --max-workers=12"
+    }
+  ],
+  "runner": {
+    "architecture": "x86_64",
+    "cpuCount": 12,
+    "kernel": "7.1.5-1-t2-noble",
+    "memoryBytes": 16659865600,
+    "operatingSystem": "Linux"
+  },
+  "schemaVersion": "buildopt.evidence/poc-magic-end-to-end-value/v2",
+  "workItem": "POC-MAGIC-END-TO-END-VALUE-001"
+}

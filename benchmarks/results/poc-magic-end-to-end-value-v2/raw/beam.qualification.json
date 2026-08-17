@@ -1,0 +1,458 @@
+{
+  "boundaries": {
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  },
+  "capturedAt": "2026-08-17T18:44:09Z",
+  "evidenceState": "QUALIFIED",
+  "execution": {
+    "buildoptRevision": "f7cd46f3d9460090cd2e80398eca3c1e062a17f8",
+    "candidateStabilization": "PAIRED_BOUND_CACHE_MEASURED_SHAPE_V1",
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "controlWarmupCount": 1,
+    "executableSha256": "f7cd46f3d9460090cd2e80398eca3c1e062a17f8cfe714b5446e1f14fc251101",
+    "gradleOptions": [
+      "--max-workers=12",
+      "--build-cache",
+      "--console=plain",
+      "--no-scan"
+    ],
+    "launcherOverheadIncluded": true,
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ]
+  },
+  "fallback": {
+    "buildSuccessful": true,
+    "mode": "FULL_GRAPH",
+    "reason": "IMPACT_GLOBAL_CHANGE"
+  },
+  "observations": [
+    {
+      "candidateDurationMs": 23854,
+      "candidateHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 253764,
+        "ioFullTotalUs": 8880246,
+        "ioSomeTotalUs": 14714114,
+        "memoryFullTotalUs": 8,
+        "memorySomeTotalUs": 8
+      },
+      "candidateLogSha256": "504b92763fffd919905467c748f9cf863ac4d59eec8962c1b19966c8ab90b32c",
+      "candidateRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "candidateTaskOutcomes": {
+        "executed": 29,
+        "fingerprintSha256": "fac866154e807e972c8498f73376941906b18e853c87f773817c53b3d731ea23",
+        "fromCache": 21,
+        "noSource": 2,
+        "skipped": 0,
+        "total": 65,
+        "upToDate": 13
+      },
+      "controlDurationMs": 102621,
+      "controlHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 15700909,
+        "ioFullTotalUs": 25279162,
+        "ioSomeTotalUs": 56357648,
+        "memoryFullTotalUs": 7669,
+        "memorySomeTotalUs": 10863
+      },
+      "controlLogSha256": "96cff6be90a76ad524036bffb4e7bd5700db41d1ea87da081fdff8e3d59f71ba",
+      "controlRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "controlTaskOutcomes": {
+        "executed": 340,
+        "fingerprintSha256": "cfbff780cf40e925bfeab07c90957c572125dc778a328d9c775630bcd904a71b",
+        "fromCache": 362,
+        "noSource": 222,
+        "skipped": 0,
+        "total": 1475,
+        "upToDate": 551
+      },
+      "order": "CONTROL_FIRST",
+      "pair": 1,
+      "productAttributableFailure": false,
+      "requiredOutputCount": 12,
+      "savedMs": 78767
+    },
+    {
+      "candidateDurationMs": 25397,
+      "candidateHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 294487,
+        "ioFullTotalUs": 9268774,
+        "ioSomeTotalUs": 15729890,
+        "memoryFullTotalUs": 3,
+        "memorySomeTotalUs": 3
+      },
+      "candidateLogSha256": "a9566f1e0361eddb6c1e99b8bb1400e6455d31196f31dd390ae60de8c4af0878",
+      "candidateRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "candidateTaskOutcomes": {
+        "executed": 29,
+        "fingerprintSha256": "fac866154e807e972c8498f73376941906b18e853c87f773817c53b3d731ea23",
+        "fromCache": 21,
+        "noSource": 2,
+        "skipped": 0,
+        "total": 65,
+        "upToDate": 13
+      },
+      "controlDurationMs": 59175,
+      "controlHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 4602889,
+        "ioFullTotalUs": 17135128,
+        "ioSomeTotalUs": 34108387,
+        "memoryFullTotalUs": 41,
+        "memorySomeTotalUs": 91
+      },
+      "controlLogSha256": "1e5851e8ad0b5593d29e19a2beffe3811ffda15f7f97e2fe177a151f870c3d4c",
+      "controlRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "controlTaskOutcomes": {
+        "executed": 340,
+        "fingerprintSha256": "cfbff780cf40e925bfeab07c90957c572125dc778a328d9c775630bcd904a71b",
+        "fromCache": 362,
+        "noSource": 222,
+        "skipped": 0,
+        "total": 1475,
+        "upToDate": 551
+      },
+      "order": "CANDIDATE_FIRST",
+      "pair": 2,
+      "productAttributableFailure": false,
+      "requiredOutputCount": 12,
+      "savedMs": 33778
+    },
+    {
+      "candidateDurationMs": 24322,
+      "candidateHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 287547,
+        "ioFullTotalUs": 9428241,
+        "ioSomeTotalUs": 14450150,
+        "memoryFullTotalUs": 3,
+        "memorySomeTotalUs": 3
+      },
+      "candidateLogSha256": "669c0c9d8f78dcd23c9deb00bba24170a0b43e8bce8e3721f2190c981b476f9d",
+      "candidateRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "candidateTaskOutcomes": {
+        "executed": 29,
+        "fingerprintSha256": "fac866154e807e972c8498f73376941906b18e853c87f773817c53b3d731ea23",
+        "fromCache": 21,
+        "noSource": 2,
+        "skipped": 0,
+        "total": 65,
+        "upToDate": 13
+      },
+      "controlDurationMs": 60770,
+      "controlHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 4608786,
+        "ioFullTotalUs": 17377124,
+        "ioSomeTotalUs": 34487359,
+        "memoryFullTotalUs": 233,
+        "memorySomeTotalUs": 301
+      },
+      "controlLogSha256": "6e8e2cce53bf2b58cc6f8ebb589d46ca8789a545034503c7d31af5df94803e85",
+      "controlRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "controlTaskOutcomes": {
+        "executed": 340,
+        "fingerprintSha256": "cfbff780cf40e925bfeab07c90957c572125dc778a328d9c775630bcd904a71b",
+        "fromCache": 362,
+        "noSource": 222,
+        "skipped": 0,
+        "total": 1475,
+        "upToDate": 551
+      },
+      "order": "CONTROL_FIRST",
+      "pair": 3,
+      "productAttributableFailure": false,
+      "requiredOutputCount": 12,
+      "savedMs": 36448
+    },
+    {
+      "candidateDurationMs": 25373,
+      "candidateHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 360056,
+        "ioFullTotalUs": 8631054,
+        "ioSomeTotalUs": 15646308,
+        "memoryFullTotalUs": 0,
+        "memorySomeTotalUs": 0
+      },
+      "candidateLogSha256": "14bc5d4e665c8d1e7bb4fb7779a04501032d455b2e683ceb06aeda5e4820cb16",
+      "candidateRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "candidateTaskOutcomes": {
+        "executed": 29,
+        "fingerprintSha256": "fac866154e807e972c8498f73376941906b18e853c87f773817c53b3d731ea23",
+        "fromCache": 21,
+        "noSource": 2,
+        "skipped": 0,
+        "total": 65,
+        "upToDate": 13
+      },
+      "controlDurationMs": 59495,
+      "controlHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 3575819,
+        "ioFullTotalUs": 16319659,
+        "ioSomeTotalUs": 35005927,
+        "memoryFullTotalUs": 11,
+        "memorySomeTotalUs": 11
+      },
+      "controlLogSha256": "1e1eccba98f3848bb84b224deb64716da9abe1a430fbce62e134052610284d37",
+      "controlRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "controlTaskOutcomes": {
+        "executed": 340,
+        "fingerprintSha256": "cfbff780cf40e925bfeab07c90957c572125dc778a328d9c775630bcd904a71b",
+        "fromCache": 362,
+        "noSource": 222,
+        "skipped": 0,
+        "total": 1475,
+        "upToDate": 551
+      },
+      "order": "CANDIDATE_FIRST",
+      "pair": 4,
+      "productAttributableFailure": false,
+      "requiredOutputCount": 12,
+      "savedMs": 34122
+    },
+    {
+      "candidateDurationMs": 24579,
+      "candidateHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 159112,
+        "ioFullTotalUs": 8646768,
+        "ioSomeTotalUs": 15483530,
+        "memoryFullTotalUs": 0,
+        "memorySomeTotalUs": 0
+      },
+      "candidateLogSha256": "d1e9ed6c89b2276304761f623abcd36cbfe194f60799a10fd1650212df1f27b5",
+      "candidateRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "candidateTaskOutcomes": {
+        "executed": 29,
+        "fingerprintSha256": "fac866154e807e972c8498f73376941906b18e853c87f773817c53b3d731ea23",
+        "fromCache": 21,
+        "noSource": 2,
+        "skipped": 0,
+        "total": 65,
+        "upToDate": 13
+      },
+      "controlDurationMs": 60676,
+      "controlHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 3753773,
+        "ioFullTotalUs": 17961679,
+        "ioSomeTotalUs": 35314141,
+        "memoryFullTotalUs": 96,
+        "memorySomeTotalUs": 95
+      },
+      "controlLogSha256": "c9540766c895c2ed75391a647382ef4df8425b6a5dcd1fdcf048d4792c2666b9",
+      "controlRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "controlTaskOutcomes": {
+        "executed": 340,
+        "fingerprintSha256": "cfbff780cf40e925bfeab07c90957c572125dc778a328d9c775630bcd904a71b",
+        "fromCache": 362,
+        "noSource": 222,
+        "skipped": 0,
+        "total": 1475,
+        "upToDate": 551
+      },
+      "order": "CONTROL_FIRST",
+      "pair": 5,
+      "productAttributableFailure": false,
+      "requiredOutputCount": 12,
+      "savedMs": 36097
+    },
+    {
+      "candidateDurationMs": 25946,
+      "candidateHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 219940,
+        "ioFullTotalUs": 9058527,
+        "ioSomeTotalUs": 16414618,
+        "memoryFullTotalUs": 0,
+        "memorySomeTotalUs": 0
+      },
+      "candidateLogSha256": "dbb85f7bc34e46d45a735e4839bfb31e4c8f70746bfaf3c610371f5b75ae9edb",
+      "candidateRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "candidateTaskOutcomes": {
+        "executed": 29,
+        "fingerprintSha256": "fac866154e807e972c8498f73376941906b18e853c87f773817c53b3d731ea23",
+        "fromCache": 21,
+        "noSource": 2,
+        "skipped": 0,
+        "total": 65,
+        "upToDate": 13
+      },
+      "controlDurationMs": 59066,
+      "controlHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 3540903,
+        "ioFullTotalUs": 17441178,
+        "ioSomeTotalUs": 34531467,
+        "memoryFullTotalUs": 1,
+        "memorySomeTotalUs": 2
+      },
+      "controlLogSha256": "f9df60471fa005dfebfbd0b0372781ecbbaea6a0d24f8ae87ee72a5a26351946",
+      "controlRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "controlTaskOutcomes": {
+        "executed": 340,
+        "fingerprintSha256": "cfbff780cf40e925bfeab07c90957c572125dc778a328d9c775630bcd904a71b",
+        "fromCache": 362,
+        "noSource": 222,
+        "skipped": 0,
+        "total": 1475,
+        "upToDate": 551
+      },
+      "order": "CANDIDATE_FIRST",
+      "pair": 6,
+      "productAttributableFailure": false,
+      "requiredOutputCount": 12,
+      "savedMs": 33120
+    },
+    {
+      "candidateDurationMs": 24633,
+      "candidateHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 246066,
+        "ioFullTotalUs": 7740385,
+        "ioSomeTotalUs": 15289961,
+        "memoryFullTotalUs": 0,
+        "memorySomeTotalUs": 0
+      },
+      "candidateLogSha256": "1b5c5ed5da4bc47be5f92250fadd6d7b3d71f9e9177af35d03b96a2ad1821fc0",
+      "candidateRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "candidateTaskOutcomes": {
+        "executed": 29,
+        "fingerprintSha256": "fac866154e807e972c8498f73376941906b18e853c87f773817c53b3d731ea23",
+        "fromCache": 21,
+        "noSource": 2,
+        "skipped": 0,
+        "total": 65,
+        "upToDate": 13
+      },
+      "controlDurationMs": 60652,
+      "controlHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 3514977,
+        "ioFullTotalUs": 17758241,
+        "ioSomeTotalUs": 36487266,
+        "memoryFullTotalUs": 166,
+        "memorySomeTotalUs": 924
+      },
+      "controlLogSha256": "00855e26063f3affe1988a6bb6b298a31fb24f50fa9b6c34f412d97930835693",
+      "controlRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "controlTaskOutcomes": {
+        "executed": 340,
+        "fingerprintSha256": "cfbff780cf40e925bfeab07c90957c572125dc778a328d9c775630bcd904a71b",
+        "fromCache": 362,
+        "noSource": 222,
+        "skipped": 0,
+        "total": 1475,
+        "upToDate": 551
+      },
+      "order": "CONTROL_FIRST",
+      "pair": 7,
+      "productAttributableFailure": false,
+      "requiredOutputCount": 12,
+      "savedMs": 36019
+    },
+    {
+      "candidateDurationMs": 25561,
+      "candidateHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 207747,
+        "ioFullTotalUs": 8529879,
+        "ioSomeTotalUs": 16615323,
+        "memoryFullTotalUs": 32,
+        "memorySomeTotalUs": 33
+      },
+      "candidateLogSha256": "9d895fa5a992ebbc67bd50ef4f7745cd98280c96e04b1ac900cf5a8bdacd1f2f",
+      "candidateRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "candidateTaskOutcomes": {
+        "executed": 29,
+        "fingerprintSha256": "fac866154e807e972c8498f73376941906b18e853c87f773817c53b3d731ea23",
+        "fromCache": 21,
+        "noSource": 2,
+        "skipped": 0,
+        "total": 65,
+        "upToDate": 13
+      },
+      "controlDurationMs": 58192,
+      "controlHostPressure": {
+        "available": true,
+        "cpuSomeTotalUs": 3937894,
+        "ioFullTotalUs": 16298191,
+        "ioSomeTotalUs": 33618476,
+        "memoryFullTotalUs": 253,
+        "memorySomeTotalUs": 261
+      },
+      "controlLogSha256": "5ab8b10eae69fa698618e6f19c7fb9cd7e59315aea04aac5f6c3c31b5ea9014a",
+      "controlRequiredOutputSha256": "bcd63f30ac38678ca4813de21515deafcf34c7abd3ba9692993107fe065122f8",
+      "controlTaskOutcomes": {
+        "executed": 340,
+        "fingerprintSha256": "cfbff780cf40e925bfeab07c90957c572125dc778a328d9c775630bcd904a71b",
+        "fromCache": 362,
+        "noSource": 222,
+        "skipped": 0,
+        "total": 1475,
+        "upToDate": 551
+      },
+      "order": "CANDIDATE_FIRST",
+      "pair": 8,
+      "productAttributableFailure": false,
+      "requiredOutputCount": 12,
+      "savedMs": 32631
+    }
+  ],
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":examples:java:twitter:classes"
+    ],
+    "fallbackEntrypoints": [
+      "classes"
+    ],
+    "omittedProjectCount": 310,
+    "omittedProjectRatio": 0.9810126582278481,
+    "requiredOutputs": [
+      "examples/java/twitter/build/classes/java/main/**"
+    ],
+    "selectedProjectCount": 6,
+    "totalProjectCount": 316
+  },
+  "rawEvidenceSha256": "ffd0a2a908ef934ca7232387bdafda1b9a597eea1f139a1ccde0d1e03f9a5504",
+  "result": {
+    "candidateMeanMs": 24958.125,
+    "controlMeanMs": 65080.875,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE",
+    "executionShapeObserved": true,
+    "executionShapeStable": true,
+    "interval95SavedMs": [
+      33867.125,
+      51469.5
+    ],
+    "meanSavedMs": 40122.75,
+    "pairs": 8,
+    "positivePairs": 8,
+    "qualified": true,
+    "reductionRatio": 0.6165060011869846,
+    "targetWarmupShapeObserved": true,
+    "targetWarmupShapeStable": true
+  },
+  "schemaVersion": "buildopt.evidence/terminal-qualification-snapshot/v1",
+  "sourceBindings": {
+    "generatedManifestSha256": "aa61ba8def992df2299bc95e653f5a26ee861cc0e5ef8fac0a2992b4a186bf37",
+    "graphSha256": "c342444dba6510aa52b51b87fd21fa2429d9805d56a4ddd01acb84c55fc2f790",
+    "manifestSha256": "c33c0d1b7c5ffef2480af1d689acbfa306e6ad3a1763025e419c0abba7eaa6fa",
+    "resolvedDependenciesSha256": "311576d0f2ae86a60d7d01931d3b390504474a8897d6af49185bb2e8fa8f7cf7",
+    "sourceEvidenceSha256": "1df3390476c3559802d2310a5633a36d974e377246f82dcda63abbefb8e3a779"
+  },
+  "subject": {
+    "pipelineClass": "auto-classes-938c4c5f",
+    "repositoryId": "apache/beam",
+    "repositoryRevision": "db6daeecbd9b9a50a0dfc0d9118f312716e34f94"
+  }
+}

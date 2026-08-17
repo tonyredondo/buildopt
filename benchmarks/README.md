@@ -21,28 +21,46 @@ For the decision-ready product summary, see the [current POC one-pager](../docs/
 The [detailed performance findings](../docs/findings/build-optimization-performance.md)
 retain mechanism-specific and historical experiments for engineering review.
 
-### Current automatic one-command matrix
+### Current automatic one-command terminal result
 
-The [automatic end-to-end evidence](./results/poc-magic-end-to-end-value-v1/README.md)
-tests the customer-shaped `buildopt optimize` path with zero manual BuildOpt
-files. Ktor qualifies at 82.00% lower measured wall time and a 27-build
-payback. Beam reduces 316 projects to six and replay wall time by 75.97%, but
-its complete first-decision cost requires 37 matching builds and exceeds the
-declared maximum of 30. Spring is directly positive but uneconomic, Groovy and
-Kafka regress, and Micronaut retains native before timing. The terminal gate is
-therefore explicitly incomplete at 1/2 economically qualified families.
+The [published terminal evidence](./results/poc-magic-end-to-end-value-v2/README.md)
+tests the customer-shaped `buildopt optimize` path with public `v0.6.1`,
+fresh package/checkouts/BuildOpt state and zero manual BuildOpt files.
 
-A later [Beam calibration-cost preflight](./results/poc-magic-calibration-cost-v1/README.md)
-uses the stricter authoritative dependency/task-shape protocol. It reduces
-comparable learning cost from 1,097.547 to 988.145 seconds, measures a
-61.916-to-23.754-second direct effect across 8/8 positive pairs, and improves
-payback from 33 to 26 builds. The absolute cost is higher than the older
-558.913-second matrix observation because the protocols are not equivalent;
-the new run binds 2.63 GB of dependencies and requires stable measured task
-shapes. It makes Beam the second economically qualified development family,
-but does not replace the required fresh published-package terminal rerun.
+| Repository / workflow | Graph | Native mean | BuildOpt mean | Direct result | Payback |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Ktor `jvmJar` | 133 -> 10 | 38.810 s | 7.830 s | **79.82% faster**, 8/8 pairs | 26 builds |
+| Beam `classes` | 316 -> 6 | 65.081 s | 24.958 s | **61.65% faster**, 8/8 pairs | 28 builds |
 
-Validate the normalized summary and every retained raw result with:
+Both rows have positive paired intervals, lower candidate p95, exact required
+outputs, stable task shapes, successful full-graph fallback and zero
+product-attributable failures. An honest Ktor root build-logic case completes
+native Gradle and retains it with `GLOBAL_CHANGE_REQUIRES_FULL_GRAPH` without
+calibration or a performance claim.
+
+Both arms receive identical content-bound dependencies and native-cache seeds;
+daemon/configuration warmup is outside measured samples. The result therefore
+compares the installed POC with optimized native Gradle rather than a cold
+download or unequal cache opportunity.
+
+Validate every retained result, pair, output hash, p95, fallback, economic
+calculation, package binding and native case with:
+
+```bash
+./dev/check-magic-end-to-end-value-v2
+```
+
+### Historical automatic diagnostic matrix
+
+The earlier [v1 automatic matrix](./results/poc-magic-end-to-end-value-v1/README.md)
+remains immutable diagnostic evidence. It originally qualified only Ktor;
+Spring and Beam were directly positive but exceeded the 30-build payback,
+Groovy and Kafka regressed, and Micronaut safely stopped before timing. The
+later [Beam calibration-cost preflight](./results/poc-magic-calibration-cost-v1/README.md)
+made Beam economically viable by reducing comparable learning cost from
+1,097.547 to 988.145 seconds and payback from 33 to 26 builds. Those development
+runs motivated, but are not substituted for, the public-package terminal v2
+capture.
 
 ```bash
 ./dev/check-magic-end-to-end-value

@@ -55,18 +55,19 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > [current one-pager](./docs/findings/buildopt-poc-handoff.md)
 > and [generalization audit](./docs/findings/buildopt-generalization-audit.md).
 
-> **Current automatic status:** the zero-manual-file `buildopt optimize` matrix
-> is intentionally less mature than the reviewed profiles above. Ktor qualifies
-> at **82.00% lower measured wall time** with a 27-build payback. A newer Beam
-> calibration preflight binds 2.63 GB of dependencies in place, preserves eight
-> measured pairs and stable task shapes, and measures **61.64% lower wall time**
-> with a 26-build payback. This provides two economically qualified development
-> families, but the terminal gate is still open until one published package
-> repeats both from fresh install-to-decision state. Spring is positive but
-> uneconomic; Groovy and Kafka are slower; Micronaut retains native before
-> timing because root `assemble` output semantics remain ambiguous. See the
-> [automatic matrix](./benchmarks/results/poc-magic-end-to-end-value-v1/README.md)
-> and [Beam calibration economics](./benchmarks/results/poc-magic-calibration-cost-v1/README.md).
+> **Current automatic status:** immutable public `v0.6.1` has completed the
+> zero-manual-file terminal POC gate. From fresh Ktor state,
+> `buildopt optimize jvmJar --max-workers=12` reduces 133 to ten projects and
+> measures **79.82% lower wall time** with 8/8 positive pairs and 26-build
+> payback. From fresh Apache Beam state, `buildopt optimize classes
+> --max-workers=12` reduces 316 to six projects and measures **61.65% lower
+> wall time** with 8/8 positive pairs and 28-build payback. Both preserve exact
+> required outputs, lower p95 and pass full-graph fallback. A Ktor root
+> build-logic change completes native Gradle and safely creates no calibration
+> or timing claim. See the
+> [published terminal result](./benchmarks/results/poc-magic-end-to-end-value-v2/README.md);
+> the [v1 matrix](./benchmarks/results/poc-magic-end-to-end-value-v1/README.md)
+> remains historical diagnostic evidence rather than being rewritten.
 
 > **POC onboarding north star:** install BuildOpt, open a Gradle repository and
 > run `buildopt optimize build`. The command now has a stable state/result,

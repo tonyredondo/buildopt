@@ -3721,6 +3721,7 @@ The one-command onboarding contract is validated separately:
 ./dev/check-magic-wow-report
 ./dev/check-magic-calibration
 ./dev/check-magic-end-to-end-value
+./dev/check-magic-end-to-end-value-v2
 ./dev/check-magic-calibration-cost
 ```
 
@@ -3746,19 +3747,26 @@ flag or calibration, and records the decision in nanoseconds. The same checker
 proves that a tampered profile runs native, repairs only from still-valid
 evidence, and becomes selectable on the following exact invocation.
 
-The end-to-end value checker validates the first automatic public-repository
-matrix and its retained raw `result.json` files. It deliberately expects the
-terminal block to remain incomplete: Ktor is the only economically qualified
-family under the declared 30-build maximum; Beam and Spring are directly
-positive but exceed that payback, Groovy and Kafka regress, and Micronaut makes
-no timing claim. The checker must not convert reviewed historical profiles or
-an unretained observation into current automatic evidence.
+The v1 end-to-end value checker preserves the first automatic
+public-repository matrix and its retained raw `result.json` files as
+diagnostic history. It deliberately expects that historical capture to remain
+incomplete rather than rewriting it after later improvements.
 The later calibration-cost checker independently recomputes the retained Beam
 preflight: authoritative read-only dependency binding, one immutable native
 cache seed, measured task-shape stabilization, eight positive alternating
 pairs, exact outputs, successful fallback, 109.402-second comparable cost
 reduction and 26-build payback. It does not rewrite the earlier matrix or claim
 that its different protocol has the same absolute learning cost.
+The v2 terminal checker binds public `v0.6.1` and recomputes two fresh
+install-to-decision results. Ktor reduces 133 to ten projects and measures
+38.810 to 7.830 seconds (79.82%, 26-build payback); Beam reduces 316 to six and
+measures 65.081 to 24.958 seconds (61.65%, 28-build payback). It checks all
+eight pair durations, output hashes, task-shape stability, p95, fallback,
+package/result/evidence digests and the zero-manual-file boundary. It also
+requires the separate Ktor global-build-logic case to retain a successful
+native build without calibration or a timing claim. Rejected `v0.6.0`
+environment and Configuration Cache attempts remain preserved but contribute
+no timing observation.
 The CI onboarding checker then proves one command on GitHub and GitLab,
 provider-bound path-independent exact checkpoint reuse, cross-repository and
 revision rejection, exact argv, private checksummed review artifacts and child

@@ -244,17 +244,22 @@ and honest native decisions when the idea does not pay.
 
 ## Current end-to-end result and immediate next step
 
-The first automatic matrix is preserved in
-[`poc-magic-end-to-end-value-v1`](../../benchmarks/results/poc-magic-end-to-end-value-v1/README.md).
-Ktor qualifies at an 82.00% direct saving and 27-build payback. Beam passes all
-direct value, output, tail and fallback gates at a 75.97% saving, but its
-558.913-second first-decision cost requires 37 builds. Spring is positive but
-uneconomic, Groovy and Kafka regress, and Micronaut safely stops before timing.
-The end-to-end block therefore remains incomplete at 1/2 qualified families.
+The terminal
+[`poc-magic-end-to-end-value-v2`](../../benchmarks/results/poc-magic-end-to-end-value-v2/README.md)
+bundle closes this roadmap's install-to-value gate with immutable public
+`v0.6.1`. Fresh Ktor and Beam state requires no manual BuildOpt files,
+qualifies at 79.82% and 61.65% lower wall time respectively, passes 8/8 pairs,
+exact outputs, lower p95 and full fallback, and repays learning in 26 and 28
+matching builds. A Ktor root build-logic change completes native Gradle and
+retains it without calibration or a timing claim.
 
-Complete `POC-MAGIC-CALIBRATION-COST-001` next. It must reduce generic
-snapshot/base-warm overhead under exact bindings, not change the eight-pair
-protocol or increase the payback threshold to rescue Beam. Once two families
-qualify, publish one immutable package and repeat fresh Ktor and Beam
-install-to-decision captures plus at least one native-retained negative. Only
-that published, fresh rerun may close `POC-MAGIC-END-TO-END-VALUE-001`.
+The earlier
+[`poc-magic-end-to-end-value-v1`](../../benchmarks/results/poc-magic-end-to-end-value-v1/README.md)
+matrix remains diagnostic history, and the calibration-cost result remains the
+development evidence that made Beam economically eligible. Neither is
+substituted for the published terminal capture.
+
+The immediate next block is `POC-CENTRAL-STORAGE-CONTRACT-001`. It must define
+separate Gradle-object and BuildOpt-state namespaces, immutable generations,
+compare-and-swap, retention and outage behavior for an optional HTTP/HTTPS
+service. Local `buildopt optimize` must remain usable without that service.

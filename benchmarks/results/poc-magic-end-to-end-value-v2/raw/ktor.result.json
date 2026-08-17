@@ -1,0 +1,193 @@
+{
+  "attempt": 1,
+  "bindings": {
+    "completeness": "PROFILE_PORTFOLIO_COMPLETE",
+    "discoveryContextSha256": "65e0ec7d707077ad8ba231a8cfd96b1e9a3125b1fb2f36acfa7b83e6d7894505",
+    "executableSha256": "f7cd46f3d9460090cd2e80398eca3c1e062a17f8cfe714b5446e1f14fc251101",
+    "invocationSha256": "95c32b9c769d344d4cb90e453c66ac2b30e8e0b35cf819443b3300e963987668",
+    "repositoryScopeSha256": "dbccdcb58322dddcff99e377e9b23680d4a3d6d0d2d385f15fe07a47df8a18ca",
+    "sha256": "b149e38806987e75ebcae142b3af19bbbb95b4e2749cd481ac54ffa39040fcbc",
+    "wrapperSha256": "1b98a06b0a7c74360e82dbbb1d55012b934de96a1ad9641152a04ebb4f0c881f"
+  },
+  "budget": {
+    "maxBreakEvenBuilds": 30,
+    "pairs": 8,
+    "wallTimeSeconds": 7200
+  },
+  "calibration": {
+    "breakEvenBuilds": 26,
+    "calibrationCostMs": 784031,
+    "candidateMeanMs": 7830.375,
+    "candidateP95Ms": 11957,
+    "controlMeanMs": 38809.75,
+    "controlP95Ms": 61575,
+    "discoverySha256": "d410ed51d9015c7d0f47e0b5688c632cd71d2ad0d203895587be35b20dcd972c",
+    "evidenceSha256": "e049515c18c872d78765cd8d63b975ddcb9ac498d6f23e133ec837e903b14a0d",
+    "fallbackSuccessful": true,
+    "generatedFiles": [
+      ".buildopt/optimize/public-v061/calibration/evidence.json"
+    ],
+    "interval95SavedMs": [
+      24679.375,
+      38922
+    ],
+    "maximumBreakEvenBuilds": 30,
+    "meanSavedMs": 30979.375,
+    "pairsMeasured": 8,
+    "pairsRequested": 8,
+    "performed": true,
+    "positivePairs": 8,
+    "productionAuthorized": false,
+    "qualified": true,
+    "reason": "CANDIDATE_CALIBRATION_QUALIFIED",
+    "reductionRatio": 0.7982369121161563,
+    "reused": false,
+    "status": "COMPLETE",
+    "testOptimization": "OUT_OF_SCOPE",
+    "valueGatePassed": true
+  },
+  "calibrationPerformed": true,
+  "completedAt": "2026-08-17T18:24:47.47408599Z",
+  "discovery": {
+    "baseRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+    "candidateEntrypoints": [
+      ":ktor-server-webjars:jvmJar"
+    ],
+    "changeFamily": "DEPENDENCY_SOURCE",
+    "changeSha256": "e0c6e8a24b966f1511111321c7f5d7b9b8d15a3644f17ba3df1448683ec36abf",
+    "changedPathCount": 1,
+    "changedProjects": [
+      ":ktor-server-webjars"
+    ],
+    "entrypoints": [
+      "jvmJar"
+    ],
+    "generatedFiles": [
+      ".buildopt/optimize/public-v061/discovery/changes.txt",
+      ".buildopt/optimize/public-v061/discovery/fallback-changes.txt",
+      ".buildopt/optimize/public-v061/discovery/generated-manifest.json",
+      ".buildopt/optimize/public-v061/discovery/graph.json",
+      ".buildopt/optimize/public-v061/discovery/manifest.json",
+      ".buildopt/optimize/public-v061/discovery/output-contract.json",
+      ".buildopt/optimize/public-v061/discovery/proposal.json"
+    ],
+    "graph": {
+      "omittedProjects": 123,
+      "selectedProjects": 10,
+      "totalProjects": 133
+    },
+    "productionAuthorized": false,
+    "reason": "STRUCTURAL_CANDIDATE_DISCOVERED",
+    "repositoryId": "ktorio/ktor",
+    "requiredOutputs": [
+      "ktor-server/ktor-server-plugins/ktor-server-webjars/build/libs/ktor-server-webjars-jvm-3.6.0-SNAPSHOT.jar"
+    ],
+    "reviewRequired": true,
+    "source": "LOCAL_UPSTREAM",
+    "status": "COMPLETE",
+    "targetRevision": "640e0bf3ccae96b35437272d99dd3d9c0b309da3",
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "durationMs": 823673,
+  "execution": {
+    "authoritative": true,
+    "exitCode": 0,
+    "mode": "OPTIMIZED_NATIVE",
+    "started": true
+  },
+  "generatedFiles": {
+    "calibration": [
+      ".buildopt/optimize/public-v061/calibration/evidence.json"
+    ],
+    "discovery": [
+      ".buildopt/optimize/public-v061/discovery/changes.txt",
+      ".buildopt/optimize/public-v061/discovery/fallback-changes.txt",
+      ".buildopt/optimize/public-v061/discovery/generated-manifest.json",
+      ".buildopt/optimize/public-v061/discovery/graph.json",
+      ".buildopt/optimize/public-v061/discovery/manifest.json",
+      ".buildopt/optimize/public-v061/discovery/output-contract.json",
+      ".buildopt/optimize/public-v061/discovery/proposal.json"
+    ],
+    "portfolio": [
+      ".buildopt/optimize/public-v061/portfolio/portfolio.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/9bf22e26980b51f3261a23b86c5ad6ccc40ec057cd2aacea8fabe404f0334bfc/evidence.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/9bf22e26980b51f3261a23b86c5ad6ccc40ec057cd2aacea8fabe404f0334bfc/generated-manifest.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/9bf22e26980b51f3261a23b86c5ad6ccc40ec057cd2aacea8fabe404f0334bfc/graph.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/9bf22e26980b51f3261a23b86c5ad6ccc40ec057cd2aacea8fabe404f0334bfc/manifest.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/9bf22e26980b51f3261a23b86c5ad6ccc40ec057cd2aacea8fabe404f0334bfc/profile.json"
+    ],
+    "result": ".buildopt/optimize/public-v061/result.json",
+    "state": ".buildopt/optimize/public-v061/state.json",
+    "valueJson": ".buildopt/optimize/public-v061/value-report.json",
+    "valueMarkdown": ".buildopt/optimize/public-v061/value-report.md"
+  },
+  "generation": 1,
+  "manualFilesRequired": 0,
+  "native": {
+    "authoritative": true,
+    "exitCode": 0,
+    "started": true
+  },
+  "outcome": "LEARNING",
+  "phase": "QUALIFIED",
+  "portfolio": {
+    "changeFamily": "DEPENDENCY_SOURCE",
+    "familySha256": "9bf22e26980b51f3261a23b86c5ad6ccc40ec057cd2aacea8fabe404f0334bfc",
+    "generatedFiles": [
+      ".buildopt/optimize/public-v061/portfolio/portfolio.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/9bf22e26980b51f3261a23b86c5ad6ccc40ec057cd2aacea8fabe404f0334bfc/evidence.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/9bf22e26980b51f3261a23b86c5ad6ccc40ec057cd2aacea8fabe404f0334bfc/generated-manifest.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/9bf22e26980b51f3261a23b86c5ad6ccc40ec057cd2aacea8fabe404f0334bfc/graph.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/9bf22e26980b51f3261a23b86c5ad6ccc40ec057cd2aacea8fabe404f0334bfc/manifest.json",
+      ".buildopt/optimize/public-v061/portfolio/profiles/9bf22e26980b51f3261a23b86c5ad6ccc40ec057cd2aacea8fabe404f0334bfc/profile.json"
+    ],
+    "performed": true,
+    "portfolioFile": ".buildopt/optimize/public-v061/portfolio/portfolio.json",
+    "productionAuthorized": false,
+    "profileCount": 1,
+    "profileFile": ".buildopt/optimize/public-v061/portfolio/profiles/9bf22e26980b51f3261a23b86c5ad6ccc40ec057cd2aacea8fabe404f0334bfc/profile.json",
+    "profileSha256": "3abfea839609148c4711bf23482c3f01f6479b6c3e5dd38867593d9dbaaf7bd6",
+    "reason": "QUALIFIED_PROFILE_STORED",
+    "reused": false,
+    "selectionPerformed": false,
+    "status": "COMPLETE",
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "portfolioPerformed": true,
+  "productionAuthorized": false,
+  "reason": "QUALIFIED_PROFILE_STORED",
+  "resume": {
+    "accepted": false,
+    "checkpointFound": false,
+    "mode": "NEVER",
+    "reason": "RESUME_DISABLED"
+  },
+  "schemaVersion": "buildopt.poc/optimize-result/v1",
+  "selection": {
+    "changeFamily": "",
+    "completedBeforeGradle": true,
+    "durationNs": 261,
+    "failedBindings": [],
+    "familySha256": "",
+    "originalEntrypoints": [],
+    "performed": false,
+    "productionAuthorized": false,
+    "profileFile": "",
+    "profileSha256": "",
+    "reason": "NO_QUALIFIED_CHECKPOINT",
+    "selected": false,
+    "selectedEntrypoints": [],
+    "status": "SKIPPED",
+    "testOptimization": "OUT_OF_SCOPE",
+    "validatedBindings": []
+  },
+  "selectionPerformed": false,
+  "startedAt": "2026-08-17T18:11:03.800196368Z",
+  "testOptimization": "OUT_OF_SCOPE",
+  "value": {
+    "cumulativeSelectionOverheadMs": 0,
+    "matchingReplayCount": 0,
+    "projectedCumulativeNetSavedMs": -784031,
+    "projectedGrossSavedMs": 0
+  }
+}

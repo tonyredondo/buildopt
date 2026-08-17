@@ -1,0 +1,262 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [summary.json]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_summary=${1:-"${buildopt_root}/benchmarks/results/poc-magic-end-to-end-value-v2/summary.json"}
+buildopt_contract="${buildopt_root}/specs/poc-magic-end-to-end-value-v2.json"
+
+for buildopt_command in jq sha256sum awk; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf '%s is required to validate terminal one-command evidence\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  .schemaVersion == "buildopt.poc/magic-end-to-end-value-contract/v2" and
+  .workItem == "POC-MAGIC-END-TO-END-VALUE-001" and
+  .qualification == {
+    exactRequiredOutputs: true,
+    fallbackSuccessful: true,
+    freshBuildOptState: true,
+    freshRepositoryCheckout: true,
+    maximumBreakEvenBuilds: 30,
+    minimumDifferentQualifiedFamilies: 2,
+    minimumPairs: 8,
+    nonRegressiveCandidateP95: true,
+    positivePairedLowerBound: true,
+    sharedGradleInputsMustBeIdenticalBetweenArms: true,
+    zeroManualBuildOptFiles: true,
+    zeroProductAttributableFailures: true
+  } and
+  .package == {
+    freshPrefixRequired: true,
+    immutablePublishedReleaseRequired: true,
+    sourceRevisionRequired: true
+  } and
+  .authority == {
+    designPartnerRequired: false,
+    productionAuthorized: false,
+    proofOfConcept: true,
+    soakRequired: false,
+    testOptimization: "OUT_OF_SCOPE"
+  } and
+  .recomputation.repositoriesAveraged == false and
+  .recomputation.mechanismPercentagesAdded == false
+' "${buildopt_contract}" >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-magic-end-to-end-value/v2" and
+  .workItem == "POC-MAGIC-END-TO-END-VALUE-001" and
+  (.repositories | length) == 2 and
+  ([.repositories[].repositoryId] | unique | length) == 2 and
+  (.negativeCases | length) >= 1 and
+  (.rejectedAttempts | length) == 2 and
+  .package == {
+    asset: "buildopt-0.6.1-linux-amd64.tar.gz",
+    assetSha256: "a543acda9ec47914f25f1b4994e9337aae5873fa89d32bedb807d078357307f9",
+    executableSha256: "f7cd46f3d9460090cd2e80398eca3c1e062a17f8cfe714b5446e1f14fc251101",
+    freshPrefix: true,
+    installerSha256: "57d63b6a0dce7794a3a26123ef4326c2b0bbe63ca6e2964041e573452337a2ec",
+    publicRelease: true,
+    releaseRunId: 32053101651,
+    releaseRunUrl: "https://github.com/tonyredondo/buildopt/actions/runs/32053101651",
+    releaseUrl: "https://github.com/tonyredondo/buildopt/releases/tag/v0.6.1",
+    sourceRevision: "a354e3ee7fffc7abe83b8abe0a125956b159e01a",
+    tag: "v0.6.1",
+    version: "0.6.1"
+  } and
+  .protocol == {
+    calibrationBudgetSeconds: 7200,
+    freshBuildOptState: true,
+    freshRepositoryCheckout: true,
+    maximumBreakEvenBuilds: 30,
+    pairs: 8,
+    sharedGradleDependencyBinding: true,
+    sharedNativeCacheSeededEqually: true,
+    unmeasuredDaemonConfigurationWarmup: true
+  } and
+  .acceptance == {
+    allFreshInstallToDecision: true,
+    decision: "COMPLETE",
+    exactRequiredOutputs: true,
+    minimumDifferentQualifiedFamilies: 2,
+    nativeRetainedCases: 1,
+    publishedPackageUsed: true,
+    qualifiedFamilies: 2,
+    zeroManualBuildOptFiles: true,
+    zeroProductAttributableFailures: true
+  } and
+  .boundaries == {
+    designPartnerRequired: false,
+    mechanismPercentagesAdded: false,
+    productionAuthorized: false,
+    proofOfConcept: true,
+    repositoriesAveraged: false,
+    soakRequired: false,
+    testOptimization: "OUT_OF_SCOPE"
+  }
+' "${buildopt_summary}" >/dev/null
+
+buildopt_evidence_root=$(cd -- "$(dirname -- "${buildopt_summary}")" && pwd -P)
+buildopt_executable_sha=$(jq -r '.package.executableSha256' "${buildopt_summary}")
+
+while IFS= read -r buildopt_row; do
+    buildopt_raw_relative=$(jq -r '.rawResult' <<<"${buildopt_row}")
+    buildopt_raw_expected=$(jq -r '.rawResultSha256' <<<"${buildopt_row}")
+    buildopt_snapshot_relative=$(jq -r '.qualificationSnapshot' <<<"${buildopt_row}")
+    buildopt_snapshot_expected=$(jq -r '.qualificationSnapshotSha256' <<<"${buildopt_row}")
+    buildopt_raw_file="${buildopt_evidence_root}/${buildopt_raw_relative}"
+    buildopt_snapshot_file="${buildopt_evidence_root}/${buildopt_snapshot_relative}"
+
+    for buildopt_file in "${buildopt_raw_file}" "${buildopt_snapshot_file}"; do
+        [[ -f ${buildopt_file} ]] || {
+            printf 'terminal evidence file is missing: %s\n' "${buildopt_file}" >&2
+            exit 1
+        }
+    done
+    [[ $(sha256sum "${buildopt_raw_file}" | awk '{print $1}') == "${buildopt_raw_expected}" ]] || {
+        printf 'terminal result digest mismatch: %s\n' "${buildopt_raw_relative}" >&2
+        exit 1
+    }
+    [[ $(sha256sum "${buildopt_snapshot_file}" | awk '{print $1}') == "${buildopt_snapshot_expected}" ]] || {
+        printf 'terminal qualification digest mismatch: %s\n' "${buildopt_snapshot_relative}" >&2
+        exit 1
+    }
+
+    jq -e --argjson row "${buildopt_row}" '
+      .schemaVersion == "buildopt.poc/optimize-result/v1" and
+      .reason == "QUALIFIED_PROFILE_STORED" and
+      .phase == "QUALIFIED" and
+      .manualFilesRequired == 0 and
+      .native == {authoritative: true, exitCode: 0, started: true} and
+      .execution.authoritative == true and .execution.exitCode == 0 and
+      .discovery.repositoryId == $row.repositoryId and
+      .discovery.baseRevision == $row.baseRevision and
+      .discovery.targetRevision == $row.targetRevision and
+      .discovery.changeFamily == $row.changeFamily and
+      .discovery.graph == $row.graph and
+      .calibration.controlMeanMs == $row.controlMeanMs and
+      .calibration.candidateMeanMs == $row.candidateMeanMs and
+      .calibration.meanSavedMs == $row.meanSavedMs and
+      .calibration.reductionRatio == $row.reductionRatio and
+      .calibration.interval95SavedMs == $row.interval95SavedMs and
+      .calibration.controlP95Ms == $row.controlP95Ms and
+      .calibration.candidateP95Ms == $row.candidateP95Ms and
+      .calibration.calibrationCostMs == $row.calibrationCostMs and
+      .calibration.breakEvenBuilds == $row.breakEvenBuilds and
+      .calibration.positivePairs == 8 and
+      .calibration.pairsMeasured == 8 and
+      .calibration.pairsRequested == 8 and
+      .calibration.qualified and .calibration.valueGatePassed and
+      .calibration.fallbackSuccessful and
+      .calibration.evidenceSha256 == $row.rawQualificationEvidenceSha256 and
+      .productionAuthorized == false and .testOptimization == "OUT_OF_SCOPE"
+    ' "${buildopt_raw_file}" >/dev/null
+
+    jq -e --argjson row "${buildopt_row}" --arg executable "${buildopt_executable_sha}" '
+      .schemaVersion == "buildopt.evidence/terminal-qualification-snapshot/v1" and
+      .rawEvidenceSha256 == $row.rawQualificationEvidenceSha256 and
+      .evidenceState == "QUALIFIED" and
+      .subject.repositoryId == $row.repositoryId and
+      .subject.repositoryRevision == $row.targetRevision and
+      .plan.totalProjectCount == $row.graph.totalProjects and
+      .plan.selectedProjectCount == $row.graph.selectedProjects and
+      .plan.omittedProjectCount == $row.graph.omittedProjects and
+      .execution.executableSha256 == $executable and
+      .execution.candidateSurface == "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY" and
+      .execution.mechanisms == ["BUILD_IMPACT"] and
+      .execution.launcherOverheadIncluded == true and
+      (.observations | length) == 8 and
+      ([.observations[].pair] == [1,2,3,4,5,6,7,8]) and
+      ([.observations[] | select(
+        .savedMs > 0 and
+        .requiredOutputCount > 0 and
+        .controlRequiredOutputSha256 == .candidateRequiredOutputSha256 and
+        .productAttributableFailure == false
+      )] | length) == 8 and
+      ([.observations[].controlTaskOutcomes.fingerprintSha256] | unique | length) == 1 and
+      ([.observations[].candidateTaskOutcomes.fingerprintSha256] | unique | length) == 1 and
+      (([.observations[].controlDurationMs] | add / length) == $row.controlMeanMs) and
+      (([.observations[].candidateDurationMs] | add / length) == $row.candidateMeanMs) and
+      (([.observations[].savedMs] | add / length) == $row.meanSavedMs) and
+      (([.observations[].controlDurationMs] | max) == $row.controlP95Ms) and
+      (([.observations[].candidateDurationMs] | max) == $row.candidateP95Ms) and
+      .result.controlMeanMs == $row.controlMeanMs and
+      .result.candidateMeanMs == $row.candidateMeanMs and
+      .result.meanSavedMs == $row.meanSavedMs and
+      .result.reductionRatio == $row.reductionRatio and
+      .result.interval95SavedMs == $row.interval95SavedMs and
+      .result.positivePairs == 8 and .result.qualified == true and
+      .fallback.mode == "FULL_GRAPH" and .fallback.buildSuccessful == true and
+      .boundaries == {
+        productionAuthorized: false,
+        proofOfConcept: true,
+        repositorySpecificRuleAdded: false,
+        testOptimizationModified: false
+      }
+    ' "${buildopt_snapshot_file}" >/dev/null
+
+    buildopt_recomputed_break_even=$(jq -n \
+        --argjson cost "$(jq -r '.calibrationCostMs' <<<"${buildopt_row}")" \
+        --argjson saving "$(jq -r '.meanSavedMs' <<<"${buildopt_row}")" \
+        '$cost / $saving | ceil')
+    [[ ${buildopt_recomputed_break_even} == "$(jq -r '.breakEvenBuilds' <<<"${buildopt_row}")" ]] || {
+        printf 'terminal break-even recomputation failed: %s\n' \
+            "$(jq -r '.repositoryId' <<<"${buildopt_row}")" >&2
+        exit 1
+    }
+done < <(jq -c '.repositories[]' "${buildopt_summary}")
+
+while IFS= read -r buildopt_row; do
+    buildopt_relative=$(jq -r '.rawResult' <<<"${buildopt_row}")
+    buildopt_expected=$(jq -r '.rawResultSha256' <<<"${buildopt_row}")
+    buildopt_file="${buildopt_evidence_root}/${buildopt_relative}"
+    [[ -f ${buildopt_file} ]] || {
+        printf 'native-retained result is missing: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+    [[ $(sha256sum "${buildopt_file}" | awk '{print $1}') == "${buildopt_expected}" ]] || {
+        printf 'native-retained result digest mismatch: %s\n' "${buildopt_relative}" >&2
+        exit 1
+    }
+    jq -e --argjson row "${buildopt_row}" '
+      .schemaVersion == "buildopt.poc/optimize-result/v1" and
+      .discovery.repositoryId == $row.repositoryId and
+      .discovery.targetRevision == $row.targetRevision and
+      .reason == $row.reason and .phase == "NATIVE_RETAINED" and
+      .native == {authoritative: true, exitCode: 0, started: true} and
+      .manualFilesRequired == 0 and
+      .calibration.performed == false and .calibration.qualified == false and
+      .productionAuthorized == false and .testOptimization == "OUT_OF_SCOPE"
+    ' "${buildopt_file}" >/dev/null
+done < <(jq -c '.negativeCases[]' "${buildopt_summary}")
+
+while IFS= read -r buildopt_row; do
+    buildopt_relative=$(jq -r '.rawResult' <<<"${buildopt_row}")
+    buildopt_expected=$(jq -r '.rawResultSha256' <<<"${buildopt_row}")
+    buildopt_file="${buildopt_evidence_root}/${buildopt_relative}"
+    [[ -f ${buildopt_file} ]] || {
+        printf 'rejected attempt is missing: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+    [[ $(sha256sum "${buildopt_file}" | awk '{print $1}') == "${buildopt_expected}" ]] || {
+        printf 'rejected attempt digest mismatch: %s\n' "${buildopt_relative}" >&2
+        exit 1
+    }
+    jq -e --argjson row "${buildopt_row}" '
+      .schemaVersion == "buildopt.poc/optimize-result/v1" and
+      .reason == $row.reason and .outcome == "NATIVE_RETAINED" and
+      .manualFilesRequired == 0 and .calibration.performed == false and
+      .productionAuthorized == false and .testOptimization == "OUT_OF_SCOPE"
+    ' "${buildopt_file}" >/dev/null
+done < <(jq -c '.rejectedAttempts[]' "${buildopt_summary}")
+
+printf 'Magic end-to-end terminal evidence OK: 2/2 qualified families, 1 safe native-retained case\n'

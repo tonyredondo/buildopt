@@ -304,34 +304,33 @@ server, credential, hand-authored profile or internal state option.
 ## What improvement should you expect?
 
 Do not use one headline percentage as an expectation for a new repository.
-The current comparable evidence measures the same installed structural-only
-method against optimized native Gradle:
+The latest zero-manual-file evidence uses the public package and the exact
+`buildopt optimize` command described above:
 
 | Repository | Native mean | BuildOpt mean | Result | Current decision |
 | --- | ---: | ---: | ---: | --- |
-| Spring Framework | 13.311 s | 11.183 s | **15.99% faster**, 8/8 balanced blocks | Qualify. |
-| OpenTelemetry | 87.869 s | 74.713 s | **14.97% faster**, 8/8 balanced blocks | Qualify. |
-| Apache Kafka | 113.381 s | 14.341 s | **87.35% faster**, 8/8 balanced blocks | Qualify. |
-| Micronaut Core | 30.411 s | 18.418 s | **39.44% faster**, 8/8 balanced blocks | Qualify. |
-| Apache Groovy | 79.868 s | 20.767 s | **74.00% faster**, 8/8 balanced blocks | Qualify. |
-| Ktor JVM JAR workflow | 103.724 s | 14.308 s | **86.21% faster**, 8/8 balanced blocks | Qualify. |
+| Ktor `jvmJar` | 38.810 s | 7.830 s | **79.82% faster**, 8/8 pairs | Qualify; 26-build payback. |
+| Apache Beam `classes` | 65.081 s | 24.958 s | **61.65% faster**, 8/8 pairs | Qualify; 28-build payback. |
 
-Every accepted row preserved the declared outputs byte for byte and proved
-full-graph fallback. These results show that structural reduction can create
-material value, not that a new repository will match one of these percentages.
-The propose -> measure -> evaluate workflow must establish that repository's
-own result. Safe Cache remains at native-cache parity; Runtime Tuning, Hot
-State, and standard Copy are retired. Mechanism and repository percentages are
-not averaged or added. See the [current POC one-pager](../findings/buildopt-poc-handoff.md)
-for the interpretation and roadmap, and the
+Both rows preserve the required outputs byte for byte, lower p95, pass
+full-graph fallback and repay calibration within the declared 30 matching
+builds. A Ktor root build-logic change also proves the negative path: the
+complete native build succeeds and no candidate or timing claim is created.
+
+An earlier reviewed-profile matrix reports 14.97% to 87.35% savings across
+Spring, OpenTelemetry, Kafka, Micronaut and Groovy. It demonstrates broader
+structural potential, but those owner-reviewed inputs are not substituted for
+the current zero-configuration result. A new repository must establish its own
+output semantics, measured value and economics. Safe Cache remains at
+native-cache parity; Runtime Tuning, Hot State and standard Copy are retired.
+Mechanism and repository percentages are not averaged or added. See the
+[current POC one-pager](../findings/buildopt-poc-handoff.md) for the
+interpretation and roadmap, and the
 [benchmark index](../../benchmarks/README.md#build-optimization-scorecard) for
 the raw evidence.
 
-Ktor also has three change-breadth results under the same selector:
-dependency source is **85.80% faster**, a JVM resource is **86.51% faster**,
-and a two-module mixed-source change is **77.98% faster**. Each result has
-16/16 positive pairs, exact required JARs and both fallbacks; root
-configuration retains native Gradle without a timing claim.
+The current package result is reproducible with
+`./dev/check-magic-end-to-end-value-v2`.
 
 ## Component ownership and configuration
 
@@ -344,7 +343,7 @@ justifies operating it.
 | Safe Cache experiment | Included in the native package | `BUILDOPT_SAFE_CACHE=1`; not a recommended default | `buildopt gradle` | Use only when collecting new paired POC evidence |
 | Task Intelligence | No separate installed CLI; owner evaluation in this source repository | Qualification evidence and trace contracts | `task-intelligence-evaluation` and owner checks | Prove qualification without publishing an optimization |
 | Build history | `buildopt-server` in the package | Server config and export directory on the server host | Service manager plus server API/dashboard | Start loopback server and inspect a redacted session |
-| Build Impact | `buildopt` and `buildopt-impact` in the package | Manifest and generated graph committed in the target repository | CI calls `generate` during adoption, `check` for drift, then explicit `buildopt impact` with a changed-path file | Verify candidate/full fallback and compare required outputs before interpreting timings |
+| Structural Build Impact | `buildopt` in the native package | No target-repository file for the automatic POC path; private state lives under `.buildopt/optimize` | `buildopt optimize <workflow>` discovers, calibrates and replays; the older explicit `buildopt impact` flow remains available for owner-reviewed experiments | Verify the generated value report, exact outputs, full fallback and payback before trusting a profile |
 | Patch Autopilot | Java patcher and owner workflow in this source repository; not yet a native-package CLI | Recipe registry, signing/trust material and repository policy | Owner-controlled candidate/validation workflow | Produce a draft bundle; applying remains explicit and reversible |
 | Shared Cache | `buildopt-server` | Private server config, authority and scoped credentials on operator hosts | Server service plus launcher gateway | Validate config, start loopback service, run an authorized repository |
 | Edge Cache | `buildopt-edge` | Private Edge config and authority on the Edge host | launchd, Windows SCM, or foreground process | `buildopt-edge validate`, then `serve` and `status` |

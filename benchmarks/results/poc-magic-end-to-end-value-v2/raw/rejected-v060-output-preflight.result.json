@@ -1,0 +1,150 @@
+{
+  "attempt": 1,
+  "bindings": {
+    "completeness": "DISCOVERY_COMPLETE",
+    "discoveryContextSha256": "65e0ec7d707077ad8ba231a8cfd96b1e9a3125b1fb2f36acfa7b83e6d7894505",
+    "executableSha256": "4dbcf71ae95e5e98e7df3ee65dffb528ae7571a3bcd27936facc663c7d14168f",
+    "invocationSha256": "95c32b9c769d344d4cb90e453c66ac2b30e8e0b35cf819443b3300e963987668",
+    "repositoryScopeSha256": "b95a1403f55a42ba27c660a95d36612ff4c3efdcb3789482d81df44c086b78d9",
+    "sha256": "46c947ae1c806f707f4fb36d89bcb058c113aefcc0ea2bcebdec54064ddabdde",
+    "wrapperSha256": "1b98a06b0a7c74360e82dbbb1d55012b934de96a1ad9641152a04ebb4f0c881f"
+  },
+  "budget": {
+    "maxBreakEvenBuilds": 30,
+    "pairs": 8,
+    "wallTimeSeconds": 7200
+  },
+  "calibration": {
+    "breakEvenBuilds": 0,
+    "calibrationCostMs": 0,
+    "candidateMeanMs": 0,
+    "candidateP95Ms": 0,
+    "controlMeanMs": 0,
+    "controlP95Ms": 0,
+    "discoverySha256": "",
+    "evidenceSha256": "",
+    "fallbackSuccessful": false,
+    "generatedFiles": [],
+    "interval95SavedMs": [],
+    "maximumBreakEvenBuilds": 30,
+    "meanSavedMs": 0,
+    "pairsMeasured": 0,
+    "pairsRequested": 8,
+    "performed": false,
+    "positivePairs": 0,
+    "productionAuthorized": false,
+    "qualified": false,
+    "reason": "OUTPUT_PREFLIGHT_FAILED",
+    "reductionRatio": 0,
+    "reused": false,
+    "status": "SKIPPED",
+    "testOptimization": "OUT_OF_SCOPE",
+    "valueGatePassed": false
+  },
+  "calibrationPerformed": false,
+  "completedAt": "2026-08-17T17:39:54.168134007Z",
+  "discovery": {
+    "baseRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+    "candidateEntrypoints": [],
+    "changeFamily": "",
+    "changeSha256": "e0c6e8a24b966f1511111321c7f5d7b9b8d15a3644f17ba3df1448683ec36abf",
+    "changedPathCount": 1,
+    "changedProjects": [],
+    "entrypoints": [
+      "jvmJar"
+    ],
+    "generatedFiles": [],
+    "graph": {
+      "omittedProjects": 0,
+      "selectedProjects": 0,
+      "totalProjects": 0
+    },
+    "productionAuthorized": false,
+    "reason": "OUTPUT_PREFLIGHT_FAILED",
+    "repositoryId": "ktorio/ktor",
+    "requiredOutputs": [],
+    "reviewRequired": true,
+    "source": "LOCAL_UPSTREAM",
+    "status": "NATIVE_RETAINED",
+    "targetRevision": "640e0bf3ccae96b35437272d99dd3d9c0b309da3",
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "durationMs": 130513,
+  "execution": {
+    "authoritative": true,
+    "exitCode": 0,
+    "mode": "OPTIMIZED_NATIVE",
+    "started": true
+  },
+  "generatedFiles": {
+    "calibration": [],
+    "discovery": [],
+    "portfolio": [],
+    "result": ".buildopt/optimize/public-v060/result.json",
+    "state": ".buildopt/optimize/public-v060/state.json",
+    "valueJson": ".buildopt/optimize/public-v060/value-report.json",
+    "valueMarkdown": ".buildopt/optimize/public-v060/value-report.md"
+  },
+  "generation": 1,
+  "manualFilesRequired": 0,
+  "native": {
+    "authoritative": true,
+    "exitCode": 0,
+    "started": true
+  },
+  "outcome": "NATIVE_RETAINED",
+  "phase": "NATIVE_RETAINED",
+  "portfolio": {
+    "changeFamily": "",
+    "familySha256": "",
+    "generatedFiles": [],
+    "performed": false,
+    "portfolioFile": "",
+    "productionAuthorized": false,
+    "profileCount": 0,
+    "profileFile": "",
+    "profileSha256": "",
+    "reason": "OUTPUT_PREFLIGHT_FAILED",
+    "reused": false,
+    "selectionPerformed": false,
+    "status": "SKIPPED",
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "portfolioPerformed": false,
+  "productionAuthorized": false,
+  "reason": "OUTPUT_PREFLIGHT_FAILED",
+  "resume": {
+    "accepted": false,
+    "checkpointFound": false,
+    "mode": "NEVER",
+    "reason": "RESUME_DISABLED"
+  },
+  "schemaVersion": "buildopt.poc/optimize-result/v1",
+  "selection": {
+    "changeFamily": "",
+    "completedBeforeGradle": true,
+    "durationNs": 287,
+    "failedBindings": [],
+    "familySha256": "",
+    "originalEntrypoints": [],
+    "performed": false,
+    "productionAuthorized": false,
+    "profileFile": "",
+    "profileSha256": "",
+    "reason": "NO_QUALIFIED_CHECKPOINT",
+    "selected": false,
+    "selectedEntrypoints": [],
+    "status": "SKIPPED",
+    "testOptimization": "OUT_OF_SCOPE",
+    "validatedBindings": []
+  },
+  "selectionPerformed": false,
+  "startedAt": "2026-08-17T17:37:43.655047392Z",
+  "testOptimization": "OUT_OF_SCOPE",
+  "value": {
+    "cumulativeSelectionOverheadMs": 0,
+    "matchingReplayCount": 0,
+    "projectedCumulativeNetSavedMs": 0,
+    "projectedGrossSavedMs": 0
+  }
+}
