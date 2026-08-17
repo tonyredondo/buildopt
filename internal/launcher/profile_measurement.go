@@ -597,7 +597,7 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	}
 	arm := newStructuralMeasurementArm(config, root, name)
 	arm.readOnlyDependencyRoot = config.gradleReadOnlyDependencyRoot
-	if err := gitRun("", "clone", "--quiet", "--no-checkout", "--shared", "--", config.repositoryRoot, arm.workspace); err != nil {
+	if err := cloneStructuralMeasurementRepository(config.repositoryRoot, arm.workspace); err != nil {
 		return arm, fmt.Errorf("clone %s arm: %w", name, err)
 	}
 	if err := os.MkdirAll(arm.gradleHome, 0o700); err != nil {
@@ -701,6 +701,20 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 			))
 	}
 	return arm, nil
+}
+
+func cloneStructuralMeasurementRepository(source, destination string) error {
+	originURL, originErr := gitOutput(source, "config", "--get", "remote.origin.url")
+	if err := gitRun("", "clone", "--quiet", "--no-checkout", "--shared", "--", source, destination); err != nil {
+		return err
+	}
+	if originErr != nil || strings.TrimSpace(originURL) == "" {
+		return nil
+	}
+	// A local clone rewrites origin to the source checkout. Preserve the
+	// repository's public identity because some Gradle builds derive metadata
+	// from that URL even though calibration never fetches from the network.
+	return gitRun(destination, "remote", "set-url", "origin", strings.TrimSpace(originURL))
 }
 
 func newStructuralMeasurementArm(config structuralMeasurementConfig, root, name string) structuralMeasurementArm {

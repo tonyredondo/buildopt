@@ -182,6 +182,59 @@ func TestStandaloneStructuralMeasurementKeepsIndependentGradleHomes(t *testing.T
 	}
 }
 
+func TestCloneStructuralMeasurementRepositoryPreservesPublicOrigin(t *testing.T) {
+	source := t.TempDir()
+	initMeasurementGitRepository(t, source)
+	const publicOrigin = "git@github.com:apache/beam.git"
+	if err := gitRun(source, "remote", "add", "origin", publicOrigin); err != nil {
+		t.Fatal(err)
+	}
+	destination := filepath.Join(t.TempDir(), "measurement")
+	if err := cloneStructuralMeasurementRepository(source, destination); err != nil {
+		t.Fatal(err)
+	}
+	actual, err := gitOutput(destination, "config", "--get", "remote.origin.url")
+	if err != nil || strings.TrimSpace(actual) != publicOrigin {
+		t.Fatalf("measurement origin = %q/%v, want %q", actual, err, publicOrigin)
+	}
+}
+
+func TestCloneStructuralMeasurementRepositoryWithoutOriginUsesLocalSource(t *testing.T) {
+	source := t.TempDir()
+	initMeasurementGitRepository(t, source)
+	destination := filepath.Join(t.TempDir(), "measurement")
+	if err := cloneStructuralMeasurementRepository(source, destination); err != nil {
+		t.Fatal(err)
+	}
+	actual, err := gitOutput(destination, "config", "--get", "remote.origin.url")
+	if err != nil || strings.TrimSpace(actual) != source {
+		t.Fatalf("measurement origin = %q/%v, want local source %q", actual, err, source)
+	}
+}
+
+func initMeasurementGitRepository(t *testing.T, repository string) {
+	t.Helper()
+	for _, arguments := range [][]string{
+		{"init", "--quiet"},
+		{"config", "user.name", "BuildOpt Test"},
+		{"config", "user.email", "buildopt@example.invalid"},
+		{"config", "commit.gpgsign", "false"},
+	} {
+		if err := gitRun(repository, arguments...); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := os.WriteFile(filepath.Join(repository, "README.md"), []byte("fixture\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := gitRun(repository, "add", "README.md"); err != nil {
+		t.Fatal(err)
+	}
+	if err := gitRun(repository, "commit", "--quiet", "-m", "fixture"); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestMeasurementGradleDistributionSeedIsPrivateAndExecutable(t *testing.T) {
 	gradleHome := t.TempDir()
 	seed := filepath.Join(gradleHome, "wrapper", "dists")
