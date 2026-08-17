@@ -24,6 +24,7 @@ const (
 	StructuralProfileID                           = "qualified-structural-build-impact"
 	CandidateStabilizationAdaptiveExactTwoOfThree = "ADAPTIVE_EXACT_2_OF_3"
 	CandidateStabilizationPairedTargetShape       = "PAIRED_TARGET_SHAPE_V1"
+	CandidateStabilizationPairedBoundCacheShape   = "PAIRED_BOUND_CACHE_MEASURED_SHAPE_V1"
 	structuralPairCount                           = 8
 	structuralMinimumSavedMS                      = 500.0
 	structuralMinimumRatio                        = 0.02
@@ -91,11 +92,12 @@ type structuralSubject struct {
 }
 
 type structuralSourceBindings struct {
-	ManifestSHA256          string `json:"manifestSha256"`
-	GraphSHA256             string `json:"graphSha256"`
-	GeneratedSHA256         string `json:"generatedManifestSha256"`
-	SourceEvidenceSHA256    string `json:"sourceEvidenceSha256"`
-	OutputEquivalenceSHA256 string `json:"outputEquivalenceSha256,omitempty"`
+	ManifestSHA256             string `json:"manifestSha256"`
+	GraphSHA256                string `json:"graphSha256"`
+	GeneratedSHA256            string `json:"generatedManifestSha256"`
+	SourceEvidenceSHA256       string `json:"sourceEvidenceSha256"`
+	OutputEquivalenceSHA256    string `json:"outputEquivalenceSha256,omitempty"`
+	ResolvedDependenciesSHA256 string `json:"resolvedDependenciesSha256,omitempty"`
 }
 
 type structuralExecution struct {
@@ -297,20 +299,21 @@ type StructuralWarmupObservation struct {
 // to render evidence for the existing structural profile qualifier. It grants
 // no activation or production authority.
 type StructuralMeasurementOptions struct {
-	CapturedAt              time.Time
-	Analysis                AnalysisReport
-	RepositoryRevision      string
-	BuildOptRevision        string
-	ExecutableSHA256        string
-	SourceEvidenceSHA256    string
-	OutputEquivalenceSHA256 string
-	GradleOptions           []string
-	ControlWarmups          []StructuralWarmupObservation
-	CandidateWarmups        []StructuralWarmupObservation
-	CandidateStabilization  string
-	Observations            []StructuralMeasurementObservation
-	FallbackReason          string
-	FallbackSuccessful      bool
+	CapturedAt                 time.Time
+	Analysis                   AnalysisReport
+	RepositoryRevision         string
+	BuildOptRevision           string
+	ExecutableSHA256           string
+	SourceEvidenceSHA256       string
+	OutputEquivalenceSHA256    string
+	ResolvedDependenciesSHA256 string
+	GradleOptions              []string
+	ControlWarmups             []StructuralWarmupObservation
+	CandidateWarmups           []StructuralWarmupObservation
+	CandidateStabilization     string
+	Observations               []StructuralMeasurementObservation
+	FallbackReason             string
+	FallbackSuccessful         bool
 }
 
 // RenderStructuralMeasurementEvidence recomputes the frozen qualification
@@ -334,7 +337,8 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 	}
 	if options.CandidateStabilization != "" &&
 		options.CandidateStabilization != CandidateStabilizationAdaptiveExactTwoOfThree &&
-		options.CandidateStabilization != CandidateStabilizationPairedTargetShape {
+		options.CandidateStabilization != CandidateStabilizationPairedTargetShape &&
+		options.CandidateStabilization != CandidateStabilizationPairedBoundCacheShape {
 		return nil, false, errors.New("structural candidate stabilization policy is invalid")
 	}
 	if options.CandidateStabilization == "" && len(options.ControlWarmups) != len(options.CandidateWarmups) {
@@ -348,12 +352,21 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 		(len(options.ControlWarmups) != 2 || len(options.CandidateWarmups) != 1) {
 		return nil, false, errors.New("paired target-shape stabilization requires two control and one candidate warm-up")
 	}
+	if options.CandidateStabilization == CandidateStabilizationPairedBoundCacheShape &&
+		(len(options.ControlWarmups) != 1 || len(options.CandidateWarmups) != 0) {
+		return nil, false, errors.New("bound-cache measured-shape stabilization requires one control daemon warm-up and no unmeasured target builds")
+	}
 	outputEquivalenceMode := ""
 	if options.OutputEquivalenceSHA256 != "" {
 		if !validSHA(options.OutputEquivalenceSHA256) || options.OutputEquivalenceSHA256 != strings.ToLower(options.OutputEquivalenceSHA256) {
 			return nil, false, errors.New("structural output-equivalence binding is invalid")
 		}
 		outputEquivalenceMode = "OWNER_REVIEWED_SEMANTIC_V1"
+	}
+	if options.ResolvedDependenciesSHA256 != "" &&
+		(!validSHA(options.ResolvedDependenciesSHA256) ||
+			options.ResolvedDependenciesSHA256 != strings.ToLower(options.ResolvedDependenciesSHA256)) {
+		return nil, false, errors.New("structural resolved-dependency binding is invalid")
 	}
 	inputs := make(map[string]InputBinding, len(options.Analysis.Inputs))
 	for _, input := range options.Analysis.Inputs {
@@ -406,11 +419,12 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 			PipelineClass:      options.Analysis.Subject.PipelineClass,
 		},
 		SourceBindings: structuralSourceBindings{
-			ManifestSHA256:          trimSHA(inputs["BUILD_IMPACT_MANIFEST"].SHA256),
-			GraphSHA256:             trimSHA(inputs["BUILD_IMPACT_GRAPH"].SHA256),
-			GeneratedSHA256:         trimSHA(inputs["GENERATED_MANIFEST"].SHA256),
-			SourceEvidenceSHA256:    options.SourceEvidenceSHA256,
-			OutputEquivalenceSHA256: options.OutputEquivalenceSHA256,
+			ManifestSHA256:             trimSHA(inputs["BUILD_IMPACT_MANIFEST"].SHA256),
+			GraphSHA256:                trimSHA(inputs["BUILD_IMPACT_GRAPH"].SHA256),
+			GeneratedSHA256:            trimSHA(inputs["GENERATED_MANIFEST"].SHA256),
+			SourceEvidenceSHA256:       options.SourceEvidenceSHA256,
+			OutputEquivalenceSHA256:    options.OutputEquivalenceSHA256,
+			ResolvedDependenciesSHA256: options.ResolvedDependenciesSHA256,
 		},
 		Plan: *options.Analysis.Plan,
 		Execution: structuralExecution{
@@ -647,6 +661,10 @@ func validateStructuralCaptureEvidence(evidence structuralEvidence, analysis Ana
 		(!validSHA(digest) || digest != strings.ToLower(digest)) {
 		return errors.New("structural output-equivalence source digest is invalid")
 	}
+	if digest := evidence.SourceBindings.ResolvedDependenciesSHA256; digest != "" &&
+		(!validSHA(digest) || digest != strings.ToLower(digest)) {
+		return errors.New("structural resolved-dependency source digest is invalid")
+	}
 	return nil
 }
 
@@ -662,8 +680,10 @@ func validateStructuralDiagnostics(policy string, control, candidate []Structura
 		return nil
 	}
 	pairedTargetShape := policy == CandidateStabilizationPairedTargetShape
+	pairedBoundCacheShape := policy == CandidateStabilizationPairedBoundCacheShape
 	if (!validStructuralWarmupLength(len(control)) || !validStructuralWarmupLength(len(candidate))) &&
-		!(pairedTargetShape && len(control) == 2 && len(candidate) == 1) {
+		!(pairedTargetShape && len(control) == 2 && len(candidate) == 1) &&
+		!(pairedBoundCacheShape && len(control) == 1 && len(candidate) == 0) {
 		return errors.New("structural measurement requires complete two-, three-, four-, or five-phase warm-ups")
 	}
 	fingerprintPresent := false
@@ -689,6 +709,13 @@ func validateStructuralDiagnostics(policy string, control, candidate []Structura
 				expectedPhases = []string{"CACHE_SEED", "TARGET_WORKLOAD_STABILIZATION"}
 			} else {
 				expectedPhases = []string{"TARGET_WORKLOAD_STABILIZATION"}
+			}
+		}
+		if pairedBoundCacheShape {
+			if armIndex == 0 {
+				expectedPhases = []string{"DAEMON_STABILIZATION"}
+			} else {
+				expectedPhases = nil
 			}
 		}
 		for index, warmup := range warmups {
@@ -728,7 +755,9 @@ func equalStructuralWarmupCount(control, candidate []StructuralWarmupObservation
 }
 
 func adaptiveStructuralWarmupCount(policy string, count int) int {
-	if policy == CandidateStabilizationAdaptiveExactTwoOfThree || policy == CandidateStabilizationPairedTargetShape {
+	if policy == CandidateStabilizationAdaptiveExactTwoOfThree ||
+		policy == CandidateStabilizationPairedTargetShape ||
+		policy == CandidateStabilizationPairedBoundCacheShape {
 		return count
 	}
 	return 0
@@ -747,7 +776,10 @@ func validStructuralWarmupCounts(execution structuralExecution) bool {
 		(candidate == 4 || candidate == 5) ||
 		execution.CandidateStabilization == CandidateStabilizationPairedTargetShape &&
 			execution.WarmupsPerArm == 0 && execution.ControlWarmupCount == 2 &&
-			execution.CandidateWarmupCount == 1 && control == 2 && candidate == 1
+			execution.CandidateWarmupCount == 1 && control == 2 && candidate == 1 ||
+		execution.CandidateStabilization == CandidateStabilizationPairedBoundCacheShape &&
+			execution.WarmupsPerArm == 0 && execution.ControlWarmupCount == 1 &&
+			execution.CandidateWarmupCount == 0 && control == 1 && candidate == 0
 }
 
 func validStructuralWarmupLength(count int) bool {
@@ -980,7 +1012,10 @@ func applyStructuralTargetWarmupShape(
 	pairedTargetShape := len(control) == 2 && len(candidate) == 1 &&
 		control[0].Phase == "CACHE_SEED" && control[1].Phase == "TARGET_WORKLOAD_STABILIZATION" &&
 		candidate[0].Phase == "TARGET_WORKLOAD_STABILIZATION"
-	if !pairedTargetShape && (len(control) < 3 || len(control) > 5 || len(candidate) < 3 || len(candidate) > 5 || len(observations) == 0) {
+	pairedBoundCacheShape := len(control) == 1 && len(candidate) == 0 &&
+		control[0].Phase == "DAEMON_STABILIZATION" &&
+		len(observations) == structuralPairCount
+	if !pairedTargetShape && !pairedBoundCacheShape && (len(control) < 3 || len(control) > 5 || len(candidate) < 3 || len(candidate) > 5 || len(observations) == 0) {
 		return result
 	}
 	if len(observations) == 0 {
@@ -990,11 +1025,17 @@ func applyStructuralTargetWarmupShape(
 	candidateBaseline := structuralWarmupBaselineIndex(len(candidate))
 	controlComparisonStart := structuralWarmupComparisonStart()
 	candidateComparisonStart := structuralWarmupComparisonStart()
-	if pairedTargetShape {
-		controlBaseline = len(control) - 1
-		candidateBaseline = len(candidate) - 1
-		controlComparisonStart = len(control)
-		candidateComparisonStart = len(candidate)
+	if pairedTargetShape || pairedBoundCacheShape {
+		if pairedTargetShape {
+			controlBaseline = len(control) - 1
+			candidateBaseline = len(candidate) - 1
+			controlComparisonStart = len(control)
+			candidateComparisonStart = len(candidate)
+		} else {
+			result.TargetWarmupShapeObserved = result.ExecutionShapeObserved
+			result.TargetWarmupShapeStable = result.ExecutionShapeStable
+			return result
+		}
 	}
 	controlFingerprint := control[controlBaseline].TaskOutcomes.FingerprintSHA256
 	candidateFingerprint := candidate[candidateBaseline].TaskOutcomes.FingerprintSHA256

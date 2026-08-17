@@ -67,6 +67,9 @@ type structuralMeasurementConfig struct {
 	gradleDistributionSeed       string
 	gradleDependencySeed         string
 	gradleReadOnlyDependencyRoot string
+	gradleDependencySHA256       string
+	gradleDependencyFileCount    int
+	gradleDependencyByteCount    int64
 	gradleNativeBuildCacheSeed   string
 	gradleSharedBuildCacheSeed   string
 	gradleMeasurementHome        string
@@ -96,22 +99,29 @@ type structuralArmResult struct {
 	finishedAt   time.Time
 }
 
+type measurementDependencyBinding struct {
+	sha256    string
+	fileCount int
+	byteCount int64
+}
+
 type structuralCalibrationEvidence struct {
-	SchemaVersion           string                                         `json:"schemaVersion"`
-	CapturedAt              string                                         `json:"capturedAt"`
-	RepositoryRevision      string                                         `json:"repositoryRevision"`
-	BaseRevision            string                                         `json:"baseRevision"`
-	BuildOptRevision        string                                         `json:"buildoptRevision"`
-	ExecutableSHA256        string                                         `json:"executableSha256"`
-	SourceEvidenceSHA256    string                                         `json:"sourceEvidenceSha256"`
-	OutputEquivalenceSHA256 string                                         `json:"outputEquivalenceSha256,omitempty"`
-	Analysis                profilediscovery.AnalysisReport                `json:"analysis"`
-	GradleOptions           []string                                       `json:"gradleOptions"`
-	CandidateWarmups        []profilediscovery.StructuralWarmupObservation `json:"candidateWarmups"`
-	CandidateStabilization  string                                         `json:"candidateStabilization"`
-	RequiredOutputSHA256    string                                         `json:"requiredOutputSha256"`
-	RequiredOutputCount     int                                            `json:"requiredOutputCount"`
-	Boundaries              structuralCalibrationBoundaries                `json:"boundaries"`
+	SchemaVersion              string                                         `json:"schemaVersion"`
+	CapturedAt                 string                                         `json:"capturedAt"`
+	RepositoryRevision         string                                         `json:"repositoryRevision"`
+	BaseRevision               string                                         `json:"baseRevision"`
+	BuildOptRevision           string                                         `json:"buildoptRevision"`
+	ExecutableSHA256           string                                         `json:"executableSha256"`
+	SourceEvidenceSHA256       string                                         `json:"sourceEvidenceSha256"`
+	OutputEquivalenceSHA256    string                                         `json:"outputEquivalenceSha256,omitempty"`
+	ResolvedDependenciesSHA256 string                                         `json:"resolvedDependenciesSha256,omitempty"`
+	Analysis                   profilediscovery.AnalysisReport                `json:"analysis"`
+	GradleOptions              []string                                       `json:"gradleOptions"`
+	CandidateWarmups           []profilediscovery.StructuralWarmupObservation `json:"candidateWarmups"`
+	CandidateStabilization     string                                         `json:"candidateStabilization"`
+	RequiredOutputSHA256       string                                         `json:"requiredOutputSha256"`
+	RequiredOutputCount        int                                            `json:"requiredOutputCount"`
+	Boundaries                 structuralCalibrationBoundaries                `json:"boundaries"`
 }
 
 type structuralCalibrationBoundaries struct {
@@ -229,22 +239,26 @@ func calibrateStructuralProfile(config structuralMeasurementConfig, progress io.
 	if executableSHA != config.executableSHA256 {
 		return nil, errors.New("installed BuildOpt executable changed during calibration")
 	}
+	if err := verifyStructuralDependencyBinding(config); err != nil {
+		return nil, err
+	}
 	evidence := structuralCalibrationEvidence{
-		SchemaVersion:           "buildopt.evidence/poc-structural-calibration/v1",
-		CapturedAt:              time.Now().UTC().Format(time.RFC3339),
-		RepositoryRevision:      config.targetRevision,
-		BaseRevision:            config.baseRevision,
-		BuildOptRevision:        config.buildOptRevision,
-		ExecutableSHA256:        config.executableSHA256,
-		SourceEvidenceSHA256:    hex.EncodeToString(changesSHA[:]),
-		OutputEquivalenceSHA256: config.outputEquivalenceSHA256,
-		Analysis:                config.analysis,
-		GradleOptions:           append([]string(nil), config.gradleOptions...),
-		CandidateWarmups:        append([]profilediscovery.StructuralWarmupObservation(nil), candidate.warmups...),
-		CandidateStabilization:  structuralCandidateStabilizationPolicy(config),
-		RequiredOutputSHA256:    outputSHA,
-		RequiredOutputCount:     outputCount,
-		Boundaries:              structuralCalibrationBoundaries{},
+		SchemaVersion:              "buildopt.evidence/poc-structural-calibration/v1",
+		CapturedAt:                 time.Now().UTC().Format(time.RFC3339),
+		RepositoryRevision:         config.targetRevision,
+		BaseRevision:               config.baseRevision,
+		BuildOptRevision:           config.buildOptRevision,
+		ExecutableSHA256:           config.executableSHA256,
+		SourceEvidenceSHA256:       hex.EncodeToString(changesSHA[:]),
+		OutputEquivalenceSHA256:    config.outputEquivalenceSHA256,
+		ResolvedDependenciesSHA256: config.gradleDependencySHA256,
+		Analysis:                   config.analysis,
+		GradleOptions:              append([]string(nil), config.gradleOptions...),
+		CandidateWarmups:           append([]profilediscovery.StructuralWarmupObservation(nil), candidate.warmups...),
+		CandidateStabilization:     structuralCandidateStabilizationPolicy(config),
+		RequiredOutputSHA256:       outputSHA,
+		RequiredOutputCount:        outputCount,
+		Boundaries:                 structuralCalibrationBoundaries{},
 	}
 	raw, err := json.MarshalIndent(evidence, "", "  ")
 	if err != nil {
@@ -451,6 +465,12 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 	observations := make([]profilediscovery.StructuralMeasurementObservation, 0, measurementPairs)
 	stableOutputSHA := ""
 	stableOutputCount := 0
+	stableControlFingerprint := ""
+	stableCandidateFingerprint := ""
+	if len(control.warmups) > 1 && len(candidate.warmups) > 0 {
+		stableControlFingerprint = control.warmups[len(control.warmups)-1].TaskOutcomes.FingerprintSHA256
+		stableCandidateFingerprint = candidate.warmups[len(candidate.warmups)-1].TaskOutcomes.FingerprintSHA256
+	}
 	for pair := 1; pair <= measurementPairs; pair++ {
 		if err := checkStructuralMeasurementBudget(config); err != nil {
 			return nil, false, err
@@ -485,8 +505,13 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 			return nil, false, fmt.Errorf("pair %d: %w", pair, err)
 		}
 		if config.pairedTargetStability {
-			if err := validateStructuralPairedTargetShape(control, candidate, controlResult, candidateResult); err != nil {
+			if err := validateStructuralPairedTargetShape(control, candidate, controlResult, candidateResult,
+				stableControlFingerprint, stableCandidateFingerprint); err != nil {
 				return nil, false, fmt.Errorf("pair %d: %w", pair, err)
+			}
+			if stableControlFingerprint == "" {
+				stableControlFingerprint = controlResult.taskOutcomes.FingerprintSHA256
+				stableCandidateFingerprint = candidateResult.taskOutcomes.FingerprintSHA256
 			}
 		}
 		firstResult, secondResult := controlResult, candidateResult
@@ -573,14 +598,18 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 	if executableSHA != config.executableSHA256 {
 		return nil, false, errors.New("installed BuildOpt executable changed during measurement")
 	}
+	if err := verifyStructuralDependencyBinding(config); err != nil {
+		return nil, false, err
+	}
 	return profilediscovery.RenderStructuralMeasurementEvidence(profilediscovery.StructuralMeasurementOptions{
 		CapturedAt: time.Now(), Analysis: config.analysis,
-		RepositoryRevision:      config.targetRevision,
-		BuildOptRevision:        config.buildOptRevision,
-		ExecutableSHA256:        config.executableSHA256,
-		SourceEvidenceSHA256:    hex.EncodeToString(changesSHA[:]),
-		OutputEquivalenceSHA256: config.outputEquivalenceSHA256,
-		GradleOptions:           config.gradleOptions, Observations: observations,
+		RepositoryRevision:         config.targetRevision,
+		BuildOptRevision:           config.buildOptRevision,
+		ExecutableSHA256:           config.executableSHA256,
+		SourceEvidenceSHA256:       hex.EncodeToString(changesSHA[:]),
+		OutputEquivalenceSHA256:    config.outputEquivalenceSHA256,
+		ResolvedDependenciesSHA256: config.gradleDependencySHA256,
+		GradleOptions:              config.gradleOptions, Observations: observations,
 		ControlWarmups: control.warmups, CandidateWarmups: candidate.warmups,
 		CandidateStabilization: structuralCandidateStabilizationPolicy(config),
 		FallbackReason:         fallbackReason, FallbackSuccessful: true,
@@ -611,20 +640,33 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	}
 	if config.gradleSharedBuildCacheSeed != "" {
 		destination := arm.buildCacheRoot
-		if err := copyMeasurementTree(config.gradleSharedBuildCacheSeed, destination); err != nil {
+		if err := linkMeasurementCacheSeed(config.gradleSharedBuildCacheSeed, destination); err != nil {
 			return arm, fmt.Errorf("seed %s native build cache: %w", name, err)
 		}
+	}
+	if config.pairedTargetStability && sharedCacheSeed == "" && config.gradleSharedBuildCacheSeed != "" {
+		// The authoritative native cache was snapshotted once before either arm
+		// existed and is immutable. Reuse that identical seed directly instead
+		// of rebuilding the base revision only to recreate an already-bound
+		// cache. The target warm-up still proves the exact measured task shape.
+		if err := linkMeasurementCacheSeed(config.gradleSharedBuildCacheSeed, arm.cacheSeed); err != nil {
+			return arm, fmt.Errorf("snapshot authoritative %s native build cache: %w", name, err)
+		}
+		return prepareStructuralBoundCacheDaemonWarmup(config, arm, progress)
 	}
 	if config.pairedTargetStability && sharedCacheSeed != "" {
 		cache := arm.buildCacheRoot
 		if err := os.RemoveAll(cache); err != nil {
 			return arm, fmt.Errorf("replace %s native build cache: %w", name, err)
 		}
-		if err := copyMeasurementTree(sharedCacheSeed, cache); err != nil {
+		if err := linkMeasurementCacheSeed(sharedCacheSeed, cache); err != nil {
 			return arm, fmt.Errorf("share %s native build-cache seed: %w", name, err)
 		}
-		if err := copyMeasurementTree(sharedCacheSeed, arm.cacheSeed); err != nil {
+		if err := linkMeasurementCacheSeed(sharedCacheSeed, arm.cacheSeed); err != nil {
 			return arm, fmt.Errorf("snapshot shared %s native build cache: %w", name, err)
+		}
+		if config.gradleSharedBuildCacheSeed != "" {
+			return arm, nil
 		}
 		return prepareStructuralPairedTargetWarmup(config, arm, candidate, 1, progress)
 	}
@@ -640,7 +682,7 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	_, _ = fmt.Fprintf(progress, "buildopt: warmed isolated %s arm cache seed in %dms with %s\n",
 		name, seedWarmup.durationMS, formatStructuralTaskOutcomes(seedWarmup.taskOutcomes))
 	cache := arm.buildCacheRoot
-	if err := copyMeasurementTree(cache, arm.cacheSeed); err != nil {
+	if err := snapshotMeasurementCacheSeed(cache, arm.cacheSeed); err != nil {
 		return arm, fmt.Errorf("snapshot %s native build cache: %w", name, err)
 	}
 	if config.pairedTargetStability {
@@ -797,18 +839,48 @@ func prepareStructuralPairedTargetWarmup(config structuralMeasurementConfig, arm
 	return arm, nil
 }
 
-func validateStructuralPairedTargetShape(control, candidate structuralMeasurementArm, controlResult, candidateResult structuralArmResult) error {
-	if len(control.warmups) != 2 || len(candidate.warmups) != 1 {
+func validateStructuralPairedTargetShape(
+	control, candidate structuralMeasurementArm,
+	controlResult, candidateResult structuralArmResult,
+	controlBaseline, candidateBaseline string,
+) error {
+	legacyWarmups := len(control.warmups) == 2 && len(candidate.warmups) == 1
+	boundCacheWarmups := len(control.warmups) == 1 && len(candidate.warmups) == 0
+	if !legacyWarmups && !boundCacheWarmups {
 		return errors.New("paired target-shape warm-up evidence is incomplete")
 	}
-	controlFingerprint := control.warmups[len(control.warmups)-1].TaskOutcomes.FingerprintSHA256
-	candidateFingerprint := candidate.warmups[len(candidate.warmups)-1].TaskOutcomes.FingerprintSHA256
-	if controlFingerprint == "" || candidateFingerprint == "" ||
-		controlResult.taskOutcomes.FingerprintSHA256 != controlFingerprint ||
-		candidateResult.taskOutcomes.FingerprintSHA256 != candidateFingerprint {
+	if legacyWarmups {
+		controlBaseline = control.warmups[len(control.warmups)-1].TaskOutcomes.FingerprintSHA256
+		candidateBaseline = candidate.warmups[len(candidate.warmups)-1].TaskOutcomes.FingerprintSHA256
+	}
+	if controlBaseline == "" && candidateBaseline == "" {
+		return nil
+	}
+	if controlBaseline == "" || candidateBaseline == "" ||
+		controlResult.taskOutcomes.FingerprintSHA256 != controlBaseline ||
+		candidateResult.taskOutcomes.FingerprintSHA256 != candidateBaseline {
 		return errors.New("measured task shape drifted from paired target stabilization")
 	}
 	return nil
+}
+
+func prepareStructuralBoundCacheDaemonWarmup(config structuralMeasurementConfig, arm structuralMeasurementArm, progress io.Writer) (structuralMeasurementArm, error) {
+	if err := resetStructuralArm(config, arm, config.targetRevision, true); err != nil {
+		return arm, fmt.Errorf("prepare %s daemon stabilization: %w", arm.name, err)
+	}
+	warmupConfig := config
+	plan := *config.analysis.Plan
+	plan.FallbackEntrypoints = []string{"help"}
+	warmupConfig.analysis.Plan = &plan
+	_, _ = fmt.Fprintf(progress, "buildopt: warming isolated %s daemon and repository configuration with Gradle help (1/1)\n", arm.name)
+	result, err := runStructuralArm(warmupConfig, arm, false, false, config.changesPath)
+	if err != nil {
+		return arm, fmt.Errorf("stabilize %s daemon: %w", arm.name, err)
+	}
+	arm.warmups = append(arm.warmups, structuralWarmupDiagnostic("DAEMON_STABILIZATION", result))
+	_, _ = fmt.Fprintf(progress, "buildopt: warmed isolated %s daemon in %dms with %s\n",
+		arm.name, result.durationMS, formatStructuralTaskOutcomes(result.taskOutcomes))
+	return arm, nil
 }
 
 func structuralTargetWarmupsConverged(warmups []profilediscovery.StructuralWarmupObservation) bool {
@@ -826,6 +898,9 @@ func shouldStopAdaptiveCandidateStabilization(candidate, adaptive bool, confirma
 
 func structuralCandidateStabilizationPolicy(config structuralMeasurementConfig) string {
 	if config.pairedTargetStability {
+		if config.gradleSharedBuildCacheSeed != "" {
+			return profilediscovery.CandidateStabilizationPairedBoundCacheShape
+		}
 		return profilediscovery.CandidateStabilizationPairedTargetShape
 	}
 	if config.adaptiveCandidateStability {
@@ -938,7 +1013,7 @@ func resetStructuralArm(config structuralMeasurementConfig, arm structuralMeasur
 		if err := os.RemoveAll(cache); err != nil {
 			return fmt.Errorf("clear isolated native build cache: %w", err)
 		}
-		if err := copyMeasurementTree(arm.cacheSeed, cache); err != nil {
+		if err := linkMeasurementCacheSeed(arm.cacheSeed, cache); err != nil {
 			return fmt.Errorf("restore isolated native build cache: %w", err)
 		}
 	}
@@ -1568,9 +1643,9 @@ func ensureMeasurementDirectory(root, directory string) error {
 	return nil
 }
 
-func copyMeasurementTree(source, target string) error {
-	info, err := os.Stat(source)
-	if err != nil || !info.IsDir() {
+func snapshotMeasurementCacheSeed(source, target string) error {
+	info, err := os.Lstat(source)
+	if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
 		return errors.New("native build cache seed is unavailable")
 	}
 	return filepath.WalkDir(source, func(candidate string, entry fs.DirEntry, walkErr error) error {
@@ -1586,19 +1661,52 @@ func copyMeasurementTree(source, target string) error {
 			return os.MkdirAll(destination, 0o700)
 		}
 		info, err := entry.Info()
-		if err != nil || !info.Mode().IsRegular() {
+		if err != nil || !info.Mode().IsRegular() || info.Mode()&os.ModeSymlink != 0 {
 			return errors.New("native build cache seed contains a non-regular entry")
 		}
-		return copyMeasurementRegularFile(candidate, destination)
+		if entry.Name() == "gc.properties" || strings.HasSuffix(entry.Name(), ".lock") {
+			return nil
+		}
+		return copyMeasurementRegularFileWithMode(candidate, destination, 0o400)
+	})
+}
+
+func linkMeasurementCacheSeed(source, target string) error {
+	info, err := os.Lstat(source)
+	if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return errors.New("native build cache seed is unavailable")
+	}
+	return filepath.WalkDir(source, func(candidate string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		relative, err := filepath.Rel(source, candidate)
+		if err != nil {
+			return err
+		}
+		destination := filepath.Join(target, relative)
+		if entry.IsDir() {
+			return os.MkdirAll(destination, 0o700)
+		}
+		entryInfo, err := entry.Info()
+		if err != nil || !entryInfo.Mode().IsRegular() || entryInfo.Mode()&os.ModeSymlink != 0 {
+			return errors.New("native build cache seed contains a non-regular entry")
+		}
+		if entryInfo.Mode().Perm()&0o222 != 0 {
+			return errors.New("native build cache seed contains a writable entry")
+		}
+		return os.Link(candidate, destination)
 	})
 }
 
 // prepareStructuralDependencySnapshot makes the dependency artifacts and
 // native build-cache entries produced by the authoritative build available to
-// both isolated measurement arms. Each source is copied once into an immutable
-// seed; writable build caches, Configuration Cache state, and repository
-// outputs remain private per arm. Automatic paired measurements may share the
-// Gradle daemon process, but never a writable build-cache directory.
+// both isolated measurement arms. Resolved dependencies are bound in place
+// through Gradle's read-only cache contract and verified before and after the
+// measurement. Writable build caches, Configuration Cache state, and
+// repository outputs remain private per arm. Automatic paired measurements
+// may share the Gradle daemon process, but never a writable build-cache
+// directory.
 func prepareStructuralDependencySnapshot(config structuralMeasurementConfig, root string, progress io.Writer) (structuralMeasurementConfig, error) {
 	if config.gradleDependencySeed == "" && config.gradleNativeBuildCacheSeed == "" {
 		return config, nil
@@ -1607,24 +1715,17 @@ func prepareStructuralDependencySnapshot(config structuralMeasurementConfig, roo
 		return config, err
 	}
 	if config.gradleDependencySeed != "" {
-		dependencyRoot := filepath.Join(root, "readonly-dependencies")
-		modulesRoot := filepath.Join(dependencyRoot, "modules-2")
-		_, _ = fmt.Fprintln(progress, "buildopt: snapshotting resolved Gradle dependencies once for both isolated arms")
-		fileCount, byteCount, err := copyMeasurementDependencyTree(config.gradleDependencySeed, modulesRoot)
+		_, _ = fmt.Fprintln(progress, "buildopt: binding resolved Gradle dependencies in place for both isolated arms")
+		binding, err := hashMeasurementDependencyTree(config.gradleDependencySeed)
 		if err != nil {
-			return config, fmt.Errorf("snapshot resolved Gradle dependencies: %w", err)
+			return config, fmt.Errorf("bind resolved Gradle dependencies: %w", err)
 		}
-		if err := os.Chmod(dependencyRoot, 0o500); err != nil {
-			return config, fmt.Errorf("protect resolved Gradle dependency root: %w", err)
-		}
-		if err := validateReadOnlyDirectory(dependencyRoot); err != nil {
-			return config, fmt.Errorf("validate resolved Gradle dependency root: %w", err)
-		}
-		if err := validateReadOnlyDependencyTree(modulesRoot); err != nil {
-			return config, fmt.Errorf("validate resolved Gradle dependency snapshot: %w", err)
-		}
-		config.gradleReadOnlyDependencyRoot = dependencyRoot
-		_, _ = fmt.Fprintf(progress, "buildopt: shared immutable dependency snapshot ready (%d files, %d bytes)\n", fileCount, byteCount)
+		config.gradleReadOnlyDependencyRoot = filepath.Dir(config.gradleDependencySeed)
+		config.gradleDependencySHA256 = binding.sha256
+		config.gradleDependencyFileCount = binding.fileCount
+		config.gradleDependencyByteCount = binding.byteCount
+		_, _ = fmt.Fprintf(progress, "buildopt: shared read-only dependency binding ready (%d files, %d bytes, sha256 %s)\n",
+			binding.fileCount, binding.byteCount, binding.sha256)
 	}
 	if config.gradleNativeBuildCacheSeed != "" {
 		sharedBuildCache := filepath.Join(root, "native-build-cache-seed")
@@ -1637,6 +1738,69 @@ func prepareStructuralDependencySnapshot(config structuralMeasurementConfig, roo
 		_, _ = fmt.Fprintf(progress, "buildopt: shared immutable native build-cache seed ready (%d files, %d bytes)\n", fileCount, byteCount)
 	}
 	return config, nil
+}
+
+func hashMeasurementDependencyTree(source string) (measurementDependencyBinding, error) {
+	info, err := os.Lstat(source)
+	if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return measurementDependencyBinding{}, errors.New("Gradle dependency cache is unavailable")
+	}
+	aggregate := sha256.New()
+	binding := measurementDependencyBinding{}
+	err = filepath.WalkDir(source, func(candidate string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		entryInfo, err := entry.Info()
+		if err != nil {
+			return err
+		}
+		if entryInfo.Mode()&os.ModeSymlink != 0 {
+			return errors.New("Gradle dependency cache contains a symlink")
+		}
+		if entry.IsDir() {
+			return nil
+		}
+		if !entryInfo.Mode().IsRegular() {
+			return errors.New("Gradle dependency cache contains a non-regular entry")
+		}
+		if entryInfo.Name() == "gc.properties" || strings.HasSuffix(entryInfo.Name(), ".lock") {
+			return nil
+		}
+		relative, err := filepath.Rel(source, candidate)
+		if err != nil {
+			return err
+		}
+		fileDigest, err := hashMeasurementFile(candidate)
+		if err != nil {
+			return err
+		}
+		_, _ = fmt.Fprintf(aggregate, "%s\x00%d\x00%s\n", filepath.ToSlash(relative), entryInfo.Size(), fileDigest)
+		binding.fileCount++
+		binding.byteCount += entryInfo.Size()
+		return nil
+	})
+	if err != nil {
+		return measurementDependencyBinding{}, err
+	}
+	binding.sha256 = hex.EncodeToString(aggregate.Sum(nil))
+	return binding, nil
+}
+
+func verifyStructuralDependencyBinding(config structuralMeasurementConfig) error {
+	if config.gradleDependencySeed == "" {
+		return nil
+	}
+	binding, err := hashMeasurementDependencyTree(config.gradleDependencySeed)
+	if err != nil {
+		return fmt.Errorf("verify resolved Gradle dependencies: %w", err)
+	}
+	if binding.sha256 != config.gradleDependencySHA256 ||
+		binding.fileCount != config.gradleDependencyFileCount ||
+		binding.byteCount != config.gradleDependencyByteCount {
+		return errors.New("resolved Gradle dependency cache changed during measurement")
+	}
+	return nil
 }
 
 func copyMeasurementDependencyTree(source, target string) (int, int64, error) {

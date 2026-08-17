@@ -332,15 +332,27 @@ func TestStructuralMeasurementSharesOnlyImmutableGradleCaches(t *testing.T) {
 	if config.gradleReadOnlyDependencyRoot == "" {
 		t.Fatal("read-only dependency root was not prepared")
 	}
-	copied := filepath.Join(config.gradleReadOnlyDependencyRoot, "modules-2", "files-2.1", "example", "artifact.jar")
-	info, err := os.Stat(copied)
-	if err != nil || (runtime.GOOS != "windows" && info.Mode().Perm() != 0o400) {
-		t.Fatalf("copied dependency = %v/%v", info, err)
+	if config.gradleReadOnlyDependencyRoot != filepath.Join(gradleHome, "caches") ||
+		config.gradleDependencySHA256 == "" || config.gradleDependencyFileCount != 1 ||
+		config.gradleDependencyByteCount != int64(len("resolved dependency")) {
+		t.Fatalf("dependency binding = root %q sha %q files %d bytes %d",
+			config.gradleReadOnlyDependencyRoot, config.gradleDependencySHA256,
+			config.gradleDependencyFileCount, config.gradleDependencyByteCount)
+	}
+	info, err := os.Stat(artifact)
+	if err != nil || (runtime.GOOS != "windows" && info.Mode().Perm() != 0o600) {
+		t.Fatalf("authoritative dependency was modified = %v/%v", info, err)
+	}
+	if _, err := os.Stat(filepath.Join(measurementRoot, "readonly-dependencies")); !os.IsNotExist(err) {
+		t.Fatalf("dependency cache was copied into the measurement root: %v", err)
 	}
 	for _, transient := range []string{"modules-2.lock", "gc.properties"} {
-		if _, err := os.Stat(filepath.Join(config.gradleReadOnlyDependencyRoot, "modules-2", transient)); !os.IsNotExist(err) {
-			t.Fatalf("transient dependency state %q was copied: %v", transient, err)
+		if err := os.WriteFile(filepath.Join(modulesRoot, transient), []byte("changed transient state"), 0o600); err != nil {
+			t.Fatal(err)
 		}
+	}
+	if err := verifyStructuralDependencyBinding(config); err != nil {
+		t.Fatalf("transient dependency state changed the binding: %v", err)
 	}
 	if config.gradleSharedBuildCacheSeed == "" {
 		t.Fatal("shared native build-cache seed was not prepared")
@@ -355,12 +367,16 @@ func TestStructuralMeasurementSharesOnlyImmutableGradleCaches(t *testing.T) {
 	}
 	for _, armName := range []string{"control", "candidate"} {
 		armCache := filepath.Join(measurementRoot, armName+"-home", "caches", "build-cache-1")
-		if err := copyMeasurementTree(config.gradleSharedBuildCacheSeed, armCache); err != nil {
+		if err := linkMeasurementCacheSeed(config.gradleSharedBuildCacheSeed, armCache); err != nil {
 			t.Fatalf("seed %s arm cache: %v", armName, err)
 		}
 		raw, err := os.ReadFile(filepath.Join(armCache, "cache-entry"))
 		if err != nil || string(raw) != "native output" {
 			t.Fatalf("%s arm cache entry = %q/%v", armName, raw, err)
+		}
+		linkedInfo, err := os.Stat(filepath.Join(armCache, "cache-entry"))
+		if err != nil || !os.SameFile(cacheInfo, linkedInfo) {
+			t.Fatalf("%s arm cache did not reuse the immutable seed inode: %v", armName, err)
 		}
 	}
 	control := strings.Join(measurementEnvironment("control-home", config.gradleReadOnlyDependencyRoot), "\n")
@@ -370,6 +386,56 @@ func TestStructuralMeasurementSharesOnlyImmutableGradleCaches(t *testing.T) {
 		!strings.Contains(control, gradleReadOnlyDependencyEnvironment+"="+config.gradleReadOnlyDependencyRoot) ||
 		!strings.Contains(candidate, gradleReadOnlyDependencyEnvironment+"="+config.gradleReadOnlyDependencyRoot) {
 		t.Fatalf("isolated measurement environments = %q / %q", control, candidate)
+	}
+	if err := os.WriteFile(artifact, []byte("changed dependency"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := verifyStructuralDependencyBinding(config); err == nil ||
+		!strings.Contains(err.Error(), "changed during measurement") {
+		t.Fatalf("dependency mutation was accepted: %v", err)
+	}
+}
+
+func TestSnapshotMeasurementCacheSeedExcludesTransientStateAndProtectsEntries(t *testing.T) {
+	source := t.TempDir()
+	if err := os.WriteFile(filepath.Join(source, "entry"), []byte("cache entry"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	for _, transient := range []string{"build-cache.lock", "gc.properties"} {
+		if err := os.WriteFile(filepath.Join(source, transient), []byte("transient"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	target := filepath.Join(t.TempDir(), "seed")
+	if err := snapshotMeasurementCacheSeed(source, target); err != nil {
+		t.Fatal(err)
+	}
+	info, err := os.Stat(filepath.Join(target, "entry"))
+	if err != nil || (runtime.GOOS != "windows" && info.Mode().Perm() != 0o400) {
+		t.Fatalf("protected cache entry = %v/%v", info, err)
+	}
+	for _, transient := range []string{"build-cache.lock", "gc.properties"} {
+		if _, err := os.Stat(filepath.Join(target, transient)); !os.IsNotExist(err) {
+			t.Fatalf("transient cache state %q was snapshotted: %v", transient, err)
+		}
+	}
+	linked := filepath.Join(t.TempDir(), "linked")
+	if err := linkMeasurementCacheSeed(target, linked); err != nil {
+		t.Fatal(err)
+	}
+	linkedInfo, err := os.Stat(filepath.Join(linked, "entry"))
+	if err != nil || !os.SameFile(info, linkedInfo) {
+		t.Fatalf("linked cache entry = %v/%v", linkedInfo, err)
+	}
+}
+
+func TestHashMeasurementDependencyTreeRejectsNestedSymlink(t *testing.T) {
+	root := t.TempDir()
+	if err := os.Symlink(t.TempDir(), filepath.Join(root, "linked-artifacts")); err != nil {
+		t.Skipf("symlink unavailable: %v", err)
+	}
+	if _, err := hashMeasurementDependencyTree(root); err == nil || !strings.Contains(err.Error(), "symlink") {
+		t.Fatalf("nested dependency symlink error = %v", err)
 	}
 }
 
@@ -519,12 +585,38 @@ func TestValidateStructuralPairedTargetShapeRequiresEveryPairToMatchWarmup(t *te
 	}}
 	controlResult := structuralArmResult{taskOutcomes: profilediscovery.StructuralTaskOutcomes{FingerprintSHA256: controlFingerprint}}
 	candidateResult := structuralArmResult{taskOutcomes: profilediscovery.StructuralTaskOutcomes{FingerprintSHA256: candidateFingerprint}}
-	if err := validateStructuralPairedTargetShape(control, candidate, controlResult, candidateResult); err != nil {
+	if err := validateStructuralPairedTargetShape(control, candidate, controlResult, candidateResult, "", ""); err != nil {
 		t.Fatal(err)
 	}
 	candidateResult.taskOutcomes.FingerprintSHA256 = strings.Repeat("3", 64)
-	if err := validateStructuralPairedTargetShape(control, candidate, controlResult, candidateResult); err == nil {
+	if err := validateStructuralPairedTargetShape(control, candidate, controlResult, candidateResult, "", ""); err == nil {
 		t.Fatal("candidate task-shape drift was accepted")
+	}
+	candidate.warmups = nil
+	control.warmups = control.warmups[:1]
+	candidateResult.taskOutcomes.FingerprintSHA256 = candidateFingerprint
+	if err := validateStructuralPairedTargetShape(control, candidate, controlResult, candidateResult, "", ""); err != nil {
+		t.Fatalf("first measured bound-cache shape was rejected: %v", err)
+	}
+	if err := validateStructuralPairedTargetShape(control, candidate, controlResult, candidateResult,
+		controlFingerprint, candidateFingerprint); err != nil {
+		t.Fatalf("stable measured bound-cache shape was rejected: %v", err)
+	}
+	candidateResult.taskOutcomes.FingerprintSHA256 = strings.Repeat("3", 64)
+	if err := validateStructuralPairedTargetShape(control, candidate, controlResult, candidateResult,
+		controlFingerprint, candidateFingerprint); err == nil {
+		t.Fatal("bound-cache measured task-shape drift was accepted")
+	}
+}
+
+func TestStructuralCandidateStabilizationPolicyDistinguishesBoundCache(t *testing.T) {
+	config := structuralMeasurementConfig{pairedTargetStability: true}
+	if policy := structuralCandidateStabilizationPolicy(config); policy != profilediscovery.CandidateStabilizationPairedTargetShape {
+		t.Fatalf("legacy paired policy = %q", policy)
+	}
+	config.gradleSharedBuildCacheSeed = "/private/immutable-cache-seed"
+	if policy := structuralCandidateStabilizationPolicy(config); policy != profilediscovery.CandidateStabilizationPairedBoundCacheShape {
+		t.Fatalf("bound-cache paired policy = %q", policy)
 	}
 }
 

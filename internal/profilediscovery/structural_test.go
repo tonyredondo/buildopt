@@ -320,8 +320,9 @@ func TestRenderStructuralMeasurementEvidencePreservesWarmupAndPairDiagnostics(t 
 		ExecutableSHA256: strings.Repeat("e", 64), SourceEvidenceSHA256: strings.Repeat("d", 64),
 		GradleOptions: []string{"--daemon", "--build-cache"}, ControlWarmups: pairedControlWarmups,
 		CandidateWarmups: pairedCandidateWarmups, Observations: observations,
-		CandidateStabilization: CandidateStabilizationPairedTargetShape,
-		FallbackReason:         "IMPACT_GLOBAL_CHANGE", FallbackSuccessful: true,
+		CandidateStabilization:     CandidateStabilizationPairedTargetShape,
+		ResolvedDependenciesSHA256: strings.Repeat("6", 64),
+		FallbackReason:             "IMPACT_GLOBAL_CHANGE", FallbackSuccessful: true,
 	})
 	if err != nil || !qualified {
 		t.Fatalf("render paired target-shape evidence = %v/%v", qualified, err)
@@ -336,8 +337,42 @@ func TestRenderStructuralMeasurementEvidencePreservesWarmupAndPairDiagnostics(t 
 		!evidence.Result.TargetWarmupShapeStable {
 		t.Fatalf("paired target-shape evidence = %+v", evidence)
 	}
+	if evidence.SourceBindings.ResolvedDependenciesSHA256 != strings.Repeat("6", 64) {
+		t.Fatalf("resolved dependency binding = %q", evidence.SourceBindings.ResolvedDependenciesSHA256)
+	}
 	if err := validateStructuralEvidence(evidence, analysis); err != nil {
 		t.Fatalf("validate paired target-shape evidence: %v", err)
+	}
+
+	boundCacheControlWarmups := []StructuralWarmupObservation{{
+		Phase: "DAEMON_STABILIZATION", DurationMS: 300,
+		LogSHA256: strings.Repeat("7", 64), TaskOutcomes: controlOutcomes, HostPressure: pressure,
+	}}
+	raw, qualified, err = RenderStructuralMeasurementEvidence(StructuralMeasurementOptions{
+		CapturedAt: time.Date(2026, 8, 11, 13, 57, 0, 0, time.UTC), Analysis: analysis,
+		RepositoryRevision: strings.Repeat("b", 40), BuildOptRevision: strings.Repeat("c", 40),
+		ExecutableSHA256: strings.Repeat("e", 64), SourceEvidenceSHA256: strings.Repeat("d", 64),
+		GradleOptions: []string{"--daemon", "--build-cache"}, ControlWarmups: boundCacheControlWarmups,
+		CandidateWarmups: nil, Observations: observations,
+		CandidateStabilization:     CandidateStabilizationPairedBoundCacheShape,
+		ResolvedDependenciesSHA256: strings.Repeat("6", 64),
+		FallbackReason:             "IMPACT_GLOBAL_CHANGE", FallbackSuccessful: true,
+	})
+	if err != nil || !qualified {
+		t.Fatalf("render bound-cache target-shape evidence = %v/%v", qualified, err)
+	}
+	evidence = structuralEvidence{}
+	if err := json.Unmarshal(raw, &evidence); err != nil {
+		t.Fatal(err)
+	}
+	if evidence.Execution.WarmupsPerArm != 0 || evidence.Execution.ControlWarmupCount != 1 ||
+		evidence.Execution.CandidateWarmupCount != 0 ||
+		evidence.Execution.CandidateStabilization != CandidateStabilizationPairedBoundCacheShape ||
+		!evidence.Result.TargetWarmupShapeStable {
+		t.Fatalf("bound-cache target-shape evidence = %+v", evidence)
+	}
+	if err := validateStructuralEvidence(evidence, analysis); err != nil {
+		t.Fatalf("validate bound-cache target-shape evidence: %v", err)
 	}
 
 	observations[7].ControlTaskOutcomes.FingerprintSHA256 = strings.Repeat("7", 64)

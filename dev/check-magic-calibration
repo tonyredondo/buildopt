@@ -156,6 +156,16 @@ jq -e '
 
 buildopt_evidence=$(jq -r '.calibration.generatedFiles[0]' "${buildopt_first}")
 test -s "${buildopt_repository}/${buildopt_evidence}"
+jq -e '
+    (.sourceBindings.resolvedDependenciesSha256 | test("^[0-9a-f]{64}$")) and
+    .execution.candidateStabilization == "PAIRED_BOUND_CACHE_MEASURED_SHAPE_V1" and
+    .execution.controlWarmupCount == 1 and
+    (.execution.candidateWarmupCount // 0) == 0
+' "${buildopt_repository}/${buildopt_evidence}" >/dev/null || {
+    printf 'automatic calibration did not preserve its dependency or stabilization bindings\n' >&2
+    jq '{sourceBindings, execution}' "${buildopt_repository}/${buildopt_evidence}" >&2
+    exit 1
+}
 if [[ $(uname -s) == Linux ]] &&
     [[ $(stat -c '%a' "${buildopt_repository}/${buildopt_evidence}") != 600 ]]; then
     printf 'automatic calibration evidence is not private: %s\n' \
@@ -387,7 +397,7 @@ mkdir -p -- "${buildopt_cancel_tmp}"
 buildopt_cancel_pid=$!
 buildopt_cancel_ready=false
 for _ in $(seq 1 240); do
-    if grep -Fq 'warming isolated control arm' "${buildopt_cancel_stderr}"; then
+    if grep -Fq 'warming isolated control daemon' "${buildopt_cancel_stderr}"; then
         buildopt_cancel_ready=true
         break
     fi
