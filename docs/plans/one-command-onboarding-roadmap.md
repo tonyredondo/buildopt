@@ -193,6 +193,7 @@ UNSEEN -> DISCOVERED -> CALIBRATING -> QUALIFIED -> ACTIVE
 | 6 | `POC-MAGIC-CI-ONBOARDING-001` | Add one-input GitHub/GitLab orchestration and portable calibration persistence. | **Done:** a clean consumer supplies `command: optimize build`; provider identity makes exact state independent of the checkout path, every other binding remains fail-closed, and both providers publish checksummed results without a service. |
 | 7 | `POC-MAGIC-WOW-REPORT-001` | Present graph reduction, observed wall time, uncertainty, break-even, cumulative saving and fallback reasons. | **Done:** human output is understandable without the tracker; JSON recomputes every number, labels cumulative value as a projection, keeps useful lifetime unavailable until observed, and never adds unrelated mechanism percentages. |
 | 8 | `POC-MAGIC-END-TO-END-VALUE-001` | Validate the complete onboarding on fresh substantial public repositories. | Install-to-decision uses one command and zero manual BuildOpt files; at least two different Gradle families produce equivalent outputs and a net installed-path win, while a negative case retains native. |
+| 8a | `POC-MAGIC-CALIBRATION-COST-001` | Reduce generic first-decision cost exposed by the partial public-repository matrix. | Reuse dependency snapshots and base preparation only under exact content bindings; remove at least the 94.1 seconds Beam needs to repay within 30 builds without reducing eight pairs, weakening output/fallback gates or adding repository-name rules. |
 
 Blocks 1–8 are ordered. A later block cannot bypass a missing safety or value
 contract from an earlier block. The installed Ktor replay is the immediate
@@ -241,12 +242,19 @@ It does require real public repositories, optimized-native controls, complete
 installed-path measurements, equivalent required outputs, immutable evidence
 and honest native decisions when the idea does not pay.
 
-## Immediate next step
+## Current end-to-end result and immediate next step
 
-Complete `POC-MAGIC-END-TO-END-VALUE-001`. The same one-command path now emits
-a customer-readable and recomputable explanation locally and in GitHub/GitLab
-artifacts. The next block must start from fresh substantial public repositories
-and the public package, require zero manual BuildOpt files, compare the complete
-installed path with optimized native Gradle, validate equivalent outputs and
-the generated report, preserve one honest native case, and begin observing how
-long exact profiles remain useful instead of assuming an infinite lifetime.
+The first automatic matrix is preserved in
+[`poc-magic-end-to-end-value-v1`](../../benchmarks/results/poc-magic-end-to-end-value-v1/README.md).
+Ktor qualifies at an 82.00% direct saving and 27-build payback. Beam passes all
+direct value, output, tail and fallback gates at a 75.97% saving, but its
+558.913-second first-decision cost requires 37 builds. Spring is positive but
+uneconomic, Groovy and Kafka regress, and Micronaut safely stops before timing.
+The end-to-end block therefore remains incomplete at 1/2 qualified families.
+
+Complete `POC-MAGIC-CALIBRATION-COST-001` next. It must reduce generic
+snapshot/base-warm overhead under exact bindings, not change the eight-pair
+protocol or increase the payback threshold to rescue Beam. Once two families
+qualify, publish one immutable package and repeat fresh Ktor and Beam
+install-to-decision captures plus at least one native-retained negative. Only
+that published, fresh rerun may close `POC-MAGIC-END-TO-END-VALUE-001`.

@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [summary.json]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_summary=${1:-"${buildopt_root}/benchmarks/results/poc-magic-end-to-end-value-v1/summary.json"}
+buildopt_contract="${buildopt_root}/specs/poc-magic-end-to-end-value-v1.json"
+
+command -v jq >/dev/null || {
+    printf 'jq is required to validate the one-command value matrix\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.poc/magic-end-to-end-value-contract/v1" and
+  .workItem == "POC-MAGIC-END-TO-END-VALUE-001" and
+  .qualification.minimumDifferentQualifiedFamilies == 2 and
+  .qualification.minimumPairs == 8 and
+  .qualification.publishedPackageRequired == true and
+  .qualification.freshInstallToDecision == true and
+  .qualification.zeroManualBuildOptFiles == true and
+  .qualification.exactRequiredOutputs == true and
+  .qualification.fallbackSuccessful == true and
+  .recomputation.repositoriesAveraged == false and
+  .recomputation.mechanismPercentagesAdded == false and
+  .authority == {
+    proofOfConcept: true, productionAuthorized: false,
+    soakRequired: false, designPartnerRequired: false,
+    testOptimization: "OUT_OF_SCOPE"
+  }
+' "${buildopt_contract}" >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-magic-end-to-end-value/v1" and
+  .workItem == "POC-MAGIC-END-TO-END-VALUE-001" and
+  (.repositories | length) == 6 and
+  ([.repositories[].repositoryId] | unique | length) == 6 and
+  ([.repositories[] | select(.economicallyQualified)] | length) == 1 and
+  ([.repositories[] | select(.valueGatePassed)] | length) == 3 and
+  ([.repositories[] | select(.decision == "CALIBRATION_VALUE_NOT_PROVEN")] | length) == 2 and
+  ([.repositories[] | select(.decision == "OUTPUT_SEMANTICS_AMBIGUOUS")] | length) == 1 and
+  ([.repositories[] | select(.manualBuildOptFiles != 0)] | length) == 0 and
+  .acceptance == {
+    allFreshInstallToDecision: false,
+    decision: "INCOMPLETE",
+    minimumDifferentQualifiedFamilies: 2,
+    publishedPackageUsed: false,
+    qualifiedFamilies: 1,
+    reasons: [
+      "ONLY_ONE_ECONOMICALLY_QUALIFIED_FAMILY",
+      "PUBLISHED_PACKAGE_NOT_USED",
+      "FRESH_INSTALL_TO_DECISION_NOT_PROVEN_FOR_ALL_ROWS"
+    ]
+  } and
+  ([.repositories[] | select(.candidateMeanMs != null) |
+    ((.controlMeanMs - .candidateMeanMs - .meanSavedMs) | fabs) < 0.000001 and
+    (((.meanSavedMs / .controlMeanMs) - .reductionRatio) | fabs) < 0.000001 and
+    .positivePairs >= 0 and .positivePairs <= 8
+  ] | all) and
+  ([.repositories[] | select(.repositoryId == "ktorio/ktor") |
+    .economicallyQualified and .positivePairs == 8 and
+    .breakEvenBuilds == 27 and .decision == "QUALIFIED_PROFILE_STORED"
+  ] | all) and
+  ([.repositories[] | select(.repositoryId == "apache/beam") |
+    (.graph == {totalProjects: 316, selectedProjects: 6, omittedProjects: 310}) and
+    .positivePairs == 8 and .valueGatePassed and
+    (.breakEvenBuilds == 37 and .decision == "CALIBRATION_BREAK_EVEN_EXCEEDED")
+  ] | all) and
+  ([.repositories[] | select(.repositoryId == "spring-projects/spring-framework") |
+    .positivePairs == 8 and .valueGatePassed and .breakEvenBuilds == 328 and
+    .decision == "CALIBRATION_BREAK_EVEN_EXCEEDED"
+  ] | all) and
+  ([.excludedObservations[] | select(.repositoryId == "open-telemetry/opentelemetry-java-instrumentation") |
+    (.accepted == false and .reason == "RAW_AUTOMATIC_RESULT_NOT_RETAINED")
+  ] | all)
+' "${buildopt_summary}" >/dev/null
+
+buildopt_evidence_root=$(cd -- "$(dirname -- "${buildopt_summary}")" && pwd -P)
+while IFS=$'\t' read -r buildopt_relative buildopt_expected; do
+    buildopt_file="${buildopt_evidence_root}/${buildopt_relative}"
+    [[ -f ${buildopt_file} ]] || {
+        printf 'raw one-command result is missing: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+    buildopt_actual=$(sha256sum "${buildopt_file}" | awk '{print $1}')
+    [[ ${buildopt_actual} == "${buildopt_expected}" ]] || {
+        printf 'raw one-command result digest mismatch: %s\n' "${buildopt_relative}" >&2
+        exit 1
+    }
+done < <(jq -r '(.repositories + .rejectedAttempts)[] | [.rawResult, .rawResultSha256] | @tsv' "${buildopt_summary}")
+
+while IFS=$'\t' read -r buildopt_relative buildopt_repository buildopt_decision; do
+    buildopt_file="${buildopt_evidence_root}/${buildopt_relative}"
+    jq -e --arg repository "${buildopt_repository}" --arg decision "${buildopt_decision}" '
+      .schemaVersion == "buildopt.poc/optimize-result/v1" and
+      .discovery.repositoryId == $repository and
+      .reason == $decision and
+      .productionAuthorized == false and
+      .testOptimization == "OUT_OF_SCOPE" and
+      .manualFilesRequired == 0
+    ' "${buildopt_file}" >/dev/null
+done < <(jq -r '.repositories[] | [.rawResult, .repositoryId, .decision] | @tsv' "${buildopt_summary}")
+
+printf 'Magic end-to-end value evidence OK: 1/2 qualified families; block remains incomplete\n'

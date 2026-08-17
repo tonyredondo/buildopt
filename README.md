@@ -27,7 +27,7 @@ evidence around that execution and uses conservative fallbacks: a rejected
 cache entry becomes a normal cache miss, an unqualified optimization is not
 applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
-> **Project status:** this is an owner-operated proof of concept. In a fresh
+> **Reviewed-profile research:** this is an owner-operated proof of concept. In a fresh
 > preregistered balanced rerun, the same generic structural Build Impact method
 > qualified independently on Spring, OpenTelemetry, Kafka, Micronaut, and
 > Groovy at **14.97% to 87.35% lower wall time** than optimized native Gradle.
@@ -54,6 +54,16 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > profiles remain review-required and are not production-authorized. See the
 > [current one-pager](./docs/findings/buildopt-poc-handoff.md)
 > and [generalization audit](./docs/findings/buildopt-generalization-audit.md).
+
+> **Current automatic status:** the zero-manual-file `buildopt optimize` matrix
+> is intentionally less mature than the reviewed profiles above. Ktor qualifies
+> at **82.00% lower measured wall time** with a 27-build payback. Beam shows
+> **75.97% lower replay wall time** and reduces 316 projects to six, but its
+> 37-build payback exceeds the declared maximum of 30. Spring is positive but
+> uneconomic; Groovy and Kafka are slower; Micronaut retains native before
+> timing because root `assemble` output semantics remain ambiguous. The current
+> terminal count is therefore **1/2 qualified families**, not a completed
+> general-product claim. See the [automatic matrix](./benchmarks/results/poc-magic-end-to-end-value-v1/README.md).
 
 > **POC onboarding north star:** install BuildOpt, open a Gradle repository and
 > run `buildopt optimize build`. The command now has a stable state/result,

@@ -21,6 +21,26 @@ For the decision-ready product summary, see the [current POC one-pager](../docs/
 The [detailed performance findings](../docs/findings/build-optimization-performance.md)
 retain mechanism-specific and historical experiments for engineering review.
 
+### Current automatic one-command matrix
+
+The [automatic end-to-end evidence](./results/poc-magic-end-to-end-value-v1/README.md)
+tests the customer-shaped `buildopt optimize` path with zero manual BuildOpt
+files. Ktor qualifies at 82.00% lower measured wall time and a 27-build
+payback. Beam reduces 316 projects to six and replay wall time by 75.97%, but
+its complete first-decision cost requires 37 matching builds and exceeds the
+declared maximum of 30. Spring is directly positive but uneconomic, Groovy and
+Kafka regress, and Micronaut retains native before timing. The terminal gate is
+therefore explicitly incomplete at 1/2 economically qualified families.
+
+Validate the normalized summary and every retained raw result with:
+
+```bash
+./dev/check-magic-end-to-end-value
+```
+
+The reviewed-profile results below remain useful feasibility evidence. They
+must not be presented as the current zero-configuration onboarding result.
+
 ### Balanced public-repository qualification
 
 The [terminal v2 evidence](./results/poc-statistical-qualification-v2/README.md)

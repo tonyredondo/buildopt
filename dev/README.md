@@ -3720,6 +3720,7 @@ The one-command onboarding contract is validated separately:
 ./dev/check-magic-ci-onboarding
 ./dev/check-magic-wow-report
 ./dev/check-magic-calibration
+./dev/check-magic-end-to-end-value
 ```
 
 The command contract fixes `buildopt optimize build`, private atomic
@@ -3743,6 +3744,14 @@ bindings before Gradle, selects the smaller qualified graph without another
 flag or calibration, and records the decision in nanoseconds. The same checker
 proves that a tampered profile runs native, repairs only from still-valid
 evidence, and becomes selectable on the following exact invocation.
+
+The end-to-end value checker validates the first automatic public-repository
+matrix and its retained raw `result.json` files. It deliberately expects the
+terminal block to remain incomplete: Ktor is the only economically qualified
+family under the declared 30-build maximum; Beam and Spring are directly
+positive but exceed that payback, Groovy and Kafka regress, and Micronaut makes
+no timing claim. The checker must not convert reviewed historical profiles or
+an unretained observation into current automatic evidence.
 The CI onboarding checker then proves one command on GitHub and GitLab,
 provider-bound path-independent exact checkpoint reuse, cross-repository and
 revision rejection, exact argv, private checksummed review artifacts and child

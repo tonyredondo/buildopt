@@ -1,326 +1,137 @@
 # BuildOpt POC: Current Evidence and Direction
 
-## Product idea
+## Idea
 
 BuildOpt explores whether a generic decision layer can make substantial Gradle
-builds faster than optimized native Gradle. Gradle already caches outputs,
-reuses configuration and incremental state, and executes a requested task graph
-efficiently. BuildOpt's current accelerator acts before that work: for an exact
-Git change, owner-approved Gradle workflow, and declared required outputs, it
-derives a smaller project/task graph and falls back to the original optimized
-native graph whenever ownership, outputs, evidence, or inputs are uncertain.
+builds faster than an already optimized native Gradle baseline. Gradle remains
+the execution engine and source of truth. BuildOpt's retained accelerator acts
+before Gradle: it derives a smaller graph for an exact Git change and requested
+workflow, measures the complete installed path, verifies required outputs, and
+replays the candidate only when safety and value gates pass. Any ambiguity,
+drift, regression, or poor payback keeps optimized native Gradle authoritative.
 
-This is an owner-operated proof of concept. There is no automatic production
-activation, soak requirement, design-partner dependency, or Test Optimization
-scope.
+This is an owner-operated proof of concept, not a production-ready product.
+Production SLOs, soak testing, design-partner dependencies, autonomous rollout,
+and Test Optimization are intentionally outside the current scope.
 
-## Current mechanisms
+## What a user does today
 
-| Mechanism | Role | Current evidence decision |
+```text
+install BuildOpt
+cd <any Gradle repository>
+buildopt optimize <existing Gradle workflow>
+```
+
+The command requires no BuildOpt manifest, graph, profile, plugin path, or
+repository-specific rule. It discovers the Git comparison, Gradle project
+ownership, candidate tasks, required outputs, and structural graph; then runs
+eight alternating optimized-native/BuildOpt pairs in isolated checkouts. A
+qualified result becomes a private digest-bound profile for exact replay.
+
+## Components and differentiation from Gradle
+
+| Component | What it does | Current role |
 | --- | --- | --- |
-| **Structural Build Impact** | Selects the smallest proven change-specific project/task graph before Gradle runs. | **Retained accelerator.** It materially improves the five-repository matrix, a fresh Ktor family transfer, three additional build-owned workflows, six earlier source-change cells, and three materially different Ktor change classes below. |
-| **Profile discovery, evaluation and replay** | Derives the candidate from generic Gradle metadata, measures it against the owner workflow, binds inputs, stores structural families and replays only an exact qualified match. | **Required safety/evidence layer.** `buildopt optimize` now selects exact local profiles automatically inside the explicit POC command; cross-revision and production activation remain disabled. |
-| **Safe Cache / local L1** | Isolates and verifies cached outputs by repository, Wrapper, and platform. | **Supporting safety, not the current speed claim.** It is approximately at parity with a warm native cache. |
-| **Shared / Edge Cache** | Moves verified cache objects closer to developers or CI. | **Separate locality experiment.** Network-dependent results are not added to Structural Build Impact percentages. |
-| **Build History and launcher** | Records evidence, preserves process behavior, and applies bypass/fallback. | **Supporting infrastructure.** Its candidate-path overhead is included in measurements. |
-| **Runtime Tuning, Hot State, standard Copy** | Previously explored worker/heap changes and broader task reuse. | **Retired from the executable POC:** terminal evidence was neutral, unstable, or regressive. |
+| **Structural Build Impact** | Avoids configuring and executing unrelated project/task producers for an exact change and output contract. | Primary accelerator. Gradle optimizes the graph it is asked to run; BuildOpt attempts to prove that a smaller graph is sufficient. |
+| **Automatic discovery and calibration** | Derives a candidate from Git/Gradle facts, measures it against optimized native Gradle, verifies outputs and computes payback. | Required evidence layer. It prevents task-count reductions from being mistaken for wall-time value. |
+| **Profile portfolio and replay** | Stores only qualified structural families and selects them after exact repository, Wrapper, workflow, graph, output and evidence bindings pass. | POC-only automatic replay; any drift falls back before Gradle starts. |
+| **Safe local cache** | Separates and verifies cached outputs by repository, Wrapper and platform. | Supporting safety. It is approximately at parity with a warm native Gradle cache and is not the current speed claim. |
+| **Shared / Edge cache** | Makes verified Gradle cache objects available over HTTP/HTTPS and optionally closer to builders. | Separate locality experiment; network results are never added to Structural Build Impact percentages. |
+| **Build history, launcher and reports** | Preserve process behavior and explain graph reduction, measured saving, uncertainty, p95, calibration cost and fallback. | Supporting infrastructure; its overhead is included in candidate timing. |
+| **Runtime Tuning, Hot State and standard Copy** | Earlier attempts to tune resources or reuse broader task state. | Retired from the executable POC after neutral, unstable or regressive evidence. |
 
-## Fresh comparable public-repository evidence
+## Current zero-configuration evidence
 
-The latest preregistered balanced protocols ran two independent captures per
-repository, eight alternating pairs per capture, and eight opposite-order
-AB/BA blocks.
-The control is optimized native Gradle with the same revision, workflow,
-resources, required outputs, cache/parallel options, and warmed state. BuildOpt
-timing includes its installed launcher, profile validation, planning, and
-Gradle execution.
+The latest automatic matrix uses installed development packages, public
+repositories, zero manual BuildOpt files, eight pairs when calibration runs,
+and a declared maximum payback of 30 matching builds.
 
-| Repository | Declared -> selected projects | Native mean | BuildOpt mean | Mean saving | Blocks | p95 native -> BuildOpt |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Spring Framework | 27 -> 10 | 13.311 s | 11.183 s | **2.128 s / 15.99%** | 8/8 positive | 15.711 -> 13.318 s |
-| OpenTelemetry Java Instrumentation | 1,024 -> 34 | 87.869 s | 74.713 s | **13.156 s / 14.97%** | 8/8 positive | 100.229 -> 79.004 s |
-| Apache Kafka | 64 -> 3 | 113.381 s | 14.341 s | **99.040 s / 87.35%** | 8/8 positive | 145.478 -> 15.339 s |
-| Micronaut Core | 75 -> 22 | 30.411 s | 18.418 s | **11.993 s / 39.44%** | 8/8 positive | 34.006 -> 20.448 s |
-| Apache Groovy | 37 -> 2 | 79.868 s | 20.767 s | **59.101 s / 74.00%** | 8/8 positive | 85.338 -> 24.183 s |
-| Ktor JVM JAR workflow | 133 -> 3 | 103.724 s | 14.308 s | **89.416 s / 86.21%** | 8/8 positive | 153.818 -> 20.397 s |
+| Repository / workflow | Projects | Native mean | BuildOpt mean | Direct effect | Current decision |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Ktor `jvmJar` | 133 -> 10 | 33.595 s | 6.049 s | **27.546 s / 82.00% faster** | **Qualified; 27-build payback** |
+| Spring `classes` | 27 -> 21 | 10.135 s | 9.072 s | **1.063 s / 10.49% faster** | Native retained; 328-build payback |
+| Beam `classes` | 316 -> 6 | 20.396 s | 4.901 s | **15.495 s / 75.97% faster** | Native retained; 37-build payback |
+| Groovy `classes` | 37 -> 30 | 61.497 s | 62.038 s | **0.542 s / 0.88% slower** | Native retained; value not proven |
+| Kafka `testClasses` | 66 -> 36 | 8.921 s | 11.671 s | **2.750 s / 30.83% slower** | Native retained; value not proven |
+| Micronaut `assemble` | unavailable | unavailable | unavailable | no timing claim | Native retained; output semantics ambiguous |
 
-All **6/6 repositories qualify independently**. Across the matrix and Ktor
-transfer, all 96 raw
-pairs improved, every required output matched exactly, measured task shapes
-were stable, both full-graph fallbacks passed for every repository, and no
-product-attributable failure occurred. Percentages are neither averaged across
-repositories nor added to cache or other mechanism results.
+Ktor, Spring and Beam improved in 8/8 pairs with positive intervals, lower p95,
+exact required outputs and successful full-graph fallback. Beam is the clearest
+new structural signal: the candidate reduces 316 projects to six and replay
+wall time by 75.97%. Its complete first-decision cost is 558.913 seconds,
+however, so repayment needs 37 matching builds rather than the allowed 30.
 
-Ktor is intentionally a JVM JAR selector rather than a claim about its full
-multiplatform release build. Its two independent captures saved 92.128 and
-86.705 seconds; the balanced block interval is +79.451..+98.422 seconds. Five
-invalid or rejected attempts are retained, and neither their timings nor their
-state enters the terminal result.
+Groovy explains why automatic graph precision matters: the current project
+dependency graph keeps a large strongly connected component, so automatic
+selection reaches 30 of 37 projects and provides no value. Kafka shows that a
+smaller graph alone is insufficient: it halves the project graph but executes
+slightly more expensive work and is 30.83% slower. Micronaut correctly makes no
+timing claim because a root `assemble` request fans out broadly and the generic
+output contract cannot yet prove a bounded terminal deliverable set.
 
-The same generic Ktor path now also qualifies three independently
-preregistered change classes under that selector:
+The first Beam attempt also exposed a general calibration bug: isolated clones
+replaced the public `origin` URL with a local path, while Beam derives metadata
+from that URL. BuildOpt now preserves the public origin without fetching from
+it; the corrected run passed all eight pairs and fallback.
 
-| Ktor change | Full -> selected projects | Native mean | BuildOpt mean | Mean saving | Blocks |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Upstream dependency source | 133 -> 3 | 98.269 s | 13.954 s | **84.314 s / 85.80%** | 8/8 positive |
-| JVM service resource | 133 -> 9 | 57.238 s | 7.720 s | **49.517 s / 86.51%** | 8/8 positive |
-| Mixed production source, two modules | 133 -> 9 | 104.877 s | 23.096 s | **81.781 s / 77.98%** | 8/8 positive |
+## What the evidence proves
 
-All **48/48 raw pairs** and **24/24 reciprocal blocks** improve. Required JARs
-are byte-identical, candidate p95 is lower, task shapes are stable and all six
-selective fallbacks pass. Two independent root-configuration proposals retain
-native Gradle without a timing claim. These percentages remain independent;
-they are not averaged with each other or with the original Ktor transfer.
-The accepted matrix restarted from zero after a diagnostic run exposed a
-missing preregistered Gradle option in the generic runner. That rejected run is
-preserved for audit and contributes no timing to this table.
+- The core structural idea can deliver large customer-path savings on real,
+  substantial Gradle repositories.
+- The automatic path can discover a 133 -> 10 Ktor candidate and qualify it
+  without a hand-authored BuildOpt file.
+- The same generic implementation finds a 316 -> 6 Beam candidate with strong,
+  repeatable replay value.
+- Safety gates work: negative, uneconomic and semantically ambiguous candidates
+  retain native Gradle rather than forcing an optimization.
+- Project count is diagnostic, not value. Only measured installed wall time,
+  outputs, uncertainty, tails, fallback and payback can qualify a profile.
 
-The result replaces no historical evidence. In particular, Spring's previous
-7/8 decision remains valid for its old strict protocol; the fresh balanced run
-uses 16 new pairs and qualifies with 8/8 positive reciprocal blocks, a positive
-1.803..2.386 s block-bootstrap interval, and improved p95.
+It does **not** yet prove the desired general product experience. The terminal
+gate requires two economically qualified repository families from a published
+package and fresh install-to-decision captures. Current automatic count is
+**1/2**. OpenTelemetry is not included in this automatic matrix because its raw
+temporary result was not retained; historical reviewed-profile evidence remains
+versioned separately and is not substituted for missing current data.
 
-## Additional build-owned workflow evidence
+## Historical feasibility versus current automation
 
-Three workflows that previously failed closed on byte-level output
-nondeterminism were rerun with explicit owner-reviewed semantic contracts.
-Exact bytes remain the default; only the declared repository-root or archive
-container metadata is excluded from comparison.
-
-| Repository and workflow | Full -> selected projects | Native mean | BuildOpt mean | Mean saving | Blocks |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Apache Groovy `jar` | 37 -> 2 | 72.319 s | 19.455 s | **52.864 s / 73.10%** | 8/8 positive |
-| Apache Kafka `checkstyleMain` | 64 -> 2 | 82.835 s | 58.209 s | **24.627 s / 29.73%** | 8/8 positive |
-| Apache Kafka `shadowJar` | 64 -> 2 | 40.728 s | 13.625 s | **27.103 s / 66.55%** | 8/8 positive |
-
-All **48/48 raw pairs** improved. Required outputs were semantically identical,
-candidate p95 was lower, task shapes were stable, two native fallbacks passed
-per workflow, and product-attributable failures were zero. Percentages remain
-workflow-specific and are not combined with the five-repository table.
-
-## Change-shape breadth
-
-The latest preregistered matrix asks whether those reviewed workflow profiles
-transfer beyond one exact source edit. Each source cell has two independent
-eight-pair captures; build-logic and global changes are separate untimed safety
-cells.
-
-| Repository and workflow | Change | Full -> selected projects | Native mean | BuildOpt mean | Mean saving |
-| --- | --- | ---: | ---: | ---: | ---: |
-| Apache Groovy `jar` | leaf source | 37 -> 2 | 71.227 s | 18.843 s | **52.384 s / 73.54%** |
-| Apache Groovy `jar` | shared source | 37 -> 2 | 79.557 s | 27.207 s | **52.349 s / 65.80%** |
-| Kafka `checkstyleMain` | metadata source | 64 -> 2 | 82.431 s | 59.353 s | **23.078 s / 28.00%** |
-| Kafka `checkstyleMain` | client-utils source | 64 -> 2 | 87.522 s | 61.177 s | **26.345 s / 30.10%** |
-| Kafka `shadowJar` | clients source | 64 -> 2 | 44.828 s | 14.956 s | **29.872 s / 66.64%** |
-| Kafka `shadowJar` | generator source | 64 -> 2 | 37.079 s | 7.587 s | **29.492 s / 79.54%** |
-
-All **96/96 raw pairs** and **48/48 reciprocal blocks** improved. Every output,
-shape, lower-bound, p95, selective fallback, and zero-product-failure gate
-passed. Eight independent build-logic/global captures correctly returned
-`NATIVE_FULL_GRAPH / GLOBAL_CHANGE_REQUIRES_FULL_GRAPH` and made no timing
-claim. The percentages remain independent and are not averaged.
-
-## Calibration economics and efficiency
-
-Two fresh setup captures per selective cell now expose how long it takes to
-reach those steady-state savings. The installed-workflow view includes the
-real combined output-preflight/discovery command and all candidate warm-ups;
-the full POC view additionally includes native-control warm-ups used only to
-prove the comparison.
-
-| Workflow and change | Saving/build | Installed break-even before -> now | Full POC break-even before -> now |
-| --- | ---: | ---: | ---: |
-| Groovy `jar`, leaf source | 52.384 s | **10 -> 9 builds** | **20 -> 19 builds** |
-| Groovy `jar`, shared source | 52.349 s | **11 -> 10 builds** | **22 -> 21 builds** |
-| Kafka Checkstyle, metadata source | 23.078 s | **31 -> 26 builds** | **55 -> 50 builds** |
-| Kafka Checkstyle, client-utils source | 26.345 s | **27 -> 24 builds** | **49 -> 46 builds** |
-| Kafka `shadowJar`, clients source | 29.872 s | **15 -> 13 builds** | **28 -> 26 builds** |
-| Kafka `shadowJar`, generator source | 29.492 s | **14 -> 13 builds** | **27 -> 25 builds** |
-
-The efficiency follow-up fuses structural discovery, replays only exact
-digest-bound proposals, and removes the third candidate target warm-up only
-after two exact task fingerprints match. Cold discovery is **8.01% to 21.08%
-lower** across all six cells; exact replay takes **0.281 to 1.261 seconds**.
-All six installed and full-POC break-even counts improve without changing any
-terminal saving, output, tail, fallback or failure result. Checkout remains
-visible but is excluded as shared native/BuildOpt work.
-
-The same economics protocol now covers the three qualified Ktor change
-classes. First-time cold discovery plus candidate stabilization repays after
-**7 builds** for dependency source, **10 builds** for a JVM resource and
-**8 builds** for the mixed-source edit. Exact proposal replay is
-0.321–0.376 seconds; including fresh stabilization, reevaluation repays after
-**2, 4 and 3 builds**. Every replay artifact and terminal output binding is
-exact, all six drift probes reject replay, and the global fallback stays
-untimed native Gradle.
-
-## What this demonstrates
-
-- **The core idea transfers.** One generic implementation derived material
-  graph reductions across six very different, substantial Gradle codebases,
-  including a new Kotlin Multiplatform family, without repository-name logic.
-- **The value transfers across change shapes.** Two distinct changes per
-  reviewed Groovy/Kafka workflow and dependency, resource, and multi-module
-  Ktor changes qualify independently, while build-logic and global changes
-  retain native Gradle instead of forcing a reduction.
-- **Avoiding the graph compounds value.** Fewer selected projects remove
-  configuration, scheduling, cache lookup, compilation, and packaging work;
-  this is why Kafka and Groovy show especially large savings.
-- **The gain survives product overhead.** Candidate timings include BuildOpt's
-  installed path rather than an internal task microbenchmark.
-- **Correctness and tails remain mandatory.** Mean speed alone cannot qualify
-  a scope; outputs, measured shapes, p95, order balance, and native fallbacks
-  must all pass.
-- **Owner-reviewed output semantics recover real workflows.** Narrow,
-  digest-bound text and archive contracts allow BuildOpt to compare correct
-  reports and packages without treating timestamps, archive order, or an
-  isolated checkout prefix as business payload. Undeclared drift still fails
-  closed.
-- **Calibration is cheaper but still not free.** The original six reviewed
-  profiles repay fused discovery plus adaptive candidate warm-ups after 9–26
-  qualifying builds; exact repeat evaluation repays after 4–12. The three
-  Ktor cells repay first-time calibration after 7–10 builds and exact replay
-  evaluation after 2–4. The POC proves repeated-build value, not instant
-  first-run payback.
-- **One-command learning now persists and replays exact profiles.** Qualified measurements
-  become exact v4 profiles in a bounded repository-scoped portfolio. Four
-  generic change families are derived from changed paths, Gradle project
-  ownership and dependency edges, never from repository names. Exact state is
-  reused without measurement and profile tampering is rebuilt only from
-  still-valid calibration evidence. A later exact command validates eleven
-  bindings before Gradle and automatically executes the smaller graph; a
-  tampered profile runs native and can be repaired for the following command.
-  Selection duration is recorded and included in total invocation wall time.
-  This orchestration result changes none of the historical wall-time claims.
-- **The reviewed profiles transfer to the public package.** Public `v0.3.1`
-  reproduced all six selective decisions through `buildopt poc`; all six
-  manifest-drift probes retained native Gradle and all six contemporary
-  candidate/native outputs were semantically equal. The replay preserves the
-  existing timing qualifications rather than creating new percentages.
-- **The new Ktor family also transfers to the public package.** Public
-  `v0.3.2` reproduced all three dependency, resource and mixed-source plans;
-  adding one unqualified Gradle option retained native Gradle 3/3 before
-  execution, and all contemporary candidate/native JARs matched exactly.
-  Historical Ktor percentages remain unchanged.
-- **Cross-date output comparison is now explicit and fail-closed.** Four Kafka
-  cells match naturally across independent captures. Two real Groovy JAR
-  probes match after declaring only `BuildDate + BuildTime`; the previous
-  contract rejects the date change, and the reviewed contract still rejects
-  undeclared version and class-payload drift. Historical profiles and timing
-  values remain unchanged.
-
-## Current limits
-
-The one-command implementation now covers discovery, calibration, portfolio
-storage and exact automatic replay rather than only a roadmap. In the real
-two-project Gradle fixture, `buildopt optimize`
-discovers packaging, custom verification, distribution and `testClasses`
-proposals with zero hand-authored BuildOpt files; every case derives a 2→1
-project graph and writes seven private review documents. For a measurable
-candidate, the same command now runs eight balanced pairs, exact output checks,
-full fallback and break-even evaluation, then resumes matching evidence without
-remeasurement. An under-budget run makes no claim. Unsupported relationships,
-a root build change and an ambiguous Git base independently retain optimized
-native Gradle. This validates orchestration, not a new transferable performance
-percentage: the current fixture's intentional delay produced 1.303 s/66.84% mean
-saving across 8/8 positive pairs and repaid its 74.968-s learning cost after 58
-matching builds under the fixture's explicit 100-build ceiling. A second exact
-invocation selected `:service-a:jar` instead of the original `jar` in 18.780 ms
-without remeasurement; profile tampering retained native before Gradle and was
-repaired only from the still-valid evidence. Those values test the protocol and
-do not extend the real-repository evidence above.
-
-The same command is now available as one-input GitHub and GitLab orchestration:
-`command: optimize build`. Provider repository identity replaces the ephemeral
-checkout path only for the repository-scope digest, allowing an exact
-checkpoint to move between clean runners of the same repository and commit.
-Executable, Wrapper, argv, base/target, graph, output, evidence and profile
-bindings still pass before use. Both providers publish a checksummed result;
-cache miss, corruption or drift runs optimized native Gradle and no BuildOpt
-service or manual internal file is required.
-
-The command now also turns the technical decision into a customer-level value
-report. `value-report.md` explains the full and selected project counts,
-observed installed-path mean saving, paired 95% interval, native and candidate
-p95, calibration cost, break-even, exact replay count, selection overhead and
-the exact current fallback reason. `value-report.json` carries the same source
-metrics and fixed formulas, so every graph, timing and economics number can be
-recomputed. It never treats graph reduction alone as value or adds unrelated
-mechanism percentages. Cumulative saving is explicitly a projection from the
-observed calibration mean over successful exact replays, less calibration and
-selection cost. Expected useful lifetime remains `UNAVAILABLE`: exact-revision
-replay cannot yet observe whether a profile would remain applicable across
-future commits.
-
-The evidence is bound to exact revisions, changes, workflows, outputs, and a
-12-CPU host. The matrices cover multiple source shapes, a JVM resource,
-multiple simultaneous paths, and conservative build-logic/global fallback,
-but they do not prove that every change in these repositories wins or that
-every Gradle repository can be activated automatically. Historical public
-profiles remain review-required; the one-command path may activate only its
-own exact qualified profile inside the explicit POC command. CI persistence
-is exact-commit only and does not infer applicability across revisions. Native
-Gradle remains authoritative on drift or ambiguity.
-
-The evidence now covers those three known output representations, but only
-through explicit reviewed contracts: Groovy JAR metadata embeds build date and
-time, Kafka Checkstyle embeds isolated workspace paths, and Kafka `shadowJar`
-preserves timestamp/order differences. A new output shape remains byte-exact
-until an owner declares and validates its semantics. The controlled Groovy
-date probe proves the semantic boundary on real JARs; it is not a second timed
-build on another day or authority to ignore arbitrary timestamps.
+Earlier owner-reviewed profiles produced substantial improvements across
+Spring, OpenTelemetry, Kafka, Micronaut, Groovy and Ktor, including 14.97% to
+87.35% lower wall time in their terminal protocols. Those experiments prove
+that structural graph reduction has broad potential when workflow scope and
+output semantics are supplied and reviewed. They do not prove that today's
+zero-configuration command discovers the same scopes automatically. The table
+above is therefore the current customer-shaped status and takes precedence for
+onboarding decisions.
 
 ## Recommended next steps
 
-The product-direction north star is now one owner-invoked command:
-
-```text
-install BuildOpt -> open a Gradle repository -> buildopt optimize build
-```
-
-That command must automatically discover, calibrate, evaluate, materialize and
-replay repository-owned profiles. The magic is orchestration rather than
-weaker evidence: unsupported or ambiguous workflows retain optimized native
-Gradle, and automatic selection remains POC-only with production authority
-false. The ordered implementation and scorecard are frozen in the
-[one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md).
-
-1. **Prove the complete effect.** Measure install-to-decision time, net
-   installed-path wall time and break-even on fresh substantial public
-   repositories; require the generated value report to agree with raw evidence
-   and never add isolated mechanism percentages.
-2. **Observe useful profile lifetime.** Repeat representative changes across
-   commits and record how many builds preserve exact structural, workflow and
-   output applicability. Until then, payback remains a projection rather than a
-   product promise.
-3. **Evaluate cross-revision learning only from that evidence.** Reuse across
-   source revisions must prove current graph/output applicability before it can
-   reduce calibration.
+1. **Reduce generic first-decision cost.** Reuse immutable dependency snapshots
+   under exact content bindings, avoid repeated multi-gigabyte copying, and
+   reuse base-cache preparation only when repository/Wrapper/dependency inputs
+   prove equivalence. Beam needs at least 94.1 seconds removed to repay within
+   30 matching builds at the observed saving.
+2. **Add an economic prequalification signal.** Use observed executed,
+   from-cache, up-to-date and no-source task shapes to avoid expensive full
+   calibration when graph reduction is unlikely to remove costly work, as in
+   Kafka.
+3. **Improve graph precision generically.** Investigate task/variant and
+   ABI-aware dependency relationships so Groovy SCCs and Micronaut root
+   fan-out can be reduced without repository-specific rules.
+4. **Repeat the terminal gate only after two families qualify.** Publish one
+   immutable release, install it into fresh Ktor and Beam checkouts/homes, run
+   the same command, preserve every raw result and require 2/2 economics plus
+   at least one native-retained negative.
+5. **Observe profile lifetime across commits.** Payback is a projection until
+   exact graph/output applicability is measured over real follow-up changes.
 
 ## Evidence
 
-- [Balanced five-repository qualification](../../benchmarks/results/poc-statistical-qualification-v2/README.md)
-- [Machine-readable terminal matrix](../../benchmarks/results/poc-statistical-qualification-v2/summary.json)
-- [Preregistered v2 contract](../../specs/poc-statistical-qualification-v2.md)
-- [Public workflow-family output barriers](../../benchmarks/results/poc-generic-workflow-value-v1/README.md)
-- [Terminal semantic output-equivalence qualification](../../benchmarks/results/poc-generic-output-equivalence-v1/README.md)
-- [Terminal generic change-breadth qualification](../../benchmarks/results/poc-generic-change-breadth-v1/README.md)
-- [Terminal calibration economics](../../benchmarks/results/poc-calibration-economics-v1/README.md)
-- [Terminal calibration efficiency](../../benchmarks/results/poc-calibration-efficiency-v1/README.md)
-- [Public installed profile replay](../../benchmarks/results/poc-installed-profile-replay-v1/README.md)
-- [Reviewed cross-date output equivalence](../../benchmarks/results/poc-cross-date-output-equivalence-v1/README.md)
-- [Ktor new-family transfer](../../benchmarks/results/poc-new-family-transfer-v1/README.md)
-- [Ktor new-family change breadth](../../benchmarks/results/poc-new-family-change-breadth-v1/README.md)
-- [Ktor calibration economics](../../benchmarks/results/poc-new-family-calibration-economics-v1/README.md)
-- [Ktor public installed profile replay](../../benchmarks/results/poc-new-family-installed-profile-replay-v1/README.md)
-- [One-command POC onboarding contract](../../specs/poc-magic-onboarding-contract-v1.md)
-- [Automatic one-command discovery contract](../../specs/poc-magic-auto-discovery-v1.md)
-- [Automatic one-command calibration contract](../../specs/poc-magic-calibration-v1.md)
-- [Automatic profile portfolio contract](../../specs/poc-magic-profile-portfolio-v1.md)
-- [Automatic qualified-profile replay contract](../../specs/poc-magic-auto-replay-v1.md)
-- [One-input CI onboarding contract](../../specs/poc-magic-ci-onboarding-v1.md)
-- [Customer-readable value report](../../specs/poc-magic-wow-report-v1.md)
-- [Generalization audit](./buildopt-generalization-audit.md)
-- [One-command POC onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
+- [Current automatic one-command matrix](../../benchmarks/results/poc-magic-end-to-end-value-v1/README.md)
+- [Machine-readable summary](../../benchmarks/results/poc-magic-end-to-end-value-v1/summary.json)
+- [End-to-end value contract](../../specs/poc-magic-end-to-end-value-v1.md)
+- [One-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
 - [Detailed historical performance findings](./build-optimization-performance.md)
+- [Generalization audit](./buildopt-generalization-audit.md)
 - [Implementation tracker](../../implementation-tracker.md)
