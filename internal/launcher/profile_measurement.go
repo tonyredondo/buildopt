@@ -69,6 +69,7 @@ type structuralMeasurementConfig struct {
 	gradleReadOnlyDependencyRoot string
 	gradleNativeBuildCacheSeed   string
 	gradleSharedBuildCacheSeed   string
+	gradleMeasurementHome        string
 	deadline                     time.Time
 }
 
@@ -76,6 +77,7 @@ type structuralMeasurementArm struct {
 	name                   string
 	workspace              string
 	gradleHome             string
+	buildCacheRoot         string
 	cacheSeed              string
 	readOnlyDependencyRoot string
 	warmups                []profilediscovery.StructuralWarmupObservation
@@ -423,6 +425,12 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 	if err != nil {
 		return nil, false, err
 	}
+	if config.pairedTargetStability {
+		config.gradleMeasurementHome, err = prepareStructuralSharedGradleHome(config, root)
+		if err != nil {
+			return nil, false, err
+		}
+	}
 	control, err := prepareStructuralMeasurementArm(config, root, "control", false, "", progress)
 	if err != nil {
 		return nil, false, err
@@ -525,11 +533,14 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 			pair, formatStructuralTaskOutcomes(controlResult.taskOutcomes), formatStructuralTaskOutcomes(candidateResult.taskOutcomes))
 	}
 	// The fallback proves correctness; it is not part of the measured effect.
-	// Release the control daemon, then reuse the candidate arm's existing
-	// scheduling mode. This leaves at most one measurement JVM alive and avoids
-	// charging a cold third Gradle process to every onboarding calibration.
-	if err := stopStructuralMeasurementArm(control); err != nil {
-		return nil, false, fmt.Errorf("stop control daemon before fallback: %w", err)
+	// Standalone measurements use one daemon per arm, so release the control
+	// daemon before fallback. Automatic paired measurements deliberately share
+	// one daemon while their writable build caches remain isolated; preserve
+	// that daemon for fallback instead of charging another cold JVM startup.
+	if control.gradleHome != candidate.gradleHome {
+		if err := stopStructuralMeasurementArm(control); err != nil {
+			return nil, false, fmt.Errorf("stop control daemon before fallback: %w", err)
+		}
 	}
 	fallbackResult, fallbackReason, err := measureStructuralFallback(config, candidate, progress)
 	if err != nil {
@@ -574,33 +585,31 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 		return structuralMeasurementArm{}, err
 	}
 	totalWarmups := 2 + config.targetStabilityConfirmations
-	arm := structuralMeasurementArm{
-		name:                   name,
-		workspace:              filepath.Join(root, name+"-repository"),
-		gradleHome:             filepath.Join(root, name+"-gradle-home"),
-		cacheSeed:              filepath.Join(root, name+"-build-cache-seed"),
-		readOnlyDependencyRoot: config.gradleReadOnlyDependencyRoot,
+	if config.pairedTargetStability {
+		totalWarmups = 2
 	}
+	arm := newStructuralMeasurementArm(config, root, name)
+	arm.readOnlyDependencyRoot = config.gradleReadOnlyDependencyRoot
 	if err := gitRun("", "clone", "--quiet", "--no-checkout", "--shared", "--", config.repositoryRoot, arm.workspace); err != nil {
 		return arm, fmt.Errorf("clone %s arm: %w", name, err)
 	}
 	if err := os.MkdirAll(arm.gradleHome, 0o700); err != nil {
 		return arm, fmt.Errorf("create %s Gradle home: %w", name, err)
 	}
-	if config.gradleDistributionSeed != "" {
+	if config.gradleMeasurementHome == "" && config.gradleDistributionSeed != "" {
 		destination := filepath.Join(arm.gradleHome, "wrapper", "dists")
 		if err := copyMeasurementDistributionTree(config.gradleDistributionSeed, destination); err != nil {
 			return arm, fmt.Errorf("seed %s Gradle distribution: %w", name, err)
 		}
 	}
 	if config.gradleSharedBuildCacheSeed != "" {
-		destination := filepath.Join(arm.gradleHome, "caches", "build-cache-1")
+		destination := arm.buildCacheRoot
 		if err := copyMeasurementTree(config.gradleSharedBuildCacheSeed, destination); err != nil {
 			return arm, fmt.Errorf("seed %s native build cache: %w", name, err)
 		}
 	}
 	if config.pairedTargetStability && sharedCacheSeed != "" {
-		cache := filepath.Join(arm.gradleHome, "caches", "build-cache-1")
+		cache := arm.buildCacheRoot
 		if err := os.RemoveAll(cache); err != nil {
 			return arm, fmt.Errorf("replace %s native build cache: %w", name, err)
 		}
@@ -623,7 +632,7 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	arm.warmups = append(arm.warmups, structuralWarmupDiagnostic("CACHE_SEED", seedWarmup))
 	_, _ = fmt.Fprintf(progress, "buildopt: warmed isolated %s arm cache seed in %dms with %s\n",
 		name, seedWarmup.durationMS, formatStructuralTaskOutcomes(seedWarmup.taskOutcomes))
-	cache := filepath.Join(arm.gradleHome, "caches", "build-cache-1")
+	cache := arm.buildCacheRoot
 	if err := copyMeasurementTree(cache, arm.cacheSeed); err != nil {
 		return arm, fmt.Errorf("snapshot %s native build cache: %w", name, err)
 	}
@@ -685,6 +694,66 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 			))
 	}
 	return arm, nil
+}
+
+func newStructuralMeasurementArm(config structuralMeasurementConfig, root, name string) structuralMeasurementArm {
+	gradleHome := filepath.Join(root, name+"-gradle-home")
+	buildCacheRoot := filepath.Join(gradleHome, "caches", "build-cache-1")
+	if config.gradleMeasurementHome != "" {
+		gradleHome = config.gradleMeasurementHome
+		buildCacheRoot = filepath.Join(root, name+"-build-cache")
+	}
+	return structuralMeasurementArm{
+		name:           name,
+		workspace:      filepath.Join(root, name+"-repository"),
+		gradleHome:     gradleHome,
+		buildCacheRoot: buildCacheRoot,
+		cacheSeed:      filepath.Join(root, name+"-build-cache-seed"),
+	}
+}
+
+func prepareStructuralSharedGradleHome(config structuralMeasurementConfig, root string) (string, error) {
+	gradleHome := filepath.Join(root, "shared-gradle-home")
+	if err := os.MkdirAll(gradleHome, 0o700); err != nil {
+		return "", fmt.Errorf("create shared measurement Gradle home: %w", err)
+	}
+	if config.gradleDistributionSeed != "" {
+		destination := filepath.Join(gradleHome, "wrapper", "dists")
+		if err := copyMeasurementDistributionTree(config.gradleDistributionSeed, destination); err != nil {
+			return "", fmt.Errorf("seed shared measurement Gradle distribution: %w", err)
+		}
+	}
+	initScript := filepath.Join(gradleHome, "init.d", "buildopt-measurement-cache.gradle")
+	if err := writeStructuralBuildCacheInitScript(initScript, root); err != nil {
+		return "", fmt.Errorf("configure isolated measurement build caches: %w", err)
+	}
+	return gradleHome, nil
+}
+
+func writeStructuralBuildCacheInitScript(scriptPath, measurementRoot string) error {
+	if err := os.MkdirAll(filepath.Dir(scriptPath), 0o700); err != nil {
+		return err
+	}
+	escapedRoot := strings.ReplaceAll(measurementRoot, `\`, `\\`)
+	escapedRoot = strings.ReplaceAll(escapedRoot, `'`, `\'`)
+	contents := "def buildoptMeasurementRoot = new File('" + escapedRoot + "').canonicalFile\n" +
+		"settingsEvaluated { settings ->\n" +
+		"    def settingsPath = settings.settingsDir.canonicalFile.toPath()\n" +
+		"    def controlPath = new File(buildoptMeasurementRoot, 'control-repository').toPath()\n" +
+		"    def candidatePath = new File(buildoptMeasurementRoot, 'candidate-repository').toPath()\n" +
+		"    def cacheRoot\n" +
+		"    if (settingsPath.startsWith(controlPath)) {\n" +
+		"        cacheRoot = new File(buildoptMeasurementRoot, 'control-build-cache')\n" +
+		"    } else if (settingsPath.startsWith(candidatePath)) {\n" +
+		"        cacheRoot = new File(buildoptMeasurementRoot, 'candidate-build-cache')\n" +
+		"    } else {\n" +
+		"        throw new GradleException('measurement build escaped the isolated control and candidate roots')\n" +
+		"    }\n" +
+		"    settings.buildCache {\n" +
+		"        local { directory = cacheRoot }\n" +
+		"    }\n" +
+		"}\n"
+	return os.WriteFile(scriptPath, []byte(contents), 0o600)
 }
 
 func prepareStructuralPairedTargetWarmup(config structuralMeasurementConfig, arm structuralMeasurementArm, candidate bool, phaseIndex int, progress io.Writer) (structuralMeasurementArm, error) {
@@ -844,7 +913,7 @@ func resetStructuralArm(config structuralMeasurementConfig, arm structuralMeasur
 		return err
 	}
 	if restoreCache {
-		cache := filepath.Join(arm.gradleHome, "caches", "build-cache-1")
+		cache := arm.buildCacheRoot
 		if err := os.RemoveAll(cache); err != nil {
 			return fmt.Errorf("clear isolated native build cache: %w", err)
 		}
@@ -1498,8 +1567,9 @@ func copyMeasurementTree(source, target string) error {
 // prepareStructuralDependencySnapshot makes the dependency artifacts and
 // native build-cache entries produced by the authoritative build available to
 // both isolated measurement arms. Each source is copied once into an immutable
-// seed; writable build caches, daemon state, Configuration Cache state, and
-// repository outputs remain private per arm.
+// seed; writable build caches, Configuration Cache state, and repository
+// outputs remain private per arm. Automatic paired measurements may share the
+// Gradle daemon process, but never a writable build-cache directory.
 func prepareStructuralDependencySnapshot(config structuralMeasurementConfig, root string, progress io.Writer) (structuralMeasurementConfig, error) {
 	if config.gradleDependencySeed == "" && config.gradleNativeBuildCacheSeed == "" {
 		return config, nil

@@ -149,6 +149,7 @@ jq -e '
     .generatedFiles.valueMarkdown == ".buildopt/optimize/qualified/value-report.md"
 ' "${buildopt_first}" >/dev/null || {
     printf 'qualified automatic calibration result is invalid\n' >&2
+    sed -n '1,320p' "${buildopt_temp}/qualified-1.log" >&2
     jq . "${buildopt_first}" >&2
     exit 1
 }

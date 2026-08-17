@@ -130,6 +130,45 @@ func TestMeasurementEnvironmentRemovesExternalBuildOptState(t *testing.T) {
 	}
 }
 
+func TestPairedStructuralMeasurementSharesDaemonButIsolatesBuildCaches(t *testing.T) {
+	root := t.TempDir()
+	sharedHome := filepath.Join(root, "shared-gradle-home")
+	config := structuralMeasurementConfig{gradleMeasurementHome: sharedHome}
+	control := newStructuralMeasurementArm(config, root, "control")
+	candidate := newStructuralMeasurementArm(config, root, "candidate")
+	if control.gradleHome != sharedHome || candidate.gradleHome != sharedHome {
+		t.Fatalf("paired Gradle homes = %q / %q", control.gradleHome, candidate.gradleHome)
+	}
+	if control.buildCacheRoot == candidate.buildCacheRoot {
+		t.Fatalf("paired cache isolation = %+v / %+v", control, candidate)
+	}
+	initScript := filepath.Join(sharedHome, "init.d", "buildopt-measurement-cache.gradle")
+	if err := writeStructuralBuildCacheInitScript(initScript, root); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile(initScript)
+	if err != nil || !strings.Contains(string(raw), "settings.buildCache") ||
+		!strings.Contains(string(raw), "control-build-cache") ||
+		!strings.Contains(string(raw), "candidate-build-cache") {
+		t.Fatalf("build-cache init script = %q/%v", raw, err)
+	}
+	if info, err := os.Stat(initScript); err != nil ||
+		(runtime.GOOS != "windows" && info.Mode().Perm() != 0o600) {
+		t.Fatalf("build-cache init-script mode = %v/%v", info, err)
+	}
+}
+
+func TestStandaloneStructuralMeasurementKeepsIndependentGradleHomes(t *testing.T) {
+	root := t.TempDir()
+	config := structuralMeasurementConfig{}
+	control := newStructuralMeasurementArm(config, root, "control")
+	candidate := newStructuralMeasurementArm(config, root, "candidate")
+	if control.gradleHome == candidate.gradleHome ||
+		control.buildCacheRoot != filepath.Join(control.gradleHome, "caches", "build-cache-1") {
+		t.Fatalf("standalone arm paths = %+v / %+v", control, candidate)
+	}
+}
+
 func TestMeasurementGradleDistributionSeedIsPrivateAndExecutable(t *testing.T) {
 	gradleHome := t.TempDir()
 	seed := filepath.Join(gradleHome, "wrapper", "dists")
