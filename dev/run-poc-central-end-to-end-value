@@ -40,7 +40,8 @@ buildopt_server_pid=
 buildopt_success=false
 buildopt_max_shared_break_even_builds=50
 buildopt_max_workers=8
-buildopt_ktor_gradle_heap_mib=3072
+buildopt_ktor_gradle_heap_mib=2048
+buildopt_ktor_kotlin_daemon_heap_mib=1536
 
 buildopt_cleanup() {
     if [[ -n ${buildopt_server_pid} ]] && kill -0 "${buildopt_server_pid}" 2>/dev/null; then
@@ -95,8 +96,12 @@ buildopt_run_environment() {
     shift 7
     if [[ ${buildopt_repository_id} == ktorio/ktor ]]; then
         mkdir -p -- "${buildopt_gradle_home}"
-        printf 'org.gradle.jvmargs=-Xms512m -Xmx%sm -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC -Dfile.encoding=UTF-8\n' \
-            "${buildopt_ktor_gradle_heap_mib}" >"${buildopt_gradle_home}/gradle.properties"
+        {
+            printf 'org.gradle.jvmargs=-Xms512m -Xmx%sm -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC -Dfile.encoding=UTF-8\n' \
+                "${buildopt_ktor_gradle_heap_mib}"
+            printf 'kotlin.daemon.jvmargs=-Xmx%sm\n' \
+                "${buildopt_ktor_kotlin_daemon_heap_mib}"
+        } >"${buildopt_gradle_home}/gradle.properties"
     fi
     (
         cd -- "${buildopt_repository}"
@@ -663,6 +668,7 @@ jq -n \
     --argjson maximumSharedBreakEvenBuilds "${buildopt_max_shared_break_even_builds}" \
     --argjson maximumWorkers "${buildopt_max_workers}" \
     --argjson ktorGradleHeapMiB "${buildopt_ktor_gradle_heap_mib}" \
+    --argjson ktorKotlinDaemonHeapMiB "${buildopt_ktor_kotlin_daemon_heap_mib}" \
     --slurpfile repositories "${buildopt_repositories_json}" \
     --slurpfile nativeRetained "${buildopt_root}/native-retained.json" '
       {
@@ -676,6 +682,7 @@ jq -n \
           unmeasuredDependencyWarmup:true,transport:"HTTPS_TLS_1_3_MINIMUM",
           maximumSharedBreakEvenBuilds:$maximumSharedBreakEvenBuilds,
           commonMaximumWorkers:$maximumWorkers,ktorGradleHeapMiB:$ktorGradleHeapMiB,
+          ktorKotlinDaemonHeapMiB:$ktorKotlinDaemonHeapMiB,
           producerDaemonStoppedBeforeConsumers:true
         },
         repositories:$repositories,nativeRetained:$nativeRetained[0],

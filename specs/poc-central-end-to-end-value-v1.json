@@ -18,7 +18,8 @@
   },
   "resourceEnvelope": {
     "commonMaximumWorkers": 8,
-    "ktorGradleHeapMiB": 3072,
+    "ktorGradleHeapMiB": 2048,
+    "ktorKotlinDaemonHeapMiB": 1536,
     "producerDaemonStoppedBeforeConsumers": true
   },
   "valueGate": {

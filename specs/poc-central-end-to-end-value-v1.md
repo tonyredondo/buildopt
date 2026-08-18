@@ -20,13 +20,14 @@ both arms receive the same opportunity to fetch committed remote objects.
 ## Resource envelope
 
 Both arms use the same maximum of eight Gradle workers. Ktor also uses the same
-3 GiB Gradle heap in both arms, supplied through each isolated Gradle User Home
-rather than as a workflow argument. This still exercises more than the
-four-CPU minimum while allowing the two hot measurement daemons and their
-Kotlin compiler daemons to coexist on the 16 GiB POC host. The producer daemon
-is stopped after central publication because it no longer participates in the
-comparison. These controls prevent unrelated completed phases from causing an
-OOM; they are not Runtime Tuning and do not advantage the candidate.
+2 GiB Gradle heap and 1.5 GiB Kotlin daemon heap in both arms, supplied through
+each isolated Gradle User Home rather than as workflow arguments. This still
+exercises more than the four-CPU minimum while allowing the two hot measurement
+daemons and their Kotlin compiler daemons to coexist on the 16 GiB POC host.
+The producer daemon is stopped after central publication because it no longer
+participates in the comparison. These controls prevent unrelated completed
+phases from causing an OOM; they are not Runtime Tuning and do not advantage
+the candidate.
 
 ## Subjects and observations
 

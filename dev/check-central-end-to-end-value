@@ -38,7 +38,8 @@ jq -e '
   } and
   .resourceEnvelope == {
     commonMaximumWorkers: 8,
-    ktorGradleHeapMiB: 3072,
+    ktorGradleHeapMiB: 2048,
+    ktorKotlinDaemonHeapMiB: 1536,
     producerDaemonStoppedBeforeConsumers: true
   } and
   .valueGate == {
@@ -79,7 +80,8 @@ jq -e '
   .protocol.unmeasuredDependencyWarmup and
   .protocol.maximumSharedBreakEvenBuilds == 50 and
   .protocol.commonMaximumWorkers == 8 and
-  .protocol.ktorGradleHeapMiB == 3072 and
+  .protocol.ktorGradleHeapMiB == 2048 and
+  .protocol.ktorKotlinDaemonHeapMiB == 1536 and
   .protocol.producerDaemonStoppedBeforeConsumers and
   (.repositories | length) == 2 and
   ([.repositories[].repositoryId] | unique | length) == 2 and
