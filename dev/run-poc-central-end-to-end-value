@@ -391,27 +391,54 @@ buildopt_subject() {
             --token-file "${buildopt_authority}/consumer-token.json" \
             --ca-file "${buildopt_tls}/ca.pem" \
             >"${buildopt_logs}/${buildopt_arm}-connect.json"
-        buildopt_clear_outputs "${buildopt_repository}" "${buildopt_cache_home}"
-        if [[ ${buildopt_arm} == control ]]; then
-            buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
-                "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
-                "${buildopt_cache_home}" "${buildopt_event}" \
-                "${buildopt_binary}" gradle "${buildopt_workflow[@]}" \
-                >"${buildopt_logs}/control-warmup.log" 2>&1
-        else
-            buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
-                "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
-                "${buildopt_cache_home}" "${buildopt_event}" \
-                "${buildopt_binary}" optimize --calibration-budget 2h --calibration-pairs 8 \
-                --max-break-even-builds "${buildopt_max_shared_break_even_builds}" \
-                --json -- "${buildopt_workflow[@]}" \
-                >"${buildopt_logs}/candidate-warmup.json" 2>"${buildopt_logs}/candidate-warmup.log"
-            jq -e '
-              .selection.selected and .central.selectionSource == "CENTRAL_PORTFOLIO" and
-              .central.gradleCacheStatus == "GATEWAY_ACTIVE"
-            ' "${buildopt_repository}/.buildopt/optimize/v1/result.json" >/dev/null
-        fi
     done
+
+    # The first connected optimize call materializes the consumer checkpoint and
+    # can transiently use both a native and a replay daemon. Run that bootstrap
+    # alone, then stop every daemon it created. The final warm-ups below leave
+    # exactly one hot daemon per measured arm without charging JVM startup to
+    # either side or exhausting a bounded POC host.
+    local buildopt_candidate_home=${buildopt_subject_root}/candidate-home
+    local buildopt_candidate_gradle=${buildopt_subject_root}/candidate-gradle
+    local buildopt_candidate_cache=${buildopt_subject_root}/candidate-cache
+    buildopt_clear_outputs "${buildopt_candidate}" "${buildopt_candidate_cache}"
+    buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+        "${buildopt_candidate}" "${buildopt_candidate_home}" "${buildopt_candidate_gradle}" \
+        "${buildopt_candidate_cache}" "${buildopt_event}" \
+        "${buildopt_binary}" optimize --calibration-budget 2h --calibration-pairs 8 \
+        --max-break-even-builds "${buildopt_max_shared_break_even_builds}" \
+        --json -- "${buildopt_workflow[@]}" \
+        >"${buildopt_logs}/candidate-bootstrap-warmup.json" \
+        2>"${buildopt_logs}/candidate-bootstrap-warmup.log"
+    jq -e '
+      .selection.selected and .central.selectionSource == "CENTRAL_PORTFOLIO" and
+      .central.gradleCacheStatus == "GATEWAY_ACTIVE"
+    ' "${buildopt_candidate}/.buildopt/optimize/v1/result.json" >/dev/null
+    buildopt_stop_gradle_daemons "${buildopt_candidate}" "${buildopt_candidate_gradle}" \
+        "${buildopt_logs}/candidate-bootstrap-daemon-stop.log"
+
+    local buildopt_control_home=${buildopt_subject_root}/control-home
+    local buildopt_control_gradle=${buildopt_subject_root}/control-gradle
+    local buildopt_control_cache=${buildopt_subject_root}/control-cache
+    buildopt_clear_outputs "${buildopt_control}" "${buildopt_control_cache}"
+    buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+        "${buildopt_control}" "${buildopt_control_home}" "${buildopt_control_gradle}" \
+        "${buildopt_control_cache}" "${buildopt_event}" \
+        "${buildopt_binary}" gradle "${buildopt_workflow[@]}" \
+        >"${buildopt_logs}/control-warmup.log" 2>&1
+
+    buildopt_clear_outputs "${buildopt_candidate}" "${buildopt_candidate_cache}"
+    buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+        "${buildopt_candidate}" "${buildopt_candidate_home}" "${buildopt_candidate_gradle}" \
+        "${buildopt_candidate_cache}" "${buildopt_event}" \
+        "${buildopt_binary}" optimize --calibration-budget 2h --calibration-pairs 8 \
+        --max-break-even-builds "${buildopt_max_shared_break_even_builds}" \
+        --json -- "${buildopt_workflow[@]}" \
+        >"${buildopt_logs}/candidate-warmup.json" 2>"${buildopt_logs}/candidate-warmup.log"
+    jq -e '
+      .selection.selected and .central.selectionSource == "CENTRAL_PORTFOLIO" and
+      .central.gradleCacheStatus == "GATEWAY_ACTIVE"
+    ' "${buildopt_candidate}/.buildopt/optimize/v1/result.json" >/dev/null
 
     local buildopt_pair
     for buildopt_pair in {1..8}; do
@@ -683,7 +710,8 @@ jq -n \
           maximumSharedBreakEvenBuilds:$maximumSharedBreakEvenBuilds,
           commonMaximumWorkers:$maximumWorkers,ktorGradleHeapMiB:$ktorGradleHeapMiB,
           ktorKotlinDaemonHeapMiB:$ktorKotlinDaemonHeapMiB,
-          producerDaemonStoppedBeforeConsumers:true
+          producerDaemonStoppedBeforeConsumers:true,
+          consumerBootstrapDaemonsStoppedBeforePairedWarmup:true
         },
         repositories:$repositories,nativeRetained:$nativeRetained[0],
         acceptance:{

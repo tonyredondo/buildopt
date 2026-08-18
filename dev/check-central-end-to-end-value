@@ -40,7 +40,8 @@ jq -e '
     commonMaximumWorkers: 8,
     ktorGradleHeapMiB: 2048,
     ktorKotlinDaemonHeapMiB: 1536,
-    producerDaemonStoppedBeforeConsumers: true
+    producerDaemonStoppedBeforeConsumers: true,
+    consumerBootstrapDaemonsStoppedBeforePairedWarmup: true
   } and
   .valueGate == {
     exactRequiredOutputs: true,
@@ -83,6 +84,7 @@ jq -e '
   .protocol.ktorGradleHeapMiB == 2048 and
   .protocol.ktorKotlinDaemonHeapMiB == 1536 and
   .protocol.producerDaemonStoppedBeforeConsumers and
+  .protocol.consumerBootstrapDaemonsStoppedBeforePairedWarmup and
   (.repositories | length) == 2 and
   ([.repositories[].repositoryId] | unique | length) == 2 and
   ([.repositories[].gradleFamily] | unique | length) == 2 and

@@ -20,7 +20,8 @@
     "commonMaximumWorkers": 8,
     "ktorGradleHeapMiB": 2048,
     "ktorKotlinDaemonHeapMiB": 1536,
-    "producerDaemonStoppedBeforeConsumers": true
+    "producerDaemonStoppedBeforeConsumers": true,
+    "consumerBootstrapDaemonsStoppedBeforePairedWarmup": true
   },
   "valueGate": {
     "exactRequiredOutputs": true,

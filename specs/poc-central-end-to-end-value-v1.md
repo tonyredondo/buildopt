@@ -25,9 +25,11 @@ each isolated Gradle User Home rather than as workflow arguments. This still
 exercises more than the four-CPU minimum while allowing the two hot measurement
 daemons and their Kotlin compiler daemons to coexist on the 16 GiB POC host.
 The producer daemon is stopped after central publication because it no longer
-participates in the comparison. These controls prevent unrelated completed
-phases from causing an OOM; they are not Runtime Tuning and do not advantage
-the candidate.
+participates in the comparison. The candidate's first connected bootstrap can
+transiently use native and replay daemons, so those bootstrap daemons are also
+stopped before the final paired warm-ups. The measured state then contains one
+hot daemon per arm. These controls prevent unrelated completed phases from
+causing an OOM; they are not Runtime Tuning and do not advantage the candidate.
 
 ## Subjects and observations
 
