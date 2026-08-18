@@ -767,6 +767,7 @@ buildopt_required_files=(
     "benchmarks/results/poc-kafka-impact-edge-composition-v2.json"
     "benchmarks/results/poc-kafka-installed-profile-value-v1.json"
     "benchmarks/results/poc-kafka-shadowjar-reproducibility-v1.json"
+    "benchmarks/results/poc-central-two-machine-v1.json"
     "benchmarks/results/poc-qualified-profile-matrix-v1/spring.json"
     "benchmarks/results/poc-qualified-profile-matrix-v1/opentelemetry.json"
     "benchmarks/results/poc-qualified-profile-matrix-v1/kafka.json"

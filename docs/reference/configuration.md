@@ -84,8 +84,11 @@ typed portfolio/evidence/checkpoint state before and after the build. It may
 reuse a remote profile across source commits only after local ancestry,
 build-logic, graph, family, workflow, tool, output, precondition and evidence
 revalidation. `buildopt sync` remains available for explicit diagnostics. The
-existing central Gradle-cache fixture still has explicit operator setup; its
-automatic invocation wiring belongs to the two-machine block.
+token document also stores the exact cache namespace, generation and expiry
+when it grants `CACHE_READ`. A selected remote profile then starts a read-only
+invocation-local gateway and configures Gradle automatically; the bearer token
+remains in the launcher. Cache publication is intentionally writer-only and
+still requires an owner-authorized signed attempt commit.
 
 ## Qualified POC profile
 
@@ -204,6 +207,7 @@ launcher-only; Gradle receives an opaque directory and fixed retention policy.
 | `BUILDOPT_LOCAL_CACHE_CREDENTIAL_PATH` | Yes | Absolute local cache credential path |
 | `BUILDOPT_SHARED_CACHE_URL` | No | Canonical HTTPS origin or canonical loopback HTTP |
 | `BUILDOPT_SHARED_CACHE_TOKEN_PATH` | Yes | Optional scoped remote beta-token path |
+| `BUILDOPT_SHARED_CACHE_CA_PATH` | No, private | Optional absolute PEM CA path for a private HTTPS cache origin |
 
 Files must be regular, current-user-owned, and mode `0600` where the platform
 supports POSIX modes. The launcher verifies signature, canonical form,
@@ -212,11 +216,13 @@ before exposing a local cache context.
 
 For the central Gradle-cache POC, `BUILDOPT_SHARED_CACHE_URL` is the trusted HTTPS
 origin and `BUILDOPT_SHARED_CACHE_TOKEN_PATH` contains the scoped central
-token. The gateway adds the signed authority's cache namespace to every
-upstream request and its pending attempt ID to PUT requests. Neither value nor
-the bearer token enters the Gradle environment. This remains an explicit
-cache-data-plane fixture; `buildopt connect` currently owns only typed state
-synchronization.
+token. `BUILDOPT_SHARED_CACHE_CA_PATH` supplies the private CA when the
+producer uses a self-signed POC service certificate. The gateway adds the
+signed authority's cache namespace to every upstream request and its pending
+attempt ID to PUT requests. None of the credential, token path or CA path
+enters the Gradle environment. Normal read-only consumers obtain their cache
+metadata and trust material from the private `buildopt connect` state instead
+of setting these variables.
 
 ## Managed Gradle bootstrap cache
 

@@ -15,6 +15,31 @@ goes to paired, bounded build-time experiments against an optimized native
 Gradle control. `./dev/check-beta-gradle-fixtures` owns the bounded
 small/medium/large Gradle build matrix and makes no performance claim.
 
+## Central two-machine functional evidence
+
+[`poc-central-two-machine-v1.json`](./results/poc-central-two-machine-v1.json)
+records the first installed composition across isolated producer and consumer
+containers. They share no workspace, Gradle User Home or BuildOpt cache. After
+the central TLS service restarts, the consumer selects `CENTRAL_PORTFOLIO`,
+uses a `READ_ONLY` gateway, restores one task `FROM-CACHE` and emits the exact
+producer JAR. With the service stopped and local cache entries removed, it
+retains the verified profile, records zero cache hits and rebuilds the same
+bytes. Central credentials are absent from Gradle and logs.
+
+The 131.608-second producer calibration, 10.270-second producer cache build,
+7.298-second consumer and 5.665-second outage observations make the phases
+auditable but are not comparable arms. They support no savings percentage.
+Validate the result with:
+
+```bash
+./dev/check-central-two-machine \
+  benchmarks/results/poc-central-two-machine-v1.json
+```
+
+`POC-CENTRAL-END-TO-END-VALUE-001` is next and must compare the complete
+centralized path against optimized native Gradle with equal remote-cache
+opportunity on substantial public repositories.
+
 ## Build Optimization scorecard
 
 For the decision-ready product summary, see the [current POC one-pager](../docs/findings/buildopt-poc-handoff.md).

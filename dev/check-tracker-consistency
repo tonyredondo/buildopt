@@ -154,6 +154,8 @@ buildopt_required_tracker_text=(
     "| \`E-368\` | 2026-08-18 | \`POC-CENTRAL-STATE-SYNC-001\`"
     "| 120 | \`POC-CENTRAL-OPTIMIZE-INTEGRATION-001\` | Integrate remote portfolio lookup/publication with \`buildopt optimize\`"
     "| \`E-369\` | 2026-08-18 | \`POC-CENTRAL-OPTIMIZE-INTEGRATION-001\`"
+    "| 121 | \`POC-CENTRAL-TWO-MACHINE-001\` | Run one server, one producer and one clean consumer"
+    "| \`E-370\` | 2026-08-18 | \`POC-CENTRAL-TWO-MACHINE-001\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"

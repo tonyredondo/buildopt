@@ -76,11 +76,13 @@ buildopt optimize build
 ```
 
 After connection, BuildOpt now synchronizes compatible profile/evidence state
-automatically around `buildopt optimize` and revalidates every remote selection
-locally. Automatic invocation-local gateway and Gradle remote HTTP-cache
-configuration remain the next two-machine step. Upstream credentials remain
-launcher/gateway inputs and are never passed to Gradle or committed to the
-repository.
+automatically around `buildopt optimize`, revalidates every remote selection
+locally and, for a `CACHE_READ` connection, starts the read-only
+invocation-local Gradle cache gateway automatically. Upstream credentials
+remain launcher/gateway inputs and are never passed to Gradle or committed to
+the repository. The isolated two-machine proof has exercised this complete
+composition; equal-opportunity value measurement is now the remaining POC
+block.
 
 ## Architecture
 
@@ -221,6 +223,13 @@ The central service is optional and additive:
 | 6 | `POC-CENTRAL-OPTIMIZE-INTEGRATION-001` | Integrate compatible remote profile lookup and publication into `buildopt optimize`. | A later compatible commit selects a remotely learned profile automatically; structural drift selects native before Gradle and starts a separate generation. |
 | 7 | `POC-CENTRAL-TWO-MACHINE-001` | Exercise one server, one trusted producer and one clean consumer in isolated machines or containers. | The consumer reuses both Gradle objects and BuildOpt state, exact outputs match, credentials stay private and server loss proves local/native fallback. |
 | 8 | `POC-CENTRAL-END-TO-END-VALUE-001` | Compare the complete installed centralized path against optimized native Gradle using the same remote Gradle cache opportunity. | At least two substantial Gradle families show equivalent outputs and a net wall-time win attributable to structural reduction plus cache reuse; an honest non-winning case retains native. |
+
+Block 7 is complete. Its Docker evidence used isolated workspaces, Gradle User
+Homes and BuildOpt caches, restarted the TLS service, selected the central
+portfolio, observed one `FROM-CACHE` task, preserved exact JAR bytes and rebuilt
+the same output with zero hits during outage. The recorded phase durations are
+diagnostic only because there was no equal-opportunity native control. Block 8
+must decide whether this optional service adds net customer value.
 
 The local one-command roadmap remains the primary critical path. Blocks 1–3
 may establish the reusable server boundary after the `buildopt optimize` state

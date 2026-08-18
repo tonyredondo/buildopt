@@ -168,9 +168,15 @@ portfolios, evidence and checkpoints. The
 now makes that synchronization automatic around `buildopt optimize`: verified
 remote profiles may cross ordinary source commits only after local ancestry,
 build-logic, graph, family, output, tool, precondition and evidence
-revalidation. Drift or service loss retains optimized native Gradle before the
-target process starts. Automatic central Gradle-cache configuration and the
-two-machine installed-path value measurement remain next.
+revalidation. The
+[isolated two-machine proof](./specs/poc-central-two-machine-v1.md) now connects
+that state path to the central Gradle cache automatically: a clean read-only
+consumer selected the remote profile, restored one task `FROM-CACHE` after a
+server restart and produced the exact producer JAR without receiving the
+central credential. Service loss retained the verified profile and rebuilt the
+same bytes with zero remote hits. This is functional composition evidence, not
+a wall-time win; an equal-opportunity comparison against optimized native
+Gradle is next.
 
 For a non-invasive evaluation, the GitHub Action's `profile-proposal` mode
 turns a checked-in workflow/output declaration and exact pull-request diff into

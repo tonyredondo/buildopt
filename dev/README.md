@@ -425,6 +425,26 @@ verified offline lookup:
 ./dev/check-central-optimize-integration
 ```
 
+Validate the complete installed producer/consumer composition in isolated
+Docker containers, including server restart, automatic remote profile and
+read-only cache reuse, exact outputs, credential containment and outage
+fallback:
+
+```bash
+./dev/run-poc-central-two-machine /tmp/buildopt-central-two-machine.json
+./dev/check-central-two-machine /tmp/buildopt-central-two-machine.json
+```
+
+The runner creates and removes its exact Docker network, containers, image and
+temporary directory. It needs a working Docker daemon and several minutes for
+the producer's eight-pair calibration. The checked-in terminal result can be
+revalidated without Docker:
+
+```bash
+./dev/check-central-two-machine \
+  benchmarks/results/poc-central-two-machine-v1.json
+```
+
 The state-storage checker proves private independent `state.sqlite`
 migrations, restart persistence, repository/kind isolation, exact CAS replay,
 one-winner concurrent promotion, invisible partial publication,
@@ -442,6 +462,9 @@ retained public Kafka evidence to prove source-only cross-commit selection
 before Gradle, rejects `build.gradle.kts` drift, publishes newly completed
 state automatically and reuses only verified offline snapshots. Neither
 checker makes a new wall-time claim.
+The two-machine checker composes those lower-level guarantees across separate
+client filesystems. Its recorded phase durations are diagnostic only; the next
+central value experiment owns the equal-opportunity native comparison.
 
 ## CI orchestration validation
 
