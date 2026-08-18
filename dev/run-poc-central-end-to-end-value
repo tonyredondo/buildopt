@@ -38,6 +38,7 @@ buildopt_control_binary=${buildopt_root}/central-control
 buildopt_repositories_json=${buildopt_root}/repositories.jsonl
 buildopt_server_pid=
 buildopt_success=false
+buildopt_max_shared_break_even_builds=50
 
 buildopt_cleanup() {
     if [[ -n ${buildopt_server_pid} ]] && kill -0 "${buildopt_server_pid}" 2>/dev/null; then
@@ -299,7 +300,9 @@ buildopt_subject() {
         "${buildopt_producer}" "${buildopt_producer_home}" "${buildopt_producer_gradle}" \
         "${buildopt_producer_cache}" "${buildopt_event}" \
         "${buildopt_binary}" optimize --resume never --calibration-budget 2h \
-        --calibration-pairs 8 --max-break-even-builds 30 --json -- "${buildopt_workflow[@]}" \
+        --calibration-pairs 8 \
+        --max-break-even-builds "${buildopt_max_shared_break_even_builds}" \
+        --json -- "${buildopt_workflow[@]}" \
         >"${buildopt_logs}/producer-optimize.json" 2> >(tee "${buildopt_logs}/producer-optimize.log" >&2)
     local buildopt_producer_result=${buildopt_producer}/.buildopt/optimize/v1/result.json
     jq -e '
@@ -372,7 +375,8 @@ buildopt_subject() {
                 "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
                 "${buildopt_cache_home}" "${buildopt_event}" \
                 "${buildopt_binary}" optimize --calibration-budget 2h --calibration-pairs 8 \
-                --max-break-even-builds 30 --json -- "${buildopt_workflow[@]}" \
+                --max-break-even-builds "${buildopt_max_shared_break_even_builds}" \
+                --json -- "${buildopt_workflow[@]}" \
                 >"${buildopt_logs}/candidate-warmup.json" 2>"${buildopt_logs}/candidate-warmup.log"
             jq -e '
               .selection.selected and .central.selectionSource == "CENTRAL_PORTFOLIO" and
@@ -418,7 +422,8 @@ buildopt_subject() {
                     "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
                     "${buildopt_cache_home}" "${buildopt_event}" \
                     "${buildopt_binary}" optimize --calibration-budget 2h --calibration-pairs 8 \
-                    --max-break-even-builds 30 --json -- "${buildopt_workflow[@]}" \
+                    --max-break-even-builds "${buildopt_max_shared_break_even_builds}" \
+                    --json -- "${buildopt_workflow[@]}" \
                     >"${buildopt_machine}" 2>"${buildopt_log}"
             fi
             buildopt_completed=$(date +%s%N)
@@ -509,6 +514,13 @@ buildopt_subject() {
     }
     local buildopt_graph
     buildopt_graph=$(jq -c '.discovery.graph' "${buildopt_producer_result}")
+    local buildopt_calibration
+    buildopt_calibration=$(jq -c '
+      .calibration | {
+        calibrationCostMs,meanSavedMs,breakEvenBuilds,maximumBreakEvenBuilds,
+        valueGatePassed,qualified,fallbackSuccessful
+      }
+    ' "${buildopt_producer_result}")
     local buildopt_gradle_version
     buildopt_gradle_version=$(grep -E '^distributionUrl=' \
         "${buildopt_producer}/gradle/wrapper/gradle-wrapper.properties" |
@@ -521,6 +533,7 @@ buildopt_subject() {
         --arg workflow "${buildopt_workflow[*]}" --arg outputPath "${buildopt_output_path}" \
         --arg namespace "${buildopt_namespace}" --argjson objectCount "${buildopt_object_count}" \
         --argjson objectBytes "${buildopt_object_bytes}" --argjson graph "${buildopt_graph}" \
+        --argjson calibration "${buildopt_calibration}" \
         --slurpfile observations "${buildopt_observations}" --argjson result "${buildopt_stats}" '
           {
             repositoryId:$repositoryId,publicRepository:true,gradleFamily:$gradleFamily,
@@ -528,7 +541,7 @@ buildopt_subject() {
             targetOrigin:"DETERMINISTIC_LOCAL_FIXTURE",changedPath:$changedPath,
             changeFamily:$changeFamily,workflow:$workflow,requiredOutput:$outputPath,
             central:{namespace:$namespace,committedObjectCount:$objectCount,committedBytes:$objectBytes},
-            graph:$graph,observations:$observations,result:$result
+            calibration:$calibration,graph:$graph,observations:$observations,result:$result
           }
         ' >>"${buildopt_repositories_json}"
 
@@ -561,7 +574,8 @@ buildopt_subject() {
             "${buildopt_negative}" "${buildopt_negative_home}" "${buildopt_negative_gradle}" \
             "${buildopt_negative_cache}" "${buildopt_negative_event}" \
             "${buildopt_binary}" optimize --calibration-budget 2h --calibration-pairs 8 \
-            --max-break-even-builds 30 --json -- "${buildopt_workflow[@]}" \
+            --max-break-even-builds "${buildopt_max_shared_break_even_builds}" \
+            --json -- "${buildopt_workflow[@]}" \
             >"${buildopt_logs}/negative.json" 2>"${buildopt_logs}/negative.log"
         local buildopt_negative_result=${buildopt_negative}/.buildopt/optimize/v1/result.json
         jq -e '
@@ -623,6 +637,7 @@ jq -n \
     --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revision}" \
     --arg packageSha "${buildopt_package_sha}" --arg kernel "$(uname -r)" \
     --argjson cpuCount "${buildopt_cpu_count}" --argjson memoryBytes "${buildopt_memory_bytes%.*}" \
+    --argjson maximumSharedBreakEvenBuilds "${buildopt_max_shared_break_even_builds}" \
     --slurpfile repositories "${buildopt_repositories_json}" \
     --slurpfile nativeRetained "${buildopt_root}/native-retained.json" '
       {
@@ -633,7 +648,8 @@ jq -n \
         protocol:{
           pairs:8,alternatingPairOrder:true,sameCommittedCentralObjects:true,
           separateWorkspaces:true,separateGradleHomes:true,separateBuildOptCaches:true,
-          unmeasuredDependencyWarmup:true,transport:"HTTPS_TLS_1_3_MINIMUM"
+          unmeasuredDependencyWarmup:true,transport:"HTTPS_TLS_1_3_MINIMUM",
+          maximumSharedBreakEvenBuilds:$maximumSharedBreakEvenBuilds
         },
         repositories:$repositories,nativeRetained:$nativeRetained[0],
         acceptance:{

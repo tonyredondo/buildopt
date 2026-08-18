@@ -18,6 +18,7 @@
   },
   "valueGate": {
     "exactRequiredOutputs": true,
+    "maximumSharedBreakEvenBuilds": 50,
     "minimumPositivePairs": 7,
     "positivePairedLowerBound": true,
     "positiveMeanWallTimeSaving": true,

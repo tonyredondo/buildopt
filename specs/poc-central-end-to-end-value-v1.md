@@ -28,9 +28,18 @@ A family qualifies only when:
 
 1. required outputs match exactly in every pair;
 2. both arms demonstrate central cache reuse;
-3. at least seven of eight pairs are positive;
-4. the paired 95% lower bound and mean saving are positive; and
-5. candidate p95 is lower than control p95.
+3. the one-time discovery and calibration cost repays within at most 50
+   matching builds across the shared central scope;
+4. at least seven of eight pairs are positive;
+5. the paired 95% lower bound and mean saving are positive; and
+6. candidate p95 is lower than control p95.
+
+The 50-build horizon is the already measured upper bound for the complete
+comparative POC, whose previous cells repaid within 19 to 50 builds. It is a
+shared-team horizon because one qualified portfolio is reused by every
+compatible consumer of the central scope. It does not weaken the direct
+onboarding gate for an isolated developer, and changing this bound requires a
+new contract revision rather than silently reinterpreting retained evidence.
 
 The seven-of-eight count is not permission to ignore a failure. The retained
 raw observation must identify every non-positive pair, while the paired

@@ -38,6 +38,7 @@ jq -e '
   } and
   .valueGate == {
     exactRequiredOutputs: true,
+    maximumSharedBreakEvenBuilds: 50,
     minimumPositivePairs: 7,
     positivePairedLowerBound: true,
     positiveMeanWallTimeSaving: true,
@@ -71,6 +72,7 @@ jq -e '
   .protocol.sameCommittedCentralObjects and .protocol.separateWorkspaces and
   .protocol.separateGradleHomes and .protocol.separateBuildOptCaches and
   .protocol.unmeasuredDependencyWarmup and
+  .protocol.maximumSharedBreakEvenBuilds == 50 and
   (.repositories | length) == 2 and
   ([.repositories[].repositoryId] | unique | length) == 2 and
   ([.repositories[].gradleFamily] | unique | length) == 2 and
@@ -79,6 +81,15 @@ jq -e '
     (.baseRevision | test("^[0-9a-f]{40}$")) and
     (.targetRevision | test("^[0-9a-f]{40}$")) and
     .central.committedObjectCount > 0 and .central.committedBytes > 0 and
+    .calibration.calibrationCostMs > 0 and
+    .calibration.meanSavedMs > 0 and
+    .calibration.breakEvenBuilds > 0 and
+    .calibration.breakEvenBuilds <= .calibration.maximumBreakEvenBuilds and
+    .calibration.maximumBreakEvenBuilds == 50 and
+    .calibration.breakEvenBuilds ==
+      ((.calibration.calibrationCostMs / .calibration.meanSavedMs) | ceil) and
+    .calibration.valueGatePassed and .calibration.qualified and
+    .calibration.fallbackSuccessful and
     .graph.totalProjects > .graph.selectedProjects and .graph.selectedProjects > 0 and
     (.observations | length) == 8 and
     ([.observations[].pair] == [1,2,3,4,5,6,7,8]) and
