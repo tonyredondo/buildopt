@@ -35,6 +35,7 @@ type managedGatewayCacheRegistrationFixture struct {
 	UpstreamEndpoint string `json:"upstreamEndpoint"`
 	Credential       string `json:"credential"`
 	AuthorityDigest  string `json:"authorityDigest"`
+	Namespace        string `json:"namespace"`
 	AllowRead        bool   `json:"allowRead"`
 	AllowWrite       bool   `json:"allowWrite"`
 	ExpiresAt        string `json:"expiresAt"`
@@ -323,6 +324,7 @@ func TestBuildoptManagedGatewayConcurrentCacheBindingsRemainIsolated(
 		upstreamA.URL,
 		credentialA,
 		authorityA,
+		"namespace-a",
 	)
 	defer connectionA.Close()
 	connectionB, gatewayB := registerManagedGatewayFixture(
@@ -332,6 +334,7 @@ func TestBuildoptManagedGatewayConcurrentCacheBindingsRemainIsolated(
 		upstreamB.URL,
 		credentialB,
 		authorityB,
+		"namespace-b",
 	)
 	defer connectionB.Close()
 
@@ -444,6 +447,7 @@ func TestBuildoptManagedGatewayCleansCrashedSpoolBeforeServing(
 		upstream.URL,
 		credential,
 		authority,
+		"recovered",
 	)
 	defer connection.Close()
 
@@ -487,7 +491,8 @@ func isolatedManagedUpstream(
 		if request.Method != http.MethodGet ||
 			request.Header.Get("Authorization") != expectedAuthorization ||
 			request.Header.Get("X-BuildOpt-Authority-Digest") !=
-				authorityDigest {
+				authorityDigest ||
+			request.Header.Get("X-BuildOpt-Cache-Namespace") != namespace {
 			writer.WriteHeader(http.StatusForbidden)
 			return
 		}
@@ -559,6 +564,7 @@ func registerManagedGatewayFixture(
 	upstream string,
 	credential []byte,
 	authorityDigest string,
+	namespace string,
 ) (*net.UnixConn, managedGatewayControlResponseFixture) {
 	t.Helper()
 	controlDigest := sha256.Sum256([]byte(directory))
@@ -591,6 +597,7 @@ func registerManagedGatewayFixture(
 				credential,
 			),
 			AuthorityDigest: authorityDigest,
+			Namespace:       namespace,
 			AllowRead:       true,
 			AllowWrite:      false,
 			ExpiresAt: time.Now().
