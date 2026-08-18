@@ -62,7 +62,7 @@ while IFS= read -r buildopt_key; do
             exit 1
         }
     done
-    if rg -n '/tmp/buildopt-installed-profile-replay|/home/tony/' \
+    if grep -En '/tmp/buildopt-installed-profile-replay|/home/tony/' \
         "${buildopt_cell}"/*.log "${buildopt_evidence_root}/install.log" >/dev/null; then
         printf 'installed-profile evidence contains a private capture path: %s\n' \
             "${buildopt_key}" >&2

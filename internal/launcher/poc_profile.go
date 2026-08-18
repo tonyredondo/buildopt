@@ -533,9 +533,10 @@ func qualifiedPOCEdgeMode(profile qualifiedPOCProfile) string {
 }
 
 func validQualifiedPOCProfilePath(candidate string) bool {
-	return candidate != "" && !filepath.IsAbs(candidate) &&
-		filepath.Clean(candidate) == candidate && candidate != "." && candidate != ".." &&
-		!strings.HasPrefix(candidate, ".."+string(filepath.Separator))
+	native := filepath.FromSlash(candidate)
+	return candidate != "" && !filepath.IsAbs(native) &&
+		filepath.Clean(native) == native && native != "." && native != ".." &&
+		!strings.HasPrefix(native, ".."+string(filepath.Separator))
 }
 
 func writeQualifiedPOCProfilePlan(writer io.Writer, plan qualifiedPOCProfilePlan) error {

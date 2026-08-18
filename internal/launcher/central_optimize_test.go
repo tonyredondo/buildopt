@@ -275,7 +275,11 @@ func centralOptimizeFixtureIntegration(
 ) *centralOptimizeIntegration {
 	t.Helper()
 	manifest, err := buildimpact.LoadRepositoryManifest(
-		invocation.repositoryRoot, centralOptimizeStageFixtureFile(t, invocation.repositoryRoot, ".buildopt/fixture-manifest.json", fixtureFiles["buildopt-impact-manifest.json"]),
+		invocation.repositoryRoot,
+		filepath.FromSlash(centralOptimizeStageFixtureFile(
+			t, invocation.repositoryRoot, ".buildopt/fixture-manifest.json",
+			fixtureFiles["buildopt-impact-manifest.json"],
+		)),
 		profile.RepositoryID, profile.PipelineClass,
 	)
 	if err != nil {

@@ -321,7 +321,7 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonInvalid, err}
 	}
 	manifest, err := buildimpact.LoadRepositoryManifest(
-		invocation.repositoryRoot, paths.manifest, entry.RepositoryID, profile.PipelineClass,
+		invocation.repositoryRoot, filepath.FromSlash(paths.manifest), entry.RepositoryID, profile.PipelineClass,
 	)
 	if err != nil {
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonInvalid, err}
@@ -353,7 +353,10 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("current change family differs from remote qualification")}
 	}
 
-	arguments := []string{"--config", paths.profile, "--changes-file", paths.changes}
+	arguments := []string{
+		"--config", filepath.FromSlash(paths.profile),
+		"--changes-file", filepath.FromSlash(paths.changes),
+	}
 	expectedOptions, reason := optimizeCalibrationGradleOptions(invocation.discovery.gradleOptions)
 	if reason != "" {
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonPlan, errors.New(reason)}
@@ -374,7 +377,9 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 	}
 	analysis, err := profilediscovery.AnalyzeOpportunity(profilediscovery.AnalysisOptions{
 		RepositoryRoot: invocation.repositoryRoot,
-		ManifestPath:   paths.manifest, GraphPath: paths.graph, GeneratedPath: paths.generated,
+		ManifestPath:   filepath.FromSlash(paths.manifest),
+		GraphPath:      filepath.FromSlash(paths.graph),
+		GeneratedPath:  filepath.FromSlash(paths.generated),
 	})
 	if err != nil {
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonInvalid, err}
