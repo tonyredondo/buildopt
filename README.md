@@ -157,8 +157,11 @@ now persists typed portfolios, evidence and checkpoints on the shared CAS with
 independent SQLite visibility. The
 [central HTTPS boundary](./specs/poc-central-https-auth-v1.md) now adds a real
 TLS 1.3 listener plus independently scoped, live-revocable cache/state tokens.
-`buildopt gradle` does not consume that endpoint yet, so remote cache/profile
-reuse still does not change the default onboarding path.
+The [central Gradle-cache proof](./specs/poc-central-gradle-cache-v1.md) now
+routes native Gradle GET/PUT traffic through the credential-containing local
+gateway and proves clean `FROM-CACHE` reuse plus outage fallback. Connection,
+owner commit orchestration and profile-state synchronization are still manual,
+so this does not change the default onboarding path yet.
 
 For a non-invasive evaluation, the GitHub Action's `profile-proposal` mode
 turns a checked-in workflow/output declaration and exact pull-request diff into

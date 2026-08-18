@@ -12,6 +12,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"path"
 	"regexp"
 	"sort"
 	"strconv"
@@ -29,6 +30,8 @@ const (
 	gatewayReadyPath        = "/_buildopt/ready"
 	gatewayGenerationHeader = "BuildOpt-Gateway-Connection-Generation"
 	gatewayAuthorityHeader  = "X-BuildOpt-Authority-Digest"
+	gatewayAttemptHeader    = "X-BuildOpt-Cache-Attempt"
+	gatewayNamespaceHeader  = "X-BuildOpt-Cache-Namespace"
 	gatewayUsername         = "buildopt"
 
 	gatewayOperationTimeout = 5 * time.Second
@@ -36,6 +39,10 @@ const (
 
 var gatewayCacheKeyPattern = regexp.MustCompile(
 	`^[A-Za-z0-9._-]{1,256}$`,
+)
+
+var gatewayNamespacePattern = regexp.MustCompile(
+	`^[A-Za-z0-9._/-]{1,512}$`,
 )
 
 type localGateway struct {
@@ -104,6 +111,7 @@ type gatewayCacheBinding struct {
 	credential       string
 	authorityDigest  string
 	attemptID        string
+	namespace        string
 	allowRead        bool
 	allowWrite       bool
 	expiresAt        time.Time
@@ -114,6 +122,7 @@ func newGatewayCacheBinding(
 	credential []byte,
 	authorityDigest string,
 	attemptID string,
+	namespace string,
 	allowRead bool,
 	allowWrite bool,
 	expiresAt time.Time,
@@ -131,6 +140,9 @@ func newGatewayCacheBinding(
 	if !validPluginAttemptID(attemptID) {
 		return nil, errors.New("gateway attempt ID is invalid")
 	}
+	if !validGatewayNamespace(namespace) {
+		return nil, errors.New("gateway cache namespace is invalid")
+	}
 	if !allowRead && !allowWrite {
 		return nil, errors.New("gateway cache binding grants no operation")
 	}
@@ -142,10 +154,24 @@ func newGatewayCacheBinding(
 		credential:       base64.RawURLEncoding.EncodeToString(credential),
 		authorityDigest:  authorityDigest,
 		attemptID:        attemptID,
+		namespace:        namespace,
 		allowRead:        allowRead,
 		allowWrite:       allowWrite,
 		expiresAt:        expiresAt.UTC(),
 	}, nil
+}
+
+func validGatewayNamespace(namespace string) bool {
+	if !gatewayNamespacePattern.MatchString(namespace) ||
+		strings.HasPrefix(namespace, "/") || path.Clean(namespace) != namespace {
+		return false
+	}
+	for _, segment := range strings.Split(namespace, "/") {
+		if segment == "." || segment == ".." || segment == "" {
+			return false
+		}
+	}
+	return true
 }
 
 func (binding *gatewayCacheBinding) copy() *gatewayCacheBinding {
@@ -428,6 +454,16 @@ func (gateway *localGateway) serveCache(
 		gatewayAuthorityHeader,
 		binding.authorityDigest,
 	)
+	upstreamRequest.Header.Set(
+		gatewayNamespaceHeader,
+		binding.namespace,
+	)
+	if request.Method == http.MethodPut {
+		upstreamRequest.Header.Set(
+			gatewayAttemptHeader,
+			binding.attemptID,
+		)
+	}
 
 	response, err := gateway.cacheClient.Do(upstreamRequest)
 	if err != nil {

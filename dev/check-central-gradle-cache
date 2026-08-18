@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-central-gradle-cache-v1.json"
+
+for buildopt_command in find jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required central Gradle-cache command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/central-gradle-cache/v1" and
+    .workItem == "POC-CENTRAL-GRADLE-CACHE-001" and
+    .path == [
+        "GRADLE_HTTP_BUILD_CACHE",
+        "INVOCATION_LOCAL_GATEWAY",
+        "OWNER_OPERATED_HTTPS_CACHE"
+    ] and
+    .gateway.upstreamTransport == "HTTPS_WITH_TRUSTED_CERTIFICATE" and
+    .gateway.upstreamCredentialVisibleToGradle == false and
+    .gateway.namespaceHeader == "X-BuildOpt-Cache-Namespace" and
+    .gateway.attemptHeaderOnPut == "X-BuildOpt-Cache-Attempt" and
+    .gateway.redirectsFollowed == false and
+    .gateway.getVerification == "COMPLETE_SHA256_BEFORE_RESPONSE" and
+    .producer.remoteMode == "WRITE_ONLY" and
+    .producer.pendingObjectsMinimum == 8 and
+    .producer.publication == "EXISTING_VERIFIED_COMMIT_PROTOCOL" and
+    .producer.pendingReadable == false and
+    .consumer.remoteMode == "READ_ONLY" and
+    .consumer.minimumFromCacheTasks == 8 and
+    .consumer.remotePublishStatus == 503 and
+    .consumer.remotePublishForwarded == false and
+    .equivalence.requiredOutputFiles == 8 and
+    .equivalence.producerConsumerSHA256Equal == true and
+    .equivalence.producerOutageSHA256Equal == true and
+    .outage.centralGet == "NORMALIZED_TO_CACHE_MISS" and
+    .outage.buildResult == "SUCCESSFUL_NATIVE_EXECUTION" and
+    .outage.fromCacheTasks == 0 and
+    .authority == {
+        proofOfConcept: true,
+        productionAuthorized: false,
+        wallTimeClaim: false,
+        soakRequired: false,
+        designPartnerRequired: false,
+        testOptimization: "OUT_OF_SCOPE"
+    } and
+    (.deferred | index("BUILDOPT_STATE_SYNC")) != null and
+    (.deferred | index("PRODUCTION_HA_RBAC_KMS_BACKUPS")) != null
+' "${buildopt_contract}" >/dev/null; then
+    printf 'central Gradle-cache contract is malformed\n' >&2
+    exit 1
+fi
+
+mapfile -t buildopt_gradle_candidates < <(
+    find "${buildopt_repo_root}/.tools/gradle-user-home/wrapper/dists/gradle-9.6.1-bin" \
+        -type f \
+        -path '*/gradle-9.6.1/bin/gradle' \
+        -perm -u+x \
+        -print 2>/dev/null
+)
+if ((${#buildopt_gradle_candidates[@]} != 1)); then
+    printf 'expected one provisioned Gradle 9.6.1 executable, found %d\n' \
+        "${#buildopt_gradle_candidates[@]}" >&2
+    exit 1
+fi
+mapfile -t buildopt_java_candidates < <(
+    find "${buildopt_repo_root}/.tools/toolchains" \
+        -mindepth 1 \
+        -maxdepth 1 \
+        -type d \
+        -name 'temurin-jdk-21-*' \
+        -print 2>/dev/null
+)
+if ((${#buildopt_java_candidates[@]} != 1)) ||
+    [[ ! -x "${buildopt_java_candidates[0]}/bin/java" ]]; then
+    printf 'expected one provisioned Temurin JDK 21\n' >&2
+    exit 1
+fi
+
+cd -- "${buildopt_repo_root}"
+BUILDOPT_CENTRAL_GRADLE_CACHE_FIXTURE="${buildopt_repo_root}/fixtures/remote-cache-value" \
+BUILDOPT_CENTRAL_GRADLE_CACHE_GRADLE="${buildopt_gradle_candidates[0]}" \
+JAVA_HOME="${buildopt_java_candidates[0]}" \
+PATH="${buildopt_java_candidates[0]}/bin:${PATH}" \
+    exec "${buildopt_script_dir}/run" \
+        --toolchain go \
+        -- \
+        go test \
+            -race \
+            -count=1 \
+            -run '^(TestCentralGradleCacheProducerConsumerAndOutage|TestGatewayNamespaceUsesCentralScopeGrammar|TestLocalGatewayRoutesOnlyCurrentAuthenticatedCacheContext|TestManagedGatewayContextCarriesOnlyTheActiveCacheBinding)$' \
+            ./internal/launcher

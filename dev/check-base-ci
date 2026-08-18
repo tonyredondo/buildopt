@@ -201,6 +201,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-central-storage-contract"
         "${buildopt_script_dir}/check-central-state-storage"
         "${buildopt_script_dir}/check-central-https-auth"
+        "${buildopt_script_dir}/check-central-gradle-cache"
         "${buildopt_script_dir}/check-toolchains-lock"
         "${buildopt_script_dir}/check-lint-toolchains"
         "${buildopt_script_dir}/check-generated-code"

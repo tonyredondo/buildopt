@@ -4,6 +4,8 @@ rootProject.name = 'buildopt-remote-cache-value'
 
 def remoteCacheUrl = providers.environmentVariable('BUILDOPT_POC_REMOTE_CACHE_URL').get()
 def remoteCachePush = providers.environmentVariable('BUILDOPT_POC_REMOTE_CACHE_PUSH').getOrElse('0') == '1'
+def remoteCacheUsername = providers.environmentVariable('BUILDOPT_POC_REMOTE_CACHE_USERNAME').getOrElse('buildopt-poc')
+def remoteCachePassword = providers.environmentVariable('BUILDOPT_POC_REMOTE_CACHE_PASSWORD').getOrElse('remote-cache-value')
 
 buildCache {
     local {
@@ -14,8 +16,8 @@ buildCache {
         push = remoteCachePush
         allowInsecureProtocol = true
         credentials {
-            username = 'buildopt-poc'
-            password = 'remote-cache-value'
+            username = remoteCacheUsername
+            password = remoteCachePassword
         }
     }
 }

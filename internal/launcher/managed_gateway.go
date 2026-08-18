@@ -66,6 +66,7 @@ type managedGatewayCacheRegistration struct {
 	UpstreamEndpoint string `json:"upstreamEndpoint"`
 	Credential       string `json:"credential"`
 	AuthorityDigest  string `json:"authorityDigest"`
+	Namespace        string `json:"namespace"`
 	AllowRead        bool   `json:"allowRead"`
 	AllowWrite       bool   `json:"allowWrite"`
 	ExpiresAt        string `json:"expiresAt"`
@@ -397,6 +398,7 @@ func managedGatewayCacheForRegistration(
 		UpstreamEndpoint: binding.upstreamEndpoint,
 		Credential:       binding.credential,
 		AuthorityDigest:  binding.authorityDigest,
+		Namespace:        binding.namespace,
 		AllowRead:        binding.allowRead,
 		AllowWrite:       binding.allowWrite,
 		ExpiresAt: binding.expiresAt.UTC().Format(
@@ -430,6 +432,7 @@ func (registration *managedGatewayCacheRegistration) binding(
 		credential,
 		registration.AuthorityDigest,
 		attemptID,
+		registration.Namespace,
 		registration.AllowRead,
 		registration.AllowWrite,
 		expiresAt,

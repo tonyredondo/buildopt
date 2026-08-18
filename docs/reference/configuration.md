@@ -176,6 +176,13 @@ supports POSIX modes. The launcher verifies signature, canonical form,
 repository/component binding, expiry, revocation, and monotonic generations
 before exposing a local cache context.
 
+For the central HTTPS POC, `BUILDOPT_SHARED_CACHE_URL` is the trusted HTTPS
+origin and `BUILDOPT_SHARED_CACHE_TOKEN_PATH` contains the scoped central
+token. The gateway adds the signed authority's cache namespace to every
+upstream request and its pending attempt ID to PUT requests. Neither value nor
+the bearer token enters the Gradle environment. This remains an advanced
+fixture path until `buildopt connect` owns the setup.
+
 ## Managed Gradle bootstrap cache
 
 `BUILDOPT_GRADLE_BOOTSTRAP_CONFIG_PATH` points to the strict launcher-owned

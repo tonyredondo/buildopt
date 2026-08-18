@@ -131,6 +131,7 @@ func gatewayCircuitBindingForTest(t *testing.T) *gatewayCacheBinding {
 		bytes.Repeat([]byte{0x42}, 32),
 		"sha256:"+strings.Repeat("a", 64),
 		"11111111-1111-4111-8111-111111111111",
+		"stable",
 		true,
 		true,
 		time.Now().Add(time.Hour),

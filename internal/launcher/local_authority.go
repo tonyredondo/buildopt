@@ -185,6 +185,7 @@ func localAuthorityContextFromEnvironment(
 		upstreamCredential,
 		document.AuthorityDigest,
 		document.Attempt.AttemptID,
+		document.Policy.RemoteCache.Namespace,
 		document.Attempt.AllowRead,
 		document.Attempt.AllowWrite,
 		verified.ExpiresAt(),

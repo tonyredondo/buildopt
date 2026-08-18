@@ -48,7 +48,7 @@ if ! jq -e '
         designPartnerRequired: false,
         testOptimization: "OUT_OF_SCOPE"
     } and
-    (.deferred | index("GRADLE_GATEWAY_REMOTE_FORWARDING")) != null and
+    .subsequentlyProven == ["GRADLE_GATEWAY_REMOTE_FORWARDING"] and
     (.deferred | index("PRODUCTION_HA_RBAC_KMS_BACKUPS")) != null
 ' "${buildopt_contract}" >/dev/null; then
     printf 'central HTTPS/authentication contract is malformed\n' >&2

@@ -162,6 +162,7 @@ func TestManagedGatewayContextCarriesOnlyTheActiveCacheBinding(t *testing.T) {
 		bytes.Repeat([]byte{0x31}, 32),
 		"sha256:"+strings.Repeat("d", 64),
 		"11111111-1111-4111-8111-111111111111",
+		"stable",
 		true,
 		false,
 		time.Now().Add(time.Hour),
@@ -182,6 +183,7 @@ func TestManagedGatewayContextCarriesOnlyTheActiveCacheBinding(t *testing.T) {
 	current := context.cache()
 	if current == nil ||
 		current.authorityDigest != binding.authorityDigest ||
+		current.namespace != binding.namespace ||
 		current.credential != binding.credential {
 		t.Fatalf("current cache binding = %+v", current)
 	}

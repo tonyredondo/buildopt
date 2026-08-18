@@ -204,6 +204,8 @@ func TestLocalGatewayRoutesOnlyCurrentAuthenticatedCacheContext(
 	attemptID := "01234567-89ab-cdef-0123-456789abcdef"
 	var receivedAuthorization string
 	var receivedAuthority string
+	var receivedAttempt string
+	var receivedNamespace string
 	var receivedBody []byte
 	cached := []byte("cached")
 	cachedDigest := "sha256:" + sha256Hex(cached)
@@ -213,6 +215,8 @@ func TestLocalGatewayRoutesOnlyCurrentAuthenticatedCacheContext(
 	) {
 		receivedAuthorization = request.Header.Get("Authorization")
 		receivedAuthority = request.Header.Get(gatewayAuthorityHeader)
+		receivedAttempt = request.Header.Get(gatewayAttemptHeader)
+		receivedNamespace = request.Header.Get(gatewayNamespaceHeader)
 		switch request.Method {
 		case http.MethodGet:
 			writer.Header().Set("ETag", `"`+cachedDigest+`"`)
@@ -234,6 +238,7 @@ func TestLocalGatewayRoutesOnlyCurrentAuthenticatedCacheContext(
 		credential,
 		authorityDigest,
 		attemptID,
+		"stable",
 		true,
 		true,
 		time.Now().Add(time.Hour),
@@ -288,11 +293,15 @@ func TestLocalGatewayRoutesOnlyCurrentAuthenticatedCacheContext(
 	}
 	expectedCredential := base64.RawURLEncoding.EncodeToString(credential)
 	if receivedAuthorization != "Bearer "+expectedCredential ||
-		receivedAuthority != authorityDigest {
+		receivedAuthority != authorityDigest ||
+		receivedNamespace != "stable" ||
+		receivedAttempt != "" {
 		t.Fatalf(
-			"upstream authority = %q/%q",
+			"upstream authority = %q/%q/%q/%q",
 			receivedAuthorization,
 			receivedAuthority,
+			receivedNamespace,
+			receivedAttempt,
 		)
 	}
 
@@ -304,6 +313,8 @@ func TestLocalGatewayRoutesOnlyCurrentAuthenticatedCacheContext(
 	if status != http.StatusCreated ||
 		len(body) != 0 ||
 		string(receivedBody) != "candidate" ||
+		receivedNamespace != "stable" ||
+		receivedAttempt != attemptID ||
 		headers.Get("X-BuildOpt-Blob-Digest") == "" {
 		t.Fatalf(
 			"cache PUT = %d/%q/%q/%q",
@@ -413,6 +424,7 @@ func TestLocalGatewayCacheFailsClosed(t *testing.T) {
 				bytes.Repeat([]byte{0x13}, 32),
 				"sha256:"+strings.Repeat("c", 64),
 				"01234567-89ab-cdef-0123-456789abcdef",
+				"stable",
 				test.allowRead,
 				test.allowWrite,
 				test.expiresAt,
@@ -441,6 +453,30 @@ func TestLocalGatewayCacheFailsClosed(t *testing.T) {
 				)
 			}
 		})
+	}
+}
+
+func TestGatewayNamespaceUsesCentralScopeGrammar(t *testing.T) {
+	for _, namespace := range []string{
+		"stable",
+		"gradle/9.6.1/linux-amd64",
+		strings.Repeat("a", 512),
+	} {
+		if !validGatewayNamespace(namespace) {
+			t.Fatalf("valid gateway namespace rejected: %q", namespace)
+		}
+	}
+	for _, namespace := range []string{
+		"",
+		"/stable",
+		"stable/../other",
+		"stable//other",
+		"stable:other",
+		strings.Repeat("a", 513),
+	} {
+		if validGatewayNamespace(namespace) {
+			t.Fatalf("invalid gateway namespace accepted: %q", namespace)
+		}
 	}
 }
 
@@ -671,6 +707,7 @@ func startCacheGatewayForTest(
 		bytes.Repeat([]byte{0x5a}, 32),
 		"sha256:"+strings.Repeat("e", 64),
 		"22222222-2222-4222-8222-222222222222",
+		"stable",
 		true,
 		true,
 		time.Now().Add(time.Hour),

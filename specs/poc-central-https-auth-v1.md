@@ -95,15 +95,12 @@ separation and repository isolation, publishes typed state through immutable
 objects/manifests plus head CAS, binds a cache write to a pending attempt and
 revokes a live credential without server restart.
 
-## POC boundary and next block
+## POC boundary and subsequent work
 
 This block proves that independent machines can be given a real encrypted and
-scoped server boundary. It does not yet make `buildopt gradle` consume that
-boundary. Automatic connection, gateway forwarding, state synchronization,
-remote profile selection, multi-machine value measurement and production
-HA/RBAC/KMS/backup design remain deferred.
-
-The next block is `POC-CENTRAL-GRADLE-CACHE-001`: forward Gradle's existing
-remote-cache protocol through the invocation-local gateway, prove one clean
-producer and one read-only consumer, and retain ordinary Gradle execution when
-the central service is unavailable.
+scoped server boundary. The subsequent
+[`POC-CENTRAL-GRADLE-CACHE-001`](./poc-central-gradle-cache-v1.md) block now
+proves Gradle gateway forwarding, a clean producer, a read-only consumer and
+ordinary execution during central outage. Automatic connection, state
+synchronization, remote profile selection, multi-machine value measurement and
+production HA/RBAC/KMS/backup design remain deferred.

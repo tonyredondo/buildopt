@@ -34,9 +34,13 @@ head. The [central HTTPS contract](../../specs/poc-central-https-auth-v1.md)
 adds an externally bindable TLS 1.3 listener, four independent capabilities,
 hash-only token persistence and live revocation.
 
-The next block is `POC-CENTRAL-GRADLE-CACHE-001`: make the invocation-local
-gateway forward Gradle cache traffic to this boundary without passing the
-upstream token into Gradle or changing the offline/native fallback.
+The Gradle data-plane proof is now complete. The invocation-local gateway adds
+the exact namespace and pending-attempt binding while retaining the upstream
+token, a clean producer publishes through the existing verified commit
+protocol, a separate read-only consumer obtains exact `FROM-CACHE` outputs and
+server outage becomes an ordinary rebuild. The next block is
+`POC-CENTRAL-STATE-SYNC-001`: add connection and typed state synchronization
+without hand-authored internal files.
 
 ## Target experience
 

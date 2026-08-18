@@ -403,13 +403,23 @@ revocation, pending cache-write binding and typed-state CAS:
 ./dev/check-central-https-auth
 ```
 
+Validate the native Gradle producer/consumer path through the local gateway
+and central HTTPS object plane:
+
+```bash
+./dev/check-central-gradle-cache
+```
+
 The state-storage checker proves private independent `state.sqlite`
 migrations, restart persistence, repository/kind isolation, exact CAS replay,
 one-winner concurrent promotion, invisible partial publication,
 complete-byte corruption rejection and the portfolio/evidence/checkpoint
 retention rules. The HTTPS checker then exercises those semantics through a
-real trusted TLS listener with scoped credentials. Cross-machine Gradle cache
-consumption and its wall-time value remain the next POC block.
+real trusted TLS listener with scoped credentials. The Gradle-cache checker
+adds a clean write-only producer, verified owner commit, independent read-only
+consumer with eight `FROM-CACHE` outcomes, exact output hashes, rejected
+read-only publication and successful native execution after server loss. It is
+a functional proof, not a cross-machine wall-time claim.
 
 ## CI orchestration validation
 

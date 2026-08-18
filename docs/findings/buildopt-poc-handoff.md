@@ -36,7 +36,7 @@ binding falls back before Gradle starts.
 | **Profile portfolio and replay** | Stores only qualified structural families under exact repository, Wrapper, workflow, graph, output, executable and evidence bindings. | POC-only automatic replay; drift retains native. |
 | **Safe local cache** | Isolates and verifies Gradle cache data by repository, Wrapper and platform. | Supporting safety; approximately at parity with an already warm native Gradle cache, not the current speed claim. |
 | **Shared / Edge cache** | Offers Gradle-compatible opaque cache objects over HTTP/HTTPS and optional locality. | Separate experiment; its percentages are never added to Build Impact results. |
-| **Optional central state** | Preserves compatible portfolios, evidence and resumable checkpoints without making remote state optimization authority. | Contract, restart-safe CAS/SQLite storage and scoped TLS 1.3 access are complete; synchronization and cross-machine value are not implemented yet. |
+| **Optional central cache and state** | Shares committed Gradle outputs plus compatible portfolios, evidence and checkpoints while keeping local execution authoritative. | Storage/TLS are complete; a clean producer and independent read-only consumer now prove eight `FROM-CACHE` outcomes, exact bytes and outage rebuild. Connection, state sync and cross-machine value are next. |
 | **Launcher, history and reports** | Preserves process behavior and reports graph reduction, wall time, uncertainty, p95, learning cost, payback and fallback. | Supporting infrastructure; launcher overhead is included in candidate timings. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier resource/state-reuse hypotheses. | Retired from the active POC after neutral, unstable or regressive evidence. |
 
@@ -106,9 +106,9 @@ but do not replace the zero-configuration Ktor/Beam result.
 
 ## Recommended next steps
 
-1. **Connect Gradle through the local verifying gateway.** Use the proven
-   central TLS/token boundary without exposing the upstream token to Gradle;
-   prove one clean producer, one read-only consumer and outage fallback.
+1. **Add one-time connection and exact state synchronization.** Make
+   `buildopt connect` configure the proven central cache path and synchronize
+   compatible portfolios/evidence/checkpoints without hand-authored files.
 2. **Measure profile lifetime across commits.** Replace projected payback with
    observed matching replays, invalidations and cumulative net saving.
 3. **Add generic economic prequalification.** Use task shapes and graph cost to
@@ -131,4 +131,5 @@ but do not replace the zero-configuration Ktor/Beam result.
 - [One-command roadmap](../plans/one-command-onboarding-roadmap.md)
 - [Optional central storage contract](../../specs/poc-central-storage-contract-v1.md)
 - [Restart-safe typed central state](../../specs/poc-central-state-storage-v1.md)
+- [Central Gradle-cache gateway proof](../../specs/poc-central-gradle-cache-v1.md)
 - [Implementation tracker](../../implementation-tracker.md)
