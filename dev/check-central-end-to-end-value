@@ -31,6 +31,7 @@ jq -e '
     control: "CENTRAL_CACHE_PLUS_FULL_NATIVE_GRAPH",
     sameCentralObjects: true,
     sameConnectionScope: true,
+    automaticProducerStatePublishedBeforeConsumers: true,
     separateGradleHomes: true,
     separateLocalBuildOptState: true,
     alternatingPairOrder: true,
@@ -84,6 +85,7 @@ jq -e '
   .protocol.ktorGradleHeapMiB == 2048 and
   .protocol.ktorKotlinDaemonHeapMiB == 1536 and
   .protocol.producerDaemonStoppedBeforeConsumers and
+  .protocol.automaticProducerStatePublishedBeforeConsumers and
   .protocol.consumerBootstrapDaemonsStoppedBeforePairedWarmup and
   (.repositories | length) == 2 and
   ([.repositories[].repositoryId] | unique | length) == 2 and

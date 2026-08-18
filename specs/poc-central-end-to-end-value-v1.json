@@ -11,6 +11,7 @@
     "control": "CENTRAL_CACHE_PLUS_FULL_NATIVE_GRAPH",
     "sameCentralObjects": true,
     "sameConnectionScope": true,
+    "automaticProducerStatePublishedBeforeConsumers": true,
     "separateGradleHomes": true,
     "separateLocalBuildOptState": true,
     "alternatingPairOrder": true,

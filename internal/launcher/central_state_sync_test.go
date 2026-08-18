@@ -145,6 +145,17 @@ func TestCentralStateSyncConnectLifecycleConcurrencyAndOfflineSnapshot(t *testin
 		t.Fatalf("incompatible fallback = code %d, %+v", code, incompatibleResult)
 	}
 
+	badWrapper, badWrapperToken, badWrapperCA := newRepository(now.Add(-4*time.Hour), "bad-wrapper", true)
+	writeGradleWrapperProperties(t, badWrapper, "distributionUrl=https\\://services.gradle.org/distributions/gradle-latest-bin.zip\n")
+	badWrapperResult, code := runCentralSyncCommand(t, badWrapper, []string{
+		"connect", server.URL, "--token-file", badWrapperToken, "--ca-file", badWrapperCA,
+	})
+	if code != 0 || badWrapperResult.LocalStateStatus != "INCOMPATIBLE" ||
+		badWrapperResult.LocalStateReason != "Gradle Wrapper version is not a supported semantic version" ||
+		!badWrapperResult.NativeFallback {
+		t.Fatalf("incompatible Wrapper reason = code %d, %+v", code, badWrapperResult)
+	}
+
 	interrupted, interruptedToken, interruptedCA := newRepository(now.Add(-2*time.Hour), "interrupted", true)
 	controlled.failNextCAS()
 	interruptedResult, code := runCentralSyncCommand(t, interrupted, []string{
@@ -232,6 +243,46 @@ func TestCentralStateSyncConnectLifecycleConcurrencyAndOfflineSnapshot(t *testin
 		centralKindStatus(consumerResult, sharedcache.StateKindPortfolio) != "OFFLINE_NO_SNAPSHOT" ||
 		centralKindStatus(consumerResult, sharedcache.StateKindCheckpoint) != "OFFLINE_SNAPSHOT" {
 		t.Fatalf("corrupt offline evidence was accepted = code %d, %+v", code, consumerResult)
+	}
+}
+
+func TestCentralStateSyncGradleVersionAcceptsRepositoryWrapperVersions(t *testing.T) {
+	tests := []struct {
+		name       string
+		properties string
+		want       string
+	}{
+		{
+			name:       "locked golden lane",
+			properties: "distributionUrl=https\\://services.gradle.org/distributions/gradle-9.6.1-bin.zip\n",
+			want:       "9.6.1",
+		},
+		{
+			name:       "public repository redirector",
+			properties: "distributionUrl=https\\://cache-redirector.jetbrains.com/services.gradle.org/distributions/gradle-9.5.1-bin.zip\n",
+			want:       "9.5.1",
+		},
+		{
+			name:       "public repository release candidate",
+			properties: "distributionUrl=https\\://services.gradle.org/distributions/gradle-9.0.0-rc-1-all.zip\n",
+			want:       "9.0.0-rc-1",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			repository := t.TempDir()
+			writeGradleWrapperProperties(t, repository, test.properties)
+			got, err := centralGradleVersion(repository)
+			if err != nil || got != test.want {
+				t.Fatalf("central Gradle version = %q, %v; want %q", got, err, test.want)
+			}
+		})
+	}
+
+	repository := t.TempDir()
+	writeGradleWrapperProperties(t, repository, "distributionUrl=https\\://services.gradle.org/distributions/gradle-latest-bin.zip\n")
+	if got, err := centralGradleVersion(repository); err == nil || got != "" {
+		t.Fatalf("unsupported central Gradle version = %q, %v", got, err)
 	}
 }
 

@@ -16,6 +16,10 @@ read-only credential. They have separate workspaces, Gradle User Homes and
 local BuildOpt caches. Dependency and Wrapper warm-up is not measured. Project
 outputs and local build-cache entries are removed before every observation, so
 both arms receive the same opportunity to fetch committed remote objects.
+Before either consumer starts, an explicit no-change sync proves that the
+producer's automatic post-run publication already made evidence, portfolio and
+checkpoint generation 1 remotely visible. The diagnostic sync may not repair a
+missing publication.
 
 ## Resource envelope
 

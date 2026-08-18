@@ -341,6 +341,23 @@ buildopt_subject() {
         exit 1
     }
 
+    buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+        "${buildopt_producer}" "${buildopt_producer_home}" "${buildopt_producer_gradle}" \
+        "${buildopt_producer_cache}" "${buildopt_event}" \
+        "${buildopt_binary}" sync \
+        >"${buildopt_logs}/producer-sync.json" 2>"${buildopt_logs}/producer-sync.log"
+    jq -e '
+      .online and .localStateStatus == "VALID" and .nativeFallback == false and
+      (.kinds | length) == 3 and
+      all(.kinds[];
+        .status == "NO_CHANGE" and .snapshotVerified and .remoteGeneration > 0
+      )
+    ' "${buildopt_logs}/producer-sync.json" >/dev/null || {
+        jq -c '{localStateStatus,localStateReason,nativeFallback,online,kinds}' \
+            "${buildopt_logs}/producer-sync.json" >&2 || true
+        exit 1
+    }
+
     buildopt_clear_outputs "${buildopt_producer}" "${buildopt_producer_cache}"
     printf '%s: publishing the full native workflow into central cache\n' "${buildopt_repository_id}"
     buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
@@ -711,6 +728,7 @@ jq -n \
           commonMaximumWorkers:$maximumWorkers,ktorGradleHeapMiB:$ktorGradleHeapMiB,
           ktorKotlinDaemonHeapMiB:$ktorKotlinDaemonHeapMiB,
           producerDaemonStoppedBeforeConsumers:true,
+          automaticProducerStatePublishedBeforeConsumers:true,
           consumerBootstrapDaemonsStoppedBeforePairedWarmup:true
         },
         repositories:$repositories,nativeRetained:$nativeRetained[0],

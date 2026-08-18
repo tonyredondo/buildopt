@@ -45,6 +45,7 @@ if ! jq -e '
     .lifecycle.offline == "VERIFIED_SNAPSHOT_ONLY" and
     .lifecycle.corruptSnapshot == "OFFLINE_NO_SNAPSHOT" and
     .lifecycle.incompatibleOrOlderLocalState == "REMOTE_RETAINED_WITH_NATIVE_FALLBACK" and
+    .lifecycle.incompatibleReasonReported == true and
     .security.requiredReadCapability == "STATE_READ" and
     .security.writeCapability == "STATE_WRITE" and
     .security.credentialFilesPrivate == true and

@@ -50,6 +50,10 @@ var centralBundleSchemaPattern = regexp.MustCompile(
 	`^buildopt\.[a-z0-9.-]+/[a-z0-9.-]+/v[1-9][0-9]*$`,
 )
 
+var centralGradleDistributionNamePattern = regexp.MustCompile(
+	`^gradle-([0-9]+\.[0-9]+(?:\.[0-9]+)?(?:[-+][A-Za-z0-9.-]+)?)-(bin|all)\.zip$`,
+)
+
 type centralConnection struct {
 	SchemaVersion         string                  `json:"schemaVersion"`
 	ServerURL             string                  `json:"serverUrl"`
@@ -150,6 +154,7 @@ type centralSyncResult struct {
 	RepositoryID          string                  `json:"repositoryId"`
 	RepositoryScopeSHA256 string                  `json:"repositoryScopeSha256"`
 	LocalStateStatus      string                  `json:"localStateStatus"`
+	LocalStateReason      string                  `json:"localStateReason,omitempty"`
 	Online                bool                    `json:"online"`
 	UsedOfflineSnapshot   bool                    `json:"usedOfflineSnapshot"`
 	NativeFallback        bool                    `json:"nativeFallback"`
@@ -369,6 +374,7 @@ func synchronizeCentralState(
 	result.LocalStateStatus = "ABSENT"
 	if localErr != nil {
 		result.LocalStateStatus = "INCOMPATIBLE"
+		result.LocalStateReason = localErr.Error()
 		result.NativeFallback = true
 		local = map[sharedcache.StateKind]*centralLocalPublication{}
 	} else if len(local) > 0 {
@@ -1428,12 +1434,12 @@ func centralGradleVersion(repositoryRoot string) (string, error) {
 		}
 		value := strings.ReplaceAll(strings.TrimPrefix(line, "distributionUrl="), `\:`, ":")
 		archive := filepath.Base(value)
-		matches := gradleDistributionNamePattern.FindStringSubmatch(archive)
+		matches := centralGradleDistributionNamePattern.FindStringSubmatch(archive)
 		if len(matches) == 3 {
 			return matches[1], nil
 		}
 	}
-	return "", errors.New("Gradle Wrapper version is outside the tested matrix")
+	return "", errors.New("Gradle Wrapper version is not a supported semantic version")
 }
 
 func centralStateRelativePath(stateRelative, path string) (string, bool) {

@@ -64,7 +64,13 @@ typed and expire after 24 hours.
   while advancing the head. The loser waits only for the bounded winning
   generation, verifies it and reports `CONCURRENT_REMOTE_WON`.
 - A newer remote generation is retained. An older incompatible local state
-  never replaces it and the result requests native fallback.
+  never replaces it and the result requests native fallback. The result also
+  reports the local incompatibility reason instead of presenting an empty sync
+  as success.
+- State origin records the semantic Gradle version declared by the repository's
+  Wrapper, including public-repository versions outside BuildOpt's locked
+  bootstrap matrix. The bootstrap itself remains limited to its pinned and
+  checksum-verified distributions.
 - Each successful online operation stores bundle, manifest and head bytes as
   a private snapshot. During an outage, only a snapshot whose canonical form,
   digests, scope, kind, generation and cross-document bindings all verify may

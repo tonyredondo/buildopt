@@ -45,7 +45,8 @@
     "interruptedPublication": "EXACT_RETRY",
     "offline": "VERIFIED_SNAPSHOT_ONLY",
     "corruptSnapshot": "OFFLINE_NO_SNAPSHOT",
-    "incompatibleOrOlderLocalState": "REMOTE_RETAINED_WITH_NATIVE_FALLBACK"
+    "incompatibleOrOlderLocalState": "REMOTE_RETAINED_WITH_NATIVE_FALLBACK",
+    "incompatibleReasonReported": true
   },
   "security": {
     "requiredReadCapability": "STATE_READ",
