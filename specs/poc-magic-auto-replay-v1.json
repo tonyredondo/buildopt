@@ -29,6 +29,7 @@
     ],
     "skippedReason": "NO_QUALIFIED_CHECKPOINT",
     "selectedReason": "QUALIFIED_PROFILE_SELECTED",
+    "selectedSource": "LOCAL_PORTFOLIO",
     "overheadUnit": "NANOSECONDS",
     "overheadIncludedInInvocationWallTime": true,
     "recordsOriginalEntrypoints": true,

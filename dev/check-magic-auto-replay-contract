@@ -36,7 +36,8 @@ jq -e '
   .selection == {
     statuses: ["SKIPPED", "NATIVE_RETAINED", "SELECTED"],
     skippedReason: "NO_QUALIFIED_CHECKPOINT",
-    selectedReason: "QUALIFIED_PROFILE_SELECTED", overheadUnit: "NANOSECONDS",
+    selectedReason: "QUALIFIED_PROFILE_SELECTED",
+    selectedSource: "LOCAL_PORTFOLIO", overheadUnit: "NANOSECONDS",
     overheadIncludedInInvocationWallTime: true,
     recordsOriginalEntrypoints: true, recordsSelectedEntrypoints: true,
     recordsValidatedAndFailedBindings: true
@@ -76,10 +77,13 @@ for buildopt_binding in \
     'optimizeBindingReplay       = "AUTOMATIC_REPLAY_COMPLETE"' \
     'optimizeSelectionReasonSelected = "QUALIFIED_PROFILE_SELECTED"' \
     'func (run *optimizeRun) prepareAutomaticReplay()' \
-    'automaticOptimizeImpact = optimize.prepareAutomaticReplay()' \
-    'CompletedBeforeGradle bool'; do
+    'automaticOptimizeImpact = optimize.prepareAutomaticReplay()'; do
     grep -R -F "${buildopt_binding}" \
         "${buildopt_repo_root}/internal/launcher" >/dev/null
 done
+grep -R -E 'CompletedBeforeGradle[[:space:]]+bool' \
+    "${buildopt_repo_root}/internal/launcher" >/dev/null
+grep -E '^[[:space:]]*Source[[:space:]]+string' \
+    "${buildopt_repo_root}/internal/launcher/optimize_replay.go" >/dev/null
 
 printf 'Magic automatic replay contract OK: exact pre-Gradle selection with native fallback\n'

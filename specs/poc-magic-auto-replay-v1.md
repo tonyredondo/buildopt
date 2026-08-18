@@ -31,7 +31,9 @@ without spending more time than the saved build work.
 
 Selection completes before the target Gradle process starts. The result records
 nanosecond selection overhead, original and selected entrypoints, every checked
-binding and any failed binding. A selected execution reports
+binding, any failed binding, and `source=LOCAL_PORTFOLIO` for this exact local
+replay contract. Central portfolio reuse has its own stricter contract and
+reports a distinct source. A selected execution reports
 `SELECTIVE_PROFILE`; the `native` object explicitly records that the full graph
 did not start. A rejected or unavailable selection reports
 `OPTIMIZED_NATIVE` and preserves the original workflow and exit status.
