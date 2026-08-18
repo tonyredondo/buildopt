@@ -281,6 +281,7 @@ jq -e \
         schemaVersion: "buildopt.poc/central-optimize-integration/v1",
         status: "DISCONNECTED", reason: "NO_CENTRAL_CONNECTION",
         connected: false, selectionSource: "NONE",
+        gradleCacheMode: "DISCONNECTED", gradleCacheStatus: "NOT_CONFIGURED",
         checkpointGeneration: 0, portfolioGeneration: 0,
         evidenceGeneration: 0, evidenceRevision: "",
         portfolioManifestSha256: "", evidenceManifestSha256: "",
