@@ -93,6 +93,11 @@ buildopt_run_environment() {
     local buildopt_cache_home=$6
     local buildopt_event=$7
     shift 7
+    if [[ ${buildopt_repository_id} == ktorio/ktor ]]; then
+        mkdir -p -- "${buildopt_gradle_home}"
+        printf 'org.gradle.jvmargs=-Xms512m -Xmx%sm -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC -Dfile.encoding=UTF-8\n' \
+            "${buildopt_ktor_gradle_heap_mib}" >"${buildopt_gradle_home}/gradle.properties"
+    fi
     (
         cd -- "${buildopt_repository}"
         env \
@@ -635,9 +640,7 @@ buildopt_subject \
     FILE ktor-server/ktor-server-plugins/ktor-server-webjars/build/libs/ktor-server-webjars-jvm-3.6.0-SNAPSHOT.jar \
     DEPENDENCY_SOURCE 28443 \
     jvmJar --daemon --build-cache --parallel --no-configuration-cache --console=plain \
-    --no-scan --max-workers="${buildopt_max_workers}" \
-    "-Dorg.gradle.jvmargs=-Xms512m -Xmx${buildopt_ktor_gradle_heap_mib}m -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC -Dfile.encoding=UTF-8" \
-    -Pktor.develocity.skipBuildScans=true
+    --no-scan --max-workers="${buildopt_max_workers}" -Pktor.develocity.skipBuildScans=true
 
 buildopt_subject \
     beam apache/beam 5090421 https://github.com/apache/beam.git \
