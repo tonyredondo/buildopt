@@ -472,7 +472,7 @@ the full-graph control and structural candidate the same committed HTTPS cache
 objects across eight alternating pairs:
 
 ```bash
-./dev/run --toolchain jdk21 -- \
+./dev/run --toolchain temurin-jdk-21 -- \
   ./dev/run-poc-central-end-to-end-value /tmp/central-value.json
 ./dev/check-central-end-to-end-value /tmp/central-value.json
 ```
