@@ -111,8 +111,8 @@ but do not replace the zero-configuration Ktor/Beam result.
 - That a qualified profile survives enough future commits to realize projected
   payback; lifetime is not yet observed.
 - Net cross-machine wall-time value versus optimized native Gradle with the
-  same remote-cache opportunity. The current 7.298-second consumer and
-  5.665-second outage observations are functional diagnostics, not comparable
+  same remote-cache opportunity. The current 7.330-second consumer and
+  5.877-second outage observations are functional diagnostics, not comparable
   performance arms.
 - Production reliability, security posture or autonomous rollout.
 

@@ -1,16 +1,16 @@
 {
   "schemaVersion": "buildopt.poc/central-two-machine-result/v1",
   "workItem": "POC-CENTRAL-TWO-MACHINE-001",
-  "capturedAt": "2026-08-18T12:19:05Z",
-  "buildoptRevision": "909ba745d8108fa4fcc283d5340c5a03d50fb270",
-  "packageSha256": "19435497d3a6ffcfe4ec1493d2166fa43cf21985469886f50a53cbef6926cdc8",
+  "capturedAt": "2026-08-18T12:32:50Z",
+  "buildoptRevision": "8d021426cba28a1fd79fc03ec0165b5a2f706667",
+  "packageSha256": "76ff293522baef588fcf4fd60f7f12e6cc172097669b330fadeb7685697e5e88",
   "source": {
     "baseRevision": "caf3b35a942af2fc3296d62493373882be363212",
     "targetRevision": "014a0b312fe9dc6fed429d50a302998082bbbdf3"
   },
   "runner": {
     "isolation": "DOCKER_CONTAINERS",
-    "imageId": "sha256:c2e90378240459e822854be24c28d0df7dd753b665407edfcae784a6fb5f9512",
+    "imageId": "sha256:31f58c3c2c27294e4b02f6113b038ef55d1be4800e9d96c2ec4a082ae9a00c38",
     "clientCpuLimit": 4,
     "clientMemoryBytes": 8589934592,
     "javaVersion": "21.0.11+10",
@@ -26,8 +26,8 @@
   },
   "producer": {
     "profileQualified": true,
-    "optimizeDurationMs": 131608,
-    "cacheBuildDurationMs": 10270,
+    "optimizeDurationMs": 136836,
+    "cacheBuildDurationMs": 11398,
     "cacheObjectsCommitted": 2,
     "publication": "COMMITTED"
   },
@@ -35,14 +35,14 @@
     "selectionSource": "CENTRAL_PORTFOLIO",
     "cacheMode": "READ_ONLY",
     "cacheStatus": "GATEWAY_ACTIVE",
-    "durationMs": 7298,
+    "durationMs": 7330,
     "fromCacheTasks": 1
   },
   "outage": {
     "serverOnline": false,
     "verifiedProfileSnapshot": true,
     "cacheStatus": "GATEWAY_ACTIVE",
-    "durationMs": 5665,
+    "durationMs": 5877,
     "fromCacheTasks": 0
   },
   "equivalence": {

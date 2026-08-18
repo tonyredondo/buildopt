@@ -26,8 +26,8 @@ producer JAR. With the service stopped and local cache entries removed, it
 retains the verified profile, records zero cache hits and rebuilds the same
 bytes. Central credentials are absent from Gradle and logs.
 
-The 131.608-second producer calibration, 10.270-second producer cache build,
-7.298-second consumer and 5.665-second outage observations make the phases
+The 136.836-second producer calibration, 11.398-second producer cache build,
+7.330-second consumer and 5.877-second outage observations make the phases
 auditable but are not comparable arms. They support no savings percentage.
 Validate the result with:
 
