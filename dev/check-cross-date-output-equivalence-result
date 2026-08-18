@@ -78,7 +78,7 @@ while IFS= read -r buildopt_key; do
     }
     if [[ ${buildopt_key} == apache-groovy-* ]]; then
         [[ -s ${buildopt_cell}/build.log && -s ${buildopt_cell}/probe.json ]] || exit 1
-        if rg -n '/tmp/buildopt-cross-date-output|/home/tony/' "${buildopt_cell}/build.log" >/dev/null; then
+        if grep -En '/tmp/buildopt-cross-date-output|/home/tony/' "${buildopt_cell}/build.log" >/dev/null; then
             printf 'cross-date log contains a private capture path: %s\n' "${buildopt_key}" >&2
             exit 1
         fi

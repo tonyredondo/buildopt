@@ -266,6 +266,7 @@ jq -e \
         durationNs: .selection.durationNs,
         changeFamily: "LEAF_SOURCE", familySha256: $family,
         profileSha256: $profile, profileFile: .portfolio.profileFile,
+        source: "LOCAL_PORTFOLIO",
         originalEntrypoints: ["jar"], selectedEntrypoints: [":service-a:jar"],
         validatedBindings: [
             "BUILDOPT_EXECUTABLE", "CALIBRATION_EVIDENCE", "CHANGE_FAMILY",
@@ -274,6 +275,20 @@ jq -e \
             "REPOSITORY_REVISION", "WORKFLOW_ENTRYPOINTS"
         ],
         failedBindings: [], productionAuthorized: false,
+        testOptimization: "OUT_OF_SCOPE"
+    } and
+    .central == {
+        schemaVersion: "buildopt.poc/central-optimize-integration/v1",
+        status: "DISCONNECTED", reason: "NO_CENTRAL_CONNECTION",
+        connected: false, selectionSource: "NONE",
+        checkpointGeneration: 0, portfolioGeneration: 0,
+        evidenceGeneration: 0, evidenceRevision: "",
+        portfolioManifestSha256: "", evidenceManifestSha256: "",
+        revalidatedRevision: "", snapshotsVerified: false,
+        preSyncOnline: false, preSyncDurationMs: 0,
+        postSyncStatus: "NOT_ATTEMPTED",
+        postSyncOnline: false, postSyncDurationMs: 0,
+        nativeFallback: false, productionAuthorized: false,
         testOptimization: "OUT_OF_SCOPE"
     } and
     .selection.durationNs >= 1 and
@@ -289,7 +304,7 @@ jq -e \
     jq . "${buildopt_second}" >&2
     exit 1
 }
-if rg -q 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-2.log"; then
+if grep -Eq 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-2.log"; then
     printf 'exact automatic replay unexpectedly repeated measurement\n' >&2
     exit 1
 fi
@@ -322,7 +337,7 @@ jq -e \
     jq . "${buildopt_repaired}" >&2
     exit 1
 }
-if rg -q 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-3.log"; then
+if grep -Eq 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-3.log"; then
     printf 'profile repair unexpectedly repeated calibration\n' >&2
     exit 1
 fi
@@ -348,7 +363,7 @@ jq -e \
     jq . "${buildopt_replayed_after_repair}" >&2
     exit 1
 }
-if rg -q 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-4.log"; then
+if grep -Eq 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-4.log"; then
     printf 'repaired automatic replay unexpectedly repeated calibration\n' >&2
     exit 1
 fi

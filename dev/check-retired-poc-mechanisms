@@ -48,7 +48,7 @@ buildopt_active_roots=(
     "${buildopt_root}/jvm/gradle-plugin/src/main"
     "${buildopt_root}/jvm/gradle-plugin/build.gradle.kts"
 )
-if rg -n -g '!**/*_test.go' \
+if grep -ERn --exclude='*_test.go' \
     'BuildOptStandardCopyCachePlugin|ResourceProfileReference|applyAuthorizedResourceProfile|--hot-state-dir|--cache-standard-copy-tasks' \
     "${buildopt_active_roots[@]}"; then
     printf 'retired POC mechanism remains reachable from an active surface\n' >&2
@@ -61,7 +61,7 @@ for buildopt_variable in \
     BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP \
     BUILDOPT_CACHE_STANDARD_COPY_TASKS; do
     buildopt_hits=$(
-        rg -l "${buildopt_variable}" \
+        grep -rlF "${buildopt_variable}" \
             "${buildopt_root}/.github/actions" \
             "${buildopt_root}/cmd" \
             "${buildopt_root}/internal/launcher" \
