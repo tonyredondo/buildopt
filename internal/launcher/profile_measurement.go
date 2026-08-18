@@ -70,7 +70,7 @@ type structuralMeasurementConfig struct {
 	gradleDependencySHA256       string
 	gradleDependencyFileCount    int
 	gradleDependencyByteCount    int64
-	gradleNativeBuildCacheSeed   string
+	gradleBuildCacheSeed         string
 	gradleSharedBuildCacheSeed   string
 	gradleMeasurementHome        string
 	deadline                     time.Time
@@ -169,6 +169,7 @@ func runStructuralProfileMeasurement(args []string, stdout, stderr io.Writer) in
 		*baseRevision, *buildOptRevision, *evidenceOutput,
 		append([]string(nil), gradleOptions...), *timeout,
 		*targetStabilityConfirmations, *adaptiveCandidateStability, *outputEquivalence,
+		"",
 	)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt: structural profile measurement unavailable: %v\n", err)
@@ -275,6 +276,7 @@ func prepareStructuralMeasurementConfig(
 	targetStabilityConfirmations int,
 	adaptiveCandidateStability bool,
 	outputEquivalencePath string,
+	gradleBuildCacheSeedOverride string,
 ) (structuralMeasurementConfig, error) {
 	repositoryRoot, err := canonicalWorkingDirectory()
 	if err != nil {
@@ -403,7 +405,7 @@ func prepareStructuralMeasurementConfig(
 	if err != nil {
 		return structuralMeasurementConfig{}, err
 	}
-	gradleNativeBuildCacheSeed, err := measurementGradleNativeBuildCacheSeed()
+	gradleBuildCacheSeed, err := measurementGradleBuildCacheSeed(gradleBuildCacheSeedOverride)
 	if err != nil {
 		return structuralMeasurementConfig{}, err
 	}
@@ -423,7 +425,7 @@ func prepareStructuralMeasurementConfig(
 		adaptiveCandidateStability:   adaptiveCandidateStability,
 		gradleDistributionSeed:       gradleDistributionSeed,
 		gradleDependencySeed:         gradleDependencySeed,
-		gradleNativeBuildCacheSeed:   gradleNativeBuildCacheSeed,
+		gradleBuildCacheSeed:         gradleBuildCacheSeed,
 	}, nil
 }
 
@@ -1395,21 +1397,24 @@ func measurementGradleDependencySeed() (string, error) {
 	return candidate, nil
 }
 
-func measurementGradleNativeBuildCacheSeed() (string, error) {
-	gradleHome := os.Getenv("GRADLE_USER_HOME")
-	if gradleHome == "" {
-		return "", nil
+func measurementGradleBuildCacheSeed(override string) (string, error) {
+	candidate := override
+	if candidate == "" {
+		gradleHome := os.Getenv("GRADLE_USER_HOME")
+		if gradleHome == "" {
+			return "", nil
+		}
+		candidate = filepath.Join(gradleHome, "caches", "build-cache-1")
 	}
-	candidate := filepath.Join(gradleHome, "caches", "build-cache-1")
 	info, err := os.Lstat(candidate)
 	if os.IsNotExist(err) {
 		return "", nil
 	}
 	if err != nil {
-		return "", fmt.Errorf("inspect native Gradle build-cache seed: %w", err)
+		return "", fmt.Errorf("inspect Gradle build-cache seed: %w", err)
 	}
 	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
-		return "", errors.New("native Gradle build-cache seed must be a real directory")
+		return "", errors.New("Gradle build-cache seed must be a real directory")
 	}
 	return candidate, nil
 }
@@ -1733,7 +1738,7 @@ func copyMeasurementCacheSeed(source, target string) error {
 }
 
 // prepareStructuralDependencySnapshot makes the dependency artifacts and
-// native build-cache entries produced by the authoritative build available to
+// build-cache entries produced by the authoritative build available to
 // both isolated measurement arms. Resolved dependencies are bound in place
 // through Gradle's read-only cache contract and verified before and after the
 // measurement. Writable build caches, Configuration Cache state, and
@@ -1741,7 +1746,7 @@ func copyMeasurementCacheSeed(source, target string) error {
 // may share the Gradle daemon process, but never a writable build-cache
 // directory.
 func prepareStructuralDependencySnapshot(config structuralMeasurementConfig, root string, progress io.Writer) (structuralMeasurementConfig, error) {
-	if config.gradleDependencySeed == "" && config.gradleNativeBuildCacheSeed == "" {
+	if config.gradleDependencySeed == "" && config.gradleBuildCacheSeed == "" {
 		return config, nil
 	}
 	if err := checkStructuralMeasurementBudget(config); err != nil {
@@ -1760,15 +1765,15 @@ func prepareStructuralDependencySnapshot(config structuralMeasurementConfig, roo
 		_, _ = fmt.Fprintf(progress, "buildopt: shared read-only dependency binding ready (%d files, %d bytes, sha256 %s)\n",
 			binding.fileCount, binding.byteCount, binding.sha256)
 	}
-	if config.gradleNativeBuildCacheSeed != "" {
-		sharedBuildCache := filepath.Join(root, "native-build-cache-seed")
-		_, _ = fmt.Fprintln(progress, "buildopt: snapshotting the native Gradle build cache once for both isolated arms")
-		fileCount, byteCount, err := copyMeasurementDependencyTree(config.gradleNativeBuildCacheSeed, sharedBuildCache)
+	if config.gradleBuildCacheSeed != "" {
+		sharedBuildCache := filepath.Join(root, "build-cache-seed")
+		_, _ = fmt.Fprintln(progress, "buildopt: snapshotting the authoritative Gradle build cache once for both isolated arms")
+		fileCount, byteCount, err := copyMeasurementDependencyTree(config.gradleBuildCacheSeed, sharedBuildCache)
 		if err != nil {
-			return config, fmt.Errorf("snapshot native Gradle build cache: %w", err)
+			return config, fmt.Errorf("snapshot authoritative Gradle build cache: %w", err)
 		}
 		config.gradleSharedBuildCacheSeed = sharedBuildCache
-		_, _ = fmt.Fprintf(progress, "buildopt: shared immutable native build-cache seed ready (%d files, %d bytes)\n", fileCount, byteCount)
+		_, _ = fmt.Fprintf(progress, "buildopt: shared immutable build-cache seed ready (%d files, %d bytes)\n", fileCount, byteCount)
 	}
 	return config, nil
 }
@@ -1894,7 +1899,7 @@ func copyMeasurementDependencyTree(source, target string) (int, int64, error) {
 func cleanupStructuralMeasurementRoot(root string) {
 	for _, immutableRoot := range []string{
 		filepath.Join(root, "readonly-dependencies"),
-		filepath.Join(root, "native-build-cache-seed"),
+		filepath.Join(root, "build-cache-seed"),
 	} {
 		_ = filepath.WalkDir(immutableRoot, func(candidate string, entry fs.DirEntry, walkErr error) error {
 			if walkErr != nil {

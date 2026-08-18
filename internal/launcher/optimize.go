@@ -182,6 +182,10 @@ type optimizeRun struct {
 	selection     optimizeSelectionResult
 	central       *centralOptimizeIntegration
 	centralReplay *centralOptimizeReplay
+	// gradleBuildCacheSeed is the cache actually used by the authoritative
+	// build. Connected invocations use managed L1 rather than Gradle's default
+	// build-cache-1 directory, so calibration must snapshot this exact path.
+	gradleBuildCacheSeed string
 }
 
 func prepareOptimizeInvocation(args []string, stateEnabled bool) (optimizeInvocation, error) {

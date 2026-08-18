@@ -492,6 +492,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			l1Err,
 		)
 	}
+	if optimize != nil && l1 != nil && l1.directory != "" {
+		optimize.gradleBuildCacheSeed = l1.directory
+	}
 
 	childEnvironment := copyEnvironment(gradleEnvironment)
 	if gateway != nil && handshake != nil {

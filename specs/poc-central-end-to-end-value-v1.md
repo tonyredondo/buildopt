@@ -32,8 +32,11 @@ The producer daemon is stopped after central publication because it no longer
 participates in the comparison. The candidate's first connected bootstrap can
 transiently use native and replay daemons, so those bootstrap daemons are also
 stopped before the final paired warm-ups. The measured state then contains one
-hot daemon per arm. These controls prevent unrelated completed phases from
-causing an OOM; they are not Runtime Tuning and do not advantage the candidate.
+hot daemon per arm. Both measured daemons are stopped after the eighth pair,
+before a negative case or the next repository, and the negative case daemon is
+stopped before leaving its subject. These controls prevent unrelated completed
+phases from causing an OOM; they are not Runtime Tuning and do not advantage
+the candidate.
 
 ## Subjects and observations
 
@@ -41,6 +44,13 @@ The terminal run uses at least two different substantial public Gradle
 families and eight alternating pairs per family. Each observation records wall
 time, pair order, central `FROM-CACHE` outcomes, graph selection, selection and
 state-sync overhead and the exact digest of every required owner output.
+
+The Beam subject keeps the repository-wide unqualified `classes` workflow. A
+diagnostic run exposed a cache-seed handoff defect: the authoritative connected
+build populated managed L1, while calibration copied Gradle's nearly empty
+legacy `build-cache-1` directory. The benchmark must seed both arms from the
+cache that actually served the authoritative build; narrowing the workflow to
+hide that defect is not permitted.
 
 A family qualifies only when:
 

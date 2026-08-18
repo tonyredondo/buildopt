@@ -197,6 +197,7 @@ func (run *optimizeRun) calibrate(
 		1,
 		false,
 		"",
+		run.gradleBuildCacheSeed,
 	)
 	if err != nil {
 		result.Status = optimizeCalibrationRetained

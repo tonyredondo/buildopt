@@ -554,6 +554,14 @@ buildopt_subject() {
             "${buildopt_order}"
     done
 
+    # Each measured arm intentionally keeps one hot daemon across its eight
+    # pairs. Release both before a negative case or the next repository so a
+    # completed subject cannot consume the bounded host's memory.
+    buildopt_stop_gradle_daemons "${buildopt_control}" "${buildopt_control_gradle}" \
+        "${buildopt_logs}/control-measurement-daemon-stop.log"
+    buildopt_stop_gradle_daemons "${buildopt_candidate}" "${buildopt_candidate_gradle}" \
+        "${buildopt_logs}/candidate-measurement-daemon-stop.log"
+
     local buildopt_stats
     buildopt_stats=$(jq -s '
       ([.[].controlDurationMs] | add / length) as $control |
@@ -666,6 +674,8 @@ buildopt_subject() {
                 performanceClaim:false
               }
             ' >"${buildopt_root}/native-retained.json"
+        buildopt_stop_gradle_daemons "${buildopt_negative}" "${buildopt_negative_gradle}" \
+            "${buildopt_logs}/negative-daemon-stop.log"
     fi
 
     local buildopt_secret
@@ -729,7 +739,9 @@ jq -n \
           ktorKotlinDaemonHeapMiB:$ktorKotlinDaemonHeapMiB,
           producerDaemonStoppedBeforeConsumers:true,
           automaticProducerStatePublishedBeforeConsumers:true,
-          consumerBootstrapDaemonsStoppedBeforePairedWarmup:true
+          consumerBootstrapDaemonsStoppedBeforePairedWarmup:true,
+          consumerMeasurementDaemonsStoppedBeforeNegativeOrNextSubject:true,
+          negativeDaemonStoppedBeforeNextSubject:true
         },
         repositories:$repositories,nativeRetained:$nativeRetained[0],
         acceptance:{

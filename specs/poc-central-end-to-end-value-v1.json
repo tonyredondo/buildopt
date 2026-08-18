@@ -22,7 +22,9 @@
     "ktorGradleHeapMiB": 2048,
     "ktorKotlinDaemonHeapMiB": 1536,
     "producerDaemonStoppedBeforeConsumers": true,
-    "consumerBootstrapDaemonsStoppedBeforePairedWarmup": true
+    "consumerBootstrapDaemonsStoppedBeforePairedWarmup": true,
+    "consumerMeasurementDaemonsStoppedBeforeNegativeOrNextSubject": true,
+    "negativeDaemonStoppedBeforeNextSubject": true
   },
   "valueGate": {
     "exactRequiredOutputs": true,

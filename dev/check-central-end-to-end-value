@@ -42,7 +42,9 @@ jq -e '
     ktorGradleHeapMiB: 2048,
     ktorKotlinDaemonHeapMiB: 1536,
     producerDaemonStoppedBeforeConsumers: true,
-    consumerBootstrapDaemonsStoppedBeforePairedWarmup: true
+    consumerBootstrapDaemonsStoppedBeforePairedWarmup: true,
+    consumerMeasurementDaemonsStoppedBeforeNegativeOrNextSubject: true,
+    negativeDaemonStoppedBeforeNextSubject: true
   } and
   .valueGate == {
     exactRequiredOutputs: true,
@@ -87,6 +89,8 @@ jq -e '
   .protocol.producerDaemonStoppedBeforeConsumers and
   .protocol.automaticProducerStatePublishedBeforeConsumers and
   .protocol.consumerBootstrapDaemonsStoppedBeforePairedWarmup and
+  .protocol.consumerMeasurementDaemonsStoppedBeforeNegativeOrNextSubject and
+  .protocol.negativeDaemonStoppedBeforeNextSubject and
   (.repositories | length) == 2 and
   ([.repositories[].repositoryId] | unique | length) == 2 and
   ([.repositories[].gradleFamily] | unique | length) == 2 and

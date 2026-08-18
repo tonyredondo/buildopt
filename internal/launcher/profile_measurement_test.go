@@ -312,9 +312,25 @@ func TestStructuralMeasurementSharesOnlyImmutableGradleCaches(t *testing.T) {
 	if err != nil || seed != modulesRoot {
 		t.Fatalf("dependency seed = %q/%v", seed, err)
 	}
-	buildCacheSeed, err := measurementGradleNativeBuildCacheSeed()
+	buildCacheSeed, err := measurementGradleBuildCacheSeed("")
 	if err != nil || buildCacheSeed != nativeBuildCache {
 		t.Fatalf("native build-cache seed = %q/%v", buildCacheSeed, err)
+	}
+	nativeBuildCacheSeed := buildCacheSeed
+	managedBuildCache := filepath.Join(t.TempDir(), "managed-cache")
+	if err := os.Mkdir(managedBuildCache, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	buildCacheSeed, err = measurementGradleBuildCacheSeed(managedBuildCache)
+	if err != nil || buildCacheSeed != managedBuildCache {
+		t.Fatalf("managed build-cache seed = %q/%v", buildCacheSeed, err)
+	}
+	managedLink := filepath.Join(t.TempDir(), "managed-cache-link")
+	if err := os.Symlink(managedBuildCache, managedLink); err == nil {
+		if _, err = measurementGradleBuildCacheSeed(managedLink); err == nil ||
+			!strings.Contains(err.Error(), "must be a real directory") {
+			t.Fatalf("managed symlink seed error = %v, want real-directory rejection", err)
+		}
 	}
 	measurementRoot := filepath.Join(t.TempDir(), "measurement")
 	if err := os.Mkdir(measurementRoot, 0o700); err != nil {
@@ -322,9 +338,9 @@ func TestStructuralMeasurementSharesOnlyImmutableGradleCaches(t *testing.T) {
 	}
 	defer cleanupStructuralMeasurementRoot(measurementRoot)
 	config, err := prepareStructuralDependencySnapshot(structuralMeasurementConfig{
-		gradleDependencySeed:       seed,
-		gradleNativeBuildCacheSeed: buildCacheSeed,
-		timeout:                    time.Minute,
+		gradleDependencySeed: seed,
+		gradleBuildCacheSeed: nativeBuildCacheSeed,
+		timeout:              time.Minute,
 	}, measurementRoot, io.Discard)
 	if err != nil {
 		t.Fatal(err)
