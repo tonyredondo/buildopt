@@ -29,6 +29,11 @@ import (
 
 const centralGradleDecisionKeyID = "central-cache-owner"
 
+const (
+	centralGradleFixtureUsername = "buildopt-poc"
+	centralGradleFixturePassword = "remote-cache-value"
+)
+
 func TestCentralGradleCacheProducerConsumerAndOutage(t *testing.T) {
 	fixture := os.Getenv("BUILDOPT_CENTRAL_GRADLE_CACHE_FIXTURE")
 	gradle := os.Getenv("BUILDOPT_CENTRAL_GRADLE_CACHE_GRADLE")
@@ -342,6 +347,8 @@ func startCentralGradleGateway(
 		return http.ErrUseLastResponse
 	}
 	gateway.cacheClient = client
+	gateway.username = centralGradleFixtureUsername
+	gateway.password = centralGradleFixturePassword
 	t.Cleanup(func() {
 		_ = gateway.close()
 	})
@@ -370,11 +377,9 @@ func runCentralGradleFixture(
 	)
 	command.Dir = project
 	command.Env = replaceEnvironment(os.Environ(), map[string]string{
-		"BUILDOPT_POC_REMOTE_CACHE_URL":      gateway.endpoint + "/cache/",
-		"BUILDOPT_POC_REMOTE_CACHE_PUSH":     pushValue,
-		"BUILDOPT_POC_REMOTE_CACHE_USERNAME": gateway.username,
-		"BUILDOPT_POC_REMOTE_CACHE_PASSWORD": gateway.password,
-		"GRADLE_USER_HOME":                   filepath.Join(project, ".gradle-user-home"),
+		"BUILDOPT_POC_REMOTE_CACHE_URL":  gateway.endpoint + "/cache/",
+		"BUILDOPT_POC_REMOTE_CACHE_PUSH": pushValue,
+		"GRADLE_USER_HOME":               filepath.Join(project, ".gradle-user-home"),
 	})
 	output, err := command.CombinedOutput()
 	if err != nil {
