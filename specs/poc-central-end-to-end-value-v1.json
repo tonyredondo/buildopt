@@ -16,6 +16,11 @@
     "alternatingPairOrder": true,
     "unmeasuredDependencyWarmup": true
   },
+  "resourceEnvelope": {
+    "commonMaximumWorkers": 8,
+    "ktorGradleHeapMiB": 3072,
+    "producerDaemonStoppedBeforeConsumers": true
+  },
   "valueGate": {
     "exactRequiredOutputs": true,
     "maximumSharedBreakEvenBuilds": 50,

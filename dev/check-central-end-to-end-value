@@ -36,6 +36,11 @@ jq -e '
     alternatingPairOrder: true,
     unmeasuredDependencyWarmup: true
   } and
+  .resourceEnvelope == {
+    commonMaximumWorkers: 8,
+    ktorGradleHeapMiB: 3072,
+    producerDaemonStoppedBeforeConsumers: true
+  } and
   .valueGate == {
     exactRequiredOutputs: true,
     maximumSharedBreakEvenBuilds: 50,
@@ -73,6 +78,9 @@ jq -e '
   .protocol.separateGradleHomes and .protocol.separateBuildOptCaches and
   .protocol.unmeasuredDependencyWarmup and
   .protocol.maximumSharedBreakEvenBuilds == 50 and
+  .protocol.commonMaximumWorkers == 8 and
+  .protocol.ktorGradleHeapMiB == 3072 and
+  .protocol.producerDaemonStoppedBeforeConsumers and
   (.repositories | length) == 2 and
   ([.repositories[].repositoryId] | unique | length) == 2 and
   ([.repositories[].gradleFamily] | unique | length) == 2 and

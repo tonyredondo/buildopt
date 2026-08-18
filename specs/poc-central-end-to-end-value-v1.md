@@ -17,6 +17,16 @@ local BuildOpt caches. Dependency and Wrapper warm-up is not measured. Project
 outputs and local build-cache entries are removed before every observation, so
 both arms receive the same opportunity to fetch committed remote objects.
 
+## Resource envelope
+
+Both arms use the same maximum of eight Gradle workers. Ktor also uses the same
+3 GiB Gradle heap in both arms. This still exercises more than the four-CPU
+minimum while allowing the two hot measurement daemons and their Kotlin
+compiler daemons to coexist on the 16 GiB POC host. The producer daemon is
+stopped after central publication because it no longer participates in the
+comparison. These controls prevent unrelated completed phases from causing an
+OOM; they are not Runtime Tuning and do not advantage the candidate.
+
 ## Subjects and observations
 
 The terminal run uses at least two different substantial public Gradle
