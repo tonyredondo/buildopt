@@ -61,7 +61,7 @@ func TestCentralGradleCacheConnectionIsReadOnlyAndCredentialContained(t *testing
 				Mode:                managedSharedReadOnlyMode,
 			},
 		},
-		result: optimizeCentralResult{SelectionSource: optimizeSelectionSourceCentral},
+		result: optimizeCentralResult{SelectionSource: "NONE"},
 	}
 	invocation := gradleInvocation{childArgs: []string{"./gradlew", "build"}, nativeOnly: true}
 	if err := enableConnectedCentralCacheGradle(&invocation, repository); err != nil {
@@ -95,6 +95,67 @@ func TestCentralGradleCacheConnectionIsReadOnlyAndCredentialContained(t *testing
 	}
 	if context.binding.credential != token {
 		t.Fatal("gateway did not retain the exact upstream credential")
+	}
+}
+
+func TestPlainGradleLoadsConnectedReadOnlyCentralCache(t *testing.T) {
+	repository := t.TempDir()
+	centralOptimizeGit(t, repository, "init", "-q")
+	centralOptimizeGit(t, repository, "config", "user.email", "buildopt@example.invalid")
+	centralOptimizeGit(t, repository, "config", "user.name", "BuildOpt fixture")
+	centralOptimizeGit(t, repository, "config", "commit.gpgsign", "false")
+	writeGradleWrapperProperties(
+		t,
+		repository,
+		"distributionUrl=https://services.gradle.org/distributions/gradle-9.6.1-bin.zip\n",
+	)
+	centralOptimizeGit(t, repository, "add", ".")
+	centralOptimizeGit(t, repository, "commit", "-qm", "fixture")
+
+	connectionDirectory := filepath.Join(repository, filepath.FromSlash(centralConnectionDir))
+	if err := os.MkdirAll(connectionDirectory, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	now := time.Now().UTC().Truncate(time.Second)
+	connection := centralConnection{
+		SchemaVersion:  centralConnectionSchema,
+		ServerURL:      "https://central.example",
+		RepositoryID:   optimizeRepositoryID(repository, os.Getenv),
+		StateDirectory: optimizeDefaultStateDir,
+		TokenFile:      centralTokenFile,
+		ConnectedAt:    now.Format(time.RFC3339Nano),
+		Cache: &centralCacheConnection{
+			Namespace:           "gradle-9.6.1/linux-amd64/jdk-21/project",
+			NamespaceGeneration: 1,
+			ExpiresAt:           now.Add(time.Hour).Format(time.RFC3339Nano),
+			Mode:                managedSharedReadOnlyMode,
+		},
+		ProductionAuthorized: false,
+		TestOptimization:     "OUT_OF_SCOPE",
+	}
+	connection.RepositoryScopeSHA256 = optimizePortfolioRepositoryScope(connection.RepositoryID)
+	if err := writeCanonicalPrivateJSON(
+		filepath.Join(connectionDirectory, centralConnectionFile),
+		connection,
+	); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(
+		filepath.Join(connectionDirectory, centralTokenFile),
+		[]byte(base64.RawURLEncoding.EncodeToString(bytes.Repeat([]byte{0x44}, 32))),
+		0o600,
+	); err != nil {
+		t.Fatal(err)
+	}
+
+	integration, err := prepareConnectedCentralGradleCache(repository)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if integration == nil || !integration.hasReadOnlyCentralCache() ||
+		integration.connection.RepositoryID != connection.RepositoryID ||
+		integration.invocation.repositoryRoot != repository {
+		t.Fatalf("plain Gradle central cache = %+v", integration)
 	}
 }
 

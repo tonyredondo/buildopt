@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "buildopt.poc/central-end-to-end-value-contract/v1",
+  "workItem": "POC-CENTRAL-END-TO-END-VALUE-001",
+  "subjects": {
+    "minimumDifferentGradleFamilies": 2,
+    "minimumPairsPerFamily": 8,
+    "substantialPublicRepositoriesRequired": true
+  },
+  "comparison": {
+    "candidate": "CENTRAL_CACHE_PLUS_CENTRAL_STRUCTURAL_PROFILE",
+    "control": "CENTRAL_CACHE_PLUS_FULL_NATIVE_GRAPH",
+    "sameCentralObjects": true,
+    "sameConnectionScope": true,
+    "separateGradleHomes": true,
+    "separateLocalBuildOptState": true,
+    "alternatingPairOrder": true,
+    "unmeasuredDependencyWarmup": true
+  },
+  "valueGate": {
+    "exactRequiredOutputs": true,
+    "minimumPositivePairs": 7,
+    "positivePairedLowerBound": true,
+    "positiveMeanWallTimeSaving": true,
+    "candidateP95BelowControlP95": true,
+    "centralCacheHitRequiredInBothArms": true
+  },
+  "negativeGate": {
+    "centralCacheRemainsAvailable": true,
+    "fullNativeGraphRetained": true,
+    "performanceClaim": false,
+    "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"
+  },
+  "boundaries": {
+    "designPartnerRequired": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositoriesAveraged": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

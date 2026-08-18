@@ -1,0 +1,166 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [result.json]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract=${buildopt_root}/specs/poc-central-end-to-end-value-v1.json
+buildopt_result=${1:-${buildopt_root}/benchmarks/results/poc-central-end-to-end-value-v1/summary.json}
+
+for buildopt_command in jq awk sha256sum; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf '%s is required to validate central value evidence\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  .schemaVersion == "buildopt.poc/central-end-to-end-value-contract/v1" and
+  .workItem == "POC-CENTRAL-END-TO-END-VALUE-001" and
+  .subjects == {
+    minimumDifferentGradleFamilies: 2,
+    minimumPairsPerFamily: 8,
+    substantialPublicRepositoriesRequired: true
+  } and
+  .comparison == {
+    candidate: "CENTRAL_CACHE_PLUS_CENTRAL_STRUCTURAL_PROFILE",
+    control: "CENTRAL_CACHE_PLUS_FULL_NATIVE_GRAPH",
+    sameCentralObjects: true,
+    sameConnectionScope: true,
+    separateGradleHomes: true,
+    separateLocalBuildOptState: true,
+    alternatingPairOrder: true,
+    unmeasuredDependencyWarmup: true
+  } and
+  .valueGate == {
+    exactRequiredOutputs: true,
+    minimumPositivePairs: 7,
+    positivePairedLowerBound: true,
+    positiveMeanWallTimeSaving: true,
+    candidateP95BelowControlP95: true,
+    centralCacheHitRequiredInBothArms: true
+  } and
+  .negativeGate == {
+    centralCacheRemainsAvailable: true,
+    fullNativeGraphRetained: true,
+    performanceClaim: false,
+    reason: "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"
+  } and
+  .boundaries == {
+    designPartnerRequired: false,
+    productionAuthorized: false,
+    proofOfConcept: true,
+    repositoriesAveraged: false,
+    soakRequired: false,
+    testOptimization: "OUT_OF_SCOPE"
+  }
+' "${buildopt_contract}" >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-central-end-to-end-value/v1" and
+  .workItem == "POC-CENTRAL-END-TO-END-VALUE-001" and
+  (.buildopt.revision | test("^[0-9a-f]{40}$")) and
+  (.buildopt.packageSha256 | test("^[0-9a-f]{64}$")) and
+  .runner.operatingSystem == "Linux" and .runner.architecture == "x86_64" and
+  .runner.cpuCount >= 4 and .runner.memoryBytes >= 8000000000 and
+  .protocol.pairs == 8 and .protocol.alternatingPairOrder and
+  .protocol.sameCommittedCentralObjects and .protocol.separateWorkspaces and
+  .protocol.separateGradleHomes and .protocol.separateBuildOptCaches and
+  .protocol.unmeasuredDependencyWarmup and
+  (.repositories | length) == 2 and
+  ([.repositories[].repositoryId] | unique | length) == 2 and
+  ([.repositories[].gradleFamily] | unique | length) == 2 and
+  all(.repositories[];
+    .publicRepository and
+    (.baseRevision | test("^[0-9a-f]{40}$")) and
+    (.targetRevision | test("^[0-9a-f]{40}$")) and
+    .central.committedObjectCount > 0 and .central.committedBytes > 0 and
+    .graph.totalProjects > .graph.selectedProjects and .graph.selectedProjects > 0 and
+    (.observations | length) == 8 and
+    ([.observations[].pair] == [1,2,3,4,5,6,7,8]) and
+    ([.observations[].order] == ["CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST"]) and
+    all(.observations[];
+      .controlDurationMs > 0 and .candidateDurationMs > 0 and
+      .savedMs == (.controlDurationMs - .candidateDurationMs) and
+      .controlFromCache > 0 and .candidateFromCache > 0 and
+      .requiredOutputCount > 0 and
+      (.controlRequiredOutputSha256 | test("^[0-9a-f]{64}$")) and
+      .controlRequiredOutputSha256 == .candidateRequiredOutputSha256 and
+      .candidateSelectionSource == "CENTRAL_PORTFOLIO" and
+      .candidateGradleCacheStatus == "GATEWAY_ACTIVE" and
+      .candidateSelectionDurationNs >= 0 and
+      .candidatePreSyncDurationMs >= 0
+    ) and
+    .result.controlMeanMs == ([.observations[].controlDurationMs] | add / length) and
+    .result.candidateMeanMs == ([.observations[].candidateDurationMs] | add / length) and
+    .result.meanSavedMs == ([.observations[].savedMs] | add / length) and
+    .result.reductionRatio == (.result.meanSavedMs / .result.controlMeanMs) and
+    .result.controlP95Ms == ([.observations[].controlDurationMs] | max) and
+    .result.candidateP95Ms == ([.observations[].candidateDurationMs] | max) and
+    .result.positivePairs == ([.observations[] | select(.savedMs > 0)] | length) and
+    .result.positivePairs >= 7 and .result.meanSavedMs > 0 and
+    .result.interval95SavedMs[0] > 0 and
+    .result.candidateP95Ms < .result.controlP95Ms and
+    .result.exactRequiredOutputs and .result.qualified
+  ) and
+  .nativeRetained.repositoryId == "ktorio/ktor" and
+  .nativeRetained.reason == "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH" and
+  .nativeRetained.phase == "NATIVE_RETAINED" and
+  .nativeRetained.centralCacheStatus == "GATEWAY_ACTIVE" and
+  .nativeRetained.nativeExitCode == 0 and
+  .nativeRetained.performanceClaim == false and
+  .acceptance == {
+    decision: "COMPLETE",
+    exactRequiredOutputs: true,
+    nativeRetainedCases: 1,
+    qualifiedFamilies: 2,
+    sameCentralCacheOpportunity: true,
+    secretsAbsentFromLogs: true
+  } and
+  .boundaries == {
+    designPartnerRequired: false,
+    mechanismPercentagesAdded: false,
+    productionAuthorized: false,
+    proofOfConcept: true,
+    repositoriesAveraged: false,
+    soakRequired: false,
+    testOptimization: "OUT_OF_SCOPE"
+  }
+' "${buildopt_result}" >/dev/null
+
+while IFS= read -r buildopt_repository; do
+    buildopt_observations=$(jq -c '.observations' <<<"${buildopt_repository}")
+    buildopt_expected_lower=$(jq -r '.result.interval95SavedMs[0]' <<<"${buildopt_repository}")
+    buildopt_expected_upper=$(jq -r '.result.interval95SavedMs[1]' <<<"${buildopt_repository}")
+    read -r buildopt_lower buildopt_upper < <(
+        jq -r '.[].savedMs' <<<"${buildopt_observations}" |
+            awk '
+              {x[NR]=$1; sum+=$1}
+              END {
+                mean=sum/NR
+                for (i=1;i<=NR;i++) squares+=(x[i]-mean)^2
+                standard=sqrt(squares/(NR-1))
+                margin=2.364624251*standard/sqrt(NR)
+                printf "%.6f %.6f\n", mean-margin, mean+margin
+              }
+            '
+    )
+    awk -v actual="${buildopt_lower}" -v expected="${buildopt_expected_lower}" \
+        'BEGIN {delta=actual-expected; if (delta<0) delta=-delta; exit(delta>0.001)}' || {
+        printf 'central value lower interval does not recompute for %s\n' \
+            "$(jq -r '.repositoryId' <<<"${buildopt_repository}")" >&2
+        exit 1
+    }
+    awk -v actual="${buildopt_upper}" -v expected="${buildopt_expected_upper}" \
+        'BEGIN {delta=actual-expected; if (delta<0) delta=-delta; exit(delta>0.001)}' || {
+        printf 'central value upper interval does not recompute for %s\n' \
+            "$(jq -r '.repositoryId' <<<"${buildopt_repository}")" >&2
+        exit 1
+    }
+done < <(jq -c '.repositories[]' "${buildopt_result}")
+
+printf 'Central end-to-end value evidence OK: 2 qualified families and 1 safe native-retained case\n'

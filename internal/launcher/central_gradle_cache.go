@@ -22,9 +22,46 @@ type centralGradleCacheContext struct {
 
 func (integration *centralOptimizeIntegration) hasReadOnlyCentralCache() bool {
 	return integration != nil &&
-		integration.result.SelectionSource == optimizeSelectionSourceCentral &&
 		integration.connection.Cache != nil &&
 		integration.connection.Cache.Mode == managedSharedReadOnlyMode
+}
+
+func prepareConnectedCentralGradleCache(
+	repositoryRoot string,
+) (*centralOptimizeIntegration, error) {
+	connectionDirectory, _, err := resolveCentralConnectionDirectory(
+		repositoryRoot,
+		centralConnectionDir,
+		false,
+	)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := os.Lstat(filepath.Join(connectionDirectory, centralConnectionFile)); err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("inspect central Gradle cache connection: %w", err)
+	}
+	connection, err := loadCentralConnection(repositoryRoot, connectionDirectory)
+	if err != nil {
+		return nil, err
+	}
+	integration := &centralOptimizeIntegration{
+		invocation: optimizeInvocation{
+			repositoryRoot:      repositoryRoot,
+			connectionDirectory: connectionDirectory,
+		},
+		connection: connection,
+		result:     disconnectedOptimizeCentralResult(),
+	}
+	if connection.Cache == nil {
+		return nil, nil
+	}
+	if !integration.hasReadOnlyCentralCache() {
+		return nil, errors.New("connected central Gradle cache is not read-only")
+	}
+	return integration, nil
 }
 
 func enableConnectedCentralCacheGradle(

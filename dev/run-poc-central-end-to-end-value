@@ -1,0 +1,629 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+if (($# != 1)); then
+    printf 'usage: %s OUTPUT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+
+for buildopt_command in awk curl date find git grep jq openssl sha256sum sort tar tee; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'central value benchmark requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ -z ${JAVA_HOME:-} || ! -x ${JAVA_HOME}/bin/java ]]; then
+    printf 'central value benchmark requires JAVA_HOME with Java 21\n' >&2
+    exit 1
+fi
+if [[ -e ${buildopt_output} ]]; then
+    printf 'central value output already exists: %s\n' "${buildopt_output}" >&2
+    exit 1
+fi
+if [[ -n $(git -C "${buildopt_repo_root}" status --porcelain) ]]; then
+    printf 'central value benchmark requires a clean BuildOpt checkout\n' >&2
+    exit 1
+fi
+
+buildopt_root=$(mktemp -d /tmp/buildopt-central-value.XXXXXX)
+buildopt_package_dir=${buildopt_root}/package
+buildopt_install=${buildopt_root}/install
+buildopt_control_binary=${buildopt_root}/central-control
+buildopt_repositories_json=${buildopt_root}/repositories.jsonl
+buildopt_server_pid=
+buildopt_success=false
+
+buildopt_cleanup() {
+    if [[ -n ${buildopt_server_pid} ]] && kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+        kill "${buildopt_server_pid}" 2>/dev/null || true
+        wait "${buildopt_server_pid}" 2>/dev/null || true
+    fi
+    if [[ ${buildopt_success} == true ]]; then
+        rm -rf -- "${buildopt_root}"
+    else
+        printf 'central value diagnostic root retained at %s\n' "${buildopt_root}" >&2
+    fi
+}
+trap buildopt_cleanup EXIT INT TERM
+
+mkdir -p -- "${buildopt_package_dir}" "${buildopt_install}"
+"${buildopt_repo_root}/packaging/linux/package.sh" \
+    --version 0.1.99-centralvalue --output "${buildopt_package_dir}" >/dev/null
+mapfile -t buildopt_installers < <(
+    find "${buildopt_package_dir}" -mindepth 2 -maxdepth 2 -type f -name install.sh -print
+)
+if ((${#buildopt_installers[@]} != 1)); then
+    printf 'expected one packaged BuildOpt installer, found %d\n' \
+        "${#buildopt_installers[@]}" >&2
+    exit 1
+fi
+"${buildopt_installers[0]}" --prefix "${buildopt_install}" >/dev/null
+buildopt_binary=${buildopt_install}/bin/buildopt
+buildopt_server_binary=${buildopt_install}/bin/buildopt-server
+
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    "${buildopt_script_dir}/run" --toolchain go -- \
+    go build -mod=readonly -buildvcs=false -trimpath \
+        -o "${buildopt_control_binary}" ./dev/central-two-machine-control
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_package=$(find "${buildopt_package_dir}" -maxdepth 1 -type f -name '*.tar.gz' -print)
+buildopt_package_sha=$(sha256sum "${buildopt_package}" | awk '{print $1}')
+
+buildopt_run_environment() {
+    local buildopt_repository_id=$1
+    local buildopt_repository_numeric_id=$2
+    local buildopt_repository=$3
+    local buildopt_home=$4
+    local buildopt_gradle_home=$5
+    local buildopt_cache_home=$6
+    local buildopt_event=$7
+    shift 7
+    (
+        cd -- "${buildopt_repository}"
+        env \
+            -u BUILDOPT_BYPASS \
+            -u BUILDOPT_LOCAL_AUTHORITY_PATH \
+            -u BUILDOPT_SHARED_CACHE_URL \
+            -u BUILDOPT_SHARED_CACHE_TOKEN_PATH \
+            -u BUILDOPT_SHARED_CACHE_CA_PATH \
+            HOME="${buildopt_home}" \
+            XDG_CACHE_HOME="${buildopt_cache_home}" \
+            GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            GITHUB_ACTIONS=true \
+            GITHUB_REPOSITORY="${buildopt_repository_id}" \
+            GITHUB_REPOSITORY_ID="${buildopt_repository_numeric_id}" \
+            GITHUB_EVENT_PATH="${buildopt_event}" \
+            GITHUB_SHA="$(git rev-parse HEAD)" \
+            CI=true LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC \
+            JAVA_HOME="${JAVA_HOME}" \
+            PATH="${buildopt_install}/bin:${JAVA_HOME}/bin:/usr/bin:/bin" \
+            "$@"
+    )
+}
+
+buildopt_clone_at() {
+    local buildopt_source=$1
+    local buildopt_destination=$2
+    local buildopt_remote=$3
+    local buildopt_revision_to_checkout=$4
+    git clone -q "${buildopt_source}" "${buildopt_destination}"
+    git -C "${buildopt_destination}" remote set-url origin "${buildopt_remote}"
+    git -C "${buildopt_destination}" config user.email buildopt@example.invalid
+    git -C "${buildopt_destination}" config user.name 'BuildOpt POC fixture'
+    git -C "${buildopt_destination}" config commit.gpgsign false
+    git -C "${buildopt_destination}" checkout -q --detach "${buildopt_revision_to_checkout}"
+}
+
+buildopt_clear_outputs() {
+    local buildopt_repository=$1
+    local buildopt_cache_home=$2
+    local buildopt_directory
+    while IFS= read -r -d '' buildopt_directory; do
+        case "${buildopt_directory}" in
+            */buildSrc/build | */build-logic/*/build | */build-logic/build) continue ;;
+        esac
+        rm -rf -- "${buildopt_directory}"
+    done < <(find "${buildopt_repository}" -type d -name build -prune -print0)
+    rm -rf -- "${buildopt_cache_home}/buildopt/state/l1"
+}
+
+buildopt_hash_required_output() {
+    local buildopt_kind=$1
+    local buildopt_repository=$2
+    local buildopt_path=$3
+    local buildopt_manifest=$4
+    case "${buildopt_kind}" in
+        FILE)
+            [[ -f ${buildopt_repository}/${buildopt_path} ]] || return 1
+            BUILDOPT_OUTPUT_COUNT=1
+            BUILDOPT_OUTPUT_SHA=$(sha256sum "${buildopt_repository}/${buildopt_path}" | awk '{print $1}')
+            ;;
+        TREE)
+            [[ -d ${buildopt_repository}/${buildopt_path} ]] || return 1
+            (
+                cd -- "${buildopt_repository}/${buildopt_path}"
+                find . -type f -print0 | sort -z | while IFS= read -r -d '' buildopt_file; do
+                    printf '%s  %s\n' "$(sha256sum "${buildopt_file}" | awk '{print $1}')" "${buildopt_file}"
+                done
+            ) >"${buildopt_manifest}"
+            BUILDOPT_OUTPUT_COUNT=$(wc -l <"${buildopt_manifest}" | tr -d ' ')
+            ((BUILDOPT_OUTPUT_COUNT > 0)) || return 1
+            BUILDOPT_OUTPUT_SHA=$(sha256sum "${buildopt_manifest}" | awk '{print $1}')
+            ;;
+        *) return 1 ;;
+    esac
+}
+
+buildopt_start_server() {
+    local buildopt_state=$1
+    local buildopt_tls=$2
+    local buildopt_port=$3
+    local buildopt_log=$4
+    "${buildopt_server_binary}" serve \
+        --listen "127.0.0.1:${buildopt_port}" \
+        --state-dir "${buildopt_state}" \
+        --tls-cert "${buildopt_tls}/server.pem" \
+        --tls-key "${buildopt_tls}/server-key.pem" \
+        --central-auth >"${buildopt_log}" 2>&1 &
+    buildopt_server_pid=$!
+    local buildopt_ready=false
+    for _ in {1..200}; do
+        if ! kill -0 "${buildopt_server_pid}" 2>/dev/null; then
+            break
+        fi
+        if curl --silent --show-error --fail \
+            --cacert "${buildopt_tls}/ca.pem" \
+            "https://127.0.0.1:${buildopt_port}/readyz" >/dev/null 2>&1; then
+            buildopt_ready=true
+            break
+        fi
+        sleep 0.1
+    done
+    if [[ ${buildopt_ready} != true ]]; then
+        printf 'central value HTTPS server did not become ready\n' >&2
+        cat "${buildopt_log}" >&2
+        exit 1
+    fi
+}
+
+buildopt_stop_server() {
+    if [[ -n ${buildopt_server_pid} ]]; then
+        kill "${buildopt_server_pid}" 2>/dev/null || true
+        wait "${buildopt_server_pid}" 2>/dev/null || true
+        buildopt_server_pid=
+    fi
+}
+
+buildopt_subject() {
+    local buildopt_name=$1
+    local buildopt_repository_id=$2
+    local buildopt_repository_numeric_id=$3
+    local buildopt_remote=$4
+    local buildopt_base_revision=$5
+    local buildopt_target_revision=$6
+    local buildopt_gradle_family=$7
+    local buildopt_namespace=$8
+    local buildopt_output_kind=$9
+    local buildopt_output_path=${10}
+    local buildopt_change_family=${11}
+    local buildopt_port=${12}
+    shift 12
+    local -a buildopt_workflow=("$@")
+
+    local buildopt_subject_root=${buildopt_root}/${buildopt_name}
+    local buildopt_source=${buildopt_subject_root}/source
+    local buildopt_producer=${buildopt_subject_root}/producer
+    local buildopt_control=${buildopt_subject_root}/control
+    local buildopt_candidate=${buildopt_subject_root}/candidate
+    local buildopt_state=${buildopt_subject_root}/central-state
+    local buildopt_authority=${buildopt_subject_root}/authority
+    local buildopt_tls=${buildopt_subject_root}/tls
+    local buildopt_event=${buildopt_subject_root}/event.json
+    local buildopt_server_url=https://127.0.0.1:${buildopt_port}
+    local buildopt_logs=${buildopt_subject_root}/logs
+    local buildopt_observations=${buildopt_subject_root}/observations.jsonl
+    mkdir -p -- "${buildopt_subject_root}" "${buildopt_state}" "${buildopt_authority}" \
+        "${buildopt_tls}" "${buildopt_logs}"
+
+    git init -q "${buildopt_source}"
+    git -C "${buildopt_source}" remote add origin "${buildopt_remote}"
+    git -C "${buildopt_source}" fetch -q --depth=1 origin \
+        "${buildopt_base_revision}" "${buildopt_target_revision}"
+    git -C "${buildopt_source}" checkout -q --detach "${buildopt_target_revision}"
+    buildopt_clone_at "${buildopt_source}" "${buildopt_producer}" \
+        "${buildopt_remote}" "${buildopt_target_revision}"
+    buildopt_clone_at "${buildopt_source}" "${buildopt_control}" \
+        "${buildopt_remote}" "${buildopt_target_revision}"
+    buildopt_clone_at "${buildopt_source}" "${buildopt_candidate}" \
+        "${buildopt_remote}" "${buildopt_target_revision}"
+    jq -n --arg before "${buildopt_base_revision}" '{before:$before}' >"${buildopt_event}"
+
+    "${buildopt_control_binary}" prepare \
+        --state-dir "${buildopt_state}" \
+        --output-dir "${buildopt_authority}" \
+        --repository-id "${buildopt_repository_id}" \
+        --source-revision "${buildopt_target_revision}" \
+        --namespace "${buildopt_namespace}" \
+        --lifetime 8h >"${buildopt_authority}/prepare.json"
+    openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 1 \
+        -subj "/CN=BuildOpt central value ${buildopt_name}" \
+        -addext 'subjectAltName=IP:127.0.0.1' \
+        -keyout "${buildopt_tls}/server-key.pem" \
+        -out "${buildopt_tls}/server.pem" >/dev/null 2>&1
+    cp -- "${buildopt_tls}/server.pem" "${buildopt_tls}/ca.pem"
+    chmod 0600 "${buildopt_tls}/"*.pem
+    buildopt_start_server "${buildopt_state}" "${buildopt_tls}" \
+        "${buildopt_port}" "${buildopt_logs}/server.log"
+
+    local buildopt_producer_home=${buildopt_subject_root}/producer-home
+    local buildopt_producer_gradle=${buildopt_subject_root}/producer-gradle
+    local buildopt_producer_cache=${buildopt_subject_root}/producer-cache
+    mkdir -p -- "${buildopt_producer_home}" "${buildopt_producer_gradle}" "${buildopt_producer_cache}"
+    buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+        "${buildopt_producer}" "${buildopt_producer_home}" "${buildopt_producer_gradle}" \
+        "${buildopt_producer_cache}" "${buildopt_event}" \
+        "${buildopt_binary}" connect "${buildopt_server_url}" \
+        --token-file "${buildopt_authority}/producer-token.json" \
+        --ca-file "${buildopt_tls}/ca.pem" \
+        >"${buildopt_logs}/producer-connect.json"
+
+    printf '%s: calibrating central structural portfolio\n' "${buildopt_repository_id}"
+    buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+        "${buildopt_producer}" "${buildopt_producer_home}" "${buildopt_producer_gradle}" \
+        "${buildopt_producer_cache}" "${buildopt_event}" \
+        "${buildopt_binary}" optimize --resume never --calibration-budget 2h \
+        --calibration-pairs 8 --max-break-even-builds 30 --json -- "${buildopt_workflow[@]}" \
+        >"${buildopt_logs}/producer-optimize.json" 2> >(tee "${buildopt_logs}/producer-optimize.log" >&2)
+    local buildopt_producer_result=${buildopt_producer}/.buildopt/optimize/v1/result.json
+    jq -e '
+      .phase == "QUALIFIED" and .calibration.qualified and
+      .portfolio.status == "COMPLETE" and .central.postSyncOnline and
+      .productionAuthorized == false and .testOptimization == "OUT_OF_SCOPE"
+    ' "${buildopt_producer_result}" >/dev/null || {
+        jq -c '{reason,phase,discovery,calibration,portfolio,central}' \
+            "${buildopt_producer_result}" >&2 || true
+        exit 1
+    }
+
+    buildopt_clear_outputs "${buildopt_producer}" "${buildopt_producer_cache}"
+    printf '%s: publishing the full native workflow into central cache\n' "${buildopt_repository_id}"
+    buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+        "${buildopt_producer}" "${buildopt_producer_home}" "${buildopt_producer_gradle}" \
+        "${buildopt_producer_cache}" "${buildopt_event}" \
+        BUILDOPT_LOCAL_AUTHORITY_PATH="${buildopt_authority}/authority.json" \
+        BUILDOPT_LOCAL_TRUST_ROOT_PATH="${buildopt_authority}/trust-root.json" \
+        BUILDOPT_LOCAL_CACHE_CREDENTIAL_PATH="${buildopt_authority}/credential" \
+        BUILDOPT_SHARED_CACHE_TOKEN_PATH="${buildopt_authority}/producer-token.raw" \
+        BUILDOPT_SHARED_CACHE_CA_PATH="${buildopt_tls}/ca.pem" \
+        BUILDOPT_SHARED_CACHE_URL="${buildopt_server_url}" \
+        BUILDOPT_L1_STATE_ROOT="${buildopt_subject_root}/producer-l1" \
+        BUILDOPT_L1_TENANT_ID=poc-owner \
+        BUILDOPT_L1_REPOSITORY_ID="${buildopt_repository_id}" \
+        BUILDOPT_L1_TRUST_DOMAIN=poc-two-machine \
+        BUILDOPT_L1_COMPATIBILITY_CLASS="${buildopt_namespace}" \
+        BUILDOPT_L1_SECURITY_GENERATION=1 \
+        BUILDOPT_L1_L2_WRITE_AUTHORIZED=1 \
+        "${buildopt_binary}" gradle "${buildopt_workflow[@]}" \
+        >"${buildopt_logs}/producer-cache.log" 2>&1
+    buildopt_stop_server
+    "${buildopt_control_binary}" commit \
+        --state-dir "${buildopt_state}" --control-dir "${buildopt_authority}" \
+        >"${buildopt_authority}/commit.json"
+    local buildopt_object_count buildopt_object_bytes
+    buildopt_object_count=$(jq -r '.ObjectCount' "${buildopt_authority}/commit.json")
+    buildopt_object_bytes=$(jq -r '.ObjectBytes' "${buildopt_authority}/commit.json")
+    ((buildopt_object_count > 0 && buildopt_object_bytes > 0)) || {
+        printf '%s central cache publication was empty\n' "${buildopt_repository_id}" >&2
+        exit 1
+    }
+    buildopt_start_server "${buildopt_state}" "${buildopt_tls}" \
+        "${buildopt_port}" "${buildopt_logs}/server-restarted.log"
+
+    local buildopt_arm
+    for buildopt_arm in control candidate; do
+        local buildopt_repository=${buildopt_subject_root}/${buildopt_arm}
+        local buildopt_home=${buildopt_subject_root}/${buildopt_arm}-home
+        local buildopt_gradle_home=${buildopt_subject_root}/${buildopt_arm}-gradle
+        local buildopt_cache_home=${buildopt_subject_root}/${buildopt_arm}-cache
+        mkdir -p -- "${buildopt_home}" "${buildopt_gradle_home}" "${buildopt_cache_home}"
+        buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+            "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
+            "${buildopt_cache_home}" "${buildopt_event}" \
+            "${buildopt_binary}" connect "${buildopt_server_url}" \
+            --token-file "${buildopt_authority}/consumer-token.json" \
+            --ca-file "${buildopt_tls}/ca.pem" \
+            >"${buildopt_logs}/${buildopt_arm}-connect.json"
+        buildopt_clear_outputs "${buildopt_repository}" "${buildopt_cache_home}"
+        if [[ ${buildopt_arm} == control ]]; then
+            buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+                "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
+                "${buildopt_cache_home}" "${buildopt_event}" \
+                "${buildopt_binary}" gradle "${buildopt_workflow[@]}" \
+                >"${buildopt_logs}/control-warmup.log" 2>&1
+        else
+            buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+                "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
+                "${buildopt_cache_home}" "${buildopt_event}" \
+                "${buildopt_binary}" optimize --calibration-budget 2h --calibration-pairs 8 \
+                --max-break-even-builds 30 --json -- "${buildopt_workflow[@]}" \
+                >"${buildopt_logs}/candidate-warmup.json" 2>"${buildopt_logs}/candidate-warmup.log"
+            jq -e '
+              .selection.selected and .central.selectionSource == "CENTRAL_PORTFOLIO" and
+              .central.gradleCacheStatus == "GATEWAY_ACTIVE"
+            ' "${buildopt_repository}/.buildopt/optimize/v1/result.json" >/dev/null
+        fi
+    done
+
+    local buildopt_pair
+    for buildopt_pair in {1..8}; do
+        local buildopt_order=CONTROL_FIRST
+        if ((buildopt_pair % 2 == 0)); then
+            buildopt_order=CANDIDATE_FIRST
+        fi
+        local -a buildopt_arms=(control candidate)
+        if [[ ${buildopt_order} == CANDIDATE_FIRST ]]; then
+            buildopt_arms=(candidate control)
+        fi
+        local buildopt_control_ms=0 buildopt_candidate_ms=0
+        local buildopt_control_hits=0 buildopt_candidate_hits=0
+        local buildopt_control_sha='' buildopt_candidate_sha=''
+        local buildopt_output_count=0
+        local buildopt_selection_source='' buildopt_cache_status=''
+        local buildopt_selection_ns=0 buildopt_presync_ms=0 buildopt_postsync_ms=0
+        for buildopt_arm in "${buildopt_arms[@]}"; do
+            local buildopt_repository=${buildopt_subject_root}/${buildopt_arm}
+            local buildopt_home=${buildopt_subject_root}/${buildopt_arm}-home
+            local buildopt_gradle_home=${buildopt_subject_root}/${buildopt_arm}-gradle
+            local buildopt_cache_home=${buildopt_subject_root}/${buildopt_arm}-cache
+            local buildopt_log=${buildopt_logs}/${buildopt_arm}-pair-${buildopt_pair}.log
+            local buildopt_machine=${buildopt_logs}/${buildopt_arm}-pair-${buildopt_pair}.json
+            buildopt_clear_outputs "${buildopt_repository}" "${buildopt_cache_home}"
+            local buildopt_started buildopt_completed
+            buildopt_started=$(date +%s%N)
+            if [[ ${buildopt_arm} == control ]]; then
+                buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+                    "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
+                    "${buildopt_cache_home}" "${buildopt_event}" \
+                    "${buildopt_binary}" gradle "${buildopt_workflow[@]}" \
+                    >"${buildopt_log}" 2>&1
+            else
+                buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+                    "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
+                    "${buildopt_cache_home}" "${buildopt_event}" \
+                    "${buildopt_binary}" optimize --calibration-budget 2h --calibration-pairs 8 \
+                    --max-break-even-builds 30 --json -- "${buildopt_workflow[@]}" \
+                    >"${buildopt_machine}" 2>"${buildopt_log}"
+            fi
+            buildopt_completed=$(date +%s%N)
+            local buildopt_duration=$(((buildopt_completed - buildopt_started) / 1000000))
+            local buildopt_hits
+            buildopt_hits=$(grep -c ' FROM-CACHE' "${buildopt_log}" || true)
+            ((buildopt_hits > 0)) || {
+                printf '%s %s pair %d reported no central FROM-CACHE outcomes\n' \
+                    "${buildopt_repository_id}" "${buildopt_arm}" "${buildopt_pair}" >&2
+                tail -n 160 "${buildopt_log}" >&2
+                exit 1
+            }
+            buildopt_hash_required_output "${buildopt_output_kind}" "${buildopt_repository}" \
+                "${buildopt_output_path}" "${buildopt_logs}/${buildopt_arm}-pair-${buildopt_pair}-outputs.txt"
+            if [[ ${buildopt_arm} == control ]]; then
+                buildopt_control_ms=${buildopt_duration}
+                buildopt_control_hits=${buildopt_hits}
+                buildopt_control_sha=${BUILDOPT_OUTPUT_SHA}
+                buildopt_output_count=${BUILDOPT_OUTPUT_COUNT}
+            else
+                buildopt_candidate_ms=${buildopt_duration}
+                buildopt_candidate_hits=${buildopt_hits}
+                buildopt_candidate_sha=${BUILDOPT_OUTPUT_SHA}
+                local buildopt_result=${buildopt_repository}/.buildopt/optimize/v1/result.json
+                buildopt_selection_source=$(jq -r '.central.selectionSource' "${buildopt_result}")
+                buildopt_cache_status=$(jq -r '.central.gradleCacheStatus' "${buildopt_result}")
+                buildopt_selection_ns=$(jq -r '.selection.durationNs' "${buildopt_result}")
+                buildopt_presync_ms=$(jq -r '.central.preSyncDurationMs' "${buildopt_result}")
+                buildopt_postsync_ms=$(jq -r '.central.postSyncDurationMs' "${buildopt_result}")
+            fi
+        done
+        [[ ${buildopt_control_sha} == "${buildopt_candidate_sha}" ]] || {
+            printf '%s pair %d required outputs differ\n' "${buildopt_repository_id}" "${buildopt_pair}" >&2
+            exit 1
+        }
+        jq -n \
+            --argjson pair "${buildopt_pair}" --arg order "${buildopt_order}" \
+            --argjson control "${buildopt_control_ms}" --argjson candidate "${buildopt_candidate_ms}" \
+            --argjson controlHits "${buildopt_control_hits}" --argjson candidateHits "${buildopt_candidate_hits}" \
+            --argjson outputCount "${buildopt_output_count}" --arg outputSha "${buildopt_control_sha}" \
+            --arg selectionSource "${buildopt_selection_source}" --arg cacheStatus "${buildopt_cache_status}" \
+            --argjson selectionNs "${buildopt_selection_ns}" --argjson preSyncMs "${buildopt_presync_ms}" \
+            --argjson postSyncMs "${buildopt_postsync_ms}" '
+              {
+                pair:$pair,order:$order,controlDurationMs:$control,candidateDurationMs:$candidate,
+                savedMs:($control-$candidate),controlFromCache:$controlHits,candidateFromCache:$candidateHits,
+                requiredOutputCount:$outputCount,controlRequiredOutputSha256:$outputSha,
+                candidateRequiredOutputSha256:$outputSha,candidateSelectionSource:$selectionSource,
+                candidateGradleCacheStatus:$cacheStatus,candidateSelectionDurationNs:$selectionNs,
+                candidatePreSyncDurationMs:$preSyncMs,candidatePostSyncDurationMs:$postSyncMs
+              }
+            ' >>"${buildopt_observations}"
+        printf '%s pair %d/8: native+central=%dms optimized+central=%dms saved=%dms order=%s\n' \
+            "${buildopt_repository_id}" "${buildopt_pair}" "${buildopt_control_ms}" \
+            "${buildopt_candidate_ms}" "$((buildopt_control_ms - buildopt_candidate_ms))" \
+            "${buildopt_order}"
+    done
+
+    local buildopt_stats
+    buildopt_stats=$(jq -s '
+      ([.[].controlDurationMs] | add / length) as $control |
+      ([.[].candidateDurationMs] | add / length) as $candidate |
+      ([.[].savedMs] | add / length) as $saved |
+      {
+        controlMeanMs:$control,candidateMeanMs:$candidate,meanSavedMs:$saved,
+        reductionRatio:($saved/$control),controlP95Ms:([.[].controlDurationMs]|max),
+        candidateP95Ms:([.[].candidateDurationMs]|max),
+        positivePairs:([.[]|select(.savedMs>0)]|length),exactRequiredOutputs:true
+      }
+    ' "${buildopt_observations}")
+    local buildopt_interval
+    buildopt_interval=$(jq -s -r '.[].savedMs' "${buildopt_observations}" | awk '
+      {x[NR]=$1; sum+=$1}
+      END {
+        mean=sum/NR
+        for (i=1;i<=NR;i++) squares+=(x[i]-mean)^2
+        standard=sqrt(squares/(NR-1)); margin=2.364624251*standard/sqrt(NR)
+        printf "[%.6f,%.6f]", mean-margin, mean+margin
+      }
+    ')
+    buildopt_stats=$(jq --argjson interval "${buildopt_interval}" \
+        '. + {interval95SavedMs:$interval} | .qualified=(.meanSavedMs>0 and .positivePairs>=7 and .interval95SavedMs[0]>0 and .candidateP95Ms<.controlP95Ms)' \
+        <<<"${buildopt_stats}")
+    jq -e '.qualified' <<<"${buildopt_stats}" >/dev/null || {
+        printf '%s did not pass the central value gate: %s\n' \
+            "${buildopt_repository_id}" "$(jq -c . <<<"${buildopt_stats}")" >&2
+        exit 1
+    }
+    local buildopt_graph
+    buildopt_graph=$(jq -c '.discovery.graph' "${buildopt_producer_result}")
+    local buildopt_gradle_version
+    buildopt_gradle_version=$(grep -E '^distributionUrl=' \
+        "${buildopt_producer}/gradle/wrapper/gradle-wrapper.properties" |
+        sed -E 's#.*gradle-([0-9.]+)-.*#\1#')
+    jq -n \
+        --arg repositoryId "${buildopt_repository_id}" --arg gradleFamily "${buildopt_gradle_family}" \
+        --arg gradleVersion "${buildopt_gradle_version}" --arg baseRevision "${buildopt_base_revision}" \
+        --arg targetRevision "${buildopt_target_revision}" --arg changeFamily "${buildopt_change_family}" \
+        --arg workflow "${buildopt_workflow[*]}" --arg outputPath "${buildopt_output_path}" \
+        --arg namespace "${buildopt_namespace}" --argjson objectCount "${buildopt_object_count}" \
+        --argjson objectBytes "${buildopt_object_bytes}" --argjson graph "${buildopt_graph}" \
+        --slurpfile observations "${buildopt_observations}" --argjson result "${buildopt_stats}" '
+          {
+            repositoryId:$repositoryId,publicRepository:true,gradleFamily:$gradleFamily,
+            gradleVersion:$gradleVersion,baseRevision:$baseRevision,targetRevision:$targetRevision,
+            changeFamily:$changeFamily,workflow:$workflow,requiredOutput:$outputPath,
+            central:{namespace:$namespace,committedObjectCount:$objectCount,committedBytes:$objectBytes},
+            graph:$graph,observations:$observations,result:$result
+          }
+        ' >>"${buildopt_repositories_json}"
+
+    if [[ ${buildopt_repository_id} == ktorio/ktor ]]; then
+        local buildopt_negative=${buildopt_subject_root}/negative
+        buildopt_clone_at "${buildopt_source}" "${buildopt_negative}" \
+            "${buildopt_remote}" "${buildopt_target_revision}"
+        printf '\n# BuildOpt global-change POC %s\n' "$(date -u +%Y%m%d%H%M%S)" \
+            >>"${buildopt_negative}/gradle.properties"
+        git -C "${buildopt_negative}" add gradle.properties
+        GIT_AUTHOR_DATE=2026-08-18T00:00:00Z GIT_COMMITTER_DATE=2026-08-18T00:00:00Z \
+            git -C "${buildopt_negative}" commit -qm 'POC global build configuration change'
+        local buildopt_negative_revision
+        buildopt_negative_revision=$(git -C "${buildopt_negative}" rev-parse HEAD)
+        local buildopt_negative_event=${buildopt_subject_root}/negative-event.json
+        jq -n --arg before "${buildopt_target_revision}" '{before:$before}' >"${buildopt_negative_event}"
+        local buildopt_negative_home=${buildopt_subject_root}/negative-home
+        local buildopt_negative_gradle=${buildopt_subject_root}/negative-gradle
+        local buildopt_negative_cache=${buildopt_subject_root}/negative-cache
+        mkdir -p -- "${buildopt_negative_home}" "${buildopt_negative_gradle}" "${buildopt_negative_cache}"
+        buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+            "${buildopt_negative}" "${buildopt_negative_home}" "${buildopt_negative_gradle}" \
+            "${buildopt_negative_cache}" "${buildopt_negative_event}" \
+            "${buildopt_binary}" connect "${buildopt_server_url}" \
+            --token-file "${buildopt_authority}/consumer-token.json" \
+            --ca-file "${buildopt_tls}/ca.pem" \
+            >"${buildopt_logs}/negative-connect.json"
+        buildopt_clear_outputs "${buildopt_negative}" "${buildopt_negative_cache}"
+        buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+            "${buildopt_negative}" "${buildopt_negative_home}" "${buildopt_negative_gradle}" \
+            "${buildopt_negative_cache}" "${buildopt_negative_event}" \
+            "${buildopt_binary}" optimize --calibration-budget 2h --calibration-pairs 8 \
+            --max-break-even-builds 30 --json -- "${buildopt_workflow[@]}" \
+            >"${buildopt_logs}/negative.json" 2>"${buildopt_logs}/negative.log"
+        local buildopt_negative_result=${buildopt_negative}/.buildopt/optimize/v1/result.json
+        jq -e '
+          .reason == "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH" and .phase == "NATIVE_RETAINED" and
+          .central.gradleCacheStatus == "GATEWAY_ACTIVE" and .native.exitCode == 0
+        ' "${buildopt_negative_result}" >/dev/null
+        jq -n --arg repositoryId "${buildopt_repository_id}" \
+            --arg targetRevision "${buildopt_negative_revision}" \
+            --argjson fromCache "$(grep -c ' FROM-CACHE' "${buildopt_logs}/negative.log" || true)" \
+            --slurpfile result "${buildopt_negative_result}" '
+              {
+                repositoryId:$repositoryId,targetRevision:$targetRevision,
+                reason:$result[0].reason,phase:$result[0].phase,
+                centralCacheStatus:$result[0].central.gradleCacheStatus,
+                centralFromCache:$fromCache,nativeExitCode:$result[0].native.exitCode,
+                performanceClaim:false
+              }
+            ' >"${buildopt_root}/native-retained.json"
+    fi
+
+    local buildopt_secret
+    for buildopt_secret in \
+        "$(jq -r '.token' "${buildopt_authority}/producer-token.json")" \
+        "$(jq -r '.token' "${buildopt_authority}/consumer-token.json")"; do
+        if grep -FR --exclude='*.json' -- "${buildopt_secret}" "${buildopt_logs}" >/dev/null; then
+            printf '%s central credential escaped into benchmark logs\n' "${buildopt_repository_id}" >&2
+            exit 1
+        fi
+    done
+    buildopt_stop_server
+}
+
+buildopt_subject \
+    ktor ktorio/ktor 6847064 https://github.com/ktorio/ktor.git \
+    bc7de799f4eb997a63250f2f70492d85f5c92f50 \
+    640e0bf3ccae96b35437272d99dd3d9c0b309da3 \
+    KTOR_KOTLIN_MULTIPLATFORM \
+    gradle-9.5.1/linux-amd64/jdk-21/ktor-jvm-jar \
+    FILE ktor-server/ktor-server-plugins/ktor-server-webjars/build/libs/ktor-server-webjars-jvm-3.6.0-SNAPSHOT.jar \
+    DEPENDENCY_SOURCE 28443 \
+    jvmJar --daemon --build-cache --parallel --no-configuration-cache --console=plain \
+    --no-scan --max-workers=12 -Pktor.develocity.skipBuildScans=true
+
+buildopt_subject \
+    beam apache/beam 5090421 https://github.com/apache/beam.git \
+    dd896e2b2395937201b7721251d9f66936f9340c \
+    db6daeecbd9b9a50a0dfc0d9118f312716e34f94 \
+    BEAM_JAVA_GROOVY \
+    gradle-8.14.3/linux-amd64/jdk-21/beam-java-twitter \
+    TREE examples/java/twitter/build/classes/java/main \
+    LEAF_SOURCE 28444 \
+    classes --daemon --build-cache --parallel --no-configuration-cache --console=plain \
+    --no-scan --max-workers=12
+
+buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+buildopt_cpu_count=$(getconf _NPROCESSORS_ONLN)
+buildopt_memory_bytes=$(awk '/MemTotal:/ {print $2 * 1024}' /proc/meminfo)
+jq -n \
+    --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revision}" \
+    --arg packageSha "${buildopt_package_sha}" --arg kernel "$(uname -r)" \
+    --argjson cpuCount "${buildopt_cpu_count}" --argjson memoryBytes "${buildopt_memory_bytes%.*}" \
+    --slurpfile repositories "${buildopt_repositories_json}" \
+    --slurpfile nativeRetained "${buildopt_root}/native-retained.json" '
+      {
+        schemaVersion:"buildopt.evidence/poc-central-end-to-end-value/v1",
+        workItem:"POC-CENTRAL-END-TO-END-VALUE-001",capturedAt:$capturedAt,
+        buildopt:{revision:$revision,packageSha256:$packageSha,installedPackage:true},
+        runner:{operatingSystem:"Linux",architecture:"x86_64",kernel:$kernel,cpuCount:$cpuCount,memoryBytes:$memoryBytes},
+        protocol:{
+          pairs:8,alternatingPairOrder:true,sameCommittedCentralObjects:true,
+          separateWorkspaces:true,separateGradleHomes:true,separateBuildOptCaches:true,
+          unmeasuredDependencyWarmup:true,transport:"HTTPS_TLS_1_3_MINIMUM"
+        },
+        repositories:$repositories,nativeRetained:$nativeRetained[0],
+        acceptance:{
+          decision:"COMPLETE",exactRequiredOutputs:true,nativeRetainedCases:1,
+          qualifiedFamilies:2,sameCentralCacheOpportunity:true,secretsAbsentFromLogs:true
+        },
+        boundaries:{
+          designPartnerRequired:false,mechanismPercentagesAdded:false,
+          productionAuthorized:false,proofOfConcept:true,repositoriesAveraged:false,
+          soakRequired:false,testOptimization:"OUT_OF_SCOPE"
+        }
+      }
+    ' >"${buildopt_output}"
+
+"${buildopt_script_dir}/check-central-end-to-end-value" "${buildopt_output}"
+buildopt_success=true

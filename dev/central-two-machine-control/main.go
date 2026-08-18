@@ -64,6 +64,11 @@ type tokenDocument struct {
 	ExpiresAt             string                          `json:"expiresAt"`
 }
 
+type commitResult struct {
+	sharedcache.CommitResult
+	ObjectBytes int64
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		usage()
@@ -84,7 +89,7 @@ func main() {
 }
 
 func usage() {
-	_, _ = fmt.Fprintln(os.Stderr, "usage: central-two-machine-control prepare --state-dir PATH --output-dir PATH --repository-id OWNER/REPO --source-revision SHA --namespace ID\n       central-two-machine-control commit --state-dir PATH --control-dir PATH")
+	_, _ = fmt.Fprintln(os.Stderr, "usage: central-two-machine-control prepare --state-dir PATH --output-dir PATH --repository-id OWNER/REPO --source-revision SHA --namespace ID [--lifetime DURATION]\n       central-two-machine-control commit --state-dir PATH --control-dir PATH")
 	os.Exit(64)
 }
 
@@ -96,9 +101,11 @@ func prepare(args []string) error {
 	repositoryID := flags.String("repository-id", "", "portable repository identity")
 	sourceRevision := flags.String("source-revision", "", "producer source revision")
 	namespace := flags.String("namespace", "", "Gradle cache namespace")
+	lifetime := flags.Duration("lifetime", 3*time.Hour, "POC authority lifetime")
 	if flags.Parse(args) != nil || flags.NArg() != 0 ||
 		!absoluteClean(*stateDir) || !absoluteClean(*outputDir) ||
-		*repositoryID == "" || *sourceRevision == "" || *namespace == "" {
+		*repositoryID == "" || *sourceRevision == "" || *namespace == "" ||
+		*lifetime <= 0 || *lifetime > 24*time.Hour {
 		return errors.New("invalid prepare arguments")
 	}
 	if err := os.MkdirAll(*outputDir, 0o700); err != nil {
@@ -116,7 +123,7 @@ func prepare(args []string) error {
 	defer clear(credential)
 	credentialDigest := sha256.Sum256(credential)
 	sourceDigest := sha256.Sum256([]byte(*sourceRevision))
-	leaseExpiresAt := now.Add(2 * time.Hour)
+	leaseExpiresAt := now.Add(*lifetime)
 	document := localauthority.Document{
 		Repository: localauthority.RepositoryIdentity{
 			Tenant: "poc-owner", Repository: *repositoryID, TrustDomain: "poc-two-machine",
@@ -158,12 +165,12 @@ func prepare(args []string) error {
 				RepeatabilityGate:   "PASSED", RelocatabilityGate: "PASSED",
 			}},
 			AffectedBuild: localauthority.AffectedBuild{EnabledInCI: true},
-			ExpiresAt:     now.Add(3 * time.Hour).Format(time.RFC3339Nano),
+			ExpiresAt:     now.Add(*lifetime).Format(time.RFC3339Nano),
 		},
 		Revocation: localauthority.RevocationState{
 			ContractVersion: "buildopt-cache-control/v1", RequestID: "two-machine-revocation-1",
 			TrustDomain: "poc-two-machine", RevocationEpoch: 1, L1SecurityGeneration: 1,
-			ValidUntil: now.Add(3 * time.Hour).Format(time.RFC3339Nano),
+			ValidUntil: now.Add(*lifetime).Format(time.RFC3339Nano),
 		},
 	}
 	authority, err := localauthority.Sign(document, decisionKeyID, privateKey)
@@ -210,7 +217,7 @@ func prepare(args []string) error {
 			sharedcache.CentralCacheRead, sharedcache.CentralCacheWrite,
 			sharedcache.CentralStateRead, sharedcache.CentralStateWrite,
 		},
-		ExpiresAt: now.Add(3 * time.Hour),
+		ExpiresAt: now.Add(*lifetime),
 	}, now)
 	if err != nil {
 		return err
@@ -220,7 +227,7 @@ func prepare(args []string) error {
 		Capabilities: []sharedcache.CentralCapability{
 			sharedcache.CentralCacheRead, sharedcache.CentralStateRead,
 		},
-		ExpiresAt: now.Add(3 * time.Hour),
+		ExpiresAt: now.Add(*lifetime),
 	}, now)
 	if err != nil {
 		return err
@@ -338,7 +345,14 @@ func commit(args []string) error {
 	if err != nil {
 		return err
 	}
-	return json.NewEncoder(os.Stdout).Encode(result)
+	var objectBytes int64
+	for _, object := range objects {
+		objectBytes += object.SizeBytes
+	}
+	return json.NewEncoder(os.Stdout).Encode(commitResult{
+		CommitResult: result,
+		ObjectBytes:  objectBytes,
+	})
 }
 
 func signDecision(decision sharedcache.CommitDecision, keyID string, privateKey ed25519.PrivateKey) ([]byte, error) {

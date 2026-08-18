@@ -33,6 +33,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 	var optimize *optimizeRun
 	var automaticOptimizeImpact *impactInvocation
 	centralGradleCacheRequested := false
+	var connectedGradleCache *centralOptimizeIntegration
 	childStdout := stdout
 	var impactTiming *impactTimingState
 	execute := func(
@@ -119,8 +120,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			if automaticOptimizeImpact == nil && centralIntegration != nil {
 				automaticOptimizeImpact = centralIntegration.prepareAutomaticReplay(optimize)
 			}
-			centralGradleCacheRequested = automaticOptimizeImpact != nil &&
-				centralIntegration.hasReadOnlyCentralCache()
+			centralGradleCacheRequested = centralIntegration.hasReadOnlyCentralCache()
 			if invocation.jsonOutput {
 				childStdout = stderr
 			}
@@ -247,13 +247,39 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			_, _ = fmt.Fprintf(stderr, "buildopt: Gradle setup unavailable: %v\n", err)
 			return exitConfiguration
 		}
+		if optimize == nil {
+			repositoryRoot, rootErr := canonicalWorkingDirectory()
+			if rootErr == nil {
+				connectedGradleCache, rootErr = prepareConnectedCentralGradleCache(
+					repositoryRoot,
+				)
+			}
+			if rootErr != nil {
+				_, _ = fmt.Fprintf(
+					stderr,
+					"buildopt: connected central Gradle cache unavailable; retaining local/native cache: %v\n",
+					rootErr,
+				)
+				connectedGradleCache = nil
+			} else if connectedGradleCache != nil {
+				centralGradleCacheRequested = true
+			}
+		}
 		if centralGradleCacheRequested {
+			var repositoryRoot string
+			if optimize != nil {
+				repositoryRoot = optimize.invocation.repositoryRoot
+			} else {
+				repositoryRoot = connectedGradleCache.invocation.repositoryRoot
+			}
 			if err := enableConnectedCentralCacheGradle(
 				&invocation,
-				optimize.invocation.repositoryRoot,
+				repositoryRoot,
 			); err != nil {
 				centralGradleCacheRequested = false
-				optimize.central.result.GradleCacheStatus = "LOCAL_NATIVE_FALLBACK"
+				if optimize != nil {
+					optimize.central.result.GradleCacheStatus = "LOCAL_NATIVE_FALLBACK"
+				}
 				_, _ = fmt.Fprintf(
 					stderr,
 					"buildopt: central Gradle cache unavailable; retaining local/native cache: %v\n",
@@ -387,18 +413,24 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 	}
 	var gateway *localGateway
 	var centralCache *centralGradleCacheContext
+	centralCacheIntegration := connectedGradleCache
+	if optimize != nil {
+		centralCacheIntegration = optimize.central
+	}
 	if handshake != nil {
 		var gatewayErr error
 		var cacheBinding *gatewayCacheBinding
 		if authority != nil {
 			cacheBinding = authority.cacheBinding
-		} else if centralGradleCacheRequested && optimize != nil {
-			centralCache, gatewayErr = optimize.central.centralGradleCacheContext(
+		} else if centralGradleCacheRequested && centralCacheIntegration != nil {
+			centralCache, gatewayErr = centralCacheIntegration.centralGradleCacheContext(
 				handshake.attemptID,
 				startedAt,
 			)
 			if gatewayErr != nil {
-				optimize.central.result.GradleCacheStatus = "LOCAL_NATIVE_FALLBACK"
+				if optimize != nil {
+					optimize.central.result.GradleCacheStatus = "LOCAL_NATIVE_FALLBACK"
+				}
 				_, _ = fmt.Fprintf(
 					stderr,
 					"buildopt: central Gradle cache unavailable; retaining local/native cache: %v\n",
@@ -407,7 +439,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 				gatewayErr = nil
 			} else if centralCache != nil {
 				cacheBinding = centralCache.binding
-				optimize.central.result.GradleCacheStatus = "GATEWAY_ACTIVE"
+				if optimize != nil {
+					optimize.central.result.GradleCacheStatus = "GATEWAY_ACTIVE"
+				}
 			}
 		}
 		gateway, gatewayErr = startInvocationGatewayWithCache(
@@ -425,8 +459,10 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			}
 		}
 		if gatewayErr != nil {
-			if centralGradleCacheRequested && optimize != nil {
-				optimize.central.result.GradleCacheStatus = "LOCAL_NATIVE_FALLBACK"
+			if centralGradleCacheRequested {
+				if optimize != nil {
+					optimize.central.result.GradleCacheStatus = "LOCAL_NATIVE_FALLBACK"
+				}
 				centralCache = nil
 			}
 			_, _ = fmt.Fprintf(

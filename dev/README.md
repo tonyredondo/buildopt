@@ -466,6 +466,23 @@ The two-machine checker composes those lower-level guarantees across separate
 client filesystems. Its recorded phase durations are diagnostic only; the next
 central value experiment owns the equal-opportunity native comparison.
 
+Run the terminal equal-opportunity central experiment with Java 21. It
+calibrates Ktor and Beam, publishes the full native workflow once, then gives
+the full-graph control and structural candidate the same committed HTTPS cache
+objects across eight alternating pairs:
+
+```bash
+./dev/run --toolchain jdk21 -- \
+  ./dev/run-poc-central-end-to-end-value /tmp/central-value.json
+./dev/check-central-end-to-end-value /tmp/central-value.json
+```
+
+The runner requires network access for the two public repositories and their
+Gradle dependencies. It uses separate workspaces, Gradle User Homes and local
+BuildOpt caches, removes its exact temporary root after success, and retains
+that root only when a failure needs diagnosis. This is a bounded POC
+experiment, not a soak.
+
 ## CI orchestration validation
 
 Validate the `F0-030` authoritative-job, protected validation queue,
