@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "buildopt.poc/central-optimize-integration/v1",
+  "workItem": "POC-CENTRAL-OPTIMIZE-INTEGRATION-001",
+  "customerFlow": {
+    "oneTimeConnection": "buildopt connect HTTPS_ORIGIN --token-file PATH [--ca-file PATH]",
+    "build": "buildopt optimize GRADLE_ARGS",
+    "manualSyncRequired": false,
+    "manualProfileRequired": false
+  },
+  "lookup": {
+    "position": "BEFORE_GRADLE",
+    "online": "AUTOMATIC_PRE_SYNC",
+    "offline": "VERIFIED_SNAPSHOT_ONLY",
+    "localExactReplayPrecedesRemoteSelection": true,
+    "portfolioReferencesExactEvidenceManifest": true,
+    "selectionDurationIncludesPreSync": true
+  },
+  "crossCommitRevalidation": {
+    "evidenceRevisionMustBeAncestor": true,
+    "repositoryIdExact": true,
+    "wrapperSha256Exact": true,
+    "buildoptExecutableSha256Exact": true,
+    "workflowEntrypointsExact": true,
+    "gradleOptionsExact": true,
+    "buildLogicUnchanged": true,
+    "changedPathsOwnedByVerifiedGraph": true,
+    "changeFamilyExact": true,
+    "requiredOutputsExact": true,
+    "profilePreconditionsExact": true,
+    "qualificationEvidenceRecomputed": true,
+    "candidatePlanRecomputed": true,
+    "selectionCompletesBeforeGradle": true
+  },
+  "publication": {
+    "position": "AFTER_LOCAL_STATE_AND_VALUE_REPORTS",
+    "online": "AUTOMATIC_POST_SYNC",
+    "outage": "LOCAL_RESULT_REMAINS_AUTHORITATIVE",
+    "resultPublishedAfterPostSyncAttempt": true
+  },
+  "result": {
+    "selectionSource": "CENTRAL_PORTFOLIO",
+    "calibrationStatus": "REMOTE_QUALIFIED",
+    "discoveryStatus": "REMOTE_REVALIDATED",
+    "remoteEvidenceRevisionRecorded": true,
+    "currentRevisionRecorded": true,
+    "portfolioAndEvidenceManifestDigestsRecorded": true,
+    "remoteEconomics": "UNAVAILABLE_WITHOUT_REPUBLISHED_CALIBRATION_COST"
+  },
+  "fallback": {
+    "mode": "OPTIMIZED_NATIVE",
+    "serviceUnavailable": true,
+    "invalidOrCorruptSnapshot": true,
+    "nonAncestorEvidence": true,
+    "buildLogicDrift": true,
+    "unknownPath": true,
+    "familyDrift": true,
+    "toolOrOutputDrift": true,
+    "remoteFailureChangesGradleExit": false
+  },
+  "evidence": {
+    "realProfileRepository": "apache/kafka",
+    "realProfileWorkflow": "shadowJar",
+    "realProfilePairs": 8,
+    "realProfileMeanSavedMs": 30106.5,
+    "realProfileReductionRatio": 0.6687008404154601,
+    "transportExercisesAutomaticPublication": true,
+    "transportExercisesVerifiedOfflineLookup": true,
+    "structuralDriftExercise": "build.gradle.kts"
+  },
+  "authority": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "newWallTimeClaim": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "deferred": [
+    "AUTOMATIC_CENTRAL_GRADLE_CACHE_CONFIGURATION",
+    "TWO_MACHINE_INSTALLED_PATH",
+    "OBSERVED_CROSS_COMMIT_PROFILE_LIFETIME",
+    "CENTRALIZED_WALL_TIME_VALUE",
+    "PRODUCTION_HA_RBAC_KMS_BACKUPS"
+  ]
+}

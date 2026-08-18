@@ -13,6 +13,11 @@
         "default": ".buildopt/optimize/v1",
         "constraint": "CLEAN_REPOSITORY_RELATIVE_UNDER_DOT_BUILDOPT"
       },
+      "connectionDir": {
+        "flag": "--connection-dir",
+        "default": ".buildopt/central/v1",
+        "constraint": "CLEAN_REPOSITORY_RELATIVE_UNDER_DOT_BUILDOPT"
+      },
       "resume": {
         "flag": "--resume",
         "default": "AUTO",
@@ -154,6 +159,7 @@
       "MANUAL_FILE_COUNT",
       "CALIBRATION_PORTFOLIO_AND_SELECTION_STATUS",
       "EXECUTION_MODE_AND_SELECTION_OVERHEAD",
+      "CENTRAL_SYNC_AND_SELECTION_SOURCE",
       "PRODUCTION_AUTHORITY",
       "TEST_OPTIMIZATION_BOUNDARY"
     ],
@@ -184,7 +190,8 @@
     "automaticDiscovery": true,
     "calibrationPerformed": true,
     "profileMaterialized": true,
-    "selectionPerformed": true
+    "selectionPerformed": true,
+    "remoteProfileRevalidation": true
   },
   "boundaries": {
     "percentagesAveragedAcrossRepositories": false,

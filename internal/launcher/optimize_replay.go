@@ -37,22 +37,27 @@ var optimizeReplayBindingNames = []string{
 }
 
 type optimizeSelectionResult struct {
-	Status                string   `json:"status"`
-	Reason                string   `json:"reason"`
-	Performed             bool     `json:"performed"`
-	Selected              bool     `json:"selected"`
-	CompletedBeforeGradle bool     `json:"completedBeforeGradle"`
-	DurationNS            int64    `json:"durationNs"`
-	ChangeFamily          string   `json:"changeFamily"`
-	FamilySHA256          string   `json:"familySha256"`
-	ProfileSHA256         string   `json:"profileSha256"`
-	ProfileFile           string   `json:"profileFile"`
-	OriginalEntrypoints   []string `json:"originalEntrypoints"`
-	SelectedEntrypoints   []string `json:"selectedEntrypoints"`
-	ValidatedBindings     []string `json:"validatedBindings"`
-	FailedBindings        []string `json:"failedBindings"`
-	ProductionAuthorized  bool     `json:"productionAuthorized"`
-	TestOptimization      string   `json:"testOptimization"`
+	Status                        string   `json:"status"`
+	Reason                        string   `json:"reason"`
+	Performed                     bool     `json:"performed"`
+	Selected                      bool     `json:"selected"`
+	CompletedBeforeGradle         bool     `json:"completedBeforeGradle"`
+	DurationNS                    int64    `json:"durationNs"`
+	ChangeFamily                  string   `json:"changeFamily"`
+	FamilySHA256                  string   `json:"familySha256"`
+	ProfileSHA256                 string   `json:"profileSha256"`
+	ProfileFile                   string   `json:"profileFile"`
+	OriginalEntrypoints           []string `json:"originalEntrypoints"`
+	SelectedEntrypoints           []string `json:"selectedEntrypoints"`
+	ValidatedBindings             []string `json:"validatedBindings"`
+	FailedBindings                []string `json:"failedBindings"`
+	Source                        string   `json:"source,omitempty"`
+	EvidenceRevision              string   `json:"evidenceRevision,omitempty"`
+	RevalidatedRevision           string   `json:"revalidatedRevision,omitempty"`
+	RemotePortfolioManifestSHA256 string   `json:"remotePortfolioManifestSha256,omitempty"`
+	RemoteEvidenceManifestSHA256  string   `json:"remoteEvidenceManifestSha256,omitempty"`
+	ProductionAuthorized          bool     `json:"productionAuthorized"`
+	TestOptimization              string   `json:"testOptimization"`
 }
 
 func emptyOptimizeSelection(status, reason string, performed bool) optimizeSelectionResult {
@@ -88,7 +93,19 @@ func validOptimizeSelectionCheckpoint(state optimizeState) bool {
 			len(selection.ValidatedBindings) <= len(optimizeReplayBindingNames) &&
 			len(selection.OriginalEntrypoints) == 0 && len(selection.SelectedEntrypoints) == 0
 	case optimizeSelectionSelected:
-		return selection.Performed && selection.Reason == optimizeSelectionReasonSelected &&
+		localSelection := (selection.Source == "" || selection.Source == optimizeSelectionSourceLocal) &&
+			selection.Reason == optimizeSelectionReasonSelected &&
+			selection.EvidenceRevision == "" && selection.RevalidatedRevision == "" &&
+			selection.RemotePortfolioManifestSHA256 == "" && selection.RemoteEvidenceManifestSHA256 == "" &&
+			equalOptimizeStrings(selection.ValidatedBindings, optimizeReplayBindingNames)
+		centralSelection := selection.Source == optimizeSelectionSourceCentral &&
+			selection.Reason == optimizeCentralReasonSelected &&
+			validMeasurementRevision(selection.EvidenceRevision) &&
+			validMeasurementRevision(selection.RevalidatedRevision) &&
+			validOptimizeSHA(selection.RemotePortfolioManifestSHA256) &&
+			validOptimizeSHA(selection.RemoteEvidenceManifestSHA256) &&
+			equalOptimizeStrings(selection.ValidatedBindings, optimizeCentralReplayBindings)
+		return selection.Performed && (localSelection || centralSelection) &&
 			optimizeStringIn(state.Phase, "ACTIVE", "STALE") &&
 			validOptimizeFamily(selection.ChangeFamily) &&
 			validOptimizeSHA(selection.FamilySHA256) && validOptimizeSHA(selection.ProfileSHA256) &&
@@ -96,7 +113,6 @@ func validOptimizeSelectionCheckpoint(state optimizeState) bool {
 			len(selection.OriginalEntrypoints) > 0 && len(selection.SelectedEntrypoints) > 0 &&
 			uniqueMeasurementStrings(selection.OriginalEntrypoints) &&
 			uniqueMeasurementStrings(selection.SelectedEntrypoints) &&
-			equalOptimizeStrings(selection.ValidatedBindings, optimizeReplayBindingNames) &&
 			len(selection.FailedBindings) == 0
 	default:
 		return false
@@ -107,7 +123,10 @@ func validEmptyOptimizeSelection(selection optimizeSelectionResult) bool {
 	return selection.ChangeFamily == "" && selection.FamilySHA256 == "" &&
 		selection.ProfileSHA256 == "" && selection.ProfileFile == "" &&
 		len(selection.OriginalEntrypoints) == 0 && len(selection.SelectedEntrypoints) == 0 &&
-		len(selection.ValidatedBindings) == 0 && len(selection.FailedBindings) == 0
+		len(selection.ValidatedBindings) == 0 && len(selection.FailedBindings) == 0 &&
+		selection.Source == "" && selection.EvidenceRevision == "" &&
+		selection.RevalidatedRevision == "" && selection.RemotePortfolioManifestSHA256 == "" &&
+		selection.RemoteEvidenceManifestSHA256 == ""
 }
 
 func (run *optimizeRun) prepareAutomaticReplay() (selected *impactInvocation) {
@@ -181,6 +200,7 @@ func (run *optimizeRun) prepareAutomaticReplay() (selected *impactInvocation) {
 		OriginalEntrypoints: append([]string(nil), entry.Entrypoints...),
 		SelectedEntrypoints: append([]string(nil), entry.CandidateEntrypoints...),
 		ValidatedBindings:   append([]string(nil), optimizeReplayBindingNames...), FailedBindings: []string{},
+		Source:               optimizeSelectionSourceLocal,
 		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}
 	return &impact

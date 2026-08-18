@@ -31,6 +31,10 @@ jq -e '
     flag: "--state-dir", default: ".buildopt/optimize/v1",
     constraint: "CLEAN_REPOSITORY_RELATIVE_UNDER_DOT_BUILDOPT"
   } and
+  .command.options.connectionDir == {
+    flag: "--connection-dir", default: ".buildopt/central/v1",
+    constraint: "CLEAN_REPOSITORY_RELATIVE_UNDER_DOT_BUILDOPT"
+  } and
   .command.options.resume == {flag: "--resume", default: "AUTO", values: ["AUTO", "NEVER"]} and
   .command.options.calibrationBudget == {
     flag: "--calibration-budget", defaultSeconds: 1800,
@@ -63,7 +67,7 @@ jq -e '
   .result.schemaVersion == "buildopt.poc/optimize-result/v1" and
   .result.file == ".buildopt/optimize/v1/result.json" and
   .result.permissions == "CURRENT_USER_PRIVATE" and
-  (.result.alwaysReports | length) == 13 and
+  (.result.alwaysReports | length) == 14 and
   .result.humanOutput == "SHORT_STDERR_SUMMARY" and
   .result.machineOutput == "RESULT_FILE_ALWAYS_AND_STDOUT_WITH_JSON_FLAG" and
   .exitBehavior == {
@@ -81,7 +85,8 @@ jq -e '
     status: "AUTOMATIC_REPLAY", outcome: "QUALIFIED_AND_USED",
     reason: "QUALIFIED_PROFILE_SELECTED", phase: "ACTIVE", nativeBuildCache: true,
     automaticDiscovery: true, calibrationPerformed: true,
-    profileMaterialized: true, selectionPerformed: true
+    profileMaterialized: true, selectionPerformed: true,
+    remoteProfileRevalidation: true
   } and
   .boundaries == {
     percentagesAveragedAcrossRepositories: false, mechanismPercentagesAdded: false,

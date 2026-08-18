@@ -193,9 +193,11 @@ Gradle-cache gateway forwarding and typed-state client synchronization are now
 implemented as separate POC proofs. `buildopt connect` persists one private
 repository-scoped connection and `buildopt sync` verifies canonical
 portfolio/evidence/checkpoint bundles, optimistic generation conflicts,
-interrupted retry and offline snapshots. Remote portfolio selection still
-requires exact local revalidation and is not yet integrated into
-`buildopt optimize`.
+interrupted retry and offline snapshots. A connected `buildopt optimize` now
+performs the same sync automatically, revalidates remote ancestry, build logic,
+graph ownership, family, workflow, tools, outputs, preconditions and evidence
+before selection, and publishes completed local state afterward. Native Gradle
+remains authoritative on any drift or service failure.
 
 Linux checks a local filesystem allowlist. macOS requires `MNT_LOCAL` and a
 same-device boundary. Windows requires one local volume and rejects reparse

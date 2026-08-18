@@ -177,10 +177,15 @@ func newOptimizeValueReport(result optimizeResult) optimizeValueReport {
 				float64(result.Discovery.Graph.TotalProjects),
 		}
 	}
-	if result.Calibration.Status == optimizeCalibrationComplete {
+	if result.Calibration.Status == optimizeCalibrationComplete ||
+		result.Calibration.Status == optimizeCalibrationRemoteQualified {
 		calibration := result.Calibration
+		performanceStatus := "OBSERVED_CALIBRATION"
+		if calibration.Status == optimizeCalibrationRemoteQualified {
+			performanceStatus = "REMOTE_EVIDENCE_REVALIDATED"
+		}
 		report.Performance = optimizeValuePerformance{
-			Status: "OBSERVED_CALIBRATION", Pairs: calibration.PairsMeasured,
+			Status: performanceStatus, Pairs: calibration.PairsMeasured,
 			PositivePairs:              calibration.PositivePairs,
 			OptimizedNativeMeanMS:      calibration.ControlMeanMS,
 			BuildOptMeanMS:             calibration.CandidateMeanMS,
@@ -193,22 +198,27 @@ func newOptimizeValueReport(result optimizeResult) optimizeValueReport {
 			CurrentSelectionOverheadMS: float64(result.Selection.DurationNS) / 1_000_000,
 			OutputsEquivalent:          true, LauncherOverheadIncluded: true,
 		}
-		paybackRemaining := float64(calibration.CalibrationCostMS) - result.Value.ProjectedGrossSavedMS +
-			result.Value.CumulativeSelectionOverheadMS
-		if paybackRemaining < 0 {
-			paybackRemaining = 0
-		}
-		report.Economics = optimizeValueEconomics{
-			Status: "CALIBRATION_PROJECTION", CalibrationCostMS: calibration.CalibrationCostMS,
-			BreakEvenBuilds:               optimizeBreakEven(calibration.CalibrationCostMS, calibration.MeanSavedMS),
-			MaximumBreakEvenBuilds:        calibration.MaximumBreakEvenBuilds,
-			ExpectedUsefulLifetime:        report.Economics.ExpectedUsefulLifetime,
-			MatchingReplayCount:           result.Value.MatchingReplayCount,
-			ProjectedGrossSavedMS:         result.Value.ProjectedGrossSavedMS,
-			CumulativeSelectionOverheadMS: result.Value.CumulativeSelectionOverheadMS,
-			ProjectedCumulativeNetSavedMS: result.Value.ProjectedCumulativeNetSavedMS,
-			ProjectedPaybackRemainingMS:   paybackRemaining,
-			ProjectionBasis:               "OBSERVED_CALIBRATION_MEAN_TIMES_SUCCESSFUL_EXACT_REPLAYS_MINUS_CALIBRATION_AND_SELECTION_COST",
+		if calibration.Status == optimizeCalibrationRemoteQualified {
+			report.Economics.UnavailableReason = "REMOTE_CALIBRATION_COST_NOT_REPUBLISHED_WITH_PORTFOLIO"
+			report.Economics.ExpectedUsefulLifetime.Reason = "CROSS_COMMIT_MATCH_COUNT_NOT_YET_OBSERVED"
+		} else {
+			paybackRemaining := float64(calibration.CalibrationCostMS) - result.Value.ProjectedGrossSavedMS +
+				result.Value.CumulativeSelectionOverheadMS
+			if paybackRemaining < 0 {
+				paybackRemaining = 0
+			}
+			report.Economics = optimizeValueEconomics{
+				Status: "CALIBRATION_PROJECTION", CalibrationCostMS: calibration.CalibrationCostMS,
+				BreakEvenBuilds:               optimizeBreakEven(calibration.CalibrationCostMS, calibration.MeanSavedMS),
+				MaximumBreakEvenBuilds:        calibration.MaximumBreakEvenBuilds,
+				ExpectedUsefulLifetime:        report.Economics.ExpectedUsefulLifetime,
+				MatchingReplayCount:           result.Value.MatchingReplayCount,
+				ProjectedGrossSavedMS:         result.Value.ProjectedGrossSavedMS,
+				CumulativeSelectionOverheadMS: result.Value.CumulativeSelectionOverheadMS,
+				ProjectedCumulativeNetSavedMS: result.Value.ProjectedCumulativeNetSavedMS,
+				ProjectedPaybackRemainingMS:   paybackRemaining,
+				ProjectionBasis:               "OBSERVED_CALIBRATION_MEAN_TIMES_SUCCESSFUL_EXACT_REPLAYS_MINUS_CALIBRATION_AND_SELECTION_COST",
+			}
 		}
 	}
 	if result.Selection.Selected {

@@ -417,6 +417,14 @@ generated portfolios, evidence and checkpoints:
 ./dev/check-central-state-sync
 ```
 
+Validate automatic pre/post synchronization inside `buildopt optimize`,
+cross-commit source-profile revalidation, structural drift rejection and
+verified offline lookup:
+
+```bash
+./dev/check-central-optimize-integration
+```
+
 The state-storage checker proves private independent `state.sqlite`
 migrations, restart persistence, repository/kind isolation, exact CAS replay,
 one-winner concurrent promotion, invisible partial publication,
@@ -429,8 +437,11 @@ read-only publication and successful native execution after server loss. It is
 a functional proof, not a cross-machine wall-time claim.
 The state-sync checker adds first/no-change sync, a clean consumer, exact
 interrupted retry, a verified concurrent winner, incompatible-state fallback
-and offline snapshot tamper rejection. Remote profile selection remains a
-later block.
+and offline snapshot tamper rejection. The central optimize checker then uses
+retained public Kafka evidence to prove source-only cross-commit selection
+before Gradle, rejects `build.gradle.kts` drift, publishes newly completed
+state automatically and reuses only verified offline snapshots. Neither
+checker makes a new wall-time claim.
 
 ## CI orchestration validation
 

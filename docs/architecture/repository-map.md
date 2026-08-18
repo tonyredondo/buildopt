@@ -49,7 +49,7 @@ in `internal/`; cross-process representations belong in `contracts/` first.
 
 | Package | Architectural responsibility | Closest executable/specification |
 |---|---|---|
-| `internal/launcher` | Command passthrough, packaged Gradle discovery, signals, gateway lifecycle, L1, authority handoff, bootstrap cache and central state connection/sync | `buildopt`; launcher, cache and central state-sync specs |
+| `internal/launcher` | Command passthrough, packaged Gradle discovery, signals, gateway lifecycle, L1, authority handoff, bootstrap cache, central state sync and remote profile revalidation | `buildopt`; launcher, cache and central optimize specs |
 | `internal/sessioningest` | Strict authenticated provisional session transport | `buildopt` and `buildopt-server`; `WS-005` |
 | `internal/buildsession` | `BUILD_SESSION v1` production, immutable JSON, JSONL, recovery | server export; data lifecycle specs |
 | `internal/buildhistory` | Redacted immutable history read model, API, embedded dashboard | `buildopt-server`; UX-F1 specs |
@@ -94,7 +94,7 @@ bytecode using the pinned Wrapper and repository-local JDK 21.
 | `contracts/proto/local-events/v1/` | JVM Gradle plugin | launcher event channel | `check-task-events-proto`, plugin handshake/correlation checks |
 | `contracts/openapi/buildopt-cache-control.v1.yaml` | server/control implementation | generated Go/Java clients | generated-client and compatibility checks |
 | `contracts/jsonschema/patch-bundle.v1.schema.json` | patch signer/workflow | Java patch verifier/applier | patch bundle, candidate, workflow, and recovery checks |
-| `contracts/jsonschema/central-state-*.v1.schema.json` | central-state clients and storage | `internal/sharedcache` typed state, HTTPS routes and `internal/launcher` sync client | `check-central-storage-contract`, `check-central-state-storage`, `check-central-https-auth`, `check-central-state-sync` |
+| `contracts/jsonschema/central-state-*.v1.schema.json` | central-state clients and storage | `internal/sharedcache` typed state, HTTPS routes and `internal/launcher` sync/revalidation client | `check-central-storage-contract`, `check-central-state-storage`, `check-central-https-auth`, `check-central-state-sync`, `check-central-optimize-integration` |
 | `specs/build-impact-*.json` | Build Impact packages/CLI | CI and selection flow | Build Impact gate and automatic discovery checks |
 | `specs/platform-runtime-parity-v2.json` | native runtime and packaging | native CI | `check-platform-compatibility` |
 

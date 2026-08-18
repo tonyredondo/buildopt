@@ -106,13 +106,18 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		}
 		args = append([]string{"gradle"}, invocation.gradleArgs...)
 		if optimizeEnabled {
+			centralIntegration := prepareCentralOptimizeIntegration(invocation, stderr)
 			optimize, err = beginOptimizeRun(invocation)
 			if err != nil {
 				_, _ = fmt.Fprintf(stderr, "buildopt: optimize state unavailable: %v\n", err)
 				return exitConfiguration
 			}
+			optimize.central = centralIntegration
 			optimizeContractOnly = true
 			automaticOptimizeImpact = optimize.prepareAutomaticReplay()
+			if automaticOptimizeImpact == nil && centralIntegration != nil {
+				automaticOptimizeImpact = centralIntegration.prepareAutomaticReplay(optimize)
+			}
 			if invocation.jsonOutput {
 				childStdout = stderr
 			}

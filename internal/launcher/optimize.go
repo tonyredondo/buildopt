@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	optimizeUsage = "usage: buildopt optimize [--state-dir PATH] [--resume auto|never] [--calibration-budget DURATION] [--calibration-pairs N] [--max-break-even-builds N] [--json] [--] <gradle args...>\n"
+	optimizeUsage = "usage: buildopt optimize [--state-dir PATH] [--connection-dir PATH] [--resume auto|never] [--calibration-budget DURATION] [--calibration-pairs N] [--max-break-even-builds N] [--json] [--] <gradle args...>\n"
 
 	optimizeStateSchemaVersion  = "buildopt.poc/optimize-state/v1"
 	optimizeResultSchemaVersion = "buildopt.poc/optimize-result/v1"
@@ -54,6 +54,8 @@ type optimizeInvocation struct {
 	repositoryRoot      string
 	stateDirectory      string
 	stateRelative       string
+	connectionDirectory string
+	connectionRelative  string
 	gradleArgs          []string
 	resumeMode          string
 	calibrationBudget   time.Duration
@@ -156,6 +158,7 @@ type optimizeResult struct {
 	Calibration          optimizeCalibrationResult `json:"calibration"`
 	Portfolio            optimizePortfolioResult   `json:"portfolio"`
 	Selection            optimizeSelectionResult   `json:"selection"`
+	Central              optimizeCentralResult     `json:"central"`
 	Value                optimizeValueState        `json:"value"`
 	GeneratedFiles       optimizeGeneratedFiles    `json:"generatedFiles"`
 	ManualFilesRequired  int                       `json:"manualFilesRequired"`
@@ -177,12 +180,15 @@ type optimizeRun struct {
 	childStarted  bool
 	previousState *optimizeState
 	selection     optimizeSelectionResult
+	central       *centralOptimizeIntegration
+	centralReplay *centralOptimizeReplay
 }
 
 func prepareOptimizeInvocation(args []string, stateEnabled bool) (optimizeInvocation, error) {
 	flags := flag.NewFlagSet("buildopt optimize", flag.ContinueOnError)
 	flags.SetOutput(io.Discard)
 	stateDirectory := flags.String("state-dir", optimizeDefaultStateDir, "generated repository-local optimize state")
+	connectionDirectory := flags.String("connection-dir", centralConnectionDir, "private repository-local central connection")
 	resume := flags.String("resume", "auto", "resume exact state automatically or never")
 	budget := flags.Duration("calibration-budget", optimizeDefaultBudget, "maximum calibration wall time per invocation")
 	pairs := flags.Int("calibration-pairs", optimizeDefaultPairs, "maximum balanced calibration pairs")
@@ -226,6 +232,12 @@ func prepareOptimizeInvocation(args []string, stateEnabled bool) (optimizeInvoca
 	invocation.repositoryRoot = repositoryRoot
 	invocation.stateDirectory = statePath
 	invocation.stateRelative = stateRelative
+	connectionPath, connectionRelative, err := resolveCentralConnectionDirectory(repositoryRoot, *connectionDirectory, false)
+	if err != nil {
+		return optimizeInvocation{}, err
+	}
+	invocation.connectionDirectory = connectionPath
+	invocation.connectionRelative = connectionRelative
 	invocation.discovery = inspectOptimizeDiscoveryContext(repositoryRoot, invocation.gradleArgs, os.Getenv)
 	if err := bindOptimizeInvocation(&invocation); err != nil {
 		return optimizeInvocation{}, err
@@ -538,6 +550,15 @@ func validOptimizeDiscoveryCheckpoint(state optimizeState) bool {
 			discovery.Graph.SelectedProjects > 0 && discovery.Graph.OmittedProjects > 0 &&
 			validOptimizeFamily(discovery.ChangeFamily) && len(discovery.ChangedProjects) > 0 &&
 			uniqueMeasurementStrings(discovery.ChangedProjects)
+	case optimizeDiscoveryRemoteRevalidated:
+		return optimizeStringIn(state.Phase, "ACTIVE", "STALE") &&
+			discovery.Reason == "REMOTE_STRUCTURAL_PROFILE_REVALIDATED" &&
+			discovery.ReviewRequired && discovery.TestOptimization == "OUT_OF_SCOPE" &&
+			validOptimizeDiscoveryFiles(discovery.GeneratedFiles, true) &&
+			discovery.Graph.TotalProjects > 0 && discovery.Graph.SelectedProjects > 0 &&
+			discovery.Graph.OmittedProjects > 0 &&
+			validOptimizeFamily(discovery.ChangeFamily) && len(discovery.ChangedProjects) > 0 &&
+			uniqueMeasurementStrings(discovery.ChangedProjects)
 	case optimizeDiscoveryRetained, optimizeDiscoverySkipped:
 		return state.Phase == "NATIVE_RETAINED" && discovery.Reason != "" &&
 			discovery.ReviewRequired && discovery.TestOptimization == "OUT_OF_SCOPE" &&
@@ -601,11 +622,18 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 	learningContext, stopSignals := notifyOptimizeLearningContext(budgetContext)
 	defer stopSignals()
 	discovery, calibration, resumed := run.resumeCalibration()
-	if !resumed {
+	if run.centralReplay != nil {
+		discovery = run.centralReplay.discovery
+		calibration = run.centralReplay.calibration
+		resumed = true
+	} else if !resumed {
 		discovery = run.discover(learningContext, exitCode, stderr)
 		calibration = run.calibrate(learningContext, learningStarted, discovery, stderr)
 	}
 	portfolio := run.materializePortfolio(discovery, calibration)
+	if run.centralReplay != nil {
+		portfolio = run.centralReplay.portfolio
+	}
 	selection := run.selection
 	completedAt := time.Now().UTC()
 	run.state.LastOutcome = optimizeOutcomeNative
@@ -625,7 +653,7 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 	}
 	if selection.Selected {
 		run.state.LastOutcome = "QUALIFIED_AND_USED"
-		run.state.LastReason = optimizeSelectionReasonSelected
+		run.state.LastReason = selection.Reason
 		run.state.Phase = "ACTIVE"
 		if exitCode != 0 {
 			run.state.LastReason = "SELECTED_BUILD_FAILED"
@@ -681,6 +709,7 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		Calibration: calibration,
 		Portfolio:   portfolio,
 		Selection:   selection,
+		Central:     disconnectedOptimizeCentralResult(),
 		Value:       run.state.Value,
 		GeneratedFiles: optimizeGeneratedFiles{
 			State:         filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeStateFile)),
@@ -705,6 +734,10 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 	}
 	if err := writePrivateAtomicFile(run.valueMDPath, valueMarkdown); err != nil {
 		return err
+	}
+	if run.central != nil {
+		run.central.publish(run, stderr)
+		result.Central = run.central.result
 	}
 	// Publish the invocation result only after its customer-readable evidence is
 	// complete, so a newly visible result never points at a partial report set.

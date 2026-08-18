@@ -75,10 +75,12 @@ The normal customer command remains unchanged:
 buildopt optimize build
 ```
 
-After connection, BuildOpt should configure the invocation-local gateway,
-Gradle's remote HTTP cache and compatible profile synchronization
-automatically. Upstream credentials remain launcher/gateway inputs and are
-never passed to Gradle or committed to the repository.
+After connection, BuildOpt now synchronizes compatible profile/evidence state
+automatically around `buildopt optimize` and revalidates every remote selection
+locally. Automatic invocation-local gateway and Gradle remote HTTP-cache
+configuration remain the next two-machine step. Upstream credentials remain
+launcher/gateway inputs and are never passed to Gradle or committed to the
+repository.
 
 ## Architecture
 

@@ -79,10 +79,13 @@ the JSON result. Plain HTTP, redirects, mismatched repository scope, malformed
 state and modified snapshots fail closed. An unavailable or incompatible
 state service retains native behavior.
 
-This connection currently owns typed portfolio/evidence/checkpoint sync only.
-The existing central Gradle-cache fixture still has explicit operator setup,
-and `buildopt optimize` does not select synchronized remote profiles until the
-next integration block.
+After this one-time connection, `buildopt optimize` automatically synchronizes
+typed portfolio/evidence/checkpoint state before and after the build. It may
+reuse a remote profile across source commits only after local ancestry,
+build-logic, graph, family, workflow, tool, output, precondition and evidence
+revalidation. `buildopt sync` remains available for explicit diagnostics. The
+existing central Gradle-cache fixture still has explicit operator setup; its
+automatic invocation wiring belongs to the two-machine block.
 
 ## Qualified POC profile
 

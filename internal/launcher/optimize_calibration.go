@@ -100,6 +100,23 @@ func validOptimizeCalibrationCheckpoint(state optimizeState) bool {
 		}
 		return state.Phase == "NATIVE_RETAINED" && state.LastOutcome == optimizeOutcomeNative &&
 			optimizeStringIn(calibration.Reason, optimizeCalibrationReasonNoValue, optimizeCalibrationReasonBreakEven)
+	case optimizeCalibrationRemoteQualified:
+		return optimizeStringIn(state.Phase, "ACTIVE", "STALE") &&
+			state.LastOutcome == "QUALIFIED_AND_USED" && !calibration.Performed && calibration.Reused &&
+			calibration.Reason == optimizeCalibrationReasonQualified &&
+			calibration.PairsRequested == optimizeRequiredCalibrationPairs &&
+			calibration.PairsMeasured == optimizeRequiredCalibrationPairs &&
+			calibration.ControlMeanMS > 0 && calibration.CandidateMeanMS > 0 &&
+			calibration.MeanSavedMS >= 500 && calibration.ReductionRatio >= 0.02 &&
+			len(calibration.Interval95SavedMS) == 2 && calibration.Interval95SavedMS[0] > 0 &&
+			calibration.PositivePairs > 0 && calibration.PositivePairs <= optimizeRequiredCalibrationPairs &&
+			calibration.ControlP95MS > 0 && calibration.CandidateP95MS > 0 &&
+			calibration.CalibrationCostMS == 0 && calibration.BreakEvenBuilds == 0 &&
+			calibration.MaximumBreakEvenBuilds >= 1 && calibration.MaximumBreakEvenBuilds <= 1000 &&
+			calibration.ValueGatePassed && calibration.Qualified && calibration.FallbackSuccessful &&
+			validOptimizeSHA(calibration.EvidenceSHA256) && validOptimizeSHA(calibration.DiscoverySHA256) &&
+			len(calibration.GeneratedFiles) == 1 && validOptimizeGeneratedPath(calibration.GeneratedFiles[0]) &&
+			calibration.TestOptimization == "OUT_OF_SCOPE"
 	default:
 		return false
 	}

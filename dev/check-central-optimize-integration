@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-central-optimize-integration-v1.json"
+
+if ! command -v jq >/dev/null 2>&1; then
+    printf 'required central optimize command is unavailable: jq\n' >&2
+    exit 1
+fi
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/central-optimize-integration/v1" and
+    .workItem == "POC-CENTRAL-OPTIMIZE-INTEGRATION-001" and
+    .customerFlow.oneTimeConnection == "buildopt connect HTTPS_ORIGIN --token-file PATH [--ca-file PATH]" and
+    .customerFlow.build == "buildopt optimize GRADLE_ARGS" and
+    .customerFlow.manualSyncRequired == false and
+    .customerFlow.manualProfileRequired == false and
+    .lookup.position == "BEFORE_GRADLE" and
+    .lookup.online == "AUTOMATIC_PRE_SYNC" and
+    .lookup.offline == "VERIFIED_SNAPSHOT_ONLY" and
+    .lookup.localExactReplayPrecedesRemoteSelection == true and
+    .lookup.portfolioReferencesExactEvidenceManifest == true and
+    .lookup.selectionDurationIncludesPreSync == true and
+    ([.crossCommitRevalidation[]] | all(. == true)) and
+    .publication.position == "AFTER_LOCAL_STATE_AND_VALUE_REPORTS" and
+    .publication.online == "AUTOMATIC_POST_SYNC" and
+    .publication.outage == "LOCAL_RESULT_REMAINS_AUTHORITATIVE" and
+    .publication.resultPublishedAfterPostSyncAttempt == true and
+    .result.selectionSource == "CENTRAL_PORTFOLIO" and
+    .result.calibrationStatus == "REMOTE_QUALIFIED" and
+    .result.discoveryStatus == "REMOTE_REVALIDATED" and
+    .result.remoteEvidenceRevisionRecorded == true and
+    .result.currentRevisionRecorded == true and
+    .result.portfolioAndEvidenceManifestDigestsRecorded == true and
+    .result.remoteEconomics == "UNAVAILABLE_WITHOUT_REPUBLISHED_CALIBRATION_COST" and
+    .fallback.mode == "OPTIMIZED_NATIVE" and
+    .fallback.serviceUnavailable == true and
+    .fallback.invalidOrCorruptSnapshot == true and
+    .fallback.nonAncestorEvidence == true and
+    .fallback.buildLogicDrift == true and
+    .fallback.unknownPath == true and
+    .fallback.familyDrift == true and
+    .fallback.toolOrOutputDrift == true and
+    .fallback.remoteFailureChangesGradleExit == false and
+    .evidence.realProfileRepository == "apache/kafka" and
+    .evidence.realProfileWorkflow == "shadowJar" and
+    .evidence.realProfilePairs == 8 and
+    .evidence.realProfileMeanSavedMs == 30106.5 and
+    .evidence.realProfileReductionRatio > 0.668 and
+    .evidence.transportExercisesAutomaticPublication == true and
+    .evidence.transportExercisesVerifiedOfflineLookup == true and
+    .evidence.structuralDriftExercise == "build.gradle.kts" and
+    .authority == {
+        proofOfConcept: true,
+        productionAuthorized: false,
+        newWallTimeClaim: false,
+        soakRequired: false,
+        designPartnerRequired: false,
+        testOptimization: "OUT_OF_SCOPE"
+    } and
+    (.deferred | index("TWO_MACHINE_INSTALLED_PATH")) != null and
+    (.deferred | index("CENTRALIZED_WALL_TIME_VALUE")) != null
+' "${buildopt_contract}" >/dev/null; then
+    printf 'central optimize integration contract is malformed\n' >&2
+    exit 1
+fi
+
+cd -- "${buildopt_repo_root}"
+exec "${buildopt_script_dir}/run" \
+    --toolchain go \
+    -- \
+    go test \
+        -race \
+        -count=1 \
+        -run '^TestCentralOptimize' \
+        ./internal/launcher

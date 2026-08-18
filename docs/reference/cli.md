@@ -46,6 +46,12 @@ graph. Unsupported, ambiguous, drifted or non-value state retains native
 Gradle. Generated private state and the latest result live under
 `.buildopt/optimize/v1`.
 
+If `buildopt connect` has created a private central connection, the command
+also synchronizes optimization state automatically before and after execution.
+Exact local replay remains first. A remote profile crosses source commits only
+after local structural and evidence revalidation; `--connection-dir` overrides
+the `.buildopt/central/v1` default. Service or binding drift retains native.
+
 Defaults are a 30-minute future calibration budget, eight balanced pairs and a
 maximum accepted break-even of 30 matching builds. `--json` reserves stdout
 for one result object and sends Gradle console output to stderr.

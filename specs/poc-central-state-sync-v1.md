@@ -72,11 +72,13 @@ typed and expire after 24 hours.
 
 ## POC boundary
 
-This block proves exact movement and recovery of optimization memory. It does
-not yet make `buildopt optimize` discover or select a remote profile, configure
-the remote Gradle cache automatically, prove two-machine installed behavior or
-claim a wall-time improvement. Those are later blocks. Production HA, RBAC,
-KMS, backups, soak testing and Test Optimization are outside this POC.
+This block proves exact movement and recovery of optimization memory. By
+itself it does not authorize a remote profile. The later
+[central optimize integration](./poc-central-optimize-integration-v1.md) now
+performs the required local revalidation and automatic pre/post sync. Automatic
+remote Gradle-cache configuration, two-machine installed behavior and a
+central wall-time claim remain later blocks. Production HA, RBAC, KMS, backups,
+soak testing and Test Optimization are outside this POC.
 
 ## Verification
 

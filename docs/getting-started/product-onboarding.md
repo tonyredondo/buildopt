@@ -175,10 +175,12 @@ Its [central HTTPS boundary](../../specs/poc-central-https-auth-v1.md) accepts
 trusted TLS 1.3 clients with separately scoped cache/state tokens. The Gradle
 gateway proof and [state-sync contract](../../specs/poc-central-state-sync-v1.md)
 now add exact cache reuse plus one-time `buildopt connect` and explicit
-`buildopt sync`. Remote profile selection is not yet integrated into the normal
-optimize invocation. Until that later POC block closes,
-`.buildopt/optimize/v1` and the CI-provider cache remain the only supported
-customer-facing optimize-state persistence.
+`buildopt sync`. The
+[central optimize integration](../../specs/poc-central-optimize-integration-v1.md)
+then makes state lookup/publication automatic around the normal optimize
+invocation and permits only locally revalidated source-commit reuse. The
+central Gradle cache still requires explicit operator wiring until the
+two-machine POC closes.
 
 ## Try the Build Impact accelerator
 
@@ -358,7 +360,7 @@ justifies operating it.
 | Build history | `buildopt-server` in the package | Server config and export directory on the server host | Service manager plus server API/dashboard | Start loopback server and inspect a redacted session |
 | Structural Build Impact | `buildopt` in the native package | No target-repository file for the automatic POC path; private state lives under `.buildopt/optimize` | `buildopt optimize <workflow>` discovers, calibrates and replays; the older explicit `buildopt impact` flow remains available for owner-reviewed experiments | Verify the generated value report, exact outputs, full fallback and payback before trusting a profile |
 | Patch Autopilot | Java patcher and owner workflow in this source repository; not yet a native-package CLI | Recipe registry, signing/trust material and repository policy | Owner-controlled candidate/validation workflow | Produce a draft bundle; applying remains explicit and reversible |
-| Shared Cache and state | `buildopt-server` | Private server state, trusted certificate/key and owner-issued scoped token; `buildopt connect` stores a private repository connection | Server plus invocation-local gateway; `buildopt sync` moves generated optimization memory, while automatic optimize integration remains next | Validate TLS/capabilities with `check-central-https-auth`, cache reuse with `check-central-gradle-cache` and state recovery with `check-central-state-sync` |
+| Shared Cache and state | `buildopt-server` | Private server state, trusted certificate/key and owner-issued scoped token; `buildopt connect` stores a private repository connection | A connected `buildopt optimize` automatically reads/publishes verified optimization memory; `buildopt sync` remains an explicit diagnostic. Central Gradle-cache wiring is still explicit | Validate TLS/capabilities with `check-central-https-auth`, cache reuse with `check-central-gradle-cache`, state recovery with `check-central-state-sync` and automatic profile reuse with `check-central-optimize-integration` |
 | Edge Cache | `buildopt-edge` | Private Edge config and authority on the Edge host | launchd, Windows SCM, or foreground process | `buildopt-edge validate`, then `serve` and `status` |
 | JVM agent | Native package | Enabled only by the relevant policy | Launcher/plugin path | Use the owning runtime workflow; no separate installation |
 

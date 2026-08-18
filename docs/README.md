@@ -87,6 +87,9 @@ before running the product.
 - [Central state synchronization](../specs/poc-central-state-sync-v1.md):
   one-time repository connection, exact generated-state publication,
   optimistic concurrency, interrupted retry and verified offline snapshots.
+- [Automatic central profile reuse](../specs/poc-central-optimize-integration-v1.md):
+  pre/post optimize synchronization, source-commit revalidation and native
+  fallback before Gradle on structural or service drift.
 
 ### Reference
 

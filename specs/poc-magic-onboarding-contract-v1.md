@@ -35,6 +35,13 @@ flag and returns:
 QUALIFIED_AND_USED / QUALIFIED_PROFILE_SELECTED
 ```
 
+When the repository has a private central connection, the same command also
+performs automatic pre/post state synchronization. Exact local replay remains
+first; a remote profile may cross source commits only after local ancestry,
+build-logic, graph ownership, family, tool, output, precondition and evidence
+revalidation. `--connection-dir` overrides the private
+`.buildopt/central/v1` default. Service or binding drift retains native Gradle.
+
 The command derives its exact Git change, workflow, Gradle-owned outputs and
 typed graph without hand-authored BuildOpt files, calibrates through eight
 balanced pairs and stores only candidates that clear correctness, value and

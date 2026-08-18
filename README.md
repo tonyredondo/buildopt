@@ -163,8 +163,14 @@ gateway and proves clean `FROM-CACHE` reuse plus outage fallback. Connection,
 owner commit orchestration is still explicit for cache publication. The
 [central state-sync proof](./specs/poc-central-state-sync-v1.md) adds one-time
 `buildopt connect` plus exact online/offline synchronization for generated
-portfolios, evidence and checkpoints. Remote state is not selected by
-`buildopt optimize` yet, so this does not change the default build path.
+portfolios, evidence and checkpoints. The
+[central optimize integration](./specs/poc-central-optimize-integration-v1.md)
+now makes that synchronization automatic around `buildopt optimize`: verified
+remote profiles may cross ordinary source commits only after local ancestry,
+build-logic, graph, family, output, tool, precondition and evidence
+revalidation. Drift or service loss retains optimized native Gradle before the
+target process starts. Automatic central Gradle-cache configuration and the
+two-machine installed-path value measurement remain next.
 
 For a non-invasive evaluation, the GitHub Action's `profile-proposal` mode
 turns a checked-in workflow/output declaration and exact pull-request diff into
