@@ -23,6 +23,9 @@ func TestStopOptimizeDiscoveryGradleDaemonUsesOriginalEnvironment(t *testing.T) 
 		t.Fatal(err)
 	}
 	gradleHome := filepath.Join(repository, "original-gradle-home")
+	if err := os.Mkdir(gradleHome, 0o700); err != nil {
+		t.Fatal(err)
+	}
 	t.Setenv("GRADLE_USER_HOME", gradleHome)
 	t.Setenv("BUILDOPT_STOP_RECORD", record)
 	t.Setenv("BUILDOPT_STOP_EXIT", "0")
@@ -35,7 +38,13 @@ func TestStopOptimizeDiscoveryGradleDaemonUsesOriginalEnvironment(t *testing.T) 
 		t.Fatal(err)
 	}
 	lines := strings.Split(strings.TrimSpace(string(raw)), "\n")
-	if len(lines) != 2 || lines[0] != gradleHome || strings.TrimSpace(lines[1]) != "--stop" {
+	homeMatches := len(lines) == 2 && strings.TrimSpace(lines[0]) == gradleHome
+	if len(lines) == 2 && runtime.GOOS == "windows" {
+		recorded, recordedErr := os.Stat(strings.TrimSpace(lines[0]))
+		expected, expectedErr := os.Stat(gradleHome)
+		homeMatches = recordedErr == nil && expectedErr == nil && os.SameFile(recorded, expected)
+	}
+	if len(lines) != 2 || !homeMatches || strings.TrimSpace(lines[1]) != "--stop" {
 		t.Fatalf("stop invocation = %q, want original Gradle home and --stop", string(raw))
 	}
 
