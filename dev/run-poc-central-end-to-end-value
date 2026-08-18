@@ -212,7 +212,7 @@ buildopt_subject() {
     local buildopt_repository_numeric_id=$3
     local buildopt_remote=$4
     local buildopt_base_revision=$5
-    local buildopt_target_revision=$6
+    local buildopt_changed_path=$6
     local buildopt_gradle_family=$7
     local buildopt_namespace=$8
     local buildopt_output_kind=$9
@@ -239,9 +239,24 @@ buildopt_subject() {
 
     git init -q "${buildopt_source}"
     git -C "${buildopt_source}" remote add origin "${buildopt_remote}"
-    git -C "${buildopt_source}" fetch -q --depth=1 origin \
-        "${buildopt_base_revision}" "${buildopt_target_revision}"
-    git -C "${buildopt_source}" checkout -q --detach "${buildopt_target_revision}"
+    git -C "${buildopt_source}" fetch -q --depth=1 origin "${buildopt_base_revision}"
+    git -C "${buildopt_source}" checkout -q --detach "${buildopt_base_revision}"
+    git -C "${buildopt_source}" config user.email buildopt@example.invalid
+    git -C "${buildopt_source}" config user.name 'BuildOpt POC fixture'
+    git -C "${buildopt_source}" config commit.gpgsign false
+    if [[ ! -f ${buildopt_source}/${buildopt_changed_path} || -L ${buildopt_source}/${buildopt_changed_path} ]]; then
+        printf '%s deterministic change target is not one regular file: %s\n' \
+            "${buildopt_repository_id}" "${buildopt_changed_path}" >&2
+        exit 1
+    fi
+    printf '\n// BuildOpt central value POC fixture: %s\n' "${buildopt_change_family}" \
+        >>"${buildopt_source}/${buildopt_changed_path}"
+    git -C "${buildopt_source}" add -- "${buildopt_changed_path}"
+    GIT_AUTHOR_DATE=2026-08-18T00:00:00Z GIT_COMMITTER_DATE=2026-08-18T00:00:00Z \
+        git -C "${buildopt_source}" commit -qm \
+        "POC ${buildopt_change_family} central value change"
+    local buildopt_target_revision
+    buildopt_target_revision=$(git -C "${buildopt_source}" rev-parse HEAD)
     buildopt_clone_at "${buildopt_source}" "${buildopt_producer}" \
         "${buildopt_remote}" "${buildopt_target_revision}"
     buildopt_clone_at "${buildopt_source}" "${buildopt_control}" \
@@ -501,7 +516,8 @@ buildopt_subject() {
     jq -n \
         --arg repositoryId "${buildopt_repository_id}" --arg gradleFamily "${buildopt_gradle_family}" \
         --arg gradleVersion "${buildopt_gradle_version}" --arg baseRevision "${buildopt_base_revision}" \
-        --arg targetRevision "${buildopt_target_revision}" --arg changeFamily "${buildopt_change_family}" \
+        --arg targetRevision "${buildopt_target_revision}" --arg changedPath "${buildopt_changed_path}" \
+        --arg changeFamily "${buildopt_change_family}" \
         --arg workflow "${buildopt_workflow[*]}" --arg outputPath "${buildopt_output_path}" \
         --arg namespace "${buildopt_namespace}" --argjson objectCount "${buildopt_object_count}" \
         --argjson objectBytes "${buildopt_object_bytes}" --argjson graph "${buildopt_graph}" \
@@ -509,6 +525,7 @@ buildopt_subject() {
           {
             repositoryId:$repositoryId,publicRepository:true,gradleFamily:$gradleFamily,
             gradleVersion:$gradleVersion,baseRevision:$baseRevision,targetRevision:$targetRevision,
+            targetOrigin:"DETERMINISTIC_LOCAL_FIXTURE",changedPath:$changedPath,
             changeFamily:$changeFamily,workflow:$workflow,requiredOutput:$outputPath,
             central:{namespace:$namespace,committedObjectCount:$objectCount,committedBytes:$objectBytes},
             graph:$graph,observations:$observations,result:$result
@@ -580,7 +597,7 @@ buildopt_subject() {
 buildopt_subject \
     ktor ktorio/ktor 6847064 https://github.com/ktorio/ktor.git \
     bc7de799f4eb997a63250f2f70492d85f5c92f50 \
-    640e0bf3ccae96b35437272d99dd3d9c0b309da3 \
+    ktor-server/ktor-server-plugins/ktor-server-webjars/jvm/src/io/ktor/server/webjars/Webjars.kt \
     KTOR_KOTLIN_MULTIPLATFORM \
     gradle-9.5.1/linux-amd64/jdk-21/ktor-jvm-jar \
     FILE ktor-server/ktor-server-plugins/ktor-server-webjars/build/libs/ktor-server-webjars-jvm-3.6.0-SNAPSHOT.jar \
@@ -591,7 +608,7 @@ buildopt_subject \
 buildopt_subject \
     beam apache/beam 5090421 https://github.com/apache/beam.git \
     dd896e2b2395937201b7721251d9f66936f9340c \
-    db6daeecbd9b9a50a0dfc0d9118f312716e34f94 \
+    examples/java/twitter/src/main/java/org/apache/beam/examples/twitterstreamgenerator/TwitterConfig.java \
     BEAM_JAVA_GROOVY \
     gradle-8.14.3/linux-amd64/jdk-21/beam-java-twitter \
     TREE examples/java/twitter/build/classes/java/main \
