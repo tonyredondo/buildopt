@@ -410,6 +410,13 @@ and central HTTPS object plane:
 ./dev/check-central-gradle-cache
 ```
 
+Validate one-time connection and exact online/offline synchronization of
+generated portfolios, evidence and checkpoints:
+
+```bash
+./dev/check-central-state-sync
+```
+
 The state-storage checker proves private independent `state.sqlite`
 migrations, restart persistence, repository/kind isolation, exact CAS replay,
 one-winner concurrent promotion, invisible partial publication,
@@ -420,6 +427,10 @@ adds a clean write-only producer, verified owner commit, independent read-only
 consumer with eight `FROM-CACHE` outcomes, exact output hashes, rejected
 read-only publication and successful native execution after server loss. It is
 a functional proof, not a cross-machine wall-time claim.
+The state-sync checker adds first/no-change sync, a clean consumer, exact
+interrupted retry, a verified concurrent winner, incompatible-state fallback
+and offline snapshot tamper rejection. Remote profile selection remains a
+later block.
 
 ## CI orchestration validation
 

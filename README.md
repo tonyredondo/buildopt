@@ -160,8 +160,11 @@ TLS 1.3 listener plus independently scoped, live-revocable cache/state tokens.
 The [central Gradle-cache proof](./specs/poc-central-gradle-cache-v1.md) now
 routes native Gradle GET/PUT traffic through the credential-containing local
 gateway and proves clean `FROM-CACHE` reuse plus outage fallback. Connection,
-owner commit orchestration and profile-state synchronization are still manual,
-so this does not change the default onboarding path yet.
+owner commit orchestration is still explicit for cache publication. The
+[central state-sync proof](./specs/poc-central-state-sync-v1.md) adds one-time
+`buildopt connect` plus exact online/offline synchronization for generated
+portfolios, evidence and checkpoints. Remote state is not selected by
+`buildopt optimize` yet, so this does not change the default build path.
 
 For a non-invasive evaluation, the GitHub Action's `profile-proposal` mode
 turns a checked-in workflow/output declaration and exact pull-request diff into

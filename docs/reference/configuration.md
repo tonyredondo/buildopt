@@ -53,6 +53,37 @@ executable task without supported public structural semantics returns
 matrix is specified in
 [`poc-generic-workflow-breadth-v1.md`](../../specs/poc-generic-workflow-breadth-v1.md).
 
+## Optional central state connection
+
+Use the CLI rather than environment variables for repository state sync:
+
+```bash
+buildopt connect https://buildopt.example.com \
+  --token-file ./buildopt.token \
+  --ca-file ./buildopt-ca.pem
+buildopt sync
+```
+
+By default, BuildOpt reads generated optimization memory from
+`.buildopt/optimize/v1` and stores the connection below
+`.buildopt/central/v1`. `--state-dir` and `--connection-dir` accept clean
+repository-relative overrides. The connection directory contains canonical
+`connection.json`, a private copied `token`, optional private `ca.pem` and
+verified snapshots. Source credential files and persisted credential files
+must be regular and mode `0600` on POSIX systems.
+
+The token must contain `STATE_READ`; `STATE_WRITE` is needed to publish local
+generated state. A read-only token can still retrieve remote state. The token
+is scoped to the derived repository identity and never enters Gradle, logs or
+the JSON result. Plain HTTP, redirects, mismatched repository scope, malformed
+state and modified snapshots fail closed. An unavailable or incompatible
+state service retains native behavior.
+
+This connection currently owns typed portfolio/evidence/checkpoint sync only.
+The existing central Gradle-cache fixture still has explicit operator setup,
+and `buildopt optimize` does not select synchronized remote profiles until the
+next integration block.
+
 ## Qualified POC profile
 
 `buildopt poc` reads `buildopt-qualified-profile.json` from the repository root
@@ -176,12 +207,13 @@ supports POSIX modes. The launcher verifies signature, canonical form,
 repository/component binding, expiry, revocation, and monotonic generations
 before exposing a local cache context.
 
-For the central HTTPS POC, `BUILDOPT_SHARED_CACHE_URL` is the trusted HTTPS
+For the central Gradle-cache POC, `BUILDOPT_SHARED_CACHE_URL` is the trusted HTTPS
 origin and `BUILDOPT_SHARED_CACHE_TOKEN_PATH` contains the scoped central
 token. The gateway adds the signed authority's cache namespace to every
 upstream request and its pending attempt ID to PUT requests. Neither value nor
-the bearer token enters the Gradle environment. This remains an advanced
-fixture path until `buildopt connect` owns the setup.
+the bearer token enters the Gradle environment. This remains an explicit
+cache-data-plane fixture; `buildopt connect` currently owns only typed state
+synchronization.
 
 ## Managed Gradle bootstrap cache
 

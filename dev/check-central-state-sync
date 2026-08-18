@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-central-state-sync-v1.json"
+
+if ! command -v jq >/dev/null 2>&1; then
+    printf 'required central state-sync command is unavailable: jq\n' >&2
+    exit 1
+fi
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/central-state-sync/v1" and
+    .workItem == "POC-CENTRAL-STATE-SYNC-001" and
+    .cli.connect == "buildopt connect HTTPS_ORIGIN --token-file PATH [--ca-file PATH]" and
+    .cli.sync == "buildopt sync" and
+    .cli.normalBuildUnchanged == true and
+    .connection.defaultDirectory == ".buildopt/central/v1" and
+    .connection.tokenVisibleToGradle == false and
+    .connection.transport == "HTTPS_TLS_1_3_MINIMUM" and
+    .connection.redirectsFollowed == false and
+    .state.sourceDirectory == ".buildopt/optimize/v1" and
+    .state.manualBuildOptFilesRequired == false and
+    .state.kinds == ["EVIDENCE", "PORTFOLIO", "CHECKPOINT"] and
+    .state.bundleSchema == "buildopt.poc/central-state-bundle/v1" and
+    .state.canonicalization == "RFC_8785_JCS" and
+    .state.fileDigestsVerified == true and
+    .state.publicationOrder == [
+        "IMMUTABLE_OBJECT",
+        "IMMUTABLE_MANIFEST",
+        "COMPARE_AND_SWAP_HEAD"
+    ] and
+    .state.portfolioReferencesEvidenceManifest == true and
+    .lifecycle.firstSync == "PUSHED" and
+    .lifecycle.noChangeSync == "NO_CHANGE" and
+    .lifecycle.cleanConsumer == "PULLED" and
+    .lifecycle.concurrentUpdate == "CONCURRENT_REMOTE_WON" and
+    .lifecycle.interruptedPublication == "EXACT_RETRY" and
+    .lifecycle.offline == "VERIFIED_SNAPSHOT_ONLY" and
+    .lifecycle.corruptSnapshot == "OFFLINE_NO_SNAPSHOT" and
+    .lifecycle.incompatibleOrOlderLocalState == "REMOTE_RETAINED_WITH_NATIVE_FALLBACK" and
+    .security.requiredReadCapability == "STATE_READ" and
+    .security.writeCapability == "STATE_WRITE" and
+    .security.credentialFilesPrivate == true and
+    .security.responseDigestsVerified == true and
+    .authority == {
+        proofOfConcept: true,
+        selectionRequiresLocalRevalidation: true,
+        productionAuthorized: false,
+        wallTimeClaim: false,
+        soakRequired: false,
+        designPartnerRequired: false,
+        testOptimization: "OUT_OF_SCOPE"
+    } and
+    (.deferred | index("REMOTE_PROFILE_SELECTION_INSIDE_BUILDOPT_OPTIMIZE")) != null and
+    (.deferred | index("PRODUCTION_HA_RBAC_KMS_BACKUPS")) != null
+' "${buildopt_contract}" >/dev/null; then
+    printf 'central state-sync contract is malformed\n' >&2
+    exit 1
+fi
+
+cd -- "${buildopt_repo_root}"
+exec "${buildopt_script_dir}/run" \
+    --toolchain go \
+    -- \
+    go test \
+        -race \
+        -count=1 \
+        -run '^TestCentralStateSync' \
+        ./internal/launcher

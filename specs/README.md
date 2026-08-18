@@ -13,6 +13,7 @@ the exact cross-component contract.
 | [`poc-central-state-storage-v1.md`](./poc-central-state-storage-v1.md) and [`poc-central-state-storage-v1.json`](./poc-central-state-storage-v1.json) | `POC-CENTRAL-STATE-STORAGE-001` |
 | [`poc-central-https-auth-v1.md`](./poc-central-https-auth-v1.md) and [`poc-central-https-auth-v1.json`](./poc-central-https-auth-v1.json) | `POC-CENTRAL-HTTPS-AUTH-001` |
 | [`poc-central-gradle-cache-v1.md`](./poc-central-gradle-cache-v1.md) and [`poc-central-gradle-cache-v1.json`](./poc-central-gradle-cache-v1.json) | `POC-CENTRAL-GRADLE-CACHE-001` |
+| [`poc-central-state-sync-v1.md`](./poc-central-state-sync-v1.md) and [`poc-central-state-sync-v1.json`](./poc-central-state-sync-v1.json) | `POC-CENTRAL-STATE-SYNC-001` |
 | [`poc-generic-workflow-breadth-v1.md`](./poc-generic-workflow-breadth-v1.md) and [`poc-generic-workflow-breadth-v1.json`](./poc-generic-workflow-breadth-v1.json) | `POC-GENERIC-WORKFLOW-BREADTH-001` |
 | [`poc-generic-owner-input-v1.md`](./poc-generic-owner-input-v1.md) and [`poc-generic-owner-input-v1.json`](./poc-generic-owner-input-v1.json) | `POC-GENERIC-OWNER-INPUT-001` |
 | [`poc-generic-profile-ci-replay-v1.md`](./poc-generic-profile-ci-replay-v1.md) and [`poc-generic-profile-ci-replay-v1.json`](./poc-generic-profile-ci-replay-v1.json) | `POC-GENERIC-PROFILE-CI-REPLAY-001` |

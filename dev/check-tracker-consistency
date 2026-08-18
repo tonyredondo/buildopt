@@ -66,7 +66,7 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`ONE-COMMAND END-TO-END POC VALUE QUALIFIED\`"
-    "**Current phase:** \`CENTRAL STATE SYNC NEXT\`"
+    "**Current phase:** \`CENTRAL OPTIMIZE INTEGRATION NEXT\`"
     "| 75 | \`POC-GENERIC-MEASUREMENT-001\` | Collect eight isolated alternating optimized-native-versus-BuildOpt pairs"
     "| \`E-288\` | 2026-08-09 | \`POC-GENERIC-MEASUREMENT-001\`"
     "| 77 | \`POC-APACHE-GROOVY-GENERALIZATION-001\` | Apply the generic measurement workflow to Apache Groovy"
@@ -150,6 +150,8 @@ buildopt_required_tracker_text=(
     "| \`E-364\` | 2026-08-17 | \`POC-CENTRAL-STORAGE-CONTRACT-001\`"
     "| \`E-365\` | 2026-08-17 | \`POC-CENTRAL-STATE-STORAGE-001\`"
     "| \`E-366\` | 2026-08-18 | \`POC-CENTRAL-HTTPS-AUTH-001\`"
+    "| 119 | \`POC-CENTRAL-STATE-SYNC-001\` | Add \`buildopt connect\` plus digest-compatible profile/evidence/checkpoint synchronization"
+    "| \`E-368\` | 2026-08-18 | \`POC-CENTRAL-STATE-SYNC-001\`"
     "| \`POC-VALUE-001\` | Reproduce the optimized native Gradle baseline"
     "| \`POC-VALUE-004\` | Benchmark the complete public onboarding path"
     "| \`POC-VALUE-G01\` | Combined BuildOpt path beats optimized native Gradle with identical outputs and zero extra failures | POC continue decision | \`DONE\`"

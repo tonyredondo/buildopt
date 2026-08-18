@@ -55,6 +55,26 @@ so an exact checkpoint can move between runners; every other binding still
 passes before reuse. No state grants production authority or enters Test
 Optimization scope.
 
+### Connect and synchronize optional central state
+
+```text
+buildopt connect https://HOST[:PORT] --token-file PATH [--ca-file PATH]
+buildopt sync
+```
+
+`connect` verifies a TLS 1.3 HTTPS endpoint, repository-scoped token and
+optional CA, stores the connection privately below `.buildopt/central/v1`, and
+performs the first synchronization. `sync` reuses that exact connection.
+Generated evidence, portfolio and checkpoint documents are transported as
+canonical digest-bound bundles; no hand-authored BuildOpt files are required.
+
+An unchanged second sync is a no-op. Interrupted publication resumes from
+immutable content, concurrent writers retain the verified winning generation,
+and an outage may use only a previously verified private snapshot. Missing,
+incompatible or corrupt state retains native behavior. This POC command does
+not yet make `buildopt optimize` select remote profiles and never exposes the
+central credential to Gradle.
+
 ### Run the qualified POC profile
 
 ```text

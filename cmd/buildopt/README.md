@@ -61,6 +61,24 @@ manual BuildOpt files and keeps `productionAuthorized=false`. Later ordered
 blocks add discovery, calibration and profile selection behind this unchanged
 surface.
 
+## Optional central state connection
+
+Generated optimization memory can be synchronized with the owner-operated POC
+service without changing the Gradle command:
+
+```bash
+buildopt connect https://buildopt.example.com \
+  --token-file ./buildopt.token \
+  --ca-file ./buildopt-ca.pem
+buildopt sync
+```
+
+The connection, copied token, optional CA and verified snapshots remain private
+below `.buildopt/central/v1`. The commands publish or retrieve only generated
+portfolios, evidence and checkpoints under exact digests and generations.
+Server loss or incompatible state retains native behavior. Automatic remote
+profile selection inside `buildopt optimize` is deliberately a later POC block.
+
 ## Explicit Build Impact POC candidate
 
 The installed launcher also exposes the owner-operated candidate path:

@@ -34,13 +34,17 @@ head. The [central HTTPS contract](../../specs/poc-central-https-auth-v1.md)
 adds an externally bindable TLS 1.3 listener, four independent capabilities,
 hash-only token persistence and live revocation.
 
-The Gradle data-plane proof is now complete. The invocation-local gateway adds
+The Gradle data-plane proof is complete. The invocation-local gateway adds
 the exact namespace and pending-attempt binding while retaining the upstream
 token, a clean producer publishes through the existing verified commit
 protocol, a separate read-only consumer obtains exact `FROM-CACHE` outputs and
-server outage becomes an ordinary rebuild. The next block is
-`POC-CENTRAL-STATE-SYNC-001`: add connection and typed state synchronization
-without hand-authored internal files.
+server outage becomes an ordinary rebuild. Connection and typed state
+synchronization are also complete: `buildopt connect` verifies and stores the
+repository-scoped HTTPS connection, while `buildopt sync` moves exact generated
+portfolios, evidence and checkpoints with idempotent publication, optimistic
+concurrency, interrupted retry and verified offline fallback. The next block is
+`POC-CENTRAL-OPTIMIZE-INTEGRATION-001`: consume that synchronized state inside
+the unchanged one-command optimization path.
 
 ## Target experience
 
@@ -57,8 +61,13 @@ buildopt-server serve --config /etc/buildopt/server.json
 Each workstation or runner connects once:
 
 ```bash
-buildopt connect https://buildopt.example.com --token-file ./buildopt.token
+buildopt connect https://buildopt.example.com \
+  --token-file ./buildopt.token \
+  --ca-file ./buildopt-ca.pem
 ```
+
+The command performs the first state synchronization. `buildopt sync` repeats
+it explicitly; unchanged state transfers no new generation.
 
 The normal customer command remains unchanged:
 

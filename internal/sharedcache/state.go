@@ -1211,6 +1211,18 @@ func decodeStateManifest(raw []byte) (StateManifest, []byte, string, error) {
 	return manifest, canonical, digestBytes(canonical), nil
 }
 
+// DecodeCentralStateManifest verifies one canonical manifest received by a
+// central-state client. The external protocol only emits JCS bytes, so a
+// semantically equivalent but non-canonical document is rejected instead of
+// acquiring a second identity in an offline snapshot.
+func DecodeCentralStateManifest(raw []byte) (StateManifest, string, error) {
+	manifest, canonical, digest, err := decodeStateManifest(raw)
+	if err != nil || !bytes.Equal(canonical, raw) {
+		return StateManifest{}, "", ErrStateInvalid
+	}
+	return manifest, digest, nil
+}
+
 func decodeStateHead(raw []byte) (StateHead, error) {
 	canonical, err := contractcrypto.CanonicalizeJCS(raw)
 	if err != nil || !bytes.Equal(canonical, raw) {
@@ -1229,6 +1241,16 @@ func decodeStateHead(raw []byte) (StateHead, error) {
 		return StateHead{}, ErrStateInvalid
 	}
 	return head, nil
+}
+
+// DecodeCentralStateHead verifies one canonical head received by a
+// central-state client and returns its content identity.
+func DecodeCentralStateHead(raw []byte) (StateHead, string, error) {
+	head, err := decodeStateHead(raw)
+	if err != nil {
+		return StateHead{}, "", err
+	}
+	return head, digestBytes(raw), nil
 }
 
 func decodeStrictStateJSON(raw []byte, target any) error {
@@ -1360,6 +1382,12 @@ func canonicalStateValue(value any) ([]byte, string, error) {
 		return nil, "", err
 	}
 	return canonical, digestBytes(canonical), nil
+}
+
+// CanonicalCentralStateValue renders one client-authored state document using
+// the same JCS identity function as durable server storage.
+func CanonicalCentralStateValue(value any) ([]byte, string, error) {
+	return canonicalStateValue(value)
 }
 
 func stateCASFingerprint(request StateCASRequest) (string, error) {

@@ -18,7 +18,7 @@ const (
 	exitCannotExecute = 126
 	exitNotFound      = 127
 	exitConfiguration = 78
-	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt optimize [options] [--] <gradle args...>\n       buildopt poc --changes-file PATH [options]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt profile input [options]\n       buildopt profile outputs [options]\n       buildopt profile propose [options]\n       buildopt profile analyze [options]\n       buildopt profile measure [options]\n       buildopt profile qualify [options]\n       buildopt profile evaluate [options]\n       buildopt profile aggregate [options]\n       buildopt profile discover [options]\n       buildopt doctor\n"
+	usage             = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt optimize [options] [--] <gradle args...>\n       buildopt connect https://HOST[:PORT] --token-file PATH [--ca-file PATH]\n       buildopt sync\n       buildopt poc --changes-file PATH [options]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt profile input [options]\n       buildopt profile outputs [options]\n       buildopt profile propose [options]\n       buildopt profile analyze [options]\n       buildopt profile measure [options]\n       buildopt profile qualify [options]\n       buildopt profile evaluate [options]\n       buildopt profile aggregate [options]\n       buildopt profile discover [options]\n       buildopt doctor\n"
 	bypassEnvironment = "BUILDOPT_BYPASS"
 )
 
@@ -66,6 +66,12 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 	}
 	if len(args) == 1 && args[0] == "doctor" {
 		return runDoctor(stdout, stderr)
+	}
+	if len(args) > 0 && args[0] == "connect" {
+		return runCentralConnect(args[1:], stdout, stderr)
+	}
+	if len(args) > 0 && args[0] == "sync" {
+		return runCentralSync(args[1:], stdout, stderr)
 	}
 	if len(args) > 0 && args[0] == "profile" {
 		return runProfileDiscovery(args[1:], stdout, stderr)

@@ -84,6 +84,9 @@ before running the product.
 - [Central HTTPS and scoped access](../specs/poc-central-https-auth-v1.md):
   TLS 1.3 listener, owner-issued capability tokens, live revocation and exact
   cache/state namespace enforcement before client forwarding is enabled.
+- [Central state synchronization](../specs/poc-central-state-sync-v1.md):
+  one-time repository connection, exact generated-state publication,
+  optimistic concurrency, interrupted retry and verified offline snapshots.
 
 ### Reference
 

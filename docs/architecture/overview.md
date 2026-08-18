@@ -189,8 +189,13 @@ restart. The [central HTTPS contract](../../specs/poc-central-https-auth-v1.md)
 adds a real external TLS listener and four independent owner-issued
 capabilities. Only token digests persist and revocation is checked on every
 request. Metadata, authorization and visibility do not cross planes. Remote
-portfolio selection will still require exact local revalidation; gateway
-forwarding and client sync are not yet implemented.
+Gradle-cache gateway forwarding and typed-state client synchronization are now
+implemented as separate POC proofs. `buildopt connect` persists one private
+repository-scoped connection and `buildopt sync` verifies canonical
+portfolio/evidence/checkpoint bundles, optimistic generation conflicts,
+interrupted retry and offline snapshots. Remote portfolio selection still
+requires exact local revalidation and is not yet integrated into
+`buildopt optimize`.
 
 Linux checks a local filesystem allowlist. macOS requires `MNT_LOCAL` and a
 same-device boundary. Windows requires one local volume and rejects reparse
