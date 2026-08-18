@@ -61,8 +61,9 @@ if ! jq -e '
     exit 1
 fi
 
+buildopt_gradle_user_home=${GRADLE_USER_HOME:-"${buildopt_repo_root}/.tools/gradle-user-home/local"}
 mapfile -t buildopt_gradle_candidates < <(
-    find "${buildopt_repo_root}/.tools/gradle-user-home/wrapper/dists/gradle-9.6.1-bin" \
+    find "${buildopt_gradle_user_home}/wrapper/dists/gradle-9.6.1-bin" \
         -type f \
         -path '*/gradle-9.6.1/bin/gradle' \
         -perm -u+x \
