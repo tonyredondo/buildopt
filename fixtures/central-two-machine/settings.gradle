@@ -1,0 +1,2 @@
+rootProject.name = 'buildopt-central-two-machine'
+include 'app', 'unrelated'

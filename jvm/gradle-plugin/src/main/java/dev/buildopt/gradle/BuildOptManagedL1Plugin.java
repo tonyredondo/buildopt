@@ -55,6 +55,8 @@ public final class BuildOptManagedL1Plugin implements Plugin<Settings> {
     static final String SHARED_READ_WRITE_MODE = "READ_WRITE";
     static final String AUTHORITY_CONTRACT =
             "buildopt-local-cache-authority/v1";
+    static final String CENTRAL_CONNECTION_CONTRACT =
+            "buildopt-central-cache-connection/v1";
     static final int RETENTION_DAYS = 7;
 
     private static final Pattern SCOPE_DIGEST = Pattern.compile("[0-9a-f]{64}");
@@ -175,7 +177,8 @@ public final class BuildOptManagedL1Plugin implements Plugin<Settings> {
                 || !AUTHENTICATED_DIGEST.matcher(authorityDigest).matches()
                 || !AUTHENTICATED_DIGEST.matcher(policyDigest).matches()
                 || !AUTHENTICATED_DIGEST.matcher(configurationDigest).matches()
-                || !authorityContract.equals(AUTHORITY_CONTRACT)) {
+                || (!authorityContract.equals(AUTHORITY_CONTRACT)
+                        && !authorityContract.equals(CENTRAL_CONNECTION_CONTRACT))) {
             return ManagedSharedDecision.invalid();
         }
         return ManagedSharedDecision.enabled(

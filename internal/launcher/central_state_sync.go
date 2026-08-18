@@ -51,16 +51,24 @@ var centralBundleSchemaPattern = regexp.MustCompile(
 )
 
 type centralConnection struct {
-	SchemaVersion         string `json:"schemaVersion"`
-	ServerURL             string `json:"serverUrl"`
-	RepositoryID          string `json:"repositoryId"`
-	RepositoryScopeSHA256 string `json:"repositoryScopeSha256"`
-	StateDirectory        string `json:"stateDirectory"`
-	TokenFile             string `json:"tokenFile"`
-	CAFile                string `json:"caFile,omitempty"`
-	ConnectedAt           string `json:"connectedAt"`
-	ProductionAuthorized  bool   `json:"productionAuthorized"`
-	TestOptimization      string `json:"testOptimization"`
+	SchemaVersion         string                  `json:"schemaVersion"`
+	ServerURL             string                  `json:"serverUrl"`
+	RepositoryID          string                  `json:"repositoryId"`
+	RepositoryScopeSHA256 string                  `json:"repositoryScopeSha256"`
+	StateDirectory        string                  `json:"stateDirectory"`
+	TokenFile             string                  `json:"tokenFile"`
+	CAFile                string                  `json:"caFile,omitempty"`
+	Cache                 *centralCacheConnection `json:"cache,omitempty"`
+	ConnectedAt           string                  `json:"connectedAt"`
+	ProductionAuthorized  bool                    `json:"productionAuthorized"`
+	TestOptimization      string                  `json:"testOptimization"`
+}
+
+type centralCacheConnection struct {
+	Namespace           string `json:"namespace"`
+	NamespaceGeneration int64  `json:"namespaceGeneration"`
+	ExpiresAt           string `json:"expiresAt"`
+	Mode                string `json:"mode"`
 }
 
 type centralIssuedTokenDocument struct {
@@ -250,6 +258,17 @@ func runCentralConnect(args []string, stdout, stderr io.Writer) int {
 		StateDirectory: stateRelative, TokenFile: centralTokenFile, CAFile: caFile,
 		ConnectedAt:          time.Now().UTC().Format(time.RFC3339Nano),
 		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
+	}
+	if tokenDocument != nil && centralHasCapability(
+		tokenDocument.Capabilities,
+		sharedcache.CentralCacheRead,
+	) {
+		connection.Cache = &centralCacheConnection{
+			Namespace:           tokenDocument.Namespace,
+			NamespaceGeneration: tokenDocument.NamespaceGeneration,
+			ExpiresAt:           tokenDocument.ExpiresAt,
+			Mode:                managedSharedReadOnlyMode,
+		}
 	}
 	if err := writeCanonicalPrivateJSON(filepath.Join(connectionPath, centralConnectionFile), connection); err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt: central connection unavailable: persist connection: %v\n", err)
@@ -1291,6 +1310,16 @@ func loadCentralConnection(repositoryRoot, connectionDirectory string) (centralC
 		(connection.CAFile != "" && connection.CAFile != centralCAFile) ||
 		!validOptimizeStateRelative(connection.StateDirectory) {
 		return centralConnection{}, errors.New("central connection document is invalid")
+	}
+	if connection.Cache != nil {
+		expiresAt, expiresErr := time.Parse(time.RFC3339Nano, connection.Cache.ExpiresAt)
+		if !validGatewayNamespace(connection.Cache.Namespace) ||
+			connection.Cache.NamespaceGeneration < 1 ||
+			connection.Cache.Mode != managedSharedReadOnlyMode ||
+			expiresErr != nil || expiresAt.Location() != time.UTC ||
+			expiresAt.Format(time.RFC3339Nano) != connection.Cache.ExpiresAt {
+			return centralConnection{}, errors.New("central connection cache binding is invalid")
+		}
 	}
 	serverURL, err := canonicalCentralServerURL(connection.ServerURL)
 	if err != nil || serverURL != connection.ServerURL {

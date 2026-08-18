@@ -68,6 +68,8 @@ type optimizeCentralResult struct {
 	EvidenceRevision        string `json:"evidenceRevision"`
 	RevalidatedRevision     string `json:"revalidatedRevision"`
 	SelectionSource         string `json:"selectionSource"`
+	GradleCacheMode         string `json:"gradleCacheMode"`
+	GradleCacheStatus       string `json:"gradleCacheStatus"`
 	PostSyncStatus          string `json:"postSyncStatus"`
 	PostSyncOnline          bool   `json:"postSyncOnline"`
 	PostSyncDurationMS      int64  `json:"postSyncDurationMs"`
@@ -77,11 +79,12 @@ type optimizeCentralResult struct {
 }
 
 type centralOptimizeIntegration struct {
-	invocation optimizeInvocation
-	connection centralConnection
-	client     *centralStateClient
-	startedAt  time.Time
-	result     optimizeCentralResult
+	invocation  optimizeInvocation
+	connection  centralConnection
+	client      *centralStateClient
+	diagnostics io.Writer
+	startedAt   time.Time
+	result      optimizeCentralResult
 
 	portfolio  *centralRemoteSnapshot
 	evidence   *centralRemoteSnapshot
@@ -107,14 +110,15 @@ func disconnectedOptimizeCentralResult() optimizeCentralResult {
 	return optimizeCentralResult{
 		SchemaVersion: optimizeCentralSchemaVersion,
 		Status:        optimizeCentralDisconnected, Reason: optimizeCentralReasonNoConnection,
-		SelectionSource: "NONE", PostSyncStatus: "NOT_ATTEMPTED",
+		SelectionSource: "NONE", GradleCacheMode: "DISCONNECTED",
+		GradleCacheStatus: "NOT_CONFIGURED", PostSyncStatus: "NOT_ATTEMPTED",
 		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}
 }
 
 func prepareCentralOptimizeIntegration(invocation optimizeInvocation, diagnostics io.Writer) *centralOptimizeIntegration {
 	integration := &centralOptimizeIntegration{
-		invocation: invocation, startedAt: time.Now(),
+		invocation: invocation, diagnostics: diagnostics, startedAt: time.Now(),
 		result: disconnectedOptimizeCentralResult(),
 	}
 	if invocation.connectionDirectory == "" {
@@ -130,6 +134,10 @@ func prepareCentralOptimizeIntegration(invocation optimizeInvocation, diagnostic
 	}
 	integration.connection = connection
 	integration.result.Connected = true
+	if connection.Cache != nil {
+		integration.result.GradleCacheMode = connection.Cache.Mode
+		integration.result.GradleCacheStatus = "AVAILABLE"
+	}
 	token, err := readPrivateCentralCredential(filepath.Join(invocation.connectionDirectory, connection.TokenFile), centralMaximumConfig)
 	if err != nil {
 		integration.retain(optimizeCentralReasonInvalid)
@@ -227,6 +235,13 @@ func (integration *centralOptimizeIntegration) prepareAutomaticReplay(run *optim
 			reason = failure.reason
 		}
 		integration.retain(reason)
+		if integration.diagnostics != nil {
+			_, _ = fmt.Fprintf(
+				integration.diagnostics,
+				"buildopt: central profile revalidation unavailable; retaining native Gradle: %v\n",
+				err,
+			)
+		}
 		selection = retainedOptimizeSelection("CENTRAL_PROFILE_REVALIDATION_FAILED", "CENTRAL_STATE")
 		selection.DurationNS = time.Since(integration.startedAt).Nanoseconds()
 		if selection.DurationNS < 1 {
@@ -295,16 +310,29 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 	portfolioFiles map[string][]byte,
 	evidenceFiles map[string][]byte,
 ) (*centralOptimizeReplay, *impactInvocation, optimizeSelectionResult, error) {
-	if entry.RepositoryID != invocation.discovery.RepositoryID ||
-		entry.WrapperSHA256 != invocation.wrapperSHA256 || entry.ExecutableSHA256 != invocation.executableSHA256 ||
-		!equalOptimizeStrings(entry.Entrypoints, invocation.discovery.Entrypoints) ||
-		!validMeasurementRevision(entry.TargetRevision) {
-		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("remote identity or tool binding drift")}
+	if entry.RepositoryID != invocation.discovery.RepositoryID {
+		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("remote repository identity drift")}
+	}
+	if entry.WrapperSHA256 != invocation.wrapperSHA256 {
+		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("remote Wrapper binding drift")}
+	}
+	if entry.ExecutableSHA256 != invocation.executableSHA256 {
+		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("remote executable binding drift")}
+	}
+	if !equalOptimizeStrings(entry.Entrypoints, invocation.discovery.Entrypoints) {
+		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("remote entrypoint binding drift")}
+	}
+	if !validMeasurementRevision(entry.TargetRevision) {
+		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("remote evidence revision is invalid")}
 	}
 	if _, err := gitOutput(invocation.repositoryRoot, "merge-base", "--is-ancestor", entry.TargetRevision, invocation.discovery.TargetRevision); err != nil {
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("remote evidence commit is not an ancestor")}
 	}
-	sinceEvidence, err := proposalGitChangedPaths(invocation.repositoryRoot, entry.TargetRevision, invocation.discovery.TargetRevision)
+	sinceEvidence, err := centralOptimizeChangedPathsSinceEvidence(
+		invocation.repositoryRoot,
+		entry.TargetRevision,
+		invocation.discovery.TargetRevision,
+	)
 	if err != nil {
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, err}
 	}
@@ -448,6 +476,13 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 		ProductionAuthorized:          false, TestOptimization: "OUT_OF_SCOPE",
 	}
 	return &centralOptimizeReplay{discovery: discovery, calibration: calibration, portfolio: portfolioResult}, &impact, selection, nil
+}
+
+func centralOptimizeChangedPathsSinceEvidence(repositoryRoot, evidenceRevision, currentRevision string) ([]string, error) {
+	if evidenceRevision == currentRevision {
+		return nil, nil
+	}
+	return proposalGitChangedPaths(repositoryRoot, evidenceRevision, currentRevision)
 }
 
 type centralOptimizePaths struct {

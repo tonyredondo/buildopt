@@ -4,6 +4,8 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/subtle"
+	"crypto/tls"
+	"crypto/x509"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -247,6 +249,29 @@ func newGatewayCacheClient() *http.Client {
 			return http.ErrUseLastResponse
 		},
 	}
+}
+
+func newGatewayCacheClientWithCA(ca []byte) (*http.Client, error) {
+	if len(ca) == 0 {
+		return newGatewayCacheClient(), nil
+	}
+	roots, err := x509.SystemCertPool()
+	if err != nil {
+		roots = x509.NewCertPool()
+	}
+	if !roots.AppendCertsFromPEM(ca) {
+		return nil, errors.New("Shared cache CA file contains no trusted certificate")
+	}
+	client := newGatewayCacheClient()
+	transport, ok := client.Transport.(*http.Transport)
+	if !ok {
+		return nil, errors.New("Shared cache transport is unavailable")
+	}
+	transport.TLSClientConfig = &tls.Config{
+		MinVersion: tls.VersionTLS13,
+		RootCAs:    roots,
+	}
+	return client, nil
 }
 
 func (gateway *localGateway) childEnvironment(
@@ -686,6 +711,7 @@ var reservedChildEnvironment = []string{
 	localTrustRootPathEnvironment,
 	localCredentialPathEnvironment,
 	sharedCacheTokenPathEnvironment,
+	sharedCacheCAPathEnvironment,
 	sharedCacheURLEnvironment,
 	managedSharedModeEnvironment,
 	managedAuthorityDigestEnvironment,

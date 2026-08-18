@@ -1,0 +1,375 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+if (($# != 1)); then
+    printf 'usage: %s OUTPUT_FILE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_container_file=${buildopt_repo_root}/containers/central-two-machine/Dockerfile
+buildopt_image="buildopt-central-two-machine:$PPID-$$"
+buildopt_network="buildopt-central-two-machine-$PPID-$$"
+buildopt_server_name="buildopt-central-server-$PPID-$$"
+buildopt_active_client=
+buildopt_root=
+buildopt_network_created=false
+buildopt_image_created=false
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ]]; then
+    printf 'central two-machine output must be a new absolute path\n' >&2
+    exit 64
+fi
+for buildopt_command in awk cat cp curl date docker find git grep id install jq openssl sed sha256sum sleep tar; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required central two-machine host command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)" ]]; then
+    printf 'central two-machine proof requires a clean revision-bound checkout\n' >&2
+    exit 1
+fi
+if ! docker info >/dev/null 2>&1; then
+    printf 'Docker daemon is unavailable\n' >&2
+    exit 1
+fi
+"${buildopt_script_dir}/check-central-two-machine" >/dev/null
+
+buildopt_cleanup() {
+    if [[ -n "${buildopt_active_client}" ]]; then
+        docker rm --force "${buildopt_active_client}" >/dev/null 2>&1 || true
+    fi
+    docker rm --force "${buildopt_server_name}" >/dev/null 2>&1 || true
+    if [[ "${buildopt_network_created}" == true ]]; then
+        docker network rm "${buildopt_network}" >/dev/null 2>&1 || true
+    fi
+    if [[ "${buildopt_image_created}" == true ]]; then
+        docker image rm "${buildopt_image}" >/dev/null 2>&1 || true
+    fi
+    if [[ -n "${buildopt_root}" &&
+        "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-central-two-machine."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-central-two-machine.XXXXXX")
+buildopt_inputs=${buildopt_root}/inputs
+buildopt_control=${buildopt_root}/control
+buildopt_state=${buildopt_root}/server-state
+buildopt_tls=${buildopt_root}/tls
+buildopt_product=${buildopt_root}/product
+buildopt_producer=${buildopt_root}/producer
+buildopt_consumer=${buildopt_root}/consumer
+mkdir -p -- \
+    "${buildopt_inputs}" "${buildopt_control}" "${buildopt_state}" \
+    "${buildopt_tls}" "${buildopt_product}" \
+    "${buildopt_producer}" "${buildopt_consumer}"
+
+mapfile -t buildopt_gradle_candidates < <(
+    find "${buildopt_repo_root}/.tools/gradle-user-home/wrapper/dists/gradle-9.6.1-bin" \
+        -type f -path '*/gradle-9.6.1/bin/gradle' -perm -u+x -print 2>/dev/null
+)
+if ((${#buildopt_gradle_candidates[@]} != 1)); then
+    printf 'expected one provisioned Gradle 9.6.1 executable, found %d\n' \
+        "${#buildopt_gradle_candidates[@]}" >&2
+    exit 1
+fi
+buildopt_gradle_root=$(cd -- "$(dirname -- "${buildopt_gradle_candidates[0]}")/.." && pwd)
+
+buildopt_release=${buildopt_root}/release
+mkdir -p -- "${buildopt_release}" "${buildopt_root}/package"
+buildopt_archive=$(
+    "${buildopt_repo_root}/packaging/linux/package.sh" \
+        --version 0.1.99-centralpoc --output "${buildopt_release}"
+)
+cp -- "${buildopt_archive}" "${buildopt_inputs}/buildopt.tar.gz"
+tar -xzf "${buildopt_archive}" -C "${buildopt_root}/package"
+mapfile -t buildopt_installers < <(
+    find "${buildopt_root}/package" -mindepth 2 -maxdepth 2 -type f -name install.sh -print
+)
+if ((${#buildopt_installers[@]} != 1)); then
+    printf 'expected one packaged BuildOpt installer, found %d\n' \
+        "${#buildopt_installers[@]}" >&2
+    exit 1
+fi
+"${buildopt_installers[0]}" --prefix "${buildopt_product}" >/dev/null
+
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    "${buildopt_script_dir}/run" --toolchain go -- \
+    go build -mod=readonly -buildvcs=false -trimpath \
+        -o "${buildopt_root}/central-two-machine-control" \
+        ./dev/central-two-machine-control
+
+buildopt_source_repository=${buildopt_root}/source-repository
+mkdir -p -- "${buildopt_source_repository}"
+cp -R -- "${buildopt_repo_root}/fixtures/central-two-machine/." \
+    "${buildopt_source_repository}/"
+find "${buildopt_source_repository}" -type d -name build -prune -exec rm -rf -- {} +
+find "${buildopt_source_repository}" -type d -name .gradle -prune -exec rm -rf -- {} +
+git -C "${buildopt_source_repository}" init -q -b main
+git -C "${buildopt_source_repository}" config user.email buildopt@example.invalid
+git -C "${buildopt_source_repository}" config user.name 'BuildOpt fixture'
+git -C "${buildopt_source_repository}" config commit.gpgsign false
+git -C "${buildopt_source_repository}" add .
+GIT_AUTHOR_DATE=2026-01-01T00:00:00Z \
+GIT_COMMITTER_DATE=2026-01-01T00:00:00Z \
+    git -C "${buildopt_source_repository}" commit -qm 'central base'
+buildopt_base_revision=$(git -C "${buildopt_source_repository}" rev-parse HEAD)
+sed -i 's/return "base";/return "target";/' \
+    "${buildopt_source_repository}/app/src/main/java/dev/buildopt/fixture/App.java"
+git -C "${buildopt_source_repository}" add app/src/main/java/dev/buildopt/fixture/App.java
+GIT_AUTHOR_DATE=2026-01-01T00:01:00Z \
+GIT_COMMITTER_DATE=2026-01-01T00:01:00Z \
+    git -C "${buildopt_source_repository}" commit -qm 'central source change'
+buildopt_target_revision=$(git -C "${buildopt_source_repository}" rev-parse HEAD)
+jq -n --arg before "${buildopt_base_revision}" '{before:$before}' \
+    >"${buildopt_inputs}/github-event.json"
+tar -C "${buildopt_source_repository}" -czf "${buildopt_inputs}/repository.tar.gz" .
+
+"${buildopt_root}/central-two-machine-control" prepare \
+    --state-dir "${buildopt_state}" \
+    --output-dir "${buildopt_control}" \
+    --repository-id buildopt/central-two-machine \
+    --source-revision "${buildopt_target_revision}" \
+    --namespace gradle-9.6.1/linux-amd64/jdk-21/central-two-machine \
+    >"${buildopt_control}/prepare.json"
+
+openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 1 \
+    -subj '/CN=BuildOpt central two-machine POC' \
+    -addext 'subjectAltName=DNS:central,IP:127.0.0.1' \
+    -keyout "${buildopt_tls}/server-key.pem" \
+    -out "${buildopt_tls}/ca.pem" >/dev/null 2>&1
+chmod 0600 "${buildopt_tls}/server-key.pem" "${buildopt_tls}/ca.pem"
+cp -- "${buildopt_tls}/ca.pem" "${buildopt_control}/ca.pem"
+
+docker build --pull=false --tag "${buildopt_image}" \
+    --file "${buildopt_container_file}" \
+    "$(dirname -- "${buildopt_container_file}")" >/dev/null
+buildopt_image_created=true
+buildopt_image_id=$(docker image inspect --format '{{.Id}}' "${buildopt_image}")
+docker network create "${buildopt_network}" >/dev/null
+buildopt_network_created=true
+
+buildopt_server_start() {
+    local buildopt_server_log=$1
+    docker run --detach \
+        --name "${buildopt_server_name}" \
+        --network "${buildopt_network}" \
+        --network-alias central \
+        --publish 127.0.0.1::8443 \
+        --user "$(id -u):$(id -g)" \
+        --read-only \
+        --tmpfs /tmp:rw,nosuid,nodev,noexec \
+        --volume "${buildopt_product}:/product:ro" \
+        --volume "${buildopt_state}:/state" \
+        --volume "${buildopt_tls}:/tls:ro" \
+        "${buildopt_image}" \
+        /product/bin/buildopt-server serve \
+            --listen 0.0.0.0:8443 \
+            --state-dir /state \
+            --tls-cert /tls/ca.pem \
+            --tls-key /tls/server-key.pem \
+            --central-auth >/dev/null
+
+    local buildopt_published buildopt_ready=false
+    buildopt_published=$(docker port "${buildopt_server_name}" 8443/tcp)
+    for _ in {1..100}; do
+        if ! docker inspect --format '{{.State.Running}}' "${buildopt_server_name}" 2>/dev/null |
+            grep -Fx true >/dev/null; then
+            break
+        fi
+        if curl --silent --show-error --fail \
+            --cacert "${buildopt_tls}/ca.pem" \
+            "https://${buildopt_published}/readyz" >/dev/null 2>&1; then
+            buildopt_ready=true
+            break
+        fi
+        sleep 0.1
+    done
+    docker logs "${buildopt_server_name}" >"${buildopt_server_log}" 2>&1 || true
+    if [[ "${buildopt_ready}" != true ]]; then
+        printf 'central HTTPS server did not become ready\n' >&2
+        cat "${buildopt_server_log}" >&2
+        exit 1
+    fi
+}
+
+buildopt_server_stop() {
+    local buildopt_server_log=$1
+    docker stop --time 10 "${buildopt_server_name}" >/dev/null
+    docker logs "${buildopt_server_name}" >"${buildopt_server_log}" 2>&1 || true
+    docker rm "${buildopt_server_name}" >/dev/null
+}
+
+buildopt_client_run() {
+    local buildopt_mode=$1
+    local buildopt_workspace=$2
+    local buildopt_log=$3
+    buildopt_active_client="buildopt-central-${buildopt_mode}-$PPID-$$"
+    local buildopt_args=(
+        run --rm
+        --name "${buildopt_active_client}"
+        --network "${buildopt_network}"
+        --cpus 4
+        --memory 8g
+        --user "$(id -u):$(id -g)"
+        --volume "${buildopt_workspace}:/workspace"
+        --volume "${buildopt_inputs}:/inputs:ro"
+        --volume "${buildopt_control}:/control:ro"
+        --volume "${buildopt_gradle_root}:/opt/gradle:ro"
+        --volume "${buildopt_repo_root}/dev/central-two-machine-client:/dev-client:ro"
+    )
+    if [[ "${buildopt_mode}" != producer ]]; then
+        buildopt_args+=(--volume "${buildopt_producer}/results:/producer-results:ro")
+    fi
+    if [[ "${buildopt_mode}" == outage ]]; then
+        buildopt_args=(
+            run --rm
+            --name "${buildopt_active_client}"
+            --network none
+            --cpus 4
+            --memory 8g
+            --user "$(id -u):$(id -g)"
+            --volume "${buildopt_workspace}:/workspace"
+            --volume "${buildopt_inputs}:/inputs:ro"
+            --volume "${buildopt_control}:/control:ro"
+            --volume "${buildopt_gradle_root}:/opt/gradle:ro"
+            --volume "${buildopt_repo_root}/dev/central-two-machine-client:/dev-client:ro"
+            --volume "${buildopt_producer}/results:/producer-results:ro"
+        )
+    fi
+    docker "${buildopt_args[@]}" "${buildopt_image}" \
+        /bin/bash /dev-client "${buildopt_mode}" 2>&1 | tee "${buildopt_log}"
+    buildopt_active_client=
+}
+
+buildopt_server_start "${buildopt_root}/server-first.log"
+buildopt_client_run producer "${buildopt_producer}" "${buildopt_root}/producer.log"
+buildopt_server_stop "${buildopt_root}/server-first.log"
+
+if ! "${buildopt_root}/central-two-machine-control" commit \
+    --state-dir "${buildopt_state}" \
+    --control-dir "${buildopt_control}" \
+    >"${buildopt_control}/commit.json"; then
+    printf 'producer cache diagnostics:\n' >&2
+    grep -E 'Build cache|build cache|Caching disabled|Could not store|remote cache|HTTP' \
+        "${buildopt_root}/producer.log" >&2 || true
+    docker logs "${buildopt_server_name}" >&2 || true
+    exit 1
+fi
+
+buildopt_server_start "${buildopt_root}/server-restarted.log"
+buildopt_client_run consumer "${buildopt_consumer}" "${buildopt_root}/consumer.log"
+buildopt_server_stop "${buildopt_root}/server-restarted.log"
+buildopt_client_run outage "${buildopt_consumer}" "${buildopt_root}/outage.log"
+
+buildopt_producer_token=$(jq -r '.token' "${buildopt_control}/producer-token.json")
+buildopt_consumer_token=$(jq -r '.token' "${buildopt_control}/consumer-token.json")
+for buildopt_secret in "${buildopt_producer_token}" "${buildopt_consumer_token}"; do
+    if grep -F -- "${buildopt_secret}" \
+        "${buildopt_root}/producer.log" \
+        "${buildopt_root}/consumer.log" \
+        "${buildopt_root}/outage.log" \
+        "${buildopt_root}/server-first.log" \
+        "${buildopt_root}/server-restarted.log" >/dev/null; then
+        printf 'central credential escaped into POC logs\n' >&2
+        exit 1
+    fi
+done
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_package_sha=$(sha256sum "${buildopt_inputs}/buildopt.tar.gz" | awk '{print $1}')
+buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+jq -n \
+    --arg capturedAt "${buildopt_captured_at}" \
+    --arg revision "${buildopt_revision}" \
+    --arg packageSha "${buildopt_package_sha}" \
+    --arg imageId "${buildopt_image_id}" \
+    --arg baseRevision "${buildopt_base_revision}" \
+    --arg targetRevision "${buildopt_target_revision}" \
+    --slurpfile producer "${buildopt_producer}/results/producer.json" \
+    --slurpfile producerOptimize "${buildopt_producer}/results/producer-optimize-result.json" \
+    --slurpfile commit "${buildopt_control}/commit.json" \
+    --slurpfile consumer "${buildopt_consumer}/results/consumer.json" \
+    --slurpfile consumerOptimize "${buildopt_consumer}/results/consumer-optimize-result.json" \
+    --slurpfile outage "${buildopt_consumer}/results/outage.json" \
+    --slurpfile outageOptimize "${buildopt_consumer}/results/outage-optimize-result.json" '
+        {
+            schemaVersion: "buildopt.poc/central-two-machine-result/v1",
+            workItem: "POC-CENTRAL-TWO-MACHINE-001",
+            capturedAt: $capturedAt,
+            buildoptRevision: $revision,
+            packageSha256: $packageSha,
+            source: {baseRevision:$baseRevision,targetRevision:$targetRevision},
+            runner: {
+                isolation:"DOCKER_CONTAINERS",
+                imageId:$imageId,
+                clientCpuLimit:4,
+                clientMemoryBytes:8589934592,
+                javaVersion:"21.0.11+10",
+                gradleVersion:"9.6.1"
+            },
+            topology: {
+                producerAndConsumerWorkspacesShared:false,
+                producerAndConsumerGradleHomesShared:false,
+                producerAndConsumerBuildOptCachesShared:false,
+                serverStatePersisted:true,
+                serverRestarted:true,
+                transport:"HTTPS_TLS_1_3_MINIMUM"
+            },
+            producer: {
+                profileQualified:$producerOptimize[0].calibration.qualified,
+                optimizeDurationMs:$producer[0].optimizeDurationMs,
+                cacheBuildDurationMs:$producer[0].cacheBuildDurationMs,
+                cacheObjectsCommitted:$commit[0].ObjectCount,
+                publication:$commit[0].Outcome
+            },
+            consumer: {
+                selectionSource:$consumerOptimize[0].selection.source,
+                cacheMode:$consumerOptimize[0].central.gradleCacheMode,
+                cacheStatus:$consumerOptimize[0].central.gradleCacheStatus,
+                durationMs:$consumer[0].durationMs,
+                fromCacheTasks:$consumer[0].fromCacheTasks
+            },
+            outage: {
+                serverOnline:false,
+                verifiedProfileSnapshot:$outageOptimize[0].central.snapshotsVerified,
+                cacheStatus:$outageOptimize[0].central.gradleCacheStatus,
+                durationMs:$outage[0].durationMs,
+                fromCacheTasks:$outage[0].fromCacheTasks
+            },
+            equivalence: {
+                requiredOutputSha256:$producer[0].requiredOutputSha256,
+                producerConsumerSHA256Equal:($producer[0].requiredOutputSha256 == $consumer[0].requiredOutputSha256),
+                producerOutageSHA256Equal:($producer[0].requiredOutputSha256 == $outage[0].requiredOutputSha256)
+            },
+            security: {
+                producerCapability:"READ_WRITE",
+                consumerCapability:"READ_ONLY",
+                centralCredentialVisibleToGradle:false,
+                credentialsFoundInLogs:false
+            },
+            measurement: {
+                durationsRecorded:true,
+                wallTimeClaim:false,
+                nextWorkItem:"POC-CENTRAL-END-TO-END-VALUE-001"
+            },
+            authority: {
+                proofOfConcept:true,
+                productionAuthorized:false,
+                soakRequired:false,
+                designPartnerRequired:false,
+                testOptimization:"OUT_OF_SCOPE"
+            }
+        }
+    ' >"${buildopt_root}/result.json"
+
+"${buildopt_script_dir}/check-central-two-machine" "${buildopt_root}/result.json"
+install -m 0600 "${buildopt_root}/result.json" "${buildopt_output}"
+printf 'Central two-machine POC evidence written: %s\n' "${buildopt_output}"

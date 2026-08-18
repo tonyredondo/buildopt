@@ -63,8 +63,19 @@ func TestPrepareGradleInvocation(t *testing.T) {
 	if explicit.managedL1 != nil {
 		t.Fatalf("explicit managed L1 was replaced: %+v", explicit.managedL1)
 	}
-	if slicesContain(explicit.childArgs, "--build-cache") {
-		t.Fatalf("explicit L1 received implicit build-cache flag: %q", explicit.childArgs)
+	if !slicesContain(explicit.childArgs, "--build-cache") {
+		t.Fatalf("explicit managed cache was not activated: %q", explicit.childArgs)
+	}
+	explicitDisabled, err := prepareGradleInvocation(
+		[]string{"--no-build-cache", "build"},
+		false,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if slicesContain(explicitDisabled.childArgs, "--build-cache") ||
+		!slicesContain(explicitDisabled.childArgs, "--no-build-cache") {
+		t.Fatalf("explicit managed cache opt-out = %q", explicitDisabled.childArgs)
 	}
 
 	clearGradleManagedL1Inputs(t)
@@ -420,6 +431,7 @@ func clearGradleManagedL1Inputs(t *testing.T) {
 		localTrustRootPathEnvironment,
 		localCredentialPathEnvironment,
 		sharedCacheTokenPathEnvironment,
+		sharedCacheCAPathEnvironment,
 		sharedCacheURLEnvironment,
 		gradleBootstrapConfigPathEnvironment,
 		managedL1StateRootEnvironment,

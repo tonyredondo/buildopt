@@ -370,6 +370,33 @@ func (storage *Storage) AttemptStatus(
 	return record.status, nil
 }
 
+// PendingAttemptObjects returns the exact, still-invisible object set owned by
+// one pending attempt. It is an owner control-plane view used to construct a
+// complete commit decision; data-plane clients never receive this inventory.
+func (storage *Storage) PendingAttemptObjects(
+	ctx context.Context,
+	attemptID string,
+) ([]CommitObject, error) {
+	if ctx == nil || !identifierPattern.MatchString(attemptID) {
+		return nil, errors.New("inspect Shared cache pending objects: invalid request")
+	}
+	finish, err := storage.beginOperation()
+	if err != nil {
+		return nil, err
+	}
+	defer finish()
+	storage.lifecycleMutex.RLock()
+	defer storage.lifecycleMutex.RUnlock()
+	record, err := storage.loadAttempt(ctx, storage.cache.database, attemptID)
+	if err != nil {
+		return nil, err
+	}
+	if record.status.State != AttemptPending {
+		return nil, ErrAttemptConflict
+	}
+	return storage.pendingObjects(ctx, storage.cache.database, record)
+}
+
 // PutPending streams one candidate to immutable storage and only then records
 // it beneath a still-pending attempt.
 func (storage *Storage) PutPending(

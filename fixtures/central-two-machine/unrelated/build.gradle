@@ -1,0 +1,18 @@
+def expensiveUnrelatedWork = tasks.register('expensiveUnrelatedWork') {
+    def marker = layout.buildDirectory.file('generated/expensive-unrelated.txt')
+    outputs.file(marker)
+    doLast {
+        Thread.sleep(2500)
+        def output = marker.get().asFile
+        output.parentFile.mkdirs()
+        output.text = 'deterministic unrelated work\n'
+    }
+}
+
+tasks.named('assemble') {
+    dependsOn expensiveUnrelatedWork
+}
+
+tasks.named('jar') {
+    archiveBaseName = 'central-unrelated'
+}

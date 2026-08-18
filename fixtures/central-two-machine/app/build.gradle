@@ -1,0 +1,3 @@
+tasks.named('jar') {
+    archiveBaseName = 'central-app'
+}

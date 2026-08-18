@@ -5,13 +5,16 @@ import (
 	"context"
 	"crypto/ed25519"
 	"crypto/sha256"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/hex"
+	"encoding/pem"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -70,6 +73,7 @@ func TestLauncherInstallsAuthenticatedCacheContext(t *testing.T) {
 	}
 	if actual.attemptID != document.Attempt.AttemptID ||
 		actual.cacheBinding == nil ||
+		actual.cacheClient != nil ||
 		actual.cacheBinding.authorityDigest == "" ||
 		!actual.cacheBinding.allowWrite ||
 		actual.managedL1Config.securityGeneration != 9 ||
@@ -105,6 +109,75 @@ func TestLauncherInstallsAuthenticatedCacheContext(t *testing.T) {
 			replayConfigured,
 			replayErr,
 		)
+	}
+}
+
+func TestLauncherAuthorityUsesExplicitSharedCacheCA(t *testing.T) {
+	var requestSeen atomic.Bool
+	server := httptest.NewUnstartedServer(http.HandlerFunc(func(
+		writer http.ResponseWriter,
+		request *http.Request,
+	) {
+		requestSeen.Store(request.Method == http.MethodPut &&
+			request.URL.Path == "/cache/central-ca-probe" &&
+			request.Header.Get("Authorization") != "" &&
+			request.Header.Get(gatewayAuthorityHeader) != "" &&
+			request.Header.Get(gatewayAttemptHeader) != "" &&
+			request.Header.Get(gatewayNamespaceHeader) == "stable")
+		writer.WriteHeader(http.StatusCreated)
+	}))
+	server.TLS = &tls.Config{MinVersion: tls.VersionTLS13}
+	server.StartTLS()
+	defer server.Close()
+
+	now := time.Now().UTC().Truncate(time.Millisecond)
+	environment, _ := writeLauncherAuthorityFixtureAt(t, server.URL, now)
+	root := filepath.Dir(environment[localCredentialPathEnvironment])
+	remoteToken := bytes.Repeat([]byte{0x6b}, localauthority.CredentialBytes)
+	remoteTokenPath := filepath.Join(root, "remote-token")
+	if err := os.WriteFile(
+		remoteTokenPath,
+		[]byte(base64.RawURLEncoding.EncodeToString(remoteToken)),
+		0o600,
+	); err != nil {
+		t.Fatal(err)
+	}
+	caPath := filepath.Join(root, "shared-cache-ca.pem")
+	ca := pem.EncodeToMemory(&pem.Block{
+		Type:  "CERTIFICATE",
+		Bytes: server.Certificate().Raw,
+	})
+	if err := os.WriteFile(caPath, ca, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	environment[sharedCacheTokenPathEnvironment] = remoteTokenPath
+	environment[sharedCacheCAPathEnvironment] = caPath
+
+	authority, configured, err := localAuthorityContextFromEnvironment(
+		context.Background(),
+		func(key string) string { return environment[key] },
+		now,
+	)
+	if err != nil || !configured || authority == nil || authority.cacheClient == nil {
+		t.Fatalf("load TLS authority = %+v/%t/%v", authority, configured, err)
+	}
+	gateway, err := startLocalGatewayWithCache(authority.cacheBinding)
+	if err != nil {
+		t.Fatal(err)
+	}
+	gateway.cacheClient.CloseIdleConnections()
+	gateway.cacheClient = authority.cacheClient
+	defer gateway.close()
+
+	status, _, _, err := requestLocalGateway(
+		gateway.endpoint,
+		gateway.username,
+		gateway.password,
+		http.MethodPut,
+		"/cache/central-ca-probe",
+	)
+	if err != nil || status != http.StatusCreated || !requestSeen.Load() {
+		t.Fatalf("TLS cache publication = %d/%t/%v", status, requestSeen.Load(), err)
 	}
 }
 

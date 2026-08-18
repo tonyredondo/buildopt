@@ -32,6 +32,7 @@ const (
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode int) {
 	var optimize *optimizeRun
 	var automaticOptimizeImpact *impactInvocation
+	centralGradleCacheRequested := false
 	childStdout := stdout
 	var impactTiming *impactTimingState
 	execute := func(
@@ -118,6 +119,8 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			if automaticOptimizeImpact == nil && centralIntegration != nil {
 				automaticOptimizeImpact = centralIntegration.prepareAutomaticReplay(optimize)
 			}
+			centralGradleCacheRequested = automaticOptimizeImpact != nil &&
+				centralIntegration.hasReadOnlyCentralCache()
 			if invocation.jsonOutput {
 				childStdout = stderr
 			}
@@ -244,6 +247,20 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			_, _ = fmt.Fprintf(stderr, "buildopt: Gradle setup unavailable: %v\n", err)
 			return exitConfiguration
 		}
+		if centralGradleCacheRequested {
+			if err := enableConnectedCentralCacheGradle(
+				&invocation,
+				optimize.invocation.repositoryRoot,
+			); err != nil {
+				centralGradleCacheRequested = false
+				optimize.central.result.GradleCacheStatus = "LOCAL_NATIVE_FALLBACK"
+				_, _ = fmt.Fprintf(
+					stderr,
+					"buildopt: central Gradle cache unavailable; retaining local/native cache: %v\n",
+					err,
+				)
+			}
+		}
 		if impactTiming != nil {
 			impactTiming.finishGradleSetup(gradleSetupStartedAt)
 		}
@@ -337,6 +354,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		authorityConfigured,
 		authorityErr,
 	)
+	if centralGradleCacheRequested {
+		localCacheFastPath = false
+	}
 	if gradleManagedL1 != nil {
 		if localCacheFastPath {
 			gradleEnvironment[gradleProjectPluginModeEnvironment] = gradleProjectPluginModeCacheOnly
@@ -356,6 +376,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		}
 	}
 	if handshakeErr != nil {
+		if centralGradleCacheRequested && optimize != nil {
+			optimize.central.result.GradleCacheStatus = "LOCAL_NATIVE_FALLBACK"
+		}
 		_, _ = fmt.Fprintf(
 			stderr,
 			"buildopt: Gradle plugin handshake unavailable: %v\n",
@@ -363,17 +386,49 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		)
 	}
 	var gateway *localGateway
+	var centralCache *centralGradleCacheContext
 	if handshake != nil {
 		var gatewayErr error
 		var cacheBinding *gatewayCacheBinding
 		if authority != nil {
 			cacheBinding = authority.cacheBinding
+		} else if centralGradleCacheRequested && optimize != nil {
+			centralCache, gatewayErr = optimize.central.centralGradleCacheContext(
+				handshake.attemptID,
+				startedAt,
+			)
+			if gatewayErr != nil {
+				optimize.central.result.GradleCacheStatus = "LOCAL_NATIVE_FALLBACK"
+				_, _ = fmt.Fprintf(
+					stderr,
+					"buildopt: central Gradle cache unavailable; retaining local/native cache: %v\n",
+					gatewayErr,
+				)
+				gatewayErr = nil
+			} else if centralCache != nil {
+				cacheBinding = centralCache.binding
+				optimize.central.result.GradleCacheStatus = "GATEWAY_ACTIVE"
+			}
 		}
 		gateway, gatewayErr = startInvocationGatewayWithCache(
 			handshake.attemptID,
 			cacheBinding,
 		)
+		if gatewayErr == nil && gateway != nil {
+			switch {
+			case authority != nil && authority.cacheClient != nil:
+				gateway.cacheClient.CloseIdleConnections()
+				gateway.cacheClient = authority.cacheClient
+			case centralCache != nil:
+				gateway.cacheClient.CloseIdleConnections()
+				gateway.cacheClient = centralCache.cacheClient
+			}
+		}
 		if gatewayErr != nil {
+			if centralGradleCacheRequested && optimize != nil {
+				optimize.central.result.GradleCacheStatus = "LOCAL_NATIVE_FALLBACK"
+				centralCache = nil
+			}
 			_, _ = fmt.Fprintf(
 				stderr,
 				"buildopt: local gateway unavailable: %v\n",
@@ -420,6 +475,11 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		}
 		if managedSharedAuthorityEnabled(authority, gateway) {
 			for key, value := range authority.childEnvironment {
+				childEnvironment[key] = value
+			}
+		}
+		if centralCache != nil && gateway != nil && !gateway.cacheSuppressed {
+			for key, value := range centralCache.childEnvironment {
 				childEnvironment[key] = value
 			}
 		}

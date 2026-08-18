@@ -132,7 +132,7 @@ func prepareGradleInvocationWithEnvironment(
 			if !buildCacheConfigured {
 				childArgs = append(childArgs, "--build-cache")
 			}
-		} else if !managedConfigured && !buildCacheConfigured {
+		} else if !buildCacheConfigured {
 			childArgs = append(childArgs, "--build-cache")
 		}
 		childArgs = append(childArgs, args...)

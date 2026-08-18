@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -16,6 +17,7 @@ const (
 	localTrustRootPathEnvironment   = "BUILDOPT_LOCAL_TRUST_ROOT_PATH"
 	localCredentialPathEnvironment  = "BUILDOPT_LOCAL_CACHE_CREDENTIAL_PATH"
 	sharedCacheTokenPathEnvironment = "BUILDOPT_SHARED_CACHE_TOKEN_PATH"
+	sharedCacheCAPathEnvironment    = "BUILDOPT_SHARED_CACHE_CA_PATH"
 	sharedCacheURLEnvironment       = "BUILDOPT_SHARED_CACHE_URL"
 
 	managedSharedModeEnvironment          = "BUILDOPT_MANAGED_SHARED_MODE"
@@ -39,6 +41,7 @@ type localAuthorityContext struct {
 	configurationCacheContract string
 	dependencyCacheAuthorized  bool
 	cacheBinding               *gatewayCacheBinding
+	cacheClient                *http.Client
 	managedL1Config            managedL1Config
 	childEnvironment           map[string]string
 }
@@ -52,6 +55,7 @@ func localAuthorityContextFromEnvironment(
 	trustRootPath := getenv(localTrustRootPathEnvironment)
 	credentialPath := getenv(localCredentialPathEnvironment)
 	remoteTokenPath := getenv(sharedCacheTokenPathEnvironment)
+	sharedCacheCAPath := getenv(sharedCacheCAPathEnvironment)
 	sharedCacheURL := getenv(sharedCacheURLEnvironment)
 	primary := []string{
 		authorityPath,
@@ -193,6 +197,17 @@ func localAuthorityContextFromEnvironment(
 	if err != nil {
 		return nil, true, err
 	}
+	var cacheClient *http.Client
+	if sharedCacheCAPath != "" {
+		ca, readErr := readCentralCAFile(sharedCacheCAPath)
+		if readErr != nil {
+			return nil, true, fmt.Errorf("read Shared cache CA: %w", readErr)
+		}
+		cacheClient, err = newGatewayCacheClientWithCA(ca)
+		if err != nil {
+			return nil, true, err
+		}
+	}
 
 	mode := managedSharedReadOnlyMode
 	if document.Attempt.AllowWrite {
@@ -222,6 +237,7 @@ func localAuthorityContextFromEnvironment(
 		configurationCacheContract: document.Policy.ConfigurationCache.ContractVersion,
 		dependencyCacheAuthorized:  verified.AllowsAction("DEPENDENCY_CACHE"),
 		cacheBinding:               cacheBinding,
+		cacheClient:                cacheClient,
 		managedL1Config:            l1Config,
 		childEnvironment: map[string]string{
 			managedSharedModeEnvironment:      mode,

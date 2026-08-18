@@ -161,6 +161,18 @@ func TestCentralOptimizeReusesQualifiedProfileAcrossSourceCommitAndRejectsStruct
 	}
 }
 
+func TestCentralOptimizeChangedPathsSinceEvidenceAllowsIdenticalRevision(t *testing.T) {
+	const revision = "929868cbdee1fbdc9cb60701e2ca17e8a66cd2ae"
+	paths, err := centralOptimizeChangedPathsSinceEvidence(
+		filepath.Join(t.TempDir(), "not-a-repository"),
+		revision,
+		revision,
+	)
+	if err != nil || len(paths) != 0 {
+		t.Fatalf("identical evidence revision = %v, %v; want no drift", paths, err)
+	}
+}
+
 func TestCentralOptimizeAutomaticallyPublishesAndUsesVerifiedOfflineSnapshots(t *testing.T) {
 	const repositoryID = "example/central-optimize"
 	now := time.Now().UTC().Truncate(time.Second)

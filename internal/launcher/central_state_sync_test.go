@@ -38,8 +38,11 @@ func TestCentralStateSyncConnectLifecycleConcurrencyAndOfflineSnapshot(t *testin
 				TrustDomain: "owner-poc", Namespace: "gradle-9.6.1/linux-amd64/jdk-21/project",
 				NamespaceGeneration: 1,
 			},
-			Capabilities: []sharedcache.CentralCapability{sharedcache.CentralStateRead},
-			ExpiresAt:    now.Add(time.Hour),
+			Capabilities: []sharedcache.CentralCapability{
+				sharedcache.CentralCacheRead,
+				sharedcache.CentralStateRead,
+			},
+			ExpiresAt: now.Add(time.Hour),
 		},
 		now,
 	)
@@ -57,7 +60,9 @@ func TestCentralStateSyncConnectLifecycleConcurrencyAndOfflineSnapshot(t *testin
 				NamespaceGeneration: 1,
 			},
 			Capabilities: []sharedcache.CentralCapability{
-				sharedcache.CentralStateRead, sharedcache.CentralStateWrite,
+				sharedcache.CentralCacheRead,
+				sharedcache.CentralStateRead,
+				sharedcache.CentralStateWrite,
 			},
 			ExpiresAt: now.Add(time.Hour),
 		},
@@ -104,6 +109,16 @@ func TestCentralStateSyncConnectLifecycleConcurrencyAndOfflineSnapshot(t *testin
 	if code != 0 || producerResult.LocalStateStatus != "VALID" ||
 		!allCentralKindStatuses(producerResult, "PUSHED") {
 		t.Fatalf("first producer sync = code %d, %+v", code, producerResult)
+	}
+	producerConnection, err := loadCentralConnection(
+		producer,
+		filepath.Join(producer, filepath.FromSlash(centralConnectionDir)),
+	)
+	if err != nil || producerConnection.Cache == nil ||
+		producerConnection.Cache.Mode != managedSharedReadOnlyMode ||
+		producerConnection.Cache.Namespace != "gradle-9.6.1/linux-amd64/jdk-21/project" ||
+		producerConnection.Cache.NamespaceGeneration != 1 {
+		t.Fatalf("connected central cache metadata = %+v/%v", producerConnection.Cache, err)
 	}
 	producerResult, code = runCentralSyncCommand(t, producer, []string{"sync"})
 	if code != 0 || !allCentralKindStatuses(producerResult, "NO_CHANGE") {

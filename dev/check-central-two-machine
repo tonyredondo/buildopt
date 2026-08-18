@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract=${buildopt_repo_root}/specs/poc-central-two-machine-v1.json
+
+if ! command -v jq >/dev/null 2>&1; then
+    printf 'required central two-machine command is unavailable: jq\n' >&2
+    exit 1
+fi
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/central-two-machine/v1" and
+    .workItem == "POC-CENTRAL-TWO-MACHINE-001" and
+    .topology == {
+        isolation: "DOCKER_CONTAINERS",
+        producerAndConsumerWorkspacesShared: false,
+        producerAndConsumerGradleHomesShared: false,
+        producerAndConsumerBuildOptCachesShared: false,
+        persistentComponent: "OWNER_OPERATED_HTTPS_SERVICE",
+        transport: "HTTPS_TLS_1_3_MINIMUM"
+    } and
+    .producer.role == "TRUSTED_CI_WRITER" and
+    .producer.profileDiscovery == "BUILDOPT_OPTIMIZE_AUTOMATIC" and
+    .producer.stateCapabilities == ["STATE_READ", "STATE_WRITE"] and
+    .producer.cacheCapabilities == ["CACHE_READ", "CACHE_WRITE"] and
+    .producer.cacheVisibilityBeforeCommit == "PENDING_ONLY" and
+    .producer.publication == "SIGNED_OWNER_COMMIT" and
+    .consumer.role == "CLEAN_READ_ONLY_MACHINE" and
+    .consumer.configuration == "BUILDOPT_CONNECT_ONCE" and
+    .consumer.profileSelection == "CENTRAL_PORTFOLIO" and
+    .consumer.cacheMode == "READ_ONLY" and
+    .consumer.credentialVisibleToGradle == false and
+    .consumer.minimumFromCacheTasks == 1 and
+    .restart == {
+        required: true,
+        stateDirectoryReused: true,
+        consumerRunsAfterRestart: true
+    } and
+    .outage.verifiedProfileSnapshotReusable == true and
+    .outage.centralCacheFailure == "NORMALIZED_TO_CACHE_MISS" and
+    .outage.expectedFromCacheTasks == 0 and
+    .outage.buildResult == "SUCCESSFUL_NATIVE_EXECUTION" and
+    .equivalence.requiredOutput == "app/build/libs/central-app-1.0.0.jar" and
+    .equivalence.producerConsumerSHA256Equal == true and
+    .equivalence.producerOutageSHA256Equal == true and
+    .measurement.durationsRecorded == true and
+    .measurement.wallTimeClaim == false and
+    .measurement.fairNativeComparisonWorkItem == "POC-CENTRAL-END-TO-END-VALUE-001" and
+    .authority == {
+        proofOfConcept: true,
+        productionAuthorized: false,
+        soakRequired: false,
+        designPartnerRequired: false,
+        testOptimization: "OUT_OF_SCOPE"
+    } and
+    (.deferred | index("FAIR_EQUAL_OPPORTUNITY_WALL_TIME_COMPARISON")) != null and
+    (.deferred | index("PRODUCTION_HA_RBAC_KMS_BACKUPS")) != null
+' "${buildopt_contract}" >/dev/null; then
+    printf 'central two-machine contract is malformed\n' >&2
+    exit 1
+fi
+
+if (($# == 0)); then
+    printf 'Central two-machine POC contract OK\n'
+    exit 0
+fi
+
+buildopt_result=$1
+if [[ ! -f "${buildopt_result}" ]]; then
+    printf 'central two-machine result is unavailable: %s\n' "${buildopt_result}" >&2
+    exit 1
+fi
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/central-two-machine-result/v1" and
+    .workItem == "POC-CENTRAL-TWO-MACHINE-001" and
+    (.capturedAt | fromdateiso8601) > 0 and
+    (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+    (.packageSha256 | test("^[0-9a-f]{64}$")) and
+    .runner.isolation == "DOCKER_CONTAINERS" and
+    .runner.clientCpuLimit == 4 and
+    .runner.clientMemoryBytes == 8589934592 and
+    .topology.producerAndConsumerWorkspacesShared == false and
+    .topology.producerAndConsumerGradleHomesShared == false and
+    .topology.producerAndConsumerBuildOptCachesShared == false and
+    .topology.serverStatePersisted == true and
+    .topology.serverRestarted == true and
+    .topology.transport == "HTTPS_TLS_1_3_MINIMUM" and
+    .producer.profileQualified == true and
+    .producer.cacheObjectsCommitted >= 1 and
+    .consumer.selectionSource == "CENTRAL_PORTFOLIO" and
+    .consumer.cacheMode == "READ_ONLY" and
+    .consumer.cacheStatus == "GATEWAY_ACTIVE" and
+    .consumer.fromCacheTasks >= 1 and
+    .outage.serverOnline == false and
+    .outage.verifiedProfileSnapshot == true and
+    .outage.fromCacheTasks == 0 and
+    .equivalence.producerConsumerSHA256Equal == true and
+    .equivalence.producerOutageSHA256Equal == true and
+    (.equivalence.requiredOutputSha256 | test("^[0-9a-f]{64}$")) and
+    .security.centralCredentialVisibleToGradle == false and
+    .security.credentialsFoundInLogs == false and
+    .measurement.wallTimeClaim == false and
+    .authority.productionAuthorized == false and
+    .authority.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_result}" >/dev/null; then
+    printf 'central two-machine result is malformed or failed its acceptance criteria\n' >&2
+    exit 1
+fi
+
+printf 'Central two-machine POC result OK: read-only reuse, restart, outage and exact output\n'

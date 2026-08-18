@@ -1,0 +1,284 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s producer|consumer|outage\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_mode=$1
+case "${buildopt_mode}" in
+    producer | consumer | outage) ;;
+    *) printf 'unsupported central two-machine mode: %s\n' "${buildopt_mode}" >&2; exit 64 ;;
+esac
+
+buildopt_workspace=/workspace
+buildopt_repository=${buildopt_workspace}/repository
+buildopt_results=${buildopt_workspace}/results
+buildopt_install=${buildopt_workspace}/install
+buildopt_package=/inputs/buildopt.tar.gz
+buildopt_source=/inputs/repository.tar.gz
+buildopt_server_url=https://central:8443
+buildopt_ca=/control/ca.pem
+
+for buildopt_command in awk cp date find git grep jq sha256sum tail tar tee; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required central two-machine client command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+for buildopt_path in "${buildopt_package}" "${buildopt_source}" "${buildopt_ca}"; do
+    if [[ ! -f "${buildopt_path}" ]]; then
+        printf 'required central two-machine input is unavailable: %s\n' \
+            "${buildopt_path}" >&2
+        exit 1
+    fi
+done
+
+mkdir -p -- "${buildopt_workspace}" "${buildopt_results}"
+if [[ "${buildopt_mode}" != outage ]]; then
+    if [[ -e "${buildopt_repository}" || -e "${buildopt_install}" ]]; then
+        printf 'central two-machine workspace is not clean\n' >&2
+        exit 1
+    fi
+    mkdir -p -- "${buildopt_repository}" "${buildopt_install}"
+    tar -xzf "${buildopt_source}" -C "${buildopt_repository}"
+    buildopt_package_root=${buildopt_workspace}/package
+    mkdir -p -- "${buildopt_package_root}"
+    tar -xzf "${buildopt_package}" -C "${buildopt_package_root}"
+    mapfile -t buildopt_installers < <(
+        find "${buildopt_package_root}" -mindepth 2 -maxdepth 2 -type f -name install.sh -print
+    )
+    if ((${#buildopt_installers[@]} != 1)); then
+        printf 'expected one BuildOpt package installer, found %d\n' \
+            "${#buildopt_installers[@]}" >&2
+        exit 1
+    fi
+    "${buildopt_installers[0]}" --prefix "${buildopt_install}"
+fi
+
+buildopt_binary=${buildopt_install}/bin/buildopt
+if [[ ! -x "${buildopt_binary}" ]]; then
+    printf 'installed BuildOpt binary is unavailable\n' >&2
+    exit 1
+fi
+
+export HOME=${buildopt_workspace}/home
+export XDG_CACHE_HOME=${buildopt_workspace}/cache
+export GRADLE_USER_HOME=${buildopt_workspace}/gradle-home
+export GITHUB_ACTIONS=true
+export GITHUB_REPOSITORY=buildopt/central-two-machine
+export GITHUB_REPOSITORY_ID=900000001
+export GITHUB_EVENT_PATH=/inputs/github-event.json
+export GITHUB_SHA
+GITHUB_SHA=$(git -C "${buildopt_repository}" rev-parse HEAD)
+export CI=true
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+export TZ=UTC
+mkdir -p -- "${HOME}" "${XDG_CACHE_HOME}" "${GRADLE_USER_HOME}"
+
+buildopt_output_digest() {
+    mapfile -t buildopt_outputs < <(
+        find "${buildopt_repository}/app/build/libs" -maxdepth 1 -type f -name 'central-app-*.jar' -print 2>/dev/null
+    )
+    if ((${#buildopt_outputs[@]} != 1)); then
+        printf 'expected one required app JAR, found %d\n' "${#buildopt_outputs[@]}" >&2
+        return 1
+    fi
+    sha256sum "${buildopt_outputs[0]}" | awk '{print $1}'
+}
+
+buildopt_run_optimize() {
+    local buildopt_log=$1
+    local buildopt_started buildopt_completed
+    buildopt_started=$(date +%s%N)
+    (
+        cd -- "${buildopt_repository}"
+        "${buildopt_binary}" optimize \
+            --calibration-budget 10m \
+            --calibration-pairs 8 \
+            --max-break-even-builds 100 \
+            assemble --no-daemon --no-configuration-cache --console=plain
+    ) 2>&1 | tee "${buildopt_log}"
+    buildopt_completed=$(date +%s%N)
+    printf '%s\n' "$(((buildopt_completed - buildopt_started) / 1000000))"
+}
+
+buildopt_assert_no_credentials() {
+    local buildopt_log=$1
+    shift
+    local buildopt_secret
+    for buildopt_secret in "$@"; do
+        if [[ -n "${buildopt_secret}" ]] && grep -F -- "${buildopt_secret}" "${buildopt_log}" >/dev/null; then
+            printf 'central credential escaped into client output\n' >&2
+            return 1
+        fi
+    done
+}
+
+case "${buildopt_mode}" in
+    producer)
+        buildopt_token_document=/control/producer-token.json
+        buildopt_connect_log=${buildopt_results}/producer-connect.json
+        (
+            cd -- "${buildopt_repository}"
+            "${buildopt_binary}" connect "${buildopt_server_url}" \
+                --token-file "${buildopt_token_document}" --ca-file "${buildopt_ca}"
+        ) >"${buildopt_connect_log}"
+        buildopt_optimize_log=${buildopt_results}/producer-optimize.log
+        buildopt_optimize_ms=$(buildopt_run_optimize "${buildopt_optimize_log}" | tail -n 1)
+        buildopt_optimize_result=${buildopt_repository}/.buildopt/optimize/v1/result.json
+        if ! jq -e '
+            .calibration.status == "COMPLETE" and
+            .calibration.qualified == true and
+            .portfolio.status == "COMPLETE" and
+            .productionAuthorized == false and
+            .testOptimization == "OUT_OF_SCOPE"
+        ' "${buildopt_optimize_result}" >/dev/null; then
+            printf 'producer did not publish one qualified profile\n' >&2
+            jq -c '{discovery,calibration,portfolio,selection,execution,central}' \
+                "${buildopt_optimize_result}" >&2 || true
+            tail -n 160 "${buildopt_optimize_log}" >&2
+            exit 1
+        fi
+        cp -- "${buildopt_optimize_result}" "${buildopt_results}/producer-optimize-result.json"
+
+        (
+            cd -- "${buildopt_repository}"
+            ./gradlew --no-daemon --no-configuration-cache clean >/dev/null
+        )
+        buildopt_cache_log=${buildopt_results}/producer-cache.log
+        buildopt_cache_started=$(date +%s%N)
+        (
+            cd -- "${buildopt_repository}"
+            BUILDOPT_LOCAL_AUTHORITY_PATH=/control/authority.json \
+            BUILDOPT_LOCAL_TRUST_ROOT_PATH=/control/trust-root.json \
+            BUILDOPT_LOCAL_CACHE_CREDENTIAL_PATH=/control/credential \
+            BUILDOPT_SHARED_CACHE_TOKEN_PATH=/control/producer-token.raw \
+            BUILDOPT_SHARED_CACHE_CA_PATH=/control/ca.pem \
+            BUILDOPT_SHARED_CACHE_URL="${buildopt_server_url}" \
+            BUILDOPT_L1_STATE_ROOT=${buildopt_workspace}/producer-l1 \
+            BUILDOPT_L1_TENANT_ID=poc-owner \
+            BUILDOPT_L1_REPOSITORY_ID=buildopt/central-two-machine \
+            BUILDOPT_L1_TRUST_DOMAIN=poc-two-machine \
+            BUILDOPT_L1_COMPATIBILITY_CLASS=gradle-9.6.1-linux-amd64-jdk21 \
+            BUILDOPT_L1_SECURITY_GENERATION=1 \
+            BUILDOPT_L1_L2_WRITE_AUTHORIZED=1 \
+                "${buildopt_binary}" gradle \
+                    --no-daemon --no-configuration-cache --console=plain assemble
+        ) 2>&1 | tee "${buildopt_cache_log}"
+        buildopt_cache_completed=$(date +%s%N)
+        buildopt_cache_ms=$(((buildopt_cache_completed - buildopt_cache_started) / 1000000))
+        buildopt_digest=$(buildopt_output_digest)
+        buildopt_producer_token=$(jq -r '.token' /control/producer-token.json)
+        buildopt_consumer_token=$(jq -r '.token' /control/consumer-token.json)
+        buildopt_assert_no_credentials \
+            "${buildopt_cache_log}" "${buildopt_producer_token}" "${buildopt_consumer_token}"
+        jq -n \
+            --arg digest "${buildopt_digest}" \
+            --argjson optimizeMs "${buildopt_optimize_ms}" \
+            --argjson cacheBuildMs "${buildopt_cache_ms}" \
+            '{requiredOutputSha256:$digest,optimizeDurationMs:$optimizeMs,cacheBuildDurationMs:$cacheBuildMs}' \
+            >"${buildopt_results}/producer.json"
+        ;;
+    consumer)
+        (
+            cd -- "${buildopt_repository}"
+            "${buildopt_binary}" connect "${buildopt_server_url}" \
+                --token-file /control/consumer-token.json --ca-file "${buildopt_ca}"
+        ) >"${buildopt_results}/consumer-connect.json"
+        buildopt_consumer_log=${buildopt_results}/consumer-optimize.log
+        buildopt_consumer_ms=$(buildopt_run_optimize "${buildopt_consumer_log}" | tail -n 1)
+        buildopt_consumer_result=${buildopt_repository}/.buildopt/optimize/v1/result.json
+        if ! jq -e '
+            .execution.mode == "SELECTIVE_PROFILE" and
+            .selection.source == "CENTRAL_PORTFOLIO" and
+            .central.selectionSource == "CENTRAL_PORTFOLIO" and
+            .central.gradleCacheMode == "READ_ONLY" and
+            .central.gradleCacheStatus == "GATEWAY_ACTIVE" and
+            .central.snapshotsVerified == true and
+            .productionAuthorized == false and
+            .testOptimization == "OUT_OF_SCOPE"
+        ' "${buildopt_consumer_result}" >/dev/null; then
+            printf 'consumer did not combine remote profile and central Gradle cache\n' >&2
+            jq -c '{discovery,calibration,portfolio,selection,execution,central}' \
+                "${buildopt_consumer_result}" >&2 || true
+            printf 'consumer connect result:\n' >&2
+            cat "${buildopt_results}/consumer-connect.json" >&2 || true
+            printf 'consumer optimize diagnostics:\n' >&2
+            tail -n 160 "${buildopt_consumer_log}" >&2 || true
+            exit 1
+        fi
+        buildopt_hits=$(grep -c ' FROM-CACHE' "${buildopt_consumer_log}" || true)
+        if ((buildopt_hits < 1)); then
+            printf 'consumer reported no central FROM-CACHE task\n' >&2
+            exit 1
+        fi
+        buildopt_digest=$(buildopt_output_digest)
+        buildopt_expected=$(jq -r '.requiredOutputSha256' /producer-results/producer.json)
+        if [[ "${buildopt_digest}" != "${buildopt_expected}" ]]; then
+            printf 'consumer output digest %s differs from producer %s\n' \
+                "${buildopt_digest}" "${buildopt_expected}" >&2
+            exit 1
+        fi
+        buildopt_producer_token=$(jq -r '.token' /control/producer-token.json)
+        buildopt_consumer_token=$(jq -r '.token' /control/consumer-token.json)
+        buildopt_assert_no_credentials \
+            "${buildopt_consumer_log}" "${buildopt_producer_token}" "${buildopt_consumer_token}"
+        cp -- "${buildopt_consumer_result}" "${buildopt_results}/consumer-optimize-result.json"
+        jq -n \
+            --arg digest "${buildopt_digest}" \
+            --argjson durationMs "${buildopt_consumer_ms}" \
+            --argjson hits "${buildopt_hits}" \
+            '{requiredOutputSha256:$digest,durationMs:$durationMs,fromCacheTasks:$hits}' \
+            >"${buildopt_results}/consumer.json"
+        ;;
+    outage)
+        if [[ ! -d "${buildopt_repository}/.buildopt/central/v1/snapshots" ]]; then
+            printf 'outage proof requires the consumer verified snapshot\n' >&2
+            exit 1
+        fi
+        find "${buildopt_repository}" -type d -name build -prune -exec rm -rf -- {} +
+        find "${GRADLE_USER_HOME}/caches" -mindepth 1 -maxdepth 1 -type d -name 'build-cache-*' -exec rm -rf -- {} + 2>/dev/null || true
+        find "${XDG_CACHE_HOME}/buildopt/state/l1" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} + 2>/dev/null || true
+        buildopt_outage_log=${buildopt_results}/outage-optimize.log
+        buildopt_outage_ms=$(buildopt_run_optimize "${buildopt_outage_log}" | tail -n 1)
+        buildopt_outage_result=${buildopt_repository}/.buildopt/optimize/v1/result.json
+        if ! jq -e '
+            .execution.mode == "SELECTIVE_PROFILE" and
+            .selection.source == "CENTRAL_PORTFOLIO" and
+            .central.preSyncOnline == false and
+            .central.snapshotsVerified == true and
+            .central.gradleCacheMode == "READ_ONLY" and
+            .productionAuthorized == false and
+            .testOptimization == "OUT_OF_SCOPE"
+        ' "${buildopt_outage_result}" >/dev/null; then
+            printf 'outage did not retain the verified profile snapshot\n' >&2
+            exit 1
+        fi
+        buildopt_hits=$(grep -c ' FROM-CACHE' "${buildopt_outage_log}" || true)
+        if ((buildopt_hits != 0)); then
+            printf 'outage unexpectedly reused %d local cache tasks\n' "${buildopt_hits}" >&2
+            exit 1
+        fi
+        buildopt_digest=$(buildopt_output_digest)
+        buildopt_expected=$(jq -r '.requiredOutputSha256' /producer-results/producer.json)
+        if [[ "${buildopt_digest}" != "${buildopt_expected}" ]]; then
+            printf 'outage output digest %s differs from producer %s\n' \
+                "${buildopt_digest}" "${buildopt_expected}" >&2
+            exit 1
+        fi
+        buildopt_producer_token=$(jq -r '.token' /control/producer-token.json)
+        buildopt_consumer_token=$(jq -r '.token' /control/consumer-token.json)
+        buildopt_assert_no_credentials \
+            "${buildopt_outage_log}" "${buildopt_producer_token}" "${buildopt_consumer_token}"
+        cp -- "${buildopt_outage_result}" "${buildopt_results}/outage-optimize-result.json"
+        jq -n \
+            --arg digest "${buildopt_digest}" \
+            --argjson durationMs "${buildopt_outage_ms}" \
+            '{requiredOutputSha256:$digest,durationMs:$durationMs,fromCacheTasks:0,serverOnline:false}' \
+            >"${buildopt_results}/outage.json"
+        ;;
+esac

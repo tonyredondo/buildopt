@@ -97,6 +97,15 @@ func TestPendingCommitVisibilityReplayAndExactAuthority(t *testing.T) {
 		status.StateVersion != 3 {
 		t.Fatalf("pending status = %+v/%v", status, err)
 	}
+	pendingObjects, err := storage.PendingAttemptObjects(ctx, request.AttemptID)
+	if err != nil || len(pendingObjects) != len(objects) {
+		t.Fatalf("pending owner inventory = %+v/%v", pendingObjects, err)
+	}
+	for index := range objects {
+		if pendingObjects[index] != objects[index] {
+			t.Fatalf("pending owner object %d = %+v, want %+v", index, pendingObjects[index], objects[index])
+		}
+	}
 
 	publicKey, privateKey, err := ed25519.GenerateKey(nil)
 	if err != nil {

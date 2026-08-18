@@ -1,0 +1,13 @@
+plugins {
+    id 'base'
+}
+
+subprojects {
+    apply plugin: 'java'
+    group = 'dev.buildopt.fixtures'
+    version = '1.0.0'
+}
+
+tasks.named('assemble') {
+    dependsOn ':app:assemble', ':unrelated:assemble'
+}
