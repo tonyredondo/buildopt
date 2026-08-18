@@ -258,11 +258,12 @@ func readRepositoryFile(repositoryRoot, relativePath string, maximumBytes int64,
 	if err != nil || resolvedRoot != repositoryRoot {
 		return nil, errors.New("repository root must exist and contain no symlink components")
 	}
-	if relativePath == "" || filepath.IsAbs(relativePath) || filepath.Clean(relativePath) != relativePath || relativePath == "." || strings.HasPrefix(relativePath, ".."+string(filepath.Separator)) {
+	nativeRelative := filepath.FromSlash(relativePath)
+	if relativePath == "" || filepath.IsAbs(nativeRelative) || filepath.Clean(nativeRelative) != nativeRelative || nativeRelative == "." || strings.HasPrefix(nativeRelative, ".."+string(filepath.Separator)) {
 		return nil, fmt.Errorf("%s path must be clean and repository relative", description)
 	}
 	current := repositoryRoot
-	for _, segment := range strings.Split(relativePath, string(filepath.Separator)) {
+	for _, segment := range strings.Split(nativeRelative, string(filepath.Separator)) {
 		if segment == "" || segment == "." || segment == ".." {
 			return nil, fmt.Errorf("%s path contains an unsafe segment", description)
 		}

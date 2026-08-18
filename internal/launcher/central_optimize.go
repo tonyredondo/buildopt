@@ -365,10 +365,16 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 		arguments = append(arguments, "--gradle-option="+option)
 	}
 	impact, err := prepareQualifiedPOCProfileInvocation(arguments, false)
-	if err != nil || !impact.plan.CandidateSelected || impact.qualifiedProfile == nil ||
+	if err != nil {
+		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonPlan, err}
+	}
+	if !impact.plan.CandidateSelected || impact.qualifiedProfile == nil ||
 		!equalOptimizeStrings(impact.plan.Entrypoints, entry.CandidateEntrypoints) ||
 		!equalOptimizeStrings(impact.qualifiedProfile.ExpectedOutputs, entry.RequiredOutputs) {
-		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonPlan, errors.New("revalidated plan retained the full graph")}
+		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{
+			optimizeCentralReasonPlan,
+			fmt.Errorf("revalidated plan retained the full graph: %s", impact.plan.Reason),
+		}
 	}
 
 	evidenceRaw := evidenceFiles[paths.bundleEvidence]
