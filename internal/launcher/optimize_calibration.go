@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime/debug"
 	"sort"
@@ -213,6 +214,13 @@ func (run *optimizeRun) calibrate(
 		result.Reason = "CALIBRATION_DISCOVERY_DRIFT"
 		return result
 	}
+	if err := stopOptimizeDiscoveryGradleDaemon(ctx, run.invocation.repositoryRoot); err != nil {
+		_, _ = fmt.Fprintf(progress, "buildopt: discovery Gradle daemon cleanup unavailable: %v\n", err)
+		result.Status = optimizeCalibrationRetained
+		result.Reason = optimizeCalibrationReasonUnavailable
+		return result
+	}
+	_, _ = fmt.Fprintln(progress, "buildopt: stopped discovery Gradle daemon before isolated calibration")
 	raw, _, err := measureStructuralProfile(config, progress)
 	if err != nil {
 		_, _ = fmt.Fprintf(progress, "buildopt: calibration evidence unavailable: %v\n", err)
@@ -275,6 +283,24 @@ func (run *optimizeRun) calibrate(
 		GeneratedFiles:       []string{filepath.ToSlash(evidencePath)},
 		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}
+}
+
+// stopOptimizeDiscoveryGradleDaemon releases the native build's resident JVM
+// before calibration starts its isolated control and candidate daemon. This is
+// outside the measured pairs and prevents large repositories from exhausting a
+// bounded host merely because discovery and calibration have distinct homes.
+func stopOptimizeDiscoveryGradleDaemon(ctx context.Context, repositoryRoot string) error {
+	stopContext, cancel := context.WithTimeout(ctx, time.Minute)
+	defer cancel()
+	command := measurementGradleCommand(repositoryRoot, []string{"--stop"})
+	cmd := exec.CommandContext(stopContext, command[0], command[1:]...)
+	cmd.Dir = repositoryRoot
+	cmd.Env = os.Environ()
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("stop discovery Gradle daemon: %w: %s", err, strings.TrimSpace(string(output)))
+	}
+	return nil
 }
 
 func optimizeCalibrationGradleOptions(options []string) ([]string, string) {

@@ -2,11 +2,49 @@ package launcher
 
 import (
 	"context"
+	"os"
+	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
 )
+
+func TestStopOptimizeDiscoveryGradleDaemonUsesOriginalEnvironment(t *testing.T) {
+	repository := t.TempDir()
+	record := filepath.Join(repository, "stop-record.txt")
+	wrapper := filepath.Join(repository, gradleWrapperName(runtime.GOOS))
+	contents := "#!/bin/sh\nprintf '%s\\n%s\\n' \"$GRADLE_USER_HOME\" \"$*\" > \"$BUILDOPT_STOP_RECORD\"\nexit \"$BUILDOPT_STOP_EXIT\"\n"
+	if runtime.GOOS == "windows" {
+		contents = "@echo off\r\n(\r\necho %GRADLE_USER_HOME%\r\necho %*\r\n) > \"%BUILDOPT_STOP_RECORD%\"\r\nexit /b %BUILDOPT_STOP_EXIT%\r\n"
+	}
+	if err := os.WriteFile(wrapper, []byte(contents), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	gradleHome := filepath.Join(repository, "original-gradle-home")
+	t.Setenv("GRADLE_USER_HOME", gradleHome)
+	t.Setenv("BUILDOPT_STOP_RECORD", record)
+	t.Setenv("BUILDOPT_STOP_EXIT", "0")
+
+	if err := stopOptimizeDiscoveryGradleDaemon(context.Background(), repository); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile(record)
+	if err != nil {
+		t.Fatal(err)
+	}
+	lines := strings.Split(strings.TrimSpace(string(raw)), "\n")
+	if len(lines) != 2 || lines[0] != gradleHome || strings.TrimSpace(lines[1]) != "--stop" {
+		t.Fatalf("stop invocation = %q, want original Gradle home and --stop", string(raw))
+	}
+
+	t.Setenv("BUILDOPT_STOP_EXIT", "37")
+	if err := stopOptimizeDiscoveryGradleDaemon(context.Background(), repository); err == nil ||
+		!strings.Contains(err.Error(), "exit status 37") {
+		t.Fatalf("failed stop error = %v, want exit status 37", err)
+	}
+}
 
 func TestOptimizeCalibrationGradleOptionsAreSafeAndDeterministic(t *testing.T) {
 	got, reason := optimizeCalibrationGradleOptions([]string{
