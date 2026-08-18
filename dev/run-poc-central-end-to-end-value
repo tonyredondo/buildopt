@@ -32,6 +32,7 @@ fi
 
 buildopt_root=$(mktemp -d /tmp/buildopt-central-value.XXXXXX)
 buildopt_package_dir=${buildopt_root}/package
+buildopt_package_root=${buildopt_root}/package-root
 buildopt_install=${buildopt_root}/install
 buildopt_control_binary=${buildopt_root}/central-control
 buildopt_repositories_json=${buildopt_root}/repositories.jsonl
@@ -51,11 +52,17 @@ buildopt_cleanup() {
 }
 trap buildopt_cleanup EXIT INT TERM
 
-mkdir -p -- "${buildopt_package_dir}" "${buildopt_install}"
+mkdir -p -- "${buildopt_package_dir}" "${buildopt_package_root}" "${buildopt_install}"
 "${buildopt_repo_root}/packaging/linux/package.sh" \
     --version 0.1.99-centralvalue --output "${buildopt_package_dir}" >/dev/null
+buildopt_package=$(find "${buildopt_package_dir}" -maxdepth 1 -type f -name '*.tar.gz' -print)
+if [[ -z ${buildopt_package} ]]; then
+    printf 'packaged BuildOpt archive is unavailable\n' >&2
+    exit 1
+fi
+tar -xzf "${buildopt_package}" -C "${buildopt_package_root}"
 mapfile -t buildopt_installers < <(
-    find "${buildopt_package_dir}" -mindepth 2 -maxdepth 2 -type f -name install.sh -print
+    find "${buildopt_package_root}" -mindepth 2 -maxdepth 2 -type f -name install.sh -print
 )
 if ((${#buildopt_installers[@]} != 1)); then
     printf 'expected one packaged BuildOpt installer, found %d\n' \
@@ -72,7 +79,6 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
         -o "${buildopt_control_binary}" ./dev/central-two-machine-control
 
 buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
-buildopt_package=$(find "${buildopt_package_dir}" -maxdepth 1 -type f -name '*.tar.gz' -print)
 buildopt_package_sha=$(sha256sum "${buildopt_package}" | awk '{print $1}')
 
 buildopt_run_environment() {
