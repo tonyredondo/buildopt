@@ -33,13 +33,16 @@ Every other Gradle/JDK/platform combination disables the managed cache for
 that invocation. No row inherits another version's internal adapter.
 
 The adapter inventories Gradle's complete project transform registry through
-the exact 8.14.2/8.14.3/9.6.1 internal contract. The three POC transform entries
+the exact 8.14.2/8.14.3/9.6.1 internal contract. The four POC transform entries
 are GraalVM Native Build Tools 0.11.1
 `org.graalvm.buildtools.gradle.tasks.scanner.JarAnalyzerTransform` and Kotlin
 Gradle Plugin 2.2.0
 `org.jetbrains.kotlin.gradle.internal.transforms.BuildToolsApiClasspathEntrySnapshotTransform`
-and
-`org.jetbrains.kotlin.gradle.scripting.internal.DiscoverScriptExtensionsTransformAction`.
+plus
+`org.jetbrains.kotlin.gradle.scripting.internal.DiscoverScriptExtensionsTransformAction`
+from Kotlin Gradle Plugin 1.6.10 or 2.2.0. The 1.6.10 row is the exact
+transform observed when Apache Beam's complete `classes` graph is configured;
+the narrower Twitter workflow does not register it.
 Each entry is bound to the exact provider, artifact name, public artifact
 SHA-256, and source revision recorded in the machine-readable policy. Runtime
 activation requires both the implementation name and the versioned artifact
@@ -108,7 +111,10 @@ that one unknown artifact transform disables the otherwise allowed compile
 task and intentionally prevents Configuration Cache reuse for the fail-closed
 build.
 The Mockito preflight separately proves the allowlisted GraalVM transform with
-the real provider before any performance samples are accepted.
+the real provider before any performance samples are accepted. The Apache Beam
+preflight likewise inventories the real Kotlin 1.6.10 script-extension
+transform before central-cache publication; neighboring and renamed Kotlin
+artifacts remain denied by the packaged policy test.
 The 8.14.2/JDK 21 rows exist solely to validate the public-repository POC path
 discovered through Mockito; they do not promote that runtime into the broader
 capability matrix.

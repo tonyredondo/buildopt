@@ -55,7 +55,7 @@ public final class TierOnePolicyTestKit {
         if (!Files.isRegularFile(pluginJar)) {
             throw new IllegalArgumentException("missing plugin JAR: " + pluginJar);
         }
-        requireErrorProneArtifactContract(pluginJar);
+        requireArtifactContracts(pluginJar);
 
         Path testRoot = Files.createTempDirectory("buildopt-tier-one-policy-");
         try {
@@ -76,7 +76,7 @@ public final class TierOnePolicyTestKit {
                 expectedJava);
     }
 
-    private static void requireErrorProneArtifactContract(Path pluginJar) throws IOException {
+    private static void requireArtifactContracts(Path pluginJar) throws IOException {
         try (URLClassLoader loader =
                 new URLClassLoader(
                         new java.net.URL[] {pluginJar.toUri().toURL()},
@@ -104,8 +104,32 @@ public final class TierOnePolicyTestKit {
                             "unproven Error Prone artifact was accepted: " + artifact);
                 }
             }
+            Method kotlinMatcher =
+                    policy.getDeclaredMethod(
+                            "isAllowlistedKotlinScriptExtensionsArtifactName", String.class);
+            kotlinMatcher.setAccessible(true);
+            for (String artifact : new String[] {
+                "kotlin-gradle-plugin-1.6.10.jar",
+                "kotlin-gradle-plugin-2.2.0-gradle813.jar"
+            }) {
+                if (!(boolean) kotlinMatcher.invoke(null, artifact)) {
+                    throw new IllegalStateException(
+                            "allowlisted Kotlin transform artifact was rejected: " + artifact);
+                }
+            }
+            for (String artifact : new String[] {
+                "kotlin-gradle-plugin-1.6.0.jar",
+                "kotlin-gradle-plugin-1.6.20.jar",
+                "renamed-kotlin-gradle-plugin-1.6.10.jar",
+                "kotlin-gradle-plugin-2.2.0.jar"
+            }) {
+                if ((boolean) kotlinMatcher.invoke(null, artifact)) {
+                    throw new IllegalStateException(
+                            "unproven Kotlin transform artifact was accepted: " + artifact);
+                }
+            }
         } catch (ReflectiveOperationException failure) {
-            throw new IOException("cannot inspect packaged Error Prone policy", failure);
+            throw new IOException("cannot inspect packaged Tier One artifact policy", failure);
         }
     }
 

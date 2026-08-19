@@ -56,8 +56,12 @@ final class BuildOptTierOnePolicy {
     private static final String KOTLIN_SCRIPT_EXTENSIONS_TRANSFORM =
             "org.jetbrains.kotlin.gradle.scripting.internal."
                     + "DiscoverScriptExtensionsTransformAction";
-    private static final String KOTLIN_GRADLE_PLUGIN_ARTIFACT =
+    private static final String KOTLIN_GRADLE_PLUGIN_2_2_ARTIFACT =
             "kotlin-gradle-plugin-2.2.0-gradle813.jar";
+    private static final Set<String> KOTLIN_SCRIPT_EXTENSIONS_ARTIFACTS =
+            Set.of(
+                    "kotlin-gradle-plugin-1.6.10.jar",
+                    KOTLIN_GRADLE_PLUGIN_2_2_ARTIFACT);
 
     private BuildOptTierOnePolicy() {}
 
@@ -107,13 +111,16 @@ final class BuildOptTierOnePolicy {
     }
 
     private static boolean isAllowlistedArtifactTransform(Class<?> implementation) {
-        String expectedArtifact = switch (implementation.getName()) {
-            case GRAALVM_JAR_ANALYZER_TRANSFORM -> GRAALVM_NATIVE_PLUGIN_ARTIFACT;
-            case KOTLIN_BUILDTOOLS_SNAPSHOT_TRANSFORM -> KOTLIN_GRADLE_PLUGIN_ARTIFACT;
-            case KOTLIN_SCRIPT_EXTENSIONS_TRANSFORM -> KOTLIN_GRADLE_PLUGIN_ARTIFACT;
-            default -> "";
+        Set<String> expectedArtifacts = switch (implementation.getName()) {
+            case GRAALVM_JAR_ANALYZER_TRANSFORM ->
+                    Set.of(GRAALVM_NATIVE_PLUGIN_ARTIFACT);
+            case KOTLIN_BUILDTOOLS_SNAPSHOT_TRANSFORM ->
+                    Set.of(KOTLIN_GRADLE_PLUGIN_2_2_ARTIFACT);
+            case KOTLIN_SCRIPT_EXTENSIONS_TRANSFORM ->
+                    KOTLIN_SCRIPT_EXTENSIONS_ARTIFACTS;
+            default -> Set.of();
         };
-        if (expectedArtifact.isEmpty()) {
+        if (expectedArtifacts.isEmpty()) {
             return false;
         }
         try {
@@ -124,10 +131,14 @@ final class BuildOptTierOnePolicy {
                                     .getCodeSource()
                                     .getLocation()
                                     .toURI());
-            return codeSource.getFileName().toString().equals(expectedArtifact);
+            return expectedArtifacts.contains(codeSource.getFileName().toString());
         } catch (Exception failure) {
             return false;
         }
+    }
+
+    static boolean isAllowlistedKotlinScriptExtensionsArtifactName(String artifactName) {
+        return KOTLIN_SCRIPT_EXTENSIONS_ARTIFACTS.contains(artifactName);
     }
 
     private static boolean isClassFromAllowlistedErrorProneArtifact(

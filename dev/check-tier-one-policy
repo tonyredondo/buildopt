@@ -119,6 +119,15 @@ if ! jq -e '
             "sourceRevision": "631e9fdbe59cc92ac1e88e6ff3bbf4418b3ab9da"
         },
         {
+            "id": "KOTLIN_SCRIPT_EXTENSIONS_1_6_10",
+            "implementation": "org.jetbrains.kotlin.gradle.scripting.internal.DiscoverScriptExtensionsTransformAction",
+            "providerPluginId": "org.jetbrains.kotlin.jvm",
+            "providerVersion": "1.6.10",
+            "artifactName": "kotlin-gradle-plugin-1.6.10.jar",
+            "artifactSha256": "66c12048f8a4e9cf92ad65b12ac615702c11ae503f53c69f57f626128be1762a",
+            "sourceRevision": "1b49105c78c566ec42b422cbd46782b47a0d9f40"
+        },
+        {
             "id": "KOTLIN_SCRIPT_EXTENSIONS_2_2_0",
             "implementation": "org.jetbrains.kotlin.gradle.scripting.internal.DiscoverScriptExtensionsTransformAction",
             "providerPluginId": "org.jetbrains.kotlin.jvm",
