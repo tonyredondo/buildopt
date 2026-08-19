@@ -20,7 +20,7 @@
   "checkpointResume": {
     "allowed": true,
     "completedSubjectEvidenceOnly": true,
-    "identicalInstalledPackageRequired": true
+    "identicalInstalledPayloadRequired": true
   },
   "resourceEnvelope": {
     "commonMaximumWorkers": 8,

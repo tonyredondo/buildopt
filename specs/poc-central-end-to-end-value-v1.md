@@ -24,8 +24,11 @@ missing publication.
 A completed subject may be resumed from a retained diagnostic root when a
 bounded runner ends before the next subject completes. Resume is allowed only
 for an eight-pair subject that already passed its value gate and only when the
-newly built installed package has the exact same SHA-256 as the checkpointed
-package. The evidence records whether resume was used and how many completed
+newly built package has the exact same canonical installed-payload digest as
+the checkpointed package, including paths, types, modes, symlink targets and
+file bytes. Container TAR metadata and its archive SHA may differ between
+harness-only commits, so both archive SHAs and the common payload digest remain
+auditable. The evidence records whether resume was used and how many completed
 subjects it reused; partial observations are never resumed.
 The runner fixes its locale before calculating decimal confidence bounds, and
 resume always recomputes every derived statistic from the retained raw pairs.

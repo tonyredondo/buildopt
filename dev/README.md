@@ -493,7 +493,9 @@ BUILDOPT_CENTRAL_VALUE_RESUME_ROOT=/tmp/buildopt-central-value.XXXXXX \
 ```
 
 Resume rejects partial subjects and rebuilds the installed package before
-requiring its SHA-256 to match the checkpoint exactly. The final evidence
+requiring its canonical payload digest to match the checkpoint exactly across
+paths, types, modes, symlink targets and file bytes. TAR metadata may differ,
+so the final evidence retains the archive and payload hashes separately and
 records whether checkpoint reuse occurred. Derived statistics are recomputed
 from the raw pairs under a deterministic locale during resume.
 

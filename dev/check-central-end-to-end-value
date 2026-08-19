@@ -40,7 +40,7 @@ jq -e '
   .checkpointResume == {
     allowed: true,
     completedSubjectEvidenceOnly: true,
-    identicalInstalledPackageRequired: true
+    identicalInstalledPayloadRequired: true
   } and
   .resourceEnvelope == {
     commonMaximumWorkers: 8,
@@ -100,8 +100,16 @@ jq -e '
   (.protocol.checkpointResume.resumedSubjectCount <= 1) and
   (.protocol.checkpointResume.used ==
     (.protocol.checkpointResume.resumedSubjectCount > 0)) and
-  (.protocol.checkpointResume.identicalInstalledPackage ==
-    .protocol.checkpointResume.used) and
+  (.protocol.checkpointResume.canonicalInstalledPayloadSha256 |
+    test("^[0-9a-f]{64}$")) and
+  (if .protocol.checkpointResume.used then
+    (.protocol.checkpointResume.checkpointPackageSha256 |
+      test("^[0-9a-f]{64}$")) and
+    .protocol.checkpointResume.identicalInstalledPayload
+   else
+    .protocol.checkpointResume.checkpointPackageSha256 == null and
+    (.protocol.checkpointResume.identicalInstalledPayload | not)
+   end) and
   (.repositories | length) == 2 and
   ([.repositories[].repositoryId] | unique | length) == 2 and
   ([.repositories[].gradleFamily] | unique | length) == 2 and

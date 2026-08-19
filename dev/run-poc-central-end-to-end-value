@@ -45,7 +45,16 @@ buildopt_max_workers=8
 buildopt_ktor_gradle_heap_mib=2048
 buildopt_ktor_kotlin_daemon_heap_mib=1536
 buildopt_resumed_subject_count=0
-buildopt_checkpoint_package_sha_matched=false
+buildopt_checkpoint_payload_matched=false
+buildopt_checkpoint_package_sha=
+buildopt_canonical_payload_sha=
+
+buildopt_package_payload_sha() {
+    local buildopt_payload_root=$1
+    tar --sort=name --mtime='@0' --owner=0 --group=0 --numeric-owner \
+        --format=gnu -cf - -C "${buildopt_payload_root}" . |
+        sha256sum | awk '{print $1}'
+}
 
 buildopt_measurement_stats() {
     local buildopt_observations_file=$1
@@ -119,6 +128,9 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 
 buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
 buildopt_package_sha=$(sha256sum "${buildopt_package}" | awk '{print $1}')
+buildopt_current_payload_root=$(dirname -- "${buildopt_installers[0]}")
+buildopt_canonical_payload_sha=$(buildopt_package_payload_sha \
+    "${buildopt_current_payload_root}")
 
 if [[ -n ${buildopt_resume_root} ]]; then
     if [[ ${buildopt_resume_root} != /tmp/buildopt-central-value.* ||
@@ -134,9 +146,22 @@ if [[ -n ${buildopt_resume_root} ]]; then
         printf 'central value resume root must contain exactly one packaged archive\n' >&2
         exit 1
     fi
-    buildopt_resume_package_sha=$(sha256sum "${buildopt_resume_packages[0]}" | awk '{print $1}')
-    if [[ ${buildopt_resume_package_sha} != "${buildopt_package_sha}" ]]; then
-        printf 'central value resume package differs from the current installed package\n' >&2
+    buildopt_checkpoint_package_sha=$(sha256sum "${buildopt_resume_packages[0]}" | awk '{print $1}')
+    buildopt_resume_package_root=${buildopt_root}/resume-package-root
+    mkdir -p -- "${buildopt_resume_package_root}"
+    tar -xzf "${buildopt_resume_packages[0]}" -C "${buildopt_resume_package_root}"
+    mapfile -t buildopt_resume_installers < <(
+        find "${buildopt_resume_package_root}" -mindepth 2 -maxdepth 2 \
+            -type f -name install.sh -print
+    )
+    if ((${#buildopt_resume_installers[@]} != 1)); then
+        printf 'central value resume archive has no unique installed payload\n' >&2
+        exit 1
+    fi
+    buildopt_resume_payload_sha=$(buildopt_package_payload_sha \
+        "$(dirname -- "${buildopt_resume_installers[0]}")")
+    if [[ ${buildopt_resume_payload_sha} != "${buildopt_canonical_payload_sha}" ]]; then
+        printf 'central value resume payload differs from the current installed payload\n' >&2
         exit 1
     fi
     if [[ ! -f ${buildopt_resume_root}/repositories.jsonl ||
@@ -186,8 +211,8 @@ if [[ -n ${buildopt_resume_root} ]]; then
         cp -- "${buildopt_resume_root}/native-retained.json" \
             "${buildopt_root}/native-retained.json"
     fi
-    buildopt_checkpoint_package_sha_matched=true
-    printf 'central value: resumed %d completed subject(s) from an identical package\n' \
+    buildopt_checkpoint_payload_matched=true
+    printf 'central value: resumed %d completed subject(s) from an identical installed payload\n' \
         "${buildopt_resumed_subject_count}"
 fi
 
@@ -819,7 +844,9 @@ jq -n \
     --argjson ktorGradleHeapMiB "${buildopt_ktor_gradle_heap_mib}" \
     --argjson ktorKotlinDaemonHeapMiB "${buildopt_ktor_kotlin_daemon_heap_mib}" \
     --argjson resumedSubjectCount "${buildopt_resumed_subject_count}" \
-    --argjson checkpointPackageShaMatched "${buildopt_checkpoint_package_sha_matched}" \
+    --arg checkpointPackageSha "${buildopt_checkpoint_package_sha}" \
+    --arg canonicalPayloadSha "${buildopt_canonical_payload_sha}" \
+    --argjson checkpointPayloadMatched "${buildopt_checkpoint_payload_matched}" \
     --slurpfile repositories "${buildopt_repositories_json}" \
     --slurpfile nativeRetained "${buildopt_root}/native-retained.json" '
       {
@@ -841,7 +868,9 @@ jq -n \
           negativeDaemonStoppedBeforeNextSubject:true,
           checkpointResume:{
             used:($resumedSubjectCount>0),resumedSubjectCount:$resumedSubjectCount,
-            identicalInstalledPackage:$checkpointPackageShaMatched
+            checkpointPackageSha256:(if $resumedSubjectCount>0 then $checkpointPackageSha else null end),
+            canonicalInstalledPayloadSha256:$canonicalPayloadSha,
+            identicalInstalledPayload:$checkpointPayloadMatched
           }
         },
         repositories:$repositories,nativeRetained:$nativeRetained[0],
