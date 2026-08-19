@@ -2,6 +2,13 @@
 
 ## Current Executive Summary
 
+- **The optional central path now demonstrates incremental value under equal
+  cache opportunity.** With the same committed Gradle remote-cache objects,
+  the complete installed path reduced Ktor `jvmJar` by **82.45%** and Beam
+  `classes` by **56.41%** across 8/8 positive pairs per family, exact outputs
+  and lower p95. A Ktor root build-logic change retained native and made no
+  performance claim. These repository-specific effects are not averaged or
+  added to the structural results below.
 - **The current POC has one broadly supported accelerator: structural Build
   Impact.** The latest balanced protocol qualified Spring (**15.99% faster**),
   OpenTelemetry (**14.97%**), Kafka (**87.35%**), Micronaut (**39.44%**), and

@@ -121,7 +121,7 @@ BuildOpt state across developer machines and CI providers. The local path
 remains complete without that service. The separate
 [centralized cache and state roadmap](./centralized-cache-and-state-roadmap.md)
 defines namespaces, HTTPS/authentication, cross-commit applicability,
-fallbacks and the two-machine value proof.
+fallbacks and the completed two-machine/equal-opportunity value proofs.
 
 ## Generic architecture
 

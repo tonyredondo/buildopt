@@ -36,11 +36,28 @@ binding falls back before Gradle starts.
 | **Profile portfolio and replay** | Stores only qualified structural families under exact repository, Wrapper, workflow, graph, output, executable and evidence bindings. | POC-only automatic replay; drift retains native. |
 | **Safe local cache** | Isolates and verifies Gradle cache data by repository, Wrapper and platform. | Supporting safety; approximately at parity with an already warm native Gradle cache, not the current speed claim. |
 | **Shared / Edge cache** | Offers Gradle-compatible opaque cache objects over HTTP/HTTPS and optional locality. | Separate experiment; its percentages are never added to Build Impact results. |
-| **Optional central cache and state** | Shares committed Gradle outputs plus compatible portfolios, evidence and checkpoints while keeping local execution authoritative. | The installed two-machine path now works end to end: a clean consumer selected a remote profile and restored one task from a read-only central cache after server restart; outage rebuilt the same JAR from verified local state. Net wall-time value is not yet measured. |
+| **Optional central cache and state** | Shares committed Gradle outputs plus compatible portfolios, evidence and checkpoints while keeping local execution authoritative. | Under the same committed remote-cache opportunity, the complete path is **82.45% faster on Ktor** and **56.41% on Beam**, with 8/8 positive pairs and exact outputs; global Ktor build logic safely retains native. |
 | **Launcher, history and reports** | Preserves process behavior and reports graph reduction, wall time, uncertainty, p95, learning cost, payback and fallback. | Supporting infrastructure; launcher overhead is included in candidate timings. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier resource/state-reuse hypotheses. | Retired from the active POC after neutral, unstable or regressive evidence. |
 
-## Latest automatic public-package proof
+## Latest central end-to-end value proof
+
+The terminal central experiment gives optimized native Gradle and BuildOpt the
+same already-committed remote-cache objects. Candidate time includes the
+installed package, structural selection, launcher, gateway, TLS, state/cache
+synchronization and Gradle execution.
+
+| Repository / workflow | Graph | Native mean | BuildOpt mean | Saving | 95% saving interval | p95 | Payback |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Ktor `jvmJar` | 133 -> 10 | 215.506 s | 37.828 s | **177.678 s / 82.45%** | 156.555..198.802 s | 243.986 -> 55.139 s | 28 builds |
+| Beam `classes` | 316 -> 6 | 48.475 s | 21.130 s | **27.345 s / 56.41%** | 22.407..32.283 s | 53.468 -> 28.319 s | 29 builds |
+
+Both rows improve in 8/8 alternating pairs and preserve exact required
+outputs. A Ktor root build-logic change keeps the full graph, succeeds through
+the same central connection and makes no performance claim. The 12-CPU host
+result is bounded POC evidence, not golden-runner or production evidence.
+
+## Previous automatic public-package local proof
 
 The terminal run used immutable public
 [`v0.6.1`](https://github.com/tonyredondo/buildopt/releases/tag/v0.6.1),
@@ -96,11 +113,10 @@ but do not replace the zero-configuration Ktor/Beam result.
   is accepted on a source-only descendant after local replanning, while a
   `build.gradle.kts` descendant is rejected before Gradle. This is functional
   reuse evidence, not a new central wall-time claim.
-- One isolated producer and consumer can now share both learned state and
-  committed Gradle objects without sharing a workspace, Gradle User Home or
-  BuildOpt cache. The consumer restored one task `FROM-CACHE`; after the server
-  stopped it recorded zero hits and rebuilt the exact same JAR. The central
-  bearer token remained outside Gradle and logs.
+- The complete connected path now beats a full-graph optimized-native control
+  under the same committed central-cache opportunity on Ktor and Beam. The
+  smaller two-machine fixture separately proves restart, credential isolation
+  and outage fallback.
 - Public-package compatibility matters: the rejected `v0.6.0` run exposed a
   real Configuration Cache defect, which was fixed and republished as
   `v0.6.1` before terminal timing restarted.
@@ -110,28 +126,27 @@ but do not replace the zero-configuration Ktor/Beam result.
 - A universal improvement for every repository, workflow or change.
 - That a qualified profile survives enough future commits to realize projected
   payback; lifetime is not yet observed.
-- Net cross-machine wall-time value versus optimized native Gradle with the
-  same remote-cache opportunity. The current 7.330-second consumer and
-  5.877-second outage observations are functional diagnostics, not comparable
-  performance arms.
+- A universal central-path improvement for every repository, workflow, change,
+  network or hardware class. The retained Ktor global case deliberately makes
+  no performance claim.
 - Production reliability, security posture or autonomous rollout.
 
 ## Recommended next steps
 
-1. **Measure centralized value under equal opportunity.** Compare the complete
-   path with optimized native Gradle using the same remote-cache opportunity on
-   at least two substantial families; the central layer must improve wall time.
-2. **Measure profile lifetime across commits.** Replace projected payback with
+1. **Measure profile lifetime across commits.** Replace projected payback with
    observed matching replays, invalidations and cumulative net saving.
-3. **Add generic economic prequalification.** Use task shapes and graph cost to
+2. **Add generic economic prequalification.** Use task shapes and graph cost to
    avoid an expensive eight-pair calibration when a candidate is unlikely to
    repay.
-4. **Improve graph precision without repository rules.** Target task/variant,
+3. **Improve graph precision without repository rules.** Target task/variant,
    ABI and output relationships that currently make some Groovy, Kafka or
    Micronaut workflows too broad or uneconomic.
-5. **Repeat the automatic path on the breadth repositories.** The POC should
+4. **Repeat the automatic path on the breadth repositories.** The POC should
    discover value from the same one command; reviewed profiles remain
    supporting evidence until then.
+5. **Transfer central value to another runner/network class.** Keep the same
+   equal-opportunity protocol and confirm that selection plus central reuse
+   remains positive without turning the POC into production qualification.
 
 ## Evidence
 
@@ -148,4 +163,7 @@ but do not replace the zero-configuration Ktor/Beam result.
 - [Automatic central profile reuse](../../specs/poc-central-optimize-integration-v1.md)
 - [Isolated two-machine proof](../../specs/poc-central-two-machine-v1.md)
 - [Two-machine machine evidence](../../benchmarks/results/poc-central-two-machine-v1.json)
+- [Central end-to-end result](../../benchmarks/results/poc-central-end-to-end-value-v1/README.md)
+- [Central end-to-end machine evidence](../../benchmarks/results/poc-central-end-to-end-value-v1/summary.json)
+- [Central end-to-end contract](../../specs/poc-central-end-to-end-value-v1.md)
 - [Implementation tracker](../../implementation-tracker.md)

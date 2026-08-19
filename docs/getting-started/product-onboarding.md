@@ -182,8 +182,12 @@ invocation and permits only locally revalidated source-commit reuse. The
 [isolated two-machine proof](../../specs/poc-central-two-machine-v1.md) now
 shows the complete connected path: a clean consumer automatically selects the
 remote profile and read-only cache, while outage rebuilds with verified local
-state. Running the service is still optional and operator-owned; its net
-wall-time value against an equal remote-cache baseline is the next experiment.
+state. The subsequent
+[central value result](../../benchmarks/results/poc-central-end-to-end-value-v1/README.md)
+compares equal committed cache opportunity and records **82.45% lower wall
+time on Ktor** and **56.41% on Beam**, with exact outputs and 8/8 positive
+pairs. Running the service remains optional and operator-owned; this is bounded
+POC evidence, not production qualification.
 
 ## Try the Build Impact accelerator
 
@@ -363,7 +367,7 @@ justifies operating it.
 | Build history | `buildopt-server` in the package | Server config and export directory on the server host | Service manager plus server API/dashboard | Start loopback server and inspect a redacted session |
 | Structural Build Impact | `buildopt` in the native package | No target-repository file for the automatic POC path; private state lives under `.buildopt/optimize` | `buildopt optimize <workflow>` discovers, calibrates and replays; the older explicit `buildopt impact` flow remains available for owner-reviewed experiments | Verify the generated value report, exact outputs, full fallback and payback before trusting a profile |
 | Patch Autopilot | Java patcher and owner workflow in this source repository; not yet a native-package CLI | Recipe registry, signing/trust material and repository policy | Owner-controlled candidate/validation workflow | Produce a draft bundle; applying remains explicit and reversible |
-| Shared Cache and state | `buildopt-server` | Private server state, trusted certificate/key and owner-issued scoped token; `buildopt connect` stores a private repository connection | A connected `buildopt optimize` automatically reads/publishes verified optimization memory and activates read-only central cache reuse when the token grants `CACHE_READ`; `buildopt sync` remains an explicit diagnostic | Validate the full isolated composition with `check-central-two-machine`; lower-level TLS, cache, state and profile checks remain available for diagnosis |
+| Shared Cache and state | `buildopt-server` | Private server state, trusted certificate/key and owner-issued scoped token; `buildopt connect` stores a private repository connection | A connected `buildopt optimize` automatically reads/publishes verified optimization memory and activates read-only central cache reuse when the token grants `CACHE_READ`; `buildopt sync` remains an explicit diagnostic | Validate paired value with `check-central-end-to-end-value` and isolated restart/outage behavior with `check-central-two-machine`; lower-level TLS, cache, state and profile checks remain available for diagnosis |
 | Edge Cache | `buildopt-edge` | Private Edge config and authority on the Edge host | launchd, Windows SCM, or foreground process | `buildopt-edge validate`, then `serve` and `status` |
 | JVM agent | Native package | Enabled only by the relevant policy | Launcher/plugin path | Use the owning runtime workflow; no separate installation |
 

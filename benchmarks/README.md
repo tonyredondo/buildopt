@@ -36,9 +36,30 @@ Validate the result with:
   benchmarks/results/poc-central-two-machine-v1.json
 ```
 
-`POC-CENTRAL-END-TO-END-VALUE-001` is next and must compare the complete
-centralized path against optimized native Gradle with equal remote-cache
-opportunity on substantial public repositories.
+That functional proof is superseded for value decisions by the terminal paired
+experiment below; it remains the smaller restart/outage diagnostic.
+
+## Central end-to-end value evidence
+
+The [terminal central result](./results/poc-central-end-to-end-value-v1/README.md)
+compares the complete installed BuildOpt path with optimized native Gradle
+under the same committed central-cache opportunity.
+
+| Repository / workflow | Graph | Central objects | Native mean | BuildOpt mean | Direct result | 95% saving interval | p95 | Payback |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Ktor `jvmJar` | 133 -> 10 | 6 / 474,183 B | 215.506 s | 37.828 s | **82.45% faster**, 8/8 pairs | 156.555..198.802 s | 243.986 -> 55.139 s | 28 builds |
+| Beam `classes` | 316 -> 6 | 155 / 46,565,962 B | 48.475 s | 21.130 s | **56.41% faster**, 8/8 pairs | 22.407..32.283 s | 53.468 -> 28.319 s | 29 builds |
+
+Every required output is exact. Selection, launcher, gateway, TLS and central
+synchronization overhead are inside candidate wall time. A Ktor root
+build-logic change retains the full native graph, succeeds with 13 central
+cache hits and makes no performance claim. This is bounded 12-CPU POC evidence,
+not the contractual golden-runner class, a soak or a universal claim.
+
+```bash
+./dev/check-central-end-to-end-value \
+  benchmarks/results/poc-central-end-to-end-value-v1/summary.json
+```
 
 ## Build Optimization scorecard
 

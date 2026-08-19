@@ -490,6 +490,19 @@ gate. The runner removes its exact temporary root after success and retains
 that root only when a failure needs diagnosis. This is a bounded POC
 experiment, not a soak.
 
+The retained terminal evidence is:
+
+```bash
+./dev/check-central-end-to-end-value \
+  benchmarks/results/poc-central-end-to-end-value-v1/summary.json
+```
+
+It records Ktor at **82.45% lower wall time** and Beam at **56.41%**, each
+with 8/8 positive pairs, exact required outputs and the same committed central
+cache opportunity. A Ktor global build-logic change retains native without a
+performance claim. The run used the 12-CPU host with a common eight-worker
+limit; it is POC evidence, not the contractual golden-runner class.
+
 If a bounded runner ends after one subject has completed all eight pairs, the
 retained diagnostic root can resume only that completed subject:
 

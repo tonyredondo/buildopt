@@ -224,12 +224,15 @@ The central service is optional and additive:
 | 7 | `POC-CENTRAL-TWO-MACHINE-001` | Exercise one server, one trusted producer and one clean consumer in isolated machines or containers. | The consumer reuses both Gradle objects and BuildOpt state, exact outputs match, credentials stay private and server loss proves local/native fallback. |
 | 8 | `POC-CENTRAL-END-TO-END-VALUE-001` | Compare the complete installed centralized path against optimized native Gradle using the same remote Gradle cache opportunity. | At least two substantial Gradle families show equivalent outputs and a net wall-time win attributable to structural reduction plus cache reuse; an honest non-winning case retains native. |
 
-Block 7 is complete. Its Docker evidence used isolated workspaces, Gradle User
+Blocks 7 and 8 are complete. Block 7 Docker evidence used isolated workspaces, Gradle User
 Homes and BuildOpt caches, restarted the TLS service, selected the central
 portfolio, observed one `FROM-CACHE` task, preserved exact JAR bytes and rebuilt
 the same output with zero hits during outage. The recorded phase durations are
 diagnostic only because there was no equal-opportunity native control. Block 8
-must decide whether this optional service adds net customer value.
+then gave the full native graph and structural candidate the same committed
+central objects. Ktor improved by **82.45%** and Beam by **56.41%**, with exact
+outputs and 8/8 positive pairs; a global Ktor change retained native. See the
+[terminal result](../../benchmarks/results/poc-central-end-to-end-value-v1/README.md).
 
 The local one-command roadmap remains the primary critical path. Blocks 1–3
 may establish the reusable server boundary after the `buildopt optimize` state
