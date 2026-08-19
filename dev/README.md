@@ -479,14 +479,15 @@ objects across eight alternating pairs:
 
 The runner requires network access for the two public repositories and their
 Gradle dependencies. It uses separate workspaces, Gradle User Homes and local
-BuildOpt caches. Before calibration it runs the complete native workflow once
-to populate the Safe Cache, then removes project outputs without deleting that
-cache. Both isolated calibration arms therefore restore the same complete
-immutable seed instead of repeating cold work from an interrupted or
-up-to-date producer checkout. The three-hour calibration allowance preserves
-all eight pairs and the full public-repository workflows; it does not relax the
-value gate. The runner removes its exact temporary root after success and
-retains that root only when a failure needs diagnosis. This is a bounded POC
+BuildOpt caches. Before calibration it runs the complete owner workflow through
+native Gradle, records that local cache's object count, bytes and manifest
+digest, and imports the verified seed into the private L1 used only by the
+isolated calibration arms. The imported L1 is deleted before normal Tier-One
+central publication, so this fair native comparator does not widen BuildOpt's
+publication policy. The three-hour calibration allowance preserves all eight
+pairs and the full public-repository workflows; it does not relax the value
+gate. The runner removes its exact temporary root after success and retains
+that root only when a failure needs diagnosis. This is a bounded POC
 experiment, not a soak.
 
 If a bounded runner ends after one subject has completed all eight pairs, the

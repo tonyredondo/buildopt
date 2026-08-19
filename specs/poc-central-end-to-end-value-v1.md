@@ -21,14 +21,28 @@ producer's automatic post-run publication already made evidence, portfolio and
 checkpoint generation 1 remotely visible. The diagnostic sync may not repair a
 missing publication.
 
-Before structural calibration, the producer runs the complete native workflow
-once to populate the same Safe Cache that `optimize` will snapshot. This
-ordinary cache-producing build is not a calibration observation. Project
-outputs are then removed without deleting the populated cache, so the
-authoritative optimize run proves that the seed is usable before both isolated
-arms receive the same immutable snapshot. This prevents an interrupted or
-already-up-to-date producer checkout from silently turning an intended warm
-central-cache comparison into repeated cold builds.
+Before structural calibration, the producer runs the complete owner workflow
+once through native Gradle, without BuildOpt's Tier-One allowlist, and records
+the object count, bytes and manifest digest of Gradle's local cache. This
+ordinary cache-producing build is not a calibration observation. The harness
+imports that immutable native cache into the private managed-L1 directory that
+`optimize` snapshots, verifies the imported manifest exactly and removes
+project outputs. Both isolated calibration arms therefore receive the complete
+native Gradle cache opportunity rather than a restricted or interrupted seed.
+
+The import is benchmark-only. The imported L1 is deleted after qualification
+and before the producer publishes the owner workflow to the central cache.
+Normal BuildOpt execution still applies the Tier-One default-deny policy, and
+the benchmark cannot make an otherwise denied object centrally visible. This
+separates a fair native calibration comparator from product publication policy.
+
+A completed subject resumed from an identical installed-payload checkpoint may
+predate this seed-manifest rule. Its retained eight-pair end-to-end evidence is
+recomputed rather than relabeled: the result records
+`COMPLETED_SUBJECT_CHECKPOINT` with unavailable seed metadata. Every structural
+calibration executed by the current run must use the complete native seed, and
+at least one final subject must carry its verified manifest. This narrow
+compatibility rule preserves prior raw observations without inventing evidence.
 
 A completed subject may be resumed from a retained diagnostic root when a
 bounded runner ends before the next subject completes. Resume is allowed only

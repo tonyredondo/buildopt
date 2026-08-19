@@ -45,7 +45,7 @@ jq -e '
   } and
   .resourceEnvelope == {
     commonMaximumWorkers: 8,
-    completeSafeCacheSeedBeforeCalibration: true,
+    completeNativeCacheSeedForExecutedCalibration: true,
     maximumCalibrationBudgetHours: 3,
     ktorGradleHeapMiB: 2048,
     ktorKotlinDaemonHeapMiB: 1536,
@@ -90,7 +90,7 @@ jq -e '
   .protocol.sameCommittedCentralObjects and .protocol.separateWorkspaces and
   .protocol.separateGradleHomes and .protocol.separateBuildOptCaches and
   .protocol.unmeasuredDependencyWarmup and
-  .protocol.completeSafeCacheSeedBeforeCalibration and
+  .protocol.completeNativeCacheSeedForExecutedCalibration and
   .protocol.calibrationBudgetHours == 3 and
   .protocol.maximumSharedBreakEvenBuilds == 50 and
   .protocol.commonMaximumWorkers == 8 and
@@ -121,11 +121,31 @@ jq -e '
   (.repositories | length) == 2 and
   ([.repositories[].repositoryId] | unique | length) == 2 and
   ([.repositories[].gradleFamily] | unique | length) == 2 and
+  ([.repositories[] | select(.calibrationSeed.kind ==
+    "COMPLETE_NATIVE_GRADLE_LOCAL_CACHE")] | length) >= 1 and
+  ([.repositories[] | select(.calibrationSeed.kind ==
+    "COMPLETED_SUBJECT_CHECKPOINT")] | length) <=
+    .protocol.checkpointResume.resumedSubjectCount and
   all(.repositories[];
     .publicRepository and
     (.baseRevision | test("^[0-9a-f]{40}$")) and
     (.targetRevision | test("^[0-9a-f]{40}$")) and
     .central.committedObjectCount > 0 and .central.committedBytes > 0 and
+    (if .calibrationSeed.kind == "COMPLETE_NATIVE_GRADLE_LOCAL_CACHE" then
+      .calibrationSeed.objectCount > 0 and .calibrationSeed.bytes > 0 and
+      (.calibrationSeed.manifestSha256 | test("^[0-9a-f]{64}$")) and
+      .calibrationSeed.importedIntoManagedL1ForCalibration and
+      .calibrationSeed.removedBeforeCentralPublication
+     else
+      .calibrationSeed == {
+        kind:"COMPLETED_SUBJECT_CHECKPOINT",
+        objectCount:null,bytes:null,manifestSha256:null,
+        importedIntoManagedL1ForCalibration:false,
+        removedBeforeCentralPublication:false,
+        checkpointedBeforeNativeSeedContract:true,
+        finalEndToEndPairsRecomputed:true
+      }
+     end) and
     .calibration.calibrationCostMs > 0 and
     .calibration.meanSavedMs > 0 and
     .calibration.breakEvenBuilds > 0 and

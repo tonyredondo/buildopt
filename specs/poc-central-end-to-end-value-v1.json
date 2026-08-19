@@ -25,7 +25,7 @@
   },
   "resourceEnvelope": {
     "commonMaximumWorkers": 8,
-    "completeSafeCacheSeedBeforeCalibration": true,
+    "completeNativeCacheSeedForExecutedCalibration": true,
     "maximumCalibrationBudgetHours": 3,
     "ktorGradleHeapMiB": 2048,
     "ktorKotlinDaemonHeapMiB": 1536,

@@ -13,7 +13,7 @@ buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
 buildopt_resume_root=${BUILDOPT_CENTRAL_VALUE_RESUME_ROOT:-}
 
-for buildopt_command in awk curl date find git grep jq openssl sha256sum sort tar tee; do
+for buildopt_command in awk curl date find git grep install jq openssl sha256sum sort stat tar tee; do
     command -v "${buildopt_command}" >/dev/null || {
         printf 'central value benchmark requires %s\n' "${buildopt_command}" >&2
         exit 1
@@ -197,8 +197,17 @@ if [[ -n ${buildopt_resume_root} ]]; then
             printf 'central value resumed subject no longer passes its recomputed gate\n' >&2
             exit 1
         }
-        jq -c --argjson result "${buildopt_resume_stats}" \
-            '.result=$result' <<<"${buildopt_resume_repository}" \
+        jq -c --argjson result "${buildopt_resume_stats}" '
+              .result=$result |
+              .calibrationSeed //= {
+                kind:"COMPLETED_SUBJECT_CHECKPOINT",
+                objectCount:null,bytes:null,manifestSha256:null,
+                importedIntoManagedL1ForCalibration:false,
+                removedBeforeCentralPublication:false,
+                checkpointedBeforeNativeSeedContract:true,
+                finalEndToEndPairsRecomputed:true
+              }
+            ' <<<"${buildopt_resume_repository}" \
             >>"${buildopt_resume_normalized}"
     done < <(jq -s -c '.[]' "${buildopt_resume_root}/repositories.jsonl")
     mv -- "${buildopt_resume_normalized}" "${buildopt_repositories_json}"
@@ -305,11 +314,154 @@ buildopt_clear_project_outputs() {
     done < <(find "${buildopt_repository}" -type d -name build -prune -print0)
 }
 
+buildopt_clear_all_project_outputs() {
+    local buildopt_repository=$1
+    local buildopt_directory
+    while IFS= read -r -d '' buildopt_directory; do
+        rm -rf -- "${buildopt_directory}"
+    done < <(find "${buildopt_repository}" -type d -name build -prune -print0)
+}
+
 buildopt_clear_outputs() {
     local buildopt_repository=$1
     local buildopt_cache_home=$2
     buildopt_clear_project_outputs "${buildopt_repository}"
     rm -rf -- "${buildopt_cache_home}/buildopt/state/l1"
+}
+
+buildopt_write_cache_seed_manifest() {
+    local buildopt_cache_directory=$1
+    local buildopt_manifest=$2
+    local buildopt_entry buildopt_name buildopt_sha buildopt_bytes
+    BUILDOPT_CACHE_SEED_COUNT=0
+    BUILDOPT_CACHE_SEED_BYTES=0
+    : >"${buildopt_manifest}"
+    if [[ ! -d ${buildopt_cache_directory} || -L ${buildopt_cache_directory} ]]; then
+        printf 'native Gradle cache seed is not one real directory: %s\n' \
+            "${buildopt_cache_directory}" >&2
+        return 1
+    fi
+    while IFS= read -r -d '' buildopt_entry; do
+        buildopt_name=$(basename -- "${buildopt_entry}")
+        case "${buildopt_name}" in
+            gc.properties | *.lock) continue ;;
+        esac
+        if [[ ! -f ${buildopt_entry} || -L ${buildopt_entry} ||
+            ! ${buildopt_name} =~ ^[0-9a-f]{32}$ ]]; then
+            printf 'native Gradle cache seed contains an unsafe entry: %s\n' \
+                "${buildopt_entry}" >&2
+            return 1
+        fi
+        buildopt_sha=$(sha256sum "${buildopt_entry}" | awk '{print $1}')
+        buildopt_bytes=$(stat -c %s "${buildopt_entry}")
+        printf '%s %s %s\n' "${buildopt_sha}" "${buildopt_bytes}" \
+            "${buildopt_name}" >>"${buildopt_manifest}"
+        BUILDOPT_CACHE_SEED_COUNT=$((BUILDOPT_CACHE_SEED_COUNT + 1))
+        BUILDOPT_CACHE_SEED_BYTES=$((BUILDOPT_CACHE_SEED_BYTES + buildopt_bytes))
+    done < <(find "${buildopt_cache_directory}" -mindepth 1 -maxdepth 1 -print0 | sort -z)
+    ((BUILDOPT_CACHE_SEED_COUNT > 0)) || {
+        printf 'native Gradle cache seed contains no reusable objects\n' >&2
+        return 1
+    }
+    BUILDOPT_CACHE_SEED_SHA=$(sha256sum "${buildopt_manifest}" | awk '{print $1}')
+}
+
+buildopt_prepare_native_calibration_seed() {
+    local buildopt_repository_id=$1
+    local buildopt_repository_numeric_id=$2
+    local buildopt_repository=$3
+    local buildopt_home=$4
+    local buildopt_gradle_home=$5
+    local buildopt_cache_home=$6
+    local buildopt_event=$7
+    local buildopt_binary=$8
+    local buildopt_logs=$9
+    shift 9
+    local -a buildopt_workflow=("$@")
+    local buildopt_native_cache=${buildopt_gradle_home}/caches/build-cache-1
+    local buildopt_source_manifest=${buildopt_logs}/producer-native-calibration-seed.manifest
+    local buildopt_import_manifest=${buildopt_logs}/producer-imported-calibration-seed.manifest
+    local -a buildopt_l1_arguments=(
+        help --daemon --build-cache --parallel --no-configuration-cache
+        --console=plain --no-scan --max-workers="${buildopt_max_workers}"
+    )
+    if [[ ${buildopt_repository_id} == ktorio/ktor ]]; then
+        buildopt_l1_arguments+=(-Pktor.develocity.skipBuildScans=true)
+    fi
+
+    # This seed is a benchmark comparator, not a product-policy override. Run
+    # the complete owner workflow through native Gradle, with its own local
+    # cache and without BuildOpt's Tier-One allowlist, after preserving the
+    # already-warmed dependency and Wrapper state in the same Gradle User Home.
+    rm -rf -- "${buildopt_native_cache}"
+    buildopt_clear_all_project_outputs "${buildopt_repository}"
+    buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+        "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
+        "${buildopt_cache_home}" "${buildopt_event}" \
+        ./gradlew "${buildopt_workflow[@]}" \
+        >"${buildopt_logs}/producer-native-calibration-seed.log" 2>&1
+    buildopt_stop_gradle_daemons "${buildopt_repository}" "${buildopt_gradle_home}" \
+        "${buildopt_logs}/producer-native-calibration-seed-daemon-stop.log"
+    buildopt_write_cache_seed_manifest "${buildopt_native_cache}" "${buildopt_source_manifest}"
+    local buildopt_native_count=${BUILDOPT_CACHE_SEED_COUNT}
+    local buildopt_native_bytes=${BUILDOPT_CACHE_SEED_BYTES}
+    local buildopt_native_sha=${BUILDOPT_CACHE_SEED_SHA}
+
+    # Materialize the private L1 directory used by the installed optimize path,
+    # stop its daemon and replace only cache objects with the immutable native
+    # comparator. Metadata and locks remain owned by Gradle/BuildOpt.
+    buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+        "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
+        "${buildopt_cache_home}" "${buildopt_event}" \
+        "${buildopt_binary}" gradle "${buildopt_l1_arguments[@]}" \
+        >"${buildopt_logs}/producer-calibration-l1-materialize.log" 2>&1
+    buildopt_stop_gradle_daemons "${buildopt_repository}" "${buildopt_gradle_home}" \
+        "${buildopt_logs}/producer-calibration-l1-daemon-stop.log"
+    local -a buildopt_l1_caches=()
+    mapfile -d '' -t buildopt_l1_caches < <(
+        find "${buildopt_cache_home}/buildopt/state/l1/scopes" -type d \
+            -path '*/generation-*/cache' -print0
+    )
+    if ((${#buildopt_l1_caches[@]} != 1)) ||
+        [[ -L ${buildopt_l1_caches[0]:-} ]]; then
+        printf '%s calibration expected exactly one private managed L1 cache, found %d\n' \
+            "${buildopt_repository_id}" "${#buildopt_l1_caches[@]}" >&2
+        return 1
+    fi
+    local buildopt_l1_cache=${buildopt_l1_caches[0]}
+    local buildopt_entry buildopt_name
+    while IFS= read -r -d '' buildopt_entry; do
+        buildopt_name=$(basename -- "${buildopt_entry}")
+        case "${buildopt_name}" in
+            gc.properties | *.lock) continue ;;
+        esac
+        if [[ ! -f ${buildopt_entry} || -L ${buildopt_entry} ]]; then
+            printf 'managed L1 contains an unsafe entry before calibration import: %s\n' \
+                "${buildopt_entry}" >&2
+            return 1
+        fi
+        rm -f -- "${buildopt_entry}"
+    done < <(find "${buildopt_l1_cache}" -mindepth 1 -maxdepth 1 -print0)
+    while IFS= read -r buildopt_name; do
+        buildopt_name=${buildopt_name##* }
+        install -m 0600 -- "${buildopt_native_cache}/${buildopt_name}" \
+            "${buildopt_l1_cache}/${buildopt_name}"
+    done <"${buildopt_source_manifest}"
+    buildopt_write_cache_seed_manifest "${buildopt_l1_cache}" "${buildopt_import_manifest}"
+    if [[ ${BUILDOPT_CACHE_SEED_COUNT} != "${buildopt_native_count}" ||
+        ${BUILDOPT_CACHE_SEED_BYTES} != "${buildopt_native_bytes}" ||
+        ${BUILDOPT_CACHE_SEED_SHA} != "${buildopt_native_sha}" ]]; then
+        printf '%s imported native calibration seed does not match its source\n' \
+            "${buildopt_repository_id}" >&2
+        return 1
+    fi
+    BUILDOPT_NATIVE_CALIBRATION_SEED_COUNT=${buildopt_native_count}
+    BUILDOPT_NATIVE_CALIBRATION_SEED_BYTES=${buildopt_native_bytes}
+    BUILDOPT_NATIVE_CALIBRATION_SEED_SHA=${buildopt_native_sha}
+    printf '%s: complete native calibration seed ready (%d files, %d bytes, %s)\n' \
+        "${buildopt_repository_id}" "${buildopt_native_count}" \
+        "${buildopt_native_bytes}" "${buildopt_native_sha}"
+    buildopt_clear_all_project_outputs "${buildopt_repository}"
 }
 
 buildopt_hash_required_output() {
@@ -577,21 +729,16 @@ buildopt_subject() {
         --ca-file "${buildopt_tls}/ca.pem" \
         >"${buildopt_logs}/producer-connect.json"
 
-    # A central-cache comparison starts from a useful producer build, not from
-    # an almost empty cache left behind by an interrupted or up-to-date
-    # discovery run. Populate the exact Safe Cache used by optimize without
-    # measuring this baseline build, then remove only project outputs. The
-    # authoritative optimize run must restore from and snapshot that complete
-    # immutable seed for both calibration arms.
-    printf '%s: preparing complete Safe Cache seed before calibration\n' \
+    # Calibrate against the complete native Gradle cache opportunity. The
+    # imported seed is temporary measurement input and is deleted below before
+    # the Tier-One-governed central publication build starts.
+    printf '%s: preparing complete native Gradle cache seed before calibration\n' \
         "${buildopt_repository_id}"
-    buildopt_clear_project_outputs "${buildopt_producer}"
-    buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+    buildopt_prepare_native_calibration_seed \
+        "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
         "${buildopt_producer}" "${buildopt_producer_home}" "${buildopt_producer_gradle}" \
         "${buildopt_producer_cache}" "${buildopt_event}" \
-        "${buildopt_binary}" gradle "${buildopt_workflow[@]}" \
-        >"${buildopt_logs}/producer-calibration-cache-seed.log" 2>&1
-    buildopt_clear_project_outputs "${buildopt_producer}"
+        "${buildopt_binary}" "${buildopt_logs}" "${buildopt_workflow[@]}"
 
     printf '%s: calibrating central structural portfolio\n' "${buildopt_repository_id}"
     buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
@@ -867,6 +1014,9 @@ buildopt_subject() {
         --arg namespace "${buildopt_namespace}" --argjson objectCount "${buildopt_object_count}" \
         --argjson objectBytes "${buildopt_object_bytes}" --argjson graph "${buildopt_graph}" \
         --argjson calibration "${buildopt_calibration}" \
+        --argjson calibrationSeedObjectCount "${BUILDOPT_NATIVE_CALIBRATION_SEED_COUNT}" \
+        --argjson calibrationSeedBytes "${BUILDOPT_NATIVE_CALIBRATION_SEED_BYTES}" \
+        --arg calibrationSeedSha "${BUILDOPT_NATIVE_CALIBRATION_SEED_SHA}" \
         --slurpfile observations "${buildopt_observations}" --argjson result "${buildopt_stats}" '
           {
             repositoryId:$repositoryId,publicRepository:true,gradleFamily:$gradleFamily,
@@ -874,6 +1024,12 @@ buildopt_subject() {
             targetOrigin:"DETERMINISTIC_LOCAL_FIXTURE",changedPath:$changedPath,
             changeFamily:$changeFamily,workflow:$workflow,requiredOutput:$outputPath,
             central:{namespace:$namespace,committedObjectCount:$objectCount,committedBytes:$objectBytes},
+            calibrationSeed:{
+              kind:"COMPLETE_NATIVE_GRADLE_LOCAL_CACHE",
+              objectCount:$calibrationSeedObjectCount,bytes:$calibrationSeedBytes,
+              manifestSha256:$calibrationSeedSha,importedIntoManagedL1ForCalibration:true,
+              removedBeforeCentralPublication:true
+            },
             calibration:$calibration,graph:$graph,observations:$observations,result:$result
           }
         ' >>"${buildopt_repositories_json}"
@@ -995,7 +1151,7 @@ jq -n \
         runner:{operatingSystem:"Linux",architecture:"x86_64",kernel:$kernel,cpuCount:$cpuCount,memoryBytes:$memoryBytes},
         protocol:{
           pairs:8,alternatingPairOrder:true,sameCommittedCentralObjects:true,
-          completeSafeCacheSeedBeforeCalibration:true,calibrationBudgetHours:3,
+          completeNativeCacheSeedForExecutedCalibration:true,calibrationBudgetHours:3,
           separateWorkspaces:true,separateGradleHomes:true,separateBuildOptCaches:true,
           unmeasuredDependencyWarmup:true,transport:"HTTPS_TLS_1_3_MINIMUM",
           maximumSharedBreakEvenBuilds:$maximumSharedBreakEvenBuilds,
