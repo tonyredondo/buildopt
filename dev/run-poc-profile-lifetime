@@ -16,6 +16,8 @@ buildopt_repository_id=ktorio/ktor
 buildopt_repository_numeric_id=6847064
 buildopt_qualifying_revision=24b8773fcee753314dfb753b3f994a7ef36823ef
 buildopt_namespace=gradle-9.2.1/linux-amd64/jdk-21/ktor-jetty-jakarta-jvmjar
+buildopt_tenant=poc-owner
+buildopt_trust_domain=poc-two-machine
 buildopt_port=28445
 buildopt_max_workers=8
 buildopt_calibration_pairs=8
@@ -387,6 +389,13 @@ buildopt_write_event "${buildopt_producer_event}" "${buildopt_qualifying_parent}
     --source-revision "${buildopt_qualifying_revision}" \
     --namespace "${buildopt_namespace}" --lifetime 8h \
     >"${buildopt_authority}/prepare.json"
+jq -e --arg tenant "${buildopt_tenant}" \
+    --arg repository "${buildopt_repository_id}" \
+    --arg trustDomain "${buildopt_trust_domain}" '
+      .repository == {
+        tenant:$tenant,repository:$repository,trustDomain:$trustDomain
+      }
+    ' "${buildopt_authority}/authority.json" >/dev/null
 openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 1 \
     -subj '/CN=BuildOpt profile lifetime POC' -addext 'subjectAltName=IP:127.0.0.1' \
     -keyout "${buildopt_tls}/server-key.pem" -out "${buildopt_tls}/server.pem" \
@@ -463,9 +472,9 @@ buildopt_run_environment "${buildopt_producer}" "${buildopt_producer_home}" \
     BUILDOPT_SHARED_CACHE_CA_PATH="${buildopt_tls}/ca.pem" \
     BUILDOPT_SHARED_CACHE_URL="${buildopt_server_url}" \
     BUILDOPT_L1_STATE_ROOT="${buildopt_root}/producer-l1" \
-    BUILDOPT_L1_TENANT_ID=poc-owner \
+    BUILDOPT_L1_TENANT_ID="${buildopt_tenant}" \
     BUILDOPT_L1_REPOSITORY_ID="${buildopt_repository_id}" \
-    BUILDOPT_L1_TRUST_DOMAIN=poc-profile-lifetime \
+    BUILDOPT_L1_TRUST_DOMAIN="${buildopt_trust_domain}" \
     BUILDOPT_L1_COMPATIBILITY_CLASS="${buildopt_namespace}" \
     BUILDOPT_L1_SECURITY_GENERATION=1 BUILDOPT_L1_L2_WRITE_AUTHORIZED=1 \
     "${buildopt_binary}" gradle "${buildopt_workflow[@]}" \
