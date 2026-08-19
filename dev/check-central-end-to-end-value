@@ -40,6 +40,7 @@ jq -e '
   .checkpointResume == {
     allowed: true,
     completedSubjectEvidenceOnly: true,
+    inProgressSubjectPreparationAllowed: true,
     identicalInstalledPayloadRequired: true
   } and
   .resourceEnvelope == {
@@ -98,8 +99,11 @@ jq -e '
   .protocol.negativeDaemonStoppedBeforeNextSubject and
   (.protocol.checkpointResume.resumedSubjectCount >= 0) and
   (.protocol.checkpointResume.resumedSubjectCount <= 1) and
+  (.protocol.checkpointResume.resumedInProgressSubjectCount >= 0) and
+  (.protocol.checkpointResume.resumedInProgressSubjectCount <= 1) and
   (.protocol.checkpointResume.used ==
-    (.protocol.checkpointResume.resumedSubjectCount > 0)) and
+    ((.protocol.checkpointResume.resumedSubjectCount +
+      .protocol.checkpointResume.resumedInProgressSubjectCount) > 0)) and
   (.protocol.checkpointResume.canonicalInstalledPayloadSha256 |
     test("^[0-9a-f]{64}$")) and
   (if .protocol.checkpointResume.used then

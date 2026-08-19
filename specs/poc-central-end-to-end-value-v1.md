@@ -34,6 +34,13 @@ The runner fixes its locale before calculating decimal confidence bounds, and
 resume always recomputes every derived statistic from the retained raw pairs.
 It never trusts a checkpoint's previously serialized aggregates.
 
+If interruption occurs after a subject's authoritative native discovery but
+before its first complete pair, the runner may reuse that prepared subject
+only after verifying the same installed payload, repository identity, base
+and target revisions, one-path change binding, all three checkout revisions,
+authority material and incomplete result marker. It reruns discovery and all
+eight pairs; no partial timing observation or derived statistic is reused.
+
 ## Resource envelope
 
 Both arms use the same maximum of eight Gradle workers. Ktor also uses the same

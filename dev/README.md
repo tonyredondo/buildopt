@@ -492,12 +492,15 @@ BUILDOPT_CENTRAL_VALUE_RESUME_ROOT=/tmp/buildopt-central-value.XXXXXX \
     ./dev/run-poc-central-end-to-end-value /tmp/central-value.json
 ```
 
-Resume rejects partial subjects and rebuilds the installed package before
-requiring its canonical payload digest to match the checkpoint exactly across
-paths, types, modes, symlink targets and file bytes. TAR metadata may differ,
-so the final evidence retains the archive and payload hashes separately and
-records whether checkpoint reuse occurred. Derived statistics are recomputed
-from the raw pairs under a deterministic locale during resume.
+Resume rejects partial timing observations and rebuilds the installed package
+before requiring its canonical payload digest to match the checkpoint exactly
+across paths, types, modes, symlink targets and file bytes. A subject stopped
+after authoritative native discovery but before its first complete pair may
+reuse only its verified checkout, dependency and authority preparation; it
+reruns discovery and all eight pairs. TAR metadata may differ, so the final
+evidence retains the archive and payload hashes separately and records whether
+checkpoint reuse occurred. Derived statistics are recomputed from the raw
+pairs under a deterministic locale during resume.
 
 ## CI orchestration validation
 

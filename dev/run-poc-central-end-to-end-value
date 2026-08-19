@@ -45,6 +45,7 @@ buildopt_max_workers=8
 buildopt_ktor_gradle_heap_mib=2048
 buildopt_ktor_kotlin_daemon_heap_mib=1536
 buildopt_resumed_subject_count=0
+buildopt_resumed_in_progress_subject_count=0
 buildopt_checkpoint_payload_matched=false
 buildopt_checkpoint_package_sha=
 buildopt_canonical_payload_sha=
@@ -389,6 +390,76 @@ buildopt_subject() {
     local -a buildopt_workflow=("$@")
 
     local buildopt_subject_root=${buildopt_root}/${buildopt_name}
+    local buildopt_resume_subject=
+    local buildopt_resumed_in_progress=false
+    if [[ -n ${buildopt_resume_root} &&
+        -d ${buildopt_resume_root}/${buildopt_name} &&
+        ! -L ${buildopt_resume_root}/${buildopt_name} ]]; then
+        buildopt_resume_subject=${buildopt_resume_root}/${buildopt_name}
+        local buildopt_resume_required
+        for buildopt_resume_required in \
+            source/.git producer/.git control/.git candidate/.git \
+            central-state authority/authority.json authority/producer-token.json \
+            authority/consumer-token.json authority/credential tls/server.pem \
+            tls/server-key.pem tls/ca.pem event.json \
+            producer/.buildopt/optimize/v1/discovery/proposal.json \
+            logs/producer-optimize.json logs/producer-optimize.log; do
+            [[ -e ${buildopt_resume_subject}/${buildopt_resume_required} &&
+                ! -L ${buildopt_resume_subject}/${buildopt_resume_required} ]] || {
+                printf '%s in-progress checkpoint is incomplete at %s\n' \
+                    "${buildopt_repository_id}" "${buildopt_resume_required}" >&2
+                exit 1
+            }
+        done
+        [[ ! -s ${buildopt_resume_subject}/logs/producer-optimize.json ]] || {
+            printf '%s in-progress checkpoint already contains an unverified optimize result\n' \
+                "${buildopt_repository_id}" >&2
+            exit 1
+        }
+        jq -e --arg repositoryId "${buildopt_repository_id}" \
+            --arg entrypoint "${buildopt_workflow[0]}" \
+            '.subject.repositoryId == $repositoryId and
+             .plan.fallbackEntrypoints == [$entrypoint] and
+             (.plan.entrypoints | length) > 0' \
+            "${buildopt_resume_subject}/producer/.buildopt/optimize/v1/discovery/proposal.json" \
+            >/dev/null || {
+            printf '%s in-progress checkpoint discovery does not match the requested subject\n' \
+                "${buildopt_repository_id}" >&2
+            exit 1
+        }
+        local buildopt_resume_target buildopt_resume_parent buildopt_resume_clone
+        buildopt_resume_target=$(git -C "${buildopt_resume_subject}/source" rev-parse HEAD)
+        buildopt_resume_parent=$(git -C "${buildopt_resume_subject}/source" rev-parse HEAD^)
+        [[ ${buildopt_resume_parent} == "${buildopt_base_revision}" ]] || {
+            printf '%s in-progress checkpoint base revision drifted\n' \
+                "${buildopt_repository_id}" >&2
+            exit 1
+        }
+        local -a buildopt_resume_changed_paths=()
+        mapfile -t buildopt_resume_changed_paths < <(
+            git -C "${buildopt_resume_subject}/source" diff-tree \
+                --no-commit-id --name-only -r HEAD
+        )
+        if ((${#buildopt_resume_changed_paths[@]} != 1)) ||
+            [[ ${buildopt_resume_changed_paths[0]} != "${buildopt_changed_path}" ]]; then
+            printf '%s in-progress checkpoint change binding drifted\n' \
+                "${buildopt_repository_id}" >&2
+            exit 1
+        fi
+        for buildopt_resume_clone in producer control candidate; do
+            [[ $(git -C "${buildopt_resume_subject}/${buildopt_resume_clone}" rev-parse HEAD) == \
+                "${buildopt_resume_target}" ]] || {
+                printf '%s in-progress checkpoint %s revision drifted\n' \
+                    "${buildopt_repository_id}" "${buildopt_resume_clone}" >&2
+                exit 1
+            }
+        done
+        buildopt_subject_root=${buildopt_resume_subject}
+        buildopt_resumed_in_progress=true
+        buildopt_resumed_in_progress_subject_count=$((buildopt_resumed_in_progress_subject_count + 1))
+        printf '%s: resuming verified in-progress subject after native discovery\n' \
+            "${buildopt_repository_id}"
+    fi
     local buildopt_source=${buildopt_subject_root}/source
     local buildopt_producer=${buildopt_subject_root}/producer
     local buildopt_control=${buildopt_subject_root}/control
@@ -400,51 +471,54 @@ buildopt_subject() {
     local buildopt_server_url=https://127.0.0.1:${buildopt_port}
     local buildopt_logs=${buildopt_subject_root}/logs
     local buildopt_observations=${buildopt_subject_root}/observations.jsonl
+    local buildopt_target_revision
     mkdir -p -- "${buildopt_subject_root}" "${buildopt_state}" "${buildopt_authority}" \
         "${buildopt_tls}" "${buildopt_logs}"
+    if [[ ${buildopt_resumed_in_progress} == true ]]; then
+        buildopt_target_revision=$(git -C "${buildopt_source}" rev-parse HEAD)
+    else
+        git init -q "${buildopt_source}"
+        git -C "${buildopt_source}" remote add origin "${buildopt_remote}"
+        git -C "${buildopt_source}" fetch -q --depth=1 origin "${buildopt_base_revision}"
+        git -C "${buildopt_source}" checkout -q --detach "${buildopt_base_revision}"
+        git -C "${buildopt_source}" config user.email buildopt@example.invalid
+        git -C "${buildopt_source}" config user.name 'BuildOpt POC fixture'
+        git -C "${buildopt_source}" config commit.gpgsign false
+        if [[ ! -f ${buildopt_source}/${buildopt_changed_path} || -L ${buildopt_source}/${buildopt_changed_path} ]]; then
+            printf '%s deterministic change target is not one regular file: %s\n' \
+                "${buildopt_repository_id}" "${buildopt_changed_path}" >&2
+            exit 1
+        fi
+        printf '\n// BuildOpt central value POC fixture: %s\n' "${buildopt_change_family}" \
+            >>"${buildopt_source}/${buildopt_changed_path}"
+        git -C "${buildopt_source}" add -- "${buildopt_changed_path}"
+        GIT_AUTHOR_DATE=2026-08-18T00:00:00Z GIT_COMMITTER_DATE=2026-08-18T00:00:00Z \
+            git -C "${buildopt_source}" commit -qm \
+            "POC ${buildopt_change_family} central value change"
+        buildopt_target_revision=$(git -C "${buildopt_source}" rev-parse HEAD)
+        buildopt_clone_at "${buildopt_source}" "${buildopt_producer}" \
+            "${buildopt_remote}" "${buildopt_target_revision}"
+        buildopt_clone_at "${buildopt_source}" "${buildopt_control}" \
+            "${buildopt_remote}" "${buildopt_target_revision}"
+        buildopt_clone_at "${buildopt_source}" "${buildopt_candidate}" \
+            "${buildopt_remote}" "${buildopt_target_revision}"
+        jq -n --arg before "${buildopt_base_revision}" '{before:$before}' >"${buildopt_event}"
 
-    git init -q "${buildopt_source}"
-    git -C "${buildopt_source}" remote add origin "${buildopt_remote}"
-    git -C "${buildopt_source}" fetch -q --depth=1 origin "${buildopt_base_revision}"
-    git -C "${buildopt_source}" checkout -q --detach "${buildopt_base_revision}"
-    git -C "${buildopt_source}" config user.email buildopt@example.invalid
-    git -C "${buildopt_source}" config user.name 'BuildOpt POC fixture'
-    git -C "${buildopt_source}" config commit.gpgsign false
-    if [[ ! -f ${buildopt_source}/${buildopt_changed_path} || -L ${buildopt_source}/${buildopt_changed_path} ]]; then
-        printf '%s deterministic change target is not one regular file: %s\n' \
-            "${buildopt_repository_id}" "${buildopt_changed_path}" >&2
-        exit 1
+        "${buildopt_control_binary}" prepare \
+            --state-dir "${buildopt_state}" \
+            --output-dir "${buildopt_authority}" \
+            --repository-id "${buildopt_repository_id}" \
+            --source-revision "${buildopt_target_revision}" \
+            --namespace "${buildopt_namespace}" \
+            --lifetime 8h >"${buildopt_authority}/prepare.json"
+        openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 1 \
+            -subj "/CN=BuildOpt central value ${buildopt_name}" \
+            -addext 'subjectAltName=IP:127.0.0.1' \
+            -keyout "${buildopt_tls}/server-key.pem" \
+            -out "${buildopt_tls}/server.pem" >/dev/null 2>&1
+        cp -- "${buildopt_tls}/server.pem" "${buildopt_tls}/ca.pem"
+        chmod 0600 "${buildopt_tls}/"*.pem
     fi
-    printf '\n// BuildOpt central value POC fixture: %s\n' "${buildopt_change_family}" \
-        >>"${buildopt_source}/${buildopt_changed_path}"
-    git -C "${buildopt_source}" add -- "${buildopt_changed_path}"
-    GIT_AUTHOR_DATE=2026-08-18T00:00:00Z GIT_COMMITTER_DATE=2026-08-18T00:00:00Z \
-        git -C "${buildopt_source}" commit -qm \
-        "POC ${buildopt_change_family} central value change"
-    local buildopt_target_revision
-    buildopt_target_revision=$(git -C "${buildopt_source}" rev-parse HEAD)
-    buildopt_clone_at "${buildopt_source}" "${buildopt_producer}" \
-        "${buildopt_remote}" "${buildopt_target_revision}"
-    buildopt_clone_at "${buildopt_source}" "${buildopt_control}" \
-        "${buildopt_remote}" "${buildopt_target_revision}"
-    buildopt_clone_at "${buildopt_source}" "${buildopt_candidate}" \
-        "${buildopt_remote}" "${buildopt_target_revision}"
-    jq -n --arg before "${buildopt_base_revision}" '{before:$before}' >"${buildopt_event}"
-
-    "${buildopt_control_binary}" prepare \
-        --state-dir "${buildopt_state}" \
-        --output-dir "${buildopt_authority}" \
-        --repository-id "${buildopt_repository_id}" \
-        --source-revision "${buildopt_target_revision}" \
-        --namespace "${buildopt_namespace}" \
-        --lifetime 8h >"${buildopt_authority}/prepare.json"
-    openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 1 \
-        -subj "/CN=BuildOpt central value ${buildopt_name}" \
-        -addext 'subjectAltName=IP:127.0.0.1' \
-        -keyout "${buildopt_tls}/server-key.pem" \
-        -out "${buildopt_tls}/server.pem" >/dev/null 2>&1
-    cp -- "${buildopt_tls}/server.pem" "${buildopt_tls}/ca.pem"
-    chmod 0600 "${buildopt_tls}/"*.pem
     buildopt_start_server "${buildopt_state}" "${buildopt_tls}" \
         "${buildopt_port}" "${buildopt_logs}/server.log"
 
@@ -452,6 +526,10 @@ buildopt_subject() {
     local buildopt_producer_gradle=${buildopt_subject_root}/producer-gradle
     local buildopt_producer_cache=${buildopt_subject_root}/producer-cache
     mkdir -p -- "${buildopt_producer_home}" "${buildopt_producer_gradle}" "${buildopt_producer_cache}"
+    if [[ ${buildopt_resumed_in_progress} == true ]]; then
+        buildopt_stop_gradle_daemons "${buildopt_producer}" "${buildopt_producer_gradle}" \
+            "${buildopt_logs}/producer-resume-daemon-stop.log"
+    fi
     buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
         "${buildopt_producer}" "${buildopt_producer_home}" "${buildopt_producer_gradle}" \
         "${buildopt_producer_cache}" "${buildopt_event}" \
@@ -844,6 +922,7 @@ jq -n \
     --argjson ktorGradleHeapMiB "${buildopt_ktor_gradle_heap_mib}" \
     --argjson ktorKotlinDaemonHeapMiB "${buildopt_ktor_kotlin_daemon_heap_mib}" \
     --argjson resumedSubjectCount "${buildopt_resumed_subject_count}" \
+    --argjson resumedInProgressSubjectCount "${buildopt_resumed_in_progress_subject_count}" \
     --arg checkpointPackageSha "${buildopt_checkpoint_package_sha}" \
     --arg canonicalPayloadSha "${buildopt_canonical_payload_sha}" \
     --argjson checkpointPayloadMatched "${buildopt_checkpoint_payload_matched}" \
@@ -867,8 +946,10 @@ jq -n \
           consumerMeasurementDaemonsStoppedBeforeNegativeOrNextSubject:true,
           negativeDaemonStoppedBeforeNextSubject:true,
           checkpointResume:{
-            used:($resumedSubjectCount>0),resumedSubjectCount:$resumedSubjectCount,
-            checkpointPackageSha256:(if $resumedSubjectCount>0 then $checkpointPackageSha else null end),
+            used:(($resumedSubjectCount+$resumedInProgressSubjectCount)>0),
+            resumedSubjectCount:$resumedSubjectCount,
+            resumedInProgressSubjectCount:$resumedInProgressSubjectCount,
+            checkpointPackageSha256:(if (($resumedSubjectCount+$resumedInProgressSubjectCount)>0) then $checkpointPackageSha else null end),
             canonicalInstalledPayloadSha256:$canonicalPayloadSha,
             identicalInstalledPayload:$checkpointPayloadMatched
           }
