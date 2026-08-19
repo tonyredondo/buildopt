@@ -21,7 +21,6 @@ buildopt_max_workers=8
 buildopt_calibration_pairs=8
 buildopt_max_break_even_builds=50
 buildopt_calibration_budget=3h
-buildopt_source_mirror=${BUILDOPT_PROFILE_LIFETIME_SOURCE_MIRROR:-}
 
 buildopt_revisions=(
     16e976ac8e6ff5bc79aaedb9ab6518bce1ea81bb
@@ -352,17 +351,7 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
 buildopt_package_sha=$(sha256sum "${buildopt_package}" | awk '{print $1}')
 
-if [[ -n ${buildopt_source_mirror} ]]; then
-    [[ -d ${buildopt_source_mirror}/.git && ! -L ${buildopt_source_mirror} ]] || {
-        printf 'profile lifetime source mirror is not a real Git checkout: %s\n' \
-            "${buildopt_source_mirror}" >&2
-        exit 1
-    }
-    git clone -q --no-local --no-checkout "${buildopt_source_mirror}" "${buildopt_source}"
-    git -C "${buildopt_source}" remote set-url origin "${buildopt_remote}"
-else
-    git clone -q --filter=blob:none --no-checkout "${buildopt_remote}" "${buildopt_source}"
-fi
+git clone -q --filter=blob:none --no-checkout "${buildopt_remote}" "${buildopt_source}"
 for buildopt_revision_to_fetch in "${buildopt_qualifying_revision}" "${buildopt_revisions[@]}"; do
     git -C "${buildopt_source}" checkout -q --detach "${buildopt_revision_to_fetch}"
 done
