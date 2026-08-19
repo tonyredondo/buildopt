@@ -40,6 +40,9 @@ only after verifying the same installed payload, repository identity, base
 and target revisions, one-path change binding, all three checkout revisions,
 authority material and incomplete result marker. It reruns discovery and all
 eight pairs; no partial timing observation or derived statistic is reused.
+The incomplete marker may be either an empty interrupted result or a complete
+fail-safe `NATIVE_RETAINED` result with successful authoritative execution,
+complete discovery, `CALIBRATION_EXECUTION_FAILED` and zero measured pairs.
 
 ## Resource envelope
 

@@ -411,11 +411,43 @@ buildopt_subject() {
                 exit 1
             }
         done
-        [[ ! -s ${buildopt_resume_subject}/logs/producer-optimize.json ]] || {
-            printf '%s in-progress checkpoint already contains an unverified optimize result\n' \
+        local buildopt_resume_result=${buildopt_resume_subject}/logs/producer-optimize.json
+        if [[ -s ${buildopt_resume_result} ]]; then
+            local buildopt_resume_persisted_result=${buildopt_resume_subject}/producer/.buildopt/optimize/v1/result.json
+            if [[ ! -f ${buildopt_resume_persisted_result} ||
+                -L ${buildopt_resume_persisted_result} ]] ||
+                ! cmp -s -- "${buildopt_resume_result}" "${buildopt_resume_persisted_result}" ||
+                ! jq -e --arg repositoryId "${buildopt_repository_id}" '
+                  .schemaVersion == "buildopt.poc/optimize-result/v1" and
+                  .outcome == "NATIVE_RETAINED" and .phase == "NATIVE_RETAINED" and
+                  .reason == "CALIBRATION_EXECUTION_FAILED" and
+                  .native == {authoritative:true,exitCode:0,started:true} and
+                  .execution.authoritative and .execution.exitCode == 0 and
+                  .discovery.status == "COMPLETE" and
+                  .discovery.reason == "STRUCTURAL_CANDIDATE_DISCOVERED" and
+                  .discovery.repositoryId == $repositoryId and
+                  (.discovery.generatedFiles | length) == 7 and
+                  .calibration.status == "NATIVE_RETAINED" and
+                  .calibration.reason == "CALIBRATION_EXECUTION_FAILED" and
+                  (.calibration.performed | not) and
+                  .calibration.pairsMeasured == 0 and
+                  (.calibration.qualified | not) and
+                  (.calibration.productionAuthorized | not) and
+                  .portfolio.status == "SKIPPED" and
+                  (.productionAuthorized | not) and
+                  .testOptimization == "OUT_OF_SCOPE"
+                ' "${buildopt_resume_result}" >/dev/null; then
+                printf '%s in-progress checkpoint optimize result is not safely resumable\n' \
+                    "${buildopt_repository_id}" >&2
+                exit 1
+            fi
+        fi
+        if [[ -e ${buildopt_resume_subject}/observations.jsonl &&
+            -s ${buildopt_resume_subject}/observations.jsonl ]]; then
+            printf '%s in-progress checkpoint contains partial timing observations\n' \
                 "${buildopt_repository_id}" >&2
             exit 1
-        }
+        fi
         jq -e --arg repositoryId "${buildopt_repository_id}" \
             --arg entrypoint "${buildopt_workflow[0]}" \
             '.subject.repositoryId == $repositoryId and

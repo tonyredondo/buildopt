@@ -497,6 +497,8 @@ before requiring its canonical payload digest to match the checkpoint exactly
 across paths, types, modes, symlink targets and file bytes. A subject stopped
 after authoritative native discovery but before its first complete pair may
 reuse only its verified checkout, dependency and authority preparation; it
+may also retain a complete fail-safe `NATIVE_RETAINED` result whose native
+execution succeeded and whose failed calibration accepted zero pairs. It
 reruns discovery and all eight pairs. TAR metadata may differ, so the final
 evidence retains the archive and payload hashes separately and records whether
 checkpoint reuse occurred. Derived statistics are recomputed from the raw
