@@ -451,9 +451,9 @@ buildopt_subject() {
         fi
         jq -e --arg repositoryId "${buildopt_repository_id}" \
             --arg entrypoint "${buildopt_workflow[0]}" \
-            '.subject.repositoryId == $repositoryId and
-             .plan.fallbackEntrypoints == [$entrypoint] and
-             (.plan.entrypoints | length) > 0' \
+            '.analysis.subject.repositoryId == $repositoryId and
+             .analysis.plan.fallbackEntrypoints == [$entrypoint] and
+             (.analysis.plan.entrypoints | length) > 0' \
             "${buildopt_resume_subject}/producer/.buildopt/optimize/v1/discovery/proposal.json" \
             >/dev/null || {
             printf '%s in-progress checkpoint discovery does not match the requested subject\n' \
