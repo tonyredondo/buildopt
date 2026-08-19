@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [result.json]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract=${buildopt_root}/specs/poc-profile-lifetime-v1.json
+buildopt_result=${1:-${buildopt_root}/benchmarks/results/poc-profile-lifetime-v1/summary.json}
+
+for buildopt_command in jq awk; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf '%s is required to validate profile lifetime evidence\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  .schemaVersion == "buildopt.poc/profile-lifetime-contract/v1" and
+  .workItem == "POC-PROFILE-LIFETIME-001" and
+  .subject.repositoryId == "apache/kafka" and .subject.publicRepository and
+  .subject.qualifyingRevision == "46ad599a6ef15c6a5f6296cb574ad25a1b7836eb" and
+  .subject.workflow == "shadowJar" and
+  (.history.matchingRevisions | length) == 10 and
+  .history.notApplicableRevision == "04c3c00f251946f8b790e198fc3524dce8558ce6" and
+  .history.buildLogicInvalidationRevision == "ab53829feb7280a1d453ebdaad032c4b64bb0f4d" and
+  .protocol == {
+    calibrationPairs:8,maximumBreakEvenBuilds:50,maximumWorkers:8,
+    persistentArmsAcrossCommits:true,sameCommittedCentralObjects:true,
+    sameStartingCacheState:true,alternatingArmOrder:true,
+    unmeasuredDependencyWarmup:true
+  } and
+  .acceptance == {
+    exactRequiredOutputsEveryRevision:true,matchingProfileSelections:10,
+    nativeRetainedNotApplicableCases:1,nativeRetainedBuildLogicCases:1,
+    observedCumulativeEconomicsRequired:true,positiveNetSavingRequired:false
+  } and
+  .boundaries == {
+    designPartnerRequired:false,productionAuthorized:false,proofOfConcept:true,
+    repositoriesAveraged:false,soakRequired:false,testOptimization:"OUT_OF_SCOPE"
+  }
+' "${buildopt_contract}" >/dev/null
+
+jq -e --slurpfile contract "${buildopt_contract}" '
+  .schemaVersion == "buildopt.evidence/poc-profile-lifetime/v1" and
+  .workItem == "POC-PROFILE-LIFETIME-001" and
+  (.buildopt.revision | test("^[0-9a-f]{40}$")) and
+  (.buildopt.packageSha256 | test("^[0-9a-f]{64}$")) and
+  .runner.operatingSystem == "Linux" and .runner.architecture == "x86_64" and
+  .runner.cpuCount >= 4 and .runner.memoryBytes >= 8000000000 and
+  .repository.id == $contract[0].subject.repositoryId and
+  .repository.remote == $contract[0].subject.remote and .repository.publicRepository and
+  .qualification.targetRevision == $contract[0].subject.qualifyingRevision and
+  (.qualification.baseRevision | test("^[0-9a-f]{40}$")) and
+  .qualification.family == "DEPENDENCY_SOURCE" and
+  .qualification.changedProjects == [":clients"] and
+  .qualification.calibration.pairsMeasured == 8 and
+  .qualification.calibration.qualified and .qualification.calibration.valueGatePassed and
+  .qualification.calibration.calibrationCostMs > 0 and
+  .qualification.graph.totalProjects > .qualification.graph.selectedProjects and
+  .qualification.graph.selectedProjects > 0 and
+  (.observations | length) == 12 and
+  ([.observations[] | select(.classification == "MATCHING_REPLAY") | .targetRevision] ==
+    $contract[0].history.matchingRevisions) and
+  ([.observations[] | select(.classification == "NOT_APPLICABLE") | .targetRevision] ==
+    [$contract[0].history.notApplicableRevision]) and
+  ([.observations[] | select(.classification == "BUILD_LOGIC_INVALIDATION") | .targetRevision] ==
+    [$contract[0].history.buildLogicInvalidationRevision]) and
+  ([.observations[].order] == [
+    "CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST",
+    "CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST",
+    "CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST"
+  ]) and
+  all(.observations[];
+    (.parentRevision | test("^[0-9a-f]{40}$")) and
+    .controlDurationMs > 0 and .candidateDurationMs > 0 and
+    .savedMs == (.controlDurationMs - .candidateDurationMs) and
+    .requiredOutputCount >= 2 and
+    (.controlRequiredOutputSha256 | test("^[0-9a-f]{64}$")) and
+    .controlRequiredOutputSha256 == .candidateRequiredOutputSha256 and
+    .centralCacheAvailable and .performanceClaim == (.classification == "MATCHING_REPLAY")
+  ) and
+  all(.observations[] | select(.classification == "MATCHING_REPLAY");
+    .candidateSelected and .selectionSource == "CENTRAL_PORTFOLIO" and
+    .candidateFamily == "DEPENDENCY_SOURCE" and
+    .evidenceRevision == $contract[0].subject.qualifyingRevision
+  ) and
+  all(.observations[] | select(.classification == "NOT_APPLICABLE");
+    (.candidateSelected | not) and .candidateFamily == "RESOURCE" and
+    .candidateReason == "REMOTE_PROFILE_STRUCTURAL_DRIFT"
+  ) and
+  all(.observations[] | select(.classification == "BUILD_LOGIC_INVALIDATION");
+    (.candidateSelected | not) and .candidateReason == "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"
+  ) and
+  .economics.observedBuilds == 12 and .economics.matchingReplays == 10 and
+  .economics.grossMatchingSavedMs ==
+    ([.observations[] | select(.classification == "MATCHING_REPLAY") | .savedMs] | add) and
+  .economics.fallbackDeltaMs ==
+    ([.observations[] | select(.classification != "MATCHING_REPLAY") | .savedMs] | add) and
+  .economics.cumulativeGrossSavedMs == ([.observations[].savedMs] | add) and
+  .economics.cumulativeNetSavedMs ==
+    (.economics.cumulativeGrossSavedMs - .qualification.calibration.calibrationCostMs) and
+  .economics.conclusion ==
+    (if .economics.cumulativeNetSavedMs >= 0 then "PAID_BACK_IN_OBSERVED_WINDOW"
+     else "NOT_PAID_BACK_IN_OBSERVED_WINDOW" end) and
+  .acceptance == {
+    decision:"COMPLETE",buildLogicInvalidations:1,exactRequiredOutputs:true,
+    matchingSelections:10,nativeRetainedCases:2,publicAncestry:true,
+    syntheticCommits:false
+  } and
+  .boundaries == {
+    designPartnerRequired:false,mechanismPercentagesAdded:false,
+    productionAuthorized:false,proofOfConcept:true,repositoriesAveraged:false,
+    soakRequired:false,testOptimization:"OUT_OF_SCOPE"
+  }
+' "${buildopt_result}" >/dev/null
+
+buildopt_first_break_even=$(jq -r '.economics.firstObservedBreakEvenBuild // 0' "${buildopt_result}")
+if ((buildopt_first_break_even > 0)); then
+    buildopt_recomputed=$(jq -r '.qualification.calibration.calibrationCostMs as $cost |
+      reduce .observations[] as $observation
+        ({sum:0,index:0,answer:0};
+         .index += 1 | .sum += $observation.savedMs |
+         if .answer == 0 and .sum >= $cost then .answer = .index else . end) | .answer' \
+        "${buildopt_result}")
+    [[ ${buildopt_recomputed} == "${buildopt_first_break_even}" ]] || {
+        printf 'profile lifetime break-even index does not recompute\n' >&2
+        exit 1
+    }
+fi
+
+printf 'Profile lifetime evidence OK: 10 matching replays, 2 safe native-retained cases\n'

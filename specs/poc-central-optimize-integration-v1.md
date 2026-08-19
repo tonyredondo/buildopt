@@ -55,6 +55,12 @@ old profile is universally valid. A build script, Wrapper, tool, workflow,
 unknown path, family, output or evidence change retains optimized native
 Gradle before the target process starts.
 
+Intervening non-structural commits are historical context, not part of the
+current event. They do not invalidate a profile merely because a documentation,
+automation or source path is outside the stored graph. BuildOpt still rejects
+any intervening Wrapper or build-logic change and re-owns and replans every
+path in the current event before selection.
+
 ## Offline and publication behavior
 
 Service failure is fail-open for the build. Only a previously stored snapshot

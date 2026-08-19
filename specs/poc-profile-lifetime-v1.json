@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "buildopt.poc/profile-lifetime-contract/v1",
+  "workItem": "POC-PROFILE-LIFETIME-001",
+  "subject": {
+    "repositoryId": "apache/kafka",
+    "publicRepository": true,
+    "remote": "https://github.com/apache/kafka.git",
+    "qualifyingRevision": "46ad599a6ef15c6a5f6296cb574ad25a1b7836eb",
+    "workflow": "shadowJar"
+  },
+  "history": {
+    "matchingRevisions": [
+      "16e976ac8e6ff5bc79aaedb9ab6518bce1ea81bb",
+      "83976543fef1fe942bf021c8eec787c75dd58bdd",
+      "e320142b7c2b40de7cd77373961ceec202c2bf5e",
+      "c96073e66b10055d3eeb408d950d91d7571a6126",
+      "4048aa19faf5159cca08a6754fafdc3be1c8bf08",
+      "496ed66512033ea3c5f7239cb0673894ea1a7a24",
+      "62913844969856ff83070dd5dd22209e8b0607b0",
+      "8cfc1cc97f522a9d8ece5cba47edf1a00757cd8c",
+      "6208dfc014ba7ae48804c5ae92e3bf4f1306b057",
+      "182fc91e52d774aca1333cbf5435f5d3f3fade0d"
+    ],
+    "notApplicableRevision": "04c3c00f251946f8b790e198fc3524dce8558ce6",
+    "buildLogicInvalidationRevision": "ab53829feb7280a1d453ebdaad032c4b64bb0f4d"
+  },
+  "protocol": {
+    "calibrationPairs": 8,
+    "maximumBreakEvenBuilds": 50,
+    "maximumWorkers": 8,
+    "persistentArmsAcrossCommits": true,
+    "sameCommittedCentralObjects": true,
+    "sameStartingCacheState": true,
+    "alternatingArmOrder": true,
+    "unmeasuredDependencyWarmup": true
+  },
+  "acceptance": {
+    "exactRequiredOutputsEveryRevision": true,
+    "matchingProfileSelections": 10,
+    "nativeRetainedNotApplicableCases": 1,
+    "nativeRetainedBuildLogicCases": 1,
+    "observedCumulativeEconomicsRequired": true,
+    "positiveNetSavingRequired": false
+  },
+  "boundaries": {
+    "designPartnerRequired": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositoriesAveraged": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

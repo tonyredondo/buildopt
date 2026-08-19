@@ -23,7 +23,7 @@ import (
 	"github.com/tonyredondo/buildopt/internal/sharedcache"
 )
 
-func TestCentralOptimizeReusesQualifiedProfileAcrossSourceCommitAndRejectsStructuralDrift(t *testing.T) {
+func TestCentralOptimizeReusesQualifiedProfileAcrossUnrelatedCommitAndRejectsStructuralDrift(t *testing.T) {
 	const (
 		repositoryID     = "apache/kafka"
 		evidenceRevision = "929868cbdee1fbdc9cb60701e2ca17e8a66cd2ae"
@@ -66,15 +66,20 @@ func TestCentralOptimizeReusesQualifiedProfileAcrossSourceCommitAndRejectsStruct
 	baseRevision := strings.TrimSpace(centralOptimizeGit(t, repository, "rev-parse", "HEAD"))
 	centralOptimizeGit(t, repository, "update-ref", "refs/replace/"+evidenceRevision, baseRevision)
 
+	writeCentralOptimizeFile(t, repository, "docs/replay-history.md", "unrelated historical change\n")
+	centralOptimizeGit(t, repository, "add", "docs/replay-history.md")
+	intermediateTree := strings.TrimSpace(centralOptimizeGit(t, repository, "write-tree"))
+	intermediateRevision := strings.TrimSpace(centralOptimizeGitInput(t, repository, "unrelated docs change\n", "commit-tree", intermediateTree, "-p", evidenceRevision))
+
 	writeCentralOptimizeFile(t, repository, changedPath, "class Metadata { int revision = 2; }\n")
 	centralOptimizeGit(t, repository, "add", changedPath)
 	tree := strings.TrimSpace(centralOptimizeGit(t, repository, "write-tree"))
-	currentRevision := strings.TrimSpace(centralOptimizeGitInput(t, repository, "source change\n", "commit-tree", tree, "-p", evidenceRevision))
+	currentRevision := strings.TrimSpace(centralOptimizeGitInput(t, repository, "source change\n", "commit-tree", tree, "-p", intermediateRevision))
 	centralOptimizeGit(t, repository, "update-ref", "refs/heads/main", currentRevision)
 	centralOptimizeGit(t, repository, "reset", "-q", "--hard", currentRevision)
 
 	eventPath := filepath.Join(repository, ".buildopt", "github-event.json")
-	eventRaw, _ := json.Marshal(map[string]string{"before": evidenceRevision})
+	eventRaw, _ := json.Marshal(map[string]string{"before": intermediateRevision})
 	if err := os.MkdirAll(filepath.Dir(eventPath), 0o700); err != nil {
 		t.Fatal(err)
 	}

@@ -524,6 +524,22 @@ evidence retains the archive and payload hashes separately and records whether
 checkpoint reuse occurred. Derived statistics are recomputed from the raw
 pairs under a deterministic locale during resume.
 
+Measure the lifetime of one central structural profile across a real public
+Kafka commit sequence with Java 21:
+
+```bash
+./dev/run --toolchain temurin-jdk-21 -- \
+  ./dev/run-poc-profile-lifetime /tmp/profile-lifetime.json
+./dev/check-profile-lifetime /tmp/profile-lifetime.json
+```
+
+The runner qualifies the profile at a public upstream commit, advances two
+persistent isolated arms through twelve later public revisions, and records
+ten matching replays, one non-applicable resource event and one build-logic
+invalidation. It requires exact owner outputs and reports observed cumulative
+economics after calibration. The networked run is bounded POC validation, not
+a soak or production qualification.
+
 ## CI orchestration validation
 
 Validate the `F0-030` authoritative-job, protected validation queue,

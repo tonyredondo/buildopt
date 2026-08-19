@@ -367,11 +367,11 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 	if err != nil {
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, err}
 	}
-	for _, changed := range sinceEvidence {
-		if _, err := buildimpact.ResolveProjectOwners(snapshot, []string{changed}); err != nil {
-			return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("post-evidence path is outside the qualified graph")}
-		}
-	}
+	// Source and documentation commits between qualification and the current
+	// event do not alter the structural binding. The current event is re-owned
+	// and replanned below, while Wrapper and build-logic drift remain rejected
+	// above. Requiring every historical path to belong to the stored graph made
+	// an unrelated README or automation edit permanently strand a valid profile.
 	family := optimizeChangeFamily(snapshot, invocation.discovery.changedPaths, owners)
 	familySHA := optimizePortfolioFamilyDigest(
 		entry.RepositoryID, family, owners, entry.Entrypoints,
