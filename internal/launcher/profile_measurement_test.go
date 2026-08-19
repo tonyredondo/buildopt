@@ -279,6 +279,83 @@ func TestMeasurementGradleDistributionSeedRejectsSymlinks(t *testing.T) {
 	}
 }
 
+func TestMeasurementGradlePropertiesSeedIsPrivateAndPreserved(t *testing.T) {
+	gradleHome := t.TempDir()
+	properties := []byte("org.gradle.jvmargs=-Xmx2g\nkotlin.daemon.jvmargs=-Xmx1536m\n")
+	seed := filepath.Join(gradleHome, "gradle.properties")
+	if err := os.WriteFile(seed, properties, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("GRADLE_USER_HOME", gradleHome)
+	resolved, err := measurementGradlePropertiesSeed()
+	if err != nil || resolved != seed {
+		t.Fatalf("properties seed = %q/%v", resolved, err)
+	}
+	target := t.TempDir()
+	if err := copyMeasurementGradleProperties(resolved, target); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile(filepath.Join(target, "gradle.properties"))
+	if err != nil || !bytes.Equal(raw, properties) {
+		t.Fatalf("copied properties = %q/%v", raw, err)
+	}
+	info, err := os.Stat(filepath.Join(target, "gradle.properties"))
+	if err != nil || (runtime.GOOS != "windows" && info.Mode().Perm() != 0o600) {
+		t.Fatalf("copied properties mode = %v/%v", info, err)
+	}
+}
+
+func TestMeasurementGradlePropertiesSeedRejectsUnsafeFiles(t *testing.T) {
+	gradleHome := t.TempDir()
+	outside := filepath.Join(t.TempDir(), "gradle.properties")
+	if err := os.WriteFile(outside, []byte("org.gradle.jvmargs=-Xmx2g\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(outside, filepath.Join(gradleHome, "gradle.properties")); err != nil {
+		t.Skipf("symlink unavailable: %v", err)
+	}
+	t.Setenv("GRADLE_USER_HOME", gradleHome)
+	if _, err := measurementGradlePropertiesSeed(); err == nil ||
+		!strings.Contains(err.Error(), "regular file") {
+		t.Fatalf("properties symlink error = %v", err)
+	}
+}
+
+func TestMeasurementGradlePropertiesSeedRejectsOversizedFile(t *testing.T) {
+	gradleHome := t.TempDir()
+	if err := os.WriteFile(
+		filepath.Join(gradleHome, "gradle.properties"),
+		make([]byte, maximumGradlePropertiesBytes+1),
+		0o600,
+	); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("GRADLE_USER_HOME", gradleHome)
+	if _, err := measurementGradlePropertiesSeed(); err == nil ||
+		!strings.Contains(err.Error(), "exceeds") {
+		t.Fatalf("oversized properties error = %v", err)
+	}
+}
+
+func TestSharedStructuralMeasurementPreservesGradleProperties(t *testing.T) {
+	root := t.TempDir()
+	seed := filepath.Join(t.TempDir(), "gradle.properties")
+	properties := []byte("org.gradle.jvmargs=-Xmx2g\n")
+	if err := os.WriteFile(seed, properties, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	home, err := prepareStructuralSharedGradleHome(
+		structuralMeasurementConfig{gradlePropertiesSeed: seed}, root,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile(filepath.Join(home, "gradle.properties"))
+	if err != nil || !bytes.Equal(raw, properties) {
+		t.Fatalf("shared properties = %q/%v", raw, err)
+	}
+}
+
 func TestStructuralMeasurementSharesOnlyImmutableGradleCaches(t *testing.T) {
 	gradleHome := t.TempDir()
 	modulesRoot := filepath.Join(gradleHome, "caches", "modules-2")

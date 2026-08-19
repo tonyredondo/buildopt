@@ -30,6 +30,7 @@ const (
 	profileMeasureUsage           = "usage: buildopt profile measure --manifest PATH --graph PATH --generated-manifest PATH --changes-file PATH --fallback-changes-file PATH --base-revision REVISION --buildopt-revision REVISION --evidence-output PATH [--output-equivalence PATH] [--gradle-option VALUE ...] [--target-stability-confirmations 1|2|3] [--adaptive-candidate-stability] [--calibration-only] [--timeout DURATION]\n"
 	measurementPairs              = 8
 	maximumMeasurementInterArmGap = 5 * time.Second
+	maximumGradlePropertiesBytes  = 1 << 20
 )
 
 var defaultStructuralGradleOptions = []string{
@@ -65,6 +66,7 @@ type structuralMeasurementConfig struct {
 	adaptiveCandidateStability   bool
 	pairedTargetStability        bool
 	gradleDistributionSeed       string
+	gradlePropertiesSeed         string
 	gradleDependencySeed         string
 	gradleReadOnlyDependencyRoot string
 	gradleDependencySHA256       string
@@ -401,6 +403,10 @@ func prepareStructuralMeasurementConfig(
 	if err != nil {
 		return structuralMeasurementConfig{}, err
 	}
+	gradlePropertiesSeed, err := measurementGradlePropertiesSeed()
+	if err != nil {
+		return structuralMeasurementConfig{}, err
+	}
 	gradleDependencySeed, err := measurementGradleDependencySeed()
 	if err != nil {
 		return structuralMeasurementConfig{}, err
@@ -424,6 +430,7 @@ func prepareStructuralMeasurementConfig(
 		targetStabilityConfirmations: targetStabilityConfirmations,
 		adaptiveCandidateStability:   adaptiveCandidateStability,
 		gradleDistributionSeed:       gradleDistributionSeed,
+		gradlePropertiesSeed:         gradlePropertiesSeed,
 		gradleDependencySeed:         gradleDependencySeed,
 		gradleBuildCacheSeed:         gradleBuildCacheSeed,
 	}, nil
@@ -640,6 +647,11 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 			return arm, fmt.Errorf("seed %s Gradle distribution: %w", name, err)
 		}
 	}
+	if config.gradleMeasurementHome == "" {
+		if err := copyMeasurementGradleProperties(config.gradlePropertiesSeed, arm.gradleHome); err != nil {
+			return arm, fmt.Errorf("seed %s Gradle properties: %w", name, err)
+		}
+	}
 	if config.gradleSharedBuildCacheSeed != "" {
 		destination := arm.buildCacheRoot
 		if err := linkMeasurementCacheSeed(config.gradleSharedBuildCacheSeed, destination); err != nil {
@@ -791,6 +803,9 @@ func prepareStructuralSharedGradleHome(config structuralMeasurementConfig, root 
 		if err := copyMeasurementDistributionTree(config.gradleDistributionSeed, destination); err != nil {
 			return "", fmt.Errorf("seed shared measurement Gradle distribution: %w", err)
 		}
+	}
+	if err := copyMeasurementGradleProperties(config.gradlePropertiesSeed, gradleHome); err != nil {
+		return "", fmt.Errorf("seed shared measurement Gradle properties: %w", err)
 	}
 	initScript := filepath.Join(gradleHome, "init.d", "buildopt-measurement-cache.gradle")
 	if err := writeStructuralBuildCacheInitScript(initScript, root); err != nil {
@@ -1376,6 +1391,44 @@ func measurementGradleDistributionSeed() (string, error) {
 		return "", errors.New("Gradle distribution seed must be a real directory")
 	}
 	return candidate, nil
+}
+
+func measurementGradlePropertiesSeed() (string, error) {
+	gradleHome := os.Getenv("GRADLE_USER_HOME")
+	if gradleHome == "" {
+		return "", nil
+	}
+	candidate := filepath.Join(gradleHome, "gradle.properties")
+	info, err := os.Lstat(candidate)
+	if os.IsNotExist(err) {
+		return "", nil
+	}
+	if err != nil {
+		return "", fmt.Errorf("inspect Gradle properties seed: %w", err)
+	}
+	if !info.Mode().IsRegular() || info.Mode()&os.ModeSymlink != 0 {
+		return "", errors.New("Gradle properties seed must be a regular file")
+	}
+	if info.Size() > maximumGradlePropertiesBytes {
+		return "", fmt.Errorf("Gradle properties seed exceeds %d bytes", maximumGradlePropertiesBytes)
+	}
+	return candidate, nil
+}
+
+func copyMeasurementGradleProperties(source, gradleHome string) error {
+	if source == "" {
+		return nil
+	}
+	// Preserve the observed Gradle/JVM configuration without sharing the
+	// caller's mutable Gradle home between isolated measurement arms.
+	raw, err := os.ReadFile(source)
+	if err != nil {
+		return err
+	}
+	if len(raw) > maximumGradlePropertiesBytes {
+		return fmt.Errorf("Gradle properties seed exceeds %d bytes", maximumGradlePropertiesBytes)
+	}
+	return os.WriteFile(filepath.Join(gradleHome, "gradle.properties"), raw, 0o600)
 }
 
 func measurementGradleDependencySeed() (string, error) {
