@@ -21,6 +21,13 @@ producer's automatic post-run publication already made evidence, portfolio and
 checkpoint generation 1 remotely visible. The diagnostic sync may not repair a
 missing publication.
 
+A completed subject may be resumed from a retained diagnostic root when a
+bounded runner ends before the next subject completes. Resume is allowed only
+for an eight-pair subject that already passed its value gate and only when the
+newly built installed package has the exact same SHA-256 as the checkpointed
+package. The evidence records whether resume was used and how many completed
+subjects it reused; partial observations are never resumed.
+
 ## Resource envelope
 
 Both arms use the same maximum of eight Gradle workers. Ktor also uses the same

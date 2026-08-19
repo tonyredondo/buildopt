@@ -10,6 +10,7 @@ fi
 buildopt_output=$1
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_resume_root=${BUILDOPT_CENTRAL_VALUE_RESUME_ROOT:-}
 
 for buildopt_command in awk curl date find git grep jq openssl sha256sum sort tar tee; do
     command -v "${buildopt_command}" >/dev/null || {
@@ -42,6 +43,8 @@ buildopt_max_shared_break_even_builds=50
 buildopt_max_workers=8
 buildopt_ktor_gradle_heap_mib=2048
 buildopt_ktor_kotlin_daemon_heap_mib=1536
+buildopt_resumed_subject_count=0
+buildopt_checkpoint_package_sha_matched=false
 
 buildopt_cleanup() {
     if [[ -n ${buildopt_server_pid} ]] && kill -0 "${buildopt_server_pid}" 2>/dev/null; then
@@ -84,6 +87,64 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 
 buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
 buildopt_package_sha=$(sha256sum "${buildopt_package}" | awk '{print $1}')
+
+if [[ -n ${buildopt_resume_root} ]]; then
+    if [[ ${buildopt_resume_root} != /tmp/buildopt-central-value.* ||
+        ! -d ${buildopt_resume_root} || -L ${buildopt_resume_root} ]]; then
+        printf 'central value resume root is not a retained benchmark directory: %s\n' \
+            "${buildopt_resume_root}" >&2
+        exit 1
+    fi
+    mapfile -t buildopt_resume_packages < <(
+        find "${buildopt_resume_root}/package" -maxdepth 1 -type f -name '*.tar.gz' -print
+    )
+    if ((${#buildopt_resume_packages[@]} != 1)); then
+        printf 'central value resume root must contain exactly one packaged archive\n' >&2
+        exit 1
+    fi
+    buildopt_resume_package_sha=$(sha256sum "${buildopt_resume_packages[0]}" | awk '{print $1}')
+    if [[ ${buildopt_resume_package_sha} != "${buildopt_package_sha}" ]]; then
+        printf 'central value resume package differs from the current installed package\n' >&2
+        exit 1
+    fi
+    if [[ ! -f ${buildopt_resume_root}/repositories.jsonl ||
+        -L ${buildopt_resume_root}/repositories.jsonl ]]; then
+        printf 'central value resume repository evidence is unavailable\n' >&2
+        exit 1
+    fi
+    jq -s -e '
+      length > 0 and length <= 2 and
+      ([.[].repositoryId] | unique | length) == length and
+      all(.[]; .repositoryId == "ktorio/ktor" or .repositoryId == "apache/beam") and
+      all(.[]; .result.qualified and (.observations | length) == 8)
+    ' "${buildopt_resume_root}/repositories.jsonl" >/dev/null || {
+        printf 'central value resume repository evidence is incomplete or invalid\n' >&2
+        exit 1
+    }
+    cp -- "${buildopt_resume_root}/repositories.jsonl" "${buildopt_repositories_json}"
+    buildopt_resumed_subject_count=$(wc -l <"${buildopt_repositories_json}" | tr -d ' ')
+    if jq -s -e 'any(.[]; .repositoryId == "ktorio/ktor")' \
+        "${buildopt_repositories_json}" >/dev/null; then
+        if [[ ! -f ${buildopt_resume_root}/native-retained.json ||
+            -L ${buildopt_resume_root}/native-retained.json ]]; then
+            printf 'central value Ktor checkpoint lacks its native-retained evidence\n' >&2
+            exit 1
+        fi
+        cp -- "${buildopt_resume_root}/native-retained.json" \
+            "${buildopt_root}/native-retained.json"
+    fi
+    buildopt_checkpoint_package_sha_matched=true
+    printf 'central value: resumed %d completed subject(s) from an identical package\n' \
+        "${buildopt_resumed_subject_count}"
+fi
+
+buildopt_subject_completed() {
+    local buildopt_repository_id=$1
+    [[ -f ${buildopt_repositories_json} ]] &&
+        jq -s -e --arg repositoryId "${buildopt_repository_id}" \
+            'any(.[]; .repositoryId == $repositoryId)' \
+            "${buildopt_repositories_json}" >/dev/null
+}
 
 buildopt_run_environment() {
     local buildopt_repository_id=$1
@@ -690,27 +751,31 @@ buildopt_subject() {
     buildopt_stop_server
 }
 
-buildopt_subject \
-    ktor ktorio/ktor 6847064 https://github.com/ktorio/ktor.git \
-    bc7de799f4eb997a63250f2f70492d85f5c92f50 \
-    ktor-server/ktor-server-plugins/ktor-server-webjars/jvm/src/io/ktor/server/webjars/Webjars.kt \
-    KTOR_KOTLIN_MULTIPLATFORM \
-    gradle-9.5.1/linux-amd64/jdk-21/ktor-jvm-jar \
-    FILE ktor-server/ktor-server-plugins/ktor-server-webjars/build/libs/ktor-server-webjars-jvm-3.6.0-SNAPSHOT.jar \
-    DEPENDENCY_SOURCE 28443 \
-    jvmJar --daemon --build-cache --parallel --no-configuration-cache --console=plain \
-    --no-scan --max-workers="${buildopt_max_workers}" -Pktor.develocity.skipBuildScans=true
+if ! buildopt_subject_completed ktorio/ktor; then
+    buildopt_subject \
+        ktor ktorio/ktor 6847064 https://github.com/ktorio/ktor.git \
+        bc7de799f4eb997a63250f2f70492d85f5c92f50 \
+        ktor-server/ktor-server-plugins/ktor-server-webjars/jvm/src/io/ktor/server/webjars/Webjars.kt \
+        KTOR_KOTLIN_MULTIPLATFORM \
+        gradle-9.5.1/linux-amd64/jdk-21/ktor-jvm-jar \
+        FILE ktor-server/ktor-server-plugins/ktor-server-webjars/build/libs/ktor-server-webjars-jvm-3.6.0-SNAPSHOT.jar \
+        DEPENDENCY_SOURCE 28443 \
+        jvmJar --daemon --build-cache --parallel --no-configuration-cache --console=plain \
+        --no-scan --max-workers="${buildopt_max_workers}" -Pktor.develocity.skipBuildScans=true
+fi
 
-buildopt_subject \
-    beam apache/beam 5090421 https://github.com/apache/beam.git \
-    dd896e2b2395937201b7721251d9f66936f9340c \
-    examples/java/twitter/src/main/java/org/apache/beam/examples/twitterstreamgenerator/TwitterConfig.java \
-    BEAM_JAVA_GROOVY \
-    gradle-8.14.3/linux-amd64/jdk-21/beam-java-twitter \
-    TREE examples/java/twitter/build/classes/java/main \
-    LEAF_SOURCE 28444 \
-    classes --daemon --build-cache --parallel --no-configuration-cache --console=plain \
-    --no-scan --max-workers="${buildopt_max_workers}"
+if ! buildopt_subject_completed apache/beam; then
+    buildopt_subject \
+        beam apache/beam 5090421 https://github.com/apache/beam.git \
+        dd896e2b2395937201b7721251d9f66936f9340c \
+        examples/java/twitter/src/main/java/org/apache/beam/examples/twitterstreamgenerator/TwitterConfig.java \
+        BEAM_JAVA_GROOVY \
+        gradle-8.14.3/linux-amd64/jdk-21/beam-java-twitter \
+        TREE examples/java/twitter/build/classes/java/main \
+        LEAF_SOURCE 28444 \
+        classes --daemon --build-cache --parallel --no-configuration-cache --console=plain \
+        --no-scan --max-workers="${buildopt_max_workers}"
+fi
 
 buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 buildopt_cpu_count=$(getconf _NPROCESSORS_ONLN)
@@ -723,6 +788,8 @@ jq -n \
     --argjson maximumWorkers "${buildopt_max_workers}" \
     --argjson ktorGradleHeapMiB "${buildopt_ktor_gradle_heap_mib}" \
     --argjson ktorKotlinDaemonHeapMiB "${buildopt_ktor_kotlin_daemon_heap_mib}" \
+    --argjson resumedSubjectCount "${buildopt_resumed_subject_count}" \
+    --argjson checkpointPackageShaMatched "${buildopt_checkpoint_package_sha_matched}" \
     --slurpfile repositories "${buildopt_repositories_json}" \
     --slurpfile nativeRetained "${buildopt_root}/native-retained.json" '
       {
@@ -741,7 +808,11 @@ jq -n \
           automaticProducerStatePublishedBeforeConsumers:true,
           consumerBootstrapDaemonsStoppedBeforePairedWarmup:true,
           consumerMeasurementDaemonsStoppedBeforeNegativeOrNextSubject:true,
-          negativeDaemonStoppedBeforeNextSubject:true
+          negativeDaemonStoppedBeforeNextSubject:true,
+          checkpointResume:{
+            used:($resumedSubjectCount>0),resumedSubjectCount:$resumedSubjectCount,
+            identicalInstalledPackage:$checkpointPackageShaMatched
+          }
         },
         repositories:$repositories,nativeRetained:$nativeRetained[0],
         acceptance:{

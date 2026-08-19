@@ -483,6 +483,19 @@ BuildOpt caches, removes its exact temporary root after success, and retains
 that root only when a failure needs diagnosis. This is a bounded POC
 experiment, not a soak.
 
+If a bounded runner ends after one subject has completed all eight pairs, the
+retained diagnostic root can resume only that completed subject:
+
+```bash
+BUILDOPT_CENTRAL_VALUE_RESUME_ROOT=/tmp/buildopt-central-value.XXXXXX \
+  ./dev/run --toolchain temurin-jdk-21 -- \
+    ./dev/run-poc-central-end-to-end-value /tmp/central-value.json
+```
+
+Resume rejects partial subjects and rebuilds the installed package before
+requiring its SHA-256 to match the checkpoint exactly. The final evidence
+records whether checkpoint reuse occurred.
+
 ## CI orchestration validation
 
 Validate the `F0-030` authoritative-job, protected validation queue,

@@ -17,6 +17,11 @@
     "alternatingPairOrder": true,
     "unmeasuredDependencyWarmup": true
   },
+  "checkpointResume": {
+    "allowed": true,
+    "completedSubjectEvidenceOnly": true,
+    "identicalInstalledPackageRequired": true
+  },
   "resourceEnvelope": {
     "commonMaximumWorkers": 8,
     "ktorGradleHeapMiB": 2048,

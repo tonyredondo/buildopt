@@ -37,6 +37,11 @@ jq -e '
     alternatingPairOrder: true,
     unmeasuredDependencyWarmup: true
   } and
+  .checkpointResume == {
+    allowed: true,
+    completedSubjectEvidenceOnly: true,
+    identicalInstalledPackageRequired: true
+  } and
   .resourceEnvelope == {
     commonMaximumWorkers: 8,
     ktorGradleHeapMiB: 2048,
@@ -91,6 +96,12 @@ jq -e '
   .protocol.consumerBootstrapDaemonsStoppedBeforePairedWarmup and
   .protocol.consumerMeasurementDaemonsStoppedBeforeNegativeOrNextSubject and
   .protocol.negativeDaemonStoppedBeforeNextSubject and
+  (.protocol.checkpointResume.resumedSubjectCount >= 0) and
+  (.protocol.checkpointResume.resumedSubjectCount <= 1) and
+  (.protocol.checkpointResume.used ==
+    (.protocol.checkpointResume.resumedSubjectCount > 0)) and
+  (.protocol.checkpointResume.identicalInstalledPackage ==
+    .protocol.checkpointResume.used) and
   (.repositories | length) == 2 and
   ([.repositories[].repositoryId] | unique | length) == 2 and
   ([.repositories[].gradleFamily] | unique | length) == 2 and
