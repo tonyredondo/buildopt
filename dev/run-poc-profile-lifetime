@@ -448,7 +448,10 @@ jq -e '.online and .localStateStatus == "VALID" and
   all(.kinds[]; .status == "NO_CHANGE" and .snapshotVerified)' \
     "${buildopt_logs}/producer-sync.json" >/dev/null
 
-rm -rf -- "${buildopt_producer_cache}/buildopt/state/l1"
+rm -rf -- \
+    "${buildopt_producer_gradle}/caches/build-cache-1" \
+    "${buildopt_producer_cache}/buildopt/state/l1" \
+    "${buildopt_root}/producer-l1"
 buildopt_clear_project_outputs "${buildopt_producer}"
 printf 'profile lifetime: publishing qualifier cache objects\n'
 buildopt_run_environment "${buildopt_producer}" "${buildopt_producer_home}" \
