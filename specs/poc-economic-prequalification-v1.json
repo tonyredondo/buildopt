@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "buildopt.poc/economic-prequalification-contract/v1",
+  "scope": {
+    "mode": "PROOF_OF_CONCEPT",
+    "productionAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "inputs": {
+    "graph": "VERIFIED_CENTRAL_GRAPH",
+    "taskShape": "EXACT_WORKFLOW_ENTRYPOINTS",
+    "changeEvidence": "BOUNDED_FIRST_PARENT_GIT_HISTORY",
+    "maximumHistoryCommits": 64
+  },
+  "economics": {
+    "calibrationPairs": 8,
+    "minimumPaybackBuilds": 8,
+    "proof": "EACH_PAIR_REQUIRES_ONE_NATIVE_CONTROL; EVEN_A_ZERO_COST_CANDIDATE_CANNOT_REPAY_FEWER_THAN_EIGHT_CONTROLS"
+  },
+  "decisions": {
+    "measure": "AT_LEAST_EIGHT_ANALOGOUS_COMMITS_AND_A_NON_EMPTY_GRAPH_REDUCTION",
+    "reject": "NO_REDUCTION_OR_FEWER_THAN_EIGHT_ANALOGOUS_COMMITS_OR_UNAVAILABLE_HISTORY"
+  },
+  "effects": {
+    "measure": "ALLOW_EXISTING_DISCOVERY_AND_CALIBRATION_PIPELINE",
+    "reject": "RETURN_AUTHORITATIVE_NATIVE_RESULT_WITHOUT_DISCOVERY_OR_CALIBRATION"
+  },
+  "constraints": {
+    "repositoryNameRules": false,
+    "borrowedProfileSavings": false,
+    "futureLifetimeClaim": false,
+    "correctnessGatesChanged": false,
+    "soakRequired": false,
+    "designPartnerRequired": false
+  }
+}

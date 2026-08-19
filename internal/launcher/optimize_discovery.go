@@ -74,6 +74,23 @@ type optimizeDiscoveryDocuments struct {
 	values map[string][]byte
 }
 
+func retainedOptimizeDiscovery(invocation optimizeInvocation, reason string) optimizeDiscoveryResult {
+	return optimizeDiscoveryResult{
+		Status: optimizeDiscoveryRetained, Reason: reason,
+		Source:           invocation.discovery.Source,
+		RepositoryID:     invocation.discovery.RepositoryID,
+		BaseRevision:     invocation.discovery.BaseRevision,
+		TargetRevision:   invocation.discovery.TargetRevision,
+		ChangeSHA256:     invocation.discovery.ChangeSHA256,
+		ChangedPathCount: invocation.discovery.ChangedPathCount,
+		Entrypoints:      append([]string(nil), invocation.discovery.Entrypoints...),
+		RequiredOutputs:  []string{}, CandidateEntrypoints: []string{},
+		ChangedProjects: []string{}, GeneratedFiles: []string{},
+		ReviewRequired: true, ProductionAuthorized: false,
+		TestOptimization: "OUT_OF_SCOPE",
+	}
+}
+
 type optimizeGitHubEvent struct {
 	Before      string `json:"before"`
 	PullRequest *struct {
@@ -366,19 +383,8 @@ func optimizeDiscoveryContextSHA(context optimizeDiscoveryContext) string {
 }
 
 func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int, diagnostics io.Writer) optimizeDiscoveryResult {
-	result := optimizeDiscoveryResult{
-		Status: optimizeDiscoverySkipped, Reason: "NATIVE_BUILD_FAILED",
-		Source:           run.invocation.discovery.Source,
-		RepositoryID:     run.invocation.discovery.RepositoryID,
-		BaseRevision:     run.invocation.discovery.BaseRevision,
-		TargetRevision:   run.invocation.discovery.TargetRevision,
-		ChangeSHA256:     run.invocation.discovery.ChangeSHA256,
-		ChangedPathCount: run.invocation.discovery.ChangedPathCount,
-		Entrypoints:      append([]string(nil), run.invocation.discovery.Entrypoints...),
-		RequiredOutputs:  []string{}, CandidateEntrypoints: []string{},
-		ChangedProjects: []string{}, GeneratedFiles: []string{}, ReviewRequired: true,
-		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
-	}
+	result := retainedOptimizeDiscovery(run.invocation, "NATIVE_BUILD_FAILED")
+	result.Status = optimizeDiscoverySkipped
 	if exitCode != 0 || !run.childStarted {
 		if !run.childStarted {
 			result.Reason = "NATIVE_BUILD_NOT_STARTED"

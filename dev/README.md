@@ -542,6 +542,19 @@ result records a 112.198-second matching saving, a 220.761-second unrelated
 fallback penalty and no observed payback. The networked run is bounded POC
 validation, not a soak or production qualification.
 
+Validate the economic precheck that protects a native fallback from unrelated
+discovery and calibration:
+
+```bash
+./dev/check-economic-prequalification
+```
+
+The checker fixes the eight-build theoretical lower bound, the 64-commit
+first-parent history cap, both `REJECT` and `MEASURE` paths, exact central
+profile replay, and the rule that a rejected candidate emits no discovery
+files and performs no calibration. It uses a verified generic graph and never
+branches on a repository name.
+
 ## CI orchestration validation
 
 Validate the `F0-030` authoritative-job, protected validation queue,

@@ -106,7 +106,10 @@ stderr. `--json` reserves stdout for one `buildopt.poc/optimize-result/v1`
 document and forwards Gradle console output to stderr. The same JSON is always
 written to the result file. It distinguishes `OPTIMIZED_NATIVE` from
 `SELECTIVE_PROFILE`, records whether the full graph started, and includes the
-pre-Gradle selection duration in nanoseconds.
+pre-Gradle selection duration in nanoseconds. When a verified central graph is
+available for an unmatched owner, it also records the bounded
+[`economic prequalification`](./poc-economic-prequalification-v1.md) decision
+that either permits measurement or prevents discovery and calibration.
 
 The exact machine contract is
 [`poc-magic-onboarding-contract-v1.json`](./poc-magic-onboarding-contract-v1.json).

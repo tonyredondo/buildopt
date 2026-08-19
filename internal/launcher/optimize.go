@@ -140,48 +140,50 @@ type optimizeGeneratedFiles struct {
 }
 
 type optimizeResult struct {
-	SchemaVersion        string                    `json:"schemaVersion"`
-	Outcome              string                    `json:"outcome"`
-	Reason               string                    `json:"reason"`
-	Phase                string                    `json:"phase"`
-	StartedAt            string                    `json:"startedAt"`
-	CompletedAt          string                    `json:"completedAt"`
-	DurationMs           int64                     `json:"durationMs"`
-	Generation           int                       `json:"generation"`
-	Attempt              int                       `json:"attempt"`
-	Bindings             optimizeBindings          `json:"bindings"`
-	Budget               optimizeBudget            `json:"budget"`
-	Resume               optimizeResume            `json:"resume"`
-	Native               optimizeNativeResult      `json:"native"`
-	Execution            optimizeExecutionResult   `json:"execution"`
-	Discovery            optimizeDiscoveryResult   `json:"discovery"`
-	Calibration          optimizeCalibrationResult `json:"calibration"`
-	Portfolio            optimizePortfolioResult   `json:"portfolio"`
-	Selection            optimizeSelectionResult   `json:"selection"`
-	Central              optimizeCentralResult     `json:"central"`
-	Value                optimizeValueState        `json:"value"`
-	GeneratedFiles       optimizeGeneratedFiles    `json:"generatedFiles"`
-	ManualFilesRequired  int                       `json:"manualFilesRequired"`
-	CalibrationPerformed bool                      `json:"calibrationPerformed"`
-	PortfolioPerformed   bool                      `json:"portfolioPerformed"`
-	SelectionPerformed   bool                      `json:"selectionPerformed"`
-	ProductionAuthorized bool                      `json:"productionAuthorized"`
-	TestOptimization     string                    `json:"testOptimization"`
+	SchemaVersion        string                           `json:"schemaVersion"`
+	Outcome              string                           `json:"outcome"`
+	Reason               string                           `json:"reason"`
+	Phase                string                           `json:"phase"`
+	StartedAt            string                           `json:"startedAt"`
+	CompletedAt          string                           `json:"completedAt"`
+	DurationMs           int64                            `json:"durationMs"`
+	Generation           int                              `json:"generation"`
+	Attempt              int                              `json:"attempt"`
+	Bindings             optimizeBindings                 `json:"bindings"`
+	Budget               optimizeBudget                   `json:"budget"`
+	Resume               optimizeResume                   `json:"resume"`
+	Native               optimizeNativeResult             `json:"native"`
+	Execution            optimizeExecutionResult          `json:"execution"`
+	Discovery            optimizeDiscoveryResult          `json:"discovery"`
+	Calibration          optimizeCalibrationResult        `json:"calibration"`
+	Portfolio            optimizePortfolioResult          `json:"portfolio"`
+	Selection            optimizeSelectionResult          `json:"selection"`
+	Prequalification     optimizeEconomicPrequalification `json:"prequalification"`
+	Central              optimizeCentralResult            `json:"central"`
+	Value                optimizeValueState               `json:"value"`
+	GeneratedFiles       optimizeGeneratedFiles           `json:"generatedFiles"`
+	ManualFilesRequired  int                              `json:"manualFilesRequired"`
+	CalibrationPerformed bool                             `json:"calibrationPerformed"`
+	PortfolioPerformed   bool                             `json:"portfolioPerformed"`
+	SelectionPerformed   bool                             `json:"selectionPerformed"`
+	ProductionAuthorized bool                             `json:"productionAuthorized"`
+	TestOptimization     string                           `json:"testOptimization"`
 }
 
 type optimizeRun struct {
-	invocation    optimizeInvocation
-	state         optimizeState
-	statePath     string
-	resultPath    string
-	valueJSONPath string
-	valueMDPath   string
-	startedAt     time.Time
-	childStarted  bool
-	previousState *optimizeState
-	selection     optimizeSelectionResult
-	central       *centralOptimizeIntegration
-	centralReplay *centralOptimizeReplay
+	invocation       optimizeInvocation
+	state            optimizeState
+	statePath        string
+	resultPath       string
+	valueJSONPath    string
+	valueMDPath      string
+	startedAt        time.Time
+	childStarted     bool
+	previousState    *optimizeState
+	selection        optimizeSelectionResult
+	prequalification optimizeEconomicPrequalification
+	central          *centralOptimizeIntegration
+	centralReplay    *centralOptimizeReplay
 	// gradleBuildCacheSeed is the cache actually used by the authoritative
 	// build. Connected invocations use managed L1 rather than Gradle's default
 	// build-cache-1 directory, so calibration must snapshot this exact path.
@@ -432,6 +434,7 @@ func beginOptimizeRun(invocation optimizeInvocation) (*optimizeRun, error) {
 		invocation: invocation, state: state, statePath: statePath,
 		resultPath: resultPath, valueJSONPath: valueJSONPath, valueMDPath: valueMDPath,
 		startedAt: startedAt, previousState: previous,
+		prequalification: unevaluatedOptimizePrequalification(optimizePrequalificationReasonNoGraph),
 	}, nil
 }
 
@@ -630,6 +633,9 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		discovery = run.centralReplay.discovery
 		calibration = run.centralReplay.calibration
 		resumed = true
+	} else if !resumed && run.prequalification.Decision == optimizePrequalificationReject {
+		discovery = retainedOptimizeDiscovery(run.invocation, "ECONOMIC_PREQUALIFICATION_REJECTED")
+		calibration = emptyOptimizeCalibration(run.invocation, discovery.Reason)
 	} else if !resumed {
 		discovery = run.discover(learningContext, exitCode, stderr)
 		calibration = run.calibrate(learningContext, learningStarted, discovery, stderr)
@@ -709,12 +715,13 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 			Started:       run.childStarted,
 			ExitCode:      exitCode,
 		},
-		Discovery:   discovery,
-		Calibration: calibration,
-		Portfolio:   portfolio,
-		Selection:   selection,
-		Central:     disconnectedOptimizeCentralResult(),
-		Value:       run.state.Value,
+		Discovery:        discovery,
+		Calibration:      calibration,
+		Portfolio:        portfolio,
+		Selection:        selection,
+		Prequalification: run.prequalification,
+		Central:          disconnectedOptimizeCentralResult(),
+		Value:            run.state.Value,
 		GeneratedFiles: optimizeGeneratedFiles{
 			State:         filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeStateFile)),
 			Result:        filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeResultFile)),

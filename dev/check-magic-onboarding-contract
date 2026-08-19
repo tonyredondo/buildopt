@@ -67,7 +67,7 @@ jq -e '
   .result.schemaVersion == "buildopt.poc/optimize-result/v1" and
   .result.file == ".buildopt/optimize/v1/result.json" and
   .result.permissions == "CURRENT_USER_PRIVATE" and
-  (.result.alwaysReports | length) == 14 and
+  (.result.alwaysReports | length) == 15 and
   .result.humanOutput == "SHORT_STDERR_SUMMARY" and
   .result.machineOutput == "RESULT_FILE_ALWAYS_AND_STDOUT_WITH_JSON_FLAG" and
   .exitBehavior == {

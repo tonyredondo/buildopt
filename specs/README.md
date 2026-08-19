@@ -97,6 +97,7 @@ the exact cross-component contract.
 | [`poc-magic-calibration-cost-v1.md`](./poc-magic-calibration-cost-v1.md) | `POC-MAGIC-CALIBRATION-COST-001` |
 | [`poc-central-end-to-end-value-v1.md`](./poc-central-end-to-end-value-v1.md) and [`poc-central-end-to-end-value-v1.json`](./poc-central-end-to-end-value-v1.json) | `POC-CENTRAL-END-TO-END-VALUE-001` |
 | [`poc-profile-lifetime-v1.md`](./poc-profile-lifetime-v1.md) and [`poc-profile-lifetime-v1.json`](./poc-profile-lifetime-v1.json) | `POC-PROFILE-LIFETIME-001` |
+| [`poc-economic-prequalification-v1.md`](./poc-economic-prequalification-v1.md) and [`poc-economic-prequalification-v1.json`](./poc-economic-prequalification-v1.json) | `POC-ECONOMIC-PREQUALIFICATION-001` |
 | [`poc-normal-build-tail-expansion-v1.md`](./poc-normal-build-tail-expansion-v1.md) and [`poc-normal-build-tail-expansion-v1.json`](./poc-normal-build-tail-expansion-v1.json) | `POC-NORMAL-BUILD-TAIL-EXPANSION-001` |
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |
 | [`private-beta-operations-v1.md`](./private-beta-operations-v1.md) | `A1-005` |

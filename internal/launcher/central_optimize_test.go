@@ -142,6 +142,52 @@ func TestCentralOptimizeReusesQualifiedProfileAcrossUnrelatedCommitAndRejectsStr
 		t.Fatalf("completed remote result did not preserve central selection: err=%v result=%+v", err, completed)
 	}
 
+	// A different source owner still fits the verified graph, but has no recent
+	// recurrence capable of repaying eight-pair calibration. The central miss
+	// must therefore retain native Gradle without entering discovery.
+	eventRaw, _ = json.Marshal(map[string]string{"before": currentRevision})
+	if err := os.WriteFile(eventPath, eventRaw, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	writeCentralOptimizeFile(t, repository, "examples/src/main/java/Example.java", "class Example {}\n")
+	centralOptimizeGit(t, repository, "add", "examples/src/main/java/Example.java")
+	centralOptimizeGit(t, repository, "commit", "-qm", "unrelated owner")
+	unrelatedRevision := strings.TrimSpace(centralOptimizeGit(t, repository, "rev-parse", "HEAD"))
+	invocation, err = prepareOptimizeInvocation(append([]string{
+		"--calibration-pairs", "8", "--",
+	}, append(append([]string(nil), profile.GradleOptions...), "shadowJar")...), true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	integration = centralOptimizeFixtureIntegration(t, invocation, fixtureFiles, profile, evidenceRevision)
+	run, err = beginOptimizeRun(invocation)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if impact = integration.prepareAutomaticReplay(run); impact != nil || run.selection.Selected ||
+		run.prequalification.Decision != optimizePrequalificationReject ||
+		run.prequalification.Reason != optimizePrequalificationReasonInsufficient ||
+		run.prequalification.AnalogousCommits != 1 ||
+		!integration.result.NativeFallback || integration.result.Reason != optimizeCentralReasonStructural {
+		t.Fatalf("unrelated owner was not rejected economically: impact=%+v selection=%+v prequalification=%+v central=%+v", impact, run.selection, run.prequalification, integration.result)
+	}
+	run.childStarted = true
+	if err := run.finish(0, io.Discard, io.Discard); err != nil {
+		t.Fatal(err)
+	}
+	completedRaw, err = os.ReadFile(run.resultPath)
+	if err != nil || json.Unmarshal(completedRaw, &completed) != nil ||
+		completed.Discovery.Reason != "ECONOMIC_PREQUALIFICATION_REJECTED" ||
+		len(completed.Discovery.GeneratedFiles) != 0 || completed.Calibration.Performed ||
+		completed.Prequalification.Decision != optimizePrequalificationReject ||
+		!validOptimizePrequalification(completed.Prequalification) {
+		t.Fatalf("economic rejection entered discovery or emitted invalid evidence: err=%v result=%+v", err, completed)
+	}
+
+	eventRaw, _ = json.Marshal(map[string]string{"before": unrelatedRevision})
+	if err := os.WriteFile(eventPath, eventRaw, 0o600); err != nil {
+		t.Fatal(err)
+	}
 	writeCentralOptimizeFile(t, repository, "build.gradle.kts", "plugins { base }\n")
 	centralOptimizeGit(t, repository, "add", "build.gradle.kts")
 	centralOptimizeGit(t, repository, "commit", "-qm", "structural drift")
@@ -360,6 +406,7 @@ func centralOptimizeFixtureIntegration(
 	evidenceManifest := optimizeDigest("central-optimize-test-evidence-v1", evidenceRevision)
 	return &centralOptimizeIntegration{
 		invocation: invocation, startedAt: time.Now(),
+		prequalification: unevaluatedOptimizePrequalification(optimizePrequalificationReasonNoGraph),
 		connection: centralConnection{
 			RepositoryID:          profile.RepositoryID,
 			RepositoryScopeSHA256: optimizePortfolioRepositoryScope(profile.RepositoryID),

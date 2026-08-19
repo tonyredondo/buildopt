@@ -79,12 +79,13 @@ type optimizeCentralResult struct {
 }
 
 type centralOptimizeIntegration struct {
-	invocation  optimizeInvocation
-	connection  centralConnection
-	client      *centralStateClient
-	diagnostics io.Writer
-	startedAt   time.Time
-	result      optimizeCentralResult
+	invocation       optimizeInvocation
+	connection       centralConnection
+	client           *centralStateClient
+	diagnostics      io.Writer
+	startedAt        time.Time
+	result           optimizeCentralResult
+	prequalification optimizeEconomicPrequalification
 
 	portfolio  *centralRemoteSnapshot
 	evidence   *centralRemoteSnapshot
@@ -119,7 +120,8 @@ func disconnectedOptimizeCentralResult() optimizeCentralResult {
 func prepareCentralOptimizeIntegration(invocation optimizeInvocation, diagnostics io.Writer) *centralOptimizeIntegration {
 	integration := &centralOptimizeIntegration{
 		invocation: invocation, diagnostics: diagnostics, startedAt: time.Now(),
-		result: disconnectedOptimizeCentralResult(),
+		result:           disconnectedOptimizeCentralResult(),
+		prequalification: unevaluatedOptimizePrequalification(optimizePrequalificationReasonNoGraph),
 	}
 	if invocation.connectionDirectory == "" {
 		return integration
@@ -248,6 +250,7 @@ func (integration *centralOptimizeIntegration) prepareAutomaticReplay(run *optim
 			selection.DurationNS = 1
 		}
 		run.selection = selection
+		run.prequalification = integration.prequalification
 		return nil
 	}
 	integration.result.Status = optimizeCentralSelected
@@ -258,6 +261,7 @@ func (integration *centralOptimizeIntegration) prepareAutomaticReplay(run *optim
 	integration.result.NativeFallback = false
 	run.centralReplay = replay
 	run.selection = selection
+	run.prequalification = unevaluatedOptimizePrequalification(optimizePrequalificationReasonSelected)
 	return impact
 }
 
@@ -378,6 +382,9 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 		entry.CandidateEntrypoints, entry.RequiredOutputs,
 	)
 	if family != entry.Family || familySHA != entry.FamilySHA256 || !equalOptimizeStrings(owners, entry.ChangedProjects) {
+		if integration.prequalification.Decision == optimizePrequalificationNotEvaluated {
+			integration.prequalification = prequalifyOptimizeDiscovery(invocation, snapshot, owners, family)
+		}
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("current change family differs from remote qualification")}
 	}
 
