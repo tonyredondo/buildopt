@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import org.gradle.api.Action;
 import org.gradle.api.Describable;
 import org.gradle.api.Project;
@@ -41,8 +42,10 @@ final class BuildOptTierOnePolicy {
             "net.ltgt.gradle.errorprone.ErrorProneCompilerArgumentProvider";
     private static final String ERROR_PRONE_JVM_ARGUMENT_PROVIDER =
             "net.ltgt.gradle.errorprone.ErrorProneJvmArgumentProvider";
-    private static final String ERROR_PRONE_PLUGIN_ARTIFACT =
-            "gradle-errorprone-plugin-4.3.0.jar";
+    private static final Set<String> ERROR_PRONE_PLUGIN_ARTIFACTS =
+            Set.of(
+                    "gradle-errorprone-plugin-4.2.0.jar",
+                    "gradle-errorprone-plugin-4.3.0.jar");
     private static final String GRAALVM_JAR_ANALYZER_TRANSFORM =
             "org.graalvm.buildtools.gradle.tasks.scanner.JarAnalyzerTransform";
     private static final String GRAALVM_NATIVE_PLUGIN_ARTIFACT =
@@ -127,8 +130,8 @@ final class BuildOptTierOnePolicy {
         }
     }
 
-    private static boolean isClassFromArtifact(
-            Object value, String className, String artifactName) {
+    private static boolean isClassFromAllowlistedErrorProneArtifact(
+            Object value, String className) {
         if (!value.getClass().getName().equals(className)) {
             return false;
         }
@@ -140,7 +143,7 @@ final class BuildOptTierOnePolicy {
                                     .getCodeSource()
                                     .getLocation()
                                     .toURI());
-            return codeSource.getFileName().toString().equals(artifactName);
+            return isAllowlistedErrorProneArtifactName(codeSource.getFileName().toString());
         } catch (Exception failure) {
             return false;
         }
@@ -164,15 +167,17 @@ final class BuildOptTierOnePolicy {
         List<?> jvmArgumentProviders =
                 javaCompile.getOptions().getForkOptions().getJvmArgumentProviders();
         return compilerArgumentProviders.size() == 1
-                && isClassFromArtifact(
+                && isClassFromAllowlistedErrorProneArtifact(
                         compilerArgumentProviders.get(0),
-                        ERROR_PRONE_COMPILER_ARGUMENT_PROVIDER,
-                        ERROR_PRONE_PLUGIN_ARTIFACT)
+                        ERROR_PRONE_COMPILER_ARGUMENT_PROVIDER)
                 && jvmArgumentProviders.size() == 1
-                && isClassFromArtifact(
+                && isClassFromAllowlistedErrorProneArtifact(
                         jvmArgumentProviders.get(0),
-                        ERROR_PRONE_JVM_ARGUMENT_PROVIDER,
-                        ERROR_PRONE_PLUGIN_ARTIFACT);
+                        ERROR_PRONE_JVM_ARGUMENT_PROVIDER);
+    }
+
+    static boolean isAllowlistedErrorProneArtifactName(String artifactName) {
+        return ERROR_PRONE_PLUGIN_ARTIFACTS.contains(artifactName);
     }
 
     static boolean isAllowlistedIdentity(Task task) {

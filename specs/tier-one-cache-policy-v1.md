@@ -67,16 +67,18 @@ of the following:
    `JavaCompile` as its direct base;
 3. the instance either has exactly one Gradle
    `org.gradle.api.internal.project.taskfactory.IncrementalTaskAction`, or the
-   exact Error Prone 4.3.0 augmentation recorded in the machine-readable
+   exact Error Prone 4.2.0 or 4.3.0 augmentation recorded in the machine-readable
    policy: one named wrapper before that built-in action plus the exact
    compiler and JVM argument-provider classes loaded from the versioned
    plugin artifact.
 
-The Error Prone exception exists only for the Mockito POC path. It is bound to
-plugin id, version, action order and display name, both provider classes,
-public artifact SHA-256, and source revision. Copying the action display name
-without the exact providers remains denied. Gradle's implementation snapshot,
-declared inputs, outputs, and native cache key remain authoritative.
+The Error Prone exception covers the two versions structurally observed in the
+Mockito and Apache Beam POC subjects. Each row is bound to plugin id, version,
+action order and display name, both provider classes, public artifact SHA-256,
+and source revision. Other versions and renamed artifacts remain denied;
+copying the action display name without the exact providers also remains
+denied. Gradle's implementation snapshot, declared inputs, outputs, and native
+cache key remain authoritative.
 
 Every other task receives a named `doNotCacheIf`. This includes custom
 `@CacheableTask` types, `Test` with no grant, a source-set task whose action

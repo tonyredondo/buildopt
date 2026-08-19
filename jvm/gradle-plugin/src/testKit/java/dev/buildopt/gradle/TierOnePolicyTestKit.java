@@ -2,6 +2,8 @@ package dev.buildopt.gradle;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -53,6 +55,7 @@ public final class TierOnePolicyTestKit {
         if (!Files.isRegularFile(pluginJar)) {
             throw new IllegalArgumentException("missing plugin JAR: " + pluginJar);
         }
+        requireErrorProneArtifactContract(pluginJar);
 
         Path testRoot = Files.createTempDirectory("buildopt-tier-one-policy-");
         try {
@@ -71,6 +74,39 @@ public final class TierOnePolicyTestKit {
                 "A0-002 TestKit OK: Gradle %s / JDK %d / Kotlin+Groovy%n",
                 gradleHome.getName(),
                 expectedJava);
+    }
+
+    private static void requireErrorProneArtifactContract(Path pluginJar) throws IOException {
+        try (URLClassLoader loader =
+                new URLClassLoader(
+                        new java.net.URL[] {pluginJar.toUri().toURL()},
+                        TierOnePolicyTestKit.class.getClassLoader())) {
+            Class<?> policy = loader.loadClass("dev.buildopt.gradle.BuildOptTierOnePolicy");
+            Method matcher =
+                    policy.getDeclaredMethod("isAllowlistedErrorProneArtifactName", String.class);
+            matcher.setAccessible(true);
+            for (String artifact : new String[] {
+                "gradle-errorprone-plugin-4.2.0.jar",
+                "gradle-errorprone-plugin-4.3.0.jar"
+            }) {
+                if (!(boolean) matcher.invoke(null, artifact)) {
+                    throw new IllegalStateException(
+                            "allowlisted Error Prone artifact was rejected: " + artifact);
+                }
+            }
+            for (String artifact : new String[] {
+                "gradle-errorprone-plugin-4.1.0.jar",
+                "gradle-errorprone-plugin-4.4.0.jar",
+                "renamed-gradle-errorprone-plugin-4.2.0.jar"
+            }) {
+                if ((boolean) matcher.invoke(null, artifact)) {
+                    throw new IllegalStateException(
+                            "unproven Error Prone artifact was accepted: " + artifact);
+                }
+            }
+        } catch (ReflectiveOperationException failure) {
+            throw new IOException("cannot inspect packaged Error Prone policy", failure);
+        }
     }
 
     private static Path writeInitScript(Path testRoot, Path pluginJar)
