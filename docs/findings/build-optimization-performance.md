@@ -9,6 +9,13 @@
   and lower p95. A Ktor root build-logic change retained native and made no
   performance claim. These repository-specific effects are not averaged or
   added to the structural results below.
+- **Observed lifetime changes the economic decision.** One Ktor Jetty profile
+  qualified at **58.36% faster** and saved **112.198 seconds** on its matching
+  replay, but an unrelated CORS change retained native only after adding
+  **220.761 seconds** of discovery overhead. The three-build public window lost
+  108.490 seconds before calibration and 1,551.814 seconds after it. Large
+  steady-state savings therefore do not authorize learning without a cheap
+  lifetime/payback precheck.
 - **The current POC has one broadly supported accelerator: structural Build
   Impact.** The latest balanced protocol qualified Spring (**15.99% faster**),
   OpenTelemetry (**14.97%**), Kafka (**87.35%**), Micronaut (**39.44%**), and
@@ -700,8 +707,9 @@ relaxing a gate or adding a Hibernate-specific decision.
 - Can a reviewed Gradle-owned output candidate be turned into one convenient,
   versioned owner input without hiding repository semantics or weakening drift
   detection?
-- Do Ktor's discovery and stabilization costs repay within a practical number
-  of repeated qualifying builds for all three retained change classes?
+- Can cheap, repository-independent graph/task/change-family signals predict
+  enough matching lifetime to justify calibration, and can an inapplicable
+  profile return native without paying for unrelated-owner discovery?
 
 ## Evidence Boundaries
 
@@ -724,6 +732,7 @@ artifacts are:
 - [installed Spring Build Impact evidence](../../benchmarks/results/poc-spring-installed-impact-v1.json);
 - [OpenTelemetry hot-state evidence](../../benchmarks/results/poc-otel-hot-state-v1.json);
 - [final OpenTelemetry optimization evidence](../../benchmarks/results/poc-otel-optimization-v2.json).
+- [observed Ktor profile-lifetime evidence](../../benchmarks/results/poc-profile-lifetime-v1/summary.json).
 - [terminal installed qualified-profile matrix](../../benchmarks/results/poc-qualified-profile-matrix-v1/summary.json).
 - [fresh five-repository structural-only matrix](../../benchmarks/results/poc-generic-profile-matrix-v1/README.md).
 - [fresh full-path ablation and retained component evidence](../../benchmarks/results/poc-full-path-ablation-v1/summary.json).

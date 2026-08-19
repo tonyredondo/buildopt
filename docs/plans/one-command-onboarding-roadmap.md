@@ -191,7 +191,7 @@ UNSEEN -> DISCOVERED -> CALIBRATING -> QUALIFIED -> ACTIVE
 | 4 | `POC-MAGIC-PROFILE-PORTFOLIO-001` | Classify observed changes into exact structural families and maintain multiple qualified profiles without repository-name rules. | **Done:** dependency, resource, leaf and mixed-source facts map to distinct logical families; independently qualified families coexist, the same family replaces only its exact binding, exact state resumes and tampering is rebuilt from valid evidence without granting selection. |
 | 5 | `POC-MAGIC-AUTO-REPLAY-001` | Let `buildopt optimize` automatically use a qualifying portfolio entry and refresh stale entries. | **Done:** the first qualifying run creates the profile; a later exact run validates eleven bindings and selects it with no extra flag or calibration; drift disables it before Gradle starts and valid evidence may repair a corrupt artifact for the next run. |
 | 6 | `POC-MAGIC-CI-ONBOARDING-001` | Add one-input GitHub/GitLab orchestration and portable calibration persistence. | **Done:** a clean consumer supplies `command: optimize build`; provider identity makes exact state independent of the checkout path, every other binding remains fail-closed, and both providers publish checksummed results without a service. |
-| 7 | `POC-MAGIC-WOW-REPORT-001` | Present graph reduction, observed wall time, uncertainty, break-even, cumulative saving and fallback reasons. | **Done:** human output is understandable without the tracker; JSON recomputes every number, labels cumulative value as a projection, keeps useful lifetime unavailable until observed, and never adds unrelated mechanism percentages. |
+| 7 | `POC-MAGIC-WOW-REPORT-001` | Present graph reduction, observed wall time, uncertainty, break-even, cumulative saving and fallback reasons. | **Done:** human output is understandable without the tracker; JSON recomputes every number, labels cumulative value as a projection, keeps useful lifetime unavailable without profile-specific cross-commit evidence, and never adds unrelated mechanism percentages. |
 | 8 | `POC-MAGIC-END-TO-END-VALUE-001` | Validate the complete onboarding on fresh substantial public repositories. | Install-to-decision uses one command and zero manual BuildOpt files; at least two different Gradle families produce equivalent outputs and a net installed-path win, while a negative case retains native. |
 | 8a | `POC-MAGIC-CALIBRATION-COST-001` | Reduce generic first-decision cost exposed by the partial public-repository matrix. | Reuse dependency snapshots and base preparation only under exact content bindings; remove at least the 94.1 seconds Beam needs to repay within 30 builds without reducing eight pairs, weakening output/fallback gates or adding repository-name rules. |
 
@@ -259,7 +259,16 @@ matrix remains diagnostic history, and the calibration-cost result remains the
 development evidence that made Beam economically eligible. Neither is
 substituted for the published terminal capture.
 
-The immediate next block is `POC-CENTRAL-STORAGE-CONTRACT-001`. It must define
-separate Gradle-object and BuildOpt-state namespaces, immutable generations,
-compare-and-swap, retention and outage behavior for an optional HTTP/HTTPS
-service. Local `buildopt optimize` must remain usable without that service.
+All optional central storage, synchronization, two-machine and equal-opportunity
+value blocks are complete. The subsequent Ktor
+[profile-lifetime experiment](../../benchmarks/results/poc-profile-lifetime-v1/README.md)
+observed one matching replay, one unrelated-owner fallback and one global
+invalidation. Although the matching replay saved 112.198 seconds, the fallback
+cost 220.761 seconds and the 1,443.324-second calibration did not repay.
+
+The immediate next block is generic economic prequalification. It must use
+cheap graph/task/change evidence to decline discovery or eight-pair
+calibration when the likely matching lifetime cannot repay it, and it must
+make unrelated-owner fallback close to optimized-native cost. It may not add
+repository-name rules, weaken correctness gates or assume another profile's
+lifetime.

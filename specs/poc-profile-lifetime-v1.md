@@ -58,15 +58,27 @@ same public commits. For every observed revision the harness deletes project
 outputs, alternates arm order, records wall time and central cache hits, and
 requires the exact same owner outputs. Their private Gradle and BuildOpt caches
 survive between commits because that is the customer lifecycle being tested.
-Gradle daemons do not survive individual invocations: Ktor configures a 10 GiB
-heap, so retaining one daemon while a preflight starts another would exceed the
-16 GiB host. Both arms therefore use the same `--no-daemon` boundary while all
-disk caches and profile state remain persistent.
+Gradle daemons do not survive individual invocations. The harness bounds the
+Gradle heap at 2 GiB and the Kotlin daemon at 1.5 GiB, and retaining daemons
+across two arms would make ordering and memory pressure depend on previous
+observations. Both arms therefore use the same `--no-daemon` boundary while
+all disk caches and profile state remain persistent.
 
 The result reports gross matching-replay saving, fallback deltas, calibration
 cost, cumulative net saving and the first observed break-even point when one
 exists. A negative net result is valid evidence; the checker must never turn a
 short lifetime into projected success.
+
+## Observed result
+
+The profile qualified with a 58.36% steady-state reduction and projected
+31-build break-even. The next matching public commit saved 112.198 seconds,
+but a later unrelated-owner change correctly retained native and added 220.761
+seconds because the current POC performed full discovery after rejection. A
+global build-logic change rejected early at native parity. The three-build
+window lost 108.490 seconds before calibration and 1,551.814 seconds after it,
+so the profile did not pay back. See the
+[retained result](../benchmarks/results/poc-profile-lifetime-v1/README.md).
 
 ## POC boundary
 

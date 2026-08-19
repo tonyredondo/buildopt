@@ -33,7 +33,7 @@ binding falls back before Gradle starts.
 | --- | --- | --- |
 | **Structural Build Impact** | Runs only the project/task producers required by the exact change and requested outputs. | Primary accelerator; closes the public one-command gate on Ktor and Beam. |
 | **Automatic discovery and calibration** | Derives Git/Gradle ownership, outputs and graph; runs balanced native/candidate pairs; checks uncertainty, p95, outputs, fallback and payback. | Prevents a smaller task count from being mistaken for customer value. |
-| **Profile portfolio and replay** | Stores only qualified structural families under exact repository, Wrapper, workflow, graph, output, executable and evidence bindings. | POC-only automatic replay; drift retains native. |
+| **Profile portfolio and replay** | Stores only qualified structural families under exact repository, Wrapper, workflow, graph, output, executable and evidence bindings. | A Ktor matching replay saved 112.198 s, but its observed public window did not repay learning; drift retained native. |
 | **Safe local cache** | Isolates and verifies Gradle cache data by repository, Wrapper and platform. | Supporting safety; approximately at parity with an already warm native Gradle cache, not the current speed claim. |
 | **Shared / Edge cache** | Offers Gradle-compatible opaque cache objects over HTTP/HTTPS and optional locality. | Separate experiment; its percentages are never added to Build Impact results. |
 | **Optional central cache and state** | Shares committed Gradle outputs plus compatible portfolios, evidence and checkpoints while keeping local execution authoritative. | Under the same committed remote-cache opportunity, the complete path is **82.45% faster on Ktor** and **56.41% on Beam**, with 8/8 positive pairs and exact outputs; global Ktor build logic safely retains native. |
@@ -56,6 +56,25 @@ Both rows improve in 8/8 alternating pairs and preserve exact required
 outputs. A Ktor root build-logic change keeps the full graph, succeeds through
 the same central connection and makes no performance claim. The 12-CPU host
 result is bounded POC evidence, not golden-runner or production evidence.
+
+## Observed profile lifetime and economics
+
+Steady-state speedup is not enough if the repository changes before learning
+repays. A new Ktor experiment follows one centrally published Jetty profile
+through a real six-commit first-parent sequence:
+
+| Event | Optimized native | BuildOpt | Direct effect |
+| --- | ---: | ---: | ---: |
+| Qualifying calibration | 80.529 s mean | 33.530 s mean | **58.36% faster**, but 1,443.324 s learning cost |
+| Matching Jetty replay | 211.042 s | 98.844 s | **112.198 s saved** |
+| Unrelated CORS change | 191.141 s | 411.902 s | **220.761 s slower** |
+| Global build-logic change | 189.178 s | 189.105 s | Native parity; profile rejected early |
+
+All required JAR bytes match. The unrelated change was safe, but expensive:
+after rejecting the Jetty profile, the current POC ran the full graph and then
+discovered the new owner. Across three observed builds, the window lost
+108.490 seconds before calibration and **1,551.814 seconds including
+calibration**. The projected 31-build break-even was not reached.
 
 ## Previous automatic public-package local proof
 
@@ -120,12 +139,15 @@ but do not replace the zero-configuration Ktor/Beam result.
 - Public-package compatibility matters: the rejected `v0.6.0` run exposed a
   real Configuration Cache defect, which was fixed and republished as
   `v0.6.1` before terminal timing restarted.
+- Profile lifetime is now measured for one real Ktor sequence. It proves that
+  a large matching replay win can still lose overall when matches are rare and
+  unrelated fallback performs expensive discovery.
 
 ## What is not proven
 
 - A universal improvement for every repository, workflow or change.
-- That a qualified profile survives enough future commits to realize projected
-  payback; lifetime is not yet observed.
+- That another profile or repository has Ktor's observed lifetime; useful
+  lifetime remains profile-, workflow- and change-distribution-specific.
 - A universal central-path improvement for every repository, workflow, change,
   network or hardware class. The retained Ktor global case deliberately makes
   no performance claim.
@@ -133,11 +155,12 @@ but do not replace the zero-configuration Ktor/Beam result.
 
 ## Recommended next steps
 
-1. **Measure profile lifetime across commits.** Replace projected payback with
-   observed matching replays, invalidations and cumulative net saving.
-2. **Add generic economic prequalification.** Use task shapes and graph cost to
-   avoid an expensive eight-pair calibration when a candidate is unlikely to
-   repay.
+1. **Add generic economic prequalification.** Use cheap task, graph and recent
+   change-family evidence to avoid discovery or eight-pair calibration when a
+   candidate is unlikely to repay within its likely matching lifetime.
+2. **Make native retention cheap.** Once a central profile is structurally
+   inapplicable, return the authoritative native result without automatically
+   paying for discovery of an unrelated owner.
 3. **Improve graph precision without repository rules.** Target task/variant,
    ABI and output relationships that currently make some Groovy, Kafka or
    Micronaut workflows too broad or uneconomic.
@@ -166,4 +189,7 @@ but do not replace the zero-configuration Ktor/Beam result.
 - [Central end-to-end result](../../benchmarks/results/poc-central-end-to-end-value-v1/README.md)
 - [Central end-to-end machine evidence](../../benchmarks/results/poc-central-end-to-end-value-v1/summary.json)
 - [Central end-to-end contract](../../specs/poc-central-end-to-end-value-v1.md)
+- [Ktor profile-lifetime result](../../benchmarks/results/poc-profile-lifetime-v1/README.md)
+- [Ktor profile-lifetime machine evidence](../../benchmarks/results/poc-profile-lifetime-v1/summary.json)
+- [Profile-lifetime contract](../../specs/poc-profile-lifetime-v1.md)
 - [Implementation tracker](../../implementation-tracker.md)

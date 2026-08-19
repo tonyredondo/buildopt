@@ -144,10 +144,11 @@ state:
 - `.buildopt/optimize/v1/value-report.json` contains the source metrics and
   formulas needed to recompute every derived number.
 
-Cumulative value is clearly labeled as a projection over successful exact
-replays, not observed cumulative wall time. Expected useful lifetime remains
-`UNAVAILABLE` until cross-commit applicability is measured separately; the POC does
-not assume a profile survives forever.
+Cumulative value in an ordinary invocation is clearly labeled as a projection
+over successful exact replays, not observed cumulative wall time. Expected
+useful lifetime remains `UNAVAILABLE` unless that profile has its own
+cross-commit evidence; the POC never applies one repository's lifetime to
+another profile.
 
 `BUILDOPT_BYPASS=1 buildopt optimize build` skips optimize state and reporting
 entirely. The [command contract](../../specs/poc-magic-onboarding-contract-v1.md)
@@ -188,6 +189,15 @@ compares equal committed cache opportunity and records **82.45% lower wall
 time on Ktor** and **56.41% on Beam**, with exact outputs and 8/8 positive
 pairs. Running the service remains optional and operator-owned; this is bounded
 POC evidence, not production qualification.
+
+The separate
+[Ktor lifetime result](../../benchmarks/results/poc-profile-lifetime-v1/README.md)
+shows the economic limitation behind this onboarding. One matching replay
+saved 112.198 seconds, but an unrelated-owner fallback added 220.761 seconds
+and the 1,443.324-second learning cost did not repay in the observed public
+window. Until generic economic prequalification exists, a large calibrated
+speedup should be read as technical potential rather than guaranteed
+cumulative customer value.
 
 ## Try the Build Impact accelerator
 

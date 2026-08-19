@@ -61,6 +61,27 @@ not the contractual golden-runner class, a soak or a universal claim.
   benchmarks/results/poc-central-end-to-end-value-v1/summary.json
 ```
 
+## Cross-commit profile lifetime evidence
+
+The [Ktor lifetime result](./results/poc-profile-lifetime-v1/README.md) follows
+one centrally published Jetty profile through a real public first-parent
+sequence. Qualification measured a 58.36% steady-state reduction with a
+1,443.324-second learning cost and projected 31-build break-even. The one
+matching replay saved 112.198 seconds; an unrelated CORS change safely retained
+native but added 220.761 seconds because the POC also discovered the new owner;
+a global build-logic invalidation rejected early at native parity.
+
+The three observed builds lost 108.490 seconds before calibration and
+1,551.814 seconds including it. This is retained negative economic evidence:
+the profile mechanism works, but this public window did not contain enough
+matching reuse to justify learning. Validate every classification, exact
+output and cumulative calculation with:
+
+```bash
+./dev/check-profile-lifetime \
+  benchmarks/results/poc-profile-lifetime-v1/summary.json
+```
+
 ## Build Optimization scorecard
 
 For the decision-ready product summary, see the [current POC one-pager](../docs/findings/buildopt-poc-handoff.md).

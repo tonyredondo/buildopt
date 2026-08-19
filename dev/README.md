@@ -525,7 +525,7 @@ checkpoint reuse occurred. Derived statistics are recomputed from the raw
 pairs under a deterministic locale during resume.
 
 Measure the lifetime of one central structural profile across a real public
-Kafka commit sequence with Java 21:
+Ktor first-parent commit sequence with Java 21:
 
 ```bash
 ./dev/run --toolchain temurin-jdk-21 -- \
@@ -533,12 +533,14 @@ Kafka commit sequence with Java 21:
 ./dev/check-profile-lifetime /tmp/profile-lifetime.json
 ```
 
-The runner qualifies the profile at a public upstream commit, advances two
-persistent isolated arms through twelve later public revisions, and records
-ten matching replays, one non-applicable resource event and one build-logic
-invalidation. It requires exact owner outputs and reports observed cumulative
-economics after calibration. The networked run is bounded POC validation, not
-a soak or production qualification.
+The runner qualifies one Jetty dependency-source profile, advances two
+persistent isolated arms through one matching replay, two deliberately
+unobserved commits, one unrelated CORS source change and one global
+build-logic invalidation. It requires exact owner outputs, identical central
+cache opportunity and cumulative economics after calibration. The retained
+result records a 112.198-second matching saving, a 220.761-second unrelated
+fallback penalty and no observed payback. The networked run is bounded POC
+validation, not a soak or production qualification.
 
 ## CI orchestration validation
 
@@ -3945,8 +3947,10 @@ Every completed optimize invocation also emits private `value-report.md` and
 `value-report.json` files. The value-report checker recomputes project
 reduction, installed-path mean saving, paired uncertainty, per-arm p95,
 calibration break-even, exact-replay projection, selection overhead and native
-fallback. It keeps expected useful lifetime explicitly unavailable until
-cross-commit matching builds are observed, rather than inventing payback.
+fallback. Individual reports still keep expected useful lifetime unavailable
+unless they contain cross-commit evidence. The separate Ktor lifetime result
+now demonstrates one profile-specific observed window; it is not a universal
+default for other profiles.
 
 `specs/poc-cross-date-output-equivalence-v1.json` and
 `specs/poc-cross-date-output-equivalence-v1.md` freeze the follow-up for the

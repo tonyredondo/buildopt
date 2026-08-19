@@ -35,7 +35,7 @@ jq -e '
     kotlinDaemonHeapMaxMiB:1536,maximumBreakEvenBuilds:50,maximumWorkers:8,
     persistentArmsAcrossCommits:true,sameCommittedCentralObjects:true,
     sameStartingCacheState:true,alternatingArmOrder:true,
-    unmeasuredDependencyWarmup:true
+    unmeasuredDependencyWarmup:true,transport:"HTTPS_TLS_1_3_MINIMUM"
   } and
   .acceptance == {
     exactRequiredOutputsEveryRevision:true,matchingProfileSelections:1,

@@ -42,9 +42,9 @@ server outage becomes an ordinary rebuild. Connection and typed state
 synchronization are also complete: `buildopt connect` verifies and stores the
 repository-scoped HTTPS connection, while `buildopt sync` moves exact generated
 portfolios, evidence and checkpoints with idempotent publication, optimistic
-concurrency, interrupted retry and verified offline fallback. The next block is
-`POC-CENTRAL-OPTIMIZE-INTEGRATION-001`: consume that synchronized state inside
-the unchanged one-command optimization path.
+concurrency, interrupted retry and verified offline fallback. Automatic
+optimize integration, isolated producer/consumer composition and terminal
+equal-opportunity value measurement are complete as well.
 
 ## Target experience
 
@@ -234,11 +234,16 @@ central objects. Ktor improved by **82.45%** and Beam by **56.41%**, with exact
 outputs and 8/8 positive pairs; a global Ktor change retained native. See the
 [terminal result](../../benchmarks/results/poc-central-end-to-end-value-v1/README.md).
 
-The local one-command roadmap remains the primary critical path. Blocks 1–3
-may establish the reusable server boundary after the `buildopt optimize` state
-contract exists. State synchronization and automatic replay require the local
-profile portfolio and replay blocks; centralized persistence must not delay or
-become mandatory for local POC value.
+The follow-up
+[profile-lifetime experiment](../../benchmarks/results/poc-profile-lifetime-v1/README.md)
+qualifies and publishes one Ktor profile, selects it on a matching public
+commit, retains native on an unrelated owner and invalidates on build logic.
+The matching replay saved 112.198 seconds, but the unrelated fallback cost
+220.761 seconds and the 1,443.324-second calibration did not repay in the
+observed window. The next POC priority is therefore economic prequalification
+and cheaper rejection, not more central infrastructure. Centralized
+persistence remains optional and must not delay or become mandatory for local
+POC value.
 
 ## POC success scorecard
 

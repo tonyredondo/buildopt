@@ -87,9 +87,12 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > graph. The decision overhead is measured; any drift runs optimized native
 > Gradle instead. Every completed command now writes a readable value report
 > plus recomputable JSON covering graph reduction, measured mean/tail value,
-> calibration cost, break-even, exact replays and fallback. Future profile
-> lifetime remains explicitly unavailable until cross-commit applicability is
-> measured separately.
+> calibration cost, break-even, exact replays and fallback. One bounded Ktor
+> public-history experiment now measures cross-commit profile lifetime: a
+> matching replay saved 112.198 seconds, but an unrelated-owner fallback cost
+> 220.761 seconds and the 1,443.324-second calibration did not repay. Useful
+> lifetime therefore remains profile-specific; it is never inferred from a
+> steady-state speedup alone.
 > This authority exists only inside the explicit POC command
 > and never grants production promotion. The ordered work and success
 > scorecard live in the
@@ -174,9 +177,13 @@ that state path to the central Gradle cache automatically: a clean read-only
 consumer selected the remote profile, restored one task `FROM-CACHE` after a
 server restart and produced the exact producer JAR without receiving the
 central credential. Service loss retained the verified profile and rebuilt the
-same bytes with zero remote hits. This is functional composition evidence, not
-a wall-time win; an equal-opportunity comparison against optimized native
-Gradle is next.
+same bytes with zero remote hits. The later equal-opportunity experiment
+measured the complete central path at 82.45% lower wall time on Ktor and 56.41%
+on Beam. The
+[profile-lifetime result](./benchmarks/results/poc-profile-lifetime-v1/README.md)
+then showed why those steady-state wins are not sufficient: observed matching
+frequency and fallback cost must repay learning before BuildOpt should spend
+on calibration.
 
 For a non-invasive evaluation, the GitHub Action's `profile-proposal` mode
 turns a checked-in workflow/output declaration and exact pull-request diff into

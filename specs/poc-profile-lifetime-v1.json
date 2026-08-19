@@ -27,7 +27,8 @@
     "sameCommittedCentralObjects": true,
     "sameStartingCacheState": true,
     "alternatingArmOrder": true,
-    "unmeasuredDependencyWarmup": true
+    "unmeasuredDependencyWarmup": true,
+    "transport": "HTTPS_TLS_1_3_MINIMUM"
   },
   "acceptance": {
     "exactRequiredOutputsEveryRevision": true,
