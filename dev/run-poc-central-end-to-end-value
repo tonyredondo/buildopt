@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 umask 077
+export LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC
 
 if (($# != 1)); then
     printf 'usage: %s OUTPUT_FILE\n' "$0" >&2
@@ -45,6 +46,37 @@ buildopt_ktor_gradle_heap_mib=2048
 buildopt_ktor_kotlin_daemon_heap_mib=1536
 buildopt_resumed_subject_count=0
 buildopt_checkpoint_package_sha_matched=false
+
+buildopt_measurement_stats() {
+    local buildopt_observations_file=$1
+    local buildopt_stats buildopt_interval
+    buildopt_stats=$(jq -s '
+      ([.[].controlDurationMs] | add / length) as $control |
+      ([.[].candidateDurationMs] | add / length) as $candidate |
+      ([.[].savedMs] | add / length) as $saved |
+      {
+        controlMeanMs:$control,candidateMeanMs:$candidate,meanSavedMs:$saved,
+        reductionRatio:($saved/$control),controlP95Ms:([.[].controlDurationMs]|max),
+        candidateP95Ms:([.[].candidateDurationMs]|max),
+        positivePairs:([.[]|select(.savedMs>0)]|length),exactRequiredOutputs:true
+      }
+    ' "${buildopt_observations_file}")
+    buildopt_interval=$(jq -s -r '.[].savedMs' "${buildopt_observations_file}" | awk '
+      {x[NR]=$1; sum+=$1}
+      END {
+        mean=sum/NR
+        for (i=1;i<=NR;i++) squares+=(x[i]-mean)^2
+        standard=sqrt(squares/(NR-1)); margin=2.364624251*standard/sqrt(NR)
+        printf "[%.6f,%.6f]", mean-margin, mean+margin
+      }
+    ')
+    jq --argjson interval "${buildopt_interval}" '
+      . + {interval95SavedMs:$interval} |
+      .qualified=(.meanSavedMs>0 and .positivePairs>=7 and
+        (.interval95SavedMs | length)==2 and .interval95SavedMs[0]>0 and
+        .candidateP95Ms<.controlP95Ms)
+    ' <<<"${buildopt_stats}"
+}
 
 buildopt_cleanup() {
     if [[ -n ${buildopt_server_pid} ]] && kill -0 "${buildopt_server_pid}" 2>/dev/null; then
@@ -116,12 +148,33 @@ if [[ -n ${buildopt_resume_root} ]]; then
       length > 0 and length <= 2 and
       ([.[].repositoryId] | unique | length) == length and
       all(.[]; .repositoryId == "ktorio/ktor" or .repositoryId == "apache/beam") and
-      all(.[]; .result.qualified and (.observations | length) == 8)
+      all(.[].observations;
+        length == 8 and
+        ([.[].pair] == [1,2,3,4,5,6,7,8]) and
+        all(.[];
+          .savedMs == (.controlDurationMs - .candidateDurationMs) and
+          .controlRequiredOutputSha256 == .candidateRequiredOutputSha256
+        )
+      )
     ' "${buildopt_resume_root}/repositories.jsonl" >/dev/null || {
         printf 'central value resume repository evidence is incomplete or invalid\n' >&2
         exit 1
     }
-    cp -- "${buildopt_resume_root}/repositories.jsonl" "${buildopt_repositories_json}"
+    buildopt_resume_normalized=${buildopt_root}/resume-normalized.jsonl
+    while IFS= read -r buildopt_resume_repository; do
+        jq -c '.observations[]' <<<"${buildopt_resume_repository}" \
+            >"${buildopt_root}/resume-observations.jsonl"
+        buildopt_resume_stats=$(buildopt_measurement_stats \
+            "${buildopt_root}/resume-observations.jsonl")
+        jq -e '.qualified' <<<"${buildopt_resume_stats}" >/dev/null || {
+            printf 'central value resumed subject no longer passes its recomputed gate\n' >&2
+            exit 1
+        }
+        jq -c --argjson result "${buildopt_resume_stats}" \
+            '.result=$result' <<<"${buildopt_resume_repository}" \
+            >>"${buildopt_resume_normalized}"
+    done <"${buildopt_resume_root}/repositories.jsonl"
+    mv -- "${buildopt_resume_normalized}" "${buildopt_repositories_json}"
     buildopt_resumed_subject_count=$(wc -l <"${buildopt_repositories_json}" | tr -d ' ')
     if jq -s -e 'any(.[]; .repositoryId == "ktorio/ktor")' \
         "${buildopt_repositories_json}" >/dev/null; then
@@ -624,30 +677,7 @@ buildopt_subject() {
         "${buildopt_logs}/candidate-measurement-daemon-stop.log"
 
     local buildopt_stats
-    buildopt_stats=$(jq -s '
-      ([.[].controlDurationMs] | add / length) as $control |
-      ([.[].candidateDurationMs] | add / length) as $candidate |
-      ([.[].savedMs] | add / length) as $saved |
-      {
-        controlMeanMs:$control,candidateMeanMs:$candidate,meanSavedMs:$saved,
-        reductionRatio:($saved/$control),controlP95Ms:([.[].controlDurationMs]|max),
-        candidateP95Ms:([.[].candidateDurationMs]|max),
-        positivePairs:([.[]|select(.savedMs>0)]|length),exactRequiredOutputs:true
-      }
-    ' "${buildopt_observations}")
-    local buildopt_interval
-    buildopt_interval=$(jq -s -r '.[].savedMs' "${buildopt_observations}" | awk '
-      {x[NR]=$1; sum+=$1}
-      END {
-        mean=sum/NR
-        for (i=1;i<=NR;i++) squares+=(x[i]-mean)^2
-        standard=sqrt(squares/(NR-1)); margin=2.364624251*standard/sqrt(NR)
-        printf "[%.6f,%.6f]", mean-margin, mean+margin
-      }
-    ')
-    buildopt_stats=$(jq --argjson interval "${buildopt_interval}" \
-        '. + {interval95SavedMs:$interval} | .qualified=(.meanSavedMs>0 and .positivePairs>=7 and .interval95SavedMs[0]>0 and .candidateP95Ms<.controlP95Ms)' \
-        <<<"${buildopt_stats}")
+    buildopt_stats=$(buildopt_measurement_stats "${buildopt_observations}")
     jq -e '.qualified' <<<"${buildopt_stats}" >/dev/null || {
         printf '%s did not pass the central value gate: %s\n' \
             "${buildopt_repository_id}" "$(jq -c . <<<"${buildopt_stats}")" >&2

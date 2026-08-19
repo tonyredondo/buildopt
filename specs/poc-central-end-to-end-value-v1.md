@@ -27,6 +27,9 @@ for an eight-pair subject that already passed its value gate and only when the
 newly built installed package has the exact same SHA-256 as the checkpointed
 package. The evidence records whether resume was used and how many completed
 subjects it reused; partial observations are never resumed.
+The runner fixes its locale before calculating decimal confidence bounds, and
+resume always recomputes every derived statistic from the retained raw pairs.
+It never trusts a checkpoint's previously serialized aggregates.
 
 ## Resource envelope
 
