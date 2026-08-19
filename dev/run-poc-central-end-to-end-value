@@ -173,7 +173,7 @@ if [[ -n ${buildopt_resume_root} ]]; then
         jq -c --argjson result "${buildopt_resume_stats}" \
             '.result=$result' <<<"${buildopt_resume_repository}" \
             >>"${buildopt_resume_normalized}"
-    done <"${buildopt_resume_root}/repositories.jsonl"
+    done < <(jq -s -c '.[]' "${buildopt_resume_root}/repositories.jsonl")
     mv -- "${buildopt_resume_normalized}" "${buildopt_repositories_json}"
     buildopt_resumed_subject_count=$(wc -l <"${buildopt_repositories_json}" | tr -d ' ')
     if jq -s -e 'any(.[]; .repositoryId == "ktorio/ktor")' \
