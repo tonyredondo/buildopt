@@ -42,6 +42,7 @@ buildopt_server_pid=
 buildopt_success=false
 buildopt_max_shared_break_even_builds=50
 buildopt_max_workers=8
+buildopt_calibration_budget=3h
 buildopt_ktor_gradle_heap_mib=2048
 buildopt_ktor_kotlin_daemon_heap_mib=1536
 buildopt_resumed_subject_count=0
@@ -293,9 +294,8 @@ buildopt_clone_at() {
     git -C "${buildopt_destination}" checkout -q --detach "${buildopt_revision_to_checkout}"
 }
 
-buildopt_clear_outputs() {
+buildopt_clear_project_outputs() {
     local buildopt_repository=$1
-    local buildopt_cache_home=$2
     local buildopt_directory
     while IFS= read -r -d '' buildopt_directory; do
         case "${buildopt_directory}" in
@@ -303,6 +303,12 @@ buildopt_clear_outputs() {
         esac
         rm -rf -- "${buildopt_directory}"
     done < <(find "${buildopt_repository}" -type d -name build -prune -print0)
+}
+
+buildopt_clear_outputs() {
+    local buildopt_repository=$1
+    local buildopt_cache_home=$2
+    buildopt_clear_project_outputs "${buildopt_repository}"
     rm -rf -- "${buildopt_cache_home}/buildopt/state/l1"
 }
 
@@ -571,11 +577,28 @@ buildopt_subject() {
         --ca-file "${buildopt_tls}/ca.pem" \
         >"${buildopt_logs}/producer-connect.json"
 
+    # A central-cache comparison starts from a useful producer build, not from
+    # an almost empty cache left behind by an interrupted or up-to-date
+    # discovery run. Populate the exact Safe Cache used by optimize without
+    # measuring this baseline build, then remove only project outputs. The
+    # authoritative optimize run must restore from and snapshot that complete
+    # immutable seed for both calibration arms.
+    printf '%s: preparing complete Safe Cache seed before calibration\n' \
+        "${buildopt_repository_id}"
+    buildopt_clear_project_outputs "${buildopt_producer}"
+    buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+        "${buildopt_producer}" "${buildopt_producer_home}" "${buildopt_producer_gradle}" \
+        "${buildopt_producer_cache}" "${buildopt_event}" \
+        "${buildopt_binary}" gradle "${buildopt_workflow[@]}" \
+        >"${buildopt_logs}/producer-calibration-cache-seed.log" 2>&1
+    buildopt_clear_project_outputs "${buildopt_producer}"
+
     printf '%s: calibrating central structural portfolio\n' "${buildopt_repository_id}"
     buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
         "${buildopt_producer}" "${buildopt_producer_home}" "${buildopt_producer_gradle}" \
         "${buildopt_producer_cache}" "${buildopt_event}" \
-        "${buildopt_binary}" optimize --resume never --calibration-budget 2h \
+        "${buildopt_binary}" optimize --resume never \
+        --calibration-budget "${buildopt_calibration_budget}" \
         --calibration-pairs 8 \
         --max-break-even-builds "${buildopt_max_shared_break_even_builds}" \
         --json -- "${buildopt_workflow[@]}" \
@@ -672,7 +695,8 @@ buildopt_subject() {
     buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
         "${buildopt_candidate}" "${buildopt_candidate_home}" "${buildopt_candidate_gradle}" \
         "${buildopt_candidate_cache}" "${buildopt_event}" \
-        "${buildopt_binary}" optimize --calibration-budget 2h --calibration-pairs 8 \
+        "${buildopt_binary}" optimize \
+        --calibration-budget "${buildopt_calibration_budget}" --calibration-pairs 8 \
         --max-break-even-builds "${buildopt_max_shared_break_even_builds}" \
         --json -- "${buildopt_workflow[@]}" \
         >"${buildopt_logs}/candidate-bootstrap-warmup.json" \
@@ -698,7 +722,8 @@ buildopt_subject() {
     buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
         "${buildopt_candidate}" "${buildopt_candidate_home}" "${buildopt_candidate_gradle}" \
         "${buildopt_candidate_cache}" "${buildopt_event}" \
-        "${buildopt_binary}" optimize --calibration-budget 2h --calibration-pairs 8 \
+        "${buildopt_binary}" optimize \
+        --calibration-budget "${buildopt_calibration_budget}" --calibration-pairs 8 \
         --max-break-even-builds "${buildopt_max_shared_break_even_builds}" \
         --json -- "${buildopt_workflow[@]}" \
         >"${buildopt_logs}/candidate-warmup.json" 2>"${buildopt_logs}/candidate-warmup.log"
@@ -743,7 +768,8 @@ buildopt_subject() {
                 buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
                     "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
                     "${buildopt_cache_home}" "${buildopt_event}" \
-                    "${buildopt_binary}" optimize --calibration-budget 2h --calibration-pairs 8 \
+                    "${buildopt_binary}" optimize \
+                    --calibration-budget "${buildopt_calibration_budget}" --calibration-pairs 8 \
                     --max-break-even-builds "${buildopt_max_shared_break_even_builds}" \
                     --json -- "${buildopt_workflow[@]}" \
                     >"${buildopt_machine}" 2>"${buildopt_log}"
@@ -880,7 +906,8 @@ buildopt_subject() {
         buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
             "${buildopt_negative}" "${buildopt_negative_home}" "${buildopt_negative_gradle}" \
             "${buildopt_negative_cache}" "${buildopt_negative_event}" \
-            "${buildopt_binary}" optimize --calibration-budget 2h --calibration-pairs 8 \
+            "${buildopt_binary}" optimize \
+            --calibration-budget "${buildopt_calibration_budget}" --calibration-pairs 8 \
             --max-break-even-builds "${buildopt_max_shared_break_even_builds}" \
             --json -- "${buildopt_workflow[@]}" \
             >"${buildopt_logs}/negative.json" 2>"${buildopt_logs}/negative.log"
@@ -968,6 +995,7 @@ jq -n \
         runner:{operatingSystem:"Linux",architecture:"x86_64",kernel:$kernel,cpuCount:$cpuCount,memoryBytes:$memoryBytes},
         protocol:{
           pairs:8,alternatingPairOrder:true,sameCommittedCentralObjects:true,
+          completeSafeCacheSeedBeforeCalibration:true,calibrationBudgetHours:3,
           separateWorkspaces:true,separateGradleHomes:true,separateBuildOptCaches:true,
           unmeasuredDependencyWarmup:true,transport:"HTTPS_TLS_1_3_MINIMUM",
           maximumSharedBreakEvenBuilds:$maximumSharedBreakEvenBuilds,

@@ -45,6 +45,8 @@ jq -e '
   } and
   .resourceEnvelope == {
     commonMaximumWorkers: 8,
+    completeSafeCacheSeedBeforeCalibration: true,
+    maximumCalibrationBudgetHours: 3,
     ktorGradleHeapMiB: 2048,
     ktorKotlinDaemonHeapMiB: 1536,
     producerDaemonStoppedBeforeConsumers: true,
@@ -88,6 +90,8 @@ jq -e '
   .protocol.sameCommittedCentralObjects and .protocol.separateWorkspaces and
   .protocol.separateGradleHomes and .protocol.separateBuildOptCaches and
   .protocol.unmeasuredDependencyWarmup and
+  .protocol.completeSafeCacheSeedBeforeCalibration and
+  .protocol.calibrationBudgetHours == 3 and
   .protocol.maximumSharedBreakEvenBuilds == 50 and
   .protocol.commonMaximumWorkers == 8 and
   .protocol.ktorGradleHeapMiB == 2048 and

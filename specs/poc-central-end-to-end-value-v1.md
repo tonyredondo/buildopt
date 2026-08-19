@@ -21,6 +21,15 @@ producer's automatic post-run publication already made evidence, portfolio and
 checkpoint generation 1 remotely visible. The diagnostic sync may not repair a
 missing publication.
 
+Before structural calibration, the producer runs the complete native workflow
+once to populate the same Safe Cache that `optimize` will snapshot. This
+ordinary cache-producing build is not a calibration observation. Project
+outputs are then removed without deleting the populated cache, so the
+authoritative optimize run proves that the seed is usable before both isolated
+arms receive the same immutable snapshot. This prevents an interrupted or
+already-up-to-date producer checkout from silently turning an intended warm
+central-cache comparison into repeated cold builds.
+
 A completed subject may be resumed from a retained diagnostic root when a
 bounded runner ends before the next subject completes. Resume is allowed only
 for an eight-pair subject that already passed its value gate and only when the
@@ -60,6 +69,10 @@ before a negative case or the next repository, and the negative case daemon is
 stopped before leaving its subject. These controls prevent unrelated completed
 phases from causing an OOM; they are not Runtime Tuning and do not advantage
 the candidate.
+
+The calibration budget is three hours. It is a bounded POC execution allowance
+for eight observations of substantial repositories, not a production timeout
+or a relaxation of the value gate.
 
 ## Subjects and observations
 
