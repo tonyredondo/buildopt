@@ -11,11 +11,11 @@ fi
 buildopt_output=$1
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
-buildopt_remote=https://github.com/apache/kafka.git
-buildopt_repository_id=apache/kafka
-buildopt_repository_numeric_id=11708340
-buildopt_qualifying_revision=46ad599a6ef15c6a5f6296cb574ad25a1b7836eb
-buildopt_namespace=gradle-9.4.1/linux-amd64/jdk-21/kafka-shadowjar
+buildopt_remote=https://github.com/ktorio/ktor.git
+buildopt_repository_id=ktorio/ktor
+buildopt_repository_numeric_id=6847064
+buildopt_qualifying_revision=24b8773fcee753314dfb753b3f994a7ef36823ef
+buildopt_namespace=gradle-9.2.1/linux-amd64/jdk-21/ktor-jetty-jakarta-jvmjar
 buildopt_port=28445
 buildopt_max_workers=8
 buildopt_calibration_pairs=8
@@ -23,27 +23,17 @@ buildopt_max_break_even_builds=50
 buildopt_calibration_budget=3h
 
 buildopt_revisions=(
-    16e976ac8e6ff5bc79aaedb9ab6518bce1ea81bb
-    83976543fef1fe942bf021c8eec787c75dd58bdd
-    04c3c00f251946f8b790e198fc3524dce8558ce6
-    e320142b7c2b40de7cd77373961ceec202c2bf5e
-    c96073e66b10055d3eeb408d950d91d7571a6126
-    4048aa19faf5159cca08a6754fafdc3be1c8bf08
-    496ed66512033ea3c5f7239cb0673894ea1a7a24
-    62913844969856ff83070dd5dd22209e8b0607b0
-    8cfc1cc97f522a9d8ece5cba47edf1a00757cd8c
-    6208dfc014ba7ae48804c5ae92e3bf4f1306b057
-    182fc91e52d774aca1333cbf5435f5d3f3fade0d
-    ab53829feb7280a1d453ebdaad032c4b64bb0f4d
+    eb60b722d1ef1fbfeba8708a7d594fd4083a2aec
+    c237e88696debef1ba860a947cfaad3a0b7cb49b
+    835d7f9ff09caf794e9f058d97ad3690d52f960a
 )
 buildopt_classifications=(
-    MATCHING_REPLAY MATCHING_REPLAY NOT_APPLICABLE MATCHING_REPLAY
-    MATCHING_REPLAY MATCHING_REPLAY MATCHING_REPLAY MATCHING_REPLAY
-    MATCHING_REPLAY MATCHING_REPLAY MATCHING_REPLAY BUILD_LOGIC_INVALIDATION
+    MATCHING_REPLAY NOT_APPLICABLE BUILD_LOGIC_INVALIDATION
 )
 buildopt_workflow=(
-    shadowJar --daemon --build-cache --parallel --no-configuration-cache
+    jvmJar --no-daemon --build-cache --parallel --no-configuration-cache
     --console=plain --no-scan --max-workers="${buildopt_max_workers}"
+    -Pktor.develocity.skipBuildScans=true
 )
 
 for buildopt_command in awk curl date find git install jq openssl sha256sum sort stat tar tee; do
@@ -209,6 +199,14 @@ buildopt_write_event() {
     jq -n --arg before "${buildopt_parent}" '{before:$before}' >"${buildopt_event}"
 }
 
+buildopt_write_ktor_gradle_properties() {
+    local buildopt_gradle_home=$1
+    {
+        printf 'org.gradle.jvmargs=-Xms512m -Xmx2048m -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC -Dfile.encoding=UTF-8\n'
+        printf 'kotlin.daemon.jvmargs=-Xmx1536m\n'
+    } >"${buildopt_gradle_home}/gradle.properties"
+}
+
 buildopt_write_cache_manifest() {
     local buildopt_cache_directory=$1
     local buildopt_manifest=$2
@@ -324,7 +322,7 @@ buildopt_hash_required_outputs() {
             "${buildopt_relative}" >>"${buildopt_manifest}"
         BUILDOPT_OUTPUT_COUNT=$((BUILDOPT_OUTPUT_COUNT + 1))
     done <"${buildopt_required_outputs}"
-    ((BUILDOPT_OUTPUT_COUNT >= 2)) || return 1
+    ((BUILDOPT_OUTPUT_COUNT > 0)) || return 1
     BUILDOPT_OUTPUT_SHA=$(sha256sum "${buildopt_manifest}" | awk '{print $1}')
 }
 
@@ -351,11 +349,14 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
 buildopt_package_sha=$(sha256sum "${buildopt_package}" | awk '{print $1}')
 
-git clone -q --filter=blob:none --no-checkout "${buildopt_remote}" "${buildopt_source}"
+GIT_CONFIG_GLOBAL=/dev/null git clone -q --filter=blob:none --no-checkout \
+    "${buildopt_remote}" "${buildopt_source}"
 for buildopt_revision_to_fetch in "${buildopt_qualifying_revision}" "${buildopt_revisions[@]}"; do
-    git -C "${buildopt_source}" checkout -q --detach "${buildopt_revision_to_fetch}"
+    GIT_CONFIG_GLOBAL=/dev/null git -C "${buildopt_source}" checkout -q --detach \
+        "${buildopt_revision_to_fetch}"
 done
-git -C "${buildopt_source}" checkout -q --detach "${buildopt_qualifying_revision}"
+GIT_CONFIG_GLOBAL=/dev/null git -C "${buildopt_source}" checkout -q --detach \
+    "${buildopt_qualifying_revision}"
 for buildopt_target in "${buildopt_revisions[@]}"; do
     git -C "${buildopt_source}" merge-base --is-ancestor \
         "${buildopt_qualifying_revision}" "${buildopt_target}" || {
@@ -363,6 +364,15 @@ for buildopt_target in "${buildopt_revisions[@]}"; do
         exit 1
     }
 done
+buildopt_terminal_revision=${buildopt_revisions[${#buildopt_revisions[@]} - 1]}
+buildopt_first_parent_commit_count=$(git -C "${buildopt_source}" rev-list \
+    --first-parent --count \
+    "${buildopt_qualifying_revision}^..${buildopt_terminal_revision}")
+[[ ${buildopt_first_parent_commit_count} == 6 ]] || {
+    printf 'unexpected first-parent history length: %s\n' \
+        "${buildopt_first_parent_commit_count}" >&2
+    exit 1
+}
 buildopt_clone_at "${buildopt_producer}" "${buildopt_qualifying_revision}"
 buildopt_clone_at "${buildopt_control}" "${buildopt_qualifying_revision}"
 buildopt_clone_at "${buildopt_candidate}" "${buildopt_qualifying_revision}"
@@ -390,6 +400,7 @@ buildopt_producer_home=${buildopt_root}/producer-home
 buildopt_producer_gradle=${buildopt_root}/producer-gradle
 buildopt_producer_cache=${buildopt_root}/producer-cache
 mkdir -p -- "${buildopt_producer_home}" "${buildopt_producer_gradle}" "${buildopt_producer_cache}"
+buildopt_write_ktor_gradle_properties "${buildopt_producer_gradle}"
 buildopt_run_environment "${buildopt_producer}" "${buildopt_producer_home}" \
     "${buildopt_producer_gradle}" "${buildopt_producer_cache}" "${buildopt_producer_event}" \
     "${buildopt_binary}" connect "${buildopt_server_url}" \
@@ -400,7 +411,7 @@ printf 'profile lifetime: preparing complete native calibration seed\n'
 buildopt_prepare_native_calibration_seed \
     "${buildopt_producer}" "${buildopt_producer_home}" "${buildopt_producer_gradle}" \
     "${buildopt_producer_cache}" "${buildopt_producer_event}"
-printf 'profile lifetime: qualifying public Kafka profile at %.12s\n' \
+printf 'profile lifetime: qualifying public Ktor Jetty profile at %.12s\n' \
     "${buildopt_qualifying_revision}"
 buildopt_run_environment "${buildopt_producer}" "${buildopt_producer_home}" \
     "${buildopt_producer_gradle}" "${buildopt_producer_cache}" "${buildopt_producer_event}" \
@@ -416,7 +427,7 @@ jq -e '
   .phase == "QUALIFIED" and .calibration.qualified and
   .calibration.pairsMeasured == 8 and .portfolio.status == "COMPLETE" and
   .central.postSyncOnline and .discovery.changeFamily == "DEPENDENCY_SOURCE" and
-  .discovery.changedProjects == [":clients"] and
+  .discovery.changedProjects == [":ktor-client-jetty-jakarta"] and
   .productionAuthorized == false and .testOptimization == "OUT_OF_SCOPE"
 ' "${buildopt_producer_result}" >/dev/null || {
     jq -c '{reason,phase,discovery,calibration,portfolio,central}' \
@@ -424,8 +435,8 @@ jq -e '
     exit 1
 }
 jq -r '.discovery.requiredOutputs[]' "${buildopt_producer_result}" >"${buildopt_required_outputs}"
-[[ $(wc -l <"${buildopt_required_outputs}" | tr -d ' ') -ge 2 ]] || {
-    printf 'qualification exposed fewer than two required outputs\n' >&2
+[[ $(wc -l <"${buildopt_required_outputs}" | tr -d ' ') -ge 1 ]] || {
+    printf 'qualification exposed no required outputs\n' >&2
     exit 1
 }
 
@@ -476,6 +487,7 @@ for buildopt_arm in control candidate; do
     buildopt_gradle=${buildopt_root}/${buildopt_arm}-gradle
     buildopt_cache=${buildopt_root}/${buildopt_arm}-cache
     mkdir -p -- "${buildopt_home}" "${buildopt_gradle}" "${buildopt_cache}"
+    buildopt_write_ktor_gradle_properties "${buildopt_gradle}"
     buildopt_write_event "${buildopt_root}/${buildopt_arm}-event.json" \
         "${buildopt_qualifying_parent}"
     buildopt_run_environment "${buildopt_repository}" "${buildopt_home}" \
@@ -565,6 +577,7 @@ for buildopt_index in "${!buildopt_revisions[@]}"; do
     buildopt_candidate_result=${buildopt_candidate}/.buildopt/optimize/v1/result.json
     buildopt_selected=$(jq -r '.selection.selected' "${buildopt_candidate_result}")
     buildopt_family=$(jq -r '.discovery.changeFamily' "${buildopt_candidate_result}")
+    buildopt_changed_projects=$(jq -c '.discovery.changedProjects' "${buildopt_candidate_result}")
     buildopt_selection_source=$(jq -r '.central.selectionSource' "${buildopt_candidate_result}")
     buildopt_evidence_revision=$(jq -r '.selection.evidenceRevision' "${buildopt_candidate_result}")
     buildopt_candidate_reason=$(jq -r \
@@ -574,6 +587,7 @@ for buildopt_index in "${!buildopt_revisions[@]}"; do
         MATCHING_REPLAY)
             [[ ${buildopt_selected} == true &&
                 ${buildopt_family} == DEPENDENCY_SOURCE &&
+                ${buildopt_changed_projects} == '[":ktor-client-jetty-jakarta"]' &&
                 ${buildopt_selection_source} == CENTRAL_PORTFOLIO &&
                 ${buildopt_evidence_revision} == "${buildopt_qualifying_revision}" ]] || {
                 jq -c '{reason,discovery,selection,central}' "${buildopt_candidate_result}" >&2
@@ -582,7 +596,8 @@ for buildopt_index in "${!buildopt_revisions[@]}"; do
             buildopt_performance_claim=true
             ;;
         NOT_APPLICABLE)
-            [[ ${buildopt_selected} == false && ${buildopt_family} == RESOURCE &&
+            [[ ${buildopt_selected} == false && ${buildopt_family} == DEPENDENCY_SOURCE &&
+                ${buildopt_changed_projects} == '[":ktor-server-cors"]' &&
                 ${buildopt_candidate_reason} == REMOTE_PROFILE_STRUCTURAL_DRIFT ]] || {
                 jq -c '{reason,discovery,selection,central}' "${buildopt_candidate_result}" >&2
                 exit 1
@@ -616,6 +631,7 @@ for buildopt_index in "${!buildopt_revisions[@]}"; do
         --argjson candidateFromCache "${buildopt_candidate_hits}" \
         --argjson outputCount "${buildopt_output_count}" --arg outputSha "${buildopt_control_sha}" \
         --argjson selected "${buildopt_selected}" --arg family "${buildopt_family}" \
+        --argjson changedProjects "${buildopt_changed_projects}" \
         --arg source "${buildopt_selection_source}" --arg evidence "${buildopt_evidence_revision}" \
         --arg reason "${buildopt_candidate_reason}" \
         --argjson centralCacheAvailable "${buildopt_central_cache_available}" \
@@ -628,13 +644,15 @@ for buildopt_index in "${!buildopt_revisions[@]}"; do
             controlFromCache:$controlFromCache,candidateFromCache:$candidateFromCache,
             requiredOutputCount:$outputCount,controlRequiredOutputSha256:$outputSha,
             candidateRequiredOutputSha256:$outputSha,candidateSelected:$selected,
-            candidateFamily:$family,selectionSource:$source,evidenceRevision:$evidence,
+            candidateFamily:$family,candidateChangedProjects:$changedProjects,
+            selectionSource:$source,evidenceRevision:$evidence,
             candidateReason:$reason,centralCacheAvailable:$centralCacheAvailable,
             performanceClaim:$performanceClaim
           }
         ' >>"${buildopt_observations}"
-    printf 'profile lifetime %d/12 %.12s %s: control=%dms candidate=%dms delta=%dms\n' \
-        "${buildopt_sequence}" "${buildopt_target}" "${buildopt_classification}" \
+    printf 'profile lifetime %d/%d %.12s %s: control=%dms candidate=%dms delta=%dms\n' \
+        "${buildopt_sequence}" "${#buildopt_revisions[@]}" \
+        "${buildopt_target}" "${buildopt_classification}" \
         "${buildopt_control_ms}" "${buildopt_candidate_ms}" \
         "$((buildopt_control_ms - buildopt_candidate_ms))"
 done
@@ -693,6 +711,7 @@ jq -n \
     --argjson cumulativeGross "${buildopt_cumulative_gross}" \
     --argjson cumulativeNet "${buildopt_cumulative_net}" \
     --argjson firstBreakEven "${buildopt_first_break_even}" \
+    --argjson firstParentCommitCount "${buildopt_first_parent_commit_count}" \
     --arg conclusion "${buildopt_conclusion}" '
       {
         schemaVersion:"buildopt.evidence/poc-profile-lifetime/v1",
@@ -700,24 +719,28 @@ jq -n \
         buildopt:{revision:$revision,packageSha256:$packageSha,installedPackage:true},
         runner:{operatingSystem:"Linux",architecture:"x86_64",kernel:$kernel,
           cpuCount:$cpuCount,memoryBytes:$memoryBytes},
-        repository:{id:"apache/kafka",remote:$remote,publicRepository:true,
-          gradleVersion:$gradleVersion,workflow:"shadowJar"},
+        repository:{id:"ktorio/ktor",remote:$remote,publicRepository:true,
+          gradleVersion:$gradleVersion,workflow:"jvmJar"},
+        history:{firstParentCommitsIncludingQualification:$firstParentCommitCount,
+          observedCommitsIncludingQualification:4,unobservedInterveningCommits:2},
         qualification:{baseRevision:$qualifierParent,targetRevision:$qualifier,
           sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",family:"DEPENDENCY_SOURCE",
-          changedProjects:[":clients"],graph:$graph,calibration:$calibration,
+          changedProjects:[":ktor-client-jetty-jakarta"],
+          graph:$graph,calibration:$calibration,
           nativeCalibrationSeed:{objectCount:$seedCount,bytes:$seedBytes,sha256:$seedSha},
           central:{namespace:$namespace,committedObjectCount:$objectCount,committedBytes:$objectBytes}},
-        protocol:{calibrationPairs:8,maximumBreakEvenBuilds:50,maximumWorkers:8,
+        protocol:{calibrationPairs:8,gradleDaemon:false,gradleHeapMaxMiB:2048,
+          kotlinDaemonHeapMaxMiB:1536,maximumBreakEvenBuilds:50,maximumWorkers:8,
           persistentArmsAcrossCommits:true,sameCommittedCentralObjects:true,
           sameStartingCacheState:true,alternatingArmOrder:true,
           unmeasuredDependencyWarmup:true,transport:"HTTPS_TLS_1_3_MINIMUM"},
         observations:$observations,
-        economics:{observedBuilds:12,matchingReplays:10,
+        economics:{observedBuilds:3,matchingReplays:1,
           grossMatchingSavedMs:$grossMatching,fallbackDeltaMs:$fallbackDelta,
           cumulativeGrossSavedMs:$cumulativeGross,cumulativeNetSavedMs:$cumulativeNet,
           firstObservedBreakEvenBuild:$firstBreakEven,conclusion:$conclusion},
         acceptance:{decision:"COMPLETE",buildLogicInvalidations:1,
-          exactRequiredOutputs:true,matchingSelections:10,nativeRetainedCases:2,
+          exactRequiredOutputs:true,matchingSelections:1,nativeRetainedCases:2,
           publicAncestry:true,syntheticCommits:false},
         boundaries:{designPartnerRequired:false,mechanismPercentagesAdded:false,
           productionAuthorized:false,proofOfConcept:true,repositoriesAveraged:false,

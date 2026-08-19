@@ -21,20 +21,24 @@ done
 jq -e '
   .schemaVersion == "buildopt.poc/profile-lifetime-contract/v1" and
   .workItem == "POC-PROFILE-LIFETIME-001" and
-  .subject.repositoryId == "apache/kafka" and .subject.publicRepository and
-  .subject.qualifyingRevision == "46ad599a6ef15c6a5f6296cb574ad25a1b7836eb" and
-  .subject.workflow == "shadowJar" and
-  (.history.matchingRevisions | length) == 10 and
-  .history.notApplicableRevision == "04c3c00f251946f8b790e198fc3524dce8558ce6" and
-  .history.buildLogicInvalidationRevision == "ab53829feb7280a1d453ebdaad032c4b64bb0f4d" and
+  .subject.repositoryId == "ktorio/ktor" and .subject.publicRepository and
+  .subject.qualifyingRevision == "24b8773fcee753314dfb753b3f994a7ef36823ef" and
+  .subject.workflow == "jvmJar" and
+  .history.firstParentCommitsIncludingQualification == 6 and
+  .history.matchingRevisions == [
+    "eb60b722d1ef1fbfeba8708a7d594fd4083a2aec"
+  ] and
+  .history.notApplicableRevision == "c237e88696debef1ba860a947cfaad3a0b7cb49b" and
+  .history.buildLogicInvalidationRevision == "835d7f9ff09caf794e9f058d97ad3690d52f960a" and
   .protocol == {
-    calibrationPairs:8,maximumBreakEvenBuilds:50,maximumWorkers:8,
+    calibrationPairs:8,gradleDaemon:false,gradleHeapMaxMiB:2048,
+    kotlinDaemonHeapMaxMiB:1536,maximumBreakEvenBuilds:50,maximumWorkers:8,
     persistentArmsAcrossCommits:true,sameCommittedCentralObjects:true,
     sameStartingCacheState:true,alternatingArmOrder:true,
     unmeasuredDependencyWarmup:true
   } and
   .acceptance == {
-    exactRequiredOutputsEveryRevision:true,matchingProfileSelections:10,
+    exactRequiredOutputsEveryRevision:true,matchingProfileSelections:1,
     nativeRetainedNotApplicableCases:1,nativeRetainedBuildLogicCases:1,
     observedCumulativeEconomicsRequired:true,positiveNetSavingRequired:false
   } and
@@ -53,32 +57,31 @@ jq -e --slurpfile contract "${buildopt_contract}" '
   .runner.cpuCount >= 4 and .runner.memoryBytes >= 8000000000 and
   .repository.id == $contract[0].subject.repositoryId and
   .repository.remote == $contract[0].subject.remote and .repository.publicRepository and
+  .protocol == $contract[0].protocol and
+  .history == {firstParentCommitsIncludingQualification:6,
+    observedCommitsIncludingQualification:4,unobservedInterveningCommits:2} and
   .qualification.targetRevision == $contract[0].subject.qualifyingRevision and
   (.qualification.baseRevision | test("^[0-9a-f]{40}$")) and
   .qualification.family == "DEPENDENCY_SOURCE" and
-  .qualification.changedProjects == [":clients"] and
+  .qualification.changedProjects == [":ktor-client-jetty-jakarta"] and
   .qualification.calibration.pairsMeasured == 8 and
   .qualification.calibration.qualified and .qualification.calibration.valueGatePassed and
   .qualification.calibration.calibrationCostMs > 0 and
   .qualification.graph.totalProjects > .qualification.graph.selectedProjects and
   .qualification.graph.selectedProjects > 0 and
-  (.observations | length) == 12 and
+  (.observations | length) == 3 and
   ([.observations[] | select(.classification == "MATCHING_REPLAY") | .targetRevision] ==
     $contract[0].history.matchingRevisions) and
   ([.observations[] | select(.classification == "NOT_APPLICABLE") | .targetRevision] ==
     [$contract[0].history.notApplicableRevision]) and
   ([.observations[] | select(.classification == "BUILD_LOGIC_INVALIDATION") | .targetRevision] ==
     [$contract[0].history.buildLogicInvalidationRevision]) and
-  ([.observations[].order] == [
-    "CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST",
-    "CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST",
-    "CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST"
-  ]) and
+  ([.observations[].order] == ["CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST"]) and
   all(.observations[];
     (.parentRevision | test("^[0-9a-f]{40}$")) and
     .controlDurationMs > 0 and .candidateDurationMs > 0 and
     .savedMs == (.controlDurationMs - .candidateDurationMs) and
-    .requiredOutputCount >= 2 and
+    .requiredOutputCount >= 1 and
     (.controlRequiredOutputSha256 | test("^[0-9a-f]{64}$")) and
     .controlRequiredOutputSha256 == .candidateRequiredOutputSha256 and
     .centralCacheAvailable and .performanceClaim == (.classification == "MATCHING_REPLAY")
@@ -86,16 +89,18 @@ jq -e --slurpfile contract "${buildopt_contract}" '
   all(.observations[] | select(.classification == "MATCHING_REPLAY");
     .candidateSelected and .selectionSource == "CENTRAL_PORTFOLIO" and
     .candidateFamily == "DEPENDENCY_SOURCE" and
+    .candidateChangedProjects == [":ktor-client-jetty-jakarta"] and
     .evidenceRevision == $contract[0].subject.qualifyingRevision
   ) and
   all(.observations[] | select(.classification == "NOT_APPLICABLE");
-    (.candidateSelected | not) and .candidateFamily == "RESOURCE" and
+    (.candidateSelected | not) and .candidateFamily == "DEPENDENCY_SOURCE" and
+    .candidateChangedProjects == [":ktor-server-cors"] and
     .candidateReason == "REMOTE_PROFILE_STRUCTURAL_DRIFT"
   ) and
   all(.observations[] | select(.classification == "BUILD_LOGIC_INVALIDATION");
     (.candidateSelected | not) and .candidateReason == "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"
   ) and
-  .economics.observedBuilds == 12 and .economics.matchingReplays == 10 and
+  .economics.observedBuilds == 3 and .economics.matchingReplays == 1 and
   .economics.grossMatchingSavedMs ==
     ([.observations[] | select(.classification == "MATCHING_REPLAY") | .savedMs] | add) and
   .economics.fallbackDeltaMs ==
@@ -108,7 +113,7 @@ jq -e --slurpfile contract "${buildopt_contract}" '
      else "NOT_PAID_BACK_IN_OBSERVED_WINDOW" end) and
   .acceptance == {
     decision:"COMPLETE",buildLogicInvalidations:1,exactRequiredOutputs:true,
-    matchingSelections:10,nativeRetainedCases:2,publicAncestry:true,
+    matchingSelections:1,nativeRetainedCases:2,publicAncestry:true,
     syntheticCommits:false
   } and
   .boundaries == {
@@ -132,4 +137,4 @@ if ((buildopt_first_break_even > 0)); then
     }
 fi
 
-printf 'Profile lifetime evidence OK: 10 matching replays, 2 safe native-retained cases\n'
+printf 'Profile lifetime evidence OK: 1 matching replay, 2 safe native-retained cases\n'
