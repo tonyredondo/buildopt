@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+export BUILDOPT_PROFILE_LIFETIME_EVIDENCE_SCHEMA=buildopt.evidence/poc-economic-prequalification/v1
+export BUILDOPT_PROFILE_LIFETIME_WORK_ITEM=POC-ECONOMIC-PREQUALIFICATION-001
+exec "${buildopt_script_dir}/run-poc-profile-lifetime" "$@"

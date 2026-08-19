@@ -23,6 +23,8 @@ buildopt_max_workers=8
 buildopt_calibration_pairs=8
 buildopt_max_break_even_builds=50
 buildopt_calibration_budget=3h
+buildopt_evidence_schema=${BUILDOPT_PROFILE_LIFETIME_EVIDENCE_SCHEMA:-buildopt.evidence/poc-profile-lifetime/v1}
+buildopt_work_item=${BUILDOPT_PROFILE_LIFETIME_WORK_ITEM:-POC-PROFILE-LIFETIME-001}
 
 buildopt_revisions=(
     eb60b722d1ef1fbfeba8708a7d594fd4083a2aec
@@ -590,6 +592,13 @@ for buildopt_index in "${!buildopt_revisions[@]}"; do
     buildopt_selected=$(jq -r '.selection.selected' "${buildopt_candidate_result}")
     buildopt_family=$(jq -r '.discovery.changeFamily' "${buildopt_candidate_result}")
     buildopt_changed_projects=$(jq -c '.discovery.changedProjects' "${buildopt_candidate_result}")
+    buildopt_prequalification_decision=$(jq -r '.prequalification.decision' "${buildopt_candidate_result}")
+    buildopt_prequalification_reason=$(jq -r '.prequalification.reason' "${buildopt_candidate_result}")
+    buildopt_prequalification_duration=$(jq -r '.prequalification.evaluationDurationNs' "${buildopt_candidate_result}")
+    buildopt_prequalification_analogous=$(jq -r '.prequalification.analogousCommits' "${buildopt_candidate_result}")
+    buildopt_prequalification_minimum=$(jq -r '.prequalification.minimumPaybackBuilds' "${buildopt_candidate_result}")
+    buildopt_discovery_performed=$(jq -r '.discovery.generatedFiles | length > 0' "${buildopt_candidate_result}")
+    buildopt_calibration_performed=$(jq -r '.calibrationPerformed' "${buildopt_candidate_result}")
     buildopt_selection_source=$(jq -r '.central.selectionSource' "${buildopt_candidate_result}")
     buildopt_evidence_revision=$(jq -r '.selection.evidenceRevision' "${buildopt_candidate_result}")
     buildopt_candidate_reason=$(jq -r \
@@ -608,10 +617,18 @@ for buildopt_index in "${!buildopt_revisions[@]}"; do
             buildopt_performance_claim=true
             ;;
         NOT_APPLICABLE)
+            buildopt_family=$(jq -r '.prequalification.changeFamily' "${buildopt_candidate_result}")
+            buildopt_changed_projects=$(jq -c '.prequalification.changedProjects' "${buildopt_candidate_result}")
             [[ ${buildopt_selected} == false && ${buildopt_family} == DEPENDENCY_SOURCE &&
                 ${buildopt_changed_projects} == '[":ktor-server-cors"]' &&
+                ${buildopt_prequalification_decision} == REJECT &&
+                ${buildopt_prequalification_reason} == INSUFFICIENT_RECENT_MATCHING_CHANGES &&
+                ${buildopt_prequalification_analogous} -lt ${buildopt_prequalification_minimum} &&
+                ${buildopt_discovery_performed} == false &&
+                ${buildopt_calibration_performed} == false &&
                 ${buildopt_candidate_reason} == REMOTE_PROFILE_STRUCTURAL_DRIFT ]] || {
-                jq -c '{reason,discovery,selection,central}' "${buildopt_candidate_result}" >&2
+                jq -c '{reason,prequalification,discovery,calibration,selection,central}' \
+                    "${buildopt_candidate_result}" >&2
                 exit 1
             }
             buildopt_performance_claim=false
@@ -646,6 +663,13 @@ for buildopt_index in "${!buildopt_revisions[@]}"; do
         --argjson changedProjects "${buildopt_changed_projects}" \
         --arg source "${buildopt_selection_source}" --arg evidence "${buildopt_evidence_revision}" \
         --arg reason "${buildopt_candidate_reason}" \
+        --arg prequalificationDecision "${buildopt_prequalification_decision}" \
+        --arg prequalificationReason "${buildopt_prequalification_reason}" \
+        --argjson prequalificationDurationNs "${buildopt_prequalification_duration}" \
+        --argjson prequalificationAnalogousCommits "${buildopt_prequalification_analogous}" \
+        --argjson prequalificationMinimumPaybackBuilds "${buildopt_prequalification_minimum}" \
+        --argjson discoveryPerformed "${buildopt_discovery_performed}" \
+        --argjson calibrationPerformed "${buildopt_calibration_performed}" \
         --argjson centralCacheAvailable "${buildopt_central_cache_available}" \
         --argjson performanceClaim "${buildopt_performance_claim}" '
           {
@@ -659,7 +683,13 @@ for buildopt_index in "${!buildopt_revisions[@]}"; do
             candidateFamily:$family,candidateChangedProjects:$changedProjects,
             selectionSource:$source,evidenceRevision:$evidence,
             candidateReason:$reason,centralCacheAvailable:$centralCacheAvailable,
-            performanceClaim:$performanceClaim
+            performanceClaim:$performanceClaim,
+            prequalification:{decision:$prequalificationDecision,
+              reason:$prequalificationReason,durationNs:$prequalificationDurationNs,
+              analogousCommits:$prequalificationAnalogousCommits,
+              minimumPaybackBuilds:$prequalificationMinimumPaybackBuilds},
+            discoveryPerformed:$discoveryPerformed,
+            calibrationPerformed:$calibrationPerformed
           }
         ' >>"${buildopt_observations}"
     printf 'profile lifetime %d/%d %.12s %s: control=%dms candidate=%dms delta=%dms\n' \
@@ -724,10 +754,12 @@ jq -n \
     --argjson cumulativeNet "${buildopt_cumulative_net}" \
     --argjson firstBreakEven "${buildopt_first_break_even}" \
     --argjson firstParentCommitCount "${buildopt_first_parent_commit_count}" \
+    --arg evidenceSchema "${buildopt_evidence_schema}" \
+    --arg workItem "${buildopt_work_item}" \
     --arg conclusion "${buildopt_conclusion}" '
       {
-        schemaVersion:"buildopt.evidence/poc-profile-lifetime/v1",
-        workItem:"POC-PROFILE-LIFETIME-001",capturedAt:$capturedAt,
+        schemaVersion:$evidenceSchema,
+        workItem:$workItem,capturedAt:$capturedAt,
         buildopt:{revision:$revision,packageSha256:$packageSha,installedPackage:true},
         runner:{operatingSystem:"Linux",architecture:"x86_64",kernel:$kernel,
           cpuCount:$cpuCount,memoryBytes:$memoryBytes},
@@ -760,5 +792,9 @@ jq -n \
       }
     ' >"${buildopt_output}"
 
-"${buildopt_script_dir}/check-profile-lifetime" "${buildopt_output}"
+if [[ ${buildopt_evidence_schema} == buildopt.evidence/poc-economic-prequalification/v1 ]]; then
+    "${buildopt_script_dir}/check-economic-prequalification" "${buildopt_output}"
+else
+    "${buildopt_script_dir}/check-profile-lifetime" "${buildopt_output}"
+fi
 buildopt_success=true

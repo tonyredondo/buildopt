@@ -4,6 +4,12 @@ set -euo pipefail
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
 buildopt_contract=${buildopt_repo_root}/specs/poc-economic-prequalification-v1.json
+buildopt_result=${1:-}
+
+if (($# > 1)); then
+    printf 'usage: %s [result.json]\n' "$0" >&2
+    exit 64
+fi
 
 for buildopt_command in jq rg; do
     command -v "${buildopt_command}" >/dev/null || {
@@ -45,5 +51,63 @@ rg -F 'ECONOMIC_PREQUALIFICATION_REJECTED' \
     ./internal/launcher \
     -run 'TestEconomicPrequalification|TestCentralOptimizeReusesQualifiedProfile' \
     -count=1
+
+if [[ -n ${buildopt_result} ]]; then
+    jq -e --slurpfile previous \
+        "${buildopt_repo_root}/benchmarks/results/poc-profile-lifetime-v1/summary.json" '
+      .schemaVersion == "buildopt.evidence/poc-economic-prequalification/v1" and
+      .workItem == "POC-ECONOMIC-PREQUALIFICATION-001" and
+      (.buildopt.revision | test("^[0-9a-f]{40}$")) and
+      (.buildopt.packageSha256 | test("^[0-9a-f]{64}$")) and
+      .repository.id == "ktorio/ktor" and .repository.publicRepository and
+      .repository.workflow == "jvmJar" and
+      .qualification.calibration.pairsMeasured == 8 and
+      .qualification.calibration.qualified and
+      (.observations | length) == 3 and
+      ([.observations[].classification] ==
+        ["MATCHING_REPLAY","NOT_APPLICABLE","BUILD_LOGIC_INVALIDATION"]) and
+      all(.observations[];
+        .controlDurationMs > 0 and .candidateDurationMs > 0 and
+        .savedMs == (.controlDurationMs - .candidateDurationMs) and
+        .requiredOutputCount >= 1 and
+        .controlRequiredOutputSha256 == .candidateRequiredOutputSha256 and
+        .centralCacheAvailable
+      ) and
+      ([.observations[] | select(.classification == "MATCHING_REPLAY")][0] |
+        .candidateSelected and .selectionSource == "CENTRAL_PORTFOLIO" and
+        .savedMs > 0) and
+      ([.observations[] | select(.classification == "NOT_APPLICABLE")][0] as $rejected |
+        ($rejected.candidateSelected | not) and
+        $rejected.candidateFamily == "DEPENDENCY_SOURCE" and
+        $rejected.candidateChangedProjects == [":ktor-server-cors"] and
+        $rejected.candidateReason == "REMOTE_PROFILE_STRUCTURAL_DRIFT" and
+        $rejected.prequalification.decision == "REJECT" and
+        $rejected.prequalification.reason == "INSUFFICIENT_RECENT_MATCHING_CHANGES" and
+        $rejected.prequalification.durationNs > 0 and
+        $rejected.prequalification.analogousCommits <
+          $rejected.prequalification.minimumPaybackBuilds and
+        ($rejected.discoveryPerformed | not) and
+        ($rejected.calibrationPerformed | not) and
+        $rejected.candidateDurationMs <= ($rejected.controlDurationMs * 1.10)) and
+      ([.observations[] | select(.classification == "BUILD_LOGIC_INVALIDATION")][0] |
+        (.candidateSelected | not) and
+        .candidateReason == "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH" and
+        (.discoveryPerformed | not) and (.calibrationPerformed | not)) and
+      .economics.grossMatchingSavedMs ==
+        ([.observations[] | select(.classification == "MATCHING_REPLAY") | .savedMs] | add) and
+      .economics.fallbackDeltaMs ==
+        ([.observations[] | select(.classification != "MATCHING_REPLAY") | .savedMs] | add) and
+      .economics.cumulativeNetSavedMs ==
+        (.economics.cumulativeGrossSavedMs - .qualification.calibration.calibrationCostMs) and
+      ($previous[0].observations[] | select(.classification == "NOT_APPLICABLE") |
+        .savedMs == -220761) and
+      .acceptance.decision == "COMPLETE" and
+      .boundaries == {
+        designPartnerRequired:false,mechanismPercentagesAdded:false,
+        productionAuthorized:false,proofOfConcept:true,repositoriesAveraged:false,
+        soakRequired:false,testOptimization:"OUT_OF_SCOPE"
+      }
+    ' "${buildopt_result}" >/dev/null
+fi
 
 printf 'economic prequalification contract and execution tests passed\n'

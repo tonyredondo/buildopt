@@ -274,6 +274,7 @@ buildopt_required_files=(
     "dev/run-poc-central-two-machine"
     "dev/run-poc-central-end-to-end-value"
     "dev/run-poc-profile-lifetime"
+    "dev/run-poc-economic-prequalification"
     "containers/central-two-machine/Dockerfile"
     "fixtures/central-two-machine/README.md"
     "fixtures/central-two-machine/.gitignore"
