@@ -416,7 +416,8 @@ buildopt_subject() {
             local buildopt_resume_persisted_result=${buildopt_resume_subject}/producer/.buildopt/optimize/v1/result.json
             if [[ ! -f ${buildopt_resume_persisted_result} ||
                 -L ${buildopt_resume_persisted_result} ]] ||
-                ! cmp -s -- "${buildopt_resume_result}" "${buildopt_resume_persisted_result}" ||
+                ! jq -s -e 'length == 2 and .[0] == .[1]' \
+                    "${buildopt_resume_result}" "${buildopt_resume_persisted_result}" >/dev/null ||
                 ! jq -e --arg repositoryId "${buildopt_repository_id}" '
                   .schemaVersion == "buildopt.poc/optimize-result/v1" and
                   .outcome == "NATIVE_RETAINED" and .phase == "NATIVE_RETAINED" and
