@@ -21,6 +21,11 @@ The precheck may use only information already available before discovery:
 - the current changed paths and their unambiguous owners in that graph; and
 - at most 64 first-parent commits from local Git history.
 
+When the graph distinguishes direct ownership from transitive task inputs,
+the precheck must resolve owners from the direct boundaries. Transitive inputs
+remain relevant to impact propagation, but they must not make an otherwise
+unambiguous changed project appear multiply owned.
+
 It must not run Gradle, inspect outputs, borrow the measured saving or useful
 lifetime of a different profile, or branch on a repository name.
 

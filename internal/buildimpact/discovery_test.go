@@ -75,6 +75,34 @@ func TestResolveProjectOwnersUsesMostSpecificSourceBoundary(t *testing.T) {
 	}
 }
 
+func TestResolveProjectOwnersPrefersDirectOwnershipOverTransitiveInputs(t *testing.T) {
+	snapshot := DiscoverySnapshot{Projects: []DiscoveredProject{
+		{
+			Path:             ":consumer",
+			SourcePaths:      []string{"modules/library/**", "modules/consumer/**"},
+			OwnedSourcePaths: []string{"modules/consumer/**"},
+		},
+		{
+			Path:             ":library",
+			SourcePaths:      []string{"modules/library/**"},
+			OwnedSourcePaths: []string{"modules/library/**"},
+		},
+	}}
+	owners, err := ResolveProjectOwners(snapshot, []string{"modules/library/src/Library.java"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(owners, []string{":library"}) {
+		t.Fatalf("owners = %v", owners)
+	}
+	if _, err := ResolveProjectOwners(DiscoverySnapshot{Projects: []DiscoveredProject{
+		{Path: ":left", SourcePaths: []string{"shared/**"}, OwnedSourcePaths: []string{"shared/**"}},
+		{Path: ":right", SourcePaths: []string{"shared/**"}, OwnedSourcePaths: []string{"shared/**"}},
+	}}, []string{"shared/Example.java"}); err == nil {
+		t.Fatal("ambiguous direct ownership was accepted")
+	}
+}
+
 func TestGenerateImpactAcceptsRootProjectDependency(t *testing.T) {
 	manifest := automaticDiscoveryManifest(t)
 	raw := []byte(`{

@@ -6,7 +6,9 @@ import (
 )
 
 // ResolveProjectOwners maps exact changed paths to one most-specific Gradle
-// project each. Equal-specificity ownership and unowned paths fail closed.
+// project each. Direct ownership boundaries take precedence over conservative
+// transitive input closures when the verified graph supplies both. Equal-
+// specificity ownership and unowned paths fail closed.
 func ResolveProjectOwners(snapshot DiscoverySnapshot, changedPaths []string) ([]string, error) {
 	if len(changedPaths) == 0 {
 		return nil, errors.New("proposal requires at least one changed path")
@@ -17,7 +19,11 @@ func ResolveProjectOwners(snapshot DiscoverySnapshot, changedPaths []string) ([]
 		matches := map[string]bool{}
 		for _, project := range snapshot.Projects {
 			projectSpecificity := -1
-			for _, sourcePath := range project.SourcePaths {
+			sourcePaths := project.SourcePaths
+			if len(project.OwnedSourcePaths) != 0 {
+				sourcePaths = project.OwnedSourcePaths
+			}
+			for _, sourcePath := range sourcePaths {
 				if matchRepositoryGlob(sourcePath, changedPath) {
 					projectSpecificity = max(projectSpecificity, repositoryGlobSpecificity(sourcePath))
 				}
