@@ -335,6 +335,10 @@ buildopt_capture_subject() {
            executableSha256:$executableSha256},processExitCode:$processExitCode,
            resultAvailable:false,productFailure:true,rawResult:null}
         ' >"${buildopt_subject_output}/capture.json"
+        if [[ ${buildopt_protocol} == v2 && -s ${buildopt_stderr} ]]; then
+            cp -- "${buildopt_stderr}" "${buildopt_subject_output}/failure.stderr"
+            tail -n 120 "${buildopt_stderr}" >&2
+        fi
     else
         cp -- "${buildopt_stdout}" "${buildopt_subject_output}/result.json"
         buildopt_state_source="${buildopt_repository}/.buildopt/optimize/${buildopt_state_name}"
