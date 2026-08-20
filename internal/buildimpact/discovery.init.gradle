@@ -187,6 +187,18 @@ gradle.projectsEvaluated {
         if (discoveredEntrypoints.any { it.unknownRelationships }) {
             fallbackReasons.add("UNSUPPORTED_OR_TEST_ENTRYPOINT")
         }
+        def helperTasks = [discovery, root.tasks.findByName("buildoptOutputContract")].findAll { it != null } as Set
+        def discoveredTasks = graph.allTasks.findAll {
+            !helperTasks.contains(it) && knownProjects.contains(it.project.path)
+        }.collect { task ->
+            [
+                path: task.path,
+                projectPath: task.project.path,
+                dependsOn: graph.getDependencies(task).findAll {
+                    !helperTasks.contains(it) && knownProjects.contains(it.project.path)
+                }.collect { it.path }.toSet().toList().sort(),
+            ]
+        }.sort { left, right -> left.path <=> right.path }
         snapshot = [
             schemaVersion: "buildopt.build-impact/gradle-discovery/v1",
             gradleVersion: gradle.gradleVersion,
@@ -194,6 +206,7 @@ gradle.projectsEvaluated {
             fallbackReasons: fallbackReasons,
             includedBuildPaths: includedBuildPaths as List,
             projects: discoveredProjects,
+            tasks: discoveredTasks,
             entrypoints: discoveredEntrypoints,
         ]
     }

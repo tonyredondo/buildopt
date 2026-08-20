@@ -23,6 +23,7 @@ const (
 	GeneratedManifestSchemaVersion = "buildopt.build-impact/generated-manifest/v1"
 	GradleDiscoveryAdapterVersion  = "gradle-runtime-v1"
 	maximumDiscoveryBytes          = 4 << 20
+	maximumDiscoveredTasks         = 262144
 )
 
 //go:embed discovery.init.gradle
@@ -35,7 +36,14 @@ type DiscoverySnapshot struct {
 	FallbackReasons    []string               `json:"fallbackReasons"`
 	IncludedBuildPaths []string               `json:"includedBuildPaths,omitempty"`
 	Projects           []DiscoveredProject    `json:"projects"`
+	Tasks              []DiscoveredTask       `json:"tasks,omitempty"`
 	Entrypoints        []DiscoveredEntrypoint `json:"entrypoints"`
+}
+
+type DiscoveredTask struct {
+	Path        string   `json:"path"`
+	ProjectPath string   `json:"projectPath"`
+	DependsOn   []string `json:"dependsOn"`
 }
 
 type DiscoveredProject struct {
@@ -132,8 +140,9 @@ func ReadInlineObservation(observation InlineObservation, entrypoints []string) 
 }
 
 // DeriveProjectEntrypoints creates conservative per-project lifecycle reaches
-// from a complete Gradle project-dependency snapshot. Callers must separately
-// prove that each requested selector is a conventional output producer.
+// from the exact configured task graph when available, falling back to the
+// complete project-dependency graph. Callers must separately prove that each
+// requested selector is a conventional output producer.
 func DeriveProjectEntrypoints(snapshot DiscoverySnapshot, entrypoints []string) (DiscoverySnapshot, error) {
 	if !snapshot.Complete || len(snapshot.Projects) == 0 || len(entrypoints) == 0 {
 		return DiscoverySnapshot{}, errors.New("complete project graph and candidate entrypoints are required")
@@ -144,6 +153,10 @@ func DeriveProjectEntrypoints(snapshot DiscoverySnapshot, entrypoints []string) 
 			return DiscoverySnapshot{}, errors.New("candidate project graph contains an unknown relationship")
 		}
 		projects[project.Path] = project
+	}
+	tasks := make(map[string]DiscoveredTask, len(snapshot.Tasks))
+	for _, task := range snapshot.Tasks {
+		tasks[task.Path] = task
 	}
 	derived := snapshot
 	derived.Entrypoints = append([]DiscoveredEntrypoint(nil), snapshot.Entrypoints...)
@@ -168,19 +181,39 @@ func DeriveProjectEntrypoints(snapshot DiscoverySnapshot, entrypoints []string) 
 			return DiscoverySnapshot{}, fmt.Errorf("candidate entrypoint %q has no project", entrypoint)
 		}
 		reached := map[string]bool{}
+		if _, exact := tasks[entrypoint]; exact {
+			reachedTasks := map[string]bool{}
+			pendingTasks := []string{entrypoint}
+			for len(pendingTasks) > 0 {
+				current := pendingTasks[len(pendingTasks)-1]
+				pendingTasks = pendingTasks[:len(pendingTasks)-1]
+				if reachedTasks[current] {
+					continue
+				}
+				task, ok := tasks[current]
+				if !ok {
+					return DiscoverySnapshot{}, fmt.Errorf("candidate task %q has an unknown dependency", current)
+				}
+				reachedTasks[current] = true
+				reached[task.ProjectPath] = true
+				pendingTasks = append(pendingTasks, task.DependsOn...)
+			}
+		}
 		pending := []string{owner}
-		for len(pending) > 0 {
-			current := pending[len(pending)-1]
-			pending = pending[:len(pending)-1]
-			if reached[current] {
-				continue
+		if len(reached) == 0 {
+			for len(pending) > 0 {
+				current := pending[len(pending)-1]
+				pending = pending[:len(pending)-1]
+				if reached[current] {
+					continue
+				}
+				project, ok := projects[current]
+				if !ok {
+					return DiscoverySnapshot{}, fmt.Errorf("candidate project %q has an unknown dependency", current)
+				}
+				reached[current] = true
+				pending = append(pending, project.DependsOn...)
 			}
-			project, ok := projects[current]
-			if !ok {
-				return DiscoverySnapshot{}, fmt.Errorf("candidate project %q has an unknown dependency", current)
-			}
-			reached[current] = true
-			pending = append(pending, project.DependsOn...)
 		}
 		reaches := make([]string, 0, len(reached))
 		for project := range reached {
@@ -562,7 +595,28 @@ func parseDiscoverySnapshotForEntrypoints(raw []byte, wantedEntrypoints []string
 			}
 		}
 	}
+	if len(snapshot.Tasks) > maximumDiscoveredTasks {
+		return DiscoverySnapshot{}, "", errors.New("Gradle discovery task collection is invalid")
+	}
+	taskSet := map[string]bool{}
+	for index := range snapshot.Tasks {
+		task := &snapshot.Tasks[index]
+		sort.Strings(task.DependsOn)
+		if !validGradleEntrypoint(task.Path) || !projectSet[task.ProjectPath] ||
+			taskSet[task.Path] || !uniqueStrings(task.DependsOn) {
+			return DiscoverySnapshot{}, "", errors.New("Gradle discovery contains an invalid task")
+		}
+		taskSet[task.Path] = true
+	}
+	for _, task := range snapshot.Tasks {
+		for _, dependency := range task.DependsOn {
+			if !taskSet[dependency] || dependency == task.Path {
+				return DiscoverySnapshot{}, "", errors.New("Gradle discovery contains an invalid task dependency")
+			}
+		}
+	}
 	sort.Slice(snapshot.Projects, func(left, right int) bool { return snapshot.Projects[left].Path < snapshot.Projects[right].Path })
+	sort.Slice(snapshot.Tasks, func(left, right int) bool { return snapshot.Tasks[left].Path < snapshot.Tasks[right].Path })
 	sort.Slice(snapshot.Entrypoints, func(left, right int) bool { return snapshot.Entrypoints[left].Name < snapshot.Entrypoints[right].Name })
 	sort.Strings(snapshot.FallbackReasons)
 	canonical, err := json.Marshal(snapshot)

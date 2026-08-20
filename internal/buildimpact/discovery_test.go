@@ -209,6 +209,45 @@ func TestDeriveProjectEntrypointsUsesTransitiveProjectDependencies(t *testing.T)
 	}
 }
 
+func TestDeriveProjectEntrypointsPrefersExactTaskDependencies(t *testing.T) {
+	snapshot := DiscoverySnapshot{
+		SchemaVersion: DiscoverySchemaVersion, GradleVersion: "9.6.1", Complete: true,
+		FallbackReasons: []string{},
+		Projects: []DiscoveredProject{
+			{Path: ":app", SourcePaths: []string{"app/**"}, DependsOn: []string{":service"}},
+			{Path: ":service", SourcePaths: []string{"service/**"}, DependsOn: []string{}},
+		},
+		Tasks: []DiscoveredTask{
+			{Path: ":app:assemble", ProjectPath: ":app", DependsOn: []string{":app:jar"}},
+			{Path: ":app:jar", ProjectPath: ":app", DependsOn: []string{}},
+		},
+		Entrypoints: []DiscoveredEntrypoint{{Name: "assemble", ReachesProjects: []string{":app", ":service"}}},
+	}
+	derived, err := DeriveProjectEntrypoints(snapshot, []string{":app:assemble"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []string{":app"}
+	if !reflect.DeepEqual(derived.Entrypoints[1].ReachesProjects, want) {
+		t.Fatalf("exact task reach = %v, want %v", derived.Entrypoints[1].ReachesProjects, want)
+	}
+}
+
+func TestDiscoveryRejectsTaskOutsideKnownProject(t *testing.T) {
+	raw := []byte(`{
+  "schemaVersion":"buildopt.build-impact/gradle-discovery/v1",
+  "gradleVersion":"9.6.1",
+  "complete":true,
+  "fallbackReasons":[],
+  "projects":[{"path":":app","sourcePaths":["app/**"],"dependsOn":[],"unknownRelationships":false}],
+  "tasks":[{"path":":buildSrc:jar","projectPath":":buildSrc","dependsOn":[]}],
+  "entrypoints":[{"name":"assemble","reachesProjects":[":app"],"containsTestTasks":false,"unknownRelationships":false}]
+}`)
+	if _, _, err := parseDiscoverySnapshotForEntrypoints(raw, []string{"assemble"}, false); err == nil {
+		t.Fatal("task outside the discovered project graph was accepted")
+	}
+}
+
 func automaticDiscoveryManifest(t *testing.T) LoadedManifest {
 	t.Helper()
 	manifest := validManifest()
