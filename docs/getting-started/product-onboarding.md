@@ -356,14 +356,13 @@ builds. A Ktor root build-logic change also proves the negative path: the
 complete native build succeeds and no candidate or timing claim is created.
 
 The newest generalization run applies that unchanged command to five more
-public repositories. It finds complete structural candidates for Spring,
-OpenTelemetry, Kafka and Groovy and safely rejects an oversized Micronaut
-`assemble` candidate. None of the five qualifies economically: the four timed
-rows need 101–710 matching builds to repay synchronous calibration, so native
-Gradle remains authoritative. OpenTelemetry is technically strong (1,024→34,
-20.25% faster and 8/8 pairs), but its 1,555.444-second learning cost still
-needs 101 builds. This is the current onboarding limitation, not a hidden
-universal speed claim.
+public repositories after incremental learning, verified output
+materialization and aggregate partitioning are composed. All five candidates
+are faster with exact outputs: Spring 12.71%, OpenTelemetry 14.97%, Kafka
+54.92%, Micronaut 66.24% and Groovy 75.97%. The last four qualify with 8/8
+pairs and 19-, 14-, 8- and 2-build payback. Spring safely remains native at
+7/8 and 67-build payback. This is the current onboarding behavior: measurable
+automatic value where proven, optimized native Gradle otherwise.
 
 An earlier reviewed-profile matrix reports 14.97% to 87.35% savings across
 Spring, OpenTelemetry, Kafka, Micronaut and Groovy. It demonstrates broader

@@ -178,12 +178,14 @@ fallback penalty from 220.761 to 13.896 seconds across runs. The matching
 Jetty replay still saves 100.744 seconds, but its 1,386.764-second learning
 cost remains unpaid in the observed window.
 
-The terminal [automatic breadth evidence](../benchmarks/results/poc-automatic-breadth-transfer-v1/README.md)
-applies the unchanged zero-manual-file command to Spring, OpenTelemetry,
-Kafka, Micronaut and Groovy with one exact binary. It records zero product
-failures and five safe native decisions. Four structural candidates preserve
-exact outputs, but synchronous learning needs 101–710 matching builds to
-repay; Micronaut's aggregate candidate is rejected before calibration.
+The immutable [V1 automatic breadth evidence](../benchmarks/results/poc-automatic-breadth-transfer-v1/README.md)
+records the synchronous-learning blocker. The current
+[V2 evidence](../benchmarks/results/poc-automatic-breadth-transfer-v2/README.md)
+applies the unchanged zero-manual-file command after incremental learning,
+verified output materialization and aggregate partitioning are composed. It
+records zero product failures, exact outputs and faster candidates on all five
+repositories; OpenTelemetry, Kafka, Micronaut and Groovy qualify while Spring
+safely retains native under the unchanged gates.
 
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation

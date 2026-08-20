@@ -1,0 +1,377 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "apache/groovy",
+  "pipelineClass": "auto-classes-8c594532",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    "classes"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "changed-projects",
+      "entrypoints": [
+        ":groovy-json:classes"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "required-output-1",
+      "path": "build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-2",
+      "path": "build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-3",
+      "path": "build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-4",
+      "path": "subprojects/groovy-ant/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-5",
+      "path": "subprojects/groovy-ant/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-6",
+      "path": "subprojects/groovy-ant/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-7",
+      "path": "subprojects/groovy-astbuilder/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-8",
+      "path": "subprojects/groovy-astbuilder/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-9",
+      "path": "subprojects/groovy-cli-commons/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-10",
+      "path": "subprojects/groovy-cli-picocli/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-11",
+      "path": "subprojects/groovy-console/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-12",
+      "path": "subprojects/groovy-console/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-13",
+      "path": "subprojects/groovy-contracts/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-14",
+      "path": "subprojects/groovy-contracts/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-15",
+      "path": "subprojects/groovy-datetime/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-16",
+      "path": "subprojects/groovy-datetime/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-17",
+      "path": "subprojects/groovy-datetime/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-18",
+      "path": "subprojects/groovy-dateutil/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-19",
+      "path": "subprojects/groovy-dateutil/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-20",
+      "path": "subprojects/groovy-dateutil/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-21",
+      "path": "subprojects/groovy-docgenerator/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-22",
+      "path": "subprojects/groovy-docgenerator/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-23",
+      "path": "subprojects/groovy-ginq/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-24",
+      "path": "subprojects/groovy-ginq/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-25",
+      "path": "subprojects/groovy-ginq/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-26",
+      "path": "subprojects/groovy-groovydoc/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-27",
+      "path": "subprojects/groovy-groovydoc/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-28",
+      "path": "subprojects/groovy-groovydoc/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-29",
+      "path": "subprojects/groovy-groovysh/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-30",
+      "path": "subprojects/groovy-groovysh/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-31",
+      "path": "subprojects/groovy-jmx/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-32",
+      "path": "subprojects/groovy-jmx/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-33",
+      "path": "subprojects/groovy-json/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-34",
+      "path": "subprojects/groovy-json/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-35",
+      "path": "subprojects/groovy-jsr223/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-36",
+      "path": "subprojects/groovy-jsr223/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-37",
+      "path": "subprojects/groovy-jsr223/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-38",
+      "path": "subprojects/groovy-macro-library/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-39",
+      "path": "subprojects/groovy-macro-library/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-40",
+      "path": "subprojects/groovy-macro-library/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-41",
+      "path": "subprojects/groovy-macro/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-42",
+      "path": "subprojects/groovy-macro/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-43",
+      "path": "subprojects/groovy-macro/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-44",
+      "path": "subprojects/groovy-nio/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-45",
+      "path": "subprojects/groovy-nio/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-46",
+      "path": "subprojects/groovy-nio/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-47",
+      "path": "subprojects/groovy-servlet/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-48",
+      "path": "subprojects/groovy-sql/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-49",
+      "path": "subprojects/groovy-sql/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-50",
+      "path": "subprojects/groovy-sql/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-51",
+      "path": "subprojects/groovy-swing/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-52",
+      "path": "subprojects/groovy-swing/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-53",
+      "path": "subprojects/groovy-swing/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-54",
+      "path": "subprojects/groovy-swing/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-55",
+      "path": "subprojects/groovy-templates/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-56",
+      "path": "subprojects/groovy-test-junit5/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-57",
+      "path": "subprojects/groovy-test-junit5/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-58",
+      "path": "subprojects/groovy-test-junit5/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-59",
+      "path": "subprojects/groovy-test/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-60",
+      "path": "subprojects/groovy-test/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-61",
+      "path": "subprojects/groovy-testng/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-62",
+      "path": "subprojects/groovy-testng/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-63",
+      "path": "subprojects/groovy-toml/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-64",
+      "path": "subprojects/groovy-typecheckers/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-65",
+      "path": "subprojects/groovy-xml/build/classes/groovy/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-66",
+      "path": "subprojects/groovy-xml/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-67",
+      "path": "subprojects/groovy-xml/build/resources/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-68",
+      "path": "subprojects/groovy-xml/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-69",
+      "path": "subprojects/groovy-yaml/build/classes/java/main/**",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

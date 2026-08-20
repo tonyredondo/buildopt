@@ -1,0 +1,324 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+  "pipelineClass": "auto-instrumentation-spring-spring-batch-3.0--0073aaec",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    ":instrumentation:spring:spring-batch-3.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-boot-autoconfigure:testClasses",
+    ":instrumentation:spring:spring-boot-autoconfigure:testing:testClasses",
+    ":instrumentation:spring:spring-boot-resources:javaagent-unit-tests:testClasses",
+    ":instrumentation:spring:spring-boot-resources:javaagent:testClasses",
+    ":instrumentation:spring:spring-cloud-aws-3.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.2:testing:testClasses",
+    ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:testClasses",
+    ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:testing:testClasses",
+    ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webflux-4.3:testing:testClasses",
+    ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:testClasses",
+    ":instrumentation:spring:spring-core-2.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-data:spring-data-1.8:javaagent:testClasses",
+    ":instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:testClasses",
+    ":instrumentation:spring:spring-data:spring-data-3.0:testing:testClasses",
+    ":instrumentation:spring:spring-data:spring-data-common:testing:testClasses",
+    ":instrumentation:spring:spring-integration-4.1:javaagent:testClasses",
+    ":instrumentation:spring:spring-integration-4.1:library:testClasses",
+    ":instrumentation:spring:spring-integration-4.1:testing:testClasses",
+    ":instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-jms:spring-jms-2.0:testing:testClasses",
+    ":instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-kafka-2.7:javaagent:testClasses",
+    ":instrumentation:spring:spring-kafka-2.7:library:testClasses",
+    ":instrumentation:spring:spring-kafka-2.7:testing:testClasses",
+    ":instrumentation:spring:spring-pulsar-1.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-pulsar-1.0:testing:testClasses",
+    ":instrumentation:spring:spring-rabbit-1.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-rmi-4.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-scheduling-3.1:bootstrap:testClasses",
+    ":instrumentation:spring:spring-scheduling-3.1:javaagent:testClasses",
+    ":instrumentation:spring:spring-security-config-6.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-security-config-6.0:library:testClasses",
+    ":instrumentation:spring:spring-web:spring-web-3.1:library:testClasses",
+    ":instrumentation:spring:spring-web:spring-web-3.1:testing:testClasses",
+    ":instrumentation:spring:spring-web:spring-web-6.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-webflux:spring-webflux-5.0:testing-webflux7:testClasses",
+    ":instrumentation:spring:spring-webflux:spring-webflux-5.0:testing:testClasses",
+    ":instrumentation:spring:spring-webflux:spring-webflux-5.3:library:testClasses",
+    ":instrumentation:spring:spring-webflux:spring-webflux-5.3:testing-webflux7:testClasses",
+    ":instrumentation:spring:spring-webflux:spring-webflux-5.3:testing:testClasses",
+    ":instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:testClasses",
+    ":instrumentation:spring:spring-webmvc:spring-webmvc-3.1:wildfly-testing:testClasses",
+    ":instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:testClasses",
+    ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:testClasses",
+    ":instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:testClasses",
+    ":instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:testing:testClasses",
+    ":instrumentation:spring:spring-ws-2.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-ws-2.0:testing:testClasses"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "changed-projects",
+      "entrypoints": [
+        ":instrumentation:spring:spring-boot-autoconfigure:testClasses"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "required-output-1",
+      "path": "instrumentation/spring/spring-batch-3.0/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-2",
+      "path": "instrumentation/spring/spring-batch-3.0/javaagent/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-3",
+      "path": "instrumentation/spring/spring-boot-actuator-autoconfigure-2.0/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-4",
+      "path": "instrumentation/spring/spring-boot-autoconfigure/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-5",
+      "path": "instrumentation/spring/spring-boot-autoconfigure/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-6",
+      "path": "instrumentation/spring/spring-boot-resources/javaagent-unit-tests/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-7",
+      "path": "instrumentation/spring/spring-boot-resources/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-8",
+      "path": "instrumentation/spring/spring-boot-resources/javaagent/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-9",
+      "path": "instrumentation/spring/spring-cloud-aws-3.0/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-10",
+      "path": "instrumentation/spring/spring-cloud-gateway/spring-cloud-gateway-2.0/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-11",
+      "path": "instrumentation/spring/spring-cloud-gateway/spring-cloud-gateway-2.0/javaagent/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-12",
+      "path": "instrumentation/spring/spring-cloud-gateway/spring-cloud-gateway-2.2/testing/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-13",
+      "path": "instrumentation/spring/spring-cloud-gateway/spring-cloud-gateway-2.2/testing/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-14",
+      "path": "instrumentation/spring/spring-cloud-gateway/spring-cloud-gateway-webflux-4.3/testing/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-15",
+      "path": "instrumentation/spring/spring-cloud-gateway/spring-cloud-gateway-webflux-4.3/testing/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-16",
+      "path": "instrumentation/spring/spring-cloud-gateway/spring-cloud-gateway-webmvc-4.3/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-17",
+      "path": "instrumentation/spring/spring-core-2.0/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-18",
+      "path": "instrumentation/spring/spring-data/spring-data-1.8/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-19",
+      "path": "instrumentation/spring/spring-data/spring-data-3.0/kotlin-testing/build/classes/kotlin/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-20",
+      "path": "instrumentation/spring/spring-data/spring-data-3.0/testing/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-21",
+      "path": "instrumentation/spring/spring-integration-4.1/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-22",
+      "path": "instrumentation/spring/spring-integration-4.1/library/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-23",
+      "path": "instrumentation/spring/spring-jms/spring-jms-2.0/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-24",
+      "path": "instrumentation/spring/spring-jms/spring-jms-6.0/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-25",
+      "path": "instrumentation/spring/spring-kafka-2.7/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-26",
+      "path": "instrumentation/spring/spring-kafka-2.7/library/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-27",
+      "path": "instrumentation/spring/spring-pulsar-1.0/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-28",
+      "path": "instrumentation/spring/spring-rabbit-1.0/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-29",
+      "path": "instrumentation/spring/spring-rmi-4.0/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-30",
+      "path": "instrumentation/spring/spring-rmi-4.0/javaagent/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-31",
+      "path": "instrumentation/spring/spring-scheduling-3.1/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-32",
+      "path": "instrumentation/spring/spring-security-config-6.0/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-33",
+      "path": "instrumentation/spring/spring-security-config-6.0/library/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-34",
+      "path": "instrumentation/spring/spring-web/spring-web-3.1/library/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-35",
+      "path": "instrumentation/spring/spring-web/spring-web-3.1/testing/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-36",
+      "path": "instrumentation/spring/spring-web/spring-web-6.0/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-37",
+      "path": "instrumentation/spring/spring-webflux/spring-webflux-5.0/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-38",
+      "path": "instrumentation/spring/spring-webflux/spring-webflux-5.0/javaagent/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-39",
+      "path": "instrumentation/spring/spring-webflux/spring-webflux-5.0/testing-webflux7/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-40",
+      "path": "instrumentation/spring/spring-webflux/spring-webflux-5.3/library/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-41",
+      "path": "instrumentation/spring/spring-webmvc/spring-webmvc-3.1/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-42",
+      "path": "instrumentation/spring/spring-webmvc/spring-webmvc-3.1/javaagent/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-43",
+      "path": "instrumentation/spring/spring-webmvc/spring-webmvc-3.1/wildfly-testing/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-44",
+      "path": "instrumentation/spring/spring-webmvc/spring-webmvc-3.1/wildfly-testing/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-45",
+      "path": "instrumentation/spring/spring-webmvc/spring-webmvc-5.3/library/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-46",
+      "path": "instrumentation/spring/spring-webmvc/spring-webmvc-6.0/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-47",
+      "path": "instrumentation/spring/spring-webmvc/spring-webmvc-6.0/library/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-48",
+      "path": "instrumentation/spring/spring-ws-2.0/javaagent/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

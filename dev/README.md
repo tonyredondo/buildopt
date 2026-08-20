@@ -602,10 +602,11 @@ This is a bounded POC experiment, not a soak. The checker requires all 85
 ordinary results, recomputes every balanced pair and preserves safe native
 retention when the unchanged value or thirty-build payback gates are not met.
 
-The current result has zero product failures and zero manual target-repository
-files. Four candidates are timed but need 101–710 matching builds to repay;
-Micronaut retains native before calibration because its aggregate workflow
-produces 73 candidate entrypoints.
+The checked V2 result has zero product failures and zero manual
+target-repository files. All five candidates beat optimized native Gradle with
+exact outputs. OpenTelemetry, Kafka, Micronaut and Groovy qualify at 14.97%,
+54.92%, 66.24% and 75.97% with 8/8 pairs and 19-, 14-, 8- and 2-build payback.
+Spring improves 12.71% but remains native at 7/8 and 67-build payback.
 
 Reproduce the incremental-learning transaction with one exact installed
 binary and validate its checked evidence with:

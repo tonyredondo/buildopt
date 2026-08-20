@@ -1,0 +1,1226 @@
+{
+  "schemaVersion": "buildopt.build-impact/declared-graph/v1",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "auto-testclasses-e43e5dea",
+  "manifestDigest": "sha256:d733b05d9ed54fe88dd06fce52e2969458200542cc4ac073870dd4d1395ffa83",
+  "adapterVersion": "gradle-runtime-v1",
+  "complete": true,
+  "projects": [
+    {
+      "path": ":clients",
+      "sourcePaths": [
+        "clients/**"
+      ],
+      "dependsOn": [
+        ":generator",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":clients:clients-integration-tests",
+      "sourcePaths": [
+        "clients/clients-integration-tests/**"
+      ],
+      "dependsOn": [
+        ":group-coordinator",
+        ":group-coordinator:group-coordinator-api",
+        ":metadata",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":storage",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util",
+        ":transaction-coordinator"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect",
+      "sourcePaths": [
+        "connect/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:api",
+      "sourcePaths": [
+        "connect/api/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:basic-auth-extension",
+      "sourcePaths": [
+        "connect/basic-auth-extension/**"
+      ],
+      "dependsOn": [
+        ":connect:api",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:file",
+      "sourcePaths": [
+        "connect/file/**"
+      ],
+      "dependsOn": [
+        ":connect:api",
+        ":connect:runtime",
+        ":core",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:json",
+      "sourcePaths": [
+        "connect/json/**"
+      ],
+      "dependsOn": [
+        ":connect:api",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:mirror",
+      "sourcePaths": [
+        "connect/mirror/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":connect:api",
+        ":connect:mirror-client",
+        ":connect:runtime",
+        ":core",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:mirror-client",
+      "sourcePaths": [
+        "connect/mirror-client/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:runtime",
+      "sourcePaths": [
+        "connect/runtime/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":connect:api",
+        ":connect:json",
+        ":connect:test-plugins",
+        ":connect:transforms",
+        ":core",
+        ":group-coordinator",
+        ":metadata",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":storage",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:test-plugins",
+      "sourcePaths": [
+        "connect/test-plugins/**"
+      ],
+      "dependsOn": [
+        ":connect:api",
+        ":server-common"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:transforms",
+      "sourcePaths": [
+        "connect/transforms/**"
+      ],
+      "dependsOn": [
+        ":connect:api",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":coordinator-common",
+      "sourcePaths": [
+        "coordinator-common/**",
+        "core/**",
+        "group-coordinator/**",
+        "metadata/**",
+        "raft/**",
+        "server/**",
+        "share-coordinator/**",
+        "storage/**",
+        "test-common/test-common-runtime/**",
+        "transaction-coordinator/**"
+      ],
+      "ownedSourcePaths": [
+        "coordinator-common/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":generator",
+        ":group-coordinator:group-coordinator-api",
+        ":server-common",
+        ":storage:storage-api",
+        ":streams",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-util",
+        ":tools:tools-api"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":core",
+      "sourcePaths": [
+        "coordinator-common/**",
+        "core/**",
+        "group-coordinator/**",
+        "metadata/**",
+        "raft/**",
+        "server/**",
+        "share-coordinator/**",
+        "storage/**",
+        "test-common/test-common-runtime/**",
+        "transaction-coordinator/**"
+      ],
+      "ownedSourcePaths": [
+        "core/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":generator",
+        ":group-coordinator:group-coordinator-api",
+        ":server-common",
+        ":storage:storage-api",
+        ":streams",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-util",
+        ":tools:tools-api"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":examples",
+      "sourcePaths": [
+        "examples/**"
+      ],
+      "dependsOn": [
+        ":clients"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":generator",
+      "sourcePaths": [
+        "generator/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":group-coordinator",
+      "sourcePaths": [
+        "coordinator-common/**",
+        "core/**",
+        "group-coordinator/**",
+        "metadata/**",
+        "raft/**",
+        "server/**",
+        "share-coordinator/**",
+        "storage/**",
+        "test-common/test-common-runtime/**",
+        "transaction-coordinator/**"
+      ],
+      "ownedSourcePaths": [
+        "group-coordinator/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":generator",
+        ":group-coordinator:group-coordinator-api",
+        ":server-common",
+        ":storage:storage-api",
+        ":streams",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-util",
+        ":tools:tools-api"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":group-coordinator:group-coordinator-api",
+      "sourcePaths": [
+        "group-coordinator/group-coordinator-api/**"
+      ],
+      "dependsOn": [
+        ":clients"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":jmh-benchmarks",
+      "sourcePaths": [
+        "jmh-benchmarks/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":connect:api",
+        ":connect:json",
+        ":connect:transforms",
+        ":coordinator-common",
+        ":core",
+        ":group-coordinator",
+        ":group-coordinator:group-coordinator-api",
+        ":metadata",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":share-coordinator",
+        ":storage",
+        ":streams",
+        ":transaction-coordinator"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":metadata",
+      "sourcePaths": [
+        "coordinator-common/**",
+        "core/**",
+        "group-coordinator/**",
+        "metadata/**",
+        "raft/**",
+        "server/**",
+        "share-coordinator/**",
+        "storage/**",
+        "test-common/test-common-runtime/**",
+        "transaction-coordinator/**"
+      ],
+      "ownedSourcePaths": [
+        "metadata/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":generator",
+        ":group-coordinator:group-coordinator-api",
+        ":server-common",
+        ":storage:storage-api",
+        ":streams",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-util",
+        ":tools:tools-api"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":raft",
+      "sourcePaths": [
+        "coordinator-common/**",
+        "core/**",
+        "group-coordinator/**",
+        "metadata/**",
+        "raft/**",
+        "server/**",
+        "share-coordinator/**",
+        "storage/**",
+        "test-common/test-common-runtime/**",
+        "transaction-coordinator/**"
+      ],
+      "ownedSourcePaths": [
+        "raft/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":generator",
+        ":group-coordinator:group-coordinator-api",
+        ":server-common",
+        ":storage:storage-api",
+        ":streams",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-util",
+        ":tools:tools-api"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":server",
+      "sourcePaths": [
+        "coordinator-common/**",
+        "core/**",
+        "group-coordinator/**",
+        "metadata/**",
+        "raft/**",
+        "server/**",
+        "share-coordinator/**",
+        "storage/**",
+        "test-common/test-common-runtime/**",
+        "transaction-coordinator/**"
+      ],
+      "ownedSourcePaths": [
+        "server/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":generator",
+        ":group-coordinator:group-coordinator-api",
+        ":server-common",
+        ":storage:storage-api",
+        ":streams",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-util",
+        ":tools:tools-api"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":server-common",
+      "sourcePaths": [
+        "server-common/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":share-coordinator",
+      "sourcePaths": [
+        "coordinator-common/**",
+        "core/**",
+        "group-coordinator/**",
+        "metadata/**",
+        "raft/**",
+        "server/**",
+        "share-coordinator/**",
+        "storage/**",
+        "test-common/test-common-runtime/**",
+        "transaction-coordinator/**"
+      ],
+      "ownedSourcePaths": [
+        "share-coordinator/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":generator",
+        ":group-coordinator:group-coordinator-api",
+        ":server-common",
+        ":storage:storage-api",
+        ":streams",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-util",
+        ":tools:tools-api"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":shell",
+      "sourcePaths": [
+        "shell/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":core",
+        ":metadata",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":storage",
+      "sourcePaths": [
+        "coordinator-common/**",
+        "core/**",
+        "group-coordinator/**",
+        "metadata/**",
+        "raft/**",
+        "server/**",
+        "share-coordinator/**",
+        "storage/**",
+        "test-common/test-common-runtime/**",
+        "transaction-coordinator/**"
+      ],
+      "ownedSourcePaths": [
+        "storage/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":generator",
+        ":group-coordinator:group-coordinator-api",
+        ":server-common",
+        ":storage:storage-api",
+        ":streams",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-util",
+        ":tools:tools-api"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":storage:storage-api",
+      "sourcePaths": [
+        "storage/api/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":server-common",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams",
+      "sourcePaths": [
+        "streams/**",
+        "streams/test-utils/**"
+      ],
+      "ownedSourcePaths": [
+        "streams/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":generator",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:examples",
+      "sourcePaths": [
+        "streams/examples/**"
+      ],
+      "dependsOn": [
+        ":streams",
+        ":streams:test-utils",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:integration-tests",
+      "sourcePaths": [
+        "streams/integration-tests/**"
+      ],
+      "dependsOn": [
+        ":group-coordinator",
+        ":server",
+        ":server-common",
+        ":storage",
+        ":streams:streams-scala",
+        ":streams:test-utils",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util",
+        ":tools",
+        ":transaction-coordinator"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:streams-scala",
+      "sourcePaths": [
+        "streams/streams-scala/**"
+      ],
+      "dependsOn": [
+        ":streams",
+        ":streams:test-utils",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:test-utils",
+      "sourcePaths": [
+        "streams/**",
+        "streams/test-utils/**"
+      ],
+      "ownedSourcePaths": [
+        "streams/test-utils/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":generator",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-0110",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-0110/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-10",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-10/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-11",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-11/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-20",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-20/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-21",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-21/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-22",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-22/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-23",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-23/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-24",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-24/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-25",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-25/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-26",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-26/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-27",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-27/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-28",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-28/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-30",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-30/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-31",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-31/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-32",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-32/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-33",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-33/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-34",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-34/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-35",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-35/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-36",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-36/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-37",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-37/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-38",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-38/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-39",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-39/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-40",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-40/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-41",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-41/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":test-common",
+      "sourcePaths": [
+        "test-common/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":test-common:test-common-internal-api",
+      "sourcePaths": [
+        "test-common/test-common-internal-api/**"
+      ],
+      "dependsOn": [
+        ":server-common",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":test-common:test-common-runtime",
+      "sourcePaths": [
+        "coordinator-common/**",
+        "core/**",
+        "group-coordinator/**",
+        "metadata/**",
+        "raft/**",
+        "server/**",
+        "share-coordinator/**",
+        "storage/**",
+        "test-common/test-common-runtime/**",
+        "transaction-coordinator/**"
+      ],
+      "ownedSourcePaths": [
+        "test-common/test-common-runtime/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":generator",
+        ":group-coordinator:group-coordinator-api",
+        ":server-common",
+        ":storage:storage-api",
+        ":streams",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-util",
+        ":tools:tools-api"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":test-common:test-common-util",
+      "sourcePaths": [
+        "test-common/test-common-util/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":tools",
+      "sourcePaths": [
+        "tools/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":connect:api",
+        ":connect:runtime",
+        ":coordinator-common",
+        ":core",
+        ":group-coordinator",
+        ":metadata",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":share-coordinator",
+        ":storage",
+        ":storage:storage-api",
+        ":streams",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util",
+        ":tools:tools-api",
+        ":transaction-coordinator"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":tools:tools-api",
+      "sourcePaths": [
+        "tools/tools-api/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":transaction-coordinator",
+      "sourcePaths": [
+        "coordinator-common/**",
+        "core/**",
+        "group-coordinator/**",
+        "metadata/**",
+        "raft/**",
+        "server/**",
+        "share-coordinator/**",
+        "storage/**",
+        "test-common/test-common-runtime/**",
+        "transaction-coordinator/**"
+      ],
+      "ownedSourcePaths": [
+        "transaction-coordinator/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":generator",
+        ":group-coordinator:group-coordinator-api",
+        ":server-common",
+        ":storage:storage-api",
+        ":streams",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-util",
+        ":tools:tools-api"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":trogdor",
+      "sourcePaths": [
+        "trogdor/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":group-coordinator",
+        ":group-coordinator:group-coordinator-api",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    }
+  ],
+  "entrypoints": [
+    {
+      "name": ":clients:testClasses",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [
+        ":clients",
+        ":generator",
+        ":test-common:test-common-util"
+      ],
+      "artifactIds": [
+        "required-output-1",
+        "required-output-10",
+        "required-output-11",
+        "required-output-12",
+        "required-output-13",
+        "required-output-14",
+        "required-output-15",
+        "required-output-16",
+        "required-output-17",
+        "required-output-18",
+        "required-output-19",
+        "required-output-2",
+        "required-output-20",
+        "required-output-21",
+        "required-output-22",
+        "required-output-23",
+        "required-output-24",
+        "required-output-25",
+        "required-output-26",
+        "required-output-27",
+        "required-output-28",
+        "required-output-29",
+        "required-output-3",
+        "required-output-30",
+        "required-output-31",
+        "required-output-32",
+        "required-output-33",
+        "required-output-34",
+        "required-output-35",
+        "required-output-36",
+        "required-output-37",
+        "required-output-38",
+        "required-output-39",
+        "required-output-4",
+        "required-output-40",
+        "required-output-41",
+        "required-output-42",
+        "required-output-43",
+        "required-output-44",
+        "required-output-45",
+        "required-output-46",
+        "required-output-47",
+        "required-output-48",
+        "required-output-49",
+        "required-output-5",
+        "required-output-50",
+        "required-output-51",
+        "required-output-52",
+        "required-output-53",
+        "required-output-54",
+        "required-output-55",
+        "required-output-56",
+        "required-output-57",
+        "required-output-58",
+        "required-output-59",
+        "required-output-6",
+        "required-output-60",
+        "required-output-61",
+        "required-output-62",
+        "required-output-63",
+        "required-output-64",
+        "required-output-65",
+        "required-output-66",
+        "required-output-67",
+        "required-output-68",
+        "required-output-69",
+        "required-output-7",
+        "required-output-70",
+        "required-output-71",
+        "required-output-72",
+        "required-output-73",
+        "required-output-74",
+        "required-output-75",
+        "required-output-76",
+        "required-output-77",
+        "required-output-78",
+        "required-output-79",
+        "required-output-8",
+        "required-output-80",
+        "required-output-81",
+        "required-output-82",
+        "required-output-83",
+        "required-output-84",
+        "required-output-85",
+        "required-output-86",
+        "required-output-87",
+        "required-output-9"
+      ],
+      "checkIds": [],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    },
+    {
+      "name": "testClasses",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [
+        ":clients",
+        ":clients:clients-integration-tests",
+        ":connect",
+        ":connect:api",
+        ":connect:basic-auth-extension",
+        ":connect:file",
+        ":connect:json",
+        ":connect:mirror",
+        ":connect:mirror-client",
+        ":connect:runtime",
+        ":connect:test-plugins",
+        ":connect:transforms",
+        ":coordinator-common",
+        ":core",
+        ":examples",
+        ":generator",
+        ":group-coordinator",
+        ":group-coordinator:group-coordinator-api",
+        ":jmh-benchmarks",
+        ":metadata",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":share-coordinator",
+        ":shell",
+        ":storage",
+        ":storage:storage-api",
+        ":streams",
+        ":streams:examples",
+        ":streams:integration-tests",
+        ":streams:streams-scala",
+        ":streams:test-utils",
+        ":streams:upgrade-system-tests-0110",
+        ":streams:upgrade-system-tests-10",
+        ":streams:upgrade-system-tests-11",
+        ":streams:upgrade-system-tests-20",
+        ":streams:upgrade-system-tests-21",
+        ":streams:upgrade-system-tests-22",
+        ":streams:upgrade-system-tests-23",
+        ":streams:upgrade-system-tests-24",
+        ":streams:upgrade-system-tests-25",
+        ":streams:upgrade-system-tests-26",
+        ":streams:upgrade-system-tests-27",
+        ":streams:upgrade-system-tests-28",
+        ":streams:upgrade-system-tests-30",
+        ":streams:upgrade-system-tests-31",
+        ":streams:upgrade-system-tests-32",
+        ":streams:upgrade-system-tests-33",
+        ":streams:upgrade-system-tests-34",
+        ":streams:upgrade-system-tests-35",
+        ":streams:upgrade-system-tests-36",
+        ":streams:upgrade-system-tests-37",
+        ":streams:upgrade-system-tests-38",
+        ":streams:upgrade-system-tests-39",
+        ":streams:upgrade-system-tests-40",
+        ":streams:upgrade-system-tests-41",
+        ":test-common",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util",
+        ":tools",
+        ":tools:tools-api",
+        ":transaction-coordinator",
+        ":trogdor"
+      ],
+      "artifactIds": [
+        "required-output-1",
+        "required-output-10",
+        "required-output-11",
+        "required-output-12",
+        "required-output-13",
+        "required-output-14",
+        "required-output-15",
+        "required-output-16",
+        "required-output-17",
+        "required-output-18",
+        "required-output-19",
+        "required-output-2",
+        "required-output-20",
+        "required-output-21",
+        "required-output-22",
+        "required-output-23",
+        "required-output-24",
+        "required-output-25",
+        "required-output-26",
+        "required-output-27",
+        "required-output-28",
+        "required-output-29",
+        "required-output-3",
+        "required-output-30",
+        "required-output-31",
+        "required-output-32",
+        "required-output-33",
+        "required-output-34",
+        "required-output-35",
+        "required-output-36",
+        "required-output-37",
+        "required-output-38",
+        "required-output-39",
+        "required-output-4",
+        "required-output-40",
+        "required-output-41",
+        "required-output-42",
+        "required-output-43",
+        "required-output-44",
+        "required-output-45",
+        "required-output-46",
+        "required-output-47",
+        "required-output-48",
+        "required-output-49",
+        "required-output-5",
+        "required-output-50",
+        "required-output-51",
+        "required-output-52",
+        "required-output-53",
+        "required-output-54",
+        "required-output-55",
+        "required-output-56",
+        "required-output-57",
+        "required-output-58",
+        "required-output-59",
+        "required-output-6",
+        "required-output-60",
+        "required-output-61",
+        "required-output-62",
+        "required-output-63",
+        "required-output-64",
+        "required-output-65",
+        "required-output-66",
+        "required-output-67",
+        "required-output-68",
+        "required-output-69",
+        "required-output-7",
+        "required-output-70",
+        "required-output-71",
+        "required-output-72",
+        "required-output-73",
+        "required-output-74",
+        "required-output-75",
+        "required-output-76",
+        "required-output-77",
+        "required-output-78",
+        "required-output-79",
+        "required-output-8",
+        "required-output-80",
+        "required-output-81",
+        "required-output-82",
+        "required-output-83",
+        "required-output-84",
+        "required-output-85",
+        "required-output-86",
+        "required-output-87",
+        "required-output-9"
+      ],
+      "checkIds": [],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    }
+  ],
+  "globalChangePaths": []
+}

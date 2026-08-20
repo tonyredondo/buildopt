@@ -211,6 +211,8 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-build-optimization-performance" >/dev/null
         "${buildopt_script_dir}/check-verified-output-materialization" >/dev/null
         "${buildopt_script_dir}/check-aggregate-workflow-partition" >/dev/null
+        "${buildopt_script_dir}/check-automatic-breadth-transfer-v2" \
+            "${buildopt_repo_root}/benchmarks/results/poc-automatic-breadth-transfer-v2/summary.json" >/dev/null
         "${buildopt_script_dir}/check-generic-holdout" >/dev/null
         "${buildopt_script_dir}/check-generic-holdout-crossover" \
             "${buildopt_repo_root}/benchmarks/results/poc-generic-holdout-v5" >/dev/null

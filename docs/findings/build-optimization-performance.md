@@ -2,52 +2,48 @@
 
 ## Current Executive Summary
 
-- **The latest unchanged automatic transfer is safe but not economically
-  broad.** One exact binary ran `buildopt optimize` with zero manual BuildOpt
-  files on Spring, OpenTelemetry, Kafka, Micronaut and Groovy. All five
-  retained optimized native Gradle, with zero product failures. Four complete
-  candidates preserved exact outputs and full fallback; Micronaut stopped
-  before timing because `assemble` produced 73 candidate entrypoints.
-- **Automatic discovery finds real reductions.** Spring reduces 27 to 10
-  projects and is **26.83% faster**; OpenTelemetry reduces 1,024 to 34 and is
-  **20.25% faster** with 8/8 positive pairs; Kafka reduces 64 to 36 and is
-  **13.42% faster**; Groovy reduces 37 to 30 and is **2.81% faster**. These
-  repository-specific percentages are not averaged.
-- **Synchronous learning is the current primary blocker.** Spring,
-  OpenTelemetry, Kafka and Groovy spend 339.603, 1,555.444, 374.762 and
-  1,423.987 seconds respectively in calibration. Their calculated paybacks
-  are 103, 101, 190 and 710 matching builds, all above the POC maximum of 30.
-  OpenTelemetry therefore proves technical value but still makes a poor first
-  customer transaction.
-- **Complete workflow outputs constrain graph reduction.** The latest generic
-  Kafka and Groovy candidates are much broader than older reviewed profiles,
-  because a clean zero-input run must preserve every output of the declared
-  aggregate workflow. The old profile percentages remain feasibility evidence
-  and are not substituted for this automatic result.
+- **The latest unchanged automatic transfer now proves broad POC value.** One
+  exact binary ran 85 ordinary `buildopt optimize` invocations with zero
+  target-repository BuildOpt files on Spring, OpenTelemetry, Kafka, Micronaut
+  and Groovy. All five candidates beat optimized native Gradle, preserve exact
+  outputs and full fallback, and report zero product failures. Four pass the
+  unchanged 8/8 and 30-build payback gates.
+- **The improvements are repository-specific and substantial.** Spring reduces
+  27 to 10 projects and saves **12.71%**; OpenTelemetry 1,024 to 34 and
+  **14.97%**; Kafka 64 to 3 and **54.92%**; Micronaut 75 to 22 and **66.24%**;
+  Groovy 37 to 2 and **75.97%**. These percentages are not averaged.
+- **Incremental learning changes the economics.** V1 needed 101–710 matching
+  builds and qualified 0/5. V2 collects the same eight pairs across useful
+  invocations and projects 19, 14, 8 and 2 builds to repay OpenTelemetry,
+  Kafka, Micronaut and Groovy. Spring falls from 103 to 67 but still retains
+  native because only 7/8 pairs improve and payback exceeds 30.
+- **Complete workflow outputs are now composed safely.** Verified materialization
+  and aggregate partitioning let the candidate rebuild changed owners while
+  restoring exact unaffected outputs. This closes Micronaut's former
+  73-entrypoint blocker and sharply narrows Kafka/Groovy without omitting
+  required deliverables.
+- **A generic materialization bottleneck was fixed, not benchmarked around.**
+  Per-file durability added about 629 seconds to the first Spring diagnostic.
+  Batched directory durability after atomic writes reduced post-fix candidate
+  overhead to about 2.7 seconds while preserving digest rejection and native
+  fallback.
 - **Prior positive evidence still matters.** The public zero-manual-file POC
   qualified Ktor `jvmJar` at **79.82% faster** with 26-build payback and Beam
   `classes` at **61.65% faster** with 28-build payback. Under equal central
   cache opportunity, the complete connected path measured **82.45% faster on
   Ktor** and **56.41% on Beam**. These results show that the idea can work, not
   that it works automatically for every Gradle repository.
-- **Incremental learning, output materialization and aggregate partitioning
-  are implemented.**
-  Seventeen useful invocations now collect one baseline and eight
-  exact-bound pairs with zero measurement-only workflow runs. The bounded
-  fixture retained native at 50.125 ms/0.90%, 4/8 and a 384-build payback,
-  proving that the unchanged value gates still reject weak evidence. A second
-  bounded POC rebuilt one changed JAR, materialized two unaffected required
-  JARs in a clean workspace and reproduced the same three-output digest; a
-  corrupted blob triggered full native fallback before candidate execution.
-  A third bounded POC reduced a generic 66-project `assemble` proposal from 66
-  entrypoints to one, materialized 65 exact JARs and preserved all 66 outputs.
-  The unchanged five-repository transfer is now the next value experiment.
+- **The next question is lifetime value, not basic feasibility.** The four
+  qualified profiles must be replayed over compatible public descendant
+  changes with selection, invalidation and fallback cost included. Spring's
+  remaining 88.668-second learning cost should be attributed and reduced
+  generically rather than weakening its gate.
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
   Runtime Tuning, Hot State and standard Copy are retired; historical Jar,
   Patch and Edge experiments remain scoped supporting evidence.
 
 See the [current one-pager](./buildopt-poc-handoff.md) and the
-[automatic breadth result](../../benchmarks/results/poc-automatic-breadth-transfer-v1/README.md)
+[automatic breadth result](../../benchmarks/results/poc-automatic-breadth-transfer-v2/README.md)
 for the decision-ready summary and raw evidence.
 
 The machine-readable incremental transaction is preserved in the

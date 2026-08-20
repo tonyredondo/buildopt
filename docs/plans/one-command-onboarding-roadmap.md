@@ -274,18 +274,16 @@ calibration and reduces the observed fallback penalty from 220.761 to 13.896
 seconds. The original Jetty qualification still needs 31 matching replays and
 does not pay back in the observed window.
 
-Automatic breadth transfer is now complete. The unchanged zero-manual-file
-command ran on Spring, OpenTelemetry, Kafka, Micronaut and Groovy with one
-exact binary. It produced zero product-attributable failures and retained
-optimized native Gradle in all five cases. Spring saved 26.83% before learning
-cost, OpenTelemetry saved 20.25% with 8/8 positive pairs, Kafka saved 13.42%,
-and Groovy saved 2.81%; Micronaut stopped before timing because aggregate
-`assemble` exposed 73 candidate entrypoints. None qualified economically:
-the four timed candidates needed 103, 101, 190 and 710 matching builds to
-repay synchronous calibration, beyond the unchanged 30-build gate.
+The V2 automatic breadth transfer is complete. The unchanged zero-manual-file
+command ran 85 ordinary invocations on Spring, OpenTelemetry, Kafka, Micronaut
+and Groovy with one exact binary. All five candidates beat optimized native
+Gradle with exact outputs and zero product failures. OpenTelemetry, Kafka,
+Micronaut and Groovy qualify with 8/8 positive pairs and 19-, 14-, 8- and
+2-build payback. Spring saves 12.71% with a positive interval but remains
+native at 7/8 and 67-build payback.
 
-The POC sequence attacks that observed economic blocker without weakening
-correctness or adding repository-specific rules:
+The completed POC sequence removed the observed economic blockers without
+weakening correctness or adding repository-specific rules:
 
 1. **Completed:** accumulate exact-bound control/candidate observations during ordinary
    `buildopt optimize` invocations instead of charging 16 extra builds before
@@ -295,16 +293,19 @@ correctness or adding repository-specific rules:
 3. **Completed:** partition aggregate workflows from generic task, variant and
    exact output relationships rather than raising the task cap. The bounded
    proof reduces 66 entrypoints to one and materializes 65 exact outputs.
-4. **Next:** repeat the same five repositories, revisions and commands with the same
-   exact-output, fallback, statistical and 30-build payback gates.
+4. **Completed:** repeat the same five repositories, revisions and commands
+   with the same exact-output, fallback, statistical and 30-build payback
+   gates; 4/5 qualify and 5/5 improve.
 
-The materialization proof rebuilt one changed JAR, restored two exact
-unaffected JARs in a clean workspace and rejected corrupt state before
-candidate execution. Aggregate partitioning then closes the synthetic
-entrypoint-cap gap with exact outputs. Both are correctness evidence; the
-fresh five-repository rerun remains necessary for a wall-time claim.
+The next onboarding work is evidence-driven rather than another broad feature:
+
+1. reduce Spring's remaining learning/materialization cost generically;
+2. replay the four qualified profiles on compatible public descendant changes
+   and measure cumulative value including selection, invalidation and fallback;
+3. expose progress, expected payback and native-retained reasons directly in
+   the one-command experience.
 
 The retained dataset and its interpretation are in
-[`poc-automatic-breadth-transfer-v1`](../../benchmarks/results/poc-automatic-breadth-transfer-v1/README.md).
+[`poc-automatic-breadth-transfer-v2`](../../benchmarks/results/poc-automatic-breadth-transfer-v2/README.md).
 No step may add repository-name rules, average repository percentages, weaken
 correctness gates or borrow another profile's lifetime.

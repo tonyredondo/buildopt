@@ -69,26 +69,19 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > the [v1 matrix](./benchmarks/results/poc-magic-end-to-end-value-v1/README.md)
 > remains historical diagnostic evidence rather than being rewritten.
 
-> **Latest generalization result:** the same unchanged command now runs on
-> Spring, OpenTelemetry, Kafka, Micronaut and Groovy with one exact binary,
-> zero target-repository BuildOpt files and zero product failures. It discovers
-> real reductions (Spring 27→10, OpenTelemetry 1,024→34, Kafka 64→36 and
-> Groovy 37→30), but all five correctly retain native Gradle: the four timed
-> candidates need 101–710 matching builds to repay synchronous learning, and
-> Micronaut's aggregate `assemble` exposes 73 candidate entrypoints before
-> timing. Incremental learning now collects the same eight pairs over useful
-> invocations with zero measurement-only workflows and correctly retains
-> native Gradle when value is unproven. Verified output materialization now
-> lets a clean candidate rebuild changed outputs and restore unaffected
-> required outputs from exact content-addressed state; corrupt or stale state
-> falls back before the candidate starts. Generic aggregate partitioning now
-> reduces a 66-entrypoint `assemble` proposal to one changed-owner entrypoint,
-> materializes the other 65 exact JARs and preserves the complete output digest
-> without raising the safety cap. This is structural correctness evidence;
-> the unchanged five-repository rerun is next to measure value. See the
-> [partition evidence](./benchmarks/results/poc-aggregate-workflow-partition-v1/README.md)
-> and the preceding
-> [automatic breadth evidence](./benchmarks/results/poc-automatic-breadth-transfer-v1/README.md).
+> **Latest generalization result:** the unchanged zero-manual-file command now
+> combines incremental learning, exact output materialization and aggregate
+> partitioning on Spring, OpenTelemetry, Kafka, Micronaut and Groovy with one
+> binary and zero product failures. All five candidates beat optimized native
+> Gradle while reproducing exact outputs: Spring 12.71%, OpenTelemetry 14.97%,
+> Kafka 54.92%, Micronaut 66.24% and Groovy 75.97%. OpenTelemetry, Kafka,
+> Micronaut and Groovy pass 8/8 pairs, positive intervals and the unchanged
+> 30-build payback gate. Spring improves 7/8 with a positive interval but needs
+> 67 matching builds to repay learning, so it correctly remains native. The
+> result is **4/5 automatically qualified and 5/5 faster**, without repository
+> rules or weaker gates. See the
+> [V2 automatic breadth evidence](./benchmarks/results/poc-automatic-breadth-transfer-v2/README.md);
+> V1 remains the immutable before-result.
 
 > **POC onboarding north star:** install BuildOpt, open a Gradle repository and
 > run `buildopt optimize build`. The command now has a stable state/result,

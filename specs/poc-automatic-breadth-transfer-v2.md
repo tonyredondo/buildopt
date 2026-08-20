@@ -47,3 +47,10 @@ This experiment proves or disproves transfer on five public repositories. It
 does not authorize production activation, average repository percentages or
 add the effects of different mechanisms. It requires neither soak testing nor
 a design partner. Test Optimization remains outside BuildOpt.
+
+## Terminal evidence
+
+The checked [five-repository result](../benchmarks/results/poc-automatic-breadth-transfer-v2/README.md)
+contains 85 ordinary invocations with exact outputs and zero product failures.
+OpenTelemetry, Kafka, Micronaut and Groovy qualify under the unchanged gates;
+Spring improves but retains native at 7/8 pairs and 67-build payback.

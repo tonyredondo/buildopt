@@ -146,6 +146,8 @@ thresholds to rehabilitate a failed mechanism.
 ./dev/check-poc-qualified-profile-matrix-v1-result \
   benchmarks/results/poc-qualified-profile-matrix-v1/summary.json
 ./dev/check-automatic-breadth-transfer
+./dev/check-automatic-breadth-transfer-v2 \
+  benchmarks/results/poc-automatic-breadth-transfer-v2/summary.json
 ```
 
 The commands validate the final POC decision, strict no-value/no-action
@@ -157,14 +159,18 @@ different workloads.
 Use the owning benchmark runner only when the relevant implementation or
 fixture changes.
 
-`check-automatic-breadth-transfer` validates the latest unchanged
+`check-automatic-breadth-transfer` validates the immutable V1 unchanged
 zero-manual-file run across Spring Framework, OpenTelemetry Java
 Instrumentation, Apache Kafka, Micronaut Core and Apache Groovy. It recomputes
 the raw/state digests, alternating pairs, output identity, fallback, graph
-reduction and learning payback. Its current terminal result is deliberately
-negative economically: all five repositories retain optimized native Gradle,
-despite technically positive candidate timings in four, because none repays
-the synchronous learning transaction within 30 matching builds.
+reduction and synchronous learning payback.
+
+`check-automatic-breadth-transfer-v2` validates the current terminal result
+after incremental learning, verified output materialization and aggregate
+partitioning are composed. It checks 85 ordinary invocations, exact executable
+and repository bindings, state trees, all output manifests and recomputed
+economics. OpenTelemetry, Kafka, Micronaut and Groovy qualify; Spring improves
+but retains native under the unchanged gates.
 
 `check-incremental-learning` validates the successor transaction: one baseline
 plus eight exact-bound control/candidate pairs accumulated across 17 useful

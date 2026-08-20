@@ -100,26 +100,27 @@ rewritten as an economic success.
 
 ### Latest automatic breadth transfer
 
-The [automatic breadth result](./results/poc-automatic-breadth-transfer-v1/README.md)
+The [V2 automatic breadth result](./results/poc-automatic-breadth-transfer-v2/README.md)
 runs the unchanged zero-manual-file path on Spring, OpenTelemetry, Kafka,
-Micronaut and Groovy with one exact BuildOpt binary.
+Micronaut and Groovy with one exact BuildOpt binary after incremental learning,
+verified output materialization and aggregate partitioning were composed.
 
 | Repository | Graph | Direct timed effect | Learning / payback | Decision |
 | --- | ---: | ---: | ---: | --- |
-| Spring | 27 -> 10 | 26.83% faster, 7/8 | 339.603 s / 103 builds | Native retained. |
-| OpenTelemetry | 1,024 -> 34 | 20.25% faster, 8/8 | 1,555.444 s / 101 builds | Native retained. |
-| Kafka | 64 -> 36 | 13.42% faster, 3/8 | 374.762 s / 190 builds | Native retained. |
-| Micronaut | 73 candidate entrypoints | not timed | no calibration | Native retained. |
-| Groovy | 37 -> 30 | 2.81% faster, 7/8 | 1,423.987 s / 710 builds | Native retained. |
+| Spring | 27 -> 10 | 12.71% faster, 7/8 | 88.668 s / 67 builds | Native retained. |
+| OpenTelemetry | 1,024 -> 34 | 14.97% faster, 8/8 | 201.913 s / 19 builds | Qualified. |
+| Kafka | 64 -> 3 | 54.92% faster, 8/8 | 70.808 s / 14 builds | Qualified. |
+| Micronaut | 75 -> 22 | 66.24% faster, 8/8 | 114.284 s / 8 builds | Qualified. |
+| Groovy | 37 -> 2 | 75.97% faster, 8/8 | 73.857 s / 2 builds | Qualified. |
 
-All four timed candidates preserve exact outputs and full fallback. The result
-proves that automatic structural discovery transfers, but the current
-synchronous learning transaction does not. Older reviewed-profile percentages
-remain feasibility evidence and are not substituted for these latest
-zero-configuration decisions.
+All 85 ordinary invocations preserve exact outputs and full fallback, and all
+five candidates are faster. Four pass the unchanged qualification gates.
+Spring remains native because 7/8 and 67-build payback do not authorize reuse.
+Repository percentages are deliberately not averaged.
 
 ```bash
-./dev/check-automatic-breadth-transfer
+./dev/check-automatic-breadth-transfer-v2 \
+  benchmarks/results/poc-automatic-breadth-transfer-v2/summary.json
 ```
 
 ### Incremental ordinary-build learning

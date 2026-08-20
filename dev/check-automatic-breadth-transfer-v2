@@ -132,11 +132,13 @@ while IFS= read -r buildopt_key; do
       (.discovery.materialization.status == "CAPTURED" or
        .discovery.materialization.status == "NOT_REQUIRED") and
       (if .calibration.qualified then
-         .phase == "QUALIFIED" and .calibration.valueGatePassed == true and
+         .outcome == "LEARNING" and .reason == "QUALIFIED_PROFILE_STORED" and
+         .calibration.valueGatePassed == true and
          .calibration.reason == "CANDIDATE_CALIBRATION_QUALIFIED" and
          .calibration.breakEvenBuilds >= 1 and .calibration.breakEvenBuilds <= 30
        else
-         .phase == "NATIVE_RETAINED" and .outcome == "NATIVE_RETAINED" and
+         .outcome == "NATIVE_RETAINED" and .reason == .calibration.reason and
+         .calibration.valueGatePassed == false and
          (.calibration.reason == "CALIBRATION_VALUE_NOT_PROVEN" or
           .calibration.reason == "CALIBRATION_BREAK_EVEN_EXCEEDED")
        end)

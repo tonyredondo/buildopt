@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v4",
+  "profileVersion": 4,
+  "profileId": "qualified-structural-build-impact",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "auto-testclasses-e43e5dea",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": ".buildopt/optimize/automatic-breadth-v2/portfolio/profiles/0784ad6a0619d261a08c2356e6bceb9f4bb56b2e0881097bcff1e54a07ae771e/manifest.json",
+    "graph": ".buildopt/optimize/automatic-breadth-v2/portfolio/profiles/0784ad6a0619d261a08c2356e6bceb9f4bb56b2e0881097bcff1e54a07ae771e/graph.json",
+    "generatedManifest": ".buildopt/optimize/automatic-breadth-v2/portfolio/profiles/0784ad6a0619d261a08c2356e6bceb9f4bb56b2e0881097bcff1e54a07ae771e/generated-manifest.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--build-cache",
+    "--parallel",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-scan",
+    "--max-workers=12"
+  ],
+  "preconditions": [
+    {
+      "type": "FILE_SHA256",
+      "path": ".buildopt/optimize/automatic-breadth-v2/portfolio/profiles/0784ad6a0619d261a08c2356e6bceb9f4bb56b2e0881097bcff1e54a07ae771e/manifest.json",
+      "sha256": "075c2f9af913f2f6601c2ea24399fef5a11b85b3b535bbed831cbdbbdf005739"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": ".buildopt/optimize/automatic-breadth-v2/portfolio/profiles/0784ad6a0619d261a08c2356e6bceb9f4bb56b2e0881097bcff1e54a07ae771e/graph.json",
+      "sha256": "b743d781250fa4c0dba7d07ef48ddb0749d30a7080a14fe215ceadb891719343"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": ".buildopt/optimize/automatic-breadth-v2/portfolio/profiles/0784ad6a0619d261a08c2356e6bceb9f4bb56b2e0881097bcff1e54a07ae771e/generated-manifest.json",
+      "sha256": "36405ce8a198f62ff30bffae3fee0fe01e717c69b9a57d0c917b95d61abb8fe4"
+    }
+  ],
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "137be8e9a17e3680df94cbdbb1330084866b2885fee0aca4dfddd13ae7ef78e7",
+    "repositoryRevision": "61d6d6c852aa941a471d82926d050ae6e63b7647",
+    "pairs": 8,
+    "meanSavedMs": 5368.25,
+    "reductionRatio": 0.5492307495555868,
+    "interval95SavedMs": [
+      3512.625,
+      7337.375
+    ]
+  }
+}
