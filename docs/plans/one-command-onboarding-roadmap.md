@@ -284,18 +284,23 @@ and Groovy saved 2.81%; Micronaut stopped before timing because aggregate
 the four timed candidates needed 103, 101, 190 and 710 matching builds to
 repay synchronous calibration, beyond the unchanged 30-build gate.
 
-The next POC sequence attacks that observed economic blocker without weakening
+The POC sequence attacks that observed economic blocker without weakening
 correctness or adding repository-specific rules:
 
-1. Accumulate exact-bound control/candidate observations during ordinary
+1. **Completed:** accumulate exact-bound control/candidate observations during ordinary
    `buildopt optimize` invocations instead of charging 16 extra builds before
    the first decision.
-2. Materialize verified unaffected outputs through Gradle-compatible cache or
+2. **Completed:** materialize verified unaffected outputs through Gradle-compatible cache or
    BuildOpt state before omitting their producers in a clean workspace.
-3. Partition aggregate workflows from generic task, variant, ABI and output
+3. **Next:** partition aggregate workflows from generic task, variant, ABI and output
    relationships rather than raising the task cap.
-4. Repeat the same five repositories, revisions and commands with the same
+4. **Then:** repeat the same five repositories, revisions and commands with the same
    exact-output, fallback, statistical and 30-build payback gates.
+
+The materialization proof rebuilt one changed JAR, restored two exact
+unaffected JARs in a clean workspace and rejected corrupt state before
+candidate execution. It closes a correctness gap only; aggregate partitioning
+and the fresh five-repository rerun remain necessary for a wall-time claim.
 
 The retained dataset and its interpretation are in
 [`poc-automatic-breadth-transfer-v1`](../../benchmarks/results/poc-automatic-breadth-transfer-v1/README.md).

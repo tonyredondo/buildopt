@@ -142,6 +142,25 @@ not numerically combined with the public-repository breadth results.
 ./dev/check-incremental-learning
 ```
 
+### Verified unaffected-output materialization
+
+The [materialization result](./results/poc-verified-output-materialization-v1/README.md)
+tests the clean-workspace correctness gap separately from timing. A full
+three-project `assemble` records three required JARs. The reduced candidate
+then rebuilds the changed `service-a` JAR and restores the unaffected
+`library-c` and `service-b` JARs from exact content-addressed state. Baseline,
+candidate and native fallback produce the same three-file digest.
+
+After a retained blob is deliberately corrupted, BuildOpt rejects the state
+before candidate execution and runs the full graph successfully. Unit coverage
+also rejects stale workspace bytes without overwriting them and prevents a
+corrupt state set from producing a partial materialization. This evidence
+authorizes the mechanism only; it contains no wall-time or payback claim.
+
+```bash
+./dev/check-verified-output-materialization
+```
+
 ## Build Optimization scorecard
 
 For the decision-ready product summary, see the [current POC one-pager](../docs/findings/buildopt-poc-handoff.md).

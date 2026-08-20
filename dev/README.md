@@ -603,6 +603,24 @@ native Gradle; this gate proves the transaction and unchanged evidence/payback
 rules rather than a synthetic speedup. The 12-CPU result remains bounded local
 POC evidence, not golden-runner or production evidence.
 
+Reproduce verified unaffected-output materialization in a clean workspace and
+validate the checked evidence with:
+
+```bash
+./dev/run-verified-output-materialization \
+  /absolute/path/to/buildopt \
+  /tmp/verified-output-materialization.json
+./dev/check-verified-output-materialization \
+  /tmp/verified-output-materialization.json
+```
+
+The runner executes one full baseline, one unchanged control, one clean
+structural candidate and one deliberate corruption fallback. It requires the
+candidate to rebuild changed outputs while BuildOpt restores only unaffected
+required outputs, compares the complete output set by exact bytes and proves
+that corrupt retained state restores the full native graph before candidate
+execution. The result is a bounded correctness POC, not a wall-time claim.
+
 ## CI orchestration validation
 
 Validate the `F0-030` authoritative-job, protected validation queue,

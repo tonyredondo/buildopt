@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "buildopt.poc/verified-output-materialization-evaluation/v1",
+  "workItem": "POC-VERIFIED-OUTPUT-MATERIALIZATION-001",
+  "capturedAt": "2026-08-20T13:02:01Z",
+  "buildoptRevision": "629fb711d2e4d61a3b1ca86469041da29c96a4ac",
+  "buildoptExecutableSha256": "a1015b7331ef86e5566812722066388b56e9c212a8ee6c34fa944febb4753b4c",
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "evidenceClass": "BOUNDED_LOCAL_POC"
+  },
+  "workload": {
+    "fixture": "fixtures/build-impact/synthetic-repository",
+    "workflow": [
+      "--no-daemon",
+      "assemble"
+    ],
+    "projects": 3,
+    "invocations": 4,
+    "candidateWorkspaceCleaned": true,
+    "cacheOpportunityEqual": true
+  },
+  "materialization": {
+    "byteCount": 1466,
+    "fileCount": 2,
+    "manifestFile": ".buildopt/materialization/v1/materialization/manifest.json",
+    "manifestSha256": "91fa804520f959c942c1cbda2a517606eb4be782be1500d83c64f83db72d9cfd",
+    "patterns": [
+      "library-c/build/libs/library-c-1.0.jar",
+      "service-b/build/libs/service-b-1.0.jar"
+    ],
+    "reason": "VERIFIED_UNAFFECTED_OUTPUTS_CAPTURED",
+    "status": "CAPTURED"
+  },
+  "graph": {
+    "omittedProjects": 1,
+    "selectedProjects": 2,
+    "totalProjects": 3
+  },
+  "outputs": {
+    "baseline": {
+      "sha256": "9072430e6b1081dc18ed38a5bd72920c82daa7bd21f63bb82ef512bb94f4fd3a",
+      "fileCount": 3
+    },
+    "cleanCandidate": {
+      "sha256": "9072430e6b1081dc18ed38a5bd72920c82daa7bd21f63bb82ef512bb94f4fd3a",
+      "fileCount": 3
+    },
+    "corruptStateFallback": {
+      "sha256": "9072430e6b1081dc18ed38a5bd72920c82daa7bd21f63bb82ef512bb94f4fd3a",
+      "fileCount": 3
+    },
+    "identical": true
+  },
+  "fallback": {
+    "triggeredBeforeCandidate": true,
+    "reason": "VERIFIED_OUTPUT_MATERIALIZATION_FAILED",
+    "nativeGraphRestored": true,
+    "exitCode": 0
+  },
+  "assertions": {
+    "onlyUnaffectedOutputsMaterialized": true,
+    "changedOutputsRebuilt": true,
+    "corruptBlobRejected": true,
+    "staleBytesRejectedByUnitTest": true,
+    "repositorySpecificRuleAdded": false,
+    "productionAuthorized": false,
+    "testOptimizationModified": false
+  },
+  "conclusion": "VERIFIED_OUTPUT_MATERIALIZATION_POC_COMPLETE"
+}

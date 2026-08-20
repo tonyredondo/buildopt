@@ -78,8 +78,11 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > Micronaut's aggregate `assemble` exposes 73 candidate entrypoints before
 > timing. Incremental learning now collects the same eight pairs over useful
 > invocations with zero measurement-only workflows and correctly retains
-> native Gradle when value is unproven. Verified output materialization is now
-> the next blocker to broad one-command value. See the
+> native Gradle when value is unproven. Verified output materialization now
+> lets a clean candidate rebuild changed outputs and restore unaffected
+> required outputs from exact content-addressed state; corrupt or stale state
+> falls back before the candidate starts. Aggregate-workflow partitioning is
+> now the next blocker to broad one-command value. See the
 > [automatic breadth evidence](./benchmarks/results/poc-automatic-breadth-transfer-v1/README.md).
 
 > **POC onboarding north star:** install BuildOpt, open a Gradle repository and
