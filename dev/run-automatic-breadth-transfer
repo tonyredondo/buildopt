@@ -42,7 +42,7 @@ buildopt_cleanup() {
 }
 trap buildopt_cleanup EXIT
 
-for buildopt_command in awk cp df find git jq perl sha256sum sort tar timeout xargs; do
+for buildopt_command in awk cp df find git jq perl sha256sum sleep sort tar timeout xargs; do
     command -v "${buildopt_command}" >/dev/null || {
         printf 'required automatic breadth command is unavailable: %s\n' "${buildopt_command}" >&2
         exit 1
@@ -427,7 +427,17 @@ buildopt_capture_subject() {
         env GRADLE_USER_HOME="${buildopt_gradle_home}" \
             "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- ./gradlew --stop
     ) >/dev/null 2>&1 || true
-    rm -rf -- "${buildopt_root:?}/${buildopt_key}"
+    buildopt_subject_root="${buildopt_root:?}/${buildopt_key}"
+    for buildopt_cleanup_attempt in 1 2 3 4 5; do
+        rm -rf -- "${buildopt_subject_root}" 2>/dev/null || true
+        [[ ! -e ${buildopt_subject_root} ]] && break
+        ((buildopt_cleanup_attempt < 5)) && sleep 1
+    done
+    [[ ! -e ${buildopt_subject_root} ]] || {
+        printf 'automatic breadth temporary state remained after daemon stop: %s\n' \
+            "${buildopt_key}" >&2
+        return 1
+    }
     printf 'Captured %s (exit %d)\n' "${buildopt_repository_id}" "${buildopt_status}"
 }
 

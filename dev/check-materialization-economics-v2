@@ -36,7 +36,7 @@ jq -e '
   .aggregation.productFailures == 0 and
   all(.subjects[];
     ([.incrementalLearning.baseline,.incrementalLearning.observations[]] | all(
-      .economics.gradleMs == .durationMs and
+      .economics.gradleMs + .incrementalOverheadMs == .durationMs and
       .economics.preExecutionMs + .economics.postExecutionMs == .incrementalOverheadMs and
       ([.economics.gradleMs,.economics.preExecutionMs,.economics.postExecutionMs,
         .economics.materializationMs,.economics.outputVerificationMs,
@@ -101,7 +101,17 @@ buildopt_cleanup() {
 trap buildopt_cleanup EXIT
 cp -a -- "${buildopt_evidence_root}/." "${buildopt_compat}/"
 while IFS= read -r buildopt_capture; do
-    jq '.schemaVersion = "buildopt.evidence/automatic-breadth-subject/v2"' \
+    jq '
+      .schemaVersion = "buildopt.evidence/automatic-breadth-subject/v2" |
+      (.incrementalLearning.baseline.incrementalOverheadMs +
+       ([.incrementalLearning.observations[].incrementalOverheadMs] | add)) as $legacyCost |
+      .incrementalLearning.incrementalCostMs = $legacyCost |
+      .calibration.calibrationCostMs = $legacyCost |
+      .calibration.breakEvenBuilds =
+        (if .calibration.meanSavedMs > 0 then
+           ($legacyCost / .calibration.meanSavedMs | ceil)
+         else 0 end)
+    ' \
         "${buildopt_capture}" >"${buildopt_capture}.tmp"
     mv -- "${buildopt_capture}.tmp" "${buildopt_capture}"
 done < <(find "${buildopt_compat}" -mindepth 2 -maxdepth 2 -name capture.json -type f | sort)
@@ -109,7 +119,17 @@ jq '
   .schemaVersion = "buildopt.evidence/poc-automatic-breadth-transfer/v2" |
   .workItem = "POC-AUTOMATIC-BREADTH-TRANSFER-V2-001" |
   .buildopt.packageVersion = "0.7.0-dev" |
-  .subjects |= map(.schemaVersion = "buildopt.evidence/automatic-breadth-subject/v2") |
+  .subjects |= map(
+    .schemaVersion = "buildopt.evidence/automatic-breadth-subject/v2" |
+    (.incrementalLearning.baseline.incrementalOverheadMs +
+     ([.incrementalLearning.observations[].incrementalOverheadMs] | add)) as $legacyCost |
+    .incrementalLearning.incrementalCostMs = $legacyCost |
+    .calibration.calibrationCostMs = $legacyCost |
+    .calibration.breakEvenBuilds =
+      (if .calibration.meanSavedMs > 0 then
+         ($legacyCost / .calibration.meanSavedMs | ceil)
+       else 0 end)
+  ) |
   del(.aggregation.economicsComplete)
 ' "${buildopt_compat}/summary.json" >"${buildopt_compat}/summary.json.tmp"
 mv -- "${buildopt_compat}/summary.json.tmp" "${buildopt_compat}/summary.json"
