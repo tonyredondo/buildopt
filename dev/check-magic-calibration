@@ -10,7 +10,19 @@ buildopt_root=$(cd -- "$(dirname -- "$0")/.." && pwd -P)
 buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-magic-calibration.XXXXXX")
 buildopt_cleanup() {
     if [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-magic-calibration."* ]]; then
-        rm -rf -- "${buildopt_temp}"
+		if [[ -n ${buildopt_gradle_home:-} && -x ${buildopt_repository:-}/gradlew ]]; then
+			(
+				cd -- "${buildopt_repository}"
+				GRADLE_USER_HOME="${buildopt_gradle_home}" ./gradlew --stop >/dev/null 2>&1
+			) || true
+		fi
+		for _ in $(seq 1 5); do
+			rm -rf -- "${buildopt_temp}" && return 0
+			sleep 0.2
+		done
+		printf 'automatic-calibration fixture cleanup did not converge: %s\n' \
+			"${buildopt_temp}" >&2
+		return 1
     fi
 }
 trap buildopt_cleanup EXIT
