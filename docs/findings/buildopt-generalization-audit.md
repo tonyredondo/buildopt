@@ -12,8 +12,9 @@ five different public repositories with zero manual BuildOpt files and zero
 product failures. It discovers four complete candidates, yet none repays the
 original synchronous learning cost within 30 matching builds. Incremental
 learning now removes measurement-only workflows. Verified clean-workspace
-materialization is also implemented; aggregate-workflow partitioning remains
-the next generalization gap.
+materialization and generic aggregate-workflow partitioning are also
+implemented. The next question is whether the same five public repositories
+improve economically when all three mechanisms are combined.
 
 ## What is generalized today
 
@@ -25,6 +26,7 @@ the next generalization gap.
 | Structural proposal | Uses typed project/task relationships and changed-project ownership; no repository-name branch is allowed. | Unknown relationships, excessive candidate task sets and no reduction retain native. |
 | Measurement / decision | Alternating native/candidate observations verify outputs, execution shape, interval, fallback and payback. | Observations now accumulate across useful invocations with zero measurement-only workflows; weak value still retains native. |
 | Verified output materialization | Captures required outputs omitted by a candidate in digest-bound private state, then restores only exact missing bytes before candidate execution. | The bounded three-project POC preserves all required JARs and rejects corrupt or stale state before candidate execution; no timing claim has been made. |
+| Aggregate workflow partition | Groups directly changed output producers by generic lifecycle selector and variant, while exact unaffected outputs remain materializable. | A bounded 66-project POC reduces 66 entrypoints to one and preserves 66 JARs; public-repository wall time is not yet measured. |
 | Portfolio / central state | Reuses exact compatible evidence across checkouts or machines. | Reuse cannot infer lifetime or value from another profile/repository. |
 | Gradle-compatible cache | Supports local and optional HTTP/HTTPS reuse with safe miss/outage behavior. | Cache is supporting infrastructure; native-cache parity is not a speed advantage. |
 
@@ -59,14 +61,15 @@ Three distinct constraints appear in the current data:
    from many otherwise unaffected projects in a clean workspace. Omitting
    those producers without materializing verified outputs would make the build
    faster but wrong.
-3. **Aggregate task breadth.** Micronaut `assemble` yields 73 candidate
-   entrypoints. Raising the limit would spend more time without proving a
-   useful partition.
+3. **Aggregate task breadth.** Micronaut `assemble` yielded 73 candidate
+   entrypoints. The new generic partition addresses this shape without raising
+   the cap, but the public Micronaut workflow has not yet been rerun.
 
-The implementation must address the remaining breadth constraint generically.
-It may reason about task producers, variants, ABI relationships and exact
-output relationships; it may not branch on repository identity or borrow an
-old profile's expected percentage.
+The implementation now addresses the synthetic breadth constraint through
+task producers, lifecycle selectors, variants and exact output relationships.
+It does not branch on repository identity or borrow an old profile's expected
+percentage. The remaining question is empirical transfer, not permission to
+weaken the contract.
 
 ## Implementation-generic versus evidence-specific
 
@@ -87,10 +90,11 @@ measured candidate or an explicit native verdict.
 
 ## Next generalization steps
 
-1. Partition aggregate workflows into bounded producer groups using generic
-   task/variant/ABI relationships; retain native when completeness is unknown.
-2. Rerun the same frozen five-repository contract without moving output,
-   fallback or payback gates.
+1. Rerun the same frozen five-repository contract with incremental learning,
+   verified materialization and aggregate partitioning enabled, without moving
+   output, fallback or payback gates.
+2. Qualify only the repository/workflow rows that beat optimized native
+   Gradle and repay within 30 matching builds; retain and diagnose the rest.
 
 ## POC conclusion
 
@@ -99,6 +103,7 @@ a faster reimplementation of Gradle's cache. The mechanism can produce large
 wall-time wins, including current public Ktor/Beam results, and the generic
 automatic path is safe. Incremental learning proves that BuildOpt can gather
 the same decision evidence without extra measurement-only workflows, and
-verified materialization preserves complete outputs in a clean reduced graph.
-The POC still needs aggregate-workflow partitioning and a fresh five-repository
-transfer before the one-command experience can claim general customer value.
+verified materialization preserves complete outputs in a clean reduced graph,
+and aggregate partitioning removes the synthetic broad-lifecycle cap blocker.
+The POC still needs a fresh five-repository transfer before the one-command
+experience can claim general customer value.

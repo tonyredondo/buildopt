@@ -621,6 +621,23 @@ required outputs, compares the complete output set by exact bytes and proves
 that corrupt retained state restores the full native graph before candidate
 execution. The result is a bounded correctness POC, not a wall-time claim.
 
+Reproduce the generic aggregate-workflow partition and validate its checked
+evidence with:
+
+```bash
+./dev/run-aggregate-workflow-partition \
+  /absolute/path/to/buildopt \
+  /tmp/aggregate-workflow-partition.json
+./dev/check-aggregate-workflow-partition \
+  /tmp/aggregate-workflow-partition.json
+```
+
+The runner creates a 66-project Groovy DSL `assemble` workflow with one direct
+change owner and 65 transitive consumers. It proves that the old 66-entrypoint
+proposal becomes one bounded candidate entrypoint, the 65 unaffected JARs are
+materialized from exact revision-bound state and the clean candidate's full
+output digest matches the baseline. The runner makes no wall-time claim.
+
 ## CI orchestration validation
 
 Validate the `F0-030` authoritative-job, protected validation queue,

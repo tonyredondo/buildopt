@@ -25,9 +25,11 @@ bytes are not overwritten and a corrupt blob writes no partial output.
 | Baseline vs corruption fallback | Identical |
 | Product-attributable failure | 0 |
 
-This is correctness evidence, not a speed claim. The next block partitions
-aggregate workflows generically; only after that will the unchanged public
-five-repository transfer be repeated under the existing wall-time and payback
+This is correctness evidence, not a speed claim. The successor
+[aggregate-workflow partition](../poc-aggregate-workflow-partition-v1/README.md)
+now reduces a 66-entrypoint aggregate proposal to one rebuild entrypoint while
+materializing the other 65 exact outputs. The unchanged public
+five-repository transfer is next under the existing wall-time and payback
 gates.
 
 Validate the machine-readable evidence with:

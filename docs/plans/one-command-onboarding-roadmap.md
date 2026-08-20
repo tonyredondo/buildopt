@@ -292,15 +292,17 @@ correctness or adding repository-specific rules:
    the first decision.
 2. **Completed:** materialize verified unaffected outputs through Gradle-compatible cache or
    BuildOpt state before omitting their producers in a clean workspace.
-3. **Next:** partition aggregate workflows from generic task, variant, ABI and output
-   relationships rather than raising the task cap.
-4. **Then:** repeat the same five repositories, revisions and commands with the same
+3. **Completed:** partition aggregate workflows from generic task, variant and
+   exact output relationships rather than raising the task cap. The bounded
+   proof reduces 66 entrypoints to one and materializes 65 exact outputs.
+4. **Next:** repeat the same five repositories, revisions and commands with the same
    exact-output, fallback, statistical and 30-build payback gates.
 
 The materialization proof rebuilt one changed JAR, restored two exact
 unaffected JARs in a clean workspace and rejected corrupt state before
-candidate execution. It closes a correctness gap only; aggregate partitioning
-and the fresh five-repository rerun remain necessary for a wall-time claim.
+candidate execution. Aggregate partitioning then closes the synthetic
+entrypoint-cap gap with exact outputs. Both are correctness evidence; the
+fresh five-repository rerun remains necessary for a wall-time claim.
 
 The retained dataset and its interpretation are in
 [`poc-automatic-breadth-transfer-v1`](../../benchmarks/results/poc-automatic-breadth-transfer-v1/README.md).

@@ -161,6 +161,24 @@ authorizes the mechanism only; it contains no wall-time or payback claim.
 ./dev/check-verified-output-materialization
 ```
 
+### Aggregate workflow partition
+
+The [aggregate partition result](./results/poc-aggregate-workflow-partition-v1/README.md)
+tests the remaining broad-lifecycle correctness gap. A generic 66-project
+`assemble` workflow has one directly changed owner and 65 transitive consumers.
+The previous flat candidate required 66 entrypoints and exceeded the unchanged
+64-entrypoint bound. The partitioned candidate runs only `:core:assemble`,
+materializes 65 revision-bound consumer JARs and produces the same complete
+66-JAR digest as the full graph.
+
+This result does not contain timing or payback evidence. It proves a generic
+producer/selector/variant partition and exact clean-workspace composition;
+the next five-public-repository transfer owns the performance decision.
+
+```bash
+./dev/check-aggregate-workflow-partition
+```
+
 ## Build Optimization scorecard
 
 For the decision-ready product summary, see the [current POC one-pager](../docs/findings/buildopt-poc-handoff.md).

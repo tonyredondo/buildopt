@@ -33,6 +33,7 @@ must run optimized native Gradle and make no performance claim.
 | **Automatic discovery** | Derives change ownership, Gradle outputs and a structural candidate without repository-name rules. | Works on 5/5 latest breadth subjects; four complete candidates and one safe aggregate-workflow rejection. |
 | **Incremental learning and value gate** | Alternates one control or candidate across each useful invocation and checks outputs, interval, tail, fallback and payback. | The transaction now adds zero measurement-only workflows; a bounded fixture correctly retained native when 0.90% did not prove value, and user cancellation preserves the cancelled build without starting recovery. |
 | **Verified output materialization** | Restores exact unaffected outputs that the requested workflow still requires when their producer is omitted from a clean candidate graph. | The bounded POC rebuilt one changed JAR, materialized two unaffected JARs and reproduced the full three-JAR digest; corrupt or stale state is rejected before candidate execution. This is correctness evidence, not a timing claim. |
+| **Aggregate workflow partition** | Splits broad lifecycle workflows into changed-owner producer groups plus exact revision-bound outputs that can be materialized. | A generic 66-project `assemble` proposal fell from 66 entrypoints to one; 65 consumer JARs were materialized and all 66 outputs matched. Performance is not yet measured. |
 | **Profile portfolio / central state** | Reuses qualified evidence under exact repository, Wrapper, workflow, graph, output and executable bindings. | Functional across checkouts/machines; value depends on profile lifetime and cannot rescue an uneconomic first decision. |
 | **Gradle-compatible cache** | Reuses verified outputs locally or through optional HTTP/HTTPS central storage. | Supporting infrastructure. Safe Cache is near native-cache parity, not the principal speed claim. |
 | **Task adapters / Patch Autopilot** | Makes one exact task shape safely reusable after review. | Strong scoped evidence exists; not generalized to arbitrary tasks. |
@@ -58,9 +59,11 @@ discovery finds genuine reductions, and OpenTelemetry has a strictly positive
 interval with 8/8 favorable pairs. The blocker is that the current command
 duplicates too much Gradle work to learn synchronously. Kafka/Groovy also show
 that a complete workflow output contract is much broader than older reviewed
-profiles; Micronaut shows that aggregate workflows need partitioning or
-verified output materialization before calibration. The materialization part
-is now implemented and checked; generic aggregate partitioning remains open.
+profiles. Verified output materialization and generic aggregate partitioning
+are now implemented and checked separately: the latter reduces a 66-project
+aggregate proposal to one rebuild entrypoint while composing the other 65
+exact outputs. The unchanged five-repository rerun must now determine whether
+those mechanisms improve wall time and learning economics on public builds.
 
 ## Latest incremental-learning result
 
@@ -85,6 +88,16 @@ the candidate and completed the full native graph with exit code zero. The
 result proves safe clean-workspace composition; it does not claim a wall-time
 improvement.
 
+## Latest aggregate-workflow partition result
+
+A generic 66-project Groovy `assemble` fixture made every project transitively
+affected while only `:core` directly owned the change. The old flat proposal
+needed 66 entrypoints and exceeded the unchanged safety limit of 64. The new
+partition ran only `:core:assemble`, restored 65 exact consumer JARs and
+produced the same complete 66-JAR SHA-256 as native Gradle. No consumer
+producer task executed. This proves generic structural breadth and exact
+composition, not a wall-time win or cross-revision ABI compatibility.
+
 ## Prior positive evidence and how to interpret it
 
 The published zero-manual-file terminal POC previously qualified Ktor `jvmJar`
@@ -103,26 +116,30 @@ path and shows where generalization is still incomplete.
 
 Continue the POC, but focus narrowly. Structural Build Impact remains the only
 broad accelerator with compelling evidence. Incremental learning removes the
-16-extra-build customer transaction, and verified materialization closes the
-clean-workspace output gap. BuildOpt is not yet a generally valuable
-one-command optimizer because aggregate workflow breadth still constrains the
-automatic graph. Native retention when value is unproven is correct behavior,
-not a hidden failure.
+16-extra-build customer transaction, verified materialization closes the
+clean-workspace output gap and aggregate partitioning removes the synthetic
+entrypoint-cap blocker. BuildOpt is not yet a generally valuable one-command
+optimizer because these three improvements have not been measured together on
+the unchanged public breadth set. Native retention when value is unproven is
+correct behavior, not a hidden failure.
 
 ## Next work
 
-1. **Partition aggregate workflows.** Derive bounded task/variant/ABI groups
-   for `assemble`, `classes` and `testClasses`; do not raise task-count limits
-   or add repository rules.
-2. **Repeat the same five-subject transfer.** Require lower learning cost,
+1. **Repeat the same five-subject transfer.** Use the exact same revisions and
+   commands with incremental learning, verified output materialization and
+   aggregate partitioning enabled. Require lower learning cost,
    exact outputs, native fallback and repository-specific payback; do not
    average percentages or add mechanism effects.
+2. **Decide from measured value.** Qualify only repository/workflow families
+   that beat optimized native Gradle and repay within 30 matching builds;
+   diagnose and retain native for the others.
 
 ## Evidence
 
 - [Latest automatic breadth result](../../benchmarks/results/poc-automatic-breadth-transfer-v1/README.md)
 - [Incremental ordinary-build learning result](../../benchmarks/results/poc-incremental-learning-v1/README.md)
 - [Verified output materialization result](../../benchmarks/results/poc-verified-output-materialization-v1/README.md)
+- [Aggregate workflow partition result](../../benchmarks/results/poc-aggregate-workflow-partition-v1/README.md)
 - [Machine-readable breadth summary](../../benchmarks/results/poc-automatic-breadth-transfer-v1/summary.json)
 - [Automatic breadth contract](../../specs/poc-automatic-breadth-transfer-v1.md)
 - [Published terminal Ktor/Beam result](../../benchmarks/results/poc-magic-end-to-end-value-v2/README.md)

@@ -30,7 +30,8 @@
   cache opportunity, the complete connected path measured **82.45% faster on
   Ktor** and **56.41% on Beam**. These results show that the idea can work, not
   that it works automatically for every Gradle repository.
-- **Incremental learning and verified output materialization are implemented.**
+- **Incremental learning, output materialization and aggregate partitioning
+  are implemented.**
   Seventeen useful invocations now collect one baseline and eight
   exact-bound pairs with zero measurement-only workflow runs. The bounded
   fixture retained native at 50.125 ms/0.90%, 4/8 and a 384-build payback,
@@ -38,7 +39,9 @@
   bounded POC rebuilt one changed JAR, materialized two unaffected required
   JARs in a clean workspace and reproduced the same three-output digest; a
   corrupted blob triggered full native fallback before candidate execution.
-  Aggregate-workflow partitioning is now the next breadth experiment.
+  A third bounded POC reduced a generic 66-project `assemble` proposal from 66
+  entrypoints to one, materialized 65 exact JARs and preserved all 66 outputs.
+  The unchanged five-repository transfer is now the next value experiment.
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
   Runtime Tuning, Hot State and standard Copy are retired; historical Jar,
   Patch and Edge experiments remain scoped supporting evidence.
@@ -51,6 +54,8 @@ The machine-readable incremental transaction is preserved in the
 [incremental-learning result](../../benchmarks/results/poc-incremental-learning-v1/README.md).
 The separate correctness evidence is preserved in the
 [verified-output materialization result](../../benchmarks/results/poc-verified-output-materialization-v1/README.md).
+The aggregate breadth proof is preserved in the
+[aggregate-workflow partition result](../../benchmarks/results/poc-aggregate-workflow-partition-v1/README.md).
 
 ## Historical and Mechanism-Specific Findings
 

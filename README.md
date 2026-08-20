@@ -81,8 +81,13 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > native Gradle when value is unproven. Verified output materialization now
 > lets a clean candidate rebuild changed outputs and restore unaffected
 > required outputs from exact content-addressed state; corrupt or stale state
-> falls back before the candidate starts. Aggregate-workflow partitioning is
-> now the next blocker to broad one-command value. See the
+> falls back before the candidate starts. Generic aggregate partitioning now
+> reduces a 66-entrypoint `assemble` proposal to one changed-owner entrypoint,
+> materializes the other 65 exact JARs and preserves the complete output digest
+> without raising the safety cap. This is structural correctness evidence;
+> the unchanged five-repository rerun is next to measure value. See the
+> [partition evidence](./benchmarks/results/poc-aggregate-workflow-partition-v1/README.md)
+> and the preceding
 > [automatic breadth evidence](./benchmarks/results/poc-automatic-breadth-transfer-v1/README.md).
 
 > **POC onboarding north star:** install BuildOpt, open a Gradle repository and
