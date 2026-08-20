@@ -98,30 +98,35 @@ rewritten as an economic success.
   benchmarks/results/poc-economic-prequalification-v1/summary.json
 ```
 
-### Latest automatic breadth transfer
+### Latest automatic breadth and materialization economics
 
-The [V2 automatic breadth result](./results/poc-automatic-breadth-transfer-v2/README.md)
+The [materialization-economics V2 result](./results/poc-materialization-economics-v2/README.md)
 runs the unchanged zero-manual-file path on Spring, OpenTelemetry, Kafka,
-Micronaut and Groovy with one exact BuildOpt binary after incremental learning,
-verified output materialization and aggregate partitioning were composed.
+Micronaut and Groovy with one exact BuildOpt binary after task-graph discovery,
+single-pack verified output materialization and end-to-end accounting were
+composed.
 
 | Repository | Graph | Direct timed effect | Learning / payback | Decision |
 | --- | ---: | ---: | ---: | --- |
-| Spring | 27 -> 10 | 12.71% faster, 7/8 | 88.668 s / 67 builds | Native retained. |
-| OpenTelemetry | 1,024 -> 34 | 14.97% faster, 8/8 | 201.913 s / 19 builds | Qualified. |
-| Kafka | 64 -> 3 | 54.92% faster, 8/8 | 70.808 s / 14 builds | Qualified. |
-| Micronaut | 75 -> 22 | 66.24% faster, 8/8 | 114.284 s / 8 builds | Qualified. |
-| Groovy | 37 -> 2 | 75.97% faster, 8/8 | 73.857 s / 2 builds | Qualified. |
+| Spring | 27 -> 10 | 9.97% faster, 8/8 | 4.070 s / 4 builds | Qualified. |
+| OpenTelemetry | 1,024 -> 34 | 14.93% faster, 8/8 | 7.357 s / 1 build | Qualified. |
+| Kafka | 64 -> 3 | 38.93% faster, 8/8 | 3.436 s / 2 builds | Qualified. |
+| Micronaut | 75 -> 22 | 59.54% faster, 8/8 | 7.298 s / 1 build | Qualified. |
+| Groovy | 37 -> 2 | 75.11% faster, 8/8 | 2.170 s / 1 build | Qualified. |
 
-All 85 ordinary invocations preserve exact outputs and full fallback, and all
-five candidates are faster. Four pass the unchanged qualification gates.
-Spring remains native because 7/8 and 67-build payback do not authorize reuse.
-Repository percentages are deliberately not averaged.
+All 85 ordinary invocations preserve exact outputs and full fallback. All five
+repositories pass the unchanged qualification gates and all 40 pairs improve.
+Durations include Gradle plus BuildOpt wrapper work. Repository percentages
+are deliberately not averaged.
 
 ```bash
-./dev/check-automatic-breadth-transfer-v2 \
-  benchmarks/results/poc-automatic-breadth-transfer-v2/summary.json
+./dev/check-materialization-economics-v2 \
+  benchmarks/results/poc-materialization-economics-v2/summary.json
 ```
+
+The preceding [automatic breadth V2 result](./results/poc-automatic-breadth-transfer-v2/README.md)
+is retained as immutable before-evidence; it qualified 4/5 and exposed the
+learning/materialization cost addressed by this follow-up.
 
 ### Incremental ordinary-build learning
 

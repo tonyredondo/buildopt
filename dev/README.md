@@ -623,6 +623,15 @@ time for every observation:
 ./dev/check-materialization-economics-v2 /absolute/evidence/directory/summary.json
 ```
 
+The checked terminal bundle is
+`benchmarks/results/poc-materialization-economics-v2`. It records 85 ordinary
+invocations and 40/40 positive pairs. Spring, OpenTelemetry, Kafka, Micronaut
+and Groovy save 9.97%, 14.93%, 38.93%, 59.54% and 75.11% end to end, preserve
+exact outputs and pass fallback. One-time learning cost is 2.170–7.357 seconds,
+so every row passes the unchanged 30-build payback gate in one to four matching
+builds. The runner is long and is not part of normal CI; Base CI validates the
+checked-in compact evidence with the strict checker.
+
 Reproduce the incremental-learning transaction with one exact installed
 binary and validate its checked evidence with:
 

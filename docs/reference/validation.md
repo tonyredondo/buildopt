@@ -334,6 +334,8 @@ filesystem, or cancellation behavior.
 ## POC and benchmark evidence
 
 ```bash
+./dev/check-materialization-economics-v2 \
+  benchmarks/results/poc-materialization-economics-v2/summary.json
 ./dev/check-poc-value-validation
 ./dev/check-owner-poc-lab
 ./dev/check-beta-benchmark-harness

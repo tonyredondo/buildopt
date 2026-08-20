@@ -1,0 +1,1107 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "micronaut-projects/micronaut-core",
+  "pipelineClass": "auto-assemble-860b2c20",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    "assemble"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "changed-projects",
+      "entrypoints": [
+        ":micronaut-http-client-jdk:assemble"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "required-output-1",
+      "path": "aop/build/libs/micronaut-aop-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-2",
+      "path": "aop/build/libs/micronaut-aop-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-3",
+      "path": "aop/build/libs/micronaut-aop-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-4",
+      "path": "aop/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-5",
+      "path": "benchmarks/build/libs/benchmarks-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-6",
+      "path": "buffer-netty/build/libs/micronaut-buffer-netty-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-7",
+      "path": "buffer-netty/build/libs/micronaut-buffer-netty-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-8",
+      "path": "buffer-netty/build/libs/micronaut-buffer-netty-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-9",
+      "path": "buffer-netty/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-10",
+      "path": "context-propagation/build/libs/micronaut-context-propagation-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-11",
+      "path": "context-propagation/build/libs/micronaut-context-propagation-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-12",
+      "path": "context-propagation/build/libs/micronaut-context-propagation-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-13",
+      "path": "context-propagation/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-14",
+      "path": "context-python-netty/build/libs/micronaut-context-python-netty-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-15",
+      "path": "context-python-netty/build/libs/micronaut-context-python-netty-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-16",
+      "path": "context-python-netty/build/libs/micronaut-context-python-netty-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-17",
+      "path": "context-python-netty/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-18",
+      "path": "context-python/build/libs/micronaut-context-python-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-19",
+      "path": "context-python/build/libs/micronaut-context-python-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-20",
+      "path": "context-python/build/libs/micronaut-context-python-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-21",
+      "path": "context-python/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-22",
+      "path": "context/build/libs/micronaut-context-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-23",
+      "path": "context/build/libs/micronaut-context-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-24",
+      "path": "context/build/libs/micronaut-context-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-25",
+      "path": "context/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-26",
+      "path": "core-processor/build/libs/micronaut-core-processor-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-27",
+      "path": "core-processor/build/libs/micronaut-core-processor-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-28",
+      "path": "core-processor/build/libs/micronaut-core-processor-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-29",
+      "path": "core-processor/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-30",
+      "path": "core-reactive/build/libs/micronaut-core-reactive-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-31",
+      "path": "core-reactive/build/libs/micronaut-core-reactive-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-32",
+      "path": "core-reactive/build/libs/micronaut-core-reactive-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-33",
+      "path": "core-reactive/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-34",
+      "path": "core/build/libs/micronaut-core-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-35",
+      "path": "core/build/libs/micronaut-core-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-36",
+      "path": "core/build/libs/micronaut-core-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-37",
+      "path": "core/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-38",
+      "path": "discovery-core/build/libs/micronaut-discovery-core-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-39",
+      "path": "discovery-core/build/libs/micronaut-discovery-core-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-40",
+      "path": "discovery-core/build/libs/micronaut-discovery-core-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-41",
+      "path": "discovery-core/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-42",
+      "path": "function-client/build/libs/micronaut-function-client-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-43",
+      "path": "function-client/build/libs/micronaut-function-client-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-44",
+      "path": "function-client/build/libs/micronaut-function-client-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-45",
+      "path": "function-client/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-46",
+      "path": "function-web/build/libs/micronaut-function-web-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-47",
+      "path": "function-web/build/libs/micronaut-function-web-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-48",
+      "path": "function-web/build/libs/micronaut-function-web-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-49",
+      "path": "function-web/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-50",
+      "path": "function/build/libs/micronaut-function-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-51",
+      "path": "function/build/libs/micronaut-function-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-52",
+      "path": "function/build/libs/micronaut-function-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-53",
+      "path": "function/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-54",
+      "path": "graal/build/libs/micronaut-graal-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-55",
+      "path": "graal/build/libs/micronaut-graal-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-56",
+      "path": "graal/build/libs/micronaut-graal-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-57",
+      "path": "graal/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-58",
+      "path": "http-client-core/build/libs/micronaut-http-client-core-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-59",
+      "path": "http-client-core/build/libs/micronaut-http-client-core-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-60",
+      "path": "http-client-core/build/libs/micronaut-http-client-core-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-61",
+      "path": "http-client-core/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-62",
+      "path": "http-client-jdk/build/libs/micronaut-http-client-jdk-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-63",
+      "path": "http-client-jdk/build/libs/micronaut-http-client-jdk-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-64",
+      "path": "http-client-jdk/build/libs/micronaut-http-client-jdk-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-65",
+      "path": "http-client-jdk/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-66",
+      "path": "http-client-tck/build/libs/micronaut-http-client-tck-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-67",
+      "path": "http-client-tck/build/libs/micronaut-http-client-tck-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-68",
+      "path": "http-client-tck/build/libs/micronaut-http-client-tck-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-69",
+      "path": "http-client-tck/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-70",
+      "path": "http-client/build/libs/micronaut-http-client-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-71",
+      "path": "http-client/build/libs/micronaut-http-client-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-72",
+      "path": "http-client/build/libs/micronaut-http-client-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-73",
+      "path": "http-client/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-74",
+      "path": "http-netty-http3/build/libs/micronaut-http-netty-http3-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-75",
+      "path": "http-netty-http3/build/libs/micronaut-http-netty-http3-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-76",
+      "path": "http-netty-http3/build/libs/micronaut-http-netty-http3-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-77",
+      "path": "http-netty-http3/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-78",
+      "path": "http-netty/build/libs/micronaut-http-netty-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-79",
+      "path": "http-netty/build/libs/micronaut-http-netty-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-80",
+      "path": "http-netty/build/libs/micronaut-http-netty-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-81",
+      "path": "http-netty/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-82",
+      "path": "http-server-netty/build/libs/micronaut-http-server-netty-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-83",
+      "path": "http-server-netty/build/libs/micronaut-http-server-netty-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-84",
+      "path": "http-server-netty/build/libs/micronaut-http-server-netty-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-85",
+      "path": "http-server-netty/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-86",
+      "path": "http-server-tck/build/libs/micronaut-http-server-tck-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-87",
+      "path": "http-server-tck/build/libs/micronaut-http-server-tck-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-88",
+      "path": "http-server-tck/build/libs/micronaut-http-server-tck-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-89",
+      "path": "http-server-tck/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-90",
+      "path": "http-server/build/libs/micronaut-http-server-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-91",
+      "path": "http-server/build/libs/micronaut-http-server-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-92",
+      "path": "http-server/build/libs/micronaut-http-server-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-93",
+      "path": "http-server/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-94",
+      "path": "http-tck/build/libs/micronaut-http-tck-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-95",
+      "path": "http-tck/build/libs/micronaut-http-tck-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-96",
+      "path": "http-tck/build/libs/micronaut-http-tck-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-97",
+      "path": "http-tck/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-98",
+      "path": "http-validation/build/libs/micronaut-http-validation-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-99",
+      "path": "http-validation/build/libs/micronaut-http-validation-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-100",
+      "path": "http-validation/build/libs/micronaut-http-validation-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-101",
+      "path": "http-validation/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-102",
+      "path": "http/build/libs/micronaut-http-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-103",
+      "path": "http/build/libs/micronaut-http-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-104",
+      "path": "http/build/libs/micronaut-http-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-105",
+      "path": "http/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-106",
+      "path": "inject-groovy-test/build/libs/micronaut-inject-groovy-test-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-107",
+      "path": "inject-groovy-test/build/libs/micronaut-inject-groovy-test-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-108",
+      "path": "inject-groovy-test/build/libs/micronaut-inject-groovy-test-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-109",
+      "path": "inject-groovy-test/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-110",
+      "path": "inject-groovy/build/libs/micronaut-inject-groovy-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-111",
+      "path": "inject-groovy/build/libs/micronaut-inject-groovy-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-112",
+      "path": "inject-groovy/build/libs/micronaut-inject-groovy-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-113",
+      "path": "inject-groovy/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-114",
+      "path": "inject-java-helper/build/libs/micronaut-inject-java-helper-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-115",
+      "path": "inject-java-helper2/build/libs/micronaut-inject-java-helper2-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-116",
+      "path": "inject-java-test/build/libs/micronaut-inject-java-test-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-117",
+      "path": "inject-java-test/build/libs/micronaut-inject-java-test-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-118",
+      "path": "inject-java-test/build/libs/micronaut-inject-java-test-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-119",
+      "path": "inject-java-test/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-120",
+      "path": "inject-java/build/libs/micronaut-inject-java-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-121",
+      "path": "inject-java/build/libs/micronaut-inject-java-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-122",
+      "path": "inject-java/build/libs/micronaut-inject-java-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-123",
+      "path": "inject-java/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-124",
+      "path": "inject-kotlin-test/build/libs/micronaut-inject-kotlin-test-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-125",
+      "path": "inject-kotlin-test/build/libs/micronaut-inject-kotlin-test-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-126",
+      "path": "inject-kotlin-test/build/libs/micronaut-inject-kotlin-test-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-127",
+      "path": "inject-kotlin-test/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-128",
+      "path": "inject-kotlin/build/libs/micronaut-inject-kotlin-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-129",
+      "path": "inject-kotlin/build/libs/micronaut-inject-kotlin-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-130",
+      "path": "inject-kotlin/build/libs/micronaut-inject-kotlin-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-131",
+      "path": "inject-kotlin/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-132",
+      "path": "inject-python-test/build/libs/micronaut-inject-python-test-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-133",
+      "path": "inject-python-test/build/libs/micronaut-inject-python-test-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-134",
+      "path": "inject-python-test/build/libs/micronaut-inject-python-test-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-135",
+      "path": "inject-python-test/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-136",
+      "path": "inject-python/build/libs/micronaut-inject-python-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-137",
+      "path": "inject-python/build/libs/micronaut-inject-python-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-138",
+      "path": "inject-python/build/libs/micronaut-inject-python-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-139",
+      "path": "inject-python/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-140",
+      "path": "inject-test-utils/build/libs/micronaut-inject-test-utils-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-141",
+      "path": "inject/build/libs/micronaut-inject-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-142",
+      "path": "inject/build/libs/micronaut-inject-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-143",
+      "path": "inject/build/libs/micronaut-inject-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-144",
+      "path": "inject/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-145",
+      "path": "jackson-core/build/libs/micronaut-jackson-core-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-146",
+      "path": "jackson-core/build/libs/micronaut-jackson-core-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-147",
+      "path": "jackson-core/build/libs/micronaut-jackson-core-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-148",
+      "path": "jackson-core/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-149",
+      "path": "jackson-databind/build/libs/micronaut-jackson-databind-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-150",
+      "path": "jackson-databind/build/libs/micronaut-jackson-databind-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-151",
+      "path": "jackson-databind/build/libs/micronaut-jackson-databind-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-152",
+      "path": "jackson-databind/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-153",
+      "path": "json-core/build/libs/micronaut-json-core-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-154",
+      "path": "json-core/build/libs/micronaut-json-core-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-155",
+      "path": "json-core/build/libs/micronaut-json-core-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-156",
+      "path": "json-core/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-157",
+      "path": "management/build/libs/micronaut-management-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-158",
+      "path": "management/build/libs/micronaut-management-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-159",
+      "path": "management/build/libs/micronaut-management-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-160",
+      "path": "management/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-161",
+      "path": "messaging/build/libs/micronaut-messaging-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-162",
+      "path": "messaging/build/libs/micronaut-messaging-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-163",
+      "path": "messaging/build/libs/micronaut-messaging-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-164",
+      "path": "messaging/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-165",
+      "path": "module-info-runtime/build/libs/micronaut-module-info-runtime-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-166",
+      "path": "module-info-runtime/build/libs/micronaut-module-info-runtime-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-167",
+      "path": "module-info-runtime/build/libs/micronaut-module-info-runtime-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-168",
+      "path": "module-info-runtime/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-169",
+      "path": "module-info/build/libs/micronaut-module-info-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-170",
+      "path": "module-info/build/libs/micronaut-module-info-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-171",
+      "path": "module-info/build/libs/micronaut-module-info-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-172",
+      "path": "module-info/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-173",
+      "path": "retry/build/libs/micronaut-retry-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-174",
+      "path": "retry/build/libs/micronaut-retry-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-175",
+      "path": "retry/build/libs/micronaut-retry-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-176",
+      "path": "retry/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-177",
+      "path": "router/build/libs/micronaut-router-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-178",
+      "path": "router/build/libs/micronaut-router-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-179",
+      "path": "router/build/libs/micronaut-router-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-180",
+      "path": "router/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-181",
+      "path": "runtime-osx/build/libs/micronaut-runtime-osx-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-182",
+      "path": "runtime-osx/build/libs/micronaut-runtime-osx-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-183",
+      "path": "runtime-osx/build/libs/micronaut-runtime-osx-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-184",
+      "path": "runtime-osx/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-185",
+      "path": "runtime/build/libs/micronaut-runtime-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-186",
+      "path": "runtime/build/libs/micronaut-runtime-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-187",
+      "path": "runtime/build/libs/micronaut-runtime-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-188",
+      "path": "runtime/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-189",
+      "path": "test-suite-annotation-remapper-visitor/build/libs/test-suite-annotation-remapper-visitor-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-190",
+      "path": "test-suite-annotation-remapper/build/libs/test-suite-annotation-remapper-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-191",
+      "path": "test-suite-groovy/build/libs/test-suite-groovy-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-192",
+      "path": "test-suite-helper/build/libs/test-suite-helper-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-193",
+      "path": "test-suite-http-client-jdk-ssl/build/libs/test-suite-http-client-jdk-ssl-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-194",
+      "path": "test-suite-http-client-tck-jdk/build/libs/test-suite-http-client-tck-jdk-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-195",
+      "path": "test-suite-http-client-tck-netty/build/libs/test-suite-http-client-tck-netty-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-196",
+      "path": "test-suite-http-server-tck-jdk/build/libs/test-suite-http-server-tck-jdk-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-197",
+      "path": "test-suite-http-server-tck-netty/build/libs/test-suite-http-server-tck-netty-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-198",
+      "path": "test-suite-http2-server-tck-netty/build/libs/test-suite-http2-server-tck-netty-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-199",
+      "path": "test-suite-jakarta-inject-bean-import/build/libs/test-suite-jakarta-inject-bean-import-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-200",
+      "path": "test-suite-javax-inject/build/libs/test-suite-javax-inject-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-201",
+      "path": "test-suite-kotlin-graalvm/build/libs/test-suite-kotlin-graalvm-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-202",
+      "path": "test-suite-kotlin-ksp-all-open/build/libs/test-suite-kotlin-ksp-all-open-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-203",
+      "path": "test-suite-kotlin/build/libs/test-suite-kotlin-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-204",
+      "path": "test-suite-logback-external-configuration/build/libs/test-suite-logback-external-configuration-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-205",
+      "path": "test-suite-logback-graalvm/build/libs/test-suite-logback-graalvm-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-206",
+      "path": "test-suite-logback/build/libs/test-suite-logback-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-207",
+      "path": "test-suite-netty-ssl-graalvm/build/libs/test-suite-netty-ssl-graalvm-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-208",
+      "path": "test-suite-property-source/build/libs/test-suite-property-source-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-209",
+      "path": "test-suite-python/build/libs/test-suite-python-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-210",
+      "path": "test-suite/build/libs/test-suite-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-211",
+      "path": "test-utils/build/libs/test-utils-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-212",
+      "path": "websocket/build/libs/micronaut-websocket-5.2.0-SNAPSHOT-javadoc.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-213",
+      "path": "websocket/build/libs/micronaut-websocket-5.2.0-SNAPSHOT-sources.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-214",
+      "path": "websocket/build/libs/micronaut-websocket-5.2.0-SNAPSHOT.jar",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-215",
+      "path": "websocket/build/publications/maven/pom-default.xml",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

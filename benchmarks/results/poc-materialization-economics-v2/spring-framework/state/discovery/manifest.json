@@ -1,0 +1,317 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "spring-projects/spring-framework",
+  "pipelineClass": "auto-testclasses-a85b3d0d",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    "testClasses"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "changed-projects",
+      "entrypoints": [
+        ":spring-jms:testClasses"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "required-output-1",
+      "path": "integration-tests/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-2",
+      "path": "integration-tests/build/classes/kotlin/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-3",
+      "path": "integration-tests/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-4",
+      "path": "spring-aop/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-5",
+      "path": "spring-aop/build/classes/kotlin/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-6",
+      "path": "spring-aop/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-7",
+      "path": "spring-aspects/build/classes/aspectj/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-8",
+      "path": "spring-aspects/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-9",
+      "path": "spring-beans/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-10",
+      "path": "spring-beans/build/classes/kotlin/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-11",
+      "path": "spring-beans/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-12",
+      "path": "spring-context-indexer/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-13",
+      "path": "spring-context-support/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-14",
+      "path": "spring-context-support/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-15",
+      "path": "spring-context/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-16",
+      "path": "spring-context/build/classes/kotlin/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-17",
+      "path": "spring-context/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-18",
+      "path": "spring-core-test/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-19",
+      "path": "spring-core-test/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-20",
+      "path": "spring-core/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-21",
+      "path": "spring-core/build/classes/kotlin/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-22",
+      "path": "spring-core/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-23",
+      "path": "spring-expression/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-24",
+      "path": "spring-expression/build/classes/kotlin/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-25",
+      "path": "spring-expression/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-26",
+      "path": "spring-jdbc/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-27",
+      "path": "spring-jdbc/build/classes/kotlin/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-28",
+      "path": "spring-jdbc/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-29",
+      "path": "spring-jms/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-30",
+      "path": "spring-jms/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-31",
+      "path": "spring-messaging/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-32",
+      "path": "spring-messaging/build/classes/kotlin/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-33",
+      "path": "spring-messaging/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-34",
+      "path": "spring-orm/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-35",
+      "path": "spring-orm/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-36",
+      "path": "spring-oxm/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-37",
+      "path": "spring-oxm/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-38",
+      "path": "spring-r2dbc/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-39",
+      "path": "spring-r2dbc/build/classes/kotlin/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-40",
+      "path": "spring-r2dbc/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-41",
+      "path": "spring-test/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-42",
+      "path": "spring-test/build/classes/kotlin/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-43",
+      "path": "spring-test/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-44",
+      "path": "spring-tx/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-45",
+      "path": "spring-tx/build/classes/kotlin/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-46",
+      "path": "spring-tx/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-47",
+      "path": "spring-web/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-48",
+      "path": "spring-web/build/classes/kotlin/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-49",
+      "path": "spring-web/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-50",
+      "path": "spring-webflux/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-51",
+      "path": "spring-webflux/build/classes/kotlin/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-52",
+      "path": "spring-webflux/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-53",
+      "path": "spring-webmvc/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-54",
+      "path": "spring-webmvc/build/classes/kotlin/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-55",
+      "path": "spring-webmvc/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-56",
+      "path": "spring-websocket/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-57",
+      "path": "spring-websocket/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.build-impact/generated-manifest/v1",
+  "repositoryId": "micronaut-projects/micronaut-core",
+  "pipelineClass": "auto-assemble-860b2c20",
+  "manifestDigest": "sha256:170d97b502aa8c569f98a9c1526ed7e0200814fc43ecd791ce6e305bffec08a8",
+  "graphDigest": "sha256:d1d1cf52190fd4607d58e9e8bcc879d397865ff700c2aab65d83ad0e24ffbb4a",
+  "discoveryDigest": "sha256:25ebda63ae2619ffc2ce2186923fc69ba26357a786cce074a7ec62166884bacc",
+  "adapterVersion": "gradle-runtime-v1",
+  "gradleVersion": "9.6.1",
+  "complete": true,
+  "fallbackReasons": []
+}

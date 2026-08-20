@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v4",
+  "profileVersion": 4,
+  "profileId": "qualified-structural-build-impact",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "apache/groovy",
+  "pipelineClass": "auto-classes-8c594532",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": ".buildopt/optimize/materialization-economics-v2/portfolio/profiles/f43a4b9d3f712aaa8b4e2edc0febc8a8a8c6994e9aff7181bee4545e0cce4730/manifest.json",
+    "graph": ".buildopt/optimize/materialization-economics-v2/portfolio/profiles/f43a4b9d3f712aaa8b4e2edc0febc8a8a8c6994e9aff7181bee4545e0cce4730/graph.json",
+    "generatedManifest": ".buildopt/optimize/materialization-economics-v2/portfolio/profiles/f43a4b9d3f712aaa8b4e2edc0febc8a8a8c6994e9aff7181bee4545e0cce4730/generated-manifest.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--build-cache",
+    "--parallel",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-scan",
+    "--max-workers=12"
+  ],
+  "preconditions": [
+    {
+      "type": "FILE_SHA256",
+      "path": ".buildopt/optimize/materialization-economics-v2/portfolio/profiles/f43a4b9d3f712aaa8b4e2edc0febc8a8a8c6994e9aff7181bee4545e0cce4730/manifest.json",
+      "sha256": "820d30560f42dcba48ad21df7eb66da8c296e30f26fa4eb644646012d1072d4e"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": ".buildopt/optimize/materialization-economics-v2/portfolio/profiles/f43a4b9d3f712aaa8b4e2edc0febc8a8a8c6994e9aff7181bee4545e0cce4730/graph.json",
+      "sha256": "0b5c6562a7e8b158a6551227fc9bf9e9039deb03577ca2e07f7c7dcbcc69aa9b"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": ".buildopt/optimize/materialization-economics-v2/portfolio/profiles/f43a4b9d3f712aaa8b4e2edc0febc8a8a8c6994e9aff7181bee4545e0cce4730/generated-manifest.json",
+      "sha256": "8986dd57dc5562f4cdaa2a748694628b2e143070c3c7e48cb8580df26ee47371"
+    }
+  ],
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "f00b8b052fbf7afe6e588325a37f706be353bf9b4da20e22cafdcdb6ba91f500",
+    "repositoryRevision": "9dbf367a956011cfedb6e3154e4c7f8e092f4da9",
+    "pairs": 8,
+    "meanSavedMs": 46456.375,
+    "reductionRatio": 0.7510574189076403,
+    "interval95SavedMs": [
+      41734.875,
+      50551.75
+    ]
+  }
+}

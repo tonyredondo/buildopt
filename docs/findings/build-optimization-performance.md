@@ -6,44 +6,46 @@
   exact binary ran 85 ordinary `buildopt optimize` invocations with zero
   target-repository BuildOpt files on Spring, OpenTelemetry, Kafka, Micronaut
   and Groovy. All five candidates beat optimized native Gradle, preserve exact
-  outputs and full fallback, and report zero product failures. Four pass the
+  outputs and full fallback, report zero product failures and pass the
   unchanged 8/8 and 30-build payback gates.
 - **The improvements are repository-specific and substantial.** Spring reduces
-  27 to 10 projects and saves **12.71%**; OpenTelemetry 1,024 to 34 and
-  **14.97%**; Kafka 64 to 3 and **54.92%**; Micronaut 75 to 22 and **66.24%**;
-  Groovy 37 to 2 and **75.97%**. These percentages are not averaged.
-- **Incremental learning changes the economics.** V1 needed 101–710 matching
-  builds and qualified 0/5. V2 collects the same eight pairs across useful
-  invocations and projects 19, 14, 8 and 2 builds to repay OpenTelemetry,
-  Kafka, Micronaut and Groovy. Spring falls from 103 to 67 but still retains
-  native because only 7/8 pairs improve and payback exceeds 30.
+  27 to 10 projects and saves **9.97%**; OpenTelemetry 1,024 to 34 and
+  **14.93%**; Kafka 64 to 3 and **38.93%**; Micronaut 75 to 22 and **59.54%**;
+  Groovy 37 to 2 and **75.11%**. All 40 pairs improve. These percentages are
+  not averaged.
+- **One-time learning cost now reflects customer economics.** Discovery shares
+  the first useful full-graph build, capture uses one manifest-bound pack and
+  repeated wrapper verification is not charged as a new learning investment.
+  The measured one-time cost is 2.170–7.357 seconds and projected payback is
+  one to four matching builds. Spring moves from 7/8 and 67-build native
+  retention to 8/8 and four-build qualification without moving a gate.
 - **Complete workflow outputs are now composed safely.** Verified materialization
   and aggregate partitioning let the candidate rebuild changed owners while
   restoring exact unaffected outputs. This closes Micronaut's former
   73-entrypoint blocker and sharply narrows Kafka/Groovy without omitting
   required deliverables.
-- **A generic materialization bottleneck was fixed, not benchmarked around.**
-  Per-file durability added about 629 seconds to the first Spring diagnostic.
-  Batched directory durability after atomic writes reduced post-fix candidate
-  overhead to about 2.7 seconds while preserving digest rejection and native
-  fallback.
+- **The materialization path is both attributed and reduced.** A single pack,
+  bounded parallel hashing/restoration and direct creation of absent verified
+  outputs replace per-file durable blobs and repeated directory sync. Capturing
+  14,445 Spring files/42.3 MB now costs 1.625 seconds; every pack entry remains
+  digest-bound and missing/corrupt state still falls back before qualification.
 - **Prior positive evidence still matters.** The public zero-manual-file POC
   qualified Ktor `jvmJar` at **79.82% faster** with 26-build payback and Beam
   `classes` at **61.65% faster** with 28-build payback. Under equal central
   cache opportunity, the complete connected path measured **82.45% faster on
   Ktor** and **56.41% on Beam**. These results show that the idea can work, not
   that it works automatically for every Gradle repository.
-- **The next question is lifetime value, not basic feasibility.** The four
+- **The next question is lifetime value, not basic feasibility.** The five
   qualified profiles must be replayed over compatible public descendant
-  changes with selection, invalidation and fallback cost included. Spring's
-  remaining 88.668-second learning cost should be attributed and reduced
-  generically rather than weakening its gate.
+  changes with selection, invalidation and fallback cost included. Calibration
+  payback is now short, but it does not prove that each structural profile
+  remains useful across enough future commits.
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
   Runtime Tuning, Hot State and standard Copy are retired; historical Jar,
   Patch and Edge experiments remain scoped supporting evidence.
 
 See the [current one-pager](./buildopt-poc-handoff.md) and the
-[automatic breadth result](../../benchmarks/results/poc-automatic-breadth-transfer-v2/README.md)
+[materialization-economics result](../../benchmarks/results/poc-materialization-economics-v2/README.md)
 for the decision-ready summary and raw evidence.
 
 The machine-readable incremental transaction is preserved in the

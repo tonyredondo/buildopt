@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "buildopt.poc/qualified-profile/v4",
+  "profileVersion": 4,
+  "profileId": "qualified-structural-build-impact",
+  "ownership": "REPOSITORY_COMMITTED",
+  "claimScope": "DECLARED_OUTPUTS_ONLY",
+  "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+  "pipelineClass": "auto-instrumentation-spring-spring-batch-3.0--0073aaec",
+  "fallback": "NATIVE_FULL_GRAPH",
+  "impact": {
+    "manifest": ".buildopt/optimize/materialization-economics-v2/portfolio/profiles/410a7755d052c4be8de02abb1741d95ddf7648fa257882e629714aee72db536e/manifest.json",
+    "graph": ".buildopt/optimize/materialization-economics-v2/portfolio/profiles/410a7755d052c4be8de02abb1741d95ddf7648fa257882e629714aee72db536e/graph.json",
+    "generatedManifest": ".buildopt/optimize/materialization-economics-v2/portfolio/profiles/410a7755d052c4be8de02abb1741d95ddf7648fa257882e629714aee72db536e/generated-manifest.json"
+  },
+  "mechanisms": {
+    "buildImpact": true,
+    "standardJarAdapter": false,
+    "safeCache": false,
+    "runtimeTuning": false,
+    "hotState": false,
+    "standardCopyAdapter": false,
+    "sharedEdgeCache": false
+  },
+  "gradleOptions": [
+    "--daemon",
+    "--build-cache",
+    "--parallel",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-scan",
+    "--max-workers=12"
+  ],
+  "preconditions": [
+    {
+      "type": "FILE_SHA256",
+      "path": ".buildopt/optimize/materialization-economics-v2/portfolio/profiles/410a7755d052c4be8de02abb1741d95ddf7648fa257882e629714aee72db536e/manifest.json",
+      "sha256": "a4f67662b7a22f26ad91629a4304bc430cf5a41ede1ae73c6a0d705409e49380"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": ".buildopt/optimize/materialization-economics-v2/portfolio/profiles/410a7755d052c4be8de02abb1741d95ddf7648fa257882e629714aee72db536e/graph.json",
+      "sha256": "0c75c5db9ec9ac0c0655174df5a82fa5a33616bf573786d7efffe5fbdf68c9ae"
+    },
+    {
+      "type": "FILE_SHA256",
+      "path": ".buildopt/optimize/materialization-economics-v2/portfolio/profiles/410a7755d052c4be8de02abb1741d95ddf7648fa257882e629714aee72db536e/generated-manifest.json",
+      "sha256": "dbf0d2d44a1e94ad621fd42015aed98acea9d2c2047e2bdbc74acd5efe96bce2"
+    }
+  ],
+  "qualification": {
+    "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+    "sha256": "572f1414059e44651b6ba8a50f6eb7cb6a42f6fa41a5c9da356fd5a0c3828f84",
+    "repositoryRevision": "1c100c2f9ac5127e7514f16320cc8144f79e5832",
+    "pairs": 8,
+    "meanSavedMs": 11327.75,
+    "reductionRatio": 0.14932195290744615,
+    "interval95SavedMs": [
+      8866,
+      14534.75
+    ]
+  }
+}

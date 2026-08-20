@@ -274,13 +274,13 @@ calibration and reduces the observed fallback penalty from 220.761 to 13.896
 seconds. The original Jetty qualification still needs 31 matching replays and
 does not pay back in the observed window.
 
-The V2 automatic breadth transfer is complete. The unchanged zero-manual-file
-command ran 85 ordinary invocations on Spring, OpenTelemetry, Kafka, Micronaut
-and Groovy with one exact binary. All five candidates beat optimized native
-Gradle with exact outputs and zero product failures. OpenTelemetry, Kafka,
-Micronaut and Groovy qualify with 8/8 positive pairs and 19-, 14-, 8- and
-2-build payback. Spring saves 12.71% with a positive interval but remains
-native at 7/8 and 67-build payback.
+The materialization-economics V2 transfer is complete. The unchanged
+zero-manual-file command ran 85 ordinary invocations on Spring, OpenTelemetry,
+Kafka, Micronaut and Groovy with one exact binary. All five candidates beat
+optimized native Gradle with exact outputs, full fallback, zero product
+failures, 8/8 positive pairs and one- to four-build payback. End-to-end savings
+range from Spring's 9.97% to Groovy's 75.11%; repository percentages are not
+averaged.
 
 The completed POC sequence removed the observed economic blockers without
 weakening correctness or adding repository-specific rules:
@@ -296,16 +296,20 @@ weakening correctness or adding repository-specific rules:
 4. **Completed:** repeat the same five repositories, revisions and commands
    with the same exact-output, fallback, statistical and 30-build payback
    gates; 4/5 qualify and 5/5 improve.
+5. **Completed:** derive exact task-graph closure, share discovery with the
+   first useful build, store verified outputs in one pack and account for
+   end-to-end wall time; 5/5 qualify and 40/40 pairs improve.
 
 The next onboarding work is evidence-driven rather than another broad feature:
 
-1. reduce Spring's remaining learning/materialization cost generically;
-2. replay the four qualified profiles on compatible public descendant changes
+1. replay the five qualified profiles on compatible public descendant changes
    and measure cumulative value including selection, invalidation and fallback;
-3. expose progress, expected payback and native-retained reasons directly in
+2. expose progress, expected payback and native-retained reasons directly in
    the one-command experience.
+3. extend the unchanged generic contracts to additional public change families
+   only after lifetime evidence identifies a real coverage gap.
 
 The retained dataset and its interpretation are in
-[`poc-automatic-breadth-transfer-v2`](../../benchmarks/results/poc-automatic-breadth-transfer-v2/README.md).
+[`poc-materialization-economics-v2`](../../benchmarks/results/poc-materialization-economics-v2/README.md).
 No step may add repository-name rules, average repository percentages, weaken
 correctness gates or borrow another profile's lifetime.

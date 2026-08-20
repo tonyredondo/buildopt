@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.build-impact/generated-manifest/v1",
+  "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+  "pipelineClass": "auto-instrumentation-spring-spring-batch-3.0--0073aaec",
+  "manifestDigest": "sha256:45f67f28f1b6cc70e6084c0469f2e230354186d88d7bdbd6f00dd142536d551e",
+  "graphDigest": "sha256:b68c0e09fcfb06ba13245d904e1a1449c26def10349e2a5846a4b34b448c91e8",
+  "discoveryDigest": "sha256:82c19b54eec5a8a7a2db2e107dc8c74f79b848a2176bfd88e5e99c1eed301bc6",
+  "adapterVersion": "gradle-runtime-v1",
+  "gradleVersion": "9.6.1",
+  "complete": true,
+  "fallbackReasons": []
+}

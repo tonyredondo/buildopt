@@ -70,18 +70,17 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > remains historical diagnostic evidence rather than being rewritten.
 
 > **Latest generalization result:** the unchanged zero-manual-file command now
-> combines incremental learning, exact output materialization and aggregate
-> partitioning on Spring, OpenTelemetry, Kafka, Micronaut and Groovy with one
-> binary and zero product failures. All five candidates beat optimized native
-> Gradle while reproducing exact outputs: Spring 12.71%, OpenTelemetry 14.97%,
-> Kafka 54.92%, Micronaut 66.24% and Groovy 75.97%. OpenTelemetry, Kafka,
-> Micronaut and Groovy pass 8/8 pairs, positive intervals and the unchanged
-> 30-build payback gate. Spring improves 7/8 with a positive interval but needs
-> 67 matching builds to repay learning, so it correctly remains native. The
-> result is **4/5 automatically qualified and 5/5 faster**, without repository
-> rules or weaker gates. See the
-> [V2 automatic breadth evidence](./benchmarks/results/poc-automatic-breadth-transfer-v2/README.md);
-> V1 remains the immutable before-result.
+> combines task-graph discovery, exact output materialization and incremental
+> learning on Spring, OpenTelemetry, Kafka, Micronaut and Groovy with one exact
+> binary and zero product failures. All five candidates pass 8/8 pairs,
+> positive intervals, exact-output fallback and the unchanged 30-build payback
+> gate: Spring **9.97%**, OpenTelemetry **14.93%**, Kafka **38.93%**, Micronaut
+> **59.54%** and Groovy **75.11%** faster end to end. Spring's learning cost
+> falls from 88.668 seconds/67 builds to 4.070 seconds/four builds without
+> lowering a threshold. The result is **5/5 automatically qualified and 40/40
+> positive pairs**, without repository rules or hidden Gradle-only timing. See
+> the [materialization-economics evidence](./benchmarks/results/poc-materialization-economics-v2/README.md);
+> the preceding V2 breadth bundle remains immutable before-evidence.
 
 > **POC onboarding north star:** install BuildOpt, open a Gradle repository and
 > run `buildopt optimize build`. The command now has a stable state/result,

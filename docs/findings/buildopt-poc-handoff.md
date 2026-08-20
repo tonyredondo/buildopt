@@ -29,12 +29,12 @@ optimized native Gradle and makes no performance claim.
 
 | Component | What it does | Current POC conclusion |
 | --- | --- | --- |
-| **Structural Build Impact** | Selects only producers needed by the exact change and required workflow outputs. | Primary accelerator; the automatic path is faster on 5/5 public repositories and qualifies on 4/5. |
+| **Structural Build Impact** | Selects only producers needed by the exact change and required workflow outputs. | Primary accelerator; the automatic path qualifies on all five public repositories under unchanged gates. |
 | **Automatic discovery** | Derives Git ownership, Gradle output relationships and a candidate without repository-name rules. | Complete on all five breadth subjects and on `classes`, `testClasses` and `assemble`. |
-| **Incremental learning and value gate** | Collects one control or candidate observation per useful invocation and checks outputs, interval, tail, fallback and payback. | Adds zero measurement-only workflows; qualifies four repositories and safely retains Spring. |
-| **Verified output materialization** | Restores exact unaffected outputs before their producers are omitted from a clean workspace. | Composed on all five public builds; corruption or missing state falls back to native before accepting output. |
+| **Incremental learning and value gate** | Collects one control or candidate observation per useful invocation and checks outputs, interval, tail, fallback and payback. | Adds zero measurement-only workflows; one-time cost now repays in one to four matching builds across all five subjects. |
+| **Verified output materialization** | Restores exact unaffected outputs before their producers are omitted from a clean workspace. | One manifest-bound pack plus bounded parallel restore qualifies all five builds; corrupt or missing state still falls back before accepting output. |
 | **Aggregate workflow partition** | Splits broad lifecycle workflows into changed-owner work plus exact revision-bound unaffected outputs. | Kafka selects 3/64 projects, Micronaut 22/75 and Groovy 2/37 while preserving complete outputs. |
-| **Profile portfolio / optional central state** | Reuses qualified evidence under exact repository, Wrapper, workflow, graph, output and executable bindings. | Functional locally and across machines; lifetime value after the latest breadth qualification is the next measurement. |
+| **Profile portfolio / optional central state** | Reuses qualified evidence under exact repository, Wrapper, workflow, graph, output and executable bindings. | Functional locally and across machines; lifetime value for the five newly qualified profiles is the next measurement. |
 | **Gradle-compatible cache** | Reuses verified task outputs locally or through optional HTTP/HTTPS storage. | Supporting infrastructure near native-cache parity, not the principal speed claim. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource/state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
 
@@ -46,21 +46,22 @@ full-graph fallback remained valid and product-attributable failures were zero.
 
 | Repository / workflow | Graph | Native -> candidate | Mean saving | 95% saving interval | Pairs | Learning / payback | Decision |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| Spring `testClasses` | 27 -> 10 | 10.456 -> 9.127 s | **1.329 s / 12.71%** | +0.282..+2.572 s | 7/8 | 88.668 s / 67 builds | Native retained. |
-| OpenTelemetry Spring family | 1,024 -> 34 | 74.529 -> 63.376 s | **11.154 s / 14.97%** | +7.903..+14.223 s | 8/8 | 201.913 s / 19 builds | Qualified. |
-| Kafka `testClasses` | 64 -> 3 | 9.774 -> 4.406 s | **5.368 s / 54.92%** | +3.513..+7.337 s | 8/8 | 70.808 s / 14 builds | Qualified. |
-| Micronaut `assemble` | 75 -> 22 | 23.108 -> 7.802 s | **15.306 s / 66.24%** | +14.245..+16.498 s | 8/8 | 114.284 s / 8 builds | Qualified. |
-| Groovy `classes` | 37 -> 2 | 65.652 -> 15.776 s | **49.876 s / 75.97%** | +45.842..+53.680 s | 8/8 | 73.857 s / 2 builds | Qualified. |
+| Spring `testClasses` | 27 -> 10 | 11.062 -> 9.960 s | **1.102 s / 9.97%** | +0.369..+2.166 s | 8/8 | 4.070 s / 4 builds | Qualified. |
+| OpenTelemetry Spring family | 1,024 -> 34 | 75.861 -> 64.534 s | **11.328 s / 14.93%** | +8.866..+14.535 s | 8/8 | 7.357 s / 1 build | Qualified. |
+| Kafka `testClasses` | 64 -> 3 | 8.246 -> 5.036 s | **3.210 s / 38.93%** | +2.727..+3.738 s | 8/8 | 3.436 s / 2 builds | Qualified. |
+| Micronaut `assemble` | 75 -> 22 | 23.997 -> 9.710 s | **14.287 s / 59.54%** | +12.724..+15.903 s | 8/8 | 7.298 s / 1 build | Qualified. |
+| Groovy `classes` | 37 -> 2 | 61.855 -> 15.398 s | **46.456 s / 75.11%** | +41.735..+50.552 s | 8/8 | 2.170 s / 1 build | Qualified. |
 
-The headline is **4/5 automatically qualified and 5/5 faster**. Spring is not
-promoted despite a positive mean and interval because only 7/8 pairs improve
-and learning would need 67 matching builds to repay, above the unchanged limit
-of 30. This is expected fail-open behavior, not a hidden failure.
+The headline is **5/5 automatically qualified and 40/40 positive pairs**.
+Every duration is complete installed wall time: Gradle plus BuildOpt discovery,
+materialization, verification and remaining wrapper work. Spring now clears the
+same thresholds at four-build payback; no exception or weaker gate was added.
 
-The run also exposed and fixed a generic small-file bottleneck. Per-file
-durability made Spring materialization add about 629 seconds. Batching directory
-durability after atomic writes reduced the first post-fix candidate overhead to
-about 2.7 seconds while preserving content hashes and native fallback.
+The run replaces per-file durable blobs with one manifest-bound pack, bounded
+parallel hashing/restoration and direct creation of absent verified outputs.
+Capturing Spring's 14,445 files/42.3 MB costs 1.625 seconds; its entire one-time
+learning overhead is 4.070 seconds. Content and entry hashes remain mandatory,
+and unavailable or corrupt state retains native Gradle.
 
 Repository percentages are not averaged and mechanism percentages are not
 added. The evidence was captured on the 12-CPU development host with a common
@@ -74,31 +75,31 @@ added. The evidence was captured on the 12-CPU development host with a common
   complete customer workflow; the candidate does not win by omitting required
   deliverables.
 - Incremental learning turns the former synchronous 16-build transaction into
-  useful ordinary invocations and reduces payback from 101–710 builds in V1 to
-  2–19 for four qualified repositories.
-- The gate remains selective: Spring improves but stays native when cumulative
-  economics are not good enough.
+  useful ordinary invocations. Shared discovery and exact one-time accounting
+  reduce projected payback from 19–67 builds in the preceding V2 result to
+  1–4 builds without removing any measured customer invocation.
+- Generic task-graph closure avoids executing unrelated tasks inside selected
+  projects while exact materialization preserves the complete workflow output.
 
 It does not yet prove that every change family will match a qualified profile
-often enough to produce cumulative customer value, nor that Spring's remaining
-learning cost is irreducible.
+often enough to produce cumulative customer value. Qualification economics and
+cross-commit lifetime are separate questions.
 
 ## Next steps
 
-1. Attribute and reduce Spring's remaining learning/materialization cost with
-   generic content reuse; preserve exact hashes, clean-workspace semantics and
-   native fallback.
-2. Replay the four qualified profiles over compatible public descendant
+1. Replay the five qualified profiles over compatible public descendant
    changes and measure cumulative savings, selection cost, invalidation and
    fallback rather than assuming calibration value equals lifetime value.
-3. Surface learning progress, expected payback and native-retained reasons in
+2. Surface learning progress, expected payback and native-retained reasons in
    the one-command experience so users do not need internal JSON.
+3. Retain generic task-graph and output contracts while adding new public
+   change families; do not infer universal transfer from these five rows.
 
 ## Evidence
 
-- [Latest five-repository result](../../benchmarks/results/poc-automatic-breadth-transfer-v2/README.md)
-- [Machine-readable summary](../../benchmarks/results/poc-automatic-breadth-transfer-v2/summary.json)
-- [V2 protocol](../../specs/poc-automatic-breadth-transfer-v2.md)
+- [Latest five-repository result](../../benchmarks/results/poc-materialization-economics-v2/README.md)
+- [Machine-readable summary](../../benchmarks/results/poc-materialization-economics-v2/summary.json)
+- [V2 protocol](../../specs/poc-materialization-economics-v2.md)
 - [Detailed performance findings](./build-optimization-performance.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [One-command roadmap](../plans/one-command-onboarding-roadmap.md)

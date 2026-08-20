@@ -188,6 +188,14 @@ records zero product failures, exact outputs and faster candidates on all five
 repositories; OpenTelemetry, Kafka, Micronaut and Groovy qualify while Spring
 safely retains native under the unchanged gates.
 
+The terminal [materialization-economics V2 evidence](../benchmarks/results/poc-materialization-economics-v2/README.md)
+keeps those repositories and gates but measures complete Gradle-plus-wrapper
+wall time, derives candidate tasks from the observed task graph and replaces
+per-file durable state with one manifest-bound pack. All five rows qualify,
+all 40 pairs improve, exact outputs and fallback pass, and one-time learning
+cost repays in one to four matching builds. The earlier V2 bundle remains
+immutable before-evidence.
+
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation
 per useful invocation. Its fixture completes eight pairs with zero
