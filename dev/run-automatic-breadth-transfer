@@ -177,7 +177,7 @@ buildopt_clean_subject_outputs() {
             "${buildopt_repository}" >&2
         return 1
     }
-    git -C "${buildopt_repository}" clean -qfdX -e .buildopt/
+    git -C "${buildopt_repository}" clean -qfdX -e '!.buildopt/'
 }
 
 buildopt_capture_subject() {
