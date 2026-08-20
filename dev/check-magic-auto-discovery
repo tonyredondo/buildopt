@@ -133,10 +133,16 @@ buildopt_check_supported() {
         .discovery.source == "LOCAL_UPSTREAM" and
         .discovery.changedPathCount == 1 and
         .discovery.entrypoints == [$entrypoint] and
-        (.discovery.requiredOutputs | length) >= 1 and
-        all(.discovery.requiredOutputs[]; startswith($expected)) and
+        (.discovery.requiredOutputs | length) >= 2 and
+        (.discovery.candidateOutputs | length) >= 1 and
+        all(.discovery.candidateOutputs[]; startswith($expected)) and
+        any(.discovery.requiredOutputs[]; startswith("service-b/")) and
         .discovery.candidateEntrypoints == [(":service-a:" + $entrypoint)] and
         .discovery.graph == {totalProjects: 2, selectedProjects: 1, omittedProjects: 1} and
+        .discovery.materialization.status == "CAPTURED" and
+        .discovery.materialization.reason == "VERIFIED_UNAFFECTED_OUTPUTS_CAPTURED" and
+        .discovery.materialization.fileCount >= 1 and
+        all(.discovery.materialization.patterns[]; startswith("service-b/")) and
         (.discovery.generatedFiles | length) == 7 and
         .discovery.reviewRequired == true and
         .discovery.productionAuthorized == false and
