@@ -6,9 +6,18 @@ if (-not (Test-Path -LiteralPath $ReceiptPath -PathType Leaf)) { throw 'BuildOpt
 $Receipt = Get-Content -Raw $ReceiptPath | ConvertFrom-Json
 if ($Receipt.schemaVersion -ne 'buildopt.install/v1') { throw 'BuildOpt installation receipt is invalid' }
 $Allowed = @('bin/buildopt.exe', 'bin/buildopt-impact.exe', 'bin/buildopt-server.exe', 'bin/buildopt-edge.exe', 'bin/buildopt-service.exe', 'share/buildopt/buildopt.init.gradle', 'share/buildopt/buildopt-gradle-plugin.jar', 'share/buildopt/buildopt-jvm-agent.jar')
+function Remove-BuildOptFile {
+    param([Parameter(Mandatory = $true)][string]$Path)
+    for ($Attempt = 1; $Attempt -le 10; $Attempt++) {
+        Remove-Item -LiteralPath $Path -Force -ErrorAction SilentlyContinue
+        if (-not (Test-Path -LiteralPath $Path)) { return }
+        Start-Sleep -Milliseconds 250
+    }
+    throw "BuildOpt uninstall could not remove $Path after bounded retries"
+}
 foreach ($Relative in $Receipt.files) {
     if ($Allowed -notcontains $Relative) { throw "Unsafe receipt entry: $Relative" }
-    Remove-Item -Force -ErrorAction SilentlyContinue (Join-Path $Prefix ($Relative -replace '/', '\'))
+    Remove-BuildOptFile (Join-Path $Prefix ($Relative -replace '/', '\'))
 }
 if ($Receipt.pathUpdated) {
     $Bin = Join-Path $Prefix 'bin'
@@ -16,5 +25,5 @@ if ($Receipt.pathUpdated) {
     $Parts = @($Current -split ';' | Where-Object { $_ -and $_ -ne $Bin })
     [Environment]::SetEnvironmentVariable('Path', ($Parts -join ';'), 'User')
 }
-Remove-Item -Force $ReceiptPath
+Remove-BuildOptFile $ReceiptPath
 Write-Output "BuildOpt removed from $Prefix"
