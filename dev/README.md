@@ -574,6 +574,18 @@ row. Partial directories are resumable by repository key. It stops before a
 subject when less than 8 GiB is free and never turns a native-retained result
 into a qualification.
 
+Validate the retained five-repository result, raw/state hashes, exact outputs,
+alternating pairs, fallback, means and break-even calculations with:
+
+```bash
+./dev/check-automatic-breadth-transfer
+```
+
+The current result has zero product failures and zero manual target-repository
+files. Four candidates are timed but need 101–710 matching builds to repay;
+Micronaut retains native before calibration because its aggregate workflow
+produces 73 candidate entrypoints.
+
 ## CI orchestration validation
 
 Validate the `F0-030` authoritative-job, protected validation queue,

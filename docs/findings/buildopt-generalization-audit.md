@@ -2,164 +2,102 @@
 
 ## Audit question
 
-Can the retained BuildOpt POC mechanisms be applied to an arbitrary Gradle
-repository without repository-name rules, while preserving native Gradle as
-the safe and performance fallback?
+Can the retained BuildOpt POC run unchanged on an arbitrary Gradle repository,
+find a safe optimization and beat optimized native Gradle without
+repository-name rules?
 
-The answer is **yes for the generic structural evaluation path, with explicit
-repository-owned semantic inputs and review; not yet as zero-input automatic
-activation**. This distinction is central. Generic implementation means that
-BuildOpt uses the same discovery, measurement and decision algorithms for
-every repository. It does not mean that BuildOpt can invent which command and
-outputs represent success for an unknown customer build.
+The current answer is: **the generic path runs and fails closed, but it does
+not yet deliver broad automatic economic value**. The latest transfer observes
+five different public repositories with zero manual BuildOpt files and zero
+product failures. It discovers four complete candidates, yet none repays the
+synchronous learning cost within 30 matching builds.
 
 ## What is generalized today
 
-| Layer | Generic behavior | Repository-owned input | Evidence and boundary |
-| --- | --- | --- | --- |
-| Installation and launcher | Native packages and `buildopt gradle` locate the Wrapper, preserve argv/process behavior and support Linux, macOS and Windows. | The repository's Wrapper and requested Gradle command. | External Kotlin and Groovy pilots pass onboarding; platform CI covers native lifecycle. |
-| Safe Cache / L1 | Cache scope is derived from repository, Wrapper and platform; unsafe or unavailable state falls back to native execution. | None beyond the repository and Wrapper already being executed. | At parity with a warm native Gradle cache, so it is a safety/onboarding feature rather than a retained accelerator claim. |
-| Output-contract preflight | The exact owner workflow runs once before proposal discovery; Gradle-declared task outputs are reduced to non-empty, repository-contained candidates with one most-specific project owner per file. Missing, empty, symlinked or ambiguous declarations retain native Gradle. | Repository identity, original entrypoints and optional required-output globs to confirm. | The same generic code caught Hibernate's wrong `build/libs` declaration, exposed its Gradle-owned `target/libs` JARs and stopped before warm-up or timing. |
-| Structural proposal | Typed Gradle discovery maps the original entrypoints and exact changed paths to project owners, constructs a smaller candidate and rejects incomplete or ambiguous graphs. | Repository identity, original entrypoints, exact Git change and validated required output globs. | The same code reproduced five clean-CI proposals, discovered the unseen Hibernate 29-to-1 candidate and independently derived Ktor's 133-to-3 JVM JAR candidate twice. No public-repository names appear in the customer execution decision. |
-| Structural measurement | Independent source trees, Gradle homes and cache seeds compare optimized native Gradle with the candidate, bind source/tool/profile hashes, compare output bytes and prove full-graph fallback. | Accepted proposal and its declared output contract. | Spring, OpenTelemetry, Kafka, Micronaut, Groovy, Hibernate and Ktor use the same installed measure/evaluate path. |
-| Structural decision | Fixed minimum saving, reduction, uncertainty, repeatability, output, failure and fallback gates determine `REVIEW_STRUCTURAL_PROFILE` or native fallback. | Explicit human review remains required. | Hibernate version 5 qualifies at 5.88%, 8/8 reciprocal blocks; Spring remains native at 7/8 despite a positive mean. |
-| Reviewed task optimization | Exact task adapters and Patch Autopilot can repair one understood cacheability contract with signed, reversible evidence. | A reviewed task type/recipe and its exact validation boundary. | Strong Kotlin/Groovy custom-task evidence exists, but this is not generalized to arbitrary task implementations. |
-| Shared / Edge Cache | Implements Gradle remote-cache protocol, authenticated commit authority, locality and safe miss/failure behavior. | Operator endpoint, credentials and a workload/network profile. | Locality has bounded synthetic and Kafka evidence; it is not part of the uniform structural claim. |
-| Evidence and CI | Review-only Action and local CLI consume the same generated `.buildopt/profile.json`, derive the exact Git change and can replay proposals on clean runners without activating a profile. | Explicit confirmation of the generated owner input. | Synthetic drift returns native with concrete output candidates; five-of-five clean-CI replay remains compatible with zero graph drift and zero active profiles. |
+| Layer | Generic behavior | Current boundary |
+| --- | --- | --- |
+| Installation / launcher | Native packages locate the Wrapper and preserve argv, exit and signal behavior. | Linux, macOS and Windows lifecycle is tested; comparable wall-time breadth evidence is Linux. |
+| Change and workflow discovery | Derives provider/local revisions, exact changed paths and requested Gradle entrypoints. | Global/build-logic ambiguity retains native. |
+| Output discovery | Reads Gradle-owned outputs and rejects missing, external, symlinked or ambiguous declarations. | A root aggregate workflow can legitimately declare a very broad output surface. |
+| Structural proposal | Uses typed project/task relationships and changed-project ownership; no repository-name branch is allowed. | Unknown relationships, excessive candidate task sets and no reduction retain native. |
+| Measurement / decision | Alternating native/candidate observations verify outputs, execution shape, interval, fallback and payback. | The current synchronous eight-pair method can cost more than the optimization can repay. |
+| Portfolio / central state | Reuses exact compatible evidence across checkouts or machines. | Reuse cannot infer lifetime or value from another profile/repository. |
+| Gradle-compatible cache | Supports local and optional HTTP/HTTPS reuse with safe miss/outage behavior. | Cache is supporting infrastructure; native-cache parity is not a speed advantage. |
 
-Runtime Tuning, Hot State and the standard `Copy` adapter are intentionally not
-generalized because end-to-end evidence was neutral, unstable or regressive.
-The standard `Jar` adapter is retained only inside its exact qualified
-OpenTelemetry composition. Generic availability is not the same as generic
-value, so unqualified mechanisms remain disabled.
+Runtime Tuning, Hot State and standard Copy remain retired. The standard `Jar`
+adapter and Patch Autopilot retain only their exact qualified scopes.
 
-## Supported applicability
+## Latest unchanged breadth evidence
 
-Any Gradle repository can run proposal discovery and receive either a
-reviewable candidate or an explicit native verdict. That is different from
-saying every Gradle workflow is currently optimizable. The retained structural
-path supports conventional lifecycle entrypoints whose complete project and
-task relationships can be discovered. It also supports multiple declared
-entrypoints while preserving all of them as fallback.
-
-The current POC deliberately rejects custom executable workflows, Gradle
-`Test` execution, external included builds, incomplete or unknown
-relationships, global/build-logic changes, ambiguous change ownership, no
-graph reduction and output contracts that cannot be verified. These are safe
-applicability boundaries, not repository allowlists. A future mechanism may
-broaden a boundary only after independent correctness and wall-time evidence.
-
-## Why the repository must own three inputs
-
-BuildOpt can discover Gradle structure, but only the repository owner can
-authoritatively define:
-
-1. **the workflow**: for example `assemble`, `check` or a distribution task;
-2. **the change**: exact paths between two immutable Git revisions; and
-3. **the required outputs**: the artifacts whose equality makes the candidate
-   semantically equivalent to the original workflow.
-
-These are not repository-specific branches in BuildOpt. They are the contract
-against which a generic optimizer can prove correctness. Removing them would
-make the POC easier to run only by making it capable of reporting a faster but
-wrong build.
-
-The Hibernate holdout demonstrated the usability problem: its build places
-JARs under `target/libs`, not Gradle's conventional `build/libs`. The completed
-generic preflight now runs the exact owner workflow once, rejects the empty
-`hibernate-core/build/libs/**` declaration, and reports three non-empty
-`:hibernate-core` JAR candidates under `target/libs`. It writes no structural
-proposal or profile and starts no warm-up or timing. That candidate can now be
-accepted explicitly through `buildopt profile input --confirm`; the generated
-owner file is shared by local and CI proposal paths, binds its source contract
-digest and is revalidated on each target.
-
-## Cross-repository evidence
-
-The uniform structural-only method now has seven public-repository results. The
-percentages are not averaged because the workloads are different.
-
-| Repository | Full -> selected projects | Direct wall-time result | Decision |
+| Repository | Automatic graph | Direct timed effect | Economics / decision |
 | --- | ---: | ---: | --- |
-| Spring Framework | 27 -> 10 | 17.94% faster, 7/8 positive raw pairs | Native fallback under the frozen repeatability gate. |
-| OpenTelemetry Java Instrumentation | 1,024 -> 34 | 14.43% faster, 8/8 | Reviewable candidate. |
-| Apache Kafka | 64 -> 3 | 84.11% faster, 8/8 | Reviewable candidate. |
-| Micronaut Core | 75 -> 22 | 41.74% faster, 8/8 | Reviewable candidate. |
-| Apache Groovy | 37 -> 2 | 73.85% faster, 8/8 | Reviewable candidate. |
-| Hibernate ORM holdout | 29 -> 1 | **5.88% faster, 8/8 reciprocal blocks** | Reviewable candidate after preregistered order correction. |
-| Ktor JVM JAR workflow | 133 -> 3 | **86.21% faster, 8/8 reciprocal blocks** | Reviewable candidate from two independent captures. |
+| Spring Framework | 27 -> 10 | 26.83% faster, 7/8, positive interval | 339.603-s learning; 103-build payback; native retained. |
+| OpenTelemetry Java Instrumentation | 1,024 -> 34 | 20.25% faster, 8/8, positive interval | 1,555.444-s learning; 101-build payback; native retained. |
+| Apache Kafka | 64 -> 36 | 13.42% faster, 3/8, interval crosses zero | 374.762-s learning; 190-build payback; native retained. |
+| Micronaut Core | 73 candidate entrypoints | Not timed | Candidate surface too large; native retained before calibration. |
+| Apache Groovy | 37 -> 30 | 2.81% faster, 7/8, positive interval | 1,423.987-s learning; 710-build payback; native retained. |
 
-All accepted observations include BuildOpt overhead, preserve the declared
-outputs byte for byte and exercise native full-graph fallback. Hibernate is
-particularly important: it was selected after the method was frozen, failed
-the first timing protocol, was investigated rather than discarded, and then
-qualified only after a generic measurement correction removed execution-order
-bias. Ktor then exercises a materially different Kotlin Multiplatform family:
-all 16 raw pairs improve, exact JVM JARs and task shapes match, and both global
-fallbacks pass. Its selector is not a claim about the full Ktor release graph.
+All timed candidates preserve exact required outputs and pass full-graph
+fallback. This is stronger generalization evidence than a manually reviewed
+profile matrix because the target repositories contain no BuildOpt files and
+the same binary makes all five decisions. It is also less flattering: older
+Kafka/Groovy/Micronaut profiles narrowed the output contract manually and must
+not be presented as current zero-configuration results.
 
-## What is implementation-generic versus evidence-specific
+## Why graph reduction alone is insufficient
 
-Public repository names remain in fixtures, runners and immutable result
-files because evidence must identify what was tested. They do not appear in
-the structural candidate-selection or qualification branches used by the
-installed CLI. The product code reasons about:
+Three distinct constraints appear in the current data:
 
-- typed projects, included builds, dependencies and entrypoints;
+1. **Learning economics.** OpenTelemetry omits 990 projects and saves 15.407
+   seconds per build, but sixteen timed arms plus stabilization cost 1,555.444
+   seconds. A real reduction can still be a bad customer transaction.
+2. **Complete outputs.** Kafka and Groovy aggregate workflows require outputs
+   from many otherwise unaffected projects in a clean workspace. Omitting
+   those producers without materializing verified outputs would make the build
+   faster but wrong.
+3. **Aggregate task breadth.** Micronaut `assemble` yields 73 candidate
+   entrypoints. Raising the limit would spend more time without proving a
+   useful partition.
+
+The next implementation must address these generically. It may reason about
+task producers, variants, ABI relationships, output digests and cache
+materialization; it may not branch on repository identity or borrow an old
+profile's expected percentage.
+
+## Implementation-generic versus evidence-specific
+
+Repository names and frozen mutations are valid in runners and immutable
+evidence because the experiment must identify what was tested. Product code
+reasons only about:
+
+- typed projects, tasks, dependencies, variants and entrypoints;
 - exact change ownership and global-change rules;
-- complete versus unknown relationships;
-- task categories and unsupported `Test` execution;
-- required output patterns and byte manifests;
-- repository, revision, Wrapper, graph, manifest and executable digests; and
-- measured wall time, uncertainty, repeatability, failures and fallback.
+- required outputs and their producer/digest relationships;
+- repository, revision, Wrapper, graph, workflow, output and executable
+  bindings; and
+- measured wall time, uncertainty, failures, fallback and payback.
 
-Experiment scripts may prepare a fixed public revision or mutation. That is
-test data, not product specialization. A new repository can use the same
-`profile propose -> measure -> evaluate` pipeline without adding its name to
-BuildOpt, provided its workflow is discoverable and its output contract is
-declared.
+No latest terminal decision depends on a repository-name rule. A new Gradle
+repository can run `buildopt optimize <workflow>` and receives either a
+measured candidate or an explicit native verdict.
 
-## Remaining gaps before calling the POC broadly usable
+## Next generalization steps
 
-1. **Ktor installed replay.** Prove the reviewed Ktor profiles through the
-   public package with exact bindings, drift fallback and contemporary native
-   output equivalence before making an onboarding claim.
-2. **Generic task-contract research.** Add an adapter or patch recipe only when
-   an exact task contract and end-to-end wall-time win transfer across
-   repositories; never infer value from cacheability alone.
-3. **Portfolio measurement.** When more than one mechanism qualifies for the
-   same workload, measure the complete installed composition directly. Do not
-   add isolated percentages.
-4. **Native measurement parity.** Installation, launcher and service lifecycle
-   are validated on Linux, macOS and Windows, but the current comparable
-   structural wall-time matrix is Linux evidence. Run the same fail-closed
-   qualification protocol natively before making macOS or Windows performance
-   claims.
-
-The strategic direction is no longer a permanently guided sequence of
-internal commands. The [one-command POC onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
-turns the same generic and fail-closed stages into `buildopt optimize build`:
-automatic discovery, calibration, qualification, portfolio replay and native
-fallback with zero hand-authored BuildOpt files for supported workflows.
-Automatic selection is limited to that explicitly invoked POC command and
-does not authorize production promotion.
+1. Persist calibration as exact-bound incremental observations across ordinary
+   invocations, rather than duplicating sixteen builds synchronously.
+2. Materialize unaffected required outputs from verified Gradle-compatible
+   cache/state before selecting a smaller graph in a clean workspace.
+3. Partition aggregate workflows into bounded producer groups using generic
+   task/variant/ABI relationships; retain native when completeness is unknown.
+4. Rerun the same frozen five-repository contract without moving output,
+   fallback or payback gates.
 
 ## POC conclusion
 
-The retained idea is not “a faster Gradle cache.” It is a generic,
-evidence-gated layer that can request less Gradle work for an exact change and
-output contract, then decline the optimization when correctness or value does
-not replicate. That idea now transfers across seven materially different
-public repositories and beats optimized native Gradle in six under the frozen
-decisions summarized here; the fresh balanced matrix separately closes Spring
-under its newer protocol, while historical rejected evidence remains
-immutable.
-
-Ktor change breadth is closed without changing the generic product path:
-dependency source, JVM resource and multi-module source changes qualify at
-85.80%, 86.51% and 77.98% lower wall time, while root configuration remains
-native. Fresh calibration evidence now shows that those cells repay first-time
-discovery and stabilization after 7, 10 and 8 qualifying builds; exact replay
-evaluation repays after 2, 4 and 3. The next block should prove the reviewed
-profiles through the public package rather than treating laboratory evidence
-as onboarding evidence.
+BuildOpt's defensible idea remains an evidence-gated structural optimizer, not
+a faster reimplementation of Gradle's cache. The mechanism can produce large
+wall-time wins, including current public Ktor/Beam results, and the generic
+automatic path is safe. The latest breadth evidence shows that safety is not
+enough: the POC still needs cheaper learning and verified output
+materialization before the one-command experience can claim general customer
+value.

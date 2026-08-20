@@ -145,6 +145,7 @@ thresholds to rehabilitate a failed mechanism.
 ./dev/check-poc-qualified-profile
 ./dev/check-poc-qualified-profile-matrix-v1-result \
   benchmarks/results/poc-qualified-profile-matrix-v1/summary.json
+./dev/check-automatic-breadth-transfer
 ```
 
 The commands validate the final POC decision, strict no-value/no-action
@@ -155,6 +156,15 @@ current substantial public paths. None reruns Gradle or adds percentages from
 different workloads.
 Use the owning benchmark runner only when the relevant implementation or
 fixture changes.
+
+`check-automatic-breadth-transfer` validates the latest unchanged
+zero-manual-file run across Spring Framework, OpenTelemetry Java
+Instrumentation, Apache Kafka, Micronaut Core and Apache Groovy. It recomputes
+the raw/state digests, alternating pairs, output identity, fallback, graph
+reduction and learning payback. Its current terminal result is deliberately
+negative economically: all five repositories retain optimized native Gradle,
+despite technically positive candidate timings in four, because none repays
+the synchronous learning transaction within 30 matching builds.
 
 `check-poc-real-world-compatibility` binds Spotless, Mockito, and SpotBugs to
 exact released commits plus wrapper, settings, and distribution hashes. The

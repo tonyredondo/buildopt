@@ -192,8 +192,8 @@ buildopt_capture_subject() {
     printf 'Preparing %s outside calibration\n' "${buildopt_repository_id}"
     if ! buildopt_prepare_gradle_distribution \
         "${buildopt_repository}" "${buildopt_gradle_home}" "${buildopt_jdk}" \
-        "${buildopt_subject_output}/distribution-preparation.log"; then
-        tail -n 120 "${buildopt_subject_output}/distribution-preparation.log" >&2
+        "${buildopt_root}/${buildopt_key}/distribution-preparation.log"; then
+        tail -n 120 "${buildopt_root}/${buildopt_key}/distribution-preparation.log" >&2
         printf 'Gradle preparation failed for %s\n' "${buildopt_key}" >&2
         return 1
     fi
@@ -238,7 +238,6 @@ buildopt_capture_subject() {
     buildopt_status=$?
     set -e
 
-    tail -n 160 "${buildopt_stderr}" >"${buildopt_subject_output}/diagnostics.log"
     if ! jq -e '.schemaVersion == "buildopt.poc/optimize-result/v1"' \
         "${buildopt_stdout}" >/dev/null 2>&1; then
         jq -n \

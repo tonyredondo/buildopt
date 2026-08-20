@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.build-impact/generated-manifest/v1",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "auto-testclasses-e43e5dea",
+  "manifestDigest": "sha256:8716146fdf85b6084b84b0f39ea390423a2c1c561435d3f7b9da96476d64bc8b",
+  "graphDigest": "sha256:a9676458317e369169786a144c4f18745a064913d993f4b4e4b6484082a0bf05",
+  "discoveryDigest": "sha256:4dce774f4928b9df4553bfe36b7a13b4f203eb3f82edeb1139db22eb8265f709",
+  "adapterVersion": "gradle-runtime-v1",
+  "gradleVersion": "9.2.1",
+  "complete": true,
+  "fallbackReasons": []
+}

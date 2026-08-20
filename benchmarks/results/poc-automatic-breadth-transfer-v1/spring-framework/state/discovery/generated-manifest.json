@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.build-impact/generated-manifest/v1",
+  "repositoryId": "spring-projects/spring-framework",
+  "pipelineClass": "auto-testclasses-a85b3d0d",
+  "manifestDigest": "sha256:0a83323ed12eaa8abbf073c83e0a1e9a58caa04e6f1cb04cb5bc2486a574678e",
+  "graphDigest": "sha256:44394e428e51740dbd8329581444f4de6df4e606e03f6ff3aa3e037a0d190de7",
+  "discoveryDigest": "sha256:56629266d5182811e21bf31e33915255447c34a6a0db4f2368390a767b890d2d",
+  "adapterVersion": "gradle-runtime-v1",
+  "gradleVersion": "9.6.1",
+  "complete": true,
+  "fallbackReasons": []
+}

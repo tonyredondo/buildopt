@@ -98,6 +98,30 @@ rewritten as an economic success.
   benchmarks/results/poc-economic-prequalification-v1/summary.json
 ```
 
+### Latest automatic breadth transfer
+
+The [automatic breadth result](./results/poc-automatic-breadth-transfer-v1/README.md)
+runs the unchanged zero-manual-file path on Spring, OpenTelemetry, Kafka,
+Micronaut and Groovy with one exact BuildOpt binary.
+
+| Repository | Graph | Direct timed effect | Learning / payback | Decision |
+| --- | ---: | ---: | ---: | --- |
+| Spring | 27 -> 10 | 26.83% faster, 7/8 | 339.603 s / 103 builds | Native retained. |
+| OpenTelemetry | 1,024 -> 34 | 20.25% faster, 8/8 | 1,555.444 s / 101 builds | Native retained. |
+| Kafka | 64 -> 36 | 13.42% faster, 3/8 | 374.762 s / 190 builds | Native retained. |
+| Micronaut | 73 candidate entrypoints | not timed | no calibration | Native retained. |
+| Groovy | 37 -> 30 | 2.81% faster, 7/8 | 1,423.987 s / 710 builds | Native retained. |
+
+All four timed candidates preserve exact outputs and full fallback. The result
+proves that automatic structural discovery transfers, but the current
+synchronous learning transaction does not. Older reviewed-profile percentages
+remain feasibility evidence and are not substituted for these latest
+zero-configuration decisions.
+
+```bash
+./dev/check-automatic-breadth-transfer
+```
+
 ## Build Optimization scorecard
 
 For the decision-ready product summary, see the [current POC one-pager](../docs/findings/buildopt-poc-handoff.md).

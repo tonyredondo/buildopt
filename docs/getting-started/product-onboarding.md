@@ -355,6 +355,16 @@ full-graph fallback and repay calibration within the declared 30 matching
 builds. A Ktor root build-logic change also proves the negative path: the
 complete native build succeeds and no candidate or timing claim is created.
 
+The newest generalization run applies that unchanged command to five more
+public repositories. It finds complete structural candidates for Spring,
+OpenTelemetry, Kafka and Groovy and safely rejects an oversized Micronaut
+`assemble` candidate. None of the five qualifies economically: the four timed
+rows need 101–710 matching builds to repay synchronous calibration, so native
+Gradle remains authoritative. OpenTelemetry is technically strong (1,024→34,
+20.25% faster and 8/8 pairs), but its 1,555.444-second learning cost still
+needs 101 builds. This is the current onboarding limitation, not a hidden
+universal speed claim.
+
 An earlier reviewed-profile matrix reports 14.97% to 87.35% savings across
 Spring, OpenTelemetry, Kafka, Micronaut and Groovy. It demonstrates broader
 structural potential, but those owner-reviewed inputs are not substituted for
@@ -369,6 +379,8 @@ the raw evidence.
 
 The current package result is reproducible with
 `./dev/check-magic-end-to-end-value-v2`.
+The latest breadth decisions are reproducible with
+`./dev/check-automatic-breadth-transfer`.
 
 ## Component ownership and configuration
 

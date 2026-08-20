@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "spring-projects/spring-framework",
+  "pipelineClass": "auto-testclasses-a85b3d0d",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    "testClasses"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "changed-projects",
+      "entrypoints": [
+        ":spring-jms:testClasses"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "required-output-1",
+      "path": "spring-jms/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-2",
+      "path": "spring-jms/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

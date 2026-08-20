@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+  "pipelineClass": "auto-instrumentation-spring-spring-batch-3.0--0073aaec",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    ":instrumentation:spring:spring-batch-3.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-boot-actuator-autoconfigure-2.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-boot-autoconfigure:testClasses",
+    ":instrumentation:spring:spring-boot-autoconfigure:testing:testClasses",
+    ":instrumentation:spring:spring-boot-resources:javaagent-unit-tests:testClasses",
+    ":instrumentation:spring:spring-boot-resources:javaagent:testClasses",
+    ":instrumentation:spring:spring-cloud-aws-3.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-2.2:testing:testClasses",
+    ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:javaagent:testClasses",
+    ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-common:testing:testClasses",
+    ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webflux-4.3:testing:testClasses",
+    ":instrumentation:spring:spring-cloud-gateway:spring-cloud-gateway-webmvc-4.3:javaagent:testClasses",
+    ":instrumentation:spring:spring-core-2.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-data:spring-data-1.8:javaagent:testClasses",
+    ":instrumentation:spring:spring-data:spring-data-3.0:kotlin-testing:testClasses",
+    ":instrumentation:spring:spring-data:spring-data-3.0:testing:testClasses",
+    ":instrumentation:spring:spring-data:spring-data-common:testing:testClasses",
+    ":instrumentation:spring:spring-integration-4.1:javaagent:testClasses",
+    ":instrumentation:spring:spring-integration-4.1:library:testClasses",
+    ":instrumentation:spring:spring-integration-4.1:testing:testClasses",
+    ":instrumentation:spring:spring-jms:spring-jms-2.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-jms:spring-jms-2.0:testing:testClasses",
+    ":instrumentation:spring:spring-jms:spring-jms-6.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-kafka-2.7:javaagent:testClasses",
+    ":instrumentation:spring:spring-kafka-2.7:library:testClasses",
+    ":instrumentation:spring:spring-kafka-2.7:testing:testClasses",
+    ":instrumentation:spring:spring-pulsar-1.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-pulsar-1.0:testing:testClasses",
+    ":instrumentation:spring:spring-rabbit-1.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-rmi-4.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-scheduling-3.1:bootstrap:testClasses",
+    ":instrumentation:spring:spring-scheduling-3.1:javaagent:testClasses",
+    ":instrumentation:spring:spring-security-config-6.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-security-config-6.0:library:testClasses",
+    ":instrumentation:spring:spring-web:spring-web-3.1:library:testClasses",
+    ":instrumentation:spring:spring-web:spring-web-3.1:testing:testClasses",
+    ":instrumentation:spring:spring-web:spring-web-6.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-webflux:spring-webflux-5.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-webflux:spring-webflux-5.0:testing-webflux7:testClasses",
+    ":instrumentation:spring:spring-webflux:spring-webflux-5.0:testing:testClasses",
+    ":instrumentation:spring:spring-webflux:spring-webflux-5.3:library:testClasses",
+    ":instrumentation:spring:spring-webflux:spring-webflux-5.3:testing-webflux7:testClasses",
+    ":instrumentation:spring:spring-webflux:spring-webflux-5.3:testing:testClasses",
+    ":instrumentation:spring:spring-webmvc:spring-webmvc-3.1:javaagent:testClasses",
+    ":instrumentation:spring:spring-webmvc:spring-webmvc-3.1:wildfly-testing:testClasses",
+    ":instrumentation:spring:spring-webmvc:spring-webmvc-5.3:library:testClasses",
+    ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:library:testClasses",
+    ":instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:javaagent:testClasses",
+    ":instrumentation:spring:spring-webmvc:spring-webmvc-common-3.1:testing:testClasses",
+    ":instrumentation:spring:spring-ws-2.0:javaagent:testClasses",
+    ":instrumentation:spring:spring-ws-2.0:testing:testClasses"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "changed-projects",
+      "entrypoints": [
+        ":instrumentation:spring:spring-boot-autoconfigure:testClasses"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "required-output-1",
+      "path": "instrumentation/spring/spring-boot-autoconfigure/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-2",
+      "path": "instrumentation/spring/spring-boot-autoconfigure/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}

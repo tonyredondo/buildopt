@@ -267,6 +267,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-magic-end-to-end-value" >/dev/null
         "${buildopt_script_dir}/check-magic-end-to-end-value-v2" >/dev/null
         "${buildopt_script_dir}/check-economic-prequalification" >/dev/null
+        "${buildopt_script_dir}/check-automatic-breadth-transfer" >/dev/null
         "${buildopt_script_dir}/check-magic-calibration-cost" >/dev/null
         "${buildopt_script_dir}/check-cross-date-output-equivalence" >/dev/null
         "${buildopt_script_dir}/check-cross-date-output-equivalence-result" >/dev/null

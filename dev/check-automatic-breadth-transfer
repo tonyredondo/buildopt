@@ -1,0 +1,222 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [summary.json]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_summary=${1:-"${buildopt_repo_root}/benchmarks/results/poc-automatic-breadth-transfer-v1/summary.json"}
+buildopt_contract="${buildopt_repo_root}/specs/poc-automatic-breadth-transfer-v1.json"
+buildopt_subjects="${buildopt_repo_root}/specs/poc-generic-profile-matrix-v3.json"
+
+for buildopt_command in awk cmp find grep jq sha256sum sort xargs; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required automatic breadth checker command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+[[ -s ${buildopt_summary} && -s ${buildopt_contract} && -s ${buildopt_subjects} ]] || {
+    printf 'automatic breadth evidence or contract is unavailable\n' >&2
+    exit 1
+}
+
+buildopt_evidence_root=$(cd -- "$(dirname -- "${buildopt_summary}")" && pwd -P)
+[[ $(sha256sum "${buildopt_subjects}" | awk '{print $1}') == \
+    $(jq -r '.frozenSubjects.sha256' "${buildopt_contract}") ]] || {
+    printf 'automatic breadth subject contract drifted\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-automatic-breadth-transfer/v1" and
+  .workItem == "POC-AUTOMATIC-BREADTH-TRANSFER-001" and
+  (.buildopt.revision | test("^[0-9a-f]{40}$")) and
+  (.buildopt.executableSha256 | test("^[0-9a-f]{64}$")) and
+  .buildopt.packageVersion == "0.3.0-dev" and
+  .aggregation == {
+    subjectCount:5,resultAvailable:5,discoveryComplete:4,
+    calibrationComplete:4,valueGatePassed:1,economicallyQualified:0,
+    nativeRetained:5,productFailures:0,
+    repositoryPercentagesAveraged:false,mechanismPercentagesAdded:false
+  } and
+  .boundaries == {
+    proofOfConcept:true,productionAuthorized:false,
+    automaticActivationOutsideOwnerCommand:false,soakRequired:false,
+    designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"
+  } and
+  ([.subjects[].key] | sort) == [
+    "apache-groovy","apache-kafka","micronaut-core",
+    "opentelemetry-java-instrumentation","spring-framework"
+  ] and
+  ([.subjects[].repositoryId] | sort) == [
+    "apache/groovy","apache/kafka","micronaut-projects/micronaut-core",
+    "open-telemetry/opentelemetry-java-instrumentation",
+    "spring-projects/spring-framework"
+  ] and
+  ([.subjects[].key] | unique | length) == 5 and
+  all(.subjects[];
+    .buildopt.revision == $revision and
+    .buildopt.executableSha256 == $executable and
+    .processExitCode == 0 and .resultAvailable == true and
+    .productFailure == false and .manualFilesRequired == 0 and
+    .outcome == "NATIVE_RETAINED" and
+    .native == {authoritative:true,exitCode:0,started:true} and
+    .execution.authoritative == true and .execution.exitCode == 0 and
+    .productionAuthorized == false and .testOptimization == "OUT_OF_SCOPE")
+' --arg revision "$(jq -r '.buildopt.revision' "${buildopt_summary}")" \
+  --arg executable "$(jq -r '.buildopt.executableSha256' "${buildopt_summary}")" \
+  "${buildopt_summary}" >/dev/null || {
+    printf 'automatic breadth terminal summary is invalid\n' >&2
+    exit 1
+}
+
+buildopt_expected_subject() {
+    case $1 in
+        spring-framework)
+            printf '%s\n' '27 10 17 1 COMPLETE CALIBRATION_VALUE_NOT_PROVEN 12339.625 9029 3310.625 7 339603 103'
+            ;;
+        opentelemetry-java-instrumentation)
+            printf '%s\n' '1024 34 990 1 COMPLETE CALIBRATION_BREAK_EVEN_EXCEEDED 76087.375 60680.5 15406.875 8 1555444 101'
+            ;;
+        apache-kafka)
+            printf '%s\n' '64 36 28 32 COMPLETE CALIBRATION_VALUE_NOT_PROVEN 14766.25 12784.625 1981.625 3 374762 190'
+            ;;
+        micronaut-core)
+            printf '%s\n' '0 0 0 73 SKIPPED CANDIDATE_TASK_SET_TOO_LARGE 0 0 0 0 0 0'
+            ;;
+        apache-groovy)
+            printf '%s\n' '37 30 7 30 COMPLETE CALIBRATION_VALUE_NOT_PROVEN 71480.25 69472.125 2008.125 7 1423987 710'
+            ;;
+        *) return 1 ;;
+    esac
+}
+
+while IFS= read -r buildopt_key; do
+    buildopt_capture="${buildopt_evidence_root}/${buildopt_key}/capture.json"
+    [[ -s ${buildopt_capture} ]] || {
+        printf 'automatic breadth capture is unavailable: %s\n' "${buildopt_key}" >&2
+        exit 1
+    }
+    buildopt_raw=$(jq -er '.rawResult' "${buildopt_capture}")
+    buildopt_raw="${buildopt_evidence_root}/${buildopt_raw}"
+    buildopt_state="${buildopt_evidence_root}/${buildopt_key}/state"
+    [[ -s ${buildopt_raw} && -d ${buildopt_state} ]] || {
+        printf 'automatic breadth raw result or state is unavailable: %s\n' \
+            "${buildopt_key}" >&2
+        exit 1
+    }
+
+    [[ $(sha256sum "${buildopt_raw}" | awk '{print $1}') == \
+        $(jq -r '.rawResultSha256' "${buildopt_capture}") ]] || {
+        printf 'automatic breadth raw result hash drifted: %s\n' "${buildopt_key}" >&2
+        exit 1
+    }
+    buildopt_state_sha=$(
+        cd -- "${buildopt_state}"
+        find . -type f -print0 | sort -z | xargs -0 -r sha256sum | \
+            sha256sum | awk '{print $1}'
+    )
+    [[ ${buildopt_state_sha} == $(jq -r '.stateTreeSha256' "${buildopt_capture}") ]] || {
+        printf 'automatic breadth state tree hash drifted: %s\n' "${buildopt_key}" >&2
+        exit 1
+    }
+    cmp -s <(jq -S . "${buildopt_raw}") <(jq -S . "${buildopt_state}/result.json") || {
+        printf 'automatic breadth state result differs from raw result: %s\n' \
+            "${buildopt_key}" >&2
+        exit 1
+    }
+    cmp -s <(jq -S --arg key "${buildopt_key}" '.subjects[] | select(.key == $key)' \
+        "${buildopt_summary}") <(jq -S . "${buildopt_capture}") || {
+        printf 'automatic breadth summary subject differs from capture: %s\n' \
+            "${buildopt_key}" >&2
+        exit 1
+    }
+
+    read -r buildopt_total buildopt_selected buildopt_omitted \
+        buildopt_candidate_count buildopt_calibration_status buildopt_reason \
+        buildopt_control_mean buildopt_candidate_mean buildopt_mean_saved \
+        buildopt_positive buildopt_cost buildopt_break_even \
+        < <(buildopt_expected_subject "${buildopt_key}")
+    jq -e '
+      .discovery.graph == {totalProjects:$total,selectedProjects:$selected,
+        omittedProjects:$omitted} and
+      (.discovery.candidateEntrypoints | length) == $candidateCount and
+      .calibration.status == $calibrationStatus and .reason == $reason and
+      .calibration.controlMeanMs == $controlMean and
+      .calibration.candidateMeanMs == $candidateMean and
+      .calibration.meanSavedMs == $meanSaved and
+      .calibration.positivePairs == $positive and
+      .calibration.calibrationCostMs == $cost and
+      .calibration.breakEvenBuilds == $breakEven
+    ' --argjson total "${buildopt_total}" --argjson selected "${buildopt_selected}" \
+      --argjson omitted "${buildopt_omitted}" \
+      --argjson candidateCount "${buildopt_candidate_count}" \
+      --arg calibrationStatus "${buildopt_calibration_status}" \
+      --arg reason "${buildopt_reason}" --argjson controlMean "${buildopt_control_mean}" \
+      --argjson candidateMean "${buildopt_candidate_mean}" \
+      --argjson meanSaved "${buildopt_mean_saved}" --argjson positive "${buildopt_positive}" \
+      --argjson cost "${buildopt_cost}" --argjson breakEven "${buildopt_break_even}" \
+      "${buildopt_capture}" >/dev/null || {
+        printf 'automatic breadth terminal decision drifted: %s\n' "${buildopt_key}" >&2
+        exit 1
+    }
+
+    if [[ ${buildopt_calibration_status} == COMPLETE ]]; then
+        buildopt_calibration="${buildopt_state}/calibration/evidence.json"
+        [[ -s ${buildopt_calibration} ]] || {
+            printf 'automatic breadth calibration evidence is unavailable: %s\n' \
+                "${buildopt_key}" >&2
+            exit 1
+        }
+        [[ $(sha256sum "${buildopt_calibration}" | awk '{print $1}') == \
+            $(jq -r '.calibration.evidenceSha256' "${buildopt_capture}") ]] || {
+            printf 'automatic breadth calibration hash drifted: %s\n' "${buildopt_key}" >&2
+            exit 1
+        }
+        jq -e '
+          (.observations | length) == 8 and
+          all(.observations[];
+            .savedMs == (.controlDurationMs - .candidateDurationMs) and
+            .controlRequiredOutputSha256 == .candidateRequiredOutputSha256 and
+            .requiredOutputCount > 0 and .productAttributableFailure == false) and
+          ([.observations[].order] == ["CONTROL_FIRST","CANDIDATE_FIRST",
+            "CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST",
+            "CONTROL_FIRST","CANDIDATE_FIRST"]) and
+          .fallback == {mode:"FULL_GRAPH",reason:"IMPACT_GLOBAL_CHANGE",buildSuccessful:true} and
+          .boundaries == {proofOfConcept:true,productionAuthorized:false,
+            repositorySpecificRuleAdded:false,testOptimizationModified:false} and
+          .result.controlMeanMs == (([.observations[].controlDurationMs] | add) / 8) and
+          .result.candidateMeanMs == (([.observations[].candidateDurationMs] | add) / 8) and
+          .result.meanSavedMs == (([.observations[].savedMs] | add) / 8) and
+          .result.reductionRatio == (.result.meanSavedMs / .result.controlMeanMs) and
+          .result.positivePairs == ([.observations[] | select(.savedMs > 0)] | length) and
+          .result.executionShapeObserved == true and .result.executionShapeStable == true and
+          .result.targetWarmupShapeObserved == true and .result.targetWarmupShapeStable == true
+        ' "${buildopt_calibration}" >/dev/null || {
+            printf 'automatic breadth calibration cannot be recomputed: %s\n' \
+                "${buildopt_key}" >&2
+            exit 1
+        }
+        buildopt_recomputed_break_even=$(jq -n \
+            --argjson cost "${buildopt_cost}" --argjson saved "${buildopt_mean_saved}" \
+            '($cost / $saved | ceil)')
+        [[ ${buildopt_recomputed_break_even} -eq ${buildopt_break_even} ]] || {
+            printf 'automatic breadth break-even cannot be recomputed: %s\n' \
+                "${buildopt_key}" >&2
+            exit 1
+        }
+    fi
+done < <(jq -r '.subjects[].key' "${buildopt_summary}")
+
+if grep -R -n -E '/tmp/buildopt-automatic-breadth\.|/home/[^/]+/' \
+    "${buildopt_evidence_root}" >/dev/null; then
+    printf 'automatic breadth evidence contains a host-local path\n' >&2
+    exit 1
+fi
+
+printf 'Automatic breadth transfer evidence: PASS\n'

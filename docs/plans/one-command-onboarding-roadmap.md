@@ -274,9 +274,30 @@ calibration and reduces the observed fallback penalty from 220.761 to 13.896
 seconds. The original Jetty qualification still needs 31 matching replays and
 does not pay back in the observed window.
 
-The immediate next block is automatic breadth transfer. The unchanged
-zero-manual-file command must run on Spring, OpenTelemetry, Kafka, Micronaut
-and Groovy, expose generic graph/output/economic blockers, and preserve native
-Gradle whenever exact evidence is unavailable. Improvements may refine generic
-task, variant, ABI or output relationships, but may not add repository-name
-rules, weaken correctness gates or borrow another profile's lifetime.
+Automatic breadth transfer is now complete. The unchanged zero-manual-file
+command ran on Spring, OpenTelemetry, Kafka, Micronaut and Groovy with one
+exact binary. It produced zero product-attributable failures and retained
+optimized native Gradle in all five cases. Spring saved 26.83% before learning
+cost, OpenTelemetry saved 20.25% with 8/8 positive pairs, Kafka saved 13.42%,
+and Groovy saved 2.81%; Micronaut stopped before timing because aggregate
+`assemble` exposed 73 candidate entrypoints. None qualified economically:
+the four timed candidates needed 103, 101, 190 and 710 matching builds to
+repay synchronous calibration, beyond the unchanged 30-build gate.
+
+The next POC sequence attacks that observed economic blocker without weakening
+correctness or adding repository-specific rules:
+
+1. Accumulate exact-bound control/candidate observations during ordinary
+   `buildopt optimize` invocations instead of charging 16 extra builds before
+   the first decision.
+2. Materialize verified unaffected outputs through Gradle-compatible cache or
+   BuildOpt state before omitting their producers in a clean workspace.
+3. Partition aggregate workflows from generic task, variant, ABI and output
+   relationships rather than raising the task cap.
+4. Repeat the same five repositories, revisions and commands with the same
+   exact-output, fallback, statistical and 30-build payback gates.
+
+The retained dataset and its interpretation are in
+[`poc-automatic-breadth-transfer-v1`](../../benchmarks/results/poc-automatic-breadth-transfer-v1/README.md).
+No step may add repository-name rules, average repository percentages, weaken
+correctness gates or borrow another profile's lifetime.

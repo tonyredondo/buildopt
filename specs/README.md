@@ -174,6 +174,13 @@ fallback penalty from 220.761 to 13.896 seconds across runs. The matching
 Jetty replay still saves 100.744 seconds, but its 1,386.764-second learning
 cost remains unpaid in the observed window.
 
+The terminal [automatic breadth evidence](../benchmarks/results/poc-automatic-breadth-transfer-v1/README.md)
+applies the unchanged zero-manual-file command to Spring, OpenTelemetry,
+Kafka, Micronaut and Groovy with one exact binary. It records zero product
+failures and five safe native decisions. Four structural candidates preserve
+exact outputs, but synchronous learning needs 101–710 matching builds to
+repay; Micronaut's aggregate candidate is rejected before calibration.
+
 Each specification must link fixtures or conformance tests and the RFC decision it refines. `F0-010` reserves these paths without creating empty specifications.
 
 `ci-orchestration-v1.json` is the machine-readable scheduling, isolation,

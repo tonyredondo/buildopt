@@ -69,6 +69,17 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > the [v1 matrix](./benchmarks/results/poc-magic-end-to-end-value-v1/README.md)
 > remains historical diagnostic evidence rather than being rewritten.
 
+> **Latest generalization result:** the same unchanged command now runs on
+> Spring, OpenTelemetry, Kafka, Micronaut and Groovy with one exact binary,
+> zero target-repository BuildOpt files and zero product failures. It discovers
+> real reductions (Spring 27→10, OpenTelemetry 1,024→34, Kafka 64→36 and
+> Groovy 37→30), but all five correctly retain native Gradle: the four timed
+> candidates need 101–710 matching builds to repay synchronous learning, and
+> Micronaut's aggregate `assemble` exposes 73 candidate entrypoints before
+> timing. The POC therefore needs incremental learning and verified output
+> materialization before it can claim broad one-command value. See the
+> [automatic breadth evidence](./benchmarks/results/poc-automatic-breadth-transfer-v1/README.md).
+
 > **POC onboarding north star:** install BuildOpt, open a Gradle repository and
 > run `buildopt optimize build`. The command now has a stable state/result,
 > resume, budget, exit and POC-authority contract. It now derives the exact Git

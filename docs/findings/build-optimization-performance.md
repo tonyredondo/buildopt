@@ -2,59 +2,47 @@
 
 ## Current Executive Summary
 
-- **The optional central path now demonstrates incremental value under equal
-  cache opportunity.** With the same committed Gradle remote-cache objects,
-  the complete installed path reduced Ktor `jvmJar` by **82.45%** and Beam
-  `classes` by **56.41%** across 8/8 positive pairs per family, exact outputs
-  and lower p95. A Ktor root build-logic change retained native and made no
-  performance claim. These repository-specific effects are not averaged or
-  added to the structural results below.
-- **Economic prequalification now prevents low-recurrence learning.** The
-  current Ktor Jetty profile qualifies at **58.03% faster** and saves **100.744
-  seconds** on its matching replay. An unrelated CORS change has only two
-  analogous recent commits, so BuildOpt rejects in 192.442 ms with no
-  discovery/calibration. Its observed penalty falls from 220.761 to 13.896
-  seconds across runs. Qualification still needs 31 matches and the current
-  three-build window remains **1,299.894 seconds negative after learning**.
-- **The current POC has one broadly supported accelerator: structural Build
-  Impact.** The latest balanced protocol qualified Spring (**15.99% faster**),
-  OpenTelemetry (**14.97%**), Kafka (**87.35%**), Micronaut (**39.44%**), and
-  Groovy (**74.00%**) independently, with 80/80 positive raw pairs, stable
-  shapes, exact outputs, improved p95, and full-graph fallback.
-- **The unchanged path also transfers to Ktor.** Two independent captures of
-  its public JVM JAR workflow reduced 133 projects to three and saved
-  **89.416 seconds/86.21%** on average, with 16/16 positive pairs, eight of
-  eight positive reciprocal blocks, exact JARs, stable task shapes, lower p95
-  and both full-graph fallbacks.
-- **Explicit output semantics broaden the workflows that can be measured
-  safely.** Two fresh captures qualified Groovy `jar` (**73.10% faster**),
-  Kafka Checkstyle (**29.73%**), and Kafka `shadowJar` (**66.55%**) across
-  48/48 positive raw pairs. Byte identity remains the default and undeclared
-  report/archive payload drift is still rejected.
-- **The same profiles now transfer across source-change shapes.** Six distinct
-  source cells qualify at **28.00% to 79.54% faster** with 96/96 positive raw
-  pairs, while eight build-logic/global probes retain native Gradle and make no
-  timing claim.
-- **Cross-date semantic output comparison now closes at 6/6 cells.** Four
-  Kafka outputs match naturally across captures. In two real Groovy JARs, the
-  old `BuildTime`-only contract rejects a controlled date change and the
-  reviewed `BuildDate + BuildTime` contract matches it; undeclared version and
-  class-payload changes remain mismatches. Historical timing is unchanged.
-- **Calibration cost is now explicit.** Discovery plus candidate warm-ups pays
-  back after **10–15 qualifying builds** for Groovy JAR/Kafka `shadowJar` and
-  **27–31** for Kafka Checkstyle. A full comparative POC, including native
-  warm-ups, pays back after **20–55** builds depending on the cell.
-- **The unseen-repository transfer now qualifies after investigation.** The
-  unchanged generic path reduced Hibernate ORM from 29 projects to one. A
-  preregistered reciprocal crossover saved **12.733 seconds/5.88%** with exact
-  300/32-task shapes, a positive interval and 8/8 positive blocks.
-  See
-  the [current one-pager](./buildopt-poc-handoff.md) for the decision-ready
-  summary and roadmap.
+- **The latest unchanged automatic transfer is safe but not economically
+  broad.** One exact binary ran `buildopt optimize` with zero manual BuildOpt
+  files on Spring, OpenTelemetry, Kafka, Micronaut and Groovy. All five
+  retained optimized native Gradle, with zero product failures. Four complete
+  candidates preserved exact outputs and full fallback; Micronaut stopped
+  before timing because `assemble` produced 73 candidate entrypoints.
+- **Automatic discovery finds real reductions.** Spring reduces 27 to 10
+  projects and is **26.83% faster**; OpenTelemetry reduces 1,024 to 34 and is
+  **20.25% faster** with 8/8 positive pairs; Kafka reduces 64 to 36 and is
+  **13.42% faster**; Groovy reduces 37 to 30 and is **2.81% faster**. These
+  repository-specific percentages are not averaged.
+- **Synchronous learning is the current primary blocker.** Spring,
+  OpenTelemetry, Kafka and Groovy spend 339.603, 1,555.444, 374.762 and
+  1,423.987 seconds respectively in calibration. Their calculated paybacks
+  are 103, 101, 190 and 710 matching builds, all above the POC maximum of 30.
+  OpenTelemetry therefore proves technical value but still makes a poor first
+  customer transaction.
+- **Complete workflow outputs constrain graph reduction.** The latest generic
+  Kafka and Groovy candidates are much broader than older reviewed profiles,
+  because a clean zero-input run must preserve every output of the declared
+  aggregate workflow. The old profile percentages remain feasibility evidence
+  and are not substituted for this automatic result.
+- **Prior positive evidence still matters.** The public zero-manual-file POC
+  qualified Ktor `jvmJar` at **79.82% faster** with 26-build payback and Beam
+  `classes` at **61.65% faster** with 28-build payback. Under equal central
+  cache opportunity, the complete connected path measured **82.45% faster on
+  Ktor** and **56.41% on Beam**. These results show that the idea can work, not
+  that it works automatically for every Gradle repository.
+- **The next POC work is incremental learning plus verified output
+  materialization.** BuildOpt should accumulate exact-bound observations over
+  ordinary invocations rather than run sixteen extra builds synchronously,
+  and use Gradle-compatible cache/state to materialize unaffected required
+  outputs before omitting their producers. Repository-name rules and weakened
+  output/fallback gates remain prohibited.
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
-  Runtime Tuning, Hot State, and standard Copy are retired; historical Jar,
-  Patch, and Edge experiments remain scoped supporting evidence rather than
-  part of the comparable structural claim.
+  Runtime Tuning, Hot State and standard Copy are retired; historical Jar,
+  Patch and Edge experiments remain scoped supporting evidence.
+
+See the [current one-pager](./buildopt-poc-handoff.md) and the
+[automatic breadth result](../../benchmarks/results/poc-automatic-breadth-transfer-v1/README.md)
+for the decision-ready summary and raw evidence.
 
 ## Historical and Mechanism-Specific Findings
 

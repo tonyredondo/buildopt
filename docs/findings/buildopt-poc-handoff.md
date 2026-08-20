@@ -4,17 +4,16 @@
 
 BuildOpt tests whether a generic decision layer can make substantial Gradle
 builds faster than an already optimized native Gradle baseline. Gradle remains
-the execution engine and source of truth. BuildOpt inspects the exact Git
-change and requested workflow, derives a smaller sufficient Gradle graph,
-measures the complete installed path, verifies required outputs, and reuses the
-candidate only while exact bindings and value gates hold. Ambiguity, drift,
-poor economics or a global change keeps optimized native Gradle authoritative.
+the execution engine and safe fallback. BuildOpt inspects the exact Git change
+and requested workflow, derives a smaller sufficient graph, measures the
+complete installed path, verifies required outputs and reuses only evidence
+that remains structurally and economically valid.
 
-This is an owner-operated proof of concept, not a production-ready product.
-Soak qualification, design-partner evidence, production SLOs, autonomous
-promotion and Test Optimization are outside the current scope.
+This is an owner-operated proof of concept, not a production product. Soak,
+design-partner evidence, production SLOs, autonomous promotion and Test
+Optimization are outside the current scope.
 
-## The intended experience
+## Intended customer experience
 
 ```text
 install BuildOpt
@@ -22,184 +21,91 @@ cd <a Gradle repository>
 buildopt optimize <the existing Gradle workflow>
 ```
 
-No BuildOpt manifest, graph, profile, plugin path or output contract is required
-in the target repository. The first invocation discovers and measures a
-candidate in private state. Later exact matches may replay it; any failed
-binding falls back before Gradle starts.
+The target repository should need no BuildOpt manifest, graph, profile, plugin
+path or output contract. An ambiguous, global, unprofitable or drifted case
+must run optimized native Gradle and make no performance claim.
 
-## Components
+## Components and current role
 
-| Component | What it contributes | Current evidence |
+| Component | What it does | Current conclusion |
 | --- | --- | --- |
-| **Structural Build Impact** | Runs only the project/task producers required by the exact change and requested outputs. | Primary accelerator; closes the public one-command gate on Ktor and Beam. |
-| **Automatic discovery and calibration** | Derives Git/Gradle ownership, outputs and graph; runs balanced native/candidate pairs; checks uncertainty, p95, outputs, fallback and payback. | Prevents a smaller task count from being mistaken for customer value. |
-| **Profile portfolio and replay** | Stores only qualified structural families under exact repository, Wrapper, workflow, graph, output, executable and evidence bindings. | A Ktor matching replay saved 112.198 s, but its observed public window did not repay learning; drift retained native. |
-| **Safe local cache** | Isolates and verifies Gradle cache data by repository, Wrapper and platform. | Supporting safety; approximately at parity with an already warm native Gradle cache, not the current speed claim. |
-| **Shared / Edge cache** | Offers Gradle-compatible opaque cache objects over HTTP/HTTPS and optional locality. | Separate experiment; its percentages are never added to Build Impact results. |
-| **Optional central cache and state** | Shares committed Gradle outputs plus compatible portfolios, evidence and checkpoints while keeping local execution authoritative. | Under the same committed remote-cache opportunity, the complete path is **82.45% faster on Ktor** and **56.41% on Beam**, with 8/8 positive pairs and exact outputs; global Ktor build logic safely retains native. |
-| **Launcher, history and reports** | Preserves process behavior and reports graph reduction, wall time, uncertainty, p95, learning cost, payback and fallback. | Supporting infrastructure; launcher overhead is included in candidate timings. |
-| **Runtime Tuning, Hot State and standard Copy** | Earlier resource/state-reuse hypotheses. | Retired from the active POC after neutral, unstable or regressive evidence. |
+| **Structural Build Impact** | Selects only task/project producers needed by the exact change and required outputs. | Primary accelerator; large reviewed and automatic wins exist, but automatic breadth is not yet economical. |
+| **Automatic discovery** | Derives change ownership, Gradle outputs and a structural candidate without repository-name rules. | Works on 5/5 latest breadth subjects; four complete candidates and one safe aggregate-workflow rejection. |
+| **Calibration and value gate** | Alternates native/candidate builds and checks outputs, interval, tail, fallback and payback. | Correct but currently too expensive when run synchronously: 0/5 latest subjects repay within 30 builds. |
+| **Profile portfolio / central state** | Reuses qualified evidence under exact repository, Wrapper, workflow, graph, output and executable bindings. | Functional across checkouts/machines; value depends on profile lifetime and cannot rescue an uneconomic first decision. |
+| **Gradle-compatible cache** | Reuses verified outputs locally or through optional HTTP/HTTPS central storage. | Supporting infrastructure. Safe Cache is near native-cache parity, not the principal speed claim. |
+| **Task adapters / Patch Autopilot** | Makes one exact task shape safely reusable after review. | Strong scoped evidence exists; not generalized to arbitrary tasks. |
+| **Launcher, history and reports** | Preserves process behavior and exposes wall time, uncertainty, payback and fallback. | Necessary infrastructure; its overhead is included in candidate time. |
+| **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource/state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
 
-## Latest central end-to-end value proof
+## Latest unchanged automatic breadth result
 
-The terminal central experiment gives optimized native Gradle and BuildOpt the
-same already-committed remote-cache objects. Candidate time includes the
-installed package, structural selection, launcher, gateway, TLS, state/cache
-synchronization and Gradle execution.
+One exact BuildOpt binary ran the zero-manual-file path on five frozen public
+repositories with eight pairs, exact outputs, full fallback and a maximum
+30-build payback.
 
-| Repository / workflow | Graph | Native mean | BuildOpt mean | Saving | 95% saving interval | p95 | Payback |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Ktor `jvmJar` | 133 -> 10 | 215.506 s | 37.828 s | **177.678 s / 82.45%** | 156.555..198.802 s | 243.986 -> 55.139 s | 28 builds |
-| Beam `classes` | 316 -> 6 | 48.475 s | 21.130 s | **27.345 s / 56.41%** | 22.407..32.283 s | 53.468 -> 28.319 s | 29 builds |
+| Repository / workflow | Graph | Native -> candidate | Direct effect | Learning / payback | Decision |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Spring `testClasses` | 27 -> 10 | 12.340 -> 9.029 s | **26.83% faster**, 7/8 | 339.603 s / 103 builds | Native retained. |
+| OpenTelemetry Spring family | 1,024 -> 34 | 76.087 -> 60.681 s | **20.25% faster**, 8/8 | 1,555.444 s / 101 builds | Native retained. |
+| Kafka `testClasses` | 64 -> 36 | 14.766 -> 12.785 s | **13.42% faster**, 3/8 | 374.762 s / 190 builds | Native retained. |
+| Micronaut `assemble` | no timed candidate | n/a | 73 candidate entrypoints | no calibration | Native retained. |
+| Groovy `classes` | 37 -> 30 | 71.480 -> 69.472 s | **2.81% faster**, 7/8 | 1,423.987 s / 710 builds | Native retained. |
 
-Both rows improve in 8/8 alternating pairs and preserve exact required
-outputs. A Ktor root build-logic change keeps the full graph, succeeds through
-the same central connection and makes no performance claim. The 12-CPU host
-result is bounded POC evidence, not golden-runner or production evidence.
+The important result is not “0/5 therefore the idea fails.” Automatic
+discovery finds genuine reductions, and OpenTelemetry has a strictly positive
+interval with 8/8 favorable pairs. The blocker is that the current command
+duplicates too much Gradle work to learn synchronously. Kafka/Groovy also show
+that a complete workflow output contract is much broader than older reviewed
+profiles; Micronaut shows that aggregate workflows need partitioning or
+verified output materialization before calibration.
 
-## Observed profile lifetime and economics
+## Prior positive evidence and how to interpret it
 
-Steady-state speedup is not enough if the repository changes before learning
-repays. The current Ktor experiment follows one centrally published Jetty
-profile through a real first-parent sequence and applies the new generic
-economic precheck before learning an unrelated owner:
+The published zero-manual-file terminal POC previously qualified Ktor `jvmJar`
+at **79.82% faster** with 26-build payback and Beam `classes` at **61.65%
+faster** with 28-build payback, both 8/8 with exact outputs and fallback.
+Optional central cache/state composition under equal cache opportunity measured
+**82.45% faster on Ktor** and **56.41% on Beam**.
 
-| Event | Optimized native | BuildOpt | Direct effect |
-| --- | ---: | ---: | ---: |
-| Qualifying calibration | 77.419 s mean | 32.489 s mean | **58.03% faster**, but 1,386.764 s learning cost |
-| Matching Jetty replay | 197.028 s | 96.284 s | **100.744 s / 51.13% saved** |
-| Unrelated CORS change | 184.647 s | 198.543 s | **13.896 s / 7.53% overhead**, discovery/calibration rejected |
-| Global build-logic change | 186.553 s | 186.531 s | 22-ms native parity; profile rejected early |
+Reviewed profiles also showed larger savings on Spring, OpenTelemetry, Kafka,
+Micronaut and Groovy. Those results prove structural potential, not automatic
+customer value: reviewed profiles narrowed the required outputs manually. The
+latest breadth result is the authoritative answer for the unchanged onboarding
+path and shows where generalization is still incomplete.
 
-All required JAR bytes match. The CORS precheck uses direct project ownership,
-finds two analogous commits against the theoretical eight-build minimum and
-rejects in 192.442 ms without discovery or calibration. The preceding run had
-observed a 220.761-second penalty on the same public change; the current
-13.896-second penalty is 93.71% lower across runs and remains inside the 10%
-native-retention guardrail. Across three current observations the window gains
-86.870 seconds before calibration but remains **1,299.894 seconds negative
-after calibration**. The projected 31-build break-even was not reached.
+## Current conclusion
 
-## Previous automatic public-package local proof
+Continue the POC, but focus narrowly. Structural Build Impact remains the only
+broad accelerator with compelling evidence. BuildOpt is not yet a generally
+valuable one-command optimizer because synchronous learning and complete-output
+materialization erase the benefit on the latest five-repository transfer.
+Native retention in all five cases is correct behavior, not a hidden failure.
 
-The terminal run used immutable public
-[`v0.6.1`](https://github.com/tonyredondo/buildopt/releases/tag/v0.6.1),
-fresh package/checkouts/BuildOpt state, zero manual BuildOpt files, eight
-alternating pairs and a maximum 30-build payback. Both arms received identical
-content-bound Gradle dependencies and native-cache seeds; unmeasured
-daemon/configuration warmup prevented download or cache asymmetry from becoming
-claimed value.
+## Next work
 
-| Repository / workflow | Graph | Native mean | BuildOpt mean | Saving | 95% saving interval | p95 | Payback |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Ktor `jvmJar` | 133 -> 10 | 38.810 s | 7.830 s | **30.979 s / 79.82%** | 24.679..38.922 s | 61.575 -> 11.957 s | 26 builds |
-| Beam `classes` | 316 -> 6 | 65.081 s | 24.958 s | **40.123 s / 61.65%** | 33.867..51.470 s | 102.621 -> 25.946 s | 28 builds |
-
-Both rows improve in 8/8 pairs, preserve every required output hash, maintain
-stable task shapes, lower p95, pass full-graph fallback and record zero
-product-attributable failures. Percentages are repository-specific and are not
-averaged or added.
-
-The honest negative is a Ktor root build-logic change. The complete native
-`jvmJar` workflow succeeded in 46 seconds; BuildOpt returned
-`GLOBAL_CHANGE_REQUIRES_FULL_GRAPH`, performed no calibration and made no
-performance claim. Safe non-activation is part of the success criterion.
-
-## Supporting breadth, not a substitute for onboarding proof
-
-The latest comparable reviewed-profile matrix independently showed structural
-potential on additional public repositories:
-
-| Repository | Optimized native | BuildOpt | Direct result |
-| --- | ---: | ---: | ---: |
-| Spring Framework | 13.311 s | 11.183 s | **15.99% faster** |
-| OpenTelemetry | 87.869 s | 74.713 s | **14.97% faster** |
-| Apache Kafka | 113.381 s | 14.341 s | **87.35% faster** |
-| Micronaut Core | 30.411 s | 18.418 s | **39.44% faster** |
-| Apache Groovy | 79.868 s | 20.767 s | **74.00% faster** |
-
-All 40 balanced blocks improved with exact outputs and full fallback. These
-profiles required reviewed owner inputs, so they demonstrate mechanism breadth
-but do not replace the zero-configuration Ktor/Beam result.
-
-## What is proven
-
-- The same repository-independent implementation can discover and qualify
-  material graph reduction in two different substantial Gradle families.
-- The complete public installed path beats optimized native Gradle, not a
-  cache-disabled strawman.
-- Correctness and economics are executable gates: exact outputs, positive
-  interval, lower p95, fallback and payback all have to pass.
-- The system can say no safely; global or uncertain work stays native without a
-  fabricated timing claim.
-- Qualified learning can now move between checkouts: retained Kafka evidence
-  is accepted on a source-only descendant after local replanning, while a
-  `build.gradle.kts` descendant is rejected before Gradle. This is functional
-  reuse evidence, not a new central wall-time claim.
-- The complete connected path now beats a full-graph optimized-native control
-  under the same committed central-cache opportunity on Ktor and Beam. The
-  smaller two-machine fixture separately proves restart, credential isolation
-  and outage fallback.
-- Public-package compatibility matters: the rejected `v0.6.0` run exposed a
-  real Configuration Cache defect, which was fixed and republished as
-  `v0.6.1` before terminal timing restarted.
-- Profile lifetime is now measured for one real Ktor sequence. It proves that
-  a large matching replay win can still lose overall when matches are rare and
-  unrelated fallback performs expensive discovery.
-- Economic prequalification can prevent that unrelated discovery generically:
-  it uses the verified graph and bounded Git history, not a Ktor/CORS rule, and
-  retains native before spending the eight-pair learning budget.
-
-## What is not proven
-
-- A universal improvement for every repository, workflow or change.
-- That another profile or repository has Ktor's observed lifetime; useful
-  lifetime remains profile-, workflow- and change-distribution-specific.
-- A universal central-path improvement for every repository, workflow, change,
-  network or hardware class. The retained Ktor global case deliberately makes
-  no performance claim.
-- Production reliability, security posture or autonomous rollout.
-
-## Recommended next steps
-
-1. **Transfer the automatic path to the breadth repositories.** Run the same
-   zero-manual-file command on Spring, OpenTelemetry, Kafka, Micronaut and
-   Groovy; diagnose generic blockers and accept value only under exact output,
-   fallback, repeatability and economic gates.
-2. **Improve graph precision without repository rules.** Target task/variant,
-   ABI and output relationships that currently make some Groovy, Kafka or
-   Micronaut workflows too broad or uneconomic.
-3. **Reduce qualification cost.** The precheck prevents obviously uneconomic
-   new learning, but a qualifying Ktor profile still costs 1,386.764 seconds
-   and needs 31 matching replays.
-4. **Measure full compositions, not added percentages.** Keep cache, graph
-   reduction and qualified task adapters attributable, then test their combined
-   wall time on the same workflow and change.
-5. **Transfer central value to another runner/network class.** Keep the same
-   equal-opportunity protocol and confirm that selection plus central reuse
-   remains positive without turning the POC into production qualification.
+1. **Make learning incremental.** Accumulate exact-bound control/candidate
+   observations across normal invocations instead of running sixteen extra
+   builds in one command. Count only incremental customer cost and retain
+   native until the same evidence gates close.
+2. **Materialize unchanged outputs generically.** Combine structural selection
+   with verified Gradle-compatible cache/state so a clean workspace can omit
+   unaffected producers without weakening the workflow's output contract.
+3. **Partition aggregate workflows.** Derive bounded task/variant/ABI groups
+   for `assemble`, `classes` and `testClasses`; do not raise task-count limits
+   or add repository rules.
+4. **Repeat the same five-subject transfer.** Require lower learning cost,
+   exact outputs, native fallback and repository-specific payback; do not
+   average percentages or add mechanism effects.
 
 ## Evidence
 
-- [Terminal one-command result](../../benchmarks/results/poc-magic-end-to-end-value-v2/README.md)
-- [Machine-readable terminal summary](../../benchmarks/results/poc-magic-end-to-end-value-v2/summary.json)
-- [Terminal contract](../../specs/poc-magic-end-to-end-value-v2.md)
-- [Historical automatic diagnostic matrix](../../benchmarks/results/poc-magic-end-to-end-value-v1/README.md)
-- [Comparable reviewed-profile matrix](../../benchmarks/results/poc-statistical-qualification-v2/README.md)
-- [Economic prequalification result](../../benchmarks/results/poc-economic-prequalification-v1/README.md)
-- [Economic prequalification machine evidence](../../benchmarks/results/poc-economic-prequalification-v1/summary.json)
-- [One-command roadmap](../plans/one-command-onboarding-roadmap.md)
-- [Optional central storage contract](../../specs/poc-central-storage-contract-v1.md)
-- [Restart-safe typed central state](../../specs/poc-central-state-storage-v1.md)
-- [Central Gradle-cache gateway proof](../../specs/poc-central-gradle-cache-v1.md)
-- [Central state-sync proof](../../specs/poc-central-state-sync-v1.md)
-- [Automatic central profile reuse](../../specs/poc-central-optimize-integration-v1.md)
-- [Isolated two-machine proof](../../specs/poc-central-two-machine-v1.md)
-- [Two-machine machine evidence](../../benchmarks/results/poc-central-two-machine-v1.json)
+- [Latest automatic breadth result](../../benchmarks/results/poc-automatic-breadth-transfer-v1/README.md)
+- [Machine-readable breadth summary](../../benchmarks/results/poc-automatic-breadth-transfer-v1/summary.json)
+- [Automatic breadth contract](../../specs/poc-automatic-breadth-transfer-v1.md)
+- [Published terminal Ktor/Beam result](../../benchmarks/results/poc-magic-end-to-end-value-v2/README.md)
 - [Central end-to-end result](../../benchmarks/results/poc-central-end-to-end-value-v1/README.md)
-- [Central end-to-end machine evidence](../../benchmarks/results/poc-central-end-to-end-value-v1/summary.json)
-- [Central end-to-end contract](../../specs/poc-central-end-to-end-value-v1.md)
-- [Ktor profile-lifetime result](../../benchmarks/results/poc-profile-lifetime-v1/README.md)
-- [Ktor profile-lifetime machine evidence](../../benchmarks/results/poc-profile-lifetime-v1/summary.json)
-- [Profile-lifetime contract](../../specs/poc-profile-lifetime-v1.md)
+- [Detailed performance findings](./build-optimization-performance.md)
+- [Generalization audit](./buildopt-generalization-audit.md)
+- [One-command roadmap](../plans/one-command-onboarding-roadmap.md)
 - [Implementation tracker](../../implementation-tracker.md)
