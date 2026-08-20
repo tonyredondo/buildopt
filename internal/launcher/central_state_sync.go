@@ -31,19 +31,20 @@ import (
 const (
 	centralConnectUsage = "usage: buildopt connect https://HOST[:PORT] --token-file PATH [--ca-file PATH] [--state-dir .buildopt/optimize/v1] [--connection-dir .buildopt/central/v1]\n       buildopt sync [--connection-dir .buildopt/central/v1]\n"
 
-	centralConnectionSchema = "buildopt.poc/central-connection/v1"
-	centralBundleSchema     = "buildopt.poc/central-state-bundle/v1"
-	centralSyncResultSchema = "buildopt.poc/central-state-sync-result/v1"
-	centralConnectionDir    = ".buildopt/central/v1"
-	centralConnectionFile   = "connection.json"
-	centralTokenFile        = "token"
-	centralCAFile           = "ca.pem"
-	centralSnapshotDir      = "snapshots"
-	centralMaximumConfig    = 64 << 10
-	centralMaximumCA        = 1 << 20
-	centralMaximumDocument  = 1 << 20
-	centralMaximumArtifact  = 16 << 20
-	centralRequestTimeout   = 10 * time.Second
+	centralConnectionSchema           = "buildopt.poc/central-connection/v1"
+	centralBundleSchema               = "buildopt.poc/central-state-bundle/v1"
+	centralMaterializationChunkSchema = "buildopt.poc/output-materialization-pack-chunk/v1"
+	centralSyncResultSchema           = "buildopt.poc/central-state-sync-result/v1"
+	centralConnectionDir              = ".buildopt/central/v1"
+	centralConnectionFile             = "connection.json"
+	centralTokenFile                  = "token"
+	centralCAFile                     = "ca.pem"
+	centralSnapshotDir                = "snapshots"
+	centralMaximumConfig              = 64 << 10
+	centralMaximumCA                  = 1 << 20
+	centralMaximumDocument            = 1 << 20
+	centralMaximumArtifact            = 16 << 20
+	centralRequestTimeout             = 10 * time.Second
 )
 
 var centralBundleSchemaPattern = regexp.MustCompile(
@@ -120,6 +121,14 @@ type centralLocalPublication struct {
 	bindings      string
 	origin        sharedcache.StateOrigin
 	createdAt     time.Time
+	objects       []centralPublicationObject
+}
+
+type centralPublicationObject struct {
+	role   string
+	sha256 string
+	raw    []byte
+	schema string
 }
 
 type centralRemoteSnapshot struct {
@@ -132,6 +141,7 @@ type centralRemoteSnapshot struct {
 	bundle         centralStateBundle
 	bundleRaw      []byte
 	bundleSHA256   string
+	objects        map[string][]byte
 }
 
 type centralSyncKindResult struct {
@@ -476,22 +486,24 @@ func synchronizeCentralKind(
 	if err != nil {
 		return result, remote, err
 	}
-	created, err := client.putObject(ctx, repositoryScope, kind, local.bundleSHA256, local.bundleRaw)
-	if err != nil {
-		if centralStatus(err) == http.StatusForbidden {
-			result.Status = "REMOTE_READ_ONLY"
-			if found && storeCentralSnapshot(connectionDirectory, remote) == nil {
-				result.SnapshotVerified = true
+	for _, object := range local.objects {
+		created, err := client.putObject(ctx, repositoryScope, kind, object.sha256, object.raw)
+		if err != nil {
+			if centralStatus(err) == http.StatusForbidden {
+				result.Status = "REMOTE_READ_ONLY"
+				if found && storeCentralSnapshot(connectionDirectory, remote) == nil {
+					result.SnapshotVerified = true
+				}
+				return result, remote, nil
 			}
-			return result, remote, nil
+			result.Status = "REMOTE_UNAVAILABLE"
+			return result, remote, err
 		}
-		result.Status = "REMOTE_UNAVAILABLE"
-		return result, remote, err
+		if created {
+			result.ObjectsUploaded++
+		}
 	}
-	if created {
-		result.ObjectsUploaded = 1
-	}
-	created, err = client.putManifest(ctx, repositoryScope, kind, manifestSHA, manifestRaw)
+	manifestCreated, err := client.putManifest(ctx, repositoryScope, kind, manifestSHA, manifestRaw)
 	if err != nil {
 		if centralStatus(err) == http.StatusConflict {
 			return retainCentralConcurrentWinner(
@@ -501,7 +513,7 @@ func synchronizeCentralKind(
 		result.Status = "REMOTE_UNAVAILABLE"
 		return result, remote, err
 	}
-	result.ManifestUploaded = created
+	result.ManifestUploaded = manifestCreated
 	next, err := client.advanceHead(ctx, repositoryScope, kind, manifest, manifestSHA, remote)
 	if err != nil {
 		if centralStatus(err) == http.StatusPreconditionFailed || centralStatus(err) == http.StatusConflict {
@@ -571,21 +583,26 @@ func buildCentralStateManifest(
 	if remote != nil {
 		generation = remote.head.Generation + 1
 	}
-	role := map[sharedcache.StateKind]string{
-		sharedcache.StateKindEvidence:   "CALIBRATION_EVIDENCE",
-		sharedcache.StateKindPortfolio:  "PORTFOLIO_INDEX",
-		sharedcache.StateKindCheckpoint: "OPTIMIZE_STATE",
-	}[local.kind]
+	artifacts := make([]sharedcache.StateArtifact, 0, len(local.objects))
+	for _, object := range local.objects {
+		artifacts = append(artifacts, sharedcache.StateArtifact{
+			Role: object.role, SHA256: object.sha256, SizeBytes: int64(len(object.raw)),
+			PayloadSchemaVersion: object.schema,
+		})
+	}
+	sort.Slice(artifacts, func(left, right int) bool {
+		if artifacts[left].Role == artifacts[right].Role {
+			return artifacts[left].SHA256 < artifacts[right].SHA256
+		}
+		return artifacts[left].Role < artifacts[right].Role
+	})
 	manifest := sharedcache.StateManifest{
 		SchemaVersion: "buildopt.central/state-manifest/v1",
 		RecordType:    "CENTRAL_STATE_MANIFEST", Kind: local.kind,
 		RepositoryScopeSHA256: local.bundle.RepositoryScopeSHA256,
 		Generation:            generation, CompatibilitySHA256: local.compatibility,
 		BindingsSHA256: local.bindings, Origin: local.origin,
-		Artifacts: []sharedcache.StateArtifact{{
-			Role: role, SHA256: local.bundleSHA256, SizeBytes: int64(len(local.bundleRaw)),
-			PayloadSchemaVersion: centralBundleSchema,
-		}},
+		Artifacts:  artifacts,
 		References: []sharedcache.StateReference{},
 		Status:     "COMPLETE", RetentionClass: "WHILE_REFERENCED_PLUS_30_DAYS",
 		CreatedAt: local.createdAt.UTC().Format(time.RFC3339Nano),
@@ -676,6 +693,8 @@ func collectCentralLocalPublications(
 		filepath.ToSlash(filepath.Join("portfolio", optimizePortfolioIndexFile)): indexRaw,
 	}
 	evidenceFiles := map[string][]byte{}
+	materializationObjects := []centralPublicationObject{}
+	materializationFound := false
 	families := make([]string, 0, len(portfolio.Profiles))
 	for _, entry := range portfolio.Profiles {
 		if !validOptimizeSHA(entry.FamilySHA256) || !validOptimizeSHA(entry.ProfileSHA256) ||
@@ -684,7 +703,8 @@ func collectCentralLocalPublications(
 			entry.RepositoryID != repositoryID || entry.State != "QUALIFIED" ||
 			entry.ProductionAuthorized || entry.SelectionAuthorized ||
 			len(entry.ChangedProjects) < 1 || len(entry.Entrypoints) < 1 ||
-			len(entry.CandidateEntrypoints) < 1 || len(entry.RequiredOutputs) < 1 {
+			len(entry.CandidateEntrypoints) < 1 || len(entry.RequiredOutputs) < 1 ||
+			!validOptimizePortfolioMaterialization(entry) {
 			return publications, errors.New("local optimize portfolio entry is invalid")
 		}
 		families = append(families, entry.FamilySHA256)
@@ -717,6 +737,23 @@ func collectCentralLocalPublications(
 				evidenceFiles[relative] = fileRaw
 			}
 		}
+		if entry.Materialization != nil {
+			if materializationFound {
+				return publications, errors.New("central POC publication supports one materialized profile per portfolio generation")
+			}
+			manifestRaw, objects, readErr := collectCentralMaterializationObjects(
+				repositoryRoot, stateRelative, entry,
+			)
+			if readErr != nil {
+				return publications, readErr
+			}
+			manifestPath := filepath.ToSlash(filepath.Join(
+				"portfolio", "profiles", entry.FamilySHA256, "materialization-manifest.json",
+			))
+			portfolioFiles[manifestPath] = manifestRaw
+			materializationObjects = objects
+			materializationFound = true
+		}
 	}
 	sort.Strings(families)
 	portfolioCompatibility := optimizeDigest(
@@ -741,9 +778,95 @@ func collectCentralLocalPublications(
 	if err != nil {
 		return publications, err
 	}
+	portfolioPublication.objects = append(portfolioPublication.objects, materializationObjects...)
 	publications[sharedcache.StateKindEvidence] = evidence
 	publications[sharedcache.StateKindPortfolio] = portfolioPublication
 	return publications, nil
+}
+
+func collectCentralMaterializationObjects(
+	repositoryRoot string,
+	stateRelative string,
+	entry optimizePortfolioEntry,
+) ([]byte, []centralPublicationObject, error) {
+	metadata := entry.Materialization
+	if metadata == nil || !validOptimizePortfolioMaterialization(entry) {
+		return nil, nil, errors.New("central output materialization metadata is invalid")
+	}
+	manifestPath := filepath.Join(
+		repositoryRoot,
+		filepath.FromSlash(filepath.ToSlash(filepath.Join(stateRelative, "materialization", "manifest.json"))),
+	)
+	manifestRaw, err := os.ReadFile(manifestPath)
+	if err != nil || len(manifestRaw) < 1 || len(manifestRaw) > optimizeMaterializationMaxManifest {
+		return nil, nil, errors.New("central output materialization manifest is unavailable")
+	}
+	manifestDigest := sha256.Sum256(manifestRaw)
+	if hex.EncodeToString(manifestDigest[:]) != metadata.ManifestSHA256 {
+		return nil, nil, errors.New("central output materialization manifest digest drifted")
+	}
+	decoder := json.NewDecoder(bytes.NewReader(manifestRaw))
+	decoder.DisallowUnknownFields()
+	var manifest optimizeOutputMaterializationManifest
+	if decoder.Decode(&manifest) != nil || decoder.Decode(&struct{}{}) != io.EOF ||
+		manifest.SchemaVersion != optimizeMaterializationSchema ||
+		manifest.RepositoryID != entry.RepositoryID || manifest.TargetRevision != entry.TargetRevision ||
+		!equalOptimizeStrings(manifest.RequiredOutputs, entry.RequiredOutputs) ||
+		!equalOptimizeStrings(manifest.CandidateOutputs, entry.CandidateOutputs) ||
+		manifest.PackSHA256 != metadata.PackSHA256 || manifest.PackSize != metadata.PackSize ||
+		manifest.PackFile != filepath.ToSlash(filepath.Join(stateRelative, "materialization", optimizeMaterializationPackName)) {
+		return nil, nil, errors.New("central output materialization manifest binding drifted")
+	}
+	pack, err := os.Open(filepath.Join(repositoryRoot, filepath.FromSlash(manifest.PackFile)))
+	if err != nil {
+		return nil, nil, errors.New("central output materialization pack is unavailable")
+	}
+	defer pack.Close()
+	info, err := pack.Stat()
+	if err != nil || !info.Mode().IsRegular() || info.Mode()&os.ModeSymlink != 0 || info.Size() != metadata.PackSize {
+		return nil, nil, errors.New("central output materialization pack is invalid")
+	}
+	objects := []centralPublicationObject{}
+	seen := map[string]bool{}
+	packDigest := sha256.New()
+	buffer := make([]byte, optimizeMaterializationChunkBytes)
+	chunkIndex := 0
+	var total int64
+	for {
+		read, readErr := io.ReadFull(pack, buffer)
+		if read > 0 {
+			if chunkIndex >= len(metadata.ChunkSHA256) {
+				return nil, nil, errors.New("central output materialization has unexpected pack chunks")
+			}
+			raw := append([]byte(nil), buffer[:read]...)
+			_, _ = packDigest.Write(raw)
+			digest := sha256.Sum256(raw)
+			sha := hex.EncodeToString(digest[:])
+			if sha != metadata.ChunkSHA256[chunkIndex] {
+				return nil, nil, errors.New("central output materialization chunk digest drifted")
+			}
+			if !seen[sha] {
+				objects = append(objects, centralPublicationObject{
+					role: "OUTPUT_PACK_CHUNK", sha256: sha, raw: raw,
+					schema: centralMaterializationChunkSchema,
+				})
+				seen[sha] = true
+			}
+			total += int64(read)
+			chunkIndex++
+		}
+		if errors.Is(readErr, io.EOF) || errors.Is(readErr, io.ErrUnexpectedEOF) {
+			break
+		}
+		if readErr != nil {
+			return nil, nil, fmt.Errorf("read central output materialization pack: %w", readErr)
+		}
+	}
+	if chunkIndex != len(metadata.ChunkSHA256) || total != metadata.PackSize ||
+		hex.EncodeToString(packDigest.Sum(nil)) != metadata.PackSHA256 {
+		return nil, nil, errors.New("central output materialization pack binding drifted")
+	}
+	return manifestRaw, objects, nil
 }
 
 func newCentralLocalPublication(
@@ -797,11 +920,24 @@ func newCentralLocalPublication(
 		return nil, errors.New("central state bundle cannot be canonicalized within its limit")
 	}
 	digest := sha256.Sum256(canonical)
-	return &centralLocalPublication{
+	publication := &centralLocalPublication{
 		kind: kind, bundle: bundle, bundleRaw: canonical,
 		bundleSHA256: hex.EncodeToString(digest[:]), compatibility: compatibility,
 		bindings: bindings, origin: origin, createdAt: createdAt.UTC(),
-	}, nil
+	}
+	publication.objects = []centralPublicationObject{{
+		role: centralPrimaryArtifactRole(kind), sha256: publication.bundleSHA256,
+		raw: publication.bundleRaw, schema: centralBundleSchema,
+	}}
+	return publication, nil
+}
+
+func centralPrimaryArtifactRole(kind sharedcache.StateKind) string {
+	return map[sharedcache.StateKind]string{
+		sharedcache.StateKindEvidence:   "CALIBRATION_EVIDENCE",
+		sharedcache.StateKindPortfolio:  "PORTFOLIO_INDEX",
+		sharedcache.StateKindCheckpoint: "OPTIMIZE_STATE",
+	}[kind]
 }
 
 func (client *centralStateClient) probe(ctx context.Context, repositoryScope string) error {
@@ -847,21 +983,27 @@ func (client *centralStateClient) loadSnapshot(
 	if err != nil || manifestETag != manifestSHA || manifestSHA != head.ManifestSHA256 ||
 		manifest.RepositoryScopeSHA256 != repositoryScope || manifest.Kind != kind ||
 		manifest.Generation != head.Generation || manifest.CompatibilitySHA256 != head.CompatibilitySHA256 ||
-		len(manifest.Artifacts) != 1 || manifest.Artifacts[0].PayloadSchemaVersion != centralBundleSchema {
+		len(manifest.Artifacts) < 1 {
 		return nil, false, errors.New("central state manifest failed canonical verification")
 	}
-	artifact := manifest.Artifacts[0]
-	bundleRaw, bundleETag, err := client.get(
-		ctx,
-		centralStatePath(repositoryScope, kind, "objects", artifact.SHA256),
-		centralMaximumArtifact,
-	)
-	if err != nil {
-		return nil, false, err
+	primary, found := centralPrimaryArtifact(manifest)
+	if !found {
+		return nil, false, errors.New("central state manifest has no primary bundle")
 	}
-	if int64(len(bundleRaw)) != artifact.SizeBytes || bundleETag != artifact.SHA256 {
-		return nil, false, errors.New("central state bundle length or identity drift")
+	objects := map[string][]byte{}
+	for _, artifact := range manifest.Artifacts {
+		objectRaw, objectETag, objectErr := client.get(
+			ctx,
+			centralStatePath(repositoryScope, kind, "objects", artifact.SHA256),
+			centralMaximumArtifact,
+		)
+		if objectErr != nil || int64(len(objectRaw)) != artifact.SizeBytes || objectETag != artifact.SHA256 {
+			return nil, false, errors.New("central state object length or identity drift")
+		}
+		objects[artifact.SHA256] = objectRaw
 	}
+	artifact := primary
+	bundleRaw := objects[artifact.SHA256]
 	bundle, bundleSHA, err := decodeCentralStateBundle(bundleRaw)
 	if err != nil || bundleSHA != artifact.SHA256 || bundle.RepositoryScopeSHA256 != repositoryScope ||
 		bundle.Kind != kind || bundle.CompatibilitySHA256 != manifest.CompatibilitySHA256 ||
@@ -871,8 +1013,21 @@ func (client *centralStateClient) loadSnapshot(
 	return &centralRemoteSnapshot{
 		head: head, headRaw: headRaw, headSHA256: headSHA,
 		manifest: manifest, manifestRaw: manifestRaw, manifestSHA256: manifestSHA,
-		bundle: bundle, bundleRaw: bundleRaw, bundleSHA256: bundleSHA,
+		bundle: bundle, bundleRaw: bundleRaw, bundleSHA256: bundleSHA, objects: objects,
 	}, true, nil
+}
+
+func centralPrimaryArtifact(manifest sharedcache.StateManifest) (sharedcache.StateArtifact, bool) {
+	role := centralPrimaryArtifactRole(manifest.Kind)
+	var found sharedcache.StateArtifact
+	count := 0
+	for _, artifact := range manifest.Artifacts {
+		if artifact.Role == role && artifact.PayloadSchemaVersion == centralBundleSchema {
+			found = artifact
+			count++
+		}
+	}
+	return found, count == 1
 }
 
 func (client *centralStateClient) putObject(
@@ -1157,6 +1312,21 @@ func storeCentralSnapshot(connectionDirectory string, snapshot *centralRemoteSna
 			return err
 		}
 	}
+	objectsDirectory := filepath.Join(directory, "objects")
+	if err := ensurePrivateDirectory(objectsDirectory, true); err != nil {
+		return err
+	}
+	for digest, raw := range snapshot.objects {
+		if digest == snapshot.bundleSHA256 {
+			continue
+		}
+		if !validOptimizeSHA(digest) || len(raw) < 1 || len(raw) > centralMaximumArtifact {
+			return errors.New("central snapshot contains an invalid auxiliary object")
+		}
+		if err := writePrivateAtomicFile(filepath.Join(objectsDirectory, digest), raw); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -1187,20 +1357,42 @@ func loadCentralSnapshot(
 	}
 	manifest, manifestSHA, err := sharedcache.DecodeCentralStateManifest(manifestRaw)
 	if err != nil || manifestSHA != head.ManifestSHA256 || manifest.RepositoryScopeSHA256 != repositoryScope ||
-		manifest.Kind != kind || len(manifest.Artifacts) != 1 {
+		manifest.Kind != kind || len(manifest.Artifacts) < 1 {
 		return nil, errors.New("offline central manifest failed verification")
 	}
+	primary, found := centralPrimaryArtifact(manifest)
+	if !found {
+		return nil, errors.New("offline central manifest has no primary bundle")
+	}
 	bundle, bundleSHA, err := decodeCentralStateBundle(bundleRaw)
-	if err != nil || bundleSHA != manifest.Artifacts[0].SHA256 ||
-		int64(len(bundleRaw)) != manifest.Artifacts[0].SizeBytes ||
+	if err != nil || bundleSHA != primary.SHA256 ||
+		int64(len(bundleRaw)) != primary.SizeBytes ||
 		bundle.RepositoryScopeSHA256 != repositoryScope || bundle.Kind != kind ||
 		bundle.CompatibilitySHA256 != manifest.CompatibilitySHA256 {
 		return nil, errors.New("offline central bundle failed verification")
 	}
+	objects := map[string][]byte{bundleSHA: bundleRaw}
+	for _, artifact := range manifest.Artifacts {
+		if artifact.SHA256 == bundleSHA {
+			continue
+		}
+		raw, readErr := readPrivateCentralCredential(
+			filepath.Join(directory, "objects", artifact.SHA256),
+			centralMaximumArtifact,
+		)
+		if readErr != nil || int64(len(raw)) != artifact.SizeBytes {
+			return nil, errors.New("offline central auxiliary object failed verification")
+		}
+		digest := sha256.Sum256(raw)
+		if hex.EncodeToString(digest[:]) != artifact.SHA256 {
+			return nil, errors.New("offline central auxiliary object digest drifted")
+		}
+		objects[artifact.SHA256] = raw
+	}
 	return &centralRemoteSnapshot{
 		head: head, headRaw: headRaw, headSHA256: headSHA,
 		manifest: manifest, manifestRaw: manifestRaw, manifestSHA256: manifestSHA,
-		bundle: bundle, bundleRaw: bundleRaw, bundleSHA256: bundleSHA,
+		bundle: bundle, bundleRaw: bundleRaw, bundleSHA256: bundleSHA, objects: objects,
 	}, nil
 }
 

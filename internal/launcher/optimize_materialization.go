@@ -30,6 +30,7 @@ const (
 	optimizeMaterializationMaxBytes    = int64(2 << 30)
 	optimizeMaterializationMaxManifest = 32 << 20
 	optimizeMaterializationPackName    = "payload.pack"
+	optimizeMaterializationChunkBytes  = 8 << 20
 )
 
 type optimizeOutputMaterialization struct {
@@ -73,6 +74,50 @@ type optimizeOutputMaterializationEntry struct {
 type optimizeMaterializationPayload struct {
 	entry optimizeOutputMaterializationEntry
 	raw   []byte
+}
+
+func prepareOptimizePortfolioMaterialization(
+	invocation optimizeInvocation,
+	discovery optimizeDiscoveryResult,
+) (*optimizePortfolioMaterialization, error) {
+	if discovery.AggregatePartition == nil ||
+		len(discovery.AggregatePartition.MaterializedProjects) == 0 {
+		return nil, errors.New("output materialization has no producer-project binding")
+	}
+	manifest, _, err := loadOptimizeOutputMaterialization(invocation, discovery)
+	if err != nil {
+		return nil, err
+	}
+	pack, err := os.Open(filepath.Join(invocation.repositoryRoot, filepath.FromSlash(manifest.PackFile)))
+	if err != nil {
+		return nil, errors.New("output materialization pack is unavailable for portfolio publication")
+	}
+	defer pack.Close()
+	chunks := []string{}
+	buffer := make([]byte, optimizeMaterializationChunkBytes)
+	for {
+		read, readErr := io.ReadFull(pack, buffer)
+		if read > 0 {
+			digest := sha256.Sum256(buffer[:read])
+			chunks = append(chunks, hex.EncodeToString(digest[:]))
+		}
+		if errors.Is(readErr, io.EOF) || errors.Is(readErr, io.ErrUnexpectedEOF) {
+			break
+		}
+		if readErr != nil {
+			return nil, fmt.Errorf("read output materialization pack: %w", readErr)
+		}
+	}
+	if len(chunks) == 0 || len(chunks) > 63 {
+		return nil, errors.New("output materialization pack exceeds the central POC chunk bound")
+	}
+	return &optimizePortfolioMaterialization{
+		ManifestSHA256:       discovery.Materialization.ManifestSHA256,
+		PackSHA256:           manifest.PackSHA256,
+		PackSize:             manifest.PackSize,
+		ChunkSHA256:          chunks,
+		MaterializedProjects: append([]string(nil), discovery.AggregatePartition.MaterializedProjects...),
+	}, nil
 }
 
 func captureOptimizeOutputMaterialization(
@@ -315,7 +360,8 @@ func loadOptimizeOutputMaterialization(
 		return optimizeOutputMaterializationManifest{}, nil, errors.New("output materialization manifest binding drifted")
 	}
 	payloads := make([]optimizeMaterializationPayload, 0, len(manifest.Entries))
-	if manifest.PackFile != filepath.ToSlash(filepath.Join(invocation.stateRelative, "materialization", optimizeMaterializationPackName)) ||
+	expectedPack := filepath.ToSlash(filepath.Join(filepath.Dir(materialization.ManifestFile), optimizeMaterializationPackName))
+	if manifest.PackFile != expectedPack ||
 		!validOptimizeSHA(manifest.PackSHA256) || manifest.PackSize != materialization.ByteCount {
 		return optimizeOutputMaterializationManifest{}, nil, errors.New("output materialization pack binding drifted")
 	}

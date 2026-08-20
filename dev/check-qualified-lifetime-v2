@@ -1,0 +1,204 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# < 1 || $# > 2)) || [[ ${2:-} != '' && ${2:-} != --subject ]]; then
+    printf 'usage: %s RESULT_JSON [--subject]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_result=$1
+buildopt_mode=${2:-summary}
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec=${buildopt_repo_root}/specs/poc-qualified-lifetime-v2.json
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'qualified-lifetime validation requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -f ${buildopt_result} ]] || {
+    printf 'qualified-lifetime evidence is unavailable: %s\n' "${buildopt_result}" >&2
+    exit 1
+}
+[[ -f ${buildopt_spec} ]] || {
+    printf 'qualified-lifetime specification is unavailable\n' >&2
+    exit 1
+}
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+
+# This is a jq program, not shell text; dollar-prefixed names are jq variables.
+# shellcheck disable=SC2016
+buildopt_common_jq='
+  def digest: type == "string" and test("^[0-9a-f]{64}$");
+  def revision: type == "string" and test("^[0-9a-f]{40}$");
+  def integer: type == "number" and floor == .;
+  def nonnegative_integer: integer and . >= 0;
+  def positive_integer: integer and . > 0;
+  def timestamp:
+    type == "string" and
+    test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$");
+  def boundaries:
+    . == {designPartnerRequired:false,mechanismPercentagesAdded:false,
+      productionAuthorized:false,proofOfConcept:true,
+      repositoriesAveraged:false,soakRequired:false,
+      testOptimization:"OUT_OF_SCOPE"};
+  def expected_conclusion($net; $selected):
+    if $net >= 0 then "PAID_BACK_IN_OBSERVED_WINDOW"
+    elif $selected == 0 then "NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW"
+    else "NOT_PAID_BACK_IN_OBSERVED_WINDOW" end;
+  def first_break_even($rows; $cost):
+    reduce $rows[] as $row ({sum:0,index:0,answer:null};
+      .index += 1 | .sum += $row.savedMs |
+      if .answer == null and .sum >= $cost then .answer = .index else . end) |
+    .answer;
+  def observation($expected; $index):
+    . as $row |
+    keys == ["candidateDurationMs","candidateFromCache",
+      "candidateRequiredOutputSha256","controlDurationMs","controlFromCache",
+      "controlRequiredOutputSha256","exactRequiredOutputs","executionMode",
+      "materializationDurationMs","nativeRetained","order","parentRevision",
+      "postSyncDurationMs","preSyncDurationMs","reason","requiredOutputCount",
+      "revision","savedMs","selected","selectionDurationNs","selectionSource",
+      "sequence","sourceOrigin"] and
+    .sequence == ($index + 1) and
+    .revision == $expected.observations[$index] and (.revision | revision) and
+    (.parentRevision | revision) and .sourceOrigin == "PUBLIC_UPSTREAM_COMMIT" and
+    .order == (if ((.sequence % 2) == 1) then "CONTROL_FIRST" else "CANDIDATE_FIRST" end) and
+    (.controlDurationMs | positive_integer) and (.candidateDurationMs | positive_integer) and
+    .savedMs == (.controlDurationMs - .candidateDurationMs) and
+    (.controlFromCache | nonnegative_integer) and (.candidateFromCache | nonnegative_integer) and
+    (.requiredOutputCount | positive_integer) and
+    (.controlRequiredOutputSha256 | digest) and
+    .candidateRequiredOutputSha256 == .controlRequiredOutputSha256 and
+    .exactRequiredOutputs == true and
+    (.reason | type == "string" and length > 0) and
+    (.selectionDurationNs | nonnegative_integer) and
+    (.preSyncDurationMs | nonnegative_integer) and
+    (.postSyncDurationMs | nonnegative_integer) and
+    (.materializationDurationMs | nonnegative_integer) and
+    (if .selected then
+       .selectionSource == "CENTRAL_PORTFOLIO" and
+       .executionMode == "INCREMENTAL_CANDIDATE" and .nativeRetained == false
+     else
+       (.selectionSource | type == "string" and length > 0) and
+       .executionMode == "OPTIMIZED_NATIVE" and .nativeRetained == true
+     end);
+  def subject($spec):
+    . as $subject |
+    ($spec.repositories[] | select(.key == $subject.key)) as $expected |
+    keys == ["acceptance","boundaries","economics","key","observations",
+      "qualification","repository","schemaVersion"] and
+    .schemaVersion == "buildopt.evidence/poc-qualified-lifetime-subject/v2" and
+    .repository == {id:$expected.repositoryId,remote:$expected.remoteUrl,
+      publicRepository:true,historyBranch:$expected.historyBranch} and
+    .qualification.parentRevision == $expected.publicRevision and
+    .qualification.targetRevision == $expected.targetRevision and
+    (.qualification.parentRevision | revision) and
+    (.qualification.targetRevision | revision) and
+    .qualification.sourceOrigin == "PUBLIC_UPSTREAM_COMMIT" and
+    .qualification.changeFamily == "DEPENDENCY_SOURCE" and
+    .qualification.expectedChangedProjects == $expected.expectedChangedProjects and
+    (.qualification.graph | type == "object") and
+    (.qualification.captureSha256 | digest) and
+    (.qualification.calibration | keys == ["breakEvenBuilds","calibrationCostMs",
+      "candidateMeanMs","controlMeanMs","fallbackSuccessful","interval95SavedMs",
+      "meanSavedMs","pairsMeasured","positivePairs","qualified","reductionRatio"]) and
+    (.qualification.calibration.calibrationCostMs | positive_integer) and
+    (.qualification.calibration.controlMeanMs | positive_integer) and
+    (.qualification.calibration.candidateMeanMs | positive_integer) and
+    (.qualification.calibration.meanSavedMs | type == "number") and
+    (.qualification.calibration.reductionRatio | type == "number") and
+    (.qualification.calibration.interval95SavedMs | type == "array" and length == 2 and
+      all(.[]; type == "number")) and
+    .qualification.calibration.pairsMeasured == $spec.protocol.calibrationPairs and
+    (.qualification.calibration.positivePairs | positive_integer) and
+    .qualification.calibration.positivePairs <= .qualification.calibration.pairsMeasured and
+    .qualification.calibration.qualified == true and
+    .qualification.calibration.fallbackSuccessful == true and
+    (.qualification.calibration.breakEvenBuilds | positive_integer) and
+    .qualification.calibration.breakEvenBuilds <= $spec.protocol.maximumBreakEvenBuilds and
+    .qualification.materialization.transport == "CENTRAL_CAS_CHUNKS" and
+    (.qualification.materialization.packBytes | positive_integer) and
+    (.qualification.materialization.chunkCount | positive_integer) and
+    .qualification.materialization.chunkCount <= 63 and
+    (.qualification.materialization.publicationDurationMs | nonnegative_integer) and
+    (.observations | type == "array" and length == ($expected.observations | length)) and
+    all(range(0; .observations | length); . as $index |
+      $subject.observations[$index] | observation($expected; $index)) and
+    (.economics | keys == ["conclusion","cumulativeGrossSavedMs",
+      "cumulativeNetSavedMs","fallbackDeltaMs","firstObservedBreakEvenBuild",
+      "nativeRetainedBuilds","observedBuilds","qualificationAndPublicationCostMs",
+      "selectedReplaySavedMs","selectedReplays"]) and
+    .economics.observedBuilds == (.observations | length) and
+    .economics.selectedReplays == ([.observations[] | select(.selected)] | length) and
+    .economics.nativeRetainedBuilds == ([.observations[] | select(.nativeRetained)] | length) and
+    .economics.selectedReplaySavedMs == ([.observations[] | select(.selected) | .savedMs] | add // 0) and
+    .economics.fallbackDeltaMs == ([.observations[] | select(.nativeRetained) | .savedMs] | add // 0) and
+    .economics.cumulativeGrossSavedMs == ([.observations[].savedMs] | add // 0) and
+    .economics.qualificationAndPublicationCostMs ==
+      (.qualification.calibration.calibrationCostMs +
+       .qualification.materialization.publicationDurationMs) and
+    .economics.cumulativeNetSavedMs ==
+      (.economics.cumulativeGrossSavedMs - .economics.qualificationAndPublicationCostMs) and
+    .economics.firstObservedBreakEvenBuild ==
+      first_break_even(.observations; .economics.qualificationAndPublicationCostMs) and
+    .economics.conclusion ==
+      expected_conclusion(.economics.cumulativeNetSavedMs; .economics.selectedReplays) and
+    .acceptance == {decision:"COMPLETE",exactRequiredOutputs:true,
+      publicAncestry:true,productFailures:0} and
+    (.boundaries | boundaries);
+'
+
+if [[ ${buildopt_mode} == --subject ]]; then
+    jq -e --slurpfile spec "${buildopt_spec}" \
+        "${buildopt_common_jq} subject(\$spec[0])" \
+        "${buildopt_result}" >/dev/null
+else
+    jq -e --slurpfile spec "${buildopt_spec}" --arg specSha "${buildopt_spec_sha}" \
+        "${buildopt_common_jq}
+         . as \$summary | \$spec[0] as \$expected |
+         keys == [\"acceptance\",\"aggregation\",\"boundaries\",\"buildopt\",
+           \"capturedAt\",\"runner\",\"schemaVersion\",\"subjects\",\"workItem\"] and
+         .schemaVersion == \"buildopt.evidence/poc-qualified-lifetime/v2\" and
+         .workItem == \$expected.workItem and (.capturedAt | timestamp) and
+         (.buildopt.revision | revision) and .buildopt.specSha256 == \$specSha and
+         .buildopt.installedPackage == true and
+         .runner.operatingSystem == \"Linux\" and .runner.architecture == \"x86_64\" and
+         (.runner.kernel | type == \"string\" and length > 0) and
+         (.runner.cpuCount | positive_integer) and (.runner.memoryBytes | positive_integer) and
+         (.subjects | type == \"array\" and length == (\$expected.repositories | length)) and
+         ([.subjects[].key] | sort) == ([\$expected.repositories[].key] | sort) and
+         all(.subjects[]; subject(\$expected)) and
+         .aggregation.subjectCount == (.subjects | length) and
+         .aggregation.qualifiedProfiles == ([.subjects[] |
+           select(.qualification.calibration.qualified)] | length) and
+         .aggregation.observedBuilds == ([.subjects[].economics.observedBuilds] | add) and
+         .aggregation.selectedReplays == ([.subjects[].economics.selectedReplays] | add) and
+         .aggregation.nativeRetainedBuilds == ([.subjects[].economics.nativeRetainedBuilds] | add) and
+         .aggregation.exactOutputObservations == ([.subjects[].observations[] |
+           select(.exactRequiredOutputs)] | length) and
+         .aggregation.paidBackSubjects == ([.subjects[] |
+           select(.economics.conclusion == \"PAID_BACK_IN_OBSERVED_WINDOW\")] | length) and
+         .aggregation.noCompatibleReplaySubjects == ([.subjects[] |
+           select(.economics.conclusion == \"NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW\")] | length) and
+         .aggregation.repositoryPercentagesAveraged == false and
+         .aggregation.mechanismPercentagesAdded == false and
+         .acceptance == {decision:\"COMPLETE\",allQualified:true,
+           allOutputsExact:true,allPublicFirstParent:true,productFailures:0} and
+         .boundaries == {designPartnerRequired:false,productionAuthorized:false,
+           proofOfConcept:true,repositorySpecificProductRules:false,
+           soakRequired:false,testOptimization:\"OUT_OF_SCOPE\"}
+        " "${buildopt_result}" >/dev/null
+fi
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ ${buildopt_before} != "${buildopt_after}" ]]; then
+    printf 'qualified-lifetime validation changed the working tree\n' >&2
+    exit 1
+fi
+
+printf 'BuildOpt qualified lifetime V2 OK: %s\n' "${buildopt_result}"

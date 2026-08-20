@@ -1,6 +1,7 @@
 package launcher
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/base64"
@@ -373,6 +374,14 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonInvalid, err}
 	}
 	snapshot := centralOptimizeDiscoverySnapshot(graph.Graph)
+	if entry.Materialization != nil && centralOptimizeMaterializedProducerChanged(
+		snapshot, sinceEvidence, entry.Materialization.MaterializedProjects,
+	) {
+		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{
+			optimizeCentralReasonStructural,
+			errors.New("a materialized producer changed after remote qualification"),
+		}
+	}
 	owners, err := buildimpact.ResolveProjectOwners(snapshot, invocation.discovery.changedPaths)
 	if err != nil {
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, err}
@@ -392,12 +401,6 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 			integration.prequalification = prequalifyOptimizeDiscovery(invocation, snapshot, owners, family)
 		}
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("current change family differs from remote qualification")}
-	}
-	if len(entry.CandidateOutputs) > 0 && !equalOptimizeStrings(entry.RequiredOutputs, entry.CandidateOutputs) {
-		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{
-			optimizeCentralReasonStructural,
-			errors.New("remote profile requires output materialization state that is not present in the portfolio bundle"),
-		}
 	}
 
 	arguments := []string{
@@ -475,11 +478,8 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 		RequiredOutputs:      append([]string(nil), entry.RequiredOutputs...),
 		CandidateOutputs:     candidateOutputs,
 		CandidateEntrypoints: append([]string(nil), entry.CandidateEntrypoints...),
-		Materialization: optimizeOutputMaterialization{
-			Status: optimizeMaterializationNotRequired, Reason: optimizeMaterializationReasonNone,
-			Patterns: []string{},
-		},
-		ChangeFamily: family, ChangedProjects: append([]string(nil), owners...),
+		Materialization:      paths.materialization,
+		ChangeFamily:         family, ChangedProjects: append([]string(nil), owners...),
 		Graph:          optimizeDiscoveryGraph{TotalProjects: len(graph.Graph.Projects), SelectedProjects: selectedProjects, OmittedProjects: len(impact.plan.OmittedProjects)},
 		GeneratedFiles: append([]string(nil), paths.discoveryFiles...), ReviewRequired: true,
 		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
@@ -513,11 +513,35 @@ func centralOptimizeChangedPathsSinceEvidence(repositoryRoot, evidenceRevision, 
 	return proposalGitChangedPaths(repositoryRoot, evidenceRevision, currentRevision)
 }
 
+func centralOptimizeMaterializedProducerChanged(
+	snapshot buildimpact.DiscoverySnapshot,
+	changedPaths []string,
+	materializedProjects []string,
+) bool {
+	materialized := make(map[string]bool, len(materializedProjects))
+	for _, project := range materializedProjects {
+		materialized[project] = true
+	}
+	for _, changed := range changedPaths {
+		owners, err := buildimpact.ResolveProjectOwners(snapshot, []string{changed})
+		if err != nil {
+			continue
+		}
+		for _, owner := range owners {
+			if materialized[owner] {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 type centralOptimizePaths struct {
 	portfolio, profile, manifest, graph, generated, evidence, changes string
 	bundleEvidence                                                    string
 	profileSHA                                                        string
 	discoveryFiles                                                    []string
+	materialization                                                   optimizeOutputMaterialization
 }
 
 func (integration *centralOptimizeIntegration) materializeEntryFiles(
@@ -587,6 +611,19 @@ func (integration *centralOptimizeIntegration) materializeEntryFiles(
 		evidence:       filepath.ToSlash(filepath.Join(materializedRoot, "evidence.json")),
 		changes:        filepath.ToSlash(filepath.Join(materializedRoot, "changes.txt")),
 		bundleEvidence: bundlePaths["evidence"],
+		materialization: optimizeOutputMaterialization{
+			Status: optimizeMaterializationNotRequired, Reason: optimizeMaterializationReasonNone,
+			Patterns: []string{},
+		},
+	}
+	if entry.Materialization != nil {
+		materialization, materializationErr := integration.materializeOutputPack(
+			invocation, entry, portfolioFiles, materializedRoot,
+		)
+		if materializationErr != nil {
+			return centralOptimizePaths{}, nil, materializationErr
+		}
+		paths.materialization = materialization
 	}
 	profile.Impact.Manifest = paths.manifest
 	profile.Impact.Graph = paths.graph
@@ -641,6 +678,113 @@ func (integration *centralOptimizeIntegration) materializeEntryFiles(
 	paths.discoveryFiles = []string{paths.manifest, paths.graph, paths.generated, paths.changes, fallback, revalidation, source}
 	sort.Strings(paths.discoveryFiles)
 	return paths, &profile, nil
+}
+
+func (integration *centralOptimizeIntegration) materializeOutputPack(
+	invocation optimizeInvocation,
+	entry optimizePortfolioEntry,
+	portfolioFiles map[string][]byte,
+	materializedRoot string,
+) (optimizeOutputMaterialization, error) {
+	started := time.Now()
+	metadata := entry.Materialization
+	if metadata == nil || integration.portfolio == nil || !validOptimizePortfolioMaterialization(entry) {
+		return optimizeOutputMaterialization{}, errors.New("remote output materialization metadata is invalid")
+	}
+	bundleManifest := filepath.ToSlash(filepath.Join(
+		"portfolio", "profiles", entry.FamilySHA256, "materialization-manifest.json",
+	))
+	manifestRaw := portfolioFiles[bundleManifest]
+	manifestDigest := sha256.Sum256(manifestRaw)
+	if len(manifestRaw) == 0 || hex.EncodeToString(manifestDigest[:]) != metadata.ManifestSHA256 {
+		return optimizeOutputMaterialization{}, errors.New("remote output materialization manifest is missing or corrupt")
+	}
+	var manifest optimizeOutputMaterializationManifest
+	if decodeCentralStrictJSON(manifestRaw, &manifest) != nil ||
+		manifest.SchemaVersion != optimizeMaterializationSchema ||
+		manifest.RepositoryID != entry.RepositoryID || manifest.TargetRevision != entry.TargetRevision ||
+		!equalOptimizeStrings(manifest.RequiredOutputs, entry.RequiredOutputs) ||
+		!equalOptimizeStrings(manifest.CandidateOutputs, entry.CandidateOutputs) ||
+		manifest.PackSHA256 != metadata.PackSHA256 || manifest.PackSize != metadata.PackSize ||
+		len(manifest.Entries) < 1 || len(manifest.Entries) > optimizeMaterializationMaxFiles {
+		return optimizeOutputMaterialization{}, errors.New("remote output materialization manifest binding drifted")
+	}
+	var byteCount int64
+	previous := ""
+	for _, materialized := range manifest.Entries {
+		if materialized.Path <= previous || !validObservedOutputPath(materialized.Path) ||
+			!validOptimizeSHA(materialized.SHA256) || materialized.Size < 0 ||
+			materialized.Mode > 0o777 || materialized.Offset != byteCount {
+			return optimizeOutputMaterialization{}, errors.New("remote output materialization entry is invalid")
+		}
+		previous = materialized.Path
+		byteCount += materialized.Size
+	}
+	if byteCount != metadata.PackSize {
+		return optimizeOutputMaterialization{}, errors.New("remote output materialization entry size drifted")
+	}
+	packRelative := filepath.ToSlash(filepath.Join(materializedRoot, optimizeMaterializationPackName))
+	packAbsolute := filepath.Join(invocation.repositoryRoot, filepath.FromSlash(packRelative))
+	if err := os.MkdirAll(filepath.Dir(packAbsolute), 0o700); err != nil {
+		return optimizeOutputMaterialization{}, errors.New("create remote output materialization directory")
+	}
+	pack, err := os.CreateTemp(filepath.Dir(packAbsolute), ".buildopt-remote-pack-*")
+	if err != nil {
+		return optimizeOutputMaterialization{}, errors.New("create remote output materialization pack")
+	}
+	temporary := pack.Name()
+	defer os.Remove(temporary)
+	if pack.Chmod(0o600) != nil {
+		_ = pack.Close()
+		return optimizeOutputMaterialization{}, errors.New("protect remote output materialization pack")
+	}
+	packDigest := sha256.New()
+	var written int64
+	for _, digest := range metadata.ChunkSHA256 {
+		raw := integration.portfolio.objects[digest]
+		chunkDigest := sha256.Sum256(raw)
+		if len(raw) < 1 || len(raw) > optimizeMaterializationChunkBytes ||
+			hex.EncodeToString(chunkDigest[:]) != digest {
+			_ = pack.Close()
+			return optimizeOutputMaterialization{}, errors.New("remote output materialization chunk is unavailable")
+		}
+		count, writeErr := io.Copy(io.MultiWriter(pack, packDigest), bytes.NewReader(raw))
+		if writeErr != nil || count != int64(len(raw)) {
+			_ = pack.Close()
+			return optimizeOutputMaterialization{}, errors.New("write remote output materialization chunk")
+		}
+		written += count
+	}
+	if written != metadata.PackSize || hex.EncodeToString(packDigest.Sum(nil)) != metadata.PackSHA256 {
+		_ = pack.Close()
+		return optimizeOutputMaterialization{}, errors.New("remote output materialization pack failed final verification")
+	}
+	syncErr := pack.Sync()
+	closeErr := pack.Close()
+	if syncErr != nil || closeErr != nil || replaceManagedFile(temporary, packAbsolute) != nil ||
+		syncManagedDirectory(filepath.Dir(packAbsolute)) != nil {
+		return optimizeOutputMaterialization{}, errors.New("remote output materialization pack failed final verification")
+	}
+	manifest.TargetRevision = invocation.discovery.TargetRevision
+	manifest.PackFile = packRelative
+	manifestRelative := filepath.ToSlash(filepath.Join(materializedRoot, "materialization-manifest.json"))
+	manifestAbsolute := filepath.Join(invocation.repositoryRoot, filepath.FromSlash(manifestRelative))
+	if err := writeCanonicalPrivateJSON(manifestAbsolute, manifest); err != nil {
+		return optimizeOutputMaterialization{}, errors.New("write remote output materialization manifest")
+	}
+	revalidatedRaw, err := os.ReadFile(manifestAbsolute)
+	if err != nil {
+		return optimizeOutputMaterialization{}, errors.New("read remote output materialization manifest")
+	}
+	revalidatedDigest := sha256.Sum256(revalidatedRaw)
+	totalMS := boundedDurationMS(time.Since(started))
+	return optimizeOutputMaterialization{
+		Status: optimizeMaterializationCaptured, Reason: optimizeMaterializationReasonReady,
+		Patterns:     optimizeMaterializationPatterns(entry.RequiredOutputs, entry.CandidateOutputs),
+		ManifestFile: manifestRelative, ManifestSHA256: hex.EncodeToString(revalidatedDigest[:]),
+		FileCount: len(manifest.Entries), ByteCount: metadata.PackSize,
+		Economics: optimizeMaterializationEconomics{PackMS: totalMS, TotalMS: totalMS},
+	}, nil
 }
 
 func centralOptimizeMetadataJSON(schema, left, right string) []byte {

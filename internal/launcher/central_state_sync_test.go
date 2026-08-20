@@ -450,13 +450,48 @@ func writeCentralSyncLocalState(
 		Family: optimizeFamilyLeaf, FamilySHA256: familySHA,
 		ChangedProjects: []string{":app"}, RepositoryID: repositoryID,
 		Entrypoints: []string{"assemble"}, CandidateEntrypoints: []string{":app:assemble"},
-		RequiredOutputs: []string{"app/build/libs/app.jar"}, TargetRevision: targetRevision,
+		RequiredOutputs:  []string{"app/build/classes/**", "app/build/libs/app.jar"},
+		CandidateOutputs: []string{"app/build/classes/**"}, TargetRevision: targetRevision,
 		WrapperSHA256: state.Bindings.WrapperSHA256, ExecutableSHA256: state.Bindings.ExecutableSHA256,
 		ManifestSHA256: fileDigest("manifest.json"), GraphSHA256: fileDigest("graph.json"),
 		GeneratedSHA256: fileDigest("generated-manifest.json"), EvidenceSHA256: fileDigest("evidence.json"),
 		ProfileSHA256: fileDigest("profile.json"),
 		ProfilePath:   filepath.ToSlash(filepath.Join(profileDirectoryRelative, "profile.json")),
 		State:         "QUALIFIED",
+	}
+	payload := []byte("central-materialized-output-" + variant)
+	payloadDigest := sha256.Sum256(payload)
+	payloadSHA := hex.EncodeToString(payloadDigest[:])
+	materialization := optimizeOutputMaterializationManifest{
+		SchemaVersion: optimizeMaterializationSchema, RepositoryID: repositoryID,
+		TargetRevision: targetRevision, RequiredOutputs: entry.RequiredOutputs,
+		CandidateOutputs: entry.CandidateOutputs,
+		PackFile:         filepath.ToSlash(filepath.Join(optimizeDefaultStateDir, "materialization", optimizeMaterializationPackName)),
+		PackSHA256:       payloadSHA, PackSize: int64(len(payload)),
+		Entries: []optimizeOutputMaterializationEntry{{
+			Path: "app/build/libs/app.jar", SHA256: payloadSHA,
+			Size: int64(len(payload)), Mode: 0o600,
+		}},
+	}
+	materializationDirectory := filepath.Join(stateDirectory, "materialization")
+	if err := os.MkdirAll(materializationDirectory, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeCanonicalPrivateJSON(filepath.Join(materializationDirectory, "manifest.json"), materialization); err != nil {
+		t.Fatal(err)
+	}
+	manifestRaw, err := os.ReadFile(filepath.Join(materializationDirectory, "manifest.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	manifestDigest := sha256.Sum256(manifestRaw)
+	if err := os.WriteFile(filepath.Join(materializationDirectory, optimizeMaterializationPackName), payload, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	entry.Materialization = &optimizePortfolioMaterialization{
+		ManifestSHA256: hex.EncodeToString(manifestDigest[:]), PackSHA256: payloadSHA,
+		PackSize: int64(len(payload)), ChunkSHA256: []string{payloadSHA},
+		MaterializedProjects: []string{":app-packaging"},
 	}
 	portfolio := optimizeProfilePortfolio{
 		SchemaVersion: optimizePortfolioSchemaVersion, Generation: 1,
@@ -551,4 +586,42 @@ func assertCentralSnapshotsEqual(t *testing.T, left, right string) {
 			}
 		}
 	}
+	for _, kind := range []string{"evidence", "portfolio", "checkpoint"} {
+		leftObjects := centralSnapshotObjects(t, left, kind)
+		rightObjects := centralSnapshotObjects(t, right, kind)
+		if len(leftObjects) != len(rightObjects) {
+			t.Fatalf("%s auxiliary object count differs", kind)
+		}
+		for digest, raw := range leftObjects {
+			if !bytes.Equal(raw, rightObjects[digest]) {
+				t.Fatalf("%s auxiliary object %s differs", kind, digest)
+			}
+		}
+	}
+}
+
+func centralSnapshotObjects(t *testing.T, repository, kind string) map[string][]byte {
+	t.Helper()
+	directory := filepath.Join(
+		repository, filepath.FromSlash(centralConnectionDir), centralSnapshotDir, kind, "objects",
+	)
+	objects := map[string][]byte{}
+	entries, err := os.ReadDir(directory)
+	if os.IsNotExist(err) {
+		return objects
+	}
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, entry := range entries {
+		if entry.IsDir() {
+			t.Fatalf("unexpected snapshot object directory: %s", entry.Name())
+		}
+		raw, readErr := os.ReadFile(filepath.Join(directory, entry.Name()))
+		if readErr != nil {
+			t.Fatal(readErr)
+		}
+		objects[entry.Name()] = raw
+	}
+	return objects
 }

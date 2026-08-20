@@ -58,26 +58,38 @@ type optimizeProfilePortfolio struct {
 }
 
 type optimizePortfolioEntry struct {
-	Family               string   `json:"family"`
-	FamilySHA256         string   `json:"familySha256"`
-	ChangedProjects      []string `json:"changedProjects"`
-	RepositoryID         string   `json:"repositoryId"`
-	Entrypoints          []string `json:"entrypoints"`
-	CandidateEntrypoints []string `json:"candidateEntrypoints"`
-	RequiredOutputs      []string `json:"requiredOutputs"`
-	CandidateOutputs     []string `json:"candidateOutputs,omitempty"`
-	TargetRevision       string   `json:"targetRevision"`
-	WrapperSHA256        string   `json:"wrapperSha256"`
-	ExecutableSHA256     string   `json:"executableSha256"`
+	Family               string                            `json:"family"`
+	FamilySHA256         string                            `json:"familySha256"`
+	ChangedProjects      []string                          `json:"changedProjects"`
+	RepositoryID         string                            `json:"repositoryId"`
+	Entrypoints          []string                          `json:"entrypoints"`
+	CandidateEntrypoints []string                          `json:"candidateEntrypoints"`
+	RequiredOutputs      []string                          `json:"requiredOutputs"`
+	CandidateOutputs     []string                          `json:"candidateOutputs,omitempty"`
+	Materialization      *optimizePortfolioMaterialization `json:"materialization,omitempty"`
+	TargetRevision       string                            `json:"targetRevision"`
+	WrapperSHA256        string                            `json:"wrapperSha256"`
+	ExecutableSHA256     string                            `json:"executableSha256"`
+	ManifestSHA256       string                            `json:"manifestSha256"`
+	GraphSHA256          string                            `json:"graphSha256"`
+	GeneratedSHA256      string                            `json:"generatedManifestSha256"`
+	EvidenceSHA256       string                            `json:"evidenceSha256"`
+	ProfileSHA256        string                            `json:"profileSha256"`
+	ProfilePath          string                            `json:"profilePath"`
+	State                string                            `json:"state"`
+	SelectionAuthorized  bool                              `json:"selectionAuthorized"`
+	ProductionAuthorized bool                              `json:"productionAuthorized"`
+}
+
+// optimizePortfolioMaterialization binds the verified output pack needed when
+// a selected profile omits producers whose outputs still belong to the owner
+// workflow. Chunks are transport identities, not Gradle cache keys.
+type optimizePortfolioMaterialization struct {
 	ManifestSHA256       string   `json:"manifestSha256"`
-	GraphSHA256          string   `json:"graphSha256"`
-	GeneratedSHA256      string   `json:"generatedManifestSha256"`
-	EvidenceSHA256       string   `json:"evidenceSha256"`
-	ProfileSHA256        string   `json:"profileSha256"`
-	ProfilePath          string   `json:"profilePath"`
-	State                string   `json:"state"`
-	SelectionAuthorized  bool     `json:"selectionAuthorized"`
-	ProductionAuthorized bool     `json:"productionAuthorized"`
+	PackSHA256           string   `json:"packSha256"`
+	PackSize             int64    `json:"packSize"`
+	ChunkSHA256          []string `json:"chunkSha256"`
+	MaterializedProjects []string `json:"materializedProjects"`
 }
 
 type optimizePortfolioArtifacts struct {
@@ -282,6 +294,13 @@ func prepareOptimizePortfolioArtifacts(invocation optimizeInvocation, discovery 
 		EvidenceSHA256: digests[3], ProfileSHA256: profileSHA, ProfilePath: profilePath,
 		State: "QUALIFIED", SelectionAuthorized: false, ProductionAuthorized: false,
 	}
+	if discovery.Materialization.Status == optimizeMaterializationCaptured {
+		materialization, err := prepareOptimizePortfolioMaterialization(invocation, discovery)
+		if err != nil {
+			return optimizePortfolioArtifacts{}, err
+		}
+		entry.Materialization = materialization
+	}
 	return optimizePortfolioArtifacts{entry: entry, files: files}, nil
 }
 
@@ -395,6 +414,7 @@ func validOptimizePortfolioEntry(repositoryRoot string, entry optimizePortfolioE
 		!uniqueMeasurementStrings(entry.ChangedProjects) || !uniqueMeasurementStrings(entry.Entrypoints) ||
 		!uniqueMeasurementStrings(entry.CandidateEntrypoints) || !uniqueMeasurementStrings(entry.RequiredOutputs) ||
 		(len(entry.CandidateOutputs) > 0 && !uniqueMeasurementStrings(entry.CandidateOutputs)) ||
+		!validOptimizePortfolioMaterialization(entry) ||
 		!validOptimizeGeneratedPath(entry.ProfilePath) ||
 		entry.FamilySHA256 != optimizePortfolioFamilyDigest(
 			entry.RepositoryID, entry.Family, entry.ChangedProjects, entry.Entrypoints,
@@ -430,6 +450,29 @@ func validOptimizePortfolioEntry(repositoryRoot string, entry optimizePortfolioE
 	_, preconditionsValid := evaluateQualifiedPOCPreconditions(repositoryRoot, profile.Preconditions)
 	if !preconditionsValid {
 		return false
+	}
+	return true
+}
+
+func validOptimizePortfolioMaterialization(entry optimizePortfolioEntry) bool {
+	requiresMaterialization := len(entry.CandidateOutputs) > 0 &&
+		!equalOptimizeStrings(entry.RequiredOutputs, entry.CandidateOutputs)
+	if entry.Materialization == nil {
+		return !requiresMaterialization
+	}
+	materialization := entry.Materialization
+	if !requiresMaterialization || !validOptimizeSHA(materialization.ManifestSHA256) ||
+		!validOptimizeSHA(materialization.PackSHA256) || materialization.PackSize < 1 ||
+		materialization.PackSize > optimizeMaterializationMaxBytes ||
+		len(materialization.ChunkSHA256) < 1 || len(materialization.ChunkSHA256) > 63 ||
+		len(materialization.MaterializedProjects) < 1 ||
+		!uniqueMeasurementStrings(materialization.MaterializedProjects) {
+		return false
+	}
+	for _, digest := range materialization.ChunkSHA256 {
+		if !validOptimizeSHA(digest) {
+			return false
+		}
 	}
 	return true
 }

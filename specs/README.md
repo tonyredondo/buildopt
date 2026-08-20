@@ -103,6 +103,7 @@ the exact cross-component contract.
 | [`poc-automatic-breadth-transfer-v1.md`](./poc-automatic-breadth-transfer-v1.md) and [`poc-automatic-breadth-transfer-v1.json`](./poc-automatic-breadth-transfer-v1.json) | `POC-AUTOMATIC-BREADTH-TRANSFER-001` |
 | [`poc-automatic-breadth-transfer-v2.md`](./poc-automatic-breadth-transfer-v2.md) and [`poc-automatic-breadth-transfer-v2.json`](./poc-automatic-breadth-transfer-v2.json) | `POC-AUTOMATIC-BREADTH-TRANSFER-V2-001` |
 | [`poc-materialization-economics-v2.md`](./poc-materialization-economics-v2.md) and [`poc-materialization-economics-v2.json`](./poc-materialization-economics-v2.json) | `POC-MATERIALIZATION-ECONOMICS-V2-001` |
+| [`poc-qualified-lifetime-v2.md`](./poc-qualified-lifetime-v2.md) and [`poc-qualified-lifetime-v2.json`](./poc-qualified-lifetime-v2.json) | `POC-QUALIFIED-LIFETIME-V2-001` |
 | [`poc-incremental-learning-v1.md`](./poc-incremental-learning-v1.md) and [`poc-incremental-learning-v1.json`](./poc-incremental-learning-v1.json) | `POC-INCREMENTAL-LEARNING-001` |
 | [`poc-normal-build-tail-expansion-v1.md`](./poc-normal-build-tail-expansion-v1.md) and [`poc-normal-build-tail-expansion-v1.json`](./poc-normal-build-tail-expansion-v1.json) | `POC-NORMAL-BUILD-TAIL-EXPANSION-001` |
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |
@@ -195,6 +196,13 @@ per-file durable state with one manifest-bound pack. All five rows qualify,
 all 40 pairs improve, exact outputs and fallback pass, and one-time learning
 cost repays in one to four matching builds. The earlier V2 bundle remains
 immutable before-evidence.
+
+The [qualified-lifetime V2 contract](./poc-qualified-lifetime-v2.md) follows
+those same five qualified profiles over frozen public first-parent descendant
+commits. It adds verified CAS transport for materialized output packs and
+measures cumulative wall-time value against persistent optimized-native arms.
+Exact native retention is a valid outcome; the experiment does not require a
+positive result, average repositories or weaken the qualification gates.
 
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation

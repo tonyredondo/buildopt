@@ -1293,6 +1293,7 @@ func validateStateManifest(manifest StateManifest) error {
 		"TASK_SHAPE_EVIDENCE": true, "OUTPUT_MANIFEST": true,
 		"OPTIMIZE_STATE": true, "DISCOVERY_SNAPSHOT": true,
 		"CALIBRATION_CHECKPOINT": true,
+		"OUTPUT_PACK_CHUNK":      true,
 	}
 	for _, artifact := range manifest.Artifacts {
 		identity := fmt.Sprintf("%s\x00%s\x00%d\x00%s", artifact.Role, artifact.SHA256, artifact.SizeBytes, artifact.PayloadSchemaVersion)
@@ -1325,6 +1326,9 @@ func validateStateManifest(manifest StateManifest) error {
 			return ErrStateInvalid
 		}
 		if artifactRoleCounts["PORTFOLIO_INDEX"] != 1 {
+			return ErrStateInvalid
+		}
+		if artifactRoleCounts["OUTPUT_PACK_CHUNK"] > 63 {
 			return ErrStateInvalid
 		}
 	case StateKindEvidence:

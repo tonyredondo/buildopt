@@ -32,11 +32,26 @@ case ${buildopt_protocol} in
         exit 64
         ;;
 esac
-buildopt_subjects="${buildopt_repo_root}/specs/poc-generic-profile-matrix-v3.json"
-buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-automatic-breadth.XXXXXX")
+buildopt_subjects=${BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_FILE:-${buildopt_repo_root}/specs/poc-generic-profile-matrix-v3.json}
+buildopt_expected_subjects_sha=${BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256:-}
+buildopt_retain_root=${BUILDOPT_AUTOMATIC_BREADTH_RETAIN_ROOT:-false}
+buildopt_requested_root=${BUILDOPT_AUTOMATIC_BREADTH_ROOT:-}
+if [[ -n ${buildopt_requested_root} ]]; then
+    [[ ${buildopt_requested_root} == "${TMPDIR:-/tmp}/buildopt-automatic-breadth."* &&
+        ! -e ${buildopt_requested_root} ]] || {
+        printf 'automatic breadth root is not a new bounded temporary path: %s\n' \
+            "${buildopt_requested_root}" >&2
+        exit 64
+    }
+    buildopt_root=${buildopt_requested_root}
+    mkdir -p -- "${buildopt_root}"
+else
+    buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-automatic-breadth.XXXXXX")
+fi
 
 buildopt_cleanup() {
-    if [[ ${buildopt_root} == "${TMPDIR:-/tmp}/buildopt-automatic-breadth."* ]]; then
+    if [[ ${buildopt_retain_root} != true &&
+        ${buildopt_root} == "${TMPDIR:-/tmp}/buildopt-automatic-breadth."* ]]; then
         rm -rf -- "${buildopt_root}"
     fi
 }
@@ -53,11 +68,17 @@ done
     printf 'automatic breadth contract is unavailable\n' >&2
     exit 1
 }
-[[ $(sha256sum "${buildopt_subjects}" | awk '{print $1}') == \
-    $(jq -r '.frozenSubjects.sha256' "${buildopt_contract}") ]] || {
+buildopt_actual_subjects_sha=$(sha256sum "${buildopt_subjects}" | awk '{print $1}')
+if [[ -n ${buildopt_expected_subjects_sha} ]]; then
+    [[ ${buildopt_actual_subjects_sha} == "${buildopt_expected_subjects_sha}" ]] || {
+        printf 'explicit automatic breadth subjects drifted\n' >&2
+        exit 1
+    }
+elif [[ ${buildopt_actual_subjects_sha} != \
+    $(jq -r '.frozenSubjects.sha256' "${buildopt_contract}") ]]; then
     printf 'frozen automatic breadth subjects drifted\n' >&2
     exit 1
-}
+fi
 [[ $(sha256sum "${buildopt_repo_root}/specs/poc-otel-spring-family-v2.tasks.txt" | awk '{print $1}') == \
     $(jq -r '.frozenSubjects.opentelemetryEntrypointsSha256' "${buildopt_contract}") ]] || {
     printf 'frozen OpenTelemetry workflow drifted\n' >&2
@@ -189,6 +210,7 @@ buildopt_capture_subject() {
     local buildopt_index=$1
     local buildopt_key buildopt_repository_id buildopt_remote buildopt_base
     local buildopt_jdk buildopt_change_path buildopt_mutation buildopt_target
+    local buildopt_public_target
     local buildopt_repository buildopt_gradle_home buildopt_subject_output
     local buildopt_event buildopt_stdout buildopt_stderr buildopt_status buildopt_free
     local buildopt_state_source buildopt_raw_sha buildopt_state_sha
@@ -203,6 +225,8 @@ buildopt_capture_subject() {
     buildopt_jdk=$(jq -er ".repositories[${buildopt_index}].jdkToolchain" "${buildopt_subjects}")
     buildopt_change_path=$(jq -er ".repositories[${buildopt_index}].changePath" "${buildopt_subjects}")
     buildopt_mutation=$(jq -er ".repositories[${buildopt_index}].mutation" "${buildopt_subjects}")
+    buildopt_public_target=$(jq -r ".repositories[${buildopt_index}].targetRevision // empty" \
+        "${buildopt_subjects}")
     buildopt_subject_output="${buildopt_output}/${buildopt_key}"
     [[ ! -e ${buildopt_subject_output} ]] || {
         printf 'automatic breadth subject already exists: %s\n' "${buildopt_key}" >&2
@@ -220,8 +244,20 @@ buildopt_capture_subject() {
     mkdir -p -- "${buildopt_repository}" "${buildopt_gradle_home}" "${buildopt_subject_output}"
     git -C "${buildopt_repository}" init -q
     git -C "${buildopt_repository}" remote add origin "${buildopt_remote}"
-    git -C "${buildopt_repository}" fetch --depth=65 origin "${buildopt_base}"
-    git -C "${buildopt_repository}" checkout -q -b buildopt-poc FETCH_HEAD
+    git -C "${buildopt_repository}" fetch --depth=65 origin \
+        "${buildopt_base}" ${buildopt_public_target:+"${buildopt_public_target}"}
+    if [[ -n ${buildopt_public_target} ]]; then
+        git -C "${buildopt_repository}" checkout -q -b buildopt-poc \
+            "${buildopt_public_target}"
+        [[ $(git -C "${buildopt_repository}" rev-parse HEAD^1) == "${buildopt_base}" ]] || {
+            printf 'public qualification target is not a direct child of its base: %s\n' \
+                "${buildopt_key}" >&2
+            return 1
+        }
+        buildopt_target=${buildopt_public_target}
+    else
+        git -C "${buildopt_repository}" checkout -q -b buildopt-poc FETCH_HEAD
+    fi
 
     printf 'Preparing %s outside calibration\n' "${buildopt_repository_id}"
     if ! buildopt_prepare_gradle_distribution \
@@ -232,16 +268,18 @@ buildopt_capture_subject() {
         return 1
     fi
 
-    buildopt_mutate_repository "${buildopt_mutation}" "${buildopt_repository}" \
-        "${buildopt_change_path}" "${buildopt_key}"
-    git -C "${buildopt_repository}" config user.name 'BuildOpt POC'
-    git -C "${buildopt_repository}" config user.email 'buildopt-poc@example.invalid'
-    git -C "${buildopt_repository}" config commit.gpgsign false
-    git -C "${buildopt_repository}" add -- "${buildopt_change_path}"
-    GIT_AUTHOR_DATE='2026-08-20T00:00:00Z' \
-        GIT_COMMITTER_DATE='2026-08-20T00:00:00Z' \
-        git -C "${buildopt_repository}" commit -qm 'Apply frozen automatic breadth mutation'
-    buildopt_target=$(git -C "${buildopt_repository}" rev-parse HEAD)
+    if [[ -z ${buildopt_public_target} ]]; then
+        buildopt_mutate_repository "${buildopt_mutation}" "${buildopt_repository}" \
+            "${buildopt_change_path}" "${buildopt_key}"
+        git -C "${buildopt_repository}" config user.name 'BuildOpt POC'
+        git -C "${buildopt_repository}" config user.email 'buildopt-poc@example.invalid'
+        git -C "${buildopt_repository}" config commit.gpgsign false
+        git -C "${buildopt_repository}" add -- "${buildopt_change_path}"
+        GIT_AUTHOR_DATE='2026-08-20T00:00:00Z' \
+            GIT_COMMITTER_DATE='2026-08-20T00:00:00Z' \
+            git -C "${buildopt_repository}" commit -qm 'Apply frozen automatic breadth mutation'
+        buildopt_target=$(git -C "${buildopt_repository}" rev-parse HEAD)
+    fi
 
     while IFS= read -r buildopt_entrypoint; do
         [[ -n ${buildopt_entrypoint} ]] && buildopt_gradle_args+=("${buildopt_entrypoint}")
@@ -427,17 +465,19 @@ buildopt_capture_subject() {
         env GRADLE_USER_HOME="${buildopt_gradle_home}" \
             "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- ./gradlew --stop
     ) >/dev/null 2>&1 || true
-    buildopt_subject_root="${buildopt_root:?}/${buildopt_key}"
-    for buildopt_cleanup_attempt in 1 2 3 4 5; do
-        rm -rf -- "${buildopt_subject_root}" 2>/dev/null || true
-        [[ ! -e ${buildopt_subject_root} ]] && break
-        ((buildopt_cleanup_attempt < 5)) && sleep 1
-    done
-    [[ ! -e ${buildopt_subject_root} ]] || {
-        printf 'automatic breadth temporary state remained after daemon stop: %s\n' \
-            "${buildopt_key}" >&2
-        return 1
-    }
+    if [[ ${buildopt_retain_root} != true ]]; then
+        buildopt_subject_root="${buildopt_root:?}/${buildopt_key}"
+        for buildopt_cleanup_attempt in 1 2 3 4 5; do
+            rm -rf -- "${buildopt_subject_root}" 2>/dev/null || true
+            [[ ! -e ${buildopt_subject_root} ]] && break
+            ((buildopt_cleanup_attempt < 5)) && sleep 1
+        done
+        [[ ! -e ${buildopt_subject_root} ]] || {
+            printf 'automatic breadth temporary state remained after daemon stop: %s\n' \
+                "${buildopt_key}" >&2
+            return 1
+        }
+    fi
     printf 'Captured %s (exit %d)\n' "${buildopt_repository_id}" "${buildopt_status}"
 }
 
@@ -558,3 +598,6 @@ else
 fi
 
 printf 'Automatic breadth transfer evidence written to %s\n' "${buildopt_output}"
+if [[ ${buildopt_retain_root} == true ]]; then
+    printf 'Automatic breadth runtime retained at %s\n' "${buildopt_root}"
+fi

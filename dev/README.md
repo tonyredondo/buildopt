@@ -632,6 +632,24 @@ so every row passes the unchanged 30-build payback gate in one to four matching
 builds. The runner is long and is not part of normal CI; Base CI validates the
 checked-in compact evidence with the strict checker.
 
+Measure whether those five qualified profiles remain useful on ordinary public
+first-parent descendants with:
+
+```bash
+./dev/run-qualified-lifetime-v2 /absolute/evidence/directory
+./dev/check-qualified-lifetime-v2 /absolute/evidence/directory/summary.json
+```
+
+The runner may also capture one subject by passing its key as the second
+argument. It repeats the unchanged 17-invocation/eight-pair qualification,
+publishes the profile and its chunked materialization pack through the central
+HTTPS/CAS path, and then compares persistent optimized-native and remote-profile
+arms on each preregistered descendant. Every observation must preserve exact
+required output bytes; incompatible profiles must retain native execution. The
+experiment reports cumulative economics per repository and never averages
+unrelated repository percentages. It is bounded POC evidence, not a soak or a
+production gate.
+
 Reproduce the incremental-learning transaction with one exact installed
 binary and validate its checked evidence with:
 
