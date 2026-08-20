@@ -269,8 +269,14 @@ func (integration *centralOptimizeIntegration) materializeReplay(
 	run *optimizeRun,
 ) (*centralOptimizeReplay, *impactInvocation, optimizeSelectionResult, error) {
 	invocation := run.invocation
-	if !invocation.discovery.Ready || integration.connection.RepositoryID != invocation.discovery.RepositoryID {
-		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("current repository discovery is unavailable")}
+	if !invocation.discovery.Ready {
+		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{
+			optimizeCentralReasonStructural,
+			fmt.Errorf("current repository discovery is unavailable: %s", invocation.discovery.Reason),
+		}
+	}
+	if integration.connection.RepositoryID != invocation.discovery.RepositoryID {
+		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("current repository identity differs from central state")}
 	}
 	portfolioFiles, err := decodedCentralBundleFiles(integration.portfolio.bundle)
 	if err != nil {

@@ -164,6 +164,9 @@ func TestCentralOptimizeReusesQualifiedProfileAcrossUnrelatedCommitAndRejectsStr
 	if err != nil {
 		t.Fatal(err)
 	}
+	if !invocation.discovery.Ready {
+		t.Fatalf("unrelated revision discovery is unavailable: %+v", invocation.discovery)
+	}
 	integration = centralOptimizeFixtureIntegration(t, invocation, fixtureFiles, profile, evidenceRevision)
 	// Reuse the exact same verified portfolio snapshot across commits. Its
 	// profile family is stable, while the materialized changed paths and
