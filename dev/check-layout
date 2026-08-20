@@ -167,6 +167,8 @@ buildopt_required_files=(
     "benchmarks/results/poc-economic-prequalification-v1/summary.json"
     "benchmarks/results/poc-automatic-breadth-transfer-v1/README.md"
     "benchmarks/results/poc-automatic-breadth-transfer-v1/summary.json"
+    "benchmarks/results/poc-incremental-learning-v1/README.md"
+    "benchmarks/results/poc-incremental-learning-v1/summary.json"
     "benchmarks/results/poc-automatic-breadth-transfer-v1/spring-framework/capture.json"
     "benchmarks/results/poc-automatic-breadth-transfer-v1/spring-framework/result.json"
     "benchmarks/results/poc-automatic-breadth-transfer-v1/spring-framework/state/calibration/evidence.json"

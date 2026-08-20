@@ -76,8 +76,10 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > Groovy 37→30), but all five correctly retain native Gradle: the four timed
 > candidates need 101–710 matching builds to repay synchronous learning, and
 > Micronaut's aggregate `assemble` exposes 73 candidate entrypoints before
-> timing. The POC therefore needs incremental learning and verified output
-> materialization before it can claim broad one-command value. See the
+> timing. Incremental learning now collects the same eight pairs over useful
+> invocations with zero measurement-only workflows and correctly retains
+> native Gradle when value is unproven. Verified output materialization is now
+> the next blocker to broad one-command value. See the
 > [automatic breadth evidence](./benchmarks/results/poc-automatic-breadth-transfer-v1/README.md).
 
 > **POC onboarding north star:** install BuildOpt, open a Gradle repository and

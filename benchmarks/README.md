@@ -122,6 +122,26 @@ zero-configuration decisions.
 ./dev/check-automatic-breadth-transfer
 ```
 
+### Incremental ordinary-build learning
+
+The [incremental learning result](./results/poc-incremental-learning-v1/README.md)
+replaces the synchronous 16-build calibration transaction with one exact-bound
+observation per useful `buildopt optimize` invocation. The executable fixture
+completed one baseline plus eight alternating pairs with nine full-graph
+workflows, eight structural candidates and **zero measurement-only workflow
+runs**. All required JAR digests matched and fallback remained valid.
+
+The three-project fixture saved only 50.125 ms/0.90% on average, produced 4/8
+positive pairs and a -275.75..+405.125-ms interval, while 19,247 ms of
+incremental BuildOpt work projected 384-build payback. The unchanged gates
+therefore retained native Gradle. This result proves the cheaper learning
+transaction and honest rejection; it is not a transferable speed claim and is
+not numerically combined with the public-repository breadth results.
+
+```bash
+./dev/check-incremental-learning
+```
+
 ## Build Optimization scorecard
 
 For the decision-ready product summary, see the [current POC one-pager](../docs/findings/buildopt-poc-handoff.md).

@@ -31,7 +31,7 @@ must run optimized native Gradle and make no performance claim.
 | --- | --- | --- |
 | **Structural Build Impact** | Selects only task/project producers needed by the exact change and required outputs. | Primary accelerator; large reviewed and automatic wins exist, but automatic breadth is not yet economical. |
 | **Automatic discovery** | Derives change ownership, Gradle outputs and a structural candidate without repository-name rules. | Works on 5/5 latest breadth subjects; four complete candidates and one safe aggregate-workflow rejection. |
-| **Calibration and value gate** | Alternates native/candidate builds and checks outputs, interval, tail, fallback and payback. | Correct but currently too expensive when run synchronously: 0/5 latest subjects repay within 30 builds. |
+| **Incremental learning and value gate** | Alternates one control or candidate across each useful invocation and checks outputs, interval, tail, fallback and payback. | The transaction now adds zero measurement-only workflows; a bounded fixture correctly retained native when 0.90% did not prove value. |
 | **Profile portfolio / central state** | Reuses qualified evidence under exact repository, Wrapper, workflow, graph, output and executable bindings. | Functional across checkouts/machines; value depends on profile lifetime and cannot rescue an uneconomic first decision. |
 | **Gradle-compatible cache** | Reuses verified outputs locally or through optional HTTP/HTTPS central storage. | Supporting infrastructure. Safe Cache is near native-cache parity, not the principal speed claim. |
 | **Task adapters / Patch Autopilot** | Makes one exact task shape safely reusable after review. | Strong scoped evidence exists; not generalized to arbitrary tasks. |
@@ -60,6 +60,18 @@ that a complete workflow output contract is much broader than older reviewed
 profiles; Micronaut shows that aggregate workflows need partitioning or
 verified output materialization before calibration.
 
+## Latest incremental-learning result
+
+The new transaction ran one baseline plus eight control/candidate pairs over
+17 useful `assemble` invocations. It launched **zero workflows solely to
+measure**, preserved the same required JAR digest in every observation and
+kept full-graph fallback available. The three-project fixture measured
+5,549.5-ms control versus 5,499.375-ms candidate: 50.125 ms/**0.90%** saved,
+4/8 positive pairs, interval -275.75..+405.125 ms and 384-build projected
+payback after 19,247 ms of incremental BuildOpt work. The unchanged gates
+correctly retained native Gradle. This proves the learning mechanism and its
+honest rejection, not a transferable speedup.
+
 ## Prior positive evidence and how to interpret it
 
 The published zero-manual-file terminal POC previously qualified Ktor `jvmJar`
@@ -77,30 +89,28 @@ path and shows where generalization is still incomplete.
 ## Current conclusion
 
 Continue the POC, but focus narrowly. Structural Build Impact remains the only
-broad accelerator with compelling evidence. BuildOpt is not yet a generally
-valuable one-command optimizer because synchronous learning and complete-output
-materialization erase the benefit on the latest five-repository transfer.
-Native retention in all five cases is correct behavior, not a hidden failure.
+broad accelerator with compelling evidence. Incremental learning removes the
+16-extra-build customer transaction, but BuildOpt is not yet a generally
+valuable one-command optimizer because clean-workspace output materialization
+and aggregate workflow breadth still constrain the automatic graph. Native
+retention when value is unproven is correct behavior, not a hidden failure.
 
 ## Next work
 
-1. **Make learning incremental.** Accumulate exact-bound control/candidate
-   observations across normal invocations instead of running sixteen extra
-   builds in one command. Count only incremental customer cost and retain
-   native until the same evidence gates close.
-2. **Materialize unchanged outputs generically.** Combine structural selection
+1. **Materialize unchanged outputs generically.** Combine structural selection
    with verified Gradle-compatible cache/state so a clean workspace can omit
    unaffected producers without weakening the workflow's output contract.
-3. **Partition aggregate workflows.** Derive bounded task/variant/ABI groups
+2. **Partition aggregate workflows.** Derive bounded task/variant/ABI groups
    for `assemble`, `classes` and `testClasses`; do not raise task-count limits
    or add repository rules.
-4. **Repeat the same five-subject transfer.** Require lower learning cost,
+3. **Repeat the same five-subject transfer.** Require lower learning cost,
    exact outputs, native fallback and repository-specific payback; do not
    average percentages or add mechanism effects.
 
 ## Evidence
 
 - [Latest automatic breadth result](../../benchmarks/results/poc-automatic-breadth-transfer-v1/README.md)
+- [Incremental ordinary-build learning result](../../benchmarks/results/poc-incremental-learning-v1/README.md)
 - [Machine-readable breadth summary](../../benchmarks/results/poc-automatic-breadth-transfer-v1/summary.json)
 - [Automatic breadth contract](../../specs/poc-automatic-breadth-transfer-v1.md)
 - [Published terminal Ktor/Beam result](../../benchmarks/results/poc-magic-end-to-end-value-v2/README.md)

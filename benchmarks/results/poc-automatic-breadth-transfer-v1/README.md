@@ -41,9 +41,10 @@ The result also explains why older reviewed profiles cannot be presented as
 zero-configuration onboarding results. Kafka and Groovy require much broader
 output contracts when BuildOpt must preserve the complete declared workflow,
 and Micronaut's aggregate `assemble` surface is too large to calibrate safely.
-The next generic work must reduce incremental learning cost and improve output
-materialization/graph precision; it must not add repository-name rules or
-weaken output and fallback checks.
+The successor [incremental-learning block](../poc-incremental-learning-v1/README.md)
+now removes measurement-only workflow runs while preserving the same decision
+gates. Verified output materialization and aggregate graph precision remain
+next; neither may add repository-name rules or weaken output/fallback checks.
 
 ## Recompute the evidence
 

@@ -30,12 +30,13 @@
   cache opportunity, the complete connected path measured **82.45% faster on
   Ktor** and **56.41% on Beam**. These results show that the idea can work, not
   that it works automatically for every Gradle repository.
-- **The next POC work is incremental learning plus verified output
-  materialization.** BuildOpt should accumulate exact-bound observations over
-  ordinary invocations rather than run sixteen extra builds synchronously,
-  and use Gradle-compatible cache/state to materialize unaffected required
-  outputs before omitting their producers. Repository-name rules and weakened
-  output/fallback gates remain prohibited.
+- **Incremental learning is implemented; verified output materialization is
+  next.** Seventeen useful invocations now collect one baseline and eight
+  exact-bound pairs with zero measurement-only workflow runs. The bounded
+  fixture retained native at 50.125 ms/0.90%, 4/8 and a 384-build payback,
+  proving that the unchanged value gates still reject weak evidence. BuildOpt
+  must next materialize unaffected required outputs from verified
+  Gradle-compatible cache/state before omitting their producers.
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
   Runtime Tuning, Hot State and standard Copy are retired; historical Jar,
   Patch and Edge experiments remain scoped supporting evidence.
@@ -43,6 +44,9 @@
 See the [current one-pager](./buildopt-poc-handoff.md) and the
 [automatic breadth result](../../benchmarks/results/poc-automatic-breadth-transfer-v1/README.md)
 for the decision-ready summary and raw evidence.
+
+The machine-readable incremental transaction is preserved in the
+[incremental-learning result](../../benchmarks/results/poc-incremental-learning-v1/README.md).
 
 ## Historical and Mechanism-Specific Findings
 

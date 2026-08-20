@@ -1,0 +1,372 @@
+{
+  "schemaVersion": "buildopt.poc/incremental-learning-evaluation/v1",
+  "workItem": "POC-INCREMENTAL-LEARNING-001",
+  "capturedAt": "2026-08-20T11:15:58Z",
+  "buildoptRevision": "269742419ec79b9fff65118886ffc1d1f5afdab8",
+  "buildoptExecutableSha256": "06c30c189b2c8a75462cae600c70d9b3eba68bdd51c50fcafb4c86cd99295f2a",
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "evidenceClass": "BOUNDED_LOCAL_POC"
+  },
+  "workload": {
+    "fixture": "fixtures/build-impact/synthetic-repository",
+    "workflow": [
+      "--no-daemon",
+      "assemble"
+    ],
+    "ordinaryInvocations": 17,
+    "baselineObservations": 1,
+    "fullGraphWorkflowRuns": 9,
+    "candidateWorkflowRuns": 8,
+    "measurementOnlyWorkflowRuns": 0
+  },
+  "result": {
+    "phase": "NATIVE_RETAINED",
+    "outcome": "NATIVE_RETAINED",
+    "reason": "CALIBRATION_VALUE_NOT_PROVEN",
+    "discovery": {
+      "baseRevision": "de5f36b625576100cb079a316b5c90a670873b60",
+      "candidateEntrypoints": [
+        ":service-a:assemble"
+      ],
+      "changeFamily": "LEAF_SOURCE",
+      "changeSha256": "2e3057cf6881a7e19fb4c1f5efa1236e80cde91883de1316aac53246e0a66ca1",
+      "changedPathCount": 1,
+      "changedProjects": [
+        ":service-a"
+      ],
+      "entrypoints": [
+        "assemble"
+      ],
+      "generatedFiles": [
+        ".buildopt/incremental-learning/v1/discovery/changes.txt",
+        ".buildopt/incremental-learning/v1/discovery/fallback-changes.txt",
+        ".buildopt/incremental-learning/v1/discovery/generated-manifest.json",
+        ".buildopt/incremental-learning/v1/discovery/graph.json",
+        ".buildopt/incremental-learning/v1/discovery/manifest.json",
+        ".buildopt/incremental-learning/v1/discovery/output-contract.json",
+        ".buildopt/incremental-learning/v1/discovery/proposal.json"
+      ],
+      "graph": {
+        "omittedProjects": 1,
+        "selectedProjects": 2,
+        "totalProjects": 3
+      },
+      "productionAuthorized": false,
+      "reason": "STRUCTURAL_CANDIDATE_DISCOVERED",
+      "repositoryId": "buildopt-poc/incremental-learning-fixture",
+      "requiredOutputs": [
+        "service-a/build/libs/service-a-1.0.jar"
+      ],
+      "reviewRequired": true,
+      "source": "LOCAL_UPSTREAM",
+      "status": "COMPLETE",
+      "targetRevision": "2e73772fe161ecd390dbe563c3f2b4ad9fb3624a",
+      "testOptimization": "OUT_OF_SCOPE"
+    },
+    "incrementalLearning": {
+      "baseline": {
+        "arm": "DISCOVERY_CONTROL",
+        "capturedAt": "2026-08-20T11:14:21Z",
+        "durationMs": 21558,
+        "exitCode": 0,
+        "incrementalOverheadMs": 18527,
+        "order": "BASELINE",
+        "pair": 0,
+        "productAttributableFailure": false,
+        "requiredOutputCount": 1,
+        "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+        "sequence": 0
+      },
+      "checkpointSha256": "359722d87b1370129782401197e3319b5e1e0502cb6d21f5549744a2d8881e95",
+      "discoverySha256": "f93196bd19539034ae32bf1d7bd09084a3c86e9c370c91a554a5577ab2e76cd0",
+      "expectedOutputCount": 1,
+      "expectedOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+      "fallbackSuccessful": true,
+      "generatedFiles": [
+        ".buildopt/incremental-learning/v1/calibration/incremental.json"
+      ],
+      "incrementalCostMs": 19247,
+      "nextArm": "COMPLETE",
+      "observations": [
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-20T11:14:27Z",
+          "durationMs": 5280,
+          "exitCode": 0,
+          "incrementalOverheadMs": 44,
+          "order": "CONTROL_FIRST",
+          "pair": 1,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 1
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-20T11:14:32Z",
+          "durationMs": 4904,
+          "exitCode": 0,
+          "incrementalOverheadMs": 49,
+          "order": "CONTROL_FIRST",
+          "pair": 1,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 2
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-20T11:14:39Z",
+          "durationMs": 5457,
+          "exitCode": 0,
+          "incrementalOverheadMs": 49,
+          "order": "CANDIDATE_FIRST",
+          "pair": 2,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 3
+        },
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-20T11:14:45Z",
+          "durationMs": 5583,
+          "exitCode": 0,
+          "incrementalOverheadMs": 44,
+          "order": "CANDIDATE_FIRST",
+          "pair": 2,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 4
+        },
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-20T11:14:51Z",
+          "durationMs": 5566,
+          "exitCode": 0,
+          "incrementalOverheadMs": 44,
+          "order": "CONTROL_FIRST",
+          "pair": 3,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 5
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-20T11:14:57Z",
+          "durationMs": 5693,
+          "exitCode": 0,
+          "incrementalOverheadMs": 45,
+          "order": "CONTROL_FIRST",
+          "pair": 3,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 6
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-20T11:15:03Z",
+          "durationMs": 5443,
+          "exitCode": 0,
+          "incrementalOverheadMs": 44,
+          "order": "CANDIDATE_FIRST",
+          "pair": 4,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 7
+        },
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-20T11:15:08Z",
+          "durationMs": 5099,
+          "exitCode": 0,
+          "incrementalOverheadMs": 44,
+          "order": "CANDIDATE_FIRST",
+          "pair": 4,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 8
+        },
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-20T11:15:15Z",
+          "durationMs": 6358,
+          "exitCode": 0,
+          "incrementalOverheadMs": 44,
+          "order": "CONTROL_FIRST",
+          "pair": 5,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 9
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-20T11:15:21Z",
+          "durationMs": 5429,
+          "exitCode": 0,
+          "incrementalOverheadMs": 45,
+          "order": "CONTROL_FIRST",
+          "pair": 5,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 10
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-20T11:15:27Z",
+          "durationMs": 5579,
+          "exitCode": 0,
+          "incrementalOverheadMs": 44,
+          "order": "CANDIDATE_FIRST",
+          "pair": 6,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 11
+        },
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-20T11:15:33Z",
+          "durationMs": 5001,
+          "exitCode": 0,
+          "incrementalOverheadMs": 44,
+          "order": "CANDIDATE_FIRST",
+          "pair": 6,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 12
+        },
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-20T11:15:39Z",
+          "durationMs": 5903,
+          "exitCode": 0,
+          "incrementalOverheadMs": 44,
+          "order": "CONTROL_FIRST",
+          "pair": 7,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 13
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-20T11:15:45Z",
+          "durationMs": 5397,
+          "exitCode": 0,
+          "incrementalOverheadMs": 48,
+          "order": "CONTROL_FIRST",
+          "pair": 7,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 14
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-20T11:15:52Z",
+          "durationMs": 6093,
+          "exitCode": 0,
+          "incrementalOverheadMs": 44,
+          "order": "CANDIDATE_FIRST",
+          "pair": 8,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 15
+        },
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-20T11:15:58Z",
+          "durationMs": 5606,
+          "exitCode": 0,
+          "incrementalOverheadMs": 44,
+          "order": "CANDIDATE_FIRST",
+          "pair": 8,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 1,
+          "requiredOutputSha256": "ff803b50c607a95e4849ad93801e57adc1510c0fdfbbc11dde9311137ceb11e4",
+          "sequence": 16
+        }
+      ],
+      "pairsCompleted": 8,
+      "performed": true,
+      "productionAuthorized": false,
+      "reason": "ORDINARY_OBSERVATIONS_COMPLETE",
+      "reused": true,
+      "status": "COMPLETE",
+      "targetPairs": 8,
+      "testOptimization": "OUT_OF_SCOPE"
+    },
+    "calibration": {
+      "breakEvenBuilds": 384,
+      "calibrationCostMs": 19247,
+      "candidateMeanMs": 5499.375,
+      "candidateP95Ms": 6093,
+      "controlMeanMs": 5549.5,
+      "controlP95Ms": 6358,
+      "discoverySha256": "f93196bd19539034ae32bf1d7bd09084a3c86e9c370c91a554a5577ab2e76cd0",
+      "evidenceSha256": "7a9b9eafc08f39d238d20ad7a8c192356016aeaee5df0c88ea6ce8c5c771d9bf",
+      "fallbackSuccessful": true,
+      "generatedFiles": [
+        ".buildopt/incremental-learning/v1/calibration/evidence.json"
+      ],
+      "interval95SavedMs": [
+        -275.75,
+        405.125
+      ],
+      "maximumBreakEvenBuilds": 30,
+      "meanSavedMs": 50.125,
+      "pairsMeasured": 8,
+      "pairsRequested": 8,
+      "performed": true,
+      "positivePairs": 4,
+      "productionAuthorized": false,
+      "qualified": false,
+      "reason": "CALIBRATION_VALUE_NOT_PROVEN",
+      "reductionRatio": 0.0090323452563294,
+      "reused": false,
+      "status": "COMPLETE",
+      "testOptimization": "OUT_OF_SCOPE",
+      "valueGatePassed": false
+    },
+    "portfolio": {
+      "changeFamily": "",
+      "familySha256": "",
+      "generatedFiles": [],
+      "performed": false,
+      "portfolioFile": "",
+      "productionAuthorized": false,
+      "profileCount": 0,
+      "profileFile": "",
+      "profileSha256": "",
+      "reason": "CALIBRATION_VALUE_NOT_PROVEN",
+      "reused": false,
+      "selectionPerformed": false,
+      "status": "SKIPPED",
+      "testOptimization": "OUT_OF_SCOPE"
+    }
+  },
+  "assertions": {
+    "exactBindings": true,
+    "outputDigestStable": true,
+    "fallbackPreserved": true,
+    "valueGatePreserved": true,
+    "tailGatePreserved": true,
+    "thirtyBuildPaybackGatePreserved": true,
+    "repositorySpecificRuleAdded": false,
+    "productionAuthorized": false,
+    "testOptimizationModified": false
+  },
+  "conclusion": "NATIVE_RETAINED_AFTER_ORDINARY_INVOCATIONS"
+}

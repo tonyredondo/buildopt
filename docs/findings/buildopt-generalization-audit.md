@@ -10,7 +10,9 @@ The current answer is: **the generic path runs and fails closed, but it does
 not yet deliver broad automatic economic value**. The latest transfer observes
 five different public repositories with zero manual BuildOpt files and zero
 product failures. It discovers four complete candidates, yet none repays the
-synchronous learning cost within 30 matching builds.
+original synchronous learning cost within 30 matching builds. Incremental
+learning now removes measurement-only workflows; clean-workspace output
+materialization remains the next generalization gap.
 
 ## What is generalized today
 
@@ -20,7 +22,7 @@ synchronous learning cost within 30 matching builds.
 | Change and workflow discovery | Derives provider/local revisions, exact changed paths and requested Gradle entrypoints. | Global/build-logic ambiguity retains native. |
 | Output discovery | Reads Gradle-owned outputs and rejects missing, external, symlinked or ambiguous declarations. | A root aggregate workflow can legitimately declare a very broad output surface. |
 | Structural proposal | Uses typed project/task relationships and changed-project ownership; no repository-name branch is allowed. | Unknown relationships, excessive candidate task sets and no reduction retain native. |
-| Measurement / decision | Alternating native/candidate observations verify outputs, execution shape, interval, fallback and payback. | The current synchronous eight-pair method can cost more than the optimization can repay. |
+| Measurement / decision | Alternating native/candidate observations verify outputs, execution shape, interval, fallback and payback. | Observations now accumulate across useful invocations with zero measurement-only workflows; weak value still retains native. |
 | Portfolio / central state | Reuses exact compatible evidence across checkouts or machines. | Reuse cannot infer lifetime or value from another profile/repository. |
 | Gradle-compatible cache | Supports local and optional HTTP/HTTPS reuse with safe miss/outage behavior. | Cache is supporting infrastructure; native-cache parity is not a speed advantage. |
 
@@ -83,13 +85,11 @@ measured candidate or an explicit native verdict.
 
 ## Next generalization steps
 
-1. Persist calibration as exact-bound incremental observations across ordinary
-   invocations, rather than duplicating sixteen builds synchronously.
-2. Materialize unaffected required outputs from verified Gradle-compatible
+1. Materialize unaffected required outputs from verified Gradle-compatible
    cache/state before selecting a smaller graph in a clean workspace.
-3. Partition aggregate workflows into bounded producer groups using generic
+2. Partition aggregate workflows into bounded producer groups using generic
    task/variant/ABI relationships; retain native when completeness is unknown.
-4. Rerun the same frozen five-repository contract without moving output,
+3. Rerun the same frozen five-repository contract without moving output,
    fallback or payback gates.
 
 ## POC conclusion
@@ -97,7 +97,7 @@ measured candidate or an explicit native verdict.
 BuildOpt's defensible idea remains an evidence-gated structural optimizer, not
 a faster reimplementation of Gradle's cache. The mechanism can produce large
 wall-time wins, including current public Ktor/Beam results, and the generic
-automatic path is safe. The latest breadth evidence shows that safety is not
-enough: the POC still needs cheaper learning and verified output
-materialization before the one-command experience can claim general customer
-value.
+automatic path is safe. Incremental learning proves that BuildOpt can gather
+the same decision evidence without extra measurement-only workflows. The POC
+still needs verified output materialization and aggregate-workflow partitioning
+before the one-command experience can claim general customer value.

@@ -182,6 +182,12 @@ failures and five safe native decisions. Four structural candidates preserve
 exact outputs, but synchronous learning needs 101–710 matching builds to
 repay; Micronaut's aggregate candidate is rejected before calibration.
 
+The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
+then replaces that synchronous transaction with one exact-bound observation
+per useful invocation. Its fixture completes eight pairs with zero
+measurement-only workflows and retains native Gradle when 0.90% does not pass
+the unchanged value and 30-build gates.
+
 Each specification must link fixtures or conformance tests and the RFC decision it refines. `F0-010` reserves these paths without creating empty specifications.
 
 `ci-orchestration-v1.json` is the machine-readable scheduling, isolation,

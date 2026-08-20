@@ -166,6 +166,12 @@ negative economically: all five repositories retain optimized native Gradle,
 despite technically positive candidate timings in four, because none repays
 the synchronous learning transaction within 30 matching builds.
 
+`check-incremental-learning` validates the successor transaction: one baseline
+plus eight exact-bound control/candidate pairs accumulated across 17 useful
+invocations, with stable required outputs, full fallback and zero
+measurement-only workflows. The checked fixture retains native Gradle because
+its weak timing does not pass the unchanged gates.
+
 `check-poc-real-world-compatibility` binds Spotless, Mockito, and SpotBugs to
 exact released commits plus wrapper, settings, and distribution hashes. The
 paired performance gate is now complete: Mockito qualified, while Spotless and

@@ -15,6 +15,7 @@ if [[ ! -f "$evidence" ]]; then
 fi
 
 jq -e '
+  . as $root |
   .schemaVersion == "buildopt.poc/incremental-learning-evaluation/v1" and
   .workItem == "POC-INCREMENTAL-LEARNING-001" and
   (.buildoptRevision | test("^[0-9a-f]{40}$")) and
@@ -43,20 +44,51 @@ jq -e '
   (.result.incrementalLearning.expectedOutputSha256 | test("^[0-9a-f]{64}$")) and
   .result.incrementalLearning.expectedOutputCount >= 1 and
   (.result.incrementalLearning.observations | length) == 16 and
+  .result.incrementalLearning.baseline.arm == "DISCOVERY_CONTROL" and
+  .result.incrementalLearning.baseline.order == "BASELINE" and
+  .result.incrementalLearning.baseline.sequence == 0 and
+  .result.incrementalLearning.baseline.pair == 0 and
+  .result.incrementalLearning.baseline.exitCode == 0 and
+  .result.incrementalLearning.baseline.requiredOutputSha256 ==
+    .result.incrementalLearning.expectedOutputSha256 and
+  .result.incrementalLearning.baseline.requiredOutputCount ==
+    .result.incrementalLearning.expectedOutputCount and
+  (.result.incrementalLearning.baseline.incrementalOverheadMs +
+    ([.result.incrementalLearning.observations[].incrementalOverheadMs] | add)) ==
+    .result.incrementalLearning.incrementalCostMs and
   ([.result.incrementalLearning.observations[] |
     (.durationMs >= 1 and .incrementalOverheadMs >= 1 and .exitCode == 0 and
-     (.requiredOutputSha256 == $.result.incrementalLearning.expectedOutputSha256) and
-     (.requiredOutputCount == $.result.incrementalLearning.expectedOutputCount) and
+     (.requiredOutputSha256 == $root.result.incrementalLearning.expectedOutputSha256) and
+     (.requiredOutputCount == $root.result.incrementalLearning.expectedOutputCount) and
      (.productAttributableFailure == false))] | all) and
   ([range(0; 16) as $index |
     .result.incrementalLearning.observations[$index] as $observation |
     ($observation.sequence == ($index + 1)) and
     ($observation.pair == ((($index / 2) | floor) + 1)) and
     (if ((((($index / 2) | floor) + 1) % 2) == 1) then
-       ($observation.order == "CONTROL_FIRST")
+       ($observation.order == "CONTROL_FIRST") and
+       ($observation.arm == (if ($index % 2) == 0 then "CONTROL" else "CANDIDATE" end))
      else
-       ($observation.order == "CANDIDATE_FIRST")
+       ($observation.order == "CANDIDATE_FIRST") and
+       ($observation.arm == (if ($index % 2) == 0 then "CANDIDATE" else "CONTROL" end))
      end)] | all) and
+  ([range(0; 16; 2) as $index |
+    .result.incrementalLearning.observations[$index] as $first |
+    .result.incrementalLearning.observations[$index + 1] as $second |
+    (if $first.arm == "CONTROL" then
+       {control: $first.durationMs, candidate: $second.durationMs}
+     else
+       {control: $second.durationMs, candidate: $first.durationMs}
+     end)] as $pairs |
+    (([$pairs[].control] | add / length) == .result.calibration.controlMeanMs) and
+    (([$pairs[].candidate] | add / length) == .result.calibration.candidateMeanMs) and
+    (([$pairs[] | .control - .candidate] | add / length) == .result.calibration.meanSavedMs) and
+    (([$pairs[] | select(.control > .candidate)] | length) == .result.calibration.positivePairs) and
+    (([$pairs[].control] | max) == .result.calibration.controlP95Ms) and
+    (([$pairs[].candidate] | max) == .result.calibration.candidateP95Ms) and
+    ((if .result.calibration.meanSavedMs > 0 then
+       (.result.incrementalLearning.incrementalCostMs / .result.calibration.meanSavedMs | ceil)
+      else 0 end) == .result.calibration.breakEvenBuilds)) and
   .result.calibration.status == "COMPLETE" and
   .result.calibration.pairsRequested == 8 and
   .result.calibration.pairsMeasured == 8 and
