@@ -33,6 +33,7 @@ var optimizeReplayBindingNames = []string{
 	"PROFILE_PRECONDITIONS",
 	"REPOSITORY_ID",
 	"REPOSITORY_REVISION",
+	optimizeMaterializationBinding,
 	"WORKFLOW_ENTRYPOINTS",
 }
 
@@ -252,6 +253,10 @@ func validateOptimizeReplayEntry(
 	}
 	if !equalOptimizeStrings(entry.RequiredOutputs, discovery.RequiredOutputs) {
 		failures = append(failures, "DISCOVERY_DOCUMENTS")
+	}
+	if !equalOptimizeStrings(entry.CandidateOutputs, discovery.CandidateOutputs) ||
+		!validOptimizeOutputMaterializationShape(discovery.Materialization, true) {
+		failures = append(failures, optimizeMaterializationBinding)
 	}
 	profile, err := loadQualifiedPOCProfile(invocation.repositoryRoot, entry.ProfilePath)
 	if err != nil {

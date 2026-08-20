@@ -296,6 +296,8 @@ buildopt_required_files=(
     "dev/run-automatic-breadth-transfer"
     "dev/check-incremental-learning"
     "dev/run-incremental-learning"
+    "dev/check-verified-output-materialization"
+    "dev/run-verified-output-materialization"
     "dev/central-two-machine-client"
     "dev/central-two-machine-control/main.go"
     "dev/run-poc-central-two-machine"

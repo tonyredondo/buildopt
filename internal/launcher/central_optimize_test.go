@@ -409,7 +409,7 @@ func centralOptimizeFixtureIntegration(
 	entrypoints := []string{"shadowJar"}
 	candidate := []string{":clients:shadowJar"}
 	outputs := []string{"clients/build/libs/kafka-clients-*.jar"}
-	familySHA := optimizePortfolioFamilyDigest(profile.RepositoryID, family, owners, entrypoints, candidate, outputs)
+	familySHA := optimizePortfolioFamilyDigest(profile.RepositoryID, family, owners, entrypoints, candidate, outputs, nil)
 	directory := filepath.ToSlash(filepath.Join(optimizeDefaultStateDir, "portfolio", "profiles", familySHA))
 	pathFor := func(name string) string { return filepath.ToSlash(filepath.Join(directory, name)) }
 	bundlePathFor := func(name string) string {

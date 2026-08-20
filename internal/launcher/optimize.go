@@ -572,7 +572,11 @@ func validOptimizeDiscoveryCheckpoint(state optimizeState) bool {
 			validOptimizeDiscoveryFiles(discovery.GeneratedFiles, true) && discovery.Graph.TotalProjects > 0 &&
 			discovery.Graph.SelectedProjects > 0 && discovery.Graph.OmittedProjects > 0 &&
 			validOptimizeFamily(discovery.ChangeFamily) && len(discovery.ChangedProjects) > 0 &&
-			uniqueMeasurementStrings(discovery.ChangedProjects)
+			uniqueMeasurementStrings(discovery.ChangedProjects) &&
+			len(discovery.RequiredOutputs) > 0 && len(discovery.CandidateOutputs) > 0 &&
+			uniqueMeasurementStrings(discovery.RequiredOutputs) &&
+			uniqueMeasurementStrings(discovery.CandidateOutputs) &&
+			validOptimizeOutputMaterializationShape(discovery.Materialization, true)
 	case optimizeDiscoveryRemoteRevalidated:
 		return optimizeStringIn(state.Phase, "ACTIVE", "STALE") &&
 			discovery.Reason == "REMOTE_STRUCTURAL_PROFILE_REVALIDATED" &&
@@ -581,11 +585,16 @@ func validOptimizeDiscoveryCheckpoint(state optimizeState) bool {
 			discovery.Graph.TotalProjects > 0 && discovery.Graph.SelectedProjects > 0 &&
 			discovery.Graph.OmittedProjects > 0 &&
 			validOptimizeFamily(discovery.ChangeFamily) && len(discovery.ChangedProjects) > 0 &&
-			uniqueMeasurementStrings(discovery.ChangedProjects)
+			uniqueMeasurementStrings(discovery.ChangedProjects) &&
+			len(discovery.RequiredOutputs) > 0 && len(discovery.CandidateOutputs) > 0 &&
+			uniqueMeasurementStrings(discovery.RequiredOutputs) &&
+			uniqueMeasurementStrings(discovery.CandidateOutputs) &&
+			validOptimizeOutputMaterializationShape(discovery.Materialization, true)
 	case optimizeDiscoveryRetained, optimizeDiscoverySkipped:
 		return state.Phase == "NATIVE_RETAINED" && discovery.Reason != "" &&
 			discovery.ReviewRequired && discovery.TestOptimization == "OUT_OF_SCOPE" &&
-			validOptimizeDiscoveryFiles(discovery.GeneratedFiles, false)
+			validOptimizeDiscoveryFiles(discovery.GeneratedFiles, false) &&
+			validOptimizeOutputMaterializationShape(discovery.Materialization, false)
 	default:
 		return false
 	}

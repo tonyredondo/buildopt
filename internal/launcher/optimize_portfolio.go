@@ -65,6 +65,7 @@ type optimizePortfolioEntry struct {
 	Entrypoints          []string `json:"entrypoints"`
 	CandidateEntrypoints []string `json:"candidateEntrypoints"`
 	RequiredOutputs      []string `json:"requiredOutputs"`
+	CandidateOutputs     []string `json:"candidateOutputs,omitempty"`
 	TargetRevision       string   `json:"targetRevision"`
 	WrapperSHA256        string   `json:"wrapperSha256"`
 	ExecutableSHA256     string   `json:"executableSha256"`
@@ -274,6 +275,7 @@ func prepareOptimizePortfolioArtifacts(invocation optimizeInvocation, discovery 
 		Entrypoints:          append([]string(nil), discovery.Entrypoints...),
 		CandidateEntrypoints: append([]string(nil), discovery.CandidateEntrypoints...),
 		RequiredOutputs:      append([]string(nil), discovery.RequiredOutputs...),
+		CandidateOutputs:     append([]string(nil), discovery.CandidateOutputs...),
 		TargetRevision:       discovery.TargetRevision,
 		WrapperSHA256:        invocation.wrapperSHA256, ExecutableSHA256: invocation.executableSHA256,
 		ManifestSHA256: digests[0], GraphSHA256: digests[1], GeneratedSHA256: digests[2],
@@ -291,18 +293,31 @@ func optimizePortfolioFamilySHA(discovery optimizeDiscoveryResult) string {
 		discovery.Entrypoints,
 		discovery.CandidateEntrypoints,
 		discovery.RequiredOutputs,
+		discovery.CandidateOutputs,
 	)
 }
 
-func optimizePortfolioFamilyDigest(repositoryID, family string, projects, entrypoints, candidateEntrypoints, outputs []string) string {
+func optimizePortfolioFamilyDigest(repositoryID, family string, projects, entrypoints, candidateEntrypoints, outputs, candidateOutputs []string) string {
+	if len(candidateOutputs) == 0 {
+		return optimizeDigest(
+			"buildopt-optimize-profile-family-v1",
+			optimizePortfolioRepositoryScope(repositoryID),
+			family,
+			optimizeDigest("buildopt-optimize-family-projects-v1", projects...),
+			optimizeDigest("buildopt-optimize-family-entrypoints-v1", entrypoints...),
+			optimizeDigest("buildopt-optimize-family-candidate-v1", candidateEntrypoints...),
+			optimizeDigest("buildopt-optimize-family-outputs-v1", outputs...),
+		)
+	}
 	return optimizeDigest(
-		"buildopt-optimize-profile-family-v1",
+		"buildopt-optimize-profile-family-v2",
 		optimizePortfolioRepositoryScope(repositoryID),
 		family,
 		optimizeDigest("buildopt-optimize-family-projects-v1", projects...),
 		optimizeDigest("buildopt-optimize-family-entrypoints-v1", entrypoints...),
 		optimizeDigest("buildopt-optimize-family-candidate-v1", candidateEntrypoints...),
 		optimizeDigest("buildopt-optimize-family-outputs-v1", outputs...),
+		optimizeDigest("buildopt-optimize-family-candidate-outputs-v1", candidateOutputs...),
 	)
 }
 
@@ -379,10 +394,11 @@ func validOptimizePortfolioEntry(repositoryRoot string, entry optimizePortfolioE
 		len(entry.Entrypoints) < 1 || len(entry.CandidateEntrypoints) < 1 || len(entry.RequiredOutputs) < 1 ||
 		!uniqueMeasurementStrings(entry.ChangedProjects) || !uniqueMeasurementStrings(entry.Entrypoints) ||
 		!uniqueMeasurementStrings(entry.CandidateEntrypoints) || !uniqueMeasurementStrings(entry.RequiredOutputs) ||
+		(len(entry.CandidateOutputs) > 0 && !uniqueMeasurementStrings(entry.CandidateOutputs)) ||
 		!validOptimizeGeneratedPath(entry.ProfilePath) ||
 		entry.FamilySHA256 != optimizePortfolioFamilyDigest(
 			entry.RepositoryID, entry.Family, entry.ChangedProjects, entry.Entrypoints,
-			entry.CandidateEntrypoints, entry.RequiredOutputs,
+			entry.CandidateEntrypoints, entry.RequiredOutputs, entry.CandidateOutputs,
 		) || filepath.Base(entry.ProfilePath) != "profile.json" ||
 		filepath.Base(filepath.Dir(entry.ProfilePath)) != entry.FamilySHA256 {
 		return false

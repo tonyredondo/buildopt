@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage='usage: dev/check-verified-output-materialization [EVIDENCE_JSON]'
+if [[ $# -gt 1 ]]; then
+  printf '%s\n' "$usage" >&2
+  exit 64
+fi
+
+repository_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
+evidence=${1:-$repository_root/benchmarks/results/poc-verified-output-materialization-v1/summary.json}
+if [[ ! -f $evidence ]]; then
+  printf 'verified output materialization evidence is missing: %s\n' "$evidence" >&2
+  exit 1
+fi
+
+jq -e '
+  .schemaVersion == "buildopt.poc/verified-output-materialization-evaluation/v1" and
+  .workItem == "POC-VERIFIED-OUTPUT-MATERIALIZATION-001" and
+  (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+  (.buildoptExecutableSha256 | test("^[0-9a-f]{64}$")) and
+  .runner.platform == "linux-amd64" and
+  .runner.cpuCount >= 1 and
+  .runner.evidenceClass == "BOUNDED_LOCAL_POC" and
+  .workload.fixture == "fixtures/build-impact/synthetic-repository" and
+  .workload.workflow == ["--no-daemon", "assemble"] and
+  .workload.projects == 3 and
+  .workload.invocations == 4 and
+  .workload.candidateWorkspaceCleaned and
+  .workload.cacheOpportunityEqual and
+  .graph.totalProjects == 3 and
+  .graph.selectedProjects == 2 and
+  .graph.omittedProjects == 1 and
+  .materialization.status == "CAPTURED" and
+  .materialization.reason == "VERIFIED_UNAFFECTED_OUTPUTS_CAPTURED" and
+  (.materialization.patterns | length) == 2 and
+  ([.materialization.patterns[] | startswith("library-c/build/libs/")] | any) and
+  ([.materialization.patterns[] | startswith("service-b/build/libs/")] | any) and
+  (.materialization.manifestSha256 | test("^[0-9a-f]{64}$")) and
+  .materialization.fileCount == 2 and
+  .materialization.byteCount > 0 and
+  .outputs.baseline.fileCount == 3 and
+  .outputs.cleanCandidate.fileCount == 3 and
+  .outputs.corruptStateFallback.fileCount == 3 and
+  .outputs.identical and
+  .outputs.baseline.sha256 == .outputs.cleanCandidate.sha256 and
+  .outputs.baseline.sha256 == .outputs.corruptStateFallback.sha256 and
+  .fallback.triggeredBeforeCandidate and
+  .fallback.reason == "VERIFIED_OUTPUT_MATERIALIZATION_FAILED" and
+  .fallback.nativeGraphRestored and
+  .fallback.exitCode == 0 and
+  .assertions.onlyUnaffectedOutputsMaterialized and
+  .assertions.changedOutputsRebuilt and
+  .assertions.corruptBlobRejected and
+  .assertions.staleBytesRejectedByUnitTest and
+  (.assertions.repositorySpecificRuleAdded == false) and
+  (.assertions.productionAuthorized == false) and
+  (.assertions.testOptimizationModified == false) and
+  .conclusion == "VERIFIED_OUTPUT_MATERIALIZATION_POC_COMPLETE"
+' "$evidence" >/dev/null
+
+"$repository_root/dev/run" --toolchain go -- go test ./internal/launcher \
+  -run 'TestOptimizeOutputMaterialization|TestOptimizeAffectedProjectsAndRequiredOutputs' \
+  -count=1
+
+printf 'verified output materialization contract: PASS (%s)\n' "$evidence"

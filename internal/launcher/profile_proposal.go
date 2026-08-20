@@ -227,6 +227,7 @@ type structuralProposalConfig struct {
 	discoveryCacheDir                                                string
 	timeout                                                          time.Duration
 	observedOutputSnapshot                                           *outputContractSnapshot
+	candidateOwnerProjects                                           map[string]bool
 }
 
 func prepareStructuralProfileProposal(ctx context.Context, config structuralProposalConfig) (profileProposalReport, map[string][]byte, error) {
@@ -341,7 +342,11 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 			return report, documents, nil
 		}
 	}
-	candidateEntrypoints := proposalOutputOwnerEntrypoints(outputReport, selectors)
+	candidateEntrypoints := proposalOutputOwnerEntrypointsForProjects(
+		outputReport,
+		selectors,
+		config.candidateOwnerProjects,
+	)
 	report.CandidateEntrypoints = candidateEntrypoints
 	if len(candidateEntrypoints) > maximumStructuralAlternativeEntrypoints {
 		report.Reason = "CANDIDATE_TASK_SET_TOO_LARGE"
@@ -463,9 +468,20 @@ func proposalOutputOwnerProjects(report outputContractReport) []string {
 }
 
 func proposalOutputOwnerEntrypoints(report outputContractReport, selectors []string) []string {
+	return proposalOutputOwnerEntrypointsForProjects(report, selectors, nil)
+}
+
+func proposalOutputOwnerEntrypointsForProjects(
+	report outputContractReport,
+	selectors []string,
+	included map[string]bool,
+) []string {
 	owners := proposalOutputOwnerProjects(report)
 	entrypoints := make([]string, 0, len(owners)*len(selectors))
 	for _, owner := range owners {
+		if included != nil && !included[owner] {
+			continue
+		}
 		for _, selector := range selectors {
 			if owner == ":" {
 				entrypoints = append(entrypoints, ":"+selector)

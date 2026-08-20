@@ -100,6 +100,9 @@ func TestOptimizeAffectedProjectsAndRequiredOutputs(t *testing.T) {
 	if got := optimizeRequiredOutputPatterns(candidates, []string{"assemble"}, affected); !reflect.DeepEqual(got, []string{"service/build/distributions/**", "service/build/publications/maven/pom-default.xml"}) {
 		t.Fatalf("assemble lifecycle output patterns = %v", got)
 	}
+	if got := optimizeRequiredOutputPatterns(candidates, []string{"assemble"}, nil); !reflect.DeepEqual(got, []string{"service/build/distributions/**", "service/build/publications/maven/pom-default.xml", "unrelated/build/libs/**"}) {
+		t.Fatalf("complete workflow output patterns = %v", got)
+	}
 }
 
 func TestOptimizeChangeFamilyUsesOnlyGraphAndChangedPaths(t *testing.T) {

@@ -385,13 +385,19 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 	family := optimizeChangeFamily(snapshot, invocation.discovery.changedPaths, owners)
 	familySHA := optimizePortfolioFamilyDigest(
 		entry.RepositoryID, family, owners, entry.Entrypoints,
-		entry.CandidateEntrypoints, entry.RequiredOutputs,
+		entry.CandidateEntrypoints, entry.RequiredOutputs, entry.CandidateOutputs,
 	)
 	if family != entry.Family || familySHA != entry.FamilySHA256 || !equalOptimizeStrings(owners, entry.ChangedProjects) {
 		if integration.prequalification.Decision == optimizePrequalificationNotEvaluated {
 			integration.prequalification = prequalifyOptimizeDiscovery(invocation, snapshot, owners, family)
 		}
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("current change family differs from remote qualification")}
+	}
+	if len(entry.CandidateOutputs) > 0 && !equalOptimizeStrings(entry.RequiredOutputs, entry.CandidateOutputs) {
+		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{
+			optimizeCentralReasonStructural,
+			errors.New("remote profile requires output materialization state that is not present in the portfolio bundle"),
+		}
 	}
 
 	arguments := []string{
@@ -456,6 +462,10 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 		GeneratedFiles: []string{paths.evidence}, ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}
 	selectedProjects := len(graph.Graph.Projects) - len(impact.plan.OmittedProjects)
+	candidateOutputs := append([]string(nil), entry.CandidateOutputs...)
+	if len(candidateOutputs) == 0 {
+		candidateOutputs = append([]string(nil), entry.RequiredOutputs...)
+	}
 	discovery := optimizeDiscoveryResult{
 		Status: optimizeDiscoveryRemoteRevalidated, Reason: "REMOTE_STRUCTURAL_PROFILE_REVALIDATED",
 		Source: invocation.discovery.Source, RepositoryID: invocation.discovery.RepositoryID,
@@ -463,8 +473,13 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 		ChangeSHA256: invocation.discovery.ChangeSHA256, ChangedPathCount: invocation.discovery.ChangedPathCount,
 		Entrypoints:          append([]string(nil), invocation.discovery.Entrypoints...),
 		RequiredOutputs:      append([]string(nil), entry.RequiredOutputs...),
+		CandidateOutputs:     candidateOutputs,
 		CandidateEntrypoints: append([]string(nil), entry.CandidateEntrypoints...),
-		ChangeFamily:         family, ChangedProjects: append([]string(nil), owners...),
+		Materialization: optimizeOutputMaterialization{
+			Status: optimizeMaterializationNotRequired, Reason: optimizeMaterializationReasonNone,
+			Patterns: []string{},
+		},
+		ChangeFamily: family, ChangedProjects: append([]string(nil), owners...),
 		Graph:          optimizeDiscoveryGraph{TotalProjects: len(graph.Graph.Projects), SelectedProjects: selectedProjects, OmittedProjects: len(impact.plan.OmittedProjects)},
 		GeneratedFiles: append([]string(nil), paths.discoveryFiles...), ReviewRequired: true,
 		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",

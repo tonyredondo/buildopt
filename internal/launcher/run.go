@@ -124,6 +124,25 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			if automaticOptimizeImpact == nil {
 				automaticOptimizeImpact = optimize.prepareIncrementalLearningArm()
 			}
+			if automaticOptimizeImpact != nil {
+				if materializationErr := optimize.materializeCandidateOutputs(); materializationErr != nil {
+					_, _ = fmt.Fprintf(stderr, "buildopt: verified output materialization unavailable: %v; using full graph\n", materializationErr)
+					automaticOptimizeImpact = nil
+					if optimize.incrementalCandidate {
+						optimize.incrementalCandidate = false
+						optimize.incrementalFailure = optimizeMaterializationFailure
+					}
+					if optimize.selection.Selected {
+						optimize.selection = retainedOptimizeSelection(optimizeSelectionReasonBindings, optimizeMaterializationBinding)
+					}
+					if optimize.centralReplay != nil {
+						optimize.centralReplay = nil
+						if optimize.central != nil {
+							optimize.central.retain(optimizeMaterializationFailure)
+						}
+					}
+				}
+			}
 			if optimize.prequalification.Decision != optimizePrequalificationReject {
 				if observationErr := optimize.prepareOutputObservation(); observationErr != nil {
 					_, _ = fmt.Fprintf(stderr, "buildopt: ordinary output observation unavailable: %v\n", observationErr)

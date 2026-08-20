@@ -50,24 +50,26 @@ type optimizeDiscoveryGraph struct {
 }
 
 type optimizeDiscoveryResult struct {
-	Status               string                 `json:"status"`
-	Reason               string                 `json:"reason"`
-	Source               string                 `json:"source"`
-	RepositoryID         string                 `json:"repositoryId"`
-	BaseRevision         string                 `json:"baseRevision"`
-	TargetRevision       string                 `json:"targetRevision"`
-	ChangeSHA256         string                 `json:"changeSha256"`
-	ChangedPathCount     int                    `json:"changedPathCount"`
-	Entrypoints          []string               `json:"entrypoints"`
-	RequiredOutputs      []string               `json:"requiredOutputs"`
-	CandidateEntrypoints []string               `json:"candidateEntrypoints"`
-	ChangeFamily         string                 `json:"changeFamily"`
-	ChangedProjects      []string               `json:"changedProjects"`
-	Graph                optimizeDiscoveryGraph `json:"graph"`
-	GeneratedFiles       []string               `json:"generatedFiles"`
-	ReviewRequired       bool                   `json:"reviewRequired"`
-	ProductionAuthorized bool                   `json:"productionAuthorized"`
-	TestOptimization     string                 `json:"testOptimization"`
+	Status               string                        `json:"status"`
+	Reason               string                        `json:"reason"`
+	Source               string                        `json:"source"`
+	RepositoryID         string                        `json:"repositoryId"`
+	BaseRevision         string                        `json:"baseRevision"`
+	TargetRevision       string                        `json:"targetRevision"`
+	ChangeSHA256         string                        `json:"changeSha256"`
+	ChangedPathCount     int                           `json:"changedPathCount"`
+	Entrypoints          []string                      `json:"entrypoints"`
+	RequiredOutputs      []string                      `json:"requiredOutputs"`
+	CandidateOutputs     []string                      `json:"candidateOutputs"`
+	CandidateEntrypoints []string                      `json:"candidateEntrypoints"`
+	Materialization      optimizeOutputMaterialization `json:"materialization"`
+	ChangeFamily         string                        `json:"changeFamily"`
+	ChangedProjects      []string                      `json:"changedProjects"`
+	Graph                optimizeDiscoveryGraph        `json:"graph"`
+	GeneratedFiles       []string                      `json:"generatedFiles"`
+	ReviewRequired       bool                          `json:"reviewRequired"`
+	ProductionAuthorized bool                          `json:"productionAuthorized"`
+	TestOptimization     string                        `json:"testOptimization"`
 }
 
 type optimizeDiscoveryDocuments struct {
@@ -84,7 +86,7 @@ func retainedOptimizeDiscovery(invocation optimizeInvocation, reason string) opt
 		ChangeSHA256:     invocation.discovery.ChangeSHA256,
 		ChangedPathCount: invocation.discovery.ChangedPathCount,
 		Entrypoints:      append([]string(nil), invocation.discovery.Entrypoints...),
-		RequiredOutputs:  []string{}, CandidateEntrypoints: []string{},
+		RequiredOutputs:  []string{}, CandidateOutputs: []string{}, CandidateEntrypoints: []string{},
 		ChangedProjects: []string{}, GeneratedFiles: []string{},
 		ReviewRequired: true, ProductionAuthorized: false,
 		TestOptimization: "OUT_OF_SCOPE",
@@ -400,6 +402,16 @@ func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int,
 		return result
 	}
 	result = discovered
+	if result.Status == optimizeDiscoveryComplete {
+		materialization, captureErr := captureOptimizeOutputMaterialization(run.invocation, result)
+		if captureErr != nil {
+			result.Status = optimizeDiscoveryRetained
+			result.Reason = "OUTPUT_MATERIALIZATION_CAPTURE_FAILED"
+			_, _ = fmt.Fprintf(diagnostics, "buildopt: verified output capture unavailable: %v\n", captureErr)
+		} else {
+			result.Materialization = materialization
+		}
+	}
 	if err := writeOptimizeDiscoveryDocuments(run.invocation.repositoryRoot, documents); err != nil {
 		result.Status = optimizeDiscoveryRetained
 		result.Reason = "DISCOVERY_STATE_WRITE_FAILED"
@@ -416,7 +428,7 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		BaseRevision: discovery.BaseRevision, TargetRevision: discovery.TargetRevision,
 		ChangeSHA256: discovery.ChangeSHA256, ChangedPathCount: discovery.ChangedPathCount,
 		Entrypoints:     append([]string(nil), discovery.Entrypoints...),
-		RequiredOutputs: []string{}, CandidateEntrypoints: []string{}, ChangedProjects: []string{}, GeneratedFiles: []string{},
+		RequiredOutputs: []string{}, CandidateOutputs: []string{}, CandidateEntrypoints: []string{}, ChangedProjects: []string{}, GeneratedFiles: []string{},
 		ReviewRequired: true, ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}
 	if head, err := gitOutput(invocation.repositoryRoot, "rev-parse", "HEAD"); err != nil || strings.TrimSpace(head) != discovery.TargetRevision {
@@ -478,8 +490,9 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 	affected := optimizeAffectedProjects(snapshot, changedOwners)
 	result.ChangeFamily = optimizeChangeFamily(snapshot, discovery.changedPaths, changedOwners)
 	result.ChangedProjects = append([]string(nil), changedOwners...)
-	patterns := optimizeRequiredOutputPatterns(outputReport.CandidateOutputs, discovery.Entrypoints, affected)
-	if len(patterns) == 0 {
+	candidatePatterns := optimizeRequiredOutputPatterns(outputReport.CandidateOutputs, discovery.Entrypoints, affected)
+	workflowPatterns := optimizeRequiredOutputPatterns(outputReport.CandidateOutputs, discovery.Entrypoints, nil)
+	if len(candidatePatterns) == 0 || len(workflowPatterns) == 0 {
 		result.Reason = "OUTPUT_SEMANTICS_AMBIGUOUS"
 		return result, optimizeDiscoveryDocuments{}, nil
 	}
@@ -488,7 +501,7 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 	config := structuralProposalConfig{
 		repositoryID: discovery.RepositoryID, pipelineClass: pipelineClass,
 		entrypoints:  append([]string(nil), discovery.Entrypoints...),
-		baseRevision: discovery.BaseRevision, requiredOutputs: patterns,
+		baseRevision: discovery.BaseRevision, requiredOutputs: workflowPatterns,
 		globalChanges:        append([]string(nil), optimizeGlobalChangePaths...),
 		gradleOptions:        append([]string(nil), discovery.gradleOptions...),
 		outputContractOutput: filepath.Join(directory, "output-contract.json"),
@@ -499,6 +512,7 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		proposalOutput:       filepath.Join(directory, "proposal.json"),
 		changeSource:         "GIT_DIFF_BASE_TO_HEAD", timeout: invocation.calibrationBudget,
 		observedOutputSnapshot: &outputReport.snapshot,
+		candidateOwnerProjects: affected,
 	}
 	report, documents, err := prepareStructuralProfileProposal(ctx, config)
 	if err != nil {
@@ -517,6 +531,7 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 	}
 	sort.Strings(paths)
 	result.RequiredOutputs = append([]string(nil), report.RequiredOutputs...)
+	result.CandidateOutputs = append([]string(nil), candidatePatterns...)
 	result.CandidateEntrypoints = append([]string(nil), report.CandidateEntrypoints...)
 	result.GeneratedFiles = paths
 	result.Reason = report.Reason
@@ -579,7 +594,7 @@ func optimizeAffectedProjects(snapshot buildimpact.DiscoverySnapshot, owners []s
 	return affected
 }
 
-func optimizeRequiredOutputPatterns(candidates []outputContractCandidate, entrypoints []string, affected map[string]bool) []string {
+func optimizeRequiredOutputPatterns(candidates []outputContractCandidate, entrypoints []string, included map[string]bool) []string {
 	selectors, err := proposalTerminalSelectors(entrypoints)
 	if err != nil {
 		return nil
@@ -587,7 +602,9 @@ func optimizeRequiredOutputPatterns(candidates []outputContractCandidate, entryp
 	direct := map[string]bool{}
 	lifecycle := map[string]bool{}
 	for _, candidate := range candidates {
-		if len(candidate.OwnerProjects) != 1 || !affected[candidate.OwnerProjects[0]] || candidate.FileCount < 1 {
+		if len(candidate.OwnerProjects) != 1 ||
+			(included != nil && !included[candidate.OwnerProjects[0]]) ||
+			candidate.FileCount < 1 {
 			continue
 		}
 		for _, task := range candidate.ProducerTasks {

@@ -41,15 +41,15 @@ func TestOptimizePortfolioFamilyDigestIsPortableAndStructural(t *testing.T) {
 	entrypoints := []string{"jar"}
 	candidate := []string{":core:jar"}
 	outputs := []string{"core/build/libs/core.jar"}
-	first := optimizePortfolioFamilyDigest("owner/repository", optimizeFamilyDependency, projects, entrypoints, candidate, outputs)
-	second := optimizePortfolioFamilyDigest("owner/repository", optimizeFamilyDependency, projects, entrypoints, candidate, outputs)
+	first := optimizePortfolioFamilyDigest("owner/repository", optimizeFamilyDependency, projects, entrypoints, candidate, outputs, outputs)
+	second := optimizePortfolioFamilyDigest("owner/repository", optimizeFamilyDependency, projects, entrypoints, candidate, outputs, outputs)
 	if first != second || !validOptimizeSHA(first) {
 		t.Fatalf("portable structural digest = %q, second = %q", first, second)
 	}
-	if first == optimizePortfolioFamilyDigest("other/repository", optimizeFamilyDependency, projects, entrypoints, candidate, outputs) {
+	if first == optimizePortfolioFamilyDigest("other/repository", optimizeFamilyDependency, projects, entrypoints, candidate, outputs, outputs) {
 		t.Fatal("repository identity did not scope the logical family")
 	}
-	if first == optimizePortfolioFamilyDigest("owner/repository", optimizeFamilyLeaf, projects, entrypoints, candidate, outputs) {
+	if first == optimizePortfolioFamilyDigest("owner/repository", optimizeFamilyLeaf, projects, entrypoints, candidate, outputs, outputs) {
 		t.Fatal("structural family did not affect the logical identity")
 	}
 }
