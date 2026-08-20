@@ -10,7 +10,23 @@ buildopt_output=$1
 buildopt_subject_filter=${2:-}
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
-buildopt_contract="${buildopt_repo_root}/specs/poc-automatic-breadth-transfer-v1.json"
+buildopt_protocol=${BUILDOPT_AUTOMATIC_BREADTH_PROTOCOL:-v1}
+case ${buildopt_protocol} in
+    v1)
+        buildopt_contract="${buildopt_repo_root}/specs/poc-automatic-breadth-transfer-v1.json"
+        buildopt_package_version=0.3.0-dev
+        buildopt_state_name=automatic-breadth-v1
+        ;;
+    v2)
+        buildopt_contract="${buildopt_repo_root}/specs/poc-automatic-breadth-transfer-v2.json"
+        buildopt_package_version=0.7.0-dev
+        buildopt_state_name=automatic-breadth-v2
+        ;;
+    *)
+        printf 'unsupported automatic breadth protocol: %s\n' "${buildopt_protocol}" >&2
+        exit 64
+        ;;
+esac
 buildopt_subjects="${buildopt_repo_root}/specs/poc-generic-profile-matrix-v3.json"
 buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-automatic-breadth.XXXXXX")
 
@@ -61,10 +77,10 @@ buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
 buildopt_package_root="${buildopt_root}/package"
 mkdir -p -- "${buildopt_package_root}" "${buildopt_root}/release" "${buildopt_root}/install"
 "${buildopt_repo_root}/packaging/linux/package.sh" \
-    --version 0.3.0-dev --output "${buildopt_package_root}" >/dev/null
-tar -xzf "${buildopt_package_root}/buildopt-0.3.0-dev-linux-amd64.tar.gz" \
+    --version "${buildopt_package_version}" --output "${buildopt_package_root}" >/dev/null
+tar -xzf "${buildopt_package_root}/buildopt-${buildopt_package_version}-linux-amd64.tar.gz" \
     -C "${buildopt_root}/release"
-"${buildopt_root}/release/buildopt-0.3.0-dev-linux-amd64/install.sh" \
+"${buildopt_root}/release/buildopt-${buildopt_package_version}-linux-amd64/install.sh" \
     --prefix "${buildopt_root}/install" >/dev/null
 buildopt_executable="${buildopt_root}/install/bin/buildopt"
 buildopt_executable_sha=$(sha256sum "${buildopt_executable}" | awk '{print $1}')
@@ -153,6 +169,20 @@ buildopt_entrypoints() {
     fi
 }
 
+buildopt_clean_subject_outputs() {
+    local buildopt_repository=$1
+    local buildopt_build_directory
+
+    [[ ${buildopt_repository} == "${buildopt_root}/"* && -d ${buildopt_repository}/.git ]] || {
+        printf 'refusing to clean an unverified automatic breadth checkout: %s\n' \
+            "${buildopt_repository}" >&2
+        return 1
+    }
+    while IFS= read -r -d '' buildopt_build_directory; do
+        rm -rf -- "${buildopt_build_directory}"
+    done < <(find "${buildopt_repository}" -type d -name build -prune -print0)
+}
+
 buildopt_capture_subject() {
     local buildopt_index=$1
     local buildopt_key buildopt_repository_id buildopt_remote buildopt_base
@@ -160,6 +190,8 @@ buildopt_capture_subject() {
     local buildopt_repository buildopt_gradle_home buildopt_subject_output
     local buildopt_event buildopt_stdout buildopt_stderr buildopt_status buildopt_free
     local buildopt_state_source buildopt_raw_sha buildopt_state_sha
+    local buildopt_invocation buildopt_invocation_file buildopt_invocation_sha
+    local buildopt_invocation_metadata buildopt_all_invocations_valid
     local -a buildopt_gradle_args=()
 
     buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_subjects}")
@@ -220,33 +252,84 @@ buildopt_capture_subject() {
     jq -n --arg before "${buildopt_base}" '{before:$before}' >"${buildopt_event}"
     buildopt_stdout="${buildopt_root}/${buildopt_key}/optimize.stdout"
     buildopt_stderr="${buildopt_root}/${buildopt_key}/optimize.stderr"
+    buildopt_invocation_metadata="${buildopt_root}/${buildopt_key}/invocations.jsonl"
+    : >"${buildopt_invocation_metadata}"
 
     printf 'Running automatic optimize path for %s\n' "${buildopt_repository_id}"
-    set +e
-    (
-        cd -- "${buildopt_repository}"
-        env -u CI \
-            GITHUB_EVENT_PATH="${buildopt_event}" \
-            GITHUB_REPOSITORY="${buildopt_repository_id}" \
-            GRADLE_USER_HOME="${buildopt_gradle_home}" \
-            timeout 60m "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
-            "${buildopt_executable}" optimize \
-            --state-dir .buildopt/optimize/automatic-breadth-v1 \
-            --resume never --calibration-budget 30m --calibration-pairs 8 \
-            --max-break-even-builds 30 --json -- "${buildopt_gradle_args[@]}"
-    ) >"${buildopt_stdout}" 2>"${buildopt_stderr}"
-    buildopt_status=$?
-    set -e
+    if [[ ${buildopt_protocol} == v1 ]]; then
+        set +e
+        (
+            cd -- "${buildopt_repository}"
+            env -u CI \
+                GITHUB_EVENT_PATH="${buildopt_event}" \
+                GITHUB_REPOSITORY="${buildopt_repository_id}" \
+                GRADLE_USER_HOME="${buildopt_gradle_home}" \
+                timeout 60m "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+                "${buildopt_executable}" optimize \
+                --state-dir ".buildopt/optimize/${buildopt_state_name}" \
+                --resume never --calibration-budget 30m --calibration-pairs 8 \
+                --max-break-even-builds 30 --json -- "${buildopt_gradle_args[@]}"
+        ) >"${buildopt_stdout}" 2>"${buildopt_stderr}"
+        buildopt_status=$?
+        set -e
+    else
+        buildopt_status=0
+        buildopt_all_invocations_valid=true
+        for buildopt_invocation in $(seq 1 17); do
+            buildopt_clean_subject_outputs "${buildopt_repository}"
+            buildopt_invocation_file=$(printf '%s/invocation-%02d.json' \
+                "${buildopt_subject_output}" "${buildopt_invocation}")
+            buildopt_stderr=$(printf '%s/invocation-%02d.stderr' \
+                "${buildopt_root}/${buildopt_key}" "${buildopt_invocation}")
+            printf '  ordinary invocation %d/17\n' "${buildopt_invocation}"
+            set +e
+            (
+                cd -- "${buildopt_repository}"
+                env -u CI \
+                    GITHUB_EVENT_PATH="${buildopt_event}" \
+                    GITHUB_REPOSITORY="${buildopt_repository_id}" \
+                    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+                    timeout 30m "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+                    "${buildopt_executable}" optimize \
+                    --state-dir ".buildopt/optimize/${buildopt_state_name}" \
+                    --resume auto --calibration-budget 30m --calibration-pairs 8 \
+                    --max-break-even-builds 30 --json -- "${buildopt_gradle_args[@]}"
+            ) >"${buildopt_invocation_file}" 2>"${buildopt_stderr}"
+            buildopt_status=$?
+            set -e
+            if ((buildopt_status != 0)) || ! jq -e \
+                '.schemaVersion == "buildopt.poc/optimize-result/v1"' \
+                "${buildopt_invocation_file}" >/dev/null 2>&1; then
+                buildopt_all_invocations_valid=false
+                break
+            fi
+            buildopt_invocation_sha=$(sha256sum "${buildopt_invocation_file}" | awk '{print $1}')
+            jq -nc --arg path "${buildopt_key}/$(basename "${buildopt_invocation_file}")" \
+                --arg sha256 "${buildopt_invocation_sha}" \
+                --argjson sequence "${buildopt_invocation}" \
+                --slurpfile result "${buildopt_invocation_file}" '
+              ($result[0]) as $r |
+              {sequence:$sequence,path:$path,sha256:$sha256,outcome:$r.outcome,
+               reason:$r.reason,phase:$r.phase,durationMs:$r.durationMs,
+               executionMode:$r.execution.mode,exitCode:$r.execution.exitCode}
+            ' >>"${buildopt_invocation_metadata}"
+        done
+        if [[ ${buildopt_all_invocations_valid} == true && ${buildopt_invocation} -eq 17 ]]; then
+            buildopt_stdout="${buildopt_subject_output}/invocation-17.json"
+        fi
+    fi
 
     if ! jq -e '.schemaVersion == "buildopt.poc/optimize-result/v1"' \
         "${buildopt_stdout}" >/dev/null 2>&1; then
+        buildopt_capture_schema="buildopt.evidence/automatic-breadth-subject/${buildopt_protocol}"
         jq -n \
             --arg key "${buildopt_key}" --arg repositoryId "${buildopt_repository_id}" \
             --arg baseRevision "${buildopt_base}" --arg targetRevision "${buildopt_target}" \
             --arg buildoptRevision "${buildopt_revision}" \
             --arg executableSha256 "${buildopt_executable_sha}" \
+            --arg captureSchema "${buildopt_capture_schema}" \
             --argjson processExitCode "${buildopt_status}" '
-          {schemaVersion:"buildopt.evidence/automatic-breadth-subject/v1",
+          {schemaVersion:$captureSchema,
            key:$key,repositoryId:$repositoryId,baseRevision:$baseRevision,
            targetRevision:$targetRevision,buildopt:{revision:$buildoptRevision,
            executableSha256:$executableSha256},processExitCode:$processExitCode,
@@ -254,9 +337,12 @@ buildopt_capture_subject() {
         ' >"${buildopt_subject_output}/capture.json"
     else
         cp -- "${buildopt_stdout}" "${buildopt_subject_output}/result.json"
-        buildopt_state_source="${buildopt_repository}/.buildopt/optimize/automatic-breadth-v1"
+        buildopt_state_source="${buildopt_repository}/.buildopt/optimize/${buildopt_state_name}"
         if [[ -d ${buildopt_state_source} ]]; then
             cp -a -- "${buildopt_state_source}" "${buildopt_subject_output}/state"
+            if [[ ${buildopt_protocol} == v2 ]]; then
+                rm -rf -- "${buildopt_subject_output}/state/materialization/blobs"
+            fi
         fi
         buildopt_raw_sha=$(sha256sum "${buildopt_subject_output}/result.json" | awk '{print $1}')
         buildopt_state_sha=null
@@ -267,7 +353,8 @@ buildopt_capture_subject() {
                     sha256sum | awk '{print $1}'
             )
         fi
-        jq -n \
+        if [[ ${buildopt_protocol} == v1 ]]; then
+            jq -n \
             --arg key "${buildopt_key}" --arg repositoryId "${buildopt_repository_id}" \
             --arg baseRevision "${buildopt_base}" --arg targetRevision "${buildopt_target}" \
             --arg buildoptRevision "${buildopt_revision}" \
@@ -291,7 +378,39 @@ buildopt_capture_subject() {
            portfolio:$r.portfolio,selection:$r.selection,value:$r.value,
            productionAuthorized:$r.productionAuthorized,
            testOptimization:$r.testOptimization}
-        ' >"${buildopt_subject_output}/capture.json"
+            ' >"${buildopt_subject_output}/capture.json"
+        else
+            jq -n \
+                --arg key "${buildopt_key}" --arg repositoryId "${buildopt_repository_id}" \
+                --arg baseRevision "${buildopt_base}" --arg targetRevision "${buildopt_target}" \
+                --arg buildoptRevision "${buildopt_revision}" \
+                --arg executableSha256 "${buildopt_executable_sha}" \
+                --arg rawResult "${buildopt_key}/result.json" \
+                --arg rawResultSha256 "${buildopt_raw_sha}" \
+                --arg stateTreeSha256 "${buildopt_state_sha}" \
+                --argjson processExitCode "${buildopt_status}" \
+                --slurpfile invocations "${buildopt_invocation_metadata}" \
+                --slurpfile result "${buildopt_subject_output}/result.json" '
+              ($result[0]) as $r |
+              {schemaVersion:"buildopt.evidence/automatic-breadth-subject/v2",
+               key:$key,repositoryId:$repositoryId,baseRevision:$baseRevision,
+               targetRevision:$targetRevision,buildopt:{revision:$buildoptRevision,
+               executableSha256:$executableSha256},processExitCode:$processExitCode,
+               resultAvailable:true,productFailure:($processExitCode != 0),
+               rawResult:$rawResult,rawResultSha256:$rawResultSha256,
+               stateTreeSha256:(if $stateTreeSha256 == "null" then null else $stateTreeSha256 end),
+               ordinaryInvocations:17,measurementOnlyWorkflowRuns:0,
+               cleanWorkspaceBeforeEveryInvocation:true,invocationResults:$invocations,
+               outcome:$r.outcome,reason:$r.reason,durationMs:$r.durationMs,
+               manualFilesRequired:$r.manualFilesRequired,native:$r.native,
+               execution:$r.execution,discovery:$r.discovery,
+               incrementalLearning:$r.incrementalLearning,
+               prequalification:$r.prequalification,calibration:$r.calibration,
+               portfolio:$r.portfolio,selection:$r.selection,value:$r.value,
+               productionAuthorized:$r.productionAuthorized,
+               testOptimization:$r.testOptimization}
+            ' >"${buildopt_subject_output}/capture.json"
+        fi
     fi
 
     (
@@ -326,28 +445,62 @@ if ((buildopt_completed != buildopt_subject_count)); then
     exit 0
 fi
 
-jq -s \
-    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-    --arg buildoptRevision "${buildopt_revision}" \
-    --arg executableSha256 "${buildopt_executable_sha}" '
-  {
-    schemaVersion:"buildopt.evidence/poc-automatic-breadth-transfer/v1",
-    workItem:"POC-AUTOMATIC-BREADTH-TRANSFER-001",capturedAt:$capturedAt,
-    buildopt:{revision:$buildoptRevision,executableSha256:$executableSha256,
-      packageVersion:"0.3.0-dev"},subjects:.,
-    aggregation:{subjectCount:length,
-      resultAvailable:(map(select(.resultAvailable))|length),
-      discoveryComplete:(map(select(.discovery.status == "COMPLETE"))|length),
-      calibrationComplete:(map(select(.calibration.status == "COMPLETE"))|length),
-      valueGatePassed:(map(select(.calibration.valueGatePassed == true))|length),
-      economicallyQualified:(map(select(.calibration.qualified == true))|length),
-      nativeRetained:(map(select(.outcome == "NATIVE_RETAINED"))|length),
-      productFailures:(map(select(.productFailure))|length),
-      repositoryPercentagesAveraged:false,mechanismPercentagesAdded:false},
-    boundaries:{proofOfConcept:true,productionAuthorized:false,
-      automaticActivationOutsideOwnerCommand:false,soakRequired:false,
-      designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
-  }
-' "${buildopt_capture_files[@]}" >"${buildopt_output}/summary.json"
+if [[ ${buildopt_protocol} == v1 ]]; then
+    jq -s \
+        --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+        --arg buildoptRevision "${buildopt_revision}" \
+        --arg executableSha256 "${buildopt_executable_sha}" '
+      {
+        schemaVersion:"buildopt.evidence/poc-automatic-breadth-transfer/v1",
+        workItem:"POC-AUTOMATIC-BREADTH-TRANSFER-001",capturedAt:$capturedAt,
+        buildopt:{revision:$buildoptRevision,executableSha256:$executableSha256,
+          packageVersion:"0.3.0-dev"},subjects:.,
+        aggregation:{subjectCount:length,
+          resultAvailable:(map(select(.resultAvailable))|length),
+          discoveryComplete:(map(select(.discovery.status == "COMPLETE"))|length),
+          calibrationComplete:(map(select(.calibration.status == "COMPLETE"))|length),
+          valueGatePassed:(map(select(.calibration.valueGatePassed == true))|length),
+          economicallyQualified:(map(select(.calibration.qualified == true))|length),
+          nativeRetained:(map(select(.outcome == "NATIVE_RETAINED"))|length),
+          productFailures:(map(select(.productFailure))|length),
+          repositoryPercentagesAveraged:false,mechanismPercentagesAdded:false},
+        boundaries:{proofOfConcept:true,productionAuthorized:false,
+          automaticActivationOutsideOwnerCommand:false,soakRequired:false,
+          designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+      }
+    ' "${buildopt_capture_files[@]}" >"${buildopt_output}/summary.json"
+else
+    jq -s \
+        --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+        --arg buildoptRevision "${buildopt_revision}" \
+        --arg executableSha256 "${buildopt_executable_sha}" \
+        --arg packageVersion "${buildopt_package_version}" '
+      {
+        schemaVersion:"buildopt.evidence/poc-automatic-breadth-transfer/v2",
+        workItem:"POC-AUTOMATIC-BREADTH-TRANSFER-V2-001",capturedAt:$capturedAt,
+        buildopt:{revision:$buildoptRevision,executableSha256:$executableSha256,
+          packageVersion:$packageVersion},subjects:.,
+        aggregation:{subjectCount:length,
+          resultAvailable:(map(select(.resultAvailable))|length),
+          discoveryComplete:(map(select(.discovery.status == "COMPLETE"))|length),
+          incrementalComplete:(map(select(.incrementalLearning.status == "COMPLETE"))|length),
+          calibrationComplete:(map(select(.calibration.status == "COMPLETE"))|length),
+          valueGatePassed:(map(select(.calibration.valueGatePassed == true))|length),
+          economicallyQualified:(map(select(.calibration.qualified == true))|length),
+          nativeRetained:(map(select(.outcome == "NATIVE_RETAINED"))|length),
+          ordinaryInvocations:(map(.ordinaryInvocations // 0)|add),
+          measurementOnlyWorkflowRuns:(map(.measurementOnlyWorkflowRuns // 0)|add),
+          aggregatePartitionsComplete:
+            (map(select(.discovery.aggregatePartition.status == "COMPLETE"))|length),
+          materializationsCaptured:
+            (map(select(.discovery.materialization.status == "CAPTURED"))|length),
+          productFailures:(map(select(.productFailure))|length),
+          repositoryPercentagesAveraged:false,mechanismPercentagesAdded:false},
+        boundaries:{proofOfConcept:true,productionAuthorized:false,
+          automaticActivationOutsideOwnerCommand:false,soakRequired:false,
+          designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+      }
+    ' "${buildopt_capture_files[@]}" >"${buildopt_output}/summary.json"
+fi
 
 printf 'Automatic breadth transfer evidence written to %s\n' "${buildopt_output}"

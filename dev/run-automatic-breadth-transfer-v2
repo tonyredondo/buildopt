@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+export BUILDOPT_AUTOMATIC_BREADTH_PROTOCOL=v2
+exec "${buildopt_script_dir}/run-automatic-breadth-transfer" "$@"

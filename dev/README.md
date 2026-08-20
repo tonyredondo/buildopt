@@ -581,6 +581,26 @@ alternating pairs, fallback, means and break-even calculations with:
 ./dev/check-automatic-breadth-transfer
 ```
 
+The incremental rerun keeps the same frozen five repositories and workflows,
+but collects one baseline and eight alternating pairs across seventeen ordinary
+invocations. It deletes only Gradle `build` directories before each invocation
+so clean-workspace materialization is exercised while private Gradle and
+BuildOpt state remain available. Capture one repository at a time to make the
+long POC restartable, then validate the completed directory:
+
+```bash
+./dev/run-automatic-breadth-transfer-v2 /absolute/evidence/directory spring-framework
+./dev/run-automatic-breadth-transfer-v2 /absolute/evidence/directory opentelemetry-java-instrumentation
+./dev/run-automatic-breadth-transfer-v2 /absolute/evidence/directory apache-kafka
+./dev/run-automatic-breadth-transfer-v2 /absolute/evidence/directory micronaut-core
+./dev/run-automatic-breadth-transfer-v2 /absolute/evidence/directory apache-groovy
+./dev/check-automatic-breadth-transfer-v2 /absolute/evidence/directory/summary.json
+```
+
+This is a bounded POC experiment, not a soak. The checker requires all 85
+ordinary results, recomputes every balanced pair and preserves safe native
+retention when the unchanged value or thirty-build payback gates are not met.
+
 The current result has zero product failures and zero manual target-repository
 files. Four candidates are timed but need 101–710 matching builds to repay;
 Micronaut retains native before calibration because its aggregate workflow

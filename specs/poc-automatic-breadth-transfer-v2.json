@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "buildopt.poc/automatic-breadth-transfer-contract/v2",
+  "workItem": "POC-AUTOMATIC-BREADTH-TRANSFER-V2-001",
+  "decision": "REPEAT_FIVE_PUBLIC_REPOSITORIES_WITH_INCREMENTAL_ORDINARY_LEARNING_AND_VERIFIED_CLEAN_WORKSPACE_OUTPUTS",
+  "frozenSubjects": {
+    "path": "specs/poc-generic-profile-matrix-v3.json",
+    "sha256": "9eb006ad888b9c1f28bfeff63e26175dccd4227c0131158b262065a1e19d0b1d",
+    "opentelemetryEntrypointsPath": "specs/poc-otel-spring-family-v2.tasks.txt",
+    "opentelemetryEntrypointsSha256": "3a93d45f268589448baa5e5fd3c8055634ee4a4d7af685c7851c59dbec13ff0f",
+    "repositoryCount": 5
+  },
+  "customerPath": {
+    "command": "buildopt optimize <existing Gradle workflow>",
+    "installedPackage": true,
+    "freshPublicCheckout": true,
+    "manualBuildOptFiles": 0,
+    "resume": "AUTO",
+    "ordinaryInvocations": 17,
+    "measurementOnlyWorkflowRuns": 0,
+    "cleanWorkspaceBeforeEveryInvocation": true,
+    "calibrationPairs": 8,
+    "calibrationBudgetSeconds": 1800,
+    "maximumBreakEvenBuilds": 30
+  },
+  "method": {
+    "control": "OPTIMIZED_NATIVE_GRADLE_SAME_DECLARED_WORKFLOW",
+    "candidateMechanisms": [
+      "INCREMENTAL_ORDINARY_LEARNING",
+      "VERIFIED_UNAFFECTED_OUTPUT_MATERIALIZATION",
+      "GENERIC_AGGREGATE_WORKFLOW_PARTITION"
+    ],
+    "gradleOptions": [
+      "--daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "sameBuildOptRevisionAcrossSubjects": true,
+    "sequentialSubjects": true,
+    "freshPrivateGradleHomePerSubject": true,
+    "dependencyAndWrapperPreparationOutsideEvidence": true,
+    "buildOutputsDeletedBeforeEveryInvocation": true,
+    "buildOptStatePreservedAcrossInvocations": true,
+    "exactOutputsRequiredForAnyValueClaim": true,
+    "fullGraphFallbackRequiredForAnyCandidate": true,
+    "failedOrUnavailableSubjectsRetained": true,
+    "repositoryNameRulesAllowed": false
+  },
+  "acceptance": {
+    "allFiveSubjectsObserved": true,
+    "allSeventeenInvocationsRetainedPerSubject": true,
+    "zeroManualBuildOptFiles": true,
+    "zeroRepositorySpecificProductRules": true,
+    "zeroProductAttributableFailures": true,
+    "optimizedNativeRetainedWhenExactEvidenceUnavailable": true,
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false,
+    "qualificationRequired": false
+  },
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "minimumFreeDiskBytesBeforeSubject": 8589934592,
+    "perInvocationTimeoutSeconds": 1800,
+    "sequentialAndRestartableByRepository": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivationOutsideOwnerCommand": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}
