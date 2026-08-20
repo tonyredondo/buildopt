@@ -101,6 +101,7 @@ func TestCentralOptimizeReusesQualifiedProfileAcrossUnrelatedCommitAndRejectsStr
 	}
 
 	integration := centralOptimizeFixtureIntegration(t, invocation, fixtureFiles, profile, evidenceRevision)
+	portfolioManifestSHA := integration.portfolio.manifestSHA256
 	run, err := beginOptimizeRun(invocation)
 	if err != nil {
 		t.Fatal(err)
@@ -125,6 +126,10 @@ func TestCentralOptimizeReusesQualifiedProfileAcrossUnrelatedCommitAndRejectsStr
 	selectedProfileSHA, err := optimizeFileSHA256(filepath.Join(repository, filepath.FromSlash(run.selection.ProfileFile)), false)
 	if err != nil || selectedProfileSHA != run.selection.ProfileSHA256 {
 		t.Fatalf("materialized profile binding = %s/%v, want %s", selectedProfileSHA, err, run.selection.ProfileSHA256)
+	}
+	firstProfileFile := run.selection.ProfileFile
+	if !strings.Contains(filepath.ToSlash(firstProfileFile), "/"+currentRevision+"/") {
+		t.Fatalf("materialized profile %q is not isolated by target revision %s", firstProfileFile, currentRevision)
 	}
 	run.central = integration
 	run.childStarted = true
@@ -160,16 +165,40 @@ func TestCentralOptimizeReusesQualifiedProfileAcrossUnrelatedCommitAndRejectsStr
 		t.Fatal(err)
 	}
 	integration = centralOptimizeFixtureIntegration(t, invocation, fixtureFiles, profile, evidenceRevision)
+	// Reuse the exact same verified portfolio snapshot across commits. Its
+	// profile family is stable, while the materialized changed paths and
+	// revalidation metadata must remain target-revision specific.
+	integration.portfolio.manifestSHA256 = portfolioManifestSHA
 	run, err = beginOptimizeRun(invocation)
 	if err != nil {
 		t.Fatal(err)
 	}
+	if _, _, _, err := integration.materializeReplay(run); err == nil ||
+		!strings.Contains(err.Error(), "current change family differs from remote qualification") {
+		t.Fatalf("cross-revision revalidation returned %v, want economic family rejection", err)
+	}
+	unrelatedProfileFile := filepath.ToSlash(filepath.Join(
+		filepath.Dir(filepath.Dir(filepath.FromSlash(firstProfileFile))),
+		unrelatedRevision,
+		"profile.json",
+	))
 	if impact = integration.prepareAutomaticReplay(run); impact != nil || run.selection.Selected ||
 		run.prequalification.Decision != optimizePrequalificationReject ||
 		run.prequalification.Reason != optimizePrequalificationReasonInsufficient ||
 		run.prequalification.AnalogousCommits != 1 ||
 		!integration.result.NativeFallback || integration.result.Reason != optimizeCentralReasonStructural {
 		t.Fatalf("unrelated owner was not rejected economically: impact=%+v selection=%+v prequalification=%+v central=%+v", impact, run.selection, run.prequalification, integration.result)
+	}
+	if unrelatedProfileFile == firstProfileFile ||
+		!strings.Contains(unrelatedProfileFile, "/"+unrelatedRevision+"/") {
+		t.Fatalf("unrelated revision materialization = %q, first = %q", unrelatedProfileFile, firstProfileFile)
+	}
+	if _, err := os.Stat(filepath.Join(repository, filepath.FromSlash(unrelatedProfileFile))); err != nil {
+		t.Fatalf("unrelated revision did not receive isolated materialization at %s: %v", unrelatedProfileFile, err)
+	}
+	retainedProfileSHA, err := optimizeFileSHA256(filepath.Join(repository, filepath.FromSlash(firstProfileFile)), false)
+	if err != nil || retainedProfileSHA != selectedProfileSHA {
+		t.Fatalf("later revision replaced the first materialized profile: %s/%v, want %s", retainedProfileSHA, err, selectedProfileSHA)
 	}
 	run.childStarted = true
 	if err := run.finish(0, io.Discard, io.Discard); err != nil {

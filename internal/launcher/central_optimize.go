@@ -543,9 +543,13 @@ func (integration *centralOptimizeIntegration) materializeEntryFiles(
 		return centralOptimizePaths{}, nil, errors.New("remote qualified profile is invalid")
 	}
 
+	// The materialized profile embeds target-specific changed paths and
+	// revalidation metadata. Keep each target revision in its own directory so
+	// concurrent or consecutive commits never replace one another's files.
 	materializedRoot := filepath.ToSlash(filepath.Join(
 		invocation.connectionRelative, "materialized",
 		integration.portfolio.manifestSHA256, entry.FamilySHA256,
+		invocation.discovery.TargetRevision,
 	))
 	paths := centralOptimizePaths{
 		portfolio:      filepath.ToSlash(filepath.Join(materializedRoot, optimizePortfolioIndexFile)),
