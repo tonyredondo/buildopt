@@ -22,6 +22,7 @@ must accept the previous checkpoint and validate all of these bindings:
 | Discovery documents | Changes, manifest, graph, generated manifest and output contract remain digest-bound. |
 | Qualification evidence | The eight-pair evidence and its recomputed summary remain exact. |
 | Profile artifacts and preconditions | Every private portfolio artifact and SHA-256 precondition still passes. |
+| Verified unaffected outputs | Every required output omitted from the candidate remains available as exact repository/revision/workflow-bound content-addressed state before selective Gradle starts. |
 
 Cross-commit structural matching is intentionally not inferred in this block.
 It requires a later contract that can prove current graph and output semantics

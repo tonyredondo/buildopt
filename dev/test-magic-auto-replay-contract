@@ -33,6 +33,8 @@ buildopt_expect_rejection() {
 
 buildopt_expect_rejection missing-wrapper-binding \
     'del(.bindings[] | select(. == "GRADLE_WRAPPER_PROPERTIES"))'
+buildopt_expect_rejection missing-unaffected-output-binding \
+    'del(.bindings[] | select(. == "VERIFIED_UNAFFECTED_OUTPUTS"))'
 buildopt_expect_rejection selection-after-gradle \
     '.trigger.completedBeforeGradle = false'
 buildopt_expect_rejection cross-revision-inference \
