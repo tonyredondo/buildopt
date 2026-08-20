@@ -38,7 +38,9 @@ cd "${buildopt_repo_root}"
 go test -race -count=1 ./internal/buildimpact ./cmd/buildopt-impact
 go vet ./internal/buildimpact ./cmd/buildopt-impact
 BUILDOPT_RUN_BUILD_IMPACT_DISCOVERY_PROOF=1 \
-    go test -count=1 -run '^TestSyntheticGradleDiscoveryGeneratedStateIsCurrent$' ./internal/buildimpact
+    go test -count=1 -run \
+    '^(TestSyntheticGradleDiscoveryGeneratedStateIsCurrent|TestTestPreparationDiscoveryDistinguishesBuildWorkFromTestExecution|TestPocCombinedDiscoveryIgnoresInheritedBuildSrcInit)$' \
+    ./internal/buildimpact
 go run ./cmd/buildopt-impact check \
     --repository "${buildopt_fixture}" \
     --manifest buildopt-impact-manifest.json \

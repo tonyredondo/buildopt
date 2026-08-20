@@ -7,7 +7,10 @@ and dependency model, and emits two deterministic, reviewable files:
 
 - a strict declared graph consumed by the existing `BIA-002` selection gate;
 - a generated manifest binding the customer manifest, discovery snapshot,
-  adapter, Gradle version, and canonical graph digests.
+  adapter, Gradle version, and canonical discovery and graph digests. The
+  discovery digest includes the exact configured task dependencies used by
+  the POC candidate derivation, while the reviewable project graph remains
+  stable when those auxiliary task relationships change.
 
 Only conventional artifact and test-preparation tasks are modeled
 automatically. Unqualified task names retain Gradle's native selector semantics

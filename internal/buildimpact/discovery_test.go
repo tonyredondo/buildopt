@@ -52,6 +52,49 @@ func TestGenerateImpactCanonicalizesConservativeSnapshot(t *testing.T) {
 	}
 }
 
+func TestDiscoveryDigestBindsTaskGraphWithoutChangingGeneratedProjectGraph(t *testing.T) {
+	manifest := automaticDiscoveryManifest(t)
+	raw := func(taskDependencies string) []byte {
+		return []byte(fmt.Sprintf(`{
+  "schemaVersion":"buildopt.build-impact/gradle-discovery/v1",
+  "gradleVersion":"9.6.1",
+  "complete":true,
+  "fallbackReasons":[],
+  "projects":[
+    {"path":":library-c","sourcePaths":["library-c/**"],"dependsOn":[],"unknownRelationships":false},
+    {"path":":service-a","sourcePaths":["service-a/**"],"dependsOn":[":library-c"],"unknownRelationships":false},
+    {"path":":service-b","sourcePaths":["service-b/**"],"dependsOn":[],"unknownRelationships":false}
+  ],
+  "tasks":[
+    {"path":":service-a:assemble","projectPath":":service-a","dependsOn":%s},
+    {"path":":service-a:jar","projectPath":":service-a","dependsOn":[]}
+  ],
+  "entrypoints":[
+    {"name":"assemble","reachesProjects":[":library-c",":service-a",":service-b"],"containsTestTasks":false,"unknownRelationships":false},
+    {"name":":service-a:assemble","reachesProjects":[":library-c",":service-a"],"containsTestTasks":false,"unknownRelationships":false}
+  ]
+}`, taskDependencies))
+	}
+	withoutDependency, err := GenerateImpact(manifest, raw(`[]`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	withDependency, err := GenerateImpact(manifest, raw(`[":service-a:jar"]`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if withoutDependency.SnapshotDigest == withDependency.SnapshotDigest {
+		t.Fatal("task dependency drift did not change the discovery digest")
+	}
+	if !bytes.Equal(withoutDependency.GraphJSON, withDependency.GraphJSON) ||
+		withoutDependency.Graph.Digest != withDependency.Graph.Digest {
+		t.Fatal("task dependency drift changed the reviewable project graph")
+	}
+	if len(withDependency.Snapshot.Tasks) != 2 {
+		t.Fatalf("validated task graph = %+v", withDependency.Snapshot.Tasks)
+	}
+}
+
 func TestResolveProjectOwnersUsesMostSpecificSourceBoundary(t *testing.T) {
 	snapshot := DiscoverySnapshot{Projects: []DiscoveredProject{
 		{Path: ":parent", SourcePaths: []string{"modules/**"}},

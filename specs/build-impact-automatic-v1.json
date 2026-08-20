@@ -17,7 +17,7 @@
   "generatedState": {
     "graphSchema": "buildopt.build-impact/declared-graph/v1",
     "manifestSchema": "buildopt.build-impact/generated-manifest/v1",
-    "canonicalDigests": ["customerManifest", "discoverySnapshot", "generatedGraph"],
+    "canonicalDigests": ["customerManifest", "discoveryProjectAndTaskSnapshot", "generatedGraph"],
     "repositoryReview": true,
     "driftPolicy": "FAIL_CLOSED"
   },
