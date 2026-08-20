@@ -11,7 +11,7 @@ if (($# > 1)); then
     exit 64
 fi
 
-for buildopt_command in jq rg; do
+for buildopt_command in grep jq; do
     command -v "${buildopt_command}" >/dev/null || {
         printf 'economic prequalification check requires %s\n' "${buildopt_command}" >&2
         exit 1
@@ -40,11 +40,11 @@ jq -e '
   }
 ' "${buildopt_contract}" >/dev/null
 
-rg -F 'optimizePrequalificationMaximumHistoryDepth = 64' \
+grep -F -- 'optimizePrequalificationMaximumHistoryDepth = 64' \
     "${buildopt_repo_root}/internal/launcher/optimize_prequalification.go" >/dev/null
-rg -F 'MinimumPaybackBuilds:   optimizeRequiredCalibrationPairs' \
+grep -F -- 'MinimumPaybackBuilds:   optimizeRequiredCalibrationPairs' \
     "${buildopt_repo_root}/internal/launcher/optimize_prequalification.go" >/dev/null
-rg -F 'ECONOMIC_PREQUALIFICATION_REJECTED' \
+grep -F -- 'ECONOMIC_PREQUALIFICATION_REJECTED' \
     "${buildopt_repo_root}/internal/launcher/optimize.go" >/dev/null
 
 "${buildopt_script_dir}/run" --toolchain go -- go test \
