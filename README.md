@@ -88,11 +88,16 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > Gradle instead. Every completed command now writes a readable value report
 > plus recomputable JSON covering graph reduction, measured mean/tail value,
 > calibration cost, break-even, exact replays and fallback. One bounded Ktor
-> public-history experiment now measures cross-commit profile lifetime: a
-> matching replay saved 112.198 seconds, but an unrelated-owner fallback cost
-> 220.761 seconds and the 1,443.324-second calibration did not repay. Useful
-> lifetime therefore remains profile-specific; it is never inferred from a
-> steady-state speedup alone.
+> public-history experiment now measures cross-commit profile lifetime. Its
+> first run found that a matching replay saved 112.198 seconds, but an
+> unrelated-owner fallback cost 220.761 seconds. The follow-up adds generic
+> economic prequalification: on the same CORS change, two analogous commits
+> were insufficient to justify the eight-build theoretical payback floor, so
+> BuildOpt rejected discovery/calibration in 192 ms. The observed fallback
+> penalty fell to 13.896 seconds while a matching replay still saved 100.744
+> seconds. The 1,386.764-second qualification still projects 31 matching
+> builds and did not repay in this three-build window. Useful lifetime remains
+> profile-specific; it is never inferred from steady-state speedup alone.
 > This authority exists only inside the explicit POC command
 > and never grants production promotion. The ordered work and success
 > scorecard live in the

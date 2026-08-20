@@ -9,13 +9,13 @@
   and lower p95. A Ktor root build-logic change retained native and made no
   performance claim. These repository-specific effects are not averaged or
   added to the structural results below.
-- **Observed lifetime changes the economic decision.** One Ktor Jetty profile
-  qualified at **58.36% faster** and saved **112.198 seconds** on its matching
-  replay, but an unrelated CORS change retained native only after adding
-  **220.761 seconds** of discovery overhead. The three-build public window lost
-  108.490 seconds before calibration and 1,551.814 seconds after it. Large
-  steady-state savings therefore do not authorize learning without a cheap
-  lifetime/payback precheck.
+- **Economic prequalification now prevents low-recurrence learning.** The
+  current Ktor Jetty profile qualifies at **58.03% faster** and saves **100.744
+  seconds** on its matching replay. An unrelated CORS change has only two
+  analogous recent commits, so BuildOpt rejects in 192.442 ms with no
+  discovery/calibration. Its observed penalty falls from 220.761 to 13.896
+  seconds across runs. Qualification still needs 31 matches and the current
+  three-build window remains **1,299.894 seconds negative after learning**.
 - **The current POC has one broadly supported accelerator: structural Build
   Impact.** The latest balanced protocol qualified Spring (**15.99% faster**),
   OpenTelemetry (**14.97%**), Kafka (**87.35%**), Micronaut (**39.44%**), and
@@ -308,6 +308,19 @@ lower wall time. All 48 raw pairs and 24 reciprocal blocks improve, exact JARs
 and task shapes match, six selective fallbacks pass, and two root-configuration
 proposals retain native Gradle without timing. The next study should measure
 Ktor discovery and warm-up economics under these unchanged terminal results.
+
+That economics work now includes observed cross-commit lifetime and generic
+prequalification. The current Jetty profile qualifies at **58.03%** lower mean
+wall time and saves **100.744 seconds / 51.13%** on one matching public replay,
+but its 1,386.764-second learning cost still needs 31 matching builds. For an
+unrelated CORS change, direct-owner history finds only two analogous commits
+against the eight-build theoretical minimum and rejects further learning in
+192.442 ms. No discovery or calibration occurs. The observed native-retention
+penalty is 13.896 seconds, down from 220.761 seconds in the preceding run; this
+is a before/after fallback comparison rather than an additional speedup claim.
+The three-build window remains **-1,299.894 seconds net after calibration**.
+The mechanism therefore proves safe economic rejection, not automatic payback
+of an already qualified profile.
 
 The accepted matrix was rerun from zero after the generic runner was found to
 omit one preregistered Ktor Gradle option. The rejected 48-pair diagnostic run

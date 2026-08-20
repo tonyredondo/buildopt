@@ -4,7 +4,7 @@ set -euo pipefail
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
 buildopt_contract=${buildopt_repo_root}/specs/poc-economic-prequalification-v1.json
-buildopt_result=${1:-}
+buildopt_result=${1:-${buildopt_repo_root}/benchmarks/results/poc-economic-prequalification-v1/summary.json}
 
 if (($# > 1)); then
     printf 'usage: %s [result.json]\n' "$0" >&2

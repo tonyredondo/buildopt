@@ -60,21 +60,25 @@ result is bounded POC evidence, not golden-runner or production evidence.
 ## Observed profile lifetime and economics
 
 Steady-state speedup is not enough if the repository changes before learning
-repays. A new Ktor experiment follows one centrally published Jetty profile
-through a real six-commit first-parent sequence:
+repays. The current Ktor experiment follows one centrally published Jetty
+profile through a real first-parent sequence and applies the new generic
+economic precheck before learning an unrelated owner:
 
 | Event | Optimized native | BuildOpt | Direct effect |
 | --- | ---: | ---: | ---: |
-| Qualifying calibration | 80.529 s mean | 33.530 s mean | **58.36% faster**, but 1,443.324 s learning cost |
-| Matching Jetty replay | 211.042 s | 98.844 s | **112.198 s saved** |
-| Unrelated CORS change | 191.141 s | 411.902 s | **220.761 s slower** |
-| Global build-logic change | 189.178 s | 189.105 s | Native parity; profile rejected early |
+| Qualifying calibration | 77.419 s mean | 32.489 s mean | **58.03% faster**, but 1,386.764 s learning cost |
+| Matching Jetty replay | 197.028 s | 96.284 s | **100.744 s / 51.13% saved** |
+| Unrelated CORS change | 184.647 s | 198.543 s | **13.896 s / 7.53% overhead**, discovery/calibration rejected |
+| Global build-logic change | 186.553 s | 186.531 s | 22-ms native parity; profile rejected early |
 
-All required JAR bytes match. The unrelated change was safe, but expensive:
-after rejecting the Jetty profile, the current POC ran the full graph and then
-discovered the new owner. Across three observed builds, the window lost
-108.490 seconds before calibration and **1,551.814 seconds including
-calibration**. The projected 31-build break-even was not reached.
+All required JAR bytes match. The CORS precheck uses direct project ownership,
+finds two analogous commits against the theoretical eight-build minimum and
+rejects in 192.442 ms without discovery or calibration. The preceding run had
+observed a 220.761-second penalty on the same public change; the current
+13.896-second penalty is 93.71% lower across runs and remains inside the 10%
+native-retention guardrail. Across three current observations the window gains
+86.870 seconds before calibration but remains **1,299.894 seconds negative
+after calibration**. The projected 31-build break-even was not reached.
 
 ## Previous automatic public-package local proof
 
@@ -142,6 +146,9 @@ but do not replace the zero-configuration Ktor/Beam result.
 - Profile lifetime is now measured for one real Ktor sequence. It proves that
   a large matching replay win can still lose overall when matches are rare and
   unrelated fallback performs expensive discovery.
+- Economic prequalification can prevent that unrelated discovery generically:
+  it uses the verified graph and bounded Git history, not a Ktor/CORS rule, and
+  retains native before spending the eight-pair learning budget.
 
 ## What is not proven
 
@@ -155,18 +162,19 @@ but do not replace the zero-configuration Ktor/Beam result.
 
 ## Recommended next steps
 
-1. **Add generic economic prequalification.** Use cheap task, graph and recent
-   change-family evidence to avoid discovery or eight-pair calibration when a
-   candidate is unlikely to repay within its likely matching lifetime.
-2. **Make native retention cheap.** Once a central profile is structurally
-   inapplicable, return the authoritative native result without automatically
-   paying for discovery of an unrelated owner.
-3. **Improve graph precision without repository rules.** Target task/variant,
+1. **Transfer the automatic path to the breadth repositories.** Run the same
+   zero-manual-file command on Spring, OpenTelemetry, Kafka, Micronaut and
+   Groovy; diagnose generic blockers and accept value only under exact output,
+   fallback, repeatability and economic gates.
+2. **Improve graph precision without repository rules.** Target task/variant,
    ABI and output relationships that currently make some Groovy, Kafka or
    Micronaut workflows too broad or uneconomic.
-4. **Repeat the automatic path on the breadth repositories.** The POC should
-   discover value from the same one command; reviewed profiles remain
-   supporting evidence until then.
+3. **Reduce qualification cost.** The precheck prevents obviously uneconomic
+   new learning, but a qualifying Ktor profile still costs 1,386.764 seconds
+   and needs 31 matching replays.
+4. **Measure full compositions, not added percentages.** Keep cache, graph
+   reduction and qualified task adapters attributable, then test their combined
+   wall time on the same workflow and change.
 5. **Transfer central value to another runner/network class.** Keep the same
    equal-opportunity protocol and confirm that selection plus central reuse
    remains positive without turning the POC into production qualification.
@@ -178,6 +186,8 @@ but do not replace the zero-configuration Ktor/Beam result.
 - [Terminal contract](../../specs/poc-magic-end-to-end-value-v2.md)
 - [Historical automatic diagnostic matrix](../../benchmarks/results/poc-magic-end-to-end-value-v1/README.md)
 - [Comparable reviewed-profile matrix](../../benchmarks/results/poc-statistical-qualification-v2/README.md)
+- [Economic prequalification result](../../benchmarks/results/poc-economic-prequalification-v1/README.md)
+- [Economic prequalification machine evidence](../../benchmarks/results/poc-economic-prequalification-v1/summary.json)
 - [One-command roadmap](../plans/one-command-onboarding-roadmap.md)
 - [Optional central storage contract](../../specs/poc-central-storage-contract-v1.md)
 - [Restart-safe typed central state](../../specs/poc-central-state-storage-v1.md)

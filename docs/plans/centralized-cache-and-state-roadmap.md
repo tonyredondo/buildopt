@@ -240,10 +240,15 @@ qualifies and publishes one Ktor profile, selects it on a matching public
 commit, retains native on an unrelated owner and invalidates on build logic.
 The matching replay saved 112.198 seconds, but the unrelated fallback cost
 220.761 seconds and the 1,443.324-second calibration did not repay in the
-observed window. The next POC priority is therefore economic prequalification
-and cheaper rejection, not more central infrastructure. Centralized
-persistence remains optional and must not delay or become mandatory for local
-POC value.
+observed window. The
+[economic prequalification follow-up](../../benchmarks/results/poc-economic-prequalification-v1/README.md)
+now rejects that unrelated owner in 192.442 ms with no discovery or
+calibration; the observed fallback penalty falls to 13.896 seconds while the
+matching replay saves 100.744 seconds. The profile still needs 31 matching
+builds and remains unpaid in the observed window. The next POC priority is
+transferring this same automatic path to the broader repository set, not more
+central infrastructure. Centralized persistence remains optional and must not
+delay or become mandatory for local POC value.
 
 ## POC success scorecard
 

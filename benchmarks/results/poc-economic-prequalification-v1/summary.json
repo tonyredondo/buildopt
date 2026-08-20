@@ -1,0 +1,218 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-economic-prequalification/v1",
+  "workItem": "POC-ECONOMIC-PREQUALIFICATION-001",
+  "capturedAt": "2026-08-20T01:04:17Z",
+  "buildopt": {
+    "revision": "917e456fcdc5bf97f887093de3e4b4d587f0dede",
+    "packageSha256": "e8b5a828dc1d300592bf7192b1a36435e94f8c8ce9c0783dc787e056b64a45f5",
+    "installedPackage": true
+  },
+  "runner": {
+    "operatingSystem": "Linux",
+    "architecture": "x86_64",
+    "kernel": "7.1.5-1-t2-noble",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600
+  },
+  "repository": {
+    "id": "ktorio/ktor",
+    "remote": "https://github.com/ktorio/ktor.git",
+    "publicRepository": true,
+    "gradleVersion": "9.2.1",
+    "workflow": "jvmJar"
+  },
+  "history": {
+    "firstParentCommitsIncludingQualification": 6,
+    "observedCommitsIncludingQualification": 4,
+    "unobservedInterveningCommits": 2
+  },
+  "qualification": {
+    "baseRevision": "759ff57549709012173a6e7eb1b0e5641f69cc24",
+    "targetRevision": "24b8773fcee753314dfb753b3f994a7ef36823ef",
+    "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+    "family": "DEPENDENCY_SOURCE",
+    "changedProjects": [
+      ":ktor-client-jetty-jakarta"
+    ],
+    "graph": {
+      "omittedProjects": 116,
+      "selectedProjects": 12,
+      "totalProjects": 128
+    },
+    "calibration": {
+      "calibrationCostMs": 1386764,
+      "controlMeanMs": 77419,
+      "candidateMeanMs": 32489.25,
+      "meanSavedMs": 44929.75,
+      "reductionRatio": 0.5803452640824603,
+      "interval95SavedMs": [
+        40517.375,
+        52264.125
+      ],
+      "positivePairs": 8,
+      "pairsMeasured": 8,
+      "valueGatePassed": true,
+      "qualified": true,
+      "breakEvenBuilds": 31,
+      "maximumBreakEvenBuilds": 50,
+      "fallbackSuccessful": true
+    },
+    "nativeCalibrationSeed": {
+      "objectCount": 1027,
+      "bytes": 40979118,
+      "sha256": "49eb92e34a52d2f473f11eb3b991aee2f0aad1e6f954ab7caf403e77bfe6b410"
+    },
+    "central": {
+      "namespace": "gradle-9.2.1/linux-amd64/jdk-21/ktor-jetty-jakarta-jvmjar",
+      "committedObjectCount": 6,
+      "committedBytes": 454162
+    }
+  },
+  "protocol": {
+    "calibrationPairs": 8,
+    "gradleDaemon": false,
+    "gradleHeapMaxMiB": 2048,
+    "kotlinDaemonHeapMaxMiB": 1536,
+    "maximumBreakEvenBuilds": 50,
+    "maximumWorkers": 8,
+    "persistentArmsAcrossCommits": true,
+    "sameCommittedCentralObjects": true,
+    "sameStartingCacheState": true,
+    "alternatingArmOrder": true,
+    "unmeasuredDependencyWarmup": true,
+    "transport": "HTTPS_TLS_1_3_MINIMUM"
+  },
+  "observations": [
+    {
+      "sequence": 1,
+      "targetRevision": "eb60b722d1ef1fbfeba8708a7d594fd4083a2aec",
+      "parentRevision": "24b8773fcee753314dfb753b3f994a7ef36823ef",
+      "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+      "classification": "MATCHING_REPLAY",
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 197028,
+      "candidateDurationMs": 96284,
+      "savedMs": 100744,
+      "controlFromCache": 12,
+      "candidateFromCache": 12,
+      "requiredOutputCount": 1,
+      "controlRequiredOutputSha256": "085bc7a787725b36cd4463d00afd317c50e30d415e779a155c301d6d4ba7e95a",
+      "candidateRequiredOutputSha256": "085bc7a787725b36cd4463d00afd317c50e30d415e779a155c301d6d4ba7e95a",
+      "candidateSelected": true,
+      "candidateFamily": "DEPENDENCY_SOURCE",
+      "candidateChangedProjects": [
+        ":ktor-client-jetty-jakarta"
+      ],
+      "selectionSource": "CENTRAL_PORTFOLIO",
+      "evidenceRevision": "24b8773fcee753314dfb753b3f994a7ef36823ef",
+      "candidateReason": "REMOTE_QUALIFIED_PROFILE_SELECTED",
+      "centralCacheAvailable": true,
+      "performanceClaim": true,
+      "prequalification": {
+        "decision": "NOT_EVALUATED",
+        "reason": "EXISTING_PROFILE_SELECTED",
+        "durationNs": 0,
+        "analogousCommits": 0,
+        "minimumPaybackBuilds": 0
+      },
+      "discoveryPerformed": true,
+      "calibrationPerformed": false
+    },
+    {
+      "sequence": 2,
+      "targetRevision": "c237e88696debef1ba860a947cfaad3a0b7cb49b",
+      "parentRevision": "b148c65fc2276dc58f501f8fb75c2680b7f07412",
+      "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+      "classification": "NOT_APPLICABLE",
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 184647,
+      "candidateDurationMs": 198543,
+      "savedMs": -13896,
+      "controlFromCache": 12,
+      "candidateFromCache": 12,
+      "requiredOutputCount": 1,
+      "controlRequiredOutputSha256": "085bc7a787725b36cd4463d00afd317c50e30d415e779a155c301d6d4ba7e95a",
+      "candidateRequiredOutputSha256": "085bc7a787725b36cd4463d00afd317c50e30d415e779a155c301d6d4ba7e95a",
+      "candidateSelected": false,
+      "candidateFamily": "DEPENDENCY_SOURCE",
+      "candidateChangedProjects": [
+        ":ktor-server-cors"
+      ],
+      "selectionSource": "NONE",
+      "evidenceRevision": "null",
+      "candidateReason": "REMOTE_PROFILE_STRUCTURAL_DRIFT",
+      "centralCacheAvailable": true,
+      "performanceClaim": false,
+      "prequalification": {
+        "decision": "REJECT",
+        "reason": "INSUFFICIENT_RECENT_MATCHING_CHANGES",
+        "durationNs": 192441936,
+        "analogousCommits": 2,
+        "minimumPaybackBuilds": 8
+      },
+      "discoveryPerformed": false,
+      "calibrationPerformed": false
+    },
+    {
+      "sequence": 3,
+      "targetRevision": "835d7f9ff09caf794e9f058d97ad3690d52f960a",
+      "parentRevision": "c237e88696debef1ba860a947cfaad3a0b7cb49b",
+      "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+      "classification": "BUILD_LOGIC_INVALIDATION",
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 186553,
+      "candidateDurationMs": 186531,
+      "savedMs": 22,
+      "controlFromCache": 12,
+      "candidateFromCache": 12,
+      "requiredOutputCount": 1,
+      "controlRequiredOutputSha256": "085bc7a787725b36cd4463d00afd317c50e30d415e779a155c301d6d4ba7e95a",
+      "candidateRequiredOutputSha256": "085bc7a787725b36cd4463d00afd317c50e30d415e779a155c301d6d4ba7e95a",
+      "candidateSelected": false,
+      "candidateFamily": "",
+      "candidateChangedProjects": [],
+      "selectionSource": "NONE",
+      "evidenceRevision": "null",
+      "candidateReason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+      "centralCacheAvailable": true,
+      "performanceClaim": false,
+      "prequalification": {
+        "decision": "NOT_EVALUATED",
+        "reason": "NO_VERIFIED_REUSABLE_GRAPH",
+        "durationNs": 0,
+        "analogousCommits": 0,
+        "minimumPaybackBuilds": 0
+      },
+      "discoveryPerformed": false,
+      "calibrationPerformed": false
+    }
+  ],
+  "economics": {
+    "observedBuilds": 3,
+    "matchingReplays": 1,
+    "grossMatchingSavedMs": 100744,
+    "fallbackDeltaMs": -13874,
+    "cumulativeGrossSavedMs": 86870,
+    "cumulativeNetSavedMs": -1299894,
+    "firstObservedBreakEvenBuild": null,
+    "conclusion": "NOT_PAID_BACK_IN_OBSERVED_WINDOW"
+  },
+  "acceptance": {
+    "decision": "COMPLETE",
+    "buildLogicInvalidations": 1,
+    "exactRequiredOutputs": true,
+    "matchingSelections": 1,
+    "nativeRetainedCases": 2,
+    "publicAncestry": true,
+    "syntheticCommits": false
+  },
+  "boundaries": {
+    "designPartnerRequired": false,
+    "mechanismPercentagesAdded": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositoriesAveraged": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

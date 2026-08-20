@@ -552,8 +552,12 @@ discovery and calibration:
 The checker fixes the eight-build theoretical lower bound, the 64-commit
 first-parent history cap, both `REJECT` and `MEASURE` paths, exact central
 profile replay, and the rule that a rejected candidate emits no discovery
-files and performs no calibration. It uses a verified generic graph and never
-branches on a repository name.
+files and performs no calibration. With no argument it also validates the
+retained public Ktor result. That run finds two analogous CORS commits, rejects
+in 192.442 ms and observes 13.896 seconds of fallback overhead instead of the
+preceding run's 220.761 seconds. It uses direct ownership from a verified
+generic graph and never branches on a repository name. Qualification still
+costs 1,386.764 seconds and remains unpaid in the three-build window.
 
 ## CI orchestration validation
 

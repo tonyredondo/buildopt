@@ -266,9 +266,17 @@ observed one matching replay, one unrelated-owner fallback and one global
 invalidation. Although the matching replay saved 112.198 seconds, the fallback
 cost 220.761 seconds and the 1,443.324-second calibration did not repay.
 
-The immediate next block is generic economic prequalification. It must use
-cheap graph/task/change evidence to decline discovery or eight-pair
-calibration when the likely matching lifetime cannot repay it, and it must
-make unrelated-owner fallback close to optimized-native cost. It may not add
-repository-name rules, weaken correctness gates or assume another profile's
-lifetime.
+Generic economic prequalification is now implemented and measured. It uses
+direct graph ownership plus at most 64 first-parent commits and requires at
+least eight analogous changes before a new eight-pair learning attempt. On the
+public Ktor CORS change it rejects in 192.442 ms, performs no discovery or
+calibration and reduces the observed fallback penalty from 220.761 to 13.896
+seconds. The original Jetty qualification still needs 31 matching replays and
+does not pay back in the observed window.
+
+The immediate next block is automatic breadth transfer. The unchanged
+zero-manual-file command must run on Spring, OpenTelemetry, Kafka, Micronaut
+and Groovy, expose generic graph/output/economic blockers, and preserve native
+Gradle whenever exact evidence is unavailable. Improvements may refine generic
+task, variant, ABI or output relationships, but may not add repository-name
+rules, weaken correctness gates or borrow another profile's lifetime.

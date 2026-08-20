@@ -82,6 +82,22 @@ output and cumulative calculation with:
   benchmarks/results/poc-profile-lifetime-v1/summary.json
 ```
 
+The [economic prequalification follow-up](./results/poc-economic-prequalification-v1/README.md)
+uses the same public change classes and prevents the rejected CORS profile
+from triggering discovery or calibration. It finds only two analogous recent
+commits against the eight-build theoretical payback floor and rejects in
+192.442 ms. The observed CORS fallback penalty falls from 220.761 seconds to
+13.896 seconds, a 93.71% lower cross-run penalty, while the matching Jetty
+replay saves 100.744 seconds and the global build-logic case remains at 22-ms
+parity. Qualification still costs 1,386.764 seconds and needs 31 matches, so
+the observed window remains **-1,299.894 seconds net** rather than being
+rewritten as an economic success.
+
+```bash
+./dev/check-economic-prequalification \
+  benchmarks/results/poc-economic-prequalification-v1/summary.json
+```
+
 ## Build Optimization scorecard
 
 For the decision-ready product summary, see the [current POC one-pager](../docs/findings/buildopt-poc-handoff.md).

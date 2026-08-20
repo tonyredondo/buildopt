@@ -195,9 +195,15 @@ The separate
 shows the economic limitation behind this onboarding. One matching replay
 saved 112.198 seconds, but an unrelated-owner fallback added 220.761 seconds
 and the 1,443.324-second learning cost did not repay in the observed public
-window. Until generic economic prequalification exists, a large calibrated
-speedup should be read as technical potential rather than guaranteed
-cumulative customer value.
+window. The subsequent
+[economic prequalification result](../../benchmarks/results/poc-economic-prequalification-v1/README.md)
+uses direct graph ownership and bounded recent history to reject learning for
+that unrelated CORS owner in 192.442 ms. It performs no discovery or
+calibration, reducing the observed fallback penalty to 13.896 seconds while a
+matching Jetty replay still saves 100.744 seconds. Qualification still needs
+31 matching builds and remains unpaid in the observed window, so a large
+calibrated speedup is technical potential rather than guaranteed cumulative
+customer value.
 
 ## Try the Build Impact accelerator
 

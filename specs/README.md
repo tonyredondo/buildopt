@@ -166,6 +166,13 @@ the exact cross-component contract.
 | [`walking-skeleton-faults-v1.md`](./walking-skeleton-faults-v1.md) | `WS-008` |
 | [`walking-skeleton-overhead-v1.md`](./walking-skeleton-overhead-v1.md) | `WS-009` |
 
+The terminal [economic prequalification evidence](../benchmarks/results/poc-economic-prequalification-v1/README.md)
+applies the contract to public Ktor history. A low-recurrence CORS owner is
+rejected in 192.442 ms before discovery/calibration, reducing the observed
+fallback penalty from 220.761 to 13.896 seconds across runs. The matching
+Jetty replay still saves 100.744 seconds, but its 1,386.764-second learning
+cost remains unpaid in the observed window.
+
 Each specification must link fixtures or conformance tests and the RFC decision it refines. `F0-010` reserves these paths without creating empty specifications.
 
 `ci-orchestration-v1.json` is the machine-readable scheduling, isolation,
