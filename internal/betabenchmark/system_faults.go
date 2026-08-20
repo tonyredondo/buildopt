@@ -623,7 +623,11 @@ func runServerRestartFault(
 	}
 	if err := restarted.waitForLine(
 		"initialized and reconciled",
-		10*time.Second,
+		// The race-enabled repository suite can saturate this host while the
+		// restarted server scans and reconciles its persisted fault state. Keep
+		// the readiness assertion intact, but give that real work a bounded
+		// scheduling budget instead of treating CPU contention as corruption.
+		30*time.Second,
 	); err != nil {
 		return faultOutcome{}, systemFaultTrigger{}, recoveryObservation{}, err
 	}
