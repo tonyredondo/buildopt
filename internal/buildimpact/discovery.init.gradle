@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap
 // Init scripts are inherited by buildSrc and included builds. Discovery owns
 // only the top-level build selected by the CLI.
 if (gradle.getParent() == null) {
+def buildoptInlineObservation = System.getenv("BUILDOPT_IMPACT_DISCOVERY_INLINE") == "1"
 def projectDependenciesByPath = new ConcurrentHashMap<String, List<String>>()
 gradle.projectsLoaded {
     // Parallel configuration gives each worker exclusive access to one
@@ -123,9 +124,11 @@ gradle.projectsEvaluated {
         if (!graph.hasTask(discovery)) {
             throw new GradleException("BuildOpt impact discovery task is absent from the graph")
         }
-        // Discovery needs the configured task graph, never task execution. Disable
-        // every requested task and dependency after Gradle has resolved the graph.
-        graph.allTasks.findAll { it != discovery }.each { it.enabled = false }
+        // Standalone discovery needs only the configured task graph. Inline
+        // observation shares the owner's useful workflow and must not disable it.
+        if (!buildoptInlineObservation) {
+            graph.allTasks.findAll { it != discovery }.each { it.enabled = false }
+        }
         def attributedTasks = new LinkedHashSet()
         def discoveredEntrypoints = requestedEntrypoints.collect { requestedName ->
             def tasks = requestedTaskGroups[requestedName as String]
@@ -171,7 +174,10 @@ gradle.projectsEvaluated {
         // Finalizers and other scheduled work that Gradle cannot attribute to
         // a requested task through TaskExecutionGraph dependencies make the
         // discovery incomplete. Never assign them by temporal proximity.
-        if (graph.allTasks.any { it != discovery && !attributedTasks.contains(it) }) {
+        if (graph.allTasks.any {
+            it != discovery && it.name != "buildoptOutputContract" &&
+                !attributedTasks.contains(it)
+        }) {
             discoveredEntrypoints.each { it.unknownRelationships = true }
         }
         def fallbackReasons = []

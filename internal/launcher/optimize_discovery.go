@@ -420,7 +420,16 @@ func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int,
 		_, _ = fmt.Fprintf(diagnostics, "buildopt: automatic discovery unavailable: %v\n", observationErr)
 		return result
 	}
-	discovered, documents, err := runAutomaticOptimizeDiscovery(discoveryContext, run.invocation, observed)
+	observedImpact, impactErr := run.observedImpactSnapshot()
+	if impactErr != nil {
+		result.Status = optimizeDiscoveryRetained
+		result.Reason = "ORDINARY_IMPACT_OBSERVATION_UNAVAILABLE"
+		_, _ = fmt.Fprintf(diagnostics, "buildopt: inline impact discovery unavailable: %v\n", impactErr)
+		return result
+	}
+	discovered, documents, err := runAutomaticOptimizeDiscovery(
+		discoveryContext, run.invocation, observed, observedImpact,
+	)
 	if err != nil {
 		result.Status = optimizeDiscoveryRetained
 		result.Reason = optimizeDiscoveryErrorReason(err)
@@ -446,7 +455,7 @@ func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int,
 	return result
 }
 
-func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvocation, observed *outputContractSnapshot) (optimizeDiscoveryResult, optimizeDiscoveryDocuments, error) {
+func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvocation, observed *outputContractSnapshot, observedImpact *buildimpact.DiscoverySnapshot) (optimizeDiscoveryResult, optimizeDiscoveryDocuments, error) {
 	discovery := invocation.discovery
 	result := optimizeDiscoveryResult{
 		Status: optimizeDiscoveryRetained, Reason: "NO_SAFE_STRUCTURAL_CANDIDATE",
@@ -486,14 +495,10 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		result.Reason = "OUTPUTS_MISSING"
 		return result, optimizeDiscoveryDocuments{}, nil
 	}
-	snapshot, err := buildimpact.ObserveGradle(ctx, buildimpact.ObservationOptions{
-		RepositoryRoot: invocation.repositoryRoot,
-		Entrypoints:    append([]string(nil), discovery.Entrypoints...),
-		GradleArgs:     append([]string(nil), discovery.gradleOptions...),
-	})
-	if err != nil {
-		return result, optimizeDiscoveryDocuments{}, fmt.Errorf("graph preflight: %w", err)
+	if observedImpact == nil {
+		return result, optimizeDiscoveryDocuments{}, errors.New("inline graph preflight is required")
 	}
+	snapshot := *observedImpact
 	if !snapshot.Complete {
 		result.Reason = "ORIGINAL_WORKFLOW_UNSUPPORTED"
 		return result, optimizeDiscoveryDocuments{}, nil
@@ -548,6 +553,7 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		proposalOutput:       filepath.Join(directory, "proposal.json"),
 		changeSource:         "GIT_DIFF_BASE_TO_HEAD", timeout: invocation.calibrationBudget,
 		observedOutputSnapshot: &outputReport.snapshot,
+		observedImpactSnapshot: observedImpact,
 		candidateOwnerProjects: candidateOwners,
 	}
 	report, documents, err := prepareStructuralProfileProposal(ctx, config)

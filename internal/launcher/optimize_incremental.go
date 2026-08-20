@@ -14,6 +14,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/tonyredondo/buildopt/internal/buildimpact"
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
 
@@ -106,6 +107,7 @@ type optimizeOutputObservation struct {
 	initPath        string
 	snapshotPath    string
 	entrypointsJSON string
+	impact          buildimpact.InlineObservation
 }
 
 func emptyOptimizeIncrementalLearning() optimizeIncrementalLearning {
@@ -157,9 +159,13 @@ func (run *optimizeRun) prepareOutputObservation() error {
 	if err != nil {
 		return fmt.Errorf("encode ordinary output observation entrypoints: %w", err)
 	}
+	impact, err := buildimpact.PrepareInlineObservation(directory, run.invocation.discovery.Entrypoints)
+	if err != nil {
+		return err
+	}
 	run.outputObservation = &optimizeOutputObservation{
 		directory: directory, initPath: initPath, snapshotPath: snapshotPath,
-		entrypointsJSON: string(entrypoints),
+		entrypointsJSON: string(entrypoints), impact: impact,
 	}
 	return nil
 }
@@ -168,15 +174,34 @@ func (run *optimizeRun) augmentGradleOutputObservation(invocation *gradleInvocat
 	if run == nil || run.outputObservation == nil || invocation == nil {
 		return
 	}
-	childArgs := make([]string, 0, len(invocation.childArgs)+3)
-	childArgs = append(childArgs, invocation.childArgs[0], "--init-script", run.outputObservation.initPath)
+	childArgs := make([]string, 0, len(invocation.childArgs)+6)
+	childArgs = append(childArgs, invocation.childArgs[0],
+		"--init-script", run.outputObservation.initPath,
+		"--init-script", run.outputObservation.impact.InitPath)
 	childArgs = append(childArgs, invocation.childArgs[1:]...)
-	invocation.childArgs = append(childArgs, "buildoptOutputContract")
+	invocation.childArgs = append(childArgs, "buildoptOutputContract", "buildoptImpactDiscovery")
 	if invocation.environment == nil {
 		invocation.environment = make(map[string]string)
 	}
 	invocation.environment["BUILDOPT_OUTPUT_CONTRACT_SNAPSHOT"] = run.outputObservation.snapshotPath
 	invocation.environment["BUILDOPT_OUTPUT_CONTRACT_ENTRYPOINTS"] = run.outputObservation.entrypointsJSON
+	invocation.environment["BUILDOPT_IMPACT_DISCOVERY_OUTPUT"] = run.outputObservation.impact.OutputPath
+	invocation.environment["BUILDOPT_IMPACT_ENTRYPOINTS"] = run.outputObservation.impact.EntrypointsJSON
+	invocation.environment["BUILDOPT_IMPACT_DISCOVERY_INLINE"] = "1"
+}
+
+func (run *optimizeRun) observedImpactSnapshot() (*buildimpact.DiscoverySnapshot, error) {
+	if run.outputObservation == nil {
+		return nil, errors.New("inline impact observation was not prepared")
+	}
+	snapshot, err := buildimpact.ReadInlineObservation(
+		run.outputObservation.impact,
+		run.invocation.discovery.Entrypoints,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &snapshot, nil
 }
 
 func (run *optimizeRun) observedOutputSnapshot() (*outputContractSnapshot, error) {
@@ -200,6 +225,8 @@ func (run *optimizeRun) cleanupOutputObservation() {
 	}
 	_ = os.Remove(run.outputObservation.snapshotPath)
 	_ = os.Remove(run.outputObservation.initPath)
+	_ = os.Remove(run.outputObservation.impact.OutputPath)
+	_ = os.Remove(run.outputObservation.impact.InitPath)
 	_ = os.Remove(run.outputObservation.directory)
 }
 

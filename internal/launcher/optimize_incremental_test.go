@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"reflect"
 	"testing"
+
+	"github.com/tonyredondo/buildopt/internal/buildimpact"
 )
 
 func TestExpectedOptimizeIncrementalArmAlternatesBalancedPairs(t *testing.T) {
@@ -33,6 +35,10 @@ func TestOptimizeOutputObservationPrecedesGradleArgumentSeparator(t *testing.T) 
 		initPath:        "/private/output-contract.init.gradle",
 		snapshotPath:    "/private/snapshot.json",
 		entrypointsJSON: `["assemble"]`,
+		impact: buildimpact.InlineObservation{
+			InitPath: "/private/impact.init.gradle", OutputPath: "/private/impact.json",
+			EntrypointsJSON: `["assemble"]`,
+		},
 	}}
 	invocation := gradleInvocation{
 		childArgs:   []string{"./gradlew", "--", "assemble"},
@@ -43,7 +49,8 @@ func TestOptimizeOutputObservationPrecedesGradleArgumentSeparator(t *testing.T) 
 
 	want := []string{
 		"./gradlew", "--init-script", "/private/output-contract.init.gradle",
-		"--", "assemble", "buildoptOutputContract",
+		"--init-script", "/private/impact.init.gradle",
+		"--", "assemble", "buildoptOutputContract", "buildoptImpactDiscovery",
 	}
 	if !reflect.DeepEqual(invocation.childArgs, want) {
 		t.Fatalf("augmented args = %q, want %q", invocation.childArgs, want)
@@ -53,6 +60,10 @@ func TestOptimizeOutputObservationPrecedesGradleArgumentSeparator(t *testing.T) 
 	}
 	if invocation.environment["BUILDOPT_OUTPUT_CONTRACT_ENTRYPOINTS"] != `["assemble"]` {
 		t.Fatalf("entrypoint environment = %q", invocation.environment["BUILDOPT_OUTPUT_CONTRACT_ENTRYPOINTS"])
+	}
+	if invocation.environment["BUILDOPT_IMPACT_DISCOVERY_OUTPUT"] != "/private/impact.json" ||
+		invocation.environment["BUILDOPT_IMPACT_DISCOVERY_INLINE"] != "1" {
+		t.Fatalf("impact environment = %#v", invocation.environment)
 	}
 }
 

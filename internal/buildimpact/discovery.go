@@ -88,6 +88,112 @@ type ObservationOptions struct {
 	GradleArgs     []string
 }
 
+// InlineObservation describes a graph snapshot collected by the owner's
+// useful Gradle invocation instead of a second configuration-only build.
+type InlineObservation struct {
+	InitPath        string
+	OutputPath      string
+	EntrypointsJSON string
+}
+
+// PrepareInlineObservation writes the same fail-closed discovery init script
+// used by ObserveGradle, configured to preserve and share the owner's task work.
+func PrepareInlineObservation(directory string, entrypoints []string) (InlineObservation, error) {
+	if err := validateEntrypoints(entrypoints); err != nil {
+		return InlineObservation{}, fmt.Errorf("invalid inline discovery entrypoints: %w", err)
+	}
+	if err := os.MkdirAll(directory, 0o700); err != nil {
+		return InlineObservation{}, fmt.Errorf("create inline discovery directory: %w", err)
+	}
+	entrypointJSON, err := json.Marshal(entrypoints)
+	if err != nil {
+		return InlineObservation{}, fmt.Errorf("encode inline discovery entrypoints: %w", err)
+	}
+	observation := InlineObservation{
+		InitPath:        filepath.Join(directory, "impact-discovery.init.gradle"),
+		OutputPath:      filepath.Join(directory, "impact-snapshot.json"),
+		EntrypointsJSON: string(entrypointJSON),
+	}
+	if err := os.WriteFile(observation.InitPath, discoveryInitScript, 0o600); err != nil {
+		return InlineObservation{}, fmt.Errorf("write inline discovery init script: %w", err)
+	}
+	_ = os.Remove(observation.OutputPath)
+	return observation, nil
+}
+
+// ReadInlineObservation validates the snapshot emitted by a useful build.
+func ReadInlineObservation(observation InlineObservation, entrypoints []string) (DiscoverySnapshot, error) {
+	raw, err := os.ReadFile(observation.OutputPath)
+	if err != nil {
+		return DiscoverySnapshot{}, fmt.Errorf("read inline Gradle discovery: %w", err)
+	}
+	snapshot, _, err := parseDiscoverySnapshotForEntrypoints(raw, entrypoints, true)
+	return snapshot, err
+}
+
+// DeriveProjectEntrypoints creates conservative per-project lifecycle reaches
+// from a complete Gradle project-dependency snapshot. Callers must separately
+// prove that each requested selector is a conventional output producer.
+func DeriveProjectEntrypoints(snapshot DiscoverySnapshot, entrypoints []string) (DiscoverySnapshot, error) {
+	if !snapshot.Complete || len(snapshot.Projects) == 0 || len(entrypoints) == 0 {
+		return DiscoverySnapshot{}, errors.New("complete project graph and candidate entrypoints are required")
+	}
+	projects := make(map[string]DiscoveredProject, len(snapshot.Projects))
+	for _, project := range snapshot.Projects {
+		if project.Path == "" || project.UnknownRelationships {
+			return DiscoverySnapshot{}, errors.New("candidate project graph contains an unknown relationship")
+		}
+		projects[project.Path] = project
+	}
+	derived := snapshot
+	derived.Entrypoints = append([]DiscoveredEntrypoint(nil), snapshot.Entrypoints...)
+	seen := make(map[string]bool, len(snapshot.Entrypoints)+len(entrypoints))
+	for _, entrypoint := range snapshot.Entrypoints {
+		seen[entrypoint.Name] = true
+	}
+	for _, entrypoint := range entrypoints {
+		if seen[entrypoint] {
+			continue
+		}
+		seen[entrypoint] = true
+		separator := strings.LastIndex(entrypoint, ":")
+		if separator < 0 || separator == len(entrypoint)-1 {
+			return DiscoverySnapshot{}, fmt.Errorf("candidate entrypoint %q is not project-qualified", entrypoint)
+		}
+		owner := entrypoint[:separator]
+		if owner == "" {
+			owner = ":"
+		}
+		if _, ok := projects[owner]; !ok {
+			return DiscoverySnapshot{}, fmt.Errorf("candidate entrypoint %q has no project", entrypoint)
+		}
+		reached := map[string]bool{}
+		pending := []string{owner}
+		for len(pending) > 0 {
+			current := pending[len(pending)-1]
+			pending = pending[:len(pending)-1]
+			if reached[current] {
+				continue
+			}
+			project, ok := projects[current]
+			if !ok {
+				return DiscoverySnapshot{}, fmt.Errorf("candidate project %q has an unknown dependency", current)
+			}
+			reached[current] = true
+			pending = append(pending, project.DependsOn...)
+		}
+		reaches := make([]string, 0, len(reached))
+		for project := range reached {
+			reaches = append(reaches, project)
+		}
+		sort.Strings(reaches)
+		derived.Entrypoints = append(derived.Entrypoints, DiscoveredEntrypoint{
+			Name: entrypoint, ReachesProjects: reaches,
+		})
+	}
+	return derived, nil
+}
+
 type GeneratedImpact struct {
 	Manifest       LoadedManifest
 	Graph          LoadedGraph

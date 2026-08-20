@@ -227,6 +227,7 @@ type structuralProposalConfig struct {
 	discoveryCacheDir                                                string
 	timeout                                                          time.Duration
 	observedOutputSnapshot                                           *outputContractSnapshot
+	observedImpactSnapshot                                           *buildimpact.DiscoverySnapshot
 	candidateOwnerProjects                                           map[string]bool
 }
 
@@ -378,9 +379,26 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 	}
 	finalContext, finalCancel := context.WithTimeout(ctx, config.timeout)
 	defer finalCancel()
-	generated, err := buildimpact.DiscoverWithManifest(finalContext, buildimpact.DiscoveryOptions{
-		RepositoryRoot: root, GradleCommand: config.gradleCommand, GradleArgs: config.gradleOptions,
-	}, loadedManifest)
+	var generated buildimpact.GeneratedImpact
+	if config.observedImpactSnapshot != nil {
+		candidateSnapshot, deriveErr := buildimpact.DeriveProjectEntrypoints(
+			*config.observedImpactSnapshot,
+			candidateEntrypoints,
+		)
+		if deriveErr != nil {
+			err = deriveErr
+		} else {
+			var snapshotRaw []byte
+			snapshotRaw, err = json.Marshal(candidateSnapshot)
+			if err == nil {
+				generated, err = buildimpact.GenerateImpact(loadedManifest, snapshotRaw)
+			}
+		}
+	} else {
+		generated, err = buildimpact.DiscoverWithManifest(finalContext, buildimpact.DiscoveryOptions{
+			RepositoryRoot: root, GradleCommand: config.gradleCommand, GradleArgs: config.gradleOptions,
+		}, loadedManifest)
+	}
 	if err != nil {
 		report.Reason = "CANDIDATE_WORKFLOW_UNSUPPORTED"
 		return report, documents, nil

@@ -11,8 +11,10 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -204,8 +206,11 @@ func (run *optimizeRun) materializeCandidateOutputs() error {
 		return err
 	}
 	directories := map[string]bool{}
-	for _, payload := range payloads {
+	destinations := make([]string, len(payloads))
+	writes := make([]bool, len(payloads))
+	for index, payload := range payloads {
 		destination := filepath.Join(run.invocation.repositoryRoot, filepath.FromSlash(payload.entry.Path))
+		destinations[index] = destination
 		if existing, readErr := os.ReadFile(destination); readErr == nil {
 			digest := sha256.Sum256(existing)
 			if hex.EncodeToString(digest[:]) != payload.entry.SHA256 {
@@ -218,10 +223,37 @@ func (run *optimizeRun) materializeCandidateOutputs() error {
 		if err := ensureOptimizeMaterializationParent(run.invocation.repositoryRoot, payload.entry.Path); err != nil {
 			return err
 		}
-		if err := writeOptimizeMaterializationFile(destination, payload.raw, fs.FileMode(payload.entry.Mode)); err != nil {
-			return fmt.Errorf("materialize required output %s: %w", payload.entry.Path, err)
-		}
+		writes[index] = true
 		directories[filepath.Dir(destination)] = true
+	}
+	errorsByIndex := make([]error, len(payloads))
+	jobs := make(chan int)
+	workers := min(len(payloads), min(runtime.GOMAXPROCS(0)*2, 32))
+	var wait sync.WaitGroup
+	for range workers {
+		wait.Add(1)
+		go func() {
+			defer wait.Done()
+			for index := range jobs {
+				if !writes[index] {
+					continue
+				}
+				payload := payloads[index]
+				errorsByIndex[index] = writeOptimizeMaterializationFile(
+					destinations[index], payload.raw, fs.FileMode(payload.entry.Mode),
+				)
+			}
+		}()
+	}
+	for index := range payloads {
+		jobs <- index
+	}
+	close(jobs)
+	wait.Wait()
+	for index, err := range errorsByIndex {
+		if err != nil {
+			return fmt.Errorf("materialize required output %s: %w", payloads[index].entry.Path, err)
+		}
 	}
 	sortedDirectories := make([]string, 0, len(directories))
 	for directory := range directories {

@@ -20,6 +20,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/outputequivalence"
@@ -1566,22 +1567,48 @@ func measurementOutputDigests(repositoryRoot string, patterns []string) (map[str
 	if len(files) == 0 {
 		return nil, errors.New("measurement produced no required outputs")
 	}
+	type digestResult struct {
+		value string
+		err   error
+	}
+	results := make([]digestResult, len(files))
+	jobs := make(chan int)
+	workers := min(len(files), min(runtime.GOMAXPROCS(0)*2, 32))
+	var wait sync.WaitGroup
+	for range workers {
+		wait.Add(1)
+		go func() {
+			defer wait.Done()
+			for index := range jobs {
+				file, err := os.Open(filepath.Join(repositoryRoot, filepath.FromSlash(files[index])))
+				if err != nil {
+					results[index].err = err
+					continue
+				}
+				digest := sha256.New()
+				_, copyErr := io.Copy(digest, file)
+				closeErr := file.Close()
+				if copyErr != nil {
+					results[index].err = copyErr
+				} else if closeErr != nil {
+					results[index].err = closeErr
+				} else {
+					results[index].value = hex.EncodeToString(digest.Sum(nil))
+				}
+			}
+		}()
+	}
+	for index := range files {
+		jobs <- index
+	}
+	close(jobs)
+	wait.Wait()
 	outputs := make(map[string]string, len(files))
-	for _, relative := range files {
-		file, err := os.Open(filepath.Join(repositoryRoot, filepath.FromSlash(relative)))
-		if err != nil {
-			return nil, err
+	for index, relative := range files {
+		if results[index].err != nil {
+			return nil, results[index].err
 		}
-		digest := sha256.New()
-		_, copyErr := io.Copy(digest, file)
-		closeErr := file.Close()
-		if copyErr != nil {
-			return nil, copyErr
-		}
-		if closeErr != nil {
-			return nil, closeErr
-		}
-		outputs[relative] = hex.EncodeToString(digest.Sum(nil))
+		outputs[relative] = results[index].value
 	}
 	return outputs, nil
 }

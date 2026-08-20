@@ -183,6 +183,32 @@ func TestGenerateImpactConservativelyNormalizesProjectDependencyCycles(t *testin
 	}
 }
 
+func TestDeriveProjectEntrypointsUsesTransitiveProjectDependencies(t *testing.T) {
+	snapshot := DiscoverySnapshot{
+		SchemaVersion: DiscoverySchemaVersion, GradleVersion: "9.6.1", Complete: true,
+		FallbackReasons: []string{},
+		Projects: []DiscoveredProject{
+			{Path: ":app", SourcePaths: []string{"app/**"}, DependsOn: []string{":service"}},
+			{Path: ":service", SourcePaths: []string{"service/**"}, DependsOn: []string{":library"}},
+			{Path: ":library", SourcePaths: []string{"library/**"}, DependsOn: []string{}},
+		},
+		Entrypoints: []DiscoveredEntrypoint{{Name: "assemble", ReachesProjects: []string{":app", ":library", ":service"}}},
+	}
+	derived, err := DeriveProjectEntrypoints(snapshot, []string{":app:assemble"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []string{":app", ":library", ":service"}
+	if len(derived.Entrypoints) != 2 || derived.Entrypoints[0].Name != "assemble" ||
+		!reflect.DeepEqual(derived.Entrypoints[1].ReachesProjects, want) ||
+		derived.Entrypoints[1].UnknownRelationships || derived.Entrypoints[1].ContainsTestTasks {
+		t.Fatalf("derived entrypoint = %+v, want reaches %v", derived.Entrypoints, want)
+	}
+	if _, err := DeriveProjectEntrypoints(snapshot, []string{":missing:assemble"}); err == nil {
+		t.Fatal("missing candidate project was accepted")
+	}
+}
+
 func automaticDiscoveryManifest(t *testing.T) LoadedManifest {
 	t.Helper()
 	manifest := validManifest()
