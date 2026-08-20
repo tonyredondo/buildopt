@@ -22,6 +22,11 @@ case ${buildopt_protocol} in
         buildopt_package_version=0.7.0-dev
         buildopt_state_name=automatic-breadth-v2
         ;;
+    v3)
+        buildopt_contract="${buildopt_repo_root}/specs/poc-materialization-economics-v2.json"
+        buildopt_package_version=0.8.0-dev
+        buildopt_state_name=materialization-economics-v2
+        ;;
     *)
         printf 'unsupported automatic breadth protocol: %s\n' "${buildopt_protocol}" >&2
         exit 64
@@ -332,7 +337,7 @@ buildopt_capture_subject() {
            executableSha256:$executableSha256},processExitCode:$processExitCode,
            resultAvailable:false,productFailure:true,rawResult:null}
         ' >"${buildopt_subject_output}/capture.json"
-        if [[ ${buildopt_protocol} == v2 && -s ${buildopt_stderr} ]]; then
+        if [[ ${buildopt_protocol} != v1 && -s ${buildopt_stderr} ]]; then
             cp -- "${buildopt_stderr}" "${buildopt_subject_output}/failure.stderr"
             tail -n 120 "${buildopt_stderr}" >&2
         fi
@@ -343,6 +348,8 @@ buildopt_capture_subject() {
             cp -a -- "${buildopt_state_source}" "${buildopt_subject_output}/state"
             if [[ ${buildopt_protocol} == v2 ]]; then
                 rm -rf -- "${buildopt_subject_output}/state/materialization/blobs"
+            elif [[ ${buildopt_protocol} == v3 ]]; then
+                rm -f -- "${buildopt_subject_output}/state/materialization/payload.pack"
             fi
         fi
         buildopt_raw_sha=$(sha256sum "${buildopt_subject_output}/result.json" | awk '{print $1}')
@@ -389,11 +396,12 @@ buildopt_capture_subject() {
                 --arg rawResult "${buildopt_key}/result.json" \
                 --arg rawResultSha256 "${buildopt_raw_sha}" \
                 --arg stateTreeSha256 "${buildopt_state_sha}" \
+                --arg captureProtocol "${buildopt_protocol}" \
                 --argjson processExitCode "${buildopt_status}" \
                 --slurpfile invocations "${buildopt_invocation_metadata}" \
                 --slurpfile result "${buildopt_subject_output}/result.json" '
               ($result[0]) as $r |
-              {schemaVersion:"buildopt.evidence/automatic-breadth-subject/v2",
+              {schemaVersion:("buildopt.evidence/automatic-breadth-subject/" + $captureProtocol),
                key:$key,repositoryId:$repositoryId,baseRevision:$baseRevision,
                targetRevision:$targetRevision,buildopt:{revision:$buildoptRevision,
                executableSha256:$executableSha256},processExitCode:$processExitCode,
@@ -470,7 +478,7 @@ if [[ ${buildopt_protocol} == v1 ]]; then
           designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
       }
     ' "${buildopt_capture_files[@]}" >"${buildopt_output}/summary.json"
-else
+elif [[ ${buildopt_protocol} == v2 ]]; then
     jq -s \
         --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
         --arg buildoptRevision "${buildopt_revision}" \
@@ -495,6 +503,41 @@ else
             (map(select(.discovery.aggregatePartition.status == "COMPLETE"))|length),
           materializationsCaptured:
             (map(select(.discovery.materialization.status == "CAPTURED"))|length),
+          productFailures:(map(select(.productFailure))|length),
+          repositoryPercentagesAveraged:false,mechanismPercentagesAdded:false},
+        boundaries:{proofOfConcept:true,productionAuthorized:false,
+          automaticActivationOutsideOwnerCommand:false,soakRequired:false,
+          designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+      }
+    ' "${buildopt_capture_files[@]}" >"${buildopt_output}/summary.json"
+else
+    jq -s \
+        --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+        --arg buildoptRevision "${buildopt_revision}" \
+        --arg executableSha256 "${buildopt_executable_sha}" \
+        --arg packageVersion "${buildopt_package_version}" '
+      {
+        schemaVersion:"buildopt.evidence/poc-materialization-economics/v2",
+        workItem:"POC-MATERIALIZATION-ECONOMICS-V2-001",capturedAt:$capturedAt,
+        buildopt:{revision:$buildoptRevision,executableSha256:$executableSha256,
+          packageVersion:$packageVersion},subjects:.,
+        aggregation:{subjectCount:length,
+          resultAvailable:(map(select(.resultAvailable))|length),
+          discoveryComplete:(map(select(.discovery.status == "COMPLETE"))|length),
+          incrementalComplete:(map(select(.incrementalLearning.status == "COMPLETE"))|length),
+          calibrationComplete:(map(select(.calibration.status == "COMPLETE"))|length),
+          valueGatePassed:(map(select(.calibration.valueGatePassed == true))|length),
+          economicallyQualified:(map(select(.calibration.qualified == true))|length),
+          nativeRetained:(map(select(.outcome == "NATIVE_RETAINED"))|length),
+          ordinaryInvocations:(map(.ordinaryInvocations // 0)|add),
+          measurementOnlyWorkflowRuns:(map(.measurementOnlyWorkflowRuns // 0)|add),
+          aggregatePartitionsComplete:
+            (map(select(.discovery.aggregatePartition.status == "COMPLETE"))|length),
+          materializationsCaptured:
+            (map(select(.discovery.materialization.status == "CAPTURED"))|length),
+          economicsComplete:
+            (map(select([.incrementalLearning.baseline,.incrementalLearning.observations[]] |
+              all(.economics != null)))|length),
           productFailures:(map(select(.productFailure))|length),
           repositoryPercentagesAveraged:false,mechanismPercentagesAdded:false},
         boundaries:{proofOfConcept:true,productionAuthorized:false,

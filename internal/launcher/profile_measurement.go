@@ -1544,7 +1544,7 @@ func measurementOutputDigests(repositoryRoot string, patterns []string) (map[str
 		}
 		relative = filepath.ToSlash(relative)
 		if entry.IsDir() {
-			if relative == ".git" {
+			if relative == ".git" || relative == ".buildopt" {
 				return filepath.SkipDir
 			}
 			return nil

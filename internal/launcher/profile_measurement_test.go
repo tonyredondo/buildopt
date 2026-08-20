@@ -81,6 +81,32 @@ func TestHashMeasurementOutputsIsPathAndContentBound(t *testing.T) {
 	}
 }
 
+func TestHashMeasurementOutputsExcludesPrivateBuildOptState(t *testing.T) {
+	repository := t.TempDir()
+	output := filepath.Join(repository, "service", "build", "libs", "a.jar")
+	if err := os.MkdirAll(filepath.Dir(output), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(output, []byte("alpha"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	firstSHA, firstCount, err := hashMeasurementOutputs(repository, []string{"**"})
+	if err != nil || firstCount != 1 {
+		t.Fatalf("first output set = %s/%d/%v", firstSHA, firstCount, err)
+	}
+	privateState := filepath.Join(repository, ".buildopt", "optimize", "materialization", "payload.pack")
+	if err := os.MkdirAll(filepath.Dir(privateState), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(privateState, []byte("private-state"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	secondSHA, secondCount, err := hashMeasurementOutputs(repository, []string{"**"})
+	if err != nil || secondCount != firstCount || secondSHA != firstSHA {
+		t.Fatalf("private state changed output set = %s/%d/%v, want %s/%d", secondSHA, secondCount, err, firstSHA, firstCount)
+	}
+}
+
 func TestMeasurementHelpersFailClosed(t *testing.T) {
 	if got := measurementFallbackReason("buildopt: Build Impact POC retained the full graph (IMPACT_GLOBAL_CHANGE)\n"); got != "IMPACT_GLOBAL_CHANGE" {
 		t.Fatalf("fallback reason = %q", got)

@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [summary.json]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_summary=${1:-"${buildopt_repo_root}/benchmarks/results/poc-materialization-economics-v2/summary.json"}
+buildopt_contract="${buildopt_repo_root}/specs/poc-materialization-economics-v2.json"
+buildopt_previous="${buildopt_repo_root}/benchmarks/results/poc-automatic-breadth-transfer-v2/summary.json"
+
+for buildopt_command in awk cp find jq mktemp mv sha256sum sort xargs; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required materialization economics checker command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -s ${buildopt_summary} && -s ${buildopt_contract} && -s ${buildopt_previous} ]] || {
+    printf 'materialization economics evidence or contract is unavailable\n' >&2
+    exit 1
+}
+buildopt_evidence_root=$(cd -- "$(dirname -- "${buildopt_summary}")" && pwd -P)
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-materialization-economics/v2" and
+  .workItem == "POC-MATERIALIZATION-ECONOMICS-V2-001" and
+  .buildopt.packageVersion == "0.8.0-dev" and
+  (.subjects | length) == 5 and
+  .aggregation.economicsComplete == 5 and
+  .aggregation.economicallyQualified == 5 and
+  .aggregation.nativeRetained == 0 and
+  .aggregation.productFailures == 0 and
+  all(.subjects[];
+    ([.incrementalLearning.baseline,.incrementalLearning.observations[]] | all(
+      .economics.gradleMs == .durationMs and
+      .economics.preExecutionMs + .economics.postExecutionMs == .incrementalOverheadMs and
+      ([.economics.gradleMs,.economics.preExecutionMs,.economics.postExecutionMs,
+        .economics.materializationMs,.economics.outputVerificationMs,
+        .economics.discoveryMs,.economics.otherWrapperMs] | all(. >= 0)) and
+      (.economics.materializationMs + .economics.outputVerificationMs +
+       .economics.discoveryMs + .economics.otherWrapperMs) <= .incrementalOverheadMs
+    ))) and
+  (.subjects[] | select(.key == "spring-framework") |
+    .calibration.qualified == true and .calibration.breakEvenBuilds <= 30) and
+  ([.subjects[] | select(.key != "spring-framework") |
+    select(.calibration.qualified == true and .calibration.positivePairs == 8 and
+      .calibration.interval95SavedMs[0] > 0 and .calibration.breakEvenBuilds <= 30)] | length) == 4
+' "${buildopt_summary}" >/dev/null || {
+    printf 'materialization economics terminal gates failed\n' >&2
+    exit 1
+}
+
+while IFS= read -r buildopt_key; do
+    buildopt_capture="${buildopt_evidence_root}/${buildopt_key}/capture.json"
+    buildopt_manifest="${buildopt_evidence_root}/${buildopt_key}/state/materialization/manifest.json"
+    [[ -s ${buildopt_capture} && -s ${buildopt_manifest} ]] || {
+        printf 'materialization economics evidence is incomplete: %s\n' "${buildopt_key}" >&2
+        exit 1
+    }
+    jq -e '
+      .schemaVersion == "buildopt.poc/verified-output-materialization/v2" and
+      .packFile == ".buildopt/optimize/materialization-economics-v2/materialization/payload.pack" and
+      (.packSha256 | test("^[0-9a-f]{64}$")) and .packSize >= 1 and
+      (.entries | length) >= 1 and
+      ([range(0; .entries|length) as $index |
+        .entries[$index] as $entry |
+        ($entry.offset == (if $index == 0 then 0 else
+          ([.entries[0:$index][].size] | add) end)) and
+        ($entry.sha256 | test("^[0-9a-f]{64}$")) and $entry.size >= 0] | all)
+    ' "${buildopt_manifest}" >/dev/null || {
+        printf 'packed materialization manifest is invalid: %s\n' "${buildopt_key}" >&2
+        exit 1
+    }
+    [[ ! -e ${buildopt_evidence_root}/${buildopt_key}/state/materialization/payload.pack ]] || {
+        printf 'large materialization payload must not be committed as evidence: %s\n' \
+            "${buildopt_key}" >&2
+        exit 1
+    }
+    jq -e '
+      .discovery.materialization.status == "CAPTURED" and
+      .discovery.materialization.economics.totalMs >= 1 and
+      (.discovery.materialization.economics.collectMs +
+       .discovery.materialization.economics.packMs +
+       .discovery.materialization.economics.manifestMs) <=
+        (.discovery.materialization.economics.totalMs + 3)
+    ' "${buildopt_capture}" >/dev/null || {
+        printf 'materialization capture attribution is invalid: %s\n' "${buildopt_key}" >&2
+        exit 1
+    }
+done < <(jq -r '.subjects[].key' "${buildopt_summary}")
+
+buildopt_compat=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-materialization-economics-check.XXXXXX")
+buildopt_cleanup() {
+    [[ ${buildopt_compat} == "${TMPDIR:-/tmp}/buildopt-materialization-economics-check."* ]] && \
+        rm -rf -- "${buildopt_compat}"
+}
+trap buildopt_cleanup EXIT
+cp -a -- "${buildopt_evidence_root}/." "${buildopt_compat}/"
+while IFS= read -r buildopt_capture; do
+    jq '.schemaVersion = "buildopt.evidence/automatic-breadth-subject/v2"' \
+        "${buildopt_capture}" >"${buildopt_capture}.tmp"
+    mv -- "${buildopt_capture}.tmp" "${buildopt_capture}"
+done < <(find "${buildopt_compat}" -mindepth 2 -maxdepth 2 -name capture.json -type f | sort)
+jq '
+  .schemaVersion = "buildopt.evidence/poc-automatic-breadth-transfer/v2" |
+  .workItem = "POC-AUTOMATIC-BREADTH-TRANSFER-V2-001" |
+  .buildopt.packageVersion = "0.7.0-dev" |
+  .subjects |= map(.schemaVersion = "buildopt.evidence/automatic-breadth-subject/v2") |
+  del(.aggregation.economicsComplete)
+' "${buildopt_compat}/summary.json" >"${buildopt_compat}/summary.json.tmp"
+mv -- "${buildopt_compat}/summary.json.tmp" "${buildopt_compat}/summary.json"
+"${buildopt_script_dir}/check-automatic-breadth-transfer-v2" \
+    "${buildopt_compat}/summary.json" >/dev/null
+
+printf 'Materialization economics V2 evidence: PASS\n'

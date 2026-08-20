@@ -608,6 +608,21 @@ exact outputs. OpenTelemetry, Kafka, Micronaut and Groovy qualify at 14.97%,
 54.92%, 66.24% and 75.97% with 8/8 pairs and 19-, 14-, 8- and 2-build payback.
 Spring improves 12.71% but remains native at 7/8 and 67-build payback.
 
+The materialization-economics rerun keeps those subjects and gates unchanged,
+stores verified outputs in one manifest-bound pack instead of one durable blob
+per file, excludes private BuildOpt state from customer-output hashing and
+records Gradle, discovery, materialization, verification and remaining wrapper
+time for every observation:
+
+```bash
+./dev/run-materialization-economics-v2 /absolute/evidence/directory spring-framework
+./dev/run-materialization-economics-v2 /absolute/evidence/directory opentelemetry-java-instrumentation
+./dev/run-materialization-economics-v2 /absolute/evidence/directory apache-kafka
+./dev/run-materialization-economics-v2 /absolute/evidence/directory micronaut-core
+./dev/run-materialization-economics-v2 /absolute/evidence/directory apache-groovy
+./dev/check-materialization-economics-v2 /absolute/evidence/directory/summary.json
+```
+
 Reproduce the incremental-learning transaction with one exact installed
 binary and validate its checked evidence with:
 

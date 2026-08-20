@@ -54,7 +54,16 @@ func TestOptimizeOutputMaterializationFailsBeforeWritingOnCorruption(t *testing.
 	if err := json.Unmarshal(manifestRaw, &manifest); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(repository, filepath.FromSlash(manifest.Entries[0].Blob)), []byte("corrupt\n"), 0o600); err != nil {
+	packPath := filepath.Join(repository, filepath.FromSlash(manifest.PackFile))
+	pack, err := os.OpenFile(packPath, os.O_WRONLY, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := pack.WriteAt([]byte("corrupt\n"), manifest.Entries[0].Offset); err != nil {
+		_ = pack.Close()
+		t.Fatal(err)
+	}
+	if err := pack.Close(); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.RemoveAll(filepath.Join(repository, "unchanged", "build")); err != nil {
@@ -126,6 +135,34 @@ func TestOptimizeOutputMaterializationRestoresManySmallFilesExactly(t *testing.T
 	}
 	if materialization.FileCount != fileCount {
 		t.Fatalf("materialization file count = %d, want %d", materialization.FileCount, fileCount)
+	}
+	if materialization.Economics.TotalMS <= 0 ||
+		materialization.Economics.CollectMS+materialization.Economics.PackMS+materialization.Economics.ManifestMS > materialization.Economics.TotalMS {
+		t.Fatalf("materialization economics = %+v", materialization.Economics)
+	}
+	manifestRaw, err := os.ReadFile(filepath.Join(repository, filepath.FromSlash(materialization.ManifestFile)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var manifest optimizeOutputMaterializationManifest
+	if err := json.Unmarshal(manifestRaw, &manifest); err != nil {
+		t.Fatal(err)
+	}
+	if manifest.PackFile == "" || manifest.PackSize != materialization.ByteCount || len(manifest.Entries) != fileCount {
+		t.Fatalf("packed materialization manifest = %+v", manifest)
+	}
+	if _, err := os.Stat(filepath.Join(stateDirectory, "materialization", "blobs")); !os.IsNotExist(err) {
+		t.Fatalf("per-file blob directory exists: %v", err)
+	}
+	var expectedOffset int64
+	for _, entry := range manifest.Entries {
+		if entry.Offset != expectedOffset {
+			t.Fatalf("entry %q offset = %d, want %d", entry.Path, entry.Offset, expectedOffset)
+		}
+		expectedOffset += entry.Size
+	}
+	if expectedOffset != manifest.PackSize {
+		t.Fatalf("entry size total = %d, want pack size %d", expectedOffset, manifest.PackSize)
 	}
 	discovery.Materialization = materialization
 	if err := os.RemoveAll(filepath.Join(repository, "unchanged", "build")); err != nil {

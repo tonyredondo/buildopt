@@ -199,6 +199,9 @@ type optimizeRun struct {
 	incrementalFailure     string
 	incrementalFallback    childExecution
 	incrementalObserved    bool
+	materializationTime    time.Duration
+	outputVerificationTime time.Duration
+	discoveryTime          time.Duration
 }
 
 func prepareOptimizeInvocation(args []string, stateEnabled bool) (optimizeInvocation, error) {
@@ -671,7 +674,9 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 			run.previousState.Discovery.Status == optimizeDiscoveryComplete {
 			discovery = run.previousState.Discovery
 		} else {
+			discoveryStarted := time.Now()
 			discovery = run.discover(learningContext, exitCode, stderr)
+			run.discoveryTime += time.Since(discoveryStarted)
 		}
 		learning, calibration = run.collectIncrementalLearning(discovery, exitCode)
 	}

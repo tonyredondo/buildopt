@@ -37,17 +37,28 @@ const (
 )
 
 type optimizeIncrementalObservation struct {
-	Sequence                   int    `json:"sequence"`
-	Pair                       int    `json:"pair"`
-	Arm                        string `json:"arm"`
-	Order                      string `json:"order"`
-	DurationMS                 int64  `json:"durationMs"`
-	RequiredOutputSHA256       string `json:"requiredOutputSha256"`
-	RequiredOutputCount        int    `json:"requiredOutputCount"`
-	ExitCode                   int    `json:"exitCode"`
-	IncrementalOverheadMS      int64  `json:"incrementalOverheadMs"`
-	CapturedAt                 string `json:"capturedAt"`
-	ProductAttributableFailure bool   `json:"productAttributableFailure"`
+	Sequence                   int                          `json:"sequence"`
+	Pair                       int                          `json:"pair"`
+	Arm                        string                       `json:"arm"`
+	Order                      string                       `json:"order"`
+	DurationMS                 int64                        `json:"durationMs"`
+	RequiredOutputSHA256       string                       `json:"requiredOutputSha256"`
+	RequiredOutputCount        int                          `json:"requiredOutputCount"`
+	ExitCode                   int                          `json:"exitCode"`
+	IncrementalOverheadMS      int64                        `json:"incrementalOverheadMs"`
+	Economics                  optimizeIncrementalEconomics `json:"economics"`
+	CapturedAt                 string                       `json:"capturedAt"`
+	ProductAttributableFailure bool                         `json:"productAttributableFailure"`
+}
+
+type optimizeIncrementalEconomics struct {
+	GradleMS             int64 `json:"gradleMs"`
+	PreExecutionMS       int64 `json:"preExecutionMs"`
+	PostExecutionMS      int64 `json:"postExecutionMs"`
+	MaterializationMS    int64 `json:"materializationMs"`
+	OutputVerificationMS int64 `json:"outputVerificationMs"`
+	DiscoveryMS          int64 `json:"discoveryMs"`
+	OtherWrapperMS       int64 `json:"otherWrapperMs"`
 }
 
 type optimizeIncrementalLearning struct {
@@ -267,7 +278,7 @@ func (run *optimizeRun) captureIncrementalOutput(exitCode int) bool {
 		}
 		return false
 	}
-	digest, count, err := hashMeasurementOutputs(run.invocation.repositoryRoot, discovery.RequiredOutputs)
+	digest, count, err := run.hashIncrementalOutputs(discovery.RequiredOutputs)
 	if err != nil {
 		run.incrementalFailure = optimizeIncrementalReasonOutputDrift
 		return run.incrementalCandidate
@@ -349,18 +360,20 @@ func (run *optimizeRun) collectIncrementalLearning(
 	digest := run.incrementalOutputSHA
 	count := run.incrementalOutputCount
 	if digest == "" {
-		digest, count, err = hashMeasurementOutputs(run.invocation.repositoryRoot, discovery.RequiredOutputs)
+		digest, count, err = run.hashIncrementalOutputs(discovery.RequiredOutputs)
 		if err != nil {
 			return retainedOptimizeIncrementalLearning(run.invocation, learning, optimizeIncrementalReasonOutputDrift), retainedIncrementalCalibration(run.invocation, optimizeIncrementalReasonOutputDrift)
 		}
 	}
 	overhead := optimizeIncrementalOverheadMS(run)
+	economics := optimizeIncrementalEconomicsForRun(run, overhead)
 	observation := optimizeIncrementalObservation{
 		DurationMS:            maximumOptimizeDurationMS(run.childExecution.completedAt.Sub(run.childExecution.startedAt)),
 		RequiredOutputSHA256:  digest,
 		RequiredOutputCount:   count,
 		ExitCode:              exitCode,
 		IncrementalOverheadMS: overhead,
+		Economics:             economics,
 		CapturedAt:            time.Now().UTC().Truncate(time.Second).Format(time.RFC3339),
 	}
 	if learning.Baseline == nil {
@@ -400,6 +413,36 @@ func (run *optimizeRun) collectIncrementalLearning(
 	}
 	completed, completedCalibration := completeOptimizeIncrementalLearning(run.invocation, discovery, learning)
 	return completed, completedCalibration
+}
+
+func (run *optimizeRun) hashIncrementalOutputs(patterns []string) (string, int, error) {
+	started := time.Now()
+	digest, count, err := hashMeasurementOutputs(run.invocation.repositoryRoot, patterns)
+	run.outputVerificationTime += time.Since(started)
+	return digest, count, err
+}
+
+func optimizeIncrementalEconomicsForRun(run *optimizeRun, overhead int64) optimizeIncrementalEconomics {
+	pre := run.childExecution.startedAt.Sub(run.startedAt).Milliseconds()
+	if pre < 0 {
+		pre = 0
+	}
+	if pre > overhead {
+		pre = overhead
+	}
+	post := overhead - pre
+	materialization := run.materializationTime.Milliseconds()
+	verification := run.outputVerificationTime.Milliseconds()
+	discovery := run.discoveryTime.Milliseconds()
+	other := overhead - materialization - verification - discovery
+	if other < 0 {
+		other = 0
+	}
+	return optimizeIncrementalEconomics{
+		GradleMS:       maximumOptimizeDurationMS(run.childExecution.completedAt.Sub(run.childExecution.startedAt)),
+		PreExecutionMS: pre, PostExecutionMS: post, MaterializationMS: materialization,
+		OutputVerificationMS: verification, DiscoveryMS: discovery, OtherWrapperMS: other,
+	}
 }
 
 func completeOptimizeIncrementalLearning(
@@ -689,9 +732,29 @@ func validOptimizeIncrementalObservation(observation optimizeIncrementalObservat
 	if _, err := time.Parse(time.RFC3339, observation.CapturedAt); err != nil {
 		return false
 	}
+	if !validOptimizeIncrementalEconomics(observation) {
+		return false
+	}
 	if baseline {
 		return observation.Sequence == 0 && observation.Pair == 0 &&
 			observation.Arm == optimizeIncrementalArmDiscovery && observation.Order == "BASELINE"
 	}
 	return true
+}
+
+func validOptimizeIncrementalEconomics(observation optimizeIncrementalObservation) bool {
+	economics := observation.Economics
+	if economics == (optimizeIncrementalEconomics{}) {
+		// Existing checkpoints remain safe to resume; newly captured evidence
+		// is required to carry complete attribution by its experiment checker.
+		return true
+	}
+	if economics.GradleMS != observation.DurationMS || economics.PreExecutionMS < 0 ||
+		economics.PostExecutionMS < 0 || economics.MaterializationMS < 0 ||
+		economics.OutputVerificationMS < 0 || economics.DiscoveryMS < 0 || economics.OtherWrapperMS < 0 {
+		return false
+	}
+	return economics.PreExecutionMS+economics.PostExecutionMS == observation.IncrementalOverheadMS &&
+		economics.MaterializationMS+economics.OutputVerificationMS+economics.DiscoveryMS+
+			economics.OtherWrapperMS <= observation.IncrementalOverheadMS
 }
