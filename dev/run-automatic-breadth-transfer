@@ -1,0 +1,354 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# < 1 || $# > 2)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/output/directory [repository-key]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_subject_filter=${2:-}
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract="${buildopt_repo_root}/specs/poc-automatic-breadth-transfer-v1.json"
+buildopt_subjects="${buildopt_repo_root}/specs/poc-generic-profile-matrix-v3.json"
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-automatic-breadth.XXXXXX")
+
+buildopt_cleanup() {
+    if [[ ${buildopt_root} == "${TMPDIR:-/tmp}/buildopt-automatic-breadth."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in awk cp df find git jq perl sha256sum sort tar timeout xargs; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required automatic breadth command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+[[ -f ${buildopt_contract} && -f ${buildopt_subjects} ]] || {
+    printf 'automatic breadth contract is unavailable\n' >&2
+    exit 1
+}
+[[ $(sha256sum "${buildopt_subjects}" | awk '{print $1}') == \
+    $(jq -r '.frozenSubjects.sha256' "${buildopt_contract}") ]] || {
+    printf 'frozen automatic breadth subjects drifted\n' >&2
+    exit 1
+}
+[[ $(sha256sum "${buildopt_repo_root}/specs/poc-otel-spring-family-v2.tasks.txt" | awk '{print $1}') == \
+    $(jq -r '.frozenSubjects.opentelemetryEntrypointsSha256' "${buildopt_contract}") ]] || {
+    printf 'frozen OpenTelemetry workflow drifted\n' >&2
+    exit 1
+}
+[[ -z $(git -C "${buildopt_repo_root}" status --porcelain --untracked-files=no) ]] || {
+    printf 'BuildOpt tracked state must be clean before evidence capture\n' >&2
+    exit 1
+}
+
+buildopt_subject_count=$(jq '.repositories | length' "${buildopt_subjects}")
+if [[ -n ${buildopt_subject_filter} ]]; then
+    [[ $(jq --arg key "${buildopt_subject_filter}" \
+        '[.repositories[] | select(.key == $key)] | length' "${buildopt_subjects}") -eq 1 ]] || {
+        printf 'repository key is absent or ambiguous: %s\n' "${buildopt_subject_filter}" >&2
+        exit 1
+    }
+fi
+mkdir -p -- "${buildopt_output}"
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_package_root="${buildopt_root}/package"
+mkdir -p -- "${buildopt_package_root}" "${buildopt_root}/release" "${buildopt_root}/install"
+"${buildopt_repo_root}/packaging/linux/package.sh" \
+    --version 0.3.0-dev --output "${buildopt_package_root}" >/dev/null
+tar -xzf "${buildopt_package_root}/buildopt-0.3.0-dev-linux-amd64.tar.gz" \
+    -C "${buildopt_root}/release"
+"${buildopt_root}/release/buildopt-0.3.0-dev-linux-amd64/install.sh" \
+    --prefix "${buildopt_root}/install" >/dev/null
+buildopt_executable="${buildopt_root}/install/bin/buildopt"
+buildopt_executable_sha=$(sha256sum "${buildopt_executable}" | awk '{print $1}')
+
+buildopt_mutate_repository() {
+    local buildopt_mutation=$1
+    local buildopt_repository=$2
+    local buildopt_change_path=$3
+    local buildopt_marker=$4
+
+    case "${buildopt_mutation}" in
+        APPEND_FIXED_COMMENT)
+            printf '\n// buildopt-poc-%s\n' "${buildopt_marker}" \
+                >>"${buildopt_repository}/${buildopt_change_path}"
+            ;;
+        ADD_PACKAGE_PRIVATE_MARKER_RETURNING_ONE)
+            perl -0pi -e 's/\n}\n\z/\n\n    int buildOptPocMarker() {\n        return 1;\n    }\n}\n/' \
+                "${buildopt_repository}/${buildopt_change_path}"
+            ;;
+        *)
+            printf 'unsupported automatic breadth mutation: %s\n' "${buildopt_mutation}" >&2
+            return 1
+            ;;
+    esac
+}
+
+buildopt_seed_gradle_distribution() {
+    local buildopt_repository=$1
+    local buildopt_gradle_home=$2
+    local buildopt_properties buildopt_url buildopt_archive buildopt_distribution
+    local buildopt_source_root buildopt_source buildopt_destination
+
+    buildopt_properties="${buildopt_repository}/gradle/wrapper/gradle-wrapper.properties"
+    [[ -f ${buildopt_properties} ]] || return 1
+    buildopt_url=$(awk -F= '$1 == "distributionUrl" {sub(/^[^=]*=/, ""); print; exit}' \
+        "${buildopt_properties}")
+    buildopt_url=${buildopt_url//\\:/:}
+    buildopt_archive=${buildopt_url%%\?*}
+    buildopt_archive=${buildopt_archive##*/}
+    buildopt_distribution=${buildopt_archive%.zip}
+    [[ ${buildopt_distribution} =~ ^gradle-[0-9][0-9.]*-(bin|all)$ ]] || return 1
+    buildopt_destination="${buildopt_gradle_home}/wrapper/dists/${buildopt_distribution}"
+    mkdir -p -- "${buildopt_destination}"
+    for buildopt_source_root in \
+        "${buildopt_repo_root}/.tools/gradle-user-home/wrapper/dists" \
+        "${GRADLE_USER_HOME:-${HOME}/.gradle}/wrapper/dists"; do
+        buildopt_source="${buildopt_source_root}/${buildopt_distribution}"
+        [[ -d ${buildopt_source} ]] || continue
+        cp -a -- "${buildopt_source}/." "${buildopt_destination}/"
+    done
+}
+
+buildopt_prepare_gradle_distribution() {
+    local buildopt_repository=$1
+    local buildopt_gradle_home=$2
+    local buildopt_jdk=$3
+    local buildopt_log=$4
+    local buildopt_attempt
+
+    buildopt_seed_gradle_distribution "${buildopt_repository}" "${buildopt_gradle_home}"
+    : >"${buildopt_log}"
+    for buildopt_attempt in 1 2 3; do
+        printf 'Gradle distribution preparation attempt %d/3\n' "${buildopt_attempt}" \
+            >>"${buildopt_log}"
+        if (
+            cd -- "${buildopt_repository}"
+            env -u CI GRADLE_USER_HOME="${buildopt_gradle_home}" \
+                timeout 15m "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+                ./gradlew --version
+        ) >>"${buildopt_log}" 2>&1; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+buildopt_entrypoints() {
+    local buildopt_index=$1
+    local buildopt_file
+    buildopt_file=$(jq -r ".repositories[${buildopt_index}].entrypointsFile // empty" \
+        "${buildopt_subjects}")
+    if [[ -n ${buildopt_file} ]]; then
+        grep -v '^[[:space:]]*$' "${buildopt_repo_root}/${buildopt_file}"
+    else
+        jq -r ".repositories[${buildopt_index}].entrypoints[]" "${buildopt_subjects}"
+    fi
+}
+
+buildopt_capture_subject() {
+    local buildopt_index=$1
+    local buildopt_key buildopt_repository_id buildopt_remote buildopt_base
+    local buildopt_jdk buildopt_change_path buildopt_mutation buildopt_target
+    local buildopt_repository buildopt_gradle_home buildopt_subject_output
+    local buildopt_event buildopt_stdout buildopt_stderr buildopt_status buildopt_free
+    local buildopt_state_source buildopt_raw_sha buildopt_state_sha
+    local -a buildopt_gradle_args=()
+
+    buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_subjects}")
+    buildopt_repository_id=$(jq -er ".repositories[${buildopt_index}].repositoryId" "${buildopt_subjects}")
+    buildopt_remote=$(jq -er ".repositories[${buildopt_index}].remoteUrl" "${buildopt_subjects}")
+    buildopt_base=$(jq -er ".repositories[${buildopt_index}].publicRevision" "${buildopt_subjects}")
+    buildopt_jdk=$(jq -er ".repositories[${buildopt_index}].jdkToolchain" "${buildopt_subjects}")
+    buildopt_change_path=$(jq -er ".repositories[${buildopt_index}].changePath" "${buildopt_subjects}")
+    buildopt_mutation=$(jq -er ".repositories[${buildopt_index}].mutation" "${buildopt_subjects}")
+    buildopt_subject_output="${buildopt_output}/${buildopt_key}"
+    [[ ! -e ${buildopt_subject_output} ]] || {
+        printf 'automatic breadth subject already exists: %s\n' "${buildopt_key}" >&2
+        return 1
+    }
+
+    buildopt_free=$(df -Pk "${TMPDIR:-/tmp}" | awk 'NR == 2 {print $4 * 1024}')
+    if ((buildopt_free < 8589934592)); then
+        printf 'less than 8 GiB is free before %s\n' "${buildopt_key}" >&2
+        return 1
+    fi
+
+    buildopt_repository="${buildopt_root}/${buildopt_key}/repository"
+    buildopt_gradle_home="${buildopt_root}/${buildopt_key}/gradle-home"
+    mkdir -p -- "${buildopt_repository}" "${buildopt_gradle_home}" "${buildopt_subject_output}"
+    git -C "${buildopt_repository}" init -q
+    git -C "${buildopt_repository}" remote add origin "${buildopt_remote}"
+    git -C "${buildopt_repository}" fetch --depth=65 origin "${buildopt_base}"
+    git -C "${buildopt_repository}" checkout -q -b buildopt-poc FETCH_HEAD
+
+    printf 'Preparing %s outside calibration\n' "${buildopt_repository_id}"
+    if ! buildopt_prepare_gradle_distribution \
+        "${buildopt_repository}" "${buildopt_gradle_home}" "${buildopt_jdk}" \
+        "${buildopt_subject_output}/distribution-preparation.log"; then
+        tail -n 120 "${buildopt_subject_output}/distribution-preparation.log" >&2
+        printf 'Gradle preparation failed for %s\n' "${buildopt_key}" >&2
+        return 1
+    fi
+
+    buildopt_mutate_repository "${buildopt_mutation}" "${buildopt_repository}" \
+        "${buildopt_change_path}" "${buildopt_key}"
+    git -C "${buildopt_repository}" config user.name 'BuildOpt POC'
+    git -C "${buildopt_repository}" config user.email 'buildopt-poc@example.invalid'
+    git -C "${buildopt_repository}" config commit.gpgsign false
+    git -C "${buildopt_repository}" add -- "${buildopt_change_path}"
+    GIT_AUTHOR_DATE='2026-08-20T00:00:00Z' \
+        GIT_COMMITTER_DATE='2026-08-20T00:00:00Z' \
+        git -C "${buildopt_repository}" commit -qm 'Apply frozen automatic breadth mutation'
+    buildopt_target=$(git -C "${buildopt_repository}" rev-parse HEAD)
+
+    while IFS= read -r buildopt_entrypoint; do
+        [[ -n ${buildopt_entrypoint} ]] && buildopt_gradle_args+=("${buildopt_entrypoint}")
+    done < <(buildopt_entrypoints "${buildopt_index}")
+    buildopt_gradle_args+=(
+        --daemon --build-cache --parallel --no-configuration-cache
+        --console=plain --no-scan --max-workers=12
+    )
+    buildopt_event="${buildopt_root}/${buildopt_key}/github-event.json"
+    jq -n --arg before "${buildopt_base}" '{before:$before}' >"${buildopt_event}"
+    buildopt_stdout="${buildopt_root}/${buildopt_key}/optimize.stdout"
+    buildopt_stderr="${buildopt_root}/${buildopt_key}/optimize.stderr"
+
+    printf 'Running automatic optimize path for %s\n' "${buildopt_repository_id}"
+    set +e
+    (
+        cd -- "${buildopt_repository}"
+        env -u CI \
+            GITHUB_EVENT_PATH="${buildopt_event}" \
+            GITHUB_REPOSITORY="${buildopt_repository_id}" \
+            GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            timeout 60m "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
+            "${buildopt_executable}" optimize \
+            --state-dir .buildopt/optimize/automatic-breadth-v1 \
+            --resume never --calibration-budget 30m --calibration-pairs 8 \
+            --max-break-even-builds 30 --json -- "${buildopt_gradle_args[@]}"
+    ) >"${buildopt_stdout}" 2>"${buildopt_stderr}"
+    buildopt_status=$?
+    set -e
+
+    tail -n 160 "${buildopt_stderr}" >"${buildopt_subject_output}/diagnostics.log"
+    if ! jq -e '.schemaVersion == "buildopt.poc/optimize-result/v1"' \
+        "${buildopt_stdout}" >/dev/null 2>&1; then
+        jq -n \
+            --arg key "${buildopt_key}" --arg repositoryId "${buildopt_repository_id}" \
+            --arg baseRevision "${buildopt_base}" --arg targetRevision "${buildopt_target}" \
+            --arg buildoptRevision "${buildopt_revision}" \
+            --arg executableSha256 "${buildopt_executable_sha}" \
+            --argjson processExitCode "${buildopt_status}" '
+          {schemaVersion:"buildopt.evidence/automatic-breadth-subject/v1",
+           key:$key,repositoryId:$repositoryId,baseRevision:$baseRevision,
+           targetRevision:$targetRevision,buildopt:{revision:$buildoptRevision,
+           executableSha256:$executableSha256},processExitCode:$processExitCode,
+           resultAvailable:false,productFailure:true,rawResult:null}
+        ' >"${buildopt_subject_output}/capture.json"
+    else
+        cp -- "${buildopt_stdout}" "${buildopt_subject_output}/result.json"
+        buildopt_state_source="${buildopt_repository}/.buildopt/optimize/automatic-breadth-v1"
+        if [[ -d ${buildopt_state_source} ]]; then
+            cp -a -- "${buildopt_state_source}" "${buildopt_subject_output}/state"
+        fi
+        buildopt_raw_sha=$(sha256sum "${buildopt_subject_output}/result.json" | awk '{print $1}')
+        buildopt_state_sha=null
+        if [[ -d ${buildopt_subject_output}/state ]]; then
+            buildopt_state_sha=$(
+                cd -- "${buildopt_subject_output}/state"
+                find . -type f -print0 | sort -z | xargs -0 -r sha256sum | \
+                    sha256sum | awk '{print $1}'
+            )
+        fi
+        jq -n \
+            --arg key "${buildopt_key}" --arg repositoryId "${buildopt_repository_id}" \
+            --arg baseRevision "${buildopt_base}" --arg targetRevision "${buildopt_target}" \
+            --arg buildoptRevision "${buildopt_revision}" \
+            --arg executableSha256 "${buildopt_executable_sha}" \
+            --arg rawResult "${buildopt_key}/result.json" --arg rawResultSha256 "${buildopt_raw_sha}" \
+            --arg stateTreeSha256 "${buildopt_state_sha}" \
+            --argjson processExitCode "${buildopt_status}" \
+            --slurpfile result "${buildopt_subject_output}/result.json" '
+          ($result[0]) as $r |
+          {schemaVersion:"buildopt.evidence/automatic-breadth-subject/v1",
+           key:$key,repositoryId:$repositoryId,baseRevision:$baseRevision,
+           targetRevision:$targetRevision,buildopt:{revision:$buildoptRevision,
+           executableSha256:$executableSha256},processExitCode:$processExitCode,
+           resultAvailable:true,productFailure:($processExitCode != 0),
+           rawResult:$rawResult,rawResultSha256:$rawResultSha256,
+           stateTreeSha256:(if $stateTreeSha256 == "null" then null else $stateTreeSha256 end),
+           outcome:$r.outcome,reason:$r.reason,durationMs:$r.durationMs,
+           manualFilesRequired:$r.manualFilesRequired,native:$r.native,
+           execution:$r.execution,discovery:$r.discovery,
+           prequalification:$r.prequalification,calibration:$r.calibration,
+           portfolio:$r.portfolio,selection:$r.selection,value:$r.value,
+           productionAuthorized:$r.productionAuthorized,
+           testOptimization:$r.testOptimization}
+        ' >"${buildopt_subject_output}/capture.json"
+    fi
+
+    (
+        cd -- "${buildopt_repository}"
+        env GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- ./gradlew --stop
+    ) >/dev/null 2>&1 || true
+    rm -rf -- "${buildopt_root:?}/${buildopt_key}"
+    printf 'Captured %s (exit %d)\n' "${buildopt_repository_id}" "${buildopt_status}"
+}
+
+for ((buildopt_index = 0; buildopt_index < buildopt_subject_count; buildopt_index++)); do
+    buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_subjects}")
+    if [[ -n ${buildopt_subject_filter} && ${buildopt_key} != "${buildopt_subject_filter}" ]]; then
+        continue
+    fi
+    buildopt_capture_subject "${buildopt_index}"
+done
+
+buildopt_completed=0
+buildopt_capture_files=()
+while IFS= read -r buildopt_key; do
+    if [[ -s ${buildopt_output}/${buildopt_key}/capture.json ]]; then
+        buildopt_capture_files+=("${buildopt_output}/${buildopt_key}/capture.json")
+        buildopt_completed=$((buildopt_completed + 1))
+    fi
+done < <(jq -r '.repositories[].key' "${buildopt_subjects}")
+
+if ((buildopt_completed != buildopt_subject_count)); then
+    printf 'Automatic breadth subjects captured: %d/%d\n' \
+        "${buildopt_completed}" "${buildopt_subject_count}"
+    exit 0
+fi
+
+jq -s \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg buildoptRevision "${buildopt_revision}" \
+    --arg executableSha256 "${buildopt_executable_sha}" '
+  {
+    schemaVersion:"buildopt.evidence/poc-automatic-breadth-transfer/v1",
+    workItem:"POC-AUTOMATIC-BREADTH-TRANSFER-001",capturedAt:$capturedAt,
+    buildopt:{revision:$buildoptRevision,executableSha256:$executableSha256,
+      packageVersion:"0.3.0-dev"},subjects:.,
+    aggregation:{subjectCount:length,
+      resultAvailable:(map(select(.resultAvailable))|length),
+      discoveryComplete:(map(select(.discovery.status == "COMPLETE"))|length),
+      calibrationComplete:(map(select(.calibration.status == "COMPLETE"))|length),
+      valueGatePassed:(map(select(.calibration.valueGatePassed == true))|length),
+      economicallyQualified:(map(select(.calibration.qualified == true))|length),
+      nativeRetained:(map(select(.outcome == "NATIVE_RETAINED"))|length),
+      productFailures:(map(select(.productFailure))|length),
+      repositoryPercentagesAveraged:false,mechanismPercentagesAdded:false},
+    boundaries:{proofOfConcept:true,productionAuthorized:false,
+      automaticActivationOutsideOwnerCommand:false,soakRequired:false,
+      designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+  }
+' "${buildopt_capture_files[@]}" >"${buildopt_output}/summary.json"
+
+printf 'Automatic breadth transfer evidence written to %s\n' "${buildopt_output}"

@@ -559,6 +559,21 @@ preceding run's 220.761 seconds. It uses direct ownership from a verified
 generic graph and never branches on a repository name. Qualification still
 costs 1,386.764 seconds and remains unpaid in the three-build window.
 
+Run the unchanged zero-manual-file optimize path across the five frozen public
+repositories, optionally one repository at a time:
+
+```bash
+./dev/run-automatic-breadth-transfer /absolute/evidence/directory
+./dev/run-automatic-breadth-transfer /absolute/evidence/directory apache-kafka
+```
+
+The runner installs one package, creates a fresh public checkout and private
+Gradle home per subject, invokes only `buildopt optimize <workflow>`, preserves
+the raw result and generated state, then removes that checkout before the next
+row. Partial directories are resumable by repository key. It stops before a
+subject when less than 8 GiB is free and never turns a native-retained result
+into a qualification.
+
 ## CI orchestration validation
 
 Validate the `F0-030` authoritative-job, protected validation queue,
