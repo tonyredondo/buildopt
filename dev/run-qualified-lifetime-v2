@@ -126,11 +126,18 @@ buildopt_stop_gradle_daemons() {
 
 buildopt_clear_project_outputs() {
     local buildopt_repository=$1
-    local buildopt_directory
+    local buildopt_directory buildopt_relative
     while IFS= read -r -d '' buildopt_directory; do
         case "${buildopt_directory}" in
             */buildSrc/build | */build-logic/*/build | */build-logic/build) continue ;;
         esac
+        buildopt_relative=${buildopt_directory#"${buildopt_repository}/"}
+        # A source package or automation directory may legitimately be named
+        # "build". Only remove output roots with no tracked descendants.
+        if [[ -n $(git -C "${buildopt_repository}" ls-files -- \
+            "${buildopt_relative}" "${buildopt_relative}/**") ]]; then
+            continue
+        fi
         rm -rf -- "${buildopt_directory}"
     done < <(find "${buildopt_repository}" -type d -name build -prune -print0)
 }
