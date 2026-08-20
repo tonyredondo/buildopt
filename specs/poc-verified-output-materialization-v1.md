@@ -25,12 +25,18 @@ external paths, empty matches, unsafe parents, excessive file/byte counts and
 ambiguous ownership retain native Gradle.
 
 Before a candidate starts, BuildOpt verifies every manifest and blob. Missing
-outputs are written atomically. Existing matching bytes are reused; existing
-different bytes, a missing blob, a corrupt blob, a changed manifest, or any
-binding drift rejects materialization without overwriting the workspace. The
-ordinary invocation then executes the full native graph. Candidate completion
-still hashes the complete required-output set; drift also triggers full-graph
-recovery.
+outputs are written through temporary files and atomic renames. Bulk capture
+and restore synchronize each affected directory once rather than forcing a
+separate filesystem barrier for every small file. Existing matching bytes are
+reused; existing different bytes, a missing blob, a corrupt blob, a changed
+manifest, or any binding drift rejects materialization without overwriting the
+workspace. The ordinary invocation then executes the full native graph.
+Candidate completion still hashes the complete required-output set; drift also
+triggers full-graph recovery.
+
+This batched durability policy is scoped to the POC. A process or host crash
+may leave an unavailable payload, but the next manifest/blob verification must
+reject it and execute the full native graph; no unverified output is accepted.
 
 The initial POC stores payloads in repository-local private BuildOpt state. A
 qualified profile that needs these payloads is not remotely replayable until a

@@ -107,13 +107,16 @@ func captureOptimizeOutputMaterialization(
 			}
 		} else if !os.IsNotExist(readErr) {
 			return optimizeOutputMaterialization{}, fmt.Errorf("inspect materialization blob: %w", readErr)
-		} else if err := writePrivateAtomicFile(blobAbsolute, raw); err != nil {
+		} else if err := writeOptimizeMaterializationFile(blobAbsolute, raw, 0o600); err != nil {
 			return optimizeOutputMaterialization{}, fmt.Errorf("write materialization blob: %w", err)
 		}
 		entries = append(entries, optimizeOutputMaterializationEntry{
 			Path: relative, Blob: blobRelative, SHA256: sha,
 			Size: int64(len(raw)), Mode: uint32(info.Mode().Perm()),
 		})
+	}
+	if err := syncManagedDirectory(blobDirectory); err != nil {
+		return optimizeOutputMaterialization{}, fmt.Errorf("sync output materialization blobs: %w", err)
 	}
 	manifest := optimizeOutputMaterializationManifest{
 		SchemaVersion: optimizeMaterializationSchema,
@@ -157,6 +160,7 @@ func (run *optimizeRun) materializeCandidateOutputs() error {
 	if err != nil {
 		return err
 	}
+	directories := map[string]bool{}
 	for _, payload := range payloads {
 		destination := filepath.Join(run.invocation.repositoryRoot, filepath.FromSlash(payload.entry.Path))
 		if existing, readErr := os.ReadFile(destination); readErr == nil {
@@ -171,8 +175,19 @@ func (run *optimizeRun) materializeCandidateOutputs() error {
 		if err := ensureOptimizeMaterializationParent(run.invocation.repositoryRoot, payload.entry.Path); err != nil {
 			return err
 		}
-		if err := writeOptimizeMaterializedFile(destination, payload.raw, fs.FileMode(payload.entry.Mode)); err != nil {
+		if err := writeOptimizeMaterializationFile(destination, payload.raw, fs.FileMode(payload.entry.Mode)); err != nil {
 			return fmt.Errorf("materialize required output %s: %w", payload.entry.Path, err)
+		}
+		directories[filepath.Dir(destination)] = true
+	}
+	sortedDirectories := make([]string, 0, len(directories))
+	for directory := range directories {
+		sortedDirectories = append(sortedDirectories, directory)
+	}
+	sort.Strings(sortedDirectories)
+	for _, directory := range sortedDirectories {
+		if err := syncManagedDirectory(directory); err != nil {
+			return fmt.Errorf("sync materialized output directory: %w", err)
 		}
 	}
 	if len(manifest.Entries) != materialization.FileCount {
@@ -361,7 +376,11 @@ func ensureOptimizeMaterializationParent(repositoryRoot, relative string) error 
 	return nil
 }
 
-func writeOptimizeMaterializedFile(path string, raw []byte, mode fs.FileMode) error {
+// writeOptimizeMaterializationFile atomically publishes one verified payload.
+// Bulk capture and restore synchronize each affected directory once after all
+// renames; syncing every small file made clean-workspace materialization scale
+// with filesystem barrier latency rather than bytes.
+func writeOptimizeMaterializationFile(path string, raw []byte, mode fs.FileMode) error {
 	temporary, err := os.CreateTemp(filepath.Dir(path), ".buildopt-output-*")
 	if err != nil {
 		return err
@@ -376,15 +395,8 @@ func writeOptimizeMaterializedFile(path string, raw []byte, mode fs.FileMode) er
 		_ = temporary.Close()
 		return err
 	}
-	if err := temporary.Sync(); err != nil {
-		_ = temporary.Close()
-		return err
-	}
 	if err := temporary.Close(); err != nil {
 		return err
 	}
-	if err := replaceManagedFile(temporaryPath, path); err != nil {
-		return err
-	}
-	return syncManagedDirectory(filepath.Dir(path))
+	return replaceManagedFile(temporaryPath, path)
 }

@@ -1,7 +1,10 @@
 package launcher
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -84,6 +87,65 @@ func TestOptimizeOutputMaterializationRejectsStaleWorkspaceBytes(t *testing.T) {
 	raw, err := os.ReadFile(stale)
 	if err != nil || string(raw) != "stale-output\n" {
 		t.Fatalf("stale output changed during rejection: %q, %v", raw, err)
+	}
+}
+
+func TestOptimizeOutputMaterializationRestoresManySmallFilesExactly(t *testing.T) {
+	repository := t.TempDir()
+	stateRelative := ".buildopt/optimize/many-files"
+	stateDirectory := filepath.Join(repository, filepath.FromSlash(stateRelative))
+	if err := os.MkdirAll(stateDirectory, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	const fileCount = 2048
+	expected := sha256.New()
+	for index := range fileCount {
+		relative := filepath.Join("unchanged", "build", "classes", fmt.Sprintf("%04d.class", index))
+		raw := []byte(fmt.Sprintf("verified-output-%04d\n", index))
+		path := filepath.Join(repository, relative)
+		if err := os.MkdirAll(filepath.Dir(path), 0o700); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, raw, 0o644); err != nil {
+			t.Fatal(err)
+		}
+		_, _ = expected.Write(raw)
+	}
+	invocation := optimizeInvocation{
+		repositoryRoot: repository, stateDirectory: stateDirectory, stateRelative: stateRelative,
+	}
+	discovery := optimizeDiscoveryResult{
+		Status: optimizeDiscoveryComplete, RepositoryID: "example/many-files",
+		TargetRevision:   "0123456789abcdef0123456789abcdef01234567",
+		RequiredOutputs:  []string{"unchanged/build/classes/**"},
+		CandidateOutputs: []string{"changed/build/classes/**"},
+	}
+	materialization, err := captureOptimizeOutputMaterialization(invocation, discovery)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if materialization.FileCount != fileCount {
+		t.Fatalf("materialization file count = %d, want %d", materialization.FileCount, fileCount)
+	}
+	discovery.Materialization = materialization
+	if err := os.RemoveAll(filepath.Join(repository, "unchanged", "build")); err != nil {
+		t.Fatal(err)
+	}
+	run := &optimizeRun{invocation: invocation, previousState: &optimizeState{Discovery: discovery}}
+	if err := run.materializeCandidateOutputs(); err != nil {
+		t.Fatal(err)
+	}
+	actual := sha256.New()
+	for index := range fileCount {
+		relative := filepath.Join("unchanged", "build", "classes", fmt.Sprintf("%04d.class", index))
+		raw, err := os.ReadFile(filepath.Join(repository, relative))
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, _ = actual.Write(raw)
+	}
+	if hex.EncodeToString(actual.Sum(nil)) != hex.EncodeToString(expected.Sum(nil)) {
+		t.Fatal("many-file materialization changed output bytes")
 	}
 }
 
