@@ -171,16 +171,13 @@ buildopt_entrypoints() {
 
 buildopt_clean_subject_outputs() {
     local buildopt_repository=$1
-    local buildopt_build_directory
 
     [[ ${buildopt_repository} == "${buildopt_root}/"* && -d ${buildopt_repository}/.git ]] || {
         printf 'refusing to clean an unverified automatic breadth checkout: %s\n' \
             "${buildopt_repository}" >&2
         return 1
     }
-    while IFS= read -r -d '' buildopt_build_directory; do
-        rm -rf -- "${buildopt_build_directory}"
-    done < <(find "${buildopt_repository}" -type d -name build -prune -print0)
+    git -C "${buildopt_repository}" clean -qfdX -e .buildopt/
 }
 
 buildopt_capture_subject() {

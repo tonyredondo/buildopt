@@ -583,10 +583,11 @@ alternating pairs, fallback, means and break-even calculations with:
 
 The incremental rerun keeps the same frozen five repositories and workflows,
 but collects one baseline and eight alternating pairs across seventeen ordinary
-invocations. It deletes only Gradle `build` directories before each invocation
-so clean-workspace materialization is exercised while private Gradle and
-BuildOpt state remain available. Capture one repository at a time to make the
-long POC restartable, then validate the completed directory:
+invocations. It uses each checkout's Git ignore rules to remove ignored
+workspace outputs before each invocation, preserving tracked sources and
+`.buildopt`, so clean-workspace materialization is exercised while private
+Gradle and BuildOpt state remain available. Capture one repository at a time
+to make the long POC restartable, then validate the completed directory:
 
 ```bash
 ./dev/run-automatic-breadth-transfer-v2 /absolute/evidence/directory spring-framework

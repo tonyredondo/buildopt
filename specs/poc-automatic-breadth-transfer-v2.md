@@ -14,12 +14,13 @@ One exact installed BuildOpt binary receives seventeen ordinary invocations:
 one discovery baseline followed by eight balanced control/candidate pairs.
 There is no separate benchmark-only Gradle workflow.
 
-Before every invocation the harness deletes only Gradle `build` directories
-inside the verified temporary checkout. The private Gradle home and BuildOpt
-state remain available. This models a clean CI workspace while giving native
-Gradle and BuildOpt equal access to their caches. A candidate may omit work
-only when BuildOpt can restore the required unaffected outputs from its
-verified materialization store.
+Before every invocation the harness uses Git's ignore rules to delete ignored
+workspace outputs inside the verified temporary checkout, while explicitly
+preserving `.buildopt`. Tracked source paths are never inferred from directory
+names. The private Gradle home and BuildOpt state remain available. This models
+a clean CI workspace while giving native Gradle and BuildOpt equal access to
+their caches. A candidate may omit work only when BuildOpt can restore the
+required unaffected outputs from its verified materialization store.
 
 The declared workflows and Gradle options remain unchanged from V1. The
 Micronaut aggregate workflow may additionally use the generic partitioner to

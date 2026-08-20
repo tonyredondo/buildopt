@@ -42,7 +42,7 @@
     "sequentialSubjects": true,
     "freshPrivateGradleHomePerSubject": true,
     "dependencyAndWrapperPreparationOutsideEvidence": true,
-    "buildOutputsDeletedBeforeEveryInvocation": true,
+    "gitIgnoredWorkspaceOutputsDeletedBeforeEveryInvocation": true,
     "buildOptStatePreservedAcrossInvocations": true,
     "exactOutputsRequiredForAnyValueClaim": true,
     "fullGraphFallbackRequiredForAnyCandidate": true,
