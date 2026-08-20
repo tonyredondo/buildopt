@@ -19,6 +19,16 @@ func TestOptimizeIncrementalWallTimeIncludesWrapperWork(t *testing.T) {
 	if got := optimizeIncrementalWallTimeMS(run, 375); got != 1625 {
 		t.Fatalf("incremental wall time = %d, want 1625", got)
 	}
+	observation := optimizeIncrementalObservation{
+		DurationMS: 1625, IncrementalOverheadMS: 375,
+		Economics: optimizeIncrementalEconomics{
+			GradleMS: 1250, PreExecutionMS: 125, PostExecutionMS: 250,
+			MaterializationMS: 100, OutputVerificationMS: 200, OtherWrapperMS: 75,
+		},
+	}
+	if !validOptimizeIncrementalEconomics(observation) {
+		t.Fatal("end-to-end wall-time economics were rejected")
+	}
 }
 
 func TestExpectedOptimizeIncrementalArmAlternatesBalancedPairs(t *testing.T) {

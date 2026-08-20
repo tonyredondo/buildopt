@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	optimizeIncrementalSchema            = "buildopt.poc/incremental-learning/v1"
+	optimizeIncrementalSchema            = "buildopt.poc/incremental-learning/v2"
 	optimizeIncrementalCollecting        = "COLLECTING"
 	optimizeIncrementalComplete          = "COMPLETE"
 	optimizeIncrementalRetained          = "NATIVE_RETAINED"
@@ -783,7 +783,7 @@ func validOptimizeIncrementalEconomics(observation optimizeIncrementalObservatio
 		// is required to carry complete attribution by its experiment checker.
 		return true
 	}
-	if economics.GradleMS != observation.DurationMS || economics.PreExecutionMS < 0 ||
+	if economics.GradleMS+observation.IncrementalOverheadMS != observation.DurationMS || economics.PreExecutionMS < 0 ||
 		economics.PostExecutionMS < 0 || economics.MaterializationMS < 0 ||
 		economics.OutputVerificationMS < 0 || economics.DiscoveryMS < 0 || economics.OtherWrapperMS < 0 {
 		return false
