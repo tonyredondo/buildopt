@@ -150,28 +150,17 @@ func inspectOptimizeDiscoveryContext(repositoryRoot string, gradleArgs []string,
 }
 
 func optimizeRepositoryClean(repositoryRoot string) bool {
-	raw, err := gitOutput(repositoryRoot, "status", "--porcelain=v1", "-z", "--untracked-files=all")
-	if err != nil {
+	tracked, err := gitOutput(repositoryRoot, "status", "--porcelain=v1", "-z", "--untracked-files=no")
+	if err != nil || tracked != "" {
 		return false
 	}
-	for _, entry := range strings.Split(raw, "\x00") {
-		if entry == "" {
-			continue
-		}
-		if strings.HasPrefix(entry, "?? ") {
-			path := filepath.ToSlash(strings.TrimPrefix(entry, "?? "))
-			if optimizeGeneratedStatePath(path) {
-				continue
-			}
-		}
-		return false
-	}
-	return true
-}
-
-func optimizeGeneratedStatePath(path string) bool {
-	return path == ".buildopt" || strings.HasPrefix(path, ".buildopt/") ||
-		path == ".gradle" || strings.HasPrefix(path, ".gradle/")
+	untracked, err := gitOutput(
+		repositoryRoot,
+		"status", "--porcelain=v1", "-z", "--untracked-files=all", "--", ".",
+		":(exclude).buildopt", ":(exclude).buildopt/**",
+		":(exclude).gradle", ":(exclude).gradle/**",
+	)
+	return err == nil && untracked == ""
 }
 
 func splitOptimizeGradleWorkflow(arguments []string) ([]string, []string, string) {

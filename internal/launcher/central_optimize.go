@@ -550,12 +550,18 @@ func (integration *centralOptimizeIntegration) materializeEntryFiles(
 	}
 
 	// The materialized profile embeds target-specific changed paths and
-	// revalidation metadata. Keep each target revision in its own directory so
-	// concurrent or consecutive commits never replace one another's files.
+	// revalidation metadata. Bind the complete portfolio, family, and target
+	// revision into one directory digest: separate commits cannot replace one
+	// another's files, while the path remains usable on Windows.
+	materializedBinding := optimizeDigest(
+		"buildopt-central-materialization-v1",
+		integration.portfolio.manifestSHA256,
+		entry.FamilySHA256,
+		invocation.discovery.TargetRevision,
+	)
 	materializedRoot := filepath.ToSlash(filepath.Join(
 		invocation.connectionRelative, "materialized",
-		integration.portfolio.manifestSHA256, entry.FamilySHA256,
-		invocation.discovery.TargetRevision,
+		materializedBinding,
 	))
 	paths := centralOptimizePaths{
 		portfolio:      filepath.ToSlash(filepath.Join(materializedRoot, optimizePortfolioIndexFile)),

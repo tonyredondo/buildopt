@@ -55,9 +55,11 @@ old profile is universally valid. A build script, Wrapper, tool, workflow,
 unknown path, family, output or evidence change retains optimized native
 Gradle before the target process starts.
 
-Materialized profiles and their changed-path/revalidation metadata are stored
-under the exact target revision. Consecutive or concurrent commits therefore
-cannot overwrite or consume one another's invocation-specific state.
+Materialized profiles and their changed-path/revalidation metadata are
+cryptographically bound to the verified portfolio, structural family and exact
+target revision. The single combined directory digest keeps paths portable
+while preventing consecutive or concurrent commits from overwriting or
+consuming one another's invocation-specific state.
 
 Intervening non-structural commits are historical context, not part of the
 current event. They do not invalidate a profile merely because a documentation,

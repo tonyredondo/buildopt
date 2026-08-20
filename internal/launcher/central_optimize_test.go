@@ -128,8 +128,15 @@ func TestCentralOptimizeReusesQualifiedProfileAcrossUnrelatedCommitAndRejectsStr
 		t.Fatalf("materialized profile binding = %s/%v, want %s", selectedProfileSHA, err, run.selection.ProfileSHA256)
 	}
 	firstProfileFile := run.selection.ProfileFile
-	if !strings.Contains(filepath.ToSlash(firstProfileFile), "/"+currentRevision+"/") {
-		t.Fatalf("materialized profile %q is not isolated by target revision %s", firstProfileFile, currentRevision)
+	selectedFamilySHA := run.selection.FamilySHA256
+	firstMaterializedBinding := optimizeDigest(
+		"buildopt-central-materialization-v1",
+		portfolioManifestSHA,
+		selectedFamilySHA,
+		currentRevision,
+	)
+	if !strings.Contains(filepath.ToSlash(firstProfileFile), "/"+firstMaterializedBinding+"/") {
+		t.Fatalf("materialized profile %q does not carry binding %s", firstProfileFile, firstMaterializedBinding)
 	}
 	run.central = integration
 	run.childStarted = true
@@ -181,9 +188,16 @@ func TestCentralOptimizeReusesQualifiedProfileAcrossUnrelatedCommitAndRejectsStr
 		!strings.Contains(err.Error(), "current change family differs from remote qualification") {
 		t.Fatalf("cross-revision revalidation returned %v, want economic family rejection", err)
 	}
-	unrelatedProfileFile := filepath.ToSlash(filepath.Join(
-		filepath.Dir(filepath.Dir(filepath.FromSlash(firstProfileFile))),
+	unrelatedMaterializedBinding := optimizeDigest(
+		"buildopt-central-materialization-v1",
+		portfolioManifestSHA,
+		selectedFamilySHA,
 		unrelatedRevision,
+	)
+	unrelatedProfileFile := filepath.ToSlash(filepath.Join(
+		invocation.connectionRelative,
+		"materialized",
+		unrelatedMaterializedBinding,
 		"profile.json",
 	))
 	if impact = integration.prepareAutomaticReplay(run); impact != nil || run.selection.Selected ||
@@ -194,7 +208,7 @@ func TestCentralOptimizeReusesQualifiedProfileAcrossUnrelatedCommitAndRejectsStr
 		t.Fatalf("unrelated owner was not rejected economically: impact=%+v selection=%+v prequalification=%+v central=%+v", impact, run.selection, run.prequalification, integration.result)
 	}
 	if unrelatedProfileFile == firstProfileFile ||
-		!strings.Contains(unrelatedProfileFile, "/"+unrelatedRevision+"/") {
+		!strings.Contains(unrelatedProfileFile, "/"+unrelatedMaterializedBinding+"/") {
 		t.Fatalf("unrelated revision materialization = %q, first = %q", unrelatedProfileFile, firstProfileFile)
 	}
 	if _, err := os.Stat(filepath.Join(repository, filepath.FromSlash(unrelatedProfileFile))); err != nil {

@@ -195,16 +195,44 @@ func TestOptimizeGitHubBaseRejectsTrailingJSON(t *testing.T) {
 	}
 }
 
-func TestOptimizeGeneratedStatePath(t *testing.T) {
-	for _, path := range []string{".buildopt/state.json", ".gradle/9.6.1/cache.bin"} {
-		if !optimizeGeneratedStatePath(path) {
-			t.Fatalf("generated state path %q was rejected", path)
+func TestOptimizeRepositoryCleanExcludesOnlyUntrackedGeneratedState(t *testing.T) {
+	repository := t.TempDir()
+	runOptimizeGit(t, repository, "init", "-b", "main")
+	runOptimizeGit(t, repository, "config", "user.name", "BuildOpt Test")
+	runOptimizeGit(t, repository, "config", "user.email", "buildopt@example.invalid")
+	write := func(relative, contents string) {
+		path := filepath.Join(repository, filepath.FromSlash(relative))
+		if err := os.MkdirAll(filepath.Dir(path), 0o700); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(contents), 0o600); err != nil {
+			t.Fatal(err)
 		}
 	}
-	for _, path := range []string{"src/New.java", "gradle/init.gradle", "build.gradle"} {
-		if optimizeGeneratedStatePath(path) {
-			t.Fatalf("customer path %q was accepted as generated state", path)
-		}
+	write("source.txt", "base\n")
+	write(".buildopt/tracked.json", "tracked\n")
+	runOptimizeGit(t, repository, "add", "-f", "source.txt", ".buildopt/tracked.json")
+	runOptimizeGit(t, repository, "commit", "-m", "base")
+	write(".buildopt/central/v1/materialized/state.json", "generated\n")
+	write(".gradle/9.6.1/cache.bin", "generated\n")
+	if !optimizeRepositoryClean(repository) {
+		t.Fatal("untracked generated state made the repository dirty")
+	}
+	write("source.txt", "dirty\n")
+	if optimizeRepositoryClean(repository) {
+		t.Fatal("tracked source change was ignored")
+	}
+	runOptimizeGit(t, repository, "restore", "source.txt")
+	write("new-source.txt", "untracked\n")
+	if optimizeRepositoryClean(repository) {
+		t.Fatal("untracked customer source was ignored")
+	}
+	if err := os.Remove(filepath.Join(repository, "new-source.txt")); err != nil {
+		t.Fatal(err)
+	}
+	write(".buildopt/tracked.json", "dirty\n")
+	if optimizeRepositoryClean(repository) {
+		t.Fatal("tracked BuildOpt path was ignored")
 	}
 }
 
