@@ -1,0 +1,234 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage='usage: dev/run-aggregate-workflow-partition BUILDOPT OUTPUT_JSON'
+if [[ $# -ne 2 ]]; then
+  printf '%s\n' "$usage" >&2
+  exit 64
+fi
+
+repository_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt=$1
+output=$2
+if [[ ! -x $buildopt ]]; then
+  printf 'buildopt executable is not executable: %s\n' "$buildopt" >&2
+  exit 66
+fi
+buildopt=$(cd "$(dirname "$buildopt")" && printf '%s/%s\n' "$PWD" "$(basename "$buildopt")")
+if [[ $output != /* ]]; then
+  output="$PWD/$output"
+fi
+
+temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-aggregate-partition.XXXXXX")
+cleanup() {
+  rm -rf -- "$temporary"
+}
+trap cleanup EXIT
+
+fixture="$temporary/repository"
+gradle_home="$temporary/gradle-home"
+mkdir -p "$fixture/core/src/main/java/example" "$gradle_home/wrapper"
+cp -a "$repository_root/gradlew" "$repository_root/gradle" "$fixture/"
+cp -a "$repository_root/.tools/gradle-user-home/wrapper/dists" "$gradle_home/wrapper/"
+cat >"$fixture/.gitignore" <<'EOF'
+.gradle/
+.buildopt/
+**/build/
+EOF
+
+cat >"$fixture/settings.gradle" <<'EOF'
+rootProject.name = 'buildopt-aggregate-partition'
+include 'core'
+EOF
+for index in $(seq -w 1 65); do
+  printf "include 'consumer-%s'\n" "$index" >>"$fixture/settings.gradle"
+done
+cat >"$fixture/build.gradle" <<'EOF'
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
+
+subprojects {
+    apply plugin: 'java'
+    group = 'dev.buildopt.aggregate'
+    version = '1.0'
+    tasks.withType(AbstractArchiveTask).configureEach {
+        preserveFileTimestamps = false
+        reproducibleFileOrder = true
+    }
+    if (name.startsWith('consumer-')) {
+        dependencies {
+            implementation project(':core')
+        }
+    }
+}
+
+tasks.register('assemble') {
+    group = 'build'
+    dependsOn subprojects.collect { it.tasks.named('assemble') }
+}
+EOF
+cat >"$fixture/core/src/main/java/example/Api.java" <<'EOF'
+package example;
+
+public final class Api {
+    private Api() {}
+    public static String value() { return "base"; }
+}
+EOF
+for index in $(seq -w 1 65); do
+  project="consumer-$index"
+  mkdir -p "$fixture/$project/src/main/java/example"
+  cat >"$fixture/$project/src/main/java/example/Consumer.java" <<EOF
+package example;
+
+public final class Consumer {
+    private Consumer() {}
+    public static String value() { return Api.value() + "-$index"; }
+}
+EOF
+done
+
+git -C "$fixture" init -b main >/dev/null
+git -C "$fixture" config user.name 'BuildOpt Aggregate Fixture'
+git -C "$fixture" config user.email 'buildopt-aggregate@example.invalid'
+git -C "$fixture" config commit.gpgsign false
+git -C "$fixture" remote add origin https://github.com/buildopt-poc/aggregate-workflow-partition-fixture.git
+git -C "$fixture" add .
+git -C "$fixture" commit -m base >/dev/null
+git -C "$fixture" switch -c feature >/dev/null
+git -C "$fixture" config branch.feature.remote .
+git -C "$fixture" config branch.feature.merge refs/heads/main
+sed -i 's/return "base"/return "target"/' "$fixture/core/src/main/java/example/Api.java"
+git -C "$fixture" add core/src/main/java/example/Api.java
+git -C "$fixture" commit -m change >/dev/null
+
+state_dir='.buildopt/aggregate-partition/v1'
+run_build() {
+  local sequence=$1
+  if ! (
+    cd "$fixture"
+    env GRADLE_USER_HOME="$gradle_home" "$buildopt" optimize \
+      --state-dir "$state_dir" -- --no-daemon assemble
+  ) >"$temporary/invocation-$sequence.log" 2>&1; then
+    printf 'BuildOpt invocation %s failed:\n' "$sequence" >&2
+    tail -n 160 "$temporary/invocation-$sequence.log" >&2
+    return 1
+  fi
+}
+
+clean_build_outputs() {
+  find "$fixture" -mindepth 2 -maxdepth 2 -type d -name build -exec rm -rf -- {} +
+}
+
+output_manifest() {
+  (
+    cd "$fixture"
+    find core consumer-* -path '*/build/libs/*.jar' -type f -print |
+      LC_ALL=C sort |
+      while IFS= read -r artifact; do
+        sha256sum "$artifact"
+      done
+  )
+}
+
+run_build 1
+baseline_manifest=$(output_manifest)
+baseline_count=$(wc -l <<<"$baseline_manifest")
+baseline_sha=$(sha256sum <<<"$baseline_manifest" | awk '{print $1}')
+if [[ $baseline_count -ne 66 ]]; then
+  printf 'baseline produced %s JARs, expected 66\n' "$baseline_count" >&2
+  exit 1
+fi
+
+run_build 2
+state="$fixture/$state_dir/state.json"
+legacy_entrypoints=$(jq -r '.discovery.aggregatePartition.legacyCandidateEntrypointCount // -1' "$state")
+candidate_entrypoints=$(jq -r '.discovery.aggregatePartition.candidateEntrypointCount // -1' "$state")
+materialized_files=$(jq -r '.discovery.materialization.fileCount // -1' "$state")
+if [[ $legacy_entrypoints != 66 || $candidate_entrypoints != 1 || $materialized_files != 65 ]]; then
+  printf 'automatic partition did not reduce the broad aggregate safely\n' >&2
+  jq '.discovery | {reason,candidateEntrypoints,aggregatePartition,materialization}' "$state" >&2
+  exit 1
+fi
+
+clean_build_outputs
+run_build 3
+candidate_manifest=$(output_manifest)
+candidate_count=$(wc -l <<<"$candidate_manifest")
+candidate_sha=$(sha256sum <<<"$candidate_manifest" | awk '{print $1}')
+if [[ $candidate_count -ne 66 || $candidate_sha != "$baseline_sha" ]]; then
+  printf 'partitioned clean-workspace candidate changed the aggregate output\n' >&2
+  exit 1
+fi
+if ! grep -q 'incremental candidate changed-projects selected' "$temporary/invocation-3.log" ||
+  ! grep -Eq '^> Task :core:(assemble|jar)( |$)' "$temporary/invocation-3.log" ||
+  grep -Eq '^> Task :consumer-[0-9]+:(assemble|jar|compileJava)( |$)' "$temporary/invocation-3.log"; then
+  printf 'partitioned candidate did not rebuild only the direct change owner\n' >&2
+  tail -n 200 "$temporary/invocation-3.log" >&2
+  exit 1
+fi
+
+result="$fixture/$state_dir/result.json"
+mkdir -p "$(dirname "$output")"
+captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+buildopt_revision=$(git -C "$repository_root" rev-parse HEAD)
+buildopt_sha=$(sha256sum "$buildopt" | awk '{print $1}')
+cpu_count=$(getconf _NPROCESSORS_ONLN)
+jq -n \
+  --arg capturedAt "$captured_at" \
+  --arg buildoptRevision "$buildopt_revision" \
+  --arg buildoptExecutableSha256 "$buildopt_sha" \
+  --arg baselineOutputSha256 "$baseline_sha" \
+  --arg candidateOutputSha256 "$candidate_sha" \
+  --argjson cpuCount "$cpu_count" \
+  --argjson baselineOutputCount "$baseline_count" \
+  --argjson candidateOutputCount "$candidate_count" \
+  --slurpfile result "$result" \
+  --slurpfile state "$state" \
+  '{
+    schemaVersion: "buildopt.poc/aggregate-workflow-partition-evaluation/v1",
+    workItem: "POC-AGGREGATE-WORKFLOW-PARTITION-001",
+    capturedAt: $capturedAt,
+    buildoptRevision: $buildoptRevision,
+    buildoptExecutableSha256: $buildoptExecutableSha256,
+    runner: {
+      platform: "linux-amd64",
+      cpuCount: $cpuCount,
+      evidenceClass: "BOUNDED_LOCAL_POC"
+    },
+    workload: {
+      dsl: "GROOVY",
+      workflow: ["--no-daemon", "assemble"],
+      projects: 66,
+      directChangeOwners: 1,
+      transitiveAffectedProjects: 66,
+      invocations: 3,
+      candidateWorkspaceCleaned: true,
+      cacheOpportunityEqual: true
+    },
+    partition: $state[0].discovery.aggregatePartition,
+    materialization: $state[0].discovery.materialization,
+    graph: $state[0].discovery.graph,
+    candidateEntrypoints: $state[0].discovery.candidateEntrypoints,
+    outputs: {
+      baseline: {sha256: $baselineOutputSha256, fileCount: $baselineOutputCount},
+      cleanCandidate: {sha256: $candidateOutputSha256, fileCount: $candidateOutputCount},
+      identical: ($baselineOutputSha256 == $candidateOutputSha256)
+    },
+    execution: {
+      candidateSelected: ($result[0].execution.mode == "INCREMENTAL_CANDIDATE"),
+      exitCode: $result[0].execution.exitCode,
+      consumerProducerExecuted: false
+    },
+    assertions: {
+      taskCapRaised: false,
+      repositorySpecificRuleAdded: false,
+      crossRevisionAbiAssumed: false,
+      exactRevisionMaterializationRequired: true,
+      ambiguousOrOversizedDirectOwnersRetainNativeByUnitTest: true,
+      productionAuthorized: false,
+      testOptimizationModified: false
+    },
+    conclusion: "AGGREGATE_WORKFLOW_PARTITION_POC_COMPLETE"
+  }' >"$output"
+
+printf 'aggregate workflow partition evidence: %s\n' "$output"

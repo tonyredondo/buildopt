@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage='usage: dev/check-aggregate-workflow-partition [EVIDENCE_JSON]'
+if [[ $# -gt 1 ]]; then
+  printf '%s\n' "$usage" >&2
+  exit 64
+fi
+
+repository_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
+evidence=${1:-$repository_root/benchmarks/results/poc-aggregate-workflow-partition-v1/summary.json}
+if [[ ! -f $evidence ]]; then
+  printf 'aggregate workflow partition evidence is missing: %s\n' "$evidence" >&2
+  exit 1
+fi
+
+jq -e '
+  .schemaVersion == "buildopt.poc/aggregate-workflow-partition-evaluation/v1" and
+  .workItem == "POC-AGGREGATE-WORKFLOW-PARTITION-001" and
+  (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+  (.buildoptExecutableSha256 | test("^[0-9a-f]{64}$")) and
+  .runner.platform == "linux-amd64" and
+  .runner.cpuCount >= 1 and
+  .runner.evidenceClass == "BOUNDED_LOCAL_POC" and
+  .workload.dsl == "GROOVY" and
+  .workload.workflow == ["--no-daemon", "assemble"] and
+  .workload.projects == 66 and
+  .workload.directChangeOwners == 1 and
+  .workload.transitiveAffectedProjects == 66 and
+  .workload.invocations == 3 and
+  .workload.candidateWorkspaceCleaned and
+  .workload.cacheOpportunityEqual and
+  .partition.schemaVersion == "buildopt.poc/aggregate-workflow-partition/v1" and
+  .partition.status == "COMPLETE" and
+  .partition.reason == "REVISION_BOUND_OUTPUT_PARTITION" and
+  .partition.abiPolicy == "EXACT_REVISION_OUTPUTS_NO_CROSS_REVISION_ABI_INFERENCE" and
+  .partition.rebuildProjects == [":core"] and
+  (.partition.affectedProjects | length) == 66 and
+  (.partition.materializedProjects | length) == 65 and
+  .partition.legacyCandidateEntrypointCount == 66 and
+  .partition.candidateEntrypointCount == 1 and
+  .partition.candidateOutputCount == 1 and
+  .partition.materializedOutputCount == 65 and
+  (.partition.taskGroups | length) == 1 and
+  .partition.taskGroups[0].selector == "assemble" and
+  .partition.taskGroups[0].variant == "MAIN_ARTIFACTS" and
+  .partition.taskGroups[0].taskContract == "GRADLE_OUTPUT_PRODUCER_LIFECYCLE_V1" and
+  .partition.taskGroups[0].entrypoints == [":core:assemble"] and
+  .candidateEntrypoints == [":core:assemble"] and
+  .materialization.status == "CAPTURED" and
+  .materialization.reason == "VERIFIED_UNAFFECTED_OUTPUTS_CAPTURED" and
+  .materialization.fileCount == 65 and
+  .materialization.byteCount > 0 and
+  .outputs.baseline.fileCount == 66 and
+  .outputs.cleanCandidate.fileCount == 66 and
+  .outputs.identical and
+  .outputs.baseline.sha256 == .outputs.cleanCandidate.sha256 and
+  .execution.candidateSelected and
+  .execution.exitCode == 0 and
+  (.execution.consumerProducerExecuted == false) and
+  (.assertions.taskCapRaised == false) and
+  (.assertions.repositorySpecificRuleAdded == false) and
+  (.assertions.crossRevisionAbiAssumed == false) and
+  .assertions.exactRevisionMaterializationRequired and
+  .assertions.ambiguousOrOversizedDirectOwnersRetainNativeByUnitTest and
+  (.assertions.productionAuthorized == false) and
+  (.assertions.testOptimizationModified == false) and
+  .conclusion == "AGGREGATE_WORKFLOW_PARTITION_POC_COMPLETE"
+' "$evidence" >/dev/null
+
+"$repository_root/dev/run" --toolchain go -- go test ./internal/launcher \
+  -run 'TestOptimizeAggregateWorkflowPartition|TestOptimizeOutputMaterialization' \
+  -count=1
+
+printf 'aggregate workflow partition contract: PASS (%s)\n' "$evidence"

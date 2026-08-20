@@ -483,6 +483,9 @@ func proposalOutputOwnerEntrypointsForProjects(
 			continue
 		}
 		for _, selector := range selectors {
+			if !proposalOwnerHasSelectorOutput(report, owner, selector) {
+				continue
+			}
 			if owner == ":" {
 				entrypoints = append(entrypoints, ":"+selector)
 			} else {
@@ -492,6 +495,24 @@ func proposalOutputOwnerEntrypointsForProjects(
 	}
 	sort.Strings(entrypoints)
 	return entrypoints
+}
+
+func proposalOwnerHasSelectorOutput(report outputContractReport, owner, selector string) bool {
+	for _, candidate := range report.CandidateOutputs {
+		if len(candidate.OwnerProjects) != 1 || candidate.OwnerProjects[0] != owner || candidate.FileCount < 1 {
+			continue
+		}
+		for _, task := range candidate.ProducerTasks {
+			name := task
+			if index := strings.LastIndex(task, ":"); index >= 0 {
+				name = task[index+1:]
+			}
+			if name == selector || optimizeLifecycleOutput(selector, candidate.Path) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func nativeProfileProposal(config structuralProposalConfig, targetRevision string, changedPaths []string) profileProposalReport {

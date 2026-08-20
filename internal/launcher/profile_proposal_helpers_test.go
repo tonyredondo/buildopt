@@ -56,10 +56,16 @@ func TestProposalTerminalSelectorsRejectsMalformedEntrypoints(t *testing.T) {
 }
 
 func TestProposalOutputOwnerProjectsUsesReviewedOutputOwners(t *testing.T) {
-	report := outputContractReport{Validations: []outputContractValidation{
-		{Pattern: "service-a/build/libs/*.jar", Status: "VALIDATED", OwnerProjects: []string{":service-a"}},
-		{Pattern: "service-b/build/libs/*.jar", Status: "VALIDATED", OwnerProjects: []string{":service-b", ":service-a"}},
-	}}
+	report := outputContractReport{
+		CandidateOutputs: []outputContractCandidate{
+			{Pattern: "service-a/build/libs/a.jar", Path: "service-a/build/libs/a.jar", FileCount: 1, OwnerProjects: []string{":service-a"}, ProducerTasks: []string{":service-a:jar"}},
+			{Pattern: "service-b/build/libs/b.jar", Path: "service-b/build/libs/b.jar", FileCount: 1, OwnerProjects: []string{":service-b"}, ProducerTasks: []string{":service-b:jar"}},
+		},
+		Validations: []outputContractValidation{
+			{Pattern: "service-a/build/libs/*.jar", Status: "VALIDATED", OwnerProjects: []string{":service-a"}},
+			{Pattern: "service-b/build/libs/*.jar", Status: "VALIDATED", OwnerProjects: []string{":service-b", ":service-a"}},
+		},
+	}
 	want := []string{":service-a", ":service-b"}
 	if got := proposalOutputOwnerProjects(report); !reflect.DeepEqual(got, want) {
 		t.Fatalf("proposalOutputOwnerProjects = %v, want %v", got, want)

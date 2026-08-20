@@ -298,6 +298,8 @@ buildopt_required_files=(
     "dev/run-incremental-learning"
     "dev/check-verified-output-materialization"
     "dev/run-verified-output-materialization"
+    "dev/check-aggregate-workflow-partition"
+    "dev/run-aggregate-workflow-partition"
     "dev/central-two-machine-client"
     "dev/central-two-machine-control/main.go"
     "dev/run-poc-central-two-machine"

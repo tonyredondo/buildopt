@@ -105,6 +105,109 @@ func TestOptimizeAffectedProjectsAndRequiredOutputs(t *testing.T) {
 	}
 }
 
+func TestOptimizeAggregateWorkflowPartitionBoundsBroadAssemble(t *testing.T) {
+	const projectCount = maximumStructuralAlternativeEntrypoints + 2
+	report := outputContractReport{
+		CandidateOutputs: []outputContractCandidate{},
+		Validations:      []outputContractValidation{},
+	}
+	affected := map[string]bool{}
+	for index := 0; index < projectCount; index++ {
+		project := ":consumer-" + strconv.Itoa(index)
+		if index == 0 {
+			project = ":core"
+		}
+		path := "consumer-" + strconv.Itoa(index) + "/build/libs/output.jar"
+		if project == ":core" {
+			path = "core/build/libs/core.jar"
+		}
+		report.CandidateOutputs = append(report.CandidateOutputs, outputContractCandidate{
+			Pattern: path, Path: path, Kind: "FILE", FileCount: 1,
+			OwnerProjects: []string{project}, ProducerTasks: []string{project + ":jar"},
+		})
+		report.Validations = append(report.Validations, outputContractValidation{
+			Pattern: path, Status: "VALID", MatchedFiles: 1,
+			OwnerProjects: []string{project}, ProducerTasks: []string{project + ":jar"},
+		})
+		affected[project] = true
+	}
+	workflowPatterns := optimizeRequiredOutputPatterns(report.CandidateOutputs, []string{"assemble"}, nil)
+	partition, candidatePatterns, candidateOwners, reason := optimizeAggregateWorkflowPartition(
+		report, []string{"assemble"}, workflowPatterns, []string{":core"}, affected,
+	)
+	if reason != "" || partition.Status != optimizeDiscoveryComplete ||
+		partition.Reason != "REVISION_BOUND_OUTPUT_PARTITION" ||
+		partition.LegacyCandidateEntrypointCount != projectCount ||
+		partition.CandidateEntrypointCount != 1 || partition.CandidateOutputCount != 1 ||
+		partition.MaterializedOutputCount != projectCount-1 ||
+		!reflect.DeepEqual(partition.RebuildProjects, []string{":core"}) ||
+		len(partition.MaterializedProjects) != projectCount-1 ||
+		len(partition.TaskGroups) != 1 || partition.TaskGroups[0].Variant != "MAIN_ARTIFACTS" ||
+		!reflect.DeepEqual(partition.TaskGroups[0].Entrypoints, []string{":core:assemble"}) ||
+		!reflect.DeepEqual(candidatePatterns, []string{"core/build/libs/core.jar"}) ||
+		!candidateOwners[":core"] {
+		t.Fatalf("aggregate partition = %+v, patterns=%v owners=%v reason=%q", partition, candidatePatterns, candidateOwners, reason)
+	}
+}
+
+func TestOptimizeAggregateWorkflowPartitionUsesGenericVariants(t *testing.T) {
+	tests := []struct {
+		selector, variant, changedPath, otherPath, producer string
+	}{
+		{"assemble", "MAIN_ARTIFACTS", "core/build/libs/core.jar", "consumer/build/libs/consumer.jar", "jar"},
+		{"classes", "MAIN_CLASSES", "core/build/classes/java/main/Api.class", "consumer/build/classes/java/main/Consumer.class", "compileJava"},
+		{"testClasses", "TEST_CLASSES", "core/build/classes/java/test/ApiTest.class", "consumer/build/classes/java/test/ConsumerTest.class", "compileTestJava"},
+	}
+	for _, test := range tests {
+		t.Run(test.selector, func(t *testing.T) {
+			report := outputContractReport{
+				CandidateOutputs: []outputContractCandidate{
+					{Pattern: test.changedPath, Path: test.changedPath, Kind: "FILE", FileCount: 1, OwnerProjects: []string{":core"}, ProducerTasks: []string{":core:" + test.producer}},
+					{Pattern: test.otherPath, Path: test.otherPath, Kind: "FILE", FileCount: 1, OwnerProjects: []string{":consumer"}, ProducerTasks: []string{":consumer:" + test.producer}},
+				},
+				Validations: []outputContractValidation{
+					{Pattern: test.changedPath, Status: "VALID", MatchedFiles: 1, OwnerProjects: []string{":core"}, ProducerTasks: []string{":core:" + test.producer}},
+					{Pattern: test.otherPath, Status: "VALID", MatchedFiles: 1, OwnerProjects: []string{":consumer"}, ProducerTasks: []string{":consumer:" + test.producer}},
+				},
+			}
+			workflow := optimizeRequiredOutputPatterns(report.CandidateOutputs, []string{test.selector}, nil)
+			partition, patterns, _, reason := optimizeAggregateWorkflowPartition(
+				report, []string{test.selector}, workflow, []string{":core"}, map[string]bool{":core": true, ":consumer": true},
+			)
+			if reason != "" || len(patterns) != 1 || patterns[0] != test.changedPath ||
+				len(partition.TaskGroups) != 1 || partition.TaskGroups[0].Variant != test.variant {
+				t.Fatalf("partition = %+v, patterns=%v reason=%q", partition, patterns, reason)
+			}
+		})
+	}
+}
+
+func TestOptimizeAggregateWorkflowPartitionRetainsNativeForTooManyChangedOwners(t *testing.T) {
+	report := outputContractReport{CandidateOutputs: []outputContractCandidate{}, Validations: []outputContractValidation{}}
+	changed := make([]string, 0, maximumStructuralAlternativeEntrypoints+1)
+	affected := map[string]bool{}
+	for index := 0; index <= maximumStructuralAlternativeEntrypoints; index++ {
+		project := ":project-" + strconv.Itoa(index)
+		path := "project-" + strconv.Itoa(index) + "/build/libs/output.jar"
+		changed = append(changed, project)
+		affected[project] = true
+		report.CandidateOutputs = append(report.CandidateOutputs, outputContractCandidate{
+			Pattern: path, Path: path, Kind: "FILE", FileCount: 1,
+			OwnerProjects: []string{project}, ProducerTasks: []string{project + ":jar"},
+		})
+		report.Validations = append(report.Validations, outputContractValidation{
+			Pattern: path, Status: "VALID", MatchedFiles: 1,
+			OwnerProjects: []string{project}, ProducerTasks: []string{project + ":jar"},
+		})
+	}
+	workflow := optimizeRequiredOutputPatterns(report.CandidateOutputs, []string{"assemble"}, nil)
+	partition, patterns, _, reason := optimizeAggregateWorkflowPartition(report, []string{"assemble"}, workflow, changed, affected)
+	if reason != "CANDIDATE_TASK_SET_TOO_LARGE" || patterns != nil ||
+		partition.Status != optimizeDiscoveryRetained || partition.CandidateEntrypointCount != len(changed) {
+		t.Fatalf("oversized partition = %+v, patterns=%v reason=%q", partition, patterns, reason)
+	}
+}
+
 func TestOptimizeChangeFamilyUsesOnlyGraphAndChangedPaths(t *testing.T) {
 	snapshot := buildimpact.DiscoverySnapshot{Projects: []buildimpact.DiscoveredProject{
 		{Path: ":core"},

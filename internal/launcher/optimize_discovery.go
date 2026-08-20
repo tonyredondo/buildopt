@@ -49,6 +49,31 @@ type optimizeDiscoveryGraph struct {
 	OmittedProjects  int `json:"omittedProjects"`
 }
 
+const optimizeAggregatePartitionSchema = "buildopt.poc/aggregate-workflow-partition/v1"
+
+type optimizeAggregateTaskGroup struct {
+	Selector       string   `json:"selector"`
+	Variant        string   `json:"variant"`
+	TaskContract   string   `json:"taskContract"`
+	Entrypoints    []string `json:"entrypoints"`
+	OutputPatterns []string `json:"outputPatterns"`
+}
+
+type optimizeAggregatePartition struct {
+	SchemaVersion                  string                       `json:"schemaVersion"`
+	Status                         string                       `json:"status"`
+	Reason                         string                       `json:"reason"`
+	ABIPolicy                      string                       `json:"abiPolicy"`
+	RebuildProjects                []string                     `json:"rebuildProjects"`
+	AffectedProjects               []string                     `json:"affectedProjects"`
+	MaterializedProjects           []string                     `json:"materializedProjects"`
+	LegacyCandidateEntrypointCount int                          `json:"legacyCandidateEntrypointCount"`
+	CandidateEntrypointCount       int                          `json:"candidateEntrypointCount"`
+	CandidateOutputCount           int                          `json:"candidateOutputCount"`
+	MaterializedOutputCount        int                          `json:"materializedOutputCount"`
+	TaskGroups                     []optimizeAggregateTaskGroup `json:"taskGroups"`
+}
+
 type optimizeDiscoveryResult struct {
 	Status               string                        `json:"status"`
 	Reason               string                        `json:"reason"`
@@ -62,6 +87,7 @@ type optimizeDiscoveryResult struct {
 	RequiredOutputs      []string                      `json:"requiredOutputs"`
 	CandidateOutputs     []string                      `json:"candidateOutputs"`
 	CandidateEntrypoints []string                      `json:"candidateEntrypoints"`
+	AggregatePartition   *optimizeAggregatePartition   `json:"aggregatePartition,omitempty"`
 	Materialization      optimizeOutputMaterialization `json:"materialization"`
 	ChangeFamily         string                        `json:"changeFamily"`
 	ChangedProjects      []string                      `json:"changedProjects"`
@@ -490,10 +516,20 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 	affected := optimizeAffectedProjects(snapshot, changedOwners)
 	result.ChangeFamily = optimizeChangeFamily(snapshot, discovery.changedPaths, changedOwners)
 	result.ChangedProjects = append([]string(nil), changedOwners...)
-	candidatePatterns := optimizeRequiredOutputPatterns(outputReport.CandidateOutputs, discovery.Entrypoints, affected)
 	workflowPatterns := optimizeRequiredOutputPatterns(outputReport.CandidateOutputs, discovery.Entrypoints, nil)
-	if len(candidatePatterns) == 0 || len(workflowPatterns) == 0 {
+	partition, candidatePatterns, candidateOwners, partitionReason := optimizeAggregateWorkflowPartition(
+		outputReport,
+		discovery.Entrypoints,
+		workflowPatterns,
+		changedOwners,
+		affected,
+	)
+	result.AggregatePartition = partition
+	if partitionReason != "" || len(candidatePatterns) == 0 || len(workflowPatterns) == 0 {
 		result.Reason = "OUTPUT_SEMANTICS_AMBIGUOUS"
+		if partitionReason != "" {
+			result.Reason = partitionReason
+		}
 		return result, optimizeDiscoveryDocuments{}, nil
 	}
 
@@ -512,7 +548,7 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		proposalOutput:       filepath.Join(directory, "proposal.json"),
 		changeSource:         "GIT_DIFF_BASE_TO_HEAD", timeout: invocation.calibrationBudget,
 		observedOutputSnapshot: &outputReport.snapshot,
-		candidateOwnerProjects: affected,
+		candidateOwnerProjects: candidateOwners,
 	}
 	report, documents, err := prepareStructuralProfileProposal(ctx, config)
 	if err != nil {
@@ -592,6 +628,172 @@ func optimizeAffectedProjects(snapshot buildimpact.DiscoverySnapshot, owners []s
 		}
 	}
 	return affected
+}
+
+// optimizeAggregateWorkflowPartition separates outputs that must be rebuilt
+// from outputs that can be restored from the exact full-graph observation of
+// the same repository revision. It never assumes ABI compatibility across
+// commits: direct change owners are rebuilt and every omitted output remains
+// bound to the revision-specific materialization manifest.
+func optimizeAggregateWorkflowPartition(
+	report outputContractReport,
+	entrypoints, workflowPatterns, changedOwners []string,
+	affected map[string]bool,
+) (*optimizeAggregatePartition, []string, map[string]bool, string) {
+	partition := &optimizeAggregatePartition{
+		SchemaVersion: optimizeAggregatePartitionSchema,
+		Status:        optimizeDiscoveryRetained,
+		Reason:        "AGGREGATE_PARTITION_UNAVAILABLE",
+		ABIPolicy:     "EXACT_REVISION_OUTPUTS_NO_CROSS_REVISION_ABI_INFERENCE",
+		TaskGroups:    []optimizeAggregateTaskGroup{},
+	}
+	if len(changedOwners) == 0 || len(workflowPatterns) == 0 || !uniqueMeasurementStrings(changedOwners) {
+		return partition, nil, nil, partition.Reason
+	}
+	candidateOwners := make(map[string]bool, len(changedOwners))
+	for _, owner := range changedOwners {
+		candidateOwners[owner] = true
+	}
+	partition.RebuildProjects = append([]string(nil), changedOwners...)
+	sort.Strings(partition.RebuildProjects)
+	for project := range affected {
+		partition.AffectedProjects = append(partition.AffectedProjects, project)
+	}
+	sort.Strings(partition.AffectedProjects)
+
+	selectors, err := proposalTerminalSelectors(entrypoints)
+	if err != nil {
+		partition.Reason = "AGGREGATE_ENTRYPOINTS_AMBIGUOUS"
+		return partition, nil, candidateOwners, partition.Reason
+	}
+	candidatePatterns := optimizeRequiredOutputPatterns(report.CandidateOutputs, entrypoints, candidateOwners)
+	candidateEntrypoints := optimizeObservedOutputEntrypoints(report, selectors, candidateOwners)
+	partition.LegacyCandidateEntrypointCount = len(optimizeObservedOutputEntrypoints(report, selectors, affected))
+	partition.CandidateEntrypointCount = len(candidateEntrypoints)
+	partition.CandidateOutputCount = len(candidatePatterns)
+	if len(candidatePatterns) == 0 || len(candidateEntrypoints) == 0 {
+		partition.Reason = "AGGREGATE_DIRECT_OUTPUTS_MISSING"
+		return partition, nil, candidateOwners, partition.Reason
+	}
+	if len(candidateEntrypoints) > maximumStructuralAlternativeEntrypoints {
+		partition.Reason = "CANDIDATE_TASK_SET_TOO_LARGE"
+		return partition, nil, candidateOwners, partition.Reason
+	}
+
+	workflowSet := make(map[string]bool, len(workflowPatterns))
+	for _, pattern := range workflowPatterns {
+		workflowSet[pattern] = true
+	}
+	candidateSet := make(map[string]bool, len(candidatePatterns))
+	for _, pattern := range candidatePatterns {
+		if !workflowSet[pattern] {
+			partition.Reason = "AGGREGATE_OUTPUT_PARTITION_INCOMPLETE"
+			return partition, nil, candidateOwners, partition.Reason
+		}
+		candidateSet[pattern] = true
+	}
+	materializedPatterns := make(map[string]bool, len(workflowPatterns)-len(candidatePatterns))
+	for _, pattern := range workflowPatterns {
+		if !candidateSet[pattern] {
+			materializedPatterns[pattern] = true
+		}
+	}
+	partition.MaterializedOutputCount = len(materializedPatterns)
+	materializedProjects := map[string]bool{}
+	for _, candidate := range report.CandidateOutputs {
+		if !materializedPatterns[candidate.Pattern] || len(candidate.OwnerProjects) != 1 {
+			continue
+		}
+		materializedProjects[candidate.OwnerProjects[0]] = true
+	}
+	for project := range materializedProjects {
+		partition.MaterializedProjects = append(partition.MaterializedProjects, project)
+	}
+	sort.Strings(partition.MaterializedProjects)
+
+	assignedPatterns := map[string]bool{}
+	for _, selector := range selectors {
+		group := optimizeAggregateTaskGroup{
+			Selector: selector, Variant: optimizeAggregateVariant(selector),
+			TaskContract: "GRADLE_OUTPUT_PRODUCER_LIFECYCLE_V1",
+			Entrypoints:  []string{}, OutputPatterns: []string{},
+		}
+		for _, candidate := range candidateEntrypoints {
+			if optimizeEntrypointSelector(candidate) == selector {
+				group.Entrypoints = append(group.Entrypoints, candidate)
+			}
+		}
+		for _, output := range report.CandidateOutputs {
+			if !candidateSet[output.Pattern] || !optimizeOutputMatchesSelector(output, selector) {
+				continue
+			}
+			group.OutputPatterns = append(group.OutputPatterns, output.Pattern)
+			assignedPatterns[output.Pattern] = true
+		}
+		sort.Strings(group.Entrypoints)
+		sort.Strings(group.OutputPatterns)
+		if len(group.Entrypoints) > 0 && len(group.OutputPatterns) > 0 {
+			partition.TaskGroups = append(partition.TaskGroups, group)
+		}
+	}
+	if len(partition.TaskGroups) == 0 || len(assignedPatterns) != len(candidatePatterns) {
+		partition.Reason = "AGGREGATE_TASK_GROUP_INCOMPLETE"
+		return partition, nil, candidateOwners, partition.Reason
+	}
+	partition.Status = optimizeDiscoveryComplete
+	partition.Reason = "REVISION_BOUND_OUTPUT_PARTITION"
+	return partition, candidatePatterns, candidateOwners, ""
+}
+
+func optimizeEntrypointSelector(entrypoint string) string {
+	if index := strings.LastIndex(entrypoint, ":"); index >= 0 {
+		return entrypoint[index+1:]
+	}
+	return entrypoint
+}
+
+func optimizeObservedOutputEntrypoints(report outputContractReport, selectors []string, included map[string]bool) []string {
+	owners := make([]string, 0, len(included))
+	for owner := range included {
+		owners = append(owners, owner)
+	}
+	sort.Strings(owners)
+	entrypoints := make([]string, 0, len(owners)*len(selectors))
+	for _, owner := range owners {
+		for _, selector := range selectors {
+			if !proposalOwnerHasSelectorOutput(report, owner, selector) {
+				continue
+			}
+			if owner == ":" {
+				entrypoints = append(entrypoints, ":"+selector)
+			} else {
+				entrypoints = append(entrypoints, owner+":"+selector)
+			}
+		}
+	}
+	return entrypoints
+}
+
+func optimizeOutputMatchesSelector(candidate outputContractCandidate, selector string) bool {
+	for _, task := range candidate.ProducerTasks {
+		if optimizeEntrypointSelector(task) == selector || optimizeLifecycleOutput(selector, candidate.Path) {
+			return true
+		}
+	}
+	return false
+}
+
+func optimizeAggregateVariant(selector string) string {
+	switch strings.ToLower(selector) {
+	case "assemble":
+		return "MAIN_ARTIFACTS"
+	case "classes":
+		return "MAIN_CLASSES"
+	case "testclasses":
+		return "TEST_CLASSES"
+	default:
+		return "EXACT_TASK_OUTPUT"
+	}
 }
 
 func optimizeRequiredOutputPatterns(candidates []outputContractCandidate, entrypoints []string, included map[string]bool) []string {

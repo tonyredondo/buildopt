@@ -9,6 +9,7 @@ the exact cross-component contract.
 
 | Specification | Owning item |
 |---|---|
+| [`poc-aggregate-workflow-partition-v1.md`](./poc-aggregate-workflow-partition-v1.md) | `POC-AGGREGATE-WORKFLOW-PARTITION-001` |
 | [`poc-verified-output-materialization-v1.md`](./poc-verified-output-materialization-v1.md) | `POC-VERIFIED-OUTPUT-MATERIALIZATION-001` |
 | [`poc-central-storage-contract-v1.md`](./poc-central-storage-contract-v1.md) and [`poc-central-storage-contract-v1.json`](./poc-central-storage-contract-v1.json) | `POC-CENTRAL-STORAGE-CONTRACT-001` |
 | [`poc-central-state-storage-v1.md`](./poc-central-state-storage-v1.md) and [`poc-central-state-storage-v1.json`](./poc-central-state-storage-v1.json) | `POC-CENTRAL-STATE-STORAGE-001` |
