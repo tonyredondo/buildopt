@@ -165,7 +165,8 @@ func TestCentralOptimizeReusesQualifiedProfileAcrossUnrelatedCommitAndRejectsStr
 		t.Fatal(err)
 	}
 	if !invocation.discovery.Ready {
-		t.Fatalf("unrelated revision discovery is unavailable: %+v", invocation.discovery)
+		status, statusErr := gitOutput(repository, "status", "--porcelain=v1", "-z", "--untracked-files=all")
+		t.Fatalf("unrelated revision discovery is unavailable: %+v; status=%q err=%v", invocation.discovery, status, statusErr)
 	}
 	integration = centralOptimizeFixtureIntegration(t, invocation, fixtureFiles, profile, evidenceRevision)
 	// Reuse the exact same verified portfolio snapshot across commits. Its
