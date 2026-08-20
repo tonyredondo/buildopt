@@ -338,10 +338,19 @@ buildopt_subject() {
             -o "${buildopt_control_binary}" ./dev/central-two-machine-control
     git clone -q "${buildopt_producer}" "${buildopt_control}"
     git clone -q "${buildopt_producer}" "${buildopt_candidate}"
-    git -C "${buildopt_control}" remote set-url origin "${buildopt_remote}"
-    git -C "${buildopt_candidate}" remote set-url origin "${buildopt_remote}"
-    git -C "${buildopt_control}" checkout -q --detach "${buildopt_qualifier}"
-    git -C "${buildopt_candidate}" checkout -q --detach "${buildopt_qualifier}"
+    local buildopt_arm
+    for buildopt_arm in control candidate; do
+        local buildopt_arm_repository=${buildopt_subject_root}/${buildopt_arm}
+        git -C "${buildopt_arm_repository}" remote set-url origin "${buildopt_remote}"
+        # A local clone of the shallow qualification checkout contains only its
+        # current branch. Fetch the frozen public history explicitly so every
+        # observation also has its commit and tree objects.
+        git -C "${buildopt_arm_repository}" fetch -q --depth=1024 origin "${buildopt_branch}"
+        git -C "${buildopt_arm_repository}" checkout -q --detach "${buildopt_qualifier}"
+        while IFS= read -r buildopt_observation; do
+            git -C "${buildopt_arm_repository}" cat-file -e "${buildopt_observation}^{tree}"
+        done < <(jq -r ".repositories[${buildopt_index}].observations[]" "${buildopt_spec}")
+    done
 
     local -a buildopt_workflow=()
     while IFS= read -r buildopt_entrypoint; do
@@ -434,7 +443,6 @@ buildopt_subject() {
     buildopt_start_server "${buildopt_server}" "${buildopt_state}" "${buildopt_tls}" \
         "${buildopt_port}" "${buildopt_logs}/server-restarted.log"
 
-    local buildopt_arm
     for buildopt_arm in control candidate; do
         local buildopt_repository=${buildopt_subject_root}/${buildopt_arm}
         local buildopt_home=${buildopt_subject_root}/${buildopt_arm}-home
