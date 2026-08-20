@@ -5,9 +5,21 @@ import (
 	"path/filepath"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
 )
+
+func TestOptimizeIncrementalWallTimeIncludesWrapperWork(t *testing.T) {
+	started := time.Unix(100, 0)
+	run := &optimizeRun{childExecution: childExecution{
+		startedAt:   started,
+		completedAt: started.Add(1250 * time.Millisecond),
+	}}
+	if got := optimizeIncrementalWallTimeMS(run, 375); got != 1625 {
+		t.Fatalf("incremental wall time = %d, want 1625", got)
+	}
+}
 
 func TestExpectedOptimizeIncrementalArmAlternatesBalancedPairs(t *testing.T) {
 	want := []struct {

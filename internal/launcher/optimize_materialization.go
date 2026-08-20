@@ -220,11 +220,32 @@ func (run *optimizeRun) materializeCandidateOutputs() error {
 		} else if !os.IsNotExist(readErr) {
 			return fmt.Errorf("inspect required output %s: %w", payload.entry.Path, readErr)
 		}
-		if err := ensureOptimizeMaterializationParent(run.invocation.repositoryRoot, payload.entry.Path); err != nil {
-			return err
-		}
 		writes[index] = true
 		directories[filepath.Dir(destination)] = true
+	}
+	sortedDirectories := make([]string, 0, len(directories))
+	for directory := range directories {
+		relative, err := filepath.Rel(run.invocation.repositoryRoot, directory)
+		if err != nil || relative == "." || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
+			return errors.New("materialization parent escapes the repository")
+		}
+		sortedDirectories = append(sortedDirectories, filepath.ToSlash(relative))
+	}
+	sort.Slice(sortedDirectories, func(left, right int) bool {
+		leftDepth := strings.Count(sortedDirectories[left], "/")
+		rightDepth := strings.Count(sortedDirectories[right], "/")
+		if leftDepth != rightDepth {
+			return leftDepth < rightDepth
+		}
+		return sortedDirectories[left] < sortedDirectories[right]
+	})
+	for _, relative := range sortedDirectories {
+		if err := ensureOptimizeMaterializationParent(
+			run.invocation.repositoryRoot,
+			filepath.ToSlash(filepath.Join(relative, ".entry")),
+		); err != nil {
+			return err
+		}
 	}
 	errorsByIndex := make([]error, len(payloads))
 	jobs := make(chan int)
@@ -253,16 +274,6 @@ func (run *optimizeRun) materializeCandidateOutputs() error {
 	for index, err := range errorsByIndex {
 		if err != nil {
 			return fmt.Errorf("materialize required output %s: %w", payloads[index].entry.Path, err)
-		}
-	}
-	sortedDirectories := make([]string, 0, len(directories))
-	for directory := range directories {
-		sortedDirectories = append(sortedDirectories, directory)
-	}
-	sort.Strings(sortedDirectories)
-	for _, directory := range sortedDirectories {
-		if err := syncManagedDirectory(directory); err != nil {
-			return fmt.Errorf("sync materialized output directory: %w", err)
 		}
 	}
 	if len(manifest.Entries) != materialization.FileCount {
@@ -484,27 +495,28 @@ func ensureOptimizeMaterializationParent(repositoryRoot, relative string) error 
 	return nil
 }
 
-// writeOptimizeMaterializationFile atomically publishes one verified payload.
-// Bulk capture and restore synchronize each affected directory once after all
-// renames; syncing every small file made clean-workspace materialization scale
-// with filesystem barrier latency rather than bytes.
+// writeOptimizeMaterializationFile publishes one already verified payload into
+// an absent workspace path. The durable pack remains authoritative, so
+// temporary-file renames and directory fsyncs would add latency without making
+// a clean-workspace restore more recoverable.
 func writeOptimizeMaterializationFile(path string, raw []byte, mode fs.FileMode) error {
-	temporary, err := os.CreateTemp(filepath.Dir(path), ".buildopt-output-*")
+	output, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, mode.Perm())
 	if err != nil {
 		return err
 	}
-	temporaryPath := temporary.Name()
-	defer os.Remove(temporaryPath)
-	if err := temporary.Chmod(mode.Perm()); err != nil {
-		_ = temporary.Close()
+	remove := true
+	defer func() {
+		if remove {
+			_ = os.Remove(path)
+		}
+	}()
+	if _, err := output.Write(raw); err != nil {
+		_ = output.Close()
 		return err
 	}
-	if _, err := temporary.Write(raw); err != nil {
-		_ = temporary.Close()
+	if err := output.Close(); err != nil {
 		return err
 	}
-	if err := temporary.Close(); err != nil {
-		return err
-	}
-	return replaceManagedFile(temporaryPath, path)
+	remove = false
+	return nil
 }

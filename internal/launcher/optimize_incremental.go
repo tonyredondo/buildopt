@@ -395,7 +395,7 @@ func (run *optimizeRun) collectIncrementalLearning(
 	overhead := optimizeIncrementalOverheadMS(run)
 	economics := optimizeIncrementalEconomicsForRun(run, overhead)
 	observation := optimizeIncrementalObservation{
-		DurationMS:            maximumOptimizeDurationMS(run.childExecution.completedAt.Sub(run.childExecution.startedAt)),
+		DurationMS:            optimizeIncrementalWallTimeMS(run, overhead),
 		RequiredOutputSHA256:  digest,
 		RequiredOutputCount:   count,
 		ExitCode:              exitCode,
@@ -413,6 +413,10 @@ func (run *optimizeRun) collectIncrementalLearning(
 		learning.ExpectedOutputSHA256 = digest
 		learning.ExpectedOutputCount = count
 		learning.NextArm = optimizeIncrementalArmControl
+		// Ordinary paired builds are useful customer work and their recurring
+		// wrapper cost is already included in DurationMS. Only the initial
+		// discovery/capture overhead is a one-time cost that must be repaid.
+		learning.IncrementalCostMS += overhead
 	} else {
 		arm, pair, order := expectedOptimizeIncrementalArm(len(learning.Observations))
 		if run.incrementalArm != arm || digest != learning.ExpectedOutputSHA256 || count != learning.ExpectedOutputCount {
@@ -431,7 +435,6 @@ func (run *optimizeRun) collectIncrementalLearning(
 			learning.NextArm = optimizeIncrementalArmComplete
 		}
 	}
-	learning.IncrementalCostMS += overhead
 	if err := writeOptimizeIncrementalCheckpoint(run.invocation, &learning); err != nil {
 		return retainedOptimizeIncrementalLearning(run.invocation, learning, optimizeIncrementalReasonState), retainedIncrementalCalibration(run.invocation, optimizeIncrementalReasonState)
 	}
@@ -440,6 +443,10 @@ func (run *optimizeRun) collectIncrementalLearning(
 	}
 	completed, completedCalibration := completeOptimizeIncrementalLearning(run.invocation, discovery, learning)
 	return completed, completedCalibration
+}
+
+func optimizeIncrementalWallTimeMS(run *optimizeRun, overhead int64) int64 {
+	return maximumOptimizeDurationMS(run.childExecution.completedAt.Sub(run.childExecution.startedAt)) + overhead
 }
 
 func (run *optimizeRun) hashIncrementalOutputs(patterns []string) (string, int, error) {
