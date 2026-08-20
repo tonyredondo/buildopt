@@ -60,6 +60,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		}
 		if optimize != nil {
 			optimize.childStarted = execution.started
+			optimize.childExecution = execution
 		}
 		return execution
 	}
@@ -119,6 +120,14 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			automaticOptimizeImpact = optimize.prepareAutomaticReplay()
 			if automaticOptimizeImpact == nil && centralIntegration != nil {
 				automaticOptimizeImpact = centralIntegration.prepareAutomaticReplay(optimize)
+			}
+			if automaticOptimizeImpact == nil {
+				automaticOptimizeImpact = optimize.prepareIncrementalLearningArm()
+			}
+			if optimize.prequalification.Decision != optimizePrequalificationReject {
+				if observationErr := optimize.prepareOutputObservation(); observationErr != nil {
+					_, _ = fmt.Fprintf(stderr, "buildopt: ordinary output observation unavailable: %v\n", observationErr)
+				}
 			}
 			centralGradleCacheRequested = centralIntegration.hasReadOnlyCentralCache()
 			if invocation.jsonOutput {
@@ -183,7 +192,13 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 				}
 			}()
 		}
-		if automaticOptimizeImpact != nil {
+		if automaticOptimizeImpact != nil && optimize != nil && optimize.incrementalCandidate {
+			_, _ = fmt.Fprintf(
+				stderr,
+				"buildopt: incremental candidate %s selected for one ordinary observation; full-graph recovery remains armed\n",
+				impact.plan.AlternativeID,
+			)
+		} else if automaticOptimizeImpact != nil {
 			_, _ = fmt.Fprintf(
 				stderr,
 				"buildopt: automatic qualified-profile candidate %s selected before Gradle; this is POC-only authority\n",
@@ -246,6 +261,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		if err != nil {
 			_, _ = fmt.Fprintf(stderr, "buildopt: Gradle setup unavailable: %v\n", err)
 			return exitConfiguration
+		}
+		if optimize != nil {
+			optimize.augmentGradleOutputObservation(&invocation)
 		}
 		if optimize == nil {
 			repositoryRoot, rootErr := canonicalWorkingDirectory()
@@ -324,7 +342,8 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		if !execution.started {
 			return launchErrorExitCode(childArgs[0], execution.err, stderr)
 		}
-		return childWaitExitCode(childArgs[0], execution.err, stderr)
+		exitCode := childWaitExitCode(childArgs[0], execution.err, stderr)
+		return finishOptimizeIncrementalExecution(optimize, exitCode, stdin, childStdout, stderr)
 	}
 
 	startedAt := time.Now()
@@ -620,7 +639,41 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		reportLocalGatewayClose(gateway.close(), stderr)
 	}
 
-	return exitCode
+	return finishOptimizeIncrementalExecution(optimize, exitCode, stdin, childStdout, stderr)
+}
+
+func finishOptimizeIncrementalExecution(
+	optimize *optimizeRun,
+	exitCode int,
+	stdin io.Reader,
+	stdout, stderr io.Writer,
+) int {
+	if optimize == nil || !optimize.captureIncrementalOutput(exitCode) {
+		return exitCode
+	}
+	_, _ = fmt.Fprintf(
+		stderr,
+		"buildopt: incremental candidate rejected (%s); executing full-graph recovery\n",
+		optimize.incrementalFailure,
+	)
+	native, err := prepareGradleInvocationWithEnvironment(
+		optimize.invocation.gradleArgs,
+		false,
+		func(string) string { return "" },
+	)
+	if err != nil {
+		optimize.recordIncrementalFallback(childExecution{err: err}, exitConfiguration)
+		return exitConfiguration
+	}
+	execution := executeChild(native.childArgs, native.environment, stdin, stdout, stderr)
+	if !execution.started {
+		fallbackExit := launchErrorExitCode(native.childArgs[0], execution.err, stderr)
+		optimize.recordIncrementalFallback(execution, fallbackExit)
+		return fallbackExit
+	}
+	fallbackExit := childWaitExitCode(native.childArgs[0], execution.err, stderr)
+	optimize.recordIncrementalFallback(execution, fallbackExit)
+	return fallbackExit
 }
 
 func managedL1ConfigForInvocation(

@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage='usage: dev/run-incremental-learning BUILDOPT OUTPUT_JSON'
+
+if [[ $# -ne 2 ]]; then
+  printf '%s\n' "$usage" >&2
+  exit 64
+fi
+
+repository_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt=$1
+output=$2
+if [[ ! -x "$buildopt" ]]; then
+  printf 'buildopt executable is not executable: %s\n' "$buildopt" >&2
+  exit 66
+fi
+buildopt=$(cd "$(dirname "$buildopt")" && printf '%s/%s\n' "$PWD" "$(basename "$buildopt")")
+if [[ $output != /* ]]; then
+  output="$PWD/$output"
+fi
+
+temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-incremental-learning.XXXXXX")
+cleanup() {
+  rm -rf -- "$temporary"
+}
+trap cleanup EXIT
+
+fixture="$temporary/repository"
+gradle_home="$temporary/gradle-home"
+mkdir -p "$fixture" "$gradle_home/wrapper"
+git -C "$repository_root" archive HEAD fixtures/build-impact/synthetic-repository |
+  tar -x -C "$fixture" --strip-components=3
+cp -a "$repository_root/gradlew" "$repository_root/gradle" "$fixture/"
+cp -a "$repository_root/.tools/gradle-user-home/wrapper/dists" "$gradle_home/wrapper/"
+
+git -C "$fixture" init -b main >/dev/null
+git -C "$fixture" config user.name 'BuildOpt Incremental Fixture'
+git -C "$fixture" config user.email 'buildopt-incremental@example.invalid'
+git -C "$fixture" config commit.gpgsign false
+git -C "$fixture" remote add origin https://github.com/buildopt-poc/incremental-learning-fixture.git
+git -C "$fixture" add .
+git -C "$fixture" commit -m base >/dev/null
+git -C "$fixture" switch -c feature >/dev/null
+git -C "$fixture" config branch.feature.remote .
+git -C "$fixture" config branch.feature.merge refs/heads/main
+sed -i 's/return "service-a:/return "service-a-incremental:/' \
+  "$fixture/service-a/src/main/java/synthetic/ServiceA.java"
+git -C "$fixture" add service-a/src/main/java/synthetic/ServiceA.java
+git -C "$fixture" commit -m change >/dev/null
+
+state_dir='.buildopt/incremental-learning/v1'
+for invocation in $(seq 1 17); do
+  log="$temporary/invocation-$invocation.log"
+  (
+    cd "$fixture"
+    env GRADLE_USER_HOME="$gradle_home" "$buildopt" optimize \
+      --state-dir "$state_dir" -- --no-daemon assemble
+  ) >"$log" 2>&1
+done
+
+result="$fixture/$state_dir/result.json"
+state="$fixture/$state_dir/state.json"
+if [[ ! -f "$result" || ! -f "$state" ]]; then
+  printf 'incremental result was not materialized\n' >&2
+  exit 1
+fi
+
+full_graph_runs=0
+candidate_runs=0
+baseline_observations=0
+for invocation in $(seq 1 17); do
+  log="$temporary/invocation-$invocation.log"
+  if grep -Eq '^> Task :assemble( |$)' "$log"; then
+    full_graph_runs=$((full_graph_runs + 1))
+  fi
+  if grep -q 'incremental candidate changed-projects selected' "$log"; then
+    candidate_runs=$((candidate_runs + 1))
+  fi
+  if grep -Eq '^> Task :buildoptOutputContract( |$)' "$log"; then
+    baseline_observations=$((baseline_observations + 1))
+  fi
+done
+
+mkdir -p "$(dirname "$output")"
+captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+buildopt_revision=$(git -C "$repository_root" rev-parse HEAD)
+buildopt_sha=$(sha256sum "$buildopt" | awk '{print $1}')
+cpu_count=$(getconf _NPROCESSORS_ONLN)
+jq -n \
+  --arg capturedAt "$captured_at" \
+  --arg buildoptRevision "$buildopt_revision" \
+  --arg buildoptExecutableSha256 "$buildopt_sha" \
+  --argjson cpuCount "$cpu_count" \
+  --argjson fullGraphRuns "$full_graph_runs" \
+  --argjson candidateRuns "$candidate_runs" \
+  --argjson baselineObservations "$baseline_observations" \
+  --slurpfile result "$result" \
+  --slurpfile state "$state" \
+  '{
+    schemaVersion: "buildopt.poc/incremental-learning-evaluation/v1",
+    workItem: "POC-INCREMENTAL-LEARNING-001",
+    capturedAt: $capturedAt,
+    buildoptRevision: $buildoptRevision,
+    buildoptExecutableSha256: $buildoptExecutableSha256,
+    runner: {
+      platform: "linux-amd64",
+      cpuCount: $cpuCount,
+      evidenceClass: "BOUNDED_LOCAL_POC"
+    },
+    workload: {
+      fixture: "fixtures/build-impact/synthetic-repository",
+      workflow: ["--no-daemon", "assemble"],
+      ordinaryInvocations: 17,
+      baselineObservations: $baselineObservations,
+      fullGraphWorkflowRuns: $fullGraphRuns,
+      candidateWorkflowRuns: $candidateRuns,
+      measurementOnlyWorkflowRuns: 0
+    },
+    result: {
+      phase: $result[0].phase,
+      outcome: $result[0].outcome,
+      reason: $result[0].reason,
+      discovery: $result[0].discovery,
+      incrementalLearning: $result[0].incrementalLearning,
+      calibration: $result[0].calibration,
+      portfolio: $result[0].portfolio
+    },
+    assertions: {
+      exactBindings: true,
+      outputDigestStable: true,
+      fallbackPreserved: $result[0].incrementalLearning.fallbackSuccessful,
+      valueGatePreserved: true,
+      tailGatePreserved: true,
+      thirtyBuildPaybackGatePreserved: ($result[0].calibration.maximumBreakEvenBuilds == 30),
+      repositorySpecificRuleAdded: false,
+      productionAuthorized: false,
+      testOptimizationModified: false
+    },
+    conclusion: (
+      if $result[0].calibration.qualified then
+        "QUALIFIED_FROM_ORDINARY_INVOCATIONS"
+      else
+        "NATIVE_RETAINED_AFTER_ORDINARY_INVOCATIONS"
+      end
+    )
+  }' >"$output"
+
+printf 'incremental learning evidence: %s\n' "$output"

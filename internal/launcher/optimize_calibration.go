@@ -75,7 +75,7 @@ func validOptimizeCalibrationCheckpoint(state optimizeState) bool {
 			len(calibration.GeneratedFiles) == 0 && len(calibration.Interval95SavedMS) == 0 &&
 			calibration.ControlP95MS == 0 && calibration.CandidateP95MS == 0 &&
 			calibration.TestOptimization == "OUT_OF_SCOPE" &&
-			optimizeStringIn(state.Phase, "DISCOVERED", "NATIVE_RETAINED")
+			optimizeStringIn(state.Phase, "DISCOVERED", "CALIBRATING", "NATIVE_RETAINED")
 	case optimizeCalibrationRetained:
 		return state.Phase == "NATIVE_RETAINED" && !calibration.Performed &&
 			calibration.Reason != "" && len(calibration.GeneratedFiles) == 0 &&

@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage='usage: dev/check-incremental-learning [EVIDENCE_JSON]'
+if [[ $# -gt 1 ]]; then
+  printf '%s\n' "$usage" >&2
+  exit 64
+fi
+
+repository_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
+evidence=${1:-$repository_root/benchmarks/results/poc-incremental-learning-v1/summary.json}
+if [[ ! -f "$evidence" ]]; then
+  printf 'incremental learning evidence is missing: %s\n' "$evidence" >&2
+  exit 1
+fi
+
+jq -e '
+  .schemaVersion == "buildopt.poc/incremental-learning-evaluation/v1" and
+  .workItem == "POC-INCREMENTAL-LEARNING-001" and
+  (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+  (.buildoptExecutableSha256 | test("^[0-9a-f]{64}$")) and
+  .runner.platform == "linux-amd64" and
+  .runner.cpuCount >= 1 and
+  .runner.evidenceClass == "BOUNDED_LOCAL_POC" and
+  .workload.fixture == "fixtures/build-impact/synthetic-repository" and
+  .workload.workflow == ["--no-daemon", "assemble"] and
+  .workload.ordinaryInvocations == 17 and
+  .workload.baselineObservations == 1 and
+  .workload.fullGraphWorkflowRuns == 9 and
+  .workload.candidateWorkflowRuns == 8 and
+  .workload.measurementOnlyWorkflowRuns == 0 and
+  .result.discovery.status == "COMPLETE" and
+  .result.discovery.graph.totalProjects == 3 and
+  .result.discovery.graph.selectedProjects == 2 and
+  .result.discovery.graph.omittedProjects == 1 and
+  .result.incrementalLearning.status == "COMPLETE" and
+  .result.incrementalLearning.reason == "ORDINARY_OBSERVATIONS_COMPLETE" and
+  .result.incrementalLearning.targetPairs == 8 and
+  .result.incrementalLearning.pairsCompleted == 8 and
+  .result.incrementalLearning.nextArm == "COMPLETE" and
+  .result.incrementalLearning.incrementalCostMs >= 1 and
+  .result.incrementalLearning.fallbackSuccessful and
+  (.result.incrementalLearning.expectedOutputSha256 | test("^[0-9a-f]{64}$")) and
+  .result.incrementalLearning.expectedOutputCount >= 1 and
+  (.result.incrementalLearning.observations | length) == 16 and
+  ([.result.incrementalLearning.observations[] |
+    (.durationMs >= 1 and .incrementalOverheadMs >= 1 and .exitCode == 0 and
+     (.requiredOutputSha256 == $.result.incrementalLearning.expectedOutputSha256) and
+     (.requiredOutputCount == $.result.incrementalLearning.expectedOutputCount) and
+     (.productAttributableFailure == false))] | all) and
+  ([range(0; 16) as $index |
+    .result.incrementalLearning.observations[$index] as $observation |
+    ($observation.sequence == ($index + 1)) and
+    ($observation.pair == ((($index / 2) | floor) + 1)) and
+    (if ((((($index / 2) | floor) + 1) % 2) == 1) then
+       ($observation.order == "CONTROL_FIRST")
+     else
+       ($observation.order == "CANDIDATE_FIRST")
+     end)] | all) and
+  .result.calibration.status == "COMPLETE" and
+  .result.calibration.pairsRequested == 8 and
+  .result.calibration.pairsMeasured == 8 and
+  .result.calibration.calibrationCostMs == .result.incrementalLearning.incrementalCostMs and
+  .result.calibration.maximumBreakEvenBuilds == 30 and
+  .result.calibration.fallbackSuccessful and
+  (.result.calibration.interval95SavedMs | length) == 2 and
+  (if .result.calibration.qualified then
+     .result.phase == "QUALIFIED" and
+     .result.calibration.reason == "CANDIDATE_CALIBRATION_QUALIFIED" and
+     .result.calibration.valueGatePassed and
+     .result.calibration.breakEvenBuilds >= 1 and
+     .result.calibration.breakEvenBuilds <= 30 and
+     .conclusion == "QUALIFIED_FROM_ORDINARY_INVOCATIONS"
+   else
+     .result.phase == "NATIVE_RETAINED" and
+     (.result.calibration.reason == "CALIBRATION_VALUE_NOT_PROVEN" or
+      .result.calibration.reason == "CALIBRATION_BREAK_EVEN_EXCEEDED") and
+     .conclusion == "NATIVE_RETAINED_AFTER_ORDINARY_INVOCATIONS"
+   end) and
+  .assertions.exactBindings and
+  .assertions.outputDigestStable and
+  .assertions.fallbackPreserved and
+  .assertions.valueGatePreserved and
+  .assertions.tailGatePreserved and
+  .assertions.thirtyBuildPaybackGatePreserved and
+  (.assertions.repositorySpecificRuleAdded == false) and
+  (.assertions.productionAuthorized == false) and
+  (.assertions.testOptimizationModified == false)
+' "$evidence" >/dev/null
+
+"$repository_root/dev/run" --toolchain go -- go test ./internal/launcher \
+  -run 'TestExpectedOptimizeIncrementalArm|TestOptimizeIncrementalCheckpoint' \
+  -count=1
+
+printf 'incremental learning contract: PASS (%s)\n' "$evidence"

@@ -586,6 +586,23 @@ files. Four candidates are timed but need 101–710 matching builds to repay;
 Micronaut retains native before calibration because its aggregate workflow
 produces 73 candidate entrypoints.
 
+Reproduce the incremental-learning transaction with one exact installed
+binary and validate its checked evidence with:
+
+```bash
+./dev/run-incremental-learning /absolute/path/to/buildopt /tmp/incremental-learning.json
+./dev/check-incremental-learning /tmp/incremental-learning.json
+```
+
+The runner performs seventeen useful customer invocations: one full-graph
+baseline that captures the output contract in the same Gradle execution, then
+eight alternating control/candidate pairs. It requires nine full-graph runs,
+eight candidate runs, one baseline observation, stable required-output bytes
+and zero measurement-only customer workflows. A small fixture may retain
+native Gradle; this gate proves the transaction and unchanged evidence/payback
+rules rather than a synthetic speedup. The 12-CPU result remains bounded local
+POC evidence, not golden-runner or production evidence.
+
 ## CI orchestration validation
 
 Validate the `F0-030` authoritative-job, protected validation queue,

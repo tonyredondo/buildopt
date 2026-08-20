@@ -385,7 +385,14 @@ func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int,
 		result.Reason = run.invocation.discovery.Reason
 		return result
 	}
-	discovered, documents, err := runAutomaticOptimizeDiscovery(discoveryContext, run.invocation)
+	observed, observationErr := run.observedOutputSnapshot()
+	if observationErr != nil {
+		result.Status = optimizeDiscoveryRetained
+		result.Reason = "ORDINARY_OUTPUT_OBSERVATION_UNAVAILABLE"
+		_, _ = fmt.Fprintf(diagnostics, "buildopt: automatic discovery unavailable: %v\n", observationErr)
+		return result
+	}
+	discovered, documents, err := runAutomaticOptimizeDiscovery(discoveryContext, run.invocation, observed)
 	if err != nil {
 		result.Status = optimizeDiscoveryRetained
 		result.Reason = optimizeDiscoveryErrorReason(err)
@@ -401,7 +408,7 @@ func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int,
 	return result
 }
 
-func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvocation) (optimizeDiscoveryResult, optimizeDiscoveryDocuments, error) {
+func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvocation, observed *outputContractSnapshot) (optimizeDiscoveryResult, optimizeDiscoveryDocuments, error) {
 	discovery := invocation.discovery
 	result := optimizeDiscoveryResult{
 		Status: optimizeDiscoveryRetained, Reason: "NO_SAFE_STRUCTURAL_CANDIDATE",
@@ -423,13 +430,17 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		}
 	}
 	pipelineClass := optimizePipelineClass(discovery.Entrypoints, discovery.ChangeSHA256)
-	outputReport, err := prepareOutputContract(ctx, invocation.repositoryRoot, outputContractConfig{
+	outputConfig := outputContractConfig{
 		repositoryID: discovery.RepositoryID, pipelineClass: pipelineClass,
 		repositoryRevision: discovery.TargetRevision,
 		entrypoints:        append([]string(nil), discovery.Entrypoints...),
 		gradleOptions:      append([]string(nil), discovery.gradleOptions...),
 		timeout:            invocation.calibrationBudget,
-	})
+	}
+	if observed == nil {
+		return result, optimizeDiscoveryDocuments{}, errors.New("ordinary output observation is required")
+	}
+	outputReport, err := prepareOutputContractReportFromSnapshot(invocation.repositoryRoot, outputConfig, *observed)
 	if err != nil {
 		return result, optimizeDiscoveryDocuments{}, fmt.Errorf("output preflight: %w", err)
 	}

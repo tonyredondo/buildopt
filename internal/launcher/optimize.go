@@ -96,24 +96,25 @@ type optimizeResume struct {
 }
 
 type optimizeState struct {
-	SchemaVersion        string                    `json:"schemaVersion"`
-	Generation           int                       `json:"generation"`
-	Attempt              int                       `json:"attempt"`
-	Phase                string                    `json:"phase"`
-	LastOutcome          string                    `json:"lastOutcome"`
-	LastReason           string                    `json:"lastReason"`
-	Bindings             optimizeBindings          `json:"bindings"`
-	Budget               optimizeBudget            `json:"budget"`
-	Resume               optimizeResume            `json:"resume"`
-	BuildStarted         bool                      `json:"buildStarted"`
-	LastExitCode         int                       `json:"lastExitCode"`
-	Discovery            optimizeDiscoveryResult   `json:"discovery"`
-	Calibration          optimizeCalibrationResult `json:"calibration"`
-	Portfolio            optimizePortfolioResult   `json:"portfolio"`
-	Selection            optimizeSelectionResult   `json:"selection"`
-	Value                optimizeValueState        `json:"value"`
-	UpdatedAt            string                    `json:"updatedAt"`
-	ProductionAuthorized bool                      `json:"productionAuthorized"`
+	SchemaVersion        string                      `json:"schemaVersion"`
+	Generation           int                         `json:"generation"`
+	Attempt              int                         `json:"attempt"`
+	Phase                string                      `json:"phase"`
+	LastOutcome          string                      `json:"lastOutcome"`
+	LastReason           string                      `json:"lastReason"`
+	Bindings             optimizeBindings            `json:"bindings"`
+	Budget               optimizeBudget              `json:"budget"`
+	Resume               optimizeResume              `json:"resume"`
+	BuildStarted         bool                        `json:"buildStarted"`
+	LastExitCode         int                         `json:"lastExitCode"`
+	Discovery            optimizeDiscoveryResult     `json:"discovery"`
+	IncrementalLearning  optimizeIncrementalLearning `json:"incrementalLearning"`
+	Calibration          optimizeCalibrationResult   `json:"calibration"`
+	Portfolio            optimizePortfolioResult     `json:"portfolio"`
+	Selection            optimizeSelectionResult     `json:"selection"`
+	Value                optimizeValueState          `json:"value"`
+	UpdatedAt            string                      `json:"updatedAt"`
+	ProductionAuthorized bool                        `json:"productionAuthorized"`
 }
 
 type optimizeNativeResult struct {
@@ -155,6 +156,7 @@ type optimizeResult struct {
 	Native               optimizeNativeResult             `json:"native"`
 	Execution            optimizeExecutionResult          `json:"execution"`
 	Discovery            optimizeDiscoveryResult          `json:"discovery"`
+	IncrementalLearning  optimizeIncrementalLearning      `json:"incrementalLearning"`
 	Calibration          optimizeCalibrationResult        `json:"calibration"`
 	Portfolio            optimizePortfolioResult          `json:"portfolio"`
 	Selection            optimizeSelectionResult          `json:"selection"`
@@ -179,6 +181,7 @@ type optimizeRun struct {
 	valueMDPath      string
 	startedAt        time.Time
 	childStarted     bool
+	childExecution   childExecution
 	previousState    *optimizeState
 	selection        optimizeSelectionResult
 	prequalification optimizeEconomicPrequalification
@@ -187,7 +190,15 @@ type optimizeRun struct {
 	// gradleBuildCacheSeed is the cache actually used by the authoritative
 	// build. Connected invocations use managed L1 rather than Gradle's default
 	// build-cache-1 directory, so calibration must snapshot this exact path.
-	gradleBuildCacheSeed string
+	gradleBuildCacheSeed   string
+	outputObservation      *optimizeOutputObservation
+	incrementalArm         string
+	incrementalCandidate   bool
+	incrementalOutputSHA   string
+	incrementalOutputCount int
+	incrementalFailure     string
+	incrementalFallback    childExecution
+	incrementalObserved    bool
 }
 
 func prepareOptimizeInvocation(args []string, stateEnabled bool) (optimizeInvocation, error) {
@@ -480,6 +491,10 @@ func inspectOptimizeCheckpoint(path string, invocation optimizeInvocation) (opti
 		resume.Reason = optimizeResumeDrift
 		return resume, previous.Generation + 1, 1, nil
 	}
+	if err := validateOptimizeIncrementalEvidence(invocation, previous.IncrementalLearning); err != nil {
+		resume.Reason = optimizeResumeInvalid
+		return resume, previous.Generation + 1, 1, nil
+	}
 	resume.Accepted = true
 	resume.Reason = optimizeResumeExact
 	return resume, previous.Generation, previous.Attempt + 1, &previous
@@ -496,6 +511,7 @@ func validOptimizeState(state optimizeState) bool {
 		state.Attempt < 1 || state.Phase == "" || state.LastOutcome == "" ||
 		state.LastReason == "" || state.ProductionAuthorized ||
 		!validOptimizeDiscoveryCheckpoint(state) ||
+		!validOptimizeIncrementalCheckpoint(state) ||
 		!validOptimizeCalibrationCheckpoint(state) ||
 		!validOptimizePortfolioCheckpoint(state) ||
 		!validOptimizeSelectionCheckpoint(state) ||
@@ -623,22 +639,32 @@ func optimizeInvocationBudget(invocation optimizeInvocation) optimizeBudget {
 }
 
 func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
-	learningStarted := time.Now()
+	defer run.cleanupOutputObservation()
 	budgetContext, cancelBudget := context.WithTimeout(context.Background(), run.invocation.calibrationBudget)
 	defer cancelBudget()
 	learningContext, stopSignals := notifyOptimizeLearningContext(budgetContext)
 	defer stopSignals()
 	discovery, calibration, resumed := run.resumeCalibration()
+	learning := emptyOptimizeIncrementalLearning()
+	if run.state.Resume.Accepted && run.previousState != nil {
+		learning = cloneOptimizeIncrementalLearning(run.previousState.IncrementalLearning)
+	}
 	if run.centralReplay != nil {
 		discovery = run.centralReplay.discovery
 		calibration = run.centralReplay.calibration
 		resumed = true
-	} else if !resumed && run.prequalification.Decision == optimizePrequalificationReject {
+	} else if !resumed && run.prequalification.Decision == optimizePrequalificationReject &&
+		!(run.previousState != nil && run.previousState.IncrementalLearning.Status == optimizeIncrementalCollecting) {
 		discovery = retainedOptimizeDiscovery(run.invocation, "ECONOMIC_PREQUALIFICATION_REJECTED")
 		calibration = emptyOptimizeCalibration(run.invocation, discovery.Reason)
 	} else if !resumed {
-		discovery = run.discover(learningContext, exitCode, stderr)
-		calibration = run.calibrate(learningContext, learningStarted, discovery, stderr)
+		if run.state.Resume.Accepted && run.previousState != nil &&
+			run.previousState.Discovery.Status == optimizeDiscoveryComplete {
+			discovery = run.previousState.Discovery
+		} else {
+			discovery = run.discover(learningContext, exitCode, stderr)
+		}
+		learning, calibration = run.collectIncrementalLearning(discovery, exitCode)
 	}
 	portfolio := run.materializePortfolio(discovery, calibration)
 	if run.centralReplay != nil {
@@ -654,7 +680,12 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		run.state.Phase = "QUALIFIED"
 	} else if discovery.Status == optimizeDiscoveryComplete && calibration.Status == optimizeCalibrationSkipped {
 		run.state.LastOutcome = optimizeOutcomeLearning
-		run.state.Phase = "DISCOVERED"
+		if learning.Status == optimizeIncrementalCollecting {
+			run.state.LastReason = learning.Reason
+			run.state.Phase = "CALIBRATING"
+		} else {
+			run.state.Phase = "DISCOVERED"
+		}
 	}
 	if portfolio.Status == optimizePortfolioComplete {
 		run.state.LastReason = portfolio.Reason
@@ -673,6 +704,7 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 	run.state.BuildStarted = run.childStarted
 	run.state.LastExitCode = exitCode
 	run.state.Discovery = discovery
+	run.state.IncrementalLearning = learning
 	run.state.Calibration = calibration
 	run.state.Portfolio = portfolio
 	run.state.Selection = selection
@@ -691,8 +723,10 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		run.state.Bindings.Completeness = optimizeBindingReplay
 	}
 	run.state.UpdatedAt = completedAt.Format(time.RFC3339Nano)
+	nativeAuthoritative := !selection.Selected && (!run.incrementalCandidate || run.incrementalFallback.started)
+	nativeStarted := run.childStarted && nativeAuthoritative
 	nativeExitCode := exitCode
-	if selection.Selected {
+	if !nativeAuthoritative {
 		nativeExitCode = 0
 	}
 	result := optimizeResult{
@@ -705,33 +739,34 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		Generation:  run.state.Generation, Attempt: run.state.Attempt,
 		Bindings: run.state.Bindings, Budget: run.state.Budget, Resume: run.state.Resume,
 		Native: optimizeNativeResult{
-			Authoritative: !selection.Selected,
-			Started:       run.childStarted && !selection.Selected,
+			Authoritative: nativeAuthoritative,
+			Started:       nativeStarted,
 			ExitCode:      nativeExitCode,
 		},
 		Execution: optimizeExecutionResult{
-			Mode:          optimizeExecutionMode(selection),
+			Mode:          run.executionMode(selection),
 			Authoritative: true,
 			Started:       run.childStarted,
 			ExitCode:      exitCode,
 		},
-		Discovery:        discovery,
-		Calibration:      calibration,
-		Portfolio:        portfolio,
-		Selection:        selection,
-		Prequalification: run.prequalification,
-		Central:          disconnectedOptimizeCentralResult(),
-		Value:            run.state.Value,
+		Discovery:           discovery,
+		IncrementalLearning: learning,
+		Calibration:         calibration,
+		Portfolio:           portfolio,
+		Selection:           selection,
+		Prequalification:    run.prequalification,
+		Central:             disconnectedOptimizeCentralResult(),
+		Value:               run.state.Value,
 		GeneratedFiles: optimizeGeneratedFiles{
 			State:         filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeStateFile)),
 			Result:        filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeResultFile)),
 			Discovery:     append([]string{}, discovery.GeneratedFiles...),
-			Calibration:   append([]string{}, calibration.GeneratedFiles...),
+			Calibration:   append(append([]string{}, learning.GeneratedFiles...), calibration.GeneratedFiles...),
 			Portfolio:     append([]string{}, portfolio.GeneratedFiles...),
 			ValueJSON:     filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeValueReportJSONFile)),
 			ValueMarkdown: filepath.ToSlash(filepath.Join(run.invocation.stateRelative, optimizeValueReportMDFile)),
 		},
-		ManualFilesRequired: 0, CalibrationPerformed: calibration.Performed && !calibration.Reused,
+		ManualFilesRequired: 0, CalibrationPerformed: (calibration.Performed && !calibration.Reused) || run.incrementalObserved,
 		PortfolioPerformed: portfolio.Performed && !portfolio.Reused, SelectionPerformed: selection.Performed,
 		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}
@@ -768,15 +803,15 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		"BuildOpt optimize: %s (%s)\nCurrent build: %s\nValue report: %s\nState: %s\nNext: %s; production authorization remains false\n",
 		result.Outcome,
 		result.Reason,
-		optimizeSelectionDescription(selection),
+		run.executionDescription(selection),
 		result.GeneratedFiles.ValueMarkdown,
 		result.GeneratedFiles.Result,
-		optimizeNextStep(discovery, calibration, portfolio, selection),
+		optimizeNextStep(discovery, learning, calibration, portfolio, selection),
 	)
 	return err
 }
 
-func optimizeNextStep(discovery optimizeDiscoveryResult, calibration optimizeCalibrationResult, portfolio optimizePortfolioResult, selection optimizeSelectionResult) string {
+func optimizeNextStep(discovery optimizeDiscoveryResult, learning optimizeIncrementalLearning, calibration optimizeCalibrationResult, portfolio optimizePortfolioResult, selection optimizeSelectionResult) string {
 	if selection.Selected {
 		return "repeat the same command while exact bindings remain valid; any drift retains native Gradle"
 	}
@@ -786,8 +821,16 @@ func optimizeNextStep(discovery optimizeDiscoveryResult, calibration optimizeCal
 	if calibration.Status == optimizeCalibrationComplete && calibration.Qualified {
 		return "store the qualified change-family profile for automatic replay"
 	}
+	if learning.Status == optimizeIncrementalCollecting {
+		return fmt.Sprintf(
+			"run the same command again; %d/%d ordinary control/candidate pairs are complete and the next arm is %s",
+			learning.PairsCompleted,
+			learning.TargetPairs,
+			learning.NextArm,
+		)
+	}
 	if discovery.Status == optimizeDiscoveryComplete && !calibration.Performed {
-		return "automatic calibration needs a complete eight-pair budget"
+		return "repeat the same command to collect exact-bound ordinary-build evidence"
 	}
 	return "native Gradle remains authoritative until discovery is safe"
 }

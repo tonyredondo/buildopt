@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "buildopt.poc/incremental-learning-contract/v1",
+  "workItem": "POC-INCREMENTAL-LEARNING-001",
+  "decision": "ACCUMULATE_EXACT_BOUND_EVIDENCE_ACROSS_ORDINARY_INVOCATIONS",
+  "customerPath": {
+    "command": "buildopt optimize <existing Gradle workflow>",
+    "manualBuildOptFiles": 0,
+    "baselineInvocations": 1,
+    "controlCandidatePairs": 8,
+    "ordinaryInvocations": 17,
+    "measurementOnlyWorkflowRuns": 0
+  },
+  "bindings": [
+    "BUILDOPT_EXECUTABLE",
+    "GRADLE_WRAPPER_PROPERTIES",
+    "GRADLE_ARGUMENTS",
+    "REPOSITORY_ID",
+    "REPOSITORY_REVISION",
+    "CHANGE_SET",
+    "DISCOVERY_GRAPH",
+    "REQUIRED_OUTPUT_DIGEST"
+  ],
+  "sequence": {
+    "baseline": "FULL_GRAPH_WITH_IN_INVOCATION_OUTPUT_OBSERVATION",
+    "oddPairs": "CONTROL_FIRST",
+    "evenPairs": "CANDIDATE_FIRST",
+    "oneCustomerWorkflowPerInvocation": true,
+    "configuredModelInspectionExecutesTaskWork": false,
+    "bindingDriftStartsNewGeneration": true
+  },
+  "candidateFailure": {
+    "fullGraphRecoveryRequired": true,
+    "failedCandidateRecordedAsValueEvidence": false,
+    "generationRetainedNative": true
+  },
+  "qualification": {
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveIntervalRequired": true,
+    "positivePairsRequired": 8,
+    "maximumBreakEvenBuilds": 30,
+    "exactOutputsRequired": true,
+    "fallbackRequired": true
+  },
+  "acceptance": {
+    "baselineObservations": 1,
+    "fullGraphWorkflowRuns": 9,
+    "candidateWorkflowRuns": 8,
+    "measurementOnlyWorkflowRuns": 0,
+    "qualificationRequired": false,
+    "repositorySpecificRulesAllowed": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}
