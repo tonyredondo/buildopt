@@ -33,6 +33,11 @@
     "failedCandidateRecordedAsValueEvidence": false,
     "generationRetainedNative": true
   },
+  "customerCancellation": {
+    "signalAndExitPreserved": true,
+    "fullGraphRecoveryStarted": false,
+    "generationRetainedNative": true
+  },
   "qualification": {
     "minimumMeanSavedMs": 500,
     "minimumReductionRatio": 0.02,

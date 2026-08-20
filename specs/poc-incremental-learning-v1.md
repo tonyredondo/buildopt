@@ -28,6 +28,11 @@ failure, missing output or byte drift triggers a full-graph recovery for that
 customer command and permanently retains native Gradle for that generation.
 The recovery is correctness work, not a learning observation.
 
+A user cancellation is not a candidate failure. BuildOpt forwards the signal,
+returns the child's cancelled status, starts no recovery build and retains
+native Gradle for the generation. This prevents a cancelled command from
+silently becoming a second customer workflow.
+
 ## Qualification and economics
 
 After sixteen observations, BuildOpt renders the existing structural evidence

@@ -648,7 +648,10 @@ func finishOptimizeIncrementalExecution(
 	stdin io.Reader,
 	stdout, stderr io.Writer,
 ) int {
-	if optimize == nil || !optimize.captureIncrementalOutput(exitCode) {
+	if optimize == nil || optimize.captureIncrementalCancellation() {
+		return exitCode
+	}
+	if !optimize.captureIncrementalOutput(exitCode) {
 		return exitCode
 	}
 	_, _ = fmt.Fprintf(

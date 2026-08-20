@@ -26,6 +26,7 @@ const (
 	optimizeIncrementalReasonComplete    = "ORDINARY_OBSERVATIONS_COMPLETE"
 	optimizeIncrementalReasonOutputDrift = "REQUIRED_OUTPUT_DRIFT"
 	optimizeIncrementalReasonCandidate   = "CANDIDATE_EXECUTION_FAILED"
+	optimizeIncrementalReasonCancelled   = "CALIBRATION_CANCELLED"
 	optimizeIncrementalReasonPreparation = "CANDIDATE_PREPARATION_FAILED"
 	optimizeIncrementalReasonState       = "INCREMENTAL_STATE_INVALID"
 	optimizeIncrementalArmDiscovery      = "DISCOVERY_CONTROL"
@@ -282,6 +283,14 @@ func (run *optimizeRun) captureIncrementalOutput(exitCode int) bool {
 	return false
 }
 
+func (run *optimizeRun) captureIncrementalCancellation() bool {
+	if run == nil || run.incrementalArm == "" || !run.childExecution.cancelled {
+		return false
+	}
+	run.incrementalFailure = optimizeIncrementalReasonCancelled
+	return true
+}
+
 func (run *optimizeRun) recordIncrementalFallback(execution childExecution, exitCode int) {
 	run.incrementalFallback = execution
 	if !execution.started || exitCode != 0 {
@@ -293,7 +302,7 @@ func (run *optimizeRun) collectIncrementalLearning(
 	discovery optimizeDiscoveryResult,
 	exitCode int,
 ) (optimizeIncrementalLearning, optimizeCalibrationResult) {
-	if discovery.Status != optimizeDiscoveryComplete || !run.childExecution.started || exitCode != 0 {
+	if discovery.Status != optimizeDiscoveryComplete || !run.childExecution.started {
 		return emptyOptimizeIncrementalLearning(), emptyOptimizeCalibration(run.invocation, discovery.Reason)
 	}
 	if run.invocation.calibrationPairs < optimizeRequiredCalibrationPairs {
@@ -312,6 +321,12 @@ func (run *optimizeRun) collectIncrementalLearning(
 		learning.TargetPairs = optimizeRequiredCalibrationPairs
 		learning.FallbackSuccessful = true
 		learning.TestOptimization = "OUT_OF_SCOPE"
+	}
+	if run.incrementalFailure == optimizeIncrementalReasonCancelled {
+		return retainedOptimizeIncrementalLearning(run.invocation, learning, run.incrementalFailure), retainedIncrementalCalibration(run.invocation, run.incrementalFailure)
+	}
+	if exitCode != 0 {
+		return emptyOptimizeIncrementalLearning(), emptyOptimizeCalibration(run.invocation, discovery.Reason)
 	}
 	discoverySHA, err := optimizeGeneratedDocumentsSHA(run.invocation.repositoryRoot, discovery.GeneratedFiles)
 	if err != nil {

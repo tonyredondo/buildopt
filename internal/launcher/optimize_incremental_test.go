@@ -142,3 +142,20 @@ func TestOptimizeIncrementalCandidateRequiresExactObservedOutputs(t *testing.T) 
 		t.Fatalf("failed candidate did not request fallback: %+v", failed)
 	}
 }
+
+func TestOptimizeIncrementalCancellationRetainsNativeWithoutRecovery(t *testing.T) {
+	run := &optimizeRun{
+		incrementalArm:       optimizeIncrementalArmCandidate,
+		incrementalCandidate: true,
+		childExecution:       childExecution{started: true, cancelled: true},
+	}
+	if !run.captureIncrementalCancellation() {
+		t.Fatal("cancelled incremental observation was not captured")
+	}
+	if run.incrementalFailure != optimizeIncrementalReasonCancelled {
+		t.Fatalf("incremental failure = %q, want %q", run.incrementalFailure, optimizeIncrementalReasonCancelled)
+	}
+	if run.incrementalFallback.started {
+		t.Fatal("cancelled incremental observation unexpectedly started recovery")
+	}
+}

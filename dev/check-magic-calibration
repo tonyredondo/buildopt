@@ -46,7 +46,18 @@ printf '%s\n' \
     '        doLast { Thread.sleep(1300) }' \
     '    }' \
     "    tasks.named('jar') { dependsOn tasks.named('calibrationWork') }" \
-    '}' >>"${buildopt_repository}/build.gradle"
+	'}' \
+	'' \
+	"project(':service-a') {" \
+	"    if (System.getenv('BUILDOPT_CANCEL_FIXTURE') == '1') {" \
+	"        tasks.named('jar') {" \
+	"            doFirst {" \
+	"                println 'buildopt-cancellation-fixture-ready'" \
+	"                Thread.sleep(10000)" \
+	"            }" \
+	"        }" \
+	"    }" \
+	'}' >>"${buildopt_repository}/build.gradle"
 
 git -C "${buildopt_repository}" init -qb main
 git -C "${buildopt_repository}" config user.name 'BuildOpt Fixture'
@@ -92,7 +103,33 @@ buildopt_run() {
     printf '%s\n' "${buildopt_stdout}"
 }
 
-buildopt_first=$(buildopt_run qualified 8 1)
+buildopt_baseline=$(buildopt_run qualified 8 1)
+jq -e '
+    .schemaVersion == "buildopt.poc/optimize-result/v1" and
+    .outcome == "LEARNING" and .phase == "CALIBRATING" and
+    .reason == "ORDINARY_OBSERVATIONS_PENDING" and
+    .native == {authoritative: true, started: true, exitCode: 0} and
+    .execution == {mode: "OPTIMIZED_NATIVE", authoritative: true, started: true, exitCode: 0} and
+    .incrementalLearning.status == "COLLECTING" and
+    .incrementalLearning.reason == "ORDINARY_OBSERVATIONS_PENDING" and
+    .incrementalLearning.pairsCompleted == 0 and
+    .incrementalLearning.nextArm == "CONTROL" and
+    .incrementalLearning.baseline.arm == "DISCOVERY_CONTROL" and
+    (.incrementalLearning.observations | length) == 0 and
+    .calibration.status == "SKIPPED" and
+    .calibration.reason == "ORDINARY_OBSERVATIONS_PENDING" and
+    .calibrationPerformed == true and .productionAuthorized == false and
+    .testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_baseline}" >/dev/null || {
+    printf 'incremental automatic-calibration baseline is invalid\n' >&2
+    jq . "${buildopt_baseline}" >&2
+    exit 1
+}
+
+buildopt_first=''
+for buildopt_attempt in $(seq 2 17); do
+    buildopt_first=$(buildopt_run qualified 8 "${buildopt_attempt}")
+done
 jq -e '
     .schemaVersion == "buildopt.poc/optimize-result/v1" and
     .outcome == "LEARNING" and .phase == "QUALIFIED" and
@@ -157,12 +194,19 @@ jq -e '
 buildopt_evidence=$(jq -r '.calibration.generatedFiles[0]' "${buildopt_first}")
 test -s "${buildopt_repository}/${buildopt_evidence}"
 jq -e '
-    (.sourceBindings.resolvedDependenciesSha256 | test("^[0-9a-f]{64}$")) and
-    .execution.candidateStabilization == "PAIRED_BOUND_CACHE_MEASURED_SHAPE_V1" and
-    .execution.controlWarmupCount == 1 and
-    (.execution.candidateWarmupCount // 0) == 0
+    (.sourceBindings.manifestSha256 | test("^[0-9a-f]{64}$")) and
+    (.sourceBindings.graphSha256 | test("^[0-9a-f]{64}$")) and
+    (.sourceBindings.generatedManifestSha256 | test("^[0-9a-f]{64}$")) and
+    (.sourceBindings.sourceEvidenceSha256 | test("^[0-9a-f]{64}$")) and
+    .execution.candidateSurface == "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY" and
+    (.execution.executableSha256 | test("^[0-9a-f]{64}$")) and
+    .execution.mechanisms == ["BUILD_IMPACT"] and
+    .execution.gradleOptions == ["--offline", "--build-cache", "--console=plain", "--no-scan"] and
+    .execution.launcherOverheadIncluded == true and
+    (.execution | has("controlWarmupCount") | not) and
+    (.execution | has("candidateWarmupCount") | not)
 ' "${buildopt_repository}/${buildopt_evidence}" >/dev/null || {
-    printf 'automatic calibration did not preserve its dependency or stabilization bindings\n' >&2
+    printf 'incremental automatic calibration did not preserve its exact source and execution bindings\n' >&2
     jq '{sourceBindings, execution}' "${buildopt_repository}/${buildopt_evidence}" >&2
     exit 1
 }
@@ -226,7 +270,7 @@ grep -Fq '# BuildOpt value report' "${buildopt_repository}/${buildopt_value_mark
 grep -Fq 'Expected useful lifetime: **unavailable**' \
     "${buildopt_repository}/${buildopt_value_markdown}"
 
-buildopt_second=$(buildopt_run qualified 8 2)
+buildopt_second=$(buildopt_run qualified 8 18)
 buildopt_selection_ns=$(jq -r '.selection.durationNs' "${buildopt_second}")
 jq -e \
     --arg evidence "${buildopt_first_evidence_sha}" \
@@ -236,7 +280,7 @@ jq -e \
     --argjson cost "${buildopt_first_cost}" \
     --argjson saved "${buildopt_first_saved}" '
     .outcome == "QUALIFIED_AND_USED" and .phase == "ACTIVE" and
-    .generation == 1 and .attempt == 2 and
+    .generation == 1 and .attempt == 18 and
     .resume == {
         mode: "AUTO", checkpointFound: true, accepted: true,
         reason: "EXACT_BINDINGS",
@@ -305,19 +349,19 @@ jq -e \
     jq . "${buildopt_second}" >&2
     exit 1
 }
-if grep -Eq 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-2.log"; then
+if grep -Eq 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-18.log"; then
     printf 'exact automatic replay unexpectedly repeated measurement\n' >&2
     exit 1
 fi
 grep -F 'automatic qualified-profile candidate' \
-    "${buildopt_temp}/qualified-2.log" >/dev/null
+    "${buildopt_temp}/qualified-18.log" >/dev/null
 
 printf '\n' >>"${buildopt_repository}/${buildopt_profile}"
-buildopt_repaired=$(buildopt_run qualified 8 3)
+buildopt_repaired=$(buildopt_run qualified 8 19)
 jq -e \
     --arg family "${buildopt_first_family_sha}" \
     --arg profile "${buildopt_first_profile_sha}" '
-    .generation == 1 and .attempt == 3 and
+    .generation == 1 and .attempt == 19 and
     .calibration.reused == true and .calibrationPerformed == false and
     .portfolio.reason == "QUALIFIED_PROFILE_STORED" and
     .portfolio.performed == true and .portfolio.reused == false and
@@ -338,18 +382,18 @@ jq -e \
     jq . "${buildopt_repaired}" >&2
     exit 1
 }
-if grep -Eq 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-3.log"; then
+if grep -Eq 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-19.log"; then
     printf 'profile repair unexpectedly repeated calibration\n' >&2
     exit 1
 fi
 
-buildopt_replayed_after_repair=$(buildopt_run qualified 8 4)
+buildopt_replayed_after_repair=$(buildopt_run qualified 8 20)
 jq -e \
     --arg family "${buildopt_first_family_sha}" \
     --arg profile "${buildopt_first_profile_sha}" '
     .outcome == "QUALIFIED_AND_USED" and .phase == "ACTIVE" and
     .reason == "QUALIFIED_PROFILE_SELECTED" and
-    .generation == 1 and .attempt == 4 and
+    .generation == 1 and .attempt == 20 and
     .calibration.reused == true and .calibrationPerformed == false and
     .portfolio.reused == true and .portfolioPerformed == false and
     .selection.status == "SELECTED" and .selection.selected == true and
@@ -364,7 +408,7 @@ jq -e \
     jq . "${buildopt_replayed_after_repair}" >&2
     exit 1
 }
-if grep -Eq 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-4.log"; then
+if grep -Eq 'structural pair [0-9]+/8' "${buildopt_temp}/qualified-20.log"; then
     printf 'repaired automatic replay unexpectedly repeated calibration\n' >&2
     exit 1
 fi
@@ -395,17 +439,20 @@ buildopt_cancel_tmp="${buildopt_temp}/cancel-tmp"
 buildopt_cancel_stdout="${buildopt_temp}/cancelled.json"
 buildopt_cancel_stderr="${buildopt_temp}/cancelled.log"
 mkdir -p -- "${buildopt_cancel_tmp}"
+buildopt_run cancelled 8 1 >/dev/null
+buildopt_run cancelled 8 2 >/dev/null
 (
     cd -- "${buildopt_repository}"
     exec env -u BUILDOPT_BYPASS \
         -u GITHUB_EVENT_PATH -u GITHUB_REPOSITORY \
         -u CI_MERGE_REQUEST_DIFF_BASE_SHA -u CI_COMMIT_BEFORE_SHA \
         -u CI_PROJECT_PATH \
+		BUILDOPT_CANCEL_FIXTURE=1 \
         TMPDIR="${buildopt_cancel_tmp}" \
         GRADLE_USER_HOME="${buildopt_gradle_home}" \
         "${buildopt_binary}" optimize --json \
         --state-dir .buildopt/optimize/cancelled \
-        --resume never --calibration-budget 5m \
+        --calibration-budget 5m \
         --calibration-pairs 8 --max-break-even-builds 100 \
         jar --offline \
         >"${buildopt_cancel_stdout}" 2>"${buildopt_cancel_stderr}"
@@ -413,7 +460,7 @@ mkdir -p -- "${buildopt_cancel_tmp}"
 buildopt_cancel_pid=$!
 buildopt_cancel_ready=false
 for _ in $(seq 1 240); do
-    if grep -Fq 'warming isolated control daemon' "${buildopt_cancel_stderr}"; then
+    if grep -Fq 'buildopt-cancellation-fixture-ready' "${buildopt_cancel_stderr}"; then
         buildopt_cancel_ready=true
         break
     fi
@@ -434,17 +481,20 @@ set +e
 wait "${buildopt_cancel_pid}"
 buildopt_cancel_exit=$?
 set -e
-if ((buildopt_cancel_exit != 0)); then
-    printf 'cancelled automatic calibration returned %s, want authoritative build status 0\n' \
-        "${buildopt_cancel_exit}" >&2
+if ((buildopt_cancel_exit == 0)); then
+    printf 'cancelled incremental observation unexpectedly returned success\n' >&2
     sed -n '1,260p' "${buildopt_cancel_stderr}" >&2
     exit 1
 fi
-jq -e '
+jq -e --argjson exitCode "${buildopt_cancel_exit}" '
     .outcome == "NATIVE_RETAINED" and .phase == "NATIVE_RETAINED" and
     .reason == "CALIBRATION_CANCELLED" and
-    .native == {authoritative: true, started: true, exitCode: 0} and
-    .execution == {mode: "OPTIMIZED_NATIVE", authoritative: true, started: true, exitCode: 0} and
+    .native == {authoritative: false, started: false, exitCode: 0} and
+    .execution == {mode: "INCREMENTAL_CANDIDATE", authoritative: true, started: true, exitCode: $exitCode} and
+    .incrementalLearning.status == "NATIVE_RETAINED" and
+    .incrementalLearning.reason == "CALIBRATION_CANCELLED" and
+    .incrementalLearning.pairsCompleted == 0 and
+    .incrementalLearning.fallbackSuccessful == true and
     .calibration.status == "NATIVE_RETAINED" and
     .calibration.reason == "CALIBRATION_CANCELLED" and
     .calibration.performed == false and .calibration.qualified == false and
@@ -452,16 +502,20 @@ jq -e '
     .portfolio.status == "SKIPPED" and .selection.status == "SKIPPED" and
     .productionAuthorized == false and .testOptimization == "OUT_OF_SCOPE"
 ' "${buildopt_cancel_stdout}" >/dev/null || {
-    printf 'cancelled automatic calibration did not retain native execution safely\n' >&2
+    printf 'cancelled incremental observation did not preserve cancellation and retain native safely\n' >&2
     jq . "${buildopt_cancel_stdout}" >&2
     exit 1
 }
+if grep -Fq 'executing full-graph recovery' "${buildopt_cancel_stderr}"; then
+    printf 'cancelled incremental observation unexpectedly started full-graph recovery\n' >&2
+    exit 1
+fi
 if find "${buildopt_cancel_tmp}" -maxdepth 1 \
     -name 'buildopt-structural-measurement-*' -print -quit | grep -q .; then
     printf 'cancelled automatic calibration retained its measurement root\n' >&2
     exit 1
 fi
 
-printf 'Magic calibration and profile portfolio OK: family=LEAF_SOURCE profiles=1 mean saved=%sms reduction=%s%% positive=8/8 calibration=%sms break-even=%s builds selection=%sns; exact evidence/profile replayed, tamper rebuilt, insufficient pair budget made no claim, and cancellation retained native with complete cleanup\n' \
+printf 'Magic calibration and profile portfolio OK: family=LEAF_SOURCE profiles=1 mean saved=%sms reduction=%s%% positive=8/8 incremental=%sms break-even=%s builds selection=%sns; 17 ordinary invocations produced exact evidence/profile replay, tamper rebuilt, insufficient pair budget made no claim, and cancellation retained native without recovery\n' \
     "${buildopt_first_saved}" "${buildopt_first_reduction}" \
     "${buildopt_first_cost}" "${buildopt_first_break_even}" "${buildopt_selection_ns}"
