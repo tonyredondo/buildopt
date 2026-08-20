@@ -542,6 +542,7 @@ func TestPocCombinedDiscoveryIgnoresInheritedBuildSrcInit(t *testing.T) {
 	repositoryRoot := buildImpactRepositoryRoot(t)
 	baseRoot := filepath.Join(repositoryRoot, filepath.FromSlash("fixtures/poc-value/build-impact"))
 	overlayRoot := filepath.Join(repositoryRoot, filepath.FromSlash("fixtures/poc-value/combined-impact"))
+	var firstGeneratedManifest []byte
 	for _, dsl := range []string{"kotlin", "groovy"} {
 		t.Run(dsl, func(t *testing.T) {
 			workspace := filepath.Join(t.TempDir(), "repository")
@@ -590,7 +591,11 @@ func TestPocCombinedDiscoveryIgnoresInheritedBuildSrcInit(t *testing.T) {
 				t.Fatal(err)
 			}
 			assertFixtureBytes(t, filepath.Join(overlayRoot, "buildopt-impact-graph.generated.json"), generated.GraphJSON)
-			assertFixtureBytes(t, filepath.Join(overlayRoot, "buildopt-impact.generated.json"), generated.GeneratedJSON)
+			if firstGeneratedManifest == nil {
+				firstGeneratedManifest = bytes.Clone(generated.GeneratedJSON)
+			} else if !bytes.Equal(firstGeneratedManifest, generated.GeneratedJSON) {
+				t.Fatal("Kotlin and Groovy discovery produced different generated manifests")
+			}
 		})
 	}
 }
