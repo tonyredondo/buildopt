@@ -365,6 +365,7 @@ buildopt_subject() {
     local buildopt_producer_cache=${buildopt_subject_root}/producer-cache
     local buildopt_producer_event=${buildopt_auto_root}/${buildopt_key}/github-event.json
     local buildopt_sync_started buildopt_sync_completed buildopt_sync_ms
+    buildopt_sync_started=$(date +%s%N)
     buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
         "${buildopt_producer}" "${buildopt_producer_home}" "${buildopt_producer_gradle}" \
         "${buildopt_producer_cache}" "${buildopt_producer_event}" "${buildopt_jdk}" \
@@ -372,17 +373,26 @@ buildopt_subject() {
         --state-dir "${buildopt_state_relative}" \
         --token-file "${buildopt_authority}/producer-token.json" \
         --ca-file "${buildopt_tls}/ca.pem" >"${buildopt_logs}/producer-connect.json"
-    buildopt_sync_started=$(date +%s%N)
+    buildopt_sync_completed=$(date +%s%N)
+    buildopt_sync_ms=$(((buildopt_sync_completed - buildopt_sync_started) / 1000000))
+    jq -e '
+      .operation == "CONNECT" and .online and (.nativeFallback | not) and
+      .localStateStatus == "VALID" and
+      any(.kinds[]; .kind == "PORTFOLIO" and .status == "PUSHED" and
+        .objectsUploaded >= 2 and .snapshotVerified)
+    ' "${buildopt_logs}/producer-connect.json" >/dev/null || {
+        jq -c . "${buildopt_logs}/producer-connect.json" >&2
+        return 1
+    }
     buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
         "${buildopt_producer}" "${buildopt_producer_home}" "${buildopt_producer_gradle}" \
         "${buildopt_producer_cache}" "${buildopt_producer_event}" "${buildopt_jdk}" \
         "${buildopt_binary}" sync >"${buildopt_logs}/producer-sync.json"
-    buildopt_sync_completed=$(date +%s%N)
-    buildopt_sync_ms=$(((buildopt_sync_completed - buildopt_sync_started) / 1000000))
     jq -e '
-      .online and (.nativeFallback | not) and .localStateStatus == "VALID" and
-      any(.kinds[]; .kind == "PORTFOLIO" and .status == "PUSHED" and
-        .objectsUploaded >= 2 and .snapshotVerified)
+      .operation == "SYNC" and .online and (.nativeFallback | not) and
+      .localStateStatus == "VALID" and
+      any(.kinds[]; .kind == "PORTFOLIO" and .status == "NO_CHANGE" and
+        .objectsUploaded == 0 and .snapshotVerified)
     ' "${buildopt_logs}/producer-sync.json" >/dev/null || {
         jq -c . "${buildopt_logs}/producer-sync.json" >&2
         return 1

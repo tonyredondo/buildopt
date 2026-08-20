@@ -88,7 +88,7 @@ materialization cost, exact output digest and the native-retention reason.
 Per subject:
 
 ```text
-one-time cost = qualification calibration cost + central publication cost
+one-time cost = qualification calibration cost + central connect/publication cost
 gross saving  = sum(control wall time - candidate wall time)
 net saving    = gross saving - one-time cost
 ```
