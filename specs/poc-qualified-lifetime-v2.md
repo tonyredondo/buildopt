@@ -35,11 +35,13 @@ OpenTelemetry Java Instrumentation, Apache Kafka, Micronaut Core and Apache
 Groovy. The repository name selects only the test fixture and public history;
 product code contains no repository-specific branch.
 
-Each qualification uses the unchanged V2 protocol:
+Each qualification uses the unchanged V2 thresholds, tasks and gates inside
+the same fresh-process envelope as its later observations:
 
 - 17 ordinary invocations before calibration;
 - eight alternating native/candidate calibration pairs;
 - at most 30 projected builds to break even;
+- one single-use Gradle process per invocation;
 - the same public workflow and exact output boundary used by V2; and
 - no weakened confidence, fallback or correctness threshold.
 

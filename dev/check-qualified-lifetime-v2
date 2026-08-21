@@ -110,6 +110,7 @@ buildopt_common_jq='
     (.qualification.targetRevision | revision) and
     .qualification.sourceOrigin == "PUBLIC_UPSTREAM_COMMIT" and
     .qualification.changeFamily == "DEPENDENCY_SOURCE" and
+    .qualification.processEnvelope == $spec.protocol.processEnvelope and
     .qualification.expectedChangedProjects == $expected.expectedChangedProjects and
     (.qualification.graph | type == "object") and
     (.qualification.captureSha256 | digest) and

@@ -36,6 +36,15 @@ buildopt_subjects=${BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_FILE:-${buildopt_repo_ro
 buildopt_expected_subjects_sha=${BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256:-}
 buildopt_retain_root=${BUILDOPT_AUTOMATIC_BREADTH_RETAIN_ROOT:-false}
 buildopt_requested_root=${BUILDOPT_AUTOMATIC_BREADTH_ROOT:-}
+buildopt_process_mode=${BUILDOPT_AUTOMATIC_BREADTH_PROCESS_MODE:-daemon}
+case ${buildopt_process_mode} in
+    daemon | no-daemon) buildopt_process_flag=--${buildopt_process_mode} ;;
+    *)
+        printf 'unsupported automatic breadth process mode: %s\n' \
+            "${buildopt_process_mode}" >&2
+        exit 64
+        ;;
+esac
 if [[ -n ${buildopt_requested_root} ]]; then
     [[ ${buildopt_requested_root} == "${TMPDIR:-/tmp}/buildopt-automatic-breadth."* &&
         ! -e ${buildopt_requested_root} ]] || {
@@ -285,7 +294,7 @@ buildopt_capture_subject() {
         [[ -n ${buildopt_entrypoint} ]] && buildopt_gradle_args+=("${buildopt_entrypoint}")
     done < <(buildopt_entrypoints "${buildopt_index}")
     buildopt_gradle_args+=(
-        --daemon --build-cache --parallel --no-configuration-cache
+        "${buildopt_process_flag}" --build-cache --parallel --no-configuration-cache
         --console=plain --no-scan --max-workers=12
     )
     buildopt_event="${buildopt_root}/${buildopt_key}/github-event.json"

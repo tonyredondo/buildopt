@@ -286,6 +286,7 @@ buildopt_subject() {
     BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256="${buildopt_spec_sha}" \
     BUILDOPT_AUTOMATIC_BREADTH_ROOT="${buildopt_auto_root}" \
     BUILDOPT_AUTOMATIC_BREADTH_RETAIN_ROOT=true \
+    BUILDOPT_AUTOMATIC_BREADTH_PROCESS_MODE=no-daemon \
         "${buildopt_script_dir}/run-automatic-breadth-transfer" \
         "${buildopt_qualification}" "${buildopt_key}"
 
@@ -683,6 +684,7 @@ buildopt_subject() {
          historyBranch:$branch},
        qualification:{parentRevision:$parent,targetRevision:$qualifier,
          sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",changeFamily:"DEPENDENCY_SOURCE",
+         processEnvelope:"FRESH_GRADLE_PROCESS_PER_BUILD",
          expectedChangedProjects:($expectedProjects|fromjson),graph:$graph,
          calibration:$calibration,captureSha256:$captureSha,
          materialization:{transport:"CENTRAL_CAS_CHUNKS",packBytes:$packBytes,
