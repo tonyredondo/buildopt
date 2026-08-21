@@ -490,6 +490,11 @@ buildopt_subject() {
     local buildopt_observations=${buildopt_subject_root}/observations.jsonl
     : >"${buildopt_observations}"
     local buildopt_sequence=0
+    local buildopt_qualifier_wrapper_sha buildopt_active_wrapper_sha
+    buildopt_qualifier_wrapper_sha=$(git -C "${buildopt_producer}" show \
+        "${buildopt_qualifier}:gradle/wrapper/gradle-wrapper.properties" | \
+        sha256sum | awk '{print $1}')
+    buildopt_active_wrapper_sha=${buildopt_qualifier_wrapper_sha}
     while IFS= read -r buildopt_observation; do
         buildopt_sequence=$((buildopt_sequence + 1))
         local buildopt_observation_parent
@@ -499,6 +504,23 @@ buildopt_subject() {
         if ((buildopt_sequence % 2 == 0)); then
             buildopt_order=CANDIDATE_FIRST
             buildopt_arms=(candidate control)
+        fi
+        local buildopt_observation_wrapper_sha buildopt_wrapper_matches_qualification=true
+        buildopt_observation_wrapper_sha=$(git -C "${buildopt_producer}" show \
+            "${buildopt_observation}:gradle/wrapper/gradle-wrapper.properties" | \
+            sha256sum | awk '{print $1}')
+        if [[ ${buildopt_observation_wrapper_sha} != "${buildopt_qualifier_wrapper_sha}" ]]; then
+            buildopt_wrapper_matches_qualification=false
+        fi
+        if [[ ${buildopt_observation_wrapper_sha} != "${buildopt_active_wrapper_sha}" ]]; then
+            for buildopt_arm in control candidate; do
+                buildopt_stop_gradle_daemons \
+                    "${buildopt_subject_root}/${buildopt_arm}" \
+                    "${buildopt_subject_root}/${buildopt_arm}-gradle" \
+                    "${buildopt_jdk}" \
+                    "${buildopt_logs}/${buildopt_sequence}-${buildopt_arm}-obsolete-daemon-stop.log"
+            done
+            buildopt_active_wrapper_sha=${buildopt_observation_wrapper_sha}
         fi
         for buildopt_arm in control candidate; do
             git -C "${buildopt_subject_root}/${buildopt_arm}" checkout -q --detach \
@@ -589,6 +611,7 @@ buildopt_subject() {
             --arg outputSha "${buildopt_control_sha}" \
             --argjson selected "${buildopt_selected}" --arg source "${buildopt_source}" \
             --arg reason "${buildopt_reason}" --arg executionMode "${buildopt_execution_mode}" \
+            --argjson wrapperMatchesQualification "${buildopt_wrapper_matches_qualification}" \
             --argjson selectionNs "${buildopt_selection_ns}" \
             --argjson preSyncMs "${buildopt_presync_ms}" \
             --argjson postSyncMs "${buildopt_postsync_ms}" \
@@ -602,6 +625,7 @@ buildopt_subject() {
            candidateRequiredOutputSha256:$outputSha,exactRequiredOutputs:true,
            selected:$selected,selectionSource:$source,reason:$reason,
            executionMode:$executionMode,nativeRetained:($selected|not),
+           wrapperMatchesQualification:$wrapperMatchesQualification,
            selectionDurationNs:$selectionNs,preSyncDurationMs:$preSyncMs,
            postSyncDurationMs:$postSyncMs,materializationDurationMs:$materializeMs}
         ' >>"${buildopt_observations}"

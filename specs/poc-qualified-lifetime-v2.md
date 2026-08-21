@@ -74,6 +74,13 @@ invocation while toolchain, Wrapper, dependency and Gradle caches remain
 persistent. Build logic is retained because deleting it would measure a cold
 bootstrap rather than ordinary descendant-build lifetime.
 
+If a public observation changes `gradle-wrapper.properties`, both arms stop
+their obsolete Wrapper-version daemons before checkout and outside measurement.
+Neither arm can reuse an old-version daemon, and this avoids an artificial
+four-daemon memory peak created only by co-locating two experimental arms. Each
+observation records whether its Wrapper still matches the qualified profile;
+Wrapper drift must retain native execution.
+
 The candidate must either:
 
 - select `CENTRAL_PORTFOLIO`, run `SELECTIVE_PROFILE` and restore exact

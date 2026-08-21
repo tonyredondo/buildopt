@@ -63,7 +63,7 @@ buildopt_common_jq='
       "materializationDurationMs","nativeRetained","order","parentRevision",
       "postSyncDurationMs","preSyncDurationMs","reason","requiredOutputCount",
       "revision","savedMs","selected","selectionDurationNs","selectionSource",
-      "sequence","sourceOrigin"] and
+      "sequence","sourceOrigin","wrapperMatchesQualification"] and
     .sequence == ($index + 1) and
     .revision == $expected.observations[$index] and (.revision | revision) and
     (.parentRevision | revision) and .sourceOrigin == "PUBLIC_UPSTREAM_COMMIT" and
@@ -80,6 +80,8 @@ buildopt_common_jq='
     (.preSyncDurationMs | nonnegative_integer) and
     (.postSyncDurationMs | nonnegative_integer) and
     (.materializationDurationMs | nonnegative_integer) and
+    (.wrapperMatchesQualification | type == "boolean") and
+    (if .wrapperMatchesQualification then true else .nativeRetained end) and
     (if .selected then
        .selectionSource == "CENTRAL_PORTFOLIO" and
        .executionMode == $selected_mode and
@@ -95,6 +97,7 @@ buildopt_common_jq='
       "qualification","repository","schemaVersion"] and
     .schemaVersion == "buildopt.evidence/poc-qualified-lifetime-subject/v2" and
     $spec.protocol.noCompatibleReplayPrecedesPayback == true and
+    $spec.protocol.obsoleteWrapperDaemonsStoppedBeforeMeasurement == true and
     $spec.protocol.selectedExecutionMode == "SELECTIVE_PROFILE" and
     .repository == {id:$expected.repositoryId,remote:$expected.remoteUrl,
       publicRepository:true,historyBranch:$expected.historyBranch} and

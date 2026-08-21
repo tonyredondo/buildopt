@@ -13,6 +13,7 @@
     "requiredOutputComparison": "EXACT_FILE_INVENTORY_AND_SHA256",
     "armOrder": "ALTERNATING",
     "noCompatibleReplayPrecedesPayback": true,
+    "obsoleteWrapperDaemonsStoppedBeforeMeasurement": true,
     "percentagesAggregatedAcrossRepositories": false
   },
   "repositories": [
