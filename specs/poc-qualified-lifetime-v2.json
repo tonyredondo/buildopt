@@ -17,6 +17,7 @@
     "nativeOutputPortabilityGate": "EXACT_CROSS_ROOT_FILE_INVENTORY_AND_SHA256",
     "portabilityControl": "UNCONNECTED_NATIVE_BUILD_CACHE_DISABLED",
     "nonPortableQualification": "REJECT_BEFORE_LIFETIME_OBSERVATION",
+    "nativeRetainedOutputMismatch": "REJECT_SUBJECT_WITHOUT_PERFORMANCE_CLAIM",
     "selectedExecutionMode": "SELECTIVE_PROFILE",
     "requiredOutputComparison": "EXACT_FILE_INVENTORY_AND_SHA256",
     "armOrder": "ALTERNATING",

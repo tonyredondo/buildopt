@@ -202,7 +202,10 @@ those same five qualified profiles over frozen public first-parent descendant
 commits. It adds verified CAS transport for materialized output packs and
 measures cumulative wall-time value against persistent optimized-native arms.
 Exact native retention is a valid outcome; the experiment does not require a
-positive result, average repositories or weaken the qualification gates.
+positive result, average repositories or weaken the qualification gates. A
+later mismatch between two native-retained builds is recorded as native output
+nondeterminism and rejects that subject without a timing claim; selected output
+differences remain product failures.
 
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation

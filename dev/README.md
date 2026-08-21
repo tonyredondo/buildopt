@@ -650,6 +650,13 @@ experiment reports cumulative economics per repository and never averages
 unrelated repository percentages. It is bounded POC evidence, not a soak or a
 production gate.
 
+The exact-byte gate also distinguishes native output nondeterminism from a
+BuildOpt correctness failure. A mismatch between two native-retained arms
+rejects the subject without a performance claim and records the complete
+difference manifest. A mismatch after `CENTRAL_PORTFOLIO` selection remains a
+hard failure. The runner never normalizes archives or bytecode to manufacture
+equivalence.
+
 Reproduce the incremental-learning transaction with one exact installed
 binary and validate its checked evidence with:
 

@@ -242,6 +242,34 @@ buildopt_hash_required_outputs() {
     BUILDOPT_OUTPUT_SHA=$(sha256sum "${buildopt_manifest}" | awk '{print $1}')
 }
 
+buildopt_write_output_differences() {
+    local buildopt_expected=$1
+    local buildopt_actual=$2
+    local buildopt_output=$3
+    awk -F '\t' '
+      NR == FNR {
+        expected[$4] = $1 FS $2 FS $3
+        next
+      }
+      {
+        actual_paths[$4] = 1
+        actual = $1 FS $2 FS $3
+        if (!($4 in expected) || expected[$4] != actual) {
+          split(expected[$4], wanted, FS)
+          print $4 FS wanted[1] FS $1 FS wanted[2] FS $2 FS wanted[3] FS $3
+        }
+      }
+      END {
+        for (path in expected) {
+          if (!(path in actual_paths)) {
+            split(expected[path], wanted, FS)
+            print path FS wanted[1] FS "MISSING" FS wanted[2] FS "MISSING" FS wanted[3] FS "MISSING"
+          }
+        }
+      }
+    ' "${buildopt_expected}" "${buildopt_actual}" | sort >"${buildopt_output}"
+}
+
 buildopt_subject() {
     local buildopt_index=$1
     local buildopt_key buildopt_repository_id buildopt_repository_numeric_id
@@ -486,30 +514,10 @@ buildopt_subject() {
             buildopt_independent_output_sha=${BUILDOPT_OUTPUT_SHA}
             if [[ ${buildopt_independent_output_sha} != "${buildopt_producer_output_sha}" ]]; then
                 buildopt_portable=false
-                awk -F '\t' '
-                  NR == FNR {
-                    producer[$4] = $1 FS $2 FS $3
-                    next
-                  }
-                  {
-                    independent[$4] = 1
-                    actual = $1 FS $2 FS $3
-                    if (!($4 in producer) || producer[$4] != actual) {
-                      split(producer[$4], expected, FS)
-                      print $4 FS expected[1] FS $1 FS expected[2] FS $2 FS expected[3] FS $3
-                    }
-                  }
-                  END {
-                    for (path in producer) {
-                      if (!(path in independent)) {
-                        split(producer[path], expected, FS)
-                        print path FS expected[1] FS "MISSING" FS expected[2] FS "MISSING" FS expected[3] FS "MISSING"
-                      }
-                    }
-                  }
-                ' "${buildopt_logs}/producer-outputs.tsv" \
-                    "${buildopt_logs}/control-warmup-outputs.tsv" | \
-                    sort >"${buildopt_portability_differences}"
+                buildopt_write_output_differences \
+                    "${buildopt_logs}/producer-outputs.tsv" \
+                    "${buildopt_logs}/control-warmup-outputs.tsv" \
+                    "${buildopt_portability_differences}"
                 break
             fi
             buildopt_run_environment "${buildopt_repository_id}" \
@@ -543,6 +551,167 @@ buildopt_subject() {
                 "${buildopt_logs}/candidate-warmup.json" >/dev/null
         fi
     done
+
+    local buildopt_observations=${buildopt_subject_root}/observations.jsonl
+    : >"${buildopt_observations}"
+    local buildopt_sequence=0
+    local buildopt_qualifier_wrapper_sha
+    buildopt_qualifier_wrapper_sha=$(git -C "${buildopt_producer}" show \
+        "${buildopt_qualifier}:gradle/wrapper/gradle-wrapper.properties" | \
+        sha256sum | awk '{print $1}')
+    while [[ ${buildopt_portable} == true ]] && IFS= read -r buildopt_observation; do
+        buildopt_sequence=$((buildopt_sequence + 1))
+        local buildopt_observation_parent
+        buildopt_observation_parent=$(git -C "${buildopt_producer}" rev-parse "${buildopt_observation}^1")
+        local buildopt_order=CONTROL_FIRST
+        local -a buildopt_arms=(control candidate)
+        if ((buildopt_sequence % 2 == 0)); then
+            buildopt_order=CANDIDATE_FIRST
+            buildopt_arms=(candidate control)
+        fi
+        local buildopt_observation_wrapper_sha buildopt_wrapper_matches_qualification=true
+        buildopt_observation_wrapper_sha=$(git -C "${buildopt_producer}" show \
+            "${buildopt_observation}:gradle/wrapper/gradle-wrapper.properties" | \
+            sha256sum | awk '{print $1}')
+        if [[ ${buildopt_observation_wrapper_sha} != "${buildopt_qualifier_wrapper_sha}" ]]; then
+            buildopt_wrapper_matches_qualification=false
+        fi
+        for buildopt_arm in control candidate; do
+            git -C "${buildopt_subject_root}/${buildopt_arm}" checkout -q --detach \
+                "${buildopt_observation}"
+            buildopt_write_event "${buildopt_subject_root}/${buildopt_arm}-event.json" \
+                "${buildopt_observation_parent}"
+        done
+        local buildopt_control_ms=0 buildopt_candidate_ms=0
+        local buildopt_control_sha='' buildopt_candidate_sha='' buildopt_output_count=0
+        local buildopt_control_hits=0 buildopt_candidate_hits=0
+        for buildopt_arm in "${buildopt_arms[@]}"; do
+            local buildopt_repository=${buildopt_subject_root}/${buildopt_arm}
+            local buildopt_home=${buildopt_subject_root}/${buildopt_arm}-home
+            local buildopt_gradle_home=${buildopt_subject_root}/${buildopt_arm}-gradle
+            local buildopt_cache_home=${buildopt_subject_root}/${buildopt_arm}-cache
+            local buildopt_event=${buildopt_subject_root}/${buildopt_arm}-event.json
+            local buildopt_log=${buildopt_logs}/${buildopt_sequence}-${buildopt_arm}.log
+            local buildopt_machine=${buildopt_logs}/${buildopt_sequence}-${buildopt_arm}.json
+            buildopt_clear_project_outputs "${buildopt_repository}"
+            local buildopt_started buildopt_completed buildopt_duration buildopt_hits
+            buildopt_started=$(date +%s%N)
+            if [[ ${buildopt_arm} == control ]]; then
+                buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+                    "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
+                    "${buildopt_cache_home}" "${buildopt_event}" "${buildopt_jdk}" \
+                    "${buildopt_binary}" gradle "${buildopt_workflow[@]}" \
+                    >"${buildopt_log}" 2>&1
+            else
+                buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
+                    "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
+                    "${buildopt_cache_home}" "${buildopt_event}" "${buildopt_jdk}" \
+                    "${buildopt_binary}" optimize --state-dir "${buildopt_state_relative}" \
+                    --calibration-budget 30m --calibration-pairs 8 \
+                    --max-break-even-builds 30 --json -- "${buildopt_workflow[@]}" \
+                    >"${buildopt_machine}" 2>"${buildopt_log}"
+            fi
+            buildopt_completed=$(date +%s%N)
+            buildopt_duration=$(((buildopt_completed - buildopt_started) / 1000000))
+            buildopt_hits=$(grep -c ' FROM-CACHE' "${buildopt_log}" || true)
+            buildopt_hash_required_outputs "${buildopt_repository}" \
+                "${buildopt_subject_output}/required-outputs.txt" \
+                "${buildopt_logs}/${buildopt_sequence}-${buildopt_arm}-outputs.tsv"
+            if [[ ${buildopt_arm} == control ]]; then
+                buildopt_control_ms=${buildopt_duration}
+                buildopt_control_hits=${buildopt_hits}
+                buildopt_control_sha=${BUILDOPT_OUTPUT_SHA}
+                buildopt_output_count=${BUILDOPT_OUTPUT_COUNT}
+            else
+                buildopt_candidate_ms=${buildopt_duration}
+                buildopt_candidate_hits=${buildopt_hits}
+                buildopt_candidate_sha=${BUILDOPT_OUTPUT_SHA}
+            fi
+        done
+        local buildopt_candidate_result=${buildopt_logs}/${buildopt_sequence}-candidate.json
+        local buildopt_selected buildopt_source buildopt_reason buildopt_execution_mode
+        local buildopt_selection_ns buildopt_presync_ms buildopt_postsync_ms buildopt_materialize_ms
+        buildopt_selected=$(jq -r '.selection.selected' "${buildopt_candidate_result}")
+        buildopt_source=$(jq -r '.central.selectionSource' "${buildopt_candidate_result}")
+        buildopt_reason=$(jq -r \
+            'if .selection.selected then .selection.reason elif .reason != "" then .reason else .central.reason end' \
+            "${buildopt_candidate_result}")
+        buildopt_execution_mode=$(jq -r '.execution.mode' "${buildopt_candidate_result}")
+        buildopt_selection_ns=$(jq -r '.selection.durationNs // 0' "${buildopt_candidate_result}")
+        buildopt_presync_ms=$(jq -r '.central.preSyncDurationMs // 0' "${buildopt_candidate_result}")
+        buildopt_postsync_ms=$(jq -r '.central.postSyncDurationMs // 0' "${buildopt_candidate_result}")
+        buildopt_materialize_ms=$(jq -r '.discovery.materialization.economics.totalMs // 0' \
+            "${buildopt_candidate_result}")
+        if [[ ${buildopt_selected} == true ]]; then
+            [[ ${buildopt_source} == CENTRAL_PORTFOLIO &&
+                ${buildopt_execution_mode} == SELECTIVE_PROFILE ]] || return 1
+        else
+            [[ ${buildopt_execution_mode} == OPTIMIZED_NATIVE ]] || return 1
+        fi
+        if [[ ${buildopt_control_sha} != "${buildopt_candidate_sha}" ]]; then
+            if [[ ${buildopt_selected} == true ]]; then
+                printf '%s selected required outputs differ at %.12s\n' \
+                    "${buildopt_repository_id}" "${buildopt_observation}" >&2
+                return 1
+            fi
+            printf '%s native required outputs are not reproducible at %.12s\n' \
+                "${buildopt_repository_id}" "${buildopt_observation}" >&2
+            buildopt_portable=false
+            buildopt_producer_output_sha=${buildopt_control_sha}
+            buildopt_independent_output_sha=${buildopt_candidate_sha}
+            buildopt_portability_output_count=${buildopt_output_count}
+            buildopt_write_output_differences \
+                "${buildopt_logs}/${buildopt_sequence}-control-outputs.tsv" \
+                "${buildopt_logs}/${buildopt_sequence}-candidate-outputs.tsv" \
+                "${buildopt_portability_differences}"
+            break
+        fi
+        jq -n \
+            --argjson sequence "${buildopt_sequence}" \
+            --arg revision "${buildopt_observation}" \
+            --arg parent "${buildopt_observation_parent}" --arg order "${buildopt_order}" \
+            --argjson controlMs "${buildopt_control_ms}" \
+            --argjson candidateMs "${buildopt_candidate_ms}" \
+            --argjson controlHits "${buildopt_control_hits}" \
+            --argjson candidateHits "${buildopt_candidate_hits}" \
+            --argjson outputCount "${buildopt_output_count}" \
+            --arg outputSha "${buildopt_control_sha}" \
+            --argjson selected "${buildopt_selected}" --arg source "${buildopt_source}" \
+            --arg reason "${buildopt_reason}" --arg executionMode "${buildopt_execution_mode}" \
+            --argjson wrapperMatchesQualification "${buildopt_wrapper_matches_qualification}" \
+            --argjson selectionNs "${buildopt_selection_ns}" \
+            --argjson preSyncMs "${buildopt_presync_ms}" \
+            --argjson postSyncMs "${buildopt_postsync_ms}" \
+            --argjson materializeMs "${buildopt_materialize_ms}" '
+          {sequence:$sequence,revision:$revision,parentRevision:$parent,
+           sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",order:$order,
+           controlDurationMs:$controlMs,candidateDurationMs:$candidateMs,
+           savedMs:($controlMs-$candidateMs),controlFromCache:$controlHits,
+           candidateFromCache:$candidateHits,requiredOutputCount:$outputCount,
+           controlRequiredOutputSha256:$outputSha,
+           candidateRequiredOutputSha256:$outputSha,exactRequiredOutputs:true,
+           selected:$selected,selectionSource:$source,reason:$reason,
+           executionMode:$executionMode,nativeRetained:($selected|not),
+           wrapperMatchesQualification:$wrapperMatchesQualification,
+           selectionDurationNs:$selectionNs,preSyncDurationMs:$preSyncMs,
+           postSyncDurationMs:$postSyncMs,materializationDurationMs:$materializeMs}
+        ' >>"${buildopt_observations}"
+        printf 'qualified lifetime %s %d/%d %.12s: selected=%s control=%dms candidate=%dms delta=%dms\n' \
+            "${buildopt_repository_id}" "${buildopt_sequence}" \
+            "$(jq ".repositories[${buildopt_index}].observations | length" "${buildopt_spec}")" \
+            "${buildopt_observation}" "${buildopt_selected}" \
+            "${buildopt_control_ms}" "${buildopt_candidate_ms}" \
+            "$((buildopt_control_ms - buildopt_candidate_ms))"
+    done < <(jq -r ".repositories[${buildopt_index}].observations[]" "${buildopt_spec}")
+
+    for buildopt_arm in control candidate; do
+        if [[ -d ${buildopt_subject_root}/${buildopt_arm}-gradle ]]; then
+            buildopt_stop_gradle_daemons "${buildopt_subject_root}/${buildopt_arm}" \
+                "${buildopt_subject_root}/${buildopt_arm}-gradle" "${buildopt_jdk}" \
+                "${buildopt_logs}/${buildopt_arm}-daemon-stop.log"
+        fi
+    done
+    buildopt_stop_server
 
     local buildopt_portability_difference_count buildopt_portability_differences_sha
     local buildopt_portability_sample
@@ -612,152 +781,6 @@ buildopt_subject() {
             "${buildopt_subject_output}/result.json" --subject
         return 0
     fi
-
-    local buildopt_observations=${buildopt_subject_root}/observations.jsonl
-    : >"${buildopt_observations}"
-    local buildopt_sequence=0
-    local buildopt_qualifier_wrapper_sha
-    buildopt_qualifier_wrapper_sha=$(git -C "${buildopt_producer}" show \
-        "${buildopt_qualifier}:gradle/wrapper/gradle-wrapper.properties" | \
-        sha256sum | awk '{print $1}')
-    while IFS= read -r buildopt_observation; do
-        buildopt_sequence=$((buildopt_sequence + 1))
-        local buildopt_observation_parent
-        buildopt_observation_parent=$(git -C "${buildopt_producer}" rev-parse "${buildopt_observation}^1")
-        local buildopt_order=CONTROL_FIRST
-        local -a buildopt_arms=(control candidate)
-        if ((buildopt_sequence % 2 == 0)); then
-            buildopt_order=CANDIDATE_FIRST
-            buildopt_arms=(candidate control)
-        fi
-        local buildopt_observation_wrapper_sha buildopt_wrapper_matches_qualification=true
-        buildopt_observation_wrapper_sha=$(git -C "${buildopt_producer}" show \
-            "${buildopt_observation}:gradle/wrapper/gradle-wrapper.properties" | \
-            sha256sum | awk '{print $1}')
-        if [[ ${buildopt_observation_wrapper_sha} != "${buildopt_qualifier_wrapper_sha}" ]]; then
-            buildopt_wrapper_matches_qualification=false
-        fi
-        for buildopt_arm in control candidate; do
-            git -C "${buildopt_subject_root}/${buildopt_arm}" checkout -q --detach \
-                "${buildopt_observation}"
-            buildopt_write_event "${buildopt_subject_root}/${buildopt_arm}-event.json" \
-                "${buildopt_observation_parent}"
-        done
-        local buildopt_control_ms=0 buildopt_candidate_ms=0
-        local buildopt_control_sha='' buildopt_candidate_sha='' buildopt_output_count=0
-        local buildopt_control_hits=0 buildopt_candidate_hits=0
-        for buildopt_arm in "${buildopt_arms[@]}"; do
-            local buildopt_repository=${buildopt_subject_root}/${buildopt_arm}
-            local buildopt_home=${buildopt_subject_root}/${buildopt_arm}-home
-            local buildopt_gradle_home=${buildopt_subject_root}/${buildopt_arm}-gradle
-            local buildopt_cache_home=${buildopt_subject_root}/${buildopt_arm}-cache
-            local buildopt_event=${buildopt_subject_root}/${buildopt_arm}-event.json
-            local buildopt_log=${buildopt_logs}/${buildopt_sequence}-${buildopt_arm}.log
-            local buildopt_machine=${buildopt_logs}/${buildopt_sequence}-${buildopt_arm}.json
-            buildopt_clear_project_outputs "${buildopt_repository}"
-            local buildopt_started buildopt_completed buildopt_duration buildopt_hits
-            buildopt_started=$(date +%s%N)
-            if [[ ${buildopt_arm} == control ]]; then
-                buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
-                    "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
-                    "${buildopt_cache_home}" "${buildopt_event}" "${buildopt_jdk}" \
-                    "${buildopt_binary}" gradle "${buildopt_workflow[@]}" \
-                    >"${buildopt_log}" 2>&1
-            else
-                buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
-                    "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
-                    "${buildopt_cache_home}" "${buildopt_event}" "${buildopt_jdk}" \
-                    "${buildopt_binary}" optimize --state-dir "${buildopt_state_relative}" \
-                    --calibration-budget 30m --calibration-pairs 8 \
-                    --max-break-even-builds 30 --json -- "${buildopt_workflow[@]}" \
-                    >"${buildopt_machine}" 2>"${buildopt_log}"
-            fi
-            buildopt_completed=$(date +%s%N)
-            buildopt_duration=$(((buildopt_completed - buildopt_started) / 1000000))
-            buildopt_hits=$(grep -c ' FROM-CACHE' "${buildopt_log}" || true)
-            buildopt_hash_required_outputs "${buildopt_repository}" \
-                "${buildopt_subject_output}/required-outputs.txt" \
-                "${buildopt_logs}/${buildopt_sequence}-${buildopt_arm}-outputs.tsv"
-            if [[ ${buildopt_arm} == control ]]; then
-                buildopt_control_ms=${buildopt_duration}
-                buildopt_control_hits=${buildopt_hits}
-                buildopt_control_sha=${BUILDOPT_OUTPUT_SHA}
-                buildopt_output_count=${BUILDOPT_OUTPUT_COUNT}
-            else
-                buildopt_candidate_ms=${buildopt_duration}
-                buildopt_candidate_hits=${buildopt_hits}
-                buildopt_candidate_sha=${BUILDOPT_OUTPUT_SHA}
-            fi
-        done
-        [[ ${buildopt_control_sha} == "${buildopt_candidate_sha}" ]] || {
-            printf '%s required outputs differ at %.12s\n' \
-                "${buildopt_repository_id}" "${buildopt_observation}" >&2
-            return 1
-        }
-        local buildopt_candidate_result=${buildopt_logs}/${buildopt_sequence}-candidate.json
-        local buildopt_selected buildopt_source buildopt_reason buildopt_execution_mode
-        local buildopt_selection_ns buildopt_presync_ms buildopt_postsync_ms buildopt_materialize_ms
-        buildopt_selected=$(jq -r '.selection.selected' "${buildopt_candidate_result}")
-        buildopt_source=$(jq -r '.central.selectionSource' "${buildopt_candidate_result}")
-        buildopt_reason=$(jq -r \
-            'if .selection.selected then .selection.reason elif .reason != "" then .reason else .central.reason end' \
-            "${buildopt_candidate_result}")
-        buildopt_execution_mode=$(jq -r '.execution.mode' "${buildopt_candidate_result}")
-        buildopt_selection_ns=$(jq -r '.selection.durationNs // 0' "${buildopt_candidate_result}")
-        buildopt_presync_ms=$(jq -r '.central.preSyncDurationMs // 0' "${buildopt_candidate_result}")
-        buildopt_postsync_ms=$(jq -r '.central.postSyncDurationMs // 0' "${buildopt_candidate_result}")
-        buildopt_materialize_ms=$(jq -r '.discovery.materialization.economics.totalMs // 0' \
-            "${buildopt_candidate_result}")
-        if [[ ${buildopt_selected} == true ]]; then
-            [[ ${buildopt_source} == CENTRAL_PORTFOLIO &&
-                ${buildopt_execution_mode} == SELECTIVE_PROFILE ]] || return 1
-        else
-            [[ ${buildopt_execution_mode} == OPTIMIZED_NATIVE ]] || return 1
-        fi
-        jq -n \
-            --argjson sequence "${buildopt_sequence}" \
-            --arg revision "${buildopt_observation}" \
-            --arg parent "${buildopt_observation_parent}" --arg order "${buildopt_order}" \
-            --argjson controlMs "${buildopt_control_ms}" \
-            --argjson candidateMs "${buildopt_candidate_ms}" \
-            --argjson controlHits "${buildopt_control_hits}" \
-            --argjson candidateHits "${buildopt_candidate_hits}" \
-            --argjson outputCount "${buildopt_output_count}" \
-            --arg outputSha "${buildopt_control_sha}" \
-            --argjson selected "${buildopt_selected}" --arg source "${buildopt_source}" \
-            --arg reason "${buildopt_reason}" --arg executionMode "${buildopt_execution_mode}" \
-            --argjson wrapperMatchesQualification "${buildopt_wrapper_matches_qualification}" \
-            --argjson selectionNs "${buildopt_selection_ns}" \
-            --argjson preSyncMs "${buildopt_presync_ms}" \
-            --argjson postSyncMs "${buildopt_postsync_ms}" \
-            --argjson materializeMs "${buildopt_materialize_ms}" '
-          {sequence:$sequence,revision:$revision,parentRevision:$parent,
-           sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",order:$order,
-           controlDurationMs:$controlMs,candidateDurationMs:$candidateMs,
-           savedMs:($controlMs-$candidateMs),controlFromCache:$controlHits,
-           candidateFromCache:$candidateHits,requiredOutputCount:$outputCount,
-           controlRequiredOutputSha256:$outputSha,
-           candidateRequiredOutputSha256:$outputSha,exactRequiredOutputs:true,
-           selected:$selected,selectionSource:$source,reason:$reason,
-           executionMode:$executionMode,nativeRetained:($selected|not),
-           wrapperMatchesQualification:$wrapperMatchesQualification,
-           selectionDurationNs:$selectionNs,preSyncDurationMs:$preSyncMs,
-           postSyncDurationMs:$postSyncMs,materializationDurationMs:$materializeMs}
-        ' >>"${buildopt_observations}"
-        printf 'qualified lifetime %s %d/%d %.12s: selected=%s control=%dms candidate=%dms delta=%dms\n' \
-            "${buildopt_repository_id}" "${buildopt_sequence}" \
-            "$(jq ".repositories[${buildopt_index}].observations | length" "${buildopt_spec}")" \
-            "${buildopt_observation}" "${buildopt_selected}" \
-            "${buildopt_control_ms}" "${buildopt_candidate_ms}" \
-            "$((buildopt_control_ms - buildopt_candidate_ms))"
-    done < <(jq -r ".repositories[${buildopt_index}].observations[]" "${buildopt_spec}")
-
-    for buildopt_arm in control candidate; do
-        buildopt_stop_gradle_daemons "${buildopt_subject_root}/${buildopt_arm}" \
-            "${buildopt_subject_root}/${buildopt_arm}-gradle" "${buildopt_jdk}" \
-            "${buildopt_logs}/${buildopt_arm}-daemon-stop.log"
-    done
-    buildopt_stop_server
 
     local buildopt_calibration_cost buildopt_central_cost buildopt_total_cost
     local buildopt_selected_count buildopt_native_count buildopt_selected_saved

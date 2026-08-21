@@ -96,6 +96,14 @@ sample paths. It does not drop volatile files, rewrite bytecode or weaken
 correctness to manufacture a portable profile. A rejected profile is a
 completed POC finding, not a product failure.
 
+The same exact-byte gate remains active during lifetime observation. If a
+native-retained control/candidate pair produces different required bytes, the
+subject is rejected without a performance claim and retains the mismatch
+manifest. This identifies nondeterministic native outputs rather than charging
+their random difference to BuildOpt. A selected profile that produces
+different required bytes remains a hard product failure; it cannot be
+reclassified as native nondeterminism.
+
 ## Comparison
 
 For every observation revision, two isolated arms with persistent cache state

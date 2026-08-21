@@ -125,6 +125,8 @@ buildopt_common_jq='
     $spec.protocol.portabilityControl ==
       "UNCONNECTED_NATIVE_BUILD_CACHE_DISABLED" and
     $spec.protocol.nonPortableQualification == "REJECT_BEFORE_LIFETIME_OBSERVATION" and
+    $spec.protocol.nativeRetainedOutputMismatch ==
+      "REJECT_SUBJECT_WITHOUT_PERFORMANCE_CLAIM" and
     $spec.protocol.freshGradleProcessPerMeasuredBuild == true and
     $spec.protocol.persistentDaemonStateCompared == false and
     $spec.protocol.selectedExecutionMode == "SELECTIVE_PROFILE" and
