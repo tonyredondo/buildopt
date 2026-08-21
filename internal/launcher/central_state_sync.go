@@ -369,6 +369,24 @@ func synchronizeCentralState(
 	connection centralConnection,
 	client *centralStateClient,
 ) (centralSyncResult, error) {
+	local, localErr := collectCentralLocalPublications(
+		repositoryRoot, stateDirectory, connection.StateDirectory,
+		connection.RepositoryID, connection.RepositoryScopeSHA256,
+	)
+	return synchronizeCentralStateWithLocal(
+		ctx, operation, connectionDirectory, connection, client, local, localErr,
+	)
+}
+
+func synchronizeCentralStateWithLocal(
+	ctx context.Context,
+	operation string,
+	connectionDirectory string,
+	connection centralConnection,
+	client *centralStateClient,
+	local map[sharedcache.StateKind]*centralLocalPublication,
+	localErr error,
+) (centralSyncResult, error) {
 	result := centralSyncResult{
 		SchemaVersion: centralSyncResultSchema, Operation: operation,
 		ServerURL: connection.ServerURL, RepositoryID: connection.RepositoryID,
@@ -377,10 +395,6 @@ func synchronizeCentralState(
 		CompletedAt:          time.Now().UTC().Format(time.RFC3339Nano),
 		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}
-	local, localErr := collectCentralLocalPublications(
-		repositoryRoot, stateDirectory, connection.StateDirectory,
-		connection.RepositoryID, connection.RepositoryScopeSHA256,
-	)
 	result.LocalStateStatus = "ABSENT"
 	if localErr != nil {
 		result.LocalStateStatus = "INCOMPATIBLE"

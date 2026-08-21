@@ -26,6 +26,7 @@ const (
 	optimizeCentralDisconnected  = "DISCONNECTED"
 	optimizeCentralAvailable     = "REMOTE_AVAILABLE"
 	optimizeCentralSelected      = "REMOTE_PROFILE_SELECTED"
+	optimizeCentralSelectedLocal = "LOCAL_REFRESHED_PROFILE_SELECTED"
 	optimizeCentralRetained      = "NATIVE_RETAINED"
 	optimizeCentralPublished     = "STATE_SYNCHRONIZED"
 
@@ -88,10 +89,12 @@ type centralOptimizeIntegration struct {
 	result           optimizeCentralResult
 	prequalification optimizeEconomicPrequalification
 
-	portfolio  *centralRemoteSnapshot
-	evidence   *centralRemoteSnapshot
-	checkpoint *centralRemoteSnapshot
-	refresh    *centralOptimizeRefresh
+	portfolio      *centralRemoteSnapshot
+	evidence       *centralRemoteSnapshot
+	checkpoint     *centralRemoteSnapshot
+	localPortfolio *centralRemoteSnapshot
+	localEvidence  *centralRemoteSnapshot
+	refresh        *centralOptimizeRefresh
 }
 
 type centralOptimizeReplay struct {
@@ -157,6 +160,11 @@ func prepareCentralOptimizeIntegration(invocation optimizeInvocation, diagnostic
 		integration.retain(optimizeCentralReasonStructural)
 		return integration
 	}
+	local, localErr := collectCentralLocalPublications(
+		invocation.repositoryRoot, invocation.stateDirectory, invocation.stateRelative,
+		connection.RepositoryID, connection.RepositoryScopeSHA256,
+	)
+	integration.captureRefreshedLocalSnapshots(local, localErr)
 	token, err := readPrivateCentralCredential(filepath.Join(invocation.connectionDirectory, connection.TokenFile), centralMaximumConfig)
 	if err != nil {
 		integration.retain(optimizeCentralReasonInvalid)
@@ -180,10 +188,9 @@ func prepareCentralOptimizeIntegration(invocation optimizeInvocation, diagnostic
 
 	started := time.Now()
 	ctx, cancel := context.WithTimeout(context.Background(), centralRequestTimeout)
-	syncResult, syncErr := synchronizeCentralState(
-		ctx, "OPTIMIZE_PRE_SYNC", invocation.repositoryRoot,
-		invocation.stateDirectory, invocation.connectionDirectory,
-		connection, client,
+	syncResult, syncErr := synchronizeCentralStateWithLocal(
+		ctx, "OPTIMIZE_PRE_SYNC", invocation.connectionDirectory,
+		connection, client, local, localErr,
 	)
 	cancel()
 	integration.result.PreSyncDurationMS = boundedDurationMS(time.Since(started))
@@ -252,7 +259,37 @@ func centralOptimizePreSyncEligible(invocation optimizeInvocation, connection ce
 }
 
 func (integration *centralOptimizeIntegration) prepareAutomaticReplay(run *optimizeRun) *impactInvocation {
-	if integration == nil || integration.portfolio == nil || integration.evidence == nil {
+	if integration == nil {
+		return nil
+	}
+	if integration.localPortfolio != nil && integration.localEvidence != nil {
+		remotePortfolio, remoteEvidence := integration.portfolio, integration.evidence
+		integration.portfolio, integration.evidence = integration.localPortfolio, integration.localEvidence
+		replay, impact, selection, err := integration.materializeReplay(run)
+		integration.portfolio, integration.evidence = remotePortfolio, remoteEvidence
+		if err == nil {
+			selection.DurationNS = time.Since(integration.startedAt).Nanoseconds()
+			if selection.DurationNS < 1 {
+				selection.DurationNS = 1
+			}
+			selection.Source = optimizeSelectionSourceLocal
+			selection.Reason = optimizeSelectionReasonSelected
+			selection.ValidatedBindings = append([]string(nil), optimizeReplayBindingNames...)
+			selection.RemotePortfolioManifestSHA256 = ""
+			selection.RemoteEvidenceManifestSHA256 = ""
+			integration.result.Status = optimizeCentralSelectedLocal
+			integration.result.Reason = optimizeCentralSelectedLocal
+			integration.result.SelectionSource = optimizeSelectionSourceLocal
+			integration.result.EvidenceRevision = selection.EvidenceRevision
+			integration.result.RevalidatedRevision = selection.RevalidatedRevision
+			integration.result.NativeFallback = false
+			run.centralReplay = replay
+			run.selection = selection
+			run.prequalification = unevaluatedOptimizePrequalification(optimizePrequalificationReasonSelected)
+			return impact
+		}
+	}
+	if integration.portfolio == nil || integration.evidence == nil {
 		return nil
 	}
 	replay, impact, selection, err := integration.materializeReplay(run)
@@ -293,6 +330,57 @@ func (integration *centralOptimizeIntegration) prepareAutomaticReplay(run *optim
 	run.selection = selection
 	run.prequalification = unevaluatedOptimizePrequalification(optimizePrequalificationReasonSelected)
 	return impact
+}
+
+func (integration *centralOptimizeIntegration) captureRefreshedLocalSnapshots(
+	publications map[sharedcache.StateKind]*centralLocalPublication,
+	err error,
+) {
+	if err != nil {
+		return
+	}
+	portfolio := publications[sharedcache.StateKindPortfolio]
+	evidence := publications[sharedcache.StateKindEvidence]
+	if portfolio == nil || evidence == nil {
+		return
+	}
+	files, decodeErr := decodedCentralBundleFiles(portfolio.bundle)
+	if decodeErr != nil {
+		return
+	}
+	indexRaw := files[filepath.ToSlash(filepath.Join("portfolio", optimizePortfolioIndexFile))]
+	var index optimizeProfilePortfolio
+	if decodeCentralStrictJSON(indexRaw, &index) != nil || len(index.Profiles) < 1 {
+		return
+	}
+	refreshed := false
+	for _, entry := range index.Profiles {
+		if validMeasurementRevision(entry.RevalidatedRevision) &&
+			entry.RevalidatedRevision != entry.TargetRevision &&
+			optimizePortfolioOutputRevision(entry) == entry.RevalidatedRevision {
+			refreshed = true
+			break
+		}
+	}
+	if !refreshed {
+		return
+	}
+	integration.localPortfolio = centralSnapshotFromLocalPublication(portfolio)
+	integration.localEvidence = centralSnapshotFromLocalPublication(evidence)
+}
+
+func centralSnapshotFromLocalPublication(publication *centralLocalPublication) *centralRemoteSnapshot {
+	objects := make(map[string][]byte, len(publication.objects))
+	for _, object := range publication.objects {
+		objects[object.sha256] = object.raw
+	}
+	return &centralRemoteSnapshot{
+		manifestSHA256: publication.bundleSHA256,
+		bundle:         publication.bundle,
+		bundleRaw:      publication.bundleRaw,
+		bundleSHA256:   publication.bundleSHA256,
+		objects:        objects,
+	}
 }
 
 func (integration *centralOptimizeIntegration) materializeReplay(

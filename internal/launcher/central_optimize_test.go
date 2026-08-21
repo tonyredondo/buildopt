@@ -361,8 +361,13 @@ func TestCentralOptimizeReusesQualifiedProfileAcrossUnrelatedCommitAndRejectsStr
 		result: optimizeCentralResult{SchemaVersion: optimizeCentralSchemaVersion, Status: optimizeCentralAvailable,
 			Reason: "VERIFIED_REMOTE_STATE_AVAILABLE", Connected: true, SnapshotsVerified: true,
 			ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE"},
-		portfolio: &centralRemoteSnapshot{manifestSHA256: portfolioManifestSHA, bundle: centralOptimizeTestBundle(sharedcache.StateKindPortfolio, refreshedFiles)},
-		evidence: &centralRemoteSnapshot{manifestSHA256: integration.evidence.manifestSHA256,
+		portfolio: integration.portfolio,
+		evidence:  integration.evidence,
+		localPortfolio: &centralRemoteSnapshot{
+			manifestSHA256: portfolioManifestSHA,
+			bundle:         centralOptimizeTestBundle(sharedcache.StateKindPortfolio, refreshedFiles),
+		},
+		localEvidence: &centralRemoteSnapshot{manifestSHA256: integration.evidence.manifestSHA256,
 			bundle: centralOptimizeTestBundle(sharedcache.StateKindEvidence, map[string][]byte{evidencePath: refreshedFiles[evidencePath]})},
 	}
 	run, err = beginOptimizeRun(invocation)
@@ -370,7 +375,10 @@ func TestCentralOptimizeReusesQualifiedProfileAcrossUnrelatedCommitAndRejectsStr
 		t.Fatal(err)
 	}
 	if impact = nextIntegration.prepareAutomaticReplay(run); impact == nil || !run.selection.Selected ||
-		run.selection.EvidenceRevision != evidenceRevision {
+		run.selection.Source != optimizeSelectionSourceLocal ||
+		run.selection.EvidenceRevision != evidenceRevision ||
+		nextIntegration.result.SelectionSource != optimizeSelectionSourceLocal ||
+		nextIntegration.result.Status != optimizeCentralSelectedLocal {
 		t.Fatalf("source descendant did not select the refreshed profile: impact=%+v selection=%+v", impact, run.selection)
 	}
 }
