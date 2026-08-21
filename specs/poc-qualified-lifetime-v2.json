@@ -8,13 +8,15 @@
     "maximumWorkers": 12,
     "history": "PUBLIC_FIRST_PARENT",
     "qualification": "PUBLIC_UPSTREAM_COMMIT",
-    "comparison": "PERSISTENT_NATIVE_CONTROL_VERSUS_REMOTE_PROFILE_CANDIDATE",
+    "comparison": "PERSISTENT_CACHE_CONTROL_VERSUS_REMOTE_PROFILE_CANDIDATE",
+    "processEnvelope": "FRESH_GRADLE_PROCESS_PER_BUILD",
+    "persistentState": "WRAPPER_DEPENDENCY_BUILD_AND_BUILDOPT_CACHES",
     "selectedExecutionMode": "SELECTIVE_PROFILE",
     "requiredOutputComparison": "EXACT_FILE_INVENTORY_AND_SHA256",
     "armOrder": "ALTERNATING",
     "noCompatibleReplayPrecedesPayback": true,
-    "obsoleteWrapperDaemonsStoppedBeforeMeasurement": true,
-    "obsoleteControlDaemonRetiredBeforeCandidateWarmup": true,
+    "freshGradleProcessPerMeasuredBuild": true,
+    "persistentDaemonStateCompared": false,
     "percentagesAggregatedAcrossRepositories": false
   },
   "repositories": [

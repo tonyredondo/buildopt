@@ -97,8 +97,10 @@ buildopt_common_jq='
       "qualification","repository","schemaVersion"] and
     .schemaVersion == "buildopt.evidence/poc-qualified-lifetime-subject/v2" and
     $spec.protocol.noCompatibleReplayPrecedesPayback == true and
-    $spec.protocol.obsoleteWrapperDaemonsStoppedBeforeMeasurement == true and
-    $spec.protocol.obsoleteControlDaemonRetiredBeforeCandidateWarmup == true and
+    $spec.protocol.processEnvelope == "FRESH_GRADLE_PROCESS_PER_BUILD" and
+    $spec.protocol.persistentState == "WRAPPER_DEPENDENCY_BUILD_AND_BUILDOPT_CACHES" and
+    $spec.protocol.freshGradleProcessPerMeasuredBuild == true and
+    $spec.protocol.persistentDaemonStateCompared == false and
     $spec.protocol.selectedExecutionMode == "SELECTIVE_PROFILE" and
     .repository == {id:$expected.repositoryId,remote:$expected.remoteUrl,
       publicRepository:true,historyBranch:$expected.historyBranch} and

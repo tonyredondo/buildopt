@@ -62,30 +62,26 @@ structural and economic selector.
 
 ## Comparison
 
-For every observation revision, two persistent isolated arms receive the same
-central Gradle-cache opportunity:
+For every observation revision, two isolated arms with persistent cache state
+receive the same central Gradle-cache opportunity:
 
 - **control** runs `buildopt gradle` with optimized native execution;
 - **candidate** runs `buildopt optimize` with the remotely transported
   portfolio and materialization.
 
 The arm order alternates. Project outputs are removed before each measured
-invocation while toolchain, Wrapper, dependency and Gradle caches remain
-persistent. Build logic is retained because deleting it would measure a cold
-bootstrap rather than ordinary descendant-build lifetime.
+invocation while toolchain, Wrapper, dependency, Gradle build-cache and BuildOpt
+state remain persistent. Build logic is retained because deleting it would
+measure a cold bootstrap rather than ordinary descendant-build lifetime.
 
-If a public observation changes `gradle-wrapper.properties`, both arms stop
-their obsolete Wrapper-version daemons before checkout and outside measurement.
-Neither arm can reuse an old-version daemon, and this avoids an artificial
-four-daemon memory peak created only by co-locating two experimental arms. Each
-observation records whether its Wrapper still matches the qualified profile;
-Wrapper drift must retain native execution.
-
-When the first observation already changes the Wrapper, the completed control
-warm-up daemon is retired before the candidate warm-up starts. The candidate
-still performs the full qualification-revision warm-up, but the two arms do not
-overlap obsolete daemons that neither can reuse in the first measurement. This
-resource cleanup also occurs outside every measured interval.
+Every build uses a fresh Gradle process. This matches the bounded CI-like POC
+envelope and prevents one co-located experimental arm from retaining Gradle,
+Worker and Kotlin daemons while the other arm is measured. Persistent daemon
+state is therefore not part of this comparison; running the arms on one host
+must not create memory pressure that a real single build would not experience.
+The maximum worker count remains 12 and no tasks or correctness gates are
+removed. Each observation records whether its Wrapper still matches the
+qualified profile; Wrapper drift must retain native execution.
 
 The candidate must either:
 
