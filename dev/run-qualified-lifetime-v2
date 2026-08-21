@@ -381,6 +381,7 @@ buildopt_subject() {
     local buildopt_producer_cache=${buildopt_subject_root}/producer-cache
     local buildopt_producer_event=${buildopt_auto_root}/${buildopt_key}/github-event.json
     local buildopt_sync_started buildopt_sync_completed buildopt_sync_ms
+    local buildopt_chunk_count
     buildopt_sync_started=$(date +%s%N)
     buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
         "${buildopt_producer}" "${buildopt_producer_home}" "${buildopt_producer_gradle}" \
@@ -400,6 +401,12 @@ buildopt_subject() {
         jq -c . "${buildopt_logs}/producer-connect.json" >&2
         return 1
     }
+    buildopt_chunk_count=$(jq -er '
+      .kinds[] |
+      select(.kind == "PORTFOLIO" and .status == "PUSHED") |
+      (.objectsUploaded - 1) |
+      select(. > 0)
+    ' "${buildopt_logs}/producer-connect.json")
     buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
         "${buildopt_producer}" "${buildopt_producer_home}" "${buildopt_producer_gradle}" \
         "${buildopt_producer_cache}" "${buildopt_producer_event}" "${buildopt_jdk}" \
@@ -637,12 +644,9 @@ buildopt_subject() {
     elif ((buildopt_selected_count == 0)); then
         buildopt_conclusion=NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW
     fi
-    local buildopt_capture_sha buildopt_pack_bytes buildopt_chunk_count
+    local buildopt_capture_sha buildopt_pack_bytes
     buildopt_capture_sha=$(sha256sum "${buildopt_qualification}/${buildopt_key}/capture.json" | awk '{print $1}')
     buildopt_pack_bytes=$(jq -r '.discovery.materialization.byteCount' "${buildopt_qualifier_result}")
-    buildopt_chunk_count=$(jq -r \
-        '.kinds[] | select(.kind == "PORTFOLIO") | .objectsUploaded - 1' \
-        "${buildopt_logs}/producer-sync.json")
     jq -n \
         --arg key "${buildopt_key}" --arg repositoryId "${buildopt_repository_id}" \
         --arg remote "${buildopt_remote}" --arg branch "${buildopt_branch}" \
