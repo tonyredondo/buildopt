@@ -12,6 +12,8 @@ buildopt_output=$1
 buildopt_filter=${2:-}
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_resume_auto_root=${BUILDOPT_QUALIFIED_LIFETIME_RESUME_AUTO_ROOT:-}
+buildopt_resume_qualification_root=${BUILDOPT_QUALIFIED_LIFETIME_RESUME_QUALIFICATION_ROOT:-}
 buildopt_spec=${buildopt_repo_root}/specs/poc-qualified-lifetime-v2.json
 buildopt_state_relative=.buildopt/optimize/materialization-economics-v2
 buildopt_success=false
@@ -61,6 +63,14 @@ if [[ -n ${buildopt_filter} ]]; then
     [[ $(jq --arg key "${buildopt_filter}" \
         '[.repositories[] | select(.key == $key)] | length' "${buildopt_spec}") -eq 1 ]] || {
         printf 'qualified lifetime repository key is absent: %s\n' "${buildopt_filter}" >&2
+        exit 64
+    }
+fi
+if [[ -n ${buildopt_resume_auto_root} || -n ${buildopt_resume_qualification_root} ]]; then
+    [[ -n ${buildopt_filter} && ${buildopt_resume_auto_root} == /* &&
+        ${buildopt_resume_qualification_root} == /* &&
+        -d ${buildopt_resume_auto_root} && -d ${buildopt_resume_qualification_root} ]] || {
+        printf 'qualification resume requires one repository key and two absolute retained roots\n' >&2
         exit 64
     }
 fi
@@ -302,23 +312,30 @@ buildopt_subject() {
         return 1
     }
 
-    local buildopt_auto_root
-    buildopt_auto_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-automatic-breadth.XXXXXX")
-    rmdir -- "${buildopt_auto_root}"
-    buildopt_runtime_roots+=("${buildopt_auto_root}")
-    local buildopt_qualification=${buildopt_work_root}/${buildopt_key}-qualification
-    printf 'qualified lifetime %s: qualifying public revision %.12s\n' \
-        "${buildopt_repository_id}" "${buildopt_qualifier}"
+    local buildopt_auto_root buildopt_qualification
     local buildopt_qualification_status=0
-    BUILDOPT_AUTOMATIC_BREADTH_PROTOCOL=v3 \
-    BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_FILE="${buildopt_spec}" \
-    BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256="${buildopt_spec_sha}" \
-    BUILDOPT_AUTOMATIC_BREADTH_ROOT="${buildopt_auto_root}" \
-    BUILDOPT_AUTOMATIC_BREADTH_RETAIN_ROOT=true \
-    BUILDOPT_AUTOMATIC_BREADTH_PROCESS_MODE=no-daemon \
-        "${buildopt_script_dir}/run-automatic-breadth-transfer" \
-        "${buildopt_qualification}" "${buildopt_key}" || \
-        buildopt_qualification_status=$?
+    if [[ -n ${buildopt_resume_auto_root} ]]; then
+        buildopt_auto_root=${buildopt_resume_auto_root}
+        buildopt_qualification=${buildopt_resume_qualification_root}
+        printf 'qualified lifetime %s: resuming captured qualification %.12s\n' \
+            "${buildopt_repository_id}" "${buildopt_qualifier}"
+    else
+        buildopt_auto_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-automatic-breadth.XXXXXX")
+        rmdir -- "${buildopt_auto_root}"
+        buildopt_qualification=${buildopt_work_root}/${buildopt_key}-qualification
+        printf 'qualified lifetime %s: qualifying public revision %.12s\n' \
+            "${buildopt_repository_id}" "${buildopt_qualifier}"
+        BUILDOPT_AUTOMATIC_BREADTH_PROTOCOL=v3 \
+        BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_FILE="${buildopt_spec}" \
+        BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256="${buildopt_spec_sha}" \
+        BUILDOPT_AUTOMATIC_BREADTH_ROOT="${buildopt_auto_root}" \
+        BUILDOPT_AUTOMATIC_BREADTH_RETAIN_ROOT=true \
+        BUILDOPT_AUTOMATIC_BREADTH_PROCESS_MODE=no-daemon \
+            "${buildopt_script_dir}/run-automatic-breadth-transfer" \
+            "${buildopt_qualification}" "${buildopt_key}" || \
+            buildopt_qualification_status=$?
+    fi
+    buildopt_runtime_roots+=("${buildopt_auto_root}")
 
     local buildopt_producer=${buildopt_auto_root}/${buildopt_key}/repository
     local buildopt_producer_gradle=${buildopt_auto_root}/${buildopt_key}/gradle-home
@@ -444,10 +461,13 @@ buildopt_subject() {
     local buildopt_control_binary=${buildopt_subject_root}/central-control
     mkdir -p -- "${buildopt_subject_root}" "${buildopt_state}" "${buildopt_authority}" \
         "${buildopt_tls}" "${buildopt_logs}"
-    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-        "${buildopt_script_dir}/run" --toolchain go -- \
-        go build -mod=readonly -buildvcs=false -trimpath \
-            -o "${buildopt_control_binary}" ./dev/central-two-machine-control
+    (
+        cd -- "${buildopt_repo_root}"
+        CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+            "${buildopt_script_dir}/run" --toolchain go -- \
+            go build -mod=readonly -buildvcs=false -trimpath \
+                -o "${buildopt_control_binary}" ./dev/central-two-machine-control
+    )
     git clone -q "${buildopt_producer}" "${buildopt_control}"
     git clone -q "${buildopt_producer}" "${buildopt_candidate}"
     local buildopt_arm

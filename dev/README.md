@@ -650,6 +650,21 @@ experiment reports cumulative economics per repository and never averages
 unrelated repository percentages. It is bounded POC evidence, not a soak or a
 production gate.
 
+If the harness stops after the expensive qualification capture, preserve the
+two diagnostic roots printed on stderr and resume that single subject without
+repeating its timing samples:
+
+```bash
+BUILDOPT_QUALIFIED_LIFETIME_RESUME_AUTO_ROOT=/absolute/buildopt-automatic-breadth.root \
+BUILDOPT_QUALIFIED_LIFETIME_RESUME_QUALIFICATION_ROOT=/absolute/qualification-result.root \
+  ./dev/run-qualified-lifetime-v2 /absolute/evidence/directory repository-key
+```
+
+Resume requires both absolute retained roots plus one repository key. The
+runner revalidates the captured result, raw samples, materialization state and
+installed binary before continuing; it does not reinterpret or rerun the
+qualification.
+
 The exact-byte gate also distinguishes native output nondeterminism from a
 BuildOpt correctness failure. A mismatch between two native-retained arms
 rejects the subject without a performance claim and records the complete
