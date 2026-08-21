@@ -11,6 +11,7 @@
     "comparison": "PERSISTENT_NATIVE_CONTROL_VERSUS_REMOTE_PROFILE_CANDIDATE",
     "requiredOutputComparison": "EXACT_FILE_INVENTORY_AND_SHA256",
     "armOrder": "ALTERNATING",
+    "noCompatibleReplayPrecedesPayback": true,
     "percentagesAggregatedAcrossRepositories": false
   },
   "repositories": [

@@ -47,8 +47,8 @@ buildopt_common_jq='
       repositoriesAveraged:false,soakRequired:false,
       testOptimization:"OUT_OF_SCOPE"};
   def expected_conclusion($net; $selected):
-    if $net >= 0 then "PAID_BACK_IN_OBSERVED_WINDOW"
-    elif $selected == 0 then "NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW"
+    if $selected == 0 then "NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW"
+    elif $net >= 0 then "PAID_BACK_IN_OBSERVED_WINDOW"
     else "NOT_PAID_BACK_IN_OBSERVED_WINDOW" end;
   def first_break_even($rows; $cost):
     reduce $rows[] as $row ({sum:0,index:0,answer:null};
@@ -93,6 +93,7 @@ buildopt_common_jq='
     keys == ["acceptance","boundaries","economics","key","observations",
       "qualification","repository","schemaVersion"] and
     .schemaVersion == "buildopt.evidence/poc-qualified-lifetime-subject/v2" and
+    $spec.protocol.noCompatibleReplayPrecedesPayback == true and
     .repository == {id:$expected.repositoryId,remote:$expected.remoteUrl,
       publicRepository:true,historyBranch:$expected.historyBranch} and
     .qualification.parentRevision == $expected.publicRevision and

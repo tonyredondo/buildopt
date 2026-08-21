@@ -639,10 +639,10 @@ buildopt_subject() {
       .answer
     ' "${buildopt_observations}")
     local buildopt_conclusion=NOT_PAID_BACK_IN_OBSERVED_WINDOW
-    if ((buildopt_net >= 0)); then
-        buildopt_conclusion=PAID_BACK_IN_OBSERVED_WINDOW
-    elif ((buildopt_selected_count == 0)); then
+    if ((buildopt_selected_count == 0)); then
         buildopt_conclusion=NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW
+    elif ((buildopt_net >= 0)); then
+        buildopt_conclusion=PAID_BACK_IN_OBSERVED_WINDOW
     fi
     local buildopt_capture_sha buildopt_pack_bytes
     buildopt_capture_sha=$(sha256sum "${buildopt_qualification}/${buildopt_key}/capture.json" | awk '{print $1}')

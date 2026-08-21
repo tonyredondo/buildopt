@@ -95,11 +95,16 @@ net saving    = gross saving - one-time cost
 
 The first observed break-even build is the earliest chronological observation
 whose cumulative saving covers the one-time cost. It is `null` when that never
-happens. A subject concludes with exactly one of:
+happens. Conclusions use this precedence:
 
-- `PAID_BACK_IN_OBSERVED_WINDOW`;
-- `NOT_PAID_BACK_IN_OBSERVED_WINDOW`; or
-- `NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW`.
+- zero compatible replays: `NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW`;
+- at least one replay and nonnegative net saving:
+  `PAID_BACK_IN_OBSERVED_WINDOW`; or
+- at least one replay and negative net saving:
+  `NOT_PAID_BACK_IN_OBSERVED_WINDOW`.
+
+Timing noise between native arms therefore cannot turn an unused profile into
+a paid-back profile.
 
 Results are reported per repository. The aggregate only counts subjects,
 observations, exact outputs, selections, fallbacks and conclusions; it does not
