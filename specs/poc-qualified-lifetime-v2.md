@@ -14,13 +14,15 @@ promotion gate.
 
 For each previously qualified change family:
 
-1. can an independently installed BuildOpt consumer obtain the profile and its
+1. do two independent native builds produce the same required output inventory
+   and exact bytes across checkout roots;
+2. can an independently installed BuildOpt consumer obtain the profile and its
    materialized outputs from the central HTTPS/CAS path;
-2. does the generic selector reuse it only on structurally compatible public
+3. does the generic selector reuse it only on structurally compatible public
    first-parent descendants;
-3. does every selected or native-retained build preserve the exact required
+4. does every selected or native-retained build preserve the exact required
    output inventory and bytes; and
-4. does cumulative observed saving repay qualification plus central
+5. does cumulative observed saving repay qualification plus central
    publication cost before the profile becomes inapplicable?
 
 The last question may legitimately answer **no**. Negative value and zero
@@ -61,6 +63,22 @@ The consumer rejects missing, reordered, oversized, duplicated or corrupt
 chunks. A source change in a project whose outputs were materialized also
 invalidates replay. Unrelated source changes may continue to the existing
 structural and economic selector.
+
+## Native output portability
+
+Qualification speedup alone does not prove that captured outputs are safe to
+move between machines. Before any lifetime observation, the producer and an
+independent checkout run the same native workflow in different absolute roots.
+Their complete required output inventories, modes, sizes and SHA-256 values
+must match exactly.
+
+A mismatch rejects the profile as
+`REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS` before lifetime observation. The
+result records the two aggregate digests, the total difference count, a digest
+of the complete difference manifest and at most 25 sample paths. It does not
+drop volatile files, rewrite bytecode or weaken correctness to manufacture a
+portable profile. A rejected profile is a completed POC finding, not a product
+failure.
 
 ## Comparison
 
@@ -123,11 +141,13 @@ produce an average speedup across unrelated repositories.
 
 ## Acceptance and boundaries
 
-The block completes when all five profiles qualify under the frozen contract,
-all listed public descendants are observed in first-parent order, every
-required output is exact, and every inapplicable profile retains native
-execution. Positive net value is a finding, not a prerequisite for accepting
-the experiment.
+The block completes when all five qualification attempts pass the frozen
+performance contract and receive an explicit portability decision. Portable
+profiles observe every listed public descendant in first-parent order, preserve
+every required output exactly and retain native execution whenever the profile
+is inapplicable. Non-portable profiles stop before lifetime observation and
+retain the exact mismatch evidence. Positive net value and universal
+portability are findings, not prerequisites for accepting the experiment.
 
 This work does not authorize production, require a soak or design partner, or
 change Test Optimization. It validates whether the general mechanism is worth

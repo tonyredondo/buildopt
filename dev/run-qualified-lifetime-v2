@@ -443,6 +443,11 @@ buildopt_subject() {
         BUILDOPT_L1_SECURITY_GENERATION=1 BUILDOPT_L1_L2_WRITE_AUTHORIZED=1 \
         "${buildopt_binary}" gradle "${buildopt_workflow[@]}" \
         >"${buildopt_logs}/producer-cache.log" 2>&1
+    buildopt_hash_required_outputs "${buildopt_producer}" \
+        "${buildopt_subject_output}/required-outputs.txt" \
+        "${buildopt_logs}/producer-outputs.tsv"
+    local buildopt_producer_output_sha=${BUILDOPT_OUTPUT_SHA}
+    local buildopt_portability_output_count=${BUILDOPT_OUTPUT_COUNT}
     buildopt_stop_gradle_daemons "${buildopt_producer}" "${buildopt_producer_gradle}" \
         "${buildopt_jdk}" "${buildopt_logs}/producer-daemon-stop.log"
     buildopt_stop_server
@@ -451,6 +456,9 @@ buildopt_subject() {
     buildopt_start_server "${buildopt_server}" "${buildopt_state}" "${buildopt_tls}" \
         "${buildopt_port}" "${buildopt_logs}/server-restarted.log"
 
+    local buildopt_portable=true buildopt_independent_output_sha=''
+    local buildopt_portability_differences=${buildopt_logs}/portability-differences.tsv
+    : >"${buildopt_portability_differences}"
     for buildopt_arm in control candidate; do
         local buildopt_repository=${buildopt_subject_root}/${buildopt_arm}
         local buildopt_home=${buildopt_subject_root}/${buildopt_arm}-home
@@ -474,6 +482,38 @@ buildopt_subject() {
                 "${buildopt_cache_home}" "${buildopt_event}" "${buildopt_jdk}" \
                 "${buildopt_binary}" gradle "${buildopt_workflow[@]}" \
                 >"${buildopt_logs}/control-warmup.log" 2>&1
+            buildopt_hash_required_outputs "${buildopt_repository}" \
+                "${buildopt_subject_output}/required-outputs.txt" \
+                "${buildopt_logs}/control-warmup-outputs.tsv"
+            buildopt_independent_output_sha=${BUILDOPT_OUTPUT_SHA}
+            if [[ ${buildopt_independent_output_sha} != "${buildopt_producer_output_sha}" ]]; then
+                buildopt_portable=false
+                awk -F '\t' '
+                  NR == FNR {
+                    producer[$4] = $1 FS $2 FS $3
+                    next
+                  }
+                  {
+                    independent[$4] = 1
+                    actual = $1 FS $2 FS $3
+                    if (!($4 in producer) || producer[$4] != actual) {
+                      split(producer[$4], expected, FS)
+                      print $4 FS expected[1] FS $1 FS expected[2] FS $2 FS expected[3] FS $3
+                    }
+                  }
+                  END {
+                    for (path in producer) {
+                      if (!(path in independent)) {
+                        split(producer[path], expected, FS)
+                        print path FS expected[1] FS "MISSING" FS expected[2] FS "MISSING" FS expected[3] FS "MISSING"
+                      }
+                    }
+                  }
+                ' "${buildopt_logs}/producer-outputs.tsv" \
+                    "${buildopt_logs}/control-warmup-outputs.tsv" | \
+                    sort >"${buildopt_portability_differences}"
+                break
+            fi
         else
             buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
                 "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
@@ -487,6 +527,74 @@ buildopt_subject() {
                 "${buildopt_logs}/candidate-warmup.json" >/dev/null
         fi
     done
+
+    local buildopt_portability_difference_count buildopt_portability_differences_sha
+    local buildopt_portability_sample
+    buildopt_portability_difference_count=$(wc -l <"${buildopt_portability_differences}" | tr -d ' ')
+    buildopt_portability_differences_sha=$(sha256sum "${buildopt_portability_differences}" | awk '{print $1}')
+    buildopt_portability_sample=$(head -n 25 "${buildopt_portability_differences}" | \
+        cut -f1 | jq -R -s 'split("\n") | map(select(length > 0))')
+    if [[ ${buildopt_portable} != true ]]; then
+        local buildopt_capture_sha buildopt_pack_bytes buildopt_total_cost
+        buildopt_capture_sha=$(sha256sum \
+            "${buildopt_qualification}/${buildopt_key}/capture.json" | awk '{print $1}')
+        buildopt_pack_bytes=$(jq -r '.discovery.materialization.byteCount' \
+            "${buildopt_qualifier_result}")
+        buildopt_total_cost=$((
+            $(jq -r '.calibration.calibrationCostMs' "${buildopt_qualifier_result}") +
+            buildopt_sync_ms
+        ))
+        jq -n \
+            --arg key "${buildopt_key}" --arg repositoryId "${buildopt_repository_id}" \
+            --arg remote "${buildopt_remote}" --arg branch "${buildopt_branch}" \
+            --arg parent "${buildopt_parent}" --arg qualifier "${buildopt_qualifier}" \
+            --arg expectedProjects "${buildopt_expected_projects}" \
+            --arg captureSha "${buildopt_capture_sha}" \
+            --arg producerSha "${buildopt_producer_output_sha}" \
+            --arg independentSha "${buildopt_independent_output_sha}" \
+            --arg differencesSha "${buildopt_portability_differences_sha}" \
+            --argjson outputCount "${buildopt_portability_output_count}" \
+            --argjson differenceCount "${buildopt_portability_difference_count}" \
+            --argjson differenceSample "${buildopt_portability_sample}" \
+            --argjson calibration "$(jq -c '.calibration | {calibrationCostMs,controlMeanMs,candidateMeanMs,meanSavedMs,reductionRatio,interval95SavedMs,positivePairs,pairsMeasured,breakEvenBuilds,qualified,fallbackSuccessful}' "${buildopt_qualifier_result}")" \
+            --argjson graph "$(jq -c '.discovery.graph' "${buildopt_qualifier_result}")" \
+            --argjson packBytes "${buildopt_pack_bytes}" \
+            --argjson chunkCount "${buildopt_chunk_count}" \
+            --argjson centralCost "${buildopt_sync_ms}" \
+            --argjson totalCost "${buildopt_total_cost}" '
+          {schemaVersion:"buildopt.evidence/poc-qualified-lifetime-subject/v2",
+           key:$key,repository:{id:$repositoryId,remote:$remote,publicRepository:true,
+             historyBranch:$branch},
+           qualification:{parentRevision:$parent,targetRevision:$qualifier,
+             sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",changeFamily:"DEPENDENCY_SOURCE",
+             processEnvelope:"FRESH_GRADLE_PROCESS_PER_BUILD",
+             expectedChangedProjects:($expectedProjects|fromjson),graph:$graph,
+             calibration:$calibration,captureSha256:$captureSha,
+             portability:{status:"REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS",
+               producerOutputSha256:$producerSha,
+               independentOutputSha256:$independentSha,outputCount:$outputCount,
+               differingFileCount:$differenceCount,differencesSha256:$differencesSha,
+               samplePaths:$differenceSample},
+             materialization:{transport:"CENTRAL_CAS_CHUNKS",packBytes:$packBytes,
+               chunkCount:$chunkCount,publicationDurationMs:$centralCost}},
+           observations:[],
+           economics:{observedBuilds:0,selectedReplays:0,nativeRetainedBuilds:0,
+             selectedReplaySavedMs:0,fallbackDeltaMs:0,cumulativeGrossSavedMs:0,
+             qualificationAndPublicationCostMs:$totalCost,
+             cumulativeNetSavedMs:(-$totalCost),firstObservedBreakEvenBuild:null,
+             conclusion:"NON_PORTABLE_NATIVE_OUTPUTS"},
+           acceptance:{decision:"COMPLETE",exactRequiredOutputs:true,
+             portabilityGatePassed:false,publicAncestry:true,productFailures:0},
+           boundaries:{designPartnerRequired:false,mechanismPercentagesAdded:false,
+             productionAuthorized:false,proofOfConcept:true,
+             repositoriesAveraged:false,soakRequired:false,
+             testOptimization:"OUT_OF_SCOPE"}}
+        ' >"${buildopt_subject_output}/result.json"
+        rm -f -- "${buildopt_subject_output}/required-outputs.txt"
+        "${buildopt_script_dir}/check-qualified-lifetime-v2" \
+            "${buildopt_subject_output}/result.json" --subject
+        return 0
+    fi
 
     local buildopt_observations=${buildopt_subject_root}/observations.jsonl
     : >"${buildopt_observations}"
@@ -667,6 +775,12 @@ buildopt_subject() {
         --arg parent "${buildopt_parent}" --arg qualifier "${buildopt_qualifier}" \
         --arg expectedProjects "${buildopt_expected_projects}" \
         --arg captureSha "${buildopt_capture_sha}" \
+        --arg producerSha "${buildopt_producer_output_sha}" \
+        --arg independentSha "${buildopt_independent_output_sha}" \
+        --arg differencesSha "${buildopt_portability_differences_sha}" \
+        --argjson portabilityOutputCount "${buildopt_portability_output_count}" \
+        --argjson portabilityDifferenceCount "${buildopt_portability_difference_count}" \
+        --argjson portabilitySample "${buildopt_portability_sample}" \
         --argjson calibration "$(jq -c '.calibration | {calibrationCostMs,controlMeanMs,candidateMeanMs,meanSavedMs,reductionRatio,interval95SavedMs,positivePairs,pairsMeasured,breakEvenBuilds,qualified,fallbackSuccessful}' "${buildopt_qualifier_result}")" \
         --argjson graph "$(jq -c '.discovery.graph' "${buildopt_qualifier_result}")" \
         --argjson packBytes "${buildopt_pack_bytes}" --argjson chunkCount "${buildopt_chunk_count}" \
@@ -687,6 +801,10 @@ buildopt_subject() {
          processEnvelope:"FRESH_GRADLE_PROCESS_PER_BUILD",
          expectedChangedProjects:($expectedProjects|fromjson),graph:$graph,
          calibration:$calibration,captureSha256:$captureSha,
+         portability:{status:"PORTABLE",producerOutputSha256:$producerSha,
+           independentOutputSha256:$independentSha,outputCount:$portabilityOutputCount,
+           differingFileCount:$portabilityDifferenceCount,
+           differencesSha256:$differencesSha,samplePaths:$portabilitySample},
          materialization:{transport:"CENTRAL_CAS_CHUNKS",packBytes:$packBytes,
            chunkCount:$chunkCount,publicationDurationMs:$centralCost}},
        observations:$observations,
@@ -696,7 +814,7 @@ buildopt_subject() {
          qualificationAndPublicationCostMs:$totalCost,cumulativeNetSavedMs:$net,
          firstObservedBreakEvenBuild:$breakEven,conclusion:$conclusion},
        acceptance:{decision:"COMPLETE",exactRequiredOutputs:true,
-         publicAncestry:true,productFailures:0},
+         portabilityGatePassed:true,publicAncestry:true,productFailures:0},
        boundaries:{designPartnerRequired:false,mechanismPercentagesAdded:false,
          productionAuthorized:false,proofOfConcept:true,
          repositoriesAveraged:false,soakRequired:false,
@@ -732,6 +850,9 @@ if ((${#buildopt_subject_files[@]} == buildopt_repository_count)); then
          cpuCount:$cpuCount,memoryBytes:$memoryBytes},subjects:.,
        aggregation:{subjectCount:length,
          qualifiedProfiles:([.[]|select(.qualification.calibration.qualified)]|length),
+         portableProfiles:([.[]|select(.qualification.portability.status == "PORTABLE")]|length),
+         nonPortableProfiles:([.[]|select(.qualification.portability.status ==
+           "REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS")]|length),
          observedBuilds:([.[].economics.observedBuilds]|add),
          selectedReplays:([.[].economics.selectedReplays]|add),
          nativeRetainedBuilds:([.[].economics.nativeRetainedBuilds]|add),
@@ -739,8 +860,10 @@ if ((${#buildopt_subject_files[@]} == buildopt_repository_count)); then
          paidBackSubjects:([.[]|select(.economics.conclusion == "PAID_BACK_IN_OBSERVED_WINDOW")]|length),
          noCompatibleReplaySubjects:([.[]|select(.economics.conclusion == "NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW")]|length),
          repositoryPercentagesAveraged:false,mechanismPercentagesAdded:false},
-       acceptance:{decision:"COMPLETE",allQualified:true,allOutputsExact:true,
-         allPublicFirstParent:true,productFailures:0},
+       acceptance:{decision:"COMPLETE",allQualified:true,
+         allPortabilityDecisionsComplete:true,
+         allPortable:([.[]|select(.qualification.portability.status == "PORTABLE")]|length) == length,
+         allOutputsExact:true,allPublicFirstParent:true,productFailures:0},
        boundaries:{designPartnerRequired:false,productionAuthorized:false,
          proofOfConcept:true,repositorySpecificProductRules:false,
          soakRequired:false,testOptimization:"OUT_OF_SCOPE"}}
