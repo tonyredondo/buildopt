@@ -274,13 +274,13 @@ calibration and reduces the observed fallback penalty from 220.761 to 13.896
 seconds. The original Jetty qualification still needs 31 matching replays and
 does not pay back in the observed window.
 
-The materialization-economics V2 transfer is complete. The unchanged
-zero-manual-file command ran 85 ordinary invocations on Spring, OpenTelemetry,
-Kafka, Micronaut and Groovy with one exact binary. All five candidates beat
-optimized native Gradle with exact outputs, full fallback, zero product
-failures, 8/8 positive pairs and one- to four-build payback. End-to-end savings
-range from Spring's 9.97% to Groovy's 75.11%; repository percentages are not
-averaged.
+The materialization-economics V2 transfer proved that all five frozen revisions
+could calibrate positively after generic task-graph and pack improvements. The
+subsequent qualified-lifetime V2 experiment now replaces that calibration-only
+status for product direction. Four of five current profiles qualify, only two
+are portable, none of seven descendant builds selects a profile and no subject
+pays back. All later builds retain optimized native Gradle with exact outputs
+and zero product failures.
 
 The completed POC sequence removed the observed economic blockers without
 weakening correctness or adding repository-specific rules:
@@ -299,17 +299,23 @@ weakening correctness or adding repository-specific rules:
 5. **Completed:** derive exact task-graph closure, share discovery with the
    first useful build, store verified outputs in one pack and account for
    end-to-end wall time; 5/5 qualify and 40/40 pairs improve.
+6. **Completed:** measure current qualification, independent-root portability
+   and public descendant lifetime; the terminal result is 4/5 qualified, 2/4
+   portable, 0/7 selected and 0/5 paid back.
 
-The next onboarding work is evidence-driven rather than another broad feature:
+The next onboarding work is evidence-driven rather than another broad feature
+or breadth rerun:
 
-1. replay the five qualified profiles on compatible public descendant changes
-   and measure cumulative value including selection, invalidation and fallback;
-2. expose progress, expected payback and native-retained reasons directly in
-   the one-command experience.
-3. extend the unchanged generic contracts to additional public change families
-   only after lifetime evidence identifies a real coverage gap.
+1. distinguish a structurally compatible central profile from a revision that
+   is merely waiting for fresh ordinary evidence, while preserving all exact
+   Wrapper, graph, workflow and output bindings;
+2. avoid central sync/materialization work before a profile is eligible;
+3. derive the smallest portable Gradle-owned output boundary without
+   normalizing or dropping required customer outputs; and
+4. rerun the same frozen public windows only after the generic correction,
+   requiring at least one exact selected replay and positive cumulative value.
 
-The retained dataset and its interpretation are in
-[`poc-materialization-economics-v2`](../../benchmarks/results/poc-materialization-economics-v2/README.md).
+The current dataset and its interpretation are in
+[`poc-qualified-lifetime-v2`](../../benchmarks/results/poc-qualified-lifetime-v2/README.md).
 No step may add repository-name rules, average repository percentages, weaken
 correctness gates or borrow another profile's lifetime.

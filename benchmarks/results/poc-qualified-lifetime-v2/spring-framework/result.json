@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-qualified-lifetime-subject/v2",
+  "key": "spring-framework",
+  "buildopt": {
+    "revision": "3c466a79f02c355a59cb5220b7b680a8ce6c672d",
+    "executableSha256": "9910fae9cbd9208a25f176e235ce4ef6a4b079d2522bf144db21c2c26b44dfb4"
+  },
+  "repository": {
+    "id": "spring-projects/spring-framework",
+    "remote": "https://github.com/spring-projects/spring-framework.git",
+    "publicRepository": true,
+    "historyBranch": "main"
+  },
+  "qualification": {
+    "parentRevision": "8fbd147f0b802434369e3e21018db929efb7f5ff",
+    "targetRevision": "1c4b20287f1d8f635867fb58c576849f9313e907",
+    "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+    "changeFamily": "DEPENDENCY_SOURCE",
+    "processEnvelope": "FRESH_GRADLE_PROCESS_PER_BUILD",
+    "expectedChangedProjects": [
+      ":spring-jms"
+    ],
+    "graph": {
+      "omittedProjects": 17,
+      "selectedProjects": 10,
+      "totalProjects": 27
+    },
+    "calibration": {
+      "calibrationCostMs": 3939,
+      "controlMeanMs": 32485.125,
+      "candidateMeanMs": 26318.5,
+      "controlP95Ms": 34191,
+      "candidateP95Ms": 29130,
+      "meanSavedMs": 6166.625,
+      "reductionRatio": 0.18982919105282803,
+      "interval95SavedMs": [
+        4715.125,
+        7447
+      ],
+      "positivePairs": 8,
+      "pairsMeasured": 8,
+      "breakEvenBuilds": 1,
+      "qualified": true,
+      "fallbackSuccessful": true,
+      "qualificationPolicy": "ROBUST_7_OF_8_POSITIVE_INTERVAL_P95_V1"
+    },
+    "captureFile": "qualification-capture.json",
+    "captureSha256": "ccd8b06ac2ceb04fabc42e85b63b258e9058bba952ad8988b7ebc28719c56312",
+    "calibrationEvidenceFile": "calibration-evidence.json",
+    "calibrationEvidenceSha256": "e2aad6666ff574141cd8840f2c037a84ec3192716235fae1f0b2efb7f349d1b3",
+    "portability": {
+      "status": "REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS",
+      "producerOutputSha256": "d0a4d79867519a09c4b708150f60188a322185bbb0a0e0138f8d3cdc541622a7",
+      "independentOutputSha256": "1f4ea17b5a218d5e3b64eb22bdb88a786845268e8d4af1a3b43dbbcdaca97a6c",
+      "outputCount": 14401,
+      "nativeCacheHits": 0,
+      "differingFileCount": 2,
+      "differencesSha256": "ac031b7cd713def96faf3d7e1d8a7d17efa4574abc4ac6fd458b74299a1aa1f5",
+      "samplePaths": [
+        "spring-aspects/build/classes/aspectj/test/org/springframework/aop/aspectj/autoproxy/CodeStyleAspect.class",
+        "spring-aspects/build/classes/aspectj/test/org/springframework/beans/factory/aspectj/ShouldBeConfiguredBySpring.class"
+      ]
+    },
+    "materialization": {
+      "transport": "CENTRAL_CAS_CHUNKS",
+      "packBytes": 41566870,
+      "chunkCount": 5,
+      "publicationDurationMs": 3653
+    }
+  },
+  "observations": [],
+  "economics": {
+    "observedBuilds": 0,
+    "selectedReplays": 0,
+    "nativeRetainedBuilds": 0,
+    "selectedReplaySavedMs": 0,
+    "fallbackDeltaMs": 0,
+    "cumulativeGrossSavedMs": 0,
+    "qualificationAndPublicationCostMs": 7592,
+    "cumulativeNetSavedMs": -7592,
+    "firstObservedBreakEvenBuild": null,
+    "conclusion": "NON_PORTABLE_NATIVE_OUTPUTS"
+  },
+  "acceptance": {
+    "decision": "COMPLETE",
+    "exactRequiredOutputs": true,
+    "portabilityGatePassed": false,
+    "publicAncestry": true,
+    "productFailures": 0
+  },
+  "boundaries": {
+    "designPartnerRequired": false,
+    "mechanismPercentagesAdded": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositoriesAveraged": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

@@ -69,18 +69,19 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > the [v1 matrix](./benchmarks/results/poc-magic-end-to-end-value-v1/README.md)
 > remains historical diagnostic evidence rather than being rewritten.
 
-> **Latest generalization result:** the unchanged zero-manual-file command now
-> combines task-graph discovery, exact output materialization and incremental
-> learning on Spring, OpenTelemetry, Kafka, Micronaut and Groovy with one exact
-> binary and zero product failures. All five candidates pass 8/8 pairs,
-> positive intervals, exact-output fallback and the unchanged 30-build payback
-> gate: Spring **9.97%**, OpenTelemetry **14.93%**, Kafka **38.93%**, Micronaut
-> **59.54%** and Groovy **75.11%** faster end to end. Spring's learning cost
-> falls from 88.668 seconds/67 builds to 4.070 seconds/four builds without
-> lowering a threshold. The result is **5/5 automatically qualified and 40/40
-> positive pairs**, without repository rules or hidden Gradle-only timing. See
-> the [materialization-economics evidence](./benchmarks/results/poc-materialization-economics-v2/README.md);
-> the preceding V2 breadth bundle remains immutable before-evidence.
+> **Latest lifetime result:** the same five public repositories were
+> requalified and followed through preregistered descendant commits. Spring,
+> OpenTelemetry, Kafka and Micronaut still show **11.88%–18.98%** isolated
+> calibration savings; Groovy retains native at 6/8 positive pairs and a worse
+> candidate p95. Only OpenTelemetry and Kafka pass exact cross-root output
+> portability. Across their seven later builds, **0 profiles are selected**,
+> all seven retain optimized native Gradle with exact outputs, and no subject
+> pays back. Spring's two AspectJ classes and one Micronaut JAR differ across
+> independent native roots and are rejected. The terminal result is therefore
+> **4/5 qualified, 2/4 portable, 0/7 selected and 0/5 paid back**, with zero
+> product failures. See the
+> [qualified-lifetime evidence](./benchmarks/results/poc-qualified-lifetime-v2/README.md);
+> attractive calibration is no longer presented as customer value.
 
 > **POC onboarding north star:** install BuildOpt, open a Gradle repository and
 > run `buildopt optimize build`. The command now has a stable state/result,
@@ -110,7 +111,11 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > penalty fell to 13.896 seconds while a matching replay still saved 100.744
 > seconds. The 1,386.764-second qualification still projects 31 matching
 > builds and did not repay in this three-build window. Useful lifetime remains
-> profile-specific; it is never inferred from steady-state speedup alone.
+> profile-specific; it is never inferred from steady-state speedup alone. The
+> new five-repository lifetime result reinforces that boundary: four current
+> calibrations qualify, but portability and cross-commit eligibility produce
+> zero selected replays. The next POC work must create generic compatible
+> reuse and cheap ineligible fallback before another breadth expansion.
 > This authority exists only inside the explicit POC command
 > and never grants production promotion. The ordered work and success
 > scorecard live in the

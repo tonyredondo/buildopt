@@ -4,12 +4,17 @@ umask 077
 export LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC
 
 if (($# < 1 || $# > 2)) || [[ $1 != /* ]]; then
-    printf 'usage: %s /absolute/evidence/output/directory [repository-key]\n' "$0" >&2
+    printf 'usage: %s /absolute/evidence/output/directory [repository-key|--summary-only]\n' "$0" >&2
     exit 64
 fi
 
 buildopt_output=$1
 buildopt_filter=${2:-}
+buildopt_summary_only=false
+if [[ ${buildopt_filter} == --summary-only ]]; then
+    buildopt_summary_only=true
+    buildopt_filter=
+fi
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
 buildopt_resume_auto_root=${BUILDOPT_QUALIFIED_LIFETIME_RESUME_AUTO_ROOT:-}
@@ -55,7 +60,8 @@ done
     printf 'qualified lifetime specification is unavailable\n' >&2
     exit 1
 }
-[[ -z $(git -C "${buildopt_repo_root}" status --porcelain) ]] || {
+[[ ${buildopt_summary_only} == true ||
+    -z $(git -C "${buildopt_repo_root}" status --porcelain) ]] || {
     printf 'qualified lifetime benchmark requires a clean BuildOpt checkout\n' >&2
     exit 1
 }
@@ -1006,9 +1012,11 @@ buildopt_subject() {
 }
 
 buildopt_repository_count=$(jq '.repositories | length' "${buildopt_spec}")
-for ((buildopt_index = 0; buildopt_index < buildopt_repository_count; buildopt_index++)); do
-    buildopt_subject "${buildopt_index}"
-done
+if [[ ${buildopt_summary_only} == false ]]; then
+    for ((buildopt_index = 0; buildopt_index < buildopt_repository_count; buildopt_index++)); do
+        buildopt_subject "${buildopt_index}"
+    done
+fi
 
 buildopt_subject_files=()
 while IFS= read -r buildopt_key; do
@@ -1044,7 +1052,8 @@ if ((${#buildopt_subject_files[@]} == buildopt_repository_count)); then
          noCompatibleReplaySubjects:([.[]|select(.economics.conclusion == "NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW")]|length),
          repositoryPercentagesAveraged:false,mechanismPercentagesAdded:false},
        acceptance:{decision:"COMPLETE",
-         allQualified:([.[]|select(.qualification.calibration.qualified)]|length) == length,
+         allQualified:
+           (([.[]|select(.qualification.calibration.qualified)]|length) == length),
          allQualifiedProfilesHavePortabilityDecision:
            (([.[]|select(.qualification.portability.status == "PORTABLE")]|length) +
             ([.[]|select(.qualification.portability.status ==
@@ -1052,8 +1061,8 @@ if ((${#buildopt_subject_files[@]} == buildopt_repository_count)); then
             ([.[]|select(.qualification.calibration.qualified)]|length)),
          allSubjectDecisionsComplete:true,
          allQualifiedProfilesPortable:
-           ([.[]|select(.qualification.portability.status == "PORTABLE")]|length) ==
-           ([.[]|select(.qualification.calibration.qualified)]|length),
+           (([.[]|select(.qualification.portability.status == "PORTABLE")]|length) ==
+            ([.[]|select(.qualification.calibration.qualified)]|length)),
          allOutputsExact:true,allPublicFirstParent:true,productFailures:0},
        boundaries:{designPartnerRequired:false,productionAuthorized:false,
          proofOfConcept:true,repositorySpecificProductRules:false,

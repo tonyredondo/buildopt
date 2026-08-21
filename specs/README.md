@@ -207,6 +207,14 @@ later mismatch between two native-retained builds is recorded as native output
 nondeterminism and rejects that subject without a timing claim; selected output
 differences remain product failures.
 
+The terminal [qualified-lifetime V2 evidence](../benchmarks/results/poc-qualified-lifetime-v2/README.md)
+records 4/5 current qualifications, 2/4 portable output sets, zero selected
+replays across seven public descendants and zero paid-back subjects. All seven
+later builds retain exact optimized-native outputs with zero product failures.
+This negative result makes cross-commit eligibility and portable output
+boundaries the next POC hypotheses; it does not authorize a weaker gate or a
+repeat-until-positive rerun.
+
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation
 per useful invocation. Its fixture completes eight pairs with zero

@@ -632,8 +632,8 @@ so every row passes the unchanged 30-build payback gate in one to four matching
 builds. The runner is long and is not part of normal CI; Base CI validates the
 checked-in compact evidence with the strict checker.
 
-Measure whether those five qualified profiles remain useful on ordinary public
-first-parent descendants with:
+Reproduce the current five-repository qualification, portability and public
+first-parent lifetime experiment with:
 
 ```bash
 ./dev/run-qualified-lifetime-v2 /absolute/evidence/directory
@@ -665,12 +665,28 @@ runner revalidates the captured result, raw samples, materialization state and
 installed binary before continuing; it does not reinterpret or rerun the
 qualification.
 
+If all five validated subject results exist but aggregate generation was
+interrupted, rebuild and validate only the compact summary without running a
+Gradle build:
+
+```bash
+./dev/run-qualified-lifetime-v2 /absolute/evidence/directory --summary-only
+```
+
 The exact-byte gate also distinguishes native output nondeterminism from a
 BuildOpt correctness failure. A mismatch between two native-retained arms
 rejects the subject without a performance claim and records the complete
 difference manifest. A mismatch after `CENTRAL_PORTFOLIO` selection remains a
 hard failure. The runner never normalizes archives or bytecode to manufacture
 equivalence.
+
+The checked terminal bundle is
+`benchmarks/results/poc-qualified-lifetime-v2`. It records five complete
+qualification decisions, four qualified profiles, two portable profiles,
+seven exact native-retained descendant builds, zero selected replays, zero
+paid-back subjects and zero product failures. Base CI validates the compact
+summary plus every subject's raw 17-invocation capture and eight-pair evidence;
+it does not rerun the public repositories.
 
 Reproduce the incremental-learning transaction with one exact installed
 binary and validate its checked evidence with:

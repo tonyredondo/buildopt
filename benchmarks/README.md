@@ -124,6 +124,27 @@ are deliberately not averaged.
   benchmarks/results/poc-materialization-economics-v2/summary.json
 ```
 
+The [qualified-lifetime V2 result](./results/poc-qualified-lifetime-v2/README.md)
+then tests whether those isolated wins survive later public commits. Current
+qualification remains positive for Spring (**18.98%**), OpenTelemetry
+(**11.88%**), Kafka (**18.02%**) and Micronaut (**13.67%**); Groovy retains
+native at 6/8 positive pairs and a regressive candidate p95. Only OpenTelemetry
+and Kafka pass exact cross-root portability. Across their seven descendant
+builds, no profile is selected, all seven exact-output runs retain native and
+no subject pays back. Spring and Micronaut stop before observation because two
+AspectJ classes and one Micronaut JAR respectively differ across independent
+native roots.
+
+```bash
+./dev/check-qualified-lifetime-v2 \
+  benchmarks/results/poc-qualified-lifetime-v2/summary.json
+```
+
+This negative result supersedes calibration-only economics for deciding the
+next POC work. It does not invalidate the measured graph-reduction mechanism;
+it shows that cross-commit eligibility and portable output boundaries are now
+the limiting product hypotheses.
+
 The preceding [automatic breadth V2 result](./results/poc-automatic-breadth-transfer-v2/README.md)
 is retained as immutable before-evidence; it qualified 4/5 and exposed the
 learning/materialization cost addressed by this follow-up.

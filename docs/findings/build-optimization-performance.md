@@ -710,6 +710,36 @@ now coalesces identical repeated path/outcome records and rejects conflicting
 duplicates. This corrects evidence collection without dropping observations,
 relaxing a gate or adding a Hibernate-specific decision.
 
+## Current Five-Repository Lifetime Decision
+
+The qualified-lifetime V2 experiment closes the gap between attractive
+single-revision calibration and customer value across commits. One exact
+installed executable requalified Spring, OpenTelemetry, Kafka, Micronaut and
+Groovy, checked exact native output portability across independent roots and
+followed every preregistered descendant only when portability passed.
+
+| Repository | Calibration decision | Portability | Descendant decision | Net result |
+| --- | --- | --- | --- | ---: |
+| Spring | 18.98% faster, 8/8 | Rejected: 2 AspectJ classes | Not observed | -7.592 s |
+| OpenTelemetry | 11.88% faster, 8/8 | Portable | 0/1 selected | -13.255 s |
+| Kafka | 18.02% faster, 8/8 | Portable | 0/6 selected | -39.961 s |
+| Micronaut | 13.67% faster, 8/8 | Rejected: 1 JAR | Not observed | -15.457 s |
+| Groovy | 6.82% faster, 6/8; p95 worse | Not evaluated | Not observed | -1.835 s |
+
+The aggregate is **4/5 qualified, 2/4 portable, 0/7 selected and 0/5 paid
+back**. All seven later builds retain optimized native Gradle, preserve exact
+required outputs and report zero product failures. The result does not revoke
+the causal graph-reduction measurements. It rejects the assumption that a
+fast profile automatically has useful lifetime.
+
+The next implementation target is therefore cross-commit value recovery, not
+another repository or a weaker gate. Product logic must identify structural
+compatibility without requiring an already-ineligible revision to pay sync and
+materialization cost, while keeping Wrapper/build-logic/workflow/output drift
+fail-closed. Native nondeterminism must be handled by deriving a smaller
+Gradle-owned required-output boundary or retaining native; BuildOpt must not
+normalize or rewrite customer artifacts to manufacture portability.
+
 ## Open Questions
 
 - Is a future repository family materially similar enough to the qualified
@@ -719,9 +749,10 @@ relaxing a gate or adding a Hibernate-specific decision.
 - Can a reviewed Gradle-owned output candidate be turned into one convenient,
   versioned owner input without hiding repository semantics or weakening drift
   detection?
-- Can cheap, repository-independent graph/task/change-family signals predict
-  enough matching lifetime to justify calibration, and can an inapplicable
-  profile return native without paying for unrelated-owner discovery?
+- Can repository-independent structural evidence authorize cross-commit reuse
+  before every new revision accumulates a complete ordinary-observation set?
+- Can Gradle ownership identify a smaller portable required-output boundary
+  for native nondeterministic artifacts without dropping customer deliverables?
 
 ## Evidence Boundaries
 
@@ -745,6 +776,7 @@ artifacts are:
 - [OpenTelemetry hot-state evidence](../../benchmarks/results/poc-otel-hot-state-v1.json);
 - [final OpenTelemetry optimization evidence](../../benchmarks/results/poc-otel-optimization-v2.json).
 - [observed Ktor profile-lifetime evidence](../../benchmarks/results/poc-profile-lifetime-v1/summary.json).
+- [five-repository qualified-lifetime evidence](../../benchmarks/results/poc-qualified-lifetime-v2/summary.json).
 - [terminal installed qualified-profile matrix](../../benchmarks/results/poc-qualified-profile-matrix-v1/summary.json).
 - [fresh five-repository structural-only matrix](../../benchmarks/results/poc-generic-profile-matrix-v1/README.md).
 - [fresh full-path ablation and retained component evidence](../../benchmarks/results/poc-full-path-ablation-v1/summary.json).

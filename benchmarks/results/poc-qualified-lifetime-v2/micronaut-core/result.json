@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-qualified-lifetime-subject/v2",
+  "key": "micronaut-core",
+  "buildopt": {
+    "revision": "795d1611f58dd8673e4b74852b43c3f0fc6d937e",
+    "executableSha256": "9910fae9cbd9208a25f176e235ce4ef6a4b079d2522bf144db21c2c26b44dfb4"
+  },
+  "repository": {
+    "id": "micronaut-projects/micronaut-core",
+    "remote": "https://github.com/micronaut-projects/micronaut-core.git",
+    "publicRepository": true,
+    "historyBranch": "5.2.x"
+  },
+  "qualification": {
+    "parentRevision": "b50709bfbc38c637522e23f7935445b280ff9762",
+    "targetRevision": "eb60c6c35f355750c6bced793e85c30629d27c4e",
+    "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+    "changeFamily": "DEPENDENCY_SOURCE",
+    "processEnvelope": "FRESH_GRADLE_PROCESS_PER_BUILD",
+    "expectedChangedProjects": [
+      ":micronaut-http-client-jdk"
+    ],
+    "graph": {
+      "omittedProjects": 49,
+      "selectedProjects": 21,
+      "totalProjects": 70
+    },
+    "calibration": {
+      "calibrationCostMs": 6209,
+      "controlMeanMs": 39662.375,
+      "candidateMeanMs": 34239.75,
+      "controlP95Ms": 44158,
+      "candidateP95Ms": 35006,
+      "meanSavedMs": 5422.625,
+      "reductionRatio": 0.13671962407697472,
+      "interval95SavedMs": [
+        3985.75,
+        7363.5
+      ],
+      "positivePairs": 8,
+      "pairsMeasured": 8,
+      "breakEvenBuilds": 2,
+      "qualified": true,
+      "fallbackSuccessful": true,
+      "qualificationPolicy": "ROBUST_7_OF_8_POSITIVE_INTERVAL_P95_V1"
+    },
+    "captureFile": "qualification-capture.json",
+    "captureSha256": "5dda24cdcdbaddc6258ee85f440201ed234c85862c45922b0933c6e334814838",
+    "calibrationEvidenceFile": "calibration-evidence.json",
+    "calibrationEvidenceSha256": "a9a540e3c561361be40a0cb7aef05d63dea0369e58503d59f0645fb624c55746",
+    "portability": {
+      "status": "REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS",
+      "producerOutputSha256": "617f7fa0e329371094d523e7d7845c5a7ebc9ac8b2c9416231e2ded3550e7a1a",
+      "independentOutputSha256": "2bc19cabeed9eb7bc5b031977f33ed19f209b9cd6c73f2856bcb22d58a8acd48",
+      "outputCount": 198,
+      "nativeCacheHits": 0,
+      "differingFileCount": 1,
+      "differencesSha256": "57739c5975ecdda01e30983318df5d9640c16f3b7faf8611261fcd7ddf922dca",
+      "samplePaths": [
+        "jackson-databind/build/libs/micronaut-jackson-databind-5.0.0-SNAPSHOT.jar"
+      ]
+    },
+    "materialization": {
+      "transport": "CENTRAL_CAS_CHUNKS",
+      "packBytes": 180069147,
+      "chunkCount": 22,
+      "publicationDurationMs": 9248
+    }
+  },
+  "observations": [],
+  "economics": {
+    "observedBuilds": 0,
+    "selectedReplays": 0,
+    "nativeRetainedBuilds": 0,
+    "selectedReplaySavedMs": 0,
+    "fallbackDeltaMs": 0,
+    "cumulativeGrossSavedMs": 0,
+    "qualificationAndPublicationCostMs": 15457,
+    "cumulativeNetSavedMs": -15457,
+    "firstObservedBreakEvenBuild": null,
+    "conclusion": "NON_PORTABLE_NATIVE_OUTPUTS"
+  },
+  "acceptance": {
+    "decision": "COMPLETE",
+    "exactRequiredOutputs": true,
+    "portabilityGatePassed": false,
+    "publicAncestry": true,
+    "productFailures": 0
+  },
+  "boundaries": {
+    "designPartnerRequired": false,
+    "mechanismPercentagesAdded": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositoriesAveraged": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

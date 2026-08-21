@@ -1,0 +1,731 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-qualified-lifetime/v2",
+  "workItem": "POC-QUALIFIED-LIFETIME-V2-001",
+  "capturedAt": "2026-08-21T20:39:42Z",
+  "buildopt": {
+    "sourceRevisions": [
+      "3c466a79f02c355a59cb5220b7b680a8ce6c672d",
+      "58a8f8520ece11420036d6969be5d5a0ba332caa",
+      "795d1611f58dd8673e4b74852b43c3f0fc6d937e"
+    ],
+    "executableSha256": "9910fae9cbd9208a25f176e235ce4ef6a4b079d2522bf144db21c2c26b44dfb4",
+    "specSha256": "3ad2c259e99f64064bf6d0cb1287a7b6ab3d1ea1a47a75d0d59a4976f51a1f4e",
+    "installedPackage": true
+  },
+  "runner": {
+    "operatingSystem": "Linux",
+    "architecture": "x86_64",
+    "kernel": "7.1.5-1-t2-noble",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600
+  },
+  "subjects": [
+    {
+      "schemaVersion": "buildopt.evidence/poc-qualified-lifetime-subject/v2",
+      "key": "spring-framework",
+      "buildopt": {
+        "revision": "3c466a79f02c355a59cb5220b7b680a8ce6c672d",
+        "executableSha256": "9910fae9cbd9208a25f176e235ce4ef6a4b079d2522bf144db21c2c26b44dfb4"
+      },
+      "repository": {
+        "id": "spring-projects/spring-framework",
+        "remote": "https://github.com/spring-projects/spring-framework.git",
+        "publicRepository": true,
+        "historyBranch": "main"
+      },
+      "qualification": {
+        "parentRevision": "8fbd147f0b802434369e3e21018db929efb7f5ff",
+        "targetRevision": "1c4b20287f1d8f635867fb58c576849f9313e907",
+        "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+        "changeFamily": "DEPENDENCY_SOURCE",
+        "processEnvelope": "FRESH_GRADLE_PROCESS_PER_BUILD",
+        "expectedChangedProjects": [
+          ":spring-jms"
+        ],
+        "graph": {
+          "omittedProjects": 17,
+          "selectedProjects": 10,
+          "totalProjects": 27
+        },
+        "calibration": {
+          "calibrationCostMs": 3939,
+          "controlMeanMs": 32485.125,
+          "candidateMeanMs": 26318.5,
+          "controlP95Ms": 34191,
+          "candidateP95Ms": 29130,
+          "meanSavedMs": 6166.625,
+          "reductionRatio": 0.18982919105282803,
+          "interval95SavedMs": [
+            4715.125,
+            7447
+          ],
+          "positivePairs": 8,
+          "pairsMeasured": 8,
+          "breakEvenBuilds": 1,
+          "qualified": true,
+          "fallbackSuccessful": true,
+          "qualificationPolicy": "ROBUST_7_OF_8_POSITIVE_INTERVAL_P95_V1"
+        },
+        "captureFile": "qualification-capture.json",
+        "captureSha256": "ccd8b06ac2ceb04fabc42e85b63b258e9058bba952ad8988b7ebc28719c56312",
+        "calibrationEvidenceFile": "calibration-evidence.json",
+        "calibrationEvidenceSha256": "e2aad6666ff574141cd8840f2c037a84ec3192716235fae1f0b2efb7f349d1b3",
+        "portability": {
+          "status": "REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS",
+          "producerOutputSha256": "d0a4d79867519a09c4b708150f60188a322185bbb0a0e0138f8d3cdc541622a7",
+          "independentOutputSha256": "1f4ea17b5a218d5e3b64eb22bdb88a786845268e8d4af1a3b43dbbcdaca97a6c",
+          "outputCount": 14401,
+          "nativeCacheHits": 0,
+          "differingFileCount": 2,
+          "differencesSha256": "ac031b7cd713def96faf3d7e1d8a7d17efa4574abc4ac6fd458b74299a1aa1f5",
+          "samplePaths": [
+            "spring-aspects/build/classes/aspectj/test/org/springframework/aop/aspectj/autoproxy/CodeStyleAspect.class",
+            "spring-aspects/build/classes/aspectj/test/org/springframework/beans/factory/aspectj/ShouldBeConfiguredBySpring.class"
+          ]
+        },
+        "materialization": {
+          "transport": "CENTRAL_CAS_CHUNKS",
+          "packBytes": 41566870,
+          "chunkCount": 5,
+          "publicationDurationMs": 3653
+        }
+      },
+      "observations": [],
+      "economics": {
+        "observedBuilds": 0,
+        "selectedReplays": 0,
+        "nativeRetainedBuilds": 0,
+        "selectedReplaySavedMs": 0,
+        "fallbackDeltaMs": 0,
+        "cumulativeGrossSavedMs": 0,
+        "qualificationAndPublicationCostMs": 7592,
+        "cumulativeNetSavedMs": -7592,
+        "firstObservedBreakEvenBuild": null,
+        "conclusion": "NON_PORTABLE_NATIVE_OUTPUTS"
+      },
+      "acceptance": {
+        "decision": "COMPLETE",
+        "exactRequiredOutputs": true,
+        "portabilityGatePassed": false,
+        "publicAncestry": true,
+        "productFailures": 0
+      },
+      "boundaries": {
+        "designPartnerRequired": false,
+        "mechanismPercentagesAdded": false,
+        "productionAuthorized": false,
+        "proofOfConcept": true,
+        "repositoriesAveraged": false,
+        "soakRequired": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    },
+    {
+      "schemaVersion": "buildopt.evidence/poc-qualified-lifetime-subject/v2",
+      "key": "opentelemetry-java-instrumentation",
+      "buildopt": {
+        "revision": "3c466a79f02c355a59cb5220b7b680a8ce6c672d",
+        "executableSha256": "9910fae9cbd9208a25f176e235ce4ef6a4b079d2522bf144db21c2c26b44dfb4"
+      },
+      "repository": {
+        "id": "open-telemetry/opentelemetry-java-instrumentation",
+        "remote": "https://github.com/open-telemetry/opentelemetry-java-instrumentation.git",
+        "publicRepository": true,
+        "historyBranch": "main"
+      },
+      "qualification": {
+        "parentRevision": "cbdf37d064a0598aba8485a2303a7322fcc50fc5",
+        "targetRevision": "f330e4c0b764d80dcc1f7c6d4c01e305593c49f1",
+        "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+        "changeFamily": "DEPENDENCY_SOURCE",
+        "processEnvelope": "FRESH_GRADLE_PROCESS_PER_BUILD",
+        "expectedChangedProjects": [
+          ":instrumentation:spring:spring-boot-autoconfigure"
+        ],
+        "graph": {
+          "omittedProjects": 974,
+          "selectedProjects": 34,
+          "totalProjects": 1008
+        },
+        "calibration": {
+          "calibrationCostMs": 5721,
+          "controlMeanMs": 132329,
+          "candidateMeanMs": 116603.125,
+          "controlP95Ms": 145656,
+          "candidateP95Ms": 121081,
+          "meanSavedMs": 15725.875,
+          "reductionRatio": 0.11883921891648845,
+          "interval95SavedMs": [
+            10856.25,
+            21539.25
+          ],
+          "positivePairs": 8,
+          "pairsMeasured": 8,
+          "breakEvenBuilds": 1,
+          "qualified": true,
+          "fallbackSuccessful": true,
+          "qualificationPolicy": "ROBUST_7_OF_8_POSITIVE_INTERVAL_P95_V1"
+        },
+        "captureFile": "qualification-capture.json",
+        "captureSha256": "e9cf244174342f5b50ac00763e375476571030ae2db58dc03706bb09a24878c7",
+        "calibrationEvidenceFile": "calibration-evidence.json",
+        "calibrationEvidenceSha256": "51e05f149075912b2cad74e1d6336987ba8b875a958ab668ee84fe6a69292edd",
+        "portability": {
+          "status": "PORTABLE",
+          "producerOutputSha256": "8f9f3fa8737ec07bc5f10f0c85e081e4772ec3f13286ac9d83f78b4197348644",
+          "independentOutputSha256": "8f9f3fa8737ec07bc5f10f0c85e081e4772ec3f13286ac9d83f78b4197348644",
+          "outputCount": 269,
+          "nativeCacheHits": 0,
+          "differingFileCount": 0,
+          "differencesSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "samplePaths": []
+        },
+        "materialization": {
+          "transport": "CENTRAL_CAS_CHUNKS",
+          "packBytes": 793958,
+          "chunkCount": 1,
+          "publicationDurationMs": 1664
+        }
+      },
+      "observations": [
+        {
+          "sequence": 1,
+          "revision": "e6c8caf77177051bb04024f019300a4b2bd39ce3",
+          "parentRevision": "a752cd9e26db0863bd9c89ae834fcab1f20edacd",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 774555,
+          "candidateDurationMs": 780425,
+          "savedMs": -5870,
+          "controlFromCache": 0,
+          "candidateFromCache": 0,
+          "requiredOutputCount": 271,
+          "controlRequiredOutputSha256": "40371aab8f2d5a3e8b040e5534682c5e6046d39b14ad43c9251fa3d445a4109a",
+          "candidateRequiredOutputSha256": "40371aab8f2d5a3e8b040e5534682c5e6046d39b14ad43c9251fa3d445a4109a",
+          "exactRequiredOutputs": true,
+          "selected": false,
+          "selectionSource": "NONE",
+          "reason": "ORDINARY_OBSERVATIONS_PENDING",
+          "executionMode": "OPTIMIZED_NATIVE",
+          "nativeRetained": true,
+          "wrapperMatchesQualification": false,
+          "selectionDurationNs": 679502253,
+          "preSyncDurationMs": 555,
+          "postSyncDurationMs": 524,
+          "materializationDurationMs": 3359
+        }
+      ],
+      "economics": {
+        "observedBuilds": 1,
+        "selectedReplays": 0,
+        "nativeRetainedBuilds": 1,
+        "selectedReplaySavedMs": 0,
+        "fallbackDeltaMs": -5870,
+        "cumulativeGrossSavedMs": -5870,
+        "qualificationAndPublicationCostMs": 7385,
+        "cumulativeNetSavedMs": -13255,
+        "firstObservedBreakEvenBuild": null,
+        "conclusion": "NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW"
+      },
+      "acceptance": {
+        "decision": "COMPLETE",
+        "exactRequiredOutputs": true,
+        "portabilityGatePassed": true,
+        "publicAncestry": true,
+        "productFailures": 0
+      },
+      "boundaries": {
+        "designPartnerRequired": false,
+        "mechanismPercentagesAdded": false,
+        "productionAuthorized": false,
+        "proofOfConcept": true,
+        "repositoriesAveraged": false,
+        "soakRequired": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    },
+    {
+      "schemaVersion": "buildopt.evidence/poc-qualified-lifetime-subject/v2",
+      "key": "apache-kafka",
+      "buildopt": {
+        "revision": "795d1611f58dd8673e4b74852b43c3f0fc6d937e",
+        "executableSha256": "9910fae9cbd9208a25f176e235ce4ef6a4b079d2522bf144db21c2c26b44dfb4"
+      },
+      "repository": {
+        "id": "apache/kafka",
+        "remote": "https://github.com/apache/kafka.git",
+        "publicRepository": true,
+        "historyBranch": "trunk"
+      },
+      "qualification": {
+        "parentRevision": "e69bbcdeaa9ff83b9b5e768c318109a9ee497976",
+        "targetRevision": "2e961afeff5cb27d60767a783edf20be00cc28e8",
+        "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+        "changeFamily": "DEPENDENCY_SOURCE",
+        "processEnvelope": "FRESH_GRADLE_PROCESS_PER_BUILD",
+        "expectedChangedProjects": [
+          ":clients"
+        ],
+        "graph": {
+          "omittedProjects": 63,
+          "selectedProjects": 3,
+          "totalProjects": 66
+        },
+        "calibration": {
+          "calibrationCostMs": 3596,
+          "controlMeanMs": 30249.625,
+          "candidateMeanMs": 24798.625,
+          "controlP95Ms": 31767,
+          "candidateP95Ms": 26990,
+          "meanSavedMs": 5451,
+          "reductionRatio": 0.18020058099893801,
+          "interval95SavedMs": [
+            3837.75,
+            6675.75
+          ],
+          "positivePairs": 8,
+          "pairsMeasured": 8,
+          "breakEvenBuilds": 1,
+          "qualified": true,
+          "fallbackSuccessful": true,
+          "qualificationPolicy": "ROBUST_7_OF_8_POSITIVE_INTERVAL_P95_V1"
+        },
+        "captureFile": "qualification-capture.json",
+        "captureSha256": "59141a569a148cb05abf3d17953501f9131847e67fb7892e33176e3a0c680122",
+        "calibrationEvidenceFile": "calibration-evidence.json",
+        "calibrationEvidenceSha256": "48b2afc46b4e774d831f604170ed390673215ae7fc91bedd95aa4b16401fb978",
+        "portability": {
+          "status": "PORTABLE",
+          "producerOutputSha256": "dec1ffa0a0dd659e7a3c201fee0b229a5544015a361251242fc8a38472f576ce",
+          "independentOutputSha256": "dec1ffa0a0dd659e7a3c201fee0b229a5544015a361251242fc8a38472f576ce",
+          "outputCount": 4440,
+          "nativeCacheHits": 0,
+          "differingFileCount": 0,
+          "differencesSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "samplePaths": []
+        },
+        "materialization": {
+          "transport": "CENTRAL_CAS_CHUNKS",
+          "packBytes": 36738136,
+          "chunkCount": 5,
+          "publicationDurationMs": 3202
+        }
+      },
+      "observations": [
+        {
+          "sequence": 1,
+          "revision": "b475ce7632bc661a79b61ee8b78124bc53170bca",
+          "parentRevision": "89a6c9eda143fd896793363e26d71002283f6a7b",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 210528,
+          "candidateDurationMs": 210790,
+          "savedMs": -262,
+          "controlFromCache": 32,
+          "candidateFromCache": 32,
+          "requiredOutputCount": 4449,
+          "controlRequiredOutputSha256": "2651238d7e21aef5c4d69a07a92b024127b5efdb1f5f0beaa62d82a751c312da",
+          "candidateRequiredOutputSha256": "2651238d7e21aef5c4d69a07a92b024127b5efdb1f5f0beaa62d82a751c312da",
+          "exactRequiredOutputs": true,
+          "selected": false,
+          "selectionSource": "NONE",
+          "reason": "ORDINARY_OBSERVATIONS_PENDING",
+          "executionMode": "OPTIMIZED_NATIVE",
+          "nativeRetained": true,
+          "wrapperMatchesQualification": true,
+          "selectionDurationNs": 1293246954,
+          "preSyncDurationMs": 1113,
+          "postSyncDurationMs": 1168,
+          "materializationDurationMs": 1037
+        },
+        {
+          "sequence": 2,
+          "revision": "e5e26abb2741c678905a925ef535b6e8eaf967b0",
+          "parentRevision": "b475ce7632bc661a79b61ee8b78124bc53170bca",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CANDIDATE_FIRST",
+          "controlDurationMs": 164261,
+          "candidateDurationMs": 184375,
+          "savedMs": -20114,
+          "controlFromCache": 32,
+          "candidateFromCache": 32,
+          "requiredOutputCount": 4449,
+          "controlRequiredOutputSha256": "b2896a63606474eb86c15a3f120f5eca2bca71f115bc02393edbf76d1e8ee6c2",
+          "candidateRequiredOutputSha256": "b2896a63606474eb86c15a3f120f5eca2bca71f115bc02393edbf76d1e8ee6c2",
+          "exactRequiredOutputs": true,
+          "selected": false,
+          "selectionSource": "NONE",
+          "reason": "ORDINARY_OBSERVATIONS_PENDING",
+          "executionMode": "OPTIMIZED_NATIVE",
+          "nativeRetained": true,
+          "wrapperMatchesQualification": true,
+          "selectionDurationNs": 1325144206,
+          "preSyncDurationMs": 1138,
+          "postSyncDurationMs": 1179,
+          "materializationDurationMs": 1079
+        },
+        {
+          "sequence": 3,
+          "revision": "308095cf221c3695ad4bc5214ebc507a0b91705f",
+          "parentRevision": "1aff0116f22528ec9179a08e001de62f14c50e51",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 174766,
+          "candidateDurationMs": 180222,
+          "savedMs": -5456,
+          "controlFromCache": 32,
+          "candidateFromCache": 32,
+          "requiredOutputCount": 4451,
+          "controlRequiredOutputSha256": "1cdd5f14bb01d98ac477fbdf6f52ee015c4fc0feb4cc761e05a8a4ca8f09d16d",
+          "candidateRequiredOutputSha256": "1cdd5f14bb01d98ac477fbdf6f52ee015c4fc0feb4cc761e05a8a4ca8f09d16d",
+          "exactRequiredOutputs": true,
+          "selected": false,
+          "selectionSource": "NONE",
+          "reason": "ORDINARY_OBSERVATIONS_PENDING",
+          "executionMode": "OPTIMIZED_NATIVE",
+          "nativeRetained": true,
+          "wrapperMatchesQualification": true,
+          "selectionDurationNs": 1358468736,
+          "preSyncDurationMs": 1141,
+          "postSyncDurationMs": 1168,
+          "materializationDurationMs": 1073
+        },
+        {
+          "sequence": 4,
+          "revision": "9301a555eac1049c6e5842e605c0bf147fe0e298",
+          "parentRevision": "308095cf221c3695ad4bc5214ebc507a0b91705f",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CANDIDATE_FIRST",
+          "controlDurationMs": 126513,
+          "candidateDurationMs": 125268,
+          "savedMs": 1245,
+          "controlFromCache": 105,
+          "candidateFromCache": 105,
+          "requiredOutputCount": 4452,
+          "controlRequiredOutputSha256": "8db397febdc8f3f45f903fe3e8977d78617b79e9c477a5f4031d42c30d3e2f03",
+          "candidateRequiredOutputSha256": "8db397febdc8f3f45f903fe3e8977d78617b79e9c477a5f4031d42c30d3e2f03",
+          "exactRequiredOutputs": true,
+          "selected": false,
+          "selectionSource": "NONE",
+          "reason": "ORDINARY_OBSERVATIONS_PENDING",
+          "executionMode": "OPTIMIZED_NATIVE",
+          "nativeRetained": true,
+          "wrapperMatchesQualification": true,
+          "selectionDurationNs": 1363031878,
+          "preSyncDurationMs": 1145,
+          "postSyncDurationMs": 1177,
+          "materializationDurationMs": 1034
+        },
+        {
+          "sequence": 5,
+          "revision": "cc6d42206fc7393c6782de664b1fd0474d4af61d",
+          "parentRevision": "841243d5ab7dc5fce9d88853a268144095568e6a",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 180665,
+          "candidateDurationMs": 184292,
+          "savedMs": -3627,
+          "controlFromCache": 32,
+          "candidateFromCache": 32,
+          "requiredOutputCount": 4470,
+          "controlRequiredOutputSha256": "b1296841df50efa6f175f30f94064c053f255a60adb966ec6ed24e086b08e0a9",
+          "candidateRequiredOutputSha256": "b1296841df50efa6f175f30f94064c053f255a60adb966ec6ed24e086b08e0a9",
+          "exactRequiredOutputs": true,
+          "selected": false,
+          "selectionSource": "NONE",
+          "reason": "ORDINARY_OBSERVATIONS_PENDING",
+          "executionMode": "OPTIMIZED_NATIVE",
+          "nativeRetained": true,
+          "wrapperMatchesQualification": true,
+          "selectionDurationNs": 1346733212,
+          "preSyncDurationMs": 1159,
+          "postSyncDurationMs": 1255,
+          "materializationDurationMs": 1039
+        },
+        {
+          "sequence": 6,
+          "revision": "7ff5d7b71c0ead6743a0d64b2b0e92abc61fed77",
+          "parentRevision": "9521d77da39bc61e0d7b62356cf7d755b69e03e8",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CANDIDATE_FIRST",
+          "controlDurationMs": 193779,
+          "candidateDurationMs": 198728,
+          "savedMs": -4949,
+          "controlFromCache": 32,
+          "candidateFromCache": 32,
+          "requiredOutputCount": 4471,
+          "controlRequiredOutputSha256": "e0c8593d5798def8322d6c20a79dc681306c3e6a785eebab6813eda286064d40",
+          "candidateRequiredOutputSha256": "e0c8593d5798def8322d6c20a79dc681306c3e6a785eebab6813eda286064d40",
+          "exactRequiredOutputs": true,
+          "selected": false,
+          "selectionSource": "NONE",
+          "reason": "ORDINARY_OBSERVATIONS_PENDING",
+          "executionMode": "OPTIMIZED_NATIVE",
+          "nativeRetained": true,
+          "wrapperMatchesQualification": true,
+          "selectionDurationNs": 1363735401,
+          "preSyncDurationMs": 1147,
+          "postSyncDurationMs": 1191,
+          "materializationDurationMs": 1057
+        }
+      ],
+      "economics": {
+        "observedBuilds": 6,
+        "selectedReplays": 0,
+        "nativeRetainedBuilds": 6,
+        "selectedReplaySavedMs": 0,
+        "fallbackDeltaMs": -33163,
+        "cumulativeGrossSavedMs": -33163,
+        "qualificationAndPublicationCostMs": 6798,
+        "cumulativeNetSavedMs": -39961,
+        "firstObservedBreakEvenBuild": null,
+        "conclusion": "NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW"
+      },
+      "acceptance": {
+        "decision": "COMPLETE",
+        "exactRequiredOutputs": true,
+        "portabilityGatePassed": true,
+        "publicAncestry": true,
+        "productFailures": 0
+      },
+      "boundaries": {
+        "designPartnerRequired": false,
+        "mechanismPercentagesAdded": false,
+        "productionAuthorized": false,
+        "proofOfConcept": true,
+        "repositoriesAveraged": false,
+        "soakRequired": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    },
+    {
+      "schemaVersion": "buildopt.evidence/poc-qualified-lifetime-subject/v2",
+      "key": "micronaut-core",
+      "buildopt": {
+        "revision": "795d1611f58dd8673e4b74852b43c3f0fc6d937e",
+        "executableSha256": "9910fae9cbd9208a25f176e235ce4ef6a4b079d2522bf144db21c2c26b44dfb4"
+      },
+      "repository": {
+        "id": "micronaut-projects/micronaut-core",
+        "remote": "https://github.com/micronaut-projects/micronaut-core.git",
+        "publicRepository": true,
+        "historyBranch": "5.2.x"
+      },
+      "qualification": {
+        "parentRevision": "b50709bfbc38c637522e23f7935445b280ff9762",
+        "targetRevision": "eb60c6c35f355750c6bced793e85c30629d27c4e",
+        "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+        "changeFamily": "DEPENDENCY_SOURCE",
+        "processEnvelope": "FRESH_GRADLE_PROCESS_PER_BUILD",
+        "expectedChangedProjects": [
+          ":micronaut-http-client-jdk"
+        ],
+        "graph": {
+          "omittedProjects": 49,
+          "selectedProjects": 21,
+          "totalProjects": 70
+        },
+        "calibration": {
+          "calibrationCostMs": 6209,
+          "controlMeanMs": 39662.375,
+          "candidateMeanMs": 34239.75,
+          "controlP95Ms": 44158,
+          "candidateP95Ms": 35006,
+          "meanSavedMs": 5422.625,
+          "reductionRatio": 0.13671962407697472,
+          "interval95SavedMs": [
+            3985.75,
+            7363.5
+          ],
+          "positivePairs": 8,
+          "pairsMeasured": 8,
+          "breakEvenBuilds": 2,
+          "qualified": true,
+          "fallbackSuccessful": true,
+          "qualificationPolicy": "ROBUST_7_OF_8_POSITIVE_INTERVAL_P95_V1"
+        },
+        "captureFile": "qualification-capture.json",
+        "captureSha256": "5dda24cdcdbaddc6258ee85f440201ed234c85862c45922b0933c6e334814838",
+        "calibrationEvidenceFile": "calibration-evidence.json",
+        "calibrationEvidenceSha256": "a9a540e3c561361be40a0cb7aef05d63dea0369e58503d59f0645fb624c55746",
+        "portability": {
+          "status": "REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS",
+          "producerOutputSha256": "617f7fa0e329371094d523e7d7845c5a7ebc9ac8b2c9416231e2ded3550e7a1a",
+          "independentOutputSha256": "2bc19cabeed9eb7bc5b031977f33ed19f209b9cd6c73f2856bcb22d58a8acd48",
+          "outputCount": 198,
+          "nativeCacheHits": 0,
+          "differingFileCount": 1,
+          "differencesSha256": "57739c5975ecdda01e30983318df5d9640c16f3b7faf8611261fcd7ddf922dca",
+          "samplePaths": [
+            "jackson-databind/build/libs/micronaut-jackson-databind-5.0.0-SNAPSHOT.jar"
+          ]
+        },
+        "materialization": {
+          "transport": "CENTRAL_CAS_CHUNKS",
+          "packBytes": 180069147,
+          "chunkCount": 22,
+          "publicationDurationMs": 9248
+        }
+      },
+      "observations": [],
+      "economics": {
+        "observedBuilds": 0,
+        "selectedReplays": 0,
+        "nativeRetainedBuilds": 0,
+        "selectedReplaySavedMs": 0,
+        "fallbackDeltaMs": 0,
+        "cumulativeGrossSavedMs": 0,
+        "qualificationAndPublicationCostMs": 15457,
+        "cumulativeNetSavedMs": -15457,
+        "firstObservedBreakEvenBuild": null,
+        "conclusion": "NON_PORTABLE_NATIVE_OUTPUTS"
+      },
+      "acceptance": {
+        "decision": "COMPLETE",
+        "exactRequiredOutputs": true,
+        "portabilityGatePassed": false,
+        "publicAncestry": true,
+        "productFailures": 0
+      },
+      "boundaries": {
+        "designPartnerRequired": false,
+        "mechanismPercentagesAdded": false,
+        "productionAuthorized": false,
+        "proofOfConcept": true,
+        "repositoriesAveraged": false,
+        "soakRequired": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    },
+    {
+      "schemaVersion": "buildopt.evidence/poc-qualified-lifetime-subject/v2",
+      "key": "apache-groovy",
+      "buildopt": {
+        "revision": "58a8f8520ece11420036d6969be5d5a0ba332caa",
+        "executableSha256": "9910fae9cbd9208a25f176e235ce4ef6a4b079d2522bf144db21c2c26b44dfb4"
+      },
+      "repository": {
+        "id": "apache/groovy",
+        "remote": "https://github.com/apache/groovy.git",
+        "publicRepository": true,
+        "historyBranch": "GROOVY_5_0_X"
+      },
+      "qualification": {
+        "parentRevision": "a509a232d6b11f5c60a2667607ce0886911353c4",
+        "targetRevision": "14fa934340c46bc1ee96cba7ae594258bd8d0fd0",
+        "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+        "changeFamily": "DEPENDENCY_SOURCE",
+        "processEnvelope": "FRESH_GRADLE_PROCESS_PER_BUILD",
+        "expectedChangedProjects": [
+          ":groovy-json"
+        ],
+        "graph": {
+          "omittedProjects": 35,
+          "selectedProjects": 2,
+          "totalProjects": 37
+        },
+        "calibration": {
+          "calibrationCostMs": 1835,
+          "controlMeanMs": 29574.5,
+          "candidateMeanMs": 27557.375,
+          "controlP95Ms": 34779,
+          "candidateP95Ms": 36534,
+          "meanSavedMs": 2017.125,
+          "reductionRatio": 0.06820487244078513,
+          "interval95SavedMs": [
+            155.5,
+            3663.875
+          ],
+          "positivePairs": 6,
+          "pairsMeasured": 8,
+          "breakEvenBuilds": 1,
+          "qualified": false,
+          "fallbackSuccessful": true,
+          "qualificationPolicy": "ROBUST_7_OF_8_POSITIVE_INTERVAL_P95_V1"
+        },
+        "captureFile": "qualification-capture.json",
+        "captureSha256": "82b2e8cecd0b190460adf921df6b60f8b8805acb835aba1a7ebac3db3b0ceeb8",
+        "calibrationEvidenceFile": "calibration-evidence.json",
+        "calibrationEvidenceSha256": "8426211ebdbdac62d4250c5a901038fe94587661e623e6f1ac52abdfaef3a33a",
+        "portability": {
+          "status": "NOT_EVALUATED_UNQUALIFIED",
+          "producerOutputSha256": "",
+          "independentOutputSha256": "",
+          "outputCount": 0,
+          "nativeCacheHits": 0,
+          "differingFileCount": 0,
+          "differencesSha256": "",
+          "samplePaths": []
+        },
+        "materialization": {
+          "transport": "NOT_PUBLISHED_UNQUALIFIED",
+          "packBytes": 17764272,
+          "chunkCount": 0,
+          "publicationDurationMs": 0
+        }
+      },
+      "observations": [],
+      "economics": {
+        "observedBuilds": 0,
+        "selectedReplays": 0,
+        "nativeRetainedBuilds": 0,
+        "selectedReplaySavedMs": 0,
+        "fallbackDeltaMs": 0,
+        "cumulativeGrossSavedMs": 0,
+        "qualificationAndPublicationCostMs": 1835,
+        "cumulativeNetSavedMs": -1835,
+        "firstObservedBreakEvenBuild": null,
+        "conclusion": "CALIBRATION_VALUE_NOT_PROVEN"
+      },
+      "acceptance": {
+        "decision": "COMPLETE",
+        "exactRequiredOutputs": true,
+        "portabilityGatePassed": false,
+        "publicAncestry": true,
+        "productFailures": 0
+      },
+      "boundaries": {
+        "designPartnerRequired": false,
+        "mechanismPercentagesAdded": false,
+        "productionAuthorized": false,
+        "proofOfConcept": true,
+        "repositoriesAveraged": false,
+        "soakRequired": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    }
+  ],
+  "aggregation": {
+    "subjectCount": 5,
+    "qualifiedProfiles": 4,
+    "unqualifiedProfiles": 1,
+    "portableProfiles": 2,
+    "nonPortableProfiles": 2,
+    "observedBuilds": 7,
+    "selectedReplays": 0,
+    "nativeRetainedBuilds": 7,
+    "exactOutputObservations": 7,
+    "paidBackSubjects": 0,
+    "noCompatibleReplaySubjects": 2,
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false
+  },
+  "acceptance": {
+    "decision": "COMPLETE",
+    "allQualified": false,
+    "allQualifiedProfilesHavePortabilityDecision": true,
+    "allSubjectDecisionsComplete": true,
+    "allQualifiedProfilesPortable": false,
+    "allOutputsExact": true,
+    "allPublicFirstParent": true,
+    "productFailures": 0
+  },
+  "boundaries": {
+    "designPartnerRequired": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositorySpecificProductRules": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}
