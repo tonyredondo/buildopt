@@ -559,7 +559,13 @@ buildopt_subject() {
     buildopt_qualifier_wrapper_sha=$(git -C "${buildopt_producer}" show \
         "${buildopt_qualifier}:gradle/wrapper/gradle-wrapper.properties" | \
         sha256sum | awk '{print $1}')
-    while [[ ${buildopt_portable} == true ]] && IFS= read -r buildopt_observation; do
+    local -a buildopt_observation_revisions=()
+    if [[ ${buildopt_portable} == true ]]; then
+        mapfile -t buildopt_observation_revisions < <(
+            jq -r ".repositories[${buildopt_index}].observations[]" "${buildopt_spec}"
+        )
+    fi
+    for buildopt_observation in "${buildopt_observation_revisions[@]}"; do
         buildopt_sequence=$((buildopt_sequence + 1))
         local buildopt_observation_parent
         buildopt_observation_parent=$(git -C "${buildopt_producer}" rev-parse "${buildopt_observation}^1")
@@ -702,7 +708,7 @@ buildopt_subject() {
             "${buildopt_observation}" "${buildopt_selected}" \
             "${buildopt_control_ms}" "${buildopt_candidate_ms}" \
             "$((buildopt_control_ms - buildopt_candidate_ms))"
-    done < <(jq -r ".repositories[${buildopt_index}].observations[]" "${buildopt_spec}")
+    done
 
     for buildopt_arm in control candidate; do
         if [[ -d ${buildopt_subject_root}/${buildopt_arm}-gradle ]]; then
