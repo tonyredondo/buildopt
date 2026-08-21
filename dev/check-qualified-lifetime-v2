@@ -55,7 +55,7 @@ buildopt_common_jq='
       .index += 1 | .sum += $row.savedMs |
       if .answer == null and .sum >= $cost then .answer = .index else . end) |
     .answer;
-  def observation($expected; $index):
+  def observation($expected; $index; $selected_mode):
     . as $row |
     keys == ["candidateDurationMs","candidateFromCache",
       "candidateRequiredOutputSha256","controlDurationMs","controlFromCache",
@@ -82,7 +82,8 @@ buildopt_common_jq='
     (.materializationDurationMs | nonnegative_integer) and
     (if .selected then
        .selectionSource == "CENTRAL_PORTFOLIO" and
-       .executionMode == "INCREMENTAL_CANDIDATE" and .nativeRetained == false
+       .executionMode == $selected_mode and
+       .nativeRetained == false
      else
        (.selectionSource | type == "string" and length > 0) and
        .executionMode == "OPTIMIZED_NATIVE" and .nativeRetained == true
@@ -94,6 +95,7 @@ buildopt_common_jq='
       "qualification","repository","schemaVersion"] and
     .schemaVersion == "buildopt.evidence/poc-qualified-lifetime-subject/v2" and
     $spec.protocol.noCompatibleReplayPrecedesPayback == true and
+    $spec.protocol.selectedExecutionMode == "SELECTIVE_PROFILE" and
     .repository == {id:$expected.repositoryId,remote:$expected.remoteUrl,
       publicRepository:true,historyBranch:$expected.historyBranch} and
     .qualification.parentRevision == $expected.publicRevision and
@@ -129,7 +131,8 @@ buildopt_common_jq='
     (.qualification.materialization.publicationDurationMs | nonnegative_integer) and
     (.observations | type == "array" and length == ($expected.observations | length)) and
     all(range(0; .observations | length); . as $index |
-      $subject.observations[$index] | observation($expected; $index)) and
+      $subject.observations[$index] |
+      observation($expected; $index; $spec.protocol.selectedExecutionMode)) and
     (.economics | keys == ["conclusion","cumulativeGrossSavedMs",
       "cumulativeNetSavedMs","fallbackDeltaMs","firstObservedBreakEvenBuild",
       "nativeRetainedBuilds","observedBuilds","qualificationAndPublicationCostMs",

@@ -573,7 +573,7 @@ buildopt_subject() {
             "${buildopt_candidate_result}")
         if [[ ${buildopt_selected} == true ]]; then
             [[ ${buildopt_source} == CENTRAL_PORTFOLIO &&
-                ${buildopt_execution_mode} == INCREMENTAL_CANDIDATE ]] || return 1
+                ${buildopt_execution_mode} == SELECTIVE_PROFILE ]] || return 1
         else
             [[ ${buildopt_execution_mode} == OPTIMIZED_NATIVE ]] || return 1
         fi

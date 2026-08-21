@@ -76,7 +76,7 @@ bootstrap rather than ordinary descendant-build lifetime.
 
 The candidate must either:
 
-- select `CENTRAL_PORTFOLIO`, run `INCREMENTAL_CANDIDATE` and restore exact
+- select `CENTRAL_PORTFOLIO`, run `SELECTIVE_PROFILE` and restore exact
   required outputs; or
 - retain `OPTIMIZED_NATIVE` with no partial candidate execution.
 
