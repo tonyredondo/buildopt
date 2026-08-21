@@ -73,17 +73,18 @@ Their complete required output inventories, modes, sizes and SHA-256 values
 must match exactly.
 
 The independent checkout is not connected to BuildOpt or the central cache
-until after this comparison passes. Its Gradle home and build cache begin empty,
-apart from the pre-seeded Wrapper distribution, so a matching digest cannot be
-caused by restoring the producer's outputs.
+until after this comparison passes. Its Gradle home begins empty apart from the
+pre-seeded Wrapper distribution, and `--no-build-cache` disables local and
+repository-configured remote Gradle caches. A matching digest therefore cannot
+be caused by restoring the producer's outputs.
 
 A mismatch rejects the profile as
 `REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS` before lifetime observation. The
 result records the two aggregate digests, the total difference count, a digest
-of the complete difference manifest and at most 25 sample paths. It does not
-drop volatile files, rewrite bytecode or weaken correctness to manufacture a
-portable profile. A rejected profile is a completed POC finding, not a product
-failure.
+of the complete difference manifest, zero native cache hits and at most 25
+sample paths. It does not drop volatile files, rewrite bytecode or weaken
+correctness to manufacture a portable profile. A rejected profile is a
+completed POC finding, not a product failure.
 
 ## Comparison
 

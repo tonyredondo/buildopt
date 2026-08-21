@@ -472,8 +472,13 @@ buildopt_subject() {
             buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
                 "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
                 "${buildopt_cache_home}" "${buildopt_event}" "${buildopt_jdk}" \
-                ./gradlew "${buildopt_workflow[@]}" \
+                ./gradlew "${buildopt_workflow[@]}" --no-build-cache \
                 >"${buildopt_logs}/control-warmup.log" 2>&1
+            if grep -Eq ' FROM-CACHE|[0-9]+ from cache' \
+                "${buildopt_logs}/control-warmup.log"; then
+                printf 'qualified lifetime portability control restored cached outputs\n' >&2
+                return 1
+            fi
             buildopt_hash_required_outputs "${buildopt_repository}" \
                 "${buildopt_subject_output}/required-outputs.txt" \
                 "${buildopt_logs}/control-warmup-outputs.tsv"
@@ -583,6 +588,7 @@ buildopt_subject() {
              portability:{status:"REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS",
                producerOutputSha256:$producerSha,
                independentOutputSha256:$independentSha,outputCount:$outputCount,
+               nativeCacheHits:0,
                differingFileCount:$differenceCount,differencesSha256:$differencesSha,
                samplePaths:$differenceSample},
              materialization:{transport:"CENTRAL_CAS_CHUNKS",packBytes:$packBytes,
@@ -813,6 +819,7 @@ buildopt_subject() {
          calibration:$calibration,captureSha256:$captureSha,
          portability:{status:"PORTABLE",producerOutputSha256:$producerSha,
            independentOutputSha256:$independentSha,outputCount:$portabilityOutputCount,
+           nativeCacheHits:0,
            differingFileCount:$portabilityDifferenceCount,
            differencesSha256:$differencesSha,samplePaths:$portabilitySample},
          materialization:{transport:"CENTRAL_CAS_CHUNKS",packBytes:$packBytes,

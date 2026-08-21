@@ -58,9 +58,10 @@ buildopt_common_jq='
     .answer;
   def portability:
     keys == ["differencesSha256","differingFileCount","independentOutputSha256",
-      "outputCount","producerOutputSha256","samplePaths","status"] and
+      "nativeCacheHits","outputCount","producerOutputSha256","samplePaths","status"] and
     (.producerOutputSha256 | digest) and (.independentOutputSha256 | digest) and
     (.differencesSha256 | digest) and (.outputCount | positive_integer) and
+    .nativeCacheHits == 0 and
     (.differingFileCount | nonnegative_integer) and
     (.samplePaths | type == "array" and length <= 25 and
       all(.[]; type == "string" and length > 0 and (startswith("/") | not))) and
@@ -117,7 +118,8 @@ buildopt_common_jq='
     $spec.protocol.persistentState == "WRAPPER_DEPENDENCY_BUILD_AND_BUILDOPT_CACHES" and
     $spec.protocol.nativeOutputPortabilityGate ==
       "EXACT_CROSS_ROOT_FILE_INVENTORY_AND_SHA256" and
-    $spec.protocol.portabilityControl == "UNCONNECTED_NATIVE_EMPTY_BUILD_CACHE" and
+    $spec.protocol.portabilityControl ==
+      "UNCONNECTED_NATIVE_BUILD_CACHE_DISABLED" and
     $spec.protocol.nonPortableQualification == "REJECT_BEFORE_LIFETIME_OBSERVATION" and
     $spec.protocol.freshGradleProcessPerMeasuredBuild == true and
     $spec.protocol.persistentDaemonStateCompared == false and
