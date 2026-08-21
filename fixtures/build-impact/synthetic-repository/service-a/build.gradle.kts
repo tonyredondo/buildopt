@@ -3,8 +3,13 @@ plugins {
 }
 
 val discoverySelfReference by configurations.creating
+val inheritedProjectDependencies by configurations.creating
+
+configurations.implementation {
+    extendsFrom(inheritedProjectDependencies)
+}
 
 dependencies {
-    implementation(project(":library-c"))
+    add(inheritedProjectDependencies.name, project(":library-c"))
     add(discoverySelfReference.name, project(":service-a"))
 }

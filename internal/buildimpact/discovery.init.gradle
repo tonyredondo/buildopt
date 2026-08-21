@@ -21,7 +21,11 @@ gradle.projectsLoaded {
         project.afterEvaluate {
             def dependencyPaths = new TreeSet<String>()
             project.configurations.each { configuration ->
-                configuration.allDependencies.withType(ProjectDependency).each { dependency ->
+                // Read each configuration's declared dependency set rather than
+                // Gradle's live allDependencies composite. Large convention-heavy
+                // builds can chain that composite deeply enough for its uniqueness
+                // callbacks to overflow the JVM stack while a project is evaluated.
+                configuration.dependencies.withType(ProjectDependency).each { dependency ->
                     // A project may use a self-targeted configuration without
                     // creating an edge in the inter-project dependency graph.
                     if (dependency.path != project.path) {
