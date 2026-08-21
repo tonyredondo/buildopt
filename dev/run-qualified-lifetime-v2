@@ -339,6 +339,22 @@ buildopt_subject() {
     git clone -q "${buildopt_producer}" "${buildopt_control}"
     git clone -q "${buildopt_producer}" "${buildopt_candidate}"
     local buildopt_arm
+    local buildopt_qualifier_wrapper_sha buildopt_active_wrapper_sha
+    local buildopt_first_observation buildopt_first_observation_wrapper_sha
+    local buildopt_first_observation_changes_wrapper=false
+    buildopt_qualifier_wrapper_sha=$(git -C "${buildopt_producer}" show \
+        "${buildopt_qualifier}:gradle/wrapper/gradle-wrapper.properties" | \
+        sha256sum | awk '{print $1}')
+    buildopt_active_wrapper_sha=${buildopt_qualifier_wrapper_sha}
+    buildopt_first_observation=$(jq -er ".repositories[${buildopt_index}].observations[0]" \
+        "${buildopt_spec}")
+    buildopt_first_observation_wrapper_sha=$(git -C "${buildopt_producer}" show \
+        "${buildopt_first_observation}:gradle/wrapper/gradle-wrapper.properties" | \
+        sha256sum | awk '{print $1}')
+    if [[ ${buildopt_first_observation_wrapper_sha} != "${buildopt_qualifier_wrapper_sha}" ]]; then
+        buildopt_first_observation_changes_wrapper=true
+    fi
+
     for buildopt_arm in control candidate; do
         local buildopt_arm_repository=${buildopt_subject_root}/${buildopt_arm}
         git -C "${buildopt_arm_repository}" remote set-url origin "${buildopt_remote}"
@@ -473,6 +489,10 @@ buildopt_subject() {
                 "${buildopt_cache_home}" "${buildopt_event}" "${buildopt_jdk}" \
                 "${buildopt_binary}" gradle "${buildopt_workflow[@]}" \
                 >"${buildopt_logs}/control-warmup.log" 2>&1
+            if [[ ${buildopt_first_observation_changes_wrapper} == true ]]; then
+                buildopt_stop_gradle_daemons "${buildopt_repository}" "${buildopt_gradle_home}" \
+                    "${buildopt_jdk}" "${buildopt_logs}/control-obsolete-daemon-prestop.log"
+            fi
         else
             buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
                 "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
@@ -490,11 +510,6 @@ buildopt_subject() {
     local buildopt_observations=${buildopt_subject_root}/observations.jsonl
     : >"${buildopt_observations}"
     local buildopt_sequence=0
-    local buildopt_qualifier_wrapper_sha buildopt_active_wrapper_sha
-    buildopt_qualifier_wrapper_sha=$(git -C "${buildopt_producer}" show \
-        "${buildopt_qualifier}:gradle/wrapper/gradle-wrapper.properties" | \
-        sha256sum | awk '{print $1}')
-    buildopt_active_wrapper_sha=${buildopt_qualifier_wrapper_sha}
     while IFS= read -r buildopt_observation; do
         buildopt_sequence=$((buildopt_sequence + 1))
         local buildopt_observation_parent

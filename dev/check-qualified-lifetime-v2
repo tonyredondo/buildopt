@@ -98,6 +98,7 @@ buildopt_common_jq='
     .schemaVersion == "buildopt.evidence/poc-qualified-lifetime-subject/v2" and
     $spec.protocol.noCompatibleReplayPrecedesPayback == true and
     $spec.protocol.obsoleteWrapperDaemonsStoppedBeforeMeasurement == true and
+    $spec.protocol.obsoleteControlDaemonRetiredBeforeCandidateWarmup == true and
     $spec.protocol.selectedExecutionMode == "SELECTIVE_PROFILE" and
     .repository == {id:$expected.repositoryId,remote:$expected.remoteUrl,
       publicRepository:true,historyBranch:$expected.historyBranch} and

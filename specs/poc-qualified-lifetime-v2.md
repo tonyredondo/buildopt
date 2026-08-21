@@ -81,6 +81,12 @@ four-daemon memory peak created only by co-locating two experimental arms. Each
 observation records whether its Wrapper still matches the qualified profile;
 Wrapper drift must retain native execution.
 
+When the first observation already changes the Wrapper, the completed control
+warm-up daemon is retired before the candidate warm-up starts. The candidate
+still performs the full qualification-revision warm-up, but the two arms do not
+overlap obsolete daemons that neither can reuse in the first measurement. This
+resource cleanup also occurs outside every measured interval.
+
 The candidate must either:
 
 - select `CENTRAL_PORTFOLIO`, run `SELECTIVE_PROFILE` and restore exact
