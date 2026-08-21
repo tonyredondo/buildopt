@@ -290,10 +290,12 @@ buildopt_subject() {
         return 0
     fi
     buildopt_subject_output=${buildopt_output}/${buildopt_key}
-    [[ ! -e ${buildopt_subject_output} ]] || {
+    if [[ -e ${buildopt_subject_output} &&
+        (-z ${buildopt_resume_auto_root} || ! -d ${buildopt_subject_output} ||
+            -e ${buildopt_subject_output}/result.json) ]]; then
         printf 'qualified lifetime subject already exists: %s\n' "${buildopt_key}" >&2
         return 1
-    }
+    fi
     buildopt_repository_id=$(jq -er ".repositories[${buildopt_index}].repositoryId" "${buildopt_spec}")
     buildopt_repository_numeric_id=$(jq -er ".repositories[${buildopt_index}].repositoryNumericId" "${buildopt_spec}")
     buildopt_remote=$(jq -er ".repositories[${buildopt_index}].remoteUrl" "${buildopt_spec}")
@@ -353,6 +355,24 @@ buildopt_subject() {
         "${buildopt_subject_output}/calibration-evidence.json"
     local buildopt_executable_sha
     buildopt_executable_sha=$(sha256sum "${buildopt_binary}" | awk '{print $1}')
+    local buildopt_subject_revision=${buildopt_revision}
+    if [[ -n ${buildopt_resume_auto_root} ]]; then
+        buildopt_subject_revision=$(jq -er \
+            '.buildopt.revision | select(test("^[0-9a-f]{40}$"))' \
+            "${buildopt_qualifier_capture}")
+        local buildopt_captured_executable_sha
+        buildopt_captured_executable_sha=$(jq -er '.buildopt.executableSha256' \
+            "${buildopt_qualifier_capture}")
+        [[ ${buildopt_captured_executable_sha} == "${buildopt_executable_sha}" ]] || {
+            printf 'resumed qualification executable does not match retained runtime\n' >&2
+            return 1
+        }
+        if jq -e '.phase == "NATIVE_RETAINED" and
+            .reason == "CALIBRATION_VALUE_NOT_PROVEN"' \
+            "${buildopt_qualifier_result}" >/dev/null; then
+            buildopt_qualification_status=1
+        fi
+    fi
 
     if ((buildopt_qualification_status != 0)); then
         jq -e --argjson projects "${buildopt_expected_projects}" '
@@ -384,7 +404,7 @@ buildopt_subject() {
             --arg key "${buildopt_key}" --arg repositoryId "${buildopt_repository_id}" \
             --arg remote "${buildopt_remote}" --arg branch "${buildopt_branch}" \
             --arg parent "${buildopt_parent}" --arg qualifier "${buildopt_qualifier}" \
-            --arg revision "${buildopt_revision}" --arg executableSha "${buildopt_executable_sha}" \
+            --arg revision "${buildopt_subject_revision}" --arg executableSha "${buildopt_executable_sha}" \
             --arg expectedProjects "${buildopt_expected_projects}" \
             --arg captureSha "${buildopt_capture_sha}" \
             --arg evidenceSha "${buildopt_calibration_evidence_sha}" \
@@ -842,7 +862,7 @@ buildopt_subject() {
             --arg key "${buildopt_key}" --arg repositoryId "${buildopt_repository_id}" \
             --arg remote "${buildopt_remote}" --arg branch "${buildopt_branch}" \
             --arg parent "${buildopt_parent}" --arg qualifier "${buildopt_qualifier}" \
-            --arg revision "${buildopt_revision}" --arg executableSha "${buildopt_executable_sha}" \
+            --arg revision "${buildopt_subject_revision}" --arg executableSha "${buildopt_executable_sha}" \
             --arg expectedProjects "${buildopt_expected_projects}" \
             --arg captureSha "${buildopt_capture_sha}" \
             --arg evidenceSha "$(sha256sum "${buildopt_calibration_evidence}" | awk '{print $1}')" \
@@ -927,7 +947,7 @@ buildopt_subject() {
         --arg key "${buildopt_key}" --arg repositoryId "${buildopt_repository_id}" \
         --arg remote "${buildopt_remote}" --arg branch "${buildopt_branch}" \
         --arg parent "${buildopt_parent}" --arg qualifier "${buildopt_qualifier}" \
-        --arg revision "${buildopt_revision}" --arg executableSha "${buildopt_executable_sha}" \
+        --arg revision "${buildopt_subject_revision}" --arg executableSha "${buildopt_executable_sha}" \
         --arg expectedProjects "${buildopt_expected_projects}" \
         --arg captureSha "${buildopt_capture_sha}" \
         --arg evidenceSha "$(sha256sum "${buildopt_calibration_evidence}" | awk '{print $1}')" \
