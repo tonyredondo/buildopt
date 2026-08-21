@@ -467,20 +467,12 @@ buildopt_subject() {
         local buildopt_event=${buildopt_subject_root}/${buildopt_arm}-event.json
         buildopt_seed_gradle_distribution "${buildopt_producer_gradle}" "${buildopt_gradle_home}"
         buildopt_write_event "${buildopt_event}" "${buildopt_parent}"
-        buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
-            "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
-            "${buildopt_cache_home}" "${buildopt_event}" "${buildopt_jdk}" \
-            "${buildopt_binary}" connect "${buildopt_url}" \
-            --state-dir "${buildopt_state_relative}" \
-            --token-file "${buildopt_authority}/consumer-token.json" \
-            --ca-file "${buildopt_tls}/ca.pem" \
-            >"${buildopt_logs}/${buildopt_arm}-connect.json"
         buildopt_clear_project_outputs "${buildopt_repository}"
         if [[ ${buildopt_arm} == control ]]; then
             buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
                 "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
                 "${buildopt_cache_home}" "${buildopt_event}" "${buildopt_jdk}" \
-                "${buildopt_binary}" gradle "${buildopt_workflow[@]}" \
+                ./gradlew "${buildopt_workflow[@]}" \
                 >"${buildopt_logs}/control-warmup.log" 2>&1
             buildopt_hash_required_outputs "${buildopt_repository}" \
                 "${buildopt_subject_output}/required-outputs.txt" \
@@ -514,7 +506,25 @@ buildopt_subject() {
                     sort >"${buildopt_portability_differences}"
                 break
             fi
+            buildopt_run_environment "${buildopt_repository_id}" \
+                "${buildopt_repository_numeric_id}" "${buildopt_repository}" \
+                "${buildopt_home}" "${buildopt_gradle_home}" \
+                "${buildopt_cache_home}" "${buildopt_event}" "${buildopt_jdk}" \
+                "${buildopt_binary}" connect "${buildopt_url}" \
+                --state-dir "${buildopt_state_relative}" \
+                --token-file "${buildopt_authority}/consumer-token.json" \
+                --ca-file "${buildopt_tls}/ca.pem" \
+                >"${buildopt_logs}/control-connect.json"
         else
+            buildopt_run_environment "${buildopt_repository_id}" \
+                "${buildopt_repository_numeric_id}" "${buildopt_repository}" \
+                "${buildopt_home}" "${buildopt_gradle_home}" \
+                "${buildopt_cache_home}" "${buildopt_event}" "${buildopt_jdk}" \
+                "${buildopt_binary}" connect "${buildopt_url}" \
+                --state-dir "${buildopt_state_relative}" \
+                --token-file "${buildopt_authority}/consumer-token.json" \
+                --ca-file "${buildopt_tls}/ca.pem" \
+                >"${buildopt_logs}/candidate-connect.json"
             buildopt_run_environment "${buildopt_repository_id}" "${buildopt_repository_numeric_id}" \
                 "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle_home}" \
                 "${buildopt_cache_home}" "${buildopt_event}" "${buildopt_jdk}" \

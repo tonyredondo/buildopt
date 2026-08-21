@@ -72,6 +72,11 @@ independent checkout run the same native workflow in different absolute roots.
 Their complete required output inventories, modes, sizes and SHA-256 values
 must match exactly.
 
+The independent checkout is not connected to BuildOpt or the central cache
+until after this comparison passes. Its Gradle home and build cache begin empty,
+apart from the pre-seeded Wrapper distribution, so a matching digest cannot be
+caused by restoring the producer's outputs.
+
 A mismatch rejects the profile as
 `REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS` before lifetime observation. The
 result records the two aggregate digests, the total difference count, a digest

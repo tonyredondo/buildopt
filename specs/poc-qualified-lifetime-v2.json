@@ -12,6 +12,7 @@
     "processEnvelope": "FRESH_GRADLE_PROCESS_PER_BUILD",
     "persistentState": "WRAPPER_DEPENDENCY_BUILD_AND_BUILDOPT_CACHES",
     "nativeOutputPortabilityGate": "EXACT_CROSS_ROOT_FILE_INVENTORY_AND_SHA256",
+    "portabilityControl": "UNCONNECTED_NATIVE_EMPTY_BUILD_CACHE",
     "nonPortableQualification": "REJECT_BEFORE_LIFETIME_OBSERVATION",
     "selectedExecutionMode": "SELECTIVE_PROFILE",
     "requiredOutputComparison": "EXACT_FILE_INVENTORY_AND_SHA256",

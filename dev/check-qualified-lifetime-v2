@@ -117,6 +117,7 @@ buildopt_common_jq='
     $spec.protocol.persistentState == "WRAPPER_DEPENDENCY_BUILD_AND_BUILDOPT_CACHES" and
     $spec.protocol.nativeOutputPortabilityGate ==
       "EXACT_CROSS_ROOT_FILE_INVENTORY_AND_SHA256" and
+    $spec.protocol.portabilityControl == "UNCONNECTED_NATIVE_EMPTY_BUILD_CACHE" and
     $spec.protocol.nonPortableQualification == "REJECT_BEFORE_LIFETIME_OBSERVATION" and
     $spec.protocol.freshGradleProcessPerMeasuredBuild == true and
     $spec.protocol.persistentDaemonStateCompared == false and
