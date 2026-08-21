@@ -66,6 +66,7 @@ type structuralMeasurementConfig struct {
 	targetStabilityConfirmations int
 	adaptiveCandidateStability   bool
 	pairedTargetStability        bool
+	qualificationPolicy          string
 	gradleDistributionSeed       string
 	gradlePropertiesSeed         string
 	gradleDependencySeed         string
@@ -622,6 +623,7 @@ func measureStructuralProfile(config structuralMeasurementConfig, progress io.Wr
 		GradleOptions:              config.gradleOptions, Observations: observations,
 		ControlWarmups: control.warmups, CandidateWarmups: candidate.warmups,
 		CandidateStabilization: structuralCandidateStabilizationPolicy(config),
+		QualificationPolicy:    config.qualificationPolicy,
 		FallbackReason:         fallbackReason, FallbackSuccessful: true,
 	})
 }

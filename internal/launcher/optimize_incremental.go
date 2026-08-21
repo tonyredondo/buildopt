@@ -531,8 +531,9 @@ func completeOptimizeIncrementalLearning(
 		ExecutableSHA256:     invocation.executableSHA256,
 		SourceEvidenceSHA256: hex.EncodeToString(changesSHA[:]),
 		GradleOptions:        options, Observations: observations,
-		FallbackReason:     "ORDINARY_FULL_GRAPH_CONTROLS_SUCCEEDED",
-		FallbackSuccessful: learning.FallbackSuccessful,
+		QualificationPolicy: profilediscovery.StructuralQualificationRobust7Of8P95,
+		FallbackReason:      "ORDINARY_FULL_GRAPH_CONTROLS_SUCCEEDED",
+		FallbackSuccessful:  learning.FallbackSuccessful,
 	})
 	if err != nil {
 		return retainedOptimizeIncrementalLearning(invocation, learning, optimizeIncrementalReasonState), calibration
@@ -571,7 +572,8 @@ func completeOptimizeIncrementalLearning(
 		Interval95SavedMS: append([]float64(nil), summary.Interval95SavedMS...),
 		PositivePairs:     summary.PositivePairs, ControlP95MS: summary.ControlP95MS,
 		CandidateP95MS: summary.CandidateP95MS, CalibrationCostMS: costMS,
-		BreakEvenBuilds: breakEven, MaximumBreakEvenBuilds: invocation.maxBreakEvenBuilds,
+		QualificationPolicy: summary.QualificationPolicy,
+		BreakEvenBuilds:     breakEven, MaximumBreakEvenBuilds: invocation.maxBreakEvenBuilds,
 		ValueGatePassed: summary.Qualified, Qualified: qualified,
 		FallbackSuccessful: summary.FallbackSuccessful,
 		EvidenceSHA256:     hex.EncodeToString(evidenceDigest[:]), DiscoverySHA256: learning.DiscoverySHA256,

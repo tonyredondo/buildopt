@@ -22,6 +22,7 @@ const (
 	StructuralEvidenceSchema                      = "buildopt.evidence/structural-profile-qualification/v1"
 	StructuralProfileSchema                       = "buildopt.poc/qualified-profile/v4"
 	StructuralProfileID                           = "qualified-structural-build-impact"
+	StructuralQualificationRobust7Of8P95          = "ROBUST_7_OF_8_POSITIVE_INTERVAL_P95_V1"
 	CandidateStabilizationAdaptiveExactTwoOfThree = "ADAPTIVE_EXACT_2_OF_3"
 	CandidateStabilizationPairedTargetShape       = "PAIRED_TARGET_SHAPE_V1"
 	CandidateStabilizationPairedBoundCacheShape   = "PAIRED_BOUND_CACHE_MEASURED_SHAPE_V1"
@@ -112,6 +113,7 @@ type structuralExecution struct {
 	ControlWarmupCount       int                           `json:"controlWarmupCount,omitempty"`
 	CandidateWarmupCount     int                           `json:"candidateWarmupCount,omitempty"`
 	CandidateStabilization   string                        `json:"candidateStabilization,omitempty"`
+	QualificationPolicy      string                        `json:"qualificationPolicy,omitempty"`
 	ControlWarmups           []StructuralWarmupObservation `json:"controlWarmups,omitempty"`
 	CandidateWarmups         []StructuralWarmupObservation `json:"candidateWarmups,omitempty"`
 }
@@ -195,6 +197,7 @@ type StructuralMeasurementSummary struct {
 	PositivePairs        int
 	ControlP95MS         float64
 	CandidateP95MS       float64
+	QualificationPolicy  string
 	Qualified            bool
 	Decision             string
 	FallbackSuccessful   bool
@@ -230,6 +233,7 @@ func InspectStructuralMeasurementEvidence(raw []byte, analysis AnalysisReport) (
 		PositivePairs:        evidence.Result.PositivePairs,
 		ControlP95MS:         structuralNearestRank(controlDurations, .95),
 		CandidateP95MS:       structuralNearestRank(candidateDurations, .95),
+		QualificationPolicy:  evidence.Execution.QualificationPolicy,
 		Qualified:            evidence.Result.Qualified,
 		Decision:             evidence.Result.Decision,
 		FallbackSuccessful:   evidence.Fallback.BuildSuccessful,
@@ -311,6 +315,7 @@ type StructuralMeasurementOptions struct {
 	ControlWarmups             []StructuralWarmupObservation
 	CandidateWarmups           []StructuralWarmupObservation
 	CandidateStabilization     string
+	QualificationPolicy        string
 	Observations               []StructuralMeasurementObservation
 	FallbackReason             string
 	FallbackSuccessful         bool
@@ -340,6 +345,10 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 		options.CandidateStabilization != CandidateStabilizationPairedTargetShape &&
 		options.CandidateStabilization != CandidateStabilizationPairedBoundCacheShape {
 		return nil, false, errors.New("structural candidate stabilization policy is invalid")
+	}
+	if options.QualificationPolicy != "" &&
+		options.QualificationPolicy != StructuralQualificationRobust7Of8P95 {
+		return nil, false, errors.New("structural qualification policy is invalid")
 	}
 	if options.CandidateStabilization == "" && len(options.ControlWarmups) != len(options.CandidateWarmups) {
 		return nil, false, errors.New("structural legacy warm-up counts must match")
@@ -400,7 +409,7 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 	if err := validateStructuralDiagnostics(options.CandidateStabilization, options.ControlWarmups, options.CandidateWarmups, observations); err != nil {
 		return nil, false, err
 	}
-	result, err := calculateStructuralResult(observations)
+	result, err := calculateStructuralResultWithPolicy(observations, options.QualificationPolicy)
 	if err != nil {
 		return nil, false, err
 	}
@@ -439,6 +448,7 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 			ControlWarmupCount:       adaptiveStructuralWarmupCount(options.CandidateStabilization, len(options.ControlWarmups)),
 			CandidateWarmupCount:     adaptiveStructuralWarmupCount(options.CandidateStabilization, len(options.CandidateWarmups)),
 			CandidateStabilization:   options.CandidateStabilization,
+			QualificationPolicy:      options.QualificationPolicy,
 			ControlWarmups:           append([]StructuralWarmupObservation(nil), options.ControlWarmups...),
 			CandidateWarmups:         append([]StructuralWarmupObservation(nil), options.CandidateWarmups...),
 		},
@@ -613,6 +623,10 @@ func validateStructuralCaptureEvidence(evidence structuralEvidence, analysis Ana
 		!validStructuralGradleOptions(evidence.Execution.GradleOptions) {
 		return errors.New("structural qualification execution surface is invalid")
 	}
+	if evidence.Execution.QualificationPolicy != "" &&
+		evidence.Execution.QualificationPolicy != StructuralQualificationRobust7Of8P95 {
+		return errors.New("structural qualification policy is invalid")
+	}
 	if evidence.SourceBindings.OutputEquivalenceSHA256 == "" {
 		if evidence.Execution.OutputEquivalenceMode != "" {
 			return errors.New("structural output-equivalence execution binding is invalid")
@@ -626,7 +640,10 @@ func validateStructuralCaptureEvidence(evidence structuralEvidence, analysis Ana
 	if err := validateStructuralDiagnostics(evidence.Execution.CandidateStabilization, evidence.Execution.ControlWarmups, evidence.Execution.CandidateWarmups, evidence.Observations); err != nil {
 		return err
 	}
-	calculated, err := calculateStructuralResult(evidence.Observations)
+	calculated, err := calculateStructuralResultWithPolicy(
+		evidence.Observations,
+		evidence.Execution.QualificationPolicy,
+	)
 	if err != nil {
 		return err
 	}
@@ -932,10 +949,16 @@ func ValidateStructuralHostPressure(pressure *StructuralHostPressure) error {
 }
 
 func calculateStructuralResult(observations []structuralObservation) (structuralResult, error) {
+	return calculateStructuralResultWithPolicy(observations, "")
+}
+
+func calculateStructuralResultWithPolicy(observations []structuralObservation, policy string) (structuralResult, error) {
 	if len(observations) != structuralPairCount {
 		return structuralResult{}, errors.New("structural qualification requires eight pairs")
 	}
 	saved := make([]float64, 0, structuralPairCount)
+	controlDurations := make([]float64, 0, structuralPairCount)
+	candidateDurations := make([]float64, 0, structuralPairCount)
 	var controlTotal, candidateTotal int64
 	positive := 0
 	requiredOutputSHA := ""
@@ -963,6 +986,8 @@ func calculateStructuralResult(observations []structuralObservation) (structural
 		}
 		controlTotal += observation.ControlDurationMS
 		candidateTotal += observation.CandidateDurationMS
+		controlDurations = append(controlDurations, float64(observation.ControlDurationMS))
+		candidateDurations = append(candidateDurations, float64(observation.CandidateDurationMS))
 		saved = append(saved, float64(observation.SavedMS))
 		if observation.SavedMS > 0 {
 			positive++
@@ -982,8 +1007,16 @@ func calculateStructuralResult(observations []structuralObservation) (structural
 	meanSaved := float64(controlTotal-candidateTotal) / structuralPairCount
 	ratio := float64(controlTotal-candidateTotal) / float64(controlTotal)
 	interval := structuralBootstrap95(saved)
+	controlP95 := structuralNearestRank(controlDurations, .95)
+	candidateP95 := structuralNearestRank(candidateDurations, .95)
+	positivePairsRequired := structuralPairCount
+	p95NonRegressive := true
+	if policy == StructuralQualificationRobust7Of8P95 {
+		positivePairsRequired = 7
+		p95NonRegressive = candidateP95 <= controlP95
+	}
 	qualified := meanSaved >= structuralMinimumSavedMS && ratio >= structuralMinimumRatio &&
-		interval[0] > 0 && positive == structuralPairCount &&
+		interval[0] > 0 && positive >= positivePairsRequired && p95NonRegressive &&
 		(!executionShapeObserved || executionShapeStable)
 	decision := "RETAIN_NATIVE_GRADLE"
 	if qualified {

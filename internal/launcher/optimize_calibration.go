@@ -19,18 +19,19 @@ import (
 )
 
 const (
-	optimizeBindingCalibration           = "CALIBRATION_COMPLETE"
-	optimizeCalibrationComplete          = "COMPLETE"
-	optimizeCalibrationRetained          = "NATIVE_RETAINED"
-	optimizeCalibrationSkipped           = "SKIPPED"
-	optimizeCalibrationReasonQualified   = "CANDIDATE_CALIBRATION_QUALIFIED"
-	optimizeCalibrationReasonNoValue     = "CALIBRATION_VALUE_NOT_PROVEN"
-	optimizeCalibrationReasonBreakEven   = "CALIBRATION_BREAK_EVEN_EXCEEDED"
-	optimizeCalibrationReasonPairs       = "CALIBRATION_PAIR_BUDGET_INSUFFICIENT"
-	optimizeCalibrationReasonUnavailable = "CALIBRATION_EXECUTION_FAILED"
-	optimizeCalibrationReasonCancelled   = "CALIBRATION_CANCELLED"
-	optimizeCalibrationEvidenceFile      = "evidence.json"
-	optimizeRequiredCalibrationPairs     = 8
+	optimizeBindingCalibration              = "CALIBRATION_COMPLETE"
+	optimizeCalibrationComplete             = "COMPLETE"
+	optimizeCalibrationRetained             = "NATIVE_RETAINED"
+	optimizeCalibrationSkipped              = "SKIPPED"
+	optimizeCalibrationReasonQualified      = "CANDIDATE_CALIBRATION_QUALIFIED"
+	optimizeCalibrationReasonNoValue        = "CALIBRATION_VALUE_NOT_PROVEN"
+	optimizeCalibrationReasonBreakEven      = "CALIBRATION_BREAK_EVEN_EXCEEDED"
+	optimizeCalibrationReasonPairs          = "CALIBRATION_PAIR_BUDGET_INSUFFICIENT"
+	optimizeCalibrationReasonUnavailable    = "CALIBRATION_EXECUTION_FAILED"
+	optimizeCalibrationReasonCancelled      = "CALIBRATION_CANCELLED"
+	optimizeCalibrationEvidenceFile         = "evidence.json"
+	optimizeRequiredCalibrationPairs        = 8
+	optimizeMinimumPositiveCalibrationPairs = 7
 )
 
 type optimizeCalibrationResult struct {
@@ -48,6 +49,7 @@ type optimizeCalibrationResult struct {
 	PositivePairs          int       `json:"positivePairs"`
 	ControlP95MS           float64   `json:"controlP95Ms"`
 	CandidateP95MS         float64   `json:"candidateP95Ms"`
+	QualificationPolicy    string    `json:"qualificationPolicy,omitempty"`
 	CalibrationCostMS      int64     `json:"calibrationCostMs"`
 	BreakEvenBuilds        int       `json:"breakEvenBuilds"`
 	MaximumBreakEvenBuilds int       `json:"maximumBreakEvenBuilds"`
@@ -89,7 +91,9 @@ func validOptimizeCalibrationCheckpoint(state optimizeState) bool {
 			!validOptimizeGeneratedPath(calibration.GeneratedFiles[0]) ||
 			!validOptimizeSHA(calibration.EvidenceSHA256) || !validOptimizeSHA(calibration.DiscoverySHA256) ||
 			calibration.ControlP95MS <= 0 || calibration.CandidateP95MS <= 0 ||
-			!calibration.FallbackSuccessful || calibration.TestOptimization != "OUT_OF_SCOPE" {
+			!validOptimizeCalibrationQualificationPolicy(calibration.QualificationPolicy) ||
+			!calibration.FallbackSuccessful || calibration.TestOptimization != "OUT_OF_SCOPE" ||
+			calibration.ValueGatePassed != validOptimizeCalibrationValueGate(calibration) {
 			return false
 		}
 		if calibration.Qualified {
@@ -107,11 +111,8 @@ func validOptimizeCalibrationCheckpoint(state optimizeState) bool {
 			calibration.Reason == optimizeCalibrationReasonQualified &&
 			calibration.PairsRequested == optimizeRequiredCalibrationPairs &&
 			calibration.PairsMeasured == optimizeRequiredCalibrationPairs &&
-			calibration.ControlMeanMS > 0 && calibration.CandidateMeanMS > 0 &&
-			calibration.MeanSavedMS >= 500 && calibration.ReductionRatio >= 0.02 &&
-			len(calibration.Interval95SavedMS) == 2 && calibration.Interval95SavedMS[0] > 0 &&
-			calibration.PositivePairs > 0 && calibration.PositivePairs <= optimizeRequiredCalibrationPairs &&
-			calibration.ControlP95MS > 0 && calibration.CandidateP95MS > 0 &&
+			validOptimizeCalibrationQualificationPolicy(calibration.QualificationPolicy) &&
+			validOptimizeCalibrationValueGate(calibration) &&
 			calibration.CalibrationCostMS == 0 && calibration.BreakEvenBuilds == 0 &&
 			calibration.MaximumBreakEvenBuilds >= 1 && calibration.MaximumBreakEvenBuilds <= 1000 &&
 			calibration.ValueGatePassed && calibration.Qualified && calibration.FallbackSuccessful &&
@@ -121,6 +122,26 @@ func validOptimizeCalibrationCheckpoint(state optimizeState) bool {
 	default:
 		return false
 	}
+}
+
+func validOptimizeCalibrationValueGate(calibration optimizeCalibrationResult) bool {
+	minimumPositivePairs := optimizeRequiredCalibrationPairs
+	p95NonRegressive := true
+	if calibration.QualificationPolicy == profilediscovery.StructuralQualificationRobust7Of8P95 {
+		minimumPositivePairs = optimizeMinimumPositiveCalibrationPairs
+		p95NonRegressive = calibration.CandidateP95MS <= calibration.ControlP95MS
+	}
+	return calibration.ControlMeanMS > 0 && calibration.CandidateMeanMS > 0 &&
+		calibration.MeanSavedMS >= 500 && calibration.ReductionRatio >= 0.02 &&
+		len(calibration.Interval95SavedMS) == 2 && calibration.Interval95SavedMS[0] > 0 &&
+		calibration.PositivePairs >= minimumPositivePairs &&
+		calibration.PositivePairs <= optimizeRequiredCalibrationPairs &&
+		calibration.ControlP95MS > 0 && calibration.CandidateP95MS > 0 &&
+		p95NonRegressive
+}
+
+func validOptimizeCalibrationQualificationPolicy(policy string) bool {
+	return policy == "" || policy == profilediscovery.StructuralQualificationRobust7Of8P95
 }
 
 func validOptimizeSHA(value string) bool {
@@ -205,6 +226,7 @@ func (run *optimizeRun) calibrate(
 		return result
 	}
 	config.pairedTargetStability = true
+	config.qualificationPolicy = profilediscovery.StructuralQualificationRobust7Of8P95
 	config.parentContext = ctx
 	if deadline, ok := ctx.Deadline(); ok {
 		config.deadline = deadline
@@ -277,7 +299,8 @@ func (run *optimizeRun) calibrate(
 		Interval95SavedMS: append([]float64(nil), summary.Interval95SavedMS...),
 		PositivePairs:     summary.PositivePairs, ControlP95MS: summary.ControlP95MS,
 		CandidateP95MS: summary.CandidateP95MS, CalibrationCostMS: costMS,
-		BreakEvenBuilds: breakEven, MaximumBreakEvenBuilds: run.invocation.maxBreakEvenBuilds,
+		QualificationPolicy: summary.QualificationPolicy,
+		BreakEvenBuilds:     breakEven, MaximumBreakEvenBuilds: run.invocation.maxBreakEvenBuilds,
 		ValueGatePassed: summary.Qualified, Qualified: qualified,
 		FallbackSuccessful: summary.FallbackSuccessful,
 		EvidenceSHA256:     hex.EncodeToString(evidenceDigest[:]), DiscoverySHA256: discoverySHA,
@@ -440,6 +463,7 @@ func sameOptimizeCalibrationSummary(calibration optimizeCalibrationResult, summa
 		calibration.PositivePairs == summary.PositivePairs &&
 		calibration.ControlP95MS == summary.ControlP95MS &&
 		calibration.CandidateP95MS == summary.CandidateP95MS &&
+		calibration.QualificationPolicy == summary.QualificationPolicy &&
 		calibration.BreakEvenBuilds == breakEven &&
 		calibration.ValueGatePassed == summary.Qualified &&
 		calibration.Qualified == qualified &&

@@ -460,7 +460,8 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 		Interval95SavedMS: append([]float64(nil), summary.Interval95SavedMS...),
 		PositivePairs:     summary.PositivePairs, ControlP95MS: summary.ControlP95MS,
 		CandidateP95MS: summary.CandidateP95MS, MaximumBreakEvenBuilds: invocation.maxBreakEvenBuilds,
-		ValueGatePassed: true, Qualified: true, FallbackSuccessful: true,
+		QualificationPolicy: summary.QualificationPolicy,
+		ValueGatePassed:     true, Qualified: true, FallbackSuccessful: true,
 		EvidenceSHA256: entry.EvidenceSHA256, DiscoverySHA256: discoverySHA,
 		GeneratedFiles: []string{paths.evidence}, ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}

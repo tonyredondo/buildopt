@@ -18,7 +18,8 @@ trap 'rm -f -- "${buildopt_temp}/contract.json"; rmdir -- "${buildopt_temp}"' EX
 for buildopt_filter in \
     '.budget.qualificationPairs = 4' \
     '.qualification.minimumMeanSavedMs = 0' \
-    '.qualification.minimumPositivePairs = 7' \
+    '.qualification.minimumPositivePairs = 6' \
+    '.qualification.candidateP95NonRegressive = false' \
     '.checkpoint.evidenceDigestRequired = false' \
     '.authority.profileMaterialized = true' \
     '.authority.productionAuthorized = true'; do

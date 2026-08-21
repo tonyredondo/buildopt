@@ -571,7 +571,7 @@ buildopt_subject() {
             --argjson outputCount "${buildopt_portability_output_count}" \
             --argjson differenceCount "${buildopt_portability_difference_count}" \
             --argjson differenceSample "${buildopt_portability_sample}" \
-            --argjson calibration "$(jq -c '.calibration | {calibrationCostMs,controlMeanMs,candidateMeanMs,meanSavedMs,reductionRatio,interval95SavedMs,positivePairs,pairsMeasured,breakEvenBuilds,qualified,fallbackSuccessful}' "${buildopt_qualifier_result}")" \
+            --argjson calibration "$(jq -c '.calibration | {calibrationCostMs,controlMeanMs,candidateMeanMs,meanSavedMs,reductionRatio,interval95SavedMs,positivePairs,pairsMeasured,breakEvenBuilds,qualified,fallbackSuccessful,qualificationPolicy}' "${buildopt_qualifier_result}")" \
             --argjson graph "$(jq -c '.discovery.graph' "${buildopt_qualifier_result}")" \
             --argjson packBytes "${buildopt_pack_bytes}" \
             --argjson chunkCount "${buildopt_chunk_count}" \
@@ -797,7 +797,7 @@ buildopt_subject() {
         --argjson portabilityOutputCount "${buildopt_portability_output_count}" \
         --argjson portabilityDifferenceCount "${buildopt_portability_difference_count}" \
         --argjson portabilitySample "${buildopt_portability_sample}" \
-        --argjson calibration "$(jq -c '.calibration | {calibrationCostMs,controlMeanMs,candidateMeanMs,meanSavedMs,reductionRatio,interval95SavedMs,positivePairs,pairsMeasured,breakEvenBuilds,qualified,fallbackSuccessful}' "${buildopt_qualifier_result}")" \
+        --argjson calibration "$(jq -c '.calibration | {calibrationCostMs,controlMeanMs,candidateMeanMs,meanSavedMs,reductionRatio,interval95SavedMs,positivePairs,pairsMeasured,breakEvenBuilds,qualified,fallbackSuccessful,qualificationPolicy}' "${buildopt_qualifier_result}")" \
         --argjson graph "$(jq -c '.discovery.graph' "${buildopt_qualifier_result}")" \
         --argjson packBytes "${buildopt_pack_bytes}" --argjson chunkCount "${buildopt_chunk_count}" \
         --argjson centralCost "${buildopt_central_cost}" \

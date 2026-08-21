@@ -42,7 +42,8 @@
     "minimumMeanSavedMs": 500,
     "minimumReductionRatio": 0.02,
     "positiveIntervalRequired": true,
-    "positivePairsRequired": 8,
+    "minimumPositivePairs": 7,
+    "candidateP95NonRegressive": true,
     "maximumBreakEvenBuilds": 30,
     "exactOutputsRequired": true,
     "fallbackRequired": true

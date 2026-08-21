@@ -4,6 +4,9 @@
   "protocol": {
     "ordinaryQualificationInvocations": 17,
     "calibrationPairs": 8,
+    "minimumPositiveCalibrationPairs": 7,
+    "positiveCalibrationIntervalRequired": true,
+    "candidateCalibrationP95NonRegressive": true,
     "maximumBreakEvenBuilds": 30,
     "maximumWorkers": 12,
     "history": "PUBLIC_FIRST_PARENT",

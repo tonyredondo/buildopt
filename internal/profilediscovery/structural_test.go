@@ -49,6 +49,7 @@ func TestRenderStructuralMeasurementEvidenceQualifiesOnlyPositiveExactPairs(t *t
 		ExecutableSHA256:        strings.Repeat("e", 64),
 		SourceEvidenceSHA256:    strings.Repeat("d", 64),
 		OutputEquivalenceSHA256: strings.Repeat("f", 64),
+		QualificationPolicy:     StructuralQualificationRobust7Of8P95,
 		GradleOptions:           []string{"--daemon", "--build-cache"}, Observations: observations,
 		FallbackReason: "IMPACT_GLOBAL_CHANGE", FallbackSuccessful: true,
 	})
@@ -63,6 +64,7 @@ func TestRenderStructuralMeasurementEvidenceQualifiesOnlyPositiveExactPairs(t *t
 		evidence.Result.MeanSavedMS != 3000 || evidence.Result.PositivePairs != 8 ||
 		evidence.SourceBindings.OutputEquivalenceSHA256 != strings.Repeat("f", 64) ||
 		evidence.Execution.OutputEquivalenceMode != "OWNER_REVIEWED_SEMANTIC_V1" ||
+		evidence.Execution.QualificationPolicy != StructuralQualificationRobust7Of8P95 ||
 		evidence.Boundaries.ProductionAuthorized || evidence.Boundaries.TestOptimizationModified {
 		t.Fatalf("rendered evidence = %+v", evidence)
 	}
@@ -74,6 +76,7 @@ func TestRenderStructuralMeasurementEvidenceQualifiesOnlyPositiveExactPairs(t *t
 		summary.ControlMeanMS != 10000 || summary.CandidateMeanMS != 7000 ||
 		summary.MeanSavedMS != 3000 || summary.PositivePairs != structuralPairCount ||
 		summary.ControlP95MS != 10000 || summary.CandidateP95MS != 7000 ||
+		summary.QualificationPolicy != StructuralQualificationRobust7Of8P95 ||
 		!summary.FallbackSuccessful || summary.ProductionAuthorized {
 		t.Fatalf("structural measurement summary = %+v", summary)
 	}
@@ -112,6 +115,59 @@ func TestRenderStructuralMeasurementEvidenceQualifiesOnlyPositiveExactPairs(t *t
 	if evidence.EvidenceState != "INCONCLUSIVE" || evidence.Result.Qualified ||
 		evidence.Result.Decision != "RETAIN_NATIVE_GRADLE" {
 		t.Fatalf("inconclusive evidence = %+v", evidence)
+	}
+}
+
+func TestStructuralQualificationAllowsOneNoisyPairButRetainsNativeForWeakRepeatabilityOrP95(t *testing.T) {
+	observations := make([]structuralObservation, structuralPairCount)
+	for index := range observations {
+		order := "CANDIDATE_FIRST"
+		if index%2 == 0 {
+			order = "CONTROL_FIRST"
+		}
+		observations[index] = structuralObservation{
+			Pair: index + 1, Order: order,
+			ControlDurationMS: 10000, CandidateDurationMS: 7000, SavedMS: 3000,
+			ControlRequiredOutputSHA256:   strings.Repeat("a", 64),
+			CandidateRequiredOutputSHA256: strings.Repeat("a", 64),
+			RequiredOutputCount:           1,
+		}
+	}
+	observations[0].ControlDurationMS = 6000
+	observations[0].CandidateDurationMS = 6500
+	observations[0].SavedMS = -500
+	observations[7].ControlDurationMS = 20000
+	observations[7].CandidateDurationMS = 10000
+	observations[7].SavedMS = 10000
+
+	legacyResult, err := calculateStructuralResult(observations)
+	if err != nil || legacyResult.Qualified || legacyResult.PositivePairs != 7 {
+		t.Fatalf("legacy seven-positive-pair result = %+v/%v, want retained native", legacyResult, err)
+	}
+
+	result, err := calculateStructuralResultWithPolicy(observations, StructuralQualificationRobust7Of8P95)
+	if err != nil || !result.Qualified || result.PositivePairs != 7 {
+		t.Fatalf("seven-positive-pair result = %+v/%v, want qualified", result, err)
+	}
+
+	weakRepeatability := append([]structuralObservation(nil), observations...)
+	weakRepeatability[1].CandidateDurationMS = 10500
+	weakRepeatability[1].SavedMS = -500
+	result, err = calculateStructuralResultWithPolicy(weakRepeatability, StructuralQualificationRobust7Of8P95)
+	if err != nil || result.Qualified || result.PositivePairs != 6 {
+		t.Fatalf("six-positive-pair result = %+v/%v, want retained native", result, err)
+	}
+
+	regressiveP95 := append([]structuralObservation(nil), observations...)
+	regressiveP95[0].ControlDurationMS = 20000
+	regressiveP95[0].CandidateDurationMS = 20500
+	regressiveP95[0].SavedMS = -500
+	regressiveP95[7].ControlDurationMS = 10000
+	regressiveP95[7].CandidateDurationMS = 7000
+	regressiveP95[7].SavedMS = 3000
+	result, err = calculateStructuralResultWithPolicy(regressiveP95, StructuralQualificationRobust7Of8P95)
+	if err != nil || result.Qualified || result.PositivePairs != 7 {
+		t.Fatalf("regressive-p95 result = %+v/%v, want retained native", result, err)
 	}
 }
 

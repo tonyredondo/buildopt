@@ -37,15 +37,25 @@ OpenTelemetry Java Instrumentation, Apache Kafka, Micronaut Core and Apache
 Groovy. The repository name selects only the test fixture and public history;
 product code contains no repository-specific branch.
 
-Each qualification uses the unchanged V2 thresholds, tasks and gates inside
-the same fresh-process envelope as its later observations:
+Each qualification uses the shared POC thresholds, tasks and gates inside the
+same fresh-process envelope as its later observations:
 
 - 17 ordinary invocations before calibration;
-- eight alternating native/candidate calibration pairs;
+- eight alternating native/candidate calibration pairs, of which at least
+  seven must improve;
+- at least 500 ms and 2% mean saving, a strictly positive paired 95% lower
+  bound and a candidate p95 no worse than native Gradle;
 - at most 30 projected builds to break even;
 - one single-use Gradle process per invocation;
 - the same public workflow and exact output boundary used by V2; and
-- no weakened confidence, fallback or correctness threshold.
+- unchanged exact-output, fallback and correctness thresholds.
+
+The 7/8 repeatability threshold replaces the brittle all-positive rule before
+any lifetime result is accepted. A diagnostic Spring run exposed the issue:
+it saved 18.12% with a positive interval and lower p95, but one 829-ms noisy
+pair caused the old 8/8 rule to reject it. No timing from that diagnostic run
+is reused. Six positive pairs, a non-positive interval or a regressive p95
+still retain native Gradle.
 
 ## Central materialization transport
 

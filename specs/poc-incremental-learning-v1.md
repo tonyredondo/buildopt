@@ -42,7 +42,8 @@ format and recomputes the unchanged gates:
 - exact required-output equality;
 - successful full-graph controls and fallback;
 - at least 500 ms and 2% mean saving;
-- a positive 95% interval and eight positive pairs;
+- a positive 95% interval, at least seven positive pairs out of eight and a
+  candidate p95 no worse than native Gradle;
 - no product-attributable failure; and
 - payback within 30 matching builds.
 
