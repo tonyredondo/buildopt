@@ -1,9 +1,10 @@
 # Qualified profile lifetime V2
 
-`POC-QUALIFIED-LIFETIME-V2-001` asks whether the five profiles qualified by
-the materialization-economics experiment keep producing net wall-time value on
-later, ordinary public commits. Qualification speedup is not treated as proof
-of useful lifetime.
+`POC-QUALIFIED-LIFETIME-V2-001` asks whether the five opportunities previously
+identified by the materialization-economics experiment still qualify and, when
+they do, keep producing net wall-time value on later ordinary public commits.
+Historical qualification speedup is not treated as proof of current value or
+useful lifetime.
 
 The frozen machine-readable protocol is
 [`poc-qualified-lifetime-v2.json`](./poc-qualified-lifetime-v2.json). The
@@ -55,7 +56,18 @@ any lifetime result is accepted. A diagnostic Spring run exposed the issue:
 it saved 18.12% with a positive interval and lower p95, but one 829-ms noisy
 pair caused the old 8/8 rule to reject it. No timing from that diagnostic run
 is reused. Six positive pairs, a non-positive interval or a regressive p95
-still retain native Gradle.
+still retain native Gradle. A failed current qualification is recorded as a
+completed negative finding and is never retried until it happens to pass.
+Portability, publication and lifetime observation are not attempted for that
+subject.
+
+Every subject result retains the raw qualification capture and calibration
+evidence beside the compact result. Those files bind the exact BuildOpt source
+revision, executable SHA-256, eight paired observations and output digests.
+The aggregate reports every harness source revision and requires one identical
+installed BuildOpt executable across all subjects. This lets an evidence-only
+harness correction preserve an earlier measurement without pretending that it
+was captured by a later commit or re-running it until it wins.
 
 ## Central materialization transport
 
@@ -173,13 +185,15 @@ produce an average speedup across unrelated repositories.
 
 ## Acceptance and boundaries
 
-The block completes when all five qualification attempts pass the frozen
-performance contract and receive an explicit portability decision. Portable
-profiles observe every listed public descendant in first-parent order, preserve
-every required output exactly and retain native execution whenever the profile
-is inapplicable. Non-portable profiles stop before lifetime observation and
-retain the exact mismatch evidence. Positive net value and universal
-portability are findings, not prerequisites for accepting the experiment.
+The block completes when all five current qualification attempts receive an
+explicit decision. Qualified profiles receive an explicit portability
+decision. Portable profiles observe every listed public descendant in
+first-parent order, preserve every required output exactly and retain native
+execution whenever the profile is inapplicable. Unqualified profiles stop
+before portability and publication; non-portable profiles stop before lifetime
+observation and retain the exact mismatch evidence. Qualification, positive net
+value and universal portability are findings, not prerequisites for accepting
+the experiment.
 
 This work does not authorize production, require a soak or design partner, or
 change Test Optimization. It validates whether the general mechanism is worth

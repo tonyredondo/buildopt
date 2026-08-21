@@ -59,18 +59,24 @@ buildopt_common_jq='
   def portability:
     keys == ["differencesSha256","differingFileCount","independentOutputSha256",
       "nativeCacheHits","outputCount","producerOutputSha256","samplePaths","status"] and
-    (.producerOutputSha256 | digest) and (.independentOutputSha256 | digest) and
-    (.differencesSha256 | digest) and (.outputCount | positive_integer) and
     .nativeCacheHits == 0 and
     (.differingFileCount | nonnegative_integer) and
     (.samplePaths | type == "array" and length <= 25 and
       all(.[]; type == "string" and length > 0 and (startswith("/") | not))) and
     (if .status == "PORTABLE" then
+       (.producerOutputSha256 | digest) and (.independentOutputSha256 | digest) and
+       (.differencesSha256 | digest) and (.outputCount | positive_integer) and
        .producerOutputSha256 == .independentOutputSha256 and
        .differingFileCount == 0 and .samplePaths == []
      elif .status == "REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS" then
+       (.producerOutputSha256 | digest) and (.independentOutputSha256 | digest) and
+       (.differencesSha256 | digest) and (.outputCount | positive_integer) and
        .producerOutputSha256 != .independentOutputSha256 and
        .differingFileCount > 0 and (.samplePaths | length > 0)
+     elif .status == "NOT_EVALUATED_UNQUALIFIED" then
+       .producerOutputSha256 == "" and .independentOutputSha256 == "" and
+       .differencesSha256 == "" and .outputCount == 0 and
+       .differingFileCount == 0 and .samplePaths == []
      else false end);
   def observation($expected; $index; $selected_mode):
     . as $row |
@@ -110,9 +116,10 @@ buildopt_common_jq='
   def subject($spec):
     . as $subject |
     ($spec.repositories[] | select(.key == $subject.key)) as $expected |
-    keys == ["acceptance","boundaries","economics","key","observations",
+    keys == ["acceptance","boundaries","buildopt","economics","key","observations",
       "qualification","repository","schemaVersion"] and
     .schemaVersion == "buildopt.evidence/poc-qualified-lifetime-subject/v2" and
+    (.buildopt.revision | revision) and (.buildopt.executableSha256 | digest) and
     $spec.protocol.noCompatibleReplayPrecedesPayback == true and
     $spec.protocol.calibrationPairs == 8 and
     $spec.protocol.minimumPositiveCalibrationPairs == 7 and
@@ -125,10 +132,13 @@ buildopt_common_jq='
     $spec.protocol.portabilityControl ==
       "UNCONNECTED_NATIVE_BUILD_CACHE_DISABLED" and
     $spec.protocol.nonPortableQualification == "REJECT_BEFORE_LIFETIME_OBSERVATION" and
+    $spec.protocol.unqualifiedCalibration == "RETAIN_NATIVE_AND_RECORD_WITHOUT_RETRY" and
     $spec.protocol.nativeRetainedOutputMismatch ==
       "REJECT_SUBJECT_WITHOUT_PERFORMANCE_CLAIM" and
     $spec.protocol.freshGradleProcessPerMeasuredBuild == true and
     $spec.protocol.persistentDaemonStateCompared == false and
+    $spec.protocol.subjectSourceRevisionsReported == true and
+    $spec.protocol.sameExecutableSha256Required == true and
     $spec.protocol.selectedExecutionMode == "SELECTIVE_PROFILE" and
     .repository == {id:$expected.repositoryId,remote:$expected.remoteUrl,
       publicRepository:true,historyBranch:$expected.historyBranch} and
@@ -141,31 +151,35 @@ buildopt_common_jq='
     .qualification.processEnvelope == $spec.protocol.processEnvelope and
     .qualification.expectedChangedProjects == $expected.expectedChangedProjects and
     (.qualification.graph | type == "object") and
+    .qualification.captureFile == "qualification-capture.json" and
     (.qualification.captureSha256 | digest) and
+    .qualification.calibrationEvidenceFile == "calibration-evidence.json" and
+    (.qualification.calibrationEvidenceSha256 | digest) and
     (.qualification.calibration | keys == ["breakEvenBuilds","calibrationCostMs",
-      "candidateMeanMs","controlMeanMs","fallbackSuccessful","interval95SavedMs",
+      "candidateMeanMs","candidateP95Ms","controlMeanMs","controlP95Ms",
+      "fallbackSuccessful","interval95SavedMs",
       "meanSavedMs","pairsMeasured","positivePairs","qualificationPolicy","qualified","reductionRatio"]) and
     (.qualification.calibration.calibrationCostMs | positive_integer) and
     (.qualification.calibration.controlMeanMs | positive_number) and
     (.qualification.calibration.candidateMeanMs | positive_number) and
+    (.qualification.calibration.controlP95Ms | positive_number) and
+    (.qualification.calibration.candidateP95Ms | positive_number) and
     (.qualification.calibration.meanSavedMs | type == "number") and
     (.qualification.calibration.reductionRatio | type == "number") and
     (.qualification.calibration.interval95SavedMs | type == "array" and length == 2 and
       all(.[]; type == "number")) and
     .qualification.calibration.pairsMeasured == $spec.protocol.calibrationPairs and
-    (.qualification.calibration.positivePairs | positive_integer) and
+    (.qualification.calibration.positivePairs | nonnegative_integer) and
     .qualification.calibration.positivePairs <= .qualification.calibration.pairsMeasured and
     .qualification.calibration.qualificationPolicy ==
       "ROBUST_7_OF_8_POSITIVE_INTERVAL_P95_V1" and
-    .qualification.calibration.qualified == true and
+    (.qualification.calibration.qualified | type == "boolean") and
     .qualification.calibration.fallbackSuccessful == true and
     (.qualification.calibration.breakEvenBuilds | positive_integer) and
     .qualification.calibration.breakEvenBuilds <= $spec.protocol.maximumBreakEvenBuilds and
     (.qualification.portability | portability) and
-    .qualification.materialization.transport == "CENTRAL_CAS_CHUNKS" and
     (.qualification.materialization.packBytes | positive_integer) and
-    (.qualification.materialization.chunkCount | positive_integer) and
-    .qualification.materialization.chunkCount <= 63 and
+    (.qualification.materialization.chunkCount | nonnegative_integer) and
     (.qualification.materialization.publicationDurationMs | nonnegative_integer) and
     (.economics | keys == ["conclusion","cumulativeGrossSavedMs",
       "cumulativeNetSavedMs","fallbackDeltaMs","firstObservedBreakEvenBuild",
@@ -180,7 +194,24 @@ buildopt_common_jq='
     .economics.qualificationAndPublicationCostMs ==
       (.qualification.calibration.calibrationCostMs +
        .qualification.materialization.publicationDurationMs) and
-    (if .qualification.portability.status == "PORTABLE" then
+    (if (.qualification.calibration.qualified | not) then
+       .qualification.portability.status == "NOT_EVALUATED_UNQUALIFIED" and
+       .qualification.materialization.transport == "NOT_PUBLISHED_UNQUALIFIED" and
+       .qualification.materialization.chunkCount == 0 and
+       .qualification.materialization.publicationDurationMs == 0 and
+       .observations == [] and .economics.observedBuilds == 0 and
+       .economics.selectedReplays == 0 and .economics.nativeRetainedBuilds == 0 and
+       .economics.selectedReplaySavedMs == 0 and .economics.fallbackDeltaMs == 0 and
+       .economics.cumulativeGrossSavedMs == 0 and
+       .economics.cumulativeNetSavedMs == (-.economics.qualificationAndPublicationCostMs) and
+       .economics.firstObservedBreakEvenBuild == null and
+       .economics.conclusion == "CALIBRATION_VALUE_NOT_PROVEN" and
+       .acceptance == {decision:"COMPLETE",exactRequiredOutputs:true,
+         portabilityGatePassed:false,publicAncestry:true,productFailures:0}
+     elif .qualification.portability.status == "PORTABLE" then
+       .qualification.materialization.transport == "CENTRAL_CAS_CHUNKS" and
+       (.qualification.materialization.chunkCount | positive_integer) and
+       .qualification.materialization.chunkCount <= 63 and
        (.observations | type == "array" and length == ($expected.observations | length)) and
        all(range(0; .observations | length); . as $index |
          $subject.observations[$index] |
@@ -194,6 +225,11 @@ buildopt_common_jq='
        .acceptance == {decision:"COMPLETE",exactRequiredOutputs:true,
          portabilityGatePassed:true,publicAncestry:true,productFailures:0}
      else
+       .qualification.calibration.qualified == true and
+       .qualification.portability.status == "REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS" and
+       .qualification.materialization.transport == "CENTRAL_CAS_CHUNKS" and
+       (.qualification.materialization.chunkCount | positive_integer) and
+       .qualification.materialization.chunkCount <= 63 and
        .observations == [] and .economics.observedBuilds == 0 and
        .economics.selectedReplays == 0 and .economics.nativeRetainedBuilds == 0 and
        .economics.selectedReplaySavedMs == 0 and .economics.fallbackDeltaMs == 0 and
@@ -207,11 +243,75 @@ buildopt_common_jq='
     (.boundaries | boundaries);
 '
 
+buildopt_validate_qualification_evidence() {
+    local buildopt_subject_result=$1
+    local buildopt_subject_dir
+    buildopt_subject_dir=$(cd -- "$(dirname -- "${buildopt_subject_result}")" && pwd -P)
+    local buildopt_capture=${buildopt_subject_dir}/qualification-capture.json
+    local buildopt_evidence=${buildopt_subject_dir}/calibration-evidence.json
+    [[ -f ${buildopt_capture} && -f ${buildopt_evidence} ]] || {
+        printf 'qualified-lifetime raw qualification evidence is unavailable beside %s\n' \
+            "${buildopt_subject_result}" >&2
+        return 1
+    }
+    local buildopt_capture_sha buildopt_evidence_sha
+    buildopt_capture_sha=$(sha256sum "${buildopt_capture}" | awk '{print $1}')
+    buildopt_evidence_sha=$(sha256sum "${buildopt_evidence}" | awk '{print $1}')
+    jq -e --slurpfile result "${buildopt_subject_result}" \
+        --arg captureSha "${buildopt_capture_sha}" --arg evidenceSha "${buildopt_evidence_sha}" '
+      $result[0] as $subject |
+      .buildopt.revision == $subject.buildopt.revision and
+      .buildopt.executableSha256 == $subject.buildopt.executableSha256 and
+      .repositoryId == $subject.repository.id and
+      .targetRevision == $subject.qualification.targetRevision and
+      .calibration.evidenceSha256 == $evidenceSha and
+      .calibration.controlP95Ms == $subject.qualification.calibration.controlP95Ms and
+      .calibration.candidateP95Ms == $subject.qualification.calibration.candidateP95Ms and
+      $subject.qualification.captureSha256 == $captureSha
+    ' "${buildopt_capture}" >/dev/null
+    jq -e --slurpfile result "${buildopt_subject_result}" '
+      $result[0] as $subject |
+      .execution.executableSha256 == $subject.buildopt.executableSha256 and
+      .subject.repositoryId == $subject.repository.id and
+      .subject.repositoryRevision == $subject.qualification.targetRevision and
+      (.observations | length) == 8 and
+      all(.observations[];
+        .controlRequiredOutputSha256 == .candidateRequiredOutputSha256 and
+        (.productAttributableFailure | not)) and
+      .result.pairs == $subject.qualification.calibration.pairsMeasured and
+      .result.controlMeanMs == $subject.qualification.calibration.controlMeanMs and
+      .result.candidateMeanMs == $subject.qualification.calibration.candidateMeanMs and
+      .result.meanSavedMs == $subject.qualification.calibration.meanSavedMs and
+      .result.reductionRatio == $subject.qualification.calibration.reductionRatio and
+      .result.interval95SavedMs == $subject.qualification.calibration.interval95SavedMs and
+      .result.positivePairs == $subject.qualification.calibration.positivePairs and
+      .result.qualified == $subject.qualification.calibration.qualified
+    ' "${buildopt_evidence}" >/dev/null
+}
+
 if [[ ${buildopt_mode} == --subject ]]; then
     jq -e --slurpfile spec "${buildopt_spec}" \
         "${buildopt_common_jq} subject(\$spec[0])" \
         "${buildopt_result}" >/dev/null
+    buildopt_validate_qualification_evidence "${buildopt_result}"
 else
+    buildopt_summary_dir=$(cd -- "$(dirname -- "${buildopt_result}")" && pwd -P)
+    while IFS= read -r buildopt_key; do
+        buildopt_subject_result=${buildopt_summary_dir}/${buildopt_key}/result.json
+        [[ -f ${buildopt_subject_result} ]] || {
+            printf 'qualified-lifetime subject result is unavailable: %s\n' \
+                "${buildopt_subject_result}" >&2
+            exit 1
+        }
+        jq -e --slurpfile spec "${buildopt_spec}" \
+            "${buildopt_common_jq} subject(\$spec[0])" \
+            "${buildopt_subject_result}" >/dev/null
+        buildopt_validate_qualification_evidence "${buildopt_subject_result}"
+        jq -e --slurpfile subject "${buildopt_subject_result}" \
+            --arg key "${buildopt_key}" '
+          (.subjects[] | select(.key == $key)) == $subject[0]
+        ' "${buildopt_result}" >/dev/null
+    done < <(jq -r '.repositories[].key' "${buildopt_spec}")
     jq -e --slurpfile spec "${buildopt_spec}" --arg specSha "${buildopt_spec_sha}" \
         "${buildopt_common_jq}
          . as \$summary | \$spec[0] as \$expected |
@@ -219,17 +319,23 @@ else
            \"capturedAt\",\"runner\",\"schemaVersion\",\"subjects\",\"workItem\"] and
          .schemaVersion == \"buildopt.evidence/poc-qualified-lifetime/v2\" and
          .workItem == \$expected.workItem and (.capturedAt | timestamp) and
-         (.buildopt.revision | revision) and .buildopt.specSha256 == \$specSha and
-         .buildopt.installedPackage == true and
+         (.buildopt.sourceRevisions | type == \"array\" and length > 0 and
+           all(.[]; revision)) and (.buildopt.executableSha256 | digest) and
+         .buildopt.specSha256 == \$specSha and .buildopt.installedPackage == true and
          .runner.operatingSystem == \"Linux\" and .runner.architecture == \"x86_64\" and
          (.runner.kernel | type == \"string\" and length > 0) and
          (.runner.cpuCount | positive_integer) and (.runner.memoryBytes | positive_integer) and
          (.subjects | type == \"array\" and length == (\$expected.repositories | length)) and
          ([.subjects[].key] | sort) == ([\$expected.repositories[].key] | sort) and
          all(.subjects[]; subject(\$expected)) and
+         .buildopt.sourceRevisions == ([.subjects[].buildopt.revision] | unique) and
+         all(.subjects[];
+           .buildopt.executableSha256 == \$summary.buildopt.executableSha256) and
          .aggregation.subjectCount == (.subjects | length) and
          .aggregation.qualifiedProfiles == ([.subjects[] |
            select(.qualification.calibration.qualified)] | length) and
+         .aggregation.unqualifiedProfiles == ([.subjects[] |
+           select(.qualification.calibration.qualified | not)] | length) and
          .aggregation.portableProfiles == ([.subjects[] |
            select(.qualification.portability.status == \"PORTABLE\")] | length) and
          .aggregation.nonPortableProfiles == ([.subjects[] |
@@ -246,9 +352,14 @@ else
            select(.economics.conclusion == \"NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW\")] | length) and
          .aggregation.repositoryPercentagesAveraged == false and
          .aggregation.mechanismPercentagesAdded == false and
-         .acceptance == {decision:\"COMPLETE\",allQualified:true,
-           allPortabilityDecisionsComplete:true,
-           allPortable:(.aggregation.nonPortableProfiles == 0),
+         .acceptance == {decision:\"COMPLETE\",
+           allQualified:(.aggregation.qualifiedProfiles == .aggregation.subjectCount),
+           allQualifiedProfilesHavePortabilityDecision:
+             ((.aggregation.portableProfiles + .aggregation.nonPortableProfiles) ==
+               .aggregation.qualifiedProfiles),
+           allSubjectDecisionsComplete:true,
+           allQualifiedProfilesPortable:
+             (.aggregation.portableProfiles == .aggregation.qualifiedProfiles),
            allOutputsExact:true,allPublicFirstParent:true,productFailures:0} and
          .boundaries == {designPartnerRequired:false,productionAuthorized:false,
            proofOfConcept:true,repositorySpecificProductRules:false,

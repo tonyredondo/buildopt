@@ -309,6 +309,7 @@ buildopt_subject() {
     local buildopt_qualification=${buildopt_work_root}/${buildopt_key}-qualification
     printf 'qualified lifetime %s: qualifying public revision %.12s\n' \
         "${buildopt_repository_id}" "${buildopt_qualifier}"
+    local buildopt_qualification_status=0
     BUILDOPT_AUTOMATIC_BREADTH_PROTOCOL=v3 \
     BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_FILE="${buildopt_spec}" \
     BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256="${buildopt_spec_sha}" \
@@ -316,7 +317,8 @@ buildopt_subject() {
     BUILDOPT_AUTOMATIC_BREADTH_RETAIN_ROOT=true \
     BUILDOPT_AUTOMATIC_BREADTH_PROCESS_MODE=no-daemon \
         "${buildopt_script_dir}/run-automatic-breadth-transfer" \
-        "${buildopt_qualification}" "${buildopt_key}"
+        "${buildopt_qualification}" "${buildopt_key}" || \
+        buildopt_qualification_status=$?
 
     local buildopt_producer=${buildopt_auto_root}/${buildopt_key}/repository
     local buildopt_producer_gradle=${buildopt_auto_root}/${buildopt_key}/gradle-home
@@ -324,7 +326,88 @@ buildopt_subject() {
     local buildopt_binary=${buildopt_install}/bin/buildopt
     local buildopt_server=${buildopt_install}/bin/buildopt-server
     local buildopt_qualifier_result=${buildopt_qualification}/${buildopt_key}/result.json
-    [[ -x ${buildopt_binary} && -x ${buildopt_server} && -s ${buildopt_qualifier_result} ]] || return 1
+    local buildopt_qualifier_capture=${buildopt_qualification}/${buildopt_key}/capture.json
+    local buildopt_calibration_evidence=${buildopt_qualification}/${buildopt_key}/state/calibration/evidence.json
+    [[ -x ${buildopt_binary} && -x ${buildopt_server} && -s ${buildopt_qualifier_result} &&
+        -s ${buildopt_qualifier_capture} && -s ${buildopt_calibration_evidence} ]] || return 1
+    install -m 0600 -- "${buildopt_qualifier_capture}" \
+        "${buildopt_subject_output}/qualification-capture.json"
+    install -m 0600 -- "${buildopt_calibration_evidence}" \
+        "${buildopt_subject_output}/calibration-evidence.json"
+    local buildopt_executable_sha
+    buildopt_executable_sha=$(sha256sum "${buildopt_binary}" | awk '{print $1}')
+
+    if ((buildopt_qualification_status != 0)); then
+        jq -e --argjson projects "${buildopt_expected_projects}" '
+          .phase == "NATIVE_RETAINED" and
+          .reason == "CALIBRATION_VALUE_NOT_PROVEN" and
+          .calibration.status == "COMPLETE" and
+          (.calibration.qualified | not) and
+          .calibration.pairsMeasured == 8 and
+          .calibration.fallbackSuccessful and
+          .discovery.changeFamily == "DEPENDENCY_SOURCE" and
+          .discovery.changedProjects == $projects and
+          .discovery.materialization.status == "CAPTURED" and
+          .portfolio.status == "SKIPPED" and
+          (.productionAuthorized | not) and .testOptimization == "OUT_OF_SCOPE"
+        ' "${buildopt_qualifier_result}" >/dev/null || {
+            jq -c '{phase,reason,discovery,calibration,portfolio}' \
+                "${buildopt_qualifier_result}" >&2
+            return 1
+        }
+        local buildopt_capture_sha buildopt_calibration_evidence_sha
+        local buildopt_pack_bytes buildopt_calibration_cost
+        buildopt_capture_sha=$(sha256sum "${buildopt_qualifier_capture}" | awk '{print $1}')
+        buildopt_calibration_evidence_sha=$(sha256sum "${buildopt_calibration_evidence}" | awk '{print $1}')
+        buildopt_pack_bytes=$(jq -r '.discovery.materialization.byteCount' \
+            "${buildopt_qualifier_result}")
+        buildopt_calibration_cost=$(jq -r '.calibration.calibrationCostMs' \
+            "${buildopt_qualifier_result}")
+        jq -n \
+            --arg key "${buildopt_key}" --arg repositoryId "${buildopt_repository_id}" \
+            --arg remote "${buildopt_remote}" --arg branch "${buildopt_branch}" \
+            --arg parent "${buildopt_parent}" --arg qualifier "${buildopt_qualifier}" \
+            --arg revision "${buildopt_revision}" --arg executableSha "${buildopt_executable_sha}" \
+            --arg expectedProjects "${buildopt_expected_projects}" \
+            --arg captureSha "${buildopt_capture_sha}" \
+            --arg evidenceSha "${buildopt_calibration_evidence_sha}" \
+            --argjson calibration "$(jq -c '.calibration | {calibrationCostMs,controlMeanMs,candidateMeanMs,controlP95Ms,candidateP95Ms,meanSavedMs,reductionRatio,interval95SavedMs,positivePairs,pairsMeasured,breakEvenBuilds,qualified,fallbackSuccessful,qualificationPolicy}' "${buildopt_qualifier_result}")" \
+            --argjson graph "$(jq -c '.discovery.graph' "${buildopt_qualifier_result}")" \
+            --argjson packBytes "${buildopt_pack_bytes}" \
+            --argjson calibrationCost "${buildopt_calibration_cost}" '
+          {schemaVersion:"buildopt.evidence/poc-qualified-lifetime-subject/v2",
+           key:$key,buildopt:{revision:$revision,executableSha256:$executableSha},
+           repository:{id:$repositoryId,remote:$remote,publicRepository:true,
+             historyBranch:$branch},
+           qualification:{parentRevision:$parent,targetRevision:$qualifier,
+             sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",changeFamily:"DEPENDENCY_SOURCE",
+             processEnvelope:"FRESH_GRADLE_PROCESS_PER_BUILD",
+             expectedChangedProjects:($expectedProjects|fromjson),graph:$graph,
+             calibration:$calibration,captureFile:"qualification-capture.json",
+             captureSha256:$captureSha,calibrationEvidenceFile:"calibration-evidence.json",
+             calibrationEvidenceSha256:$evidenceSha,
+             portability:{status:"NOT_EVALUATED_UNQUALIFIED",
+               producerOutputSha256:"",independentOutputSha256:"",outputCount:0,
+               nativeCacheHits:0,differingFileCount:0,differencesSha256:"",samplePaths:[]},
+             materialization:{transport:"NOT_PUBLISHED_UNQUALIFIED",packBytes:$packBytes,
+               chunkCount:0,publicationDurationMs:0}},
+           observations:[],
+           economics:{observedBuilds:0,selectedReplays:0,nativeRetainedBuilds:0,
+             selectedReplaySavedMs:0,fallbackDeltaMs:0,cumulativeGrossSavedMs:0,
+             qualificationAndPublicationCostMs:$calibrationCost,
+             cumulativeNetSavedMs:(-$calibrationCost),firstObservedBreakEvenBuild:null,
+             conclusion:"CALIBRATION_VALUE_NOT_PROVEN"},
+           acceptance:{decision:"COMPLETE",exactRequiredOutputs:true,
+             portabilityGatePassed:false,publicAncestry:true,productFailures:0},
+           boundaries:{designPartnerRequired:false,mechanismPercentagesAdded:false,
+             productionAuthorized:false,proofOfConcept:true,
+             repositoriesAveraged:false,soakRequired:false,
+             testOptimization:"OUT_OF_SCOPE"}}
+        ' >"${buildopt_subject_output}/result.json"
+        "${buildopt_script_dir}/check-qualified-lifetime-v2" \
+            "${buildopt_subject_output}/result.json" --subject
+        return 0
+    fi
     jq -e --argjson projects "${buildopt_expected_projects}" '
       .phase == "QUALIFIED" and .calibration.qualified and
       .discovery.changeFamily == "DEPENDENCY_SOURCE" and
@@ -739,28 +822,33 @@ buildopt_subject() {
             --arg key "${buildopt_key}" --arg repositoryId "${buildopt_repository_id}" \
             --arg remote "${buildopt_remote}" --arg branch "${buildopt_branch}" \
             --arg parent "${buildopt_parent}" --arg qualifier "${buildopt_qualifier}" \
+            --arg revision "${buildopt_revision}" --arg executableSha "${buildopt_executable_sha}" \
             --arg expectedProjects "${buildopt_expected_projects}" \
             --arg captureSha "${buildopt_capture_sha}" \
+            --arg evidenceSha "$(sha256sum "${buildopt_calibration_evidence}" | awk '{print $1}')" \
             --arg producerSha "${buildopt_producer_output_sha}" \
             --arg independentSha "${buildopt_independent_output_sha}" \
             --arg differencesSha "${buildopt_portability_differences_sha}" \
             --argjson outputCount "${buildopt_portability_output_count}" \
             --argjson differenceCount "${buildopt_portability_difference_count}" \
             --argjson differenceSample "${buildopt_portability_sample}" \
-            --argjson calibration "$(jq -c '.calibration | {calibrationCostMs,controlMeanMs,candidateMeanMs,meanSavedMs,reductionRatio,interval95SavedMs,positivePairs,pairsMeasured,breakEvenBuilds,qualified,fallbackSuccessful,qualificationPolicy}' "${buildopt_qualifier_result}")" \
+            --argjson calibration "$(jq -c '.calibration | {calibrationCostMs,controlMeanMs,candidateMeanMs,controlP95Ms,candidateP95Ms,meanSavedMs,reductionRatio,interval95SavedMs,positivePairs,pairsMeasured,breakEvenBuilds,qualified,fallbackSuccessful,qualificationPolicy}' "${buildopt_qualifier_result}")" \
             --argjson graph "$(jq -c '.discovery.graph' "${buildopt_qualifier_result}")" \
             --argjson packBytes "${buildopt_pack_bytes}" \
             --argjson chunkCount "${buildopt_chunk_count}" \
             --argjson centralCost "${buildopt_sync_ms}" \
             --argjson totalCost "${buildopt_total_cost}" '
           {schemaVersion:"buildopt.evidence/poc-qualified-lifetime-subject/v2",
-           key:$key,repository:{id:$repositoryId,remote:$remote,publicRepository:true,
+           key:$key,buildopt:{revision:$revision,executableSha256:$executableSha},
+           repository:{id:$repositoryId,remote:$remote,publicRepository:true,
              historyBranch:$branch},
            qualification:{parentRevision:$parent,targetRevision:$qualifier,
              sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",changeFamily:"DEPENDENCY_SOURCE",
              processEnvelope:"FRESH_GRADLE_PROCESS_PER_BUILD",
              expectedChangedProjects:($expectedProjects|fromjson),graph:$graph,
-             calibration:$calibration,captureSha256:$captureSha,
+             calibration:$calibration,captureFile:"qualification-capture.json",
+             captureSha256:$captureSha,calibrationEvidenceFile:"calibration-evidence.json",
+             calibrationEvidenceSha256:$evidenceSha,
              portability:{status:"REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS",
                producerOutputSha256:$producerSha,
                independentOutputSha256:$independentSha,outputCount:$outputCount,
@@ -819,15 +907,17 @@ buildopt_subject() {
         --arg key "${buildopt_key}" --arg repositoryId "${buildopt_repository_id}" \
         --arg remote "${buildopt_remote}" --arg branch "${buildopt_branch}" \
         --arg parent "${buildopt_parent}" --arg qualifier "${buildopt_qualifier}" \
+        --arg revision "${buildopt_revision}" --arg executableSha "${buildopt_executable_sha}" \
         --arg expectedProjects "${buildopt_expected_projects}" \
         --arg captureSha "${buildopt_capture_sha}" \
+        --arg evidenceSha "$(sha256sum "${buildopt_calibration_evidence}" | awk '{print $1}')" \
         --arg producerSha "${buildopt_producer_output_sha}" \
         --arg independentSha "${buildopt_independent_output_sha}" \
         --arg differencesSha "${buildopt_portability_differences_sha}" \
         --argjson portabilityOutputCount "${buildopt_portability_output_count}" \
         --argjson portabilityDifferenceCount "${buildopt_portability_difference_count}" \
         --argjson portabilitySample "${buildopt_portability_sample}" \
-        --argjson calibration "$(jq -c '.calibration | {calibrationCostMs,controlMeanMs,candidateMeanMs,meanSavedMs,reductionRatio,interval95SavedMs,positivePairs,pairsMeasured,breakEvenBuilds,qualified,fallbackSuccessful,qualificationPolicy}' "${buildopt_qualifier_result}")" \
+        --argjson calibration "$(jq -c '.calibration | {calibrationCostMs,controlMeanMs,candidateMeanMs,controlP95Ms,candidateP95Ms,meanSavedMs,reductionRatio,interval95SavedMs,positivePairs,pairsMeasured,breakEvenBuilds,qualified,fallbackSuccessful,qualificationPolicy}' "${buildopt_qualifier_result}")" \
         --argjson graph "$(jq -c '.discovery.graph' "${buildopt_qualifier_result}")" \
         --argjson packBytes "${buildopt_pack_bytes}" --argjson chunkCount "${buildopt_chunk_count}" \
         --argjson centralCost "${buildopt_central_cost}" \
@@ -840,13 +930,16 @@ buildopt_subject() {
         --argjson net "${buildopt_net}" --argjson breakEven "${buildopt_break_even}" \
         --arg conclusion "${buildopt_conclusion}" '
       {schemaVersion:"buildopt.evidence/poc-qualified-lifetime-subject/v2",
-       key:$key,repository:{id:$repositoryId,remote:$remote,publicRepository:true,
+       key:$key,buildopt:{revision:$revision,executableSha256:$executableSha},
+       repository:{id:$repositoryId,remote:$remote,publicRepository:true,
          historyBranch:$branch},
        qualification:{parentRevision:$parent,targetRevision:$qualifier,
          sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",changeFamily:"DEPENDENCY_SOURCE",
          processEnvelope:"FRESH_GRADLE_PROCESS_PER_BUILD",
          expectedChangedProjects:($expectedProjects|fromjson),graph:$graph,
-         calibration:$calibration,captureSha256:$captureSha,
+         calibration:$calibration,captureFile:"qualification-capture.json",
+         captureSha256:$captureSha,calibrationEvidenceFile:"calibration-evidence.json",
+         calibrationEvidenceSha256:$evidenceSha,
          portability:{status:"PORTABLE",producerOutputSha256:$producerSha,
            independentOutputSha256:$independentSha,outputCount:$portabilityOutputCount,
            nativeCacheHits:0,
@@ -892,11 +985,14 @@ if ((${#buildopt_subject_files[@]} == buildopt_repository_count)); then
         --argjson memoryBytes "${buildopt_memory_bytes%.*}" '
       {schemaVersion:"buildopt.evidence/poc-qualified-lifetime/v2",
        workItem:"POC-QUALIFIED-LIFETIME-V2-001",capturedAt:$capturedAt,
-       buildopt:{revision:$revision,specSha256:$specSha,installedPackage:true},
+       buildopt:{sourceRevisions:([.[].buildopt.revision]|unique),
+         executableSha256:.[0].buildopt.executableSha256,
+         specSha256:$specSha,installedPackage:true},
        runner:{operatingSystem:"Linux",architecture:"x86_64",kernel:$kernel,
          cpuCount:$cpuCount,memoryBytes:$memoryBytes},subjects:.,
        aggregation:{subjectCount:length,
          qualifiedProfiles:([.[]|select(.qualification.calibration.qualified)]|length),
+         unqualifiedProfiles:([.[]|select(.qualification.calibration.qualified|not)]|length),
          portableProfiles:([.[]|select(.qualification.portability.status == "PORTABLE")]|length),
          nonPortableProfiles:([.[]|select(.qualification.portability.status ==
            "REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS")]|length),
@@ -907,9 +1003,17 @@ if ((${#buildopt_subject_files[@]} == buildopt_repository_count)); then
          paidBackSubjects:([.[]|select(.economics.conclusion == "PAID_BACK_IN_OBSERVED_WINDOW")]|length),
          noCompatibleReplaySubjects:([.[]|select(.economics.conclusion == "NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW")]|length),
          repositoryPercentagesAveraged:false,mechanismPercentagesAdded:false},
-       acceptance:{decision:"COMPLETE",allQualified:true,
-         allPortabilityDecisionsComplete:true,
-         allPortable:([.[]|select(.qualification.portability.status == "PORTABLE")]|length) == length,
+       acceptance:{decision:"COMPLETE",
+         allQualified:([.[]|select(.qualification.calibration.qualified)]|length) == length,
+         allQualifiedProfilesHavePortabilityDecision:
+           (([.[]|select(.qualification.portability.status == "PORTABLE")]|length) +
+            ([.[]|select(.qualification.portability.status ==
+              "REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS")]|length) ==
+            ([.[]|select(.qualification.calibration.qualified)]|length)),
+         allSubjectDecisionsComplete:true,
+         allQualifiedProfilesPortable:
+           ([.[]|select(.qualification.portability.status == "PORTABLE")]|length) ==
+           ([.[]|select(.qualification.calibration.qualified)]|length),
          allOutputsExact:true,allPublicFirstParent:true,productFailures:0},
        boundaries:{designPartnerRequired:false,productionAuthorized:false,
          proofOfConcept:true,repositorySpecificProductRules:false,
