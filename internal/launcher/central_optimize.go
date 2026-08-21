@@ -91,12 +91,24 @@ type centralOptimizeIntegration struct {
 	portfolio  *centralRemoteSnapshot
 	evidence   *centralRemoteSnapshot
 	checkpoint *centralRemoteSnapshot
+	refresh    *centralOptimizeRefresh
 }
 
 type centralOptimizeReplay struct {
 	discovery   optimizeDiscoveryResult
 	calibration optimizeCalibrationResult
 	portfolio   optimizePortfolioResult
+}
+
+// centralOptimizeRefresh retains a fully verified economic profile whose
+// revision-bound output pack cannot be used by the current descendant. A
+// successful authoritative native build may refresh those bytes, but only
+// after current discovery proves the same repository-independent structure.
+type centralOptimizeRefresh struct {
+	entry          optimizePortfolioEntry
+	portfolioFiles map[string][]byte
+	calibration    optimizeCalibrationResult
+	graph          optimizeDiscoveryGraph
 }
 
 type centralOptimizeFailure struct {
@@ -140,6 +152,10 @@ func prepareCentralOptimizeIntegration(invocation optimizeInvocation, diagnostic
 	if connection.Cache != nil {
 		integration.result.GradleCacheMode = connection.Cache.Mode
 		integration.result.GradleCacheStatus = "AVAILABLE"
+	}
+	if !centralOptimizePreSyncEligible(invocation, connection) {
+		integration.retain(optimizeCentralReasonStructural)
+		return integration
 	}
 	token, err := readPrivateCentralCredential(filepath.Join(invocation.connectionDirectory, connection.TokenFile), centralMaximumConfig)
 	if err != nil {
@@ -220,6 +236,19 @@ func boundedDurationMS(duration time.Duration) int64 {
 		return 1
 	}
 	return value
+}
+
+func centralOptimizePreSyncEligible(invocation optimizeInvocation, connection centralConnection) bool {
+	if !invocation.discovery.Ready || invocation.discovery.RepositoryID != connection.RepositoryID ||
+		len(invocation.discovery.changedPaths) == 0 {
+		return false
+	}
+	for _, changed := range invocation.discovery.changedPaths {
+		if matchesAnyProposalGlob(optimizeGlobalChangePaths, changed) || centralOptimizeBuildLogicPath(changed) {
+			return false
+		}
+	}
+	return true
 }
 
 func (integration *centralOptimizeIntegration) prepareAutomaticReplay(run *optimizeRun) *impactInvocation {
@@ -336,20 +365,31 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 	if !validMeasurementRevision(entry.TargetRevision) {
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("remote evidence revision is invalid")}
 	}
+	if entry.RevalidatedRevision != "" && !validMeasurementRevision(entry.RevalidatedRevision) {
+		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("remote revalidated revision is invalid")}
+	}
 	if _, err := gitOutput(invocation.repositoryRoot, "merge-base", "--is-ancestor", entry.TargetRevision, invocation.discovery.TargetRevision); err != nil {
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("remote evidence commit is not an ancestor")}
 	}
-	sinceEvidence, err := centralOptimizeChangedPathsSinceEvidence(
+	outputRevision := optimizePortfolioOutputRevision(entry)
+	if _, err := gitOutput(invocation.repositoryRoot, "merge-base", "--is-ancestor", outputRevision, invocation.discovery.TargetRevision); err != nil {
+		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("remote output revision is not an ancestor")}
+	}
+	sinceOutput, err := centralOptimizeChangedPathsSinceEvidence(
 		invocation.repositoryRoot,
-		entry.TargetRevision,
+		outputRevision,
 		invocation.discovery.TargetRevision,
 	)
 	if err != nil {
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, err}
 	}
-	for _, changed := range sinceEvidence {
+	refreshRequired := false
+	refreshReason := ""
+	for _, changed := range sinceOutput {
 		if matchesAnyProposalGlob(optimizeGlobalChangePaths, changed) || centralOptimizeBuildLogicPath(changed) {
-			return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("build logic changed after remote qualification")}
+			refreshRequired = true
+			refreshReason = "build logic changed after the remote output snapshot"
+			break
 		}
 	}
 
@@ -375,12 +415,10 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 	}
 	snapshot := centralOptimizeDiscoverySnapshot(graph.Graph)
 	if entry.Materialization != nil && centralOptimizeMaterializedProducerChanged(
-		snapshot, sinceEvidence, entry.Materialization.MaterializedProjects,
+		snapshot, sinceOutput, entry.Materialization.MaterializedProjects,
 	) {
-		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{
-			optimizeCentralReasonStructural,
-			errors.New("a materialized producer changed after remote qualification"),
-		}
+		refreshRequired = true
+		refreshReason = "a materialized producer changed after the remote output snapshot"
 	}
 	owners, err := buildimpact.ResolveProjectOwners(snapshot, invocation.discovery.changedPaths)
 	if err != nil {
@@ -466,6 +504,28 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 		GeneratedFiles: []string{paths.evidence}, ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}
 	selectedProjects := len(graph.Graph.Projects) - len(impact.plan.OmittedProjects)
+	if refreshRequired {
+		integration.refresh = &centralOptimizeRefresh{
+			entry: entry, portfolioFiles: portfolioFiles, calibration: calibration,
+			graph: optimizeDiscoveryGraph{
+				TotalProjects: len(graph.Graph.Projects), SelectedProjects: selectedProjects,
+				OmittedProjects: len(impact.plan.OmittedProjects),
+			},
+		}
+		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{
+			optimizeCentralReasonStructural,
+			fmt.Errorf("%s; authoritative native refresh required", refreshReason),
+		}
+	}
+	if entry.Materialization != nil {
+		materialization, materializationErr := integration.materializeOutputPack(
+			invocation, entry, portfolioFiles, filepath.ToSlash(filepath.Dir(paths.profile)),
+		)
+		if materializationErr != nil {
+			return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonInvalid, materializationErr}
+		}
+		paths.materialization = materialization
+	}
 	candidateOutputs := append([]string(nil), entry.CandidateOutputs...)
 	if len(candidateOutputs) == 0 {
 		candidateOutputs = append([]string(nil), entry.RequiredOutputs...)
@@ -507,6 +567,136 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 	return &centralOptimizeReplay{discovery: discovery, calibration: calibration, portfolio: portfolioResult}, &impact, selection, nil
 }
 
+func (integration *centralOptimizeIntegration) refreshQualifiedProfile(
+	run *optimizeRun,
+	discovery optimizeDiscoveryResult,
+) (optimizeCalibrationResult, optimizePortfolioResult, bool) {
+	refresh := integration.refresh
+	if refresh == nil || discovery.Status != optimizeDiscoveryComplete ||
+		discovery.RepositoryID != refresh.entry.RepositoryID ||
+		discovery.TargetRevision != run.invocation.discovery.TargetRevision ||
+		discovery.ChangeFamily != refresh.entry.Family ||
+		discovery.Graph != refresh.graph ||
+		!equalOptimizeStrings(discovery.ChangedProjects, refresh.entry.ChangedProjects) ||
+		!equalOptimizeStrings(discovery.Entrypoints, refresh.entry.Entrypoints) ||
+		!equalOptimizeStrings(discovery.CandidateEntrypoints, refresh.entry.CandidateEntrypoints) ||
+		!equalOptimizeStrings(discovery.RequiredOutputs, refresh.entry.RequiredOutputs) ||
+		!equalOptimizeStrings(discovery.CandidateOutputs, refresh.entry.CandidateOutputs) ||
+		optimizePortfolioFamilySHA(discovery) != refresh.entry.FamilySHA256 {
+		return optimizeCalibrationResult{}, optimizePortfolioResult{}, false
+	}
+	if refresh.entry.Materialization != nil {
+		if discovery.AggregatePartition == nil ||
+			!equalOptimizeStrings(
+				discovery.AggregatePartition.MaterializedProjects,
+				refresh.entry.Materialization.MaterializedProjects,
+			) || discovery.Materialization.Status != optimizeMaterializationCaptured {
+			return optimizeCalibrationResult{}, optimizePortfolioResult{}, false
+		}
+	}
+
+	entry := refresh.entry
+	if entry.Materialization != nil {
+		materialization, err := prepareOptimizePortfolioMaterialization(run.invocation, discovery)
+		if err != nil {
+			return optimizeCalibrationResult{}, optimizePortfolioResult{}, false
+		}
+		entry.Materialization = materialization
+	}
+	bundleProfile, ok := centralStateRelativePath(run.invocation.stateRelative, entry.ProfilePath)
+	if !ok {
+		return optimizeCalibrationResult{}, optimizePortfolioResult{}, false
+	}
+	entry.RevalidatedRevision = discovery.TargetRevision
+	bundleDirectory := filepath.ToSlash(filepath.Dir(bundleProfile))
+	destinationDirectory := filepath.ToSlash(filepath.Dir(entry.ProfilePath))
+	destinationPaths := []string{
+		filepath.ToSlash(filepath.Join(destinationDirectory, "manifest.json")),
+		filepath.ToSlash(filepath.Join(destinationDirectory, "graph.json")),
+		filepath.ToSlash(filepath.Join(destinationDirectory, "generated-manifest.json")),
+	}
+	profileRaw := refresh.portfolioFiles[filepath.ToSlash(filepath.Join(bundleDirectory, "profile.json"))]
+	var profile qualifiedPOCProfile
+	if decodeCentralStrictJSON(profileRaw, &profile) != nil || validateQualifiedPOCProfile(profile) != nil ||
+		profile.RepositoryID != entry.RepositoryID || profile.Qualification == nil ||
+		profile.Qualification.SHA256 != entry.EvidenceSHA256 || len(profile.Preconditions) != 3 {
+		return optimizeCalibrationResult{}, optimizePortfolioResult{}, false
+	}
+	profile.Impact.Manifest = destinationPaths[0]
+	profile.Impact.Graph = destinationPaths[1]
+	profile.Impact.GeneratedManifest = destinationPaths[2]
+	for index, path := range destinationPaths {
+		profile.Preconditions[index].Path = path
+	}
+	profileRaw, err := json.Marshal(profile)
+	if err != nil {
+		return optimizeCalibrationResult{}, optimizePortfolioResult{}, false
+	}
+	profileDigest := sha256.Sum256(profileRaw)
+	entry.ProfileSHA256 = hex.EncodeToString(profileDigest[:])
+	profileDestination := filepath.Join(run.invocation.repositoryRoot, filepath.FromSlash(entry.ProfilePath))
+	if err := os.MkdirAll(filepath.Dir(profileDestination), 0o700); err != nil ||
+		writePrivateAtomicFile(profileDestination, profileRaw) != nil {
+		return optimizeCalibrationResult{}, optimizePortfolioResult{}, false
+	}
+	for _, name := range []string{"manifest.json", "graph.json", "generated-manifest.json", "evidence.json"} {
+		source := filepath.ToSlash(filepath.Join(bundleDirectory, name))
+		raw := refresh.portfolioFiles[source]
+		if len(raw) == 0 {
+			return optimizeCalibrationResult{}, optimizePortfolioResult{}, false
+		}
+		destination := filepath.Join(
+			run.invocation.repositoryRoot,
+			filepath.FromSlash(filepath.ToSlash(filepath.Join(destinationDirectory, name))),
+		)
+		if err := os.MkdirAll(filepath.Dir(destination), 0o700); err != nil ||
+			writePrivateAtomicFile(destination, raw) != nil {
+			return optimizeCalibrationResult{}, optimizePortfolioResult{}, false
+		}
+	}
+
+	indexPath := filepath.ToSlash(filepath.Join(run.invocation.stateRelative, "portfolio", optimizePortfolioIndexFile))
+	portfolio := optimizeProfilePortfolio{
+		SchemaVersion: optimizePortfolioSchemaVersion,
+		Generation:    run.state.Generation, RepositoryScopeSHA256: optimizePortfolioRepositoryScope(entry.RepositoryID),
+		Profiles: []optimizePortfolioEntry{entry}, UpdatedAt: time.Now().UTC().Format(time.RFC3339Nano),
+		SelectionAuthorized: false, ProductionAuthorized: false,
+	}
+	indexAbsolute := filepath.Join(run.invocation.repositoryRoot, filepath.FromSlash(indexPath))
+	if err := writeCanonicalPrivateJSON(indexAbsolute, portfolio); err != nil {
+		return optimizeCalibrationResult{}, optimizePortfolioResult{}, false
+	}
+	if _, valid := loadOptimizePortfolio(
+		run.invocation.repositoryRoot,
+		indexPath,
+		optimizePortfolioRepositoryScope(entry.RepositoryID),
+	); !valid {
+		return optimizeCalibrationResult{}, optimizePortfolioResult{}, false
+	}
+
+	calibration := refresh.calibration
+	calibration.GeneratedFiles = []string{filepath.ToSlash(filepath.Join(destinationDirectory, "evidence.json"))}
+	result := optimizePortfolioResultForEntry(
+		optimizePortfolioReasonRefreshed,
+		true,
+		false,
+		indexPath,
+		1,
+		entry,
+	)
+	integration.result.Reason = "REMOTE_QUALIFIED_PROFILE_OUTPUTS_REFRESHED"
+	integration.result.EvidenceRevision = entry.TargetRevision
+	integration.result.RevalidatedRevision = discovery.TargetRevision
+	integration.result.NativeFallback = true
+	if integration.diagnostics != nil {
+		_, _ = fmt.Fprintf(
+			integration.diagnostics,
+			"buildopt: remote profile structure remained compatible; refreshed exact outputs at %s after authoritative native Gradle\n",
+			discovery.TargetRevision,
+		)
+	}
+	return calibration, result, true
+}
 func centralOptimizeChangedPathsSinceEvidence(repositoryRoot, evidenceRevision, currentRevision string) ([]string, error) {
 	if evidenceRevision == currentRevision {
 		return nil, nil
@@ -617,15 +807,6 @@ func (integration *centralOptimizeIntegration) materializeEntryFiles(
 			Patterns: []string{},
 		},
 	}
-	if entry.Materialization != nil {
-		materialization, materializationErr := integration.materializeOutputPack(
-			invocation, entry, portfolioFiles, materializedRoot,
-		)
-		if materializationErr != nil {
-			return centralOptimizePaths{}, nil, materializationErr
-		}
-		paths.materialization = materialization
-	}
 	profile.Impact.Manifest = paths.manifest
 	profile.Impact.Graph = paths.graph
 	profile.Impact.GeneratedManifest = paths.generated
@@ -703,7 +884,7 @@ func (integration *centralOptimizeIntegration) materializeOutputPack(
 	var manifest optimizeOutputMaterializationManifest
 	if decodeCentralStrictJSON(manifestRaw, &manifest) != nil ||
 		manifest.SchemaVersion != optimizeMaterializationSchema ||
-		manifest.RepositoryID != entry.RepositoryID || manifest.TargetRevision != entry.TargetRevision ||
+		manifest.RepositoryID != entry.RepositoryID || manifest.TargetRevision != optimizePortfolioOutputRevision(entry) ||
 		!equalOptimizeStrings(manifest.RequiredOutputs, entry.RequiredOutputs) ||
 		!equalOptimizeStrings(manifest.CandidateOutputs, entry.CandidateOutputs) ||
 		manifest.PackSHA256 != metadata.PackSHA256 || manifest.PackSize != metadata.PackSize ||

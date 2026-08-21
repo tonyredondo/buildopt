@@ -17,6 +17,15 @@ func TestOptimizeOutputMaterializationRestoresOnlyUnaffectedOutputs(t *testing.T
 		t.Fatal(err)
 	}
 	discovery.Materialization = materialization
+	discovery.AggregatePartition = &optimizeAggregatePartition{MaterializedProjects: []string{":unchanged"}}
+	portfolioMaterialization, err := prepareOptimizePortfolioMaterialization(invocation, discovery)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if portfolioMaterialization.OutputRevision != discovery.TargetRevision ||
+		!equalOptimizeStrings(portfolioMaterialization.MaterializedProjects, []string{":unchanged"}) {
+		t.Fatalf("portfolio materialization revision binding = %+v", portfolioMaterialization)
+	}
 	if materialization.Status != optimizeMaterializationCaptured || materialization.FileCount != 1 {
 		t.Fatalf("materialization = %+v", materialization)
 	}

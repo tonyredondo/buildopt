@@ -106,8 +106,12 @@ func validOptimizeCalibrationCheckpoint(state optimizeState) bool {
 		return state.Phase == "NATIVE_RETAINED" && state.LastOutcome == optimizeOutcomeNative &&
 			optimizeStringIn(calibration.Reason, optimizeCalibrationReasonNoValue, optimizeCalibrationReasonBreakEven)
 	case optimizeCalibrationRemoteQualified:
-		return optimizeStringIn(state.Phase, "ACTIVE", "STALE") &&
-			state.LastOutcome == "QUALIFIED_AND_USED" && !calibration.Performed && calibration.Reused &&
+		selectedReplay := optimizeStringIn(state.Phase, "ACTIVE", "STALE") &&
+			state.LastOutcome == "QUALIFIED_AND_USED" && state.Selection.Selected
+		refreshedNative := state.Phase == "QUALIFIED" && state.LastOutcome == optimizeOutcomeLearning &&
+			!state.Selection.Selected && state.Portfolio.Reason == optimizePortfolioReasonRefreshed
+		return (selectedReplay || refreshedNative) &&
+			!calibration.Performed && calibration.Reused &&
 			calibration.Reason == optimizeCalibrationReasonQualified &&
 			calibration.PairsRequested == optimizeRequiredCalibrationPairs &&
 			calibration.PairsMeasured == optimizeRequiredCalibrationPairs &&

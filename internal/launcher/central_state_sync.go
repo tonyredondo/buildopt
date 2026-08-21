@@ -810,7 +810,7 @@ func collectCentralMaterializationObjects(
 	var manifest optimizeOutputMaterializationManifest
 	if decoder.Decode(&manifest) != nil || decoder.Decode(&struct{}{}) != io.EOF ||
 		manifest.SchemaVersion != optimizeMaterializationSchema ||
-		manifest.RepositoryID != entry.RepositoryID || manifest.TargetRevision != entry.TargetRevision ||
+		manifest.RepositoryID != entry.RepositoryID || manifest.TargetRevision != optimizePortfolioOutputRevision(entry) ||
 		!equalOptimizeStrings(manifest.RequiredOutputs, entry.RequiredOutputs) ||
 		!equalOptimizeStrings(manifest.CandidateOutputs, entry.CandidateOutputs) ||
 		manifest.PackSHA256 != metadata.PackSHA256 || manifest.PackSize != metadata.PackSize ||

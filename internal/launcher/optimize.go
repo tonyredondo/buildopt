@@ -683,13 +683,21 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 	portfolio := run.materializePortfolio(discovery, calibration)
 	if run.centralReplay != nil {
 		portfolio = run.centralReplay.portfolio
+	} else if run.central != nil {
+		if refreshedCalibration, refreshedPortfolio, refreshed := run.central.refreshQualifiedProfile(run, discovery); refreshed {
+			calibration = refreshedCalibration
+			portfolio = refreshedPortfolio
+			learning = emptyOptimizeIncrementalLearning()
+		}
 	}
 	selection := run.selection
 	completedAt := time.Now().UTC()
 	run.state.LastOutcome = optimizeOutcomeNative
 	run.state.LastReason = calibration.Reason
 	run.state.Phase = "NATIVE_RETAINED"
-	if calibration.Status == optimizeCalibrationComplete && calibration.Qualified {
+	if calibration.Status == optimizeCalibrationComplete && calibration.Qualified ||
+		calibration.Status == optimizeCalibrationRemoteQualified &&
+			portfolio.Reason == optimizePortfolioReasonRefreshed {
 		run.state.LastOutcome = optimizeOutcomeLearning
 		run.state.Phase = "QUALIFIED"
 	} else if discovery.Status == optimizeDiscoveryComplete && calibration.Status == optimizeCalibrationSkipped {

@@ -117,6 +117,7 @@ func prepareOptimizePortfolioMaterialization(
 		PackSize:             manifest.PackSize,
 		ChunkSHA256:          chunks,
 		MaterializedProjects: append([]string(nil), discovery.AggregatePartition.MaterializedProjects...),
+		OutputRevision:       discovery.TargetRevision,
 	}, nil
 }
 

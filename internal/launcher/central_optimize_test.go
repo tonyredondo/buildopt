@@ -257,6 +257,122 @@ func TestCentralOptimizeReusesQualifiedProfileAcrossUnrelatedCommitAndRejectsStr
 		!integration.result.NativeFallback || integration.result.Reason != optimizeCentralReasonStructural {
 		t.Fatalf("build-logic drift did not retain native Gradle: impact=%+v selection=%+v central=%+v", impact, run.selection, integration.result)
 	}
+	if integration.refresh != nil {
+		t.Fatal("the build-logic event itself must not refresh a source-family profile")
+	}
+	eventRaw, _ = json.Marshal(map[string]string{"before": driftRevision})
+	if err := os.WriteFile(eventPath, eventRaw, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	writeCentralOptimizeFile(t, repository, changedPath, "class Metadata { int revision = 3; }\n")
+	centralOptimizeGit(t, repository, "add", changedPath)
+	centralOptimizeGit(t, repository, "commit", "-qm", "source requiring native refresh")
+	refreshRevision := strings.TrimSpace(centralOptimizeGit(t, repository, "rev-parse", "HEAD"))
+	invocation, err = prepareOptimizeInvocation(append([]string{
+		"--calibration-pairs", "8", "--",
+	}, append(append([]string(nil), profile.GradleOptions...), "shadowJar")...), true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	integration = centralOptimizeFixtureIntegration(t, invocation, fixtureFiles, profile, evidenceRevision)
+	run, err = beginOptimizeRun(invocation)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if impact = integration.prepareAutomaticReplay(run); impact != nil || run.selection.Selected {
+		t.Fatalf("source event with stale outputs selected before native refresh: impact=%+v selection=%+v", impact, run.selection)
+	}
+	if integration.refresh == nil {
+		t.Fatal("build-logic drift did not retain a verified native-refresh candidate")
+	}
+	refreshEntry := integration.refresh.entry
+	refreshedDiscovery := optimizeDiscoveryResult{
+		Status: optimizeDiscoveryComplete, Reason: optimizeDiscoveryReasonFound,
+		Source: invocation.discovery.Source, RepositoryID: repositoryID,
+		BaseRevision: invocation.discovery.BaseRevision, TargetRevision: refreshRevision,
+		ChangeSHA256: invocation.discovery.ChangeSHA256, ChangedPathCount: invocation.discovery.ChangedPathCount,
+		Entrypoints:          append([]string(nil), refreshEntry.Entrypoints...),
+		RequiredOutputs:      append([]string(nil), refreshEntry.RequiredOutputs...),
+		CandidateOutputs:     append([]string(nil), refreshEntry.CandidateOutputs...),
+		CandidateEntrypoints: append([]string(nil), refreshEntry.CandidateEntrypoints...),
+		Materialization: optimizeOutputMaterialization{
+			Status: optimizeMaterializationNotRequired, Reason: optimizeMaterializationReasonNone,
+			Patterns: []string{},
+		},
+		ChangeFamily: refreshEntry.Family, ChangedProjects: append([]string(nil), refreshEntry.ChangedProjects...),
+		Graph: integration.refresh.graph, GeneratedFiles: []string{}, ReviewRequired: true,
+		ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
+	}
+	refreshedCalibration, refreshedPortfolio, refreshed := integration.refreshQualifiedProfile(run, refreshedDiscovery)
+	if !refreshed || refreshedCalibration.Status != optimizeCalibrationRemoteQualified ||
+		refreshedPortfolio.Reason != optimizePortfolioReasonRefreshed {
+		t.Fatalf("authoritative native refresh = %t, %+v, %+v", refreshed, refreshedCalibration, refreshedPortfolio)
+	}
+	localPortfolio, valid := loadOptimizePortfolio(
+		repository,
+		filepath.ToSlash(filepath.Join(optimizeDefaultStateDir, "portfolio", optimizePortfolioIndexFile)),
+		optimizePortfolioRepositoryScope(repositoryID),
+	)
+	if !valid || len(localPortfolio.Profiles) != 1 ||
+		localPortfolio.Profiles[0].TargetRevision != evidenceRevision ||
+		localPortfolio.Profiles[0].RevalidatedRevision != refreshRevision {
+		t.Fatalf("refreshed portfolio did not preserve evidence and output revisions: %+v", localPortfolio)
+	}
+
+	// A later source-only descendant now measures drift from the refreshed
+	// revision, so the old economic evidence can select without accepting the
+	// intervening build-logic bytes.
+	eventRaw, _ = json.Marshal(map[string]string{"before": refreshRevision})
+	if err := os.WriteFile(eventPath, eventRaw, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	writeCentralOptimizeFile(t, repository, changedPath, "class Metadata { int revision = 4; }\n")
+	centralOptimizeGit(t, repository, "add", changedPath)
+	centralOptimizeGit(t, repository, "commit", "-qm", "source after native refresh")
+	invocation, err = prepareOptimizeInvocation(append([]string{
+		"--calibration-pairs", "8", "--",
+	}, append(append([]string(nil), profile.GradleOptions...), "shadowJar")...), true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	refreshedFiles := map[string][]byte{}
+	for _, name := range []string{"profile.json", "manifest.json", "graph.json", "generated-manifest.json", "evidence.json"} {
+		localPath := filepath.ToSlash(filepath.Join(filepath.Dir(localPortfolio.Profiles[0].ProfilePath), name))
+		raw, readErr := os.ReadFile(filepath.Join(repository, filepath.FromSlash(localPath)))
+		if readErr != nil {
+			t.Fatal(readErr)
+		}
+		bundlePath, ok := centralStateRelativePath(optimizeDefaultStateDir, localPath)
+		if !ok {
+			t.Fatalf("refreshed bundle path %s escaped state", localPath)
+		}
+		refreshedFiles[bundlePath] = raw
+	}
+	indexRaw, err := os.ReadFile(filepath.Join(repository, filepath.FromSlash(refreshedPortfolio.PortfolioFile)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	refreshedFiles[filepath.ToSlash(filepath.Join("portfolio", optimizePortfolioIndexFile))] = indexRaw
+	evidencePath := filepath.ToSlash(filepath.Join("portfolio", "profiles", localPortfolio.Profiles[0].FamilySHA256, "evidence.json"))
+	nextIntegration := &centralOptimizeIntegration{
+		invocation: invocation, startedAt: time.Now(),
+		prequalification: unevaluatedOptimizePrequalification(optimizePrequalificationReasonNoGraph),
+		connection:       centralConnection{RepositoryID: repositoryID, RepositoryScopeSHA256: optimizePortfolioRepositoryScope(repositoryID)},
+		result: optimizeCentralResult{SchemaVersion: optimizeCentralSchemaVersion, Status: optimizeCentralAvailable,
+			Reason: "VERIFIED_REMOTE_STATE_AVAILABLE", Connected: true, SnapshotsVerified: true,
+			ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE"},
+		portfolio: &centralRemoteSnapshot{manifestSHA256: portfolioManifestSHA, bundle: centralOptimizeTestBundle(sharedcache.StateKindPortfolio, refreshedFiles)},
+		evidence: &centralRemoteSnapshot{manifestSHA256: integration.evidence.manifestSHA256,
+			bundle: centralOptimizeTestBundle(sharedcache.StateKindEvidence, map[string][]byte{evidencePath: refreshedFiles[evidencePath]})},
+	}
+	run, err = beginOptimizeRun(invocation)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if impact = nextIntegration.prepareAutomaticReplay(run); impact == nil || !run.selection.Selected ||
+		run.selection.EvidenceRevision != evidenceRevision {
+		t.Fatalf("source descendant did not select the refreshed profile: impact=%+v selection=%+v", impact, run.selection)
+	}
 }
 
 func TestCentralOptimizeChangedPathsSinceEvidenceAllowsIdenticalRevision(t *testing.T) {
@@ -268,6 +384,31 @@ func TestCentralOptimizeChangedPathsSinceEvidenceAllowsIdenticalRevision(t *test
 	)
 	if err != nil || len(paths) != 0 {
 		t.Fatalf("identical evidence revision = %v, %v; want no drift", paths, err)
+	}
+}
+
+func TestCentralOptimizePreSyncRejectsIneligibleCurrentEvent(t *testing.T) {
+	connection := centralConnection{RepositoryID: "example/repository"}
+	invocation := optimizeInvocation{discovery: optimizeDiscoveryContext{
+		Ready: true, RepositoryID: connection.RepositoryID,
+		changedPaths: []string{"module/src/main/java/Example.java"},
+	}}
+	if !centralOptimizePreSyncEligible(invocation, connection) {
+		t.Fatal("source-only event was rejected before central lookup")
+	}
+	invocation.discovery.changedPaths = []string{"build.gradle.kts"}
+	if centralOptimizePreSyncEligible(invocation, connection) {
+		t.Fatal("build-logic event reached central synchronization")
+	}
+	invocation.discovery.changedPaths = []string{"module/src/main/java/Example.java"}
+	invocation.discovery.RepositoryID = "other/repository"
+	if centralOptimizePreSyncEligible(invocation, connection) {
+		t.Fatal("repository identity drift reached central synchronization")
+	}
+	invocation.discovery.RepositoryID = connection.RepositoryID
+	invocation.discovery.Ready = false
+	if centralOptimizePreSyncEligible(invocation, connection) {
+		t.Fatal("unavailable discovery reached central synchronization")
 	}
 }
 
@@ -332,7 +473,10 @@ func TestCentralOptimizeAutomaticallyPublishesAndUsesVerifiedOfflineSnapshots(t 
 			stateRelative:       optimizeDefaultStateDir,
 			connectionDirectory: filepath.Join(repository, filepath.FromSlash(centralConnectionDir)),
 			connectionRelative:  centralConnectionDir,
-			discovery:           optimizeDiscoveryContext{RepositoryID: repositoryID},
+			discovery: optimizeDiscoveryContext{
+				Ready: true, RepositoryID: repositoryID,
+				changedPaths: []string{"src/main/java/Example.java"},
+			},
 		}
 	}
 

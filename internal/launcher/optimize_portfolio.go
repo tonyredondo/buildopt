@@ -24,6 +24,7 @@ const (
 	optimizePortfolioRetained             = "NATIVE_RETAINED"
 	optimizePortfolioReasonStored         = "QUALIFIED_PROFILE_STORED"
 	optimizePortfolioReasonReused         = "QUALIFIED_PROFILE_REUSED"
+	optimizePortfolioReasonRefreshed      = "QUALIFIED_PROFILE_OUTPUTS_REFRESHED"
 	optimizePortfolioIndexFile            = "portfolio.json"
 	optimizePortfolioMaximumEntries       = 64
 	optimizePortfolioMaximumIndexBytes    = 1 << 20
@@ -68,6 +69,7 @@ type optimizePortfolioEntry struct {
 	CandidateOutputs     []string                          `json:"candidateOutputs,omitempty"`
 	Materialization      *optimizePortfolioMaterialization `json:"materialization,omitempty"`
 	TargetRevision       string                            `json:"targetRevision"`
+	RevalidatedRevision  string                            `json:"revalidatedRevision,omitempty"`
 	WrapperSHA256        string                            `json:"wrapperSha256"`
 	ExecutableSHA256     string                            `json:"executableSha256"`
 	ManifestSHA256       string                            `json:"manifestSha256"`
@@ -90,6 +92,10 @@ type optimizePortfolioMaterialization struct {
 	PackSize             int64    `json:"packSize"`
 	ChunkSHA256          []string `json:"chunkSha256"`
 	MaterializedProjects []string `json:"materializedProjects"`
+	// OutputRevision identifies the native build that produced the exact
+	// omitted-project bytes. It is intentionally independent from the older
+	// qualification revision carried by the portfolio entry.
+	OutputRevision string `json:"outputRevision,omitempty"`
 }
 
 type optimizePortfolioArtifacts struct {
@@ -123,7 +129,7 @@ func validOptimizePortfolioCheckpoint(state optimizeState) bool {
 	case optimizePortfolioComplete:
 		return optimizeStringIn(state.Phase, "QUALIFIED", "ACTIVE", "STALE") && portfolio.Reason != "" &&
 			(portfolio.Performed != portfolio.Reused) &&
-			optimizeStringIn(portfolio.Reason, optimizePortfolioReasonStored, optimizePortfolioReasonReused) &&
+			optimizeStringIn(portfolio.Reason, optimizePortfolioReasonStored, optimizePortfolioReasonReused, optimizePortfolioReasonRefreshed) &&
 			validOptimizeFamily(portfolio.ChangeFamily) && validOptimizeSHA(portfolio.FamilySHA256) &&
 			validOptimizeSHA(portfolio.ProfileSHA256) && portfolio.ProfileCount >= 1 &&
 			portfolio.ProfileCount <= optimizePortfolioMaximumEntries &&
@@ -410,6 +416,7 @@ func validOptimizePortfolioEntry(repositoryRoot string, entry optimizePortfolioE
 		!validOptimizeSHA(entry.ProfileSHA256) || entry.State != "QUALIFIED" ||
 		entry.SelectionAuthorized || entry.ProductionAuthorized || entry.RepositoryID == "" ||
 		!validMeasurementRevision(entry.TargetRevision) || len(entry.ChangedProjects) < 1 ||
+		(entry.RevalidatedRevision != "" && !validMeasurementRevision(entry.RevalidatedRevision)) ||
 		len(entry.Entrypoints) < 1 || len(entry.CandidateEntrypoints) < 1 || len(entry.RequiredOutputs) < 1 ||
 		!uniqueMeasurementStrings(entry.ChangedProjects) || !uniqueMeasurementStrings(entry.Entrypoints) ||
 		!uniqueMeasurementStrings(entry.CandidateEntrypoints) || !uniqueMeasurementStrings(entry.RequiredOutputs) ||
@@ -466,7 +473,10 @@ func validOptimizePortfolioMaterialization(entry optimizePortfolioEntry) bool {
 		materialization.PackSize > optimizeMaterializationMaxBytes ||
 		len(materialization.ChunkSHA256) < 1 || len(materialization.ChunkSHA256) > 63 ||
 		len(materialization.MaterializedProjects) < 1 ||
-		!uniqueMeasurementStrings(materialization.MaterializedProjects) {
+		!uniqueMeasurementStrings(materialization.MaterializedProjects) ||
+		(materialization.OutputRevision != "" && !validMeasurementRevision(materialization.OutputRevision)) ||
+		(entry.RevalidatedRevision != "" && materialization.OutputRevision != "" &&
+			entry.RevalidatedRevision != materialization.OutputRevision) {
 		return false
 	}
 	for _, digest := range materialization.ChunkSHA256 {
@@ -475,6 +485,16 @@ func validOptimizePortfolioMaterialization(entry optimizePortfolioEntry) bool {
 		}
 	}
 	return true
+}
+
+func optimizePortfolioOutputRevision(entry optimizePortfolioEntry) string {
+	if entry.RevalidatedRevision != "" {
+		return entry.RevalidatedRevision
+	}
+	if entry.Materialization != nil && entry.Materialization.OutputRevision != "" {
+		return entry.Materialization.OutputRevision
+	}
+	return entry.TargetRevision
 }
 
 func readOptimizePortfolioSource(repositoryRoot, relativePath string) ([]byte, error) {
