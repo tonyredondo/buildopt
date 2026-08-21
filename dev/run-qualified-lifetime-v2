@@ -452,7 +452,8 @@ buildopt_subject() {
         "${buildopt_jdk}" "${buildopt_logs}/producer-daemon-stop.log"
     buildopt_stop_server
     "${buildopt_control_binary}" commit --state-dir "${buildopt_state}" \
-        --control-dir "${buildopt_authority}" >"${buildopt_authority}/commit.json"
+        --control-dir "${buildopt_authority}" --abort-empty \
+        >"${buildopt_authority}/commit.json"
     buildopt_start_server "${buildopt_server}" "${buildopt_state}" "${buildopt_tls}" \
         "${buildopt_port}" "${buildopt_logs}/server-restarted.log"
 

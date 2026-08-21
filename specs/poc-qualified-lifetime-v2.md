@@ -128,6 +128,14 @@ The candidate must either:
 Every observation records wall time, cache hits, selection and sync cost,
 materialization cost, exact output digest and the native-retention reason.
 
+The central Gradle cache remains independently fail-closed. If the qualified
+repository uses a runtime outside the proven Tier 1 matrix, the policy disables
+that cache for the whole invocation. A producer with no eligible cache writes
+must abort its empty pending attempt rather than manufacture an empty commit;
+the profile and output pack may still use the separately verified central
+state/CAS transport. Both measured arms then retain the same zero-object remote
+cache opportunity.
+
 ## Economics
 
 Per subject:

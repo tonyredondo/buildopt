@@ -89,7 +89,7 @@ func main() {
 }
 
 func usage() {
-	_, _ = fmt.Fprintln(os.Stderr, "usage: central-two-machine-control prepare --state-dir PATH --output-dir PATH --repository-id OWNER/REPO --source-revision SHA --namespace ID [--lifetime DURATION]\n       central-two-machine-control commit --state-dir PATH --control-dir PATH")
+	_, _ = fmt.Fprintln(os.Stderr, "usage: central-two-machine-control prepare --state-dir PATH --output-dir PATH --repository-id OWNER/REPO --source-revision SHA --namespace ID [--lifetime DURATION]\n       central-two-machine-control commit --state-dir PATH --control-dir PATH [--abort-empty]")
 	os.Exit(64)
 }
 
@@ -264,6 +264,11 @@ func commit(args []string) error {
 	flags.SetOutput(io.Discard)
 	stateDir := flags.String("state-dir", "", "central storage root")
 	controlDir := flags.String("control-dir", "", "private fixture control root")
+	abortEmpty := flags.Bool(
+		"abort-empty",
+		false,
+		"abort a cache attempt that produced no pending objects",
+	)
 	if flags.Parse(args) != nil || flags.NArg() != 0 ||
 		!absoluteClean(*stateDir) || !absoluteClean(*controlDir) {
 		return errors.New("invalid commit arguments")
@@ -294,6 +299,28 @@ func commit(args []string) error {
 		return fmt.Errorf("inspect pending producer objects: %w", err)
 	}
 	if len(objects) == 0 {
+		if *abortEmpty {
+			result, abortErr := storage.AbortAttempt(
+				context.Background(),
+				sharedcache.AbortAttemptRequest{
+					RequestID:            "two-machine-empty-producer-abort",
+					AttemptID:            status.AttemptID,
+					ExpectedStateVersion: status.StateVersion,
+					Reason:               "INCOMPLETE_COMMIT_DECISION",
+				},
+			)
+			if abortErr != nil {
+				return fmt.Errorf("abort empty producer attempt: %w", abortErr)
+			}
+			return json.NewEncoder(os.Stdout).Encode(commitResult{
+				CommitResult: sharedcache.CommitResult{
+					AttemptID:    result.Status.AttemptID,
+					Outcome:      "EMPTY_ABORTED",
+					ObjectCount:  0,
+					StateVersion: result.Status.StateVersion,
+				},
+			})
+		}
 		return errors.New("pending producer objects are empty")
 	}
 	sort.Slice(objects, func(left, right int) bool {
