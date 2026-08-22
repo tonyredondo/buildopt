@@ -433,11 +433,18 @@ buildopt_capture_subject() {
                 jq -e '
                   .schemaVersion == "buildopt.poc/native-volatility-quarantine/v1" and
                   .decision == "TRANSPORT_READY" and
-                  .reason == "VOLATILE_PRODUCERS_QUARANTINED" and
-                  (.quarantinedProducers | length) > 0 and
-                  (.transportedOutputs | length) > 0
+                  (.transportedOutputs | length) > 0 and
+                  ((.reason == "INDEPENDENT_NATIVE_OUTPUTS_EXACT" and
+                    (.quarantinedProducers | length) == 0 and
+                    (.quarantinedOutputs | length) == 0 and
+                    (.transportedOutputs | length) == .comparedOutputCount) or
+                   (.reason == "VOLATILE_PRODUCERS_QUARANTINED" and
+                    (.quarantinedProducers | length) > 0 and
+                    (.quarantinedOutputs | length) > 0 and
+                    ((.quarantinedOutputs + .transportedOutputs) | length) ==
+                      .comparedOutputCount))
                 ' "${buildopt_quarantine_result}" >/dev/null || {
-                    printf 'producer-bound quarantine did not produce a mixed transport plan\n' >&2
+                    printf 'producer-bound output analysis did not produce a safe transport plan\n' >&2
                     buildopt_all_invocations_valid=false
                     break
                 }

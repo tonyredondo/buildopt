@@ -94,15 +94,33 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 			ProducerTasks: append([]string(nil), entry.ProducerTasks...),
 		})
 	}
+	secondPath := filepath.Join(repository, "second.json")
+	secondRaw, err := json.MarshalIndent(second, "", "  ")
+	if err != nil || os.WriteFile(secondPath, append(secondRaw, '\n'), 0o600) != nil {
+		t.Fatal("write second native observation")
+	}
+	exactState := optimizeQuarantineTestState(invocation, discovery)
+	exactResult, err := applyOptimizeNativeQuarantine(invocation, &exactState, secondPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if exactResult.Reason != nativevolatility.ReasonExact ||
+		len(exactResult.QuarantinedOutputs) != 0 ||
+		len(exactResult.TransportedOutputs) != len(manifest.Entries) ||
+		exactState.Phase != "NATIVE_RETAINED" ||
+		exactState.LastReason != "CALIBRATION_VALUE_NOT_PROVEN" ||
+		exactState.Discovery.Materialization.QuarantineFile == "" ||
+		exactState.Discovery.Materialization.QuarantineSHA256 == "" {
+		t.Fatalf("exact state = %+v, result = %+v", exactState, exactResult)
+	}
 	for index := range second.Entries {
 		if second.Entries[index].Path == "volatile/build/classes/changed.class" {
 			second.Entries[index].SHA256 = strings.Repeat("9", 64)
 		}
 	}
-	secondPath := filepath.Join(repository, "second.json")
-	secondRaw, err := json.MarshalIndent(second, "", "  ")
+	secondRaw, err = json.MarshalIndent(second, "", "  ")
 	if err != nil || os.WriteFile(secondPath, append(secondRaw, '\n'), 0o600) != nil {
-		t.Fatal("write second native observation")
+		t.Fatal("write changed second native observation")
 	}
 	state := optimizeQuarantineTestState(invocation, discovery)
 	if !validOptimizeState(state) {

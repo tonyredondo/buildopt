@@ -168,9 +168,6 @@ func applyOptimizeNativeQuarantine(
 	if result.Decision != nativevolatility.DecisionTransportReady {
 		return result, fmt.Errorf("native output evidence retained Gradle: %s", result.Reason)
 	}
-	if len(result.QuarantinedProducers) == 0 {
-		return result, errors.New("native outputs are exact; quarantine is unnecessary")
-	}
 	if len(result.TransportedOutputs) == 0 {
 		return result, errors.New("quarantine leaves no transportable outputs")
 	}
@@ -193,6 +190,30 @@ func applyOptimizeNativeQuarantine(
 	}
 	if len(filtered) != len(stable) {
 		return result, errors.New("transported output set is incomplete")
+	}
+	if len(result.QuarantinedProducers) == 0 {
+		if len(filtered) != len(payloads) ||
+			len(result.TransportedOutputs) != result.ComparedOutputCount {
+			return result, errors.New("exact native output set is incomplete")
+		}
+		resultRelative, resultSHA, persistErr := persistOptimizeNativeVolatilityResult(
+			invocation, result,
+		)
+		if persistErr != nil {
+			return result, persistErr
+		}
+		state.Discovery.Materialization.QuarantineFile = resultRelative
+		state.Discovery.Materialization.QuarantineSHA256 = resultSHA
+		state.UpdatedAt = time.Now().UTC().Format(time.RFC3339Nano)
+		if !validOptimizeState(*state) {
+			return result, errors.New("exact native output optimize state is invalid")
+		}
+		if err := writeCanonicalPrivateJSON(
+			filepath.Join(invocation.stateDirectory, optimizeStateFile), state,
+		); err != nil {
+			return result, fmt.Errorf("write exact native output optimize state: %w", err)
+		}
+		return result, nil
 	}
 
 	discovery := state.Discovery
@@ -226,20 +247,12 @@ func applyOptimizeNativeQuarantine(
 	if err := rewriteOptimizeQuarantineDiscoveryDocuments(invocation, discovery); err != nil {
 		return result, fmt.Errorf("rewrite quarantined discovery documents: %w", err)
 	}
-	resultRelative := filepath.ToSlash(filepath.Join(
-		invocation.stateRelative, "materialization", "quarantine", "native-volatility.json",
-	))
-	resultAbsolute := filepath.Join(invocation.repositoryRoot, filepath.FromSlash(resultRelative))
-	if err := writeCanonicalPrivateJSON(resultAbsolute, result); err != nil {
-		return result, fmt.Errorf("write native volatility result: %w", err)
-	}
-	resultRaw, err := os.ReadFile(resultAbsolute)
+	resultRelative, resultSHA, err := persistOptimizeNativeVolatilityResult(invocation, result)
 	if err != nil {
 		return result, err
 	}
-	resultDigest := sha256.Sum256(resultRaw)
 	materialization.QuarantineFile = resultRelative
-	materialization.QuarantineSHA256 = hex.EncodeToString(resultDigest[:])
+	materialization.QuarantineSHA256 = resultSHA
 	discovery.Materialization = materialization
 
 	state.Phase = "DISCOVERED"
@@ -262,6 +275,28 @@ func applyOptimizeNativeQuarantine(
 		return result, fmt.Errorf("write quarantined optimize state: %w", err)
 	}
 	return result, nil
+}
+
+func persistOptimizeNativeVolatilityResult(
+	invocation optimizeInvocation,
+	result nativevolatility.Result,
+) (string, string, error) {
+	resultRelative := filepath.ToSlash(filepath.Join(
+		invocation.stateRelative, "materialization", "quarantine", "native-volatility.json",
+	))
+	resultAbsolute := filepath.Join(invocation.repositoryRoot, filepath.FromSlash(resultRelative))
+	if err := os.MkdirAll(filepath.Dir(resultAbsolute), 0o700); err != nil {
+		return "", "", fmt.Errorf("create native volatility result directory: %w", err)
+	}
+	if err := writeCanonicalPrivateJSON(resultAbsolute, result); err != nil {
+		return "", "", fmt.Errorf("write native volatility result: %w", err)
+	}
+	resultRaw, err := os.ReadFile(resultAbsolute)
+	if err != nil {
+		return "", "", err
+	}
+	resultDigest := sha256.Sum256(resultRaw)
+	return resultRelative, hex.EncodeToString(resultDigest[:]), nil
 }
 
 // rewriteOptimizeQuarantineDiscoveryDocuments preserves the fail-closed

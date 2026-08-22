@@ -538,12 +538,16 @@ buildopt_subject() {
         }
         jq -e '
           .decision == "TRANSPORT_READY" and
-          .reason == "VOLATILE_PRODUCERS_QUARANTINED" and
-          (.quarantinedProducers | length) > 0 and
-          (.quarantinedOutputs | length) > 0 and
           (.transportedOutputs | length) > 0 and
-          ((.quarantinedOutputs + .transportedOutputs) | length) ==
-            .comparedOutputCount and
+          ((.reason == "INDEPENDENT_NATIVE_OUTPUTS_EXACT" and
+            (.quarantinedProducers | length) == 0 and
+            (.quarantinedOutputs | length) == 0 and
+            (.transportedOutputs | length) == .comparedOutputCount) or
+           (.reason == "VOLATILE_PRODUCERS_QUARANTINED" and
+            (.quarantinedProducers | length) > 0 and
+            (.quarantinedOutputs | length) > 0 and
+            ((.quarantinedOutputs + .transportedOutputs) | length) ==
+              .comparedOutputCount)) and
           .productionAuthorized == false and .testOptimization == "OUT_OF_SCOPE"
         ' "${buildopt_quarantine_result}" >/dev/null || return 1
         buildopt_portability_outputs=${buildopt_subject_output}/transported-outputs.txt
