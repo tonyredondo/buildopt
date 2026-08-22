@@ -18,6 +18,10 @@
     "measurementOnlyWorkflowRuns": 0,
     "cleanWorkspaceBeforeEveryInvocation": true,
     "calibrationPairs": 8,
+    "publicDescendantRevisions": [
+      "4e8acb9ef2ff43c6f841af2a2ad0a3de53cac914",
+      "9cedcd65ef9db17fdc1e1a02a2296f42d98647f2"
+    ],
     "maximumBreakEvenBuilds": 30
   },
   "method": {
@@ -38,6 +42,8 @@
     "quarantinedProducerTasksAddedToCandidate": true,
     "stableTransportedOutputsExactAcrossEveryPair": true,
     "quarantinedOutputsRebuiltAcrossEveryPair": true,
+    "descendantSelectionMeasuredAfterQualification": true,
+    "selectedDescendantRequiresExactRequiredOutputs": true,
     "postQuarantinePerformanceReportedEvenWhenNegative": true,
     "zeroProductAttributableFailures": true,
     "repositoryPercentagesAveraged": false,

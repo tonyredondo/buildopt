@@ -1,0 +1,516 @@
+{
+  "subject": {
+    "repositoryId": "spring-projects/spring-framework",
+    "baseRevision": "d8216d719bb203a1ed74e5f75c894b08db6f1a88",
+    "targetRevision": "dbbbf37ac9097852194222a0405d3e060a846b8e",
+    "ordinaryInvocations": 18,
+    "processExitCode": 0,
+    "productFailure": false,
+    "nativeVolatility": {
+      "resultFile": "spring-framework-classes-jms/quarantine-result.json",
+      "resultSha256": "49e9cf87eaacb7fc5be7536fc34a8589e7199110f3f3b0a60b211a482cc86dfd",
+      "secondObservationFile": "spring-framework-classes-jms/native-second.json",
+      "secondObservationSha256": "ef67bd68805a25e40cbcd90770bb7ae5c2226162fbadd5f4972363e451dd2075",
+      "comparedOutputCount": 8216,
+      "volatilePaths": [
+        "spring-aspects/build/classes/aspectj/main/org/springframework/beans/factory/aspectj/AbstractDependencyInjectionAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/beans/factory/aspectj/AbstractInterfaceDrivenDependencyInjectionAspect$ConfigurableDeserializationSupport.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/beans/factory/aspectj/AbstractInterfaceDrivenDependencyInjectionAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/beans/factory/aspectj/AnnotationBeanConfigurerAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/beans/factory/aspectj/GenericInterfaceDrivenDependencyInjectionAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/cache/aspectj/AbstractCacheAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/cache/aspectj/AnnotationCacheAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/cache/aspectj/JCacheCacheAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/scheduling/aspectj/AbstractAsyncExecutionAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/scheduling/aspectj/AnnotationAsyncExecutionAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/transaction/aspectj/AbstractTransactionAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/transaction/aspectj/AnnotationTransactionAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/transaction/aspectj/JtaAnnotationTransactionAspect.class",
+        "spring-messaging/build/classes/java/main/org/springframework/messaging/tcp/reactor/ReactorNettyTcpClient.class"
+      ],
+      "quarantinedProducers": [
+        ":spring-aspects:compileAspectj",
+        ":spring-messaging:compileJava"
+      ],
+      "quarantinedOutputCount": 352,
+      "transportedOutputCount": 7864,
+      "decision": "TRANSPORT_READY",
+      "reason": "VOLATILE_PRODUCERS_QUARANTINED"
+    },
+    "discovery": {
+      "candidateEntrypoints": [
+        ":spring-aspects:compileAspectj",
+        ":spring-jms:classes",
+        ":spring-messaging:compileJava"
+      ],
+      "aggregatePartition": {
+        "affectedProjects": [
+          ":framework-api",
+          ":framework-docs",
+          ":spring-jms"
+        ],
+        "candidateEntrypointCount": 3,
+        "candidateOutputCount": 354,
+        "materializedOutputCount": 53,
+        "rebuildProjects": [
+          ":spring-aspects",
+          ":spring-jms",
+          ":spring-messaging"
+        ]
+      }
+    },
+    "incrementalLearning": {
+      "baseline": {
+        "arm": "DISCOVERY_CONTROL",
+        "capturedAt": "2026-08-22T20:13:09Z",
+        "durationMs": 13503,
+        "economics": {
+          "discoveryMs": 0,
+          "gradleMs": 12841,
+          "materializationMs": 0,
+          "otherWrapperMs": 122,
+          "outputVerificationMs": 540,
+          "postExecutionMs": 542,
+          "preExecutionMs": 120
+        },
+        "exitCode": 0,
+        "incrementalOverheadMs": 662,
+        "order": "BASELINE",
+        "pair": 0,
+        "productAttributableFailure": false,
+        "requiredOutputCount": 8033,
+        "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+        "sequence": 0
+      },
+      "observations": [
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-22T20:13:21Z",
+          "durationMs": 10862,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 10245,
+            "materializationMs": 0,
+            "otherWrapperMs": 48,
+            "outputVerificationMs": 569,
+            "postExecutionMs": 569,
+            "preExecutionMs": 48
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 617,
+          "order": "CONTROL_FIRST",
+          "pair": 1,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 1
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-22T20:13:29Z",
+          "durationMs": 7172,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 6217,
+            "materializationMs": 288,
+            "otherWrapperMs": 103,
+            "outputVerificationMs": 564,
+            "postExecutionMs": 565,
+            "preExecutionMs": 390
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 955,
+          "order": "CONTROL_FIRST",
+          "pair": 1,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 2
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-22T20:13:37Z",
+          "durationMs": 6848,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 5781,
+            "materializationMs": 284,
+            "otherWrapperMs": 106,
+            "outputVerificationMs": 677,
+            "postExecutionMs": 678,
+            "preExecutionMs": 389
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 1067,
+          "order": "CANDIDATE_FIRST",
+          "pair": 2,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 3
+        },
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-22T20:13:48Z",
+          "durationMs": 10589,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 8533,
+            "materializationMs": 0,
+            "otherWrapperMs": 49,
+            "outputVerificationMs": 2007,
+            "postExecutionMs": 2007,
+            "preExecutionMs": 49
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 2056,
+          "order": "CANDIDATE_FIRST",
+          "pair": 2,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 4
+        },
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-22T20:13:57Z",
+          "durationMs": 7730,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 7143,
+            "materializationMs": 0,
+            "otherWrapperMs": 48,
+            "outputVerificationMs": 539,
+            "postExecutionMs": 540,
+            "preExecutionMs": 47
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 587,
+          "order": "CONTROL_FIRST",
+          "pair": 3,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 5
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-22T20:14:04Z",
+          "durationMs": 6749,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 5815,
+            "materializationMs": 299,
+            "otherWrapperMs": 99,
+            "outputVerificationMs": 536,
+            "postExecutionMs": 537,
+            "preExecutionMs": 397
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 934,
+          "order": "CONTROL_FIRST",
+          "pair": 3,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 6
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-22T20:14:12Z",
+          "durationMs": 6719,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 5813,
+            "materializationMs": 286,
+            "otherWrapperMs": 102,
+            "outputVerificationMs": 518,
+            "postExecutionMs": 519,
+            "preExecutionMs": 387
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 906,
+          "order": "CANDIDATE_FIRST",
+          "pair": 4,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 7
+        },
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-22T20:14:23Z",
+          "durationMs": 9858,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 7419,
+            "materializationMs": 0,
+            "otherWrapperMs": 49,
+            "outputVerificationMs": 2390,
+            "postExecutionMs": 2391,
+            "preExecutionMs": 48
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 2439,
+          "order": "CANDIDATE_FIRST",
+          "pair": 4,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 8
+        },
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-22T20:14:31Z",
+          "durationMs": 7372,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 6706,
+            "materializationMs": 0,
+            "otherWrapperMs": 49,
+            "outputVerificationMs": 617,
+            "postExecutionMs": 617,
+            "preExecutionMs": 49
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 666,
+          "order": "CONTROL_FIRST",
+          "pair": 5,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 9
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-22T20:14:39Z",
+          "durationMs": 6974,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 5986,
+            "materializationMs": 284,
+            "otherWrapperMs": 101,
+            "outputVerificationMs": 603,
+            "postExecutionMs": 604,
+            "preExecutionMs": 384
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 988,
+          "order": "CONTROL_FIRST",
+          "pair": 5,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 10
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-22T20:14:47Z",
+          "durationMs": 6655,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 5693,
+            "materializationMs": 286,
+            "otherWrapperMs": 93,
+            "outputVerificationMs": 583,
+            "postExecutionMs": 584,
+            "preExecutionMs": 378
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 962,
+          "order": "CANDIDATE_FIRST",
+          "pair": 6,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 11
+        },
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-22T20:14:55Z",
+          "durationMs": 7143,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 6521,
+            "materializationMs": 0,
+            "otherWrapperMs": 50,
+            "outputVerificationMs": 572,
+            "postExecutionMs": 573,
+            "preExecutionMs": 49
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 622,
+          "order": "CANDIDATE_FIRST",
+          "pair": 6,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 12
+        },
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-22T20:15:03Z",
+          "durationMs": 7971,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 7311,
+            "materializationMs": 0,
+            "otherWrapperMs": 51,
+            "outputVerificationMs": 609,
+            "postExecutionMs": 610,
+            "preExecutionMs": 50
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 660,
+          "order": "CONTROL_FIRST",
+          "pair": 7,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 13
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-22T20:15:11Z",
+          "durationMs": 6918,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 5978,
+            "materializationMs": 303,
+            "otherWrapperMs": 102,
+            "outputVerificationMs": 535,
+            "postExecutionMs": 535,
+            "preExecutionMs": 405
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 940,
+          "order": "CONTROL_FIRST",
+          "pair": 7,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 14
+        },
+        {
+          "arm": "CANDIDATE",
+          "capturedAt": "2026-08-22T20:15:20Z",
+          "durationMs": 8200,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 5111,
+            "materializationMs": 945,
+            "otherWrapperMs": 103,
+            "outputVerificationMs": 2041,
+            "postExecutionMs": 2043,
+            "preExecutionMs": 1046
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 3089,
+          "order": "CANDIDATE_FIRST",
+          "pair": 8,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 15
+        },
+        {
+          "arm": "CONTROL",
+          "capturedAt": "2026-08-22T20:15:30Z",
+          "durationMs": 7626,
+          "economics": {
+            "discoveryMs": 0,
+            "gradleMs": 7006,
+            "materializationMs": 0,
+            "otherWrapperMs": 49,
+            "outputVerificationMs": 571,
+            "postExecutionMs": 572,
+            "preExecutionMs": 48
+          },
+          "exitCode": 0,
+          "incrementalOverheadMs": 620,
+          "order": "CANDIDATE_FIRST",
+          "pair": 8,
+          "productAttributableFailure": false,
+          "requiredOutputCount": 8033,
+          "requiredOutputSha256": "c85abd5ece7efaebebe645934c24f3ac3ec94b0a7f4728de6446275db43f9902",
+          "sequence": 16
+        }
+      ],
+      "pairsCompleted": 8,
+      "status": "COMPLETE"
+    },
+    "calibration": {
+      "breakEvenBuilds": 1,
+      "calibrationCostMs": 662,
+      "candidateMeanMs": 7029.375,
+      "candidateP95Ms": 8200,
+      "controlMeanMs": 8643.875,
+      "controlP95Ms": 10862,
+      "discoverySha256": "9c0683a5bd24c80d51a4bb7ade0ec3dfa9c885630606485f78c9c53e73440e1a",
+      "evidenceSha256": "9865c8b0f68cdf86b41271b24f207fe0f4aba0af20f3c0f9849fb5a37bf179dc",
+      "fallbackSuccessful": true,
+      "generatedFiles": [
+        ".buildopt/optimize/producer-bound-quarantine-v1/calibration/evidence.json"
+      ],
+      "interval95SavedMs": [
+        549.375,
+        2702.25
+      ],
+      "maximumBreakEvenBuilds": 30,
+      "meanSavedMs": 1614.5,
+      "pairsMeasured": 8,
+      "pairsRequested": 8,
+      "performed": true,
+      "positivePairs": 7,
+      "productionAuthorized": false,
+      "qualificationPolicy": "ROBUST_7_OF_8_POSITIVE_INTERVAL_P95_V1",
+      "qualified": true,
+      "reason": "CANDIDATE_CALIBRATION_QUALIFIED",
+      "reductionRatio": 0.18677965611487904,
+      "reused": false,
+      "status": "COMPLETE",
+      "testOptimization": "OUT_OF_SCOPE",
+      "valueGatePassed": true
+    },
+    "portfolio": {
+      "status": "COMPLETE",
+      "reason": "QUALIFIED_PROFILE_STORED",
+      "profileCount": 1
+    },
+    "productionAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "aggregation": {
+    "subjectCount": 1,
+    "resultAvailable": 1,
+    "discoveryComplete": 1,
+    "quarantineApplied": 1,
+    "incrementalComplete": 1,
+    "calibrationComplete": 1,
+    "valueGatePassed": 1,
+    "economicallyQualified": 1,
+    "ordinaryInvocations": 18,
+    "exactStableOutputPairs": 16,
+    "productFailures": 0,
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false
+  },
+  "decision": "QUARANTINED_PROFILE_QUALIFIED",
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRules": false,
+    "automaticActivationOutsideOwnerCommand": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "buildopt": {
+    "revision": "d00a5f491bf4b64891edf2d35c20a9b500e2b718",
+    "executableSha256": "4c21a4ac8fbaa8324c6f0fa1a6c76876b09d3abdae75cbdc1ca9261feeec963b",
+    "packageVersion": "0.9.0-dev"
+  },
+  "capturedAt": "2026-08-22T20:15:32Z",
+  "schemaVersion": "buildopt.evidence/poc-producer-bound-quarantine-replay/v1",
+  "workItem": "POC-PRODUCER-BOUND-QUARANTINE-REPLAY-001"
+}

@@ -753,9 +753,9 @@ else
           repositoryPercentagesAveraged:false,mechanismPercentagesAdded:false},
         decision:(if all(.nativeVolatility.decision == "TRANSPORT_READY" and
           .incrementalLearning.status == "COMPLETE") then
-          (if all(.calibration.qualified == true) then "QUARANTINED_REPLAY_QUALIFIED"
-           else "QUARANTINED_REPLAY_VALUE_NOT_PROVEN" end)
-          else "QUARANTINED_REPLAY_INCOMPLETE" end),
+          (if all(.calibration.qualified == true) then "QUARANTINED_PROFILE_QUALIFIED"
+           else "QUARANTINED_PROFILE_VALUE_NOT_PROVEN" end)
+          else "QUARANTINED_QUALIFICATION_INCOMPLETE" end),
         boundaries:{proofOfConcept:true,productionAuthorized:false,
           repositorySpecificProductRules:false,automaticActivationOutsideOwnerCommand:false,
           soakRequired:false,designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}

@@ -20,8 +20,26 @@ buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
 buildopt_resume_auto_root=${BUILDOPT_QUALIFIED_LIFETIME_RESUME_AUTO_ROOT:-}
 buildopt_resume_qualification_root=${BUILDOPT_QUALIFIED_LIFETIME_RESUME_QUALIFICATION_ROOT:-}
 buildopt_spec=${BUILDOPT_QUALIFIED_LIFETIME_SPEC:-${buildopt_repo_root}/specs/poc-qualified-lifetime-v2.json}
+buildopt_automatic_protocol=${BUILDOPT_QUALIFIED_LIFETIME_AUTOMATIC_PROTOCOL:-v3}
+buildopt_portability_mode=${BUILDOPT_QUALIFIED_LIFETIME_PORTABILITY_MODE:-FULL_REQUIRED_OUTPUTS}
 export BUILDOPT_QUALIFIED_LIFETIME_SPEC=${buildopt_spec}
-buildopt_state_relative=.buildopt/optimize/materialization-economics-v2
+buildopt_state_relative=${BUILDOPT_QUALIFIED_LIFETIME_STATE_RELATIVE:-.buildopt/optimize/materialization-economics-v2}
+case ${buildopt_automatic_protocol} in
+    v3 | v4) ;;
+    *)
+        printf 'unsupported qualified lifetime automatic protocol: %s\n' \
+            "${buildopt_automatic_protocol}" >&2
+        exit 64
+        ;;
+esac
+case ${buildopt_portability_mode} in
+    FULL_REQUIRED_OUTPUTS | PRODUCER_BOUND_QUARANTINE) ;;
+    *)
+        printf 'unsupported qualified lifetime portability mode: %s\n' \
+            "${buildopt_portability_mode}" >&2
+        exit 64
+        ;;
+esac
 buildopt_success=false
 buildopt_server_pid=
 buildopt_runtime_roots=()
@@ -334,7 +352,7 @@ buildopt_subject() {
         buildopt_qualification=${buildopt_work_root}/${buildopt_key}-qualification
         printf 'qualified lifetime %s: qualifying public revision %.12s\n' \
             "${buildopt_repository_id}" "${buildopt_qualifier}"
-        BUILDOPT_AUTOMATIC_BREADTH_PROTOCOL=v3 \
+        BUILDOPT_AUTOMATIC_BREADTH_PROTOCOL="${buildopt_automatic_protocol}" \
         BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_FILE="${buildopt_spec}" \
         BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256="${buildopt_spec_sha}" \
         BUILDOPT_AUTOMATIC_BREADTH_ROOT="${buildopt_auto_root}" \
@@ -476,6 +494,36 @@ buildopt_subject() {
     }
     jq -r '.discovery.requiredOutputs[]' "${buildopt_qualifier_result}" \
         >"${buildopt_subject_output}/required-outputs.txt"
+    local buildopt_portability_outputs=${buildopt_subject_output}/required-outputs.txt
+    if [[ ${buildopt_portability_mode} == PRODUCER_BOUND_QUARANTINE ]]; then
+        local buildopt_quarantine_relative buildopt_quarantine_result
+        buildopt_quarantine_relative=$(jq -er '
+          .discovery.materialization.quarantineFile |
+          select(startswith(".buildopt/") and
+            (contains("..") | not) and (endswith("/native-volatility.json")))
+        ' "${buildopt_qualifier_result}")
+        buildopt_quarantine_result=${buildopt_producer}/${buildopt_quarantine_relative}
+        [[ -s ${buildopt_quarantine_result} ]] || {
+            printf 'qualified lifetime quarantine result is unavailable\n' >&2
+            return 1
+        }
+        jq -e '
+          .decision == "TRANSPORT_READY" and
+          .reason == "VOLATILE_PRODUCERS_QUARANTINED" and
+          (.quarantinedProducers | length) > 0 and
+          (.quarantinedOutputs | length) > 0 and
+          (.transportedOutputs | length) > 0 and
+          ((.quarantinedOutputs + .transportedOutputs) | length) ==
+            .comparedOutputCount and
+          .productionAuthorized == false and .testOptimization == "OUT_OF_SCOPE"
+        ' "${buildopt_quarantine_result}" >/dev/null || return 1
+        buildopt_portability_outputs=${buildopt_subject_output}/transported-outputs.txt
+        jq -r '.transportedOutputs[].path' "${buildopt_quarantine_result}" \
+            >"${buildopt_portability_outputs}"
+        [[ $(wc -l <"${buildopt_portability_outputs}" | tr -d ' ') -eq \
+            $(jq '.transportedOutputs | length' "${buildopt_quarantine_result}") ]] || \
+            return 1
+    fi
 
     git -C "${buildopt_producer}" fetch -q --depth=1024 origin "${buildopt_branch}"
     local buildopt_previous=${buildopt_qualifier}
@@ -612,7 +660,7 @@ buildopt_subject() {
         "${buildopt_binary}" gradle "${buildopt_workflow[@]}" \
         >"${buildopt_logs}/producer-cache.log" 2>&1
     buildopt_hash_required_outputs "${buildopt_producer}" \
-        "${buildopt_subject_output}/required-outputs.txt" \
+        "${buildopt_portability_outputs}" \
         "${buildopt_logs}/producer-outputs.tsv"
     local buildopt_producer_output_sha=${BUILDOPT_OUTPUT_SHA}
     local buildopt_portability_output_count=${BUILDOPT_OUTPUT_COUNT}
@@ -649,7 +697,7 @@ buildopt_subject() {
                 return 1
             fi
             buildopt_hash_required_outputs "${buildopt_repository}" \
-                "${buildopt_subject_output}/required-outputs.txt" \
+                "${buildopt_portability_outputs}" \
                 "${buildopt_logs}/control-warmup-outputs.tsv"
             buildopt_independent_output_sha=${BUILDOPT_OUTPUT_SHA}
             if [[ ${buildopt_independent_output_sha} != "${buildopt_producer_output_sha}" ]]; then

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_subjects=${buildopt_repo_root}/specs/poc-cross-commit-breadth-spring-jms-v1.subjects.json
+
+export BUILDOPT_QUALIFIED_LIFETIME_SPEC=${buildopt_subjects}
+export BUILDOPT_QUALIFIED_LIFETIME_AUTOMATIC_PROTOCOL=v4
+export BUILDOPT_QUALIFIED_LIFETIME_PORTABILITY_MODE=PRODUCER_BOUND_QUARANTINE
+export BUILDOPT_QUALIFIED_LIFETIME_STATE_RELATIVE=.buildopt/optimize/producer-bound-quarantine-v1
+
+exec "${buildopt_script_dir}/run-qualified-lifetime-v2" "$@"
