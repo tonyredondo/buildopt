@@ -1,0 +1,299 @@
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+  "evidenceState": "INCONCLUSIVE",
+  "capturedAt": "2026-08-22T19:33:18Z",
+  "subject": {
+    "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+    "repositoryRevision": "dc7e94b40f1b86a19ec3449d895e80ff3c5754a4",
+    "pipelineClass": "auto-instrumentation-jmx-metrics-javaagent-te-26184f7f"
+  },
+  "sourceBindings": {
+    "manifestSha256": "d7b59526627144275f185b1466273a3df856768d05522095e34ca8d8c1a2dd1e",
+    "graphSha256": "a5b51143bd414691399529c84f54c0e82e7ce4ad58616d2bf356ad9b90aa6a3e",
+    "generatedManifestSha256": "2c63ee0de4273677632b1ffea64a1c72ab7fac85eee4bd684ade5b3f1c4cc023",
+    "sourceEvidenceSha256": "b9799aade371d3293cb139e4c3c957fd71e60860f911f74387329f2e57edddc5"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":instrumentation:jmx-metrics:library:testClasses"
+    ],
+    "fallbackEntrypoints": [
+      ":instrumentation:jmx-metrics:javaagent:testClasses",
+      ":instrumentation:jmx-metrics:library:testClasses",
+      ":instrumentation:jmx-metrics:testing-apps:camel-testing-app:testClasses",
+      ":instrumentation:jmx-metrics:testing-apps:testing-webapp:testClasses"
+    ],
+    "requiredOutputs": [
+      "instrumentation/jmx-metrics/javaagent/build/classes/java/test/**",
+      "instrumentation/jmx-metrics/library/build/classes/java/test/**",
+      "instrumentation/jmx-metrics/library/build/resources/test/**"
+    ],
+    "totalProjectCount": 1027,
+    "selectedProjectCount": 8,
+    "omittedProjectCount": 1019,
+    "omittedProjectRatio": 0.9922103213242454
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "6530559ecb8c14a1897b667afbb953b4583d1df0",
+    "executableSha256": "6530559ecb8c14a1897b667afbb953b4583d1df0453d25389fa392ef4180f3d8",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--no-daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true,
+    "qualificationPolicy": "ROBUST_7_OF_8_POSITIVE_INTERVAL_P95_V1"
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 134773,
+      "candidateDurationMs": 119301,
+      "savedMs": 15472,
+      "controlRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "candidateRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "requiredOutputCount": 50,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 119171,
+      "candidateDurationMs": 121626,
+      "savedMs": -2455,
+      "controlRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "candidateRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "requiredOutputCount": 50,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 119943,
+      "candidateDurationMs": 123130,
+      "savedMs": -3187,
+      "controlRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "candidateRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "requiredOutputCount": 50,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 123249,
+      "candidateDurationMs": 118988,
+      "savedMs": 4261,
+      "controlRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "candidateRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "requiredOutputCount": 50,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 5,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 121033,
+      "candidateDurationMs": 125235,
+      "savedMs": -4202,
+      "controlRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "candidateRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "requiredOutputCount": 50,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 6,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 119506,
+      "candidateDurationMs": 112704,
+      "savedMs": 6802,
+      "controlRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "candidateRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "requiredOutputCount": 50,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 7,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 119760,
+      "candidateDurationMs": 117642,
+      "savedMs": 2118,
+      "controlRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "candidateRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "requiredOutputCount": 50,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 8,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 118918,
+      "candidateDurationMs": 116039,
+      "savedMs": 2879,
+      "controlRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "candidateRequiredOutputSha256": "9d126dfcc8bd306432bf49242d8886013ab725c6d2687d891d43b7f2b92de030",
+      "requiredOutputCount": 50,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    }
+  ],
+  "fallback": {
+    "mode": "FULL_GRAPH",
+    "reason": "ORDINARY_FULL_GRAPH_CONTROLS_SUCCEEDED",
+    "buildSuccessful": true
+  },
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 122044.125,
+    "candidateMeanMs": 119333.125,
+    "meanSavedMs": 2711,
+    "reductionRatio": 0.022213277369967626,
+    "interval95SavedMs": [
+      -1124,
+      7329.875
+    ],
+    "positivePairs": 5,
+    "qualified": false,
+    "decision": "RETAIN_NATIVE_GRADLE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

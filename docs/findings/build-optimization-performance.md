@@ -785,6 +785,16 @@ like two producer boundaries, but it lacks the complete producer inventory for
 that exact revision. It is therefore repairable diagnostic evidence, not a
 filtered pack, selected replay or new performance result.
 
+The corrected OpenTelemetry replay then exercises the ownership result through
+the complete installed candidate path. It reduces 1,027 projects to 8,
+materializes one 2,709-byte class file and preserves all 50 required outputs in
+8/8 control/candidate pairs. The mean falls from 122,044.125 ms to 119,333.125
+ms, saving 2,711 ms/**2.22%**, and p95 improves by 9,538 ms. The robust gate
+still rejects it: only 5/8 pairs improve and the saved-time interval is
+-1,124..+7,329.875 ms. No profile or pack is published and no descendant is
+timed. This distinguishes a corrected functional path from a proven economic
+win and leaves the broader cross-commit claim unchanged.
+
 ## Open Questions
 
 - Can descendant discovery preregister a refresh followed by a structurally

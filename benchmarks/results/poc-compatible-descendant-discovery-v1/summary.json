@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-compatible-descendant-discovery/v1",
+  "workItem": "POC-COMPATIBLE-DESCENDANT-DISCOVERY-001",
+  "capturedAt": "2026-08-22T19:33:18Z",
+  "buildopt": {
+    "revision": "71d014b404e0be7587c51caa707980cd1e296c63",
+    "executableSha256": "6530559ecb8c14a1897b667afbb953b4583d1df0453d25389fa392ef4180f3d8"
+  },
+  "subject": {
+    "repository": "open-telemetry/opentelemetry-java-instrumentation",
+    "workflow": "instrumentation/jmx-metrics testClasses",
+    "parentRevision": "0ae4cc70d2c2a2bd02f71a33f90b80db7e65ef99",
+    "targetRevision": "dc7e94b40f1b86a19ec3449d895e80ff3c5754a4",
+    "changeFamily": "MIXED_SOURCE",
+    "effectiveChangedPathCount": 3,
+    "ignoredWorkflowInputPaths": [
+      "CHANGELOG.md"
+    ]
+  },
+  "discovery": {
+    "totalProjects": 1027,
+    "selectedProjects": 8,
+    "omittedProjects": 1019,
+    "candidateEntrypoints": [
+      ":instrumentation:jmx-metrics:library:testClasses"
+    ],
+    "materializedFileCount": 1,
+    "materializedBytes": 2709
+  },
+  "calibration": {
+    "pairs": 8,
+    "positivePairs": 5,
+    "controlMeanMs": 122044.125,
+    "candidateMeanMs": 119333.125,
+    "meanSavedMs": 2711,
+    "reductionRatio": 0.022213277369967626,
+    "controlP95Ms": 134773,
+    "candidateP95Ms": 125235,
+    "interval95SavedMs": [
+      -1124,
+      7329.875
+    ],
+    "requiredOutputCount": 50,
+    "exactOutputPairs": 8,
+    "qualified": false,
+    "fallbackSuccessful": true,
+    "decision": "CALIBRATION_VALUE_NOT_PROVEN"
+  },
+  "sourceEvidence": {
+    "resultFile": "opentelemetry-jmx-metrics/result.json",
+    "resultSha256": "ea2ad5aabdf6b5fc959115de000b71556aa1aa91508b5b9759f6c05adc8e305d",
+    "captureFile": "opentelemetry-jmx-metrics/qualification-capture.json",
+    "captureSha256": "ce6e394abf345ff4843b440e56155ef92f915798093939d7d83bc1c7d326060d",
+    "calibrationEvidenceFile": "opentelemetry-jmx-metrics/calibration-evidence.json",
+    "calibrationEvidenceSha256": "54790278a23c0ad72fe6b0d7c5a7bbc6578ea1e02f89fe1ef9df15b9ce19600e"
+  },
+  "decision": "WINDOW_REJECTED_BEFORE_DESCENDANT",
+  "nextWork": "POC-PRODUCER-BOUND-QUARANTINE-REPLAY-001",
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRules": false,
+    "claimBroadened": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

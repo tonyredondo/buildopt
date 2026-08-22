@@ -68,22 +68,23 @@ not averaged and mechanism percentages are not added. These runs used the
 12-CPU development host with a common 12-worker cap.
 
 The unchanged breadth replication then tested three non-Kafka subjects. Spring
-root `classes` lost 206 ms/0.91% with only 1/8 positive pairs. OpenTelemetry JMX
-retained native before calibration because its public change mixed three owned
-JMX paths with an unowned root changelog. Spring JMS calibrated 2.590 seconds/
-11.43% faster with 8/8 positive pairs, but independent native roots produced 14
-different class files out of 8,385 outputs, so no profile was transported or
-replayed. The terminal total is **3 subjects, 1 positive calibration, 0 portable
-profiles, 0 selected replays and 0 product failures**. The Kafka-only value claim
-therefore does not broaden.
+root `classes` lost 206 ms/0.91% with only 1/8 positive pairs. Spring JMS
+calibrated 2.590 seconds/11.43% faster with 8/8 positive pairs, but independent
+native roots produced 14 different class files out of 8,385 outputs, so no
+profile was transported or replayed. OpenTelemetry JMX initially retained
+native because its public change mixed three owned JMX paths with an unowned
+root changelog. The Kafka-only value claim therefore did not broaden.
 
-Workflow-input ownership now closes the OpenTelemetry discovery blocker without
-changing that performance conclusion. The same frozen JMX change observes all
-four changed paths: only unowned `CHANGELOG.md` has zero consumers and is
-ignored; the JMX YAML and Java test are consumed, while the owned `jetty.md`
-remains relevant. Discovery completes from 1,027 to 8 projects with zero product
-failures. Calibration is skipped, so this is structural evidence rather than a
-new wall-time result.
+Workflow-input ownership and effective-change replay now close the
+OpenTelemetry discovery blocker without weakening the value gate. The same
+frozen JMX change observes all four changed paths: only unowned `CHANGELOG.md`
+has zero consumers and is ignored; the JMX YAML and Java test are consumed,
+while the owned `jetty.md` remains relevant. Discovery completes from 1,027 to
+8 projects. All eight candidates run and preserve the same 50 required outputs,
+but the profile still retains native: 122.044-second control versus
+119.333-second candidate saves **2.711 seconds / 2.22%**, with only 5/8 positive
+pairs and a **-1.124..+7.330-second** interval. No descendant is timed because
+the calibration value is not proven.
 
 Native-volatility quarantine now closes the mechanism gap exposed by Spring
 JMS. Two independent output observations are compared exactly; any differing
@@ -113,11 +114,11 @@ adds no replay or wall-time claim; the public experiment must be recaptured.
 
 ## Next steps
 
-1. Discover descendant windows structurally: preregister a refresh followed by
-   an omitted-owner change that can actually select the refreshed profile.
-2. Recapture complete producer-bound native observations during those windows,
-   apply the quarantine, rebuild volatile producers locally and measure the
-   resulting selected replay against optimized native Gradle.
+1. Recapture two complete producer-bound native observations for the strong
+   Spring JMS calibration and derive its quarantine before publishing a pack.
+2. Add every quarantined Gradle producer to the selected local rebuild, keep
+   only stable exact outputs in transport, and measure the preregistered
+   compatible descendant against optimized native Gradle.
 3. Broaden the value claim only after at least two non-Kafka subjects produce
    positive attributable selected replays with exact transported outputs.
 
@@ -128,6 +129,8 @@ adds no replay or wall-time claim; the public experiment must be recaptured.
 - [Machine-readable ownership summary](../../benchmarks/results/poc-workflow-input-ownership-v1/summary.json)
 - [Native-volatility quarantine result](../../benchmarks/results/poc-native-volatility-quarantine-v1/README.md)
 - [Machine-readable quarantine summary](../../benchmarks/results/poc-native-volatility-quarantine-v1/summary.json)
+- [Compatible descendant discovery result](../../benchmarks/results/poc-compatible-descendant-discovery-v1/README.md)
+- [Machine-readable compatible descendant summary](../../benchmarks/results/poc-compatible-descendant-discovery-v1/summary.json)
 - [Native-volatility quarantine protocol](../../specs/poc-native-volatility-quarantine-v1.md)
 - [Workflow-input ownership protocol](../../specs/poc-workflow-input-ownership-v1.md)
 - [Machine-readable recovery summary](../../benchmarks/results/poc-cross-commit-value-recovery-v1/summary.json)

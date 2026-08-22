@@ -767,6 +767,17 @@ revision did not retain a complete producer inventory. Therefore the checker
 does not authorize a filtered public pack, selected replay or wall-time claim.
 Normal CI executes only this bounded fixture and evidence validation.
 
+Validate the corrected OpenTelemetry effective-change replay and its terminal
+economic rejection without rerunning the 17 public-repository builds:
+
+```bash
+./dev/check-compatible-descendant-discovery
+```
+
+The checker binds the raw capture and calibration evidence, requires all eight
+50-output pairs to be exact, and confirms that 5/8 with an interval crossing
+zero retains native before any descendant timing.
+
 Reproduce the incremental-learning transaction with one exact installed
 binary and validate its checked evidence with:
 

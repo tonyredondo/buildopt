@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [EVIDENCE_ROOT]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence_root=${1:-"${buildopt_repo_root}/benchmarks/results/poc-compatible-descendant-discovery-v1"}
+buildopt_summary=${buildopt_evidence_root}/summary.json
+buildopt_subject=${buildopt_evidence_root}/opentelemetry-jmx-metrics
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'compatible descendant validation requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+for buildopt_file in "${buildopt_summary}" "${buildopt_subject}/result.json" \
+    "${buildopt_subject}/qualification-capture.json" \
+    "${buildopt_subject}/calibration-evidence.json"; do
+    [[ -s ${buildopt_file} ]] || {
+        printf 'compatible descendant evidence is unavailable: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+for buildopt_kind in result capture calibrationEvidence; do
+    buildopt_relative=$(jq -er ".sourceEvidence.${buildopt_kind}File" "${buildopt_summary}")
+    buildopt_expected=$(jq -er ".sourceEvidence.${buildopt_kind}Sha256" "${buildopt_summary}")
+    buildopt_actual=$(sha256sum "${buildopt_evidence_root}/${buildopt_relative}" | awk '{print $1}')
+    [[ ${buildopt_actual} == "${buildopt_expected}" ]] || {
+        printf 'compatible descendant %s digest drifted\n' "${buildopt_kind}" >&2
+        exit 1
+    }
+done
+
+BUILDOPT_QUALIFIED_LIFETIME_SPEC="${buildopt_repo_root}/specs/poc-cross-commit-breadth-replication-v1.subjects.json" \
+    "${buildopt_script_dir}/check-qualified-lifetime-v2" \
+        "${buildopt_subject}/result.json" --subject >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-compatible-descendant-discovery/v1" and
+  .workItem == "POC-COMPATIBLE-DESCENDANT-DISCOVERY-001" and
+  .subject.repository == "open-telemetry/opentelemetry-java-instrumentation" and
+  .subject.changeFamily == "MIXED_SOURCE" and
+  .subject.effectiveChangedPathCount == 3 and
+  .subject.ignoredWorkflowInputPaths == ["CHANGELOG.md"] and
+  .discovery == {
+    totalProjects:1027,selectedProjects:8,omittedProjects:1019,
+    candidateEntrypoints:[":instrumentation:jmx-metrics:library:testClasses"],
+    materializedFileCount:1,materializedBytes:2709} and
+  .calibration.pairs == 8 and .calibration.positivePairs == 5 and
+  .calibration.requiredOutputCount == 50 and .calibration.exactOutputPairs == 8 and
+  .calibration.controlMeanMs == 122044.125 and
+  .calibration.candidateMeanMs == 119333.125 and
+  .calibration.meanSavedMs == 2711 and
+  .calibration.reductionRatio == 0.022213277369967626 and
+  .calibration.interval95SavedMs == [-1124,7329.875] and
+  (.calibration.qualified | not) and .calibration.fallbackSuccessful and
+  .calibration.decision == "CALIBRATION_VALUE_NOT_PROVEN" and
+  .decision == "WINDOW_REJECTED_BEFORE_DESCENDANT" and
+  .nextWork == "POC-PRODUCER-BOUND-QUARANTINE-REPLAY-001" and
+  .boundaries == {
+    proofOfConcept:true,productionAuthorized:false,
+    repositorySpecificProductRules:false,claimBroadened:false,
+    soakRequired:false,designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_summary}" >/dev/null
+
+jq -e '
+  .result.pairs == 8 and .result.positivePairs == 5 and
+  .result.controlMeanMs == 122044.125 and
+  .result.candidateMeanMs == 119333.125 and
+  .result.meanSavedMs == 2711 and
+  .result.interval95SavedMs == [-1124,7329.875] and
+  (.result.qualified | not) and .result.decision == "RETAIN_NATIVE_GRADLE" and
+  ([.observations[] | select(
+    .requiredOutputCount == 50 and
+    .controlRequiredOutputSha256 == .candidateRequiredOutputSha256 and
+    (.productAttributableFailure | not))] | length) == 8 and
+  .fallback.buildSuccessful
+' "${buildopt_subject}/calibration-evidence.json" >/dev/null
+
+printf 'Compatible descendant discovery OK: OpenTelemetry 1027->8, 50 exact outputs, 5/8 and interval crosses zero; native retained\n'

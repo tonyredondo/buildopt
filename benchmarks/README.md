@@ -201,6 +201,13 @@ existing observations associate those patterns with two producers. The exact
 revision did not retain the complete producer-bound output set, so no filtered
 pack, selected replay or new performance result is claimed.
 
+The [compatible descendant discovery result](./results/poc-compatible-descendant-discovery-v1/README.md)
+reruns the frozen OpenTelemetry JMX window after the ownership correction. The
+candidate is functionally correct in 8/8 pairs and reduces 1,027 projects to 8,
+but its 2.22% mean saving has only 5/8 positive pairs and a saved-time interval
+that crosses zero. The profile remains unpublished and the Kafka-only
+cross-commit value claim is not broadened.
+
 The preceding [automatic breadth V2 result](./results/poc-automatic-breadth-transfer-v2/README.md)
 is retained as immutable before-evidence; it qualified 4/5 and exposed the
 learning/materialization cost addressed by this follow-up.

@@ -335,14 +335,20 @@ weakening correctness or adding repository-specific rules:
     frozen Spring JMS finding remains diagnostic because its exact revision did
     not retain a complete producer inventory; no replay or timing claim is added.
 
+11. **Completed:** rerun the frozen OpenTelemetry JMX window after persisting
+    only workflow-relevant changed paths. Discovery completes 1,027->8 and all
+    eight candidates preserve 50 exact outputs, but only 5/8 pairs improve. The
+    2.22% mean saving has a -1.124..+7.330-second interval, so native is retained
+    before descendant timing.
+
 
 The next onboarding work addresses the generic blockers exposed by that
 replication rather than adding repository exceptions:
 
-1. preregister descendant windows whose refresh and omitted-owner replay are
-   structurally compatible before timing; and
-2. recapture complete producer-bound native observations in those windows and
-   measure the quarantine-enabled replay against optimized native Gradle; and
+1. recapture complete producer-bound native observations for the strong Spring
+   JMS window;
+2. quarantine volatile producers, rebuild them locally and measure the
+   compatible descendant against optimized native Gradle; and
 3. broaden the POC claim only after at least two non-Kafka subjects produce
    positive attributable selected replays.
 
@@ -357,6 +363,9 @@ The completed ownership result is in
 
 The completed quarantine mechanism is in
 [native-volatility quarantine v1](../../benchmarks/results/poc-native-volatility-quarantine-v1/README.md).
+
+The rejected first compatible window is in
+[compatible descendant discovery v1](../../benchmarks/results/poc-compatible-descendant-discovery-v1/README.md).
 
 
 No step may add repository-name rules, average repository percentages, weaken
