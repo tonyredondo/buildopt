@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_subjects=${buildopt_repo_root}/specs/poc-cross-commit-breadth-spring-jms-v1.subjects.json
+
+export BUILDOPT_AUTOMATIC_BREADTH_PROTOCOL=v4
+export BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_FILE=${buildopt_subjects}
+export BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256
+BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256=$(sha256sum "${buildopt_subjects}" | awk '{print $1}')
+
+exec "${buildopt_script_dir}/run-automatic-breadth-transfer" "$@"

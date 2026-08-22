@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "buildopt.poc/producer-bound-quarantine-replay-contract/v1",
+  "workItem": "POC-PRODUCER-BOUND-QUARANTINE-REPLAY-001",
+  "decision": "MEASURE_FILTERED_TRANSPORT_WITH_LOCAL_NATIVE_REBUILD",
+  "frozenSubjects": {
+    "path": "specs/poc-cross-commit-breadth-spring-jms-v1.subjects.json",
+    "sha256": "ada79285769acde4a5297c994e75d102bb7f5461c42a702f9dc83af1e02de2e7",
+    "opentelemetryEntrypointsPath": "specs/poc-otel-spring-family-v2.tasks.txt",
+    "opentelemetryEntrypointsSha256": "3a93d45f268589448baa5e5fd3c8055634ee4a4d7af685c7851c59dbec13ff0f",
+    "repositoryCount": 1
+  },
+  "customerPath": {
+    "command": "buildopt optimize <existing Gradle workflow>",
+    "installedPackage": true,
+    "freshPublicCheckout": true,
+    "manualBuildOptFiles": 0,
+    "ordinaryInvocations": 18,
+    "measurementOnlyWorkflowRuns": 0,
+    "cleanWorkspaceBeforeEveryInvocation": true,
+    "calibrationPairs": 8,
+    "maximumBreakEvenBuilds": 30
+  },
+  "method": {
+    "firstObservation": "INITIAL_OPTIMIZED_NATIVE_BUILD_PRODUCER_BOUND_PACK",
+    "secondObservation": "INDEPENDENT_NATIVE_ROOT_WITH_BUILD_CACHE_DISABLED",
+    "quarantineBoundary": "COMPLETE_GRADLE_PRODUCER",
+    "transportedOutputs": "EXACT_SHA256_REQUIRED",
+    "quarantinedOutputs": "REBUILT_LOCALLY_AND_REQUIRED_TO_EXIST",
+    "calibration": "RESET_AFTER_QUARANTINE_AND_REMEASURE_END_TO_END",
+    "fullGraphFallbackRequiredForAnyCandidate": true,
+    "repositoryNameRulesAllowed": false,
+    "filenameOrExtensionRulesAllowed": false
+  },
+  "acceptance": {
+    "independentNativePathSetExact": true,
+    "producerAttributionComplete": true,
+    "volatileProducerOutputsExcludedFromTransport": true,
+    "quarantinedProducerTasksAddedToCandidate": true,
+    "stableTransportedOutputsExactAcrossEveryPair": true,
+    "quarantinedOutputsRebuiltAcrossEveryPair": true,
+    "postQuarantinePerformanceReportedEvenWhenNegative": true,
+    "zeroProductAttributableFailures": true,
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false
+  },
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "minimumFreeDiskBytesBeforeSubject": 8589934592,
+    "perInvocationTimeoutSeconds": 1800,
+    "sequentialAndRestartableByRepository": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticActivationOutsideOwnerCommand": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}
