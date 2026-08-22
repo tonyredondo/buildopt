@@ -159,7 +159,7 @@ func (run *optimizeRun) prepareOutputObservation() error {
 	if err != nil {
 		return fmt.Errorf("encode ordinary output observation entrypoints: %w", err)
 	}
-	impact, err := buildimpact.PrepareInlineObservation(directory, run.invocation.discovery.Entrypoints)
+	impact, err := buildimpact.PrepareInlineObservation(directory, run.invocation.discovery.Entrypoints, run.invocation.discovery.changedPaths)
 	if err != nil {
 		return err
 	}
@@ -179,7 +179,11 @@ func (run *optimizeRun) augmentGradleOutputObservation(invocation *gradleInvocat
 		"--init-script", run.outputObservation.initPath,
 		"--init-script", run.outputObservation.impact.InitPath)
 	childArgs = append(childArgs, invocation.childArgs[1:]...)
-	invocation.childArgs = append(childArgs, "buildoptOutputContract", "buildoptImpactDiscovery")
+	// Finalized provider-backed inputs require the requested tasks to finish.
+	// Disable Configuration Cache only for this one-time observation; measured
+	// native and candidate executions retain the owner's normal cache behavior.
+	invocation.childArgs = append(childArgs, "--no-configuration-cache",
+		"buildoptOutputContract", "buildoptImpactDiscovery")
 	if invocation.environment == nil {
 		invocation.environment = make(map[string]string)
 	}
@@ -188,6 +192,8 @@ func (run *optimizeRun) augmentGradleOutputObservation(invocation *gradleInvocat
 	invocation.environment["BUILDOPT_IMPACT_DISCOVERY_OUTPUT"] = run.outputObservation.impact.OutputPath
 	invocation.environment["BUILDOPT_IMPACT_ENTRYPOINTS"] = run.outputObservation.impact.EntrypointsJSON
 	invocation.environment["BUILDOPT_IMPACT_DISCOVERY_INLINE"] = "1"
+	invocation.environment["BUILDOPT_IMPACT_WORKFLOW_INPUTS_OUTPUT"] = run.outputObservation.impact.WorkflowInputPath
+	invocation.environment["BUILDOPT_IMPACT_CHANGED_PATHS"] = run.outputObservation.impact.ChangedPathsJSON
 }
 
 func (run *optimizeRun) observedImpactSnapshot() (*buildimpact.DiscoverySnapshot, error) {
@@ -204,6 +210,19 @@ func (run *optimizeRun) observedImpactSnapshot() (*buildimpact.DiscoverySnapshot
 	return &snapshot, nil
 }
 
+func (run *optimizeRun) observedWorkflowInputRelevance() (*buildimpact.WorkflowInputRelevance, error) {
+	if run.outputObservation == nil {
+		return nil, errors.New("inline workflow-input observation was not prepared")
+	}
+	observation, err := buildimpact.ReadWorkflowInputRelevance(
+		run.outputObservation.impact,
+		run.invocation.discovery.changedPaths,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &observation, nil
+}
 func (run *optimizeRun) observedOutputSnapshot() (*outputContractSnapshot, error) {
 	if run.outputObservation == nil {
 		return nil, errors.New("ordinary output observation was not prepared")
@@ -226,6 +245,7 @@ func (run *optimizeRun) cleanupOutputObservation() {
 	_ = os.Remove(run.outputObservation.snapshotPath)
 	_ = os.Remove(run.outputObservation.initPath)
 	_ = os.Remove(run.outputObservation.impact.OutputPath)
+	_ = os.Remove(run.outputObservation.impact.WorkflowInputPath)
 	_ = os.Remove(run.outputObservation.impact.InitPath)
 	_ = os.Remove(run.outputObservation.directory)
 }

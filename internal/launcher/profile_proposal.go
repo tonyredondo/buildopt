@@ -229,6 +229,7 @@ type structuralProposalConfig struct {
 	observedOutputSnapshot                                           *outputContractSnapshot
 	observedImpactSnapshot                                           *buildimpact.DiscoverySnapshot
 	candidateOwnerProjects                                           map[string]bool
+	workflowIgnoredPaths                                             []string
 }
 
 func prepareStructuralProfileProposal(ctx context.Context, config structuralProposalConfig) (profileProposalReport, map[string][]byte, error) {
@@ -424,7 +425,8 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 		}
 		return report, documents, nil
 	}
-	if _, err := buildimpact.ResolveProjectOwners(snapshot, changedPaths); err != nil {
+	ownershipPaths := optimizeWorkflowRelevantPaths(changedPaths, config.workflowIgnoredPaths)
+	if _, err := buildimpact.ResolveProjectOwners(snapshot, ownershipPaths); err != nil {
 		report.Reason = "SOURCE_OWNERSHIP_AMBIGUOUS"
 		return report, documents, nil
 	}

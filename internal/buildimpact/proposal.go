@@ -15,30 +15,7 @@ func ResolveProjectOwners(snapshot DiscoverySnapshot, changedPaths []string) ([]
 	}
 	owners := map[string]bool{}
 	for _, changedPath := range changedPaths {
-		bestSpecificity := -1
-		matches := map[string]bool{}
-		for _, project := range snapshot.Projects {
-			projectSpecificity := -1
-			sourcePaths := project.SourcePaths
-			if len(project.OwnedSourcePaths) != 0 {
-				sourcePaths = project.OwnedSourcePaths
-			}
-			for _, sourcePath := range sourcePaths {
-				if matchRepositoryGlob(sourcePath, changedPath) {
-					projectSpecificity = max(projectSpecificity, repositoryGlobSpecificity(sourcePath))
-				}
-			}
-			if projectSpecificity < 0 {
-				continue
-			}
-			if projectSpecificity > bestSpecificity {
-				matches = map[string]bool{}
-				bestSpecificity = projectSpecificity
-			}
-			if projectSpecificity == bestSpecificity {
-				matches[project.Path] = true
-			}
-		}
+		matches := matchingProjectOwners(snapshot, changedPath)
 		if len(matches) != 1 {
 			return nil, errors.New("changed path has missing or ambiguous Gradle project ownership")
 		}

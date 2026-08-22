@@ -91,6 +91,7 @@ type optimizeDiscoveryResult struct {
 	Materialization      optimizeOutputMaterialization `json:"materialization"`
 	ChangeFamily         string                        `json:"changeFamily"`
 	ChangedProjects      []string                      `json:"changedProjects"`
+	WorkflowIgnoredPaths []string                      `json:"workflowIgnoredPaths"`
 	Graph                optimizeDiscoveryGraph        `json:"graph"`
 	GeneratedFiles       []string                      `json:"generatedFiles"`
 	ReviewRequired       bool                          `json:"reviewRequired"`
@@ -113,7 +114,7 @@ func retainedOptimizeDiscovery(invocation optimizeInvocation, reason string) opt
 		ChangedPathCount: invocation.discovery.ChangedPathCount,
 		Entrypoints:      append([]string(nil), invocation.discovery.Entrypoints...),
 		RequiredOutputs:  []string{}, CandidateOutputs: []string{}, CandidateEntrypoints: []string{},
-		ChangedProjects: []string{}, GeneratedFiles: []string{},
+		ChangedProjects: []string{}, WorkflowIgnoredPaths: []string{}, GeneratedFiles: []string{},
 		ReviewRequired: true, ProductionAuthorized: false,
 		TestOptimization: "OUT_OF_SCOPE",
 	}
@@ -427,8 +428,15 @@ func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int,
 		_, _ = fmt.Fprintf(diagnostics, "buildopt: inline impact discovery unavailable: %v\n", impactErr)
 		return result
 	}
+	observedInputs, inputErr := run.observedWorkflowInputRelevance()
+	if inputErr != nil {
+		result.Status = optimizeDiscoveryRetained
+		result.Reason = "ORDINARY_WORKFLOW_INPUT_OBSERVATION_UNAVAILABLE"
+		_, _ = fmt.Fprintf(diagnostics, "buildopt: workflow-input discovery unavailable: %v\n", inputErr)
+		return result
+	}
 	discovered, documents, err := runAutomaticOptimizeDiscovery(
-		discoveryContext, run.invocation, observed, observedImpact,
+		discoveryContext, run.invocation, observed, observedImpact, observedInputs,
 	)
 	if err != nil {
 		result.Status = optimizeDiscoveryRetained
@@ -455,7 +463,7 @@ func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int,
 	return result
 }
 
-func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvocation, observed *outputContractSnapshot, observedImpact *buildimpact.DiscoverySnapshot) (optimizeDiscoveryResult, optimizeDiscoveryDocuments, error) {
+func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvocation, observed *outputContractSnapshot, observedImpact *buildimpact.DiscoverySnapshot, observedInputs *buildimpact.WorkflowInputRelevance) (optimizeDiscoveryResult, optimizeDiscoveryDocuments, error) {
 	discovery := invocation.discovery
 	result := optimizeDiscoveryResult{
 		Status: optimizeDiscoveryRetained, Reason: "NO_SAFE_STRUCTURAL_CANDIDATE",
@@ -463,7 +471,8 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		BaseRevision: discovery.BaseRevision, TargetRevision: discovery.TargetRevision,
 		ChangeSHA256: discovery.ChangeSHA256, ChangedPathCount: discovery.ChangedPathCount,
 		Entrypoints:     append([]string(nil), discovery.Entrypoints...),
-		RequiredOutputs: []string{}, CandidateOutputs: []string{}, CandidateEntrypoints: []string{}, ChangedProjects: []string{}, GeneratedFiles: []string{},
+		RequiredOutputs: []string{}, CandidateOutputs: []string{}, CandidateEntrypoints: []string{},
+		ChangedProjects: []string{}, WorkflowIgnoredPaths: []string{}, GeneratedFiles: []string{},
 		ReviewRequired: true, ProductionAuthorized: false, TestOptimization: "OUT_OF_SCOPE",
 	}
 	if head, err := gitOutput(invocation.repositoryRoot, "rev-parse", "HEAD"); err != nil || strings.TrimSpace(head) != discovery.TargetRevision {
@@ -513,14 +522,26 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 			return result, optimizeDiscoveryDocuments{}, nil
 		}
 	}
-	changedOwners, err := buildimpact.ResolveProjectOwners(snapshot, discovery.changedPaths)
-	if err != nil {
-		result.Reason = "SOURCE_OWNERSHIP_AMBIGUOUS"
-		return result, optimizeDiscoveryDocuments{}, nil
+	changedOwners, ownerErr := buildimpact.ResolveProjectOwners(snapshot, discovery.changedPaths)
+	ignoredPaths := []string{}
+	if ownerErr != nil {
+		if observedInputs == nil {
+			result.Reason = "SOURCE_OWNERSHIP_AMBIGUOUS"
+			return result, optimizeDiscoveryDocuments{}, nil
+		}
+		changedOwners, ignoredPaths, ownerErr = buildimpact.ResolveWorkflowProjectOwners(
+			snapshot, *observedInputs, discovery.changedPaths,
+		)
+		if ownerErr != nil {
+			result.Reason = "SOURCE_OWNERSHIP_AMBIGUOUS"
+			return result, optimizeDiscoveryDocuments{}, nil
+		}
 	}
+	relevantPaths := optimizeWorkflowRelevantPaths(discovery.changedPaths, ignoredPaths)
 	affected := optimizeAffectedProjects(snapshot, changedOwners)
-	result.ChangeFamily = optimizeChangeFamily(snapshot, discovery.changedPaths, changedOwners)
+	result.ChangeFamily = optimizeChangeFamily(snapshot, relevantPaths, changedOwners)
 	result.ChangedProjects = append([]string(nil), changedOwners...)
+	result.WorkflowIgnoredPaths = append([]string(nil), ignoredPaths...)
 	workflowPatterns := optimizeRequiredOutputPatterns(outputReport.CandidateOutputs, discovery.Entrypoints, nil)
 	partition, candidatePatterns, candidateOwners, partitionReason := optimizeAggregateWorkflowPartition(
 		outputReport,
@@ -555,6 +576,7 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		observedOutputSnapshot: &outputReport.snapshot,
 		observedImpactSnapshot: observedImpact,
 		candidateOwnerProjects: candidateOwners,
+		workflowIgnoredPaths:   append([]string(nil), ignoredPaths...),
 	}
 	report, documents, err := prepareStructuralProfileProposal(ctx, config)
 	if err != nil {
@@ -589,6 +611,20 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		result.Reason = optimizeDiscoveryReasonFound
 	}
 	return result, optimizeDiscoveryDocuments{values: documents}, nil
+}
+
+func optimizeWorkflowRelevantPaths(changedPaths, ignoredPaths []string) []string {
+	ignored := make(map[string]bool, len(ignoredPaths))
+	for _, path := range ignoredPaths {
+		ignored[path] = true
+	}
+	relevant := make([]string, 0, len(changedPaths))
+	for _, path := range changedPaths {
+		if !ignored[path] {
+			relevant = append(relevant, path)
+		}
+	}
+	return relevant
 }
 
 func optimizeChangeFamily(snapshot buildimpact.DiscoverySnapshot, changedPaths, owners []string) string {

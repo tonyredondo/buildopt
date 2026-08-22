@@ -40,6 +40,45 @@ buildopt_prepare_repository() {
     printf '.buildopt/\n**/build/\n' >"${buildopt_path}/.gitignore"
     sed -i 's/service-a-target/service-a-base/' \
         "${buildopt_path}/service-a/src/main/java/example/Application.java"
+    case ${buildopt_change} in
+        source-unowned | provider-unowned)
+            printf 'base notes\n' >"${buildopt_path}/NOTES.md"
+            if [[ ${buildopt_change} == provider-unowned ]]; then
+                printf '%s\n' \
+                    '' \
+                    "def buildoptProviderProducer = tasks.register('buildoptProviderProducer') {" \
+                    "    def generated = layout.buildDirectory.file('buildopt/provider-input.txt')" \
+                    "    outputs.file(generated)" \
+                    "    doLast {" \
+                    "        generated.get().asFile.parentFile.mkdirs()" \
+                    "        generated.get().asFile.text = 'provider-backed input'" \
+                    "    }" \
+                    "}" \
+                    "def buildoptMappedInput = buildoptProviderProducer.map {" \
+                    "    it.outputs.files.singleFile" \
+                    "}" \
+                    "def buildoptProviderConsumer = tasks.register('buildoptProviderConsumer') {" \
+                    "    dependsOn(buildoptProviderProducer)" \
+                    "    inputs.file(buildoptMappedInput)" \
+                    "    outputs.file(layout.buildDirectory.file('buildopt/provider-output.txt'))" \
+                    "    doLast { outputs.files.singleFile.text = inputs.files.singleFile.text }" \
+                    "}" \
+                    "project(':service-a') { tasks.named('jar') { dependsOn(buildoptProviderConsumer) } }" \
+                    >>"${buildopt_path}/build.gradle"
+            fi
+            ;;
+        deleted-unowned)
+            printf 'base deletion\n' >"${buildopt_path}/DELETED.md"
+            ;;
+        consumed-unowned)
+            printf 'base input\n' >"${buildopt_path}/shared-input.txt"
+            printf '%s\n' \
+                '' \
+                "project(':service-a') {" \
+                "    tasks.named('jar') { inputs.file(rootProject.file('shared-input.txt')) }" \
+                '}' >>"${buildopt_path}/build.gradle"
+            ;;
+    esac
     git -C "${buildopt_path}" init -qb main
     git -C "${buildopt_path}" config user.name 'BuildOpt Fixture'
     git -C "${buildopt_path}" config user.email buildopt-fixture@example.invalid
@@ -52,11 +91,22 @@ buildopt_prepare_repository() {
         git -C "${buildopt_path}" config branch.feature.merge refs/heads/main
     fi
     case ${buildopt_change} in
-        source | no-upstream)
+        source | no-upstream | source-unowned | provider-unowned | deleted-unowned | consumed-unowned)
             sed -i 's/service-a-base/service-a-target/' \
                 "${buildopt_path}/service-a/src/main/java/example/Application.java"
             git -C "${buildopt_path}" add \
                 service-a/src/main/java/example/Application.java
+            if [[ ${buildopt_change} == source-unowned ||
+                ${buildopt_change} == provider-unowned ]]; then
+                printf 'target notes\n' >"${buildopt_path}/NOTES.md"
+                git -C "${buildopt_path}" add NOTES.md
+            elif [[ ${buildopt_change} == deleted-unowned ]]; then
+                rm -- "${buildopt_path}/DELETED.md"
+                git -C "${buildopt_path}" add -u DELETED.md
+            elif [[ ${buildopt_change} == consumed-unowned ]]; then
+                printf 'target input\n' >"${buildopt_path}/shared-input.txt"
+                git -C "${buildopt_path}" add shared-input.txt
+            fi
             ;;
         global)
             printf '\n// automatic-discovery global-change fixture\n' \
@@ -171,6 +221,52 @@ buildopt_check_supported distribution distZip \
     'service-a/build/distributions/'
 buildopt_check_supported test-preparation testClasses \
     'service-a/build/classes/java/test/'
+buildopt_mixed="${buildopt_temp}/mixed-unowned"
+buildopt_prepare_repository "${buildopt_mixed}" source-unowned
+buildopt_run_optimize "${buildopt_mixed}" mixed-unowned jar
+jq -e '
+    .outcome == "LEARNING" and
+    .reason == "CALIBRATION_PAIR_BUDGET_INSUFFICIENT" and
+    .discovery.status == "COMPLETE" and
+    .discovery.changedPathCount == 2 and
+    .discovery.changedProjects == [":service-a"] and
+    .discovery.workflowIgnoredPaths == ["NOTES.md"] and
+    .discovery.graph == {totalProjects: 2, selectedProjects: 1, omittedProjects: 1}
+' "${buildopt_mixed}/.buildopt/optimize/mixed-unowned/result.json" >/dev/null
+buildopt_provider="${buildopt_temp}/provider-unowned"
+buildopt_prepare_repository "${buildopt_provider}" provider-unowned
+buildopt_run_optimize "${buildopt_provider}" provider-unowned jar
+jq -e '
+    .outcome == "LEARNING" and
+    .reason == "CALIBRATION_PAIR_BUDGET_INSUFFICIENT" and
+    .discovery.status == "COMPLETE" and
+    .discovery.changedPathCount == 2 and
+    .discovery.changedProjects == [":service-a"] and
+    .discovery.workflowIgnoredPaths == ["NOTES.md"] and
+    .discovery.graph == {totalProjects: 2, selectedProjects: 1, omittedProjects: 1}
+' "${buildopt_provider}/.buildopt/optimize/provider-unowned/result.json" >/dev/null
+
+buildopt_consumed="${buildopt_temp}/consumed-unowned"
+buildopt_prepare_repository "${buildopt_consumed}" consumed-unowned
+buildopt_run_optimize "${buildopt_consumed}" consumed-unowned jar
+jq -e '
+    .outcome == "NATIVE_RETAINED" and
+    .reason == "SOURCE_OWNERSHIP_AMBIGUOUS" and
+    .discovery.status == "NATIVE_RETAINED" and
+    .discovery.workflowIgnoredPaths == [] and
+    .discovery.generatedFiles == []
+' "${buildopt_consumed}/.buildopt/optimize/consumed-unowned/result.json" >/dev/null
+buildopt_deleted="${buildopt_temp}/deleted-unowned"
+buildopt_prepare_repository "${buildopt_deleted}" deleted-unowned
+buildopt_run_optimize "${buildopt_deleted}" deleted-unowned jar
+jq -e '
+    .outcome == "NATIVE_RETAINED" and
+    .reason == "SOURCE_OWNERSHIP_AMBIGUOUS" and
+    .discovery.status == "NATIVE_RETAINED" and
+    .discovery.workflowIgnoredPaths == [] and
+    .discovery.generatedFiles == []
+' "${buildopt_deleted}/.buildopt/optimize/deleted-unowned/result.json" >/dev/null
+
 
 buildopt_run_optimize "${buildopt_repository}" packaging jar
 jq -e '
@@ -213,4 +309,4 @@ jq -e '
     .discovery.generatedFiles == []
 ' "${buildopt_ambiguous}/.buildopt/optimize/ambiguous/result.json" >/dev/null
 
-printf 'Magic automatic discovery OK: four workflow families discovered; unsupported, global and ambiguous cases retained native Gradle\n'
+printf 'Magic automatic discovery OK: four workflow families and complete workflow-input ownership; consumed, deleted, unsupported, global and ambiguous cases retained native Gradle\n'

@@ -99,16 +99,26 @@ type ObservationOptions struct {
 // InlineObservation describes a graph snapshot collected by the owner's
 // useful Gradle invocation instead of a second configuration-only build.
 type InlineObservation struct {
-	InitPath        string
-	OutputPath      string
-	EntrypointsJSON string
+	InitPath          string
+	OutputPath        string
+	EntrypointsJSON   string
+	WorkflowInputPath string
+	ChangedPathsJSON  string
 }
 
 // PrepareInlineObservation writes the same fail-closed discovery init script
 // used by ObserveGradle, configured to preserve and share the owner's task work.
-func PrepareInlineObservation(directory string, entrypoints []string) (InlineObservation, error) {
+func PrepareInlineObservation(directory string, entrypoints, changedPaths []string) (InlineObservation, error) {
 	if err := validateEntrypoints(entrypoints); err != nil {
 		return InlineObservation{}, fmt.Errorf("invalid inline discovery entrypoints: %w", err)
+	}
+	if len(changedPaths) == 0 || len(changedPaths) > maximumWorkflowInputPaths || !uniqueStrings(changedPaths) {
+		return InlineObservation{}, errors.New("inline discovery changed paths are invalid")
+	}
+	for _, path := range changedPaths {
+		if !validRepositoryPath(path) {
+			return InlineObservation{}, errors.New("inline discovery changed path is unsafe")
+		}
 	}
 	if err := os.MkdirAll(directory, 0o700); err != nil {
 		return InlineObservation{}, fmt.Errorf("create inline discovery directory: %w", err)
@@ -117,15 +127,22 @@ func PrepareInlineObservation(directory string, entrypoints []string) (InlineObs
 	if err != nil {
 		return InlineObservation{}, fmt.Errorf("encode inline discovery entrypoints: %w", err)
 	}
+	changedPathJSON, err := json.Marshal(changedPaths)
+	if err != nil {
+		return InlineObservation{}, fmt.Errorf("encode inline discovery changed paths: %w", err)
+	}
 	observation := InlineObservation{
-		InitPath:        filepath.Join(directory, "impact-discovery.init.gradle"),
-		OutputPath:      filepath.Join(directory, "impact-snapshot.json"),
-		EntrypointsJSON: string(entrypointJSON),
+		InitPath:          filepath.Join(directory, "impact-discovery.init.gradle"),
+		OutputPath:        filepath.Join(directory, "impact-snapshot.json"),
+		EntrypointsJSON:   string(entrypointJSON),
+		WorkflowInputPath: filepath.Join(directory, "workflow-inputs.json"),
+		ChangedPathsJSON:  string(changedPathJSON),
 	}
 	if err := os.WriteFile(observation.InitPath, discoveryInitScript, 0o600); err != nil {
 		return InlineObservation{}, fmt.Errorf("write inline discovery init script: %w", err)
 	}
 	_ = os.Remove(observation.OutputPath)
+	_ = os.Remove(observation.WorkflowInputPath)
 	return observation, nil
 }
 
@@ -137,6 +154,16 @@ func ReadInlineObservation(observation InlineObservation, entrypoints []string) 
 	}
 	snapshot, _, err := parseDiscoverySnapshotForEntrypoints(raw, entrypoints, true)
 	return snapshot, err
+}
+
+// ReadWorkflowInputRelevance validates the changed-path evidence emitted beside
+// an inline task-graph observation.
+func ReadWorkflowInputRelevance(observation InlineObservation, changedPaths []string) (WorkflowInputRelevance, error) {
+	raw, err := os.ReadFile(observation.WorkflowInputPath)
+	if err != nil {
+		return WorkflowInputRelevance{}, fmt.Errorf("read workflow-input observation: %w", err)
+	}
+	return ParseWorkflowInputRelevance(raw, changedPaths)
 }
 
 // DeriveProjectEntrypoints creates conservative per-project lifecycle reaches

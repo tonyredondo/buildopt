@@ -40,6 +40,19 @@ gradle.projectsLoaded {
 gradle.projectsEvaluated {
     def outputPath = System.getenv("BUILDOPT_IMPACT_DISCOVERY_OUTPUT")
     def entrypointJSON = System.getenv("BUILDOPT_IMPACT_ENTRYPOINTS")
+    def workflowInputOutputPath = System.getenv("BUILDOPT_IMPACT_WORKFLOW_INPUTS_OUTPUT")
+    def changedPathJSON = System.getenv("BUILDOPT_IMPACT_CHANGED_PATHS")
+    if ((workflowInputOutputPath == null) != (changedPathJSON == null)) {
+        throw new GradleException("BuildOpt workflow-input discovery environment is incomplete")
+    }
+    def requestedChangedPaths = null
+    if (changedPathJSON != null) {
+        requestedChangedPaths = new JsonSlurper().parseText(changedPathJSON)
+        if (!(requestedChangedPaths instanceof List) || requestedChangedPaths.isEmpty() ||
+            requestedChangedPaths.any { !(it instanceof String) || it.isBlank() }) {
+            throw new GradleException("BuildOpt workflow-input discovery requires changed paths")
+        }
+    }
     if (outputPath == null || outputPath.isBlank() || entrypointJSON == null) {
         throw new GradleException("BuildOpt impact discovery environment is incomplete")
     }
@@ -110,6 +123,69 @@ gradle.projectsEvaluated {
         [(requested): matchingTasks]
     }
     def snapshot = null
+    def workflowAttributedTasks = null
+    def captureWorkflowInputSnapshot = { attributedTasks ->
+        if (requestedChangedPaths == null || attributedTasks == null) {
+            return null
+        }
+        def workflowRootPath = root.projectDir.toPath().toRealPath()
+        def workflowFallbackReasons = new TreeSet<String>()
+        def candidatePaths = new LinkedHashMap<String, java.nio.file.Path>()
+        requestedChangedPaths.each { relativePath ->
+            try {
+                def candidate = workflowRootPath.resolve(relativePath as String).normalize()
+                if (!candidate.startsWith(workflowRootPath) ||
+                    !java.nio.file.Files.exists(candidate, java.nio.file.LinkOption.NOFOLLOW_LINKS) ||
+                    !candidate.toRealPath().equals(candidate)) {
+                    workflowFallbackReasons.add("CHANGED_PATH_UNRESOLVED")
+                } else {
+                    candidatePaths.put(relativePath as String, candidate)
+                }
+            } catch (Exception ignored) {
+                workflowFallbackReasons.add("CHANGED_PATH_UNRESOLVED")
+            }
+        }
+        def consumersByPath = requestedChangedPaths.collectEntries {
+            [(it as String): new TreeSet<String>()]
+        }
+        // Provider-backed inputs are not guaranteed to be queryable while the
+        // graph is merely ready. Capture after the requested workflow completes,
+        // when producer outputs are available. NO-SOURCE tasks performed no work
+        // and therefore cannot consume a changed path in this invocation.
+        attributedTasks.findAll { !it.state.noSource }.each { task ->
+            try {
+                task.inputs.files.files.each { inputFile ->
+                    def inputPath = inputFile.toPath().toAbsolutePath().normalize()
+                    if (inputPath.startsWith(workflowRootPath) &&
+                        java.nio.file.Files.exists(inputPath, java.nio.file.LinkOption.NOFOLLOW_LINKS) &&
+                        !inputPath.toRealPath().equals(inputPath)) {
+                        workflowFallbackReasons.add("TASK_INPUT_SYMLINK_UNRESOLVED")
+                    } else {
+                        candidatePaths.each { relativePath, candidate ->
+                            if (inputPath.equals(candidate) ||
+                                (java.nio.file.Files.isDirectory(inputPath, java.nio.file.LinkOption.NOFOLLOW_LINKS) &&
+                                    candidate.startsWith(inputPath))) {
+                                consumersByPath[relativePath].add(task.path)
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ignored) {
+                workflowFallbackReasons.add("TASK_INPUTS_UNAVAILABLE")
+            }
+        }
+        [
+            schemaVersion: "buildopt.build-impact/workflow-input-relevance/v1",
+            complete: workflowFallbackReasons.isEmpty(),
+            fallbackReasons: workflowFallbackReasons as List,
+            paths: requestedChangedPaths.collect { relativePath ->
+                [
+                    path: relativePath,
+                    consumingTasks: consumersByPath[relativePath] as List,
+                ]
+            }.sort { left, right -> left.path <=> right.path },
+        ]
+    }
     def discoveryTask = root.tasks.register("buildoptImpactDiscovery") {
         group = "buildopt"
         description = "Emits a conservative BuildOpt project and task dependency snapshot"
@@ -121,6 +197,19 @@ gradle.projectsEvaluated {
             def output = new File(outputPath)
             output.parentFile.mkdirs()
             output.text = JsonOutput.toJson(snapshot) + "\n"
+        }
+    }
+    if (workflowInputOutputPath != null) {
+        discoveryTask.configure {
+            doLast {
+                def workflowInputSnapshot = captureWorkflowInputSnapshot(workflowAttributedTasks)
+                if (workflowInputSnapshot == null) {
+                    throw new GradleException("BuildOpt workflow-input snapshot is unavailable")
+                }
+                def workflowOutput = new File(workflowInputOutputPath)
+                workflowOutput.parentFile.mkdirs()
+                workflowOutput.text = JsonOutput.toJson(workflowInputSnapshot) + "\n"
+            }
         }
     }
     gradle.taskGraph.whenReady { graph ->
@@ -174,6 +263,9 @@ gradle.projectsEvaluated {
                 containsTestTasks: containsTests,
                 unknownRelationships: reachedProjects.isEmpty() || unknownRelationships,
             ]
+        }
+        if (workflowInputOutputPath != null) {
+            workflowAttributedTasks = List.copyOf(attributedTasks)
         }
         // Finalizers and other scheduled work that Gradle cannot attribute to
         // a requested task through TaskExecutionGraph dependencies make the
