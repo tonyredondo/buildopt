@@ -10,7 +10,7 @@ buildopt_result=$1
 buildopt_mode=${2:-summary}
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
-buildopt_spec=${buildopt_repo_root}/specs/poc-qualified-lifetime-v2.json
+buildopt_spec=${BUILDOPT_QUALIFIED_LIFETIME_SPEC:-${buildopt_repo_root}/specs/poc-qualified-lifetime-v2.json}
 
 for buildopt_command in git jq sha256sum; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
