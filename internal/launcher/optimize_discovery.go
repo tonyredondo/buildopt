@@ -588,7 +588,11 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 	}
 	documents[config.proposalOutput] = append(proposalRaw, '\n')
 	changesPath := filepath.Join(directory, "changes.txt")
-	documents[changesPath] = []byte(strings.Join(discovery.changedPaths, "\n") + "\n")
+	// Replay must consume the same effective change set that discovery used.
+	// Reintroducing paths proven unconsumed by the requested workflow would make
+	// the generic impact planner reject the already verified candidate as an
+	// unknown change.
+	documents[changesPath] = optimizeReplayChangedPaths(discovery.changedPaths, ignoredPaths)
 	paths := make([]string, 0, len(documents))
 	for path := range documents {
 		paths = append(paths, filepath.ToSlash(path))
@@ -625,6 +629,10 @@ func optimizeWorkflowRelevantPaths(changedPaths, ignoredPaths []string) []string
 		}
 	}
 	return relevant
+}
+
+func optimizeReplayChangedPaths(changedPaths, ignoredPaths []string) []byte {
+	return []byte(strings.Join(optimizeWorkflowRelevantPaths(changedPaths, ignoredPaths), "\n") + "\n")
 }
 
 func optimizeChangeFamily(snapshot buildimpact.DiscoverySnapshot, changedPaths, owners []string) string {

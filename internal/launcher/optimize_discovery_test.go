@@ -235,6 +235,26 @@ func TestOptimizeChangeFamilyUsesOnlyGraphAndChangedPaths(t *testing.T) {
 	}
 }
 
+func TestOptimizeWorkflowRelevantPathsPreservesVerifiedEffectiveChanges(t *testing.T) {
+	changed := []string{
+		"CHANGELOG.md",
+		"library/src/main/resources/rules.yaml",
+		"library/src/test/java/RulesTest.java",
+	}
+	ignored := []string{"CHANGELOG.md"}
+	want := []string{
+		"library/src/main/resources/rules.yaml",
+		"library/src/test/java/RulesTest.java",
+	}
+
+	if got := optimizeWorkflowRelevantPaths(changed, ignored); !reflect.DeepEqual(got, want) {
+		t.Fatalf("effective changed paths = %v, want %v", got, want)
+	}
+	if got := string(optimizeReplayChangedPaths(changed, ignored)); got != strings.Join(want, "\n")+"\n" {
+		t.Fatalf("replay changes = %q", got)
+	}
+}
+
 func TestInspectOptimizeDiscoveryContextUsesExactLocalUpstream(t *testing.T) {
 	repository := t.TempDir()
 	runOptimizeGit(t, repository, "init", "-b", "main")

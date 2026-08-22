@@ -99,12 +99,14 @@ fi
 }
 
 buildopt_subject_count=$(jq '.repositories | length' "${buildopt_subjects}")
+buildopt_expected_subject_count=${buildopt_subject_count}
 if [[ -n ${buildopt_subject_filter} ]]; then
     [[ $(jq --arg key "${buildopt_subject_filter}" \
         '[.repositories[] | select(.key == $key)] | length' "${buildopt_subjects}") -eq 1 ]] || {
         printf 'repository key is absent or ambiguous: %s\n' "${buildopt_subject_filter}" >&2
         exit 1
     }
+    buildopt_expected_subject_count=1
 fi
 mkdir -p -- "${buildopt_output}"
 
@@ -505,11 +507,15 @@ while IFS= read -r buildopt_key; do
         buildopt_capture_files+=("${buildopt_output}/${buildopt_key}/capture.json")
         buildopt_completed=$((buildopt_completed + 1))
     fi
-done < <(jq -r '.repositories[].key' "${buildopt_subjects}")
+done < <(
+    jq -r --arg key "${buildopt_subject_filter}" '
+      .repositories[] | select($key == "" or .key == $key) | .key
+    ' "${buildopt_subjects}"
+)
 
-if ((buildopt_completed != buildopt_subject_count)); then
+if ((buildopt_completed != buildopt_expected_subject_count)); then
     printf 'Automatic breadth subjects captured: %d/%d\n' \
-        "${buildopt_completed}" "${buildopt_subject_count}"
+        "${buildopt_completed}" "${buildopt_expected_subject_count}"
     exit 0
 fi
 
