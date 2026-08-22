@@ -236,8 +236,15 @@ buildopt_hash_required_outputs() {
     local buildopt_repository=$1
     local buildopt_patterns=$2
     local buildopt_manifest=$3
+    local buildopt_quarantine=${4:-}
     local buildopt_paths=${buildopt_manifest}.paths
+    local buildopt_complete_manifest=${buildopt_manifest}
+    local buildopt_quarantined_manifest=${buildopt_manifest}.quarantined
+    local buildopt_quarantined_paths=${buildopt_manifest}.quarantined.paths
     local buildopt_pattern buildopt_root buildopt_relative buildopt_mode buildopt_size
+    if [[ -n ${buildopt_quarantine} ]]; then
+        buildopt_complete_manifest=${buildopt_manifest}.complete
+    fi
     : >"${buildopt_paths}"
     while IFS= read -r buildopt_pattern; do
         [[ -n ${buildopt_pattern} && ${buildopt_pattern} != /* &&
@@ -259,7 +266,7 @@ buildopt_hash_required_outputs() {
         fi
     done <"${buildopt_patterns}"
     sort -u -o "${buildopt_paths}" "${buildopt_paths}"
-    : >"${buildopt_manifest}"
+    : >"${buildopt_complete_manifest}"
     while IFS= read -r buildopt_relative; do
         [[ -f ${buildopt_repository}/${buildopt_relative} &&
             ! -L ${buildopt_repository}/${buildopt_relative} ]] || return 1
@@ -268,8 +275,32 @@ buildopt_hash_required_outputs() {
         printf '%s\t%s\t%s\t%s\n' \
             "$(sha256sum "${buildopt_repository}/${buildopt_relative}" | awk '{print $1}')" \
             "${buildopt_size}" "${buildopt_mode}" "${buildopt_relative}" \
-            >>"${buildopt_manifest}"
+            >>"${buildopt_complete_manifest}"
     done <"${buildopt_paths}"
+    BUILDOPT_QUARANTINED_OUTPUT_COUNT=0
+    BUILDOPT_QUARANTINED_PATH_SHA=
+    if [[ -n ${buildopt_quarantine} ]]; then
+        jq -er '.quarantinedOutputs[].path' "${buildopt_quarantine}" |
+            sort -u >"${buildopt_quarantined_paths}"
+        [[ $(wc -l <"${buildopt_quarantined_paths}" | tr -d ' ') -eq \
+            $(jq -er '.quarantinedOutputs | length' "${buildopt_quarantine}") ]] || return 1
+        : >"${buildopt_quarantined_manifest}"
+        awk -F '\t' -v quarantined="${buildopt_quarantined_manifest}" '
+          NR == FNR {expected[$1] = 1; next}
+          $4 in expected {seen[$4] = 1; print > quarantined; next}
+          {print}
+          END {
+            for (path in expected) {
+              if (!(path in seen)) exit 42
+            }
+          }
+        ' "${buildopt_quarantined_paths}" "${buildopt_complete_manifest}" \
+            >"${buildopt_manifest}" || return 1
+        BUILDOPT_QUARANTINED_OUTPUT_COUNT=$(wc -l <"${buildopt_quarantined_manifest}" | tr -d ' ')
+        ((BUILDOPT_QUARANTINED_OUTPUT_COUNT > 0)) || return 1
+        BUILDOPT_QUARANTINED_PATH_SHA=$(cut -f4 "${buildopt_quarantined_manifest}" |
+            sha256sum | awk '{print $1}')
+    fi
     BUILDOPT_OUTPUT_COUNT=$(wc -l <"${buildopt_manifest}" | tr -d ' ')
     ((BUILDOPT_OUTPUT_COUNT > 0)) || return 1
     BUILDOPT_OUTPUT_SHA=$(sha256sum "${buildopt_manifest}" | awk '{print $1}')
@@ -776,6 +807,8 @@ buildopt_subject() {
         done
         local buildopt_control_ms=0 buildopt_candidate_ms=0
         local buildopt_control_sha='' buildopt_candidate_sha='' buildopt_output_count=0
+        local buildopt_control_quarantined_count=0 buildopt_candidate_quarantined_count=0
+        local buildopt_control_quarantined_path_sha='' buildopt_candidate_quarantined_path_sha=''
         local buildopt_control_hits=0 buildopt_candidate_hits=0
         for buildopt_arm in "${buildopt_arms[@]}"; do
             local buildopt_repository=${buildopt_subject_root}/${buildopt_arm}
@@ -808,16 +841,21 @@ buildopt_subject() {
             buildopt_hits=$(grep -c ' FROM-CACHE' "${buildopt_log}" || true)
             buildopt_hash_required_outputs "${buildopt_repository}" \
                 "${buildopt_subject_output}/required-outputs.txt" \
-                "${buildopt_logs}/${buildopt_sequence}-${buildopt_arm}-outputs.tsv"
+                "${buildopt_logs}/${buildopt_sequence}-${buildopt_arm}-outputs.tsv" \
+                "${buildopt_quarantine_result:-}"
             if [[ ${buildopt_arm} == control ]]; then
                 buildopt_control_ms=${buildopt_duration}
                 buildopt_control_hits=${buildopt_hits}
                 buildopt_control_sha=${BUILDOPT_OUTPUT_SHA}
                 buildopt_output_count=${BUILDOPT_OUTPUT_COUNT}
+                buildopt_control_quarantined_count=${BUILDOPT_QUARANTINED_OUTPUT_COUNT}
+                buildopt_control_quarantined_path_sha=${BUILDOPT_QUARANTINED_PATH_SHA}
             else
                 buildopt_candidate_ms=${buildopt_duration}
                 buildopt_candidate_hits=${buildopt_hits}
                 buildopt_candidate_sha=${BUILDOPT_OUTPUT_SHA}
+                buildopt_candidate_quarantined_count=${BUILDOPT_QUARANTINED_OUTPUT_COUNT}
+                buildopt_candidate_quarantined_path_sha=${BUILDOPT_QUARANTINED_PATH_SHA}
             fi
         done
         local buildopt_candidate_result=${buildopt_logs}/${buildopt_sequence}-candidate.json
@@ -841,7 +879,9 @@ buildopt_subject() {
         else
             [[ ${buildopt_execution_mode} == OPTIMIZED_NATIVE ]] || return 1
         fi
-        if [[ ${buildopt_control_sha} != "${buildopt_candidate_sha}" ]]; then
+        if [[ ${buildopt_control_sha} != "${buildopt_candidate_sha}" ||
+            ${buildopt_control_quarantined_count} -ne ${buildopt_candidate_quarantined_count} ||
+            ${buildopt_control_quarantined_path_sha} != "${buildopt_candidate_quarantined_path_sha}" ]]; then
             if [[ ${buildopt_selected} == true ]]; then
                 printf '%s selected required outputs differ at %.12s\n' \
                     "${buildopt_repository_id}" "${buildopt_observation}" >&2
@@ -868,6 +908,8 @@ buildopt_subject() {
             --argjson controlHits "${buildopt_control_hits}" \
             --argjson candidateHits "${buildopt_candidate_hits}" \
             --argjson outputCount "${buildopt_output_count}" \
+            --argjson quarantinedOutputCount "${buildopt_control_quarantined_count}" \
+            --arg quarantinedPathSha "${buildopt_control_quarantined_path_sha}" \
             --arg outputSha "${buildopt_control_sha}" \
             --argjson selected "${buildopt_selected}" --arg source "${buildopt_source}" \
             --arg reason "${buildopt_reason}" --arg executionMode "${buildopt_execution_mode}" \
@@ -881,6 +923,8 @@ buildopt_subject() {
            controlDurationMs:$controlMs,candidateDurationMs:$candidateMs,
            savedMs:($controlMs-$candidateMs),controlFromCache:$controlHits,
            candidateFromCache:$candidateHits,requiredOutputCount:$outputCount,
+           quarantinedOutputCount:$quarantinedOutputCount,
+           quarantinedPathSha256:$quarantinedPathSha,
            controlRequiredOutputSha256:$outputSha,
            candidateRequiredOutputSha256:$outputSha,exactRequiredOutputs:true,
            selected:$selected,selectionSource:$source,reason:$reason,
