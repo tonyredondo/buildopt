@@ -778,7 +778,8 @@ buildopt_subject() {
         buildopt_materialize_ms=$(jq -r '.discovery.materialization.economics.totalMs // 0' \
             "${buildopt_candidate_result}")
         if [[ ${buildopt_selected} == true ]]; then
-            [[ ${buildopt_source} == CENTRAL_PORTFOLIO &&
+            [[ (${buildopt_source} == CENTRAL_PORTFOLIO ||
+                ${buildopt_source} == LOCAL_PORTFOLIO) &&
                 ${buildopt_execution_mode} == SELECTIVE_PROFILE ]] || return 1
         else
             [[ ${buildopt_execution_mode} == OPTIMIZED_NATIVE ]] || return 1

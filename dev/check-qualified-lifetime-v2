@@ -106,7 +106,8 @@ buildopt_common_jq='
     (.wrapperMatchesQualification | type == "boolean") and
     (if .wrapperMatchesQualification then true else .nativeRetained end) and
     (if .selected then
-       .selectionSource == "CENTRAL_PORTFOLIO" and
+       (.selectionSource == "CENTRAL_PORTFOLIO" or
+         .selectionSource == "LOCAL_PORTFOLIO") and
        .executionMode == $selected_mode and
        .nativeRetained == false
      else

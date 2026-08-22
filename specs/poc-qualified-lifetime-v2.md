@@ -141,8 +141,10 @@ qualified profile; Wrapper drift must retain native execution.
 
 The candidate must either:
 
-- select `CENTRAL_PORTFOLIO`, run `SELECTIVE_PROFILE` and restore exact
-  required outputs; or
+- select `CENTRAL_PORTFOLIO` directly from the verified remote snapshot, or
+  select `LOCAL_PORTFOLIO` from a previously verified and structurally
+  revalidated local refresh; in either case it must run `SELECTIVE_PROFILE`
+  and restore exact required outputs; or
 - retain `OPTIMIZED_NATIVE` with no partial candidate execution.
 
 Every observation records wall time, cache hits, selection and sync cost,
