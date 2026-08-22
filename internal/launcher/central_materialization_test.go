@@ -87,6 +87,69 @@ func TestCentralOptimizeMaterializesChunkedOutputPackExactly(t *testing.T) {
 	}
 }
 
+func TestCollectCentralMaterializationUsesPortfolioManifestPath(t *testing.T) {
+	repository := t.TempDir()
+	stateRelative := ".buildopt/optimize/quarantine"
+	payload := []byte("stable-output\n")
+	payloadDigest := sha256.Sum256(payload)
+	payloadSHA := hex.EncodeToString(payloadDigest[:])
+	manifestRelative := filepath.ToSlash(filepath.Join(
+		stateRelative, "materialization", "quarantine", "manifest.json",
+	))
+	packRelative := filepath.ToSlash(filepath.Join(
+		filepath.Dir(manifestRelative), optimizeMaterializationPackName,
+	))
+	entry := optimizePortfolioEntry{
+		RepositoryID: "example/quarantine", FamilySHA256: optimizeDigest("quarantine-family"),
+		TargetRevision:   "0123456789abcdef0123456789abcdef01234567",
+		RequiredOutputs:  []string{"changed/build/**", "stable/build/**"},
+		CandidateOutputs: []string{"changed/build/**"},
+	}
+	manifest := optimizeOutputMaterializationManifest{
+		SchemaVersion: optimizeMaterializationSchema, RepositoryID: entry.RepositoryID,
+		TargetRevision: entry.TargetRevision, RequiredOutputs: entry.RequiredOutputs,
+		CandidateOutputs: entry.CandidateOutputs, PackFile: packRelative,
+		PackSHA256: payloadSHA, PackSize: int64(len(payload)),
+		Entries: []optimizeOutputMaterializationEntry{{
+			Path: "stable/build/stable.jar", SHA256: payloadSHA,
+			Size: int64(len(payload)), Mode: 0o600,
+		}},
+	}
+	manifestRaw, err := json.Marshal(manifest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	manifestDigest := sha256.Sum256(manifestRaw)
+	entry.Materialization = &optimizePortfolioMaterialization{
+		ManifestFile: manifestRelative,
+		ManifestSHA256: hex.EncodeToString(manifestDigest[:]),
+		PackSHA256: payloadSHA, PackSize: int64(len(payload)),
+		ChunkSHA256: []string{payloadSHA}, MaterializedProjects: []string{":stable"},
+	}
+	for relative, raw := range map[string][]byte{
+		manifestRelative: manifestRaw,
+		packRelative:     payload,
+	} {
+		absolute := filepath.Join(repository, filepath.FromSlash(relative))
+		if err := os.MkdirAll(filepath.Dir(absolute), 0o700); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(absolute, raw, 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	collectedManifest, objects, err := collectCentralMaterializationObjects(
+		repository, stateRelative, entry,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(collectedManifest) != string(manifestRaw) || len(objects) != 1 ||
+		objects[0].sha256 != payloadSHA || string(objects[0].raw) != string(payload) {
+		t.Fatalf("collected materialization = %q, %+v", collectedManifest, objects)
+	}
+}
+
 func TestCentralOptimizeInvalidatesWhenMaterializedProducerChanges(t *testing.T) {
 	snapshot := buildimpact.DiscoverySnapshot{
 		SchemaVersion: buildimpact.DiscoverySchemaVersion,

@@ -807,10 +807,11 @@ func collectCentralMaterializationObjects(
 	if metadata == nil || !validOptimizePortfolioMaterialization(entry) {
 		return nil, nil, errors.New("central output materialization metadata is invalid")
 	}
-	manifestPath := filepath.Join(
-		repositoryRoot,
-		filepath.FromSlash(filepath.ToSlash(filepath.Join(stateRelative, "materialization", "manifest.json"))),
-	)
+	manifestRelative := metadata.ManifestFile
+	if manifestRelative == "" {
+		manifestRelative = filepath.ToSlash(filepath.Join(stateRelative, "materialization", "manifest.json"))
+	}
+	manifestPath := filepath.Join(repositoryRoot, filepath.FromSlash(manifestRelative))
 	manifestRaw, err := os.ReadFile(manifestPath)
 	if err != nil || len(manifestRaw) < 1 || len(manifestRaw) > optimizeMaterializationMaxManifest {
 		return nil, nil, errors.New("central output materialization manifest is unavailable")
@@ -828,7 +829,9 @@ func collectCentralMaterializationObjects(
 		!equalOptimizeStrings(manifest.RequiredOutputs, entry.RequiredOutputs) ||
 		!equalOptimizeStrings(manifest.CandidateOutputs, entry.CandidateOutputs) ||
 		manifest.PackSHA256 != metadata.PackSHA256 || manifest.PackSize != metadata.PackSize ||
-		manifest.PackFile != filepath.ToSlash(filepath.Join(stateRelative, "materialization", optimizeMaterializationPackName)) {
+		manifest.PackFile != filepath.ToSlash(filepath.Join(
+			filepath.Dir(manifestRelative), optimizeMaterializationPackName,
+		)) {
 		return nil, nil, errors.New("central output materialization manifest binding drifted")
 	}
 	pack, err := os.Open(filepath.Join(repositoryRoot, filepath.FromSlash(manifest.PackFile)))

@@ -115,6 +115,7 @@ func prepareOptimizePortfolioMaterialization(
 		return nil, errors.New("output materialization pack exceeds the central POC chunk bound")
 	}
 	return &optimizePortfolioMaterialization{
+		ManifestFile:         discovery.Materialization.ManifestFile,
 		ManifestSHA256:       discovery.Materialization.ManifestSHA256,
 		PackSHA256:           manifest.PackSHA256,
 		PackSize:             manifest.PackSize,

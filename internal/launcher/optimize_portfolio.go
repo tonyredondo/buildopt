@@ -87,6 +87,7 @@ type optimizePortfolioEntry struct {
 // a selected profile omits producers whose outputs still belong to the owner
 // workflow. Chunks are transport identities, not Gradle cache keys.
 type optimizePortfolioMaterialization struct {
+	ManifestFile         string   `json:"manifestFile,omitempty"`
 	ManifestSHA256       string   `json:"manifestSha256"`
 	PackSHA256           string   `json:"packSha256"`
 	PackSize             int64    `json:"packSize"`
@@ -469,6 +470,8 @@ func validOptimizePortfolioMaterialization(entry optimizePortfolioEntry) bool {
 	}
 	materialization := entry.Materialization
 	if !requiresMaterialization || !validOptimizeSHA(materialization.ManifestSHA256) ||
+		(materialization.ManifestFile != "" &&
+			!validOptimizeGeneratedPath(materialization.ManifestFile)) ||
 		!validOptimizeSHA(materialization.PackSHA256) || materialization.PackSize < 1 ||
 		materialization.PackSize > optimizeMaterializationMaxBytes ||
 		len(materialization.ChunkSHA256) < 1 || len(materialization.ChunkSHA256) > 63 ||
