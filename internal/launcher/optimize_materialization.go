@@ -34,14 +34,16 @@ const (
 )
 
 type optimizeOutputMaterialization struct {
-	Status         string                           `json:"status"`
-	Reason         string                           `json:"reason"`
-	Patterns       []string                         `json:"patterns"`
-	ManifestFile   string                           `json:"manifestFile,omitempty"`
-	ManifestSHA256 string                           `json:"manifestSha256,omitempty"`
-	FileCount      int                              `json:"fileCount"`
-	ByteCount      int64                            `json:"byteCount"`
-	Economics      optimizeMaterializationEconomics `json:"economics"`
+	Status           string                           `json:"status"`
+	Reason           string                           `json:"reason"`
+	Patterns         []string                         `json:"patterns"`
+	ManifestFile     string                           `json:"manifestFile,omitempty"`
+	ManifestSHA256   string                           `json:"manifestSha256,omitempty"`
+	FileCount        int                              `json:"fileCount"`
+	ByteCount        int64                            `json:"byteCount"`
+	QuarantineFile   string                           `json:"quarantineFile,omitempty"`
+	QuarantineSHA256 string                           `json:"quarantineSha256,omitempty"`
+	Economics        optimizeMaterializationEconomics `json:"economics"`
 }
 
 type optimizeMaterializationEconomics struct {
@@ -64,11 +66,12 @@ type optimizeOutputMaterializationManifest struct {
 }
 
 type optimizeOutputMaterializationEntry struct {
-	Path   string `json:"path"`
-	SHA256 string `json:"sha256"`
-	Size   int64  `json:"size"`
-	Mode   uint32 `json:"mode"`
-	Offset int64  `json:"offset"`
+	Path          string   `json:"path"`
+	SHA256        string   `json:"sha256"`
+	Size          int64    `json:"size"`
+	Mode          uint32   `json:"mode"`
+	Offset        int64    `json:"offset"`
+	ProducerTasks []string `json:"producerTasks,omitempty"`
 }
 
 type optimizeMaterializationPayload struct {
@@ -161,6 +164,13 @@ func captureOptimizeOutputMaterialization(
 	entries := make([]optimizeOutputMaterializationEntry, 0, len(files))
 	var byteCount int64
 	for _, relative := range files {
+		producerTasks, producerErr := optimizeMaterializationProducerTasks(
+			relative, discovery.outputCandidates,
+		)
+		if producerErr != nil {
+			_ = pack.Close()
+			return optimizeOutputMaterialization{}, producerErr
+		}
 		absolute := filepath.Join(invocation.repositoryRoot, filepath.FromSlash(relative))
 		info, err := os.Lstat(absolute)
 		if err != nil || !info.Mode().IsRegular() || info.Mode()&os.ModeSymlink != 0 {
@@ -186,6 +196,7 @@ func captureOptimizeOutputMaterialization(
 		entries = append(entries, optimizeOutputMaterializationEntry{
 			Path: relative, SHA256: hex.EncodeToString(digest.Sum(nil)),
 			Size: size, Mode: uint32(info.Mode().Perm()), Offset: byteCount - size,
+			ProducerTasks: producerTasks,
 		})
 	}
 	if err := pack.Sync(); err != nil {
@@ -229,6 +240,35 @@ func captureOptimizeOutputMaterialization(
 		Economics: optimizeMaterializationEconomics{CollectMS: collectMS, PackMS: packMS,
 			ManifestMS: manifestMS, TotalMS: elapsedOptimizeEconomicsMS(totalStarted)},
 	}, nil
+}
+
+func optimizeMaterializationProducerTasks(relative string, candidates []outputContractCandidate) ([]string, error) {
+	if len(candidates) == 0 {
+		// Legacy unit fixtures and previously captured manifests predate
+		// producer-bound quarantine. They remain readable but cannot authorize
+		// quarantine until recaptured with complete attribution.
+		return nil, nil
+	}
+	producers := map[string]bool{}
+	for _, candidate := range candidates {
+		if matchProposalGlob(candidate.Pattern, relative) {
+			for _, producer := range candidate.ProducerTasks {
+				if producer == "" {
+					return nil, errors.New("output materialization producer attribution is invalid")
+				}
+				producers[producer] = true
+			}
+		}
+	}
+	result := make([]string, 0, len(producers))
+	for producer := range producers {
+		result = append(result, producer)
+	}
+	sort.Strings(result)
+	if len(result) == 0 {
+		return nil, fmt.Errorf("output materialization producer is unavailable for %s", relative)
+	}
+	return result, nil
 }
 
 func (run *optimizeRun) materializeCandidateOutputs() error {
@@ -380,7 +420,8 @@ func loadOptimizeOutputMaterialization(
 	var byteCount int64
 	for _, entry := range manifest.Entries {
 		if entry.Path <= previous || !validObservedOutputPath(entry.Path) || !validOptimizeSHA(entry.SHA256) ||
-			entry.Size < 0 || entry.Mode > 0o777 || entry.Offset != byteCount {
+			entry.Size < 0 || entry.Mode > 0o777 || entry.Offset != byteCount ||
+			(len(entry.ProducerTasks) > 0 && !uniqueMeasurementStrings(entry.ProducerTasks)) {
 			return optimizeOutputMaterializationManifest{}, nil, errors.New("output materialization entry is invalid")
 		}
 		previous = entry.Path
@@ -487,12 +528,15 @@ func validOptimizeOutputMaterializationShape(materialization optimizeOutputMater
 		return materialization.Status == "" && materialization.Reason == "" &&
 			len(materialization.Patterns) == 0 && materialization.ManifestFile == "" &&
 			materialization.ManifestSHA256 == "" && materialization.FileCount == 0 &&
-			materialization.ByteCount == 0 && materialization.Economics == (optimizeMaterializationEconomics{})
+			materialization.ByteCount == 0 && materialization.QuarantineFile == "" &&
+			materialization.QuarantineSHA256 == "" &&
+			materialization.Economics == (optimizeMaterializationEconomics{})
 	}
 	if materialization.Status == optimizeMaterializationNotRequired {
 		return materialization.Reason == optimizeMaterializationReasonNone && len(materialization.Patterns) == 0 &&
 			materialization.ManifestFile == "" && materialization.ManifestSHA256 == "" &&
 			materialization.FileCount == 0 && materialization.ByteCount == 0 &&
+			materialization.QuarantineFile == "" && materialization.QuarantineSHA256 == "" &&
 			materialization.Economics == (optimizeMaterializationEconomics{})
 	}
 	if materialization.Status != optimizeMaterializationCaptured || materialization.Reason != optimizeMaterializationReasonReady ||
@@ -501,6 +545,12 @@ func validOptimizeOutputMaterializationShape(materialization optimizeOutputMater
 		!validOptimizeSHA(materialization.ManifestSHA256) || materialization.FileCount < 1 ||
 		materialization.FileCount > optimizeMaterializationMaxFiles || materialization.ByteCount < 0 ||
 		materialization.ByteCount > optimizeMaterializationMaxBytes {
+		return false
+	}
+	if (materialization.QuarantineFile == "") != (materialization.QuarantineSHA256 == "") ||
+		(materialization.QuarantineFile != "" &&
+			(!validOptimizeGeneratedPath(materialization.QuarantineFile) ||
+				!validOptimizeSHA(materialization.QuarantineSHA256))) {
 		return false
 	}
 	if materialization.Economics.TotalMS < 1 || materialization.Economics.CollectMS < 0 ||

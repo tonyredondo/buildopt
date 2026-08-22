@@ -29,6 +29,18 @@ func TestOptimizeOutputMaterializationRestoresOnlyUnaffectedOutputs(t *testing.T
 	if materialization.Status != optimizeMaterializationCaptured || materialization.FileCount != 1 {
 		t.Fatalf("materialization = %+v", materialization)
 	}
+	manifestRaw, err := os.ReadFile(filepath.Join(repository, filepath.FromSlash(materialization.ManifestFile)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var attributed optimizeOutputMaterializationManifest
+	if err := json.Unmarshal(manifestRaw, &attributed); err != nil {
+		t.Fatal(err)
+	}
+	if len(attributed.Entries) != 1 ||
+		!equalOptimizeStrings(attributed.Entries[0].ProducerTasks, []string{":unchanged:jar"}) {
+		t.Fatalf("materialization producer attribution = %+v", attributed.Entries)
+	}
 	if err := os.RemoveAll(filepath.Join(repository, "changed", "build")); err != nil {
 		t.Fatal(err)
 	}
@@ -221,6 +233,10 @@ func prepareOptimizeMaterializationFixture(t *testing.T) (string, optimizeInvoca
 		TargetRevision:   "0123456789abcdef0123456789abcdef01234567",
 		RequiredOutputs:  []string{"changed/build/*.jar", "unchanged/build/*.jar"},
 		CandidateOutputs: []string{"changed/build/*.jar"},
+		outputCandidates: []outputContractCandidate{
+			{Pattern: "changed/build/*.jar", ProducerTasks: []string{":changed:jar"}},
+			{Pattern: "unchanged/build/*.jar", ProducerTasks: []string{":unchanged:jar"}},
+		},
 	}
 	return repository, optimizeInvocation{
 		repositoryRoot: repository, stateDirectory: stateDirectory, stateRelative: stateRelative,

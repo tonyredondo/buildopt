@@ -7,7 +7,9 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"os"
 	"path"
+	"path/filepath"
 	"sort"
 	"strings"
 )
@@ -28,6 +30,7 @@ const (
 )
 
 const maximumOutputs = 250000
+const maximumObservedBytes = int64(2 << 30)
 
 // Entry binds one regular output to its exact bytes and Gradle producer tasks.
 // Multiple producers are accepted, but volatility in the entry quarantines all
@@ -43,6 +46,72 @@ type Observation struct {
 	SchemaVersion string  `json:"schemaVersion"`
 	BindingSHA256 string  `json:"bindingSha256"`
 	Entries       []Entry `json:"entries"`
+}
+
+// Observe hashes a complete producer-bound output inventory in one native
+// workspace. Every path component must remain a regular, non-symlink path
+// below root; callers cannot turn a captured relative path into host access.
+func Observe(root, binding string, inventory []Entry) (Observation, error) {
+	if !validSHA(binding) || len(inventory) == 0 || len(inventory) > maximumOutputs {
+		return Observation{}, errors.New("invalid native output observation request")
+	}
+	absoluteRoot, err := filepath.Abs(root)
+	if err != nil {
+		return Observation{}, errors.New("resolve native output root")
+	}
+	rootInfo, err := os.Lstat(absoluteRoot)
+	if err != nil || !rootInfo.IsDir() || rootInfo.Mode()&os.ModeSymlink != 0 {
+		return Observation{}, errors.New("native output root is unavailable")
+	}
+	entries := make([]Entry, 0, len(inventory))
+	var observedBytes int64
+	for _, source := range inventory {
+		entry := cloneEntry(source)
+		entry.SHA256 = strings.Repeat("0", sha256.Size*2)
+		if _, _, validateErr := validateObservation(Observation{
+			SchemaVersion: ObservationSchema, BindingSHA256: binding, Entries: []Entry{entry},
+		}, false); validateErr != nil {
+			return Observation{}, validateErr
+		}
+		absolute, pathErr := secureObservationPath(absoluteRoot, entry.Path)
+		if pathErr != nil {
+			return Observation{}, pathErr
+		}
+		raw, readErr := os.ReadFile(absolute)
+		if readErr != nil {
+			return Observation{}, fmt.Errorf("read native output %s", entry.Path)
+		}
+		observedBytes += int64(len(raw))
+		if observedBytes > maximumObservedBytes {
+			return Observation{}, errors.New("native output observation exceeds the byte bound")
+		}
+		digest := sha256.Sum256(raw)
+		entry.SHA256 = hex.EncodeToString(digest[:])
+		entries = append(entries, entry)
+	}
+	observation := Observation{SchemaVersion: ObservationSchema, BindingSHA256: binding, Entries: entries}
+	if _, _, err := validateObservation(observation, false); err != nil {
+		return Observation{}, err
+	}
+	return observation, nil
+}
+
+func secureObservationPath(root, relative string) (string, error) {
+	if !validRelativePath(relative) {
+		return "", errors.New("invalid native output path")
+	}
+	current := root
+	parts := strings.Split(relative, "/")
+	for index, part := range parts {
+		current = filepath.Join(current, part)
+		info, err := os.Lstat(current)
+		if err != nil || info.Mode()&os.ModeSymlink != 0 ||
+			(index < len(parts)-1 && !info.IsDir()) ||
+			(index == len(parts)-1 && !info.Mode().IsRegular()) {
+			return "", fmt.Errorf("native output %s is not a regular in-root file", relative)
+		}
+	}
+	return current, nil
 }
 
 // Result is a producer-atomic plan. Transported entries retain the first
@@ -149,12 +218,8 @@ func Analyze(first, second Observation) Result {
 // VerifyCandidate proves that every transported output remains byte-exact and
 // every quarantined producer output is supplied by the local native rebuild.
 func VerifyCandidate(result Result, reused, rebuilt Observation) error {
-	if result.SchemaVersion != ResultSchema || result.Decision != DecisionTransportReady ||
-		result.ProductionAuthorized || result.TestOptimization != "OUT_OF_SCOPE" {
-		return errors.New("native volatility result is not transport-ready POC evidence")
-	}
-	if result.TransportSHA256 != entriesDigest(result.TransportedOutputs) {
-		return errors.New("native volatility transport plan was modified")
+	if err := ValidateResult(result); err != nil {
+		return err
 	}
 	if reused.BindingSHA256 != result.BindingSHA256 || rebuilt.BindingSHA256 != result.BindingSHA256 {
 		return errors.New("candidate output binding mismatch")
@@ -172,6 +237,69 @@ func VerifyCandidate(result Result, reused, rebuilt Observation) error {
 	}
 	if err := verifyRebuiltSet(result.QuarantinedOutputs, rebuiltEntries, result.QuarantinedProducers); err != nil {
 		return fmt.Errorf("verify rebuilt outputs: %w", err)
+	}
+	return nil
+}
+
+// ValidateResult checks the complete producer-atomic partition without
+// requiring candidate observations. It is used when the optimize checkpoint
+// consumes a previously produced quarantine decision.
+func ValidateResult(result Result) error {
+	if result.SchemaVersion != ResultSchema || result.Decision != DecisionTransportReady ||
+		result.ProductionAuthorized || result.TestOptimization != "OUT_OF_SCOPE" ||
+		!validSHA(result.BindingSHA256) || !validSHA(result.FirstObservationSHA) ||
+		!validSHA(result.SecondObservationSHA) || result.ComparedOutputCount < 1 ||
+		result.ComparedOutputCount > maximumOutputs || !uniqueNonEmpty(result.QuarantinedProducers) {
+		return errors.New("native volatility result is not transport-ready POC evidence")
+	}
+	if result.Reason != ReasonExact && result.Reason != ReasonQuarantined {
+		return errors.New("native volatility result reason is invalid")
+	}
+	quarantined, _, err := validateObservation(Observation{
+		SchemaVersion: ObservationSchema, BindingSHA256: result.BindingSHA256,
+		Entries: result.QuarantinedOutputs,
+	}, true)
+	if err != nil {
+		return errors.New("native volatility quarantined output set is invalid")
+	}
+	transported, _, err := validateObservation(Observation{
+		SchemaVersion: ObservationSchema, BindingSHA256: result.BindingSHA256,
+		Entries: result.TransportedOutputs,
+	}, true)
+	if err != nil || len(quarantined)+len(transported) != result.ComparedOutputCount {
+		return errors.New("native volatility output partition is incomplete")
+	}
+	producerSet := make(map[string]bool, len(result.QuarantinedProducers))
+	for _, producer := range result.QuarantinedProducers {
+		producerSet[producer] = true
+	}
+	for path, entry := range quarantined {
+		if _, exists := transported[path]; exists || !intersects(entry.ProducerTasks, producerSet) {
+			return errors.New("native volatility quarantine partition overlaps")
+		}
+	}
+	for _, entry := range transported {
+		if intersects(entry.ProducerTasks, producerSet) {
+			return errors.New("native volatility transported output uses a quarantined producer")
+		}
+	}
+	if result.TransportSHA256 != entriesDigest(result.TransportedOutputs) {
+		return errors.New("native volatility transport plan was modified")
+	}
+	if len(result.QuarantinedProducers) == 0 {
+		if result.Reason != ReasonExact || len(result.QuarantinedOutputs) != 0 || len(result.VolatilePaths) != 0 {
+			return errors.New("native volatility exact partition is inconsistent")
+		}
+		return nil
+	}
+	if result.Reason != ReasonQuarantined || len(result.QuarantinedOutputs) == 0 ||
+		len(result.VolatilePaths) == 0 || !uniqueNonEmpty(result.VolatilePaths) {
+		return errors.New("native volatility quarantine metadata is incomplete")
+	}
+	for _, volatile := range result.VolatilePaths {
+		if _, exists := quarantined[volatile]; !exists {
+			return errors.New("native volatility path is outside the quarantine")
+		}
 	}
 	return nil
 }

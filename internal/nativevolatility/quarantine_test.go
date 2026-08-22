@@ -1,6 +1,8 @@
 package nativevolatility
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -29,6 +31,9 @@ func TestAnalyzeQuarantinesWholeProducerAndVerifiesCandidate(t *testing.T) {
 		len(result.QuarantinedOutputs) != 2 || len(result.TransportedOutputs) != 2 {
 		t.Fatalf("producer quarantine was not atomic: %+v", result)
 	}
+	if err := ValidateResult(result); err != nil {
+		t.Fatalf("validate result: %v", err)
+	}
 	reused := observation(result.TransportedOutputs...)
 	rebuilt := observation(second.Entries[2:]...)
 	if err := VerifyCandidate(result, reused, rebuilt); err != nil {
@@ -39,6 +44,12 @@ func TestAnalyzeQuarantinesWholeProducerAndVerifiesCandidate(t *testing.T) {
 	tampered.Entries[0].SHA256 = digest("9")
 	if err := VerifyCandidate(result, tampered, rebuilt); err == nil {
 		t.Fatal("tampered reused output was accepted")
+	}
+	tamperedResult := result
+	tamperedResult.TransportedOutputs = append([]Entry(nil), result.TransportedOutputs...)
+	tamperedResult.TransportedOutputs[0].SHA256 = digest("9")
+	if err := ValidateResult(tamperedResult); err == nil {
+		t.Fatal("tampered transport result was accepted")
 	}
 }
 
@@ -105,6 +116,36 @@ func TestAnalyzeRejectsNonCanonicalPath(t *testing.T) {
 		if result.Decision != DecisionNativeRetained || result.Reason != ReasonInvalidEvidence {
 			t.Fatalf("non-canonical path %q did not retain native: %+v", candidate, result)
 		}
+	}
+}
+
+func TestObserveHashesProducerBoundInventoryAndRejectsSymlinks(t *testing.T) {
+	root := t.TempDir()
+	output := filepath.Join(root, "module", "build", "value.bin")
+	if err := os.MkdirAll(filepath.Dir(output), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(output, []byte("native-output\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	inventory := []Entry{{Path: "module/build/value.bin", ProducerTasks: []string{":module:produce"}}}
+	observed, err := Observe(root, testBinding, inventory)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(observed.Entries) != 1 || observed.Entries[0].SHA256 !=
+		"eae571c9f5c5bfb917357ce4cc94ecbb0862a14c0cf413b26b3f47473e72e257" ||
+		!equalStrings(observed.Entries[0].ProducerTasks, []string{":module:produce"}) {
+		t.Fatalf("observed inventory = %+v", observed)
+	}
+	if err := os.Remove(output); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(filepath.Join(root, "outside.bin"), output); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Observe(root, testBinding, inventory); err == nil {
+		t.Fatal("symlinked native output was accepted")
 	}
 }
 

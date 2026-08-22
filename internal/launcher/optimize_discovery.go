@@ -97,6 +97,7 @@ type optimizeDiscoveryResult struct {
 	ReviewRequired       bool                          `json:"reviewRequired"`
 	ProductionAuthorized bool                          `json:"productionAuthorized"`
 	TestOptimization     string                        `json:"testOptimization"`
+	outputCandidates     []outputContractCandidate
 }
 
 type optimizeDiscoveryDocuments struct {
@@ -601,6 +602,7 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 	result.RequiredOutputs = append([]string(nil), report.RequiredOutputs...)
 	result.CandidateOutputs = append([]string(nil), candidatePatterns...)
 	result.CandidateEntrypoints = append([]string(nil), report.CandidateEntrypoints...)
+	result.outputCandidates = append([]outputContractCandidate(nil), outputReport.CandidateOutputs...)
 	result.GeneratedFiles = paths
 	result.Reason = report.Reason
 	if report.Analysis != nil && report.Analysis.Plan != nil {

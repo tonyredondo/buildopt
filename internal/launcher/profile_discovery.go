@@ -45,6 +45,12 @@ func (values *repeatedProfilePathFlag) Set(value string) error {
 }
 
 func runProfileDiscovery(args []string, stdout, stderr io.Writer) int {
+	if len(args) > 0 && args[0] == "native-observe" {
+		return runOptimizeNativeObservation(args[1:], stdout, stderr)
+	}
+	if len(args) > 0 && args[0] == "quarantine" {
+		return runOptimizeNativeQuarantine(args[1:], stdout, stderr)
+	}
 	if len(args) > 0 && args[0] == "input" {
 		return runProfileOwnerInput(args[1:], stdout, stderr)
 	}

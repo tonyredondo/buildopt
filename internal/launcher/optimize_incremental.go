@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"sort"
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
@@ -304,8 +305,26 @@ func (run *optimizeRun) prepareIncrementalLearningArm() *impactInvocation {
 		arguments = append(arguments, "--gradle-option="+option)
 	}
 	impact, err := prepareImpactInvocation(arguments, false)
-	if err != nil || !impact.plan.CandidateSelected ||
-		!equalOptimizeStrings(impact.plan.Entrypoints, discovery.CandidateEntrypoints) {
+	if err != nil || !impact.plan.CandidateSelected {
+		run.incrementalFailure = optimizeIncrementalReasonPreparation
+		return nil
+	}
+	selectedEntrypoints := append([]string(nil), impact.plan.Entrypoints...)
+	if discovery.Materialization.QuarantineFile != "" {
+		quarantine, quarantineErr := loadOptimizeNativeQuarantine(run.invocation, discovery)
+		if quarantineErr != nil {
+			run.incrementalFailure = optimizeIncrementalReasonPreparation
+			return nil
+		}
+		selectedEntrypoints = mergeOptimizeStrings(
+			selectedEntrypoints, quarantine.QuarantinedProducers,
+		)
+		impact.gradleArgs = append(impact.gradleArgs, subtractOptimizeStrings(
+			quarantine.QuarantinedProducers, impact.plan.Entrypoints,
+		)...)
+		impact.plan.Entrypoints = append([]string(nil), selectedEntrypoints...)
+	}
+	if !equalOptimizeStrings(selectedEntrypoints, discovery.CandidateEntrypoints) {
 		run.incrementalFailure = optimizeIncrementalReasonPreparation
 		return nil
 	}
@@ -325,7 +344,7 @@ func (run *optimizeRun) captureIncrementalOutput(exitCode int) bool {
 		}
 		return false
 	}
-	digest, count, err := run.hashIncrementalOutputs(discovery.RequiredOutputs)
+	digest, count, err := run.hashIncrementalOutputs(discovery)
 	if err != nil {
 		run.incrementalFailure = optimizeIncrementalReasonOutputDrift
 		return run.incrementalCandidate
@@ -407,7 +426,7 @@ func (run *optimizeRun) collectIncrementalLearning(
 	digest := run.incrementalOutputSHA
 	count := run.incrementalOutputCount
 	if digest == "" {
-		digest, count, err = run.hashIncrementalOutputs(discovery.RequiredOutputs)
+		digest, count, err = run.hashIncrementalOutputs(discovery)
 		if err != nil {
 			return retainedOptimizeIncrementalLearning(run.invocation, learning, optimizeIncrementalReasonOutputDrift), retainedIncrementalCalibration(run.invocation, optimizeIncrementalReasonOutputDrift)
 		}
@@ -469,11 +488,46 @@ func optimizeIncrementalWallTimeMS(run *optimizeRun, overhead int64) int64 {
 	return maximumOptimizeDurationMS(run.childExecution.completedAt.Sub(run.childExecution.startedAt)) + overhead
 }
 
-func (run *optimizeRun) hashIncrementalOutputs(patterns []string) (string, int, error) {
+func (run *optimizeRun) hashIncrementalOutputs(discovery optimizeDiscoveryResult) (string, int, error) {
 	started := time.Now()
-	digest, count, err := hashMeasurementOutputs(run.invocation.repositoryRoot, patterns)
+	outputs, err := measurementOutputDigests(
+		run.invocation.repositoryRoot, discovery.RequiredOutputs,
+	)
+	if err != nil {
+		run.outputVerificationTime += time.Since(started)
+		return "", 0, err
+	}
+	if discovery.Materialization.QuarantineFile != "" {
+		quarantine, quarantineErr := loadOptimizeNativeQuarantine(run.invocation, discovery)
+		if quarantineErr != nil {
+			run.outputVerificationTime += time.Since(started)
+			return "", 0, quarantineErr
+		}
+		for _, entry := range quarantine.QuarantinedOutputs {
+			if _, exists := outputs[entry.Path]; !exists {
+				run.outputVerificationTime += time.Since(started)
+				return "", 0, fmt.Errorf("quarantined output %s was not rebuilt locally", entry.Path)
+			}
+			delete(outputs, entry.Path)
+		}
+	}
+	files := make([]string, 0, len(outputs))
+	for relative := range outputs {
+		files = append(files, relative)
+	}
+	sort.Strings(files)
+	if len(files) == 0 {
+		run.outputVerificationTime += time.Since(started)
+		return "", 0, errors.New("incremental verification has no stable outputs")
+	}
+	manifest := sha256.New()
+	for _, relative := range files {
+		_, _ = fmt.Fprintf(manifest, "%s  %s\n", outputs[relative], relative)
+	}
+	digest := hex.EncodeToString(manifest.Sum(nil))
+	count := len(files)
 	run.outputVerificationTime += time.Since(started)
-	return digest, count, err
+	return digest, count, nil
 }
 
 func optimizeIncrementalEconomicsForRun(run *optimizeRun, overhead int64) optimizeIncrementalEconomics {
