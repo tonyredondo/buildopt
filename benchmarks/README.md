@@ -185,6 +185,22 @@ The earlier negative V2 result remains the immutable breadth baseline. It does
 not invalidate graph reduction; it exposed the cross-commit eligibility and
 portable-output limitations addressed by the recovery implementation.
 
+### Native-volatility quarantine
+
+The [quarantine result](./results/poc-native-volatility-quarantine-v1/README.md)
+closes the generic mechanism gap exposed by the Spring JMS portability failure.
+One volatile output quarantines its complete producer, while outputs from stable
+producers remain eligible for exact transport. The executable fixture compares
+four outputs, identifies one volatile path, quarantines two producer outputs and
+transports two stable outputs. Tampered transported bytes and incomplete
+attribution fail closed.
+
+The associated public finding remains intentionally narrower: Spring JMS had 14
+different files among 8,385 outputs after an 11.43% positive calibration, and
+existing observations associate those patterns with two producers. The exact
+revision did not retain the complete producer-bound output set, so no filtered
+pack, selected replay or new performance result is claimed.
+
 The preceding [automatic breadth V2 result](./results/poc-automatic-breadth-transfer-v2/README.md)
 is retained as immutable before-evidence; it qualified 4/5 and exposed the
 learning/materialization cost addressed by this follow-up.

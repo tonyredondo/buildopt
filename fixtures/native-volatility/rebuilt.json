@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "buildopt.poc/native-output-observation/v1",
+  "bindingSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "entries": [
+    {
+      "path": "generator/build/changed.bin",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "producerTasks": [":generator:produce"]
+    },
+    {
+      "path": "generator/build/unchanged.bin",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "producerTasks": [":generator:produce"]
+    }
+  ]
+}

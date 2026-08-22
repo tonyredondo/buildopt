@@ -29,7 +29,7 @@ Optimization are outside the current scope.
 | **Structural Build Impact** | Selects only the changed producers and tasks needed by the requested workflow. | The primary accelerator: current isolated calibrations reduce Spring 27→10, OpenTelemetry 1,008→34, Kafka 66→3, Micronaut 70→21 and Groovy 37→2 projects. |
 | **Automatic discovery** | Derives Git ownership, finalized workflow inputs, Gradle task/output relationships and candidate graphs without repository-name rules. | Works across `classes`, `testClasses`, `assemble` and the five unrelated public repositories. Complete task-input evidence now lets a mixed OpenTelemetry change ignore only its unconsumed root changelog while retaining module-owned and consumed paths. |
 | **Incremental learning and value gate** | Accumulates useful control/candidate observations and checks repeatability, uncertainty, p95, outputs, fallback and payback. | Prevents weak current evidence from being promoted: Groovy retains native at 6/8 and a regressive p95. |
-| **Verified output materialization** | Restores exact unaffected outputs before their producers are omitted. | Fast and fail-closed, but only portable output sets may move across roots or machines. |
+| **Verified output materialization** | Restores exact unaffected outputs before their producers are omitted. | Fast and fail-closed. A producer-atomic quarantine now excludes every output of a task when any output is volatile, while exact outputs from other producers remain transportable. |
 | **Profile portfolio and central state** | Carries verified profiles and packs over HTTP/HTTPS between builds and machines. | Transport and safe cross-commit refresh work and one Kafka descendant saved 104.975 seconds. Unchanged replication on Spring and OpenTelemetry found generic ownership and native-output portability blockers, so broader value remains unproven. |
 | **Gradle-compatible cache** | Reuses verified task outputs locally or through optional HTTP/HTTPS storage. | Supporting infrastructure near native-cache parity, not the principal speed claim. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource/state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
@@ -85,6 +85,16 @@ remains relevant. Discovery completes from 1,027 to 8 projects with zero product
 failures. Calibration is skipped, so this is structural evidence rather than a
 new wall-time result.
 
+Native-volatility quarantine now closes the mechanism gap exposed by Spring
+JMS. Two independent output observations are compared exactly; any differing
+path quarantines its complete Gradle producer, all outputs of that producer are
+rebuilt locally, and only the remaining exact outputs may be transported. The
+generic fixture proves atomic quarantine, exact transported-byte verification
+and fail-closed ambiguity handling. The historical Spring evidence identifies
+14 volatile paths associated with two producer patterns, but it did not retain
+the complete producer inventory at that exact revision. Therefore this block
+adds no replay or wall-time claim; the public experiment must be recaptured.
+
 ## What this proves
 
 - Generic graph reduction can beat optimized native Gradle on isolated,
@@ -103,11 +113,11 @@ new wall-time result.
 
 ## Next steps
 
-1. Add native-volatility quarantine: discover volatile producer outputs from
-   independent native builds, rebuild those producers locally and keep exact
-   bytes for every output BuildOpt actually transports or reuses.
-2. Discover descendant windows structurally: preregister a refresh followed by
+1. Discover descendant windows structurally: preregister a refresh followed by
    an omitted-owner change that can actually select the refreshed profile.
+2. Recapture complete producer-bound native observations during those windows,
+   apply the quarantine, rebuild volatile producers locally and measure the
+   resulting selected replay against optimized native Gradle.
 3. Broaden the value claim only after at least two non-Kafka subjects produce
    positive attributable selected replays with exact transported outputs.
 
@@ -116,6 +126,9 @@ new wall-time result.
 - [Latest recovery result](../../benchmarks/results/poc-cross-commit-value-recovery-v1/README.md)
 - [Workflow-input ownership result](../../benchmarks/results/poc-workflow-input-ownership-v1/README.md)
 - [Machine-readable ownership summary](../../benchmarks/results/poc-workflow-input-ownership-v1/summary.json)
+- [Native-volatility quarantine result](../../benchmarks/results/poc-native-volatility-quarantine-v1/README.md)
+- [Machine-readable quarantine summary](../../benchmarks/results/poc-native-volatility-quarantine-v1/summary.json)
+- [Native-volatility quarantine protocol](../../specs/poc-native-volatility-quarantine-v1.md)
 - [Workflow-input ownership protocol](../../specs/poc-workflow-input-ownership-v1.md)
 - [Machine-readable recovery summary](../../benchmarks/results/poc-cross-commit-value-recovery-v1/summary.json)
 - [Recovery protocol](../../specs/poc-cross-commit-value-recovery-v1.md)

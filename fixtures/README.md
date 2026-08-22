@@ -26,6 +26,13 @@ contents, and one exact volatile Java-properties key. The implementation tests
 prove that undeclared text, archive payload, entry, mode, and property drift
 remain rejected; these fixtures do not authorize automatic activation.
 
+`native-volatility/` contains two complete independent native observations plus
+the candidate transported and locally rebuilt sets. One changed output forces
+its complete two-output producer into quarantine; two outputs from a separate
+producer remain byte-exact and transportable. The fixture contains no repository
+identity, filename-extension policy or performance claim.
+
+
 `poc-qualified-profile-matrix/` contains the Spring Build-Impact-only profile
 used by the cross-repository installed-path matrix. OpenTelemetry and Kafka
 reuse their already reviewed repository-owned profiles; the matrix never

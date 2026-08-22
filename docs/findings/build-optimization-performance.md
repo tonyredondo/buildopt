@@ -774,12 +774,23 @@ with zero product failures. The setup observation is deliberately unmeasured
 and calibration is skipped, so this closes an ownership hypothesis without
 adding a performance result or broadening the Kafka value claim.
 
+The native-volatility follow-up now provides the corresponding generic safety
+mechanism. It compares two complete, producer-bound native observations and
+quarantines a Gradle producer atomically when any of its outputs differs. Every
+output BuildOpt transports remains byte-exact; all outputs of a quarantined
+producer must be rebuilt locally; missing paths, bindings or producers retain
+native Gradle. A four-output fixture proves this behavior and rejects tampered
+transported bytes. The frozen Spring JMS evidence has 14 volatile paths shaped
+like two producer boundaries, but it lacks the complete producer inventory for
+that exact revision. It is therefore repairable diagnostic evidence, not a
+filtered pack, selected replay or new performance result.
+
 ## Open Questions
 
-- Can native-volatility quarantine rebuild volatile producers locally while
-  preserving exact bytes for every output BuildOpt transports or reuses?
 - Can descendant discovery preregister a refresh followed by a structurally
   compatible omitted-owner change before spending another timing budget?
+- When producer-bound public observations are recaptured, does quarantining the
+  volatile producers leave enough stable work to produce positive net value?
 - What future materially different trace would be sufficient to reopen a
   rejected mechanism without repeating the closed evidence?
 - Can a reviewed Gradle-owned output candidate be turned into one convenient,

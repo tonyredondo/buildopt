@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "buildopt.poc/native-output-observation/v1",
+  "bindingSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "entries": [
+    {
+      "path": "consumer/build/stable-a.bin",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "producerTasks": [":consumer:stable"]
+    },
+    {
+      "path": "consumer/build/stable-b.bin",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "producerTasks": [":consumer:stable"]
+    }
+  ]
+}

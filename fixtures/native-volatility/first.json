@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "buildopt.poc/native-output-observation/v1",
+  "bindingSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "entries": [
+    {
+      "path": "consumer/build/stable-a.bin",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "producerTasks": [":consumer:stable"]
+    },
+    {
+      "path": "consumer/build/stable-b.bin",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "producerTasks": [":consumer:stable"]
+    },
+    {
+      "path": "generator/build/changed.bin",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "producerTasks": [":generator:produce"]
+    },
+    {
+      "path": "generator/build/unchanged.bin",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "producerTasks": [":generator:produce"]
+    }
+  ]
+}

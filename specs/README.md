@@ -247,6 +247,16 @@ cases retain native Gradle. The frozen JMX proof ignores only root
 `CHANGELOG.md` and completes a 1,027->8-project structural discovery. It skips
 calibration and makes no wall-time or broadened-value claim.
 
+The [native-volatility quarantine contract](./poc-native-volatility-quarantine-v1.md)
+turns independent native-output differences into a producer-atomic safety
+boundary. Any differing path quarantines all outputs from its observed Gradle
+producer; only exact outputs from other producers enter the transport plan.
+Candidate verification requires exact transported bytes and a complete local
+rebuild of quarantined outputs. Missing paths, binding drift or ambiguous
+producers retain native Gradle. Its generic fixture proves the mechanism; the
+linked Spring JMS finding remains diagnostic because the frozen revision lacks
+the complete producer inventory needed to authorize a replay.
+
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation
 per useful invocation. Its fixture completes eight pairs with zero

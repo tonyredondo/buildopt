@@ -328,13 +328,21 @@ weakening correctness or adding repository-specific rules:
    module paths and discovers 1,027->8 projects. Calibration is skipped, so this
    is structural proof rather than a new value claim.
 
+10. **Completed:** add producer-atomic native-volatility quarantine. Two
+    independent native observations now exclude the complete producer of any
+    differing output, require those outputs to be rebuilt locally, verify every
+    transported byte exactly and retain native on incomplete attribution. The
+    frozen Spring JMS finding remains diagnostic because its exact revision did
+    not retain a complete producer inventory; no replay or timing claim is added.
+
+
 The next onboarding work addresses the generic blockers exposed by that
 replication rather than adding repository exceptions:
 
-1. quarantine outputs proven volatile across independent native builds, rebuild
-   their producers locally and transport only outputs that remain exact;
-2. preregister descendant windows whose refresh and omitted-owner replay are
+1. preregister descendant windows whose refresh and omitted-owner replay are
    structurally compatible before timing; and
+2. recapture complete producer-bound native observations in those windows and
+   measure the quarantine-enabled replay against optimized native Gradle; and
 3. broaden the POC claim only after at least two non-Kafka subjects produce
    positive attributable selected replays.
 
@@ -346,6 +354,10 @@ The terminal breadth dataset is in
 
 The completed ownership result is in
 [workflow-input ownership v1](../../benchmarks/results/poc-workflow-input-ownership-v1/README.md).
+
+The completed quarantine mechanism is in
+[native-volatility quarantine v1](../../benchmarks/results/poc-native-volatility-quarantine-v1/README.md).
+
 
 No step may add repository-name rules, average repository percentages, weaken
 correctness gates or borrow another profile's lifetime.

@@ -750,6 +750,23 @@ Standalone Build Impact discovery and all measured or fallback workflows retain
 their normal Configuration Cache behavior. No repository identity or filename
 extension is used to decide relevance.
 
+Validate producer-atomic native-volatility quarantine without rerunning a public
+repository:
+
+```bash
+./dev/check-native-volatility-quarantine
+```
+
+The checker compares two complete synthetic native observations, quarantines
+the complete producer of one differing output, verifies the exact remaining
+transported bytes and requires every quarantined output to be rebuilt locally.
+It also rejects tampering and retains native for binding, path or producer
+ambiguity. The frozen Spring JMS finding remains linked as diagnostic evidence:
+14 of 8,385 outputs differed and match two observed producer patterns, but that
+revision did not retain a complete producer inventory. Therefore the checker
+does not authorize a filtered public pack, selected replay or wall-time claim.
+Normal CI executes only this bounded fixture and evidence validation.
+
 Reproduce the incremental-learning transaction with one exact installed
 binary and validate its checked evidence with:
 

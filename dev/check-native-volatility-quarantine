@@ -1,0 +1,171 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [EVIDENCE_ROOT]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_fixture=${buildopt_repo_root}/fixtures/native-volatility
+buildopt_evidence_root=${1:-"${buildopt_repo_root}/benchmarks/results/poc-native-volatility-quarantine-v1"}
+buildopt_summary=${buildopt_evidence_root}/summary.json
+buildopt_contract=${buildopt_repo_root}/specs/poc-native-volatility-quarantine-v1.md
+
+for buildopt_command in git go jq mktemp sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'native-volatility quarantine validation requires %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+for buildopt_file in \
+    "${buildopt_contract}" \
+    "${buildopt_evidence_root}/README.md" \
+    "${buildopt_summary}" \
+    "${buildopt_fixture}/first.json" \
+    "${buildopt_fixture}/second.json" \
+    "${buildopt_fixture}/reused.json" \
+    "${buildopt_fixture}/rebuilt.json"; do
+    [[ -s ${buildopt_file} ]] || {
+        printf 'native-volatility quarantine file is unavailable: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_tmp=$(mktemp -d /tmp/buildopt-native-volatility-check.XXXXXX)
+trap 'rm -rf -- "${buildopt_tmp}"' EXIT
+cd -- "${buildopt_repo_root}"
+
+buildopt_breadth_source=${buildopt_repo_root}/benchmarks/results/poc-cross-commit-breadth-replication-v1/summary.json
+buildopt_producer_source=${buildopt_repo_root}/benchmarks/results/poc-automatic-breadth-transfer-v2/spring-framework/state/discovery/output-contract.json
+read -r buildopt_breadth_sha _ < <(sha256sum -- "${buildopt_breadth_source}")
+read -r buildopt_producer_sha _ < <(sha256sum -- "${buildopt_producer_source}")
+[[ ${buildopt_breadth_sha} == "$(jq -r '.sourceEvidence.breadthSummarySha256' "${buildopt_summary}")" ]] || {
+    printf 'native-volatility breadth source digest drifted\n' >&2
+    exit 1
+}
+[[ ${buildopt_producer_sha} == "$(jq -r '.sourceEvidence.producerContractSha256' "${buildopt_summary}")" ]] || {
+    printf 'native-volatility producer source digest drifted\n' >&2
+    exit 1
+}
+
+
+go test -count=1 ./internal/nativevolatility ./cmd/native-volatility-evaluation
+go run ./cmd/native-volatility-evaluation \
+    --first "${buildopt_fixture}/first.json" \
+    --second "${buildopt_fixture}/second.json" \
+    --reused "${buildopt_fixture}/reused.json" \
+    --rebuilt "${buildopt_fixture}/rebuilt.json" \
+    >"${buildopt_tmp}/result.json"
+
+jq -e '
+  .schemaVersion == "buildopt.poc/native-volatility-quarantine/v1" and
+  .decision == "TRANSPORT_READY" and
+  .reason == "VOLATILE_PRODUCERS_QUARANTINED" and
+  .comparedOutputCount == 4 and
+  .volatilePaths == ["generator/build/changed.bin"] and
+  .quarantinedProducers == [":generator:produce"] and
+  (.quarantinedOutputs | map(.path)) == [
+    "generator/build/changed.bin",
+    "generator/build/unchanged.bin"] and
+  (.transportedOutputs | map(.path)) == [
+    "consumer/build/stable-a.bin",
+    "consumer/build/stable-b.bin"] and
+  (.transportSha256 | test("^[0-9a-f]{64}$")) and
+  .productionAuthorized == false and .testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_tmp}/result.json" >/dev/null
+
+jq '.entries[0].sha256 =
+  "9999999999999999999999999999999999999999999999999999999999999999"' \
+    "${buildopt_fixture}/reused.json" >"${buildopt_tmp}/tampered-reused.json"
+if go run ./cmd/native-volatility-evaluation \
+    --first "${buildopt_fixture}/first.json" \
+    --second "${buildopt_fixture}/second.json" \
+    --reused "${buildopt_tmp}/tampered-reused.json" \
+    --rebuilt "${buildopt_fixture}/rebuilt.json" \
+    >"${buildopt_tmp}/tampered-result.json" 2>/dev/null; then
+    printf 'tampered transported bytes were accepted\n' >&2
+    exit 1
+fi
+
+jq '.entries[0].path = "other/build/stable-a.bin"' \
+    "${buildopt_fixture}/second.json" >"${buildopt_tmp}/path-mismatch.json"
+go run ./cmd/native-volatility-evaluation \
+    --first "${buildopt_fixture}/first.json" \
+    --second "${buildopt_tmp}/path-mismatch.json" \
+    >"${buildopt_tmp}/retained.json"
+jq -e '
+  .decision == "NATIVE_RETAINED" and
+  .reason == "NATIVE_OUTPUT_PATH_SET_MISMATCH" and
+  .transportedOutputs == [] and .quarantinedOutputs == []
+' "${buildopt_tmp}/retained.json" >/dev/null
+
+jq '.entries[2].producerTasks = []' \
+    "${buildopt_fixture}/second.json" >"${buildopt_tmp}/missing-producer.json"
+go run ./cmd/native-volatility-evaluation \
+    --first "${buildopt_fixture}/first.json" \
+    --second "${buildopt_tmp}/missing-producer.json" \
+    >"${buildopt_tmp}/ambiguous.json"
+jq -e '
+  .decision == "NATIVE_RETAINED" and
+  .reason == "NATIVE_OUTPUT_EVIDENCE_INVALID"
+' "${buildopt_tmp}/ambiguous.json" >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-native-volatility-quarantine/v1" and
+  .workItem == "POC-NATIVE-VOLATILITY-QUARANTINE-001" and
+  .capturedAt == "2026-08-22" and
+  .publicFinding.repository == "spring-projects/spring-framework" and
+  .publicFinding.workflow == "classes" and
+  .publicFinding.variant == "JMS_CHANGE" and
+  .publicFinding.comparedOutputCount == 8385 and
+  .publicFinding.volatilePathCount == 14 and
+  .publicFinding.volatilePathsObserved == true and
+  .publicFinding.producerBindings == [
+    {outputPattern:"spring-aspects/build/classes/aspectj/main/**",
+     producerTasks:[":spring-aspects:compileAspectj"],volatilePathCount:13},
+    {outputPattern:"spring-messaging/build/classes/java/main/**",
+     producerTasks:[":spring-messaging:compileJava"],volatilePathCount:1}] and
+  .mechanism.fixtureComparedOutputs == 4 and
+  .mechanism.fixtureVolatileOutputs == 1 and
+  .mechanism.fixtureQuarantinedOutputs == 2 and
+  .mechanism.fixtureTransportedOutputs == 2 and
+  .mechanism.atomicProducerQuarantine and
+  .mechanism.exactTransportVerification and
+  .mechanism.localRebuildRequired and
+  .decision == "QUARANTINE_MECHANISM_PROVEN_REPLAY_NOT_YET_MEASURED" and
+  .nextWork == "POC-COMPATIBLE-DESCENDANT-DISCOVERY-001" and
+  .boundaries == {
+    proofOfConcept:true,productionAuthorized:false,
+    repositorySpecificProductRules:false,filenameExtensionRules:false,
+    performanceClaimed:false,claimBroadened:false,soakRequired:false,
+    designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_summary}" >/dev/null
+
+buildopt_grep_status=0
+git -C "${buildopt_repo_root}" grep -ilE \
+    'spring|aspectj|messaging|kafka|opentelemetry|micronaut|groovy' -- \
+    internal/nativevolatility cmd/native-volatility-evaluation \
+    ':(exclude)**/*_test.go' \
+    >"${buildopt_tmp}/subject-specific-files.txt" || buildopt_grep_status=$?
+if ((buildopt_grep_status > 1)); then
+    printf 'native-volatility source scan failed\n' >&2
+    exit 1
+fi
+if [[ -s ${buildopt_tmp}/subject-specific-files.txt ]]; then
+    printf 'native-volatility implementation contains subject-specific rules\n' >&2
+    exit 1
+fi
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+[[ ${buildopt_before} == "${buildopt_after}" ]] || {
+    printf 'native-volatility validation changed the working tree\n' >&2
+    exit 1
+}
+
+printf 'Native-volatility quarantine OK: producer-atomic rebuild, exact transported bytes, Spring 14 paths mapped without a replay claim\n'

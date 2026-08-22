@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-native-volatility-quarantine/v1",
+  "workItem": "POC-NATIVE-VOLATILITY-QUARANTINE-001",
+  "capturedAt": "2026-08-22",
+  "implementationBaseRevision": "78b1f008b5c7908ac2894ad09e625a8884159725",
+  "sourceEvidence": {
+    "breadthSummary": "benchmarks/results/poc-cross-commit-breadth-replication-v1/summary.json",
+    "breadthSummarySha256": "dfa6311c5b4fcd38b12092839251b395fe73a30b6b961c482b46bf545f9a7309",
+    "producerContract": "benchmarks/results/poc-automatic-breadth-transfer-v2/spring-framework/state/discovery/output-contract.json",
+    "producerContractSha256": "e0a54bc2907ac66eff5c0ea95adae1600d24166f258af422ebf2e0a8999e10a2"
+  },
+  "publicFinding": {
+    "repository": "spring-projects/spring-framework",
+    "workflow": "classes",
+    "variant": "JMS_CHANGE",
+    "calibrationMeanSavingPercent": 11.43,
+    "calibrationPositivePairs": 8,
+    "comparedOutputCount": 8385,
+    "volatilePathCount": 14,
+    "volatilePathsObserved": true,
+    "producerBindings": [
+      {
+        "outputPattern": "spring-aspects/build/classes/aspectj/main/**",
+        "producerTasks": [
+          ":spring-aspects:compileAspectj"
+        ],
+        "volatilePathCount": 13
+      },
+      {
+        "outputPattern": "spring-messaging/build/classes/java/main/**",
+        "producerTasks": [
+          ":spring-messaging:compileJava"
+        ],
+        "volatilePathCount": 1
+      }
+    ],
+    "exactRevisionProducerInventoryRetained": false,
+    "filteredPackAuthorized": false,
+    "selectedReplayObserved": false
+  },
+  "mechanism": {
+    "fixtureComparedOutputs": 4,
+    "fixtureVolatileOutputs": 1,
+    "fixtureQuarantinedOutputs": 2,
+    "fixtureTransportedOutputs": 2,
+    "atomicProducerQuarantine": true,
+    "exactTransportVerification": true,
+    "localRebuildRequired": true,
+    "tamperedTransportRejected": true,
+    "pathSetMismatchRetainsNative": true,
+    "producerAmbiguityRetainsNative": true
+  },
+  "decision": "QUARANTINE_MECHANISM_PROVEN_REPLAY_NOT_YET_MEASURED",
+  "nextWork": "POC-COMPATIBLE-DESCENDANT-DISCOVERY-001",
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRules": false,
+    "filenameExtensionRules": false,
+    "performanceClaimed": false,
+    "claimBroadened": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

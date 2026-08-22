@@ -9,6 +9,14 @@ package exposes a `go doc` package comment that states its authority and
 failure boundary; exported symbols should document non-obvious lifecycle,
 security, persistence, or side effects close to the code.
 
+`nativevolatility/` owns the POC producer-atomic portability boundary. It
+compares complete, exact-bound native output observations, quarantines every
+producer associated with a differing output, excludes all outputs of those
+producers from transport and verifies exact bytes for everything BuildOpt
+reuses. Missing or ambiguous paths, bindings and producers retain native Gradle.
+It contains no repository identity or filename-extension policy and grants no
+production authority.
+
 `launcher/` contains the dependency-free `WS-001` command passthrough, the
 `WS-002` Linux process-group and signal contract, the `WS-003` plugin handshake,
 and the neutral `WS-004` authenticated local rendezvous used by `cmd/buildopt`.
