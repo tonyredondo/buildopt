@@ -28,9 +28,9 @@ Optimization are outside the current scope.
 | --- | --- | --- |
 | **Structural Build Impact** | Selects only the changed producers and tasks needed by the requested workflow. | The primary accelerator: current isolated calibrations reduce Spring 27→10, OpenTelemetry 1,008→34, Kafka 66→3, Micronaut 70→21 and Groovy 37→2 projects. |
 | **Automatic discovery** | Derives Git ownership, finalized workflow inputs, Gradle task/output relationships and candidate graphs without repository-name rules. | Works across `classes`, `testClasses`, `assemble` and the five unrelated public repositories. Complete task-input evidence now lets a mixed OpenTelemetry change ignore only its unconsumed root changelog while retaining module-owned and consumed paths. |
-| **Incremental learning and value gate** | Accumulates useful control/candidate observations and checks repeatability, uncertainty, p95, outputs, fallback and payback. | Prevents weak current evidence from being promoted: Groovy retains native at 6/8 and a regressive p95. |
+| **Incremental learning and value gate** | Accumulates useful control/candidate observations and checks repeatability, uncertainty, p95, outputs, fallback and payback. | The automatic POC policy now accepts 6/8 only with a strictly positive interval and non-regressive p95; weak or incompatible evidence still retains native. |
 | **Verified output materialization** | Restores exact unaffected outputs before their producers are omitted. | Fast and fail-closed. A producer-atomic quarantine now excludes every output of a task when any output is volatile, while exact outputs from other producers remain transportable. |
-| **Profile portfolio and central state** | Carries verified profiles and packs over HTTP/HTTPS between builds and machines. | Transport and safe cross-commit refresh work and one Kafka descendant saved 104.975 seconds. Unchanged replication on Spring and OpenTelemetry found generic ownership and native-output portability blockers, so broader value remains unproven. |
+| **Profile portfolio and central state** | Carries verified profiles and packs over HTTP/HTTPS between builds and machines. | Transport and safe cross-commit refresh now have selected value on Kafka (+104.975 s) and Spring (+84.656 s); the claim remains bounded to qualified compatible workflows. |
 | **Gradle-compatible cache** | Reuses verified task outputs locally or through optional HTTP/HTTPS storage. | Supporting infrastructure near native-cache parity, not the principal speed claim. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource/state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
 
@@ -93,8 +93,19 @@ rebuilt locally, and only the remaining exact outputs may be transported. The
 generic fixture proves atomic quarantine, exact transported-byte verification
 and fail-closed ambiguity handling. The historical Spring evidence identifies
 14 volatile paths associated with two producer patterns, but it did not retain
-the complete producer inventory at that exact revision. Therefore this block
-adds no replay or wall-time claim; the public experiment must be recaptured.
+the complete producer inventory at that exact revision. Therefore that fixture
+alone added no replay or wall-time claim.
+
+The subsequent producer-bound recapture closes that public experiment. Spring
+JMS qualifies under the explicit automatic POC policy at **4.62% / 1.362 s**,
+6/8 positive pairs, a +375.75..+2,435.75-ms interval and lower p95. Independent
+roots retain 7,864 exact transported outputs and quarantine 352 outputs. The
+first compatible descendant selects the profile and saves **84.656 seconds /
+50.27%** (168.393 s -> 83.737 s). A later `spring-core` change is structurally
+and economically ineligible and retains optimized native Gradle. Across both
+observations, 8,033 stable outputs remain byte-exact, all 352 quarantined paths
+are rebuilt locally, product failures remain zero and cumulative net is
+**+59.550 seconds** after qualification/publication cost.
 
 ## What this proves
 
@@ -107,20 +118,21 @@ adds no replay or wall-time claim; the public experiment must be recaptured.
 - Cross-commit reuse can now create attributable value: the one selected Kafka
   descendant saves 104.975 seconds and the six-build window finishes 66.772
   seconds net positive after learning and publication.
-- The current POC is not yet general. Unchanged replication found one weak
-  calibration, one ownership rejection and one positive-but-nonportable
-  calibration. Those are useful generic product gaps, not evidence to broaden
-  the one-workflow Kafka claim.
+- Cross-commit value is no longer Kafka-only: the unchanged generic path now
+  has one selected Kafka replay and one selected Spring replay. It is still not
+  universal; other repository/workflow families must qualify independently.
 
 ## Next steps
 
-1. Recapture two complete producer-bound native observations for the strong
-   Spring JMS calibration and derive its quarantine before publishing a pack.
-2. Add every quarantined Gradle producer to the selected local rebuild, keep
-   only stable exact outputs in transport, and measure the preregistered
-   compatible descendant against optimized native Gradle.
-3. Broaden the value claim only after at least two non-Kafka subjects produce
-   positive attributable selected replays with exact transported outputs.
+1. Repeat the unchanged producer-bound lifetime path on another non-Kafka
+   repository/workflow family with a positive calibration and portable output
+   boundary.
+2. Reduce the roughly six seconds of BuildOpt selection/synchronization work on
+   native-retained descendants; do not attribute uncontrolled arm variation to
+   the product.
+3. Keep automatic activation bounded by exact change family, graph, Wrapper,
+   executable, output and economic bindings while moving the proven path toward
+   the one-command onboarding flow.
 
 ## Evidence
 
@@ -129,6 +141,7 @@ adds no replay or wall-time claim; the public experiment must be recaptured.
 - [Machine-readable ownership summary](../../benchmarks/results/poc-workflow-input-ownership-v1/summary.json)
 - [Native-volatility quarantine result](../../benchmarks/results/poc-native-volatility-quarantine-v1/README.md)
 - [Machine-readable quarantine summary](../../benchmarks/results/poc-native-volatility-quarantine-v1/summary.json)
+- [Producer-bound Spring lifetime result](../../benchmarks/results/poc-producer-bound-quarantine-lifetime-v2/README.md)
 - [Compatible descendant discovery result](../../benchmarks/results/poc-compatible-descendant-discovery-v1/README.md)
 - [Machine-readable compatible descendant summary](../../benchmarks/results/poc-compatible-descendant-discovery-v1/summary.json)
 - [Native-volatility quarantine protocol](../../specs/poc-native-volatility-quarantine-v1.md)

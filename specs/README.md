@@ -103,6 +103,7 @@ the exact cross-component contract.
 | [`poc-automatic-breadth-transfer-v1.md`](./poc-automatic-breadth-transfer-v1.md) and [`poc-automatic-breadth-transfer-v1.json`](./poc-automatic-breadth-transfer-v1.json) | `POC-AUTOMATIC-BREADTH-TRANSFER-001` |
 | [`poc-automatic-breadth-transfer-v2.md`](./poc-automatic-breadth-transfer-v2.md) and [`poc-automatic-breadth-transfer-v2.json`](./poc-automatic-breadth-transfer-v2.json) | `POC-AUTOMATIC-BREADTH-TRANSFER-V2-001` |
 | [`poc-automatic-qualification-v1.md`](./poc-automatic-qualification-v1.md) | Automatic `buildopt optimize` POC qualification |
+| [`poc-producer-bound-quarantine-lifetime-v2.md`](./poc-producer-bound-quarantine-lifetime-v2.md) and [`poc-producer-bound-quarantine-lifetime-v2.json`](./poc-producer-bound-quarantine-lifetime-v2.json) | `POC-PRODUCER-BOUND-QUARANTINE-REPLAY` |
 | [`poc-materialization-economics-v2.md`](./poc-materialization-economics-v2.md) and [`poc-materialization-economics-v2.json`](./poc-materialization-economics-v2.json) | `POC-MATERIALIZATION-ECONOMICS-V2-001` |
 | [`poc-qualified-lifetime-v2.md`](./poc-qualified-lifetime-v2.md) and [`poc-qualified-lifetime-v2.json`](./poc-qualified-lifetime-v2.json) | `POC-QUALIFIED-LIFETIME-V2-001` |
 | [`poc-incremental-learning-v1.md`](./poc-incremental-learning-v1.md) and [`poc-incremental-learning-v1.json`](./poc-incremental-learning-v1.json) | `POC-INCREMENTAL-LEARNING-001` |
@@ -257,6 +258,12 @@ rebuild of quarantined outputs. Missing paths, binding drift or ambiguous
 producers retain native Gradle. Its generic fixture proves the mechanism; the
 linked Spring JMS finding remains diagnostic because the frozen revision lacks
 the complete producer inventory needed to authorize a replay.
+
+The derived [producer-bound quarantine lifetime contract](./poc-producer-bound-quarantine-lifetime-v2.md)
+then recaptures that complete Spring boundary, applies the explicit automatic
+6/8 policy without rewriting the historical 7/8 spec, and measures one selected
+plus one native-retained public descendant with exact stable bytes and complete
+local rebuild of quarantined outputs.
 
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation

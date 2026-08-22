@@ -201,6 +201,19 @@ existing observations associate those patterns with two producers. The exact
 revision did not retain the complete producer-bound output set, so no filtered
 pack, selected replay or new performance result is claimed.
 
+The later [producer-bound lifetime result](./results/poc-producer-bound-quarantine-lifetime-v2/README.md)
+recaptures the complete public boundary and applies that mechanism end to end.
+Spring qualifies at 4.62% with 6/8 positive pairs, a strictly positive interval
+and lower p95. One compatible descendant selects the profile and saves 84.656
+seconds/50.27%; one incompatible `spring-core` descendant retains optimized
+native Gradle. Both preserve 8,033 stable outputs exactly and rebuild the same
+352 quarantined paths locally. The two-build window finishes 59.550 seconds net
+positive with zero product failures.
+
+```bash
+./dev/check-producer-bound-quarantine-lifetime
+```
+
 The [compatible descendant discovery result](./results/poc-compatible-descendant-discovery-v1/README.md)
 reruns the frozen OpenTelemetry JMX window after the ownership correction. The
 candidate is functionally correct in 8/8 pairs and reduces 1,027 projects to 8,

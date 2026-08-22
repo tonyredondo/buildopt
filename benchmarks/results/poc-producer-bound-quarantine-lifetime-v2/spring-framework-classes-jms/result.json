@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-qualified-lifetime-subject/v2",
+  "key": "spring-framework-classes-jms",
+  "buildopt": {
+    "revision": "706046cadd706abc464e1f8bb9be00ca7f8f8e65",
+    "executableSha256": "ee5b2dd00b5b39855f4b00cacb6efe9d12a8ce053a2e61eb258831cd8c0474d7"
+  },
+  "repository": {
+    "id": "spring-projects/spring-framework",
+    "remote": "https://github.com/spring-projects/spring-framework.git",
+    "publicRepository": true,
+    "historyBranch": "main"
+  },
+  "qualification": {
+    "parentRevision": "d8216d719bb203a1ed74e5f75c894b08db6f1a88",
+    "targetRevision": "dbbbf37ac9097852194222a0405d3e060a846b8e",
+    "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+    "changeFamily": "DEPENDENCY_SOURCE",
+    "processEnvelope": "FRESH_GRADLE_PROCESS_PER_BUILD",
+    "expectedChangedProjects": [
+      ":spring-jms"
+    ],
+    "graph": {
+      "omittedProjects": 24,
+      "selectedProjects": 3,
+      "totalProjects": 27
+    },
+    "calibration": {
+      "calibrationCostMs": 661,
+      "controlMeanMs": 29464.375,
+      "candidateMeanMs": 28102.75,
+      "controlP95Ms": 32523,
+      "candidateP95Ms": 29370,
+      "meanSavedMs": 1361.625,
+      "reductionRatio": 0.046212587234584136,
+      "interval95SavedMs": [
+        375.75,
+        2435.75
+      ],
+      "positivePairs": 6,
+      "pairsMeasured": 8,
+      "breakEvenBuilds": 1,
+      "qualified": true,
+      "fallbackSuccessful": true,
+      "qualificationPolicy": "ROBUST_6_OF_8_ALTERNATING_PAIRS_INTERVAL_P95_V1"
+    },
+    "captureFile": "qualification-capture.json",
+    "captureSha256": "a3df54a14f2690164d0bbe8b621e55e6c012f2e58a0e14ee57526d99e17f194a",
+    "calibrationEvidenceFile": "calibration-evidence.json",
+    "calibrationEvidenceSha256": "1f508c604a017db5c179009f3be69c5503ee47316aa586a5491de4242226157d",
+    "portability": {
+      "status": "PORTABLE",
+      "producerOutputSha256": "4e972e85881e8360ee8e5ad856c1de5b99e2843b78fd7ab950174b0e44d72c3b",
+      "independentOutputSha256": "4e972e85881e8360ee8e5ad856c1de5b99e2843b78fd7ab950174b0e44d72c3b",
+      "outputCount": 7864,
+      "nativeCacheHits": 0,
+      "differingFileCount": 0,
+      "differencesSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "samplePaths": []
+    },
+    "materialization": {
+      "transport": "CENTRAL_CAS_CHUNKS",
+      "packBytes": 28675253,
+      "chunkCount": 4,
+      "publicationDurationMs": 2979
+    }
+  },
+  "observations": [
+    {
+      "sequence": 1,
+      "revision": "4e8acb9ef2ff43c6f841af2a2ad0a3de53cac914",
+      "parentRevision": "dbbbf37ac9097852194222a0405d3e060a846b8e",
+      "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 168393,
+      "candidateDurationMs": 83737,
+      "savedMs": 84656,
+      "controlFromCache": 0,
+      "candidateFromCache": 0,
+      "requiredOutputCount": 8033,
+      "quarantinedOutputCount": 352,
+      "quarantinedPathSha256": "3c6c4b65ac9494c10bb9aab188f543397439d2583b6c0116bd99eff8ba816a4b",
+      "controlRequiredOutputSha256": "6f36d3b5d42f117078571ad04778e2d2c0dc07da1be666a33e79523b6bd0091f",
+      "candidateRequiredOutputSha256": "6f36d3b5d42f117078571ad04778e2d2c0dc07da1be666a33e79523b6bd0091f",
+      "exactRequiredOutputs": true,
+      "selected": true,
+      "selectionSource": "CENTRAL_PORTFOLIO",
+      "reason": "REMOTE_QUALIFIED_PROFILE_SELECTED",
+      "executionMode": "SELECTIVE_PROFILE",
+      "nativeRetained": false,
+      "wrapperMatchesQualification": true,
+      "selectionDurationNs": 2206623029,
+      "preSyncDurationMs": 1082,
+      "postSyncDurationMs": 1202,
+      "materializationDurationMs": 421
+    },
+    {
+      "sequence": 2,
+      "revision": "9cedcd65ef9db17fdc1e1a02a2296f42d98647f2",
+      "parentRevision": "4e8acb9ef2ff43c6f841af2a2ad0a3de53cac914",
+      "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 122701,
+      "candidateDurationMs": 144167,
+      "savedMs": -21466,
+      "controlFromCache": 0,
+      "candidateFromCache": 0,
+      "requiredOutputCount": 8033,
+      "quarantinedOutputCount": 352,
+      "quarantinedPathSha256": "3c6c4b65ac9494c10bb9aab188f543397439d2583b6c0116bd99eff8ba816a4b",
+      "controlRequiredOutputSha256": "6f36d3b5d42f117078571ad04778e2d2c0dc07da1be666a33e79523b6bd0091f",
+      "candidateRequiredOutputSha256": "6f36d3b5d42f117078571ad04778e2d2c0dc07da1be666a33e79523b6bd0091f",
+      "exactRequiredOutputs": true,
+      "selected": false,
+      "selectionSource": "NONE",
+      "reason": "ECONOMIC_PREQUALIFICATION_REJECTED",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "nativeRetained": true,
+      "wrapperMatchesQualification": true,
+      "selectionDurationNs": 1914276682,
+      "preSyncDurationMs": 1073,
+      "postSyncDurationMs": 2825,
+      "materializationDurationMs": 0
+    }
+  ],
+  "economics": {
+    "observedBuilds": 2,
+    "selectedReplays": 1,
+    "nativeRetainedBuilds": 1,
+    "selectedReplaySavedMs": 84656,
+    "fallbackDeltaMs": -21466,
+    "cumulativeGrossSavedMs": 63190,
+    "qualificationAndPublicationCostMs": 3640,
+    "cumulativeNetSavedMs": 59550,
+    "firstObservedBreakEvenBuild": 1,
+    "conclusion": "PAID_BACK_IN_OBSERVED_WINDOW"
+  },
+  "acceptance": {
+    "decision": "COMPLETE",
+    "exactRequiredOutputs": true,
+    "portabilityGatePassed": true,
+    "publicAncestry": true,
+    "productFailures": 0
+  },
+  "boundaries": {
+    "designPartnerRequired": false,
+    "mechanismPercentagesAdded": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositoriesAveraged": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

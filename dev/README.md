@@ -767,6 +767,19 @@ revision did not retain a complete producer inventory. Therefore the checker
 does not authorize a filtered public pack, selected replay or wall-time claim.
 Normal CI executes only this bounded fixture and evidence validation.
 
+Validate the subsequent public Spring qualification and two-descendant lifetime
+without rerunning the repository:
+
+```bash
+./dev/check-producer-bound-quarantine-lifetime
+```
+
+The checker binds the explicit automatic 6/8 policy, raw paired evidence,
+independent-root stable pack, 352 locally rebuilt quarantine paths, one selected
+84.656-second replay, one optimized-native rejection and +59.550-second
+cumulative net. It also reruns the generic qualified-lifetime subject validator
+under the derived contract while preserving the historical 7/8 evidence.
+
 Validate the corrected OpenTelemetry effective-change replay and its terminal
 economic rejection without rerunning the 17 public-repository builds:
 

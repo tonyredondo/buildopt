@@ -35,11 +35,13 @@
   cache opportunity, the complete connected path measured **82.45% faster on
   Ktor** and **56.41% on Beam**. These results show that the idea can work, not
   that it works automatically for every Gradle repository.
-- **The next question is lifetime value, not basic feasibility.** The five
-  qualified profiles must be replayed over compatible public descendant
-  changes with selection, invalidation and fallback cost included. Calibration
-  payback is now short, but it does not prove that each structural profile
-  remains useful across enough future commits.
+- **Cross-commit value now exists on two repository families.** Kafka has one
+  selected replay saving 104.975 seconds. The producer-bound Spring JMS replay
+  saves **84.656 seconds / 50.27%** on one compatible descendant and retains
+  optimized native Gradle on the next incompatible change. Its two-build window
+  finishes **59.550 seconds net positive** after qualification/publication.
+  Generality is still bounded: another non-Kafka family must independently
+  qualify and select before broadening the claim.
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
   Runtime Tuning, Hot State and standard Copy are retired; historical Jar,
   Patch and Edge experiments remain scoped supporting evidence.
@@ -54,6 +56,8 @@ The separate correctness evidence is preserved in the
 [verified-output materialization result](../../benchmarks/results/poc-verified-output-materialization-v1/README.md).
 The aggregate breadth proof is preserved in the
 [aggregate-workflow partition result](../../benchmarks/results/poc-aggregate-workflow-partition-v1/README.md).
+The latest cross-commit proof is preserved in the
+[producer-bound Spring lifetime result](../../benchmarks/results/poc-producer-bound-quarantine-lifetime-v2/README.md).
 
 ## Historical and Mechanism-Specific Findings
 

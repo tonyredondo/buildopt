@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [EVIDENCE_ROOT]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence_root=${1:-"${buildopt_repo_root}/benchmarks/results/poc-producer-bound-quarantine-lifetime-v2"}
+buildopt_subject_root=${buildopt_evidence_root}/spring-framework-classes-jms
+buildopt_result=${buildopt_subject_root}/result.json
+buildopt_capture=${buildopt_subject_root}/qualification-capture.json
+buildopt_calibration=${buildopt_subject_root}/calibration-evidence.json
+buildopt_contract=${buildopt_repo_root}/specs/poc-producer-bound-quarantine-lifetime-v2.json
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'producer-bound quarantine lifetime validation requires %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+for buildopt_file in \
+    "${buildopt_evidence_root}/README.md" \
+    "${buildopt_contract}" \
+    "${buildopt_result}" \
+    "${buildopt_capture}" \
+    "${buildopt_calibration}"; do
+    [[ -s ${buildopt_file} ]] || {
+        printf 'producer-bound quarantine lifetime file is unavailable: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+
+BUILDOPT_QUALIFIED_LIFETIME_SPEC=${buildopt_contract} \
+    "${buildopt_script_dir}/check-qualified-lifetime-v2" \
+    "${buildopt_result}" --subject
+
+buildopt_capture_sha=$(sha256sum "${buildopt_capture}" | awk '{print $1}')
+buildopt_calibration_sha=$(sha256sum "${buildopt_calibration}" | awk '{print $1}')
+
+jq -e --arg captureSha "${buildopt_capture_sha}" \
+    --arg calibrationSha "${buildopt_calibration_sha}" '
+  .schemaVersion == "buildopt.evidence/poc-qualified-lifetime-subject/v2" and
+  .key == "spring-framework-classes-jms" and
+  .buildopt.revision == "706046cadd706abc464e1f8bb9be00ca7f8f8e65" and
+  .repository.id == "spring-projects/spring-framework" and
+  .qualification.parentRevision == "d8216d719bb203a1ed74e5f75c894b08db6f1a88" and
+  .qualification.targetRevision == "dbbbf37ac9097852194222a0405d3e060a846b8e" and
+  .qualification.captureSha256 == $captureSha and
+  .qualification.calibrationEvidenceSha256 == $calibrationSha and
+  .qualification.calibration.qualificationPolicy ==
+    "ROBUST_6_OF_8_ALTERNATING_PAIRS_INTERVAL_P95_V1" and
+  .qualification.calibration.pairsMeasured == 8 and
+  .qualification.calibration.positivePairs == 6 and
+  .qualification.calibration.controlMeanMs == 29464.375 and
+  .qualification.calibration.candidateMeanMs == 28102.75 and
+  .qualification.calibration.meanSavedMs == 1361.625 and
+  .qualification.calibration.reductionRatio == 0.046212587234584136 and
+  .qualification.calibration.interval95SavedMs == [375.75,2435.75] and
+  .qualification.calibration.controlP95Ms == 32523 and
+  .qualification.calibration.candidateP95Ms == 29370 and
+  .qualification.calibration.breakEvenBuilds == 1 and
+  .qualification.calibration.qualified and
+  .qualification.calibration.fallbackSuccessful and
+  .qualification.portability.status == "PORTABLE" and
+  .qualification.portability.outputCount == 7864 and
+  .qualification.materialization.transport == "CENTRAL_CAS_CHUNKS" and
+  (.observations | length) == 2 and
+  .observations[0].revision == "4e8acb9ef2ff43c6f841af2a2ad0a3de53cac914" and
+  .observations[0].controlDurationMs == 168393 and
+  .observations[0].candidateDurationMs == 83737 and
+  .observations[0].savedMs == 84656 and
+  .observations[0].selected and
+  .observations[0].selectionSource == "CENTRAL_PORTFOLIO" and
+  .observations[0].executionMode == "SELECTIVE_PROFILE" and
+  .observations[1].revision == "9cedcd65ef9db17fdc1e1a02a2296f42d98647f2" and
+  .observations[1].controlDurationMs == 122701 and
+  .observations[1].candidateDurationMs == 144167 and
+  .observations[1].savedMs == -21466 and
+  (.observations[1].selected | not) and
+  .observations[1].reason == "ECONOMIC_PREQUALIFICATION_REJECTED" and
+  .observations[1].executionMode == "OPTIMIZED_NATIVE" and
+  .observations[1].nativeRetained and
+  ([.observations[] | select(
+    .requiredOutputCount == 8033 and
+    .quarantinedOutputCount == 352 and
+    .quarantinedPathSha256 ==
+      "3c6c4b65ac9494c10bb9aab188f543397439d2583b6c0116bd99eff8ba816a4b" and
+    .controlRequiredOutputSha256 ==
+      "6f36d3b5d42f117078571ad04778e2d2c0dc07da1be666a33e79523b6bd0091f" and
+    .candidateRequiredOutputSha256 == .controlRequiredOutputSha256 and
+    .exactRequiredOutputs)] | length) == 2 and
+  .economics == {
+    observedBuilds:2,selectedReplays:1,nativeRetainedBuilds:1,
+    selectedReplaySavedMs:84656,fallbackDeltaMs:-21466,
+    cumulativeGrossSavedMs:63190,qualificationAndPublicationCostMs:3640,
+    cumulativeNetSavedMs:59550,firstObservedBreakEvenBuild:1,
+    conclusion:"PAID_BACK_IN_OBSERVED_WINDOW"} and
+  .acceptance == {
+    decision:"COMPLETE",exactRequiredOutputs:true,
+    portabilityGatePassed:true,publicAncestry:true,productFailures:0} and
+  .boundaries.proofOfConcept and
+  (.boundaries.productionAuthorized | not) and
+  (.boundaries.soakRequired | not) and
+  (.boundaries.designPartnerRequired | not) and
+  .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_result}" >/dev/null
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+[[ ${buildopt_before} == "${buildopt_after}" ]] || {
+    printf 'producer-bound quarantine lifetime validation modified the checkout\n' >&2
+    exit 1
+}
+
+printf '%s\n' \
+    'Producer-bound quarantine lifetime OK: Spring selected replay +84.656 s, cumulative net +59.550 s'

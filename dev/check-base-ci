@@ -222,6 +222,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-workflow-input-ownership" >/dev/null
         "${buildopt_script_dir}/check-native-volatility-quarantine" >/dev/null
         "${buildopt_script_dir}/check-compatible-descendant-discovery" >/dev/null
+        "${buildopt_script_dir}/check-producer-bound-quarantine-lifetime" >/dev/null
         "${buildopt_script_dir}/check-generic-holdout" >/dev/null
         "${buildopt_script_dir}/check-generic-holdout-crossover" \
             "${buildopt_repo_root}/benchmarks/results/poc-generic-holdout-v5" >/dev/null
