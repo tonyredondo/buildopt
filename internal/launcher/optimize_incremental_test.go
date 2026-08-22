@@ -89,6 +89,27 @@ func TestOptimizeOutputObservationPrecedesGradleArgumentSeparator(t *testing.T) 
 	}
 }
 
+func TestSelectedOptimizeReplayDoesNotAttachFullGraphObservation(t *testing.T) {
+	stateDirectory := filepath.Join(t.TempDir(), "state")
+	run := optimizeRun{
+		invocation: optimizeInvocation{
+			stateDirectory: stateDirectory,
+			discovery:      optimizeDiscoveryContext{Ready: true},
+		},
+		selection: optimizeSelectionResult{Selected: true},
+	}
+
+	if err := run.prepareOutputObservation(); err != nil {
+		t.Fatal(err)
+	}
+	if run.outputObservation != nil {
+		t.Fatal("selected replay attached ordinary full-graph observation")
+	}
+	if _, err := os.Stat(stateDirectory); !os.IsNotExist(err) {
+		t.Fatalf("selected replay created observation state: %v", err)
+	}
+}
+
 func TestOptimizeIncrementalCheckpointRejectsTampering(t *testing.T) {
 	repository := t.TempDir()
 	invocation := optimizeInvocation{

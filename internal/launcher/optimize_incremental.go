@@ -140,7 +140,7 @@ func (run *optimizeRun) executionDescription(selection optimizeSelectionResult) 
 }
 
 func (run *optimizeRun) prepareOutputObservation() error {
-	if !run.invocation.discovery.Ready ||
+	if run.selection.Selected || !run.invocation.discovery.Ready ||
 		(run.previousState != nil && run.state.Resume.Accepted &&
 			run.previousState.Discovery.Status == optimizeDiscoveryComplete) {
 		return nil
