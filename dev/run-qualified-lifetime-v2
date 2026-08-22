@@ -242,23 +242,21 @@ buildopt_hash_required_outputs() {
     while IFS= read -r buildopt_pattern; do
         [[ -n ${buildopt_pattern} && ${buildopt_pattern} != /* &&
             ${buildopt_pattern} != *'..'* ]] || return 1
-        case "${buildopt_pattern}" in
-            */**)
-                buildopt_root=${buildopt_pattern%/**}
-                if [[ -d ${buildopt_repository}/${buildopt_root} ]]; then
-                    find "${buildopt_repository}/${buildopt_root}" -type l -print -quit |
-                        grep -q . && return 1
-                    find "${buildopt_repository}/${buildopt_root}" -type f -printf '%P\n' |
-                        sed "s#^#${buildopt_root}/#" >>"${buildopt_paths}"
-                fi
-                ;;
-            *'*'*) return 1 ;;
-            *)
-                [[ -f ${buildopt_repository}/${buildopt_pattern} &&
-                    ! -L ${buildopt_repository}/${buildopt_pattern} ]] || return 1
-                printf '%s\n' "${buildopt_pattern}" >>"${buildopt_paths}"
-                ;;
-        esac
+        if [[ ${buildopt_pattern} == *'/**' ]]; then
+            buildopt_root=${buildopt_pattern%/**}
+            if [[ -d ${buildopt_repository}/${buildopt_root} ]]; then
+                find "${buildopt_repository}/${buildopt_root}" -type l -print -quit |
+                    grep -q . && return 1
+                find "${buildopt_repository}/${buildopt_root}" -type f -printf '%P\n' |
+                    sed "s#^#${buildopt_root}/#" >>"${buildopt_paths}"
+            fi
+        elif [[ ${buildopt_pattern} == *'*'* ]]; then
+            return 1
+        else
+            [[ -f ${buildopt_repository}/${buildopt_pattern} &&
+                ! -L ${buildopt_repository}/${buildopt_pattern} ]] || return 1
+            printf '%s\n' "${buildopt_pattern}" >>"${buildopt_paths}"
+        fi
     done <"${buildopt_patterns}"
     sort -u -o "${buildopt_paths}" "${buildopt_paths}"
     : >"${buildopt_manifest}"
