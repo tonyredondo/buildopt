@@ -211,9 +211,18 @@ The terminal [qualified-lifetime V2 evidence](../benchmarks/results/poc-qualifie
 records 4/5 current qualifications, 2/4 portable output sets, zero selected
 replays across seven public descendants and zero paid-back subjects. All seven
 later builds retain exact optimized-native outputs with zero product failures.
-This negative result makes cross-commit eligibility and portable output
-boundaries the next POC hypotheses; it does not authorize a weaker gate or a
-repeat-until-positive rerun.
+This negative result remains immutable before-evidence and does not authorize a
+weaker gate or repeat-until-positive rerun.
+
+The [cross-commit value recovery contract](./poc-cross-commit-value-recovery-v1.md)
+then holds Kafka's qualifier and six-descendant public window fixed. It requires
+cheap eligibility before central work, verified local refresh, distinct target,
+revalidation and output revisions, and no full-workflow observation after a
+selective replay is chosen. Its checked before/after evidence requires a
+regressive selected replay before the repair, positive attributable selected
+value after it, exact outputs, zero product failures and positive cumulative net
+after qualification/publication cost. Native-retained arm variation stays
+visible but cannot prove selected-replay value.
 
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation

@@ -282,6 +282,15 @@ are portable, none of seven descendant builds selects a profile and no subject
 pays back. All later builds retain optimized native Gradle with exact outputs
 and zero product failures.
 
+The cross-commit recovery experiment then keeps Kafka's same qualifier and six
+public descendants fixed. One verified local replay initially loses 5.404
+seconds because selected execution still attaches the full observation
+workflow. After removing that redundant graph only for an already-selected
+profile, the same descendant saves 104.975 seconds/71.14%, preserves all 4,449
+required outputs and leaves the six-build window 66.772 seconds net positive
+after qualification/publication. Native-retained arm variation remains separate
+from the attributable replay value.
+
 The completed POC sequence removed the observed economic blockers without
 weakening correctness or adding repository-specific rules:
 
@@ -303,19 +312,23 @@ weakening correctness or adding repository-specific rules:
    and public descendant lifetime; the terminal result is 4/5 qualified, 2/4
    portable, 0/7 selected and 0/5 paid back.
 
-The next onboarding work is evidence-driven rather than another broad feature
-or breadth rerun:
+7. **Completed:** recover cross-commit Kafka value through cheap eligibility,
+   verified local refresh and preserved selected graph reduction; one selected
+   replay saves 104.975 seconds and the frozen window pays back without weaker
+   output or fallback gates.
+The next onboarding work tests whether that recovery generalizes rather than
+adding another broad feature:
 
-1. distinguish a structurally compatible central profile from a revision that
-   is merely waiting for fresh ordinary evidence, while preserving all exact
-   Wrapper, graph, workflow and output bindings;
-2. avoid central sync/materialization work before a profile is eligible;
-3. derive the smallest portable Gradle-owned output boundary without
-   normalizing or dropping required customer outputs; and
-4. rerun the same frozen public windows only after the generic correction,
-   requiring at least one exact selected replay and positive cumulative value.
+1. preregister compatible public descendant windows for at least two additional
+   repository/workflow families;
+2. apply the unchanged eligibility, refresh, local/central replay and
+   exact-output implementation without repository-name rules;
+3. report selection frequency, selected-replay value, native fallback delta and
+   cumulative payback separately; and
+4. broaden the POC claim only for subjects with positive attributable replay
+   value and exact required outputs.
 
-The current dataset and its interpretation are in
-[`poc-qualified-lifetime-v2`](../../benchmarks/results/poc-qualified-lifetime-v2/README.md).
+The current recovery dataset and its interpretation are in
+[`poc-cross-commit-value-recovery-v1`](../../benchmarks/results/poc-cross-commit-value-recovery-v1/README.md).
 No step may add repository-name rules, average repository percentages, weaken
 correctness gates or borrow another profile's lifetime.

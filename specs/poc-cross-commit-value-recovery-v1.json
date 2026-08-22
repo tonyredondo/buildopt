@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "buildopt.spec/poc-cross-commit-value-recovery/v1",
+  "workItem": "POC-CROSS-COMMIT-VALUE-RECOVERY-001",
+  "baseContract": {
+    "file": "specs/poc-qualified-lifetime-v2.json",
+    "sha256": "3ad2c259e99f64064bf6d0cb1287a7b6ab3d1ea1a47a75d0d59a4976f51a1f4e"
+  },
+  "subject": {
+    "key": "apache-kafka",
+    "repositoryId": "apache/kafka",
+    "qualifierRevision": "2e961afeff5cb27d60767a783edf20be00cc28e8",
+    "observations": [
+      "b475ce7632bc661a79b61ee8b78124bc53170bca",
+      "e5e26abb2741c678905a925ef535b6e8eaf967b0",
+      "308095cf221c3695ad4bc5214ebc507a0b91705f",
+      "9301a555eac1049c6e5842e605c0bf147fe0e298",
+      "cc6d42206fc7393c6782de664b1fd0474d4af61d",
+      "7ff5d7b71c0ead6743a0d64b2b0e92abc61fed77"
+    ]
+  },
+  "implementation": {
+    "beforeRevision": "037ee030adcf7ca0904f1262874ee3b803087a91",
+    "afterRevision": "817bc7cc255beb165855c49997fc22fdcff41627",
+    "selectedRevision": "e5e26abb2741c678905a925ef535b6e8eaf967b0"
+  },
+  "protocol": {
+    "cheapEligibilityPrecedesCentralSync": true,
+    "ineligibleRevisionPaysNoSyncOrMaterializationCost": true,
+    "refreshedProfileMayBeReusedLocally": true,
+    "refreshedProfileRequiresFullMaterializationValidation": true,
+    "selectedReplayDoesNotAttachFullGraphOutputObservation": true,
+    "sameFrozenPublicWindowRequired": true,
+    "selectedReplayAttributableValueReportedSeparately": true,
+    "fallbackNoiseMayNotProveSelectedReplayValue": true,
+    "exactRequiredOutputsRequired": true,
+    "positiveSelectedReplayRequired": true,
+    "positiveCumulativeNetRequired": true
+  },
+  "acceptance": {
+    "minimumSelectedReplays": 1,
+    "selectedReplaySavedMsMustBePositive": true,
+    "cumulativeNetSavedMsMustBePositive": true,
+    "beforeSelectedReplayMustBeRegressive": true,
+    "afterCandidateMustBeatBeforeCandidate": true,
+    "productFailures": 0
+  },
+  "boundaries": {
+    "designPartnerRequired": false,
+    "mechanismPercentagesAdded": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositoriesAveraged": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

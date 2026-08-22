@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-cross-commit-value-recovery/v1",
+  "workItem": "POC-CROSS-COMMIT-VALUE-RECOVERY-001",
+  "capturedAt": "2026-08-22T01:05:50Z",
+  "specSha256": "875090d01d8ae665ffa51d6c9462fac4556a4bc883a31319300f30c9afccca4d",
+  "repository": {
+    "key": "apache-kafka",
+    "id": "apache/kafka",
+    "qualifierRevision": "2e961afeff5cb27d60767a783edf20be00cc28e8",
+    "observationRevisions": [
+      "b475ce7632bc661a79b61ee8b78124bc53170bca",
+      "e5e26abb2741c678905a925ef535b6e8eaf967b0",
+      "308095cf221c3695ad4bc5214ebc507a0b91705f",
+      "9301a555eac1049c6e5842e605c0bf147fe0e298",
+      "cc6d42206fc7393c6782de664b1fd0474d4af61d",
+      "7ff5d7b71c0ead6743a0d64b2b0e92abc61fed77"
+    ]
+  },
+  "before": {
+    "resultFile": "before/apache-kafka/result.json",
+    "resultSha256": "6930826dc6df2528b98ec8e6e438be0e25ec2efd9640868ac6f62fd74af6fca2",
+    "buildoptRevision": "037ee030adcf7ca0904f1262874ee3b803087a91",
+    "selectedRevision": "e5e26abb2741c678905a925ef535b6e8eaf967b0",
+    "selectedSource": "LOCAL_PORTFOLIO",
+    "controlDurationMs": 160895,
+    "candidateDurationMs": 166299,
+    "selectedSavedMs": -5404,
+    "cumulativeNetSavedMs": -22040,
+    "conclusion": "NOT_PAID_BACK_IN_OBSERVED_WINDOW"
+  },
+  "after": {
+    "resultFile": "after/apache-kafka/result.json",
+    "resultSha256": "faaed63b2c00de3533485828263b7a65949092468f42ecfcb839189a92e9d3db",
+    "buildoptRevision": "817bc7cc255beb165855c49997fc22fdcff41627",
+    "selectedRevision": "e5e26abb2741c678905a925ef535b6e8eaf967b0",
+    "selectedSource": "LOCAL_PORTFOLIO",
+    "controlDurationMs": 147552,
+    "candidateDurationMs": 42577,
+    "selectedSavedMs": 104975,
+    "fallbackDeltaMs": -31441,
+    "cumulativeGrossSavedMs": 73534,
+    "qualificationAndPublicationCostMs": 6762,
+    "cumulativeNetSavedMs": 66772,
+    "conclusion": "PAID_BACK_IN_OBSERVED_WINDOW"
+  },
+  "comparison": {
+    "selectedRevision": "e5e26abb2741c678905a925ef535b6e8eaf967b0",
+    "candidateDurationImprovementMs": 123722,
+    "selectedSavedImprovementMs": 110379,
+    "afterSelectedReductionBasisPoints": 7114,
+    "selectedReplayRecovered": true,
+    "cumulativeNetRecovered": true
+  },
+  "acceptance": {
+    "decision": "COMPLETE",
+    "exactRequiredOutputs": true,
+    "productFailures": 0,
+    "sameFrozenPublicWindow": true,
+    "selectedLocalReplay": true,
+    "selectedReplayPositive": true,
+    "cumulativeNetPositive": true
+  },
+  "boundaries": {
+    "designPartnerRequired": false,
+    "mechanismPercentagesAdded": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositoriesAveraged": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

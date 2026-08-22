@@ -30,7 +30,7 @@ Optimization are outside the current scope.
 | **Automatic discovery** | Derives Git ownership, Gradle task/output relationships and candidate graphs without repository-name rules. | Works across `classes`, `testClasses`, `assemble` and the five unrelated public repositories. |
 | **Incremental learning and value gate** | Accumulates useful control/candidate observations and checks repeatability, uncertainty, p95, outputs, fallback and payback. | Prevents weak current evidence from being promoted: Groovy retains native at 6/8 and a regressive p95. |
 | **Verified output materialization** | Restores exact unaffected outputs before their producers are omitted. | Fast and fail-closed, but only portable output sets may move across roots or machines. |
-| **Profile portfolio and central state** | Carries verified profiles and packs over HTTP/HTTPS between builds and machines. | Transport works; useful cross-commit selection is the current value gap. |
+| **Profile portfolio and central state** | Carries verified profiles and packs over HTTP/HTTPS between builds and machines. | Transport and safe cross-commit refresh now work; one Kafka descendant reused a verified local refresh and saved 104.975 seconds. Broader lifetime transfer remains unproven. |
 | **Gradle-compatible cache** | Reuses verified task outputs locally or through optional HTTP/HTTPS storage. | Supporting infrastructure near native-cache parity, not the principal speed claim. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource/state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
 
@@ -49,43 +49,60 @@ the profile was portable.
 | Micronaut `assemble` | **13.67% faster**, 8/8 | Rejected: 1 JAR differs | 0 | **-15.457 s net**; non-portable. |
 | Groovy `classes` | 6.82% faster, 6/8; p95 worse | Not evaluated | 0 | **-1.835 s net**; current value not proven. |
 
-Aggregate: **4/5 qualified, 2/4 portable, 0/7 selected replays, 7/7 native
-fallbacks, 0/5 paid back, exact outputs and zero product failures**. Repository
-percentages are not averaged and mechanism percentages are not added. The run
-used the 12-CPU development host with a common 12-worker cap.
+That frozen V2 baseline was **4/5 qualified, 2/4 portable, 0/7 selected
+replays, 7/7 native fallbacks, and 0/5 paid back**. The recovery experiment
+then reran the same Kafka qualifier and six descendants after generic product
+changes:
+
+| Recovery measurement | Before | After |
+| --- | ---: | ---: |
+| Selected descendant candidate | 166.299 s | **42.577 s** |
+| Attributable selected-replay saving | -5.404 s | **+104.975 s / 71.14%** |
+| Six-build cumulative net after learning/publication | -22.040 s | **+66.772 s** |
+
+The selected candidate became 123.722 seconds faster and preserved all 4,449
+required outputs exactly. The five native-retained after observations total
+-31.441 seconds of uncontrolled arm variation; that value remains visible in
+window economics but is not attributed to BuildOpt. Repository percentages are
+not averaged and mechanism percentages are not added. These runs used the
+12-CPU development host with a common 12-worker cap.
 
 ## What this proves
 
 - Generic graph reduction can beat optimized native Gradle on isolated,
   substantial workflows without repository-specific product branches.
-- Calibration speed is not customer value. A profile must remain portable and
-  eligible on later commits before its learning cost can repay.
+- Calibration speed is not customer value. A profile must remain portable,
+  refreshable, and eligible on later commits before its learning cost can repay.
 - Fail-open behavior is working: every uncertain descendant ran optimized
   native Gradle and preserved exact outputs.
-- The current POC is not yet a general build-time product. It has demonstrated
-  the accelerator, but this public window demonstrated **no transferable
-  lifetime value**.
+- Cross-commit reuse can now create attributable value: the one selected Kafka
+  descendant saves 104.975 seconds and the six-build window finishes 66.772
+  seconds net positive after learning and publication.
+- The current POC is not yet general. This is one workflow in one public
+  repository; it proves recovery is possible, not that every Gradle repository
+  will produce the same saving or selection frequency.
 
 ## Next steps
 
-1. Make cross-commit eligibility generic: distinguish a structurally compatible
-   existing profile from a new revision that is merely waiting for fresh
-   ordinary evidence, without weakening Wrapper, graph, workflow or output
-   bindings.
-2. Skip central sync/materialization work before a profile is actually eligible,
-   keeping rejected/inapplicable paths near optimized-native cost.
-3. Derive the smallest Gradle-owned portable output boundary and diagnose
-   nondeterministic native artifacts without rewriting, normalizing or dropping
-   required customer outputs.
-4. Rerun the same frozen public windows only after those generic changes. The
-   success condition is at least one exact selected replay and positive
-   cumulative net value; another attractive calibration is insufficient.
+1. Replicate the unchanged recovery mechanism on at least two additional public
+   repository/workflow families with compatible descendant windows. Do not add
+   repository-name rules or weaken exact-output and fallback gates.
+2. Measure selection frequency, attributable selected-replay value, rejection
+   cost, and cumulative payback separately. A positive native-arm delta cannot
+   rescue a regressive selected replay.
+3. Improve portability only by narrowing to customer-required Gradle-owned
+   outputs. Never normalize, rewrite, or silently drop nondeterministic customer
+   artifacts to manufacture a match.
+4. Keep the one-command path automatic: learn during useful builds, refresh
+   compatible profiles, select only after complete binding validation, and
+   fall back near native cost on every uncertain revision.
 
 ## Evidence
 
-- [Latest lifetime result](../../benchmarks/results/poc-qualified-lifetime-v2/README.md)
-- [Machine-readable summary](../../benchmarks/results/poc-qualified-lifetime-v2/summary.json)
-- [Lifetime protocol](../../specs/poc-qualified-lifetime-v2.md)
+- [Latest recovery result](../../benchmarks/results/poc-cross-commit-value-recovery-v1/README.md)
+- [Machine-readable recovery summary](../../benchmarks/results/poc-cross-commit-value-recovery-v1/summary.json)
+- [Recovery protocol](../../specs/poc-cross-commit-value-recovery-v1.md)
+- [Five-repository lifetime baseline](../../benchmarks/results/poc-qualified-lifetime-v2/README.md)
 - [Detailed performance findings](./build-optimization-performance.md)
 - [Generalization audit](./buildopt-generalization-audit.md)
 - [One-command roadmap](../plans/one-command-onboarding-roadmap.md)

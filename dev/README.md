@@ -688,6 +688,29 @@ paid-back subjects and zero product failures. Base CI validates the compact
 summary plus every subject's raw 17-invocation capture and eight-pair evidence;
 it does not rerun the public repositories.
 
+The follow-up recovery bundle keeps Kafka's qualifier and six public descendant
+revisions fixed while comparing the implementation before and after selected
+replay stops attaching the original full-workflow output observation:
+
+```bash
+./dev/check-cross-commit-value-recovery
+```
+
+The checker first validates both raw captures with
+`check-qualified-lifetime-v2 --subject`, then recomputes the exact selected
+revision and source, candidate improvement, attributable replay saving, fallback
+delta and cumulative economics. The selected candidate changes from 166.299 to
+42.577 seconds and saves 104.975 seconds/71.14% after the repair. The complete
+six-build window changes from -22.040 to +66.772 seconds net after 6.762 seconds
+of qualification/publication cost. All 4,449 required outputs match and product
+failures remain zero.
+
+The after native-retained arms total -31.441 seconds. That uncontrolled delta is
+kept in the window total but cannot prove selected-replay value; the strict gate
+requires the selected replay itself to be positive. The checked bundle is
+`benchmarks/results/poc-cross-commit-value-recovery-v1`. Normal CI validates the
+committed evidence and does not rerun the long public-repository capture.
+
 Reproduce the incremental-learning transaction with one exact installed
 binary and validate its checked evidence with:
 

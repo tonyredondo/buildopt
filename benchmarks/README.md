@@ -140,10 +140,27 @@ native roots.
   benchmarks/results/poc-qualified-lifetime-v2/summary.json
 ```
 
-This negative result supersedes calibration-only economics for deciding the
-next POC work. It does not invalidate the measured graph-reduction mechanism;
-it shows that cross-commit eligibility and portable output boundaries are now
-the limiting product hypotheses.
+The [cross-commit recovery result](./results/poc-cross-commit-value-recovery-v1/README.md)
+keeps Kafka's qualifier, six public descendants, workflow and output gate
+unchanged while comparing the implementation before and after selected-replay
+graph repair. The selected candidate changes from 166.299 seconds and -5.404
+seconds saved to 42.577 seconds and **+104.975 seconds / 71.14%** saved. All
+4,449 required outputs match. The six-build window changes from -22.040 seconds
+to **+66.772 seconds net** after learning/publication.
+
+```bash
+./dev/check-cross-commit-value-recovery
+```
+
+The checker validates both raw results under qualified lifetime v2 and
+recomputes the comparison. It keeps native-retained arm delta separate: the
+after fallbacks total -31.441 seconds and are not claimed as mechanism value.
+This closes one Kafka recovery hypothesis; it does not turn 71.14% into a
+universal or cross-repository claim.
+
+The earlier negative V2 result remains the immutable breadth baseline. It does
+not invalidate graph reduction; it exposed the cross-commit eligibility and
+portable-output limitations addressed by the recovery implementation.
 
 The preceding [automatic breadth V2 result](./results/poc-automatic-breadth-transfer-v2/README.md)
 is retained as immutable before-evidence; it qualified 4/5 and exposed the

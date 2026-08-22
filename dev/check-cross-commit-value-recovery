@@ -1,0 +1,167 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [SUMMARY_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_summary=${1:-${buildopt_repo_root}/benchmarks/results/poc-cross-commit-value-recovery-v1/summary.json}
+buildopt_spec=${buildopt_repo_root}/specs/poc-cross-commit-value-recovery-v1.json
+buildopt_base_spec=${buildopt_repo_root}/specs/poc-qualified-lifetime-v2.json
+buildopt_evidence_root=$(dirname -- "${buildopt_summary}")
+buildopt_before_result=${buildopt_evidence_root}/before/apache-kafka/result.json
+buildopt_after_result=${buildopt_evidence_root}/after/apache-kafka/result.json
+buildopt_after_calibration=${buildopt_evidence_root}/after/apache-kafka/calibration-evidence.json
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'cross-commit value recovery validation requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+for buildopt_file in "${buildopt_summary}" "${buildopt_spec}" "${buildopt_base_spec}" \
+    "${buildopt_before_result}" "${buildopt_after_result}" "${buildopt_after_calibration}"; do
+    [[ -f ${buildopt_file} ]] || {
+        printf 'cross-commit value recovery evidence is unavailable: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_before_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+"${buildopt_repo_root}/dev/check-qualified-lifetime-v2" "${buildopt_before_result}" --subject
+"${buildopt_repo_root}/dev/check-qualified-lifetime-v2" "${buildopt_after_result}" --subject
+
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_base_spec_sha=$(sha256sum "${buildopt_base_spec}" | awk '{print $1}')
+buildopt_before_sha=$(sha256sum "${buildopt_before_result}" | awk '{print $1}')
+buildopt_after_sha=$(sha256sum "${buildopt_after_result}" | awk '{print $1}')
+
+# This is a jq program, not shell text; dollar-prefixed names are jq variables.
+# shellcheck disable=SC2016
+jq -e \
+    --slurpfile spec "${buildopt_spec}" \
+    --slurpfile before "${buildopt_before_result}" \
+    --slurpfile after "${buildopt_after_result}" \
+    --slurpfile afterCalibration "${buildopt_after_calibration}" \
+    --arg specSha "${buildopt_spec_sha}" \
+    --arg baseSpecSha "${buildopt_base_spec_sha}" \
+    --arg beforeSha "${buildopt_before_sha}" \
+    --arg afterSha "${buildopt_after_sha}" '
+  def digest: type == "string" and test("^[0-9a-f]{64}$");
+  def boundaries:
+    . == {designPartnerRequired:false,mechanismPercentagesAdded:false,
+      productionAuthorized:false,proofOfConcept:true,
+      repositoriesAveraged:false,soakRequired:false,
+      testOptimization:"OUT_OF_SCOPE"};
+  $spec[0] as $contract |
+  $before[0] as $old |
+  $after[0] as $new |
+  ($old.observations | map(select(.selected))) as $oldSelected |
+  ($new.observations | map(select(.selected))) as $newSelected |
+  keys == ["acceptance","after","before","boundaries","capturedAt",
+    "comparison","repository","schemaVersion","specSha256","workItem"] and
+  .schemaVersion == "buildopt.evidence/poc-cross-commit-value-recovery/v1" and
+  .workItem == $contract.workItem and
+  .specSha256 == $specSha and (.specSha256 | digest) and
+  $contract.baseContract.sha256 == $baseSpecSha and
+  $contract.protocol.cheapEligibilityPrecedesCentralSync == true and
+  $contract.protocol.ineligibleRevisionPaysNoSyncOrMaterializationCost == true and
+  $contract.protocol.refreshedProfileMayBeReusedLocally == true and
+  $contract.protocol.refreshedProfileRequiresFullMaterializationValidation == true and
+  $contract.protocol.selectedReplayDoesNotAttachFullGraphOutputObservation == true and
+  $contract.protocol.sameFrozenPublicWindowRequired == true and
+  $contract.protocol.selectedReplayAttributableValueReportedSeparately == true and
+  $contract.protocol.fallbackNoiseMayNotProveSelectedReplayValue == true and
+  $contract.protocol.exactRequiredOutputsRequired == true and
+  $contract.protocol.positiveSelectedReplayRequired == true and
+  $contract.protocol.positiveCumulativeNetRequired == true and
+  ($contract.boundaries | boundaries) and
+  .capturedAt == $afterCalibration[0].capturedAt and
+  (.capturedAt | test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")) and
+  .repository == {
+    key:$contract.subject.key,
+    id:$contract.subject.repositoryId,
+    qualifierRevision:$contract.subject.qualifierRevision,
+    observationRevisions:$contract.subject.observations
+  } and
+  $old.repository.id == $contract.subject.repositoryId and
+  $new.repository == $old.repository and
+  $old.qualification.targetRevision == $contract.subject.qualifierRevision and
+  $new.qualification.targetRevision == $contract.subject.qualifierRevision and
+  [$old.observations[].revision] == $contract.subject.observations and
+  [$new.observations[].revision] == $contract.subject.observations and
+  $old.buildopt.revision == $contract.implementation.beforeRevision and
+  $new.buildopt.revision == $contract.implementation.afterRevision and
+  .before == {
+    resultFile:"before/apache-kafka/result.json",
+    resultSha256:$beforeSha,
+    buildoptRevision:$old.buildopt.revision,
+    selectedRevision:$oldSelected[0].revision,
+    selectedSource:$oldSelected[0].selectionSource,
+    controlDurationMs:$oldSelected[0].controlDurationMs,
+    candidateDurationMs:$oldSelected[0].candidateDurationMs,
+    selectedSavedMs:$oldSelected[0].savedMs,
+    cumulativeNetSavedMs:$old.economics.cumulativeNetSavedMs,
+    conclusion:$old.economics.conclusion
+  } and
+  .after == {
+    resultFile:"after/apache-kafka/result.json",
+    resultSha256:$afterSha,
+    buildoptRevision:$new.buildopt.revision,
+    selectedRevision:$newSelected[0].revision,
+    selectedSource:$newSelected[0].selectionSource,
+    controlDurationMs:$newSelected[0].controlDurationMs,
+    candidateDurationMs:$newSelected[0].candidateDurationMs,
+    selectedSavedMs:$newSelected[0].savedMs,
+    fallbackDeltaMs:$new.economics.fallbackDeltaMs,
+    cumulativeGrossSavedMs:$new.economics.cumulativeGrossSavedMs,
+    qualificationAndPublicationCostMs:$new.economics.qualificationAndPublicationCostMs,
+    cumulativeNetSavedMs:$new.economics.cumulativeNetSavedMs,
+    conclusion:$new.economics.conclusion
+  } and
+  ($oldSelected | length) == 1 and ($newSelected | length) == 1 and
+  $oldSelected[0].revision == $contract.implementation.selectedRevision and
+  $newSelected[0].revision == $contract.implementation.selectedRevision and
+  $oldSelected[0].selectionSource == "LOCAL_PORTFOLIO" and
+  $newSelected[0].selectionSource == "LOCAL_PORTFOLIO" and
+  $oldSelected[0].savedMs < 0 and $newSelected[0].savedMs > 0 and
+  $new.economics.selectedReplays >= $contract.acceptance.minimumSelectedReplays and
+  $new.economics.selectedReplaySavedMs == $newSelected[0].savedMs and
+  $new.economics.selectedReplaySavedMs > 0 and
+  $new.economics.cumulativeNetSavedMs > 0 and
+  $new.economics.conclusion == "PAID_BACK_IN_OBSERVED_WINDOW" and
+  .comparison == {
+    selectedRevision:$contract.implementation.selectedRevision,
+    candidateDurationImprovementMs:
+      ($oldSelected[0].candidateDurationMs - $newSelected[0].candidateDurationMs),
+    selectedSavedImprovementMs:($newSelected[0].savedMs - $oldSelected[0].savedMs),
+    afterSelectedReductionBasisPoints:
+      (((10000 * $newSelected[0].savedMs / $newSelected[0].controlDurationMs) | round)),
+    selectedReplayRecovered:true,
+    cumulativeNetRecovered:true
+  } and
+  .acceptance == {
+    decision:"COMPLETE",
+    exactRequiredOutputs:true,
+    productFailures:0,
+    sameFrozenPublicWindow:true,
+    selectedLocalReplay:true,
+    selectedReplayPositive:true,
+    cumulativeNetPositive:true
+  } and
+  all($old.observations[]; .exactRequiredOutputs) and
+  all($new.observations[]; .exactRequiredOutputs) and
+  $old.acceptance.productFailures == 0 and $new.acceptance.productFailures == 0 and
+  (.boundaries | boundaries)
+' "${buildopt_summary}" >/dev/null
+
+buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+[[ ${buildopt_before_status} == "${buildopt_after_status}" ]] || {
+    printf 'cross-commit value recovery validation modified the working tree\n' >&2
+    exit 1
+}
+
+printf 'cross-commit value recovery validation passed\n'

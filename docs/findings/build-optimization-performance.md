@@ -732,27 +732,43 @@ required outputs and report zero product failures. The result does not revoke
 the causal graph-reduction measurements. It rejects the assumption that a
 fast profile automatically has useful lifetime.
 
-The next implementation target is therefore cross-commit value recovery, not
-another repository or a weaker gate. Product logic must identify structural
-compatibility without requiring an already-ineligible revision to pay sync and
-materialization cost, while keeping Wrapper/build-logic/workflow/output drift
-fail-closed. Native nondeterminism must be handled by deriving a smaller
-Gradle-owned required-output boundary or retaining native; BuildOpt must not
-normalize or rewrite customer artifacts to manufacture portability.
+## Cross-Commit Value Recovery
+
+The recovery experiment keeps Kafka's qualifier and six public descendants
+unchanged. Cheap structural eligibility now runs before central work, an
+authoritative native descendant can refresh the profile and exact output pack,
+and a read-only invocation can reuse that verified local snapshot. Qualification,
+revalidation and output revisions remain distinct and every selected replay
+still passes the complete materialization binding check.
+
+The first complete capture exposed a product defect rather than an evidence
+failure: the selected replay still attached the full original output-observation
+workflow. Its candidate took 166.299 seconds versus 160.895 seconds control,
+losing 5.404 seconds despite reporting `SELECTIVE_PROFILE`. After removing that
+redundant observation only for an already-selected replay, the same descendant
+took 42.577 seconds versus 147.552 seconds control, saving **104.975 seconds /
+71.14%** and preserving all 4,449 required outputs exactly. The candidate itself
+improved by 123.722 seconds between captures.
+
+Across the same six-build window, qualification plus publication costs 6.762
+seconds, selected-replay value is +104.975 seconds, native-retained arm delta is
+-31.441 seconds, and final cumulative net is **+66.772 seconds**. The selected
+value is attributable; the native-arm variation is reported but not credited to
+BuildOpt. This closes the Kafka recovery hypothesis but not broad generality.
+The next target is unchanged-mechanism replication on at least two additional
+public repository/workflow families.
 
 ## Open Questions
 
-- Is a future repository family materially similar enough to the qualified
-  Kafka graph/locality shape to justify a newly preregistered replication?
+- Does the unchanged recovery mechanism select and save attributable time on
+  at least two non-Kafka public repository/workflow families?
 - What future materially different trace would be sufficient to reopen a
   rejected mechanism without repeating the closed evidence?
 - Can a reviewed Gradle-owned output candidate be turned into one convenient,
   versioned owner input without hiding repository semantics or weakening drift
   detection?
-- Can repository-independent structural evidence authorize cross-commit reuse
-  before every new revision accumulates a complete ordinary-observation set?
-- Can Gradle ownership identify a smaller portable required-output boundary
-  for native nondeterministic artifacts without dropping customer deliverables?
+- Which Gradle-owned required-output boundaries are portable across roots
+  without dropping customer deliverables?
 
 ## Evidence Boundaries
 

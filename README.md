@@ -112,10 +112,14 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > seconds. The 1,386.764-second qualification still projects 31 matching
 > builds and did not repay in this three-build window. Useful lifetime remains
 > profile-specific; it is never inferred from steady-state speedup alone. The
-> new five-repository lifetime result reinforces that boundary: four current
-> calibrations qualify, but portability and cross-commit eligibility produce
-> zero selected replays. The next POC work must create generic compatible
-> reuse and cheap ineligible fallback before another breadth expansion.
+> five-repository lifetime baseline reinforces that boundary: four current
+> calibrations qualify, but its original portability and eligibility rules
+> produce zero selected replays. The recovery experiment then keeps Kafka's
+> exact six-descendant window fixed and turns one verified local replay from
+> -5.404 seconds to **+104.975 seconds / 71.14%**, with exact outputs and
+> **+66.772 seconds cumulative net** after learning/publication. This proves
+> cross-commit value on one public workflow; the next POC step must replicate
+> the unchanged mechanism on additional repository families.
 > This authority exists only inside the explicit POC command
 > and never grants production promotion. The ordered work and success
 > scorecard live in the
