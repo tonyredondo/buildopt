@@ -381,15 +381,23 @@ buildopt_subject() {
         fi
     fi
 
+    local buildopt_change_family
+    buildopt_change_family=$(jq -er '
+      .discovery.changeFamily |
+      select(. == "DEPENDENCY_SOURCE" or . == "RESOURCE" or
+        . == "LEAF_SOURCE" or . == "MIXED_SOURCE")
+    ' "${buildopt_qualifier_result}")
+
     if ((buildopt_qualification_status != 0)); then
-        jq -e --argjson projects "${buildopt_expected_projects}" '
+        jq -e --argjson projects "${buildopt_expected_projects}" \
+            --arg changeFamily "${buildopt_change_family}" '
           .phase == "NATIVE_RETAINED" and
           .reason == "CALIBRATION_VALUE_NOT_PROVEN" and
           .calibration.status == "COMPLETE" and
           (.calibration.qualified | not) and
           .calibration.pairsMeasured == 8 and
           .calibration.fallbackSuccessful and
-          .discovery.changeFamily == "DEPENDENCY_SOURCE" and
+          .discovery.changeFamily == $changeFamily and
           .discovery.changedProjects == $projects and
           .discovery.materialization.status == "CAPTURED" and
           .portfolio.status == "SKIPPED" and
@@ -413,6 +421,7 @@ buildopt_subject() {
             --arg parent "${buildopt_parent}" --arg qualifier "${buildopt_qualifier}" \
             --arg revision "${buildopt_subject_revision}" --arg executableSha "${buildopt_executable_sha}" \
             --arg expectedProjects "${buildopt_expected_projects}" \
+            --arg changeFamily "${buildopt_change_family}" \
             --arg captureSha "${buildopt_capture_sha}" \
             --arg evidenceSha "${buildopt_calibration_evidence_sha}" \
             --argjson calibration "$(jq -c '.calibration | {calibrationCostMs,controlMeanMs,candidateMeanMs,controlP95Ms,candidateP95Ms,meanSavedMs,reductionRatio,interval95SavedMs,positivePairs,pairsMeasured,breakEvenBuilds,qualified,fallbackSuccessful,qualificationPolicy}' "${buildopt_qualifier_result}")" \
@@ -424,7 +433,7 @@ buildopt_subject() {
            repository:{id:$repositoryId,remote:$remote,publicRepository:true,
              historyBranch:$branch},
            qualification:{parentRevision:$parent,targetRevision:$qualifier,
-             sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",changeFamily:"DEPENDENCY_SOURCE",
+             sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",changeFamily:$changeFamily,
              processEnvelope:"FRESH_GRADLE_PROCESS_PER_BUILD",
              expectedChangedProjects:($expectedProjects|fromjson),graph:$graph,
              calibration:$calibration,captureFile:"qualification-capture.json",
@@ -452,9 +461,10 @@ buildopt_subject() {
             "${buildopt_subject_output}/result.json" --subject
         return 0
     fi
-    jq -e --argjson projects "${buildopt_expected_projects}" '
+    jq -e --argjson projects "${buildopt_expected_projects}" \
+        --arg changeFamily "${buildopt_change_family}" '
       .phase == "QUALIFIED" and .calibration.qualified and
-      .discovery.changeFamily == "DEPENDENCY_SOURCE" and
+      .discovery.changeFamily == $changeFamily and
       .discovery.changedProjects == $projects and
       .discovery.materialization.status == "CAPTURED" and
       .portfolio.status == "COMPLETE" and
@@ -873,6 +883,7 @@ buildopt_subject() {
             --arg revision "${buildopt_subject_revision}" --arg executableSha "${buildopt_executable_sha}" \
             --arg expectedProjects "${buildopt_expected_projects}" \
             --arg captureSha "${buildopt_capture_sha}" \
+            --arg changeFamily "${buildopt_change_family}" \
             --arg evidenceSha "$(sha256sum "${buildopt_calibration_evidence}" | awk '{print $1}')" \
             --arg producerSha "${buildopt_producer_output_sha}" \
             --arg independentSha "${buildopt_independent_output_sha}" \
@@ -891,7 +902,7 @@ buildopt_subject() {
            repository:{id:$repositoryId,remote:$remote,publicRepository:true,
              historyBranch:$branch},
            qualification:{parentRevision:$parent,targetRevision:$qualifier,
-             sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",changeFamily:"DEPENDENCY_SOURCE",
+             sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",changeFamily:$changeFamily,
              processEnvelope:"FRESH_GRADLE_PROCESS_PER_BUILD",
              expectedChangedProjects:($expectedProjects|fromjson),graph:$graph,
              calibration:$calibration,captureFile:"qualification-capture.json",
@@ -959,6 +970,7 @@ buildopt_subject() {
         --arg expectedProjects "${buildopt_expected_projects}" \
         --arg captureSha "${buildopt_capture_sha}" \
         --arg evidenceSha "$(sha256sum "${buildopt_calibration_evidence}" | awk '{print $1}')" \
+        --arg changeFamily "${buildopt_change_family}" \
         --arg producerSha "${buildopt_producer_output_sha}" \
         --arg independentSha "${buildopt_independent_output_sha}" \
         --arg differencesSha "${buildopt_portability_differences_sha}" \
@@ -982,7 +994,7 @@ buildopt_subject() {
        repository:{id:$repositoryId,remote:$remote,publicRepository:true,
          historyBranch:$branch},
        qualification:{parentRevision:$parent,targetRevision:$qualifier,
-         sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",changeFamily:"DEPENDENCY_SOURCE",
+         sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",changeFamily:$changeFamily,
          processEnvelope:"FRESH_GRADLE_PROCESS_PER_BUILD",
          expectedChangedProjects:($expectedProjects|fromjson),graph:$graph,
          calibration:$calibration,captureFile:"qualification-capture.json",

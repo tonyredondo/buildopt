@@ -148,7 +148,10 @@ buildopt_common_jq='
     (.qualification.parentRevision | revision) and
     (.qualification.targetRevision | revision) and
     .qualification.sourceOrigin == "PUBLIC_UPSTREAM_COMMIT" and
-    .qualification.changeFamily == "DEPENDENCY_SOURCE" and
+    (.qualification.changeFamily == "DEPENDENCY_SOURCE" or
+      .qualification.changeFamily == "RESOURCE" or
+      .qualification.changeFamily == "LEAF_SOURCE" or
+      .qualification.changeFamily == "MIXED_SOURCE") and
     .qualification.processEnvelope == $spec.protocol.processEnvelope and
     .qualification.expectedChangedProjects == $expected.expectedChangedProjects and
     (.qualification.graph | type == "object") and
