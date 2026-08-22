@@ -12,7 +12,7 @@ buildopt_evidence_root=${1:-"${buildopt_repo_root}/benchmarks/results/poc-workfl
 buildopt_summary=${buildopt_evidence_root}/summary.json
 buildopt_contract=${buildopt_repo_root}/specs/poc-workflow-input-ownership-v1.md
 
-for buildopt_command in git jq mktemp rg; do
+for buildopt_command in git jq mktemp; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
         printf 'workflow-input ownership validation requires %s\n' \
             "${buildopt_command}" >&2
@@ -90,11 +90,19 @@ jq -e '
 buildopt_revision=$(jq -r '.buildoptRevision' "${buildopt_summary}")
 git -C "${buildopt_repo_root}" cat-file -e "${buildopt_revision}^{commit}"
 
-if rg -n -i 'opentelemetry|CHANGELOG\.md|jetty' \
-    --glob '!**/*_test.go' \
-    "${buildopt_repo_root}/internal/buildimpact" \
-    "${buildopt_repo_root}/internal/launcher" \
-    "${buildopt_repo_root}/dev/check-magic-auto-discovery" >/dev/null; then
+buildopt_grep_status=0
+git -C "${buildopt_repo_root}" grep -ilE \
+    'opentelemetry|CHANGELOG\.md|jetty' -- \
+    internal/buildimpact \
+    internal/launcher \
+    dev/check-magic-auto-discovery \
+    ':(exclude)**/*_test.go' \
+    >"${buildopt_tmp}/subject-specific-files.txt" || buildopt_grep_status=$?
+if ((buildopt_grep_status > 1)); then
+    printf 'workflow-input ownership source scan failed\n' >&2
+    exit 1
+fi
+if [[ -s ${buildopt_tmp}/subject-specific-files.txt ]]; then
     printf 'workflow-input ownership implementation contains subject-specific rules\n' >&2
     exit 1
 fi
