@@ -15,7 +15,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tonyredondo/buildopt/internal/buildimpact"
 	"github.com/tonyredondo/buildopt/internal/nativevolatility"
+	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
 
 const (
@@ -221,6 +223,9 @@ func applyOptimizeNativeQuarantine(
 		return result, err
 	}
 	_ = manifest
+	if err := rewriteOptimizeQuarantineDiscoveryDocuments(invocation, discovery); err != nil {
+		return result, fmt.Errorf("rewrite quarantined discovery documents: %w", err)
+	}
 	resultRelative := filepath.ToSlash(filepath.Join(
 		invocation.stateRelative, "materialization", "quarantine", "native-volatility.json",
 	))
@@ -257,6 +262,170 @@ func applyOptimizeNativeQuarantine(
 		return result, fmt.Errorf("write quarantined optimize state: %w", err)
 	}
 	return result, nil
+}
+
+// rewriteOptimizeQuarantineDiscoveryDocuments preserves the fail-closed
+// Build Impact bindings after native volatility requires additional producers
+// to run locally. The persisted configured-model snapshot is the authority for
+// deriving those task entrypoints; no task-to-project relationship is guessed
+// from names or from execution timing.
+func rewriteOptimizeQuarantineDiscoveryDocuments(
+	invocation optimizeInvocation,
+	discovery optimizeDiscoveryResult,
+) error {
+	directory := filepath.Join(invocation.stateDirectory, "discovery")
+	read := func(name string, maximum int64) ([]byte, error) {
+		raw, err := os.ReadFile(filepath.Join(directory, name))
+		if err != nil || len(raw) == 0 || int64(len(raw)) > maximum {
+			return nil, fmt.Errorf("%s is unavailable", name)
+		}
+		return raw, nil
+	}
+	decode := func(raw []byte, destination any) error {
+		decoder := json.NewDecoder(bytes.NewReader(raw))
+		decoder.DisallowUnknownFields()
+		if err := decoder.Decode(destination); err != nil {
+			return err
+		}
+		if err := decoder.Decode(&struct{}{}); !errors.Is(err, io.EOF) {
+			return errors.New("document has trailing JSON")
+		}
+		return nil
+	}
+
+	manifestRaw, err := read("manifest.json", 256<<10)
+	if err != nil {
+		return err
+	}
+	var manifest buildimpact.Manifest
+	if err := decode(manifestRaw, &manifest); err != nil {
+		return fmt.Errorf("decode manifest: %w", err)
+	}
+	loadedManifest, err := buildimpact.ParseManifest(
+		manifestRaw, discovery.RepositoryID, manifest.PipelineClass,
+	)
+	if err != nil {
+		return err
+	}
+
+	graphRaw, err := read("graph.json", 2<<20)
+	if err != nil {
+		return err
+	}
+	loadedGraph, err := buildimpact.ParseDeclaredGraph(graphRaw, loadedManifest)
+	if err != nil {
+		return err
+	}
+	generatedRaw, err := read("generated-manifest.json", 256<<10)
+	if err != nil {
+		return err
+	}
+	var generated buildimpact.GeneratedManifest
+	if err := decode(generatedRaw, &generated); err != nil {
+		return fmt.Errorf("decode generated manifest: %w", err)
+	}
+	if generated.SchemaVersion != buildimpact.GeneratedManifestSchemaVersion ||
+		generated.RepositoryID != loadedManifest.Manifest.RepositoryID ||
+		generated.PipelineClass != loadedManifest.Manifest.PipelineClass ||
+		generated.ManifestDigest != loadedManifest.Digest ||
+		generated.GraphDigest != loadedGraph.Digest {
+		return errors.New("generated manifest does not bind the current discovery documents")
+	}
+
+	proposalRaw, err := read("proposal.json", 2<<20)
+	if err != nil {
+		return err
+	}
+	var proposal profileProposalReport
+	if err := decode(proposalRaw, &proposal); err != nil {
+		return fmt.Errorf("decode proposal: %w", err)
+	}
+	if proposal.Analysis == nil || proposal.Analysis.Plan == nil ||
+		!equalOptimizeStrings(proposal.CandidateEntrypoints, proposal.Analysis.Plan.Entrypoints) {
+		return errors.New("proposal has no bound structural candidate")
+	}
+	alternativeID := proposal.Analysis.Plan.AlternativeID
+	alternativeFound := false
+	for index := range manifest.AllowedAlternatives {
+		if manifest.AllowedAlternatives[index].ID != alternativeID {
+			continue
+		}
+		if !equalOptimizeStrings(
+			manifest.AllowedAlternatives[index].Entrypoints,
+			proposal.CandidateEntrypoints,
+		) {
+			return errors.New("proposal and manifest alternatives differ")
+		}
+		manifest.AllowedAlternatives[index].Entrypoints = append(
+			[]string(nil), discovery.CandidateEntrypoints...,
+		)
+		alternativeFound = true
+	}
+	if !alternativeFound {
+		return errors.New("proposal alternative is absent from the manifest")
+	}
+	updatedManifestRaw, err := json.Marshal(manifest)
+	if err != nil {
+		return err
+	}
+	updatedManifest, err := buildimpact.ParseManifest(
+		updatedManifestRaw, discovery.RepositoryID, manifest.PipelineClass,
+	)
+	if err != nil {
+		return err
+	}
+
+	snapshotRaw, err := read("snapshot.json", 4<<20)
+	if err != nil {
+		return err
+	}
+	var snapshot buildimpact.DiscoverySnapshot
+	if err := decode(snapshotRaw, &snapshot); err != nil {
+		return fmt.Errorf("decode configured-model snapshot: %w", err)
+	}
+	derived, err := buildimpact.DeriveProjectEntrypoints(
+		snapshot, discovery.CandidateEntrypoints,
+	)
+	if err != nil {
+		return err
+	}
+	derivedRaw, err := json.Marshal(derived)
+	if err != nil {
+		return err
+	}
+	updated, err := buildimpact.GenerateImpact(updatedManifest, derivedRaw)
+	if err != nil {
+		return err
+	}
+	analysis := profilediscovery.AnalyzeGeneratedOpportunity(
+		updated.Manifest, updated.Graph, updated.Generated,
+	)
+	if analysis.Decision != profilediscovery.DecisionMeasure || analysis.Plan == nil ||
+		!equalOptimizeStrings(analysis.Plan.Entrypoints, discovery.CandidateEntrypoints) {
+		return errors.New("quarantined candidate no longer provides structural reduction")
+	}
+
+	proposal.CandidateEntrypoints = append([]string(nil), discovery.CandidateEntrypoints...)
+	proposal.OmittedProjects = proposalOmittedProjects(
+		updated.Graph.Graph, discovery.CandidateEntrypoints,
+	)
+	proposal.Analysis = &analysis
+	proposal.Decision = analysis.Decision
+	proposal.Reason = analysis.Reason
+	documents := optimizeDiscoveryDocuments{values: map[string][]byte{
+		filepath.ToSlash(filepath.Join(invocation.stateRelative, "discovery", "manifest.json")):           updatedManifestRaw,
+		filepath.ToSlash(filepath.Join(invocation.stateRelative, "discovery", "graph.json")):              updated.GraphJSON,
+		filepath.ToSlash(filepath.Join(invocation.stateRelative, "discovery", "generated-manifest.json")): updated.GeneratedJSON,
+		filepath.ToSlash(filepath.Join(invocation.stateRelative, "discovery", "snapshot.json")):           derivedRaw,
+	}}
+	proposalRaw, err = json.MarshalIndent(proposal, "", "  ")
+	if err != nil {
+		return err
+	}
+	documents.values[filepath.ToSlash(filepath.Join(
+		invocation.stateRelative, "discovery", "proposal.json",
+	))] = append(proposalRaw, '\n')
+	return writeOptimizeDiscoveryDocuments(invocation.repositoryRoot, documents)
 }
 
 func writeOptimizeQuarantineMaterialization(

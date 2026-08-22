@@ -193,7 +193,7 @@ buildopt_check_supported() {
         .discovery.materialization.reason == "VERIFIED_UNAFFECTED_OUTPUTS_CAPTURED" and
         .discovery.materialization.fileCount >= 1 and
         all(.discovery.materialization.patterns[]; startswith("service-b/")) and
-        (.discovery.generatedFiles | length) == 7 and
+        (.discovery.generatedFiles | length) == 8 and
         .discovery.reviewRequired == true and
         .discovery.productionAuthorized == false and
         .discovery.testOptimization == "OUT_OF_SCOPE"

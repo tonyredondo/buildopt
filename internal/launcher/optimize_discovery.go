@@ -588,6 +588,11 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		return result, optimizeDiscoveryDocuments{}, err
 	}
 	documents[config.proposalOutput] = append(proposalRaw, '\n')
+	snapshotRaw, err := json.MarshalIndent(*observedImpact, "", "  ")
+	if err != nil {
+		return result, optimizeDiscoveryDocuments{}, err
+	}
+	documents[filepath.Join(directory, "snapshot.json")] = append(snapshotRaw, '\n')
 	changesPath := filepath.Join(directory, "changes.txt")
 	// Replay must consume the same effective change set that discovery used.
 	// Reintroducing paths proven unconsumed by the requested workflow would make

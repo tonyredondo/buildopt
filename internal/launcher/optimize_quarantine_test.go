@@ -8,7 +8,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/tonyredondo/buildopt/internal/buildimpact"
 	"github.com/tonyredondo/buildopt/internal/nativevolatility"
+	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
 
 func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing.T) {
@@ -63,7 +65,7 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 			stateRelative + "/discovery/changes.txt", stateRelative + "/discovery/fallback-changes.txt",
 			stateRelative + "/discovery/generated-manifest.json", stateRelative + "/discovery/graph.json",
 			stateRelative + "/discovery/manifest.json", stateRelative + "/discovery/output-contract.json",
-			stateRelative + "/discovery/proposal.json",
+			stateRelative + "/discovery/proposal.json", stateRelative + "/discovery/snapshot.json",
 		},
 		ReviewRequired: true, TestOptimization: "OUT_OF_SCOPE",
 		outputCandidates: []outputContractCandidate{
@@ -77,6 +79,7 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 		t.Fatal(err)
 	}
 	discovery.Materialization = materialization
+	writeOptimizeQuarantineTestDiscoveryDocuments(t, invocation, discovery)
 	manifest, _, err := loadOptimizeOutputMaterialization(invocation, discovery)
 	if err != nil {
 		t.Fatal(err)
@@ -117,6 +120,7 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 		state.Calibration.Status != optimizeCalibrationSkipped {
 		t.Fatalf("quarantined state = %+v, result = %+v", state, result)
 	}
+	assertOptimizeQuarantineTestDiscoveryDocuments(t, invocation, state.Discovery)
 	filtered, _, err := loadOptimizeOutputMaterialization(invocation, state.Discovery)
 	if err != nil {
 		t.Fatal(err)
@@ -157,6 +161,170 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 	if digest, count, err := run.hashIncrementalOutputs(state.Discovery); err != nil ||
 		!validOptimizeSHA(digest) || count != 2 {
 		t.Fatalf("stable verification = %q, %d, %v", digest, count, err)
+	}
+}
+
+func assertOptimizeQuarantineTestDiscoveryDocuments(
+	t *testing.T,
+	invocation optimizeInvocation,
+	discovery optimizeDiscoveryResult,
+) {
+	t.Helper()
+	directory := filepath.Join(invocation.stateDirectory, "discovery")
+	manifestRaw, err := os.ReadFile(filepath.Join(directory, "manifest.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	manifest, err := buildimpact.ParseManifest(
+		manifestRaw, discovery.RepositoryID, "quarantine-test",
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(manifest.Manifest.AllowedAlternatives) != 1 ||
+		!equalOptimizeStrings(
+			manifest.Manifest.AllowedAlternatives[0].Entrypoints,
+			discovery.CandidateEntrypoints,
+		) {
+		t.Fatalf("rewritten manifest = %+v", manifest.Manifest.AllowedAlternatives)
+	}
+	graphRaw, err := os.ReadFile(filepath.Join(directory, "graph.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	graph, err := buildimpact.ParseDeclaredGraph(graphRaw, manifest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	generatedRaw, err := os.ReadFile(filepath.Join(directory, "generated-manifest.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var generated buildimpact.GeneratedManifest
+	if err := json.Unmarshal(generatedRaw, &generated); err != nil {
+		t.Fatal(err)
+	}
+	if generated.ManifestDigest != manifest.Digest || generated.GraphDigest != graph.Digest {
+		t.Fatalf("rewritten generated binding = %+v", generated)
+	}
+	entrypoints := make([]string, 0, len(graph.Graph.Entrypoints))
+	for _, entrypoint := range graph.Graph.Entrypoints {
+		entrypoints = append(entrypoints, entrypoint.Name)
+	}
+	for _, candidate := range discovery.CandidateEntrypoints {
+		if !optimizeStringIn(candidate, entrypoints...) {
+			t.Fatalf("rewritten graph entrypoints = %v, missing %s", entrypoints, candidate)
+		}
+	}
+	proposalRaw, err := os.ReadFile(filepath.Join(directory, "proposal.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var proposal profileProposalReport
+	if err := json.Unmarshal(proposalRaw, &proposal); err != nil {
+		t.Fatal(err)
+	}
+	if proposal.Analysis == nil || proposal.Analysis.Plan == nil ||
+		!equalOptimizeStrings(proposal.CandidateEntrypoints, discovery.CandidateEntrypoints) ||
+		!equalOptimizeStrings(proposal.Analysis.Plan.Entrypoints, discovery.CandidateEntrypoints) {
+		t.Fatalf("rewritten proposal = %+v", proposal)
+	}
+}
+
+func writeOptimizeQuarantineTestDiscoveryDocuments(
+	t *testing.T,
+	invocation optimizeInvocation,
+	discovery optimizeDiscoveryResult,
+) {
+	t.Helper()
+	manifest := buildimpact.Manifest{
+		SchemaVersion: buildimpact.ManifestSchemaVersion, ManifestVersion: 1,
+		RepositoryID: discovery.RepositoryID, PipelineClass: "quarantine-test",
+		Ownership: buildimpact.RepositoryOwnership, OriginalEntrypoints: []string{"classes"},
+		AllowedAlternatives: []buildimpact.EntrypointSet{{
+			ID: "changed-projects", Entrypoints: append([]string(nil), discovery.CandidateEntrypoints...),
+		}},
+		RequiredArtifacts: []buildimpact.Artifact{
+			{ID: "changed-output", Path: "changed/build/*.jar", Owner: buildimpact.BuildOptimization},
+			{ID: "stable-output", Path: "stable/build/*.jar", Owner: buildimpact.BuildOptimization},
+			{ID: "volatile-output", Path: "volatile/build/classes/**", Owner: buildimpact.BuildOptimization},
+		},
+		RequiredChecks: []buildimpact.Check{}, GlobalChangePaths: []string{"settings.gradle"},
+		UnknownChangePolicy: buildimpact.FullGraphPolicy,
+	}
+	manifestRaw, err := json.MarshalIndent(manifest, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	manifestRaw = append(manifestRaw, '\n')
+	loadedManifest, err := buildimpact.ParseManifest(
+		manifestRaw, discovery.RepositoryID, manifest.PipelineClass,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	snapshot := buildimpact.DiscoverySnapshot{
+		SchemaVersion: buildimpact.DiscoverySchemaVersion, GradleVersion: "9.6.1",
+		Complete: true, FallbackReasons: []string{}, IncludedBuildPaths: []string{},
+		Projects: []buildimpact.DiscoveredProject{
+			{Path: ":changed", SourcePaths: []string{"changed/**"}, DependsOn: []string{}},
+			{Path: ":stable", SourcePaths: []string{"stable/**"}, DependsOn: []string{}},
+			{Path: ":volatile", SourcePaths: []string{"volatile/**"}, DependsOn: []string{}},
+		},
+		Tasks: []buildimpact.DiscoveredTask{
+			{Path: ":changed:classes", ProjectPath: ":changed", DependsOn: []string{}},
+			{Path: ":stable:jar", ProjectPath: ":stable", DependsOn: []string{}},
+			{Path: ":volatile:compileJava", ProjectPath: ":volatile", DependsOn: []string{}},
+		},
+		Entrypoints: []buildimpact.DiscoveredEntrypoint{{
+			Name: "classes", ReachesProjects: []string{":changed", ":stable", ":volatile"},
+		}},
+	}
+	derived, err := buildimpact.DeriveProjectEntrypoints(snapshot, discovery.CandidateEntrypoints)
+	if err != nil {
+		t.Fatal(err)
+	}
+	derivedRaw, err := json.MarshalIndent(derived, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	generated, err := buildimpact.GenerateImpact(loadedManifest, derivedRaw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	analysis := profilediscovery.AnalyzeGeneratedOpportunity(
+		generated.Manifest, generated.Graph, generated.Generated,
+	)
+	if analysis.Decision != profilediscovery.DecisionMeasure {
+		t.Fatalf("test discovery analysis = %+v", analysis)
+	}
+	proposal := profileProposalReport{
+		SchemaVersion: "buildopt.poc/profile-proposal/v1",
+		Decision:      analysis.Decision, Reason: analysis.Reason,
+		RepositoryID: discovery.RepositoryID, PipelineClass: manifest.PipelineClass,
+		OriginalEntrypoints:  []string{"classes"},
+		CandidateEntrypoints: append([]string(nil), discovery.CandidateEntrypoints...),
+		OmittedProjects: proposalOmittedProjects(
+			generated.Graph.Graph, discovery.CandidateEntrypoints,
+		),
+		UnknownRelationships: false, Analysis: &analysis, ReviewRequired: true,
+		TestOptimization: "OUT_OF_SCOPE",
+	}
+	proposalRaw, err := json.MarshalIndent(proposal, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	directory := filepath.ToSlash(filepath.Join(invocation.stateRelative, "discovery"))
+	if err := writeOptimizeDiscoveryDocuments(invocation.repositoryRoot, optimizeDiscoveryDocuments{
+		values: map[string][]byte{
+			directory + "/manifest.json":           manifestRaw,
+			directory + "/graph.json":              generated.GraphJSON,
+			directory + "/generated-manifest.json": generated.GeneratedJSON,
+			directory + "/snapshot.json":           append(derivedRaw, '\n'),
+			directory + "/proposal.json":           append(proposalRaw, '\n'),
+		},
+	}); err != nil {
+		t.Fatal(err)
 	}
 }
 

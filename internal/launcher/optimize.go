@@ -604,7 +604,10 @@ func validOptimizeDiscoveryCheckpoint(state optimizeState) bool {
 }
 
 func validOptimizeDiscoveryFiles(paths []string, complete bool) bool {
-	if len(paths) > 7 || (complete && len(paths) != 7) {
+	// Local discovery retains the configured-model snapshot needed to rewrite
+	// producer-bound quarantine plans. Central replay materializes only the
+	// seven already-bound profile documents and does not recalibrate them.
+	if len(paths) > 8 || (complete && len(paths) != 7 && len(paths) != 8) {
 		return false
 	}
 	seen := make(map[string]bool, len(paths))

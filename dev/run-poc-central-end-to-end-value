@@ -585,7 +585,7 @@ buildopt_subject() {
                   .discovery.status == "COMPLETE" and
                   .discovery.reason == "STRUCTURAL_CANDIDATE_DISCOVERED" and
                   .discovery.repositoryId == $repositoryId and
-                  (.discovery.generatedFiles | length) == 7 and
+                  (.discovery.generatedFiles | length) == 8 and
                   .calibration.status == "NATIVE_RETAINED" and
                   .calibration.reason == "CALIBRATION_EXECUTION_FAILED" and
                   (.calibration.performed | not) and
