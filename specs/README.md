@@ -238,6 +238,15 @@ positive calibration rejected for 14 native-output differences. Zero profiles
 are portable, zero replays are selected, zero product failures occur and the
 cross-repository value claim remains bounded to the prior Kafka evidence.
 
+The [workflow-input ownership contract](./poc-workflow-input-ownership-v1.md)
+then addresses the OpenTelemetry blocker generically. A changed unowned path
+may be ignored only when the exact requested workflow produces complete
+finalized task-input evidence and zero tasks consume it. Owned paths remain
+relevant; consumed, deleted, missing, incomplete, ambiguous and all-unowned
+cases retain native Gradle. The frozen JMX proof ignores only root
+`CHANGELOG.md` and completes a 1,027->8-project structural discovery. It skips
+calibration and makes no wall-time or broadened-value claim.
+
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation
 per useful invocation. Its fixture completes eight pairs with zero

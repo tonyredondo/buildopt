@@ -731,6 +731,25 @@ Normal CI runs only this deterministic checker. The public builds are not
 repeated, native differences are not normalized, and no repository-specific
 ownership exception is authorized.
 
+Validate the generic workflow-input ownership follow-up without rerunning the
+long OpenTelemetry capture:
+
+```bash
+./dev/check-workflow-input-ownership
+```
+
+The checker binds the frozen public base/target, exact four-path observation,
+provider-backed input coverage, 1,027->8-project discovery, zero product
+failures and the absence of any performance claim. Base CI separately runs the
+full automatic discovery fixture, including provider-backed, consumed,
+deleted, global, unsupported and ambiguous cases, plus the Go suite.
+
+The one-time setup observation queries finalized inputs after requested tasks
+execute and disables Configuration Cache only for that unmeasured capture.
+Standalone Build Impact discovery and all measured or fallback workflows retain
+their normal Configuration Cache behavior. No repository identity or filename
+extension is used to decide relevance.
+
 Reproduce the incremental-learning transaction with one exact installed
 binary and validate its checked evidence with:
 

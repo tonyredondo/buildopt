@@ -322,15 +322,20 @@ weakening correctness or adding repository-specific rules:
    independent-root portability on 14 class files. The aggregate is 0/3
    portable and 0/3 selected, so the Kafka claim remains bounded.
 
+9. **Completed:** add workflow-input ownership without repository or extension
+   rules. On the frozen OpenTelemetry JMX change, complete finalized task-input
+   evidence ignores only unconsumed root CHANGELOG.md, retains the three
+   module paths and discovers 1,027->8 projects. Calibration is skipped, so this
+   is structural proof rather than a new value claim.
+
 The next onboarding work addresses the generic blockers exposed by that
 replication rather than adding repository exceptions:
 
-1. prove workflow-input relevance before ignoring an unowned changed path;
-2. quarantine outputs proven volatile across independent native builds, rebuild
+1. quarantine outputs proven volatile across independent native builds, rebuild
    their producers locally and transport only outputs that remain exact;
-3. preregister descendant windows whose refresh and omitted-owner replay are
+2. preregister descendant windows whose refresh and omitted-owner replay are
    structurally compatible before timing; and
-4. broaden the POC claim only after at least two non-Kafka subjects produce
+3. broaden the POC claim only after at least two non-Kafka subjects produce
    positive attributable selected replays.
 
 The current recovery dataset and its interpretation are in
@@ -338,6 +343,9 @@ The current recovery dataset and its interpretation are in
 
 The terminal breadth dataset is in
 [`poc-cross-commit-breadth-replication-v1`](../../benchmarks/results/poc-cross-commit-breadth-replication-v1/README.md).
+
+The completed ownership result is in
+[workflow-input ownership v1](../../benchmarks/results/poc-workflow-input-ownership-v1/README.md).
 
 No step may add repository-name rules, average repository percentages, weaken
 correctness gates or borrow another profile's lifetime.

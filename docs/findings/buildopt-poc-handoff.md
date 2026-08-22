@@ -27,7 +27,7 @@ Optimization are outside the current scope.
 | Component | What it does | Current conclusion |
 | --- | --- | --- |
 | **Structural Build Impact** | Selects only the changed producers and tasks needed by the requested workflow. | The primary accelerator: current isolated calibrations reduce Spring 27→10, OpenTelemetry 1,008→34, Kafka 66→3, Micronaut 70→21 and Groovy 37→2 projects. |
-| **Automatic discovery** | Derives Git ownership, Gradle task/output relationships and candidate graphs without repository-name rules. | Works across `classes`, `testClasses`, `assemble` and the five unrelated public repositories. |
+| **Automatic discovery** | Derives Git ownership, finalized workflow inputs, Gradle task/output relationships and candidate graphs without repository-name rules. | Works across `classes`, `testClasses`, `assemble` and the five unrelated public repositories. Complete task-input evidence now lets a mixed OpenTelemetry change ignore only its unconsumed root changelog while retaining module-owned and consumed paths. |
 | **Incremental learning and value gate** | Accumulates useful control/candidate observations and checks repeatability, uncertainty, p95, outputs, fallback and payback. | Prevents weak current evidence from being promoted: Groovy retains native at 6/8 and a regressive p95. |
 | **Verified output materialization** | Restores exact unaffected outputs before their producers are omitted. | Fast and fail-closed, but only portable output sets may move across roots or machines. |
 | **Profile portfolio and central state** | Carries verified profiles and packs over HTTP/HTTPS between builds and machines. | Transport and safe cross-commit refresh work and one Kafka descendant saved 104.975 seconds. Unchanged replication on Spring and OpenTelemetry found generic ownership and native-output portability blockers, so broader value remains unproven. |
@@ -77,6 +77,14 @@ replayed. The terminal total is **3 subjects, 1 positive calibration, 0 portable
 profiles, 0 selected replays and 0 product failures**. The Kafka-only value claim
 therefore does not broaden.
 
+Workflow-input ownership now closes the OpenTelemetry discovery blocker without
+changing that performance conclusion. The same frozen JMX change observes all
+four changed paths: only unowned `CHANGELOG.md` has zero consumers and is
+ignored; the JMX YAML and Java test are consumed, while the owned `jetty.md`
+remains relevant. Discovery completes from 1,027 to 8 projects with zero product
+failures. Calibration is skipped, so this is structural evidence rather than a
+new wall-time result.
+
 ## What this proves
 
 - Generic graph reduction can beat optimized native Gradle on isolated,
@@ -95,19 +103,20 @@ therefore does not broaden.
 
 ## Next steps
 
-1. Add workflow-input ownership: an unowned changed path may be ignored only
-   when Gradle evidence proves that the requested workflow does not consume it.
-2. Add native-volatility quarantine: discover volatile producer outputs from
+1. Add native-volatility quarantine: discover volatile producer outputs from
    independent native builds, rebuild those producers locally and keep exact
    bytes for every output BuildOpt actually transports or reuses.
-3. Discover descendant windows structurally: preregister a refresh followed by
+2. Discover descendant windows structurally: preregister a refresh followed by
    an omitted-owner change that can actually select the refreshed profile.
-4. Broaden the value claim only after at least two non-Kafka subjects produce
+3. Broaden the value claim only after at least two non-Kafka subjects produce
    positive attributable selected replays with exact transported outputs.
 
 ## Evidence
 
 - [Latest recovery result](../../benchmarks/results/poc-cross-commit-value-recovery-v1/README.md)
+- [Workflow-input ownership result](../../benchmarks/results/poc-workflow-input-ownership-v1/README.md)
+- [Machine-readable ownership summary](../../benchmarks/results/poc-workflow-input-ownership-v1/summary.json)
+- [Workflow-input ownership protocol](../../specs/poc-workflow-input-ownership-v1.md)
 - [Machine-readable recovery summary](../../benchmarks/results/poc-cross-commit-value-recovery-v1/summary.json)
 - [Recovery protocol](../../specs/poc-cross-commit-value-recovery-v1.md)
 - [Breadth replication result](../../benchmarks/results/poc-cross-commit-breadth-replication-v1/README.md)

@@ -252,6 +252,19 @@ For the decision-ready product summary, see the [current POC one-pager](../docs/
 The [detailed performance findings](../docs/findings/build-optimization-performance.md)
 retain mechanism-specific and historical experiments for engineering review.
 
+### Latest generic blocker closure
+
+The [workflow-input ownership evidence](./results/poc-workflow-input-ownership-v1/README.md)
+replays the OpenTelemetry JMX change that previously retained native on mixed
+owned and unowned paths. Complete finalized Gradle task-input evidence ignores
+only unconsumed root `CHANGELOG.md`; the YAML and Java test remain consumed and
+the owned `jetty.md` remains relevant. Discovery completes from 1,027 to 8
+projects with zero product failures.
+
+Calibration is skipped, so this is structural correctness evidence rather than
+a new performance row. The Kafka-only selected-replay value claim remains
+unchanged.
+
 ### Current automatic one-command terminal result
 
 The [published terminal evidence](./results/poc-magic-end-to-end-value-v2/README.md)

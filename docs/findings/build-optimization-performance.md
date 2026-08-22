@@ -764,11 +764,18 @@ roots differ in 14 of 8,385 class outputs. No subject becomes portable or
 selects a replay, product failures remain zero, and the Kafka claim does not
 broaden.
 
+The generic workflow-input follow-up now resolves the OpenTelemetry ownership
+blocker structurally. A late, complete task-input observation proves that
+`CHANGELOG.md` is unowned and consumed by zero requested-workflow tasks; the
+JMX YAML feeds `processResources`, the Java test feeds `compileTestJava`, and
+the module-owned `jetty.md` remains relevant even with no direct consumer.
+BuildOpt ignores only the changelog and discovers a 1,027->8-project candidate
+with zero product failures. The setup observation is deliberately unmeasured
+and calibration is skipped, so this closes an ownership hypothesis without
+adding a performance result or broadening the Kafka value claim.
+
 ## Open Questions
 
-- Can workflow-input evidence prove that an unowned changed path is irrelevant
-  to the requested Gradle workflow without using path extensions or repository
-  identity?
 - Can native-volatility quarantine rebuild volatile producers locally while
   preserving exact bytes for every output BuildOpt transports or reuses?
 - Can descendant discovery preregister a refresh followed by a structurally
