@@ -158,6 +158,29 @@ after fallbacks total -31.441 seconds and are not claimed as mechanism value.
 This closes one Kafka recovery hypothesis; it does not turn 71.14% into a
 universal or cross-repository claim.
 
+### Cross-commit breadth replication
+
+The [breadth replication result](./results/poc-cross-commit-breadth-replication-v1/README.md)
+applies the frozen recovery path to three non-Kafka subjects without repository
+rules or weaker correctness gates. It is terminal negative breadth evidence:
+
+| Subject | Calibration | Portability / replay | Decision |
+| --- | ---: | --- | --- |
+| Spring root `classes` | -206.25 ms / -0.91%, 1/8 positive | Not evaluated | Retain native; value not proven. |
+| OpenTelemetry JMX `testClasses` | Not measured | Ownership rejected before calibration | Retain native; root changelog is unowned. |
+| Spring JMS root `classes` | +2.590 s / +11.43%, 8/8 positive | 14/8,385 native outputs differ | Reject transport; no replay. |
+
+The aggregate is three subjects, one positive calibration, zero portable
+profiles, zero selected replays and zero product failures. Spring's 14 differing
+class files remain explicit native-output volatility; they are not normalized or
+ignored. OpenTelemetry's unowned root changelog remains an ownership gap; it is
+not bypassed by a repository-specific exception. Therefore the one-workflow
+Kafka value claim does not broaden.
+
+```bash
+./dev/check-cross-commit-breadth-replication
+```
+
 The earlier negative V2 result remains the immutable breadth baseline. It does
 not invalidate graph reduction; it exposed the cross-commit eligibility and
 portable-output limitations addressed by the recovery implementation.

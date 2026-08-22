@@ -755,13 +755,24 @@ seconds, selected-replay value is +104.975 seconds, native-retained arm delta is
 -31.441 seconds, and final cumulative net is **+66.772 seconds**. The selected
 value is attributable; the native-arm variation is reported but not credited to
 BuildOpt. This closes the Kafka recovery hypothesis but not broad generality.
-The next target is unchanged-mechanism replication on at least two additional
-public repository/workflow families.
+The unchanged breadth replication has now run on three non-Kafka subjects.
+Spring root `classes` is 206.25 ms/0.91% slower with 1/8 positive pairs.
+OpenTelemetry JMX fails closed before calibration because the public change
+mixes owned JMX files with an unowned root changelog. Spring JMS calibrates
+2.590 seconds/11.43% faster with 8/8 positive pairs, but independent native
+roots differ in 14 of 8,385 class outputs. No subject becomes portable or
+selects a replay, product failures remain zero, and the Kafka claim does not
+broaden.
 
 ## Open Questions
 
-- Does the unchanged recovery mechanism select and save attributable time on
-  at least two non-Kafka public repository/workflow families?
+- Can workflow-input evidence prove that an unowned changed path is irrelevant
+  to the requested Gradle workflow without using path extensions or repository
+  identity?
+- Can native-volatility quarantine rebuild volatile producers locally while
+  preserving exact bytes for every output BuildOpt transports or reuses?
+- Can descendant discovery preregister a refresh followed by a structurally
+  compatible omitted-owner change before spending another timing budget?
 - What future materially different trace would be sufficient to reopen a
   rejected mechanism without repeating the closed evidence?
 - Can a reviewed Gradle-owned output candidate be turned into one convenient,

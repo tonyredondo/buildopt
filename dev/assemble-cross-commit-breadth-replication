@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [EVIDENCE_ROOT]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence_root=${1:-"${buildopt_repo_root}/benchmarks/results/poc-cross-commit-breadth-replication-v1"}
+buildopt_original_spec=${buildopt_repo_root}/specs/poc-cross-commit-breadth-replication-v1.subjects.json
+buildopt_jms_spec=${buildopt_repo_root}/specs/poc-cross-commit-breadth-spring-jms-v1.subjects.json
+buildopt_spring=${buildopt_evidence_root}/spring-framework-classes/optimize-result.json
+buildopt_otel=${buildopt_evidence_root}/opentelemetry-jmx-metrics/optimize-result.json
+buildopt_jms=${buildopt_evidence_root}/spring-framework-classes-jms/result.json
+
+for buildopt_file in "${buildopt_original_spec}" "${buildopt_jms_spec}" \
+    "${buildopt_spring}" "${buildopt_otel}" "${buildopt_jms}"; do
+    [[ -f ${buildopt_file} ]] || {
+        printf 'breadth replication input is unavailable: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  .phase == "NATIVE_RETAINED" and .reason == "CALIBRATION_VALUE_NOT_PROVEN" and
+  .discovery.repositoryId == "spring-projects/spring-framework" and
+  .discovery.changedProjects == [":framework-docs", ":spring-expression"] and
+  .discovery.graph == {omittedProjects:6,selectedProjects:21,totalProjects:27} and
+  .calibration.performed and (.calibration.qualified | not) and
+  .calibration.pairsMeasured == 8 and .calibration.positivePairs == 1 and
+  .calibration.meanSavedMs == -206.25 and
+  .calibration.interval95SavedMs == [-1311.875,1651.875]
+' "${buildopt_spring}" >/dev/null
+
+jq -e '
+  .phase == "NATIVE_RETAINED" and .reason == "SOURCE_OWNERSHIP_AMBIGUOUS" and
+  .discovery.repositoryId == "open-telemetry/opentelemetry-java-instrumentation" and
+  .discovery.changedPathCount == 4 and .discovery.changedProjects == [] and
+  (.calibration.performed | not) and .calibration.pairsMeasured == 0
+' "${buildopt_otel}" >/dev/null
+
+jq -e '
+  .key == "spring-framework-classes-jms" and
+  .qualification.calibration.qualified and
+  .qualification.calibration.pairsMeasured == 8 and
+  .qualification.calibration.positivePairs == 8 and
+  .qualification.calibration.meanSavedMs == 2590.375 and
+  .qualification.portability.status == "REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS" and
+  .qualification.portability.outputCount == 8385 and
+  .qualification.portability.differingFileCount == 14 and
+  .observations == [] and .economics.selectedReplays == 0 and
+  .economics.cumulativeNetSavedMs == -5422 and
+  .acceptance.productFailures == 0
+' "${buildopt_jms}" >/dev/null
+
+buildopt_original_spec_sha=$(sha256sum "${buildopt_original_spec}" | awk '{print $1}')
+buildopt_jms_spec_sha=$(sha256sum "${buildopt_jms_spec}" | awk '{print $1}')
+buildopt_spring_sha=$(sha256sum "${buildopt_spring}" | awk '{print $1}')
+buildopt_otel_sha=$(sha256sum "${buildopt_otel}" | awk '{print $1}')
+buildopt_jms_sha=$(sha256sum "${buildopt_jms}" | awk '{print $1}')
+
+jq -n \
+    --slurpfile spring "${buildopt_spring}" \
+    --slurpfile otel "${buildopt_otel}" \
+    --slurpfile jms "${buildopt_jms}" \
+    --arg originalSpecSha "${buildopt_original_spec_sha}" \
+    --arg jmsSpecSha "${buildopt_jms_spec_sha}" \
+    --arg springSha "${buildopt_spring_sha}" \
+    --arg otelSha "${buildopt_otel_sha}" \
+    --arg jmsSha "${buildopt_jms_sha}" '
+  {schemaVersion:"buildopt.evidence/poc-cross-commit-breadth-replication/v1",
+   workItem:"POC-CROSS-COMMIT-BREADTH-REPLICATION-001",
+   decision:"DO_NOT_BROADEN_CROSS_COMMIT_VALUE_CLAIM",
+   protocol:{runner:{platform:"linux-amd64",cpuCount:12,maxWorkers:12},
+     originalPreregistration:{revision:"8951cfe5fc17e4a9cdbb1905384de46961325330",
+       spec:"specs/poc-cross-commit-breadth-replication-v1.subjects.json",sha256:$originalSpecSha},
+     springJmsAddendum:{revision:"e7ee145882c945ef8dfa559adfad9609f2809521",
+       spec:"specs/poc-cross-commit-breadth-spring-jms-v1.subjects.json",sha256:$jmsSpecSha},
+     method:"PUBLIC_FIRST_PARENT_FRESH_GRADLE_PROCESS_EXACT_OUTPUT_V2",
+     percentagesAggregatedAcrossRepositories:false},
+   subjects:[
+     {key:"spring-framework-classes",repository:"spring-projects/spring-framework",
+      workflow:["classes"],classification:"CALIBRATION_VALUE_NOT_PROVEN",
+      evidence:{file:"spring-framework-classes/optimize-result.json",sha256:$springSha},
+      graph:$spring[0].discovery.graph,changedProjects:$spring[0].discovery.changedProjects,
+      calibration:($spring[0].calibration |
+        {controlMeanMs,candidateMeanMs,meanSavedMs,reductionRatio,interval95SavedMs,
+         positivePairs,pairsMeasured,controlP95Ms,candidateP95Ms}),
+      selectedReplays:0,selectedReplaySavedMs:0,claimEligible:false,
+      finding:"The 21-project mixed-source closure is slower than native and fails the frozen value gate."},
+     {key:"opentelemetry-jmx-metrics",
+      repository:"open-telemetry/opentelemetry-java-instrumentation",
+      workflow:$otel[0].discovery.entrypoints,classification:"SOURCE_OWNERSHIP_AMBIGUOUS",
+      evidence:{file:"opentelemetry-jmx-metrics/optimize-result.json",sha256:$otelSha},
+      changedPathCount:$otel[0].discovery.changedPathCount,
+      ownedPaths:["instrumentation/jmx-metrics/library/jetty.md",
+        "instrumentation/jmx-metrics/library/src/main/resources/jmx/rules/jetty.yaml",
+        "instrumentation/jmx-metrics/library/src/test/java/io/opentelemetry/instrumentation/jmx/rules/JettyTest.java"],
+      unownedPaths:["CHANGELOG.md"],calibrationPerformed:false,
+      selectedReplays:0,selectedReplaySavedMs:0,claimEligible:false,
+      finding:"A mixed commit with one unowned root document fails closed before calibration."},
+     {key:"spring-framework-classes-jms",repository:"spring-projects/spring-framework",
+      workflow:["classes"],classification:"NON_PORTABLE_NATIVE_OUTPUTS",
+      evidence:{file:"spring-framework-classes-jms/result.json",sha256:$jmsSha},
+      graph:$jms[0].qualification.graph,
+      calibration:$jms[0].qualification.calibration,
+      portability:$jms[0].qualification.portability,
+      nativeVolatility:{aspectJClassFiles:13,javaClassFiles:1,
+        codeAndSignaturesMatchedInDiagnostic:true,
+        diagnosticOnly:true},
+      selectedReplays:0,selectedReplaySavedMs:0,
+      qualificationAndPublicationCostMs:$jms[0].economics.qualificationAndPublicationCostMs,
+      cumulativeNetSavedMs:$jms[0].economics.cumulativeNetSavedMs,
+      claimEligible:false,
+      finding:"Selection saves 11.43% in calibration, but 14 native class outputs differ across roots, so lifetime replay is rejected."}
+   ],
+   result:{evaluatedSubjects:3,additionalRepositoryFamilies:2,
+     qualifiedCalibrations:1,portableSubjects:0,positiveSelectedReplaySubjects:0,
+     selectedReplaySavedMs:0,productFailures:0,claimBroadened:false},
+   nextWork:[
+     {id:"POC-WORKFLOW-INPUT-OWNERSHIP-001",
+      purpose:"Classify mixed unowned paths from observed Gradle task inputs without extension or repository rules."},
+     {id:"POC-NATIVE-VOLATILITY-QUARANTINE-001",
+      purpose:"Keep native-volatile producers out of transported packs and require exact bytes for every output BuildOpt reuses."},
+     {id:"POC-COMPATIBLE-DESCENDANT-DISCOVERY-001",
+      purpose:"Preregister descendant windows that contain a refresh followed by a structurally compatible omitted-owner change."}
+   ],
+   boundaries:{proofOfConcept:true,productionAuthorized:false,
+     repositorySpecificProductRules:false,soakRequired:false,
+     designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}}
+' | jq -S .

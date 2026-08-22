@@ -711,6 +711,26 @@ requires the selected replay itself to be positive. The checked bundle is
 `benchmarks/results/poc-cross-commit-value-recovery-v1`. Normal CI validates the
 committed evidence and does not rerun the long public-repository capture.
 
+Validate the frozen non-Kafka cross-commit breadth replication without rerunning
+the public repositories:
+
+```bash
+./dev/check-cross-commit-breadth-replication
+```
+
+The checker reconstructs
+`benchmarks/results/poc-cross-commit-breadth-replication-v1/summary.json` from
+the raw Spring broad, OpenTelemetry JMX and Spring JMS captures. It requires the
+observed terminal decisions: Spring broad fails calibration at -0.91% and 1/8,
+OpenTelemetry fails ownership before calibration, and Spring JMS qualifies at
+11.43% and 8/8 before 14 native output differences reject portability. It also
+requires zero selected replays, zero product failures and
+`claimBroadened=false`.
+
+Normal CI runs only this deterministic checker. The public builds are not
+repeated, native differences are not normalized, and no repository-specific
+ownership exception is authorized.
+
 Reproduce the incremental-learning transaction with one exact installed
 binary and validate its checked evidence with:
 

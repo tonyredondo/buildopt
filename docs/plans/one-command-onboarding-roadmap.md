@@ -316,19 +316,28 @@ weakening correctness or adding repository-specific rules:
    verified local refresh and preserved selected graph reduction; one selected
    replay saves 104.975 seconds and the frozen window pays back without weaker
    output or fallback gates.
-The next onboarding work tests whether that recovery generalizes rather than
-adding another broad feature:
+8. **Completed:** apply the unchanged recovery path to three non-Kafka subjects.
+   Spring root `classes` fails calibration, OpenTelemetry JMX fails closed on
+   mixed owned/unowned changes, and Spring JMS qualifies at 11.43% but fails
+   independent-root portability on 14 class files. The aggregate is 0/3
+   portable and 0/3 selected, so the Kafka claim remains bounded.
 
-1. preregister compatible public descendant windows for at least two additional
-   repository/workflow families;
-2. apply the unchanged eligibility, refresh, local/central replay and
-   exact-output implementation without repository-name rules;
-3. report selection frequency, selected-replay value, native fallback delta and
-   cumulative payback separately; and
-4. broaden the POC claim only for subjects with positive attributable replay
-   value and exact required outputs.
+The next onboarding work addresses the generic blockers exposed by that
+replication rather than adding repository exceptions:
+
+1. prove workflow-input relevance before ignoring an unowned changed path;
+2. quarantine outputs proven volatile across independent native builds, rebuild
+   their producers locally and transport only outputs that remain exact;
+3. preregister descendant windows whose refresh and omitted-owner replay are
+   structurally compatible before timing; and
+4. broaden the POC claim only after at least two non-Kafka subjects produce
+   positive attributable selected replays.
 
 The current recovery dataset and its interpretation are in
 [`poc-cross-commit-value-recovery-v1`](../../benchmarks/results/poc-cross-commit-value-recovery-v1/README.md).
+
+The terminal breadth dataset is in
+[`poc-cross-commit-breadth-replication-v1`](../../benchmarks/results/poc-cross-commit-breadth-replication-v1/README.md).
+
 No step may add repository-name rules, average repository percentages, weaken
 correctness gates or borrow another profile's lifetime.

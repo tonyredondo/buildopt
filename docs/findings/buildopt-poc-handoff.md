@@ -30,7 +30,7 @@ Optimization are outside the current scope.
 | **Automatic discovery** | Derives Git ownership, Gradle task/output relationships and candidate graphs without repository-name rules. | Works across `classes`, `testClasses`, `assemble` and the five unrelated public repositories. |
 | **Incremental learning and value gate** | Accumulates useful control/candidate observations and checks repeatability, uncertainty, p95, outputs, fallback and payback. | Prevents weak current evidence from being promoted: Groovy retains native at 6/8 and a regressive p95. |
 | **Verified output materialization** | Restores exact unaffected outputs before their producers are omitted. | Fast and fail-closed, but only portable output sets may move across roots or machines. |
-| **Profile portfolio and central state** | Carries verified profiles and packs over HTTP/HTTPS between builds and machines. | Transport and safe cross-commit refresh now work; one Kafka descendant reused a verified local refresh and saved 104.975 seconds. Broader lifetime transfer remains unproven. |
+| **Profile portfolio and central state** | Carries verified profiles and packs over HTTP/HTTPS between builds and machines. | Transport and safe cross-commit refresh work and one Kafka descendant saved 104.975 seconds. Unchanged replication on Spring and OpenTelemetry found generic ownership and native-output portability blockers, so broader value remains unproven. |
 | **Gradle-compatible cache** | Reuses verified task outputs locally or through optional HTTP/HTTPS storage. | Supporting infrastructure near native-cache parity, not the principal speed claim. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource/state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
 
@@ -67,6 +67,16 @@ window economics but is not attributed to BuildOpt. Repository percentages are
 not averaged and mechanism percentages are not added. These runs used the
 12-CPU development host with a common 12-worker cap.
 
+The unchanged breadth replication then tested three non-Kafka subjects. Spring
+root `classes` lost 206 ms/0.91% with only 1/8 positive pairs. OpenTelemetry JMX
+retained native before calibration because its public change mixed three owned
+JMX paths with an unowned root changelog. Spring JMS calibrated 2.590 seconds/
+11.43% faster with 8/8 positive pairs, but independent native roots produced 14
+different class files out of 8,385 outputs, so no profile was transported or
+replayed. The terminal total is **3 subjects, 1 positive calibration, 0 portable
+profiles, 0 selected replays and 0 product failures**. The Kafka-only value claim
+therefore does not broaden.
+
 ## What this proves
 
 - Generic graph reduction can beat optimized native Gradle on isolated,
@@ -78,30 +88,31 @@ not averaged and mechanism percentages are not added. These runs used the
 - Cross-commit reuse can now create attributable value: the one selected Kafka
   descendant saves 104.975 seconds and the six-build window finishes 66.772
   seconds net positive after learning and publication.
-- The current POC is not yet general. This is one workflow in one public
-  repository; it proves recovery is possible, not that every Gradle repository
-  will produce the same saving or selection frequency.
+- The current POC is not yet general. Unchanged replication found one weak
+  calibration, one ownership rejection and one positive-but-nonportable
+  calibration. Those are useful generic product gaps, not evidence to broaden
+  the one-workflow Kafka claim.
 
 ## Next steps
 
-1. Replicate the unchanged recovery mechanism on at least two additional public
-   repository/workflow families with compatible descendant windows. Do not add
-   repository-name rules or weaken exact-output and fallback gates.
-2. Measure selection frequency, attributable selected-replay value, rejection
-   cost, and cumulative payback separately. A positive native-arm delta cannot
-   rescue a regressive selected replay.
-3. Improve portability only by narrowing to customer-required Gradle-owned
-   outputs. Never normalize, rewrite, or silently drop nondeterministic customer
-   artifacts to manufacture a match.
-4. Keep the one-command path automatic: learn during useful builds, refresh
-   compatible profiles, select only after complete binding validation, and
-   fall back near native cost on every uncertain revision.
+1. Add workflow-input ownership: an unowned changed path may be ignored only
+   when Gradle evidence proves that the requested workflow does not consume it.
+2. Add native-volatility quarantine: discover volatile producer outputs from
+   independent native builds, rebuild those producers locally and keep exact
+   bytes for every output BuildOpt actually transports or reuses.
+3. Discover descendant windows structurally: preregister a refresh followed by
+   an omitted-owner change that can actually select the refreshed profile.
+4. Broaden the value claim only after at least two non-Kafka subjects produce
+   positive attributable selected replays with exact transported outputs.
 
 ## Evidence
 
 - [Latest recovery result](../../benchmarks/results/poc-cross-commit-value-recovery-v1/README.md)
 - [Machine-readable recovery summary](../../benchmarks/results/poc-cross-commit-value-recovery-v1/summary.json)
 - [Recovery protocol](../../specs/poc-cross-commit-value-recovery-v1.md)
+- [Breadth replication result](../../benchmarks/results/poc-cross-commit-breadth-replication-v1/README.md)
+- [Machine-readable breadth summary](../../benchmarks/results/poc-cross-commit-breadth-replication-v1/summary.json)
+- [Breadth replication protocol](../../specs/poc-cross-commit-breadth-replication-v1.md)
 - [Five-repository lifetime baseline](../../benchmarks/results/poc-qualified-lifetime-v2/README.md)
 - [Detailed performance findings](./build-optimization-performance.md)
 - [Generalization audit](./buildopt-generalization-audit.md)

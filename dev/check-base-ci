@@ -218,6 +218,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-qualified-lifetime-v2" \
             "${buildopt_repo_root}/benchmarks/results/poc-qualified-lifetime-v2/summary.json" >/dev/null
         "${buildopt_script_dir}/check-cross-commit-value-recovery" >/dev/null
+        "${buildopt_script_dir}/check-cross-commit-breadth-replication" >/dev/null
         "${buildopt_script_dir}/check-generic-holdout" >/dev/null
         "${buildopt_script_dir}/check-generic-holdout-crossover" \
             "${buildopt_repo_root}/benchmarks/results/poc-generic-holdout-v5" >/dev/null

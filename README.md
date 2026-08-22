@@ -118,8 +118,13 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > exact six-descendant window fixed and turns one verified local replay from
 > -5.404 seconds to **+104.975 seconds / 71.14%**, with exact outputs and
 > **+66.772 seconds cumulative net** after learning/publication. This proves
-> cross-commit value on one public workflow; the next POC step must replicate
-> the unchanged mechanism on additional repository families.
+> cross-commit value on one public workflow. The unchanged breadth replication
+> does not broaden that claim: Spring root `classes` fails calibration,
+> OpenTelemetry JMX fails closed on mixed unowned-path ownership, and Spring
+> JMS calibrates **11.43%** faster but is rejected because 14 native class
+> outputs differ across roots. The next POC work targets those generic blockers
+> through workflow-input ownership and native-volatility quarantine, while
+> keeping exact bytes for every output BuildOpt transports.
 > This authority exists only inside the explicit POC command
 > and never grants production promotion. The ordered work and success
 > scorecard live in the

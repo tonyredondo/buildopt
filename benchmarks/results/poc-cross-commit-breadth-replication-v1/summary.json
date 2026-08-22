@@ -1,0 +1,199 @@
+{
+  "boundaries": {
+    "designPartnerRequired": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositorySpecificProductRules": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "decision": "DO_NOT_BROADEN_CROSS_COMMIT_VALUE_CLAIM",
+  "nextWork": [
+    {
+      "id": "POC-WORKFLOW-INPUT-OWNERSHIP-001",
+      "purpose": "Classify mixed unowned paths from observed Gradle task inputs without extension or repository rules."
+    },
+    {
+      "id": "POC-NATIVE-VOLATILITY-QUARANTINE-001",
+      "purpose": "Keep native-volatile producers out of transported packs and require exact bytes for every output BuildOpt reuses."
+    },
+    {
+      "id": "POC-COMPATIBLE-DESCENDANT-DISCOVERY-001",
+      "purpose": "Preregister descendant windows that contain a refresh followed by a structurally compatible omitted-owner change."
+    }
+  ],
+  "protocol": {
+    "method": "PUBLIC_FIRST_PARENT_FRESH_GRADLE_PROCESS_EXACT_OUTPUT_V2",
+    "originalPreregistration": {
+      "revision": "8951cfe5fc17e4a9cdbb1905384de46961325330",
+      "sha256": "f9ea18a1b815e007014cfe6d588872df003cbcdc440f1fea5b7b9348ef0be6b8",
+      "spec": "specs/poc-cross-commit-breadth-replication-v1.subjects.json"
+    },
+    "percentagesAggregatedAcrossRepositories": false,
+    "runner": {
+      "cpuCount": 12,
+      "maxWorkers": 12,
+      "platform": "linux-amd64"
+    },
+    "springJmsAddendum": {
+      "revision": "e7ee145882c945ef8dfa559adfad9609f2809521",
+      "sha256": "ada79285769acde4a5297c994e75d102bb7f5461c42a702f9dc83af1e02de2e7",
+      "spec": "specs/poc-cross-commit-breadth-spring-jms-v1.subjects.json"
+    }
+  },
+  "result": {
+    "additionalRepositoryFamilies": 2,
+    "claimBroadened": false,
+    "evaluatedSubjects": 3,
+    "portableSubjects": 0,
+    "positiveSelectedReplaySubjects": 0,
+    "productFailures": 0,
+    "qualifiedCalibrations": 1,
+    "selectedReplaySavedMs": 0
+  },
+  "schemaVersion": "buildopt.evidence/poc-cross-commit-breadth-replication/v1",
+  "subjects": [
+    {
+      "calibration": {
+        "candidateMeanMs": 22883.25,
+        "candidateP95Ms": 27530,
+        "controlMeanMs": 22677,
+        "controlP95Ms": 27442,
+        "interval95SavedMs": [
+          -1311.875,
+          1651.875
+        ],
+        "meanSavedMs": -206.25,
+        "pairsMeasured": 8,
+        "positivePairs": 1,
+        "reductionRatio": -0.009095118401905014
+      },
+      "changedProjects": [
+        ":framework-docs",
+        ":spring-expression"
+      ],
+      "claimEligible": false,
+      "classification": "CALIBRATION_VALUE_NOT_PROVEN",
+      "evidence": {
+        "file": "spring-framework-classes/optimize-result.json",
+        "sha256": "c27c2c5ff6623126b57fd2ab2c2289307fc3b785db2933074574e2d9e3a943b9"
+      },
+      "finding": "The 21-project mixed-source closure is slower than native and fails the frozen value gate.",
+      "graph": {
+        "omittedProjects": 6,
+        "selectedProjects": 21,
+        "totalProjects": 27
+      },
+      "key": "spring-framework-classes",
+      "repository": "spring-projects/spring-framework",
+      "selectedReplaySavedMs": 0,
+      "selectedReplays": 0,
+      "workflow": [
+        "classes"
+      ]
+    },
+    {
+      "calibrationPerformed": false,
+      "changedPathCount": 4,
+      "claimEligible": false,
+      "classification": "SOURCE_OWNERSHIP_AMBIGUOUS",
+      "evidence": {
+        "file": "opentelemetry-jmx-metrics/optimize-result.json",
+        "sha256": "5d6583b4b2a9eb4499bc6f9870959d1b0323bd4dc8151dcecc3f66a52fe5e4bc"
+      },
+      "finding": "A mixed commit with one unowned root document fails closed before calibration.",
+      "key": "opentelemetry-jmx-metrics",
+      "ownedPaths": [
+        "instrumentation/jmx-metrics/library/jetty.md",
+        "instrumentation/jmx-metrics/library/src/main/resources/jmx/rules/jetty.yaml",
+        "instrumentation/jmx-metrics/library/src/test/java/io/opentelemetry/instrumentation/jmx/rules/JettyTest.java"
+      ],
+      "repository": "open-telemetry/opentelemetry-java-instrumentation",
+      "selectedReplaySavedMs": 0,
+      "selectedReplays": 0,
+      "unownedPaths": [
+        "CHANGELOG.md"
+      ],
+      "workflow": [
+        ":instrumentation:jmx-metrics:javaagent:testClasses",
+        ":instrumentation:jmx-metrics:library:testClasses",
+        ":instrumentation:jmx-metrics:testing-apps:camel-testing-app:testClasses",
+        ":instrumentation:jmx-metrics:testing-apps:testing-webapp:testClasses"
+      ]
+    },
+    {
+      "calibration": {
+        "breakEvenBuilds": 1,
+        "calibrationCostMs": 2442,
+        "candidateMeanMs": 20063.875,
+        "candidateP95Ms": 21496,
+        "controlMeanMs": 22654.25,
+        "controlP95Ms": 23675,
+        "fallbackSuccessful": true,
+        "interval95SavedMs": [
+          1916.25,
+          3239.375
+        ],
+        "meanSavedMs": 2590.375,
+        "pairsMeasured": 8,
+        "positivePairs": 8,
+        "qualificationPolicy": "ROBUST_7_OF_8_POSITIVE_INTERVAL_P95_V1",
+        "qualified": true,
+        "reductionRatio": 0.11434388690863745
+      },
+      "claimEligible": false,
+      "classification": "NON_PORTABLE_NATIVE_OUTPUTS",
+      "cumulativeNetSavedMs": -5422,
+      "evidence": {
+        "file": "spring-framework-classes-jms/result.json",
+        "sha256": "5adb8c7fe69cf9208151db89ded2b290695c7c83b12b11f2ab82a39bd8824210"
+      },
+      "finding": "Selection saves 11.43% in calibration, but 14 native class outputs differ across roots, so lifetime replay is rejected.",
+      "graph": {
+        "omittedProjects": 17,
+        "selectedProjects": 10,
+        "totalProjects": 27
+      },
+      "key": "spring-framework-classes-jms",
+      "nativeVolatility": {
+        "aspectJClassFiles": 13,
+        "codeAndSignaturesMatchedInDiagnostic": true,
+        "diagnosticOnly": true,
+        "javaClassFiles": 1
+      },
+      "portability": {
+        "differencesSha256": "f3021de6f471eaa862057c90b0d6397ff1abab1cea1ad825a0ca96f6d485718e",
+        "differingFileCount": 14,
+        "independentOutputSha256": "d94bd876f110d9f8d66c0500a2b2dee473d8f4c35d09dca608383a8e572a2142",
+        "nativeCacheHits": 0,
+        "outputCount": 8385,
+        "producerOutputSha256": "e531c637d9e6955b30d641988d50414a52d918a82b2bd5f06eb67291feb46208",
+        "samplePaths": [
+          "spring-aspects/build/classes/aspectj/main/org/springframework/beans/factory/aspectj/AbstractDependencyInjectionAspect.class",
+          "spring-aspects/build/classes/aspectj/main/org/springframework/beans/factory/aspectj/AbstractInterfaceDrivenDependencyInjectionAspect$ConfigurableDeserializationSupport.class",
+          "spring-aspects/build/classes/aspectj/main/org/springframework/beans/factory/aspectj/AbstractInterfaceDrivenDependencyInjectionAspect.class",
+          "spring-aspects/build/classes/aspectj/main/org/springframework/beans/factory/aspectj/AnnotationBeanConfigurerAspect.class",
+          "spring-aspects/build/classes/aspectj/main/org/springframework/beans/factory/aspectj/GenericInterfaceDrivenDependencyInjectionAspect.class",
+          "spring-aspects/build/classes/aspectj/main/org/springframework/cache/aspectj/AbstractCacheAspect.class",
+          "spring-aspects/build/classes/aspectj/main/org/springframework/cache/aspectj/AnnotationCacheAspect.class",
+          "spring-aspects/build/classes/aspectj/main/org/springframework/cache/aspectj/JCacheCacheAspect.class",
+          "spring-aspects/build/classes/aspectj/main/org/springframework/scheduling/aspectj/AbstractAsyncExecutionAspect.class",
+          "spring-aspects/build/classes/aspectj/main/org/springframework/scheduling/aspectj/AnnotationAsyncExecutionAspect.class",
+          "spring-aspects/build/classes/aspectj/main/org/springframework/transaction/aspectj/AbstractTransactionAspect.class",
+          "spring-aspects/build/classes/aspectj/main/org/springframework/transaction/aspectj/AnnotationTransactionAspect.class",
+          "spring-aspects/build/classes/aspectj/main/org/springframework/transaction/aspectj/JtaAnnotationTransactionAspect.class",
+          "spring-messaging/build/classes/java/main/org/springframework/messaging/tcp/reactor/ReactorNettyTcpClient.class"
+        ],
+        "status": "REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS"
+      },
+      "qualificationAndPublicationCostMs": 5422,
+      "repository": "spring-projects/spring-framework",
+      "selectedReplaySavedMs": 0,
+      "selectedReplays": 0,
+      "workflow": [
+        "classes"
+      ]
+    }
+  ],
+  "workItem": "POC-CROSS-COMMIT-BREADTH-REPLICATION-001"
+}

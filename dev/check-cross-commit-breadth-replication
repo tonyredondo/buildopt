@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [EVIDENCE_ROOT]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence_root=${1:-"${buildopt_repo_root}/benchmarks/results/poc-cross-commit-breadth-replication-v1"}
+buildopt_summary=${buildopt_evidence_root}/summary.json
+
+for buildopt_command in cmp git jq mktemp sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'breadth replication validation requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -f ${buildopt_summary} ]] || {
+    printf 'breadth replication summary is unavailable: %s\n' "${buildopt_summary}" >&2
+    exit 1
+}
+
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_tmp=$(mktemp -d /tmp/buildopt-breadth-replication-check.XXXXXX)
+trap 'rm -rf -- "${buildopt_tmp}"' EXIT
+"${buildopt_script_dir}/assemble-cross-commit-breadth-replication" \
+    "${buildopt_evidence_root}" >"${buildopt_tmp}/summary.json"
+cmp -s "${buildopt_summary}" "${buildopt_tmp}/summary.json" || {
+    printf 'breadth replication summary does not match its raw evidence\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-cross-commit-breadth-replication/v1" and
+  .workItem == "POC-CROSS-COMMIT-BREADTH-REPLICATION-001" and
+  .decision == "DO_NOT_BROADEN_CROSS_COMMIT_VALUE_CLAIM" and
+  .protocol.percentagesAggregatedAcrossRepositories == false and
+  (.subjects | length) == 3 and
+  ([.subjects[].classification] == ["CALIBRATION_VALUE_NOT_PROVEN",
+    "SOURCE_OWNERSHIP_AMBIGUOUS","NON_PORTABLE_NATIVE_OUTPUTS"]) and
+  .subjects[0].calibration.meanSavedMs == -206.25 and
+  .subjects[0].calibration.positivePairs == 1 and
+  .subjects[1].unownedPaths == ["CHANGELOG.md"] and
+  .subjects[1].calibrationPerformed == false and
+  .subjects[2].calibration.meanSavedMs == 2590.375 and
+  .subjects[2].calibration.positivePairs == 8 and
+  .subjects[2].portability.differingFileCount == 14 and
+  .subjects[2].nativeVolatility == {aspectJClassFiles:13,
+    codeAndSignaturesMatchedInDiagnostic:true,diagnosticOnly:true,javaClassFiles:1} and
+  all(.subjects[]; .selectedReplays == 0 and .selectedReplaySavedMs == 0 and
+    (.claimEligible | not)) and
+  .result == {additionalRepositoryFamilies:2,claimBroadened:false,
+    evaluatedSubjects:3,portableSubjects:0,positiveSelectedReplaySubjects:0,
+    productFailures:0,qualifiedCalibrations:1,selectedReplaySavedMs:0} and
+  [.nextWork[].id] == ["POC-WORKFLOW-INPUT-OWNERSHIP-001",
+    "POC-NATIVE-VOLATILITY-QUARANTINE-001",
+    "POC-COMPATIBLE-DESCENDANT-DISCOVERY-001"] and
+  .boundaries == {designPartnerRequired:false,productionAuthorized:false,
+    proofOfConcept:true,repositorySpecificProductRules:false,soakRequired:false,
+    testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_summary}" >/dev/null
+
+jq '.result.claimBroadened = true' "${buildopt_summary}" >"${buildopt_tmp}/tampered.json"
+if jq -e '.result.claimBroadened == false' "${buildopt_tmp}/tampered.json" >/dev/null; then
+    printf 'tampered breadth replication claim was accepted\n' >&2
+    exit 1
+fi
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+[[ ${buildopt_before} == "${buildopt_after}" ]] || {
+    printf 'breadth replication validation changed the working tree\n' >&2
+    exit 1
+}
+
+printf 'Cross-commit breadth replication evidence OK: three subjects, zero broadened claims, three generic follow-up blocks\n'

@@ -224,6 +224,20 @@ value after it, exact outputs, zero product failures and positive cumulative net
 after qualification/publication cost. Native-retained arm variation stays
 visible but cannot prove selected-replay value.
 
+The [cross-commit breadth replication contract](./poc-cross-commit-breadth-replication-v1.md)
+freezes two non-Kafka public families under the unchanged recovery mechanism.
+Its immutable subject file binds Spring root `classes` and OpenTelemetry JMX
+`testClasses`; a preregistered addendum binds Spring JMS after the broad
+Spring change exposed a different owner graph. The addendum cannot rewrite the
+original observations.
+
+The terminal
+[breadth evidence](../benchmarks/results/poc-cross-commit-breadth-replication-v1/README.md)
+records one failed calibration, one pre-calibration ownership rejection and one
+positive calibration rejected for 14 native-output differences. Zero profiles
+are portable, zero replays are selected, zero product failures occur and the
+cross-repository value claim remains bounded to the prior Kafka evidence.
+
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation
 per useful invocation. Its fixture completes eight pairs with zero

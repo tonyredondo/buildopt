@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-qualified-lifetime-subject/v2",
+  "key": "spring-framework-classes-jms",
+  "buildopt": {
+    "revision": "e7ee145882c945ef8dfa559adfad9609f2809521",
+    "executableSha256": "4bd6e4102acfc3de3098a3483ba4fd2e028f4bd0f6c227a7ea9bf6b129098ff4"
+  },
+  "repository": {
+    "id": "spring-projects/spring-framework",
+    "remote": "https://github.com/spring-projects/spring-framework.git",
+    "publicRepository": true,
+    "historyBranch": "main"
+  },
+  "qualification": {
+    "parentRevision": "d8216d719bb203a1ed74e5f75c894b08db6f1a88",
+    "targetRevision": "dbbbf37ac9097852194222a0405d3e060a846b8e",
+    "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+    "changeFamily": "DEPENDENCY_SOURCE",
+    "processEnvelope": "FRESH_GRADLE_PROCESS_PER_BUILD",
+    "expectedChangedProjects": [
+      ":spring-jms"
+    ],
+    "graph": {
+      "omittedProjects": 17,
+      "selectedProjects": 10,
+      "totalProjects": 27
+    },
+    "calibration": {
+      "calibrationCostMs": 2442,
+      "controlMeanMs": 22654.25,
+      "candidateMeanMs": 20063.875,
+      "controlP95Ms": 23675,
+      "candidateP95Ms": 21496,
+      "meanSavedMs": 2590.375,
+      "reductionRatio": 0.11434388690863745,
+      "interval95SavedMs": [
+        1916.25,
+        3239.375
+      ],
+      "positivePairs": 8,
+      "pairsMeasured": 8,
+      "breakEvenBuilds": 1,
+      "qualified": true,
+      "fallbackSuccessful": true,
+      "qualificationPolicy": "ROBUST_7_OF_8_POSITIVE_INTERVAL_P95_V1"
+    },
+    "captureFile": "qualification-capture.json",
+    "captureSha256": "39b5066ab6a750b5e7d72d380f58ce2c32e06b103fd3e12107086519fa5c0f2d",
+    "calibrationEvidenceFile": "calibration-evidence.json",
+    "calibrationEvidenceSha256": "3caa139c1da4d1f8733dbb7cd114a8dbf9dd1e7f0ca1b8fc8e9faefdbe6bea7a",
+    "portability": {
+      "status": "REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS",
+      "producerOutputSha256": "e531c637d9e6955b30d641988d50414a52d918a82b2bd5f06eb67291feb46208",
+      "independentOutputSha256": "d94bd876f110d9f8d66c0500a2b2dee473d8f4c35d09dca608383a8e572a2142",
+      "outputCount": 8385,
+      "nativeCacheHits": 0,
+      "differingFileCount": 14,
+      "differencesSha256": "f3021de6f471eaa862057c90b0d6397ff1abab1cea1ad825a0ca96f6d485718e",
+      "samplePaths": [
+        "spring-aspects/build/classes/aspectj/main/org/springframework/beans/factory/aspectj/AbstractDependencyInjectionAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/beans/factory/aspectj/AbstractInterfaceDrivenDependencyInjectionAspect$ConfigurableDeserializationSupport.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/beans/factory/aspectj/AbstractInterfaceDrivenDependencyInjectionAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/beans/factory/aspectj/AnnotationBeanConfigurerAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/beans/factory/aspectj/GenericInterfaceDrivenDependencyInjectionAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/cache/aspectj/AbstractCacheAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/cache/aspectj/AnnotationCacheAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/cache/aspectj/JCacheCacheAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/scheduling/aspectj/AbstractAsyncExecutionAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/scheduling/aspectj/AnnotationAsyncExecutionAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/transaction/aspectj/AbstractTransactionAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/transaction/aspectj/AnnotationTransactionAspect.class",
+        "spring-aspects/build/classes/aspectj/main/org/springframework/transaction/aspectj/JtaAnnotationTransactionAspect.class",
+        "spring-messaging/build/classes/java/main/org/springframework/messaging/tcp/reactor/ReactorNettyTcpClient.class"
+      ]
+    },
+    "materialization": {
+      "transport": "CENTRAL_CAS_CHUNKS",
+      "packBytes": 30160515,
+      "chunkCount": 4,
+      "publicationDurationMs": 2980
+    }
+  },
+  "observations": [],
+  "economics": {
+    "observedBuilds": 0,
+    "selectedReplays": 0,
+    "nativeRetainedBuilds": 0,
+    "selectedReplaySavedMs": 0,
+    "fallbackDeltaMs": 0,
+    "cumulativeGrossSavedMs": 0,
+    "qualificationAndPublicationCostMs": 5422,
+    "cumulativeNetSavedMs": -5422,
+    "firstObservedBreakEvenBuild": null,
+    "conclusion": "NON_PORTABLE_NATIVE_OUTPUTS"
+  },
+  "acceptance": {
+    "decision": "COMPLETE",
+    "exactRequiredOutputs": true,
+    "portabilityGatePassed": false,
+    "publicAncestry": true,
+    "productFailures": 0
+  },
+  "boundaries": {
+    "designPartnerRequired": false,
+    "mechanismPercentagesAdded": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositoriesAveraged": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}
