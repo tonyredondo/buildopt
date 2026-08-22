@@ -104,6 +104,7 @@ the exact cross-component contract.
 | [`poc-automatic-breadth-transfer-v2.md`](./poc-automatic-breadth-transfer-v2.md) and [`poc-automatic-breadth-transfer-v2.json`](./poc-automatic-breadth-transfer-v2.json) | `POC-AUTOMATIC-BREADTH-TRANSFER-V2-001` |
 | [`poc-automatic-qualification-v1.md`](./poc-automatic-qualification-v1.md) | Automatic `buildopt optimize` POC qualification |
 | [`poc-producer-bound-quarantine-lifetime-v2.md`](./poc-producer-bound-quarantine-lifetime-v2.md) and [`poc-producer-bound-quarantine-lifetime-v2.json`](./poc-producer-bound-quarantine-lifetime-v2.json) | `POC-PRODUCER-BOUND-QUARANTINE-REPLAY` |
+| [`poc-producer-bound-lifetime-generalization-v1.md`](./poc-producer-bound-lifetime-generalization-v1.md) and [`poc-producer-bound-lifetime-generalization-v1.json`](./poc-producer-bound-lifetime-generalization-v1.json) | `POC-PRODUCER-BOUND-LIFETIME-GENERALIZATION-001` |
 | [`poc-materialization-economics-v2.md`](./poc-materialization-economics-v2.md) and [`poc-materialization-economics-v2.json`](./poc-materialization-economics-v2.json) | `POC-MATERIALIZATION-ECONOMICS-V2-001` |
 | [`poc-qualified-lifetime-v2.md`](./poc-qualified-lifetime-v2.md) and [`poc-qualified-lifetime-v2.json`](./poc-qualified-lifetime-v2.json) | `POC-QUALIFIED-LIFETIME-V2-001` |
 | [`poc-incremental-learning-v1.md`](./poc-incremental-learning-v1.md) and [`poc-incremental-learning-v1.json`](./poc-incremental-learning-v1.json) | `POC-INCREMENTAL-LEARNING-001` |
@@ -264,6 +265,12 @@ then recaptures that complete Spring boundary, applies the explicit automatic
 6/8 policy without rewriting the historical 7/8 spec, and measures one selected
 plus one native-retained public descendant with exact stable bytes and complete
 local rebuild of quarantined outputs.
+
+The [producer-bound lifetime generalization contract](./poc-producer-bound-lifetime-generalization-v1.md)
+freezes the unchanged mechanism on Micronaut Core. It reuses the qualification
+and three public descendants registered by qualified-lifetime V2, and permits
+the claim to broaden only after a positive selected replay with exact stable
+outputs and complete local producer rebuilds.
 
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation

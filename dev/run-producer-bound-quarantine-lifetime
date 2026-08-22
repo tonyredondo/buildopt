@@ -3,7 +3,7 @@ set -euo pipefail
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
-buildopt_subjects=${buildopt_repo_root}/specs/poc-cross-commit-breadth-spring-jms-v1.subjects.json
+buildopt_subjects=${BUILDOPT_PRODUCER_BOUND_LIFETIME_SPEC:-${buildopt_repo_root}/specs/poc-cross-commit-breadth-spring-jms-v1.subjects.json}
 
 export BUILDOPT_QUALIFIED_LIFETIME_SPEC=${buildopt_subjects}
 export BUILDOPT_QUALIFIED_LIFETIME_AUTOMATIC_PROTOCOL=v4
