@@ -140,6 +140,12 @@ func TestOptimizeCalibrationCheckpointRejectsAuthorityAndMetricTampering(t *test
 		t.Fatal("qualified checkpoint with only six positive pairs was accepted")
 	}
 	mutated = state
+	mutated.Calibration.QualificationPolicy = profilediscovery.StructuralQualificationRobust6Of8AlternatingP95
+	mutated.Calibration.PositivePairs = 6
+	if !validOptimizeCalibrationCheckpoint(mutated) {
+		t.Fatal("alternating-pair checkpoint with six positive pairs was rejected")
+	}
+	mutated = state
 	mutated.Calibration.CandidateP95MS = 12000
 	mutated.Calibration.ValueGatePassed = false
 	if validOptimizeCalibrationCheckpoint(mutated) {

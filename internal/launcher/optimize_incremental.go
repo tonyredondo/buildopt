@@ -605,7 +605,7 @@ func completeOptimizeIncrementalLearning(
 		ExecutableSHA256:     invocation.executableSHA256,
 		SourceEvidenceSHA256: hex.EncodeToString(changesSHA[:]),
 		GradleOptions:        options, Observations: observations,
-		QualificationPolicy: profilediscovery.StructuralQualificationRobust7Of8P95,
+		QualificationPolicy: profilediscovery.StructuralQualificationRobust6Of8AlternatingP95,
 		FallbackReason:      "ORDINARY_FULL_GRAPH_CONTROLS_SUCCEEDED",
 		FallbackSuccessful:  learning.FallbackSuccessful,
 	})

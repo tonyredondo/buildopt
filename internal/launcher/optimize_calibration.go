@@ -31,7 +31,7 @@ const (
 	optimizeCalibrationReasonCancelled      = "CALIBRATION_CANCELLED"
 	optimizeCalibrationEvidenceFile         = "evidence.json"
 	optimizeRequiredCalibrationPairs        = 8
-	optimizeMinimumPositiveCalibrationPairs = 7
+	optimizeMinimumPositiveCalibrationPairs = 6
 )
 
 type optimizeCalibrationResult struct {
@@ -132,6 +132,9 @@ func validOptimizeCalibrationValueGate(calibration optimizeCalibrationResult) bo
 	minimumPositivePairs := optimizeRequiredCalibrationPairs
 	p95NonRegressive := true
 	if calibration.QualificationPolicy == profilediscovery.StructuralQualificationRobust7Of8P95 {
+		minimumPositivePairs = 7
+		p95NonRegressive = calibration.CandidateP95MS <= calibration.ControlP95MS
+	} else if calibration.QualificationPolicy == profilediscovery.StructuralQualificationRobust6Of8AlternatingP95 {
 		minimumPositivePairs = optimizeMinimumPositiveCalibrationPairs
 		p95NonRegressive = calibration.CandidateP95MS <= calibration.ControlP95MS
 	}
@@ -145,7 +148,9 @@ func validOptimizeCalibrationValueGate(calibration optimizeCalibrationResult) bo
 }
 
 func validOptimizeCalibrationQualificationPolicy(policy string) bool {
-	return policy == "" || policy == profilediscovery.StructuralQualificationRobust7Of8P95
+	return policy == "" ||
+		policy == profilediscovery.StructuralQualificationRobust7Of8P95 ||
+		policy == profilediscovery.StructuralQualificationRobust6Of8AlternatingP95
 }
 
 func validOptimizeSHA(value string) bool {
@@ -230,7 +235,7 @@ func (run *optimizeRun) calibrate(
 		return result
 	}
 	config.pairedTargetStability = true
-	config.qualificationPolicy = profilediscovery.StructuralQualificationRobust7Of8P95
+	config.qualificationPolicy = profilediscovery.StructuralQualificationRobust6Of8AlternatingP95
 	config.parentContext = ctx
 	if deadline, ok := ctx.Deadline(); ok {
 		config.deadline = deadline

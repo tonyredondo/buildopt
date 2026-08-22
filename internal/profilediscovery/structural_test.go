@@ -157,6 +157,10 @@ func TestStructuralQualificationAllowsOneNoisyPairButRetainsNativeForWeakRepeata
 	if err != nil || result.Qualified || result.PositivePairs != 6 {
 		t.Fatalf("six-positive-pair result = %+v/%v, want retained native", result, err)
 	}
+	result, err = calculateStructuralResultWithPolicy(weakRepeatability, StructuralQualificationRobust6Of8AlternatingP95)
+	if err != nil || !result.Qualified || result.PositivePairs != 6 {
+		t.Fatalf("alternating six-positive-pair result = %+v/%v, want qualified", result, err)
+	}
 
 	regressiveP95 := append([]structuralObservation(nil), observations...)
 	regressiveP95[0].ControlDurationMS = 20000

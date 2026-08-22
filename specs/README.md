@@ -102,6 +102,7 @@ the exact cross-component contract.
 | [`poc-economic-prequalification-v1.md`](./poc-economic-prequalification-v1.md) and [`poc-economic-prequalification-v1.json`](./poc-economic-prequalification-v1.json) | `POC-ECONOMIC-PREQUALIFICATION-001` |
 | [`poc-automatic-breadth-transfer-v1.md`](./poc-automatic-breadth-transfer-v1.md) and [`poc-automatic-breadth-transfer-v1.json`](./poc-automatic-breadth-transfer-v1.json) | `POC-AUTOMATIC-BREADTH-TRANSFER-001` |
 | [`poc-automatic-breadth-transfer-v2.md`](./poc-automatic-breadth-transfer-v2.md) and [`poc-automatic-breadth-transfer-v2.json`](./poc-automatic-breadth-transfer-v2.json) | `POC-AUTOMATIC-BREADTH-TRANSFER-V2-001` |
+| [`poc-automatic-qualification-v1.md`](./poc-automatic-qualification-v1.md) | Automatic `buildopt optimize` POC qualification |
 | [`poc-materialization-economics-v2.md`](./poc-materialization-economics-v2.md) and [`poc-materialization-economics-v2.json`](./poc-materialization-economics-v2.json) | `POC-MATERIALIZATION-ECONOMICS-V2-001` |
 | [`poc-qualified-lifetime-v2.md`](./poc-qualified-lifetime-v2.md) and [`poc-qualified-lifetime-v2.json`](./poc-qualified-lifetime-v2.json) | `POC-QUALIFIED-LIFETIME-V2-001` |
 | [`poc-incremental-learning-v1.md`](./poc-incremental-learning-v1.md) and [`poc-incremental-learning-v1.json`](./poc-incremental-learning-v1.json) | `POC-INCREMENTAL-LEARNING-001` |

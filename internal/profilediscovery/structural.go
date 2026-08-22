@@ -23,6 +23,10 @@ const (
 	StructuralProfileSchema                       = "buildopt.poc/qualified-profile/v4"
 	StructuralProfileID                           = "qualified-structural-build-impact"
 	StructuralQualificationRobust7Of8P95          = "ROBUST_7_OF_8_POSITIVE_INTERVAL_P95_V1"
+	// StructuralQualificationRobust6Of8AlternatingP95 is the bounded automatic
+	// POC policy for one eight-pair alternating capture. It is deliberately not
+	// the historical two-capture balanced-block v2 protocol.
+	StructuralQualificationRobust6Of8AlternatingP95 = "ROBUST_6_OF_8_ALTERNATING_PAIRS_INTERVAL_P95_V1"
 	CandidateStabilizationAdaptiveExactTwoOfThree = "ADAPTIVE_EXACT_2_OF_3"
 	CandidateStabilizationPairedTargetShape       = "PAIRED_TARGET_SHAPE_V1"
 	CandidateStabilizationPairedBoundCacheShape   = "PAIRED_BOUND_CACHE_MEASURED_SHAPE_V1"
@@ -347,7 +351,8 @@ func RenderStructuralMeasurementEvidence(options StructuralMeasurementOptions) (
 		return nil, false, errors.New("structural candidate stabilization policy is invalid")
 	}
 	if options.QualificationPolicy != "" &&
-		options.QualificationPolicy != StructuralQualificationRobust7Of8P95 {
+		options.QualificationPolicy != StructuralQualificationRobust7Of8P95 &&
+		options.QualificationPolicy != StructuralQualificationRobust6Of8AlternatingP95 {
 		return nil, false, errors.New("structural qualification policy is invalid")
 	}
 	if options.CandidateStabilization == "" && len(options.ControlWarmups) != len(options.CandidateWarmups) {
@@ -624,7 +629,8 @@ func validateStructuralCaptureEvidence(evidence structuralEvidence, analysis Ana
 		return errors.New("structural qualification execution surface is invalid")
 	}
 	if evidence.Execution.QualificationPolicy != "" &&
-		evidence.Execution.QualificationPolicy != StructuralQualificationRobust7Of8P95 {
+		evidence.Execution.QualificationPolicy != StructuralQualificationRobust7Of8P95 &&
+		evidence.Execution.QualificationPolicy != StructuralQualificationRobust6Of8AlternatingP95 {
 		return errors.New("structural qualification policy is invalid")
 	}
 	if evidence.SourceBindings.OutputEquivalenceSHA256 == "" {
@@ -1013,6 +1019,9 @@ func calculateStructuralResultWithPolicy(observations []structuralObservation, p
 	p95NonRegressive := true
 	if policy == StructuralQualificationRobust7Of8P95 {
 		positivePairsRequired = 7
+		p95NonRegressive = candidateP95 <= controlP95
+	} else if policy == StructuralQualificationRobust6Of8AlternatingP95 {
+		positivePairsRequired = 6
 		p95NonRegressive = candidateP95 <= controlP95
 	}
 	qualified := meanSaved >= structuralMinimumSavedMS && ratio >= structuralMinimumRatio &&
