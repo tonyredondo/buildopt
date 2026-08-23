@@ -17,10 +17,10 @@ candidate checkouts, stabilizes their Gradle state, runs eight alternating
 control/candidate pairs, compares required outputs exactly by default, and
 executes the complete original graph as a fallback correctness proof.
 
-A candidate qualifies only when at least seven of eight pairs improve, mean
-saving is at least 500 ms and 2%, the paired 95% lower bound is positive,
-candidate p95 is no worse than native Gradle, observed task shapes are stable,
-outputs are equivalent, fallback succeeds, and:
+A candidate qualifies only when at least six of eight alternating pairs
+improve, mean saving is at least 500 ms and 2%, the paired 95% lower bound is
+positive, candidate p95 is no worse than native Gradle, observed task shapes
+are stable, outputs are equivalent, fallback succeeds, and:
 
 ```text
 ceil(total discovery and calibration cost / mean saving per matching build)

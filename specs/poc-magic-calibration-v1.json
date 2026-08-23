@@ -20,7 +20,7 @@
     "requiredOutputEquivalence": "EXACT_BYTES_BY_DEFAULT",
     "minimumMeanSavedMs": 500,
     "minimumReductionRatio": 0.02,
-    "minimumPositivePairs": 7,
+    "minimumPositivePairs": 6,
     "interval95LowerBoundPositive": true,
     "candidateP95NonRegressive": true,
     "executionShapeStableWhenObserved": true,

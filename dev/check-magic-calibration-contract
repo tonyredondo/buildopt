@@ -33,7 +33,7 @@ jq -e '
     .qualification.requiredOutputEquivalence == "EXACT_BYTES_BY_DEFAULT" and
     .qualification.minimumMeanSavedMs == 500 and
     .qualification.minimumReductionRatio == 0.02 and
-    .qualification.minimumPositivePairs == 7 and
+    .qualification.minimumPositivePairs == 6 and
     .qualification.interval95LowerBoundPositive == true and
     .qualification.candidateP95NonRegressive == true and
     .qualification.executionShapeStableWhenObserved == true and
@@ -66,9 +66,9 @@ jq -e '
 
 grep -F 'optimizeRequiredCalibrationPairs        = 8' \
     "${buildopt_root}/internal/launcher/optimize_calibration.go" >/dev/null
-grep -F 'optimizeMinimumPositiveCalibrationPairs = 7' \
+grep -F 'optimizeMinimumPositiveCalibrationPairs = 6' \
     "${buildopt_root}/internal/launcher/optimize_calibration.go" >/dev/null
-grep -F 'StructuralQualificationRobust7Of8P95' \
+grep -F 'StructuralQualificationRobust6Of8AlternatingP95' \
     "${buildopt_root}/internal/launcher/optimize_calibration.go" >/dev/null
 grep -F 'structuralMinimumSavedMS' \
     "${buildopt_root}/internal/profilediscovery/structural.go" >/dev/null

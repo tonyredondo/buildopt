@@ -117,7 +117,7 @@ Today it executes the optimized native Gradle baseline, derives the exact Git
 change, Gradle-owned outputs and complete structural graph, then measures a
 safe candidate through eight order-balanced pairs. Qualification requires
 equivalent outputs, a successful full-graph fallback, a positive paired bound,
-at least 500 ms and 2% mean saving, at least 7/8 positive pairs, a positive
+at least 500 ms and 2% mean saving, at least 6/8 positive pairs, a positive
 paired 95% lower bound, non-regressive p95, and repayment within
 `--max-break-even-builds`. A positive candidate reports
 `LEARNING / QUALIFIED_PROFILE_STORED`; ambiguity, global changes,
