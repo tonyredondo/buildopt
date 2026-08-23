@@ -29,6 +29,21 @@ done
         ./cmd/gradle-critical-path
 )
 
+env -u BUILDOPT_TASK_GRAPH_OUTPUT \
+    GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local" \
+    "${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --project-dir "${buildopt_fixture}" \
+    --project-cache-dir "${buildopt_temporary}/inactive-project-cache" \
+    --init-script "${buildopt_script_dir}/gradle-critical-path.init.gradle" \
+    --no-daemon --offline --console=plain help \
+    >"${buildopt_temporary}/inactive.log" 2>&1
+grep -Fq 'BUILD SUCCESSFUL' "${buildopt_temporary}/inactive.log"
+[[ ! -e ${buildopt_temporary}/graph.jsonl ]] || {
+    printf 'inactive Gradle critical-path collector wrote a task graph\n' >&2
+    exit 1
+}
+
 env \
     GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local" \
     BUILDOPT_TASK_GRAPH_OUTPUT="${buildopt_temporary}/graph.jsonl" \

@@ -5,44 +5,42 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.StandardOpenOption
 
 def outputPath = System.getenv("BUILDOPT_TASK_GRAPH_OUTPUT")
-if (outputPath == null || outputPath.isBlank()) {
-    throw new GradleException("BUILDOPT_TASK_GRAPH_OUTPUT is required")
-}
+if (outputPath != null && !outputPath.isBlank()) {
+    def identityPath = { Task task ->
+        def buildPath = task.project.gradle.identityPath.toString()
+        buildPath == ":" ? task.path : buildPath + task.path
+    }
 
-def identityPath = { Task task ->
-    def buildPath = task.project.gradle.identityPath.toString()
-    buildPath == ":" ? task.path : buildPath + task.path
-}
+    gradle.taskGraph.whenReady { graph ->
+        def graphTasks = graph.allTasks as Set
+        def tasks = graph.allTasks.collect { task ->
+            def dependencies = graph.getDependencies(task)
+                .findAll { graphTasks.contains(it) }
+                .collect { dependency -> identityPath(dependency) }
+                .unique()
+                .sort()
+            [
+                identity: identityPath(task),
+                path: task.path,
+                taskClass: task.class.name,
+                dependencies: dependencies
+            ]
+        }.sort { left, right -> left.identity <=> right.identity }
 
-gradle.taskGraph.whenReady { graph ->
-    def graphTasks = graph.allTasks as Set
-    def tasks = graph.allTasks.collect { task ->
-        def dependencies = graph.getDependencies(task)
-            .findAll { graphTasks.contains(it) }
-            .collect { dependency -> identityPath(dependency) }
-            .unique()
-            .sort()
-        [
-            identity: identityPath(task),
-            path: task.path,
-            taskClass: task.class.name,
-            dependencies: dependencies
-        ]
-    }.sort { left, right -> left.identity <=> right.identity }
-
-    def document = JsonOutput.toJson([
-        schemaVersion: "buildopt.diagnostics/gradle-task-graph/v1",
-        buildPath: gradle.identityPath.toString(),
-        tasks: tasks
-    ]) + "\n"
-    def destination = new File(outputPath).toPath().toAbsolutePath().normalize()
-    destination.parent.toFile().mkdirs()
-    FileChannel.open(destination,
-        StandardOpenOption.CREATE,
-        StandardOpenOption.WRITE,
-        StandardOpenOption.APPEND).withCloseable { channel ->
-        channel.lock().withCloseable {
-            channel.write(ByteBuffer.wrap(document.getBytes(StandardCharsets.UTF_8)))
+        def document = JsonOutput.toJson([
+            schemaVersion: "buildopt.diagnostics/gradle-task-graph/v1",
+            buildPath: gradle.identityPath.toString(),
+            tasks: tasks
+        ]) + "\n"
+        def destination = new File(outputPath).toPath().toAbsolutePath().normalize()
+        destination.parent.toFile().mkdirs()
+        FileChannel.open(destination,
+            StandardOpenOption.CREATE,
+            StandardOpenOption.WRITE,
+            StandardOpenOption.APPEND).withCloseable { channel ->
+            channel.lock().withCloseable {
+                channel.write(ByteBuffer.wrap(document.getBytes(StandardCharsets.UTF_8)))
+            }
         }
     }
 }

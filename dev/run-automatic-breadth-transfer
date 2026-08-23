@@ -279,7 +279,6 @@ buildopt_capture_subject() {
     local -a buildopt_gradle_args=()
     local -a buildopt_native_gradle_args=()
     local -a buildopt_quarantine_args=()
-    local -a buildopt_trace_args=()
     local -a buildopt_trace_environment=()
 
     buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_subjects}")
@@ -353,10 +352,10 @@ buildopt_capture_subject() {
         --console=plain --no-scan --max-workers=12
     )
     if [[ ${buildopt_task_trace} == true ]]; then
-        buildopt_trace_args=(
-            --init-script "${buildopt_script_dir}/gradle-critical-path.init.gradle"
-        )
-        mkdir -p -- "${buildopt_subject_output}/operations"
+        mkdir -p -- "${buildopt_subject_output}/operations" \
+            "${buildopt_gradle_home}/init.d"
+        cp -- "${buildopt_script_dir}/gradle-critical-path.init.gradle" \
+            "${buildopt_gradle_home}/init.d/buildopt-critical-path.gradle"
     fi
     buildopt_event="${buildopt_root}/${buildopt_key}/github-event.json"
     jq -n --arg before "${buildopt_base}" '{before:$before}' >"${buildopt_event}"
@@ -420,8 +419,7 @@ buildopt_capture_subject() {
                         "${buildopt_executable}" optimize \
                     --state-dir ".buildopt/optimize/${buildopt_state_name}" \
                     --resume auto --calibration-budget 30m --calibration-pairs 8 \
-                    --max-break-even-builds 30 --json -- \
-                    "${buildopt_trace_args[@]}" "${buildopt_gradle_args[@]}"
+                    --max-break-even-builds 30 --json -- "${buildopt_gradle_args[@]}"
             ) >"${buildopt_invocation_file}" 2>"${buildopt_stderr}"
             buildopt_status=$?
             set -e
