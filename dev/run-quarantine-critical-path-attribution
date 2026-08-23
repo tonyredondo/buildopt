@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if (($# != 1)) || [[ $1 != /* || -e $1 ]]; then
-    printf 'usage: %s /new/absolute/evidence/directory\n' "$0" >&2
+if (($# < 1 || $# > 2)) || [[ $1 != /* || -e $1 ]] ||
+    (($# == 2)) && [[ $2 != /* || ! -d $2 ]]; then
+    printf 'usage: %s /new/absolute/evidence/directory [/existing/raw/directory]\n' \
+        "$0" >&2
     exit 64
 fi
 
 buildopt_output=$1
+buildopt_existing_raw=${2:-}
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
-buildopt_raw=${buildopt_output}/raw
+buildopt_raw=${buildopt_existing_raw:-${buildopt_output}/raw}
 buildopt_analysis=${buildopt_output}/analysis
 buildopt_tools=${buildopt_output}/tools
 buildopt_source_summary=${buildopt_raw}/summary.json
@@ -32,16 +35,19 @@ done
     printf 'BuildOpt state must be clean before critical-path attribution\n' >&2
     exit 1
 }
-buildopt_free=$(df -Pk "${TMPDIR:-/tmp}" | awk 'NR == 2 {print $4 * 1024}')
-if ((buildopt_free < 17179869184)); then
-    printf 'quarantine critical-path attribution requires at least 16 GiB free\n' >&2
-    exit 1
-fi
-
 mkdir -p -- "${buildopt_output}"
-printf 'Capturing the frozen Micronaut window with task operations and DAGs\n'
-env BUILDOPT_AUTOMATIC_BREADTH_TASK_TRACE=true \
-    "${buildopt_script_dir}/run-compatible-portfolio-value" "${buildopt_raw}"
+if [[ -z ${buildopt_existing_raw} ]]; then
+    buildopt_free=$(df -Pk "${TMPDIR:-/tmp}" | awk 'NR == 2 {print $4 * 1024}')
+    if ((buildopt_free < 17179869184)); then
+        printf 'quarantine critical-path attribution requires at least 16 GiB free\n' >&2
+        exit 1
+    fi
+    printf 'Capturing the frozen Micronaut window with task operations and DAGs\n'
+    env BUILDOPT_AUTOMATIC_BREADTH_TASK_TRACE=true \
+        "${buildopt_script_dir}/run-compatible-portfolio-value" "${buildopt_raw}"
+else
+    printf 'Analyzing the existing frozen Micronaut task capture\n'
+fi
 
 "${buildopt_script_dir}/check-compatible-portfolio-value" "${buildopt_source_summary}"
 [[ -s ${buildopt_final_result} ]] || {
@@ -69,7 +75,7 @@ mkdir -p -- "${buildopt_analysis}" "${buildopt_tools}"
 )
 
 while IFS=$'\t' read -r buildopt_sequence buildopt_pair buildopt_order buildopt_arm; do
-    buildopt_invocation=$((buildopt_sequence + 1))
+    buildopt_invocation=$((buildopt_sequence + 2))
     printf -v buildopt_prefix 'invocation-%02d' "${buildopt_invocation}"
     buildopt_result=${buildopt_subject}/${buildopt_prefix}.json
     buildopt_operations=${buildopt_subject}/operations/${buildopt_prefix}-log.txt
