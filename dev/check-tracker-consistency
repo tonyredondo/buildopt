@@ -81,6 +81,8 @@ buildopt_required_tracker_text=(
     "| 142 | \`POC-COMPATIBLE-PORTFOLIO-VALUE-001\` | Learn producer volatility"
     "| \`E-390\` | 2026-08-23 | \`POC-COMPATIBLE-PORTFOLIO-VALUE-001\`"
     "| 143 | \`POC-TRANSITIVE-PRODUCER-LINEAGE-001\` | Capture the generic Gradle task-dependency graph"
+    "| \`E-391\` | 2026-08-23 | \`POC-TRANSITIVE-PRODUCER-LINEAGE-001\`"
+    "| 144 | \`POC-MINIMAL-QUARANTINE-REBUILD-FRONTIER-001\` | Derive the smallest exact Gradle task frontier"
     "| 75 | \`POC-GENERIC-MEASUREMENT-001\` | Collect eight isolated alternating optimized-native-versus-BuildOpt pairs"
     "| \`E-288\` | 2026-08-09 | \`POC-GENERIC-MEASUREMENT-001\`"
     "| 77 | \`POC-APACHE-GROOVY-GENERALIZATION-001\` | Apply the generic measurement workflow to Apache Groovy"

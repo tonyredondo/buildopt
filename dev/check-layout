@@ -410,6 +410,7 @@ buildopt_required_files=(
     "dev/run-portfolio-compatibility-preflight"
     "dev/check-compatible-portfolio-value"
     "dev/run-compatible-portfolio-value"
+    "dev/check-transitive-producer-lineage"
     "dev/check-compatible-descendant-discovery"
     "dev/check-incremental-learning"
     "dev/run-incremental-learning"

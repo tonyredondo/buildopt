@@ -861,6 +861,19 @@ intermediate producers lack proven transitive lineage to those final outputs.
 The structured `PORTFOLIO_PRODUCER_LINEAGE_UNAVAILABLE` result is a successful
 fail-closed POC outcome, not a performance percentage.
 
+Validate the lineage correction, its first exact-output recovery and the
+terminal eight-pair result without rerunning Micronaut:
+
+```bash
+./dev/check-transitive-producer-lineage
+```
+
+The checker binds the two implementation revisions, both evidence summaries,
+the diagnostic candidate frontier, all 16 timing observations, the single
+required-output digest and the POC boundaries. The terminal result proves
+lineage-safe replay but rejects value at 65 ms/0.49%, 5/8 positive pairs, an
+interval crossing zero and regressive p95.
+
 Validate the corrected OpenTelemetry effective-change replay and its terminal
 economic rejection without rerunning the 17 public-repository builds:
 

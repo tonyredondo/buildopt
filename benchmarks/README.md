@@ -2191,6 +2191,26 @@ architecture evidence, not a performance percentage. Revalidate it with:
 ./dev/check-compatible-portfolio-value
 ```
 
+## Transitive producer lineage
+
+[`results/poc-transitive-producer-lineage-v1/`](./results/poc-transitive-producer-lineage-v1/README.md)
+repeats the same frozen Micronaut window after recording the complete Gradle
+task lineage for every materialized output. The diagnostic run proves why
+transport and execution must change together: 89 outputs were safely
+quarantined, but rebuilding only 11 direct/changed entrypoints caused
+`REQUIRED_OUTPUT_DRIFT`; full-graph recovery preserved the exact digest.
+
+The corrected generic rebuild frontier uses 58 entrypoints across 52 of 70
+projects, transports 101 outputs and rebuilds 89. It completes eight pairs
+with one exact digest, a successful fallback and zero product failures. Mean
+wall time changes from 13,318.25 to 13,253.25 ms, a **65-ms/0.49%** saving,
+but only 5/8 pairs improve, the interval is -1,114.375..+1,166.75 ms and p95
+regresses from 14,267 to 16,967 ms. Correctness is proven; value is not.
+
+```bash
+./dev/check-transitive-producer-lineage
+```
+
 ## JVM Agent spike evidence
 
 [`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one

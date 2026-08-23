@@ -295,6 +295,14 @@ as valid POC outcomes. The terminal public result passes the preflight but
 retains native because eight volatile intermediate producers lack proven
 transitive lineage to final materialized outputs; no timing claim is made.
 
+The [transitive producer lineage protocol](./poc-transitive-producer-lineage-v1.md)
+closes that correctness gap on the same frozen window. It binds direct and
+transitive Gradle producers to materialized outputs, propagates quarantine and
+derives a fail-closed rebuild frontier. The corrected candidate preserves one
+exact output digest through eight pairs, but 65 ms/0.49% mean saving, 5/8
+positive pairs, an interval crossing zero and worse p95 reject value. The next
+hypothesis is a smaller exact frontier, not a weaker gate.
+
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation
 per useful invocation. Its fixture completes eight pairs with zero

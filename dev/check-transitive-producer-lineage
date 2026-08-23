@@ -1,0 +1,155 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [EVIDENCE_DIRECTORY]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence_dir=${1:-${buildopt_repo_root}/benchmarks/results/poc-transitive-producer-lineage-v1}
+buildopt_before=${buildopt_evidence_dir}/pre-fix-summary.json
+buildopt_after=${buildopt_evidence_dir}/summary.json
+buildopt_diagnostic=${buildopt_evidence_dir}/diagnostic.json
+
+command -v jq >/dev/null 2>&1 || {
+    printf 'transitive producer lineage validation requires jq\n' >&2
+    exit 1
+}
+command -v sha256sum >/dev/null 2>&1 || {
+    printf 'transitive producer lineage validation requires sha256sum\n' >&2
+    exit 1
+}
+
+for buildopt_file in "${buildopt_before}" "${buildopt_after}" "${buildopt_diagnostic}"; do
+    [[ -s ${buildopt_file} ]] || {
+        printf 'transitive producer lineage evidence is unavailable: %s\n' \
+            "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_before_sha=$(sha256sum "${buildopt_before}")
+buildopt_before_sha=${buildopt_before_sha%% *}
+buildopt_after_sha=$(sha256sum "${buildopt_after}")
+buildopt_after_sha=${buildopt_after_sha%% *}
+
+jq -e \
+    --arg beforeSha "${buildopt_before_sha}" \
+    --arg afterSha "${buildopt_after_sha}" '
+  . as $root |
+  .schemaVersion == "buildopt.evidence/poc-transitive-producer-lineage-diagnostic/v1" and
+  .workItem == "POC-TRANSITIVE-PRODUCER-LINEAGE-001" and
+  .preFix.buildoptRevision == "45d67215975f1e37a324d98afa099af47636e1cf" and
+  .preFix.summarySha256 == $beforeSha and
+  .preFix.attempt == 4 and
+  .preFix.execution.mode == "FULL_GRAPH_RECOVERY" and
+  .preFix.execution.exitCode == 0 and
+  .preFix.outcome == "NATIVE_RETAINED" and
+  .preFix.reason == "REQUIRED_OUTPUT_DRIFT" and
+  .preFix.fallbackSuccessful == true and
+  .preFix.graph == {"omittedProjects":62,"selectedProjects":8,"totalProjects":70} and
+  .preFix.candidateEntrypointCount == 11 and
+  .preFix.quarantinedOutputCount == 89 and
+  .preFix.transportedOutputCount == 101 and
+  .corrected.buildoptRevision == "9893316aedaec6f51592adb0ddfbc796fe64e7c3" and
+  .corrected.summarySha256 == $afterSha and
+  .corrected.execution.mode == "OPTIMIZED_NATIVE" and
+  .corrected.execution.exitCode == 0 and
+  .corrected.outcome == "NATIVE_RETAINED" and
+  .corrected.reason == "CALIBRATION_VALUE_NOT_PROVEN" and
+  .corrected.fallbackSuccessful == true and
+  .corrected.graph == {"omittedProjects":18,"selectedProjects":52,"totalProjects":70} and
+  .corrected.candidateEntrypointCount == 58 and
+  .corrected.legacyCandidateEntrypointCount == 68 and
+  .corrected.materializedOutputCount == 190 and
+  .corrected.candidateOutputCount == 97 and
+  (.corrected.observations | length) == 16 and
+  (.corrected.observations | all(
+    .exitCode == 0 and .productAttributableFailure == false and
+    .requiredOutputCount == 109 and
+    .requiredOutputSha256 == $root.corrected.requiredOutputSha256)) and
+  .preFix.requiredOutputSha256 == .corrected.requiredOutputSha256 and
+  .boundaries == {
+    "proofOfConcept":true,
+    "productionAuthorized":false,
+    "repositorySpecificProductRules":false,
+    "soakRequired":false,
+    "designPartnerRequired":false,
+    "testOptimization":"OUT_OF_SCOPE"
+  }
+' "${buildopt_diagnostic}" >/dev/null || {
+    printf 'transitive producer lineage diagnostic drifted\n' >&2
+    exit 1
+}
+
+jq -e '
+  .buildoptRevision == "45d67215975f1e37a324d98afa099af47636e1cf" and
+  .repository.id == "micronaut-projects/micronaut-core" and
+  .repository.learningRevision == "4dc4299f8dd0faccc0c45c2f83a223b456dc0731" and
+  .repository.evaluationRevision == "a7955f4cc50225044d8eb7c614ba80b607b000dd" and
+  .evaluation.nativeVolatility.portfolioApplied == true and
+  .evaluation.nativeVolatility.quarantinedOutputCount == 89 and
+  .evaluation.nativeVolatility.transportedOutputCount == 101 and
+  .evaluation.measurement.pairsMeasured == 0 and
+  .evaluation.measurement.fallbackSuccessful == false and
+  .acceptance.exactOutputGatePreserved == true
+' "${buildopt_before}" >/dev/null || {
+    printf 'pre-fix lineage evidence drifted\n' >&2
+    exit 1
+}
+
+jq -e '
+  .buildoptRevision == "9893316aedaec6f51592adb0ddfbc796fe64e7c3" and
+  .repository.id == "micronaut-projects/micronaut-core" and
+  .repository.learningRevision == "4dc4299f8dd0faccc0c45c2f83a223b456dc0731" and
+  .repository.evaluationRevision == "a7955f4cc50225044d8eb7c614ba80b607b000dd" and
+  .learning.ordinaryInvocations == 1 and
+  .learning.nativeVolatility.comparedOutputCount == 11187 and
+  .learning.nativeVolatility.quarantinedOutputCount == 476 and
+  .learning.nativeVolatility.transportedOutputCount == 10711 and
+  .evaluation.preflight.decision == "COMPATIBLE" and
+  .evaluation.nativeVolatility.portfolioApplied == true and
+  .evaluation.nativeVolatility.missingPortfolioProducers == [] and
+  .evaluation.nativeVolatility.quarantinedOutputCount == 89 and
+  .evaluation.nativeVolatility.transportedOutputCount == 101 and
+  .evaluation.graph == {"omittedProjects":18,"selectedProjects":52,"totalProjects":70} and
+  .evaluation.ordinaryInvocations == 18 and
+  .evaluation.measurement.pairsMeasured == 8 and
+  .evaluation.measurement.positivePairs == 5 and
+  .evaluation.measurement.controlMeanMs == 13318.25 and
+  .evaluation.measurement.candidateMeanMs == 13253.25 and
+  .evaluation.measurement.meanSavedMs == 65 and
+  .evaluation.measurement.reductionRatio == 0.004880521089482477 and
+  .evaluation.measurement.interval95SavedMs == [-1114.375,1166.75] and
+  .evaluation.measurement.controlP95Ms == 14267 and
+  .evaluation.measurement.candidateP95Ms == 16967 and
+  .evaluation.measurement.breakEvenBuilds == 29 and
+  .evaluation.measurement.calibrationCostMs == 1853 and
+  .evaluation.measurement.qualified == false and
+  .evaluation.measurement.fallbackSuccessful == true and
+  .evaluation.measurement.requiredOutputDigestCount == 1 and
+  .evaluation.productFailures == 0 and
+  .acceptance.decision == "COMPATIBLE_PORTFOLIO_VALUE_NOT_PROVEN" and
+  .acceptance.compatibleReplayValueProven == false and
+  .acceptance.exactOutputGatePreserved == true and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false and
+  .boundaries.repositorySpecificProductRules == false and
+  .boundaries.soakRequired == false and
+  .boundaries.designPartnerRequired == false and
+  .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_after}" >/dev/null || {
+    printf 'terminal transitive producer lineage evidence drifted\n' >&2
+    exit 1
+}
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/nativevolatility
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/launcher \
+    -run 'Test(OptimizeTaskLineage|PropagateProducerLineage|RebuildEntrypoints|ApplyOptimizeNativeQuarantine)'
+
+printf 'Transitive producer lineage contract and evidence: PASS\n'

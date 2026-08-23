@@ -55,15 +55,15 @@
   `NATIVE_RETAINED`. No independent native clone, measurement-only workflow or
   timing pair started. This avoids invalid experiment cost; it is not reported
   as customer build-time saving.
-- **The first exactly compatible portfolio window exposes a producer-lineage
-  gap rather than a timing result.** Micronaut reduces 70 to 22 projects and
-  captures 190 outputs/172.5 MB in 2.537 seconds after a 623.348-second native
-  build. The portfolio learns nine volatile producers across 11,187 outputs,
-  but eight intermediate producers have no proven transitive attribution to
-  the final candidate outputs. BuildOpt returns
-  `PORTFOLIO_PRODUCER_LINEAGE_UNAVAILABLE`, preserves native Gradle and runs
-  zero pairs. Ignoring the gap could restore JARs derived from volatile
-  compilers, so this result authorizes lineage work, not a performance claim.
+- **Transitive producer lineage is now correct, but its current rebuild
+  frontier is not valuable.** The first lineage-aware Micronaut replay
+  quarantined the correct 89 outputs but rebuilt only 11 entrypoints; exact
+  verification caught `REQUIRED_OUTPUT_DRIFT` and recovered through native
+  Gradle. The corrected generic frontier rebuilds 58 entrypoints across 52/70
+  projects, completes 8/8 pairs with one exact digest and zero failures, but
+  saves only **65 ms/0.49%**. Only 5/8 pairs improve, the interval crosses zero
+  and p95 regresses from 14.267 to 16.967 seconds. Correctness is proven;
+  activation and value are rejected.
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
   Runtime Tuning, Hot State and standard Copy are retired; historical Jar,
   Patch and Edge experiments remain scoped supporting evidence.
@@ -866,11 +866,30 @@ The result keeps exact-output safety intact and makes the next technical
 requirement explicit: derive and verify transitive Gradle task lineage before
 measuring portfolio replay value.
 
+That lineage is now derived from the observed Gradle task graph and bound into
+the materialization manifest. The first replay demonstrates why transport and
+execution cannot be separated: quarantine correctly removes 89 downstream
+outputs, but rebuilding only 11 direct/changed entrypoints produces required
+output drift. The full graph recovers the exact digest. The correction derives
+the rebuild frontier from every quarantined output's direct producer and uses
+a project lifecycle entrypoint only when its observed closure covers the exact
+producer set. It needs 58 entrypoints and 52 projects, transports 101 outputs
+and completes all eight alternating pairs with the same required-output
+digest and zero product failures.
+
+The terminal value is negative for promotion. Optimized native averages
+13,318.25 ms and BuildOpt 13,253.25 ms, saving 65 ms/**0.49%**. Five of eight
+pairs improve, the 95% saved-time interval is -1,114.375..+1,166.75 ms and
+candidate p95 is 16,967 ms versus 14,267 ms. This closes lineage correctness
+and opens a narrower performance question: can an exact direct-producer/task
+cover rebuild substantially less than 52 projects without weakening output
+equivalence?
+
 ## Open Questions
 
-- Can Gradle task dependencies provide complete, generic transitive lineage
-  from volatile intermediate producers to every final materialized output,
-  allowing the exactly compatible Micronaut portfolio to be timed safely?
+- Can the exact 58-entrypoint/52-project quarantine frontier be reduced using
+  direct producers or graph-proven lifecycle covers while reproducing every
+  required output and improving the robust wall-time gate?
 - When producer-bound public observations are recaptured, does quarantining the
   volatile producers leave enough stable work to produce positive net value?
 - What future materially different trace would be sufficient to reopen a
@@ -922,6 +941,7 @@ artifacts are:
 - [Hibernate output-contract preflight](../../benchmarks/results/poc-generic-output-contract-v1/README.md).
 - [generalization audit](./buildopt-generalization-audit.md).
 - [compatible producer-portfolio value evidence](../../benchmarks/results/poc-compatible-portfolio-value-v1/README.md).
+- [transitive producer-lineage evidence](../../benchmarks/results/poc-transitive-producer-lineage-v1/README.md).
 
 ## General opportunity and whole-profile value
 
