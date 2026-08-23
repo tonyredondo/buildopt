@@ -780,6 +780,19 @@ independent-root stable pack, 352 locally rebuilt quarantine paths, one selected
 cumulative net. It also reruns the generic qualified-lifetime subject validator
 under the derived contract while preserving the historical 7/8 evidence.
 
+Validate the subsequent Micronaut generalization result without rerunning its
+public repository builds:
+
+```bash
+./dev/check-producer-bound-lifetime-generalization
+```
+
+The checker binds the 70-to-2 qualification, 10.33% mean saving, target
+producer quarantine and the first descendant's native-retained result. It
+requires the exact-output rejection caused by a different generated JAR,
+records no descendant performance claim, and leaves cross-revision volatility
+learning as the next bounded hypothesis.
+
 Validate the corrected OpenTelemetry effective-change replay and its terminal
 economic rejection without rerunning the 17 public-repository builds:
 

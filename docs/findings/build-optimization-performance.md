@@ -799,10 +799,24 @@ still rejects it: only 5/8 pairs improve and the saved-time interval is
 timed. This distinguishes a corrected functional path from a proven economic
 win and leaves the broader cross-commit claim unchanged.
 
+The next Micronaut producer-bound lifetime run provides a different boundary.
+Its public `assemble` qualification reduces 70 projects to 2 and saves
+**4,092.375 ms/10.33%**, with 7/8 positive pairs, a positive interval and lower
+p95. At the target revision, one volatile HTTP-server JAR is quarantined while
+193 outputs remain exactly transportable. The first preregistered descendant
+does not select that profile because its checkpoint and source-ownership
+bindings drift; it runs optimized native Gradle in both arms. Those independent
+native arms nevertheless differ in one Jackson JAR. Two generated classes
+reverse the operands passed to `Set.of`, showing that volatile producer
+identity can change between revisions. BuildOpt neither selected nor restored
+outputs, exact hashes remain enforced, no descendant saving is claimed, and the
+run ends **-11.676 seconds net** after qualification/publication.
+
 ## Open Questions
 
-- Can descendant discovery preregister a refresh followed by a structurally
-  compatible omitted-owner change before spending another timing budget?
+- Can an authoritative native revision update a repository/workflow-bound
+  producer-volatility portfolio, followed by a separately preregistered
+  compatible revision that measures replay value without post-hoc selection?
 - When producer-bound public observations are recaptured, does quarantining the
   volatile producers leave enough stable work to produce positive net value?
 - What future materially different trace would be sufficient to reopen a

@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [SUMMARY]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_summary=${1:-${buildopt_repo_root}/benchmarks/results/poc-producer-bound-lifetime-generalization-v1/summary.json}
+
+command -v jq >/dev/null 2>&1 || {
+    printf 'producer-bound lifetime generalization validation requires jq\n' >&2
+    exit 1
+}
+
+[[ -s ${buildopt_summary} ]] || {
+    printf 'producer-bound lifetime generalization summary is unavailable: %s\n' \
+        "${buildopt_summary}" >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-producer-bound-lifetime-generalization/v1" and
+  .workItem == "POC-PRODUCER-BOUND-LIFETIME-GENERALIZATION-001" and
+  .buildopt.revision == "a9df9b133d79873f29cd730e824adeda1e92e56b" and
+  .repository.id == "micronaut-projects/micronaut-core" and
+  .qualification.graph == {totalProjects:70,selectedProjects:2,omittedProjects:68} and
+  .qualification.controlMeanMs == 39610.875 and
+  .qualification.candidateMeanMs == 35518.5 and
+  .qualification.meanSavedMs == 4092.375 and
+  .qualification.reductionRatio == 0.10331443069611565 and
+  .qualification.interval95SavedMs == [2095.75,5833] and
+  .qualification.positivePairs == 7 and
+  .qualification.pairsMeasured == 8 and
+  .qualification.qualified and
+  .qualification.fallbackSuccessful and
+  .targetNativeVolatility.decision == "TRANSPORT_READY" and
+  .targetNativeVolatility.quarantinedProducers == [":micronaut-http-server-netty:jar"] and
+  .targetNativeVolatility.transportedOutputs == 193 and
+  .firstDescendant.selection.status == "NATIVE_RETAINED" and
+  .firstDescendant.selection.discoveryReason == "SOURCE_OWNERSHIP_AMBIGUOUS" and
+  .firstDescendant.portability.status == "REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS" and
+  .firstDescendant.portability.differingFileCount == 1 and
+  .firstDescendant.bytecodeDiagnosis.generatedClassesDiffering == 2 and
+  .firstDescendant.bytecodeDiagnosis.cause == "GENERATED_SET_ELEMENT_ORDER" and
+  .economics == {
+    qualificationAndPublicationCostMs:11676,selectedReplays:0,
+    cumulativeNetSavedMs:-11676,conclusion:"NON_PORTABLE_NATIVE_OUTPUTS"
+  } and
+  .acceptance.decision == "COMPLETE" and
+  (.acceptance.broadenedClaim | not) and
+  (.acceptance.performanceClaimForDescendant | not) and
+  .acceptance.exactTransportGatePreserved and
+  .acceptance.productFailures == 0 and
+  .nextHypothesis.workItem == "POC-CROSS-REVISION-VOLATILITY-PORTFOLIO-001" and
+  .boundaries.proofOfConcept and
+  (.boundaries.productionAuthorized | not) and
+  (.boundaries.soakRequired | not) and
+  (.boundaries.designPartnerRequired | not) and
+  .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_summary}" >/dev/null
+
+printf '%s\n' \
+    'Producer-bound lifetime generalization OK: Micronaut +10.33% qualification, replay claim safely rejected'

@@ -121,12 +121,18 @@ are rebuilt locally, product failures remain zero and cumulative net is
 - Cross-commit value is no longer Kafka-only: the unchanged generic path now
   has one selected Kafka replay and one selected Spring replay. It is still not
   universal; other repository/workflow families must qualify independently.
+- The first unchanged Micronaut generalization did not broaden that claim. Its
+  qualification was **10.33% faster** with 7/8 positive pairs, but the first
+  native-retained descendant generated a different Jackson JAR even though no
+  BuildOpt profile was selected. The differing bytecode reverses two `Set.of`
+  operands, proving that producer volatility can move between revisions.
 
 ## Next steps
 
-1. Repeat the unchanged producer-bound lifetime path on another non-Kafka
-   repository/workflow family with a positive calibration and portable output
-   boundary.
+1. Build a cross-revision producer-volatility portfolio from authoritative
+   native observations, then test it only on a later preregistered compatible
+   revision. The learning revision must remain diagnostic rather than becoming
+   a performance claim.
 2. Reduce the roughly six seconds of BuildOpt selection/synchronization work on
    native-retained descendants; do not attribute uncontrolled arm variation to
    the product.
@@ -142,6 +148,7 @@ are rebuilt locally, product failures remain zero and cumulative net is
 - [Native-volatility quarantine result](../../benchmarks/results/poc-native-volatility-quarantine-v1/README.md)
 - [Machine-readable quarantine summary](../../benchmarks/results/poc-native-volatility-quarantine-v1/summary.json)
 - [Producer-bound Spring lifetime result](../../benchmarks/results/poc-producer-bound-quarantine-lifetime-v2/README.md)
+- [Micronaut lifetime generalization result](../../benchmarks/results/poc-producer-bound-lifetime-generalization-v1/README.md)
 - [Compatible descendant discovery result](../../benchmarks/results/poc-compatible-descendant-discovery-v1/README.md)
 - [Machine-readable compatible descendant summary](../../benchmarks/results/poc-compatible-descendant-discovery-v1/summary.json)
 - [Native-volatility quarantine protocol](../../specs/poc-native-volatility-quarantine-v1.md)

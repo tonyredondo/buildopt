@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-producer-bound-lifetime-generalization/v1",
+  "workItem": "POC-PRODUCER-BOUND-LIFETIME-GENERALIZATION-001",
+  "capturedAt": "2026-08-23",
+  "buildopt": {
+    "revision": "a9df9b133d79873f29cd730e824adeda1e92e56b",
+    "executableSha256": "5b7ec0dc53cf64f311cb28aa1be50e60c0acd77d4ef41886045ab8b423caa2ea"
+  },
+  "repository": {
+    "id": "micronaut-projects/micronaut-core",
+    "historyBranch": "5.2.x",
+    "parentRevision": "b50709bfbc38c637522e23f7935445b280ff9762",
+    "targetRevision": "eb60c6c35f355750c6bced793e85c30629d27c4e",
+    "firstDescendantRevision": "6a11a05950f36193bd865d6b25c2bc17dfb4ff1c"
+  },
+  "qualification": {
+    "graph": {
+      "totalProjects": 70,
+      "selectedProjects": 2,
+      "omittedProjects": 68
+    },
+    "controlMeanMs": 39610.875,
+    "candidateMeanMs": 35518.5,
+    "meanSavedMs": 4092.375,
+    "reductionRatio": 0.10331443069611565,
+    "interval95SavedMs": [2095.75, 5833],
+    "controlP95Ms": 41231,
+    "candidateP95Ms": 39300,
+    "positivePairs": 7,
+    "pairsMeasured": 8,
+    "breakEvenBuilds": 1,
+    "qualified": true,
+    "fallbackSuccessful": true,
+    "pairSavedMs": [3442, 7486, 1565, 7047, -1009, 3280, 5438, 5490]
+  },
+  "targetNativeVolatility": {
+    "decision": "TRANSPORT_READY",
+    "reason": "VOLATILE_PRODUCERS_QUARANTINED",
+    "comparedOutputs": 194,
+    "volatilePaths": 1,
+    "quarantinedProducers": [":micronaut-http-server-netty:jar"],
+    "quarantinedOutputs": 1,
+    "transportedOutputs": 193
+  },
+  "firstDescendant": {
+    "selection": {
+      "status": "NATIVE_RETAINED",
+      "reason": "CHECKPOINT_BINDING_DRIFT",
+      "discoveryReason": "SOURCE_OWNERSHIP_AMBIGUOUS",
+      "executionMode": "OPTIMIZED_NATIVE"
+    },
+    "portability": {
+      "status": "REJECTED_NON_REPRODUCIBLE_NATIVE_OUTPUTS",
+      "outputCount": 197,
+      "differingFileCount": 1,
+      "differingPath": "jackson-databind/build/libs/micronaut-jackson-databind-5.0.0-SNAPSHOT.jar",
+      "controlOutputManifestSha256": "36ea029ce5818b760921ca98a9ddd5dc66d8be65a66fa28f336c221d44742fe4",
+      "candidateOutputManifestSha256": "881a6ff96ab453713e14aee0c746b8f0ffe2ba83a0a7d19ba3626088816da19e",
+      "differencesSha256": "57739c5975ecdda01e30983318df5d9640c16f3b7faf8611261fcd7ddf922dca"
+    },
+    "bytecodeDiagnosis": {
+      "generatedClassesDiffering": 2,
+      "classNames": [
+        "io.micronaut.jackson.codec.$JsonMediaTypeCodec$Definition",
+        "io.micronaut.jackson.codec.$JsonStreamMediaTypeCodec$Definition"
+      ],
+      "cause": "GENERATED_SET_ELEMENT_ORDER",
+      "semanticDescription": "Two generated classes reverse the two operands passed to Set.of; exact class and JAR bytes therefore differ even though BuildOpt retained native execution."
+    }
+  },
+  "economics": {
+    "qualificationAndPublicationCostMs": 11676,
+    "selectedReplays": 0,
+    "cumulativeNetSavedMs": -11676,
+    "conclusion": "NON_PORTABLE_NATIVE_OUTPUTS"
+  },
+  "acceptance": {
+    "decision": "COMPLETE",
+    "broadenedClaim": false,
+    "performanceClaimForDescendant": false,
+    "exactTransportGatePreserved": true,
+    "productFailures": 0
+  },
+  "nextHypothesis": {
+    "workItem": "POC-CROSS-REVISION-VOLATILITY-PORTFOLIO-001",
+    "description": "Accumulate producer volatility only from authoritative native observations and require a later preregistered descendant before measuring replay value."
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

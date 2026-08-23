@@ -214,6 +214,24 @@ positive with zero product failures.
 ./dev/check-producer-bound-quarantine-lifetime
 ```
 
+The subsequent [Micronaut generalization result](./results/poc-producer-bound-lifetime-generalization-v1/README.md)
+keeps the producer-bound protocol unchanged. Its public qualification reduces
+70 projects to 2 and saves **4,092.375 ms / 10.33%**, with 7/8 positive pairs
+and a positive interval. Target-revision quarantine transports 193 exact
+outputs and rebuilds one volatile HTTP-server JAR locally.
+
+The first preregistered descendant retains optimized native Gradle because its
+source/checkpoint bindings drift. Those two native arms nevertheless differ in
+one Jackson JAR: two generated classes reverse the operands passed to
+`Set.of`. BuildOpt selected no profile and restored no outputs, so this is
+native cross-revision volatility rather than product corruption. Exact hashes
+remain mandatory; no descendant performance result is claimed, the remaining
+descendants are not timed, and the experiment finishes **-11.676 seconds net**.
+
+```bash
+./dev/check-producer-bound-lifetime-generalization
+```
+
 The [compatible descendant discovery result](./results/poc-compatible-descendant-discovery-v1/README.md)
 reruns the frozen OpenTelemetry JMX window after the ownership correction. The
 candidate is functionally correct in 8/8 pairs and reduces 1,027 projects to 8,

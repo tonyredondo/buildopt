@@ -403,6 +403,7 @@ buildopt_required_files=(
     "dev/check-workflow-input-ownership"
     "dev/check-native-volatility-quarantine"
     "dev/check-producer-bound-quarantine-lifetime"
+    "dev/check-producer-bound-lifetime-generalization"
     "dev/check-compatible-descendant-discovery"
     "dev/check-incremental-learning"
     "dev/run-incremental-learning"

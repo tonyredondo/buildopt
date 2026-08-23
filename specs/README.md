@@ -270,7 +270,10 @@ The [producer-bound lifetime generalization contract](./poc-producer-bound-lifet
 freezes the unchanged mechanism on Micronaut Core. It reuses the qualification
 and three public descendants registered by qualified-lifetime V2, and permits
 the claim to broaden only after a positive selected replay with exact stable
-outputs and complete local producer rebuilds.
+outputs and complete local producer rebuilds. The checked result does not
+broadly qualify: the target quarantine is exact, but the first native-retained
+descendant exposes a different volatile generated JAR, so no replay value is
+claimed and cross-revision volatility learning becomes the next hypothesis.
 
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation
