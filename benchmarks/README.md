@@ -247,6 +247,23 @@ treated as a universal producer list.
 ./dev/check-cross-revision-volatility-portfolio
 ```
 
+The [portfolio compatibility preflight result](./results/poc-portfolio-compatibility-preflight-v1/README.md)
+moves the context decision ahead of the extra native observation. On the
+frozen Micronaut rejection, the required customer `assemble` completed in
+526.089 seconds; the preflight then identified Wrapper and output-contract
+drift, retained native and proved that no independent native clone or second
+Gradle workflow started. It avoids one incompatible measurement-only build but
+does not count the customer build as a saving or claim a performance
+percentage.
+
+```bash
+./dev/check-portfolio-compatibility-preflight
+```
+
+The same evidence preregisters a direct-child Micronaut window with identical
+repository, workflow and Wrapper bindings. Its output contract must still pass
+runtime preflight before any independent observation or timing is allowed.
+
 The [compatible descendant discovery result](./results/poc-compatible-descendant-discovery-v1/README.md)
 reruns the frozen OpenTelemetry JMX window after the ownership correction. The
 candidate is functionally correct in 8/8 pairs and reduces 1,027 projects to 8,

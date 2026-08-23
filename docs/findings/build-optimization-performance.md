@@ -49,6 +49,12 @@
   so BuildOpt returns `NATIVE_RETAINED` with zero timing pairs. Its native pair
   observes two different volatile JAR producers, confirming that one observed
   producer list cannot be generalized universally.
+- **Compatibility is now checked before paying for a second native
+  observation.** The frozen Micronaut customer build took 526.089 seconds,
+  after which exact Wrapper/output-contract drift returned
+  `NATIVE_RETAINED`. No independent native clone, measurement-only workflow or
+  timing pair started. This avoids invalid experiment cost; it is not reported
+  as customer build-time saving.
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
   Runtime Tuning, Hot State and standard Copy are retired; historical Jar,
   Patch and Edge experiments remain scoped supporting evidence.
@@ -831,10 +837,17 @@ current native pair independently sees two volatile JAR producers among 186
 outputs. This proves path-independent portfolio identity and fail-closed
 compatibility, not cross-revision value; no percentage is claimed.
 
+The subsequent preflight moves that decision ahead of the extra native
+observation. On the same frozen evaluation it runs the single required
+ordinary `assemble`, detects the Wrapper and output-contract mismatch and
+proves that no independent native workspace or second Gradle workflow starts.
+The result therefore avoids one incompatible measurement-only build while
+preserving zero timing pairs and no performance claim. A new direct-child
+Micronaut window is preregistered with matching static repository, workflow and
+Wrapper bindings; runtime output-contract compatibility remains mandatory.
+
 ## Open Questions
 
-- Can compatibility be decided before a second native observation, avoiding a
-  complete extra build whenever Wrapper or output-contract bindings drift?
 - Can multiple authoritative observations under one compatible context form a
   monotonic producer portfolio that remains exact and produces positive value
   on a separately preregistered public descendant?

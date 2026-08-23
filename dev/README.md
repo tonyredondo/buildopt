@@ -822,6 +822,26 @@ bindings and stops with zero timing pairs. The learning pair quarantines 476 of
 different volatile JAR producers, so neither observation is generalized into a
 universal producer list.
 
+Validate the portfolio compatibility preflight, its fail-closed Go contract
+and the frozen Micronaut evidence with:
+
+```bash
+./dev/check-portfolio-compatibility-preflight
+```
+
+Capture the rejection fixture and preregister the next compatible public
+window with at least 16 GiB free using:
+
+```bash
+./dev/run-portfolio-compatibility-preflight /new/absolute/evidence/directory
+```
+
+The runner executes one required ordinary customer build. When repository,
+workflow, Wrapper or output-contract bindings drift, it stops before cloning
+or starting the independent native observation. The checked evidence records
+one avoided measurement-only build, zero timing pairs and no performance
+claim.
+
 Validate the corrected OpenTelemetry effective-change replay and its terminal
 economic rejection without rerunning the 17 public-repository builds:
 

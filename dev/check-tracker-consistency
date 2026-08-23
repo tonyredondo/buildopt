@@ -66,7 +66,7 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`STRUCTURAL AND CROSS-COMMIT ACCELERATION PROVEN; GENERALITY BOUNDED\`"
-    "**Current phase:** \`PORTFOLIO COMPATIBILITY PREFLIGHT NEXT\`"
+    "**Current phase:** \`COMPATIBLE PORTFOLIO VALUE NEXT\`"
     "| 132 | \`POC-QUALIFIED-LIFETIME-V2-001\` | Replay the five V2-qualified profiles"
     "| \`E-380\` | 2026-08-21 | \`POC-QUALIFIED-LIFETIME-V2-001\`"
     "| 133 | \`POC-CROSS-COMMIT-VALUE-RECOVERY-001\` | Reuse an existing profile"
@@ -77,6 +77,8 @@ buildopt_required_tracker_text=(
     "| 140 | \`POC-CROSS-REVISION-VOLATILITY-PORTFOLIO-001\` | Accumulate producer volatility"
     "| \`E-388\` | 2026-08-23 | \`POC-CROSS-REVISION-VOLATILITY-PORTFOLIO-001\`"
     "| 141 | \`POC-PORTFOLIO-COMPATIBILITY-PREFLIGHT-001\` | Compare canonical repository"
+    "| \`E-389\` | 2026-08-23 | \`POC-PORTFOLIO-COMPATIBILITY-PREFLIGHT-001\`"
+    "| 142 | \`POC-COMPATIBLE-PORTFOLIO-VALUE-001\` | Start a fresh producer-volatility learning generation"
     "| 75 | \`POC-GENERIC-MEASUREMENT-001\` | Collect eight isolated alternating optimized-native-versus-BuildOpt pairs"
     "| \`E-288\` | 2026-08-09 | \`POC-GENERIC-MEASUREMENT-001\`"
     "| 77 | \`POC-APACHE-GROOVY-GENERALIZATION-001\` | Apply the generic measurement workflow to Apache Groovy"

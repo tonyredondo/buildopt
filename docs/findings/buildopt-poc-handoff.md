@@ -132,15 +132,21 @@ are rebuilt locally, product failures remain zero and cumulative net is
   contract, so BuildOpt returned `NATIVE_RETAINED` before timing. Its native
   pair observed two different volatile JAR producers. Portfolio safety is
   proven, but no new Micronaut replay value is claimed.
+- Portfolio compatibility now runs before the additional diagnostic native
+  observation. The frozen Micronaut customer build took 526.089 seconds and
+  then failed closed on Wrapper/output-contract drift. BuildOpt started zero
+  independent native observations and zero timing pairs, avoiding one
+  incompatible measurement-only build without misreporting the required
+  customer build as a saving.
 
 ## Next steps
 
-1. Move portfolio compatibility ahead of the second native observation. A
-   Wrapper or output-contract mismatch should retain native after the ordinary
-   customer build without paying for another full build.
-2. Preregister a public descendant with matching repository, workflow, Wrapper
-   and output-contract bindings, then measure whether a multi-observation
+1. Execute the preregistered direct-child Micronaut window. Require matching
+   repository, workflow, Wrapper and runtime output-contract bindings before
+   the independent observation, then measure whether the multi-observation
    producer portfolio creates exact positive replay value.
+2. Generalize only if that compatible window preserves exact required outputs,
+   produces repeatable wall-time value and retains native on any drift.
 3. Reduce selection/synchronization cost on native-retained descendants and
    keep automatic activation bounded by exact change family, graph, executable,
    output and economic bindings.
@@ -156,6 +162,8 @@ are rebuilt locally, product failures remain zero and cumulative net is
 - [Micronaut lifetime generalization result](../../benchmarks/results/poc-producer-bound-lifetime-generalization-v1/README.md)
 - [Cross-revision volatility portfolio result](../../benchmarks/results/poc-cross-revision-volatility-portfolio-v1/README.md)
 - [Machine-readable volatility portfolio summary](../../benchmarks/results/poc-cross-revision-volatility-portfolio-v1/summary.json)
+- [Portfolio compatibility preflight result](../../benchmarks/results/poc-portfolio-compatibility-preflight-v1/README.md)
+- [Machine-readable preflight summary](../../benchmarks/results/poc-portfolio-compatibility-preflight-v1/summary.json)
 - [Compatible descendant discovery result](../../benchmarks/results/poc-compatible-descendant-discovery-v1/README.md)
 - [Machine-readable compatible descendant summary](../../benchmarks/results/poc-compatible-descendant-discovery-v1/summary.json)
 - [Native-volatility quarantine protocol](../../specs/poc-native-volatility-quarantine-v1.md)

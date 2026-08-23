@@ -58,3 +58,16 @@ The implementation adds no repository-name behavior, threshold change,
 production authority, soak or design-partner requirement. Test Optimization
 remains out of scope, historical output bytes are never reused and exact
 current-revision output verification remains mandatory.
+
+## Observed result
+
+The frozen rejection fixture completed its one required ordinary
+optimized-native `assemble` invocation in 526.089 seconds. Preflight then
+reported `NATIVE_RETAINED / PORTFOLIO_CONTEXT_DRIFT` for the Wrapper and output
+contract. It authorized and started zero independent native observations, ran
+zero measurement-only workflows and recorded zero timing pairs.
+
+This proves avoided incompatible experiment work, not build acceleration. The
+ordinary 526.089-second customer build is not counted as a saving and no
+percentage is claimed. The next preregistered window remains ineligible for
+timing until its runtime output contract also passes this preflight.
