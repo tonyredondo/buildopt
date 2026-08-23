@@ -162,17 +162,26 @@ are rebuilt locally, product failures remain zero and cumulative net is
   -1.878..+0.500 seconds and worse p95. Gradle accounts for 681 ms of the mean
   regression. The experiment is recorded and reverted; the POC keeps the
   previously verified graph-proven cover.
+- Task-level attribution explains why neither exact frontier creates owner
+  value. The safe graph-proven candidate executes 110 fewer tasks and removes
+  4,731 ms of cumulative task work, but none of those tasks appears on the
+  control critical path. Its main-build task span grows 248.375 ms and its
+  longest hard-dependency chain grows 178.875 ms. The unchanged causal pairs
+  save only 197 ms/1.51%, with 5/8 positive pairs and an interval crossing
+  zero. The terminal decision is to stop the Micronaut quarantine line.
 
 ## Next steps
 
-1. Attribute the native and quarantine candidate critical paths at task level
-   on the same frozen Micronaut window; do not propose another frontier unless
-   the trace identifies generically eliminable work.
-2. Stop this Micronaut optimization line if the 52-project rebuild is required
-   by the exact owner-visible outputs. A smaller graph on paper is not value.
+1. Stop the Micronaut quarantine line. The diagnostic found no material
+   generically eliminable work on the critical path, so another smaller
+   frontier is not authorized by the evidence.
+2. Reuse task/DAG attribution as an early diagnostic for materially different
+   generic hypotheses and workloads, while keeping paired wall time—not traced
+   task duration—as the causal value test.
 3. Preserve automatic activation only for profiles that pass exact outputs,
-   repeatability, interval, p95 and economic gates; keep reducing generic
-   qualification/verification cost where it affects already valuable profiles.
+   repeatability, interval, p95 and economic gates. Focus new POC work on
+   broadening already-qualified structural/cross-commit value rather than
+   tuning a rejected repository window.
 
 ## Evidence
 
@@ -193,6 +202,8 @@ are rebuilt locally, product failures remain zero and cumulative net is
 - [Machine-readable lineage summary](../../benchmarks/results/poc-transitive-producer-lineage-v1/summary.json)
 - [Minimal quarantine frontier result](../../benchmarks/results/poc-minimal-quarantine-rebuild-frontier-v1/README.md)
 - [Machine-readable minimal-frontier summary](../../benchmarks/results/poc-minimal-quarantine-rebuild-frontier-v1/summary.json)
+- [Quarantine critical-path attribution](../../benchmarks/results/poc-quarantine-critical-path-attribution-v1/README.md)
+- [Machine-readable critical-path attribution](../../benchmarks/results/poc-quarantine-critical-path-attribution-v1/attribution.json)
 - [Compatible descendant discovery result](../../benchmarks/results/poc-compatible-descendant-discovery-v1/README.md)
 - [Machine-readable compatible descendant summary](../../benchmarks/results/poc-compatible-descendant-discovery-v1/summary.json)
 - [Native-volatility quarantine protocol](../../specs/poc-native-volatility-quarantine-v1.md)

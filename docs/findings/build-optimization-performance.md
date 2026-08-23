@@ -903,10 +903,21 @@ reopening needs task critical-path evidence that identifies eliminable work;
 fewer lifecycle abstractions or a theoretically smaller task cover are not
 enough.
 
+That terminal attribution is now complete. The unchanged graph-proven
+candidate executes 568 tasks instead of 678 and reduces cumulative task
+duration by 4,731 ms, but none of the 110 eliminated tasks belongs to a control
+critical path. Candidate main-build task span grows from 5,617.5 to 5,865.875
+ms and its longest hard-dependency chain grows from 5,183.5 to 5,362.375 ms.
+The authoritative paired wall-time result is 13,077.125 ms native versus
+12,880.125 ms candidate: a non-qualifying 197 ms/**1.51%**, 5/8 positive pairs
+and a -703.5..+951.125-ms interval. This closes the Micronaut quarantine line:
+the removed work is parallel/off-critical and the exact owner-visible boundary
+does not expose another generic critical-path optimization.
+
 ## Open Questions
 
-- Which tasks dominate the native and quarantine candidate critical paths,
-  and is any of that work generically eliminable without reducing the exact
+- On a materially different workflow, can task/DAG attribution identify
+  generic critical-path work that is both removable and outside the exact
   owner-visible output boundary?
 - When producer-bound public observations are recaptured, does quarantining the
   volatile producers leave enough stable work to produce positive net value?

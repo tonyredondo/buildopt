@@ -913,6 +913,26 @@ eight-alternating-pair contracts. Trace collection is diagnostic and excluded
 from wall-time claims; it exists only to distinguish command-line entrypoint
 count from executed task and dependency-chain work.
 
+Validate the checked terminal result without rerunning Micronaut:
+
+```bash
+./dev/check-quarantine-critical-path-attribution
+```
+
+The result joins all 16 trace observations to the unchanged paired wall-time
+evidence. The candidate eliminates 110 tasks and 4,731 ms of cumulative task
+duration, but none of the eliminated tasks belongs to a control critical path;
+the candidate main-build span grows 248.375 ms and its longest hard-dependency
+chain grows 178.875 ms. The terminal decision is therefore
+`STOP_MICRONAUT_QUARANTINE_LINE`, not another smaller frontier.
+
+Existing raw captures can be reanalyzed without starting Gradle again:
+
+```bash
+./dev/run-quarantine-critical-path-attribution \
+  /new/absolute/analysis/directory /absolute/existing/raw/directory
+```
+
 Validate the corrected OpenTelemetry effective-change replay and its terminal
 economic rejection without rerunning the 17 public-repository builds:
 

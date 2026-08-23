@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_DIRECTORY]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_result=${1:-${buildopt_repo_root}/benchmarks/results/poc-quarantine-critical-path-attribution-v1}
+buildopt_attribution=${buildopt_result}/attribution.json
+buildopt_source=${buildopt_result}/source-summary.json
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'quarantine critical-path validation requires %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+"${buildopt_script_dir}/check-compatible-portfolio-value" "${buildopt_source}"
+buildopt_source_sha=$(sha256sum "${buildopt_source}" | awk '{print $1}')
+
+jq -e --arg sourceSha "${buildopt_source_sha}" '
+  .schemaVersion ==
+    "buildopt.evidence/poc-quarantine-critical-path-attribution/v1" and
+  .workItem == "POC-QUARANTINE-CRITICAL-PATH-ATTRIBUTION-001" and
+  .buildoptRevision == "215013b659e57a1ddc2958122353f300892ec9e4" and
+  .sourceSummarySha256 == $sourceSha and
+  .method == "LONGEST_HARD_DEPENDENCY_CHAIN_BY_TASK_DURATION" and
+  .causalMeasurement == {
+    "pairsMeasured":8,"positivePairs":5,
+    "controlMeanMs":13077.125,"candidateMeanMs":12880.125,
+    "meanSavedMs":197,"reductionRatio":0.015064473269162756,
+    "interval95SavedMs":[-703.5,951.125],
+    "controlP95Ms":14216,"candidateP95Ms":14149,
+    "qualified":false,"fallbackSuccessful":true,
+    "requiredOutputSha256":
+      "c737a1b9c094e10672dc51c65cad73df02d238882c8a72b5c87f235c8ae8a8d4"
+  } and
+  .graph == {"omittedProjects":18,"selectedProjects":52,"totalProjects":70} and
+  .arms.control.observations == 8 and
+  .arms.control.meanTaskCount == 678 and
+  .arms.control.meanCumulativeTaskDurationMs == 43357.125 and
+  .arms.control.meanMainBuildTaskSpanMs == 5617.5 and
+  .arms.control.meanMainBuildCriticalPathMs == 5183.5 and
+  .arms.candidate.observations == 8 and
+  .arms.candidate.meanTaskCount == 568 and
+  .arms.candidate.meanCumulativeTaskDurationMs == 38626.125 and
+  .arms.candidate.meanMainBuildTaskSpanMs == 5865.875 and
+  .arms.candidate.meanMainBuildCriticalPathMs == 5362.375 and
+  .attribution.taskCountDelta == -110 and
+  .attribution.cumulativeTaskDurationDeltaMs == -4731 and
+  .attribution.mainBuildTaskSpanDeltaMs == 248.375 and
+  .attribution.mainBuildCriticalPathDeltaMs == 178.875 and
+  .attribution.eliminated.taskCount == 110 and
+  .attribution.eliminated.meanControlDurationMs == 1706.375 and
+  .attribution.eliminated.criticalPathMembership == 0 and
+  .attribution.eliminated.byClass[0] == {
+    "taskClass":"org.gradle.api.tasks.bundling.Jar",
+    "taskCount":20,"meanControlDurationMs":1299.75,
+    "criticalPathMembership":0
+  } and
+  .attribution.eliminated.byClass[1] == {
+    "taskClass":"org.gradle.api.tasks.javadoc.Javadoc",
+    "taskCount":3,"meanControlDurationMs":280.375,
+    "criticalPathMembership":0
+  } and
+  (.observations | length) == 16 and
+  ([.observations[].invocation.sequence] == [range(1;17)]) and
+  ([.observations[].invocation.ordinaryInvocation] == [range(3;19)]) and
+  ([.observations[].invocation.wallDurationMs] ==
+    [13395,14149,13501,13944,14216,13363,13786,11423,
+     13026,11328,12734,13515,12325,12599,11581,12773]) and
+  ([.observations[] |
+    if .arm == "control" then .invocation.executionMode == "OPTIMIZED_NATIVE"
+    else .invocation.executionMode == "INCREMENTAL_CANDIDATE" end] | all) and
+  ([.observations[] |
+    (.operationTraceSha256 | test("^[0-9a-f]{64}$")) and
+    (.taskGraphSha256 | test("^[0-9a-f]{64}$")) and
+    .summary.taskCount > 0 and .summary.buildCount > 0 and
+    (.summary.mainBuildCriticalPathTasks | length) > 0] | all) and
+  (.tasks | length) == 678 and
+  ([.tasks[] | select(.control.presentCount == 8 and
+    .candidate.presentCount == 0)] | length) == 110 and
+  ([.tasks[] | select(.control.presentCount == 8 and
+    .candidate.presentCount == 0) | .control.criticalMembership] | add) == 0 and
+  .decision == {
+    "result":"STOP_MICRONAUT_QUARANTINE_LINE",
+    "reason":"ELIMINATED_TASKS_ARE_OUTSIDE_CRITICAL_PATH_AND_VALUE_IS_UNPROVEN",
+    "anotherGenericMicronautOptimizationAuthorized":false
+  } and
+  .boundaries == {
+    "proofOfConcept":true,"diagnosticOnly":true,
+    "productionAuthorized":false,"repositorySpecificProductRules":false,
+    "soakRequired":false,"designPartnerRequired":false,
+    "testOptimization":"OUT_OF_SCOPE"
+  }
+' "${buildopt_attribution}" >/dev/null || {
+    printf 'quarantine critical-path attribution evidence drifted\n' >&2
+    exit 1
+}
+
+jq -e --slurpfile attribution "${buildopt_attribution}" '
+  .buildoptRevision == "d33c45792677249fbbbcc51f61e1bff5b1915439" and
+  .repository.id == "micronaut-projects/micronaut-core" and
+  .repository.learningRevision == "4dc4299f8dd0faccc0c45c2f83a223b456dc0731" and
+  .repository.evaluationRevision == "a7955f4cc50225044d8eb7c614ba80b607b000dd" and
+  .evaluation.graph == $attribution[0].graph and
+  .evaluation.measurement.controlMeanMs ==
+    $attribution[0].causalMeasurement.controlMeanMs and
+  .evaluation.measurement.candidateMeanMs ==
+    $attribution[0].causalMeasurement.candidateMeanMs and
+  .evaluation.measurement.meanSavedMs ==
+    $attribution[0].causalMeasurement.meanSavedMs and
+  .evaluation.measurement.interval95SavedMs ==
+    $attribution[0].causalMeasurement.interval95SavedMs and
+  .evaluation.measurement.qualified == false and
+  .evaluation.measurement.fallbackSuccessful == true and
+  .evaluation.measurement.requiredOutputSha256 ==
+    $attribution[0].causalMeasurement.requiredOutputSha256 and
+  .evaluation.nativeVolatility.comparedOutputCount == 190 and
+  .evaluation.nativeVolatility.quarantinedOutputCount == 89 and
+  .evaluation.nativeVolatility.transportedOutputCount == 101 and
+  (.evaluation.nativeVolatility.quarantinedProducers | length) == 7 and
+  .evaluation.productFailures == 0 and
+  .acceptance.decision == "COMPATIBLE_PORTFOLIO_VALUE_NOT_PROVEN" and
+  .acceptance.exactOutputGatePreserved == true
+' "${buildopt_source}" >/dev/null || {
+    printf 'quarantine critical-path source and attribution disagree\n' >&2
+    exit 1
+}
+
+printf 'Quarantine critical-path attribution evidence: PASS\n'

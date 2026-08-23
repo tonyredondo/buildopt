@@ -416,6 +416,7 @@ buildopt_required_files=(
     "dev/check-transitive-producer-lineage"
     "dev/check-minimal-quarantine-rebuild-frontier"
     "dev/check-gradle-critical-path"
+    "dev/check-quarantine-critical-path-attribution"
     "dev/gradle-critical-path.init.gradle"
     "dev/run-quarantine-critical-path-attribution"
     "dev/check-compatible-descendant-discovery"

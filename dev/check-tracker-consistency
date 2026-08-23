@@ -66,7 +66,7 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`STRUCTURAL AND CROSS-COMMIT ACCELERATION PROVEN; GENERALITY BOUNDED\`"
-    "**Current phase:** \`TRANSITIVE PRODUCER LINEAGE NEXT\`"
+    "**Current phase:** \`POC EVIDENCE COMPLETE; NO MICRONAUT FOLLOW-UP AUTHORIZED\`"
     "| 132 | \`POC-QUALIFIED-LIFETIME-V2-001\` | Replay the five V2-qualified profiles"
     "| \`E-380\` | 2026-08-21 | \`POC-QUALIFIED-LIFETIME-V2-001\`"
     "| 133 | \`POC-CROSS-COMMIT-VALUE-RECOVERY-001\` | Reuse an existing profile"
@@ -85,6 +85,7 @@ buildopt_required_tracker_text=(
     "| 144 | \`POC-MINIMAL-QUARANTINE-REBUILD-FRONTIER-001\` | Derive the smallest exact Gradle task frontier"
     "| \`E-392\` | 2026-08-23 | \`POC-MINIMAL-QUARANTINE-REBUILD-FRONTIER-001\`"
     "| 145 | \`POC-QUARANTINE-CRITICAL-PATH-ATTRIBUTION-001\` | Capture task-level Gradle build-operation duration"
+    "| \`E-393\` | 2026-08-24 | \`POC-QUARANTINE-CRITICAL-PATH-ATTRIBUTION-001\`"
     "| 75 | \`POC-GENERIC-MEASUREMENT-001\` | Collect eight isolated alternating optimized-native-versus-BuildOpt pairs"
     "| \`E-288\` | 2026-08-09 | \`POC-GENERIC-MEASUREMENT-001\`"
     "| 77 | \`POC-APACHE-GROOVY-GENERALIZATION-001\` | Apply the generic measurement workflow to Apache Groovy"

@@ -2236,6 +2236,28 @@ project graph nor wall time. Revalidate the negative evidence with:
 ./dev/check-minimal-quarantine-rebuild-frontier
 ```
 
+## Quarantine critical-path attribution
+
+[`results/poc-quarantine-critical-path-attribution-v1/`](./results/poc-quarantine-critical-path-attribution-v1/README.md)
+answers the final Micronaut question with task-level Gradle build operations
+and the resolved hard-dependency DAG. Diagnostic traces are not used as causal
+timings; the unchanged eight alternating wall-time pairs remain authoritative.
+
+The graph-proven candidate executes 110 fewer tasks and reduces cumulative
+task duration by 4,731 ms. None of those 110 tasks appears on a control
+critical path. Candidate main-build task span instead grows by 248.375 ms and
+the longest hard-dependency chain grows by 178.875 ms. The causal result saves
+only 197 ms/1.51%, with 5/8 positive pairs and an interval of
+-703.5..+951.125 ms, so it remains unqualified.
+
+The terminal decision is `STOP_MICRONAUT_QUARANTINE_LINE`: removed work is
+parallel/off-critical, while the remaining chain is required by the exact
+owner-visible output boundary. Validate the checked attribution with:
+
+```bash
+./dev/check-quarantine-critical-path-attribution
+```
+
 ## JVM Agent spike evidence
 
 [`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one
