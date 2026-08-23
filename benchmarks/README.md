@@ -2171,6 +2171,26 @@ Revalidate the result and its negative tamper fixtures with:
 ./dev/test-new-family-installed-profile-replay-result
 ```
 
+## Compatible producer-portfolio value
+
+[`results/poc-compatible-portfolio-value-v1/`](./results/poc-compatible-portfolio-value-v1/README.md)
+tests a fresh Micronaut producer-volatility portfolio on a nearby source-code
+revision whose repository, workflow, Wrapper and runtime output-contract
+bindings are exact. Learning compares 11,187 outputs, quarantines 868 from
+nine volatile producers and leaves 10,319 transportable. The evaluation
+reduces 70 projects to 22 and captures 190 unaffected outputs/172.5 MB in
+2.537 seconds, but eight historical intermediate producers have no proven
+transitive lineage to the final materialized outputs.
+
+BuildOpt therefore returns
+`NATIVE_RETAINED / PORTFOLIO_PRODUCER_LINEAGE_UNAVAILABLE`, records the exact
+missing producer list and starts zero timing pairs. This is terminal safety and
+architecture evidence, not a performance percentage. Revalidate it with:
+
+```bash
+./dev/check-compatible-portfolio-value
+```
+
 ## JVM Agent spike evidence
 
 [`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one

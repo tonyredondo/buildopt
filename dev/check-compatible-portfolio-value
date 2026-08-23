@@ -86,22 +86,22 @@ jq -e --slurpfile contract "${buildopt_contract}" '
   .evaluation.productFailures == 0 and
   ((.evaluation.preflight.decision == "COMPATIBLE" and
     .evaluation.preflight.reason == "PORTFOLIO_CONTEXT_COMPATIBLE" and
-	.evaluation.preflight.independentNativeObservationAuthorized == true and
-	.evaluation.preflight.driftedBindings == [] and
-	.evaluation.independentNativeObservationStarted == true and
-	((.evaluation.nativeVolatility.portfolioApplied == true and
-	  .evaluation.nativeVolatility.portfolioDecision == "PORTFOLIO_APPLIED" and
-	  (.evaluation.nativeVolatility.comparedOutputCount > 0) and
-	  (.evaluation.nativeVolatility.quarantinedOutputCount > 0) and
-	  (.evaluation.nativeVolatility.transportedOutputCount > 0) and
-	  .evaluation.ordinaryInvocations == 18 and
-	  .evaluation.measurementOnlyWorkflowRuns == 0 and
-	  .evaluation.measurement.pairsMeasured == 8 and
-	  .evaluation.measurement.pairsRequested == 8 and
-	  .evaluation.measurement.fallbackSuccessful == true and
-	  .evaluation.measurement.requiredOutputDigestCount == 1 and
-	  ((.evaluation.measurement.qualified == true and
-	    .acceptance.decision == "COMPATIBLE_PORTFOLIO_QUALIFIED" and
+    .evaluation.preflight.independentNativeObservationAuthorized == true and
+    .evaluation.preflight.driftedBindings == [] and
+    .evaluation.independentNativeObservationStarted == true and
+    ((.evaluation.nativeVolatility.portfolioApplied == true and
+      .evaluation.nativeVolatility.portfolioDecision == "PORTFOLIO_APPLIED" and
+      (.evaluation.nativeVolatility.comparedOutputCount > 0) and
+      (.evaluation.nativeVolatility.quarantinedOutputCount > 0) and
+      (.evaluation.nativeVolatility.transportedOutputCount > 0) and
+      .evaluation.ordinaryInvocations == 18 and
+      .evaluation.measurementOnlyWorkflowRuns == 0 and
+      .evaluation.measurement.pairsMeasured == 8 and
+      .evaluation.measurement.pairsRequested == 8 and
+      .evaluation.measurement.fallbackSuccessful == true and
+      .evaluation.measurement.requiredOutputDigestCount == 1 and
+      ((.evaluation.measurement.qualified == true and
+        .acceptance.decision == "COMPATIBLE_PORTFOLIO_QUALIFIED" and
         .evaluation.measurement.positivePairs >= 6 and
         .evaluation.measurement.meanSavedMs >= 500 and
         .evaluation.measurement.reductionRatio >= 0.02 and
@@ -110,7 +110,7 @@ jq -e --slurpfile contract "${buildopt_contract}" '
         .acceptance.compatibleReplayValueProven == true) or
       (.evaluation.measurement.qualified == false and
         .acceptance.decision == "COMPATIBLE_PORTFOLIO_VALUE_NOT_PROVEN" and
-	    .acceptance.compatibleReplayValueProven == false))) or
+        .acceptance.compatibleReplayValueProven == false))) or
     (.evaluation.nativeVolatility.portfolioApplied == false and
       .evaluation.nativeVolatility.portfolioDecision == "NATIVE_RETAINED" and
       ((.evaluation.nativeVolatility.portfolioReason ==
@@ -122,8 +122,8 @@ jq -e --slurpfile contract "${buildopt_contract}" '
       .evaluation.ordinaryInvocations == 1 and
       .evaluation.measurement.pairsMeasured == 0 and
       .acceptance.decision == .evaluation.nativeVolatility.portfolioReason and
-      .acceptance.compatibleReplayValueProven == false)) or
-   (.evaluation.preflight.decision == "NATIVE_RETAINED" and
+      .acceptance.compatibleReplayValueProven == false))) or
+  (.evaluation.preflight.decision == "NATIVE_RETAINED" and
     .evaluation.preflight.reason == "PORTFOLIO_CONTEXT_DRIFT" and
     .evaluation.preflight.independentNativeObservationAuthorized == false and
     (.evaluation.preflight.driftedBindings | length) > 0 and

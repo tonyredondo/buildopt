@@ -226,6 +226,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-producer-bound-lifetime-generalization" >/dev/null
         "${buildopt_script_dir}/check-cross-revision-volatility-portfolio" >/dev/null
         "${buildopt_script_dir}/check-portfolio-compatibility-preflight" >/dev/null
+        "${buildopt_script_dir}/check-compatible-portfolio-value" >/dev/null
         "${buildopt_script_dir}/check-generic-holdout" >/dev/null
         "${buildopt_script_dir}/check-generic-holdout-crossover" \
             "${buildopt_repo_root}/benchmarks/results/poc-generic-holdout-v5" >/dev/null

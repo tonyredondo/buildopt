@@ -842,6 +842,25 @@ or starting the independent native observation. The checked evidence records
 one avoided measurement-only build, zero timing pairs and no performance
 claim.
 
+Validate the exactly compatible Micronaut portfolio experiment with:
+
+```bash
+./dev/check-compatible-portfolio-value
+```
+
+Capture it from scratch with at least 16 GiB free using:
+
+```bash
+./dev/run-compatible-portfolio-value /new/absolute/evidence/directory
+```
+
+The frozen result passes repository, workflow, Wrapper and runtime
+output-contract compatibility, reduces 70 projects to 22 and captures 190
+unaffected outputs. It retains native before timing because eight volatile
+intermediate producers lack proven transitive lineage to those final outputs.
+The structured `PORTFOLIO_PRODUCER_LINEAGE_UNAVAILABLE` result is a successful
+fail-closed POC outcome, not a performance percentage.
+
 Validate the corrected OpenTelemetry effective-change replay and its terminal
 economic rejection without rerunning the 17 public-repository builds:
 

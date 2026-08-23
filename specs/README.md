@@ -291,7 +291,9 @@ The [compatible producer portfolio value protocol](./poc-compatible-portfolio-va
 uses that preregistered direct-child window. It requires an exact runtime
 preflight before the second observation and eight alternating pairs, preserves
 required outputs byte for byte and treats both qualification and safe rejection
-as valid POC outcomes.
+as valid POC outcomes. The terminal public result passes the preflight but
+retains native because eight volatile intermediate producers lack proven
+transitive lineage to final materialized outputs; no timing claim is made.
 
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation

@@ -35,6 +35,13 @@ the runtime preflight remains mandatory and unchanged.
 Any context drift returns `NATIVE_RETAINED`, starts no timing and makes no
 performance claim.
 
+Compatible context is necessary but not sufficient. When a learned volatile
+producer is an intermediate task and the current materialization attributes
+only a downstream final producer, BuildOpt must prove the transitive Gradle
+producer lineage before transport. Missing lineage returns
+`NATIVE_RETAINED / PORTFOLIO_PRODUCER_LINEAGE_UNAVAILABLE`, names the missing
+producers, starts no timing and makes no performance claim.
+
 ## Value gate
 
 Qualification requires all eight pairs, at least six positive pairs, a
@@ -51,3 +58,19 @@ mechanisms.
 The implementation may use no repository-name branch, relaxed output check or
 target-specific threshold. It is POC evidence only and does not authorize
 production, soak testing, design-partner work or Test Optimization.
+
+## Observed result
+
+The frozen run binds BuildOpt `7c59e0b` to the preregistered public revisions.
+Learning compares 11,187 outputs, quarantines 868 outputs from nine volatile
+producers and leaves 10,319 transportable. The evaluation preflight is exactly
+compatible, selects 22 of 70 projects and captures 190 outputs/172,543,372
+bytes in 2,537 ms after a 623,348-ms ordinary build.
+
+One current output is volatile and 189 are stable, but eight learned
+intermediate producers are absent from direct attribution on the final
+materialized outputs. The result is therefore
+`PORTFOLIO_PRODUCER_LINEAGE_UNAVAILABLE`: native Gradle is retained, zero
+timing pairs run and no replay-value percentage is claimed. The next bounded
+hypothesis is generic transitive task-producer lineage, not a repository rule
+or weaker exact-output gate.

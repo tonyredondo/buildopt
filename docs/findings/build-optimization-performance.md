@@ -55,6 +55,15 @@
   `NATIVE_RETAINED`. No independent native clone, measurement-only workflow or
   timing pair started. This avoids invalid experiment cost; it is not reported
   as customer build-time saving.
+- **The first exactly compatible portfolio window exposes a producer-lineage
+  gap rather than a timing result.** Micronaut reduces 70 to 22 projects and
+  captures 190 outputs/172.5 MB in 2.537 seconds after a 623.348-second native
+  build. The portfolio learns nine volatile producers across 11,187 outputs,
+  but eight intermediate producers have no proven transitive attribution to
+  the final candidate outputs. BuildOpt returns
+  `PORTFOLIO_PRODUCER_LINEAGE_UNAVAILABLE`, preserves native Gradle and runs
+  zero pairs. Ignoring the gap could restore JARs derived from volatile
+  compilers, so this result authorizes lineage work, not a performance claim.
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
   Runtime Tuning, Hot State and standard Copy are retired; historical Jar,
   Patch and Edge experiments remain scoped supporting evidence.
@@ -846,11 +855,22 @@ preserving zero timing pairs and no performance claim. A new direct-child
 Micronaut window is preregistered with matching static repository, workflow and
 Wrapper bindings; runtime output-contract compatibility remains mandatory.
 
+That direct-child window is now complete. Runtime compatibility also matches,
+the change reduces 70 projects to 22, and the ordinary 623.348-second build
+captures 190 unaffected outputs/172.5 MB in 2.537 seconds. The independent
+observation finds 189 stable outputs and one volatile Jackson JAR. The learned
+portfolio contains nine volatile producers, but eight are intermediate tasks
+that are absent from direct attribution on those final outputs. BuildOpt
+returns `PORTFOLIO_PRODUCER_LINEAGE_UNAVAILABLE` and starts zero timing pairs.
+The result keeps exact-output safety intact and makes the next technical
+requirement explicit: derive and verify transitive Gradle task lineage before
+measuring portfolio replay value.
+
 ## Open Questions
 
-- Can multiple authoritative observations under one compatible context form a
-  monotonic producer portfolio that remains exact and produces positive value
-  on a separately preregistered public descendant?
+- Can Gradle task dependencies provide complete, generic transitive lineage
+  from volatile intermediate producers to every final materialized output,
+  allowing the exactly compatible Micronaut portfolio to be timed safely?
 - When producer-bound public observations are recaptured, does quarantining the
   volatile producers leave enough stable work to produce positive net value?
 - What future materially different trace would be sufficient to reopen a
@@ -901,6 +921,7 @@ artifacts are:
 - [Hibernate reciprocal crossover result](../../benchmarks/results/poc-generic-holdout-v5/README.md).
 - [Hibernate output-contract preflight](../../benchmarks/results/poc-generic-output-contract-v1/README.md).
 - [generalization audit](./buildopt-generalization-audit.md).
+- [compatible producer-portfolio value evidence](../../benchmarks/results/poc-compatible-portfolio-value-v1/README.md).
 
 ## General opportunity and whole-profile value
 

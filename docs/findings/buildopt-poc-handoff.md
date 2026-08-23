@@ -30,7 +30,7 @@ Optimization are outside the current scope.
 | **Automatic discovery** | Derives Git ownership, finalized workflow inputs, Gradle task/output relationships and candidate graphs without repository-name rules. | Works across `classes`, `testClasses`, `assemble` and the five unrelated public repositories. Complete task-input evidence now lets a mixed OpenTelemetry change ignore only its unconsumed root changelog while retaining module-owned and consumed paths. |
 | **Incremental learning and value gate** | Accumulates useful control/candidate observations and checks repeatability, uncertainty, p95, outputs, fallback and payback. | The automatic POC policy now accepts 6/8 only with a strictly positive interval and non-regressive p95; weak or incompatible evidence still retains native. |
 | **Verified output materialization** | Restores exact unaffected outputs before their producers are omitted. | Fast and fail-closed. A producer-atomic quarantine now excludes every output of a task when any output is volatile, while exact outputs from other producers remain transportable. |
-| **Profile portfolio and central state** | Carries verified profiles and packs over HTTP/HTTPS between builds and machines. | Transport and safe cross-commit refresh now have selected value on Kafka (+104.975 s) and Spring (+84.656 s); the claim remains bounded to qualified compatible workflows. |
+| **Profile portfolio and central state** | Carries verified profiles and packs over HTTP/HTTPS between builds and machines. | Transport and safe cross-commit refresh have selected value on Kafka (+104.975 s) and Spring (+84.656 s). Micronaut now exposes the next generic gap: transitive producer lineage is required before a compatible portfolio may restore final outputs. |
 | **Gradle-compatible cache** | Reuses verified task outputs locally or through optional HTTP/HTTPS storage. | Supporting infrastructure near native-cache parity, not the principal speed claim. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource/state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
 
@@ -138,16 +138,24 @@ are rebuilt locally, product failures remain zero and cumulative net is
   independent native observations and zero timing pairs, avoiding one
   incompatible measurement-only build without misreporting the required
   customer build as a saving.
+- The compatible direct-child Micronaut window then passed all four context
+  bindings. It selected 22 of 70 projects and captured 190 outputs/172.5 MB in
+  2.537 seconds after a 623.348-second ordinary build. Learning left 10,319 of
+  11,187 outputs transportable, but eight volatile intermediate producers had
+  no proven transitive lineage to the final materialized outputs. BuildOpt
+  returned `PORTFOLIO_PRODUCER_LINEAGE_UNAVAILABLE`, ran zero timing pairs and
+  claimed no saving. The opportunity is large; the safe connection between
+  intermediate producers and final outputs is the next missing mechanism.
 
 ## Next steps
 
-1. Execute the preregistered direct-child Micronaut window. Require matching
-   repository, workflow, Wrapper and runtime output-contract bindings before
-   the independent observation, then measure whether the multi-observation
-   producer portfolio creates exact positive replay value.
-2. Generalize only if that compatible window preserves exact required outputs,
-   produces repeatable wall-time value and retains native on any drift.
-3. Reduce selection/synchronization cost on native-retained descendants and
+1. Derive generic transitive Gradle producer lineage from the observed task
+   graph so volatile intermediate tasks quarantine every downstream final
+   output they can affect; ambiguity must retain native.
+2. Repeat the same frozen Micronaut window and start eight timing pairs only
+   when the lineage-bound partition preserves exact required outputs.
+3. Generalize only if that replay produces repeatable wall-time value, then
+   reduce selection/synchronization cost on native-retained descendants and
    keep automatic activation bounded by exact change family, graph, executable,
    output and economic bindings.
 
@@ -164,6 +172,8 @@ are rebuilt locally, product failures remain zero and cumulative net is
 - [Machine-readable volatility portfolio summary](../../benchmarks/results/poc-cross-revision-volatility-portfolio-v1/summary.json)
 - [Portfolio compatibility preflight result](../../benchmarks/results/poc-portfolio-compatibility-preflight-v1/README.md)
 - [Machine-readable preflight summary](../../benchmarks/results/poc-portfolio-compatibility-preflight-v1/summary.json)
+- [Compatible portfolio value result](../../benchmarks/results/poc-compatible-portfolio-value-v1/README.md)
+- [Machine-readable compatible portfolio summary](../../benchmarks/results/poc-compatible-portfolio-value-v1/summary.json)
 - [Compatible descendant discovery result](../../benchmarks/results/poc-compatible-descendant-discovery-v1/README.md)
 - [Machine-readable compatible descendant summary](../../benchmarks/results/poc-compatible-descendant-discovery-v1/summary.json)
 - [Native-volatility quarantine protocol](../../specs/poc-native-volatility-quarantine-v1.md)
