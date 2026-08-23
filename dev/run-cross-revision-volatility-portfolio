@@ -1,0 +1,162 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ $1 != /* || -e $1 ]]; then
+    printf 'usage: %s /new/absolute/evidence/directory\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract=${buildopt_repo_root}/specs/poc-cross-revision-volatility-portfolio-v1.json
+buildopt_runner=${buildopt_script_dir}/run-automatic-breadth-transfer
+buildopt_state_name=producer-bound-quarantine-v1
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'cross-revision volatility run requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -s ${buildopt_contract} && -x ${buildopt_runner} ]] || {
+    printf 'cross-revision volatility contract or runner is unavailable\n' >&2
+    exit 1
+}
+[[ -z $(git -C "${buildopt_repo_root}" status --porcelain --untracked-files=all) ]] || {
+    printf 'BuildOpt state must be clean before cross-revision evidence capture\n' >&2
+    exit 1
+}
+buildopt_free=$(df -Pk "${TMPDIR:-/tmp}" | awk 'NR == 2 {print $4 * 1024}')
+if ((buildopt_free < 17179869184)); then
+    printf 'cross-revision volatility run requires at least 16 GiB free\n' >&2
+    exit 1
+fi
+
+mkdir -p -- "${buildopt_output}"
+buildopt_learning_subjects=${buildopt_output}/learning-subjects.json
+buildopt_evaluation_subjects=${buildopt_output}/evaluation-subjects.json
+buildopt_context=${buildopt_output}/portfolio-context.json
+buildopt_portfolio=${buildopt_output}/portfolio.json
+buildopt_tools=${buildopt_output}/tools
+buildopt_context_workspace=${buildopt_output}/context-workspace
+mkdir -p -- "${buildopt_tools}" "${buildopt_context_workspace}/.buildopt/optimize"
+
+buildopt_subject() {
+    local buildopt_key=$1
+    local buildopt_parent=$2
+    local buildopt_target=$3
+    jq -n \
+        --arg key "${buildopt_key}" \
+        --arg parent "${buildopt_parent}" \
+        --arg target "${buildopt_target}" '
+      {
+        schemaVersion:"buildopt.specs/poc-qualified-lifetime/v2",
+        workItem:"POC-CROSS-REVISION-VOLATILITY-PORTFOLIO-001",
+        repositories:[{
+          key:$key,repositoryId:"micronaut-projects/micronaut-core",
+          repositoryNumericId:124230204,
+          remoteUrl:"https://github.com/micronaut-projects/micronaut-core.git",
+          historyBranch:"5.2.x",publicRevision:$parent,targetRevision:$target,
+          jdkToolchain:"temurin-jdk-25",
+          changePath:"http-client-jdk/src/main/java/io/micronaut/http/client/jdk/DefaultJdkHttpClient.java",
+          mutation:"APPEND_FIXED_COMMENT",entrypoints:["assemble"],entrypointsFile:null,
+          expectedChangedProjects:[],observations:[]
+        }],
+        boundaries:{proofOfConcept:true,productionAuthorized:false,
+          repositorySpecificProductRules:false,soakRequired:false,
+          designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+      }
+    '
+}
+
+buildopt_subject learning \
+    39c74acd625cd5264dad23ce05d78a59e4786006 \
+    6a11a05950f36193bd865d6b25c2bc17dfb4ff1c >"${buildopt_learning_subjects}"
+buildopt_subject evaluation \
+    0f1642bdda4d36cd4a65c616e7113f9fea012fa3 \
+    1be5f8cefb80b4dbd2b3e086705950ddc72f195f >"${buildopt_evaluation_subjects}"
+
+printf 'Capturing diagnostic native learning revision\n'
+buildopt_learning_subjects_sha=$(sha256sum "${buildopt_learning_subjects}" | awk '{print $1}')
+env \
+    BUILDOPT_AUTOMATIC_BREADTH_PROTOCOL=v4 \
+    BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_FILE="${buildopt_learning_subjects}" \
+    BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256="${buildopt_learning_subjects_sha}" \
+    BUILDOPT_AUTOMATIC_BREADTH_INVOCATIONS=1 \
+    "${buildopt_runner}" "${buildopt_output}/learning"
+
+buildopt_learning_result=${buildopt_output}/learning/learning/quarantine-result.json
+buildopt_learning_state=${buildopt_output}/learning/learning/state
+[[ -s ${buildopt_learning_result} && -s ${buildopt_learning_state}/state.json ]] || {
+    printf 'diagnostic learning revision did not produce native volatility evidence\n' >&2
+    exit 1
+}
+
+printf 'Building exact portfolio tools from %s\n' "$(git -C "${buildopt_repo_root}" rev-parse --short HEAD)"
+(
+    cd -- "${buildopt_repo_root}"
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -trimpath -o "${buildopt_tools}/buildopt" ./cmd/buildopt
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -trimpath -o "${buildopt_tools}/native-volatility-evaluation" \
+        ./cmd/native-volatility-evaluation
+)
+cp -a -- "${buildopt_learning_state}" \
+    "${buildopt_context_workspace}/.buildopt/optimize/${buildopt_state_name}"
+(
+    cd -- "${buildopt_context_workspace}"
+    "${buildopt_tools}/buildopt" profile native-context \
+        --state-dir ".buildopt/optimize/${buildopt_state_name}"
+) >"${buildopt_context}"
+buildopt_learning_revision_sha=$(printf '%s' \
+    6a11a05950f36193bd865d6b25c2bc17dfb4ff1c | sha256sum | awk '{print $1}')
+"${buildopt_tools}/native-volatility-evaluation" \
+    --portfolio-context "${buildopt_context}" \
+    --learn-result "${buildopt_learning_result}" \
+    --learn-revision "${buildopt_learning_revision_sha}" >"${buildopt_portfolio}"
+
+printf 'Evaluating portfolio on the preregistered later public revision\n'
+buildopt_evaluation_subjects_sha=$(sha256sum "${buildopt_evaluation_subjects}" | awk '{print $1}')
+buildopt_evaluation_revision_sha=$(printf '%s' \
+    1be5f8cefb80b4dbd2b3e086705950ddc72f195f | sha256sum | awk '{print $1}')
+env \
+    BUILDOPT_AUTOMATIC_BREADTH_PROTOCOL=v4 \
+    BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_FILE="${buildopt_evaluation_subjects}" \
+    BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256="${buildopt_evaluation_subjects_sha}" \
+    BUILDOPT_NATIVE_VOLATILITY_PORTFOLIO_FILE="${buildopt_portfolio}" \
+    BUILDOPT_NATIVE_VOLATILITY_PORTFOLIO_CONTEXT_FILE="${buildopt_context}" \
+    BUILDOPT_NATIVE_VOLATILITY_REVISION_SHA256="${buildopt_evaluation_revision_sha}" \
+    "${buildopt_runner}" "${buildopt_output}/evaluation"
+
+buildopt_evaluation_capture=${buildopt_output}/evaluation/evaluation/capture.json
+buildopt_evaluation_result=${buildopt_output}/evaluation/evaluation/quarantine-result.json
+[[ -s ${buildopt_evaluation_capture} && -s ${buildopt_evaluation_result} ]] || {
+    printf 'evaluation revision did not produce portfolio evidence\n' >&2
+    exit 1
+}
+
+jq -n \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg buildoptRevision "$(git -C "${buildopt_repo_root}" rev-parse HEAD)" \
+    --slurpfile learning "${buildopt_output}/learning/learning/capture.json" \
+    --slurpfile portfolio "${buildopt_portfolio}" \
+    --slurpfile evaluation "${buildopt_evaluation_capture}" \
+    --slurpfile evidence "${buildopt_evaluation_result}" '
+  {
+    schemaVersion:"buildopt.evidence/poc-cross-revision-volatility-portfolio/v1",
+    workItem:"POC-CROSS-REVISION-VOLATILITY-PORTFOLIO-001",
+    capturedAt:$capturedAt,buildoptRevision:$buildoptRevision,
+    learning:{revision:"6a11a05950f36193bd865d6b25c2bc17dfb4ff1c",
+      performanceClaimed:false,nativeVolatility:$learning[0].nativeVolatility},
+    portfolio:$portfolio[0],
+    evaluation:{revision:"1be5f8cefb80b4dbd2b3e086705950ddc72f195f",
+      capture:$evaluation[0],evidence:$evidence[0]},
+    boundaries:{proofOfConcept:true,productionAuthorized:false,
+      repositorySpecificProductRules:false,soakRequired:false,
+      designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+  }
+' >"${buildopt_output}/summary.json"
+
+rm -rf -- "${buildopt_tools}" "${buildopt_context_workspace}"
+printf 'Cross-revision volatility portfolio evidence written to %s\n' "${buildopt_output}"

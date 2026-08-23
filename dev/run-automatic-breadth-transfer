@@ -42,6 +42,25 @@ buildopt_expected_subjects_sha=${BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256:-}
 buildopt_retain_root=${BUILDOPT_AUTOMATIC_BREADTH_RETAIN_ROOT:-false}
 buildopt_requested_root=${BUILDOPT_AUTOMATIC_BREADTH_ROOT:-}
 buildopt_process_mode=${BUILDOPT_AUTOMATIC_BREADTH_PROCESS_MODE:-daemon}
+buildopt_native_portfolio=${BUILDOPT_NATIVE_VOLATILITY_PORTFOLIO_FILE:-}
+buildopt_native_portfolio_context=${BUILDOPT_NATIVE_VOLATILITY_PORTFOLIO_CONTEXT_FILE:-}
+buildopt_native_portfolio_revision=${BUILDOPT_NATIVE_VOLATILITY_REVISION_SHA256:-}
+buildopt_native_portfolio_requested=false
+if [[ -n ${buildopt_native_portfolio}${buildopt_native_portfolio_context}${buildopt_native_portfolio_revision} ]]; then
+    [[ -s ${buildopt_native_portfolio} && -s ${buildopt_native_portfolio_context} &&
+        ${buildopt_native_portfolio_revision} =~ ^[0-9a-f]{64}$ ]] || {
+        printf 'complete native volatility portfolio inputs are required\n' >&2
+        exit 64
+    }
+    buildopt_native_portfolio_requested=true
+fi
+buildopt_requested_invocations=${BUILDOPT_AUTOMATIC_BREADTH_INVOCATIONS:-}
+if [[ -n ${buildopt_requested_invocations} &&
+    (! ${buildopt_requested_invocations} =~ ^[1-9][0-9]*$ ||
+     ${buildopt_requested_invocations} -gt 18 || ${buildopt_protocol} != v4) ]]; then
+    printf 'automatic breadth invocation override requires protocol v4 and 1..18 invocations\n' >&2
+    exit 64
+fi
 case ${buildopt_process_mode} in
     daemon | no-daemon) buildopt_process_flag=--${buildopt_process_mode} ;;
     *)
@@ -238,6 +257,7 @@ buildopt_capture_subject() {
     local buildopt_argument
     local -a buildopt_gradle_args=()
     local -a buildopt_native_gradle_args=()
+    local -a buildopt_quarantine_args=()
 
     buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_subjects}")
     buildopt_repository_id=$(jq -er ".repositories[${buildopt_index}].repositoryId" "${buildopt_subjects}")
@@ -338,6 +358,8 @@ buildopt_capture_subject() {
         buildopt_all_invocations_valid=true
         buildopt_total_invocations=17
         [[ ${buildopt_protocol} == v4 ]] && buildopt_total_invocations=18
+        [[ -n ${buildopt_requested_invocations} ]] && \
+            buildopt_total_invocations=${buildopt_requested_invocations}
         for buildopt_invocation in $(seq 1 "${buildopt_total_invocations}"); do
             buildopt_clean_subject_outputs "${buildopt_repository}"
             buildopt_invocation_file=$(printf '%s/invocation-%02d.json' \
@@ -420,29 +442,49 @@ buildopt_capture_subject() {
                     buildopt_all_invocations_valid=false
                     break
                 fi
+                buildopt_quarantine_args=(
+                    --state-dir ".buildopt/optimize/${buildopt_state_name}"
+                    --second-observation "${buildopt_native_observation}"
+                )
+                if [[ ${buildopt_native_portfolio_requested} == true ]]; then
+                    buildopt_quarantine_args+=(
+                        --portfolio "${buildopt_native_portfolio}"
+                        --portfolio-context "${buildopt_native_portfolio_context}"
+                        --revision "${buildopt_native_portfolio_revision}"
+                    )
+                fi
                 if ! (
                     cd -- "${buildopt_repository}"
                     "${buildopt_executable}" profile quarantine \
-                        --state-dir ".buildopt/optimize/${buildopt_state_name}" \
-                        --second-observation "${buildopt_native_observation}"
+                        "${buildopt_quarantine_args[@]}"
                 ) >"${buildopt_quarantine_result}" 2>"${buildopt_subject_output}/quarantine.stderr"; then
                     cat "${buildopt_subject_output}/quarantine.stderr" >&2
                     buildopt_all_invocations_valid=false
                     break
                 fi
-                jq -e '
-                  .schemaVersion == "buildopt.poc/native-volatility-quarantine/v1" and
-                  .decision == "TRANSPORT_READY" and
-                  (.transportedOutputs | length) > 0 and
-                  ((.reason == "INDEPENDENT_NATIVE_OUTPUTS_EXACT" and
-                    (.quarantinedProducers | length) == 0 and
-                    (.quarantinedOutputs | length) == 0 and
-                    (.transportedOutputs | length) == .comparedOutputCount) or
-                   (.reason == "VOLATILE_PRODUCERS_QUARANTINED" and
-                    (.quarantinedProducers | length) > 0 and
-                    (.quarantinedOutputs | length) > 0 and
-                    ((.quarantinedOutputs + .transportedOutputs) | length) ==
-                      .comparedOutputCount))
+                jq -e --argjson portfolio "${buildopt_native_portfolio_requested}" '
+                  if $portfolio then
+                    .schemaVersion == "buildopt.poc/optimize-native-volatility-portfolio-evidence/v1" and
+                    .current.schemaVersion == "buildopt.poc/native-volatility-quarantine/v1" and
+                    .current.decision == "TRANSPORT_READY" and
+                    .application.schemaVersion == "buildopt.poc/native-volatility-portfolio-application/v1" and
+                    .application.decision == "PORTFOLIO_APPLIED" and
+                    (.application.quarantinedOutputs | length) > 0 and
+                    (.application.transportedOutputs | length) > 0
+                  else
+                    .schemaVersion == "buildopt.poc/native-volatility-quarantine/v1" and
+                    .decision == "TRANSPORT_READY" and
+                    (.transportedOutputs | length) > 0 and
+                    ((.reason == "INDEPENDENT_NATIVE_OUTPUTS_EXACT" and
+                      (.quarantinedProducers | length) == 0 and
+                      (.quarantinedOutputs | length) == 0 and
+                      (.transportedOutputs | length) == .comparedOutputCount) or
+                     (.reason == "VOLATILE_PRODUCERS_QUARANTINED" and
+                      (.quarantinedProducers | length) > 0 and
+                      (.quarantinedOutputs | length) > 0 and
+                      ((.quarantinedOutputs + .transportedOutputs) | length) ==
+                        .comparedOutputCount))
+                  end
                 ' "${buildopt_quarantine_result}" >/dev/null || {
                     printf 'producer-bound output analysis did not produce a safe transport plan\n' >&2
                     buildopt_all_invocations_valid=false
@@ -576,16 +618,30 @@ buildopt_capture_subject() {
                     --arg nativeObservationFile "${buildopt_key}/native-second.json" \
                     --arg nativeObservationSha256 "${buildopt_native_observation_sha}" \
                     --slurpfile quarantine "${buildopt_subject_output}/quarantine-result.json" '
+                  ($quarantine[0]) as $evidence |
+                  (if $evidence.schemaVersion ==
+                    "buildopt.poc/optimize-native-volatility-portfolio-evidence/v1"
+                   then $evidence.current else $evidence end) as $current |
+                  (if $evidence.schemaVersion ==
+                    "buildopt.poc/optimize-native-volatility-portfolio-evidence/v1"
+                   then $evidence.application else null end) as $application |
                   . + {nativeVolatility:{
                     resultFile:$quarantineFile,resultSha256:$quarantineSha256,
                     secondObservationFile:$nativeObservationFile,
                     secondObservationSha256:$nativeObservationSha256,
-                    comparedOutputCount:$quarantine[0].comparedOutputCount,
-                    volatilePaths:$quarantine[0].volatilePaths,
-                    quarantinedProducers:$quarantine[0].quarantinedProducers,
-                    quarantinedOutputCount:($quarantine[0].quarantinedOutputs | length),
-                    transportedOutputCount:($quarantine[0].transportedOutputs | length),
-                    decision:$quarantine[0].decision,reason:$quarantine[0].reason}}
+                    comparedOutputCount:$current.comparedOutputCount,
+                    volatilePaths:$current.volatilePaths,
+                    quarantinedProducers:
+                      (if $application == null then $current.quarantinedProducers
+                       else $application.effectiveQuarantinedProducers end),
+                    quarantinedOutputCount:
+                      ((if $application == null then $current.quarantinedOutputs
+                        else $application.quarantinedOutputs end) | length),
+                    transportedOutputCount:
+                      ((if $application == null then $current.transportedOutputs
+                        else $application.transportedOutputs end) | length),
+                    decision:$current.decision,reason:$current.reason,
+                    portfolioApplied:($application != null)}}
                 ' "${buildopt_subject_output}/capture.json" \
                     >"${buildopt_subject_output}/capture.tmp"
                 mv -- "${buildopt_subject_output}/capture.tmp" \

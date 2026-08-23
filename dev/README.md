@@ -805,6 +805,17 @@ optimized-native observations. It never carries historical output bytes into a
 new revision; application always partitions a newly observed current-revision
 inventory.
 
+Capture the preregistered public Micronaut learning and evaluation revisions
+with at least 16 GiB free using:
+
+```bash
+./dev/run-cross-revision-volatility-portfolio /new/absolute/evidence/directory
+```
+
+The learning revision runs once and cannot claim performance. The later public
+revision runs the ordinary eight alternating pairs only after its current
+context and complete native output inventory validate against the portfolio.
+
 Validate the corrected OpenTelemetry effective-change replay and its terminal
 economic rejection without rerunning the 17 public-repository builds:
 

@@ -1,6 +1,8 @@
 package launcher
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -112,6 +114,56 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 		exactState.Discovery.Materialization.QuarantineFile == "" ||
 		exactState.Discovery.Materialization.QuarantineSHA256 == "" {
 		t.Fatalf("exact state = %+v, result = %+v", exactState, exactResult)
+	}
+	portfolioState := optimizeQuarantineTestState(invocation, discovery)
+	portfolioContext, err := optimizeNativePortfolioContext(portfolioState)
+	if err != nil {
+		t.Fatal(err)
+	}
+	learningFirst := nativevolatility.Observation{
+		SchemaVersion: nativevolatility.ObservationSchema, BindingSHA256: optimizeDigest("learning-binding"),
+		Entries: []nativevolatility.Entry{
+			{Path: "stable.bin", SHA256: optimizeDigest("stable"), ProducerTasks: []string{":stable:jar"}},
+			{Path: "volatile.bin", SHA256: optimizeDigest("volatile-one"), ProducerTasks: []string{":volatile:compileJava"}},
+		},
+	}
+	learningSecond := learningFirst
+	learningSecond.Entries = append([]nativevolatility.Entry(nil), learningFirst.Entries...)
+	learningSecond.Entries[1].SHA256 = optimizeDigest("volatile-two")
+	portfolio, err := nativevolatility.LearnPortfolio(
+		nativevolatility.Portfolio{}, portfolioContext, optimizeDigest("learning-revision"),
+		nativevolatility.Analyze(learningFirst, learningSecond), true,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	portfolioPath := filepath.Join(repository, "portfolio.json")
+	contextPath := filepath.Join(repository, "portfolio-context.json")
+	if err := writeCanonicalPrivateJSON(portfolioPath, portfolio); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeCanonicalPrivateJSON(contextPath, portfolioContext); err != nil {
+		t.Fatal(err)
+	}
+	evaluationRevisionDigest := sha256.Sum256([]byte(discovery.TargetRevision))
+	current, application, err := applyOptimizeNativeQuarantineWithPortfolio(
+		invocation, &portfolioState, secondPath, portfolioPath, contextPath,
+		hex.EncodeToString(evaluationRevisionDigest[:]),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if current.Reason != nativevolatility.ReasonExact || application == nil ||
+		!equalOptimizeStrings(application.EffectiveQuarantinedProducers,
+			[]string{":volatile:compileJava"}) ||
+		len(application.QuarantinedOutputs) != 2 || len(application.TransportedOutputs) != 1 {
+		t.Fatalf("portfolio current = %+v, application = %+v", current, application)
+	}
+	loadedPortfolioPlan, err := loadOptimizeNativeQuarantine(invocation, portfolioState.Discovery)
+	if err != nil || !equalOptimizeStrings(
+		loadedPortfolioPlan.QuarantinedProducers, []string{":volatile:compileJava"},
+	) || len(loadedPortfolioPlan.QuarantinedOutputs) != 2 {
+		t.Fatalf("loaded portfolio plan = %+v, err = %v", loadedPortfolioPlan, err)
 	}
 	for index := range second.Entries {
 		if second.Entries[index].Path == "volatile/build/classes/changed.class" {
