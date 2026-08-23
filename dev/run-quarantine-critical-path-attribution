@@ -74,7 +74,8 @@ mkdir -p -- "${buildopt_analysis}" "${buildopt_tools}"
         ./cmd/gradle-critical-path
 )
 
-while IFS=$'\t' read -r buildopt_sequence buildopt_pair buildopt_order buildopt_arm; do
+while IFS=$'\t' read -r buildopt_sequence buildopt_pair buildopt_order buildopt_arm \
+    buildopt_wall_duration; do
     buildopt_invocation=$((buildopt_sequence + 2))
     printf -v buildopt_prefix 'invocation-%02d' "${buildopt_invocation}"
     buildopt_result=${buildopt_subject}/${buildopt_prefix}.json
@@ -103,14 +104,16 @@ while IFS=$'\t' read -r buildopt_sequence buildopt_pair buildopt_order buildopt_
     jq --argjson sequence "${buildopt_sequence}" \
         --argjson invocation "${buildopt_invocation}" \
         --argjson pair "${buildopt_pair}" --arg order "${buildopt_order}" \
+        --argjson wallDurationMs "${buildopt_wall_duration}" \
         --arg executionMode "${buildopt_expected_mode}" '
       . + {invocation:{sequence:$sequence,ordinaryInvocation:$invocation,
-        pair:$pair,order:$order,executionMode:$executionMode}}
+        pair:$pair,order:$order,executionMode:$executionMode,
+        wallDurationMs:$wallDurationMs}}
     ' "${buildopt_report}.tmp" >"${buildopt_report}"
     rm -f -- "${buildopt_report}.tmp"
 done < <(jq -r '
   .incrementalLearning.observations[] |
-  [.sequence,.pair,.order,.arm] | @tsv
+  [.sequence,.pair,.order,.arm,.durationMs] | @tsv
 ' "${buildopt_final_result}")
 
 mapfile -t buildopt_reports < <(find "${buildopt_analysis}" -maxdepth 1 \
