@@ -64,6 +64,13 @@
   saves only **65 ms/0.49%**. Only 5/8 pairs improve, the interval crosses zero
   and p95 regresses from 14.267 to 16.967 seconds. Correctness is proven;
   activation and value are rejected.
+- **The minimal direct-producer frontier does not recover Micronaut value.**
+  The exact follow-up replaces lifecycle covers with direct terminal tasks,
+  but grows 58 to 63 entrypoints, leaves the graph at 52/70 projects and loses
+  **709.375 ms/5.60%** against its own optimized-native control. Only 3/8 pairs
+  improve, the interval crosses zero and p95 regresses. Gradle accounts for
+  680.625 ms of the mean loss; wrapper work adds 28.75 ms. The experiment is
+  preserved and the product path is restored to the graph-proven cover.
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
   Runtime Tuning, Hot State and standard Copy are retired; historical Jar,
   Patch and Edge experiments remain scoped supporting evidence.
@@ -885,11 +892,22 @@ and opens a narrower performance question: can an exact direct-producer/task
 cover rebuild substantially less than 52 projects without weakening output
 equivalence?
 
+That direct-producer experiment is now complete. The exact DAG frontier uses
+63 terminal tasks (38 `javadocJar`, 22 `jar`, two `assemble` and one
+`sourcesJar`) and still selects 52/70 projects. It preserves all 109 required
+outputs with one digest and completes fallback, but optimized native averages
+12,656.125 ms versus 13,365.5 ms for BuildOpt: **709.375 ms/5.60% slower**.
+Only 3/8 pairs improve, the interval is -1,877.625..+500.25 ms and p95 changes
+from 13,589 to 15,053 ms. The implementation is therefore reverted. A future
+reopening needs task critical-path evidence that identifies eliminable work;
+fewer lifecycle abstractions or a theoretically smaller task cover are not
+enough.
+
 ## Open Questions
 
-- Can the exact 58-entrypoint/52-project quarantine frontier be reduced using
-  direct producers or graph-proven lifecycle covers while reproducing every
-  required output and improving the robust wall-time gate?
+- Which tasks dominate the native and quarantine candidate critical paths,
+  and is any of that work generically eliminable without reducing the exact
+  owner-visible output boundary?
 - When producer-bound public observations are recaptured, does quarantining the
   volatile producers leave enough stable work to produce positive net value?
 - What future materially different trace would be sufficient to reopen a

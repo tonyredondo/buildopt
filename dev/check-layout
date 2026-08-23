@@ -411,6 +411,7 @@ buildopt_required_files=(
     "dev/check-compatible-portfolio-value"
     "dev/run-compatible-portfolio-value"
     "dev/check-transitive-producer-lineage"
+    "dev/check-minimal-quarantine-rebuild-frontier"
     "dev/check-compatible-descendant-discovery"
     "dev/check-incremental-learning"
     "dev/run-incremental-learning"

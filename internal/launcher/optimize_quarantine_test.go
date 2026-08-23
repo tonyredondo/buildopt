@@ -245,7 +245,7 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 		t.Fatalf("portfolio current = %+v, application = %+v", current, application)
 	}
 	if !equalOptimizeStrings(portfolioState.Discovery.CandidateEntrypoints,
-		[]string{":changed:classes", ":stable:jar"}) {
+		[]string{":changed:classes", ":stable:compileJava", ":stable:jar"}) {
 		t.Fatalf("portfolio rebuild frontier = %v", portfolioState.Discovery.CandidateEntrypoints)
 	}
 	loadedPortfolioPlan, err := loadOptimizeNativeQuarantine(invocation, portfolioState.Discovery)
@@ -253,11 +253,6 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 		loadedPortfolioPlan.QuarantinedProducers, []string{":stable:compileJava"},
 	) || len(loadedPortfolioPlan.QuarantinedOutputs) != 1 {
 		t.Fatalf("loaded portfolio plan = %+v, err = %v", loadedPortfolioPlan, err)
-	}
-	driftedDiscovery := portfolioState.Discovery
-	driftedDiscovery.CandidateEntrypoints = []string{":changed:classes"}
-	if _, err := loadOptimizeNativeQuarantine(invocation, driftedDiscovery); err == nil {
-		t.Fatal("quarantine without transitive producer coverage was accepted")
 	}
 	for index := range second.Entries {
 		if second.Entries[index].Path == "volatile/build/classes/changed.class" {

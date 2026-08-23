@@ -2211,6 +2211,31 @@ regresses from 14,267 to 16,967 ms. Correctness is proven; value is not.
 ./dev/check-transitive-producer-lineage
 ```
 
+## Minimal quarantine rebuild frontier
+
+[`results/poc-minimal-quarantine-rebuild-frontier-v1/`](./results/poc-minimal-quarantine-rebuild-frontier-v1/README.md)
+tests the narrower hypothesis opened by the lineage result. An experimental
+revision replaces project lifecycle covers with the minimal direct-producer DAG
+frontier while keeping the same frozen Micronaut revisions, producer portfolio,
+output gate, fallback and eight alternating pairs.
+
+The direct frontier is exact but not faster. It uses 63 entrypoints instead of
+58, still selects 52/70 projects and completes with 101 transported outputs,
+89 locally rebuilt outputs, one required-output digest, successful fallback
+and zero product failures. Optimized native averages 12,656.125 ms and BuildOpt
+13,365.5 ms: **709.375 ms/5.60% slower**, with 3/8 positive pairs, a
+-1,877.625..+500.25-ms interval and p95 regression from 13,589 to 15,053 ms.
+Within the capture, Gradle contributes 680.625 ms of the regression and wrapper
+work 28.75 ms.
+
+The terminal decision is `RETAIN_GRAPH_PROVEN_PROJECT_FRONTIER`. The
+experimental implementation is reverted because it reduces neither the
+project graph nor wall time. Revalidate the negative evidence with:
+
+```bash
+./dev/check-minimal-quarantine-rebuild-frontier
+```
+
 ## JVM Agent spike evidence
 
 [`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one

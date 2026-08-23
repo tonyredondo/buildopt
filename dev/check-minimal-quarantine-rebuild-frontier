@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_DIRECTORY]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_result=${1:-${buildopt_repo_root}/benchmarks/results/poc-minimal-quarantine-rebuild-frontier-v1}
+buildopt_summary=${buildopt_result}/summary.json
+buildopt_diagnostic=${buildopt_result}/diagnostic.json
+buildopt_previous=${buildopt_repo_root}/benchmarks/results/poc-transitive-producer-lineage-v1/summary.json
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'minimal quarantine frontier validation requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+"${buildopt_script_dir}/check-compatible-portfolio-value" "${buildopt_summary}"
+
+buildopt_summary_sha=$(sha256sum "${buildopt_summary}" | awk '{print $1}')
+buildopt_previous_sha=$(sha256sum "${buildopt_previous}" | awk '{print $1}')
+jq -e \
+    --arg summarySha "${buildopt_summary_sha}" \
+    --arg previousSha "${buildopt_previous_sha}" '
+  .schemaVersion == "buildopt.evidence/poc-minimal-quarantine-rebuild-frontier-diagnostic/v1" and
+  .workItem == "POC-MINIMAL-QUARANTINE-REBUILD-FRONTIER-001" and
+  .previousFrontier.summarySha256 == $previousSha and
+  .previousFrontier.buildoptRevision == "9893316aedaec6f51592adb0ddfbc796fe64e7c3" and
+  .previousFrontier.strategy == "GRAPH_PROVEN_PROJECT_LIFECYCLE_COVER" and
+  .previousFrontier.candidateEntrypointCount == 58 and
+  .previousFrontier.selectedProjects == 52 and
+  .previousFrontier.totalProjects == 70 and
+  .previousFrontier.meanSavedMs == 65 and
+  .previousFrontier.positivePairs == 5 and
+  .directProducerFrontier.summarySha256 == $summarySha and
+  .directProducerFrontier.buildoptRevision == "df1c6d31d5591df17f6d538294bdc0d8d54347fa" and
+  .directProducerFrontier.strategy == "MINIMAL_DIRECT_PRODUCER_DAG_FRONTIER" and
+  .directProducerFrontier.candidateEntrypointCount == 63 and
+  .directProducerFrontier.candidateTaskNames ==
+    {"assemble":2,"jar":22,"javadocJar":38,"sourcesJar":1} and
+  .directProducerFrontier.selectedProjects == 52 and
+  .directProducerFrontier.totalProjects == 70 and
+  .directProducerFrontier.controlMeanMs == 12656.125 and
+  .directProducerFrontier.candidateMeanMs == 13365.5 and
+  .directProducerFrontier.meanSavedMs == -709.375 and
+  .directProducerFrontier.reductionRatio == -0.05604993629566712 and
+  .directProducerFrontier.positivePairs == 3 and
+  .directProducerFrontier.pairEffectsMs == [-130,-606,55,-1795,-2763,372,-3166,2358] and
+  .directProducerFrontier.interval95SavedMs == [-1877.625,500.25] and
+  .directProducerFrontier.controlP95Ms == 13589 and
+  .directProducerFrontier.candidateP95Ms == 15053 and
+  .directProducerFrontier.quarantinedOutputs == 89 and
+  .directProducerFrontier.transportedOutputs == 101 and
+  .directProducerFrontier.requiredOutputDigestCount == 1 and
+  .directProducerFrontier.fallbackSuccessful == true and
+  .directProducerFrontier.productFailures == 0 and
+  .comparison.entrypointDelta == 5 and
+  .comparison.selectedProjectDelta == 0 and
+  .comparison.meanSavedDeltaMs == -774.375 and
+  .comparison.directFrontierGradleDeltaMs == 680.625 and
+  .comparison.directFrontierWrapperDeltaMs == 28.75 and
+  .comparison.exactOutputGatePreserved == true and
+  .comparison.decision == "RETAIN_GRAPH_PROVEN_PROJECT_FRONTIER" and
+  .comparison.reason == "DIRECT_FRONTIER_VALUE_NOT_PROVEN" and
+  .boundaries == {
+    "proofOfConcept":true,"productionAuthorized":false,
+    "repositorySpecificProductRules":false,"soakRequired":false,
+    "designPartnerRequired":false,"testOptimization":"OUT_OF_SCOPE"
+  }
+' "${buildopt_diagnostic}" >/dev/null || {
+    printf 'minimal quarantine frontier evidence drifted\n' >&2
+    exit 1
+}
+
+jq -e --slurpfile diagnostic "${buildopt_diagnostic}" '
+  .buildoptRevision == $diagnostic[0].directProducerFrontier.buildoptRevision and
+  .evaluation.graph.selectedProjects == $diagnostic[0].directProducerFrontier.selectedProjects and
+  .evaluation.graph.totalProjects == $diagnostic[0].directProducerFrontier.totalProjects and
+  .evaluation.measurement.pairsMeasured == 8 and
+  .evaluation.measurement.positivePairs == $diagnostic[0].directProducerFrontier.positivePairs and
+  .evaluation.measurement.controlMeanMs == $diagnostic[0].directProducerFrontier.controlMeanMs and
+  .evaluation.measurement.candidateMeanMs == $diagnostic[0].directProducerFrontier.candidateMeanMs and
+  .evaluation.measurement.meanSavedMs == $diagnostic[0].directProducerFrontier.meanSavedMs and
+  .evaluation.measurement.reductionRatio == $diagnostic[0].directProducerFrontier.reductionRatio and
+  .evaluation.measurement.interval95SavedMs == $diagnostic[0].directProducerFrontier.interval95SavedMs and
+  .evaluation.measurement.controlP95Ms == $diagnostic[0].directProducerFrontier.controlP95Ms and
+  .evaluation.measurement.candidateP95Ms == $diagnostic[0].directProducerFrontier.candidateP95Ms and
+  .evaluation.measurement.qualified == false and
+  .evaluation.measurement.fallbackSuccessful == true and
+  .evaluation.measurement.requiredOutputDigestCount == 1 and
+  .evaluation.productFailures == 0 and
+  .acceptance.decision == "COMPATIBLE_PORTFOLIO_VALUE_NOT_PROVEN" and
+  .acceptance.exactOutputGatePreserved == true
+' "${buildopt_summary}" >/dev/null || {
+    printf 'minimal quarantine frontier summary and diagnostic disagree\n' >&2
+    exit 1
+}
+
+printf 'Minimal quarantine rebuild frontier evidence: PASS\n'

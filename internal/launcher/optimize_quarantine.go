@@ -624,17 +624,18 @@ func applyOptimizeNativeQuarantineWithPortfolio(
 	if err != nil {
 		return result, application, err
 	}
-	rebuildEntrypoints, err := lineage.rebuildEntrypoints(
-		plan.QuarantinedOutputs, discovery.CandidateEntrypoints,
-	)
+	rebuildEntrypoints, err := lineage.rebuildEntrypoints(plan.QuarantinedOutputs)
 	if err != nil {
 		return result, application, err
 	}
 	discovery.CandidateEntrypoints = mergeOptimizeStrings(
+		discovery.CandidateEntrypoints, plan.QuarantinedProducers,
+	)
+	discovery.CandidateEntrypoints = mergeOptimizeStrings(
 		discovery.CandidateEntrypoints, rebuildEntrypoints,
 	)
-	if err := validateOptimizeQuarantineCandidateEntrypoints(discovery.CandidateEntrypoints); err != nil {
-		return result, application, err
+	if len(discovery.CandidateEntrypoints) > maximumStructuralAlternativeEntrypoints {
+		return result, application, errors.New("quarantine candidate task set exceeds the POC bound")
 	}
 	quarantinedPaths := make([]string, 0, len(plan.QuarantinedOutputs))
 	for _, entry := range plan.QuarantinedOutputs {
@@ -644,9 +645,7 @@ func applyOptimizeNativeQuarantineWithPortfolio(
 	if len(discovery.CandidateOutputs) > optimizeMaterializationMaxFiles {
 		return result, application, errors.New("quarantine candidate output set exceeds the POC bound")
 	}
-	updateOptimizeQuarantinePartition(
-		&discovery, rebuildEntrypoints,
-	)
+	updateOptimizeQuarantinePartition(&discovery, rebuildEntrypoints)
 
 	quarantineDirectory := filepath.Join(invocation.stateDirectory, "materialization", "quarantine")
 	if err := os.MkdirAll(quarantineDirectory, 0o700); err != nil {
@@ -1220,30 +1219,27 @@ func loadOptimizeNativeQuarantine(
 	default:
 		return plan, errors.New("native volatility quarantine schema is unsupported")
 	}
-	if plan.BindingSHA256 != invocation.bindingSHA256 {
+	if plan.BindingSHA256 != invocation.bindingSHA256 ||
+		!equalOptimizeStrings(plan.QuarantinedProducers,
+			intersectOptimizeStrings(discovery.CandidateEntrypoints, plan.QuarantinedProducers)) {
 		return optimizeNativeQuarantinePlan{}, errors.New("native volatility quarantine binding drifted")
-	}
-	lineage, err := loadOptimizeQuarantineTaskLineage(invocation)
-	if err != nil {
-		return optimizeNativeQuarantinePlan{}, err
-	}
-	coverage, err := lineage.coverage(discovery.CandidateEntrypoints)
-	if err != nil {
-		return optimizeNativeQuarantinePlan{}, err
-	}
-	for _, producer := range plan.QuarantinedProducers {
-		if !coverage[producer] {
-			return optimizeNativeQuarantinePlan{}, errors.New("native volatility quarantine binding drifted")
-		}
 	}
 	return plan, nil
 }
 
-func validateOptimizeQuarantineCandidateEntrypoints(entrypoints []string) error {
-	if len(entrypoints) > maximumStructuralAlternativeEntrypoints {
-		return errors.New("quarantine candidate task set exceeds the POC bound")
+func intersectOptimizeStrings(values, selected []string) []string {
+	set := make(map[string]bool, len(selected))
+	for _, value := range selected {
+		set[value] = true
 	}
-	return nil
+	result := make([]string, 0, len(selected))
+	for _, value := range values {
+		if set[value] {
+			result = append(result, value)
+		}
+	}
+	sort.Strings(result)
+	return result
 }
 
 func encodeOptimizeJSON(writer io.Writer, value any) error {

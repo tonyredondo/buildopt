@@ -30,7 +30,7 @@ Optimization are outside the current scope.
 | **Automatic discovery** | Derives Git ownership, finalized workflow inputs, Gradle task/output relationships and candidate graphs without repository-name rules. | Works across `classes`, `testClasses`, `assemble` and the five unrelated public repositories. Complete task-input evidence now lets a mixed OpenTelemetry change ignore only its unconsumed root changelog while retaining module-owned and consumed paths. |
 | **Incremental learning and value gate** | Accumulates useful control/candidate observations and checks repeatability, uncertainty, p95, outputs, fallback and payback. | The automatic POC policy now accepts 6/8 only with a strictly positive interval and non-regressive p95; weak or incompatible evidence still retains native. |
 | **Verified output materialization** | Restores exact unaffected outputs before their producers are omitted. | Fast and fail-closed. A producer-atomic quarantine now excludes every output of a task when any output is volatile, while exact outputs from other producers remain transportable. |
-| **Profile portfolio and central state** | Carries verified profiles and packs over HTTP/HTTPS between builds and machines. | Transport and safe cross-commit refresh have selected value on Kafka (+104.975 s) and Spring (+84.656 s). Micronaut now proves exact transitive lineage and recovery, but its safe 58-entrypoint rebuild frontier saves only 65 ms/0.49% and does not qualify. |
+| **Profile portfolio and central state** | Carries verified profiles and packs over HTTP/HTTPS between builds and machines. | Transport and safe cross-commit refresh have selected value on Kafka (+104.975 s) and Spring (+84.656 s). Micronaut proves exact transitive lineage and recovery, but neither its 58-entrypoint lifecycle cover (+65 ms/0.49%) nor a 63-entrypoint direct frontier (-709 ms/-5.60%) qualifies. |
 | **Gradle-compatible cache** | Reuses verified task outputs locally or through optional HTTP/HTTPS storage. | Supporting infrastructure near native-cache parity, not the principal speed claim. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource/state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
 
@@ -155,19 +155,24 @@ are rebuilt locally, product failures remain zero and cumulative net is
   It is correct but not valuable enough: 13.318 s native versus 13.253 s
   BuildOpt saves **65 ms/0.49%**, only 5/8 pairs improve, the interval crosses
   zero and p95 regresses from 14.267 to 16.967 s.
+- The follow-up direct-producer frontier also fails the value test. It keeps
+  one exact digest, 101 transported and 89 rebuilt outputs, but uses 63
+  entrypoints, still selects 52/70 projects and changes 12.656-second native to
+  13.366-second BuildOpt: **709 ms/5.60% slower**, 3/8 positive, interval
+  -1.878..+0.500 seconds and worse p95. Gradle accounts for 681 ms of the mean
+  regression. The experiment is recorded and reverted; the POC keeps the
+  previously verified graph-proven cover.
 
 ## Next steps
 
-1. Replace the coarse 58-entrypoint quarantine frontier with the smallest
-   exact set of direct producers or graph-proven lifecycle covers; incomplete
-   coverage must retain native.
-2. Repeat the same frozen Micronaut window and preserve the single exact output
-   digest, full fallback and robust value gate. The goal is repeatable
-   wall-time value, not a smaller graph on paper.
-3. Generalize only after the frontier qualifies, then reduce the remaining
-   1.7–3.5-second verification/wrapper overhead and keep automatic activation
-   bounded by exact change family, graph, executable, output and economic
-   bindings.
+1. Attribute the native and quarantine candidate critical paths at task level
+   on the same frozen Micronaut window; do not propose another frontier unless
+   the trace identifies generically eliminable work.
+2. Stop this Micronaut optimization line if the 52-project rebuild is required
+   by the exact owner-visible outputs. A smaller graph on paper is not value.
+3. Preserve automatic activation only for profiles that pass exact outputs,
+   repeatability, interval, p95 and economic gates; keep reducing generic
+   qualification/verification cost where it affects already valuable profiles.
 
 ## Evidence
 
@@ -186,6 +191,8 @@ are rebuilt locally, product failures remain zero and cumulative net is
 - [Machine-readable compatible portfolio summary](../../benchmarks/results/poc-compatible-portfolio-value-v1/summary.json)
 - [Transitive producer lineage result](../../benchmarks/results/poc-transitive-producer-lineage-v1/README.md)
 - [Machine-readable lineage summary](../../benchmarks/results/poc-transitive-producer-lineage-v1/summary.json)
+- [Minimal quarantine frontier result](../../benchmarks/results/poc-minimal-quarantine-rebuild-frontier-v1/README.md)
+- [Machine-readable minimal-frontier summary](../../benchmarks/results/poc-minimal-quarantine-rebuild-frontier-v1/summary.json)
 - [Compatible descendant discovery result](../../benchmarks/results/poc-compatible-descendant-discovery-v1/README.md)
 - [Machine-readable compatible descendant summary](../../benchmarks/results/poc-compatible-descendant-discovery-v1/summary.json)
 - [Native-volatility quarantine protocol](../../specs/poc-native-volatility-quarantine-v1.md)

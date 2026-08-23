@@ -1,0 +1,212 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-compatible-portfolio-value/v1",
+  "workItem": "POC-COMPATIBLE-PORTFOLIO-VALUE-001",
+  "capturedAt": "2026-08-23T19:56:22Z",
+  "buildoptRevision": "df1c6d31d5591df17f6d538294bdc0d8d54347fa",
+  "repository": {
+    "id": "micronaut-projects/micronaut-core",
+    "learningRevision": "4dc4299f8dd0faccc0c45c2f83a223b456dc0731",
+    "evaluationRevision": "a7955f4cc50225044d8eb7c614ba80b607b000dd"
+  },
+  "learning": {
+    "ordinaryInvocations": 1,
+    "independentNativeObservations": 1,
+    "measurementOnlyWorkflowRuns": 0,
+    "performanceClaimed": false,
+    "nativeVolatility": {
+      "resultFile": "compatible-learning/quarantine-result.json",
+      "resultSha256": "8dca465c4c64cd59fda67f9db9eda62bee445ab2c2cd0c6cb0475db5340b6b94",
+      "preflightFile": null,
+      "preflightSha256": null,
+      "preflightDecision": null,
+      "secondObservationFile": "compatible-learning/native-second.json",
+      "secondObservationSha256": "355236b033e46f1ac94fd187ccbfbbb359f48850bf75d12e2d3e0f095362b9c6",
+      "independentNativeObservationAuthorized": true,
+      "independentNativeObservationStarted": true,
+      "comparedOutputCount": 11187,
+      "volatilePaths": [
+        "aop/build/kotlin/compileKotlin/cacheable/last-build.bin",
+        "context-propagation/build/kotlin/kaptGenerateStubsKotlin/cacheable/last-build.bin",
+        "core-reactive/build/kotlin/compileKotlin/cacheable/last-build.bin",
+        "http-server-netty/build/classes/java/main/io/micronaut/http/server/netty/$DefaultNettyEmbeddedServerFactory$Definition.class",
+        "http-server-netty/build/libs/micronaut-http-server-netty-5.0.0-SNAPSHOT.jar",
+        "http-server-netty/build/tmp/compileJava/previous-compilation-data.bin",
+        "http/build/kotlin/compileKotlin/cacheable/last-build.bin",
+        "inject-kotlin/build/kotlin/compileKotlin/cacheable/last-build.bin",
+        "jackson-databind/build/classes/java/main/io/micronaut/jackson/codec/$JsonMediaTypeCodec$Definition.class",
+        "jackson-databind/build/classes/java/main/io/micronaut/jackson/codec/$JsonStreamMediaTypeCodec$Definition.class",
+        "jackson-databind/build/libs/micronaut-jackson-databind-5.0.0-SNAPSHOT.jar",
+        "jackson-databind/build/tmp/compileJava/previous-compilation-data.bin"
+      ],
+      "quarantinedProducers": [
+        ":micronaut-aop:compileKotlin",
+        ":micronaut-context-propagation:kaptGenerateStubsKotlin",
+        ":micronaut-core-reactive:compileKotlin",
+        ":micronaut-http-server-netty:compileJava",
+        ":micronaut-http-server-netty:jar",
+        ":micronaut-http:compileKotlin",
+        ":micronaut-inject-kotlin:compileKotlin",
+        ":micronaut-jackson-databind:compileJava",
+        ":micronaut-jackson-databind:jar"
+      ],
+      "quarantinedOutputCount": 868,
+      "transportedOutputCount": 10319,
+      "decision": "TRANSPORT_READY",
+      "reason": "VOLATILE_PRODUCERS_QUARANTINED",
+      "portfolioApplied": false,
+      "portfolioDecision": null,
+      "portfolioReason": null,
+      "contextDriftedBindings": [],
+      "missingPortfolioProducers": []
+    },
+    "portfolio": {
+      "schemaVersion": "buildopt.poc/native-volatility-portfolio/v1",
+      "contextSha256": "ab5cc121d8be94070aab20c3bb9efaa076c4fd3ab87cfcd18611d9e6539b735c",
+      "observations": [
+        {
+          "revisionSha256": "4912196eb69dc37ebe8dcfe083b76a6c1de72fb93b47180ed7c4bbada7bb0fb0",
+          "resultSha256": "e3a3fec8b99d823d913f0c83680f551922739e6927b4c85bff0e83d163507b7b",
+          "quarantinedProducers": [
+            ":micronaut-aop:compileKotlin",
+            ":micronaut-context-propagation:kaptGenerateStubsKotlin",
+            ":micronaut-core-reactive:compileKotlin",
+            ":micronaut-http-server-netty:compileJava",
+            ":micronaut-http-server-netty:jar",
+            ":micronaut-http:compileKotlin",
+            ":micronaut-inject-kotlin:compileKotlin",
+            ":micronaut-jackson-databind:compileJava",
+            ":micronaut-jackson-databind:jar"
+          ],
+          "authoritativeNative": true,
+          "performanceClaimed": false
+        }
+      ],
+      "quarantinedProducers": [
+        ":micronaut-aop:compileKotlin",
+        ":micronaut-context-propagation:kaptGenerateStubsKotlin",
+        ":micronaut-core-reactive:compileKotlin",
+        ":micronaut-http-server-netty:compileJava",
+        ":micronaut-http-server-netty:jar",
+        ":micronaut-http:compileKotlin",
+        ":micronaut-inject-kotlin:compileKotlin",
+        ":micronaut-jackson-databind:compileJava",
+        ":micronaut-jackson-databind:jar"
+      ],
+      "productionAuthorized": false,
+      "testOptimization": "OUT_OF_SCOPE"
+    }
+  },
+  "evaluation": {
+    "ordinaryInvocations": 18,
+    "measurementOnlyWorkflowRuns": 0,
+    "preflight": {
+      "schemaVersion": "buildopt.poc/native-volatility-portfolio-preflight/v1",
+      "decision": "COMPATIBLE",
+      "reason": "PORTFOLIO_CONTEXT_COMPATIBLE",
+      "learnedContext": {
+        "repositoryScopeSha256": "5e4cc0e302ef2d474af33ca05bacfba5f8ab03602215246c676c20e8befe5a46",
+        "workflowSha256": "b58ded20178d9db59bf3e6a0facf7fee57f91e566bbaa4f60d2a64d6fd02e98f",
+        "wrapperSha256": "70fa201501995e6f45c0c475def71093f8115849344c48322ca997cfddba8534",
+        "outputContractSha256": "b3e3315b96087e000ad9aecd1fecc3465dff0383707cdacb555222754c2a0fdb"
+      },
+      "currentContext": {
+        "repositoryScopeSha256": "5e4cc0e302ef2d474af33ca05bacfba5f8ab03602215246c676c20e8befe5a46",
+        "workflowSha256": "b58ded20178d9db59bf3e6a0facf7fee57f91e566bbaa4f60d2a64d6fd02e98f",
+        "wrapperSha256": "70fa201501995e6f45c0c475def71093f8115849344c48322ca997cfddba8534",
+        "outputContractSha256": "b3e3315b96087e000ad9aecd1fecc3465dff0383707cdacb555222754c2a0fdb"
+      },
+      "learnedContextSha256": "ab5cc121d8be94070aab20c3bb9efaa076c4fd3ab87cfcd18611d9e6539b735c",
+      "currentContextSha256": "ab5cc121d8be94070aab20c3bb9efaa076c4fd3ab87cfcd18611d9e6539b735c",
+      "driftedBindings": [],
+      "independentNativeObservationAuthorized": true,
+      "productionAuthorized": false,
+      "testOptimization": "OUT_OF_SCOPE"
+    },
+    "independentNativeObservationStarted": true,
+    "graph": {
+      "omittedProjects": 18,
+      "selectedProjects": 52,
+      "totalProjects": 70
+    },
+    "nativeVolatility": {
+      "resultFile": "compatible-evaluation/quarantine-result.json",
+      "resultSha256": "60feabd86fb008652674ba13bac333d7cecfb7933ba3f55eba3aae07987c2b61",
+      "preflightFile": "compatible-evaluation/portfolio-preflight.json",
+      "preflightSha256": "805e6345f2133ad2d866931da151480a4da203624d24f0baa7264682e3855489",
+      "preflightDecision": "COMPATIBLE",
+      "secondObservationFile": "compatible-evaluation/native-second.json",
+      "secondObservationSha256": "926d364715069501209b92667c7dcdb0e635ff1eb40ab41db4a06c2d48019bf3",
+      "independentNativeObservationAuthorized": true,
+      "independentNativeObservationStarted": true,
+      "comparedOutputCount": 190,
+      "volatilePaths": [],
+      "quarantinedProducers": [
+        ":micronaut-aop:compileKotlin",
+        ":micronaut-context-propagation:kaptGenerateStubsKotlin",
+        ":micronaut-core-reactive:compileKotlin",
+        ":micronaut-http-server-netty:compileJava",
+        ":micronaut-http-server-netty:jar",
+        ":micronaut-http:compileKotlin",
+        ":micronaut-inject-kotlin:compileKotlin",
+        ":micronaut-jackson-databind:compileJava",
+        ":micronaut-jackson-databind:jar"
+      ],
+      "quarantinedOutputCount": 89,
+      "transportedOutputCount": 101,
+      "decision": "TRANSPORT_READY",
+      "reason": "INDEPENDENT_NATIVE_OUTPUTS_EXACT",
+      "portfolioApplied": true,
+      "portfolioDecision": "PORTFOLIO_APPLIED",
+      "portfolioReason": null,
+      "contextDriftedBindings": [],
+      "missingPortfolioProducers": []
+    },
+    "measurement": {
+      "pairsRequested": 8,
+      "pairsMeasured": 8,
+      "positivePairs": 3,
+      "controlMeanMs": 12656.125,
+      "candidateMeanMs": 13365.5,
+      "meanSavedMs": -709.375,
+      "reductionRatio": -0.05604993629566712,
+      "interval95SavedMs": [
+        -1877.625,
+        500.25
+      ],
+      "controlP95Ms": 13589,
+      "candidateP95Ms": 15053,
+      "breakEvenBuilds": 0,
+      "calibrationCostMs": 1706,
+      "qualificationPolicy": "ROBUST_6_OF_8_ALTERNATING_PAIRS_INTERVAL_P95_V1",
+      "qualified": false,
+      "fallbackSuccessful": true,
+      "requiredOutputDigestCount": 1,
+      "requiredOutputSha256": "54ef1aba4d665f73cef9fb8729ef7c03e3e37bb64cf392b9304d8f781ada4f21"
+    },
+    "productFailures": 0
+  },
+  "sourceEvidenceSha256": {
+    "learningCapture": "99120f49d5339c93acadde4022a076d11e2dcbf9b23d1ec0f6075e38da1e6f2d",
+    "learningQuarantine": "8dca465c4c64cd59fda67f9db9eda62bee445ab2c2cd0c6cb0475db5340b6b94",
+    "portfolioContext": "a57db42ba9b84cf75cf0ac91701f562f929abf3f7f75de8b6e2a7bbeed3b5fe9",
+    "portfolio": "112b38187872db2af4bfeda73b7b26403af1af3c0eee20bc4cdf09d8b7d1f091",
+    "evaluationCapture": "25bd90716aea372c9a53042aed0fa73c8ed79804a092f1d4cedbdf11fd2b7781",
+    "evaluationPreflight": "805e6345f2133ad2d866931da151480a4da203624d24f0baa7264682e3855489",
+    "evaluationQuarantine": "60feabd86fb008652674ba13bac333d7cecfb7933ba3f55eba3aae07987c2b61"
+  },
+  "acceptance": {
+    "decision": "COMPATIBLE_PORTFOLIO_VALUE_NOT_PROVEN",
+    "compatibleReplayValueProven": false,
+    "exactOutputGatePreserved": true,
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRules": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

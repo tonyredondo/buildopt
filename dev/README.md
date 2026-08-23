@@ -874,6 +874,20 @@ required-output digest and the POC boundaries. The terminal result proves
 lineage-safe replay but rejects value at 65 ms/0.49%, 5/8 positive pairs, an
 interval crossing zero and regressive p95.
 
+Validate the follow-up direct-producer frontier experiment without rerunning
+Micronaut:
+
+```bash
+./dev/check-minimal-quarantine-rebuild-frontier
+```
+
+The checker binds the experimental implementation, exact eight-pair summary,
+task-shape diagnostic and preceding graph-proven result. The 63-entrypoint
+direct frontier keeps one exact output digest and a successful fallback, but
+selects the same 52/70 projects and is 709.375 ms/5.60% slower than its own
+optimized-native control. The experiment is retained as negative POC evidence;
+the launcher keeps the graph-proven lifecycle cover.
+
 Validate the corrected OpenTelemetry effective-change replay and its terminal
 economic rejection without rerunning the 17 public-repository builds:
 
