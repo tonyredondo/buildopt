@@ -4,13 +4,21 @@
 
 This proof-of-concept experiment asks whether producer volatility learned from
 two authoritative native observations can remain exact and improve wall time
-on a directly adjacent public revision with the same structural context.
+on a nearby public code revision with the same structural context.
 
 The subject is Micronaut Core `assemble`. A fresh portfolio is learned at
-`8e418f75dd7a3aa66bc94786101bc8a2005cb5e2` and evaluated only at its direct
-child `4dc4299f8dd0faccc0c45c2f83a223b456dc0731`. The child changes only
-`gradle/libs.versions.toml`; both revisions have the same frozen Wrapper tree
-digest.
+`4dc4299f8dd0faccc0c45c2f83a223b456dc0731` and evaluated at
+`a7955f4cc50225044d8eb7c614ba80b607b000dd`. One documentation-only commit lies
+between them. The evaluation commit changes production code in `core` plus two
+test sources and is the direct child of its declared evaluation base. Learning
+and evaluation keep the same frozen Wrapper tree digest.
+
+An earlier preregistered direct child changed only `gradle/libs.versions.toml`.
+The ordinary path correctly retained the full graph and therefore produced no
+revision-bound materialization to which a producer portfolio could be applied.
+That attempt is diagnostic evidence, not a timing result. The replacement
+window was selected by change class before observing any performance samples;
+the runtime preflight remains mandatory and unchanged.
 
 ## Execution order
 

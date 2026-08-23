@@ -21,11 +21,16 @@ jq -e '
   .workItem == "POC-COMPATIBLE-PORTFOLIO-VALUE-001" and
   .subject.repositoryId == "micronaut-projects/micronaut-core" and
   .subject.historyBranch == "5.2.x" and
-  .subject.learningBaseRevision == "6a11a05950f36193bd865d6b25c2bc17dfb4ff1c" and
-  .subject.learningRevision == "8e418f75dd7a3aa66bc94786101bc8a2005cb5e2" and
-  .subject.evaluationRevision == "4dc4299f8dd0faccc0c45c2f83a223b456dc0731" and
-  .subject.evaluationIsDirectChild == true and
-  .subject.evaluationChangedPaths == ["gradle/libs.versions.toml"] and
+  .subject.learningBaseRevision == "8e418f75dd7a3aa66bc94786101bc8a2005cb5e2" and
+  .subject.learningRevision == "4dc4299f8dd0faccc0c45c2f83a223b456dc0731" and
+  .subject.evaluationBaseRevision == "53af04a2bdea87c92bfb9cc0a87241d21a79b574" and
+  .subject.evaluationRevision == "a7955f4cc50225044d8eb7c614ba80b607b000dd" and
+  .subject.evaluationIsDirectChildOfBase == true and
+  .subject.interveningCommitsAfterLearning == 1 and
+  .subject.evaluationChangedPaths == [
+    "core/src/main/java/io/micronaut/core/convert/DefaultMutableConversionService.java",
+    "core/src/test/groovy/io/micronaut/core/convert/DefaultConversionServiceSpec.groovy",
+    "http-server-netty/src/test/groovy/io/micronaut/http/server/netty/binding/ParameterBindingSpec.groovy"] and
   .learning.ordinaryInvocations == 1 and
   .learning.independentNativeObservations == 1 and
   .learning.measurementOnlyWorkflowRuns == 0 and
@@ -81,22 +86,22 @@ jq -e --slurpfile contract "${buildopt_contract}" '
   .evaluation.productFailures == 0 and
   ((.evaluation.preflight.decision == "COMPATIBLE" and
     .evaluation.preflight.reason == "PORTFOLIO_CONTEXT_COMPATIBLE" and
-    .evaluation.preflight.independentNativeObservationAuthorized == true and
-    .evaluation.preflight.driftedBindings == [] and
-    .evaluation.independentNativeObservationStarted == true and
-    .evaluation.nativeVolatility.portfolioApplied == true and
-    .evaluation.nativeVolatility.portfolioDecision == "PORTFOLIO_APPLIED" and
-    (.evaluation.nativeVolatility.comparedOutputCount > 0) and
-    (.evaluation.nativeVolatility.quarantinedOutputCount > 0) and
-    (.evaluation.nativeVolatility.transportedOutputCount > 0) and
-    .evaluation.ordinaryInvocations == 18 and
-    .evaluation.measurementOnlyWorkflowRuns == 0 and
-    .evaluation.measurement.pairsMeasured == 8 and
-    .evaluation.measurement.pairsRequested == 8 and
-    .evaluation.measurement.fallbackSuccessful == true and
-    .evaluation.measurement.requiredOutputDigestCount == 1 and
-    ((.evaluation.measurement.qualified == true and
-        .acceptance.decision == "COMPATIBLE_PORTFOLIO_QUALIFIED" and
+	.evaluation.preflight.independentNativeObservationAuthorized == true and
+	.evaluation.preflight.driftedBindings == [] and
+	.evaluation.independentNativeObservationStarted == true and
+	((.evaluation.nativeVolatility.portfolioApplied == true and
+	  .evaluation.nativeVolatility.portfolioDecision == "PORTFOLIO_APPLIED" and
+	  (.evaluation.nativeVolatility.comparedOutputCount > 0) and
+	  (.evaluation.nativeVolatility.quarantinedOutputCount > 0) and
+	  (.evaluation.nativeVolatility.transportedOutputCount > 0) and
+	  .evaluation.ordinaryInvocations == 18 and
+	  .evaluation.measurementOnlyWorkflowRuns == 0 and
+	  .evaluation.measurement.pairsMeasured == 8 and
+	  .evaluation.measurement.pairsRequested == 8 and
+	  .evaluation.measurement.fallbackSuccessful == true and
+	  .evaluation.measurement.requiredOutputDigestCount == 1 and
+	  ((.evaluation.measurement.qualified == true and
+	    .acceptance.decision == "COMPATIBLE_PORTFOLIO_QUALIFIED" and
         .evaluation.measurement.positivePairs >= 6 and
         .evaluation.measurement.meanSavedMs >= 500 and
         .evaluation.measurement.reductionRatio >= 0.02 and
@@ -105,7 +110,15 @@ jq -e --slurpfile contract "${buildopt_contract}" '
         .acceptance.compatibleReplayValueProven == true) or
       (.evaluation.measurement.qualified == false and
         .acceptance.decision == "COMPATIBLE_PORTFOLIO_VALUE_NOT_PROVEN" and
-        .acceptance.compatibleReplayValueProven == false))) or
+	    .acceptance.compatibleReplayValueProven == false))) or
+    (.evaluation.nativeVolatility.portfolioApplied == false and
+      .evaluation.nativeVolatility.portfolioDecision == "NATIVE_RETAINED" and
+      .evaluation.nativeVolatility.portfolioReason ==
+        "CURRENT_MATERIALIZATION_UNAVAILABLE" and
+      .evaluation.ordinaryInvocations == 1 and
+      .evaluation.measurement.pairsMeasured == 0 and
+      .acceptance.decision == "CURRENT_MATERIALIZATION_UNAVAILABLE" and
+      .acceptance.compatibleReplayValueProven == false)) or
    (.evaluation.preflight.decision == "NATIVE_RETAINED" and
     .evaluation.preflight.reason == "PORTFOLIO_CONTEXT_DRIFT" and
     .evaluation.preflight.independentNativeObservationAuthorized == false and

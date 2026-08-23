@@ -21,13 +21,14 @@ import (
 )
 
 const (
-	profileNativeObserveUsage        = "usage: buildopt profile native-observe --state-dir PATH --root DIR\n"
-	profileNativeContextUsage        = "usage: buildopt profile native-context --state-dir PATH\n"
-	profileNativePreflightUsage      = "usage: buildopt profile native-preflight --state-dir PATH --portfolio FILE --portfolio-context FILE\n"
-	profileQuarantineUsage           = "usage: buildopt profile quarantine --state-dir PATH --second-observation FILE [--portfolio FILE --portfolio-context FILE --revision SHA256]\n"
-	optimizeQuarantineReason         = "NATIVE_VOLATILE_PRODUCERS_QUARANTINED"
-	optimizePortfolioEvidenceSchema  = "buildopt.poc/optimize-native-volatility-portfolio-evidence/v1"
-	optimizePortfolioRetentionSchema = "buildopt.poc/optimize-native-volatility-portfolio-retention/v1"
+	profileNativeObserveUsage              = "usage: buildopt profile native-observe --state-dir PATH --root DIR\n"
+	profileNativeContextUsage              = "usage: buildopt profile native-context --state-dir PATH\n"
+	profileNativePreflightUsage            = "usage: buildopt profile native-preflight --state-dir PATH --portfolio FILE --portfolio-context FILE\n"
+	profileQuarantineUsage                 = "usage: buildopt profile quarantine --state-dir PATH --second-observation FILE [--portfolio FILE --portfolio-context FILE --revision SHA256]\n"
+	optimizeQuarantineReason               = "NATIVE_VOLATILE_PRODUCERS_QUARANTINED"
+	optimizePortfolioEvidenceSchema        = "buildopt.poc/optimize-native-volatility-portfolio-evidence/v1"
+	optimizePortfolioRetentionSchema       = "buildopt.poc/optimize-native-volatility-portfolio-retention/v1"
+	optimizePortfolioReasonMaterialization = "CURRENT_MATERIALIZATION_UNAVAILABLE"
 )
 
 var errOptimizeNativePortfolioContextDrift = errors.New("native volatility portfolio context drifted")
@@ -193,18 +194,29 @@ func runOptimizeNativeQuarantine(args []string, stdout, stderr io.Writer) int {
 	if err == nil {
 		var result nativevolatility.Result
 		var application *nativevolatility.PortfolioApplication
+		var retention *optimizeNativePortfolioRetention
 		if state.Discovery.Status == optimizeDiscoveryComplete &&
 			state.Discovery.Materialization.Status == optimizeMaterializationCaptured {
 			result, application, err = applyOptimizeNativeQuarantineWithPortfolio(
 				invocation, &state, *secondPath, *portfolioPath, *portfolioContextPath, *revision,
 			)
 		} else if *portfolioPath != "" || *portfolioContextPath != "" || *revision != "" {
-			err = errors.New("portfolio application requires a complete captured materialization")
+			result, err = analyzeDiagnosticNativeObservations(invocation, state, *secondPath)
+			if err == nil {
+				var value optimizeNativePortfolioRetention
+				value, err = optimizeNativePortfolioRetentionEvidence(
+					state, result, *portfolioPath, *portfolioContextPath,
+					optimizePortfolioReasonMaterialization,
+				)
+				retention = &value
+			}
 		} else {
 			result, err = analyzeDiagnosticNativeObservations(invocation, state, *secondPath)
 		}
 		if err == nil {
-			if application != nil {
+			if retention != nil {
+				err = encodeOptimizeJSON(stdout, *retention)
+			} else if application != nil {
 				var portfolio nativevolatility.Portfolio
 				portfolio, err = readOptimizeNativePortfolio(*portfolioPath)
 				if err == nil {
@@ -236,35 +248,63 @@ func encodeOptimizeNativePortfolioRetention(
 	portfolioPath string,
 	contextPath string,
 ) error {
-	portfolio, err := readOptimizeNativePortfolio(portfolioPath)
+	retention, err := optimizeNativePortfolioRetentionEvidence(
+		state, current, portfolioPath, contextPath, "PORTFOLIO_CONTEXT_DRIFT",
+	)
 	if err != nil {
 		return err
+	}
+	return encodeOptimizeJSON(stdout, retention)
+}
+
+func optimizeNativePortfolioRetentionEvidence(
+	state optimizeState,
+	current nativevolatility.Result,
+	portfolioPath string,
+	contextPath string,
+	reason string,
+) (optimizeNativePortfolioRetention, error) {
+	portfolio, err := readOptimizeNativePortfolio(portfolioPath)
+	if err != nil {
+		return optimizeNativePortfolioRetention{}, err
 	}
 	learned, err := readOptimizeNativePortfolioContext(contextPath)
 	if err != nil {
-		return err
+		return optimizeNativePortfolioRetention{}, err
 	}
 	learnedSHA, err := nativevolatility.ContextSHA256(learned)
 	if err != nil || learnedSHA != portfolio.ContextSHA256 {
-		return errors.New("native volatility portfolio context is invalid")
+		return optimizeNativePortfolioRetention{}, errors.New("native volatility portfolio context is invalid")
 	}
 	currentContext, err := optimizeNativePortfolioContext(state)
 	if err != nil {
-		return err
+		return optimizeNativePortfolioRetention{}, err
 	}
 	preflight, err := nativevolatility.PreflightPortfolio(portfolio, learned, currentContext)
-	if err != nil || preflight.Decision != nativevolatility.PortfolioDecisionRetained {
-		return errors.New("native volatility portfolio retention context is invalid")
+	if err != nil {
+		return optimizeNativePortfolioRetention{}, errors.New("native volatility portfolio retention context is invalid")
 	}
-	return encodeOptimizeJSON(stdout, optimizeNativePortfolioRetention{
+	if reason == "PORTFOLIO_CONTEXT_DRIFT" {
+		if preflight.Decision != nativevolatility.PortfolioDecisionRetained {
+			return optimizeNativePortfolioRetention{}, errors.New("native volatility portfolio retention context is invalid")
+		}
+	} else if reason == optimizePortfolioReasonMaterialization {
+		if preflight.Decision != nativevolatility.PortfolioDecisionCompatible ||
+			len(preflight.DriftedBindings) != 0 {
+			return optimizeNativePortfolioRetention{}, errors.New("native volatility portfolio materialization retention is invalid")
+		}
+	} else {
+		return optimizeNativePortfolioRetention{}, errors.New("native volatility portfolio retention reason is invalid")
+	}
+	return optimizeNativePortfolioRetention{
 		SchemaVersion: optimizePortfolioRetentionSchema,
 		Portfolio:     portfolio, Current: current,
 		LearnedContext: learned, CurrentContext: currentContext,
 		LearnedContextSHA: learnedSHA, CurrentContextSHA: preflight.CurrentContextSHA256,
-		Decision: "NATIVE_RETAINED", Reason: "PORTFOLIO_CONTEXT_DRIFT",
+		Decision: "NATIVE_RETAINED", Reason: reason,
 		DriftedBindings: preflight.DriftedBindings, ProductionAuthorized: false,
 		TestOptimization: "OUT_OF_SCOPE",
-	})
+	}, nil
 }
 
 func loadOptimizeQuarantineState(relative string) (optimizeInvocation, optimizeState, error) {

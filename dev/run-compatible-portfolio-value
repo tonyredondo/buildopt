@@ -44,6 +44,7 @@ mkdir -p -- "${buildopt_tools}" "${buildopt_context_workspace}/.buildopt/optimiz
 
 buildopt_learning_base=$(jq -er '.subject.learningBaseRevision' "${buildopt_contract}")
 buildopt_learning_revision=$(jq -er '.subject.learningRevision' "${buildopt_contract}")
+buildopt_evaluation_base=$(jq -er '.subject.evaluationBaseRevision' "${buildopt_contract}")
 buildopt_evaluation_revision=$(jq -er '.subject.evaluationRevision' "${buildopt_contract}")
 
 buildopt_subject() {
@@ -78,8 +79,9 @@ buildopt_subject() {
 buildopt_subject compatible-learning "${buildopt_learning_base}" \
     "${buildopt_learning_revision}" gradle/wrapper/gradle-wrapper.properties \
     >"${buildopt_learning_subjects}"
-buildopt_subject compatible-evaluation "${buildopt_learning_revision}" \
-    "${buildopt_evaluation_revision}" gradle/libs.versions.toml \
+buildopt_subject compatible-evaluation "${buildopt_evaluation_base}" \
+    "${buildopt_evaluation_revision}" \
+    core/src/main/java/io/micronaut/core/convert/DefaultMutableConversionService.java \
     >"${buildopt_evaluation_subjects}"
 
 printf 'Learning a fresh producer portfolio at %s\n' "${buildopt_learning_revision}"
@@ -210,7 +212,8 @@ jq -n \
    [($e.incrementalLearning.observations[]?.requiredOutputSha256 // empty)] |
    map(select(length > 0)) | unique) as $outputDigests |
   ($p.decision == "COMPATIBLE") as $compatible |
-  ($compatible and ($e.calibration.qualified // false)) as $qualified |
+  ($compatible and $e.nativeVolatility.portfolioApplied) as $materialized |
+  ($materialized and ($e.calibration.qualified // false)) as $qualified |
   {
     schemaVersion:"buildopt.evidence/poc-compatible-portfolio-value/v1",
     workItem:"POC-COMPATIBLE-PORTFOLIO-VALUE-001",
@@ -228,7 +231,7 @@ jq -n \
       independentNativeObservationStarted:
         $e.nativeVolatility.independentNativeObservationStarted,
       graph:($e.discovery.graph // null),nativeVolatility:$e.nativeVolatility,
-      measurement:(if $compatible then {
+      measurement:(if $materialized then {
         pairsRequested:$e.calibration.pairsRequested,
         pairsMeasured:$e.calibration.pairsMeasured,
         positivePairs:$e.calibration.positivePairs,
@@ -260,11 +263,12 @@ jq -n \
          else $evaluationQuarantineSha end)},
     acceptance:{
       decision:(if $qualified then "COMPATIBLE_PORTFOLIO_QUALIFIED"
-        elif $compatible then "COMPATIBLE_PORTFOLIO_VALUE_NOT_PROVEN"
+        elif $materialized then "COMPATIBLE_PORTFOLIO_VALUE_NOT_PROVEN"
+        elif $compatible then "CURRENT_MATERIALIZATION_UNAVAILABLE"
         else "COMPATIBILITY_REJECTED" end),
       compatibleReplayValueProven:$qualified,
       exactOutputGatePreserved:
-        (if $compatible then (($outputDigests|length) == 1) else true end),
+        (if $materialized then (($outputDigests|length) == 1) else true end),
       repositoryPercentagesAveraged:false,mechanismPercentagesAdded:false},
     boundaries:$contract[0].boundaries
   }

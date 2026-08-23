@@ -520,8 +520,10 @@ buildopt_capture_subject() {
                      (.schemaVersion == "buildopt.poc/optimize-native-volatility-portfolio-retention/v1" and
                       .current.schemaVersion == "buildopt.poc/native-volatility-quarantine/v1" and
                       .decision == "NATIVE_RETAINED" and
-                      .reason == "PORTFOLIO_CONTEXT_DRIFT" and
-                      (.driftedBindings | length) > 0 and
+                      ((.reason == "PORTFOLIO_CONTEXT_DRIFT" and
+                        (.driftedBindings | length) > 0) or
+                       (.reason == "CURRENT_MATERIALIZATION_UNAVAILABLE" and
+                        (.driftedBindings | length) == 0)) and
                       .productionAuthorized == false and
                       .testOptimization == "OUT_OF_SCOPE"))
                   else

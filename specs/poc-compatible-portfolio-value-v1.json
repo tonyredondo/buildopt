@@ -8,13 +8,17 @@
     "workflow": [
       "assemble"
     ],
-    "learningBaseRevision": "6a11a05950f36193bd865d6b25c2bc17dfb4ff1c",
-    "learningRevision": "8e418f75dd7a3aa66bc94786101bc8a2005cb5e2",
-    "evaluationRevision": "4dc4299f8dd0faccc0c45c2f83a223b456dc0731",
-    "evaluationIsDirectChild": true,
+    "learningBaseRevision": "8e418f75dd7a3aa66bc94786101bc8a2005cb5e2",
+    "learningRevision": "4dc4299f8dd0faccc0c45c2f83a223b456dc0731",
+    "evaluationBaseRevision": "53af04a2bdea87c92bfb9cc0a87241d21a79b574",
+    "evaluationRevision": "a7955f4cc50225044d8eb7c614ba80b607b000dd",
+    "evaluationIsDirectChildOfBase": true,
+    "interveningCommitsAfterLearning": 1,
     "wrapperTreeSha256": "1d1bca219166747b5f7ecbe36d877e3972dfc2047dd6e6ef041867a6f789552c",
     "evaluationChangedPaths": [
-      "gradle/libs.versions.toml"
+      "core/src/main/java/io/micronaut/core/convert/DefaultMutableConversionService.java",
+      "core/src/test/groovy/io/micronaut/core/convert/DefaultConversionServiceSpec.groovy",
+      "http-server-netty/src/test/groovy/io/micronaut/http/server/netty/binding/ParameterBindingSpec.groovy"
     ]
   },
   "learning": {

@@ -364,6 +364,29 @@ func TestDiagnosticNativeObservationWorksWithoutMaterialization(t *testing.T) {
 		context.RepositoryScopeSHA256 != expectedRepositoryScope {
 		t.Fatalf("diagnostic portfolio context = %+v, err = %v", context, err)
 	}
+	portfolio, err := nativevolatility.LearnPortfolio(
+		nativevolatility.Portfolio{}, context, optimizeDigest("learning-revision"), result, true,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	portfolioPath := filepath.Join(repository, "portfolio.json")
+	contextPath := filepath.Join(repository, "portfolio-context.json")
+	if err := writeCanonicalPrivateJSON(portfolioPath, portfolio); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeCanonicalPrivateJSON(contextPath, context); err != nil {
+		t.Fatal(err)
+	}
+	retention, err := optimizeNativePortfolioRetentionEvidence(
+		state, result, portfolioPath, contextPath, optimizePortfolioReasonMaterialization,
+	)
+	if err != nil || retention.Decision != "NATIVE_RETAINED" ||
+		retention.Reason != optimizePortfolioReasonMaterialization ||
+		len(retention.DriftedBindings) != 0 || retention.ProductionAuthorized ||
+		retention.TestOptimization != "OUT_OF_SCOPE" {
+		t.Fatalf("materialization retention = %+v, err = %v", retention, err)
+	}
 	state.Bindings.RepositoryScopeSHA256 = optimizeDigest("different-checkout-root")
 	otherRootContext, err := optimizeNativePortfolioContext(state)
 	if err != nil || otherRootContext != context {
