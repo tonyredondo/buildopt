@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [SUMMARY]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract=${buildopt_repo_root}/specs/poc-compatible-portfolio-value-v1.json
+buildopt_summary=${1:-${buildopt_repo_root}/benchmarks/results/poc-compatible-portfolio-value-v1/summary.json}
+
+command -v jq >/dev/null 2>&1 || {
+    printf 'compatible portfolio value validation requires jq\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-compatible-portfolio-value/v1" and
+  .workItem == "POC-COMPATIBLE-PORTFOLIO-VALUE-001" and
+  .subject.repositoryId == "micronaut-projects/micronaut-core" and
+  .subject.historyBranch == "5.2.x" and
+  .subject.learningBaseRevision == "6a11a05950f36193bd865d6b25c2bc17dfb4ff1c" and
+  .subject.learningRevision == "8e418f75dd7a3aa66bc94786101bc8a2005cb5e2" and
+  .subject.evaluationRevision == "4dc4299f8dd0faccc0c45c2f83a223b456dc0731" and
+  .subject.evaluationIsDirectChild == true and
+  .subject.evaluationChangedPaths == ["gradle/libs.versions.toml"] and
+  .learning.ordinaryInvocations == 1 and
+  .learning.independentNativeObservations == 1 and
+  .learning.measurementOnlyWorkflowRuns == 0 and
+  .learning.performanceClaimed == false and
+  .learning.historicalOutputBytesStored == false and
+  .learning.historicalOutputHashesReused == false and
+  .preflight.requiredDecision == "COMPATIBLE" and
+  .preflight.bindings == ["REPOSITORY_SCOPE_SHA256","WORKFLOW_SHA256",
+    "GRADLE_WRAPPER_SHA256","OUTPUT_CONTRACT_SHA256"] and
+  .preflight.driftDecision == "NATIVE_RETAINED" and
+  .preflight.driftStartsTiming == false and
+  .measurement.pairs == 8 and .measurement.minimumPositivePairs == 6 and
+  .measurement.positiveSavedTimeIntervalRequired == true and
+  .measurement.candidateP95NonRegressive == true and
+  .measurement.minimumMeanSavedMs == 500 and
+  .measurement.minimumReductionRatio == 0.02 and
+  .measurement.exactRequiredOutputs == true and
+  .measurement.fallbackRequired == true and
+  .measurement.repositoryPercentagesAveraged == false and
+  .measurement.mechanismPercentagesAdded == false and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false and
+  .boundaries.repositorySpecificProductRules == false and
+  .boundaries.soakRequired == false and
+  .boundaries.designPartnerRequired == false and
+  .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_contract}" >/dev/null || {
+    printf 'compatible portfolio value contract drifted\n' >&2
+    exit 1
+}
+
+[[ -s ${buildopt_summary} ]] || {
+    printf 'compatible portfolio value summary is unavailable: %s\n' \
+        "${buildopt_summary}" >&2
+    exit 1
+}
+
+jq -e --slurpfile contract "${buildopt_contract}" '
+  .schemaVersion == "buildopt.evidence/poc-compatible-portfolio-value/v1" and
+  .workItem == "POC-COMPATIBLE-PORTFOLIO-VALUE-001" and
+  .repository.id == $contract[0].subject.repositoryId and
+  .repository.learningRevision == $contract[0].subject.learningRevision and
+  .repository.evaluationRevision == $contract[0].subject.evaluationRevision and
+  .learning.ordinaryInvocations == 1 and
+  .learning.independentNativeObservations == 1 and
+  .learning.measurementOnlyWorkflowRuns == 0 and
+  .learning.performanceClaimed == false and
+  .learning.nativeVolatility.decision == "TRANSPORT_READY" and
+  (.learning.nativeVolatility.comparedOutputCount > 0) and
+  (.learning.portfolio.quarantinedProducers | length) > 0 and
+  .learning.portfolio.productionAuthorized == false and
+  .learning.portfolio.testOptimization == "OUT_OF_SCOPE" and
+  .evaluation.productFailures == 0 and
+  ((.evaluation.preflight.decision == "COMPATIBLE" and
+    .evaluation.preflight.reason == "PORTFOLIO_CONTEXT_COMPATIBLE" and
+    .evaluation.preflight.independentNativeObservationAuthorized == true and
+    .evaluation.preflight.driftedBindings == [] and
+    .evaluation.independentNativeObservationStarted == true and
+    .evaluation.nativeVolatility.portfolioApplied == true and
+    .evaluation.nativeVolatility.portfolioDecision == "PORTFOLIO_APPLIED" and
+    (.evaluation.nativeVolatility.comparedOutputCount > 0) and
+    (.evaluation.nativeVolatility.quarantinedOutputCount > 0) and
+    (.evaluation.nativeVolatility.transportedOutputCount > 0) and
+    .evaluation.ordinaryInvocations == 18 and
+    .evaluation.measurementOnlyWorkflowRuns == 0 and
+    .evaluation.measurement.pairsMeasured == 8 and
+    .evaluation.measurement.pairsRequested == 8 and
+    .evaluation.measurement.fallbackSuccessful == true and
+    .evaluation.measurement.requiredOutputDigestCount == 1 and
+    ((.evaluation.measurement.qualified == true and
+        .acceptance.decision == "COMPATIBLE_PORTFOLIO_QUALIFIED" and
+        .evaluation.measurement.positivePairs >= 6 and
+        .evaluation.measurement.meanSavedMs >= 500 and
+        .evaluation.measurement.reductionRatio >= 0.02 and
+        .evaluation.measurement.interval95SavedMs[0] > 0 and
+        .evaluation.measurement.candidateP95Ms <= .evaluation.measurement.controlP95Ms and
+        .acceptance.compatibleReplayValueProven == true) or
+      (.evaluation.measurement.qualified == false and
+        .acceptance.decision == "COMPATIBLE_PORTFOLIO_VALUE_NOT_PROVEN" and
+        .acceptance.compatibleReplayValueProven == false))) or
+   (.evaluation.preflight.decision == "NATIVE_RETAINED" and
+    .evaluation.preflight.reason == "PORTFOLIO_CONTEXT_DRIFT" and
+    .evaluation.preflight.independentNativeObservationAuthorized == false and
+    (.evaluation.preflight.driftedBindings | length) > 0 and
+    .evaluation.independentNativeObservationStarted == false and
+    .evaluation.ordinaryInvocations == 1 and
+    .evaluation.measurementOnlyWorkflowRuns == 0 and
+    .evaluation.measurement.pairsMeasured == 0 and
+    .acceptance.decision == "COMPATIBILITY_REJECTED" and
+    .acceptance.compatibleReplayValueProven == false)) and
+  .acceptance.exactOutputGatePreserved == true and
+  .acceptance.repositoryPercentagesAveraged == false and
+  .acceptance.mechanismPercentagesAdded == false and
+  (.sourceEvidenceSha256 | all(test("^[0-9a-f]{64}$"))) and
+  .boundaries == $contract[0].boundaries
+' "${buildopt_summary}" >/dev/null || {
+    printf 'compatible portfolio value evidence drifted\n' >&2
+    exit 1
+}
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/nativevolatility ./cmd/native-volatility-evaluation
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/launcher \
+    -run 'Test(ApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration|DiagnosticNativeObservationWorksWithoutMaterialization)$'
+
+printf 'Compatible portfolio value contract and evidence: PASS\n'

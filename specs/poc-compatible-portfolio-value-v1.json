@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "buildopt.specs/poc-compatible-portfolio-value/v1",
+  "workItem": "POC-COMPATIBLE-PORTFOLIO-VALUE-001",
+  "subject": {
+    "repositoryId": "micronaut-projects/micronaut-core",
+    "remoteUrl": "https://github.com/micronaut-projects/micronaut-core.git",
+    "historyBranch": "5.2.x",
+    "workflow": [
+      "assemble"
+    ],
+    "learningBaseRevision": "6a11a05950f36193bd865d6b25c2bc17dfb4ff1c",
+    "learningRevision": "8e418f75dd7a3aa66bc94786101bc8a2005cb5e2",
+    "evaluationRevision": "4dc4299f8dd0faccc0c45c2f83a223b456dc0731",
+    "evaluationIsDirectChild": true,
+    "wrapperTreeSha256": "1d1bca219166747b5f7ecbe36d877e3972dfc2047dd6e6ef041867a6f789552c",
+    "evaluationChangedPaths": [
+      "gradle/libs.versions.toml"
+    ]
+  },
+  "learning": {
+    "ordinaryInvocations": 1,
+    "independentNativeObservations": 1,
+    "measurementOnlyWorkflowRuns": 0,
+    "performanceClaimed": false,
+    "portfolioSource": "TWO_INDEPENDENT_CURRENT_CONTEXT_NATIVE_OBSERVATIONS",
+    "storedData": "PRODUCER_TASK_PATHS_AND_AUTHORITATIVE_RESULT_DIGESTS_ONLY",
+    "historicalOutputBytesStored": false,
+    "historicalOutputHashesReused": false
+  },
+  "preflight": {
+    "position": "AFTER_EVALUATION_CUSTOMER_BUILD_BEFORE_INDEPENDENT_NATIVE_OBSERVATION",
+    "requiredDecision": "COMPATIBLE",
+    "bindings": [
+      "REPOSITORY_SCOPE_SHA256",
+      "WORKFLOW_SHA256",
+      "GRADLE_WRAPPER_SHA256",
+      "OUTPUT_CONTRACT_SHA256"
+    ],
+    "driftDecision": "NATIVE_RETAINED",
+    "driftStartsTiming": false
+  },
+  "measurement": {
+    "pairs": 8,
+    "armOrder": "ALTERNATING",
+    "minimumPositivePairs": 6,
+    "positiveSavedTimeIntervalRequired": true,
+    "candidateP95NonRegressive": true,
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "exactRequiredOutputs": true,
+    "fallbackRequired": true,
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRules": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

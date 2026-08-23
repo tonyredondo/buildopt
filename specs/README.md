@@ -287,6 +287,12 @@ Its [machine-readable contract](./poc-portfolio-compatibility-preflight-v1.json)
 also preregisters the next Micronaut learning/evaluation window without
 assuming output-contract compatibility before it is observed.
 
+The [compatible producer portfolio value protocol](./poc-compatible-portfolio-value-v1.md)
+uses that preregistered direct-child window. It requires an exact runtime
+preflight before the second observation and eight alternating pairs, preserves
+required outputs byte for byte and treats both qualification and safe rejection
+as valid POC outcomes.
+
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation
 per useful invocation. Its fixture completes eight pairs with zero

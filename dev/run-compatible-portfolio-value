@@ -1,0 +1,274 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ $1 != /* || -e $1 ]]; then
+    printf 'usage: %s /new/absolute/evidence/directory\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract=${buildopt_repo_root}/specs/poc-compatible-portfolio-value-v1.json
+buildopt_runner=${buildopt_script_dir}/run-automatic-breadth-transfer
+buildopt_state_name=producer-bound-quarantine-v1
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'compatible portfolio value run requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -s ${buildopt_contract} && -x ${buildopt_runner} ]] || {
+    printf 'compatible portfolio value inputs are unavailable\n' >&2
+    exit 1
+}
+[[ -z $(git -C "${buildopt_repo_root}" status --porcelain --untracked-files=all) ]] || {
+    printf 'BuildOpt state must be clean before compatible portfolio capture\n' >&2
+    exit 1
+}
+buildopt_free=$(df -Pk "${TMPDIR:-/tmp}" | awk 'NR == 2 {print $4 * 1024}')
+if ((buildopt_free < 17179869184)); then
+    printf 'compatible portfolio value run requires at least 16 GiB free\n' >&2
+    exit 1
+fi
+
+mkdir -p -- "${buildopt_output}"
+buildopt_learning_subjects=${buildopt_output}/learning-subjects.json
+buildopt_evaluation_subjects=${buildopt_output}/evaluation-subjects.json
+buildopt_context=${buildopt_output}/portfolio-context.json
+buildopt_portfolio=${buildopt_output}/portfolio.json
+buildopt_tools=${buildopt_output}/tools
+buildopt_context_workspace=${buildopt_output}/context-workspace
+mkdir -p -- "${buildopt_tools}" "${buildopt_context_workspace}/.buildopt/optimize"
+
+buildopt_learning_base=$(jq -er '.subject.learningBaseRevision' "${buildopt_contract}")
+buildopt_learning_revision=$(jq -er '.subject.learningRevision' "${buildopt_contract}")
+buildopt_evaluation_revision=$(jq -er '.subject.evaluationRevision' "${buildopt_contract}")
+
+buildopt_subject() {
+    local buildopt_key=$1
+    local buildopt_parent=$2
+    local buildopt_target=$3
+    local buildopt_change_path=$4
+    jq -n \
+        --arg key "${buildopt_key}" \
+        --arg parent "${buildopt_parent}" \
+        --arg target "${buildopt_target}" \
+        --arg changePath "${buildopt_change_path}" '
+      {
+        schemaVersion:"buildopt.specs/poc-qualified-lifetime/v2",
+        workItem:"POC-COMPATIBLE-PORTFOLIO-VALUE-001",
+        repositories:[{
+          key:$key,repositoryId:"micronaut-projects/micronaut-core",
+          repositoryNumericId:124230204,
+          remoteUrl:"https://github.com/micronaut-projects/micronaut-core.git",
+          historyBranch:"5.2.x",publicRevision:$parent,targetRevision:$target,
+          jdkToolchain:"temurin-jdk-25",changePath:$changePath,
+          mutation:"APPEND_FIXED_COMMENT",entrypoints:["assemble"],entrypointsFile:null,
+          expectedChangedProjects:[],observations:[]
+        }],
+        boundaries:{proofOfConcept:true,productionAuthorized:false,
+          repositorySpecificProductRules:false,soakRequired:false,
+          designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+      }
+    '
+}
+
+buildopt_subject compatible-learning "${buildopt_learning_base}" \
+    "${buildopt_learning_revision}" gradle/wrapper/gradle-wrapper.properties \
+    >"${buildopt_learning_subjects}"
+buildopt_subject compatible-evaluation "${buildopt_learning_revision}" \
+    "${buildopt_evaluation_revision}" gradle/libs.versions.toml \
+    >"${buildopt_evaluation_subjects}"
+
+printf 'Learning a fresh producer portfolio at %s\n' "${buildopt_learning_revision}"
+buildopt_learning_subjects_sha=$(sha256sum "${buildopt_learning_subjects}" | awk '{print $1}')
+env \
+    BUILDOPT_AUTOMATIC_BREADTH_PROTOCOL=v4 \
+    BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_FILE="${buildopt_learning_subjects}" \
+    BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256="${buildopt_learning_subjects_sha}" \
+    BUILDOPT_AUTOMATIC_BREADTH_INVOCATIONS=1 \
+    "${buildopt_runner}" "${buildopt_output}/learning"
+
+buildopt_learning_capture=${buildopt_output}/learning/compatible-learning/capture.json
+buildopt_learning_result=${buildopt_output}/learning/compatible-learning/quarantine-result.json
+buildopt_learning_state=${buildopt_output}/learning/compatible-learning/state
+[[ -s ${buildopt_learning_capture} && -s ${buildopt_learning_result} &&
+    -s ${buildopt_learning_state}/state.json ]] || {
+    printf 'compatible portfolio learning evidence is incomplete\n' >&2
+    exit 1
+}
+jq -e '
+  .productFailure == false and .ordinaryInvocations == 1 and
+  .measurementOnlyWorkflowRuns == 0 and
+  .nativeVolatility.independentNativeObservationStarted == true and
+  .nativeVolatility.decision == "TRANSPORT_READY" and
+  (.nativeVolatility.comparedOutputCount > 0)
+' "${buildopt_learning_capture}" >/dev/null || {
+    printf 'compatible portfolio learning did not produce authoritative evidence\n' >&2
+    exit 1
+}
+
+printf 'Building exact portfolio tools from %s\n' \
+    "$(git -C "${buildopt_repo_root}" rev-parse --short HEAD)"
+(
+    cd -- "${buildopt_repo_root}"
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -trimpath -o "${buildopt_tools}/buildopt" ./cmd/buildopt
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -trimpath -o "${buildopt_tools}/native-volatility-evaluation" \
+        ./cmd/native-volatility-evaluation
+)
+cp -a -- "${buildopt_learning_state}" \
+    "${buildopt_context_workspace}/.buildopt/optimize/${buildopt_state_name}"
+(
+    cd -- "${buildopt_context_workspace}"
+    "${buildopt_tools}/buildopt" profile native-context \
+        --state-dir ".buildopt/optimize/${buildopt_state_name}"
+) >"${buildopt_context}"
+buildopt_learning_revision_sha=$(printf '%s' "${buildopt_learning_revision}" |
+    sha256sum | awk '{print $1}')
+"${buildopt_tools}/native-volatility-evaluation" \
+    --portfolio-context "${buildopt_context}" \
+    --learn-result "${buildopt_learning_result}" \
+    --learn-revision "${buildopt_learning_revision_sha}" >"${buildopt_portfolio}"
+
+printf 'Evaluating the portfolio at direct child %s\n' "${buildopt_evaluation_revision}"
+buildopt_evaluation_subjects_sha=$(sha256sum "${buildopt_evaluation_subjects}" | awk '{print $1}')
+buildopt_evaluation_revision_sha=$(printf '%s' "${buildopt_evaluation_revision}" |
+    sha256sum | awk '{print $1}')
+env \
+    BUILDOPT_AUTOMATIC_BREADTH_PROTOCOL=v4 \
+    BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_FILE="${buildopt_evaluation_subjects}" \
+    BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256="${buildopt_evaluation_subjects_sha}" \
+    BUILDOPT_NATIVE_VOLATILITY_PORTFOLIO_FILE="${buildopt_portfolio}" \
+    BUILDOPT_NATIVE_VOLATILITY_PORTFOLIO_CONTEXT_FILE="${buildopt_context}" \
+    BUILDOPT_NATIVE_VOLATILITY_REVISION_SHA256="${buildopt_evaluation_revision_sha}" \
+    "${buildopt_runner}" "${buildopt_output}/evaluation"
+
+buildopt_evaluation_capture=${buildopt_output}/evaluation/compatible-evaluation/capture.json
+buildopt_preflight=${buildopt_output}/evaluation/compatible-evaluation/portfolio-preflight.json
+[[ -s ${buildopt_evaluation_capture} && -s ${buildopt_preflight} ]] || {
+    printf 'compatible portfolio evaluation evidence is incomplete\n' >&2
+    exit 1
+}
+
+buildopt_preflight_decision=$(jq -er '.decision' "${buildopt_preflight}")
+case ${buildopt_preflight_decision} in
+    COMPATIBLE)
+        for buildopt_required in native-build.log native-second.json quarantine-result.json; do
+            [[ -s ${buildopt_output}/evaluation/compatible-evaluation/${buildopt_required} ]] || {
+                printf 'compatible preflight did not produce required native evidence: %s\n' \
+                    "${buildopt_required}" >&2
+                exit 1
+            }
+        done
+        ;;
+    NATIVE_RETAINED)
+        for buildopt_forbidden in native-build.log native-second.json quarantine-result.json; do
+            [[ ! -e ${buildopt_output}/evaluation/compatible-evaluation/${buildopt_forbidden} ]] || {
+                printf 'rejected preflight started forbidden native work: %s\n' \
+                    "${buildopt_forbidden}" >&2
+                exit 1
+            }
+        done
+        ;;
+    *)
+        printf 'unexpected portfolio preflight decision: %s\n' \
+            "${buildopt_preflight_decision}" >&2
+        exit 1
+        ;;
+esac
+
+buildopt_evaluation_quarantine_sha=null
+if [[ -s ${buildopt_output}/evaluation/compatible-evaluation/quarantine-result.json ]]; then
+    buildopt_evaluation_quarantine_sha=$(sha256sum \
+        "${buildopt_output}/evaluation/compatible-evaluation/quarantine-result.json" |
+        awk '{print $1}')
+fi
+
+jq -n \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg buildoptRevision "$(git -C "${buildopt_repo_root}" rev-parse HEAD)" \
+    --arg learningRevision "${buildopt_learning_revision}" \
+    --arg evaluationRevision "${buildopt_evaluation_revision}" \
+    --arg learningCaptureSha "$(sha256sum "${buildopt_learning_capture}" | awk '{print $1}')" \
+    --arg learningQuarantineSha "$(sha256sum "${buildopt_learning_result}" | awk '{print $1}')" \
+    --arg contextSha "$(sha256sum "${buildopt_context}" | awk '{print $1}')" \
+    --arg portfolioSha "$(sha256sum "${buildopt_portfolio}" | awk '{print $1}')" \
+    --arg evaluationCaptureSha "$(sha256sum "${buildopt_evaluation_capture}" | awk '{print $1}')" \
+    --arg preflightSha "$(sha256sum "${buildopt_preflight}" | awk '{print $1}')" \
+    --arg evaluationQuarantineSha "${buildopt_evaluation_quarantine_sha}" \
+    --slurpfile contract "${buildopt_contract}" \
+    --slurpfile learning "${buildopt_learning_capture}" \
+    --slurpfile portfolio "${buildopt_portfolio}" \
+    --slurpfile evaluation "${buildopt_evaluation_capture}" \
+    --slurpfile preflight "${buildopt_preflight}" '
+  ($learning[0]) as $l | ($evaluation[0]) as $e | ($preflight[0]) as $p |
+  ([($e.incrementalLearning.baseline.requiredOutputSha256 // empty)] +
+   [($e.incrementalLearning.observations[]?.requiredOutputSha256 // empty)] |
+   map(select(length > 0)) | unique) as $outputDigests |
+  ($p.decision == "COMPATIBLE") as $compatible |
+  ($compatible and ($e.calibration.qualified // false)) as $qualified |
+  {
+    schemaVersion:"buildopt.evidence/poc-compatible-portfolio-value/v1",
+    workItem:"POC-COMPATIBLE-PORTFOLIO-VALUE-001",
+    capturedAt:$capturedAt,buildoptRevision:$buildoptRevision,
+    repository:{id:$contract[0].subject.repositoryId,
+      learningRevision:$learningRevision,evaluationRevision:$evaluationRevision},
+    learning:{ordinaryInvocations:$l.ordinaryInvocations,
+      independentNativeObservations:1,
+      measurementOnlyWorkflowRuns:$l.measurementOnlyWorkflowRuns,
+      performanceClaimed:false,nativeVolatility:$l.nativeVolatility,
+      portfolio:$portfolio[0]},
+    evaluation:{ordinaryInvocations:$e.ordinaryInvocations,
+      measurementOnlyWorkflowRuns:$e.measurementOnlyWorkflowRuns,
+      preflight:$p,
+      independentNativeObservationStarted:
+        $e.nativeVolatility.independentNativeObservationStarted,
+      graph:($e.discovery.graph // null),nativeVolatility:$e.nativeVolatility,
+      measurement:(if $compatible then {
+        pairsRequested:$e.calibration.pairsRequested,
+        pairsMeasured:$e.calibration.pairsMeasured,
+        positivePairs:$e.calibration.positivePairs,
+        controlMeanMs:$e.calibration.controlMeanMs,
+        candidateMeanMs:$e.calibration.candidateMeanMs,
+        meanSavedMs:$e.calibration.meanSavedMs,
+        reductionRatio:$e.calibration.reductionRatio,
+        interval95SavedMs:$e.calibration.interval95SavedMs,
+        controlP95Ms:$e.calibration.controlP95Ms,
+        candidateP95Ms:$e.calibration.candidateP95Ms,
+        breakEvenBuilds:$e.calibration.breakEvenBuilds,
+        calibrationCostMs:$e.calibration.calibrationCostMs,
+        qualificationPolicy:$e.calibration.qualificationPolicy,
+        qualified:$e.calibration.qualified,
+        fallbackSuccessful:($e.calibration.fallbackSuccessful and
+          $e.incrementalLearning.fallbackSuccessful),
+        requiredOutputDigestCount:($outputDigests|length),
+        requiredOutputSha256:($outputDigests[0] // null)
+      } else {pairsRequested:8,pairsMeasured:0,positivePairs:0,
+        qualified:false,fallbackSuccessful:true,
+        requiredOutputDigestCount:0,requiredOutputSha256:null} end),
+      productFailures:(if $e.productFailure then 1 else 0 end)},
+    sourceEvidenceSha256:{learningCapture:$learningCaptureSha,
+      learningQuarantine:$learningQuarantineSha,portfolioContext:$contextSha,
+      portfolio:$portfolioSha,evaluationCapture:$evaluationCaptureSha,
+      evaluationPreflight:$preflightSha,
+      evaluationQuarantine:
+        (if $evaluationQuarantineSha == "null" then $preflightSha
+         else $evaluationQuarantineSha end)},
+    acceptance:{
+      decision:(if $qualified then "COMPATIBLE_PORTFOLIO_QUALIFIED"
+        elif $compatible then "COMPATIBLE_PORTFOLIO_VALUE_NOT_PROVEN"
+        else "COMPATIBILITY_REJECTED" end),
+      compatibleReplayValueProven:$qualified,
+      exactOutputGatePreserved:
+        (if $compatible then (($outputDigests|length) == 1) else true end),
+      repositoryPercentagesAveraged:false,mechanismPercentagesAdded:false},
+    boundaries:$contract[0].boundaries
+  }
+' >"${buildopt_output}/summary.json"
+
+rm -rf -- "${buildopt_tools}" "${buildopt_context_workspace}"
+printf 'Compatible portfolio value evidence written to %s\n' "${buildopt_output}"
