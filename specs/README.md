@@ -281,6 +281,12 @@ without carrying historical bytes into a later revision. Its machine-readable
 companion is
 [`poc-cross-revision-volatility-portfolio-v1.json`](./poc-cross-revision-volatility-portfolio-v1.json).
 
+The [portfolio compatibility preflight](./poc-portfolio-compatibility-preflight-v1.md)
+moves the four-binding decision ahead of the independent native observation.
+Its [machine-readable contract](./poc-portfolio-compatibility-preflight-v1.json)
+also preregisters the next Micronaut learning/evaluation window without
+assuming output-contract compatibility before it is observed.
+
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation
 per useful invocation. Its fixture completes eight pairs with zero

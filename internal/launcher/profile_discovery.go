@@ -51,6 +51,9 @@ func runProfileDiscovery(args []string, stdout, stderr io.Writer) int {
 	if len(args) > 0 && args[0] == "native-context" {
 		return runOptimizeNativePortfolioContext(args[1:], stdout, stderr)
 	}
+	if len(args) > 0 && args[0] == "native-preflight" {
+		return runOptimizeNativePortfolioPreflight(args[1:], stdout, stderr)
+	}
 	if len(args) > 0 && args[0] == "quarantine" {
 		return runOptimizeNativeQuarantine(args[1:], stdout, stderr)
 	}

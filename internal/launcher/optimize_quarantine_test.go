@@ -147,9 +147,24 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 	if err := writeCanonicalPrivateJSON(contextPath, portfolioContext); err != nil {
 		t.Fatal(err)
 	}
+	compatiblePreflight, err := optimizeNativePortfolioPreflight(
+		portfolioState, portfolioPath, contextPath,
+	)
+	if err != nil || compatiblePreflight.Decision != nativevolatility.PortfolioDecisionCompatible ||
+		!compatiblePreflight.IndependentNativeObservationAuthorized {
+		t.Fatalf("compatible portfolio preflight = %+v, err = %v", compatiblePreflight, err)
+	}
 	evaluationRevisionDigest := sha256.Sum256([]byte(discovery.TargetRevision))
 	driftedState := portfolioState
 	driftedState.Bindings.WrapperSHA256 = optimizeDigest("different-wrapper")
+	driftedPreflight, err := optimizeNativePortfolioPreflight(
+		driftedState, portfolioPath, contextPath,
+	)
+	if err != nil || driftedPreflight.Decision != nativevolatility.PortfolioDecisionRetained ||
+		driftedPreflight.IndependentNativeObservationAuthorized ||
+		!equalOptimizeStrings(driftedPreflight.DriftedBindings, []string{"GRADLE_WRAPPER_SHA256"}) {
+		t.Fatalf("drifted portfolio preflight = %+v, err = %v", driftedPreflight, err)
+	}
 	driftedCurrent, driftedApplication, err := applyOptimizeNativeQuarantineWithPortfolio(
 		invocation, &driftedState, secondPath, portfolioPath, contextPath,
 		hex.EncodeToString(evaluationRevisionDigest[:]),

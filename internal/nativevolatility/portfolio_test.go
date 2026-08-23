@@ -116,6 +116,52 @@ func TestPortfolioApplicationFailsClosedOnMissingProducerAndTampering(t *testing
 	}
 }
 
+func TestPortfolioPreflightAuthorizesOnlyExactContext(t *testing.T) {
+	context := portfolioTestContext()
+	learning := Analyze(
+		observation(entry("stable", "1", ":stable"), entry("volatile", "2", ":volatile")),
+		observation(entry("stable", "1", ":stable"), entry("volatile", "3", ":volatile")),
+	)
+	portfolio, err := LearnPortfolio(Portfolio{}, context, digest("a"), learning, true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	compatible, err := PreflightPortfolio(portfolio, context, context)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if compatible.Decision != PortfolioDecisionCompatible ||
+		!compatible.IndependentNativeObservationAuthorized || len(compatible.DriftedBindings) != 0 {
+		t.Fatalf("compatible preflight = %+v", compatible)
+	}
+
+	driftedContext := context
+	driftedContext.WrapperSHA256 = digest("8")
+	driftedContext.OutputContractSHA256 = digest("9")
+	retained, err := PreflightPortfolio(portfolio, context, driftedContext)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if retained.Decision != PortfolioDecisionRetained ||
+		retained.IndependentNativeObservationAuthorized ||
+		!equalStrings(retained.DriftedBindings, []string{
+			"GRADLE_WRAPPER_SHA256", "OUTPUT_CONTRACT_SHA256",
+		}) {
+		t.Fatalf("drifted preflight = %+v", retained)
+	}
+
+	tampered := retained
+	tampered.IndependentNativeObservationAuthorized = true
+	if err := ValidatePortfolioPreflight(tampered, portfolio); err == nil {
+		t.Fatal("drifted preflight authorized an independent native observation")
+	}
+	wrongLearned := context
+	wrongLearned.RepositoryScopeSHA256 = digest("0")
+	if _, err := PreflightPortfolio(portfolio, wrongLearned, context); err == nil {
+		t.Fatal("portfolio accepted a mismatched learned context")
+	}
+}
+
 func portfolioTestContext() PortfolioContext {
 	return PortfolioContext{
 		RepositoryScopeSHA256: digest("1"), WorkflowSHA256: digest("2"),

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "buildopt.specs/poc-portfolio-compatibility-preflight/v1",
+  "workItem": "POC-PORTFOLIO-COMPATIBILITY-PREFLIGHT-001",
+  "preflight": {
+    "position": "AFTER_ORDINARY_OPTIMIZED_NATIVE_BEFORE_INDEPENDENT_NATIVE_OBSERVATION",
+    "bindings": [
+      "REPOSITORY_SCOPE_SHA256",
+      "WORKFLOW_SHA256",
+      "GRADLE_WRAPPER_SHA256",
+      "OUTPUT_CONTRACT_SHA256"
+    ],
+    "compatibleDecision": "COMPATIBLE",
+    "driftDecision": "NATIVE_RETAINED",
+    "driftReason": "PORTFOLIO_CONTEXT_DRIFT",
+    "driftStartsIndependentNativeObservation": false,
+    "compatibleAuthorizesTransport": false,
+    "compatibleAuthorizesProduction": false
+  },
+  "rejectionFixture": {
+    "repositoryId": "micronaut-projects/micronaut-core",
+    "learningRevision": "6a11a05950f36193bd865d6b25c2bc17dfb4ff1c",
+    "evaluationRevision": "1be5f8cefb80b4dbd2b3e086705950ddc72f195f",
+    "expectedDriftedBindings": [
+      "GRADLE_WRAPPER_SHA256",
+      "OUTPUT_CONTRACT_SHA256"
+    ],
+    "expectedIndependentNativeObservations": 0,
+    "performanceClaimed": false
+  },
+  "nextExperiment": {
+    "repositoryId": "micronaut-projects/micronaut-core",
+    "historyBranch": "5.2.x",
+    "workflow": [
+      "assemble"
+    ],
+    "learningRevision": "8e418f75dd7a3aa66bc94786101bc8a2005cb5e2",
+    "evaluationRevision": "4dc4299f8dd0faccc0c45c2f83a223b456dc0731",
+    "evaluationIsDirectChild": true,
+    "wrapperTreeSha256": "1d1bca219166747b5f7ecbe36d877e3972dfc2047dd6e6ef041867a6f789552c",
+    "evaluationChangedPaths": [
+      "gradle/libs.versions.toml"
+    ],
+    "staticBindingsCompatible": [
+      "REPOSITORY_SCOPE_SHA256",
+      "WORKFLOW_SHA256",
+      "GRADLE_WRAPPER_SHA256"
+    ],
+    "outputContractCompatibility": "MUST_BE_OBSERVED_BY_PREFLIGHT",
+    "timingAuthorizedBeforeCompatiblePreflight": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRules": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

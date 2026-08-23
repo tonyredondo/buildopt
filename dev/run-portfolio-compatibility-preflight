@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ $1 != /* || -e $1 ]]; then
+    printf 'usage: %s /new/absolute/evidence/directory\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract=${buildopt_repo_root}/specs/poc-portfolio-compatibility-preflight-v1.json
+buildopt_previous=${buildopt_repo_root}/benchmarks/results/poc-cross-revision-volatility-portfolio-v1/summary.json
+buildopt_runner=${buildopt_script_dir}/run-automatic-breadth-transfer
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'portfolio compatibility preflight run requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -s ${buildopt_contract} && -s ${buildopt_previous} && -x ${buildopt_runner} ]] || {
+    printf 'portfolio compatibility preflight inputs are unavailable\n' >&2
+    exit 1
+}
+[[ -z $(git -C "${buildopt_repo_root}" status --porcelain --untracked-files=all) ]] || {
+    printf 'BuildOpt state must be clean before portfolio preflight evidence capture\n' >&2
+    exit 1
+}
+buildopt_free=$(df -Pk "${TMPDIR:-/tmp}" | awk 'NR == 2 {print $4 * 1024}')
+if ((buildopt_free < 8589934592)); then
+    printf 'portfolio compatibility preflight run requires at least 8 GiB free\n' >&2
+    exit 1
+fi
+
+mkdir -p -- "${buildopt_output}"
+buildopt_subjects=${buildopt_output}/subjects.json
+buildopt_context=${buildopt_output}/learned-context.json
+buildopt_portfolio=${buildopt_output}/portfolio.json
+buildopt_run=${buildopt_output}/run
+
+jq '.portfolio | {
+  repositoryScopeSha256,workflowSha256,wrapperSha256,outputContractSha256
+}' "${buildopt_previous}" >"${buildopt_context}"
+jq -n \
+    --arg contextSha "$(jq -er '.portfolio.contextSha256' "${buildopt_previous}")" \
+    --arg revisionSha "$(printf '%s' 6a11a05950f36193bd865d6b25c2bc17dfb4ff1c | sha256sum | awk '{print $1}')" \
+    --arg resultSha "$(jq -er '.sourceEvidenceSha256.learningQuarantine' "${buildopt_previous}")" \
+    --argjson producers "$(jq -c '.learning.quarantinedProducers' "${buildopt_previous}")" '
+  {schemaVersion:"buildopt.poc/native-volatility-portfolio/v1",
+   contextSha256:$contextSha,
+   observations:[{revisionSha256:$revisionSha,resultSha256:$resultSha,
+     quarantinedProducers:$producers,authoritativeNative:true,performanceClaimed:false}],
+   quarantinedProducers:$producers,productionAuthorized:false,
+   testOptimization:"OUT_OF_SCOPE"}
+' >"${buildopt_portfolio}"
+
+jq -n '
+  {schemaVersion:"buildopt.specs/poc-qualified-lifetime/v2",
+   workItem:"POC-PORTFOLIO-COMPATIBILITY-PREFLIGHT-001",
+   repositories:[{
+     key:"micronaut-preflight",repositoryId:"micronaut-projects/micronaut-core",
+     repositoryNumericId:124230204,
+     remoteUrl:"https://github.com/micronaut-projects/micronaut-core.git",
+     historyBranch:"5.2.x",
+     publicRevision:"0f1642bdda4d36cd4a65c616e7113f9fea012fa3",
+     targetRevision:"1be5f8cefb80b4dbd2b3e086705950ddc72f195f",
+     jdkToolchain:"temurin-jdk-25",
+     changePath:"http-client-jdk/src/main/java/io/micronaut/http/client/jdk/DefaultJdkHttpClient.java",
+     mutation:"APPEND_FIXED_COMMENT",entrypoints:["assemble"],entrypointsFile:null,
+     expectedChangedProjects:[],observations:[]}],
+   boundaries:{proofOfConcept:true,productionAuthorized:false,
+     repositorySpecificProductRules:false,soakRequired:false,
+     designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}}
+' >"${buildopt_subjects}"
+
+buildopt_subjects_sha=$(sha256sum "${buildopt_subjects}" | awk '{print $1}')
+env \
+    BUILDOPT_AUTOMATIC_BREADTH_PROTOCOL=v4 \
+    BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_FILE="${buildopt_subjects}" \
+    BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256="${buildopt_subjects_sha}" \
+    BUILDOPT_AUTOMATIC_BREADTH_INVOCATIONS=1 \
+    BUILDOPT_NATIVE_VOLATILITY_PORTFOLIO_FILE="${buildopt_portfolio}" \
+    BUILDOPT_NATIVE_VOLATILITY_PORTFOLIO_CONTEXT_FILE="${buildopt_context}" \
+    BUILDOPT_NATIVE_VOLATILITY_REVISION_SHA256="$(printf '%s' 1be5f8cefb80b4dbd2b3e086705950ddc72f195f | sha256sum | awk '{print $1}')" \
+    "${buildopt_runner}" "${buildopt_run}"
+
+buildopt_capture=${buildopt_run}/micronaut-preflight/capture.json
+buildopt_preflight=${buildopt_run}/micronaut-preflight/portfolio-preflight.json
+[[ -s ${buildopt_capture} && -s ${buildopt_preflight} ]] || {
+    printf 'portfolio compatibility preflight evidence is incomplete\n' >&2
+    exit 1
+}
+for buildopt_forbidden in native-build.log native-second.json quarantine-result.json; do
+    [[ ! -e ${buildopt_run}/micronaut-preflight/${buildopt_forbidden} ]] || {
+        printf 'incompatible preflight started forbidden native work: %s\n' \
+            "${buildopt_forbidden}" >&2
+        exit 1
+    }
+done
+
+jq -n \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg buildoptRevision "$(git -C "${buildopt_repo_root}" rev-parse HEAD)" \
+    --arg captureSha "$(sha256sum "${buildopt_capture}" | awk '{print $1}')" \
+    --arg preflightSha "$(sha256sum "${buildopt_preflight}" | awk '{print $1}')" \
+    --slurpfile capture "${buildopt_capture}" \
+    --slurpfile preflight "${buildopt_preflight}" \
+    --slurpfile contract "${buildopt_contract}" '
+  {schemaVersion:"buildopt.evidence/poc-portfolio-compatibility-preflight/v1",
+   workItem:"POC-PORTFOLIO-COMPATIBILITY-PREFLIGHT-001",
+   capturedAt:$capturedAt,buildoptRevision:$buildoptRevision,
+   rejection:{repositoryId:$capture[0].repositoryId,
+     learningRevision:$contract[0].rejectionFixture.learningRevision,
+     evaluationRevision:$capture[0].targetRevision,
+     ordinaryInvocations:$capture[0].ordinaryInvocations,
+     measurementOnlyWorkflowRuns:$capture[0].measurementOnlyWorkflowRuns,
+     optimizedNativeDurationMs:$capture[0].durationMs,
+     decision:$preflight[0].decision,reason:$preflight[0].reason,
+     driftedBindings:$preflight[0].driftedBindings,
+     independentNativeObservationAuthorized:
+       $preflight[0].independentNativeObservationAuthorized,
+     independentNativeObservationStarted:
+       $capture[0].nativeVolatility.independentNativeObservationStarted,
+     independentNativeObservations:0,avoidedIndependentNativeObservations:1,
+     timingPairsMeasured:0,performanceClaimed:false,productFailures:0},
+   nextExperiment:$contract[0].nextExperiment,
+   sourceEvidenceSha256:{capture:$captureSha,preflight:$preflightSha},
+   acceptance:{decision:"PREFLIGHT_PROVEN_NEXT_WINDOW_PREREGISTERED",
+     incompatibleWorkAvoided:true,compatibleReplayValueProven:false,
+     exactOutputGatePreserved:true},
+   boundaries:$contract[0].boundaries}
+' >"${buildopt_output}/summary.json"
+
+printf 'Portfolio compatibility preflight evidence written to %s\n' "${buildopt_output}"

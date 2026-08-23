@@ -256,6 +256,9 @@ buildopt_capture_subject() {
     local buildopt_total_invocations buildopt_native_repository buildopt_native_gradle_home
     local buildopt_native_log buildopt_native_observation buildopt_quarantine_result
     local buildopt_quarantine_sha buildopt_native_observation_sha
+    local buildopt_portfolio_preflight buildopt_portfolio_preflight_sha
+    local buildopt_portfolio_preflight_json
+    local buildopt_portfolio_preflight_decision
     local buildopt_argument
     local -a buildopt_gradle_args=()
     local -a buildopt_native_gradle_args=()
@@ -409,6 +412,45 @@ buildopt_capture_subject() {
                 buildopt_native_log="${buildopt_subject_output}/native-build.log"
                 buildopt_native_observation="${buildopt_subject_output}/native-second.json"
                 buildopt_quarantine_result="${buildopt_subject_output}/quarantine-result.json"
+                buildopt_portfolio_preflight="${buildopt_subject_output}/portfolio-preflight.json"
+                if [[ ${buildopt_native_portfolio_requested} == true ]]; then
+                    printf '  portfolio compatibility preflight\n'
+                    if ! (
+                        cd -- "${buildopt_repository}"
+                        "${buildopt_executable}" profile native-preflight \
+                            --state-dir ".buildopt/optimize/${buildopt_state_name}" \
+                            --portfolio "${buildopt_native_portfolio}" \
+                            --portfolio-context "${buildopt_native_portfolio_context}"
+                    ) >"${buildopt_portfolio_preflight}" \
+                        2>"${buildopt_subject_output}/portfolio-preflight.stderr"; then
+                        cat "${buildopt_subject_output}/portfolio-preflight.stderr" >&2
+                        buildopt_all_invocations_valid=false
+                        break
+                    fi
+                    jq -e '
+                      .schemaVersion == "buildopt.poc/native-volatility-portfolio-preflight/v1" and
+                      ((.decision == "COMPATIBLE" and
+                        .reason == "PORTFOLIO_CONTEXT_COMPATIBLE" and
+                        .independentNativeObservationAuthorized == true and
+                        (.driftedBindings | length) == 0) or
+                       (.decision == "NATIVE_RETAINED" and
+                        .reason == "PORTFOLIO_CONTEXT_DRIFT" and
+                        .independentNativeObservationAuthorized == false and
+                        (.driftedBindings | length) > 0)) and
+                      .productionAuthorized == false and
+                      .testOptimization == "OUT_OF_SCOPE"
+                    ' "${buildopt_portfolio_preflight}" >/dev/null || {
+                        printf 'portfolio compatibility preflight is invalid\n' >&2
+                        buildopt_all_invocations_valid=false
+                        break
+                    }
+                    buildopt_portfolio_preflight_decision=$(jq -r '.decision' \
+                        "${buildopt_portfolio_preflight}")
+                    if [[ ${buildopt_portfolio_preflight_decision} == NATIVE_RETAINED ]]; then
+                        buildopt_total_invocations=${buildopt_invocation}
+                        break
+                    fi
+                fi
                 printf '  independent native observation and producer quarantine\n'
                 git clone -q --no-hardlinks "${buildopt_repository}" "${buildopt_native_repository}"
                 mkdir -p -- "${buildopt_native_gradle_home}"
@@ -625,15 +667,49 @@ buildopt_capture_subject() {
                testOptimization:$r.testOptimization}
             ' >"${buildopt_subject_output}/capture.json"
             if [[ ${buildopt_protocol} == v4 ]]; then
-                buildopt_quarantine_sha=$(sha256sum \
-                    "${buildopt_subject_output}/quarantine-result.json" | awk '{print $1}')
-                buildopt_native_observation_sha=$(sha256sum \
-                    "${buildopt_subject_output}/native-second.json" | awk '{print $1}')
-                jq --arg quarantineFile "${buildopt_key}/quarantine-result.json" \
-                    --arg quarantineSha256 "${buildopt_quarantine_sha}" \
-                    --arg nativeObservationFile "${buildopt_key}/native-second.json" \
-                    --arg nativeObservationSha256 "${buildopt_native_observation_sha}" \
-                    --slurpfile quarantine "${buildopt_subject_output}/quarantine-result.json" '
+                buildopt_portfolio_preflight_sha=
+                buildopt_portfolio_preflight_json=null
+                if [[ -s ${buildopt_subject_output}/portfolio-preflight.json ]]; then
+                    buildopt_portfolio_preflight_sha=$(sha256sum \
+                        "${buildopt_subject_output}/portfolio-preflight.json" | awk '{print $1}')
+                    buildopt_portfolio_preflight_json=$(jq -c . \
+                        "${buildopt_subject_output}/portfolio-preflight.json")
+                fi
+                if [[ ${buildopt_portfolio_preflight_json} != null &&
+                    $(jq -r '.decision' "${buildopt_subject_output}/portfolio-preflight.json") == \
+                        NATIVE_RETAINED ]]; then
+                    jq --arg preflightFile "${buildopt_key}/portfolio-preflight.json" \
+                        --arg preflightSha256 "${buildopt_portfolio_preflight_sha}" \
+                        --argjson preflight "${buildopt_portfolio_preflight_json}" '
+                      . + {nativeVolatility:{
+                        resultFile:$preflightFile,resultSha256:$preflightSha256,
+                        preflightFile:$preflightFile,preflightSha256:$preflightSha256,
+                        preflightDecision:$preflight.decision,
+                        secondObservationFile:null,secondObservationSha256:null,
+                        independentNativeObservationAuthorized:
+                          $preflight.independentNativeObservationAuthorized,
+                        independentNativeObservationStarted:false,
+                        comparedOutputCount:0,volatilePaths:[],quarantinedProducers:[],
+                        quarantinedOutputCount:0,transportedOutputCount:0,
+                        decision:$preflight.decision,reason:$preflight.reason,
+                        portfolioApplied:false,portfolioDecision:$preflight.decision,
+                        portfolioReason:$preflight.reason,
+                        contextDriftedBindings:$preflight.driftedBindings}}
+                    ' "${buildopt_subject_output}/capture.json" \
+                        >"${buildopt_subject_output}/capture.tmp"
+                else
+                    buildopt_quarantine_sha=$(sha256sum \
+                        "${buildopt_subject_output}/quarantine-result.json" | awk '{print $1}')
+                    buildopt_native_observation_sha=$(sha256sum \
+                        "${buildopt_subject_output}/native-second.json" | awk '{print $1}')
+                    jq --arg quarantineFile "${buildopt_key}/quarantine-result.json" \
+                        --arg quarantineSha256 "${buildopt_quarantine_sha}" \
+                        --arg nativeObservationFile "${buildopt_key}/native-second.json" \
+                        --arg nativeObservationSha256 "${buildopt_native_observation_sha}" \
+                        --arg preflightFile "${buildopt_key}/portfolio-preflight.json" \
+                        --arg preflightSha256 "${buildopt_portfolio_preflight_sha}" \
+                        --argjson preflight "${buildopt_portfolio_preflight_json}" \
+                        --slurpfile quarantine "${buildopt_subject_output}/quarantine-result.json" '
                   ($quarantine[0]) as $evidence |
                   (if ($evidence.schemaVersion ==
                     "buildopt.poc/optimize-native-volatility-portfolio-evidence/v1" or
@@ -648,8 +724,17 @@ buildopt_capture_subject() {
                    then $evidence else null end) as $retention |
                   . + {nativeVolatility:{
                     resultFile:$quarantineFile,resultSha256:$quarantineSha256,
+                    preflightFile:(if $preflight == null then null else $preflightFile end),
+                    preflightSha256:
+                      (if $preflight == null then null else $preflightSha256 end),
+                    preflightDecision:
+                      (if $preflight == null then null else $preflight.decision end),
                     secondObservationFile:$nativeObservationFile,
                     secondObservationSha256:$nativeObservationSha256,
+                    independentNativeObservationAuthorized:
+                      (if $preflight == null then true
+                       else $preflight.independentNativeObservationAuthorized end),
+                    independentNativeObservationStarted:true,
                     comparedOutputCount:$current.comparedOutputCount,
                     volatilePaths:$current.volatilePaths,
                     quarantinedProducers:
@@ -675,6 +760,7 @@ buildopt_capture_subject() {
                       (if $retention == null then [] else $retention.driftedBindings end)}}
                 ' "${buildopt_subject_output}/capture.json" \
                     >"${buildopt_subject_output}/capture.tmp"
+                fi
                 mv -- "${buildopt_subject_output}/capture.tmp" \
                     "${buildopt_subject_output}/capture.json"
             fi

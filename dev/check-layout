@@ -406,6 +406,8 @@ buildopt_required_files=(
     "dev/check-producer-bound-lifetime-generalization"
     "dev/check-cross-revision-volatility-portfolio"
     "dev/run-cross-revision-volatility-portfolio"
+    "dev/check-portfolio-compatibility-preflight"
+    "dev/run-portfolio-compatibility-preflight"
     "dev/check-compatible-descendant-discovery"
     "dev/check-incremental-learning"
     "dev/run-incremental-learning"

@@ -11,8 +11,11 @@ import (
 const (
 	PortfolioSchema            = "buildopt.poc/native-volatility-portfolio/v1"
 	PortfolioApplicationSchema = "buildopt.poc/native-volatility-portfolio-application/v1"
+	PortfolioPreflightSchema   = "buildopt.poc/native-volatility-portfolio-preflight/v1"
 
 	PortfolioDecisionApplied = "PORTFOLIO_APPLIED"
+	PortfolioDecisionCompatible = "COMPATIBLE"
+	PortfolioDecisionRetained   = "NATIVE_RETAINED"
 )
 
 // PortfolioContext binds producer-volatility learning to one repository,
@@ -67,6 +70,114 @@ type PortfolioApplication struct {
 	TransportSHA256               string   `json:"transportSha256"`
 	ProductionAuthorized          bool     `json:"productionAuthorized"`
 	TestOptimization              string   `json:"testOptimization"`
+}
+
+// PortfolioPreflight decides whether a learned portfolio may justify an
+// independent native observation for the current revision. It performs no
+// build work and grants no transport or production authority.
+type PortfolioPreflight struct {
+	SchemaVersion                         string           `json:"schemaVersion"`
+	Decision                              string           `json:"decision"`
+	Reason                                string           `json:"reason"`
+	LearnedContext                        PortfolioContext `json:"learnedContext"`
+	CurrentContext                        PortfolioContext `json:"currentContext"`
+	LearnedContextSHA256                  string           `json:"learnedContextSha256"`
+	CurrentContextSHA256                  string           `json:"currentContextSha256"`
+	DriftedBindings                       []string         `json:"driftedBindings"`
+	IndependentNativeObservationAuthorized bool           `json:"independentNativeObservationAuthorized"`
+	ProductionAuthorized                  bool             `json:"productionAuthorized"`
+	TestOptimization                      string           `json:"testOptimization"`
+}
+
+// PreflightPortfolio compares every stable portfolio binding before the
+// caller starts an independent native observation. A drift decision is a
+// successful fail-closed result rather than an evaluation error.
+func PreflightPortfolio(
+	portfolio Portfolio,
+	learned PortfolioContext,
+	current PortfolioContext,
+) (PortfolioPreflight, error) {
+	if err := ValidatePortfolio(portfolio); err != nil {
+		return PortfolioPreflight{}, errors.New("native volatility portfolio is invalid")
+	}
+	learnedSHA, err := ContextSHA256(learned)
+	if err != nil || learnedSHA != portfolio.ContextSHA256 {
+		return PortfolioPreflight{}, errors.New("native volatility learned context is invalid")
+	}
+	currentSHA, err := ContextSHA256(current)
+	if err != nil {
+		return PortfolioPreflight{}, errors.New("native volatility current context is invalid")
+	}
+	drifted := portfolioDriftedBindings(learned, current)
+	result := PortfolioPreflight{
+		SchemaVersion: PortfolioPreflightSchema,
+		Decision: PortfolioDecisionCompatible,
+		Reason: "PORTFOLIO_CONTEXT_COMPATIBLE",
+		LearnedContext: learned,
+		CurrentContext: current,
+		LearnedContextSHA256: learnedSHA,
+		CurrentContextSHA256: currentSHA,
+		DriftedBindings: drifted,
+		IndependentNativeObservationAuthorized: true,
+		ProductionAuthorized: false,
+		TestOptimization: "OUT_OF_SCOPE",
+	}
+	if len(drifted) > 0 {
+		result.Decision = PortfolioDecisionRetained
+		result.Reason = "PORTFOLIO_CONTEXT_DRIFT"
+		result.IndependentNativeObservationAuthorized = false
+	}
+	if err := ValidatePortfolioPreflight(result, portfolio); err != nil {
+		return PortfolioPreflight{}, err
+	}
+	return result, nil
+}
+
+// ValidatePortfolioPreflight rejects incomplete, inconsistent or
+// authority-expanding compatibility decisions.
+func ValidatePortfolioPreflight(result PortfolioPreflight, portfolio Portfolio) error {
+	if result.SchemaVersion != PortfolioPreflightSchema || result.ProductionAuthorized ||
+		result.TestOptimization != "OUT_OF_SCOPE" || ValidatePortfolio(portfolio) != nil {
+		return errors.New("native volatility portfolio preflight is invalid")
+	}
+	learnedSHA, learnedErr := ContextSHA256(result.LearnedContext)
+	currentSHA, currentErr := ContextSHA256(result.CurrentContext)
+	drifted := portfolioDriftedBindings(result.LearnedContext, result.CurrentContext)
+	if learnedErr != nil || currentErr != nil || learnedSHA != portfolio.ContextSHA256 ||
+		result.LearnedContextSHA256 != learnedSHA || result.CurrentContextSHA256 != currentSHA ||
+		!equalStrings(result.DriftedBindings, drifted) {
+		return errors.New("native volatility portfolio preflight binding drifted")
+	}
+	if len(drifted) == 0 {
+		if result.Decision != PortfolioDecisionCompatible ||
+			result.Reason != "PORTFOLIO_CONTEXT_COMPATIBLE" ||
+			!result.IndependentNativeObservationAuthorized {
+			return errors.New("compatible native volatility preflight is invalid")
+		}
+		return nil
+	}
+	if result.Decision != PortfolioDecisionRetained || result.Reason != "PORTFOLIO_CONTEXT_DRIFT" ||
+		result.IndependentNativeObservationAuthorized {
+		return errors.New("drifted native volatility preflight is invalid")
+	}
+	return nil
+}
+
+func portfolioDriftedBindings(learned, current PortfolioContext) []string {
+	drifted := []string{}
+	if learned.RepositoryScopeSHA256 != current.RepositoryScopeSHA256 {
+		drifted = append(drifted, "REPOSITORY_SCOPE_SHA256")
+	}
+	if learned.WorkflowSHA256 != current.WorkflowSHA256 {
+		drifted = append(drifted, "WORKFLOW_SHA256")
+	}
+	if learned.WrapperSHA256 != current.WrapperSHA256 {
+		drifted = append(drifted, "GRADLE_WRAPPER_SHA256")
+	}
+	if learned.OutputContractSHA256 != current.OutputContractSHA256 {
+		drifted = append(drifted, "OUTPUT_CONTRACT_SHA256")
+	}
+	return drifted
 }
 
 // ContextSHA256 returns the stable cross-revision portfolio binding.
