@@ -63,49 +63,89 @@ func newOptimizeTaskLineage(tasks []buildimpact.DiscoveredTask) (*optimizeTaskLi
 	return lineage, nil
 }
 
-// rebuildEntrypoints returns a bounded project-level task frontier that
-// rebuilds every output removed from transport. A project's observed assemble
-// task is used only when its exact dependency closure covers every direct
-// producer in that project; otherwise the direct producers remain explicit.
-func (lineage *optimizeTaskLineage) rebuildEntrypoints(entries []nativevolatility.Entry) ([]string, error) {
+// rebuildEntrypoints returns the smallest exact direct-producer frontier that
+// rebuilds every output removed from transport. Existing candidate tasks and
+// downstream required producers cover their observed ancestors; no lifecycle
+// task is introduced merely to shorten the command line.
+func (lineage *optimizeTaskLineage) rebuildEntrypoints(
+	entries []nativevolatility.Entry,
+	existing []string,
+) ([]string, error) {
 	if lineage == nil || len(entries) == 0 {
 		return nil, errOptimizeTaskLineageIncomplete
 	}
-	byProject := map[string][]string{}
+	required := []string{}
 	for _, entry := range entries {
 		if len(entry.ProducerTasks) == 0 {
 			return nil, errOptimizeTaskLineageIncomplete
 		}
 		for _, producer := range entry.ProducerTasks {
-			project, exists := lineage.projects[producer]
-			if !exists || project == "" {
+			if _, exists := lineage.projects[producer]; !exists {
 				return nil, errOptimizeTaskLineageIncomplete
 			}
-			byProject[project] = append(byProject[project], producer)
+			required = append(required, producer)
 		}
 	}
-	result := []string{}
-	for project, producers := range byProject {
-		producers = mergeOptimizeStrings(nil, producers)
-		assemble := project + ":assemble"
-		if project == ":" {
-			assemble = ":assemble"
+	required = mergeOptimizeStrings(nil, required)
+	existingCoverage, err := lineage.coverage(existing)
+	if err != nil {
+		return nil, err
+	}
+	uncovered := []string{}
+	for _, producer := range required {
+		if !existingCoverage[producer] {
+			uncovered = append(uncovered, producer)
 		}
-		covered := false
-		if _, exists := lineage.dependencies[assemble]; exists {
-			ancestors, err := lineage.ancestors([]string{assemble})
-			if err != nil {
-				return nil, err
+	}
+
+	uncoveredSet := make(map[string]bool, len(uncovered))
+	for _, producer := range uncovered {
+		uncoveredSet[producer] = true
+	}
+	dominated := map[string]bool{}
+	for _, descendant := range uncovered {
+		coverage, coverageErr := lineage.coverage([]string{descendant})
+		if coverageErr != nil {
+			return nil, coverageErr
+		}
+		for producer := range coverage {
+			if producer != descendant && uncoveredSet[producer] {
+				dominated[producer] = true
 			}
-			covered = len(subtractOptimizeStrings(producers, append(ancestors, assemble))) == 0
-		}
-		if covered {
-			result = append(result, assemble)
-		} else {
-			result = append(result, producers...)
 		}
 	}
-	return mergeOptimizeStrings(nil, result), nil
+	frontier := make([]string, 0, len(uncovered)-len(dominated))
+	for _, producer := range uncovered {
+		if !dominated[producer] {
+			frontier = append(frontier, producer)
+		}
+	}
+	frontier = mergeOptimizeStrings(nil, frontier)
+	completeCoverage, err := lineage.coverage(mergeOptimizeStrings(existing, frontier))
+	if err != nil {
+		return nil, err
+	}
+	for _, producer := range required {
+		if !completeCoverage[producer] {
+			return nil, errOptimizeTaskLineageIncomplete
+		}
+	}
+	return frontier, nil
+}
+
+func (lineage *optimizeTaskLineage) coverage(entrypoints []string) (map[string]bool, error) {
+	covered := map[string]bool{}
+	for _, entrypoint := range mergeOptimizeStrings(nil, entrypoints) {
+		ancestors, err := lineage.ancestors([]string{entrypoint})
+		if err != nil {
+			return nil, err
+		}
+		covered[entrypoint] = true
+		for _, ancestor := range ancestors {
+			covered[ancestor] = true
+		}
+	}
+	return covered, nil
 }
 
 func (lineage *optimizeTaskLineage) ancestors(producers []string) ([]string, error) {

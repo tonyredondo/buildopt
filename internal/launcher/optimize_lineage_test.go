@@ -2,6 +2,7 @@ package launcher
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
@@ -81,7 +82,7 @@ func TestOptimizeTaskLineageRejectsUnknownDirectProducer(t *testing.T) {
 	}
 }
 
-func TestOptimizeTaskLineageBuildsBoundedProjectRebuildFrontier(t *testing.T) {
+func TestOptimizeTaskLineageBuildsMinimalDirectProducerFrontier(t *testing.T) {
 	lineage, err := newOptimizeTaskLineage([]buildimpact.DiscoveredTask{
 		{Path: ":app:assemble", ProjectPath: ":app", DependsOn: []string{":app:jar", ":app:javadocJar"}},
 		{Path: ":app:jar", ProjectPath: ":app", DependsOn: []string{":app:classes"}},
@@ -97,12 +98,51 @@ func TestOptimizeTaskLineageBuildsBoundedProjectRebuildFrontier(t *testing.T) {
 		{Path: "app/build/libs/app.jar", ProducerTasks: []string{":app:jar"}},
 		{Path: "app/build/libs/app-javadoc.jar", ProducerTasks: []string{":app:javadocJar"}},
 		{Path: "custom/build/archive.bin", ProducerTasks: []string{":custom:archive"}},
+	}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []string{":app:jar", ":app:javadocJar", ":custom:archive"}
+	if !equalOptimizeStrings(frontier, want) {
+		t.Fatalf("rebuild frontier = %v, want %v", frontier, want)
+	}
+}
+
+func TestOptimizeTaskLineageRemovesAlreadyCoveredAndDominatedProducers(t *testing.T) {
+	lineage, err := newOptimizeTaskLineage([]buildimpact.DiscoveredTask{
+		{Path: ":app:assemble", ProjectPath: ":app", DependsOn: []string{":app:jar"}},
+		{Path: ":app:jar", ProjectPath: ":app", DependsOn: []string{":app:classes"}},
+		{Path: ":app:classes", ProjectPath: ":app", DependsOn: []string{":app:compileJava"}},
+		{Path: ":app:compileJava", ProjectPath: ":app", DependsOn: []string{}},
+		{Path: ":other:jar", ProjectPath: ":other", DependsOn: []string{}},
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := []string{":app:assemble", ":custom:archive"}
+	frontier, err := lineage.rebuildEntrypoints([]nativevolatility.Entry{
+		{Path: "app/build/classes/App.class", ProducerTasks: []string{":app:compileJava"}},
+		{Path: "app/build/libs/app.jar", ProducerTasks: []string{":app:jar"}},
+		{Path: "other/build/libs/other.jar", ProducerTasks: []string{":other:jar"}},
+	}, []string{":app:assemble"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []string{":other:jar"}
 	if !equalOptimizeStrings(frontier, want) {
-		t.Fatalf("rebuild frontier = %v, want %v", frontier, want)
+		t.Fatalf("minimal rebuild frontier = %v, want %v", frontier, want)
+	}
+}
+
+func TestOptimizeQuarantineCandidateEntrypointBound(t *testing.T) {
+	entrypoints := make([]string, maximumStructuralAlternativeEntrypoints)
+	for index := range entrypoints {
+		entrypoints[index] = fmt.Sprintf(":project-%d:jar", index)
+	}
+	if err := validateOptimizeQuarantineCandidateEntrypoints(entrypoints); err != nil {
+		t.Fatalf("bounded quarantine frontier rejected: %v", err)
+	}
+	entrypoints = append(entrypoints, ":overflow:jar")
+	if err := validateOptimizeQuarantineCandidateEntrypoints(entrypoints); err == nil {
+		t.Fatal("oversized quarantine frontier accepted")
 	}
 }

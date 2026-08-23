@@ -311,18 +311,11 @@ func (run *optimizeRun) prepareIncrementalLearningArm() *impactInvocation {
 	}
 	selectedEntrypoints := append([]string(nil), impact.plan.Entrypoints...)
 	if discovery.Materialization.QuarantineFile != "" {
-		quarantine, quarantineErr := loadOptimizeNativeQuarantine(run.invocation, discovery)
+		_, quarantineErr := loadOptimizeNativeQuarantine(run.invocation, discovery)
 		if quarantineErr != nil {
 			run.incrementalFailure = optimizeIncrementalReasonPreparation
 			return nil
 		}
-		selectedEntrypoints = mergeOptimizeStrings(
-			selectedEntrypoints, quarantine.QuarantinedProducers,
-		)
-		impact.gradleArgs = append(impact.gradleArgs, subtractOptimizeStrings(
-			quarantine.QuarantinedProducers, impact.plan.Entrypoints,
-		)...)
-		impact.plan.Entrypoints = append([]string(nil), selectedEntrypoints...)
 	}
 	if !equalOptimizeStrings(selectedEntrypoints, discovery.CandidateEntrypoints) {
 		run.incrementalFailure = optimizeIncrementalReasonPreparation
