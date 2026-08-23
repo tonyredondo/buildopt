@@ -13,7 +13,7 @@ buildopt_evidence_root=${1:-"${buildopt_repo_root}/benchmarks/results/poc-native
 buildopt_summary=${buildopt_evidence_root}/summary.json
 buildopt_contract=${buildopt_repo_root}/specs/poc-native-volatility-quarantine-v1.md
 
-for buildopt_command in git go jq mktemp sha256sum; do
+for buildopt_command in git jq mktemp sha256sum; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
         printf 'native-volatility quarantine validation requires %s\n' \
             "${buildopt_command}" >&2
@@ -55,8 +55,10 @@ read -r buildopt_producer_sha _ < <(sha256sum -- "${buildopt_producer_source}")
 }
 
 
-go test -count=1 ./internal/nativevolatility ./cmd/native-volatility-evaluation
-go run ./cmd/native-volatility-evaluation \
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/nativevolatility ./cmd/native-volatility-evaluation
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./cmd/native-volatility-evaluation \
     --first "${buildopt_fixture}/first.json" \
     --second "${buildopt_fixture}/second.json" \
     --reused "${buildopt_fixture}/reused.json" \
@@ -83,7 +85,8 @@ jq -e '
 jq '.entries[0].sha256 =
   "9999999999999999999999999999999999999999999999999999999999999999"' \
     "${buildopt_fixture}/reused.json" >"${buildopt_tmp}/tampered-reused.json"
-if go run ./cmd/native-volatility-evaluation \
+if "${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./cmd/native-volatility-evaluation \
     --first "${buildopt_fixture}/first.json" \
     --second "${buildopt_fixture}/second.json" \
     --reused "${buildopt_tmp}/tampered-reused.json" \
@@ -95,7 +98,8 @@ fi
 
 jq '.entries[0].path = "other/build/stable-a.bin"' \
     "${buildopt_fixture}/second.json" >"${buildopt_tmp}/path-mismatch.json"
-go run ./cmd/native-volatility-evaluation \
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./cmd/native-volatility-evaluation \
     --first "${buildopt_fixture}/first.json" \
     --second "${buildopt_tmp}/path-mismatch.json" \
     >"${buildopt_tmp}/retained.json"
@@ -107,7 +111,8 @@ jq -e '
 
 jq '.entries[2].producerTasks = []' \
     "${buildopt_fixture}/second.json" >"${buildopt_tmp}/missing-producer.json"
-go run ./cmd/native-volatility-evaluation \
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./cmd/native-volatility-evaluation \
     --first "${buildopt_fixture}/first.json" \
     --second "${buildopt_tmp}/missing-producer.json" \
     >"${buildopt_tmp}/ambiguous.json"

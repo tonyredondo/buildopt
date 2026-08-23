@@ -448,18 +448,18 @@ func rewriteOptimizeQuarantineDiscoveryDocuments(
 	proposal.Decision = analysis.Decision
 	proposal.Reason = analysis.Reason
 	documents := optimizeDiscoveryDocuments{values: map[string][]byte{
-		filepath.ToSlash(filepath.Join(invocation.stateRelative, "discovery", "manifest.json")):           updatedManifestRaw,
-		filepath.ToSlash(filepath.Join(invocation.stateRelative, "discovery", "graph.json")):              updated.GraphJSON,
-		filepath.ToSlash(filepath.Join(invocation.stateRelative, "discovery", "generated-manifest.json")): updated.GeneratedJSON,
-		filepath.ToSlash(filepath.Join(invocation.stateRelative, "discovery", "snapshot.json")):           derivedRaw,
+		filepath.Join(invocation.stateRelative, "discovery", "manifest.json"):           updatedManifestRaw,
+		filepath.Join(invocation.stateRelative, "discovery", "graph.json"):              updated.GraphJSON,
+		filepath.Join(invocation.stateRelative, "discovery", "generated-manifest.json"): updated.GeneratedJSON,
+		filepath.Join(invocation.stateRelative, "discovery", "snapshot.json"):           derivedRaw,
 	}}
 	proposalRaw, err = json.MarshalIndent(proposal, "", "  ")
 	if err != nil {
 		return err
 	}
-	documents.values[filepath.ToSlash(filepath.Join(
+	documents.values[filepath.Join(
 		invocation.stateRelative, "discovery", "proposal.json",
-	))] = append(proposalRaw, '\n')
+	)] = append(proposalRaw, '\n')
 	return writeOptimizeDiscoveryDocuments(invocation.repositoryRoot, documents)
 }
 
