@@ -42,13 +42,18 @@ This diagnostic path never mutates optimize state, authorizes transport or
 claims performance; a later revision must still prove its own complete
 materialization, current bytes, correctness and value before any replay.
 
-The portfolio is bound to digests of the repository scope, Gradle workflow,
-Wrapper and owner-reviewed output contract. Drift in any field retains native
-Gradle. At the evaluation revision, two new native observations recompute the
-complete current output inventory. The effective quarantine is the union of
-current volatile producers and compatible portfolio producers. Every other
-output must retain its current-revision SHA-256; quarantined outputs must be
-rebuilt locally by their attributed producer.
+The portfolio is bound to digests of the canonical repository identity,
+Gradle workflow, Wrapper and owner-reviewed output contract. The repository
+scope is derived from the canonical repository ID rather than the checkout
+path, so two independent roots of the same repository remain comparable.
+Wrapper, workflow or output-contract drift remains incompatible. Such drift
+produces a structured `NATIVE_RETAINED` result naming every changed binding and
+stops the remaining timing pairs because they cannot support a portfolio value
+claim. At a compatible evaluation revision, two new native observations
+recompute the complete current output inventory. The effective quarantine is
+the union of current volatile producers and compatible portfolio producers.
+Every other output must retain its current-revision SHA-256; quarantined
+outputs must be rebuilt locally by their attributed producer.
 
 ## Value gate
 

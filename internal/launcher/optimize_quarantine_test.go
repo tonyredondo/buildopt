@@ -1,9 +1,11 @@
 package launcher
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -146,6 +148,32 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 		t.Fatal(err)
 	}
 	evaluationRevisionDigest := sha256.Sum256([]byte(discovery.TargetRevision))
+	driftedState := portfolioState
+	driftedState.Bindings.WrapperSHA256 = optimizeDigest("different-wrapper")
+	driftedCurrent, driftedApplication, err := applyOptimizeNativeQuarantineWithPortfolio(
+		invocation, &driftedState, secondPath, portfolioPath, contextPath,
+		hex.EncodeToString(evaluationRevisionDigest[:]),
+	)
+	if !errors.Is(err, errOptimizeNativePortfolioContextDrift) || driftedApplication != nil {
+		t.Fatalf("drifted portfolio application = %+v, err = %v", driftedApplication, err)
+	}
+	var retention bytes.Buffer
+	if err := encodeOptimizeNativePortfolioRetention(
+		&retention, driftedState, driftedCurrent, portfolioPath, contextPath,
+	); err != nil {
+		t.Fatal(err)
+	}
+	var retained optimizeNativePortfolioRetention
+	if err := json.Unmarshal(retention.Bytes(), &retained); err != nil {
+		t.Fatal(err)
+	}
+	if retained.SchemaVersion != optimizePortfolioRetentionSchema ||
+		retained.Decision != "NATIVE_RETAINED" ||
+		retained.Reason != "PORTFOLIO_CONTEXT_DRIFT" ||
+		!equalOptimizeStrings(retained.DriftedBindings, []string{"GRADLE_WRAPPER_SHA256"}) ||
+		retained.ProductionAuthorized || retained.TestOptimization != "OUT_OF_SCOPE" {
+		t.Fatalf("portfolio retention = %+v", retained)
+	}
 	current, application, err := applyOptimizeNativeQuarantineWithPortfolio(
 		invocation, &portfolioState, secondPath, portfolioPath, contextPath,
 		hex.EncodeToString(evaluationRevisionDigest[:]),
@@ -316,8 +344,16 @@ func TestDiagnosticNativeObservationWorksWithoutMaterialization(t *testing.T) {
 		t.Fatalf("diagnostic result = %+v, state mutated = %v", result, string(before) != string(after))
 	}
 	context, err := optimizeNativePortfolioContext(state)
-	if err != nil || context.OutputContractSHA256 != metadata.OutputContractSHA256 {
+	expectedRepositoryScope := optimizePortfolioRepositoryScope(state.Discovery.RepositoryID)
+	if err != nil || context.OutputContractSHA256 != metadata.OutputContractSHA256 ||
+		context.RepositoryScopeSHA256 != expectedRepositoryScope {
 		t.Fatalf("diagnostic portfolio context = %+v, err = %v", context, err)
+	}
+	state.Bindings.RepositoryScopeSHA256 = optimizeDigest("different-checkout-root")
+	otherRootContext, err := optimizeNativePortfolioContext(state)
+	if err != nil || otherRootContext != context {
+		t.Fatalf("checkout root changed portfolio context: before=%+v after=%+v err=%v",
+			context, otherRootContext, err)
 	}
 	firstPath := filepath.Join(repository, filepath.FromSlash(metadata.File))
 	if err := os.WriteFile(firstPath, []byte("{}\n"), 0o600); err != nil {

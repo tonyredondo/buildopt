@@ -28,9 +28,10 @@
       "GRADLE_WRAPPER_SHA256",
       "OUTPUT_CONTRACT_SHA256"
     ],
+    "repositoryScopeIdentity": "SHA256_OF_CANONICAL_REPOSITORY_ID_NOT_CHECKOUT_PATH",
     "evaluationOutputEvidence": "TWO_NEW_CURRENT_REVISION_NATIVE_OBSERVATIONS",
     "effectiveQuarantine": "CURRENT_AND_PORTFOLIO_PRODUCER_UNION",
-    "contextDrift": "RETAIN_OPTIMIZED_NATIVE"
+    "contextDrift": "STRUCTURED_NATIVE_RETENTION_AND_STOP_TIMING"
   },
   "measurement": {
     "pairs": 8,

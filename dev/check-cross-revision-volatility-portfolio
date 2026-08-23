@@ -36,6 +36,9 @@ jq -e '
     "WORKFLOW_SHA256",
     "GRADLE_WRAPPER_SHA256",
     "OUTPUT_CONTRACT_SHA256"] and
+  .portfolio.repositoryScopeIdentity ==
+    "SHA256_OF_CANONICAL_REPOSITORY_ID_NOT_CHECKOUT_PATH" and
+  .portfolio.contextDrift == "STRUCTURED_NATIVE_RETENTION_AND_STOP_TIMING" and
   .portfolio.evaluationOutputEvidence == "TWO_NEW_CURRENT_REVISION_NATIVE_OBSERVATIONS" and
   .measurement.pairs == 8 and .measurement.minimumPositivePairs == 6 and
   .measurement.positiveSavedTimeIntervalRequired == true and

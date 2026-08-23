@@ -21,12 +21,15 @@ import (
 )
 
 const (
-	profileNativeObserveUsage       = "usage: buildopt profile native-observe --state-dir PATH --root DIR\n"
-	profileNativeContextUsage       = "usage: buildopt profile native-context --state-dir PATH\n"
-	profileQuarantineUsage          = "usage: buildopt profile quarantine --state-dir PATH --second-observation FILE [--portfolio FILE --portfolio-context FILE --revision SHA256]\n"
-	optimizeQuarantineReason        = "NATIVE_VOLATILE_PRODUCERS_QUARANTINED"
-	optimizePortfolioEvidenceSchema = "buildopt.poc/optimize-native-volatility-portfolio-evidence/v1"
+	profileNativeObserveUsage        = "usage: buildopt profile native-observe --state-dir PATH --root DIR\n"
+	profileNativeContextUsage        = "usage: buildopt profile native-context --state-dir PATH\n"
+	profileQuarantineUsage           = "usage: buildopt profile quarantine --state-dir PATH --second-observation FILE [--portfolio FILE --portfolio-context FILE --revision SHA256]\n"
+	optimizeQuarantineReason         = "NATIVE_VOLATILE_PRODUCERS_QUARANTINED"
+	optimizePortfolioEvidenceSchema  = "buildopt.poc/optimize-native-volatility-portfolio-evidence/v1"
+	optimizePortfolioRetentionSchema = "buildopt.poc/optimize-native-volatility-portfolio-retention/v1"
 )
+
+var errOptimizeNativePortfolioContextDrift = errors.New("native volatility portfolio context drifted")
 
 type optimizeNativeQuarantinePlan struct {
 	BindingSHA256        string
@@ -40,6 +43,21 @@ type optimizeNativePortfolioEvidence struct {
 	Portfolio     nativevolatility.Portfolio            `json:"portfolio"`
 	Current       nativevolatility.Result               `json:"current"`
 	Application   nativevolatility.PortfolioApplication `json:"application"`
+}
+
+type optimizeNativePortfolioRetention struct {
+	SchemaVersion        string                            `json:"schemaVersion"`
+	Portfolio            nativevolatility.Portfolio        `json:"portfolio"`
+	Current              nativevolatility.Result           `json:"current"`
+	LearnedContext       nativevolatility.PortfolioContext `json:"learnedContext"`
+	CurrentContext       nativevolatility.PortfolioContext `json:"currentContext"`
+	LearnedContextSHA    string                            `json:"learnedContextSha256"`
+	CurrentContextSHA    string                            `json:"currentContextSha256"`
+	Decision             string                            `json:"decision"`
+	Reason               string                            `json:"reason"`
+	DriftedBindings      []string                          `json:"driftedBindings"`
+	ProductionAuthorized bool                              `json:"productionAuthorized"`
+	TestOptimization     string                            `json:"testOptimization"`
 }
 
 func runOptimizeNativeObservation(args []string, stdout, stderr io.Writer) int {
@@ -147,6 +165,10 @@ func runOptimizeNativeQuarantine(args []string, stdout, stderr io.Writer) int {
 			} else {
 				err = encodeOptimizeJSON(stdout, result)
 			}
+		} else if errors.Is(err, errOptimizeNativePortfolioContextDrift) {
+			err = encodeOptimizeNativePortfolioRetention(
+				stdout, state, result, *portfolioPath, *portfolioContextPath,
+			)
 		}
 	}
 	if err != nil {
@@ -154,6 +176,68 @@ func runOptimizeNativeQuarantine(args []string, stdout, stderr io.Writer) int {
 		return exitConfiguration
 	}
 	return 0
+}
+
+func encodeOptimizeNativePortfolioRetention(
+	stdout io.Writer,
+	state optimizeState,
+	current nativevolatility.Result,
+	portfolioPath string,
+	contextPath string,
+) error {
+	portfolio, err := readOptimizeNativePortfolio(portfolioPath)
+	if err != nil {
+		return err
+	}
+	learned, err := readOptimizeNativePortfolioContext(contextPath)
+	if err != nil {
+		return err
+	}
+	learnedSHA, err := nativevolatility.ContextSHA256(learned)
+	if err != nil || learnedSHA != portfolio.ContextSHA256 {
+		return errors.New("native volatility portfolio context is invalid")
+	}
+	currentContext, err := optimizeNativePortfolioContext(state)
+	if err != nil {
+		return err
+	}
+	currentSHA, err := nativevolatility.ContextSHA256(currentContext)
+	if err != nil || currentSHA == learnedSHA {
+		return errors.New("native volatility portfolio retention context is invalid")
+	}
+	drifted := optimizeNativePortfolioDriftedBindings(learned, currentContext)
+	if len(drifted) == 0 {
+		return errors.New("native volatility portfolio retention has no drifted binding")
+	}
+	return encodeOptimizeJSON(stdout, optimizeNativePortfolioRetention{
+		SchemaVersion: optimizePortfolioRetentionSchema,
+		Portfolio:     portfolio, Current: current,
+		LearnedContext: learned, CurrentContext: currentContext,
+		LearnedContextSHA: learnedSHA, CurrentContextSHA: currentSHA,
+		Decision: "NATIVE_RETAINED", Reason: "PORTFOLIO_CONTEXT_DRIFT",
+		DriftedBindings: drifted, ProductionAuthorized: false,
+		TestOptimization: "OUT_OF_SCOPE",
+	})
+}
+
+func optimizeNativePortfolioDriftedBindings(
+	learned nativevolatility.PortfolioContext,
+	current nativevolatility.PortfolioContext,
+) []string {
+	drifted := []string{}
+	if learned.RepositoryScopeSHA256 != current.RepositoryScopeSHA256 {
+		drifted = append(drifted, "REPOSITORY_SCOPE_SHA256")
+	}
+	if learned.WorkflowSHA256 != current.WorkflowSHA256 {
+		drifted = append(drifted, "WORKFLOW_SHA256")
+	}
+	if learned.WrapperSHA256 != current.WrapperSHA256 {
+		drifted = append(drifted, "GRADLE_WRAPPER_SHA256")
+	}
+	if learned.OutputContractSHA256 != current.OutputContractSHA256 {
+		drifted = append(drifted, "OUTPUT_CONTRACT_SHA256")
+	}
+	return drifted
 }
 
 func loadOptimizeQuarantineState(relative string) (optimizeInvocation, optimizeState, error) {
@@ -352,9 +436,16 @@ func applyOptimizeNativeQuarantineWithPortfolio(
 		if contextErr != nil {
 			return result, nil, contextErr
 		}
+		contextSHA, contextErr := nativevolatility.ContextSHA256(context)
+		if contextErr != nil || contextSHA != portfolio.ContextSHA256 {
+			return result, nil, errors.New("native volatility portfolio context is invalid")
+		}
 		expectedContext, contextErr := optimizeNativePortfolioContext(*state)
-		if contextErr != nil || context != expectedContext {
-			return result, nil, errors.New("native volatility portfolio does not bind the current optimize context")
+		if contextErr != nil {
+			return result, nil, contextErr
+		}
+		if context != expectedContext {
+			return result, nil, fmt.Errorf("%w: native volatility portfolio does not bind the current optimize context", errOptimizeNativePortfolioContextDrift)
 		}
 		applied, applyErr := nativevolatility.ApplyPortfolio(portfolio, context, revision, result)
 		if applyErr != nil {
@@ -851,7 +942,7 @@ func readOptimizeNativePortfolioContext(path string) (nativevolatility.Portfolio
 }
 
 func optimizeNativePortfolioContext(state optimizeState) (nativevolatility.PortfolioContext, error) {
-	if !validOptimizeSHA(state.Bindings.RepositoryScopeSHA256) ||
+	if state.Discovery.RepositoryID == "" ||
 		!validOptimizeSHA(state.Bindings.InvocationSHA256) ||
 		!validOptimizeSHA(state.Bindings.WrapperSHA256) {
 		return nativevolatility.PortfolioContext{}, errors.New("complete optimize portfolio context is unavailable")
@@ -887,7 +978,7 @@ func optimizeNativePortfolioContext(state optimizeState) (nativevolatility.Portf
 		outputContractSHA = hex.EncodeToString(digest[:])
 	}
 	context := nativevolatility.PortfolioContext{
-		RepositoryScopeSHA256: state.Bindings.RepositoryScopeSHA256,
+		RepositoryScopeSHA256: optimizePortfolioRepositoryScope(state.Discovery.RepositoryID),
 		WorkflowSHA256:        state.Bindings.InvocationSHA256,
 		WrapperSHA256:         state.Bindings.WrapperSHA256,
 		OutputContractSHA256:  outputContractSHA,
