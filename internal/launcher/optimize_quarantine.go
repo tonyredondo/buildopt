@@ -335,6 +335,9 @@ func optimizeMissingPortfolioProducers(
 		for _, producer := range entry.ProducerTasks {
 			present[producer] = true
 		}
+		for _, producer := range entry.ProducerLineage {
+			present[producer] = true
+		}
 	}
 	missing := make([]string, 0, len(portfolio.QuarantinedProducers))
 	for _, producer := range portfolio.QuarantinedProducers {
@@ -470,7 +473,8 @@ func optimizeNativeInventory(manifest optimizeOutputMaterializationManifest) ([]
 		}
 		inventory = append(inventory, nativevolatility.Entry{
 			Path: entry.Path, SHA256: entry.SHA256,
-			ProducerTasks: append([]string(nil), entry.ProducerTasks...),
+			ProducerTasks:   append([]string(nil), entry.ProducerTasks...),
+			ProducerLineage: append([]string(nil), entry.ProducerLineage...),
 		})
 	}
 	return inventory, nil
@@ -581,7 +585,8 @@ func applyOptimizeNativeQuarantineWithPortfolio(
 			continue
 		}
 		if entry.SHA256 != payload.entry.SHA256 ||
-			!equalOptimizeStrings(entry.ProducerTasks, payload.entry.ProducerTasks) {
+			!equalOptimizeStrings(entry.ProducerTasks, payload.entry.ProducerTasks) ||
+			!equalOptimizeStrings(entry.ProducerLineage, payload.entry.ProducerLineage) {
 			return result, application, fmt.Errorf("transported output %s drifted before quarantine", entry.Path)
 		}
 		filtered = append(filtered, payload)
@@ -1010,6 +1015,19 @@ func subtractOptimizeStrings(values, removed []string) []string {
 		}
 	}
 	return result
+}
+
+func optimizeStringsIntersect(left, right []string) bool {
+	set := make(map[string]bool, len(left))
+	for _, value := range left {
+		set[value] = true
+	}
+	for _, value := range right {
+		if set[value] {
+			return true
+		}
+	}
+	return false
 }
 
 func readOptimizeNativeObservation(path string) (nativevolatility.Observation, error) {

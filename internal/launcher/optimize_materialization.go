@@ -66,12 +66,13 @@ type optimizeOutputMaterializationManifest struct {
 }
 
 type optimizeOutputMaterializationEntry struct {
-	Path          string   `json:"path"`
-	SHA256        string   `json:"sha256"`
-	Size          int64    `json:"size"`
-	Mode          uint32   `json:"mode"`
-	Offset        int64    `json:"offset"`
-	ProducerTasks []string `json:"producerTasks,omitempty"`
+	Path            string   `json:"path"`
+	SHA256          string   `json:"sha256"`
+	Size            int64    `json:"size"`
+	Mode            uint32   `json:"mode"`
+	Offset          int64    `json:"offset"`
+	ProducerTasks   []string `json:"producerTasks,omitempty"`
+	ProducerLineage []string `json:"producerLineage,omitempty"`
 }
 
 type optimizeMaterializationPayload struct {
@@ -165,8 +166,8 @@ func captureOptimizeOutputMaterialization(
 	entries := make([]optimizeOutputMaterializationEntry, 0, len(files))
 	var byteCount int64
 	for _, relative := range files {
-		producerTasks, producerErr := optimizeMaterializationProducerTasks(
-			relative, discovery.outputCandidates,
+		producerTasks, producerLineage, producerErr := optimizeMaterializationProducerTasks(
+			relative, discovery.outputCandidates, discovery.taskLineage,
 		)
 		if producerErr != nil {
 			_ = pack.Close()
@@ -197,7 +198,7 @@ func captureOptimizeOutputMaterialization(
 		entries = append(entries, optimizeOutputMaterializationEntry{
 			Path: relative, SHA256: hex.EncodeToString(digest.Sum(nil)),
 			Size: size, Mode: uint32(info.Mode().Perm()), Offset: byteCount - size,
-			ProducerTasks: producerTasks,
+			ProducerTasks: producerTasks, ProducerLineage: producerLineage,
 		})
 	}
 	if err := pack.Sync(); err != nil {
@@ -243,19 +244,23 @@ func captureOptimizeOutputMaterialization(
 	}, nil
 }
 
-func optimizeMaterializationProducerTasks(relative string, candidates []outputContractCandidate) ([]string, error) {
+func optimizeMaterializationProducerTasks(
+	relative string,
+	candidates []outputContractCandidate,
+	taskLineage *optimizeTaskLineage,
+) ([]string, []string, error) {
 	if len(candidates) == 0 {
 		// Legacy unit fixtures and previously captured manifests predate
 		// producer-bound quarantine. They remain readable but cannot authorize
 		// quarantine until recaptured with complete attribution.
-		return nil, nil
+		return nil, nil, nil
 	}
 	producers := map[string]bool{}
 	for _, candidate := range candidates {
 		if matchProposalGlob(candidate.Pattern, relative) {
 			for _, producer := range candidate.ProducerTasks {
 				if producer == "" {
-					return nil, errors.New("output materialization producer attribution is invalid")
+					return nil, nil, errors.New("output materialization producer attribution is invalid")
 				}
 				producers[producer] = true
 			}
@@ -267,9 +272,13 @@ func optimizeMaterializationProducerTasks(relative string, candidates []outputCo
 	}
 	sort.Strings(result)
 	if len(result) == 0 {
-		return nil, fmt.Errorf("output materialization producer is unavailable for %s", relative)
+		return nil, nil, fmt.Errorf("output materialization producer is unavailable for %s", relative)
 	}
-	return result, nil
+	lineage, err := taskLineage.ancestors(result)
+	if err != nil {
+		return nil, nil, fmt.Errorf("output materialization producer lineage for %s: %w", relative, err)
+	}
+	return result, lineage, nil
 }
 
 func (run *optimizeRun) materializeCandidateOutputs() error {
@@ -422,7 +431,9 @@ func loadOptimizeOutputMaterialization(
 	for _, entry := range manifest.Entries {
 		if entry.Path <= previous || !validObservedOutputPath(entry.Path) || !validOptimizeSHA(entry.SHA256) ||
 			entry.Size < 0 || entry.Mode > 0o777 || entry.Offset != byteCount ||
-			(len(entry.ProducerTasks) > 0 && !uniqueMeasurementStrings(entry.ProducerTasks)) {
+			(len(entry.ProducerTasks) > 0 && !uniqueMeasurementStrings(entry.ProducerTasks)) ||
+			(len(entry.ProducerLineage) > 0 && !uniqueMeasurementStrings(entry.ProducerLineage)) ||
+			optimizeStringsIntersect(entry.ProducerTasks, entry.ProducerLineage) {
 			return optimizeOutputMaterializationManifest{}, nil, errors.New("output materialization entry is invalid")
 		}
 		previous = entry.Path

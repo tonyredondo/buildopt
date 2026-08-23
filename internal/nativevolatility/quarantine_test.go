@@ -53,6 +53,25 @@ func TestAnalyzeQuarantinesWholeProducerAndVerifiesCandidate(t *testing.T) {
 	}
 }
 
+func TestAnalyzePropagatesVolatilityToDownstreamOutputs(t *testing.T) {
+	compileFirst := entry("classes/App.class", "1", ":app:compileJava")
+	compileSecond := entry("classes/App.class", "2", ":app:compileJava")
+	jarFirst := entry("libs/app.jar", "3", ":app:jar")
+	jarFirst.ProducerLineage = []string{":app:classes", ":app:compileJava"}
+	jarSecond := cloneEntry(jarFirst)
+	stable := entry("libs/stable.jar", "4", ":stable:jar")
+
+	result := Analyze(
+		observation(compileFirst, jarFirst, stable),
+		observation(compileSecond, jarSecond, stable),
+	)
+	if result.Decision != DecisionTransportReady || result.Reason != ReasonQuarantined ||
+		!equalStrings(result.QuarantinedProducers, []string{":app:compileJava"}) ||
+		len(result.QuarantinedOutputs) != 2 || len(result.TransportedOutputs) != 1 {
+		t.Fatalf("transitive quarantine = %+v", result)
+	}
+}
+
 func TestAnalyzeRetainsNativeOnUnsafeEvidence(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -125,6 +144,15 @@ func TestOutputContractSHA256IgnoresRevisionBytesButBindsProducers(t *testing.T)
 	}
 	if driftedSHA == firstSHA {
 		t.Fatal("producer attribution drift was not bound")
+	}
+	second.Entries[1].ProducerTasks = []string{":b"}
+	second.Entries[1].ProducerLineage = []string{":upstream"}
+	lineageSHA, err := OutputContractSHA256(second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if lineageSHA != firstSHA {
+		t.Fatal("revision-bound producer lineage changed the cross-revision output contract")
 	}
 }
 

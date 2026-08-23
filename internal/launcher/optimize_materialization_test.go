@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/tonyredondo/buildopt/internal/buildimpact"
 )
 
 func TestOptimizeOutputMaterializationRestoresOnlyUnaffectedOutputs(t *testing.T) {
@@ -38,7 +40,8 @@ func TestOptimizeOutputMaterializationRestoresOnlyUnaffectedOutputs(t *testing.T
 		t.Fatal(err)
 	}
 	if len(attributed.Entries) != 1 ||
-		!equalOptimizeStrings(attributed.Entries[0].ProducerTasks, []string{":unchanged:jar"}) {
+		!equalOptimizeStrings(attributed.Entries[0].ProducerTasks, []string{":unchanged:jar"}) ||
+		!equalOptimizeStrings(attributed.Entries[0].ProducerLineage, []string{":unchanged:compileJava"}) {
 		t.Fatalf("materialization producer attribution = %+v", attributed.Entries)
 	}
 	if err := os.RemoveAll(filepath.Join(repository, "changed", "build")); err != nil {
@@ -238,6 +241,16 @@ func prepareOptimizeMaterializationFixture(t *testing.T) (string, optimizeInvoca
 			{Pattern: "unchanged/build/*.jar", ProducerTasks: []string{":unchanged:jar"}},
 		},
 	}
+	lineage, err := newOptimizeTaskLineage([]buildimpact.DiscoveredTask{
+		{Path: ":changed:compileJava", ProjectPath: ":changed", DependsOn: []string{}},
+		{Path: ":changed:jar", ProjectPath: ":changed", DependsOn: []string{":changed:compileJava"}},
+		{Path: ":unchanged:compileJava", ProjectPath: ":unchanged", DependsOn: []string{}},
+		{Path: ":unchanged:jar", ProjectPath: ":unchanged", DependsOn: []string{":unchanged:compileJava"}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	discovery.taskLineage = lineage
 	return repository, optimizeInvocation{
 		repositoryRoot: repository, stateDirectory: stateDirectory, stateRelative: stateRelative,
 	}, discovery

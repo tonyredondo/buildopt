@@ -102,6 +102,7 @@ type optimizeDiscoveryResult struct {
 	ProductionAuthorized bool                          `json:"productionAuthorized"`
 	TestOptimization     string                        `json:"testOptimization"`
 	outputCandidates     []outputContractCandidate
+	taskLineage          *optimizeTaskLineage
 }
 
 const (
@@ -713,6 +714,11 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		}
 	}
 	if report.Decision == profilediscovery.DecisionMeasure && report.Reason == "COMPLETE_STRUCTURAL_REDUCTION" {
+		lineage, lineageErr := newOptimizeTaskLineage(observedImpact.Tasks)
+		if lineageErr != nil {
+			return result, optimizeDiscoveryDocuments{}, lineageErr
+		}
+		result.taskLineage = lineage
 		result.Status = optimizeDiscoveryComplete
 		result.Reason = optimizeDiscoveryReasonFound
 	}

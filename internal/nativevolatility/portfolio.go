@@ -13,7 +13,7 @@ const (
 	PortfolioApplicationSchema = "buildopt.poc/native-volatility-portfolio-application/v1"
 	PortfolioPreflightSchema   = "buildopt.poc/native-volatility-portfolio-preflight/v1"
 
-	PortfolioDecisionApplied = "PORTFOLIO_APPLIED"
+	PortfolioDecisionApplied    = "PORTFOLIO_APPLIED"
 	PortfolioDecisionCompatible = "COMPATIBLE"
 	PortfolioDecisionRetained   = "NATIVE_RETAINED"
 )
@@ -76,17 +76,17 @@ type PortfolioApplication struct {
 // independent native observation for the current revision. It performs no
 // build work and grants no transport or production authority.
 type PortfolioPreflight struct {
-	SchemaVersion                         string           `json:"schemaVersion"`
-	Decision                              string           `json:"decision"`
-	Reason                                string           `json:"reason"`
-	LearnedContext                        PortfolioContext `json:"learnedContext"`
-	CurrentContext                        PortfolioContext `json:"currentContext"`
-	LearnedContextSHA256                  string           `json:"learnedContextSha256"`
-	CurrentContextSHA256                  string           `json:"currentContextSha256"`
-	DriftedBindings                       []string         `json:"driftedBindings"`
-	IndependentNativeObservationAuthorized bool           `json:"independentNativeObservationAuthorized"`
-	ProductionAuthorized                  bool             `json:"productionAuthorized"`
-	TestOptimization                      string           `json:"testOptimization"`
+	SchemaVersion                          string           `json:"schemaVersion"`
+	Decision                               string           `json:"decision"`
+	Reason                                 string           `json:"reason"`
+	LearnedContext                         PortfolioContext `json:"learnedContext"`
+	CurrentContext                         PortfolioContext `json:"currentContext"`
+	LearnedContextSHA256                   string           `json:"learnedContextSha256"`
+	CurrentContextSHA256                   string           `json:"currentContextSha256"`
+	DriftedBindings                        []string         `json:"driftedBindings"`
+	IndependentNativeObservationAuthorized bool             `json:"independentNativeObservationAuthorized"`
+	ProductionAuthorized                   bool             `json:"productionAuthorized"`
+	TestOptimization                       string           `json:"testOptimization"`
 }
 
 // PreflightPortfolio compares every stable portfolio binding before the
@@ -110,17 +110,17 @@ func PreflightPortfolio(
 	}
 	drifted := portfolioDriftedBindings(learned, current)
 	result := PortfolioPreflight{
-		SchemaVersion: PortfolioPreflightSchema,
-		Decision: PortfolioDecisionCompatible,
-		Reason: "PORTFOLIO_CONTEXT_COMPATIBLE",
-		LearnedContext: learned,
-		CurrentContext: current,
-		LearnedContextSHA256: learnedSHA,
-		CurrentContextSHA256: currentSHA,
-		DriftedBindings: drifted,
+		SchemaVersion:                          PortfolioPreflightSchema,
+		Decision:                               PortfolioDecisionCompatible,
+		Reason:                                 "PORTFOLIO_CONTEXT_COMPATIBLE",
+		LearnedContext:                         learned,
+		CurrentContext:                         current,
+		LearnedContextSHA256:                   learnedSHA,
+		CurrentContextSHA256:                   currentSHA,
+		DriftedBindings:                        drifted,
 		IndependentNativeObservationAuthorized: true,
-		ProductionAuthorized: false,
-		TestOptimization: "OUT_OF_SCOPE",
+		ProductionAuthorized:                   false,
+		TestOptimization:                       "OUT_OF_SCOPE",
 	}
 	if len(drifted) > 0 {
 		result.Decision = PortfolioDecisionRetained
@@ -300,7 +300,12 @@ func ApplyPortfolio(
 				matchedPortfolio[producer] = true
 			}
 		}
-		if intersects(entry.ProducerTasks, producerSet) {
+		for _, producer := range entry.ProducerLineage {
+			if containsString(portfolio.QuarantinedProducers, producer) {
+				matchedPortfolio[producer] = true
+			}
+		}
+		if entryIntersects(entry, producerSet) {
 			application.QuarantinedOutputs = append(application.QuarantinedOutputs, cloneEntry(entry))
 		} else {
 			application.TransportedOutputs = append(application.TransportedOutputs, cloneEntry(entry))
@@ -424,12 +429,12 @@ func ValidatePortfolioApplication(
 		producerSet[producer] = true
 	}
 	for _, entry := range application.QuarantinedOutputs {
-		if !intersects(entry.ProducerTasks, producerSet) {
+		if !entryIntersects(entry, producerSet) {
 			return errors.New("portfolio quarantine contains an unrelated output")
 		}
 	}
 	for _, entry := range application.TransportedOutputs {
-		if intersects(entry.ProducerTasks, producerSet) {
+		if entryIntersects(entry, producerSet) {
 			return errors.New("portfolio transported output uses a quarantined producer")
 		}
 	}

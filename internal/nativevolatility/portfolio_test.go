@@ -40,6 +40,35 @@ func TestPortfolioLearnsDiagnosticProducerAndAppliesCurrentHashes(t *testing.T) 
 	}
 }
 
+func TestPortfolioAppliesHistoricalProducerThroughCurrentTaskLineage(t *testing.T) {
+	context := portfolioTestContext()
+	learning := Analyze(
+		observation(entry("classes/App.class", "1", ":app:compileJava")),
+		observation(entry("classes/App.class", "2", ":app:compileJava")),
+	)
+	portfolio, err := LearnPortfolio(Portfolio{}, context, digest("a"), learning, true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	currentJar := entry("libs/app.jar", "3", ":app:jar")
+	currentJar.ProducerLineage = []string{":app:classes", ":app:compileJava"}
+	stable := entry("libs/stable.jar", "4", ":stable:jar")
+	current := Analyze(
+		Observation{SchemaVersion: ObservationSchema, BindingSHA256: digest("b"), Entries: []Entry{currentJar, stable}},
+		Observation{SchemaVersion: ObservationSchema, BindingSHA256: digest("b"), Entries: []Entry{currentJar, stable}},
+	)
+	application, err := ApplyPortfolio(portfolio, context, digest("c"), current)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(application.QuarantinedOutputs) != 1 ||
+		application.QuarantinedOutputs[0].Path != "libs/app.jar" ||
+		len(application.TransportedOutputs) != 1 ||
+		application.TransportedOutputs[0].Path != "libs/stable.jar" {
+		t.Fatalf("lineage portfolio application = %+v", application)
+	}
+}
+
 func TestPortfolioAccumulatesOnlyAuthoritativeCompatibleEvidence(t *testing.T) {
 	context := portfolioTestContext()
 	first := Analyze(

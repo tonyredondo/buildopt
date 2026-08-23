@@ -78,6 +78,16 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 			{Pattern: "volatile/build/classes/**", ProducerTasks: []string{":volatile:compileJava"}},
 		},
 	}
+	lineage, err := newOptimizeTaskLineage([]buildimpact.DiscoveredTask{
+		{Path: ":changed:classes", ProjectPath: ":changed", DependsOn: []string{}},
+		{Path: ":stable:compileJava", ProjectPath: ":stable", DependsOn: []string{}},
+		{Path: ":stable:jar", ProjectPath: ":stable", DependsOn: []string{":stable:compileJava"}},
+		{Path: ":volatile:compileJava", ProjectPath: ":volatile", DependsOn: []string{}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	discovery.taskLineage = lineage
 	materialization, err := captureOptimizeOutputMaterialization(invocation, discovery)
 	if err != nil {
 		t.Fatal(err)
@@ -95,7 +105,8 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 	for _, entry := range manifest.Entries {
 		second.Entries = append(second.Entries, nativevolatility.Entry{
 			Path: entry.Path, SHA256: entry.SHA256,
-			ProducerTasks: append([]string(nil), entry.ProducerTasks...),
+			ProducerTasks:   append([]string(nil), entry.ProducerTasks...),
+			ProducerLineage: append([]string(nil), entry.ProducerLineage...),
 		})
 	}
 	secondPath := filepath.Join(repository, "second.json")
@@ -117,7 +128,10 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 		exactState.Discovery.Materialization.QuarantineSHA256 == "" {
 		t.Fatalf("exact state = %+v, result = %+v", exactState, exactResult)
 	}
-	portfolioState := optimizeQuarantineTestState(invocation, discovery)
+	portfolioDiscovery := discovery
+	portfolioPartition := *discovery.AggregatePartition
+	portfolioDiscovery.AggregatePartition = &portfolioPartition
+	portfolioState := optimizeQuarantineTestState(invocation, portfolioDiscovery)
 	portfolioContext, err := optimizeNativePortfolioContext(portfolioState)
 	if err != nil {
 		t.Fatal(err)
@@ -126,7 +140,7 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 		SchemaVersion: nativevolatility.ObservationSchema, BindingSHA256: optimizeDigest("learning-binding"),
 		Entries: []nativevolatility.Entry{
 			{Path: "stable.bin", SHA256: optimizeDigest("stable"), ProducerTasks: []string{":stable:jar"}},
-			{Path: "volatile.bin", SHA256: optimizeDigest("volatile-one"), ProducerTasks: []string{":volatile:compileJava"}},
+			{Path: "volatile.bin", SHA256: optimizeDigest("volatile-one"), ProducerTasks: []string{":stable:compileJava"}},
 		},
 	}
 	learningSecond := learningFirst
@@ -226,14 +240,14 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 	}
 	if current.Reason != nativevolatility.ReasonExact || application == nil ||
 		!equalOptimizeStrings(application.EffectiveQuarantinedProducers,
-			[]string{":volatile:compileJava"}) ||
-		len(application.QuarantinedOutputs) != 2 || len(application.TransportedOutputs) != 1 {
+			[]string{":stable:compileJava"}) ||
+		len(application.QuarantinedOutputs) != 1 || len(application.TransportedOutputs) != 2 {
 		t.Fatalf("portfolio current = %+v, application = %+v", current, application)
 	}
 	loadedPortfolioPlan, err := loadOptimizeNativeQuarantine(invocation, portfolioState.Discovery)
 	if err != nil || !equalOptimizeStrings(
-		loadedPortfolioPlan.QuarantinedProducers, []string{":volatile:compileJava"},
-	) || len(loadedPortfolioPlan.QuarantinedOutputs) != 2 {
+		loadedPortfolioPlan.QuarantinedProducers, []string{":stable:compileJava"},
+	) || len(loadedPortfolioPlan.QuarantinedOutputs) != 1 {
 		t.Fatalf("loaded portfolio plan = %+v, err = %v", loadedPortfolioPlan, err)
 	}
 	for index := range second.Entries {
@@ -245,6 +259,10 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 	if err != nil || os.WriteFile(secondPath, append(secondRaw, '\n'), 0o600) != nil {
 		t.Fatal("write changed second native observation")
 	}
+	// Restore the original discovery documents before exercising the separate
+	// current-revision quarantine path below. The portfolio path above rewrites
+	// its own candidate state exactly as a real invocation would.
+	writeOptimizeQuarantineTestDiscoveryDocuments(t, invocation, discovery)
 	state := optimizeQuarantineTestState(invocation, discovery)
 	if !validOptimizeState(state) {
 		t.Fatal("pre-quarantine state is invalid")
@@ -539,7 +557,8 @@ func writeOptimizeQuarantineTestDiscoveryDocuments(
 		},
 		Tasks: []buildimpact.DiscoveredTask{
 			{Path: ":changed:classes", ProjectPath: ":changed", DependsOn: []string{}},
-			{Path: ":stable:jar", ProjectPath: ":stable", DependsOn: []string{}},
+			{Path: ":stable:compileJava", ProjectPath: ":stable", DependsOn: []string{}},
+			{Path: ":stable:jar", ProjectPath: ":stable", DependsOn: []string{":stable:compileJava"}},
 			{Path: ":volatile:compileJava", ProjectPath: ":volatile", DependsOn: []string{}},
 		},
 		Entrypoints: []buildimpact.DiscoveredEntrypoint{{

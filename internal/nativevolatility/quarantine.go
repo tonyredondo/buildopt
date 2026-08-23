@@ -32,13 +32,15 @@ const (
 const maximumOutputs = 250000
 const maximumObservedBytes = int64(2 << 30)
 
-// Entry binds one regular output to its exact bytes and Gradle producer tasks.
-// Multiple producers are accepted, but volatility in the entry quarantines all
-// of them and every other output produced by any of those tasks.
+// Entry binds one regular output to its exact bytes, direct Gradle producer
+// tasks and their upstream task lineage. Multiple direct producers are
+// accepted. Volatility quarantines the direct producers, while both direct and
+// upstream tasks determine which downstream outputs must be rebuilt locally.
 type Entry struct {
-	Path          string   `json:"path"`
-	SHA256        string   `json:"sha256"`
-	ProducerTasks []string `json:"producerTasks"`
+	Path            string   `json:"path"`
+	SHA256          string   `json:"sha256"`
+	ProducerTasks   []string `json:"producerTasks"`
+	ProducerLineage []string `json:"producerLineage,omitempty"`
 }
 
 // Observation is the exact output view from one independent native workspace.
@@ -203,7 +205,8 @@ func Analyze(first, second Observation) Result {
 			result.Reason = ReasonPathMismatch
 			return result
 		}
-		if !equalStrings(left.ProducerTasks, right.ProducerTasks) {
+		if !equalStrings(left.ProducerTasks, right.ProducerTasks) ||
+			!equalStrings(left.ProducerLineage, right.ProducerLineage) {
 			result.Reason = ReasonProducerAmbiguous
 			return result
 		}
@@ -226,7 +229,7 @@ func Analyze(first, second Observation) Result {
 	}
 	sortEntries(ordered)
 	for _, entry := range ordered {
-		if intersects(entry.ProducerTasks, quarantined) {
+		if entryIntersects(entry, quarantined) {
 			result.QuarantinedOutputs = append(result.QuarantinedOutputs, cloneEntry(entry))
 			continue
 		}
@@ -303,12 +306,12 @@ func ValidateResult(result Result) error {
 		producerSet[producer] = true
 	}
 	for path, entry := range quarantined {
-		if _, exists := transported[path]; exists || !intersects(entry.ProducerTasks, producerSet) {
+		if _, exists := transported[path]; exists || !entryIntersects(entry, producerSet) {
 			return errors.New("native volatility quarantine partition overlaps")
 		}
 	}
 	for _, entry := range transported {
-		if intersects(entry.ProducerTasks, producerSet) {
+		if entryIntersects(entry, producerSet) {
 			return errors.New("native volatility transported output uses a quarantined producer")
 		}
 	}
@@ -345,8 +348,10 @@ func validateObservation(observation Observation, allowEmpty bool) (map[string]E
 		rawPath := entry.Path
 		entry.Path = path.Clean(entry.Path)
 		sort.Strings(entry.ProducerTasks)
+		sort.Strings(entry.ProducerLineage)
 		if rawPath != entry.Path || !validRelativePath(entry.Path) || !validSHA(entry.SHA256) ||
-			len(entry.ProducerTasks) == 0 || !uniqueNonEmpty(entry.ProducerTasks) {
+			len(entry.ProducerTasks) == 0 || !uniqueNonEmpty(entry.ProducerTasks) ||
+			!uniqueNonEmpty(entry.ProducerLineage) || intersects(entry.ProducerLineage, stringSet(entry.ProducerTasks)) {
 			return nil, "", errors.New("invalid native output entry")
 		}
 		if _, exists := entries[entry.Path]; exists {
@@ -365,7 +370,9 @@ func verifyExactSet(expected []Entry, actual map[string]Entry) error {
 	}
 	for _, entry := range expected {
 		observed, ok := actual[entry.Path]
-		if !ok || observed.SHA256 != entry.SHA256 || !equalStrings(observed.ProducerTasks, entry.ProducerTasks) {
+		if !ok || observed.SHA256 != entry.SHA256 ||
+			!equalStrings(observed.ProducerTasks, entry.ProducerTasks) ||
+			!equalStrings(observed.ProducerLineage, entry.ProducerLineage) {
 			return fmt.Errorf("transported output %s is not exact", entry.Path)
 		}
 	}
@@ -383,7 +390,8 @@ func verifyRebuiltSet(expected []Entry, actual map[string]Entry, producers []str
 	for _, entry := range expected {
 		observed, ok := actual[entry.Path]
 		if !ok || !equalStrings(observed.ProducerTasks, entry.ProducerTasks) ||
-			!intersects(observed.ProducerTasks, quarantined) {
+			!equalStrings(observed.ProducerLineage, entry.ProducerLineage) ||
+			!entryIntersects(observed, quarantined) {
 			return fmt.Errorf("quarantined output %s was not rebuilt by its producer", entry.Path)
 		}
 	}
@@ -397,6 +405,11 @@ func entriesDigest(entries []Entry) string {
 		_, _ = hash.Write([]byte{0})
 		_, _ = hash.Write([]byte(entry.SHA256))
 		for _, producer := range entry.ProducerTasks {
+			_, _ = hash.Write([]byte{0})
+			_, _ = hash.Write([]byte(producer))
+		}
+		_, _ = hash.Write([]byte{0xff})
+		for _, producer := range entry.ProducerLineage {
 			_, _ = hash.Write([]byte{0})
 			_, _ = hash.Write([]byte(producer))
 		}
@@ -448,9 +461,23 @@ func intersects(values []string, set map[string]bool) bool {
 	return false
 }
 
+func entryIntersects(entry Entry, set map[string]bool) bool {
+	return intersects(entry.ProducerTasks, set) || intersects(entry.ProducerLineage, set)
+}
+
+func stringSet(values []string) map[string]bool {
+	set := make(map[string]bool, len(values))
+	for _, value := range values {
+		set[value] = true
+	}
+	return set
+}
+
 func cloneEntry(entry Entry) Entry {
 	entry.ProducerTasks = append([]string(nil), entry.ProducerTasks...)
+	entry.ProducerLineage = append([]string(nil), entry.ProducerLineage...)
 	sort.Strings(entry.ProducerTasks)
+	sort.Strings(entry.ProducerLineage)
 	return entry
 }
 
