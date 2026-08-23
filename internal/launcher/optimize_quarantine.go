@@ -29,9 +29,11 @@ const (
 	optimizePortfolioEvidenceSchema        = "buildopt.poc/optimize-native-volatility-portfolio-evidence/v1"
 	optimizePortfolioRetentionSchema       = "buildopt.poc/optimize-native-volatility-portfolio-retention/v1"
 	optimizePortfolioReasonMaterialization = "CURRENT_MATERIALIZATION_UNAVAILABLE"
+	optimizePortfolioReasonLineage         = "PORTFOLIO_PRODUCER_LINEAGE_UNAVAILABLE"
 )
 
 var errOptimizeNativePortfolioContextDrift = errors.New("native volatility portfolio context drifted")
+var errOptimizeNativePortfolioLineage = errors.New("native volatility portfolio producer lineage is unavailable")
 
 type optimizeNativeQuarantinePlan struct {
 	BindingSHA256        string
@@ -58,6 +60,7 @@ type optimizeNativePortfolioRetention struct {
 	Decision             string                            `json:"decision"`
 	Reason               string                            `json:"reason"`
 	DriftedBindings      []string                          `json:"driftedBindings"`
+	MissingProducers     []string                          `json:"missingProducers"`
 	ProductionAuthorized bool                              `json:"productionAuthorized"`
 	TestOptimization     string                            `json:"testOptimization"`
 }
@@ -231,6 +234,12 @@ func runOptimizeNativeQuarantine(args []string, stdout, stderr io.Writer) int {
 		} else if errors.Is(err, errOptimizeNativePortfolioContextDrift) {
 			err = encodeOptimizeNativePortfolioRetention(
 				stdout, state, result, *portfolioPath, *portfolioContextPath,
+				"PORTFOLIO_CONTEXT_DRIFT",
+			)
+		} else if errors.Is(err, errOptimizeNativePortfolioLineage) {
+			err = encodeOptimizeNativePortfolioRetention(
+				stdout, state, result, *portfolioPath, *portfolioContextPath,
+				optimizePortfolioReasonLineage,
 			)
 		}
 	}
@@ -247,9 +256,10 @@ func encodeOptimizeNativePortfolioRetention(
 	current nativevolatility.Result,
 	portfolioPath string,
 	contextPath string,
+	reason string,
 ) error {
 	retention, err := optimizeNativePortfolioRetentionEvidence(
-		state, current, portfolioPath, contextPath, "PORTFOLIO_CONTEXT_DRIFT",
+		state, current, portfolioPath, contextPath, reason,
 	)
 	if err != nil {
 		return err
@@ -284,6 +294,7 @@ func optimizeNativePortfolioRetentionEvidence(
 	if err != nil {
 		return optimizeNativePortfolioRetention{}, errors.New("native volatility portfolio retention context is invalid")
 	}
+	missingProducers := optimizeMissingPortfolioProducers(portfolio, current)
 	if reason == "PORTFOLIO_CONTEXT_DRIFT" {
 		if preflight.Decision != nativevolatility.PortfolioDecisionRetained {
 			return optimizeNativePortfolioRetention{}, errors.New("native volatility portfolio retention context is invalid")
@@ -292,6 +303,11 @@ func optimizeNativePortfolioRetentionEvidence(
 		if preflight.Decision != nativevolatility.PortfolioDecisionCompatible ||
 			len(preflight.DriftedBindings) != 0 {
 			return optimizeNativePortfolioRetention{}, errors.New("native volatility portfolio materialization retention is invalid")
+		}
+	} else if reason == optimizePortfolioReasonLineage {
+		if preflight.Decision != nativevolatility.PortfolioDecisionCompatible ||
+			len(preflight.DriftedBindings) != 0 || len(missingProducers) == 0 {
+			return optimizeNativePortfolioRetention{}, errors.New("native volatility portfolio lineage retention is invalid")
 		}
 	} else {
 		return optimizeNativePortfolioRetention{}, errors.New("native volatility portfolio retention reason is invalid")
@@ -302,9 +318,31 @@ func optimizeNativePortfolioRetentionEvidence(
 		LearnedContext: learned, CurrentContext: currentContext,
 		LearnedContextSHA: learnedSHA, CurrentContextSHA: preflight.CurrentContextSHA256,
 		Decision: "NATIVE_RETAINED", Reason: reason,
-		DriftedBindings: preflight.DriftedBindings, ProductionAuthorized: false,
-		TestOptimization: "OUT_OF_SCOPE",
+		DriftedBindings: preflight.DriftedBindings, MissingProducers: missingProducers,
+		ProductionAuthorized: false,
+		TestOptimization:     "OUT_OF_SCOPE",
 	}, nil
+}
+
+func optimizeMissingPortfolioProducers(
+	portfolio nativevolatility.Portfolio,
+	current nativevolatility.Result,
+) []string {
+	present := make(map[string]bool)
+	entries := append([]nativevolatility.Entry(nil), current.QuarantinedOutputs...)
+	entries = append(entries, current.TransportedOutputs...)
+	for _, entry := range entries {
+		for _, producer := range entry.ProducerTasks {
+			present[producer] = true
+		}
+	}
+	missing := make([]string, 0, len(portfolio.QuarantinedProducers))
+	for _, producer := range portfolio.QuarantinedProducers {
+		if !present[producer] {
+			missing = append(missing, producer)
+		}
+	}
+	return missing
 }
 
 func loadOptimizeQuarantineState(relative string) (optimizeInvocation, optimizeState, error) {
@@ -513,6 +551,11 @@ func applyOptimizeNativeQuarantineWithPortfolio(
 		}
 		if context != expectedContext {
 			return result, nil, fmt.Errorf("%w: native volatility portfolio does not bind the current optimize context", errOptimizeNativePortfolioContextDrift)
+		}
+		if missing := optimizeMissingPortfolioProducers(portfolio, result); len(missing) > 0 {
+			return result, nil, fmt.Errorf(
+				"%w: %s", errOptimizeNativePortfolioLineage, strings.Join(missing, ","),
+			)
 		}
 		applied, applyErr := nativevolatility.ApplyPortfolio(portfolio, context, revision, result)
 		if applyErr != nil {

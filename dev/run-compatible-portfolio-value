@@ -213,6 +213,7 @@ jq -n \
    map(select(length > 0)) | unique) as $outputDigests |
   ($p.decision == "COMPATIBLE") as $compatible |
   ($compatible and $e.nativeVolatility.portfolioApplied) as $materialized |
+	($e.nativeVolatility.portfolioReason // null) as $retentionReason |
   ($materialized and ($e.calibration.qualified // false)) as $qualified |
   {
     schemaVersion:"buildopt.evidence/poc-compatible-portfolio-value/v1",
@@ -264,7 +265,7 @@ jq -n \
     acceptance:{
       decision:(if $qualified then "COMPATIBLE_PORTFOLIO_QUALIFIED"
         elif $materialized then "COMPATIBLE_PORTFOLIO_VALUE_NOT_PROVEN"
-        elif $compatible then "CURRENT_MATERIALIZATION_UNAVAILABLE"
+        elif $compatible then $retentionReason
         else "COMPATIBILITY_REJECTED" end),
       compatibleReplayValueProven:$qualified,
       exactOutputGatePreserved:

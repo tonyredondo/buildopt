@@ -113,11 +113,15 @@ jq -e --slurpfile contract "${buildopt_contract}" '
 	    .acceptance.compatibleReplayValueProven == false))) or
     (.evaluation.nativeVolatility.portfolioApplied == false and
       .evaluation.nativeVolatility.portfolioDecision == "NATIVE_RETAINED" and
-      .evaluation.nativeVolatility.portfolioReason ==
-        "CURRENT_MATERIALIZATION_UNAVAILABLE" and
+      ((.evaluation.nativeVolatility.portfolioReason ==
+          "CURRENT_MATERIALIZATION_UNAVAILABLE" and
+        .evaluation.nativeVolatility.missingPortfolioProducers == []) or
+       (.evaluation.nativeVolatility.portfolioReason ==
+          "PORTFOLIO_PRODUCER_LINEAGE_UNAVAILABLE" and
+        (.evaluation.nativeVolatility.missingPortfolioProducers | length) > 0)) and
       .evaluation.ordinaryInvocations == 1 and
       .evaluation.measurement.pairsMeasured == 0 and
-      .acceptance.decision == "CURRENT_MATERIALIZATION_UNAVAILABLE" and
+      .acceptance.decision == .evaluation.nativeVolatility.portfolioReason and
       .acceptance.compatibleReplayValueProven == false)) or
    (.evaluation.preflight.decision == "NATIVE_RETAINED" and
     .evaluation.preflight.reason == "PORTFOLIO_CONTEXT_DRIFT" and

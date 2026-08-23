@@ -175,6 +175,7 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 	var retention bytes.Buffer
 	if err := encodeOptimizeNativePortfolioRetention(
 		&retention, driftedState, driftedCurrent, portfolioPath, contextPath,
+		"PORTFOLIO_CONTEXT_DRIFT",
 	); err != nil {
 		t.Fatal(err)
 	}
@@ -186,8 +187,35 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 		retained.Decision != "NATIVE_RETAINED" ||
 		retained.Reason != "PORTFOLIO_CONTEXT_DRIFT" ||
 		!equalOptimizeStrings(retained.DriftedBindings, []string{"GRADLE_WRAPPER_SHA256"}) ||
+		len(retained.MissingProducers) != 0 ||
 		retained.ProductionAuthorized || retained.TestOptimization != "OUT_OF_SCOPE" {
 		t.Fatalf("portfolio retention = %+v", retained)
+	}
+	missingPortfolio := portfolio
+	missingPortfolio.Observations = append(
+		[]nativevolatility.PortfolioObservation(nil), portfolio.Observations...,
+	)
+	missingPortfolio.Observations[0].QuarantinedProducers = []string{":missing:compileJava"}
+	missingPortfolio.QuarantinedProducers = []string{":missing:compileJava"}
+	missingPortfolioPath := filepath.Join(repository, "missing-portfolio.json")
+	if err := writeCanonicalPrivateJSON(missingPortfolioPath, missingPortfolio); err != nil {
+		t.Fatal(err)
+	}
+	missingCurrent, missingApplication, err := applyOptimizeNativeQuarantineWithPortfolio(
+		invocation, &portfolioState, secondPath, missingPortfolioPath, contextPath,
+		hex.EncodeToString(evaluationRevisionDigest[:]),
+	)
+	if !errors.Is(err, errOptimizeNativePortfolioLineage) || missingApplication != nil {
+		t.Fatalf("missing lineage application = %+v, err = %v", missingApplication, err)
+	}
+	missingRetention, err := optimizeNativePortfolioRetentionEvidence(
+		portfolioState, missingCurrent, missingPortfolioPath, contextPath,
+		optimizePortfolioReasonLineage,
+	)
+	if err != nil || missingRetention.Reason != optimizePortfolioReasonLineage ||
+		!equalOptimizeStrings(missingRetention.MissingProducers, []string{":missing:compileJava"}) ||
+		len(missingRetention.DriftedBindings) != 0 || missingRetention.ProductionAuthorized {
+		t.Fatalf("missing lineage retention = %+v, err = %v", missingRetention, err)
 	}
 	current, application, err := applyOptimizeNativeQuarantineWithPortfolio(
 		invocation, &portfolioState, secondPath, portfolioPath, contextPath,

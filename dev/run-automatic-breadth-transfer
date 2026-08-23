@@ -523,7 +523,11 @@ buildopt_capture_subject() {
                       ((.reason == "PORTFOLIO_CONTEXT_DRIFT" and
                         (.driftedBindings | length) > 0) or
                        (.reason == "CURRENT_MATERIALIZATION_UNAVAILABLE" and
-                        (.driftedBindings | length) == 0)) and
+                        (.driftedBindings | length) == 0 and
+                        (.missingProducers | length) == 0) or
+                       (.reason == "PORTFOLIO_PRODUCER_LINEAGE_UNAVAILABLE" and
+                        (.driftedBindings | length) == 0 and
+                        (.missingProducers | length) > 0)) and
                       .productionAuthorized == false and
                       .testOptimization == "OUT_OF_SCOPE"))
                   else
@@ -759,7 +763,9 @@ buildopt_capture_subject() {
                     portfolioReason:
                       (if $retention == null then null else $retention.reason end),
                     contextDriftedBindings:
-                      (if $retention == null then [] else $retention.driftedBindings end)}}
+                      (if $retention == null then [] else $retention.driftedBindings end),
+                    missingPortfolioProducers:
+                      (if $retention == null then [] else $retention.missingProducers end)}}
                 ' "${buildopt_subject_output}/capture.json" \
                     >"${buildopt_subject_output}/capture.tmp"
                 fi
