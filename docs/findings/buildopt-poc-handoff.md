@@ -126,19 +126,24 @@ are rebuilt locally, product failures remain zero and cumulative net is
   native-retained descendant generated a different Jackson JAR even though no
   BuildOpt profile was selected. The differing bytecode reverses two `Set.of`
   operands, proving that producer volatility can move between revisions.
+- The fresh cross-revision portfolio safely learned five volatile Kotlin
+  producers from 11,187 outputs, quarantining 476 while leaving 10,711 exact
+  outputs transportable. The later revision changed its Wrapper and output
+  contract, so BuildOpt returned `NATIVE_RETAINED` before timing. Its native
+  pair observed two different volatile JAR producers. Portfolio safety is
+  proven, but no new Micronaut replay value is claimed.
 
 ## Next steps
 
-1. Build a cross-revision producer-volatility portfolio from authoritative
-   native observations, then test it only on a later preregistered compatible
-   revision. The learning revision must remain diagnostic rather than becoming
-   a performance claim.
-2. Reduce the roughly six seconds of BuildOpt selection/synchronization work on
-   native-retained descendants; do not attribute uncontrolled arm variation to
-   the product.
-3. Keep automatic activation bounded by exact change family, graph, Wrapper,
-   executable, output and economic bindings while moving the proven path toward
-   the one-command onboarding flow.
+1. Move portfolio compatibility ahead of the second native observation. A
+   Wrapper or output-contract mismatch should retain native after the ordinary
+   customer build without paying for another full build.
+2. Preregister a public descendant with matching repository, workflow, Wrapper
+   and output-contract bindings, then measure whether a multi-observation
+   producer portfolio creates exact positive replay value.
+3. Reduce selection/synchronization cost on native-retained descendants and
+   keep automatic activation bounded by exact change family, graph, executable,
+   output and economic bindings.
 
 ## Evidence
 
@@ -149,6 +154,8 @@ are rebuilt locally, product failures remain zero and cumulative net is
 - [Machine-readable quarantine summary](../../benchmarks/results/poc-native-volatility-quarantine-v1/summary.json)
 - [Producer-bound Spring lifetime result](../../benchmarks/results/poc-producer-bound-quarantine-lifetime-v2/README.md)
 - [Micronaut lifetime generalization result](../../benchmarks/results/poc-producer-bound-lifetime-generalization-v1/README.md)
+- [Cross-revision volatility portfolio result](../../benchmarks/results/poc-cross-revision-volatility-portfolio-v1/README.md)
+- [Machine-readable volatility portfolio summary](../../benchmarks/results/poc-cross-revision-volatility-portfolio-v1/summary.json)
 - [Compatible descendant discovery result](../../benchmarks/results/poc-compatible-descendant-discovery-v1/README.md)
 - [Machine-readable compatible descendant summary](../../benchmarks/results/poc-compatible-descendant-discovery-v1/summary.json)
 - [Native-volatility quarantine protocol](../../specs/poc-native-volatility-quarantine-v1.md)

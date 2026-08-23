@@ -232,6 +232,21 @@ descendants are not timed, and the experiment finishes **-11.676 seconds net**.
 ./dev/check-producer-bound-lifetime-generalization
 ```
 
+The [cross-revision volatility portfolio result](./results/poc-cross-revision-volatility-portfolio-v1/README.md)
+then captures a fresh diagnostic pair at the frozen learning revision. It
+compares 11,187 outputs, quarantines 476 outputs from five volatile Kotlin
+producers and leaves 10,711 outputs exactly transportable. On the later public
+revision, canonical repository and workflow identity remain stable while the
+Gradle Wrapper and output contract drift. The product returns structured
+`NATIVE_RETAINED` and stops before all timing pairs, so no replay percentage is
+claimed. The current-revision native pair also observes two different volatile
+JAR producers among 186 outputs, demonstrating that a single pair cannot be
+treated as a universal producer list.
+
+```bash
+./dev/check-cross-revision-volatility-portfolio
+```
+
 The [compatible descendant discovery result](./results/poc-compatible-descendant-discovery-v1/README.md)
 reruns the frozen OpenTelemetry JMX window after the ownership correction. The
 candidate is functionally correct in 8/8 pairs and reduces 1,027 projects to 8,

@@ -42,6 +42,13 @@
   finishes **59.550 seconds net positive** after qualification/publication.
   Generality is still bounded: another non-Kafka family must independently
   qualify and select before broadening the claim.
+- **The first cross-revision volatility portfolio is safe but not yet
+  valuable.** A fresh Micronaut learning pair quarantines 476 of 11,187
+  outputs from five Kotlin producers and leaves 10,711 exact outputs
+  transportable. The later revision changes its Wrapper and output contract,
+  so BuildOpt returns `NATIVE_RETAINED` with zero timing pairs. Its native pair
+  observes two different volatile JAR producers, confirming that one observed
+  producer list cannot be generalized universally.
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
   Runtime Tuning, Hot State and standard Copy are retired; historical Jar,
   Patch and Edge experiments remain scoped supporting evidence.
@@ -812,11 +819,25 @@ identity can change between revisions. BuildOpt neither selected nor restored
 outputs, exact hashes remain enforced, no descendant saving is claimed, and the
 run ends **-11.676 seconds net** after qualification/publication.
 
+The cross-revision portfolio follow-up captures a fresh independent pair at the
+diagnostic learning revision rather than copying the earlier one-JAR finding.
+It compares 11,187 outputs and observes five volatile Kotlin task-state files.
+Quarantining their complete producers excludes 476 outputs and leaves 10,711
+exact outputs transportable. At the frozen evaluation revision, canonical
+repository identity and workflow remain equal, but the Gradle Wrapper and
+output contract differ. BuildOpt returns structured `NATIVE_RETAINED`, names
+both drifted bindings and stops before the eight timing pairs. The evaluation's
+current native pair independently sees two volatile JAR producers among 186
+outputs. This proves path-independent portfolio identity and fail-closed
+compatibility, not cross-revision value; no percentage is claimed.
+
 ## Open Questions
 
-- Can an authoritative native revision update a repository/workflow-bound
-  producer-volatility portfolio, followed by a separately preregistered
-  compatible revision that measures replay value without post-hoc selection?
+- Can compatibility be decided before a second native observation, avoiding a
+  complete extra build whenever Wrapper or output-contract bindings drift?
+- Can multiple authoritative observations under one compatible context form a
+  monotonic producer portfolio that remains exact and produces positive value
+  on a separately preregistered public descendant?
 - When producer-bound public observations are recaptured, does quarantining the
   volatile producers leave enough stable work to produce positive net value?
 - What future materially different trace would be sufficient to reopen a

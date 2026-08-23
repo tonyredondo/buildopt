@@ -790,8 +790,8 @@ public repository builds:
 The checker binds the 70-to-2 qualification, 10.33% mean saving, target
 producer quarantine and the first descendant's native-retained result. It
 requires the exact-output rejection caused by a different generated JAR,
-records no descendant performance claim, and leaves cross-revision volatility
-learning as the next bounded hypothesis.
+records no descendant performance claim, and motivates the subsequent
+cross-revision volatility experiment.
 
 Validate the preregistered cross-revision producer-volatility portfolio and
 its fail-closed Go implementation with:
@@ -815,6 +815,12 @@ with at least 16 GiB free using:
 The learning revision runs once and cannot claim performance. The later public
 revision runs the ordinary eight alternating pairs only after its current
 context and complete native output inventory validate against the portfolio.
+The checked terminal evidence instead records Wrapper and output-contract
+drift: BuildOpt returns structured `NATIVE_RETAINED`, names both incompatible
+bindings and stops with zero timing pairs. The learning pair quarantines 476 of
+11,187 outputs across five Kotlin producers; the later native pair observes two
+different volatile JAR producers, so neither observation is generalized into a
+universal producer list.
 
 Validate the corrected OpenTelemetry effective-change replay and its terminal
 economic rejection without rerunning the 17 public-repository builds:

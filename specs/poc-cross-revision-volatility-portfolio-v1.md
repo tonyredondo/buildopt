@@ -15,9 +15,11 @@ history from branch `5.2.x`.
 - The qualification revision remains
   `eb60c6c35f355750c6bced793e85c30629d27c4e`.
 - The diagnostic learning revision is
-  `6a11a05950f36193bd865d6b25c2bc17dfb4ff1c`. It taught the portfolio that
-  `:micronaut-jackson-databind:jar` can produce different exact bytes across
-  independent native roots. This revision cannot produce a performance claim.
+  `6a11a05950f36193bd865d6b25c2bc17dfb4ff1c`. A prior diagnostic run at this
+  revision exposed volatile `:micronaut-jackson-databind:jar` bytes. That
+  observation motivated the experiment but did not preregister an expected
+  producer list: the fresh independent pair must learn only what it observes.
+  This revision cannot produce a performance claim.
 - The later evaluation revision is the already-public first-parent commit
   `1be5f8cefb80b4dbd2b3e086705950ddc72f195f` (`Async Http Client`). It is
   measured only if automatic discovery proves that the current change,
@@ -63,6 +65,23 @@ interval, non-regressive candidate p95, at least 500 ms and 2% mean saving,
 exact required outputs and successful native fallback. Qualification,
 diagnostic learning, publication and replay economics remain separate and
 percentages are not added.
+
+## Observed outcome
+
+The fresh learning pair compared 11,187 outputs. Five Kotlin task-state files
+differed, so producer-atomic quarantine excluded 476 outputs from five
+producers and left 10,711 exact outputs transportable. The later revision kept
+the same canonical repository and workflow bindings, but its Wrapper and
+output contract changed. BuildOpt returned structured `NATIVE_RETAINED`, named
+both drifted bindings and stopped before timing. Its current-revision native
+pair independently observed two volatile JAR producers among 186 outputs.
+
+The changing producer sets confirm that one native pair is bounded evidence,
+not a universal volatility list. Portfolio safety and path-independent
+repository identity are proven; cross-revision replay value is not. The next
+block must reject incompatible contexts before paying for the second native
+observation, then preregister a fully compatible public revision before any
+new timing claim.
 
 ## Boundaries
 

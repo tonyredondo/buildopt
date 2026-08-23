@@ -9,6 +9,7 @@ fi
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
 buildopt_contract=${buildopt_repo_root}/specs/poc-cross-revision-volatility-portfolio-v1.json
+buildopt_evidence=${buildopt_repo_root}/benchmarks/results/poc-cross-revision-volatility-portfolio-v1/summary.json
 
 command -v jq >/dev/null 2>&1 || {
     printf 'cross-revision volatility portfolio validation requires jq\n' >&2
@@ -55,6 +56,55 @@ jq -e '
   .boundaries.testOptimization == "OUT_OF_SCOPE"
 ' "${buildopt_contract}" >/dev/null || {
     printf 'cross-revision volatility portfolio contract drifted\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-cross-revision-volatility-portfolio/v1" and
+  .workItem == "POC-CROSS-REVISION-VOLATILITY-PORTFOLIO-001" and
+  .buildopt.revision == "a0e896685770dd4d0e2d4e0c17ca3e21b8296e4b" and
+  .repository.id == "micronaut-projects/micronaut-core" and
+  .repository.learningRevision == "6a11a05950f36193bd865d6b25c2bc17dfb4ff1c" and
+  .repository.evaluationRevision == "1be5f8cefb80b4dbd2b3e086705950ddc72f195f" and
+  .learning.measurementOnlyWorkflowRuns == 0 and
+  .learning.comparedOutputCount == 11187 and
+  (.learning.volatilePaths | length) == 5 and
+  (.learning.quarantinedProducers | length) == 5 and
+  .learning.quarantinedOutputCount == 476 and
+  .learning.transportedOutputCount == 10711 and
+  .learning.decision == "TRANSPORT_READY" and
+  .learning.performanceClaimed == false and
+  .portfolio.repositoryScopeSha256 == .evaluation.currentContext.repositoryScopeSha256 and
+  .portfolio.workflowSha256 == .evaluation.currentContext.workflowSha256 and
+  .portfolio.wrapperSha256 != .evaluation.currentContext.wrapperSha256 and
+  .portfolio.outputContractSha256 != .evaluation.currentContext.outputContractSha256 and
+  .portfolio.historicalOutputBytesStored == false and
+  .portfolio.historicalOutputHashesReused == false and
+  .evaluation.currentNativeOutputCount == 186 and
+  (.evaluation.currentVolatilePaths | length) == 2 and
+  (.evaluation.currentQuarantinedProducers | length) == 2 and
+  .evaluation.currentQuarantinedOutputCount == 2 and
+  .evaluation.currentTransportedOutputCount == 184 and
+  .evaluation.decision == "NATIVE_RETAINED" and
+  .evaluation.reason == "PORTFOLIO_CONTEXT_DRIFT" and
+  .evaluation.driftedBindings == [
+    "GRADLE_WRAPPER_SHA256",
+    "OUTPUT_CONTRACT_SHA256"] and
+  .evaluation.timingPairsMeasured == 0 and
+  .evaluation.performanceClaimed == false and
+  .evaluation.productFailures == 0 and
+  .acceptance.decision == "COMPLETE_NATIVE_RETAINED" and
+  .acceptance.broadenedValueClaim == false and
+  .acceptance.portfolioSafetyProven == true and
+  .acceptance.crossRevisionReplayValueProven == false and
+  .nextHypothesis.workItem == "POC-PORTFOLIO-COMPATIBILITY-PREFLIGHT-001" and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false and
+  .boundaries.soakRequired == false and
+  .boundaries.designPartnerRequired == false and
+  .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_evidence}" >/dev/null || {
+    printf 'cross-revision volatility portfolio evidence drifted\n' >&2
     exit 1
 }
 
