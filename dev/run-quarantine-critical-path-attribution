@@ -127,9 +127,11 @@ fi
 jq -s \
     --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
     --arg buildoptRevision "$(git -C "${buildopt_repo_root}" rev-parse HEAD)" \
-    --arg sourceSummarySha "$(sha256sum "${buildopt_source_summary}" | awk '{print $1}')" '
+    --arg sourceSummarySha "$(sha256sum "${buildopt_source_summary}" | awk '{print $1}')" \
+    --slurpfile sourceResult "${buildopt_final_result}" '
   def mean: if length == 0 then 0 else add / length end;
   . as $reports |
+  ($sourceResult[0]) as $source |
   ($reports | map(select(.arm == "control")) | length) as $controlCount |
   ($reports | map(select(.arm == "candidate")) | length) as $candidateCount |
   def armSummary($arm):
@@ -159,13 +161,62 @@ jq -s \
         outcomes:($candidate|group_by(.outcome)|map({key:.[0].outcome,value:length})|from_entries)}} |
      .candidateMinusControlMs = (.candidate.meanDurationMs - .control.meanDurationMs)) |
    sort_by(.identity)) as $tasks |
+  ($tasks | map(select(.control.presentCount == $controlCount and
+    .candidate.presentCount == 0))) as $eliminated |
+  ({taskCount:($eliminated|length),
+    meanControlDurationMs:([$eliminated[].control.meanDurationMs]|add // 0),
+    criticalPathMembership:([$eliminated[].control.criticalMembership]|add // 0),
+    byClass:($eliminated|group_by(.taskClass)|map({taskClass:.[0].taskClass,
+      taskCount:length,
+      meanControlDurationMs:([.[].control.meanDurationMs]|add // 0),
+      criticalPathMembership:([.[].control.criticalMembership]|add // 0)})|
+      sort_by(-.meanControlDurationMs,.taskClass))}) as $eliminatedSummary |
+  (armSummary("control")) as $controlSummary |
+  (armSummary("candidate")) as $candidateSummary |
+  (if $source.calibration.qualified == false and
+       $eliminatedSummary.criticalPathMembership == 0 and
+       $candidateSummary.meanMainBuildCriticalPathMs >=
+         $controlSummary.meanMainBuildCriticalPathMs
+   then "STOP_MICRONAUT_QUARANTINE_LINE"
+   else "REVIEW_CRITICAL_PATH_HYPOTHESIS"
+   end) as $decision |
   {
     schemaVersion:"buildopt.evidence/poc-quarantine-critical-path-attribution/v1",
     workItem:"POC-QUARANTINE-CRITICAL-PATH-ATTRIBUTION-001",
     capturedAt:$capturedAt,buildoptRevision:$buildoptRevision,
     sourceSummarySha256:$sourceSummarySha,
     method:"LONGEST_HARD_DEPENDENCY_CHAIN_BY_TASK_DURATION",
-    arms:{control:armSummary("control"),candidate:armSummary("candidate")},
+    causalMeasurement:{pairsMeasured:$source.calibration.pairsMeasured,
+      positivePairs:$source.calibration.positivePairs,
+      controlMeanMs:$source.calibration.controlMeanMs,
+      candidateMeanMs:$source.calibration.candidateMeanMs,
+      meanSavedMs:$source.calibration.meanSavedMs,
+      reductionRatio:$source.calibration.reductionRatio,
+      interval95SavedMs:$source.calibration.interval95SavedMs,
+      controlP95Ms:$source.calibration.controlP95Ms,
+      candidateP95Ms:$source.calibration.candidateP95Ms,
+      qualified:$source.calibration.qualified,
+      fallbackSuccessful:$source.calibration.fallbackSuccessful,
+      requiredOutputSha256:$source.incrementalLearning.expectedOutputSha256},
+    graph:$source.discovery.graph,
+    arms:{control:$controlSummary,candidate:$candidateSummary},
+    attribution:{taskCountDelta:($candidateSummary.meanTaskCount-
+        $controlSummary.meanTaskCount),
+      cumulativeTaskDurationDeltaMs:
+        ($candidateSummary.meanCumulativeTaskDurationMs-
+         $controlSummary.meanCumulativeTaskDurationMs),
+      mainBuildTaskSpanDeltaMs:($candidateSummary.meanMainBuildTaskSpanMs-
+        $controlSummary.meanMainBuildTaskSpanMs),
+      mainBuildCriticalPathDeltaMs:
+        ($candidateSummary.meanMainBuildCriticalPathMs-
+         $controlSummary.meanMainBuildCriticalPathMs),
+      eliminated:$eliminatedSummary},
+    decision:{result:$decision,
+      reason:(if $decision == "STOP_MICRONAUT_QUARANTINE_LINE"
+        then "ELIMINATED_TASKS_ARE_OUTSIDE_CRITICAL_PATH_AND_VALUE_IS_UNPROVEN"
+        else "MATERIAL_CRITICAL_PATH_HYPOTHESIS_REQUIRES_REVIEW" end),
+      anotherGenericMicronautOptimizationAuthorized:
+        ($decision != "STOP_MICRONAUT_QUARANTINE_LINE")},
     observations:($reports|sort_by(.invocation.ordinaryInvocation)|map({
       arm,invocation,operationTraceSha256,taskGraphSha256,builds,summary})),
     tasks:$tasks,
