@@ -42,6 +42,21 @@ buildopt_expected_subjects_sha=${BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256:-}
 buildopt_retain_root=${BUILDOPT_AUTOMATIC_BREADTH_RETAIN_ROOT:-false}
 buildopt_requested_root=${BUILDOPT_AUTOMATIC_BREADTH_ROOT:-}
 buildopt_process_mode=${BUILDOPT_AUTOMATIC_BREADTH_PROCESS_MODE:-daemon}
+buildopt_task_trace=${BUILDOPT_AUTOMATIC_BREADTH_TASK_TRACE:-false}
+case ${buildopt_task_trace} in
+    false) ;;
+    true)
+        [[ ${buildopt_protocol} == v4 &&
+            -s ${buildopt_script_dir}/gradle-critical-path.init.gradle ]] || {
+            printf 'task trace capture requires protocol v4 and its init script\n' >&2
+            exit 64
+        }
+        ;;
+    *)
+        printf 'automatic breadth task trace must be true or false\n' >&2
+        exit 64
+        ;;
+esac
 buildopt_native_volatility_diagnostic=0
 [[ ${buildopt_protocol} == v4 ]] && buildopt_native_volatility_diagnostic=1
 buildopt_native_portfolio=${BUILDOPT_NATIVE_VOLATILITY_PORTFOLIO_FILE:-}
@@ -259,10 +274,12 @@ buildopt_capture_subject() {
     local buildopt_portfolio_preflight buildopt_portfolio_preflight_sha
     local buildopt_portfolio_preflight_json
     local buildopt_portfolio_preflight_decision
+    local buildopt_trace_base buildopt_trace_graph
     local buildopt_argument
     local -a buildopt_gradle_args=()
     local -a buildopt_native_gradle_args=()
     local -a buildopt_quarantine_args=()
+    local -a buildopt_trace_environment=()
 
     buildopt_key=$(jq -er ".repositories[${buildopt_index}].key" "${buildopt_subjects}")
     buildopt_repository_id=$(jq -er ".repositories[${buildopt_index}].repositoryId" "${buildopt_subjects}")
@@ -334,6 +351,12 @@ buildopt_capture_subject() {
         "${buildopt_process_flag}" --build-cache --parallel --no-configuration-cache
         --console=plain --no-scan --max-workers=12
     )
+    if [[ ${buildopt_task_trace} == true ]]; then
+        buildopt_gradle_args+=(
+            --init-script "${buildopt_script_dir}/gradle-critical-path.init.gradle"
+        )
+        mkdir -p -- "${buildopt_subject_output}/operations"
+    fi
     buildopt_event="${buildopt_root}/${buildopt_key}/github-event.json"
     jq -n --arg before "${buildopt_base}" '{before:$before}' >"${buildopt_event}"
     buildopt_stdout="${buildopt_root}/${buildopt_key}/optimize.stdout"
@@ -368,6 +391,16 @@ buildopt_capture_subject() {
             buildopt_total_invocations=${buildopt_requested_invocations}
         for buildopt_invocation in $(seq 1 "${buildopt_total_invocations}"); do
             buildopt_clean_subject_outputs "${buildopt_repository}"
+            buildopt_trace_environment=()
+            if [[ ${buildopt_task_trace} == true ]]; then
+                buildopt_trace_base=$(printf '%s/operations/invocation-%02d' \
+                    "${buildopt_subject_output}" "${buildopt_invocation}")
+                buildopt_trace_graph=${buildopt_trace_base}-graph.jsonl
+                buildopt_trace_environment=(
+                    "GRADLE_OPTS=-Dorg.gradle.internal.operations.trace=${buildopt_trace_base}"
+                    "BUILDOPT_TASK_GRAPH_OUTPUT=${buildopt_trace_graph}"
+                )
+            fi
             buildopt_invocation_file=$(printf '%s/invocation-%02d.json' \
                 "${buildopt_subject_output}" "${buildopt_invocation}")
             buildopt_stderr=$(printf '%s/invocation-%02d.stderr' \
@@ -377,7 +410,7 @@ buildopt_capture_subject() {
             set +e
             (
                 cd -- "${buildopt_repository}"
-                env -u CI \
+                env -u CI "${buildopt_trace_environment[@]}" \
                     GITHUB_EVENT_PATH="${buildopt_event}" \
                     GITHUB_REPOSITORY="${buildopt_repository_id}" \
                     GRADLE_USER_HOME="${buildopt_gradle_home}" \
@@ -393,6 +426,14 @@ buildopt_capture_subject() {
             if ((buildopt_status != 0)) || ! jq -e \
                 '.schemaVersion == "buildopt.poc/optimize-result/v1"' \
                 "${buildopt_invocation_file}" >/dev/null 2>&1; then
+                buildopt_all_invocations_valid=false
+                break
+            fi
+            if [[ ${buildopt_task_trace} == true ]] &&
+                jq -e '.execution.started == true' "${buildopt_invocation_file}" >/dev/null &&
+                [[ ! -s ${buildopt_trace_base}-log.txt || ! -s ${buildopt_trace_graph} ]]; then
+                printf 'task trace capture is incomplete for invocation %d\n' \
+                    "${buildopt_invocation}" >&2
                 buildopt_all_invocations_valid=false
                 break
             fi

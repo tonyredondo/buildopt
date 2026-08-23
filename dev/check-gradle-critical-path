@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_fixture=${buildopt_repo_root}/fixtures/gradle-correlation
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-critical-path.XXXXXX")
+trap 'rm -rf -- "${buildopt_temporary}"' EXIT
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain --untracked-files=all)
+
+for buildopt_command in git jq; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'Gradle critical-path check requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+(
+    cd -- "${buildopt_repo_root}"
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go test -count=1 ./internal/gradlecriticalpath ./cmd/gradle-critical-path
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -trimpath -o "${buildopt_temporary}/gradle-critical-path" \
+        ./cmd/gradle-critical-path
+)
+
+env \
+    GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local" \
+    BUILDOPT_TASK_GRAPH_OUTPUT="${buildopt_temporary}/graph.jsonl" \
+    GRADLE_OPTS="-Dorg.gradle.internal.operations.trace=${buildopt_temporary}/operations" \
+    "${buildopt_script_dir}/run" -- \
+    "${buildopt_repo_root}/gradlew" \
+    --project-dir "${buildopt_fixture}" \
+    --project-cache-dir "${buildopt_temporary}/project-cache" \
+    --init-script "${buildopt_script_dir}/gradle-critical-path.init.gradle" \
+    --no-daemon --offline --console=plain --parallel --max-workers=4 \
+    "-PbuildoptFixtureOutputDir=${buildopt_temporary}/outputs" \
+    "-PbuildoptFixtureCacheDir=${buildopt_temporary}/cache" \
+    clean correlationFixture >"${buildopt_temporary}/gradle.log" 2>&1
+
+"${buildopt_temporary}/gradle-critical-path" \
+    --operations "${buildopt_temporary}/operations-log.txt" \
+    --graph "${buildopt_temporary}/graph.jsonl" --arm candidate \
+    >"${buildopt_temporary}/report.json"
+
+jq -e '
+  .schemaVersion == "buildopt.diagnostics/gradle-task-critical-path/v1" and
+  .arm == "candidate" and .summary.taskCount == 12 and
+  .summary.buildCount == 2 and .summary.mainBuildTaskSpanMs >= 0 and
+  .summary.mainBuildCriticalPathMs >= 0 and
+  (.summary.mainBuildCriticalPathTasks | length) > 0 and
+  ([.builds[].buildPath] | sort) == [":",":buildSrc"] and
+  ([.tasks[] | select(.identity == ":alpha:correlationFixture")] | length) == 1 and
+  .boundaries == {"diagnosticOnly":true,"productionAuthorized":false,
+    "criticalPathMethod":"LONGEST_HARD_DEPENDENCY_CHAIN_BY_TASK_DURATION",
+    "testOptimization":"OUT_OF_SCOPE"}
+' "${buildopt_temporary}/report.json" >/dev/null || {
+    printf 'Gradle critical-path report drifted\n' >&2
+    exit 1
+}
+grep -Fq 'BUILD SUCCESSFUL' "${buildopt_temporary}/gradle.log"
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain --untracked-files=all)
+[[ ${buildopt_after} == "${buildopt_before}" ]] || {
+    printf 'Gradle critical-path check changed the working tree\n' >&2
+    exit 1
+}
+
+printf 'Gradle critical-path attribution OK: resolved DAG plus task operations\n'

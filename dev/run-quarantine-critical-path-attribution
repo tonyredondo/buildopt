@@ -1,0 +1,174 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ $1 != /* || -e $1 ]]; then
+    printf 'usage: %s /new/absolute/evidence/directory\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_raw=${buildopt_output}/raw
+buildopt_analysis=${buildopt_output}/analysis
+buildopt_tools=${buildopt_output}/tools
+buildopt_source_summary=${buildopt_raw}/summary.json
+buildopt_subject=${buildopt_raw}/evaluation/compatible-evaluation
+buildopt_final_result=${buildopt_subject}/result.json
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'quarantine critical-path attribution requires %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -x ${buildopt_script_dir}/run-compatible-portfolio-value &&
+    -s ${buildopt_script_dir}/gradle-critical-path.init.gradle ]] || {
+    printf 'quarantine critical-path attribution inputs are unavailable\n' >&2
+    exit 1
+}
+[[ -z $(git -C "${buildopt_repo_root}" status --porcelain --untracked-files=all) ]] || {
+    printf 'BuildOpt state must be clean before critical-path attribution\n' >&2
+    exit 1
+}
+buildopt_free=$(df -Pk "${TMPDIR:-/tmp}" | awk 'NR == 2 {print $4 * 1024}')
+if ((buildopt_free < 17179869184)); then
+    printf 'quarantine critical-path attribution requires at least 16 GiB free\n' >&2
+    exit 1
+fi
+
+mkdir -p -- "${buildopt_output}"
+printf 'Capturing the frozen Micronaut window with task operations and DAGs\n'
+env BUILDOPT_AUTOMATIC_BREADTH_TASK_TRACE=true \
+    "${buildopt_script_dir}/run-compatible-portfolio-value" "${buildopt_raw}"
+
+"${buildopt_script_dir}/check-compatible-portfolio-value" "${buildopt_source_summary}"
+[[ -s ${buildopt_final_result} ]] || {
+    printf 'critical-path source result is unavailable\n' >&2
+    exit 1
+}
+jq -e '
+  .incrementalLearning.status == "COMPLETE" and
+  (.incrementalLearning.observations | length) == 16 and
+  ([.incrementalLearning.observations[].arm] |
+    map(select(. == "CONTROL")) | length) == 8 and
+  ([.incrementalLearning.observations[].arm] |
+    map(select(. == "CANDIDATE")) | length) == 8
+' "${buildopt_final_result}" >/dev/null || {
+    printf 'critical-path source result lacks eight complete pairs\n' >&2
+    exit 1
+}
+
+mkdir -p -- "${buildopt_analysis}" "${buildopt_tools}"
+(
+    cd -- "${buildopt_repo_root}"
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go build -trimpath -o "${buildopt_tools}/gradle-critical-path" \
+        ./cmd/gradle-critical-path
+)
+
+while IFS=$'\t' read -r buildopt_sequence buildopt_pair buildopt_order buildopt_arm; do
+    buildopt_invocation=$((buildopt_sequence + 1))
+    printf -v buildopt_prefix 'invocation-%02d' "${buildopt_invocation}"
+    buildopt_result=${buildopt_subject}/${buildopt_prefix}.json
+    buildopt_operations=${buildopt_subject}/operations/${buildopt_prefix}-log.txt
+    buildopt_graph=${buildopt_subject}/operations/${buildopt_prefix}-graph.jsonl
+    buildopt_report=${buildopt_analysis}/${buildopt_prefix}.json
+    buildopt_expected_mode=OPTIMIZED_NATIVE
+    buildopt_cli_arm=control
+    if [[ ${buildopt_arm} == CANDIDATE ]]; then
+        buildopt_expected_mode=INCREMENTAL_CANDIDATE
+        buildopt_cli_arm=candidate
+    fi
+    [[ -s ${buildopt_result} && -s ${buildopt_operations} && -s ${buildopt_graph} ]] || {
+        printf 'critical-path invocation %02d is incomplete\n' \
+            "${buildopt_invocation}" >&2
+        exit 1
+    }
+    [[ $(jq -er '.execution.mode' "${buildopt_result}") == "${buildopt_expected_mode}" ]] || {
+        printf 'critical-path invocation %02d mode drifted\n' \
+            "${buildopt_invocation}" >&2
+        exit 1
+    }
+    "${buildopt_tools}/gradle-critical-path" \
+        --operations "${buildopt_operations}" --graph "${buildopt_graph}" \
+        --arm "${buildopt_cli_arm}" >"${buildopt_report}.tmp"
+    jq --argjson sequence "${buildopt_sequence}" \
+        --argjson invocation "${buildopt_invocation}" \
+        --argjson pair "${buildopt_pair}" --arg order "${buildopt_order}" \
+        --arg executionMode "${buildopt_expected_mode}" '
+      . + {invocation:{sequence:$sequence,ordinaryInvocation:$invocation,
+        pair:$pair,order:$order,executionMode:$executionMode}}
+    ' "${buildopt_report}.tmp" >"${buildopt_report}"
+    rm -f -- "${buildopt_report}.tmp"
+done < <(jq -r '
+  .incrementalLearning.observations[] |
+  [.sequence,.pair,.order,.arm] | @tsv
+' "${buildopt_final_result}")
+
+mapfile -t buildopt_reports < <(find "${buildopt_analysis}" -maxdepth 1 \
+    -type f -name 'invocation-*.json' -print | sort)
+if ((${#buildopt_reports[@]} != 16)); then
+    printf 'expected 16 critical-path reports, found %d\n' \
+        "${#buildopt_reports[@]}" >&2
+    exit 1
+fi
+
+jq -s \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg buildoptRevision "$(git -C "${buildopt_repo_root}" rev-parse HEAD)" \
+    --arg sourceSummarySha "$(sha256sum "${buildopt_source_summary}" | awk '{print $1}')" '
+  def mean: if length == 0 then 0 else add / length end;
+  . as $reports |
+  ($reports | map(select(.arm == "control")) | length) as $controlCount |
+  ($reports | map(select(.arm == "candidate")) | length) as $candidateCount |
+  def armSummary($arm):
+    [$reports[] | select(.arm == $arm)] as $selected |
+    {observations:($selected|length),
+     meanTaskCount:([$selected[].summary.taskCount]|mean),
+     meanCumulativeTaskDurationMs:([$selected[].summary.cumulativeTaskDurationMs]|mean),
+     meanMainBuildTaskSpanMs:([$selected[].summary.mainBuildTaskSpanMs]|mean),
+     meanMainBuildCriticalPathMs:([$selected[].summary.mainBuildCriticalPathMs]|mean),
+     criticalPathMembership:
+       ([$selected[].summary.mainBuildCriticalPathTasks[]] | group_by(.) |
+        map({task:.[0],count:length}) | sort_by(-.count,.task))};
+  ([ $reports[] as $report | $report.tasks[] |
+     . + {arm:$report.arm,ordinaryInvocation:$report.invocation.ordinaryInvocation} ] |
+   group_by(.identity) |
+   map(. as $samples |
+     ([$samples[] | select(.arm == "control")]) as $control |
+     ([$samples[] | select(.arm == "candidate")]) as $candidate |
+     {identity:$samples[0].identity,taskClass:$samples[0].taskClass,
+      control:{presentCount:($control|length),
+        meanDurationMs:(([$control[].durationMs]|add // 0) / $controlCount),
+        criticalMembership:([$control[]|select(.criticalPath)]|length),
+        outcomes:($control|group_by(.outcome)|map({key:.[0].outcome,value:length})|from_entries)},
+      candidate:{presentCount:($candidate|length),
+        meanDurationMs:(([$candidate[].durationMs]|add // 0) / $candidateCount),
+        criticalMembership:([$candidate[]|select(.criticalPath)]|length),
+        outcomes:($candidate|group_by(.outcome)|map({key:.[0].outcome,value:length})|from_entries)}} |
+     .candidateMinusControlMs = (.candidate.meanDurationMs - .control.meanDurationMs)) |
+   sort_by(.identity)) as $tasks |
+  {
+    schemaVersion:"buildopt.evidence/poc-quarantine-critical-path-attribution/v1",
+    workItem:"POC-QUARANTINE-CRITICAL-PATH-ATTRIBUTION-001",
+    capturedAt:$capturedAt,buildoptRevision:$buildoptRevision,
+    sourceSummarySha256:$sourceSummarySha,
+    method:"LONGEST_HARD_DEPENDENCY_CHAIN_BY_TASK_DURATION",
+    arms:{control:armSummary("control"),candidate:armSummary("candidate")},
+    observations:($reports|sort_by(.invocation.ordinaryInvocation)|map({
+      arm,invocation,operationTraceSha256,taskGraphSha256,builds,summary})),
+    tasks:$tasks,
+    largestCandidateRegressions:($tasks|sort_by(-.candidateMinusControlMs)|.[0:20]),
+    largestCandidateSavings:($tasks|sort_by(.candidateMinusControlMs)|.[0:20]),
+    boundaries:{proofOfConcept:true,diagnosticOnly:true,
+      productionAuthorized:false,repositorySpecificProductRules:false,
+      soakRequired:false,designPartnerRequired:false,
+      testOptimization:"OUT_OF_SCOPE"}
+  }
+' "${buildopt_reports[@]}" >"${buildopt_output}/attribution.json"
+
+cp -- "${buildopt_source_summary}" "${buildopt_output}/source-summary.json"
+rm -rf -- "${buildopt_tools}"
+printf 'Quarantine critical-path attribution written to %s\n' "${buildopt_output}"

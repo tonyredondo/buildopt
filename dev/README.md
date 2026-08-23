@@ -888,6 +888,31 @@ selects the same 52/70 projects and is 709.375 ms/5.60% slower than its own
 optimized-native control. The experiment is retained as negative POC evidence;
 the launcher keeps the graph-proven lifecycle cover.
 
+Validate the generic Gradle task-operation and dependency-DAG attribution
+tooling with:
+
+```bash
+./dev/check-gradle-critical-path
+```
+
+The checker runs a real Gradle 9.6.1 build, exports the already-resolved task
+graph through a diagnostic init script, joins it to Gradle's task build
+operations and calculates the longest hard-dependency chain by cumulative task
+duration. It keeps `buildSrc` and the main build as separate trace segments and
+does not authorize any optimization.
+
+Capture the frozen Micronaut native-versus-quarantine attribution with at
+least 16 GiB free using:
+
+```bash
+./dev/run-quarantine-critical-path-attribution /new/absolute/evidence/directory
+```
+
+The runner preserves the daemon, 12-worker, exact-output, fallback and
+eight-alternating-pair contracts. Trace collection is diagnostic and excluded
+from wall-time claims; it exists only to distinguish command-line entrypoint
+count from executed task and dependency-chain work.
+
 Validate the corrected OpenTelemetry effective-change replay and its terminal
 economic rejection without rerunning the 17 public-repository builds:
 
