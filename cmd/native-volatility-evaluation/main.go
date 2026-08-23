@@ -31,8 +31,27 @@ func run(arguments []string, stdout io.Writer) error {
 	observeRoot := flags.String("observe-root", "", "native workspace to observe")
 	manifestPath := flags.String("materialization-manifest", "", "producer-bound materialization manifest")
 	binding := flags.String("binding", "", "observation environment binding SHA-256")
+	portfolioContextPath := flags.String("portfolio-context", "", "cross-revision portfolio context")
+	portfolioPath := flags.String("portfolio", "", "existing cross-revision portfolio")
+	learnResultPath := flags.String("learn-result", "", "authoritative native result to learn")
+	learnRevision := flags.String("learn-revision", "", "learning source revision SHA-256")
+	applyCurrentPath := flags.String("apply-current", "", "current native result to partition")
+	applyRevision := flags.String("apply-revision", "", "current source revision SHA-256")
 	if err := flags.Parse(arguments); err != nil || flags.NArg() != 0 {
-		return errors.New("usage: native-volatility-evaluation --first FILE --second FILE [--reused FILE --rebuilt FILE] | --observe-root DIR --materialization-manifest FILE --binding SHA256")
+		return errors.New("usage: native-volatility-evaluation --first FILE --second FILE [--reused FILE --rebuilt FILE] | --observe-root DIR --materialization-manifest FILE --binding SHA256 | --portfolio-context FILE [--portfolio FILE] --learn-result FILE --learn-revision SHA256 | --portfolio-context FILE --portfolio FILE --apply-current FILE --apply-revision SHA256 [--reused FILE --rebuilt FILE]")
+	}
+	portfolioMode := *portfolioContextPath != "" || *portfolioPath != "" ||
+		*learnResultPath != "" || *learnRevision != "" ||
+		*applyCurrentPath != "" || *applyRevision != ""
+	if portfolioMode {
+		if *firstPath != "" || *secondPath != "" || *observeRoot != "" ||
+			*manifestPath != "" || *binding != "" || *portfolioContextPath == "" {
+			return errors.New("portfolio mode cannot be combined with observation or analysis mode")
+		}
+		return runPortfolioMode(
+			stdout, *portfolioContextPath, *portfolioPath, *learnResultPath, *learnRevision,
+			*applyCurrentPath, *applyRevision, *reusedPath, *rebuiltPath,
+		)
 	}
 	if *observeRoot != "" || *manifestPath != "" || *binding != "" {
 		if *observeRoot == "" || *manifestPath == "" || *binding == "" ||
@@ -74,6 +93,78 @@ func run(arguments []string, stdout io.Writer) error {
 		}
 	}
 	return writeJSON(stdout, result)
+}
+
+func runPortfolioMode(
+	stdout io.Writer,
+	contextPath string,
+	portfolioPath string,
+	learnResultPath string,
+	learnRevision string,
+	applyCurrentPath string,
+	applyRevision string,
+	reusedPath string,
+	rebuiltPath string,
+) error {
+	context, err := readJSON[nativevolatility.PortfolioContext](contextPath)
+	if err != nil {
+		return fmt.Errorf("read portfolio context: %w", err)
+	}
+	learning := learnResultPath != "" || learnRevision != ""
+	applying := applyCurrentPath != "" || applyRevision != ""
+	if learning == applying || (reusedPath == "") != (rebuiltPath == "") {
+		return errors.New("portfolio mode requires exactly one complete learn or apply request")
+	}
+	portfolio := nativevolatility.Portfolio{}
+	if portfolioPath != "" {
+		portfolio, err = readJSON[nativevolatility.Portfolio](portfolioPath)
+		if err != nil {
+			return fmt.Errorf("read portfolio: %w", err)
+		}
+	}
+	if learning {
+		if learnResultPath == "" || learnRevision == "" || reusedPath != "" || applyCurrentPath != "" {
+			return errors.New("portfolio learning requires result and revision only")
+		}
+		result, readErr := readJSON[nativevolatility.Result](learnResultPath)
+		if readErr != nil {
+			return fmt.Errorf("read learning result: %w", readErr)
+		}
+		learned, learnErr := nativevolatility.LearnPortfolio(
+			portfolio, context, learnRevision, result, true,
+		)
+		if learnErr != nil {
+			return learnErr
+		}
+		return writeJSON(stdout, learned)
+	}
+	if portfolioPath == "" || applyCurrentPath == "" || applyRevision == "" || learnResultPath != "" {
+		return errors.New("portfolio application requires context, portfolio, current result and revision")
+	}
+	current, err := readJSON[nativevolatility.Result](applyCurrentPath)
+	if err != nil {
+		return fmt.Errorf("read current result: %w", err)
+	}
+	application, err := nativevolatility.ApplyPortfolio(portfolio, context, applyRevision, current)
+	if err != nil {
+		return err
+	}
+	if reusedPath != "" {
+		reused, readErr := readObservation(reusedPath)
+		if readErr != nil {
+			return fmt.Errorf("read reused observation: %w", readErr)
+		}
+		rebuilt, readErr := readObservation(rebuiltPath)
+		if readErr != nil {
+			return fmt.Errorf("read rebuilt observation: %w", readErr)
+		}
+		if err := nativevolatility.VerifyPortfolioCandidate(
+			application, portfolio, current, reused, rebuilt,
+		); err != nil {
+			return err
+		}
+	}
+	return writeJSON(stdout, application)
 }
 
 func observeMaterialization(root, manifestPath, binding string) (nativevolatility.Observation, error) {
@@ -130,18 +221,22 @@ func writeJSON(stdout io.Writer, value any) error {
 }
 
 func readObservation(path string) (nativevolatility.Observation, error) {
+	return readJSON[nativevolatility.Observation](path)
+}
+
+func readJSON[T any](path string) (T, error) {
+	var value T
 	raw, err := os.ReadFile(path)
 	if err != nil {
-		return nativevolatility.Observation{}, err
+		return value, err
 	}
 	decoder := json.NewDecoder(bytes.NewReader(raw))
 	decoder.DisallowUnknownFields()
-	var observation nativevolatility.Observation
-	if err := decoder.Decode(&observation); err != nil {
-		return nativevolatility.Observation{}, err
+	if err := decoder.Decode(&value); err != nil {
+		return value, err
 	}
 	if err := decoder.Decode(&struct{}{}); !errors.Is(err, io.EOF) {
-		return nativevolatility.Observation{}, errors.New("observation contains trailing JSON")
+		return value, errors.New("JSON document contains trailing data")
 	}
-	return observation, nil
+	return value, nil
 }

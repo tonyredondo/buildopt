@@ -275,6 +275,12 @@ broadly qualify: the target quarantine is exact, but the first native-retained
 descendant exposes a different volatile generated JAR, so no replay value is
 claimed and cross-revision volatility learning becomes the next hypothesis.
 
+The [cross-revision producer volatility portfolio](./poc-cross-revision-volatility-portfolio-v1.md)
+freezes how authoritative native observations may teach producer volatility
+without carrying historical bytes into a later revision. Its machine-readable
+companion is
+[`poc-cross-revision-volatility-portfolio-v1.json`](./poc-cross-revision-volatility-portfolio-v1.json).
+
 The terminal [incremental-learning evidence](../benchmarks/results/poc-incremental-learning-v1/README.md)
 then replaces that synchronous transaction with one exact-bound observation
 per useful invocation. Its fixture completes eight pairs with zero

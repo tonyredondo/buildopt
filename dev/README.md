@@ -793,6 +793,18 @@ requires the exact-output rejection caused by a different generated JAR,
 records no descendant performance claim, and leaves cross-revision volatility
 learning as the next bounded hypothesis.
 
+Validate the preregistered cross-revision producer-volatility portfolio and
+its fail-closed Go implementation with:
+
+```bash
+./dev/check-cross-revision-volatility-portfolio
+```
+
+The portfolio stores producer task paths learned only from two independent
+optimized-native observations. It never carries historical output bytes into a
+new revision; application always partitions a newly observed current-revision
+inventory.
+
 Validate the corrected OpenTelemetry effective-change replay and its terminal
 economic rejection without rerunning the 17 public-repository builds:
 

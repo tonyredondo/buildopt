@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "buildopt.specs/poc-cross-revision-volatility-portfolio/v1",
+  "workItem": "POC-CROSS-REVISION-VOLATILITY-PORTFOLIO-001",
+  "subject": {
+    "repositoryId": "micronaut-projects/micronaut-core",
+    "remoteUrl": "https://github.com/micronaut-projects/micronaut-core.git",
+    "historyBranch": "5.2.x",
+    "workflow": [
+      "assemble"
+    ],
+    "qualificationRevision": "eb60c6c35f355750c6bced793e85c30629d27c4e",
+    "learningRevision": "6a11a05950f36193bd865d6b25c2bc17dfb4ff1c",
+    "evaluationRevision": "1be5f8cefb80b4dbd2b3e086705950ddc72f195f",
+    "evaluationChange": "PUBLIC_UPSTREAM_COMMIT"
+  },
+  "portfolio": {
+    "learningSource": "TWO_INDEPENDENT_OPTIMIZED_NATIVE_OBSERVATIONS",
+    "learningRevisionPerformanceClaimed": false,
+    "storedData": "PRODUCER_TASK_PATHS_AND_AUTHORITATIVE_RESULT_DIGESTS_ONLY",
+    "historicalOutputBytesStored": false,
+    "historicalOutputHashesReused": false,
+    "contextBindings": [
+      "REPOSITORY_SCOPE_SHA256",
+      "WORKFLOW_SHA256",
+      "GRADLE_WRAPPER_SHA256",
+      "OUTPUT_CONTRACT_SHA256"
+    ],
+    "evaluationOutputEvidence": "TWO_NEW_CURRENT_REVISION_NATIVE_OBSERVATIONS",
+    "effectiveQuarantine": "CURRENT_AND_PORTFOLIO_PRODUCER_UNION",
+    "contextDrift": "RETAIN_OPTIMIZED_NATIVE"
+  },
+  "measurement": {
+    "pairs": 8,
+    "armOrder": "ALTERNATING",
+    "minimumPositivePairs": 6,
+    "positiveSavedTimeIntervalRequired": true,
+    "candidateP95NonRegressive": true,
+    "minimumMeanSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "exactRequiredOutputs": true,
+    "fallbackRequired": true,
+    "incompatibleEvaluationRevision": "RETAIN_OPTIMIZED_NATIVE_WITHOUT_PERFORMANCE_CLAIM"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRules": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}
