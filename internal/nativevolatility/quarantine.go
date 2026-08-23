@@ -48,6 +48,35 @@ type Observation struct {
 	Entries       []Entry `json:"entries"`
 }
 
+// OutputContractSHA256 returns a revision-independent digest of the exact
+// output paths and producer attribution carried by an observation. Output
+// bytes and the per-invocation binding are deliberately excluded so the digest
+// can bind compatible diagnostic learning across source revisions.
+func OutputContractSHA256(observation Observation) (string, error) {
+	entries, _, err := validateObservation(observation, false)
+	if err != nil {
+		return "", err
+	}
+	ordered := make([]Entry, 0, len(entries))
+	for _, entry := range entries {
+		entry.SHA256 = ""
+		ordered = append(ordered, entry)
+	}
+	sortEntries(ordered)
+	digest := sha256.New()
+	_, _ = digest.Write([]byte("buildopt-native-output-contract-v1\x00"))
+	for _, entry := range ordered {
+		_, _ = digest.Write([]byte(entry.Path))
+		_, _ = digest.Write([]byte{'\x00'})
+		for _, producer := range entry.ProducerTasks {
+			_, _ = digest.Write([]byte(producer))
+			_, _ = digest.Write([]byte{'\x00'})
+		}
+		_, _ = digest.Write([]byte{'\xff'})
+	}
+	return hex.EncodeToString(digest.Sum(nil)), nil
+}
+
 // Observe hashes a complete producer-bound output inventory in one native
 // workspace. Every path component must remain a regular, non-symlink path
 // below root; callers cannot turn a captured relative path into host access.

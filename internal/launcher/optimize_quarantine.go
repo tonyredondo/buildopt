@@ -55,17 +55,12 @@ func runOptimizeNativeObservation(args []string, stdout, stderr io.Writer) int {
 		_, _ = io.WriteString(stderr, profileNativeObserveUsage)
 		return exitUsage
 	}
-	invocation, state, err := loadOptimizeQuarantineState(*stateRelative)
+	invocation, state, err := loadOptimizeStateForNativeEvidence(*stateRelative)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt: native output observation unavailable: %v\n", err)
 		return exitConfiguration
 	}
-	manifest, _, err := loadOptimizeOutputMaterialization(invocation, state.Discovery)
-	if err != nil {
-		_, _ = fmt.Fprintf(stderr, "buildopt: native output observation unavailable: %v\n", err)
-		return exitConfiguration
-	}
-	inventory, err := optimizeNativeInventory(manifest)
+	inventory, err := optimizeNativeObservationInventory(invocation, state)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt: native output observation unavailable: %v\n", err)
 		return exitConfiguration
@@ -94,7 +89,7 @@ func runOptimizeNativePortfolioContext(args []string, stdout, stderr io.Writer) 
 		_, _ = io.WriteString(stderr, profileNativeContextUsage)
 		return exitUsage
 	}
-	_, state, err := loadOptimizeQuarantineState(*stateRelative)
+	_, state, err := loadOptimizeStateForNativeEvidence(*stateRelative)
 	if err == nil {
 		var context nativevolatility.PortfolioContext
 		context, err = optimizeNativePortfolioContext(state)
@@ -125,13 +120,20 @@ func runOptimizeNativeQuarantine(args []string, stdout, stderr io.Writer) int {
 		_, _ = io.WriteString(stderr, profileQuarantineUsage)
 		return exitUsage
 	}
-	invocation, state, err := loadOptimizeQuarantineState(*stateRelative)
+	invocation, state, err := loadOptimizeStateForNativeEvidence(*stateRelative)
 	if err == nil {
 		var result nativevolatility.Result
 		var application *nativevolatility.PortfolioApplication
-		result, application, err = applyOptimizeNativeQuarantineWithPortfolio(
-			invocation, &state, *secondPath, *portfolioPath, *portfolioContextPath, *revision,
-		)
+		if state.Discovery.Status == optimizeDiscoveryComplete &&
+			state.Discovery.Materialization.Status == optimizeMaterializationCaptured {
+			result, application, err = applyOptimizeNativeQuarantineWithPortfolio(
+				invocation, &state, *secondPath, *portfolioPath, *portfolioContextPath, *revision,
+			)
+		} else if *portfolioPath != "" || *portfolioContextPath != "" || *revision != "" {
+			err = errors.New("portfolio application requires a complete captured materialization")
+		} else {
+			result, err = analyzeDiagnosticNativeObservations(invocation, state, *secondPath)
+		}
 		if err == nil {
 			if application != nil {
 				var portfolio nativevolatility.Portfolio
@@ -155,6 +157,18 @@ func runOptimizeNativeQuarantine(args []string, stdout, stderr io.Writer) int {
 }
 
 func loadOptimizeQuarantineState(relative string) (optimizeInvocation, optimizeState, error) {
+	invocation, state, err := loadOptimizeStateForNativeEvidence(relative)
+	if err != nil {
+		return optimizeInvocation{}, optimizeState{}, err
+	}
+	if state.Discovery.Status != optimizeDiscoveryComplete ||
+		state.Discovery.Materialization.Status != optimizeMaterializationCaptured {
+		return optimizeInvocation{}, optimizeState{}, errors.New("complete captured materialization is required")
+	}
+	return invocation, state, nil
+}
+
+func loadOptimizeStateForNativeEvidence(relative string) (optimizeInvocation, optimizeState, error) {
 	repositoryRoot, err := canonicalWorkingDirectory()
 	if err != nil {
 		return optimizeInvocation{}, optimizeState{}, err
@@ -176,16 +190,87 @@ func loadOptimizeQuarantineState(relative string) (optimizeInvocation, optimizeS
 	if err := decoder.Decode(&struct{}{}); !errors.Is(err, io.EOF) || !validOptimizeState(state) {
 		return optimizeInvocation{}, optimizeState{}, errors.New("optimize state is invalid")
 	}
-	if state.Discovery.Status != optimizeDiscoveryComplete ||
-		state.Discovery.Materialization.Status != optimizeMaterializationCaptured {
-		return optimizeInvocation{}, optimizeState{}, errors.New("complete captured materialization is required")
-	}
 	return optimizeInvocation{
 		repositoryRoot: repositoryRoot, stateDirectory: stateDirectory, stateRelative: normalized,
 		bindingSHA256: state.Bindings.SHA256, calibrationPairs: state.Budget.Pairs,
 		maxBreakEvenBuilds: state.Budget.MaxBreakEvenBuilds,
 		calibrationBudget:  time.Duration(state.Budget.WallTimeSeconds) * time.Second,
 	}, state, nil
+}
+
+func optimizeNativeObservationInventory(
+	invocation optimizeInvocation,
+	state optimizeState,
+) ([]nativevolatility.Entry, error) {
+	if state.Discovery.Status == optimizeDiscoveryComplete &&
+		state.Discovery.Materialization.Status == optimizeMaterializationCaptured {
+		manifest, _, err := loadOptimizeOutputMaterialization(invocation, state.Discovery)
+		if err != nil {
+			return nil, err
+		}
+		return optimizeNativeInventory(manifest)
+	}
+	first, err := readOptimizeDiagnosticNativeObservation(invocation, state)
+	if err != nil {
+		return nil, err
+	}
+	return append([]nativevolatility.Entry(nil), first.Entries...), nil
+}
+
+func analyzeDiagnosticNativeObservations(
+	invocation optimizeInvocation,
+	state optimizeState,
+	secondPath string,
+) (nativevolatility.Result, error) {
+	first, err := readOptimizeDiagnosticNativeObservation(invocation, state)
+	if err != nil {
+		return nativevolatility.Result{}, err
+	}
+	second, err := readOptimizeNativeObservation(secondPath)
+	if err != nil {
+		return nativevolatility.Result{}, err
+	}
+	result := nativevolatility.Analyze(first, second)
+	if result.Decision != nativevolatility.DecisionTransportReady {
+		return result, fmt.Errorf("diagnostic native output evidence retained Gradle: %s", result.Reason)
+	}
+	return result, nil
+}
+
+func readOptimizeDiagnosticNativeObservation(
+	invocation optimizeInvocation,
+	state optimizeState,
+) (nativevolatility.Observation, error) {
+	metadata := state.Discovery.NativeObservation
+	if metadata.Status != optimizeNativeObservationCaptured ||
+		!validOptimizeNativeObservationShape(metadata) {
+		return nativevolatility.Observation{}, errors.New("diagnostic native output observation is unavailable")
+	}
+	expected := filepath.ToSlash(filepath.Join(
+		invocation.stateRelative, "native-volatility", "first-observation.json",
+	))
+	if metadata.File != expected {
+		return nativevolatility.Observation{}, errors.New("diagnostic native output observation path drifted")
+	}
+	absolute := filepath.Join(invocation.repositoryRoot, filepath.FromSlash(metadata.File))
+	raw, err := os.ReadFile(absolute)
+	if err != nil || len(raw) == 0 || len(raw) > optimizeMaterializationMaxManifest {
+		return nativevolatility.Observation{}, errors.New("diagnostic native output observation is unavailable")
+	}
+	digest := sha256.Sum256(raw)
+	if hex.EncodeToString(digest[:]) != metadata.SHA256 {
+		return nativevolatility.Observation{}, errors.New("diagnostic native output observation digest drifted")
+	}
+	observation, err := readOptimizeNativeObservation(absolute)
+	if err != nil || observation.BindingSHA256 != state.Bindings.SHA256 ||
+		len(observation.Entries) != metadata.OutputCount {
+		return nativevolatility.Observation{}, errors.New("diagnostic native output observation binding drifted")
+	}
+	contractSHA, err := nativevolatility.OutputContractSHA256(observation)
+	if err != nil || contractSHA != metadata.OutputContractSHA256 {
+		return nativevolatility.Observation{}, errors.New("diagnostic native output contract drifted")
+	}
+	return observation, nil
 }
 
 func optimizeNativeInventory(manifest optimizeOutputMaterializationManifest) ([]nativevolatility.Entry, error) {
@@ -768,35 +853,44 @@ func readOptimizeNativePortfolioContext(path string) (nativevolatility.Portfolio
 func optimizeNativePortfolioContext(state optimizeState) (nativevolatility.PortfolioContext, error) {
 	if !validOptimizeSHA(state.Bindings.RepositoryScopeSHA256) ||
 		!validOptimizeSHA(state.Bindings.InvocationSHA256) ||
-		!validOptimizeSHA(state.Bindings.WrapperSHA256) ||
-		state.Discovery.Status != optimizeDiscoveryComplete ||
-		len(state.Discovery.Entrypoints) == 0 || len(state.Discovery.RequiredOutputs) == 0 ||
-		state.Discovery.AggregatePartition == nil {
+		!validOptimizeSHA(state.Bindings.WrapperSHA256) {
 		return nativevolatility.PortfolioContext{}, errors.New("complete optimize portfolio context is unavailable")
 	}
-	contract := struct {
-		Entrypoints      []string                     `json:"entrypoints"`
-		RequiredOutputs  []string                     `json:"requiredOutputs"`
-		TaskGroups       []optimizeAggregateTaskGroup `json:"taskGroups"`
-		OriginalProjects int                          `json:"originalProjects"`
-	}{
-		Entrypoints:     append([]string(nil), state.Discovery.Entrypoints...),
-		RequiredOutputs: append([]string(nil), state.Discovery.RequiredOutputs...),
-		TaskGroups: append(
-			[]optimizeAggregateTaskGroup(nil), state.Discovery.AggregatePartition.TaskGroups...,
-		),
-		OriginalProjects: state.Discovery.Graph.TotalProjects,
+	outputContractSHA := ""
+	if validOptimizeNativeObservationShape(state.Discovery.NativeObservation) &&
+		state.Discovery.NativeObservation.Status == optimizeNativeObservationCaptured {
+		outputContractSHA = state.Discovery.NativeObservation.OutputContractSHA256
+	} else {
+		if state.Discovery.Status != optimizeDiscoveryComplete ||
+			len(state.Discovery.Entrypoints) == 0 || len(state.Discovery.RequiredOutputs) == 0 ||
+			state.Discovery.AggregatePartition == nil {
+			return nativevolatility.PortfolioContext{}, errors.New("complete optimize portfolio context is unavailable")
+		}
+		contract := struct {
+			Entrypoints      []string                     `json:"entrypoints"`
+			RequiredOutputs  []string                     `json:"requiredOutputs"`
+			TaskGroups       []optimizeAggregateTaskGroup `json:"taskGroups"`
+			OriginalProjects int                          `json:"originalProjects"`
+		}{
+			Entrypoints:     append([]string(nil), state.Discovery.Entrypoints...),
+			RequiredOutputs: append([]string(nil), state.Discovery.RequiredOutputs...),
+			TaskGroups: append(
+				[]optimizeAggregateTaskGroup(nil), state.Discovery.AggregatePartition.TaskGroups...,
+			),
+			OriginalProjects: state.Discovery.Graph.TotalProjects,
+		}
+		raw, err := json.Marshal(contract)
+		if err != nil {
+			return nativevolatility.PortfolioContext{}, err
+		}
+		digest := sha256.Sum256(raw)
+		outputContractSHA = hex.EncodeToString(digest[:])
 	}
-	raw, err := json.Marshal(contract)
-	if err != nil {
-		return nativevolatility.PortfolioContext{}, err
-	}
-	digest := sha256.Sum256(raw)
 	context := nativevolatility.PortfolioContext{
 		RepositoryScopeSHA256: state.Bindings.RepositoryScopeSHA256,
 		WorkflowSHA256:        state.Bindings.InvocationSHA256,
 		WrapperSHA256:         state.Bindings.WrapperSHA256,
-		OutputContractSHA256:  hex.EncodeToString(digest[:]),
+		OutputContractSHA256:  outputContractSHA,
 	}
 	if _, err := nativevolatility.ContextSHA256(context); err != nil {
 		return nativevolatility.PortfolioContext{}, err

@@ -2,6 +2,8 @@ package launcher
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
+	"github.com/tonyredondo/buildopt/internal/nativevolatility"
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
 
@@ -89,6 +92,7 @@ type optimizeDiscoveryResult struct {
 	CandidateEntrypoints []string                      `json:"candidateEntrypoints"`
 	AggregatePartition   *optimizeAggregatePartition   `json:"aggregatePartition,omitempty"`
 	Materialization      optimizeOutputMaterialization `json:"materialization"`
+	NativeObservation    optimizeNativeObservation     `json:"nativeObservation"`
 	ChangeFamily         string                        `json:"changeFamily"`
 	ChangedProjects      []string                      `json:"changedProjects"`
 	WorkflowIgnoredPaths []string                      `json:"workflowIgnoredPaths"`
@@ -98,6 +102,21 @@ type optimizeDiscoveryResult struct {
 	ProductionAuthorized bool                          `json:"productionAuthorized"`
 	TestOptimization     string                        `json:"testOptimization"`
 	outputCandidates     []outputContractCandidate
+}
+
+const (
+	optimizeNativeObservationCaptured = "CAPTURED"
+	optimizeNativeObservationReason   = "DIAGNOSTIC_NATIVE_OUTPUTS_CAPTURED"
+)
+
+type optimizeNativeObservation struct {
+	Status               string `json:"status"`
+	Reason               string `json:"reason"`
+	File                 string `json:"file"`
+	SHA256               string `json:"sha256"`
+	OutputContractSHA256 string `json:"outputContractSha256"`
+	OutputCount          int    `json:"outputCount"`
+	ProductionAuthorized bool   `json:"productionAuthorized"`
 }
 
 type optimizeDiscoveryDocuments struct {
@@ -422,10 +441,23 @@ func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int,
 		_, _ = fmt.Fprintf(diagnostics, "buildopt: automatic discovery unavailable: %v\n", observationErr)
 		return result
 	}
+	nativeObservation := optimizeNativeObservation{}
+	if os.Getenv("BUILDOPT_NATIVE_VOLATILITY_DIAGNOSTIC") == "1" {
+		var nativeObservationErr error
+		nativeObservation, nativeObservationErr = captureOptimizeNativeObservation(
+			run.invocation, *observed,
+		)
+		if nativeObservationErr != nil {
+			_, _ = fmt.Fprintf(diagnostics, "buildopt: diagnostic native output observation unavailable: %v\n", nativeObservationErr)
+		} else {
+			result.NativeObservation = nativeObservation
+		}
+	}
 	observedImpact, impactErr := run.observedImpactSnapshot()
 	if impactErr != nil {
 		result.Status = optimizeDiscoveryRetained
 		result.Reason = "ORDINARY_IMPACT_OBSERVATION_UNAVAILABLE"
+		result.NativeObservation = nativeObservation
 		_, _ = fmt.Fprintf(diagnostics, "buildopt: inline impact discovery unavailable: %v\n", impactErr)
 		return result
 	}
@@ -433,6 +465,7 @@ func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int,
 	if inputErr != nil {
 		result.Status = optimizeDiscoveryRetained
 		result.Reason = "ORDINARY_WORKFLOW_INPUT_OBSERVATION_UNAVAILABLE"
+		result.NativeObservation = nativeObservation
 		_, _ = fmt.Fprintf(diagnostics, "buildopt: workflow-input discovery unavailable: %v\n", inputErr)
 		return result
 	}
@@ -446,6 +479,7 @@ func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int,
 		return result
 	}
 	result = discovered
+	result.NativeObservation = nativeObservation
 	if result.Status == optimizeDiscoveryComplete {
 		materialization, captureErr := captureOptimizeOutputMaterialization(run.invocation, result)
 		if captureErr != nil {
@@ -462,6 +496,67 @@ func (run *optimizeRun) discover(discoveryContext context.Context, exitCode int,
 		result.GeneratedFiles = []string{}
 	}
 	return result
+}
+
+func captureOptimizeNativeObservation(
+	invocation optimizeInvocation,
+	snapshot outputContractSnapshot,
+) (optimizeNativeObservation, error) {
+	owners, _, err := collectOutputOwnership(invocation.repositoryRoot, snapshot)
+	if err != nil {
+		return optimizeNativeObservation{}, err
+	}
+	byPath := make(map[string]nativevolatility.Entry)
+	for _, owner := range owners {
+		for _, relative := range owner.files {
+			_, tasks := mostSpecificOutputOwners(relative, owners)
+			producers := sortedSet(tasks)
+			if len(producers) == 0 {
+				return optimizeNativeObservation{}, fmt.Errorf("output %s has no producer attribution", relative)
+			}
+			byPath[relative] = nativevolatility.Entry{Path: relative, ProducerTasks: producers}
+		}
+	}
+	paths := make([]string, 0, len(byPath))
+	for relative := range byPath {
+		paths = append(paths, relative)
+	}
+	sort.Strings(paths)
+	inventory := make([]nativevolatility.Entry, 0, len(paths))
+	for _, relative := range paths {
+		inventory = append(inventory, byPath[relative])
+	}
+	observation, err := nativevolatility.Observe(
+		invocation.repositoryRoot, invocation.bindingSHA256, inventory,
+	)
+	if err != nil {
+		return optimizeNativeObservation{}, err
+	}
+	contractSHA, err := nativevolatility.OutputContractSHA256(observation)
+	if err != nil {
+		return optimizeNativeObservation{}, err
+	}
+	relative := filepath.ToSlash(filepath.Join(
+		invocation.stateRelative, "native-volatility", "first-observation.json",
+	))
+	absolute := filepath.Join(invocation.repositoryRoot, filepath.FromSlash(relative))
+	if err := os.MkdirAll(filepath.Dir(absolute), 0o700); err != nil {
+		return optimizeNativeObservation{}, err
+	}
+	if err := writeCanonicalPrivateJSON(absolute, observation); err != nil {
+		return optimizeNativeObservation{}, err
+	}
+	raw, err := os.ReadFile(absolute)
+	if err != nil {
+		return optimizeNativeObservation{}, err
+	}
+	digest := sha256.Sum256(raw)
+	return optimizeNativeObservation{
+		Status: optimizeNativeObservationCaptured, Reason: optimizeNativeObservationReason,
+		File: relative, SHA256: hex.EncodeToString(digest[:]),
+		OutputContractSHA256: contractSHA, OutputCount: len(observation.Entries),
+		ProductionAuthorized: false,
+	}, nil
 }
 
 func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvocation, observed *outputContractSnapshot, observedImpact *buildimpact.DiscoverySnapshot, observedInputs *buildimpact.WorkflowInputRelevance) (optimizeDiscoveryResult, optimizeDiscoveryDocuments, error) {

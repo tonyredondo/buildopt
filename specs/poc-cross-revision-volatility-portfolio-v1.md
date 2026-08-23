@@ -34,6 +34,14 @@ producer attribution. The portfolio stores only the volatile producer task
 paths and the digest of the authoritative result. It never stores or reuses
 historical output bytes or hashes.
 
+Learning does not require a structural candidate or captured transport pack.
+Protocol v4 explicitly opts into a diagnostic observation of the native Gradle
+output contract before source-ownership selection. The observation is stored
+privately, bound by digest and compared with a second independent native root.
+This diagnostic path never mutates optimize state, authorizes transport or
+claims performance; a later revision must still prove its own complete
+materialization, current bytes, correctness and value before any replay.
+
 The portfolio is bound to digests of the repository scope, Gradle workflow,
 Wrapper and owner-reviewed output contract. Drift in any field retains native
 Gradle. At the evaluation revision, two new native observations recompute the

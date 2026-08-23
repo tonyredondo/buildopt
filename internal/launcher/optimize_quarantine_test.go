@@ -234,6 +234,100 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 	}
 }
 
+func TestDiagnosticNativeObservationWorksWithoutMaterialization(t *testing.T) {
+	repository := t.TempDir()
+	stateRelative := ".buildopt/optimize/diagnostic"
+	stateDirectory := filepath.Join(repository, filepath.FromSlash(stateRelative))
+	output := filepath.Join(repository, "module", "build", "value.bin")
+	if err := os.MkdirAll(filepath.Dir(output), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(output, []byte("first\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	invocation := optimizeInvocation{
+		repositoryRoot: repository, stateDirectory: stateDirectory, stateRelative: stateRelative,
+		bindingSHA256: optimizeDigest("diagnostic-binding"), calibrationPairs: 8,
+		maxBreakEvenBuilds: 30, calibrationBudget: 30 * time.Minute,
+	}
+	snapshot := outputContractSnapshot{
+		SchemaVersion: outputSnapshotSchema, GradleVersion: "9.6.1",
+		Entrypoints: []string{"assemble"},
+		Tasks: []outputContractTask{{
+			TaskPath: ":module:assemble", ProjectPath: ":module", ProjectDirectory: "module",
+			Outputs: []outputContractRoot{{
+				Path: "module/build", Kind: "DIRECTORY", Exists: true,
+				InsideRepository: true, FileCount: 1,
+			}},
+		}},
+	}
+	metadata, err := captureOptimizeNativeObservation(invocation, snapshot)
+	if err != nil {
+		t.Fatal(err)
+	}
+	state := optimizeQuarantineTestState(invocation, optimizeDiscoveryResult{
+		Status: optimizeDiscoveryRetained, Reason: "SOURCE_OWNERSHIP_AMBIGUOUS",
+		Source: "TEST", RepositoryID: "example/diagnostic",
+		BaseRevision: strings.Repeat("a", 40), TargetRevision: strings.Repeat("b", 40),
+		ChangeSHA256: optimizeDigest("change"), ChangedPathCount: 1,
+		Entrypoints: []string{"assemble"}, RequiredOutputs: []string{},
+		CandidateOutputs: []string{}, CandidateEntrypoints: []string{},
+		ChangedProjects: []string{}, WorkflowIgnoredPaths: []string{}, GeneratedFiles: []string{},
+		NativeObservation: metadata, ReviewRequired: true, TestOptimization: "OUT_OF_SCOPE",
+	})
+	if !validOptimizeState(state) {
+		t.Fatal("retained diagnostic optimize state is invalid")
+	}
+	first, err := readOptimizeDiagnosticNativeObservation(invocation, state)
+	if err != nil {
+		t.Fatal(err)
+	}
+	secondRoot := t.TempDir()
+	secondOutput := filepath.Join(secondRoot, "module", "build", "value.bin")
+	if err := os.MkdirAll(filepath.Dir(secondOutput), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(secondOutput, []byte("second\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	second, err := nativevolatility.Observe(secondRoot, state.Bindings.SHA256, first.Entries)
+	if err != nil {
+		t.Fatal(err)
+	}
+	secondPath := filepath.Join(repository, "second.json")
+	if err := writeCanonicalPrivateJSON(secondPath, second); err != nil {
+		t.Fatal(err)
+	}
+	before, err := json.Marshal(state)
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := analyzeDiagnosticNativeObservations(invocation, state, secondPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	after, err := json.Marshal(state)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Reason != nativevolatility.ReasonQuarantined ||
+		!equalOptimizeStrings(result.QuarantinedProducers, []string{":module:assemble"}) ||
+		string(before) != string(after) {
+		t.Fatalf("diagnostic result = %+v, state mutated = %v", result, string(before) != string(after))
+	}
+	context, err := optimizeNativePortfolioContext(state)
+	if err != nil || context.OutputContractSHA256 != metadata.OutputContractSHA256 {
+		t.Fatalf("diagnostic portfolio context = %+v, err = %v", context, err)
+	}
+	firstPath := filepath.Join(repository, filepath.FromSlash(metadata.File))
+	if err := os.WriteFile(firstPath, []byte("{}\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := readOptimizeDiagnosticNativeObservation(invocation, state); err == nil {
+		t.Fatal("tampered diagnostic observation was accepted")
+	}
+}
+
 func assertOptimizeQuarantineTestDiscoveryDocuments(
 	t *testing.T,
 	invocation optimizeInvocation,

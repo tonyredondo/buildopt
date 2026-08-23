@@ -561,7 +561,7 @@ func validOptimizeState(state optimizeState) bool {
 
 func validOptimizeDiscoveryCheckpoint(state optimizeState) bool {
 	discovery := state.Discovery
-	if discovery.ProductionAuthorized {
+	if discovery.ProductionAuthorized || !validOptimizeNativeObservationShape(discovery.NativeObservation) {
 		return false
 	}
 	switch discovery.Status {
@@ -601,6 +601,21 @@ func validOptimizeDiscoveryCheckpoint(state optimizeState) bool {
 	default:
 		return false
 	}
+}
+
+func validOptimizeNativeObservationShape(observation optimizeNativeObservation) bool {
+	if observation.Status == "" {
+		return observation == (optimizeNativeObservation{})
+	}
+	if observation.Status != optimizeNativeObservationCaptured ||
+		observation.Reason != optimizeNativeObservationReason || observation.ProductionAuthorized ||
+		observation.OutputCount < 1 || observation.OutputCount > maximumOutputContractFiles ||
+		!validOptimizeSHA(observation.SHA256) || !validOptimizeSHA(observation.OutputContractSHA256) {
+		return false
+	}
+	native := filepath.FromSlash(observation.File)
+	return observation.File != "" && !filepath.IsAbs(native) && filepath.Clean(native) == native &&
+		strings.HasPrefix(observation.File, ".buildopt/")
 }
 
 func validOptimizeDiscoveryFiles(paths []string, complete bool) bool {

@@ -42,6 +42,8 @@ buildopt_expected_subjects_sha=${BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256:-}
 buildopt_retain_root=${BUILDOPT_AUTOMATIC_BREADTH_RETAIN_ROOT:-false}
 buildopt_requested_root=${BUILDOPT_AUTOMATIC_BREADTH_ROOT:-}
 buildopt_process_mode=${BUILDOPT_AUTOMATIC_BREADTH_PROCESS_MODE:-daemon}
+buildopt_native_volatility_diagnostic=0
+[[ ${buildopt_protocol} == v4 ]] && buildopt_native_volatility_diagnostic=1
 buildopt_native_portfolio=${BUILDOPT_NATIVE_VOLATILITY_PORTFOLIO_FILE:-}
 buildopt_native_portfolio_context=${BUILDOPT_NATIVE_VOLATILITY_PORTFOLIO_CONTEXT_FILE:-}
 buildopt_native_portfolio_revision=${BUILDOPT_NATIVE_VOLATILITY_REVISION_SHA256:-}
@@ -346,7 +348,8 @@ buildopt_capture_subject() {
                 GITHUB_REPOSITORY="${buildopt_repository_id}" \
                 GRADLE_USER_HOME="${buildopt_gradle_home}" \
                 timeout 60m "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
-                "${buildopt_executable}" optimize \
+                env BUILDOPT_NATIVE_VOLATILITY_DIAGNOSTIC="${buildopt_native_volatility_diagnostic}" \
+                    "${buildopt_executable}" optimize \
                 --state-dir ".buildopt/optimize/${buildopt_state_name}" \
                 --resume never --calibration-budget 30m --calibration-pairs 8 \
                 --max-break-even-builds 30 --json -- "${buildopt_gradle_args[@]}"
@@ -376,7 +379,8 @@ buildopt_capture_subject() {
                     GITHUB_REPOSITORY="${buildopt_repository_id}" \
                     GRADLE_USER_HOME="${buildopt_gradle_home}" \
                     timeout 30m "${buildopt_script_dir}/run" --toolchain "${buildopt_jdk}" -- \
-                    "${buildopt_executable}" optimize \
+                    env BUILDOPT_NATIVE_VOLATILITY_DIAGNOSTIC="${buildopt_native_volatility_diagnostic}" \
+                        "${buildopt_executable}" optimize \
                     --state-dir ".buildopt/optimize/${buildopt_state_name}" \
                     --resume auto --calibration-budget 30m --calibration-pairs 8 \
                     --max-break-even-builds 30 --json -- "${buildopt_gradle_args[@]}"
@@ -803,7 +807,7 @@ else
         aggregation:{subjectCount:length,
           resultAvailable:(map(select(.resultAvailable))|length),
           discoveryComplete:(map(select(.discovery.status == "COMPLETE"))|length),
-          quarantineApplied:(map(select(.nativeVolatility.decision == "TRANSPORT_READY"))|length),
+          quarantineApplied:(map(select(.nativeVolatility?.decision == "TRANSPORT_READY"))|length),
           incrementalComplete:(map(select(.incrementalLearning.status == "COMPLETE"))|length),
           calibrationComplete:(map(select(.calibration.status == "COMPLETE"))|length),
           valueGatePassed:(map(select(.calibration.valueGatePassed == true))|length),
@@ -814,8 +818,9 @@ else
               map(select(.requiredOutputSha256 != "")) | length) | add),
           productFailures:(map(select(.productFailure))|length),
           repositoryPercentagesAveraged:false,mechanismPercentagesAdded:false},
-        decision:(if all(.nativeVolatility.decision == "TRANSPORT_READY" and
-          .incrementalLearning.status == "COMPLETE") then
+        decision:(if all(.productFailure == false and
+          .nativeVolatility?.decision == "TRANSPORT_READY" and
+          .incrementalLearning?.status == "COMPLETE") then
           (if all(.calibration.qualified == true) then "QUARANTINED_PROFILE_QUALIFIED"
            else "QUARANTINED_PROFILE_VALUE_NOT_PROVEN" end)
           else "QUARANTINED_QUALIFICATION_INCOMPLETE" end),

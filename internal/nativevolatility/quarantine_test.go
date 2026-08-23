@@ -103,6 +103,31 @@ func TestAnalyzeExactObservationsTransportEverything(t *testing.T) {
 	}
 }
 
+func TestOutputContractSHA256IgnoresRevisionBytesButBindsProducers(t *testing.T) {
+	first := observation(entry("a", "1", ":a"), entry("b", "2", ":b"))
+	second := observation(entry("a", "3", ":a"), entry("b", "4", ":b"))
+	second.BindingSHA256 = digest("b")
+	firstSHA, err := OutputContractSHA256(first)
+	if err != nil {
+		t.Fatal(err)
+	}
+	secondSHA, err := OutputContractSHA256(second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if firstSHA != secondSHA {
+		t.Fatalf("compatible output contracts differ: %s != %s", firstSHA, secondSHA)
+	}
+	second.Entries[1].ProducerTasks = []string{":other"}
+	driftedSHA, err := OutputContractSHA256(second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if driftedSHA == firstSHA {
+		t.Fatal("producer attribution drift was not bound")
+	}
+}
+
 func TestAnalyzeRejectsNonCanonicalPath(t *testing.T) {
 	for _, candidate := range []string{
 		"output/../output/a.bin",

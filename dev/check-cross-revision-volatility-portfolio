@@ -25,6 +25,9 @@ jq -e '
   .subject.evaluationRevision == "1be5f8cefb80b4dbd2b3e086705950ddc72f195f" and
   .subject.evaluationChange == "PUBLIC_UPSTREAM_COMMIT" and
   .portfolio.learningSource == "TWO_INDEPENDENT_OPTIMIZED_NATIVE_OBSERVATIONS" and
+  .portfolio.diagnosticObservationOptIn == "PROTOCOL_V4_ONLY" and
+  .portfolio.structuralSelectionRequiredForLearning == false and
+  .portfolio.transportAuthorizedByLearning == false and
   .portfolio.learningRevisionPerformanceClaimed == false and
   .portfolio.historicalOutputBytesStored == false and
   .portfolio.historicalOutputHashesReused == false and
@@ -57,6 +60,6 @@ cd -- "${buildopt_repo_root}"
     go test -count=1 ./internal/nativevolatility ./cmd/native-volatility-evaluation
 "${buildopt_script_dir}/run" --toolchain go -- \
     go test -count=1 ./internal/launcher \
-    -run TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration
+    -run "Test(ApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration|DiagnosticNativeObservationWorksWithoutMaterialization)"
 
 printf 'Cross-revision volatility portfolio contract and implementation: PASS\n'

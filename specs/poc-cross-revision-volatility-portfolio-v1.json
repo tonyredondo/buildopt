@@ -15,6 +15,9 @@
   },
   "portfolio": {
     "learningSource": "TWO_INDEPENDENT_OPTIMIZED_NATIVE_OBSERVATIONS",
+    "diagnosticObservationOptIn": "PROTOCOL_V4_ONLY",
+    "structuralSelectionRequiredForLearning": false,
+    "transportAuthorizedByLearning": false,
     "learningRevisionPerformanceClaimed": false,
     "storedData": "PRODUCER_TASK_PATHS_AND_AUTHORITATIVE_RESULT_DIGESTS_ONLY",
     "historicalOutputBytesStored": false,
