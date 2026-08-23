@@ -332,14 +332,14 @@ func writeOptimizeQuarantineTestDiscoveryDocuments(
 	if err != nil {
 		t.Fatal(err)
 	}
-	directory := filepath.ToSlash(filepath.Join(invocation.stateRelative, "discovery"))
+	directory := filepath.Join(invocation.stateRelative, "discovery")
 	if err := writeOptimizeDiscoveryDocuments(invocation.repositoryRoot, optimizeDiscoveryDocuments{
 		values: map[string][]byte{
-			directory + "/manifest.json":           manifestRaw,
-			directory + "/graph.json":              generated.GraphJSON,
-			directory + "/generated-manifest.json": generated.GeneratedJSON,
-			directory + "/snapshot.json":           append(derivedRaw, '\n'),
-			directory + "/proposal.json":           append(proposalRaw, '\n'),
+			filepath.Join(directory, "manifest.json"):           manifestRaw,
+			filepath.Join(directory, "graph.json"):              generated.GraphJSON,
+			filepath.Join(directory, "generated-manifest.json"): generated.GeneratedJSON,
+			filepath.Join(directory, "snapshot.json"):           append(derivedRaw, '\n'),
+			filepath.Join(directory, "proposal.json"):           append(proposalRaw, '\n'),
 		},
 	}); err != nil {
 		t.Fatal(err)

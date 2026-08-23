@@ -66,11 +66,11 @@ while IFS= read -r buildopt_key; do
       .packFile == ".buildopt/optimize/materialization-economics-v2/materialization/payload.pack" and
       (.packSha256 | test("^[0-9a-f]{64}$")) and .packSize >= 1 and
       (.entries | length) >= 1 and
-      ([range(0; .entries|length) as $index |
-        .entries[$index] as $entry |
-        ($entry.offset == (if $index == 0 then 0 else
-          ([.entries[0:$index][].size] | add) end)) and
-        ($entry.sha256 | test("^[0-9a-f]{64}$")) and $entry.size >= 0] | all)
+      (reduce .entries[] as $entry
+        ({offset: 0, valid: true};
+         .valid = (.valid and $entry.offset == .offset and
+           ($entry.sha256 | test("^[0-9a-f]{64}$")) and $entry.size >= 0) |
+         .offset += $entry.size) | .valid)
     ' "${buildopt_manifest}" >/dev/null || {
         printf 'packed materialization manifest is invalid: %s\n' "${buildopt_key}" >&2
         exit 1
