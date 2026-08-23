@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
+	"github.com/tonyredondo/buildopt/internal/nativevolatility"
 )
 
 var (
@@ -19,6 +20,7 @@ var (
 // manifest.
 type optimizeTaskLineage struct {
 	dependencies map[string][]string
+	projects     map[string]string
 }
 
 func newOptimizeTaskLineage(tasks []buildimpact.DiscoveredTask) (*optimizeTaskLineage, error) {
@@ -26,6 +28,7 @@ func newOptimizeTaskLineage(tasks []buildimpact.DiscoveredTask) (*optimizeTaskLi
 		return nil, errOptimizeTaskLineageIncomplete
 	}
 	dependencies := make(map[string][]string, len(tasks))
+	projects := make(map[string]string, len(tasks))
 	for _, task := range tasks {
 		if task.Path == "" || task.ProjectPath == "" {
 			return nil, errOptimizeTaskLineageIncomplete
@@ -44,6 +47,7 @@ func newOptimizeTaskLineage(tasks []buildimpact.DiscoveredTask) (*optimizeTaskLi
 			}
 		}
 		dependencies[task.Path] = values
+		projects[task.Path] = task.ProjectPath
 	}
 	for _, values := range dependencies {
 		for _, dependency := range values {
@@ -52,11 +56,56 @@ func newOptimizeTaskLineage(tasks []buildimpact.DiscoveredTask) (*optimizeTaskLi
 			}
 		}
 	}
-	lineage := &optimizeTaskLineage{dependencies: dependencies}
+	lineage := &optimizeTaskLineage{dependencies: dependencies, projects: projects}
 	if lineage.cyclic() {
 		return nil, errOptimizeTaskLineageCyclic
 	}
 	return lineage, nil
+}
+
+// rebuildEntrypoints returns a bounded project-level task frontier that
+// rebuilds every output removed from transport. A project's observed assemble
+// task is used only when its exact dependency closure covers every direct
+// producer in that project; otherwise the direct producers remain explicit.
+func (lineage *optimizeTaskLineage) rebuildEntrypoints(entries []nativevolatility.Entry) ([]string, error) {
+	if lineage == nil || len(entries) == 0 {
+		return nil, errOptimizeTaskLineageIncomplete
+	}
+	byProject := map[string][]string{}
+	for _, entry := range entries {
+		if len(entry.ProducerTasks) == 0 {
+			return nil, errOptimizeTaskLineageIncomplete
+		}
+		for _, producer := range entry.ProducerTasks {
+			project, exists := lineage.projects[producer]
+			if !exists || project == "" {
+				return nil, errOptimizeTaskLineageIncomplete
+			}
+			byProject[project] = append(byProject[project], producer)
+		}
+	}
+	result := []string{}
+	for project, producers := range byProject {
+		producers = mergeOptimizeStrings(nil, producers)
+		assemble := project + ":assemble"
+		if project == ":" {
+			assemble = ":assemble"
+		}
+		covered := false
+		if _, exists := lineage.dependencies[assemble]; exists {
+			ancestors, err := lineage.ancestors([]string{assemble})
+			if err != nil {
+				return nil, err
+			}
+			covered = len(subtractOptimizeStrings(producers, append(ancestors, assemble))) == 0
+		}
+		if covered {
+			result = append(result, assemble)
+		} else {
+			result = append(result, producers...)
+		}
+	}
+	return mergeOptimizeStrings(nil, result), nil
 }
 
 func (lineage *optimizeTaskLineage) ancestors(producers []string) ([]string, error) {

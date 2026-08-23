@@ -244,6 +244,10 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 		len(application.QuarantinedOutputs) != 1 || len(application.TransportedOutputs) != 2 {
 		t.Fatalf("portfolio current = %+v, application = %+v", current, application)
 	}
+	if !equalOptimizeStrings(portfolioState.Discovery.CandidateEntrypoints,
+		[]string{":changed:classes", ":stable:compileJava", ":stable:jar"}) {
+		t.Fatalf("portfolio rebuild frontier = %v", portfolioState.Discovery.CandidateEntrypoints)
+	}
 	loadedPortfolioPlan, err := loadOptimizeNativeQuarantine(invocation, portfolioState.Discovery)
 	if err != nil || !equalOptimizeStrings(
 		loadedPortfolioPlan.QuarantinedProducers, []string{":stable:compileJava"},

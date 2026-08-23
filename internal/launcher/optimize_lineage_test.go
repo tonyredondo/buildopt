@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
+	"github.com/tonyredondo/buildopt/internal/nativevolatility"
 )
 
 func TestOptimizeTaskLineageReturnsSortedTransitiveAncestors(t *testing.T) {
@@ -77,5 +78,31 @@ func TestOptimizeTaskLineageRejectsUnknownDirectProducer(t *testing.T) {
 	}
 	if _, err := lineage.ancestors([]string{":app:missing"}); !errors.Is(err, errOptimizeTaskLineageIncomplete) {
 		t.Fatalf("unknown producer error = %v", err)
+	}
+}
+
+func TestOptimizeTaskLineageBuildsBoundedProjectRebuildFrontier(t *testing.T) {
+	lineage, err := newOptimizeTaskLineage([]buildimpact.DiscoveredTask{
+		{Path: ":app:assemble", ProjectPath: ":app", DependsOn: []string{":app:jar", ":app:javadocJar"}},
+		{Path: ":app:jar", ProjectPath: ":app", DependsOn: []string{":app:classes"}},
+		{Path: ":app:javadocJar", ProjectPath: ":app", DependsOn: []string{":app:javadoc"}},
+		{Path: ":app:classes", ProjectPath: ":app", DependsOn: []string{}},
+		{Path: ":app:javadoc", ProjectPath: ":app", DependsOn: []string{}},
+		{Path: ":custom:archive", ProjectPath: ":custom", DependsOn: []string{}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	frontier, err := lineage.rebuildEntrypoints([]nativevolatility.Entry{
+		{Path: "app/build/libs/app.jar", ProducerTasks: []string{":app:jar"}},
+		{Path: "app/build/libs/app-javadoc.jar", ProducerTasks: []string{":app:javadocJar"}},
+		{Path: "custom/build/archive.bin", ProducerTasks: []string{":custom:archive"}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []string{":app:assemble", ":custom:archive"}
+	if !equalOptimizeStrings(frontier, want) {
+		t.Fatalf("rebuild frontier = %v, want %v", frontier, want)
 	}
 }

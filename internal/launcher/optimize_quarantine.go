@@ -620,8 +620,19 @@ func applyOptimizeNativeQuarantineWithPortfolio(
 	}
 
 	discovery := state.Discovery
+	lineage, err := loadOptimizeQuarantineTaskLineage(invocation)
+	if err != nil {
+		return result, application, err
+	}
+	rebuildEntrypoints, err := lineage.rebuildEntrypoints(plan.QuarantinedOutputs)
+	if err != nil {
+		return result, application, err
+	}
 	discovery.CandidateEntrypoints = mergeOptimizeStrings(
 		discovery.CandidateEntrypoints, plan.QuarantinedProducers,
+	)
+	discovery.CandidateEntrypoints = mergeOptimizeStrings(
+		discovery.CandidateEntrypoints, rebuildEntrypoints,
 	)
 	if len(discovery.CandidateEntrypoints) > maximumStructuralAlternativeEntrypoints {
 		return result, application, errors.New("quarantine candidate task set exceeds the POC bound")
@@ -634,7 +645,7 @@ func applyOptimizeNativeQuarantineWithPortfolio(
 	if len(discovery.CandidateOutputs) > optimizeMaterializationMaxFiles {
 		return result, application, errors.New("quarantine candidate output set exceeds the POC bound")
 	}
-	updateOptimizeQuarantinePartition(&discovery, plan.QuarantinedProducers)
+	updateOptimizeQuarantinePartition(&discovery, rebuildEntrypoints)
 
 	quarantineDirectory := filepath.Join(invocation.stateDirectory, "materialization", "quarantine")
 	if err := os.MkdirAll(quarantineDirectory, 0o700); err != nil {
@@ -975,6 +986,22 @@ func updateOptimizeQuarantinePartition(discovery *optimizeDiscoveryResult, produ
 		discovery.ChangedProjects, discovery.AggregatePartition.RebuildProjects,
 	))
 	discovery.Graph.OmittedProjects = discovery.Graph.TotalProjects - discovery.Graph.SelectedProjects
+}
+
+func loadOptimizeQuarantineTaskLineage(invocation optimizeInvocation) (*optimizeTaskLineage, error) {
+	var snapshot buildimpact.DiscoverySnapshot
+	path := filepath.Join(
+		invocation.repositoryRoot,
+		filepath.FromSlash(filepath.Join(invocation.stateRelative, "discovery", "snapshot.json")),
+	)
+	if err := readOptimizeStrictJSON(path, 4<<20, &snapshot); err != nil {
+		return nil, fmt.Errorf("read quarantine task lineage: %w", err)
+	}
+	lineage, err := newOptimizeTaskLineage(snapshot.Tasks)
+	if err != nil {
+		return nil, fmt.Errorf("derive quarantine task lineage: %w", err)
+	}
+	return lineage, nil
 }
 
 func optimizeTaskProject(task string) string {
