@@ -285,24 +285,32 @@ buildopt_hash_required_outputs() {
     BUILDOPT_QUARANTINED_OUTPUT_COUNT=0
     BUILDOPT_QUARANTINED_PATH_SHA=
     if [[ -n ${buildopt_quarantine} ]]; then
-        jq -er '.quarantinedOutputs[].path' "${buildopt_quarantine}" |
+        local buildopt_expected_quarantined_count
+        buildopt_expected_quarantined_count=$(jq -er '.quarantinedOutputs | length' \
+            "${buildopt_quarantine}")
+        jq -r '.quarantinedOutputs[].path' "${buildopt_quarantine}" |
             sort -u >"${buildopt_quarantined_paths}"
         [[ $(wc -l <"${buildopt_quarantined_paths}" | tr -d ' ') -eq \
-            $(jq -er '.quarantinedOutputs | length' "${buildopt_quarantine}") ]] || return 1
+            ${buildopt_expected_quarantined_count} ]] || return 1
         : >"${buildopt_quarantined_manifest}"
-        awk -F '\t' -v quarantined="${buildopt_quarantined_manifest}" '
-          NR == FNR {expected[$1] = 1; next}
-          $4 in expected {seen[$4] = 1; print > quarantined; next}
-          {print}
-          END {
-            for (path in expected) {
-              if (!(path in seen)) exit 42
-            }
-          }
-        ' "${buildopt_quarantined_paths}" "${buildopt_complete_manifest}" \
-            >"${buildopt_manifest}" || return 1
+        if ((buildopt_expected_quarantined_count == 0)); then
+            cp -- "${buildopt_complete_manifest}" "${buildopt_manifest}"
+        else
+            awk -F '\t' -v quarantined="${buildopt_quarantined_manifest}" '
+              NR == FNR {expected[$1] = 1; next}
+              $4 in expected {seen[$4] = 1; print > quarantined; next}
+              {print}
+              END {
+                for (path in expected) {
+                  if (!(path in seen)) exit 42
+                }
+              }
+            ' "${buildopt_quarantined_paths}" "${buildopt_complete_manifest}" \
+                >"${buildopt_manifest}" || return 1
+        fi
         BUILDOPT_QUARANTINED_OUTPUT_COUNT=$(wc -l <"${buildopt_quarantined_manifest}" | tr -d ' ')
-        ((BUILDOPT_QUARANTINED_OUTPUT_COUNT > 0)) || return 1
+        [[ ${BUILDOPT_QUARANTINED_OUTPUT_COUNT} -eq \
+            ${buildopt_expected_quarantined_count} ]] || return 1
         BUILDOPT_QUARANTINED_PATH_SHA=$(cut -f4 "${buildopt_quarantined_manifest}" |
             sha256sum | awk '{print $1}')
     fi
