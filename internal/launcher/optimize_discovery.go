@@ -52,6 +52,42 @@ type optimizeDiscoveryGraph struct {
 	OmittedProjects  int `json:"omittedProjects"`
 }
 
+const optimizeWorkflowOwnershipSchema = "buildopt.poc/workflow-project-ownership/v1"
+
+type optimizeWorkflowOwnership struct {
+	SchemaVersion            string `json:"schemaVersion"`
+	Status                   string `json:"status"`
+	Reason                   string `json:"reason"`
+	OwnedProjectCount        int    `json:"ownedProjectCount"`
+	IgnoredPathCount         int    `json:"ignoredPathCount"`
+	ConsumedUnownedPathCount int    `json:"consumedUnownedPathCount"`
+	UnattributedPathCount    int    `json:"unattributedPathCount"`
+}
+
+func resolveOptimizeWorkflowOwnership(snapshot buildimpact.DiscoverySnapshot, observation buildimpact.WorkflowInputRelevance, changedPaths []string) ([]string, []string, *optimizeWorkflowOwnership, string) {
+	ownership, err := buildimpact.ResolveWorkflowProjectOwnership(snapshot, observation, changedPaths)
+	diagnostic := &optimizeWorkflowOwnership{
+		SchemaVersion:            optimizeWorkflowOwnershipSchema,
+		OwnedProjectCount:        len(ownership.Owners),
+		IgnoredPathCount:         len(ownership.IgnoredPaths),
+		ConsumedUnownedPathCount: len(ownership.ConsumedUnownedPaths),
+		UnattributedPathCount:    len(ownership.UnattributedPaths),
+	}
+	if errors.Is(err, buildimpact.ErrConfigurationInputOwnershipUnproven) {
+		diagnostic.Status = "UNPROVEN"
+		diagnostic.Reason = "CONFIGURATION_INPUT_OWNERSHIP_UNPROVEN"
+		return nil, nil, diagnostic, diagnostic.Reason
+	}
+	if err != nil {
+		diagnostic.Status = "REJECTED"
+		diagnostic.Reason = "SOURCE_OWNERSHIP_AMBIGUOUS"
+		return nil, nil, diagnostic, diagnostic.Reason
+	}
+	diagnostic.Status = "PROVEN"
+	diagnostic.Reason = "COMPLETE_WORKFLOW_OWNERSHIP"
+	return ownership.Owners, ownership.IgnoredPaths, diagnostic, ""
+}
+
 const optimizeAggregatePartitionSchema = "buildopt.poc/aggregate-workflow-partition/v1"
 
 type optimizeAggregateTaskGroup struct {
@@ -96,6 +132,7 @@ type optimizeDiscoveryResult struct {
 	ChangeFamily         string                        `json:"changeFamily"`
 	ChangedProjects      []string                      `json:"changedProjects"`
 	WorkflowIgnoredPaths []string                      `json:"workflowIgnoredPaths"`
+	WorkflowOwnership    *optimizeWorkflowOwnership    `json:"workflowOwnership,omitempty"`
 	Graph                optimizeDiscoveryGraph        `json:"graph"`
 	GeneratedFiles       []string                      `json:"generatedFiles"`
 	ReviewRequired       bool                          `json:"reviewRequired"`
@@ -626,11 +663,10 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 			result.Reason = "SOURCE_OWNERSHIP_AMBIGUOUS"
 			return result, optimizeDiscoveryDocuments{}, nil
 		}
-		changedOwners, ignoredPaths, ownerErr = buildimpact.ResolveWorkflowProjectOwners(
+		changedOwners, ignoredPaths, result.WorkflowOwnership, result.Reason = resolveOptimizeWorkflowOwnership(
 			snapshot, *observedInputs, discovery.changedPaths,
 		)
-		if ownerErr != nil {
-			result.Reason = "SOURCE_OWNERSHIP_AMBIGUOUS"
+		if result.Reason != "" {
 			return result, optimizeDiscoveryDocuments{}, nil
 		}
 	}

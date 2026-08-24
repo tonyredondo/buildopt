@@ -16,6 +16,12 @@ const (
 	maximumWorkflowInputConsumers       = 262144
 )
 
+// ErrConfigurationInputOwnershipUnproven means every changed path is outside
+// declared source roots and has no task consumer in an otherwise complete
+// requested graph. Such a path may still affect Gradle configuration, so the
+// caller must retain the native workflow.
+var ErrConfigurationInputOwnershipUnproven = errors.New("configuration input ownership is unproven")
+
 // WorkflowInputRelevance records whether changed repository paths are declared
 // inputs of the exact Gradle task graph requested by the owner. It is bounded
 // evidence for one invocation and never authorizes omission when incomplete.
@@ -113,22 +119,48 @@ func validateWorkflowInputRelevance(observation WorkflowInputRelevance, changedP
 	return nil
 }
 
-// ResolveWorkflowProjectOwners extends strict project ownership only for paths
-// that a complete observation proves are outside the requested workflow. It
-// never suppresses ambiguous ownership or a path consumed by any task.
-func ResolveWorkflowProjectOwners(snapshot DiscoverySnapshot, observation WorkflowInputRelevance, changedPaths []string) ([]string, []string, error) {
+// WorkflowProjectOwnership explains how complete workflow evidence resolved
+// each path that did not have one direct source owner.
+type WorkflowProjectOwnership struct {
+	Owners               []string
+	IgnoredPaths         []string
+	ConsumedUnownedPaths []string
+	UnattributedPaths    []string
+}
+
+// ResolveWorkflowProjectOwnership extends strict source ownership with exact
+// consuming-task ownership from a complete requested graph. Unowned paths with
+// no consumer are ignorable only when another changed path proves the affected
+// project set; an all-unattributed change remains fail-closed because it may be
+// read during Gradle configuration.
+func ResolveWorkflowProjectOwnership(snapshot DiscoverySnapshot, observation WorkflowInputRelevance, changedPaths []string) (WorkflowProjectOwnership, error) {
 	if err := validateWorkflowInputRelevance(observation, changedPaths); err != nil {
-		return nil, nil, err
+		return WorkflowProjectOwnership{}, err
 	}
 	if !observation.Complete {
-		return nil, nil, errors.New("workflow-input observation is incomplete")
+		return WorkflowProjectOwnership{}, errors.New("workflow-input observation is incomplete")
 	}
 	inputs := make(map[string]WorkflowInputPath, len(observation.Paths))
 	for _, entry := range observation.Paths {
 		inputs[entry.Path] = entry
 	}
+	projects := make(map[string]bool, len(snapshot.Projects))
+	for _, project := range snapshot.Projects {
+		projects[project.Path] = true
+	}
+	taskProjects := make(map[string]string, len(snapshot.Tasks))
+	for _, task := range snapshot.Tasks {
+		if previous, exists := taskProjects[task.Path]; exists && previous != task.ProjectPath {
+			return WorkflowProjectOwnership{}, errors.New("workflow task ownership is ambiguous")
+		}
+		if !projects[task.ProjectPath] {
+			return WorkflowProjectOwnership{}, errors.New("workflow task references an unknown project")
+		}
+		taskProjects[task.Path] = task.ProjectPath
+	}
 	owners := map[string]bool{}
-	ignored := make([]string, 0)
+	consumedUnowned := make([]string, 0)
+	unattributed := make([]string, 0)
 	for _, changedPath := range changedPaths {
 		matches := matchingProjectOwners(snapshot, changedPath)
 		switch len(matches) {
@@ -137,12 +169,21 @@ func ResolveWorkflowProjectOwners(snapshot DiscoverySnapshot, observation Workfl
 				owners[owner] = true
 			}
 		case 0:
-			if len(inputs[changedPath].ConsumingTasks) != 0 {
-				return nil, nil, errors.New("unowned changed path is consumed by the requested workflow")
+			consumers := inputs[changedPath].ConsumingTasks
+			if len(consumers) == 0 {
+				unattributed = append(unattributed, changedPath)
+				continue
 			}
-			ignored = append(ignored, changedPath)
+			for _, consumer := range consumers {
+				project, exists := taskProjects[consumer]
+				if !exists {
+					return WorkflowProjectOwnership{}, errors.New("workflow input references an unknown consuming task")
+				}
+				owners[project] = true
+			}
+			consumedUnowned = append(consumedUnowned, changedPath)
 		default:
-			return nil, nil, errors.New("changed path has ambiguous Gradle project ownership")
+			return WorkflowProjectOwnership{}, errors.New("changed path has ambiguous Gradle project ownership")
 		}
 	}
 	result := make([]string, 0, len(owners))
@@ -150,11 +191,25 @@ func ResolveWorkflowProjectOwners(snapshot DiscoverySnapshot, observation Workfl
 		result = append(result, owner)
 	}
 	sort.Strings(result)
-	sort.Strings(ignored)
-	if len(result) == 0 {
-		return nil, nil, errors.New("workflow-input filtering removed every owned change")
+	sort.Strings(consumedUnowned)
+	sort.Strings(unattributed)
+	resolution := WorkflowProjectOwnership{
+		Owners:               result,
+		ConsumedUnownedPaths: consumedUnowned,
+		UnattributedPaths:    unattributed,
 	}
-	return result, ignored, nil
+	if len(result) == 0 {
+		return resolution, ErrConfigurationInputOwnershipUnproven
+	}
+	resolution.IgnoredPaths = append([]string(nil), unattributed...)
+	return resolution, nil
+}
+
+// ResolveWorkflowProjectOwners preserves the original compact API for callers
+// that need only the proven projects and safely ignored paths.
+func ResolveWorkflowProjectOwners(snapshot DiscoverySnapshot, observation WorkflowInputRelevance, changedPaths []string) ([]string, []string, error) {
+	resolution, err := ResolveWorkflowProjectOwnership(snapshot, observation, changedPaths)
+	return resolution.Owners, resolution.IgnoredPaths, err
 }
 
 func matchingProjectOwners(snapshot DiscoverySnapshot, changedPath string) map[string]bool {

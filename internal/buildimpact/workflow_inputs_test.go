@@ -1,6 +1,7 @@
 package buildimpact
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 )
@@ -8,6 +9,9 @@ import (
 func TestWorkflowInputRelevanceAllowsOnlyCompleteUnconsumedUnownedPaths(t *testing.T) {
 	snapshot := DiscoverySnapshot{Projects: []DiscoveredProject{
 		{Path: ":module", SourcePaths: []string{"module/**"}},
+	}, Tasks: []DiscoveredTask{
+		{Path: ":module:compileJava", ProjectPath: ":module"},
+		{Path: ":module:processResources", ProjectPath: ":module"},
 	}}
 	changed := []string{"CHANGELOG.md", "module/src/main/java/Example.java"}
 	observation := WorkflowInputRelevance{
@@ -31,8 +35,12 @@ func TestWorkflowInputRelevanceAllowsOnlyCompleteUnconsumedUnownedPaths(t *testi
 	consumed := observation
 	consumed.Paths = append([]WorkflowInputPath(nil), observation.Paths...)
 	consumed.Paths[0] = WorkflowInputPath{Path: "CHANGELOG.md", ConsumingTasks: []string{":module:processResources"}}
-	if _, _, err := ResolveWorkflowProjectOwners(snapshot, consumed, changed); err == nil {
-		t.Fatal("consumed unowned path was ignored")
+	owners, ignored, err = ResolveWorkflowProjectOwners(snapshot, consumed, changed)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(owners, []string{":module"}) || len(ignored) != 0 {
+		t.Fatalf("consumed owners = %v, ignored = %v", owners, ignored)
 	}
 
 	incomplete := observation
@@ -65,12 +73,30 @@ func TestWorkflowInputRelevanceNeverSuppressesAmbiguousOrAllUnownedChanges(t *te
 
 	allUnowned := observation
 	allUnowned.Paths = []WorkflowInputPath{{Path: "CHANGELOG.md", ConsumingTasks: []string{}}}
-	if _, _, err := ResolveWorkflowProjectOwners(
+	resolution, err := ResolveWorkflowProjectOwnership(
 		DiscoverySnapshot{Projects: []DiscoveredProject{{Path: ":module", SourcePaths: []string{"module/**"}}}},
 		allUnowned,
 		[]string{"CHANGELOG.md"},
-	); err == nil {
-		t.Fatal("change set without an owned project was accepted")
+	)
+	if !errors.Is(err, ErrConfigurationInputOwnershipUnproven) ||
+		!reflect.DeepEqual(resolution.UnattributedPaths, []string{"CHANGELOG.md"}) {
+		t.Fatalf("all-unowned resolution = %+v, err = %v", resolution, err)
+	}
+}
+
+func TestWorkflowInputRelevanceRejectsUnknownConsumerTask(t *testing.T) {
+	snapshot := DiscoverySnapshot{Projects: []DiscoveredProject{
+		{Path: ":module", SourcePaths: []string{"module/**"}},
+	}}
+	observation := WorkflowInputRelevance{
+		SchemaVersion: WorkflowInputRelevanceSchemaVersion,
+		Complete:      true,
+		Paths: []WorkflowInputPath{{
+			Path: "versions.properties", ConsumingTasks: []string{":module:processResources"},
+		}},
+	}
+	if _, err := ResolveWorkflowProjectOwnership(snapshot, observation, []string{"versions.properties"}); err == nil {
+		t.Fatal("unknown consuming task was accepted")
 	}
 }
 

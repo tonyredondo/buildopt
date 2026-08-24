@@ -255,6 +255,27 @@ func TestOptimizeWorkflowRelevantPathsPreservesVerifiedEffectiveChanges(t *testi
 	}
 }
 
+func TestResolveOptimizeWorkflowOwnershipReportsConfigurationInput(t *testing.T) {
+	snapshot := buildimpact.DiscoverySnapshot{Projects: []buildimpact.DiscoveredProject{
+		{Path: ":module", SourcePaths: []string{"module/**"}},
+	}}
+	observation := buildimpact.WorkflowInputRelevance{
+		SchemaVersion: buildimpact.WorkflowInputRelevanceSchemaVersion,
+		Complete:      true,
+		Paths: []buildimpact.WorkflowInputPath{{
+			Path: "versions.properties", ConsumingTasks: []string{},
+		}},
+	}
+	owners, ignored, diagnostic, reason := resolveOptimizeWorkflowOwnership(
+		snapshot, observation, []string{"versions.properties"},
+	)
+	if owners != nil || ignored != nil || reason != "CONFIGURATION_INPUT_OWNERSHIP_UNPROVEN" ||
+		diagnostic.Status != "UNPROVEN" || diagnostic.OwnedProjectCount != 0 ||
+		diagnostic.UnattributedPathCount != 1 {
+		t.Fatalf("owners=%v ignored=%v diagnostic=%+v reason=%q", owners, ignored, diagnostic, reason)
+	}
+}
+
 func TestInspectOptimizeDiscoveryContextUsesExactLocalUpstream(t *testing.T) {
 	repository := t.TempDir()
 	runOptimizeGit(t, repository, "init", "-b", "main")
