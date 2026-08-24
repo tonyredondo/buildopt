@@ -229,6 +229,7 @@ type structuralProposalConfig struct {
 	observedOutputSnapshot                                           *outputContractSnapshot
 	observedImpactSnapshot                                           *buildimpact.DiscoverySnapshot
 	candidateOwnerProjects                                           map[string]bool
+	changedOwnerProjects                                             []string
 	workflowIgnoredPaths                                             []string
 }
 
@@ -426,7 +427,7 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 		return report, documents, nil
 	}
 	ownershipPaths := optimizeWorkflowRelevantPaths(changedPaths, config.workflowIgnoredPaths)
-	if _, err := buildimpact.ResolveProjectOwners(snapshot, ownershipPaths); err != nil {
+	if !proposalWorkflowOwnershipProven(snapshot, ownershipPaths, config.changedOwnerProjects) {
 		report.Reason = "SOURCE_OWNERSHIP_AMBIGUOUS"
 		return report, documents, nil
 	}
@@ -465,6 +466,29 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 		}
 	}
 	return report, documents, nil
+}
+
+// proposalWorkflowOwnershipProven preserves a workflow-input ownership result
+// already derived from the same complete Gradle snapshot. Standalone profile
+// proposals have no such observation and continue to resolve ownership from
+// repository-relative source paths.
+func proposalWorkflowOwnershipProven(snapshot buildimpact.DiscoverySnapshot, changedPaths, resolvedOwners []string) bool {
+	if len(resolvedOwners) == 0 {
+		_, err := buildimpact.ResolveProjectOwners(snapshot, changedPaths)
+		return err == nil
+	}
+	projects := make(map[string]bool, len(snapshot.Projects))
+	for _, project := range snapshot.Projects {
+		projects[project.Path] = true
+	}
+	seen := make(map[string]bool, len(resolvedOwners))
+	for _, owner := range resolvedOwners {
+		if owner == "" || !projects[owner] || seen[owner] {
+			return false
+		}
+		seen[owner] = true
+	}
+	return true
 }
 
 // proposalOutputOwnerProjects returns the reviewed owners of the declared

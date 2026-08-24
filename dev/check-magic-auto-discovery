@@ -250,12 +250,23 @@ buildopt_consumed="${buildopt_temp}/consumed-unowned"
 buildopt_prepare_repository "${buildopt_consumed}" consumed-unowned
 buildopt_run_optimize "${buildopt_consumed}" consumed-unowned jar
 jq -e '
-    .outcome == "NATIVE_RETAINED" and
-    .reason == "SOURCE_OWNERSHIP_AMBIGUOUS" and
-    .discovery.status == "NATIVE_RETAINED" and
+    .outcome == "LEARNING" and
+    .reason == "CALIBRATION_PAIR_BUDGET_INSUFFICIENT" and
+    .discovery.status == "COMPLETE" and
+    .discovery.changedProjects == [":service-a"] and
     .discovery.workflowIgnoredPaths == [] and
-    .discovery.generatedFiles == []
-' "${buildopt_consumed}/.buildopt/optimize/consumed-unowned/result.json" >/dev/null
+    .discovery.workflowOwnership == {
+      schemaVersion:"buildopt.poc/workflow-project-ownership/v1",
+      status:"PROVEN",reason:"COMPLETE_WORKFLOW_OWNERSHIP",
+      ownedProjectCount:1,ignoredPathCount:0,
+      consumedUnownedPathCount:1,unattributedPathCount:0
+    } and
+    .discovery.graph == {totalProjects:2,selectedProjects:1,omittedProjects:1}
+' "${buildopt_consumed}/.buildopt/optimize/consumed-unowned/result.json" >/dev/null || {
+    printf 'consumed unowned input ownership assertion failed\n' >&2
+    jq . "${buildopt_consumed}/.buildopt/optimize/consumed-unowned/result.json" >&2
+    exit 1
+}
 buildopt_deleted="${buildopt_temp}/deleted-unowned"
 buildopt_prepare_repository "${buildopt_deleted}" deleted-unowned
 buildopt_run_optimize "${buildopt_deleted}" deleted-unowned jar
@@ -309,4 +320,4 @@ jq -e '
     .discovery.generatedFiles == []
 ' "${buildopt_ambiguous}/.buildopt/optimize/ambiguous/result.json" >/dev/null
 
-printf 'Magic automatic discovery OK: four workflow families and complete workflow-input ownership; consumed, deleted, unsupported, global and ambiguous cases retained native Gradle\n'
+printf 'Magic automatic discovery OK: four workflow families and consumed-input ownership; deleted, unsupported, global and ambiguous cases retained native Gradle\n'

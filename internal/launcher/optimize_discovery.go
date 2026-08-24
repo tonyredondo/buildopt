@@ -674,7 +674,7 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 	affected := optimizeAffectedProjects(snapshot, changedOwners)
 	result.ChangeFamily = optimizeChangeFamily(snapshot, relevantPaths, changedOwners)
 	result.ChangedProjects = append([]string(nil), changedOwners...)
-	result.WorkflowIgnoredPaths = append([]string(nil), ignoredPaths...)
+	result.WorkflowIgnoredPaths = append([]string{}, ignoredPaths...)
 	workflowPatterns := optimizeRequiredOutputPatterns(outputReport.CandidateOutputs, discovery.Entrypoints, nil)
 	partition, candidatePatterns, candidateOwners, partitionReason := optimizeAggregateWorkflowPartition(
 		outputReport,
@@ -709,6 +709,7 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		observedOutputSnapshot: &outputReport.snapshot,
 		observedImpactSnapshot: observedImpact,
 		candidateOwnerProjects: candidateOwners,
+		changedOwnerProjects:   append([]string(nil), changedOwners...),
 		workflowIgnoredPaths:   append([]string(nil), ignoredPaths...),
 	}
 	report, documents, err := prepareStructuralProfileProposal(ctx, config)

@@ -255,6 +255,27 @@ func TestOptimizeWorkflowRelevantPathsPreservesVerifiedEffectiveChanges(t *testi
 	}
 }
 
+func TestProposalWorkflowOwnershipPreservesObservedConsumers(t *testing.T) {
+	snapshot := buildimpact.DiscoverySnapshot{Projects: []buildimpact.DiscoveredProject{
+		{Path: ":service-a", SourcePaths: []string{"service-a/**"}},
+		{Path: ":service-b", SourcePaths: []string{"service-b/**"}},
+	}}
+	changed := []string{"service-a/src/main/java/example/Application.java", "shared-input.txt"}
+
+	if !proposalWorkflowOwnershipProven(snapshot, changed, []string{":service-a"}) {
+		t.Fatal("observed workflow consumer ownership was not preserved")
+	}
+	if proposalWorkflowOwnershipProven(snapshot, changed, []string{":unknown"}) {
+		t.Fatal("unknown observed workflow owner was accepted")
+	}
+	if proposalWorkflowOwnershipProven(snapshot, changed, []string{":service-a", ":service-a"}) {
+		t.Fatal("duplicate observed workflow owner was accepted")
+	}
+	if proposalWorkflowOwnershipProven(snapshot, changed, nil) {
+		t.Fatal("unowned path was accepted without observed workflow ownership")
+	}
+}
+
 func TestResolveOptimizeWorkflowOwnershipReportsConfigurationInput(t *testing.T) {
 	snapshot := buildimpact.DiscoverySnapshot{Projects: []buildimpact.DiscoveredProject{
 		{Path: ":module", SourcePaths: []string{"module/**"}},
