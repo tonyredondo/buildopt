@@ -510,7 +510,9 @@ buildopt_subject() {
     fi
     jq -e --argjson projects "${buildopt_expected_projects}" \
         --arg changeFamily "${buildopt_change_family}" '
-      .phase == "QUALIFIED" and .calibration.qualified and
+      ((.phase == "QUALIFIED") or
+       (.phase == "ACTIVE" and .reason == "QUALIFIED_PROFILE_SELECTED")) and
+      .calibration.qualified and
       .discovery.changeFamily == $changeFamily and
       .discovery.changedProjects == $projects and
       .discovery.materialization.status == "CAPTURED" and
