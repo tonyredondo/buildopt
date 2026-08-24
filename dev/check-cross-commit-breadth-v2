@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 2)); then
+    printf 'usage: %s [EVIDENCE_ROOT] [--spec-only]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence=${1:-${buildopt_repo_root}/benchmarks/results/poc-cross-commit-breadth-v2}
+buildopt_mode=${2:-}
+buildopt_spec=${buildopt_repo_root}/specs/poc-cross-commit-breadth-v2.subjects.json
+
+for buildopt_command in cmp git jq mktemp sha256sum; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'cross-commit breadth V2 validation requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-qualified-lifetime/v2" and
+  .workItem == "POC-CROSS-COMMIT-BREADTH-V2-001" and
+  .protocol.ordinaryQualificationInvocations == 18 and
+  .protocol.calibrationPairs == 8 and
+  .protocol.minimumClaimEligibleSubjects == 2 and
+  .acceptance.minimumClaimEligibleSubjects == 2 and
+  (.repositories | length) == 3 and
+  ([.repositories[].repositoryId] | unique | length) == 3 and
+  all(.repositories[];
+    (.publicRevision | test("^[0-9a-f]{40}$")) and
+    (.targetRevision | test("^[0-9a-f]{40}$")) and
+    (.observations | length) == 3 and
+    all(.observations[]; test("^[0-9a-f]{40}$"))) and
+  .boundaries == {designPartnerRequired:false,productionAuthorized:false,
+    proofOfConcept:true,repositorySpecificProductRules:false,soakRequired:false,
+    testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_spec}" >/dev/null
+
+if [[ ${buildopt_mode} == --spec-only ]]; then
+    printf 'Cross-commit breadth V2 specification OK: three frozen public families\n'
+    exit 0
+fi
+[[ -z ${buildopt_mode} && -s ${buildopt_evidence}/summary.json &&
+    -s ${buildopt_evidence}/raw/summary.json ]] || {
+    printf 'cross-commit breadth V2 evidence is unavailable\n' >&2
+    exit 1
+}
+
+"${buildopt_script_dir}/check-qualified-lifetime-v2" \
+    "${buildopt_evidence}/raw/summary.json"
+buildopt_tmp=$(mktemp -d /tmp/buildopt-cross-commit-breadth-v2-check.XXXXXX)
+trap 'rm -rf -- "${buildopt_tmp}"' EXIT
+"${buildopt_script_dir}/assemble-cross-commit-breadth-v2" \
+    "${buildopt_evidence}" >"${buildopt_tmp}/summary.json"
+cmp -s "${buildopt_evidence}/summary.json" "${buildopt_tmp}/summary.json" || {
+    printf 'cross-commit breadth V2 summary does not match raw evidence\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-cross-commit-breadth-v2/v1" and
+  .workItem == "POC-CROSS-COMMIT-BREADTH-V2-001" and
+  .protocol.minimumClaimEligibleSubjects == 2 and
+  (.protocol.percentagesAggregatedAcrossRepositories | not) and
+  (.subjects | length) == 3 and
+  .result.evaluatedSubjects == 3 and
+  .result.productFailures == 0 and
+  (.result.crossCommitClaimBroadened == (.result.claimEligibleSubjects >= 2)) and
+  (.decision == (if .result.claimEligibleSubjects >= 2 then
+    "BROADEN_CROSS_COMMIT_VALUE_CLAIM" else
+    "RETAIN_BOUNDED_CROSS_COMMIT_VALUE_CLAIM" end)) and
+  all(.subjects[];
+    (.claimEligible == (.classification == "CLAIM_ELIGIBLE")) and
+    (.claimEligible | not) or
+      (.qualification.calibration.qualified and
+       .qualification.portability.status == "PORTABLE" and
+       .economics.selectedReplays > 0 and
+       .economics.cumulativeNetSavedMs > 0 and
+       all(.observations[]; .exactRequiredOutputs))) and
+  .boundaries == {designPartnerRequired:false,productionAuthorized:false,
+    proofOfConcept:true,repositorySpecificProductRules:false,soakRequired:false,
+    testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_evidence}/summary.json" >/dev/null
+
+printf 'Cross-commit breadth V2 evidence OK: %s/3 subjects claim-eligible, decision %s\n' \
+    "$(jq -r '.result.claimEligibleSubjects' "${buildopt_evidence}/summary.json")" \
+    "$(jq -r '.decision' "${buildopt_evidence}/summary.json")"

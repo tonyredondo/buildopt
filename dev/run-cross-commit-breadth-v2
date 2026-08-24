@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# < 1 || $# > 2)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/output/directory [repository-key|--summary-only]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_filter=${2:-}
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_raw=${buildopt_output}/raw
+buildopt_spec=${buildopt_repo_root}/specs/poc-cross-commit-breadth-v2.subjects.json
+
+BUILDOPT_QUALIFIED_LIFETIME_SPEC="${buildopt_spec}" \
+BUILDOPT_QUALIFIED_LIFETIME_AUTOMATIC_PROTOCOL=v4 \
+BUILDOPT_QUALIFIED_LIFETIME_PORTABILITY_MODE=PRODUCER_BOUND_QUARANTINE \
+    "${buildopt_script_dir}/run-qualified-lifetime-v2" \
+    "${buildopt_raw}" ${buildopt_filter:+"${buildopt_filter}"}
+
+if [[ -s ${buildopt_raw}/summary.json ]]; then
+    "${buildopt_script_dir}/assemble-cross-commit-breadth-v2" \
+        "${buildopt_output}" >"${buildopt_output}/summary.json"
+    "${buildopt_script_dir}/check-cross-commit-breadth-v2" "${buildopt_output}"
+    printf 'Cross-commit breadth V2 evidence written to %s\n' "${buildopt_output}"
+fi
