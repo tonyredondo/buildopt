@@ -353,20 +353,10 @@ func observeGradle(ctx context.Context, options ObservationOptions) ([]byte, err
 		"BUILDOPT_IMPACT_DISCOVERY_OUTPUT": outputPath,
 		"BUILDOPT_IMPACT_ENTRYPOINTS":      string(entrypoints),
 	})
-	runDiscovery := func() ([]byte, error) {
-		command := exec.CommandContext(ctx, gradleCommand, arguments...)
-		command.Dir = root
-		command.Env = discoveryEnvironment
-		return command.CombinedOutput()
-	}
-	output, err := runDiscovery()
-	// Cold composite builds may compile their included build logic before the
-	// root build resolves the init-script task selector. A single identical
-	// retry is safe because that failed invocation never reaches the discovery
-	// task or owner workflow. Every other Gradle failure remains fail-closed.
-	if err != nil && retryableDiscoveryTaskRegistrationFailure(output) {
-		output, err = runDiscovery()
-	}
+	command := exec.CommandContext(ctx, gradleCommand, arguments...)
+	command.Dir = root
+	command.Env = discoveryEnvironment
+	output, err := command.CombinedOutput()
 	if err != nil {
 		return nil, fmt.Errorf("run Gradle impact discovery: %w\n%s", err, output)
 	}
@@ -375,10 +365,6 @@ func observeGradle(ctx context.Context, options ObservationOptions) ([]byte, err
 		return nil, fmt.Errorf("read Gradle impact discovery: %w", err)
 	}
 	return raw, nil
-}
-
-func retryableDiscoveryTaskRegistrationFailure(output []byte) bool {
-	return bytes.Contains(output, []byte("Task 'buildoptImpactDiscovery' not found"))
 }
 
 func discoveryGradleArguments(ownerOptions []string, initPath string) []string {

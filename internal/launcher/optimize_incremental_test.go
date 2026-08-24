@@ -1,7 +1,6 @@
 package launcher
 
 import (
-	"bytes"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -91,43 +90,6 @@ func TestOptimizeOutputObservationPrecedesGradleArgumentSeparator(t *testing.T) 
 		invocation.environment["BUILDOPT_IMPACT_WORKFLOW_INPUTS_OUTPUT"] != "/private/workflow-inputs.json" ||
 		invocation.environment["BUILDOPT_IMPACT_CHANGED_PATHS"] != `["module/src/Example.java"]` {
 		t.Fatalf("impact environment = %#v", invocation.environment)
-	}
-}
-
-func TestInlineObservationRetryRecognizesOnlyOwnedTaskRegistration(t *testing.T) {
-	for _, output := range []string{
-		"Task 'buildoptImpactDiscovery' not found in root project 'composite'",
-		"Task 'buildoptOutputContract' not found in root project 'composite'",
-	} {
-		if !retryableInlineObservationRegistrationFailure([]byte(output)) {
-			t.Fatalf("owned task registration failure was not retryable: %q", output)
-		}
-	}
-	for _, output := range []string{
-		"Task 'test' not found in root project 'composite'",
-		"Execution failed for task ':compileKotlin'",
-		"BUILD FAILED",
-	} {
-		if retryableInlineObservationRegistrationFailure([]byte(output)) {
-			t.Fatalf("unrelated Gradle failure was retryable: %q", output)
-		}
-	}
-}
-
-func TestOptimizeObservationDiagnosticTailKeepsBoundedSuffix(t *testing.T) {
-	var tail optimizeObservationDiagnosticTail
-	prefix := bytes.Repeat([]byte("x"), optimizeObservationDiagnosticBytes+17)
-	if _, err := tail.Write(prefix); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := tail.Write([]byte("owned-task-failure")); err != nil {
-		t.Fatal(err)
-	}
-	if len(tail.data) != optimizeObservationDiagnosticBytes {
-		t.Fatalf("diagnostic tail length = %d", len(tail.data))
-	}
-	if !bytes.HasSuffix(tail.data, []byte("owned-task-failure")) {
-		t.Fatal("diagnostic tail lost the newest failure")
 	}
 }
 

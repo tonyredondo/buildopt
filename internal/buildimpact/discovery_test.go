@@ -316,22 +316,6 @@ func TestDiscoveryGradleArgumentsOwnObservationOnlyOptionsWithoutDroppingOwnerPr
 	}
 }
 
-func TestDiscoveryRetriesOnlyMissingOwnedTaskRegistration(t *testing.T) {
-	if !retryableDiscoveryTaskRegistrationFailure([]byte(
-		"Task 'buildoptImpactDiscovery' not found in root project 'composite'")) {
-		t.Fatal("cold composite task registration failure was not retryable")
-	}
-	for _, output := range [][]byte{
-		[]byte("Task 'test' not found in root project 'composite'"),
-		[]byte("Execution failed for task ':compileKotlin'"),
-		[]byte("BUILD FAILED"),
-	} {
-		if retryableDiscoveryTaskRegistrationFailure(output) {
-			t.Fatalf("unrelated Gradle failure was retryable: %q", output)
-		}
-	}
-}
-
 func TestSyntheticGradleDiscoveryGeneratedStateIsCurrent(t *testing.T) {
 	if os.Getenv("BUILDOPT_RUN_BUILD_IMPACT_DISCOVERY_PROOF") != "1" {
 		t.Skip("real Gradle discovery proof is run by check-build-impact-automatic")

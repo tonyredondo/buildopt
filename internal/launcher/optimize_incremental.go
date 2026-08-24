@@ -19,30 +19,6 @@ import (
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
 
-const optimizeObservationDiagnosticBytes = 64 << 10
-
-type optimizeObservationDiagnosticTail struct {
-	data []byte
-}
-
-func (tail *optimizeObservationDiagnosticTail) Write(payload []byte) (int, error) {
-	if len(payload) >= optimizeObservationDiagnosticBytes {
-		tail.data = append(tail.data[:0], payload[len(payload)-optimizeObservationDiagnosticBytes:]...)
-		return len(payload), nil
-	}
-	if overflow := len(tail.data) + len(payload) - optimizeObservationDiagnosticBytes; overflow > 0 {
-		copy(tail.data, tail.data[overflow:])
-		tail.data = tail.data[:len(tail.data)-overflow]
-	}
-	tail.data = append(tail.data, payload...)
-	return len(payload), nil
-}
-
-func retryableInlineObservationRegistrationFailure(output []byte) bool {
-	return bytes.Contains(output, []byte("Task 'buildoptImpactDiscovery' not found")) ||
-		bytes.Contains(output, []byte("Task 'buildoptOutputContract' not found"))
-}
-
 const (
 	optimizeIncrementalSchema            = "buildopt.poc/incremental-learning/v2"
 	optimizeIncrementalCollecting        = "COLLECTING"

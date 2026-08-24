@@ -10,6 +10,12 @@ import java.util.concurrent.ConcurrentHashMap
 // Init scripts are inherited by buildSrc and included builds. Discovery owns
 // only the top-level build selected by the CLI.
 if (gradle.getParent() == null) {
+    // Configuration-on-demand resolves root task names before projectsEvaluated.
+    // Register the stable entrypoint as soon as the root project exists, then
+    // attach the fully resolved task graph after all projects are evaluated.
+    gradle.rootProject {
+        it.tasks.register("buildoptImpactDiscovery")
+    }
 def buildoptInlineObservation = System.getenv("BUILDOPT_IMPACT_DISCOVERY_INLINE") == "1"
 def projectDependenciesByPath = new ConcurrentHashMap<String, List<String>>()
 gradle.projectsLoaded {
@@ -186,7 +192,8 @@ gradle.projectsEvaluated {
             }.sort { left, right -> left.path <=> right.path },
         ]
     }
-    def discoveryTask = root.tasks.register("buildoptImpactDiscovery") {
+    def discoveryTask = root.tasks.named("buildoptImpactDiscovery")
+    discoveryTask.configure {
         group = "buildopt"
         description = "Emits a conservative BuildOpt project and task dependency snapshot"
         dependsOn(requestedTaskGroups.values().flatten())
