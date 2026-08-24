@@ -367,6 +367,14 @@ The completed quarantine mechanism is in
 The rejected first compatible window is in
 [compatible descendant discovery v1](../../benchmarks/results/poc-compatible-descendant-discovery-v1/README.md).
 
+The latest bounded compatibility follow-up is complete in
+[source ownership compatibility v1](../../benchmarks/results/poc-source-ownership-compatibility-v1/README.md).
+It distinguishes task-owned inputs from unproven configuration-time inputs,
+keeps the latter native and preserves 3,890 exact Groovy outputs. The full
+lifetime replay correctly stopped when fresh qualification failed its unchanged
+statistical gate. The next experiment may inspect generic Gradle
+configuration-input evidence; it may not add repository or filename rules.
+
 
 No step may add repository-name rules, average repository percentages, weaken
 correctness gates or borrow another profile's lifetime.

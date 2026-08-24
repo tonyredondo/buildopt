@@ -9,7 +9,8 @@ fi
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
 buildopt_spec=${buildopt_root}/specs/poc-source-ownership-compatibility-v1.json
-buildopt_diagnostic=${buildopt_root}/benchmarks/results/poc-source-ownership-compatibility-v1/diagnostic.json
+buildopt_evidence=${buildopt_root}/benchmarks/results/poc-source-ownership-compatibility-v1
+buildopt_diagnostic=${buildopt_evidence}/diagnostic.json
 
 for buildopt_command in jq sha256sum; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
@@ -85,4 +86,104 @@ jq -e '
     designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
 ' "${buildopt_diagnostic}" >/dev/null
 
-printf 'Source-ownership compatibility specification OK: unowned configuration input remains fail-closed\n'
+if [[ ${1:-} == --spec-only ]]; then
+    printf 'Source-ownership compatibility specification OK: unowned configuration input remains fail-closed\n'
+    exit 0
+fi
+
+buildopt_summary=${buildopt_evidence}/summary.json
+for buildopt_file in summary.json snapshot.json workflow-inputs.json required-patterns.json \
+    diagnostic-evaluation.json native-evaluation.json qualification-rejection-pairs.json \
+    qualification-rejection-capture.json; do
+    [[ -s ${buildopt_evidence}/${buildopt_file} ]] || {
+        printf 'source-ownership terminal evidence is missing: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-source-ownership-compatibility/v1" and
+  .workItem == "POC-SOURCE-OWNERSHIP-COMPATIBILITY-001" and
+  .buildoptRevision == "8044c1007ae48347835f9d0de7d0148128c16ec0" and
+  .repository == {id:"apache/groovy",
+    revision:"1ff25776219998ef05f520c0e1f10f4e56eaf961",
+    entrypoints:["classes"],changedPaths:["versions.properties"]} and
+  .resolution.status == "NATIVE_RETAINED" and
+  .resolution.reason == "CONFIGURATION_INPUT_OWNERSHIP_UNPROVEN" and
+  .resolution.owners == [] and .resolution.consumedUnownedPaths == [] and
+  .resolution.unattributedPaths == ["versions.properties"] and
+  .resolution.projectCount == 37 and .resolution.taskCount == 166 and
+  .resolution.requiredOutputCount == 3890 and
+  (.resolution.requiredOutputSha256 | test("^[0-9a-f]{64}$")) and
+  .authoritativeNative.exitCode == 0 and .authoritativeNative.durationMs > 0 and
+  .authoritativeNative.requiredOutputCount == 3890 and
+  .authoritativeNative.requiredOutputSha256 == .resolution.requiredOutputSha256 and
+  .authoritativeNative.exactWithDiagnostic and
+  .decision == "RETAIN_NATIVE_CONFIGURATION_INPUT_SCOPE" and
+  .productFailures == 0 and
+  .boundaries == {proofOfConcept:true,productionAuthorized:false,
+    repositorySpecificProductRules:false,soakRequired:false,
+    designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_summary}" >/dev/null
+
+while IFS=$'\t' read -r buildopt_file buildopt_sha; do
+    [[ $(sha256sum "${buildopt_evidence}/${buildopt_file}" | awk '{print $1}') == "${buildopt_sha}" ]] || {
+        printf 'source-ownership evidence digest changed: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done < <(jq -r '
+  [.observation.snapshotFile,.observation.snapshotSha256],
+  [.observation.workflowInputsFile,.observation.workflowInputsSha256],
+  [.observation.requiredPatternsFile,.observation.requiredPatternsSha256] | @tsv
+' "${buildopt_summary}")
+
+jq -e '
+  .schemaVersion == "buildopt.build-impact/gradle-discovery/v1" and
+  .gradleVersion == "8.14.3" and .complete and .fallbackReasons == [] and
+  (.projects | length) == 37 and (.tasks | length) == 166 and
+  (.entrypoints | length) == 1 and .entrypoints[0].name == "classes" and
+  (.entrypoints[0].reachesProjects | length) == 33
+' "${buildopt_evidence}/snapshot.json" >/dev/null
+jq -e '
+  .schemaVersion == "buildopt.build-impact/workflow-input-relevance/v1" and
+  .complete and .fallbackReasons == [] and
+  .paths == [{path:"versions.properties",consumingTasks:[]}]
+' "${buildopt_evidence}/workflow-inputs.json" >/dev/null
+jq -e 'type == "array" and length == 69 and all(.[]; type == "string" and length > 0)' \
+  "${buildopt_evidence}/required-patterns.json" >/dev/null
+
+jq -e '
+  .buildopt.revision == "c0f7a972c0ef5bfdcb3cd42cbaf46f2d6a0e9733" and
+  .discovery.repositoryId == "apache/groovy" and
+  .discovery.targetRevision == "14fa934340c46bc1ee96cba7ae594258bd8d0fd0" and
+  .calibration.controlMeanMs == 29622.875 and
+  .calibration.candidateMeanMs == 28422.625 and
+  .calibration.meanSavedMs == 1200.25 and
+  .calibration.reductionRatio == 0.04051767426355477 and
+  .calibration.positivePairs == 6 and
+  .calibration.interval95SavedMs == [-261.5,2625.25] and
+  (.calibration.qualified | not) and
+  .calibration.reason == "CALIBRATION_VALUE_NOT_PROVEN"
+' "${buildopt_evidence}/qualification-rejection-capture.json" >/dev/null
+jq -e '
+  .schemaVersion == "buildopt.evidence/structural-profile-qualification/v1" and
+  .evidenceState == "INCONCLUSIVE" and .subject.repositoryId == "apache/groovy" and
+  .result.pairs == 8 and .result.controlMeanMs == 29622.875 and
+  .result.candidateMeanMs == 28422.625 and .result.meanSavedMs == 1200.25 and
+  .result.positivePairs == 6 and .result.interval95SavedMs == [-261.5,2625.25] and
+  (.result.qualified | not) and .result.decision == "RETAIN_NATIVE_GRADLE" and
+  (.observations | length) == 8
+' "${buildopt_evidence}/qualification-rejection-pairs.json" >/dev/null
+
+[[ $(sha256sum "${buildopt_evidence}/qualification-rejection-pairs.json" | awk '{print $1}') == \
+  9f0bf9c95c507d8d28dfc7e49a33ddd2e09f491f5a08cd1b7a61901343210900 ]]
+[[ $(sha256sum "${buildopt_evidence}/qualification-rejection-capture.json" | awk '{print $1}') == \
+  469e6085f0d6dd25d5cf2ade7f269f876c9df2b4823a26bf52ef09e10de91dad ]]
+
+jq -e '
+  .result.preGradleDecisions == 7 and .result.postGradleDiscoveryDecisions == 1 and
+  .result.exactRequiredOutputs and .result.productFailures == 0 and
+  ([.observations[] | select(.completedBeforeGradle)] | length) == 7
+' "${buildopt_root}/benchmarks/results/poc-native-retention-fast-path-v1/summary.json" >/dev/null
+
+printf 'Source-ownership compatibility evidence OK: configuration input retained native, 3890 exact outputs\n'

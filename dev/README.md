@@ -4569,6 +4569,23 @@ overhead. A rejected preregistered hypothesis is still valid evidence when the
 checker proves the result recomputes, preserves every safety invariant and
 records the mismatch explicitly.
 
+## Source-ownership compatibility evidence
+
+`./dev/check-source-ownership-compatibility --spec-only` validates the frozen
+Apache Groovy configuration-input hypothesis. The default command also checks
+the complete Gradle model, task-input evidence, generic ownership decision,
+3,890-output native equivalence and the preserved calibration rejection:
+
+```bash
+./dev/check-source-ownership-compatibility
+```
+
+`./dev/run-source-ownership-compatibility /absolute/output/directory` creates
+the evidence from two fresh public source roots. The first records a complete
+Gradle model; the second runs the authoritative native `classes` workflow. The
+runner never publishes a profile, and a configuration-time input without a
+source owner or known task consumer remains native.
+
 ## Update policy
 
 Toolchain updates are atomic repository changes:

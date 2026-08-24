@@ -159,6 +159,12 @@ different workloads.
 Use the owning benchmark runner only when the relevant implementation or
 fixture changes.
 
+`./dev/check-source-ownership-compatibility` validates the latest bounded
+ownership result: a complete public Gradle model, typed task-consumer
+attribution, explicit native retention for unproven configuration inputs and
+3,890 exact Groovy outputs. Its paired qualification rejection is retained as
+negative evidence and is not rerun until favourable.
+
 `check-automatic-breadth-transfer` validates the immutable V1 unchanged
 zero-manual-file run across Spring Framework, OpenTelemetry Java
 Instrumentation, Apache Kafka, Micronaut Core and Apache Groovy. It recomputes

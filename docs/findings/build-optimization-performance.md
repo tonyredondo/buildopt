@@ -765,6 +765,15 @@ required outputs and report zero product failures. The result does not revoke
 the causal graph-reduction measurements. It rejects the assumption that a
 fast profile automatically has useful lifetime.
 
+The latest ownership follow-up keeps that conclusion conservative. Apache
+Groovy `1ff25776` changes a configuration-time `versions.properties` file with
+no source owner or task consumer, so BuildOpt explicitly retains native as
+`CONFIGURATION_INPUT_OWNERSHIP_UNPROVEN`. The independent `classes` build takes
+29.710 seconds and matches all 3,890 required outputs. A fresh target replay
+does not reproduce robust qualification: it saves 1.200 seconds/4.05% on
+average with 6/8 positive pairs, but its -0.262..+2.625-second interval crosses
+zero. No descendant profile or new performance claim is created.
+
 ## Cross-Commit Value Recovery
 
 The recovery experiment keeps Kafka's qualifier and six public descendants

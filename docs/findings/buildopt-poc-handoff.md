@@ -145,6 +145,16 @@ with zero product failures. The cross-commit claim therefore remains bounded.
   earlier than expected. The selected Ktor control remains exact and saves
   **126.225 seconds / 56.47%**. Single-pair fallback wall deltas remain
   descriptive Gradle noise, not a BuildOpt overhead claim.
+- The remaining Groovy ownership ambiguity is now explicitly classified rather
+  than widened. Public revision `1ff25776` changes a configuration-time
+  `versions.properties` input with no source owner or task consumer. BuildOpt
+  returns `CONFIGURATION_INPUT_OWNERSHIP_UNPROVEN`, executes native `classes`
+  in 29.710 seconds and preserves all 3,890 required outputs exactly. The fresh
+  target calibration that preceded the descendant replay averaged 4.05%
+  savings with 6/8 positive pairs, but its -0.262..+2.625-second interval
+  crossed zero, so no profile was published. This proves safe attribution and
+  also shows that the earlier isolated Groovy value was not repeatable enough
+  in this run to justify cross-commit reuse.
 - The first unchanged Micronaut generalization did not broaden that claim. Its
   qualification was **10.33% faster** with 7/8 positive pairs, but the first
   native-retained descendant generated a different Jackson JAR even though no
@@ -196,14 +206,14 @@ with zero product failures. The cross-commit claim therefore remains bounded.
 
 ## Next steps
 
-1. Improve generic compatibility across source-only descendants using Gradle
-   ownership, task inputs, output contracts and producer lineage; do not add
-   repository-name rules or weaken exact output equality. Start with the one
-   remaining post-discovery Groovy ownership ambiguity, and preserve the new
-   seven-of-eight early-retention behavior as a regression gate.
-2. Re-run the same frozen windows only after a generic correction. Require at
-   least two of three subjects to select exact replays and finish net positive
-   before broadening the cross-commit claim.
+1. Investigate whether Gradle exposes a complete, repository-independent
+   configuration-input binding. Proceed only if the exact changed path can be
+   tied to affected projects or the full workflow without filename rules; an
+   absent or incomplete signal must keep native execution.
+2. Re-run the same frozen window only after that generic proof and a fresh
+   target qualification. Require exact outputs, a robust positive calibration
+   and positive cumulative cross-commit value; do not reuse the historical
+   qualification merely because it was favourable.
 3. Keep the Micronaut quarantine line stopped and use task/DAG attribution only
    as an early diagnostic for materially different hypotheses. Paired wall
    time remains the causal value test.
@@ -213,6 +223,7 @@ with zero product failures. The cross-commit claim therefore remains bounded.
 - [Latest recovery result](../../benchmarks/results/poc-cross-commit-value-recovery-v1/README.md)
 - [Workflow-input ownership result](../../benchmarks/results/poc-workflow-input-ownership-v1/README.md)
 - [Machine-readable ownership summary](../../benchmarks/results/poc-workflow-input-ownership-v1/summary.json)
+- [Source ownership compatibility result](../../benchmarks/results/poc-source-ownership-compatibility-v1/README.md)
 - [Native-volatility quarantine result](../../benchmarks/results/poc-native-volatility-quarantine-v1/README.md)
 - [Machine-readable quarantine summary](../../benchmarks/results/poc-native-volatility-quarantine-v1/summary.json)
 - [Producer-bound Spring lifetime result](../../benchmarks/results/poc-producer-bound-quarantine-lifetime-v2/README.md)

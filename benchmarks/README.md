@@ -2304,6 +2304,27 @@ evidence with:
 ./dev/check-native-retention-fast-path
 ```
 
+## Source ownership compatibility
+
+[`results/poc-source-ownership-compatibility-v1/`](./results/poc-source-ownership-compatibility-v1/README.md)
+investigates the only post-discovery ownership ambiguity in the frozen breadth
+V2 fallback set. A fresh public Apache Groovy `classes` observation is complete
+at 37 projects and 166 tasks, but `versions.properties` has no source owner or
+task consumer and is read during configuration. BuildOpt now reports
+`CONFIGURATION_INPUT_OWNERSHIP_UNPROVEN` and retains native Gradle instead of
+collapsing this distinct case into generic source ambiguity.
+
+The independent native replay completed in 29.710 seconds and matched all 3,890
+required outputs byte for byte. The full lifetime attempt stopped earlier when
+fresh target calibration saved a descriptive 1.200 seconds/4.05% with 6/8
+positive pairs but a -0.262..+2.625-second interval. The value gate therefore
+published no profile and the descendant window was not replayed. This negative
+result is retained rather than rerun for a favourable sample. Validate it with:
+
+```bash
+./dev/check-source-ownership-compatibility
+```
+
 ## JVM Agent spike evidence
 
 [`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one

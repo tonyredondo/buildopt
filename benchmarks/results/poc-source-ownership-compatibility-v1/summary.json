@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-source-ownership-compatibility/v1",
+  "workItem": "POC-SOURCE-OWNERSHIP-COMPATIBILITY-001",
+  "capturedAt": "2026-08-24T20:53:16Z",
+  "buildoptRevision": "8044c1007ae48347835f9d0de7d0148128c16ec0",
+  "repository": {
+    "id": "apache/groovy",
+    "revision": "1ff25776219998ef05f520c0e1f10f4e56eaf961",
+    "entrypoints": [
+      "classes"
+    ],
+    "changedPaths": [
+      "versions.properties"
+    ]
+  },
+  "observation": {
+    "snapshotFile": "snapshot.json",
+    "snapshotSha256": "12b8173fc79bbe0a1009a14832f58697a211fa1590cb45356a31ca1bf343fb55",
+    "workflowInputsFile": "workflow-inputs.json",
+    "workflowInputsSha256": "234c70e7854ade121972b2fa717dc52b90bde9c9af9d29a272ad6fe7bc2df92a",
+    "requiredPatternsFile": "required-patterns.json",
+    "requiredPatternsSha256": "034522065d194f7affc8a327aa707873f4db1e115c3d93e03e69c2350e76db7c"
+  },
+  "resolution": {
+    "schemaVersion": "buildopt.evidence/source-ownership-evaluation/v1",
+    "status": "NATIVE_RETAINED",
+    "reason": "CONFIGURATION_INPUT_OWNERSHIP_UNPROVEN",
+    "owners": [],
+    "ignoredPaths": null,
+    "consumedUnownedPaths": [],
+    "unattributedPaths": [
+      "versions.properties"
+    ],
+    "projectCount": 37,
+    "taskCount": 166,
+    "requiredOutputCount": 3890,
+    "requiredOutputSha256": "0b10489074409998afe248c2d42dbb58f4a6b82c139499e898a2bd1cf64eb087",
+    "productionAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "authoritativeNative": {
+    "exitCode": 0,
+    "durationMs": 29710,
+    "requiredOutputCount": 3890,
+    "requiredOutputSha256": "0b10489074409998afe248c2d42dbb58f4a6b82c139499e898a2bd1cf64eb087",
+    "exactWithDiagnostic": true
+  },
+  "decision": "RETAIN_NATIVE_CONFIGURATION_INPUT_SCOPE",
+  "productFailures": 0,
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRules": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}
