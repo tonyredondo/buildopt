@@ -245,6 +245,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-native-retention-fast-path" >/dev/null
         "${buildopt_script_dir}/check-source-ownership-compatibility" >/dev/null
         "${buildopt_script_dir}/check-configuration-input-binding" >/dev/null
+        "${buildopt_script_dir}/check-aggregate-output-closure" >/dev/null
         "${buildopt_script_dir}/check-generic-holdout" >/dev/null
         "${buildopt_script_dir}/check-generic-holdout-crossover" \
             "${buildopt_repo_root}/benchmarks/results/poc-generic-holdout-v5" >/dev/null

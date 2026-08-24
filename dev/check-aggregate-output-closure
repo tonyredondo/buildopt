@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec=${buildopt_root}/specs/poc-aggregate-output-closure-v1.json
+buildopt_summary=${buildopt_root}/benchmarks/results/poc-aggregate-output-closure-v1/summary.json
+
+command -v jq >/dev/null 2>&1 || {
+    printf 'jq is required\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-aggregate-output-closure/v1" and
+  .workItem == "POC-AGGREGATE-OUTPUT-CLOSURE-001" and
+  .fixtures.gradleVersions == ["8.14.3","9.6.1"] and
+  .fixtures.dsls == ["groovy","kotlin"] and
+  .fixtures.requestedEntrypoint == ":changed:bundleAll" and
+  .fixtures.reachedTasks == 3 and
+  .fixtures.requiredOutputs == 2 and
+  .fixtures.candidateProducers == 1 and
+  .fixtures.candidateOutputs == 1 and
+  .fixtures.materializedOutputs == 1 and
+  (.fixtures.usesConventionalOutputDirectories | not) and
+  (.fixtures.usesArchiveOrLanguagePluginTypes | not) and
+  all(.requiredProofs[]; .) and
+  .decision.completeClosure == "ALLOW_REVISION_BOUND_AGGREGATE_CANDIDATE" and
+  .decision.result == "AGGREGATE_OUTPUT_CLOSURE_POC_COMPLETE" and
+  .boundaries == {proofOfConcept:true,productionAuthorized:false,
+    repositorySpecificProductRules:false,taskNameOrOutputExtensionRules:false,
+    crossRevisionAbiInferred:false,performanceReplayRequired:false,
+    soakRequired:false,designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_spec}" >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-aggregate-output-closure/v1" and
+  .workItem == "POC-AGGREGATE-OUTPUT-CLOSURE-001" and
+  .buildoptRevision == "8c83ffd21b989ef77be67234a3ca3448aae1747a" and
+  .buildoptExecutableSha256 == "3000ea7f47dd5d4cbee15afea8ab45eedf3d83b99a9514460bd315cd80977fdd" and
+  (.cases | length) == 4 and
+  ([.cases[].gradleVersion] | unique) == ["8.14.3","9.6.1"] and
+  ([.cases[].dsl] | unique) == ["groovy","kotlin"] and
+  all(.cases[];
+    .workflow == ["--no-daemon",":changed:bundleAll"] and
+    .outputClosure == {
+      candidateOutputCount:1,candidateProducerCount:1,materializedOutputCount:1,
+      reachedTaskCount:3,reason:"COMPLETE_REACHABLE_PRODUCER_OUTPUTS",
+      requestedEntrypoints:[":changed:bundleAll"],requiredOutputCount:2,
+      schemaVersion:"buildopt.poc/aggregate-output-closure/v1",status:"COMPLETE"
+    } and
+    (.requiredOutputs | length) == 2 and
+    .candidateOutputs == ["changed/build/custom-output/payload.bin"] and
+    .candidateEntrypoints == [":changed:emitPayload"] and
+    .materialization.fileCount == 1 and
+    .materialization.patterns == ["stable/build/custom-output/payload.bin"] and
+    .materialization.status == "CAPTURED" and
+    .baseline.fileCount == 2 and .cleanCandidate.fileCount == 2 and
+    .baseline.sha256 == .cleanCandidate.sha256 and
+    .exactOutputs and (.stableProducerExecuted | not) and .productFailures == 0) and
+  .decision == "AGGREGATE_OUTPUT_CLOSURE_POC_COMPLETE" and
+  .productFailures == 0 and (.performanceReplayRun | not) and
+  .boundaries == {proofOfConcept:true,productionAuthorized:false,
+    repositorySpecificProductRules:false,taskNameOrOutputExtensionRules:false,
+    soakRequired:false,designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_summary}" >/dev/null
+
+printf 'Aggregate output closure evidence OK: 4/4 Gradle/DSL cases reproduce exact custom outputs\n'

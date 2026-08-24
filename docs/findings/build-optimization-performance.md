@@ -971,6 +971,7 @@ artifacts are:
 - [observed Ktor profile-lifetime evidence](../../benchmarks/results/poc-profile-lifetime-v1/summary.json).
 - [five-repository qualified-lifetime evidence](../../benchmarks/results/poc-qualified-lifetime-v2/summary.json).
 - [configuration-input binding evidence](../../benchmarks/results/poc-configuration-input-binding-v1/summary.json).
+- [aggregate output closure evidence](../../benchmarks/results/poc-aggregate-output-closure-v1/summary.json).
 - [terminal installed qualified-profile matrix](../../benchmarks/results/poc-qualified-profile-matrix-v1/summary.json).
 - [fresh five-repository structural-only matrix](../../benchmarks/results/poc-generic-profile-matrix-v1/README.md).
 - [fresh full-path ablation and retained component evidence](../../benchmarks/results/poc-full-path-ablation-v1/summary.json).
@@ -992,6 +993,16 @@ artifacts are:
 - [transitive producer-lineage evidence](../../benchmarks/results/poc-transitive-producer-lineage-v1/README.md).
 
 ## General opportunity and whole-profile value
+
+The latest functional-coverage block removes a correctness limitation without
+creating a new performance claim. For custom aggregate workflows whose
+lifecycle entrypoint has no direct output, BuildOpt now derives every required
+output from the configured Gradle task graph and observed producer ownership.
+Across Gradle 8.14.3/9.6.1 and Groovy/Kotlin, 4/4 cases rebuild only the changed
+producer, materialize the stable producer's output without executing it and
+match the full-workflow digest. Missing dependencies, ambiguous ownership and
+unreachable producers retain native Gradle. Cross-commit value still depends
+on the next structural profile-rebinding proof.
 
 The terminal specialization remains valid, but it does not end the search for
 a general product. The next foundation separates two decisions that earlier

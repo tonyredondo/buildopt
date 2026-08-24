@@ -584,6 +584,15 @@ reports and invalidates the changed file, but its supported report exposes the
 build-logic read origin rather than complete semantic project ownership. The
 bounded hypothesis therefore closes with full-workflow native retention.
 
+`poc-aggregate-output-closure-v1.json` and
+`poc-aggregate-output-closure-v1.md` define the next generic correctness
+boundary. When conventional aggregate partitioning has no direct output,
+BuildOpt may traverse the exact configured task graph, rebuild changed
+producers and materialize every other required output only if ownership and
+reachability are complete. Missing, ambiguous or bounded evidence retains the
+full native workflow. The proof is revision-bound and contains no timing or
+cross-revision ABI claim.
+
 `poc-structural-profile-v1.json` and `poc-structural-profile-v1.md` define the
 repository-independent bridge from measured structural value to an installed
 Build-Impact-only profile. Eight positive optimized-native comparisons,

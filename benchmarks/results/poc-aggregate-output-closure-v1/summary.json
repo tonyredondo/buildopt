@@ -1,0 +1,262 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-aggregate-output-closure/v1",
+  "workItem": "POC-AGGREGATE-OUTPUT-CLOSURE-001",
+  "capturedAt": "2026-08-24T23:29:29Z",
+  "buildoptRevision": "8c83ffd21b989ef77be67234a3ca3448aae1747a",
+  "buildoptExecutableSha256": "3000ea7f47dd5d4cbee15afea8ab45eedf3d83b99a9514460bd315cd80977fdd",
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "evidenceClass": "BOUNDED_LOCAL_POC"
+  },
+  "cases": [
+    {
+      "gradleVersion": "8.14.3",
+      "dsl": "groovy",
+      "workflow": [
+        "--no-daemon",
+        ":changed:bundleAll"
+      ],
+      "outputClosure": {
+        "candidateOutputCount": 1,
+        "candidateProducerCount": 1,
+        "materializedOutputCount": 1,
+        "reachedTaskCount": 3,
+        "reason": "COMPLETE_REACHABLE_PRODUCER_OUTPUTS",
+        "requestedEntrypoints": [
+          ":changed:bundleAll"
+        ],
+        "requiredOutputCount": 2,
+        "schemaVersion": "buildopt.poc/aggregate-output-closure/v1",
+        "status": "COMPLETE"
+      },
+      "requiredOutputs": [
+        "changed/build/custom-output/payload.bin",
+        "stable/build/custom-output/payload.bin"
+      ],
+      "candidateOutputs": [
+        "changed/build/custom-output/payload.bin"
+      ],
+      "candidateEntrypoints": [
+        ":changed:emitPayload"
+      ],
+      "materialization": {
+        "byteCount": 7,
+        "economics": {
+          "collectMs": 1,
+          "manifestMs": 42,
+          "packMs": 45,
+          "totalMs": 88
+        },
+        "fileCount": 1,
+        "manifestFile": ".buildopt/aggregate-output-closure/v1/materialization/manifest.json",
+        "manifestSha256": "a319458ebd2952f2ac2ed9d866cc65b69ae894a8ee317fdfa795861c84ad6807",
+        "patterns": [
+          "stable/build/custom-output/payload.bin"
+        ],
+        "reason": "VERIFIED_UNAFFECTED_OUTPUTS_CAPTURED",
+        "status": "CAPTURED"
+      },
+      "baseline": {
+        "fileCount": 2,
+        "sha256": "3d3ce1c25f00aadd230bfc33c9ff48a1f04392035b17d084ff1a71d30d24d327"
+      },
+      "cleanCandidate": {
+        "fileCount": 2,
+        "sha256": "3d3ce1c25f00aadd230bfc33c9ff48a1f04392035b17d084ff1a71d30d24d327"
+      },
+      "exactOutputs": true,
+      "stableProducerExecuted": false,
+      "productFailures": 0
+    },
+    {
+      "gradleVersion": "8.14.3",
+      "dsl": "kotlin",
+      "workflow": [
+        "--no-daemon",
+        ":changed:bundleAll"
+      ],
+      "outputClosure": {
+        "candidateOutputCount": 1,
+        "candidateProducerCount": 1,
+        "materializedOutputCount": 1,
+        "reachedTaskCount": 3,
+        "reason": "COMPLETE_REACHABLE_PRODUCER_OUTPUTS",
+        "requestedEntrypoints": [
+          ":changed:bundleAll"
+        ],
+        "requiredOutputCount": 2,
+        "schemaVersion": "buildopt.poc/aggregate-output-closure/v1",
+        "status": "COMPLETE"
+      },
+      "requiredOutputs": [
+        "changed/build/custom-output/payload.bin",
+        "stable/build/custom-output/payload.bin"
+      ],
+      "candidateOutputs": [
+        "changed/build/custom-output/payload.bin"
+      ],
+      "candidateEntrypoints": [
+        ":changed:emitPayload"
+      ],
+      "materialization": {
+        "byteCount": 7,
+        "economics": {
+          "collectMs": 1,
+          "manifestMs": 42,
+          "packMs": 43,
+          "totalMs": 86
+        },
+        "fileCount": 1,
+        "manifestFile": ".buildopt/aggregate-output-closure/v1/materialization/manifest.json",
+        "manifestSha256": "a14010e2584ea9246f157e93d54ae3ec0f567b9e681b7de909de8a6b60f6a559",
+        "patterns": [
+          "stable/build/custom-output/payload.bin"
+        ],
+        "reason": "VERIFIED_UNAFFECTED_OUTPUTS_CAPTURED",
+        "status": "CAPTURED"
+      },
+      "baseline": {
+        "fileCount": 2,
+        "sha256": "3d3ce1c25f00aadd230bfc33c9ff48a1f04392035b17d084ff1a71d30d24d327"
+      },
+      "cleanCandidate": {
+        "fileCount": 2,
+        "sha256": "3d3ce1c25f00aadd230bfc33c9ff48a1f04392035b17d084ff1a71d30d24d327"
+      },
+      "exactOutputs": true,
+      "stableProducerExecuted": false,
+      "productFailures": 0
+    },
+    {
+      "gradleVersion": "9.6.1",
+      "dsl": "groovy",
+      "workflow": [
+        "--no-daemon",
+        ":changed:bundleAll"
+      ],
+      "outputClosure": {
+        "candidateOutputCount": 1,
+        "candidateProducerCount": 1,
+        "materializedOutputCount": 1,
+        "reachedTaskCount": 3,
+        "reason": "COMPLETE_REACHABLE_PRODUCER_OUTPUTS",
+        "requestedEntrypoints": [
+          ":changed:bundleAll"
+        ],
+        "requiredOutputCount": 2,
+        "schemaVersion": "buildopt.poc/aggregate-output-closure/v1",
+        "status": "COMPLETE"
+      },
+      "requiredOutputs": [
+        "changed/build/custom-output/payload.bin",
+        "stable/build/custom-output/payload.bin"
+      ],
+      "candidateOutputs": [
+        "changed/build/custom-output/payload.bin"
+      ],
+      "candidateEntrypoints": [
+        ":changed:emitPayload"
+      ],
+      "materialization": {
+        "byteCount": 7,
+        "economics": {
+          "collectMs": 1,
+          "manifestMs": 42,
+          "packMs": 43,
+          "totalMs": 85
+        },
+        "fileCount": 1,
+        "manifestFile": ".buildopt/aggregate-output-closure/v1/materialization/manifest.json",
+        "manifestSha256": "ac5525a83f6ce4a46802d58cfef4e9b0ba0807a8db7746b2400b525c2d8ea713",
+        "patterns": [
+          "stable/build/custom-output/payload.bin"
+        ],
+        "reason": "VERIFIED_UNAFFECTED_OUTPUTS_CAPTURED",
+        "status": "CAPTURED"
+      },
+      "baseline": {
+        "fileCount": 2,
+        "sha256": "3d3ce1c25f00aadd230bfc33c9ff48a1f04392035b17d084ff1a71d30d24d327"
+      },
+      "cleanCandidate": {
+        "fileCount": 2,
+        "sha256": "3d3ce1c25f00aadd230bfc33c9ff48a1f04392035b17d084ff1a71d30d24d327"
+      },
+      "exactOutputs": true,
+      "stableProducerExecuted": false,
+      "productFailures": 0
+    },
+    {
+      "gradleVersion": "9.6.1",
+      "dsl": "kotlin",
+      "workflow": [
+        "--no-daemon",
+        ":changed:bundleAll"
+      ],
+      "outputClosure": {
+        "candidateOutputCount": 1,
+        "candidateProducerCount": 1,
+        "materializedOutputCount": 1,
+        "reachedTaskCount": 3,
+        "reason": "COMPLETE_REACHABLE_PRODUCER_OUTPUTS",
+        "requestedEntrypoints": [
+          ":changed:bundleAll"
+        ],
+        "requiredOutputCount": 2,
+        "schemaVersion": "buildopt.poc/aggregate-output-closure/v1",
+        "status": "COMPLETE"
+      },
+      "requiredOutputs": [
+        "changed/build/custom-output/payload.bin",
+        "stable/build/custom-output/payload.bin"
+      ],
+      "candidateOutputs": [
+        "changed/build/custom-output/payload.bin"
+      ],
+      "candidateEntrypoints": [
+        ":changed:emitPayload"
+      ],
+      "materialization": {
+        "byteCount": 7,
+        "economics": {
+          "collectMs": 1,
+          "manifestMs": 41,
+          "packMs": 42,
+          "totalMs": 84
+        },
+        "fileCount": 1,
+        "manifestFile": ".buildopt/aggregate-output-closure/v1/materialization/manifest.json",
+        "manifestSha256": "62a25673595ca18fc369b4ad6085081c34e9a38f99525ad5ef36181eab0e4c0c",
+        "patterns": [
+          "stable/build/custom-output/payload.bin"
+        ],
+        "reason": "VERIFIED_UNAFFECTED_OUTPUTS_CAPTURED",
+        "status": "CAPTURED"
+      },
+      "baseline": {
+        "fileCount": 2,
+        "sha256": "3d3ce1c25f00aadd230bfc33c9ff48a1f04392035b17d084ff1a71d30d24d327"
+      },
+      "cleanCandidate": {
+        "fileCount": 2,
+        "sha256": "3d3ce1c25f00aadd230bfc33c9ff48a1f04392035b17d084ff1a71d30d24d327"
+      },
+      "exactOutputs": true,
+      "stableProducerExecuted": false,
+      "productFailures": 0
+    }
+  ],
+  "decision": "AGGREGATE_OUTPUT_CLOSURE_POC_COMPLETE",
+  "productFailures": 0,
+  "performanceReplayRun": false,
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRules": false,
+    "taskNameOrOutputExtensionRules": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

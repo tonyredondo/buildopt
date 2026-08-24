@@ -4601,6 +4601,21 @@ verifies invalidation and checks the affected and unaffected JARs. The report
 contains the input and build-logic read origin but no complete semantic project
 owner, so the safe POC result remains full-workflow native retention.
 
+## Aggregate output closure evidence
+
+`./dev/check-aggregate-output-closure` validates the immutable Gradle 8/9 and
+Groovy/Kotlin result for a custom aggregate workflow. The fixture's requested
+task has no outputs and its producers write outside conventional output paths.
+All four cases rebuild only the changed producer, materialize the stable output
+and reproduce the full-workflow digest exactly. The runner is intentionally
+separate because Base CI validates the frozen result rather than rerunning four
+cold Gradle fixtures:
+
+```bash
+./dev/run-aggregate-output-closure /absolute/path/to/buildopt /absolute/path/to/summary.json
+./dev/check-aggregate-output-closure
+```
+
 ## Update policy
 
 Toolchain updates are atomic repository changes:

@@ -2342,6 +2342,23 @@ retention, with no performance replay after the safety precondition fails:
 ./dev/check-configuration-input-binding --fixture
 ```
 
+## Aggregate output closure
+
+[`results/poc-aggregate-output-closure-v1/`](./results/poc-aggregate-output-closure-v1/README.md)
+proves the generic correctness prerequisite that follows configuration-input
+retention. A custom lifecycle task has no direct output and its two producers
+write arbitrary extension-neutral files outside BuildOpt's conventional output
+paths. Gradle 8.14.3 and 9.6.1 with both DSLs complete 4/4 cases: the changed
+producer is rebuilt, the stable output is materialized without executing its
+producer, and the candidate reproduces the baseline two-file digest exactly.
+
+This evidence closes output coverage only. It is deliberately revision-bound
+and makes no wall-time claim:
+
+```bash
+./dev/check-aggregate-output-closure
+```
+
 ## JVM Agent spike evidence
 
 [`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one

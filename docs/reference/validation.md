@@ -170,6 +170,13 @@ negative evidence and is not rerun until favourable.
 Configuration Cache cases; the default Base CI check validates the immutable
 contract and result without recompiling Kotlin DSL from a cold home.
 
+`./dev/check-aggregate-output-closure` validates the following generic output
+coverage step. Its immutable four-case result requires exact custom aggregate
+outputs, one changed producer entrypoint, verified stable-output
+materialization, no stable-producer execution and zero product failures. The
+owning runner is used only when the implementation or fixture changes; normal
+Base CI does not repeat the Gradle matrix.
+
 `check-automatic-breadth-transfer` validates the immutable V1 unchanged
 zero-manual-file run across Spring Framework, OpenTelemetry Java
 Instrumentation, Apache Kafka, Micronaut Core and Apache Groovy. It recomputes
