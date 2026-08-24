@@ -420,6 +420,7 @@ buildopt_required_files=(
     "dev/assemble-cross-commit-breadth-v2"
     "dev/check-cross-commit-breadth-v2"
     "dev/run-cross-commit-breadth-v2"
+    "dev/check-native-retention-fast-path"
     "dev/gradle-critical-path.init.gradle"
     "dev/run-quarantine-critical-path-attribution"
     "dev/check-compatible-descendant-discovery"

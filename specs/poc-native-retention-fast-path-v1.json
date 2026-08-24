@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "buildopt.specs/poc-native-retention-fast-path/v1",
+  "workItem": "POC-NATIVE-RETENTION-FAST-PATH-001",
+  "baseline": {
+    "evidence": "benchmarks/results/poc-cross-commit-breadth-v2/raw/summary.json",
+    "sha256": "eb6e320ac053af7d65bc98705f21e1f73f2ecb276e8572281fb4687e5bb269ee"
+  },
+  "source": {
+    "subjects": "specs/poc-cross-commit-breadth-v2.subjects.json",
+    "sameRepositories": true,
+    "sameRevisions": true,
+    "sameEntrypoints": true,
+    "sameRequiredOutputs": true,
+    "sameArmOrder": true
+  },
+  "acceptance": {
+    "nativeRetainedObservations": 8,
+    "preGradleDecisions": 6,
+    "postGradleDiscoveryDecisions": 2,
+    "maximumPreGradleWrapperOverheadMsPerObservation": 5000,
+    "maximumPreGradleWrapperOverheadMsTotal": 24000,
+    "allPreGradleDecisionsSkipOutputObservation": true,
+    "allPostGradleDecisionsDeclareOutputObservation": true,
+    "allRequiredOutputsExact": true,
+    "allNativeBuildsAuthoritative": true,
+    "productFailures": 0
+  },
+  "expected": [
+    {
+      "revision": "7fd551e29949003b5fd60b7e09875483ae3447c9",
+      "decisionPhase": "PRE_GRADLE_ECONOMIC",
+      "reason": "ECONOMIC_PREQUALIFICATION_REJECTED"
+    },
+    {
+      "revision": "2d3f00040b7b1cf33ca3940356a67807f4f4cc36",
+      "decisionPhase": "PRE_GRADLE_ECONOMIC",
+      "reason": "ECONOMIC_PREQUALIFICATION_REJECTED"
+    },
+    {
+      "revision": "fecf3fa2160dba7cd6b147294f8bc7f7b7adfe7c",
+      "decisionPhase": "PRE_GRADLE_COMPATIBILITY",
+      "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"
+    },
+    {
+      "revision": "c237e88696debef1ba860a947cfaad3a0b7cb49b",
+      "decisionPhase": "PRE_GRADLE_ECONOMIC",
+      "reason": "ECONOMIC_PREQUALIFICATION_REJECTED"
+    },
+    {
+      "revision": "835d7f9ff09caf794e9f058d97ad3690d52f960a",
+      "decisionPhase": "PRE_GRADLE_COMPATIBILITY",
+      "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"
+    },
+    {
+      "revision": "be211c1b142eedde02d0c16fb57f99ed23110de2",
+      "decisionPhase": "POST_GRADLE_DISCOVERY",
+      "reason": "ORDINARY_OBSERVATIONS_PENDING"
+    },
+    {
+      "revision": "18ed80f564212fc67d6e8af6593dda2e94e6cbe5",
+      "decisionPhase": "PRE_GRADLE_COMPATIBILITY",
+      "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"
+    },
+    {
+      "revision": "1ff25776219998ef05f520c0e1f10f4e56eaf961",
+      "decisionPhase": "POST_GRADLE_DISCOVERY",
+      "reason": "SOURCE_OWNERSHIP_AMBIGUOUS"
+    }
+  ],
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRules": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

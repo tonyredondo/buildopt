@@ -910,3 +910,11 @@ real value experiment before timing. They compare Kafka's optimized native
 root `assemble` with the installed qualified three-project client-Jar path,
 bind the exact output and global fallback, and retain the existing four-pair
 500-ms/2%/positive-bound qualification gate.
+
+`poc-native-retention-fast-path-v1.json` and
+`poc-native-retention-fast-path-v1.md` freeze the eight native-retained
+cross-commit breadth V2 observations before implementation. The contract
+separates direct BuildOpt pre/post execution overhead from single-pair Gradle
+noise, requires six repository-independent compatibility/economic decisions
+before Gradle without output observers, and keeps two genuinely
+discovery-dependent invocations visible rather than optimizing away learning.

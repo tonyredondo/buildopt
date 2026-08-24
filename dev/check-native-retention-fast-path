@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 2)); then
+    printf 'usage: %s [EVIDENCE_ROOT] [--spec-only]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec=${buildopt_repo_root}/specs/poc-native-retention-fast-path-v1.json
+buildopt_evidence=${buildopt_repo_root}/benchmarks/results/poc-native-retention-fast-path-v1
+buildopt_mode=
+if (($# == 1)) && [[ $1 == --spec-only ]]; then
+    buildopt_mode=--spec-only
+elif (($# >= 1)); then
+    buildopt_evidence=$1
+    buildopt_mode=${2:-}
+fi
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'native-retention fast-path validation requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_baseline=$(jq -er '.baseline.evidence' "${buildopt_spec}")
+buildopt_baseline_sha=$(sha256sum "${buildopt_repo_root}/${buildopt_baseline}" | awk '{print $1}')
+
+jq -e --arg baselineSha "${buildopt_baseline_sha}" '
+  .schemaVersion == "buildopt.specs/poc-native-retention-fast-path/v1" and
+  .workItem == "POC-NATIVE-RETENTION-FAST-PATH-001" and
+  .baseline.sha256 == $baselineSha and
+  .source.sameRepositories and .source.sameRevisions and
+  .source.sameEntrypoints and .source.sameRequiredOutputs and
+  .source.sameArmOrder and
+  .acceptance.nativeRetainedObservations == 8 and
+  .acceptance.preGradleDecisions == 6 and
+  .acceptance.postGradleDiscoveryDecisions == 2 and
+  .acceptance.maximumPreGradleWrapperOverheadMsPerObservation == 5000 and
+  .acceptance.maximumPreGradleWrapperOverheadMsTotal == 24000 and
+  (.expected | length) == 8 and
+  ([.expected[].revision] | unique | length) == 8 and
+  ([.expected[] | select(.decisionPhase | startswith("PRE_GRADLE_"))] | length) == 6 and
+  ([.expected[] | select(.decisionPhase == "POST_GRADLE_DISCOVERY")] | length) == 2 and
+  all(.expected[]; (.revision | test("^[0-9a-f]{40}$")) and
+    (.reason | length > 0)) and
+  .boundaries == {proofOfConcept:true,productionAuthorized:false,
+    repositorySpecificProductRules:false,soakRequired:false,
+    designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_spec}" >/dev/null
+
+if [[ ${buildopt_mode} == --spec-only || $# == 0 ]]; then
+    printf 'Native-retention fast-path specification OK: 8 frozen fallbacks, 6 pre-Gradle decisions\n'
+    exit 0
+fi
+
+[[ -z ${buildopt_mode} && -s ${buildopt_evidence}/summary.json ]] || {
+    printf 'native-retention fast-path evidence is unavailable\n' >&2
+    exit 1
+}
+
+printf 'native-retention fast-path evidence validation is not yet implemented\n' >&2
+exit 1
