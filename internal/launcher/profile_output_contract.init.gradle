@@ -75,21 +75,38 @@ abstract class BuildOptOutputContractTask extends DefaultTask {
 // Init scripts are inherited by buildSrc and included builds. Output-contract
 // discovery owns only the top-level repository selected by the CLI.
 if (gradle.getParent() == null) {
+    def entrypointJSON = System.getenv("BUILDOPT_OUTPUT_CONTRACT_ENTRYPOINTS")
+    if (entrypointJSON == null) {
+        throw new GradleException("BuildOpt output-contract environment is incomplete")
+    }
+    def requestedEntrypoints = new JsonSlurper().parseText(entrypointJSON)
+    if (!(requestedEntrypoints instanceof List) || requestedEntrypoints.isEmpty() ||
+        requestedEntrypoints.any { !(it instanceof String) || it.isBlank() }) {
+        throw new GradleException("BuildOpt output-contract discovery requires entrypoints")
+    }
     // Configuration-on-demand resolves root task names before projectsEvaluated.
-    // Register the stable entrypoint as soon as the root project exists, then
-    // attach the fully resolved owner tasks after all projects are evaluated.
-    gradle.rootProject {
-        it.tasks.register("buildoptOutputContract", BuildOptOutputContractTask)
+    // Register the stable entrypoint as soon as the root project exists. Attach
+    // matching owner tasks lazily as Gradle creates them so the snapshot remains
+    // terminal even when configuration-on-demand resolves the root graph before
+    // projectsEvaluated.
+    gradle.rootProject { root ->
+        def outputContractTask = root.tasks.register("buildoptOutputContract", BuildOptOutputContractTask)
+        def requestedTaskCollections = root.allprojects.collect { project ->
+            project.tasks.matching { task ->
+                requestedEntrypoints.any { requestedName ->
+                    def selector = requestedName as String
+                    selector.contains(":") ? task.path == selector : task.name == selector
+                }
+            }
+        }
+        outputContractTask.configure {
+            dependsOn(requestedTaskCollections)
+        }
     }
     gradle.projectsEvaluated {
         def outputPath = System.getenv("BUILDOPT_OUTPUT_CONTRACT_SNAPSHOT")
-        def entrypointJSON = System.getenv("BUILDOPT_OUTPUT_CONTRACT_ENTRYPOINTS")
-        if (outputPath == null || outputPath.isBlank() || entrypointJSON == null) {
+        if (outputPath == null || outputPath.isBlank()) {
             throw new GradleException("BuildOpt output-contract environment is incomplete")
-        }
-        def requestedEntrypoints = new JsonSlurper().parseText(entrypointJSON)
-        if (!(requestedEntrypoints instanceof List) || requestedEntrypoints.isEmpty()) {
-            throw new GradleException("BuildOpt output-contract discovery requires entrypoints")
         }
 
         def root = gradle.rootProject

@@ -10,11 +10,33 @@ import java.util.concurrent.ConcurrentHashMap
 // Init scripts are inherited by buildSrc and included builds. Discovery owns
 // only the top-level build selected by the CLI.
 if (gradle.getParent() == null) {
+    def entrypointJSON = System.getenv("BUILDOPT_IMPACT_ENTRYPOINTS")
+    if (entrypointJSON == null) {
+        throw new GradleException("BuildOpt impact discovery environment is incomplete")
+    }
+    def requestedEntrypoints = new JsonSlurper().parseText(entrypointJSON)
+    if (!(requestedEntrypoints instanceof List) || requestedEntrypoints.isEmpty() ||
+        requestedEntrypoints.any { !(it instanceof String) || it.isBlank() }) {
+        throw new GradleException("BuildOpt impact discovery requires entrypoints")
+    }
     // Configuration-on-demand resolves root task names before projectsEvaluated.
-    // Register the stable entrypoint as soon as the root project exists, then
-    // attach the fully resolved task graph after all projects are evaluated.
-    gradle.rootProject {
-        it.tasks.register("buildoptImpactDiscovery")
+    // Register the stable entrypoint as soon as the root project exists. Attach
+    // matching owner tasks lazily as Gradle creates them: large composite builds
+    // can resolve the root task graph before projectsEvaluated, which is too late
+    // to add the dependency edges that make this a terminal observation.
+    gradle.rootProject { root ->
+        def discoveryTask = root.tasks.register("buildoptImpactDiscovery")
+        def requestedTaskCollections = root.allprojects.collect { project ->
+            project.tasks.matching { task ->
+                requestedEntrypoints.any { requestedName ->
+                    def selector = requestedName as String
+                    selector.contains(":") ? task.path == selector : task.name == selector
+                }
+            }
+        }
+        discoveryTask.configure {
+            dependsOn(requestedTaskCollections)
+        }
     }
 def buildoptInlineObservation = System.getenv("BUILDOPT_IMPACT_DISCOVERY_INLINE") == "1"
 def projectDependenciesByPath = new ConcurrentHashMap<String, List<String>>()
@@ -45,7 +67,6 @@ gradle.projectsLoaded {
 }
 gradle.projectsEvaluated {
     def outputPath = System.getenv("BUILDOPT_IMPACT_DISCOVERY_OUTPUT")
-    def entrypointJSON = System.getenv("BUILDOPT_IMPACT_ENTRYPOINTS")
     def workflowInputOutputPath = System.getenv("BUILDOPT_IMPACT_WORKFLOW_INPUTS_OUTPUT")
     def changedPathJSON = System.getenv("BUILDOPT_IMPACT_CHANGED_PATHS")
     if ((workflowInputOutputPath == null) != (changedPathJSON == null)) {
@@ -59,12 +80,8 @@ gradle.projectsEvaluated {
             throw new GradleException("BuildOpt workflow-input discovery requires changed paths")
         }
     }
-    if (outputPath == null || outputPath.isBlank() || entrypointJSON == null) {
+    if (outputPath == null || outputPath.isBlank()) {
         throw new GradleException("BuildOpt impact discovery environment is incomplete")
-    }
-    def requestedEntrypoints = new JsonSlurper().parseText(entrypointJSON)
-    if (!(requestedEntrypoints instanceof List) || requestedEntrypoints.isEmpty()) {
-        throw new GradleException("BuildOpt impact discovery requires entrypoints")
     }
 
     def root = gradle.rootProject
