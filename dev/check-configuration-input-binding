@@ -11,12 +11,19 @@ buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
 buildopt_spec=${buildopt_root}/specs/poc-configuration-input-binding-v1.json
 buildopt_summary=${buildopt_root}/benchmarks/results/poc-configuration-input-binding-v1/summary.json
 
-for buildopt_command in awk find jq rg sed; do
-    command -v "${buildopt_command}" >/dev/null 2>&1 || {
-        printf '%s is required\n' "${buildopt_command}" >&2
-        exit 1
-    }
-done
+command -v jq >/dev/null 2>&1 || {
+    printf 'jq is required\n' >&2
+    exit 1
+}
+
+if [[ ${1:-} == --fixture ]]; then
+    for buildopt_command in awk find rg sed; do
+        command -v "${buildopt_command}" >/dev/null 2>&1 || {
+            printf '%s is required\n' "${buildopt_command}" >&2
+            exit 1
+        }
+    done
+fi
 
 jq -e '
   .schemaVersion == "buildopt.specs/poc-configuration-input-binding/v1" and
