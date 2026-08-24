@@ -620,7 +620,7 @@ buildopt_subject() {
         --namespace "gradle-public-lifetime-v2/linux-amd64/${buildopt_jdk}/${buildopt_key}" \
         --lifetime 8h >"${buildopt_authority}/prepare.json"
     openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 1 \
-        -subj "/CN=BuildOpt qualified lifetime ${buildopt_key}" \
+        -subj "/CN=BuildOpt qualified lifetime" \
         -addext 'subjectAltName=IP:127.0.0.1' \
         -keyout "${buildopt_tls}/server-key.pem" \
         -out "${buildopt_tls}/server.pem" >/dev/null 2>&1
