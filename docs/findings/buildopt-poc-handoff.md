@@ -135,6 +135,16 @@ with zero product failures. The cross-commit claim therefore remains bounded.
   acceleration and output portability succeed in 3/3 families, but compatibility
   and fallback economics reduce later reuse to 1/9 commits and 0/3 paid-back
   windows. A fast target benchmark is not sufficient evidence of customer value.
+- Native fallback is now close to native cost for every cheap negative case in
+  that matrix. Seven of eight retained revisions decide before Gradle, attach
+  no output observer and total **9.020 seconds** of directly measured wrapper
+  work; the maximum is **2.878 seconds**. All eight authoritative native builds
+  preserve exact outputs with zero product failures. The frozen hypothesis
+  predicted only six early decisions: Groovy `be211c1b` modifies five nested
+  build scripts, so the generic build-logic classifier safely resolved it
+  earlier than expected. The selected Ktor control remains exact and saves
+  **126.225 seconds / 56.47%**. Single-pair fallback wall deltas remain
+  descriptive Gradle noise, not a BuildOpt overhead claim.
 - The first unchanged Micronaut generalization did not broaden that claim. Its
   qualification was **10.33% faster** with 7/8 positive pairs, but the first
   native-retained descendant generated a different Jackson JAR even though no
@@ -186,17 +196,15 @@ with zero product failures. The cross-commit claim therefore remains bounded.
 
 ## Next steps
 
-1. Make a native-retained decision close to native Gradle cost. Eight of nine
-   breadth V2 descendants fall back, so selection, synchronization and
-   observation work must be skipped before Gradle whenever cheap compatibility
-   evidence is already negative.
-2. Improve generic compatibility across source-only descendants using Gradle
+1. Improve generic compatibility across source-only descendants using Gradle
    ownership, task inputs, output contracts and producer lineage; do not add
-   repository-name rules or weaken exact output equality.
-3. Re-run the same frozen windows only after a generic correction. Require at
+   repository-name rules or weaken exact output equality. Start with the one
+   remaining post-discovery Groovy ownership ambiguity, and preserve the new
+   seven-of-eight early-retention behavior as a regression gate.
+2. Re-run the same frozen windows only after a generic correction. Require at
    least two of three subjects to select exact replays and finish net positive
    before broadening the cross-commit claim.
-4. Keep the Micronaut quarantine line stopped and use task/DAG attribution only
+3. Keep the Micronaut quarantine line stopped and use task/DAG attribution only
    as an early diagnostic for materially different hypotheses. Paired wall
    time remains the causal value test.
 
@@ -223,6 +231,8 @@ with zero product failures. The cross-commit claim therefore remains bounded.
 - [Machine-readable critical-path attribution](../../benchmarks/results/poc-quarantine-critical-path-attribution-v1/attribution.json)
 - [Cross-commit breadth V2 result](../../benchmarks/results/poc-cross-commit-breadth-v2/README.md)
 - [Machine-readable breadth V2 summary](../../benchmarks/results/poc-cross-commit-breadth-v2/summary.json)
+- [Native-retention fast-path result](../../benchmarks/results/poc-native-retention-fast-path-v1/README.md)
+- [Machine-readable native-retention summary](../../benchmarks/results/poc-native-retention-fast-path-v1/summary.json)
 - [Compatible descendant discovery result](../../benchmarks/results/poc-compatible-descendant-discovery-v1/README.md)
 - [Machine-readable compatible descendant summary](../../benchmarks/results/poc-compatible-descendant-discovery-v1/summary.json)
 - [Native-volatility quarantine protocol](../../specs/poc-native-volatility-quarantine-v1.md)

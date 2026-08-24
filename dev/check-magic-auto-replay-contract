@@ -74,9 +74,18 @@ jq -e '
   }
 ' "${buildopt_contract}" >/dev/null
 
+awk '
+  $1 == "optimizeBindingReplay" && $2 == "=" &&
+    $3 == "\"AUTOMATIC_REPLAY_COMPLETE\"" { replay = 1 }
+  END { exit(replay ? 0 : 1) }
+' "${buildopt_repo_root}/internal/launcher/optimize.go"
+awk '
+  $1 == "optimizeSelectionReasonSelected" && $2 == "=" &&
+    $3 == "\"QUALIFIED_PROFILE_SELECTED\"" { selected = 1 }
+  END { exit(selected ? 0 : 1) }
+' "${buildopt_repo_root}/internal/launcher/optimize_replay.go"
+
 for buildopt_binding in \
-    'optimizeBindingReplay       = "AUTOMATIC_REPLAY_COMPLETE"' \
-    'optimizeSelectionReasonSelected = "QUALIFIED_PROFILE_SELECTED"' \
     'func (run *optimizeRun) prepareAutomaticReplay()' \
     'automaticOptimizeImpact = optimize.prepareAutomaticReplay()'; do
     grep -R -F "${buildopt_binding}" \

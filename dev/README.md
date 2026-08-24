@@ -4549,6 +4549,26 @@ The GitHub Action tests use a deterministic synthetic release archive and fake H
 
 The golden container tests use a synthetic Docker client and deterministic host-resource probes. They verify index-to-platform digest binding, exact pull and run arguments, local image identity, strict cgroup settings, mutable-reference rejection, daemon/resource failures, and child exit-code propagation without contacting a registry or starting a container.
 
+## Native-retention fast-path evidence
+
+`./dev/check-native-retention-fast-path --spec-only` validates the frozen
+eight-revision contract without requiring terminal evidence. The default
+command validates the checked result, recomputes it from the compact breadth
+V2 source capture and accepts either terminal hypothesis outcome only when the
+machine decision matches the observed expectation mismatches:
+
+```bash
+./dev/check-native-retention-fast-path
+```
+
+`./dev/run-native-retention-fast-path /absolute/output/directory` reruns the
+same public repositories, revisions, workflows, arm order and exact-output
+gates. It reports BuildOpt pre/post execution time independently from Gradle
+child duration so single-pair wall-time noise cannot masquerade as wrapper
+overhead. A rejected preregistered hypothesis is still valid evidence when the
+checker proves the result recomputes, preserves every safety invariant and
+records the mismatch explicitly.
+
 ## Update policy
 
 Toolchain updates are atomic repository changes:

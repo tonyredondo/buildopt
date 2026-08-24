@@ -54,7 +54,10 @@ jq -e '
 
 grep -F 'optimizeDiscoveryReasonFound = "STRUCTURAL_CANDIDATE_DISCOVERED"' \
     "${buildopt_root}/internal/launcher/optimize_discovery.go" >/dev/null
-grep -F 'optimizeBindingDiscovery    = "DISCOVERY_COMPLETE"' \
-    "${buildopt_root}/internal/launcher/optimize.go" >/dev/null
+awk '
+  $1 == "optimizeBindingDiscovery" && $2 == "=" &&
+    $3 == "\"DISCOVERY_COMPLETE\"" { found = 1 }
+  END { exit(found ? 0 : 1) }
+' "${buildopt_root}/internal/launcher/optimize.go"
 
 printf 'Magic automatic-discovery contract OK\n'

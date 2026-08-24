@@ -53,3 +53,20 @@ task, source revision or correctness boundary may change after timing begins.
 This is proof-of-concept evidence, not a production latency SLO. It adds no
 repository-name branch, no production authority, no soak or design-partner
 dependency, and no Test Optimization behavior.
+
+## Terminal result
+
+The frozen run rejects the exact six/two prediction but proves the generic
+behavior with stronger early coverage: seven of eight fallbacks decide before
+Gradle, skip output observation, total 9,020 ms of direct wrapper work and have
+a 2,878-ms maximum. The remaining ownership-ambiguous change honestly attaches
+the configured observer. All exact outputs and authoritative native builds
+pass with zero product failures.
+
+The deviation is Groovy `be211c1b`, which changes five subproject
+`build.gradle` files. The generic nested build-logic classifier correctly
+returns `PRE_GRADLE_COMPATIBILITY / GLOBAL_CHANGE_REQUIRES_FULL_GRAPH` instead
+of the preregistered `POST_GRADLE_DISCOVERY / ORDINARY_OBSERVATIONS_PENDING`.
+The contract above is not rewritten after observation; the checked result
+records `FAST_PATH_REJECTED` and
+`GENERIC_FAST_PATH_BEHAVIOR_PROVEN` separately.

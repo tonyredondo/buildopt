@@ -918,3 +918,8 @@ separates direct BuildOpt pre/post execution overhead from single-pair Gradle
 noise, requires six repository-independent compatibility/economic decisions
 before Gradle without output observers, and keeps two genuinely
 discovery-dependent invocations visible rather than optimizing away learning.
+The terminal evidence rejects the exact six/two prediction because the generic
+nested-build-logic rule resolves one additional Groovy revision before Gradle.
+Observed behavior is seven early decisions with 9,020 ms total/2,878 ms maximum
+direct wrapper overhead, one honest post-discovery ambiguity, exact outputs and
+zero product failures. The frozen expectation is not rewritten.

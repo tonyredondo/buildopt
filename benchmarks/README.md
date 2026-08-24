@@ -2283,6 +2283,27 @@ owner-visible output boundary. Validate the checked attribution with:
 ./dev/check-quarantine-critical-path-attribution
 ```
 
+## Native-retention fast path
+
+[`results/poc-native-retention-fast-path-v1/`](./results/poc-native-retention-fast-path-v1/README.md)
+repeats the eight native-retained cross-commit breadth V2 revisions with direct
+BuildOpt pre/post execution timing. Seven fallbacks decide before Gradle,
+attach no output observer and total 9,020 ms of wrapper work; the maximum is
+2,878 ms. The one ownership-ambiguous Groovy change still declares its
+post-discovery observer. All eight execute the authoritative optimized-native
+command, preserve exact required outputs and report zero product failures.
+
+The original six/two hypothesis is rejected because Groovy `be211c1b` changes
+five nested `build.gradle` files and the generic build-logic classifier safely
+resolves it before Gradle. That stronger observed coverage is recorded as a
+mismatch rather than rewriting the preregistration. The selected Ktor control
+also remains exact and saves 126.225 seconds/56.47%. Validate the terminal
+evidence with:
+
+```bash
+./dev/check-native-retention-fast-path
+```
+
 ## JVM Agent spike evidence
 
 [`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one

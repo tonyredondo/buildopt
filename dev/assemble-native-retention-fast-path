@@ -52,6 +52,13 @@ jq -S --slurpfile spec "${buildopt_spec}" --slurpfile baseline "${buildopt_basel
      exactRequiredOutputs:$row.exactRequiredOutputs}] as $observations |
   [$observations[] | select(.decisionPhase | startswith("PRE_GRADLE_"))] as $pre |
   [$observations[] | select(.decisionPhase == "POST_GRADLE_DISCOVERY")] as $post |
+  [$observations[] | select(.reason != .expectedReason or
+    .decisionPhase != .expectedDecisionPhase) |
+    {revision,expectedReason,reason,expectedDecisionPhase,decisionPhase}] as $mismatches |
+  [.subjects[] as $subject | $subject.observations[] | select(.selected) |
+    {subjectKey:$subject.key,repository:$subject.repository.id,
+     revision,selected,reason,controlDurationMs,candidateDurationMs,savedMs,
+     reductionRatio:(.savedMs / .controlDurationMs),exactRequiredOutputs}] as $selected |
   {schemaVersion:"buildopt.evidence/poc-native-retention-fast-path/v1",
    workItem:$contract.workItem,capturedAt:.capturedAt,
    protocol:{spec:"specs/poc-native-retention-fast-path-v1.json",
@@ -69,8 +76,22 @@ jq -S --slurpfile spec "${buildopt_spec}" --slurpfile baseline "${buildopt_basel
      maximumPreGradleWrapperOverheadMs:([$pre[].wrapperOverheadMs]|max),
      baselineSinglePairSavedMs:([$observations[].baselineSavedMs]|add),
      currentSinglePairSavedMs:([$observations[].savedMs]|add),
+     expectationMismatchCount:($mismatches|length),
+     expectationMismatches:$mismatches,
+     selectedRegression:$selected,
      exactRequiredOutputs:all($observations[];.exactRequiredOutputs),
      productFailures:0,
+     behavior:(if
+       ($observations|length) == $contract.acceptance.nativeRetainedObservations and
+       all($observations[];.executionMode == "OPTIMIZED_NATIVE" and
+         .exactRequiredOutputs) and
+       all($pre[];(.outputObservationPrepared|not) and
+         .wrapperOverheadMs <= $contract.acceptance.maximumPreGradleWrapperOverheadMsPerObservation) and
+       all($post[];.outputObservationPrepared) and
+       ([$pre[].wrapperOverheadMs]|add) <=
+         $contract.acceptance.maximumPreGradleWrapperOverheadMsTotal
+       then "GENERIC_FAST_PATH_BEHAVIOR_PROVEN"
+       else "GENERIC_FAST_PATH_BEHAVIOR_NOT_PROVEN" end),
      decision:(if
        ($observations|length) == $contract.acceptance.nativeRetainedObservations and
        ($pre|length) == $contract.acceptance.preGradleDecisions and

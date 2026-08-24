@@ -51,7 +51,7 @@ jq -e --arg baselineSha "${buildopt_baseline_sha}" '
     designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
 ' "${buildopt_spec}" >/dev/null
 
-if [[ ${buildopt_mode} == --spec-only || $# == 0 ]]; then
+if [[ ${buildopt_mode} == --spec-only ]]; then
     printf 'Native-retention fast-path specification OK: 8 frozen fallbacks, 6 pre-Gradle decisions\n'
     exit 0
 fi
@@ -60,6 +60,7 @@ fi
     printf 'native-retention fast-path evidence is unavailable\n' >&2
     exit 1
 }
+buildopt_evidence=$(cd -- "${buildopt_evidence}" && pwd -P)
 
 buildopt_source=${buildopt_evidence}/source-v2/raw/summary.json
 [[ -s ${buildopt_source} ]] || {
@@ -87,12 +88,30 @@ jq -e --slurpfile spec "${buildopt_spec}" \
   .protocol.specSha256 == $specSha and
   .protocol.sourceV2SummarySha256 == $sourceSha and
   .result.nativeRetainedObservations == $contract.acceptance.nativeRetainedObservations and
-  .result.preGradleDecisions == $contract.acceptance.preGradleDecisions and
-  .result.postGradleDiscoveryDecisions == $contract.acceptance.postGradleDiscoveryDecisions and
+  .result.preGradleDecisions + .result.postGradleDiscoveryDecisions ==
+    $contract.acceptance.nativeRetainedObservations and
   .result.exactRequiredOutputs and .result.productFailures == 0 and
-  .result.decision == "FAST_PATH_ACCEPTED" and
+  .result.behavior == "GENERIC_FAST_PATH_BEHAVIOR_PROVEN" and
+  .result.expectationMismatchCount ==
+    ([.observations[] | select(.reason != .expectedReason or
+      .decisionPhase != .expectedDecisionPhase)] | length) and
+  .result.expectationMismatches ==
+    [.observations[] | select(.reason != .expectedReason or
+      .decisionPhase != .expectedDecisionPhase) |
+      {revision,expectedReason,reason,expectedDecisionPhase,decisionPhase}] and
+  ((.result.expectationMismatchCount == 0 and
+      .result.preGradleDecisions == $contract.acceptance.preGradleDecisions and
+      .result.postGradleDiscoveryDecisions == $contract.acceptance.postGradleDiscoveryDecisions and
+      .result.decision == "FAST_PATH_ACCEPTED") or
+    (.result.expectationMismatchCount > 0 and
+      .result.decision == "FAST_PATH_REJECTED")) and
+  (.result.selectedRegression | length) == 1 and
+  all(.result.selectedRegression[];
+    .selected and .controlDurationMs > .candidateDurationMs and
+    .savedMs == (.controlDurationMs - .candidateDurationMs) and
+    .reductionRatio == (.savedMs / .controlDurationMs) and
+    .exactRequiredOutputs) and
   all(.observations[];
-    .reason == .expectedReason and .decisionPhase == .expectedDecisionPhase and
     .wrapperOverheadMs == (.preExecutionMs + .postExecutionMs) and
     .gradleDurationMs > 0 and .executionMode == "OPTIMIZED_NATIVE" and
     .exactRequiredOutputs) and
@@ -106,6 +125,7 @@ jq -e --slurpfile spec "${buildopt_spec}" \
   .boundaries == $contract.boundaries
 ' "${buildopt_evidence}/summary.json" >/dev/null
 
-printf 'Native-retention fast path OK: %s/8 pre-Gradle, %sms direct wrapper overhead\n' \
+printf 'Native-retention evidence OK: %s/8 pre-Gradle, %sms direct wrapper overhead, %s\n' \
     "$(jq -r '.result.preGradleDecisions' "${buildopt_evidence}/summary.json")" \
-    "$(jq -r '.result.preGradleWrapperOverheadMs' "${buildopt_evidence}/summary.json")"
+    "$(jq -r '.result.preGradleWrapperOverheadMs' "${buildopt_evidence}/summary.json")" \
+    "$(jq -r '.result.decision' "${buildopt_evidence}/summary.json")"

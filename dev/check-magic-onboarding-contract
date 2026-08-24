@@ -95,14 +95,24 @@ jq -e '
 ' --argjson phases "$(jq '.phases' "${buildopt_contract}")" "${buildopt_contract}" >/dev/null
 
 for buildopt_binding in \
-    'optimizeStateSchemaVersion  = "buildopt.poc/optimize-state/v1"' \
-    'optimizeResultSchemaVersion = "buildopt.poc/optimize-result/v1"' \
-    'optimizeDefaultStateDir     = ".buildopt/optimize/v1"' \
-    'optimizeReasonPending       = "AUTO_DISCOVERY_PENDING"' \
-    'optimizeDefaultBudget       = 30 * time.Minute' \
-    'optimizeDefaultPairs        = 8' \
-    'optimizeDefaultBreakEven    = 30'; do
-    grep -F "${buildopt_binding}" "${buildopt_repo_root}/internal/launcher/optimize.go" >/dev/null
+    'optimizeStateSchemaVersion|"buildopt.poc/optimize-state/v1"' \
+    'optimizeResultSchemaVersion|"buildopt.poc/optimize-result/v1"' \
+    'optimizeDefaultStateDir|".buildopt/optimize/v1"' \
+    'optimizeReasonPending|"AUTO_DISCOVERY_PENDING"' \
+    'optimizeDefaultBudget|30 * time.Minute' \
+    'optimizeDefaultPairs|8' \
+    'optimizeDefaultBreakEven|30'; do
+    buildopt_name=${buildopt_binding%%|*}
+    buildopt_value=${buildopt_binding#*|}
+    awk -v name="${buildopt_name}" -v value="${buildopt_value}" '
+      $1 == name && $2 == "=" {
+        $1 = ""
+        $2 = ""
+        sub(/^[[:space:]]+/, "")
+        if ($0 == value) found = 1
+      }
+      END { exit(found ? 0 : 1) }
+    ' "${buildopt_repo_root}/internal/launcher/optimize.go"
 done
 
 grep -F 'buildopt optimize [options] [--] <gradle args...>' \
