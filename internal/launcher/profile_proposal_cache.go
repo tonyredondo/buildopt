@@ -32,6 +32,7 @@ type profileProposalCacheBinding struct {
 	TargetRevision          string            `json:"targetRevision"`
 	ChangedPaths            []string          `json:"changedPaths"`
 	Entrypoints             []string          `json:"entrypoints"`
+	CandidateEntrypoints    []string          `json:"candidateEntrypoints,omitempty"`
 	RequiredOutputs         []string          `json:"requiredOutputs"`
 	GlobalChanges           []string          `json:"globalChanges"`
 	GradleCommand           string            `json:"gradleCommand"`
@@ -72,6 +73,7 @@ func prepareProfileProposalCacheBinding(root, targetRevision string, changedPath
 		BaseRevision: config.baseRevision, TargetRevision: targetRevision,
 		ChangedPaths:            append([]string(nil), changedPaths...),
 		Entrypoints:             append([]string(nil), config.entrypoints...),
+		CandidateEntrypoints:    append([]string(nil), config.candidateEntrypoints...),
 		RequiredOutputs:         append([]string(nil), config.requiredOutputs...),
 		GlobalChanges:           append([]string(nil), config.globalChanges...),
 		GradleCommand:           config.gradleCommand,

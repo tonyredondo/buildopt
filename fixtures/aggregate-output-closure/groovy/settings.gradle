@@ -1,0 +1,3 @@
+rootProject.name = 'buildopt-aggregate-output-closure-groovy'
+
+include 'changed', 'stable'

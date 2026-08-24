@@ -1,0 +1,24 @@
+def registerPayload = { Project owner ->
+    owner.tasks.register('emitPayload') {
+        def source = owner.layout.projectDirectory.file('input.txt')
+        def destination = owner.layout.buildDirectory.file('custom-output/payload.bin')
+        inputs.file(source)
+        outputs.file(destination)
+        doLast {
+            def output = destination.get().asFile
+            output.parentFile.mkdirs()
+            output.text = source.asFile.text.trim() + '\n'
+        }
+    }
+}
+
+registerPayload(project(':stable'))
+registerPayload(project(':changed'))
+
+project(':changed') {
+    tasks.register('bundleAll') {
+        group = 'build'
+        dependsOn tasks.named('emitPayload')
+        dependsOn project(':stable').tasks.named('emitPayload')
+    }
+}

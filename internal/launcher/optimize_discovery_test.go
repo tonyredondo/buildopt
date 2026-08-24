@@ -208,6 +208,127 @@ func TestOptimizeAggregateWorkflowPartitionRetainsNativeForTooManyChangedOwners(
 	}
 }
 
+func TestOptimizeAggregateProducerOutputClosureUsesExactTaskRelationships(t *testing.T) {
+	report := outputContractReport{CandidateOutputs: []outputContractCandidate{
+		{
+			Pattern: "changed/build/custom-output/payload.bin", Path: "changed/build/custom-output/payload.bin",
+			Kind: "FILE", FileCount: 1, OwnerProjects: []string{":changed"},
+			ProducerTasks: []string{":changed:emitPayload"},
+		},
+		{
+			Pattern: "stable/build/custom-output/payload.bin", Path: "stable/build/custom-output/payload.bin",
+			Kind: "FILE", FileCount: 1, OwnerProjects: []string{":stable"},
+			ProducerTasks: []string{":stable:emitPayload"},
+		},
+	}}
+	snapshot := buildimpact.DiscoverySnapshot{
+		Complete: true,
+		Tasks: []buildimpact.DiscoveredTask{
+			{Path: ":changed:bundleAll", ProjectPath: ":changed", DependsOn: []string{":changed:emitPayload", ":stable:emitPayload"}},
+			{Path: ":changed:emitPayload", ProjectPath: ":changed", DependsOn: []string{}},
+			{Path: ":stable:emitPayload", ProjectPath: ":stable", DependsOn: []string{}},
+		},
+	}
+	workflow := optimizeRequiredOutputPatterns(report.CandidateOutputs, []string{":changed:bundleAll"}, nil)
+	partition, _, _, reason := optimizeAggregateWorkflowPartition(
+		report, []string{":changed:bundleAll"}, workflow, []string{":changed"},
+		map[string]bool{":changed": true},
+	)
+	if reason != "AGGREGATE_PARTITION_UNAVAILABLE" || partition.Status != optimizeDiscoveryRetained {
+		t.Fatalf("legacy aggregate partition = %+v, reason=%q", partition, reason)
+	}
+
+	partition, required, candidates, owners, reason := optimizeAggregateProducerOutputClosure(
+		report, snapshot, []string{":changed:bundleAll"}, []string{":changed"},
+		map[string]bool{":changed": true},
+	)
+	if reason != "" || partition.Status != optimizeDiscoveryComplete ||
+		partition.Reason != "REVISION_BOUND_AGGREGATE_OUTPUT_CLOSURE" ||
+		!reflect.DeepEqual(required, []string{
+			"changed/build/custom-output/payload.bin",
+			"stable/build/custom-output/payload.bin",
+		}) ||
+		!reflect.DeepEqual(candidates, []string{"changed/build/custom-output/payload.bin"}) ||
+		!owners[":changed"] || len(owners) != 1 ||
+		!reflect.DeepEqual(partition.RebuildProjects, []string{":changed"}) ||
+		!reflect.DeepEqual(partition.MaterializedProjects, []string{":stable"}) ||
+		partition.CandidateEntrypointCount != 1 || partition.CandidateOutputCount != 1 ||
+		partition.MaterializedOutputCount != 1 || len(partition.TaskGroups) != 1 ||
+		partition.TaskGroups[0].Selector != ":changed:bundleAll" ||
+		partition.TaskGroups[0].Variant != "AGGREGATE_OUTPUT_CLOSURE" ||
+		partition.TaskGroups[0].TaskContract != "GRADLE_REACHABLE_OUTPUT_PRODUCERS_V1" ||
+		!reflect.DeepEqual(partition.TaskGroups[0].Entrypoints, []string{":changed:emitPayload"}) ||
+		partition.OutputClosure == nil || partition.OutputClosure.Status != optimizeDiscoveryComplete ||
+		partition.OutputClosure.ReachedTaskCount != 3 || partition.OutputClosure.RequiredOutputCount != 2 ||
+		partition.OutputClosure.CandidateProducerCount != 1 ||
+		partition.OutputClosure.CandidateOutputCount != 1 ||
+		partition.OutputClosure.MaterializedOutputCount != 1 {
+		t.Fatalf("aggregate output closure = %+v, required=%v candidates=%v owners=%v reason=%q", partition, required, candidates, owners, reason)
+	}
+}
+
+func TestOptimizeAggregateProducerOutputClosureRetainsNativeForIncompleteEvidence(t *testing.T) {
+	baseReport := outputContractReport{CandidateOutputs: []outputContractCandidate{
+		{
+			Pattern: "changed/build/custom-output/payload.bin", Path: "changed/build/custom-output/payload.bin",
+			Kind: "FILE", FileCount: 1, OwnerProjects: []string{":changed"},
+			ProducerTasks: []string{":changed:emitPayload"},
+		},
+	}}
+	baseSnapshot := buildimpact.DiscoverySnapshot{Complete: true, Tasks: []buildimpact.DiscoveredTask{
+		{Path: ":changed:bundleAll", ProjectPath: ":changed", DependsOn: []string{":changed:emitPayload"}},
+		{Path: ":changed:emitPayload", ProjectPath: ":changed", DependsOn: []string{}},
+	}}
+
+	tests := []struct {
+		name   string
+		report outputContractReport
+		graph  buildimpact.DiscoverySnapshot
+		reason string
+	}{
+		{
+			name: "missing dependency", report: baseReport,
+			graph: buildimpact.DiscoverySnapshot{Complete: true, Tasks: []buildimpact.DiscoveredTask{
+				{Path: ":changed:bundleAll", ProjectPath: ":changed", DependsOn: []string{":changed:missing"}},
+			}},
+			reason: "AGGREGATE_OUTPUT_CLOSURE_GRAPH_INCOMPLETE",
+		},
+		{
+			name: "ambiguous owner",
+			report: outputContractReport{CandidateOutputs: []outputContractCandidate{
+				{
+					Pattern: "shared/build/payload.bin", Path: "shared/build/payload.bin", Kind: "FILE", FileCount: 1,
+					OwnerProjects: []string{":changed", ":stable"}, ProducerTasks: []string{":changed:emitPayload"},
+				},
+			}},
+			graph: baseSnapshot, reason: "AGGREGATE_OUTPUT_CLOSURE_OWNERSHIP_AMBIGUOUS",
+		},
+		{
+			name: "producer outside requested graph",
+			report: outputContractReport{CandidateOutputs: []outputContractCandidate{
+				{
+					Pattern: "changed/build/payload.bin", Path: "changed/build/payload.bin", Kind: "FILE", FileCount: 1,
+					OwnerProjects: []string{":changed"}, ProducerTasks: []string{":changed:otherPayload"},
+				},
+			}},
+			graph: baseSnapshot, reason: "AGGREGATE_OUTPUT_CLOSURE_PRODUCER_UNREACHABLE",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			partition, required, candidates, _, reason := optimizeAggregateProducerOutputClosure(
+				test.report, test.graph, []string{":changed:bundleAll"}, []string{":changed"},
+				map[string]bool{":changed": true},
+			)
+			if reason != test.reason || partition.Status != optimizeDiscoveryRetained ||
+				required != nil || candidates != nil || partition.OutputClosure == nil ||
+				partition.OutputClosure.Reason != test.reason {
+				t.Fatalf("partition = %+v, required=%v candidates=%v reason=%q", partition, required, candidates, reason)
+			}
+		})
+	}
+}
+
 func TestOptimizeChangeFamilyUsesOnlyGraphAndChangedPaths(t *testing.T) {
 	snapshot := buildimpact.DiscoverySnapshot{Projects: []buildimpact.DiscoveredProject{
 		{Path: ":core"},

@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "buildopt.specs/poc-aggregate-output-closure/v1",
+  "workItem": "POC-AGGREGATE-OUTPUT-CLOSURE-001",
+  "question": "Can BuildOpt derive every output of a custom aggregate workflow from exact Gradle task and producer relationships without repository, plugin, task-name, path, or extension rules?",
+  "fixtures": {
+    "gradleVersions": [
+      "8.14.3",
+      "9.6.1"
+    ],
+    "dsls": [
+      "groovy",
+      "kotlin"
+    ],
+    "requestedEntrypoint": ":changed:bundleAll",
+    "reachedTasks": 3,
+    "requiredOutputs": 2,
+    "candidateProducers": 1,
+    "candidateOutputs": 1,
+    "materializedOutputs": 1,
+    "usesConventionalOutputDirectories": false,
+    "usesArchiveOrLanguagePluginTypes": false
+  },
+  "requiredProofs": {
+    "completeConfiguredTaskGraph": true,
+    "everyOutputHasOneOwner": true,
+    "everyProducerIsReachable": true,
+    "changedProducerRebuilt": true,
+    "unaffectedProducerNotExecuted": true,
+    "unaffectedOutputMaterialized": true,
+    "cleanCandidateOutputsExact": true,
+    "ambiguousOrIncompleteEvidenceRetainsNative": true
+  },
+  "decision": {
+    "completeClosure": "ALLOW_REVISION_BOUND_AGGREGATE_CANDIDATE",
+    "missingDependency": "RETAIN_NATIVE_FULL_WORKFLOW",
+    "ambiguousOwnership": "RETAIN_NATIVE_FULL_WORKFLOW",
+    "unreachableProducer": "RETAIN_NATIVE_FULL_WORKFLOW",
+    "outputOrTaskBoundExceeded": "RETAIN_NATIVE_FULL_WORKFLOW",
+    "result": "AGGREGATE_OUTPUT_CLOSURE_POC_COMPLETE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRules": false,
+    "taskNameOrOutputExtensionRules": false,
+    "crossRevisionAbiInferred": false,
+    "performanceReplayRequired": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

@@ -89,6 +89,19 @@ func resolveOptimizeWorkflowOwnership(snapshot buildimpact.DiscoverySnapshot, ob
 }
 
 const optimizeAggregatePartitionSchema = "buildopt.poc/aggregate-workflow-partition/v1"
+const optimizeAggregateOutputClosureSchema = "buildopt.poc/aggregate-output-closure/v1"
+
+type optimizeAggregateOutputClosure struct {
+	SchemaVersion           string   `json:"schemaVersion"`
+	Status                  string   `json:"status"`
+	Reason                  string   `json:"reason"`
+	RequestedEntrypoints    []string `json:"requestedEntrypoints"`
+	ReachedTaskCount        int      `json:"reachedTaskCount"`
+	RequiredOutputCount     int      `json:"requiredOutputCount"`
+	CandidateProducerCount  int      `json:"candidateProducerCount"`
+	CandidateOutputCount    int      `json:"candidateOutputCount"`
+	MaterializedOutputCount int      `json:"materializedOutputCount"`
+}
 
 type optimizeAggregateTaskGroup struct {
 	Selector       string   `json:"selector"`
@@ -99,18 +112,19 @@ type optimizeAggregateTaskGroup struct {
 }
 
 type optimizeAggregatePartition struct {
-	SchemaVersion                  string                       `json:"schemaVersion"`
-	Status                         string                       `json:"status"`
-	Reason                         string                       `json:"reason"`
-	ABIPolicy                      string                       `json:"abiPolicy"`
-	RebuildProjects                []string                     `json:"rebuildProjects"`
-	AffectedProjects               []string                     `json:"affectedProjects"`
-	MaterializedProjects           []string                     `json:"materializedProjects"`
-	LegacyCandidateEntrypointCount int                          `json:"legacyCandidateEntrypointCount"`
-	CandidateEntrypointCount       int                          `json:"candidateEntrypointCount"`
-	CandidateOutputCount           int                          `json:"candidateOutputCount"`
-	MaterializedOutputCount        int                          `json:"materializedOutputCount"`
-	TaskGroups                     []optimizeAggregateTaskGroup `json:"taskGroups"`
+	SchemaVersion                  string                          `json:"schemaVersion"`
+	Status                         string                          `json:"status"`
+	Reason                         string                          `json:"reason"`
+	ABIPolicy                      string                          `json:"abiPolicy"`
+	RebuildProjects                []string                        `json:"rebuildProjects"`
+	AffectedProjects               []string                        `json:"affectedProjects"`
+	MaterializedProjects           []string                        `json:"materializedProjects"`
+	LegacyCandidateEntrypointCount int                             `json:"legacyCandidateEntrypointCount"`
+	CandidateEntrypointCount       int                             `json:"candidateEntrypointCount"`
+	CandidateOutputCount           int                             `json:"candidateOutputCount"`
+	MaterializedOutputCount        int                             `json:"materializedOutputCount"`
+	TaskGroups                     []optimizeAggregateTaskGroup    `json:"taskGroups"`
+	OutputClosure                  *optimizeAggregateOutputClosure `json:"outputClosure,omitempty"`
 }
 
 type optimizeDiscoveryResult struct {
@@ -683,6 +697,13 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		changedOwners,
 		affected,
 	)
+	if partitionReason == "AGGREGATE_DIRECT_OUTPUTS_MISSING" ||
+		(partitionReason == "AGGREGATE_PARTITION_UNAVAILABLE" && len(workflowPatterns) == 0) {
+		partition, workflowPatterns, candidatePatterns, candidateOwners, partitionReason =
+			optimizeAggregateProducerOutputClosure(
+				outputReport, snapshot, discovery.Entrypoints, changedOwners, affected,
+			)
+	}
 	result.AggregatePartition = partition
 	if partitionReason != "" || len(candidatePatterns) == 0 || len(workflowPatterns) == 0 {
 		result.Reason = "OUTPUT_SEMANTICS_AMBIGUOUS"
@@ -693,6 +714,16 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 	}
 
 	directory := filepath.Join(filepath.FromSlash(invocation.stateRelative), "discovery")
+	closureEntrypoints := []string{}
+	if partition.OutputClosure != nil && partition.OutputClosure.Status == optimizeDiscoveryComplete {
+		closureEntrypointSet := map[string]bool{}
+		for _, group := range partition.TaskGroups {
+			for _, entrypoint := range group.Entrypoints {
+				closureEntrypointSet[entrypoint] = true
+			}
+		}
+		closureEntrypoints = sortedSet(closureEntrypointSet)
+	}
 	config := structuralProposalConfig{
 		repositoryID: discovery.RepositoryID, pipelineClass: pipelineClass,
 		entrypoints:  append([]string(nil), discovery.Entrypoints...),
@@ -709,6 +740,7 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 		observedOutputSnapshot: &outputReport.snapshot,
 		observedImpactSnapshot: observedImpact,
 		candidateOwnerProjects: candidateOwners,
+		candidateEntrypoints:   closureEntrypoints,
 		changedOwnerProjects:   append([]string(nil), changedOwners...),
 		workflowIgnoredPaths:   append([]string(nil), ignoredPaths...),
 	}
@@ -938,6 +970,207 @@ func optimizeAggregateWorkflowPartition(
 	partition.Status = optimizeDiscoveryComplete
 	partition.Reason = "REVISION_BOUND_OUTPUT_PARTITION"
 	return partition, candidatePatterns, candidateOwners, ""
+}
+
+// optimizeAggregateProducerOutputClosure is the fail-closed fallback for an
+// aggregate workflow whose requested task has no conventional output of its
+// own. It derives the complete output surface from the configured Gradle task
+// graph and the exact output producers observed during the useful full build.
+// It does not infer customer intent from task names, output extensions, plugin
+// types or repository identity.
+func optimizeAggregateProducerOutputClosure(
+	report outputContractReport,
+	snapshot buildimpact.DiscoverySnapshot,
+	entrypoints, changedOwners []string,
+	affected map[string]bool,
+) (*optimizeAggregatePartition, []string, []string, map[string]bool, string) {
+	closure := &optimizeAggregateOutputClosure{
+		SchemaVersion:        optimizeAggregateOutputClosureSchema,
+		Status:               optimizeDiscoveryRetained,
+		Reason:               "AGGREGATE_OUTPUT_CLOSURE_UNAVAILABLE",
+		RequestedEntrypoints: append([]string(nil), entrypoints...),
+	}
+	partition := &optimizeAggregatePartition{
+		SchemaVersion: optimizeAggregatePartitionSchema,
+		Status:        optimizeDiscoveryRetained,
+		Reason:        closure.Reason,
+		ABIPolicy:     "EXACT_REVISION_OUTPUTS_NO_CROSS_REVISION_ABI_INFERENCE",
+		TaskGroups:    []optimizeAggregateTaskGroup{},
+		OutputClosure: closure,
+	}
+	if !snapshot.Complete || len(entrypoints) == 0 || len(changedOwners) == 0 ||
+		!uniqueMeasurementStrings(entrypoints) || !uniqueMeasurementStrings(changedOwners) {
+		closure.Reason = "AGGREGATE_OUTPUT_CLOSURE_GRAPH_INCOMPLETE"
+		partition.Reason = closure.Reason
+		return partition, nil, nil, nil, partition.Reason
+	}
+
+	tasks := make(map[string]buildimpact.DiscoveredTask, len(snapshot.Tasks))
+	for _, task := range snapshot.Tasks {
+		if task.Path == "" || task.ProjectPath == "" || tasks[task.Path].Path != "" ||
+			(len(task.DependsOn) > 0 && !uniqueMeasurementStrings(task.DependsOn)) {
+			closure.Reason = "AGGREGATE_OUTPUT_CLOSURE_GRAPH_INCOMPLETE"
+			partition.Reason = closure.Reason
+			return partition, nil, nil, nil, partition.Reason
+		}
+		tasks[task.Path] = task
+	}
+	for _, task := range tasks {
+		for _, dependency := range task.DependsOn {
+			if _, ok := tasks[dependency]; !ok {
+				closure.Reason = "AGGREGATE_OUTPUT_CLOSURE_GRAPH_INCOMPLETE"
+				partition.Reason = closure.Reason
+				return partition, nil, nil, nil, partition.Reason
+			}
+		}
+	}
+
+	reachedByEntrypoint := make(map[string]map[string]bool, len(entrypoints))
+	reachedTasks := map[string]bool{}
+	for _, entrypoint := range entrypoints {
+		seeds := []string{}
+		if strings.Contains(entrypoint, ":") {
+			if _, ok := tasks[entrypoint]; ok {
+				seeds = append(seeds, entrypoint)
+			}
+		} else {
+			for path := range tasks {
+				if optimizeEntrypointSelector(path) == entrypoint {
+					seeds = append(seeds, path)
+				}
+			}
+			sort.Strings(seeds)
+		}
+		if len(seeds) == 0 {
+			closure.Reason = "AGGREGATE_OUTPUT_CLOSURE_GRAPH_INCOMPLETE"
+			partition.Reason = closure.Reason
+			return partition, nil, nil, nil, partition.Reason
+		}
+		reached := map[string]bool{}
+		pending := append([]string(nil), seeds...)
+		for len(pending) > 0 {
+			path := pending[len(pending)-1]
+			pending = pending[:len(pending)-1]
+			if reached[path] {
+				continue
+			}
+			task, ok := tasks[path]
+			if !ok {
+				closure.Reason = "AGGREGATE_OUTPUT_CLOSURE_GRAPH_INCOMPLETE"
+				partition.Reason = closure.Reason
+				return partition, nil, nil, nil, partition.Reason
+			}
+			reached[path] = true
+			reachedTasks[path] = true
+			pending = append(pending, task.DependsOn...)
+		}
+		reachedByEntrypoint[entrypoint] = reached
+	}
+	closure.ReachedTaskCount = len(reachedTasks)
+
+	changed := make(map[string]bool, len(changedOwners))
+	for _, owner := range changedOwners {
+		changed[owner] = true
+	}
+	requiredPatterns := map[string]bool{}
+	candidatePatterns := map[string]bool{}
+	candidateProducers := map[string]bool{}
+	materializedProjects := map[string]bool{}
+	for _, candidate := range report.CandidateOutputs {
+		if candidate.Pattern == "" || candidate.FileCount < 1 || len(candidate.OwnerProjects) != 1 ||
+			len(candidate.ProducerTasks) == 0 || !uniqueMeasurementStrings(candidate.ProducerTasks) {
+			closure.Reason = "AGGREGATE_OUTPUT_CLOSURE_OWNERSHIP_AMBIGUOUS"
+			partition.Reason = closure.Reason
+			return partition, nil, nil, nil, partition.Reason
+		}
+		owner := candidate.OwnerProjects[0]
+		for _, producer := range candidate.ProducerTasks {
+			task, ok := tasks[producer]
+			if !ok || !reachedTasks[producer] || task.ProjectPath != owner {
+				closure.Reason = "AGGREGATE_OUTPUT_CLOSURE_PRODUCER_UNREACHABLE"
+				partition.Reason = closure.Reason
+				return partition, nil, nil, nil, partition.Reason
+			}
+		}
+		requiredPatterns[candidate.Pattern] = true
+		if changed[owner] {
+			candidatePatterns[candidate.Pattern] = true
+			for _, producer := range candidate.ProducerTasks {
+				candidateProducers[producer] = true
+			}
+		} else {
+			materializedProjects[owner] = true
+		}
+	}
+	if len(requiredPatterns) == 0 || len(requiredPatterns) > 256 ||
+		len(candidatePatterns) == 0 || len(candidateProducers) == 0 {
+		closure.Reason = "AGGREGATE_DIRECT_OUTPUTS_MISSING"
+		if len(requiredPatterns) > 256 {
+			closure.Reason = "AGGREGATE_OUTPUT_CLOSURE_TOO_LARGE"
+		}
+		partition.Reason = closure.Reason
+		return partition, nil, nil, changed, partition.Reason
+	}
+	if len(candidateProducers) > maximumStructuralAlternativeEntrypoints {
+		closure.Reason = "CANDIDATE_TASK_SET_TOO_LARGE"
+		partition.Reason = closure.Reason
+		return partition, nil, nil, changed, partition.Reason
+	}
+
+	required := sortedSet(requiredPatterns)
+	candidates := sortedSet(candidatePatterns)
+	producers := sortedSet(candidateProducers)
+	partition.RebuildProjects = append([]string(nil), changedOwners...)
+	sort.Strings(partition.RebuildProjects)
+	for project := range affected {
+		partition.AffectedProjects = append(partition.AffectedProjects, project)
+	}
+	sort.Strings(partition.AffectedProjects)
+	partition.MaterializedProjects = sortedSet(materializedProjects)
+	partition.CandidateEntrypointCount = len(producers)
+	partition.CandidateOutputCount = len(candidates)
+	partition.MaterializedOutputCount = len(required) - len(candidates)
+
+	assignedPatterns := map[string]bool{}
+	for _, entrypoint := range entrypoints {
+		groupEntrypoints := map[string]bool{}
+		groupPatterns := map[string]bool{}
+		reached := reachedByEntrypoint[entrypoint]
+		for _, candidate := range report.CandidateOutputs {
+			if !candidatePatterns[candidate.Pattern] {
+				continue
+			}
+			for _, producer := range candidate.ProducerTasks {
+				if reached[producer] {
+					groupEntrypoints[producer] = true
+					groupPatterns[candidate.Pattern] = true
+					assignedPatterns[candidate.Pattern] = true
+				}
+			}
+		}
+		if len(groupEntrypoints) > 0 && len(groupPatterns) > 0 {
+			partition.TaskGroups = append(partition.TaskGroups, optimizeAggregateTaskGroup{
+				Selector: entrypoint, Variant: "AGGREGATE_OUTPUT_CLOSURE",
+				TaskContract: "GRADLE_REACHABLE_OUTPUT_PRODUCERS_V1",
+				Entrypoints:  sortedSet(groupEntrypoints), OutputPatterns: sortedSet(groupPatterns),
+			})
+		}
+	}
+	if len(partition.TaskGroups) == 0 || len(assignedPatterns) != len(candidates) {
+		closure.Reason = "AGGREGATE_OUTPUT_CLOSURE_GROUP_INCOMPLETE"
+		partition.Reason = closure.Reason
+		return partition, nil, nil, changed, partition.Reason
+	}
+
+	closure.Status = optimizeDiscoveryComplete
+	closure.Reason = "COMPLETE_REACHABLE_PRODUCER_OUTPUTS"
+	closure.RequiredOutputCount = len(required)
+	closure.CandidateProducerCount = len(producers)
+	closure.CandidateOutputCount = len(candidates)
+	closure.MaterializedOutputCount = len(required) - len(candidates)
+	partition.Status = optimizeDiscoveryComplete
+	partition.Reason = "REVISION_BOUND_AGGREGATE_OUTPUT_CLOSURE"
+	return partition, required, candidates, changed, ""
 }
 
 func optimizeEntrypointSelector(entrypoint string) string {

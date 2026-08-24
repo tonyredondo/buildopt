@@ -229,6 +229,7 @@ type structuralProposalConfig struct {
 	observedOutputSnapshot                                           *outputContractSnapshot
 	observedImpactSnapshot                                           *buildimpact.DiscoverySnapshot
 	candidateOwnerProjects                                           map[string]bool
+	candidateEntrypoints                                             []string
 	changedOwnerProjects                                             []string
 	workflowIgnoredPaths                                             []string
 }
@@ -350,7 +351,15 @@ func prepareStructuralProfileProposal(ctx context.Context, config structuralProp
 		selectors,
 		config.candidateOwnerProjects,
 	)
+	if len(config.candidateEntrypoints) > 0 {
+		candidateEntrypoints = append([]string(nil), config.candidateEntrypoints...)
+		sort.Strings(candidateEntrypoints)
+	}
 	report.CandidateEntrypoints = candidateEntrypoints
+	if len(candidateEntrypoints) == 0 || !uniqueMeasurementStrings(candidateEntrypoints) {
+		report.Reason = "CANDIDATE_TASK_SET_INVALID"
+		return report, documents, nil
+	}
 	if len(candidateEntrypoints) > maximumStructuralAlternativeEntrypoints {
 		report.Reason = "CANDIDATE_TASK_SET_TOO_LARGE"
 		return report, documents, nil

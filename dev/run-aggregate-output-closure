@@ -1,0 +1,257 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_usage='usage: dev/run-aggregate-output-closure BUILDOPT OUTPUT_JSON'
+if (($# != 2)); then
+    printf '%s\n' "${buildopt_usage}" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_executable=$1
+buildopt_output=$2
+[[ -x ${buildopt_executable} ]] || {
+    printf 'buildopt executable is not executable: %s\n' "${buildopt_executable}" >&2
+    exit 66
+}
+buildopt_executable=$(cd -- "$(dirname -- "${buildopt_executable}")" && printf '%s/%s\n' "${PWD}" "$(basename -- "${buildopt_executable}")")
+if [[ ${buildopt_output} != /* ]]; then
+    buildopt_output=${PWD}/${buildopt_output}
+fi
+
+for buildopt_command in awk cp find git jq sed sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-aggregate-output-closure.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-aggregate-output-closure.*)
+            rm -rf -- "${buildopt_temporary}"
+            ;;
+        *)
+            printf 'refusing to clean unexpected fixture root: %s\n' "${buildopt_temporary}" >&2
+            return 1
+            ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+buildopt_gradle_bin() {
+    case $1 in
+        8.14.3)
+            printf '%s\n' "${buildopt_root}/.tools/gradle-compat/gradle-8.14.3/bin/gradle"
+            ;;
+        9.6.1)
+            printf '%s\n' "${buildopt_root}/.tools/gradle-user-home/local/wrapper/dists/gradle-9.6.1-bin/4ticwg1pgcbps2hj28r8so764/gradle-9.6.1/bin/gradle"
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+buildopt_output_manifest() {
+    local buildopt_repository=$1
+    (
+        cd -- "${buildopt_repository}"
+        find changed stable -path '*/build/custom-output/payload.bin' -type f -print |
+            LC_ALL=C sort |
+            while IFS= read -r buildopt_artifact; do
+                sha256sum "${buildopt_artifact}"
+            done
+    )
+}
+
+buildopt_run_case() {
+    local buildopt_gradle_version=$1
+    local buildopt_dsl=$2
+    local buildopt_case_root=${buildopt_temporary}/${buildopt_gradle_version}-${buildopt_dsl}
+    local buildopt_repository=${buildopt_case_root}/repository
+    local buildopt_gradle_home=${buildopt_case_root}/gradle-home
+    local buildopt_gradle
+    buildopt_gradle=$(buildopt_gradle_bin "${buildopt_gradle_version}")
+    [[ -x ${buildopt_gradle} ]] || {
+        printf 'Gradle %s is unavailable\n' "${buildopt_gradle_version}" >&2
+        return 1
+    }
+
+    mkdir -p -- "${buildopt_case_root}" "${buildopt_gradle_home}"
+    cp -a -- "${buildopt_root}/fixtures/aggregate-output-closure/${buildopt_dsl}" "${buildopt_repository}"
+    printf '#!/usr/bin/env bash\nexec %q "$@"\n' "${buildopt_gradle}" >"${buildopt_repository}/gradlew"
+    chmod 0755 "${buildopt_repository}/gradlew"
+    mkdir -p -- "${buildopt_repository}/gradle/wrapper"
+    printf 'distributionUrl=https\\://services.gradle.org/distributions/gradle-%s-bin.zip\n' \
+        "${buildopt_gradle_version}" >"${buildopt_repository}/gradle/wrapper/gradle-wrapper.properties"
+    printf '.gradle/\n.buildopt/\n**/build/\n' >"${buildopt_repository}/.gitignore"
+
+    git -C "${buildopt_repository}" init -b main >/dev/null
+    git -C "${buildopt_repository}" config user.name 'BuildOpt Aggregate Closure Fixture'
+    git -C "${buildopt_repository}" config user.email 'buildopt-aggregate-closure@example.invalid'
+    git -C "${buildopt_repository}" config commit.gpgsign false
+    git -C "${buildopt_repository}" remote add origin \
+        https://github.com/buildopt-poc/aggregate-output-closure-fixture.git
+    git -C "${buildopt_repository}" add .
+    git -C "${buildopt_repository}" commit -m base >/dev/null
+    git -C "${buildopt_repository}" switch -c feature >/dev/null
+    git -C "${buildopt_repository}" config branch.feature.remote .
+    git -C "${buildopt_repository}" config branch.feature.merge refs/heads/main
+    sed -i 's/^base$/target/' "${buildopt_repository}/changed/input.txt"
+    git -C "${buildopt_repository}" add changed/input.txt
+    git -C "${buildopt_repository}" commit -m change >/dev/null
+
+    local buildopt_state_dir=.buildopt/aggregate-output-closure/v1
+    buildopt_invoke() {
+        local buildopt_sequence=$1
+        if ! (
+            cd -- "${buildopt_repository}"
+            env GRADLE_USER_HOME="${buildopt_gradle_home}" "${buildopt_executable}" optimize \
+                --state-dir "${buildopt_state_dir}" -- --no-daemon :changed:bundleAll
+        ) >"${buildopt_case_root}/invocation-${buildopt_sequence}.log" 2>&1; then
+            printf 'BuildOpt invocation %s failed for Gradle %s / %s DSL:\n' \
+                "${buildopt_sequence}" "${buildopt_gradle_version}" "${buildopt_dsl}" >&2
+            tail -n 200 "${buildopt_case_root}/invocation-${buildopt_sequence}.log" >&2
+            return 1
+        fi
+    }
+
+    buildopt_invoke 1
+    local buildopt_baseline_manifest
+    buildopt_baseline_manifest=$(buildopt_output_manifest "${buildopt_repository}")
+    local buildopt_baseline_count
+    buildopt_baseline_count=$(wc -l <<<"${buildopt_baseline_manifest}")
+    local buildopt_baseline_sha
+    buildopt_baseline_sha=$(sha256sum <<<"${buildopt_baseline_manifest}" | awk '{print $1}')
+    [[ ${buildopt_baseline_count} == 2 ]] || {
+        printf 'baseline produced %s outputs, expected 2\n' "${buildopt_baseline_count}" >&2
+        return 1
+    }
+
+    buildopt_invoke 2
+    local buildopt_state=${buildopt_repository}/${buildopt_state_dir}/state.json
+    if ! jq -e '
+      .discovery.status == "COMPLETE" and
+      .discovery.reason == "STRUCTURAL_CANDIDATE_DISCOVERED" and
+      .discovery.requiredOutputs == [
+        "changed/build/custom-output/payload.bin",
+        "stable/build/custom-output/payload.bin"
+      ] and
+      .discovery.candidateOutputs == ["changed/build/custom-output/payload.bin"] and
+      .discovery.candidateEntrypoints == [":changed:emitPayload"] and
+      .discovery.aggregatePartition.status == "COMPLETE" and
+      .discovery.aggregatePartition.reason == "REVISION_BOUND_AGGREGATE_OUTPUT_CLOSURE" and
+      .discovery.aggregatePartition.outputClosure.status == "COMPLETE" and
+      .discovery.aggregatePartition.outputClosure.reason == "COMPLETE_REACHABLE_PRODUCER_OUTPUTS" and
+      .discovery.aggregatePartition.outputClosure.reachedTaskCount == 3 and
+      .discovery.aggregatePartition.outputClosure.requiredOutputCount == 2 and
+      .discovery.aggregatePartition.outputClosure.candidateProducerCount == 1 and
+      .discovery.aggregatePartition.outputClosure.candidateOutputCount == 1 and
+      .discovery.aggregatePartition.outputClosure.materializedOutputCount == 1 and
+      .discovery.materialization.status == "CAPTURED" and
+      .discovery.materialization.fileCount == 1
+    ' "${buildopt_state}" >/dev/null; then
+        printf 'aggregate closure state is incomplete for Gradle %s / %s DSL\n' \
+            "${buildopt_gradle_version}" "${buildopt_dsl}" >&2
+        jq '.discovery | {status,reason,requiredOutputs,candidateOutputs,candidateEntrypoints,aggregatePartition,materialization}' \
+            "${buildopt_state}" >&2
+        tail -n 200 "${buildopt_case_root}/invocation-2.log" >&2
+        return 1
+    fi
+
+    find "${buildopt_repository}/changed" "${buildopt_repository}/stable" \
+        -type d -name build -prune -exec rm -rf -- {} +
+    buildopt_invoke 3
+    local buildopt_candidate_manifest
+    buildopt_candidate_manifest=$(buildopt_output_manifest "${buildopt_repository}")
+    local buildopt_candidate_count
+    buildopt_candidate_count=$(wc -l <<<"${buildopt_candidate_manifest}")
+    local buildopt_candidate_sha
+    buildopt_candidate_sha=$(sha256sum <<<"${buildopt_candidate_manifest}" | awk '{print $1}')
+    if [[ ${buildopt_candidate_count} != 2 || ${buildopt_candidate_sha} != "${buildopt_baseline_sha}" ]]; then
+        printf 'aggregate closure changed the complete output for Gradle %s / %s DSL\n' \
+            "${buildopt_gradle_version}" "${buildopt_dsl}" >&2
+        return 1
+    fi
+    if ! grep -q 'incremental candidate changed-projects selected' "${buildopt_case_root}/invocation-3.log" ||
+        ! grep -Eq '^> Task :changed:emitPayload( |$)' "${buildopt_case_root}/invocation-3.log" ||
+        grep -Eq '^> Task :stable:emitPayload( |$)' "${buildopt_case_root}/invocation-3.log"; then
+        printf 'aggregate closure did not rebuild only the changed producer\n' >&2
+        tail -n 200 "${buildopt_case_root}/invocation-3.log" >&2
+        return 1
+    fi
+
+    jq -n \
+        --arg gradleVersion "${buildopt_gradle_version}" \
+        --arg dsl "${buildopt_dsl}" \
+        --arg baselineSha256 "${buildopt_baseline_sha}" \
+        --arg candidateSha256 "${buildopt_candidate_sha}" \
+        --slurpfile state "${buildopt_state}" \
+        '{
+          gradleVersion: $gradleVersion,
+          dsl: $dsl,
+          workflow: ["--no-daemon", ":changed:bundleAll"],
+          outputClosure: $state[0].discovery.aggregatePartition.outputClosure,
+          requiredOutputs: $state[0].discovery.requiredOutputs,
+          candidateOutputs: $state[0].discovery.candidateOutputs,
+          candidateEntrypoints: $state[0].discovery.candidateEntrypoints,
+          materialization: $state[0].discovery.materialization,
+          baseline: {fileCount: 2, sha256: $baselineSha256},
+          cleanCandidate: {fileCount: 2, sha256: $candidateSha256},
+          exactOutputs: ($baselineSha256 == $candidateSha256),
+          stableProducerExecuted: false,
+          productFailures: 0
+        }' >"${buildopt_case_root}/case.json"
+    printf '  Gradle %s / %s DSL: 2/2 exact outputs; stable producer materialized\n' \
+        "${buildopt_gradle_version}" "${buildopt_dsl}"
+}
+
+printf 'Aggregate output closure fixture matrix:\n'
+for buildopt_gradle_version in 8.14.3 9.6.1; do
+    for buildopt_dsl in groovy kotlin; do
+        buildopt_run_case "${buildopt_gradle_version}" "${buildopt_dsl}"
+    done
+done
+
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+buildopt_revision=$(git -C "${buildopt_root}" rev-parse HEAD)
+buildopt_executable_sha=$(sha256sum "${buildopt_executable}" | awk '{print $1}')
+buildopt_cpu_count=$(getconf _NPROCESSORS_ONLN)
+jq -n \
+    --arg capturedAt "${buildopt_captured_at}" \
+    --arg buildoptRevision "${buildopt_revision}" \
+    --arg buildoptExecutableSha256 "${buildopt_executable_sha}" \
+    --argjson cpuCount "${buildopt_cpu_count}" \
+    --slurpfile gradle8143Groovy "${buildopt_temporary}/8.14.3-groovy/case.json" \
+    --slurpfile gradle8143Kotlin "${buildopt_temporary}/8.14.3-kotlin/case.json" \
+    --slurpfile gradle961Groovy "${buildopt_temporary}/9.6.1-groovy/case.json" \
+    --slurpfile gradle961Kotlin "${buildopt_temporary}/9.6.1-kotlin/case.json" \
+    '{
+      schemaVersion: "buildopt.evidence/poc-aggregate-output-closure/v1",
+      workItem: "POC-AGGREGATE-OUTPUT-CLOSURE-001",
+      capturedAt: $capturedAt,
+      buildoptRevision: $buildoptRevision,
+      buildoptExecutableSha256: $buildoptExecutableSha256,
+      runner: {platform: "linux-amd64", cpuCount: $cpuCount, evidenceClass: "BOUNDED_LOCAL_POC"},
+      cases: [
+        $gradle8143Groovy[0], $gradle8143Kotlin[0],
+        $gradle961Groovy[0], $gradle961Kotlin[0]
+      ],
+      decision: "AGGREGATE_OUTPUT_CLOSURE_POC_COMPLETE",
+      productFailures: 0,
+      performanceReplayRun: false,
+      boundaries: {
+        proofOfConcept: true,
+        productionAuthorized: false,
+        repositorySpecificProductRules: false,
+        taskNameOrOutputExtensionRules: false,
+        soakRequired: false,
+        designPartnerRequired: false,
+        testOptimization: "OUT_OF_SCOPE"
+      }
+    }' >"${buildopt_output}"
+
+printf 'Aggregate output closure evidence: %s\n' "${buildopt_output}"
