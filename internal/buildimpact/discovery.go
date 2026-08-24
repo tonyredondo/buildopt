@@ -166,6 +166,14 @@ func ReadWorkflowInputRelevance(observation InlineObservation, changedPaths []st
 	return ParseWorkflowInputRelevance(raw, changedPaths)
 }
 
+// ParseObservedDiscoverySnapshot validates a stored read-only task-graph
+// observation for the exact requested entrypoints. It supports POC evidence
+// tools without exposing manifest-authorized profile generation.
+func ParseObservedDiscoverySnapshot(raw []byte, entrypoints []string) (DiscoverySnapshot, error) {
+	snapshot, _, err := parseDiscoverySnapshotForEntrypoints(raw, entrypoints, true)
+	return snapshot, err
+}
+
 // DeriveProjectEntrypoints creates conservative per-project lifecycle reaches
 // from the exact configured task graph when available, falling back to the
 // complete project-dependency graph. Callers must separately prove that each

@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+export LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC
+
+if (($# != 1)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/output/directory\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_revision=1ff25776219998ef05f520c0e1f10f4e56eaf961
+buildopt_repository_id=apache/groovy
+buildopt_mirror=${BUILDOPT_GROOVY_MIRROR:-}
+buildopt_patterns_source=${buildopt_root}/benchmarks/results/poc-native-retention-fast-path-v1/source-v2/raw/apache-groovy-json-compatible-window/qualification-capture.json
+buildopt_work=$(mktemp -d /tmp/buildopt-source-ownership-run.XXXXXX)
+buildopt_success=false
+
+buildopt_cleanup() {
+    if [[ ${buildopt_success} == true && ${buildopt_work} == /tmp/buildopt-source-ownership-run.* ]]; then
+        rm -rf -- "${buildopt_work}"
+    else
+        printf 'source-ownership diagnostic retained at %s\n' "${buildopt_work}" >&2
+    fi
+}
+trap buildopt_cleanup EXIT INT TERM
+
+for buildopt_command in date git jq sha256sum tar; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'source-ownership replay requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -z $(git -C "${buildopt_root}" status --porcelain) ]] || {
+    printf 'source-ownership replay requires a clean BuildOpt checkout\n' >&2
+    exit 1
+}
+[[ ! -e ${buildopt_output} ]] || {
+    printf 'source-ownership evidence output already exists\n' >&2
+    exit 1
+}
+mkdir -p -- "${buildopt_output}"
+
+if [[ -z ${buildopt_mirror} ]]; then
+    buildopt_mirror=${buildopt_work}/mirror.git
+    git clone --quiet --mirror https://github.com/apache/groovy.git "${buildopt_mirror}"
+fi
+git --git-dir="${buildopt_mirror}" cat-file -e "${buildopt_revision}^{commit}"
+
+for buildopt_arm in diagnostic native; do
+    mkdir -p -- "${buildopt_work}/${buildopt_arm}"
+    git --git-dir="${buildopt_mirror}" archive "${buildopt_revision}" |
+        tar -x -C "${buildopt_work}/${buildopt_arm}"
+done
+
+jq -c '.discovery.requiredOutputs' "${buildopt_patterns_source}" >"${buildopt_output}/required-patterns.json"
+jq -nc '["versions.properties"]' >"${buildopt_output}/changed-paths.json"
+(
+    cd -- "${buildopt_root}"
+    "${buildopt_script_dir}/run" --toolchain go -- go build \
+        -o "${buildopt_work}/source-ownership-evaluation" ./dev/source-ownership-evaluation
+)
+
+buildopt_gradle_home=${buildopt_work}/gradle-home
+buildopt_home=${buildopt_work}/home
+buildopt_cache=${buildopt_work}/cache
+mkdir -p -- "${buildopt_gradle_home}" "${buildopt_home}" "${buildopt_cache}"
+buildopt_gradle_args=(classes --no-daemon --build-cache --parallel \
+    --no-configuration-cache --console=plain --no-scan --max-workers=12)
+
+(
+    cd -- "${buildopt_work}/diagnostic"
+    BUILDOPT_IMPACT_ENTRYPOINTS='["classes"]' \
+    BUILDOPT_IMPACT_DISCOVERY_OUTPUT="${buildopt_output}/snapshot.json" \
+    BUILDOPT_IMPACT_WORKFLOW_INPUTS_OUTPUT="${buildopt_output}/workflow-inputs.json" \
+    BUILDOPT_IMPACT_CHANGED_PATHS='["versions.properties"]' \
+    BUILDOPT_IMPACT_DISCOVERY_INLINE=1 \
+    HOME="${buildopt_home}" XDG_CACHE_HOME="${buildopt_cache}" \
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_script_dir}/run" --toolchain temurin-jdk-21 -- \
+        ./gradlew "${buildopt_gradle_args[@]}" \
+        --init-script "${buildopt_root}/internal/buildimpact/discovery.init.gradle" \
+        buildoptImpactDiscovery
+) >"${buildopt_work}/diagnostic.log" 2>&1
+
+"${buildopt_work}/source-ownership-evaluation" \
+    --snapshot "${buildopt_output}/snapshot.json" \
+    --inputs "${buildopt_output}/workflow-inputs.json" \
+    --changes "${buildopt_output}/changed-paths.json" \
+    --patterns "${buildopt_output}/required-patterns.json" \
+    --repository "${buildopt_work}/diagnostic" \
+    >"${buildopt_output}/diagnostic-evaluation.json"
+
+buildopt_started=$(date +%s%3N)
+(
+    cd -- "${buildopt_work}/native"
+    HOME="${buildopt_home}" XDG_CACHE_HOME="${buildopt_cache}" \
+    GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_script_dir}/run" --toolchain temurin-jdk-21 -- \
+        ./gradlew "${buildopt_gradle_args[@]}"
+) >"${buildopt_work}/native.log" 2>&1
+buildopt_native_ms=$(($(date +%s%3N) - buildopt_started))
+
+"${buildopt_work}/source-ownership-evaluation" \
+    --snapshot "${buildopt_output}/snapshot.json" \
+    --inputs "${buildopt_output}/workflow-inputs.json" \
+    --changes "${buildopt_output}/changed-paths.json" \
+    --patterns "${buildopt_output}/required-patterns.json" \
+    --repository "${buildopt_work}/native" \
+    >"${buildopt_output}/native-evaluation.json"
+
+buildopt_implementation=$(git -C "${buildopt_root}" rev-parse HEAD)
+buildopt_snapshot_sha=$(sha256sum "${buildopt_output}/snapshot.json" | awk '{print $1}')
+buildopt_inputs_sha=$(sha256sum "${buildopt_output}/workflow-inputs.json" | awk '{print $1}')
+buildopt_patterns_sha=$(sha256sum "${buildopt_output}/required-patterns.json" | awk '{print $1}')
+jq -n \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg implementation "${buildopt_implementation}" \
+    --arg repository "${buildopt_repository_id}" \
+    --arg revision "${buildopt_revision}" \
+    --arg snapshotSha "${buildopt_snapshot_sha}" \
+    --arg inputsSha "${buildopt_inputs_sha}" \
+    --arg patternsSha "${buildopt_patterns_sha}" \
+    --argjson nativeMs "${buildopt_native_ms}" \
+    --slurpfile diagnostic "${buildopt_output}/diagnostic-evaluation.json" \
+    --slurpfile native "${buildopt_output}/native-evaluation.json" '
+  {schemaVersion:"buildopt.evidence/poc-source-ownership-compatibility/v1",
+   workItem:"POC-SOURCE-OWNERSHIP-COMPATIBILITY-001",capturedAt:$capturedAt,
+   buildoptRevision:$implementation,
+   repository:{id:$repository,revision:$revision,entrypoints:["classes"],
+     changedPaths:["versions.properties"]},
+   observation:{snapshotFile:"snapshot.json",snapshotSha256:$snapshotSha,
+     workflowInputsFile:"workflow-inputs.json",workflowInputsSha256:$inputsSha,
+     requiredPatternsFile:"required-patterns.json",requiredPatternsSha256:$patternsSha},
+   resolution:$diagnostic[0],
+   authoritativeNative:{exitCode:0,durationMs:$nativeMs,
+     requiredOutputCount:$native[0].requiredOutputCount,
+     requiredOutputSha256:$native[0].requiredOutputSha256,
+     exactWithDiagnostic:($native[0].requiredOutputSha256 == $diagnostic[0].requiredOutputSha256 and
+       $native[0].requiredOutputCount == $diagnostic[0].requiredOutputCount)},
+   decision:"RETAIN_NATIVE_CONFIGURATION_INPUT_SCOPE",
+   productFailures:0,
+   boundaries:{proofOfConcept:true,productionAuthorized:false,
+     repositorySpecificProductRules:false,soakRequired:false,
+     designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}}
+' >"${buildopt_output}/summary.json"
+
+buildopt_success=true
+printf 'Source-ownership compatibility evidence written to %s\n' "${buildopt_output}"
