@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-configuration-input-binding/v1",
+  "workItem": "POC-CONFIGURATION-INPUT-BINDING-001",
+  "capturedAt": "2026-08-25T00:00:00Z",
+  "cases": [
+    {
+      "gradleVersion": "8.14.3",
+      "dsl": "groovy",
+      "configurationCacheStored": true,
+      "configurationCacheReusedBeforeChange": true,
+      "configurationCacheInvalidatedAfterChange": true,
+      "reportedInput": "versions.properties",
+      "reportedReadOrigin": "build file 'build.gradle'",
+      "supportedProjectOwner": null,
+      "consumerOutputChanged": true,
+      "unaffectedOutputStable": true
+    },
+    {
+      "gradleVersion": "8.14.3",
+      "dsl": "kotlin",
+      "configurationCacheStored": true,
+      "configurationCacheReusedBeforeChange": true,
+      "configurationCacheInvalidatedAfterChange": true,
+      "reportedInput": "versions.properties",
+      "reportedReadOrigin": "build file 'build.gradle.kts'",
+      "supportedProjectOwner": null,
+      "consumerOutputChanged": true,
+      "unaffectedOutputStable": true
+    },
+    {
+      "gradleVersion": "9.6.1",
+      "dsl": "groovy",
+      "configurationCacheStored": true,
+      "configurationCacheReusedBeforeChange": true,
+      "configurationCacheInvalidatedAfterChange": true,
+      "reportedInput": "versions.properties",
+      "reportedReadOrigin": "build file 'build.gradle'",
+      "supportedProjectOwner": null,
+      "consumerOutputChanged": true,
+      "unaffectedOutputStable": true
+    },
+    {
+      "gradleVersion": "9.6.1",
+      "dsl": "kotlin",
+      "configurationCacheStored": true,
+      "configurationCacheReusedBeforeChange": true,
+      "configurationCacheInvalidatedAfterChange": true,
+      "reportedInput": "versions.properties",
+      "reportedReadOrigin": "build file 'build.gradle.kts'",
+      "supportedProjectOwner": null,
+      "consumerOutputChanged": true,
+      "unaffectedOutputStable": true
+    }
+  ],
+  "decision": "RETAIN_NATIVE_CONFIGURATION_INPUT_SCOPE",
+  "safeScope": "FULL_REQUESTED_WORKFLOW",
+  "performanceReplayRun": false,
+  "productFailures": 0,
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRules": false,
+    "internalGradleFormatsAreAuthority": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "buildopt.specs/poc-configuration-input-binding/v1",
+  "workItem": "POC-CONFIGURATION-INPUT-BINDING-001",
+  "question": "Can a supported Gradle configuration input be mapped completely to the projects whose requested outputs it affects?",
+  "fixtures": {
+    "gradleVersions": [
+      "8.14.3",
+      "9.6.1"
+    ],
+    "dsls": [
+      "groovy",
+      "kotlin"
+    ],
+    "inputMechanism": "PROVIDER_FACTORY_FILE_CONTENTS",
+    "changedPath": "versions.properties",
+    "requestedTasks": [
+      ":service-a:jar",
+      ":service-b:jar"
+    ],
+    "semanticConsumer": ":service-a",
+    "unaffectedProject": ":service-b"
+  },
+  "requiredProofs": {
+    "configurationCacheStored": true,
+    "configurationCacheReusedBeforeChange": true,
+    "configurationCacheInvalidatedAfterChange": true,
+    "changedInputReported": true,
+    "semanticConsumerOutputChanges": true,
+    "unaffectedOutputRemainsStable": true,
+    "supportedProjectOwnershipAvailable": false
+  },
+  "decision": {
+    "completeProjectOwnership": "ALLOW_STRUCTURAL_PROJECT_SCOPE",
+    "buildLogicOriginOnly": "RETAIN_NATIVE_FULL_WORKFLOW",
+    "missingOrAmbiguousEvidence": "RETAIN_NATIVE_FULL_WORKFLOW",
+    "result": "RETAIN_NATIVE_CONFIGURATION_INPUT_SCOPE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRules": false,
+    "internalGradleFormatsAreAuthority": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

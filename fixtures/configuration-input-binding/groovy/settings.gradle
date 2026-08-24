@@ -1,0 +1,2 @@
+rootProject.name = 'configuration-input-groovy'
+include 'service-a', 'service-b'

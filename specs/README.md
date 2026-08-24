@@ -577,6 +577,13 @@ may attribute an otherwise unowned path to the consumers' Gradle projects, but
 configuration-time inputs with no source or task owner remain native with an
 explicit unproven-ownership reason. Repository and filename rules are excluded.
 
+`poc-configuration-input-binding-v1.json` and
+`poc-configuration-input-binding-v1.md` test that remaining input class against
+Gradle 8.14.3 and 9.6.1 in Groovy and Kotlin DSL. Configuration Cache detects,
+reports and invalidates the changed file, but its supported report exposes the
+build-logic read origin rather than complete semantic project ownership. The
+bounded hypothesis therefore closes with full-workflow native retention.
+
 `poc-structural-profile-v1.json` and `poc-structural-profile-v1.md` define the
 repository-independent bridge from measured structural value to an installed
 Build-Impact-only profile. Eight positive optimized-native comparisons,

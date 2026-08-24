@@ -1,12 +1,12 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `STRUCTURAL AND CROSS-COMMIT ACCELERATION PROVEN; GENERALITY BOUNDED` — Kafka and Spring now have exact selected descendant replays with positive cumulative economics, while incompatible descendants retain optimized native Gradle and broader repository/workflow coverage remains to be demonstrated<br>
-**Current phase:** `POC EVIDENCE COMPLETE; NO MICRONAUT FOLLOW-UP AUTHORIZED` — task-level attribution proves that the exact Micronaut quarantine candidate removes parallel work rather than critical-path work, so optimized native Gradle remains selected and no further Micronaut-specific optimization is authorized without a materially different generic hypothesis<br>
+**Current phase:** `POC FUNCTIONAL COVERAGE IN PROGRESS; CONFIGURATION INPUT BINDING ACTIVE` — the POC is converting isolated structural wins into repeated cross-commit value while retaining optimized native Gradle whenever ownership, outputs, compatibility or economics are incomplete<br>
 **POC functional target:** improve real builds against optimized native Gradle and make that value accessible through one owner-invoked command with zero hand-authored BuildOpt files for supported workflows; ambiguous, drifted or non-value state retains native Gradle<br>
 **POC onboarding north star:** `install BuildOpt -> open a Gradle repository -> buildopt optimize build`; automatic selection is allowed only inside the explicit POC command after qualification, while autonomous production promotion remains out of scope<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
-**Last updated:** 2026-08-23<br>
+**Last updated:** 2026-08-25<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
 **RFC baseline SHA-256:** `135448428affcf78018434bab41e7fab0c4ac3e86b7422de10a89385dfaeefdb`
 
@@ -183,7 +183,13 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-CROSS-COMMIT-BREADTH-V2 | Test producer-bound cross-commit value on three frozen public families with exact portability and cumulative economics | `DONE` | 1/1 | `E-394`; 3/3 target qualifications, 3/3 portable, 1/9 selected, 0/3 paid back; claim remains bounded |
 | POC-NATIVE-RETENTION-FAST-PATH | Make incompatible cross-commit decisions before central/materialization work and keep fallback close to optimized native Gradle cost | `DONE` | 1/1 | `E-395`; behavior proven at 7/8 early decisions and 9.020 s direct overhead, while the exact preregistered 6/2 count is honestly rejected |
 | POC-SOURCE-OWNERSHIP-COMPATIBILITY | Attribute the remaining post-discovery ambiguity and broaden compatibility only from generic Gradle ownership evidence | `DONE` | 1/1 | `E-396`; explicit configuration-input native retention, 3,890 exact outputs; fresh qualification rejected before descendant replay |
-| POC-CONFIGURATION-INPUT-BINDING | Determine whether Gradle exposes complete generic project/workflow ownership for configuration-time inputs | `TODO` | 0/1 | Proceed only from typed complete evidence; no repository/filename rule and no replay without fresh qualification |
+| POC-FUNCTIONAL-COVERAGE | Turn isolated structural wins into safe, repeated and net-positive value across ordinary Gradle commit sequences | `IN_PROGRESS` | 0/6 | Configuration inputs -> aggregate outputs -> structural rebinding -> ordinary learning/economics -> breadth V3 -> terminal decision |
+| POC-CONFIGURATION-INPUT-BINDING | Determine whether Gradle exposes complete generic project/workflow ownership for configuration-time inputs | `IN_PROGRESS` | 0/1 | Proceed only from typed complete evidence; no repository/filename rule and no replay without fresh qualification |
+| POC-AGGREGATE-OUTPUT-CLOSURE | Close generic producer/output gaps that prevent otherwise reducible aggregate workflows from selecting | `WAITING` | 0/1 | Depends on configuration-input binding; exact declared outputs and native fallback remain mandatory |
+| POC-STRUCTURAL-PROFILE-REBINDING | Rebind qualified evidence across commits from structural workflow, producer and output compatibility rather than incidental revision identity | `WAITING` | 0/1 | Depends on aggregate-output closure; no cross-revision output reuse without exact evidence |
+| POC-ORDINARY-LEARNING-ECONOMICS | Learn only from customer-requested builds and reject candidates whose likely compatible lifetime cannot repay discovery/publication | `WAITING` | 0/1 | Depends on structural rebinding; no measurement-only customer builds or weaker value gate |
+| POC-LIFETIME-BREADTH-V3 | Replay one unchanged binary over frozen Spring, OpenTelemetry, Kafka, Micronaut and Groovy windows | `WAITING` | 0/1 | Depends on ordinary learning/economics; measure complete cumulative customer value, not target calibration alone |
+| POC-FUNCTIONAL-COVERAGE-DECISION | Issue the terminal continue/stop decision for the generic one-command POC | `WAITING` | 0/1 | Requires breadth V3 and the explicit functional-coverage exit gate below |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Positive POC continue decision |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -251,6 +257,12 @@ Optimized native Gradle baseline
   → prove workflow-input relevance for mixed owned/unowned changes
   → quarantine only proven native-volatility producers and rebuild them locally
   → preregister structurally compatible refresh/replay windows before more timing
+  → bind configuration-time inputs to affected projects or retain native from typed incomplete evidence
+  → close aggregate workflow outputs from generic producer, lifecycle and variant relationships
+  → rebind qualified profiles across structurally compatible commits
+  → learn and prequalify economics only from ordinary requested builds
+  → run the frozen five-repository lifetime breadth V3 matrix
+  → issue the terminal generic functional-coverage CONTINUE or STOP decision
 ```
 
 The implementation history remains useful, but it is not the POC exit gate:
@@ -264,6 +276,28 @@ Tuning candidates remain no-value/no-action outcomes, not hidden successes.
 Soak, design partners, GA-D, HA, identity/RBAC, multi-tenancy, and production
 rollout remain outside the POC. Public repositories are evidence inputs rather
 than partners. Test Optimization remains a separate product.
+
+For this POC, **functional coverage** means that one installed command can
+classify every requested Gradle workflow safely: select a measured structural
+candidate when complete evidence and positive economics hold, otherwise run
+optimized native Gradle with bounded overhead. It does not mean that every
+commit is accelerable. Global/build-logic changes remain valid native outcomes.
+
+The terminal functional-coverage gate requires all of the following on a
+frozen, preregistered five-repository lifetime matrix:
+
+- exact declared outputs and zero product failures in every selected and
+  native-retained execution;
+- no repository-name, filename or extension rule in product selection;
+- robust target qualification: at least 6/8 positive pairs, a strictly
+  positive paired lower bound and non-regressive p95;
+- at least three unrelated repository families with a selected compatible
+  descendant and positive cumulative net value after learning/publication;
+- selection on at least half of preregistered non-global descendants that the
+  structural compatibility contract declares eligible;
+- projected and observed payback within five matching builds;
+- early native-retention median below 500 ms and p95 below one second for
+  cases decidable before Gradle.
 
 ### 2.3 Next executable items
 
@@ -417,7 +451,12 @@ than partners. Test Optimization remains a separate product.
 | 146 | `POC-CROSS-COMMIT-BREADTH-V2-001` | Apply the producer-bound qualified-lifetime path to frozen OpenTelemetry, Ktor and Groovy public windows; require exact portable outputs, three first-parent descendant observations, at least one selected replay and positive cumulative net per subject, and broaden the claim only when at least two of three subjects qualify economically | `DONE` | Codex; `E-394`; targets save 8.53%, 56.33% and 10.56% with 8/8 each, but only 1/9 descendants selects and no subject pays back |
 | 147 | `POC-NATIVE-RETENTION-FAST-PATH-001` | Attribute selection, synchronization, materialization, observation and Gradle work on all eight native-retained breadth V2 descendants; move only repository-independent negative compatibility checks ahead of expensive work, preserve exact-output and full native fallback semantics, and require materially lower fallback overhead on the same frozen commits before investigating broader selection | `DONE` | Codex; `E-395`; 7/8 decide before Gradle, total 9.020 s/max 2.878 s direct wrapper overhead, exact outputs and zero failures; the preregistered 6/2 count is rejected because one nested build-logic change resolves earlier than predicted |
 | 148 | `POC-SOURCE-OWNERSHIP-COMPATIBILITY-001` | Attribute the remaining `SOURCE_OWNERSHIP_AMBIGUOUS` post-discovery revision through generic Gradle task-input, ownership and output-contract evidence; authorize an earlier or selective path only when the same rule applies without repository identity, preserves exact bytes and keeps the seven early-retention cases unchanged, then rerun the frozen window | `DONE` | `E-396`; generic consumer attribution proven, configuration-only path explicitly retained native, 3,890 exact outputs; full window stopped when fresh target qualification failed |
-| 149 | `POC-CONFIGURATION-INPUT-BINDING-001` | Inspect typed Gradle configuration and value-source evidence for a complete mapping from a changed configuration-time input to affected projects or the requested workflow; retain native on missing/incomplete evidence and replay only after independent fixtures plus fresh robust target qualification | `TODO` | Next bounded POC hypothesis; no filename/repository rule, production authority, soak/design-partner dependency or Test Optimization behavior |
+| 149 | `POC-CONFIGURATION-INPUT-BINDING-001` | Inspect typed Gradle configuration and value-source evidence for a complete mapping from a changed configuration-time input to affected projects or the requested workflow; retain native on missing/incomplete evidence and replay only after independent fixtures plus fresh robust target qualification | `IN_PROGRESS` | Active bounded POC hypothesis; no filename/repository rule, production authority, soak/design-partner dependency or Test Optimization behavior |
+| 150 | `POC-AGGREGATE-OUTPUT-CLOSURE-001` | Derive every required aggregate output from complete Gradle producer, task, lifecycle and variant evidence; close `AGGREGATE_DIRECT_OUTPUTS_MISSING` only when the omitted bytes can be materialized or their producers rebuilt exactly | `WAITING` | Depends on `POC-CONFIGURATION-INPUT-BINDING-001`; no task-name/plugin/repository special case |
+| 151 | `POC-STRUCTURAL-PROFILE-REBINDING-001` | Replace incidental revision coupling with a canonical compatibility fingerprint over workflow, Wrapper, task/producer lineage, output contract and change family; retain native on any incomplete or drifted binding | `WAITING` | Depends on `POC-AGGREGATE-OUTPUT-CLOSURE-001`; cross-revision outputs remain digest-bound |
+| 152 | `POC-ORDINARY-LEARNING-ECONOMICS-001` | Accumulate duration, graph, outcomes, portability and volatility only from requested ordinary builds; predict compatible lifetime and calibrate only when expected cumulative value repays within five matches | `WAITING` | Depends on `POC-STRUCTURAL-PROFILE-REBINDING-001`; no measurement-only customer build or weaker statistical gate |
+| 153 | `POC-LIFETIME-BREADTH-V3-001` | Freeze one executable and comparable Spring, OpenTelemetry, Kafka, Micronaut and Groovy target/descendant windows; report selection, native retention, exact outputs, learning, publication, fallback and cumulative net wall time for every subject | `WAITING` | Depends on `POC-ORDINARY-LEARNING-ECONOMICS-001`; repository percentages remain separate and mechanisms are not added |
+| 154 | `POC-FUNCTIONAL-COVERAGE-DECISION-001` | Evaluate the explicit functional-coverage gate and issue `CONTINUE_GENERIC_POC` or `STOP_GENERIC_POC` without moving thresholds after observing breadth V3 | `WAITING` | Depends on `POC-LIFETIME-BREADTH-V3-001`; production hardening remains deferred |
 
 #### One-command POC critical path
 

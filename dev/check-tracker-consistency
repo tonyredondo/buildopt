@@ -66,7 +66,7 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`STRUCTURAL AND CROSS-COMMIT ACCELERATION PROVEN; GENERALITY BOUNDED\`"
-    "**Current phase:** \`POC EVIDENCE COMPLETE; NO MICRONAUT FOLLOW-UP AUTHORIZED\`"
+    "**Current phase:** \`POC FUNCTIONAL COVERAGE IN PROGRESS; CONFIGURATION INPUT BINDING ACTIVE\`"
     "| 132 | \`POC-QUALIFIED-LIFETIME-V2-001\` | Replay the five V2-qualified profiles"
     "| \`E-380\` | 2026-08-21 | \`POC-QUALIFIED-LIFETIME-V2-001\`"
     "| 133 | \`POC-CROSS-COMMIT-VALUE-RECOVERY-001\` | Reuse an existing profile"

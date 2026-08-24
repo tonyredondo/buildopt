@@ -1,0 +1,191 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)) || [[ ${1:-} != "" && ${1:-} != --fixture ]]; then
+    printf 'usage: %s [--fixture]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec=${buildopt_root}/specs/poc-configuration-input-binding-v1.json
+buildopt_summary=${buildopt_root}/benchmarks/results/poc-configuration-input-binding-v1/summary.json
+
+for buildopt_command in awk find jq rg sed; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-configuration-input-binding/v1" and
+  .workItem == "POC-CONFIGURATION-INPUT-BINDING-001" and
+  .fixtures.gradleVersions == ["8.14.3","9.6.1"] and
+  .fixtures.dsls == ["groovy","kotlin"] and
+  .fixtures.inputMechanism == "PROVIDER_FACTORY_FILE_CONTENTS" and
+  .fixtures.changedPath == "versions.properties" and
+  .fixtures.semanticConsumer == ":service-a" and
+  .fixtures.unaffectedProject == ":service-b" and
+  .requiredProofs.configurationCacheStored and
+  .requiredProofs.configurationCacheReusedBeforeChange and
+  .requiredProofs.configurationCacheInvalidatedAfterChange and
+  .requiredProofs.changedInputReported and
+  .requiredProofs.semanticConsumerOutputChanges and
+  .requiredProofs.unaffectedOutputRemainsStable and
+  (.requiredProofs.supportedProjectOwnershipAvailable | not) and
+  .decision.result == "RETAIN_NATIVE_CONFIGURATION_INPUT_SCOPE" and
+  .decision.buildLogicOriginOnly == "RETAIN_NATIVE_FULL_WORKFLOW" and
+  .boundaries == {proofOfConcept:true,productionAuthorized:false,
+    repositorySpecificProductRules:false,internalGradleFormatsAreAuthority:false,
+    soakRequired:false,designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_spec}" >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-configuration-input-binding/v1" and
+  .workItem == "POC-CONFIGURATION-INPUT-BINDING-001" and
+  (.cases | length) == 4 and
+  ([.cases[].gradleVersion] | unique) == ["8.14.3","9.6.1"] and
+  ([.cases[].dsl] | unique) == ["groovy","kotlin"] and
+  all(.cases[];
+    .configurationCacheStored and
+    .configurationCacheReusedBeforeChange and
+    .configurationCacheInvalidatedAfterChange and
+    .reportedInput == "versions.properties" and
+    .supportedProjectOwner == null and
+    .consumerOutputChanged and .unaffectedOutputStable) and
+  .decision == "RETAIN_NATIVE_CONFIGURATION_INPUT_SCOPE" and
+  .safeScope == "FULL_REQUESTED_WORKFLOW" and
+  (.performanceReplayRun | not) and .productFailures == 0 and
+  .boundaries == {proofOfConcept:true,productionAuthorized:false,
+    repositorySpecificProductRules:false,internalGradleFormatsAreAuthority:false,
+    soakRequired:false,designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_summary}" >/dev/null
+
+if [[ ${1:-} != --fixture ]]; then
+    printf 'Configuration-input binding evidence OK: supported Gradle evidence requires full-workflow native retention\n'
+    exit 0
+fi
+
+buildopt_java_home=${BUILDOPT_JAVA_HOME:-${buildopt_root}/.tools/toolchains/temurin-jdk-21-e4446ff06a276155}
+[[ -x ${buildopt_java_home}/bin/java ]] || {
+    printf 'Temurin JDK 21 is required; run ./dev/bootstrap --toolchain jdk21\n' >&2
+    exit 1
+}
+
+buildopt_temp_root=$(mktemp -d /tmp/buildopt-config-input-binding.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temp_root} in
+        /tmp/buildopt-config-input-binding.*)
+            rm -rf -- "${buildopt_temp_root}"
+            ;;
+        *)
+            printf 'refusing to clean unexpected fixture root: %s\n' "${buildopt_temp_root}" >&2
+            return 1
+            ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+buildopt_gradle_bin() {
+    case $1 in
+        8.14.3)
+            printf '%s\n' "${buildopt_root}/.tools/gradle-compat/gradle-8.14.3/bin/gradle"
+            ;;
+        9.6.1)
+            printf '%s\n' "${buildopt_root}/.tools/gradle-user-home/local/wrapper/dists/gradle-9.6.1-bin/4ticwg1pgcbps2hj28r8so764/gradle-9.6.1/bin/gradle"
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+buildopt_extract_report_data() {
+    local buildopt_report=$1
+    awk '
+      /\/\/ begin-report-data/ { capture = 1; next }
+      /\/\/ end-report-data/ { capture = 0 }
+      capture { print }
+    ' "${buildopt_report}"
+}
+
+buildopt_run_case() {
+    local buildopt_version=$1
+    local buildopt_dsl=$2
+    local buildopt_case_root=${buildopt_temp_root}/${buildopt_version}-${buildopt_dsl}
+    local buildopt_project=${buildopt_case_root}/project
+    local buildopt_gradle_home=${buildopt_case_root}/gradle-home
+    local buildopt_gradle
+    buildopt_gradle=$(buildopt_gradle_bin "${buildopt_version}")
+
+    [[ -x ${buildopt_gradle} ]] || {
+        printf 'Gradle %s is unavailable; run the compatibility bootstrap\n' "${buildopt_version}" >&2
+        return 1
+    }
+
+    mkdir -p -- "${buildopt_case_root}" "${buildopt_gradle_home}"
+    cp -a -- "${buildopt_root}/fixtures/configuration-input-binding/${buildopt_dsl}" "${buildopt_project}"
+
+    local -a buildopt_command=(
+        "${buildopt_gradle}"
+        -p "${buildopt_project}"
+        --no-daemon
+        --offline
+        --configuration-cache
+        :service-a:jar
+        :service-b:jar
+    )
+    JAVA_HOME=${buildopt_java_home} \
+        GRADLE_USER_HOME=${buildopt_gradle_home} \
+        PATH="${buildopt_java_home}/bin:${PATH}" \
+        "${buildopt_command[@]}" >"${buildopt_case_root}/first.log" 2>&1
+    JAVA_HOME=${buildopt_java_home} \
+        GRADLE_USER_HOME=${buildopt_gradle_home} \
+        PATH="${buildopt_java_home}/bin:${PATH}" \
+        "${buildopt_command[@]}" >"${buildopt_case_root}/second.log" 2>&1
+
+    sed -i 's/^1\.0\.0$/2.0.0/' "${buildopt_project}/versions.properties"
+    JAVA_HOME=${buildopt_java_home} \
+        GRADLE_USER_HOME=${buildopt_gradle_home} \
+        PATH="${buildopt_java_home}/bin:${PATH}" \
+        "${buildopt_command[@]}" >"${buildopt_case_root}/third.log" 2>&1
+
+    rg -q 'Configuration cache entry stored\.' "${buildopt_case_root}/first.log"
+    rg -q 'Configuration cache entry reused\.' "${buildopt_case_root}/second.log"
+    rg -q "configuration cache cannot be reused because file 'versions.properties' has changed" \
+        "${buildopt_case_root}/third.log"
+    [[ -s ${buildopt_project}/service-a/build/libs/service-a-1.0.0.jar ]]
+    [[ -s ${buildopt_project}/service-a/build/libs/service-a-2.0.0.jar ]]
+    [[ -s ${buildopt_project}/service-b/build/libs/service-b-1.0.0.jar ]]
+    [[ $(find "${buildopt_project}/service-b/build/libs" -type f -name '*.jar' | wc -l) == 1 ]]
+
+    local buildopt_report
+    buildopt_report=$(find "${buildopt_project}/build/reports/configuration-cache" \
+        -type f -name configuration-cache-report.html -print -quit)
+    [[ -n ${buildopt_report} ]]
+    buildopt_extract_report_data "${buildopt_report}" >"${buildopt_case_root}/report.json"
+    local buildopt_script="build file 'build.gradle'"
+    if [[ ${buildopt_dsl} == kotlin ]]; then
+        buildopt_script="build file 'build.gradle.kts'"
+    fi
+    jq -e --arg buildopt_script "${buildopt_script}" '
+      .diagnostics == [{
+        trace:[{kind:"BuildLogic",location:$buildopt_script}],
+        input:[{text:"file "},{name:"versions.properties"}]
+      }] and
+      (.diagnostics[0] | keys | sort) == ["input","trace"]
+    ' "${buildopt_case_root}/report.json" >/dev/null
+
+    printf '  Gradle %s / %s DSL: input invalidated globally; semantic project owner unavailable\n' \
+        "${buildopt_version}" "${buildopt_dsl}"
+}
+
+printf 'Configuration-input binding fixture matrix:\n'
+for buildopt_version in 8.14.3 9.6.1; do
+    for buildopt_dsl in groovy kotlin; do
+        buildopt_run_case "${buildopt_version}" "${buildopt_dsl}"
+    done
+done
+
+printf 'Configuration-input binding fixture OK: 4/4 cases retain the full requested workflow\n'
