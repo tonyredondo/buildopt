@@ -48,8 +48,9 @@ fi
     exit 1
 }
 
-"${buildopt_script_dir}/check-qualified-lifetime-v2" \
-    "${buildopt_evidence}/raw/summary.json"
+BUILDOPT_QUALIFIED_LIFETIME_SPEC="${buildopt_spec}" \
+    "${buildopt_script_dir}/check-qualified-lifetime-v2" \
+        "${buildopt_evidence}/raw/summary.json"
 buildopt_tmp=$(mktemp -d /tmp/buildopt-cross-commit-breadth-v2-check.XXXXXX)
 trap 'rm -rf -- "${buildopt_tmp}"' EXIT
 "${buildopt_script_dir}/assemble-cross-commit-breadth-v2" \

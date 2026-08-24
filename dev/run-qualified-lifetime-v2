@@ -108,6 +108,8 @@ mkdir -p -- "${buildopt_output}"
 
 buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
 buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_work_item=$(jq -er '.workItem | select(type == "string" and length > 0)' \
+    "${buildopt_spec}")
 buildopt_cpu_count=$(getconf _NPROCESSORS_ONLN)
 buildopt_memory_bytes=$(awk '/MemTotal:/ {print $2 * 1024}' /proc/meminfo)
 
@@ -1151,11 +1153,12 @@ done < <(jq -r '.repositories[].key' "${buildopt_spec}")
 if ((${#buildopt_subject_files[@]} == buildopt_repository_count)); then
     jq -s \
         --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+        --arg workItem "${buildopt_work_item}" \
         --arg revision "${buildopt_revision}" --arg specSha "${buildopt_spec_sha}" \
         --arg kernel "$(uname -r)" --argjson cpuCount "${buildopt_cpu_count}" \
         --argjson memoryBytes "${buildopt_memory_bytes%.*}" '
       {schemaVersion:"buildopt.evidence/poc-qualified-lifetime/v2",
-       workItem:"POC-QUALIFIED-LIFETIME-V2-001",capturedAt:$capturedAt,
+       workItem:$workItem,capturedAt:$capturedAt,
        buildopt:{sourceRevisions:([.[].buildopt.revision]|unique),
          executableSha256:.[0].buildopt.executableSha256,
          specSha256:$specSha,installedPackage:true},
