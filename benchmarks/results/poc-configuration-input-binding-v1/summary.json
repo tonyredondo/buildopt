@@ -1,7 +1,8 @@
 {
   "schemaVersion": "buildopt.evidence/poc-configuration-input-binding/v1",
   "workItem": "POC-CONFIGURATION-INPUT-BINDING-001",
-  "capturedAt": "2026-08-25T00:00:00Z",
+  "capturedAt": "2026-08-24T22:20:49Z",
+  "implementationRevision": "cee4f6c2d0897008097e424225b231dd53a74eec",
   "cases": [
     {
       "gradleVersion": "8.14.3",

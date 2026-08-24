@@ -2325,6 +2325,23 @@ result is retained rather than rerun for a favourable sample. Validate it with:
 ./dev/check-source-ownership-compatibility
 ```
 
+## Configuration-input binding
+
+[`results/poc-configuration-input-binding-v1/`](./results/poc-configuration-input-binding-v1/README.md)
+tests the remaining configuration-input question independently of Apache
+Groovy. Gradle 8.14.3 and 9.6.1, with Groovy and Kotlin DSL, store and reuse
+Configuration Cache state, invalidate it after the root input changes and
+preserve the expected affected/unaffected JAR behavior in 4/4 cases.
+
+The supported report exposes the input and build-logic read origin, not a
+complete semantic project owner. The terminal result is full-workflow native
+retention, with no performance replay after the safety precondition fails:
+
+```bash
+./dev/check-configuration-input-binding
+./dev/check-configuration-input-binding --fixture
+```
+
 ## JVM Agent spike evidence
 
 [`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one

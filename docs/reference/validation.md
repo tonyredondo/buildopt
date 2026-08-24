@@ -165,6 +165,11 @@ attribution, explicit native retention for unproven configuration inputs and
 3,890 exact Groovy outputs. Its paired qualification rejection is retained as
 negative evidence and is not rerun until favourable.
 
+`./dev/check-configuration-input-binding` validates the independent Gradle
+8/9 and Groovy/Kotlin result. Add `--fixture` to execute the four real
+Configuration Cache cases; the default Base CI check validates the immutable
+contract and result without recompiling Kotlin DSL from a cold home.
+
 `check-automatic-breadth-transfer` validates the immutable V1 unchanged
 zero-manual-file run across Spring Framework, OpenTelemetry Java
 Instrumentation, Apache Kafka, Micronaut Core and Apache Groovy. It recomputes

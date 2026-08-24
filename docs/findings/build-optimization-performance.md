@@ -774,6 +774,15 @@ does not reproduce robust qualification: it saves 1.200 seconds/4.05% on
 average with 6/8 positive pairs, but its -0.262..+2.625-second interval crosses
 zero. No descendant profile or new performance claim is created.
 
+The subsequent configuration-input fixture closes that open safety question
+without broadening selection. Across Gradle 8.14.3 and 9.6.1 in both Groovy
+and Kotlin DSL, `ProviderFactory.fileContents` is stored, reused and
+invalidated correctly in 4/4 cases. The supported report names the changed
+file and the build-logic location that read it, but does not expose complete
+semantic project ownership. Because root, settings and convention logic can
+configure multiple projects, BuildOpt retains the full requested workflow and
+runs no performance replay after that precondition fails.
+
 ## Cross-Commit Value Recovery
 
 The recovery experiment keeps Kafka's qualifier and six public descendants
@@ -961,6 +970,7 @@ artifacts are:
 - [final OpenTelemetry optimization evidence](../../benchmarks/results/poc-otel-optimization-v2.json).
 - [observed Ktor profile-lifetime evidence](../../benchmarks/results/poc-profile-lifetime-v1/summary.json).
 - [five-repository qualified-lifetime evidence](../../benchmarks/results/poc-qualified-lifetime-v2/summary.json).
+- [configuration-input binding evidence](../../benchmarks/results/poc-configuration-input-binding-v1/summary.json).
 - [terminal installed qualified-profile matrix](../../benchmarks/results/poc-qualified-profile-matrix-v1/summary.json).
 - [fresh five-repository structural-only matrix](../../benchmarks/results/poc-generic-profile-matrix-v1/README.md).
 - [fresh full-path ablation and retained component evidence](../../benchmarks/results/poc-full-path-ablation-v1/summary.json).

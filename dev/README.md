@@ -4586,6 +4586,21 @@ Gradle model; the second runs the authoritative native `classes` workflow. The
 runner never publishes a profile, and a configuration-time input without a
 source owner or known task consumer remains native.
 
+## Configuration-input binding evidence
+
+`./dev/check-configuration-input-binding` validates the terminal supported-API
+decision. Use `--fixture` to run Gradle 8.14.3 and 9.6.1 against the independent
+Groovy and Kotlin two-project fixtures:
+
+```bash
+./dev/check-configuration-input-binding --fixture
+```
+
+Each case stores and reuses Configuration Cache state, changes the root input,
+verifies invalidation and checks the affected and unaffected JARs. The report
+contains the input and build-logic read origin but no complete semantic project
+owner, so the safe POC result remains full-workflow native retention.
+
 ## Update policy
 
 Toolchain updates are atomic repository changes:

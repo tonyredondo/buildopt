@@ -44,6 +44,7 @@ jq -e '
 jq -e '
   .schemaVersion == "buildopt.evidence/poc-configuration-input-binding/v1" and
   .workItem == "POC-CONFIGURATION-INPUT-BINDING-001" and
+  .implementationRevision == "cee4f6c2d0897008097e424225b231dd53a74eec" and
   (.cases | length) == 4 and
   ([.cases[].gradleVersion] | unique) == ["8.14.3","9.6.1"] and
   ([.cases[].dsl] | unique) == ["groovy","kotlin"] and

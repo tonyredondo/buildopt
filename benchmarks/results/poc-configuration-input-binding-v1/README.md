@@ -4,6 +4,9 @@ Four independent fixtures prove that Gradle 8.14.3 and 9.6.1, with Groovy and
 Kotlin DSL, detect a root file read through `ProviderFactory.fileContents` as
 a Configuration Cache input.
 
+The executable fixture and contract are frozen at BuildOpt revision
+`cee4f6c2d0897008097e424225b231dd53a74eec`.
+
 All four cases store the configuration, reuse it before the change, invalidate
 it after `versions.properties` changes, change only `:service-a`'s versioned
 JAR and leave `:service-b` stable. The supported Configuration Cache report

@@ -155,6 +155,12 @@ with zero product failures. The cross-commit claim therefore remains bounded.
   crossed zero, so no profile was published. This proves safe attribution and
   also shows that the earlier isolated Groovy value was not repeatable enough
   in this run to justify cross-commit reuse.
+- The generic configuration-input follow-up closes that ambiguity without a
+  repository rule. Gradle 8.14.3 and 9.6.1, in Groovy and Kotlin DSL, detect,
+  report and invalidate a `ProviderFactory.fileContents` input in 4/4 fixture
+  cases. The report identifies the file and build-logic read origin, but not
+  complete semantic project ownership. BuildOpt therefore retains the full
+  requested workflow; no timing is run after this safety precondition fails.
 - The first unchanged Micronaut generalization did not broaden that claim. Its
   qualification was **10.33% faster** with 7/8 positive pairs, but the first
   native-retained descendant generated a different Jackson JAR even though no
@@ -206,17 +212,21 @@ with zero product failures. The cross-commit claim therefore remains bounded.
 
 ## Next steps
 
-1. Investigate whether Gradle exposes a complete, repository-independent
-   configuration-input binding. Proceed only if the exact changed path can be
-   tied to affected projects or the full workflow without filename rules; an
-   absent or incomplete signal must keep native execution.
-2. Re-run the same frozen window only after that generic proof and a fresh
-   target qualification. Require exact outputs, a robust positive calibration
-   and positive cumulative cross-commit value; do not reuse the historical
-   qualification merely because it was favourable.
-3. Keep the Micronaut quarantine line stopped and use task/DAG attribution only
-   as an early diagnostic for materially different hypotheses. Paired wall
-   time remains the causal value test.
+1. Close aggregate workflow outputs from complete Gradle producer, lifecycle,
+   task and variant relationships. Authorize a reduced candidate only when all
+   required bytes can be materialized or rebuilt exactly.
+2. Rebind qualified profiles across commits from canonical workflow, Wrapper,
+   producer-lineage, output-contract and change-family compatibility rather
+   than incidental revision identity.
+3. Learn duration, graph, portability and volatility only from ordinary
+   requested builds, and require expected payback within five compatible
+   matches before spending calibration work.
+4. Run one unchanged binary over frozen Spring, OpenTelemetry, Kafka,
+   Micronaut and Groovy lifetime windows. Require exact outputs, zero product
+   failures, at least three net-positive repository families and selection on
+   at least half of structurally eligible non-global descendants.
+5. Issue a terminal continue/stop decision for the generic one-command POC.
+   Production hardening, soak and design partners remain outside this gate.
 
 ## Evidence
 
@@ -224,6 +234,8 @@ with zero product failures. The cross-commit claim therefore remains bounded.
 - [Workflow-input ownership result](../../benchmarks/results/poc-workflow-input-ownership-v1/README.md)
 - [Machine-readable ownership summary](../../benchmarks/results/poc-workflow-input-ownership-v1/summary.json)
 - [Source ownership compatibility result](../../benchmarks/results/poc-source-ownership-compatibility-v1/README.md)
+- [Configuration-input binding result](../../benchmarks/results/poc-configuration-input-binding-v1/README.md)
+- [Machine-readable configuration-input summary](../../benchmarks/results/poc-configuration-input-binding-v1/summary.json)
 - [Native-volatility quarantine result](../../benchmarks/results/poc-native-volatility-quarantine-v1/README.md)
 - [Machine-readable quarantine summary](../../benchmarks/results/poc-native-volatility-quarantine-v1/summary.json)
 - [Producer-bound Spring lifetime result](../../benchmarks/results/poc-producer-bound-quarantine-lifetime-v2/README.md)
