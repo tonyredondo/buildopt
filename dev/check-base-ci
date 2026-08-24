@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+buildopt_report_error() {
+    local buildopt_status=$1
+    local buildopt_line=$2
+    printf 'base CI failed at line %s (status %s)\n' \
+        "${buildopt_line}" "${buildopt_status}" >&2
+    exit "${buildopt_status}"
+}
+trap 'buildopt_report_error "$?" "$LINENO"' ERR
+
 buildopt_usage() {
     printf 'usage: %s (--static | --lane <core|rust>)\n' "$0"
 }
