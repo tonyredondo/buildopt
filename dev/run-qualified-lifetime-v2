@@ -23,9 +23,14 @@ buildopt_spec=${BUILDOPT_QUALIFIED_LIFETIME_SPEC:-${buildopt_repo_root}/specs/po
 buildopt_automatic_protocol=${BUILDOPT_QUALIFIED_LIFETIME_AUTOMATIC_PROTOCOL:-v3}
 buildopt_portability_mode=${BUILDOPT_QUALIFIED_LIFETIME_PORTABILITY_MODE:-FULL_REQUIRED_OUTPUTS}
 export BUILDOPT_QUALIFIED_LIFETIME_SPEC=${buildopt_spec}
-buildopt_state_relative=${BUILDOPT_QUALIFIED_LIFETIME_STATE_RELATIVE:-.buildopt/optimize/materialization-economics-v2}
+buildopt_state_relative=${BUILDOPT_QUALIFIED_LIFETIME_STATE_RELATIVE:-}
 case ${buildopt_automatic_protocol} in
-    v3 | v4) ;;
+    v3)
+        buildopt_state_relative=${buildopt_state_relative:-.buildopt/optimize/materialization-economics-v2}
+        ;;
+    v4)
+        buildopt_state_relative=${buildopt_state_relative:-.buildopt/optimize/producer-bound-quarantine-v1}
+        ;;
     *)
         printf 'unsupported qualified lifetime automatic protocol: %s\n' \
             "${buildopt_automatic_protocol}" >&2
