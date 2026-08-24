@@ -40,23 +40,39 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		childArgs []string,
 		environmentOverrides map[string]string,
 	) childExecution {
+		executeOnce := func(diagnostics io.Writer) childExecution {
+			if impactTiming != nil {
+				return impactTiming.execute(
+					childArgs,
+					environmentOverrides,
+					stdin,
+					childStdout,
+					diagnostics,
+				)
+			}
+			return executeChild(
+				childArgs,
+				environmentOverrides,
+				stdin,
+				childStdout,
+				diagnostics,
+			)
+		}
 		var execution childExecution
-		if impactTiming != nil {
-			execution = impactTiming.execute(
-				childArgs,
-				environmentOverrides,
-				stdin,
-				childStdout,
-				stderr,
-			)
+		if optimize != nil && optimize.outputObservation != nil {
+			var diagnostics optimizeObservationDiagnosticTail
+			execution = executeOnce(io.MultiWriter(stderr, &diagnostics))
+			// Cold composite builds can finish compiling their included build
+			// logic before Gradle resolves init-script task selectors. The exact
+			// missing-task error proves that no owner task graph was executed, so
+			// one identical retry is safe. All other failures remain authoritative.
+			if execution.started && execution.err != nil &&
+				retryableInlineObservationRegistrationFailure(diagnostics.data) {
+				_, _ = io.WriteString(stderr, "buildopt: retrying cold composite observation after owned task registration was unavailable\n")
+				execution = executeOnce(stderr)
+			}
 		} else {
-			execution = executeChild(
-				childArgs,
-				environmentOverrides,
-				stdin,
-				childStdout,
-				stderr,
-			)
+			execution = executeOnce(stderr)
 		}
 		if optimize != nil {
 			optimize.childStarted = execution.started
