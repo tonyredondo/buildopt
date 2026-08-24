@@ -107,6 +107,16 @@ observations, 8,033 stable outputs remain byte-exact, all 352 quarantined paths
 are rebuilt locally, product failures remain zero and cumulative net is
 **+59.550 seconds** after qualification/publication cost.
 
+The latest breadth V2 matrix applies that producer-bound path to three new
+frozen public windows. All three target commits show real isolated potential:
+OpenTelemetry saves **8.53%**, Ktor **56.33%** and Groovy **10.56%**, each with
+8/8 positive pairs and exact portable outputs. Across the nine later commits,
+however, only one Ktor revision selects the profile. That replay saves
+**116.030 seconds / 53.69%**, but the remaining native-retained comparisons
+make the three complete windows **-168.751 s**, **-52.237 s** and **-37.684 s**
+after qualification/publication. The result is 1/9 selected and 0/3 paid back,
+with zero product failures. The cross-commit claim therefore remains bounded.
+
 ## What this proves
 
 - Generic graph reduction can beat optimized native Gradle on isolated,
@@ -121,6 +131,10 @@ are rebuilt locally, product failures remain zero and cumulative net is
 - Cross-commit value is no longer Kafka-only: the unchanged generic path now
   has one selected Kafka replay and one selected Spring replay. It is still not
   universal; other repository/workflow families must qualify independently.
+- The three-family breadth V2 run makes that limitation concrete. Target
+  acceleration and output portability succeed in 3/3 families, but compatibility
+  and fallback economics reduce later reuse to 1/9 commits and 0/3 paid-back
+  windows. A fast target benchmark is not sufficient evidence of customer value.
 - The first unchanged Micronaut generalization did not broaden that claim. Its
   qualification was **10.33% faster** with 7/8 positive pairs, but the first
   native-retained descendant generated a different Jackson JAR even though no
@@ -172,16 +186,19 @@ are rebuilt locally, product failures remain zero and cumulative net is
 
 ## Next steps
 
-1. Stop the Micronaut quarantine line. The diagnostic found no material
-   generically eliminable work on the critical path, so another smaller
-   frontier is not authorized by the evidence.
-2. Reuse task/DAG attribution as an early diagnostic for materially different
-   generic hypotheses and workloads, while keeping paired wall time—not traced
-   task duration—as the causal value test.
-3. Preserve automatic activation only for profiles that pass exact outputs,
-   repeatability, interval, p95 and economic gates. Focus new POC work on
-   broadening already-qualified structural/cross-commit value rather than
-   tuning a rejected repository window.
+1. Make a native-retained decision close to native Gradle cost. Eight of nine
+   breadth V2 descendants fall back, so selection, synchronization and
+   observation work must be skipped before Gradle whenever cheap compatibility
+   evidence is already negative.
+2. Improve generic compatibility across source-only descendants using Gradle
+   ownership, task inputs, output contracts and producer lineage; do not add
+   repository-name rules or weaken exact output equality.
+3. Re-run the same frozen windows only after a generic correction. Require at
+   least two of three subjects to select exact replays and finish net positive
+   before broadening the cross-commit claim.
+4. Keep the Micronaut quarantine line stopped and use task/DAG attribution only
+   as an early diagnostic for materially different hypotheses. Paired wall
+   time remains the causal value test.
 
 ## Evidence
 
@@ -204,6 +221,8 @@ are rebuilt locally, product failures remain zero and cumulative net is
 - [Machine-readable minimal-frontier summary](../../benchmarks/results/poc-minimal-quarantine-rebuild-frontier-v1/summary.json)
 - [Quarantine critical-path attribution](../../benchmarks/results/poc-quarantine-critical-path-attribution-v1/README.md)
 - [Machine-readable critical-path attribution](../../benchmarks/results/poc-quarantine-critical-path-attribution-v1/attribution.json)
+- [Cross-commit breadth V2 result](../../benchmarks/results/poc-cross-commit-breadth-v2/README.md)
+- [Machine-readable breadth V2 summary](../../benchmarks/results/poc-cross-commit-breadth-v2/summary.json)
 - [Compatible descendant discovery result](../../benchmarks/results/poc-compatible-descendant-discovery-v1/README.md)
 - [Machine-readable compatible descendant summary](../../benchmarks/results/poc-compatible-descendant-discovery-v1/summary.json)
 - [Native-volatility quarantine protocol](../../specs/poc-native-volatility-quarantine-v1.md)

@@ -1,0 +1,362 @@
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+  "evidenceState": "QUALIFIED",
+  "capturedAt": "2026-08-24T09:50:18Z",
+  "subject": {
+    "repositoryId": "apache/groovy",
+    "repositoryRevision": "14fa934340c46bc1ee96cba7ae594258bd8d0fd0",
+    "pipelineClass": "auto-classes-f5d1b6aa"
+  },
+  "sourceBindings": {
+    "manifestSha256": "a4a27510ea2ec48447174dd9301a936abe2e8fb7f4ae1ac7d9e0e7f955b446c2",
+    "graphSha256": "4c9d19f217c248418956c6f4f0d711c78857456a9254d2df35f47c5d924c4320",
+    "generatedManifestSha256": "d60e27a2c8d52231bd2c5dfd90c52ceb418d845d10d1954df9352f0fe8cccf2c",
+    "sourceEvidenceSha256": "9dde669786a94f9aa420d0717ab40f8a993530b8750ca7c2541e620dfb04d795"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":groovy-json:classes"
+    ],
+    "fallbackEntrypoints": [
+      "classes"
+    ],
+    "requiredOutputs": [
+      "build/classes/groovy/main/**",
+      "build/classes/java/main/**",
+      "build/resources/main/**",
+      "subprojects/groovy-ant/build/classes/groovy/main/**",
+      "subprojects/groovy-ant/build/classes/java/main/**",
+      "subprojects/groovy-ant/build/resources/main/**",
+      "subprojects/groovy-astbuilder/build/classes/java/main/**",
+      "subprojects/groovy-astbuilder/build/resources/main/**",
+      "subprojects/groovy-cli-commons/build/classes/groovy/main/**",
+      "subprojects/groovy-cli-picocli/build/classes/groovy/main/**",
+      "subprojects/groovy-console/build/classes/groovy/main/**",
+      "subprojects/groovy-console/build/resources/main/**",
+      "subprojects/groovy-contracts/build/classes/java/main/**",
+      "subprojects/groovy-contracts/build/resources/main/**",
+      "subprojects/groovy-datetime/build/classes/java/main/**",
+      "subprojects/groovy-datetime/build/resources/main/**",
+      "subprojects/groovy-datetime/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "subprojects/groovy-dateutil/build/classes/java/main/**",
+      "subprojects/groovy-dateutil/build/resources/main/**",
+      "subprojects/groovy-dateutil/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "subprojects/groovy-docgenerator/build/classes/groovy/main/**",
+      "subprojects/groovy-docgenerator/build/resources/main/**",
+      "subprojects/groovy-ginq/build/classes/groovy/main/**",
+      "subprojects/groovy-ginq/build/resources/main/**",
+      "subprojects/groovy-ginq/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "subprojects/groovy-groovydoc/build/classes/groovy/main/**",
+      "subprojects/groovy-groovydoc/build/classes/java/main/**",
+      "subprojects/groovy-groovydoc/build/resources/main/**",
+      "subprojects/groovy-groovysh/build/classes/groovy/main/**",
+      "subprojects/groovy-groovysh/build/resources/main/**",
+      "subprojects/groovy-jmx/build/classes/groovy/main/**",
+      "subprojects/groovy-jmx/build/classes/java/main/**",
+      "subprojects/groovy-json/build/classes/java/main/**",
+      "subprojects/groovy-json/build/resources/main/**",
+      "subprojects/groovy-jsr223/build/classes/java/main/**",
+      "subprojects/groovy-jsr223/build/resources/main/**",
+      "subprojects/groovy-jsr223/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "subprojects/groovy-macro-library/build/classes/groovy/main/**",
+      "subprojects/groovy-macro-library/build/resources/main/**",
+      "subprojects/groovy-macro-library/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "subprojects/groovy-macro/build/classes/groovy/main/**",
+      "subprojects/groovy-macro/build/resources/main/**",
+      "subprojects/groovy-macro/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "subprojects/groovy-nio/build/classes/java/main/**",
+      "subprojects/groovy-nio/build/resources/main/**",
+      "subprojects/groovy-nio/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "subprojects/groovy-servlet/build/classes/java/main/**",
+      "subprojects/groovy-sql/build/classes/java/main/**",
+      "subprojects/groovy-sql/build/resources/main/**",
+      "subprojects/groovy-sql/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "subprojects/groovy-swing/build/classes/groovy/main/**",
+      "subprojects/groovy-swing/build/classes/java/main/**",
+      "subprojects/groovy-swing/build/resources/main/**",
+      "subprojects/groovy-swing/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "subprojects/groovy-templates/build/classes/groovy/main/**",
+      "subprojects/groovy-test-junit5/build/classes/groovy/main/**",
+      "subprojects/groovy-test-junit5/build/classes/java/main/**",
+      "subprojects/groovy-test-junit5/build/resources/main/**",
+      "subprojects/groovy-test/build/classes/groovy/main/**",
+      "subprojects/groovy-test/build/classes/java/main/**",
+      "subprojects/groovy-testng/build/classes/java/main/**",
+      "subprojects/groovy-testng/build/resources/main/**",
+      "subprojects/groovy-toml/build/classes/java/main/**",
+      "subprojects/groovy-typecheckers/build/classes/groovy/main/**",
+      "subprojects/groovy-xml/build/classes/groovy/main/**",
+      "subprojects/groovy-xml/build/classes/java/main/**",
+      "subprojects/groovy-xml/build/resources/main/**",
+      "subprojects/groovy-xml/build/resources/main/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule",
+      "subprojects/groovy-yaml/build/classes/java/main/**"
+    ],
+    "totalProjectCount": 37,
+    "selectedProjectCount": 2,
+    "omittedProjectCount": 35,
+    "omittedProjectRatio": 0.9459459459459459
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "2e8f398b97d689ed5a3147cca0f28881055a09e7",
+    "executableSha256": "2e8f398b97d689ed5a3147cca0f28881055a09e7470c1b06f1d77e8eba03367c",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--no-daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true,
+    "qualificationPolicy": "ROBUST_6_OF_8_ALTERNATING_PAIRS_INTERVAL_P95_V1"
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 39978,
+      "candidateDurationMs": 29728,
+      "savedMs": 10250,
+      "controlRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "candidateRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "requiredOutputCount": 3890,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 34721,
+      "candidateDurationMs": 28419,
+      "savedMs": 6302,
+      "controlRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "candidateRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "requiredOutputCount": 3890,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 32652,
+      "candidateDurationMs": 32271,
+      "savedMs": 381,
+      "controlRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "candidateRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "requiredOutputCount": 3890,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 34598,
+      "candidateDurationMs": 28461,
+      "savedMs": 6137,
+      "controlRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "candidateRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "requiredOutputCount": 3890,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 5,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 32632,
+      "candidateDurationMs": 30690,
+      "savedMs": 1942,
+      "controlRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "candidateRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "requiredOutputCount": 3890,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 6,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 32480,
+      "candidateDurationMs": 32400,
+      "savedMs": 80,
+      "controlRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "candidateRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "requiredOutputCount": 3890,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 7,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 33152,
+      "candidateDurationMs": 32274,
+      "savedMs": 878,
+      "controlRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "candidateRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "requiredOutputCount": 3890,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 8,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 32975,
+      "candidateDurationMs": 30106,
+      "savedMs": 2869,
+      "controlRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "candidateRequiredOutputSha256": "25bed2dcfa06f417c8c97df464164d6387dc0ba95ea76409231111767f64d77a",
+      "requiredOutputCount": 3890,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    }
+  ],
+  "fallback": {
+    "mode": "FULL_GRAPH",
+    "reason": "ORDINARY_FULL_GRAPH_CONTROLS_SUCCEEDED",
+    "buildSuccessful": true
+  },
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 34148.5,
+    "candidateMeanMs": 30543.625,
+    "meanSavedMs": 3604.875,
+    "reductionRatio": 0.10556466609075069,
+    "interval95SavedMs": [
+      1369.125,
+      6078.5
+    ],
+    "positivePairs": 8,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

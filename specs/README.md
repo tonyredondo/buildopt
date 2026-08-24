@@ -241,6 +241,14 @@ positive calibration rejected for 14 native-output differences. Zero profiles
 are portable, zero replays are selected, zero product failures occur and the
 cross-repository value claim remains bounded to the prior Kafka evidence.
 
+The [cross-commit breadth V2 protocol](./poc-cross-commit-breadth-v2.md) then
+freezes three Wrapper-compatible first-parent windows for OpenTelemetry, Ktor
+and Groovy under the producer-bound lifetime path. Its terminal
+[evidence](../benchmarks/results/poc-cross-commit-breadth-v2/README.md) records
+three positive, portable target qualifications but only one selected replay
+across nine descendants and no paid-back subject. The claim broadens only at
+two claim-eligible subjects, so the terminal decision remains bounded.
+
 The [workflow-input ownership contract](./poc-workflow-input-ownership-v1.md)
 then addresses the OpenTelemetry blocker generically. A changed unowned path
 may be ignored only when the exact requested workflow produces complete

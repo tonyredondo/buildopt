@@ -185,6 +185,31 @@ The earlier negative V2 result remains the immutable breadth baseline. It does
 not invalidate graph reduction; it exposed the cross-commit eligibility and
 portable-output limitations addressed by the recovery implementation.
 
+### Cross-commit breadth V2
+
+The [breadth V2 result](./results/poc-cross-commit-breadth-v2/README.md)
+retests the producer-bound path on frozen OpenTelemetry, Ktor and Groovy
+families. Each target qualifies with 8/8 positive pairs and exact portable
+outputs: **8.53%**, **56.33%** and **10.56%** lower mean wall time,
+respectively.
+
+The later public commits do not sustain that isolated value. OpenTelemetry and
+Groovy select zero of three descendants. Ktor selects one and saves
+116.030 seconds/53.69%, but its two native-retained comparisons lose 152.684
+seconds. After learning/publication, the three windows finish -168.751,
+-52.237 and -37.684 seconds. The matrix is therefore 1/9 selected, 0/3 paid
+back and zero product failures; the cross-commit claim remains bounded.
+
+```bash
+./dev/check-cross-commit-breadth-v2 \
+  benchmarks/results/poc-cross-commit-breadth-v2
+```
+
+This result does not average repository percentages. Its signed millisecond
+total is descriptive window accounting, not a universal performance estimate.
+It redirects the next POC work toward cheaper native retention and broader
+generic compatibility rather than more isolated calibration wins.
+
 ### Native-volatility quarantine
 
 The [quarantine result](./results/poc-native-volatility-quarantine-v1/README.md)

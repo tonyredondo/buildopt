@@ -12,6 +12,10 @@ buildopt_evidence=${1:-${buildopt_repo_root}/benchmarks/results/poc-cross-commit
 buildopt_mode=${2:-}
 buildopt_spec=${buildopt_repo_root}/specs/poc-cross-commit-breadth-v2.subjects.json
 
+if [[ ${buildopt_evidence} != /* ]]; then
+    buildopt_evidence=$(cd -- "$(dirname -- "${buildopt_evidence}")" && pwd -P)/$(basename -- "${buildopt_evidence}")
+fi
+
 for buildopt_command in cmp git jq mktemp sha256sum; do
     command -v "${buildopt_command}" >/dev/null || {
         printf 'cross-commit breadth V2 validation requires %s\n' "${buildopt_command}" >&2

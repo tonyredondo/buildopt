@@ -1,0 +1,182 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-qualified-lifetime-subject/v2",
+  "key": "opentelemetry-spring-compatible-window",
+  "buildopt": {
+    "revision": "e9cc2ebde952096c73b354109828085fc981a6b8",
+    "executableSha256": "2e8f398b97d689ed5a3147cca0f28881055a09e7470c1b06f1d77e8eba03367c"
+  },
+  "repository": {
+    "id": "open-telemetry/opentelemetry-java-instrumentation",
+    "remote": "https://github.com/open-telemetry/opentelemetry-java-instrumentation.git",
+    "publicRepository": true,
+    "historyBranch": "main"
+  },
+  "qualification": {
+    "parentRevision": "cbdf37d064a0598aba8485a2303a7322fcc50fc5",
+    "targetRevision": "f330e4c0b764d80dcc1f7c6d4c01e305593c49f1",
+    "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+    "changeFamily": "DEPENDENCY_SOURCE",
+    "processEnvelope": "FRESH_GRADLE_PROCESS_PER_BUILD",
+    "expectedChangedProjects": [
+      ":instrumentation:spring:spring-boot-autoconfigure"
+    ],
+    "graph": {
+      "omittedProjects": 974,
+      "selectedProjects": 34,
+      "totalProjects": 1008
+    },
+    "calibration": {
+      "calibrationCostMs": 12376,
+      "controlMeanMs": 124366.125,
+      "candidateMeanMs": 113761.75,
+      "controlP95Ms": 143162,
+      "candidateP95Ms": 119253,
+      "meanSavedMs": 10604.375,
+      "reductionRatio": 0.08526739093945397,
+      "interval95SavedMs": [
+        5078.125,
+        16945
+      ],
+      "positivePairs": 8,
+      "pairsMeasured": 8,
+      "breakEvenBuilds": 2,
+      "qualified": true,
+      "fallbackSuccessful": true,
+      "qualificationPolicy": "ROBUST_6_OF_8_ALTERNATING_PAIRS_INTERVAL_P95_V1"
+    },
+    "captureFile": "qualification-capture.json",
+    "captureSha256": "d67beb146a5adc62fcac1b1d3e849c40d8838ae32ae7bf87302b241e26cbb401",
+    "calibrationEvidenceFile": "calibration-evidence.json",
+    "calibrationEvidenceSha256": "2ee6060a9f71c43be78963b9f7025acf0dc4dccd42fdca711c79fde4a68b931d",
+    "portability": {
+      "status": "PORTABLE",
+      "producerOutputSha256": "143801f062c8181560585b762aabf1ee5c45d8616d89bffe9cf185dba2d1df82",
+      "independentOutputSha256": "143801f062c8181560585b762aabf1ee5c45d8616d89bffe9cf185dba2d1df82",
+      "outputCount": 248,
+      "nativeCacheHits": 0,
+      "differingFileCount": 0,
+      "differencesSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "samplePaths": []
+    },
+    "materialization": {
+      "transport": "CENTRAL_CAS_CHUNKS",
+      "packBytes": 793958,
+      "chunkCount": 1,
+      "publicationDurationMs": 1671
+    }
+  },
+  "observations": [
+    {
+      "sequence": 1,
+      "revision": "7fd551e29949003b5fd60b7e09875483ae3447c9",
+      "parentRevision": "f330e4c0b764d80dcc1f7c6d4c01e305593c49f1",
+      "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 305687,
+      "candidateDurationMs": 410259,
+      "savedMs": -104572,
+      "controlFromCache": 16,
+      "candidateFromCache": 16,
+      "requiredOutputCount": 269,
+      "quarantinedOutputCount": 0,
+      "quarantinedPathSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "controlRequiredOutputSha256": "8f9f3fa8737ec07bc5f10f0c85e081e4772ec3f13286ac9d83f78b4197348644",
+      "candidateRequiredOutputSha256": "8f9f3fa8737ec07bc5f10f0c85e081e4772ec3f13286ac9d83f78b4197348644",
+      "exactRequiredOutputs": true,
+      "selected": false,
+      "selectionSource": "NONE",
+      "reason": "ECONOMIC_PREQUALIFICATION_REJECTED",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "nativeRetained": true,
+      "wrapperMatchesQualification": true,
+      "selectionDurationNs": 1526920510,
+      "preSyncDurationMs": 667,
+      "postSyncDurationMs": 562,
+      "materializationDurationMs": 0
+    },
+    {
+      "sequence": 2,
+      "revision": "2d3f00040b7b1cf33ca3940356a67807f4f4cc36",
+      "parentRevision": "7fd551e29949003b5fd60b7e09875483ae3447c9",
+      "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 325511,
+      "candidateDurationMs": 313256,
+      "savedMs": 12255,
+      "controlFromCache": 16,
+      "candidateFromCache": 16,
+      "requiredOutputCount": 269,
+      "quarantinedOutputCount": 0,
+      "quarantinedPathSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "controlRequiredOutputSha256": "8f9f3fa8737ec07bc5f10f0c85e081e4772ec3f13286ac9d83f78b4197348644",
+      "candidateRequiredOutputSha256": "8f9f3fa8737ec07bc5f10f0c85e081e4772ec3f13286ac9d83f78b4197348644",
+      "exactRequiredOutputs": true,
+      "selected": false,
+      "selectionSource": "NONE",
+      "reason": "ECONOMIC_PREQUALIFICATION_REJECTED",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "nativeRetained": true,
+      "wrapperMatchesQualification": true,
+      "selectionDurationNs": 1443962890,
+      "preSyncDurationMs": 587,
+      "postSyncDurationMs": 576,
+      "materializationDurationMs": 0
+    },
+    {
+      "sequence": 3,
+      "revision": "fecf3fa2160dba7cd6b147294f8bc7f7b7adfe7c",
+      "parentRevision": "2d3f00040b7b1cf33ca3940356a67807f4f4cc36",
+      "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 321527,
+      "candidateDurationMs": 383914,
+      "savedMs": -62387,
+      "controlFromCache": 16,
+      "candidateFromCache": 16,
+      "requiredOutputCount": 269,
+      "quarantinedOutputCount": 0,
+      "quarantinedPathSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "controlRequiredOutputSha256": "8f9f3fa8737ec07bc5f10f0c85e081e4772ec3f13286ac9d83f78b4197348644",
+      "candidateRequiredOutputSha256": "8f9f3fa8737ec07bc5f10f0c85e081e4772ec3f13286ac9d83f78b4197348644",
+      "exactRequiredOutputs": true,
+      "selected": false,
+      "selectionSource": "NONE",
+      "reason": "AGGREGATE_DIRECT_OUTPUTS_MISSING",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "nativeRetained": true,
+      "wrapperMatchesQualification": true,
+      "selectionDurationNs": 2125,
+      "preSyncDurationMs": 0,
+      "postSyncDurationMs": 0,
+      "materializationDurationMs": 0
+    }
+  ],
+  "economics": {
+    "observedBuilds": 3,
+    "selectedReplays": 0,
+    "nativeRetainedBuilds": 3,
+    "selectedReplaySavedMs": 0,
+    "fallbackDeltaMs": -154704,
+    "cumulativeGrossSavedMs": -154704,
+    "qualificationAndPublicationCostMs": 14047,
+    "cumulativeNetSavedMs": -168751,
+    "firstObservedBreakEvenBuild": null,
+    "conclusion": "NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW"
+  },
+  "acceptance": {
+    "decision": "COMPLETE",
+    "exactRequiredOutputs": true,
+    "portabilityGatePassed": true,
+    "publicAncestry": true,
+    "productFailures": 0
+  },
+  "boundaries": {
+    "designPartnerRequired": false,
+    "mechanismPercentagesAdded": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositoriesAveraged": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

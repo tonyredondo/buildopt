@@ -231,6 +231,8 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-minimal-quarantine-rebuild-frontier" >/dev/null
         "${buildopt_script_dir}/check-gradle-critical-path" >/dev/null
         "${buildopt_script_dir}/check-quarantine-critical-path-attribution" >/dev/null
+        "${buildopt_script_dir}/check-cross-commit-breadth-v2" \
+            "${buildopt_repo_root}/benchmarks/results/poc-cross-commit-breadth-v2" >/dev/null
         "${buildopt_script_dir}/check-generic-holdout" >/dev/null
         "${buildopt_script_dir}/check-generic-holdout-crossover" \
             "${buildopt_repo_root}/benchmarks/results/poc-generic-holdout-v5" >/dev/null

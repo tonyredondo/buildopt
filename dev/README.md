@@ -731,6 +731,20 @@ Normal CI runs only this deterministic checker. The public builds are not
 repeated, native differences are not normalized, and no repository-specific
 ownership exception is authorized.
 
+Validate the producer-bound cross-commit breadth V2 evidence without rerunning
+OpenTelemetry, Ktor or Groovy:
+
+```bash
+./dev/check-cross-commit-breadth-v2 \
+  benchmarks/results/poc-cross-commit-breadth-v2
+```
+
+The checker validates the frozen three-family specification, revalidates the
+raw qualified-lifetime summary, rebuilds the terminal summary byte for byte and
+requires the observed 0/3 claim-eligible decision. The full runner is
+restartable by repository key; `--summary-only` assembles an already complete
+raw matrix. Base CI validates only the compact checked evidence.
+
 Validate the generic workflow-input ownership follow-up without rerunning the
 long OpenTelemetry capture:
 

@@ -1,0 +1,602 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-qualified-lifetime/v2",
+  "workItem": "POC-CROSS-COMMIT-BREADTH-V2-001",
+  "capturedAt": "2026-08-24T13:42:14Z",
+  "buildopt": {
+    "sourceRevisions": [
+      "143c98ab91986880cc348e6ff35e8ad0661f7b9e",
+      "e9cc2ebde952096c73b354109828085fc981a6b8"
+    ],
+    "executableSha256": "2e8f398b97d689ed5a3147cca0f28881055a09e7470c1b06f1d77e8eba03367c",
+    "specSha256": "c4e68aa6054f60e1b46caac52bf7f4669816af72fcd6a0c6ad0a06dfb7aa9fe6",
+    "installedPackage": true
+  },
+  "runner": {
+    "operatingSystem": "Linux",
+    "architecture": "x86_64",
+    "kernel": "7.1.5-1-t2-noble",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600
+  },
+  "subjects": [
+    {
+      "schemaVersion": "buildopt.evidence/poc-qualified-lifetime-subject/v2",
+      "key": "opentelemetry-spring-compatible-window",
+      "buildopt": {
+        "revision": "e9cc2ebde952096c73b354109828085fc981a6b8",
+        "executableSha256": "2e8f398b97d689ed5a3147cca0f28881055a09e7470c1b06f1d77e8eba03367c"
+      },
+      "repository": {
+        "id": "open-telemetry/opentelemetry-java-instrumentation",
+        "remote": "https://github.com/open-telemetry/opentelemetry-java-instrumentation.git",
+        "publicRepository": true,
+        "historyBranch": "main"
+      },
+      "qualification": {
+        "parentRevision": "cbdf37d064a0598aba8485a2303a7322fcc50fc5",
+        "targetRevision": "f330e4c0b764d80dcc1f7c6d4c01e305593c49f1",
+        "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+        "changeFamily": "DEPENDENCY_SOURCE",
+        "processEnvelope": "FRESH_GRADLE_PROCESS_PER_BUILD",
+        "expectedChangedProjects": [
+          ":instrumentation:spring:spring-boot-autoconfigure"
+        ],
+        "graph": {
+          "omittedProjects": 974,
+          "selectedProjects": 34,
+          "totalProjects": 1008
+        },
+        "calibration": {
+          "calibrationCostMs": 12376,
+          "controlMeanMs": 124366.125,
+          "candidateMeanMs": 113761.75,
+          "controlP95Ms": 143162,
+          "candidateP95Ms": 119253,
+          "meanSavedMs": 10604.375,
+          "reductionRatio": 0.08526739093945397,
+          "interval95SavedMs": [
+            5078.125,
+            16945
+          ],
+          "positivePairs": 8,
+          "pairsMeasured": 8,
+          "breakEvenBuilds": 2,
+          "qualified": true,
+          "fallbackSuccessful": true,
+          "qualificationPolicy": "ROBUST_6_OF_8_ALTERNATING_PAIRS_INTERVAL_P95_V1"
+        },
+        "captureFile": "qualification-capture.json",
+        "captureSha256": "d67beb146a5adc62fcac1b1d3e849c40d8838ae32ae7bf87302b241e26cbb401",
+        "calibrationEvidenceFile": "calibration-evidence.json",
+        "calibrationEvidenceSha256": "2ee6060a9f71c43be78963b9f7025acf0dc4dccd42fdca711c79fde4a68b931d",
+        "portability": {
+          "status": "PORTABLE",
+          "producerOutputSha256": "143801f062c8181560585b762aabf1ee5c45d8616d89bffe9cf185dba2d1df82",
+          "independentOutputSha256": "143801f062c8181560585b762aabf1ee5c45d8616d89bffe9cf185dba2d1df82",
+          "outputCount": 248,
+          "nativeCacheHits": 0,
+          "differingFileCount": 0,
+          "differencesSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "samplePaths": []
+        },
+        "materialization": {
+          "transport": "CENTRAL_CAS_CHUNKS",
+          "packBytes": 793958,
+          "chunkCount": 1,
+          "publicationDurationMs": 1671
+        }
+      },
+      "observations": [
+        {
+          "sequence": 1,
+          "revision": "7fd551e29949003b5fd60b7e09875483ae3447c9",
+          "parentRevision": "f330e4c0b764d80dcc1f7c6d4c01e305593c49f1",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 305687,
+          "candidateDurationMs": 410259,
+          "savedMs": -104572,
+          "controlFromCache": 16,
+          "candidateFromCache": 16,
+          "requiredOutputCount": 269,
+          "quarantinedOutputCount": 0,
+          "quarantinedPathSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlRequiredOutputSha256": "8f9f3fa8737ec07bc5f10f0c85e081e4772ec3f13286ac9d83f78b4197348644",
+          "candidateRequiredOutputSha256": "8f9f3fa8737ec07bc5f10f0c85e081e4772ec3f13286ac9d83f78b4197348644",
+          "exactRequiredOutputs": true,
+          "selected": false,
+          "selectionSource": "NONE",
+          "reason": "ECONOMIC_PREQUALIFICATION_REJECTED",
+          "executionMode": "OPTIMIZED_NATIVE",
+          "nativeRetained": true,
+          "wrapperMatchesQualification": true,
+          "selectionDurationNs": 1526920510,
+          "preSyncDurationMs": 667,
+          "postSyncDurationMs": 562,
+          "materializationDurationMs": 0
+        },
+        {
+          "sequence": 2,
+          "revision": "2d3f00040b7b1cf33ca3940356a67807f4f4cc36",
+          "parentRevision": "7fd551e29949003b5fd60b7e09875483ae3447c9",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CANDIDATE_FIRST",
+          "controlDurationMs": 325511,
+          "candidateDurationMs": 313256,
+          "savedMs": 12255,
+          "controlFromCache": 16,
+          "candidateFromCache": 16,
+          "requiredOutputCount": 269,
+          "quarantinedOutputCount": 0,
+          "quarantinedPathSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlRequiredOutputSha256": "8f9f3fa8737ec07bc5f10f0c85e081e4772ec3f13286ac9d83f78b4197348644",
+          "candidateRequiredOutputSha256": "8f9f3fa8737ec07bc5f10f0c85e081e4772ec3f13286ac9d83f78b4197348644",
+          "exactRequiredOutputs": true,
+          "selected": false,
+          "selectionSource": "NONE",
+          "reason": "ECONOMIC_PREQUALIFICATION_REJECTED",
+          "executionMode": "OPTIMIZED_NATIVE",
+          "nativeRetained": true,
+          "wrapperMatchesQualification": true,
+          "selectionDurationNs": 1443962890,
+          "preSyncDurationMs": 587,
+          "postSyncDurationMs": 576,
+          "materializationDurationMs": 0
+        },
+        {
+          "sequence": 3,
+          "revision": "fecf3fa2160dba7cd6b147294f8bc7f7b7adfe7c",
+          "parentRevision": "2d3f00040b7b1cf33ca3940356a67807f4f4cc36",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 321527,
+          "candidateDurationMs": 383914,
+          "savedMs": -62387,
+          "controlFromCache": 16,
+          "candidateFromCache": 16,
+          "requiredOutputCount": 269,
+          "quarantinedOutputCount": 0,
+          "quarantinedPathSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlRequiredOutputSha256": "8f9f3fa8737ec07bc5f10f0c85e081e4772ec3f13286ac9d83f78b4197348644",
+          "candidateRequiredOutputSha256": "8f9f3fa8737ec07bc5f10f0c85e081e4772ec3f13286ac9d83f78b4197348644",
+          "exactRequiredOutputs": true,
+          "selected": false,
+          "selectionSource": "NONE",
+          "reason": "AGGREGATE_DIRECT_OUTPUTS_MISSING",
+          "executionMode": "OPTIMIZED_NATIVE",
+          "nativeRetained": true,
+          "wrapperMatchesQualification": true,
+          "selectionDurationNs": 2125,
+          "preSyncDurationMs": 0,
+          "postSyncDurationMs": 0,
+          "materializationDurationMs": 0
+        }
+      ],
+      "economics": {
+        "observedBuilds": 3,
+        "selectedReplays": 0,
+        "nativeRetainedBuilds": 3,
+        "selectedReplaySavedMs": 0,
+        "fallbackDeltaMs": -154704,
+        "cumulativeGrossSavedMs": -154704,
+        "qualificationAndPublicationCostMs": 14047,
+        "cumulativeNetSavedMs": -168751,
+        "firstObservedBreakEvenBuild": null,
+        "conclusion": "NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW"
+      },
+      "acceptance": {
+        "decision": "COMPLETE",
+        "exactRequiredOutputs": true,
+        "portabilityGatePassed": true,
+        "publicAncestry": true,
+        "productFailures": 0
+      },
+      "boundaries": {
+        "designPartnerRequired": false,
+        "mechanismPercentagesAdded": false,
+        "productionAuthorized": false,
+        "proofOfConcept": true,
+        "repositoriesAveraged": false,
+        "soakRequired": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    },
+    {
+      "schemaVersion": "buildopt.evidence/poc-qualified-lifetime-subject/v2",
+      "key": "ktor-jvm-jar-compatible-window",
+      "buildopt": {
+        "revision": "e9cc2ebde952096c73b354109828085fc981a6b8",
+        "executableSha256": "2e8f398b97d689ed5a3147cca0f28881055a09e7470c1b06f1d77e8eba03367c"
+      },
+      "repository": {
+        "id": "ktorio/ktor",
+        "remote": "https://github.com/ktorio/ktor.git",
+        "publicRepository": true,
+        "historyBranch": "main"
+      },
+      "qualification": {
+        "parentRevision": "759ff57549709012173a6e7eb1b0e5641f69cc24",
+        "targetRevision": "24b8773fcee753314dfb753b3f994a7ef36823ef",
+        "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+        "changeFamily": "LEAF_SOURCE",
+        "processEnvelope": "FRESH_GRADLE_PROCESS_PER_BUILD",
+        "expectedChangedProjects": [
+          ":ktor-client-jetty-jakarta"
+        ],
+        "graph": {
+          "omittedProjects": 116,
+          "selectedProjects": 12,
+          "totalProjects": 128
+        },
+        "calibration": {
+          "calibrationCostMs": 13561,
+          "controlMeanMs": 80684.875,
+          "candidateMeanMs": 35236.5,
+          "controlP95Ms": 111043,
+          "candidateP95Ms": 36596,
+          "meanSavedMs": 45448.375,
+          "reductionRatio": 0.5632824615518088,
+          "interval95SavedMs": [
+            40350.25,
+            55035.375
+          ],
+          "positivePairs": 8,
+          "pairsMeasured": 8,
+          "breakEvenBuilds": 1,
+          "qualified": true,
+          "fallbackSuccessful": true,
+          "qualificationPolicy": "ROBUST_6_OF_8_ALTERNATING_PAIRS_INTERVAL_P95_V1"
+        },
+        "captureFile": "qualification-capture.json",
+        "captureSha256": "c80ebda086073a91d479fe1f1d35ebeec71262f23251816f901b01eeb46ac84c",
+        "calibrationEvidenceFile": "calibration-evidence.json",
+        "calibrationEvidenceSha256": "994afdd50b2587c30a016ad3a4b412a3f12b24af861a9c2ffeb1de1a0614f0a1",
+        "portability": {
+          "status": "PORTABLE",
+          "producerOutputSha256": "74dba4c1fb358dd3f87c287c0233032ca43902ba82c1e4d40a3050eb3ec1aefb",
+          "independentOutputSha256": "74dba4c1fb358dd3f87c287c0233032ca43902ba82c1e4d40a3050eb3ec1aefb",
+          "outputCount": 116,
+          "nativeCacheHits": 0,
+          "differingFileCount": 0,
+          "differencesSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "samplePaths": []
+        },
+        "materialization": {
+          "transport": "CENTRAL_CAS_CHUNKS",
+          "packBytes": 9751348,
+          "chunkCount": 2,
+          "publicationDurationMs": 2022
+        }
+      },
+      "observations": [
+        {
+          "sequence": 1,
+          "revision": "eb60b722d1ef1fbfeba8708a7d594fd4083a2aec",
+          "parentRevision": "24b8773fcee753314dfb753b3f994a7ef36823ef",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 216096,
+          "candidateDurationMs": 100066,
+          "savedMs": 116030,
+          "controlFromCache": 6,
+          "candidateFromCache": 12,
+          "requiredOutputCount": 117,
+          "quarantinedOutputCount": 0,
+          "quarantinedPathSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlRequiredOutputSha256": "ca47ae0721964c303c4819bb8898ad4bf8db280c9343408ac28677e2abe1917d",
+          "candidateRequiredOutputSha256": "ca47ae0721964c303c4819bb8898ad4bf8db280c9343408ac28677e2abe1917d",
+          "exactRequiredOutputs": true,
+          "selected": true,
+          "selectionSource": "CENTRAL_PORTFOLIO",
+          "reason": "REMOTE_QUALIFIED_PROFILE_SELECTED",
+          "executionMode": "SELECTIVE_PROFILE",
+          "nativeRetained": false,
+          "wrapperMatchesQualification": true,
+          "selectionDurationNs": 1554904955,
+          "preSyncDurationMs": 678,
+          "postSyncDurationMs": 667,
+          "materializationDurationMs": 171
+        },
+        {
+          "sequence": 2,
+          "revision": "c237e88696debef1ba860a947cfaad3a0b7cb49b",
+          "parentRevision": "b148c65fc2276dc58f501f8fb75c2680b7f07412",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CANDIDATE_FIRST",
+          "controlDurationMs": 190144,
+          "candidateDurationMs": 283565,
+          "savedMs": -93421,
+          "controlFromCache": 12,
+          "candidateFromCache": 12,
+          "requiredOutputCount": 117,
+          "quarantinedOutputCount": 0,
+          "quarantinedPathSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlRequiredOutputSha256": "54a2b313b087a88217443f6614c80ef88b4d4b44ebad7202554ec191c0febf39",
+          "candidateRequiredOutputSha256": "54a2b313b087a88217443f6614c80ef88b4d4b44ebad7202554ec191c0febf39",
+          "exactRequiredOutputs": true,
+          "selected": false,
+          "selectionSource": "NONE",
+          "reason": "ECONOMIC_PREQUALIFICATION_REJECTED",
+          "executionMode": "OPTIMIZED_NATIVE",
+          "nativeRetained": true,
+          "wrapperMatchesQualification": true,
+          "selectionDurationNs": 1456717332,
+          "preSyncDurationMs": 690,
+          "postSyncDurationMs": 1314,
+          "materializationDurationMs": 0
+        },
+        {
+          "sequence": 3,
+          "revision": "835d7f9ff09caf794e9f058d97ad3690d52f960a",
+          "parentRevision": "c237e88696debef1ba860a947cfaad3a0b7cb49b",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 192992,
+          "candidateDurationMs": 252255,
+          "savedMs": -59263,
+          "controlFromCache": 12,
+          "candidateFromCache": 12,
+          "requiredOutputCount": 117,
+          "quarantinedOutputCount": 0,
+          "quarantinedPathSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlRequiredOutputSha256": "54a2b313b087a88217443f6614c80ef88b4d4b44ebad7202554ec191c0febf39",
+          "candidateRequiredOutputSha256": "54a2b313b087a88217443f6614c80ef88b4d4b44ebad7202554ec191c0febf39",
+          "exactRequiredOutputs": true,
+          "selected": false,
+          "selectionSource": "NONE",
+          "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+          "executionMode": "OPTIMIZED_NATIVE",
+          "nativeRetained": true,
+          "wrapperMatchesQualification": true,
+          "selectionDurationNs": 1703,
+          "preSyncDurationMs": 0,
+          "postSyncDurationMs": 0,
+          "materializationDurationMs": 0
+        }
+      ],
+      "economics": {
+        "observedBuilds": 3,
+        "selectedReplays": 1,
+        "nativeRetainedBuilds": 2,
+        "selectedReplaySavedMs": 116030,
+        "fallbackDeltaMs": -152684,
+        "cumulativeGrossSavedMs": -36654,
+        "qualificationAndPublicationCostMs": 15583,
+        "cumulativeNetSavedMs": -52237,
+        "firstObservedBreakEvenBuild": 1,
+        "conclusion": "NOT_PAID_BACK_IN_OBSERVED_WINDOW"
+      },
+      "acceptance": {
+        "decision": "COMPLETE",
+        "exactRequiredOutputs": true,
+        "portabilityGatePassed": true,
+        "publicAncestry": true,
+        "productFailures": 0
+      },
+      "boundaries": {
+        "designPartnerRequired": false,
+        "mechanismPercentagesAdded": false,
+        "productionAuthorized": false,
+        "proofOfConcept": true,
+        "repositoriesAveraged": false,
+        "soakRequired": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    },
+    {
+      "schemaVersion": "buildopt.evidence/poc-qualified-lifetime-subject/v2",
+      "key": "apache-groovy-json-compatible-window",
+      "buildopt": {
+        "revision": "143c98ab91986880cc348e6ff35e8ad0661f7b9e",
+        "executableSha256": "2e8f398b97d689ed5a3147cca0f28881055a09e7470c1b06f1d77e8eba03367c"
+      },
+      "repository": {
+        "id": "apache/groovy",
+        "remote": "https://github.com/apache/groovy.git",
+        "publicRepository": true,
+        "historyBranch": "GROOVY_5_0_X"
+      },
+      "qualification": {
+        "parentRevision": "a509a232d6b11f5c60a2667607ce0886911353c4",
+        "targetRevision": "14fa934340c46bc1ee96cba7ae594258bd8d0fd0",
+        "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+        "changeFamily": "DEPENDENCY_SOURCE",
+        "processEnvelope": "FRESH_GRADLE_PROCESS_PER_BUILD",
+        "expectedChangedProjects": [
+          ":groovy-json"
+        ],
+        "graph": {
+          "omittedProjects": 35,
+          "selectedProjects": 2,
+          "totalProjects": 37
+        },
+        "calibration": {
+          "calibrationCostMs": 6721,
+          "controlMeanMs": 34148.5,
+          "candidateMeanMs": 30543.625,
+          "controlP95Ms": 39978,
+          "candidateP95Ms": 32400,
+          "meanSavedMs": 3604.875,
+          "reductionRatio": 0.10556466609075069,
+          "interval95SavedMs": [
+            1369.125,
+            6078.5
+          ],
+          "positivePairs": 8,
+          "pairsMeasured": 8,
+          "breakEvenBuilds": 2,
+          "qualified": true,
+          "fallbackSuccessful": true,
+          "qualificationPolicy": "ROBUST_6_OF_8_ALTERNATING_PAIRS_INTERVAL_P95_V1"
+        },
+        "captureFile": "qualification-capture.json",
+        "captureSha256": "7d3af9257f4cdd57f8e4097c1185ea08c93af2e94026a65521212c4982bb7e3e",
+        "calibrationEvidenceFile": "calibration-evidence.json",
+        "calibrationEvidenceSha256": "db9a6d5ef53277f040df59d2c892072b3791fd60c61b0985f1901e01057a966a",
+        "portability": {
+          "status": "PORTABLE",
+          "producerOutputSha256": "cfac348a1ca46f4f5feba96f9c5484719c28fb8cf445f0ccac9080809d5ff25b",
+          "independentOutputSha256": "cfac348a1ca46f4f5feba96f9c5484719c28fb8cf445f0ccac9080809d5ff25b",
+          "outputCount": 3823,
+          "nativeCacheHits": 0,
+          "differingFileCount": 0,
+          "differencesSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "samplePaths": []
+        },
+        "materialization": {
+          "transport": "CENTRAL_CAS_CHUNKS",
+          "packBytes": 17764272,
+          "chunkCount": 3,
+          "publicationDurationMs": 2457
+        }
+      },
+      "observations": [
+        {
+          "sequence": 1,
+          "revision": "be211c1b142eedde02d0c16fb57f99ed23110de2",
+          "parentRevision": "14fa934340c46bc1ee96cba7ae594258bd8d0fd0",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 103589,
+          "candidateDurationMs": 109887,
+          "savedMs": -6298,
+          "controlFromCache": 18,
+          "candidateFromCache": 18,
+          "requiredOutputCount": 3890,
+          "quarantinedOutputCount": 0,
+          "quarantinedPathSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlRequiredOutputSha256": "8c7ffa6ed845f4bbd04397501475cb210b8af934d17d397e3911aa9956f5a241",
+          "candidateRequiredOutputSha256": "8c7ffa6ed845f4bbd04397501475cb210b8af934d17d397e3911aa9956f5a241",
+          "exactRequiredOutputs": true,
+          "selected": false,
+          "selectionSource": "NONE",
+          "reason": "ORDINARY_OBSERVATIONS_PENDING",
+          "executionMode": "OPTIMIZED_NATIVE",
+          "nativeRetained": true,
+          "wrapperMatchesQualification": true,
+          "selectionDurationNs": 1670,
+          "preSyncDurationMs": 0,
+          "postSyncDurationMs": 0,
+          "materializationDurationMs": 866
+        },
+        {
+          "sequence": 2,
+          "revision": "18ed80f564212fc67d6e8af6593dda2e94e6cbe5",
+          "parentRevision": "be211c1b142eedde02d0c16fb57f99ed23110de2",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CANDIDATE_FIRST",
+          "controlDurationMs": 93675,
+          "candidateDurationMs": 99196,
+          "savedMs": -5521,
+          "controlFromCache": 18,
+          "candidateFromCache": 18,
+          "requiredOutputCount": 3890,
+          "quarantinedOutputCount": 0,
+          "quarantinedPathSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlRequiredOutputSha256": "8c7ffa6ed845f4bbd04397501475cb210b8af934d17d397e3911aa9956f5a241",
+          "candidateRequiredOutputSha256": "8c7ffa6ed845f4bbd04397501475cb210b8af934d17d397e3911aa9956f5a241",
+          "exactRequiredOutputs": true,
+          "selected": false,
+          "selectionSource": "NONE",
+          "reason": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+          "executionMode": "OPTIMIZED_NATIVE",
+          "nativeRetained": true,
+          "wrapperMatchesQualification": true,
+          "selectionDurationNs": 1934,
+          "preSyncDurationMs": 0,
+          "postSyncDurationMs": 0,
+          "materializationDurationMs": 0
+        },
+        {
+          "sequence": 3,
+          "revision": "1ff25776219998ef05f520c0e1f10f4e56eaf961",
+          "parentRevision": "18ed80f564212fc67d6e8af6593dda2e94e6cbe5",
+          "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+          "order": "CONTROL_FIRST",
+          "controlDurationMs": 99523,
+          "candidateDurationMs": 116210,
+          "savedMs": -16687,
+          "controlFromCache": 0,
+          "candidateFromCache": 0,
+          "requiredOutputCount": 3890,
+          "quarantinedOutputCount": 0,
+          "quarantinedPathSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlRequiredOutputSha256": "8c7ffa6ed845f4bbd04397501475cb210b8af934d17d397e3911aa9956f5a241",
+          "candidateRequiredOutputSha256": "8c7ffa6ed845f4bbd04397501475cb210b8af934d17d397e3911aa9956f5a241",
+          "exactRequiredOutputs": true,
+          "selected": false,
+          "selectionSource": "NONE",
+          "reason": "SOURCE_OWNERSHIP_AMBIGUOUS",
+          "executionMode": "OPTIMIZED_NATIVE",
+          "nativeRetained": true,
+          "wrapperMatchesQualification": true,
+          "selectionDurationNs": 1545981534,
+          "preSyncDurationMs": 886,
+          "postSyncDurationMs": 888,
+          "materializationDurationMs": 0
+        }
+      ],
+      "economics": {
+        "observedBuilds": 3,
+        "selectedReplays": 0,
+        "nativeRetainedBuilds": 3,
+        "selectedReplaySavedMs": 0,
+        "fallbackDeltaMs": -28506,
+        "cumulativeGrossSavedMs": -28506,
+        "qualificationAndPublicationCostMs": 9178,
+        "cumulativeNetSavedMs": -37684,
+        "firstObservedBreakEvenBuild": null,
+        "conclusion": "NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW"
+      },
+      "acceptance": {
+        "decision": "COMPLETE",
+        "exactRequiredOutputs": true,
+        "portabilityGatePassed": true,
+        "publicAncestry": true,
+        "productFailures": 0
+      },
+      "boundaries": {
+        "designPartnerRequired": false,
+        "mechanismPercentagesAdded": false,
+        "productionAuthorized": false,
+        "proofOfConcept": true,
+        "repositoriesAveraged": false,
+        "soakRequired": false,
+        "testOptimization": "OUT_OF_SCOPE"
+      }
+    }
+  ],
+  "aggregation": {
+    "subjectCount": 3,
+    "qualifiedProfiles": 3,
+    "unqualifiedProfiles": 0,
+    "portableProfiles": 3,
+    "nonPortableProfiles": 0,
+    "observedBuilds": 9,
+    "selectedReplays": 1,
+    "nativeRetainedBuilds": 8,
+    "exactOutputObservations": 9,
+    "paidBackSubjects": 0,
+    "noCompatibleReplaySubjects": 2,
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false
+  },
+  "acceptance": {
+    "decision": "COMPLETE",
+    "allQualified": true,
+    "allQualifiedProfilesHavePortabilityDecision": true,
+    "allSubjectDecisionsComplete": true,
+    "allQualifiedProfilesPortable": true,
+    "allOutputsExact": true,
+    "allPublicFirstParent": true,
+    "productFailures": 0
+  },
+  "boundaries": {
+    "designPartnerRequired": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositorySpecificProductRules": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}
