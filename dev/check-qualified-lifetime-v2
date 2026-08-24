@@ -105,7 +105,17 @@ buildopt_common_jq='
        "postSyncDurationMs","preSyncDurationMs","quarantinedOutputCount",
        "quarantinedPathSha256","reason","requiredOutputCount","revision","savedMs",
        "selected","selectionDurationNs","selectionSource","sequence","sourceOrigin",
-       "wrapperMatchesQualification"]) and
+       "wrapperMatchesQualification"] or
+     keys == ["candidateDurationMs","candidateFromCache",
+       "candidateRequiredOutputSha256","controlDurationMs","controlFromCache",
+       "controlRequiredOutputSha256","decisionPhase","exactRequiredOutputs",
+       "executionMode","gradleDurationMs","materializationDurationMs",
+       "nativeRetained","order","outputObservationPrepared","parentRevision",
+       "postExecutionMs","postSyncDurationMs","preExecutionMs","preSyncDurationMs",
+       "quarantinedOutputCount","quarantinedPathSha256","reason",
+       "requiredOutputCount","revision","savedMs","selected",
+       "selectionDurationNs","selectionSource","sequence","sourceOrigin",
+       "wrapperMatchesQualification","wrapperOverheadMs"]) and
     .sequence == ($index + 1) and
     .revision == $expected.observations[$index] and (.revision | revision) and
     (.parentRevision | revision) and .sourceOrigin == "PUBLIC_UPSTREAM_COMMIT" and
@@ -126,6 +136,14 @@ buildopt_common_jq='
     (.preSyncDurationMs | nonnegative_integer) and
     (.postSyncDurationMs | nonnegative_integer) and
     (.materializationDurationMs | nonnegative_integer) and
+    (if has("wrapperOverheadMs") then
+       (.gradleDurationMs | positive_integer) and
+       (.preExecutionMs | nonnegative_integer) and
+       (.postExecutionMs | nonnegative_integer) and
+       .wrapperOverheadMs == (.preExecutionMs + .postExecutionMs) and
+       (.decisionPhase | type == "string" and length > 0) and
+       (.outputObservationPrepared | type == "boolean")
+     else true end) and
     (.wrapperMatchesQualification | type == "boolean") and
     (if .wrapperMatchesQualification then true else .nativeRetained end) and
     (if .selected then

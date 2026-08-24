@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/output/directory\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec=${buildopt_repo_root}/specs/poc-native-retention-fast-path-v1.json
+buildopt_source=${buildopt_output}/source-v2/raw/summary.json
+buildopt_baseline=${buildopt_repo_root}/$(jq -er '.baseline.evidence' "${buildopt_spec}")
+
+[[ -s ${buildopt_spec} && -s ${buildopt_source} && -s ${buildopt_baseline} ]] || {
+    printf 'native-retention fast-path inputs are unavailable\n' >&2
+    exit 1
+}
+
+jq -S --slurpfile spec "${buildopt_spec}" --slurpfile baseline "${buildopt_baseline}" \
+  --arg specSha "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" \
+  --arg sourceSha "$(sha256sum "${buildopt_source}" | awk '{print $1}')" '
+  def rows($document):
+    [$document.subjects[] as $subject |
+      $subject.observations[] | select(.nativeRetained) |
+      . + {subjectKey:$subject.key,repository:$subject.repository.id}];
+  ($spec[0]) as $contract |
+  rows(.) as $current |
+  rows($baseline[0]) as $old |
+  [$current[] as $row |
+    ($contract.expected[] | select(.revision == $row.revision)) as $expected |
+    ($old[] | select(.revision == $row.revision)) as $previous |
+    {subjectKey:$row.subjectKey,repository:$row.repository,
+     revision:$row.revision,order:$row.order,
+     expectedReason:$expected.reason,reason:$row.reason,
+     expectedDecisionPhase:$expected.decisionPhase,
+     decisionPhase:$row.decisionPhase,
+     completedBeforeGradle:($row.decisionPhase | startswith("PRE_GRADLE_")),
+     outputObservationPrepared:$row.outputObservationPrepared,
+     gradleDurationMs:$row.gradleDurationMs,
+     preExecutionMs:$row.preExecutionMs,postExecutionMs:$row.postExecutionMs,
+     wrapperOverheadMs:$row.wrapperOverheadMs,
+     controlDurationMs:$row.controlDurationMs,
+     candidateDurationMs:$row.candidateDurationMs,savedMs:$row.savedMs,
+     baselineReason:$previous.reason,baselineSavedMs:$previous.savedMs,
+     preSyncDurationMs:$row.preSyncDurationMs,
+     postSyncDurationMs:$row.postSyncDurationMs,
+     selectionDurationNs:$row.selectionDurationNs,
+     materializationDurationMs:$row.materializationDurationMs,
+     executionMode:$row.executionMode,
+     exactRequiredOutputs:$row.exactRequiredOutputs}] as $observations |
+  [$observations[] | select(.decisionPhase | startswith("PRE_GRADLE_"))] as $pre |
+  [$observations[] | select(.decisionPhase == "POST_GRADLE_DISCOVERY")] as $post |
+  {schemaVersion:"buildopt.evidence/poc-native-retention-fast-path/v1",
+   workItem:$contract.workItem,capturedAt:.capturedAt,
+   protocol:{spec:"specs/poc-native-retention-fast-path-v1.json",
+     specSha256:$specSha,
+     baseline:$contract.baseline,
+     sourceV2Summary:"source-v2/raw/summary.json",
+     sourceV2SummarySha256:$sourceSha,
+     wallTimeUse:"DESCRIPTIVE_SINGLE_PAIR_ONLY",
+     acceptanceBasis:"DIRECT_BUILDOPT_PRE_AND_POST_EXECUTION_TIME"},
+   buildopt:.buildopt,runner:.runner,observations:$observations,
+   result:{nativeRetainedObservations:($observations|length),
+     preGradleDecisions:($pre|length),
+     postGradleDiscoveryDecisions:($post|length),
+     preGradleWrapperOverheadMs:([$pre[].wrapperOverheadMs]|add),
+     maximumPreGradleWrapperOverheadMs:([$pre[].wrapperOverheadMs]|max),
+     baselineSinglePairSavedMs:([$observations[].baselineSavedMs]|add),
+     currentSinglePairSavedMs:([$observations[].savedMs]|add),
+     exactRequiredOutputs:all($observations[];.exactRequiredOutputs),
+     productFailures:0,
+     decision:(if
+       ($observations|length) == $contract.acceptance.nativeRetainedObservations and
+       ($pre|length) == $contract.acceptance.preGradleDecisions and
+       ($post|length) == $contract.acceptance.postGradleDiscoveryDecisions and
+       all($observations[];.reason == .expectedReason and
+         .decisionPhase == .expectedDecisionPhase and
+         .executionMode == "OPTIMIZED_NATIVE" and .exactRequiredOutputs) and
+       all($pre[];(.outputObservationPrepared|not) and
+         .wrapperOverheadMs <= $contract.acceptance.maximumPreGradleWrapperOverheadMsPerObservation) and
+       all($post[];.outputObservationPrepared) and
+       ([$pre[].wrapperOverheadMs]|add) <=
+         $contract.acceptance.maximumPreGradleWrapperOverheadMsTotal
+       then "FAST_PATH_ACCEPTED" else "FAST_PATH_REJECTED" end)},
+   boundaries:$contract.boundaries}
+' "${buildopt_source}"

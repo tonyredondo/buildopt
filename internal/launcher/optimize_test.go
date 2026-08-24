@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestOptimizeContractRunsNativeAndResumesOnlyExactBindings(t *testing.T) {
@@ -405,6 +406,44 @@ func newOptimizeTestRepository(t *testing.T) string {
 	}
 	writeGradleWrapperProperties(t, repository, "distributionUrl=gradle-9.6.1-bin.zip\n")
 	return repository
+}
+
+func TestStaticOptimizeRetentionRecognizesNestedBuildLogic(t *testing.T) {
+	tests := []struct {
+		path string
+		want string
+	}{
+		{"module/build.gradle.kts", "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"},
+		{"gradle/verification-metadata.xml", "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"},
+		{"module/src/main/java/Example.java", ""},
+	}
+	for _, test := range tests {
+		discovery := optimizeDiscoveryContext{Ready: true, changedPaths: []string{test.path}}
+		if got := staticOptimizeRetentionReason(discovery); got != test.want {
+			t.Fatalf("static retention for %s = %q, want %q", test.path, got, test.want)
+		}
+	}
+}
+
+func TestNativeRetentionResultAttributesWrapperTimeDirectly(t *testing.T) {
+	started := time.Unix(100, 0)
+	run := optimizeRun{
+		startedAt: started,
+		childExecution: childExecution{
+			started: true, startedAt: started.Add(1250 * time.Millisecond),
+			completedAt: started.Add(11250 * time.Millisecond),
+		},
+		retentionDecisionPhase: optimizeRetentionPreGradleCompatibility,
+	}
+	result := run.nativeRetentionResult(
+		"GLOBAL_CHANGE_REQUIRES_FULL_GRAPH", started.Add(12*time.Second),
+	)
+	if result.DecisionPhase != optimizeRetentionPreGradleCompatibility ||
+		!result.CompletedBeforeGradle || result.OutputObservationPrepared ||
+		result.PreExecutionMS != 1250 || result.GradleDurationMS != 10000 ||
+		result.PostExecutionMS != 750 || result.WrapperOverheadMS != 2000 {
+		t.Fatalf("native-retention attribution = %+v", result)
+	}
 }
 
 func readOptimizeResultForTest(t *testing.T, path string) optimizeResult {

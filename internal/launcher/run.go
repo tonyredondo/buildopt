@@ -117,12 +117,20 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			}
 			optimize.central = centralIntegration
 			optimizeContractOnly = true
-			automaticOptimizeImpact = optimize.prepareAutomaticReplay()
-			if automaticOptimizeImpact == nil && centralIntegration != nil {
-				automaticOptimizeImpact = centralIntegration.prepareAutomaticReplay(optimize)
-			}
-			if automaticOptimizeImpact == nil {
-				automaticOptimizeImpact = optimize.prepareIncrementalLearningArm()
+			if optimize.earlyRetentionReason != "" {
+				optimize.retentionDecisionPhase = optimizeRetentionPreGradleCompatibility
+			} else {
+				automaticOptimizeImpact = optimize.prepareAutomaticReplay()
+				if automaticOptimizeImpact == nil && centralIntegration != nil {
+					automaticOptimizeImpact = centralIntegration.prepareAutomaticReplay(optimize)
+				}
+				if optimize.prequalification.Decision == optimizePrequalificationReject {
+					optimize.earlyRetentionReason = "ECONOMIC_PREQUALIFICATION_REJECTED"
+					optimize.retentionDecisionPhase = optimizeRetentionPreGradleEconomic
+				}
+				if automaticOptimizeImpact == nil && optimize.earlyRetentionReason == "" {
+					automaticOptimizeImpact = optimize.prepareIncrementalLearningArm()
+				}
 			}
 			if automaticOptimizeImpact != nil {
 				if materializationErr := optimize.materializeCandidateOutputs(); materializationErr != nil {
@@ -143,7 +151,8 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 					}
 				}
 			}
-			if optimize.prequalification.Decision != optimizePrequalificationReject {
+			if optimize.earlyRetentionReason == "" &&
+				optimize.prequalification.Decision != optimizePrequalificationReject {
 				if observationErr := optimize.prepareOutputObservation(); observationErr != nil {
 					_, _ = fmt.Fprintf(stderr, "buildopt: ordinary output observation unavailable: %v\n", observationErr)
 				}

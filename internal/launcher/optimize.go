@@ -21,36 +21,41 @@ import (
 const (
 	optimizeUsage = "usage: buildopt optimize [--state-dir PATH] [--connection-dir PATH] [--resume auto|never] [--calibration-budget DURATION] [--calibration-pairs N] [--max-break-even-builds N] [--json] [--] <gradle args...>\n"
 
-	optimizeStateSchemaVersion  = "buildopt.poc/optimize-state/v1"
-	optimizeResultSchemaVersion = "buildopt.poc/optimize-result/v1"
-	optimizeDefaultStateDir     = ".buildopt/optimize/v1"
-	optimizeStateFile           = "state.json"
-	optimizeResultFile          = "result.json"
-	optimizeValueReportJSONFile = "value-report.json"
-	optimizeValueReportMDFile   = "value-report.md"
-	optimizeOutcomeLearning     = "LEARNING"
-	optimizeOutcomeNative       = "NATIVE_RETAINED"
-	optimizePhaseUnseen         = "UNSEEN"
-	optimizeReasonPending       = "AUTO_DISCOVERY_PENDING"
-	optimizeResumeAuto          = "AUTO"
-	optimizeResumeNever         = "NEVER"
-	optimizeResumeNone          = "NO_CHECKPOINT"
-	optimizeResumeExact         = "EXACT_BINDINGS"
-	optimizeResumeDrift         = "BINDING_DRIFT"
-	optimizeResumeInvalid       = "INVALID_CHECKPOINT"
-	optimizeResumeDisabled      = "RESUME_DISABLED"
-	optimizeBindingContractOnly = "CONTRACT_ONLY"
-	optimizeBindingDiscovery    = "DISCOVERY_COMPLETE"
-	optimizeBindingReplay       = "AUTOMATIC_REPLAY_COMPLETE"
-	optimizeDefaultBudget       = 30 * time.Minute
-	optimizeDefaultPairs        = 8
-	optimizeDefaultBreakEven    = 30
-	optimizeMaximumStateBytes   = 1 << 20
+	optimizeStateSchemaVersion              = "buildopt.poc/optimize-state/v1"
+	optimizeResultSchemaVersion             = "buildopt.poc/optimize-result/v1"
+	optimizeDefaultStateDir                 = ".buildopt/optimize/v1"
+	optimizeStateFile                       = "state.json"
+	optimizeResultFile                      = "result.json"
+	optimizeValueReportJSONFile             = "value-report.json"
+	optimizeValueReportMDFile               = "value-report.md"
+	optimizeOutcomeLearning                 = "LEARNING"
+	optimizeOutcomeNative                   = "NATIVE_RETAINED"
+	optimizePhaseUnseen                     = "UNSEEN"
+	optimizeReasonPending                   = "AUTO_DISCOVERY_PENDING"
+	optimizeResumeAuto                      = "AUTO"
+	optimizeResumeNever                     = "NEVER"
+	optimizeResumeNone                      = "NO_CHECKPOINT"
+	optimizeResumeExact                     = "EXACT_BINDINGS"
+	optimizeResumeDrift                     = "BINDING_DRIFT"
+	optimizeResumeInvalid                   = "INVALID_CHECKPOINT"
+	optimizeResumeDisabled                  = "RESUME_DISABLED"
+	optimizeRetentionPreGradleCompatibility = "PRE_GRADLE_COMPATIBILITY"
+	optimizeRetentionPreGradleEconomic      = "PRE_GRADLE_ECONOMIC"
+	optimizeRetentionPostGradleDiscovery    = "POST_GRADLE_DISCOVERY"
+	optimizeRetentionProfileSelected        = "PROFILE_SELECTED"
+	optimizeBindingContractOnly             = "CONTRACT_ONLY"
+	optimizeBindingDiscovery                = "DISCOVERY_COMPLETE"
+	optimizeBindingReplay                   = "AUTOMATIC_REPLAY_COMPLETE"
+	optimizeDefaultBudget                   = 30 * time.Minute
+	optimizeDefaultPairs                    = 8
+	optimizeDefaultBreakEven                = 30
+	optimizeMaximumStateBytes               = 1 << 20
 )
 
 var errOptimizeUsage = errors.New("invalid optimize usage")
 
 type optimizeInvocation struct {
+	startedAt           time.Time
 	repositoryRoot      string
 	stateDirectory      string
 	stateRelative       string
@@ -130,6 +135,21 @@ type optimizeExecutionResult struct {
 	ExitCode      int    `json:"exitCode"`
 }
 
+// optimizeNativeRetentionResult attributes BuildOpt-owned wrapper work
+// directly instead of inferring it from one noisy native/candidate pair.
+// Output observation is explicit because it intentionally changes the Gradle
+// invocation and is only justified when the configured model is still needed.
+type optimizeNativeRetentionResult struct {
+	DecisionPhase             string `json:"decisionPhase"`
+	Reason                    string `json:"reason"`
+	CompletedBeforeGradle     bool   `json:"completedBeforeGradle"`
+	OutputObservationPrepared bool   `json:"outputObservationPrepared"`
+	GradleDurationMS          int64  `json:"gradleDurationMs"`
+	PreExecutionMS            int64  `json:"preExecutionMs"`
+	PostExecutionMS           int64  `json:"postExecutionMs"`
+	WrapperOverheadMS         int64  `json:"wrapperOverheadMs"`
+}
+
 type optimizeGeneratedFiles struct {
 	State         string   `json:"state"`
 	Result        string   `json:"result"`
@@ -155,6 +175,7 @@ type optimizeResult struct {
 	Resume               optimizeResume                   `json:"resume"`
 	Native               optimizeNativeResult             `json:"native"`
 	Execution            optimizeExecutionResult          `json:"execution"`
+	NativeRetention      optimizeNativeRetentionResult    `json:"nativeRetention"`
 	Discovery            optimizeDiscoveryResult          `json:"discovery"`
 	IncrementalLearning  optimizeIncrementalLearning      `json:"incrementalLearning"`
 	Calibration          optimizeCalibrationResult        `json:"calibration"`
@@ -202,9 +223,12 @@ type optimizeRun struct {
 	materializationTime    time.Duration
 	outputVerificationTime time.Duration
 	discoveryTime          time.Duration
+	earlyRetentionReason   string
+	retentionDecisionPhase string
 }
 
 func prepareOptimizeInvocation(args []string, stateEnabled bool) (optimizeInvocation, error) {
+	startedAt := time.Now()
 	flags := flag.NewFlagSet("buildopt optimize", flag.ContinueOnError)
 	flags.SetOutput(io.Discard)
 	stateDirectory := flags.String("state-dir", optimizeDefaultStateDir, "generated repository-local optimize state")
@@ -234,6 +258,7 @@ func prepareOptimizeInvocation(args []string, stateEnabled bool) (optimizeInvoca
 		return optimizeInvocation{}, fmt.Errorf("%w: --state-dir must be a clean repository-relative path under .buildopt", errOptimizeUsage)
 	}
 	invocation := optimizeInvocation{
+		startedAt:  startedAt,
 		gradleArgs: append([]string(nil), flags.Args()...), resumeMode: resumeMode,
 		calibrationBudget: *budget, calibrationPairs: *pairs,
 		maxBreakEvenBuilds: *maxBreakEven, jsonOutput: *jsonOutput,
@@ -427,7 +452,10 @@ func beginOptimizeRun(invocation optimizeInvocation) (*optimizeRun, error) {
 	); err != nil {
 		return nil, err
 	}
-	startedAt := time.Now().UTC()
+	startedAt := invocation.startedAt.UTC()
+	if startedAt.IsZero() {
+		startedAt = time.Now().UTC()
+	}
 	statePath := filepath.Join(invocation.stateDirectory, optimizeStateFile)
 	resultPath := filepath.Join(invocation.stateDirectory, optimizeResultFile)
 	valueJSONPath := filepath.Join(invocation.stateDirectory, optimizeValueReportJSONFile)
@@ -448,8 +476,22 @@ func beginOptimizeRun(invocation optimizeInvocation) (*optimizeRun, error) {
 		invocation: invocation, state: state, statePath: statePath,
 		resultPath: resultPath, valueJSONPath: valueJSONPath, valueMDPath: valueMDPath,
 		startedAt: startedAt, previousState: previous,
-		prequalification: unevaluatedOptimizePrequalification(optimizePrequalificationReasonNoGraph),
+		prequalification:     unevaluatedOptimizePrequalification(optimizePrequalificationReasonNoGraph),
+		earlyRetentionReason: staticOptimizeRetentionReason(invocation.discovery),
 	}, nil
+}
+
+func staticOptimizeRetentionReason(discovery optimizeDiscoveryContext) string {
+	if !discovery.Ready {
+		return ""
+	}
+	for _, changed := range discovery.changedPaths {
+		if matchesAnyProposalGlob(optimizeGlobalChangePaths, changed) ||
+			centralOptimizeBuildLogicPath(changed) {
+			return "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH"
+		}
+	}
+	return ""
 }
 
 func inspectOptimizeCheckpoint(path string, invocation optimizeInvocation) (optimizeResume, int, int, *optimizeState) {
@@ -679,7 +721,10 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 	if run.state.Resume.Accepted && run.previousState != nil {
 		learning = cloneOptimizeIncrementalLearning(run.previousState.IncrementalLearning)
 	}
-	if run.centralReplay != nil {
+	if run.earlyRetentionReason != "" {
+		discovery = retainedOptimizeDiscovery(run.invocation, run.earlyRetentionReason)
+		calibration = emptyOptimizeCalibration(run.invocation, discovery.Reason)
+	} else if run.centralReplay != nil {
 		discovery = run.centralReplay.discovery
 		calibration = run.centralReplay.calibration
 		resumed = true
@@ -825,6 +870,7 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		run.central.publish(run, stderr)
 		result.Central = run.central.result
 	}
+	result.NativeRetention = run.nativeRetentionResult(result.Reason, time.Now())
 	// Publish the invocation result only after its customer-readable evidence is
 	// complete, so a newly visible result never points at a partial report set.
 	if err := writeCanonicalPrivateJSON(run.resultPath, result); err != nil {
@@ -849,6 +895,40 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		optimizeNextStep(discovery, learning, calibration, portfolio, selection),
 	)
 	return err
+}
+
+func (run *optimizeRun) nativeRetentionResult(reason string, completedAt time.Time) optimizeNativeRetentionResult {
+	phase := run.retentionDecisionPhase
+	if run.selection.Selected {
+		phase = optimizeRetentionProfileSelected
+	} else if phase == "" {
+		phase = optimizeRetentionPostGradleDiscovery
+	}
+	pre, post, gradle := int64(0), int64(0), int64(0)
+	if !run.childExecution.startedAt.IsZero() {
+		pre = run.childExecution.startedAt.Sub(run.startedAt).Milliseconds()
+	}
+	if !run.childExecution.completedAt.IsZero() {
+		gradle = run.childExecution.completedAt.Sub(run.childExecution.startedAt).Milliseconds()
+		post = completedAt.Sub(run.childExecution.completedAt).Milliseconds()
+	}
+	if pre < 0 {
+		pre = 0
+	}
+	if post < 0 {
+		post = 0
+	}
+	if gradle < 0 {
+		gradle = 0
+	}
+	return optimizeNativeRetentionResult{
+		DecisionPhase: phase, Reason: reason,
+		CompletedBeforeGradle: phase == optimizeRetentionPreGradleCompatibility ||
+			phase == optimizeRetentionPreGradleEconomic || phase == optimizeRetentionProfileSelected,
+		OutputObservationPrepared: run.outputObservation != nil,
+		GradleDurationMS:          gradle, PreExecutionMS: pre, PostExecutionMS: post,
+		WrapperOverheadMS: pre + post,
+	}
 }
 
 func optimizeNextStep(discovery optimizeDiscoveryResult, learning optimizeIncrementalLearning, calibration optimizeCalibrationResult, portfolio optimizePortfolioResult, selection optimizeSelectionResult) string {

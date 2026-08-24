@@ -18,7 +18,7 @@ elif (($# >= 1)); then
     buildopt_mode=${2:-}
 fi
 
-for buildopt_command in jq sha256sum; do
+for buildopt_command in cmp jq mktemp sha256sum; do
     command -v "${buildopt_command}" >/dev/null || {
         printf 'native-retention fast-path validation requires %s\n' "${buildopt_command}" >&2
         exit 1
@@ -61,5 +61,51 @@ fi
     exit 1
 }
 
-printf 'native-retention fast-path evidence validation is not yet implemented\n' >&2
-exit 1
+buildopt_source=${buildopt_evidence}/source-v2/raw/summary.json
+[[ -s ${buildopt_source} ]] || {
+    printf 'native-retention source V2 evidence is unavailable\n' >&2
+    exit 1
+}
+BUILDOPT_QUALIFIED_LIFETIME_SPEC="${buildopt_repo_root}/specs/poc-cross-commit-breadth-v2.subjects.json" \
+    "${buildopt_script_dir}/check-qualified-lifetime-v2" "${buildopt_source}"
+
+buildopt_tmp=$(mktemp -d /tmp/buildopt-native-retention-check.XXXXXX)
+trap 'rm -rf -- "${buildopt_tmp}"' EXIT
+"${buildopt_script_dir}/assemble-native-retention-fast-path" \
+    "${buildopt_evidence}" >"${buildopt_tmp}/summary.json"
+cmp -s "${buildopt_evidence}/summary.json" "${buildopt_tmp}/summary.json" || {
+    printf 'native-retention fast-path summary does not recompute\n' >&2
+    exit 1
+}
+
+jq -e --slurpfile spec "${buildopt_spec}" \
+  --arg specSha "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" \
+  --arg sourceSha "$(sha256sum "${buildopt_source}" | awk '{print $1}')" '
+  ($spec[0]) as $contract |
+  .schemaVersion == "buildopt.evidence/poc-native-retention-fast-path/v1" and
+  .workItem == $contract.workItem and
+  .protocol.specSha256 == $specSha and
+  .protocol.sourceV2SummarySha256 == $sourceSha and
+  .result.nativeRetainedObservations == $contract.acceptance.nativeRetainedObservations and
+  .result.preGradleDecisions == $contract.acceptance.preGradleDecisions and
+  .result.postGradleDiscoveryDecisions == $contract.acceptance.postGradleDiscoveryDecisions and
+  .result.exactRequiredOutputs and .result.productFailures == 0 and
+  .result.decision == "FAST_PATH_ACCEPTED" and
+  all(.observations[];
+    .reason == .expectedReason and .decisionPhase == .expectedDecisionPhase and
+    .wrapperOverheadMs == (.preExecutionMs + .postExecutionMs) and
+    .gradleDurationMs > 0 and .executionMode == "OPTIMIZED_NATIVE" and
+    .exactRequiredOutputs) and
+  all(.observations[] | select(.completedBeforeGradle);
+    (.outputObservationPrepared | not) and
+    .wrapperOverheadMs <= $contract.acceptance.maximumPreGradleWrapperOverheadMsPerObservation) and
+  all(.observations[] | select(.completedBeforeGradle | not);
+    .outputObservationPrepared) and
+  .result.preGradleWrapperOverheadMs <=
+    $contract.acceptance.maximumPreGradleWrapperOverheadMsTotal and
+  .boundaries == $contract.boundaries
+' "${buildopt_evidence}/summary.json" >/dev/null
+
+printf 'Native-retention fast path OK: %s/8 pre-Gradle, %sms direct wrapper overhead\n' \
+    "$(jq -r '.result.preGradleDecisions' "${buildopt_evidence}/summary.json")" \
+    "$(jq -r '.result.preGradleWrapperOverheadMs' "${buildopt_evidence}/summary.json")"

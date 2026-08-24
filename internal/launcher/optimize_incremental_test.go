@@ -114,6 +114,27 @@ func TestSelectedOptimizeReplayDoesNotAttachFullGraphObservation(t *testing.T) {
 	}
 }
 
+func TestEarlyNativeRetentionDoesNotAttachFullGraphObservation(t *testing.T) {
+	stateDirectory := filepath.Join(t.TempDir(), "state")
+	run := optimizeRun{
+		invocation: optimizeInvocation{
+			stateDirectory: stateDirectory,
+			discovery:      optimizeDiscoveryContext{Ready: true},
+		},
+		earlyRetentionReason: "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+	}
+
+	if err := run.prepareOutputObservation(); err != nil {
+		t.Fatal(err)
+	}
+	if run.outputObservation != nil {
+		t.Fatal("early native retention attached ordinary full-graph observation")
+	}
+	if _, err := os.Stat(stateDirectory); !os.IsNotExist(err) {
+		t.Fatalf("early native retention created observation state: %v", err)
+	}
+}
+
 func TestOptimizeIncrementalCheckpointRejectsTampering(t *testing.T) {
 	repository := t.TempDir()
 	invocation := optimizeInvocation{

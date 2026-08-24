@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# < 1 || $# > 2)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/output/directory [--summary-only]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_mode=${2:-}
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+
+if [[ ${buildopt_mode} != --summary-only ]]; then
+    [[ -z ${buildopt_mode} ]] || exit 64
+    "${buildopt_script_dir}/run-cross-commit-breadth-v2" \
+        "${buildopt_output}/source-v2"
+fi
+
+"${buildopt_script_dir}/assemble-native-retention-fast-path" \
+    "${buildopt_output}" >"${buildopt_output}/summary.json"
+"${buildopt_script_dir}/check-native-retention-fast-path" "${buildopt_output}"
+printf 'Native-retention fast-path evidence written to %s\n' "${buildopt_output}"

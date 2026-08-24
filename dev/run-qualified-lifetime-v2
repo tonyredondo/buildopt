@@ -882,6 +882,8 @@ buildopt_subject() {
         local buildopt_candidate_result=${buildopt_logs}/${buildopt_sequence}-candidate.json
         local buildopt_selected buildopt_source buildopt_reason buildopt_execution_mode
         local buildopt_selection_ns buildopt_presync_ms buildopt_postsync_ms buildopt_materialize_ms
+        local buildopt_gradle_ms buildopt_pre_execution_ms buildopt_post_execution_ms
+        local buildopt_wrapper_overhead_ms buildopt_decision_phase buildopt_observation_prepared
         buildopt_selected=$(jq -r '.selection.selected' "${buildopt_candidate_result}")
         buildopt_source=$(jq -r '.central.selectionSource' "${buildopt_candidate_result}")
         buildopt_reason=$(jq -r \
@@ -892,6 +894,13 @@ buildopt_subject() {
         buildopt_presync_ms=$(jq -r '.central.preSyncDurationMs // 0' "${buildopt_candidate_result}")
         buildopt_postsync_ms=$(jq -r '.central.postSyncDurationMs // 0' "${buildopt_candidate_result}")
         buildopt_materialize_ms=$(jq -r '.discovery.materialization.economics.totalMs // 0' \
+            "${buildopt_candidate_result}")
+        buildopt_gradle_ms=$(jq -r '.nativeRetention.gradleDurationMs' "${buildopt_candidate_result}")
+        buildopt_pre_execution_ms=$(jq -r '.nativeRetention.preExecutionMs' "${buildopt_candidate_result}")
+        buildopt_post_execution_ms=$(jq -r '.nativeRetention.postExecutionMs' "${buildopt_candidate_result}")
+        buildopt_wrapper_overhead_ms=$(jq -r '.nativeRetention.wrapperOverheadMs' "${buildopt_candidate_result}")
+        buildopt_decision_phase=$(jq -r '.nativeRetention.decisionPhase' "${buildopt_candidate_result}")
+        buildopt_observation_prepared=$(jq -r '.nativeRetention.outputObservationPrepared' \
             "${buildopt_candidate_result}")
         if [[ ${buildopt_selected} == true ]]; then
             [[ (${buildopt_source} == CENTRAL_PORTFOLIO ||
@@ -938,7 +947,13 @@ buildopt_subject() {
             --argjson selectionNs "${buildopt_selection_ns}" \
             --argjson preSyncMs "${buildopt_presync_ms}" \
             --argjson postSyncMs "${buildopt_postsync_ms}" \
-            --argjson materializeMs "${buildopt_materialize_ms}" '
+            --argjson materializeMs "${buildopt_materialize_ms}" \
+            --argjson gradleMs "${buildopt_gradle_ms}" \
+            --argjson preExecutionMs "${buildopt_pre_execution_ms}" \
+            --argjson postExecutionMs "${buildopt_post_execution_ms}" \
+            --argjson wrapperOverheadMs "${buildopt_wrapper_overhead_ms}" \
+            --arg decisionPhase "${buildopt_decision_phase}" \
+            --argjson observationPrepared "${buildopt_observation_prepared}" '
           {sequence:$sequence,revision:$revision,parentRevision:$parent,
            sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",order:$order,
            controlDurationMs:$controlMs,candidateDurationMs:$candidateMs,
@@ -952,7 +967,11 @@ buildopt_subject() {
            executionMode:$executionMode,nativeRetained:($selected|not),
            wrapperMatchesQualification:$wrapperMatchesQualification,
            selectionDurationNs:$selectionNs,preSyncDurationMs:$preSyncMs,
-           postSyncDurationMs:$postSyncMs,materializationDurationMs:$materializeMs}
+           postSyncDurationMs:$postSyncMs,materializationDurationMs:$materializeMs,
+           gradleDurationMs:$gradleMs,preExecutionMs:$preExecutionMs,
+           postExecutionMs:$postExecutionMs,wrapperOverheadMs:$wrapperOverheadMs,
+           decisionPhase:$decisionPhase,
+           outputObservationPrepared:$observationPrepared}
         ' >>"${buildopt_observations}"
         printf 'qualified lifetime %s %d/%d %.12s: selected=%s control=%dms candidate=%dms delta=%dms\n' \
             "${buildopt_repository_id}" "${buildopt_sequence}" \
