@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "buildopt.specs/poc-source-ownership-compatibility/v1",
+  "workItem": "POC-SOURCE-OWNERSHIP-COMPATIBILITY-001",
+  "baseline": {
+    "buildoptRevision": "d2b68a9221d49bdb6d0e9c7f05718873a95c5d3f",
+    "nativeRetentionSummary": "benchmarks/results/poc-native-retention-fast-path-v1/summary.json",
+    "nativeRetentionSummarySha256": "75cb6aa0672200194d0bc3ee2514c5ddb6c777bd0f82f18c245f7fc5df7750ae",
+    "groovyLifetimeResult": "benchmarks/results/poc-native-retention-fast-path-v1/source-v2/raw/apache-groovy-json-compatible-window/result.json",
+    "groovyLifetimeResultSha256": "c29ddbbf6dd9636be082ece5769bd7dba7986bccb66dbcfd47cd2e66a675e799"
+  },
+  "subject": {
+    "repository": "apache/groovy",
+    "revision": "1ff25776219998ef05f520c0e1f10f4e56eaf961",
+    "parentRevision": "18ed80f564212fc67d6e8af6593dda2e94e6cbe5",
+    "entrypoints": ["classes"],
+    "changedPaths": ["versions.properties"],
+    "baselineReason": "SOURCE_OWNERSHIP_AMBIGUOUS",
+    "baselineDecisionPhase": "POST_GRADLE_DISCOVERY",
+    "baselineExecutionMode": "OPTIMIZED_NATIVE"
+  },
+  "diagnostic": {
+    "evidence": "benchmarks/results/poc-source-ownership-compatibility-v1/diagnostic.json",
+    "gradleVersion": "8.14.3",
+    "completeModel": true,
+    "projectCount": 37,
+    "taskCount": 166,
+    "reachedProjectCount": 33,
+    "changedPathCount": 1,
+    "consumingTaskCount": 0,
+    "qualificationOutputCount": 3823,
+    "currentRequiredOutputCount": 3890
+  },
+  "hypothesis": {
+    "consumedUnownedPath": "ATTRIBUTE_TO_COMPLETE_CONSUMING_TASK_PROJECTS",
+    "ambiguousSourcePath": "RETAIN_NATIVE_SOURCE_OWNERSHIP_AMBIGUOUS",
+    "allUnownedUnconsumedPaths": "RETAIN_NATIVE_CONFIGURATION_INPUT_OWNERSHIP_UNPROVEN",
+    "expectedSubjectReason": "CONFIGURATION_INPUT_OWNERSHIP_UNPROVEN",
+    "expectedSubjectDecisionPhase": "POST_GRADLE_DISCOVERY",
+    "expectedSubjectSelected": false,
+    "expectedSubjectExecutionMode": "OPTIMIZED_NATIVE"
+  },
+  "acceptance": {
+    "genericConsumerOwnershipFixtureRequired": true,
+    "unknownConsumerTaskFailsClosed": true,
+    "ambiguousSourceOwnershipFailsClosed": true,
+    "sevenExistingEarlyDecisionsUnchanged": true,
+    "subjectExecutesAuthoritativeNativeWorkflow": true,
+    "exactRequiredOutputs": true,
+    "productFailures": 0,
+    "selectionRequired": false,
+    "negativeResultRemainsEvidence": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRules": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

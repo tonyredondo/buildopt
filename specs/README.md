@@ -570,6 +570,13 @@ boundary of a cyclic Gradle component. Production closure remains unchanged;
 the owner-operated POC path may use only subset-validated owned roots and keeps
 the full graph for equal-specificity ambiguity.
 
+`poc-source-ownership-compatibility-v1.json` and
+`poc-source-ownership-compatibility-v1.md` freeze the remaining ownership
+question from the cross-commit breadth window. Complete task-consumer evidence
+may attribute an otherwise unowned path to the consumers' Gradle projects, but
+configuration-time inputs with no source or task owner remain native with an
+explicit unproven-ownership reason. Repository and filename rules are excluded.
+
 `poc-structural-profile-v1.json` and `poc-structural-profile-v1.md` define the
 repository-independent bridge from measured structural value to an installed
 Build-Impact-only profile. Eight positive optimized-native comparisons,

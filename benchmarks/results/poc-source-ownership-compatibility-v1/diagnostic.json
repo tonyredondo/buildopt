@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-source-ownership-compatibility-diagnostic/v1",
+  "capturedAt": "2026-08-24T20:06:00Z",
+  "buildoptRevision": "d2b68a9221d49bdb6d0e9c7f05718873a95c5d3f",
+  "repository": {
+    "id": "apache/groovy",
+    "revision": "1ff25776219998ef05f520c0e1f10f4e56eaf961",
+    "parentRevision": "18ed80f564212fc67d6e8af6593dda2e94e6cbe5",
+    "publicRepository": true
+  },
+  "execution": {
+    "gradleVersion": "8.14.3",
+    "jdk": "TEMURIN_21",
+    "entrypoints": ["classes"],
+    "changedPaths": ["versions.properties"],
+    "measurementIncluded": false
+  },
+  "model": {
+    "complete": true,
+    "fallbackReasons": [],
+    "projectCount": 37,
+    "taskCount": 166,
+    "reachedProjectCount": 33
+  },
+  "workflowInputRelevance": {
+    "schemaVersion": "buildopt.build-impact/workflow-input-relevance/v1",
+    "complete": true,
+    "fallbackReasons": [],
+    "paths": [
+      {
+        "path": "versions.properties",
+        "consumingTasks": []
+      }
+    ]
+  },
+  "configurationRead": {
+    "evidencePath": "build-logic/src/main/groovy/org/apache/groovy/gradle/Versions.groovy",
+    "mechanism": "PROVIDER_FILE_CONTENTS_DURING_CONFIGURATION",
+    "productRuleAdded": false
+  },
+  "outputContract": {
+    "qualificationOutputCount": 3823,
+    "currentRequiredOutputCount": 3890,
+    "identicalToQualification": false
+  },
+  "conclusion": "CONFIGURATION_INPUT_SCOPE_REQUIRES_FAIL_CLOSED_NATIVE_EXECUTION",
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificProductRules": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

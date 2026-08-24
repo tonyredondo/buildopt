@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)) || [[ ${1:-} != "" && ${1:-} != --spec-only ]]; then
+    printf 'usage: %s [--spec-only]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec=${buildopt_root}/specs/poc-source-ownership-compatibility-v1.json
+buildopt_diagnostic=${buildopt_root}/benchmarks/results/poc-source-ownership-compatibility-v1/diagnostic.json
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-source-ownership-compatibility/v1" and
+  .workItem == "POC-SOURCE-OWNERSHIP-COMPATIBILITY-001" and
+  .baseline.buildoptRevision == "d2b68a9221d49bdb6d0e9c7f05718873a95c5d3f" and
+  .subject.repository == "apache/groovy" and
+  .subject.revision == "1ff25776219998ef05f520c0e1f10f4e56eaf961" and
+  .subject.changedPaths == ["versions.properties"] and
+  .subject.baselineReason == "SOURCE_OWNERSHIP_AMBIGUOUS" and
+  .diagnostic.gradleVersion == "8.14.3" and
+  .diagnostic.completeModel and .diagnostic.projectCount == 37 and
+  .diagnostic.taskCount == 166 and .diagnostic.reachedProjectCount == 33 and
+  .diagnostic.changedPathCount == 1 and .diagnostic.consumingTaskCount == 0 and
+  .diagnostic.qualificationOutputCount == 3823 and
+  .diagnostic.currentRequiredOutputCount == 3890 and
+  .hypothesis.consumedUnownedPath == "ATTRIBUTE_TO_COMPLETE_CONSUMING_TASK_PROJECTS" and
+  .hypothesis.allUnownedUnconsumedPaths ==
+    "RETAIN_NATIVE_CONFIGURATION_INPUT_OWNERSHIP_UNPROVEN" and
+  .hypothesis.expectedSubjectReason == "CONFIGURATION_INPUT_OWNERSHIP_UNPROVEN" and
+  .hypothesis.expectedSubjectDecisionPhase == "POST_GRADLE_DISCOVERY" and
+  (.hypothesis.expectedSubjectSelected | not) and
+  .acceptance.genericConsumerOwnershipFixtureRequired and
+  .acceptance.unknownConsumerTaskFailsClosed and
+  .acceptance.ambiguousSourceOwnershipFailsClosed and
+  .acceptance.sevenExistingEarlyDecisionsUnchanged and
+  .acceptance.subjectExecutesAuthoritativeNativeWorkflow and
+  .acceptance.exactRequiredOutputs and .acceptance.productFailures == 0 and
+  .acceptance.negativeResultRemainsEvidence and
+  .boundaries == {proofOfConcept:true,productionAuthorized:false,
+    repositorySpecificProductRules:false,soakRequired:false,
+    designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_spec}" >/dev/null
+
+while IFS=$'\t' read -r buildopt_path buildopt_sha; do
+    [[ -s ${buildopt_root}/${buildopt_path} ]] || exit 1
+    [[ $(sha256sum "${buildopt_root}/${buildopt_path}" | awk '{print $1}') == "${buildopt_sha}" ]] || {
+        printf 'frozen baseline digest changed: %s\n' "${buildopt_path}" >&2
+        exit 1
+    }
+done < <(jq -r '
+  [.baseline.nativeRetentionSummary,.baseline.nativeRetentionSummarySha256],
+  [.baseline.groovyLifetimeResult,.baseline.groovyLifetimeResultSha256] |
+  @tsv
+' "${buildopt_spec}")
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/poc-source-ownership-compatibility-diagnostic/v1" and
+  .buildoptRevision == "d2b68a9221d49bdb6d0e9c7f05718873a95c5d3f" and
+  .repository.id == "apache/groovy" and
+  .repository.revision == "1ff25776219998ef05f520c0e1f10f4e56eaf961" and
+  .execution.gradleVersion == "8.14.3" and
+  .execution.entrypoints == ["classes"] and
+  .execution.changedPaths == ["versions.properties"] and
+  (.execution.measurementIncluded | not) and
+  .model == {complete:true,fallbackReasons:[],projectCount:37,taskCount:166,
+    reachedProjectCount:33} and
+  .workflowInputRelevance.complete and
+  .workflowInputRelevance.paths == [{path:"versions.properties",consumingTasks:[]}] and
+  .configurationRead.mechanism == "PROVIDER_FILE_CONTENTS_DURING_CONFIGURATION" and
+  (.configurationRead.productRuleAdded | not) and
+  .outputContract == {qualificationOutputCount:3823,currentRequiredOutputCount:3890,
+    identicalToQualification:false} and
+  .conclusion == "CONFIGURATION_INPUT_SCOPE_REQUIRES_FAIL_CLOSED_NATIVE_EXECUTION" and
+  .boundaries == {proofOfConcept:true,productionAuthorized:false,
+    repositorySpecificProductRules:false,soakRequired:false,
+    designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_diagnostic}" >/dev/null
+
+printf 'Source-ownership compatibility specification OK: unowned configuration input remains fail-closed\n'
