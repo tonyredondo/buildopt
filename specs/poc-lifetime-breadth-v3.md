@@ -29,6 +29,12 @@ fingerprint. Evidence ancestry and exact output revisions remain separate, so
 structural compatibility never makes stale bytes current. Every uncertain,
 global or incompatible descendant runs optimized native Gradle.
 
+V3 deliberately reuses the existing
+`.buildopt/optimize/materialization-economics-v2` local state layout. The new
+experiment changes the lifetime decision and accounting protocol, not the
+installed profile format; inventing a second state directory would hide the
+qualified portfolio from the same public executable.
+
 For each repository the result retains complete signed wall-time economics:
 discovery and capture, ordinary qualification, publication, selected replay
 saving and directly measured native-retention wrapper cost. Repository
