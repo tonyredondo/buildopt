@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`STRUCTURAL AND CROSS-COMMIT ACCELERATION PROVEN; GENERALITY BOUNDED\`"
-    "**Current phase:** \`POC FUNCTIONAL COVERAGE IN PROGRESS; STRUCTURAL PROFILE REBINDING ACTIVE\`"
+    "**Overall status:** \`CURRENT GENERIC STRUCTURAL-PROFILE HYPOTHESIS STOPPED; BOUNDED MECHANISM VALUE RETAINED\`"
+    "**Current phase:** \`ADAPTIVE FRAGMENT STATE COMPLETE; CHEAP COMPATIBILITY NEXT\`"
     "| 150 | \`POC-AGGREGATE-OUTPUT-CLOSURE-001\` | Derive every required aggregate output"
     "| \`E-398\` | 2026-08-25 | \`POC-AGGREGATE-OUTPUT-CLOSURE-001\`"
     "| 149 | \`POC-CONFIGURATION-INPUT-BINDING-001\` | Inspect typed Gradle configuration"
