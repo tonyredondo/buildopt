@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
 
 if (($# != 1)) || [[ $1 != /* ]]; then
     printf 'usage: %s /absolute/result.json\n' "$0" >&2
@@ -35,12 +35,18 @@ buildopt_source_archive_sha=$(
     git -C "${buildopt_repo_root}" archive "${buildopt_revision}" | sha256sum | awk '{print $1}'
 )
 buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-af014a.XXXXXX")
+buildopt_failed=false
 buildopt_cleanup() {
+    if [[ ${buildopt_failed} == true ]]; then
+        printf 'AF-014A failed; diagnostic state retained at %s\n' "${buildopt_temp}" >&2
+        return
+    fi
     if [[ ${buildopt_temp:-} == "${TMPDIR:-/tmp}/buildopt-af014a."* ]]; then
         rm -rf -- "${buildopt_temp}"
     fi
 }
 trap buildopt_cleanup EXIT
+trap 'buildopt_failed=true; printf "AF-014A command failed near line %s\n" "${LINENO}" >&2' ERR
 
 mkdir -p -- "${buildopt_temp}/release" "${buildopt_temp}/package" \
     "${buildopt_temp}/install" "${buildopt_temp}/learning"
@@ -252,6 +258,8 @@ for buildopt_sequence in $(seq 1 18); do
           .selection.selected == true and .execution.mode == "SELECTIVE_PROFILE"
         ' "${buildopt_candidate_json}" >/dev/null
     fi
+    printf 'AF-014A learning pair %d/18 complete (%s)\n' \
+        "${buildopt_sequence}" "${buildopt_order}"
 done
 
 printf '\n// AF-014A forward global change\n' >>"${buildopt_seed}/build.gradle"
