@@ -4741,6 +4741,19 @@ no Gradle build and grants no fragment activation:
 ./dev/check-adaptive-fragment-online
 ```
 
+## Adaptive fragment cross-repository prior
+
+`./dev/check-adaptive-fragment-prior` validates the `AF-007` feature weights,
+focused Go tests and vet, recomputes the opaque four-source/two-holdout ranking
+report and rejects transferred activation authority. It proves repository-name
+and input-order invariance, safe evidence-driven priority changes, an empty
+unmatched result and six fail-closed inputs. It executes no Gradle build,
+predicts no target saving and grants no local correctness, value or activation:
+
+```bash
+./dev/check-adaptive-fragment-prior
+```
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic

@@ -31,6 +31,7 @@ decision.
 | **Verified output materialization** | Restore byte-exact outputs from unaffected producers so the reduced graph remains correct. | Fail-closed correctness is strong: the current five-repository run verifies 27 exact-output builds with zero product failures. |
 | **Structural profile rebinding** | Reuse learned evidence only when Wrapper, workflow, producer lineage, output contract and change family remain compatible. | Safely rejects drift and selected one of six structurally eligible Kafka descendants in the current run. |
 | **Ordinary-build learning economics** | Learn only from builds the user requested and stop when the expected compatible lifetime cannot repay discovery. | Four repositories stopped after one requested build and avoided 64 additional learning builds. |
+| **Cross-repository hypothesis prior** | Use generic task implementation, plugin, Gradle and graph/output features to decide what to investigate first in a new repository. | Four opaque source scopes rank three hypothesis classes identically for two holdouts and after all repository identities are replaced. Priors never transfer correctness, value or activation. |
 | **Local/HTTP cache and central state** | Carry verified task outputs and profiles between builds or machines. | Supporting infrastructure; useful for transport and persistence, but not the primary acceleration claim. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource and state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
 
@@ -110,7 +111,7 @@ from ordinary builds; compose only fragments with current correctness and value
 authority; and retain native Gradle through a sub-second no-value path. The new
 tracker preserves the same five-repository baseline, exact-output and zero-
 failure requirements, and makes cumulative longitudinal value—not isolated
-target speedup—the terminal decision. AF-001..AF-006 now provide typed fragment
+target speedup—the terminal decision. AF-001..AF-007 now provide typed fragment
 identity/state, sub-millisecond lookup and a no-lookahead shadow result with
 100% fragment retention across the six eligible descendants, plus immutable
 signed economics. The retained Kafka composition recomputes to `+82.527 s`
@@ -120,10 +121,13 @@ second requested descendant. Existing evidence cannot attribute that gross
 saving to one fragment. AF-006 now provides immutable ordinary-build
 checkpoints: exact restart succeeds, insufficient evidence remains
 `OBSERVED`/`SHADOW`, and a synthetic value regression suspends only the affected
-fragment and its dependent. The next block will test cross-repository
-hypothesis priors; transferred evidence may rank exploration but cannot grant
-local correctness or activation. Production hardening, soak, design
-partners and Test Optimization remain outside this POC.
+fragment and its dependent. AF-007 adds a name-independent prior: replacing all
+source/holdout identities leaves the structural ranking unchanged, and source
+outcomes can reorder exploration while fresh target correctness and value stay
+mandatory. The vectors make no timing claim. AF-008 will now test a durable,
+reviewable task-contract patch that improves the repository's ordinary native
+Gradle path and remains useful without BuildOpt at execution time. Production
+hardening, soak, design partners and Test Optimization remain outside this POC.
 
 ## Evidence
 
@@ -140,3 +144,5 @@ partners and Test Optimization remain outside this POC.
 - [Machine-readable economic ledger](../../benchmarks/results/adaptive-fragment-economics-v1.json)
 - [Ordinary-build learner contract](../../specs/poc-adaptive-fragment-online-v1.md)
 - [Machine-readable learner proof](../../benchmarks/results/adaptive-fragment-online-v1.json)
+- [Cross-repository prior contract](../../specs/poc-adaptive-fragment-prior-v1.md)
+- [Machine-readable prior proof](../../benchmarks/results/adaptive-fragment-prior-v1.json)

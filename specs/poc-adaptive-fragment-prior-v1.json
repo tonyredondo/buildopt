@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "buildopt.specs/poc-adaptive-fragment-prior/v1",
+  "workItem": "AF-007",
+  "features": {
+    "repositoryIdentityAllowed": false,
+    "taskImplementationSha256Weight": 35,
+    "pluginVersionSha256Weight": 25,
+    "gradleMajorWeight": 10,
+    "taskClassWeight": 10,
+    "graphShapeWeight": 10,
+    "outputShapeWeight": 10,
+    "taskOrPluginExactMatchRequired": true
+  },
+  "sourceEvidence": {
+    "minimumIndependentRepositories": 2,
+    "exactOutputsRequired": true,
+    "localCorrectnessRequired": true,
+    "productAttributableFailureAllowed": false,
+    "positiveOutcomeRequiresLocalValueGate": true,
+    "oneObservationPerRepositoryHypothesis": true
+  },
+  "targetAuthority": {
+    "explorationPriorityMayChange": true,
+    "correctnessMayTransfer": false,
+    "valueMayTransfer": false,
+    "activationMayTransfer": false,
+    "freshLocalCorrectnessRequired": true,
+    "freshLocalValueRequired": true
+  },
+  "gate": {
+    "sourceRepositories": 4,
+    "sourceObservations": 6,
+    "holdoutRepositories": 2,
+    "rankedHypotheses": 3,
+    "repositoryRenameComparisons": 3,
+    "priorityChanges": 1,
+    "noMatchCandidates": 0,
+    "rejectedUnsafeInputs": 6,
+    "activationAuthorizations": 0
+  },
+  "evidence": "benchmarks/results/adaptive-fragment-prior-v1.json",
+  "outcome": "SAFE_HYPOTHESIS_PRIORS_AVAILABLE",
+  "boundaries": {
+    "proofOfConcept": true,
+    "syntheticRankingVectors": true,
+    "syntheticTimingClaim": false,
+    "gradleExecutions": 0,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

@@ -1,7 +1,7 @@
 # Adaptive Fragment Generalization POC Tracker
 
 **Status:** `IN_PROGRESS`<br>
-**Current block:** `AF-007 — Cross-repository hypothesis priors`<br>
+**Current block:** `AF-008 — Patch-opportunity learning`<br>
 **Decision baseline:** the current whole-profile hypothesis remains
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)<br>
 **Last updated:** 2026-08-25
@@ -183,8 +183,8 @@ the correctness authority for cacheability. Repetition alone is not authority.
 |---:|---|---|---|---|
 | 5 | `AF-005` Fragment economic ledger | Account for signed wall-time value, decision cost, isolated learning cost, recurrence, decay, payback and bounded regret per fragment and composition. | `DONE` | AF-002 |
 | 6 | `AF-006` Ordinary-build online learner | Update fragment evidence from requested builds only and keep native Gradle authoritative until qualification. | `DONE` | AF-004, AF-005 |
-| 7 | `AF-007` Cross-repository hypothesis priors | Use task implementation, plugin, Gradle and structural features to rank hypotheses across repositories without transferring correctness authority or activation. | `TODO` | AF-006 |
-| 8 | `AF-008` Patch-opportunity learning | Turn recurring expensive non-incremental or non-cacheable task evidence into a reviewed Patch Autopilot proposal and measure the accepted patch independently. | `WAITING` | AF-006 |
+| 7 | `AF-007` Cross-repository hypothesis priors | Use task implementation, plugin, Gradle and structural features to rank hypotheses across repositories without transferring correctness authority or activation. | `DONE` | AF-006 |
+| 8 | `AF-008` Patch-opportunity learning | Turn recurring expensive non-incremental or non-cacheable task evidence into a reviewed Patch Autopilot proposal and measure the accepted patch independently. | `TODO` | AF-006 |
 
 ### Phase C — Composition and activation
 
@@ -450,15 +450,15 @@ commit whenever the block changes their claims or interfaces.
 | Document | Update trigger | Required update | Blocks |
 |---|---|---|---|
 | This tracker | Every block | State, owner, evidence, outcome, next block, validation and changelog. | AF-000..015 |
-| [`implementation-tracker.md`](../../implementation-tracker.md) | Phase or terminal-status change | Active phase, milestone progress and pointer to this detailed tracker. Do not duplicate block evidence. | AF-000, AF-004, AF-005, AF-006, AF-010, AF-013, AF-015 |
+| [`implementation-tracker.md`](../../implementation-tracker.md) | Phase or terminal-status change | Active phase, milestone progress and pointer to this detailed tracker. Do not duplicate block evidence. | AF-000, AF-004, AF-005, AF-006, AF-007, AF-010, AF-013, AF-015 |
 | [Master RFC](../../gradle-build-optimization-platform.md) | Product invariant or accepted architecture changes | Adaptive fragment model, authority boundary or terminal decision; implementation detail alone does not rewrite the RFC. | AF-001, AF-005, AF-006, AF-015 |
-| [`specs/README.md`](../../specs/README.md) and new specs | Executable contract introduced or revised | Contract purpose, authority, checker and explicit POC boundary. | AF-001, AF-002, AF-005, AF-006, AF-009, AF-013, AF-015 |
+| [`specs/README.md`](../../specs/README.md) and new specs | Executable contract introduced or revised | Contract purpose, authority, checker and explicit POC boundary. | AF-001, AF-002, AF-005, AF-006, AF-007, AF-009, AF-013, AF-015 |
 | [`benchmarks/README.md`](../../benchmarks/README.md) | New measured or shadow evidence | Protocol, runner, controls, result links and non-additive interpretation. | AF-003, AF-004, AF-005, AF-006, AF-008, AF-011, AF-013, AF-014 |
-| [POC one-pager](../findings/buildopt-poc-handoff.md) | Material customer-value evidence or terminal direction changes | Current idea, mechanisms, latest longitudinal numbers, conclusion and next step only. Remove superseded “current” data. | AF-004, AF-005, AF-006, AF-008, AF-011, AF-013, AF-015 |
+| [POC one-pager](../findings/buildopt-poc-handoff.md) | Material customer-value evidence or terminal direction changes | Current idea, mechanisms, latest longitudinal numbers, conclusion and next step only. Remove superseded “current” data. | AF-004, AF-005, AF-006, AF-007, AF-008, AF-011, AF-013, AF-015 |
 | [Performance findings](../findings/build-optimization-performance.md) | New attributable timing evidence | Isolated mechanism and composed-path effects, negative evidence and activation decision. | AF-008, AF-010, AF-011, AF-013, AF-015 |
 | [Generalization audit](../findings/buildopt-generalization-audit.md) | Compatibility, transfer or breadth evidence changes | Current generic boundary, selection coverage, invalidation granularity and lifetime conclusion. | AF-004, AF-005, AF-006, AF-007, AF-010, AF-013, AF-015 |
-| [Architecture overview](../architecture/overview.md) | Runtime/data-flow architecture changes | Fragment registry, planner, learner, ledger and local/central boundaries. | AF-002, AF-006, AF-009, AF-012 |
-| [Repository map](../architecture/repository-map.md) | Packages, commands or ownership move | Architecture-to-directory mapping and owning validators. | AF-002, AF-003, AF-006, AF-009, AF-012 |
+| [Architecture overview](../architecture/overview.md) | Runtime/data-flow architecture changes | Fragment registry, planner, learner, ledger and local/central boundaries. | AF-002, AF-006, AF-007, AF-009, AF-012 |
+| [Repository map](../architecture/repository-map.md) | Packages, commands or ownership move | Architecture-to-directory mapping and owning validators. | AF-002, AF-003, AF-006, AF-007, AF-009, AF-012 |
 | [Product onboarding](../getting-started/product-onboarding.md) | User-visible behavior changes | First build, learning, active use, native retention and report interpretation. | AF-006, AF-010, AF-012, AF-014 |
 | [Product workflows](../guides/product-workflows.md) | New operator/user workflow exists | Observation, qualification, composition, patch review and fallback sequence. | AF-006, AF-008, AF-010, AF-014 |
 | [CLI reference](../reference/cli.md) | CLI/options/exit/report changes | Exact syntax, outputs, exit behavior and examples. | AF-006, AF-009, AF-012, AF-014 |
@@ -499,6 +499,7 @@ IDs from the implementation tracker.
 | `AF-E005` | AF-004 | [Frozen-history shadow contract](../../specs/poc-adaptive-fragment-shadow-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-shadow-v1.json), recomputable [five-repository report](../../benchmarks/results/adaptive-fragment-shadow-v1.json) and [`dev/check-adaptive-fragment-shadow`](../../dev/check-adaptive-fragment-shadow). The replay reproduces 1/1 whole-profile selections, reports five partial decisions, retains at least one fragment in 6/6 eligible descendants and consumes zero future observations, activation authorizations or measurement-only builds. | `DONE` |
 | `AF-E006` | AF-005 | [Fragment economics contract](../../specs/poc-adaptive-fragment-economics-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-economics-v1.json), recomputable [economic report](../../benchmarks/results/adaptive-fragment-economics-v1.json) and [`dev/check-adaptive-fragment-economics`](../../dev/check-adaptive-fragment-economics). Retained Kafka composition value is +82,527 ms after all observed costs; synthetic vectors prove negative signed value, exact-once async cost, immutable observations, fixed-horizon projection and unclipped regret without activation or new build timing. | `DONE` |
 | `AF-E007` | AF-006 | [Ordinary-build learner contract](../../specs/poc-adaptive-fragment-online-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-online-v1.json), recomputable [checkpoint report](../../benchmarks/results/adaptive-fragment-online-v1.json) and [`dev/check-adaptive-fragment-online`](../../dev/check-adaptive-fragment-online). Five requested builds and 15 exact samples prove observed/shadow/qualified progression, exact restart, zero measurement-only work, five fail-closed update mutations and dependency-bounded regression suspension without running Gradle or authorizing activation. | `DONE` |
+| `AF-E008` | AF-007 | [Cross-repository prior contract](../../specs/poc-adaptive-fragment-prior-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-prior-v1.json), recomputable [four-source/two-holdout report](../../benchmarks/results/adaptive-fragment-prior-v1.json) and [`dev/check-adaptive-fragment-prior`](../../dev/check-adaptive-fragment-prior). Three generic classes rank identically after every repository identity is replaced and input order reversed; transferred positive/non-positive evidence changes only the top exploration priority, unmatched features return no candidate and six unsafe inputs fail closed. Local correctness/value remain mandatory and activation authorizations remain zero. | `DONE` |
 
 ## 12. Decision log
 
@@ -515,11 +516,13 @@ IDs from the implementation tracker.
 | 2026-08-25 | Keep structural compatibility, output-byte freshness and economic authorization separate. | Five Kafka descendants retain a structural opportunity after whole-profile reuse becomes invalid; compatibility must not become replay authority. |
 | 2026-08-25 | Keep observed economics immutable and projections in a separate derived series. | A later horizon or decay assumption must never rewrite historical value, recurrence, payback or regret. |
 | 2026-08-25 | Publish a new canonical checkpoint generation only after the complete requested-build update validates. | Interruption must preserve the prior exact generation; implicit partial repair would corrupt learning authority. |
+| 2026-08-25 | Exclude repository identity from cross-repository prior fingerprints, scores and tie-breaks. | Repository provenance may prevent local evidence leakage, but names, paths and remotes must never become product behavior or transfer authority. |
 
 ## 13. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-25 | Closed AF-007 as `SAFE_HYPOTHESIS_PRIORS_AVAILABLE`: four opaque source scopes rank three hypothesis classes for two holdouts, full source/holdout identity replacement and reversed input preserve the result, evidence can reorder exploration only, and zero correctness/value/activation authority transfers; opened AF-008 patch-opportunity learning. |
 | 2026-08-25 | Closed AF-006 as `ONLINE_FRAGMENT_LEARNING_AVAILABLE`: five requested builds, 15 comparable samples, zero measurement-only work, exact restart and dependency-bounded regression suspension are executable; opened AF-007 cross-repository hypothesis priors. |
 | 2026-08-25 | Closed AF-005 as `FRAGMENT_ECONOMICS_RECOMPUTABLE`: retained Kafka composition value is +82,527 ms after exact observed costs; negative value, exact-once async cost, immutable observations, non-additive percentages and unclipped regret are executable; opened AF-006 ordinary-build online learning. |
 | 2026-08-25 | Closed AF-004 as `FRAGMENT_COVERAGE_HYPOTHESIS_SUPPORTED`: 6/6 eligible descendants retain a structural fragment, the original 1/6 whole-profile selection is reproduced, five partial cases stay explicit and zero lookahead or activation is introduced; opened AF-005 economics. |

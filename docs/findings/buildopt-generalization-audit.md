@@ -147,6 +147,13 @@ it cannot, the generic POC should stop rather than reinterpret the evidence.
 AF-006 proves the online lifecycle mechanically but adds no real timing result:
 five synthetic requested-build updates move three fragments through
 `OBSERVED`, `SHADOW` and `QUALIFIED`; a later negative value suspends one family
-and its dependent while an unrelated family stays qualified. AF-007 must now
-test whether repository-independent structural features can rank useful local
-hypotheses without transferring correctness or activation authority.
+and its dependent while an unrelated family stays qualified. AF-007 now proves
+that task-implementation, plugin-version, Gradle and structural features can
+rank local exploration without repository-name behavior: replacing four source
+and two holdout identities leaves the three-class ranking unchanged, while
+changing transferred positive/non-positive evidence changes only exploration
+priority. Every candidate still requires local correctness and value and
+authorizes no activation. These are synthetic ranking vectors, not a target
+timing or breadth result. AF-008 must next test whether recurring generic task-
+contract evidence can produce a reversible Patch Autopilot improvement on the
+ordinary native Gradle path.

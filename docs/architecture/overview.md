@@ -55,7 +55,7 @@ result.
 | Optimization service and Shared backend | `buildopt-server` | Accepts sessions, exports immutable evidence, serves authenticated cache state, stores control metadata, and exposes local build history |
 | Edge Cache | `buildopt-edge` | Provides a bounded nearby read-through/pending-write cache while Shared retains commit and collision authority |
 | Build Impact | `buildopt-impact` | Discovers the declared Gradle graph and verifies repository-owned generated impact state |
-| Adaptive fragment model | `internal/adaptivefragment` | Defines path-independent fragment identity plus immutable fragment, observation, portfolio and ledger generations; no runtime activation yet |
+| Adaptive fragment model | `internal/adaptivefragment` | Defines path-independent fragment identity, immutable state/economics and non-authorizing structural priors; no runtime activation yet |
 | Patch engine | `jvm/patcher` JAR | Verifies signed exact bundles, applies them in a detached worktree, and supports draft-only delivery and exact revert |
 | Windows service host | `buildopt-service.exe` | Runs server or Edge under Windows SCM with the supplied private config |
 

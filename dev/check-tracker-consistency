@@ -66,7 +66,7 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`CURRENT GENERIC STRUCTURAL-PROFILE HYPOTHESIS STOPPED; BOUNDED MECHANISM VALUE RETAINED\`"
-    "**Current phase:** \`ONLINE FRAGMENT LEARNING AVAILABLE; SAFE PRIORS NEXT\`"
+    "**Current phase:** \`SAFE HYPOTHESIS PRIORS AVAILABLE; DURABLE PATCH VALUE NEXT\`"
     "| 150 | \`POC-AGGREGATE-OUTPUT-CLOSURE-001\` | Derive every required aggregate output"
     "| \`E-398\` | 2026-08-25 | \`POC-AGGREGATE-OUTPUT-CLOSURE-001\`"
     "| 149 | \`POC-CONFIGURATION-INPUT-BINDING-001\` | Inspect typed Gradle configuration"

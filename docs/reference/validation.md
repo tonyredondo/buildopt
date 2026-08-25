@@ -80,6 +80,7 @@ Adaptive-fragment identity and selective invalidation:
 ./dev/check-adaptive-fragment-shadow
 ./dev/check-adaptive-fragment-economics
 ./dev/check-adaptive-fragment-online
+./dev/check-adaptive-fragment-prior
 ```
 
 The static and synthetic `AF-001` gate validates the machine policy, runs the
