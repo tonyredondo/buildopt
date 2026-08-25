@@ -295,6 +295,7 @@ func TestCentralOptimizeReusesQualifiedProfileAcrossUnrelatedCommitAndRejectsStr
 		RequiredOutputs:      append([]string(nil), refreshEntry.RequiredOutputs...),
 		CandidateOutputs:     append([]string(nil), refreshEntry.CandidateOutputs...),
 		CandidateEntrypoints: append([]string(nil), refreshEntry.CandidateEntrypoints...),
+		StructuralBinding:    refreshEntry.StructuralBinding,
 		Materialization: optimizeOutputMaterialization{
 			Status: optimizeMaterializationNotRequired, Reason: optimizeMaterializationReasonNone,
 			Patterns: []string{},
@@ -561,7 +562,8 @@ func centralOptimizeFixtureIntegration(
 	entrypoints := []string{"shadowJar"}
 	candidate := []string{":clients:shadowJar"}
 	outputs := []string{"clients/build/libs/kafka-clients-*.jar"}
-	familySHA := optimizePortfolioFamilyDigest(profile.RepositoryID, family, owners, entrypoints, candidate, outputs, nil)
+	candidateOutputs := append([]string(nil), outputs...)
+	familySHA := optimizePortfolioFamilyDigest(profile.RepositoryID, family, owners, entrypoints, candidate, outputs, candidateOutputs)
 	directory := filepath.ToSlash(filepath.Join(optimizeDefaultStateDir, "portfolio", "profiles", familySHA))
 	pathFor := func(name string) string { return filepath.ToSlash(filepath.Join(directory, name)) }
 	bundlePathFor := func(name string) string {
@@ -574,7 +576,8 @@ func centralOptimizeFixtureIntegration(
 	entry := optimizePortfolioEntry{
 		Family: family, FamilySHA256: familySHA, ChangedProjects: owners,
 		RepositoryID: profile.RepositoryID, Entrypoints: entrypoints, CandidateEntrypoints: candidate,
-		RequiredOutputs: outputs, TargetRevision: evidenceRevision,
+		GradleOptions:   append([]string(nil), invocation.discovery.gradleOptions...),
+		RequiredOutputs: outputs, CandidateOutputs: candidateOutputs, TargetRevision: evidenceRevision,
 		WrapperSHA256: invocation.wrapperSHA256, ExecutableSHA256: invocation.executableSHA256,
 		ManifestSHA256:  digest(fixtureFiles["buildopt-impact-manifest.json"]),
 		GraphSHA256:     digest(fixtureFiles["buildopt-impact-graph.generated.json"]),
@@ -583,6 +586,7 @@ func centralOptimizeFixtureIntegration(
 		ProfileSHA256:   digest(fixtureFiles["profile.json"]), ProfilePath: pathFor("profile.json"),
 		State: "QUALIFIED",
 	}
+	entry.StructuralBinding = testOptimizeStructuralBinding(t, entry)
 	portfolio := optimizeProfilePortfolio{
 		SchemaVersion: optimizePortfolioSchemaVersion, Generation: 1,
 		RepositoryScopeSHA256: optimizePortfolioRepositoryScope(profile.RepositoryID),

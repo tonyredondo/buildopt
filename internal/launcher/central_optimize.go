@@ -44,12 +44,21 @@ const (
 	optimizeSelectionSourceCentral     = "CENTRAL_PORTFOLIO"
 )
 
-var optimizeCentralReplayBindings = append(
-	append([]string(nil), optimizeReplayBindingNames...),
-	"CENTRAL_EVIDENCE_REFERENCE",
-	"SOURCE_COMMIT_ANCESTRY",
-	"STRUCTURAL_DIFF",
-)
+var optimizeCentralReplayBindings = func() []string {
+	bindings := make([]string, 0, len(optimizeReplayBindingNames)+4)
+	for _, binding := range optimizeReplayBindingNames {
+		if binding != "REPOSITORY_REVISION" {
+			bindings = append(bindings, binding)
+		}
+	}
+	return append(bindings,
+		"CENTRAL_EVIDENCE_REFERENCE",
+		"EVIDENCE_REVISION_ANCESTRY",
+		"OUTPUT_REVISION_ANCESTRY",
+		"STRUCTURAL_PROFILE_FINGERPRINT",
+		"STRUCTURAL_DIFF",
+	)
+}()
 
 // optimizeCentralResult reports optional central-state work separately from
 // the authoritative Gradle execution. Central failure is always fail-open and
@@ -528,6 +537,12 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 		}
 		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{optimizeCentralReasonStructural, errors.New("current change family differs from remote qualification")}
 	}
+	if !optimizeStructuralBindingMatchesCurrent(entry, invocation, family, owners) {
+		return nil, nil, optimizeSelectionResult{}, centralOptimizeFailure{
+			optimizeCentralReasonStructural,
+			errors.New("current structure differs from the qualified profile fingerprint"),
+		}
+	}
 
 	arguments := []string{
 		"--config", filepath.FromSlash(paths.profile),
@@ -627,6 +642,7 @@ func (integration *centralOptimizeIntegration) tryPortfolioEntry(
 		RequiredOutputs:      append([]string(nil), entry.RequiredOutputs...),
 		CandidateOutputs:     candidateOutputs,
 		CandidateEntrypoints: append([]string(nil), entry.CandidateEntrypoints...),
+		StructuralBinding:    entry.StructuralBinding,
 		Materialization:      paths.materialization,
 		ChangeFamily:         family, ChangedProjects: append([]string(nil), owners...),
 		Graph:          optimizeDiscoveryGraph{TotalProjects: len(graph.Graph.Projects), SelectedProjects: selectedProjects, OmittedProjects: len(impact.plan.OmittedProjects)},

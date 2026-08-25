@@ -16,6 +16,7 @@ import (
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
 	"github.com/tonyredondo/buildopt/internal/nativevolatility"
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
+	"github.com/tonyredondo/buildopt/internal/structuralbinding"
 )
 
 const (
@@ -140,6 +141,7 @@ type optimizeDiscoveryResult struct {
 	RequiredOutputs      []string                      `json:"requiredOutputs"`
 	CandidateOutputs     []string                      `json:"candidateOutputs"`
 	CandidateEntrypoints []string                      `json:"candidateEntrypoints"`
+	StructuralBinding    structuralbinding.Binding     `json:"structuralBinding"`
 	AggregatePartition   *optimizeAggregatePartition   `json:"aggregatePartition,omitempty"`
 	Materialization      optimizeOutputMaterialization `json:"materialization"`
 	NativeObservation    optimizeNativeObservation     `json:"nativeObservation"`
@@ -788,6 +790,11 @@ func runAutomaticOptimizeDiscovery(ctx context.Context, invocation optimizeInvoc
 			return result, optimizeDiscoveryDocuments{}, lineageErr
 		}
 		result.taskLineage = lineage
+		binding, bindingErr := deriveOptimizeStructuralBinding(invocation, result)
+		if bindingErr != nil {
+			return result, optimizeDiscoveryDocuments{}, bindingErr
+		}
+		result.StructuralBinding = binding
 		result.Status = optimizeDiscoveryComplete
 		result.Reason = optimizeDiscoveryReasonFound
 	}

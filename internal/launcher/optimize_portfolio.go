@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
+	"github.com/tonyredondo/buildopt/internal/structuralbinding"
 )
 
 const (
@@ -65,6 +66,7 @@ type optimizePortfolioEntry struct {
 	RepositoryID         string                            `json:"repositoryId"`
 	Entrypoints          []string                          `json:"entrypoints"`
 	CandidateEntrypoints []string                          `json:"candidateEntrypoints"`
+	GradleOptions        []string                          `json:"gradleOptions"`
 	RequiredOutputs      []string                          `json:"requiredOutputs"`
 	CandidateOutputs     []string                          `json:"candidateOutputs,omitempty"`
 	Materialization      *optimizePortfolioMaterialization `json:"materialization,omitempty"`
@@ -78,6 +80,7 @@ type optimizePortfolioEntry struct {
 	EvidenceSHA256       string                            `json:"evidenceSha256"`
 	ProfileSHA256        string                            `json:"profileSha256"`
 	ProfilePath          string                            `json:"profilePath"`
+	StructuralBinding    structuralbinding.Binding         `json:"structuralBinding"`
 	State                string                            `json:"state"`
 	SelectionAuthorized  bool                              `json:"selectionAuthorized"`
 	ProductionAuthorized bool                              `json:"productionAuthorized"`
@@ -293,13 +296,15 @@ func prepareOptimizePortfolioArtifacts(invocation optimizeInvocation, discovery 
 		RepositoryID:         discovery.RepositoryID,
 		Entrypoints:          append([]string(nil), discovery.Entrypoints...),
 		CandidateEntrypoints: append([]string(nil), discovery.CandidateEntrypoints...),
+		GradleOptions:        append([]string(nil), invocation.discovery.gradleOptions...),
 		RequiredOutputs:      append([]string(nil), discovery.RequiredOutputs...),
 		CandidateOutputs:     append([]string(nil), discovery.CandidateOutputs...),
 		TargetRevision:       discovery.TargetRevision,
 		WrapperSHA256:        invocation.wrapperSHA256, ExecutableSHA256: invocation.executableSHA256,
 		ManifestSHA256: digests[0], GraphSHA256: digests[1], GeneratedSHA256: digests[2],
 		EvidenceSHA256: digests[3], ProfileSHA256: profileSHA, ProfilePath: profilePath,
-		State: "QUALIFIED", SelectionAuthorized: false, ProductionAuthorized: false,
+		StructuralBinding: discovery.StructuralBinding,
+		State:             "QUALIFIED", SelectionAuthorized: false, ProductionAuthorized: false,
 	}
 	if discovery.Materialization.Status == optimizeMaterializationCaptured {
 		materialization, err := prepareOptimizePortfolioMaterialization(invocation, discovery)
@@ -414,7 +419,8 @@ func validOptimizePortfolioEntry(repositoryRoot string, entry optimizePortfolioE
 		!validOptimizeSHA(entry.WrapperSHA256) || !validOptimizeSHA(entry.ExecutableSHA256) ||
 		!validOptimizeSHA(entry.ManifestSHA256) || !validOptimizeSHA(entry.GraphSHA256) ||
 		!validOptimizeSHA(entry.GeneratedSHA256) || !validOptimizeSHA(entry.EvidenceSHA256) ||
-		!validOptimizeSHA(entry.ProfileSHA256) || entry.State != "QUALIFIED" ||
+		!validOptimizeSHA(entry.ProfileSHA256) || !structuralbinding.Valid(entry.StructuralBinding) ||
+		entry.State != "QUALIFIED" ||
 		entry.SelectionAuthorized || entry.ProductionAuthorized || entry.RepositoryID == "" ||
 		!validMeasurementRevision(entry.TargetRevision) || len(entry.ChangedProjects) < 1 ||
 		(entry.RevalidatedRevision != "" && !validMeasurementRevision(entry.RevalidatedRevision)) ||
@@ -422,6 +428,7 @@ func validOptimizePortfolioEntry(repositoryRoot string, entry optimizePortfolioE
 		!uniqueMeasurementStrings(entry.ChangedProjects) || !uniqueMeasurementStrings(entry.Entrypoints) ||
 		!uniqueMeasurementStrings(entry.CandidateEntrypoints) || !uniqueMeasurementStrings(entry.RequiredOutputs) ||
 		(len(entry.CandidateOutputs) > 0 && !uniqueMeasurementStrings(entry.CandidateOutputs)) ||
+		(len(entry.GradleOptions) > 0 && !uniqueMeasurementStrings(entry.GradleOptions)) ||
 		!validOptimizePortfolioMaterialization(entry) ||
 		!validOptimizeGeneratedPath(entry.ProfilePath) ||
 		entry.FamilySHA256 != optimizePortfolioFamilyDigest(
@@ -429,6 +436,18 @@ func validOptimizePortfolioEntry(repositoryRoot string, entry optimizePortfolioE
 			entry.CandidateEntrypoints, entry.RequiredOutputs, entry.CandidateOutputs,
 		) || filepath.Base(entry.ProfilePath) != "profile.json" ||
 		filepath.Base(filepath.Dir(entry.ProfilePath)) != entry.FamilySHA256 {
+		return false
+	}
+	repositoryBinding, repositoryErr := structuralbinding.RepositoryScopeSHA256(entry.RepositoryID)
+	workflowBinding, workflowErr := structuralbinding.WorkflowSHA256(
+		entry.Entrypoints, entry.CandidateEntrypoints, entry.GradleOptions,
+	)
+	familyBinding, familyErr := structuralbinding.ChangeFamilySHA256(entry.Family, entry.ChangedProjects)
+	if repositoryErr != nil || workflowErr != nil || familyErr != nil ||
+		entry.StructuralBinding.RepositoryScopeSHA256 != repositoryBinding ||
+		entry.StructuralBinding.WorkflowSHA256 != workflowBinding ||
+		entry.StructuralBinding.WrapperSHA256 != entry.WrapperSHA256 ||
+		entry.StructuralBinding.ChangeFamilySHA256 != familyBinding {
 		return false
 	}
 	directory := filepath.Dir(entry.ProfilePath)

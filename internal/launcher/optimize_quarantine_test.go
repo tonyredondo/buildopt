@@ -42,7 +42,7 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 	binding := optimizeDigest("quarantine-test-binding")
 	invocation := optimizeInvocation{
 		repositoryRoot: repository, stateDirectory: stateDirectory, stateRelative: stateRelative,
-		bindingSHA256: binding, calibrationPairs: 8, maxBreakEvenBuilds: 30,
+		bindingSHA256: binding, wrapperSHA256: optimizeDigest("wrapper"), calibrationPairs: 8, maxBreakEvenBuilds: 30,
 		calibrationBudget: 30 * time.Minute,
 	}
 	discovery := optimizeDiscoveryResult{
@@ -73,9 +73,9 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 		},
 		ReviewRequired: true, TestOptimization: "OUT_OF_SCOPE",
 		outputCandidates: []outputContractCandidate{
-			{Pattern: "changed/build/*.jar", ProducerTasks: []string{":changed:classes"}},
-			{Pattern: "stable/build/*.jar", ProducerTasks: []string{":stable:jar"}},
-			{Pattern: "volatile/build/classes/**", ProducerTasks: []string{":volatile:compileJava"}},
+			{Pattern: "changed/build/*.jar", Kind: "FILE", OwnerProjects: []string{":changed"}, ProducerTasks: []string{":changed:classes"}},
+			{Pattern: "stable/build/*.jar", Kind: "FILE", OwnerProjects: []string{":stable"}, ProducerTasks: []string{":stable:jar"}},
+			{Pattern: "volatile/build/classes/**", Kind: "DIRECTORY", OwnerProjects: []string{":volatile"}, ProducerTasks: []string{":volatile:compileJava"}},
 		},
 	}
 	lineage, err := newOptimizeTaskLineage([]buildimpact.DiscoveredTask{
@@ -88,6 +88,10 @@ func TestApplyOptimizeNativeQuarantineFiltersPackAndResetsCalibration(t *testing
 		t.Fatal(err)
 	}
 	discovery.taskLineage = lineage
+	discovery.StructuralBinding, err = deriveOptimizeStructuralBinding(invocation, discovery)
+	if err != nil {
+		t.Fatal(err)
+	}
 	materialization, err := captureOptimizeOutputMaterialization(invocation, discovery)
 	if err != nil {
 		t.Fatal(err)

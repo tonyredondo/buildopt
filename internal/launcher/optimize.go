@@ -621,7 +621,8 @@ func validOptimizeDiscoveryCheckpoint(state optimizeState) bool {
 			len(discovery.RequiredOutputs) > 0 && len(discovery.CandidateOutputs) > 0 &&
 			uniqueMeasurementStrings(discovery.RequiredOutputs) &&
 			uniqueMeasurementStrings(discovery.CandidateOutputs) &&
-			validOptimizeOutputMaterializationShape(discovery.Materialization, true)
+			validOptimizeOutputMaterializationShape(discovery.Materialization, true) &&
+			validOptimizeStructuralBinding(discovery.StructuralBinding)
 	case optimizeDiscoveryRemoteRevalidated:
 		return optimizeStringIn(state.Phase, "ACTIVE", "STALE") &&
 			discovery.Reason == "REMOTE_STRUCTURAL_PROFILE_REVALIDATED" &&
@@ -634,12 +635,14 @@ func validOptimizeDiscoveryCheckpoint(state optimizeState) bool {
 			len(discovery.RequiredOutputs) > 0 && len(discovery.CandidateOutputs) > 0 &&
 			uniqueMeasurementStrings(discovery.RequiredOutputs) &&
 			uniqueMeasurementStrings(discovery.CandidateOutputs) &&
-			validOptimizeOutputMaterializationShape(discovery.Materialization, true)
+			validOptimizeOutputMaterializationShape(discovery.Materialization, true) &&
+			validOptimizeStructuralBinding(discovery.StructuralBinding)
 	case optimizeDiscoveryRetained, optimizeDiscoverySkipped:
 		return state.Phase == "NATIVE_RETAINED" && discovery.Reason != "" &&
 			discovery.ReviewRequired && discovery.TestOptimization == "OUT_OF_SCOPE" &&
 			validOptimizeDiscoveryFiles(discovery.GeneratedFiles, false) &&
-			validOptimizeOutputMaterializationShape(discovery.Materialization, false)
+			validOptimizeOutputMaterializationShape(discovery.Materialization, false) &&
+			emptyOptimizeStructuralBinding(discovery.StructuralBinding)
 	default:
 		return false
 	}
