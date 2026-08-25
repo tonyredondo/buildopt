@@ -447,6 +447,13 @@ buildopt_capture_subject() {
                reason:$r.reason,phase:$r.phase,durationMs:$r.durationMs,
                executionMode:$r.execution.mode,exitCode:$r.execution.exitCode}
             ' >>"${buildopt_invocation_metadata}"
+            if jq -e '
+              .incrementalLearning.ordinaryEconomics.decision == "NATIVE_RETAINED" and
+              .reason == "ORDINARY_LEARNING_ECONOMICS_REJECTED"
+            ' "${buildopt_invocation_file}" >/dev/null; then
+                buildopt_total_invocations=${buildopt_invocation}
+                break
+            fi
             if [[ ${buildopt_protocol} == v4 && ${buildopt_invocation} -eq 1 ]]; then
                 buildopt_native_repository="${buildopt_root}/${buildopt_key}/native-repository"
                 buildopt_native_gradle_home="${buildopt_root}/${buildopt_key}/native-gradle-home"

@@ -22,6 +22,7 @@ buildopt_resume_qualification_root=${BUILDOPT_QUALIFIED_LIFETIME_RESUME_QUALIFIC
 buildopt_spec=${BUILDOPT_QUALIFIED_LIFETIME_SPEC:-${buildopt_repo_root}/specs/poc-qualified-lifetime-v2.json}
 buildopt_automatic_protocol=${BUILDOPT_QUALIFIED_LIFETIME_AUTOMATIC_PROTOCOL:-v3}
 buildopt_portability_mode=${BUILDOPT_QUALIFIED_LIFETIME_PORTABILITY_MODE:-FULL_REQUIRED_OUTPUTS}
+buildopt_lifetime_v3_mode=${BUILDOPT_LIFETIME_BREADTH_V3_MODE:-false}
 export BUILDOPT_QUALIFIED_LIFETIME_SPEC=${buildopt_spec}
 buildopt_state_relative=${BUILDOPT_QUALIFIED_LIFETIME_STATE_RELATIVE:-}
 case ${buildopt_automatic_protocol} in
@@ -42,6 +43,13 @@ case ${buildopt_portability_mode} in
     *)
         printf 'unsupported qualified lifetime portability mode: %s\n' \
             "${buildopt_portability_mode}" >&2
+        exit 64
+        ;;
+esac
+case ${buildopt_lifetime_v3_mode} in
+    false | true) ;;
+    *)
+        printf 'lifetime breadth V3 mode must be true or false\n' >&2
         exit 64
         ;;
 esac
@@ -417,11 +425,25 @@ buildopt_subject() {
     local buildopt_qualifier_capture=${buildopt_qualification}/${buildopt_key}/capture.json
     local buildopt_calibration_evidence=${buildopt_qualification}/${buildopt_key}/state/calibration/evidence.json
     [[ -x ${buildopt_binary} && -x ${buildopt_server} && -s ${buildopt_qualifier_result} &&
-        -s ${buildopt_qualifier_capture} && -s ${buildopt_calibration_evidence} ]] || return 1
+        -s ${buildopt_qualifier_capture} ]] || return 1
+    local buildopt_early_economic_retention=false
+    if jq -e '
+      .phase == "NATIVE_RETAINED" and
+      .reason == "ORDINARY_LEARNING_ECONOMICS_REJECTED" and
+      .incrementalLearning.ordinaryEconomics.decision == "NATIVE_RETAINED"
+    ' "${buildopt_qualifier_result}" >/dev/null; then
+        buildopt_early_economic_retention=true
+    fi
+    if [[ ${buildopt_early_economic_retention} != true &&
+        ! -s ${buildopt_calibration_evidence} ]]; then
+        return 1
+    fi
     install -m 0600 -- "${buildopt_qualifier_capture}" \
         "${buildopt_subject_output}/qualification-capture.json"
-    install -m 0600 -- "${buildopt_calibration_evidence}" \
-        "${buildopt_subject_output}/calibration-evidence.json"
+    if [[ -s ${buildopt_calibration_evidence} ]]; then
+        install -m 0600 -- "${buildopt_calibration_evidence}" \
+            "${buildopt_subject_output}/calibration-evidence.json"
+    fi
     local buildopt_executable_sha
     buildopt_executable_sha=$(sha256sum "${buildopt_binary}" | awk '{print $1}')
     local buildopt_subject_revision=${buildopt_revision}
@@ -449,6 +471,77 @@ buildopt_subject() {
       select(. == "DEPENDENCY_SOURCE" or . == "RESOURCE" or
         . == "LEAF_SOURCE" or . == "MIXED_SOURCE")
     ' "${buildopt_qualifier_result}")
+
+    if [[ ${buildopt_early_economic_retention} == true ]]; then
+        [[ ${buildopt_lifetime_v3_mode} == true ]] || {
+            printf 'ordinary economics retention requires lifetime breadth V3 mode\n' >&2
+            return 1
+        }
+        jq -e --argjson projects "${buildopt_expected_projects}" '
+          .incrementalLearning.ordinaryEconomics as $economics |
+          .phase == "NATIVE_RETAINED" and
+          .reason == "ORDINARY_LEARNING_ECONOMICS_REJECTED" and
+          .execution.exitCode == 0 and
+          .discovery.changedProjects == $projects and
+          .discovery.structuralBinding.status == "COMPLETE" and
+          $economics.schemaVersion == "buildopt.poc/ordinary-learning-economics/v1" and
+          $economics.decision == "NATIVE_RETAINED" and
+          ($economics.requestedBuilds == 1 or $economics.requestedBuilds == 3) and
+          $economics.measurementOnlyBuilds == 0 and
+          $economics.compatibleBuilds == $economics.requestedBuilds and
+          $economics.successfulBuilds == $economics.requestedBuilds and
+          $economics.exactOutputBuilds == $economics.requestedBuilds and
+          $economics.structurallyPortableBuilds == $economics.requestedBuilds and
+          $economics.maximumPaybackMatches == 5 and
+          ($economics.reason == "COMPATIBLE_LIFETIME_INSUFFICIENT" or
+           $economics.reason == "ORDINARY_SAVING_NOT_POSITIVE" or
+           $economics.reason == "FIVE_MATCH_PAYBACK_EXCEEDED") and
+          ($economics.productionAuthorized | not) and
+          $economics.testOptimization == "OUT_OF_SCOPE" and
+          (.productionAuthorized | not) and .testOptimization == "OUT_OF_SCOPE"
+        ' "${buildopt_qualifier_result}" >/dev/null || {
+            jq -c '{phase,reason,discovery,incrementalLearning,execution}' \
+                "${buildopt_qualifier_result}" >&2
+            return 1
+        }
+        local buildopt_capture_sha buildopt_ordinary_economics
+        buildopt_capture_sha=$(sha256sum "${buildopt_qualifier_capture}" | awk '{print $1}')
+        buildopt_ordinary_economics=$(jq -c \
+            '.incrementalLearning.ordinaryEconomics' "${buildopt_qualifier_result}")
+        jq -n \
+            --arg key "${buildopt_key}" --arg repositoryId "${buildopt_repository_id}" \
+            --arg remote "${buildopt_remote}" --arg branch "${buildopt_branch}" \
+            --arg parent "${buildopt_parent}" --arg qualifier "${buildopt_qualifier}" \
+            --arg revision "${buildopt_subject_revision}" \
+            --arg executableSha "${buildopt_executable_sha}" \
+            --arg changeFamily "${buildopt_change_family}" \
+            --arg captureSha "${buildopt_capture_sha}" \
+            --argjson graph "$(jq -c '.discovery.graph' "${buildopt_qualifier_result}")" \
+            --argjson economics "${buildopt_ordinary_economics}" '
+          {schemaVersion:"buildopt.evidence/poc-lifetime-breadth-subject/v3-early",
+           key:$key,buildopt:{revision:$revision,executableSha256:$executableSha},
+           repository:{id:$repositoryId,remote:$remote,publicRepository:true,
+             historyBranch:$branch},
+           qualification:{parentRevision:$parent,targetRevision:$qualifier,
+             sourceOrigin:"PUBLIC_UPSTREAM_COMMIT",changeFamily:$changeFamily,
+             graph:$graph,captureFile:"qualification-capture.json",
+             captureSha256:$captureSha,ordinaryEconomics:$economics},
+           observations:[],
+           economics:{observedBuilds:0,eligibleDescendants:0,selectedReplays:0,
+             nativeRetainedBuilds:0,selectedReplaySavedMs:0,
+             nativeRetentionWrapperCostMs:0,
+             qualificationAndPublicationCostMs:$economics.learningCostMs,
+             cumulativeNetSavedMs:(-$economics.learningCostMs),
+             conclusion:"EARLY_ECONOMIC_RETENTION"},
+           acceptance:{decision:"COMPLETE",exactRequiredOutputs:true,
+             publicAncestry:true,productFailures:0},
+           boundaries:{designPartnerRequired:false,mechanismPercentagesAdded:false,
+             productionAuthorized:false,proofOfConcept:true,
+             repositoriesAveraged:false,soakRequired:false,
+             testOptimization:"OUT_OF_SCOPE"}}
+        ' >"${buildopt_subject_output}/result.json"
+        return 0
+    fi
 
     if ((buildopt_qualification_status != 0)); then
         jq -e --argjson projects "${buildopt_expected_projects}" \
@@ -1169,7 +1262,16 @@ while IFS= read -r buildopt_key; do
     fi
 done < <(jq -r '.repositories[].key' "${buildopt_spec}")
 
-if ((${#buildopt_subject_files[@]} == buildopt_repository_count)); then
+if ((${#buildopt_subject_files[@]} == buildopt_repository_count)) &&
+    [[ ${buildopt_lifetime_v3_mode} == true ]]; then
+    "${buildopt_script_dir}/check-lifetime-breadth-v3" assemble \
+        "${buildopt_repo_root}/specs/poc-lifetime-breadth-v3.json" \
+        "${buildopt_output}"
+    "${buildopt_script_dir}/check-lifetime-breadth-v3" check \
+        "${buildopt_repo_root}/specs/poc-lifetime-breadth-v3.json" \
+        "${buildopt_output}"
+    printf 'Lifetime breadth V3 evidence written to %s\n' "${buildopt_output}"
+elif ((${#buildopt_subject_files[@]} == buildopt_repository_count)); then
     jq -s \
         --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
         --arg workItem "${buildopt_work_item}" \

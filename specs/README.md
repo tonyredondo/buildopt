@@ -107,6 +107,7 @@ the exact cross-component contract.
 | [`poc-producer-bound-lifetime-generalization-v1.md`](./poc-producer-bound-lifetime-generalization-v1.md) and [`poc-producer-bound-lifetime-generalization-v1.json`](./poc-producer-bound-lifetime-generalization-v1.json) | `POC-PRODUCER-BOUND-LIFETIME-GENERALIZATION-001` |
 | [`poc-materialization-economics-v2.md`](./poc-materialization-economics-v2.md) and [`poc-materialization-economics-v2.json`](./poc-materialization-economics-v2.json) | `POC-MATERIALIZATION-ECONOMICS-V2-001` |
 | [`poc-qualified-lifetime-v2.md`](./poc-qualified-lifetime-v2.md) and [`poc-qualified-lifetime-v2.json`](./poc-qualified-lifetime-v2.json) | `POC-QUALIFIED-LIFETIME-V2-001` |
+| [`poc-lifetime-breadth-v3.md`](./poc-lifetime-breadth-v3.md) and [`poc-lifetime-breadth-v3.json`](./poc-lifetime-breadth-v3.json) | `POC-LIFETIME-BREADTH-V3-001` |
 | [`poc-incremental-learning-v1.md`](./poc-incremental-learning-v1.md) and [`poc-incremental-learning-v1.json`](./poc-incremental-learning-v1.json) | `POC-INCREMENTAL-LEARNING-001` |
 | [`poc-normal-build-tail-expansion-v1.md`](./poc-normal-build-tail-expansion-v1.md) and [`poc-normal-build-tail-expansion-v1.json`](./poc-normal-build-tail-expansion-v1.json) | `POC-NORMAL-BUILD-TAIL-EXPANSION-001` |
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |
@@ -216,6 +217,15 @@ replays across seven public descendants and zero paid-back subjects. All seven
 later builds retain exact optimized-native outputs with zero product failures.
 This negative result remains immutable before-evidence and does not authorize a
 weaker gate or repeat-until-positive rerun.
+
+The [ordinary-build lifetime breadth V3 contract](./poc-lifetime-breadth-v3.md)
+reuses those five preregistered public windows with the five-match economics
+gate added by ordinary learning. It stops unpromising subjects after one or
+three requested builds, preserves the unchanged eight-pair robust gate for
+promising subjects and measures complete signed lifetime value with one exact
+installed executable. Missing the fixed three-of-five value and 50% eligible
+selection thresholds is an accepted terminal POC result, not permission to
+move the gates after observation.
 
 The [cross-commit value recovery contract](./poc-cross-commit-value-recovery-v1.md)
 then holds Kafka's qualifier and six-descendant public window fixed. It requires

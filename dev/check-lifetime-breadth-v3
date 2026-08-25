@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+cd -- "${buildopt_script_dir}/lifetime-breadth-v3"
+exec "${buildopt_script_dir}/run" --toolchain go -- \
+    go run -mod=readonly . "$@"

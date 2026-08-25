@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# < 1 || $# > 2)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/evidence/output/directory [repository-key|--summary-only]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_subject_spec=${buildopt_repo_root}/specs/poc-qualified-lifetime-v2.json
+
+BUILDOPT_LIFETIME_BREADTH_V3_MODE=true \
+BUILDOPT_QUALIFIED_LIFETIME_SPEC="${buildopt_subject_spec}" \
+BUILDOPT_QUALIFIED_LIFETIME_AUTOMATIC_PROTOCOL=v3 \
+BUILDOPT_QUALIFIED_LIFETIME_STATE_RELATIVE=.buildopt/optimize/lifetime-breadth-v3 \
+    "${buildopt_script_dir}/run-qualified-lifetime-v2" "$@"

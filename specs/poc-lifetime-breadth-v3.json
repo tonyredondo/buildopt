@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "buildopt.specs/poc-lifetime-breadth/v3",
+  "workItem": "POC-LIFETIME-BREADTH-V3-001",
+  "frozenSubjects": {
+    "path": "specs/poc-qualified-lifetime-v2.json",
+    "sha256": "3ad2c259e99f64064bf6d0cb1287a7b6ab3d1ea1a47a75d0d59a4976f51a1f4e",
+    "repositoryCount": 5,
+    "repositories": [
+      "spring-projects/spring-framework",
+      "open-telemetry/opentelemetry-java-instrumentation",
+      "apache/kafka",
+      "micronaut-projects/micronaut-core",
+      "apache/groovy"
+    ]
+  },
+  "customerPath": {
+    "command": "buildopt optimize <existing Gradle workflow>",
+    "installedPackage": true,
+    "ordinaryRequestedBuildsOnly": true,
+    "measurementOnlyBuilds": 0,
+    "oneExecutableAcrossSubjects": true,
+    "repositorySpecificProductRules": false
+  },
+  "learning": {
+    "historicalCompatibleMatchesRequired": 5,
+    "maximumProjectedPaybackMatches": 5,
+    "maximumRequestedBuildsPerQualification": 17,
+    "earlyRetentionBuildCounts": [
+      1,
+      3
+    ],
+    "robustPairs": 8,
+    "minimumPositivePairs": 6,
+    "positiveIntervalRequired": true,
+    "candidateP95NonRegressive": true,
+    "positiveFirstPairOnlyContinuesLearning": true,
+    "positiveEconomicsDoesNotQualifyAlone": true
+  },
+  "lifetime": {
+    "history": "FROZEN_PUBLIC_FIRST_PARENT_WINDOWS",
+    "structuralIdentity": "CANONICAL_STRUCTURAL_FINGERPRINT",
+    "exactOutputsRemainRevisionBound": true,
+    "eligibleDescendant": "NON_GLOBAL_STRUCTURALLY_COMPATIBLE_CHANGE",
+    "nativeRetention": "FAIL_OPEN_OPTIMIZED_NATIVE_GRADLE",
+    "cumulativeEconomicsIncludes": [
+      "DISCOVERY_AND_CAPTURE_COST",
+      "QUALIFICATION_COST",
+      "PUBLICATION_COST",
+      "SELECTED_REPLAY_SAVING",
+      "NATIVE_RETAINED_WRAPPER_COST"
+    ],
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false
+  },
+  "acceptance": {
+    "allFiveSubjectsObserved": true,
+    "sameExecutableSha256": true,
+    "exactOutputsForEveryRequestedBuild": true,
+    "zeroProductAttributableFailures": true,
+    "minimumNetPositiveRepositoryFamilies": 3,
+    "minimumEligibleDescendantSelectionRatio": 0.5,
+    "terminalPassDecision": "FUNCTIONAL_COVERAGE_PROVEN",
+    "terminalFailDecision": "FUNCTIONAL_COVERAGE_NOT_PROVEN"
+  },
+  "runner": {
+    "platform": "linux-amd64",
+    "cpuCount": 12,
+    "maximumWorkers": 12,
+    "minimumFreeDiskBytesBeforeSubject": 8589934592,
+    "sequentialSubjects": true,
+    "restartableByRepository": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

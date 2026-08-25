@@ -688,6 +688,24 @@ paid-back subjects and zero product failures. Base CI validates the compact
 summary plus every subject's raw 17-invocation capture and eight-pair evidence;
 it does not rerun the public repositories.
 
+Run the frozen ordinary-build lifetime breadth experiment with:
+
+```bash
+./dev/run-lifetime-breadth-v3 /absolute/evidence/directory
+./dev/check-lifetime-breadth-v3 check \
+  ./specs/poc-lifetime-breadth-v3.json /absolute/evidence/directory
+```
+
+The wrapper uses the same five public target/descendant windows and the same
+installed executable for every subject. It stops after one requested build
+when the compatible history is too short, after three when the first pair
+cannot repay within five matches, or continues to the unchanged 17-build,
+eight-pair robust gate. The result keeps learning/publication cost, selected
+replay saving and native-retention wrapper cost signed per repository. Pass a
+repository key to resume one subject, or `--summary-only` after all five raw
+subject directories exist. This is a bounded POC experiment and never a soak
+or production activation gate.
+
 The follow-up recovery bundle keeps Kafka's qualifier and six public descendant
 revisions fixed while comparing the implementation before and after selected
 replay stops attaching the original full-workflow output observation:
