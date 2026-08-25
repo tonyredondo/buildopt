@@ -1,7 +1,7 @@
-// Package adaptivefragment defines the POC contract for independently
-// compatible optimization fragments. It provides identity and applicability
-// rules only; persistence, online learning and activation belong to later
-// adaptive-fragment blocks.
+// Package adaptivefragment defines the POC contracts for independently
+// compatible optimization fragments, their immutable typed state and a cheap
+// repository-local compatibility index. Online learning, composition,
+// synchronization and activation belong to later adaptive-fragment blocks.
 package adaptivefragment
 
 import (
@@ -14,8 +14,8 @@ import (
 	"strings"
 )
 
-// SchemaVersion identifies the in-memory AF-001 contract. Persisted state is
-// deliberately deferred to AF-002.
+// SchemaVersion identifies the in-memory AF-001 identity contract. Persisted
+// AF-002 records and the derived AF-003 index use their own versions.
 const SchemaVersion = "buildopt.poc/adaptive-fragment-contract/v1"
 
 // Kind identifies one independently invalidated optimization class.

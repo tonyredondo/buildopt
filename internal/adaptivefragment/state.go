@@ -160,19 +160,7 @@ func validatePersistedFragment(fragment PersistedFragment) error {
 	if fragment.Generation == 0 {
 		return errors.New("adaptive fragment generation is invalid")
 	}
-	contract := Fragment{
-		SchemaVersion:         SchemaVersion,
-		FamilyID:              fragment.FamilyID,
-		RevisionID:            fragment.RevisionID,
-		RepositoryScopeSHA256: fragment.RepositoryScopeSHA256,
-		Kind:                  fragment.Kind,
-		SelectorSHA256:        fragment.SelectorSHA256,
-		Authority:             fragment.Authority,
-		AuthoritySHA256:       fragment.AuthoritySHA256,
-		Bindings:              fragment.Bindings,
-		Requires:              fragment.Requires,
-		ConflictsWith:         fragment.ConflictsWith,
-	}
+	contract := persistedFragmentContract(fragment)
 	if !Valid(contract) {
 		return errors.New("adaptive fragment semantic identity is invalid")
 	}
@@ -189,6 +177,22 @@ func validatePersistedFragment(fragment PersistedFragment) error {
 		return errors.New("adaptive fragment evidence expiration is invalid")
 	}
 	return nil
+}
+
+func persistedFragmentContract(fragment PersistedFragment) Fragment {
+	return Fragment{
+		SchemaVersion:         SchemaVersion,
+		FamilyID:              fragment.FamilyID,
+		RevisionID:            fragment.RevisionID,
+		RepositoryScopeSHA256: fragment.RepositoryScopeSHA256,
+		Kind:                  fragment.Kind,
+		SelectorSHA256:        fragment.SelectorSHA256,
+		Authority:             fragment.Authority,
+		AuthoritySHA256:       fragment.AuthoritySHA256,
+		Bindings:              fragment.Bindings,
+		Requires:              fragment.Requires,
+		ConflictsWith:         fragment.ConflictsWith,
+	}
 }
 
 func validateObservations(fragment PersistedFragment, observations []Observation) error {

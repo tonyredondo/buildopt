@@ -1,0 +1,279 @@
+{
+  "schemaVersion": "buildopt.poc/adaptive-fragment-lookup-benchmark/v1",
+  "workItem": "AF-003",
+  "capturedAt": "2026-08-25T13:45:00.735012697Z",
+  "runner": {
+    "goos": "linux",
+    "goarch": "amd64",
+    "cpuCount": 12
+  },
+  "subjects": [
+    {
+      "repositoryId": "spring-projects/spring-framework",
+      "revision": "1c4b20287f1d8f635867fb58c576849f9313e907",
+      "gitFingerprintSha256": "16030dfce09eab834966acb386a35b28097465abde5de561c9801961f8aa38cb",
+      "decisionCount": 6
+    },
+    {
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "revision": "f330e4c0b764d80dcc1f7c6d4c01e305593c49f1",
+      "gitFingerprintSha256": "eb9a17465395bad3ebdcd72a3c3b97f969cd3b616464eb236110a8a749f129f1",
+      "decisionCount": 6
+    },
+    {
+      "repositoryId": "apache/kafka",
+      "revision": "2e961afeff5cb27d60767a783edf20be00cc28e8",
+      "gitFingerprintSha256": "d399522158e1a39aac7a63fd9363461b0f6029ca34b997eaa25219b70eaf1f05",
+      "decisionCount": 6
+    },
+    {
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "revision": "eb60c6c35f355750c6bced793e85c30629d27c4e",
+      "gitFingerprintSha256": "461c306cef6c4a83682631d3c329c35463485f271ab61bdc76aaa44f8749448e",
+      "decisionCount": 6
+    },
+    {
+      "repositoryId": "apache/groovy",
+      "revision": "14fa934340c46bc1ee96cba7ae594258bd8d0fd0",
+      "gitFingerprintSha256": "3010a23f93337945888f91b197c1a48b540ecd1d9c5c5e49a0103d098a2e7ebc",
+      "decisionCount": 6
+    }
+  ],
+  "decisions": [
+    {
+      "repositoryId": "spring-projects/spring-framework",
+      "scenario": "exact-bindings",
+      "disposition": "COMPATIBLE",
+      "reason": "COMPATIBLE_FRAGMENT_CANDIDATES",
+      "durationNs": 26546
+    },
+    {
+      "repositoryId": "spring-projects/spring-framework",
+      "scenario": "unrelated-platform-drift",
+      "disposition": "COMPATIBLE",
+      "reason": "COMPATIBLE_FRAGMENT_CANDIDATES",
+      "durationNs": 30465
+    },
+    {
+      "repositoryId": "spring-projects/spring-framework",
+      "scenario": "declared-wrapper-drift",
+      "disposition": "SUSPENDED",
+      "reason": "DECLARED_BINDING_DRIFT",
+      "durationNs": 23315
+    },
+    {
+      "repositoryId": "spring-projects/spring-framework",
+      "scenario": "ambiguous-producer-lineage",
+      "disposition": "NATIVE_RETAINED",
+      "reason": "NO_COMPATIBLE_FRAGMENT",
+      "durationNs": 30952
+    },
+    {
+      "repositoryId": "spring-projects/spring-framework",
+      "scenario": "cross-repository-scope",
+      "disposition": "NATIVE_RETAINED",
+      "reason": "REPOSITORY_SCOPE_MISMATCH",
+      "durationNs": 19656
+    },
+    {
+      "repositoryId": "spring-projects/spring-framework",
+      "scenario": "missing-output-fingerprint",
+      "disposition": "NATIVE_RETAINED",
+      "reason": "NO_COMPATIBLE_FRAGMENT",
+      "durationNs": 32664
+    },
+    {
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "scenario": "exact-bindings",
+      "disposition": "COMPATIBLE",
+      "reason": "COMPATIBLE_FRAGMENT_CANDIDATES",
+      "durationNs": 21815
+    },
+    {
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "scenario": "unrelated-platform-drift",
+      "disposition": "COMPATIBLE",
+      "reason": "COMPATIBLE_FRAGMENT_CANDIDATES",
+      "durationNs": 24865
+    },
+    {
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "scenario": "declared-wrapper-drift",
+      "disposition": "SUSPENDED",
+      "reason": "DECLARED_BINDING_DRIFT",
+      "durationNs": 27394
+    },
+    {
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "scenario": "ambiguous-producer-lineage",
+      "disposition": "NATIVE_RETAINED",
+      "reason": "NO_COMPATIBLE_FRAGMENT",
+      "durationNs": 24558
+    },
+    {
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "scenario": "cross-repository-scope",
+      "disposition": "NATIVE_RETAINED",
+      "reason": "REPOSITORY_SCOPE_MISMATCH",
+      "durationNs": 14496
+    },
+    {
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "scenario": "missing-output-fingerprint",
+      "disposition": "NATIVE_RETAINED",
+      "reason": "NO_COMPATIBLE_FRAGMENT",
+      "durationNs": 23709
+    },
+    {
+      "repositoryId": "apache/kafka",
+      "scenario": "exact-bindings",
+      "disposition": "COMPATIBLE",
+      "reason": "COMPATIBLE_FRAGMENT_CANDIDATES",
+      "durationNs": 27059
+    },
+    {
+      "repositoryId": "apache/kafka",
+      "scenario": "unrelated-platform-drift",
+      "disposition": "COMPATIBLE",
+      "reason": "COMPATIBLE_FRAGMENT_CANDIDATES",
+      "durationNs": 37085
+    },
+    {
+      "repositoryId": "apache/kafka",
+      "scenario": "declared-wrapper-drift",
+      "disposition": "SUSPENDED",
+      "reason": "DECLARED_BINDING_DRIFT",
+      "durationNs": 60834
+    },
+    {
+      "repositoryId": "apache/kafka",
+      "scenario": "ambiguous-producer-lineage",
+      "disposition": "NATIVE_RETAINED",
+      "reason": "NO_COMPATIBLE_FRAGMENT",
+      "durationNs": 38858
+    },
+    {
+      "repositoryId": "apache/kafka",
+      "scenario": "cross-repository-scope",
+      "disposition": "NATIVE_RETAINED",
+      "reason": "REPOSITORY_SCOPE_MISMATCH",
+      "durationNs": 11441
+    },
+    {
+      "repositoryId": "apache/kafka",
+      "scenario": "missing-output-fingerprint",
+      "disposition": "NATIVE_RETAINED",
+      "reason": "NO_COMPATIBLE_FRAGMENT",
+      "durationNs": 23468
+    },
+    {
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "scenario": "exact-bindings",
+      "disposition": "COMPATIBLE",
+      "reason": "COMPATIBLE_FRAGMENT_CANDIDATES",
+      "durationNs": 25854
+    },
+    {
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "scenario": "unrelated-platform-drift",
+      "disposition": "COMPATIBLE",
+      "reason": "COMPATIBLE_FRAGMENT_CANDIDATES",
+      "durationNs": 24023
+    },
+    {
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "scenario": "declared-wrapper-drift",
+      "disposition": "SUSPENDED",
+      "reason": "DECLARED_BINDING_DRIFT",
+      "durationNs": 28719
+    },
+    {
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "scenario": "ambiguous-producer-lineage",
+      "disposition": "NATIVE_RETAINED",
+      "reason": "NO_COMPATIBLE_FRAGMENT",
+      "durationNs": 30501
+    },
+    {
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "scenario": "cross-repository-scope",
+      "disposition": "NATIVE_RETAINED",
+      "reason": "REPOSITORY_SCOPE_MISMATCH",
+      "durationNs": 14450
+    },
+    {
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "scenario": "missing-output-fingerprint",
+      "disposition": "NATIVE_RETAINED",
+      "reason": "NO_COMPATIBLE_FRAGMENT",
+      "durationNs": 24448
+    },
+    {
+      "repositoryId": "apache/groovy",
+      "scenario": "exact-bindings",
+      "disposition": "COMPATIBLE",
+      "reason": "COMPATIBLE_FRAGMENT_CANDIDATES",
+      "durationNs": 24918
+    },
+    {
+      "repositoryId": "apache/groovy",
+      "scenario": "unrelated-platform-drift",
+      "disposition": "COMPATIBLE",
+      "reason": "COMPATIBLE_FRAGMENT_CANDIDATES",
+      "durationNs": 21302
+    },
+    {
+      "repositoryId": "apache/groovy",
+      "scenario": "declared-wrapper-drift",
+      "disposition": "SUSPENDED",
+      "reason": "DECLARED_BINDING_DRIFT",
+      "durationNs": 24646
+    },
+    {
+      "repositoryId": "apache/groovy",
+      "scenario": "ambiguous-producer-lineage",
+      "disposition": "NATIVE_RETAINED",
+      "reason": "NO_COMPATIBLE_FRAGMENT",
+      "durationNs": 25277
+    },
+    {
+      "repositoryId": "apache/groovy",
+      "scenario": "cross-repository-scope",
+      "disposition": "NATIVE_RETAINED",
+      "reason": "REPOSITORY_SCOPE_MISMATCH",
+      "durationNs": 14856
+    },
+    {
+      "repositoryId": "apache/groovy",
+      "scenario": "missing-output-fingerprint",
+      "disposition": "NATIVE_RETAINED",
+      "reason": "NO_COMPATIBLE_FRAGMENT",
+      "durationNs": 39118
+    }
+  ],
+  "summary": {
+    "repositoryCount": 5,
+    "decisionCount": 30,
+    "dispositionCounts": {
+      "COMPATIBLE": 10,
+      "NATIVE_RETAINED": 15,
+      "SUSPENDED": 5
+    },
+    "medianMs": 0.024865,
+    "p95Ms": 0.039118,
+    "maximumMs": 0.060834
+  },
+  "sideEffects": {
+    "gradleStarts": 0,
+    "remoteCalls": 0,
+    "outputMaterializations": 0,
+    "lifecycleMutations": 0
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "buildTimingClaim": false,
+    "activationAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "outcome": "FAST_FRAGMENT_LOOKUP_AVAILABLE"
+}

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "buildopt.specs/poc-adaptive-fragment-index/v1",
+  "workItem": "AF-003",
+  "index": {
+    "schemaVersion": "buildopt.adaptive/compatibility-index/v1",
+    "recordType": "ADAPTIVE_FRAGMENT_COMPATIBILITY_INDEX",
+    "scope": "REPOSITORY_LOCAL_DERIVED_CACHE",
+    "authority": "AF_002_FRAGMENT_GENERATIONS",
+    "discardable": true
+  },
+  "fingerprints": [
+    "GIT_REVISION_PROVENANCE",
+    "GRADLE_WRAPPER",
+    "WORKFLOW",
+    "PRODUCER_LINEAGE",
+    "OUTPUT_CONTRACT",
+    "CHANGE_FAMILY"
+  ],
+  "decisions": {
+    "COMPATIBLE": "RETURN_CANDIDATE_WITHOUT_ACTIVATION",
+    "SUSPENDED": "DECLARED_BINDING_DRIFT",
+    "NATIVE_RETAINED": [
+      "MISSING_OR_INVALID_FINGERPRINT",
+      "AMBIGUOUS_BINDING",
+      "REPOSITORY_SCOPE_MISMATCH",
+      "LIFECYCLE_SUSPENDED",
+      "EVIDENCE_EXPIRED",
+      "INDEX_INVALID",
+      "NO_COMPATIBLE_FRAGMENT"
+    ]
+  },
+  "gate": {
+    "minimumRepositories": 5,
+    "minimumDecisions": 30,
+    "medianMsExclusiveMaximum": 500,
+    "p95MsExclusiveMaximum": 1000,
+    "maximumGradleStarts": 0,
+    "maximumRemoteCalls": 0,
+    "maximumOutputMaterializations": 0,
+    "maximumLifecycleMutations": 0
+  },
+  "evidence": "benchmarks/results/adaptive-fragment-lookup-v1-local.json",
+  "outcome": "FAST_FRAGMENT_LOOKUP_AVAILABLE",
+  "boundaries": {
+    "proofOfConcept": true,
+    "activationAuthorized": false,
+    "buildTimingClaim": false,
+    "centralSynchronizationImplemented": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

@@ -2436,3 +2436,26 @@ warm, order-sensitive JDK 21 sample emitted while closing `SPK-002`. It is
 descriptive only: the prototype is `UNAVAILABLE` for access tracing because it
 observes class loads rather than method calls. The result never activates an
 overhead or promotion gate.
+
+## Adaptive fragment lookup overhead
+
+[`adaptive-fragment-lookup-v1-local.json`](./results/adaptive-fragment-lookup-v1-local.json)
+records the bounded `AF-003` decision-time experiment. The same six generic
+lookup scenarios run on the frozen Spring Framework, OpenTelemetry Java
+Instrumentation, Apache Kafka, Micronaut Core and Apache Groovy subjects. The
+repository identifiers select evidence rows only; they do not change product
+behavior.
+
+The 12-CPU Linux run completes 30 decisions with a **0.025-ms median**,
+**0.039-ms p95** and **0.061-ms maximum**. Ten decisions return compatible
+candidates, five declare binding-drift suspension and fifteen retain native
+Gradle. The measured decision loop starts Gradle zero times, makes zero remote
+calls, materializes zero outputs and mutates no lifecycle state.
+
+This proves cheap lookup, not build acceleration or activation correctness.
+Effects are not added to any build-time percentage. Validate the frozen report,
+run a live report and exercise the tamper rejection with:
+
+```bash
+./dev/check-adaptive-fragment-index
+```

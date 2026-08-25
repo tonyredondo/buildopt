@@ -23,6 +23,20 @@ Launcher-owned `BUILDOPT_PLUGIN_*` and `BUILDOPT_GATEWAY_*` rendezvous values
 are internal outputs. Do not prepopulate them; the launcher removes inherited
 values and creates fresh invocation context.
 
+## Adaptive fragment lookup inputs
+
+The `AF-003` compatibility index has no user-facing toggle or repository-name
+profile. It is a discardable local cache derived from the current Git revision,
+Gradle Wrapper, requested workflow, producer lineage, output contract and
+change family. Optional task, platform, network, cache-namespace and patch-base
+fingerprints are present only when a fragment declares those bindings.
+
+Git revision is provenance rather than a compatibility binding. BuildOpt may
+therefore return the same fragment candidate on a later commit when every
+semantic binding consumed by that fragment remains equal. Missing, ambiguous,
+expired, corrupt or cross-repository state retains native Gradle. `AF-003`
+returns candidates only and introduces no activation or central-state input.
+
 ## Structural proposal owner input
 
 `.buildopt/profile.json` is the repository-owned review contract shared by

@@ -4686,6 +4686,20 @@ or performance claim:
 ./dev/check-adaptive-fragment-state
 ```
 
+## Adaptive fragment compatibility index
+
+`./dev/check-adaptive-fragment-index` validates the `AF-003` machine policy,
+recomputes the checked five-repository/30-decision report, runs a fresh bounded
+lookup benchmark and rejects a deliberately tampered summary. The decision
+path is pure Go and reports zero Gradle starts, remote calls, output
+materializations and lifecycle mutations. It returns compatible candidates,
+declared-binding suspension or explicit native retention without authorizing
+activation or making a build-time claim:
+
+```bash
+./dev/check-adaptive-fragment-index
+```
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
