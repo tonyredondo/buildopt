@@ -165,8 +165,9 @@ tasks.register("reviewedWorkload") { dependsOn(manifests) }\
         rm -f -- "${buildopt_workspace}/settings.gradle.kts" \
             "${buildopt_workspace}/build.gradle.kts"
         sed -i "/tasks.named('assemble')/i\
+def rootTasks = tasks\
 def manifests = (1..8).collect { index ->\
-    project.tasks.register(\"generateManifest\${index}\", dev.buildopt.pilot.GeneratePilotManifest) {\
+    rootTasks.register(\"generateManifest\${index}\", dev.buildopt.pilot.GeneratePilotManifest) {\
         entries.set((1..32).collect { \"entry-\${index}-\${it}\" })\
         outputFile.set(layout.buildDirectory.file(\"poc-value/manifest-\${index}.txt\"))\
     }\
