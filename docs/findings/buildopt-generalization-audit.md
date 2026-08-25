@@ -119,7 +119,9 @@ Its first proof must happen before another broad timing campaign:
    frozen histories without lookahead (**complete: 6/6 eligible Kafka
    descendants retain a structural fragment; only 1/6 retained the whole
    profile**);
-3. learn value and decay from ordinary builds using a signed economic ledger;
+3. learn value and decay from ordinary builds using a signed economic ledger
+   (**the immutable/recomputable ledger is complete; online accumulation is
+   next**);
 4. activate and directly measure only compositions whose individual fragments
    retain correctness and positive value authority; and
 5. rerun the five chronological repository families only after the active
@@ -130,11 +132,14 @@ Its first proof must happen before another broad timing campaign:
 BuildOpt's defensible idea remains an evidence-gated optimizer on top of native
 Gradle, not a faster reimplementation of Gradle's cache. The current complete-
 profile implementation demonstrates bounded target value and strong safety,
-but not generic lifetime customer value. The new fragment hypothesis must
-The shadow result supports the coverage hypothesis but does not yet establish
+but not generic lifetime customer value. The shadow result supports the
+coverage hypothesis but does not yet establish
 wall-time value: the subgraph candidate remains structurally compatible in all
 six eligible Kafka descendants, including five where whole-profile reuse is
-invalid. The active fragment path must now increase cross-commit selection
-coverage and cumulative net savings without
+invalid. AF-005 makes the retained Kafka composition economically auditable:
+`135.127 - 42.040 - 10.560 = +82.527 seconds`, with observed payback at the
+second requested descendant. It deliberately does not assign that saving to an
+individual fragment. The active fragment path must now increase cross-commit
+selection coverage and cumulative net savings without
 repository-specific rules, weaker output gates or slower native retention. If
 it cannot, the generic POC should stop rather than reinterpret the evidence.

@@ -78,6 +78,7 @@ Adaptive-fragment identity and selective invalidation:
 ./dev/check-adaptive-fragment-state
 ./dev/check-adaptive-fragment-index
 ./dev/check-adaptive-fragment-shadow
+./dev/check-adaptive-fragment-economics
 ```
 
 The static and synthetic `AF-001` gate validates the machine policy, runs the
@@ -93,6 +94,11 @@ The `AF-004` gate recomputes the five-repository frozen-history decomposition,
 reproduces the original whole-profile selections, reports partial compatibility
 separately and rejects any lookahead or report tampering. It remains shadow
 evidence and neither executes nor times a fragment.
+The `AF-005` gate recomputes immutable signed economics from retained Kafka
+composition evidence and synthetic edge vectors. It proves that negative builds
+reduce value, asynchronous costs are charged once, recurrence is represented by
+exact counts, projections cannot rewrite observations and percentages are never
+added. It does not activate or time a fragment.
 
 ```bash
 ./dev/check-generated-code

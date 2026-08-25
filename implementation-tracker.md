@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `CURRENT GENERIC STRUCTURAL-PROFILE HYPOTHESIS STOPPED; BOUNDED MECHANISM VALUE RETAINED` — the terminal five-repository result preserves exact outputs and bounded Kafka value, but fails repository breadth, descendant selection and native-retention overhead<br>
-**Current phase:** `FRAGMENT SHADOW COVERAGE SUPPORTED; ECONOMIC LEDGER NEXT` — AF-001..AF-004 define fragment identity/state, sub-millisecond lookup and no-lookahead shadow coverage; AF-005 will make signed fragment value and cost recomputable before activation<br>
+**Current phase:** `FRAGMENT ECONOMICS RECOMPUTABLE; ONLINE LEARNING NEXT` — AF-001..AF-005 define fragment identity/state, sub-millisecond lookup, no-lookahead shadow coverage and immutable signed economics; AF-006 will accumulate fragment evidence from requested ordinary builds without activation<br>
 **POC functional target:** improve real builds against optimized native Gradle and make that value accessible through one owner-invoked command with zero hand-authored BuildOpt files for supported workflows; ambiguous, drifted or non-value state retains native Gradle<br>
 **POC onboarding north star:** `install BuildOpt -> open a Gradle repository -> buildopt optimize build`; automatic selection is allowed only inside the explicit POC command after qualification, while autonomous production promotion remains out of scope<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
@@ -2418,6 +2418,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-25 | Closed AF-005 with immutable signed fragment/composition economics: retained Kafka value recomputes to +82,527 ms after exact observed costs, synthetic vectors prove negative value, exact-once async charge, immutable projections and unclipped regret, and AF-006 ordinary-build online learning is next | Codex |
 | 2026-08-25 | Closed AF-004 with exact reproduction of the one whole-profile selection, five separately reported partial cases and 6/6 eligible descendants retaining a structural fragment with zero lookahead, activation or new timing claim; opened AF-005 fragment economics | Codex |
 | 2026-08-25 | Closed AF-003 with a discardable pre-Gradle compatibility index and 30 five-repository decisions at 0.025-ms median/0.039-ms p95/0.061-ms maximum with zero external side effects; opened AF-004 frozen-history shadow decomposition without an activation or build-value claim | Codex |
 | 2026-08-25 | Closed AF-002 with four immutable fragment-state schemas, exact repository/generation linkage, JCS digest rules, two valid lifecycle bundles and seven fail-closed mutations; opened AF-003 cheap compatibility without activating a fragment | Codex |

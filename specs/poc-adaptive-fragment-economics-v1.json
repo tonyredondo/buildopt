@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "buildopt.specs/poc-adaptive-fragment-economics/v1",
+  "workItem": "AF-005",
+  "observedFormula": "SUM_SIGNED_ACTIVATED_GROSS_MINUS_SYNCHRONOUS_COST_MINUS_UNIQUE_ASYNCHRONOUS_COST",
+  "recurrence": "EXACT_COUNTS_NOT_ADDED_PERCENTAGES",
+  "projection": {
+    "decayPermille": 900,
+    "fixedHorizons": [1, 5, 10],
+    "observedStateMutable": false,
+    "activationAuthority": false
+  },
+  "payback": {
+    "observed": "FIRST_REQUESTED_BUILD_WITH_NONNEGATIVE_CUMULATIVE_VALUE_AFTER_POSITIVE_GROSS",
+    "projected": "FIRST_FIXED_POLICY_FUTURE_BUILD_WITH_NONNEGATIVE_OBSERVED_PLUS_PROJECTED_VALUE"
+  },
+  "regret": {
+    "reported": "UNCLIPPED_OBSERVED_DOWNSIDE",
+    "budgetChangesObservedNet": false
+  },
+  "gate": {
+    "negativeBuildMustReduceValue": true,
+    "asynchronousCostChargedExactlyOnce": true,
+    "maximumAdditivePercentageCount": 0,
+    "maximumObservedRewriteCount": 0,
+    "maximumMeasurementOnlyBuildCount": 0,
+    "retainedKafkaNetMs": 82527,
+    "retainedKafkaPaybackBuild": 2
+  },
+  "evidence": "benchmarks/results/adaptive-fragment-economics-v1.json",
+  "outcome": "FRAGMENT_ECONOMICS_RECOMPUTABLE",
+  "boundaries": {
+    "proofOfConcept": true,
+    "syntheticTimingClaim": false,
+    "retainedCompositionAttributionOnly": true,
+    "fragmentActivationAuthorized": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

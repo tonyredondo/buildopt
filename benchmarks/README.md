@@ -2483,3 +2483,24 @@ time. Recompute the report and exercise provenance and tamper rejection with:
 ```bash
 ./dev/check-adaptive-fragment-shadow
 ```
+
+## Adaptive fragment economic ledger
+
+[`adaptive-fragment-economics-v1.json`](./results/adaptive-fragment-economics-v1.json)
+is the recomputable `AF-005` ledger over retained evidence plus deliberately
+synthetic edge vectors. Kafka remains a `COMPOSITION`: the frozen evidence can
+recompute `135,127 - 42,040 - 10,560 = +82,527 ms` and observed payback at the
+second requested descendant, but cannot attribute the gross saving between the
+subgraph and materialization fragments.
+
+The synthetic signed vector ends at `+40 ms`; a `-100 ms` activated build plus
+its `20 ms` synchronous cost reduces cumulative value by exactly `120 ms`, and
+two references to the same `500 ms` asynchronous event charge it once. A
+separate negative vector reports `-350 ms` against a `100 ms` regret budget
+without clipping. Fixed-horizon projections are derived policy outputs, not
+observed timings, activation authority or percentages that can be added to
+other effects.
+
+```bash
+./dev/check-adaptive-fragment-economics
+```

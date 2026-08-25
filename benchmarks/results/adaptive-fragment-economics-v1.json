@@ -1,0 +1,205 @@
+{
+  "schemaVersion": "buildopt.poc/adaptive-fragment-economics/v1",
+  "workItem": "AF-005",
+  "capturedAt": "2026-08-25T10:47:46Z",
+  "source": {
+    "schemaVersion": "buildopt.evidence/poc-lifetime-breadth/v3",
+    "summarySha256": "7f6f4cb8c15ba355943afaf9f5110d4dec3a11c43b4427af1ad60d7a93c6f8e6",
+    "kafkaResultSha256": "358af8773138419a7b8df982f5ccdc7d38064e8ac5575d028ea55edaf4ffbc2c",
+    "timeBasis": "ORDER_PRESERVING_SEQUENCE_ANCHORED_FOR_TYPED_LEDGER"
+  },
+  "policy": {
+    "decayPermille": 900,
+    "horizons": [
+      1,
+      5,
+      10
+    ],
+    "regretBudgetMs": 100000
+  },
+  "assessments": {
+    "retainedKafkaComposition": {
+      "scope": "COMPOSITION",
+      "entry": {
+        "familyId": "126c9160abe6d3bdd32c411a5d2ce5b4ed17d2ef4a63127f0a3932da322e1308",
+        "revisionId": "950ba87c000dac55813f3807177a686e95801ae3a129687f40ed06e445be66df",
+        "fragmentGeneration": 1,
+        "requestedBuildCount": 6,
+        "grossSavedMs": 135127,
+        "synchronousOverheadMs": 42040,
+        "outOfBandLearningCostMs": 10560,
+        "cumulativeNetMs": 82527,
+        "lastObservedAt": "2026-08-25T10:05:00Z",
+        "evidenceExpiresAt": "2026-09-25T11:00:00Z"
+      },
+      "recurrence": {
+        "compatibleBuilds": 6,
+        "activatedBuilds": 1,
+        "requestedBuilds": 6
+      },
+      "uniqueCostEventCount": 1,
+      "negativeActivatedBuilds": 0,
+      "observedBreakEvenBuild": 2,
+      "decayPermille": 900,
+      "projections": [
+        {
+          "additionalBuilds": 1,
+          "projectedGrossSavedMs": 22521,
+          "projectedOverheadMs": 7006,
+          "projectedNetMs": 15515,
+          "observedPlusProjectedMs": 98042
+        },
+        {
+          "additionalBuilds": 5,
+          "projectedGrossSavedMs": 92220,
+          "projectedOverheadMs": 35030,
+          "projectedNetMs": 57190,
+          "observedPlusProjectedMs": 139717
+        },
+        {
+          "additionalBuilds": 10,
+          "projectedGrossSavedMs": 146665,
+          "projectedOverheadMs": 70060,
+          "projectedNetMs": 76605,
+          "observedPlusProjectedMs": 159132
+        }
+      ],
+      "regret": {
+        "observedDownsideMs": 0,
+        "budgetMs": 100000,
+        "withinBudget": true
+      }
+    },
+    "syntheticNegativeFragment": {
+      "scope": "FRAGMENT",
+      "entry": {
+        "familyId": "c68e3ce41f7f2c0204a56ea6bce3df86ea4beab1ae8c744fe88bdcdae11e227b",
+        "revisionId": "d33182bf212642669304c40b3a6f4aa05daaeeae45f51bf8c8f41a4f65427aa4",
+        "fragmentGeneration": 1,
+        "requestedBuildCount": 1,
+        "grossSavedMs": -300,
+        "synchronousOverheadMs": 50,
+        "outOfBandLearningCostMs": 0,
+        "cumulativeNetMs": -350,
+        "lastObservedAt": "2026-08-25T10:00:00Z",
+        "evidenceExpiresAt": "2026-09-25T11:00:00Z"
+      },
+      "recurrence": {
+        "compatibleBuilds": 1,
+        "activatedBuilds": 1,
+        "requestedBuilds": 1
+      },
+      "uniqueCostEventCount": 0,
+      "negativeActivatedBuilds": 1,
+      "decayPermille": 900,
+      "projections": [
+        {
+          "additionalBuilds": 1,
+          "projectedGrossSavedMs": -300,
+          "projectedOverheadMs": 50,
+          "projectedNetMs": -350,
+          "observedPlusProjectedMs": -700
+        },
+        {
+          "additionalBuilds": 5,
+          "projectedGrossSavedMs": -1227,
+          "projectedOverheadMs": 250,
+          "projectedNetMs": -1477,
+          "observedPlusProjectedMs": -1827
+        },
+        {
+          "additionalBuilds": 10,
+          "projectedGrossSavedMs": -1944,
+          "projectedOverheadMs": 500,
+          "projectedNetMs": -2444,
+          "observedPlusProjectedMs": -2794
+        }
+      ],
+      "regret": {
+        "observedDownsideMs": 350,
+        "budgetMs": 100,
+        "withinBudget": false
+      }
+    },
+    "syntheticSignedFragment": {
+      "scope": "FRAGMENT",
+      "entry": {
+        "familyId": "1b7f84ba48f9fddbbf3f9375de7545ed0b21cbecca7d47828b287beaf64724de",
+        "revisionId": "8624a62a5cfaeae11b3aeb7dd567d2f5b79e46a098207116be0e16aa38cb4017",
+        "fragmentGeneration": 1,
+        "requestedBuildCount": 3,
+        "grossSavedMs": 600,
+        "synchronousOverheadMs": 60,
+        "outOfBandLearningCostMs": 500,
+        "cumulativeNetMs": 40,
+        "lastObservedAt": "2026-08-25T10:02:00Z",
+        "evidenceExpiresAt": "2026-09-25T11:00:00Z"
+      },
+      "recurrence": {
+        "compatibleBuilds": 3,
+        "activatedBuilds": 3,
+        "requestedBuilds": 3
+      },
+      "uniqueCostEventCount": 1,
+      "negativeActivatedBuilds": 1,
+      "observedBreakEvenBuild": 2,
+      "decayPermille": 900,
+      "projections": [
+        {
+          "additionalBuilds": 1,
+          "projectedGrossSavedMs": 200,
+          "projectedOverheadMs": 20,
+          "projectedNetMs": 180,
+          "observedPlusProjectedMs": 220
+        },
+        {
+          "additionalBuilds": 5,
+          "projectedGrossSavedMs": 817,
+          "projectedOverheadMs": 100,
+          "projectedNetMs": 717,
+          "observedPlusProjectedMs": 757
+        },
+        {
+          "additionalBuilds": 10,
+          "projectedGrossSavedMs": 1292,
+          "projectedOverheadMs": 200,
+          "projectedNetMs": 1092,
+          "observedPlusProjectedMs": 1132
+        }
+      ],
+      "regret": {
+        "observedDownsideMs": 0,
+        "budgetMs": 200,
+        "withinBudget": true
+      }
+    }
+  },
+  "invariants": {
+    "negativeBuildValueDeltaMs": -120,
+    "declaredAsyncCostReferences": 2,
+    "uniqueAsyncCostEvents": 1,
+    "asyncCostChargedMs": 500,
+    "observedRewriteCount": 0,
+    "additivePercentageCount": 0,
+    "measurementOnlyBuildCount": 0
+  },
+  "summary": {
+    "assessmentCount": 3,
+    "retainedRequestedBuilds": 6,
+    "retainedActivatedBuilds": 1,
+    "retainedGrossSavedMs": 135127,
+    "retainedSynchronousCostMs": 42040,
+    "retainedAsynchronousCostMs": 10560,
+    "retainedCumulativeNetMs": 82527,
+    "retainedObservedPaybackBuild": 2
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "syntheticTimingClaim": false,
+    "fragmentAttribution": false,
+    "activationAuthorized": false,
+    "productionAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "outcome": "FRAGMENT_ECONOMICS_RECOMPUTABLE"
+}

@@ -4714,6 +4714,20 @@ fragment activation:
 ./dev/check-adaptive-fragment-shadow
 ```
 
+## Adaptive fragment economics
+
+`./dev/check-adaptive-fragment-economics` validates the `AF-005` policy,
+recomputes every signed cost/value record from frozen source evidence, runs the
+focused Go tests and vet check, and rejects a deliberately altered cumulative
+net value. The retained Kafka result remains a composition because the existing
+timing cannot be split safely between its subgraph and materialization
+fragments. Synthetic vectors prove negative value, exact-once asynchronous cost,
+immutable observations, fixed-horizon projection and unclipped bounded regret:
+
+```bash
+./dev/check-adaptive-fragment-economics
+```
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
