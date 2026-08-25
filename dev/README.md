@@ -4728,6 +4728,19 @@ immutable observations, fixed-horizon projection and unclipped bounded regret:
 ./dev/check-adaptive-fragment-economics
 ```
 
+## Adaptive fragment ordinary-build learner
+
+`./dev/check-adaptive-fragment-online` validates the `AF-006` policy, focused
+Go tests and vet, recomputes the canonical checkpoint report and rejects a
+tampered result. It proves exact requested-build cohorts, immutable generation
+updates, strict restart binding, `OBSERVED -> SHADOW -> QUALIFIED` progression
+and dependency-bounded suspension after signed value regression. It executes
+no Gradle build and grants no fragment activation:
+
+```bash
+./dev/check-adaptive-fragment-online
+```
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic

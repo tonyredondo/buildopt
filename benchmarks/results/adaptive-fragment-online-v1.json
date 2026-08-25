@@ -1,0 +1,465 @@
+{
+  "schemaVersion": "buildopt.poc/adaptive-fragment-online/v1",
+  "workItem": "AF-006",
+  "capturedAt": "2026-08-25T11:05:00Z",
+  "policy": {
+    "evidenceSource": "REQUESTED_ORDINARY_BUILD",
+    "minimumShadowBuilds": 2,
+    "minimumQualificationBuilds": 4,
+    "exactOutputsRequired": true,
+    "comparableCohortRequired": true
+  },
+  "timeline": [
+    {
+      "requestedBuilds": 1,
+      "states": {
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": "OBSERVED",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb": "OBSERVED",
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "OBSERVED"
+      },
+      "qualified": [],
+      "suspended": []
+    },
+    {
+      "requestedBuilds": 2,
+      "states": {
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": "SHADOW",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb": "SHADOW",
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "SHADOW"
+      },
+      "qualified": [],
+      "suspended": []
+    },
+    {
+      "requestedBuilds": 4,
+      "states": {
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": "QUALIFIED",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb": "QUALIFIED",
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "QUALIFIED"
+      },
+      "qualified": [
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      ],
+      "suspended": []
+    },
+    {
+      "requestedBuilds": 5,
+      "states": {
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": "SUSPENDED",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb": "SUSPENDED",
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": "QUALIFIED"
+      },
+      "qualified": [],
+      "suspended": [
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ]
+    }
+  ],
+  "resume": {
+    "interruptedGeneration": 3,
+    "interruptedCheckpointSha256": "cea2d029158593e1a40c308aaa077a5ef3ac265c86b7a79fbba80759d542e3a6",
+    "exactResumeAccepted": true,
+    "digestMismatchRejected": true,
+    "repositoryMismatchRejected": true,
+    "bindingMismatchRejected": true,
+    "unknownFieldRejected": true
+  },
+  "regression": {
+    "regressedFamily": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "regressedNetMs": -250,
+    "suspendedFamilies": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    ],
+    "dependentFamily": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "unaffectedFamily": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "unaffectedState": "QUALIFIED",
+    "unaffectedNetMs": 200,
+    "unrelatedSuspensionCount": 0
+  },
+  "summary": {
+    "requestedBuilds": 5,
+    "measurementOnlyBuilds": 0,
+    "acceptedOrdinaryBuilds": 5,
+    "comparableFragmentSamples": 15,
+    "qualifiedBeforeRegression": 3,
+    "suspendedAfterRegression": 2,
+    "independentQualifiedAfter": 1,
+    "rejectedInvalidUpdates": 5,
+    "priorCheckpointMutations": 0
+  },
+  "finalState": {
+    "schemaVersion": "buildopt.adaptive/online-checkpoint/v1",
+    "recordType": "ADAPTIVE_FRAGMENT_ONLINE_CHECKPOINT",
+    "repositoryScopeSha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "contextBindingsSha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "generation": 6,
+    "supersedesSha256": "8869ef2d44734861bb8c1131c6b973a8e6b8ca2c4d51e5a6d59b52316dcffe8b",
+    "requestedBuildCount": 5,
+    "lastBuildId": "5c7f7f7fa10e1e6636bb67cf14cf4303e9d02f0dbcba48bb335b1522edd3523a",
+    "asOf": "2026-08-25T11:05:00Z",
+    "policy": {
+      "DecayPermille": 900,
+      "Horizons": [
+        1,
+        5,
+        10
+      ],
+      "RegretBudgetMs": 1000
+    },
+    "fragments": [
+      {
+        "familyId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "revisionId": "1111111111111111111111111111111111111111111111111111111111111111",
+        "generation": 1,
+        "requires": [],
+        "state": "SUSPENDED",
+        "suspensionReason": "VALUE_REGRESSION",
+        "evidenceExpiresAt": "2026-09-25T11:00:00Z",
+        "observations": [
+          {
+            "ObservationID": "573f97886550832549e9ab2594632154196aa8e432e1cdd6feabf56e9b34dcb5",
+            "Sequence": 1,
+            "ObservedAt": "2026-08-25T11:01:00Z",
+            "Compatible": true,
+            "Activated": true,
+            "GrossSavedMs": 200,
+            "SynchronousOverheadMs": 10,
+            "AsynchronousCostEvents": []
+          },
+          {
+            "ObservationID": "084cc16049247f221897c68fef097a24135c5bc4114955302fb736bbc73fd318",
+            "Sequence": 2,
+            "ObservedAt": "2026-08-25T11:02:00Z",
+            "Compatible": true,
+            "Activated": true,
+            "GrossSavedMs": 200,
+            "SynchronousOverheadMs": 10,
+            "AsynchronousCostEvents": []
+          },
+          {
+            "ObservationID": "ef04114bdb1b76a42cefeb717b18a005bcc0c5274726c33de15731f49c56fd39",
+            "Sequence": 3,
+            "ObservedAt": "2026-08-25T11:03:00Z",
+            "Compatible": true,
+            "Activated": true,
+            "GrossSavedMs": 200,
+            "SynchronousOverheadMs": 10,
+            "AsynchronousCostEvents": []
+          },
+          {
+            "ObservationID": "83c8315d74bc63bbcf2d12d2f3dad9952100c173f5c63f0630c447bf26a6c5ff",
+            "Sequence": 4,
+            "ObservedAt": "2026-08-25T11:04:00Z",
+            "Compatible": true,
+            "Activated": true,
+            "GrossSavedMs": 200,
+            "SynchronousOverheadMs": 10,
+            "AsynchronousCostEvents": []
+          },
+          {
+            "ObservationID": "6333c1301b0a8fff61c91ded24353a3d7f623d59a5b8b243fb3e0b65c7dcf489",
+            "Sequence": 5,
+            "ObservedAt": "2026-08-25T11:05:00Z",
+            "Compatible": true,
+            "Activated": true,
+            "GrossSavedMs": -1000,
+            "SynchronousOverheadMs": 10,
+            "AsynchronousCostEvents": []
+          }
+        ],
+        "assessment": {
+          "scope": "FRAGMENT",
+          "entry": {
+            "familyId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "revisionId": "1111111111111111111111111111111111111111111111111111111111111111",
+            "fragmentGeneration": 1,
+            "requestedBuildCount": 5,
+            "grossSavedMs": -200,
+            "synchronousOverheadMs": 50,
+            "outOfBandLearningCostMs": 0,
+            "cumulativeNetMs": -250,
+            "lastObservedAt": "2026-08-25T11:05:00Z",
+            "evidenceExpiresAt": "2026-09-25T11:00:00Z"
+          },
+          "recurrence": {
+            "compatibleBuilds": 5,
+            "activatedBuilds": 5,
+            "requestedBuilds": 5
+          },
+          "uniqueCostEventCount": 0,
+          "negativeActivatedBuilds": 1,
+          "observedBreakEvenBuild": 1,
+          "decayPermille": 900,
+          "projections": [
+            {
+              "additionalBuilds": 1,
+              "projectedGrossSavedMs": -40,
+              "projectedOverheadMs": 10,
+              "projectedNetMs": -50,
+              "observedPlusProjectedMs": -300
+            },
+            {
+              "additionalBuilds": 5,
+              "projectedGrossSavedMs": -161,
+              "projectedOverheadMs": 50,
+              "projectedNetMs": -211,
+              "observedPlusProjectedMs": -461
+            },
+            {
+              "additionalBuilds": 10,
+              "projectedGrossSavedMs": -247,
+              "projectedOverheadMs": 100,
+              "projectedNetMs": -347,
+              "observedPlusProjectedMs": -597
+            }
+          ],
+          "regret": {
+            "observedDownsideMs": 250,
+            "budgetMs": 1000,
+            "withinBudget": true
+          }
+        }
+      },
+      {
+        "familyId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "revisionId": "2222222222222222222222222222222222222222222222222222222222222222",
+        "generation": 1,
+        "requires": [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ],
+        "state": "SUSPENDED",
+        "suspensionReason": "DEPENDENCY_SUSPENDED",
+        "evidenceExpiresAt": "2026-09-25T11:00:00Z",
+        "observations": [
+          {
+            "ObservationID": "0b67850d2c3fd518a98d3ebff47de395914442d61f9f6294956ce17a9ad8341a",
+            "Sequence": 1,
+            "ObservedAt": "2026-08-25T11:01:00Z",
+            "Compatible": true,
+            "Activated": true,
+            "GrossSavedMs": 100,
+            "SynchronousOverheadMs": 10,
+            "AsynchronousCostEvents": []
+          },
+          {
+            "ObservationID": "87ce25fbd3f71e5a39e94d5274ea0c70d24355ef8b821c8beae67278b2ebfb4a",
+            "Sequence": 2,
+            "ObservedAt": "2026-08-25T11:02:00Z",
+            "Compatible": true,
+            "Activated": true,
+            "GrossSavedMs": 100,
+            "SynchronousOverheadMs": 10,
+            "AsynchronousCostEvents": []
+          },
+          {
+            "ObservationID": "3c2af236885375a8f3ec1233ef41df13171618c0465f43943fe8e756b3826f34",
+            "Sequence": 3,
+            "ObservedAt": "2026-08-25T11:03:00Z",
+            "Compatible": true,
+            "Activated": true,
+            "GrossSavedMs": 100,
+            "SynchronousOverheadMs": 10,
+            "AsynchronousCostEvents": []
+          },
+          {
+            "ObservationID": "fe42705148717bdf04b9e7ccbf91849f897c3b4d08ad0217aed58f895155bfee",
+            "Sequence": 4,
+            "ObservedAt": "2026-08-25T11:04:00Z",
+            "Compatible": true,
+            "Activated": true,
+            "GrossSavedMs": 100,
+            "SynchronousOverheadMs": 10,
+            "AsynchronousCostEvents": []
+          },
+          {
+            "ObservationID": "3e118d1b826c86af0a73ea8e9051b12f3a8334c229c57f3f90d743070a1a8106",
+            "Sequence": 5,
+            "ObservedAt": "2026-08-25T11:05:00Z",
+            "Compatible": true,
+            "Activated": true,
+            "GrossSavedMs": 100,
+            "SynchronousOverheadMs": 10,
+            "AsynchronousCostEvents": []
+          }
+        ],
+        "assessment": {
+          "scope": "FRAGMENT",
+          "entry": {
+            "familyId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "revisionId": "2222222222222222222222222222222222222222222222222222222222222222",
+            "fragmentGeneration": 1,
+            "requestedBuildCount": 5,
+            "grossSavedMs": 500,
+            "synchronousOverheadMs": 50,
+            "outOfBandLearningCostMs": 0,
+            "cumulativeNetMs": 450,
+            "lastObservedAt": "2026-08-25T11:05:00Z",
+            "evidenceExpiresAt": "2026-09-25T11:00:00Z"
+          },
+          "recurrence": {
+            "compatibleBuilds": 5,
+            "activatedBuilds": 5,
+            "requestedBuilds": 5
+          },
+          "uniqueCostEventCount": 0,
+          "negativeActivatedBuilds": 0,
+          "observedBreakEvenBuild": 1,
+          "decayPermille": 900,
+          "projections": [
+            {
+              "additionalBuilds": 1,
+              "projectedGrossSavedMs": 100,
+              "projectedOverheadMs": 10,
+              "projectedNetMs": 90,
+              "observedPlusProjectedMs": 540
+            },
+            {
+              "additionalBuilds": 5,
+              "projectedGrossSavedMs": 407,
+              "projectedOverheadMs": 50,
+              "projectedNetMs": 357,
+              "observedPlusProjectedMs": 807
+            },
+            {
+              "additionalBuilds": 10,
+              "projectedGrossSavedMs": 636,
+              "projectedOverheadMs": 100,
+              "projectedNetMs": 536,
+              "observedPlusProjectedMs": 986
+            }
+          ],
+          "regret": {
+            "observedDownsideMs": 0,
+            "budgetMs": 1000,
+            "withinBudget": true
+          }
+        }
+      },
+      {
+        "familyId": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "revisionId": "3333333333333333333333333333333333333333333333333333333333333333",
+        "generation": 1,
+        "requires": [],
+        "state": "QUALIFIED",
+        "evidenceExpiresAt": "2026-09-25T11:00:00Z",
+        "observations": [
+          {
+            "ObservationID": "942d1b53679d0e4017896d8544f80f59f9cfeb384e0c731bce3b82b2c2a752af",
+            "Sequence": 1,
+            "ObservedAt": "2026-08-25T11:01:00Z",
+            "Compatible": true,
+            "Activated": true,
+            "GrossSavedMs": 50,
+            "SynchronousOverheadMs": 10,
+            "AsynchronousCostEvents": []
+          },
+          {
+            "ObservationID": "de73acbc4323bae127dc41328c3f24c2deeed3f7f08153dd5e562f30651f612f",
+            "Sequence": 2,
+            "ObservedAt": "2026-08-25T11:02:00Z",
+            "Compatible": true,
+            "Activated": true,
+            "GrossSavedMs": 50,
+            "SynchronousOverheadMs": 10,
+            "AsynchronousCostEvents": []
+          },
+          {
+            "ObservationID": "492df55f3a3d5790df694132c1c59b95d9a1b5cd3ccf72a5c742d6e338a76542",
+            "Sequence": 3,
+            "ObservedAt": "2026-08-25T11:03:00Z",
+            "Compatible": true,
+            "Activated": true,
+            "GrossSavedMs": 50,
+            "SynchronousOverheadMs": 10,
+            "AsynchronousCostEvents": []
+          },
+          {
+            "ObservationID": "3d060dacab6d81e8b56198f40eb59061e759bf0c5905558e9e60a3ddcc4dee6c",
+            "Sequence": 4,
+            "ObservedAt": "2026-08-25T11:04:00Z",
+            "Compatible": true,
+            "Activated": true,
+            "GrossSavedMs": 50,
+            "SynchronousOverheadMs": 10,
+            "AsynchronousCostEvents": []
+          },
+          {
+            "ObservationID": "811ecbec4938c4b6a1073fd2434b2606b4859da4588a356f93ff47e3bab1ab55",
+            "Sequence": 5,
+            "ObservedAt": "2026-08-25T11:05:00Z",
+            "Compatible": true,
+            "Activated": true,
+            "GrossSavedMs": 50,
+            "SynchronousOverheadMs": 10,
+            "AsynchronousCostEvents": []
+          }
+        ],
+        "assessment": {
+          "scope": "FRAGMENT",
+          "entry": {
+            "familyId": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "revisionId": "3333333333333333333333333333333333333333333333333333333333333333",
+            "fragmentGeneration": 1,
+            "requestedBuildCount": 5,
+            "grossSavedMs": 250,
+            "synchronousOverheadMs": 50,
+            "outOfBandLearningCostMs": 0,
+            "cumulativeNetMs": 200,
+            "lastObservedAt": "2026-08-25T11:05:00Z",
+            "evidenceExpiresAt": "2026-09-25T11:00:00Z"
+          },
+          "recurrence": {
+            "compatibleBuilds": 5,
+            "activatedBuilds": 5,
+            "requestedBuilds": 5
+          },
+          "uniqueCostEventCount": 0,
+          "negativeActivatedBuilds": 0,
+          "observedBreakEvenBuild": 1,
+          "decayPermille": 900,
+          "projections": [
+            {
+              "additionalBuilds": 1,
+              "projectedGrossSavedMs": 50,
+              "projectedOverheadMs": 10,
+              "projectedNetMs": 40,
+              "observedPlusProjectedMs": 240
+            },
+            {
+              "additionalBuilds": 5,
+              "projectedGrossSavedMs": 203,
+              "projectedOverheadMs": 50,
+              "projectedNetMs": 153,
+              "observedPlusProjectedMs": 353
+            },
+            {
+              "additionalBuilds": 10,
+              "projectedGrossSavedMs": 314,
+              "projectedOverheadMs": 100,
+              "projectedNetMs": 214,
+              "observedPlusProjectedMs": 414
+            }
+          ],
+          "regret": {
+            "observedDownsideMs": 0,
+            "budgetMs": 1000,
+            "withinBudget": true
+          }
+        }
+      }
+    ]
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "syntheticTimingClaim": false,
+    "gradleExecutions": 0,
+    "activationAuthorized": false,
+    "productionAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "outcome": "ONLINE_FRAGMENT_LEARNING_AVAILABLE"
+}

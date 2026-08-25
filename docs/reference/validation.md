@@ -79,6 +79,7 @@ Adaptive-fragment identity and selective invalidation:
 ./dev/check-adaptive-fragment-index
 ./dev/check-adaptive-fragment-shadow
 ./dev/check-adaptive-fragment-economics
+./dev/check-adaptive-fragment-online
 ```
 
 The static and synthetic `AF-001` gate validates the machine policy, runs the
@@ -99,6 +100,11 @@ composition evidence and synthetic edge vectors. It proves that negative builds
 reduce value, asynchronous costs are charged once, recurrence is represented by
 exact counts, projections cannot rewrite observations and percentages are never
 added. It does not activate or time a fragment.
+The `AF-006` gate exercises canonical online checkpoints using only synthetic
+requested-build inputs. It rejects measurement-only, binding/cohort drift,
+inexact outputs and product failures; exact restart succeeds, insufficient
+evidence stays observed/shadow and regression suspends only the affected family
+and its transitive dependents. It runs no Gradle build and makes no timing claim.
 
 ```bash
 ./dev/check-generated-code

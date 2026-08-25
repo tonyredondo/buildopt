@@ -2504,3 +2504,21 @@ other effects.
 ```bash
 ./dev/check-adaptive-fragment-economics
 ```
+
+## Adaptive fragment ordinary-build learning
+
+[`adaptive-fragment-online-v1.json`](./results/adaptive-fragment-online-v1.json)
+is the deterministic `AF-006` state-machine proof. Five requested ordinary
+builds contribute 15 exact comparable fragment samples; no measurement-only
+build is created. All three fragments remain `OBSERVED` after one build, move
+to `SHADOW` after two and become `QUALIFIED` after four.
+
+The fifth synthetic signed observation takes one base fragment to `-250 ms`.
+Only that family and its declared dependent suspend; an unrelated fragment
+remains `QUALIFIED` at `+200 ms`. An interrupted generation resumes only with
+its exact canonical digest, repository scope and context bindings. These values
+exercise lifecycle behavior and make no wall-time or activation claim.
+
+```bash
+./dev/check-adaptive-fragment-online
+```

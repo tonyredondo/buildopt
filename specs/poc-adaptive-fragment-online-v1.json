@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "buildopt.specs/poc-adaptive-fragment-online/v1",
+  "workItem": "AF-006",
+  "evidenceSource": "REQUESTED_ORDINARY_BUILD",
+  "checkpoint": {
+    "canonicalization": "RFC8785_JCS",
+    "digest": "SHA-256",
+    "atomicGeneration": true,
+    "exactRepositoryScopeRequired": true,
+    "exactContextBindingsRequired": true,
+    "unknownFields": "REJECT",
+    "interruptedGenerationRemainsUsable": true
+  },
+  "cohort": {
+    "sameRepositoryScope": true,
+    "sameContextBindings": true,
+    "sameFragmentRevision": true,
+    "exactOutputsRequired": true,
+    "productAttributableFailureAllowed": false,
+    "measurementOnlyBuildAllowed": false
+  },
+  "lifecycle": {
+    "minimumShadowBuilds": 2,
+    "minimumQualificationBuilds": 4,
+    "insufficientEvidenceStates": ["OBSERVED", "SHADOW"],
+    "qualificationGrantsActivation": false,
+    "negativeCumulativeValueFromQualified": "SUSPEND_FRAGMENT_AND_TRANSITIVE_DEPENDENTS",
+    "unrelatedFragmentStateChanges": 0
+  },
+  "gate": {
+    "requestedBuilds": 5,
+    "measurementOnlyBuilds": 0,
+    "comparableFragmentSamples": 15,
+    "qualifiedBeforeRegression": 3,
+    "suspendedAfterRegression": 2,
+    "independentQualifiedAfterRegression": 1,
+    "rejectedInvalidUpdates": 5,
+    "priorCheckpointMutations": 0
+  },
+  "evidence": "benchmarks/results/adaptive-fragment-online-v1.json",
+  "outcome": "ONLINE_FRAGMENT_LEARNING_AVAILABLE",
+  "boundaries": {
+    "proofOfConcept": true,
+    "syntheticTimingClaim": false,
+    "gradleExecutions": 0,
+    "fragmentActivationAuthorized": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

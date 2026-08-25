@@ -110,16 +110,19 @@ from ordinary builds; compose only fragments with current correctness and value
 authority; and retain native Gradle through a sub-second no-value path. The new
 tracker preserves the same five-repository baseline, exact-output and zero-
 failure requirements, and makes cumulative longitudinal value—not isolated
-target speedup—the terminal decision. AF-001..AF-005 now provide typed fragment
+target speedup—the terminal decision. AF-001..AF-006 now provide typed fragment
 identity/state, sub-millisecond lookup and a no-lookahead shadow result with
 100% fragment retention across the six eligible descendants, plus immutable
 signed economics. The retained Kafka composition recomputes to `+82.527 s`
 after `135.127 s` gross saving, `42.040 s` synchronous wrapper cost and
 `10.560 s` one-time qualification/publication cost; payback occurs on the
 second requested descendant. Existing evidence cannot attribute that gross
-saving to one fragment, so AF-006 must learn fragment-level observations from
-ordinary requested builds before any activation.
-Production hardening, soak, design
+saving to one fragment. AF-006 now provides immutable ordinary-build
+checkpoints: exact restart succeeds, insufficient evidence remains
+`OBSERVED`/`SHADOW`, and a synthetic value regression suspends only the affected
+fragment and its dependent. The next block will test cross-repository
+hypothesis priors; transferred evidence may rank exploration but cannot grant
+local correctness or activation. Production hardening, soak, design
 partners and Test Optimization remain outside this POC.
 
 ## Evidence
@@ -135,3 +138,5 @@ partners and Test Optimization remain outside this POC.
 - [Machine-readable shadow result](../../benchmarks/results/adaptive-fragment-shadow-v1.json)
 - [Adaptive fragment economics](../../specs/poc-adaptive-fragment-economics-v1.md)
 - [Machine-readable economic ledger](../../benchmarks/results/adaptive-fragment-economics-v1.json)
+- [Ordinary-build learner contract](../../specs/poc-adaptive-fragment-online-v1.md)
+- [Machine-readable learner proof](../../benchmarks/results/adaptive-fragment-online-v1.json)

@@ -120,8 +120,8 @@ Its first proof must happen before another broad timing campaign:
    descendants retain a structural fragment; only 1/6 retained the whole
    profile**);
 3. learn value and decay from ordinary builds using a signed economic ledger
-   (**the immutable/recomputable ledger is complete; online accumulation is
-   next**);
+   (**complete: immutable checkpoints accept requested builds only, resume
+   under exact bindings and isolate regression to dependent fragments**);
 4. activate and directly measure only compositions whose individual fragments
    retain correctness and positive value authority; and
 5. rerun the five chronological repository families only after the active
@@ -143,3 +143,10 @@ individual fragment. The active fragment path must now increase cross-commit
 selection coverage and cumulative net savings without
 repository-specific rules, weaker output gates or slower native retention. If
 it cannot, the generic POC should stop rather than reinterpret the evidence.
+
+AF-006 proves the online lifecycle mechanically but adds no real timing result:
+five synthetic requested-build updates move three fragments through
+`OBSERVED`, `SHADOW` and `QUALIFIED`; a later negative value suspends one family
+and its dependent while an unrelated family stays qualified. AF-007 must now
+test whether repository-independent structural features can rank useful local
+hypotheses without transferring correctness or activation authority.

@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_evidence="${buildopt_repo_root}/benchmarks/results/adaptive-fragment-online-v1.json"
+buildopt_policy="${buildopt_repo_root}/specs/poc-adaptive-fragment-online-v1.json"
+buildopt_temp_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-af006.XXXXXX")
+trap 'rm -r -- "${buildopt_temp_root}"' EXIT
+
+for buildopt_command in grep jq mktemp; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'adaptive fragment online check requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-adaptive-fragment-online/v1" and
+    .workItem == "AF-006" and
+    .evidenceSource == "REQUESTED_ORDINARY_BUILD" and
+    .checkpoint.canonicalization == "RFC8785_JCS" and
+    .checkpoint.exactRepositoryScopeRequired == true and
+    .checkpoint.exactContextBindingsRequired == true and
+    .cohort.exactOutputsRequired == true and
+    .cohort.measurementOnlyBuildAllowed == false and
+    .lifecycle.minimumShadowBuilds == 2 and
+    .lifecycle.minimumQualificationBuilds == 4 and
+    .lifecycle.qualificationGrantsActivation == false and
+    .lifecycle.unrelatedFragmentStateChanges == 0 and
+    .gate.requestedBuilds == 5 and
+    .gate.measurementOnlyBuilds == 0 and
+    .gate.comparableFragmentSamples == 15 and
+    .gate.qualifiedBeforeRegression == 3 and
+    .gate.suspendedAfterRegression == 2 and
+    .gate.independentQualifiedAfterRegression == 1 and
+    .gate.rejectedInvalidUpdates == 5 and
+    .gate.priorCheckpointMutations == 0 and
+    .outcome == "ONLINE_FRAGMENT_LEARNING_AVAILABLE" and
+    .boundaries.fragmentActivationAuthorized == false and
+    .boundaries.productionAuthorized == false and
+    .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_policy}" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/adaptivefragment ./dev/adaptive-fragment-online
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/adaptivefragment ./dev/adaptive-fragment-online
+buildopt_direct_imports=$("${buildopt_script_dir}/run" --toolchain go -- \
+    go list -f '{{range .Imports}}{{println .}}{{end}}' \
+    ./internal/adaptivefragment ./dev/adaptive-fragment-online)
+if grep -Eq '^(net|net/.*|os/exec)$' <<<"${buildopt_direct_imports}"; then
+    echo "adaptive fragment online learner imports process or network execution" >&2
+    exit 1
+fi
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./dev/adaptive-fragment-online --validate "${buildopt_evidence}" >/dev/null
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./dev/adaptive-fragment-online --output "${buildopt_temp_root}/live-report.json"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./dev/adaptive-fragment-online --validate "${buildopt_temp_root}/live-report.json" >/dev/null
+
+jq '.summary.measurementOnlyBuilds = 1' "${buildopt_evidence}" >"${buildopt_temp_root}/tampered-report.json"
+if "${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./dev/adaptive-fragment-online --validate "${buildopt_temp_root}/tampered-report.json" >/dev/null 2>&1; then
+    echo "adaptive fragment online learner accepted a tampered report" >&2
+    exit 1
+fi
+
+echo "adaptive fragment online learning: ONLINE_FRAGMENT_LEARNING_AVAILABLE"
