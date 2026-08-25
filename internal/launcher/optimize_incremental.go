@@ -16,11 +16,12 @@ import (
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
+	"github.com/tonyredondo/buildopt/internal/ordinarylearning"
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 )
 
 const (
-	optimizeIncrementalSchema            = "buildopt.poc/incremental-learning/v2"
+	optimizeIncrementalSchema            = "buildopt.poc/incremental-learning/v3"
 	optimizeIncrementalCollecting        = "COLLECTING"
 	optimizeIncrementalComplete          = "COMPLETE"
 	optimizeIncrementalRetained          = "NATIVE_RETAINED"
@@ -31,6 +32,7 @@ const (
 	optimizeIncrementalReasonCancelled   = "CALIBRATION_CANCELLED"
 	optimizeIncrementalReasonPreparation = "CANDIDATE_PREPARATION_FAILED"
 	optimizeIncrementalReasonState       = "INCREMENTAL_STATE_INVALID"
+	optimizeIncrementalReasonEconomics   = "ORDINARY_LEARNING_ECONOMICS_REJECTED"
 	optimizeIncrementalArmDiscovery      = "DISCOVERY_CONTROL"
 	optimizeIncrementalArmControl        = "CONTROL"
 	optimizeIncrementalArmCandidate      = "CANDIDATE"
@@ -75,6 +77,7 @@ type optimizeIncrementalLearning struct {
 	ExpectedOutputCount  int                              `json:"expectedOutputCount"`
 	DiscoverySHA256      string                           `json:"discoverySha256"`
 	IncrementalCostMS    int64                            `json:"incrementalCostMs"`
+	OrdinaryEconomics    ordinarylearning.Decision        `json:"ordinaryEconomics"`
 	Baseline             *optimizeIncrementalObservation  `json:"baseline,omitempty"`
 	Observations         []optimizeIncrementalObservation `json:"observations"`
 	CheckpointSHA256     string                           `json:"checkpointSha256"`
@@ -96,6 +99,7 @@ type optimizeIncrementalDocument struct {
 	ExpectedOutputCount  int                              `json:"expectedOutputCount"`
 	DiscoverySHA256      string                           `json:"discoverySha256"`
 	IncrementalCostMS    int64                            `json:"incrementalCostMs"`
+	OrdinaryEconomics    ordinarylearning.Decision        `json:"ordinaryEconomics"`
 	Baseline             *optimizeIncrementalObservation  `json:"baseline,omitempty"`
 	Observations         []optimizeIncrementalObservation `json:"observations"`
 	FallbackSuccessful   bool                             `json:"fallbackSuccessful"`
@@ -474,11 +478,21 @@ func (run *optimizeRun) collectIncrementalLearning(
 			learning.NextArm = optimizeIncrementalArmComplete
 		}
 	}
+	if err := updateOptimizeOrdinaryEconomics(run.invocation, discovery, &learning); err != nil {
+		return retainedOptimizeIncrementalLearning(run.invocation, learning, optimizeIncrementalReasonState), retainedIncrementalCalibration(run.invocation, optimizeIncrementalReasonState)
+	}
+	if learning.OrdinaryEconomics.Decision == ordinarylearning.DecisionRetained {
+		return retainedOptimizeIncrementalLearning(run.invocation, learning, optimizeIncrementalReasonEconomics), retainedIncrementalCalibration(run.invocation, optimizeIncrementalReasonEconomics)
+	}
 	if err := writeOptimizeIncrementalCheckpoint(run.invocation, &learning); err != nil {
 		return retainedOptimizeIncrementalLearning(run.invocation, learning, optimizeIncrementalReasonState), retainedIncrementalCalibration(run.invocation, optimizeIncrementalReasonState)
 	}
 	if len(learning.Observations) != optimizeRequiredCalibrationPairs*2 {
 		return learning, calibration
+	}
+	if learning.OrdinaryEconomics.Decision != ordinarylearning.DecisionQualificationReady ||
+		!learning.OrdinaryEconomics.CalibrationAuthorized {
+		return retainedOptimizeIncrementalLearning(run.invocation, learning, optimizeIncrementalReasonEconomics), retainedIncrementalCalibration(run.invocation, optimizeIncrementalReasonEconomics)
 	}
 	completed, completedCalibration := completeOptimizeIncrementalLearning(run.invocation, discovery, learning)
 	return completed, completedCalibration
@@ -528,6 +542,86 @@ func (run *optimizeRun) hashIncrementalOutputs(discovery optimizeDiscoveryResult
 	count := len(files)
 	run.outputVerificationTime += time.Since(started)
 	return digest, count, nil
+}
+
+func updateOptimizeOrdinaryEconomics(
+	invocation optimizeInvocation,
+	discovery optimizeDiscoveryResult,
+	learning *optimizeIncrementalLearning,
+) error {
+	if learning == nil || learning.Baseline == nil || !validOptimizeStructuralBinding(discovery.StructuralBinding) {
+		return errors.New("ordinary learning structural binding is unavailable")
+	}
+	historical := learning.OrdinaryEconomics.HistoricalCompatibleMatches
+	volatileProducers := learning.OrdinaryEconomics.MaximumVolatileProducerCount
+	if learning.OrdinaryEconomics.SchemaVersion == "" {
+		projected, err := predictOptimizeCompatibleMatches(invocation, discovery)
+		if err != nil {
+			projected = 0
+		}
+		historical = projected
+		if discovery.Materialization.QuarantineFile != "" {
+			quarantine, err := loadOptimizeNativeQuarantine(invocation, discovery)
+			if err != nil {
+				return err
+			}
+			volatileProducers = len(quarantine.QuarantinedProducers)
+		}
+	}
+	decision, err := ordinarylearning.Evaluate(optimizeOrdinaryEconomicsInput(
+		discovery, *learning, historical, volatileProducers,
+	))
+	if err != nil {
+		return err
+	}
+	learning.OrdinaryEconomics = decision
+	return nil
+}
+
+func optimizeOrdinaryEconomicsInput(
+	discovery optimizeDiscoveryResult,
+	learning optimizeIncrementalLearning,
+	historicalCompatibleMatches int,
+	volatileProducerCount int,
+) ordinarylearning.Input {
+	graph := ordinarylearning.Graph{
+		TotalProjects: discovery.Graph.TotalProjects, SelectedProjects: discovery.Graph.SelectedProjects,
+		OmittedProjects: discovery.Graph.OmittedProjects,
+	}
+	makeObservation := func(observation optimizeIncrementalObservation, arm string) ordinarylearning.Observation {
+		return ordinarylearning.Observation{
+			Sequence: observation.Sequence, Pair: observation.Pair, Arm: arm,
+			Source: ordinarylearning.ObservationSource, DurationMS: observation.DurationMS,
+			StructuralFingerprintSHA256: discovery.StructuralBinding.SHA256,
+			Graph:                       graph, ExactOutputs: observation.RequiredOutputSHA256 == learning.ExpectedOutputSHA256 &&
+				observation.RequiredOutputCount == learning.ExpectedOutputCount,
+			Successful: observation.ExitCode == 0, StructurallyPortable: validOptimizeStructuralBinding(discovery.StructuralBinding),
+			VolatileProducerCount: volatileProducerCount, MeasurementOnly: false,
+			ProductAttributableFailure: observation.ProductAttributableFailure,
+		}
+	}
+	observations := []ordinarylearning.Observation{makeObservation(*learning.Baseline, "BASELINE")}
+	for _, observation := range learning.Observations {
+		observations = append(observations, makeObservation(observation, observation.Arm))
+	}
+	return ordinarylearning.Input{
+		LearningCostMS:              learning.IncrementalCostMS,
+		HistoricalCompatibleMatches: historicalCompatibleMatches,
+		Observations:                observations,
+	}
+}
+
+func validOptimizeOrdinaryEconomics(discovery optimizeDiscoveryResult, learning optimizeIncrementalLearning) bool {
+	if learning.OrdinaryEconomics.SchemaVersion != ordinarylearning.SchemaVersion || learning.Baseline == nil {
+		return false
+	}
+	expected, err := ordinarylearning.Evaluate(optimizeOrdinaryEconomicsInput(
+		discovery,
+		learning,
+		learning.OrdinaryEconomics.HistoricalCompatibleMatches,
+		learning.OrdinaryEconomics.MaximumVolatileProducerCount,
+	))
+	return err == nil && reflect.DeepEqual(expected, learning.OrdinaryEconomics)
 }
 
 func optimizeIncrementalEconomicsForRun(run *optimizeRun, overhead int64) optimizeIncrementalEconomics {
@@ -630,7 +724,8 @@ func completeOptimizeIncrementalLearning(
 	if summary.MeanSavedMS > 0 {
 		breakEven = int(math.Ceil(float64(costMS) / summary.MeanSavedMS))
 	}
-	qualified := summary.Qualified && breakEven > 0 && breakEven <= invocation.maxBreakEvenBuilds
+	maximumPayback := min(invocation.maxBreakEvenBuilds, ordinarylearning.MaximumPaybackMatches)
+	qualified := summary.Qualified && breakEven > 0 && breakEven <= maximumPayback
 	calibrationReason := optimizeCalibrationReasonNoValue
 	if summary.Qualified && !qualified {
 		calibrationReason = optimizeCalibrationReasonBreakEven
@@ -647,7 +742,7 @@ func completeOptimizeIncrementalLearning(
 		PositivePairs:     summary.PositivePairs, ControlP95MS: summary.ControlP95MS,
 		CandidateP95MS: summary.CandidateP95MS, CalibrationCostMS: costMS,
 		QualificationPolicy: summary.QualificationPolicy,
-		BreakEvenBuilds:     breakEven, MaximumBreakEvenBuilds: invocation.maxBreakEvenBuilds,
+		BreakEvenBuilds:     breakEven, MaximumBreakEvenBuilds: maximumPayback,
 		ValueGatePassed: summary.Qualified, Qualified: qualified,
 		FallbackSuccessful: summary.FallbackSuccessful,
 		EvidenceSHA256:     hex.EncodeToString(evidenceDigest[:]), DiscoverySHA256: learning.DiscoverySHA256,
@@ -725,6 +820,7 @@ func writeOptimizeIncrementalCheckpoint(invocation optimizeInvocation, learning 
 		PairsCompleted: learning.PairsCompleted, NextArm: learning.NextArm,
 		ExpectedOutputSHA256: learning.ExpectedOutputSHA256, ExpectedOutputCount: learning.ExpectedOutputCount,
 		DiscoverySHA256: learning.DiscoverySHA256, IncrementalCostMS: learning.IncrementalCostMS,
+		OrdinaryEconomics:    learning.OrdinaryEconomics,
 		Baseline:             learning.Baseline,
 		Observations:         append([]optimizeIncrementalObservation(nil), learning.Observations...),
 		FallbackSuccessful:   learning.FallbackSuccessful,
@@ -779,6 +875,7 @@ func validateOptimizeIncrementalEvidence(invocation optimizeInvocation, learning
 		PairsCompleted: learning.PairsCompleted, NextArm: learning.NextArm,
 		ExpectedOutputSHA256: learning.ExpectedOutputSHA256, ExpectedOutputCount: learning.ExpectedOutputCount,
 		DiscoverySHA256: learning.DiscoverySHA256, IncrementalCostMS: learning.IncrementalCostMS,
+		OrdinaryEconomics:    learning.OrdinaryEconomics,
 		Baseline:             learning.Baseline,
 		Observations:         append([]optimizeIncrementalObservation(nil), learning.Observations...),
 		FallbackSuccessful:   learning.FallbackSuccessful,
@@ -804,6 +901,9 @@ func validOptimizeIncrementalCheckpoint(state optimizeState) bool {
 		learning.Baseline == nil || !validOptimizeIncrementalObservation(*learning.Baseline, true) ||
 		learning.PairsCompleted != len(learning.Observations)/2 ||
 		len(learning.Observations) > optimizeRequiredCalibrationPairs*2 {
+		return false
+	}
+	if !validOptimizeOrdinaryEconomics(state.Discovery, learning) {
 		return false
 	}
 	for index, observation := range learning.Observations {

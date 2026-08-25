@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
+	"github.com/tonyredondo/buildopt/internal/ordinarylearning"
 )
 
 func TestEconomicPrequalificationRequiresEnoughAnalogousCommits(t *testing.T) {
@@ -17,12 +18,12 @@ func TestEconomicPrequalificationRequiresEnoughAnalogousCommits(t *testing.T) {
 		reason   string
 	}{
 		{
-			name: "reject seven analogous changes", commits: 7,
+			name: "reject four analogous changes", commits: 4,
 			decision: optimizePrequalificationReject,
 			reason:   optimizePrequalificationReasonInsufficient,
 		},
 		{
-			name: "measure after eight analogous changes", commits: 8,
+			name: "measure after five analogous changes", commits: 5,
 			decision: optimizePrequalificationMeasure,
 			reason:   optimizePrequalificationReasonMeasure,
 		},
@@ -43,7 +44,7 @@ func TestEconomicPrequalificationRequiresEnoughAnalogousCommits(t *testing.T) {
 			)
 			if result.Decision != test.decision || result.Reason != test.reason ||
 				result.AnalogousCommits != test.commits ||
-				result.MinimumPaybackBuilds != optimizeRequiredCalibrationPairs ||
+				result.MinimumPaybackBuilds != ordinarylearning.MaximumPaybackMatches ||
 				result.DiscoveryAuthorized != (test.decision == optimizePrequalificationMeasure) ||
 				!validOptimizePrequalification(result) {
 				t.Fatalf("prequalification = %+v", result)
@@ -53,7 +54,7 @@ func TestEconomicPrequalificationRequiresEnoughAnalogousCommits(t *testing.T) {
 }
 
 func TestEconomicPrequalificationRejectsAFullGraphCandidate(t *testing.T) {
-	repository, target := economicPrequalificationRepository(t, 8)
+	repository, target := economicPrequalificationRepository(t, ordinarylearning.MaximumPaybackMatches)
 	result := prequalifyOptimizeDiscovery(
 		optimizeInvocation{
 			repositoryRoot:     repository,
@@ -74,6 +75,25 @@ func TestEconomicPrequalificationRejectsAFullGraphCandidate(t *testing.T) {
 		result.Reason != optimizePrequalificationReasonNoReduction ||
 		result.OmittedProjects != 0 || !validOptimizePrequalification(result) {
 		t.Fatalf("full-graph prequalification = %+v", result)
+	}
+}
+
+func TestCompatibleLifetimeProjectionCountsOnlyMatchingOrdinaryFamilies(t *testing.T) {
+	repository, target := economicPrequalificationRepository(t, ordinarylearning.MaximumPaybackMatches)
+	commits, compatible, err := countOptimizeCompatibleCommits(
+		repository,
+		target,
+		optimizePrequalificationMaximumHistoryDepth,
+		economicPrequalificationSnapshot(),
+		[]string{":library"},
+		optimizeFamilyDependency,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(commits) != ordinarylearning.MaximumPaybackMatches+1 ||
+		compatible != ordinarylearning.MaximumPaybackMatches {
+		t.Fatalf("history = %d commits/%d compatible, want %d/%d", len(commits), compatible, ordinarylearning.MaximumPaybackMatches+1, ordinarylearning.MaximumPaybackMatches)
 	}
 }
 

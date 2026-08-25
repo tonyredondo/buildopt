@@ -2,12 +2,15 @@ package launcher
 
 import (
 	"errors"
+	"os"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
+	"github.com/tonyredondo/buildopt/internal/ordinarylearning"
 )
 
 const (
@@ -63,7 +66,7 @@ func unevaluatedOptimizePrequalification(reason string) optimizeEconomicPrequali
 func prequalifyOptimizeDiscovery(
 	invocation optimizeInvocation,
 	snapshot buildimpact.DiscoverySnapshot,
-	owners []string,
+	expectedOwners []string,
 	family string,
 ) (result optimizeEconomicPrequalification) {
 	startedAt := time.Now()
@@ -74,9 +77,9 @@ func prequalifyOptimizeDiscovery(
 		EvidenceSource:         "VERIFIED_CENTRAL_GRAPH_AND_FIRST_PARENT_GIT_HISTORY",
 		Entrypoints:            append([]string(nil), invocation.discovery.Entrypoints...),
 		ChangeFamily:           family,
-		ChangedProjects:        append([]string(nil), owners...),
+		ChangedProjects:        append([]string(nil), expectedOwners...),
 		GraphProjects:          len(snapshot.Projects),
-		MinimumPaybackBuilds:   optimizeRequiredCalibrationPairs,
+		MinimumPaybackBuilds:   ordinarylearning.MaximumPaybackMatches,
 		MaximumBreakEvenBuilds: invocation.maxBreakEvenBuilds,
 		ProductionAuthorized:   false, TestOptimization: "OUT_OF_SCOPE",
 	}
@@ -87,42 +90,29 @@ func prequalifyOptimizeDiscovery(
 		}
 	}()
 
-	affected := optimizeAffectedProjects(snapshot, owners)
+	affected := optimizeAffectedProjects(snapshot, expectedOwners)
 	result.SelectedProjects = len(affected)
 	result.OmittedProjects = len(snapshot.Projects) - len(affected)
 	if result.GraphProjects < 1 || result.SelectedProjects < 1 || result.OmittedProjects < 1 {
 		result.Reason = optimizePrequalificationReasonNoReduction
 		return result
 	}
-	if invocation.maxBreakEvenBuilds < optimizeRequiredCalibrationPairs {
+	if invocation.maxBreakEvenBuilds < ordinarylearning.MaximumPaybackMatches {
 		result.Reason = optimizePrequalificationReasonInsufficient
 		return result
 	}
 
 	window := min(invocation.maxBreakEvenBuilds, optimizePrequalificationMaximumHistoryDepth)
-	commits, err := optimizeRecentFirstParentCommits(
-		invocation.repositoryRoot,
-		invocation.discovery.TargetRevision,
-		window,
+	commits, analogous, err := countOptimizeCompatibleCommits(
+		invocation.repositoryRoot, invocation.discovery.TargetRevision, window,
+		snapshot, expectedOwners, family,
 	)
 	if err != nil {
 		return result
 	}
 	result.HistoryWindowCommits = window
 	result.ObservedCommits = len(commits)
-	for _, commit := range commits {
-		paths, pathErr := optimizeCommitChangedPaths(invocation.repositoryRoot, commit)
-		if pathErr != nil || optimizeUnsafeEconomicChange(paths) {
-			continue
-		}
-		commitOwners, ownerErr := buildimpact.ResolveProjectOwners(snapshot, paths)
-		if ownerErr != nil || !equalOptimizeStrings(commitOwners, owners) {
-			continue
-		}
-		if optimizeChangeFamily(snapshot, paths, commitOwners) == family {
-			result.AnalogousCommits++
-		}
-	}
+	result.AnalogousCommits = analogous
 	if result.AnalogousCommits < result.MinimumPaybackBuilds {
 		result.Reason = optimizePrequalificationReasonInsufficient
 		return result
@@ -131,6 +121,68 @@ func prequalifyOptimizeDiscovery(
 	result.Reason = optimizePrequalificationReasonMeasure
 	result.DiscoveryAuthorized = true
 	return result
+}
+
+// predictOptimizeCompatibleMatches estimates only whether the current change
+// family recurs often enough to repay learning inside the fixed POC horizon.
+// It uses no timing claim and starts no Gradle process. Direct durations,
+// outputs, portability and volatility still come only from requested builds.
+func predictOptimizeCompatibleMatches(invocation optimizeInvocation, discovery optimizeDiscoveryResult) (int, error) {
+	directory := filepath.Join(invocation.repositoryRoot, filepath.FromSlash(invocation.stateRelative), "discovery")
+	manifestRaw, err := os.ReadFile(filepath.Join(directory, "manifest.json"))
+	if err != nil {
+		return 0, err
+	}
+	manifest, err := buildimpact.ParseManifest(
+		manifestRaw,
+		discovery.RepositoryID,
+		optimizePipelineClass(discovery.Entrypoints, discovery.ChangeSHA256),
+	)
+	if err != nil {
+		return 0, err
+	}
+	graphRaw, err := os.ReadFile(filepath.Join(directory, "graph.json"))
+	if err != nil {
+		return 0, err
+	}
+	graph, err := buildimpact.ParseDeclaredGraph(graphRaw, manifest)
+	if err != nil {
+		return 0, err
+	}
+	snapshot := centralOptimizeDiscoverySnapshot(graph.Graph)
+	_, compatible, err := countOptimizeCompatibleCommits(
+		invocation.repositoryRoot, discovery.TargetRevision,
+		optimizePrequalificationMaximumHistoryDepth, snapshot,
+		discovery.ChangedProjects, discovery.ChangeFamily,
+	)
+	return compatible, err
+}
+
+func countOptimizeCompatibleCommits(
+	repositoryRoot string,
+	targetRevision string,
+	maximum int,
+	snapshot buildimpact.DiscoverySnapshot,
+	expectedOwners []string,
+	family string,
+) ([]string, int, error) {
+	commits, err := optimizeRecentFirstParentCommits(repositoryRoot, targetRevision, maximum)
+	if err != nil {
+		return nil, 0, err
+	}
+	compatible := 0
+	for _, commit := range commits {
+		paths, pathErr := optimizeCommitChangedPaths(repositoryRoot, commit)
+		if pathErr != nil || optimizeUnsafeEconomicChange(paths) {
+			continue
+		}
+		commitOwners, ownerErr := buildimpact.ResolveProjectOwners(snapshot, paths)
+		if ownerErr == nil && equalOptimizeStrings(commitOwners, expectedOwners) &&
+			optimizeChangeFamily(snapshot, paths, commitOwners) == family {
+			compatible++
+		}
+	}
+	return commits, compatible, nil
 }
 
 func optimizeRecentFirstParentCommits(repositoryRoot, targetRevision string, maximum int) ([]string, error) {

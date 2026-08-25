@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
+	"github.com/tonyredondo/buildopt/internal/ordinarylearning"
 )
 
 func TestOptimizeIncrementalWallTimeIncludesWrapperWork(t *testing.T) {
@@ -236,5 +237,64 @@ func TestOptimizeIncrementalCancellationRetainsNativeWithoutRecovery(t *testing.
 	}
 	if run.incrementalFallback.started {
 		t.Fatal("cancelled incremental observation unexpectedly started recovery")
+	}
+}
+
+func TestOptimizeIncrementalOrdinaryEconomicsControlsFurtherLearning(t *testing.T) {
+	entry := optimizePortfolioEntry{
+		Family: optimizeFamilyLeaf, ChangedProjects: []string{":app"}, RepositoryID: "example/ordinary-economics",
+		Entrypoints: []string{"assemble"}, CandidateEntrypoints: []string{":app:assemble"},
+		RequiredOutputs: []string{"app/build/libs/app.jar"}, CandidateOutputs: []string{"app/build/libs/app.jar"},
+		WrapperSHA256: optimizeDigest("wrapper"), GradleOptions: []string{"--no-daemon"},
+	}
+	discovery := optimizeDiscoveryResult{
+		Status: optimizeDiscoveryComplete, StructuralBinding: testOptimizeStructuralBinding(t, entry),
+		Graph: optimizeDiscoveryGraph{TotalProjects: 10, SelectedProjects: 3, OmittedProjects: 7},
+	}
+	digest := optimizeDigest("ordinary-output")
+	learning := optimizeIncrementalLearning{
+		Status: optimizeIncrementalCollecting, Reason: optimizeIncrementalReasonPending,
+		Performed: true, TargetPairs: optimizeRequiredCalibrationPairs, PairsCompleted: 1,
+		NextArm: optimizeIncrementalArmCandidate, ExpectedOutputSHA256: digest, ExpectedOutputCount: 1,
+		DiscoverySHA256: optimizeDigest("discovery"), IncrementalCostMS: 900,
+		Baseline: incrementalEconomicsObservation(0, 0, optimizeIncrementalArmDiscovery, 1300, digest),
+		Observations: []optimizeIncrementalObservation{
+			*incrementalEconomicsObservation(1, 1, optimizeIncrementalArmControl, 1300, digest),
+			*incrementalEconomicsObservation(2, 1, optimizeIncrementalArmCandidate, 900, digest),
+		},
+		FallbackSuccessful: true, TestOptimization: "OUT_OF_SCOPE",
+		OrdinaryEconomics: ordinarylearning.Decision{
+			SchemaVersion:                ordinarylearning.SchemaVersion,
+			HistoricalCompatibleMatches:  ordinarylearning.MaximumPaybackMatches,
+			MaximumVolatileProducerCount: 2,
+		},
+	}
+	if err := updateOptimizeOrdinaryEconomics(optimizeInvocation{}, discovery, &learning); err != nil {
+		t.Fatal(err)
+	}
+	if learning.OrdinaryEconomics.Decision != ordinarylearning.DecisionContinue ||
+		learning.OrdinaryEconomics.ProjectedPaybackMatches != 3 ||
+		!validOptimizeOrdinaryEconomics(discovery, learning) {
+		t.Fatalf("ordinary economics = %+v", learning.OrdinaryEconomics)
+	}
+
+	learning.IncrementalCostMS = 2100
+	if err := updateOptimizeOrdinaryEconomics(optimizeInvocation{}, discovery, &learning); err != nil {
+		t.Fatal(err)
+	}
+	if learning.OrdinaryEconomics.Decision != ordinarylearning.DecisionRetained ||
+		learning.OrdinaryEconomics.Reason != ordinarylearning.ReasonPayback ||
+		learning.OrdinaryEconomics.ProjectedPaybackMatches != 6 {
+		t.Fatalf("uneconomic learning = %+v", learning.OrdinaryEconomics)
+	}
+}
+
+func incrementalEconomicsObservation(sequence, pair int, arm string, duration int64, digest string) *optimizeIncrementalObservation {
+	return &optimizeIncrementalObservation{
+		Sequence: sequence, Pair: pair, Arm: arm, Order: "CONTROL_FIRST", DurationMS: duration,
+		RequiredOutputSHA256: digest, RequiredOutputCount: 1, ExitCode: 0,
+		IncrementalOverheadMS: 1,
+		Economics:             optimizeIncrementalEconomics{GradleMS: duration - 1, PreExecutionMS: 1},
+		CapturedAt:            "2026-08-25T10:00:00Z",
 	}
 }
