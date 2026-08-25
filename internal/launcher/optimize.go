@@ -150,6 +150,28 @@ type optimizeNativeRetentionResult struct {
 	WrapperOverheadMS         int64  `json:"wrapperOverheadMs"`
 }
 
+// optimizeTimingResult separates the non-overlapping externally relevant
+// phases from nested diagnostics. Diagnostics explain work inside the top-level
+// phases and therefore must never be added to TotalNS.
+type optimizeTimingResult struct {
+	PreExecutionNS    int64                     `json:"preExecutionNs"`
+	GradleExecutionNS int64                     `json:"gradleExecutionNs"`
+	FinalizationNS    int64                     `json:"finalizationNs"`
+	UnattributedNS    int64                     `json:"unattributedNs"`
+	TotalNS           int64                     `json:"totalNs"`
+	Diagnostics       optimizeTimingDiagnostics `json:"diagnostics"`
+}
+
+type optimizeTimingDiagnostics struct {
+	GradleSetupNS        int64 `json:"gradleSetupNs"`
+	MatchingNS           int64 `json:"matchingNs"`
+	LocalStateNS         int64 `json:"localStateNs"`
+	CentralStateNS       int64 `json:"centralStateNs"`
+	MaterializationNS    int64 `json:"materializationNs"`
+	OutputVerificationNS int64 `json:"outputVerificationNs"`
+	DiscoveryLearningNS  int64 `json:"discoveryLearningNs"`
+}
+
 type optimizeGeneratedFiles struct {
 	State         string   `json:"state"`
 	Result        string   `json:"result"`
@@ -176,6 +198,7 @@ type optimizeResult struct {
 	Native               optimizeNativeResult             `json:"native"`
 	Execution            optimizeExecutionResult          `json:"execution"`
 	NativeRetention      optimizeNativeRetentionResult    `json:"nativeRetention"`
+	Timing               optimizeTimingResult             `json:"timing"`
 	Discovery            optimizeDiscoveryResult          `json:"discovery"`
 	IncrementalLearning  optimizeIncrementalLearning      `json:"incrementalLearning"`
 	Calibration          optimizeCalibrationResult        `json:"calibration"`
@@ -223,6 +246,10 @@ type optimizeRun struct {
 	materializationTime    time.Duration
 	outputVerificationTime time.Duration
 	discoveryTime          time.Duration
+	gradleSetupTime        time.Duration
+	localStateTime         time.Duration
+	centralStateTime       time.Duration
+	finishStartedAt        time.Time
 	earlyRetentionReason   string
 	retentionDecisionPhase string
 }
@@ -445,6 +472,7 @@ func optimizeWriteDigestValue(writer io.Writer, value string) {
 }
 
 func beginOptimizeRun(invocation optimizeInvocation) (*optimizeRun, error) {
+	localStateStartedAt := time.Now()
 	if _, _, err := resolveOptimizeStateDirectory(
 		invocation.repositoryRoot,
 		invocation.stateRelative,
@@ -478,6 +506,7 @@ func beginOptimizeRun(invocation optimizeInvocation) (*optimizeRun, error) {
 		startedAt: startedAt, previousState: previous,
 		prequalification:     unevaluatedOptimizePrequalification(optimizePrequalificationReasonNoGraph),
 		earlyRetentionReason: staticOptimizeRetentionReason(invocation.discovery),
+		localStateTime:       time.Since(localStateStartedAt),
 	}, nil
 }
 
@@ -714,6 +743,7 @@ func optimizeInvocationBudget(invocation optimizeInvocation) optimizeBudget {
 }
 
 func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
+	run.finishStartedAt = time.Now()
 	defer run.cleanupOutputObservation()
 	budgetContext, cancelBudget := context.WithTimeout(context.Background(), run.invocation.calibrationBudget)
 	defer cancelBudget()
@@ -860,6 +890,7 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 	}
 	valueReport := newOptimizeValueReport(result)
 	valueMarkdown := renderOptimizeValueMarkdown(valueReport)
+	localStateStartedAt := time.Now()
 	if err := writeCanonicalPrivateJSON(run.statePath, run.state); err != nil {
 		return err
 	}
@@ -869,11 +900,18 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 	if err := writePrivateAtomicFile(run.valueMDPath, valueMarkdown); err != nil {
 		return err
 	}
+	run.localStateTime += time.Since(localStateStartedAt)
 	if run.central != nil {
+		centralStateStartedAt := time.Now()
 		run.central.publish(run, stderr)
+		run.centralStateTime += time.Since(centralStateStartedAt)
 		result.Central = run.central.result
 	}
-	result.NativeRetention = run.nativeRetentionResult(result.Reason, time.Now())
+	timingCompletedAt := time.Now().UTC()
+	result.CompletedAt = timingCompletedAt.Format(time.RFC3339Nano)
+	result.DurationMs = timingCompletedAt.Sub(run.startedAt).Milliseconds()
+	result.NativeRetention = run.nativeRetentionResult(result.Reason, timingCompletedAt)
+	result.Timing = run.timingResult(timingCompletedAt)
 	// Publish the invocation result only after its customer-readable evidence is
 	// complete, so a newly visible result never points at a partial report set.
 	if err := writeCanonicalPrivateJSON(run.resultPath, result); err != nil {
@@ -898,6 +936,50 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		optimizeNextStep(discovery, learning, calibration, portfolio, selection),
 	)
 	return err
+}
+
+func (run *optimizeRun) timingResult(completedAt time.Time) optimizeTimingResult {
+	total := completedAt.Sub(run.startedAt)
+	preExecution := time.Duration(0)
+	gradleExecution := time.Duration(0)
+	if !run.childExecution.startedAt.IsZero() {
+		preExecution = run.childExecution.startedAt.Sub(run.startedAt)
+	}
+	if !run.childExecution.startedAt.IsZero() && !run.childExecution.completedAt.IsZero() {
+		gradleExecution = run.childExecution.completedAt.Sub(run.childExecution.startedAt)
+	}
+	finalization := time.Duration(0)
+	if !run.finishStartedAt.IsZero() {
+		finalization = completedAt.Sub(run.finishStartedAt)
+	}
+	preExecution = nonNegativeOptimizeDuration(preExecution)
+	gradleExecution = nonNegativeOptimizeDuration(gradleExecution)
+	finalization = nonNegativeOptimizeDuration(finalization)
+	unattributed := total - preExecution - gradleExecution - finalization
+	unattributed = nonNegativeOptimizeDuration(unattributed)
+	return optimizeTimingResult{
+		PreExecutionNS:    preExecution.Nanoseconds(),
+		GradleExecutionNS: gradleExecution.Nanoseconds(),
+		FinalizationNS:    finalization.Nanoseconds(),
+		UnattributedNS:    unattributed.Nanoseconds(),
+		TotalNS:           nonNegativeOptimizeDuration(total).Nanoseconds(),
+		Diagnostics: optimizeTimingDiagnostics{
+			GradleSetupNS:        nonNegativeOptimizeDuration(run.gradleSetupTime).Nanoseconds(),
+			MatchingNS:           int64(run.selection.DurationNS),
+			LocalStateNS:         nonNegativeOptimizeDuration(run.localStateTime).Nanoseconds(),
+			CentralStateNS:       nonNegativeOptimizeDuration(run.centralStateTime).Nanoseconds(),
+			MaterializationNS:    nonNegativeOptimizeDuration(run.materializationTime).Nanoseconds(),
+			OutputVerificationNS: nonNegativeOptimizeDuration(run.outputVerificationTime).Nanoseconds(),
+			DiscoveryLearningNS:  nonNegativeOptimizeDuration(run.discoveryTime).Nanoseconds(),
+		},
+	}
+}
+
+func nonNegativeOptimizeDuration(duration time.Duration) time.Duration {
+	if duration < 0 {
+		return 0
+	}
+	return duration
 }
 
 func (run *optimizeRun) nativeRetentionResult(reason string, completedAt time.Time) optimizeNativeRetentionResult {

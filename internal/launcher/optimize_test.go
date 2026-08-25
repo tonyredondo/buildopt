@@ -62,6 +62,7 @@ func TestOptimizeContractRunsNativeAndResumesOnlyExactBindings(t *testing.T) {
 		result.GeneratedFiles.ValueMarkdown != ".buildopt/optimize-test/v1/value-report.md" {
 		t.Fatalf("value report paths = %+v", result.GeneratedFiles)
 	}
+	assertOptimizeTimingForTest(t, result.Timing)
 
 	t.Setenv("BUILDOPT_OPTIMIZE_TEST_EXIT", "0")
 	stdout.Reset()
@@ -95,6 +96,25 @@ func TestOptimizeContractRunsNativeAndResumesOnlyExactBindings(t *testing.T) {
 	if result.Generation != 2 || result.Attempt != 1 || !result.Resume.CheckpointFound ||
 		result.Resume.Accepted || result.Resume.Reason != optimizeResumeDrift {
 		t.Fatalf("binding-drift result = %+v", result)
+	}
+}
+
+func assertOptimizeTimingForTest(t *testing.T, timing optimizeTimingResult) {
+	t.Helper()
+	if timing.PreExecutionNS < 0 || timing.GradleExecutionNS < 0 ||
+		timing.FinalizationNS < 0 || timing.UnattributedNS < 0 || timing.TotalNS <= 0 {
+		t.Fatalf("invalid optimize phase timing = %+v", timing)
+	}
+	if timing.PreExecutionNS+timing.GradleExecutionNS+timing.FinalizationNS+
+		timing.UnattributedNS != timing.TotalNS {
+		t.Fatalf("optimize top-level phase timing does not reconcile = %+v", timing)
+	}
+	diagnostics := timing.Diagnostics
+	if diagnostics.GradleSetupNS < 0 || diagnostics.MatchingNS < 0 ||
+		diagnostics.LocalStateNS <= 0 || diagnostics.CentralStateNS < 0 ||
+		diagnostics.MaterializationNS < 0 || diagnostics.OutputVerificationNS < 0 ||
+		diagnostics.DiscoveryLearningNS < 0 {
+		t.Fatalf("invalid optimize timing diagnostics = %+v", diagnostics)
 	}
 }
 

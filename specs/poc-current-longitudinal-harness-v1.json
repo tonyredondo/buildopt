@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "buildopt.specs/poc-current-longitudinal-harness/v1",
+  "workItem": "AF-014A",
+  "methodology": {
+    "control": "OPTIMIZED_NATIVE_GRADLE",
+    "candidate": "CURRENT_INSTALLED_BUILDOPT_OPTIMIZE",
+    "learningAttempts": 18,
+    "armOrder": "CONTROL_FIRST_THEN_ALTERNATE",
+    "untimedCandidateLearningAllowed": false,
+    "mutableArmStateSharingAllowed": false,
+    "percentagesAdded": false
+  },
+  "workflow": {
+    "control": ["./gradlew", "--build-cache", "jar", "--offline", "--no-daemon"],
+    "candidate": [
+      "buildopt", "optimize", "--json",
+      "--state-dir", ".buildopt/optimize/longitudinal-harness",
+      "--calibration-budget", "5m",
+      "--calibration-pairs", "8",
+      "--max-break-even-builds", "100",
+      "jar", "--offline", "--no-daemon"
+    ]
+  },
+  "requiredScenarios": ["CONTROL", "SELECTED", "NATIVE_RETAINED", "BYPASS"],
+  "boundaries": {
+    "proofOfConcept": true,
+    "performanceClaim": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

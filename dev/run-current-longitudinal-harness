@@ -1,0 +1,416 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/result.json\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+[[ ! -e ${buildopt_output} ]] || {
+    printf 'current longitudinal result already exists: %s\n' "${buildopt_output}" >&2
+    exit 1
+}
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract="${buildopt_repo_root}/specs/poc-current-longitudinal-harness-v1.json"
+
+for buildopt_command in cp date find git jq sha256sum sort stat tar; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'AF-014A runner requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+[[ -z $(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all) ]] || {
+    printf 'AF-014A package source must be a clean Git tree\n' >&2
+    exit 1
+}
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+buildopt_short_revision=${buildopt_revision:0:12}
+buildopt_version="0.0.0-af014a+${buildopt_short_revision}"
+buildopt_source_archive_sha=$(
+    git -C "${buildopt_repo_root}" archive "${buildopt_revision}" | sha256sum | awk '{print $1}'
+)
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-af014a.XXXXXX")
+buildopt_cleanup() {
+    if [[ ${buildopt_temp:-} == "${TMPDIR:-/tmp}/buildopt-af014a."* ]]; then
+        rm -rf -- "${buildopt_temp}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+mkdir -p -- "${buildopt_temp}/release" "${buildopt_temp}/package" \
+    "${buildopt_temp}/install" "${buildopt_temp}/learning"
+env GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local" \
+    "${buildopt_repo_root}/packaging/linux/package.sh" \
+    --version "${buildopt_version}" --output "${buildopt_temp}/release" \
+    >"${buildopt_temp}/package.out" 2>"${buildopt_temp}/package.err"
+buildopt_archive="${buildopt_temp}/release/buildopt-${buildopt_version}-linux-amd64.tar.gz"
+[[ -s ${buildopt_archive} ]] || {
+    printf 'AF-014A Linux AMD64 package was not produced\n' >&2
+    sed -n '1,240p' "${buildopt_temp}/package.err" >&2
+    exit 1
+}
+buildopt_archive_sha=$(sha256sum "${buildopt_archive}" | awk '{print $1}')
+tar -xzf "${buildopt_archive}" -C "${buildopt_temp}/package"
+buildopt_package_root="${buildopt_temp}/package/buildopt-${buildopt_version}-linux-amd64"
+"${buildopt_package_root}/install.sh" --prefix "${buildopt_temp}/install" \
+    >"${buildopt_temp}/install.log"
+buildopt_binary="${buildopt_temp}/install/bin/buildopt"
+[[ -x ${buildopt_binary} ]] || {
+    printf 'AF-014A package did not install buildopt\n' >&2
+    exit 1
+}
+buildopt_executable_sha=$(sha256sum "${buildopt_binary}" | awk '{print $1}')
+
+buildopt_seed="${buildopt_temp}/seed"
+mkdir -p -- "${buildopt_seed}"
+cp -R -- "${buildopt_repo_root}/fixtures/gradle-workflow-breadth/." "${buildopt_seed}/"
+cp -- "${buildopt_repo_root}/gradlew" "${buildopt_seed}/gradlew"
+cp -R -- "${buildopt_repo_root}/gradle" "${buildopt_seed}/gradle"
+chmod +x -- "${buildopt_seed}/gradlew"
+printf '.buildopt/\n**/build/\n' >"${buildopt_seed}/.gitignore"
+sed -i 's/service-a-target/service-a-base/' \
+    "${buildopt_seed}/service-a/src/main/java/example/Application.java"
+cat >>"${buildopt_seed}/build.gradle" <<'GRADLE'
+
+tasks.register('buildoptHarnessEnvironment') {
+    doLast {
+        println "buildopt-harness-bypass=${System.getenv('BUILDOPT_BYPASS') ?: '<unset>'}"
+    }
+}
+project(':service-a') {
+    tasks.named('jar') { dependsOn rootProject.tasks.named('buildoptHarnessEnvironment') }
+}
+GRADLE
+
+git -C "${buildopt_seed}" init -qb main
+git -C "${buildopt_seed}" config user.name 'BuildOpt Fixture'
+git -C "${buildopt_seed}" config user.email buildopt-fixture@example.invalid
+git -C "${buildopt_seed}" config commit.gpgsign false
+git -C "${buildopt_seed}" add .
+git -C "${buildopt_seed}" commit -qm 'AF-014A base'
+git -C "${buildopt_seed}" switch -qc feature
+sed -i 's/service-a-base/service-a-target/' \
+    "${buildopt_seed}/service-a/src/main/java/example/Application.java"
+git -C "${buildopt_seed}" add service-a/src/main/java/example/Application.java
+git -C "${buildopt_seed}" commit -qm 'AF-014A leaf source target'
+buildopt_target_revision=$(git -C "${buildopt_seed}" rev-parse HEAD)
+
+git clone -q --branch feature --single-branch "${buildopt_seed}" "${buildopt_temp}/control"
+git clone -q --branch feature --single-branch "${buildopt_seed}" "${buildopt_temp}/candidate"
+buildopt_control="${buildopt_temp}/control"
+buildopt_candidate="${buildopt_temp}/candidate"
+buildopt_control_gradle="${buildopt_temp}/control-gradle-home"
+buildopt_candidate_gradle="${buildopt_temp}/candidate-gradle-home"
+mkdir -p -- "${buildopt_control_gradle}/wrapper/dists" \
+    "${buildopt_candidate_gradle}/wrapper/dists"
+for buildopt_home in "${buildopt_control_gradle}" "${buildopt_candidate_gradle}"; do
+    cp -a -- "${buildopt_repo_root}/.tools/gradle-user-home/local/wrapper/dists/." \
+        "${buildopt_home}/wrapper/dists/"
+done
+
+[[ ! -e ${buildopt_control}/.buildopt && ! -e ${buildopt_candidate}/.buildopt ]] || {
+    printf 'AF-014A fixture contains pre-existing BuildOpt state\n' >&2
+    exit 1
+}
+
+buildopt_output_sha() {
+    local buildopt_repository=$1
+    (
+        cd -- "${buildopt_repository}"
+        find service-a/build/libs service-b/build/libs -type f -name '*.jar' -print0 |
+            sort -z |
+            while IFS= read -r -d '' buildopt_file; do
+                printf '%s\0' "${buildopt_file}"
+                sha256sum "${buildopt_file}" | awk '{printf "%s\\0", $1}'
+            done | sha256sum | awk '{print $1}'
+    )
+}
+
+buildopt_timed_control() {
+    local buildopt_log=$1
+    local buildopt_started buildopt_completed
+    buildopt_started=$(date +%s%N)
+    (
+        cd -- "${buildopt_control}"
+        env -u BUILDOPT_BYPASS \
+            GRADLE_USER_HOME="${buildopt_control_gradle}" \
+            ./gradlew --build-cache jar --offline --no-daemon
+    ) >"${buildopt_log}" 2>&1
+    buildopt_completed=$(date +%s%N)
+    buildopt_last_wall_ns=$((buildopt_completed - buildopt_started))
+    grep -Fq 'buildopt-harness-bypass=<unset>' "${buildopt_log}"
+}
+
+buildopt_timed_candidate() {
+    local buildopt_json=$1
+    local buildopt_log=$2
+    local buildopt_started buildopt_completed
+    buildopt_started=$(date +%s%N)
+    (
+        cd -- "${buildopt_candidate}"
+        env -u BUILDOPT_BYPASS \
+            GRADLE_USER_HOME="${buildopt_candidate_gradle}" \
+            "${buildopt_binary}" optimize --json \
+            --state-dir .buildopt/optimize/longitudinal-harness \
+            --calibration-budget 5m --calibration-pairs 8 \
+            --max-break-even-builds 100 \
+            jar --offline --no-daemon
+    ) >"${buildopt_json}" 2>"${buildopt_log}"
+    buildopt_completed=$(date +%s%N)
+    buildopt_last_wall_ns=$((buildopt_completed - buildopt_started))
+    grep -Fq 'buildopt-harness-bypass=<unset>' "${buildopt_log}"
+}
+
+: >"${buildopt_temp}/learning.ndjson"
+buildopt_first_control_wall=0
+buildopt_first_output_sha=''
+buildopt_selected_wall=0
+buildopt_selected_output_sha=''
+buildopt_selected_state_changed=false
+buildopt_selected_timing='null'
+for buildopt_sequence in $(seq 1 18); do
+    buildopt_control_log="${buildopt_temp}/learning/control-${buildopt_sequence}.log"
+    buildopt_candidate_json="${buildopt_temp}/learning/candidate-${buildopt_sequence}.json"
+    buildopt_candidate_log="${buildopt_temp}/learning/candidate-${buildopt_sequence}.log"
+    buildopt_state_before=''
+    if [[ -s ${buildopt_candidate}/.buildopt/optimize/longitudinal-harness/state.json ]]; then
+        buildopt_state_before=$(sha256sum \
+            "${buildopt_candidate}/.buildopt/optimize/longitudinal-harness/state.json" | awk '{print $1}')
+    fi
+    if ((buildopt_sequence % 2 == 1)); then
+        buildopt_order=CONTROL_FIRST
+        buildopt_timed_control "${buildopt_control_log}"
+        buildopt_control_wall=${buildopt_last_wall_ns}
+        buildopt_control_sha=$(buildopt_output_sha "${buildopt_control}")
+        buildopt_timed_candidate "${buildopt_candidate_json}" "${buildopt_candidate_log}"
+        buildopt_candidate_wall=${buildopt_last_wall_ns}
+        buildopt_candidate_sha=$(buildopt_output_sha "${buildopt_candidate}")
+    else
+        buildopt_order=CANDIDATE_FIRST
+        buildopt_timed_candidate "${buildopt_candidate_json}" "${buildopt_candidate_log}"
+        buildopt_candidate_wall=${buildopt_last_wall_ns}
+        buildopt_candidate_sha=$(buildopt_output_sha "${buildopt_candidate}")
+        buildopt_timed_control "${buildopt_control_log}"
+        buildopt_control_wall=${buildopt_last_wall_ns}
+        buildopt_control_sha=$(buildopt_output_sha "${buildopt_control}")
+    fi
+    [[ ${buildopt_control_sha} == "${buildopt_candidate_sha}" ]] || {
+        printf 'AF-014A output mismatch at learning sequence %d\n' "${buildopt_sequence}" >&2
+        exit 1
+    }
+    jq -e --argjson sequence "${buildopt_sequence}" '
+        .schemaVersion == "buildopt.poc/optimize-result/v1" and
+        .generation == 1 and .attempt == $sequence and
+        .execution.started == true and .execution.exitCode == 0 and
+        .timing.totalNs > 0 and
+        (.timing.preExecutionNs + .timing.gradleExecutionNs +
+         .timing.finalizationNs + .timing.unattributedNs) == .timing.totalNs
+    ' "${buildopt_candidate_json}" >/dev/null
+    jq -cn \
+        --argjson sequence "${buildopt_sequence}" \
+        --arg order "${buildopt_order}" \
+        --arg revision "${buildopt_target_revision}" \
+        --argjson controlWall "${buildopt_control_wall}" \
+        --argjson candidateWall "${buildopt_candidate_wall}" \
+        --arg output "${buildopt_candidate_sha}" \
+        --slurpfile result "${buildopt_candidate_json}" '
+        {
+          sequence:$sequence,order:$order,revision:$revision,
+          controlWallNs:$controlWall,candidateWallNs:$candidateWall,
+          exactOutputs:true,outputSha256:$output,
+          generation:$result[0].generation,attempt:$result[0].attempt,
+          outcome:$result[0].outcome,phase:$result[0].phase,
+          executionMode:$result[0].execution.mode,
+          selectionStatus:$result[0].selection.status,
+          selectionSelected:$result[0].selection.selected,
+          timing:$result[0].timing
+        }
+    ' >>"${buildopt_temp}/learning.ndjson"
+    if ((buildopt_sequence == 1)); then
+        buildopt_first_control_wall=${buildopt_control_wall}
+        buildopt_first_output_sha=${buildopt_control_sha}
+    fi
+    if ((buildopt_sequence == 18)); then
+        buildopt_state_after=$(sha256sum \
+            "${buildopt_candidate}/.buildopt/optimize/longitudinal-harness/state.json" | awk '{print $1}')
+        [[ -n ${buildopt_state_before} && ${buildopt_state_before} != "${buildopt_state_after}" ]] &&
+            buildopt_selected_state_changed=true
+        buildopt_selected_wall=${buildopt_candidate_wall}
+        buildopt_selected_output_sha=${buildopt_candidate_sha}
+        buildopt_selected_timing=$(jq -c '.timing' "${buildopt_candidate_json}")
+        jq -e '
+          .outcome == "QUALIFIED_AND_USED" and .phase == "ACTIVE" and
+          .selection.selected == true and .execution.mode == "SELECTIVE_PROFILE"
+        ' "${buildopt_candidate_json}" >/dev/null
+    fi
+done
+
+printf '\n// AF-014A forward global change\n' >>"${buildopt_seed}/build.gradle"
+git -C "${buildopt_seed}" add build.gradle
+git -C "${buildopt_seed}" commit -qm 'AF-014A forward global change'
+buildopt_global_revision=$(git -C "${buildopt_seed}" rev-parse HEAD)
+git -C "${buildopt_control}" pull -q --ff-only
+git -C "${buildopt_candidate}" pull -q --ff-only
+
+buildopt_timed_control "${buildopt_temp}/native-control.log"
+buildopt_native_control_wall=${buildopt_last_wall_ns}
+buildopt_native_control_sha=$(buildopt_output_sha "${buildopt_control}")
+buildopt_native_state_before=$(sha256sum \
+    "${buildopt_candidate}/.buildopt/optimize/longitudinal-harness/state.json" | awk '{print $1}')
+buildopt_timed_candidate "${buildopt_temp}/native.json" "${buildopt_temp}/native.log"
+buildopt_native_wall=${buildopt_last_wall_ns}
+buildopt_native_candidate_sha=$(buildopt_output_sha "${buildopt_candidate}")
+buildopt_native_state_after=$(sha256sum \
+    "${buildopt_candidate}/.buildopt/optimize/longitudinal-harness/state.json" | awk '{print $1}')
+[[ ${buildopt_native_control_sha} == "${buildopt_native_candidate_sha}" ]] || {
+    printf 'AF-014A native-retained outputs differ\n' >&2
+    exit 1
+}
+jq -e '
+  .outcome == "NATIVE_RETAINED" and .generation == 2 and .attempt == 1 and
+  .selection.selected == false and .execution.mode == "OPTIMIZED_NATIVE"
+' "${buildopt_temp}/native.json" >/dev/null
+
+buildopt_bypass_state_before=$(sha256sum \
+    "${buildopt_candidate}/.buildopt/optimize/longitudinal-harness/state.json" | awk '{print $1}')
+buildopt_bypass_started=$(date +%s%N)
+(
+    cd -- "${buildopt_candidate}"
+    env BUILDOPT_BYPASS=1 GRADLE_USER_HOME="${buildopt_candidate_gradle}" \
+        "${buildopt_binary}" optimize --json \
+        --state-dir .buildopt/optimize/longitudinal-harness \
+        --calibration-budget 5m --calibration-pairs 8 \
+        --max-break-even-builds 100 jar --offline --no-daemon
+) >"${buildopt_temp}/bypass.log" 2>&1
+buildopt_bypass_completed=$(date +%s%N)
+buildopt_bypass_wall=$((buildopt_bypass_completed - buildopt_bypass_started))
+grep -Fq 'buildopt-harness-bypass=<unset>' "${buildopt_temp}/bypass.log"
+buildopt_bypass_sha=$(buildopt_output_sha "${buildopt_candidate}")
+buildopt_bypass_state_after=$(sha256sum \
+    "${buildopt_candidate}/.buildopt/optimize/longitudinal-harness/state.json" | awk '{print $1}')
+[[ ${buildopt_bypass_sha} == "${buildopt_native_control_sha}" &&
+    ${buildopt_bypass_state_before} == "${buildopt_bypass_state_after}" ]] || {
+    printf 'AF-014A bypass changed output or adaptive state\n' >&2
+    exit 1
+}
+
+[[ ! -e ${buildopt_control}/.buildopt ]] || {
+    printf 'AF-014A control arm acquired BuildOpt state\n' >&2
+    exit 1
+}
+buildopt_candidate_state="${buildopt_candidate}/.buildopt/optimize/longitudinal-harness/state.json"
+[[ -s ${buildopt_candidate_state} ]] || {
+    printf 'AF-014A candidate state is missing\n' >&2
+    exit 1
+}
+buildopt_candidate_private=true
+if [[ $(uname -s) == Linux ]] && [[ $(stat -c '%a' "${buildopt_candidate_state}") != 600 ]]; then
+    buildopt_candidate_private=false
+fi
+
+buildopt_wrapper_sha=$(sha256sum "${buildopt_candidate}/gradle/wrapper/gradle-wrapper.properties" | awk '{print $1}')
+buildopt_control_checkout_sha=$(printf '%s' "${buildopt_control}" | sha256sum | awk '{print $1}')
+buildopt_candidate_checkout_sha=$(printf '%s' "${buildopt_candidate}" | sha256sum | awk '{print $1}')
+buildopt_environment_input=$(printf '%s\n' \
+    "revision=${buildopt_revision}" \
+    "package=${buildopt_archive_sha}" \
+    "executable=${buildopt_executable_sha}" \
+    "wrapper=${buildopt_wrapper_sha}" \
+    "kernel=$(uname -sr)" \
+    "machine=$(uname -m)" \
+    "cpu=$(getconf _NPROCESSORS_ONLN)" \
+    'control=./gradlew --build-cache jar --offline --no-daemon' \
+    'candidate=buildopt optimize --json --state-dir .buildopt/optimize/longitudinal-harness --calibration-budget 5m --calibration-pairs 8 --max-break-even-builds 100 jar --offline --no-daemon')
+buildopt_environment_sha=$(printf '%s' "${buildopt_environment_input}" | sha256sum | awk '{print $1}')
+buildopt_contract_sha=$(sha256sum "${buildopt_contract}" | awk '{print $1}')
+buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+jq -n \
+    --arg capturedAt "${buildopt_captured_at}" \
+    --arg revision "${buildopt_revision}" \
+    --arg sourceArchive "${buildopt_source_archive_sha}" \
+    --arg contractSHA "${buildopt_contract_sha}" \
+    --arg version "${buildopt_version}" \
+    --arg archiveSHA "${buildopt_archive_sha}" \
+    --arg executableSHA "${buildopt_executable_sha}" \
+    --arg environmentInput "${buildopt_environment_input}" \
+    --arg environmentSHA "${buildopt_environment_sha}" \
+    --arg controlCheckoutSHA "${buildopt_control_checkout_sha}" \
+    --arg candidateCheckoutSHA "${buildopt_candidate_checkout_sha}" \
+    --arg targetRevision "${buildopt_target_revision}" \
+    --arg globalRevision "${buildopt_global_revision}" \
+    --arg firstOutputSHA "${buildopt_first_output_sha}" \
+    --arg selectedOutputSHA "${buildopt_selected_output_sha}" \
+    --arg nativeOutputSHA "${buildopt_native_candidate_sha}" \
+    --arg bypassOutputSHA "${buildopt_bypass_sha}" \
+    --argjson firstControlWall "${buildopt_first_control_wall}" \
+    --argjson selectedWall "${buildopt_selected_wall}" \
+    --argjson selectedStateChanged "${buildopt_selected_state_changed}" \
+    --argjson selectedTiming "${buildopt_selected_timing}" \
+    --argjson nativeControlWall "${buildopt_native_control_wall}" \
+    --argjson nativeWall "${buildopt_native_wall}" \
+    --argjson nativeStateChanged "$([[ ${buildopt_native_state_before} != "${buildopt_native_state_after}" ]] && echo true || echo false)" \
+    --argjson nativeTiming "$(jq -c '.timing' "${buildopt_temp}/native.json")" \
+    --argjson bypassWall "${buildopt_bypass_wall}" \
+    --argjson candidatePrivate "${buildopt_candidate_private}" \
+    --slurpfile contract "${buildopt_contract}" \
+    --slurpfile learning "${buildopt_temp}/learning.ndjson" \
+    --slurpfile native "${buildopt_temp}/native.json" '
+    {
+      schemaVersion:"buildopt.poc/current-longitudinal-harness/v1",
+      workItem:"AF-014A",capturedAt:$capturedAt,
+      outcome:"CURRENT_LONGITUDINAL_HARNESS_READY",
+      evaluatedRevision:$revision,sourceArchiveSha256:$sourceArchive,
+      contract:{path:"specs/poc-current-longitudinal-harness-v1.json",sha256:$contractSHA},
+      package:{version:$version,archiveSha256:$archiveSHA,
+        executableSha256:$executableSHA,installed:true},
+      harness:{
+        environmentFingerprintInput:$environmentInput,
+        environmentFingerprintSha256:$environmentSHA,
+        controlCheckoutSha256:$controlCheckoutSHA,
+        candidateCheckoutSha256:$candidateCheckoutSHA,
+        separateCheckouts:true,separateGradleHomes:true,
+        separateNativeCaches:true,separateDaemonRegistries:true,
+        controlStateAbsent:true,candidateStatePrivate:$candidatePrivate,
+        untimedCandidateLearning:0,
+        forwardRevisions:[$targetRevision,$globalRevision]
+      },
+      workflow:$contract[0].workflow,
+      learning:$learning,
+      scenarios:[
+        {name:"CONTROL",revision:$targetRevision,externalWallNs:$firstControlWall,
+          exactOutputs:true,outputSha256:$firstOutputSHA,generation:0,attempt:0,
+          outcome:"OPTIMIZED_NATIVE",phase:"CONTROL",executionMode:"OPTIMIZED_NATIVE",
+          selectionSelected:false,stateChanged:false,bypassRemoved:false,timing:null},
+        {name:"SELECTED",revision:$targetRevision,externalWallNs:$selectedWall,
+          exactOutputs:true,outputSha256:$selectedOutputSHA,generation:1,attempt:18,
+          outcome:"QUALIFIED_AND_USED",phase:"ACTIVE",executionMode:"SELECTIVE_PROFILE",
+          selectionSelected:true,stateChanged:$selectedStateChanged,bypassRemoved:false,
+          timing:$selectedTiming},
+        {name:"NATIVE_RETAINED",revision:$globalRevision,externalWallNs:$nativeWall,
+          exactOutputs:true,outputSha256:$nativeOutputSHA,
+          generation:$native[0].generation,attempt:$native[0].attempt,
+          outcome:$native[0].outcome,phase:$native[0].phase,
+          executionMode:$native[0].execution.mode,selectionSelected:false,
+          stateChanged:$nativeStateChanged,bypassRemoved:false,timing:$nativeTiming},
+        {name:"BYPASS",revision:$globalRevision,externalWallNs:$bypassWall,
+          exactOutputs:true,outputSha256:$bypassOutputSHA,generation:0,attempt:0,
+          outcome:"BYPASS",phase:"BYPASS",executionMode:"OPTIMIZED_NATIVE",
+          selectionSelected:false,stateChanged:false,bypassRemoved:true,timing:null}
+      ],
+      boundaries:$contract[0].boundaries
+    }
+' >"${buildopt_output}"
+chmod 0600 "${buildopt_output}"
+
+(
+    cd -- "${buildopt_repo_root}/dev/current-longitudinal-harness"
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go run . "${buildopt_contract}" "${buildopt_output}"
+)
+printf 'AF-014A current installed longitudinal result written to %s\n' "${buildopt_output}"

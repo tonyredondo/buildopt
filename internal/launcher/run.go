@@ -109,12 +109,15 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		}
 		args = append([]string{"gradle"}, invocation.gradleArgs...)
 		if optimizeEnabled {
+			centralStateStartedAt := time.Now()
 			centralIntegration := prepareCentralOptimizeIntegration(invocation, stderr)
+			centralStateTime := time.Since(centralStateStartedAt)
 			optimize, err = beginOptimizeRun(invocation)
 			if err != nil {
 				_, _ = fmt.Fprintf(stderr, "buildopt: optimize state unavailable: %v\n", err)
 				return exitConfiguration
 			}
+			optimize.centralStateTime += centralStateTime
 			optimize.central = centralIntegration
 			optimizeContractOnly = true
 			if optimize.earlyRetentionReason != "" {
@@ -291,6 +294,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			return exitConfiguration
 		}
 		if optimize != nil {
+			optimize.gradleSetupTime += time.Since(gradleSetupStartedAt)
 			optimize.augmentGradleOutputObservation(&invocation)
 		}
 		if optimize == nil {
