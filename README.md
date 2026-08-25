@@ -93,7 +93,11 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > producer, subgraph, task, patch and cache-locality fragments. It requires
 > sub-second native retention, chronological no-lookahead learning and positive
 > cumulative value in at least three of five public repository families before
-> restoring any generic claim.
+> restoring any generic claim. The first real activation proof now passes:
+> six Gradle 9.6.1 scenarios preserve every producer and final output while
+> unrelated producers restore independently, changed producers rebuild locally
+> and unsafe state retains the complete native workflow. This is correctness
+> evidence; direct composed wall-time measurement is the next gate.
 
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired

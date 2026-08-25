@@ -160,5 +160,11 @@ the replacement applies/reverts outside the checkout, and the frozen native
 Gradle evidence saves 67.28% in Kotlin and 68.01% in Groovy across 16 exact-
 output pairs. The improvement survives without BuildOpt at execution time.
 This proves durable value for one recipe, not generic patch coverage. AF-009
-must now compose independently qualified fragments while rejecting conflicts
-and predictions below the net-value floor.
+then proved exact conflict-aware planning without timing. AF-010 now proves the
+missing execution boundary on real Gradle: an unrelated change restores two
+independent producers, each localized change rebuilds only its affected
+producer, and global, ambiguous or incomplete state runs the complete original
+workflow. Six of six final bundles and producer-output sets match byte for byte
+with zero product failures. This establishes fragment-specific invalidation and
+activation correctness, not generic wall-time value; AF-011 must time the full
+composition directly.

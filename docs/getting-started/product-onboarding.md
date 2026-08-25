@@ -132,6 +132,14 @@ drift runs the original optimized native graph instead. Selection remains
 POC-only and grants no production authority. Machine-readable mode reserves
 stdout for one result document:
 
+The adaptive-fragment successor is not yet part of the installed command. Its
+first runtime proof is complete in the repository: two independent producers
+can restore exact unaffected outputs, rebuild only a changed producer and fall
+back to the original complete workflow when change or stored state is unsafe.
+This closes activation correctness only. The current customer command remains
+the whole-profile POC above until AF-011 proves direct net wall-time value and
+AF-014 reproduces the adaptive decision through a clean installation.
+
 ```bash
 buildopt optimize --json -- build
 ```

@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_policy="${buildopt_repo_root}/specs/poc-adaptive-fragment-activation-v1.json"
+buildopt_evidence="${buildopt_repo_root}/benchmarks/results/adaptive-fragment-activation-v1.json"
+buildopt_before_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+
+for buildopt_command in git jq mktemp; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'adaptive fragment activation check requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-adaptive-fragment-activation/v1" and
+    .workItem == "AF-010" and .input.maximumProducers == 16 and
+    .input.changeScopes == ["UNRELATED", "LOCALIZED", "GLOBAL", "AMBIGUOUS"] and
+    .input.fragmentPair == ["SUBGRAPH", "OUTPUT_MATERIALIZATION"] and
+    .input.producerSpecificContexts == true and .input.exactOutputRevisionRequired == true and
+    .activation.planner == "buildopt.adaptive/fragment-plan/v1" and
+    .activation.predictionModel == "EXACT_COMPOSITION_PREDICTION_NOT_ADDED_ISOLATED_EFFECTS" and
+    .activation.partialMode == "PARTIAL_GRAPH" and
+    .activation.unaffectedProducer == "RESTORE_EXACT_OUTPUT" and
+    .activation.changedProducer == "REBUILD_LOCALLY" and .activation.beforeGradle == true and
+    .fallback.target == "NATIVE_GRADLE" and .fallback.originalWorkflow == "fullBuild" and
+    ([.fallback[] | select(. == true)] | length) == 6 and
+    .proof.gradleVersion == "9.6.1" and .proof.scenarioCount == 6 and
+    .proof.partialGraphCount == 3 and .proof.nativeFallbackCount == 3 and
+    .proof.independentProducerChanges == 2 and .proof.exactOutputScenarioCount == 6 and
+    .proof.productAttributableFailures == 0 and
+    .outcome == "COMPOSABLE_BUILD_IMPACT_AVAILABLE" and
+    .boundaries.proofOfConcept == true and .boundaries.realGradleExecution == true and
+    .boundaries.syntheticEconomics == true and .boundaries.newTimingClaim == false and
+    .boundaries.productionAuthorized == false and .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false and .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_policy}" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/adaptivefragment ./dev/adaptive-fragment-activation
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/adaptivefragment ./dev/adaptive-fragment-activation
+
+buildopt_go=$("${buildopt_script_dir}/run" --toolchain go -- sh -c 'command -v go')
+"${buildopt_script_dir}/run" --toolchain temurin-jdk-21 -- \
+    env CGO_ENABLED=0 GOCACHE="${TMPDIR:-/tmp}/buildopt-af010-go-cache" \
+    "${buildopt_go}" run ./dev/adaptive-fragment-activation \
+    --repository-root "${buildopt_repo_root}" \
+    --validate "${buildopt_evidence}" >/dev/null
+
+jq -e '
+    .schemaVersion == "buildopt.poc/adaptive-fragment-activation/v1" and
+    .workItem == "AF-010" and .gradleVersion == "9.6.1" and
+    .summary.scenarioCount == 6 and .summary.partialGraphCount == 3 and
+    .summary.nativeFallbackCount == 3 and .summary.independentProducerChanges == 2 and
+    .summary.exactOutputScenarioCount == 6 and .summary.unaffectedOutputRestorations == 4 and
+    .summary.localizedProducerRebuilds == 2 and .summary.globalOrAmbiguousFallbacks == 2 and
+    .summary.productAttributableFailures == 0 and
+    ([.scenarios[] | select(.exactProducerOutputs and .exactRequiredBundle)] | length) == 6 and
+    ([.scenarios[] | select(.disposition == "PARTIAL_GRAPH")] | length) == 3 and
+    ([.scenarios[] | select(.disposition == "NATIVE_GRADLE")] | length) == 3 and
+    .boundaries.realGradleExecution == true and .boundaries.newTimingClaim == false and
+    .boundaries.productionGranted == false and .boundaries.testOptimization == "OUT_OF_SCOPE" and
+    .outcome == "COMPOSABLE_BUILD_IMPACT_AVAILABLE"
+' "${buildopt_evidence}" >/dev/null
+
+buildopt_after_status=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ "${buildopt_after_status}" != "${buildopt_before_status}" ]]; then
+    echo 'adaptive fragment activation checker mutated the source tree' >&2
+    exit 1
+fi
+
+echo 'adaptive fragment activation: COMPOSABLE_BUILD_IMPACT_AVAILABLE'

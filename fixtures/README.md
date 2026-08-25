@@ -20,6 +20,12 @@ Reproducible Gradle repositories and scenarios for the golden lane, TestKit, cac
 
 Fixtures must declare their wrapper, JDK, plugins, seed, and expected result; they do not depend on accidental workstation state.
 
+`adaptive-fragment-activation/` is the `AF-010` real Gradle 9.6.1 proof. Two
+independent deterministic producers feed one reproducible bundle. Unrelated
+changes restore both exact producer outputs, localized changes rebuild only
+the changed producer, and build-logic, ambiguous or missing-output state runs
+the complete original workflow. It proves activation correctness, not timing.
+
 `output-equivalence/` contains the three owner-reviewed semantic contracts for
 the public workflow POC. They exercise relocatable UTF-8 reports, canonical ZIP
 contents, and one exact volatile Java-properties key. The implementation tests

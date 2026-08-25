@@ -175,6 +175,15 @@ See the [patcher README](../../jvm/patcher/README.md) and
 Build Impact can discover a conventional Gradle project graph while keeping
 the repository-owned manifest as authority. Generate reviewable state:
 
+The adaptive-fragment POC now also has a repository-internal activation proof.
+It pairs a qualified producer subgraph with its exact output materialization,
+restores only verified unaffected bytes and rebuilds only producers whose
+bindings or output revision changed. Global, ambiguous or incomplete state
+returns to the complete original workflow before Gradle starts. This is not
+yet an installed customer workflow and it has no wall-time claim; run
+`./dev/check-adaptive-fragment-activation` from a BuildOpt checkout to inspect
+the six-scenario Gradle proof.
+
 ```bash
 buildopt-impact generate \
   --repository . \

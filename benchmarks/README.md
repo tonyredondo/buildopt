@@ -2564,10 +2564,28 @@ native Gradle with zero selected fragments.
 
 The `5,000 ms` selected value is deliberately synthetic. It validates planner
 control flow only: it is not a measured saving, is not assembled from component
-percentages and grants no fragment activation. `AF-010` owns the first runtime
-Build Impact activation, and `AF-011` must measure any final composition
-directly.
+percentages and does not become measured value through activation.
 
 ```bash
 ./dev/check-adaptive-fragment-planner
+```
+
+## Active Build Impact fragment correctness
+
+[`adaptive-fragment-activation-v1.json`](./results/adaptive-fragment-activation-v1.json)
+is the `AF-010` real Gradle 9.6.1 correctness proof. Six isolated native and
+candidate scenarios exercise an unrelated change, one localized change per
+producer, a global build-logic change, an ambiguous change and missing stored
+output. Three scenarios use a partial graph and three retain the complete
+original workflow.
+
+Across the matrix, four unaffected producer outputs are restored, two changed
+producers rebuild locally, all six producer/output sets and final reproducible
+bundles match their native control exactly, and product failures are zero. The
+report intentionally contains no durations: AF-009 planner economics remain
+synthetic and AF-011 owns the direct timed comparison of each qualified
+mechanism and their complete composition against optimized native Gradle.
+
+```bash
+./dev/check-adaptive-fragment-activation
 ```

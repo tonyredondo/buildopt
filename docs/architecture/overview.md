@@ -186,8 +186,13 @@ same-scope, unexpired qualified generations and exact whole-composition
 economic predictions. Dependencies must be closed, conflicts are symmetric and
 every constituent correctness authority remains present. Missing or ambiguous
 input, absent joint economics or a prediction below the fixed net-value floor
-produces a native Gradle plan before Gradle starts. Runtime activation remains
-deferred to `AF-010`.
+produces a native Gradle plan before Gradle starts. `AF-010` now consumes that
+plan for Build Impact only: each producer needs separate compatible subgraph
+and exact-output-materialization fragments. Unaffected producers restore
+verified bytes, changed producers rebuild locally, and global, ambiguous or
+incomplete state retains the complete original workflow before execution.
+The implementation is storage-neutral and timing remains deferred to
+`AF-011`.
 
 The local POC remains service-independent. `buildopt-server` can now expose one
 TLS 1.3 endpoint with two logically isolated planes:

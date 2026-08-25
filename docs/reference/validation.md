@@ -119,6 +119,15 @@ constituent authorities, requires dependency closure, rejects mutual exclusion,
 uses only whole-composition predictions above a fixed net-value floor and
 returns native Gradle for seven missing, ambiguous or unsafe vectors. Its economic values
 are synthetic and make no build-time or activation claim.
+The `AF-010` gate runs six real Gradle 9.6.1 control/candidate scenarios. It
+requires exact subgraph/materialization pairs, proves producer-local
+invalidation and verified restoration, checks executed producer tasks and
+retains the complete native workflow on global, ambiguous or incomplete state.
+It validates correctness and activation only; it records no wall times.
+
+```bash
+./dev/check-adaptive-fragment-activation
+```
 
 ```bash
 ./dev/check-generated-code

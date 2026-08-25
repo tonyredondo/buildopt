@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "buildopt.specs/poc-adaptive-fragment-activation/v1",
+  "workItem": "AF-010",
+  "input": {
+    "maximumProducers": 16,
+    "changeScopes": ["UNRELATED", "LOCALIZED", "GLOBAL", "AMBIGUOUS"],
+    "fragmentPair": ["SUBGRAPH", "OUTPUT_MATERIALIZATION"],
+    "producerSpecificContexts": true,
+    "exactOutputRevisionRequired": true
+  },
+  "activation": {
+    "planner": "buildopt.adaptive/fragment-plan/v1",
+    "predictionModel": "EXACT_COMPOSITION_PREDICTION_NOT_ADDED_ISOLATED_EFFECTS",
+    "partialMode": "PARTIAL_GRAPH",
+    "unaffectedProducer": "RESTORE_EXACT_OUTPUT",
+    "changedProducer": "REBUILD_LOCALLY",
+    "finalizationEntrypointRequired": true,
+    "beforeGradle": true
+  },
+  "fallback": {
+    "target": "NATIVE_GRADLE",
+    "originalWorkflow": "fullBuild",
+    "onGlobalChange": true,
+    "onAmbiguousChange": true,
+    "onUnsafeContext": true,
+    "onIncompleteFragmentPair": true,
+    "onMissingStoredOutput": true,
+    "onPlannerRejection": true
+  },
+  "proof": {
+    "fixture": "fixtures/adaptive-fragment-activation",
+    "gradleVersion": "9.6.1",
+    "scenarioCount": 6,
+    "partialGraphCount": 3,
+    "nativeFallbackCount": 3,
+    "independentProducerChanges": 2,
+    "exactOutputScenarioCount": 6,
+    "productAttributableFailures": 0
+  },
+  "evidence": "benchmarks/results/adaptive-fragment-activation-v1.json",
+  "outcome": "COMPOSABLE_BUILD_IMPACT_AVAILABLE",
+  "boundaries": {
+    "proofOfConcept": true,
+    "realGradleExecution": true,
+    "syntheticEconomics": true,
+    "newTimingClaim": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

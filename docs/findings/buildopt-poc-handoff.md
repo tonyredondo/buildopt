@@ -136,9 +136,13 @@ adding isolated effects: it closes
 dependencies, rejects one-way or two-way conflicts, preserves every exact
 constituent authority and falls back to native Gradle when the direct joint
 prediction is absent, ambiguous or below `100 ms`. The proof is synthetic and
-does not claim runtime saving. AF-010 is next: activate Build Impact fragments
-independently across compatible and changed producers while preserving exact
-required outputs. Production hardening, soak, design partners and Test
+does not claim runtime saving. AF-010 now executes that boundary on real Gradle:
+six control/candidate scenarios restore four exact unaffected outputs, rebuild
+two changed producers locally and retain the complete original workflow for
+global, ambiguous or missing state. Every producer and final bundle is exact
+and product failures are zero. No durations were collected, so AF-011 is next:
+measure each qualified mechanism and the complete composition directly against
+optimized native Gradle. Production hardening, soak, design partners and Test
 Optimization remain outside this POC.
 
 ## Evidence
@@ -153,6 +157,7 @@ Optimization remain outside this POC.
 - [Adaptive fragment shadow replay](../../specs/poc-adaptive-fragment-shadow-v1.md)
 - [Machine-readable shadow result](../../benchmarks/results/adaptive-fragment-shadow-v1.json)
 - [Adaptive fragment economics](../../specs/poc-adaptive-fragment-economics-v1.md)
+- [Active Build Impact fragment evidence](../../benchmarks/results/adaptive-fragment-activation-v1.json)
 - [Machine-readable economic ledger](../../benchmarks/results/adaptive-fragment-economics-v1.json)
 - [Ordinary-build learner contract](../../specs/poc-adaptive-fragment-online-v1.md)
 - [Machine-readable learner proof](../../benchmarks/results/adaptive-fragment-online-v1.json)

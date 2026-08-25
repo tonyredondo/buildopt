@@ -4782,6 +4782,21 @@ process, makes no timing claim and grants no activation:
 ./dev/check-adaptive-fragment-planner
 ```
 
+## Active Build Impact fragments
+
+`./dev/check-adaptive-fragment-activation` validates the `AF-010` activation
+contract, focused Go tests and vet, then executes six isolated Gradle 9.6.1
+control/candidate scenarios. It proves that unrelated changes restore exact
+outputs from both producers, each localized change rebuilds only its affected
+producer, and global, ambiguous or incomplete state runs the complete original
+workflow. Every producer output and final bundle is compared byte for byte.
+The proof uses synthetic planner economics and records no durations, so it
+authorizes composition experiments but makes no wall-time claim:
+
+```bash
+./dev/check-adaptive-fragment-activation
+```
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic

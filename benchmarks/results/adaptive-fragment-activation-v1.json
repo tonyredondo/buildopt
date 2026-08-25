@@ -1,0 +1,172 @@
+{
+  "schemaVersion": "buildopt.poc/adaptive-fragment-activation/v1",
+  "workItem": "AF-010",
+  "capturedAt": "2026-08-25T20:00:00Z",
+  "gradleVersion": "9.6.1",
+  "fixtureSha256": "b98c4cfe0aee02bf2dfe2c9c8430d60a5b2db2e8e1bc6d5a6690ae64f1542a6b",
+  "scenarios": [
+    {
+      "name": "UNRELATED_CHANGE",
+      "changeScope": "UNRELATED",
+      "disposition": "PARTIAL_GRAPH",
+      "reason": "COMPOSABLE_BUILD_IMPACT",
+      "planId": "5185b36ca75c165278e10d482be5b8f7262d9cddd0be52966d079268a8323831",
+      "plannerPlanId": "67f4a9c3b5d4ad08384f62883763782fdd099c1a9f508dd72da91ac734c1c848",
+      "entrypoints": [
+        "packageAll"
+      ],
+      "selectedFragmentCount": 4,
+      "restoredProducers": [
+        "38540f7449941d21e4c22aa3e29d872e5f60143f182e94fdba7bad5deaff37c1",
+        "950d5064f801a5b848b22efcdd37249474fd195bdc88d837fe236219d44eb68b"
+      ],
+      "rebuiltProducers": [],
+      "executedProducerTasks": [],
+      "nativeBundleSha256": "810b09ac44e1f9db841f3f56bba0da8a5672853301f05d8e8209063178657aeb",
+      "candidateBundleSha256": "810b09ac44e1f9db841f3f56bba0da8a5672853301f05d8e8209063178657aeb",
+      "exactProducerOutputs": true,
+      "exactRequiredBundle": true,
+      "productAttributableFailure": false
+    },
+    {
+      "name": "PRODUCER_A_CHANGE",
+      "changeScope": "LOCALIZED",
+      "disposition": "PARTIAL_GRAPH",
+      "reason": "COMPOSABLE_BUILD_IMPACT",
+      "planId": "492db77444e0cd048b3358820e95f611400fab4fe2685ca2c7b6f33d317bee15",
+      "plannerPlanId": "3562acfcfea8716a8e433dc14a8df636277df61183b6670b179a046a9b89dba8",
+      "entrypoints": [
+        ":producer-a:produce",
+        "packageAll"
+      ],
+      "selectedFragmentCount": 2,
+      "restoredProducers": [
+        "38540f7449941d21e4c22aa3e29d872e5f60143f182e94fdba7bad5deaff37c1"
+      ],
+      "rebuiltProducers": [
+        "950d5064f801a5b848b22efcdd37249474fd195bdc88d837fe236219d44eb68b"
+      ],
+      "executedProducerTasks": [
+        "producer-a"
+      ],
+      "nativeBundleSha256": "36f34fe27ca1cee6c17c18469a4560c5408410684eadb89320d9d0084175e748",
+      "candidateBundleSha256": "36f34fe27ca1cee6c17c18469a4560c5408410684eadb89320d9d0084175e748",
+      "exactProducerOutputs": true,
+      "exactRequiredBundle": true,
+      "productAttributableFailure": false
+    },
+    {
+      "name": "PRODUCER_B_CHANGE",
+      "changeScope": "LOCALIZED",
+      "disposition": "PARTIAL_GRAPH",
+      "reason": "COMPOSABLE_BUILD_IMPACT",
+      "planId": "1e23827bd359550329466982db5f6c2466a3a4b1be0b1a21ea51f352fa0f496b",
+      "plannerPlanId": "bc31e91cc9d05f21a0f82ac207da480cdc86cedba55cd688a691d94857a06b05",
+      "entrypoints": [
+        ":producer-b:produce",
+        "packageAll"
+      ],
+      "selectedFragmentCount": 2,
+      "restoredProducers": [
+        "950d5064f801a5b848b22efcdd37249474fd195bdc88d837fe236219d44eb68b"
+      ],
+      "rebuiltProducers": [
+        "38540f7449941d21e4c22aa3e29d872e5f60143f182e94fdba7bad5deaff37c1"
+      ],
+      "executedProducerTasks": [
+        "producer-b"
+      ],
+      "nativeBundleSha256": "faebf9b095264710d753c00e8600f7de6cefd082d16bfb15da4ea7f75f7d8dbb",
+      "candidateBundleSha256": "faebf9b095264710d753c00e8600f7de6cefd082d16bfb15da4ea7f75f7d8dbb",
+      "exactProducerOutputs": true,
+      "exactRequiredBundle": true,
+      "productAttributableFailure": false
+    },
+    {
+      "name": "BUILD_LOGIC_CHANGE",
+      "changeScope": "GLOBAL",
+      "disposition": "NATIVE_GRADLE",
+      "reason": "GLOBAL_CHANGE",
+      "planId": "0a12f4ce348afe894270fa7526245ccafef9292e3dfeeb36457ae98f6171fe66",
+      "entrypoints": [
+        "fullBuild"
+      ],
+      "selectedFragmentCount": 0,
+      "restoredProducers": [],
+      "rebuiltProducers": [],
+      "executedProducerTasks": [
+        "producer-a",
+        "producer-b"
+      ],
+      "nativeBundleSha256": "810b09ac44e1f9db841f3f56bba0da8a5672853301f05d8e8209063178657aeb",
+      "candidateBundleSha256": "810b09ac44e1f9db841f3f56bba0da8a5672853301f05d8e8209063178657aeb",
+      "exactProducerOutputs": true,
+      "exactRequiredBundle": true,
+      "productAttributableFailure": false
+    },
+    {
+      "name": "AMBIGUOUS_CHANGE",
+      "changeScope": "AMBIGUOUS",
+      "disposition": "NATIVE_GRADLE",
+      "reason": "AMBIGUOUS_CHANGE",
+      "planId": "a550fe1d55c0477271223aabc82c8fa728469b87bcd4362d75a55abaf821ec4e",
+      "entrypoints": [
+        "fullBuild"
+      ],
+      "selectedFragmentCount": 0,
+      "restoredProducers": [],
+      "rebuiltProducers": [],
+      "executedProducerTasks": [
+        "producer-a",
+        "producer-b"
+      ],
+      "nativeBundleSha256": "810b09ac44e1f9db841f3f56bba0da8a5672853301f05d8e8209063178657aeb",
+      "candidateBundleSha256": "810b09ac44e1f9db841f3f56bba0da8a5672853301f05d8e8209063178657aeb",
+      "exactProducerOutputs": true,
+      "exactRequiredBundle": true,
+      "productAttributableFailure": false
+    },
+    {
+      "name": "MISSING_STORED_OUTPUT",
+      "changeScope": "UNRELATED",
+      "disposition": "NATIVE_GRADLE",
+      "reason": "INVALID_STORED_OUTPUT",
+      "planId": "5c1130463147c5449027b3bb3e2ce010c77b2fc089cf51c3318fbe06c9857f35",
+      "entrypoints": [
+        "fullBuild"
+      ],
+      "selectedFragmentCount": 0,
+      "restoredProducers": [],
+      "rebuiltProducers": [],
+      "executedProducerTasks": [
+        "producer-a",
+        "producer-b"
+      ],
+      "nativeBundleSha256": "810b09ac44e1f9db841f3f56bba0da8a5672853301f05d8e8209063178657aeb",
+      "candidateBundleSha256": "810b09ac44e1f9db841f3f56bba0da8a5672853301f05d8e8209063178657aeb",
+      "exactProducerOutputs": true,
+      "exactRequiredBundle": true,
+      "productAttributableFailure": false
+    }
+  ],
+  "summary": {
+    "scenarioCount": 6,
+    "partialGraphCount": 3,
+    "nativeFallbackCount": 3,
+    "independentProducerChanges": 2,
+    "exactOutputScenarioCount": 6,
+    "unaffectedOutputRestorations": 4,
+    "localizedProducerRebuilds": 2,
+    "globalOrAmbiguousFallbacks": 2,
+    "productAttributableFailures": 0
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "realGradleExecution": true,
+    "syntheticEconomics": true,
+    "newTimingClaim": false,
+    "productionGranted": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "outcome": "COMPOSABLE_BUILD_IMPACT_AVAILABLE"
+}

@@ -44,6 +44,12 @@ for the decision-ready summary and raw evidence.
 The next hypothesis, its fixed scorecard, ordered work and documentation
 obligations are tracked separately in the
 [Adaptive Fragment Generalization POC Tracker](../plans/adaptive-fragment-generalization-tracker.md).
+Its AF-010 gate now demonstrates independent Build Impact activation on real
+Gradle without adding a performance number: six native/candidate scenarios
+produce exact outputs, restore four unaffected producer outputs, rebuild two
+changed producers locally and retain the complete native workflow for global,
+ambiguous or incomplete state. AF-011 must measure the mechanisms separately
+and their full composition directly before this can become a value claim.
 
 The machine-readable incremental transaction is preserved in the
 [incremental-learning result](../../benchmarks/results/poc-incremental-learning-v1/README.md).
