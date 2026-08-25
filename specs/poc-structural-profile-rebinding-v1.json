@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "buildopt.specs/poc-structural-profile-rebinding/v1",
+  "workItem": "POC-STRUCTURAL-PROFILE-REBINDING-001",
+  "identity": [
+    "REPOSITORY_SCOPE",
+    "WORKFLOW",
+    "GRADLE_WRAPPER",
+    "PRODUCER_LINEAGE",
+    "OUTPUT_CONTRACT",
+    "CHANGE_FAMILY"
+  ],
+  "excludedIdentity": [
+    "CHECKOUT_PATH",
+    "EVIDENCE_REVISION",
+    "OUTPUT_REVISION",
+    "TARGET_REVISION"
+  ],
+  "requiredProofs": {
+    "revisionIndependentFingerprint": true,
+    "checkoutPathIndependentFingerprint": true,
+    "allCompatibilityDimensionsBound": true,
+    "incompleteEvidenceRejected": true,
+    "centralCrossRevisionReplayRevalidated": true,
+    "evidenceRevisionAncestrySeparate": true,
+    "exactOutputRevisionSeparate": true
+  },
+  "decision": "ALLOW_STRUCTURALLY_COMPATIBLE_PROFILE_REBINDING",
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "exactOutputsRevisionBound": true,
+    "performanceClaim": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

@@ -593,6 +593,12 @@ reachability are complete. Missing, ambiguous or bounded evidence retains the
 full native workflow. The proof is revision-bound and contains no timing or
 cross-revision ABI claim.
 
+`poc-structural-profile-rebinding-v1.json` and
+`poc-structural-profile-rebinding-v1.md` replace incidental revision identity
+with a canonical repository/workflow/Wrapper/producer/output/change-family
+fingerprint. Evidence and exact-output revisions remain independent safety
+bindings; incomplete or drifted structure retains native Gradle.
+
 `poc-structural-profile-v1.json` and `poc-structural-profile-v1.md` define the
 repository-independent bridge from measured structural value to an installed
 Build-Impact-only profile. Eight positive optimized-native comparisons,

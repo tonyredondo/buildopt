@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-structural-profile-rebinding/v1",
+  "workItem": "POC-STRUCTURAL-PROFILE-REBINDING-001",
+  "implementationRevision": "7592fa57be4c84b69feca522a999849beb195e4a",
+  "binding": {
+    "schemaVersion": "buildopt.poc/structural-profile-binding/v1",
+    "repositoryScopeSha256": "df3ce80568c6d986f2b33eb0def5afa5fc5b0ccf75d923c33497649d16a64427",
+    "workflowSha256": "2c8a12c5bb37a05ef3eb09f91239a95e91dc9b10cfdccf65bb3b3740370cd946",
+    "wrapperSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "producerLineageSha256": "98526cb0e25f4551e52b64713d8086c989caddc1d6a634ba50fc8007e51e1ed8",
+    "outputContractSha256": "976f61389b86d026424802416e3009840b40eb101be0f454269068bfdb213a45",
+    "changeFamilySha256": "029b490fa179b0db70eb330bdf1f7fe9dcf619fa047f733ca0eee785cfdbe4af",
+    "sha256": "23617d77850dca07e822f18e2dc2ab99f53fd106123ad181f886c09ec78ca219"
+  },
+  "compatibleCases": [
+    {
+      "name": "next source commit",
+      "evidenceCommit": "1111111111111111111111111111111111111111",
+      "currentCommit": "2222222222222222222222222222222222222222",
+      "checkoutRoot": "/runner/work/repository-a",
+      "bindingSha256": "23617d77850dca07e822f18e2dc2ab99f53fd106123ad181f886c09ec78ca219",
+      "compatible": true
+    },
+    {
+      "name": "independent checkout",
+      "evidenceCommit": "1111111111111111111111111111111111111111",
+      "currentCommit": "3333333333333333333333333333333333333333",
+      "checkoutRoot": "D:/agent/work/repository-b",
+      "bindingSha256": "23617d77850dca07e822f18e2dc2ab99f53fd106123ad181f886c09ec78ca219",
+      "compatible": true
+    }
+  ],
+  "driftCases": [
+    {
+      "name": "Wrapper",
+      "rejected": true
+    },
+    {
+      "name": "workflow",
+      "rejected": true
+    },
+    {
+      "name": "producer lineage",
+      "rejected": true
+    },
+    {
+      "name": "output contract",
+      "rejected": true
+    },
+    {
+      "name": "change family",
+      "rejected": true
+    }
+  ],
+  "incompleteCases": [
+    {
+      "name": "missing task dependency",
+      "rejected": true
+    },
+    {
+      "name": "ambiguous output owner",
+      "rejected": true
+    },
+    {
+      "name": "missing output evidence",
+      "rejected": true
+    },
+    {
+      "name": "cyclic producer lineage",
+      "rejected": true
+    }
+  ],
+  "decision": "ALLOW_STRUCTURALLY_COMPATIBLE_PROFILE_REBINDING",
+  "productFailures": 0,
+  "performanceReplayRun": false,
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "revisionIsCompatibilityKey": false,
+    "checkoutPathIsIdentity": false,
+    "exactOutputsRevisionBound": true,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

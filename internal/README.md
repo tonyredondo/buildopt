@@ -17,6 +17,13 @@ reuses. Missing or ambiguous paths, bindings and producers retain native Gradle.
 It contains no repository identity or filename-extension policy and grants no
 production authority.
 
+`structuralbinding/` owns the revision- and checkout-path-independent POC
+compatibility fingerprint for qualified structural profiles. It binds the
+repository scope, workflow and options, Wrapper, complete candidate/producer
+task lineage, exact required/candidate output ownership and change family.
+Incomplete, ambiguous or cyclic evidence is rejected; evidence ancestry and
+revision-bound output bytes remain launcher responsibilities.
+
 `launcher/` contains the dependency-free `WS-001` command passthrough, the
 `WS-002` Linux process-group and signal contract, the `WS-003` plugin handshake,
 and the neutral `WS-004` authenticated local rendezvous used by `cmd/buildopt`.

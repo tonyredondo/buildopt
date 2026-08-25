@@ -31,6 +31,7 @@ Optimization are outside the current scope.
 | **Incremental learning and value gate** | Accumulates useful control/candidate observations and checks repeatability, uncertainty, p95, outputs, fallback and payback. | The automatic POC policy now accepts 6/8 only with a strictly positive interval and non-regressive p95; weak or incompatible evidence still retains native. |
 | **Verified output materialization** | Restores exact unaffected outputs before their producers are omitted. | Fast and fail-closed. A producer-atomic quarantine now excludes every output of a task when any output is volatile, while exact outputs from other producers remain transportable. |
 | **Aggregate output closure** | Derives the complete output set of custom lifecycle workflows from Gradle task dependencies and producer ownership. | 4/4 Gradle 8/9 x Groovy/Kotlin fixtures rebuild the changed producer, materialize the stable output and reproduce exact bytes without task-name, plugin, path or extension rules. This is correctness evidence, not a timing claim. |
+| **Structural profile rebinding** | Reuses qualified structural evidence across commits when workflow, Wrapper, producer lineage, output contract and change family are unchanged. | 2/2 different commit/root contexts retain one fingerprint; 5/5 structural drifts and 4/4 incomplete evidence cases reject. Evidence ancestry and exact output revisions remain separate, so stale bytes are never implied by compatibility. |
 | **Profile portfolio and central state** | Carries verified profiles and packs over HTTP/HTTPS between builds and machines. | Transport and safe cross-commit refresh have selected value on Kafka (+104.975 s) and Spring (+84.656 s). Micronaut proves exact transitive lineage and recovery, but neither its 58-entrypoint lifecycle cover (+65 ms/0.49%) nor a 63-entrypoint direct frontier (-709 ms/-5.60%) qualifies. |
 | **Gradle-compatible cache** | Reuses verified task outputs locally or through optional HTTP/HTTPS storage. | Supporting infrastructure near native-cache parity, not the principal speed claim. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource/state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
@@ -126,6 +127,10 @@ with zero product failures. The cross-commit claim therefore remains bounded.
   refreshable, and eligible on later commits before its learning cost can repay.
 - Fail-open behavior is working: every uncertain descendant ran optimized
   native Gradle and preserved exact outputs.
+- Qualified evidence is no longer compatible merely because a Git revision
+  matches, nor rejected merely because it differs. A canonical structural
+  fingerprint accepts compatible commits/checkouts and rejects Wrapper,
+  workflow, lineage, output or family drift; exact bytes remain revision-bound.
 - Cross-commit reuse can now create attributable value: the one selected Kafka
   descendant saves 104.975 seconds and the six-build window finishes 66.772
   seconds net positive after learning and publication.
@@ -213,23 +218,22 @@ with zero product failures. The cross-commit claim therefore remains bounded.
 
 ## Next steps
 
-1. Rebind qualified profiles across commits from canonical workflow, Wrapper,
-   producer-lineage, output-contract and change-family compatibility rather
-   than incidental revision identity.
-2. Learn duration, graph, portability and volatility only from ordinary
+1. Learn duration, graph, portability and volatility only from ordinary
    requested builds, and require expected payback within five compatible
    matches before spending calibration work.
-3. Run one unchanged binary over frozen Spring, OpenTelemetry, Kafka,
+2. Run one unchanged binary over frozen Spring, OpenTelemetry, Kafka,
    Micronaut and Groovy lifetime windows. Require exact outputs, zero product
    failures, at least three net-positive repository families and selection on
    at least half of structurally eligible non-global descendants.
-4. Issue a terminal continue/stop decision for the generic one-command POC.
+3. Issue a terminal continue/stop decision for the generic one-command POC.
    Production hardening, soak and design partners remain outside this gate.
 
 ## Evidence
 
 - [Aggregate output closure result](../../benchmarks/results/poc-aggregate-output-closure-v1/README.md)
 - [Machine-readable aggregate closure](../../benchmarks/results/poc-aggregate-output-closure-v1/summary.json)
+- [Structural profile rebinding result](../../benchmarks/results/poc-structural-profile-rebinding-v1/README.md)
+- [Machine-readable structural binding evidence](../../benchmarks/results/poc-structural-profile-rebinding-v1/summary.json)
 - [Latest recovery result](../../benchmarks/results/poc-cross-commit-value-recovery-v1/README.md)
 - [Workflow-input ownership result](../../benchmarks/results/poc-workflow-input-ownership-v1/README.md)
 - [Machine-readable ownership summary](../../benchmarks/results/poc-workflow-input-ownership-v1/summary.json)

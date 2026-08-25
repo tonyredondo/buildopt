@@ -201,9 +201,11 @@ owner commit orchestration is still explicit for cache publication. The
 portfolios, evidence and checkpoints. The
 [central optimize integration](./specs/poc-central-optimize-integration-v1.md)
 now makes that synchronization automatic around `buildopt optimize`: verified
-remote profiles may cross ordinary source commits only after local ancestry,
-build-logic, graph, family, output, tool, precondition and evidence
-revalidation. The
+remote profiles may cross ordinary source commits only after canonical
+workflow, Wrapper, producer-lineage, output-contract and change-family
+revalidation. Evidence ancestry and exact output revisions remain separate;
+build-logic or producer drift requires native refresh or full native fallback.
+The
 [isolated two-machine proof](./specs/poc-central-two-machine-v1.md) now connects
 that state path to the central Gradle cache automatically: a clean read-only
 consumer selected the remote profile, restored one task `FROM-CACHE` after a

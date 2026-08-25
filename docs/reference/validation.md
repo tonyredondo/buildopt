@@ -177,6 +177,12 @@ materialization, no stable-producer execution and zero product failures. The
 owning runner is used only when the implementation or fixture changes; normal
 Base CI does not repeat the Gradle matrix.
 
+`./dev/check-structural-profile-rebinding` validates the canonical
+cross-revision profile identity, its five drift dimensions, four incomplete
+evidence failures and the real central selection/refresh path. It makes no
+timing claim and never treats a compatible structure as authority to reuse
+stale output bytes.
+
 `check-automatic-breadth-transfer` validates the immutable V1 unchanged
 zero-manual-file run across Spring Framework, OpenTelemetry Java
 Instrumentation, Apache Kafka, Micronaut Core and Apache Groovy. It recomputes

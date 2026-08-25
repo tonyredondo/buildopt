@@ -972,6 +972,7 @@ artifacts are:
 - [five-repository qualified-lifetime evidence](../../benchmarks/results/poc-qualified-lifetime-v2/summary.json).
 - [configuration-input binding evidence](../../benchmarks/results/poc-configuration-input-binding-v1/summary.json).
 - [aggregate output closure evidence](../../benchmarks/results/poc-aggregate-output-closure-v1/summary.json).
+- [structural profile rebinding evidence](../../benchmarks/results/poc-structural-profile-rebinding-v1/summary.json).
 - [terminal installed qualified-profile matrix](../../benchmarks/results/poc-qualified-profile-matrix-v1/summary.json).
 - [fresh five-repository structural-only matrix](../../benchmarks/results/poc-generic-profile-matrix-v1/README.md).
 - [fresh full-path ablation and retained component evidence](../../benchmarks/results/poc-full-path-ablation-v1/summary.json).
@@ -1002,7 +1003,18 @@ Across Gradle 8.14.3/9.6.1 and Groovy/Kotlin, 4/4 cases rebuild only the changed
 producer, materialize the stable producer's output without executing it and
 match the full-workflow digest. Missing dependencies, ambiguous ownership and
 unreachable producers retain native Gradle. Cross-commit value still depends
-on the next structural profile-rebinding proof.
+on compatibility surviving ordinary commits.
+
+That identity is now explicit. Discovery and the central portfolio carry one
+canonical fingerprint over repository scope, workflow/options, Wrapper,
+complete producer lineage, required/candidate output ownership and change
+family. Commit IDs and checkout roots are excluded, while evidence ancestry
+and exact output revisions remain independent safety bindings. Two compatible
+commit/root contexts preserve one fingerprint; five structural drift classes
+and four incomplete-evidence classes reject. This closes compatibility, not
+performance: no timing result changes, and the next experiment must determine
+whether ordinary requested builds supply enough compatible observations to
+repay learning.
 
 The terminal specialization remains valid, but it does not end the search for
 a general product. The next foundation separates two decisions that earlier

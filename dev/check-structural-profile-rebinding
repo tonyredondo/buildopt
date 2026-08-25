@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec=${buildopt_root}/specs/poc-structural-profile-rebinding-v1.json
+buildopt_summary=${buildopt_root}/benchmarks/results/poc-structural-profile-rebinding-v1/summary.json
+
+command -v jq >/dev/null 2>&1 || {
+    printf 'jq is required\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-structural-profile-rebinding/v1" and
+  .workItem == "POC-STRUCTURAL-PROFILE-REBINDING-001" and
+  .identity == ["REPOSITORY_SCOPE","WORKFLOW","GRADLE_WRAPPER","PRODUCER_LINEAGE","OUTPUT_CONTRACT","CHANGE_FAMILY"] and
+  .excludedIdentity == ["CHECKOUT_PATH","EVIDENCE_REVISION","OUTPUT_REVISION","TARGET_REVISION"] and
+  all(.requiredProofs[]; .) and
+  .decision == "ALLOW_STRUCTURALLY_COMPATIBLE_PROFILE_REBINDING" and
+  .boundaries == {proofOfConcept:true,productionAuthorized:false,
+    exactOutputsRevisionBound:true,performanceClaim:false,soakRequired:false,
+    designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_spec}" >/dev/null
+
+"${buildopt_root}/dev/run" --toolchain go -- go run ./dev/structural-profile-rebinding --check "${buildopt_summary}"
+"${buildopt_root}/dev/run" --toolchain go -- go test ./internal/structuralbinding ./internal/launcher \
+    -run 'TestBinding|TestOptimizeStructuralBinding|TestCentralOptimizeReusesQualifiedProfileAcrossUnrelatedCommitAndRejectsStructuralDrift'
+
+printf 'Structural profile rebinding evidence OK: 2 compatible contexts accepted; 5 drift and 4 incomplete contexts rejected\n'

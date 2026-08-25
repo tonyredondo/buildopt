@@ -2359,6 +2359,23 @@ and makes no wall-time claim:
 ./dev/check-aggregate-output-closure
 ```
 
+## Structural profile rebinding
+
+[`results/poc-structural-profile-rebinding-v1/`](./results/poc-structural-profile-rebinding-v1/README.md)
+separates structural compatibility from Git revision identity. Two contexts
+with different commits and checkout roots produce one canonical fingerprint;
+Wrapper, workflow, producer-lineage, output-contract and change-family drift
+are rejected in 5/5 cases, and four incomplete/ambiguous lineage or output
+cases fail closed.
+
+The real central integration proof also preserves evidence ancestry and keeps
+exact output bytes revision-bound, refreshing them through native Gradle when
+necessary. This is compatibility evidence, not a new performance result:
+
+```bash
+./dev/check-structural-profile-rebinding
+```
+
 ## JVM Agent spike evidence
 
 [`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one

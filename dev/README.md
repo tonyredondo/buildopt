@@ -4616,6 +4616,19 @@ cold Gradle fixtures:
 ./dev/check-aggregate-output-closure
 ```
 
+## Structural profile rebinding evidence
+
+`./dev/check-structural-profile-rebinding` regenerates the canonical binding
+model from the committed evidence and runs the focused Go/central-integration
+tests. It accepts revision and checkout-root changes only when repository,
+workflow, Wrapper, complete producer lineage, output contract and change
+family remain identical. Evidence ancestry and exact output revisions stay
+separate and mandatory:
+
+```bash
+./dev/check-structural-profile-rebinding
+```
+
 ## Update policy
 
 Toolchain updates are atomic repository changes:
