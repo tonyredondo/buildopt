@@ -28,6 +28,11 @@
     "exactRequiredOutputs": true,
     "signedDelta": "CONTROL_MS_MINUS_CANDIDATE_MS",
     "learningCostIncluded": true,
+    "qualificationCostRecorded": true,
+    "selectionIdentityRecorded": true,
+    "selectionMatchingCostRecorded": true,
+    "nativeRetentionPhaseRecorded": true,
+    "discoveredGraphReductionRecorded": true,
     "fingerprints": [
       "CHECKOUT",
       "GRADLE_HOME",

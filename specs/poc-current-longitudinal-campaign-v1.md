@@ -25,7 +25,11 @@ The first pair is control-first and order alternates thereafter. Both arms run
 the frozen workflow on the same public revision. The runner records independent
 monotonic wall time, the candidate's non-overlapping internal phases, cache,
 daemon and state fingerprints, required-output hashes and the complete installed
-decision. Learning and calibration work remains inside candidate wall time.
+decision. The raw record preserves calibration cost and sample count, profile
+identity, selection matching cost and bindings, discovered graph reduction and
+the native-retention phase. Learning and calibration work remains inside
+candidate wall time so `AF-014D` can calculate qualification cost and payback
+without reconstructing facts from transient logs.
 
 ## Exclusions and reserves
 

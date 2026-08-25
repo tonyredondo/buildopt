@@ -74,17 +74,51 @@ type arm struct {
 }
 
 type candidateDecision struct {
-	Outcome                     string   `json:"outcome"`
-	Reason                      string   `json:"reason"`
-	Phase                       string   `json:"phase"`
-	ExecutionMode               string   `json:"executionMode"`
-	SelectionStatus             string   `json:"selectionStatus"`
-	SelectionSelected           bool     `json:"selectionSelected"`
-	RuntimeSurface              string   `json:"runtimeSurface"`
-	ActivatedFragments          []string `json:"activatedFragments"`
-	SuspendedFragments          []string `json:"suspendedFragments"`
-	MeasurementAuthorityUpdated bool     `json:"measurementAuthorityUpdated"`
-	Timing                      timing   `json:"timing"`
+	Outcome                     string          `json:"outcome"`
+	Reason                      string          `json:"reason"`
+	Phase                       string          `json:"phase"`
+	ExecutionMode               string          `json:"executionMode"`
+	SelectionStatus             string          `json:"selectionStatus"`
+	SelectionSelected           bool            `json:"selectionSelected"`
+	CalibrationPerformed        bool            `json:"calibrationPerformed"`
+	CalibrationCostMS           int64           `json:"calibrationCostMs"`
+	CalibrationPairsMeasured    int             `json:"calibrationPairsMeasured"`
+	CalibrationQualified        bool            `json:"calibrationQualified"`
+	CalibrationReason           string          `json:"calibrationReason"`
+	SelectionPerformed          bool            `json:"selectionPerformed"`
+	SelectionDurationNS         int64           `json:"selectionDurationNs"`
+	SelectionChangeFamily       string          `json:"selectionChangeFamily"`
+	SelectionFamilySHA          string          `json:"selectionFamilySha256"`
+	SelectionProfileSHA         string          `json:"selectionProfileSha256"`
+	OriginalEntrypoints         []string        `json:"originalEntrypoints"`
+	SelectedEntrypoints         []string        `json:"selectedEntrypoints"`
+	FailedBindings              []string        `json:"failedBindings"`
+	DiscoveryChangeFamily       string          `json:"discoveryChangeFamily"`
+	ChangedPathCount            int             `json:"changedPathCount"`
+	GraphSelectedProjects       int             `json:"graphSelectedProjects"`
+	GraphOmittedProjects        int             `json:"graphOmittedProjects"`
+	GraphTotalProjects          int             `json:"graphTotalProjects"`
+	PortfolioPerformed          bool            `json:"portfolioPerformed"`
+	PortfolioChangeFamily       string          `json:"portfolioChangeFamily"`
+	PortfolioProfileSHA         string          `json:"portfolioProfileSha256"`
+	PortfolioProfileCount       int             `json:"portfolioProfileCount"`
+	NativeRetention             nativeRetention `json:"nativeRetention"`
+	RuntimeSurface              string          `json:"runtimeSurface"`
+	ActivatedFragments          []string        `json:"activatedFragments"`
+	SuspendedFragments          []string        `json:"suspendedFragments"`
+	MeasurementAuthorityUpdated bool            `json:"measurementAuthorityUpdated"`
+	Timing                      timing          `json:"timing"`
+}
+
+type nativeRetention struct {
+	DecisionPhase             string `json:"decisionPhase"`
+	CompletedBeforeGradle     bool   `json:"completedBeforeGradle"`
+	WrapperOverheadMS         int64  `json:"wrapperOverheadMs"`
+	PreExecutionMS            int64  `json:"preExecutionMs"`
+	GradleDurationMS          int64  `json:"gradleDurationMs"`
+	PostExecutionMS           int64  `json:"postExecutionMs"`
+	OutputObservationPrepared bool   `json:"outputObservationPrepared"`
+	Reason                    string `json:"reason"`
 }
 
 type timing struct {
@@ -322,9 +356,22 @@ func validateObservation(value observation, sequence int, previous int64) error 
 	decision := value.Decision
 	if decision.Outcome == "" || decision.Reason == "" || decision.Phase == "" || decision.ExecutionMode == "" ||
 		decision.SelectionStatus == "" || decision.MeasurementAuthorityUpdated ||
+		decision.CalibrationCostMS < 0 || decision.CalibrationPairsMeasured < 0 || decision.CalibrationReason == "" ||
+		decision.SelectionDurationNS < 0 || decision.ChangedPathCount < 0 ||
+		decision.GraphSelectedProjects < 0 || decision.GraphOmittedProjects < 0 || decision.GraphTotalProjects < 0 ||
+		decision.PortfolioProfileCount < 0 || decision.NativeRetention.DecisionPhase == "" ||
+		decision.NativeRetention.WrapperOverheadMS < 0 || decision.NativeRetention.PreExecutionMS < 0 ||
+		decision.NativeRetention.GradleDurationMS < 0 || decision.NativeRetention.PostExecutionMS < 0 ||
+		decision.NativeRetention.Reason == "" ||
 		decision.Timing.TotalNS <= 0 || decision.Timing.TotalNS != decision.Timing.PreExecutionNS+
 		decision.Timing.GradleExecutionNS+decision.Timing.FinalizationNS+decision.Timing.UnattributedNS {
 		return errors.New("candidate decision or phase timing is invalid")
+	}
+	if decision.CalibrationPerformed && (decision.CalibrationCostMS <= 0 || decision.CalibrationPairsMeasured <= 0) {
+		return errors.New("performed calibration is missing exact cost or sample count")
+	}
+	if decision.SelectionSelected && (!decision.SelectionPerformed || !validSHA(decision.SelectionProfileSHA)) {
+		return errors.New("selected profile is missing its installed selection identity")
 	}
 	if len(decision.ActivatedFragments) != 0 || len(decision.SuspendedFragments) != 0 || decision.RuntimeSurface != "NO_FRAGMENT_RUNTIME" {
 		return errors.New("whole-profile runtime was relabelled as adaptive fragments")
