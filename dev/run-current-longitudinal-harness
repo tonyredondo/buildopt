@@ -87,6 +87,13 @@ sed -i 's/service-a-target/service-a-base/' \
     "${buildopt_seed}/service-a/src/main/java/example/Application.java"
 cat >>"${buildopt_seed}/build.gradle" <<'GRADLE'
 
+project(':service-b') {
+    tasks.register('calibrationWork') {
+        outputs.upToDateWhen { false }
+        doLast { Thread.sleep(1300) }
+    }
+    tasks.named('jar') { dependsOn tasks.named('calibrationWork') }
+}
 tasks.register('buildoptHarnessEnvironment') {
     doLast {
         println "buildopt-harness-bypass=${System.getenv('BUILDOPT_BYPASS') ?: '<unset>'}"
@@ -104,7 +111,17 @@ git -C "${buildopt_seed}" config commit.gpgsign false
 git -C "${buildopt_seed}" add .
 git -C "${buildopt_seed}" commit -qm 'AF-014A base'
 git -C "${buildopt_seed}" switch -qc feature
-sed -i 's/service-a-base/service-a-target/' \
+buildopt_previous=service-a-base
+for buildopt_history_index in $(seq 1 4); do
+    buildopt_current="service-a-history-${buildopt_history_index}"
+    sed -i "s/${buildopt_previous}/${buildopt_current}/" \
+        "${buildopt_seed}/service-a/src/main/java/example/Application.java"
+    git -C "${buildopt_seed}" add service-a/src/main/java/example/Application.java
+    git -C "${buildopt_seed}" commit -qm \
+        "AF-014A compatible source history ${buildopt_history_index}"
+    buildopt_previous=${buildopt_current}
+done
+sed -i "s/${buildopt_previous}/service-a-target/" \
     "${buildopt_seed}/service-a/src/main/java/example/Application.java"
 git -C "${buildopt_seed}" add service-a/src/main/java/example/Application.java
 git -C "${buildopt_seed}" commit -qm 'AF-014A leaf source target'
@@ -115,7 +132,7 @@ git clone -q --branch feature "${buildopt_seed}" "${buildopt_temp}/candidate"
 buildopt_control="${buildopt_temp}/control"
 buildopt_candidate="${buildopt_temp}/candidate"
 for buildopt_repository in "${buildopt_control}" "${buildopt_candidate}"; do
-    git -C "${buildopt_repository}" branch main origin/main
+    git -C "${buildopt_repository}" branch main origin/main >/dev/null
     git -C "${buildopt_repository}" config branch.feature.remote .
     git -C "${buildopt_repository}" config branch.feature.merge refs/heads/main
 done
