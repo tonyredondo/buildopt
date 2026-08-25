@@ -167,8 +167,16 @@ joint path. AF-012 now persists the same portfolio and economic ledger locally
 and over the existing HTTPS state plane. Exact bytes restore on a clean second
 machine, CAS conflicts remain visible, corrupt state rejects, a verified local
 generation survives outage and a clean offline machine retains native Gradle.
-Adaptive documents generate zero Gradle cache-plane requests. AF-013 is next:
-measure cumulative no-lookahead value across the frozen five repositories.
+Adaptive documents generate zero Gradle cache-plane requests. AF-013 now
+normalizes the frozen direct measurements without rerunning favorable arms:
+Spring closes at `+59.550 s`, Kafka at `+88.219 s`, OpenTelemetry at
+`-168.751 s` and Groovy at `-37.684 s`. Micronaut remains `INCONCLUSIVE`
+because its first descendant failed byte reproducibility before an attributable
+timing pair could be accepted. All 14 comparable builds have exact outputs and
+zero product failures, but only 2/5 rows are positive versus the frozen 3/5
+breadth target. AF-014 is next: the installed one-command path must reproduce
+the same decisions and account for all of its overhead before AF-015 makes the
+terminal decision.
 Production hardening, soak, design partners and Test Optimization remain
 outside this POC.
 
@@ -197,3 +205,5 @@ outside this POC.
 - [Direct fragment-composition result](../../benchmarks/results/adaptive-fragment-composition-v1.json)
 - [Fresh HTTP cache-locality result](../../benchmarks/results/adaptive-cache-locality-v1.json)
 - [Adaptive state portability contract](../../specs/poc-adaptive-state-portability-v1.md)
+- [Adaptive longitudinal matrix](../../benchmarks/results/adaptive-fragment-longitudinal-v1.json)
+- [Adaptive longitudinal protocol](../../specs/poc-adaptive-fragment-longitudinal-v1.md)

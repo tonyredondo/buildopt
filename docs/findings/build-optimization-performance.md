@@ -1076,3 +1076,29 @@ Validate the current scorecard with:
 ./dev/check-poc-verification-overhead-attribution-v1-result
 ./dev/check-poc-apache-groovy-classes-v1
 ```
+
+## Adaptive longitudinal normalization
+
+AF-013 binds the previous direct chronological measurements into one canonical
+five-repository report rather than rerunning them after seeing the result. It
+recomputes 14 signed control/candidate deltas against optimized native Gradle,
+charges each recorded learning/publication cost once and preserves every
+negative build.
+
+| Repository | Net value | Worst build | Outcome |
+|---|---:|---:|---|
+| Spring Framework | **+59.550 s** | -21.466 s | `NET_POSITIVE` |
+| OpenTelemetry | **-168.751 s** | -104.572 s | `NET_NEGATIVE` |
+| Kafka | **+88.219 s** | -20.618 s | `NET_POSITIVE` |
+| Micronaut | unavailable | no comparable pair | `INCONCLUSIVE` |
+| Groovy | **-37.684 s** | -16.687 s | `NET_NEGATIVE` |
+
+All comparable outputs are exact and product failures are zero. This result is
+not obtained by adding isolated Build Impact, patch or locality percentages.
+It reaches only 2/5 positive rows versus the frozen 3/5 breadth requirement;
+AF-014 must now prove that the installed command makes the same choices with
+all product overhead included.
+
+```bash
+./dev/check-adaptive-fragment-longitudinal
+```

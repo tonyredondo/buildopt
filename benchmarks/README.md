@@ -2620,3 +2620,30 @@ production activation remains unauthorized.
 ```bash
 ./dev/check-adaptive-fragment-composition
 ```
+
+## Adaptive fragment longitudinal matrix
+
+[`adaptive-fragment-longitudinal-v1.json`](./results/adaptive-fragment-longitudinal-v1.json)
+is the `AF-013` canonical normalization of the frozen chronological
+source-checkout measurements. It is not a favorable rerun or a new timing
+claim. The checker recomputes every source digest, signed per-build delta,
+one-time learning charge, cumulative value and row outcome from the immutable
+raw evidence.
+
+Fourteen directly comparable builds preserve exact required outputs and report
+zero product failures. Spring finishes at **+59.550 s** and Kafka at
+**+88.219 s**. OpenTelemetry finishes at **-168.751 s** and Groovy at
+**-37.684 s**. Micronaut is `INCONCLUSIVE`: its exact-output safety gate
+rejected a nondeterministic descendant JAR before an attributable timing pair
+could be accepted. Negative builds remain visible; the worst individual deltas
+are -21.466 s for Spring, -104.572 s for OpenTelemetry, -20.618 s for Kafka and
+-16.687 s for Groovy.
+
+Only **2/5** rows are net positive versus the frozen terminal breadth target of
+3/5. The aggregate decision remains deliberately deferred to `AF-015`; this
+matrix neither adds mechanism percentages nor treats a missing Micronaut delta
+as zero.
+
+```bash
+./dev/check-adaptive-fragment-longitudinal
+```

@@ -4826,6 +4826,29 @@ from Gradle cache routes. It adds no public command or timing claim:
 ./dev/check-adaptive-state-portability
 ```
 
+## Adaptive fragment longitudinal matrix
+
+`./dev/check-adaptive-fragment-longitudinal` regenerates the `AF-013`
+five-repository report from its declared immutable source documents. It checks
+all 14 signed paired deltas, chronological pre-decision bounds, exact required
+outputs, one-time learning charges, source digests and row classifications. It
+also proves that changing a delta or the frozen breadth threshold fails.
+
+The checked result contains two `NET_POSITIVE`, two `NET_NEGATIVE` and one
+`INCONCLUSIVE` row. The Micronaut exclusion is retained because no comparable
+performance pair exists after its byte-reproducibility rejection. The command
+does not rerun public repositories:
+
+```bash
+./dev/check-adaptive-fragment-longitudinal
+```
+
+To regenerate a candidate report explicitly:
+
+```bash
+./dev/run-adaptive-fragment-longitudinal /absolute/path/result.json
+```
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic

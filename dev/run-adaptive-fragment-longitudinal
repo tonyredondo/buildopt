@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/result.json\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+
+cd -- "${buildopt_repo_root}/dev/adaptive-fragment-longitudinal"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run . assemble \
+    "${buildopt_repo_root}/specs/poc-adaptive-fragment-longitudinal-v1.json" "$1"
+
+printf 'adaptive fragment longitudinal result written to %s\n' "$1"

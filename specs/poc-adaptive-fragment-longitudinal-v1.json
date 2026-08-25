@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "buildopt.specs/poc-adaptive-fragment-longitudinal/v1",
+  "workItem": "AF-013",
+  "frozenAt": "2026-08-25T00:00:00Z",
+  "methodology": {
+    "evaluation": "CHRONOLOGICAL_PREQUENTIAL_REPLAY_OF_DIRECT_MEASUREMENTS",
+    "control": "OPTIMIZED_NATIVE_GRADLE",
+    "candidate": "SOURCE_CHECKOUT_BUILDOPT_DECISION",
+    "learningCostChargedOnce": true,
+    "futureObservationsAvailable": false,
+    "percentagesAdded": false,
+    "newBuildTiming": false,
+    "inconclusiveWhenComparableDeltaMissing": true
+  },
+  "repositories": [
+    {
+      "key": "spring-framework",
+      "repositoryId": "spring-projects/spring-framework",
+      "sourceType": "QUALIFIED_LIFETIME_SUBJECT_V2",
+      "sourcePath": "benchmarks/results/poc-producer-bound-quarantine-lifetime-v2/spring-framework-classes-jms/result.json",
+      "sourceSha256": "8e18f4bdf949d4cc24ed16ce50460e78d77a0fdd1f8f81e8291b7c36802e628d",
+      "workflow": ["classes"],
+      "expectedObservationCount": 2
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "sourceType": "CROSS_COMMIT_BREADTH_V2_SUBJECT",
+      "sourcePath": "benchmarks/results/poc-cross-commit-breadth-v2/summary.json",
+      "sourceSha256": "d7c38666190255c3a7b1d4048d252a2ff58d2feda119744bebbd89ddf86229ae",
+      "sourceSubjectKey": "opentelemetry-spring-compatible-window",
+      "workflow": ["spring-webmvc-6.0:javaagent:shadowJar"],
+      "expectedObservationCount": 3
+    },
+    {
+      "key": "apache-kafka",
+      "repositoryId": "apache/kafka",
+      "sourceType": "QUALIFIED_LIFETIME_SUBJECT_V2",
+      "sourcePath": "benchmarks/results/poc-lifetime-breadth-v3/apache-kafka/result.json",
+      "sourceSha256": "358af8773138419a7b8df982f5ccdc7d38064e8ac5575d028ea55edaf4ffbc2c",
+      "workflow": ["core:compileTestJava"],
+      "expectedObservationCount": 6
+    },
+    {
+      "key": "micronaut-core",
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "sourceType": "PRODUCER_BOUND_LIFETIME_GENERALIZATION_V1",
+      "sourcePath": "benchmarks/results/poc-producer-bound-lifetime-generalization-v1/summary.json",
+      "sourceSha256": "f7d36b86e35041e2c47ded2203b1d4ae6ddfd49ae68ddcca24e4aebb444e69ca",
+      "workflow": ["assemble"],
+      "expectedObservationCount": 0
+    },
+    {
+      "key": "apache-groovy",
+      "repositoryId": "apache/groovy",
+      "sourceType": "CROSS_COMMIT_BREADTH_V2_SUBJECT",
+      "sourcePath": "benchmarks/results/poc-cross-commit-breadth-v2/summary.json",
+      "sourceSha256": "d7c38666190255c3a7b1d4048d252a2ff58d2feda119744bebbd89ddf86229ae",
+      "sourceSubjectKey": "apache-groovy-json-compatible-window",
+      "workflow": ["json:assemble"],
+      "expectedObservationCount": 3
+    }
+  ],
+  "classification": {
+    "netPositive": "COMPLETE_COMPARABLE_SEQUENCE_AND_CUMULATIVE_NET_MS_GT_ZERO",
+    "netNegative": "COMPLETE_COMPARABLE_SEQUENCE_AND_CUMULATIVE_NET_MS_LTE_ZERO",
+    "inconclusive": "NO_COMPLETE_COMPARABLE_SEQUENCE",
+    "terminalBreadthRequired": 3
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "freshPerformanceClaim": false,
+    "repositorySpecificProductRules": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

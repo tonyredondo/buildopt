@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-adaptive-fragment-longitudinal-v1.json"
+buildopt_result="${buildopt_repo_root}/benchmarks/results/adaptive-fragment-longitudinal-v1.json"
+buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+buildopt_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-af013-check.XXXXXX")
+trap 'test -n "${buildopt_tmp:-}" && rm -rf -- "${buildopt_tmp}"' EXIT
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'AF-013 checker requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+cd -- "${buildopt_repo_root}/dev/adaptive-fragment-longitudinal"
+"${buildopt_script_dir}/run" --toolchain go -- go test -count=1 ./...
+"${buildopt_script_dir}/run" --toolchain go -- go vet ./...
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run . check "${buildopt_contract}" "${buildopt_result}"
+
+jq -e '
+  .schemaVersion == "buildopt.poc/adaptive-fragment-longitudinal/v1" and
+  .workItem == "AF-013" and
+  .methodology.evaluation == "CHRONOLOGICAL_PREQUENTIAL_REPLAY_OF_DIRECT_MEASUREMENTS" and
+  .methodology.control == "OPTIMIZED_NATIVE_GRADLE" and
+  .methodology.learningCostChargedOnce == true and
+  .methodology.futureObservationsAvailable == false and
+  .methodology.percentagesAdded == false and
+  .methodology.newBuildTiming == false and
+  (.rows | length) == 5 and
+  ([.rows[].outcome] | group_by(.) | map({(.[0]): length}) | add) ==
+    {INCONCLUSIVE: 1, NET_NEGATIVE: 2, NET_POSITIVE: 2} and
+  all(.rows[]; .productFailures == 0 and
+      all(.observations[]; .maxSourceSequence == (.sequence - 1) and
+          .signedDeltaMs == (.controlWallMs - .buildOptWallMs) and
+          .exactRequiredOutputs == true)) and
+  .summary.repositoryCount == 5 and .summary.closedRows == 5 and
+  .summary.measuredBuilds == 14 and .summary.exactComparableBuilds == 14 and
+  .summary.selectedBuilds == 2 and .summary.productFailures == 0 and
+  .summary.completeSignedMeasuredDeltas == true and
+  .summary.netPositiveRows == 2 and .summary.netNegativeRows == 2 and
+  .summary.inconclusiveRows == 1 and .summary.terminalBreadthRequired == 3 and
+  .summary.terminalBreadthObserved == 2 and
+  .summary.aggregateDecisionDeferred == true and
+  .boundaries.proofOfConcept == true and
+  .boundaries.freshPerformanceClaim == false and
+  .boundaries.productionAuthorized == false and
+  .boundaries.repositorySpecificProductRules == false and
+  .boundaries.soakRequired == false and .boundaries.designPartnerRequired == false and
+  .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_result}" >/dev/null
+
+jq '(.rows[0].observations[0].signedDeltaMs) += 1' "${buildopt_result}" \
+    >"${buildopt_tmp}/tampered-result.json"
+if "${buildopt_script_dir}/run" --toolchain go -- \
+    go run . check "${buildopt_contract}" "${buildopt_tmp}/tampered-result.json" \
+    >"${buildopt_tmp}/tampered.out" 2>"${buildopt_tmp}/tampered.err"; then
+    echo 'AF-013 checker accepted a changed signed delta' >&2
+    exit 1
+fi
+
+jq '.classification.terminalBreadthRequired = 4' "${buildopt_contract}" \
+    >"${buildopt_tmp}/changed-contract.json"
+if "${buildopt_script_dir}/run" --toolchain go -- \
+    go run . check "${buildopt_tmp}/changed-contract.json" "${buildopt_result}" \
+    >"${buildopt_tmp}/contract.out" 2>"${buildopt_tmp}/contract.err"; then
+    echo 'AF-013 checker accepted a changed preregistered threshold' >&2
+    exit 1
+fi
+
+buildopt_after=$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)
+if [[ ${buildopt_before} != "${buildopt_after}" ]]; then
+    echo 'AF-013 checker mutated the source tree' >&2
+    exit 1
+fi
+
+echo 'adaptive fragment longitudinal matrix: 2 NET_POSITIVE, 2 NET_NEGATIVE, 1 INCONCLUSIVE'

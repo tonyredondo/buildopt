@@ -93,12 +93,16 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > producer, subgraph, task, patch and cache-locality fragments. It requires
 > sub-second native retention, chronological no-lookahead learning and positive
 > cumulative value in at least three of five public repository families before
-> restoring any generic claim. Direct AF-011 timing now shows 68.56% Groovy
+> restoring any generic claim. Direct AF-011 timing shows 68.56% Groovy
 > and 79.32% Kotlin savings when Build Impact and a reviewed task patch run
 > together, with exact outputs. The composition remains unauthorized because
 > Kotlin Build Impact reaches only 6/8 positive isolated pairs versus the fixed
-> 7/8 gate. Independently qualified fragments are retained; portable local and
-> HTTPS adaptive state is the next block.
+> 7/8 gate. AF-013 now normalizes 14 exact chronological comparisons: Spring is
+> **+59.550 s**, Kafka **+88.219 s**, OpenTelemetry **-168.751 s**, Groovy
+> **-37.684 s**, and Micronaut remains `INCONCLUSIVE` after a byte-
+> reproducibility rejection. Only **2/5** rows are positive versus the frozen
+> 3/5 target. The next block must reproduce these source-checkout decisions
+> through one installed command before any terminal decision.
 
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired

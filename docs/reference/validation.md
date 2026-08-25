@@ -469,6 +469,18 @@ The historical eight-hour soak harness is outside the active POC. It is not a
 quickstart, owner-lab, CI, or value-gate requirement; reconsider it only after
 the POC proves enough net value to justify productization.
 
+## Adaptive fragment longitudinal evidence
+
+```bash
+./dev/check-adaptive-fragment-longitudinal
+```
+
+This is a static-plus-Go recomputation gate for `AF-013`. It reads the frozen
+Spring, OpenTelemetry, Kafka, Micronaut and Groovy source evidence, verifies
+source hashes and exact signed observations, regenerates the canonical report
+and rejects result or threshold tampering. It does not rerun Gradle or make a
+fresh performance claim.
+
 ## Complete lanes
 
 - `./dev/check-phase-zero` composes the historical Phase 0 gates.

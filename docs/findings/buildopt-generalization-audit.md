@@ -52,24 +52,29 @@ repositories contain no BuildOpt files and the same binary makes all five
 decisions. It is not the current lifetime conclusion: target qualification does
 not prove that a profile will recur often enough across later commits.
 
-## Current chronological lifetime evidence
+## Current adaptive longitudinal evidence
 
-| Repository | Requested qualification builds | Later selection | Signed lifetime net |
-|---|---:|---:|---:|
-| Spring Framework | 1 | 0 / 0 | **-10.113 s** |
-| OpenTelemetry Java Instrumentation | 1 | 0 / 0 | **-9.961 s** |
-| Apache Kafka | 17 | **1 / 6 eligible** | **+82.527 s** |
-| Micronaut Core | 1 | 0 / 0 | **-9.149 s** |
-| Apache Groovy | 1 | 0 / 0 | **-2.760 s** |
+| Repository | Comparable descendants | Selected | Signed longitudinal net | Row outcome |
+|---|---:|---:|---:|---|
+| Spring Framework | 2 | 1 | **+59.550 s** | `NET_POSITIVE` |
+| OpenTelemetry Java Instrumentation | 3 | 0 | **-168.751 s** | `NET_NEGATIVE` |
+| Apache Kafka | 6 | 1 | **+88.219 s** | `NET_POSITIVE` |
+| Micronaut Core | 0 / 1 attempted | 0 | no attributable delta | `INCONCLUSIVE` |
+| Apache Groovy | 3 | 0 | **-37.684 s** | `NET_NEGATIVE` |
 
-The sequence uses 21 requested builds and zero measurement-only builds. It
-verifies 27 exact-output observations with zero product failures. Kafka's one
-selected descendant saves 135.127 seconds, but five other eligible descendants
-retain native Gradle and incur measured wrapper cost. The complete frozen gate
-therefore fails repository-family breadth, selection coverage and native-
-retention overhead even though the signed cross-repository total is positive.
-Repository percentages are not averaged and Kafka's gain does not override the
-four negative family outcomes.
+AF-013 recomputes these rows from prior direct source-checkout measurements; it
+is not a favorable rerun or a fresh timing claim. The 14 comparable observations
+all preserve exact required outputs and report zero product failures. Every
+signed delta and the one-time qualification/publication cost remain visible.
+Micronaut is not treated as zero: its descendant JAR differed byte for byte, so
+the safety gate retained native and the row remains inconclusive.
+
+Only 2/5 rows are net positive versus the frozen terminal breadth requirement
+of 3/5. OpenTelemetry's worst individual regression is -104.572 seconds, while
+Spring and Kafka each contain one negative build despite positive cumulative
+value. The terminal decision is deferred until the installed-path replay in
+AF-014; repository percentages are not averaged and mechanism effects are not
+added.
 
 ## Why graph reduction alone is insufficient
 
@@ -124,8 +129,8 @@ Its first proof must happen before another broad timing campaign:
    under exact bindings and isolate regression to dependent fragments**);
 4. activate and directly measure only compositions whose individual fragments
    retain correctness and positive value authority; and
-5. rerun the five chronological repository families only after the active
-   fragment path satisfies the frozen correctness and economic gates.
+5. reproduce the five chronological decisions through the installed command,
+   with all launcher/state overhead inside measured wall time (**next: AF-014**).
 
 ## POC conclusion
 
@@ -171,3 +176,9 @@ directly: both composed DSL arms were strongly positive and exact, but Kotlin
 Build Impact reached only 6/8 positive isolated pairs. The frozen constituent
 gate therefore retained the independently qualified fragments instead of
 authorizing the joint path.
+
+AF-013 then closed the five evidence rows without hiding adverse observations:
+Spring and Kafka are net positive, OpenTelemetry and Groovy net negative, and
+Micronaut inconclusive after an output-reproducibility rejection. This reaches
+2/5 positive families, not the preregistered 3/5. The source-checkout matrix is
+therefore evidence to reproduce, not permission to claim generic value.
