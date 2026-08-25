@@ -46,6 +46,13 @@ concurrency, interrupted retry and verified offline fallback. Automatic
 optimize integration, isolated producer/consumer composition and terminal
 equal-opportunity value measurement are complete as well.
 
+`AF-002` additionally defines storage-neutral adaptive fragment, observation,
+portfolio and economic-ledger documents. They use the same immutable artifact
+and exact-generation principles, but are not yet synchronized by the existing
+profile endpoints. `AF-012` owns that integration. Until then, these schemas
+create no remote activation authority and cannot be encoded as Gradle cache
+objects.
+
 ## Target experience
 
 An owner prepares one server host:

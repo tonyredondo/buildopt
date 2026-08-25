@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/adaptive-fragment-economic-ledger.v1.schema.json",
+  "title": "BuildOpt ADAPTIVE_FRAGMENT_ECONOMIC_LEDGER v1",
+  "description": "One immutable typed economic snapshot linked to an adaptive fragment portfolio. AF-005 owns decision formulas.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "recordType", "repositoryScopeSha256", "generation", "portfolioGeneration", "entries", "asOf"],
+  "properties": {
+    "schemaVersion": { "const": "buildopt.adaptive/economic-ledger/v1" },
+    "recordType": { "const": "ADAPTIVE_FRAGMENT_ECONOMIC_LEDGER" },
+    "repositoryScopeSha256": { "$ref": "#/$defs/sha256" },
+    "generation": { "$ref": "#/$defs/generation" },
+    "supersedesSha256": { "$ref": "#/$defs/sha256" },
+    "portfolioGeneration": { "$ref": "#/$defs/generation" },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4096,
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "asOf": { "$ref": "#/$defs/timestamp" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "generation": { "const": 1 } }, "required": ["generation"] },
+      "then": { "not": { "required": ["supersedesSha256"] } },
+      "else": { "required": ["supersedesSha256"] }
+    }
+  ],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "generation": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "familyId",
+        "revisionId",
+        "fragmentGeneration",
+        "requestedBuildCount",
+        "grossSavedMs",
+        "synchronousOverheadMs",
+        "outOfBandLearningCostMs",
+        "cumulativeNetMs",
+        "lastObservedAt",
+        "evidenceExpiresAt"
+      ],
+      "properties": {
+        "familyId": { "$ref": "#/$defs/sha256" },
+        "revisionId": { "$ref": "#/$defs/sha256" },
+        "fragmentGeneration": { "$ref": "#/$defs/generation" },
+        "requestedBuildCount": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+        "grossSavedMs": { "type": "integer", "minimum": -9007199254740991, "maximum": 9007199254740991 },
+        "synchronousOverheadMs": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+        "outOfBandLearningCostMs": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+        "cumulativeNetMs": { "type": "integer", "minimum": -9007199254740991, "maximum": 9007199254740991 },
+        "lastObservedAt": { "$ref": "#/$defs/timestamp" },
+        "evidenceExpiresAt": { "$ref": "#/$defs/timestamp" }
+      }
+    }
+  }
+}

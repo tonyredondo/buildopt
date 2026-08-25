@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "buildopt.specs/poc-adaptive-fragment-state/v1",
+  "workItem": "AF-002",
+  "records": [
+    {
+      "recordType": "ADAPTIVE_FRAGMENT",
+      "schemaId": "https://schemas.buildopt.dev/adaptive-fragment.v1.schema.json"
+    },
+    {
+      "recordType": "ADAPTIVE_FRAGMENT_OBSERVATION",
+      "schemaId": "https://schemas.buildopt.dev/adaptive-fragment-observation.v1.schema.json"
+    },
+    {
+      "recordType": "ADAPTIVE_FRAGMENT_PORTFOLIO",
+      "schemaId": "https://schemas.buildopt.dev/adaptive-fragment-portfolio.v1.schema.json"
+    },
+    {
+      "recordType": "ADAPTIVE_FRAGMENT_ECONOMIC_LEDGER",
+      "schemaId": "https://schemas.buildopt.dev/adaptive-fragment-economic-ledger.v1.schema.json"
+    }
+  ],
+  "canonicalDocumentDigest": {
+    "canonicalization": "RFC8785_JCS",
+    "algorithm": "SHA-256",
+    "encoding": "LOWERCASE_HEX",
+    "embeddedInDocument": false
+  },
+  "crossRecordInvariants": [
+    "EXACT_REPOSITORY_SCOPE",
+    "CANONICAL_FAMILY_AND_REVISION",
+    "CONTIGUOUS_FRAGMENT_GENERATION",
+    "VALID_LIFECYCLE_TRANSITION",
+    "PORTFOLIO_FRAGMENT_GENERATION_MATCH",
+    "LEDGER_PORTFOLIO_GENERATION_MATCH",
+    "MONOTONIC_UTC_TIME",
+    "SORTED_UNIQUE_FAMILIES"
+  ],
+  "fixtures": {
+    "validLifecycleBundles": 2,
+    "negativeMutations": 7
+  },
+  "compatibility": {
+    "unknownSchemaVersion": "REJECT",
+    "unknownRecordField": "REJECT",
+    "stateMigration": "OUT_OF_SCOPE"
+  },
+  "outcome": "TYPED_FRAGMENT_STATE_AVAILABLE",
+  "boundaries": {
+    "proofOfConcept": true,
+    "cheapCompatibilityIndexImplemented": false,
+    "onlineLearnerImplemented": false,
+    "economicDecisionFormulaDefined": false,
+    "centralSynchronizationImplemented": false,
+    "activationAuthorized": false,
+    "performanceClaim": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

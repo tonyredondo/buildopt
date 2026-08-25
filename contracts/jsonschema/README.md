@@ -2,6 +2,25 @@
 
 Versioned JSON Schema 2020-12 contracts for exportable records and signed commands.
 
+## Adaptive fragment state v1
+
+The four `AF-002` schemas define immutable adaptive fragment generations,
+append-only lifecycle observations, repository-scoped portfolios and typed
+economic-ledger snapshots. JSON Schema owns their closed shapes; the linked
+conformance vectors additionally enforce canonical AF-001 identities, exact
+repository scope, contiguous generations, valid transitions, portfolio/ledger
+generation binding, unknown-version rejection and RFC 8785 JCS document
+digests.
+
+Run:
+
+```bash
+./dev/check-adaptive-fragment-state
+```
+
+The records are POC state only. They do not activate a fragment, define the
+AF-005 economic decision formula or migrate unknown versions.
+
 ## BUILD_SESSION v1
 
 [`build-session.v1.schema.json`](./build-session.v1.schema.json) is the normative `F0-011` contract. Its canonical identifier is `https://schemas.buildopt.dev/build-session.v1.schema.json`, and its initial `schemaVersion` is `1.0`.

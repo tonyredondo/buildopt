@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/adaptive-fragment.v1.schema.json",
+  "title": "BuildOpt ADAPTIVE_FRAGMENT v1",
+  "description": "One immutable generation of an authority-bound adaptive POC fragment.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "familyId",
+    "revisionId",
+    "repositoryScopeSha256",
+    "kind",
+    "selectorSha256",
+    "authority",
+    "authoritySha256",
+    "bindings",
+    "requires",
+    "conflictsWith",
+    "state",
+    "generation",
+    "createdAt",
+    "updatedAt",
+    "evidenceExpiresAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "buildopt.adaptive/fragment/v1" },
+    "recordType": { "const": "ADAPTIVE_FRAGMENT" },
+    "familyId": { "$ref": "#/$defs/sha256" },
+    "revisionId": { "$ref": "#/$defs/sha256" },
+    "repositoryScopeSha256": { "$ref": "#/$defs/sha256" },
+    "kind": { "$ref": "#/$defs/kind" },
+    "selectorSha256": { "$ref": "#/$defs/sha256" },
+    "authority": { "$ref": "#/$defs/authority" },
+    "authoritySha256": { "$ref": "#/$defs/sha256" },
+    "bindings": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 10,
+      "propertyNames": { "$ref": "#/$defs/bindingKey" },
+      "additionalProperties": { "$ref": "#/$defs/sha256" }
+    },
+    "requires": { "$ref": "#/$defs/familySet" },
+    "conflictsWith": { "$ref": "#/$defs/familySet" },
+    "state": { "$ref": "#/$defs/state" },
+    "generation": { "$ref": "#/$defs/generation" },
+    "createdAt": { "$ref": "#/$defs/timestamp" },
+    "updatedAt": { "$ref": "#/$defs/timestamp" },
+    "evidenceExpiresAt": { "$ref": "#/$defs/timestamp" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "kind": { "const": "SUBGRAPH" } }, "required": ["kind"] },
+      "then": {
+        "properties": {
+          "authority": { "enum": ["GRADLE_MODEL", "REVIEWED_ADAPTER"] },
+          "bindings": { "required": ["WORKFLOW", "GRADLE_WRAPPER", "PRODUCER_LINEAGE", "OUTPUT_CONTRACT", "CHANGE_FAMILY"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "OUTPUT_MATERIALIZATION" } }, "required": ["kind"] },
+      "then": {
+        "properties": {
+          "authority": { "const": "VERIFIED_PRODUCER" },
+          "bindings": { "required": ["GRADLE_WRAPPER", "PRODUCER_LINEAGE", "OUTPUT_CONTRACT"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "TASK_CONTRACT" } }, "required": ["kind"] },
+      "then": {
+        "properties": {
+          "authority": { "enum": ["GRADLE_NATIVE", "REVIEWED_ADAPTER", "REVIEWED_PATCH"] },
+          "bindings": { "required": ["GRADLE_WRAPPER", "TASK_IMPLEMENTATION", "OUTPUT_CONTRACT"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "PATCH" } }, "required": ["kind"] },
+      "then": {
+        "properties": {
+          "authority": { "const": "REVIEWED_PATCH" },
+          "bindings": { "required": ["TASK_IMPLEMENTATION", "OUTPUT_CONTRACT", "PATCH_BASE"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "CACHE_LOCALITY" } }, "required": ["kind"] },
+      "then": {
+        "properties": {
+          "authority": { "const": "GRADLE_NATIVE" },
+          "bindings": { "required": ["GRADLE_WRAPPER", "NETWORK_CLASS", "CACHE_NAMESPACE"] }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "generation": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "kind": { "enum": ["SUBGRAPH", "OUTPUT_MATERIALIZATION", "TASK_CONTRACT", "PATCH", "CACHE_LOCALITY"] },
+    "authority": { "enum": ["GRADLE_MODEL", "GRADLE_NATIVE", "REVIEWED_ADAPTER", "REVIEWED_PATCH", "VERIFIED_PRODUCER"] },
+    "state": { "enum": ["OBSERVED", "SHADOW", "QUALIFIED", "ACTIVE", "SUSPENDED", "EXPIRED"] },
+    "bindingKey": { "enum": ["WORKFLOW", "GRADLE_WRAPPER", "TASK_IMPLEMENTATION", "PRODUCER_LINEAGE", "OUTPUT_CONTRACT", "CHANGE_FAMILY", "PLATFORM", "NETWORK_CLASS", "CACHE_NAMESPACE", "PATCH_BASE"] },
+    "familySet": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/sha256" }
+    }
+  }
+}

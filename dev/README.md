@@ -4672,6 +4672,20 @@ contract check; it does not persist, learn, activate or benchmark a fragment:
 ./dev/check-adaptive-fragment-contract
 ```
 
+## Adaptive fragment state
+
+`./dev/check-adaptive-fragment-state` compiles the four `AF-002` Draft 2020-12
+schemas and validates immutable fragment, observation, portfolio and economic-
+ledger documents. The focused root-module tests enforce canonical AF-001
+identity, contiguous lifecycle generations, exact repository scope,
+portfolio/ledger links and JCS tamper detection. Two valid lifecycle bundles
+and seven negative mutations are synthetic and make no persistence, activation
+or performance claim:
+
+```bash
+./dev/check-adaptive-fragment-state
+```
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic

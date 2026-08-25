@@ -1,0 +1,54 @@
+{
+  "base": "active-lifecycle.json",
+  "cases": [
+    {
+      "name": "unknown-schema-version",
+      "target": "fragment.schemaVersion",
+      "value": "buildopt.adaptive/fragment/v2",
+      "layer": "SCHEMA",
+      "diagnostic": "schemaVersion"
+    },
+    {
+      "name": "tampered-family-identity",
+      "target": "fragment.familyId",
+      "value": "0000000000000000000000000000000000000000000000000000000000000000",
+      "layer": "SEMANTIC",
+      "diagnostic": "semantic identity"
+    },
+    {
+      "name": "unknown-authority",
+      "target": "fragment.authority",
+      "value": "UNKNOWN_AUTHORITY",
+      "layer": "SCHEMA",
+      "diagnostic": "authority"
+    },
+    {
+      "name": "cross-repository-portfolio",
+      "target": "portfolio.repositoryScopeSha256",
+      "value": "f85d70336958d9cd09870bdfab01df3ef85ec86d69d2ebd455a6a84a6a88046d",
+      "layer": "SEMANTIC",
+      "diagnostic": "repository scope"
+    },
+    {
+      "name": "incompatible-fragment-generation",
+      "target": "portfolio.fragments[0].fragmentGeneration",
+      "value": 3,
+      "layer": "SEMANTIC",
+      "diagnostic": "generation"
+    },
+    {
+      "name": "impossible-lifecycle-transition",
+      "target": "observations[2].toState",
+      "value": "ACTIVE",
+      "layer": "SEMANTIC",
+      "diagnostic": "transition is impossible"
+    },
+    {
+      "name": "canonical-document-tampering",
+      "target": "fragment.updatedAt",
+      "value": "2026-08-25T10:03:01Z",
+      "layer": "DIGEST",
+      "diagnostic": "digest mismatch"
+    }
+  ]
+}

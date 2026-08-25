@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/adaptive-fragment-observation.v1.schema.json",
+  "title": "BuildOpt ADAPTIVE_FRAGMENT_OBSERVATION v1",
+  "description": "One immutable lifecycle observation for an exact adaptive fragment revision.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "observationId",
+    "repositoryScopeSha256",
+    "familyId",
+    "revisionId",
+    "generation",
+    "fromState",
+    "toState",
+    "source",
+    "contextBindingsSha256",
+    "evidenceDocumentSha256",
+    "observedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "buildopt.adaptive/observation/v1" },
+    "recordType": { "const": "ADAPTIVE_FRAGMENT_OBSERVATION" },
+    "observationId": { "$ref": "#/$defs/sha256" },
+    "repositoryScopeSha256": { "$ref": "#/$defs/sha256" },
+    "familyId": { "$ref": "#/$defs/sha256" },
+    "revisionId": { "$ref": "#/$defs/sha256" },
+    "generation": { "$ref": "#/$defs/generation" },
+    "fromState": { "enum": ["ABSENT", "OBSERVED", "SHADOW", "QUALIFIED", "ACTIVE", "SUSPENDED", "EXPIRED"] },
+    "toState": { "$ref": "#/$defs/state" },
+    "source": { "enum": ["REQUESTED_BUILD", "CONTRACT_REVIEW", "SYSTEM_DECISION"] },
+    "contextBindingsSha256": { "$ref": "#/$defs/sha256" },
+    "evidenceDocumentSha256": { "$ref": "#/$defs/sha256" },
+    "observedAt": { "$ref": "#/$defs/timestamp" },
+    "nativeRetentionReason": {
+      "enum": ["BINDING_DRIFT", "MISSING_BINDING", "AMBIGUOUS_BINDING", "AUTHORITY_INVALID", "EVIDENCE_EXPIRED", "VALUE_REJECTED"]
+    }
+  },
+  "allOf": [
+    {
+      "if": { "required": ["nativeRetentionReason"] },
+      "then": { "properties": { "toState": { "enum": ["SUSPENDED", "EXPIRED"] } } }
+    },
+    {
+      "if": { "properties": { "fromState": { "const": "ABSENT" } }, "required": ["fromState"] },
+      "then": {
+        "properties": { "generation": { "const": 1 }, "toState": { "const": "OBSERVED" } },
+        "not": { "required": ["nativeRetentionReason"] }
+      }
+    },
+    {
+      "if": { "properties": { "toState": { "enum": ["SUSPENDED", "EXPIRED"] } }, "required": ["toState"] },
+      "then": { "required": ["nativeRetentionReason"] }
+    }
+  ],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "generation": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "state": { "enum": ["OBSERVED", "SHADOW", "QUALIFIED", "ACTIVE", "SUSPENDED", "EXPIRED"] }
+  }
+}

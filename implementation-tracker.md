@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `CURRENT GENERIC STRUCTURAL-PROFILE HYPOTHESIS STOPPED; BOUNDED MECHANISM VALUE RETAINED` — the terminal five-repository result preserves exact outputs and bounded Kafka value, but fails repository breadth, descendant selection and native-retention overhead<br>
-**Current phase:** `ADAPTIVE FRAGMENT CONTRACT COMPLETE; TYPED STATE NEXT` — AF-001 defines independently compatible fragment families/revisions, correctness authorities, selective invalidation and mandatory requalification; AF-002 will define their persisted POC state<br>
+**Current phase:** `ADAPTIVE FRAGMENT STATE COMPLETE; CHEAP COMPATIBILITY NEXT` — AF-001/AF-002 define fragment identity, lifecycle and immutable typed state; AF-003 will measure a pre-Gradle compatibility index with native retention under one second<br>
 **POC functional target:** improve real builds against optimized native Gradle and make that value accessible through one owner-invoked command with zero hand-authored BuildOpt files for supported workflows; ambiguous, drifted or non-value state retains native Gradle<br>
 **POC onboarding north star:** `install BuildOpt -> open a Gradle repository -> buildopt optimize build`; automatic selection is allowed only inside the explicit POC command after qualification, while autonomous production promotion remains out of scope<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
@@ -191,7 +191,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-ORDINARY-LEARNING-ECONOMICS | Learn only from customer-requested builds and reject candidates whose likely compatible lifetime cannot repay discovery/publication | `DONE` | 1/1 | `E-400`; five-match lifetime/payback horizon, ordinary builds only, robust eight-pair gate unchanged |
 | POC-LIFETIME-BREADTH-V3 | Replay one unchanged binary over frozen Spring, OpenTelemetry, Kafka, Micronaut and Groovy windows | `DONE` | 1/1 | `E-401`; 1/5 net-positive families, 1/6 eligible descendants selected, exact outputs and zero failures; functional coverage not proven |
 | POC-FUNCTIONAL-COVERAGE-DECISION | Issue the terminal continue/stop decision for the generic one-command POC | `DONE` | 1/1 | `E-402`; 5/8 criteria pass, terminal `STOP_GENERIC_POC`; no successor was authorized by that result |
-| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | `DOING` | 2/16 | `AF-E001..002`; AF-001 contract accepted, AF-002 typed state next; detailed gates live in the [active tracker](./docs/plans/adaptive-fragment-generalization-tracker.md) |
+| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | `DOING` | 3/16 | `AF-E001..003`; typed fragment state is available and AF-003 cheap compatibility is next; detailed gates live in the [active tracker](./docs/plans/adaptive-fragment-generalization-tracker.md) |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Not authorized by terminal `STOP_GENERIC_POC` |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -2418,6 +2418,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-25 | Closed AF-002 with four immutable fragment-state schemas, exact repository/generation linkage, JCS digest rules, two valid lifecycle bundles and seven fail-closed mutations; opened AF-003 cheap compatibility without activating a fragment | Codex |
 | 2026-08-25 | Closed AF-001 with path-independent fragment family/revision identity, five authority-bound fragment classes, selective semantic invalidation and mandatory requalification; opened AF-002 typed state without authorizing activation or making a timing claim | Codex |
 | 2026-08-25 | Opened the separately tracked Adaptive Fragment Generalization POC after the terminal whole-profile stop: AF-001..AF-015 preserve the frozen baseline, require independently invalidated fragments, sub-second native retention, chronological learning and cumulative value in at least three of five families | Codex |
 | 2026-08-25 | Applied the complete frozen functional-coverage gate: 5/8 criteria pass, breadth is 1/5, selection is 1/6 and one pre-Gradle rejection costs 4,098 ms; closed the current generic structural-profile hypothesis as `STOP_GENERIC_POC` without deleting bounded evidence or authorizing productization | Codex |

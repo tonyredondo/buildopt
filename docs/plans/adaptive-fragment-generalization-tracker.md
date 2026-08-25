@@ -1,7 +1,7 @@
 # Adaptive Fragment Generalization POC Tracker
 
 **Status:** `IN_PROGRESS`<br>
-**Current block:** `AF-002 — Fragment state schemas`<br>
+**Current block:** `AF-003 — Cheap compatibility index`<br>
 **Decision baseline:** the current whole-profile hypothesis remains
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)<br>
 **Last updated:** 2026-08-25
@@ -173,8 +173,8 @@ the correctness authority for cacheability. Repetition alone is not authority.
 |---:|---|---|---|---|
 | 0 | `AF-000` Tracker and baseline alignment | Freeze the failed whole-profile baseline, define the new hypothesis and reconcile current documentation. | `DONE` | — |
 | 1 | `AF-001` Adaptive fragment contract | Define the normative fragment identity, lifecycle, compatibility, invalidation, evidence and conflict model. | `DONE` | AF-000 |
-| 2 | `AF-002` Fragment state schemas | Define machine-readable fragment, observation, economic-ledger and portfolio schemas with positive and negative vectors. | `TODO` | AF-001 |
-| 3 | `AF-003` Cheap compatibility index | Decide native retention or return compatible fragment candidates without Gradle startup, central synchronization or materialization. | `WAITING` | AF-002 |
+| 2 | `AF-002` Fragment state schemas | Define machine-readable fragment, observation, economic-ledger and portfolio schemas with positive and negative vectors. | `DONE` | AF-001 |
+| 3 | `AF-003` Cheap compatibility index | Decide native retention or return compatible fragment candidates without Gradle startup, central synchronization or materialization. | `TODO` | AF-002 |
 | 4 | `AF-004` Frozen-history shadow decomposition | Decompose the existing five-repository whole-profile evidence and replay fragment applicability chronologically without making a new timing claim. | `WAITING` | AF-002, AF-003 |
 
 ### Phase B — Learning and economics
@@ -245,6 +245,12 @@ cross-repository scope, incompatible generations and impossible transitions
 fail closed.
 
 **Outcome:** `TYPED_FRAGMENT_STATE_AVAILABLE`.
+
+**Result:** `TYPED_FRAGMENT_STATE_AVAILABLE` — four closed Draft 2020-12
+schemas, storage-neutral Go types and cross-record conformance now cover two
+valid lifecycle bundles and seven negative mutations. Canonical JCS digests are
+external, generations and repository scope link exactly, unknown versions
+remain rejected and state migration is outside the POC.
 
 ### AF-003 — Cheap compatibility index
 
@@ -454,6 +460,7 @@ IDs from the implementation tracker.
 |---|---|---|---|
 | `AF-E001` | AF-000 | New adaptive-fragment tracker, terminal-baseline reconciliation and documentation navigation. | `DONE` |
 | `AF-E002` | AF-001 | [Adaptive fragment contract v1](../../specs/poc-adaptive-fragment-contract-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-contract-v1.json), dependency-free Go identity/compatibility implementation and [`dev/check-adaptive-fragment-contract`](../../dev/check-adaptive-fragment-contract). The proof covers canonical path-independent identity, five fragment classes, authority rejection, partial binding invalidation, native retention on missing/ambiguous context and mandatory requalification after suspension. | `DONE` |
+| `AF-E003` | AF-002 | [Adaptive fragment state v1](../../specs/poc-adaptive-fragment-state-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-state-v1.json), four Draft 2020-12 schemas, two linked lifecycle bundles, seven negative mutations and [`dev/check-adaptive-fragment-state`](../../dev/check-adaptive-fragment-state). Schema and Go conformance prove canonical identity, JCS digest drift, exact repository/generation links, valid requalification and fail-closed unknown version/authority, tampering and impossible transitions. | `DONE` |
 
 ## 12. Decision log
 
@@ -464,10 +471,12 @@ IDs from the implementation tracker.
 | 2026-08-25 | Keep Gradle-native cache/configuration/incremental behavior as the substrate. | Cache parity is not differentiation; BuildOpt's value is selection, validated composition, durable fixes and learning. |
 | 2026-08-25 | Permit cross-repository evidence only as a hypothesis prior. | Evidence from another repository cannot authorize correctness or activation locally. |
 | 2026-08-25 | Separate stable fragment families from evidence-bound revisions. | Repository opportunity identity can survive ordinary commits without allowing changed authority, bindings or stale bytes to inherit qualification. |
+| 2026-08-25 | Keep canonical document digests outside adaptive state documents. | RFC 8785 JCS plus an external SHA-256 avoids self-reference and permits the existing local/central content-addressed envelope to carry identical bytes later. |
 
 ## 13. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-25 | Closed AF-002 as `TYPED_FRAGMENT_STATE_AVAILABLE`: four immutable record schemas, exact cross-record generations, two valid lifecycle bundles, seven negative mutations and canonical JCS digest rules now unblock the cheap compatibility index in AF-003. |
 | 2026-08-25 | Closed AF-001 as `FRAGMENT_CONTRACT_ACCEPTED`: five generic fragment classes now have canonical family/revision identity, explicit authority, selective invalidation, fail-closed compatibility and mandatory requalification; opened AF-002 for typed persistence state. |
 | 2026-08-25 | Created the tracker, froze the prior terminal result, defined AF-001..AF-015, the terminal scorecard and mandatory documentation update matrix. |

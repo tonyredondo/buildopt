@@ -6,6 +6,10 @@ Normative source for versioned schemas, interfaces, and cross-language conforman
 
 | Contract path | Owning item |
 |---|---|
+| `jsonschema/adaptive-fragment.v1.schema.json` | `AF-002` |
+| `jsonschema/adaptive-fragment-observation.v1.schema.json` | `AF-002` |
+| `jsonschema/adaptive-fragment-portfolio.v1.schema.json` | `AF-002` |
+| `jsonschema/adaptive-fragment-economic-ledger.v1.schema.json` | `AF-002` |
 | `jsonschema/build-session.v1.schema.json` | `F0-011` |
 | `jsonschema/experiment-result.v1.schema.json` | `F0-012` |
 | `jsonschema/action-record.v1.schema.json` | `F0-012` |

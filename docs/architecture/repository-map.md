@@ -50,6 +50,7 @@ in `internal/`; cross-process representations belong in `contracts/` first.
 | Package | Architectural responsibility | Closest executable/specification |
 |---|---|---|
 | `internal/launcher` | Command passthrough, packaged Gradle discovery, signals, gateway lifecycle, L1, authority handoff, bootstrap cache, central state sync and remote profile revalidation | `buildopt`; launcher, cache and central optimize specs |
+| `internal/adaptivefragment` | Canonical fragment family/revision identity, declared-binding compatibility, lifecycle and immutable typed state conformance | AF-001/AF-002 specs; `check-adaptive-fragment-contract`, `check-adaptive-fragment-state` |
 | `internal/sessioningest` | Strict authenticated provisional session transport | `buildopt` and `buildopt-server`; `WS-005` |
 | `internal/buildsession` | `BUILD_SESSION v1` production, immutable JSON, JSONL, recovery | server export; data lifecycle specs |
 | `internal/buildhistory` | Redacted immutable history read model, API, embedded dashboard | `buildopt-server`; UX-F1 specs |
@@ -90,6 +91,7 @@ bytecode using the pinned Wrapper and repository-local JDK 21.
 
 | Normative source | Primary producers | Primary consumers | Conformance evidence |
 |---|---|---|---|
+| `contracts/jsonschema/adaptive-fragment*.v1.schema.json` | future adaptive learner/state writer | `internal/adaptivefragment`; future AF-003/AF-012 consumers | `check-adaptive-fragment-state` |
 | `contracts/jsonschema/build-session.v1.schema.json` | `internal/buildsession` | server history/export tooling | `check-build-session-schema`, `check-build-session-export` |
 | `contracts/proto/local-events/v1/` | JVM Gradle plugin | launcher event channel | `check-task-events-proto`, plugin handshake/correlation checks |
 | `contracts/openapi/buildopt-cache-control.v1.yaml` | server/control implementation | generated Go/Java clients | generated-client and compatibility checks |

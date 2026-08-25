@@ -9,12 +9,14 @@ package exposes a `go doc` package comment that states its authority and
 failure boundary; exported symbols should document non-obvious lifecycle,
 security, persistence, or side effects close to the code.
 
-`adaptivefragment/` owns the `AF-001` POC contract for repository-scoped,
-path-independent optimization fragment identity. It distinguishes stable
-families from evidence-bound revisions, validates correctness authorities and
-declared semantic bindings, and evaluates only the bindings consumed by each
-fragment so unrelated drift does not invalidate the complete portfolio. It
-does not persist, learn, compose or activate fragments.
+`adaptivefragment/` owns the `AF-001`/`AF-002` POC contracts for repository-
+scoped, path-independent optimization fragment identity and immutable typed
+state. It distinguishes stable families from evidence-bound revisions,
+validates correctness authorities and declared semantic bindings, evaluates
+only bindings consumed by each fragment, and links fragment, observation,
+portfolio and economic-ledger generations through closed JSON schemas and JCS
+digests. It does not implement the compatibility index, learn, compose,
+synchronize or activate fragments.
 
 `nativevolatility/` owns the POC producer-atomic portability boundary. It
 compares complete, exact-bound native output observations, quarantines every

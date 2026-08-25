@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_policy="${buildopt_repo_root}/specs/poc-adaptive-fragment-state-v1.json"
+
+if ! command -v jq >/dev/null 2>&1; then
+    echo "adaptive fragment state check requires jq" >&2
+    exit 1
+fi
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-adaptive-fragment-state/v1" and
+    (.records | map(.recordType)) == [
+        "ADAPTIVE_FRAGMENT",
+        "ADAPTIVE_FRAGMENT_OBSERVATION",
+        "ADAPTIVE_FRAGMENT_PORTFOLIO",
+        "ADAPTIVE_FRAGMENT_ECONOMIC_LEDGER"
+    ] and
+    .canonicalDocumentDigest == {
+        canonicalization: "RFC8785_JCS",
+        algorithm: "SHA-256",
+        encoding: "LOWERCASE_HEX",
+        embeddedInDocument: false
+    } and
+    .fixtures == {validLifecycleBundles: 2, negativeMutations: 7} and
+    .compatibility.stateMigration == "OUT_OF_SCOPE" and
+    .outcome == "TYPED_FRAGMENT_STATE_AVAILABLE" and
+    .boundaries.activationAuthorized == false and
+    .boundaries.performanceClaim == false and
+    .boundaries.productionAuthorized == false and
+    .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_policy}" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/adaptivefragment
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/adaptivefragment
+
+cd -- "${buildopt_repo_root}/dev/schema-validator"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 -run TestAdaptiveFragmentStateSchemas .
+
+echo "adaptive fragment state: TYPED_FRAGMENT_STATE_AVAILABLE"

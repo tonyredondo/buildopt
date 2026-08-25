@@ -56,6 +56,18 @@ const CentralStateHeadSchemaID = "https://schemas.buildopt.dev/central-state-hea
 // request schema identifier.
 const CentralStateCASSchemaID = "https://schemas.buildopt.dev/central-state-cas.v1.schema.json"
 
+// AdaptiveFragmentSchemaID is the canonical persisted fragment schema identifier.
+const AdaptiveFragmentSchemaID = "https://schemas.buildopt.dev/adaptive-fragment.v1.schema.json"
+
+// AdaptiveFragmentObservationSchemaID is the canonical fragment observation schema identifier.
+const AdaptiveFragmentObservationSchemaID = "https://schemas.buildopt.dev/adaptive-fragment-observation.v1.schema.json"
+
+// AdaptiveFragmentPortfolioSchemaID is the canonical fragment portfolio schema identifier.
+const AdaptiveFragmentPortfolioSchemaID = "https://schemas.buildopt.dev/adaptive-fragment-portfolio.v1.schema.json"
+
+// AdaptiveFragmentEconomicLedgerSchemaID is the canonical fragment economic-ledger schema identifier.
+const AdaptiveFragmentEconomicLedgerSchemaID = "https://schemas.buildopt.dev/adaptive-fragment-economic-ledger.v1.schema.json"
+
 // ValidateBuildSessionV1 compiles the pinned Draft 2020-12 schema and validates
 // one JSON document with format assertions enabled.
 func ValidateBuildSessionV1(schemaPath string, instancePath string) error {
@@ -186,6 +198,26 @@ func ValidatePatchBundleV1(schemaPath string, instancePath string) error {
 		PatchBundleSchemaID,
 		"PATCH_BUNDLE",
 	)
+}
+
+// ValidateAdaptiveFragmentV1 validates one persisted fragment generation.
+func ValidateAdaptiveFragmentV1(schemaPath string, instancePath string) error {
+	return validateContract(schemaPath, instancePath, AdaptiveFragmentSchemaID, "ADAPTIVE_FRAGMENT")
+}
+
+// ValidateAdaptiveFragmentObservationV1 validates one append-only fragment transition.
+func ValidateAdaptiveFragmentObservationV1(schemaPath string, instancePath string) error {
+	return validateContract(schemaPath, instancePath, AdaptiveFragmentObservationSchemaID, "ADAPTIVE_FRAGMENT_OBSERVATION")
+}
+
+// ValidateAdaptiveFragmentPortfolioV1 validates one immutable fragment portfolio.
+func ValidateAdaptiveFragmentPortfolioV1(schemaPath string, instancePath string) error {
+	return validateContract(schemaPath, instancePath, AdaptiveFragmentPortfolioSchemaID, "ADAPTIVE_FRAGMENT_PORTFOLIO")
+}
+
+// ValidateAdaptiveFragmentEconomicLedgerV1 validates one typed economic snapshot.
+func ValidateAdaptiveFragmentEconomicLedgerV1(schemaPath string, instancePath string) error {
+	return validateContract(schemaPath, instancePath, AdaptiveFragmentEconomicLedgerSchemaID, "ADAPTIVE_FRAGMENT_ECONOMIC_LEDGER")
 }
 
 func validateContract(

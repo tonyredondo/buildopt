@@ -55,6 +55,7 @@ result.
 | Optimization service and Shared backend | `buildopt-server` | Accepts sessions, exports immutable evidence, serves authenticated cache state, stores control metadata, and exposes local build history |
 | Edge Cache | `buildopt-edge` | Provides a bounded nearby read-through/pending-write cache while Shared retains commit and collision authority |
 | Build Impact | `buildopt-impact` | Discovers the declared Gradle graph and verifies repository-owned generated impact state |
+| Adaptive fragment model | `internal/adaptivefragment` | Defines path-independent fragment identity plus immutable fragment, observation, portfolio and ledger generations; no runtime activation yet |
 | Patch engine | `jvm/patcher` JAR | Verifies signed exact bundles, applies them in a detached worktree, and supports draft-only delivery and exact revert |
 | Windows service host | `buildopt-service.exe` | Runs server or Edge under Windows SCM with the supplied private config |
 
@@ -171,6 +172,14 @@ KMS/HSM-backed keys, HA, and recovery objectives.
 | Patch staging | Java patcher | Private detached Git worktree; exact branch/ref publication only after all postimages match |
 
 ### Optional cross-machine state boundary
+
+The adaptive POC now has four storage-neutral documents: fragment generations,
+append-only observations, portfolio snapshots and economic-ledger snapshots.
+They use repository scope, exact generation links and external RFC 8785 JCS
+digests. `AF-002` defines and validates those bytes only. Local persistence and
+reuse through the existing HTTPS state plane remain deferred to `AF-012`; an
+unavailable or incompatible document therefore grants no current runtime
+authority.
 
 The local POC remains service-independent. `buildopt-server` can now expose one
 TLS 1.3 endpoint with two logically isolated planes:

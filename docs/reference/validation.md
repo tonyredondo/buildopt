@@ -75,12 +75,15 @@ Adaptive-fragment identity and selective invalidation:
 
 ```bash
 ./dev/check-adaptive-fragment-contract
+./dev/check-adaptive-fragment-state
 ```
 
 This static and synthetic `AF-001` gate validates the machine policy, runs the
 focused Go identity/compatibility/lifecycle tests and rejects repository-
 specific behavior in the fragment package. It makes no timing or activation
-claim.
+claim. The `AF-002` gate compiles four Draft 2020-12 schemas, validates two
+linked lifecycle bundles and rejects seven schema, semantic and canonical-digest
+mutations. It does not implement persistence or synchronization.
 
 ```bash
 ./dev/check-generated-code

@@ -1,0 +1,60 @@
+{
+  "fragment": {
+    "schemaVersion": "buildopt.adaptive/fragment/v1",
+    "recordType": "ADAPTIVE_FRAGMENT",
+    "familyId": "9cc337b9fc0afe4f666a9e3902817e14367aa287ce23d073c8fb05512b898019",
+    "revisionId": "8894134bfbaf581005f3eb2227ea68deec60cf320efccc4940c8670b0caf80d3",
+    "repositoryScopeSha256": "e3057b37a05778f919c3f1d73a1160681442d24df9bfb13cc58faa6f03c676d3",
+    "kind": "SUBGRAPH",
+    "selectorSha256": "107819b573b9720f859452e7285b3ecb066aa4f225004001b548c62452b8f2a7",
+    "authority": "GRADLE_MODEL",
+    "authoritySha256": "8f76fd501bb68ef71f4e276bc28f29bce1003b0c2c9d9478de81b5bfc0cde1e9",
+    "bindings": {
+      "WORKFLOW": "da7f739f627198465eeab537a6f7a435dc4a0c332f9e4a8462293eb3f4ab7ee0",
+      "GRADLE_WRAPPER": "a622b10ddc23c8c9e9ec39d4833ae9b7b772ef40cb430425cb1689b76ec3490c",
+      "PRODUCER_LINEAGE": "0713f136ea316c8f3e274d55012e3bf10d05b5263837187a39593ff0d8838dfa",
+      "OUTPUT_CONTRACT": "7b8c56be0a5f71be141f0cfaa9195e2ff8d1ef89e380560b579a82fd841429c1",
+      "CHANGE_FAMILY": "b061ee94954e0dbd049277eb1d91ce9ee3fb5acc1fdf4942deace850346e3c28"
+    },
+    "requires": [],
+    "conflictsWith": [],
+    "state": "ACTIVE",
+    "generation": 8,
+    "createdAt": "2026-08-25T10:00:00Z",
+    "updatedAt": "2026-08-25T10:07:00Z",
+    "evidenceExpiresAt": "2026-09-25T10:07:00Z"
+  },
+  "observations": [
+    { "schemaVersion": "buildopt.adaptive/observation/v1", "recordType": "ADAPTIVE_FRAGMENT_OBSERVATION", "observationId": "3f9e4298f1e6e661894b06854c6539ecbce11684310919778b618d400a1d225d", "repositoryScopeSha256": "e3057b37a05778f919c3f1d73a1160681442d24df9bfb13cc58faa6f03c676d3", "familyId": "9cc337b9fc0afe4f666a9e3902817e14367aa287ce23d073c8fb05512b898019", "revisionId": "8894134bfbaf581005f3eb2227ea68deec60cf320efccc4940c8670b0caf80d3", "generation": 1, "fromState": "ABSENT", "toState": "OBSERVED", "source": "REQUESTED_BUILD", "contextBindingsSha256": "ea7792a26f405e2ae9c6f49ca93bbe6076ceac0a1fc53d83426c7d7f2d9377e4", "evidenceDocumentSha256": "ee8250fb76e094b34b471f13a73dbbe51d1ae142e9df59d7c0d31ec20f0a0a8e", "observedAt": "2026-08-25T10:00:00Z" },
+    { "schemaVersion": "buildopt.adaptive/observation/v1", "recordType": "ADAPTIVE_FRAGMENT_OBSERVATION", "observationId": "3620367257958ba31a1b52b88af53dc1f0e0fed222c07c3d3efe2f2c2e14e299", "repositoryScopeSha256": "e3057b37a05778f919c3f1d73a1160681442d24df9bfb13cc58faa6f03c676d3", "familyId": "9cc337b9fc0afe4f666a9e3902817e14367aa287ce23d073c8fb05512b898019", "revisionId": "8894134bfbaf581005f3eb2227ea68deec60cf320efccc4940c8670b0caf80d3", "generation": 2, "fromState": "OBSERVED", "toState": "SHADOW", "source": "SYSTEM_DECISION", "contextBindingsSha256": "ea7792a26f405e2ae9c6f49ca93bbe6076ceac0a1fc53d83426c7d7f2d9377e4", "evidenceDocumentSha256": "ee8250fb76e094b34b471f13a73dbbe51d1ae142e9df59d7c0d31ec20f0a0a8e", "observedAt": "2026-08-25T10:01:00Z" },
+    { "schemaVersion": "buildopt.adaptive/observation/v1", "recordType": "ADAPTIVE_FRAGMENT_OBSERVATION", "observationId": "c91f51d309736c5ecef334c5eddc761d26fab848df0a5df1acfdeb9813d1d8be", "repositoryScopeSha256": "e3057b37a05778f919c3f1d73a1160681442d24df9bfb13cc58faa6f03c676d3", "familyId": "9cc337b9fc0afe4f666a9e3902817e14367aa287ce23d073c8fb05512b898019", "revisionId": "8894134bfbaf581005f3eb2227ea68deec60cf320efccc4940c8670b0caf80d3", "generation": 3, "fromState": "SHADOW", "toState": "QUALIFIED", "source": "CONTRACT_REVIEW", "contextBindingsSha256": "ea7792a26f405e2ae9c6f49ca93bbe6076ceac0a1fc53d83426c7d7f2d9377e4", "evidenceDocumentSha256": "ee8250fb76e094b34b471f13a73dbbe51d1ae142e9df59d7c0d31ec20f0a0a8e", "observedAt": "2026-08-25T10:02:00Z" },
+    { "schemaVersion": "buildopt.adaptive/observation/v1", "recordType": "ADAPTIVE_FRAGMENT_OBSERVATION", "observationId": "02ad65e4251c35c6c4fa942e7a6f19892f75bc0555cf18c98a7499affd853a30", "repositoryScopeSha256": "e3057b37a05778f919c3f1d73a1160681442d24df9bfb13cc58faa6f03c676d3", "familyId": "9cc337b9fc0afe4f666a9e3902817e14367aa287ce23d073c8fb05512b898019", "revisionId": "8894134bfbaf581005f3eb2227ea68deec60cf320efccc4940c8670b0caf80d3", "generation": 4, "fromState": "QUALIFIED", "toState": "ACTIVE", "source": "SYSTEM_DECISION", "contextBindingsSha256": "ea7792a26f405e2ae9c6f49ca93bbe6076ceac0a1fc53d83426c7d7f2d9377e4", "evidenceDocumentSha256": "ee8250fb76e094b34b471f13a73dbbe51d1ae142e9df59d7c0d31ec20f0a0a8e", "observedAt": "2026-08-25T10:03:00Z" },
+    { "schemaVersion": "buildopt.adaptive/observation/v1", "recordType": "ADAPTIVE_FRAGMENT_OBSERVATION", "observationId": "a3e3a3d1cfa2068a053f9d66aa8b336f73e9bb8971391f4d1528ad3790923320", "repositoryScopeSha256": "e3057b37a05778f919c3f1d73a1160681442d24df9bfb13cc58faa6f03c676d3", "familyId": "9cc337b9fc0afe4f666a9e3902817e14367aa287ce23d073c8fb05512b898019", "revisionId": "8894134bfbaf581005f3eb2227ea68deec60cf320efccc4940c8670b0caf80d3", "generation": 5, "fromState": "ACTIVE", "toState": "SUSPENDED", "source": "SYSTEM_DECISION", "contextBindingsSha256": "ea7792a26f405e2ae9c6f49ca93bbe6076ceac0a1fc53d83426c7d7f2d9377e4", "evidenceDocumentSha256": "ee8250fb76e094b34b471f13a73dbbe51d1ae142e9df59d7c0d31ec20f0a0a8e", "observedAt": "2026-08-25T10:04:00Z", "nativeRetentionReason": "AMBIGUOUS_BINDING" },
+    { "schemaVersion": "buildopt.adaptive/observation/v1", "recordType": "ADAPTIVE_FRAGMENT_OBSERVATION", "observationId": "5bb5d419f39f1e66da8f58292a1b1d914dc098f5d0cd5b9a67e4ce410c0313cd", "repositoryScopeSha256": "e3057b37a05778f919c3f1d73a1160681442d24df9bfb13cc58faa6f03c676d3", "familyId": "9cc337b9fc0afe4f666a9e3902817e14367aa287ce23d073c8fb05512b898019", "revisionId": "8894134bfbaf581005f3eb2227ea68deec60cf320efccc4940c8670b0caf80d3", "generation": 6, "fromState": "SUSPENDED", "toState": "SHADOW", "source": "REQUESTED_BUILD", "contextBindingsSha256": "ea7792a26f405e2ae9c6f49ca93bbe6076ceac0a1fc53d83426c7d7f2d9377e4", "evidenceDocumentSha256": "ee8250fb76e094b34b471f13a73dbbe51d1ae142e9df59d7c0d31ec20f0a0a8e", "observedAt": "2026-08-25T10:05:00Z" },
+    { "schemaVersion": "buildopt.adaptive/observation/v1", "recordType": "ADAPTIVE_FRAGMENT_OBSERVATION", "observationId": "1daca748a3def9298651484dc3650aafd1f671ad0306400e1478ae819b340484", "repositoryScopeSha256": "e3057b37a05778f919c3f1d73a1160681442d24df9bfb13cc58faa6f03c676d3", "familyId": "9cc337b9fc0afe4f666a9e3902817e14367aa287ce23d073c8fb05512b898019", "revisionId": "8894134bfbaf581005f3eb2227ea68deec60cf320efccc4940c8670b0caf80d3", "generation": 7, "fromState": "SHADOW", "toState": "QUALIFIED", "source": "CONTRACT_REVIEW", "contextBindingsSha256": "ea7792a26f405e2ae9c6f49ca93bbe6076ceac0a1fc53d83426c7d7f2d9377e4", "evidenceDocumentSha256": "ee8250fb76e094b34b471f13a73dbbe51d1ae142e9df59d7c0d31ec20f0a0a8e", "observedAt": "2026-08-25T10:06:00Z" },
+    { "schemaVersion": "buildopt.adaptive/observation/v1", "recordType": "ADAPTIVE_FRAGMENT_OBSERVATION", "observationId": "cadc54e746e614f2e35a2b9e6744286bdf4ff961a33269f76df8e1b8c3ca488b", "repositoryScopeSha256": "e3057b37a05778f919c3f1d73a1160681442d24df9bfb13cc58faa6f03c676d3", "familyId": "9cc337b9fc0afe4f666a9e3902817e14367aa287ce23d073c8fb05512b898019", "revisionId": "8894134bfbaf581005f3eb2227ea68deec60cf320efccc4940c8670b0caf80d3", "generation": 8, "fromState": "QUALIFIED", "toState": "ACTIVE", "source": "SYSTEM_DECISION", "contextBindingsSha256": "ea7792a26f405e2ae9c6f49ca93bbe6076ceac0a1fc53d83426c7d7f2d9377e4", "evidenceDocumentSha256": "ee8250fb76e094b34b471f13a73dbbe51d1ae142e9df59d7c0d31ec20f0a0a8e", "observedAt": "2026-08-25T10:07:00Z" }
+  ],
+  "portfolio": {
+    "schemaVersion": "buildopt.adaptive/portfolio/v1",
+    "recordType": "ADAPTIVE_FRAGMENT_PORTFOLIO",
+    "repositoryScopeSha256": "e3057b37a05778f919c3f1d73a1160681442d24df9bfb13cc58faa6f03c676d3",
+    "generation": 2,
+    "supersedesSha256": "88656288ece4dcd141f4c68f49cf896409aa37c2314d84143786ab8349d645a5",
+    "fragments": [
+      { "familyId": "9cc337b9fc0afe4f666a9e3902817e14367aa287ce23d073c8fb05512b898019", "revisionId": "8894134bfbaf581005f3eb2227ea68deec60cf320efccc4940c8670b0caf80d3", "fragmentGeneration": 8, "state": "ACTIVE" }
+    ],
+    "createdAt": "2026-08-25T10:07:00Z"
+  },
+  "ledger": {
+    "schemaVersion": "buildopt.adaptive/economic-ledger/v1",
+    "recordType": "ADAPTIVE_FRAGMENT_ECONOMIC_LEDGER",
+    "repositoryScopeSha256": "e3057b37a05778f919c3f1d73a1160681442d24df9bfb13cc58faa6f03c676d3",
+    "generation": 2,
+    "supersedesSha256": "88656288ece4dcd141f4c68f49cf896409aa37c2314d84143786ab8349d645a5",
+    "portfolioGeneration": 2,
+    "entries": [
+      { "familyId": "9cc337b9fc0afe4f666a9e3902817e14367aa287ce23d073c8fb05512b898019", "revisionId": "8894134bfbaf581005f3eb2227ea68deec60cf320efccc4940c8670b0caf80d3", "fragmentGeneration": 8, "requestedBuildCount": 8, "grossSavedMs": 1800, "synchronousOverheadMs": 240, "outOfBandLearningCostMs": 300, "cumulativeNetMs": 1260, "lastObservedAt": "2026-08-25T10:07:00Z", "evidenceExpiresAt": "2026-09-25T10:07:00Z" }
+    ],
+    "asOf": "2026-08-25T10:07:00Z"
+  }
+}
