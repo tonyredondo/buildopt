@@ -29,9 +29,9 @@ jq -e '
   .inputs.changeEvidence == "BOUNDED_FIRST_PARENT_GIT_HISTORY" and
   .inputs.maximumHistoryCommits == 64 and
   .economics.calibrationPairs == 8 and
-  .economics.minimumPaybackBuilds == 8 and
-  .decisions.measure == "AT_LEAST_EIGHT_ANALOGOUS_COMMITS_AND_A_NON_EMPTY_GRAPH_REDUCTION" and
-  .decisions.reject == "NO_REDUCTION_OR_FEWER_THAN_EIGHT_ANALOGOUS_COMMITS_OR_UNAVAILABLE_HISTORY" and
+  .economics.minimumPaybackBuilds == 5 and
+  .decisions.measure == "AT_LEAST_FIVE_ANALOGOUS_COMMITS_AND_A_NON_EMPTY_GRAPH_REDUCTION" and
+  .decisions.reject == "NO_REDUCTION_OR_FEWER_THAN_FIVE_ANALOGOUS_COMMITS_OR_UNAVAILABLE_HISTORY" and
   .effects.reject == "RETURN_AUTHORITATIVE_NATIVE_RESULT_WITHOUT_DISCOVERY_OR_CALIBRATION" and
   .constraints == {
     repositoryNameRules:false,borrowedProfileSavings:false,
@@ -42,7 +42,7 @@ jq -e '
 
 grep -F -- 'optimizePrequalificationMaximumHistoryDepth = 64' \
     "${buildopt_repo_root}/internal/launcher/optimize_prequalification.go" >/dev/null
-grep -F -- 'MinimumPaybackBuilds:   optimizeRequiredCalibrationPairs' \
+grep -F -- 'MinimumPaybackBuilds:   ordinarylearning.MaximumPaybackMatches' \
     "${buildopt_repo_root}/internal/launcher/optimize_prequalification.go" >/dev/null
 grep -F -- 'ECONOMIC_PREQUALIFICATION_REJECTED' \
     "${buildopt_repo_root}/internal/launcher/optimize.go" >/dev/null

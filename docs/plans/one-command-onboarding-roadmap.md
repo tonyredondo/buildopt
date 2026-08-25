@@ -267,12 +267,14 @@ invalidation. Although the matching replay saved 112.198 seconds, the fallback
 cost 220.761 seconds and the 1,443.324-second calibration did not repay.
 
 Generic economic prequalification is now implemented and measured. It uses
-direct graph ownership plus at most 64 first-parent commits and requires at
-least eight analogous changes before a new eight-pair learning attempt. On the
-public Ktor CORS change it rejects in 192.442 ms, performs no discovery or
-calibration and reduces the observed fallback penalty from 220.761 to 13.896
-seconds. The original Jetty qualification still needs 31 matching replays and
-does not pay back in the observed window.
+direct graph ownership plus at most 64 first-parent commits. The historical
+Ktor experiment required eight analogous changes and rejected the public CORS
+change in 192.442 ms, reducing the observed fallback penalty from 220.761 to
+13.896 seconds. The current ordinary-build contract supersedes that threshold:
+it requires five analogous changes, then lets the first requested pair prove
+positive payback within five matches while preserving the full eight-pair
+qualification gate. The original Jetty qualification still needs 31 matching
+replays and does not pay back in the observed window.
 
 The materialization-economics V2 transfer proved that all five frozen revisions
 could calibrate positively after generic task-graph and pack improvements. The

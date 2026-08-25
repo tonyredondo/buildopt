@@ -31,18 +31,24 @@ lifetime of a different profile, or branch on a repository name.
 
 ## Conservative economic lower bound
 
-Qualification requires eight paired observations. Each pair contains one
-optimized-native control. Even if the candidate arm took zero milliseconds,
-the calibration could not repay in fewer than eight matching builds because
-the eight controls alone must be recovered.
+Qualification still requires eight paired observations, but those observations
+now arrive only through customer-requested ordinary builds. The controls are
+useful authoritative executions rather than extra measurement-only workflows.
+The economic cost is therefore the incremental discovery, verification,
+materialization and wrapper work added while learning.
+
+The POC uses a fixed five-match horizon for that incremental cost. Historical
+recurrence is only a planning signal: the first complete ordinary pair must
+still demonstrate positive projected net value and payback within the same
+horizon, and all eight pairs remain mandatory for robust qualification.
 
 Therefore the generic precheck requires all of the following before allowing
 measurement:
 
 1. the current owner and change family resolve without ambiguity;
 2. the verified graph can omit at least one project;
-3. the configured maximum break-even window is at least eight builds; and
-4. at least eight commits in the bounded recent history have the same owner and
+3. the configured maximum break-even window is at least five builds; and
+4. at least five commits in the bounded recent history have the same owner and
    change family without global/build-logic changes.
 
 Failure or unavailable evidence means `REJECT`, not optimistic discovery.
