@@ -234,9 +234,8 @@ buildopt_subject() {
     fi
 
     for buildopt_arm in control candidate; do
-        git clone -q --no-checkout "${buildopt_subject_root}/source" "${buildopt_subject_root}/${buildopt_arm}"
-        git -C "${buildopt_subject_root}/${buildopt_arm}" remote set-url origin "${buildopt_remote}"
-        git -C "${buildopt_subject_root}/${buildopt_arm}" checkout -q --detach "${buildopt_anchor}"
+        git -C "${buildopt_subject_root}/source" worktree add -q --detach \
+            "${buildopt_subject_root}/${buildopt_arm}" "${buildopt_anchor}"
         mkdir -p -- "${buildopt_subject_root}/${buildopt_arm}-gradle"
         cp -a --reflink=auto "${buildopt_seed_gradle}/." "${buildopt_subject_root}/${buildopt_arm}-gradle/"
     done
