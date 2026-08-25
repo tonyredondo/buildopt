@@ -29,6 +29,13 @@ fingerprint. Evidence ancestry and exact output revisions remain separate, so
 structural compatibility never makes stale bytes current. Every uncertain,
 global or incompatible descendant runs optimized native Gradle.
 
+The selection denominator includes every wrapper-compatible descendant that
+reaches profile selection, structural rebound, economic prequalification or
+revision-bound output refresh. A faster build rejected by economics or stale
+output ancestry is therefore not hidden by removing it from the eligible set.
+Global, wrapper-incompatible and structurally incompatible changes remain
+outside that denominator and execute native Gradle.
+
 V3 deliberately reuses the existing
 `.buildopt/optimize/materialization-economics-v2` local state layout. The new
 experiment changes the lifetime decision and accounting protocol, not the

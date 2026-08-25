@@ -126,7 +126,11 @@ buildopt_common_jq='
     (.requiredOutputCount | positive_integer) and
     (if has("quarantinedOutputCount") then
        (.quarantinedOutputCount | nonnegative_integer) and
-       (.quarantinedPathSha256 | digest)
+       (if .quarantinedOutputCount == 0 then
+          .quarantinedPathSha256 == ""
+        else
+          (.quarantinedPathSha256 | digest)
+        end)
      else true end) and
     (.controlRequiredOutputSha256 | digest) and
     .candidateRequiredOutputSha256 == .controlRequiredOutputSha256 and

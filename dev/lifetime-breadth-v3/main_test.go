@@ -16,6 +16,8 @@ func TestEligibleObservation(t *testing.T) {
 		{true, "QUALIFIED_PROFILE_SELECTED", true, true},
 		{true, "ORDINARY_OBSERVATIONS_PENDING", false, true},
 		{true, "STRUCTURAL_PROFILE_REBOUND", false, true},
+		{true, "QUALIFIED_PROFILE_OUTPUTS_REFRESHED", false, true},
+		{true, "ECONOMIC_PREQUALIFICATION_REJECTED", false, true},
 		{false, "ORDINARY_OBSERVATIONS_PENDING", false, false},
 		{true, "PORTFOLIO_CONTEXT_DRIFT", false, false},
 	} {

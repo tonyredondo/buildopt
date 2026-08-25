@@ -471,7 +471,11 @@ func eligibleObservation(wrapper bool, reason string, selected bool) bool {
 		return true
 	}
 	switch reason {
-	case "ORDINARY_OBSERVATIONS_PENDING", "QUALIFIED_PROFILE_SELECTED", "STRUCTURAL_PROFILE_REBOUND":
+	case "ORDINARY_OBSERVATIONS_PENDING",
+		"QUALIFIED_PROFILE_SELECTED",
+		"STRUCTURAL_PROFILE_REBOUND",
+		"QUALIFIED_PROFILE_OUTPUTS_REFRESHED",
+		"ECONOMIC_PREQUALIFICATION_REJECTED":
 		return true
 	default:
 		return false
