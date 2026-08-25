@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "buildopt.specs/poc-adaptive-state-portability/v1",
+  "workItem": "AF-012",
+  "localStore": {
+    "model": "LOCAL_FIRST_IMMUTABLE_GENERATIONS",
+    "head": "OPTIMISTIC_CAS",
+    "canonicalization": "RFC8785_JCS",
+    "digest": "SHA-256",
+    "documents": [
+      "ADAPTIVE_FRAGMENT",
+      "ADAPTIVE_FRAGMENT_OBSERVATION",
+      "ADAPTIVE_FRAGMENT_PORTFOLIO",
+      "ADAPTIVE_FRAGMENT_ECONOMIC_LEDGER"
+    ]
+  },
+  "centralState": {
+    "transport": "TLS_1_3_HTTPS",
+    "repositoryScoped": true,
+    "evidenceKind": [
+      "ADAPTIVE_FRAGMENT",
+      "ADAPTIVE_FRAGMENT_OBSERVATION",
+      "ADAPTIVE_FRAGMENT_ECONOMIC_LEDGER"
+    ],
+    "portfolioKind": [
+      "ADAPTIVE_FRAGMENT_PORTFOLIO",
+      "ADAPTIVE_LOCAL_STATE_HEAD"
+    ],
+    "headUpdate": "EXACT_GENERATION_CAS",
+    "localRevalidationRequired": true
+  },
+  "separation": {
+    "gradleCachePath": "/cache/",
+    "buildoptStatePath": "/state/",
+    "adaptiveDocumentsInGradleCache": false,
+    "sharedRetentionPolicy": false
+  },
+  "proofs": {
+    "exactSecondMachineReuse": true,
+    "concurrentWinnerVisible": true,
+    "corruptionRejected": true,
+    "verifiedOfflineReuse": true,
+    "cleanOfflineNativeFallback": true,
+    "cachePlaneRequests": 0
+  },
+  "outcome": "ADAPTIVE_STATE_PORTABLE",
+  "boundaries": {
+    "proofOfConcept": true,
+    "publicCommandAdded": false,
+    "activationAuthorityAdded": false,
+    "performanceClaim": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_policy="${buildopt_repo_root}/specs/poc-adaptive-state-portability-v1.json"
+
+if ! command -v jq >/dev/null 2>&1; then
+    echo "adaptive state portability check requires jq" >&2
+    exit 1
+fi
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-adaptive-state-portability/v1" and
+    .workItem == "AF-012" and
+    .localStore.model == "LOCAL_FIRST_IMMUTABLE_GENERATIONS" and
+    .localStore.head == "OPTIMISTIC_CAS" and
+    .localStore.canonicalization == "RFC8785_JCS" and
+    .centralState.transport == "TLS_1_3_HTTPS" and
+    .centralState.repositoryScoped == true and
+    .centralState.localRevalidationRequired == true and
+    .separation.adaptiveDocumentsInGradleCache == false and
+    .separation.sharedRetentionPolicy == false and
+    .proofs == {
+        exactSecondMachineReuse: true,
+        concurrentWinnerVisible: true,
+        corruptionRejected: true,
+        verifiedOfflineReuse: true,
+        cleanOfflineNativeFallback: true,
+        cachePlaneRequests: 0
+    } and
+    .outcome == "ADAPTIVE_STATE_PORTABLE" and
+    .boundaries.publicCommandAdded == false and
+    .boundaries.activationAuthorityAdded == false and
+    .boundaries.performanceClaim == false and
+    .boundaries.productionAuthorized == false and
+    .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false and
+    .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_policy}" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/adaptivefragment
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 -run '^TestAdaptiveStateSync' ./internal/launcher
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/adaptivefragment ./internal/launcher
+
+echo "adaptive state portability: ADAPTIVE_STATE_PORTABLE"

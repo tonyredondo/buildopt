@@ -163,9 +163,12 @@ and product failures are zero. AF-011 now measures each mechanism and the
 complete compatible composition directly. The composed arms are strongly
 positive, but Kotlin Build Impact misses the fixed repeatability gate, so the
 planner retains independently qualified fragments instead of activating the
-joint path. AF-012 is next: persist the same portfolio and economic ledger
-locally and over the existing HTTPS state plane while preserving offline native
-fallback and keeping Gradle cache objects separate from BuildOpt policy state.
+joint path. AF-012 now persists the same portfolio and economic ledger locally
+and over the existing HTTPS state plane. Exact bytes restore on a clean second
+machine, CAS conflicts remain visible, corrupt state rejects, a verified local
+generation survives outage and a clean offline machine retains native Gradle.
+Adaptive documents generate zero Gradle cache-plane requests. AF-013 is next:
+measure cumulative no-lookahead value across the frozen five repositories.
 Production hardening, soak, design partners and Test Optimization remain
 outside this POC.
 
@@ -193,3 +196,4 @@ outside this POC.
 - [Machine-readable planner proof](../../benchmarks/results/adaptive-fragment-planner-v1.json)
 - [Direct fragment-composition result](../../benchmarks/results/adaptive-fragment-composition-v1.json)
 - [Fresh HTTP cache-locality result](../../benchmarks/results/adaptive-cache-locality-v1.json)
+- [Adaptive state portability contract](../../specs/poc-adaptive-state-portability-v1.md)

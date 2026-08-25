@@ -4814,6 +4814,18 @@ fail-closed POC decision, not a checker failure:
 ./dev/check-adaptive-fragment-composition
 ```
 
+## Adaptive state portability
+
+`./dev/check-adaptive-state-portability` validates the `AF-012` local-first
+generation and HTTPS adapter. It proves exact canonical reuse in a clean second
+root, local and central optimistic concurrency, private files, tamper rejection,
+verified offline reuse, clean-machine native fallback and strict separation
+from Gradle cache routes. It adds no public command or timing claim:
+
+```bash
+./dev/check-adaptive-state-portability
+```
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic

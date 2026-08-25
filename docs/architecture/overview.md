@@ -173,13 +173,13 @@ KMS/HSM-backed keys, HA, and recovery objectives.
 
 ### Optional cross-machine state boundary
 
-The adaptive POC now has four storage-neutral documents: fragment generations,
+The adaptive POC has four storage-neutral documents: fragment generations,
 append-only observations, portfolio snapshots and economic-ledger snapshots.
 They use repository scope, exact generation links and external RFC 8785 JCS
-digests. `AF-002` defines and validates those bytes only. Local persistence and
-reuse through the existing HTTPS state plane remain deferred to `AF-012`; an
-unavailable or incompatible document therefore grants no current runtime
-authority.
+digests. `AF-012` now persists those exact bytes in a private local immutable
+generation behind one optimistic-CAS head. The same bytes travel through the
+existing repository-scoped HTTPS `EVIDENCE` and `PORTFOLIO` manifests and are
+fully revalidated before a clean second machine restores them.
 
 `AF-009` adds a storage-neutral planner over those documents. It accepts only
 same-scope, unexpired qualified generations and exact whole-composition
@@ -191,10 +191,13 @@ plan for Build Impact only: each producer needs separate compatible subgraph
 and exact-output-materialization fragments. Unaffected producers restore
 verified bytes, changed producers rebuild locally, and global, ambiguous or
 incomplete state retains the complete original workflow before execution.
-The implementation is storage-neutral. `AF-011` directly measured the active
+The activation implementation remains storage-neutral. `AF-011` directly measured the active
 composition and retained independently qualified fragments because Kotlin
-Build Impact missed its frozen isolated repeatability gate; `AF-012` now owns
-portable local and HTTPS state without changing those activation authorities.
+Build Impact missed its frozen isolated repeatability gate. Portable state does
+not change those authorities: a verified offline generation may be reused,
+while absent, corrupt, incompatible or unlinked state retains native Gradle.
+Gradle cache objects remain on the independent cache protocol and never store
+adaptive policy documents.
 
 The local POC remains service-independent. `buildopt-server` can now expose one
 TLS 1.3 endpoint with two logically isolated planes:

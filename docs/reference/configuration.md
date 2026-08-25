@@ -104,6 +104,13 @@ invocation-local gateway and configures Gradle automatically; the bearer token
 remains in the launcher. Cache publication is intentionally writer-only and
 still requires an owner-authorized signed attempt commit.
 
+The adaptive-fragment successor already reuses the same connection internally:
+its fragment, observations and economic ledger use `EVIDENCE`; its portfolio
+and exact local head use `PORTFOLIO`. These canonical control documents never
+use the Gradle `/cache/` route. This is an AF-012 POC boundary, not yet a public
+configuration surface; AF-014 owns installed-command integration after the
+longitudinal matrix closes.
+
 ## Qualified POC profile
 
 `buildopt poc` reads `buildopt-qualified-profile.json` from the repository root

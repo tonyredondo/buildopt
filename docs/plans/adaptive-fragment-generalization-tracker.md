@@ -1,7 +1,7 @@
 # Adaptive Fragment Generalization POC Tracker
 
 **Status:** `IN_PROGRESS`<br>
-**Current block:** `AF-012 — Local and central adaptive state`<br>
+**Current block:** `AF-013 — Longitudinal five-repository matrix`<br>
 **Decision baseline:** the current whole-profile hypothesis remains
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)<br>
 **Last updated:** 2026-08-25
@@ -193,13 +193,13 @@ the correctness authority for cacheability. Repetition alone is not authority.
 | 9 | `AF-009` Conflict-aware fragment planner | Compose compatible fragments with explicit dependencies, mutual exclusions and a predicted net-value floor; otherwise select native Gradle. | `DONE` | AF-003, AF-005, AF-006 |
 | 10 | `AF-010` Active Build Impact fragments | Activate producer/subgraph fragments independently, preserve exact required outputs and invalidate only affected fragments across commits. | `DONE` | AF-009 |
 | 11 | `AF-011` Multi-mechanism composition | Directly measure qualified Build Impact, reviewed-task/patch and bounded cache-locality combinations without adding isolated percentages. | `DONE` | AF-008, AF-010 |
-| 12 | `AF-012` Local and central adaptive state | Persist the same typed portfolio and ledger locally and through the existing HTTPS state plane; prove two-machine reuse, offline fallback and no use of Gradle cache objects as policy documents. | `TODO` | AF-002, AF-005, AF-009 |
+| 12 | `AF-012` Local and central adaptive state | Persist the same typed portfolio and ledger locally and through the existing HTTPS state plane; prove two-machine reuse, offline fallback and no use of Gradle cache objects as policy documents. | `DONE` | AF-002, AF-005, AF-009 |
 
 ### Phase D — Customer path and terminal decision
 
 | Order | Block | Goal | State | Depends on |
 |---:|---|---|---|---|
-| 13 | `AF-013` Longitudinal five-repository matrix | Run frozen chronological sequences on Spring, OpenTelemetry, Kafka, Micronaut and Groovy against optimized native Gradle with no lookahead. | `WAITING` | AF-010, AF-011 |
+| 13 | `AF-013` Longitudinal five-repository matrix | Run frozen chronological sequences on Spring, OpenTelemetry, Kafka, Micronaut and Groovy against optimized native Gradle with no lookahead. | `TODO` | AF-010, AF-011 |
 | 14 | `AF-014` Installed one-command replay | Exercise the same decisions through a clean published-package installation and `buildopt optimize <workflow>`, including fast native retention and readable value reporting. | `WAITING` | AF-012, AF-013 |
 | 15 | `AF-015` Terminal adaptive-fragment decision | Recompute the complete scorecard and choose continue, specialize or stop without changing thresholds. | `WAITING` | AF-013, AF-014 |
 
@@ -453,6 +453,15 @@ retention rules.
 
 **Outcome:** `ADAPTIVE_STATE_PORTABLE`.
 
+**Closed result:** the same canonical fragment, observations, portfolio and
+economic ledger now persist as one local-first immutable generation with a
+mode-`0600` CAS head. The existing TLS state plane carries evidence and
+portfolio as linked manifests, restores the exact head on a clean second
+machine, exposes a concurrent winner, rejects changed bytes and retains a
+verified local generation during outage. A clean machine without valid state
+uses native Gradle. The proof records state-plane traffic and zero Gradle
+cache-plane requests; it adds no activation authority or performance claim.
+
 ### AF-013 — Longitudinal five-repository matrix
 
 **Deliverables:** frozen chronological sequences, raw observations, immutable
@@ -550,6 +559,7 @@ IDs from the implementation tracker.
 | `AF-E010` | AF-009 | [Conflict-aware planner contract](../../specs/poc-adaptive-fragment-planner-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-planner-v1.json), recomputable [planner report](../../benchmarks/results/adaptive-fragment-planner-v1.json) and [`dev/check-adaptive-fragment-planner`](../../dev/check-adaptive-fragment-planner). Five qualified fragments and six exact synthetic composition predictions prove canonical selection, one dependency, symmetric conflict rejection, retained constituent authorities, three rejected alternatives and seven zero-selection native fallbacks without Gradle, timing or activation. | `DONE` |
 | `AF-E011` | AF-010 | [Active Build Impact contract](../../specs/poc-adaptive-fragment-activation-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-activation-v1.json), real Gradle [activation report](../../benchmarks/results/adaptive-fragment-activation-v1.json), two-producer [fixture](../../fixtures/adaptive-fragment-activation) and [`dev/check-adaptive-fragment-activation`](../../dev/check-adaptive-fragment-activation). Six Gradle 9.6.1 control/candidate scenarios prove four exact unaffected-output restorations, two producer-local rebuilds, three partial graphs, three complete native fallbacks, exact final bundles and zero product failures without making a timing claim. | `DONE` |
 | `AF-E012` | AF-011 | [Composition protocol](../../specs/poc-adaptive-fragment-composition-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-composition-v1.json), immutable [direct-composition report](../../benchmarks/results/adaptive-fragment-composition-v1.json), fresh [HTTP-locality report](../../benchmarks/results/adaptive-cache-locality-v1.json), controlled [fixture](../../fixtures/adaptive-fragment-composition) and [`dev/check-adaptive-fragment-composition`](../../dev/check-adaptive-fragment-composition). Forty-eight direct Gradle pairs preserve exact outputs; both composed DSL arms and five of six isolated DSL arms pass, but Kotlin Build Impact reaches only 6/8 positive pairs, so the frozen constituent gate retains independently qualified fragments instead of authorizing composition. | `DONE` |
+| `AF-E013` | AF-012 | [Adaptive state portability protocol](../../specs/poc-adaptive-state-portability-v1.md), exact [machine policy](../../specs/poc-adaptive-state-portability-v1.json), local-first persistence in [`internal/adaptivefragment`](../../internal/adaptivefragment), HTTPS adapter in [`internal/launcher`](../../internal/launcher) and [`dev/check-adaptive-state-portability`](../../dev/check-adaptive-state-portability). Exact canonical bytes survive a clean second-machine restore; local and central optimistic concurrency, private files, tamper rejection, verified offline reuse and clean-offline native fallback pass while adaptive control documents generate zero `/cache/` requests. | `DONE` |
 
 ## 12. Decision log
 
@@ -571,11 +581,13 @@ IDs from the implementation tracker.
 | 2026-08-25 | Require exact whole-composition economics in the fragment planner. | Adding isolated effects would hide interaction costs; missing, ambiguous or below-floor joint evidence must retain native Gradle before execution. |
 | 2026-08-25 | Require subgraph and output-materialization fragments to activate as an exact producer pair with separate contexts. | Structural omission and stored bytes consume different facts; pairing prevents either authority from restoring unverified work and allows one producer to invalidate without suspending unrelated producers. |
 | 2026-08-25 | Do not authorize a composed path when one constituent misses its independent repeatability gate. | Direct composition can look strongly positive while an isolated mechanism remains order-sensitive; retaining qualified fragments preserves attribution and prevents interaction from masking unstable authority. |
+| 2026-08-25 | Keep adaptive control state local-first and transport the same canonical documents through typed central-state manifests. | Exact portable bytes permit safe second-machine reuse while separate state/cache routes, CAS heads and retention prevent Gradle blob presence from becoming optimization authority. |
 
 ## 13. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-25 | Closed AF-012 as `ADAPTIVE_STATE_PORTABLE`: exact local generations and the repository-scoped TLS state plane now preserve the same portfolio/ledger bytes across two machines, expose local/remote concurrency, reject corruption, reuse verified state offline and retain native on a clean offline machine; opened AF-013 longitudinal five-repository measurement. |
 | 2026-08-25 | Closed AF-011 as `RETAIN_BEST_SINGLE_FRAGMENT`: 48 direct Gradle pairs show 68.56% Groovy and 79.32% Kotlin composition savings with exact outputs, the reviewed patch and HTTP locality qualify independently, but Kotlin Build Impact reaches only 6/8 positive pairs; preserved the failed constituent gate and opened AF-012 portable adaptive state. |
 | 2026-08-25 | Closed AF-010 as `COMPOSABLE_BUILD_IMPACT_AVAILABLE`: six real Gradle scenarios preserve every producer output and final bundle while restoring four unaffected outputs, rebuilding two changed producers locally and retaining the complete native workflow for global, ambiguous or incomplete state; opened AF-011 direct multi-mechanism timing without turning synthetic planner value into measured saving. |
 | 2026-08-25 | Closed AF-009 as `FRAGMENT_COMPOSITION_PLAN_AVAILABLE`: deterministic exact-set planning closes dependencies, excludes conflicts, preserves constituent authorities and retains native Gradle for seven unsafe vectors; opened AF-010 runtime Build Impact fragments without turning synthetic predicted value into a timing claim. |

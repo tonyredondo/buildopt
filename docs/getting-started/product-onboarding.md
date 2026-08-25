@@ -137,11 +137,14 @@ first runtime proof is complete in the repository: two independent producers
 can restore exact unaffected outputs, rebuild only a changed producer and fall
 back to the original complete workflow when change or stored state is unsafe.
 This closes activation correctness only. The current customer command remains
-the whole-profile POC above. AF-011 has measured direct net wall-time value for
-the adaptive composition, but retained independently qualified fragments
-because one constituent missed its frozen repeatability gate. AF-012 must make
-that portfolio portable and AF-014 must reproduce the resulting adaptive
-decision through a clean installation before the successor enters onboarding.
+the whole-profile POC above. AF-011 measured direct net wall-time value for the
+adaptive composition, but retained independently qualified fragments because
+one constituent missed its frozen repeatability gate. AF-012 now preserves the
+same typed portfolio and ledger locally and through the HTTPS state plane,
+including clean-machine restore and offline/native fallback. AF-013 must prove
+longitudinal value across the frozen five repositories, and AF-014 must then
+reproduce the same decision through a clean installation before the successor
+enters onboarding.
 
 ```bash
 buildopt optimize --json -- build
