@@ -499,6 +499,18 @@ contract or timing tampering. The controlled omitted workload exists only to
 exercise every state transition reliably, so this gate makes no repository
 performance claim. `AF-014B` owns cohort freezing before public timing.
 
+## Frozen current longitudinal cohorts
+
+```bash
+./dev/check-current-longitudinal-cohorts \
+  "$PWD/benchmarks/results/current-longitudinal-cohorts-v1.json"
+```
+
+This `AF-014B` gate validates five contiguous first-parent chains containing
+100 primary commits and 50 ordered reserves. It recomputes changed-path digests
+and generic change shapes, binds JDK/workflow/output scope, and rejects reorder,
+scope drift, unknown fields or timing before `AF-014C`. It performs no build.
+
 ## Complete lanes
 
 - `./dev/check-phase-zero` composes the historical Phase 0 gates.

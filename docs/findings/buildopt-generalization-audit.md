@@ -139,9 +139,10 @@ Its first proof must happen before another broad timing campaign:
    observations plus exact selected, forward native-retained and bypass
    scenarios; apparatus evidence only**);
 6. freeze 20 primary first-parent commits plus an ordered reserve queue per
-   family before timing (**next: AF-014B**);
+   family before timing (**complete: 100 primary commits and 50 reserves bound
+   to exact topology, paths, workflows and outputs with no timing fields**);
 7. collect at least 15 comparable builds per terminal row with chronological
-   learning and exact outputs (**AF-014C**); and
+   learning and exact outputs (**next: AF-014C**); and
 8. attribute activated mechanisms, fallback cost and residual variation before
    recomputing the terminal decision (**AF-014D/AF-015**).
 

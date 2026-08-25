@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+buildopt_output=${1:-}
+if [[ -z "${buildopt_output}" || "${buildopt_output}" != /* ]]; then
+    printf 'usage: %s /absolute/path/result.json\n' "${0}" >&2
+    exit 64
+fi
+
+buildopt_temp=$(mktemp -d /tmp/buildopt-af014b.XXXXXX)
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+
+cd "${buildopt_root}/dev/current-longitudinal-cohorts"
+"${buildopt_root}/dev/run" --toolchain go -- go run . \
+    --freeze \
+    --temp-root "${buildopt_temp}" \
+    "${buildopt_root}/specs/poc-current-longitudinal-cohorts-v1.json" \
+    "${buildopt_output}"

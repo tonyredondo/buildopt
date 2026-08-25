@@ -2681,3 +2681,22 @@ observes any current value.
 ./dev/check-current-longitudinal-harness \
   "$PWD/benchmarks/results/current-longitudinal-harness-v1.json"
 ```
+
+## Frozen current longitudinal cohorts
+
+[`current-longitudinal-cohorts-v1.json`](./results/current-longitudinal-cohorts-v1.json)
+freezes the `AF-014C` inputs before any public-repository timing. Spring,
+OpenTelemetry, Kafka, Micronaut and Groovy each contribute one anchor, 20
+primary first-parent commits and ten ordered reserves. The 150 candidate
+observations bind exact parent/tree identities, changed paths, generic
+change-shape labels, workflow, output contract and JDK. The last reserve equals
+the public branch HEAD observed at 2026-08-25T22:04:09Z.
+
+The checker rejects reordering, result-dependent replacement, workflow/output
+scope drift, changed path digests, unknown fields and any timing added before
+the campaign. This manifest contains no performance result.
+
+```bash
+./dev/check-current-longitudinal-cohorts \
+  "$PWD/benchmarks/results/current-longitudinal-cohorts-v1.json"
+```

@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+buildopt_result=${1:-"${buildopt_root}/benchmarks/results/current-longitudinal-cohorts-v1.json"}
+
+cd "${buildopt_root}/dev/current-longitudinal-cohorts"
+"${buildopt_root}/dev/run" --toolchain go -- go test -count=1 ./...
+"${buildopt_root}/dev/run" --toolchain go -- go vet ./...
+"${buildopt_root}/dev/run" --toolchain go -- go run . \
+    "${buildopt_root}/specs/poc-current-longitudinal-cohorts-v1.json" \
+    "${buildopt_result}"
+
+buildopt_temp=$(mktemp -d /tmp/buildopt-af014b-check.XXXXXX)
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+
+jq '.repositories[0].primary |= ([.[1], .[0]] + .[2:])' \
+    "${buildopt_result}" >"${buildopt_temp}/reordered.json"
+if "${buildopt_root}/dev/run" --toolchain go -- go run . \
+    "${buildopt_root}/specs/poc-current-longitudinal-cohorts-v1.json" \
+    "${buildopt_temp}/reordered.json" >/dev/null 2>&1; then
+    printf 'AF-014B checker accepted reordered primary commits\n' >&2
+    exit 1
+fi
+
+jq '.repositories[1].policy.workflow[0] = "changed-after-freeze"' \
+    "${buildopt_result}" >"${buildopt_temp}/scope-drift.json"
+if "${buildopt_root}/dev/run" --toolchain go -- go run . \
+    "${buildopt_root}/specs/poc-current-longitudinal-cohorts-v1.json" \
+    "${buildopt_temp}/scope-drift.json" >/dev/null 2>&1; then
+    printf 'AF-014B checker accepted workflow drift\n' >&2
+    exit 1
+fi
+
+jq '.timing = {"wallNs": 1}' "${buildopt_result}" >"${buildopt_temp}/timing.json"
+if "${buildopt_root}/dev/run" --toolchain go -- go run . \
+    "${buildopt_root}/specs/poc-current-longitudinal-cohorts-v1.json" \
+    "${buildopt_temp}/timing.json" >/dev/null 2>&1; then
+    printf 'AF-014B checker accepted timing before the campaign\n' >&2
+    exit 1
+fi
+
+printf 'AF-014B frozen cohorts are ordered, scope-bound, and timing-free\n'

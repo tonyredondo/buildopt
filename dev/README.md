@@ -4879,6 +4879,24 @@ The fixture's deterministic eight-second omitted workload proves lifecycle
 reachability only. Do not report its selected/native durations as customer
 performance evidence.
 
+## Frozen current longitudinal cohorts
+
+Freeze public topology before timing from a clean tree:
+
+```bash
+./dev/freeze-current-longitudinal-cohorts /absolute/path/cohorts.json
+```
+
+The freezer downloads commit/tree topology only, then records one anchor, 20
+primary first-parent commits and ten ordered reserves for each of the five
+public subjects. Validate a frozen result, including negative reorder, scope
+drift and premature-timing vectors, with:
+
+```bash
+./dev/check-current-longitudinal-cohorts \
+  "$PWD/benchmarks/results/current-longitudinal-cohorts-v1.json"
+```
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic

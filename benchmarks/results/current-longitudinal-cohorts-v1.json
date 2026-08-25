@@ -1,0 +1,2615 @@
+{
+  "schemaVersion": "buildopt.poc/current-longitudinal-cohorts/v1",
+  "workItem": "AF-014B",
+  "frozenAt": "2026-08-25T22:04:09Z",
+  "outcome": "CURRENT_LONGITUDINAL_COHORTS_FROZEN",
+  "contract": {
+    "path": "specs/poc-current-longitudinal-cohorts-v1.json",
+    "sha256": "b707aaed29aa3215dc8ee1e068b124e8fdb68eca21ea495244b4c91a206a1558"
+  },
+  "selection": {
+    "history": "PUBLIC_FIRST_PARENT_CONTIGUOUS",
+    "primaryCount": 20,
+    "reserveCount": 10,
+    "timingAllowedAtFreeze": false,
+    "replacement": "NEXT_UNUSED_RESERVE_ONLY",
+    "minimumComparableTarget": 15
+  },
+  "repositories": [
+    {
+      "policy": {
+        "key": "spring-framework",
+        "repositoryId": "spring-projects/spring-framework",
+        "remoteUrl": "https://github.com/spring-projects/spring-framework.git",
+        "branch": "main",
+        "jdkToolchain": "temurin-jdk-25",
+        "workflow": [
+          "classes",
+          "--offline",
+          "--no-daemon",
+          "--max-workers=12"
+        ],
+        "requiredOutputs": [
+          "spring-jms/build/classes/**"
+        ]
+      },
+      "remoteHead": "b28569119fe7193adb4035d156b00b701c810a89",
+      "anchor": {
+        "ordinal": 0,
+        "revision": "7da47f8c473e5b48939418adc9b2427b0890501f",
+        "parentRevision": "a947f9bf7908f10a24aa98db68585fb5bbd0e2af",
+        "treeRevision": "06ee941a1fa38f486042e24d269abafc58ae535d",
+        "committedAt": "2026-08-18T18:14:01+02:00",
+        "changedPaths": [
+          "spring-context/src/main/java/org/springframework/scheduling/config/ScheduledTaskRegistrar.java",
+          "spring-context/src/test/java/org/springframework/scheduling/config/ScheduledTaskRegistrarTests.java"
+        ],
+        "changedPathsSha256": "79fd337a71877c4894302d4f1137512648dbfa91fcacddc98b6c2fa945d7fad7",
+        "changeShape": "MIXED"
+      },
+      "primary": [
+        {
+          "ordinal": 1,
+          "revision": "daa8c10031e35f1a447917474f203789e009d3b5",
+          "parentRevision": "7da47f8c473e5b48939418adc9b2427b0890501f",
+          "treeRevision": "cd805423e88c1669048bd273465678947644d070",
+          "committedAt": "2026-08-18T18:17:57+02:00",
+          "changedPaths": [
+            "spring-context/src/main/java/org/springframework/scheduling/config/ScheduledTaskRegistrar.java",
+            "spring-context/src/test/java/org/springframework/scheduling/config/ScheduledTaskRegistrarTests.java"
+          ],
+          "changedPathsSha256": "79fd337a71877c4894302d4f1137512648dbfa91fcacddc98b6c2fa945d7fad7",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 2,
+          "revision": "b20d31a5cde39294b3a2533c93775e475de8f524",
+          "parentRevision": "daa8c10031e35f1a447917474f203789e009d3b5",
+          "treeRevision": "33defa16d776e9e867c0a4a6213de40fc8a594f5",
+          "committedAt": "2026-08-18T18:24:38+02:00",
+          "changedPaths": [
+            "spring-test/src/main/java/org/springframework/mock/web/MockCookie.java",
+            "spring-test/src/test/java/org/springframework/mock/web/MockCookieTests.java",
+            "spring-web/src/testFixtures/java/org/springframework/web/testfixture/servlet/MockCookie.java"
+          ],
+          "changedPathsSha256": "aba17d8d6b69ced32c25a140c3955969b6f88055443eedb12166fb13c6bf03c1",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 3,
+          "revision": "04e5c9216285549ff2d402ce269a3778226cd3ce",
+          "parentRevision": "b20d31a5cde39294b3a2533c93775e475de8f524",
+          "treeRevision": "984a05e8de60c5e65b488d472742cd87dadfdc9f",
+          "committedAt": "2026-08-18T18:24:54+02:00",
+          "changedPaths": [
+            "spring-test/src/test/java/org/springframework/mock/web/MockCookieTests.java"
+          ],
+          "changedPathsSha256": "dda11c605f3055ca9e6f7e7644b513eb79f5e8c22367f7064cbfc68584d06bd0",
+          "changeShape": "TEST_SOURCE"
+        },
+        {
+          "ordinal": 4,
+          "revision": "a16509447075017b7691bf401e5214dc25f2d3cb",
+          "parentRevision": "04e5c9216285549ff2d402ce269a3778226cd3ce",
+          "treeRevision": "329eea61f97dd17ef0305e7596ef2bcfd9c4deb1",
+          "committedAt": "2026-08-18T18:49:06+02:00",
+          "changedPaths": [
+            "framework-docs/modules/ROOT/pages/integration/rest-clients.adoc",
+            "framework-docs/src/main/java/org/springframework/docs/integration/restmessageconversion/RestClientMessageConversion.java",
+            "framework-docs/src/main/java/org/springframework/docs/integration/restrestclient/create/RestClientCreation.java",
+            "framework-docs/src/main/kotlin/org/springframework/docs/integration/restmessageconversion/RestClientMessageConversion.kt",
+            "framework-docs/src/main/kotlin/org/springframework/docs/integration/restrestclient/create/RestClientCreation.kt"
+          ],
+          "changedPathsSha256": "15aec0d60a014f01fa1f449217240197fb80c244852fed071be77b331dfb9637",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 5,
+          "revision": "ee3b666a5cf2feefc67bd5a158039159d8708933",
+          "parentRevision": "a16509447075017b7691bf401e5214dc25f2d3cb",
+          "treeRevision": "9f9fc6ff0720c7fc38be19044313be2da0654e20",
+          "committedAt": "2026-08-19T14:19:30+03:00",
+          "changedPaths": [
+            "spring-web/src/main/java/org/springframework/http/codec/protobuf/ProtobufDecoder.java",
+            "spring-web/src/main/java/org/springframework/http/codec/protobuf/ProtobufEncoder.java",
+            "spring-web/src/main/java/org/springframework/http/codec/protobuf/ProtobufHttpMessageWriter.java",
+            "spring-web/src/main/java/org/springframework/http/codec/protobuf/ProtobufJsonDecoder.java",
+            "spring-web/src/main/java/org/springframework/http/codec/protobuf/ProtobufJsonEncoder.java",
+            "spring-web/src/test/java/org/springframework/http/codec/protobuf/ProtobufJsonEncoderTests.java"
+          ],
+          "changedPathsSha256": "011db80da8a76ba7265cbc7dcd29c1a8ea5d8a0edc5dbbcbff5e0494a877e190",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 6,
+          "revision": "ba13cae6ccad7cac1f881859efd334b64835abc8",
+          "parentRevision": "ee3b666a5cf2feefc67bd5a158039159d8708933",
+          "treeRevision": "8d5edb3165adde6cff0a8641823827c67caf288c",
+          "committedAt": "2026-08-19T17:26:45+02:00",
+          "changedPaths": [
+            "spring-jms/src/main/java/org/springframework/jms/listener/adapter/AbstractAdaptableMessageListener.java",
+            "spring-jms/src/main/java/org/springframework/jms/listener/adapter/MessageListenerAdapter.java",
+            "spring-jms/src/main/java/org/springframework/jms/support/converter/MessageConverter.java",
+            "spring-jms/src/main/java/org/springframework/jms/support/converter/MessagingMessageConverter.java",
+            "spring-jms/src/main/java/org/springframework/jms/support/converter/SimpleMessageConverter.java",
+            "spring-jms/src/test/java/org/springframework/jms/support/SimpleMessageConverterTests.java"
+          ],
+          "changedPathsSha256": "163d9713fe01ae7e6f713dcb7c971e943bdb37560c3207ff2ac35b7c48cc23be",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 7,
+          "revision": "fd95ab16baa2353416e96bddbd979169a9618260",
+          "parentRevision": "ba13cae6ccad7cac1f881859efd334b64835abc8",
+          "treeRevision": "85ca69bfa4e2b93deaf2e4ab5027297dbce2dfcb",
+          "committedAt": "2026-08-19T17:45:47+02:00",
+          "changedPaths": [
+            "spring-expression/src/main/java/org/springframework/expression/spel/support/ReflectivePropertyAccessor.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/PropertyAccessTests.java"
+          ],
+          "changedPathsSha256": "75f244b21ba2c3a06a12518919a6e06f29013f2a9483462559a8a10cfa52bf05",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 8,
+          "revision": "f067d40f0a646a98d0e2735a34b6e31f0e3f2c97",
+          "parentRevision": "fd95ab16baa2353416e96bddbd979169a9618260",
+          "treeRevision": "527211e78415a7d4382db393fb9975592f108fac",
+          "committedAt": "2026-08-19T18:19:04+02:00",
+          "changedPaths": [
+            "spring-core/src/main/java/org/springframework/core/convert/Property.java",
+            "spring-core/src/test/java/org/springframework/core/convert/PropertyTests.java"
+          ],
+          "changedPathsSha256": "b04f03395446d35f0267787e0e143097e6ae47e370a1c265c832d9dbea42735d",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 9,
+          "revision": "e8e293a706002a42859a86044fc103a3f5e255be",
+          "parentRevision": "f067d40f0a646a98d0e2735a34b6e31f0e3f2c97",
+          "treeRevision": "2c61fa21c408aa432653fa9dacd481cebb14122e",
+          "committedAt": "2026-08-19T18:26:46+02:00",
+          "changedPaths": [
+            "spring-core/src/main/java/org/springframework/core/convert/Property.java",
+            "spring-core/src/test/java/org/springframework/core/convert/PropertyTests.java"
+          ],
+          "changedPathsSha256": "b04f03395446d35f0267787e0e143097e6ae47e370a1c265c832d9dbea42735d",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 10,
+          "revision": "526c706d1c33863b16591ef0507170e02365229b",
+          "parentRevision": "e8e293a706002a42859a86044fc103a3f5e255be",
+          "treeRevision": "da9527b305dee7bd88ddc145a0b16fde58b238bc",
+          "committedAt": "2026-08-19T18:41:13+02:00",
+          "changedPaths": [
+            "framework-docs/modules/ROOT/pages/core/aop/schema.adoc",
+            "framework-docs/modules/ROOT/pages/core/appendix/xml-custom.adoc",
+            "framework-docs/modules/ROOT/pages/data-access/transaction/strategies.adoc",
+            "framework-docs/modules/ROOT/pages/testing/resttestclient.adoc",
+            "framework-docs/modules/ROOT/pages/testing/testcontext-framework/ctx-management/groovy.adoc",
+            "framework-docs/modules/ROOT/pages/web/webflux/config.adoc",
+            "framework-docs/modules/ROOT/pages/web/webmvc-test.adoc",
+            "framework-docs/modules/ROOT/pages/web/webmvc/mvc-config/content-negotiation.adoc"
+          ],
+          "changedPathsSha256": "596cb3c9b056c69cf3fa88170106ebfb6af358ff68110e8748b77aadb8b29012",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 11,
+          "revision": "e9e00e325780351c2175b164e625967723d63dab",
+          "parentRevision": "526c706d1c33863b16591ef0507170e02365229b",
+          "treeRevision": "56533015bbeffa15c609d675758d82f3024312be",
+          "committedAt": "2026-08-20T10:59:06+02:00",
+          "changedPaths": [
+            "gradle/wrapper/gradle-wrapper.properties"
+          ],
+          "changedPathsSha256": "68b1979ce7ad28d23319ce9ec56965b57a391912187c9e3a1b55330972804d61",
+          "changeShape": "BUILD_LOGIC_OR_DEPENDENCY"
+        },
+        {
+          "ordinal": 12,
+          "revision": "555ac3768dba24d5034c331bc96fe7f8dfd5c15c",
+          "parentRevision": "e9e00e325780351c2175b164e625967723d63dab",
+          "treeRevision": "4eb0cbe50d8651d92273338b94163aaf41c0e4e4",
+          "committedAt": "2026-08-20T12:45:02+02:00",
+          "changedPaths": [
+            ".gitignore",
+            "buildSrc/src/main/java/org/springframework/build/CheckstyleConventions.java"
+          ],
+          "changedPathsSha256": "134ddb1b8c52910047f5dda92d06690f8157475c870b5fbfbf3f2fe7ea30d25c",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 13,
+          "revision": "4a64537ac6c786dfda289c3dd21549546758c179",
+          "parentRevision": "555ac3768dba24d5034c331bc96fe7f8dfd5c15c",
+          "treeRevision": "d2d405c7d52e0de3a6b4e71fed85c29cc3a4dde5",
+          "committedAt": "2026-08-20T14:13:55+02:00",
+          "changedPaths": [
+            "spring-test/src/test/java/org/springframework/test/web/servlet/client/RestTestClientTests.java",
+            "spring-test/src/test/java/org/springframework/test/web/servlet/request/MockHttpServletRequestBuilderTests.java",
+            "spring-web/src/main/java/org/springframework/http/HttpHeaders.java",
+            "spring-web/src/main/java/org/springframework/http/HttpMethod.java",
+            "spring-web/src/main/java/org/springframework/http/client/HttpComponentsClientHttpRequestFactory.java",
+            "spring-web/src/main/java/org/springframework/web/HttpMediaTypeNotSupportedException.java",
+            "spring-web/src/main/java/org/springframework/web/bind/annotation/RequestMethod.java",
+            "spring-web/src/main/java/org/springframework/web/filter/FormContentFilter.java",
+            "spring-web/src/main/java/org/springframework/web/filter/HiddenHttpMethodFilter.java",
+            "spring-web/src/main/java/org/springframework/web/filter/reactive/HiddenHttpMethodFilter.java",
+            "spring-web/src/main/java/org/springframework/web/server/UnsupportedMediaTypeStatusException.java",
+            "spring-web/src/test/java/org/springframework/http/HttpMethodTests.java",
+            "spring-web/src/test/java/org/springframework/web/bind/annotation/RequestMethodTests.java",
+            "spring-web/src/test/java/org/springframework/web/client/AbstractMockWebServerTests.java",
+            "spring-web/src/test/java/org/springframework/web/client/RestTemplateIntegrationTests.java",
+            "spring-web/src/test/java/org/springframework/web/filter/FormContentFilterTests.java",
+            "spring-web/src/testFixtures/java/org/springframework/web/testfixture/method/MvcAnnotationPredicates.java",
+            "spring-webflux/src/main/java/org/springframework/web/reactive/result/method/RequestMappingInfoHandlerMapping.java",
+            "spring-webflux/src/main/java/org/springframework/web/reactive/result/method/annotation/AbstractMessageReaderArgumentResolver.java",
+            "spring-webflux/src/test/java/org/springframework/web/reactive/result/method/RequestMappingInfoHandlerMappingTests.java",
+            "spring-webmvc/src/main/java/org/springframework/web/servlet/mvc/method/RequestMappingInfoHandlerMapping.java",
+            "spring-webmvc/src/main/java/org/springframework/web/servlet/mvc/method/annotation/AbstractMessageConverterMethodArgumentResolver.java",
+            "spring-webmvc/src/test/java/org/springframework/web/servlet/handler/MappedInterceptorTests.java",
+            "spring-webmvc/src/test/java/org/springframework/web/servlet/mvc/method/RequestMappingInfoHandlerMappingTests.java",
+            "spring-webmvc/src/test/java/org/springframework/web/servlet/mvc/method/annotation/ResponseEntityExceptionHandlerTests.java",
+            "spring-webmvc/src/test/java/org/springframework/web/servlet/support/WebContentGeneratorTests.java"
+          ],
+          "changedPathsSha256": "7e61399435fb7d881148082be0eec16f868412c5df5a3351a88d6ba87c0811de",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 14,
+          "revision": "2730d77f828644b570eb558e917217ecf0d9e12c",
+          "parentRevision": "4a64537ac6c786dfda289c3dd21549546758c179",
+          "treeRevision": "5bb3708ddd7fe09e49f0882a0b36421d12bfd4fa",
+          "committedAt": "2026-08-20T14:13:55+02:00",
+          "changedPaths": [
+            "spring-test/src/test/java/org/springframework/test/web/servlet/request/MockHttpServletRequestBuilderTests.java",
+            "spring-web/src/main/java/org/springframework/http/HttpHeaders.java",
+            "spring-web/src/main/java/org/springframework/web/HttpMediaTypeNotSupportedException.java",
+            "spring-web/src/main/java/org/springframework/web/server/UnsupportedMediaTypeStatusException.java",
+            "spring-web/src/testFixtures/java/org/springframework/web/testfixture/method/MvcAnnotationPredicates.java"
+          ],
+          "changedPathsSha256": "ba77c24fd5a5aed706170a5f3cf9de6673e4e9ed33a5b4861c9ddf64992a3faf",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 15,
+          "revision": "74b6a5ba3ee5645cd2f5f99fa9c1cefeea95c9f1",
+          "parentRevision": "2730d77f828644b570eb558e917217ecf0d9e12c",
+          "treeRevision": "2f92623b30e08e1d70fa44e12661e487761d366e",
+          "committedAt": "2026-08-20T14:57:50+02:00",
+          "changedPaths": [
+            "framework-docs/modules/ROOT/pages/core/aop-api/pfb.adoc",
+            "framework-docs/modules/ROOT/pages/core/aop/ataspectj/advice.adoc",
+            "framework-docs/modules/ROOT/pages/core/aop/schema.adoc",
+            "framework-docs/modules/ROOT/pages/core/aop/using-aspectj.adoc",
+            "framework-docs/modules/ROOT/pages/core/aot.adoc",
+            "framework-docs/modules/ROOT/pages/core/appendix/xml-custom.adoc",
+            "framework-docs/modules/ROOT/pages/core/beans/annotation-config/autowired.adoc",
+            "framework-docs/modules/ROOT/pages/core/beans/basics.adoc",
+            "framework-docs/modules/ROOT/pages/core/beans/classpath-scanning.adoc",
+            "framework-docs/modules/ROOT/pages/core/beans/context-introduction.adoc",
+            "framework-docs/modules/ROOT/pages/core/beans/definition.adoc",
+            "framework-docs/modules/ROOT/pages/core/beans/dependencies/factory-autowire.adoc",
+            "framework-docs/modules/ROOT/pages/core/beans/dependencies/factory-collaborators.adoc",
+            "framework-docs/modules/ROOT/pages/core/beans/dependencies/factory-method-injection.adoc",
+            "framework-docs/modules/ROOT/pages/core/beans/dependencies/factory-properties-detailed.adoc",
+            "framework-docs/modules/ROOT/pages/core/beans/environment.adoc",
+            "framework-docs/modules/ROOT/pages/core/beans/factory-extension.adoc",
+            "framework-docs/modules/ROOT/pages/core/beans/factory-nature.adoc",
+            "framework-docs/modules/ROOT/pages/core/beans/factory-scopes.adoc",
+            "framework-docs/modules/ROOT/pages/core/beans/java/bean-annotation.adoc",
+            "framework-docs/modules/ROOT/pages/core/databuffer-codec.adoc",
+            "framework-docs/modules/ROOT/pages/core/expressions/evaluation.adoc",
+            "framework-docs/modules/ROOT/pages/core/expressions/language-ref/operators.adoc",
+            "framework-docs/modules/ROOT/pages/core/resources.adoc",
+            "framework-docs/modules/ROOT/pages/core/validation/data-binding.adoc",
+            "framework-docs/modules/ROOT/pages/data-access/appendix.adoc",
+            "framework-docs/modules/ROOT/pages/data-access/jdbc/connections.adoc",
+            "framework-docs/modules/ROOT/pages/data-access/jdbc/core.adoc",
+            "framework-docs/modules/ROOT/pages/data-access/jdbc/embedded-database-support.adoc",
+            "framework-docs/modules/ROOT/pages/data-access/jdbc/object.adoc",
+            "framework-docs/modules/ROOT/pages/data-access/jdbc/simple.adoc",
+            "framework-docs/modules/ROOT/pages/data-access/orm/general.adoc",
+            "framework-docs/modules/ROOT/pages/data-access/orm/hibernate.adoc",
+            "framework-docs/modules/ROOT/pages/data-access/orm/jpa.adoc",
+            "framework-docs/modules/ROOT/pages/data-access/oxm.adoc",
+            "framework-docs/modules/ROOT/pages/data-access/r2dbc.adoc",
+            "framework-docs/modules/ROOT/pages/data-access/transaction/declarative/annotations.adoc",
+            "framework-docs/modules/ROOT/pages/integration/cache/annotations.adoc",
+            "framework-docs/modules/ROOT/pages/integration/cache/store-configuration.adoc",
+            "framework-docs/modules/ROOT/pages/integration/jms/receiving.adoc",
+            "framework-docs/modules/ROOT/pages/integration/jms/using.adoc",
+            "framework-docs/modules/ROOT/pages/integration/jmx/exporting.adoc",
+            "framework-docs/modules/ROOT/pages/integration/jmx/interface.adoc",
+            "framework-docs/modules/ROOT/pages/integration/jmx/naming.adoc",
+            "framework-docs/modules/ROOT/pages/integration/observability.adoc",
+            "framework-docs/modules/ROOT/pages/integration/rest-clients.adoc",
+            "framework-docs/modules/ROOT/pages/integration/scheduling.adoc",
+            "framework-docs/modules/ROOT/pages/rsocket.adoc",
+            "framework-docs/modules/ROOT/pages/testing/annotations/integration-junit-jupiter.adoc",
+            "framework-docs/modules/ROOT/pages/testing/annotations/integration-junit4.adoc",
+            "framework-docs/modules/ROOT/pages/testing/integration.adoc",
+            "framework-docs/modules/ROOT/pages/testing/resttestclient.adoc",
+            "framework-docs/modules/ROOT/pages/testing/testcontext-framework/ctx-management/context-customizers.adoc",
+            "framework-docs/modules/ROOT/pages/testing/testcontext-framework/executing-sql.adoc",
+            "framework-docs/modules/ROOT/pages/testing/testcontext-framework/support-classes.adoc",
+            "framework-docs/modules/ROOT/pages/testing/testcontext-framework/tel-config.adoc",
+            "framework-docs/modules/ROOT/pages/testing/testcontext-framework/tx.adoc",
+            "framework-docs/modules/ROOT/pages/testing/unit.adoc",
+            "framework-docs/modules/ROOT/pages/testing/webtestclient.adoc",
+            "framework-docs/modules/ROOT/pages/web/webflux-functional.adoc",
+            "framework-docs/modules/ROOT/pages/web/webflux-versioning.adoc",
+            "framework-docs/modules/ROOT/pages/web/webflux/caching.adoc",
+            "framework-docs/modules/ROOT/pages/web/webflux/config.adoc",
+            "framework-docs/modules/ROOT/pages/web/webflux/controller/ann-requestmapping.adoc",
+            "framework-docs/modules/ROOT/pages/web/webflux/dispatcher-handler.adoc",
+            "framework-docs/modules/ROOT/pages/web/webflux/new-framework.adoc",
+            "framework-docs/modules/ROOT/pages/web/webflux/reactive-spring.adoc",
+            "framework-docs/modules/ROOT/pages/web/webmvc-functional.adoc",
+            "framework-docs/modules/ROOT/pages/web/webmvc-versioning.adoc",
+            "framework-docs/modules/ROOT/pages/web/webmvc-view/mvc-jsp.adoc",
+            "framework-docs/modules/ROOT/pages/web/webmvc/filters.adoc",
+            "framework-docs/modules/ROOT/pages/web/webmvc/mvc-ann-async.adoc",
+            "framework-docs/modules/ROOT/pages/web/webmvc/mvc-caching.adoc",
+            "framework-docs/modules/ROOT/pages/web/webmvc/mvc-controller/ann-requestmapping.adoc",
+            "framework-docs/modules/ROOT/pages/web/webmvc/mvc-servlet/localeresolver.adoc",
+            "framework-docs/modules/ROOT/pages/web/webmvc/mvc-servlet/viewresolver.adoc",
+            "framework-docs/modules/ROOT/pages/web/websocket/server.adoc",
+            "framework-docs/modules/ROOT/pages/web/websocket/stomp/handle-annotations.adoc"
+          ],
+          "changedPathsSha256": "e728e4ecad7ecbfe1b4a1e20150f18f338a77797f38a4b7d6ac51423a2afb3de",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 16,
+          "revision": "bcfa6c3c4fc9133229bcf252827989555ec009a7",
+          "parentRevision": "74b6a5ba3ee5645cd2f5f99fa9c1cefeea95c9f1",
+          "treeRevision": "78c170c5f96e921af931bcdff801f133f0cad18d",
+          "committedAt": "2026-08-20T15:56:20+02:00",
+          "changedPaths": [
+            "buildSrc/src/main/java/org/springframework/build/CheckstyleConventions.java"
+          ],
+          "changedPathsSha256": "589e6f2a735537a5e75930cc1b7bbda589897a30da92e72e8253e6a9ed42a0d9",
+          "changeShape": "BUILD_LOGIC_OR_DEPENDENCY"
+        },
+        {
+          "ordinal": 17,
+          "revision": "af466ccf63bc55f82961b6627fe0c97c43a54632",
+          "parentRevision": "bcfa6c3c4fc9133229bcf252827989555ec009a7",
+          "treeRevision": "2361b052f9a844aee15641baaccbc1ee56711035",
+          "committedAt": "2026-08-20T16:19:37+02:00",
+          "changedPaths": [
+            "spring-core/src/main/java/org/springframework/core/convert/support/OptionalToObjectConverter.java",
+            "spring-core/src/test/java/org/springframework/core/convert/converter/DefaultConversionServiceTests.java"
+          ],
+          "changedPathsSha256": "fd3f1ebd6eaecca15c44e1b9323286c78a56f346e48b9ecad7324a29d1bdd73a",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 18,
+          "revision": "59a784cb7ebfbb7f701067d5a4c2c5403be31a49",
+          "parentRevision": "af466ccf63bc55f82961b6627fe0c97c43a54632",
+          "treeRevision": "14b41fc0574986d0815dc8e95359f2a470796171",
+          "committedAt": "2026-08-20T16:27:18+02:00",
+          "changedPaths": [
+            "spring-core/src/main/java/org/springframework/core/annotation/AnnotationTypeMappings.java",
+            "spring-core/src/test/java/org/springframework/core/annotation/AnnotationTypeMappingsTests.java"
+          ],
+          "changedPathsSha256": "dc0ee5e53c099b413da107b32afe85ac96300161284b5c9601340bee86f1cc73",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 19,
+          "revision": "6ee3ef6af5e215b854b0901e6a43737e86318c31",
+          "parentRevision": "59a784cb7ebfbb7f701067d5a4c2c5403be31a49",
+          "treeRevision": "53efe3209fa32012a2e569d7679ae9090931228b",
+          "committedAt": "2026-08-20T16:32:05+02:00",
+          "changedPaths": [
+            "spring-core/src/main/java/org/springframework/core/annotation/AnnotationTypeMapping.java",
+            "spring-core/src/main/java/org/springframework/core/annotation/MergedAnnotation.java",
+            "spring-core/src/main/java/org/springframework/core/annotation/TypeMappedAnnotation.java",
+            "spring-core/src/test/java/org/springframework/core/annotation/MergedAnnotationsTests.java"
+          ],
+          "changedPathsSha256": "0a27027da2e398b2320f66028b7f839fb5f170935527b77fe9d989cbf50fa7a1",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 20,
+          "revision": "df72838ce1e4885a4799a915bf9dccf6b09dea2e",
+          "parentRevision": "6ee3ef6af5e215b854b0901e6a43737e86318c31",
+          "treeRevision": "72ef34edc5dc9eba865c64b4b2f5d014cb838b10",
+          "committedAt": "2026-08-20T18:18:13+02:00",
+          "changedPaths": [
+            ".github/workflows/build-and-deploy-snapshot.yml",
+            "framework-docs/modules/ROOT/pages/appendix.adoc",
+            "framework-docs/modules/ROOT/pages/core/expressions/evaluation.adoc",
+            "framework-platform/framework-platform.gradle",
+            "spring-beans/src/main/java/org/springframework/beans/AbstractNestablePropertyAccessor.java",
+            "spring-beans/src/test/java/org/springframework/beans/BeanWrapperAutoGrowingTests.java",
+            "spring-context-support/src/main/java/org/springframework/ui/freemarker/SpringTemplateLoader.java",
+            "spring-context-support/src/test/java/org/springframework/ui/freemarker/SpringTemplateLoaderTests.java",
+            "spring-core/src/main/java/org/springframework/core/SpringProperties.java",
+            "spring-expression/src/main/java/org/springframework/expression/EvaluationContext.java",
+            "spring-expression/src/main/java/org/springframework/expression/spel/SpelMessage.java",
+            "spring-expression/src/main/java/org/springframework/expression/spel/SpelParserConfiguration.java",
+            "spring-expression/src/main/java/org/springframework/expression/spel/ast/OperatorPower.java",
+            "spring-expression/src/main/java/org/springframework/expression/spel/standard/SpelExpression.java",
+            "spring-expression/src/main/java/org/springframework/expression/spel/support/SimpleEvaluationContext.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/AbstractExpressionTests.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/EvaluationTests.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/standard/SpelCompilerTests.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/standard/SpelExpressionTestUtils.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/support/SimpleEvaluationContextTests.java",
+            "spring-messaging/src/main/java/org/springframework/messaging/rsocket/annotation/support/MessagingRSocket.java",
+            "spring-web/src/main/java/org/springframework/http/ContentDisposition.java",
+            "spring-web/src/main/java/org/springframework/http/codec/ServerSentEvent.java",
+            "spring-web/src/main/java/org/springframework/http/codec/ServerSentEventHttpMessageWriter.java",
+            "spring-web/src/main/java/org/springframework/http/codec/multipart/PartEventHttpMessageReader.java",
+            "spring-web/src/main/java/org/springframework/http/codec/xml/Jaxb2Helper.java",
+            "spring-web/src/main/java/org/springframework/http/codec/xml/Jaxb2XmlDecoder.java",
+            "spring-web/src/main/java/org/springframework/http/codec/xml/XmlEventDecoder.java",
+            "spring-web/src/main/java/org/springframework/http/server/reactive/JettyCoreServerHttpResponse.java",
+            "spring-web/src/main/java/org/springframework/web/bind/EscapedErrors.java",
+            "spring-web/src/main/java/org/springframework/web/filter/UrlHandlerFilter.java",
+            "spring-web/src/main/java/org/springframework/web/filter/reactive/UrlHandlerFilter.java",
+            "spring-web/src/main/java/org/springframework/web/util/SseUtils.java",
+            "spring-web/src/test/java/org/springframework/http/ContentDispositionTests.java",
+            "spring-web/src/test/java/org/springframework/http/codec/multipart/PartEventHttpMessageReaderTests.java",
+            "spring-web/src/test/java/org/springframework/http/codec/xml/Jaxb2XmlDecoderTests.java",
+            "spring-web/src/test/java/org/springframework/http/codec/xml/XmlEventDecoderTests.java",
+            "spring-web/src/test/java/org/springframework/web/bind/EscapedErrorsTests.java",
+            "spring-web/src/test/java/org/springframework/web/filter/UrlHandlerFilterTests.java",
+            "spring-web/src/test/java/org/springframework/web/filter/reactive/UrlHandlerFilterTests.java",
+            "spring-web/src/test/java/org/springframework/web/util/SseUtilsTests.java",
+            "spring-webflux/src/main/java/org/springframework/web/reactive/function/server/RouterFunctions.java",
+            "spring-webflux/src/main/java/org/springframework/web/reactive/result/view/ViewResolutionResultHandler.java",
+            "spring-webflux/src/main/java/org/springframework/web/reactive/socket/server/support/HandshakeWebSocketService.java",
+            "spring-webflux/src/test/java/org/springframework/web/reactive/function/server/RouterFunctionsTests.java",
+            "spring-webflux/src/test/java/org/springframework/web/reactive/result/view/FragmentViewResolutionResultHandlerTests.java",
+            "spring-webmvc/src/main/java/org/springframework/web/servlet/function/SseServerResponse.java",
+            "spring-webmvc/src/main/java/org/springframework/web/servlet/mvc/UrlFilenameViewController.java",
+            "spring-webmvc/src/main/java/org/springframework/web/servlet/mvc/method/annotation/ResponseBodyEmitterReturnValueHandler.java",
+            "spring-webmvc/src/main/java/org/springframework/web/servlet/mvc/method/annotation/SseEmitter.java",
+            "spring-webmvc/src/main/java/org/springframework/web/servlet/view/xslt/XsltView.java",
+            "spring-webmvc/src/test/java/org/springframework/web/servlet/function/SseServerResponseTests.java",
+            "spring-webmvc/src/test/java/org/springframework/web/servlet/mvc/UrlFilenameViewControllerTests.java",
+            "spring-webmvc/src/test/java/org/springframework/web/servlet/mvc/method/annotation/FragmentRenderingStreamTests.java"
+          ],
+          "changedPathsSha256": "11cc43a131810579bb1adc01079841dce78c3e4048c6b3d363abd5680159eaa5",
+          "changeShape": "MIXED"
+        }
+      ],
+      "reserves": [
+        {
+          "ordinal": 21,
+          "revision": "89047909ea4bcda166c1f6d69fabb8d2cfde5073",
+          "parentRevision": "df72838ce1e4885a4799a915bf9dccf6b09dea2e",
+          "treeRevision": "72ef34edc5dc9eba865c64b4b2f5d014cb838b10",
+          "committedAt": "2026-08-20T18:26:02+02:00",
+          "changedPaths": null,
+          "changedPathsSha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 22,
+          "revision": "8473ec3e25e508107693701bb26ebe43fdabe23a",
+          "parentRevision": "89047909ea4bcda166c1f6d69fabb8d2cfde5073",
+          "treeRevision": "f3731e80122a2510ba4d3317c008bd931d371d3b",
+          "committedAt": "2026-08-21T13:15:14+02:00",
+          "changedPaths": [
+            "framework-docs/modules/ROOT/pages/core/expressions/evaluation.adoc",
+            "spring-expression/src/main/java/org/springframework/expression/spel/SpelMessage.java",
+            "spring-expression/src/main/java/org/springframework/expression/spel/SpelParserConfiguration.java",
+            "spring-expression/src/main/java/org/springframework/expression/spel/standard/InternalSpelExpressionParser.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/standard/SpelParserTests.java"
+          ],
+          "changedPathsSha256": "2aa368afa9c847000221921426575f0166828b1c0a9cda43afa1416de974ee6b",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 23,
+          "revision": "68d438c9ffea359847829b624918d779b1bcf60d",
+          "parentRevision": "8473ec3e25e508107693701bb26ebe43fdabe23a",
+          "treeRevision": "7a2a0ecbaf9b986501c971413abb98f484e1ad0f",
+          "committedAt": "2026-08-21T13:23:54+02:00",
+          "changedPaths": [
+            "spring-expression/src/main/java/org/springframework/expression/spel/SpelParserConfiguration.java"
+          ],
+          "changedPathsSha256": "3977db20e28b71e6b323ad216fa8e2d342575f3be4d5c6227a785890502b7d53",
+          "changeShape": "PRODUCTION_SOURCE"
+        },
+        {
+          "ordinal": 24,
+          "revision": "fb240829b3ce4a893f77612b6557eaf014ea389a",
+          "parentRevision": "68d438c9ffea359847829b624918d779b1bcf60d",
+          "treeRevision": "619062148704c2ac546b1107e106a2299d300f2c",
+          "committedAt": "2026-08-21T14:11:04+02:00",
+          "changedPaths": [
+            "framework-docs/modules/ROOT/pages/core/expressions/evaluation.adoc",
+            "spring-expression/src/main/java/org/springframework/expression/spel/SpelParserConfiguration.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/IndexingTests.java"
+          ],
+          "changedPathsSha256": "55d5ad7c20904beebc599dce9e7c0c148b372cf0bd154de61859e1ff5ecb3dcb",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 25,
+          "revision": "9dabfe98e89499fb78f30de7dc1714eabd6b9804",
+          "parentRevision": "fb240829b3ce4a893f77612b6557eaf014ea389a",
+          "treeRevision": "d3293c6928172211e75908fb678b9006be19b704",
+          "committedAt": "2026-08-21T15:21:13+02:00",
+          "changedPaths": [
+            "spring-expression/src/main/java/org/springframework/expression/spel/ast/ConstructorReference.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/ArrayConstructorTests.java"
+          ],
+          "changedPathsSha256": "092444f30bf32b6456d53615ba45ae91c00ada5acbe7e06761dfa00bcf25edac",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 26,
+          "revision": "aee39843f8c0f283f5f9cb1a0590af76470357fd",
+          "parentRevision": "9dabfe98e89499fb78f30de7dc1714eabd6b9804",
+          "treeRevision": "1184f43a8d15665e559e389752f5236ffc2ef8a0",
+          "committedAt": "2026-08-22T12:09:56+02:00",
+          "changedPaths": [
+            "framework-docs/modules/ROOT/pages/core/expressions/evaluation.adoc",
+            "spring-context/src/main/java/org/springframework/context/expression/StandardBeanExpressionResolver.java",
+            "spring-expression/src/main/java/org/springframework/expression/spel/ExpressionState.java",
+            "spring-expression/src/main/java/org/springframework/expression/spel/SpelParserConfiguration.java",
+            "spring-expression/src/main/java/org/springframework/expression/spel/standard/SpelExpressionParser.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/EvaluationTests.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/IndexingTests.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/SpelCompilationCoverageTests.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/SpelParserConfigurationTests.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/SpelReproTests.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/standard/SpelCompilerTests.java"
+          ],
+          "changedPathsSha256": "6bec72dbd73fad9eb72de390a4bbe2f40a4e5a58675007411bf6ca81797c7392",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 27,
+          "revision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+          "parentRevision": "aee39843f8c0f283f5f9cb1a0590af76470357fd",
+          "treeRevision": "738fceccedd61aa09fbad335e86d42b8c8654538",
+          "committedAt": "2026-08-22T13:28:57+02:00",
+          "changedPaths": [
+            "spring-expression/src/main/java/org/springframework/expression/spel/SpelParserConfiguration.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/IndexingTests.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/SpelParserConfigurationTests.java",
+            "spring-expression/src/test/java/org/springframework/expression/spel/standard/SpelParserTests.java"
+          ],
+          "changedPathsSha256": "dfaf852684d09f2e279201fc82cb5f845ce606285be27eb41ac85cfc781da7e4",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 28,
+          "revision": "ac95b96c21906f644e85028fa4df96fcb8cc2c65",
+          "parentRevision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+          "treeRevision": "f5c75101297d64b742bc09397c15df6550ac352f",
+          "committedAt": "2026-08-24T12:18:48+02:00",
+          "changedPaths": [
+            "spring-aop/src/main/java/org/springframework/aop/framework/AopProxyUtils.java",
+            "spring-aop/src/main/java/org/springframework/aop/framework/CglibAopProxy.java",
+            "spring-aop/src/main/java/org/springframework/aop/framework/ProxyProcessorSupport.java",
+            "spring-aop/src/test/java/org/springframework/aop/framework/CglibAopProxyConfigurationCallbackTests.java"
+          ],
+          "changedPathsSha256": "80ec03c4b8451d4472de5db7fe5dc4b0b72812b388d5469b6d999a697b9cce98",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 29,
+          "revision": "79a75a5762115809bc4dd8e96de39b36e21187a5",
+          "parentRevision": "ac95b96c21906f644e85028fa4df96fcb8cc2c65",
+          "treeRevision": "b0306e9d6839b17411c6a2ec8b3c9c71e36050f6",
+          "committedAt": "2026-08-24T12:36:28+02:00",
+          "changedPaths": [
+            "spring-aop/src/main/java/org/springframework/aop/framework/AopProxyUtils.java",
+            "spring-aop/src/main/java/org/springframework/aop/framework/CglibAopProxy.java",
+            "spring-aop/src/test/java/org/springframework/aop/framework/CglibAopProxyConfigurationCallbackTests.java"
+          ],
+          "changedPathsSha256": "9d3682390eb5b2c562cab98110922c6053dbc60329fc260b2f3e9ee9b9fe83a9",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 30,
+          "revision": "b28569119fe7193adb4035d156b00b701c810a89",
+          "parentRevision": "79a75a5762115809bc4dd8e96de39b36e21187a5",
+          "treeRevision": "2ba164a180dcb2e32f7cce1f0758cd7ec13a48e2",
+          "committedAt": "2026-08-24T17:21:41+01:00",
+          "changedPaths": [
+            "spring-web/src/main/java/org/springframework/http/codec/protobuf/ProtobufJsonEncoder.java",
+            "spring-web/src/main/java/org/springframework/http/server/reactive/DefaultServerHttpRequestBuilder.java",
+            "spring-web/src/main/java/org/springframework/http/server/reactive/ServerHttpRequest.java",
+            "spring-web/src/test/java/org/springframework/http/codec/protobuf/ProtobufJsonEncoderTests.java",
+            "spring-web/src/test/java/org/springframework/http/server/reactive/ServerHttpRequestTests.java"
+          ],
+          "changedPathsSha256": "e9973b4d37aecbda5e94b311206ebd936c0a6af66897a48e2867f811fbb3143a",
+          "changeShape": "MIXED"
+        }
+      ]
+    },
+    {
+      "policy": {
+        "key": "opentelemetry-java-instrumentation",
+        "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+        "remoteUrl": "https://github.com/open-telemetry/opentelemetry-java-instrumentation.git",
+        "branch": "main",
+        "jdkToolchain": "temurin-jdk-21",
+        "workflow": [
+          "spring-webmvc-6.0:javaagent:shadowJar",
+          "--offline",
+          "--no-daemon",
+          "--max-workers=12"
+        ],
+        "requiredOutputs": [
+          "instrumentation/spring/spring-webmvc/spring-webmvc-6.0/javaagent/build/libs/*.jar"
+        ]
+      },
+      "remoteHead": "f4c3dc3583f8b3e0e546bb2b4c3c5d2fa6ec9954",
+      "anchor": {
+        "ordinal": 0,
+        "revision": "8545ffb71b2e54d2a3468134070c79a00c76714a",
+        "parentRevision": "f09e466ac18d354c0f45addc1b96b0f3b8c78b06",
+        "treeRevision": "db0c1597d5b9ba41a1bdc07e0ce84040bd0e060b",
+        "committedAt": "2026-08-24T09:06:29+03:00",
+        "changedPaths": [
+          "CHANGELOG.md",
+          "docs/apidiffs/2.31.1_vs_2.31.0/opentelemetry-instrumentation-annotations.txt",
+          "docs/apidiffs/2.31.1_vs_2.31.0/opentelemetry-instrumentation-api.txt",
+          "docs/apidiffs/2.31.1_vs_2.31.0/opentelemetry-spring-boot-autoconfigure.txt",
+          "docs/apidiffs/2.31.1_vs_2.31.0/opentelemetry-spring-boot-starter.txt",
+          "docs/apidiffs/current_vs_latest/opentelemetry-instrumentation-annotations.txt",
+          "docs/apidiffs/current_vs_latest/opentelemetry-instrumentation-api.txt",
+          "docs/apidiffs/current_vs_latest/opentelemetry-spring-boot-autoconfigure.txt",
+          "docs/apidiffs/current_vs_latest/opentelemetry-spring-boot-starter.txt",
+          "version.gradle.kts"
+        ],
+        "changedPathsSha256": "2dfe13f17dc06b44fbaa3b84592a84be939eba5dc9a5fa8d597afdc268086bb5",
+        "changeShape": "MIXED"
+      },
+      "primary": [
+        {
+          "ordinal": 1,
+          "revision": "aa996db4b68d98c4a9018f17736c4459404c57ab",
+          "parentRevision": "8545ffb71b2e54d2a3468134070c79a00c76714a",
+          "treeRevision": "eab78807be5fab305a79653d255ad9096eddecfc",
+          "committedAt": "2026-08-24T11:27:08+03:00",
+          "changedPaths": [
+            "instrumentation/rediscala-1.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/rediscala/v1_8/RediscalaAttributesGetter.java",
+            "instrumentation/rediscala-1.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/rediscala/v1_8/RediscalaRequest.java",
+            "instrumentation/rediscala-1.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/rediscala/v1_8/RediscalaSingletons.java",
+            "instrumentation/rediscala-1.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/rediscala/v1_8/RequestInstrumentation.java",
+            "instrumentation/rediscala-1.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/rediscala/v1_8/ServerEndpoint.java",
+            "instrumentation/rediscala-1.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/rediscala/v1_8/TransactionBuilderInstrumentation.java",
+            "instrumentation/rediscala-1.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/rediscala/v1_8/TransactionInstrumentation.java",
+            "instrumentation/rediscala-1.8/javaagent/src/test/scala/io/opentelemetry/javaagent/instrumentation/rediscala/v1_8/RediscalaClientTest.scala"
+          ],
+          "changedPathsSha256": "80b45dc8e83d58fc10397cc190cc7a7bc9ef7aaff8753ee2adec3be59435d9d6",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 2,
+          "revision": "bfc0df25d83fd15cdf6200461d3dd57aa5bd7f95",
+          "parentRevision": "aa996db4b68d98c4a9018f17736c4459404c57ab",
+          "treeRevision": "c4771829e4bfaaaa6fc1ad9cfac9f3c39874ae30",
+          "committedAt": "2026-08-24T11:28:01+03:00",
+          "changedPaths": [
+            "instrumentation/spymemcached-2.12/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/spymemcached/v2_12/SpymemcachedAttributesGetter.java",
+            "instrumentation/spymemcached-2.12/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/spymemcached/v2_12/SpymemcachedRequest.java",
+            "instrumentation/spymemcached-2.12/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/spymemcached/v2_12/SpymemcachedTest.java"
+          ],
+          "changedPathsSha256": "4d3696c3729393969bc0946605864db1730b25f24dc092a03278b60287649b4d",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 3,
+          "revision": "ca936607630dfa578e6d4ae1e1691e837ea42dd5",
+          "parentRevision": "bfc0df25d83fd15cdf6200461d3dd57aa5bd7f95",
+          "treeRevision": "7888eb0385d18dadb78ed5e0a0061f03215ef5a2",
+          "committedAt": "2026-08-24T14:21:36+03:00",
+          "changedPaths": [
+            "instrumentation/hbase/hbase-client-2.0/javaagent/build.gradle.kts",
+            "instrumentation/hbase/hbase-client-common-1.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/hbase/client/common/HbaseInstrumenterFactory.java",
+            "instrumentation/hbase/hbase-client-common-1.0/testing/src/main/java/io/opentelemetry/javaagent/instrumentation/hbase/testing/AbstractHbaseTest.java"
+          ],
+          "changedPathsSha256": "14538545b85c613178f3ce80b7b606dfda83e72072127dbe3c45289859e2c246",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 4,
+          "revision": "51278a378d1358c9ad9d31dda1e887af63fec90f",
+          "parentRevision": "ca936607630dfa578e6d4ae1e1691e837ea42dd5",
+          "treeRevision": "9ee1071b2fd516001074b5d04253777a0292fcca",
+          "committedAt": "2026-08-24T14:32:22+03:00",
+          "changedPaths": [
+            "instrumentation/jdbc/library/src/main/java/io/opentelemetry/instrumentation/jdbc/internal/JdbcAttributesGetter.java",
+            "instrumentation/jdbc/library/src/test/java/io/opentelemetry/instrumentation/jdbc/datasource/JdbcTelemetryTest.java",
+            "instrumentation/jdbc/library/src/test/java/io/opentelemetry/instrumentation/jdbc/internal/JdbcAttributesGetterTest.java"
+          ],
+          "changedPathsSha256": "769bd162eeccfa2b8c546efaeee771842cc7356dd4fd40b33f742bd3acbbd12a",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 5,
+          "revision": "ed6f7d4901eaef7ba5b3d6575543fc8d018fb4bc",
+          "parentRevision": "51278a378d1358c9ad9d31dda1e887af63fec90f",
+          "treeRevision": "858b933704b13f92f5bdea55a6ad438e8413972a",
+          "committedAt": "2026-08-24T14:41:48+03:00",
+          "changedPaths": [
+            "smoke-tests/images/fake-backend/src/main/java/io/opentelemetry/smoketest/fakebackend/FakeBackendMain.java",
+            "smoke-tests/images/fake-backend/src/main/java/io/opentelemetry/smoketest/fakebackend/FakeLogsCollectorService.java",
+            "smoke-tests/images/fake-backend/src/main/java/io/opentelemetry/smoketest/fakebackend/FakeLogsCollectorServiceGrpc.java",
+            "smoke-tests/images/fake-backend/src/main/java/io/opentelemetry/smoketest/fakebackend/FakeLogsCollectorServiceHttp.java",
+            "smoke-tests/images/fake-backend/src/main/java/io/opentelemetry/smoketest/fakebackend/FakeMetricsCollectorService.java",
+            "smoke-tests/images/fake-backend/src/main/java/io/opentelemetry/smoketest/fakebackend/FakeMetricsCollectorServiceGrpc.java",
+            "smoke-tests/images/fake-backend/src/main/java/io/opentelemetry/smoketest/fakebackend/FakeMetricsCollectorServiceHttp.java",
+            "smoke-tests/images/fake-backend/src/main/java/io/opentelemetry/smoketest/fakebackend/FakeTraceCollectorService.java",
+            "smoke-tests/images/fake-backend/src/main/java/io/opentelemetry/smoketest/fakebackend/FakeTraceCollectorServiceGrpc.java",
+            "smoke-tests/images/fake-backend/src/main/java/io/opentelemetry/smoketest/fakebackend/FakeTraceCollectorServiceHttp.java",
+            "smoke-tests/images/fake-backend/src/main/java/io/opentelemetry/smoketest/fakebackend/RequestsStorage.java"
+          ],
+          "changedPathsSha256": "ef6bc317bf2c0b4d57ee7e31e4b20632e15c13fe8f4029c551587386fe43c410",
+          "changeShape": "PRODUCTION_SOURCE"
+        },
+        {
+          "ordinal": 6,
+          "revision": "64f252fabff4c699b736be452c857a46cd7225fd",
+          "parentRevision": "ed6f7d4901eaef7ba5b3d6575543fc8d018fb4bc",
+          "treeRevision": "3407d355ff2e409b26696d39c2148de88fe63537",
+          "committedAt": "2026-08-24T07:40:04-07:00",
+          "changedPaths": [
+            "instrumentation/elasticsearch/elasticsearch-transport-common-5.0/javaagent-unit-tests/build.gradle.kts",
+            "instrumentation/elasticsearch/elasticsearch-transport-common-5.0/javaagent-unit-tests/src/test/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/common/v5_0/ElasticsearchTransportAttributesGetterTest.java",
+            "instrumentation/elasticsearch/elasticsearch-transport-common-5.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/common/v5_0/ElasticsearchTransportAttributesGetter.java",
+            "instrumentation/elasticsearch/elasticsearch-transport-common-5.0/testing/src/main/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/common/v5_0/AbstractElasticsearchTransportClientTest.java",
+            "instrumentation/opensearch/opensearch-java-3.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/opensearch/v3_0/OpenSearchAttributesGetter.java",
+            "instrumentation/opensearch/opensearch-java-3.0/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/opensearch/v3_0/OpenSearchApacheHttpClient5TransportTest.java",
+            "settings.gradle.kts"
+          ],
+          "changedPathsSha256": "c5cfb8acf42b90efe274f5d994f5ddccb07d9c4294a63339bf1c8846fbf3a5ba",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 7,
+          "revision": "6508c81c3118a3f40e0e8de0e6fabd55a4e8e521",
+          "parentRevision": "64f252fabff4c699b736be452c857a46cd7225fd",
+          "treeRevision": "00fa329f391b468e681bd6b8aa5e298b3f55cc7e",
+          "committedAt": "2026-08-24T07:55:24-07:00",
+          "changedPaths": [
+            "instrumentation/couchbase/couchbase-2.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/couchbase/v2_0/CouchbaseAttributesGetter.java",
+            "instrumentation/couchbase/couchbase-2.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/couchbase/v2_0/CouchbaseBucketInstrumentation.java",
+            "instrumentation/couchbase/couchbase-2.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/couchbase/v2_0/CouchbaseClusterInstrumentation.java",
+            "instrumentation/couchbase/couchbase-2.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/couchbase/v2_0/CouchbaseSingletons.java",
+            "instrumentation/couchbase/couchbase-2.6/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/couchbase/v2_6/CouchbaseNetworkInstrumentation.java",
+            "instrumentation/couchbase/couchbase-2.6/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/couchbase/v2_6/CouchbaseClient26Test.java",
+            "instrumentation/couchbase/couchbase-common-2.0/javaagent-unit-tests/build.gradle.kts",
+            "instrumentation/couchbase/couchbase-common-2.0/javaagent-unit-tests/src/test/java/io/opentelemetry/javaagent/instrumentation/couchbase/v2_0/CouchbaseAttributesGetterTest.java",
+            "instrumentation/couchbase/couchbase-common-2.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/couchbase/common/v2_0/CouchbaseRequestInfo.java",
+            "instrumentation/couchbase/couchbase-common/testing/src/main/java/io/opentelemetry/instrumentation/couchbase/AbstractCouchbaseAsyncClientTest.java",
+            "instrumentation/couchbase/couchbase-common/testing/src/main/java/io/opentelemetry/instrumentation/couchbase/AbstractCouchbaseClientTest.java",
+            "instrumentation/couchbase/couchbase-common/testing/src/main/java/io/opentelemetry/instrumentation/couchbase/AbstractCouchbaseTest.java",
+            "instrumentation/couchbase/couchbase-common/testing/src/main/java/io/opentelemetry/instrumentation/couchbase/springdata/AbstractCouchbaseSpringRepositoryTest.java",
+            "instrumentation/couchbase/couchbase-common/testing/src/main/java/io/opentelemetry/instrumentation/couchbase/springdata/AbstractCouchbaseSpringTemplateTest.java",
+            "instrumentation/rxjava/rxjava-1.0/library/src/main/java/io/opentelemetry/instrumentation/rxjava/v1_0/TracedOnSubscribe.java"
+          ],
+          "changedPathsSha256": "7be7a2f52e235e3e522470878f2ee729bee65b3b4c47ffde8e14a1c399fd93d7",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 8,
+          "revision": "a02a3fe701d0c94a8c867da6ba5a8ec2c0c076e4",
+          "parentRevision": "6508c81c3118a3f40e0e8de0e6fabd55a4e8e521",
+          "treeRevision": "67b26b12c1b48cb4735d49ee3f8634815f6570b1",
+          "committedAt": "2026-08-24T10:51:31-07:00",
+          "changedPaths": [
+            "instrumentation/geode-1.4/javaagent/build.gradle.kts",
+            "instrumentation/geode-1.4/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/geode/v1_4/PutGetTest.java",
+            "instrumentation/geode-1.4/javaagent/src/test/resources/geode-2.0.2.Dockerfile",
+            "instrumentation/geode-1.4/javaagent/src/test/resources/geode-cache.xml"
+          ],
+          "changedPathsSha256": "12858566d454592e85c239439ee5f5210a15c970642cacb3b2a18af3ac6f90aa",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 9,
+          "revision": "9c6b2014dfd50ff3387c2fbc3b1561623f6604e3",
+          "parentRevision": "a02a3fe701d0c94a8c867da6ba5a8ec2c0c076e4",
+          "treeRevision": "197b09147d1a7bba066f3aa4b911044a2545ac06",
+          "committedAt": "2026-08-24T10:52:25-07:00",
+          "changedPaths": [
+            "CHANGELOG.md",
+            "instrumentation/resources/library/src/main/java/io/opentelemetry/instrumentation/resources/HostIdResource.java"
+          ],
+          "changedPathsSha256": "b34b7634dfcbe3663206752fd1e48aa00695048e1cfe7752afac5ae114552bb2",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 10,
+          "revision": "54d384ccdafd7675525f72a81950e3d39f4f9cde",
+          "parentRevision": "9c6b2014dfd50ff3387c2fbc3b1561623f6604e3",
+          "treeRevision": "b29b04d68269549abe1ea3fc389c0e80cea1869b",
+          "committedAt": "2026-08-24T10:53:36-07:00",
+          "changedPaths": [
+            ".github/agents/knowledge/metadata-yaml-format.md",
+            "instrumentation-docs/readme.md",
+            "instrumentation/apache-commons-pool-2.0/metadata.yaml",
+            "instrumentation/dropwizard/dropwizard-metrics-4.0/metadata.yaml"
+          ],
+          "changedPathsSha256": "67d518dd0ed3f5a9ddc353f104ef831e227ea22b12c88eb34779d881e56da96a",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 11,
+          "revision": "9b7098fae616587a5dc691b5ca5cab4c686b752c",
+          "parentRevision": "54d384ccdafd7675525f72a81950e3d39f4f9cde",
+          "treeRevision": "0a4b8faf473de3d9dd3604e0a0e930f921064622",
+          "committedAt": "2026-08-24T11:31:42-07:00",
+          "changedPaths": [
+            ".github/agents/knowledge/general-rules.md"
+          ],
+          "changedPathsSha256": "5cba68786f4a0296cdb78d4bb6cbaa2485a4aaff3d0257f79526dbb6cb1bd2a1",
+          "changeShape": "DOCUMENTATION_ONLY"
+        },
+        {
+          "ordinal": 12,
+          "revision": "64a8915669ee552c818c51a106a7110ceddb3cb1",
+          "parentRevision": "9b7098fae616587a5dc691b5ca5cab4c686b752c",
+          "treeRevision": "93a9a5ef1cabc96975282a770674f7c15048a633",
+          "committedAt": "2026-08-24T12:22:49-07:00",
+          "changedPaths": [
+            "instrumentation/geode-1.4/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/geode/v1_4/GeodeDbAttributesGetter.java",
+            "instrumentation/geode-1.4/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/geode/v1_4/GeodeRequest.java",
+            "instrumentation/geode-1.4/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/geode/v1_4/GeodeServerAddress.java",
+            "instrumentation/geode-1.4/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/geode/v1_4/PutGetTest.java"
+          ],
+          "changedPathsSha256": "2fd4d5d545acb9595c62212b7eaa6940034f173f76e1ad654a428ec82fa79cec",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 13,
+          "revision": "0c4043354a7000a6ef96e2028abbaf31b7bfe418",
+          "parentRevision": "64a8915669ee552c818c51a106a7110ceddb3cb1",
+          "treeRevision": "4b6340c4c56efcd6f27bd7d5337da0757704af9f",
+          "committedAt": "2026-08-24T20:31:11Z",
+          "changedPaths": [
+            ".github/renovate.json5",
+            "instrumentation/jmx-metrics/library/src/test/java/io/opentelemetry/instrumentation/jmx/rules/RegistryManifestTest.java"
+          ],
+          "changedPathsSha256": "9fa909f9c9992f75524193916db6a8ac9307d10c2d5a6afe066d3e4bd3acaebe",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 14,
+          "revision": "68d46363dc9dc198d25556c2db3fdc84b0ad8548",
+          "parentRevision": "0c4043354a7000a6ef96e2028abbaf31b7bfe418",
+          "treeRevision": "8fbd35c71db6521eb10ed3402b5ea8643dd2b277",
+          "committedAt": "2026-08-24T18:06:15-07:00",
+          "changedPaths": [
+            ".github/workflows/documentation-synchronization-audit.yml",
+            "instrumentation-docs/build.gradle.kts",
+            "instrumentation-docs/src/main/java/io/opentelemetry/instrumentation/docs/DocSynchronization.java"
+          ],
+          "changedPathsSha256": "2f5226fb98a99328c2ee72f4b4079bd41c345f1514eac8c073285b3bf0af7832",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 15,
+          "revision": "3bcccbe96016975304c6777a52a24022a7707f48",
+          "parentRevision": "68d46363dc9dc198d25556c2db3fdc84b0ad8548",
+          "treeRevision": "e64a8c32df1b6333c0209f5e8e68c71ab8ccc90e",
+          "committedAt": "2026-08-24T18:13:33-07:00",
+          "changedPaths": [
+            "instrumentation/jmx-metrics/README.md",
+            "instrumentation/jmx-metrics/javaagent/kafka-broker.md",
+            "instrumentation/jmx-metrics/javaagent/src/main/resources/jmx/rules/experimental-kafka-broker.yaml",
+            "instrumentation/jmx-metrics/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/jmx/JmxMetricInsightInstallerTest.java",
+            "instrumentation/jmx-metrics/library/kafka-broker.md",
+            "instrumentation/jmx-metrics/library/src/main/resources/jmx/rules/experimental-kafka-broker.yaml",
+            "instrumentation/jmx-metrics/library/src/test/java/io/opentelemetry/instrumentation/jmx/rules/KafkaConnectTest.java",
+            "instrumentation/jmx-metrics/library/src/test/java/io/opentelemetry/instrumentation/jmx/rules/TargetSystemTest.java",
+            "instrumentation/jmx-metrics/library/src/test/java/io/opentelemetry/instrumentation/jmx/rules/kafka/KafkaBrokerTest.java",
+            "instrumentation/jmx-metrics/library/src/test/java/io/opentelemetry/instrumentation/jmx/rules/kafka/KafkaConnectTest.java",
+            "instrumentation/jmx-metrics/library/src/test/java/io/opentelemetry/instrumentation/jmx/rules/kafka/KafkaContainer.java"
+          ],
+          "changedPathsSha256": "12310a13d16bd66c72b0384c6e2f6e549f0c753aedbb1d1f69035af041af9ec0",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 16,
+          "revision": "2e7ea360034294006d4b2abaf2de3a9e86e29cfc",
+          "parentRevision": "3bcccbe96016975304c6777a52a24022a7707f48",
+          "treeRevision": "44fa83de8e950765e518e575b886d72420c7a91b",
+          "committedAt": "2026-08-24T19:53:01-07:00",
+          "changedPaths": [
+            ".github/workflows/auto-license-report.yml",
+            ".github/workflows/auto-update-otel-sdk.yml",
+            ".github/workflows/build-common.yml",
+            ".github/workflows/build-daily.yml",
+            ".github/workflows/codeql.yml",
+            ".github/workflows/copilot-setup-steps.yml",
+            ".github/workflows/documentation-synchronization-audit.yml",
+            ".github/workflows/flaky-test-remediation.yml",
+            ".github/workflows/metadata-update.yml",
+            ".github/workflows/metadata-validation.yml",
+            ".github/workflows/overhead-benchmark-daily.yml",
+            ".github/workflows/pr-smoke-test-early-jdk8-images.yml",
+            ".github/workflows/pr-smoke-test-fake-backend-images.yml",
+            ".github/workflows/publish-smoke-test-early-jdk8-images.yml",
+            ".github/workflows/publish-smoke-test-fake-backend-images.yml",
+            ".github/workflows/publish-smoke-test-servlet-images.yml",
+            ".github/workflows/release.yml",
+            ".github/workflows/reusable-build-servlet-images.yml",
+            ".github/workflows/reusable-muzzle.yml",
+            ".github/workflows/reusable-pr-smoke-test-images.yml",
+            ".github/workflows/reusable-publish-smoke-test-images.yml",
+            ".github/workflows/reusable-test-latest-deps.yml",
+            ".github/workflows/sonatype-guide-dependency-audit-daily.yml",
+            ".github/workflows/update-latest-dep-versions.yml",
+            "instrumentation/geode-1.4/javaagent/src/test/resources/geode-2.0.2.Dockerfile"
+          ],
+          "changedPathsSha256": "50f76cec8b3b8f4042e23d0794b83bce8acffd6a911e9202b4c253cd93f48d76",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 17,
+          "revision": "30a6e9869e37729f7a0182968cfdeef32f64225d",
+          "parentRevision": "2e7ea360034294006d4b2abaf2de3a9e86e29cfc",
+          "treeRevision": "cd745ed110979c725e40e268d1c464a80c93a646",
+          "committedAt": "2026-08-25T03:32:38Z",
+          "changedPaths": [
+            "smoke-tests/images/quarkus/build.gradle.kts"
+          ],
+          "changedPathsSha256": "a8fc022fb4c3d033229c49ced4230d992d90566c3221eb736a076b5da0a0f80d",
+          "changeShape": "BUILD_LOGIC_OR_DEPENDENCY"
+        },
+        {
+          "ordinal": 18,
+          "revision": "68715fb7a2f51ba5ede6ea15d4cd7422c21b5bab",
+          "parentRevision": "30a6e9869e37729f7a0182968cfdeef32f64225d",
+          "treeRevision": "d0775569497d253788ea35bf45126311bf21e47e",
+          "committedAt": "2026-08-25T08:42:02+03:00",
+          "changedPaths": [
+            ".github/renovate.json5",
+            "conventions/build.gradle.kts",
+            "conventions/src/main/kotlin/otel.spring-native-test-conventions.gradle.kts",
+            "settings.gradle.kts"
+          ],
+          "changedPathsSha256": "a2ec0b2595fed00fdd062adf3da48d7350c25071a2f3fad23608d2cef1dfae8e",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 19,
+          "revision": "7eb46b3d3bf9e14474438766de1d55a1b555bcde",
+          "parentRevision": "68715fb7a2f51ba5ede6ea15d4cd7422c21b5bab",
+          "treeRevision": "61a746f93feb5bbab3cfdcaba918f4f088ed2363",
+          "committedAt": "2026-08-25T08:48:36+03:00",
+          "changedPaths": [
+            ".github/config/latest-dep-versions.json"
+          ],
+          "changedPathsSha256": "6ccd2860537964b728d2a733d042babc8b82a68f821b44fa9d9667934f767614",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 20,
+          "revision": "bc6fb28e07747ee5a63af3996b274dc08de24f53",
+          "parentRevision": "7eb46b3d3bf9e14474438766de1d55a1b555bcde",
+          "treeRevision": "9cf242c4f65a23c5a770af64441499d0b5b71c13",
+          "committedAt": "2026-08-25T08:59:17+03:00",
+          "changedPaths": [
+            ".github/agents/knowledge/gradle-conventions.md",
+            ".github/agents/knowledge/testing-experimental-flags.md",
+            "instrumentation/kubernetes-client-7.0/javaagent/build.gradle.kts",
+            "instrumentation/reactor/reactor-kafka-1.0/javaagent/build.gradle.kts",
+            "instrumentation/vertx/vertx-kafka-client-3.6/vertx-kafka-client-3.6-testing/build.gradle.kts",
+            "instrumentation/vertx/vertx-kafka-client-3.6/vertx-kafka-client-4-testing/build.gradle.kts",
+            "instrumentation/vertx/vertx-kafka-client-3.6/vertx-kafka-client-5-testing/build.gradle.kts",
+            "instrumentation/xxl-job/xxl-job-2.3.0/javaagent/build.gradle.kts"
+          ],
+          "changedPathsSha256": "cbed68e445dcb4dfde3aae02c0ae3a3f56718c0b486f641a6e757f198a15d0f9",
+          "changeShape": "MIXED"
+        }
+      ],
+      "reserves": [
+        {
+          "ordinal": 21,
+          "revision": "09ba49d1f3f07bdecdec8e0d02086300c7de9a45",
+          "parentRevision": "bc6fb28e07747ee5a63af3996b274dc08de24f53",
+          "treeRevision": "0d1c766553470313fd00fedab93d25d87ecab2af",
+          "committedAt": "2026-08-25T10:40:45+03:00",
+          "changedPaths": [
+            "instrumentation-annotations-support/src/main/java/io/opentelemetry/instrumentation/api/annotation/support/AttributeBindingFactory.java",
+            "instrumentation-annotations-support/src/test/java/io/opentelemetry/instrumentation/api/annotation/support/AttributeBindingFactoryTest.java",
+            "instrumentation/opentelemetry-instrumentation-annotations-1.16/javaagent/src/test/java/io/opentelemetry/test/annotation/TracedWithSpan.java",
+            "instrumentation/opentelemetry-instrumentation-annotations-1.16/javaagent/src/test/java/io/opentelemetry/test/annotation/WithSpanInstrumentationTest.java"
+          ],
+          "changedPathsSha256": "cc121017369347d07102a852b3ce7f3ff2206bec2be807cd5e9bc1619746ed76",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 22,
+          "revision": "049fc9c6474dc62702dd754fa293672fdc1af716",
+          "parentRevision": "09ba49d1f3f07bdecdec8e0d02086300c7de9a45",
+          "treeRevision": "37d14e8439d6938b9a3ffe8a4cc03cdf9bf61144",
+          "committedAt": "2026-08-25T14:05:40+03:00",
+          "changedPaths": [
+            "instrumentation/elasticsearch/elasticsearch-transport-5.3/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/v5_3/springdata/Elasticsearch53SpringRepositoryTest.java",
+            "instrumentation/elasticsearch/elasticsearch-transport-5.3/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/v5_3/springdata/Elasticsearch53SpringTemplateTest.java",
+            "instrumentation/elasticsearch/elasticsearch-transport-6.0/javaagent/src/elasticsearch7Test/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/v7_0/Elasticsearch7TransportClientTest.java",
+            "instrumentation/elasticsearch/elasticsearch-transport-common-5.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/common/v5_0/ElasticsearchActionNames.java",
+            "instrumentation/elasticsearch/elasticsearch-transport-common-5.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/common/v5_0/ElasticsearchTransportAttributesGetter.java",
+            "instrumentation/elasticsearch/elasticsearch-transport-common-5.0/testing/src/main/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/common/v5_0/AbstractElasticsearchNodeClientTest.java",
+            "instrumentation/elasticsearch/elasticsearch-transport-common-5.0/testing/src/main/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/common/v5_0/AbstractElasticsearchTransportClientTest.java"
+          ],
+          "changedPathsSha256": "b21e7c8b8e477c080374ca7cdc65d1da8bbd77283921651aadb6e08002f7a7f4",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 23,
+          "revision": "3791351cde2c4c865c776ef255a3041fec98a008",
+          "parentRevision": "049fc9c6474dc62702dd754fa293672fdc1af716",
+          "treeRevision": "82e2ff1a4ae948bfa669b2a520e049432cc5a04d",
+          "committedAt": "2026-08-25T14:07:51+03:00",
+          "changedPaths": [
+            "instrumentation/pulsar/pulsar-2.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/pulsar/v2_8/MessageListenerInstrumentation.java",
+            "instrumentation/pulsar/pulsar-2.8/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/pulsar/v2_8/PulsarClientTest.java"
+          ],
+          "changedPathsSha256": "f9b7a300cc0cbe9188681a170a109a3c66ec2b68131112b4c2a3f81287e2fe59",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 24,
+          "revision": "22d33b008db9c709deb102718eebf3aeebd7cb3d",
+          "parentRevision": "3791351cde2c4c865c776ef255a3041fec98a008",
+          "treeRevision": "4070b5f2e14c666e7bd8fe95c87148d2c95a87d6",
+          "committedAt": "2026-08-25T14:23:21+03:00",
+          "changedPaths": [
+            ".github/agents/knowledge/javaagent-singletons-patterns.md",
+            ".github/copilot-instructions.md",
+            ".github/instructions/java-style.instructions.md",
+            "docs/contributing/style-guide.md",
+            "instrumentation/hbase/hbase-client-common-1.0/javaagent/src/main/java/org/apache/hadoop/hbase/ipc/OpenTelemetryCallUtil.java",
+            "instrumentation/jdbc/library/src/main/java/io/opentelemetry/instrumentation/jdbc/internal/JdbcData.java",
+            "instrumentation/kafka/kafka-clients/kafka-clients-common-0.11/library/src/main/java/io/opentelemetry/instrumentation/kafkaclients/common/v0_11/internal/KafkaConsumerContextUtil.java",
+            "instrumentation/kafka/kafka-clients/kafka-clients-common-0.11/library/src/main/java/io/opentelemetry/instrumentation/kafkaclients/common/v0_11/internal/KafkaUtil.java",
+            "instrumentation/netty/netty-3.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/netty/v3_8/client/HttpClientRequestTracingHandler.java",
+            "instrumentation/netty/netty-3.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/netty/v3_8/client/HttpClientResponseTracingHandler.java",
+            "instrumentation/netty/netty-3.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/netty/v3_8/server/HttpServerRequestTracingHandler.java",
+            "instrumentation/netty/netty-3.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/netty/v3_8/server/HttpServerResponseTracingHandler.java",
+            "instrumentation/okhttp/okhttp-3.0/library/src/main/java/io/opentelemetry/instrumentation/okhttp/v3_0/TracingCallFactory.java",
+            "instrumentation/reactor/reactor-netty/reactor-netty-1.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/reactornetty/v1_0/InstrumentationContexts.java",
+            "instrumentation/servlet/servlet-3.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/servlet/v3_0/snippet/ServletOutputStreamInjectionState.java",
+            "instrumentation/spring/spring-cloud-aws-3.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/spring/cloud/aws/v3_0/SpringAwsUtil.java",
+            "instrumentation/spring/spring-kafka-2.7/library/src/main/java/io/opentelemetry/instrumentation/spring/kafka/v2_7/InstrumentedBatchInterceptor.java",
+            "instrumentation/spring/spring-kafka-2.7/library/src/main/java/io/opentelemetry/instrumentation/spring/kafka/v2_7/InstrumentedRecordInterceptor.java",
+            "instrumentation/thrift-0.13/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/thrift/v0_13/ThriftSingletons.java",
+            "instrumentation/tomcat/tomcat-jdbc-8.5/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/tomcat/jdbc/v8_5/TomcatJdbcSingletons.java",
+            "instrumentation/vertx/vertx-redis-client-4.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/vertx/redisclient/v4_0/VertxRedisClientSingletons.java",
+            "instrumentation/vertx/vertx-sql-client/vertx-sql-client-4.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/vertx/sqlclient/v4_0/VertxSqlClientSingletons.java",
+            "instrumentation/vertx/vertx-sql-client/vertx-sql-client-5.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/vertx/sqlclient/v5_0/VertxSqlClientSingletons.java",
+            "smoke-tests/extensions/extension/src/main/java/io/opentelemetry/smoketest/extensions/inlined/SmokeInlinedInstrumentation.java"
+          ],
+          "changedPathsSha256": "b730a123e3430f120fb4dbbc60ca9dd4c21808127adf69fe1567167aed97d6b9",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 25,
+          "revision": "ec1bb39df777c42d1c043a4bba7b4246655a8bc6",
+          "parentRevision": "22d33b008db9c709deb102718eebf3aeebd7cb3d",
+          "treeRevision": "8a198a562b46e530516c2b1b7f40f14ceac2d29d",
+          "committedAt": "2026-08-25T15:08:05+03:00",
+          "changedPaths": [
+            ".github/config/lychee.toml",
+            "instrumentation/lettuce/lettuce-5.1/library/README.md"
+          ],
+          "changedPathsSha256": "1e7f49b2be9f77fe06f9f79f972e79456fce3803dc9f9fad5fb87ee34b276a43",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 26,
+          "revision": "bb6908966fb187cf5abeb9e586ac524a0208e7e7",
+          "parentRevision": "ec1bb39df777c42d1c043a4bba7b4246655a8bc6",
+          "treeRevision": "9ddbdd636cd71cf9003b3fb76f0139d3cbeafc39",
+          "committedAt": "2026-08-25T15:26:13+03:00",
+          "changedPaths": [
+            "instrumentation/thrift-0.13/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/thrift/v0_13/ThriftTBaseAsyncProcessorInstrumentation.java",
+            "instrumentation/thrift-0.13/library/src/main/java/io/opentelemetry/instrumentation/thrift/v0_13/internal/ServerAsyncProcessorDecorator.java",
+            "instrumentation/thrift-0.13/library/src/main/java/io/opentelemetry/instrumentation/thrift/v0_13/internal/ServerOutProtocolDecorator.java",
+            "instrumentation/thrift-0.13/testing/src/main/java/io/opentelemetry/instrumentation/thrift/v0_13/AbstractThriftTest.java"
+          ],
+          "changedPathsSha256": "19e89ae3e6f038369d975e9e9a35d5cc012637920c01628bc3a49da7ce5b75ed",
+          "changeShape": "PRODUCTION_SOURCE"
+        },
+        {
+          "ordinal": 27,
+          "revision": "200ed04011fef82dbcbab4905471571654363c7c",
+          "parentRevision": "bb6908966fb187cf5abeb9e586ac524a0208e7e7",
+          "treeRevision": "8e96ab09ec8079a28e75cea55df8cf469ef9001e",
+          "committedAt": "2026-08-25T15:46:24+03:00",
+          "changedPaths": [
+            ".fossa.yml",
+            ".github/config/latest-dep-versions.json",
+            ".github/scripts/instrumentations.sh",
+            "docs/supported-libraries.md",
+            "instrumentation/redisson/redisson-metrics-3.18/javaagent/build.gradle.kts",
+            "instrumentation/redisson/redisson-metrics-3.18/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/redissonmetrics/v3_18/ClientConnectionsEntryInstrumentation.java",
+            "instrumentation/redisson/redisson-metrics-3.18/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/redissonmetrics/v3_18/RedissonMetricsInstrumentationModule.java",
+            "instrumentation/redisson/redisson-metrics-3.18/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/redissonmetrics/v3_18/RedissonSingletons.java",
+            "instrumentation/redisson/redisson-metrics-3.18/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/redissonmetrics/v3_18/RedissonConnectionPoolMetricsTest.java",
+            "instrumentation/redisson/redisson-metrics-3.18/metadata.yaml",
+            "instrumentation/redisson/redisson-metrics-3.26/javaagent/build.gradle.kts",
+            "instrumentation/redisson/redisson-metrics-3.26/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/redissonmetrics/v3_26/ClientConnectionsEntryInstrumentation.java",
+            "instrumentation/redisson/redisson-metrics-3.26/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/redissonmetrics/v3_26/RedisClientInstrumentation.java",
+            "instrumentation/redisson/redisson-metrics-3.26/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/redissonmetrics/v3_26/RedissonConnectionPoolMetrics.java",
+            "instrumentation/redisson/redisson-metrics-3.26/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/redissonmetrics/v3_26/RedissonMetricsInstrumentationModule.java",
+            "instrumentation/redisson/redisson-metrics-3.26/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/redissonmetrics/v3_26/RedissonSingletons.java",
+            "instrumentation/redisson/redisson-metrics-3.26/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/redissonmetrics/v3_26/RedissonConnectionPoolMetricsTest.java",
+            "instrumentation/redisson/redisson-metrics-common-3.18/javaagent/build.gradle.kts",
+            "instrumentation/redisson/redisson-metrics-common-3.18/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/redissonmetrics/common/v3_18/RedisClientInstrumentation.java",
+            "instrumentation/redisson/redisson-metrics-common-3.18/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/redissonmetrics/common/v3_18/RedissonConnectionPoolMetrics.java",
+            "instrumentation/redisson/redisson-metrics-common-3.18/testing/build.gradle.kts",
+            "instrumentation/redisson/redisson-metrics-common-3.18/testing/src/main/java/io/opentelemetry/javaagent/instrumentation/redissonmetrics/AbstractRedissonConnectionPoolMetricsTest.java",
+            "settings.gradle.kts"
+          ],
+          "changedPathsSha256": "488445f7931aaf201e716fafbf7d8223dfa3ffc15ff93b5e960be266b0d0472f",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 28,
+          "revision": "73bec73c80f74944c55564eb07b98b62b15b814f",
+          "parentRevision": "200ed04011fef82dbcbab4905471571654363c7c",
+          "treeRevision": "c4e50f6ed7b39e4f0405c7cfa25168e7a5edef81",
+          "committedAt": "2026-08-25T06:23:41-07:00",
+          "changedPaths": [
+            ".github/workflows/build-common.yml"
+          ],
+          "changedPathsSha256": "210c627483783d9c4811a09069c58d7788d6326dcaf7cdeb5ae10ceb543fd83d",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 29,
+          "revision": "57c630b802811aac03ba9a4207799167b14c10b5",
+          "parentRevision": "73bec73c80f74944c55564eb07b98b62b15b814f",
+          "treeRevision": "ea63ad3754fa0a4a3cbe672e7bccd420657f10e5",
+          "committedAt": "2026-08-25T10:27:59-07:00",
+          "changedPaths": [
+            "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/JmxTelemetry.java",
+            "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/JmxTelemetryBuilder.java",
+            "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/ExperimentalJmxMetricHandler.java",
+            "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/engine/BeanFinder.java",
+            "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/engine/JmxMetricInsight.java",
+            "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/engine/MetricDef.java",
+            "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/handler/CassandraCompactionProgressHandler.java",
+            "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/handler/HandlerRegistry.java",
+            "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/yaml/JmxConfig.java",
+            "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/yaml/RuleParser.java",
+            "instrumentation/jmx-metrics/library/src/test/java/io/opentelemetry/instrumentation/jmx/internal/engine/MetricAggregationTest.java",
+            "instrumentation/jmx-metrics/library/src/test/java/io/opentelemetry/instrumentation/jmx/rules/HandlerTest.java"
+          ],
+          "changedPathsSha256": "77d479f47f162fa89c6911628d2a3c066e460d79052a5c325fbc373ad21f48e6",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 30,
+          "revision": "f4c3dc3583f8b3e0e546bb2b4c3c5d2fa6ec9954",
+          "parentRevision": "57c630b802811aac03ba9a4207799167b14c10b5",
+          "treeRevision": "5b4f13c5f25a09949cff0f2ae62e5733214882fd",
+          "committedAt": "2026-08-25T19:12:48Z",
+          "changedPaths": [
+            "instrumentation/vertx/vertx-http-client/vertx-http-client-3.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/vertx/httpclient/v3_0/HttpRequestInstrumentation.java",
+            "instrumentation/vertx/vertx-http-client/vertx-http-client-4.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/vertx/httpclient/v4_0/HttpRequestInstrumentation.java",
+            "instrumentation/vertx/vertx-http-client/vertx-http-client-4.0/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/vertx/httpclient/v4_0/VertxHttpClientTest.java",
+            "instrumentation/vertx/vertx-http-client/vertx-http-client-5.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/vertx/httpclient/v5_0/HttpRequestInstrumentation.java",
+            "instrumentation/vertx/vertx-http-client/vertx-http-client-5.0/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/vertx/httpclient/v5_0/VertxHttpClientTest.java"
+          ],
+          "changedPathsSha256": "3962029320cc01f1571d71e88493d6cf2c652a07d8b6430a197ee71ffe39793e",
+          "changeShape": "MIXED"
+        }
+      ]
+    },
+    {
+      "policy": {
+        "key": "apache-kafka",
+        "repositoryId": "apache/kafka",
+        "remoteUrl": "https://github.com/apache/kafka.git",
+        "branch": "trunk",
+        "jdkToolchain": "temurin-jdk-25",
+        "workflow": [
+          "core:compileTestJava",
+          "--offline",
+          "--no-daemon",
+          "--max-workers=12"
+        ],
+        "requiredOutputs": [
+          "core/build/classes/scala/test/**"
+        ]
+      },
+      "remoteHead": "d3b8b1bd023dc3d8dff4f7f85af5963de0214b11",
+      "anchor": {
+        "ordinal": 0,
+        "revision": "ce7c89312a8b63fe979a102d45f1e37d50181557",
+        "parentRevision": "d0d01b960d2023cca05191aa105b1a169c5e5cb0",
+        "treeRevision": "4d64398b180e84b6cbd3c23ea9eda4b1410ad846",
+        "committedAt": "2026-08-20T10:09:34-07:00",
+        "changedPaths": [
+          "streams/src/main/java/org/apache/kafka/streams/processor/internals/ProcessorMetadata.java",
+          "streams/src/test/java/org/apache/kafka/streams/processor/internals/ProcessorMetadataTest.java"
+        ],
+        "changedPathsSha256": "d559cb9d6f0a2749ace3042f6907fcf3466d55124fa689813eb4cedea3fc69b2",
+        "changeShape": "MIXED"
+      },
+      "primary": [
+        {
+          "ordinal": 1,
+          "revision": "02d0b030ae12b41aa581da6df4c2ca891d35d3db",
+          "parentRevision": "ce7c89312a8b63fe979a102d45f1e37d50181557",
+          "treeRevision": "1a5ee716483cbe6b1de0fcebb3e58870421a8b75",
+          "committedAt": "2026-08-20T10:09:47-07:00",
+          "changedPaths": [
+            "streams/src/main/java/org/apache/kafka/streams/kstream/internals/ChangedDeserializer.java",
+            "streams/src/test/java/org/apache/kafka/streams/kstream/internals/ChangedSerdeTest.java"
+          ],
+          "changedPathsSha256": "290c86a2f1adfdf58f4dcf5e34ebbd002e88956b09e4b58a0463ea5990e90ea5",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 2,
+          "revision": "a85ec49904b5dc8a9f8c8c29b8598fe89b9433ae",
+          "parentRevision": "02d0b030ae12b41aa581da6df4c2ca891d35d3db",
+          "treeRevision": "7791e3589c5b22ef1d648434f4e3792d201f9f16",
+          "committedAt": "2026-08-20T10:10:02-07:00",
+          "changedPaths": [
+            "streams/src/main/java/org/apache/kafka/streams/processor/internals/ProcessorRecordContext.java",
+            "streams/src/test/java/org/apache/kafka/streams/processor/internals/ProcessorRecordContextTest.java"
+          ],
+          "changedPathsSha256": "980765bedd29e36d4d05b6d0cdba91a4b5e08924d179af5abf14703cd63c69c8",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 3,
+          "revision": "446017978175962f4016b73e3d6d0cf48a9d40dc",
+          "parentRevision": "a85ec49904b5dc8a9f8c8c29b8598fe89b9433ae",
+          "treeRevision": "1cee0b73492e45caa74072a5e84a9c8c5f01bd29",
+          "committedAt": "2026-08-20T10:11:14-07:00",
+          "changedPaths": [
+            "streams/src/main/java/org/apache/kafka/streams/kstream/internals/foreignkeyjoin/CombinedKeySchema.java",
+            "streams/src/test/java/org/apache/kafka/streams/kstream/internals/foreignkeyjoin/CombinedKeySchemaTest.java"
+          ],
+          "changedPathsSha256": "00adde4f942f09a49d5382af3ab91300a5d91a42575b7fe01d18dd6dd00c2337",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 4,
+          "revision": "638ea27e499d699bfce7e072e31efaa254b06af8",
+          "parentRevision": "446017978175962f4016b73e3d6d0cf48a9d40dc",
+          "treeRevision": "35c75118f2b56a35264829037cea8cde2aab9fce",
+          "committedAt": "2026-08-21T02:06:11+08:00",
+          "changedPaths": [
+            "build.gradle",
+            "docs/streams/developer-guide/testing.md",
+            "streams/examples/src/test/java/org/apache/kafka/streams/examples/docs/DeveloperGuideTesting.java",
+            "streams/examples/src/test/java/org/apache/kafka/streams/examples/wordcount/WordCountDemoTest.java",
+            "streams/examples/src/test/java/org/apache/kafka/streams/examples/wordcount/WordCountProcessorTest.java",
+            "streams/examples/src/test/java/org/apache/kafka/streams/examples/wordcount/WordCountTransformerTest.java"
+          ],
+          "changedPathsSha256": "16e8c42e0dc466d0a4ad373940a9d96e6785a49f6ef4c123c29dbeaea458ddeb",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 5,
+          "revision": "8f4e08b5a3fc05eb65e97909572cfbb62a583f79",
+          "parentRevision": "638ea27e499d699bfce7e072e31efaa254b06af8",
+          "treeRevision": "fe9acf65506d27ec46aeab61258cef061df0576b",
+          "committedAt": "2026-08-20T14:35:48-07:00",
+          "changedPaths": [
+            "streams/src/main/java/org/apache/kafka/streams/processor/internals/PunctuationQueue.java",
+            "streams/src/main/java/org/apache/kafka/streams/processor/internals/PunctuationSchedule.java",
+            "streams/src/test/java/org/apache/kafka/streams/processor/internals/PunctuationQueueTest.java"
+          ],
+          "changedPathsSha256": "474bf4924e9b39777e39a1b904bd62ed3a87a12bac2bbef71a1a3946cb95e6c0",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 6,
+          "revision": "a5b195269314cec9549416d86094eac95aa1d79d",
+          "parentRevision": "8f4e08b5a3fc05eb65e97909572cfbb62a583f79",
+          "treeRevision": "4822a22b89a730689b3c949e9854d0d5f0391a65",
+          "committedAt": "2026-08-21T20:23:55+08:00",
+          "changedPaths": [
+            "clients/src/main/java/org/apache/kafka/clients/ClientUtils.java",
+            "clients/src/main/java/org/apache/kafka/clients/CommonClientConfigs.java",
+            "clients/src/main/java/org/apache/kafka/common/errors/BootstrapResolutionException.java",
+            "docs/getting-started/upgrade.md"
+          ],
+          "changedPathsSha256": "b9588ee93e8b9afcbff3e8d8f8336404b7ea8af4a8611adc7cec487099d70907",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 7,
+          "revision": "8f9338ba4b0cfaf3c58a3cb40fe30d9a69dbde17",
+          "parentRevision": "a5b195269314cec9549416d86094eac95aa1d79d",
+          "treeRevision": "55b978517658ccdafb8397de87fc20deb7bee46f",
+          "committedAt": "2026-08-21T14:25:43+01:00",
+          "changedPaths": [
+            "share-coordinator/src/main/java/org/apache/kafka/coordinator/share/ShareCoordinatorService.java",
+            "share-coordinator/src/main/java/org/apache/kafka/coordinator/share/ShareCoordinatorShard.java",
+            "share-coordinator/src/test/java/org/apache/kafka/coordinator/share/ShareCoordinatorShardTest.java"
+          ],
+          "changedPathsSha256": "119a6afc1291506b56f15d188f037c3e55d9f3df00a75c37f64d07e561125075",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 8,
+          "revision": "05f61b9ff5ed72f32ef8371f6ae338ab9b8f7ce5",
+          "parentRevision": "8f9338ba4b0cfaf3c58a3cb40fe30d9a69dbde17",
+          "treeRevision": "5def5f92413350452887524b600503d3141eac10",
+          "committedAt": "2026-08-21T08:42:06-07:00",
+          "changedPaths": [
+            "clients/src/main/java/org/apache/kafka/clients/admin/Admin.java",
+            "core/src/main/scala/kafka/server/ControllerServer.scala",
+            "metadata/src/main/java/org/apache/kafka/controller/Controller.java",
+            "metadata/src/main/java/org/apache/kafka/controller/FeatureControlManager.java",
+            "metadata/src/main/java/org/apache/kafka/controller/QuorumController.java",
+            "metadata/src/main/java/org/apache/kafka/controller/QuorumFeatures.java",
+            "metadata/src/main/java/org/apache/kafka/controller/RaftClientVotersSupplier.java",
+            "metadata/src/test/java/org/apache/kafka/controller/ClusterControlManagerTest.java",
+            "metadata/src/test/java/org/apache/kafka/controller/ConfigurationControlManagerTest.java",
+            "metadata/src/test/java/org/apache/kafka/controller/FeatureControlManagerTest.java",
+            "metadata/src/test/java/org/apache/kafka/controller/MockRaftClient.java",
+            "metadata/src/test/java/org/apache/kafka/controller/ProducerIdControlManagerTest.java",
+            "metadata/src/test/java/org/apache/kafka/controller/QuorumControllerTest.java",
+            "metadata/src/test/java/org/apache/kafka/controller/QuorumControllerTestEnv.java",
+            "metadata/src/test/java/org/apache/kafka/controller/QuorumFeaturesTest.java",
+            "metadata/src/test/java/org/apache/kafka/controller/RaftClientVotersSupplierTest.java",
+            "metadata/src/test/java/org/apache/kafka/controller/ReplicationControlManagerTest.java",
+            "metadata/src/test/java/org/apache/kafka/image/publisher/SnapshotEmitterTest.java",
+            "raft/src/main/java/org/apache/kafka/raft/KafkaRaftClient.java",
+            "raft/src/main/java/org/apache/kafka/raft/RaftClient.java",
+            "raft/src/test/java/org/apache/kafka/raft/KafkaRaftClientReconfigTest.java",
+            "raft/src/test/java/org/apache/kafka/raft/KafkaRaftClientTest.java",
+            "server/src/test/java/org/apache/kafka/server/KRaftClusterTest.java"
+          ],
+          "changedPathsSha256": "4434152b672ac3fd2183cdc9db67699d192666b8446deaf4b62bf063f55d59ea",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 9,
+          "revision": "f311e62120f3c852780ae96c690ac3bad9764f4b",
+          "parentRevision": "05f61b9ff5ed72f32ef8371f6ae338ab9b8f7ce5",
+          "treeRevision": "280e6de22dd3a79a813261ffac0bbf1dc02895bb",
+          "committedAt": "2026-08-22T00:36:54+08:00",
+          "changedPaths": [
+            ".github/workflows/docker_build_and_test.yml",
+            ".github/workflows/docker_official_image_build_and_test.yml",
+            ".github/workflows/docker_scan.yml"
+          ],
+          "changedPathsSha256": "e851ac0378a1cc5caadda8da1135931d4888ff3f04b717a22ffdc653c8732453",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 10,
+          "revision": "8c556f5d66def69787a36a41c9f7124e76609640",
+          "parentRevision": "f311e62120f3c852780ae96c690ac3bad9764f4b",
+          "treeRevision": "dcbfc3242ff4a6aa0251f626c094817f4007ec59",
+          "committedAt": "2026-08-21T09:54:04-07:00",
+          "changedPaths": [
+            "tests/kafkatest/services/streams.py",
+            "tests/kafkatest/tests/streams/streams_application_upgrade_test.py"
+          ],
+          "changedPathsSha256": "ca2670a9183756220efe57f519a71aba8517b3efe29aecbe76013e6f99a55fd7",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 11,
+          "revision": "e28414ee4a1dfa3d093dc10168f944f1a759434e",
+          "parentRevision": "8c556f5d66def69787a36a41c9f7124e76609640",
+          "treeRevision": "e7a26ba78120318f7e8aaab80687571e47475445",
+          "committedAt": "2026-08-21T17:56:26+01:00",
+          "changedPaths": [
+            "clients/clients-integration-tests/src/test/java/org/apache/kafka/clients/consumer/ShareConsumerTest.java"
+          ],
+          "changedPathsSha256": "27212e55473cd45529b77cc2fba3d2667030b7b37599941de5a12d6d45af34fc",
+          "changeShape": "TEST_SOURCE"
+        },
+        {
+          "ordinal": 12,
+          "revision": "d79bd502ec7fa49335afa422f442af80ed0ab8f6",
+          "parentRevision": "e28414ee4a1dfa3d093dc10168f944f1a759434e",
+          "treeRevision": "0e22273b4026e2e43b9630b6d847e552907ee1be",
+          "committedAt": "2026-08-23T01:23:41+08:00",
+          "changedPaths": [
+            ".github/actions/setup-gradle/action.yml"
+          ],
+          "changedPathsSha256": "a0dd62ce9ed4ffa140e4ba63b9028e354606f2774dabafe38be377a35f737032",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 13,
+          "revision": "68ee27313642a7a8935b359b4ce27643f7c68de8",
+          "parentRevision": "d79bd502ec7fa49335afa422f442af80ed0ab8f6",
+          "treeRevision": "4c5e805b186c0ae46a2897b564bb47f756fb0da7",
+          "committedAt": "2026-08-23T19:48:49+08:00",
+          "changedPaths": [
+            "server/src/test/java/org/apache/kafka/network/RequestConvertToJsonTest.java"
+          ],
+          "changedPathsSha256": "86aac9fbaeca083bc839c7b17247cd81c5f5c300b176e021ad667a32a127c2b2",
+          "changeShape": "TEST_SOURCE"
+        },
+        {
+          "ordinal": 14,
+          "revision": "9f1512a245ea75b773213dd36f6f0e6ee95a2176",
+          "parentRevision": "68ee27313642a7a8935b359b4ce27643f7c68de8",
+          "treeRevision": "58aceeac3c3beafa98d14f66679e35c35a93fa4e",
+          "committedAt": "2026-08-23T23:11:12+08:00",
+          "changedPaths": [
+            "clients/clients-integration-tests/src/test/java/org/apache/kafka/clients/ClientRebootstrapTest.java"
+          ],
+          "changedPathsSha256": "f159c94b80119e3972930157806f7ec53ec251dcdd85b68f1d72670124730be8",
+          "changeShape": "TEST_SOURCE"
+        },
+        {
+          "ordinal": 15,
+          "revision": "20aa07522d9b95782d2b6d1db700457745c5ea2e",
+          "parentRevision": "9f1512a245ea75b773213dd36f6f0e6ee95a2176",
+          "treeRevision": "38be3fcdcec9c84db0ce2676457727fb3d221579",
+          "committedAt": "2026-08-24T01:00:35+08:00",
+          "changedPaths": [
+            ".asf.yaml"
+          ],
+          "changedPathsSha256": "1850a9952becacd54f39ced50528b7e05216c50494d55e0d3c5cf90958db6037",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 16,
+          "revision": "3d790171db6f3ad6f0c03aec7362a1b83964c21d",
+          "parentRevision": "20aa07522d9b95782d2b6d1db700457745c5ea2e",
+          "treeRevision": "2593b7ca6e02c6dc084427c4403f3b79350fc5c2",
+          "committedAt": "2026-08-24T01:10:39+08:00",
+          "changedPaths": [
+            "committer-tools/refresh_collaborators.py",
+            "committer-tools/requirements.txt"
+          ],
+          "changedPathsSha256": "bd18fcc0dc9d2888abe4fbdf93e68bcd4ccbba5e8c584497777fcbe041c95b0e",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 17,
+          "revision": "61488cf2c7e65dc5a6e889f5f9374ff1504f5cba",
+          "parentRevision": "3d790171db6f3ad6f0c03aec7362a1b83964c21d",
+          "treeRevision": "2c96a92f02ca05f7fd9bfbb5e56d846f66fd82f1",
+          "committedAt": "2026-08-23T18:51:24+01:00",
+          "changedPaths": [
+            "server-common/src/main/java/org/apache/kafka/server/common/MetadataVersion.java",
+            "server-common/src/test/java/org/apache/kafka/server/common/MetadataVersionTest.java",
+            "test-common/test-common-internal-api/src/main/java/org/apache/kafka/common/test/api/ClusterTest.java"
+          ],
+          "changedPathsSha256": "682cbf8be3ef332106b96edc395f07e851cd5214d7db27d9012a0ceeadbb8af1",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 18,
+          "revision": "ee5f55f7e151245a0ec38dd343ac0b06309a04a3",
+          "parentRevision": "61488cf2c7e65dc5a6e889f5f9374ff1504f5cba",
+          "treeRevision": "57c5543f5a6737d48a89b717039a0fbeac39b12a",
+          "committedAt": "2026-08-24T17:25:45+08:00",
+          "changedPaths": [
+            "streams/integration-tests/src/test/java/org/apache/kafka/streams/integration/IQv2StoreIntegrationTest.java"
+          ],
+          "changedPathsSha256": "8ad2dfbcf03d09b0506bcf6220340132ecdf5593e8b7dd72001cba6adc267474",
+          "changeShape": "TEST_SOURCE"
+        },
+        {
+          "ordinal": 19,
+          "revision": "808bbe535b1ca8e4c80e2e124db01184ef907858",
+          "parentRevision": "ee5f55f7e151245a0ec38dd343ac0b06309a04a3",
+          "treeRevision": "0c54f49ca631463f4f97201539c4a13ce31f6be2",
+          "committedAt": "2026-08-24T18:14:44+08:00",
+          "changedPaths": [
+            "metadata/src/test/java/org/apache/kafka/metadata/storage/FormatterTest.java"
+          ],
+          "changedPathsSha256": "2c871c3f10409303339d758d3245bb5b8682973a65f269a9478d14abf6756486",
+          "changeShape": "TEST_SOURCE"
+        },
+        {
+          "ordinal": 20,
+          "revision": "83a5eadde884f5ad2845ca5896ae83167b781bf8",
+          "parentRevision": "808bbe535b1ca8e4c80e2e124db01184ef907858",
+          "treeRevision": "c5a09adbaaab0f28096ca24744f11d2535977727",
+          "committedAt": "2026-08-24T21:06:32+08:00",
+          "changedPaths": [
+            "clients/src/test/java/org/apache/kafka/common/network/SelectorTest.java",
+            "clients/src/test/java/org/apache/kafka/common/network/SslSelectorTest.java"
+          ],
+          "changedPathsSha256": "f58fa90a5b4b625d29c8b1a2a57d65e6b007ac8250581fef3dc554e2649dcbaa",
+          "changeShape": "TEST_SOURCE"
+        }
+      ],
+      "reserves": [
+        {
+          "ordinal": 21,
+          "revision": "3e0bc2801e223a74c126f25496c3ff5caaca0b52",
+          "parentRevision": "83a5eadde884f5ad2845ca5896ae83167b781bf8",
+          "treeRevision": "b892da2e00b5c6f3e68a73ebe27c21e06daac3de",
+          "committedAt": "2026-08-24T15:59:00+02:00",
+          "changedPaths": [
+            "clients/clients-integration-tests/src/test/java/org/apache/kafka/clients/admin/AlterConfigsIntegrationTest.java",
+            "core/src/main/scala/kafka/server/ConfigAdminManager.scala",
+            "core/src/main/scala/kafka/server/DynamicBrokerConfig.scala",
+            "core/src/main/scala/kafka/server/KafkaApis.scala",
+            "core/src/main/scala/kafka/server/KafkaConfig.scala",
+            "core/src/test/scala/unit/kafka/server/ConfigAdminManagerTest.scala",
+            "core/src/test/scala/unit/kafka/server/KafkaConfigTest.scala",
+            "server/src/main/java/org/apache/kafka/server/config/DynamicBrokerConfig.java",
+            "server/src/main/java/org/apache/kafka/server/config/DynamicConfig.java"
+          ],
+          "changedPathsSha256": "fdd171868dba4ea2e26fe90ae29f7daaa0f1f8f24c689e1adb69829569ea25bb",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 22,
+          "revision": "61e0b5b04f5195c5721a1bc0fe116979a19c7586",
+          "parentRevision": "3e0bc2801e223a74c126f25496c3ff5caaca0b52",
+          "treeRevision": "987bb9b7fdd600413c0d137591919325f08e19b5",
+          "committedAt": "2026-08-24T12:19:48-04:00",
+          "changedPaths": [
+            "docs/streams/developer-guide/interactive-queries.md"
+          ],
+          "changedPathsSha256": "c9f0c0d5ecdecaf65dd5279218e7974bd71976a0959043dae78f3f1e944e7859",
+          "changeShape": "DOCUMENTATION_ONLY"
+        },
+        {
+          "ordinal": 23,
+          "revision": "12bb49ddf97422d7c28cbd4ac2b3c425f73b2fa5",
+          "parentRevision": "61e0b5b04f5195c5721a1bc0fe116979a19c7586",
+          "treeRevision": "e20dd74c894fcbc35b4df541a995a42235796c17",
+          "committedAt": "2026-08-25T02:54:36+08:00",
+          "changedPaths": [
+            "build.gradle"
+          ],
+          "changedPathsSha256": "fa01f357a57e6b6b5d5fa4679b42a54974486a7eed29ea14c3e25ae3e9392a66",
+          "changeShape": "BUILD_LOGIC_OR_DEPENDENCY"
+        },
+        {
+          "ordinal": 24,
+          "revision": "254612f9126bd6137f05663b43723870fd49cb36",
+          "parentRevision": "12bb49ddf97422d7c28cbd4ac2b3c425f73b2fa5",
+          "treeRevision": "4c516b7123634dd8916ad821846c1d1768930889",
+          "committedAt": "2026-08-25T02:57:47+08:00",
+          "changedPaths": [
+            "streams/src/test/java/org/apache/kafka/streams/kstream/internals/graph/GraphGraceSearchUtilTest.java"
+          ],
+          "changedPathsSha256": "0445e2a6d6c9cbef07634b84c858b455ca482d50a370c3342c7daaae521699cc",
+          "changeShape": "TEST_SOURCE"
+        },
+        {
+          "ordinal": 25,
+          "revision": "6b82d1f8dfd489ec9da93ca036369d927baf6cd7",
+          "parentRevision": "254612f9126bd6137f05663b43723870fd49cb36",
+          "treeRevision": "89d11338700133cbd40206bdeeb293d5bff7d7ed",
+          "committedAt": "2026-08-25T03:04:18+08:00",
+          "changedPaths": [
+            "streams/src/test/java/org/apache/kafka/streams/kstream/internals/foreignkeyjoin/ForeignTableJoinProcessorSupplierTests.java",
+            "streams/src/test/java/org/apache/kafka/streams/kstream/internals/foreignkeyjoin/ResponseJoinProcessorSupplierTest.java",
+            "streams/src/test/java/org/apache/kafka/streams/kstream/internals/foreignkeyjoin/SubscriptionSendProcessorSupplierTest.java"
+          ],
+          "changedPathsSha256": "c664ce6ec3485963e86fd1436e7e4a5833b47192679009a0eb2dc6d6c9f28af0",
+          "changeShape": "TEST_SOURCE"
+        },
+        {
+          "ordinal": 26,
+          "revision": "5ad7e0e3f343241f030c77eac7f87ac449522fc1",
+          "parentRevision": "6b82d1f8dfd489ec9da93ca036369d927baf6cd7",
+          "treeRevision": "d60a35839af192deaf1c39d23ea6058ddcda8290",
+          "committedAt": "2026-08-25T09:11:08+08:00",
+          "changedPaths": [
+            "server/src/main/java/org/apache/kafka/server/partition/DefaultAlterPartitionManager.java",
+            "server/src/test/java/org/apache/kafka/server/partition/AlterPartitionManagerTest.java"
+          ],
+          "changedPathsSha256": "c628d727cf9d96472fe90bf1a240a2f9868b52b10ee69bb7e8716788341856bd",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 27,
+          "revision": "21a2e9a227b17443d60cead4b6c2a54eb952653f",
+          "parentRevision": "5ad7e0e3f343241f030c77eac7f87ac449522fc1",
+          "treeRevision": "3612f2769c62fc2cfc6c33b2fef283c035857a08",
+          "committedAt": "2026-08-25T10:00:26+08:00",
+          "changedPaths": [
+            "core/src/main/scala/kafka/server/DynamicBrokerConfig.scala"
+          ],
+          "changedPathsSha256": "c82014f6dea1ae6d0a47ae11e9f86e891773fb6f2ae16342562be2b54e2eb050",
+          "changeShape": "PRODUCTION_SOURCE"
+        },
+        {
+          "ordinal": 28,
+          "revision": "263b02ebc6e409863b0431b87e2323fcb1e0dfb9",
+          "parentRevision": "21a2e9a227b17443d60cead4b6c2a54eb952653f",
+          "treeRevision": "30d6b5c9bf2d63b583a5215c7b6cda0bac5db7bb",
+          "committedAt": "2026-08-25T14:32:28+08:00",
+          "changedPaths": [
+            "tests/kafkatest/benchmarks/core/benchmark_test.py"
+          ],
+          "changedPathsSha256": "21687a1bde0ce36b0fe9484ef19c8f7834012a3aca617be4174bb125d27eb3dd",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 29,
+          "revision": "d8683419f26b36d2221eda20575981cb6375fb26",
+          "parentRevision": "263b02ebc6e409863b0431b87e2323fcb1e0dfb9",
+          "treeRevision": "8493efaccfbddb0b87d14a892fcdd4ce3b675823",
+          "committedAt": "2026-08-25T14:52:26+08:00",
+          "changedPaths": [
+            "docker/jvm/Dockerfile",
+            "docker/jvm/jsa_launch",
+            "docker/native/Dockerfile"
+          ],
+          "changedPathsSha256": "d08201fb86b4f8f7fe84c72620470d2a7756e1d5b86750c68c2665ab5930a4fb",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 30,
+          "revision": "d3b8b1bd023dc3d8dff4f7f85af5963de0214b11",
+          "parentRevision": "d8683419f26b36d2221eda20575981cb6375fb26",
+          "treeRevision": "1ae9d8e26dcddea55d8b5de9221affcdaba2697e",
+          "committedAt": "2026-08-25T13:20:58+05:30",
+          "changedPaths": [
+            "clients/src/main/java/org/apache/kafka/clients/MetadataSnapshot.java",
+            "clients/src/main/java/org/apache/kafka/clients/producer/internals/BuiltInPartitioner.java",
+            "clients/src/main/java/org/apache/kafka/clients/producer/internals/ChunkedRecordAccumulator.java",
+            "clients/src/main/java/org/apache/kafka/clients/producer/internals/ProducerBatch.java",
+            "clients/src/main/java/org/apache/kafka/clients/producer/internals/RecordAccumulator.java",
+            "jmh-benchmarks/src/main/java/org/apache/kafka/jmh/producer/RecordAccumulatorReadyBenchmark.java"
+          ],
+          "changedPathsSha256": "2b0225d4d4e81efcd7275b0b05fdaabc8ab7a88fd9f270e5ce8a256642e91c67",
+          "changeShape": "PRODUCTION_SOURCE"
+        }
+      ]
+    },
+    {
+      "policy": {
+        "key": "micronaut-core",
+        "repositoryId": "micronaut-projects/micronaut-core",
+        "remoteUrl": "https://github.com/micronaut-projects/micronaut-core.git",
+        "branch": "5.2.x",
+        "jdkToolchain": "temurin-jdk-25",
+        "workflow": [
+          "assemble",
+          "--offline",
+          "--no-daemon",
+          "--max-workers=12"
+        ],
+        "requiredOutputs": [
+          "http-client-jdk/build/libs/**"
+        ]
+      },
+      "remoteHead": "88d07edeb51e663fad6f1375abcad48e4f9b99c0",
+      "anchor": {
+        "ordinal": 0,
+        "revision": "3083f40df534736e508a5e97c4cd6b7fbd41caad",
+        "parentRevision": "2939bae25d4082be87756125c75f7c6b047060e0",
+        "treeRevision": "f19dc83707b7b342a2eafe14d042cfaa7a2d952f",
+        "committedAt": "2026-08-04T10:30:00+02:00",
+        "changedPaths": [
+          "inject/src/main/java/io/micronaut/context/env/PropertySourcePropertyResolver.java",
+          "inject/src/test/groovy/io/micronaut/context/env/PropertySourcePropertyResolverSpec.groovy"
+        ],
+        "changedPathsSha256": "0c7f4b7b3d8b7e6aa9f03a31a8771a0fa3b0d5ce6653dfe4af75b45ecf1f63c6",
+        "changeShape": "MIXED"
+      },
+      "primary": [
+        {
+          "ordinal": 1,
+          "revision": "b963c8fce122421171de9f3ebf90328c1b935bd6",
+          "parentRevision": "3083f40df534736e508a5e97c4cd6b7fbd41caad",
+          "treeRevision": "343f66d35db87371bc551d0eceea39aa82536a5b",
+          "committedAt": "2026-08-04T10:30:50+02:00",
+          "changedPaths": [
+            "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/AbstractKotlinElement.kt",
+            "inject-kotlin/src/test/groovy/io/micronaut/kotlin/processing/beans/BeanDefinitionSpec.groovy"
+          ],
+          "changedPathsSha256": "9bb9240c69be6a7f79924ee73f0a33f60c674a1de425c0246b793b4590d7dcb3",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 2,
+          "revision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+          "parentRevision": "b963c8fce122421171de9f3ebf90328c1b935bd6",
+          "treeRevision": "75d8826068f20aa41dd285bfc2d61ec8dbcbddc1",
+          "committedAt": "2026-08-05T09:37:13+02:00",
+          "changedPaths": [
+            "context-propagation/src/test/kotlin/io/micronaut/context/propagation/client/ClientFilterPropagatedContextSpec.kt",
+            "http-client-core/build.gradle.kts",
+            "http-client-core/src/main/java/io/micronaut/http/client/interceptor/HttpClientIntroductionAdvice.java"
+          ],
+          "changedPathsSha256": "ae71042a064eaca8b9d2745f203f5b0102d957d8c4267415ac53f18427e58459",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 3,
+          "revision": "f8b4e5ce89b24fa8bc0a1bee867847e03ab51184",
+          "parentRevision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+          "treeRevision": "47fd9fc16e1e2a9ebbfcb39c560bfc2ccdb7a5bf",
+          "committedAt": "2026-08-11T10:20:49+02:00",
+          "changedPaths": [
+            "inject-python/build.gradle.kts",
+            "inject-python/src/main/java/io/micronaut/python/compiler/IncrementalCompilation.java",
+            "inject-python/src/main/java/io/micronaut/python/compiler/PyronautCompiler.java",
+            "inject-python/src/main/java/io/micronaut/python/compiler/PyronautJavaCompiler.java",
+            "inject-python/src/main/java/io/micronaut/python/processing/PythonProcessingSession.java",
+            "inject-python/src/test/java/io/micronaut/python/compiler/PyronautCompilerIncrementalTest.java"
+          ],
+          "changedPathsSha256": "29495c17dce52833b5227cc431f818adfb2d83550d5d275a810cd898015bb90d",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 4,
+          "revision": "a898c29504a7cd3301131cfb1441d41078e27d16",
+          "parentRevision": "f8b4e5ce89b24fa8bc0a1bee867847e03ab51184",
+          "treeRevision": "e8e6560fc9e0c0302b0cfde1c479b1222f7ac92f",
+          "committedAt": "2026-08-11T13:07:25+02:00",
+          "changedPaths": [
+            "inject-python-test/src/test/groovy/io/micronaut/python/compiler/PyronautCompilerSpec.groovy",
+            "inject-python/src/main/java/io/micronaut/python/compiler/PyronautCompiler.java",
+            "inject-python/src/main/java/io/micronaut/python/compiler/PyronautJavaCompiler.java",
+            "inject-python/src/main/java/io/micronaut/python/processing/PythonAnnotationProcessor.java",
+            "inject-python/src/main/java/io/micronaut/python/processing/PythonAstParser.java",
+            "inject-python/src/main/resources/GRAALPY-VFS/io.micronaut/micronaut-inject-python/src/micronaut_transformer.py",
+            "inject-python/src/test/java/io/micronaut/python/compiler/PyronautCompilerIncrementalTest.java",
+            "inject-python/src/test/java/io/micronaut/python/compiler/PyronautCompilerTest.java"
+          ],
+          "changedPathsSha256": "348ba837d2168ea4cefeaaee23c6b7aaa8853b59b35638d6b163de5704f47d38",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 5,
+          "revision": "ee76087d1a392696f3e92a6d3ed092b2ecfc44b1",
+          "parentRevision": "a898c29504a7cd3301131cfb1441d41078e27d16",
+          "treeRevision": "b60d504c2dc049a25f6b442331f837ab2a324084",
+          "committedAt": "2026-08-14T11:41:03+02:00",
+          "changedPaths": [
+            "inject-python/src/main/java/io/micronaut/python/processing/PythonEnvironment.java",
+            "inject-python/src/main/java/io/micronaut/python/processing/PythonStubGenerator.java",
+            "inject-python/src/main/java/io/micronaut/python/processing/annotation/PythonAnnotationMetadataBuilder.java",
+            "inject-python/src/main/java/io/micronaut/python/processing/visitor/ControllerScriptElementProcessor.java",
+            "inject-python/src/main/java/io/micronaut/python/processing/visitor/PythonScriptElement.java",
+            "inject-python/src/main/java/io/micronaut/python/processing/visitor/ScriptDef.java",
+            "inject-python/src/main/resources/GRAALPY-VFS/io.micronaut/micronaut-inject-python/src/micronaut_processor.py",
+            "inject-python/src/test/java/io/micronaut/python/processing/PythonAstParserTest.java",
+            "src/main/docs/guide/languageSupport/python/moduleScripts.adoc",
+            "src/main/docs/guide/languageSupport/python/moduleScripts/testing.adoc",
+            "src/main/docs/guide/toc.yml",
+            "test-suite-python/src/test/python/example/ModuleSpec.py",
+            "test-suite-python/src/test/python/example/module_routes.py"
+          ],
+          "changedPathsSha256": "353143b0dfbafe15a3c17423c1b020f81da980547151772cdbdf8310389c7786",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 6,
+          "revision": "b868a19567c7f00e195b4fb3e21dacdb585728e5",
+          "parentRevision": "ee76087d1a392696f3e92a6d3ed092b2ecfc44b1",
+          "treeRevision": "ccfa62d1423aac9ef1f1b5dc8bfed001e38fee84",
+          "committedAt": "2026-08-14T11:41:17+02:00",
+          "changedPaths": [
+            "inject-python-test/src/test/groovy/io/micronaut/python/annotation/processing/test/web/PythonControllerSpec.groovy"
+          ],
+          "changedPathsSha256": "b3127f11cdb41e4c88cb7660a77c5a265b844d6a9f6b51b798c14e38bd209553",
+          "changeShape": "TEST_SOURCE"
+        },
+        {
+          "ordinal": 7,
+          "revision": "197938e99b52fbc568432b73d19bf1fa3d7c65e9",
+          "parentRevision": "b868a19567c7f00e195b4fb3e21dacdb585728e5",
+          "treeRevision": "a5f53664e64b4f37ec9a6ca4808e11571372ee71",
+          "committedAt": "2026-08-14T17:19:27+02:00",
+          "changedPaths": [
+            ".github/workflows/central-sync.yml",
+            ".github/workflows/graalvm-dev.yml",
+            ".github/workflows/graalvm-latest.yml",
+            ".github/workflows/gradle.yml",
+            ".github/workflows/publish-snapshot.yml",
+            ".github/workflows/python.yml",
+            ".github/workflows/release.yml",
+            ".github/workflows/sonatype.yml"
+          ],
+          "changedPathsSha256": "77881cb3e72dc0f3d86a925701638a630d3c62452679555f758a14e446b18ce6",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 8,
+          "revision": "dc03ff09a0c03cb6d79737b389d80251a98b7376",
+          "parentRevision": "197938e99b52fbc568432b73d19bf1fa3d7c65e9",
+          "treeRevision": "7a913faee6a89fe2b096cc59fb04090c045b9eec",
+          "committedAt": "2026-08-14T17:19:41+02:00",
+          "changedPaths": [
+            ".github/workflows/corretto.yml"
+          ],
+          "changedPathsSha256": "11fabcff8bbf71e43ddff0a6826e2330a241ece33528591db04562733d8fc68c",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 9,
+          "revision": "42c14e7f6f0ea07a769f6dd3d46c24a7c5de790c",
+          "parentRevision": "dc03ff09a0c03cb6d79737b389d80251a98b7376",
+          "treeRevision": "44bac9b824184567c282de71b1c9ed7a3a04054c",
+          "committedAt": "2026-08-14T18:11:46+02:00",
+          "changedPaths": [
+            "gradle/libs.versions.toml"
+          ],
+          "changedPathsSha256": "2fa9aa2d7a4e09e2d4401d6ce8619c5a89108cf2618ad5eb222f914dc1839aaf",
+          "changeShape": "BUILD_LOGIC_OR_DEPENDENCY"
+        },
+        {
+          "ordinal": 10,
+          "revision": "3b3dccd8178033cf0e338054e532b45910b5b45e",
+          "parentRevision": "42c14e7f6f0ea07a769f6dd3d46c24a7c5de790c",
+          "treeRevision": "5f3cd79f603a114ff57ff62d134da95d446b4ee1",
+          "committedAt": "2026-08-14T22:40:13+02:00",
+          "changedPaths": [
+            "inject-python-test/build.gradle.kts",
+            "inject-python-test/src/test/groovy/io/micronaut/python/annotation/processing/test/ModuleScriptSpec.groovy",
+            "inject-python-test/src/test/groovy/io/micronaut/python/compiler/PyronautCompilerSpec.groovy",
+            "inject-python/src/main/java/io/micronaut/python/processing/PythonStubGenerator.java",
+            "inject-python/src/main/java/io/micronaut/python/processing/annotation/PythonElementAnnotationMetadataFactory.java",
+            "inject-python/src/main/java/io/micronaut/python/processing/visitor/PythonScriptElement.java",
+            "inject-python/src/main/resources/GRAALPY-VFS/io.micronaut/micronaut-inject-python/src/micronaut_processor.py",
+            "test-suite-python/src/test/python/example/ModuleSpec.py"
+          ],
+          "changedPathsSha256": "64d8daa2cc9490b8025a9fe968f56e80055771ac903f79134d88a41a104d22a7",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 11,
+          "revision": "e1b601cb256e1ebc50162dda3f0b1e193d6db1fb",
+          "parentRevision": "3b3dccd8178033cf0e338054e532b45910b5b45e",
+          "treeRevision": "ed49e1e998cc873b86dc041a6f45ca382b11acf0",
+          "committedAt": "2026-08-15T20:32:37+02:00",
+          "changedPaths": [
+            "gradle/libs.versions.toml"
+          ],
+          "changedPathsSha256": "2fa9aa2d7a4e09e2d4401d6ce8619c5a89108cf2618ad5eb222f914dc1839aaf",
+          "changeShape": "BUILD_LOGIC_OR_DEPENDENCY"
+        },
+        {
+          "ordinal": 12,
+          "revision": "54d38f397e622b2fa5f8bc72fc04bd5ea87c6d8a",
+          "parentRevision": "e1b601cb256e1ebc50162dda3f0b1e193d6db1fb",
+          "treeRevision": "952c5e458b646c0b5bd74c028747d2a482567e46",
+          "committedAt": "2026-08-16T15:58:25+02:00",
+          "changedPaths": [
+            ".agents/skills/coding/SKILL.md",
+            ".agents/skills/gradle/SKILL.md",
+            "context-python/src/main/java/io/micronaut/context/python/annotation/PythonModule.java",
+            "inject-python-test/src/test/groovy/io/micronaut/python/compiler/PyronautCompilerSpec.groovy",
+            "inject-python/src/main/java/io/micronaut/python/compiler/IncrementalCompilation.java",
+            "inject-python/src/main/java/io/micronaut/python/processing/PythonAstParser.java",
+            "inject-python/src/main/java/io/micronaut/python/processing/PythonStubGenerator.java",
+            "inject-python/src/main/java/io/micronaut/python/processing/visitor/ScriptDef.java",
+            "test-suite-python/src/test/python/example/test_main.py"
+          ],
+          "changedPathsSha256": "3f324fed28d26d3b0c18deb7addee9eecadc8b6c3dfb3a48c3b252bc47dc6cc8",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 13,
+          "revision": "9de1e04f6696b528fdad36e38df781a2cb48fc04",
+          "parentRevision": "54d38f397e622b2fa5f8bc72fc04bd5ea87c6d8a",
+          "treeRevision": "5c60ef8beba159787b00c293bda054899e88c71d",
+          "committedAt": "2026-08-17T07:38:48+02:00",
+          "changedPaths": [
+            "inject-python/src/main/resources/GRAALPY-VFS/io.micronaut/micronaut-inject-python/src/micronaut_transformer.py",
+            "inject-python/src/test/java/io/micronaut/python/processing/PythonAstParserTest.java"
+          ],
+          "changedPathsSha256": "dc0d71725ad2d98bda448d4c1ee639dd27a176979b7c347224c05199308799a7",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 14,
+          "revision": "e129f3ced1c5fc03f2318cfe07db1556499725d4",
+          "parentRevision": "9de1e04f6696b528fdad36e38df781a2cb48fc04",
+          "treeRevision": "5929d995b4eeb11fe03cf2cf5dc67e985ef3cf93",
+          "committedAt": "2026-08-17T08:37:15+02:00",
+          "changedPaths": [
+            "buffer-netty/src/main/java/io/micronaut/buffer/netty/NettyReadBufferFactory.java",
+            "buffer-netty/src/test/java/io/micronaut/buffer/netty/AbstractReadBufferTest.java",
+            "buffer-netty/src/test/java/io/micronaut/buffer/netty/NettyReadBufferTest.java",
+            "context-python/src/main/java/io/micronaut/context/python/PythonContextRuntime.java"
+          ],
+          "changedPathsSha256": "4e7a77d7b92a86fd574c90a3d3fe0ac16418ca445c305b90eb098f7f2b472cf4",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 15,
+          "revision": "a6b836422f6d89cd935906280e98fd95345833f9",
+          "parentRevision": "e129f3ced1c5fc03f2318cfe07db1556499725d4",
+          "treeRevision": "bea91377e6daf17d151864b90d345c9eedada944",
+          "committedAt": "2026-08-18T07:42:12+02:00",
+          "changedPaths": [
+            "inject-python/src/main/java/io/micronaut/python/processing/PythonStubGenerator.java",
+            "inject-python/src/test/java/io/micronaut/python/compiler/PyronautCompilerTest.java"
+          ],
+          "changedPathsSha256": "d9a307e64a1a11f6e946149384d7d54e2a3d512dc682adce502c8412758c0c58",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 16,
+          "revision": "1bef76de158433f9a164dd9320e2fad3b31dbf46",
+          "parentRevision": "a6b836422f6d89cd935906280e98fd95345833f9",
+          "treeRevision": "5598320dff50dc4197ee8246f84efbfa91b9f544",
+          "committedAt": "2026-08-18T10:58:14+02:00",
+          "changedPaths": [
+            "core/src/main/java/io/micronaut/core/io/service/ServiceScanner.java",
+            "core/src/main/java/io/micronaut/core/util/NativeImageUtils.java",
+            "core/src/test/java/io/micronaut/core/io/service/SoftServiceLoaderTest.java"
+          ],
+          "changedPathsSha256": "38a49a05b485b6d153c7e6b220bc5bd6deb34310553cf9f53bee05d37fbf91b0",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 17,
+          "revision": "2db0fd7dd0ce5c26faf72f05852e88ddea466a7e",
+          "parentRevision": "1bef76de158433f9a164dd9320e2fad3b31dbf46",
+          "treeRevision": "bbc35b00c68049f61599762c0c282792a8491320",
+          "committedAt": "2026-08-18T16:14:31+02:00",
+          "changedPaths": [
+            "inject-python/src/main/resources/GRAALPY-VFS/io.micronaut/micronaut-inject-python/src/micronaut_transformer.py",
+            "inject-python/src/test/java/io/micronaut/python/processing/PythonAstParserTest.java"
+          ],
+          "changedPathsSha256": "dc0d71725ad2d98bda448d4c1ee639dd27a176979b7c347224c05199308799a7",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 18,
+          "revision": "e8773c4db69ccae2bfac5559c7a71c92b58a422c",
+          "parentRevision": "2db0fd7dd0ce5c26faf72f05852e88ddea466a7e",
+          "treeRevision": "8f6225086bdd99d101d43c82d40f51ab81177073",
+          "committedAt": "2026-08-19T03:41:30Z",
+          "changedPaths": [
+            "gradle/libs.versions.toml"
+          ],
+          "changedPathsSha256": "2fa9aa2d7a4e09e2d4401d6ce8619c5a89108cf2618ad5eb222f914dc1839aaf",
+          "changeShape": "BUILD_LOGIC_OR_DEPENDENCY"
+        },
+        {
+          "ordinal": 19,
+          "revision": "234085479fde13fbfdeed63970ca3f9455f3eb0c",
+          "parentRevision": "e8773c4db69ccae2bfac5559c7a71c92b58a422c",
+          "treeRevision": "fa77339f230cda02897de67512dc1b9456962ab7",
+          "committedAt": "2026-08-19T09:13:44+02:00",
+          "changedPaths": [
+            "core-processor/src/main/java/io/micronaut/context/visitor/ConfigurationMetadataWriterVisitor.java",
+            "core-processor/src/main/java/io/micronaut/inject/configuration/JsonSchemaConfigurationMetadataWriter.java",
+            "http-server-netty/src/main/java/io/micronaut/http/server/netty/multipart/FormDemuxer.java",
+            "http-server-tck/src/main/java/io/micronaut/http/server/tck/tests/cors/CorsSimpleRequestTest.java",
+            "http-server-tck/src/main/java/io/micronaut/http/server/tck/tests/cors/SimpleRequestWithCorsNotEnabledTest.java",
+            "inject-java/src/test/groovy/io/micronaut/inject/configuration/ConfigurationJsonSchemaSpec.groovy",
+            "inject/src/test/java/io/micronaut/context/DefaultApplicationContextTest.java",
+            "src/main/docs/guide/httpServer/transfers.adoc",
+            "test-suite-http-server-tck-jdk/build.gradle.kts",
+            "test-suite-http-server-tck-netty/build.gradle.kts"
+          ],
+          "changedPathsSha256": "a813d47fc8ffd1352cd39fb46cb66f10addae90133eb01801d55ac0dd82b4d01",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 20,
+          "revision": "eb0070fe38e91dec6d0b781e9421355cb3ce68dd",
+          "parentRevision": "234085479fde13fbfdeed63970ca3f9455f3eb0c",
+          "treeRevision": "d2ab6db3efc207d8f0623d4ce8b30a8378d9a212",
+          "committedAt": "2026-08-20T02:56:55Z",
+          "changedPaths": [
+            "gradle/libs.versions.toml"
+          ],
+          "changedPathsSha256": "2fa9aa2d7a4e09e2d4401d6ce8619c5a89108cf2618ad5eb222f914dc1839aaf",
+          "changeShape": "BUILD_LOGIC_OR_DEPENDENCY"
+        }
+      ],
+      "reserves": [
+        {
+          "ordinal": 21,
+          "revision": "f070bf5e42ed4708930802f7229ef549105d2207",
+          "parentRevision": "eb0070fe38e91dec6d0b781e9421355cb3ce68dd",
+          "treeRevision": "ad28c0e55ec41997da5c793f42742c28f763ff55",
+          "committedAt": "2026-08-20T07:42:22+02:00",
+          "changedPaths": [
+            ".agents/skills/coding/SKILL.md",
+            ".agents/skills/gradle/SKILL.md",
+            ".github/workflows/central-sync.yml",
+            ".github/workflows/graalvm-dev.yml",
+            ".github/workflows/graalvm-latest.yml",
+            ".github/workflows/gradle.yml",
+            ".github/workflows/publish-snapshot.yml",
+            ".github/workflows/release.yml",
+            ".github/workflows/sonatype.yml",
+            ".gitignore"
+          ],
+          "changedPathsSha256": "ef981a6e0934fc02a7416de3453f3a8f31936f7a750ae2b31c57919683128097",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 22,
+          "revision": "a23044d47d3c73e863047bbe55abcc0a7eb29ae2",
+          "parentRevision": "f070bf5e42ed4708930802f7229ef549105d2207",
+          "treeRevision": "23a7682e8bfd776547b1a42af9687c19cfbe14ad",
+          "committedAt": "2026-08-20T12:13:29+02:00",
+          "changedPaths": [
+            ".github/workflows/python.yml",
+            "gradle/libs.versions.toml"
+          ],
+          "changedPathsSha256": "a6d390d33f2447a3e73c5a3b37952343886c0c9e80a7162b3cce783d5b5bf2b3",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 23,
+          "revision": "4bff1e8107a86f6ce9617b827cacfc3bced3e985",
+          "parentRevision": "a23044d47d3c73e863047bbe55abcc0a7eb29ae2",
+          "treeRevision": "9cb2304e02affbe7b67e4987319a04c1cc8af0a2",
+          "committedAt": "2026-08-20T22:34:35+02:00",
+          "changedPaths": [
+            "context-python/build.gradle.kts",
+            "inject-python/build.gradle.kts"
+          ],
+          "changedPathsSha256": "19f384ce5645cec1ab08d9418333706cca78c6626e5dc6d0d7870ef8fb6143f5",
+          "changeShape": "BUILD_LOGIC_OR_DEPENDENCY"
+        },
+        {
+          "ordinal": 24,
+          "revision": "05cdf6f0d17c7160050697dfaf7e3042ddd2579c",
+          "parentRevision": "4bff1e8107a86f6ce9617b827cacfc3bced3e985",
+          "treeRevision": "e2322af468a433359899be8e8f96702533e48098",
+          "committedAt": "2026-08-21T03:15:42Z",
+          "changedPaths": [
+            "inject-python-test/build.gradle.kts",
+            "test-suite-python/build.gradle.kts"
+          ],
+          "changedPathsSha256": "e0e989bc067b356f85a55cc51e8d4269decb65302e4b3719e65f2e1fb1cffe96",
+          "changeShape": "BUILD_LOGIC_OR_DEPENDENCY"
+        },
+        {
+          "ordinal": 25,
+          "revision": "ffbaf590c5902d0c906a2e59e538e6e578a00eaa",
+          "parentRevision": "05cdf6f0d17c7160050697dfaf7e3042ddd2579c",
+          "treeRevision": "e298edcff4d41d894ee0bd2a817f91df89c9fadd",
+          "committedAt": "2026-08-21T08:39:28+02:00",
+          "changedPaths": [
+            "gradle/wrapper/gradle-wrapper.jar",
+            "gradle/wrapper/gradle-wrapper.properties"
+          ],
+          "changedPathsSha256": "6050d395c3b6bcd64a308b3c66b9cba985ddec6791278ab033674754ed0b817d",
+          "changeShape": "BUILD_LOGIC_OR_DEPENDENCY"
+        },
+        {
+          "ordinal": 26,
+          "revision": "0663b01d521557d7769b9c83b8700450087d0f43",
+          "parentRevision": "ffbaf590c5902d0c906a2e59e538e6e578a00eaa",
+          "treeRevision": "08031ea1fa731fd0525ef32b911cf404141d7ce9",
+          "committedAt": "2026-08-21T14:20:48+02:00",
+          "changedPaths": [
+            "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/KotlinNativeElementsHelper.kt",
+            "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/annotation/KotlinAnnotationMetadataBuilder.kt",
+            "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/beans/BeanDefinitionProcessor.kt",
+            "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/extensions.kt",
+            "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/AbstractKotlinElement.kt",
+            "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/AbstractKotlinPropertyAccessorMethodElement.kt",
+            "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/KotlinClassElement.kt",
+            "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/KotlinMethodElement.kt",
+            "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/KotlinNativeElement.kt",
+            "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/KotlinVisitorContext.kt"
+          ],
+          "changedPathsSha256": "e100ef0e14f793f7c39043aa63951273b6b8d5e4d0e87772ce63fc2b00b5bd63",
+          "changeShape": "PRODUCTION_SOURCE"
+        },
+        {
+          "ordinal": 27,
+          "revision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+          "parentRevision": "0663b01d521557d7769b9c83b8700450087d0f43",
+          "treeRevision": "69d637b6d8b445ff41809df9fd1d2394bf7c1893",
+          "committedAt": "2026-08-21T16:40:19+02:00",
+          "changedPaths": [
+            "core-processor/src/main/java/io/micronaut/aop/writer/AopProxyWriter.java",
+            "inject-java/src/test/groovy/io/micronaut/aop/scope/ScopedProxyToStringSpec.groovy"
+          ],
+          "changedPathsSha256": "b635c3b348b0438ae3afb73e21428ed285e48bbc06fa8afb42b92853349e576d",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 28,
+          "revision": "784e7ff015460df6fb6a7742bb4a8f5e20bb2256",
+          "parentRevision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+          "treeRevision": "2cc896cd6634c43d1778d68fc8e0a4dd5db2d75b",
+          "committedAt": "2026-08-24T09:40:57+02:00",
+          "changedPaths": [
+            "gradle/libs.versions.toml",
+            "http/src/main/java/io/micronaut/http/Destination.java",
+            "http/src/main/java/io/micronaut/http/HttpHeaders.java",
+            "http/src/main/java/io/micronaut/http/HttpRequest.java",
+            "http/src/main/java/io/micronaut/http/Mode.java",
+            "http/src/main/java/io/micronaut/http/SecFetch.java",
+            "http/src/main/java/io/micronaut/http/Site.java",
+            "http/src/test/groovy/io/micronaut/http/HttpHeadersSpec.groovy",
+            "http/src/test/java/io/micronaut/http/DestinationTest.java",
+            "http/src/test/java/io/micronaut/http/ModeTest.java",
+            "http/src/test/java/io/micronaut/http/SecFetchTest.java",
+            "http/src/test/java/io/micronaut/http/SiteTest.java"
+          ],
+          "changedPathsSha256": "a0cec1c7abda2cef29175cb6c9fab7476c512758a12da6799b1bdeddffa671bd",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 29,
+          "revision": "f06bb3693f9851421c86ca95c4621699be194b7f",
+          "parentRevision": "784e7ff015460df6fb6a7742bb4a8f5e20bb2256",
+          "treeRevision": "4ebf90662cc486c650588b56851d44d070b04f77",
+          "committedAt": "2026-08-25T15:33:23+02:00",
+          "changedPaths": [
+            "inject-python-test/src/test/groovy/io/micronaut/python/annotation/processing/test/ConfigurationBuilderSpec.groovy",
+            "inject-python-test/src/test/groovy/io/micronaut/python/compiler/GenerateToStringEqualsSpec.groovy",
+            "inject-python/src/main/java/io/micronaut/python/processing/PythonStubGenerator.java",
+            "inject-python/src/test/java/io/micronaut/python/compiler/PyronautCompilerTest.java"
+          ],
+          "changedPathsSha256": "b35b5b22bbea61528a93d1bd35c0fa16a9458c451069d537740d5a168ef9db37",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 30,
+          "revision": "88d07edeb51e663fad6f1375abcad48e4f9b99c0",
+          "parentRevision": "f06bb3693f9851421c86ca95c4621699be194b7f",
+          "treeRevision": "4b7942ddedc956b6aefc776bed20acbe366c432f",
+          "committedAt": "2026-08-25T18:29:41+02:00",
+          "changedPaths": [
+            "core-processor/src/main/java/io/micronaut/aop/writer/ProxyingBeanDefinitionWriter.java",
+            "core-processor/src/main/java/io/micronaut/inject/writer/BeanDefinitionWriter.java",
+            "inject-java/src/test/groovy/io/micronaut/aop/compile/PreDestroyInterceptorCompileSpec.groovy"
+          ],
+          "changedPathsSha256": "07cbb0621bfce9adb24aa1aeddc284b850a9ad1052e93f8e5b7211cb3117ee82",
+          "changeShape": "MIXED"
+        }
+      ]
+    },
+    {
+      "policy": {
+        "key": "apache-groovy",
+        "repositoryId": "apache/groovy",
+        "remoteUrl": "https://github.com/apache/groovy.git",
+        "branch": "GROOVY_5_0_X",
+        "jdkToolchain": "temurin-jdk-21",
+        "workflow": [
+          "json:assemble",
+          "--offline",
+          "--no-daemon",
+          "--max-workers=12"
+        ],
+        "requiredOutputs": [
+          "subprojects/groovy-json/build/classes/java/main/**",
+          "subprojects/groovy-json/build/resources/main/**"
+        ]
+      },
+      "remoteHead": "a63cd35f0fd7f5d7dd10c0fbd4236dc4eb659257",
+      "anchor": {
+        "ordinal": 0,
+        "revision": "b46ebb25e7bcba7269c9185aa0e965e02c50db06",
+        "parentRevision": "b7796c3f9bf1ce53fb1075cc86dbf46b5e8ca94c",
+        "treeRevision": "880a023daca8d38b0552d71578039f70c7354a14",
+        "committedAt": "2026-06-28T11:05:27+10:00",
+        "changedPaths": [
+          "src/test/groovy/org/codehaus/groovy/transform/traitx/Groovy12106.groovy",
+          "src/test/groovy/org/codehaus/groovy/transform/traitx/TraitStaticDispatchMatrix.groovy"
+        ],
+        "changedPathsSha256": "31e1c8cb5d0c1ea8dbf575f14db08fe487da33fb790f71cd960ddd496d2ae7b3",
+        "changeShape": "TEST_SOURCE"
+      },
+      "primary": [
+        {
+          "ordinal": 1,
+          "revision": "fcab925d215e3589e9ef2c9e7876d1b37df9a01f",
+          "parentRevision": "b46ebb25e7bcba7269c9185aa0e965e02c50db06",
+          "treeRevision": "e6da64dbd734997157a76d5586509dc02278e3ca",
+          "committedAt": "2026-06-30T06:53:46+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/transform/trait/TraitReceiverTransformer.java",
+            "src/test/groovy/org/codehaus/groovy/transform/traitx/Groovy12106.groovy"
+          ],
+          "changedPathsSha256": "cc47693ea8e397b726498e8daefe10018d4454b8ce1646cc3f8f529de71fe943",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 2,
+          "revision": "67198d4f5f17fcd56eae7ad968033633ae1b47bc",
+          "parentRevision": "fcab925d215e3589e9ef2c9e7876d1b37df9a01f",
+          "treeRevision": "be4b335bb3526c2f61a6a6348ce25d45fdcb4064",
+          "committedAt": "2026-07-01T00:33:25+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/transform/trait/TraitReceiverTransformer.java"
+          ],
+          "changedPathsSha256": "7de660d116c25583fee320e04dae8af24041a919bf596a6c23feb5a6c8189315",
+          "changeShape": "PRODUCTION_SOURCE"
+        },
+        {
+          "ordinal": 3,
+          "revision": "1047526efa98283ac736d2ffe208648dd79a98c4",
+          "parentRevision": "67198d4f5f17fcd56eae7ad968033633ae1b47bc",
+          "treeRevision": "d3d68ca4bf5f96b4fad5231c87268e336abe5d81",
+          "committedAt": "2026-07-01T06:23:40+10:00",
+          "changedPaths": [
+            "src/main/java/groovy/transform/OperatorRename.java",
+            "src/main/java/org/codehaus/groovy/runtime/ScriptBytecodeAdapter.java",
+            "src/main/java/org/codehaus/groovy/transform/OperatorRenameASTTransformation.java",
+            "src/test/groovy/org/codehaus/groovy/transform/OperatorRenameTransformTest.groovy"
+          ],
+          "changedPathsSha256": "dc3d8d9356ab569e1858f297afd714b13141d32a98804f412e2572ddfff833b7",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 4,
+          "revision": "7f126e6ca49e3a00fdc197421912ae1cdc0e1cab",
+          "parentRevision": "1047526efa98283ac736d2ffe208648dd79a98c4",
+          "treeRevision": "cac895012e5423a766eb1de20f78786e87a6cc95",
+          "committedAt": "2026-07-04T09:00:08+10:00",
+          "changedPaths": [
+            "gradle.properties"
+          ],
+          "changedPathsSha256": "01ffe7af6b3f601392cd4f538ca64ec859b8eca9d417a0e57b7ca80521f6a3fc",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 5,
+          "revision": "c2b7cdd4c45f13edbc076a54416ff0cf949cf75d",
+          "parentRevision": "7f126e6ca49e3a00fdc197421912ae1cdc0e1cab",
+          "treeRevision": "b5149122f34cedeb833fde795246d8b9db8e3f2f",
+          "committedAt": "2026-07-08T22:10:42+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/reflection/ParameterTypes.java",
+            "src/test/groovy/bugs/Groovy11182.groovy"
+          ],
+          "changedPathsSha256": "54221c17e6d9115f936873c47a3a73bb051d9cf9b96173ff5f823330686d5f1f",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 6,
+          "revision": "ee772e01f546b3961020581bb064a1f4e3df40fc",
+          "parentRevision": "c2b7cdd4c45f13edbc076a54416ff0cf949cf75d",
+          "treeRevision": "0c5eb1a3f9cbc4f3dbd043019dd2d643fb534a49",
+          "committedAt": "2026-07-08T22:10:51+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/reflection/CachedMethod.java",
+            "src/main/java/org/codehaus/groovy/runtime/MetaClassHelper.java",
+            "src/main/java/org/codehaus/groovy/runtime/callsite/PlainObjectMetaMethodSite.java",
+            "src/test/groovy/bugs/Groovy12140.groovy"
+          ],
+          "changedPathsSha256": "6caca9bf377fe59d97ed4878a438418a2d202f33f7278844d48907388de5d45a",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 7,
+          "revision": "4992767d8378d8f51a5f4065794303d62103a1bc",
+          "parentRevision": "ee772e01f546b3961020581bb064a1f4e3df40fc",
+          "treeRevision": "f4d388baad447feb50897d8548a3121efee5c228",
+          "committedAt": "2026-07-11T10:06:33+08:00",
+          "changedPaths": [
+            "subprojects/groovy-console/src/main/groovy/groovy/console/ui/AstNodeToScriptAdapter.groovy",
+            "subprojects/groovy-console/src/test/groovy/groovy/console/ui/AstNodeToScriptAdapterTest.groovy"
+          ],
+          "changedPathsSha256": "3519e24201e2d8e4fce05b0098c1e68d4b60cb2e91bbc3046533c3084f69b0eb",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 8,
+          "revision": "ff64047145b3f9098ec344aa3efd4a228b9d861e",
+          "parentRevision": "4992767d8378d8f51a5f4065794303d62103a1bc",
+          "treeRevision": "b9af13ea4defb2386abf3c185e8f78125821b459",
+          "committedAt": "2026-07-11T14:19:36+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/vmplugin/v8/Java8.java"
+          ],
+          "changedPathsSha256": "f778d298d3dcdd50566825979dfd2ac14cb1ba0dde937edda9588a21cdb58770",
+          "changeShape": "PRODUCTION_SOURCE"
+        },
+        {
+          "ordinal": 9,
+          "revision": "d5e442f85f38a83ce3b906946951d485e678ea60",
+          "parentRevision": "ff64047145b3f9098ec344aa3efd4a228b9d861e",
+          "treeRevision": "c16b8712fe93e53dbff8a2910fc9c0b35ac2b1ad",
+          "committedAt": "2026-07-13T19:56:51+10:00",
+          "changedPaths": [
+            "build-logic/src/main/groovy/org.apache.groovy-tested.gradle"
+          ],
+          "changedPathsSha256": "69df3a5270153f407266653ec48121688cd69b165af4c884a06a2eb504f09a53",
+          "changeShape": "PRODUCTION_SOURCE"
+        },
+        {
+          "ordinal": 10,
+          "revision": "ee45d534b0db8a44fca69ba1a44225f9af41db10",
+          "parentRevision": "d5e442f85f38a83ce3b906946951d485e678ea60",
+          "treeRevision": "c3537524df3e1f90ee9a8e14e0f1d127da282af7",
+          "committedAt": "2026-07-14T09:59:11+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/transform/stc/StaticTypeCheckingSupport.java",
+            "src/test/groovy/org/codehaus/groovy/transform/stc/StaticTypeCheckingSupportTest.groovy"
+          ],
+          "changedPathsSha256": "4f758c636791b420d559635db2f78da7e61dd58d4a6b20ef67b47ffaa427a8ac",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 11,
+          "revision": "e9b08dbff9d2e16057764f336674bfed1b6513ff",
+          "parentRevision": "ee45d534b0db8a44fca69ba1a44225f9af41db10",
+          "treeRevision": "9dc6bfa5e6e3e47236bdba41460a562460fbb9ac",
+          "committedAt": "2026-07-14T09:59:24+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/classgen/Verifier.java",
+            "src/test/groovy/org/codehaus/groovy/classgen/CovariantBridgeMethodOrderTest.groovy"
+          ],
+          "changedPathsSha256": "8bc70356ff9e024eedb61051cb0bcb091a4a19d2ce41be680fbef9b87da5000e",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 12,
+          "revision": "bea1ca1ed60a2c113bbf6f414f6a47d2ee4d099f",
+          "parentRevision": "e9b08dbff9d2e16057764f336674bfed1b6513ff",
+          "treeRevision": "934ed6c463fc16f167d6ee534bbe6c766fc8dbeb",
+          "committedAt": "2026-07-14T09:59:57+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/classgen/AsmClassGenerator.java",
+            "src/test/groovy/org/codehaus/groovy/classgen/SyntheticClassLiteralFieldOrderTest.groovy"
+          ],
+          "changedPathsSha256": "a87146c7d25ff6af4f903ab220a734cc892a9d07d044196ffb72585655a7f6cc",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 13,
+          "revision": "1c49437ba60d0594550a00950aed2f69bdbd13ce",
+          "parentRevision": "bea1ca1ed60a2c113bbf6f414f6a47d2ee4d099f",
+          "treeRevision": "ce57329c27d465d9c73bf9bd391398ed7bdf4b9f",
+          "committedAt": "2026-07-14T10:16:27+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/classgen/asm/sc/AbstractFunctionalInterfaceWriter.java",
+            "src/test/groovy/bugs/Groovy12154.groovy"
+          ],
+          "changedPathsSha256": "56a59e649cad982ab7e929b38ce7c2c50cafdf21b32172aee725a1bbe1bd440f",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 14,
+          "revision": "7aabc479f6bc03a6a6c5ecd31fc2c66d2cfb8e21",
+          "parentRevision": "1c49437ba60d0594550a00950aed2f69bdbd13ce",
+          "treeRevision": "3d649f543fa6fbd929ad7be48082e145f5f66311",
+          "committedAt": "2026-07-14T10:35:19+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/reflection/ReflectionUtils.java",
+            "src/main/java/org/codehaus/groovy/vmplugin/v8/Java8.java"
+          ],
+          "changedPathsSha256": "c66ae6697cf85edaad9b081fcd9aa40695408703a2cb0c920fab9a20469d358b",
+          "changeShape": "PRODUCTION_SOURCE"
+        },
+        {
+          "ordinal": 15,
+          "revision": "e30b425d5e5b8cc421b4c838d98a1578cc3383bc",
+          "parentRevision": "7aabc479f6bc03a6a6c5ecd31fc2c66d2cfb8e21",
+          "treeRevision": "8c40e81abb3f595174e2f5d0b560b23a83fc63da",
+          "committedAt": "2026-07-14T10:50:29+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/transform/AnnotationCollectorTransform.java",
+            "src/test/groovy/org/codehaus/groovy/transform/AnnotationCollectorMemberOrderTest.groovy"
+          ],
+          "changedPathsSha256": "be4e8cccc15f905f33651528baa37a3cb0d3673bb2dc606d6583e7e22b4df8a5",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 16,
+          "revision": "7bb918b5601946be17ec32dad532a2528b9a9342",
+          "parentRevision": "e30b425d5e5b8cc421b4c838d98a1578cc3383bc",
+          "treeRevision": "b18c4c781700ce1bf430975795e84f4963a23f5d",
+          "committedAt": "2026-07-24T08:24:21+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/transform/stc/UnionTypeClassNode.java",
+            "src/test/groovy/bugs/Groovy12172.groovy"
+          ],
+          "changedPathsSha256": "fa3dd3e39e40c11f120d01c5ffcfa6babdf4deeb8c1153c8edb440efdd4f8914",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 17,
+          "revision": "09a2d2f01015adc50708e366c6936164b462baab",
+          "parentRevision": "7bb918b5601946be17ec32dad532a2528b9a9342",
+          "treeRevision": "550c3d6f556ea7f7036648669746b959710c9d24",
+          "committedAt": "2026-07-24T08:24:37+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/transform/stc/StaticTypeCheckingVisitor.java",
+            "src/test/groovy/bugs/Groovy12184.groovy"
+          ],
+          "changedPathsSha256": "066a9ea71ff1c7db766d2a5d4d6369aac01caf72952b8ce3015a42afb2c7a8a1",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 18,
+          "revision": "938aa52a1c626def25dc7dbe8a62acd2b07d3b86",
+          "parentRevision": "09a2d2f01015adc50708e366c6936164b462baab",
+          "treeRevision": "14de7176610abde33fc8daff60233ff7b48c8957",
+          "committedAt": "2026-07-25T08:43:27+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/classgen/ClassCompletionVerifier.java",
+            "src/test/groovy/bugs/Groovy12188.groovy"
+          ],
+          "changedPathsSha256": "74114a2ccff3e02eb8a6f6a35e80f6fd2386dc49d1619bc573d7a63e7047341a",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 19,
+          "revision": "2bfb406131c4af5394ceb4fb8892eb50499c6e88",
+          "parentRevision": "938aa52a1c626def25dc7dbe8a62acd2b07d3b86",
+          "treeRevision": "f5557e35f84e32070b374c5085b855b429c67932",
+          "committedAt": "2026-07-25T14:16:14+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/transform/StaticTypesTransformation.java",
+            "src/test/groovy/bugs/Groovy8444.groovy"
+          ],
+          "changedPathsSha256": "dc87fbf81ff60970c939a9538c8f6b5567ec21be1d38ccf51126b7066d65fb89",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 20,
+          "revision": "5c850b15f0da810d68c516bf6c0685e7842b6c7b",
+          "parentRevision": "2bfb406131c4af5394ceb4fb8892eb50499c6e88",
+          "treeRevision": "15cbc7a9b211b233079f7faa2914b2d61a4133e9",
+          "committedAt": "2026-07-25T15:24:37+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/transform/StaticTypesTransformation.java"
+          ],
+          "changedPathsSha256": "37ebb2fc3a9f265fd31bc5ed79cc637d6858bab7ce09642c2cbbd8f14807ac48",
+          "changeShape": "PRODUCTION_SOURCE"
+        }
+      ],
+      "reserves": [
+        {
+          "ordinal": 21,
+          "revision": "462ef085ff489071ef00958fc07c3abad4b1aceb",
+          "parentRevision": "5c850b15f0da810d68c516bf6c0685e7842b6c7b",
+          "treeRevision": "9dce7198c57bb2065b23b18a1bff8bdf9eb90cbc",
+          "committedAt": "2026-07-26T10:20:51+10:00",
+          "changedPaths": [
+            "build-logic/src/main/groovy/org/apache/groovy/gradle/PerformanceTestsExtension.groovy"
+          ],
+          "changedPathsSha256": "e706586789bde30a1f32ae3c298888a82488636b116ecd804ad6a38986552ba0",
+          "changeShape": "BUILD_LOGIC_OR_DEPENDENCY"
+        },
+        {
+          "ordinal": 22,
+          "revision": "42cd2149b6ff11f0b4e6f703c78510d664a77d34",
+          "parentRevision": "462ef085ff489071ef00958fc07c3abad4b1aceb",
+          "treeRevision": "fd0f75748e322a004cbf0d4efe9df0e54c40a547",
+          "committedAt": "2026-07-26T10:24:24+10:00",
+          "changedPaths": [
+            "versions.properties"
+          ],
+          "changedPathsSha256": "15ee9f11b0a3eac62dc8e69b34596e7de6a457c70c7812359596f24f0acbc5b5",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 23,
+          "revision": "060973a0264379299e0e03072b700b70333a400c",
+          "parentRevision": "42cd2149b6ff11f0b4e6f703c78510d664a77d34",
+          "treeRevision": "b67e1815a647a91e58307866f59b7b830614bddc",
+          "committedAt": "2026-07-26T10:37:43+10:00",
+          "changedPaths": [
+            "gradle/verification-metadata.xml"
+          ],
+          "changedPathsSha256": "032944780ba91bcefbef6d8e49b639dc12b2d467b4ca1469974ea55126c32f4d",
+          "changeShape": "BUILD_LOGIC_OR_DEPENDENCY"
+        },
+        {
+          "ordinal": 24,
+          "revision": "fb1ad94ad73e26e48d10ab262aa6e849e69873c0",
+          "parentRevision": "060973a0264379299e0e03072b700b70333a400c",
+          "treeRevision": "763557dfcbf36cc8d97d839a8fbc4239c8ab3102",
+          "committedAt": "2026-07-26T16:57:25+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/transform/DelegateASTTransformation.java",
+            "src/test/groovy/org/codehaus/groovy/transform/DelegateTransformTest.groovy"
+          ],
+          "changedPathsSha256": "83829285482c495e8fce7b4b98b26f62ef2788e8ffbd8f782f71863293b73e69",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 25,
+          "revision": "2acc9750f6d2ae9b263f58335749275433c3d034",
+          "parentRevision": "fb1ad94ad73e26e48d10ab262aa6e849e69873c0",
+          "treeRevision": "ce36c8c2902b0324305645b234ed19c0f053cf18",
+          "committedAt": "2026-07-27T18:54:44+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/control/CompilerConfiguration.java"
+          ],
+          "changedPathsSha256": "9ab276ac1ab3ae2fcbb032da61c591a154cd888be1356a3de03e586d47062ba1",
+          "changeShape": "PRODUCTION_SOURCE"
+        },
+        {
+          "ordinal": 26,
+          "revision": "4bbcdba3cf42239a702c054c84443896e8d8c2f6",
+          "parentRevision": "2acc9750f6d2ae9b263f58335749275433c3d034",
+          "treeRevision": "fbed50ebf1002a0b544e6bd75b355a6cd7158a79",
+          "committedAt": "2026-07-27T18:55:25+10:00",
+          "changedPaths": [
+            "src/test/groovy/org/codehaus/groovy/control/CompilerConfigurationTest.java",
+            "subprojects/groovy-console/src/main/groovy/groovy/console/ui/Console.groovy",
+            "subprojects/groovy-console/src/test/groovy/groovy/console/SwingBuilderConsoleTest.groovy",
+            "subprojects/groovy-console/src/test/groovy/groovy/console/ui/HistoryRecordGetTextToRunTests.groovy",
+            "subprojects/groovy-swing/src/main/groovy/groovy/swing/SwingBuilder.groovy"
+          ],
+          "changedPathsSha256": "1194f7562a81b6cf9df93f7624bdd3e8d7233db668049c28a2268be6d2aa4ebd",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 27,
+          "revision": "494c9cb23ae799226c6ab8485301dae2925e6ed4",
+          "parentRevision": "4bbcdba3cf42239a702c054c84443896e8d8c2f6",
+          "treeRevision": "182ddedf427382d9598d4cdf78b22b4c91864a77",
+          "committedAt": "2026-07-29T09:09:37+10:00",
+          "changedPaths": [
+            "src/main/java/org/codehaus/groovy/ast/GenericsType.java",
+            "src/test/groovy/groovy/OverrideTest.groovy"
+          ],
+          "changedPathsSha256": "42496a896a3dab57b65351a9c2bafd0809906388a936b202892ffd438917fc31",
+          "changeShape": "MIXED"
+        },
+        {
+          "ordinal": 28,
+          "revision": "4e703cbdde658cf2906a6d77c309b4b9624f1adf",
+          "parentRevision": "494c9cb23ae799226c6ab8485301dae2925e6ed4",
+          "treeRevision": "8a73b902c4d8f3ccc3bfb2183f9ea350b1e81475",
+          "committedAt": "2026-08-01T15:34:12+10:00",
+          "changedPaths": [
+            "gradle.properties"
+          ],
+          "changedPathsSha256": "01ffe7af6b3f601392cd4f538ca64ec859b8eca9d417a0e57b7ca80521f6a3fc",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 29,
+          "revision": "f0b4d886134a07a2a35c29220f1e92f0247bdd1f",
+          "parentRevision": "4e703cbdde658cf2906a6d77c309b4b9624f1adf",
+          "treeRevision": "07ae60d63eee90f2c53422dfd9bc9e8c72cb8337",
+          "committedAt": "2026-08-15T11:05:02+09:00",
+          "changedPaths": [
+            "versions.properties"
+          ],
+          "changedPathsSha256": "15ee9f11b0a3eac62dc8e69b34596e7de6a457c70c7812359596f24f0acbc5b5",
+          "changeShape": "OTHER"
+        },
+        {
+          "ordinal": 30,
+          "revision": "a63cd35f0fd7f5d7dd10c0fbd4236dc4eb659257",
+          "parentRevision": "f0b4d886134a07a2a35c29220f1e92f0247bdd1f",
+          "treeRevision": "54b43cb64de803d8760ab48b8870d444bac2612a",
+          "committedAt": "2026-08-15T11:10:07+09:00",
+          "changedPaths": [
+            "gradle/verification-metadata.xml"
+          ],
+          "changedPathsSha256": "032944780ba91bcefbef6d8e49b639dc12b2d467b4ca1469974ea55126c32f4d",
+          "changeShape": "BUILD_LOGIC_OR_DEPENDENCY"
+        }
+      ]
+    }
+  ],
+  "exclusions": [
+    "NATIVE_BUILD_FAILURE",
+    "DEPENDENCY_UNAVAILABLE_AFTER_PREPARATION",
+    "RUNNER_ENVIRONMENT_FAILURE",
+    "NATIVE_REQUIRED_OUTPUT_MISSING",
+    "NATIVE_OUTPUT_NONDETERMINISTIC"
+  ],
+  "resourceBudget": {
+    "platform": "linux-amd64",
+    "minimumFreeDiskBytesBeforeRepository": 8589934592,
+    "sequentialRepositories": true,
+    "removeReproducibleTemporaryStateAfterEvidence": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "performanceClaim": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

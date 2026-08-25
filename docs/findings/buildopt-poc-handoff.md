@@ -179,8 +179,10 @@ OpenTelemetry and Groovy have only three later commits, Micronaut has no valid
 descendant pair and several rejection paths changed afterward. AF-014A now
 proves one current-SHA installed package, separate arm state, chronological
 learning, exact selected/native-retained/bypass behavior and reconciled phase
-timing. Its controlled fixture is apparatus evidence, not a speedup. AF-014B..D
-will freeze 20 primary commits plus ordered reserves per family before timing,
+timing. Its controlled fixture is apparatus evidence, not a speedup. AF-014B
+has now frozen 20 primary commits plus ten ordered reserves per family before
+timing. The five chains contain 100 primary observations, exact topology,
+generic change shapes and immutable workflow/output/JDK scope. AF-014C/D will
 collect at least 15 comparable builds per terminal row and attribute activated
 mechanisms, fallback cost and residual variation.
 AF-015 will decide from that current campaign only.

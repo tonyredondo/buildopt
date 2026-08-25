@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "buildopt.specs/current-longitudinal-cohorts/v1",
+  "workItem": "AF-014B",
+  "selection": {
+    "history": "PUBLIC_FIRST_PARENT_CONTIGUOUS",
+    "primaryCount": 20,
+    "reserveCount": 10,
+    "timingAllowedAtFreeze": false,
+    "replacement": "NEXT_UNUSED_RESERVE_ONLY",
+    "minimumComparableTarget": 15
+  },
+  "repositories": [
+    {
+      "key": "spring-framework",
+      "repositoryId": "spring-projects/spring-framework",
+      "remoteUrl": "https://github.com/spring-projects/spring-framework.git",
+      "branch": "main",
+      "jdkToolchain": "temurin-jdk-25",
+      "workflow": ["classes", "--offline", "--no-daemon", "--max-workers=12"],
+      "requiredOutputs": ["spring-jms/build/classes/**"]
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "remoteUrl": "https://github.com/open-telemetry/opentelemetry-java-instrumentation.git",
+      "branch": "main",
+      "jdkToolchain": "temurin-jdk-21",
+      "workflow": ["spring-webmvc-6.0:javaagent:shadowJar", "--offline", "--no-daemon", "--max-workers=12"],
+      "requiredOutputs": ["instrumentation/spring/spring-webmvc/spring-webmvc-6.0/javaagent/build/libs/*.jar"]
+    },
+    {
+      "key": "apache-kafka",
+      "repositoryId": "apache/kafka",
+      "remoteUrl": "https://github.com/apache/kafka.git",
+      "branch": "trunk",
+      "jdkToolchain": "temurin-jdk-25",
+      "workflow": ["core:compileTestJava", "--offline", "--no-daemon", "--max-workers=12"],
+      "requiredOutputs": ["core/build/classes/scala/test/**"]
+    },
+    {
+      "key": "micronaut-core",
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "remoteUrl": "https://github.com/micronaut-projects/micronaut-core.git",
+      "branch": "5.2.x",
+      "jdkToolchain": "temurin-jdk-25",
+      "workflow": ["assemble", "--offline", "--no-daemon", "--max-workers=12"],
+      "requiredOutputs": ["http-client-jdk/build/libs/**"]
+    },
+    {
+      "key": "apache-groovy",
+      "repositoryId": "apache/groovy",
+      "remoteUrl": "https://github.com/apache/groovy.git",
+      "branch": "GROOVY_5_0_X",
+      "jdkToolchain": "temurin-jdk-21",
+      "workflow": ["json:assemble", "--offline", "--no-daemon", "--max-workers=12"],
+      "requiredOutputs": ["subprojects/groovy-json/build/classes/java/main/**", "subprojects/groovy-json/build/resources/main/**"]
+    }
+  ],
+  "exclusions": [
+    "NATIVE_BUILD_FAILURE",
+    "DEPENDENCY_UNAVAILABLE_AFTER_PREPARATION",
+    "RUNNER_ENVIRONMENT_FAILURE",
+    "NATIVE_REQUIRED_OUTPUT_MISSING",
+    "NATIVE_OUTPUT_NONDETERMINISTIC"
+  ],
+  "changeShapes": [
+    "PRODUCTION_SOURCE",
+    "TEST_SOURCE",
+    "BUILD_LOGIC_OR_DEPENDENCY",
+    "DOCUMENTATION_ONLY",
+    "MIXED",
+    "OTHER"
+  ],
+  "resourceBudget": {
+    "platform": "linux-amd64",
+    "minimumFreeDiskBytesBeforeRepository": 8589934592,
+    "sequentialRepositories": true,
+    "removeReproducibleTemporaryStateAfterEvidence": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "performanceClaim": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}
