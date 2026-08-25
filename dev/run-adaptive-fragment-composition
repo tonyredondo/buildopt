@@ -14,6 +14,7 @@ buildopt_spec="${buildopt_repo_root}/specs/poc-adaptive-fragment-composition-v1.
 buildopt_impact_base="${buildopt_repo_root}/fixtures/poc-value/build-impact"
 buildopt_impact_overlay="${buildopt_repo_root}/fixtures/poc-value/combined-impact"
 buildopt_patch_fixture="${buildopt_repo_root}/fixtures/poc-value/reviewed-task"
+buildopt_composition_fixture="${buildopt_repo_root}/fixtures/adaptive-fragment-composition"
 
 if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
     ! -s "${buildopt_locality}" ]]; then
@@ -95,6 +96,7 @@ buildopt_fixture_digest() {
 buildopt_base_sha=$(buildopt_fixture_digest "${buildopt_impact_base}")
 buildopt_overlay_sha=$(buildopt_fixture_digest "${buildopt_impact_overlay}")
 buildopt_patch_sha=$(buildopt_fixture_digest "${buildopt_patch_fixture}")
+buildopt_composition_sha=$(buildopt_fixture_digest "${buildopt_composition_fixture}")
 buildopt_preimage_sha=$(sha256sum \
     "${buildopt_patch_fixture}/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java" |
     awk '{print $1}')
@@ -134,6 +136,8 @@ buildopt_prepare_workspace() {
     mkdir -p -- "${buildopt_workspace}"
     cp -R -- "${buildopt_impact_base}/." "${buildopt_workspace}/"
     cp -R -- "${buildopt_impact_overlay}/." "${buildopt_workspace}/"
+    cp -- "${buildopt_composition_fixture}/build.gradle" \
+        "${buildopt_composition_fixture}/build.gradle.kts" "${buildopt_workspace}/"
     mkdir -p -- "${buildopt_workspace}/buildSrc/src/main/java/dev/buildopt/pilot"
     cp -- "${buildopt_patch_fixture}/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java" \
         "${buildopt_workspace}/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java"
@@ -150,30 +154,9 @@ buildopt_prepare_workspace() {
     if [[ "${buildopt_dsl}" == KOTLIN ]]; then
         rm -f -- "${buildopt_workspace}/settings.gradle" \
             "${buildopt_workspace}/build.gradle"
-        # The Gradle Kotlin DSL placeholders must remain literal here.
-        # shellcheck disable=SC2016
-        sed -i '/tasks.named("assemble")/i\
-val manifests = (1..8).map { index ->\
-    tasks.register<dev.buildopt.pilot.GeneratePilotManifest>("generateManifest$index") {\
-        entries.set((1..32).map { "entry-$index-$it" })\
-        outputFile.set(layout.buildDirectory.file("poc-value/manifest-$index.txt"))\
-    }\
-}\
-tasks.register("reviewedWorkload") { dependsOn(manifests) }\
-' "${buildopt_workspace}/build.gradle.kts"
     else
         rm -f -- "${buildopt_workspace}/settings.gradle.kts" \
             "${buildopt_workspace}/build.gradle.kts"
-        sed -i "/tasks.named('assemble')/i\
-def rootTasks = tasks\
-def manifests = (1..8).collect { index ->\
-    rootTasks.register(\"generateManifest\${index}\", dev.buildopt.pilot.GeneratePilotManifest) {\
-        entries.set((1..32).collect { \"entry-\${index}-\${it}\" })\
-        outputFile.set(layout.buildDirectory.file(\"poc-value/manifest-\${index}.txt\"))\
-    }\
-}\
-tasks.register('reviewedWorkload') { dependsOn(manifests) }\
-" "${buildopt_workspace}/build.gradle"
     fi
 }
 
@@ -351,6 +334,7 @@ jq -s \
     --arg impactBaseSha256 "${buildopt_base_sha}" \
     --arg impactOverlaySha256 "${buildopt_overlay_sha}" \
     --arg patchFixtureSha256 "${buildopt_patch_sha}" \
+    --arg compositionFixtureSha256 "${buildopt_composition_sha}" \
     --arg patchPreimageSha256 "${buildopt_preimage_sha}" \
     --arg patchPostimageSha256 "${buildopt_postimage_sha}" '
     def bootstrap_mean($rows; $sample):
@@ -408,6 +392,7 @@ jq -s \
         impactBaseSha256: $impactBaseSha256,
         impactOverlaySha256: $impactOverlaySha256,
         patchFixtureSha256: $patchFixtureSha256,
+        compositionFixtureSha256: $compositionFixtureSha256,
         patchPreimageSha256: $patchPreimageSha256,
         patchPostimageSha256: $patchPostimageSha256
       },
