@@ -200,11 +200,11 @@ type summary struct {
 	WorkItem      string `json:"workItem"`
 	CapturedAt    string `json:"capturedAt"`
 	BuildOpt      struct {
-		SourceRevision    string `json:"sourceRevision"`
-		ExecutableSHA256  string `json:"executableSha256"`
-		ContractSHA256    string `json:"contractSha256"`
-		SubjectSpecSHA256 string `json:"subjectSpecSha256"`
-		InstalledPackage  bool   `json:"installedPackage"`
+		SourceRevisions   []string `json:"sourceRevisions"`
+		ExecutableSHA256  string   `json:"executableSha256"`
+		ContractSHA256    string   `json:"contractSha256"`
+		SubjectSpecSHA256 string   `json:"subjectSpecSha256"`
+		InstalledPackage  bool     `json:"installedPackage"`
 	} `json:"buildopt"`
 	Runner struct {
 		OperatingSystem string `json:"operatingSystem"`
@@ -329,14 +329,15 @@ func buildSummary(contractPath, output, capturedAt string, cpuCount int) (summar
 		result.Subjects = append(result.Subjects, subject)
 	}
 	sort.Slice(result.Subjects, func(i, j int) bool { return result.Subjects[i].Key < result.Subjects[j].Key })
+	revisions := map[string]bool{}
 	for _, row := range result.Subjects {
-		if result.BuildOpt.SourceRevision == "" {
-			result.BuildOpt.SourceRevision = row.BuildOptRevision
+		if result.BuildOpt.ExecutableSHA256 == "" {
 			result.BuildOpt.ExecutableSHA256 = row.ExecutableSHA256
 		}
-		if row.BuildOptRevision != result.BuildOpt.SourceRevision || row.ExecutableSHA256 != result.BuildOpt.ExecutableSHA256 {
+		if row.ExecutableSHA256 != result.BuildOpt.ExecutableSHA256 {
 			return result, errors.New("lifetime subjects did not use one exact executable")
 		}
+		revisions[row.BuildOptRevision] = true
 		result.Aggregation.SubjectCount++
 		if row.Lifetime.CumulativeNetSavedMS > 0 {
 			result.Aggregation.NetPositiveSubjects++
@@ -349,6 +350,10 @@ func buildSummary(contractPath, output, capturedAt string, cpuCount int) (summar
 		result.Aggregation.ProductFailures += row.ProductFailures
 		result.Aggregation.SignedNetSavedMS += row.Lifetime.CumulativeNetSavedMS
 	}
+	for revision := range revisions {
+		result.BuildOpt.SourceRevisions = append(result.BuildOpt.SourceRevisions, revision)
+	}
+	sort.Strings(result.BuildOpt.SourceRevisions)
 	if result.Aggregation.EligibleDescendants > 0 {
 		result.Aggregation.SelectionRatio = float64(result.Aggregation.SelectedReplays) / float64(result.Aggregation.EligibleDescendants)
 	}

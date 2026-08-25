@@ -36,12 +36,15 @@ percentages are not averaged and mechanism percentages are not added.
 
 ## Acceptance and interpretation
 
-The breadth hypothesis passes only when all five subjects use the same
-executable, every requested build preserves its required outputs, product
-failures remain zero, at least three repository families finish net positive
-and at least half of the non-global structurally eligible descendants select a
-profile. Missing those value thresholds is a valid terminal POC result; the
-thresholds are not moved after observation.
+The breadth hypothesis passes only when all five subjects use the same exact
+executable SHA-256, every requested build preserves its required outputs,
+product failures remain zero, at least three repository families finish net
+positive and at least half of the non-global structurally eligible descendants
+select a profile. Harness-only revisions may differ when a retained run is
+resumed after an evidence adapter repair, but every such revision is reported
+and the installed product bytes must remain identical. Missing the value
+thresholds is a valid terminal POC result; the thresholds are not moved after
+observation.
 
 This protocol does not authorize production activation, soak testing, design
 partner work or Test Optimization. It is a bounded experiment to decide

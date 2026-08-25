@@ -483,7 +483,9 @@ buildopt_subject() {
           .reason == "ORDINARY_LEARNING_ECONOMICS_REJECTED" and
           .execution.exitCode == 0 and
           .discovery.changedProjects == $projects and
-          .discovery.structuralBinding.status == "COMPLETE" and
+          .discovery.structuralBinding.schemaVersion ==
+            "buildopt.poc/structural-profile-binding/v1" and
+          (.discovery.structuralBinding.sha256 | test("^[0-9a-f]{64}$")) and
           $economics.schemaVersion == "buildopt.poc/ordinary-learning-economics/v1" and
           $economics.decision == "NATIVE_RETAINED" and
           ($economics.requestedBuilds == 1 or $economics.requestedBuilds == 3) and
