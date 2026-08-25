@@ -77,29 +77,34 @@ percentages are not added.
 - Early economics prevent waste: the four short-lived hypotheses stop after
   one requested build instead of spending 16 additional builds each.
 
-The terminal evidence decision is therefore
-`FUNCTIONAL_COVERAGE_NOT_PROVEN`. This does not mean the mechanism never works;
-it means the current generic one-command POC has not shown enough repeatable
-cross-commit coverage to justify claiming broad customer value.
+Applying the complete frozen gate yields **`STOP_GENERIC_POC`**. Five criteria
+pass: matrix completeness, exact outputs/zero failures, generic selection,
+robust Kafka qualification and bounded Kafka payback. Three fail:
 
-## Recommended next decision
+- 1/5 net-positive repository families versus the required 3/5;
+- 1/6 selected eligible descendants (16.67%) versus the required 50%; and
+- one observed pre-Gradle economic rejection at 4,098 ms, above the 500-ms
+  median and 1,000-ms p95 limits.
 
-The next block must issue the frozen terminal decision without moving the
-thresholds after seeing the data:
+## Conclusion and next step
 
-1. Stop presenting target calibration wins as generic customer value.
-2. Decide whether to stop the generic POC or explicitly narrow the hypothesis
-   to repository/workflow families with demonstrated recurring structural
-   compatibility.
-3. If continuing, improve automatic compatibility and selection coverage as a
-   generic Gradle mechanism; do not add repository-name rules or weaken exact
-   output, failure or statistical gates.
-4. Keep production hardening, soak and design-partner work deferred until the
-   POC first proves repeatable net wall-time value.
+The current generic structural-profile hypothesis stops here. This is not a
+claim that BuildOpt never works: Kafka pays back strongly, Spring and other
+bounded experiments remain valid mechanism evidence, and exact-output plus
+fail-open controls work. It is a rejection of the broad claim that the current
+one-command implementation already delivers repeatable net wall-time value to
+ordinary Gradle repositories.
+
+No generic implementation block follows automatically. Further work requires
+a new, explicitly preregistered hypothesis that explains how it will improve
+cross-commit compatibility, selection coverage or decision overhead without
+repository-specific rules or weaker correctness/statistical gates. Production
+hardening, soak, design partners and Test Optimization remain outside this POC.
 
 ## Evidence
 
 - [Lifetime breadth V3 result](../../benchmarks/results/poc-lifetime-breadth-v3/README.md)
+- [Terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)
 - [Machine-readable V3 summary](../../benchmarks/results/poc-lifetime-breadth-v3/summary.json)
 - [V3 protocol](../../specs/poc-lifetime-breadth-v3.md)
 - [Detailed historical findings](./build-optimization-performance.md)

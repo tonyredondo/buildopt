@@ -229,6 +229,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-lifetime-breadth-v3" check \
             "${buildopt_repo_root}/specs/poc-lifetime-breadth-v3.json" \
             "${buildopt_repo_root}/benchmarks/results/poc-lifetime-breadth-v3" >/dev/null
+        "${buildopt_script_dir}/check-functional-coverage-decision" >/dev/null
         "${buildopt_script_dir}/check-cross-commit-value-recovery" >/dev/null
         "${buildopt_script_dir}/check-cross-commit-breadth-replication" >/dev/null
         "${buildopt_script_dir}/check-workflow-input-ownership" >/dev/null

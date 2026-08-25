@@ -202,6 +202,16 @@ selection coverage gates:
   ./benchmarks/results/poc-lifetime-breadth-v3
 ```
 
+Apply the frozen terminal POC gate and verify its retained decision with:
+
+```bash
+./dev/check-functional-coverage-decision
+```
+
+This checker validates the V3 source evidence, regenerates the eight decision
+criteria, compares the terminal JSON byte for byte and rejects false-continue
+or threshold-drift fixtures.
+
 `check-automatic-breadth-transfer` validates the immutable V1 unchanged
 zero-manual-file run across Spring Framework, OpenTelemetry Java
 Instrumentation, Apache Kafka, Micronaut Core and Apache Groovy. It recomputes

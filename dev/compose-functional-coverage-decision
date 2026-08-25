@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [OUTPUT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract=${buildopt_repo_root}/specs/poc-functional-coverage-decision-v1.json
+buildopt_lifetime_contract=${buildopt_repo_root}/specs/poc-lifetime-breadth-v3.json
+buildopt_lifetime_summary=${buildopt_repo_root}/benchmarks/results/poc-lifetime-breadth-v3/summary.json
+buildopt_kafka_result=${buildopt_repo_root}/benchmarks/results/poc-lifetime-breadth-v3/apache-kafka/result.json
+buildopt_output=${1:-/dev/stdout}
+
+for buildopt_command in awk jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required functional-coverage decision command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -n \
+    --slurpfile contract "${buildopt_contract}" \
+    --slurpfile lifetimeContract "${buildopt_lifetime_contract}" \
+    --slurpfile lifetime "${buildopt_lifetime_summary}" \
+    --slurpfile kafka "${buildopt_kafka_result}" \
+    --arg contractSha "$(sha256sum "${buildopt_contract}" | awk '{print $1}')" \
+    --arg composerSha "$(sha256sum "${BASH_SOURCE[0]}" | awk '{print $1}')" \
+    --arg lifetimeContractSha "$(sha256sum "${buildopt_lifetime_contract}" | awk '{print $1}')" \
+    --arg lifetimeSummarySha "$(sha256sum "${buildopt_lifetime_summary}" | awk '{print $1}')" '
+  def nearest_rank($values; $percentile):
+    ($values | sort) as $sorted |
+    if ($sorted | length) == 0 then null
+    else $sorted[(((($sorted | length) * $percentile) | ceil) - 1)] end;
+  def criterion($id; $required; $observed; $passed):
+    {id:$id, required:$required, observed:$observed, passed:$passed};
+  ($contract[0]) as $c |
+  ($lifetimeContract[0]) as $lc |
+  ($lifetime[0]) as $v3 |
+  ($kafka[0]) as $k |
+  [$k.observations[] | select(.decisionPhase == "PRE_GRADLE_ECONOMIC") |
+    .wrapperOverheadMs] as $early |
+  [$v3.subjects[] | select(.qualification.robustQualified)] as $qualified |
+  [$v3.subjects[] | select(.lifetime.cumulativeNetSavedMs > 0)] as $positive |
+  [$k.observations[] | select(.selected)] as $selected |
+  [
+    criterion("FROZEN_MATRIX_COMPLETE";
+      {subjectCount:$c.criteria.subjectCount};
+      {subjectCount:$v3.aggregation.subjectCount};
+      ($v3.aggregation.subjectCount == $c.criteria.subjectCount)),
+    criterion("EXACT_OUTPUTS_AND_ZERO_FAILURES";
+      {exactOutputsRequired:true, zeroProductFailuresRequired:true};
+      {exactOutputBuilds:$v3.aggregation.exactOutputBuilds,
+       productFailures:$v3.aggregation.productFailures,
+       measurementOnlyBuilds:$v3.aggregation.measurementOnlyBuilds};
+      ($v3.aggregation.exactOutputBuilds ==
+        ($v3.aggregation.requestedQualificationBuilds + $v3.aggregation.eligibleDescendants) and
+       $v3.aggregation.productFailures == 0 and
+       $v3.aggregation.measurementOnlyBuilds == 0)),
+    criterion("GENERIC_SELECTION_RULES";
+      {repositorySpecificProductRulesAllowed:false};
+      {repositorySpecificProductRules:$lc.customerPath.repositorySpecificProductRules};
+      ($lc.customerPath.repositorySpecificProductRules == false)),
+    criterion("ROBUST_TARGET_QUALIFICATION";
+      {minimumPositivePairs:$c.criteria.minimumPositivePairs,
+       positiveIntervalRequired:true, candidateP95NonRegressive:true};
+      {qualifiedProfiles:($qualified | length),
+       allQualifiedProfilesRobust:([
+         $qualified[] |
+         (.qualification.positivePairs >= $c.criteria.minimumPositivePairs)
+       ] | all), kafkaPositivePairs:$k.qualification.calibration.positivePairs,
+       kafkaInterval95SavedMs:$k.qualification.calibration.interval95SavedMs,
+       kafkaControlP95Ms:$k.qualification.calibration.controlP95Ms,
+       kafkaCandidateP95Ms:$k.qualification.calibration.candidateP95Ms};
+      (($qualified | length) > 0 and
+       ([$qualified[] | .qualification.positivePairs >= $c.criteria.minimumPositivePairs] | all) and
+       $k.qualification.calibration.interval95SavedMs[0] > 0 and
+       $k.qualification.calibration.candidateP95Ms <= $k.qualification.calibration.controlP95Ms)),
+    criterion("REPOSITORY_FAMILY_BREADTH";
+      {minimumNetPositiveRepositoryFamilies:$c.criteria.minimumNetPositiveRepositoryFamilies};
+      {netPositiveRepositoryFamilies:($positive | length),
+       repositoryFamilies:$v3.aggregation.subjectCount};
+      (($positive | length) >= $c.criteria.minimumNetPositiveRepositoryFamilies)),
+    criterion("ELIGIBLE_DESCENDANT_SELECTION";
+      {minimumSelectionRatio:$c.criteria.minimumEligibleDescendantSelectionRatio};
+      {selectedReplays:$v3.aggregation.selectedReplays,
+       eligibleDescendants:$v3.aggregation.eligibleDescendants,
+       selectionRatio:$v3.aggregation.selectionRatio};
+      ($v3.aggregation.selectionRatio >= $c.criteria.minimumEligibleDescendantSelectionRatio)),
+    criterion("BOUNDED_PAYBACK";
+      {maximumProjectedAndObservedMatches:$c.criteria.maximumProjectedPaybackMatches};
+      {qualifiedProfiles:($qualified | length),
+       projectedPaybackMatches:$qualified[0].qualification.projectedPaybackMatches,
+       observedPaybackMatchOrdinal:$selected[0].sequence,
+       cumulativeNetSavedMs:$qualified[0].lifetime.cumulativeNetSavedMs};
+      (($qualified | length) == 1 and ($selected | length) == 1 and
+       $qualified[0].qualification.projectedPaybackMatches <=
+         $c.criteria.maximumProjectedPaybackMatches and
+       $selected[0].sequence <= $c.criteria.maximumProjectedPaybackMatches and
+       $qualified[0].lifetime.cumulativeNetSavedMs > 0)),
+    criterion("EARLY_NATIVE_RETENTION_OVERHEAD";
+      {maximumMedianMs:$c.criteria.maximumEarlyRetentionMedianMs,
+       maximumP95Ms:$c.criteria.maximumEarlyRetentionP95Ms};
+      {sampleCount:($early | length),
+       medianMs:nearest_rank($early; 0.5), p95Ms:nearest_rank($early; 0.95),
+       samplesMs:$early};
+      (($early | length) > 0 and
+       nearest_rank($early; 0.5) < $c.criteria.maximumEarlyRetentionMedianMs and
+       nearest_rank($early; 0.95) < $c.criteria.maximumEarlyRetentionP95Ms))
+  ] as $criteria |
+  ($criteria | map(select(.passed == false) | .id)) as $failed |
+  {
+    schemaVersion:"buildopt.evidence/poc-functional-coverage-decision/v1",
+    workItem:$c.workItem,
+    decidedOn:"2026-08-25",
+    evidenceState:"TERMINAL",
+    source:{
+      contractSha256:$contractSha,
+      composerSha256:$composerSha,
+      lifetimeContractSha256:$lifetimeContractSha,
+      lifetimeSummarySha256:$lifetimeSummarySha,
+      executableSha256:$v3.buildopt.executableSha256,
+      lifetimeDecision:$v3.decision
+    },
+    criteria:$criteria,
+    failedCriteria:$failed,
+    decision:(if ($failed | length) == 0 then $c.decisions.pass else $c.decisions.fail end),
+    effect:{
+      genericClaimAuthorized:(($failed | length) == 0),
+      productionHardeningAuthorized:false,
+      thresholdsChanged:false,
+      repositorySpecificRulesAuthorized:false,
+      boundedMechanismEvidenceRetained:true,
+      nextGenericImplementationBlock:null
+    },
+    boundaries:$c.boundaries
+  }
+' >"${buildopt_output}"

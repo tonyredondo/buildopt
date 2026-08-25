@@ -163,6 +163,18 @@ only and is neither averaged across repositories nor used to override breadth.
   ./benchmarks/results/poc-lifetime-breadth-v3
 ```
 
+The [generic POC functional-coverage decision](./results/poc-functional-coverage-decision-v1/README.md)
+applies the complete frozen exit gate to that evidence. Five of eight criteria
+pass, including exact outputs, zero product failures, generic selection rules,
+robust Kafka qualification and bounded Kafka payback. The breadth criteria fail
+at 1/5 net-positive families and 1/6 selected eligible descendants; the only
+observed pre-Gradle economic rejection costs 4,098 ms, above both overhead
+limits. The resulting decision is `STOP_GENERIC_POC`.
+
+```bash
+./dev/check-functional-coverage-decision
+```
+
 The [cross-commit recovery result](./results/poc-cross-commit-value-recovery-v1/README.md)
 keeps Kafka's qualifier, six public descendants, workflow and output gate
 unchanged while comparing the implementation before and after selected-replay

@@ -2,8 +2,9 @@
 
 ## Current Executive Summary
 
-- **The current decision evidence is lifetime breadth V3, not isolated target
-  calibration.** One exact executable ran the frozen Spring, OpenTelemetry,
+- **The current decision is `STOP_GENERIC_POC`, derived from lifetime breadth
+  V3 rather than isolated target calibration.** One exact executable ran the
+  frozen Spring, OpenTelemetry,
   Kafka, Micronaut and Groovy windows using only requested ordinary builds.
   Four subjects stopped after one build because their compatible history could
   not repay the unchanged five-match learning horizon. This avoided 64
@@ -14,12 +15,16 @@
   178.566 to 43.439 seconds, saving **135.127 seconds / 75.67%** with 4,449
   exact outputs. After qualification, publication and measured fallback
   wrapper work, Kafka finishes **82.527 seconds net positive**.
-- **The generic breadth claim is not proven.** Only **1/5 repository families**
+- **The generic breadth claim is stopped.** Only **1/5 repository families**
   is net positive and only **1/6 eligible descendants (16.67%)** selects a
   profile. The preregistered functional-coverage gate required at least 3/5
   net-positive families and at least 50% selection coverage. Its result is
-  `FUNCTIONAL_COVERAGE_NOT_PROVEN`; the thresholds were not moved after seeing
-  the data.
+  `STOP_GENERIC_POC`; the thresholds were not moved after seeing the data.
+- **Early native retention also misses its cost gate.** The only decision made
+  at the explicit pre-Gradle economic phase costs **4,098 ms**. With one sample,
+  nearest-rank median and p95 are both 4,098 ms, above the frozen 500-ms and
+  1,000-ms limits. This is insufficient distributional evidence and a clear
+  failed criterion, not a generalized overhead estimate.
 - **Correctness and safe fallback remain strong.** The aggregate contains 21
   requested builds, zero measurement-only builds, 27 exact-output observations
   and zero product failures. Every uncertain or incompatible case retains
@@ -34,7 +39,7 @@
   Patch and Edge experiments remain scoped supporting evidence.
 
 See the [current one-pager](./buildopt-poc-handoff.md) and the
-[lifetime breadth V3 result](../../benchmarks/results/poc-lifetime-breadth-v3/README.md)
+[terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)
 for the decision-ready summary and raw evidence.
 
 The machine-readable incremental transaction is preserved in the

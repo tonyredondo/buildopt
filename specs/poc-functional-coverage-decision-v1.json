@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "buildopt.specs/poc-functional-coverage-decision/v1",
+  "workItem": "POC-FUNCTIONAL-COVERAGE-DECISION-001",
+  "source": {
+    "lifetimeContractPath": "specs/poc-lifetime-breadth-v3.json",
+    "lifetimeContractSha256": "509b77d04a187719709053dee9b73c93b7fd18999f661596609358abac011983",
+    "lifetimeSummaryPath": "benchmarks/results/poc-lifetime-breadth-v3/summary.json",
+    "lifetimeSummarySha256": "7f6f4cb8c15ba355943afaf9f5110d4dec3a11c43b4427af1ad60d7a93c6f8e6",
+    "kafkaResultPath": "benchmarks/results/poc-lifetime-breadth-v3/apache-kafka/result.json"
+  },
+  "criteria": {
+    "subjectCount": 5,
+    "minimumPositivePairs": 6,
+    "maximumProjectedPaybackMatches": 5,
+    "minimumNetPositiveRepositoryFamilies": 3,
+    "minimumEligibleDescendantSelectionRatio": 0.5,
+    "maximumEarlyRetentionMedianMs": 500,
+    "maximumEarlyRetentionP95Ms": 1000,
+    "exactOutputsRequired": true,
+    "zeroProductFailuresRequired": true,
+    "repositorySpecificProductRulesAllowed": false
+  },
+  "decisions": {
+    "pass": "CONTINUE_GENERIC_POC",
+    "fail": "STOP_GENERIC_POC",
+    "allCriteriaMustPass": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "thresholdChangesAuthorized": false,
+    "repositorySpecificRulesAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

@@ -706,6 +706,18 @@ repository key to resume one subject, or `--summary-only` after all five raw
 subject directories exist. This is a bounded POC experiment and never a soak
 or production activation gate.
 
+Issue and verify the terminal generic POC decision with:
+
+```bash
+./dev/compose-functional-coverage-decision /tmp/decision.json
+./dev/check-functional-coverage-decision
+```
+
+The composer derives all eight frozen criteria from validated V3 evidence. The
+checker compares the retained result byte for byte and exercises false-continue
+and threshold-drift negatives. It does not run another public build or collect
+new timings.
+
 The follow-up recovery bundle keeps Kafka's qualifier and six public descendant
 revisions fixed while comparing the implementation before and after selected
 replay stops attaching the original full-workflow output observation:

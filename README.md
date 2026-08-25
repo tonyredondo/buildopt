@@ -69,7 +69,7 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > the [v1 matrix](./benchmarks/results/poc-magic-end-to-end-value-v1/README.md)
 > remains historical diagnostic evidence rather than being rewritten.
 
-> **Current lifetime result:** one exact executable ran frozen Spring,
+> **Current terminal decision:** one exact executable ran frozen Spring,
 > OpenTelemetry, Kafka, Micronaut and Groovy ordinary-build windows. Four
 > short-lived hypotheses stopped after one requested build, avoiding 64
 > additional learning builds. Kafka qualified at **21.43% faster with 8/8
@@ -79,10 +79,13 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > work. Across the complete matrix only **1/5 repositories** is net positive
 > and **1/6 eligible descendants (16.67%)** selects, below the frozen 3/5 and
 > 50% breadth gates. All 27 output observations are exact and product failures
-> remain zero. The terminal evidence is
-> `FUNCTIONAL_COVERAGE_NOT_PROVEN`; isolated acceleration is no longer
-> presented as generic customer value. See the
-> [lifetime breadth V3 evidence](./benchmarks/results/poc-lifetime-breadth-v3/README.md).
+> remain zero. Applying every frozen criterion without moving thresholds yields
+> **`STOP_GENERIC_POC`**: 1/5 net-positive families, 1/6 selected eligible
+> descendants and 4.098 seconds of observed pre-Gradle retention overhead all
+> miss their gates. This stops the current generic structural-profile
+> hypothesis, not the bounded mechanisms and evidence that did work. See the
+> [terminal decision](./benchmarks/results/poc-functional-coverage-decision-v1/README.md)
+> and [lifetime breadth V3 evidence](./benchmarks/results/poc-lifetime-breadth-v3/README.md).
 
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired

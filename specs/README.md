@@ -108,6 +108,7 @@ the exact cross-component contract.
 | [`poc-materialization-economics-v2.md`](./poc-materialization-economics-v2.md) and [`poc-materialization-economics-v2.json`](./poc-materialization-economics-v2.json) | `POC-MATERIALIZATION-ECONOMICS-V2-001` |
 | [`poc-qualified-lifetime-v2.md`](./poc-qualified-lifetime-v2.md) and [`poc-qualified-lifetime-v2.json`](./poc-qualified-lifetime-v2.json) | `POC-QUALIFIED-LIFETIME-V2-001` |
 | [`poc-lifetime-breadth-v3.md`](./poc-lifetime-breadth-v3.md) and [`poc-lifetime-breadth-v3.json`](./poc-lifetime-breadth-v3.json) | `POC-LIFETIME-BREADTH-V3-001` |
+| [`poc-functional-coverage-decision-v1.md`](./poc-functional-coverage-decision-v1.md) and [`poc-functional-coverage-decision-v1.json`](./poc-functional-coverage-decision-v1.json) | `POC-FUNCTIONAL-COVERAGE-DECISION-001` |
 | [`poc-incremental-learning-v1.md`](./poc-incremental-learning-v1.md) and [`poc-incremental-learning-v1.json`](./poc-incremental-learning-v1.json) | `POC-INCREMENTAL-LEARNING-001` |
 | [`poc-normal-build-tail-expansion-v1.md`](./poc-normal-build-tail-expansion-v1.md) and [`poc-normal-build-tail-expansion-v1.json`](./poc-normal-build-tail-expansion-v1.json) | `POC-NORMAL-BUILD-TAIL-EXPANSION-001` |
 | [`private-beta-data-lifecycle-v1.md`](./private-beta-data-lifecycle-v1.md) | `A1-004` / `A1-G05` |
@@ -226,6 +227,11 @@ promising subjects and measures complete signed lifetime value with one exact
 installed executable. Missing the fixed three-of-five value and 50% eligible
 selection thresholds is an accepted terminal POC result, not permission to
 move the gates after observation.
+
+The [generic POC functional-coverage decision](./poc-functional-coverage-decision-v1.md)
+then applies every frozen criterion without collecting another timing or moving
+a threshold. Any failed criterion stops the current generic hypothesis while
+preserving bounded mechanism evidence and all fail-open behavior.
 
 The [cross-commit value recovery contract](./poc-cross-commit-value-recovery-v1.md)
 then holds Kafka's qualifier and six-descendant public window fixed. It requires
