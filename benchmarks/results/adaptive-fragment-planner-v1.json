@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "buildopt.poc/adaptive-fragment-planner/v1",
+  "workItem": "AF-009",
+  "capturedAt": "2026-08-25T18:00:00Z",
+  "policy": {
+    "predictionModel": "EXACT_COMPOSITION_PREDICTION_NOT_ADDED_ISOLATED_EFFECTS",
+    "minimumPredictedNetMs": 100,
+    "orderIndependent": true,
+    "dependencyClosure": true,
+    "mutualExclusion": true,
+    "authorityComposition": "CONJUNCTION_OF_CONSTITUENT_AUTHORITIES",
+    "ambiguityFallback": "NATIVE_GRADLE",
+    "noEligibleFallback": "NATIVE_GRADLE",
+    "preGradleDecision": true
+  },
+  "input": {
+    "candidateCount": 5,
+    "exactPredictionCount": 6,
+    "repositoryRuleUsed": false,
+    "isolatedPercentageAdds": 0,
+    "measurementOnlyBuilds": 0
+  },
+  "selectedPlan": {
+    "schemaVersion": "buildopt.adaptive/fragment-plan/v1",
+    "planId": "17b8dd01afddb54dc64dda771144c5b3372bdd55204a741bf0f4c42bfc70aae4",
+    "disposition": "COMPOSED",
+    "reason": "POSITIVE_EXACT_COMPOSITION",
+    "repositoryScopeSha256": "fa1334943ea03ac88bc7080cd48d972370140d964e476afc97e6e03dafeeec89",
+    "nativeWorkflowSha256": "6e34ab256087dc3c0c7add0b07a63f80f069b76d0ad76e980e995b2da92c6383",
+    "decisionAt": "2026-08-25T17:00:00Z",
+    "minimumPredictedNetMs": 100,
+    "predictionEvidenceSha256": "160e1a4f65037e24b08b788b9c7c4aacc6b5d675513b7fd4d7a5505ce232cce7",
+    "predictionHorizonBuilds": 5,
+    "predictedNetMs": 5000,
+    "correctnessMode": "CONJUNCTION_OF_CONSTITUENT_AUTHORITIES",
+    "selected": [
+      {
+        "familyId": "cfd946fa19d69b908241f3700ad0ac15a9281047da528e23dcb96ca391d7fd45",
+        "revisionId": "6f857290f78795902da7ee26e0509e19112637d080bc2647517dfa580caabb74",
+        "fragmentGeneration": 1,
+        "kind": "SUBGRAPH",
+        "authority": "GRADLE_MODEL",
+        "authoritySha256": "36087e482151bc2cbcdb6651c7907e8a5f9bb24327d39f58eb133910ea0f0207"
+      },
+      {
+        "familyId": "f7e7f0915821308a744b684f81a6a26e35d8f047c18c3e02bac806fa7694c525",
+        "revisionId": "c31b4e361715dd51e54004a0d4915e8d5d2ac9d6fb067ec3154d47118ceddc3e",
+        "fragmentGeneration": 1,
+        "kind": "OUTPUT_MATERIALIZATION",
+        "authority": "VERIFIED_PRODUCER",
+        "authoritySha256": "bbe39f9bee8073666520fb9ebf99bc776d2b82fbc6ec2391cc910687342a2019"
+      }
+    ],
+    "rejectedAlternatives": [
+      {
+        "families": [
+          "8be1acdf5c19dae82eec0e0410aaca31aa50b348cfd090a1691d853f72c477a4",
+          "d0c6801253a64182b1acc78104adee3c7ff8de11354417f3888c1631d360dc8a"
+        ],
+        "reason": "MUTUAL_EXCLUSION"
+      },
+      {
+        "families": [
+          "af738bffd2d43f585129c1e569731c079d2d896dfb85f686395ff92801897f1a"
+        ],
+        "reason": "PREDICTED_NET_BELOW_FLOOR"
+      },
+      {
+        "families": [
+          "cfd946fa19d69b908241f3700ad0ac15a9281047da528e23dcb96ca391d7fd45"
+        ],
+        "reason": "DEPENDENCY_NOT_SELECTED"
+      }
+    ]
+  },
+  "fallbacks": [
+    {
+      "case": "EXACT_COMPOSITION_PREDICTION_UNAVAILABLE",
+      "disposition": "NATIVE_GRADLE",
+      "reason": "EXACT_COMPOSITION_PREDICTION_UNAVAILABLE",
+      "planId": "c4d35cc0605e39abf0ae2119a7a63d28c89748703fa8135ded7b5c9f007d80d8",
+      "selected": 0
+    },
+    {
+      "case": "PREDICTED_NET_BELOW_FLOOR",
+      "disposition": "NATIVE_GRADLE",
+      "reason": "PREDICTED_NET_BELOW_FLOOR",
+      "planId": "35c8dd2a06ea7ec6775c5a51798471bd85e8119353daf423651ca940cfa3e72f",
+      "selected": 0
+    },
+    {
+      "case": "AMBIGUOUS_COMPOSITION_PREDICTION",
+      "disposition": "NATIVE_GRADLE",
+      "reason": "AMBIGUOUS_COMPOSITION_PREDICTION",
+      "planId": "5d13d29355f8423eef786a6c0a221acd0bbc7e1cbb777aba0b781456da9a8d0c",
+      "selected": 0
+    },
+    {
+      "case": "DEPENDENCY_UNAVAILABLE",
+      "disposition": "NATIVE_GRADLE",
+      "reason": "DEPENDENCY_UNAVAILABLE",
+      "planId": "a01f7872d270064f308b09fd3028ec47a466b8f94773661fd3e2e0c57b139426",
+      "selected": 0
+    },
+    {
+      "case": "CANDIDATE_EVIDENCE_EXPIRED",
+      "disposition": "NATIVE_GRADLE",
+      "reason": "CANDIDATE_EVIDENCE_EXPIRED",
+      "planId": "ef8e31b94f65b01ddd643844ef76b6d58e4d7b37617cd5c91f1a9a4afafa0d56",
+      "selected": 0
+    },
+    {
+      "case": "CANDIDATE_NOT_QUALIFIED",
+      "disposition": "NATIVE_GRADLE",
+      "reason": "CANDIDATE_NOT_QUALIFIED",
+      "planId": "b2f47a64599db402783287ce5b75fb4d894f00099d903d4cda01abc9c4cd91d7",
+      "selected": 0
+    },
+    {
+      "case": "PREDICTION_REFERENCES_UNKNOWN_FRAGMENT",
+      "disposition": "NATIVE_GRADLE",
+      "reason": "PREDICTION_REFERENCES_UNKNOWN_FRAGMENT",
+      "planId": "2f489a9f143676235980c3256e58f32105206e981069b3611c65845f9acf19e0",
+      "selected": 0
+    }
+  ],
+  "invariants": {
+    "reorderedPlanIdMatches": true,
+    "selectedFragmentCount": 2,
+    "selectedDependencyCount": 1,
+    "selectedConflictCount": 0,
+    "retainedAuthorityCount": 2,
+    "rejectedAlternativeCount": 3,
+    "fallbackCaseCount": 7,
+    "fallbackSelections": 0,
+    "productAttributableFailures": 0
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "syntheticEconomics": true,
+    "newTimingClaim": false,
+    "activationGranted": false,
+    "productionGranted": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "outcome": "FRAGMENT_COMPOSITION_PLAN_AVAILABLE"
+}

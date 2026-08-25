@@ -4768,6 +4768,20 @@ recipe or authorize automatic patch application:
 ./dev/check-adaptive-fragment-patch-opportunity
 ```
 
+## Adaptive fragment conflict-aware planner
+
+`./dev/check-adaptive-fragment-planner` validates the `AF-009` exact-
+composition policy, focused Go tests and vet, recomputes the canonical plan and
+rejects a deliberately altered prediction. It proves order-independent
+selection, dependency closure, symmetric mutual exclusion, constituent-
+authority retention, a fixed predicted-net floor and seven explicit native
+fallback cases. The economics are synthetic; the checker starts no Gradle
+process, makes no timing claim and grants no activation:
+
+```bash
+./dev/check-adaptive-fragment-planner
+```
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic

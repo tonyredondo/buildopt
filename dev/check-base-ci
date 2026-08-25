@@ -375,6 +375,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-otel-spring-family-v2-result" \
             "${buildopt_repo_root}/benchmarks/results/poc-otel-spring-family-v2.json" >/dev/null
         "${buildopt_script_dir}/check-poc-otel-overhead" >/dev/null
+        "${buildopt_script_dir}/check-adaptive-fragment-planner" >/dev/null
         "${buildopt_script_dir}/run" \
             --toolchain temurin-jdk-21 \
             -- \

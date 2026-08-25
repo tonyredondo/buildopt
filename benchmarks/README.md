@@ -2547,3 +2547,27 @@ not generic recipe coverage or automatic patching.
 ```bash
 ./dev/check-adaptive-fragment-patch-opportunity
 ```
+
+## Adaptive fragment conflict-aware planning
+
+[`adaptive-fragment-planner-v1.json`](./results/adaptive-fragment-planner-v1.json)
+is the recomputable `AF-009` planner proof. Five qualified generic fragment
+revisions and six exact-composition predictions exercise dependency closure,
+one-way declared mutual exclusion, a fixed `100 ms` predicted-net floor and
+canonical order-independent selection.
+
+The selected two-fragment plan includes one explicit dependency and retains
+both constituent correctness authorities. Three alternatives are rejected for
+missing dependency closure, mutual exclusion or insufficient predicted value.
+Seven additional missing, malformed, stale, ambiguous or uneconomic requests return
+native Gradle with zero selected fragments.
+
+The `5,000 ms` selected value is deliberately synthetic. It validates planner
+control flow only: it is not a measured saving, is not assembled from component
+percentages and grants no fragment activation. `AF-010` owns the first runtime
+Build Impact activation, and `AF-011` must measure any final composition
+directly.
+
+```bash
+./dev/check-adaptive-fragment-planner
+```

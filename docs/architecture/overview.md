@@ -55,7 +55,7 @@ result.
 | Optimization service and Shared backend | `buildopt-server` | Accepts sessions, exports immutable evidence, serves authenticated cache state, stores control metadata, and exposes local build history |
 | Edge Cache | `buildopt-edge` | Provides a bounded nearby read-through/pending-write cache while Shared retains commit and collision authority |
 | Build Impact | `buildopt-impact` | Discovers the declared Gradle graph and verifies repository-owned generated impact state |
-| Adaptive fragment model | `internal/adaptivefragment` | Defines path-independent fragment identity, immutable state/economics and non-authorizing structural priors; no runtime activation yet |
+| Adaptive fragment model | `internal/adaptivefragment` | Defines path-independent fragment identity, immutable state/economics, non-authorizing structural priors and conflict-aware pre-Gradle composition plans; no runtime activation yet |
 | Patch engine | `jvm/patcher` JAR | Verifies signed exact bundles, applies them in a detached worktree, and supports draft-only delivery and exact revert |
 | Windows service host | `buildopt-service.exe` | Runs server or Edge under Windows SCM with the supplied private config |
 
@@ -180,6 +180,14 @@ digests. `AF-002` defines and validates those bytes only. Local persistence and
 reuse through the existing HTTPS state plane remain deferred to `AF-012`; an
 unavailable or incompatible document therefore grants no current runtime
 authority.
+
+`AF-009` adds a storage-neutral planner over those documents. It accepts only
+same-scope, unexpired qualified generations and exact whole-composition
+economic predictions. Dependencies must be closed, conflicts are symmetric and
+every constituent correctness authority remains present. Missing or ambiguous
+input, absent joint economics or a prediction below the fixed net-value floor
+produces a native Gradle plan before Gradle starts. Runtime activation remains
+deferred to `AF-010`.
 
 The local POC remains service-independent. `buildopt-server` can now expose one
 TLS 1.3 endpoint with two logically isolated planes:

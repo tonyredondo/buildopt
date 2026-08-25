@@ -82,6 +82,7 @@ Adaptive-fragment identity and selective invalidation:
 ./dev/check-adaptive-fragment-online
 ./dev/check-adaptive-fragment-prior
 ./dev/check-adaptive-fragment-patch-opportunity
+./dev/check-adaptive-fragment-planner
 ```
 
 The static and synthetic `AF-001` gate validates the machine policy, runs the
@@ -113,6 +114,11 @@ detector, verifies that its proposal remains review-only, exercises temporary
 application and exact revert, and binds the accepted exact recipe to 16 frozen
 native Gradle pairs with identical outputs. It revalidates existing timing
 evidence rather than producing another sample.
+The `AF-009` gate recomputes a pure pre-Gradle planner proof. It keeps exact
+constituent authorities, requires dependency closure, rejects mutual exclusion,
+uses only whole-composition predictions above a fixed net-value floor and
+returns native Gradle for seven missing, ambiguous or unsafe vectors. Its economic values
+are synthetic and make no build-time or activation claim.
 
 ```bash
 ./dev/check-generated-code

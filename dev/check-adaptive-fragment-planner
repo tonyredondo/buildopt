@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_evidence="${buildopt_repo_root}/benchmarks/results/adaptive-fragment-planner-v1.json"
+buildopt_policy="${buildopt_repo_root}/specs/poc-adaptive-fragment-planner-v1.json"
+buildopt_temp_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-af009.XXXXXX")
+trap 'rm -r -- "${buildopt_temp_root}"' EXIT
+
+for buildopt_command in grep jq mktemp; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'adaptive fragment planner check requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-adaptive-fragment-planner/v1" and
+    .workItem == "AF-009" and
+    .input.maximumCandidates == 32 and .input.maximumExactPredictions == 1024 and
+    .input.qualifiedOrActiveLifecycleRequired == true and
+    .input.unexpiredEvidenceRequired == true and .input.sameRepositoryScopeRequired == true and
+    .composition.predictionModel == "EXACT_COMPOSITION_PREDICTION_NOT_ADDED_ISOLATED_EFFECTS" and
+    .composition.minimumPredictedNetMs == 100 and
+    .composition.dependencyClosureRequired == true and .composition.mutualExclusionRequired == true and
+    .composition.orderIndependent == true and .composition.tieBreak == "CANONICAL_FAMILY_SET" and
+    .composition.correctnessMode == "CONJUNCTION_OF_CONSTITUENT_AUTHORITIES" and
+    .fallback.target == "NATIVE_GRADLE" and .fallback.beforeGradle == true and
+    ([.fallback[] | select(. == true)] | length) == 9 and
+    .outcome == "FRAGMENT_COMPOSITION_PLAN_AVAILABLE" and
+    .boundaries.proofOfConcept == true and .boundaries.syntheticEconomics == true and
+    .boundaries.newTimingClaim == false and .boundaries.fragmentActivationAuthorized == false and
+    .boundaries.productionAuthorized == false and .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false and .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_policy}" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/adaptivefragment ./dev/adaptive-fragment-planner
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/adaptivefragment ./dev/adaptive-fragment-planner
+
+buildopt_direct_imports=$("${buildopt_script_dir}/run" --toolchain go -- \
+    go list -f '{{range .Imports}}{{println .}}{{end}}' \
+    ./internal/adaptivefragment ./dev/adaptive-fragment-planner)
+if grep -Eq '^(net|net/.*|os/exec)$' <<<"${buildopt_direct_imports}"; then
+    echo 'adaptive fragment planner imports process or network execution' >&2
+    exit 1
+fi
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./dev/adaptive-fragment-planner --validate "${buildopt_evidence}" >/dev/null
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./dev/adaptive-fragment-planner --output "${buildopt_temp_root}/live-report.json"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./dev/adaptive-fragment-planner --validate "${buildopt_temp_root}/live-report.json" >/dev/null
+
+jq '.selectedPlan.predictedNetMs += 1' "${buildopt_evidence}" >"${buildopt_temp_root}/tampered-report.json"
+if "${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./dev/adaptive-fragment-planner --validate "${buildopt_temp_root}/tampered-report.json" >/dev/null 2>&1; then
+    echo 'adaptive fragment planner accepted a tampered prediction' >&2
+    exit 1
+fi
+
+echo 'adaptive fragment planner: FRAGMENT_COMPOSITION_PLAN_AVAILABLE'

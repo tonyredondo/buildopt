@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "buildopt.specs/poc-adaptive-fragment-planner/v1",
+  "workItem": "AF-009",
+  "input": {
+    "maximumCandidates": 32,
+    "maximumExactPredictions": 1024,
+    "qualifiedOrActiveLifecycleRequired": true,
+    "unexpiredEvidenceRequired": true,
+    "sameRepositoryScopeRequired": true
+  },
+  "composition": {
+    "predictionModel": "EXACT_COMPOSITION_PREDICTION_NOT_ADDED_ISOLATED_EFFECTS",
+    "minimumPredictedNetMs": 100,
+    "dependencyClosureRequired": true,
+    "mutualExclusionRequired": true,
+    "orderIndependent": true,
+    "tieBreak": "CANONICAL_FAMILY_SET",
+    "correctnessMode": "CONJUNCTION_OF_CONSTITUENT_AUTHORITIES"
+  },
+  "fallback": {
+    "target": "NATIVE_GRADLE",
+    "beforeGradle": true,
+    "onMissingDependency": true,
+    "onDependencyCycle": true,
+    "onAmbiguousCandidate": true,
+    "onAmbiguousPrediction": true,
+    "onExpiredEvidence": true,
+    "onUnqualifiedLifecycle": true,
+    "onMissingExactPrediction": true,
+    "onPredictedNetBelowFloor": true
+  },
+  "evidence": "benchmarks/results/adaptive-fragment-planner-v1.json",
+  "outcome": "FRAGMENT_COMPOSITION_PLAN_AVAILABLE",
+  "boundaries": {
+    "proofOfConcept": true,
+    "syntheticEconomics": true,
+    "newTimingClaim": false,
+    "fragmentActivationAuthorized": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

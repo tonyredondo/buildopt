@@ -9,7 +9,7 @@ package exposes a `go doc` package comment that states its authority and
 failure boundary; exported symbols should document non-obvious lifecycle,
 security, persistence, or side effects close to the code.
 
-`adaptivefragment/` owns the `AF-001`..`AF-008` POC contracts for repository-
+`adaptivefragment/` owns the `AF-001`..`AF-009` POC contracts for repository-
 scoped, path-independent optimization fragment identity and immutable typed
 state. It distinguishes stable families from evidence-bound revisions,
 validates correctness authorities and declared semantic bindings, evaluates
@@ -17,8 +17,11 @@ only bindings consumed by each fragment, and links fragment, observation,
 portfolio and economic-ledger generations through closed JSON schemas and JCS
 digests. Its discardable repository-local compatibility index returns
 candidates, suspension reasons or native retention from pre-Gradle
-fingerprints without mutating lifecycle state. It does not compose,
-synchronize or activate fragments. Its frozen-history shadow replay separates
+fingerprints without mutating lifecycle state. Its pure pre-Gradle planner
+selects only exact directly predicted dependency-closed compositions, treats
+conflicts symmetrically, retains every constituent authority and returns native
+Gradle on ambiguity or insufficient net value. It does not synchronize or
+activate fragments. Its frozen-history shadow replay separates
 structural compatibility from output-byte freshness and economic
 authorization without consuming future observations.
 Its economic assessment preserves signed observed value, deduplicates stable

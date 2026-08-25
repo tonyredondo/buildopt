@@ -1,7 +1,7 @@
 # Adaptive Fragment Generalization POC Tracker
 
 **Status:** `IN_PROGRESS`<br>
-**Current block:** `AF-009 — Conflict-aware fragment planner`<br>
+**Current block:** `AF-010 — Active Build Impact fragments`<br>
 **Decision baseline:** the current whole-profile hypothesis remains
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)<br>
 **Last updated:** 2026-08-25
@@ -190,8 +190,8 @@ the correctness authority for cacheability. Repetition alone is not authority.
 
 | Order | Block | Goal | State | Depends on |
 |---:|---|---|---|---|
-| 9 | `AF-009` Conflict-aware fragment planner | Compose compatible fragments with explicit dependencies, mutual exclusions and a predicted net-value floor; otherwise select native Gradle. | `TODO` | AF-003, AF-005, AF-006 |
-| 10 | `AF-010` Active Build Impact fragments | Activate producer/subgraph fragments independently, preserve exact required outputs and invalidate only affected fragments across commits. | `WAITING` | AF-009 |
+| 9 | `AF-009` Conflict-aware fragment planner | Compose compatible fragments with explicit dependencies, mutual exclusions and a predicted net-value floor; otherwise select native Gradle. | `DONE` | AF-003, AF-005, AF-006 |
+| 10 | `AF-010` Active Build Impact fragments | Activate producer/subgraph fragments independently, preserve exact required outputs and invalidate only affected fragments across commits. | `TODO` | AF-009 |
 | 11 | `AF-011` Multi-mechanism composition | Directly measure qualified Build Impact, reviewed-task/patch and bounded cache-locality combinations without adding isolated percentages. | `WAITING` | AF-008, AF-010 |
 | 12 | `AF-012` Local and central adaptive state | Persist the same typed portfolio and ledger locally and through the existing HTTPS state plane; prove two-machine reuse, offline fallback and no use of Gradle cache objects as policy documents. | `WAITING` | AF-002, AF-005, AF-009 |
 
@@ -381,6 +381,17 @@ failure or ambiguity retains native before Gradle.
 
 **Outcome:** `FRAGMENT_COMPOSITION_PLAN_AVAILABLE`.
 
+**Result:** `FRAGMENT_COMPOSITION_PLAN_AVAILABLE`. The pure pre-Gradle planner
+is input-order independent, closes dependencies, treats one-way declared
+conflicts as mutual exclusions and preserves every constituent correctness
+authority. It selects only an exact whole-composition prediction above the
+fixed `100 ms` net-value floor; it never adds isolated percentages. The
+recomputable synthetic proof selects two qualified fragments with one explicit
+dependency, rejects three unsafe alternatives and retains native Gradle with
+zero selections for seven missing, stale, ambiguous, incomplete or uneconomic
+requests.
+This proves planning behavior, not activation or build-time value.
+
 ### AF-010 — Active Build Impact fragments
 
 **Deliverables:** independent producer/subgraph activation, exact unaffected
@@ -509,6 +520,7 @@ IDs from the implementation tracker.
 | `AF-E007` | AF-006 | [Ordinary-build learner contract](../../specs/poc-adaptive-fragment-online-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-online-v1.json), recomputable [checkpoint report](../../benchmarks/results/adaptive-fragment-online-v1.json) and [`dev/check-adaptive-fragment-online`](../../dev/check-adaptive-fragment-online). Five requested builds and 15 exact samples prove observed/shadow/qualified progression, exact restart, zero measurement-only work, five fail-closed update mutations and dependency-bounded regression suspension without running Gradle or authorizing activation. | `DONE` |
 | `AF-E008` | AF-007 | [Cross-repository prior contract](../../specs/poc-adaptive-fragment-prior-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-prior-v1.json), recomputable [four-source/two-holdout report](../../benchmarks/results/adaptive-fragment-prior-v1.json) and [`dev/check-adaptive-fragment-prior`](../../dev/check-adaptive-fragment-prior). Three generic classes rank identically after every repository identity is replaced and input order reversed; transferred positive/non-positive evidence changes only the top exploration priority, unmatched features return no candidate and six unsafe inputs fail closed. Local correctness/value remain mandatory and activation authorizations remain zero. | `DONE` |
 | `AF-E009` | AF-008 | [Patch-opportunity contract](../../specs/poc-adaptive-fragment-patch-opportunity-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-patch-opportunity-v1.json), recomputable [detector/transaction/value report](../../benchmarks/results/adaptive-fragment-patch-opportunity-v1.json) and [`dev/check-adaptive-fragment-patch-opportunity`](../../dev/check-adaptive-fragment-patch-opportunity). Ten unsafe inputs reject; accepted bytes apply and exactly revert outside the checkout; the frozen 4-CPU/16-GiB native Gradle evidence saves 67.28% Kotlin and 68.01% Groovy across 16 pairs with exact outputs and zero product failures. | `DONE` |
+| `AF-E010` | AF-009 | [Conflict-aware planner contract](../../specs/poc-adaptive-fragment-planner-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-planner-v1.json), recomputable [planner report](../../benchmarks/results/adaptive-fragment-planner-v1.json) and [`dev/check-adaptive-fragment-planner`](../../dev/check-adaptive-fragment-planner). Five qualified fragments and six exact synthetic composition predictions prove canonical selection, one dependency, symmetric conflict rejection, retained constituent authorities, three rejected alternatives and seven zero-selection native fallbacks without Gradle, timing or activation. | `DONE` |
 
 ## 12. Decision log
 
@@ -527,11 +539,13 @@ IDs from the implementation tracker.
 | 2026-08-25 | Publish a new canonical checkpoint generation only after the complete requested-build update validates. | Interruption must preserve the prior exact generation; implicit partial repair would corrupt learning authority. |
 | 2026-08-25 | Exclude repository identity from cross-repository prior fingerprints, scores and tie-breaks. | Repository provenance may prevent local evidence leakage, but names, paths and remotes must never become product behavior or transfer authority. |
 | 2026-08-25 | Separate generic patch-opportunity detection from recipe authority. | Repeated task evidence may create a review proposal, but only an exact reviewed recipe plus transactional correctness and independent native value can authorize a durable source change. |
+| 2026-08-25 | Require exact whole-composition economics in the fragment planner. | Adding isolated effects would hide interaction costs; missing, ambiguous or below-floor joint evidence must retain native Gradle before execution. |
 
 ## 13. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-25 | Closed AF-009 as `FRAGMENT_COMPOSITION_PLAN_AVAILABLE`: deterministic exact-set planning closes dependencies, excludes conflicts, preserves constituent authorities and retains native Gradle for seven unsafe vectors; opened AF-010 runtime Build Impact fragments without turning synthetic predicted value into a timing claim. |
 | 2026-08-25 | Closed AF-008 as `DURABLE_PATCH_VALUE_PROVED`: a generic detector emits one non-authorizing proposal, ten unsafe inputs reject, the reviewed exact recipe applies/reverts outside the checkout, and 16 frozen native Gradle pairs save 67.28% Kotlin/68.01% Groovy with exact outputs; opened AF-009 conflict-aware composition. |
 | 2026-08-25 | Closed AF-007 as `SAFE_HYPOTHESIS_PRIORS_AVAILABLE`: four opaque source scopes rank three hypothesis classes for two holdouts, full source/holdout identity replacement and reversed input preserve the result, evidence can reorder exploration only, and zero correctness/value/activation authority transfers; opened AF-008 patch-opportunity learning. |
 | 2026-08-25 | Closed AF-006 as `ONLINE_FRAGMENT_LEARNING_AVAILABLE`: five requested builds, 15 comparable samples, zero measurement-only work, exact restart and dependency-bounded regression suspension are executable; opened AF-007 cross-repository hypothesis priors. |
