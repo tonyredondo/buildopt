@@ -5,7 +5,7 @@
   "outcome": "CURRENT_LONGITUDINAL_COHORTS_FROZEN",
   "contract": {
     "path": "specs/poc-current-longitudinal-cohorts-v1.json",
-    "sha256": "b707aaed29aa3215dc8ee1e068b124e8fdb68eca21ea495244b4c91a206a1558"
+    "sha256": "ed751add06579ff52b3dc1eb66eeca202d399f4dd23ed6b2a7265a4fcc734f55"
   },
   "selection": {
     "history": "PUBLIC_FIRST_PARENT_CONTIGUOUS",
@@ -26,6 +26,7 @@
         "workflow": [
           "classes",
           "--offline",
+          "--no-scan",
           "--no-daemon",
           "--max-workers=12"
         ],
@@ -639,8 +640,9 @@
         "branch": "main",
         "jdkToolchain": "temurin-jdk-21",
         "workflow": [
-          "spring-webmvc-6.0:javaagent:shadowJar",
+          ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:shadowJar",
           "--offline",
+          "--no-scan",
           "--no-daemon",
           "--max-workers=12"
         ],
@@ -1219,6 +1221,7 @@
         "workflow": [
           "core:compileTestJava",
           "--offline",
+          "--no-scan",
           "--no-daemon",
           "--max-workers=12"
         ],
@@ -1677,6 +1680,7 @@
         "workflow": [
           "assemble",
           "--offline",
+          "--no-scan",
           "--no-daemon",
           "--max-workers=12"
         ],
@@ -2178,6 +2182,7 @@
         "workflow": [
           "json:assemble",
           "--offline",
+          "--no-scan",
           "--no-daemon",
           "--max-workers=12"
         ],

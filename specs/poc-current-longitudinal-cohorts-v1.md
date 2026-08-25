@@ -19,6 +19,10 @@ contract, commit parent/tree, ordering and path digest. Unknown JSON fields are
 rejected, which prevents timing or post-result annotations from entering the
 frozen manifest.
 
+Every frozen workflow also passes `--no-scan`. Public repository builds may
+apply Develocity plugins that publish automatically; the POC must not transmit
+runner metadata merely to establish a local performance comparison.
+
 The manifest proves experimental preregistration, not performance. Builds run
 sequentially in `AF-014C`; reproducible checkouts and caches may be removed only
 after immutable evidence is secured. Production hardening, soak, design

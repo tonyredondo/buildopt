@@ -18,7 +18,7 @@ import (
 const (
 	rawSchema    = "buildopt.poc/current-longitudinal-raw/v1"
 	reportSchema = "buildopt.poc/current-longitudinal-report/v1"
-	contractSHA  = "24c3b2de49452955143f790e3335a27d75d5cdd798cdf9767376b6aff3dbc309"
+	contractSHA  = "6e869f0d5af75c66de77dcbe141851b16e4d2dd87438b0c7d31742a1a667ffe4"
 )
 
 type rawEvidence struct {

@@ -40,7 +40,7 @@ done
     exit 1
 }
 [[ $(sha256sum "${buildopt_cohort}" | awk '{print $1}') == \
-    24c3b2de49452955143f790e3335a27d75d5cdd798cdf9767376b6aff3dbc309 ]] || {
+    6e869f0d5af75c66de77dcbe141851b16e4d2dd87438b0c7d31742a1a667ffe4 ]] || {
     printf 'AF-014C frozen cohort digest drifted\n' >&2
     exit 1
 }
@@ -473,8 +473,20 @@ buildopt_subject() {
         "${buildopt_accepted}" "$(wc -l <"${buildopt_exclusions}" | tr -d ' ')"
 }
 
+buildopt_compact_subject() {
+    local buildopt_index=$1 buildopt_key buildopt_subject_root
+    buildopt_key=$(jq -r ".repositories[${buildopt_index}].policy.key" "${buildopt_cohort}")
+    buildopt_subject_root="${buildopt_temp}/subjects/${buildopt_key}"
+    [[ -s ${buildopt_subject_root}/subject.json ]] || {
+        printf 'AF-014C %s: immutable subject evidence missing before cleanup\n' "${buildopt_key}" >&2
+        return 1
+    }
+    find "${buildopt_subject_root}" -mindepth 1 -maxdepth 1 ! -name subject.json -exec rm -rf -- {} +
+}
+
 for buildopt_index in 0 1 2 3 4; do
     buildopt_subject "${buildopt_index}"
+    buildopt_compact_subject "${buildopt_index}"
     buildopt_free=$(df -Pk "${TMPDIR:-/tmp}" | awk 'NR == 2 {print $4 * 1024}')
     ((buildopt_free >= 8589934592)) || {
         printf 'AF-014C disk floor crossed after repository %d\n' "${buildopt_index}" >&2

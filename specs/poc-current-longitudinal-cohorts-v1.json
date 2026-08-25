@@ -16,7 +16,7 @@
       "remoteUrl": "https://github.com/spring-projects/spring-framework.git",
       "branch": "main",
       "jdkToolchain": "temurin-jdk-25",
-      "workflow": ["classes", "--offline", "--no-daemon", "--max-workers=12"],
+      "workflow": ["classes", "--offline", "--no-scan", "--no-daemon", "--max-workers=12"],
       "requiredOutputs": ["spring-jms/build/classes/**"]
     },
     {
@@ -25,7 +25,7 @@
       "remoteUrl": "https://github.com/open-telemetry/opentelemetry-java-instrumentation.git",
       "branch": "main",
       "jdkToolchain": "temurin-jdk-21",
-      "workflow": ["spring-webmvc-6.0:javaagent:shadowJar", "--offline", "--no-daemon", "--max-workers=12"],
+      "workflow": [":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:shadowJar", "--offline", "--no-scan", "--no-daemon", "--max-workers=12"],
       "requiredOutputs": ["instrumentation/spring/spring-webmvc/spring-webmvc-6.0/javaagent/build/libs/*.jar"]
     },
     {
@@ -34,7 +34,7 @@
       "remoteUrl": "https://github.com/apache/kafka.git",
       "branch": "trunk",
       "jdkToolchain": "temurin-jdk-25",
-      "workflow": ["core:compileTestJava", "--offline", "--no-daemon", "--max-workers=12"],
+      "workflow": ["core:compileTestJava", "--offline", "--no-scan", "--no-daemon", "--max-workers=12"],
       "requiredOutputs": ["core/build/classes/scala/test/**"]
     },
     {
@@ -43,7 +43,7 @@
       "remoteUrl": "https://github.com/micronaut-projects/micronaut-core.git",
       "branch": "5.2.x",
       "jdkToolchain": "temurin-jdk-25",
-      "workflow": ["assemble", "--offline", "--no-daemon", "--max-workers=12"],
+      "workflow": ["assemble", "--offline", "--no-scan", "--no-daemon", "--max-workers=12"],
       "requiredOutputs": ["http-client-jdk/build/libs/**"]
     },
     {
@@ -52,7 +52,7 @@
       "remoteUrl": "https://github.com/apache/groovy.git",
       "branch": "GROOVY_5_0_X",
       "jdkToolchain": "temurin-jdk-21",
-      "workflow": ["json:assemble", "--offline", "--no-daemon", "--max-workers=12"],
+      "workflow": ["json:assemble", "--offline", "--no-scan", "--no-daemon", "--max-workers=12"],
       "requiredOutputs": ["subprojects/groovy-json/build/classes/java/main/**", "subprojects/groovy-json/build/resources/main/**"]
     }
   ],

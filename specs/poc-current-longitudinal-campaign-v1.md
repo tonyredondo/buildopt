@@ -21,6 +21,11 @@ the candidate owns BuildOpt state. Observation `N` may consume only candidate
 state committed by observations `1..N-1`; there is no future-state replay and
 no untimed candidate warmup.
 
+After a repository closes, the runner retains its immutable `subject.json` and
+removes only that repository's transient checkout, dependency and Gradle-cache
+state. This bounds disk use without changing later observations or the final
+aggregate.
+
 The first pair is control-first and order alternates thereafter. Both arms run
 the frozen workflow on the same public revision. The runner records independent
 monotonic wall time, the candidate's non-overlapping internal phases, cache,
