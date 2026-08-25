@@ -55,18 +55,26 @@ jq -e \
       ["BUILD_IMPACT", "BUILD_IMPACT_PLUS_REVIEWED_TASK_PATCH", "REVIEWED_TASK_PATCH"] and
     ([.directComparisons[].dsl] | unique) == ["GROOVY", "KOTLIN"] and
     all(.directComparisons[];
-      .pairs == 8 and .meanSavedMs >= 500 and .meanReductionRatio >= 0.02 and
-      .interval95SavedMs[0] > 0 and .positivePairs >= 7 and
-      .requiredOutputsIdentical == true and .productAttributableFailures == 0 and
-      .qualified == true and (.observations | length) == 8 and
+      .pairs == 8 and .requiredOutputsIdentical == true and
+      .productAttributableFailures == 0 and (.observations | length) == 8 and
       all(.observations[];
-        .requiredOutputsIdentical == true and .productAttributableFailure == false)) and
+        .requiredOutputsIdentical == true and .productAttributableFailure == false) and
+      (.qualified ==
+        (.meanSavedMs >= 500 and .meanReductionRatio >= 0.02 and
+         .interval95SavedMs[0] > 0 and .positivePairs >= 7))) and
+    ([.directComparisons[] | select(.qualified)] | length) == 5 and
+    ([.directComparisons[] |
+      select(.comparison == "BUILD_IMPACT" and .dsl == "KOTLIN" and
+             .qualified == false and .positivePairs == 6)] | length) == 1 and
+    all(.directComparisons[] |
+      select(.comparison == "BUILD_IMPACT_PLUS_REVIEWED_TASK_PATCH");
+      .qualified == true and .positivePairs == 8) and
     .cacheLocality.qualified == true and
     .cacheLocality.directEvidenceSha256 == $localitySha and
     .cacheLocality.interval95SavedMs[0] > 0 and .cacheLocality.positivePairs == 4 and
     .cacheLocality.compositionDisposition == "INDEPENDENT_SCOPE_ONLY" and
-    .decision.outcome == "COMPOSED_VALUE_QUALIFIED" and
-    .decision.directCompositionQualified == true and
+    .decision.outcome == "RETAIN_BEST_SINGLE_FRAGMENT" and
+    .decision.directCompositionQualified == false and
     .decision.independentLocalityQualified == true and
     .decision.percentagesAdded == false and
     .boundaries.proofOfConcept == true and
@@ -86,4 +94,4 @@ jq -e '
     .boundaries.onlyReadLocalityChanges == true
 ' "${buildopt_locality}" >/dev/null
 
-echo 'adaptive fragment composition: COMPOSED_VALUE_QUALIFIED'
+echo 'adaptive fragment composition: RETAIN_BEST_SINGLE_FRAGMENT'

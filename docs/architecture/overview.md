@@ -191,8 +191,10 @@ plan for Build Impact only: each producer needs separate compatible subgraph
 and exact-output-materialization fragments. Unaffected producers restore
 verified bytes, changed producers rebuild locally, and global, ambiguous or
 incomplete state retains the complete original workflow before execution.
-The implementation is storage-neutral and timing remains deferred to
-`AF-011`.
+The implementation is storage-neutral. `AF-011` directly measured the active
+composition and retained independently qualified fragments because Kotlin
+Build Impact missed its frozen isolated repeatability gate; `AF-012` now owns
+portable local and HTTPS state without changing those activation authorities.
 
 The local POC remains service-independent. `buildopt-server` can now expose one
 TLS 1.3 endpoint with two logically isolated planes:

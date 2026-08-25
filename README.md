@@ -93,11 +93,12 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > producer, subgraph, task, patch and cache-locality fragments. It requires
 > sub-second native retention, chronological no-lookahead learning and positive
 > cumulative value in at least three of five public repository families before
-> restoring any generic claim. The first real activation proof now passes:
-> six Gradle 9.6.1 scenarios preserve every producer and final output while
-> unrelated producers restore independently, changed producers rebuild locally
-> and unsafe state retains the complete native workflow. This is correctness
-> evidence; direct composed wall-time measurement is the next gate.
+> restoring any generic claim. Direct AF-011 timing now shows 68.56% Groovy
+> and 79.32% Kotlin savings when Build Impact and a reviewed task patch run
+> together, with exact outputs. The composition remains unauthorized because
+> Kotlin Build Impact reaches only 6/8 positive isolated pairs versus the fixed
+> 7/8 gate. Independently qualified fragments are retained; portable local and
+> HTTPS adaptive state is the next block.
 
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired

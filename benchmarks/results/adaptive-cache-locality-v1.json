@@ -1,0 +1,143 @@
+{
+  "boundaries": {
+    "buildImpactChanged": false,
+    "designPartnerRequired": false,
+    "onlyReadLocalityChanges": true,
+    "productionReadinessClaimed": false,
+    "proofOfConcept": true,
+    "runtimeTuningChanged": false,
+    "safeCacheChanged": false,
+    "sameAuthenticationCheck": true,
+    "sameCommittedObjectBytes": true,
+    "sameGradleHttpBuildCacheClient": true,
+    "sameSharedOrigin": true,
+    "sameWorkloadAndOutputs": true,
+    "soakRequired": false,
+    "testOptimizationModified": false
+  },
+  "buildoptRevision": "96004e78aa981f33e8b1ebbef780e20646d68d99",
+  "capturedAt": "2026-08-25T18:05:27Z",
+  "fixtureSha256": "2728d328a10f0ea8c1f29dca5db71d5cfe16f716a6fc5aacdf1868c6dd03b853",
+  "hypothesis": {
+    "candidate": "GRADLE_HTTP_BUILD_CACHE_TO_PREWARMED_BUILDOPT_EDGE",
+    "control": "GRADLE_HTTP_BUILD_CACHE_DIRECT_TO_SHARED",
+    "mechanism": "EDGE_COMMITTED_READ_LOCALITY",
+    "singleChangedInput": "CACHE_READ_LOCATION"
+  },
+  "network": {
+    "bandwidthBytesPerSecond": 20971520,
+    "latencyPerResponseMs": 80,
+    "model": "LOOPBACK_SHAPED_WAN",
+    "packetLossRatio": 0
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 6925,
+      "candidateDurationMs": 4519,
+      "savedMs": 2406,
+      "interArmIdleGapMs": 85,
+      "controlOriginRequests": 8,
+      "controlOriginBytes": 33569616,
+      "candidateOriginRequests": 0,
+      "candidateOriginBytes": 0,
+      "requiredOutputCount": 8,
+      "requiredOutputBytes": 33554432,
+      "requiredOutputSha256": "ec5408e8b4cc71fb409d1be15d0b74c067fb551b72dd53cae9397b95e3b87a0f",
+      "taskOutcomeSetSha256": "9135a821763c6561073d5dc175be4f637678519fa1ec9bb38461861714bec057",
+      "outputsIdentical": true,
+      "taskOutcomesIdentical": true,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 7102,
+      "candidateDurationMs": 4486,
+      "savedMs": 2616,
+      "interArmIdleGapMs": 83,
+      "controlOriginRequests": 8,
+      "controlOriginBytes": 33569616,
+      "candidateOriginRequests": 0,
+      "candidateOriginBytes": 0,
+      "requiredOutputCount": 8,
+      "requiredOutputBytes": 33554432,
+      "requiredOutputSha256": "ec5408e8b4cc71fb409d1be15d0b74c067fb551b72dd53cae9397b95e3b87a0f",
+      "taskOutcomeSetSha256": "9135a821763c6561073d5dc175be4f637678519fa1ec9bb38461861714bec057",
+      "outputsIdentical": true,
+      "taskOutcomesIdentical": true,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 7094,
+      "candidateDurationMs": 4653,
+      "savedMs": 2441,
+      "interArmIdleGapMs": 84,
+      "controlOriginRequests": 8,
+      "controlOriginBytes": 33569616,
+      "candidateOriginRequests": 0,
+      "candidateOriginBytes": 0,
+      "requiredOutputCount": 8,
+      "requiredOutputBytes": 33554432,
+      "requiredOutputSha256": "ec5408e8b4cc71fb409d1be15d0b74c067fb551b72dd53cae9397b95e3b87a0f",
+      "taskOutcomeSetSha256": "9135a821763c6561073d5dc175be4f637678519fa1ec9bb38461861714bec057",
+      "outputsIdentical": true,
+      "taskOutcomesIdentical": true,
+      "productAttributableFailure": false
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 7188,
+      "candidateDurationMs": 4724,
+      "savedMs": 2464,
+      "interArmIdleGapMs": 87,
+      "controlOriginRequests": 8,
+      "controlOriginBytes": 33569616,
+      "candidateOriginRequests": 0,
+      "candidateOriginBytes": 0,
+      "requiredOutputCount": 8,
+      "requiredOutputBytes": 33554432,
+      "requiredOutputSha256": "ec5408e8b4cc71fb409d1be15d0b74c067fb551b72dd53cae9397b95e3b87a0f",
+      "taskOutcomeSetSha256": "9135a821763c6561073d5dc175be4f637678519fa1ec9bb38461861714bec057",
+      "outputsIdentical": true,
+      "taskOutcomesIdentical": true,
+      "productAttributableFailure": false
+    }
+  ],
+  "preparation": {
+    "edgeWarmupOriginBytes": 33569616,
+    "edgeWarmupOriginRequests": 8,
+    "measured": false,
+    "seededObjectBytes": 33569616,
+    "seededObjectCount": 8
+  },
+  "result": {
+    "candidateMeanMs": 4595.5,
+    "controlMeanMs": 7077.25,
+    "decision": "QUALIFY_EDGE_LOCALITY_FOR_CONTROLLED_REMOTE_CACHE_POC",
+    "interval95SavedMs": [
+      2420.5,
+      2572.25
+    ],
+    "meanSavedMs": 2481.75,
+    "pairs": 4,
+    "positivePairs": 4,
+    "qualified": true,
+    "reductionRatio": 0.3506658659790173
+  },
+  "runner": {
+    "cpuCount": 12,
+    "gradle": "9.6.1",
+    "id": "linux-amd64-12c-16659865600b-v1",
+    "jdk": "21",
+    "memoryBytes": 16659865600
+  },
+  "runnerScriptSha256": "fd701dc223f5f4b9f0c564023733f8e004c87bea08256453e4f85f1865e83b0c",
+  "schemaVersion": "buildopt.evidence/poc-remote-cache-value/v1",
+  "specSha256": "4d4ec11ecfeb6f25b3b4e81fa4dbed15115653cffa63f21122b06a28801b21ad",
+  "workItem": "POC-REMOTE-CACHE-VALUE-001"
+}

@@ -2589,3 +2589,34 @@ mechanism and their complete composition against optimized native Gradle.
 ```bash
 ./dev/check-adaptive-fragment-activation
 ```
+
+## Adaptive fragment direct composition
+
+[`adaptive-fragment-composition-v1.json`](./results/adaptive-fragment-composition-v1.json)
+is the `AF-011` direct timing report. It contains 48 new Gradle 9.6.1 pairs on
+one controlled workflow: Build Impact alone, the reviewed task-contract patch
+alone and both mechanisms actually enabled together, for Groovy and Kotlin.
+All comparisons use the complete optimized native workflow as control and
+preserve the ten required outputs byte for byte.
+
+The composed path saves **2,947 ms/68.56% in Groovy** and
+**3,025.25 ms/79.32% in Kotlin**, with 8/8 positive pairs and positive lower
+bounds. These are direct end-to-end effects, not sums. The patch qualifies
+independently in both DSLs. Build Impact qualifies in Groovy at
+2,180.375 ms/46.45%, but Kotlin reaches only 6/8 positive pairs despite a
+positive mean and lower bound.
+
+[`adaptive-cache-locality-v1.json`](./results/adaptive-cache-locality-v1.json)
+is a fresh independent HTTP-cache run on the same revision. Prewarmed Edge
+saves **2,481.75 ms/35.07%**, 4/4, against the same committed objects read
+directly from Shared. It is not claimed inside the final composition because
+the remote-cache object contract differs from the direct fixture.
+
+The frozen constituent rule therefore produces
+`RETAIN_BEST_SINGLE_FRAGMENT`: a strongly positive composition cannot mask an
+isolated repeatability miss. Outputs are exact, product failures are zero and
+production activation remains unauthorized.
+
+```bash
+./dev/check-adaptive-fragment-composition
+```

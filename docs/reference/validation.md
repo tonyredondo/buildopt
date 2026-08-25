@@ -83,6 +83,7 @@ Adaptive-fragment identity and selective invalidation:
 ./dev/check-adaptive-fragment-prior
 ./dev/check-adaptive-fragment-patch-opportunity
 ./dev/check-adaptive-fragment-planner
+./dev/check-adaptive-fragment-composition
 ```
 
 The static and synthetic `AF-001` gate validates the machine policy, runs the
@@ -124,9 +125,15 @@ requires exact subgraph/materialization pairs, proves producer-local
 invalidation and verified restoration, checks executed producer tasks and
 retains the complete native workflow on global, ambiguous or incomplete state.
 It validates correctness and activation only; it records no wall times.
+The `AF-011` gate validates the immutable 48-pair direct-composition report
+and fresh Shared/Edge locality evidence. It accepts either preregistered
+outcome; the checked result is `RETAIN_BEST_SINGLE_FRAGMENT` because Kotlin
+Build Impact reaches 6/8 positive pairs even though both composed arms are
+faster and exact.
 
 ```bash
 ./dev/check-adaptive-fragment-activation
+./dev/check-adaptive-fragment-composition
 ```
 
 ```bash

@@ -4797,6 +4797,23 @@ authorizes composition experiments but makes no wall-time claim:
 ./dev/check-adaptive-fragment-activation
 ```
 
+## Adaptive fragment composition timing
+
+`./dev/check-adaptive-fragment-composition` validates the `AF-011` frozen
+protocol, direct 48-pair Gradle report and fresh controlled Shared/Edge
+locality evidence. The direct runner measures Build Impact, the reviewed task
+patch and their real composition against the same optimized native workflow;
+it never adds component percentages.
+
+Both composed DSL arms are strongly positive and exact. The checker still
+returns `RETAIN_BEST_SINGLE_FRAGMENT` because Kotlin Build Impact records only
+6/8 positive isolated pairs versus the fixed 7/8 gate. This is a successful
+fail-closed POC decision, not a checker failure:
+
+```bash
+./dev/check-adaptive-fragment-composition
+```
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic

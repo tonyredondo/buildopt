@@ -137,8 +137,11 @@ first runtime proof is complete in the repository: two independent producers
 can restore exact unaffected outputs, rebuild only a changed producer and fall
 back to the original complete workflow when change or stored state is unsafe.
 This closes activation correctness only. The current customer command remains
-the whole-profile POC above until AF-011 proves direct net wall-time value and
-AF-014 reproduces the adaptive decision through a clean installation.
+the whole-profile POC above. AF-011 has measured direct net wall-time value for
+the adaptive composition, but retained independently qualified fragments
+because one constituent missed its frozen repeatability gate. AF-012 must make
+that portfolio portable and AF-014 must reproduce the resulting adaptive
+decision through a clean installation before the successor enters onboarding.
 
 ```bash
 buildopt optimize --json -- build

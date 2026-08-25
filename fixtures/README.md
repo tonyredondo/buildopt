@@ -26,6 +26,11 @@ changes restore both exact producer outputs, localized changes rebuild only
 the changed producer, and build-logic, ambiguous or missing-output state runs
 the complete original workflow. It proves activation correctness, not timing.
 
+`adaptive-fragment-composition/` supplies the Groovy and Kotlin root build
+scripts for the `AF-011` controlled timing workflow. The runner combines it
+with the existing Build Impact and reviewed-task fixtures to measure isolated
+and directly composed value without adding percentages.
+
 `output-equivalence/` contains the three owner-reviewed semantic contracts for
 the public workflow POC. They exercise relocatable UTF-8 reports, canonical ZIP
 contents, and one exact volatile Java-properties key. The implementation tests

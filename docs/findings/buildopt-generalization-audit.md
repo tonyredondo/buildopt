@@ -166,5 +166,8 @@ independent producers, each localized change rebuilds only its affected
 producer, and global, ambiguous or incomplete state runs the complete original
 workflow. Six of six final bundles and producer-output sets match byte for byte
 with zero product failures. This establishes fragment-specific invalidation and
-activation correctness, not generic wall-time value; AF-011 must time the full
-composition directly.
+activation correctness. AF-011 subsequently timed the full composition
+directly: both composed DSL arms were strongly positive and exact, but Kotlin
+Build Impact reached only 6/8 positive isolated pairs. The frozen constituent
+gate therefore retained the independently qualified fragments instead of
+authorizing the joint path.

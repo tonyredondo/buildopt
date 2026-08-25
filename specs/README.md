@@ -19,6 +19,7 @@ the exact cross-component contract.
 | [`poc-adaptive-fragment-patch-opportunity-v1.md`](./poc-adaptive-fragment-patch-opportunity-v1.md) and [`poc-adaptive-fragment-patch-opportunity-v1.json`](./poc-adaptive-fragment-patch-opportunity-v1.json) | `AF-008` |
 | [`poc-adaptive-fragment-planner-v1.md`](./poc-adaptive-fragment-planner-v1.md) and [`poc-adaptive-fragment-planner-v1.json`](./poc-adaptive-fragment-planner-v1.json) | `AF-009` |
 | [`poc-adaptive-fragment-activation-v1.md`](./poc-adaptive-fragment-activation-v1.md) and [`poc-adaptive-fragment-activation-v1.json`](./poc-adaptive-fragment-activation-v1.json) | `AF-010` |
+| [`poc-adaptive-fragment-composition-v1.md`](./poc-adaptive-fragment-composition-v1.md) and [`poc-adaptive-fragment-composition-v1.json`](./poc-adaptive-fragment-composition-v1.json) | `AF-011` |
 | [`poc-aggregate-workflow-partition-v1.md`](./poc-aggregate-workflow-partition-v1.md) | `POC-AGGREGATE-WORKFLOW-PARTITION-001` |
 | [`poc-verified-output-materialization-v1.md`](./poc-verified-output-materialization-v1.md) | `POC-VERIFIED-OUTPUT-MATERIALIZATION-001` |
 | [`poc-central-storage-contract-v1.md`](./poc-central-storage-contract-v1.md) and [`poc-central-storage-contract-v1.json`](./poc-central-storage-contract-v1.json) | `POC-CENTRAL-STORAGE-CONTRACT-001` |

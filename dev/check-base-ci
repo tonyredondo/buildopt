@@ -377,6 +377,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-poc-otel-overhead" >/dev/null
         "${buildopt_script_dir}/check-adaptive-fragment-planner" >/dev/null
         "${buildopt_script_dir}/check-adaptive-fragment-activation" >/dev/null
+        "${buildopt_script_dir}/check-adaptive-fragment-composition" >/dev/null
         "${buildopt_script_dir}/run" \
             --toolchain temurin-jdk-21 \
             -- \

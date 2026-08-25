@@ -44,12 +44,15 @@ for the decision-ready summary and raw evidence.
 The next hypothesis, its fixed scorecard, ordered work and documentation
 obligations are tracked separately in the
 [Adaptive Fragment Generalization POC Tracker](../plans/adaptive-fragment-generalization-tracker.md).
-Its AF-010 gate now demonstrates independent Build Impact activation on real
-Gradle without adding a performance number: six native/candidate scenarios
-produce exact outputs, restore four unaffected producer outputs, rebuild two
-changed producers locally and retain the complete native workflow for global,
-ambiguous or incomplete state. AF-011 must measure the mechanisms separately
-and their full composition directly before this can become a value claim.
+Its AF-010 gate demonstrates independent Build Impact activation on real
+Gradle, and AF-011 now adds direct timing without adding isolated percentages.
+Across 48 Gradle 9.6.1 pairs, Build Impact plus the reviewed patch saves
+2,947 ms/68.56% in Groovy and 3,025.25 ms/79.32% in Kotlin, with 8/8 positive
+pairs, exact outputs and zero failures. The patch and controlled HTTP locality
+qualify independently. Build Impact qualifies in Groovy but reaches only 6/8
+positive pairs in Kotlin, so the frozen constituent gate produces
+`RETAIN_BEST_SINGLE_FRAGMENT` even though both composed arms are faster. This
+is the intended fail-closed behavior, not a reason to add or average effects.
 
 The machine-readable incremental transaction is preserved in the
 [incremental-learning result](../../benchmarks/results/poc-incremental-learning-v1/README.md).

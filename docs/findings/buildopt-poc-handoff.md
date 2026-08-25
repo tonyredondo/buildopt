@@ -33,7 +33,7 @@ decision.
 | **Ordinary-build learning economics** | Learn only from builds the user requested and stop when the expected compatible lifetime cannot repay discovery. | Four repositories stopped after one requested build and avoided 64 additional learning builds. |
 | **Cross-repository hypothesis prior** | Use generic task implementation, plugin, Gradle and graph/output features to decide what to investigate first in a new repository. | Four opaque source scopes rank three hypothesis classes identically for two holdouts and after all repository identities are replaced. Priors never transfer correctness, value or activation. |
 | **Durable patch-opportunity learning** | Detect repeated expensive task-contract problems, propose an owner-reviewed reversible source patch and validate it independently. | One generic detector feeds an exact reviewed recipe that saves **67.28% Kotlin** and **68.01% Groovy** across 16 native Gradle pairs with exact outputs. BuildOpt is not needed after acceptance; recipe coverage remains specific. |
-| **Conflict-aware fragment planner** | Compose only qualified fragments whose dependencies, exclusions, authorities and direct joint economics remain valid; otherwise use native Gradle. | A deterministic pre-Gradle proof selects one dependency-closed two-fragment plan, rejects three unsafe alternatives and returns native Gradle for seven missing, stale, ambiguous or uneconomic vectors. The values are synthetic and grant no activation. |
+| **Conflict-aware fragment planner** | Compose only qualified fragments whose dependencies, exclusions, authorities and direct joint economics remain valid; otherwise use native Gradle. | Direct timing now shows that the reviewed patch and Build Impact can save 68.56% Groovy and 79.32% Kotlin together, but Kotlin Build Impact reaches only 6/8 positive isolated pairs. The frozen constituent gate therefore retains qualified fragments instead of authorizing the composition. |
 | **Local/HTTP cache and central state** | Carry verified task outputs and profiles between builds or machines. | Supporting infrastructure; useful for transport and persistence, but not the primary acceleration claim. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource and state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
 
@@ -64,6 +64,25 @@ measurement-only builds, verifies 27 exact-output observations and records
 zero product failures. The signed total is +50.544 seconds, but that number is
 descriptive only: repository percentages are not averaged and mechanism
 percentages are not added.
+
+## Current fragment-composition result
+
+AF-011 ran 48 new Gradle 9.6.1 pairs on one controlled workflow, always against
+the complete optimized native workflow and with identical required outputs.
+
+| Direct comparison | Groovy | Kotlin | Decision |
+| --- | ---: | ---: | --- |
+| Build Impact | **46.45% / 2.180 s**, 7/8 | **43.97% / 1.973 s**, 6/8 | Groovy qualifies; Kotlin misses repeatability |
+| Reviewed task patch | **37.95% / 1.749 s**, 7/8 | **35.08% / 1.705 s**, 8/8 | Both qualify |
+| Direct composition | **68.56% / 2.947 s**, 8/8 | **79.32% / 3.025 s**, 8/8 | Faster in both, but not authorized |
+| HTTP cache locality, independent scope | **35.07% / 2.482 s**, 4/4 | Same controlled cache contract | Qualifies independently |
+
+Every lower confidence bound is positive, outputs are byte-identical and
+product failures are zero. The composed percentages are measured directly and
+are not sums. The outcome is `RETAIN_BEST_SINGLE_FRAGMENT`: a positive
+composition cannot hide the failed 7/8 constituent gate. Cache locality is not
+claimed as part of that composition because its remote-cache object contract
+is different.
 
 ## What the evidence says
 
@@ -140,10 +159,15 @@ does not claim runtime saving. AF-010 now executes that boundary on real Gradle:
 six control/candidate scenarios restore four exact unaffected outputs, rebuild
 two changed producers locally and retain the complete original workflow for
 global, ambiguous or missing state. Every producer and final bundle is exact
-and product failures are zero. No durations were collected, so AF-011 is next:
-measure each qualified mechanism and the complete composition directly against
-optimized native Gradle. Production hardening, soak, design partners and Test
-Optimization remain outside this POC.
+and product failures are zero. AF-011 now measures each mechanism and the
+complete compatible composition directly. The composed arms are strongly
+positive, but Kotlin Build Impact misses the fixed repeatability gate, so the
+planner retains independently qualified fragments instead of activating the
+joint path. AF-012 is next: persist the same portfolio and economic ledger
+locally and over the existing HTTPS state plane while preserving offline native
+fallback and keeping Gradle cache objects separate from BuildOpt policy state.
+Production hardening, soak, design partners and Test Optimization remain
+outside this POC.
 
 ## Evidence
 
@@ -167,3 +191,5 @@ Optimization remain outside this POC.
 - [Machine-readable durable patch proof](../../benchmarks/results/adaptive-fragment-patch-opportunity-v1.json)
 - [Conflict-aware planner contract](../../specs/poc-adaptive-fragment-planner-v1.md)
 - [Machine-readable planner proof](../../benchmarks/results/adaptive-fragment-planner-v1.json)
+- [Direct fragment-composition result](../../benchmarks/results/adaptive-fragment-composition-v1.json)
+- [Fresh HTTP cache-locality result](../../benchmarks/results/adaptive-cache-locality-v1.json)

@@ -1,7 +1,7 @@
 # Adaptive Fragment Generalization POC Tracker
 
 **Status:** `IN_PROGRESS`<br>
-**Current block:** `AF-011 — Multi-mechanism composition`<br>
+**Current block:** `AF-012 — Local and central adaptive state`<br>
 **Decision baseline:** the current whole-profile hypothesis remains
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)<br>
 **Last updated:** 2026-08-25
@@ -192,8 +192,8 @@ the correctness authority for cacheability. Repetition alone is not authority.
 |---:|---|---|---|---|
 | 9 | `AF-009` Conflict-aware fragment planner | Compose compatible fragments with explicit dependencies, mutual exclusions and a predicted net-value floor; otherwise select native Gradle. | `DONE` | AF-003, AF-005, AF-006 |
 | 10 | `AF-010` Active Build Impact fragments | Activate producer/subgraph fragments independently, preserve exact required outputs and invalidate only affected fragments across commits. | `DONE` | AF-009 |
-| 11 | `AF-011` Multi-mechanism composition | Directly measure qualified Build Impact, reviewed-task/patch and bounded cache-locality combinations without adding isolated percentages. | `TODO` | AF-008, AF-010 |
-| 12 | `AF-012` Local and central adaptive state | Persist the same typed portfolio and ledger locally and through the existing HTTPS state plane; prove two-machine reuse, offline fallback and no use of Gradle cache objects as policy documents. | `WAITING` | AF-002, AF-005, AF-009 |
+| 11 | `AF-011` Multi-mechanism composition | Directly measure qualified Build Impact, reviewed-task/patch and bounded cache-locality combinations without adding isolated percentages. | `DONE` | AF-008, AF-010 |
+| 12 | `AF-012` Local and central adaptive state | Persist the same typed portfolio and ledger locally and through the existing HTTPS state plane; prove two-machine reuse, offline fallback and no use of Gradle cache objects as policy documents. | `TODO` | AF-002, AF-005, AF-009 |
 
 ### Phase D — Customer path and terminal decision
 
@@ -427,6 +427,20 @@ positive lower bound; no percentage is constructed by addition.
 
 **Outcome:** `COMPOSED_VALUE_QUALIFIED` or `RETAIN_BEST_SINGLE_FRAGMENT`.
 
+**Result:** `RETAIN_BEST_SINGLE_FRAGMENT`. On one controlled Gradle 9.6.1
+workflow, the direct Build-Impact-plus-reviewed-patch arm is faster than the
+optimized native control in both DSLs: Groovy saves 2,947 ms/68.56% and Kotlin
+saves 3,025.25 ms/79.32%, with 8/8 positive pairs, positive lower bounds,
+byte-identical outputs and zero product failures. The reviewed patch qualifies
+independently in both DSLs and controlled HTTP locality qualifies at
+2,481.75 ms/35.07% with 4/4 positive pairs. Build Impact qualifies
+independently in Groovy at 2,180.375 ms/46.45%, but Kotlin reaches only 6/8
+positive pairs despite a positive 1,972.75-ms mean and positive 724.5-ms lower
+bound. Because every constituent had to pass before activation, the composed
+path is not authorized. Locality remains independent because its remote-cache
+object contract differs from the composition fixture; no percentages are
+added.
+
 ### AF-012 — Local and central adaptive state
 
 **Deliverables:** local-first portfolio/ledger persistence and reuse through the
@@ -535,6 +549,7 @@ IDs from the implementation tracker.
 | `AF-E009` | AF-008 | [Patch-opportunity contract](../../specs/poc-adaptive-fragment-patch-opportunity-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-patch-opportunity-v1.json), recomputable [detector/transaction/value report](../../benchmarks/results/adaptive-fragment-patch-opportunity-v1.json) and [`dev/check-adaptive-fragment-patch-opportunity`](../../dev/check-adaptive-fragment-patch-opportunity). Ten unsafe inputs reject; accepted bytes apply and exactly revert outside the checkout; the frozen 4-CPU/16-GiB native Gradle evidence saves 67.28% Kotlin and 68.01% Groovy across 16 pairs with exact outputs and zero product failures. | `DONE` |
 | `AF-E010` | AF-009 | [Conflict-aware planner contract](../../specs/poc-adaptive-fragment-planner-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-planner-v1.json), recomputable [planner report](../../benchmarks/results/adaptive-fragment-planner-v1.json) and [`dev/check-adaptive-fragment-planner`](../../dev/check-adaptive-fragment-planner). Five qualified fragments and six exact synthetic composition predictions prove canonical selection, one dependency, symmetric conflict rejection, retained constituent authorities, three rejected alternatives and seven zero-selection native fallbacks without Gradle, timing or activation. | `DONE` |
 | `AF-E011` | AF-010 | [Active Build Impact contract](../../specs/poc-adaptive-fragment-activation-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-activation-v1.json), real Gradle [activation report](../../benchmarks/results/adaptive-fragment-activation-v1.json), two-producer [fixture](../../fixtures/adaptive-fragment-activation) and [`dev/check-adaptive-fragment-activation`](../../dev/check-adaptive-fragment-activation). Six Gradle 9.6.1 control/candidate scenarios prove four exact unaffected-output restorations, two producer-local rebuilds, three partial graphs, three complete native fallbacks, exact final bundles and zero product failures without making a timing claim. | `DONE` |
+| `AF-E012` | AF-011 | [Composition protocol](../../specs/poc-adaptive-fragment-composition-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-composition-v1.json), immutable [direct-composition report](../../benchmarks/results/adaptive-fragment-composition-v1.json), fresh [HTTP-locality report](../../benchmarks/results/adaptive-cache-locality-v1.json), controlled [fixture](../../fixtures/adaptive-fragment-composition) and [`dev/check-adaptive-fragment-composition`](../../dev/check-adaptive-fragment-composition). Forty-eight direct Gradle pairs preserve exact outputs; both composed DSL arms and five of six isolated DSL arms pass, but Kotlin Build Impact reaches only 6/8 positive pairs, so the frozen constituent gate retains independently qualified fragments instead of authorizing composition. | `DONE` |
 
 ## 12. Decision log
 
@@ -555,11 +570,13 @@ IDs from the implementation tracker.
 | 2026-08-25 | Separate generic patch-opportunity detection from recipe authority. | Repeated task evidence may create a review proposal, but only an exact reviewed recipe plus transactional correctness and independent native value can authorize a durable source change. |
 | 2026-08-25 | Require exact whole-composition economics in the fragment planner. | Adding isolated effects would hide interaction costs; missing, ambiguous or below-floor joint evidence must retain native Gradle before execution. |
 | 2026-08-25 | Require subgraph and output-materialization fragments to activate as an exact producer pair with separate contexts. | Structural omission and stored bytes consume different facts; pairing prevents either authority from restoring unverified work and allows one producer to invalidate without suspending unrelated producers. |
+| 2026-08-25 | Do not authorize a composed path when one constituent misses its independent repeatability gate. | Direct composition can look strongly positive while an isolated mechanism remains order-sensitive; retaining qualified fragments preserves attribution and prevents interaction from masking unstable authority. |
 
 ## 13. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-25 | Closed AF-011 as `RETAIN_BEST_SINGLE_FRAGMENT`: 48 direct Gradle pairs show 68.56% Groovy and 79.32% Kotlin composition savings with exact outputs, the reviewed patch and HTTP locality qualify independently, but Kotlin Build Impact reaches only 6/8 positive pairs; preserved the failed constituent gate and opened AF-012 portable adaptive state. |
 | 2026-08-25 | Closed AF-010 as `COMPOSABLE_BUILD_IMPACT_AVAILABLE`: six real Gradle scenarios preserve every producer output and final bundle while restoring four unaffected outputs, rebuilding two changed producers locally and retaining the complete native workflow for global, ambiguous or incomplete state; opened AF-011 direct multi-mechanism timing without turning synthetic planner value into measured saving. |
 | 2026-08-25 | Closed AF-009 as `FRAGMENT_COMPOSITION_PLAN_AVAILABLE`: deterministic exact-set planning closes dependencies, excludes conflicts, preserves constituent authorities and retains native Gradle for seven unsafe vectors; opened AF-010 runtime Build Impact fragments without turning synthetic predicted value into a timing claim. |
 | 2026-08-25 | Closed AF-008 as `DURABLE_PATCH_VALUE_PROVED`: a generic detector emits one non-authorizing proposal, ten unsafe inputs reject, the reviewed exact recipe applies/reverts outside the checkout, and 16 frozen native Gradle pairs save 67.28% Kotlin/68.01% Groovy with exact outputs; opened AF-009 conflict-aware composition. |
