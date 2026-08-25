@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "buildopt.specs/current-longitudinal-campaign/v1",
+  "workItem": "AF-014C",
+  "cohort": {
+    "path": "benchmarks/results/current-longitudinal-cohorts-v1.json",
+    "sha256": "24c3b2de49452955143f790e3335a27d75d5cdd798cdf9767376b6aff3dbc309"
+  },
+  "arms": {
+    "control": "OPTIMIZED_NATIVE_GRADLE",
+    "candidate": "CURRENT_INSTALLED_BUILDOPT",
+    "order": "ALTERNATING_CONTROL_FIRST",
+    "separateCheckouts": true,
+    "separateGradleHomes": true,
+    "separateBuildCaches": true,
+    "separateDaemonRegistries": true,
+    "candidateStateOnly": true
+  },
+  "chronology": {
+    "primaryPerRepository": 20,
+    "minimumComparablePerRepository": 15,
+    "reservePolicy": "NEXT_FROZEN_RESERVE_AFTER_PREREGISTERED_EXCLUSION",
+    "noLookahead": true,
+    "measurementOnlyAuthorityUpdates": false
+  },
+  "measurement": {
+    "externalWallClock": "CLOCK_MONOTONIC",
+    "completeCandidatePhases": true,
+    "exactRequiredOutputs": true,
+    "signedDelta": "CONTROL_MS_MINUS_CANDIDATE_MS",
+    "learningCostIncluded": true,
+    "fingerprints": [
+      "CHECKOUT",
+      "GRADLE_HOME",
+      "NATIVE_BUILD_CACHE",
+      "DAEMON_REGISTRY",
+      "BUILDOPT_STATE"
+    ]
+  },
+  "runtimeSurfaces": [
+    "WHOLE_PROFILE",
+    "NATIVE_RETAINED",
+    "NO_FRAGMENT_RUNTIME"
+  ],
+  "exclusions": [
+    "NATIVE_BUILD_FAILURE",
+    "DEPENDENCY_UNAVAILABLE_AFTER_PREPARATION",
+    "RUNNER_ENVIRONMENT_FAILURE",
+    "NATIVE_OUTPUT_NONDETERMINISM"
+  ],
+  "outcomes": [
+    "NET_POSITIVE",
+    "NET_NEGATIVE",
+    "INCONCLUSIVE",
+    "INSUFFICIENT_COHORT"
+  ],
+  "classification": {
+    "minimumDirectionalPermille": 600,
+    "positive": "CUMULATIVE_NET_POSITIVE_AND_DIRECTIONAL_GATE",
+    "negative": "CUMULATIVE_NET_NEGATIVE_AND_DIRECTIONAL_GATE",
+    "otherwise": "INCONCLUSIVE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

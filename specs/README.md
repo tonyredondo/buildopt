@@ -24,6 +24,7 @@ the exact cross-component contract.
 | [`poc-adaptive-fragment-longitudinal-v1.md`](./poc-adaptive-fragment-longitudinal-v1.md) and [`poc-adaptive-fragment-longitudinal-v1.json`](./poc-adaptive-fragment-longitudinal-v1.json) | `AF-013` |
 | [`poc-current-longitudinal-harness-v1.md`](./poc-current-longitudinal-harness-v1.md) and [`poc-current-longitudinal-harness-v1.json`](./poc-current-longitudinal-harness-v1.json) | `AF-014A` |
 | [`poc-current-longitudinal-cohorts-v1.md`](./poc-current-longitudinal-cohorts-v1.md) and [`poc-current-longitudinal-cohorts-v1.json`](./poc-current-longitudinal-cohorts-v1.json) | `AF-014B` |
+| [`poc-current-longitudinal-campaign-v1.md`](./poc-current-longitudinal-campaign-v1.md) and [`poc-current-longitudinal-campaign-v1.json`](./poc-current-longitudinal-campaign-v1.json) | `AF-014C` |
 | [`poc-aggregate-workflow-partition-v1.md`](./poc-aggregate-workflow-partition-v1.md) | `POC-AGGREGATE-WORKFLOW-PARTITION-001` |
 | [`poc-verified-output-materialization-v1.md`](./poc-verified-output-materialization-v1.md) | `POC-VERIFIED-OUTPUT-MATERIALIZATION-001` |
 | [`poc-central-storage-contract-v1.md`](./poc-central-storage-contract-v1.md) and [`poc-central-storage-contract-v1.json`](./poc-central-storage-contract-v1.json) | `POC-CENTRAL-STORAGE-CONTRACT-001` |

@@ -511,6 +511,21 @@ This `AF-014B` gate validates five contiguous first-parent chains containing
 and generic change shapes, binds JDK/workflow/output scope, and rejects reorder,
 scope drift, unknown fields or timing before `AF-014C`. It performs no build.
 
+## Current installed longitudinal campaign
+
+```bash
+./dev/check-current-longitudinal-campaign \
+  "$PWD/benchmarks/results/current-longitudinal-raw-v1.json" \
+  "$PWD/benchmarks/results/current-longitudinal-report-v1.json"
+```
+
+The `AF-014C` checker recomputes signed and cumulative net value from raw
+control/candidate pairs, binds every attempted revision to the frozen primary
+and reserve order, requires exact output bytes and verifies that candidate
+state `N` consumes exactly the state produced by accepted observation `N-1`.
+It also rejects any attempt to relabel the installed whole-profile runtime as
+adaptive-fragment activation.
+
 ## Complete lanes
 
 - `./dev/check-phase-zero` composes the historical Phase 0 gates.

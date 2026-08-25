@@ -229,7 +229,7 @@ the correctness authority for cacheability. Repetition alone is not authority.
 | 13 | `AF-013` Historical longitudinal normalization | Preserve the earlier Spring, OpenTelemetry, Kafka, Micronaut and Groovy observations as an immutable no-lookahead audit without treating them as the current implementation scorecard. | `DONE` | AF-010, AF-011 |
 | 14a | `AF-014A` Current installed longitudinal harness | Install one package built from the current SHA and prove isolated, stateful, fully attributed optimized-native-versus-BuildOpt execution through the public command. | `DONE` | AF-012, AF-013 |
 | 14b | `AF-014B` Frozen current commit cohorts | Freeze 20 primary first-parent commits, deterministic reserve queues, workflows, output contracts and exclusion rules for each of the five public repositories before timing. | `DONE` | AF-014A |
-| 14c | `AF-014C` Current longitudinal campaign | Run the current installed binary over the frozen cohorts with chronological learning, alternating arms and exact outputs. | `TODO` | AF-014B |
+| 14c | `AF-014C` Current longitudinal campaign | Run the current installed binary over the frozen cohorts with chronological learning, alternating arms and exact outputs. | `DOING` | AF-014B |
 | 14d | `AF-014D` Mechanism attribution and generalization analysis | Attribute savings, overhead and regressions to activated fragments, fallback, state, materialization, Gradle execution or unresolved variation. | `WAITING` | AF-014C |
 | 15 | `AF-015` Terminal adaptive-fragment decision | Recompute the complete scorecard from the current campaign and choose continue, specialize or stop without changing thresholds. | `WAITING` | AF-014D |
 

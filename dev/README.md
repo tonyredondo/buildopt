@@ -4897,6 +4897,31 @@ drift and premature-timing vectors, with:
   "$PWD/benchmarks/results/current-longitudinal-cohorts-v1.json"
 ```
 
+## Current installed longitudinal campaign
+
+Run the five frozen public histories sequentially from a clean, source-bound
+revision. The runner builds and installs one Linux AMD64 package, prepares each
+repository's dependencies before timing, alternates isolated optimized-native
+and installed BuildOpt arms, preserves chronological candidate state and
+removes successful reproducible working data:
+
+```bash
+./dev/run-current-longitudinal-campaign /absolute/path/campaign
+```
+
+The output contains `raw.json` and its deterministic `report.json`. Validate
+both against the frozen cohort with:
+
+```bash
+./dev/check-current-longitudinal-campaign \
+  /absolute/path/campaign/raw.json \
+  /absolute/path/campaign/report.json
+```
+
+The installed command currently exposes whole-profile selection rather than
+fragment identities. The runner records `NO_FRAGMENT_RUNTIME` instead of
+mislabeling those profiles; `AF-014D` owns the resulting attribution decision.
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic

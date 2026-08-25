@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_root=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_raw=${1:-"${buildopt_root}/benchmarks/results/current-longitudinal-raw-v1.json"}
+buildopt_report=${2:-"${buildopt_root}/benchmarks/results/current-longitudinal-report-v1.json"}
+
+if (($# > 2)); then
+    printf 'usage: %s [RAW_JSON REPORT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+(
+    cd -- "${buildopt_root}/dev/current-longitudinal-campaign"
+    "${buildopt_root}/dev/run" --toolchain go -- go test ./...
+    "${buildopt_root}/dev/run" --toolchain go -- go vet ./...
+    "${buildopt_root}/dev/run" --toolchain go -- \
+        go run . --validate \
+        "${buildopt_root}/benchmarks/results/current-longitudinal-cohorts-v1.json" \
+        "${buildopt_raw}" "${buildopt_report}"
+)
