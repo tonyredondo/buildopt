@@ -197,7 +197,7 @@ buildopt_hash_outputs() {
             printf 'AF-011 required output missing: %s\n' "${buildopt_file}" >&2
             exit 1
         }
-        sha256sum "${buildopt_file}"
+        sha256sum "${buildopt_file}" | awk '{print $1}'
     done | sha256sum | awk '{print $1}'
 }
 
