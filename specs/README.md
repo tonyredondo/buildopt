@@ -599,6 +599,12 @@ with a canonical repository/workflow/Wrapper/producer/output/change-family
 fingerprint. Evidence and exact-output revisions remain independent safety
 bindings; incomplete or drifted structure retains native Gradle.
 
+`poc-ordinary-learning-economics-v1.json` and
+`poc-ordinary-learning-economics-v1.md` bound POC learning to customer-requested
+ordinary builds. Compatible lifetime must cover five matches, the first pair
+must repay learning within that horizon, and the unchanged eight-pair robust
+gate remains mandatory. No measurement-only build or timing claim is added.
+
 `poc-structural-profile-v1.json` and `poc-structural-profile-v1.md` define the
 repository-independent bridge from measured structural value to an installed
 Build-Impact-only profile. Eight positive optimized-native comparisons,

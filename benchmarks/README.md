@@ -2376,6 +2376,24 @@ necessary. This is compatibility evidence, not a new performance result:
 ./dev/check-structural-profile-rebinding
 ```
 
+## Ordinary-build learning economics
+
+[`results/poc-ordinary-learning-economics-v1/`](./results/poc-ordinary-learning-economics-v1/README.md)
+proves that the POC spends learning effort only when ordinary requested builds
+can plausibly repay it. The fixed horizon is five structurally compatible
+matches, and the existing robust qualification still needs eight alternating
+pairs.
+
+The deterministic decision evidence stops an insufficient-lifetime hypothesis
+after one requested build, avoiding 16 remaining observations, and stops a
+six-match payback after three requested builds, avoiding 14. A positive first
+pair projects three matches to payback but authorizes only continued learning.
+This is economic-control evidence, not a repository speedup:
+
+```bash
+./dev/check-ordinary-learning-economics
+```
+
 ## JVM Agent spike evidence
 
 [`results/spk-002-agent.json`](./results/spk-002-agent.json) records the one

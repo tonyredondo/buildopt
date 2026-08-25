@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "buildopt.specs/poc-ordinary-learning-economics/v1",
+  "workItem": "POC-ORDINARY-LEARNING-ECONOMICS-001",
+  "maximumPaybackMatches": 5,
+  "requiredRobustPairs": 8,
+  "requiredProofs": {
+    "requestedOrdinaryBuildsOnly": true,
+    "measurementOnlyBuildsRejected": true,
+    "structuralContextBound": true,
+    "exactOutputsRequired": true,
+    "compatibleLifetimePredictedBeforeCalibration": true,
+    "nonPositiveValueRetainsNative": true,
+    "fiveMatchPaybackEnforced": true,
+    "robustEightPairGatePreserved": true
+  },
+  "decision": "ALLOW_BOUNDED_ORDINARY_BUILD_LEARNING",
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "performanceClaim": false,
+    "extraMeasurementBuilds": false,
+    "robustGateWeakened": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

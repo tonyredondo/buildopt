@@ -32,6 +32,7 @@ Optimization are outside the current scope.
 | **Verified output materialization** | Restores exact unaffected outputs before their producers are omitted. | Fast and fail-closed. A producer-atomic quarantine now excludes every output of a task when any output is volatile, while exact outputs from other producers remain transportable. |
 | **Aggregate output closure** | Derives the complete output set of custom lifecycle workflows from Gradle task dependencies and producer ownership. | 4/4 Gradle 8/9 x Groovy/Kotlin fixtures rebuild the changed producer, materialize the stable output and reproduce exact bytes without task-name, plugin, path or extension rules. This is correctness evidence, not a timing claim. |
 | **Structural profile rebinding** | Reuses qualified structural evidence across commits when workflow, Wrapper, producer lineage, output contract and change family are unchanged. | 2/2 different commit/root contexts retain one fingerprint; 5/5 structural drifts and 4/4 incomplete evidence cases reject. Evidence ancestry and exact output revisions remain separate, so stale bytes are never implied by compatibility. |
+| **Ordinary-build learning economics** | Learns duration, graph, portability and volatility only from customer-requested builds, then asks whether compatible lifetime can repay discovery. | A fixed five-match horizon rejects short-lived, regressive or six-match-payback hypotheses early; a positive first pair only continues toward the unchanged eight-pair robust gate. No measurement-only builds are added. |
 | **Profile portfolio and central state** | Carries verified profiles and packs over HTTP/HTTPS between builds and machines. | Transport and safe cross-commit refresh have selected value on Kafka (+104.975 s) and Spring (+84.656 s). Micronaut proves exact transitive lineage and recovery, but neither its 58-entrypoint lifecycle cover (+65 ms/0.49%) nor a 63-entrypoint direct frontier (-709 ms/-5.60%) qualifies. |
 | **Gradle-compatible cache** | Reuses verified task outputs locally or through optional HTTP/HTTPS storage. | Supporting infrastructure near native-cache parity, not the principal speed claim. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource/state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
@@ -215,17 +216,21 @@ with zero product failures. The cross-commit claim therefore remains bounded.
   longest hard-dependency chain grows 178.875 ms. The unchanged causal pairs
   save only 197 ms/1.51%, with 5/8 positive pairs and an interval crossing
   zero. The terminal decision is to stop the Micronaut quarantine line.
+- Learning cost is now part of the product decision rather than retrospective
+  reporting. A 900-ms synthetic cost with 400-ms first-pair saving projects
+  three matches to payback and 1,100 ms net over the bounded horizon. A
+  four-match lifetime stops after one requested build and avoids 16 remaining
+  observations; a six-match payback or regressive first pair stops after three
+  and avoids 14. These are deterministic economics checks, not new repository
+  speedups. Unsafe evidence rejects 4/4 and product failures remain zero.
 
 ## Next steps
 
-1. Learn duration, graph, portability and volatility only from ordinary
-   requested builds, and require expected payback within five compatible
-   matches before spending calibration work.
-2. Run one unchanged binary over frozen Spring, OpenTelemetry, Kafka,
+1. Run one unchanged binary over frozen Spring, OpenTelemetry, Kafka,
    Micronaut and Groovy lifetime windows. Require exact outputs, zero product
    failures, at least three net-positive repository families and selection on
    at least half of structurally eligible non-global descendants.
-3. Issue a terminal continue/stop decision for the generic one-command POC.
+2. Issue a terminal continue/stop decision for the generic one-command POC.
    Production hardening, soak and design partners remain outside this gate.
 
 ## Evidence
@@ -234,6 +239,8 @@ with zero product failures. The cross-commit claim therefore remains bounded.
 - [Machine-readable aggregate closure](../../benchmarks/results/poc-aggregate-output-closure-v1/summary.json)
 - [Structural profile rebinding result](../../benchmarks/results/poc-structural-profile-rebinding-v1/README.md)
 - [Machine-readable structural binding evidence](../../benchmarks/results/poc-structural-profile-rebinding-v1/summary.json)
+- [Ordinary-build learning economics](../../benchmarks/results/poc-ordinary-learning-economics-v1/README.md)
+- [Machine-readable learning economics](../../benchmarks/results/poc-ordinary-learning-economics-v1/summary.json)
 - [Latest recovery result](../../benchmarks/results/poc-cross-commit-value-recovery-v1/README.md)
 - [Workflow-input ownership result](../../benchmarks/results/poc-workflow-input-ownership-v1/README.md)
 - [Machine-readable ownership summary](../../benchmarks/results/poc-workflow-input-ownership-v1/summary.json)

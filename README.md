@@ -83,6 +83,16 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > [qualified-lifetime evidence](./benchmarks/results/poc-qualified-lifetime-v2/README.md);
 > attractive calibration is no longer presented as customer value.
 
+> **Ordinary-build learning economics:** the POC now learns only from builds
+> the user already requested. It predicts structural recurrence before paired
+> calibration and requires projected payback within five compatible matches.
+> Deterministic contract evidence stops a short-lived hypothesis after one
+> requested build (avoiding 16 remaining observations) and a six-match payback
+> after three (avoiding 14). A positive probe only permits continued learning;
+> the unchanged eight-pair robust gate still decides qualification. This is a
+> learning-cost control, not a new wall-time result. See the
+> [ordinary-learning evidence](./benchmarks/results/poc-ordinary-learning-economics-v1/README.md).
+
 > **POC onboarding north star:** install BuildOpt, open a Gradle repository and
 > run `buildopt optimize build`. The command now has a stable state/result,
 > resume, budget, exit and POC-authority contract. It now derives the exact Git

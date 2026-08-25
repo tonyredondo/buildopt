@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_spec=${buildopt_root}/specs/poc-ordinary-learning-economics-v1.json
+buildopt_summary=${buildopt_root}/benchmarks/results/poc-ordinary-learning-economics-v1/summary.json
+
+command -v jq >/dev/null 2>&1 || {
+    printf 'jq is required\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-ordinary-learning-economics/v1" and
+  .workItem == "POC-ORDINARY-LEARNING-ECONOMICS-001" and
+  .maximumPaybackMatches == 5 and
+  .requiredRobustPairs == 8 and
+  all(.requiredProofs[]; .) and
+  .decision == "ALLOW_BOUNDED_ORDINARY_BUILD_LEARNING" and
+  .boundaries == {proofOfConcept:true,productionAuthorized:false,
+    performanceClaim:false,extraMeasurementBuilds:false,robustGateWeakened:false,
+    soakRequired:false,designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_spec}" >/dev/null
+
+"${buildopt_root}/dev/run" --toolchain go -- go run ./dev/ordinary-learning-economics --check "${buildopt_summary}"
+"${buildopt_root}/dev/run" --toolchain go -- go test ./internal/ordinarylearning ./internal/launcher \
+    -run 'TestEvaluate|TestOptimizeIncrementalEconomics|TestPrequalifyOptimizeDiscovery'
+
+printf 'Ordinary learning economics evidence OK: five-match payback enforced; 4 unsafe inputs rejected\n'

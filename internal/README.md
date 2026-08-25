@@ -24,6 +24,12 @@ task lineage, exact required/candidate output ownership and change family.
 Incomplete, ambiguous or cyclic evidence is rejected; evidence ancestry and
 revision-bound output bytes remain launcher responsibilities.
 
+`ordinarylearning/` owns the bounded economics applied to useful observations
+from customer-requested Gradle builds. It validates structural compatibility,
+exact outputs, portability and product outcomes, then permits continued
+learning only when projected compatible lifetime repays within five matches.
+It never authorizes an extra measurement build or production behavior.
+
 `launcher/` contains the dependency-free `WS-001` command passthrough, the
 `WS-002` Linux process-group and signal contract, the `WS-003` plugin handshake,
 and the neutral `WS-004` authenticated local rendezvous used by `cmd/buildopt`.

@@ -1016,6 +1016,17 @@ performance: no timing result changes, and the next experiment must determine
 whether ordinary requested builds supply enough compatible observations to
 repay learning.
 
+That economic decision is now executable. BuildOpt counts only
+customer-requested builds with the same structural fingerprint, successful
+outcome, exact outputs and portable evidence. It requires at least five likely
+compatible matches before paired learning and, after the first pair, requires
+positive projected net value with payback no later than match five. A bounded
+fixture stops a four-match lifetime after one build (16 remaining observations
+avoided), and stops a six-match payback after three builds (14 avoided). A
+positive three-match payback still does not qualify the candidate: eight
+alternating pairs and the unchanged robust value/tail gate remain mandatory.
+These synthetic figures validate decision economics, not wall-time speedup.
+
 The terminal specialization remains valid, but it does not end the search for
 a general product. The next foundation separates two decisions that earlier
 profiles coupled too tightly:

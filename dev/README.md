@@ -4629,6 +4629,18 @@ separate and mandatory:
 ./dev/check-structural-profile-rebinding
 ```
 
+## Ordinary-build learning economics evidence
+
+`./dev/check-ordinary-learning-economics` regenerates the five-match economic
+decision from the committed summary and runs the focused evaluator and launcher
+integration tests. It proves that no measurement-only build contributes
+evidence, unsafe or drifted observations fail closed, and a positive first pair
+does not bypass the existing eight-pair robust qualification:
+
+```bash
+./dev/check-ordinary-learning-economics
+```
+
 ## Update policy
 
 Toolchain updates are atomic repository changes:

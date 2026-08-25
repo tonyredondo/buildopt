@@ -183,6 +183,12 @@ evidence failures and the real central selection/refresh path. It makes no
 timing claim and never treats a compatible structure as authority to reuse
 stale output bytes.
 
+`./dev/check-ordinary-learning-economics` validates that only requested
+ordinary builds supply duration, graph, portability, volatility and outcome
+evidence. It enforces a five-match payback horizon, rejects four unsafe evidence
+classes and preserves the separate eight-pair robust qualification gate. Its
+synthetic durations test decisions and do not claim repository performance.
+
 `check-automatic-breadth-transfer` validates the immutable V1 unchanged
 zero-manual-file run across Spring Framework, OpenTelemetry Java
 Instrumentation, Apache Kafka, Micronaut Core and Apache Groovy. It recomputes
