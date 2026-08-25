@@ -80,7 +80,18 @@ git -C "${buildopt_repository}" commit -qm 'automatic calibration base'
 git -C "${buildopt_repository}" switch -qc feature
 git -C "${buildopt_repository}" config branch.feature.remote .
 git -C "${buildopt_repository}" config branch.feature.merge refs/heads/main
-sed -i 's/service-a-base/service-a-target/' \
+buildopt_previous=service-a-base
+for buildopt_history_index in $(seq 1 4); do
+    buildopt_current=service-a-history-${buildopt_history_index}
+    sed -i "s/${buildopt_previous}/${buildopt_current}/" \
+        "${buildopt_repository}/service-a/src/main/java/example/Application.java"
+    git -C "${buildopt_repository}" add \
+        service-a/src/main/java/example/Application.java
+    git -C "${buildopt_repository}" commit -qm \
+        "ordinary compatible source change ${buildopt_history_index}"
+    buildopt_previous=${buildopt_current}
+done
+sed -i "s/${buildopt_previous}/service-a-target/" \
     "${buildopt_repository}/service-a/src/main/java/example/Application.java"
 git -C "${buildopt_repository}" add \
     service-a/src/main/java/example/Application.java
