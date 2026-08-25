@@ -6,6 +6,10 @@ not rerun or improve those observations and therefore makes no fresh timing
 claim. Reusing the immutable raw measurements avoids selecting a favorable
 rerun after seeing earlier results.
 
+This is historical audit evidence. It does not represent the current adaptive
+implementation and cannot satisfy the AF-014A..D current installed-package
+campaign or the AF-015 terminal scorecard.
+
 The machine contract is
 [`poc-adaptive-fragment-longitudinal-v1.json`](./poc-adaptive-fragment-longitudinal-v1.json).
 Each row names one source document and source schema. The assembler accepts

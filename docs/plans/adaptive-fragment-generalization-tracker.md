@@ -1,7 +1,7 @@
 # Adaptive Fragment Generalization POC Tracker
 
 **Status:** `IN_PROGRESS`<br>
-**Current block:** `AF-014 — Installed one-command replay`<br>
+**Current block:** `AF-014A — Current installed longitudinal harness`<br>
 **Decision baseline:** the current whole-profile hypothesis remains
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)<br>
 **Last updated:** 2026-08-25
@@ -27,6 +27,13 @@ of learning and activation.
 This is a POC value-validation plan. It is not a production-readiness,
 availability, multi-tenancy, soak, design-partner or autonomous-production
 rollout plan.
+
+`AF-013` is retained as an immutable audit of previously captured evidence. It
+is not the scorecard for the current implementation: several rejection paths
+were subsequently changed, OpenTelemetry and Groovy contain only three later
+commits, and Micronaut produced no comparable descendant pair. The current POC
+claim must therefore be evaluated again with one installed binary over larger
+chronological cohorts selected before timing.
 
 ## 2. Product hypothesis
 
@@ -95,7 +102,10 @@ result must pass every criterion below without post-result threshold movement.
 | Fragment activation coverage | At least 50% of structurally eligible descendant builds activate at least one independently compatible fragment. |
 | Repository-family breadth | At least three of five frozen public repository families finish the longitudinal window with positive cumulative net wall-time value. |
 | Longitudinal confidence | At least three families have a positive paired or sequence-aware lower confidence bound at the preregistered horizon. |
-| Time to value | Report cumulative value at builds 1, 5, 10 and 20; a qualifying family must repay within 20 compatible requested builds or the complete shorter frozen window. |
+| Cohort integrity | Freeze 20 primary first-parent commits plus an ordered reserve queue per family before timing; a terminal row requires at least 15 comparable requested builds, and every exclusion/replacement remains visible without timing-based selection. |
+| Current implementation | Every measured candidate uses one installed package built from the exact evaluated BuildOpt SHA; historical source-checkout arms cannot satisfy this criterion. |
+| Portfolio value | The signed aggregate across comparable builds is positive, while repository breadth still prevents one large win from masking negative families. |
+| Time to value | Report cumulative value at builds 1, 5, 10, 15 and 20; a qualifying family must repay within 20 compatible requested builds or the complete shorter frozen window. |
 | Native-retention cost | Pre-Gradle no-value decisions have median below 500 ms and p95 below 1,000 ms over at least 30 observations spanning all five families. |
 | Ordinary learning | Natural learning uses requested builds only; measurement-only builds are zero outside explicitly isolated terminal experiments. |
 | Bounded regret | Report every negative commit and the worst per-build regression; future expected value cannot hide an unbounded current penalty. |
@@ -115,6 +125,21 @@ The terminal outcome is one of:
 Every longitudinal evaluation is chronological and prequential: decision `N`
 may use only state observed before build `N`. No future commit, outcome or
 compatibility fact may influence an earlier selection.
+
+Each repository cohort is a contiguous first-parent sequence after a frozen
+anchor. Twenty primary commits, an ordered reserve tail, the requested
+workflow, output contract, exclusion reasons and the BuildOpt package SHA are
+committed before any timed arm runs. A primary commit may be replaced only by
+the next unused reserve after a preregistered native-build, environment or
+correctness-contract exclusion. Timing, a negative delta, native retention or
+an inconvenient change shape can never cause replacement.
+
+Control and candidate use separate but equivalently prepared persistent
+checkouts, Gradle user homes, daemon state, dependency state and native Gradle
+caches. The candidate additionally carries its BuildOpt portfolio and ledger
+forward in chronological order. Arm order alternates per commit. Untimed setup
+or warm-up is explicit and cannot update adaptive authority or enter the value
+claim.
 
 For a frozen sequence of requested builds:
 
@@ -138,6 +163,8 @@ Each evidence bundle must retain:
 - required-output and execution-shape comparisons;
 - individual wall times, signed deltas, tails and confidence method;
 - matching, decision, materialization and fallback overhead;
+- time spent in the BuildOpt launcher, state synchronization and Gradle child,
+  plus any residual unallocated paired variation;
 - learning cost, payback ordinal and cumulative net value; and
 - every product failure, invalid observation and exclusion reason.
 
@@ -199,9 +226,12 @@ the correctness authority for cacheability. Repetition alone is not authority.
 
 | Order | Block | Goal | State | Depends on |
 |---:|---|---|---|---|
-| 13 | `AF-013` Longitudinal five-repository matrix | Run frozen chronological sequences on Spring, OpenTelemetry, Kafka, Micronaut and Groovy against optimized native Gradle with no lookahead. | `DONE` | AF-010, AF-011 |
-| 14 | `AF-014` Installed one-command replay | Exercise the same decisions through a clean published-package installation and `buildopt optimize <workflow>`, including fast native retention and readable value reporting. | `TODO` | AF-012, AF-013 |
-| 15 | `AF-015` Terminal adaptive-fragment decision | Recompute the complete scorecard and choose continue, specialize or stop without changing thresholds. | `WAITING` | AF-013, AF-014 |
+| 13 | `AF-013` Historical longitudinal normalization | Preserve the earlier Spring, OpenTelemetry, Kafka, Micronaut and Groovy observations as an immutable no-lookahead audit without treating them as the current implementation scorecard. | `DONE` | AF-010, AF-011 |
+| 14a | `AF-014A` Current installed longitudinal harness | Install one package built from the current SHA and prove isolated, stateful, fully attributed optimized-native-versus-BuildOpt execution through the public command. | `TODO` | AF-012, AF-013 |
+| 14b | `AF-014B` Frozen current commit cohorts | Freeze 20 primary first-parent commits, deterministic reserve queues, workflows, output contracts and exclusion rules for each of the five public repositories before timing. | `WAITING` | AF-014A |
+| 14c | `AF-014C` Current longitudinal campaign | Run the current installed binary over the frozen cohorts with chronological learning, alternating arms and exact outputs. | `WAITING` | AF-014B |
+| 14d | `AF-014D` Mechanism attribution and generalization analysis | Attribute savings, overhead and regressions to activated fragments, fallback, state, materialization, Gradle execution or unresolved variation. | `WAITING` | AF-014C |
+| 15 | `AF-015` Terminal adaptive-fragment decision | Recompute the complete scorecard from the current campaign and choose continue, specialize or stop without changing thresholds. | `WAITING` | AF-014D |
 
 ## 8. Block definitions and required outcomes
 
@@ -482,29 +512,116 @@ an attributable timing pair existed. All 14 comparable outputs are exact,
 product failures are zero, every negative build remains present and sequence
 `N` exposes at most sequence `N-1`. Only 2/5 rows are positive versus the
 terminal 3/5 breadth target. No aggregate decision is made here and no fresh
-timing claim is introduced; AF-014 must reproduce these decisions through the
-installed command.
+timing claim is introduced. This result is a historical baseline, not the
+scorecard for the current adaptive implementation.
 
-### AF-014 — Installed one-command replay
+### AF-014A — Current installed longitudinal harness
 
-**Deliverables:** clean package installation, one public command, automatic
-local/central state use, human/JSON reports and fast bypass/native retention.
+**Deliverables**
 
-**Exit gate:** no hand-authored BuildOpt files in evaluated repositories;
-installed decisions equal source-checkout decisions; all product overhead is
-inside measured wall time; bypass restores the original command and
-environment.
+- a clean package built from and cryptographically bound to the evaluated
+  BuildOpt SHA;
+- one public `buildopt optimize <workflow>` invocation with no repository-
+  authored BuildOpt files;
+- separate persistent control and candidate checkouts, Gradle homes, daemons,
+  dependency caches and native Build Cache state with equivalent preparation;
+- candidate-local adaptive portfolio/ledger state that survives only forward
+  chronological movement;
+- alternating arm order and an immutable environment/command fingerprint; and
+- phase timing for launcher, matching, local/central state, materialization,
+  Gradle child and finalization, with bypass and native retention exercised.
 
-**Outcome:** `ADAPTIVE_ONBOARDING_REPRODUCED`.
+**Exit gate:** a controlled real Gradle fixture completes exact control,
+selected, native-retained and bypass scenarios through the installed package;
+all product overhead is inside the externally measured candidate wall time;
+the harness cannot share mutable arm state or learn from untimed setup; and
+bypass restores the original command and environment.
+
+**Outcome:** `CURRENT_LONGITUDINAL_HARNESS_READY`.
+
+### AF-014B — Frozen current commit cohorts
+
+**Deliverables**
+
+- one frozen first-parent anchor, 20 chronologically later primary commits and
+  an ordered reserve tail for Spring Framework, OpenTelemetry Java
+  Instrumentation, Kafka, Micronaut Core and Groovy;
+- the exact requested workflow and required-output contract for each family;
+- generic change-shape labels derived without repository-name product rules;
+- preregistered exclusion reasons for native build failure, unavailable
+  dependencies, environment failure and native-output nondeterminism; and
+- a disk/runtime budget that executes repositories sequentially and removes
+  only reproducible temporary checkouts and caches after evidence is secured.
+
+The cohort is selected from topology, buildability metadata and the frozen
+workflow before timing. A primary revision excluded under a preregistered rule
+consumes the next reserve in order. A slow, negative or native-retained commit
+is never replaced after its result is known.
+
+**Exit gate:** all 100 primary revisions, their parents and every ordered
+reserve are public and frozen, no timing result exists at freeze time, each row
+can yield at least 15 comparable builds under the preregistered rules or is
+declared insufficient, and an independent checker rejects reorder,
+out-of-order replacement or scope drift.
+
+**Outcome:** `CURRENT_LONGITUDINAL_COHORTS_FROZEN`.
+
+### AF-014C — Current longitudinal campaign
+
+**Deliverables**
+
+- optimized-native control and current installed BuildOpt candidate arms for
+  every non-excluded cohort commit;
+- one chronological adaptive state stream per candidate repository, with build
+  `N` consuming at most observations through `N-1`;
+- alternating arm order, exact required-output comparison, cache/daemon/state
+  fingerprints and complete phase timing;
+- per-build decision, activated/suspended fragments, signed delta and
+  cumulative net value including one-time learning cost; and
+- raw immutable observations plus a deterministic report/checker.
+
+**Exit gate:** every family has at least 15 comparable requested-build pairs or
+is explicitly incomplete; 75–100 accepted pairs are expected across the five
+families; outputs remain exact, product failures are zero, every adverse delta
+and exclusion is retained, and no measurement-only build updates authority.
+
+**Outcome:** one `NET_POSITIVE`, `NET_NEGATIVE`, `INCONCLUSIVE` or
+`INSUFFICIENT_COHORT` row per repository, without a terminal product decision.
+
+### AF-014D — Mechanism attribution and generalization analysis
+
+**Deliverables**
+
+- per-repository and cross-repository totals for selected fragments, native
+  retention, qualification cost, payback ordinal and worst regression;
+- attributable time for Build Impact, reviewed patch/task, safe cache locality,
+  state synchronization, output materialization and the complete composed path;
+- native-retention median/p95 and residual wall-time variation not explained by
+  recorded BuildOpt phases;
+- results grouped by generic change shape, Gradle/plugin/task implementation
+  and fragment compatibility rather than repository identity; and
+- a current one-pager/scorecard that separates measured mechanism effects and
+  never adds percentages from different workloads.
+
+**Exit gate:** every claimed saving points to an actually activated mechanism
+and exact output evidence; fallback regressions separate recorded BuildOpt cost
+from unresolved runner/Gradle variation; current and historical datasets are
+never merged; and the terminal scorecard can be recomputed without a narrative
+override.
+
+**Outcome:** `CURRENT_VALUE_ATTRIBUTED` or
+`CURRENT_VALUE_NOT_ATTRIBUTABLE`.
 
 ### AF-015 — Terminal adaptive-fragment decision
 
 **Deliverables:** a digest-bound scorecard that recomputes every section 4
 criterion and a concise decision update for team sharing.
 
-**Exit gate:** all source evidence is immutable and independently checked; no
-threshold, repository row, failure or negative build is omitted after results
-are known.
+**Exit gate:** all current installed-package evidence is immutable and
+independently checked; every section 4 criterion is evaluated; no threshold,
+repository row, failure, exclusion or negative build is omitted after results
+are known; and `AF-013` historical observations are context rather than current
+decision inputs.
 
 **Outcome:** `CONTINUE_ADAPTIVE_FRAGMENT_POC`,
 `SPECIALIZE_BOUNDED_FRAGMENT_CLASSES` or `STOP_ADAPTIVE_FRAGMENT_POC`.
@@ -516,23 +633,23 @@ commit whenever the block changes their claims or interfaces.
 
 | Document | Update trigger | Required update | Blocks |
 |---|---|---|---|
-| This tracker | Every block | State, owner, evidence, outcome, next block, validation and changelog. | AF-000..015 |
-| [`implementation-tracker.md`](../../implementation-tracker.md) | Phase or terminal-status change | Active phase, milestone progress and pointer to this detailed tracker. Do not duplicate block evidence. | AF-000, AF-004, AF-005, AF-006, AF-007, AF-010, AF-013, AF-015 |
+| This tracker | Every block | State, owner, evidence, outcome, next block, validation and changelog. | AF-000..015, including AF-014A..D |
+| [`implementation-tracker.md`](../../implementation-tracker.md) | Phase or terminal-status change | Active phase, milestone progress and pointer to this detailed tracker. Do not duplicate block evidence. | AF-000, AF-004, AF-005, AF-006, AF-007, AF-010, AF-013, AF-014A, AF-014C, AF-015 |
 | [Master RFC](../../gradle-build-optimization-platform.md) | Product invariant or accepted architecture changes | Adaptive fragment model, authority boundary or terminal decision; implementation detail alone does not rewrite the RFC. | AF-001, AF-005, AF-006, AF-015 |
-| [`specs/README.md`](../../specs/README.md) and new specs | Executable contract introduced or revised | Contract purpose, authority, checker and explicit POC boundary. | AF-001, AF-002, AF-005, AF-006, AF-007, AF-009, AF-013, AF-015 |
-| [`benchmarks/README.md`](../../benchmarks/README.md) | New measured or shadow evidence | Protocol, runner, controls, result links and non-additive interpretation. | AF-003, AF-004, AF-005, AF-006, AF-008, AF-011, AF-013, AF-014 |
-| [POC one-pager](../findings/buildopt-poc-handoff.md) | Material customer-value evidence or terminal direction changes | Current idea, mechanisms, latest longitudinal numbers, conclusion and next step only. Remove superseded “current” data. | AF-004, AF-005, AF-006, AF-007, AF-008, AF-011, AF-013, AF-015 |
-| [Performance findings](../findings/build-optimization-performance.md) | New attributable timing evidence | Isolated mechanism and composed-path effects, negative evidence and activation decision. | AF-008, AF-010, AF-011, AF-013, AF-015 |
-| [Generalization audit](../findings/buildopt-generalization-audit.md) | Compatibility, transfer or breadth evidence changes | Current generic boundary, selection coverage, invalidation granularity and lifetime conclusion. | AF-004, AF-005, AF-006, AF-007, AF-010, AF-013, AF-015 |
+| [`specs/README.md`](../../specs/README.md) and new specs | Executable contract introduced or revised | Contract purpose, authority, checker and explicit POC boundary. | AF-001, AF-002, AF-005, AF-006, AF-007, AF-009, AF-013, AF-014A..C, AF-015 |
+| [`benchmarks/README.md`](../../benchmarks/README.md) | New measured or shadow evidence | Protocol, runner, controls, result links and non-additive interpretation. | AF-003, AF-004, AF-005, AF-006, AF-008, AF-011, AF-013, AF-014A..D |
+| [POC one-pager](../findings/buildopt-poc-handoff.md) | Material customer-value evidence or terminal direction changes | Current idea, mechanisms, latest longitudinal numbers, conclusion and next step only. Remove superseded “current” data. | AF-004, AF-005, AF-006, AF-007, AF-008, AF-011, AF-013, AF-014C..D, AF-015 |
+| [Performance findings](../findings/build-optimization-performance.md) | New attributable timing evidence | Isolated mechanism and composed-path effects, negative evidence and activation decision. | AF-008, AF-010, AF-011, AF-013, AF-014C..D, AF-015 |
+| [Generalization audit](../findings/buildopt-generalization-audit.md) | Compatibility, transfer or breadth evidence changes | Current generic boundary, selection coverage, invalidation granularity and lifetime conclusion. | AF-004, AF-005, AF-006, AF-007, AF-010, AF-013, AF-014B..D, AF-015 |
 | [Architecture overview](../architecture/overview.md) | Runtime/data-flow architecture changes | Fragment registry, planner, learner, ledger and local/central boundaries. | AF-002, AF-006, AF-007, AF-009, AF-012 |
 | [Repository map](../architecture/repository-map.md) | Packages, commands or ownership move | Architecture-to-directory mapping and owning validators. | AF-002, AF-003, AF-006, AF-007, AF-009, AF-012 |
-| [Product onboarding](../getting-started/product-onboarding.md) | User-visible behavior changes | First build, learning, active use, native retention and report interpretation. | AF-006, AF-010, AF-012, AF-014 |
-| [Product workflows](../guides/product-workflows.md) | New operator/user workflow exists | Observation, qualification, composition, patch review and fallback sequence. | AF-006, AF-008, AF-010, AF-014 |
-| [CLI reference](../reference/cli.md) | CLI/options/exit/report changes | Exact syntax, outputs, exit behavior and examples. | AF-006, AF-009, AF-012, AF-014 |
-| [Configuration reference](../reference/configuration.md) | New state, policy or server input exists | Defaults, scope, secrets, invalidation and bypass. | AF-003, AF-006, AF-012, AF-014 |
+| [Product onboarding](../getting-started/product-onboarding.md) | User-visible behavior changes | First build, learning, active use, native retention and report interpretation. | AF-006, AF-010, AF-012, AF-014A, AF-015 |
+| [Product workflows](../guides/product-workflows.md) | New operator/user workflow exists | Observation, qualification, composition, patch review and fallback sequence. | AF-006, AF-008, AF-010, AF-014A, AF-015 |
+| [CLI reference](../reference/cli.md) | CLI/options/exit/report changes | Exact syntax, outputs, exit behavior and examples. | AF-006, AF-009, AF-012, AF-014A, AF-015 |
+| [Configuration reference](../reference/configuration.md) | New state, policy or server input exists | Defaults, scope, secrets, invalidation and bypass. | AF-003, AF-006, AF-012, AF-014A, AF-015 |
 | [Validation reference](../reference/validation.md) | Any checker is added or changed | Command, covered contract, expected result and whether it is static, synthetic or timed. | AF-001..015 |
 | [Central cache/state roadmap](./centralized-cache-and-state-roadmap.md) | Shared state representation or synchronization changes | Fragment/ledger state kinds and two-machine behavior; never merge Gradle data and BuildOpt control planes. | AF-002, AF-012 |
-| Root [`README.md`](../../README.md) | Public current status, result or onboarding changes | Short current claim and links; do not copy the full tracker. | AF-000, AF-010, AF-013, AF-014, AF-015 |
+| Root [`README.md`](../../README.md) | Public current status, result or onboarding changes | Short current claim and links; do not copy the full tracker. | AF-000, AF-010, AF-013, AF-014A, AF-014C..D, AF-015 |
 | [`docs/README.md`](../README.md) | Documentation entry point changes | Link the active tracker and current finding/decision documents. | AF-000 and whenever a document is added/renamed |
 
 ## 10. Block closure checklist
@@ -573,6 +690,11 @@ IDs from the implementation tracker.
 | `AF-E012` | AF-011 | [Composition protocol](../../specs/poc-adaptive-fragment-composition-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-composition-v1.json), immutable [direct-composition report](../../benchmarks/results/adaptive-fragment-composition-v1.json), fresh [HTTP-locality report](../../benchmarks/results/adaptive-cache-locality-v1.json), controlled [fixture](../../fixtures/adaptive-fragment-composition) and [`dev/check-adaptive-fragment-composition`](../../dev/check-adaptive-fragment-composition). Forty-eight direct Gradle pairs preserve exact outputs; both composed DSL arms and five of six isolated DSL arms pass, but Kotlin Build Impact reaches only 6/8 positive pairs, so the frozen constituent gate retains independently qualified fragments instead of authorizing composition. | `DONE` |
 | `AF-E013` | AF-012 | [Adaptive state portability protocol](../../specs/poc-adaptive-state-portability-v1.md), exact [machine policy](../../specs/poc-adaptive-state-portability-v1.json), local-first persistence in [`internal/adaptivefragment`](../../internal/adaptivefragment), HTTPS adapter in [`internal/launcher`](../../internal/launcher) and [`dev/check-adaptive-state-portability`](../../dev/check-adaptive-state-portability). Exact canonical bytes survive a clean second-machine restore; local and central optimistic concurrency, private files, tamper rejection, verified offline reuse and clean-offline native fallback pass while adaptive control documents generate zero `/cache/` requests. | `DONE` |
 | `AF-E014` | AF-013 | [Longitudinal protocol](../../specs/poc-adaptive-fragment-longitudinal-v1.md), frozen [machine contract](../../specs/poc-adaptive-fragment-longitudinal-v1.json), canonical [five-row result](../../benchmarks/results/adaptive-fragment-longitudinal-v1.json) and [`dev/check-adaptive-fragment-longitudinal`](../../dev/check-adaptive-fragment-longitudinal). Fourteen exact signed direct pairs close Spring/Kafka positive, OpenTelemetry/Groovy negative and Micronaut inconclusive; source digests, no-lookahead bounds, one-time cost, negative builds and threshold/result tamper rejection are recomputed without a fresh timing claim. | `DONE` |
+| `AF-E015` | AF-014A | Reserved for the current-SHA installed harness contract, package digest, arm-isolation proof, phase-timing result and independent checker. | `TODO` |
+| `AF-E016` | AF-014B | Reserved for the five frozen 20-primary-commit cohort manifests, ordered reserve queues, workflows, output contracts, exclusion policy and pre-timing integrity checker. | `WAITING` |
+| `AF-E017` | AF-014C | Reserved for 75–100 current installed-package control/candidate pairs, raw observations, canonical longitudinal report and checker. | `WAITING` |
+| `AF-E018` | AF-014D | Reserved for mechanism/fallback attribution, residual-variation analysis and the recomputable current value scorecard. | `WAITING` |
+| `AF-E019` | AF-015 | Reserved for the terminal adaptive-fragment decision and its threshold-preserving checker. | `WAITING` |
 
 ## 12. Decision log
 
@@ -595,12 +717,14 @@ IDs from the implementation tracker.
 | 2026-08-25 | Require subgraph and output-materialization fragments to activate as an exact producer pair with separate contexts. | Structural omission and stored bytes consume different facts; pairing prevents either authority from restoring unverified work and allows one producer to invalidate without suspending unrelated producers. |
 | 2026-08-25 | Do not authorize a composed path when one constituent misses its independent repeatability gate. | Direct composition can look strongly positive while an isolated mechanism remains order-sensitive; retaining qualified fragments preserves attribution and prevents interaction from masking unstable authority. |
 | 2026-08-25 | Keep adaptive control state local-first and transport the same canonical documents through typed central-state manifests. | Exact portable bytes permit safe second-machine reuse while separate state/cache routes, CAS heads and retention prevent Gradle blob presence from becoming optimization authority. |
-| 2026-08-25 | Normalize immutable direct measurements before installed replay instead of rerunning favorable arms. | The source-checkout matrix must preserve adverse builds, missing comparable evidence and original learning costs; AF-014 can then test only whether the installed path reproduces the same decisions. |
+| 2026-08-25 | Retain AF-013 as historical audit evidence, not the current implementation scorecard. | Its direct observations remain valuable and immutable, but later implementation changes, three-commit OpenTelemetry/Groovy windows and a missing Micronaut pair cannot decide current generic lifetime value. |
+| 2026-08-25 | Evaluate the current installed binary over larger cohorts frozen before timing. | Twenty primary commits plus ordered reserves per family, at least 15 comparable builds per terminal row, persistent chronological state and explicit phase attribution reduce cherry-picking, short-window luck and unassigned fallback variation. |
 
 ## 13. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-25 | Reoriented the terminal validation around current evidence: AF-013 remains an immutable historical baseline; replaced the old single AF-014 replay with AF-014A installed harness, AF-014B frozen 20-primary-commit cohorts plus ordered reserves, AF-014C 75–100-commit current campaign and AF-014D mechanism attribution; AF-015 now consumes only the current installed-package scorecard. |
 | 2026-08-25 | Closed AF-013 with 2 `NET_POSITIVE`, 2 `NET_NEGATIVE` and 1 `INCONCLUSIVE` repository row: 14/14 comparable outputs are exact, product failures are zero, Spring/Kafka are positive, OpenTelemetry/Groovy negative and Micronaut lacks a comparable delta after byte-reproducibility rejection; opened AF-014 installed one-command replay without making the terminal decision. |
 | 2026-08-25 | Closed AF-012 as `ADAPTIVE_STATE_PORTABLE`: exact local generations and the repository-scoped TLS state plane now preserve the same portfolio/ledger bytes across two machines, expose local/remote concurrency, reject corruption, reuse verified state offline and retain native on a clean offline machine; opened AF-013 longitudinal five-repository measurement. |
 | 2026-08-25 | Closed AF-011 as `RETAIN_BEST_SINGLE_FRAGMENT`: 48 direct Gradle pairs show 68.56% Groovy and 79.32% Kotlin composition savings with exact outputs, the reviewed patch and HTTP locality qualify independently, but Kotlin Build Impact reaches only 6/8 positive pairs; preserved the failed constituent gate and opened AF-012 portable adaptive state. |
@@ -614,4 +738,4 @@ IDs from the implementation tracker.
 | 2026-08-25 | Closed AF-003 as `FAST_FRAGMENT_LOOKUP_AVAILABLE`: 30 decisions across five frozen repository families meet the sub-second gate with explicit compatible/suspended/native reasons and no Gradle, remote, materialization or mutation side effects; opened AF-004 shadow decomposition. |
 | 2026-08-25 | Closed AF-002 as `TYPED_FRAGMENT_STATE_AVAILABLE`: four immutable record schemas, exact cross-record generations, two valid lifecycle bundles, seven negative mutations and canonical JCS digest rules now unblock the cheap compatibility index in AF-003. |
 | 2026-08-25 | Closed AF-001 as `FRAGMENT_CONTRACT_ACCEPTED`: five generic fragment classes now have canonical family/revision identity, explicit authority, selective invalidation, fail-closed compatibility and mandatory requalification; opened AF-002 for typed persistence state. |
-| 2026-08-25 | Created the tracker, froze the prior terminal result, defined AF-001..AF-015, the terminal scorecard and mandatory documentation update matrix. |
+| 2026-08-25 | Created the tracker, froze the prior terminal result, defined the original AF-001..AF-015 sequence, the terminal scorecard and mandatory documentation update matrix. |

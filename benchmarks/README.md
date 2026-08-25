@@ -2621,14 +2621,14 @@ production activation remains unauthorized.
 ./dev/check-adaptive-fragment-composition
 ```
 
-## Adaptive fragment longitudinal matrix
+## Historical adaptive fragment longitudinal matrix
 
 [`adaptive-fragment-longitudinal-v1.json`](./results/adaptive-fragment-longitudinal-v1.json)
 is the `AF-013` canonical normalization of the frozen chronological
-source-checkout measurements. It is not a favorable rerun or a new timing
-claim. The checker recomputes every source digest, signed per-build delta,
-one-time learning charge, cumulative value and row outcome from the immutable
-raw evidence.
+source-checkout measurements. It is not a favorable rerun, a new timing claim
+or a scorecard for the current adaptive implementation. The checker recomputes
+every source digest, signed per-build delta, one-time learning charge,
+cumulative value and row outcome from the immutable raw evidence.
 
 Fourteen directly comparable builds preserve exact required outputs and report
 zero product failures. Spring finishes at **+59.550 s** and Kafka at
@@ -2642,7 +2642,10 @@ are -21.466 s for Spring, -104.572 s for OpenTelemetry, -20.618 s for Kafka and
 Only **2/5** rows are net positive versus the frozen terminal breadth target of
 3/5. The aggregate decision remains deliberately deferred to `AF-015`; this
 matrix neither adds mechanism percentages nor treats a missing Micronaut delta
-as zero.
+as zero. `AF-014A..D` will create the current installed harness, freeze five
+20-primary-commit cohorts plus ordered reserves before timing, execute a
+75–100-commit campaign and attribute mechanism value and fallback overhead.
+Historical and current datasets will remain separate.
 
 ```bash
 ./dev/check-adaptive-fragment-longitudinal

@@ -4828,16 +4828,19 @@ from Gradle cache routes. It adds no public command or timing claim:
 
 ## Adaptive fragment longitudinal matrix
 
-`./dev/check-adaptive-fragment-longitudinal` regenerates the `AF-013`
-five-repository report from its declared immutable source documents. It checks
-all 14 signed paired deltas, chronological pre-decision bounds, exact required
-outputs, one-time learning charges, source digests and row classifications. It
-also proves that changing a delta or the frozen breadth threshold fails.
+`./dev/check-adaptive-fragment-longitudinal` regenerates the historical
+`AF-013` five-repository report from its declared immutable source documents.
+It checks all 14 signed paired deltas, chronological pre-decision bounds, exact
+required outputs, one-time learning charges, source digests and row
+classifications. It also proves that changing a delta or the frozen breadth
+threshold fails.
 
 The checked result contains two `NET_POSITIVE`, two `NET_NEGATIVE` and one
 `INCONCLUSIVE` row. The Micronaut exclusion is retained because no comparable
 performance pair exists after its byte-reproducibility rejection. The command
-does not rerun public repositories:
+does not rerun public repositories or validate the current adaptive
+implementation. AF-014A..D will use separate installed-harness, cohort,
+current-campaign and attribution evidence:
 
 ```bash
 ./dev/check-adaptive-fragment-longitudinal

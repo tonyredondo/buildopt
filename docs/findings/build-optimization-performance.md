@@ -1077,13 +1077,13 @@ Validate the current scorecard with:
 ./dev/check-poc-apache-groovy-classes-v1
 ```
 
-## Adaptive longitudinal normalization
+## Historical adaptive longitudinal normalization
 
 AF-013 binds the previous direct chronological measurements into one canonical
 five-repository report rather than rerunning them after seeing the result. It
 recomputes 14 signed control/candidate deltas against optimized native Gradle,
 charges each recorded learning/publication cost once and preserves every
-negative build.
+negative build. It does not measure the current adaptive implementation.
 
 | Repository | Net value | Worst build | Outcome |
 |---|---:|---:|---|
@@ -1095,9 +1095,12 @@ negative build.
 
 All comparable outputs are exact and product failures are zero. This result is
 not obtained by adding isolated Build Impact, patch or locality percentages.
-It reaches only 2/5 positive rows versus the frozen 3/5 breadth requirement;
-AF-014 must now prove that the installed command makes the same choices with
-all product overhead included.
+It reaches only 2/5 positive rows versus the frozen 3/5 breadth requirement.
+The next current-value proof is deliberately larger: AF-014A installs and
+attributes the current binary, AF-014B freezes five 20-primary-commit cohorts
+plus ordered reserves before timing, AF-014C collects 75–100 comparable current
+observations, and AF-014D separates mechanism value, fallback overhead and
+unresolved wall-time variation.
 
 ```bash
 ./dev/check-adaptive-fragment-longitudinal

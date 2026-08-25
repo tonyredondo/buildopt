@@ -475,11 +475,13 @@ the POC proves enough net value to justify productization.
 ./dev/check-adaptive-fragment-longitudinal
 ```
 
-This is a static-plus-Go recomputation gate for `AF-013`. It reads the frozen
-Spring, OpenTelemetry, Kafka, Micronaut and Groovy source evidence, verifies
-source hashes and exact signed observations, regenerates the canonical report
-and rejects result or threshold tampering. It does not rerun Gradle or make a
-fresh performance claim.
+This is a static-plus-Go recomputation gate for historical `AF-013` evidence.
+It reads the frozen Spring, OpenTelemetry, Kafka, Micronaut and Groovy source
+evidence, verifies source hashes and exact signed observations, regenerates the
+canonical report and rejects result or threshold tampering. It does not rerun
+Gradle or make a fresh performance claim, and it is not the current adaptive
+implementation scorecard. The AF-014A..D current campaign will have separate
+contracts, results and checkers.
 
 ## Complete lanes
 

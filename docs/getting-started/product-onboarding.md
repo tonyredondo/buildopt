@@ -141,10 +141,11 @@ the whole-profile POC above. AF-011 measured direct net wall-time value for the
 adaptive composition, but retained independently qualified fragments because
 one constituent missed its frozen repeatability gate. AF-012 now preserves the
 same typed portfolio and ledger locally and through the HTTPS state plane,
-including clean-machine restore and offline/native fallback. AF-013 must prove
-longitudinal value across the frozen five repositories, and AF-014 must then
-reproduce the same decision through a clean installation before the successor
-enters onboarding.
+including clean-machine restore and offline/native fallback. AF-013 now remains
+an immutable historical audit rather than the current scorecard. AF-014A..D
+must prove the public installed command, freeze larger commit cohorts, execute
+the current implementation chronologically and attribute its value before the
+successor enters onboarding.
 
 ```bash
 buildopt optimize --json -- build

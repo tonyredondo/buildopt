@@ -97,12 +97,15 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > and 79.32% Kotlin savings when Build Impact and a reviewed task patch run
 > together, with exact outputs. The composition remains unauthorized because
 > Kotlin Build Impact reaches only 6/8 positive isolated pairs versus the fixed
-> 7/8 gate. AF-013 now normalizes 14 exact chronological comparisons: Spring is
+> 7/8 gate. AF-013 preserves 14 historical chronological comparisons: Spring is
 > **+59.550 s**, Kafka **+88.219 s**, OpenTelemetry **-168.751 s**, Groovy
 > **-37.684 s**, and Micronaut remains `INCONCLUSIVE` after a byte-
 > reproducibility rejection. Only **2/5** rows are positive versus the frozen
-> 3/5 target. The next block must reproduce these source-checkout decisions
-> through one installed command before any terminal decision.
+> 3/5 target. Those measurements audit earlier behavior but do not represent the
+> current adaptive implementation. The next campaign will install one current
+> binary, freeze 20 primary first-parent commits plus ordered reserves per
+> family before timing, and evaluate at least 15 comparable builds per terminal
+> row before any decision.
 
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired

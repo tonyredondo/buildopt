@@ -52,7 +52,7 @@ repositories contain no BuildOpt files and the same binary makes all five
 decisions. It is not the current lifetime conclusion: target qualification does
 not prove that a profile will recur often enough across later commits.
 
-## Current adaptive longitudinal evidence
+## Historical adaptive longitudinal evidence
 
 | Repository | Comparable descendants | Selected | Signed longitudinal net | Row outcome |
 |---|---:|---:|---:|---|
@@ -63,18 +63,22 @@ not prove that a profile will recur often enough across later commits.
 | Apache Groovy | 3 | 0 | **-37.684 s** | `NET_NEGATIVE` |
 
 AF-013 recomputes these rows from prior direct source-checkout measurements; it
-is not a favorable rerun or a fresh timing claim. The 14 comparable observations
-all preserve exact required outputs and report zero product failures. Every
-signed delta and the one-time qualification/publication cost remain visible.
-Micronaut is not treated as zero: its descendant JAR differed byte for byte, so
-the safety gate retained native and the row remains inconclusive.
+is not a favorable rerun, a fresh timing claim or the scorecard for the current
+implementation. The 14 comparable observations all preserve exact required
+outputs and report zero product failures. Every signed delta and the one-time
+qualification/publication cost remain visible. Micronaut is not treated as
+zero: its descendant JAR differed byte for byte, so the safety gate retained
+native and the row remains inconclusive.
 
 Only 2/5 rows are net positive versus the frozen terminal breadth requirement
 of 3/5. OpenTelemetry's worst individual regression is -104.572 seconds, while
 Spring and Kafka each contain one negative build despite positive cumulative
-value. The terminal decision is deferred until the installed-path replay in
-AF-014; repository percentages are not averaged and mechanism effects are not
-added.
+value. OpenTelemetry and Groovy contain only three later observations, while
+Micronaut has no comparable descendant pair; later implementation work also
+changed ownership and aggregate-output rejection paths. The terminal decision
+is therefore deferred until AF-014A..D evaluate the current installed binary on
+larger frozen cohorts. Repository percentages are not averaged and mechanism
+effects are not added.
 
 ## Why graph reduction alone is insufficient
 
@@ -129,8 +133,14 @@ Its first proof must happen before another broad timing campaign:
    under exact bindings and isolate regression to dependent fragments**);
 4. activate and directly measure only compositions whose individual fragments
    retain correctness and positive value authority; and
-5. reproduce the five chronological decisions through the installed command,
-   with all launcher/state overhead inside measured wall time (**next: AF-014**).
+5. install one current-SHA package and prove isolated, stateful, phase-attributed
+   control/candidate execution (**next: AF-014A**);
+6. freeze 20 primary first-parent commits plus an ordered reserve queue per
+   family before timing (**AF-014B**);
+7. collect at least 15 comparable builds per terminal row with chronological
+   learning and exact outputs (**AF-014C**); and
+8. attribute activated mechanisms, fallback cost and residual variation before
+   recomputing the terminal decision (**AF-014D/AF-015**).
 
 ## POC conclusion
 
@@ -177,8 +187,11 @@ Build Impact reached only 6/8 positive isolated pairs. The frozen constituent
 gate therefore retained the independently qualified fragments instead of
 authorizing the joint path.
 
-AF-013 then closed the five evidence rows without hiding adverse observations:
-Spring and Kafka are net positive, OpenTelemetry and Groovy net negative, and
-Micronaut inconclusive after an output-reproducibility rejection. This reaches
-2/5 positive families, not the preregistered 3/5. The source-checkout matrix is
-therefore evidence to reproduce, not permission to claim generic value.
+AF-013 then closed five historical evidence rows without hiding adverse
+observations: Spring and Kafka are net positive, OpenTelemetry and Groovy net
+negative, and Micronaut inconclusive after an output-reproducibility rejection.
+This reaches 2/5 positive families, not the preregistered 3/5. The
+source-checkout matrix is therefore historical audit evidence, not permission
+to claim current generic value. The current claim now requires a larger,
+preregistered installed-package campaign rather than exact repetition of
+outdated decisions.

@@ -167,16 +167,20 @@ joint path. AF-012 now persists the same portfolio and economic ledger locally
 and over the existing HTTPS state plane. Exact bytes restore on a clean second
 machine, CAS conflicts remain visible, corrupt state rejects, a verified local
 generation survives outage and a clean offline machine retains native Gradle.
-Adaptive documents generate zero Gradle cache-plane requests. AF-013 now
-normalizes the frozen direct measurements without rerunning favorable arms:
+Adaptive documents generate zero Gradle cache-plane requests. AF-013 preserves
+the frozen historical measurements without rerunning favorable arms:
 Spring closes at `+59.550 s`, Kafka at `+88.219 s`, OpenTelemetry at
 `-168.751 s` and Groovy at `-37.684 s`. Micronaut remains `INCONCLUSIVE`
 because its first descendant failed byte reproducibility before an attributable
 timing pair could be accepted. All 14 comparable builds have exact outputs and
 zero product failures, but only 2/5 rows are positive versus the frozen 3/5
-breadth target. AF-014 is next: the installed one-command path must reproduce
-the same decisions and account for all of its overhead before AF-015 makes the
-terminal decision.
+breadth target. This is an audit of earlier behavior, not the current scorecard:
+OpenTelemetry and Groovy have only three later commits, Micronaut has no valid
+descendant pair and several rejection paths changed afterward. AF-014A..D will
+install one current-SHA package, freeze 20 primary commits plus ordered reserves
+per family before timing, collect at least 15 comparable builds per terminal
+row and attribute activated mechanisms, fallback cost and residual variation.
+AF-015 will decide from that current campaign only.
 Production hardening, soak, design partners and Test Optimization remain
 outside this POC.
 
