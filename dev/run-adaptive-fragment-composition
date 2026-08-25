@@ -59,9 +59,22 @@ if [[ ! -d "${buildopt_gradle_home}/wrapper/dists/gradle-9.6.1-bin" ]]; then
 fi
 
 buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-af011.XXXXXX")
+buildopt_gradle_homes=()
 buildopt_cleanup() {
     if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-af011."* ]]; then
-        rm -rf -- "${buildopt_root}"
+        local buildopt_home
+        for buildopt_home in "${buildopt_gradle_homes[@]}"; do
+            env GRADLE_USER_HOME="${buildopt_home}" \
+                "${buildopt_repo_root}/gradlew" --stop >/dev/null 2>&1 || true
+        done
+        for _ in 1 2 3; do
+            if rm -rf -- "${buildopt_root}" 2>/dev/null; then
+                return 0
+            fi
+            sleep 1
+        done
+        printf 'AF-011 could not remove temporary root: %s\n' "${buildopt_root}" >&2
+        return 1
     fi
 }
 trap buildopt_cleanup EXIT
@@ -128,6 +141,7 @@ buildopt_seed_home() {
         mkdir -p -- "${buildopt_home}/wrapper"
         ln -s -- "${buildopt_gradle_home}/wrapper/dists" \
             "${buildopt_home}/wrapper/dists"
+        buildopt_gradle_homes+=("${buildopt_home}")
     fi
 }
 
@@ -194,6 +208,7 @@ buildopt_unrelated=false
 
 buildopt_run_arm() {
     local buildopt_workspace=$1 buildopt_home=$2 buildopt_mode=$3 buildopt_log=$4
+    local buildopt_measured=$5
     local buildopt_started buildopt_finished buildopt_status
     local -a buildopt_tasks
     buildopt_clear_outputs "${buildopt_workspace}"
@@ -226,7 +241,8 @@ buildopt_run_arm() {
     if grep -Eq '^> Task :service-b:expensiveUnrelated$' "${buildopt_log}"; then
         buildopt_unrelated=true
     fi
-    if [[ "${buildopt_mode}" == *_PATCHED && "${buildopt_cache_hits}" -ne 8 ]]; then
+    if [[ "${buildopt_measured}" == true && "${buildopt_mode}" == *_PATCHED &&
+        "${buildopt_cache_hits}" -ne 8 ]]; then
         printf 'AF-011 %s restored %d/8 reviewed tasks\n' \
             "${buildopt_mode}" "${buildopt_cache_hits}" >&2
         exit 1
@@ -282,26 +298,26 @@ buildopt_run_comparison() {
     buildopt_prepare_workspace "${buildopt_control}" "${buildopt_dsl}" false
     buildopt_prepare_workspace "${buildopt_candidate}" "${buildopt_dsl}" "${buildopt_patched}"
     buildopt_run_arm "${buildopt_control}" "${buildopt_control_home}" FULL_UNPATCHED \
-        "${buildopt_root}/${buildopt_slug}-warm-control.log"
+        "${buildopt_root}/${buildopt_slug}-warm-control.log" false
     buildopt_run_arm "${buildopt_candidate}" "${buildopt_candidate_home}" \
-        "${buildopt_candidate_mode}" "${buildopt_root}/${buildopt_slug}-warm-candidate.log"
+        "${buildopt_candidate_mode}" "${buildopt_root}/${buildopt_slug}-warm-candidate.log" false
     local buildopt_pair buildopt_order
     for buildopt_pair in {1..8}; do
         buildopt_order=CONTROL_FIRST
         if ((buildopt_pair % 2 == 0)); then buildopt_order=CANDIDATE_FIRST; fi
         if [[ "${buildopt_order}" == CONTROL_FIRST ]]; then
             buildopt_run_arm "${buildopt_control}" "${buildopt_control_home}" FULL_UNPATCHED \
-                "${buildopt_root}/${buildopt_slug}-${buildopt_pair}-control.log"
+                "${buildopt_root}/${buildopt_slug}-${buildopt_pair}-control.log" true
             buildopt_control_ms=${buildopt_duration_ms}; buildopt_control_sha=${buildopt_output_sha}; buildopt_control_hits=${buildopt_cache_hits}
             buildopt_run_arm "${buildopt_candidate}" "${buildopt_candidate_home}" \
-                "${buildopt_candidate_mode}" "${buildopt_root}/${buildopt_slug}-${buildopt_pair}-candidate.log"
+                "${buildopt_candidate_mode}" "${buildopt_root}/${buildopt_slug}-${buildopt_pair}-candidate.log" true
             buildopt_candidate_ms=${buildopt_duration_ms}; buildopt_candidate_sha=${buildopt_output_sha}; buildopt_candidate_hits=${buildopt_cache_hits}
         else
             buildopt_run_arm "${buildopt_candidate}" "${buildopt_candidate_home}" \
-                "${buildopt_candidate_mode}" "${buildopt_root}/${buildopt_slug}-${buildopt_pair}-candidate.log"
+                "${buildopt_candidate_mode}" "${buildopt_root}/${buildopt_slug}-${buildopt_pair}-candidate.log" true
             buildopt_candidate_ms=${buildopt_duration_ms}; buildopt_candidate_sha=${buildopt_output_sha}; buildopt_candidate_hits=${buildopt_cache_hits}
             buildopt_run_arm "${buildopt_control}" "${buildopt_control_home}" FULL_UNPATCHED \
-                "${buildopt_root}/${buildopt_slug}-${buildopt_pair}-control.log"
+                "${buildopt_root}/${buildopt_slug}-${buildopt_pair}-control.log" true
             buildopt_control_ms=${buildopt_duration_ms}; buildopt_control_sha=${buildopt_output_sha}; buildopt_control_hits=${buildopt_cache_hits}
         fi
         buildopt_record "${buildopt_comparison}" "${buildopt_dsl}" "${buildopt_pair}" \
