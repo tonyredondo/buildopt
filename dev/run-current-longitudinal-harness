@@ -110,10 +110,15 @@ git -C "${buildopt_seed}" add service-a/src/main/java/example/Application.java
 git -C "${buildopt_seed}" commit -qm 'AF-014A leaf source target'
 buildopt_target_revision=$(git -C "${buildopt_seed}" rev-parse HEAD)
 
-git clone -q --branch feature --single-branch "${buildopt_seed}" "${buildopt_temp}/control"
-git clone -q --branch feature --single-branch "${buildopt_seed}" "${buildopt_temp}/candidate"
+git clone -q --branch feature "${buildopt_seed}" "${buildopt_temp}/control"
+git clone -q --branch feature "${buildopt_seed}" "${buildopt_temp}/candidate"
 buildopt_control="${buildopt_temp}/control"
 buildopt_candidate="${buildopt_temp}/candidate"
+for buildopt_repository in "${buildopt_control}" "${buildopt_candidate}"; do
+    git -C "${buildopt_repository}" branch main origin/main
+    git -C "${buildopt_repository}" config branch.feature.remote .
+    git -C "${buildopt_repository}" config branch.feature.merge refs/heads/main
+done
 buildopt_control_gradle="${buildopt_temp}/control-gradle-home"
 buildopt_candidate_gradle="${buildopt_temp}/candidate-gradle-home"
 mkdir -p -- "${buildopt_control_gradle}/wrapper/dists" \
@@ -266,8 +271,10 @@ printf '\n// AF-014A forward global change\n' >>"${buildopt_seed}/build.gradle"
 git -C "${buildopt_seed}" add build.gradle
 git -C "${buildopt_seed}" commit -qm 'AF-014A forward global change'
 buildopt_global_revision=$(git -C "${buildopt_seed}" rev-parse HEAD)
-git -C "${buildopt_control}" pull -q --ff-only
-git -C "${buildopt_candidate}" pull -q --ff-only
+for buildopt_repository in "${buildopt_control}" "${buildopt_candidate}"; do
+    git -C "${buildopt_repository}" fetch -q origin feature
+    git -C "${buildopt_repository}" merge -q --ff-only origin/feature
+done
 
 buildopt_timed_control "${buildopt_temp}/native-control.log"
 buildopt_native_control_wall=${buildopt_last_wall_ns}
