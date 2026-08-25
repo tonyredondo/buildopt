@@ -30,7 +30,7 @@ done
 
 buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
 buildopt_short_revision=${buildopt_revision:0:12}
-buildopt_version="0.0.0-af014a+${buildopt_short_revision}"
+buildopt_version="0.0.0-af014a.${buildopt_short_revision}"
 buildopt_source_archive_sha=$(
     git -C "${buildopt_repo_root}" archive "${buildopt_revision}" | sha256sum | awk '{print $1}'
 )
