@@ -154,6 +154,11 @@ and two holdout identities leaves the three-class ranking unchanged, while
 changing transferred positive/non-positive evidence changes only exploration
 priority. Every candidate still requires local correctness and value and
 authorizes no activation. These are synthetic ranking vectors, not a target
-timing or breadth result. AF-008 must next test whether recurring generic task-
-contract evidence can produce a reversible Patch Autopilot improvement on the
-ordinary native Gradle path.
+timing or breadth result. AF-008 now connects one generic repeated-task
+detector to an exact reviewed Patch Autopilot recipe: ten unsafe inputs reject,
+the replacement applies/reverts outside the checkout, and the frozen native
+Gradle evidence saves 67.28% in Kotlin and 68.01% in Groovy across 16 exact-
+output pairs. The improvement survives without BuildOpt at execution time.
+This proves durable value for one recipe, not generic patch coverage. AF-009
+must now compose independently qualified fragments while rejecting conflicts
+and predictions below the net-value floor.

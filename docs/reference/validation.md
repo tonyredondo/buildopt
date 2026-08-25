@@ -81,6 +81,7 @@ Adaptive-fragment identity and selective invalidation:
 ./dev/check-adaptive-fragment-economics
 ./dev/check-adaptive-fragment-online
 ./dev/check-adaptive-fragment-prior
+./dev/check-adaptive-fragment-patch-opportunity
 ```
 
 The static and synthetic `AF-001` gate validates the machine policy, runs the
@@ -106,6 +107,12 @@ requested-build inputs. It rejects measurement-only, binding/cohort drift,
 inexact outputs and product failures; exact restart succeeds, insufficient
 evidence stays observed/shadow and regression suspends only the affected family
 and its transitive dependents. It runs no Gradle build and makes no timing claim.
+The `AF-007` gate proves name-independent exploration ordering without
+transferring local authority. The `AF-008` gate adds a generic repeated-task
+detector, verifies that its proposal remains review-only, exercises temporary
+application and exact revert, and binds the accepted exact recipe to 16 frozen
+native Gradle pairs with identical outputs. It revalidates existing timing
+evidence rather than producing another sample.
 
 ```bash
 ./dev/check-generated-code

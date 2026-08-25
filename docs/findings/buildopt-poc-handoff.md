@@ -32,6 +32,7 @@ decision.
 | **Structural profile rebinding** | Reuse learned evidence only when Wrapper, workflow, producer lineage, output contract and change family remain compatible. | Safely rejects drift and selected one of six structurally eligible Kafka descendants in the current run. |
 | **Ordinary-build learning economics** | Learn only from builds the user requested and stop when the expected compatible lifetime cannot repay discovery. | Four repositories stopped after one requested build and avoided 64 additional learning builds. |
 | **Cross-repository hypothesis prior** | Use generic task implementation, plugin, Gradle and graph/output features to decide what to investigate first in a new repository. | Four opaque source scopes rank three hypothesis classes identically for two holdouts and after all repository identities are replaced. Priors never transfer correctness, value or activation. |
+| **Durable patch-opportunity learning** | Detect repeated expensive task-contract problems, propose an owner-reviewed reversible source patch and validate it independently. | One generic detector feeds an exact reviewed recipe that saves **67.28% Kotlin** and **68.01% Groovy** across 16 native Gradle pairs with exact outputs. BuildOpt is not needed after acceptance; recipe coverage remains specific. |
 | **Local/HTTP cache and central state** | Carry verified task outputs and profiles between builds or machines. | Supporting infrastructure; useful for transport and persistence, but not the primary acceleration claim. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource and state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
 
@@ -111,7 +112,7 @@ from ordinary builds; compose only fragments with current correctness and value
 authority; and retain native Gradle through a sub-second no-value path. The new
 tracker preserves the same five-repository baseline, exact-output and zero-
 failure requirements, and makes cumulative longitudinal value—not isolated
-target speedup—the terminal decision. AF-001..AF-007 now provide typed fragment
+target speedup—the terminal decision. AF-001..AF-008 now provide typed fragment
 identity/state, sub-millisecond lookup and a no-lookahead shadow result with
 100% fragment retention across the six eligible descendants, plus immutable
 signed economics. The retained Kafka composition recomputes to `+82.527 s`
@@ -124,9 +125,12 @@ checkpoints: exact restart succeeds, insufficient evidence remains
 fragment and its dependent. AF-007 adds a name-independent prior: replacing all
 source/holdout identities leaves the structural ranking unchanged, and source
 outcomes can reorder exploration while fresh target correctness and value stay
-mandatory. The vectors make no timing claim. AF-008 will now test a durable,
-reviewable task-contract patch that improves the repository's ordinary native
-Gradle path and remains useful without BuildOpt at execution time. Production
+mandatory. The vectors make no timing claim. AF-008 now proves that a generic
+repeated-task detector can lead to one durable reviewed patch: the exact recipe
+saves 1.369 seconds/67.28% in Kotlin and 2.349 seconds/68.01% in Groovy across
+16 native Gradle pairs, with exact outputs and no BuildOpt runtime dependency.
+That does not make the recipe generic or automatic. AF-009 must next compose
+only compatible fragments whose predicted net value remains positive. Production
 hardening, soak, design partners and Test Optimization remain outside this POC.
 
 ## Evidence
@@ -146,3 +150,5 @@ hardening, soak, design partners and Test Optimization remain outside this POC.
 - [Machine-readable learner proof](../../benchmarks/results/adaptive-fragment-online-v1.json)
 - [Cross-repository prior contract](../../specs/poc-adaptive-fragment-prior-v1.md)
 - [Machine-readable prior proof](../../benchmarks/results/adaptive-fragment-prior-v1.json)
+- [Patch-opportunity contract](../../specs/poc-adaptive-fragment-patch-opportunity-v1.md)
+- [Machine-readable durable patch proof](../../benchmarks/results/adaptive-fragment-patch-opportunity-v1.json)

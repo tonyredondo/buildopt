@@ -2522,3 +2522,28 @@ exercise lifecycle behavior and make no wall-time or activation claim.
 ```bash
 ./dev/check-adaptive-fragment-online
 ```
+
+## Adaptive fragment durable patch value
+
+[`adaptive-fragment-patch-opportunity-v1.json`](./results/adaptive-fragment-patch-opportunity-v1.json)
+is the recomputable `AF-008` link between generic opportunity detection, one
+owner-reviewed exact recipe, transactional apply/revert and the existing native
+Gradle paired measurement. It deliberately does not rerun or average the frozen
+timings.
+
+The generic detector observes three stable requested builds whose task remains
+non-cacheable and not up-to-date, and emits only `PROPOSED`. Ten unsafe or
+ambiguous variants reject. The accepted `CUSTOM_TASK_CONTRACT_JAVA_V1@1.0`
+replacement is content-bound, applies outside the checkout and exactly restores
+the preimage.
+
+On the qualified 4-CPU/16-GiB runner, the original eight-pair measurements save
+**1,369.250 ms/67.28% in Kotlin** and **2,349.125 ms/68.01% in Groovy**. All 16
+pairs preserve exact outputs, candidate arms restore all eight tasks through
+native Gradle caching and product-attributable failures remain zero. BuildOpt
+is not needed after the source patch. This proves one reviewed synthetic recipe,
+not generic recipe coverage or automatic patching.
+
+```bash
+./dev/check-adaptive-fragment-patch-opportunity
+```

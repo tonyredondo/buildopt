@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "buildopt.poc/adaptive-fragment-patch-opportunity/v1",
+  "workItem": "AF-008",
+  "capturedAt": "2026-08-25T16:00:00Z",
+  "detection": {
+    "input": {
+      "evidenceSha256": "83569857d6d77ac35357cb2e159d05671e65a40792fd6c133f612dd94ee28e56",
+      "repositoryScopeSha256": "eef9fd16301d15167c14e2d2e2e7bb3e6c360cc21a3844bbc2a55837b9a36572",
+      "taskImplementationSha256": "299bfc088837ec84f99f8e3b0ef81b5c1ff2be1cb4b358f13934384fdbbe1e55",
+      "relativeSourcePath": "fixtures/poc-value/reviewed-task/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java",
+      "sourcePreimageSha256": "392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083",
+      "facts": {
+        "extendsDefaultTask": true,
+        "internalInputCount": 1,
+        "internalOutputCount": 1,
+        "taskActionCount": 1,
+        "unknownSideEffects": false
+      },
+      "observations": [
+        {
+          "requestedBuildOrdinal": 1,
+          "durationMs": 1900,
+          "executed": true,
+          "cacheable": false,
+          "upToDate": false,
+          "inputSnapshotSha256": "cf14af0d409596d2d6cfeeecbc95dc0905e33c7fd7c0262cf2dab661b8ba8626",
+          "outputSnapshotSha256": "b5aa61a59c9c75b907251835055f18cb96ff0d4a6f816e7aaab35458cc3cbe8f",
+          "productFailure": false
+        },
+        {
+          "requestedBuildOrdinal": 2,
+          "durationMs": 2100,
+          "executed": true,
+          "cacheable": false,
+          "upToDate": false,
+          "inputSnapshotSha256": "cf14af0d409596d2d6cfeeecbc95dc0905e33c7fd7c0262cf2dab661b8ba8626",
+          "outputSnapshotSha256": "b5aa61a59c9c75b907251835055f18cb96ff0d4a6f816e7aaab35458cc3cbe8f",
+          "productFailure": false
+        },
+        {
+          "requestedBuildOrdinal": 3,
+          "durationMs": 1800,
+          "executed": true,
+          "cacheable": false,
+          "upToDate": false,
+          "inputSnapshotSha256": "cf14af0d409596d2d6cfeeecbc95dc0905e33c7fd7c0262cf2dab661b8ba8626",
+          "outputSnapshotSha256": "b5aa61a59c9c75b907251835055f18cb96ff0d4a6f816e7aaab35458cc3cbe8f",
+          "productFailure": false
+        }
+      ]
+    },
+    "repositoryRuleUsed": false,
+    "minimumRequestedBuilds": 3,
+    "minimumMedianCostMs": 500,
+    "rejectedUnsafeInputs": 10
+  },
+  "proposal": {
+    "status": "PROPOSED",
+    "kind": "TASK_CONTRACT_PATCH",
+    "relativeSourcePath": "fixtures/poc-value/reviewed-task/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java",
+    "sourcePreimageSha256": "392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083",
+    "medianRepeatedCostMs": 1900,
+    "requestedBuilds": 3,
+    "suggestedAnnotations": [
+      "CacheableTask",
+      "Input",
+      "OutputFile"
+    ],
+    "recipeHint": "CUSTOM_TASK_CONTRACT_JAVA_V1",
+    "ownerReviewRequired": true,
+    "transactionalValidationRequired": true,
+    "exactRevertRequired": true,
+    "patchAuthorized": false,
+    "activationAuthorized": false
+  },
+  "transaction": {
+    "ownerReviewAccepted": true,
+    "recipeId": "CUSTOM_TASK_CONTRACT_JAVA_V1",
+    "recipeVersion": "1.0",
+    "preimageSha256": "392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083",
+    "postimageSha256": "79fa100a4e2d962dd506259311f90ecb92ad62500391d140065b6f157a172a2b",
+    "appliedOutsideCheckout": true,
+    "checkoutUnchanged": true,
+    "exactRevertRestoredPreimage": true,
+    "rejectedProposalMutations": 0
+  },
+  "measurement": {
+    "sourceEvidence": "benchmarks/results/poc-value-coverage-v1.json",
+    "sourceEvidenceSha256": "51481c6d8ca49a642f76f571e321c26014a07d3f97d4782e66aeda8dc69e64e6",
+    "runnerId": "linux-amd64-4c-16g-v1",
+    "runnerCpu": 4,
+    "runnerMemoryBytes": 17179869184,
+    "nativeGradleBeforeAfter": true,
+    "buildoptRequiredAtExecution": false,
+    "workloads": [
+      {
+        "dsl": "GROOVY",
+        "pairs": 8,
+        "controlMeanMs": 3454.125,
+        "candidateMeanMs": 1105,
+        "meanSavedMs": 2349.125,
+        "meanReductionRatio": 0.680092642854558,
+        "interval95SavedMs": [
+          1245.125,
+          3420.75
+        ],
+        "positivePairs": 7,
+        "requiredOutputsIdentical": true,
+        "controlCacheHits": 0,
+        "candidateCacheHits": 64,
+        "productAttributableFailures": 0,
+        "qualified": true
+      },
+      {
+        "dsl": "KOTLIN",
+        "pairs": 8,
+        "controlMeanMs": 2035.25,
+        "candidateMeanMs": 666,
+        "meanSavedMs": 1369.25,
+        "meanReductionRatio": 0.6727674732833804,
+        "interval95SavedMs": [
+          1142.125,
+          1624.375
+        ],
+        "positivePairs": 8,
+        "requiredOutputsIdentical": true,
+        "controlCacheHits": 0,
+        "candidateCacheHits": 64,
+        "productAttributableFailures": 0,
+        "qualified": true
+      }
+    ]
+  },
+  "summary": {
+    "detectedOpportunities": 1,
+    "acceptedPatches": 1,
+    "rejectedPatches": 1,
+    "dsls": 2,
+    "pairedComparisons": 16,
+    "minimumSavedMs": 1369.25,
+    "minimumReductionRatio": 0.6727674732833804,
+    "exactOutputComparisons": 16
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "syntheticReviewedFixture": true,
+    "generalDetector": true,
+    "generalPatchRecipe": false,
+    "automaticPatchApplication": false,
+    "productionAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "outcome": "DURABLE_PATCH_VALUE_PROVED"
+}

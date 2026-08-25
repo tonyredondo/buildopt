@@ -130,6 +130,14 @@ Patch Autopilot is a signed, exact, PR-only workflow. The current recipe
 registry covers bounded archive reproducibility, Groovy DSL archive
 reproducibility, root build-cache properties, and custom task contracts.
 
+For the adaptive POC, ordinary requested builds may first create a review-only
+task-contract opportunity when the same expensive task repeatedly executes
+with stable inputs/outputs while neither cacheable nor up-to-date. Detection is
+repository-name independent and cannot apply a patch. An owner must accept an
+exact recipe; BuildOpt then validates it in an isolated workspace, checks exact
+revert and measures native Gradle before/after. A rejected proposal leaves the
+checkout unchanged.
+
 The Java patcher:
 
 1. verifies canonical JSON, signature, expiry, repository/base/source-state
@@ -156,6 +164,7 @@ Exercise the implemented workflow with:
 ./dev/check-post-merge-patch-monitor
 ./dev/check-patch-autopilot-recipes
 ./dev/check-patch-autopilot-validation-revert
+./dev/check-adaptive-fragment-patch-opportunity
 ```
 
 See the [patcher README](../../jvm/patcher/README.md) and

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "buildopt.specs/poc-adaptive-fragment-patch-opportunity/v1",
+  "workItem": "AF-008",
+  "detector": {
+    "repositoryRuleAllowed": false,
+    "minimumRequestedBuilds": 3,
+    "minimumMedianRepeatedCostMs": 500,
+    "stableInputSnapshotRequired": true,
+    "stableOutputSnapshotRequired": true,
+    "nonCacheableRequired": true,
+    "notUpToDateRequired": true,
+    "productFailureAllowed": false,
+    "ownerReviewRequired": true,
+    "patchAuthorizationGranted": false
+  },
+  "proposal": {
+    "kind": "TASK_CONTRACT_PATCH",
+    "status": "PROPOSED",
+    "suggestedAnnotations": [
+      "CacheableTask",
+      "Input",
+      "OutputFile"
+    ],
+    "recipeHint": "CUSTOM_TASK_CONTRACT_JAVA_V1",
+    "genericDetector": true,
+    "genericRecipe": false
+  },
+  "transaction": {
+    "applyOutsideCheckout": true,
+    "exactPreimageBinding": true,
+    "exactPostimageBinding": true,
+    "exactRevertRequired": true,
+    "rejectedProposalMutations": 0
+  },
+  "valueGate": {
+    "sourceEvidence": "benchmarks/results/poc-value-coverage-v1.json",
+    "runner": "linux-amd64-4c-16g-v1",
+    "nativeGradleBeforeAfter": true,
+    "pairsPerDsl": 8,
+    "dsls": [
+      "GROOVY",
+      "KOTLIN"
+    ],
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "positiveLower95Bound": true,
+    "exactOutputsRequired": true,
+    "maximumProductAttributableFailures": 0,
+    "buildoptRequiredAtExecution": false
+  },
+  "outcome": "DURABLE_PATCH_VALUE_PROVED",
+  "boundaries": {
+    "proofOfConcept": true,
+    "syntheticReviewedFixture": true,
+    "automaticPatchApplication": false,
+    "productionAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

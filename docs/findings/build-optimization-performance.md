@@ -149,6 +149,23 @@ later and stricter comparison against optimized native Gradle superseded that
 result: the selected candidate regressed by 4.3%. The current activation
 decision correctly follows the stronger evidence.
 
+### Durable patch-opportunity learning
+
+The adaptive POC now separates generic detection from patch authority. Three
+stable requested-build observations can identify a repeated expensive Java
+task that remains non-cacheable and not up-to-date, but the detector emits only
+a review-required proposal. Ten unsafe shapes reject, and repository/path
+renaming does not change the classification.
+
+For the one exact owner-reviewed recipe, application and exact revert occur
+outside the checkout. The frozen native Gradle measurement remains the value
+authority: eight Kotlin pairs save **1,369.250 ms/67.28%** and eight Groovy pairs
+save **2,349.125 ms/68.01%**. All 16 comparisons preserve exact outputs and have
+zero product-attributable failures. This is durable because later execution is
+ordinary Gradle with the corrected task contract; BuildOpt is no longer on the
+runtime path. The detector is generic, but the recipe and value claim remain
+restricted to the reviewed synthetic source shape.
+
 ## What the Evidence Actually Proves
 
 ### The clearest value comes from avoiding work

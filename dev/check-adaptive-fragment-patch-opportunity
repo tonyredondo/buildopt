@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_evidence="${buildopt_repo_root}/benchmarks/results/adaptive-fragment-patch-opportunity-v1.json"
+buildopt_policy="${buildopt_repo_root}/specs/poc-adaptive-fragment-patch-opportunity-v1.json"
+buildopt_temp_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-af008.XXXXXX")
+trap 'rm -r -- "${buildopt_temp_root}"' EXIT
+
+for buildopt_command in grep jq mktemp; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'adaptive fragment patch opportunity check requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-adaptive-fragment-patch-opportunity/v1" and
+    .workItem == "AF-008" and
+    .detector.repositoryRuleAllowed == false and
+    .detector.minimumRequestedBuilds == 3 and
+    .detector.minimumMedianRepeatedCostMs == 500 and
+    .detector.stableInputSnapshotRequired == true and
+    .detector.stableOutputSnapshotRequired == true and
+    .detector.nonCacheableRequired == true and
+    .detector.notUpToDateRequired == true and
+    .detector.productFailureAllowed == false and
+    .detector.ownerReviewRequired == true and
+    .detector.patchAuthorizationGranted == false and
+    .proposal.kind == "TASK_CONTRACT_PATCH" and
+    .proposal.status == "PROPOSED" and
+    .proposal.suggestedAnnotations == ["CacheableTask", "Input", "OutputFile"] and
+    .proposal.recipeHint == "CUSTOM_TASK_CONTRACT_JAVA_V1" and
+    .proposal.genericDetector == true and .proposal.genericRecipe == false and
+    .transaction.applyOutsideCheckout == true and
+    .transaction.exactPreimageBinding == true and
+    .transaction.exactPostimageBinding == true and
+    .transaction.exactRevertRequired == true and
+    .transaction.rejectedProposalMutations == 0 and
+    .valueGate.sourceEvidence == "benchmarks/results/poc-value-coverage-v1.json" and
+    .valueGate.runner == "linux-amd64-4c-16g-v1" and
+    .valueGate.nativeGradleBeforeAfter == true and
+    .valueGate.pairsPerDsl == 8 and .valueGate.dsls == ["GROOVY", "KOTLIN"] and
+    .valueGate.minimumSavedMs == 500 and .valueGate.minimumReductionRatio == 0.02 and
+    .valueGate.positiveLower95Bound == true and .valueGate.exactOutputsRequired == true and
+    .valueGate.maximumProductAttributableFailures == 0 and
+    .valueGate.buildoptRequiredAtExecution == false and
+    .outcome == "DURABLE_PATCH_VALUE_PROVED" and
+    .boundaries.proofOfConcept == true and .boundaries.syntheticReviewedFixture == true and
+    .boundaries.automaticPatchApplication == false and .boundaries.productionAuthorized == false and
+    .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_policy}" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./internal/adaptivefragment ./dev/adaptive-fragment-patch-opportunity
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/adaptivefragment ./dev/adaptive-fragment-patch-opportunity
+
+"${buildopt_script_dir}/check-poc-value-coverage" >/dev/null
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./dev/adaptive-fragment-patch-opportunity --validate "${buildopt_evidence}" --root "${buildopt_repo_root}" >/dev/null
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./dev/adaptive-fragment-patch-opportunity --output "${buildopt_temp_root}/live-report.json" --root "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./dev/adaptive-fragment-patch-opportunity --validate "${buildopt_temp_root}/live-report.json" --root "${buildopt_repo_root}" >/dev/null
+
+jq '.proposal.patchAuthorized = true' "${buildopt_evidence}" >"${buildopt_temp_root}/tampered-report.json"
+if "${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./dev/adaptive-fragment-patch-opportunity --validate "${buildopt_temp_root}/tampered-report.json" --root "${buildopt_repo_root}" >/dev/null 2>&1; then
+    echo 'adaptive fragment patch opportunity accepted detector-granted patch authority' >&2
+    exit 1
+fi
+
+echo 'adaptive fragment patch opportunity: DURABLE_PATCH_VALUE_PROVED'

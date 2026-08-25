@@ -1,7 +1,7 @@
 # Adaptive Fragment Generalization POC Tracker
 
 **Status:** `IN_PROGRESS`<br>
-**Current block:** `AF-008 — Patch-opportunity learning`<br>
+**Current block:** `AF-009 — Conflict-aware fragment planner`<br>
 **Decision baseline:** the current whole-profile hypothesis remains
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)<br>
 **Last updated:** 2026-08-25
@@ -184,13 +184,13 @@ the correctness authority for cacheability. Repetition alone is not authority.
 | 5 | `AF-005` Fragment economic ledger | Account for signed wall-time value, decision cost, isolated learning cost, recurrence, decay, payback and bounded regret per fragment and composition. | `DONE` | AF-002 |
 | 6 | `AF-006` Ordinary-build online learner | Update fragment evidence from requested builds only and keep native Gradle authoritative until qualification. | `DONE` | AF-004, AF-005 |
 | 7 | `AF-007` Cross-repository hypothesis priors | Use task implementation, plugin, Gradle and structural features to rank hypotheses across repositories without transferring correctness authority or activation. | `DONE` | AF-006 |
-| 8 | `AF-008` Patch-opportunity learning | Turn recurring expensive non-incremental or non-cacheable task evidence into a reviewed Patch Autopilot proposal and measure the accepted patch independently. | `TODO` | AF-006 |
+| 8 | `AF-008` Patch-opportunity learning | Turn recurring expensive non-incremental or non-cacheable task evidence into a reviewed Patch Autopilot proposal and measure the accepted patch independently. | `DONE` | AF-006 |
 
 ### Phase C — Composition and activation
 
 | Order | Block | Goal | State | Depends on |
 |---:|---|---|---|---|
-| 9 | `AF-009` Conflict-aware fragment planner | Compose compatible fragments with explicit dependencies, mutual exclusions and a predicted net-value floor; otherwise select native Gradle. | `WAITING` | AF-003, AF-005, AF-006 |
+| 9 | `AF-009` Conflict-aware fragment planner | Compose compatible fragments with explicit dependencies, mutual exclusions and a predicted net-value floor; otherwise select native Gradle. | `TODO` | AF-003, AF-005, AF-006 |
 | 10 | `AF-010` Active Build Impact fragments | Activate producer/subgraph fragments independently, preserve exact required outputs and invalidate only affected fragments across commits. | `WAITING` | AF-009 |
 | 11 | `AF-011` Multi-mechanism composition | Directly measure qualified Build Impact, reviewed-task/patch and bounded cache-locality combinations without adding isolated percentages. | `WAITING` | AF-008, AF-010 |
 | 12 | `AF-012` Local and central adaptive state | Persist the same typed portfolio and ledger locally and through the existing HTTPS state plane; prove two-machine reuse, offline fallback and no use of Gradle cache objects as policy documents. | `WAITING` | AF-002, AF-005, AF-009 |
@@ -362,6 +362,14 @@ time; rejected patches do not change the checkout.
 
 **Outcome:** `DURABLE_PATCH_VALUE_PROVED` or `NO_PATCH_VALUE`.
 
+**Result:** `DURABLE_PATCH_VALUE_PROVED`. A repository-name-independent
+detector identifies one repeated non-cacheable/not-up-to-date Java task shape
+after three stable requested builds and emits only a review-required proposal.
+The exact reviewed recipe applies and reverts outside the checkout. The frozen
+native Gradle measurement preserves 16/16 exact-output comparisons and saves
+1,369.250 ms/67.28% for Kotlin and 2,349.125 ms/68.01% for Groovy. This proves
+one durable reviewed recipe, not a generic recipe or automatic patching.
+
 ### AF-009 — Conflict-aware fragment planner
 
 **Deliverables:** dependency/conflict graph, deterministic composition,
@@ -500,6 +508,7 @@ IDs from the implementation tracker.
 | `AF-E006` | AF-005 | [Fragment economics contract](../../specs/poc-adaptive-fragment-economics-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-economics-v1.json), recomputable [economic report](../../benchmarks/results/adaptive-fragment-economics-v1.json) and [`dev/check-adaptive-fragment-economics`](../../dev/check-adaptive-fragment-economics). Retained Kafka composition value is +82,527 ms after all observed costs; synthetic vectors prove negative signed value, exact-once async cost, immutable observations, fixed-horizon projection and unclipped regret without activation or new build timing. | `DONE` |
 | `AF-E007` | AF-006 | [Ordinary-build learner contract](../../specs/poc-adaptive-fragment-online-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-online-v1.json), recomputable [checkpoint report](../../benchmarks/results/adaptive-fragment-online-v1.json) and [`dev/check-adaptive-fragment-online`](../../dev/check-adaptive-fragment-online). Five requested builds and 15 exact samples prove observed/shadow/qualified progression, exact restart, zero measurement-only work, five fail-closed update mutations and dependency-bounded regression suspension without running Gradle or authorizing activation. | `DONE` |
 | `AF-E008` | AF-007 | [Cross-repository prior contract](../../specs/poc-adaptive-fragment-prior-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-prior-v1.json), recomputable [four-source/two-holdout report](../../benchmarks/results/adaptive-fragment-prior-v1.json) and [`dev/check-adaptive-fragment-prior`](../../dev/check-adaptive-fragment-prior). Three generic classes rank identically after every repository identity is replaced and input order reversed; transferred positive/non-positive evidence changes only the top exploration priority, unmatched features return no candidate and six unsafe inputs fail closed. Local correctness/value remain mandatory and activation authorizations remain zero. | `DONE` |
+| `AF-E009` | AF-008 | [Patch-opportunity contract](../../specs/poc-adaptive-fragment-patch-opportunity-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-patch-opportunity-v1.json), recomputable [detector/transaction/value report](../../benchmarks/results/adaptive-fragment-patch-opportunity-v1.json) and [`dev/check-adaptive-fragment-patch-opportunity`](../../dev/check-adaptive-fragment-patch-opportunity). Ten unsafe inputs reject; accepted bytes apply and exactly revert outside the checkout; the frozen 4-CPU/16-GiB native Gradle evidence saves 67.28% Kotlin and 68.01% Groovy across 16 pairs with exact outputs and zero product failures. | `DONE` |
 
 ## 12. Decision log
 
@@ -517,11 +526,13 @@ IDs from the implementation tracker.
 | 2026-08-25 | Keep observed economics immutable and projections in a separate derived series. | A later horizon or decay assumption must never rewrite historical value, recurrence, payback or regret. |
 | 2026-08-25 | Publish a new canonical checkpoint generation only after the complete requested-build update validates. | Interruption must preserve the prior exact generation; implicit partial repair would corrupt learning authority. |
 | 2026-08-25 | Exclude repository identity from cross-repository prior fingerprints, scores and tie-breaks. | Repository provenance may prevent local evidence leakage, but names, paths and remotes must never become product behavior or transfer authority. |
+| 2026-08-25 | Separate generic patch-opportunity detection from recipe authority. | Repeated task evidence may create a review proposal, but only an exact reviewed recipe plus transactional correctness and independent native value can authorize a durable source change. |
 
 ## 13. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-25 | Closed AF-008 as `DURABLE_PATCH_VALUE_PROVED`: a generic detector emits one non-authorizing proposal, ten unsafe inputs reject, the reviewed exact recipe applies/reverts outside the checkout, and 16 frozen native Gradle pairs save 67.28% Kotlin/68.01% Groovy with exact outputs; opened AF-009 conflict-aware composition. |
 | 2026-08-25 | Closed AF-007 as `SAFE_HYPOTHESIS_PRIORS_AVAILABLE`: four opaque source scopes rank three hypothesis classes for two holdouts, full source/holdout identity replacement and reversed input preserve the result, evidence can reorder exploration only, and zero correctness/value/activation authority transfers; opened AF-008 patch-opportunity learning. |
 | 2026-08-25 | Closed AF-006 as `ONLINE_FRAGMENT_LEARNING_AVAILABLE`: five requested builds, 15 comparable samples, zero measurement-only work, exact restart and dependency-bounded regression suspension are executable; opened AF-007 cross-repository hypothesis priors. |
 | 2026-08-25 | Closed AF-005 as `FRAGMENT_ECONOMICS_RECOMPUTABLE`: retained Kafka composition value is +82,527 ms after exact observed costs; negative value, exact-once async cost, immutable observations, non-additive percentages and unclipped regret are executable; opened AF-006 ordinary-build online learning. |

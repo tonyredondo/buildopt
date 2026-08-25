@@ -4754,6 +4754,20 @@ predicts no target saving and grants no local correctness, value or activation:
 ./dev/check-adaptive-fragment-prior
 ```
 
+## Adaptive fragment patch-opportunity learning
+
+`./dev/check-adaptive-fragment-patch-opportunity` validates the `AF-008`
+generic repeated-task detector, its review-only authority boundary, temporary
+application and exact revert. It recomputes the report from the frozen native
+Gradle paired evidence: eight Kotlin and eight Groovy comparisons preserve
+exact outputs while the reviewed patch saves 67.28% and 68.01% respectively.
+The checker makes no new timing observation and does not broaden the exact
+recipe or authorize automatic patch application:
+
+```bash
+./dev/check-adaptive-fragment-patch-opportunity
+```
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
