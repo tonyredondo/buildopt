@@ -1,0 +1,382 @@
+{
+  "schemaVersion": "buildopt.evidence/structural-profile-qualification/v1",
+  "evidenceState": "QUALIFIED",
+  "capturedAt": "2026-08-25T09:41:17Z",
+  "subject": {
+    "repositoryId": "apache/kafka",
+    "repositoryRevision": "2e961afeff5cb27d60767a783edf20be00cc28e8",
+    "pipelineClass": "auto-testclasses-1376268d"
+  },
+  "sourceBindings": {
+    "manifestSha256": "9ee81b458012a889702f628601b886133e4ac7e84437188abfdf7d446e8c3958",
+    "graphSha256": "a7ffdd4396a36a29323e8feeef5b8d375c7a221e3db757d2cb45aa8b0aeea326",
+    "generatedManifestSha256": "a144ecf811497492875b5221ffedf6adc59d54d0d857167c6558a01d53e9d2a0",
+    "sourceEvidenceSha256": "bdf70f490a99a9d797c7e2e18b42eb4820b7fbab0c8de04153955a51c888b66f"
+  },
+  "plan": {
+    "alternativeId": "changed-projects",
+    "entrypoints": [
+      ":clients:testClasses"
+    ],
+    "fallbackEntrypoints": [
+      "testClasses"
+    ],
+    "requiredOutputs": [
+      "clients/build/classes/java/test/**",
+      "clients/build/resources/test/**",
+      "clients/clients-integration-tests/build/classes/java/test/**",
+      "clients/clients-integration-tests/build/resources/test/**",
+      "connect/api/build/classes/java/test/**",
+      "connect/api/build/resources/test/**",
+      "connect/basic-auth-extension/build/classes/java/test/**",
+      "connect/file/build/classes/java/test/**",
+      "connect/file/build/resources/test/**",
+      "connect/json/build/classes/java/test/**",
+      "connect/json/build/resources/test/**",
+      "connect/mirror-client/build/classes/java/test/**",
+      "connect/mirror/build/classes/java/test/**",
+      "connect/mirror/build/resources/test/**",
+      "connect/runtime/build/classes/java/test/**",
+      "connect/runtime/build/resources/test/**",
+      "connect/transforms/build/classes/java/test/**",
+      "coordinator-common/build/classes/java/test/**",
+      "coordinator-common/build/resources/test/**",
+      "core/build/classes/scala/test/**",
+      "core/build/resources/test/**",
+      "generator/build/classes/java/test/**",
+      "group-coordinator/build/classes/java/test/**",
+      "group-coordinator/build/resources/test/**",
+      "metadata/build/classes/java/test/**",
+      "metadata/build/resources/test/**",
+      "raft/build/classes/java/test/**",
+      "raft/build/resources/test/**",
+      "server-common/build/classes/java/test/**",
+      "server-common/build/resources/test/**",
+      "server/build/classes/java/test/**",
+      "server/build/resources/test/**",
+      "share-coordinator/build/classes/java/test/**",
+      "share-coordinator/build/resources/test/**",
+      "shell/build/classes/java/test/**",
+      "shell/build/resources/test/**",
+      "storage/api/build/classes/java/test/**",
+      "storage/api/build/resources/test/**",
+      "storage/build/classes/java/test/**",
+      "storage/build/resources/test/**",
+      "streams/build/classes/java/test/**",
+      "streams/build/resources/test/**",
+      "streams/examples/build/classes/java/test/**",
+      "streams/integration-tests/build/classes/java/test/**",
+      "streams/integration-tests/build/resources/test/**",
+      "streams/streams-scala/build/classes/scala/test/**",
+      "streams/streams-scala/build/resources/test/**",
+      "streams/test-utils/build/classes/java/test/**",
+      "streams/test-utils/build/resources/test/**",
+      "streams/upgrade-system-tests-0110/build/classes/java/test/**",
+      "streams/upgrade-system-tests-10/build/classes/java/test/**",
+      "streams/upgrade-system-tests-11/build/classes/java/test/**",
+      "streams/upgrade-system-tests-20/build/classes/java/test/**",
+      "streams/upgrade-system-tests-21/build/classes/java/test/**",
+      "streams/upgrade-system-tests-22/build/classes/java/test/**",
+      "streams/upgrade-system-tests-23/build/classes/java/test/**",
+      "streams/upgrade-system-tests-24/build/classes/java/test/**",
+      "streams/upgrade-system-tests-25/build/classes/java/test/**",
+      "streams/upgrade-system-tests-26/build/classes/java/test/**",
+      "streams/upgrade-system-tests-27/build/classes/java/test/**",
+      "streams/upgrade-system-tests-28/build/classes/java/test/**",
+      "streams/upgrade-system-tests-30/build/classes/java/test/**",
+      "streams/upgrade-system-tests-31/build/classes/java/test/**",
+      "streams/upgrade-system-tests-32/build/classes/java/test/**",
+      "streams/upgrade-system-tests-33/build/classes/java/test/**",
+      "streams/upgrade-system-tests-34/build/classes/java/test/**",
+      "streams/upgrade-system-tests-35/build/classes/java/test/**",
+      "streams/upgrade-system-tests-36/build/classes/java/test/**",
+      "streams/upgrade-system-tests-37/build/classes/java/test/**",
+      "streams/upgrade-system-tests-38/build/classes/java/test/**",
+      "streams/upgrade-system-tests-39/build/classes/java/test/**",
+      "streams/upgrade-system-tests-40/build/classes/java/test/**",
+      "streams/upgrade-system-tests-41/build/classes/java/test/**",
+      "streams/upgrade-system-tests-42/build/classes/java/test/**",
+      "streams/upgrade-system-tests-43/build/classes/java/test/**",
+      "test-common/test-common-internal-api/build/classes/java/test/**",
+      "test-common/test-common-internal-api/build/resources/test/**",
+      "test-common/test-common-runtime/build/classes/java/test/**",
+      "test-common/test-common-runtime/build/resources/test/**",
+      "test-common/test-common-util/build/classes/java/test/**",
+      "test-common/test-common-util/build/resources/test/**",
+      "tools/build/classes/java/test/**",
+      "tools/build/resources/test/**",
+      "tools/tools-api/build/classes/java/test/**",
+      "tools/tools-api/build/resources/test/**",
+      "transaction-coordinator/build/classes/java/test/**",
+      "transaction-coordinator/build/resources/test/**",
+      "trogdor/build/classes/java/test/**",
+      "trogdor/build/resources/test/**"
+    ],
+    "totalProjectCount": 66,
+    "selectedProjectCount": 3,
+    "omittedProjectCount": 63,
+    "omittedProjectRatio": 0.9545454545454546
+  },
+  "execution": {
+    "candidateSurface": "INSTALLED_BUILDOPT_STRUCTURAL_IMPACT_ONLY",
+    "buildoptRevision": "a8f8af24fecf4d0a190c38ed47f354c8a1accdc6",
+    "executableSha256": "a8f8af24fecf4d0a190c38ed47f354c8a1accdc622a5b3b51689d744a730b576",
+    "mechanisms": [
+      "BUILD_IMPACT"
+    ],
+    "gradleOptions": [
+      "--no-daemon",
+      "--build-cache",
+      "--parallel",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--no-scan",
+      "--max-workers=12"
+    ],
+    "launcherOverheadIncluded": true,
+    "qualificationPolicy": "ROBUST_6_OF_8_ALTERNATING_PAIRS_INTERVAL_P95_V1"
+  },
+  "observations": [
+    {
+      "pair": 1,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 30486,
+      "candidateDurationMs": 22863,
+      "savedMs": 7623,
+      "controlRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "candidateRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "requiredOutputCount": 4440,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 2,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 31266,
+      "candidateDurationMs": 25006,
+      "savedMs": 6260,
+      "controlRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "candidateRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "requiredOutputCount": 4440,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 3,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 33320,
+      "candidateDurationMs": 24321,
+      "savedMs": 8999,
+      "controlRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "candidateRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "requiredOutputCount": 4440,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 4,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 30570,
+      "candidateDurationMs": 24710,
+      "savedMs": 5860,
+      "controlRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "candidateRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "requiredOutputCount": 4440,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 5,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 31616,
+      "candidateDurationMs": 24461,
+      "savedMs": 7155,
+      "controlRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "candidateRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "requiredOutputCount": 4440,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 6,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 29825,
+      "candidateDurationMs": 24389,
+      "savedMs": 5436,
+      "controlRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "candidateRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "requiredOutputCount": 4440,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 7,
+      "order": "CONTROL_FIRST",
+      "controlDurationMs": 31551,
+      "candidateDurationMs": 25065,
+      "savedMs": 6486,
+      "controlRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "candidateRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "requiredOutputCount": 4440,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "pair": 8,
+      "order": "CANDIDATE_FIRST",
+      "controlDurationMs": 30521,
+      "candidateDurationMs": 24956,
+      "savedMs": 5565,
+      "controlRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "candidateRequiredOutputSha256": "581e8a78bb605773f7f73ecdb1cd0086beea06e73ff12433308a69336dd84e6d",
+      "requiredOutputCount": 4440,
+      "productAttributableFailure": false,
+      "controlTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      },
+      "candidateTaskOutcomes": {
+        "total": 0,
+        "executed": 0,
+        "fromCache": 0,
+        "upToDate": 0,
+        "noSource": 0,
+        "skipped": 0
+      }
+    }
+  ],
+  "fallback": {
+    "mode": "FULL_GRAPH",
+    "reason": "ORDINARY_FULL_GRAPH_CONTROLS_SUCCEEDED",
+    "buildSuccessful": true
+  },
+  "result": {
+    "pairs": 8,
+    "controlMeanMs": 31144.375,
+    "candidateMeanMs": 24471.375,
+    "meanSavedMs": 6673,
+    "reductionRatio": 0.21426019947422287,
+    "interval95SavedMs": [
+      5971.375,
+      7517.75
+    ],
+    "positivePairs": 8,
+    "qualified": true,
+    "decision": "QUALIFY_STRUCTURAL_PROFILE"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositorySpecificRuleAdded": false,
+    "testOptimizationModified": false
+  }
+}

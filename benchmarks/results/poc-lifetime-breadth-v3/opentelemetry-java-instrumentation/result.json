@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-lifetime-breadth-subject/v3-early",
+  "key": "opentelemetry-java-instrumentation",
+  "buildopt": {
+    "revision": "398cdb32e1e5957454ea2171408d30872a7ac418",
+    "executableSha256": "a8f8af24fecf4d0a190c38ed47f354c8a1accdc622a5b3b51689d744a730b576"
+  },
+  "repository": {
+    "id": "open-telemetry/opentelemetry-java-instrumentation",
+    "remote": "https://github.com/open-telemetry/opentelemetry-java-instrumentation.git",
+    "publicRepository": true,
+    "historyBranch": "main"
+  },
+  "qualification": {
+    "parentRevision": "cbdf37d064a0598aba8485a2303a7322fcc50fc5",
+    "targetRevision": "f330e4c0b764d80dcc1f7c6d4c01e305593c49f1",
+    "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+    "changeFamily": "DEPENDENCY_SOURCE",
+    "graph": {
+      "omittedProjects": 974,
+      "selectedProjects": 34,
+      "totalProjects": 1008
+    },
+    "captureFile": "qualification-capture.json",
+    "captureSha256": "d7316ea6c5995ee9565481e9cd19f09d35585a5d43ebd5bc4ef0ce366208b910",
+    "ordinaryEconomics": {
+      "calibrationAuthorized": false,
+      "candidateMeanMs": 0,
+      "compatibleBuilds": 1,
+      "controlMeanMs": 0,
+      "decision": "NATIVE_RETAINED",
+      "evidenceSource": "REQUESTED_ORDINARY_BUILD",
+      "exactOutputBuilds": 1,
+      "historicalCompatibleMatches": 1,
+      "learningCostMs": 9961,
+      "maximumPaybackMatches": 5,
+      "maximumVolatileProducerCount": 0,
+      "meanSavedMs": 0,
+      "measurementOnlyBuilds": 0,
+      "observedPairs": 0,
+      "productionAuthorized": false,
+      "projectedCompatibleMatches": 1,
+      "projectedGrossSavedMs": 0,
+      "projectedNetSavedMs": 0,
+      "projectedPaybackMatches": 0,
+      "reason": "COMPATIBLE_LIFETIME_INSUFFICIENT",
+      "reductionRatio": 0,
+      "requestedBuilds": 1,
+      "schemaVersion": "buildopt.poc/ordinary-learning-economics/v1",
+      "structurallyPortableBuilds": 1,
+      "successfulBuilds": 1,
+      "testOptimization": "OUT_OF_SCOPE"
+    }
+  },
+  "observations": [],
+  "economics": {
+    "observedBuilds": 0,
+    "eligibleDescendants": 0,
+    "selectedReplays": 0,
+    "nativeRetainedBuilds": 0,
+    "selectedReplaySavedMs": 0,
+    "nativeRetentionWrapperCostMs": 0,
+    "qualificationAndPublicationCostMs": 9961,
+    "cumulativeNetSavedMs": -9961,
+    "conclusion": "EARLY_ECONOMIC_RETENTION"
+  },
+  "acceptance": {
+    "decision": "COMPLETE",
+    "exactRequiredOutputs": true,
+    "publicAncestry": true,
+    "productFailures": 0
+  },
+  "boundaries": {
+    "designPartnerRequired": false,
+    "mechanismPercentagesAdded": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositoriesAveraged": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

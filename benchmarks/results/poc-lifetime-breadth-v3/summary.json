@@ -1,0 +1,230 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-lifetime-breadth/v3",
+  "workItem": "POC-LIFETIME-BREADTH-V3-001",
+  "capturedAt": "2026-08-25T10:47:46Z",
+  "buildopt": {
+    "sourceRevisions": [
+      "29b224545fc84fab3a2103c5218d34f968808aaa",
+      "398cdb32e1e5957454ea2171408d30872a7ac418",
+      "5df074746c9007ab85db170c6cb3b062cfcb84a5"
+    ],
+    "executableSha256": "a8f8af24fecf4d0a190c38ed47f354c8a1accdc622a5b3b51689d744a730b576",
+    "contractSha256": "509b77d04a187719709053dee9b73c93b7fd18999f661596609358abac011983",
+    "subjectSpecSha256": "3ad2c259e99f64064bf6d0cb1287a7b6ab3d1ea1a47a75d0d59a4976f51a1f4e",
+    "installedPackage": true
+  },
+  "runner": {
+    "operatingSystem": "Linux",
+    "architecture": "x86_64",
+    "cpuCount": 12
+  },
+  "subjects": [
+    {
+      "key": "apache-groovy",
+      "repositoryId": "apache/groovy",
+      "targetRevision": "14fa934340c46bc1ee96cba7ae594258bd8d0fd0",
+      "buildoptRevision": "29b224545fc84fab3a2103c5218d34f968808aaa",
+      "executableSha256": "a8f8af24fecf4d0a190c38ed47f354c8a1accdc622a5b3b51689d744a730b576",
+      "qualification": {
+        "status": "ECONOMICALLY_RETAINED",
+        "requestedBuilds": 1,
+        "measurementOnlyBuilds": 0,
+        "historicalCompatibleMatches": 1,
+        "ordinaryDecision": "NATIVE_RETAINED",
+        "ordinaryReason": "COMPATIBLE_LIFETIME_INSUFFICIENT",
+        "observedPairs": 0,
+        "robustQualified": false,
+        "positivePairs": 0,
+        "meanSavedMs": 0,
+        "exactOutputBuilds": 1,
+        "learningCostMs": 2760,
+        "projectedPaybackMatches": 0
+      },
+      "lifetime": {
+        "observedBuilds": 0,
+        "eligibleDescendants": 0,
+        "selectedReplays": 0,
+        "nativeRetainedBuilds": 0,
+        "exactOutputBuilds": 0,
+        "selectedReplaySavedMs": 0,
+        "nativeRetentionWrapperCostMs": 0,
+        "qualificationAndPublicationCostMs": 2760,
+        "cumulativeNetSavedMs": -2760,
+        "conclusion": "EARLY_ECONOMIC_RETENTION"
+      },
+      "productFailures": 0,
+      "rawResultSha256": "640c8e2a72c1e7bf081f359430197335cdac16f93d08cb70ea764db9e58c93d5",
+      "qualificationCaptureSha256": "4d24c2f97efd17c0329e68ea616b0283b9063e6ad6d6f058a31a24e0b7fe4d74"
+    },
+    {
+      "key": "apache-kafka",
+      "repositoryId": "apache/kafka",
+      "targetRevision": "2e961afeff5cb27d60767a783edf20be00cc28e8",
+      "buildoptRevision": "398cdb32e1e5957454ea2171408d30872a7ac418",
+      "executableSha256": "a8f8af24fecf4d0a190c38ed47f354c8a1accdc622a5b3b51689d744a730b576",
+      "qualification": {
+        "status": "QUALIFIED",
+        "requestedBuilds": 17,
+        "measurementOnlyBuilds": 0,
+        "historicalCompatibleMatches": 12,
+        "ordinaryDecision": "QUALIFICATION_READY",
+        "ordinaryReason": "ROBUST_ORDINARY_EVIDENCE_READY",
+        "observedPairs": 8,
+        "robustQualified": true,
+        "positivePairs": 8,
+        "meanSavedMs": 6673,
+        "exactOutputBuilds": 17,
+        "learningCostMs": 6987,
+        "projectedPaybackMatches": 2
+      },
+      "lifetime": {
+        "observedBuilds": 6,
+        "eligibleDescendants": 6,
+        "selectedReplays": 1,
+        "nativeRetainedBuilds": 5,
+        "exactOutputBuilds": 6,
+        "selectedReplaySavedMs": 135127,
+        "nativeRetentionWrapperCostMs": 42040,
+        "qualificationAndPublicationCostMs": 10560,
+        "cumulativeNetSavedMs": 82527,
+        "conclusion": "PAID_BACK_IN_OBSERVED_WINDOW"
+      },
+      "productFailures": 0,
+      "rawResultSha256": "358af8773138419a7b8df982f5ccdc7d38064e8ac5575d028ea55edaf4ffbc2c",
+      "qualificationCaptureSha256": "867dee330c5d9b2925eb944edb0e77c57641549f53971fc13385090796b371a6"
+    },
+    {
+      "key": "micronaut-core",
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "targetRevision": "eb60c6c35f355750c6bced793e85c30629d27c4e",
+      "buildoptRevision": "29b224545fc84fab3a2103c5218d34f968808aaa",
+      "executableSha256": "a8f8af24fecf4d0a190c38ed47f354c8a1accdc622a5b3b51689d744a730b576",
+      "qualification": {
+        "status": "ECONOMICALLY_RETAINED",
+        "requestedBuilds": 1,
+        "measurementOnlyBuilds": 0,
+        "historicalCompatibleMatches": 1,
+        "ordinaryDecision": "NATIVE_RETAINED",
+        "ordinaryReason": "COMPATIBLE_LIFETIME_INSUFFICIENT",
+        "observedPairs": 0,
+        "robustQualified": false,
+        "positivePairs": 0,
+        "meanSavedMs": 0,
+        "exactOutputBuilds": 1,
+        "learningCostMs": 9149,
+        "projectedPaybackMatches": 0
+      },
+      "lifetime": {
+        "observedBuilds": 0,
+        "eligibleDescendants": 0,
+        "selectedReplays": 0,
+        "nativeRetainedBuilds": 0,
+        "exactOutputBuilds": 0,
+        "selectedReplaySavedMs": 0,
+        "nativeRetentionWrapperCostMs": 0,
+        "qualificationAndPublicationCostMs": 9149,
+        "cumulativeNetSavedMs": -9149,
+        "conclusion": "EARLY_ECONOMIC_RETENTION"
+      },
+      "productFailures": 0,
+      "rawResultSha256": "dc866fbaac59d1a35f9925648982ab27c3ae59ba4184730ce9ced4675c161997",
+      "qualificationCaptureSha256": "5b4035980bbc7fcb61bca4fa952b25078c1d6f04a81226c8a190cf3389677c6c"
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "targetRevision": "f330e4c0b764d80dcc1f7c6d4c01e305593c49f1",
+      "buildoptRevision": "398cdb32e1e5957454ea2171408d30872a7ac418",
+      "executableSha256": "a8f8af24fecf4d0a190c38ed47f354c8a1accdc622a5b3b51689d744a730b576",
+      "qualification": {
+        "status": "ECONOMICALLY_RETAINED",
+        "requestedBuilds": 1,
+        "measurementOnlyBuilds": 0,
+        "historicalCompatibleMatches": 1,
+        "ordinaryDecision": "NATIVE_RETAINED",
+        "ordinaryReason": "COMPATIBLE_LIFETIME_INSUFFICIENT",
+        "observedPairs": 0,
+        "robustQualified": false,
+        "positivePairs": 0,
+        "meanSavedMs": 0,
+        "exactOutputBuilds": 1,
+        "learningCostMs": 9961,
+        "projectedPaybackMatches": 0
+      },
+      "lifetime": {
+        "observedBuilds": 0,
+        "eligibleDescendants": 0,
+        "selectedReplays": 0,
+        "nativeRetainedBuilds": 0,
+        "exactOutputBuilds": 0,
+        "selectedReplaySavedMs": 0,
+        "nativeRetentionWrapperCostMs": 0,
+        "qualificationAndPublicationCostMs": 9961,
+        "cumulativeNetSavedMs": -9961,
+        "conclusion": "EARLY_ECONOMIC_RETENTION"
+      },
+      "productFailures": 0,
+      "rawResultSha256": "0ff22b7cab3992af164d688865f960def9d8a06043e6fb86d61e6604afa938d5",
+      "qualificationCaptureSha256": "d7316ea6c5995ee9565481e9cd19f09d35585a5d43ebd5bc4ef0ce366208b910"
+    },
+    {
+      "key": "spring-framework",
+      "repositoryId": "spring-projects/spring-framework",
+      "targetRevision": "1c4b20287f1d8f635867fb58c576849f9313e907",
+      "buildoptRevision": "5df074746c9007ab85db170c6cb3b062cfcb84a5",
+      "executableSha256": "a8f8af24fecf4d0a190c38ed47f354c8a1accdc622a5b3b51689d744a730b576",
+      "qualification": {
+        "status": "ECONOMICALLY_RETAINED",
+        "requestedBuilds": 1,
+        "measurementOnlyBuilds": 0,
+        "historicalCompatibleMatches": 4,
+        "ordinaryDecision": "NATIVE_RETAINED",
+        "ordinaryReason": "COMPATIBLE_LIFETIME_INSUFFICIENT",
+        "observedPairs": 0,
+        "robustQualified": false,
+        "positivePairs": 0,
+        "meanSavedMs": 0,
+        "exactOutputBuilds": 1,
+        "learningCostMs": 10113,
+        "projectedPaybackMatches": 0
+      },
+      "lifetime": {
+        "observedBuilds": 0,
+        "eligibleDescendants": 0,
+        "selectedReplays": 0,
+        "nativeRetainedBuilds": 0,
+        "exactOutputBuilds": 0,
+        "selectedReplaySavedMs": 0,
+        "nativeRetentionWrapperCostMs": 0,
+        "qualificationAndPublicationCostMs": 10113,
+        "cumulativeNetSavedMs": -10113,
+        "conclusion": "EARLY_ECONOMIC_RETENTION"
+      },
+      "productFailures": 0,
+      "rawResultSha256": "c57da48acfddbb3d514b2dda827c53463980cfc5c39f66db7ce5d07a46347654",
+      "qualificationCaptureSha256": "48b61f219134d7c9a1ae183b7897a6439ec97a9cf61a4859de4d1db9cb015ca4"
+    }
+  ],
+  "aggregation": {
+    "subjectCount": 5,
+    "netPositiveSubjects": 1,
+    "requestedQualificationBuilds": 21,
+    "measurementOnlyBuilds": 0,
+    "eligibleDescendants": 6,
+    "selectedReplays": 1,
+    "selectionRatio": 0.16666666666666666,
+    "exactOutputBuilds": 27,
+    "productFailures": 0,
+    "signedNetSavedMs": 50544,
+    "repositoryPercentagesAveraged": false,
+    "mechanismPercentagesAdded": false
+  },
+  "decision": "FUNCTIONAL_COVERAGE_NOT_PROVEN",
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

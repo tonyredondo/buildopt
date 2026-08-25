@@ -2,6 +2,14 @@
 set -euo pipefail
 
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_arguments=("$@")
+if (($# >= 2)) && [[ ${buildopt_arguments[1]} != /* ]]; then
+    buildopt_arguments[1]=${buildopt_repo_root}/${buildopt_arguments[1]}
+fi
+if (($# >= 3)) && [[ ${buildopt_arguments[2]} != /* ]]; then
+    buildopt_arguments[2]=${buildopt_repo_root}/${buildopt_arguments[2]}
+fi
 cd -- "${buildopt_script_dir}/lifetime-breadth-v3"
 exec "${buildopt_script_dir}/run" --toolchain go -- \
-    go run -mod=readonly . "$@"
+    go run -mod=readonly . "${buildopt_arguments[@]}"

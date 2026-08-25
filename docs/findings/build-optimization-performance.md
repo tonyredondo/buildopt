@@ -2,81 +2,39 @@
 
 ## Current Executive Summary
 
-- **The latest unchanged automatic transfer now proves broad POC value.** One
-  exact binary ran 85 ordinary `buildopt optimize` invocations with zero
-  target-repository BuildOpt files on Spring, OpenTelemetry, Kafka, Micronaut
-  and Groovy. All five candidates beat optimized native Gradle, preserve exact
-  outputs and full fallback, report zero product failures and pass the
-  unchanged 8/8 and 30-build payback gates.
-- **The improvements are repository-specific and substantial.** Spring reduces
-  27 to 10 projects and saves **9.97%**; OpenTelemetry 1,024 to 34 and
-  **14.93%**; Kafka 64 to 3 and **38.93%**; Micronaut 75 to 22 and **59.54%**;
-  Groovy 37 to 2 and **75.11%**. All 40 pairs improve. These percentages are
-  not averaged.
-- **One-time learning cost now reflects customer economics.** Discovery shares
-  the first useful full-graph build, capture uses one manifest-bound pack and
-  repeated wrapper verification is not charged as a new learning investment.
-  The measured one-time cost is 2.170–7.357 seconds and projected payback is
-  one to four matching builds. Spring moves from 7/8 and 67-build native
-  retention to 8/8 and four-build qualification without moving a gate.
-- **Complete workflow outputs are now composed safely.** Verified materialization
-  and aggregate partitioning let the candidate rebuild changed owners while
-  restoring exact unaffected outputs. This closes Micronaut's former
-  73-entrypoint blocker and sharply narrows Kafka/Groovy without omitting
-  required deliverables.
-- **The materialization path is both attributed and reduced.** A single pack,
-  bounded parallel hashing/restoration and direct creation of absent verified
-  outputs replace per-file durable blobs and repeated directory sync. Capturing
-  14,445 Spring files/42.3 MB now costs 1.625 seconds; every pack entry remains
-  digest-bound and missing/corrupt state still falls back before qualification.
-- **Prior positive evidence still matters.** The public zero-manual-file POC
-  qualified Ktor `jvmJar` at **79.82% faster** with 26-build payback and Beam
-  `classes` at **61.65% faster** with 28-build payback. Under equal central
-  cache opportunity, the complete connected path measured **82.45% faster on
-  Ktor** and **56.41% on Beam**. These results show that the idea can work, not
-  that it works automatically for every Gradle repository.
-- **Cross-commit value now exists on two repository families.** Kafka has one
-  selected replay saving 104.975 seconds. The producer-bound Spring JMS replay
-  saves **84.656 seconds / 50.27%** on one compatible descendant and retains
-  optimized native Gradle on the next incompatible change. Its two-build window
-  finishes **59.550 seconds net positive** after qualification/publication.
-  Generality is still bounded: another non-Kafka family must independently
-  qualify and select before broadening the claim.
-- **The first cross-revision volatility portfolio is safe but not yet
-  valuable.** A fresh Micronaut learning pair quarantines 476 of 11,187
-  outputs from five Kotlin producers and leaves 10,711 exact outputs
-  transportable. The later revision changes its Wrapper and output contract,
-  so BuildOpt returns `NATIVE_RETAINED` with zero timing pairs. Its native pair
-  observes two different volatile JAR producers, confirming that one observed
-  producer list cannot be generalized universally.
-- **Compatibility is now checked before paying for a second native
-  observation.** The frozen Micronaut customer build took 526.089 seconds,
-  after which exact Wrapper/output-contract drift returned
-  `NATIVE_RETAINED`. No independent native clone, measurement-only workflow or
-  timing pair started. This avoids invalid experiment cost; it is not reported
-  as customer build-time saving.
-- **Transitive producer lineage is now correct, but its current rebuild
-  frontier is not valuable.** The first lineage-aware Micronaut replay
-  quarantined the correct 89 outputs but rebuilt only 11 entrypoints; exact
-  verification caught `REQUIRED_OUTPUT_DRIFT` and recovered through native
-  Gradle. The corrected generic frontier rebuilds 58 entrypoints across 52/70
-  projects, completes 8/8 pairs with one exact digest and zero failures, but
-  saves only **65 ms/0.49%**. Only 5/8 pairs improve, the interval crosses zero
-  and p95 regresses from 14.267 to 16.967 seconds. Correctness is proven;
-  activation and value are rejected.
-- **The minimal direct-producer frontier does not recover Micronaut value.**
-  The exact follow-up replaces lifecycle covers with direct terminal tasks,
-  but grows 58 to 63 entrypoints, leaves the graph at 52/70 projects and loses
-  **709.375 ms/5.60%** against its own optimized-native control. Only 3/8 pairs
-  improve, the interval crosses zero and p95 regresses. Gradle accounts for
-  680.625 ms of the mean loss; wrapper work adds 28.75 ms. The experiment is
-  preserved and the product path is restored to the graph-proven cover.
+- **The current decision evidence is lifetime breadth V3, not isolated target
+  calibration.** One exact executable ran the frozen Spring, OpenTelemetry,
+  Kafka, Micronaut and Groovy windows using only requested ordinary builds.
+  Four subjects stopped after one build because their compatible history could
+  not repay the unchanged five-match learning horizon. This avoided 64
+  additional qualification builds.
+- **Kafka proves that the mechanism can create large value.** Its target
+  qualifies at **21.43% faster with 8/8 positive pairs**. One of six
+  structurally eligible descendants selects the profile and improves from
+  178.566 to 43.439 seconds, saving **135.127 seconds / 75.67%** with 4,449
+  exact outputs. After qualification, publication and measured fallback
+  wrapper work, Kafka finishes **82.527 seconds net positive**.
+- **The generic breadth claim is not proven.** Only **1/5 repository families**
+  is net positive and only **1/6 eligible descendants (16.67%)** selects a
+  profile. The preregistered functional-coverage gate required at least 3/5
+  net-positive families and at least 50% selection coverage. Its result is
+  `FUNCTIONAL_COVERAGE_NOT_PROVEN`; the thresholds were not moved after seeing
+  the data.
+- **Correctness and safe fallback remain strong.** The aggregate contains 21
+  requested builds, zero measurement-only builds, 27 exact-output observations
+  and zero product failures. Every uncertain or incompatible case retains
+  optimized native Gradle.
+- **Historical isolated wins remain mechanism evidence, not generic customer
+  value.** Ktor, Beam, Spring, Kafka and other bounded experiments demonstrate
+  that structural graph reduction can be fast. V3 demonstrates that profile
+  recurrence and selection across ordinary commits are currently the limiting
+  factors.
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
   Runtime Tuning, Hot State and standard Copy are retired; historical Jar,
   Patch and Edge experiments remain scoped supporting evidence.
 
 See the [current one-pager](./buildopt-poc-handoff.md) and the
-[materialization-economics result](../../benchmarks/results/poc-materialization-economics-v2/README.md)
+[lifetime breadth V3 result](../../benchmarks/results/poc-lifetime-breadth-v3/README.md)
 for the decision-ready summary and raw evidence.
 
 The machine-readable incremental transaction is preserved in the

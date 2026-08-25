@@ -140,6 +140,29 @@ native roots.
   benchmarks/results/poc-qualified-lifetime-v2/summary.json
 ```
 
+The [ordinary-build lifetime breadth V3 result](./results/poc-lifetime-breadth-v3/README.md)
+is the current terminal evidence. One exact executable runs the same five
+public repository families under the bounded ordinary-build learning policy.
+Spring, OpenTelemetry, Micronaut and Groovy stop after one requested build
+because their compatible history cannot repay within five matches. Kafka uses
+17 requested builds, qualifies at **21.43% with 8/8 positive pairs**, and
+selects one of six eligible descendants. That selected replay saves **135.127
+seconds / 75.67%**; Kafka finishes **82.527 seconds net positive** after
+qualification, publication and measured fallback wrapper work.
+
+The aggregate contains 21 requested builds, zero measurement-only builds, 27
+exact-output observations and zero product failures. Only 1/5 repository
+families is net positive and only 1/6 eligible descendants selects, below the
+frozen 3/5 and 50% gates. Its terminal result is
+`FUNCTIONAL_COVERAGE_NOT_PROVEN`. The signed +50.544-second total is descriptive
+only and is neither averaged across repositories nor used to override breadth.
+
+```bash
+./dev/check-lifetime-breadth-v3 check \
+  ./specs/poc-lifetime-breadth-v3.json \
+  ./benchmarks/results/poc-lifetime-breadth-v3
+```
+
 The [cross-commit recovery result](./results/poc-cross-commit-value-recovery-v1/README.md)
 keeps Kafka's qualifier, six public descendants, workflow and output gate
 unchanged while comparing the implementation before and after selected-replay

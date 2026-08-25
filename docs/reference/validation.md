@@ -189,6 +189,19 @@ evidence. It enforces a five-match payback horizon, rejects four unsafe evidence
 classes and preserves the separate eight-pair robust qualification gate. Its
 synthetic durations test decisions and do not claim repository performance.
 
+`./dev/check-lifetime-breadth-v3 check` recomputes the terminal five-repository
+ordinary-build experiment from every subject result, qualification capture and
+the Kafka calibration evidence. It verifies one executable SHA, requested-build
+accounting, exact outputs, zero product failures, descendant eligibility,
+selection, cumulative economics and the frozen 3/5 repository plus 50%
+selection coverage gates:
+
+```bash
+./dev/check-lifetime-breadth-v3 check \
+  ./specs/poc-lifetime-breadth-v3.json \
+  ./benchmarks/results/poc-lifetime-breadth-v3
+```
+
 `check-automatic-breadth-transfer` validates the immutable V1 unchanged
 zero-manual-file run across Spring Framework, OpenTelemetry Java
 Instrumentation, Apache Kafka, Micronaut Core and Apache Groovy. It recomputes

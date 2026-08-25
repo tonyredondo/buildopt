@@ -226,6 +226,9 @@ case "${buildopt_lane}" in
             "${buildopt_repo_root}/benchmarks/results/poc-materialization-economics-v2/summary.json" >/dev/null
         "${buildopt_script_dir}/check-qualified-lifetime-v2" \
             "${buildopt_repo_root}/benchmarks/results/poc-qualified-lifetime-v2/summary.json" >/dev/null
+        "${buildopt_script_dir}/check-lifetime-breadth-v3" check \
+            "${buildopt_repo_root}/specs/poc-lifetime-breadth-v3.json" \
+            "${buildopt_repo_root}/benchmarks/results/poc-lifetime-breadth-v3" >/dev/null
         "${buildopt_script_dir}/check-cross-commit-value-recovery" >/dev/null
         "${buildopt_script_dir}/check-cross-commit-breadth-replication" >/dev/null
         "${buildopt_script_dir}/check-workflow-input-ownership" >/dev/null

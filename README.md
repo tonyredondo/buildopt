@@ -69,19 +69,20 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > the [v1 matrix](./benchmarks/results/poc-magic-end-to-end-value-v1/README.md)
 > remains historical diagnostic evidence rather than being rewritten.
 
-> **Latest lifetime result:** the same five public repositories were
-> requalified and followed through preregistered descendant commits. Spring,
-> OpenTelemetry, Kafka and Micronaut still show **11.88%–18.98%** isolated
-> calibration savings; Groovy retains native at 6/8 positive pairs and a worse
-> candidate p95. Only OpenTelemetry and Kafka pass exact cross-root output
-> portability. Across their seven later builds, **0 profiles are selected**,
-> all seven retain optimized native Gradle with exact outputs, and no subject
-> pays back. Spring's two AspectJ classes and one Micronaut JAR differ across
-> independent native roots and are rejected. The terminal result is therefore
-> **4/5 qualified, 2/4 portable, 0/7 selected and 0/5 paid back**, with zero
-> product failures. See the
-> [qualified-lifetime evidence](./benchmarks/results/poc-qualified-lifetime-v2/README.md);
-> attractive calibration is no longer presented as customer value.
+> **Current lifetime result:** one exact executable ran frozen Spring,
+> OpenTelemetry, Kafka, Micronaut and Groovy ordinary-build windows. Four
+> short-lived hypotheses stopped after one requested build, avoiding 64
+> additional learning builds. Kafka qualified at **21.43% faster with 8/8
+> positive pairs**; one of six eligible descendants selected the profile and
+> saved **135.127 seconds / 75.67%**, leaving Kafka **82.527 seconds net
+> positive** after qualification, publication and measured fallback wrapper
+> work. Across the complete matrix only **1/5 repositories** is net positive
+> and **1/6 eligible descendants (16.67%)** selects, below the frozen 3/5 and
+> 50% breadth gates. All 27 output observations are exact and product failures
+> remain zero. The terminal evidence is
+> `FUNCTIONAL_COVERAGE_NOT_PROVEN`; isolated acceleration is no longer
+> presented as generic customer value. See the
+> [lifetime breadth V3 evidence](./benchmarks/results/poc-lifetime-breadth-v3/README.md).
 
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired
