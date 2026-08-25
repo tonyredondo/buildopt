@@ -15,6 +15,7 @@ before running the product.
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
 | Review the POC idea, mechanisms, current value, and next steps | [Current POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
+| Follow the active generalization hypothesis | [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md) | [Current generalization audit](./findings/buildopt-generalization-audit.md), [terminal whole-profile decision](../benchmarks/results/poc-functional-coverage-decision-v1/README.md) |
 | Follow the path to automatic onboarding | [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md) | [Product onboarding](./getting-started/product-onboarding.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
 | Plan optional shared state across machines | [Centralized cache and state POC roadmap](./plans/centralized-cache-and-state-roadmap.md) | [Storage contract](../specs/poc-central-storage-contract-v1.md), [architecture overview](./architecture/overview.md) |
 | Inspect exact behavior | [Specifications index](../specs/README.md) | [Contracts index](../contracts/README.md), [ADRs](../adr/README.md) |
@@ -57,12 +58,15 @@ before running the product.
   measured contribution by component, current activation decisions, evidence
   boundaries, and the recommended experimental roadmap.
 - [BuildOpt generalization audit](./findings/buildopt-generalization-audit.md):
-  which mechanisms are repository-independent, which semantic inputs must
-  remain owner-controlled, how output ownership now fails before measurement,
-  and what still blocks broad POC onboarding.
+  the historical target wins, terminal chronological lifetime failure, retained
+  repository-independent mechanisms and the boundary the next hypothesis must
+  cross.
 
 ### Plans
 
+- [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md):
+  the active post-`STOP_GENERIC_POC` hypothesis, terminal scorecard, ordered
+  AF-001..AF-015 work, evidence outcomes and mandatory documentation updates.
 - [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md):
   the `buildopt optimize build` north star, automatic state machine, ordered
   implementation blocks, end-to-end value gates and explicit POC boundaries.

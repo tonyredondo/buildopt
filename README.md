@@ -87,6 +87,14 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > [terminal decision](./benchmarks/results/poc-functional-coverage-decision-v1/README.md)
 > and [lifetime breadth V3 evidence](./benchmarks/results/poc-lifetime-breadth-v3/README.md).
 
+> **Next POC hypothesis:** the active
+> [Adaptive Fragment Generalization Tracker](./docs/plans/adaptive-fragment-generalization-tracker.md)
+> replaces all-or-nothing structural profiles with independently compatible
+> producer, subgraph, task, patch and cache-locality fragments. It requires
+> sub-second native retention, chronological no-lookahead learning and positive
+> cumulative value in at least three of five public repository families before
+> restoring any generic claim.
+
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired
 > calibration and requires projected payback within five compatible matches.

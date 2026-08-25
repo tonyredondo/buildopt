@@ -41,6 +41,9 @@
 See the [current one-pager](./buildopt-poc-handoff.md) and the
 [terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)
 for the decision-ready summary and raw evidence.
+The next hypothesis, its fixed scorecard, ordered work and documentation
+obligations are tracked separately in the
+[Adaptive Fragment Generalization POC Tracker](../plans/adaptive-fragment-generalization-tracker.md).
 
 The machine-readable incremental transaction is preserved in the
 [incremental-learning result](../../benchmarks/results/poc-incremental-learning-v1/README.md).

@@ -6,13 +6,18 @@ Can the retained BuildOpt POC run unchanged on an arbitrary Gradle repository,
 find a safe optimization and beat optimized native Gradle without
 repository-name rules?
 
-The current answer is: **yes for four of five tested repository/workflow
-families, with safe native retention for the fifth**. The latest transfer runs
-one exact binary on five different public repositories with zero manual
-BuildOpt files and zero product failures. All five candidates beat optimized
-native Gradle and preserve exact outputs; OpenTelemetry, Kafka, Micronaut and
-Groovy pass 8/8 pairs and repay learning within 30 matching builds. Spring
-improves but remains native because it reaches only 7/8 and 67-build payback.
+The current answer is: **not with the complete structural-profile unit tested
+so far**. Target qualification produced substantial savings on several public
+repositories, but the later chronological lifetime evaluation found repeatable
+net value in only one of five families. One of six structurally eligible
+descendants selected a profile, so the frozen terminal decision is
+[`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md).
+
+That decision stops the current whole-profile hypothesis, not the bounded
+mechanisms that worked. The next preregistered direction is an
+[adaptive fragment model](../plans/adaptive-fragment-generalization-tracker.md)
+that independently retains, invalidates and composes producer, subgraph, task,
+patch and cache-locality evidence.
 
 ## What is generalized today
 
@@ -31,7 +36,7 @@ improves but remains native because it reaches only 7/8 and 67-build payback.
 Runtime Tuning, Hot State and standard Copy remain retired. The standard `Jar`
 adapter and Patch Autopilot retain only their exact qualified scopes.
 
-## Latest unchanged breadth evidence
+## Historical target-qualification evidence
 
 | Repository | Automatic graph | Direct timed effect | Economics / decision |
 | --- | ---: | ---: | --- |
@@ -42,9 +47,29 @@ adapter and Patch Autopilot retain only their exact qualified scopes.
 | Apache Groovy | 37 -> 2 | 75.97% faster, 8/8, positive interval | 73.857-s learning; 2-build payback; qualified. |
 
 All 85 ordinary invocations preserve exact required outputs and pass full-graph
-fallback. This is stronger generalization evidence than a manually reviewed
-profile matrix because the target repositories contain no BuildOpt files and
-the same binary makes all five decisions. Percentages remain row-specific.
+fallback. This remains useful mechanism evidence because the target
+repositories contain no BuildOpt files and the same binary makes all five
+decisions. It is not the current lifetime conclusion: target qualification does
+not prove that a profile will recur often enough across later commits.
+
+## Current chronological lifetime evidence
+
+| Repository | Requested qualification builds | Later selection | Signed lifetime net |
+|---|---:|---:|---:|
+| Spring Framework | 1 | 0 / 0 | **-10.113 s** |
+| OpenTelemetry Java Instrumentation | 1 | 0 / 0 | **-9.961 s** |
+| Apache Kafka | 17 | **1 / 6 eligible** | **+82.527 s** |
+| Micronaut Core | 1 | 0 / 0 | **-9.149 s** |
+| Apache Groovy | 1 | 0 / 0 | **-2.760 s** |
+
+The sequence uses 21 requested builds and zero measurement-only builds. It
+verifies 27 exact-output observations with zero product failures. Kafka's one
+selected descendant saves 135.127 seconds, but five other eligible descendants
+retain native Gradle and incur measured wrapper cost. The complete frozen gate
+therefore fails repository-family breadth, selection coverage and native-
+retention overhead even though the signed cross-repository total is positive.
+Repository percentages are not averaged and Kafka's gain does not override the
+four negative family outcomes.
 
 ## Why graph reduction alone is insufficient
 
@@ -84,18 +109,25 @@ measured candidate or an explicit native verdict.
 
 ## Next generalization steps
 
-1. Reduce Spring's remaining learning/materialization cost through generic
-   unchanged-content reuse, without moving output, fallback or payback gates.
-2. Replay the four qualified profiles over compatible public descendants and
-   measure cumulative value, selection cost, invalidation and fallback.
-3. Add new holdout repository/workflow families only after the lifetime result,
-   using the unchanged command and no repository-specific product rules.
+The detailed order, outcomes and documentation obligations live in the
+[Adaptive Fragment Generalization POC Tracker](../plans/adaptive-fragment-generalization-tracker.md).
+Its first proof must happen before another broad timing campaign:
+
+1. replace a complete-profile decision with independently compatible fragments;
+2. prove fragment applicability over the frozen histories without lookahead;
+3. make no-value selection cheaper than 500 ms median and 1,000 ms p95;
+4. learn value and decay from ordinary builds using a signed economic ledger;
+5. activate and directly measure only compositions whose individual fragments
+   retain correctness and positive value authority; and
+6. rerun the five chronological repository families only if shadow coverage
+   reaches at least 50% of eligible descendants.
 
 ## POC conclusion
 
-BuildOpt's defensible idea is an evidence-gated structural optimizer, not a
-faster reimplementation of Gradle's cache. The latest unchanged automatic path
-now demonstrates general POC value on four unrelated repository/workflow
-families and safe rejection on a fifth. The next proof must show that this
-qualification pays back across later compatible changes; calibration speedup
-alone is not lifetime customer value.
+BuildOpt's defensible idea remains an evidence-gated optimizer on top of native
+Gradle, not a faster reimplementation of Gradle's cache. The current complete-
+profile implementation demonstrates bounded target value and strong safety,
+but not generic lifetime customer value. The new fragment hypothesis must
+increase cross-commit selection coverage and cumulative net savings without
+repository-specific rules, weaker output gates or slower native retention. If
+it cannot, the generic POC should stop rather than reinterpret the evidence.

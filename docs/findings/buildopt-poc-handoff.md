@@ -95,11 +95,17 @@ fail-open controls work. It is a rejection of the broad claim that the current
 one-command implementation already delivers repeatable net wall-time value to
 ordinary Gradle repositories.
 
-No generic implementation block follows automatically. Further work requires
-a new, explicitly preregistered hypothesis that explains how it will improve
-cross-commit compatibility, selection coverage or decision overhead without
-repository-specific rules or weaker correctness/statistical gates. Production
-hardening, soak, design partners and Test Optimization remain outside this POC.
+No generic implementation block followed automatically from that failed gate.
+The next explicitly preregistered hypothesis is now the
+[Adaptive Fragment Generalization POC](../plans/adaptive-fragment-generalization-tracker.md):
+replace a complete structural profile with independently compatible producer,
+subgraph, task, patch and cache-locality fragments; learn their signed economics
+from ordinary builds; compose only fragments with current correctness and value
+authority; and retain native Gradle through a sub-second no-value path. The new
+tracker preserves the same five-repository baseline, exact-output and zero-
+failure requirements, and makes cumulative longitudinal value—not isolated
+target speedup—the terminal decision. Production hardening, soak, design
+partners and Test Optimization remain outside this POC.
 
 ## Evidence
 

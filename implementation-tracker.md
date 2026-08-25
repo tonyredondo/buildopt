@@ -1,13 +1,14 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `STRUCTURAL AND CROSS-COMMIT ACCELERATION PROVEN; GENERALITY BOUNDED` — Kafka and Spring now have exact selected descendant replays with positive cumulative economics, while incompatible descendants retain optimized native Gradle and broader repository/workflow coverage remains to be demonstrated<br>
-**Current phase:** `POC FUNCTIONAL COVERAGE IN PROGRESS; STRUCTURAL PROFILE REBINDING ACTIVE` — custom aggregate outputs now close from exact Gradle producer/task evidence; the active hypothesis is to replace revision identity with a canonical compatibility fingerprint without weakening exact-output fallback<br>
+**Overall status:** `CURRENT GENERIC STRUCTURAL-PROFILE HYPOTHESIS STOPPED; BOUNDED MECHANISM VALUE RETAINED` — the terminal five-repository result preserves exact outputs and bounded Kafka value, but fails repository breadth, descendant selection and native-retention overhead<br>
+**Current phase:** `ADAPTIVE FRAGMENT GENERALIZATION PLANNED; IMPLEMENTATION NOT STARTED` — the new hypothesis replaces all-or-nothing profiles with independently compatible fragments and cumulative longitudinal value while retaining optimized native Gradle as the default<br>
 **POC functional target:** improve real builds against optimized native Gradle and make that value accessible through one owner-invoked command with zero hand-authored BuildOpt files for supported workflows; ambiguous, drifted or non-value state retains native Gradle<br>
 **POC onboarding north star:** `install BuildOpt -> open a Gradle repository -> buildopt optimize build`; automatic selection is allowed only inside the explicit POC command after qualification, while autonomous production promotion remains out of scope<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
 **Last updated:** 2026-08-25<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
+**Active POC tracker:** [Adaptive Fragment Generalization POC Tracker](./docs/plans/adaptive-fragment-generalization-tracker.md)<br>
 **RFC baseline SHA-256:** `135448428affcf78018434bab41e7fab0c4ac3e86b7422de10a89385dfaeefdb`
 
 ---
@@ -189,7 +190,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-STRUCTURAL-PROFILE-REBINDING | Rebind qualified evidence across commits from structural workflow, producer and output compatibility rather than incidental revision identity | `DONE` | 1/1 | `E-399`; 2 compatible contexts share one fingerprint, 5 drift and 4 incomplete contexts reject, exact outputs remain revision-bound |
 | POC-ORDINARY-LEARNING-ECONOMICS | Learn only from customer-requested builds and reject candidates whose likely compatible lifetime cannot repay discovery/publication | `DONE` | 1/1 | `E-400`; five-match lifetime/payback horizon, ordinary builds only, robust eight-pair gate unchanged |
 | POC-LIFETIME-BREADTH-V3 | Replay one unchanged binary over frozen Spring, OpenTelemetry, Kafka, Micronaut and Groovy windows | `DONE` | 1/1 | `E-401`; 1/5 net-positive families, 1/6 eligible descendants selected, exact outputs and zero failures; functional coverage not proven |
-| POC-FUNCTIONAL-COVERAGE-DECISION | Issue the terminal continue/stop decision for the generic one-command POC | `DONE` | 1/1 | `E-402`; 5/8 criteria pass, terminal `STOP_GENERIC_POC`; no automatic successor block |
+| POC-FUNCTIONAL-COVERAGE-DECISION | Issue the terminal continue/stop decision for the generic one-command POC | `DONE` | 1/1 | `E-402`; 5/8 criteria pass, terminal `STOP_GENERIC_POC`; no successor was authorized by that result |
+| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | `TODO` | 1/16 | `AF-E001`; detailed AF-001..AF-015 plan and gates live in the [active tracker](./docs/plans/adaptive-fragment-generalization-tracker.md) |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Not authorized by terminal `STOP_GENERIC_POC` |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -2416,6 +2418,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-25 | Opened the separately tracked Adaptive Fragment Generalization POC after the terminal whole-profile stop: AF-001..AF-015 preserve the frozen baseline, require independently invalidated fragments, sub-second native retention, chronological learning and cumulative value in at least three of five families | Codex |
 | 2026-08-25 | Applied the complete frozen functional-coverage gate: 5/8 criteria pass, breadth is 1/5, selection is 1/6 and one pre-Gradle rejection costs 4,098 ms; closed the current generic structural-profile hypothesis as `STOP_GENERIC_POC` without deleting bounded evidence or authorizing productization | Codex |
 | 2026-08-25 | Closed lifetime breadth V3 with one exact executable over five frozen public windows: 21 requested builds, zero measurement-only builds, 27 exact-output observations, zero failures, 1/5 net-positive families and 1/6 eligible descendants selected; recorded `FUNCTIONAL_COVERAGE_NOT_PROVEN` and opened the frozen terminal decision | Codex |
 | 2026-08-25 | Closed ordinary-build learning economics: requested builds only, fixed five-match lifetime/payback horizon, early one/three-build rejection, unchanged eight-pair robust gate and zero timing claim; opened breadth V3 | Codex |
