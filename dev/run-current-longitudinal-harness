@@ -44,10 +44,14 @@ trap buildopt_cleanup EXIT
 
 mkdir -p -- "${buildopt_temp}/release" "${buildopt_temp}/package" \
     "${buildopt_temp}/install" "${buildopt_temp}/learning"
-env GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local" \
+if ! env GRADLE_USER_HOME="${buildopt_repo_root}/.tools/gradle-user-home/local" \
     "${buildopt_repo_root}/packaging/linux/package.sh" \
     --version "${buildopt_version}" --output "${buildopt_temp}/release" \
-    >"${buildopt_temp}/package.out" 2>"${buildopt_temp}/package.err"
+    >"${buildopt_temp}/package.out" 2>"${buildopt_temp}/package.err"; then
+    printf 'AF-014A package build failed\n' >&2
+    sed -n '1,260p' "${buildopt_temp}/package.err" >&2
+    exit 1
+fi
 buildopt_archive="${buildopt_temp}/release/buildopt-${buildopt_version}-linux-amd64.tar.gz"
 [[ -s ${buildopt_archive} ]] || {
     printf 'AF-014A Linux AMD64 package was not produced\n' >&2
