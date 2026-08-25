@@ -92,6 +92,8 @@ buildopt_run_env() {
                 -u BUILDOPT_SHARED_CACHE_CA_PATH \
                 HOME="${buildopt_home}" XDG_CACHE_HOME="${buildopt_cache}" \
                 GRADLE_USER_HOME="${buildopt_gradle}" CI=true GITHUB_ACTIONS=true \
+                GITHUB_SERVER_URL=https://github.com GITHUB_RUN_ID=140014 \
+                GITHUB_RUN_ATTEMPT=1 GITHUB_JOB=af014c GITHUB_WORKFLOW=af014c \
                 GITHUB_REPOSITORY="${buildopt_repository_id}" \
                 GITHUB_REPOSITORY_ID="${buildopt_numeric_id}" \
                 GITHUB_EVENT_PATH="${buildopt_event_path}" \
