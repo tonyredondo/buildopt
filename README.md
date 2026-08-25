@@ -102,10 +102,12 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > **-37.684 s**, and Micronaut remains `INCONCLUSIVE` after a byte-
 > reproducibility rejection. Only **2/5** rows are positive versus the frozen
 > 3/5 target. Those measurements audit earlier behavior but do not represent the
-> current adaptive implementation. The next campaign will install one current
-> binary, freeze 20 primary first-parent commits plus ordered reserves per
-> family before timing, and evaluate at least 15 comparable builds per terminal
-> row before any decision.
+> current adaptive implementation. The installed measurement harness is now
+> source-bound and validated with separate arms, 18 alternating learning
+> observations, exact selected/native-retained/bypass paths and reconciled
+> phase timing; its controlled fixture makes no performance claim. The next
+> block freezes 20 primary first-parent commits plus ordered reserves per family
+> before timing, followed by at least 15 comparable builds per terminal row.
 
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired

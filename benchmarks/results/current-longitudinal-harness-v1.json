@@ -1,0 +1,742 @@
+{
+  "schemaVersion": "buildopt.poc/current-longitudinal-harness/v1",
+  "workItem": "AF-014A",
+  "capturedAt": "2026-08-25T21:33:25Z",
+  "outcome": "CURRENT_LONGITUDINAL_HARNESS_READY",
+  "evaluatedRevision": "617509d049f1f166994927a413d7952679134f06",
+  "sourceArchiveSha256": "075c566c6311b5f5d1bcfd11a4f8f48298fe3f3dcba0e3585af3b18d2501e1e7",
+  "contract": {
+    "path": "specs/poc-current-longitudinal-harness-v1.json",
+    "sha256": "40393f8294beaabbc0ec1482d0a9af798b1b07b442d2458f4d8f78b87ab93c34"
+  },
+  "package": {
+    "version": "0.0.0-af014a.617509d049f1",
+    "archiveSha256": "7e90c7ec6a7de231590f4edf62e5c8e6eb0c98ff5dfbacce60a11ea8f980ce67",
+    "executableSha256": "b0a9ffb79669d3d9d72ffd91bf6ce3e80c7bdb3376e1e1627dc584dd7153aac0",
+    "installed": true
+  },
+  "harness": {
+    "environmentFingerprintInput": "revision=617509d049f1f166994927a413d7952679134f06\npackage=7e90c7ec6a7de231590f4edf62e5c8e6eb0c98ff5dfbacce60a11ea8f980ce67\nexecutable=b0a9ffb79669d3d9d72ffd91bf6ce3e80c7bdb3376e1e1627dc584dd7153aac0\nwrapper=9a5899ae4710614c4ed47550f0089dddf197b4504dbbb2f27346d06106f9f95c\nkernel=Linux 7.1.5-1-t2-noble\nmachine=x86_64\ncpu=12\ncontrol=./gradlew --build-cache jar --offline --no-daemon\ncandidate=buildopt optimize --json --state-dir .buildopt/optimize/longitudinal-harness --calibration-budget 5m --calibration-pairs 8 --max-break-even-builds 100 jar --offline --no-daemon",
+    "environmentFingerprintSha256": "44ed7d57b033af4c905a4b041ea762d5c62e4b9e0583c0a3ce4672ee18578815",
+    "controlCheckoutSha256": "9b0cdc80ec55d45ee63db12778d1dd79688945adc1d6c76d68909a6444bc97a1",
+    "candidateCheckoutSha256": "74266f7a337ef7792da72b4559865a58e6576fc3958965bb34b3a257b8b00d53",
+    "separateCheckouts": true,
+    "separateGradleHomes": true,
+    "separateNativeCaches": true,
+    "separateDaemonRegistries": true,
+    "controlStateAbsent": true,
+    "candidateStatePrivate": true,
+    "untimedCandidateLearning": 0,
+    "forwardRevisions": [
+      "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "216eb98f5f6565e5bb36eb87cb010e90e39307cb"
+    ]
+  },
+  "workflow": {
+    "control": [
+      "./gradlew",
+      "--build-cache",
+      "jar",
+      "--offline",
+      "--no-daemon"
+    ],
+    "candidate": [
+      "buildopt",
+      "optimize",
+      "--json",
+      "--state-dir",
+      ".buildopt/optimize/longitudinal-harness",
+      "--calibration-budget",
+      "5m",
+      "--calibration-pairs",
+      "8",
+      "--max-break-even-builds",
+      "100",
+      "jar",
+      "--offline",
+      "--no-daemon"
+    ]
+  },
+  "learning": [
+    {
+      "sequence": 1,
+      "order": "CONTROL_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 13638735012,
+      "candidateWallNs": 16675722176,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 1,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 11242,
+          "discoveryLearningNs": 540490301,
+          "gradleSetupNs": 16384,
+          "localStateNs": 178294172,
+          "matchingNs": 699,
+          "materializationNs": 0,
+          "outputVerificationNs": 2351618
+        },
+        "finalizationNs": 808572737,
+        "gradleExecutionNs": 15588253952,
+        "preExecutionNs": 211062412,
+        "totalNs": 16608093625,
+        "unattributedNs": 204524
+      }
+    },
+    {
+      "sequence": 2,
+      "order": "CANDIDATE_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12581914316,
+      "candidateWallNs": 12801754047,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 2,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 11902,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 16187,
+          "localStateNs": 178809711,
+          "matchingNs": 507,
+          "materializationNs": 0,
+          "outputVerificationNs": 698663
+        },
+        "finalizationNs": 173736317,
+        "gradleExecutionNs": 12318352436,
+        "preExecutionNs": 231523437,
+        "totalNs": 12724426468,
+        "unattributedNs": 814278
+      }
+    },
+    {
+      "sequence": 3,
+      "order": "CONTROL_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12264472077,
+      "candidateWallNs": 4664887078,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 3,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "INCREMENTAL_CANDIDATE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 14038,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 8914,
+          "localStateNs": 172785255,
+          "matchingNs": 542,
+          "materializationNs": 124662,
+          "outputVerificationNs": 703861
+        },
+        "finalizationNs": 170927124,
+        "gradleExecutionNs": 4220306241,
+        "preExecutionNs": 208664739,
+        "totalNs": 4600674414,
+        "unattributedNs": 776310
+      }
+    },
+    {
+      "sequence": 4,
+      "order": "CANDIDATE_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12566154114,
+      "candidateWallNs": 4906643879,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 4,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "INCREMENTAL_CANDIDATE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 13230,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 9065,
+          "localStateNs": 171446869,
+          "matchingNs": 765,
+          "materializationNs": 130973,
+          "outputVerificationNs": 615468
+        },
+        "finalizationNs": 170953754,
+        "gradleExecutionNs": 4394760087,
+        "preExecutionNs": 256797847,
+        "totalNs": 4823186467,
+        "unattributedNs": 674779
+      }
+    },
+    {
+      "sequence": 5,
+      "order": "CONTROL_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12306466314,
+      "candidateWallNs": 12980620820,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 5,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 11846,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 17525,
+          "localStateNs": 173385435,
+          "matchingNs": 543,
+          "materializationNs": 0,
+          "outputVerificationNs": 728692
+        },
+        "finalizationNs": 173769119,
+        "gradleExecutionNs": 12535210551,
+        "preExecutionNs": 202775827,
+        "totalNs": 12912606420,
+        "unattributedNs": 850923
+      }
+    },
+    {
+      "sequence": 6,
+      "order": "CANDIDATE_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12252619739,
+      "candidateWallNs": 12835201374,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 6,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 11543,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 30132,
+          "localStateNs": 191608589,
+          "matchingNs": 774,
+          "materializationNs": 0,
+          "outputVerificationNs": 644464
+        },
+        "finalizationNs": 173981753,
+        "gradleExecutionNs": 12289257221,
+        "preExecutionNs": 284600867,
+        "totalNs": 12748591598,
+        "unattributedNs": 751757
+      }
+    },
+    {
+      "sequence": 7,
+      "order": "CONTROL_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12263176453,
+      "candidateWallNs": 4685571828,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 7,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "INCREMENTAL_CANDIDATE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 11826,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 10741,
+          "localStateNs": 175550803,
+          "matchingNs": 384,
+          "materializationNs": 124182,
+          "outputVerificationNs": 654813
+        },
+        "finalizationNs": 174779866,
+        "gradleExecutionNs": 4238589208,
+        "preExecutionNs": 206704085,
+        "totalNs": 4620836968,
+        "unattributedNs": 763809
+      }
+    },
+    {
+      "sequence": 8,
+      "order": "CANDIDATE_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12520110831,
+      "candidateWallNs": 4783029191,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 8,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "INCREMENTAL_CANDIDATE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 10905,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 9640,
+          "localStateNs": 176621211,
+          "matchingNs": 451,
+          "materializationNs": 144882,
+          "outputVerificationNs": 942084
+        },
+        "finalizationNs": 176359315,
+        "gradleExecutionNs": 4295955255,
+        "preExecutionNs": 231252509,
+        "totalNs": 4704603848,
+        "unattributedNs": 1036769
+      }
+    },
+    {
+      "sequence": 9,
+      "order": "CONTROL_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12317166243,
+      "candidateWallNs": 12851307288,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 9,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 11350,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 22991,
+          "localStateNs": 175583300,
+          "matchingNs": 491,
+          "materializationNs": 0,
+          "outputVerificationNs": 847645
+        },
+        "finalizationNs": 175249805,
+        "gradleExecutionNs": 12400490998,
+        "preExecutionNs": 205390168,
+        "totalNs": 12782129336,
+        "unattributedNs": 998365
+      }
+    },
+    {
+      "sequence": 10,
+      "order": "CANDIDATE_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12322843610,
+      "candidateWallNs": 12835716790,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 10,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 13742,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 24210,
+          "localStateNs": 176033124,
+          "matchingNs": 490,
+          "materializationNs": 0,
+          "outputVerificationNs": 733684
+        },
+        "finalizationNs": 174615294,
+        "gradleExecutionNs": 12361079676,
+        "preExecutionNs": 212074957,
+        "totalNs": 12748598703,
+        "unattributedNs": 828776
+      }
+    },
+    {
+      "sequence": 11,
+      "order": "CONTROL_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12399825784,
+      "candidateWallNs": 4689924563,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 11,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "INCREMENTAL_CANDIDATE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 12239,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 9055,
+          "localStateNs": 177822715,
+          "matchingNs": 500,
+          "materializationNs": 128825,
+          "outputVerificationNs": 984089
+        },
+        "finalizationNs": 176772767,
+        "gradleExecutionNs": 4239662327,
+        "preExecutionNs": 206469531,
+        "totalNs": 4623984713,
+        "unattributedNs": 1080088
+      }
+    },
+    {
+      "sequence": 12,
+      "order": "CANDIDATE_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12560932629,
+      "candidateWallNs": 4856024563,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 12,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "INCREMENTAL_CANDIDATE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 17459,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 10924,
+          "localStateNs": 175458665,
+          "matchingNs": 500,
+          "materializationNs": 128621,
+          "outputVerificationNs": 840687
+        },
+        "finalizationNs": 174658794,
+        "gradleExecutionNs": 4279616628,
+        "preExecutionNs": 315402483,
+        "totalNs": 4770585057,
+        "unattributedNs": 907152
+      }
+    },
+    {
+      "sequence": 13,
+      "order": "CONTROL_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12239218923,
+      "candidateWallNs": 12756865755,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 13,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 12563,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 24438,
+          "localStateNs": 177699090,
+          "matchingNs": 510,
+          "materializationNs": 0,
+          "outputVerificationNs": 615804
+        },
+        "finalizationNs": 175845428,
+        "gradleExecutionNs": 12297172441,
+        "preExecutionNs": 211864860,
+        "totalNs": 12685763687,
+        "unattributedNs": 880958
+      }
+    },
+    {
+      "sequence": 14,
+      "order": "CANDIDATE_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12193091939,
+      "candidateWallNs": 12800756022,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 14,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 12915,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 16084,
+          "localStateNs": 172518425,
+          "matchingNs": 490,
+          "materializationNs": 0,
+          "outputVerificationNs": 645784
+        },
+        "finalizationNs": 176754155,
+        "gradleExecutionNs": 12266963843,
+        "preExecutionNs": 269443194,
+        "totalNs": 12713917864,
+        "unattributedNs": 756672
+      }
+    },
+    {
+      "sequence": 15,
+      "order": "CONTROL_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12361238876,
+      "candidateWallNs": 4808579987,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 15,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "INCREMENTAL_CANDIDATE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 11939,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 10089,
+          "localStateNs": 173141278,
+          "matchingNs": 602,
+          "materializationNs": 127367,
+          "outputVerificationNs": 934911
+        },
+        "finalizationNs": 171467175,
+        "gradleExecutionNs": 4359998238,
+        "preExecutionNs": 220933985,
+        "totalNs": 4753436190,
+        "unattributedNs": 1036792
+      }
+    },
+    {
+      "sequence": 16,
+      "order": "CANDIDATE_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12337659786,
+      "candidateWallNs": 4715614418,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 16,
+      "outcome": "LEARNING",
+      "phase": "CALIBRATING",
+      "executionMode": "INCREMENTAL_CANDIDATE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 14417,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 9903,
+          "localStateNs": 178560100,
+          "matchingNs": 582,
+          "materializationNs": 136323,
+          "outputVerificationNs": 621830
+        },
+        "finalizationNs": 179737993,
+        "gradleExecutionNs": 4244359967,
+        "preExecutionNs": 224973989,
+        "totalNs": 4649783254,
+        "unattributedNs": 711305
+      }
+    },
+    {
+      "sequence": 17,
+      "order": "CONTROL_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12524409905,
+      "candidateWallNs": 13123246793,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 17,
+      "outcome": "LEARNING",
+      "phase": "QUALIFIED",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "selectionStatus": "SKIPPED",
+      "selectionSelected": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 11416,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 16103,
+          "localStateNs": 193356487,
+          "matchingNs": 393,
+          "materializationNs": 0,
+          "outputVerificationNs": 679940
+        },
+        "finalizationNs": 550445317,
+        "gradleExecutionNs": 12301568678,
+        "preExecutionNs": 206845618,
+        "totalNs": 13059669182,
+        "unattributedNs": 809569
+      }
+    },
+    {
+      "sequence": 18,
+      "order": "CANDIDATE_FIRST",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "controlWallNs": 12417397197,
+      "candidateWallNs": 4614156419,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 18,
+      "outcome": "QUALIFIED_AND_USED",
+      "phase": "ACTIVE",
+      "executionMode": "SELECTIVE_PROFILE",
+      "selectionStatus": "SELECTED",
+      "selectionSelected": true,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 12114,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 10538,
+          "localStateNs": 175824366,
+          "matchingNs": 15277226,
+          "materializationNs": 148523,
+          "outputVerificationNs": 0
+        },
+        "finalizationNs": 134923072,
+        "gradleExecutionNs": 4151015611,
+        "preExecutionNs": 255439565,
+        "totalNs": 4541554468,
+        "unattributedNs": 176220
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "CONTROL",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "externalWallNs": 13638735012,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 0,
+      "attempt": 0,
+      "outcome": "OPTIMIZED_NATIVE",
+      "phase": "CONTROL",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "selectionSelected": false,
+      "stateChanged": false,
+      "bypassRemoved": false,
+      "timing": null
+    },
+    {
+      "name": "SELECTED",
+      "revision": "e20b3733ff2bb01b8ca3e497e4e4d062192027fd",
+      "externalWallNs": 4614156419,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 1,
+      "attempt": 18,
+      "outcome": "QUALIFIED_AND_USED",
+      "phase": "ACTIVE",
+      "executionMode": "SELECTIVE_PROFILE",
+      "selectionSelected": true,
+      "stateChanged": true,
+      "bypassRemoved": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 12114,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 10538,
+          "localStateNs": 175824366,
+          "matchingNs": 15277226,
+          "materializationNs": 148523,
+          "outputVerificationNs": 0
+        },
+        "finalizationNs": 134923072,
+        "gradleExecutionNs": 4151015611,
+        "preExecutionNs": 255439565,
+        "totalNs": 4541554468,
+        "unattributedNs": 176220
+      }
+    },
+    {
+      "name": "NATIVE_RETAINED",
+      "revision": "216eb98f5f6565e5bb36eb87cb010e90e39307cb",
+      "externalWallNs": 13769721499,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 2,
+      "attempt": 1,
+      "outcome": "NATIVE_RETAINED",
+      "phase": "NATIVE_RETAINED",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "selectionSelected": false,
+      "stateChanged": true,
+      "bypassRemoved": false,
+      "timing": {
+        "diagnostics": {
+          "centralStateNs": 31250,
+          "discoveryLearningNs": 0,
+          "gradleSetupNs": 20543,
+          "localStateNs": 175620153,
+          "matchingNs": 0,
+          "materializationNs": 0,
+          "outputVerificationNs": 0
+        },
+        "finalizationNs": 131063782,
+        "gradleExecutionNs": 13364195484,
+        "preExecutionNs": 209939418,
+        "totalNs": 13705297018,
+        "unattributedNs": 98334
+      }
+    },
+    {
+      "name": "BYPASS",
+      "revision": "216eb98f5f6565e5bb36eb87cb010e90e39307cb",
+      "externalWallNs": 12407537752,
+      "exactOutputs": true,
+      "outputSha256": "ef4fe7bac265e3237a8282f52ac427c85e3123e1cb88894883fb37aea17f3266",
+      "generation": 0,
+      "attempt": 0,
+      "outcome": "BYPASS",
+      "phase": "BYPASS",
+      "executionMode": "OPTIMIZED_NATIVE",
+      "selectionSelected": false,
+      "stateChanged": false,
+      "bypassRemoved": true,
+      "timing": null
+    }
+  ],
+  "boundaries": {
+    "proofOfConcept": true,
+    "performanceClaim": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

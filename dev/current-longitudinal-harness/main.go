@@ -20,6 +20,7 @@ const (
 )
 
 var shaPattern = regexp.MustCompile(`^[0-9a-f]{64}$`)
+var revisionPattern = regexp.MustCompile(`^[0-9a-f]{40}$`)
 
 type contract struct {
 	SchemaVersion string `json:"schemaVersion"`
@@ -186,7 +187,7 @@ func validate(contractRaw []byte, spec contract, report result) error {
 		report.Outcome != "CURRENT_LONGITUDINAL_HARNESS_READY" ||
 		report.Contract.Path != "specs/poc-current-longitudinal-harness-v1.json" ||
 		report.Contract.SHA256 != hex.EncodeToString(contractDigest[:]) ||
-		!validSHA(report.EvaluatedRevision) || !validSHA(report.SourceArchiveSHA) ||
+		!validRevision(report.EvaluatedRevision) || !validSHA(report.SourceArchiveSHA) ||
 		!validSHA(report.Package.ArchiveSHA256) || !validSHA(report.Package.ExecutableSHA256) ||
 		!report.Package.Installed || report.Package.Version == "" ||
 		!equalStrings(report.Workflow.Control, spec.Workflow.Control) ||
@@ -203,7 +204,7 @@ func validate(contractRaw []byte, spec contract, report result) error {
 		!harness.SeparateNativeCaches || !harness.SeparateDaemonRegistries ||
 		!harness.ControlStateAbsent || !harness.CandidateStatePrivate ||
 		harness.UntimedCandidateLearning != 0 || len(harness.ForwardRevisions) != 2 ||
-		!validSHA(harness.ForwardRevisions[0]) || !validSHA(harness.ForwardRevisions[1]) ||
+		!validRevision(harness.ForwardRevisions[0]) || !validRevision(harness.ForwardRevisions[1]) ||
 		harness.ForwardRevisions[0] == harness.ForwardRevisions[1] {
 		return errors.New("mutable arm isolation or forward-only revision evidence is invalid")
 	}
@@ -216,7 +217,8 @@ func validate(contractRaw []byte, spec contract, report result) error {
 			expectedOrder = "CANDIDATE_FIRST"
 		}
 		if item.Sequence != index+1 || item.Attempt != index+1 || item.Generation != 1 ||
-			item.Order != expectedOrder || item.Revision != harness.ForwardRevisions[0] ||
+			item.Order != expectedOrder || !validRevision(item.Revision) ||
+			item.Revision != harness.ForwardRevisions[0] ||
 			item.ControlWallNS <= 0 || item.CandidateWallNS <= 0 || !item.ExactOutputs ||
 			!validSHA(item.OutputSHA256) || item.Outcome == "" || item.Phase == "" ||
 			item.ExecutionMode == "" || item.SelectionStatus == "" ||
@@ -237,7 +239,7 @@ func validate(contractRaw []byte, spec contract, report result) error {
 	for index, expected := range spec.RequiredScenarios {
 		item := report.Scenarios[index]
 		if item.Name != expected || item.ExternalWallNS <= 0 || !item.ExactOutputs ||
-			!validSHA(item.OutputSHA256) || !validSHA(item.Revision) {
+			!validSHA(item.OutputSHA256) || !validRevision(item.Revision) {
 			return fmt.Errorf("invalid %s scenario", expected)
 		}
 		switch expected {
@@ -300,6 +302,8 @@ func validBoundaries(value boundaries) bool {
 }
 
 func validSHA(value string) bool { return shaPattern.MatchString(value) }
+
+func validRevision(value string) bool { return revisionPattern.MatchString(value) }
 
 func equalStrings(first, second []string) bool {
 	if len(first) != len(second) {

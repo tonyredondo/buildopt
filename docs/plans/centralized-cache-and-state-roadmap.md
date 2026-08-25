@@ -50,10 +50,11 @@ equal-opportunity value measurement are complete as well.
 portfolio and economic-ledger documents. They use the same immutable artifact
 and exact-generation principles, but are not yet synchronized by the existing
 profile endpoints. `AF-012` now implements that integration for typed adaptive
-fragment, observation, portfolio and economic-ledger documents. The customer
-command remains deferred to AF-014A; AF-014B..D then evaluate that installed
-path over frozen current cohorts. These schemas create no remote activation
-authority and cannot be encoded as Gradle cache objects.
+fragment, observation, portfolio and economic-ledger documents. AF-014A now
+proves the installed customer command with isolated arms, forward-only state
+and phase-attributed execution; AF-014B..D evaluate that path over frozen
+current cohorts. These schemas create no remote activation authority and
+cannot be encoded as Gradle cache objects.
 
 ## Target experience
 

@@ -4839,8 +4839,8 @@ The checked result contains two `NET_POSITIVE`, two `NET_NEGATIVE` and one
 `INCONCLUSIVE` row. The Micronaut exclusion is retained because no comparable
 performance pair exists after its byte-reproducibility rejection. The command
 does not rerun public repositories or validate the current adaptive
-implementation. AF-014A..D will use separate installed-harness, cohort,
-current-campaign and attribution evidence:
+implementation. AF-014A now supplies separate installed-harness evidence;
+AF-014B..D supply cohort, current-campaign and attribution evidence:
 
 ```bash
 ./dev/check-adaptive-fragment-longitudinal
@@ -4851,6 +4851,33 @@ To regenerate a candidate report explicitly:
 ```bash
 ./dev/run-adaptive-fragment-longitudinal /absolute/path/result.json
 ```
+
+## Current installed longitudinal harness
+
+`./dev/check-current-longitudinal-harness` validates the committed `AF-014A`
+result against its machine contract and evaluated Git archive. It checks the
+source/package/executable digests, separate arm identities, 18 alternating
+timed learning observations, exact selected/forward-native/bypass outputs and
+external-versus-internal timing reconciliation. It also mutates timing and
+contract inputs to prove fail-closed behavior:
+
+```bash
+./dev/check-current-longitudinal-harness \
+  "$PWD/benchmarks/results/current-longitudinal-harness-v1.json"
+```
+
+To create a new controlled result from a clean source tree, pass an absolute
+destination to the installed-package runner. It builds and installs a package
+from the current SHA, creates independent arm state and removes successful
+temporary state; failures retain their diagnostic root:
+
+```bash
+./dev/run-current-longitudinal-harness /absolute/path/result.json
+```
+
+The fixture's deterministic eight-second omitted workload proves lifecycle
+reachability only. Do not report its selected/native durations as customer
+performance evidence.
 
 ## Ordinary-build learning economics evidence
 

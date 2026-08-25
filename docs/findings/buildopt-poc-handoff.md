@@ -176,10 +176,13 @@ timing pair could be accepted. All 14 comparable builds have exact outputs and
 zero product failures, but only 2/5 rows are positive versus the frozen 3/5
 breadth target. This is an audit of earlier behavior, not the current scorecard:
 OpenTelemetry and Groovy have only three later commits, Micronaut has no valid
-descendant pair and several rejection paths changed afterward. AF-014A..D will
-install one current-SHA package, freeze 20 primary commits plus ordered reserves
-per family before timing, collect at least 15 comparable builds per terminal
-row and attribute activated mechanisms, fallback cost and residual variation.
+descendant pair and several rejection paths changed afterward. AF-014A now
+proves one current-SHA installed package, separate arm state, chronological
+learning, exact selected/native-retained/bypass behavior and reconciled phase
+timing. Its controlled fixture is apparatus evidence, not a speedup. AF-014B..D
+will freeze 20 primary commits plus ordered reserves per family before timing,
+collect at least 15 comparable builds per terminal row and attribute activated
+mechanisms, fallback cost and residual variation.
 AF-015 will decide from that current campaign only.
 Production hardening, soak, design partners and Test Optimization remain
 outside this POC.

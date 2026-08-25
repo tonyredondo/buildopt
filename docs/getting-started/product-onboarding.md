@@ -142,10 +142,13 @@ adaptive composition, but retained independently qualified fragments because
 one constituent missed its frozen repeatability gate. AF-012 now preserves the
 same typed portfolio and ledger locally and through the HTTPS state plane,
 including clean-machine restore and offline/native fallback. AF-013 now remains
-an immutable historical audit rather than the current scorecard. AF-014A..D
-must prove the public installed command, freeze larger commit cohorts, execute
-the current implementation chronologically and attribute its value before the
-successor enters onboarding.
+an immutable historical audit rather than the current scorecard. AF-014A has
+now proved the public installed command, separate persistent arms, forward-only
+learning, exact selected/native-retained/bypass paths and reconciled phase
+timing. AF-014B..D must still freeze larger commit cohorts, execute the current
+implementation chronologically and attribute its value before the successor
+enters onboarding. The controlled AF-014A fixture is apparatus evidence, not a
+customer speedup.
 
 ```bash
 buildopt optimize --json -- build

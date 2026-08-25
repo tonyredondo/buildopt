@@ -483,6 +483,22 @@ Gradle or make a fresh performance claim, and it is not the current adaptive
 implementation scorecard. The AF-014A..D current campaign will have separate
 contracts, results and checkers.
 
+## Current installed longitudinal harness
+
+```bash
+./dev/check-current-longitudinal-harness \
+  "$PWD/benchmarks/results/current-longitudinal-harness-v1.json"
+```
+
+This `AF-014A` gate validates the installed package, source archive and
+executable digests; separate control/candidate state; 18 alternating timed
+learning observations; exact selected, forward native-retained and bypass
+outputs; and reconciliation of external wall time with non-overlapping
+pre-execution, Gradle, finalization and unattributed phases. It also rejects
+contract or timing tampering. The controlled omitted workload exists only to
+exercise every state transition reliably, so this gate makes no repository
+performance claim. `AF-014B` owns cohort freezing before public timing.
+
 ## Complete lanes
 
 - `./dev/check-phase-zero` composes the historical Phase 0 gates.

@@ -26,6 +26,22 @@ Use the [base recovery runbook](../../runbooks/base-recovery.md) for CI kill
 switches, immutable rollback, uninstall, state preservation, and partial patch
 recovery.
 
+## Evaluate the adaptive one-command path
+
+The current customer-facing POC remains:
+
+```bash
+buildopt optimize build
+```
+
+Unsupported, drifted or non-economic state executes optimized native Gradle;
+`BUILDOPT_BYPASS=1` removes optimize state and reporting entirely. AF-014A has
+validated the installed command with separate persistent control/candidate
+arms, forward-only learning, exact selected/native-retained/bypass behavior and
+reconciled phase timing. Its controlled fixture is measurement-apparatus
+evidence, not a speedup. Public-repository value must come from the cohorts
+frozen by AF-014B and measured by AF-014C/D.
+
 ## Build history and dashboard
 
 `buildopt-server` can export immutable redacted `BUILD_SESSION v1` documents

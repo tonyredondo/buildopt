@@ -61,6 +61,13 @@ so an exact checkpoint can move between runners; every other binding still
 passes before reuse. No state grants production authority or enters Test
 Optimization scope.
 
+Every non-bypass JSON result includes a diagnostic `timing` object. Its
+top-level `preExecutionNs`, `gradleExecutionNs`, `finalizationNs`,
+`unattributedNs` and `totalNs` fields are non-overlapping and reconcile the
+launcher interval. Nested setup, matching, state, materialization, output
+verification and discovery/learning durations explain work inside those
+phases; they are diagnostic and must not be added to the top-level phases.
+
 ### Connect and synchronize optional central state
 
 ```text

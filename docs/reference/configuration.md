@@ -108,9 +108,10 @@ The adaptive-fragment successor already reuses the same connection internally:
 its fragment, observations and economic ledger use `EVIDENCE`; its portfolio
 and exact local head use `PORTFOLIO`. These canonical control documents never
 use the Gradle `/cache/` route. This is an AF-012 POC boundary, not yet a public
-configuration surface. AF-014A owns installed-command integration, while
-AF-014B..D own the frozen current cohorts, longitudinal run and value
-attribution before a terminal decision.
+configuration surface. AF-014A now proves the installed command with isolated
+arm state and phase-attributed timing. AF-014B..D own the frozen current
+cohorts, longitudinal run and value attribution before a terminal decision;
+they must not reuse the controlled harness durations as customer value.
 
 ## Qualified POC profile
 

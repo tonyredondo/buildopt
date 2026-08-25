@@ -76,9 +76,10 @@ Spring and Kafka each contain one negative build despite positive cumulative
 value. OpenTelemetry and Groovy contain only three later observations, while
 Micronaut has no comparable descendant pair; later implementation work also
 changed ownership and aggregate-output rejection paths. The terminal decision
-is therefore deferred until AF-014A..D evaluate the current installed binary on
-larger frozen cohorts. Repository percentages are not averaged and mechanism
-effects are not added.
+is therefore deferred until AF-014B..D evaluate the current installed binary on
+larger frozen cohorts. AF-014A has already proved the isolated installed
+measurement apparatus without creating a value claim. Repository percentages
+are not averaged and mechanism effects are not added.
 
 ## Why graph reduction alone is insufficient
 
@@ -134,9 +135,11 @@ Its first proof must happen before another broad timing campaign:
 4. activate and directly measure only compositions whose individual fragments
    retain correctness and positive value authority; and
 5. install one current-SHA package and prove isolated, stateful, phase-attributed
-   control/candidate execution (**next: AF-014A**);
+   control/candidate execution (**complete: 18 alternating learning
+   observations plus exact selected, forward native-retained and bypass
+   scenarios; apparatus evidence only**);
 6. freeze 20 primary first-parent commits plus an ordered reserve queue per
-   family before timing (**AF-014B**);
+   family before timing (**next: AF-014B**);
 7. collect at least 15 comparable builds per terminal row with chronological
    learning and exact outputs (**AF-014C**); and
 8. attribute activated mechanisms, fallback cost and residual variation before

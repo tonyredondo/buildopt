@@ -2650,3 +2650,34 @@ Historical and current datasets will remain separate.
 ```bash
 ./dev/check-adaptive-fragment-longitudinal
 ```
+
+## Current installed longitudinal harness
+
+[`current-longitudinal-harness-v1.json`](./results/current-longitudinal-harness-v1.json)
+is the `AF-014A` source-bound proof that the current installed package can be
+measured without contaminating the public-repository campaign. It binds
+BuildOpt `617509d049f1f166994927a413d7952679134f06`, the source archive, release
+archive, executable, commands and environment fingerprint. Control and
+candidate use separate persistent checkouts, Gradle homes, dependency caches,
+native Build Cache state and adaptive state.
+
+The fixture completes 18 timed learning observations in alternating order,
+nine control-first and nine candidate-first. It then reaches exact selected,
+forward native-retained and bypass scenarios. The selected invocation
+reconciles **4,541.554 ms** of internal work inside **4,614.156 ms** external
+wall time; the forward native-retained invocation reconciles **13,705.297 ms**
+inside **13,769.721 ms**. Bypass preserves the adaptive-state checkpoint,
+removes BuildOpt internals from the child environment and produces the same
+required output bytes. Every required JAR digest is identical.
+
+These durations are apparatus evidence, not a BuildOpt saving. The fixture
+contains eight seconds of deterministic non-cacheable work so that the
+selected transition remains reachable despite cold installed-package overhead.
+No percentage, generalization claim or production authorization is derived
+from it. `AF-014B` will freeze the five public commit cohorts before `AF-014C`
+observes any current value.
+
+```bash
+./dev/check-current-longitudinal-harness \
+  "$PWD/benchmarks/results/current-longitudinal-harness-v1.json"
+```
