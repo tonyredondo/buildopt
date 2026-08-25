@@ -90,7 +90,7 @@ cat >>"${buildopt_seed}/build.gradle" <<'GRADLE'
 project(':service-b') {
     tasks.register('calibrationWork') {
         outputs.upToDateWhen { false }
-        doLast { Thread.sleep(1300) }
+        doLast { Thread.sleep(8000) }
     }
     tasks.named('jar') { dependsOn tasks.named('calibrationWork') }
 }

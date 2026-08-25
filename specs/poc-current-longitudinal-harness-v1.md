@@ -25,6 +25,12 @@ untimed candidate warmup, calibration or profile publication. After the first
 selected replay, the fixture advances to a later global-change commit; it is
 never rewound.
 
+The selected-path fixture adds eight seconds of deterministic, non-cacheable
+work to the omitted subproject. This margin exists only to make the state
+transition robust against cold JVM and runner variation. AF-014A is explicitly
+not performance evidence; later frozen public-repository cohorts own all value
+claims.
+
 ## Timing model
 
 Each non-bypass candidate result contains four non-overlapping top-level
