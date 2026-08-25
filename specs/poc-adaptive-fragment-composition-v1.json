@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "buildopt.specs/poc-adaptive-fragment-composition/v1",
+  "workItem": "AF-011",
+  "gradle": {
+    "version": "9.6.1",
+    "optimizedNativeControl": {
+      "buildCache": true,
+      "configurationCache": true,
+      "parallel": true,
+      "daemon": true
+    }
+  },
+  "directComparisons": [
+    "BUILD_IMPACT",
+    "REVIEWED_TASK_PATCH",
+    "BUILD_IMPACT_PLUS_REVIEWED_TASK_PATCH"
+  ],
+  "dsls": [
+    "GROOVY",
+    "KOTLIN"
+  ],
+  "measurement": {
+    "pairsPerComparison": 8,
+    "pairOrder": "ALTERNATING",
+    "confidenceInterval": "DETERMINISTIC_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
+    "minimumSavedMs": 500,
+    "minimumReductionRatio": 0.02,
+    "minimumPositivePairs": 7,
+    "positiveLower95Bound": true,
+    "requiredOutputsIdentical": true,
+    "maximumProductAttributableFailures": 0
+  },
+  "cacheLocality": {
+    "evidenceSchema": "buildopt.evidence/poc-remote-cache-value/v1",
+    "requiredDecision": "QUALIFY_EDGE_LOCALITY_FOR_CONTROLLED_REMOTE_CACHE_POC",
+    "compositionDisposition": "INDEPENDENT_SCOPE_ONLY"
+  },
+  "decision": {
+    "qualified": "COMPOSED_VALUE_QUALIFIED",
+    "notQualified": "RETAIN_BEST_SINGLE_FRAGMENT",
+    "percentagesAdded": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "syntheticControlledWorkflow": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

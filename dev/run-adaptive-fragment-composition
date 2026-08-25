@@ -1,0 +1,438 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 2)); then
+    printf 'usage: %s OUTPUT_FILE LOCALITY_EVIDENCE\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_locality=$2
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-adaptive-fragment-composition-v1.json"
+buildopt_impact_base="${buildopt_repo_root}/fixtures/poc-value/build-impact"
+buildopt_impact_overlay="${buildopt_repo_root}/fixtures/poc-value/combined-impact"
+buildopt_patch_fixture="${buildopt_repo_root}/fixtures/poc-value/reviewed-task"
+
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
+    ! -s "${buildopt_locality}" ]]; then
+    printf 'invalid AF-011 runner input\n' >&2
+    exit 64
+fi
+for buildopt_command in awk chmod cp date env find git grep jq ln mkdir mktemp \
+    rm sed sha256sum sort; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'AF-011 runner requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+if [[ -n "$(git -C "${buildopt_repo_root}" status --porcelain=v1 --untracked-files=all)" ]]; then
+    printf 'AF-011 measurement requires a clean revision-bound checkout\n' >&2
+    exit 1
+fi
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-adaptive-fragment-composition/v1" and
+    .workItem == "AF-011" and .measurement.pairsPerComparison == 8 and
+    .measurement.minimumSavedMs == 500 and
+    .measurement.minimumReductionRatio == 0.02 and
+    .measurement.minimumPositivePairs == 7 and
+    .decision.percentagesAdded == false
+' "${buildopt_spec}" >/dev/null
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-remote-cache-value/v1" and
+    .result.qualified == true and
+    .result.decision == "QUALIFY_EDGE_LOCALITY_FOR_CONTROLLED_REMOTE_CACHE_POC" and
+    .result.pairs == 4 and .result.positivePairs == 4 and
+    .result.interval95SavedMs[0] > 0 and
+    .boundaries.sameWorkloadAndOutputs == true and
+    .boundaries.onlyReadLocalityChanges == true and
+    .boundaries.testOptimizationModified == false
+' "${buildopt_locality}" >/dev/null
+
+buildopt_gradle_home=${GRADLE_USER_HOME:-"${HOME}/.gradle"}
+if [[ ! -d "${buildopt_gradle_home}/wrapper/dists/gradle-9.6.1-bin" ]]; then
+    printf 'locked Gradle 9.6.1 distribution is unavailable\n' >&2
+    exit 1
+fi
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-af011.XXXXXX")
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-af011."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+chmod 0700 "${buildopt_root}"
+buildopt_raw="${buildopt_root}/observations.jsonl"
+buildopt_runner="${buildopt_root}/runner.json"
+"${buildopt_script_dir}/capture-golden-runner" "${buildopt_runner}"
+
+buildopt_fixture_digest() {
+    local buildopt_fixture=$1
+    (
+        cd -- "${buildopt_fixture}"
+        while IFS= read -r buildopt_file; do
+            printf '%s  %s\n' \
+                "$(sha256sum "${buildopt_file}" | awk '{print $1}')" \
+                "${buildopt_file}"
+        done < <(find . -type f -print | sort)
+    ) | sha256sum | awk '{print $1}'
+}
+
+buildopt_base_sha=$(buildopt_fixture_digest "${buildopt_impact_base}")
+buildopt_overlay_sha=$(buildopt_fixture_digest "${buildopt_impact_overlay}")
+buildopt_patch_sha=$(buildopt_fixture_digest "${buildopt_patch_fixture}")
+buildopt_preimage_sha=$(sha256sum \
+    "${buildopt_patch_fixture}/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java" |
+    awk '{print $1}')
+buildopt_postimage_sha=$(sha256sum \
+    "${buildopt_patch_fixture}/GeneratePilotManifest.patched.java" | awk '{print $1}')
+if [[ "${buildopt_preimage_sha}" != 392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083 ||
+    "${buildopt_postimage_sha}" != 79fa100a4e2d962dd506259311f90ecb92ad62500391d140065b6f157a172a2b ]]; then
+    printf 'AF-011 reviewed patch fixture drifted\n' >&2
+    exit 1
+fi
+
+buildopt_gradle_arguments=(
+    --offline
+    --parallel
+    --configuration-cache
+    --build-cache
+    --console=plain
+    --warning-mode=fail
+)
+if [[ -n "${BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS:-}" ]]; then
+    buildopt_gradle_arguments+=(
+        "-Dorg.gradle.java.installations.paths=${BUILDOPT_BENCHMARK_JAVA_INSTALLATIONS_PATHS}"
+    )
+fi
+
+buildopt_seed_home() {
+    local buildopt_home=$1
+    if [[ ! -e "${buildopt_home}/wrapper/dists" ]]; then
+        mkdir -p -- "${buildopt_home}/wrapper"
+        ln -s -- "${buildopt_gradle_home}/wrapper/dists" \
+            "${buildopt_home}/wrapper/dists"
+    fi
+}
+
+buildopt_prepare_workspace() {
+    local buildopt_workspace=$1 buildopt_dsl=$2 buildopt_patched=$3
+    mkdir -p -- "${buildopt_workspace}"
+    cp -R -- "${buildopt_impact_base}/." "${buildopt_workspace}/"
+    cp -R -- "${buildopt_impact_overlay}/." "${buildopt_workspace}/"
+    mkdir -p -- "${buildopt_workspace}/buildSrc/src/main/java/dev/buildopt/pilot"
+    cp -- "${buildopt_patch_fixture}/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java" \
+        "${buildopt_workspace}/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java"
+    if [[ "${buildopt_patched}" == true ]]; then
+        cp -- "${buildopt_patch_fixture}/GeneratePilotManifest.patched.java" \
+            "${buildopt_workspace}/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java"
+    fi
+    cp -- "${buildopt_repo_root}/gradlew" "${buildopt_workspace}/gradlew"
+    chmod 0755 "${buildopt_workspace}/gradlew"
+    mkdir -p -- "${buildopt_workspace}/gradle/wrapper"
+    cp -- "${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.jar" \
+        "${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.properties" \
+        "${buildopt_workspace}/gradle/wrapper/"
+    if [[ "${buildopt_dsl}" == KOTLIN ]]; then
+        rm -f -- "${buildopt_workspace}/settings.gradle" \
+            "${buildopt_workspace}/build.gradle"
+        # The Gradle Kotlin DSL placeholders must remain literal here.
+        # shellcheck disable=SC2016
+        sed -i '/tasks.named("assemble")/i\
+val manifests = (1..8).map { index ->\
+    tasks.register<dev.buildopt.pilot.GeneratePilotManifest>("generateManifest$index") {\
+        entries.set((1..32).map { "entry-$index-$it" })\
+        outputFile.set(layout.buildDirectory.file("poc-value/manifest-$index.txt"))\
+    }\
+}\
+tasks.register("reviewedWorkload") { dependsOn(manifests) }\
+' "${buildopt_workspace}/build.gradle.kts"
+    else
+        rm -f -- "${buildopt_workspace}/settings.gradle.kts" \
+            "${buildopt_workspace}/build.gradle.kts"
+        sed -i "/tasks.named('assemble')/i\
+def manifests = (1..8).collect { index ->\
+    tasks.register(\"generateManifest\${index}\", dev.buildopt.pilot.GeneratePilotManifest) {\
+        entries.set((1..32).collect { \"entry-\${index}-\${it}\" })\
+        outputFile.set(layout.buildDirectory.file(\"poc-value/manifest-\${index}.txt\"))\
+    }\
+}\
+tasks.register('reviewedWorkload') { dependsOn(manifests) }\
+" "${buildopt_workspace}/build.gradle"
+    fi
+}
+
+buildopt_clear_outputs() {
+    local buildopt_workspace=$1
+    rm -rf -- "${buildopt_workspace}/build" \
+        "${buildopt_workspace}/library-c/build" \
+        "${buildopt_workspace}/service-a/build" \
+        "${buildopt_workspace}/service-b/build"
+}
+
+buildopt_hash_outputs() {
+    local buildopt_workspace=$1
+    local -a buildopt_outputs=(
+        "${buildopt_workspace}/service-a/build/libs/service-a-1.0.jar"
+        "${buildopt_workspace}/build/test-owned/check.txt"
+    )
+    local buildopt_index
+    for buildopt_index in {1..8}; do
+        buildopt_outputs+=("${buildopt_workspace}/build/poc-value/manifest-${buildopt_index}.txt")
+    done
+    for buildopt_file in "${buildopt_outputs[@]}"; do
+        [[ -s "${buildopt_file}" ]] || {
+            printf 'AF-011 required output missing: %s\n' "${buildopt_file}" >&2
+            exit 1
+        }
+        sha256sum "${buildopt_file}"
+    done | sha256sum | awk '{print $1}'
+}
+
+buildopt_duration_ms=0
+buildopt_output_sha=
+buildopt_cache_hits=0
+buildopt_unrelated=false
+
+buildopt_run_arm() {
+    local buildopt_workspace=$1 buildopt_home=$2 buildopt_mode=$3 buildopt_log=$4
+    local buildopt_started buildopt_finished buildopt_status
+    local -a buildopt_tasks
+    buildopt_clear_outputs "${buildopt_workspace}"
+    if [[ "${buildopt_mode}" == IMPACT_* ]]; then
+        buildopt_tasks=(:service-a:assemble reviewedWorkload testOwnedCheck)
+    else
+        buildopt_tasks=(assemble reviewedWorkload testOwnedCheck)
+    fi
+    buildopt_seed_home "${buildopt_home}"
+    buildopt_started=$(date +%s%N)
+    set +e
+    (
+        cd -- "${buildopt_workspace}"
+        env GRADLE_USER_HOME="${buildopt_home}" \
+            ./gradlew "${buildopt_gradle_arguments[@]}" "${buildopt_tasks[@]}"
+    ) >"${buildopt_log}" 2>&1
+    buildopt_status=$?
+    set -e
+    buildopt_finished=$(date +%s%N)
+    if ((buildopt_status != 0)); then
+        sed -n '1,240p' "${buildopt_log}" >&2
+        printf 'AF-011 %s arm failed\n' "${buildopt_mode}" >&2
+        exit 1
+    fi
+    buildopt_duration_ms=$(((buildopt_finished - buildopt_started) / 1000000))
+    buildopt_output_sha=$(buildopt_hash_outputs "${buildopt_workspace}")
+    buildopt_cache_hits=$(grep -Ec '^> Task :generateManifest[0-9]+ FROM-CACHE$' \
+        "${buildopt_log}" || true)
+    buildopt_unrelated=false
+    if grep -Eq '^> Task :service-b:expensiveUnrelated$' "${buildopt_log}"; then
+        buildopt_unrelated=true
+    fi
+    if [[ "${buildopt_mode}" == *_PATCHED && "${buildopt_cache_hits}" -ne 8 ]]; then
+        printf 'AF-011 %s restored %d/8 reviewed tasks\n' \
+            "${buildopt_mode}" "${buildopt_cache_hits}" >&2
+        exit 1
+    fi
+    if [[ "${buildopt_mode}" == *_UNPATCHED && "${buildopt_cache_hits}" -ne 0 ]]; then
+        printf 'AF-011 unpatched arm unexpectedly restored reviewed tasks\n' >&2
+        exit 1
+    fi
+    if [[ "${buildopt_mode}" == FULL_* && "${buildopt_unrelated}" != true ]]; then
+        printf 'AF-011 full arm omitted unrelated work\n' >&2
+        exit 1
+    fi
+    if [[ "${buildopt_mode}" == IMPACT_* && "${buildopt_unrelated}" != false ]]; then
+        printf 'AF-011 impact arm executed unrelated work\n' >&2
+        exit 1
+    fi
+}
+
+buildopt_record() {
+    local buildopt_comparison=$1 buildopt_dsl=$2 buildopt_pair=$3 buildopt_order=$4
+    local buildopt_control_ms=$5 buildopt_candidate_ms=$6 buildopt_control_sha=$7
+    local buildopt_candidate_sha=$8 buildopt_control_hits=$9 buildopt_candidate_hits=${10}
+    jq -cn \
+        --arg comparison "${buildopt_comparison}" --arg dsl "${buildopt_dsl}" \
+        --arg order "${buildopt_order}" --arg controlSha256 "${buildopt_control_sha}" \
+        --arg candidateSha256 "${buildopt_candidate_sha}" \
+        --argjson pair "${buildopt_pair}" --argjson controlDurationMs "${buildopt_control_ms}" \
+        --argjson candidateDurationMs "${buildopt_candidate_ms}" \
+        --argjson controlCacheHits "${buildopt_control_hits}" \
+        --argjson candidateCacheHits "${buildopt_candidate_hits}" '{
+          comparison: $comparison, dsl: $dsl, pair: $pair, order: $order,
+          controlDurationMs: $controlDurationMs,
+          candidateDurationMs: $candidateDurationMs,
+          savedMs: ($controlDurationMs - $candidateDurationMs),
+          controlOutputSha256: $controlSha256,
+          candidateOutputSha256: $candidateSha256,
+          controlReviewedTaskCacheHits: $controlCacheHits,
+          candidateReviewedTaskCacheHits: $candidateCacheHits,
+          requiredOutputsIdentical: ($controlSha256 == $candidateSha256),
+          productAttributableFailure: false
+        }' >>"${buildopt_raw}"
+}
+
+buildopt_run_comparison() {
+    local buildopt_dsl=$1 buildopt_comparison=$2 buildopt_candidate_mode=$3
+    local buildopt_patched=false
+    if [[ "${buildopt_candidate_mode}" == *_PATCHED ]]; then buildopt_patched=true; fi
+    local buildopt_slug="${buildopt_dsl,,}-${buildopt_comparison,,}"
+    local buildopt_control="${buildopt_root}/${buildopt_slug}-control"
+    local buildopt_candidate="${buildopt_root}/${buildopt_slug}-candidate"
+    local buildopt_control_home="${buildopt_root}/${buildopt_slug}-control-home"
+    local buildopt_candidate_home="${buildopt_root}/${buildopt_slug}-candidate-home"
+    buildopt_prepare_workspace "${buildopt_control}" "${buildopt_dsl}" false
+    buildopt_prepare_workspace "${buildopt_candidate}" "${buildopt_dsl}" "${buildopt_patched}"
+    buildopt_run_arm "${buildopt_control}" "${buildopt_control_home}" FULL_UNPATCHED \
+        "${buildopt_root}/${buildopt_slug}-warm-control.log"
+    buildopt_run_arm "${buildopt_candidate}" "${buildopt_candidate_home}" \
+        "${buildopt_candidate_mode}" "${buildopt_root}/${buildopt_slug}-warm-candidate.log"
+    local buildopt_pair buildopt_order
+    for buildopt_pair in {1..8}; do
+        buildopt_order=CONTROL_FIRST
+        if ((buildopt_pair % 2 == 0)); then buildopt_order=CANDIDATE_FIRST; fi
+        if [[ "${buildopt_order}" == CONTROL_FIRST ]]; then
+            buildopt_run_arm "${buildopt_control}" "${buildopt_control_home}" FULL_UNPATCHED \
+                "${buildopt_root}/${buildopt_slug}-${buildopt_pair}-control.log"
+            buildopt_control_ms=${buildopt_duration_ms}; buildopt_control_sha=${buildopt_output_sha}; buildopt_control_hits=${buildopt_cache_hits}
+            buildopt_run_arm "${buildopt_candidate}" "${buildopt_candidate_home}" \
+                "${buildopt_candidate_mode}" "${buildopt_root}/${buildopt_slug}-${buildopt_pair}-candidate.log"
+            buildopt_candidate_ms=${buildopt_duration_ms}; buildopt_candidate_sha=${buildopt_output_sha}; buildopt_candidate_hits=${buildopt_cache_hits}
+        else
+            buildopt_run_arm "${buildopt_candidate}" "${buildopt_candidate_home}" \
+                "${buildopt_candidate_mode}" "${buildopt_root}/${buildopt_slug}-${buildopt_pair}-candidate.log"
+            buildopt_candidate_ms=${buildopt_duration_ms}; buildopt_candidate_sha=${buildopt_output_sha}; buildopt_candidate_hits=${buildopt_cache_hits}
+            buildopt_run_arm "${buildopt_control}" "${buildopt_control_home}" FULL_UNPATCHED \
+                "${buildopt_root}/${buildopt_slug}-${buildopt_pair}-control.log"
+            buildopt_control_ms=${buildopt_duration_ms}; buildopt_control_sha=${buildopt_output_sha}; buildopt_control_hits=${buildopt_cache_hits}
+        fi
+        buildopt_record "${buildopt_comparison}" "${buildopt_dsl}" "${buildopt_pair}" \
+            "${buildopt_order}" "${buildopt_control_ms}" "${buildopt_candidate_ms}" \
+            "${buildopt_control_sha}" "${buildopt_candidate_sha}" \
+            "${buildopt_control_hits}" "${buildopt_candidate_hits}"
+        printf 'AF-011 %s %s pair %d saved %dms\n' "${buildopt_dsl}" \
+            "${buildopt_comparison}" "${buildopt_pair}" \
+            "$((buildopt_control_ms - buildopt_candidate_ms))"
+    done
+}
+
+for buildopt_dsl in GROOVY KOTLIN; do
+    buildopt_run_comparison "${buildopt_dsl}" BUILD_IMPACT IMPACT_UNPATCHED
+    buildopt_run_comparison "${buildopt_dsl}" REVIEWED_TASK_PATCH FULL_PATCHED
+    buildopt_run_comparison "${buildopt_dsl}" \
+        BUILD_IMPACT_PLUS_REVIEWED_TASK_PATCH IMPACT_PATCHED
+done
+
+buildopt_revision=$(git -C "${buildopt_repo_root}" rev-parse HEAD)
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+jq -s \
+    --slurpfile runner "${buildopt_runner}" \
+    --slurpfile locality "${buildopt_locality}" \
+    --arg capturedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg buildoptRevision "${buildopt_revision}" \
+    --arg specSha256 "$(sha256sum "${buildopt_spec}" | awk '{print $1}')" \
+    --arg runnerSha256 "$(sha256sum "${BASH_SOURCE[0]}" | awk '{print $1}')" \
+    --arg localitySha256 "$(sha256sum "${buildopt_locality}" | awk '{print $1}')" \
+    --arg impactBaseSha256 "${buildopt_base_sha}" \
+    --arg impactOverlaySha256 "${buildopt_overlay_sha}" \
+    --arg patchFixtureSha256 "${buildopt_patch_sha}" \
+    --arg patchPreimageSha256 "${buildopt_preimage_sha}" \
+    --arg patchPostimageSha256 "${buildopt_postimage_sha}" '
+    def bootstrap_mean($rows; $sample):
+      reduce range(0; 8) as $draw
+        ({state: ((2654435761 * ($sample + 1)) % 4294967296), sum: 0};
+         .state = ((1664525 * .state + 1013904223) % 4294967296) |
+         .sum += $rows[((.state / 536870912) | floor)].savedMs) |
+      .sum / 8;
+    def bootstrap95($rows):
+      ([range(0; 4096) as $sample | bootstrap_mean($rows; $sample)] | sort) as $replicates |
+      [$replicates[102], $replicates[3993]];
+    group_by([.comparison, .dsl]) |
+    map(. as $rows |
+      (($rows | map(.controlDurationMs) | add) / 8) as $controlMean |
+      (($rows | map(.candidateDurationMs) | add) / 8) as $candidateMean |
+      (($rows | map(.savedMs) | add) / 8) as $savedMean |
+      ($savedMean / $controlMean) as $ratio |
+      bootstrap95($rows) as $interval |
+      ($rows | map(select(.savedMs > 0)) | length) as $positive |
+      (all($rows[]; .requiredOutputsIdentical and (.productAttributableFailure | not))) as $exact |
+      ($savedMean >= 500 and $ratio >= 0.02 and $positive >= 7 and
+       $interval[0] > 0 and $exact) as $qualified |
+      {
+        comparison: $rows[0].comparison,
+        dsl: $rows[0].dsl,
+        pairs: 8,
+        controlMeanMs: $controlMean,
+        candidateMeanMs: $candidateMean,
+        meanSavedMs: $savedMean,
+        meanReductionRatio: $ratio,
+        interval95SavedMs: $interval,
+        positivePairs: $positive,
+        requiredOutputsIdentical: $exact,
+        productAttributableFailures: ($rows | map(select(.productAttributableFailure)) | length),
+        qualified: $qualified,
+        observations: $rows
+      }) as $direct |
+    (all($direct[]; .qualified)) as $directQualified |
+    ($locality[0].result.qualified and $locality[0].result.interval95SavedMs[0] > 0 and
+     $locality[0].boundaries.sameWorkloadAndOutputs and
+     $locality[0].boundaries.onlyReadLocalityChanges) as $localityQualified |
+    ($directQualified and $localityQualified) as $qualified |
+    {
+      schemaVersion: "buildopt.poc/adaptive-fragment-composition/v1",
+      workItem: "AF-011",
+      capturedAt: $capturedAt,
+      buildoptRevision: $buildoptRevision,
+      runner: $runner[0],
+      evidence: {
+        specSha256: $specSha256,
+        runnerSha256: $runnerSha256,
+        localitySha256: $localitySha256
+      },
+      fixtures: {
+        impactBaseSha256: $impactBaseSha256,
+        impactOverlaySha256: $impactOverlaySha256,
+        patchFixtureSha256: $patchFixtureSha256,
+        patchPreimageSha256: $patchPreimageSha256,
+        patchPostimageSha256: $patchPostimageSha256
+      },
+      methodology: {
+        gradleVersion: "9.6.1",
+        control: "OPTIMIZED_NATIVE_GRADLE_FULL_GRAPH_ORIGINAL_TASK_CONTRACT",
+        pairsPerDirectComparison: 8,
+        pairOrder: "ALTERNATING",
+        thresholdsFrozenBeforeMeasurement: true,
+        percentagesAdded: false
+      },
+      directComparisons: $direct,
+      cacheLocality: {
+        qualified: $localityQualified,
+        directEvidenceSha256: $localitySha256,
+        meanSavedMs: $locality[0].result.meanSavedMs,
+        meanReductionRatio: $locality[0].result.reductionRatio,
+        interval95SavedMs: $locality[0].result.interval95SavedMs,
+        positivePairs: $locality[0].result.positivePairs,
+        compositionDisposition: "INDEPENDENT_SCOPE_ONLY",
+        reason: "REMOTE_CACHE_OBJECT_CONTRACT_DIFFERS_FROM_DIRECT_COMPOSITION_FIXTURE"
+      },
+      decision: {
+        outcome: (if $qualified then "COMPOSED_VALUE_QUALIFIED" else "RETAIN_BEST_SINGLE_FRAGMENT" end),
+        directCompositionQualified: $directQualified,
+        independentLocalityQualified: $localityQualified,
+        percentagesAdded: false
+      },
+      boundaries: {
+        proofOfConcept: true,
+        syntheticControlledWorkflow: true,
+        cacheLocalityNotClaimedInFinalComposition: true,
+        productionAuthorized: false,
+        soakRequired: false,
+        designPartnerRequired: false,
+        testOptimization: "OUT_OF_SCOPE"
+      }
+    }' "${buildopt_raw}" >"${buildopt_output}"
+chmod 0600 "${buildopt_output}"
+printf 'AF-011 composition evidence written: %s\n' "${buildopt_output}"

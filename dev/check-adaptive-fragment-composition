@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-adaptive-fragment-composition-v1.json"
+buildopt_result="${buildopt_repo_root}/benchmarks/results/adaptive-fragment-composition-v1.json"
+buildopt_locality="${buildopt_repo_root}/benchmarks/results/adaptive-cache-locality-v1.json"
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'AF-011 checker requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-adaptive-fragment-composition/v1" and
+    .workItem == "AF-011" and .gradle.version == "9.6.1" and
+    .directComparisons == ["BUILD_IMPACT", "REVIEWED_TASK_PATCH", "BUILD_IMPACT_PLUS_REVIEWED_TASK_PATCH"] and
+    .dsls == ["GROOVY", "KOTLIN"] and
+    .measurement.pairsPerComparison == 8 and
+    .measurement.minimumSavedMs == 500 and
+    .measurement.minimumReductionRatio == 0.02 and
+    .measurement.minimumPositivePairs == 7 and
+    .cacheLocality.compositionDisposition == "INDEPENDENT_SCOPE_ONLY" and
+    .decision.percentagesAdded == false and
+    .boundaries.proofOfConcept == true and .boundaries.productionAuthorized == false and
+    .boundaries.soakRequired == false and .boundaries.designPartnerRequired == false and
+    .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_spec}" >/dev/null
+
+buildopt_spec_sha=$(sha256sum "${buildopt_spec}" | awk '{print $1}')
+buildopt_runner_sha=$(sha256sum "${buildopt_script_dir}/run-adaptive-fragment-composition" | awk '{print $1}')
+buildopt_locality_sha=$(sha256sum "${buildopt_locality}" | awk '{print $1}')
+jq -e \
+    --arg specSha "${buildopt_spec_sha}" \
+    --arg runnerSha "${buildopt_runner_sha}" \
+    --arg localitySha "${buildopt_locality_sha}" '
+    .schemaVersion == "buildopt.poc/adaptive-fragment-composition/v1" and
+    .workItem == "AF-011" and
+    .evidence.specSha256 == $specSha and .evidence.runnerSha256 == $runnerSha and
+    .evidence.localitySha256 == $localitySha and
+    .methodology.gradleVersion == "9.6.1" and
+    .methodology.pairsPerDirectComparison == 8 and
+    .methodology.thresholdsFrozenBeforeMeasurement == true and
+    .methodology.percentagesAdded == false and
+    (.directComparisons | length) == 6 and
+    ([.directComparisons[].comparison] | unique) ==
+      ["BUILD_IMPACT", "BUILD_IMPACT_PLUS_REVIEWED_TASK_PATCH", "REVIEWED_TASK_PATCH"] and
+    ([.directComparisons[].dsl] | unique) == ["GROOVY", "KOTLIN"] and
+    all(.directComparisons[];
+      .pairs == 8 and .meanSavedMs >= 500 and .meanReductionRatio >= 0.02 and
+      .interval95SavedMs[0] > 0 and .positivePairs >= 7 and
+      .requiredOutputsIdentical == true and .productAttributableFailures == 0 and
+      .qualified == true and (.observations | length) == 8 and
+      all(.observations[];
+        .requiredOutputsIdentical == true and .productAttributableFailure == false)) and
+    .cacheLocality.qualified == true and
+    .cacheLocality.directEvidenceSha256 == $localitySha and
+    .cacheLocality.interval95SavedMs[0] > 0 and .cacheLocality.positivePairs == 4 and
+    .cacheLocality.compositionDisposition == "INDEPENDENT_SCOPE_ONLY" and
+    .decision.outcome == "COMPOSED_VALUE_QUALIFIED" and
+    .decision.directCompositionQualified == true and
+    .decision.independentLocalityQualified == true and
+    .decision.percentagesAdded == false and
+    .boundaries.proofOfConcept == true and
+    .boundaries.syntheticControlledWorkflow == true and
+    .boundaries.cacheLocalityNotClaimedInFinalComposition == true and
+    .boundaries.productionAuthorized == false and .boundaries.soakRequired == false and
+    .boundaries.designPartnerRequired == false and
+    .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_result}" >/dev/null
+
+jq -e '
+    .schemaVersion == "buildopt.evidence/poc-remote-cache-value/v1" and
+    .result.qualified == true and
+    .result.decision == "QUALIFY_EDGE_LOCALITY_FOR_CONTROLLED_REMOTE_CACHE_POC" and
+    .result.interval95SavedMs[0] > 0 and .result.positivePairs == 4 and
+    .boundaries.sameWorkloadAndOutputs == true and
+    .boundaries.onlyReadLocalityChanges == true
+' "${buildopt_locality}" >/dev/null
+
+echo 'adaptive fragment composition: COMPOSED_VALUE_QUALIFIED'
