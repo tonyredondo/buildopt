@@ -4659,6 +4659,19 @@ separate and mandatory:
 ./dev/check-structural-profile-rebinding
 ```
 
+## Adaptive fragment contract
+
+`./dev/check-adaptive-fragment-contract` validates the `AF-001` machine policy,
+then runs the focused Go tests and vet check for canonical family/revision
+identity, correctness authorities, declared-binding compatibility, selective
+invalidation and lifecycle requalification. It also rejects known public-
+repository identities in the runtime package. This is a static and synthetic
+contract check; it does not persist, learn, activate or benchmark a fragment:
+
+```bash
+./dev/check-adaptive-fragment-contract
+```
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic

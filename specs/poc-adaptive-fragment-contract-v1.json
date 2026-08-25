@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "buildopt.specs/poc-adaptive-fragment-contract/v1",
+  "workItem": "AF-001",
+  "fragmentKinds": [
+    "SUBGRAPH",
+    "OUTPUT_MATERIALIZATION",
+    "TASK_CONTRACT",
+    "PATCH",
+    "CACHE_LOCALITY"
+  ],
+  "correctnessAuthorities": [
+    "GRADLE_MODEL",
+    "GRADLE_NATIVE",
+    "REVIEWED_ADAPTER",
+    "REVIEWED_PATCH",
+    "VERIFIED_PRODUCER"
+  ],
+  "bindingKeys": [
+    "WORKFLOW",
+    "GRADLE_WRAPPER",
+    "TASK_IMPLEMENTATION",
+    "PRODUCER_LINEAGE",
+    "OUTPUT_CONTRACT",
+    "CHANGE_FAMILY",
+    "PLATFORM",
+    "NETWORK_CLASS",
+    "CACHE_NAMESPACE",
+    "PATCH_BASE"
+  ],
+  "requiredBindings": {
+    "SUBGRAPH": [
+      "WORKFLOW",
+      "GRADLE_WRAPPER",
+      "PRODUCER_LINEAGE",
+      "OUTPUT_CONTRACT",
+      "CHANGE_FAMILY"
+    ],
+    "OUTPUT_MATERIALIZATION": [
+      "GRADLE_WRAPPER",
+      "PRODUCER_LINEAGE",
+      "OUTPUT_CONTRACT"
+    ],
+    "TASK_CONTRACT": [
+      "GRADLE_WRAPPER",
+      "TASK_IMPLEMENTATION",
+      "OUTPUT_CONTRACT"
+    ],
+    "PATCH": [
+      "TASK_IMPLEMENTATION",
+      "OUTPUT_CONTRACT",
+      "PATCH_BASE"
+    ],
+    "CACHE_LOCALITY": [
+      "GRADLE_WRAPPER",
+      "NETWORK_CLASS",
+      "CACHE_NAMESPACE"
+    ]
+  },
+  "identity": {
+    "familyIncludes": [
+      "REPOSITORY_SCOPE",
+      "FRAGMENT_KIND",
+      "SELECTOR",
+      "AUTHORITY_TYPE"
+    ],
+    "revisionIncludes": [
+      "FAMILY_ID",
+      "AUTHORITY_DIGEST",
+      "DECLARED_BINDINGS",
+      "REQUIREMENTS",
+      "CONFLICTS"
+    ],
+    "excluded": [
+      "CHECKOUT_PATH",
+      "GIT_REVISION",
+      "REPOSITORY_NAME_RULE"
+    ]
+  },
+  "lifecycle": [
+    "OBSERVED",
+    "SHADOW",
+    "QUALIFIED",
+    "ACTIVE",
+    "SUSPENDED",
+    "EXPIRED"
+  ],
+  "requiredProofs": {
+    "pathIndependentIdentity": true,
+    "deterministicCanonicalIdentity": true,
+    "selectiveInvalidation": true,
+    "missingRelevantBindingRetainsNative": true,
+    "ambiguousRelevantBindingRetainsNative": true,
+    "repositorySpecificProductRulesAllowed": false,
+    "suspendedFragmentRequiresRequalification": true
+  },
+  "outcome": "FRAGMENT_CONTRACT_ACCEPTED",
+  "boundaries": {
+    "proofOfConcept": true,
+    "persistenceSchemasDefined": false,
+    "activationAuthorized": false,
+    "performanceClaim": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

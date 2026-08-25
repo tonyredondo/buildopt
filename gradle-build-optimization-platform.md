@@ -314,6 +314,37 @@ An autonomous action that affects correctness needs an executable contract: an o
 
 Hermeticity and determinism are separate gates. A sandbox can prevent a process from reading undeclared state, but does not by itself eliminate internal timestamps, randomness, races, unstable ordering, or non-repeatable behavior. A task is cache-safe only when it passes both gates and its contract is relocatable; repetitions detect violations but do not prove their universal absence.
 
+### 5.9 Compose independently valid fragments
+
+The POC does not treat a complete repository profile as the generic unit of
+reuse. The adaptive unit is an independently versioned fragment representing a
+producer subgraph, exact output-materialization boundary, task contract,
+reviewed patch or bounded cache-locality policy.
+
+Each fragment has a stable repository-scoped family identity and an evidence-
+bound revision identity. Checkout paths and Git revisions are not identity
+inputs. The revision declares the exact semantic bindings it consumes, such as
+Wrapper, workflow, task implementation, producer lineage, output contract,
+change family, patch base, platform or cache context. Compatibility compares
+only those declared bindings: missing, ambiguous or changed relevant state
+suspends that revision, while unrelated drift leaves other fragments eligible.
+Stable structural identity never makes stale output bytes or evidence current.
+
+Correctness authority remains local and explicit: Gradle's model or native
+contract, a reviewed adapter or patch, or a verified producer boundary.
+Cross-repository evidence may prioritize a structurally similar hypothesis but
+cannot authorize correctness, qualification or activation in another
+repository. Repository scope is therefore isolation data, never a repository-
+name product branch.
+
+Fragments progress through `OBSERVED`, `SHADOW`, `QUALIFIED` and `ACTIVE`, with
+`SUSPENDED` and `EXPIRED` terminal detours. A suspended fragment must return
+through shadow evaluation and qualification; observation count alone never
+reactivates it. Dependencies, conflicts, economics and composition are checked
+before activation, and native Gradle remains authoritative whenever any
+required state is unavailable or ambiguous. The executable contract is
+[`Adaptive fragment contract v1`](./specs/poc-adaptive-fragment-contract-v1.md).
+
 ---
 
 ## 6. Conceptual acceleration model

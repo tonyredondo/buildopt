@@ -71,6 +71,17 @@ signals, spool, authentication, or process cleanup changes.
 
 ## Contracts and generated code
 
+Adaptive-fragment identity and selective invalidation:
+
+```bash
+./dev/check-adaptive-fragment-contract
+```
+
+This static and synthetic `AF-001` gate validates the machine policy, runs the
+focused Go identity/compatibility/lifecycle tests and rejects repository-
+specific behavior in the fragment package. It makes no timing or activation
+claim.
+
 ```bash
 ./dev/check-generated-code
 ./dev/check-generated-clients

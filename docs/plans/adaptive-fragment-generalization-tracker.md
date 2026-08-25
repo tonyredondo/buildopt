@@ -1,7 +1,7 @@
 # Adaptive Fragment Generalization POC Tracker
 
-**Status:** `PLANNED`<br>
-**Current block:** `AF-001 — Adaptive fragment contract`<br>
+**Status:** `IN_PROGRESS`<br>
+**Current block:** `AF-002 — Fragment state schemas`<br>
 **Decision baseline:** the current whole-profile hypothesis remains
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)<br>
 **Last updated:** 2026-08-25
@@ -172,8 +172,8 @@ the correctness authority for cacheability. Repetition alone is not authority.
 | Order | Block | Goal | State | Depends on |
 |---:|---|---|---|---|
 | 0 | `AF-000` Tracker and baseline alignment | Freeze the failed whole-profile baseline, define the new hypothesis and reconcile current documentation. | `DONE` | — |
-| 1 | `AF-001` Adaptive fragment contract | Define the normative fragment identity, lifecycle, compatibility, invalidation, evidence and conflict model. | `TODO` | AF-000 |
-| 2 | `AF-002` Fragment state schemas | Define machine-readable fragment, observation, economic-ledger and portfolio schemas with positive and negative vectors. | `WAITING` | AF-001 |
+| 1 | `AF-001` Adaptive fragment contract | Define the normative fragment identity, lifecycle, compatibility, invalidation, evidence and conflict model. | `DONE` | AF-000 |
+| 2 | `AF-002` Fragment state schemas | Define machine-readable fragment, observation, economic-ledger and portfolio schemas with positive and negative vectors. | `TODO` | AF-001 |
 | 3 | `AF-003` Cheap compatibility index | Decide native retention or return compatible fragment candidates without Gradle startup, central synchronization or materialization. | `WAITING` | AF-002 |
 | 4 | `AF-004` Frozen-history shadow decomposition | Decompose the existing five-repository whole-profile evidence and replay fragment applicability chronologically without making a new timing claim. | `WAITING` | AF-002, AF-003 |
 
@@ -226,6 +226,13 @@ the correctness authority for cacheability. Repetition alone is not authority.
 - no field embeds repository-specific behavior.
 
 **Outcome:** `FRAGMENT_CONTRACT_ACCEPTED` or `FRAGMENT_MODEL_REJECTED`.
+
+**Result:** `FRAGMENT_CONTRACT_ACCEPTED` — five fragment classes now have
+canonical family/revision identities, explicit correctness authorities,
+declared semantic bindings, partial invalidation and a lifecycle that requires
+requalification after suspension. The executable proof contains no known
+public-repository identity and makes no persistence, activation or timing
+claim.
 
 ### AF-002 — Fragment state schemas
 
@@ -446,6 +453,7 @@ IDs from the implementation tracker.
 | Evidence | Block | Description | State |
 |---|---|---|---|
 | `AF-E001` | AF-000 | New adaptive-fragment tracker, terminal-baseline reconciliation and documentation navigation. | `DONE` |
+| `AF-E002` | AF-001 | [Adaptive fragment contract v1](../../specs/poc-adaptive-fragment-contract-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-contract-v1.json), dependency-free Go identity/compatibility implementation and [`dev/check-adaptive-fragment-contract`](../../dev/check-adaptive-fragment-contract). The proof covers canonical path-independent identity, five fragment classes, authority rejection, partial binding invalidation, native retention on missing/ambiguous context and mandatory requalification after suspension. | `DONE` |
 
 ## 12. Decision log
 
@@ -455,9 +463,11 @@ IDs from the implementation tracker.
 | 2026-08-25 | Use independently invalidated fragments and cumulative longitudinal value as the new POC hypothesis. | Isolated mechanisms produce strong value, but recurrence and invalidation erase whole-profile economics. |
 | 2026-08-25 | Keep Gradle-native cache/configuration/incremental behavior as the substrate. | Cache parity is not differentiation; BuildOpt's value is selection, validated composition, durable fixes and learning. |
 | 2026-08-25 | Permit cross-repository evidence only as a hypothesis prior. | Evidence from another repository cannot authorize correctness or activation locally. |
+| 2026-08-25 | Separate stable fragment families from evidence-bound revisions. | Repository opportunity identity can survive ordinary commits without allowing changed authority, bindings or stale bytes to inherit qualification. |
 
 ## 13. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-25 | Closed AF-001 as `FRAGMENT_CONTRACT_ACCEPTED`: five generic fragment classes now have canonical family/revision identity, explicit authority, selective invalidation, fail-closed compatibility and mandatory requalification; opened AF-002 for typed persistence state. |
 | 2026-08-25 | Created the tracker, froze the prior terminal result, defined AF-001..AF-015, the terminal scorecard and mandatory documentation update matrix. |

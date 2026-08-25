@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_usage() {
+    echo "usage: ./dev/check-adaptive-fragment-contract" >&2
+}
+
+if (($# != 0)); then
+    buildopt_usage
+    exit 64
+fi
+
+buildopt_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+buildopt_policy="${buildopt_root}/specs/poc-adaptive-fragment-contract-v1.json"
+
+for buildopt_command in jq rg; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        echo "adaptive fragment contract check requires ${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-adaptive-fragment-contract/v1" and
+    .workItem == "AF-001" and
+    .fragmentKinds == ["SUBGRAPH", "OUTPUT_MATERIALIZATION", "TASK_CONTRACT", "PATCH", "CACHE_LOCALITY"] and
+    .identity.excluded == ["CHECKOUT_PATH", "GIT_REVISION", "REPOSITORY_NAME_RULE"] and
+    .requiredProofs == {
+        pathIndependentIdentity: true,
+        deterministicCanonicalIdentity: true,
+        selectiveInvalidation: true,
+        missingRelevantBindingRetainsNative: true,
+        ambiguousRelevantBindingRetainsNative: true,
+        repositorySpecificProductRulesAllowed: false,
+        suspendedFragmentRequiresRequalification: true
+    } and
+    .outcome == "FRAGMENT_CONTRACT_ACCEPTED" and
+    .boundaries == {
+        proofOfConcept: true,
+        persistenceSchemasDefined: false,
+        activationAuthorized: false,
+        performanceClaim: false,
+        productionAuthorized: false,
+        soakRequired: false,
+        designPartnerRequired: false,
+        testOptimization: "OUT_OF_SCOPE"
+    }
+' "${buildopt_policy}" >/dev/null
+
+if rg -n '(spring-projects|apache/kafka|open-telemetry|micronaut-projects|apache/groovy)' \
+    "${buildopt_root}/internal/adaptivefragment"; then
+    echo "adaptive fragment runtime contains repository-specific behavior" >&2
+    exit 1
+fi
+
+"${buildopt_root}/dev/run" --toolchain go -- \
+    go test ./internal/adaptivefragment
+"${buildopt_root}/dev/run" --toolchain go -- \
+    go vet ./internal/adaptivefragment
+
+echo "adaptive fragment contract: FRAGMENT_CONTRACT_ACCEPTED"
