@@ -2459,3 +2459,27 @@ run a live report and exercise the tamper rejection with:
 ```bash
 ./dev/check-adaptive-fragment-index
 ```
+
+## Adaptive fragment frozen-history coverage
+
+[`adaptive-fragment-shadow-v1.json`](./results/adaptive-fragment-shadow-v1.json)
+records the `AF-004` shadow decomposition over the existing five-repository
+lifetime histories. It runs no new build and makes no timing claim. Only Kafka
+had a qualified profile to decompose; the other four subjects had already
+retained native execution before calibration.
+
+The replay reproduces the one complete selection among six eligible Kafka
+descendants. All six retain the structural `SUBGRAPH` candidate, while four
+suspend `OUTPUT_MATERIALIZATION` after refreshed bytes and one leaves it
+unevaluated after the economic gate retains native execution. That is **6/6
+(100%)** descendant fragment retention, **5** partial-compatibility decisions
+and zero future observations, activation authorizations or measurement-only
+builds.
+
+This supports the fragment coverage hypothesis and permits the next active
+implementation blocks. It does not show that a partial fragment saves wall
+time. Recompute the report and exercise provenance and tamper rejection with:
+
+```bash
+./dev/check-adaptive-fragment-shadow
+```

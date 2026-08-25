@@ -50,7 +50,7 @@ in `internal/`; cross-process representations belong in `contracts/` first.
 | Package | Architectural responsibility | Closest executable/specification |
 |---|---|---|
 | `internal/launcher` | Command passthrough, packaged Gradle discovery, signals, gateway lifecycle, L1, authority handoff, bootstrap cache, central state sync and remote profile revalidation | `buildopt`; launcher, cache and central optimize specs |
-| `internal/adaptivefragment` | Canonical fragment family/revision identity, declared-binding compatibility, lifecycle, immutable typed state and discardable pre-Gradle compatibility index | AF-001..AF-003 specs; `check-adaptive-fragment-contract`, `check-adaptive-fragment-state`, `check-adaptive-fragment-index` |
+| `internal/adaptivefragment` | Canonical fragment family/revision identity, declared-binding compatibility, lifecycle, immutable typed state, discardable pre-Gradle compatibility index and non-authorizing chronological shadow replay | AF-001..AF-004 specs; `check-adaptive-fragment-contract`, `check-adaptive-fragment-state`, `check-adaptive-fragment-index`, `check-adaptive-fragment-shadow` |
 | `internal/sessioningest` | Strict authenticated provisional session transport | `buildopt` and `buildopt-server`; `WS-005` |
 | `internal/buildsession` | `BUILD_SESSION v1` production, immutable JSON, JSONL, recovery | server export; data lifecycle specs |
 | `internal/buildhistory` | Redacted immutable history read model, API, embedded dashboard | `buildopt-server`; UX-F1 specs |

@@ -1,7 +1,8 @@
 // Package adaptivefragment defines the POC contracts for independently
 // compatible optimization fragments, their immutable typed state and a cheap
-// repository-local compatibility index. Online learning, composition,
-// synchronization and activation belong to later adaptive-fragment blocks.
+// repository-local compatibility index and frozen-history shadow replay.
+// Online learning, composition, synchronization and activation belong to
+// later adaptive-fragment blocks.
 package adaptivefragment
 
 import (

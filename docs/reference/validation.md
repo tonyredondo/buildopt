@@ -77,6 +77,7 @@ Adaptive-fragment identity and selective invalidation:
 ./dev/check-adaptive-fragment-contract
 ./dev/check-adaptive-fragment-state
 ./dev/check-adaptive-fragment-index
+./dev/check-adaptive-fragment-shadow
 ```
 
 The static and synthetic `AF-001` gate validates the machine policy, runs the
@@ -88,6 +89,10 @@ mutations. It does not implement persistence or synchronization. The bounded
 `AF-003` gate validates the frozen and live 30-decision/five-repository lookup
 reports, recalculates latency summaries and rejects tampering. It measures
 pre-Gradle decision overhead only, not build-wall-time value.
+The `AF-004` gate recomputes the five-repository frozen-history decomposition,
+reproduces the original whole-profile selections, reports partial compatibility
+separately and rejects any lookahead or report tampering. It remains shadow
+evidence and neither executes nor times a fragment.
 
 ```bash
 ./dev/check-generated-code

@@ -1,7 +1,7 @@
 # Adaptive Fragment Generalization POC Tracker
 
 **Status:** `IN_PROGRESS`<br>
-**Current block:** `AF-004 — Frozen-history shadow decomposition`<br>
+**Current block:** `AF-005 — Fragment economic ledger`<br>
 **Decision baseline:** the current whole-profile hypothesis remains
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)<br>
 **Last updated:** 2026-08-25
@@ -175,13 +175,13 @@ the correctness authority for cacheability. Repetition alone is not authority.
 | 1 | `AF-001` Adaptive fragment contract | Define the normative fragment identity, lifecycle, compatibility, invalidation, evidence and conflict model. | `DONE` | AF-000 |
 | 2 | `AF-002` Fragment state schemas | Define machine-readable fragment, observation, economic-ledger and portfolio schemas with positive and negative vectors. | `DONE` | AF-001 |
 | 3 | `AF-003` Cheap compatibility index | Decide native retention or return compatible fragment candidates without Gradle startup, central synchronization or materialization. | `DONE` | AF-002 |
-| 4 | `AF-004` Frozen-history shadow decomposition | Decompose the existing five-repository whole-profile evidence and replay fragment applicability chronologically without making a new timing claim. | `TODO` | AF-002, AF-003 |
+| 4 | `AF-004` Frozen-history shadow decomposition | Decompose the existing five-repository whole-profile evidence and replay fragment applicability chronologically without making a new timing claim. | `DONE` | AF-002, AF-003 |
 
 ### Phase B — Learning and economics
 
 | Order | Block | Goal | State | Depends on |
 |---:|---|---|---|---|
-| 5 | `AF-005` Fragment economic ledger | Account for signed wall-time value, decision cost, isolated learning cost, recurrence, decay, payback and bounded regret per fragment and composition. | `WAITING` | AF-002 |
+| 5 | `AF-005` Fragment economic ledger | Account for signed wall-time value, decision cost, isolated learning cost, recurrence, decay, payback and bounded regret per fragment and composition. | `TODO` | AF-002 |
 | 6 | `AF-006` Ordinary-build online learner | Update fragment evidence from requested builds only and keep native Gradle authoritative until qualification. | `WAITING` | AF-004, AF-005 |
 | 7 | `AF-007` Cross-repository hypothesis priors | Use task implementation, plugin, Gradle and structural features to rank hypotheses across repositories without transferring correctness authority or activation. | `WAITING` | AF-006 |
 | 8 | `AF-008` Patch-opportunity learning | Turn recurring expensive non-incremental or non-cacheable task evidence into a reviewed Patch Autopilot proposal and measure the accepted patch independently. | `WAITING` | AF-006 |
@@ -286,6 +286,14 @@ authorizing active implementation.
 
 **Outcome:** `FRAGMENT_COVERAGE_HYPOTHESIS_SUPPORTED` or
 `STOP_BEFORE_ACTIVE_FRAGMENT_IMPLEMENTATION`.
+
+**Result:** `FRAGMENT_COVERAGE_HYPOTHESIS_SUPPORTED` — the frozen replay
+reproduces the single whole-profile selection and reports five partial cases
+separately. All 6/6 eligible Kafka descendants retain the structural fragment;
+four suspend output materialization after refreshed bytes and one leaves it
+unevaluated after economic rejection. No future observation, measurement-only
+build or activation authority is consumed. The result supports implementing
+fragment economics; it makes no wall-time-value claim.
 
 ### AF-005 — Fragment economic ledger
 
@@ -470,6 +478,7 @@ IDs from the implementation tracker.
 | `AF-E002` | AF-001 | [Adaptive fragment contract v1](../../specs/poc-adaptive-fragment-contract-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-contract-v1.json), dependency-free Go identity/compatibility implementation and [`dev/check-adaptive-fragment-contract`](../../dev/check-adaptive-fragment-contract). The proof covers canonical path-independent identity, five fragment classes, authority rejection, partial binding invalidation, native retention on missing/ambiguous context and mandatory requalification after suspension. | `DONE` |
 | `AF-E003` | AF-002 | [Adaptive fragment state v1](../../specs/poc-adaptive-fragment-state-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-state-v1.json), four Draft 2020-12 schemas, two linked lifecycle bundles, seven negative mutations and [`dev/check-adaptive-fragment-state`](../../dev/check-adaptive-fragment-state). Schema and Go conformance prove canonical identity, JCS digest drift, exact repository/generation links, valid requalification and fail-closed unknown version/authority, tampering and impossible transitions. | `DONE` |
 | `AF-E004` | AF-003 | [Compatibility-index contract](../../specs/poc-adaptive-fragment-index-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-index-v1.json), checked [30-decision report](../../benchmarks/results/adaptive-fragment-lookup-v1-local.json) and [`dev/check-adaptive-fragment-index`](../../dev/check-adaptive-fragment-index). The bounded 12-CPU run records 0.025-ms median/0.039-ms p95/0.061-ms maximum lookup, all three dispositions, five frozen repository families, recomputable summaries, tamper rejection and zero external side effects. | `DONE` |
+| `AF-E005` | AF-004 | [Frozen-history shadow contract](../../specs/poc-adaptive-fragment-shadow-v1.md), exact [machine policy](../../specs/poc-adaptive-fragment-shadow-v1.json), recomputable [five-repository report](../../benchmarks/results/adaptive-fragment-shadow-v1.json) and [`dev/check-adaptive-fragment-shadow`](../../dev/check-adaptive-fragment-shadow). The replay reproduces 1/1 whole-profile selections, reports five partial decisions, retains at least one fragment in 6/6 eligible descendants and consumes zero future observations, activation authorizations or measurement-only builds. | `DONE` |
 
 ## 12. Decision log
 
@@ -483,11 +492,13 @@ IDs from the implementation tracker.
 | 2026-08-25 | Keep canonical document digests outside adaptive state documents. | RFC 8785 JCS plus an external SHA-256 avoids self-reference and permits the existing local/central content-addressed envelope to carry identical bytes later. |
 | 2026-08-25 | Treat the compatibility index as derived and discardable. | Immutable fragment generations retain authority; a corrupt index fails closed and can be rebuilt without migrating or mutating lifecycle state. |
 | 2026-08-25 | Keep Git revision as lookup provenance rather than a compatibility binding. | Cross-commit reuse is possible only when every semantic binding actually declared by a fragment remains equal. |
+| 2026-08-25 | Keep structural compatibility, output-byte freshness and economic authorization separate. | Five Kafka descendants retain a structural opportunity after whole-profile reuse becomes invalid; compatibility must not become replay authority. |
 
 ## 13. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-25 | Closed AF-004 as `FRAGMENT_COVERAGE_HYPOTHESIS_SUPPORTED`: 6/6 eligible descendants retain a structural fragment, the original 1/6 whole-profile selection is reproduced, five partial cases stay explicit and zero lookahead or activation is introduced; opened AF-005 economics. |
 | 2026-08-25 | Closed AF-003 as `FAST_FRAGMENT_LOOKUP_AVAILABLE`: 30 decisions across five frozen repository families meet the sub-second gate with explicit compatible/suspended/native reasons and no Gradle, remote, materialization or mutation side effects; opened AF-004 shadow decomposition. |
 | 2026-08-25 | Closed AF-002 as `TYPED_FRAGMENT_STATE_AVAILABLE`: four immutable record schemas, exact cross-record generations, two valid lifecycle bundles, seven negative mutations and canonical JCS digest rules now unblock the cheap compatibility index in AF-003. |
 | 2026-08-25 | Closed AF-001 as `FRAGMENT_CONTRACT_ACCEPTED`: five generic fragment classes now have canonical family/revision identity, explicit authority, selective invalidation, fail-closed compatibility and mandatory requalification; opened AF-002 for typed persistence state. |

@@ -1,0 +1,244 @@
+{
+  "schemaVersion": "buildopt.poc/adaptive-fragment-shadow/v1",
+  "workItem": "AF-004",
+  "capturedAt": "2026-08-25T10:47:46Z",
+  "source": {
+    "schemaVersion": "buildopt.evidence/poc-lifetime-breadth/v3",
+    "summarySha256": "7f6f4cb8c15ba355943afaf9f5110d4dec3a11c43b4427af1ad60d7a93c6f8e6"
+  },
+  "decomposition": [
+    {
+      "kind": "OUTPUT_MATERIALIZATION",
+      "bindings": [
+        "GRADLE_WRAPPER",
+        "PRODUCER_LINEAGE",
+        "OUTPUT_CONTRACT"
+      ]
+    },
+    {
+      "kind": "SUBGRAPH",
+      "bindings": [
+        "WORKFLOW",
+        "GRADLE_WRAPPER",
+        "PRODUCER_LINEAGE",
+        "OUTPUT_CONTRACT",
+        "CHANGE_FAMILY"
+      ]
+    }
+  ],
+  "subjects": [
+    {
+      "repositoryId": "apache/groovy",
+      "targetRevision": "14fa934340c46bc1ee96cba7ae594258bd8d0fd0",
+      "qualificationStatus": "ECONOMICALLY_RETAINED",
+      "sourceResultSha256": "640c8e2a72c1e7bf081f359430197335cdac16f93d08cb70ea764db9e58c93d5",
+      "sourceCaptureSha256": "4d24c2f97efd17c0329e68ea616b0283b9063e6ad6d6f058a31a24e0b7fe4d74",
+      "candidateFragments": [],
+      "eligibleDescendants": 0,
+      "wholeProfileSelections": 0,
+      "reproducedSelections": 0,
+      "descendantsWithFragment": 0,
+      "partialCompatibilityCount": 0
+    },
+    {
+      "repositoryId": "apache/kafka",
+      "targetRevision": "2e961afeff5cb27d60767a783edf20be00cc28e8",
+      "qualificationStatus": "QUALIFIED",
+      "sourceResultSha256": "358af8773138419a7b8df982f5ccdc7d38064e8ac5575d028ea55edaf4ffbc2c",
+      "sourceCaptureSha256": "867dee330c5d9b2925eb944edb0e77c57641549f53971fc13385090796b371a6",
+      "candidateFragments": [
+        "OUTPUT_MATERIALIZATION",
+        "SUBGRAPH"
+      ],
+      "eligibleDescendants": 6,
+      "wholeProfileSelections": 1,
+      "reproducedSelections": 1,
+      "descendantsWithFragment": 6,
+      "partialCompatibilityCount": 5
+    },
+    {
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "targetRevision": "eb60c6c35f355750c6bced793e85c30629d27c4e",
+      "qualificationStatus": "ECONOMICALLY_RETAINED",
+      "sourceResultSha256": "dc866fbaac59d1a35f9925648982ab27c3ae59ba4184730ce9ced4675c161997",
+      "sourceCaptureSha256": "5b4035980bbc7fcb61bca4fa952b25078c1d6f04a81226c8a190cf3389677c6c",
+      "candidateFragments": [],
+      "eligibleDescendants": 0,
+      "wholeProfileSelections": 0,
+      "reproducedSelections": 0,
+      "descendantsWithFragment": 0,
+      "partialCompatibilityCount": 0
+    },
+    {
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "targetRevision": "f330e4c0b764d80dcc1f7c6d4c01e305593c49f1",
+      "qualificationStatus": "ECONOMICALLY_RETAINED",
+      "sourceResultSha256": "0ff22b7cab3992af164d688865f960def9d8a06043e6fb86d61e6604afa938d5",
+      "sourceCaptureSha256": "d7316ea6c5995ee9565481e9cd19f09d35585a5d43ebd5bc4ef0ce366208b910",
+      "candidateFragments": [],
+      "eligibleDescendants": 0,
+      "wholeProfileSelections": 0,
+      "reproducedSelections": 0,
+      "descendantsWithFragment": 0,
+      "partialCompatibilityCount": 0
+    },
+    {
+      "repositoryId": "spring-projects/spring-framework",
+      "targetRevision": "1c4b20287f1d8f635867fb58c576849f9313e907",
+      "qualificationStatus": "ECONOMICALLY_RETAINED",
+      "sourceResultSha256": "c57da48acfddbb3d514b2dda827c53463980cfc5c39f66db7ce5d07a46347654",
+      "sourceCaptureSha256": "48b61f219134d7c9a1ae183b7897a6439ec97a9cf61a4859de4d1db9cb015ca4",
+      "candidateFragments": [],
+      "eligibleDescendants": 0,
+      "wholeProfileSelections": 0,
+      "reproducedSelections": 0,
+      "descendantsWithFragment": 0,
+      "partialCompatibilityCount": 0
+    }
+  ],
+  "replay": [
+    {
+      "sequence": 1,
+      "revision": "b475ce7632bc661a79b61ee8b78124bc53170bca",
+      "maxSourceSequence": 1,
+      "originalSelected": false,
+      "reproducedSelected": false,
+      "economicAuthorization": false,
+      "fragments": [
+        {
+          "kind": "OUTPUT_MATERIALIZATION",
+          "applicability": "SUSPENDED",
+          "reason": "OUTPUT_BYTES_REFRESHED"
+        },
+        {
+          "kind": "SUBGRAPH",
+          "applicability": "APPLICABLE",
+          "reason": "STRUCTURAL_PROFILE_COMPATIBLE"
+        }
+      ]
+    },
+    {
+      "sequence": 2,
+      "revision": "e5e26abb2741c678905a925ef535b6e8eaf967b0",
+      "maxSourceSequence": 2,
+      "originalSelected": true,
+      "reproducedSelected": true,
+      "economicAuthorization": true,
+      "fragments": [
+        {
+          "kind": "OUTPUT_MATERIALIZATION",
+          "applicability": "APPLICABLE",
+          "reason": "QUALIFIED_OUTPUTS_CURRENT"
+        },
+        {
+          "kind": "SUBGRAPH",
+          "applicability": "APPLICABLE",
+          "reason": "STRUCTURAL_PROFILE_COMPATIBLE"
+        }
+      ]
+    },
+    {
+      "sequence": 3,
+      "revision": "308095cf221c3695ad4bc5214ebc507a0b91705f",
+      "maxSourceSequence": 3,
+      "originalSelected": false,
+      "reproducedSelected": false,
+      "economicAuthorization": false,
+      "fragments": [
+        {
+          "kind": "OUTPUT_MATERIALIZATION",
+          "applicability": "NOT_EVALUATED",
+          "reason": "ECONOMIC_GATE_RETAINED_NATIVE"
+        },
+        {
+          "kind": "SUBGRAPH",
+          "applicability": "APPLICABLE",
+          "reason": "STRUCTURAL_PROFILE_COMPATIBLE"
+        }
+      ]
+    },
+    {
+      "sequence": 4,
+      "revision": "9301a555eac1049c6e5842e605c0bf147fe0e298",
+      "maxSourceSequence": 4,
+      "originalSelected": false,
+      "reproducedSelected": false,
+      "economicAuthorization": false,
+      "fragments": [
+        {
+          "kind": "OUTPUT_MATERIALIZATION",
+          "applicability": "SUSPENDED",
+          "reason": "OUTPUT_BYTES_REFRESHED"
+        },
+        {
+          "kind": "SUBGRAPH",
+          "applicability": "APPLICABLE",
+          "reason": "STRUCTURAL_PROFILE_COMPATIBLE"
+        }
+      ]
+    },
+    {
+      "sequence": 5,
+      "revision": "cc6d42206fc7393c6782de664b1fd0474d4af61d",
+      "maxSourceSequence": 5,
+      "originalSelected": false,
+      "reproducedSelected": false,
+      "economicAuthorization": false,
+      "fragments": [
+        {
+          "kind": "OUTPUT_MATERIALIZATION",
+          "applicability": "SUSPENDED",
+          "reason": "OUTPUT_BYTES_REFRESHED"
+        },
+        {
+          "kind": "SUBGRAPH",
+          "applicability": "APPLICABLE",
+          "reason": "STRUCTURAL_PROFILE_COMPATIBLE"
+        }
+      ]
+    },
+    {
+      "sequence": 6,
+      "revision": "7ff5d7b71c0ead6743a0d64b2b0e92abc61fed77",
+      "maxSourceSequence": 6,
+      "originalSelected": false,
+      "reproducedSelected": false,
+      "economicAuthorization": false,
+      "fragments": [
+        {
+          "kind": "OUTPUT_MATERIALIZATION",
+          "applicability": "SUSPENDED",
+          "reason": "OUTPUT_BYTES_REFRESHED"
+        },
+        {
+          "kind": "SUBGRAPH",
+          "applicability": "APPLICABLE",
+          "reason": "STRUCTURAL_PROFILE_COMPATIBLE"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "repositoryCount": 5,
+    "qualifiedProfileCount": 1,
+    "earlyRetainedRepositoryCount": 4,
+    "eligibleDescendants": 6,
+    "wholeProfileSelections": 1,
+    "reproducedWholeSelections": 1,
+    "descendantsWithFragment": 6,
+    "partialCompatibilityCount": 5,
+    "fragmentRetentionRatio": 1,
+    "lookaheadObservationCount": 0,
+    "activationAuthorizationCount": 0,
+    "measurementOnlyBuildCount": 0
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "shadowOnly": true,
+    "buildTimingClaim": false,
+    "activationAuthorized": false,
+    "productionAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "outcome": "FRAGMENT_COVERAGE_HYPOTHESIS_SUPPORTED"
+}

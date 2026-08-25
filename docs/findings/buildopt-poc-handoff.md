@@ -76,6 +76,12 @@ percentages are not added.
   native Gradle, outputs remain exact and product failures are zero.
 - Early economics prevent waste: the four short-lived hypotheses stop after
   one requested build instead of spending 16 additional builds each.
+- Frozen shadow decomposition explains part of the coverage loss: all **6/6**
+  eligible Kafka descendants retain a compatible structural fragment even
+  though only **1/6** retains the complete profile. Five cases are partial, so
+  output freshness or economics can invalidate materialization without erasing
+  the structural opportunity. This is compatibility evidence, not a timing
+  result.
 
 Applying the complete frozen gate yields **`STOP_GENERIC_POC`**. Five criteria
 pass: matrix completeness, exact outputs/zero failures, generic selection,
@@ -95,8 +101,8 @@ fail-open controls work. It is a rejection of the broad claim that the current
 one-command implementation already delivers repeatable net wall-time value to
 ordinary Gradle repositories.
 
-No generic implementation block followed automatically from that failed gate.
-The next explicitly preregistered hypothesis is now the
+No generic whole-profile implementation block followed automatically from that
+failed gate. The explicitly preregistered
 [Adaptive Fragment Generalization POC](../plans/adaptive-fragment-generalization-tracker.md):
 replace a complete structural profile with independently compatible producer,
 subgraph, task, patch and cache-locality fragments; learn their signed economics
@@ -104,7 +110,11 @@ from ordinary builds; compose only fragments with current correctness and value
 authority; and retain native Gradle through a sub-second no-value path. The new
 tracker preserves the same five-repository baseline, exact-output and zero-
 failure requirements, and makes cumulative longitudinal value—not isolated
-target speedup—the terminal decision. Production hardening, soak, design
+target speedup—the terminal decision. AF-001..AF-004 now provide typed fragment
+identity/state, sub-millisecond lookup and a no-lookahead shadow result with
+100% fragment retention across the six eligible descendants. The next block
+must make per-fragment signed economics recomputable before any activation.
+Production hardening, soak, design
 partners and Test Optimization remain outside this POC.
 
 ## Evidence
@@ -116,3 +126,5 @@ partners and Test Optimization remain outside this POC.
 - [Detailed historical findings](./build-optimization-performance.md)
 - [Ordinary-build learning economics](../../benchmarks/results/poc-ordinary-learning-economics-v1/README.md)
 - [Structural profile rebinding](../../benchmarks/results/poc-structural-profile-rebinding-v1/README.md)
+- [Adaptive fragment shadow replay](../../specs/poc-adaptive-fragment-shadow-v1.md)
+- [Machine-readable shadow result](../../benchmarks/results/adaptive-fragment-shadow-v1.json)

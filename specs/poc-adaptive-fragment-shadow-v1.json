@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "buildopt.specs/poc-adaptive-fragment-shadow/v1",
+  "workItem": "AF-004",
+  "source": {
+    "evidence": "benchmarks/results/poc-lifetime-breadth-v3",
+    "repositories": 5,
+    "chronology": "OBSERVATION_SEQUENCE",
+    "futureEvidenceAllowed": false
+  },
+  "decomposition": {
+    "SUBGRAPH": {
+      "retains": "STRUCTURAL_SELECTION_CONTRACT",
+      "doesNotAuthorize": "OUTPUT_REPLAY"
+    },
+    "OUTPUT_MATERIALIZATION": {
+      "retains": "QUALIFIED_OUTPUT_BYTES",
+      "suspendsOn": "OUTPUT_BYTES_REFRESHED"
+    },
+    "economicGate": "SEPARATE_FROM_COMPATIBILITY"
+  },
+  "gate": {
+    "wholeProfileSelectionsMustBeReproduced": true,
+    "partialCompatibilityReportedSeparately": true,
+    "minimumFragmentRetentionRatio": 0.5,
+    "maximumLookaheadObservations": 0,
+    "maximumActivationAuthorizations": 0,
+    "maximumMeasurementOnlyBuilds": 0
+  },
+  "evidence": "benchmarks/results/adaptive-fragment-shadow-v1.json",
+  "outcome": "FRAGMENT_COVERAGE_HYPOTHESIS_SUPPORTED",
+  "boundaries": {
+    "proofOfConcept": true,
+    "shadowOnly": true,
+    "buildTimingClaim": false,
+    "activeImplementationAuthorized": true,
+    "fragmentActivationAuthorized": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

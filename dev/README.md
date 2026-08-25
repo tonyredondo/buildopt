@@ -4700,6 +4700,20 @@ activation or making a build-time claim:
 ./dev/check-adaptive-fragment-index
 ```
 
+## Adaptive fragment shadow replay
+
+`./dev/check-adaptive-fragment-shadow` validates the `AF-004` machine policy
+and recomputes the chronological shadow decomposition from the frozen
+five-repository lifetime bundle. It reproduces complete-profile decisions,
+separates structural compatibility from materialization freshness and
+economic authorization, rejects lookahead and a deliberately tampered report,
+and runs the focused Go tests and vet check. It performs no build, timing or
+fragment activation:
+
+```bash
+./dev/check-adaptive-fragment-shadow
+```
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
