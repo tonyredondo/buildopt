@@ -34,6 +34,7 @@ func TestBootstrapTemplatesStayWithinPortableFileContract(t *testing.T) {
 		"AllowAutoRedirect = $false",
 		"[Environment]::GetCommandLineArgs()",
 		"$seen -and $item -ceq '--buildopt-wrapper-arguments'",
+		"[Array]::IndexOf($WrapperArgs, '--buildopt-wrapper-arguments')",
 		"BUILDOPT_WRAPPER_MANAGEMENT=version-json",
 		"$env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'version-json'",
 		"Security.Cryptography.SHA256",

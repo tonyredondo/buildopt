@@ -10,6 +10,11 @@ exit /b %ERRORLEVEL%
 $ErrorActionPreference = 'Stop'
 
 $WrapperArgs = @($args)
+$PowerShellTail = [Array]::IndexOf($WrapperArgs, '--buildopt-wrapper-arguments')
+if ($PowerShellTail -ge 0) {
+    if ($PowerShellTail -eq 0) { $WrapperArgs = @() }
+    else { $WrapperArgs = @($WrapperArgs[0..($PowerShellTail - 1)]) }
+}
 if ($WrapperArgs.Count -gt 0 -and $WrapperArgs[0] -ceq '--') {
     $WrapperArgs = @($WrapperArgs | Select-Object -Skip 1)
 }
