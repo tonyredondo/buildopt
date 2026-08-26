@@ -33,6 +33,7 @@ func TestBootstrapTemplatesStayWithinPortableFileContract(t *testing.T) {
 	for _, required := range []string{
 		"AllowAutoRedirect = $false",
 		"[Environment]::GetCommandLineArgs()",
+		"$commandArgs=@($args)",
 		"Security.Cryptography.SHA256",
 		"distribution archive contains an unsafe entry",
 		"verified bootstrap unavailable; running Gradle directly",
