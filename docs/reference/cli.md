@@ -429,5 +429,10 @@ Use the matching `dev/check-*` gate and specification rather than relying on
 unstated flags. The soak subcommand exists as a deferred qualification tool;
 the quickstart and owner POC lab do not run it.
 
+The AF-015 terminal scorecard is intentionally a source-tree validation command
+(`./dev/check-adaptive-fragment-terminal-decision`), not an installed customer
+CLI. The adaptive-fragment hypothesis is stopped and has no supported
+activation command.
+
 Runtime Tuning, exact-bound Hot State, and standard Copy have no installed or
 source-tree evaluation CLI. Their immutable results are historical evidence.

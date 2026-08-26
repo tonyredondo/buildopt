@@ -1,0 +1,338 @@
+{
+  "schemaVersion": "buildopt.poc/adaptive-fragment-terminal-decision/v1",
+  "workItem": "AF-015",
+  "capturedAt": "2026-08-26T12:12:09Z",
+  "evaluatedRevision": "95622d8279ea29c9cf390aa179d8f920d1cbef70",
+  "rawSha256": "c682c2a09b97d87eaaca63445c4a1fc53ba420aa42d31d60ca745c31c2f9f339",
+  "reportSha256": "c68cb97e9ed6795256f785b3e38ac6fc165e8cf81ba7720a77bcfe5ede41287c",
+  "attributionSha256": "1198f8b566316040e95e9a053fa8b976fda86337c39dd0fa6f6c36f6ddf9b26e",
+  "campaignContractSha256": "691a68eb7417aadb6b510217c98c753b2ee2fccaff286e9d8501f4b94f0d2c44",
+  "decisionContractSha256": "a79e328dbe9f668f90231370133bb685bda8d3ee49217bd725cd9cc595d696ca",
+  "outcome": "STOP_ADAPTIVE_FRAGMENT_POC",
+  "summary": {
+    "criteriaPassed": 9,
+    "criteriaFailed": 6,
+    "comparablePairs": 100,
+    "exactOutputPairs": 100,
+    "productFailures": 0,
+    "eligibleDescendantBuilds": 71,
+    "activatedEligibleBuilds": 0,
+    "activationCoveragePermille": 0,
+    "positiveFamilies": 0,
+    "positiveLowerBoundFamilies": 0,
+    "familiesRepaid": 0,
+    "cumulativeSignedDeltaNs": -368622514697,
+    "attributableMechanismSavingsNs": 0,
+    "nativeRetentionMedianNs": 530777013,
+    "nativeRetentionP95Ns": 8655690602,
+    "worstRegressionNs": 23333711744
+  },
+  "criteria": [
+    {
+      "id": "CORRECTNESS",
+      "status": "PASS",
+      "requirement": "all comparable pairs preserve exact outputs and product failures equal zero",
+      "observed": "100/100 exact-output pairs; 0 product failures",
+      "evidence": "AF-E017"
+    },
+    {
+      "id": "GENERIC_IMPLEMENTATION",
+      "status": "PASS",
+      "requirement": "no repository-name rules or manually authored evaluated profile",
+      "observed": "repository-name rules allowed=false; manual profiles allowed=false; selected profiles=0",
+      "evidence": "AF-E002,AF-E018"
+    },
+    {
+      "id": "NATIVE_SUBSTRATE",
+      "status": "PASS",
+      "requirement": "equivalent optimized Gradle substrate with isolated arm state",
+      "observed": "campaign contract fixes separate equivalent checkouts, Gradle homes, caches and daemon registries",
+      "evidence": "AF-E016,AF-E017"
+    },
+    {
+      "id": "FRAGMENT_ACTIVATION_COVERAGE",
+      "status": "FAIL",
+      "requirement": "at least 500 permille of structurally eligible builds activate a fragment",
+      "observed": "0/71 eligible builds activated (0 permille)",
+      "evidence": "AF-E017"
+    },
+    {
+      "id": "REPOSITORY_FAMILY_BREADTH",
+      "status": "FAIL",
+      "requirement": "at least 3/5 families have positive cumulative net value",
+      "observed": "0/5 families positive",
+      "evidence": "AF-E017"
+    },
+    {
+      "id": "LONGITUDINAL_CONFIDENCE",
+      "status": "FAIL",
+      "requirement": "at least 3/5 families have a positive paired lower confidence bound",
+      "observed": "0/5 positive deterministic paired-bootstrap lower bounds",
+      "evidence": "AF-E019"
+    },
+    {
+      "id": "COHORT_INTEGRITY",
+      "status": "PASS",
+      "requirement": "five frozen families with at least 15 comparable requested builds and visible exclusions",
+      "observed": "5 families; 100 pairs; 1 exclusions",
+      "evidence": "AF-E015,AF-E017"
+    },
+    {
+      "id": "CURRENT_IMPLEMENTATION",
+      "status": "PASS",
+      "requirement": "one installed package built from the exact evaluated SHA",
+      "observed": "evaluated revision=95622d8279ea29c9cf390aa179d8f920d1cbef70; executable sha256=84c53007c5c8b9349c3f2e78ed453eb155833046f220eded898337fd9dcc9670",
+      "evidence": "AF-E014,AF-E017"
+    },
+    {
+      "id": "PORTFOLIO_VALUE",
+      "status": "FAIL",
+      "requirement": "positive signed aggregate without masking negative repository breadth",
+      "observed": "signed aggregate=-368622514697 ns; positive families=0",
+      "evidence": "AF-E017"
+    },
+    {
+      "id": "TIME_TO_VALUE",
+      "status": "FAIL",
+      "requirement": "at least three qualifying families repay by build 20 with checkpoints 1/5/10/15/20 retained",
+      "observed": "0 families repaid; all repository checkpoints retained",
+      "evidence": "AF-E019"
+    },
+    {
+      "id": "NATIVE_RETENTION_COST",
+      "status": "FAIL",
+      "requirement": "at least 30 observations with median \u003c500 ms and p95 \u003c1000 ms",
+      "observed": "n=100; median=530777013 ns; p95=8655690602 ns",
+      "evidence": "AF-E018"
+    },
+    {
+      "id": "ORDINARY_LEARNING",
+      "status": "PASS",
+      "requirement": "requested builds only and zero measurement-only authority updates",
+      "observed": "calibration cost=0 ms; measurement-only authority updates=0",
+      "evidence": "AF-E017"
+    },
+    {
+      "id": "BOUNDED_REGRET",
+      "status": "PASS",
+      "requirement": "every negative build and worst regression remain reported",
+      "observed": "75 negative pairs; worst regression=23333711744 ns",
+      "evidence": "AF-E017,AF-E018"
+    },
+    {
+      "id": "ATTRIBUTION",
+      "status": "PASS",
+      "requirement": "independent mechanism accounting and directly measured composition without adding percentages",
+      "observed": "11 mechanisms; reconciliation=true; attributable savings=0 ns",
+      "evidence": "AF-E018"
+    },
+    {
+      "id": "SAFE_EVOLUTION",
+      "status": "PASS",
+      "requirement": "drift suspends affected fragments and never restores unverified bytes",
+      "observed": "no fragment/profile activated; native Gradle retained for every current pair",
+      "evidence": "AF-E002,AF-E017"
+    }
+  ],
+  "repositories": [
+    {
+      "key": "apache-groovy",
+      "repositoryId": "apache/groovy",
+      "comparablePairs": 20,
+      "outcome": "NET_NEGATIVE",
+      "cumulativeSignedDeltaNs": -25207309452,
+      "lowerConfidenceBoundNs": -2087860712,
+      "positivePairs": 6,
+      "negativePairs": 14,
+      "eligibleBuilds": 16,
+      "fragmentActivations": 0,
+      "paybackOrdinal": null,
+      "worstRegressionNs": 5150947580,
+      "cumulativeCheckpoints": [
+        {
+          "ordinal": 1,
+          "cumulativeNetNs": 1629891689
+        },
+        {
+          "ordinal": 5,
+          "cumulativeNetNs": -128856632
+        },
+        {
+          "ordinal": 10,
+          "cumulativeNetNs": -10347790000
+        },
+        {
+          "ordinal": 15,
+          "cumulativeNetNs": -11517689598
+        },
+        {
+          "ordinal": 20,
+          "cumulativeNetNs": -25207309452
+        }
+      ]
+    },
+    {
+      "key": "apache-kafka",
+      "repositoryId": "apache/kafka",
+      "comparablePairs": 20,
+      "outcome": "NET_NEGATIVE",
+      "cumulativeSignedDeltaNs": -42309439693,
+      "lowerConfidenceBoundNs": -2834439352,
+      "positivePairs": 2,
+      "negativePairs": 18,
+      "eligibleBuilds": 18,
+      "fragmentActivations": 0,
+      "paybackOrdinal": null,
+      "worstRegressionNs": 5905485611,
+      "cumulativeCheckpoints": [
+        {
+          "ordinal": 1,
+          "cumulativeNetNs": -5905485611
+        },
+        {
+          "ordinal": 5,
+          "cumulativeNetNs": -17569276680
+        },
+        {
+          "ordinal": 10,
+          "cumulativeNetNs": -22608765407
+        },
+        {
+          "ordinal": 15,
+          "cumulativeNetNs": -32577401569
+        },
+        {
+          "ordinal": 20,
+          "cumulativeNetNs": -42309439693
+        }
+      ]
+    },
+    {
+      "key": "micronaut-core",
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "comparablePairs": 20,
+      "outcome": "NET_NEGATIVE",
+      "cumulativeSignedDeltaNs": -144656096015,
+      "lowerConfidenceBoundNs": -10456481708,
+      "positivePairs": 4,
+      "negativePairs": 16,
+      "eligibleBuilds": 11,
+      "fragmentActivations": 0,
+      "paybackOrdinal": null,
+      "worstRegressionNs": 23333711744,
+      "cumulativeCheckpoints": [
+        {
+          "ordinal": 1,
+          "cumulativeNetNs": -23333711744
+        },
+        {
+          "ordinal": 5,
+          "cumulativeNetNs": -44002950281
+        },
+        {
+          "ordinal": 10,
+          "cumulativeNetNs": -75606109134
+        },
+        {
+          "ordinal": 15,
+          "cumulativeNetNs": -132339968468
+        },
+        {
+          "ordinal": 20,
+          "cumulativeNetNs": -144656096015
+        }
+      ]
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "comparablePairs": 20,
+      "outcome": "INCONCLUSIVE",
+      "cumulativeSignedDeltaNs": -26043969982,
+      "lowerConfidenceBoundNs": -3312191512,
+      "positivePairs": 11,
+      "negativePairs": 9,
+      "eligibleBuilds": 11,
+      "fragmentActivations": 0,
+      "paybackOrdinal": null,
+      "worstRegressionNs": 16081900138,
+      "cumulativeCheckpoints": [
+        {
+          "ordinal": 1,
+          "cumulativeNetNs": -16081900138
+        },
+        {
+          "ordinal": 5,
+          "cumulativeNetNs": -13886602159
+        },
+        {
+          "ordinal": 10,
+          "cumulativeNetNs": -12980045199
+        },
+        {
+          "ordinal": 15,
+          "cumulativeNetNs": -7662773069
+        },
+        {
+          "ordinal": 20,
+          "cumulativeNetNs": -26043969982
+        }
+      ]
+    },
+    {
+      "key": "spring-framework",
+      "repositoryId": "spring-projects/spring-framework",
+      "comparablePairs": 20,
+      "outcome": "NET_NEGATIVE",
+      "cumulativeSignedDeltaNs": -130405699555,
+      "lowerConfidenceBoundNs": -7828367169,
+      "positivePairs": 2,
+      "negativePairs": 18,
+      "eligibleBuilds": 15,
+      "fragmentActivations": 0,
+      "paybackOrdinal": null,
+      "worstRegressionNs": 11321010679,
+      "cumulativeCheckpoints": [
+        {
+          "ordinal": 1,
+          "cumulativeNetNs": -6103346557
+        },
+        {
+          "ordinal": 5,
+          "cumulativeNetNs": -37721777596
+        },
+        {
+          "ordinal": 10,
+          "cumulativeNetNs": -72873758245
+        },
+        {
+          "ordinal": 15,
+          "cumulativeNetNs": -111746574253
+        },
+        {
+          "ordinal": 20,
+          "cumulativeNetNs": -130405699555
+        }
+      ]
+    }
+  ],
+  "specialization": {
+    "correctnessPassed": true,
+    "boundedValueExists": false,
+    "activations": 0,
+    "attributableSavingsNs": 0,
+    "positiveFamilies": 0
+  },
+  "historicalContext": {
+    "evidence": "AF-013",
+    "role": "CONTEXT_ONLY",
+    "decisionInput": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

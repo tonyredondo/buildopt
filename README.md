@@ -87,7 +87,7 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > [terminal decision](./benchmarks/results/poc-functional-coverage-decision-v1/README.md)
 > and [lifetime breadth V3 evidence](./benchmarks/results/poc-lifetime-breadth-v3/README.md).
 
-> **Next POC hypothesis:** the active
+> **Adaptive successor result:** the now-closed
 > [Adaptive Fragment Generalization Tracker](./docs/plans/adaptive-fragment-generalization-tracker.md)
 > replaces all-or-nothing structural profiles with independently compatible
 > producer, subgraph, task, patch and cache-locality fragments. It requires
@@ -111,8 +111,13 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > is the largest recorded slice at **98.385 seconds**; native retention is
 > **0.531 seconds p50 / 8.656 seconds p95**. Because no profile or fragment
 > activated, attributable mechanism saving is **zero** and the current outcome
-> is `CURRENT_VALUE_NOT_ATTRIBUTABLE`. AF-015 now applies the frozen terminal
-> criteria without reinterpreting favorable noise as product value.
+> is `CURRENT_VALUE_NOT_ATTRIBUTABLE`. AF-015 now closes the successor as
+> `STOP_ADAPTIVE_FRAGMENT_POC`: 9/15 frozen criteria pass, but activation is
+> **0/71** eligible builds, breadth and positive confidence are both **0/5**,
+> no family repays and native-retention tails exceed the fixed limits. With
+> zero activated saving, bounded specialization is not evidence-backed either.
+> The result stops this hypothesis; it does not turn historical isolated wins
+> into a current customer claim.
 
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired

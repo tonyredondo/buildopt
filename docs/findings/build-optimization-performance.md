@@ -1104,7 +1104,7 @@ with exact outputs and zero product failures. Only 25 pairs are positive, all
 cumulative signed delta is **-368.623 seconds**. Spring, Kafka, Micronaut and
 Groovy are net negative; OpenTelemetry is inconclusive. One Groovy primary
 dependency/native failure remains an explicit exclusion and the next frozen
-reserve supplies its twentieth pair. AF-014D must now separate recorded
+reserve supplies its twentieth pair. AF-014D subsequently separates recorded
 BuildOpt decision/verification cost from unresolved Gradle and runner variation;
 the aggregate regression is not attributed to a mechanism merely because it
 occurred under the candidate arm.
@@ -1119,6 +1119,16 @@ seconds of discovery/learning, 28.890 seconds of output verification and
 no saving is attributable to Build Impact, patch, locality, materialization or
 composition. The outcome is `CURRENT_VALUE_NOT_ATTRIBUTABLE`, not an estimate
 of what those inactive mechanisms might have saved.
+
+AF-015 closes the adaptive-fragment generalization hypothesis as
+`STOP_ADAPTIVE_FRAGMENT_POC`. The immutable terminal scorecard passes 9/15
+criteria but fails activation (0/71 eligible builds), repository breadth (0/5
+positive), longitudinal confidence (0/5 positive lower bounds), portfolio
+value (-368.623 seconds), payback (0 families) and native-retention cost
+(0.531-second p50 / 8.656-second p95). Correct outputs and safe fallback remain
+valuable engineering evidence, but they do not establish acceleration. Zero
+current activations and zero attributable saving also leave no bounded fragment
+class to specialize.
 
 ```bash
 ./dev/check-adaptive-fragment-longitudinal

@@ -345,6 +345,18 @@ before activation, and native Gradle remains authoritative whenever any
 required state is unavailable or ambiguous. The executable contract is
 [`Adaptive fragment contract v1`](./specs/poc-adaptive-fragment-contract-v1.md).
 
+The adaptive-fragment generalization POC is now terminally stopped. The
+current installed-package evaluation retained exact outputs across 100 paired
+builds, but activated no fragment in 71 structurally eligible builds, produced
+zero positive repository families, accumulated -368.623 seconds of signed
+value and missed the frozen native-retention tail limits. The checked
+`STOP_ADAPTIVE_FRAGMENT_POC` decision therefore does not authorize this model
+for onboarding or production. The fragment contracts, correctness boundaries
+and negative evidence remain architectural research artifacts; any successor
+hypothesis must be materially different and separately preregistered rather
+than reopening these thresholds. See the
+[`AF-015` terminal contract](./specs/poc-adaptive-fragment-terminal-decision-v1.md).
+
 ---
 
 ## 6. Conceptual acceleration model

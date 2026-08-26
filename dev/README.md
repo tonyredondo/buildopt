@@ -4953,6 +4953,20 @@ discovery/learning (**98.385 s**), output verification (**28.890 s**) and
 local/central state (**18.154 s**). Native-retention overhead is **0.531 s**
 p50 and **8.656 s** p95.
 
+Close the adaptive-fragment POC from the immutable current evidence:
+
+```bash
+./dev/check-adaptive-fragment-terminal-decision
+```
+
+The AF-015 checker revalidates AF-014C/D, verifies every SHA-256 binding,
+recomputes deterministic paired lower bounds and all 15 frozen criteria, and
+rejects both edited output and moved thresholds. The committed scorecard closes
+as `STOP_ADAPTIVE_FRAGMENT_POC`: 9/15 criteria pass, but activation is 0/71,
+breadth and positive lower bounds are 0/5, cumulative value is -368.623
+seconds, payback is absent and native-retention tails fail. It does not rerun
+the 100-pair campaign.
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic

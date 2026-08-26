@@ -2640,7 +2640,7 @@ are -21.466 s for Spring, -104.572 s for OpenTelemetry, -20.618 s for Kafka and
 -16.687 s for Groovy.
 
 Only **2/5** rows are net positive versus the frozen terminal breadth target of
-3/5. The aggregate decision remains deliberately deferred to `AF-015`; this
+3/5. The aggregate decision was deliberately deferred to `AF-015`; this
 matrix neither adds mechanism percentages nor treats a missing Micronaut delta
 as zero. `AF-014A..D` will create the current installed harness, freeze five
 20-primary-commit cohorts plus ordered reserves before timing, execute a
@@ -2780,4 +2780,33 @@ result: assembly is -169.863 s, production classes -130.406 s, shadow JAR
 
 ```bash
 ./dev/check-current-longitudinal-attribution
+```
+
+## Adaptive-fragment terminal decision
+
+[`adaptive-fragment-terminal-decision-v1.json`](./results/adaptive-fragment-terminal-decision-v1.json)
+is the digest-bound `AF-015` scorecard over the current AF-014C/D evidence. It
+recomputes all 15 preregistered criteria, retains every repository row and
+cumulative checkpoint at builds 1, 5, 10, 15 and 20, and uses a deterministic
+10,000-sample paired-bootstrap lower bound. AF-013 historical evidence is
+explicitly context-only.
+
+| Terminal result | Current observation |
+| --- | ---: |
+| Criteria | **9 pass / 6 fail** |
+| Exact outputs / product failures | **100/100 / 0** |
+| Eligible builds with an activation | **0/71** |
+| Positive families / positive lower bounds | **0/5 / 0/5** |
+| Cumulative signed value | **-368.623 s** |
+| Families repaid by build 20 | **0** |
+| Native-retention p50 / p95 | **0.531 s / 8.656 s** |
+| Activated-mechanism saving | **0 s** |
+
+Correctness and auditability pass, but every generic value/economics gate
+fails. `SPECIALIZE_BOUNDED_FRAGMENT_CLASSES` is also rejected because the
+current campaign contains no activation, attributable saving or positive
+family. The checked outcome is `STOP_ADAPTIVE_FRAGMENT_POC`.
+
+```bash
+./dev/check-adaptive-fragment-terminal-decision
 ```

@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_root=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_raw=${1:-"${buildopt_root}/benchmarks/results/current-longitudinal-raw-v1.json"}
+buildopt_report=${2:-"${buildopt_root}/benchmarks/results/current-longitudinal-report-v1.json"}
+buildopt_attribution=${3:-"${buildopt_root}/benchmarks/results/current-longitudinal-attribution-v1.json"}
+buildopt_decision=${4:-"${buildopt_root}/benchmarks/results/adaptive-fragment-terminal-decision-v1.json"}
+buildopt_campaign_contract="${buildopt_root}/specs/poc-current-longitudinal-campaign-v1.json"
+buildopt_decision_contract="${buildopt_root}/specs/poc-adaptive-fragment-terminal-decision-v1.json"
+
+if (($# > 4)); then
+    printf 'usage: %s [RAW_JSON REPORT_JSON ATTRIBUTION_JSON DECISION_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+"${buildopt_root}/dev/check-current-longitudinal-attribution" \
+    "${buildopt_raw}" "${buildopt_report}" "${buildopt_attribution}"
+
+(
+    cd -- "${buildopt_root}/dev/current-longitudinal-campaign"
+    "${buildopt_root}/dev/run" --toolchain go -- go test ./...
+    "${buildopt_root}/dev/run" --toolchain go -- go vet ./...
+    "${buildopt_root}/dev/run" --toolchain go -- \
+        go run . --validate-decision \
+        "${buildopt_raw}" "${buildopt_report}" "${buildopt_attribution}" \
+        "${buildopt_campaign_contract}" "${buildopt_decision_contract}" \
+        "${buildopt_decision}"
+)
+
+buildopt_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-af015.XXXXXX")
+trap 'rm -rf -- "${buildopt_tmp}"' EXIT
+
+jq '.summary.criteriaFailed -= 1' "${buildopt_decision}" >"${buildopt_tmp}/mutated-decision.json"
+if (
+    cd -- "${buildopt_root}/dev/current-longitudinal-campaign"
+    "${buildopt_root}/dev/run" --toolchain go -- \
+        go run . --validate-decision \
+        "${buildopt_raw}" "${buildopt_report}" "${buildopt_attribution}" \
+        "${buildopt_campaign_contract}" "${buildopt_decision_contract}" \
+        "${buildopt_tmp}/mutated-decision.json"
+) >/dev/null 2>&1; then
+    printf 'mutated terminal decision unexpectedly passed validation\n' >&2
+    exit 1
+fi
+
+jq '.thresholds.minimumPositiveFamilies = 2' "${buildopt_decision_contract}" >"${buildopt_tmp}/moved-threshold.json"
+if (
+    cd -- "${buildopt_root}/dev/current-longitudinal-campaign"
+    "${buildopt_root}/dev/run" --toolchain go -- \
+        go run . --decide \
+        "${buildopt_raw}" "${buildopt_report}" "${buildopt_attribution}" \
+        "${buildopt_campaign_contract}" "${buildopt_tmp}/moved-threshold.json"
+) >/dev/null 2>&1; then
+    printf 'post-result threshold movement unexpectedly passed validation\n' >&2
+    exit 1
+fi
+
+printf 'adaptive-fragment terminal decision: PASS\n'

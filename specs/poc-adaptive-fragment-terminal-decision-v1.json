@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "buildopt.poc/adaptive-fragment-terminal-decision-contract/v1",
+  "workItem": "AF-015",
+  "sourceSchemas": {
+    "raw": "buildopt.poc/current-longitudinal-raw/v1",
+    "report": "buildopt.poc/current-longitudinal-report/v1",
+    "attribution": "buildopt.poc/current-longitudinal-attribution/v1",
+    "campaignContract": "buildopt.specs/current-longitudinal-campaign/v1"
+  },
+  "criteria": [
+    "CORRECTNESS",
+    "GENERIC_IMPLEMENTATION",
+    "NATIVE_SUBSTRATE",
+    "FRAGMENT_ACTIVATION_COVERAGE",
+    "REPOSITORY_FAMILY_BREADTH",
+    "LONGITUDINAL_CONFIDENCE",
+    "COHORT_INTEGRITY",
+    "CURRENT_IMPLEMENTATION",
+    "PORTFOLIO_VALUE",
+    "TIME_TO_VALUE",
+    "NATIVE_RETENTION_COST",
+    "ORDINARY_LEARNING",
+    "BOUNDED_REGRET",
+    "ATTRIBUTION",
+    "SAFE_EVOLUTION"
+  ],
+  "thresholds": {
+    "familyCount": 5,
+    "minimumActivationCoveragePermille": 500,
+    "minimumPositiveFamilies": 3,
+    "minimumPositiveLowerBoundFamilies": 3,
+    "minimumComparablePairsPerFamily": 15,
+    "maximumPaybackOrdinal": 20,
+    "minimumNativeRetentionObservations": 30,
+    "maximumNativeRetentionMedianNs": 500000000,
+    "maximumNativeRetentionP95Ns": 1000000000,
+    "minimumPortfolioNetNs": 1,
+    "minimumBoundedActivations": 1,
+    "minimumBoundedSavingsNs": 1,
+    "minimumBoundedPositiveFamilies": 1
+  },
+  "confidence": {
+    "method": "DETERMINISTIC_PAIRED_BOOTSTRAP",
+    "samples": 10000,
+    "lowerPermille": 50,
+    "seed": 20260826
+  },
+  "implementation": {
+    "repositoryNameRulesAllowed": false,
+    "manualProfilesAllowed": false
+  },
+  "outcomes": [
+    "CONTINUE_ADAPTIVE_FRAGMENT_POC",
+    "SPECIALIZE_BOUNDED_FRAGMENT_CLASSES",
+    "STOP_ADAPTIVE_FRAGMENT_POC"
+  ],
+  "historicalContext": "AF-013_CONTEXT_ONLY",
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

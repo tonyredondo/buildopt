@@ -1,7 +1,7 @@
 # Adaptive Fragment Generalization POC Tracker
 
-**Status:** `IN_PROGRESS`<br>
-**Current block:** `AF-015 — Terminal adaptive-fragment decision`<br>
+**Status:** `COMPLETE — STOP_ADAPTIVE_FRAGMENT_POC`<br>
+**Current block:** `NONE — terminal decision recorded`<br>
 **Decision baseline:** the current whole-profile hypothesis remains
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)<br>
 **Last updated:** 2026-08-26
@@ -231,7 +231,7 @@ the correctness authority for cacheability. Repetition alone is not authority.
 | 14b | `AF-014B` Frozen current commit cohorts | Freeze 20 primary first-parent commits, deterministic reserve queues, workflows, output contracts and exclusion rules for each of the five public repositories before timing. | `DONE` | AF-014A |
 | 14c | `AF-014C` Current longitudinal campaign | Run the current installed binary over the frozen cohorts with chronological learning, alternating arms and exact outputs. | `DONE` | AF-014B |
 | 14d | `AF-014D` Mechanism attribution and generalization analysis | Attribute savings, overhead and regressions to activated fragments, fallback, state, materialization, Gradle execution or unresolved variation. | `DONE` | AF-014C |
-| 15 | `AF-015` Terminal adaptive-fragment decision | Recompute the complete scorecard from the current campaign and choose continue, specialize or stop without changing thresholds. | `TODO` | AF-014D |
+| 15 | `AF-015` Terminal adaptive-fragment decision | Recompute the complete scorecard from the current campaign and choose continue, specialize or stop without changing thresholds. | `DONE` | AF-014D |
 
 ## 8. Block definitions and required outcomes
 
@@ -676,6 +676,19 @@ decision inputs.
 **Outcome:** `CONTINUE_ADAPTIVE_FRAGMENT_POC`,
 `SPECIALIZE_BOUNDED_FRAGMENT_CLASSES` or `STOP_ADAPTIVE_FRAGMENT_POC`.
 
+**Closed outcome:** `STOP_ADAPTIVE_FRAGMENT_POC`. The digest-bound scorecard
+recomputes all 15 frozen criteria from the current installed-package evidence:
+9 pass and 6 fail. Correctness, generic implementation, native substrate,
+cohort integrity, current implementation, ordinary learning, bounded-regret
+reporting, attribution and safe evolution pass. Fragment activation coverage
+(0/71 eligible builds), repository breadth (0/5 positive), longitudinal
+confidence (0/5 positive lower bounds), portfolio value (-368.623 seconds),
+time to value (0 families repaid) and native-retention cost (0.531-second p50,
+8.656-second p95) fail. Specialization is not supported because the current
+campaign contains zero activations, zero attributable mechanism saving and zero
+positive families. Historical AF-013 evidence remains context only. Evidence:
+`AF-E019`.
+
 ## 9. Documentation update matrix
 
 Every block updates this tracker. Other documents are updated in the same
@@ -744,12 +757,13 @@ IDs from the implementation tracker.
 | `AF-E016` | AF-014B | [Cohort contract](../../specs/poc-current-longitudinal-cohorts-v1.md), exact [machine policy](../../specs/poc-current-longitudinal-cohorts-v1.json), timing-free [five-repository manifest](../../benchmarks/results/current-longitudinal-cohorts-v1.json), topology freezer [`dev/freeze-current-longitudinal-cohorts`](../../dev/freeze-current-longitudinal-cohorts) and independent [`dev/check-current-longitudinal-cohorts`](../../dev/check-current-longitudinal-cohorts). Five public first-parent chains bind 100 primary commits and 50 ordered reserves to exact parents, trees, timestamps, changed paths, generic shapes, workflows, output contracts and JDKs. Reorder, scope drift and pre-campaign timing fields fail closed; OpenTelemetry and Groovy use fully qualified Gradle project paths, every public build disables Build Scan publication, and Kafka's real `core:compileTestScala` task was proved from clean offline outputs before accepting timing while retaining the originally frozen commits. Manifest SHA-256 is `8ca7a1b7b9ea2c71eb95f050eff0fdb76c23425141cd0c4f8f104f33782503ee`. | `DONE` |
 | `AF-E017` | AF-014C | [Campaign protocol](../../specs/poc-current-longitudinal-campaign-v1.md), exact [machine policy](../../specs/poc-current-longitudinal-campaign-v1.json), immutable [100-pair raw evidence](../../benchmarks/results/current-longitudinal-raw-v1.json), canonical [five-row report](../../benchmarks/results/current-longitudinal-report-v1.json), installed runner [`dev/run-current-longitudinal-campaign`](../../dev/run-current-longitudinal-campaign) and independent [`dev/check-current-longitudinal-campaign`](../../dev/check-current-longitudinal-campaign). All five repositories close at 20 comparable pairs with exact outputs and zero product failures; 25/100 pairs are positive, 75/100 negative, all 100 retain native Gradle, no profile or fragment activates and cumulative signed value is -368.623 seconds. One Groovy primary dependency/native failure remains recorded and the next frozen reserve supplies its replacement. Calibration records use the nested benchmark-calibration authority rather than conflating incremental learning with a performed benchmark. | `DONE` |
 | `AF-E018` | AF-014D | [Attribution protocol](../../specs/poc-current-longitudinal-attribution-v1.md), exact [machine contract](../../specs/poc-current-longitudinal-attribution-v1.json), deterministic [current attribution](../../benchmarks/results/current-longitudinal-attribution-v1.json) and independent [`dev/check-current-longitudinal-attribution`](../../dev/check-current-longitudinal-attribution). All 100 exact-output observations are recomputed from AF-014C: 179.029 seconds are recorded BuildOpt path cost, -189.593 seconds are residual Gradle/runner variation, native retention is 0.531 seconds p50/8.656 seconds p95, and no inactive mechanism receives a saving. The checker rejects edited attribution and classifies workflows without repository identity. | `DONE` |
-| `AF-E019` | AF-015 | Reserved for the terminal adaptive-fragment decision and its threshold-preserving checker. | `TODO` |
+| `AF-E019` | AF-015 | [Terminal decision protocol](../../specs/poc-adaptive-fragment-terminal-decision-v1.md), exact [machine contract](../../specs/poc-adaptive-fragment-terminal-decision-v1.json), digest-bound [15-criterion scorecard](../../benchmarks/results/adaptive-fragment-terminal-decision-v1.json) and independent [`dev/check-adaptive-fragment-terminal-decision`](../../dev/check-adaptive-fragment-terminal-decision). The checker revalidates AF-014C/D, binds every input by SHA-256, preserves all five repository rows and 1/5/10/15/20 checkpoints, rejects moved thresholds and edited output, and records `STOP_ADAPTIVE_FRAGMENT_POC`: 9/15 criteria pass, 0/71 eligible builds activate, 0/5 families are positive or have a positive lower bound, no family repays and bounded specialization has no activated value. | `DONE` |
 
 ## 12. Decision log
 
 | Date | Decision | Reason |
 |---|---|---|
+| 2026-08-26 | Stop the adaptive-fragment generalization POC and do not specialize inactive fragment classes. | Current evidence passes safety and auditability but fails every generic value gate: 0/71 activations, 0/5 positive families, 0/5 positive lower bounds, -368.623 seconds aggregate value, no payback and native-retention tails above the frozen limits. With zero activated saving, specialization would be hypothetical rather than evidence-backed. |
 | 2026-08-25 | Stop treating a complete structural profile as the generic unit of reuse. | The terminal result reached only 1/5 net-positive families and 1/6 eligible descendant selections. |
 | 2026-08-25 | Use independently invalidated fragments and cumulative longitudinal value as the new POC hypothesis. | Isolated mechanisms produce strong value, but recurrence and invalidation erase whole-profile economics. |
 | 2026-08-25 | Keep Gradle-native cache/configuration/incremental behavior as the substrate. | Cache parity is not differentiation; BuildOpt's value is selection, validated composition, durable fixes and learning. |
@@ -774,6 +788,7 @@ IDs from the implementation tracker.
 
 | Date | Change |
 |---|---|
+| 2026-08-26 | Closed AF-015 and this tracker as `STOP_ADAPTIVE_FRAGMENT_POC`. The digest-bound scorecard evaluates all 15 frozen criteria: 9 pass and 6 fail. It retains every repository row, negative pair, exclusion, confidence bound and cumulative checkpoint; rejects output/threshold tampering; keeps AF-013 context-only; and refuses bounded specialization because current activations, attributable saving and positive families are all zero. |
 | 2026-08-26 | Closed AF-014D as `CURRENT_VALUE_NOT_ATTRIBUTABLE`: the 100-pair current campaign contains 179.029 seconds of recorded BuildOpt path cost and -189.593 seconds of residual Gradle/runner variation, with 0.531-second p50 and 8.656-second p95 native retention. Discovery/learning is the largest recorded slice at 98.385 seconds. No profile or fragment activates, so attributable saving and payback remain zero/unavailable; opened AF-015 without moving any terminal threshold. |
 | 2026-08-26 | Closed AF-014C as `CURRENT_LONGITUDINAL_CAMPAIGN_COMPLETE`: 100/100 comparable pairs across five current public histories preserve exact outputs with zero product failures; 25 are positive, 75 negative, every invocation retains native Gradle, no profile/fragment activates and cumulative signed value is -368.623 seconds. One Groovy primary dependency/native failure remains explicit and its next frozen reserve supplies the twentieth pair. Opened AF-014D for phase and residual attribution without a terminal decision. |
 | 2026-08-26 | Corrected Groovy's frozen AF-014B workflow to the real `:groovy-json:assemble` project path after a clean public-repository reproduction. AF-014C now prepares dependency modules and Wrapper distributions outside measured wall time at every attempted revision, without copying outputs, task caches or candidate state; Git SHA-1/SHA-256 identities are validated separately from SHA-256 evidence digests. |

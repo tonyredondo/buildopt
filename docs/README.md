@@ -65,8 +65,9 @@ before running the product.
 ### Plans
 
 - [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md):
-  the active post-`STOP_GENERIC_POC` hypothesis, terminal scorecard, ordered
-  AF-001..AF-015 work, evidence outcomes and mandatory documentation updates.
+  the completed post-`STOP_GENERIC_POC` hypothesis, terminal
+  `STOP_ADAPTIVE_FRAGMENT_POC` scorecard, ordered AF-001..AF-015 work, evidence
+  outcomes and mandatory documentation updates.
 - [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md):
   the `buildopt optimize build` north star, automatic state machine, ordered
   implementation blocks, end-to-end value gates and explicit POC boundaries.

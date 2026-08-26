@@ -1,15 +1,15 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `CURRENT GENERIC STRUCTURAL-PROFILE HYPOTHESIS STOPPED; BOUNDED MECHANISM VALUE RETAINED` — the terminal five-repository result preserves exact outputs and bounded Kafka value, but fails repository breadth, descendant selection and native-retention overhead<br>
-**Current phase:** `CURRENT VALUE NOT ATTRIBUTABLE; TERMINAL DECISION NEXT` — AF-014D attributes 179.029 seconds of recorded BuildOpt path cost and -189.593 seconds of residual Gradle/runner variation across the 100 current exact-output pairs. Native retention is 0.531 seconds p50/8.656 seconds p95; no profile or fragment activated, so attributable mechanism saving is zero. AF-015 now applies the frozen terminal criteria<br>
+**Overall status:** `GENERIC ADAPTIVE-FRAGMENT POC STOPPED; BOUNDED MECHANISM RESEARCH RETAINED` — the terminal current-package scorecard preserves exact outputs but records zero activations, zero attributable saving, 0/5 positive families and -368.623 seconds cumulative value<br>
+**Current phase:** `STOP_ADAPTIVE_FRAGMENT_POC` — AF-015 closes the separately tracked adaptive-fragment hypothesis after 9/15 frozen criteria pass and 6 value/economics criteria fail; no successor hypothesis is authorized by this result<br>
 **POC functional target:** improve real builds against optimized native Gradle and make that value accessible through one owner-invoked command with zero hand-authored BuildOpt files for supported workflows; ambiguous, drifted or non-value state retains native Gradle<br>
 **POC onboarding north star:** `install BuildOpt -> open a Gradle repository -> buildopt optimize build`; automatic selection is allowed only inside the explicit POC command after qualification, while autonomous production promotion remains out of scope<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
 **Last updated:** 2026-08-26<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
-**Active POC tracker:** [Adaptive Fragment Generalization POC Tracker](./docs/plans/adaptive-fragment-generalization-tracker.md)<br>
-**RFC baseline SHA-256:** `1b8dd8cdeba756328e127a7146d26040a75a199e205d8e602fa83d83c8a7ad11`
+**Detailed POC tracker:** [Adaptive Fragment Generalization POC Tracker](./docs/plans/adaptive-fragment-generalization-tracker.md)<br>
+**RFC baseline SHA-256:** `82c18cc94f003564ae927aca793a671b0cb421b74476ab845bed437cb56c9ff6`
 
 ---
 
@@ -191,8 +191,8 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-ORDINARY-LEARNING-ECONOMICS | Learn only from customer-requested builds and reject candidates whose likely compatible lifetime cannot repay discovery/publication | `DONE` | 1/1 | `E-400`; five-match lifetime/payback horizon, ordinary builds only, robust eight-pair gate unchanged |
 | POC-LIFETIME-BREADTH-V3 | Replay one unchanged binary over frozen Spring, OpenTelemetry, Kafka, Micronaut and Groovy windows | `DONE` | 1/1 | `E-401`; 1/5 net-positive families, 1/6 eligible descendants selected, exact outputs and zero failures; functional coverage not proven |
 | POC-FUNCTIONAL-COVERAGE-DECISION | Issue the terminal continue/stop decision for the generic one-command POC | `DONE` | 1/1 | `E-402`; 5/8 criteria pass, terminal `STOP_GENERIC_POC`; no successor was authorized by that result |
-| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | `DOING` | 18/19 | `AF-E001..018`; AF-014D attributes the current 100-pair result to 179.029 seconds recorded BuildOpt cost and -189.593 seconds residual variation, with zero activated-mechanism saving; AF-015 is the remaining terminal decision in the [active tracker](./docs/plans/adaptive-fragment-generalization-tracker.md) |
-| GA-D | Production hardening | `DEFERRED` | 0/1 | Not authorized by terminal `STOP_GENERIC_POC` |
+| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | `DONE` | 19/19 | `AF-E001..019`; terminal `STOP_ADAPTIVE_FRAGMENT_POC`: 9/15 criteria pass, but 0/71 eligible builds activate, 0/5 families are positive or have positive lower bounds, cumulative value is -368.623 seconds and native-retention tails fail; see the [closed tracker](./docs/plans/adaptive-fragment-generalization-tracker.md) |
+| GA-D | Production hardening | `DEFERRED` | 0/1 | Not authorized by terminal `STOP_GENERIC_POC` or `STOP_ADAPTIVE_FRAGMENT_POC` |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
 
@@ -2418,6 +2418,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-26 | Closed AF-015 and the adaptive-fragment tracker as `STOP_ADAPTIVE_FRAGMENT_POC`: the digest-bound current scorecard passes 9/15 criteria but fails activation (0/71), breadth (0/5), confidence (0/5), portfolio value (-368.623 seconds), payback (0 families) and native-retention cost (0.531-second p50/8.656-second p95). Zero activations and zero attributable saving also reject bounded specialization; AF-013 remains context-only | Codex |
 | 2026-08-26 | Closed AF-014D as `CURRENT_VALUE_NOT_ATTRIBUTABLE`: 179.029 seconds of recorded BuildOpt path cost plus -189.593 seconds of residual Gradle/runner variation reconcile the -368.623-second current result; native retention is 0.531 seconds p50/8.656 seconds p95 and zero activations imply zero attributable mechanism saving. Opened AF-015 without moving thresholds | Codex |
 | 2026-08-26 | Closed AF-014C as `CURRENT_LONGITUDINAL_CAMPAIGN_COMPLETE`: 100 current installed-package pairs preserve exact outputs with zero product failures; 25 are positive, 75 negative, every invocation retains native Gradle, no profile/fragment activates and cumulative signed value is -368.623 seconds. One Groovy primary dependency/native failure remains explicit and a frozen reserve supplies the twentieth pair; opened AF-014D attribution | Codex |
 | 2026-08-26 | Closed AF-014B as `CURRENT_LONGITUDINAL_COHORTS_FROZEN`: 100 primary public commits and 50 ordered reserves are bound before timing to exact first-parent topology, trees, changed paths, generic shapes, workflows, outputs, JDKs and exclusion policy; opened AF-014C sequential campaign | Codex |

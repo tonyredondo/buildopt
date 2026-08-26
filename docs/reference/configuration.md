@@ -37,6 +37,11 @@ semantic binding consumed by that fragment remains equal. Missing, ambiguous,
 expired, corrupt or cross-repository state retains native Gradle. `AF-003`
 returns candidates only and introduces no activation or central-state input.
 
+AF-015 subsequently stopped the adaptive-fragment generalization POC. These
+lookup inputs remain research-contract documentation and are not customer
+configuration. No flag may reactivate the stopped hypothesis; a successor
+would require a separate preregistered contract and evidence.
+
 ## Structural proposal owner input
 
 `.buildopt/profile.json` is the repository-owned review contract shared by

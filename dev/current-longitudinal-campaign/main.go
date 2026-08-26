@@ -1,6 +1,6 @@
-// Command current-longitudinal-campaign validates AF-014C raw observations and
-// deterministically derives the current longitudinal report. It never runs a
-// build or mutates candidate authority.
+// Command current-longitudinal-campaign validates AF-014C raw observations,
+// derives the AF-014D attribution and closes the AF-015 terminal scorecard. It
+// never runs a build or mutates candidate authority.
 package main
 
 import (
@@ -252,9 +252,21 @@ func main() {
 		runAttribution(os.Args[2], os.Args[3], os.Args[4], os.Args[5], false)
 		return
 	}
+	if len(os.Args) == 7 && os.Args[1] == "--decide" {
+		runTerminalDecision(os.Args[2], os.Args[3], os.Args[4], os.Args[5], os.Args[6], "", false)
+		return
+	}
+	if len(os.Args) == 8 && os.Args[1] == "--write-decision" {
+		runTerminalDecision(os.Args[2], os.Args[3], os.Args[4], os.Args[5], os.Args[6], os.Args[7], true)
+		return
+	}
+	if len(os.Args) == 8 && os.Args[1] == "--validate-decision" {
+		runTerminalDecision(os.Args[2], os.Args[3], os.Args[4], os.Args[5], os.Args[6], os.Args[7], false)
+		return
+	}
 	if (len(os.Args) != 3 || os.Args[1] != "--aggregate") &&
 		(len(os.Args) != 5 || os.Args[1] != "--validate") {
-		fmt.Fprintln(os.Stderr, "usage: current-longitudinal-campaign --time DURATION_FILE -- COMMAND... | --aggregate RAW_JSON | --validate COHORT_JSON RAW_JSON REPORT_JSON | --attribute RAW_JSON REPORT_JSON CONTRACT_JSON | --write-attribution RAW_JSON REPORT_JSON CONTRACT_JSON ATTRIBUTION_JSON | --validate-attribution RAW_JSON REPORT_JSON CONTRACT_JSON ATTRIBUTION_JSON")
+		fmt.Fprintln(os.Stderr, "usage: current-longitudinal-campaign --time DURATION_FILE -- COMMAND... | --aggregate RAW_JSON | --validate COHORT_JSON RAW_JSON REPORT_JSON | --attribute RAW_JSON REPORT_JSON CONTRACT_JSON | --write-attribution RAW_JSON REPORT_JSON CONTRACT_JSON ATTRIBUTION_JSON | --validate-attribution RAW_JSON REPORT_JSON CONTRACT_JSON ATTRIBUTION_JSON | --decide RAW_JSON REPORT_JSON ATTRIBUTION_JSON CAMPAIGN_CONTRACT_JSON DECISION_CONTRACT_JSON | --write-decision RAW_JSON REPORT_JSON ATTRIBUTION_JSON CAMPAIGN_CONTRACT_JSON DECISION_CONTRACT_JSON DECISION_JSON | --validate-decision RAW_JSON REPORT_JSON ATTRIBUTION_JSON CAMPAIGN_CONTRACT_JSON DECISION_CONTRACT_JSON DECISION_JSON")
 		os.Exit(64)
 	}
 	rawIndex := 2

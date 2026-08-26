@@ -554,6 +554,24 @@ retentions record 179.029 seconds of BuildOpt path cost, the residual is
 recomputation over current public-repository evidence; it does not rerun Gradle
 or create a production claim.
 
+## Adaptive-fragment terminal decision
+
+```bash
+./dev/check-adaptive-fragment-terminal-decision
+```
+
+The `AF-015` gate first revalidates AF-014C/D, binds raw, report, attribution,
+campaign protocol and terminal contract by SHA-256, and recomputes all 15
+frozen criteria. It retains all repository rows, exclusions, negative builds,
+paired-bootstrap lower bounds and cumulative checkpoints at 1/5/10/15/20.
+Edited output and post-result threshold movement fail closed.
+
+The committed decision is `STOP_ADAPTIVE_FRAGMENT_POC`: 9 criteria pass and 6
+fail. Activation is 0/71 eligible builds, positive breadth and confidence are
+0/5, portfolio value is -368.623 seconds, no family repays and native-retention
+cost is 0.531 seconds p50 / 8.656 seconds p95. AF-013 is context only and no
+Gradle build is rerun by this static decision gate.
+
 ## Complete lanes
 
 - `./dev/check-phase-zero` composes the historical Phase 0 gates.

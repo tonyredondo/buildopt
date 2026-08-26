@@ -350,6 +350,13 @@ for the installed candidate/fallback proof. Read
 [Build Impact POC onboarding](../../specs/build-impact-poc-onboarding-v1.md),
 and the [generic measurement contract](../../specs/poc-generic-measurement-v1.md).
 
+The later adaptive-fragment successor is not an onboarding workflow. Its
+current 100-pair campaign closed as `STOP_ADAPTIVE_FRAGMENT_POC` after zero of
+71 eligible builds activated a fragment and all generic value gates failed.
+Do not configure or copy its research state into a customer repository; the
+specifications and scorecard are retained for audit and future materially
+different hypotheses only.
+
 ## Edge Cache
 
 Edge is optional. Validate its strict private configuration before serving:

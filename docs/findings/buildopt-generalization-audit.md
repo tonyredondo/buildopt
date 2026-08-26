@@ -149,8 +149,10 @@ Its first proof must happen before another broad timing campaign:
    (**complete: 179.029 seconds recorded BuildOpt cost, -189.593 seconds
    residual, zero activated-mechanism saving, 0.531-second p50 and 8.656-second
    p95 native retention**); and
-9. recompute the frozen terminal decision from current evidence only (**next:
-   AF-015**).
+9. recompute the frozen terminal decision from current evidence only
+   (**complete: 9/15 criteria pass; activation 0/71, breadth 0/5, positive
+   confidence 0/5, portfolio -368.623 seconds, payback 0 and native-retention
+   tails fail; outcome `STOP_ADAPTIVE_FRAGMENT_POC`**).
 
 ## POC conclusion
 
@@ -164,10 +166,13 @@ six eligible Kafka descendants, including five where whole-profile reuse is
 invalid. AF-005 makes the retained Kafka composition economically auditable:
 `135.127 - 42.040 - 10.560 = +82.527 seconds`, with observed payback at the
 second requested descendant. It deliberately does not assign that saving to an
-individual fragment. The active fragment path must now increase cross-commit
-selection coverage and cumulative net savings without
-repository-specific rules, weaker output gates or slower native retention. If
-it cannot, the generic POC should stop rather than reinterpret the evidence.
+individual fragment. The current adaptive-fragment campaign did not turn that
+bounded result into generic customer value: no fragment activated in 71
+eligible builds, 0/5 families were positive, cumulative value was -368.623
+seconds and native-retention tails missed their limits. AF-015 therefore stops
+the generic successor rather than reinterpreting the evidence. Any future POC
+must preregister a materially different mechanism and cannot inherit authority
+from these inactive fragments.
 
 AF-006 proves the online lifecycle mechanically but adds no real timing result:
 five synthetic requested-build updates move three fragments through

@@ -145,17 +145,21 @@ including clean-machine restore and offline/native fallback. AF-013 now remains
 an immutable historical audit rather than the current scorecard. AF-014A has
 now proved the public installed command, separate persistent arms, forward-only
 learning, exact selected/native-retained/bypass paths and reconciled phase
-timing. AF-014B..D must still freeze larger commit cohorts, execute the current
-implementation chronologically and attribute its value before the successor
-enters onboarding. AF-014C has now completed 100 exact-output current pairs
+timing. AF-014B..D subsequently froze larger commit cohorts, executed the
+current implementation chronologically and attributed its value before the
+terminal decision. AF-014C completed 100 exact-output current pairs
 with zero product failures, but all 100 invocations retained native Gradle and
 the signed total is -368.623 seconds. AF-014D attributes 179.029 seconds to the
 recorded BuildOpt path and -189.593 seconds to residual Gradle/runner
 variation. The native-retention path is 0.531 seconds p50 and 8.656 seconds
 p95; discovery/learning alone records 98.385 seconds. Because no mechanism
 activated, attributable saving is zero. This adaptive successor therefore
-remains outside customer onboarding pending the AF-015 terminal decision. The
-controlled AF-014A fixture remains apparatus evidence only.
+remains outside customer onboarding. AF-015 closes it as
+`STOP_ADAPTIVE_FRAGMENT_POC`: 9/15 frozen criteria pass, while activation
+(0/71), breadth (0/5), positive confidence (0/5), portfolio value (-368.623
+seconds), payback (0 families) and native-retention cost fail. With no
+activated saving, bounded specialization is not authorized. The controlled
+AF-014A fixture remains apparatus evidence only.
 
 ```bash
 buildopt optimize --json -- build

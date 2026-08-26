@@ -69,6 +69,15 @@ state access 18.154 seconds. Native retention costs 0.531 seconds p50 and
 mechanism saving is **zero** and the outcome is
 `CURRENT_VALUE_NOT_ATTRIBUTABLE`.
 
+The terminal AF-015 scorecard now stops this successor hypothesis. It passes
+9/15 frozen criteria, including correctness, generic implementation, native
+substrate, cohort integrity, ordinary learning and attribution. It fails all
+six value/economics gates: 0/71 eligible builds activate, 0/5 families are
+positive, 0/5 have a positive lower confidence bound, signed portfolio value is
+-368.623 seconds, no family repays and native retention is 0.531 seconds p50 /
+8.656 seconds p95. With zero activated saving, there is no evidence-backed
+bounded fragment class to specialize.
+
 ## Historical complete-profile result
 
 One exact BuildOpt executable was used across frozen Spring Framework,
@@ -122,14 +131,14 @@ is different.
   pairs preserve exact outputs with zero product failures, while 75/100 regress
   and cumulative signed value is -368.623 seconds.
 - No current campaign build activated a whole profile or adaptive fragment.
-  The next decision therefore depends on whether AF-014D attributes the loss to
-  avoidable BuildOpt decision/verification work or unresolved Gradle/runner
-  variation; no current acceleration claim is justified yet.
+  AF-014D attributes 179.029 seconds to recorded BuildOpt work and -189.593
+  seconds to residual Gradle/runner variation; AF-015 still credits zero saving
+  because no mechanism activated.
 - The core idea can create very large value when a learned structural profile
   remains compatible: Kafka's selected replay saves 75.67%.
 - Isolated acceleration is not enough. A profile must recur across real commits
   often enough to repay discovery and publication.
-- The current generic breadth is insufficient. Only **1/5 repository
+- The earlier whole-profile breadth was insufficient. Only **1/5 repository
   families** is net positive and only **1/6 eligible descendants (16.67%)**
   selects a profile. The preregistered pass gate required at least 3/5 net
   positive families and at least 50% selection coverage.
@@ -143,6 +152,9 @@ is different.
   output freshness or economics can invalidate materialization without erasing
   the structural opportunity. This is compatibility evidence, not a timing
   result.
+- The current adaptive breadth is also insufficient: **0/5** families are net
+  positive, **0/71** eligible builds activate and **0/5** lower confidence
+  bounds are positive.
 
 The earlier complete-profile gate yielded **`STOP_GENERIC_POC`**. Five criteria
 pass: matrix completeness, exact outputs/zero failures, generic selection,
@@ -153,19 +165,28 @@ robust Kafka qualification and bounded Kafka payback. Three fail:
 - one observed pre-Gradle economic rejection at 4,098 ms, above the 500-ms
   median and 1,000-ms p95 limits.
 
-## Conclusion and next step
+## Conclusion and terminal direction
 
-The current generic structural-profile hypothesis stops here. This is not a
-claim that BuildOpt never works: Kafka pays back strongly, Spring and other
+The generic structural-profile hypothesis and its adaptive-fragment successor
+both stop here. This is not a claim that BuildOpt never works: Kafka pays back
+strongly, Spring and other
 bounded experiments remain valid mechanism evidence, and exact-output plus
 fail-open controls work. It is a rejection of the broad claim that the current
 one-command implementation already delivers repeatable net wall-time value to
 ordinary Gradle repositories.
 
+The successor decision is `STOP_ADAPTIVE_FRAGMENT_POC`, not specialization.
+Its scorecard passes 9/15 safety, integrity and auditability criteria but fails
+all six value/economics criteria. There is no further block in this tracker.
+Any future work must preregister a materially different mechanism that can
+activate generically, repay its own learning/verification cost and beat
+optimized native Gradle over real commit sequences; it cannot reopen these
+thresholds or inherit authority from inactive fragments.
+
 No generic whole-profile implementation block followed automatically from that
-failed gate. The explicitly preregistered
-[Adaptive Fragment Generalization POC](../plans/adaptive-fragment-generalization-tracker.md):
-replace a complete structural profile with independently compatible producer,
+failed gate. The separately preregistered
+[Adaptive Fragment Generalization POC](../plans/adaptive-fragment-generalization-tracker.md)
+then tested a replacement: independently compatible producer,
 subgraph, task, patch and cache-locality fragments; learn their signed economics
 from ordinary builds; compose only fragments with current correctness and value
 authority; and retain native Gradle through a sub-second no-value path. The new
@@ -225,10 +246,12 @@ package. AF-014D now attributes the current result: 179.029 seconds of recorded
 BuildOpt cost, -189.593 seconds of residual variation, and zero
 activated-mechanism saving. The largest actionable recorded slice is
 discovery/learning at 98.385 seconds; however, reducing overhead alone cannot
-create customer value when selection coverage remains zero. AF-015 will apply
-the frozen breadth, lifetime, fallback and value criteria to this current
-campaign only, then choose whether to continue, specialize or stop the adaptive
-fragment hypothesis.
+create customer value when selection coverage remains zero. AF-015 has now
+applied the frozen breadth, lifetime, fallback and value criteria to this
+current campaign only and records `STOP_ADAPTIVE_FRAGMENT_POC`. Nine safety,
+integrity and auditability criteria pass; activation coverage, breadth,
+confidence, portfolio value, time to value and native-retention cost fail.
+Historical favorable observations remain context, not current decision inputs.
 Production hardening, soak, design partners and Test Optimization remain
 outside this POC.
 
@@ -236,6 +259,8 @@ outside this POC.
 
 - [Lifetime breadth V3 result](../../benchmarks/results/poc-lifetime-breadth-v3/README.md)
 - [Terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)
+- [Adaptive-fragment terminal scorecard](../../benchmarks/results/adaptive-fragment-terminal-decision-v1.json)
+- [Adaptive-fragment terminal contract](../../specs/poc-adaptive-fragment-terminal-decision-v1.md)
 - [Machine-readable V3 summary](../../benchmarks/results/poc-lifetime-breadth-v3/summary.json)
 - [V3 protocol](../../specs/poc-lifetime-breadth-v3.md)
 - [Detailed historical findings](./build-optimization-performance.md)
