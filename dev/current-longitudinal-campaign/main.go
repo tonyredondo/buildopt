@@ -12,13 +12,16 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"sort"
+	"strconv"
+	"time"
 )
 
 const (
 	rawSchema    = "buildopt.poc/current-longitudinal-raw/v1"
 	reportSchema = "buildopt.poc/current-longitudinal-report/v1"
-	contractSHA  = "6688c594694d66083d8781eb8902e14319cf7f19e63faeef45fa2ff0c88ee9e5"
+	cohortSHA    = "8ca7a1b7b9ea2c71eb95f050eff0fdb76c23425141cd0c4f8f104f33782503ee"
 )
 
 type rawEvidence struct {
@@ -35,12 +38,23 @@ type rawEvidence struct {
 }
 
 type repositoryRaw struct {
-	Key          string        `json:"key"`
-	RepositoryID string        `json:"repositoryId"`
-	Workflow     []string      `json:"workflow"`
-	Outputs      []string      `json:"requiredOutputs"`
-	Observations []observation `json:"observations"`
-	Exclusions   []exclusion   `json:"exclusions"`
+	Key                   string                `json:"key"`
+	RepositoryID          string                `json:"repositoryId"`
+	Workflow              []string              `json:"workflow"`
+	Outputs               []string              `json:"requiredOutputs"`
+	DependencyPreparation dependencyPreparation `json:"dependencyPreparation"`
+	Observations          []observation         `json:"observations"`
+	Exclusions            []exclusion           `json:"exclusions"`
+}
+
+type dependencyPreparation struct {
+	Mode               string   `json:"mode"`
+	Attempts           int      `json:"attempts"`
+	Successes          int      `json:"successes"`
+	Failures           int      `json:"failures"`
+	WallNS             int64    `json:"wallNs"`
+	CopiedSurfaces     []string `json:"copiedSurfaces"`
+	IncludedInPairWall bool     `json:"includedInPairWall"`
 }
 
 type observation struct {
@@ -223,9 +237,12 @@ type shapeSummary struct {
 }
 
 func main() {
+	if len(os.Args) >= 5 && os.Args[1] == "--time" && os.Args[3] == "--" {
+		os.Exit(runTimedCommand(os.Args[2], os.Args[4:]))
+	}
 	if (len(os.Args) != 3 || os.Args[1] != "--aggregate") &&
 		(len(os.Args) != 5 || os.Args[1] != "--validate") {
-		fmt.Fprintln(os.Stderr, "usage: current-longitudinal-campaign --aggregate RAW_JSON | --validate COHORT_JSON RAW_JSON REPORT_JSON")
+		fmt.Fprintln(os.Stderr, "usage: current-longitudinal-campaign --time DURATION_FILE -- COMMAND... | --aggregate RAW_JSON | --validate COHORT_JSON RAW_JSON REPORT_JSON")
 		os.Exit(64)
 	}
 	rawIndex := 2
@@ -275,14 +292,40 @@ func main() {
 	fmt.Println("current longitudinal campaign: valid")
 }
 
+func runTimedCommand(durationPath string, arguments []string) int {
+	if durationPath == "" || len(arguments) == 0 {
+		return 64
+	}
+	command := exec.Command(arguments[0], arguments[1:]...)
+	command.Stdin = os.Stdin
+	command.Stdout = os.Stdout
+	command.Stderr = os.Stderr
+	started := time.Now()
+	err := command.Run()
+	duration := time.Since(started).Nanoseconds()
+	if writeErr := os.WriteFile(durationPath, []byte(strconv.FormatInt(duration, 10)+"\n"), 0o600); writeErr != nil {
+		fmt.Fprintln(os.Stderr, writeErr)
+		return 70
+	}
+	if err == nil {
+		return 0
+	}
+	var exitErr *exec.ExitError
+	if errors.As(err, &exitErr) {
+		return exitErr.ExitCode()
+	}
+	fmt.Fprintln(os.Stderr, err)
+	return 70
+}
+
 func decodeRaw(raw []byte) (rawEvidence, error) {
 	var result rawEvidence
 	if err := decodeStrict(raw, &result); err != nil {
 		return result, err
 	}
 	if result.SchemaVersion != rawSchema || result.WorkItem != "AF-014C" ||
-		!validSHA(result.EvaluatedSHA) || !validSHA(result.ExecutableSHA) ||
-		result.CohortSHA != contractSHA || !validSHA(result.ContractSHA) || len(result.Repositories) != 5 ||
+		!validGitOID(result.EvaluatedSHA) || !validSHA(result.ExecutableSHA) ||
+		result.CohortSHA != cohortSHA || !validSHA(result.ContractSHA) || len(result.Repositories) != 5 ||
 		result.Boundaries != (boundaries{ProofOfConcept: true, TestOptimization: "OUT_OF_SCOPE"}) {
 		return result, errors.New("current longitudinal raw evidence identity is invalid")
 	}
@@ -292,9 +335,24 @@ func decodeRaw(raw []byte) (rawEvidence, error) {
 		if repository.Key == "" || repository.RepositoryID == "" || seen[repository.Key] || len(repository.Workflow) == 0 || len(repository.Outputs) == 0 {
 			return result, errors.New("current longitudinal repository identity is invalid")
 		}
+		preparation := repository.DependencyPreparation
+		if preparation.Mode != "ANCHOR_AND_EACH_ATTEMPT_UNMEASURED" || preparation.Attempts <= 0 ||
+			preparation.Successes < 0 || preparation.Failures < 0 ||
+			preparation.Successes+preparation.Failures != preparation.Attempts || preparation.WallNS <= 0 ||
+			preparation.IncludedInPairWall || len(preparation.CopiedSurfaces) != 3 ||
+			preparation.CopiedSurfaces[0] != "GRADLE_DEPENDENCY_MODULES" ||
+			preparation.CopiedSurfaces[1] != "GRADLE_DEPENDENCY_VERIFICATION" ||
+			preparation.CopiedSurfaces[2] != "GRADLE_WRAPPER_DISTRIBUTIONS" {
+			return result, errors.New("current longitudinal dependency preparation is invalid")
+		}
 		seen[repository.Key] = true
 		if len(repository.Observations) > 20 || len(repository.Observations)+len(repository.Exclusions) > 30 {
 			return result, errors.New("current longitudinal cohort cardinality is invalid")
+		}
+		expectedPreparationAttempts := 1 + len(repository.Observations) + len(repository.Exclusions)
+		anchorFailure := len(repository.Observations) == 0 && len(repository.Exclusions) == 30 && preparation.Attempts == 1
+		if preparation.Attempts != expectedPreparationAttempts && !anchorFailure {
+			return result, errors.New("current longitudinal per-attempt dependency preparation is incomplete")
 		}
 		var cumulative int64
 		previousState := ""
@@ -311,7 +369,7 @@ func decodeRaw(raw []byte) (rawEvidence, error) {
 		for _, excluded := range repository.Exclusions {
 			if excluded.CohortAttempt <= 0 || !oneOf(excluded.Source, "PRIMARY", "RESERVE") || !oneOf(excluded.Reason,
 				"NATIVE_BUILD_FAILURE", "DEPENDENCY_UNAVAILABLE_AFTER_PREPARATION",
-				"RUNNER_ENVIRONMENT_FAILURE", "NATIVE_OUTPUT_NONDETERMINISM") || !validSHA(excluded.Revision) {
+				"RUNNER_ENVIRONMENT_FAILURE", "NATIVE_OUTPUT_NONDETERMINISM") || !validGitOID(excluded.Revision) || excluded.Detail == "" {
 				return result, errors.New("current longitudinal exclusion is invalid")
 			}
 		}
@@ -333,7 +391,7 @@ func validateObservation(value observation, sequence int, previous int64) error 
 		wantOrder = "CANDIDATE_FIRST"
 	}
 	if value.CohortAttempt <= 0 || value.Sequence != sequence || value.Order != wantOrder || !oneOf(value.Source, "PRIMARY", "RESERVE") ||
-		!validSHA(value.Revision) || !validSHA(value.Parent) || value.ChangeShape == "" ||
+		!validGitOID(value.Revision) || !validGitOID(value.Parent) || value.ChangeShape == "" ||
 		value.Control.WallNS <= 0 || value.Candidate.WallNS <= 0 || value.Control.ExitCode != 0 ||
 		!validSHA(value.Control.OutputSHA) || !validSHA(value.Candidate.OutputSHA) ||
 		value.Control.OutputCount <= 0 || value.Control.OutputCount != value.Candidate.OutputCount ||
@@ -542,6 +600,13 @@ func decodeStrict(raw []byte, target any) error {
 
 func validSHA(value string) bool {
 	if len(value) != 64 {
+		return false
+	}
+	_, err := hex.DecodeString(value)
+	return err == nil
+}
+func validGitOID(value string) bool {
+	if len(value) != 40 && len(value) != 64 {
 		return false
 	}
 	_, err := hex.DecodeString(value)

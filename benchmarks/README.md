@@ -2697,6 +2697,11 @@ task is `NO-SOURCE`; the frozen workflow therefore uses the real
 `core:compileTestScala` task and verifies the original Scala test-class output
 contract. The selected Kafka commit window remains unchanged.
 
+The Groovy workflow likewise uses the real fully qualified
+`:groovy-json:assemble` project task. A clean public checkout proved that the
+former `json:assemble` spelling cannot resolve project `json`; no Groovy timing
+from that invalid task is retained.
+
 The checker rejects reordering, result-dependent replacement, workflow/output
 scope drift, changed path digests, unknown fields and any timing added before
 the campaign. This manifest contains no performance result.

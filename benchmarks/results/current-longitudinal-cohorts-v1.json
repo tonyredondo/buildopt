@@ -5,7 +5,7 @@
   "outcome": "CURRENT_LONGITUDINAL_COHORTS_FROZEN",
   "contract": {
     "path": "specs/poc-current-longitudinal-cohorts-v1.json",
-    "sha256": "a06bf152befa01a3e2dbc065693492730be991c66651f9857b550a64328d6b94"
+    "sha256": "591179cdc657dc50b204a5bf132e2a551b0fbcce986b273720f060ecad4804a4"
   },
   "selection": {
     "history": "PUBLIC_FIRST_PARENT_CONTIGUOUS",
@@ -2180,7 +2180,7 @@
         "branch": "GROOVY_5_0_X",
         "jdkToolchain": "temurin-jdk-21",
         "workflow": [
-          "json:assemble",
+          ":groovy-json:assemble",
           "--offline",
           "--no-scan",
           "--no-daemon",

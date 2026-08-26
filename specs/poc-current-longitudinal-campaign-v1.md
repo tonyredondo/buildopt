@@ -21,6 +21,16 @@ the candidate owns BuildOpt state. Observation `N` may consume only candidate
 state committed by observations `1..N-1`; there is no future-state replay and
 no untimed candidate warmup.
 
+Dependency preparation runs against the anchor and then against every attempted
+revision before either timed arm. It may use the network, is never included in
+pair wall time and copies only Gradle dependency modules, dependency-verification
+keyrings and Wrapper distributions into the two isolated Gradle homes. It never copies task outputs,
+native build-cache entries, project state, daemon state or BuildOpt state. This
+keeps both arms offline and equivalent when a chronological commit changes a
+dependency or plugin version without treating that expected evolution as an
+exclusion. Preparation attempts, outcomes and total unmeasured wall time remain
+visible in raw evidence.
+
 After a repository closes, the runner retains its immutable `subject.json` and
 removes only that repository's transient checkout, dependency and Gradle-cache
 state. This bounds disk use without changing later observations or the final
@@ -43,6 +53,12 @@ dependencies after preparation, runner-environment failure or native-output
 nondeterminism. The next frozen reserve is consumed in its recorded order. A
 slow candidate, native retention, a negative delta or an unhelpful change shape
 is never excluded. All exclusions remain in the raw evidence.
+
+Git revisions are validated as hexadecimal Git object IDs (SHA-1 or SHA-256),
+while executable, contract, cohort, output and state digests remain strict
+SHA-256 values. A repository with zero comparable observations is still valid
+raw evidence only when all 30 frozen primary/reserve attempts are present as
+declared exclusions.
 
 ## Fragment boundary
 

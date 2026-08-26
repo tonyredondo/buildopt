@@ -29,6 +29,10 @@ Kafka pair was accepted, validated from clean outputs while offline, and keeps
 the original frozen commit identities and `core/build/classes/scala/test/**`
 output contract.
 
+Apache Groovy uses the fully qualified `:groovy-json:assemble` task. The short
+`json:assemble` spelling is not a valid project path on the frozen branch and
+must fail cohort validation rather than exclude all Groovy observations.
+
 The manifest proves experimental preregistration, not performance. Builds run
 sequentially in `AF-014C`; reproducible checkouts and caches may be removed only
 after immutable evidence is secured. Production hardening, soak, design

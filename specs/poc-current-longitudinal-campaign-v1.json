@@ -3,7 +3,7 @@
   "workItem": "AF-014C",
   "cohort": {
     "path": "benchmarks/results/current-longitudinal-cohorts-v1.json",
-    "sha256": "6688c594694d66083d8781eb8902e14319cf7f19e63faeef45fa2ff0c88ee9e5"
+    "sha256": "8ca7a1b7b9ea2c71eb95f050eff0fdb76c23425141cd0c4f8f104f33782503ee"
   },
   "arms": {
     "control": "OPTIMIZED_NATIVE_GRADLE",
@@ -33,6 +33,22 @@
     "selectionMatchingCostRecorded": true,
     "nativeRetentionPhaseRecorded": true,
     "discoveredGraphReductionRecorded": true,
+    "dependencyPreparation": {
+      "mode": "ANCHOR_AND_EACH_ATTEMPT_UNMEASURED",
+      "includedInPairWall": false,
+      "copiedSurfaces": [
+        "GRADLE_DEPENDENCY_MODULES",
+        "GRADLE_DEPENDENCY_VERIFICATION",
+        "GRADLE_WRAPPER_DISTRIBUTIONS"
+      ],
+      "forbiddenSurfaces": [
+        "TASK_OUTPUTS",
+        "NATIVE_BUILD_CACHE",
+        "PROJECT_STATE",
+        "DAEMON_STATE",
+        "BUILDOPT_STATE"
+      ]
+    },
     "fingerprints": [
       "CHECKOUT",
       "GRADLE_HOME",

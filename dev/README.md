@@ -4901,9 +4901,11 @@ drift and premature-timing vectors, with:
 
 Run the five frozen public histories sequentially from a clean, source-bound
 revision. The runner builds and installs one Linux AMD64 package, prepares each
-repository's dependencies before timing, alternates isolated optimized-native
-and installed BuildOpt arms, preserves chronological candidate state and
-removes successful reproducible working data:
+repository's dependencies at the anchor and every attempted revision before
+timing, copies only dependency modules, verification keyrings and Wrapper
+distributions to both arms, alternates isolated optimized-native and installed
+BuildOpt arms, preserves chronological candidate state and removes successful
+reproducible working data:
 
 ```bash
 ./dev/run-current-longitudinal-campaign /absolute/path/campaign

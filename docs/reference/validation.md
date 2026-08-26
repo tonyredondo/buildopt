@@ -523,6 +523,9 @@ The `AF-014C` checker recomputes signed and cumulative net value from raw
 control/candidate pairs, binds every attempted revision to the frozen primary
 and reserve order, requires exact output bytes and verifies that candidate
 state `N` consumes exactly the state produced by accepted observation `N-1`.
+It also verifies that unmeasured dependency preparation is reported for the
+anchor and each attempted revision and is limited to modules, verification
+keyrings and Wrapper distributions shared symmetrically between the arms.
 It also rejects any attempt to relabel the installed whole-profile runtime as
 adaptive-fragment activation.
 

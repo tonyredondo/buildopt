@@ -52,7 +52,7 @@
       "remoteUrl": "https://github.com/apache/groovy.git",
       "branch": "GROOVY_5_0_X",
       "jdkToolchain": "temurin-jdk-21",
-      "workflow": ["json:assemble", "--offline", "--no-scan", "--no-daemon", "--max-workers=12"],
+      "workflow": [":groovy-json:assemble", "--offline", "--no-scan", "--no-daemon", "--max-workers=12"],
       "requiredOutputs": ["subprojects/groovy-json/build/classes/java/main/**", "subprojects/groovy-json/build/resources/main/**"]
     }
   ],

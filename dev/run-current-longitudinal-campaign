@@ -40,7 +40,7 @@ done
     exit 1
 }
 [[ $(sha256sum "${buildopt_cohort}" | awk '{print $1}') == \
-    6688c594694d66083d8781eb8902e14319cf7f19e63faeef45fa2ff0c88ee9e5 ]] || {
+    8ca7a1b7b9ea2c71eb95f050eff0fdb76c23425141cd0c4f8f104f33782503ee ]] || {
     printf 'AF-014C frozen cohort digest drifted\n' >&2
     exit 1
 }
@@ -167,6 +167,16 @@ buildopt_native_failure_reason() {
     fi
 }
 
+buildopt_sync_dependency_state() {
+    local buildopt_source_gradle=$1 buildopt_destination_gradle=$2 buildopt_relative
+    for buildopt_relative in caches/modules-2 caches/keyrings wrapper/dists; do
+        [[ -d ${buildopt_source_gradle}/${buildopt_relative} ]] || continue
+        mkdir -p -- "${buildopt_destination_gradle}/${buildopt_relative}"
+        cp -a --reflink=auto "${buildopt_source_gradle}/${buildopt_relative}/." \
+            "${buildopt_destination_gradle}/${buildopt_relative}/"
+    done
+}
+
 buildopt_subject() {
     local buildopt_index=$1
     local buildopt_policy buildopt_key buildopt_repository_id buildopt_remote buildopt_branch buildopt_jdk
@@ -201,14 +211,29 @@ buildopt_subject() {
     while IFS= read -r buildopt_argument; do
         [[ ${buildopt_argument} == --offline ]] || buildopt_seed_workflow+=("${buildopt_argument}")
     done < <(jq -r '.[]' <<<"${buildopt_workflow}")
-    local buildopt_seed_status=0
+    local buildopt_seed_status=0 buildopt_preparation_duration
+    local buildopt_preparation_attempts=1 buildopt_preparation_successes=0
+    local buildopt_preparation_failures=0 buildopt_preparation_wall_ns=0
+    buildopt_preparation_duration="${buildopt_logs}/dependency-preparation.duration"
     buildopt_run_env "${buildopt_repository_id}" "${buildopt_numeric_id}" \
         "${buildopt_subject_root}/source" "${buildopt_seed_home}" "${buildopt_seed_gradle}" \
         "${buildopt_seed_cache}" "${buildopt_seed_event}" "${buildopt_jdk}" \
-        ./gradlew --build-cache "${buildopt_seed_workflow[@]}" \
+        "${buildopt_temp}/check-bin/current-longitudinal-campaign" --time \
+        "${buildopt_preparation_duration}" -- \
+        ./gradlew --no-build-cache "${buildopt_seed_workflow[@]}" \
         >"${buildopt_logs}/dependency-preparation.log" 2>&1 || buildopt_seed_status=$?
+    [[ -s ${buildopt_preparation_duration} ]] || {
+        printf 'AF-014C %s: anchor preparation timer failed\n' "${buildopt_repository_id}" >&2
+        return 1
+    }
+    buildopt_preparation_wall_ns=$(<"${buildopt_preparation_duration}")
+    if ((buildopt_seed_status == 0)); then
+        buildopt_preparation_successes=1
+    else
+        buildopt_preparation_failures=1
+    fi
 
-    if ((buildopt_seed_status != 0)); then
+    if ((buildopt_seed_status != 0)) && [[ ! -d ${buildopt_seed_gradle}/wrapper/dists ]]; then
         : >"${buildopt_subject_root}/exclusions.jsonl"
         local buildopt_entry buildopt_seed_source buildopt_seed_key buildopt_seed_attempt=0
         for buildopt_seed_source in PRIMARY RESERVE; do
@@ -225,9 +250,17 @@ buildopt_subject() {
             done < <(jq -c ".repositories[${buildopt_index}].${buildopt_seed_key}[]" "${buildopt_cohort}")
         done
         jq -n --argjson policy "${buildopt_policy}" \
+            --argjson preparationAttempts "${buildopt_preparation_attempts}" \
+            --argjson preparationSuccesses "${buildopt_preparation_successes}" \
+            --argjson preparationFailures "${buildopt_preparation_failures}" \
+            --argjson preparationWall "${buildopt_preparation_wall_ns}" \
             --slurpfile exclusions "${buildopt_subject_root}/exclusions.jsonl" \
             '{key:$policy.key,repositoryId:$policy.repositoryId,workflow:$policy.workflow,
-              requiredOutputs:$policy.requiredOutputs,observations:[],exclusions:$exclusions}' \
+              requiredOutputs:$policy.requiredOutputs,
+              dependencyPreparation:{mode:"ANCHOR_AND_EACH_ATTEMPT_UNMEASURED",attempts:$preparationAttempts,
+                successes:$preparationSuccesses,failures:$preparationFailures,wallNs:$preparationWall,
+                copiedSurfaces:["GRADLE_DEPENDENCY_MODULES","GRADLE_DEPENDENCY_VERIFICATION","GRADLE_WRAPPER_DISTRIBUTIONS"],includedInPairWall:false},
+              observations:[],exclusions:$exclusions}' \
             >"${buildopt_subject_root}/subject.json"
         printf 'AF-014C %s: dependency preparation unavailable; cohort retained as insufficient\n' "${buildopt_repository_id}"
         return
@@ -237,7 +270,8 @@ buildopt_subject() {
         git -C "${buildopt_subject_root}/source" worktree add -q --detach \
             "${buildopt_subject_root}/${buildopt_arm}" "${buildopt_anchor}"
         mkdir -p -- "${buildopt_subject_root}/${buildopt_arm}-gradle"
-        cp -a --reflink=auto "${buildopt_seed_gradle}/." "${buildopt_subject_root}/${buildopt_arm}-gradle/"
+        buildopt_sync_dependency_state "${buildopt_seed_gradle}" \
+            "${buildopt_subject_root}/${buildopt_arm}-gradle"
     done
 
     local buildopt_control="${buildopt_subject_root}/control"
@@ -261,7 +295,33 @@ buildopt_subject() {
             buildopt_parent=$(jq -r '.parentRevision' <<<"${buildopt_entry}")
             buildopt_ordinal=$(jq -r '.ordinal' <<<"${buildopt_entry}")
             buildopt_shape=$(jq -r '.changeShape' <<<"${buildopt_entry}")
+            git -C "${buildopt_subject_root}/source" checkout -q --detach "${buildopt_revision_under_test}"
+            buildopt_event "${buildopt_seed_event}" "${buildopt_parent}"
+            local buildopt_revision_preparation_status=0
+            buildopt_preparation_duration="${buildopt_logs}/dependency-preparation-${buildopt_attempt}.duration"
+            buildopt_run_env "${buildopt_repository_id}" "${buildopt_numeric_id}" \
+                "${buildopt_subject_root}/source" "${buildopt_seed_home}" "${buildopt_seed_gradle}" \
+                "${buildopt_seed_cache}" "${buildopt_seed_event}" "${buildopt_jdk}" \
+                "${buildopt_temp}/check-bin/current-longitudinal-campaign" --time \
+                "${buildopt_preparation_duration}" -- \
+                ./gradlew --no-build-cache --rerun-tasks "${buildopt_seed_workflow[@]}" \
+                >"${buildopt_logs}/dependency-preparation-${buildopt_attempt}.log" 2>&1 || \
+                buildopt_revision_preparation_status=$?
+            [[ -s ${buildopt_preparation_duration} ]] || {
+                printf 'AF-014C %s: revision preparation timer failed at %.12s\n' \
+                    "${buildopt_repository_id}" "${buildopt_revision_under_test}" >&2
+                return 1
+            }
+            buildopt_preparation_attempts=$((buildopt_preparation_attempts + 1))
+            buildopt_preparation_wall_ns=$((buildopt_preparation_wall_ns + $(<"${buildopt_preparation_duration}")))
+            if ((buildopt_revision_preparation_status == 0)); then
+                buildopt_preparation_successes=$((buildopt_preparation_successes + 1))
+            else
+                buildopt_preparation_failures=$((buildopt_preparation_failures + 1))
+            fi
             for buildopt_arm in control candidate; do
+                buildopt_sync_dependency_state "${buildopt_seed_gradle}" \
+                    "${buildopt_subject_root}/${buildopt_arm}-gradle"
                 git -C "${buildopt_subject_root}/${buildopt_arm}" checkout -q --detach "${buildopt_revision_under_test}"
                 buildopt_event "${buildopt_subject_root}/${buildopt_arm}-event.json" "${buildopt_parent}"
             done
@@ -292,42 +352,52 @@ buildopt_subject() {
                 local buildopt_event_path="${buildopt_subject_root}/${buildopt_arm}-event.json"
                 local buildopt_log="${buildopt_logs}/${buildopt_sequence}-${buildopt_arm}.log"
                 local buildopt_machine="${buildopt_logs}/${buildopt_sequence}-${buildopt_arm}.json"
-                local buildopt_started buildopt_finished buildopt_status=0
-                buildopt_started=$(date +%s%N)
+                local buildopt_duration="${buildopt_logs}/${buildopt_sequence}-${buildopt_arm}.duration"
+                local buildopt_status=0
                 if [[ ${buildopt_arm} == control ]]; then
                     buildopt_run_env "${buildopt_repository_id}" "${buildopt_numeric_id}" \
                         "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle}" \
                         "${buildopt_cache}" "${buildopt_event_path}" "${buildopt_jdk}" \
+                        "${buildopt_temp}/check-bin/current-longitudinal-campaign" --time \
+                        "${buildopt_duration}" -- \
                         ./gradlew --build-cache "${buildopt_workflow_args[@]}" \
                         >"${buildopt_log}" 2>&1 || buildopt_status=$?
                 else
                     buildopt_run_env "${buildopt_repository_id}" "${buildopt_numeric_id}" \
                         "${buildopt_repository}" "${buildopt_home}" "${buildopt_gradle}" \
                         "${buildopt_cache}" "${buildopt_event_path}" "${buildopt_jdk}" \
+                        "${buildopt_temp}/check-bin/current-longitudinal-campaign" --time \
+                        "${buildopt_duration}" -- \
                         "${buildopt_binary}" optimize --json --state-dir "${buildopt_state_rel}" \
                         --calibration-budget 30m --calibration-pairs 8 --max-break-even-builds 30 -- \
                         "${buildopt_workflow_args[@]}" \
                         >"${buildopt_machine}" 2>"${buildopt_log}" || buildopt_status=$?
                 fi
-                buildopt_finished=$(date +%s%N)
+                [[ -s ${buildopt_duration} ]] || {
+                    printf 'AF-014C %s: pair timer failed at %.12s (%s)\n' \
+                        "${buildopt_repository_id}" "${buildopt_revision_under_test}" "${buildopt_arm}" >&2
+                    return 1
+                }
                 if [[ ${buildopt_arm} == control ]]; then
-                    buildopt_control_ns=$((buildopt_finished - buildopt_started)); buildopt_control_status=${buildopt_status}
+                    buildopt_control_ns=$(<"${buildopt_duration}"); buildopt_control_status=${buildopt_status}
                     if ((buildopt_status != 0)) && [[ ${buildopt_order} == CONTROL_FIRST ]]; then
                         break
                     fi
                 else
-                    buildopt_candidate_ns=$((buildopt_finished - buildopt_started)); buildopt_candidate_status=${buildopt_status}
+                    buildopt_candidate_ns=$(<"${buildopt_duration}"); buildopt_candidate_status=${buildopt_status}
                 fi
             done
 
             if ((buildopt_control_status != 0)); then
-                local buildopt_failure_reason
+                local buildopt_failure_reason buildopt_failure_detail=CONTROL_ARM_FAILED_AFTER_PREPARATION_SUCCESS
                 buildopt_failure_reason=$(buildopt_native_failure_reason "${buildopt_logs}/${buildopt_sequence}-control.log")
+                ((buildopt_revision_preparation_status == 0)) || \
+                    buildopt_failure_detail=CONTROL_ARM_FAILED_AFTER_PREPARATION_FAILURE
                 jq -cn --arg source "${buildopt_queue_source}" --argjson entry "${buildopt_entry}" \
-                    --arg reason "${buildopt_failure_reason}" \
+                    --arg reason "${buildopt_failure_reason}" --arg detail "${buildopt_failure_detail}" \
                     --argjson attempt "${buildopt_attempt}" \
                     '{cohortAttempt:$attempt,source:$source,frozenOrdinal:$entry.ordinal,revision:$entry.revision,
-                      reason:$reason,detail:"CONTROL_ARM_FAILED"}' >>"${buildopt_exclusions}"
+                      reason:$reason,detail:$detail}' >>"${buildopt_exclusions}"
                 rm -rf -- "${buildopt_candidate}/.buildopt"
                 if [[ -n $(find "${buildopt_state_backup}" -mindepth 1 -print -quit) ]]; then
                     mkdir -p -- "${buildopt_candidate}/.buildopt"
@@ -465,9 +535,17 @@ buildopt_subject() {
     done
 
     jq -n --argjson policy "${buildopt_policy}" \
+        --argjson preparationAttempts "${buildopt_preparation_attempts}" \
+        --argjson preparationSuccesses "${buildopt_preparation_successes}" \
+        --argjson preparationFailures "${buildopt_preparation_failures}" \
+        --argjson preparationWall "${buildopt_preparation_wall_ns}" \
         --slurpfile observations "${buildopt_observations}" --slurpfile exclusions "${buildopt_exclusions}" \
         '{key:$policy.key,repositoryId:$policy.repositoryId,workflow:$policy.workflow,
-          requiredOutputs:$policy.requiredOutputs,observations:$observations,exclusions:$exclusions}' \
+          requiredOutputs:$policy.requiredOutputs,
+          dependencyPreparation:{mode:"ANCHOR_AND_EACH_ATTEMPT_UNMEASURED",attempts:$preparationAttempts,
+            successes:$preparationSuccesses,failures:$preparationFailures,wallNs:$preparationWall,
+            copiedSurfaces:["GRADLE_DEPENDENCY_MODULES","GRADLE_DEPENDENCY_VERIFICATION","GRADLE_WRAPPER_DISTRIBUTIONS"],includedInPairWall:false},
+          observations:$observations,exclusions:$exclusions}' \
         >"${buildopt_subject_root}/subject.json"
     printf 'AF-014C %s complete: %d comparable, %d excluded\n' "${buildopt_repository_id}" \
         "${buildopt_accepted}" "$(wc -l <"${buildopt_exclusions}" | tr -d ' ')"
