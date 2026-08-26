@@ -52,13 +52,35 @@ function Invoke-GradleDirect {
     exit $LASTEXITCODE
 }
 
+function ConvertTo-NativeArgument([string]$Argument) {
+    if ($Argument.Length -gt 0 -and $Argument -cnotmatch '[\s"]') { return $Argument }
+    $Quoted = [Text.StringBuilder]::new()
+    [void]$Quoted.Append('"')
+    $Backslashes = 0
+    foreach ($Character in $Argument.ToCharArray()) {
+        if ($Character -ceq '\') {
+            $Backslashes++
+        } elseif ($Character -ceq '"') {
+            [void]$Quoted.Append(('\' * (($Backslashes * 2) + 1)))
+            [void]$Quoted.Append('"')
+            $Backslashes = 0
+        } else {
+            if ($Backslashes -gt 0) { [void]$Quoted.Append(('\' * $Backslashes)) }
+            [void]$Quoted.Append($Character)
+            $Backslashes = 0
+        }
+    }
+    if ($Backslashes -gt 0) { [void]$Quoted.Append(('\' * ($Backslashes * 2))) }
+    [void]$Quoted.Append('"')
+    return $Quoted.ToString()
+}
+
 function Invoke-NativePassthrough([string]$FilePath, [string[]]$Arguments) {
     $StartInfo = [Diagnostics.ProcessStartInfo]::new()
     $StartInfo.FileName = $FilePath
     $StartInfo.UseShellExecute = $false
-    foreach ($Argument in $Arguments) {
-        [void]$StartInfo.ArgumentList.Add($Argument)
-    }
+    $EscapedArguments = @($Arguments | ForEach-Object { ConvertTo-NativeArgument $_ })
+    $StartInfo.Arguments = [string]::Join(' ', $EscapedArguments)
     $Process = [Diagnostics.Process]::Start($StartInfo)
     if ($null -eq $Process) { Stop-Wrapper 126 'verified BuildOpt binary could not start' }
     try {

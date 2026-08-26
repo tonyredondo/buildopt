@@ -244,17 +244,17 @@ jobs:
           $DirectExit = $LASTEXITCODE
           'input line' | & "$WrapperRoot\buildoptw.bat" @ProbeArgs 1>"$env:RUNNER_TEMP\wrapped.out" 2>"$env:RUNNER_TEMP\wrapped.err"
           $WrappedExit = $LASTEXITCODE
-          if ($DirectExit -ne 37 -or $WrappedExit -ne 37) { throw "ordinary exit parity failed: direct=$DirectExit wrapper=$WrappedExit" }
           $DirectOutHash = (Get-FileHash "$env:RUNNER_TEMP\direct.out").Hash
           $WrappedOutHash = (Get-FileHash "$env:RUNNER_TEMP\wrapped.out").Hash
           $DirectErrHash = (Get-FileHash "$env:RUNNER_TEMP\direct.err").Hash
           $WrappedErrHash = (Get-FileHash "$env:RUNNER_TEMP\wrapped.err").Hash
-          if ($DirectOutHash -ne $WrappedOutHash -or $DirectErrHash -ne $WrappedErrHash) {
+          if ($DirectExit -ne 37 -or $WrappedExit -ne 37 -or
+              $DirectOutHash -ne $WrappedOutHash -or $DirectErrHash -ne $WrappedErrHash) {
             $DirectOutBase64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes("$env:RUNNER_TEMP\direct.out"))
             $WrappedOutBase64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes("$env:RUNNER_TEMP\wrapped.out"))
             $DirectErrBase64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes("$env:RUNNER_TEMP\direct.err"))
             $WrappedErrBase64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes("$env:RUNNER_TEMP\wrapped.err"))
-            throw "ordinary stream or argument parity failed: out=$DirectOutHash/$WrappedOutHash err=$DirectErrHash/$WrappedErrHash out64=$DirectOutBase64/$WrappedOutBase64 err64=$DirectErrBase64/$WrappedErrBase64"
+            throw "ordinary parity failed: exit=$DirectExit/$WrappedExit out=$DirectOutHash/$WrappedOutHash err=$DirectErrHash/$WrappedErrHash out64=$DirectOutBase64/$WrappedOutBase64 err64=$DirectErrBase64/$WrappedErrBase64"
           }
           $env:BUILDOPT_PLUGIN_TOKEN = 'must-not-reach-gradle'
           'input line' | & "$WrapperRoot\buildoptw.bat" @ProbeArgs 1>"$env:RUNNER_TEMP\scrubbed.out" 2>"$env:RUNNER_TEMP\scrubbed.err"
