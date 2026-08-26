@@ -222,8 +222,14 @@ request and concurrent first use downloads once. Synthetic negatives,
 race/vet, ShellCheck, PowerShell parsing and real public `v0.6.1` Linux and
 Windows-body online/offline smokes pass. The public smoke exposed and corrected
 the original zero-redirect assumption for GitHub release assets without
-weakening checksum authority. Gradle execution remains intentionally disabled
-until `SWL-004`; there is still no new performance claim.
+weakening checksum authority. `SWL-004` completes the neutral customer command:
+ordinary arguments run the repository Gradle Wrapper through the existing
+process launcher, difficult arguments/cwd/streams/environment and child exit
+codes remain equivalent, signals reach descendants, exact bypass occurs before
+configuration/bootstrap and bootstrap failure falls back to direct Gradle.
+Native macOS/Windows entrypoints exercise the same route. Cache/state,
+observation, learning and optimization remain disabled, so there is still no
+new performance claim.
 
 No generic whole-profile implementation block followed automatically from that
 failed gate. The separately preregistered

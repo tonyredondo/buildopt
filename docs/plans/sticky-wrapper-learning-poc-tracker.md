@@ -3,8 +3,8 @@
 ## Status
 
 **Overall:** `IN_PROGRESS`<br>
-**Progress:** `4/17` blocks complete<br>
-**Current block:** `SWL-004` — Gradle passthrough and bypass<br>
+**Progress:** `5/17` blocks complete<br>
+**Current block:** `SWL-005` — Portable connection and project identity<br>
 **Predecessor:** the adaptive-fragment experiment closed as
 `STOP_ADAPTIVE_FRAGMENT_POC` with zero activations and zero attributable
 saving. Its evidence remains immutable context, not authority for this POC.
@@ -239,8 +239,8 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | 1 | `SWL-001` Repository wrapper contract | Exact committed files, properties/config grammar, CLI, bootstrap and authority boundaries | `DONE` | SWL-000 |
 | 2 | `SWL-002` Wrapper generator | `buildopt wrapper init` creates, updates and verifies deterministic portable files | `DONE` | SWL-001 |
 | 3 | `SWL-003` Verified bootstrap | Cross-platform download/cache/install with SHA-256, offline reuse and negative fixtures | `DONE` | SWL-002 |
-| 4 | `SWL-004` Gradle passthrough and bypass | Wrapper discovers the repository Gradle Wrapper and preserves complete process behavior | `TODO` | SWL-003 |
-| 5 | `SWL-005` Portable connection and project identity | Non-secret committed endpoint/scope plus private credential discovery | `WAITING` | SWL-004 |
+| 4 | `SWL-004` Gradle passthrough and bypass | Wrapper discovers the repository Gradle Wrapper and preserves complete process behavior | `DONE` | SWL-003 |
+| 5 | `SWL-005` Portable connection and project identity | Non-secret committed endpoint/scope plus private credential discovery | `TODO` | SWL-004 |
 | 6 | `SWL-006` Gradle HTTP cache integration | Existing verifying gateway and central cache operate automatically through the wrapper | `WAITING` | SWL-005 |
 | 7 | `SWL-007` Decision contract and store | Typed state machine, signed decisions, generation CAS, expiry, revocation and plane separation | `WAITING` | SWL-005 |
 | 8 | `SWL-008` Native no-op fast path | Exact local snapshot makes native retention independent of a blocking remote lookup | `WAITING` | SWL-007 |
@@ -341,9 +341,10 @@ Windows wrapper entrypoints are wired into platform CI. The initial public
 GitHub asset smoke exposed that release assets may return an HTTPS redirect;
 the frozen policy was corrected from zero redirects to at most five
 HTTPS-only redirects while the pinned archive SHA-256 remains authoritative.
-Only `--buildopt version` is executable in this block. Ordinary Gradle
-arguments stop with code 70 until SWL-004, so no passthrough, build-time or
-production claim is made.
+This block authorizes only `--buildopt version` and bootstrap behavior. The
+current templates also contain the later SWL-004 passthrough, whose independent
+evidence supplies process authority; SWL-003 itself makes no passthrough,
+build-time or production claim.
 
 ### SWL-004 — Gradle passthrough and bypass
 
@@ -355,6 +356,18 @@ state, cache gateway, plugin and observation before any of them start.
 Acceptance: direct Gradle and wrapper executions match arguments, cwd,
 standard streams, environment boundary, descendants and ordinary/signal exit
 codes across the supported native CI matrix.
+
+Closure: ordinary arguments now invoke only the sibling `gradlew`/`gradlew.bat`
+through the existing `buildopt run --` process launcher. The POSIX executable
+fixture preserves empty/space/glob/variable/quote/Unicode/newline arguments,
+cwd, stdin/stdout/stderr, ordinary environment and exit 37; removes private
+BuildOpt environment; proves `--gradle --buildopt` routing, unknown management,
+pre-bootstrap bypass with missing configuration, bootstrap-failure fallback,
+missing/non-executable wrapper exits 127/126 and `SIGTERM` delivery to a child plus descendant with
+Gradle-owned exit 42. Native platform CI exercises the real macOS and Windows
+wrapper entrypoints; macOS also routes its cancellation tree through
+`buildoptw`, while the existing Windows Job Object gate retains descendant
+cleanup. No cache, observation, learning or optimization is activated.
 
 ### SWL-005 — Portable connection and project identity
 
@@ -527,7 +540,7 @@ customer behavior, architecture, value evidence or direction changes.
 | `SWL-E002` | SWL-001 | [Repository wrapper protocol](../../specs/poc-sticky-wrapper-contract-v1.md), exact [machine contract](../../specs/poc-sticky-wrapper-contract-v1.json), portable [fixtures](../../fixtures/sticky-wrapper-contract/README.md) and executable [`check-sticky-wrapper-contract`](../../dev/check-sticky-wrapper-contract): four paths, strict properties/config grammars, POSIX/Windows agreement, 13 negative cases, argument routing, bypass and downgrade semantics | `DONE` |
 | `SWL-E003` | SWL-002 | [Generator contract](../../specs/poc-sticky-wrapper-generator-v1.md), `internal/stickywrapper`, executable [`check-sticky-wrapper-generator`](../../dev/check-sticky-wrapper-generator), deterministic/read-only/drift/update/downgrade/concurrency/rollback tests, portable compilation and real public-metadata smoke | `DONE` |
 | `SWL-E004` | SWL-003 | [Bootstrap contract](../../specs/poc-sticky-wrapper-bootstrap-v1.md), embedded POSIX/Windows templates and executable [`check-sticky-wrapper-bootstrap`](../../dev/check-sticky-wrapper-bootstrap): checksum-pinned download, safe extraction, internal manifest, atomic concurrent publication, verified offline reuse, public package smokes and native platform CI gates | `DONE` |
-| `SWL-E005` | SWL-004 | Gradle passthrough, signals, bypass and exit parity | `WAITING` |
+| `SWL-E005` | SWL-004 | [Neutral passthrough contract](../../specs/poc-sticky-wrapper-passthrough-v1.md), machine-readable [boundary](../../specs/poc-sticky-wrapper-passthrough-v1.json), executable [`check-sticky-wrapper-passthrough`](../../dev/check-sticky-wrapper-passthrough) and native platform gates: difficult argv/cwd/streams/environment, ordinary and signal exits, descendants, pre-bootstrap bypass and fail-open Gradle fallback | `DONE` |
 | `SWL-E006` | SWL-005 | Portable scope and credential-bound connection proof | `WAITING` |
 | `SWL-E007` | SWL-006 | Central Gradle HTTP cache producer/consumer/outage proof | `WAITING` |
 | `SWL-E008` | SWL-007 | Decision lifecycle, signed storage and cross-plane negatives | `WAITING` |
@@ -560,6 +573,7 @@ customer behavior, architecture, value evidence or direction changes.
 
 | Date | Change |
 | --- | --- |
+| 2026-08-26 | Closed SWL-004. Ordinary wrapper calls now execute the repository Gradle Wrapper through the verified `buildopt run --` launcher with exact argv/cwd/streams/environment/exit behavior; `--gradle` escapes management, exact bypass runs before configuration/bootstrap, ordinary bootstrap failures warn and run direct Gradle, and management fails closed. Linux difficult-argument and signal-tree fixtures plus native macOS/Windows entrypoint gates pass without activating any optimization; opened SWL-005. |
 | 2026-08-26 | Closed SWL-003. Implemented checksum-pinned POSIX/Windows bootstrap for four native packages, safe extraction and internal manifest verification, atomic concurrent user-cache publication and verified zero-network reuse. Synthetic negatives, race/vet, ShellCheck, PowerShell parsing and public `v0.6.1` Linux/Windows-body smokes pass. A real GitHub release-asset redirect corrected the frozen policy to at most five HTTPS-only redirects without weakening the archive checksum authority; opened SWL-004. |
 | 2026-08-26 | Closed SWL-002. Implemented deterministic `wrapper init`, offline/read-only `check` and distribution-only `update`; bound real immutable GitHub release digests without archive download, preserved owner files, rejected drift/downgrade/concurrency and proved full rollback. Linux race/vet, Windows/macOS compilation and public `v0.6.1` metadata smoke pass; opened SWL-003. |
 | 2026-08-26 | Closed SWL-001. Frozen four portable file formats, strict ordered properties and flat-TOML configuration, four platform distributions, HTTPS/checksum/timeouts/proxy/redirect rules, unambiguous `--buildopt`/`--gradle` routing, pre-bootstrap bypass, update/downgrade semantics and fixed error behavior. Both parser shapes accept the canonical fixture and reject all 13 negative cases; opened SWL-002. |

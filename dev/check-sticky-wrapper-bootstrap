@@ -27,8 +27,8 @@ jq -e '
     .schemaVersion == "buildopt.poc/sticky-wrapper-bootstrap/v1" and
     .workItem == "SWL-003" and
     .inputContract.sha256 == "38614c543483e59d7b039595b4dfb120bdb493b6650f92ae433bbe47e5b909df" and
-    .templates.posix.sha256 == "22846bbb63f24f0a422b1b1024ee74af22f7977faccb4676f617ee71e89e4334" and
-    .templates.windows.sha256 == "231e6c93870d635a1f392df58d0d5313a9fca8dc1deee979dea423f37f563b58" and
+    .templates.posix.sha256 == "1a1f2abbce71568ed791da1d1622d5a8c8e72296d36bd2f5f44ca498b84ac325" and
+    .templates.windows.sha256 == "494d1689c9dfb7c7b89e6f899baa9c8a3f8677f7f1fe9b46b9e17ef9d3ed5eb1" and
     .download.redirectPolicy == "HTTPS_ONLY_MAX_5" and
     .download.archiveSha256RequiredBeforeExtraction != false and
     .archive.traversalRejected and .archive.linksRejected and
@@ -38,7 +38,8 @@ jq -e '
     .validation.goTestFunctions == 16 and
     .outcome == "VERIFIED_BOOTSTRAP_ACCEPTED" and
     .boundaries.bootstrapImplemented and
-    (.boundaries.gradlePassthroughImplemented | not) and
+    .boundaries.gradlePassthroughImplemented and
+    .boundaries.bypassImplemented and
     (.boundaries.performanceClaim | not) and
     (.boundaries.productionAuthorized | not) and
     (.boundaries.testOptimizationOwned | not)

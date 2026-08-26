@@ -47,9 +47,9 @@ result.
 
 ### Sticky-wrapper entrypoint under construction
 
-The active successor POC is adding a thin repository-committed entrypoint above
-the implemented launcher. Deterministic generation and verified native-package
-bootstrap now exist; Gradle process passthrough remains the next block:
+The active successor POC adds a thin repository-committed entrypoint above the
+implemented launcher. Deterministic generation, verified native-package
+bootstrap and neutral Gradle process passthrough now exist:
 
 ```text
 committed buildoptw / buildoptw.bat
@@ -68,15 +68,15 @@ decision keeps `NATIVE_NOOP` out of a blocking server lookup; expired,
 incompatible or absent state uses native Gradle. The existing Gradle-cache data
 plane and typed state control plane remain separate. This boundary is frozen in
 the [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
-and is implemented through deterministic generation plus verified package
-bootstrap; it is not yet an end-to-end customer build path because process
-passthrough belongs to SWL-004.
+and is implemented through deterministic generation, verified package
+bootstrap and exact Gradle passthrough. Cache/state connection and learning
+remain later POC blocks, so this is not yet an acceleration claim.
 
 ## Components
 
 | Component | Runtime artifact | Responsibility |
 |---|---|---|
-| Repository BuildOpt Wrapper (bootstrap implemented) | `buildoptw`, `buildoptw.bat` | Verifies and bootstraps a pinned BuildOpt distribution; SWL-004 adds exact Gradle process passthrough to complete the committed local/CI command |
+| Repository BuildOpt Wrapper | `buildoptw`, `buildoptw.bat` | Verifies and bootstraps a pinned BuildOpt distribution, then preserves the repository Gradle Wrapper process contract; bypass runs Gradle before configuration or bootstrap |
 | CI Launcher | `buildopt` | Preserves argv, environment boundaries, streams, process tree, signals, and child exit status |
 | Local Verifying Cache Gateway | inside `buildopt` | Gives Gradle an invocation-local endpoint, verifies policy and objects, and hides upstream credentials |
 | Gradle plugin | `jvm/gradle-plugin` JAR | Performs the authenticated handshake, configures managed cache inputs, and emits bounded task/build events through public Gradle APIs |

@@ -55,9 +55,20 @@ publication, verified offline reuse and negative matrix with:
 ./dev/check-sticky-wrapper-bootstrap
 ```
 
-This is the `SWL-003` implementation gate. Native macOS and Windows wrapper
-entrypoints are also exercised by Platform CI. It enables only wrapper-owned
-`--buildopt version`; Gradle passthrough belongs to `SWL-004`.
+This is the `SWL-003` bootstrap gate. Native macOS and Windows wrapper
+entrypoints are also exercised by Platform CI. The current templates compose
+this bootstrap with the separately validated `SWL-004` passthrough.
+
+Validate exact Gradle argument/cwd/stream/environment behavior, ordinary exit
+codes, explicit `--gradle` routing, pre-bootstrap bypass, bootstrap fallback,
+missing-wrapper failure and signal propagation to a descendant tree with:
+
+```bash
+./dev/check-sticky-wrapper-passthrough
+```
+
+This is the `SWL-004` implementation gate. It proves a neutral customer
+command and activates no cache, observation, learning or optimization.
 
 ## Toolchain lock
 

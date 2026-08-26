@@ -44,7 +44,10 @@ The [generator contract](../../specs/poc-sticky-wrapper-generator-v1.md)
 defines deterministic creation, read-only drift detection and release-only
 updates. The [bootstrap contract](../../specs/poc-sticky-wrapper-bootstrap-v1.md)
 defines checksum verification, safe extraction, atomic user-cache publication
-and offline reuse. Gradle passthrough remains disabled until `SWL-004` closes.
+and offline reuse. The
+[passthrough contract](../../specs/poc-sticky-wrapper-passthrough-v1.md)
+defines the now-active neutral Gradle route and pre-bootstrap bypass. Neither
+contract activates cache/state integration or optimization.
 
 BuildOpt configuration is grouped by trust boundary. Supply a complete group
 or omit it; partial configuration normally disables that optional capability

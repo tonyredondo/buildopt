@@ -8,13 +8,13 @@
   "templates": {
     "posix": {
       "path": "internal/stickywrapper/templates/buildoptw",
-      "sha256": "22846bbb63f24f0a422b1b1024ee74af22f7977faccb4676f617ee71e89e4334",
-      "bytes": 11628
+      "sha256": "1a1f2abbce71568ed791da1d1622d5a8c8e72296d36bd2f5f44ca498b84ac325",
+      "bytes": 15067
     },
     "windows": {
       "path": "internal/stickywrapper/templates/buildoptw.bat",
-      "sha256": "231e6c93870d635a1f392df58d0d5313a9fca8dc1deee979dea423f37f563b58",
-      "bytes": 13581
+      "sha256": "494d1689c9dfb7c7b89e6f899baa9c8a3f8677f7f1fe9b46b9e17ef9d3ed5eb1",
+      "bytes": 16665
     }
   },
   "platforms": {
@@ -70,16 +70,17 @@
     "nativeMacosWorkflowGate": true,
     "nativeWindowsWorkflowGate": true
   },
-  "interimRuntime": {
+  "runtime": {
     "implementedManagementCommand": "--buildopt version [--json]",
-    "gradlePassthroughImplemented": false,
-    "normalInvocationExitUntilSWL004": 70
+    "gradlePassthroughImplemented": true,
+    "bypassImplemented": true,
+    "passthroughContract": "specs/poc-sticky-wrapper-passthrough-v1.json"
   },
   "outcome": "VERIFIED_BOOTSTRAP_ACCEPTED",
   "boundaries": {
     "bootstrapImplemented": true,
-    "gradlePassthroughImplemented": false,
-    "bypassImplemented": false,
+    "gradlePassthroughImplemented": true,
+    "bypassImplemented": true,
     "centralCacheConnected": false,
     "centralStateConnected": false,
     "performanceClaim": false,

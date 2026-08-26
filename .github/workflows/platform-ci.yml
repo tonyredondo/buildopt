@@ -51,6 +51,48 @@ jobs:
           sed -i '' 's#https://github.com/tonyredondo/buildopt/releases/download/#https://offline.invalid/releases/download/#' "$wrapper_root/.buildopt/wrapper.properties"
           second=$("$wrapper_root/buildoptw" --buildopt version --json)
           test "$first" = "$second"
+          cat >"$wrapper_root/gradlew" <<'EOF'
+          #!/bin/sh
+          printf 'cwd=<%s>\n' "$PWD"
+          printf 'value=<%s>\n' "${BUILDOPT_NATIVE_PASSTHROUGH:-}"
+          printf 'bypass=<%s>\n' "${BUILDOPT_BYPASS:-}"
+          index=0
+          for argument do printf 'arg[%s]=<%s>\n' "$index" "$argument"; index=$((index + 1)); done
+          cat
+          printf 'fixture stderr\n' >&2
+          exit "${BUILDOPT_NATIVE_EXIT:-0}"
+          EOF
+          chmod 0755 "$wrapper_root/gradlew"
+          export BUILDOPT_NATIVE_PASSTHROUGH=native-value BUILDOPT_NATIVE_EXIT=37
+          # The literal text verifies that neither wrapper performs shell expansion.
+          # shellcheck disable=SC2016
+          arguments=('' 'two words' '*' '$HOME' 'snowman-☃')
+          set +e
+          (cd "$wrapper_root" && printf 'input line\n' | ./gradlew "${arguments[@]}") >"$RUNNER_TEMP/direct.out" 2>"$RUNNER_TEMP/direct.err"
+          direct_exit=$?
+          (cd "$wrapper_root" && printf 'input line\n' | ./buildoptw "${arguments[@]}") >"$RUNNER_TEMP/wrapped.out" 2>"$RUNNER_TEMP/wrapped.err"
+          wrapped_exit=$?
+          set -e
+          test "$direct_exit" -eq 37 && test "$wrapped_exit" -eq 37
+          cmp "$RUNNER_TEMP/direct.out" "$RUNNER_TEMP/wrapped.out"
+          cmp "$RUNNER_TEMP/direct.err" "$RUNNER_TEMP/wrapped.err"
+          mv "$wrapper_root/.buildopt/wrapper.properties" "$wrapper_root/.buildopt/wrapper.properties.saved"
+          BUILDOPT_BYPASS=1 bash -c 'cd "$1" && printf "input line\n" | ./buildoptw "${@:2}"' _ "$wrapper_root" "${arguments[@]}" >"$RUNNER_TEMP/bypass.out" 2>"$RUNNER_TEMP/bypass.err" || bypass_exit=$?
+          test "${bypass_exit:-0}" -eq 37
+          cmp "$RUNNER_TEMP/direct.out" "$RUNNER_TEMP/bypass.out"
+          cmp "$RUNNER_TEMP/direct.err" "$RUNNER_TEMP/bypass.err"
+          mv "$wrapper_root/.buildopt/wrapper.properties.saved" "$wrapper_root/.buildopt/wrapper.properties"
+          cp "$PWD/fixtures/platform/cancel-tree.sh" "$wrapper_root/gradlew"
+          chmod 0755 "$wrapper_root/gradlew"
+          export BUILDOPT_CANCEL_PID_FILE="$RUNNER_TEMP/wrapper-cancel-child.pid"
+          "$wrapper_root/buildoptw" &
+          wrapper_pid=$!
+          for _ in {1..100}; do test -s "$BUILDOPT_CANCEL_PID_FILE" && break; sleep 0.1; done
+          test -s "$BUILDOPT_CANCEL_PID_FILE"
+          wrapper_child_pid=$(cat "$BUILDOPT_CANCEL_PID_FILE")
+          kill -TERM "$wrapper_pid"
+          wait "$wrapper_pid" || true
+          if kill -0 "$wrapper_child_pid" 2>/dev/null; then exit 1; fi
       - name: Build, package, install, upgrade, and launch
         shell: bash
         run: |
@@ -168,6 +210,56 @@ jobs:
           [IO.File]::WriteAllText("$WrapperRoot\.buildopt\wrapper.properties", $Properties, [Text.UTF8Encoding]::new($false))
           $Second = (& "$WrapperRoot\buildoptw.bat" --buildopt version --json | ConvertFrom-Json)
           if ($LASTEXITCODE -ne 0 -or $Second.distributionVersion -ne '0.6.1' -or $Second.bootstrap -ne 'VERIFIED') { throw 'offline wrapper reuse failed' }
+          $ProbeSource = @'
+          package main
+          import (
+            "encoding/json"
+            "io"
+            "os"
+            "strconv"
+          )
+          func main() {
+            input, _ := io.ReadAll(os.Stdin)
+            cwd, _ := os.Getwd()
+            result := map[string]any{
+              "args": os.Args[1:], "cwd": cwd, "stdin": string(input),
+              "value": os.Getenv("BUILDOPT_NATIVE_PASSTHROUGH"),
+              "bypass": os.Getenv("BUILDOPT_BYPASS"),
+              "internal": os.Getenv("BUILDOPT_PLUGIN_TOKEN"),
+            }
+            _ = json.NewEncoder(os.Stdout).Encode(result)
+            _, _ = os.Stderr.WriteString("fixture stderr\n")
+            code, _ := strconv.Atoi(os.Getenv("BUILDOPT_NATIVE_EXIT"))
+            os.Exit(code)
+          }
+          '@
+          [IO.File]::WriteAllText("$WrapperRoot\probe.go", $ProbeSource, [Text.UTF8Encoding]::new($false))
+          & go build -o "$WrapperRoot\gradle-probe.exe" "$WrapperRoot\probe.go"
+          if ($LASTEXITCODE -ne 0) { throw 'Gradle probe build failed' }
+          [IO.File]::WriteAllText("$WrapperRoot\gradlew.bat", "@echo off`r`n`"%~dp0gradle-probe.exe`" %*`r`n", [Text.UTF8Encoding]::new($false))
+          $env:BUILDOPT_NATIVE_PASSTHROUGH = 'native-value'
+          $env:BUILDOPT_NATIVE_EXIT = '37'
+          $ProbeArgs = @('', 'two words', '*', '$HOME', 'snowman-☃')
+          'input line' | & "$WrapperRoot\gradlew.bat" @ProbeArgs 1>"$env:RUNNER_TEMP\direct.out" 2>"$env:RUNNER_TEMP\direct.err"
+          $DirectExit = $LASTEXITCODE
+          'input line' | & "$WrapperRoot\buildoptw.bat" @ProbeArgs 1>"$env:RUNNER_TEMP\wrapped.out" 2>"$env:RUNNER_TEMP\wrapped.err"
+          $WrappedExit = $LASTEXITCODE
+          if ($DirectExit -ne 37 -or $WrappedExit -ne 37) { throw "ordinary exit parity failed: direct=$DirectExit wrapper=$WrappedExit" }
+          if ((Get-FileHash "$env:RUNNER_TEMP\direct.out").Hash -ne (Get-FileHash "$env:RUNNER_TEMP\wrapped.out").Hash -or
+              (Get-FileHash "$env:RUNNER_TEMP\direct.err").Hash -ne (Get-FileHash "$env:RUNNER_TEMP\wrapped.err").Hash) { throw 'ordinary stream or argument parity failed' }
+          $env:BUILDOPT_PLUGIN_TOKEN = 'must-not-reach-gradle'
+          'input line' | & "$WrapperRoot\buildoptw.bat" @ProbeArgs 1>"$env:RUNNER_TEMP\scrubbed.out" 2>"$env:RUNNER_TEMP\scrubbed.err"
+          if ((Get-Content -Raw "$env:RUNNER_TEMP\scrubbed.out") -notmatch '"internal":""') { throw 'private BuildOpt environment reached Gradle' }
+          Remove-Item Env:BUILDOPT_PLUGIN_TOKEN
+          Move-Item "$WrapperRoot\.buildopt\wrapper.properties" "$WrapperRoot\.buildopt\wrapper.properties.saved"
+          $env:BUILDOPT_BYPASS = '1'
+          'input line' | & "$WrapperRoot\buildoptw.bat" @ProbeArgs 1>"$env:RUNNER_TEMP\bypass.out" 2>"$env:RUNNER_TEMP\bypass.err"
+          $BypassExit = $LASTEXITCODE
+          Remove-Item Env:BUILDOPT_BYPASS
+          if ($BypassExit -ne 37 -or
+              (Get-FileHash "$env:RUNNER_TEMP\direct.out").Hash -ne (Get-FileHash "$env:RUNNER_TEMP\bypass.out").Hash -or
+              (Get-FileHash "$env:RUNNER_TEMP\direct.err").Hash -ne (Get-FileHash "$env:RUNNER_TEMP\bypass.err").Hash) { throw 'pre-bootstrap bypass parity failed' }
+          Move-Item "$WrapperRoot\.buildopt\wrapper.properties.saved" "$WrapperRoot\.buildopt\wrapper.properties"
       - name: Build, package, install, upgrade, and launch
         shell: pwsh
         run: |

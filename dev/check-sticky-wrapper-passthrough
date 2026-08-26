@@ -1,0 +1,271 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_template="${buildopt_repo_root}/internal/stickywrapper/templates/buildoptw"
+buildopt_contract="${buildopt_repo_root}/specs/poc-sticky-wrapper-passthrough-v1.json"
+buildopt_test_root=$(mktemp -d)
+trap 'rm -rf -- "${buildopt_test_root}"' EXIT
+
+for buildopt_command in cmp diff env grep jq mkdir mktemp sed setsid sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required sticky-wrapper passthrough command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.poc/sticky-wrapper-passthrough/v1" and
+    .workItem == "SWL-004" and
+    .routing.default == "GRADLE" and
+    .routing.gradleEscape == "--gradle" and
+    .routing.managementPrefix == "--buildopt" and
+    .passthrough.shellReparse == false and
+    .passthrough.ordinaryExitCodePreserved and
+    .passthrough.signalExitCodePreserved and
+    .passthrough.descendantsReceiveSignals and
+    .bypass.value == "1" and
+    .bypass.beforeCommittedConfiguration and
+    .bypass.beforeBootstrap and
+    .bypass.internalEnvironmentScrubbed and
+    .bootstrapFailure.normalInvocation == "WARN_AND_DIRECT_GRADLE" and
+    .bootstrapFailure.managementInvocation == "FAIL_CLOSED" and
+    .validation.posixScenarios == 11 and
+    .boundaries.gradlePassthroughImplemented and
+    .boundaries.bypassImplemented and
+    (.boundaries.optimizationActivated | not) and
+    (.boundaries.performanceClaim | not) and
+    (.boundaries.productionAuthorized | not) and
+    (.boundaries.testOptimizationOwned | not)
+' "${buildopt_contract}" >/dev/null
+
+buildopt_repository="${buildopt_test_root}/repository"
+buildopt_cache="${buildopt_test_root}/cache"
+buildopt_version=1.2.3
+buildopt_platform=linux-amd64
+buildopt_archive_sha=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+buildopt_install="${buildopt_cache}/buildopt/wrapper/distributions/${buildopt_version}/${buildopt_platform}/${buildopt_archive_sha}"
+mkdir -p -- "${buildopt_repository}/.buildopt" "${buildopt_install}/bin" "${buildopt_install}/lib"
+cp -- "${buildopt_template}" "${buildopt_repository}/buildoptw"
+chmod 0755 "${buildopt_repository}/buildoptw"
+
+"${buildopt_repo_root}/dev/run" --toolchain go -- go build \
+    -o "${buildopt_install}/bin/buildopt" ./cmd/buildopt
+for buildopt_binary in buildopt-impact buildopt-server buildopt-edge; do
+    printf '#!/bin/sh\nexit 0\n' >"${buildopt_install}/bin/${buildopt_binary}"
+    chmod 0755 "${buildopt_install}/bin/${buildopt_binary}"
+done
+printf 'plugin\n' >"${buildopt_install}/lib/buildopt-gradle-plugin-${buildopt_version}.jar"
+printf 'agent\n' >"${buildopt_install}/lib/buildopt-jvm-agent-${buildopt_version}.jar"
+printf 'init\n' >"${buildopt_install}/lib/buildopt.init.gradle"
+(
+    cd -- "${buildopt_install}"
+    sha256sum bin/* lib/* >SHA256SUMS
+)
+printf '%s\n%s\n%s\n%s\n' \
+    'buildopt.wrapper-install/v1' "${buildopt_version}" "${buildopt_platform}" \
+    "${buildopt_archive_sha}" >"${buildopt_install}/.buildopt-wrapper-install"
+
+cat >"${buildopt_repository}/.buildopt/wrapper.properties" <<EOF
+schemaVersion=buildopt.wrapper/v1
+distributionVersion=${buildopt_version}
+distributionUrl.linux-amd64=https://fixtures.example.invalid/v${buildopt_version}/buildopt-${buildopt_version}-linux-amd64.tar.gz
+distributionSha256.linux-amd64=${buildopt_archive_sha}
+distributionUrl.macos-amd64=https://fixtures.example.invalid/v${buildopt_version}/buildopt-${buildopt_version}-darwin-amd64.tar.gz
+distributionSha256.macos-amd64=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+distributionUrl.macos-arm64=https://fixtures.example.invalid/v${buildopt_version}/buildopt-${buildopt_version}-darwin-arm64.tar.gz
+distributionSha256.macos-arm64=cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+distributionUrl.windows-amd64=https://fixtures.example.invalid/v${buildopt_version}/buildopt-${buildopt_version}-windows-amd64.zip
+distributionSha256.windows-amd64=dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+network.connectTimeoutMs=5000
+network.readTimeoutMs=30000
+network.redirectPolicy=https-only-max-5
+network.proxyMode=environment
+EOF
+cp -- "${buildopt_repository}/.buildopt/wrapper.properties" \
+    "${buildopt_test_root}/valid-wrapper.properties"
+
+cat >"${buildopt_repository}/gradlew" <<'EOF'
+#!/bin/sh
+printf 'cwd=<%s>\n' "$PWD"
+printf 'passthrough=<%s>\n' "${BUILDOPT_TEST_PASSTHROUGH:-}"
+printf 'bypass=<%s>\n' "${BUILDOPT_BYPASS:-}"
+printf 'internal=<%s>\n' "${BUILDOPT_PLUGIN_TOKEN:-}"
+printf 'wrapper-cache=<%s>\n' "${BUILDOPT_WRAPPER_CACHE_HOME:-}"
+buildopt_index=0
+for buildopt_argument do
+    printf 'arg[%s]=<%s>\n' "${buildopt_index}" "${buildopt_argument}"
+    buildopt_index=$((buildopt_index + 1))
+done
+printf 'stdin=<'
+cat
+printf '>\n'
+printf 'fixture stderr\n' >&2
+exit "${BUILDOPT_TEST_EXIT:-0}"
+EOF
+chmod 0755 "${buildopt_repository}/gradlew"
+
+buildopt_run_capture() {
+    local buildopt_label=$1
+    shift
+    local buildopt_exit=0
+    set +e
+    (
+        cd -- "${buildopt_repository}"
+        printf 'input line\n' | "$@"
+    ) >"${buildopt_test_root}/${buildopt_label}.stdout" \
+        2>"${buildopt_test_root}/${buildopt_label}.stderr"
+    buildopt_exit=$?
+    set -e
+    printf '%s\n' "${buildopt_exit}" >"${buildopt_test_root}/${buildopt_label}.exit"
+}
+
+buildopt_arguments=('' 'two words' '*' "\$HOME" '"quoted"' 'snowman-☃' $'line\nbreak')
+export BUILDOPT_TEST_PASSTHROUGH='inherited-value'
+export BUILDOPT_WRAPPER_CACHE_HOME="${buildopt_cache}"
+export BUILDOPT_TEST_EXIT=37
+
+buildopt_run_capture direct env -u BUILDOPT_WRAPPER_CACHE_HOME \
+    "${buildopt_repository}/gradlew" "${buildopt_arguments[@]}"
+buildopt_run_capture wrapped "${buildopt_repository}/buildoptw" "${buildopt_arguments[@]}"
+cmp "${buildopt_test_root}/direct.stdout" "${buildopt_test_root}/wrapped.stdout"
+cmp "${buildopt_test_root}/direct.exit" "${buildopt_test_root}/wrapped.exit"
+grep -Fx 'fixture stderr' "${buildopt_test_root}/wrapped.stderr" >/dev/null
+[[ "$(cat "${buildopt_test_root}/wrapped.exit")" == 37 ]]
+grep -Fx 'internal=<>' "${buildopt_test_root}/wrapped.stdout" >/dev/null
+grep -Fx 'passthrough=<inherited-value>' "${buildopt_test_root}/wrapped.stdout" >/dev/null
+
+buildopt_run_capture escaped-direct env -u BUILDOPT_WRAPPER_CACHE_HOME \
+    "${buildopt_repository}/gradlew" --buildopt version
+buildopt_run_capture escaped-wrapper "${buildopt_repository}/buildoptw" --gradle --buildopt version
+if ! cmp "${buildopt_test_root}/escaped-direct.stdout" "${buildopt_test_root}/escaped-wrapper.stdout"; then
+    diff -u "${buildopt_test_root}/escaped-direct.stdout" \
+        "${buildopt_test_root}/escaped-wrapper.stdout" >&2
+    exit 1
+fi
+cmp "${buildopt_test_root}/escaped-direct.exit" "${buildopt_test_root}/escaped-wrapper.exit"
+
+export BUILDOPT_PLUGIN_TOKEN='must-not-reach-gradle'
+buildopt_run_capture scrubbed "${buildopt_repository}/buildoptw" "${buildopt_arguments[@]}"
+grep -Fx 'internal=<>' "${buildopt_test_root}/scrubbed.stdout" >/dev/null
+grep -Fx 'wrapper-cache=<>' "${buildopt_test_root}/scrubbed.stdout" >/dev/null
+
+set +e
+"${buildopt_repository}/buildoptw" --buildopt unknown \
+    >"${buildopt_test_root}/management.stdout" 2>"${buildopt_test_root}/management.stderr"
+buildopt_management_exit=$?
+set -e
+[[ "${buildopt_management_exit}" == 64 ]]
+grep -F 'unknown or invalid management command' "${buildopt_test_root}/management.stderr" >/dev/null
+
+mv -- "${buildopt_repository}/.buildopt/wrapper.properties" \
+    "${buildopt_repository}/.buildopt/wrapper.properties.saved"
+export BUILDOPT_BYPASS=1
+buildopt_run_capture bypass "${buildopt_repository}/buildoptw" "${buildopt_arguments[@]}"
+unset BUILDOPT_BYPASS
+cmp "${buildopt_test_root}/direct.stdout" "${buildopt_test_root}/bypass.stdout"
+cmp "${buildopt_test_root}/direct.exit" "${buildopt_test_root}/bypass.exit"
+grep -Fx 'bypass=<>' "${buildopt_test_root}/bypass.stdout" >/dev/null
+mv -- "${buildopt_repository}/.buildopt/wrapper.properties.saved" \
+    "${buildopt_repository}/.buildopt/wrapper.properties"
+
+printf 'invalid\n' >"${buildopt_repository}/.buildopt/wrapper.properties"
+set +e
+"${buildopt_repository}/buildoptw" --buildopt version \
+    >"${buildopt_test_root}/management-bootstrap.stdout" \
+    2>"${buildopt_test_root}/management-bootstrap.stderr"
+buildopt_management_bootstrap_exit=$?
+set -e
+[[ "${buildopt_management_bootstrap_exit}" == 65 ]]
+[[ ! -s "${buildopt_test_root}/management-bootstrap.stdout" ]]
+grep -F 'buildoptw:' "${buildopt_test_root}/management-bootstrap.stderr" >/dev/null
+if grep -Fq 'running Gradle directly' "${buildopt_test_root}/management-bootstrap.stderr"; then
+    printf 'management bootstrap failure fell back to Gradle\n' >&2
+    exit 1
+fi
+
+buildopt_run_capture fallback "${buildopt_repository}/buildoptw" "${buildopt_arguments[@]}"
+cmp "${buildopt_test_root}/direct.stdout" "${buildopt_test_root}/fallback.stdout"
+cmp "${buildopt_test_root}/direct.exit" "${buildopt_test_root}/fallback.exit"
+grep -F 'verified bootstrap unavailable; running Gradle directly' \
+    "${buildopt_test_root}/fallback.stderr" >/dev/null
+[[ "$(grep -Fc 'verified bootstrap unavailable; running Gradle directly' \
+    "${buildopt_test_root}/fallback.stderr")" == 1 ]]
+if grep -Fq 'wrapper properties' "${buildopt_test_root}/fallback.stderr"; then
+    printf 'ordinary fallback exposed an internal bootstrap diagnostic\n' >&2
+    exit 1
+fi
+
+rm -- "${buildopt_repository}/gradlew"
+set +e
+"${buildopt_repository}/buildoptw" help >/dev/null 2>"${buildopt_test_root}/missing.stderr"
+buildopt_missing_exit=$?
+set -e
+[[ "${buildopt_missing_exit}" == 127 ]]
+
+printf '#!/bin/sh\nexit 0\n' >"${buildopt_repository}/gradlew"
+chmod 0644 "${buildopt_repository}/gradlew"
+set +e
+"${buildopt_repository}/buildoptw" help >/dev/null 2>"${buildopt_test_root}/non-executable.stderr"
+buildopt_non_executable_exit=$?
+set -e
+[[ "${buildopt_non_executable_exit}" == 126 ]]
+
+cp -- "${buildopt_repo_root}/cmd/buildopt/testdata/signal-helper/main.go" \
+    "${buildopt_test_root}/signal-helper.go"
+"${buildopt_repo_root}/dev/run" --toolchain go -- go build \
+    -o "${buildopt_test_root}/signal-helper" "${buildopt_test_root}/signal-helper.go"
+cat >"${buildopt_repository}/gradlew" <<EOF
+#!/bin/sh
+exec '${buildopt_test_root}/signal-helper' "\$@"
+EOF
+chmod 0755 "${buildopt_repository}/gradlew"
+mv -- "${buildopt_test_root}/signal-helper.go" "${buildopt_test_root}/signal-helper.source"
+cp -- "${buildopt_test_root}/valid-wrapper.properties" \
+    "${buildopt_repository}/.buildopt/wrapper.properties"
+
+buildopt_signal_case() {
+    local buildopt_label=$1
+    shift
+    local buildopt_leader_ready="${buildopt_test_root}/${buildopt_label}-leader.json"
+    local buildopt_descendant_ready="${buildopt_test_root}/${buildopt_label}-descendant.json"
+    local buildopt_leader_signal="${buildopt_test_root}/${buildopt_label}-leader.signal"
+    local buildopt_descendant_signal="${buildopt_test_root}/${buildopt_label}-descendant.signal"
+    local buildopt_cleanup="${buildopt_test_root}/${buildopt_label}-cleanup"
+    BUILDOPT_TEST_LEADER_READY="${buildopt_leader_ready}" \
+    BUILDOPT_TEST_DESCENDANT_READY="${buildopt_descendant_ready}" \
+    BUILDOPT_TEST_LEADER_SIGNAL="${buildopt_leader_signal}" \
+    BUILDOPT_TEST_DESCENDANT_SIGNAL="${buildopt_descendant_signal}" \
+    BUILDOPT_TEST_CLEANUP_COMPLETE="${buildopt_cleanup}" \
+    BUILDOPT_TEST_LEADER_EXIT_CODE=42 \
+    BUILDOPT_TEST_CLEANUP_DELAY=0.01s \
+        "$@" tree >"${buildopt_test_root}/${buildopt_label}.log" 2>&1 &
+    local buildopt_pid=$!
+    for _ in {1..200}; do
+        [[ -s "${buildopt_leader_ready}" && -s "${buildopt_descendant_ready}" ]] && break
+        kill -0 "${buildopt_pid}" 2>/dev/null || break
+        sleep 0.01
+    done
+    [[ -s "${buildopt_leader_ready}" && -s "${buildopt_descendant_ready}" ]]
+    kill -TERM "${buildopt_pid}"
+    local buildopt_exit=0
+    set +e
+    wait "${buildopt_pid}"
+    buildopt_exit=$?
+    set -e
+    [[ "${buildopt_exit}" == 42 ]]
+    [[ "$(cat "${buildopt_leader_signal}")" == 15 ]]
+    [[ "$(cat "${buildopt_descendant_signal}")" == 15 ]]
+    [[ "$(cat "${buildopt_cleanup}")" == complete ]]
+}
+
+buildopt_signal_case wrapped-signal "${buildopt_repository}/buildoptw"
+
+printf 'sticky wrapper passthrough check passed (11 POSIX scenarios)\n'

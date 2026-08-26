@@ -4,12 +4,77 @@ set -eu
 buildopt_fail() {
     buildopt_fail_code=$1
     shift
-    printf 'buildoptw: %s\n' "$*" >&2
+    if [ "${buildopt_fallback_ready:-0}" -ne 1 ]; then
+        printf 'buildoptw: %s\n' "$*" >&2
+    fi
     exit "${buildopt_fail_code}"
 }
 
 buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd) ||
     buildopt_fail 70 'wrapper directory is unavailable'
+
+buildopt_force_gradle=0
+if [ "${1:-}" = '--gradle' ]; then
+    buildopt_force_gradle=1
+    shift
+fi
+buildopt_management=0
+if [ "${buildopt_force_gradle}" -eq 0 ] && [ "${1:-}" = '--buildopt' ]; then
+    buildopt_management=1
+fi
+
+buildopt_gradle_wrapper="${buildopt_script_dir}/gradlew"
+buildopt_require_gradle_wrapper() {
+    [ -e "${buildopt_gradle_wrapper}" ] ||
+        buildopt_fail 127 'repository Gradle Wrapper is missing'
+    [ -f "${buildopt_gradle_wrapper}" ] && [ -x "${buildopt_gradle_wrapper}" ] ||
+        buildopt_fail 126 'repository Gradle Wrapper is not executable'
+}
+buildopt_scrub_child_environment() {
+    unset BUILDOPT_BYPASS BUILDOPT_WRAPPER_CACHE_HOME \
+        BUILDOPT_PLUGIN_ATTEMPT_ID BUILDOPT_PLUGIN_SOCKET BUILDOPT_PLUGIN_TOKEN \
+        BUILDOPT_GATEWAY_URL BUILDOPT_GATEWAY_USERNAME BUILDOPT_GATEWAY_PASSWORD \
+        BUILDOPT_GATEWAY_GENERATION BUILDOPT_MANAGED_GATEWAY_STATE_ROOT \
+        BUILDOPT_MANAGED_RUNNER_SLOT BUILDOPT_MANAGED_GATEWAY_IDLE_TIMEOUT \
+        BUILDOPT_L1_STATE_ROOT BUILDOPT_L1_TENANT BUILDOPT_L1_REPOSITORY \
+        BUILDOPT_L1_TRUST_DOMAIN BUILDOPT_L1_COMPATIBILITY BUILDOPT_L1_GENERATION \
+        BUILDOPT_L1_L2_WRITER BUILDOPT_L1_DIRECTORY BUILDOPT_L1_MODE \
+        BUILDOPT_L1_OUTPUT_GENERATION BUILDOPT_L1_RETENTION_GENERATIONS \
+        BUILDOPT_LOCAL_AUTHORITY_PATH BUILDOPT_LOCAL_TRUST_ROOT_PATH \
+        BUILDOPT_LOCAL_CREDENTIAL_PATH BUILDOPT_SHARED_CACHE_TOKEN_PATH \
+        BUILDOPT_SHARED_CACHE_CA_PATH BUILDOPT_SHARED_CACHE_URL \
+        BUILDOPT_MANAGED_SHARED_MODE BUILDOPT_MANAGED_AUTHORITY_DIGEST \
+        BUILDOPT_MANAGED_POLICY_DIGEST BUILDOPT_MANAGED_CONFIGURATION_DIGEST \
+        BUILDOPT_MANAGED_AUTHORITY_CONTRACT BUILDOPT_GRADLE_BOOTSTRAP_CONFIG_PATH \
+        BUILDOPT_SERVER_URL BUILDOPT_SERVER_TOKEN BUILDOPT_SESSION_CONTEXT \
+        BUILDOPT_GRADLE_SAFE_CACHE BUILDOPT_GRADLE_STANDARD_JAR_CACHE \
+        BUILDOPT_POC_EDGE_CACHE_URL BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP \
+        BUILDOPT_CACHE_STANDARD_COPY_TASKS
+}
+
+if [ "${BUILDOPT_BYPASS:-}" = 1 ]; then
+    buildopt_require_gradle_wrapper
+    buildopt_scrub_child_environment
+    exec "${buildopt_gradle_wrapper}" "$@"
+fi
+
+if [ "${buildopt_management}" -eq 0 ]; then
+    buildopt_require_gradle_wrapper
+    buildopt_fallback_ready=1
+    trap '
+        trap - EXIT HUP INT TERM
+        if command -v buildopt_cleanup >/dev/null 2>&1; then buildopt_cleanup; fi
+        exec 3<&- || true
+        printf "%s\n" "buildoptw: verified bootstrap unavailable; running Gradle directly" >&2
+        buildopt_scrub_child_environment
+        exec "${buildopt_gradle_wrapper}" "$@"
+        exit 126
+    ' EXIT
+    trap 'trap - EXIT HUP INT TERM; if command -v buildopt_cleanup >/dev/null 2>&1; then buildopt_cleanup; fi; exit 129' HUP
+    trap 'trap - EXIT HUP INT TERM; if command -v buildopt_cleanup >/dev/null 2>&1; then buildopt_cleanup; fi; exit 130' INT
+    trap 'trap - EXIT HUP INT TERM; if command -v buildopt_cleanup >/dev/null 2>&1; then buildopt_cleanup; fi; exit 143' TERM
+fi
+
 buildopt_properties="${buildopt_script_dir}/.buildopt/wrapper.properties"
 [ -f "${buildopt_properties}" ] && [ ! -L "${buildopt_properties}" ] ||
     buildopt_fail 65 'wrapper properties are missing or unsafe'
@@ -194,7 +259,9 @@ else
             rm -rf -- "${buildopt_work}" 2>/dev/null || true
             rmdir -- "${buildopt_lock}" 2>/dev/null || true
         }
-        trap buildopt_cleanup EXIT HUP INT TERM
+        if [ "${buildopt_management}" -eq 1 ]; then
+            trap buildopt_cleanup EXIT HUP INT TERM
+        fi
         if [ -e "${buildopt_install_root}" ]; then
             buildopt_verify_install "${buildopt_install_root}" || buildopt_fail 74 'cached distribution failed verification'
         else
@@ -229,11 +296,14 @@ else
             buildopt_verify_install "${buildopt_install_root}" || buildopt_fail 74 'published distribution failed verification'
         fi
         buildopt_cleanup
-        trap - EXIT HUP INT TERM
+        if [ "${buildopt_management}" -eq 1 ]; then
+            trap - EXIT HUP INT TERM
+        fi
     fi
 fi
 
-if [ "${1:-}" = '--buildopt' ] && [ "${2:-}" = version ] &&
+if [ "${buildopt_management}" -eq 1 ] &&
+    [ "${1:-}" = '--buildopt' ] && [ "${2:-}" = version ] &&
     { [ "$#" -eq 2 ] || { [ "$#" -eq 3 ] && [ "${3:-}" = '--json' ]; }; }; then
     if [ "$#" -eq 3 ]; then
         printf '{"schemaVersion":"buildopt.wrapper-status/v1","distributionVersion":"%s","bootstrap":"VERIFIED"}\n' "${buildopt_version}"
@@ -243,4 +313,10 @@ if [ "${1:-}" = '--buildopt' ] && [ "${2:-}" = version ] &&
     exit 0
 fi
 
-buildopt_fail 70 'verified bootstrap is ready; Gradle passthrough belongs to SWL-004'
+if [ "${buildopt_management}" -eq 1 ]; then
+    buildopt_fail 64 'unknown or invalid management command'
+fi
+
+trap - EXIT HUP INT TERM
+buildopt_scrub_child_environment
+exec "${buildopt_install_root}/bin/buildopt" run -- "${buildopt_gradle_wrapper}" "$@"

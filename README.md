@@ -125,8 +125,8 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > non-secret configuration deterministically with `buildopt wrapper init`.
 > The generated scripts now select, download, checksum, safely extract and
 > atomically cache the pinned native package, with verified zero-network warm
-> reuse. Gradle passthrough is the next block; once it closes, developers and CI will run
-> `./buildoptw <gradle args...>` without a global BuildOpt installation or a
+> reuse. Developers and CI can now run `./buildoptw <gradle args...>` without a
+> global BuildOpt installation or a
 > hand-authored profile. The wrapper will use the existing Gradle-compatible
 > HTTPS cache and a separate typed decision store to choose native no-op,
 > observation, shadow, bounded trial, exact active profile or reviewed durable

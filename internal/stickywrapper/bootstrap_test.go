@@ -23,7 +23,8 @@ func TestBootstrapTemplatesStayWithinPortableFileContract(t *testing.T) {
 		"distribution checksum mismatch",
 		"distribution archive contains a link or unsafe entry",
 		"cached distribution failed verification",
-		"Gradle passthrough belongs to SWL-004",
+		"verified bootstrap unavailable; running Gradle directly",
+		"run --",
 	} {
 		if !strings.Contains(string(posixWrapper), required) {
 			t.Fatalf("POSIX template is missing %q", required)
@@ -33,7 +34,8 @@ func TestBootstrapTemplatesStayWithinPortableFileContract(t *testing.T) {
 		"AllowAutoRedirect = $false",
 		"Security.Cryptography.SHA256",
 		"distribution archive contains an unsafe entry",
-		"Gradle passthrough belongs to SWL-004",
+		"verified bootstrap unavailable; running Gradle directly",
+		"run --",
 	} {
 		if !strings.Contains(string(windowsWrapper), required) {
 			t.Fatalf("Windows template is missing %q", required)

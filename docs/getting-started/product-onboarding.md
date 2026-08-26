@@ -83,9 +83,16 @@ bootstrap with:
 ./buildoptw --buildopt version --json
 ```
 
-Ordinary Gradle passthrough is intentionally not enabled until `SWL-004`, so
-the generated wrapper exits 70 rather than pretending to run a build. The installed
-`buildopt gradle` path below remains the usable evaluation path meanwhile. The
+The committed wrapper now runs ordinary Gradle commands neutrally:
+
+```bash
+./buildoptw build
+```
+
+It preserves Gradle arguments, cwd, streams, process cleanup and exit status.
+`BUILDOPT_BYPASS=1 ./buildoptw build` skips configuration and bootstrap and
+runs the repository Gradle Wrapper directly. This completes onboarding only;
+cache/state connection, learning and optimization remain later POC blocks. The
 complete sequence, scorecard and status are in the
 [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md).
 

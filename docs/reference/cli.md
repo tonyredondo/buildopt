@@ -43,9 +43,9 @@ The repeated customer command remains the next-block surface:
 ./buildoptw --buildopt explain [--json]
 ```
 
-Until `SWL-004`, ordinary Gradle arguments exit 70 after a successful
-bootstrap. This explicit stop prevents the bootstrap proof from being mistaken
-for process-behavior or performance evidence.
+Ordinary Gradle arguments now pass through the verified `buildopt run --`
+launcher. This proves process equivalence only; it does not activate or claim
+cache, observation, learning or optimization value.
 
 Every invocation without the first-argument `--buildopt` prefix goes to the
 existing repository Gradle Wrapper. Therefore `./buildoptw status` still runs a
@@ -60,6 +60,8 @@ Generator behavior and evidence are in the
 [generator contract](../../specs/poc-sticky-wrapper-generator-v1.md).
 Bootstrap behavior and evidence are in the
 [bootstrap contract](../../specs/poc-sticky-wrapper-bootstrap-v1.md).
+Process behavior, pre-bootstrap bypass and fail-open fallback are in the
+[passthrough contract](../../specs/poc-sticky-wrapper-passthrough-v1.md).
 
 ### Run a command
 

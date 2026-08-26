@@ -3,8 +3,9 @@
 Status: accepted POC implementation contract (`SWL-003`).
 
 This block turns the two generated wrapper scripts into a verified,
-user-scoped distribution bootstrap. It deliberately stops before Gradle
-passthrough, cache/state connection or optimization decisions.
+user-scoped distribution bootstrap. `SWL-004` now composes that bootstrap with
+the separate [neutral passthrough contract](./poc-sticky-wrapper-passthrough-v1.md);
+this document still owns only selection, download, verification and reuse.
 
 ## Selection and cache identity
 
@@ -47,16 +48,16 @@ for the complete directory and then verifies it. Failure removes the staging
 directory and lock. An existing invalid entry fails closed rather than being
 silently replaced from the network.
 
-For this interim block, the only successful wrapper operation after bootstrap
-is:
+The verified bootstrap still owns this management operation:
 
 ```text
 ./buildoptw --buildopt version [--json]
 ```
 
-Other invocations exit `70` with an explicit `SWL-004` boundary. Gradle
-passthrough and `BUILDOPT_BYPASS=1` equivalence are implemented next; this
-prevents `SWL-003` from claiming untested process behavior.
+Ordinary invocations now continue through the independently validated
+`SWL-004` Gradle passthrough. Bootstrap failure and
+`BUILDOPT_BYPASS=1` semantics belong to that later contract rather than being
+retroactively claimed as bootstrap evidence.
 
 ## Evidence
 

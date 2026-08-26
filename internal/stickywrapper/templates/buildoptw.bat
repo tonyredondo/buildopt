@@ -6,13 +6,79 @@ exit /b %ERRORLEVEL%
 # BUILDOPT_POWERSHELL
 $ErrorActionPreference = 'Stop'
 
+$WrapperArgs = @($args)
+if ($WrapperArgs.Count -gt 0 -and $WrapperArgs[0] -ceq '--') {
+    $WrapperArgs = @($WrapperArgs | Select-Object -Skip 1)
+}
+$ForceGradle = $false
+if ($WrapperArgs.Count -gt 0 -and $WrapperArgs[0] -ceq '--gradle') {
+    $ForceGradle = $true
+    $WrapperArgs = @($WrapperArgs | Select-Object -Skip 1)
+}
+$ManagementInvocation = -not $ForceGradle -and $WrapperArgs.Count -gt 0 -and $WrapperArgs[0] -ceq '--buildopt'
+$BootstrapFallbackEnabled = $false
+$GradleWrapper = $null
+
+function Clear-BuildOptChildEnvironment {
+    $Names = @(
+        'BUILDOPT_BYPASS', 'BUILDOPT_WRAPPER_CACHE_HOME',
+        'BUILDOPT_PLUGIN_ATTEMPT_ID', 'BUILDOPT_PLUGIN_SOCKET', 'BUILDOPT_PLUGIN_TOKEN',
+        'BUILDOPT_GATEWAY_URL', 'BUILDOPT_GATEWAY_USERNAME', 'BUILDOPT_GATEWAY_PASSWORD',
+        'BUILDOPT_GATEWAY_GENERATION', 'BUILDOPT_MANAGED_GATEWAY_STATE_ROOT',
+        'BUILDOPT_MANAGED_RUNNER_SLOT', 'BUILDOPT_MANAGED_GATEWAY_IDLE_TIMEOUT',
+        'BUILDOPT_L1_STATE_ROOT', 'BUILDOPT_L1_TENANT', 'BUILDOPT_L1_REPOSITORY',
+        'BUILDOPT_L1_TRUST_DOMAIN', 'BUILDOPT_L1_COMPATIBILITY', 'BUILDOPT_L1_GENERATION',
+        'BUILDOPT_L1_L2_WRITER', 'BUILDOPT_L1_DIRECTORY', 'BUILDOPT_L1_MODE',
+        'BUILDOPT_L1_OUTPUT_GENERATION', 'BUILDOPT_L1_RETENTION_GENERATIONS',
+        'BUILDOPT_LOCAL_AUTHORITY_PATH', 'BUILDOPT_LOCAL_TRUST_ROOT_PATH',
+        'BUILDOPT_LOCAL_CREDENTIAL_PATH', 'BUILDOPT_SHARED_CACHE_TOKEN_PATH',
+        'BUILDOPT_SHARED_CACHE_CA_PATH', 'BUILDOPT_SHARED_CACHE_URL',
+        'BUILDOPT_MANAGED_SHARED_MODE', 'BUILDOPT_MANAGED_AUTHORITY_DIGEST',
+        'BUILDOPT_MANAGED_POLICY_DIGEST', 'BUILDOPT_MANAGED_CONFIGURATION_DIGEST',
+        'BUILDOPT_MANAGED_AUTHORITY_CONTRACT', 'BUILDOPT_GRADLE_BOOTSTRAP_CONFIG_PATH',
+        'BUILDOPT_SERVER_URL', 'BUILDOPT_SERVER_TOKEN', 'BUILDOPT_SESSION_CONTEXT',
+        'BUILDOPT_GRADLE_SAFE_CACHE', 'BUILDOPT_GRADLE_STANDARD_JAR_CACHE',
+        'BUILDOPT_POC_EDGE_CACHE_URL', 'BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP',
+        'BUILDOPT_CACHE_STANDARD_COPY_TASKS'
+    )
+    foreach ($Name in $Names) {
+        [Environment]::SetEnvironmentVariable($Name, $null, 'Process')
+    }
+}
+
+function Invoke-GradleDirect {
+    Clear-BuildOptChildEnvironment
+    & $GradleWrapper @WrapperArgs
+    exit $LASTEXITCODE
+}
+
 function Stop-Wrapper([int]$Code, [string]$Message) {
+    if ($BootstrapFallbackEnabled) {
+        [Console]::Error.WriteLine('buildoptw: verified bootstrap unavailable; running Gradle directly')
+        Invoke-GradleDirect
+    }
     [Console]::Error.WriteLine("buildoptw: $Message")
     exit $Code
 }
 
 $WrapperPath = [IO.Path]::GetFullPath($env:BUILDOPT_WRAPPER_FILE)
 $RepositoryRoot = Split-Path -Parent $WrapperPath
+$GradleWrapper = Join-Path $RepositoryRoot 'gradlew.bat'
+if (-not $ManagementInvocation -or $env:BUILDOPT_BYPASS -ceq '1') {
+    if (-not (Test-Path -LiteralPath $GradleWrapper)) {
+        Stop-Wrapper 127 'repository Gradle Wrapper is missing'
+    }
+    if (-not (Test-Path -LiteralPath $GradleWrapper -PathType Leaf)) {
+        Stop-Wrapper 126 'repository Gradle Wrapper is not executable'
+    }
+}
+if ($env:BUILDOPT_BYPASS -ceq '1') {
+    Invoke-GradleDirect
+}
+if (-not $ManagementInvocation) {
+    $BootstrapFallbackEnabled = $true
+}
+
 $PropertiesPath = Join-Path $RepositoryRoot '.buildopt\wrapper.properties'
 if (-not (Test-Path -LiteralPath $PropertiesPath -PathType Leaf) -or
     ((Get-Item -LiteralPath $PropertiesPath -Force).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
@@ -228,9 +294,8 @@ if (Test-Path -LiteralPath $InstallRoot) {
     }
 }
 
-$WrapperArgs = @($args)
-if ($WrapperArgs.Count -gt 0 -and $WrapperArgs[0] -ceq '--') { $WrapperArgs = @($WrapperArgs | Select-Object -Skip 1) }
-if (($WrapperArgs.Count -eq 2 -or ($WrapperArgs.Count -eq 3 -and $WrapperArgs[2] -ceq '--json')) -and
+if ($ManagementInvocation -and
+    ($WrapperArgs.Count -eq 2 -or ($WrapperArgs.Count -eq 3 -and $WrapperArgs[2] -ceq '--json')) -and
     $WrapperArgs[0] -ceq '--buildopt' -and $WrapperArgs[1] -ceq 'version') {
     if ($WrapperArgs.Count -eq 3) {
         Write-Output "{`"schemaVersion`":`"buildopt.wrapper-status/v1`",`"distributionVersion`":`"$Version`",`"bootstrap`":`"VERIFIED`"}"
@@ -239,4 +304,12 @@ if (($WrapperArgs.Count -eq 2 -or ($WrapperArgs.Count -eq 3 -and $WrapperArgs[2]
     }
     exit 0
 }
-Stop-Wrapper 70 'verified bootstrap is ready; Gradle passthrough belongs to SWL-004'
+if ($ManagementInvocation) {
+    Stop-Wrapper 64 'unknown or invalid management command'
+}
+
+$BootstrapFallbackEnabled = $false
+Clear-BuildOptChildEnvironment
+$BuildOptBinary = Join-Path $InstallRoot 'bin\buildopt.exe'
+& $BuildOptBinary run -- $GradleWrapper @WrapperArgs
+exit $LASTEXITCODE

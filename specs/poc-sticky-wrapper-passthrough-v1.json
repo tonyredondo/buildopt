@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-passthrough/v1",
+  "workItem": "SWL-004",
+  "inputContract": "specs/poc-sticky-wrapper-contract-v1.json",
+  "routing": {
+    "default": "GRADLE",
+    "gradleEscape": "--gradle",
+    "managementPrefix": "--buildopt",
+    "repositoryGradleWrapper": {
+      "posix": "gradlew",
+      "windows": "gradlew.bat"
+    }
+  },
+  "passthrough": {
+    "launcherCommand": "buildopt run --",
+    "shellReparse": false,
+    "argumentsPreserved": true,
+    "workingDirectoryPreserved": true,
+    "standardStreamsPreserved": true,
+    "ordinaryEnvironmentPreserved": true,
+    "internalEnvironmentScrubbed": true,
+    "ordinaryExitCodePreserved": true,
+    "signalExitCodePreserved": true,
+    "descendantsReceiveSignals": true
+  },
+  "bypass": {
+    "environment": "BUILDOPT_BYPASS",
+    "value": "1",
+    "beforeCommittedConfiguration": true,
+    "beforeBootstrap": true,
+    "beforeProductRuntime": true,
+    "directGradle": true,
+    "internalEnvironmentScrubbed": true,
+    "childResultAuthoritative": true
+  },
+  "bootstrapFailure": {
+    "normalInvocation": "WARN_AND_DIRECT_GRADLE",
+    "managementInvocation": "FAIL_CLOSED",
+    "unverifiedBinaryExecuted": false,
+    "childResultAuthoritativeAfterFallback": true
+  },
+  "wrapperOwnedExitCodes": {
+    "usage": 64,
+    "missingGradleWrapper": 127,
+    "nonExecutableGradleWrapper": 126
+  },
+  "validation": {
+    "posixScenarios": 11,
+    "difficultArguments": [
+      "EMPTY",
+      "SPACES",
+      "GLOB",
+      "SHELL_VARIABLE_TEXT",
+      "QUOTES",
+      "UNICODE",
+      "NEWLINE"
+    ],
+    "nativeMacos": true,
+    "nativeWindows": true,
+    "signalTree": true,
+    "negativeBootstrap": true,
+    "preBootstrapBypass": true
+  },
+  "outcome": "NEUTRAL_GRADLE_PASSTHROUGH_ACCEPTED",
+  "boundaries": {
+    "gradlePassthroughImplemented": true,
+    "bypassImplemented": true,
+    "optimizationActivated": false,
+    "centralCacheConnected": false,
+    "centralStateConnected": false,
+    "learningActivated": false,
+    "performanceClaim": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationOwned": false
+  }
+}
