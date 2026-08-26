@@ -16,7 +16,7 @@ cd -- "${buildopt_repo_root}"
 if ! jq -e '
     .schemaVersion == "buildopt.poc/sticky-wrapper-generator/v1" and
     .workItem == "SWL-002" and
-    .inputContract.sha256 == "6a3f9a9f0e6c784a8078eddb6189268c699d242748d962365f56ed02c6038c0b" and
+    .inputContract.sha256 == "38614c543483e59d7b039595b4dfb120bdb493b6650f92ae433bbe47e5b909df" and
     .generation.targetCount == 4 and
     .generation.deterministic == true and
     .generation.checkOffline == true and

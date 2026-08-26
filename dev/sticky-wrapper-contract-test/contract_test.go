@@ -245,7 +245,7 @@ func parseProperties(data []byte, windows bool) (map[string]string, error) {
 	}
 	if values["network.connectTimeoutMs"] != "5000" ||
 		values["network.readTimeoutMs"] != "30000" ||
-		values["network.redirectPolicy"] != "reject" ||
+		values["network.redirectPolicy"] != "https-only-max-5" ||
 		values["network.proxyMode"] != "environment" {
 		return nil, reject("INVALID_VALUE", "network policy differs from v1")
 	}

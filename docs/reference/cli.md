@@ -28,16 +28,24 @@ scripts and owner configuration byte-identical. Repeating a version performs
 no write; a downgrade requires `--allow-downgrade`. All writes are staged and
 rolled back as one four-file transaction on failure.
 
-The generated scripts intentionally report that bootstrap is unavailable
-until `SWL-003` closes. Therefore the repeated customer command remains a
-future surface:
+The generated scripts now bootstrap and verify the pinned native distribution
+in a user cache. The implemented management command is:
+
+```text
+./buildoptw --buildopt version [--json]
+```
+
+The repeated customer command remains the next-block surface:
 
 ```text
 ./buildoptw <gradle args...>
 ./buildoptw --buildopt status [--json]
 ./buildoptw --buildopt explain [--json]
-./buildoptw --buildopt version [--json]
 ```
+
+Until `SWL-004`, ordinary Gradle arguments exit 70 after a successful
+bootstrap. This explicit stop prevents the bootstrap proof from being mistaken
+for process-behavior or performance evidence.
 
 Every invocation without the first-argument `--buildopt` prefix goes to the
 existing repository Gradle Wrapper. Therefore `./buildoptw status` still runs a
@@ -50,6 +58,8 @@ The exact routing, exit codes and fail-open behavior are in the
 [wrapper contract](../../specs/poc-sticky-wrapper-contract-v1.md).
 Generator behavior and evidence are in the
 [generator contract](../../specs/poc-sticky-wrapper-generator-v1.md).
+Bootstrap behavior and evidence are in the
+[bootstrap contract](../../specs/poc-sticky-wrapper-bootstrap-v1.md).
 
 ### Run a command
 

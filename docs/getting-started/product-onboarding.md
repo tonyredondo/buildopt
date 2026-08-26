@@ -73,9 +73,18 @@ git add buildoptw buildoptw.bat .buildopt/wrapper.properties .buildopt/config.to
 
 `init` pins the latest stable public release and its four GitHub SHA-256 asset
 digests; it does not download an archive. `check` is offline/read-only. Use
-`buildopt wrapper update --version X.Y.Z` for an explicit upgrade. Bootstrap
-and Gradle passthrough are not implemented yet, so these scripts intentionally
-stop before running a build until `SWL-003..004` close. The installed
+`buildopt wrapper update --version X.Y.Z` for an explicit upgrade. First use
+now downloads the selected native package into a user cache, verifies the
+pinned archive checksum and internal manifest, and publishes it atomically.
+Warm use re-verifies the cached package without a network request. Confirm the
+bootstrap with:
+
+```bash
+./buildoptw --buildopt version --json
+```
+
+Ordinary Gradle passthrough is intentionally not enabled until `SWL-004`, so
+the generated wrapper exits 70 rather than pretending to run a build. The installed
 `buildopt gradle` path below remains the usable evaluation path meanwhile. The
 complete sequence, scorecard and status are in the
 [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md).

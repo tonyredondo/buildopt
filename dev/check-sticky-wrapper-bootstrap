@@ -1,0 +1,311 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_template="${buildopt_repo_root}/internal/stickywrapper/templates/buildoptw"
+buildopt_windows_template="${buildopt_repo_root}/internal/stickywrapper/templates/buildoptw.bat"
+buildopt_contract="${buildopt_repo_root}/specs/poc-sticky-wrapper-bootstrap-v1.json"
+buildopt_test_root=$(mktemp -d)
+trap 'rm -rf -- "${buildopt_test_root}"' EXIT
+buildopt_version=1.2.3
+
+for buildopt_command in awk chmod cmp cp find gzip jq mkdir mktemp readlink sha256sum tar; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required sticky-wrapper bootstrap command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.poc/sticky-wrapper-bootstrap/v1" and
+    .workItem == "SWL-003" and
+    .inputContract.sha256 == "38614c543483e59d7b039595b4dfb120bdb493b6650f92ae433bbe47e5b909df" and
+    .templates.posix.sha256 == "22846bbb63f24f0a422b1b1024ee74af22f7977faccb4676f617ee71e89e4334" and
+    .templates.windows.sha256 == "df51f6aa1741d1b991cfc329e70db55fd4257458c3909cc727820a461ebc8ef5" and
+    .download.redirectPolicy == "HTTPS_ONLY_MAX_5" and
+    .download.archiveSha256RequiredBeforeExtraction != false and
+    .archive.traversalRejected and .archive.linksRejected and
+    .cache.atomicDirectoryPublication and .cache.verifiedOfflineReuse and
+    .cache.warmReuseNetworkRequests == 0 and
+    .validation.syntheticPosixScenarios == 13 and
+    .validation.goTestFunctions == 16 and
+    .outcome == "VERIFIED_BOOTSTRAP_ACCEPTED" and
+    .boundaries.bootstrapImplemented and
+    (.boundaries.gradlePassthroughImplemented | not) and
+    (.boundaries.performanceClaim | not) and
+    (.boundaries.productionAuthorized | not) and
+    (.boundaries.testOptimizationOwned | not)
+' "${buildopt_contract}" >/dev/null
+[[ "$(sha256sum "${buildopt_template}" | awk '{print $1}')" == \
+    "$(jq -r .templates.posix.sha256 "${buildopt_contract}")" ]]
+[[ "$(sha256sum "${buildopt_windows_template}" | awk '{print $1}')" == \
+    "$(jq -r .templates.windows.sha256 "${buildopt_contract}")" ]]
+[[ "$(wc -c <"${buildopt_template}")" == "$(jq -r .templates.posix.bytes "${buildopt_contract}")" ]]
+[[ "$(wc -c <"${buildopt_windows_template}")" == "$(jq -r .templates.windows.bytes "${buildopt_contract}")" ]]
+sh -n "${buildopt_template}"
+
+buildopt_make_package() {
+    local buildopt_label=$1
+    local buildopt_root_name=$2
+    local buildopt_package="${buildopt_test_root}/packages/${buildopt_label}"
+    local buildopt_root="${buildopt_package}/${buildopt_root_name}"
+    mkdir -p -- "${buildopt_root}/bin" "${buildopt_root}/lib"
+    for buildopt_binary in buildopt buildopt-impact buildopt-server buildopt-edge; do
+        # The fixture expands $0 only when the generated probe runs.
+        # shellcheck disable=SC2016
+        printf '#!/bin/sh\nprintf "fixture %%s\\n" "$0"\n' >"${buildopt_root}/bin/${buildopt_binary}"
+        chmod 0755 "${buildopt_root}/bin/${buildopt_binary}"
+    done
+    printf 'plugin\n' >"${buildopt_root}/lib/buildopt-gradle-plugin-${buildopt_version}.jar"
+    printf 'agent\n' >"${buildopt_root}/lib/buildopt-jvm-agent-${buildopt_version}.jar"
+    printf 'init\n' >"${buildopt_root}/lib/buildopt.init.gradle"
+    (
+        cd -- "${buildopt_root}"
+        sha256sum bin/* lib/* >SHA256SUMS
+    )
+    mkdir -p -- "${buildopt_test_root}/archives"
+    TZ=UTC tar --sort=name --format=ustar --mtime=@0 --owner=0 --group=0 \
+        --numeric-owner -C "${buildopt_package}" -czf \
+        "${buildopt_test_root}/archives/${buildopt_label}.tar.gz" "${buildopt_root_name}"
+}
+
+buildopt_make_package linux "buildopt-${buildopt_version}-linux-amd64"
+buildopt_make_package macos-amd64 "buildopt-${buildopt_version}-darwin-amd64"
+buildopt_make_package macos-arm64 "buildopt-${buildopt_version}-darwin-arm64"
+
+buildopt_linux_archive="${buildopt_test_root}/archives/linux.tar.gz"
+buildopt_macos_amd64_archive="${buildopt_test_root}/archives/macos-amd64.tar.gz"
+buildopt_macos_arm64_archive="${buildopt_test_root}/archives/macos-arm64.tar.gz"
+buildopt_linux_sha=$(sha256sum "${buildopt_linux_archive}" | awk '{print $1}')
+buildopt_macos_amd64_sha=$(sha256sum "${buildopt_macos_amd64_archive}" | awk '{print $1}')
+buildopt_macos_arm64_sha=$(sha256sum "${buildopt_macos_arm64_archive}" | awk '{print $1}')
+buildopt_windows_sha=dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+
+buildopt_write_properties() {
+    local buildopt_repository=$1
+    local buildopt_selected_linux_sha=${2:-"${buildopt_linux_sha}"}
+    mkdir -p -- "${buildopt_repository}/.buildopt"
+    cp -- "${buildopt_template}" "${buildopt_repository}/buildoptw"
+    chmod 0755 "${buildopt_repository}/buildoptw"
+    cat >"${buildopt_repository}/.buildopt/wrapper.properties" <<EOF
+schemaVersion=buildopt.wrapper/v1
+distributionVersion=${buildopt_version}
+distributionUrl.linux-amd64=https://fixtures.example.invalid/v${buildopt_version}/buildopt-${buildopt_version}-linux-amd64.tar.gz
+distributionSha256.linux-amd64=${buildopt_selected_linux_sha}
+distributionUrl.macos-amd64=https://fixtures.example.invalid/v${buildopt_version}/buildopt-${buildopt_version}-darwin-amd64.tar.gz
+distributionSha256.macos-amd64=${buildopt_macos_amd64_sha}
+distributionUrl.macos-arm64=https://fixtures.example.invalid/v${buildopt_version}/buildopt-${buildopt_version}-darwin-arm64.tar.gz
+distributionSha256.macos-arm64=${buildopt_macos_arm64_sha}
+distributionUrl.windows-amd64=https://fixtures.example.invalid/v${buildopt_version}/buildopt-${buildopt_version}-windows-amd64.zip
+distributionSha256.windows-amd64=${buildopt_windows_sha}
+network.connectTimeoutMs=5000
+network.readTimeoutMs=30000
+network.redirectPolicy=https-only-max-5
+network.proxyMode=environment
+EOF
+}
+
+buildopt_fake_bin="${buildopt_test_root}/fake-bin"
+mkdir -p -- "${buildopt_fake_bin}"
+cat >"${buildopt_fake_bin}/curl" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_output=
+buildopt_url=
+buildopt_location=0
+buildopt_max_redirs=
+buildopt_proto_redir=
+while (($#)); do
+    case "$1" in
+        --output) buildopt_output=$2; shift 2 ;;
+        --location) buildopt_location=1; shift ;;
+        --max-redirs) buildopt_max_redirs=$2; shift 2 ;;
+        --proto-redir) buildopt_proto_redir=$2; shift 2 ;;
+        --) buildopt_url=$2; shift 2 ;;
+        *) shift ;;
+    esac
+done
+[[ "${buildopt_location}" == 1 && "${buildopt_max_redirs}" == 5 && "${buildopt_proto_redir}" == '=https' ]] || exit 96
+printf '%s\n' "${buildopt_url}" >>"${BUILDOPT_TEST_CURL_LOG}"
+case "${BUILDOPT_TEST_CURL_MODE:-copy}" in
+    fail|redirect) exit 22 ;;
+    slow) sleep 0.5 ;;
+esac
+case "${buildopt_url}" in
+    *linux-amd64*) buildopt_source=${BUILDOPT_TEST_LINUX_ARCHIVE} ;;
+    *darwin-amd64*) buildopt_source=${BUILDOPT_TEST_MACOS_AMD64_ARCHIVE} ;;
+    *darwin-arm64*) buildopt_source=${BUILDOPT_TEST_MACOS_ARM64_ARCHIVE} ;;
+    *) exit 22 ;;
+esac
+cp -- "${buildopt_source}" "${buildopt_output}"
+EOF
+chmod 0755 "${buildopt_fake_bin}/curl"
+
+buildopt_real_uname=$(command -v uname)
+buildopt_set_uname() {
+    local buildopt_system=$1
+    local buildopt_machine=$2
+    cat >"${buildopt_fake_bin}/uname" <<EOF
+#!/bin/sh
+case "\${1:-}" in
+    -s) printf '%s\\n' '${buildopt_system}' ;;
+    -m) printf '%s\\n' '${buildopt_machine}' ;;
+    *) exec '${buildopt_real_uname}' "\$@" ;;
+esac
+EOF
+    chmod 0755 "${buildopt_fake_bin}/uname"
+}
+
+buildopt_curl_log="${buildopt_test_root}/curl.log"
+: >"${buildopt_curl_log}"
+buildopt_run() {
+    local buildopt_repository=$1
+    local buildopt_cache=$2
+    shift 2
+    BUILDOPT_TEST_CURL_LOG="${buildopt_curl_log}" \
+    BUILDOPT_TEST_LINUX_ARCHIVE="${buildopt_linux_archive}" \
+    BUILDOPT_TEST_MACOS_AMD64_ARCHIVE="${buildopt_macos_amd64_archive}" \
+    BUILDOPT_TEST_MACOS_ARM64_ARCHIVE="${buildopt_macos_arm64_archive}" \
+    BUILDOPT_WRAPPER_CACHE_HOME="${buildopt_cache}" \
+    PATH="${buildopt_fake_bin}:${PATH}" \
+        "${buildopt_repository}/buildoptw" "$@"
+}
+
+buildopt_expect_exit() {
+    local buildopt_label=$1
+    local buildopt_want=$2
+    shift 2
+    local buildopt_exit
+    set +e
+    "$@" >/dev/null 2>&1
+    buildopt_exit=$?
+    set -e
+    if ((buildopt_exit != buildopt_want)); then
+        printf '%s returned %s instead of %s\n' \
+            "${buildopt_label}" "${buildopt_exit}" "${buildopt_want}" >&2
+        exit 1
+    fi
+}
+
+buildopt_repository="${buildopt_test_root}/repository"
+buildopt_cache="${buildopt_test_root}/cache"
+buildopt_write_properties "${buildopt_repository}"
+buildopt_set_uname Linux x86_64
+buildopt_online=$(buildopt_run "${buildopt_repository}" "${buildopt_cache}" --buildopt version --json)
+jq -e --arg version "${buildopt_version}" '
+    .schemaVersion == "buildopt.wrapper-status/v1" and
+    .distributionVersion == $version and
+    .bootstrap == "VERIFIED"
+' <<<"${buildopt_online}" >/dev/null
+[[ "$(wc -l <"${buildopt_curl_log}")" == 1 ]]
+buildopt_install="${buildopt_cache}/buildopt/wrapper/distributions/${buildopt_version}/linux-amd64/${buildopt_linux_sha}"
+[[ -x "${buildopt_install}/bin/buildopt" ]]
+[[ "$(<"${buildopt_install}/.buildopt-wrapper-install")" == \
+    $'buildopt.wrapper-install/v1\n1.2.3\nlinux-amd64\n'"${buildopt_linux_sha}" ]]
+
+BUILDOPT_TEST_CURL_MODE=fail buildopt_run \
+    "${buildopt_repository}" "${buildopt_cache}" --buildopt version >/dev/null
+[[ "$(wc -l <"${buildopt_curl_log}")" == 1 ]]
+
+cp -- "${buildopt_install}/bin/buildopt" "${buildopt_install}/bin/buildopt.before-tamper"
+printf 'tampered\n' >>"${buildopt_install}/bin/buildopt"
+buildopt_expect_exit 'tampered warm cache' 74 \
+    buildopt_run "${buildopt_repository}" "${buildopt_cache}" --buildopt version
+mv -- "${buildopt_install}/bin/buildopt.before-tamper" "${buildopt_install}/bin/buildopt"
+
+for buildopt_platform_case in 'Darwin x86_64 macos-amd64' 'Darwin arm64 macos-arm64'; do
+    read -r buildopt_system buildopt_machine buildopt_platform <<<"${buildopt_platform_case}"
+    buildopt_set_uname "${buildopt_system}" "${buildopt_machine}"
+    buildopt_platform_cache="${buildopt_test_root}/cache-${buildopt_platform}"
+    buildopt_run "${buildopt_repository}" "${buildopt_platform_cache}" --buildopt version >/dev/null
+    find "${buildopt_platform_cache}/buildopt/wrapper/distributions/${buildopt_version}/${buildopt_platform}" \
+        -mindepth 1 -maxdepth 1 -type d | grep -q .
+done
+
+buildopt_bad_checksum_repo="${buildopt_test_root}/bad-checksum-repository"
+buildopt_write_properties "${buildopt_bad_checksum_repo}" \
+    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+buildopt_set_uname Linux x86_64
+buildopt_expect_exit 'archive checksum mismatch' 74 \
+    buildopt_run "${buildopt_bad_checksum_repo}" "${buildopt_test_root}/bad-checksum-cache" --buildopt version
+
+buildopt_bad_manifest_package="${buildopt_test_root}/bad-manifest-package"
+cp -R -- "${buildopt_test_root}/packages/linux/." "${buildopt_bad_manifest_package}"
+printf 'invalid manifest\n' >"${buildopt_bad_manifest_package}/buildopt-${buildopt_version}-linux-amd64/SHA256SUMS"
+tar -C "${buildopt_bad_manifest_package}" -czf "${buildopt_test_root}/archives/bad-manifest.tar.gz" \
+    "buildopt-${buildopt_version}-linux-amd64"
+buildopt_linux_archive="${buildopt_test_root}/archives/bad-manifest.tar.gz"
+buildopt_bad_manifest_sha=$(sha256sum "${buildopt_linux_archive}" | awk '{print $1}')
+buildopt_bad_manifest_repo="${buildopt_test_root}/bad-manifest-repository"
+buildopt_write_properties "${buildopt_bad_manifest_repo}" "${buildopt_bad_manifest_sha}"
+buildopt_expect_exit 'internal manifest mismatch' 74 \
+    buildopt_run "${buildopt_bad_manifest_repo}" "${buildopt_test_root}/bad-manifest-cache" --buildopt version
+
+buildopt_link_package="${buildopt_test_root}/link-package"
+cp -R -- "${buildopt_test_root}/packages/linux/." "${buildopt_link_package}"
+ln -s -- ../../outside "${buildopt_link_package}/buildopt-${buildopt_version}-linux-amd64/lib/unsafe-link"
+tar -C "${buildopt_link_package}" -czf "${buildopt_test_root}/archives/link.tar.gz" \
+    "buildopt-${buildopt_version}-linux-amd64"
+buildopt_linux_archive="${buildopt_test_root}/archives/link.tar.gz"
+buildopt_link_sha=$(sha256sum "${buildopt_linux_archive}" | awk '{print $1}')
+buildopt_link_repo="${buildopt_test_root}/link-repository"
+buildopt_write_properties "${buildopt_link_repo}" "${buildopt_link_sha}"
+buildopt_expect_exit 'archive link' 74 \
+    buildopt_run "${buildopt_link_repo}" "${buildopt_test_root}/link-cache" --buildopt version
+
+buildopt_traversal_package="${buildopt_test_root}/traversal-package"
+cp -R -- "${buildopt_test_root}/packages/linux/." "${buildopt_traversal_package}"
+tar -C "${buildopt_traversal_package}" \
+    --transform="s#buildopt-${buildopt_version}-linux-amd64/lib/buildopt.init.gradle#buildopt-${buildopt_version}-linux-amd64/../escape#" \
+    -czf "${buildopt_test_root}/archives/traversal.tar.gz" \
+    "buildopt-${buildopt_version}-linux-amd64"
+buildopt_linux_archive="${buildopt_test_root}/archives/traversal.tar.gz"
+buildopt_traversal_sha=$(sha256sum "${buildopt_linux_archive}" | awk '{print $1}')
+buildopt_traversal_repo="${buildopt_test_root}/traversal-repository"
+buildopt_write_properties "${buildopt_traversal_repo}" "${buildopt_traversal_sha}"
+buildopt_expect_exit 'archive traversal' 74 \
+    buildopt_run "${buildopt_traversal_repo}" "${buildopt_test_root}/traversal-cache" --buildopt version
+
+buildopt_linux_archive="${buildopt_test_root}/archives/linux.tar.gz"
+buildopt_redirect_repo="${buildopt_test_root}/redirect-repository"
+buildopt_write_properties "${buildopt_redirect_repo}"
+BUILDOPT_TEST_CURL_MODE=redirect buildopt_expect_exit 'redirect' 69 \
+    buildopt_run "${buildopt_redirect_repo}" "${buildopt_test_root}/redirect-cache" --buildopt version
+BUILDOPT_TEST_CURL_MODE=fail buildopt_expect_exit 'interrupted download' 69 \
+    buildopt_run "${buildopt_redirect_repo}" "${buildopt_test_root}/interrupted-cache" --buildopt version
+[[ -z "$(find "${buildopt_test_root}/interrupted-cache" -name '*.lock' -o -name '.buildopt-wrapper.*' 2>/dev/null)" ]]
+
+buildopt_set_uname FreeBSD amd64
+buildopt_expect_exit 'unsupported platform' 69 \
+    buildopt_run "${buildopt_repository}" "${buildopt_test_root}/unsupported-cache" --buildopt version
+
+buildopt_set_uname Linux x86_64
+buildopt_concurrent_cache="${buildopt_test_root}/concurrent-cache"
+buildopt_before_downloads=$(wc -l <"${buildopt_curl_log}")
+BUILDOPT_TEST_CURL_MODE=slow buildopt_run \
+    "${buildopt_repository}" "${buildopt_concurrent_cache}" --buildopt version >"${buildopt_test_root}/concurrent-1" &
+buildopt_first_pid=$!
+BUILDOPT_TEST_CURL_MODE=slow buildopt_run \
+    "${buildopt_repository}" "${buildopt_concurrent_cache}" --buildopt version >"${buildopt_test_root}/concurrent-2" &
+buildopt_second_pid=$!
+wait "${buildopt_first_pid}"
+wait "${buildopt_second_pid}"
+cmp -s "${buildopt_test_root}/concurrent-1" "${buildopt_test_root}/concurrent-2"
+buildopt_after_downloads=$(wc -l <"${buildopt_curl_log}")
+((buildopt_after_downloads - buildopt_before_downloads == 1))
+[[ -z "$(find "${buildopt_concurrent_cache}" -name '*.lock' -o -name '.buildopt-wrapper.*')" ]]
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 ./internal/stickywrapper
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/stickywrapper ./internal/launcher ./cmd/buildopt
+
+printf 'Sticky wrapper bootstrap: VERIFIED_BOOTSTRAP_ACCEPTED\n'

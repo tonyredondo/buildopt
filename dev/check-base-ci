@@ -210,6 +210,7 @@ case "${buildopt_lane}" in
 		"${buildopt_script_dir}/check-sticky-wrapper-learning-plan"
 		"${buildopt_script_dir}/check-sticky-wrapper-contract"
 		"${buildopt_script_dir}/check-sticky-wrapper-generator"
+		"${buildopt_script_dir}/check-sticky-wrapper-bootstrap"
         "${buildopt_script_dir}/check-central-storage-contract"
         "${buildopt_script_dir}/check-central-state-storage"
         "${buildopt_script_dir}/check-central-https-auth"

@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-bootstrap/v1",
+  "workItem": "SWL-003",
+  "inputContract": {
+    "path": "specs/poc-sticky-wrapper-contract-v1.json",
+    "sha256": "38614c543483e59d7b039595b4dfb120bdb493b6650f92ae433bbe47e5b909df"
+  },
+  "templates": {
+    "posix": {
+      "path": "internal/stickywrapper/templates/buildoptw",
+      "sha256": "22846bbb63f24f0a422b1b1024ee74af22f7977faccb4676f617ee71e89e4334",
+      "bytes": 11628
+    },
+    "windows": {
+      "path": "internal/stickywrapper/templates/buildoptw.bat",
+      "sha256": "df51f6aa1741d1b991cfc329e70db55fd4257458c3909cc727820a461ebc8ef5",
+      "bytes": 13773
+    }
+  },
+  "platforms": {
+    "linux-amd64": "TAR_GZ",
+    "macos-amd64": "TAR_GZ",
+    "macos-arm64": "TAR_GZ",
+    "windows-amd64": "ZIP"
+  },
+  "download": {
+    "scheme": "HTTPS",
+    "connectTimeoutMs": 5000,
+    "requestTimeoutMs": 30000,
+    "redirectPolicy": "HTTPS_ONLY_MAX_5",
+    "proxySource": "PROCESS_ENVIRONMENT",
+    "archiveSha256RequiredBeforeExtraction": true
+  },
+  "archive": {
+    "singlePinnedRootRequired": true,
+    "absolutePathRejected": true,
+    "traversalRejected": true,
+    "duplicatePathRejected": true,
+    "linksRejected": true,
+    "internalSha256ManifestRequired": true,
+    "requiredBinary": "bin/buildopt",
+    "unverifiedBinaryExecuted": false
+  },
+  "cache": {
+    "key": [
+      "distributionVersion",
+      "platform",
+      "archiveSha256"
+    ],
+    "userScoped": true,
+    "repositoryPathCommitted": false,
+    "credentialCommitted": false,
+    "stagedOnTargetFilesystem": true,
+    "atomicDirectoryPublication": true,
+    "exclusiveBootstrapLock": true,
+    "verifiedOfflineReuse": true,
+    "warmReuseNetworkRequests": 0,
+    "invalidExistingEntryRedownloaded": false
+  },
+  "validation": {
+    "syntheticPosixScenarios": 13,
+    "goTestFunctions": 16,
+    "raceDetector": true,
+    "goVet": true,
+    "shellcheck": true,
+    "powershellSyntax": true,
+    "publicRelease": "0.6.1",
+    "publicLinuxOnlineAndOffline": true,
+    "publicWindowsBodyOnlineAndOffline": true,
+    "nativeMacosWorkflowGate": true,
+    "nativeWindowsWorkflowGate": true
+  },
+  "interimRuntime": {
+    "implementedManagementCommand": "--buildopt version [--json]",
+    "gradlePassthroughImplemented": false,
+    "normalInvocationExitUntilSWL004": 70
+  },
+  "outcome": "VERIFIED_BOOTSTRAP_ACCEPTED",
+  "boundaries": {
+    "bootstrapImplemented": true,
+    "gradlePassthroughImplemented": false,
+    "bypassImplemented": false,
+    "centralCacheConnected": false,
+    "centralStateConnected": false,
+    "performanceClaim": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationOwned": false
+  }
+}

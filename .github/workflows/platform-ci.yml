@@ -36,6 +36,21 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/go-tmp"
           TMPDIR="$RUNNER_TEMP/go-tmp" go test -count=1 ./internal/filelock ./internal/datalifecycle ./internal/buildsession ./internal/localauthority ./internal/sharedcache ./internal/edgecache ./internal/launcher ./cmd/buildopt-server ./cmd/buildopt-edge
+      - name: Verify sticky wrapper bootstrap
+        shell: bash
+        run: |
+          set -euo pipefail
+          wrapper_root="$RUNNER_TEMP/sticky-wrapper"
+          mkdir -p "$wrapper_root/.buildopt"
+          cp internal/stickywrapper/templates/buildoptw "$wrapper_root/buildoptw"
+          cp fixtures/sticky-wrapper-contract/valid/.buildopt/wrapper.properties "$wrapper_root/.buildopt/wrapper.properties"
+          chmod 0755 "$wrapper_root/buildoptw"
+          export BUILDOPT_WRAPPER_CACHE_HOME="$RUNNER_TEMP/sticky-wrapper-cache"
+          first=$("$wrapper_root/buildoptw" --buildopt version --json)
+          jq -e '.distributionVersion == "0.6.1" and .bootstrap == "VERIFIED"' <<<"$first" >/dev/null
+          sed -i '' 's#https://github.com/tonyredondo/buildopt/releases/download/#https://offline.invalid/releases/download/#' "$wrapper_root/.buildopt/wrapper.properties"
+          second=$("$wrapper_root/buildoptw" --buildopt version --json)
+          test "$first" = "$second"
       - name: Build, package, install, upgrade, and launch
         shell: bash
         run: |
@@ -137,6 +152,22 @@ jobs:
           $ErrorActionPreference = 'Stop'
           & go test -count=1 ./internal/filelock ./internal/datalifecycle ./internal/buildsession ./internal/localauthority ./internal/sharedcache ./internal/edgecache ./internal/launcher ./cmd/buildopt-server ./cmd/buildopt-edge
           if ($LASTEXITCODE -ne 0) { throw 'native runtime tests failed' }
+      - name: Verify sticky wrapper bootstrap
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $WrapperRoot = "$env:RUNNER_TEMP\sticky-wrapper"
+          New-Item -ItemType Directory -Force -Path "$WrapperRoot\.buildopt" | Out-Null
+          Copy-Item internal\stickywrapper\templates\buildoptw.bat "$WrapperRoot\buildoptw.bat"
+          Copy-Item fixtures\sticky-wrapper-contract\valid\.buildopt\wrapper.properties "$WrapperRoot\.buildopt\wrapper.properties"
+          $env:BUILDOPT_WRAPPER_CACHE_HOME = "$env:RUNNER_TEMP\sticky-wrapper-cache"
+          $First = (& "$WrapperRoot\buildoptw.bat" --buildopt version --json | ConvertFrom-Json)
+          if ($LASTEXITCODE -ne 0 -or $First.distributionVersion -ne '0.6.1' -or $First.bootstrap -ne 'VERIFIED') { throw 'online wrapper bootstrap failed' }
+          $Properties = [IO.File]::ReadAllText("$WrapperRoot\.buildopt\wrapper.properties")
+          $Properties = $Properties.Replace('https://github.com/tonyredondo/buildopt/releases/download/', 'https://offline.invalid/releases/download/')
+          [IO.File]::WriteAllText("$WrapperRoot\.buildopt\wrapper.properties", $Properties, [Text.UTF8Encoding]::new($false))
+          $Second = (& "$WrapperRoot\buildoptw.bat" --buildopt version --json | ConvertFrom-Json)
+          if ($LASTEXITCODE -ne 0 -or $Second.distributionVersion -ne '0.6.1' -or $Second.bootstrap -ne 'VERIFIED') { throw 'offline wrapper reuse failed' }
       - name: Build, package, install, upgrade, and launch
         shell: pwsh
         run: |

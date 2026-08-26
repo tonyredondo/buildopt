@@ -1,0 +1,246 @@
+#!/bin/sh
+set -eu
+
+buildopt_fail() {
+    buildopt_fail_code=$1
+    shift
+    printf 'buildoptw: %s\n' "$*" >&2
+    exit "${buildopt_fail_code}"
+}
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd) ||
+    buildopt_fail 70 'wrapper directory is unavailable'
+buildopt_properties="${buildopt_script_dir}/.buildopt/wrapper.properties"
+[ -f "${buildopt_properties}" ] && [ ! -L "${buildopt_properties}" ] ||
+    buildopt_fail 65 'wrapper properties are missing or unsafe'
+
+exec 3<"${buildopt_properties}"
+buildopt_read_property() {
+    IFS='=' read -r buildopt_property_key buildopt_property_value <&3 ||
+        buildopt_fail 65 "missing property $1"
+    [ "${buildopt_property_key}" = "$1" ] ||
+        buildopt_fail 65 "expected property $1"
+    case "${buildopt_property_value}" in
+        *'='*) buildopt_fail 65 "property $1 is malformed" ;;
+    esac
+    BUILDOPT_PROPERTY_VALUE=${buildopt_property_value}
+}
+
+buildopt_read_property schemaVersion
+buildopt_schema=${BUILDOPT_PROPERTY_VALUE}
+buildopt_read_property distributionVersion
+buildopt_version=${BUILDOPT_PROPERTY_VALUE}
+buildopt_read_property distributionUrl.linux-amd64
+buildopt_url_linux_amd64=${BUILDOPT_PROPERTY_VALUE}
+buildopt_read_property distributionSha256.linux-amd64
+buildopt_sha_linux_amd64=${BUILDOPT_PROPERTY_VALUE}
+buildopt_read_property distributionUrl.macos-amd64
+buildopt_url_macos_amd64=${BUILDOPT_PROPERTY_VALUE}
+buildopt_read_property distributionSha256.macos-amd64
+buildopt_sha_macos_amd64=${BUILDOPT_PROPERTY_VALUE}
+buildopt_read_property distributionUrl.macos-arm64
+buildopt_url_macos_arm64=${BUILDOPT_PROPERTY_VALUE}
+buildopt_read_property distributionSha256.macos-arm64
+buildopt_sha_macos_arm64=${BUILDOPT_PROPERTY_VALUE}
+buildopt_read_property distributionUrl.windows-amd64
+buildopt_read_property distributionSha256.windows-amd64
+buildopt_read_property network.connectTimeoutMs
+buildopt_connect_timeout=${BUILDOPT_PROPERTY_VALUE}
+buildopt_read_property network.readTimeoutMs
+buildopt_read_timeout=${BUILDOPT_PROPERTY_VALUE}
+buildopt_read_property network.redirectPolicy
+buildopt_redirect_policy=${BUILDOPT_PROPERTY_VALUE}
+buildopt_read_property network.proxyMode
+buildopt_proxy_mode=${BUILDOPT_PROPERTY_VALUE}
+if IFS= read -r buildopt_extra <&3; then
+    : "${buildopt_extra}"
+    buildopt_fail 65 'wrapper properties contain extra entries'
+fi
+exec 3<&-
+
+[ "${buildopt_schema}" = 'buildopt.wrapper/v1' ] ||
+    buildopt_fail 65 'wrapper properties schema is unsupported'
+case "${buildopt_version}" in
+    ''|*[!0-9.]*|.*|*.|*..*) buildopt_fail 65 'distribution version is invalid' ;;
+esac
+buildopt_version_parts=$(printf '%s' "${buildopt_version}" | awk -F. 'NF == 3 && $1 ~ /^[0-9]+$/ && $2 ~ /^[0-9]+$/ && $3 ~ /^[0-9]+$/ {print "yes"}')
+[ "${buildopt_version_parts}" = yes ] || buildopt_fail 65 'distribution version is invalid'
+[ "${buildopt_connect_timeout}" = 5000 ] &&
+    [ "${buildopt_read_timeout}" = 30000 ] &&
+    [ "${buildopt_redirect_policy}" = https-only-max-5 ] &&
+    [ "${buildopt_proxy_mode}" = environment ] ||
+    buildopt_fail 65 'wrapper network policy is unsupported'
+
+buildopt_uname_s=$(uname -s 2>/dev/null || true)
+buildopt_uname_m=$(uname -m 2>/dev/null || true)
+case "${buildopt_uname_s}:${buildopt_uname_m}" in
+    Linux:x86_64|Linux:amd64)
+        buildopt_platform=linux-amd64
+        buildopt_archive_root="buildopt-${buildopt_version}-linux-amd64"
+        buildopt_url=${buildopt_url_linux_amd64}
+        buildopt_sha=${buildopt_sha_linux_amd64}
+        ;;
+    Darwin:x86_64|Darwin:amd64)
+        buildopt_platform=macos-amd64
+        buildopt_archive_root="buildopt-${buildopt_version}-darwin-amd64"
+        buildopt_url=${buildopt_url_macos_amd64}
+        buildopt_sha=${buildopt_sha_macos_amd64}
+        ;;
+    Darwin:arm64|Darwin:aarch64)
+        buildopt_platform=macos-arm64
+        buildopt_archive_root="buildopt-${buildopt_version}-darwin-arm64"
+        buildopt_url=${buildopt_url_macos_arm64}
+        buildopt_sha=${buildopt_sha_macos_arm64}
+        ;;
+    *) buildopt_fail 69 'this operating system or architecture is unsupported' ;;
+esac
+
+buildopt_validate_sha() {
+    [ "${#1}" -eq 64 ] || return 1
+    case "$1" in *[!0-9a-f]*) return 1 ;; esac
+}
+buildopt_validate_sha "${buildopt_sha}" || buildopt_fail 65 'distribution checksum is invalid'
+case "${buildopt_url}" in
+    https://*) ;;
+    *) buildopt_fail 65 'distribution URL must use HTTPS' ;;
+esac
+case "${buildopt_url}" in
+    *'?'*|*'#'*|*' '*|*"$(printf '\t')"*|*/latest/*)
+        buildopt_fail 65 'distribution URL is not immutable' ;;
+esac
+buildopt_authority=${buildopt_url#https://}
+buildopt_authority=${buildopt_authority%%/*}
+case "${buildopt_authority}" in ''|*@*) buildopt_fail 65 'distribution URL authority is invalid' ;; esac
+case "${buildopt_url}" in *"/${buildopt_version}/"*|*"/v${buildopt_version}/"*) ;; *) buildopt_fail 65 'distribution URL does not contain the pinned version' ;; esac
+
+buildopt_sha_file() {
+    if command -v sha256sum >/dev/null 2>&1; then
+        sha256sum "$1" | awk '{print $1}'
+    elif command -v shasum >/dev/null 2>&1; then
+        shasum -a 256 "$1" | awk '{print $1}'
+    else
+        buildopt_fail 69 'no SHA-256 command is available'
+    fi
+}
+
+buildopt_verify_manifest() {
+    buildopt_verify_root=$1
+    [ -d "${buildopt_verify_root}" ] && [ ! -L "${buildopt_verify_root}" ] || return 1
+    [ -x "${buildopt_verify_root}/bin/buildopt" ] &&
+        [ -f "${buildopt_verify_root}/SHA256SUMS" ] &&
+        [ ! -L "${buildopt_verify_root}/SHA256SUMS" ] || return 1
+    [ -z "$(find "${buildopt_verify_root}" -type l -print -quit 2>/dev/null)" ] || return 1
+    awk '
+        NF != 2 || length($1) != 64 || $1 !~ /^[0-9a-f]+$/ ||
+        $2 !~ /^(bin|lib)\/[A-Za-z0-9._\/-]+$/ ||
+        $2 ~ /(^|\/)\.\.(\/|$)/ {exit 1}
+        END {if (NR < 4) exit 1}
+    ' "${buildopt_verify_root}/SHA256SUMS" || return 1
+    if command -v sha256sum >/dev/null 2>&1; then
+        (cd "${buildopt_verify_root}" && sha256sum -c SHA256SUMS >/dev/null 2>&1)
+    else
+        (cd "${buildopt_verify_root}" && shasum -a 256 -c SHA256SUMS >/dev/null 2>&1)
+    fi
+}
+
+buildopt_marker_text=$(printf '%s\n%s\n%s\n%s' \
+    'buildopt.wrapper-install/v1' "${buildopt_version}" "${buildopt_platform}" "${buildopt_sha}")
+buildopt_verify_install() {
+    buildopt_install=$1
+    [ -f "${buildopt_install}/.buildopt-wrapper-install" ] &&
+        [ ! -L "${buildopt_install}/.buildopt-wrapper-install" ] || return 1
+    [ "$(cat "${buildopt_install}/.buildopt-wrapper-install")" = "${buildopt_marker_text}" ] || return 1
+    buildopt_verify_manifest "${buildopt_install}"
+}
+
+if [ -n "${BUILDOPT_WRAPPER_CACHE_HOME:-}" ]; then
+    buildopt_cache_home=${BUILDOPT_WRAPPER_CACHE_HOME}
+elif [ "${buildopt_uname_s}" = Darwin ]; then
+    buildopt_cache_home=${HOME:?HOME is required}/Library/Caches
+else
+    buildopt_cache_home=${XDG_CACHE_HOME:-${HOME:?HOME is required}/.cache}
+fi
+case "${buildopt_cache_home}" in /*) ;; *) buildopt_fail 70 'wrapper cache root must be absolute' ;; esac
+buildopt_lf='
+'
+buildopt_cr=$(printf '\r')
+case "${buildopt_cache_home}" in *"${buildopt_lf}"*|*"${buildopt_cr}"*) buildopt_fail 70 'wrapper cache root is malformed' ;; esac
+
+buildopt_parent="${buildopt_cache_home}/buildopt/wrapper/distributions/${buildopt_version}/${buildopt_platform}"
+buildopt_install_root="${buildopt_parent}/${buildopt_sha}"
+buildopt_lock="${buildopt_install_root}.lock"
+if [ -e "${buildopt_install_root}" ]; then
+    buildopt_verify_install "${buildopt_install_root}" || buildopt_fail 74 'cached distribution failed verification'
+else
+    mkdir -p -- "${buildopt_parent}" || buildopt_fail 70 'cannot create wrapper cache'
+    buildopt_have_lock=0
+    buildopt_wait=0
+    while [ "${buildopt_have_lock}" -eq 0 ]; do
+        if mkdir -- "${buildopt_lock}" 2>/dev/null; then
+            buildopt_have_lock=1
+            break
+        fi
+        if [ -e "${buildopt_install_root}" ] && buildopt_verify_install "${buildopt_install_root}"; then
+            break
+        fi
+        buildopt_wait=$((buildopt_wait + 1))
+        [ "${buildopt_wait}" -lt 300 ] || buildopt_fail 70 'another bootstrap did not complete'
+        sleep 0.1
+    done
+    if [ "${buildopt_have_lock}" -eq 1 ]; then
+        buildopt_work=$(mktemp -d "${buildopt_parent}/.buildopt-wrapper.XXXXXX") ||
+            buildopt_fail 70 'cannot create bootstrap staging directory'
+        buildopt_cleanup() {
+            rm -rf -- "${buildopt_work}" 2>/dev/null || true
+            rmdir -- "${buildopt_lock}" 2>/dev/null || true
+        }
+        trap buildopt_cleanup EXIT HUP INT TERM
+        if [ -e "${buildopt_install_root}" ]; then
+            buildopt_verify_install "${buildopt_install_root}" || buildopt_fail 74 'cached distribution failed verification'
+        else
+            command -v curl >/dev/null 2>&1 || buildopt_fail 69 'curl is unavailable'
+            command -v tar >/dev/null 2>&1 || buildopt_fail 69 'tar is unavailable'
+            buildopt_archive="${buildopt_work}/distribution.tar.gz"
+            if ! curl --fail --silent --show-error --location --max-redirs 5 \
+                --proto '=https' --proto-redir '=https' --tlsv1.2 \
+                --connect-timeout 5 --max-time 30 --output "${buildopt_archive}" -- "${buildopt_url}"; then
+                buildopt_fail 69 'distribution download failed'
+            fi
+            [ "$(buildopt_sha_file "${buildopt_archive}")" = "${buildopt_sha}" ] ||
+                buildopt_fail 74 'distribution checksum mismatch'
+            buildopt_entries="${buildopt_work}/entries"
+            tar -tzf "${buildopt_archive}" >"${buildopt_entries}" 2>/dev/null ||
+                buildopt_fail 74 'distribution archive cannot be listed'
+            awk -v root="${buildopt_archive_root}/" '
+                length($0) == 0 || length($0) > 1024 || index($0, "\\") ||
+                substr($0, 1, length(root)) != root || $0 ~ /(^|\/)\.\.(\/|$)/ || seen[$0]++ {exit 1}
+            ' "${buildopt_entries}" || buildopt_fail 74 'distribution archive contains an unsafe path'
+            tar -tvzf "${buildopt_archive}" 2>/dev/null |
+                awk 'substr($1,1,1) != "-" && substr($1,1,1) != "d" {exit 1}' ||
+                buildopt_fail 74 'distribution archive contains a link or unsafe entry'
+            tar -xzf "${buildopt_archive}" -C "${buildopt_work}" --no-same-owner 2>/dev/null ||
+                buildopt_fail 74 'distribution archive extraction failed'
+            buildopt_staged="${buildopt_work}/${buildopt_archive_root}"
+            buildopt_verify_manifest "${buildopt_staged}" || buildopt_fail 74 'distribution contents failed verification'
+            printf '%s\n' "${buildopt_marker_text}" >"${buildopt_staged}/.buildopt-wrapper-install" ||
+                buildopt_fail 70 'cannot write bootstrap marker'
+            mv -- "${buildopt_staged}" "${buildopt_install_root}" ||
+                buildopt_fail 70 'cannot publish verified distribution'
+            buildopt_verify_install "${buildopt_install_root}" || buildopt_fail 74 'published distribution failed verification'
+        fi
+        buildopt_cleanup
+        trap - EXIT HUP INT TERM
+    fi
+fi
+
+if [ "${1:-}" = '--buildopt' ] && [ "${2:-}" = version ] &&
+    { [ "$#" -eq 2 ] || { [ "$#" -eq 3 ] && [ "${3:-}" = '--json' ]; }; }; then
+    if [ "$#" -eq 3 ]; then
+        printf '{"schemaVersion":"buildopt.wrapper-status/v1","distributionVersion":"%s","bootstrap":"VERIFIED"}\n' "${buildopt_version}"
+    else
+        printf 'BuildOpt Wrapper %s (verified)\n' "${buildopt_version}"
+    fi
+    exit 0
+fi
+
+buildopt_fail 70 'verified bootstrap is ready; Gradle passthrough belongs to SWL-004'

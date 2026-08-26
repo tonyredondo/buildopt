@@ -48,8 +48,8 @@ result.
 ### Sticky-wrapper entrypoint under construction
 
 The active successor POC is adding a thin repository-committed entrypoint above
-the implemented launcher. The deterministic generator exists; bootstrap and
-execution remain subsequent blocks:
+the implemented launcher. Deterministic generation and verified native-package
+bootstrap now exist; Gradle process passthrough remains the next block:
 
 ```text
 committed buildoptw / buildoptw.bat
@@ -68,14 +68,15 @@ decision keeps `NATIVE_NOOP` out of a blocking server lookup; expired,
 incompatible or absent state uses native Gradle. The existing Gradle-cache data
 plane and typed state control plane remain separate. This boundary is frozen in
 the [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
-and is implemented through deterministic generation only; it is not yet an
-end-to-end customer build path.
+and is implemented through deterministic generation plus verified package
+bootstrap; it is not yet an end-to-end customer build path because process
+passthrough belongs to SWL-004.
 
 ## Components
 
 | Component | Runtime artifact | Responsibility |
 |---|---|---|
-| Repository BuildOpt Wrapper (planned) | `buildoptw`, `buildoptw.bat` | Verifies and bootstraps a pinned BuildOpt distribution and provides one committed local/CI command without storing credentials |
+| Repository BuildOpt Wrapper (bootstrap implemented) | `buildoptw`, `buildoptw.bat` | Verifies and bootstraps a pinned BuildOpt distribution; SWL-004 adds exact Gradle process passthrough to complete the committed local/CI command |
 | CI Launcher | `buildopt` | Preserves argv, environment boundaries, streams, process tree, signals, and child exit status |
 | Local Verifying Cache Gateway | inside `buildopt` | Gives Gradle an invocation-local endpoint, verifies policy and objects, and hides upstream credentials |
 | Gradle plugin | `jvm/gradle-plugin` JAR | Performs the authenticated handshake, configures managed cache inputs, and emits bounded task/build events through public Gradle APIs |

@@ -47,6 +47,18 @@ separate real smoke, but the deterministic gate itself is offline. It never
 downloads or executes a distribution archive; verified bootstrap belongs to
 `SWL-003`.
 
+Validate the implemented POSIX bootstrap, machine contract, platform
+selection, archive and internal checksums, safe extraction, atomic concurrent
+publication, verified offline reuse and negative matrix with:
+
+```bash
+./dev/check-sticky-wrapper-bootstrap
+```
+
+This is the `SWL-003` implementation gate. Native macOS and Windows wrapper
+entrypoints are also exercised by Platform CI. It enables only wrapper-owned
+`--buildopt version`; Gradle passthrough belongs to `SWL-004`.
+
 ## Toolchain lock
 
 [`toolchains.lock.yaml`](./toolchains.lock.yaml) is the source of truth for downloadable development toolchains on the initial `linux-amd64` platform. It is JSON-compatible YAML 1.2 so the Phase 0 validator can parse it with `jq` before the repository adopts a YAML library.

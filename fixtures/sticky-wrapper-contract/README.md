@@ -6,8 +6,11 @@ exit before performing any network or Gradle operation; `SWL-003` owns the
 real bootstrap body.
 
 `valid/` contains the four portable committed paths with canonical modes and
-LF bytes. It is byte-identical to `SWL-002` generation for public release
-`v0.6.1` plus the documented example server and project scope.
+LF bytes. Its properties/configuration are byte-identical to `SWL-002`
+generation for public release `v0.6.1` plus the documented example server and
+project scope. The inert scripts retain the SWL-001 entrypoint fixture;
+executable bootstrap sources now live under `internal/stickywrapper/templates`
+and are embedded by the generator.
 `invalid-cases.json` applies named mutations to the valid properties
 or configuration and records the required rejection class. The Go fixture
 tests independently parse the strict properties/configuration formats through

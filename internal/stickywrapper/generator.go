@@ -6,6 +6,7 @@ package stickywrapper
 import (
 	"bufio"
 	"context"
+	_ "embed"
 	"errors"
 	"fmt"
 	"io/fs"
@@ -69,9 +70,13 @@ var (
 	sha256Pattern     = regexp.MustCompile(`^[0-9a-f]{64}$`)
 	projectPattern    = regexp.MustCompile(`^[a-z0-9][a-z0-9._-]{0,62}/[a-z0-9][a-z0-9._-]{0,62}$`)
 	credentialPattern = regexp.MustCompile(`^BUILDOPT_[A-Z0-9_]{1,55}$`)
-	posixWrapper      = []byte("#!/bin/sh\nset -eu\nprintf '%s\\n' 'BuildOpt Wrapper bootstrap is not implemented.' >&2\nexit 70\n")
-	windowsWrapper    = []byte("@echo off\n>&2 echo BuildOpt Wrapper bootstrap is not implemented.\nexit /b 70\n")
 )
+
+//go:embed templates/buildoptw
+var posixWrapper []byte
+
+//go:embed templates/buildoptw.bat
+var windowsWrapper []byte
 
 // ErrorKind classifies generator failures into stable CLI exit categories.
 type ErrorKind uint8
@@ -319,19 +324,19 @@ func canonicalSnapshot(release Release, config Config) Snapshot {
 
 func renderProperties(release Release) []byte {
 	values := map[string]string{
-		"schemaVersion":                       "buildopt.wrapper/v1",
-		"distributionVersion":                 release.Version,
-		"distributionUrl.linux-amd64":         release.Distributions["linux-amd64"].URL,
-		"distributionSha256.linux-amd64":      release.Distributions["linux-amd64"].SHA256,
-		"distributionUrl.macos-amd64":         release.Distributions["macos-amd64"].URL,
-		"distributionSha256.macos-amd64":      release.Distributions["macos-amd64"].SHA256,
-		"distributionUrl.macos-arm64":         release.Distributions["macos-arm64"].URL,
-		"distributionSha256.macos-arm64":      release.Distributions["macos-arm64"].SHA256,
-		"distributionUrl.windows-amd64":       release.Distributions["windows-amd64"].URL,
-		"distributionSha256.windows-amd64":    release.Distributions["windows-amd64"].SHA256,
+		"schemaVersion":                    "buildopt.wrapper/v1",
+		"distributionVersion":              release.Version,
+		"distributionUrl.linux-amd64":      release.Distributions["linux-amd64"].URL,
+		"distributionSha256.linux-amd64":   release.Distributions["linux-amd64"].SHA256,
+		"distributionUrl.macos-amd64":      release.Distributions["macos-amd64"].URL,
+		"distributionSha256.macos-amd64":   release.Distributions["macos-amd64"].SHA256,
+		"distributionUrl.macos-arm64":      release.Distributions["macos-arm64"].URL,
+		"distributionSha256.macos-arm64":   release.Distributions["macos-arm64"].SHA256,
+		"distributionUrl.windows-amd64":    release.Distributions["windows-amd64"].URL,
+		"distributionSha256.windows-amd64": release.Distributions["windows-amd64"].SHA256,
 		"network.connectTimeoutMs":         "5000",
 		"network.readTimeoutMs":            "30000",
-		"network.redirectPolicy":           "reject",
+		"network.redirectPolicy":           "https-only-max-5",
 		"network.proxyMode":                "environment",
 	}
 	var builder strings.Builder
@@ -410,12 +415,12 @@ func parseProperties(raw []byte) (Release, error) {
 	if values["schemaVersion"] != "buildopt.wrapper/v1" ||
 		values["network.connectTimeoutMs"] != "5000" ||
 		values["network.readTimeoutMs"] != "30000" ||
-		values["network.redirectPolicy"] != "reject" ||
+		values["network.redirectPolicy"] != "https-only-max-5" ||
 		values["network.proxyMode"] != "environment" {
 		return Release{}, classified(ErrorCommittedData, "wrapper properties contain unsupported fixed values")
 	}
 	release := Release{
-		Version: values["distributionVersion"],
+		Version:       values["distributionVersion"],
 		Distributions: map[string]Distribution{},
 	}
 	for _, platform := range []string{"linux-amd64", "macos-amd64", "macos-arm64", "windows-amd64"} {

@@ -77,24 +77,24 @@ func configuredFixture() Config {
 	}
 }
 
-func TestCanonicalReleaseMatchesCommittedContractFixture(t *testing.T) {
+func TestCanonicalReleaseMetadataMatchesCommittedContractFixture(t *testing.T) {
 	release := Release{
 		Version: "0.6.1",
 		Distributions: map[string]Distribution{
 			"linux-amd64": {
-				URL: "https://github.com/tonyredondo/buildopt/releases/download/v0.6.1/buildopt-0.6.1-linux-amd64.tar.gz",
+				URL:    "https://github.com/tonyredondo/buildopt/releases/download/v0.6.1/buildopt-0.6.1-linux-amd64.tar.gz",
 				SHA256: "a543acda9ec47914f25f1b4994e9337aae5873fa89d32bedb807d078357307f9",
 			},
 			"macos-amd64": {
-				URL: "https://github.com/tonyredondo/buildopt/releases/download/v0.6.1/buildopt-0.6.1-darwin-amd64.tar.gz",
+				URL:    "https://github.com/tonyredondo/buildopt/releases/download/v0.6.1/buildopt-0.6.1-darwin-amd64.tar.gz",
 				SHA256: "ea1107eedcd6ca5731964b8d4b3a69541dd85637fde5e2bd2e0216d3a75ace2e",
 			},
 			"macos-arm64": {
-				URL: "https://github.com/tonyredondo/buildopt/releases/download/v0.6.1/buildopt-0.6.1-darwin-arm64.tar.gz",
+				URL:    "https://github.com/tonyredondo/buildopt/releases/download/v0.6.1/buildopt-0.6.1-darwin-arm64.tar.gz",
 				SHA256: "866a804d876ef26df1ec9237017578f88d01bde6800f863454d8689166e25001",
 			},
 			"windows-amd64": {
-				URL: "https://github.com/tonyredondo/buildopt/releases/download/v0.6.1/buildopt-0.6.1-windows-amd64.zip",
+				URL:    "https://github.com/tonyredondo/buildopt/releases/download/v0.6.1/buildopt-0.6.1-windows-amd64.zip",
 				SHA256: "8338745bd49453cea3bf27a24c0b4620202086bc4fdeafdb6f0efb404039106a",
 			},
 		},
@@ -106,7 +106,7 @@ func TestCanonicalReleaseMatchesCommittedContractFixture(t *testing.T) {
 	}
 	snapshot := canonicalSnapshot(release, config)
 	fixtureRoot := filepath.Join("..", "..", "fixtures", "sticky-wrapper-contract", "valid")
-	for _, relative := range targetPaths {
+	for _, relative := range []string{propertiesPath, configPath} {
 		fixture := mustRead(t, filepath.Join(fixtureRoot, filepath.FromSlash(relative)))
 		if !bytes.Equal(snapshot.Files[relative], fixture) {
 			t.Fatalf("generated %s differs from the committed contract fixture", relative)
@@ -186,7 +186,7 @@ func TestCheckRejectsDriftWithoutRepair(t *testing.T) {
 		{name: "Windows script", relative: windowsPath, mutate: appendMarker},
 		{name: "unknown property", relative: propertiesPath, mutate: appendMarker},
 		{
-			name: "owner config",
+			name:     "owner config",
 			relative: configPath,
 			mutate: func(raw []byte) []byte {
 				return bytes.Replace(raw, []byte(`mode = "auto"`), []byte(`mode = "trial"`), 1)

@@ -64,12 +64,15 @@ exact outputs, portability and product outcomes, then permits continued
 learning only when projected compatible lifetime repays within five matches.
 It never authorizes an extra measurement build or production behavior.
 
-`stickywrapper/` owns the four repository-committed wrapper files and the
-maintainer `init`, read-only `check` and distribution-only `update` commands.
-It resolves immutable public release metadata, validates strict portable
-configuration and publishes through a rollback-safe transaction. It never
-downloads or executes an archive, passes credentials to Gradle or grants
-runtime/performance authority.
+`stickywrapper/` owns the four repository-committed wrapper files, embedded
+POSIX/Windows bootstrap templates and the maintainer `init`, read-only `check`
+and distribution-only `update` commands. Generation resolves immutable public
+release metadata, validates strict portable configuration and publishes through
+a rollback-safe transaction. The generated scripts select and checksum-verify
+the native archive, reject unsafe extraction, verify the internal manifest and
+atomically publish a user-cache installation. They never pass credentials to
+Gradle or grant runtime/performance authority; Gradle passthrough belongs to
+SWL-004.
 
 `launcher/` contains the dependency-free `WS-001` command passthrough, the
 `WS-002` Linux process-group and signal contract, the `WS-003` plugin handshake,

@@ -56,9 +56,13 @@ The schema is `buildopt.wrapper/v1`. The version is an exact three-component
 numeric version without a moving alias. Every platform has an immutable HTTPS
 URL with no userinfo, query or fragment and a lowercase 64-character SHA-256.
 The version must appear in every URL path. Connection and read timeouts are
-fixed at 5 and 30 seconds, redirects are rejected and proxy discovery is
-limited to the process environment. A proxy URL or credential is never
-committed.
+fixed at 5 and 30 seconds. GitHub release downloads may follow at most five
+redirects, every hop must remain HTTPS, and the pinned SHA-256 remains the
+content authority. GitHub's
+[release-asset API](https://docs.github.com/en/rest/releases/assets?apiVersion=2022-11-28#get-a-release-asset)
+documents assets as either a `200` stream or a `302` redirect. Proxy discovery
+is limited to the process environment. A
+proxy URL or credential is never committed.
 
 Unknown, duplicate, security-sensitive or reordered keys reject identically
 under the POSIX and Windows parsing contracts.

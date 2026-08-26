@@ -123,8 +123,9 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > wrapper as the sticky customer integration. A maintainer can now generate
 > `buildoptw`, `buildoptw.bat`, checksum-pinned wrapper properties and portable
 > non-secret configuration deterministically with `buildopt wrapper init`.
-> Verified bootstrap and Gradle passthrough remain the next blocks; once they
-> close, developers and CI will run
+> The generated scripts now select, download, checksum, safely extract and
+> atomically cache the pinned native package, with verified zero-network warm
+> reuse. Gradle passthrough is the next block; once it closes, developers and CI will run
 > `./buildoptw <gradle args...>` without a global BuildOpt installation or a
 > hand-authored profile. The wrapper will use the existing Gradle-compatible
 > HTTPS cache and a separate typed decision store to choose native no-op,

@@ -211,16 +211,19 @@ counts. Historical AF observations are context only.
 
 `SWL-001` freezes the four file formats, immutable per-platform distribution
 identities, strict portable configuration, explicit management routing,
-pre-bootstrap bypass and update/downgrade behavior. `SWL-002` now implements
-`buildopt wrapper init`, offline/read-only `check` and distribution-only
-`update`. Generation is byte-deterministic, refuses existing targets before
-network access, uses GitHub-provided SHA-256 asset digests, preserves owner
-configuration, requires explicit downgrade authority and rolls all files back
-after an injected mid-publication failure. Linux runtime tests pass under the
-race detector and the generator compiles for Windows AMD64 and macOS ARM64. A
-real metadata smoke generated and checked `v0.6.1` without downloading an
-archive. Bootstrap and Gradle execution remain unimplemented until
-`SWL-003..004`; there is still no new performance claim.
+pre-bootstrap bypass and update/downgrade behavior. `SWL-002` implements
+deterministic `buildopt wrapper init`, offline/read-only `check` and
+distribution-only `update`, including transactional rollback. `SWL-003` now
+adds the generated POSIX/Windows bootstrap: it selects one of four pinned
+native packages, permits at most five HTTPS-only redirects, verifies the outer
+SHA-256 and internal manifest, rejects unsafe archive entries and atomically
+publishes a user-cache installation. Verified warm reuse performs no network
+request and concurrent first use downloads once. Synthetic negatives,
+race/vet, ShellCheck, PowerShell parsing and real public `v0.6.1` Linux and
+Windows-body online/offline smokes pass. The public smoke exposed and corrected
+the original zero-redirect assumption for GitHub release assets without
+weakening checksum authority. Gradle execution remains intentionally disabled
+until `SWL-004`; there is still no new performance claim.
 
 No generic whole-profile implementation block followed automatically from that
 failed gate. The separately preregistered
@@ -303,6 +306,7 @@ outside this POC.
 - [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
 - [Sticky wrapper machine contract](../../specs/poc-sticky-wrapper-learning-v1.md)
 - [Sticky wrapper generator contract](../../specs/poc-sticky-wrapper-generator-v1.md)
+- [Sticky wrapper bootstrap contract](../../specs/poc-sticky-wrapper-bootstrap-v1.md)
 - [Machine-readable V3 summary](../../benchmarks/results/poc-lifetime-breadth-v3/summary.json)
 - [V3 protocol](../../specs/poc-lifetime-breadth-v3.md)
 - [Detailed historical findings](./build-optimization-performance.md)

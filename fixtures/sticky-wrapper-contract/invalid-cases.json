@@ -42,8 +42,8 @@
       "id": "PROPERTIES_REDIRECT_FOLLOW",
       "file": "wrapper.properties",
       "operation": "replace-first",
-      "old": "network.redirectPolicy=reject",
-      "value": "network.redirectPolicy=follow",
+      "old": "network.redirectPolicy=https-only-max-5",
+      "value": "network.redirectPolicy=unbounded",
       "errorClass": "INVALID_VALUE"
     },
     {

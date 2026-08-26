@@ -82,7 +82,7 @@
     },
     {
       "id": "BOOTSTRAP_INTEGRITY",
-      "requirement": "all tested distributions are immutable, checksum verified and atomically installed; tamper, redirect and traversal reject"
+      "requirement": "all tested distributions are immutable, checksum verified and atomically installed; tamper, non-HTTPS or excessive redirect, and traversal reject"
     },
     {
       "id": "GRADLE_EQUIVALENCE",

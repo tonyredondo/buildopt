@@ -108,7 +108,7 @@ bytecode using the pinned Wrapper and repository-local JDK 21.
 
 | Normative source | Primary producers | Primary consumers | Conformance evidence |
 |---|---|---|---|
-| `specs/poc-sticky-wrapper-contract-v1.*` and `specs/poc-sticky-wrapper-generator-v1.*` | `internal/stickywrapper`; `buildopt wrapper` CLI | generated POSIX/Windows repository wrappers | `check-sticky-wrapper-contract`, `check-sticky-wrapper-generator`; portable four-file fixtures, deterministic generation, drift, downgrade and rollback tests |
+| `specs/poc-sticky-wrapper-contract-v1.*`, `poc-sticky-wrapper-generator-v1.*` and `poc-sticky-wrapper-bootstrap-v1.*` | `internal/stickywrapper`; `buildopt wrapper` CLI; embedded POSIX/Windows templates | generated repository wrappers and user-cache distributions | `check-sticky-wrapper-contract`, `check-sticky-wrapper-generator`, `check-sticky-wrapper-bootstrap`; portable fixtures, deterministic generation, drift/rollback, checksum, extraction, concurrency and offline-reuse tests |
 | `contracts/jsonschema/adaptive-fragment*.v1.schema.json` and `specs/poc-adaptive-state-portability-v1.*` | adaptive learner and local state writer | `internal/adaptivefragment`; `internal/launcher` HTTPS state adapter | `check-adaptive-fragment-state`, `check-adaptive-fragment-index`, `check-adaptive-state-portability` |
 | `contracts/jsonschema/build-session.v1.schema.json` | `internal/buildsession` | server history/export tooling | `check-build-session-schema`, `check-build-session-export` |
 | `contracts/proto/local-events/v1/` | JVM Gradle plugin | launcher event channel | `check-task-events-proto`, plugin handshake/correlation checks |

@@ -54,7 +54,7 @@ if ! jq -e '
     ] and
     .wrapperProperties.connectTimeoutMs == 5000 and
     .wrapperProperties.readTimeoutMs == 30000 and
-    .wrapperProperties.redirectPolicy == "reject" and
+    .wrapperProperties.redirectPolicy == "https-only-max-5" and
     .wrapperProperties.proxyMode == "environment" and
     .configuration.syntax == "STRICT_FLAT_TOML_SUBSET_V1" and
     .configuration.orderedKeys == [

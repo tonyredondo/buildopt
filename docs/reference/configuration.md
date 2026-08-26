@@ -17,8 +17,9 @@ Unavailable, invalid or absent state retains native Gradle.
 `wrapper.properties` is ordered ASCII `key=value`, with no whitespace,
 comments, blank lines, escapes, duplicates or unknown keys. It binds exact
 Linux AMD64, macOS AMD64/ARM64 and Windows AMD64 HTTPS URLs and SHA-256 values,
-5-second connect and 30-second read timeouts, rejected redirects and
-environment-only proxy discovery.
+5-second connect and 30-second read timeouts, at most five HTTPS-only redirects
+and environment-only proxy discovery. The pinned checksum remains the content
+authority after every redirect.
 
 `config.toml` is a strict flat subset with exactly these ordered keys:
 
@@ -41,8 +42,9 @@ The complete encoding, ordering, URL, path and failure rules are in the
 The current binary generates and validates them through `buildopt wrapper`.
 The [generator contract](../../specs/poc-sticky-wrapper-generator-v1.md)
 defines deterministic creation, read-only drift detection and release-only
-updates. The generated scripts do not bootstrap a distribution until
-`SWL-003` closes.
+updates. The [bootstrap contract](../../specs/poc-sticky-wrapper-bootstrap-v1.md)
+defines checksum verification, safe extraction, atomic user-cache publication
+and offline reuse. Gradle passthrough remains disabled until `SWL-004` closes.
 
 BuildOpt configuration is grouped by trust boundary. Supply a complete group
 or omit it; partial configuration normally disables that optional capability

@@ -3,7 +3,7 @@
   "workItem": "SWL-002",
   "inputContract": {
     "path": "specs/poc-sticky-wrapper-contract-v1.json",
-    "sha256": "6a3f9a9f0e6c784a8078eddb6189268c699d242748d962365f56ed02c6038c0b"
+    "sha256": "38614c543483e59d7b039595b4dfb120bdb493b6650f92ae433bbe47e5b909df"
   },
   "commands": {
     "init": "buildopt wrapper init [--server URL --project-scope SCOPE] [--mode auto|observe|off]",

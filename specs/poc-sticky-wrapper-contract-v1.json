@@ -81,7 +81,7 @@
     ],
     "connectTimeoutMs": 5000,
     "readTimeoutMs": 30000,
-    "redirectPolicy": "reject",
+    "redirectPolicy": "https-only-max-5",
     "proxyMode": "environment"
   },
   "configuration": {
@@ -161,7 +161,9 @@
   "network": {
     "proxySource": "PROCESS_ENVIRONMENT",
     "committedProxyUrlAllowed": false,
-    "redirectsFollowed": false,
+    "redirectsFollowed": true,
+    "redirectsHttpsOnly": true,
+    "redirectsMaximum": 5,
     "timeoutsConfigurableInProjectConfig": false,
     "sensitiveEnvironmentValuesLogged": false
   },
