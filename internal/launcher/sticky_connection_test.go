@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -64,7 +65,7 @@ func TestStickyConnectionIsPortableScopedAndRevocable(t *testing.T) {
 	}
 	first, credentialEnvironment, err := prepareStickyWrapperConnection(
 		firstRoot,
-		[]string{filepath.Join(firstRoot, "gradlew"), "build"},
+		[]string{stickyConnectionGradleCommand(firstRoot), "build"},
 		getenv,
 		now,
 		client,
@@ -75,7 +76,7 @@ func TestStickyConnectionIsPortableScopedAndRevocable(t *testing.T) {
 	defer first.close()
 	second, _, err := prepareStickyWrapperConnection(
 		secondRoot,
-		[]string{filepath.Join(secondRoot, "gradlew"), "build"},
+		[]string{stickyConnectionGradleCommand(secondRoot), "build"},
 		getenv,
 		now,
 		client,
@@ -96,7 +97,7 @@ func TestStickyConnectionIsPortableScopedAndRevocable(t *testing.T) {
 	)
 	trailingSlash, _, err := prepareStickyWrapperConnection(
 		trailingSlashRoot,
-		[]string{filepath.Join(trailingSlashRoot, "gradlew"), "build"},
+		[]string{stickyConnectionGradleCommand(trailingSlashRoot), "build"},
 		getenv,
 		now,
 		client,
@@ -114,7 +115,7 @@ func TestStickyConnectionIsPortableScopedAndRevocable(t *testing.T) {
 	otherRoot := writeStickyConnectionRepository(t, server.URL, "example/other-project", "BUILDOPT_TEAM_TOKEN")
 	if connection, _, err := prepareStickyWrapperConnection(
 		otherRoot,
-		[]string{filepath.Join(otherRoot, "gradlew"), "build"},
+		[]string{stickyConnectionGradleCommand(otherRoot), "build"},
 		getenv,
 		now,
 		client,
@@ -128,7 +129,7 @@ func TestStickyConnectionIsPortableScopedAndRevocable(t *testing.T) {
 	missingRoot := writeStickyConnectionRepository(t, server.URL, "example/portable-project", "BUILDOPT_MISSING_TOKEN")
 	if connection, _, err := prepareStickyWrapperConnection(
 		missingRoot,
-		[]string{filepath.Join(missingRoot, "gradlew")},
+		[]string{stickyConnectionGradleCommand(missingRoot)},
 		func(string) string { return "" },
 		now,
 		client,
@@ -149,7 +150,7 @@ func TestStickyConnectionIsPortableScopedAndRevocable(t *testing.T) {
 	)
 	if connection, _, err := prepareStickyWrapperConnection(
 		firstRoot,
-		[]string{filepath.Join(firstRoot, "gradlew")},
+		[]string{stickyConnectionGradleCommand(firstRoot)},
 		func(string) string { return stickyConnectionTokenJSON(t, stateOnly) },
 		now,
 		client,
@@ -171,7 +172,7 @@ func TestStickyConnectionIsPortableScopedAndRevocable(t *testing.T) {
 	}
 	if connection, _, err := prepareStickyWrapperConnection(
 		firstRoot,
-		[]string{filepath.Join(firstRoot, "gradlew")},
+		[]string{stickyConnectionGradleCommand(firstRoot)},
 		func(string) string { return string(futureJSON) },
 		now,
 		client,
@@ -195,7 +196,7 @@ func TestStickyConnectionIsPortableScopedAndRevocable(t *testing.T) {
 	)
 	other, _, err := prepareStickyWrapperConnection(
 		firstRoot,
-		[]string{filepath.Join(firstRoot, "gradlew")},
+		[]string{stickyConnectionGradleCommand(firstRoot)},
 		func(string) string { return stickyConnectionTokenJSON(t, otherNamespace) },
 		now,
 		client,
@@ -213,7 +214,7 @@ func TestStickyConnectionIsPortableScopedAndRevocable(t *testing.T) {
 	}
 	if connection, _, err := prepareStickyWrapperConnection(
 		firstRoot,
-		[]string{filepath.Join(firstRoot, "gradlew")},
+		[]string{stickyConnectionGradleCommand(firstRoot)},
 		getenv,
 		now.Add(2*time.Minute),
 		client,
@@ -248,14 +249,14 @@ func TestStickyConnectionRejectsRedirectsAndForeignWrapperRoots(t *testing.T) {
 	getenv := func(string) string { return stickyConnectionTokenJSON(t, issued) }
 	if connection, _, err := prepareStickyWrapperConnection(
 		root,
-		[]string{filepath.Join(root, "gradlew")},
+		[]string{stickyConnectionGradleCommand(root)},
 		getenv,
 		now,
 		client,
 	); err == nil || connection != nil || !strings.Contains(err.Error(), "redirect rejected") {
 		t.Fatalf("redirect accepted: %+v/%v", connection, err)
 	}
-	foreign := filepath.Join(t.TempDir(), "gradlew")
+	foreign := stickyConnectionGradleCommand(t.TempDir())
 	if connection, _, err := prepareStickyWrapperConnection(
 		root,
 		[]string{foreign},
@@ -329,10 +330,18 @@ func writeStickyConnectionRepository(t *testing.T, serverURL, projectScope, cred
 	if err := os.WriteFile(filepath.Join(root, ".buildopt", "config.toml"), []byte(config), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(root, "gradlew"), []byte("#!/bin/sh\nexit 0\n"), 0o755); err != nil {
+	if err := os.WriteFile(stickyConnectionGradleCommand(root), []byte("fixture\n"), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	return root
+}
+
+func stickyConnectionGradleCommand(root string) string {
+	name := "gradlew"
+	if runtime.GOOS == "windows" {
+		name = "gradlew.bat"
+	}
+	return filepath.Join(root, name)
 }
 
 func assertStickyRevokedCannotRead(
