@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-connection/v1",
+  "workItem": "SWL-005",
+  "committedConfiguration": {
+    "path": ".buildopt/config.toml",
+    "serverField": "server_url",
+    "projectField": "project_scope",
+    "credentialSourceField": "credential_env",
+    "containsSecret": false,
+    "containsCheckoutPath": false
+  },
+  "identity": {
+    "projectScopeDomain": "buildopt-optimize-portfolio-repository-v1",
+    "projectScopeInput": "project_scope",
+    "checkoutPathInput": false,
+    "connectionScopeDomain": "buildopt-sticky-connection-scope-v1",
+    "connectionBindings": [
+      "server_url",
+      "project_scope_sha256",
+      "tenant",
+      "repository",
+      "trust_domain",
+      "namespace",
+      "namespace_generation"
+    ]
+  },
+  "credential": {
+    "schemaVersion": "buildopt.central/access-token/v1",
+    "source": "ENVIRONMENT_NAMED_BY_COMMITTED_CONFIG",
+    "requiredCapabilities": [
+      "CACHE_READ",
+      "STATE_READ"
+    ],
+    "projectScopeMustMatch": true,
+    "expiryCheckedLocally": true,
+    "revocationCheckedRemotely": true,
+    "passedToGradle": false,
+    "persistedByWrapper": false
+  },
+  "transport": {
+    "externalScheme": "HTTPS",
+    "numericLoopbackFixtureScheme": "HTTP_ALLOWED",
+    "minimumTLS": "1.3",
+    "redirects": 0,
+    "requestTimeoutMs": 10000,
+    "proxyMode": "ENVIRONMENT"
+  },
+  "failure": {
+    "missingCredential": "NATIVE_GRADLE",
+    "invalidCredential": "NATIVE_GRADLE_WITH_WARNING",
+    "wrongProject": "NATIVE_GRADLE_WITH_WARNING",
+    "wrongCapabilities": "NATIVE_GRADLE_WITH_WARNING",
+    "expiredOrRevoked": "NATIVE_GRADLE_WITH_WARNING",
+    "serverUnavailable": "NATIVE_GRADLE_WITH_WARNING",
+    "cacheOrStateReadGranted": false
+  },
+  "validation": {
+    "cleanCheckouts": 2,
+    "sameProjectIdentity": true,
+    "namespaceIsolation": true,
+    "crossRepositoryRejectedBeforeNetwork": true,
+    "missingCredentialAvoidsNetwork": true,
+    "wrongCapabilityRejectedBeforeNetwork": true,
+    "liveRevocation": true,
+    "redirectRejected": true,
+    "foreignWrapperRootRejected": true,
+    "dynamicCredentialScrubbed": true,
+    "nativeMacosCompilation": true,
+    "nativeWindowsCompilation": true
+  },
+  "outcome": "PORTABLE_CREDENTIAL_BOUND_CONNECTION_ACCEPTED",
+  "boundaries": {
+    "connectionValidated": true,
+    "gradleCacheConfigured": false,
+    "centralStateConsumed": false,
+    "decisionAuthorityCreated": false,
+    "learningActivated": false,
+    "optimizationActivated": false,
+    "performanceClaim": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationOwned": false
+  }
+}

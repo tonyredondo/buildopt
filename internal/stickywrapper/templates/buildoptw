@@ -32,6 +32,7 @@ buildopt_require_gradle_wrapper() {
 }
 buildopt_scrub_child_environment() {
     unset BUILDOPT_BYPASS BUILDOPT_WRAPPER_CACHE_HOME \
+        BUILDOPT_STICKY_WRAPPER_ROOT \
         BUILDOPT_PLUGIN_ATTEMPT_ID BUILDOPT_PLUGIN_SOCKET BUILDOPT_PLUGIN_TOKEN \
         BUILDOPT_GATEWAY_URL BUILDOPT_GATEWAY_USERNAME BUILDOPT_GATEWAY_PASSWORD \
         BUILDOPT_GATEWAY_GENERATION BUILDOPT_MANAGED_GATEWAY_STATE_ROOT \
@@ -52,9 +53,19 @@ buildopt_scrub_child_environment() {
         BUILDOPT_CACHE_STANDARD_COPY_TASKS
 }
 
+buildopt_scrub_direct_gradle_environment() {
+    # Direct Gradle execution has no BuildOpt launcher available to remove a
+    # repository-selected credential name. Treat the BUILDOPT_ namespace as
+    # private and remove it in full before bypass or bootstrap fallback.
+    buildopt_private_names=$(env | sed -n 's/^\(BUILDOPT_[A-Za-z0-9_]*\)=.*/\1/p')
+    for buildopt_private_name in ${buildopt_private_names}; do
+        unset "${buildopt_private_name}"
+    done
+}
+
 if [ "${BUILDOPT_BYPASS:-}" = 1 ]; then
     buildopt_require_gradle_wrapper
-    buildopt_scrub_child_environment
+    buildopt_scrub_direct_gradle_environment
     exec "${buildopt_gradle_wrapper}" "$@"
 fi
 
@@ -66,7 +77,7 @@ if [ "${buildopt_management}" -eq 0 ]; then
         if command -v buildopt_cleanup >/dev/null 2>&1; then buildopt_cleanup; fi
         exec 3<&- || true
         printf "%s\n" "buildoptw: verified bootstrap unavailable; running Gradle directly" >&2
-        buildopt_scrub_child_environment
+        buildopt_scrub_direct_gradle_environment
         exec "${buildopt_gradle_wrapper}" "$@"
         exit 126
     ' EXIT
@@ -319,4 +330,5 @@ fi
 
 trap - EXIT HUP INT TERM
 buildopt_scrub_child_environment
+export BUILDOPT_STICKY_WRAPPER_ROOT="${buildopt_script_dir}"
 exec "${buildopt_install_root}/bin/buildopt" run -- "${buildopt_gradle_wrapper}" "$@"

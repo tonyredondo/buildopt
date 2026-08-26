@@ -63,14 +63,19 @@ existing buildopt launcher -> existing Gradle Wrapper
 ```
 
 The four generated committed files contain only bootstrap identity and portable
-non-secret configuration. Runtime credentials remain private. A local exact
+non-secret configuration. Runtime credentials remain private. The implemented
+connection boundary hashes the committed project scope independently of the
+checkout path, additionally binds server/cache namespace and generation, and
+proves `CACHE_READ` plus `STATE_READ` with live revocation. Missing or rejected
+credentials retain native Gradle and never reach the child process. A local exact
 decision keeps `NATIVE_NOOP` out of a blocking server lookup; expired,
 incompatible or absent state uses native Gradle. The existing Gradle-cache data
 plane and typed state control plane remain separate. This boundary is frozen in
 the [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
 and is implemented through deterministic generation, verified package
-bootstrap and exact Gradle passthrough. Cache/state connection and learning
-remain later POC blocks, so this is not yet an acceleration claim.
+bootstrap, exact Gradle passthrough and authenticated portable connection.
+Automatic cache/state consumption and learning remain later POC blocks, so this
+is not yet an acceleration claim.
 
 ## Components
 

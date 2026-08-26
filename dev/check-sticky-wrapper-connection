@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-sticky-wrapper-connection-v1.json"
+buildopt_posix_template="${buildopt_repo_root}/internal/stickywrapper/templates/buildoptw"
+buildopt_windows_template="${buildopt_repo_root}/internal/stickywrapper/templates/buildoptw.bat"
+buildopt_test_root=$(mktemp -d)
+trap 'rm -rf -- "${buildopt_test_root}"' EXIT
+
+for buildopt_command in jq rg; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required sticky-wrapper connection command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.poc/sticky-wrapper-connection/v1" and
+    .workItem == "SWL-005" and
+    (.committedConfiguration.containsSecret | not) and
+    (.committedConfiguration.containsCheckoutPath | not) and
+    (.identity.checkoutPathInput | not) and
+    .credential.requiredCapabilities == ["CACHE_READ", "STATE_READ"] and
+    .credential.projectScopeMustMatch and
+    .credential.expiryCheckedLocally and
+    .credential.revocationCheckedRemotely and
+    (.credential.passedToGradle | not) and
+    (.credential.persistedByWrapper | not) and
+    .transport.externalScheme == "HTTPS" and
+    .transport.minimumTLS == "1.3" and
+    .transport.redirects == 0 and
+    .failure.missingCredential == "NATIVE_GRADLE" and
+    .validation.cleanCheckouts == 2 and
+    .validation.sameProjectIdentity and
+    .validation.namespaceIsolation and
+    .validation.crossRepositoryRejectedBeforeNetwork and
+    .validation.missingCredentialAvoidsNetwork and
+    .validation.wrongCapabilityRejectedBeforeNetwork and
+    .validation.liveRevocation and
+    .validation.dynamicCredentialScrubbed and
+    .boundaries.connectionValidated and
+    (.boundaries.gradleCacheConfigured | not) and
+    (.boundaries.centralStateConsumed | not) and
+    (.boundaries.optimizationActivated | not) and
+    (.boundaries.performanceClaim | not) and
+    (.boundaries.productionAuthorized | not) and
+    (.boundaries.testOptimizationOwned | not)
+' "${buildopt_contract}" >/dev/null
+
+rg -F 'BUILDOPT_STICKY_WRAPPER_ROOT' "${buildopt_posix_template}" >/dev/null
+rg -F 'BUILDOPT_STICKY_WRAPPER_ROOT' "${buildopt_windows_template}" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+./dev/run --toolchain go -- go test -race -count=1 \
+    ./internal/stickywrapper ./internal/launcher \
+    -run '^(TestLoadConfig|TestStickyConnection)'
+./dev/run --toolchain go -- go vet ./internal/stickywrapper ./internal/launcher
+GOOS=darwin GOARCH=arm64 ./dev/run --toolchain go -- go test \
+    -c -o "${buildopt_test_root}/launcher-darwin.test" ./internal/launcher
+GOOS=windows GOARCH=amd64 ./dev/run --toolchain go -- go test \
+    -c -o "${buildopt_test_root}/launcher-windows.test.exe" ./internal/launcher
+
+printf '%s\n' 'Sticky wrapper connection contract: OK'

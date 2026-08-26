@@ -3,8 +3,8 @@
 ## Status
 
 **Overall:** `IN_PROGRESS`<br>
-**Progress:** `5/17` blocks complete<br>
-**Current block:** `SWL-005` — Portable connection and project identity<br>
+**Progress:** `6/17` blocks complete<br>
+**Current block:** `SWL-006` — Gradle HTTP cache integration<br>
 **Predecessor:** the adaptive-fragment experiment closed as
 `STOP_ADAPTIVE_FRAGMENT_POC` with zero activations and zero attributable
 saving. Its evidence remains immutable context, not authority for this POC.
@@ -240,8 +240,8 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | 2 | `SWL-002` Wrapper generator | `buildopt wrapper init` creates, updates and verifies deterministic portable files | `DONE` | SWL-001 |
 | 3 | `SWL-003` Verified bootstrap | Cross-platform download/cache/install with SHA-256, offline reuse and negative fixtures | `DONE` | SWL-002 |
 | 4 | `SWL-004` Gradle passthrough and bypass | Wrapper discovers the repository Gradle Wrapper and preserves complete process behavior | `DONE` | SWL-003 |
-| 5 | `SWL-005` Portable connection and project identity | Non-secret committed endpoint/scope plus private credential discovery | `TODO` | SWL-004 |
-| 6 | `SWL-006` Gradle HTTP cache integration | Existing verifying gateway and central cache operate automatically through the wrapper | `WAITING` | SWL-005 |
+| 5 | `SWL-005` Portable connection and project identity | Non-secret committed endpoint/scope plus private credential discovery | `DONE` | SWL-004 |
+| 6 | `SWL-006` Gradle HTTP cache integration | Existing verifying gateway and central cache operate automatically through the wrapper | `TODO` | SWL-005 |
 | 7 | `SWL-007` Decision contract and store | Typed state machine, signed decisions, generation CAS, expiry, revocation and plane separation | `WAITING` | SWL-005 |
 | 8 | `SWL-008` Native no-op fast path | Exact local snapshot makes native retention independent of a blocking remote lookup | `WAITING` | SWL-007 |
 | 9 | `SWL-009` Ordinary-build observation | Bounded exact timings, outputs, task/graph facts and ledger updates from requested builds | `WAITING` | SWL-008 |
@@ -379,6 +379,23 @@ embedded tokens and redirects reject.
 Acceptance: two clean machines derive the same authorized project scope;
 another repository, missing/wrong scopes and revoked token retain native and
 cannot read state or cache objects.
+
+Closure: the generated wrapper declares its canonical repository root only to
+the verified BuildOpt process. The binary loads the strict committed
+configuration, reads the exact owner-issued `buildopt.central/access-token/v1`
+document from the named private environment variable, derives project identity
+without the checkout path and additionally binds server, tenant, trust domain,
+cache namespace and namespace generation. It requires `CACHE_READ` plus
+`STATE_READ`, checks expiry locally and probes both capabilities without
+mutating either plane; redirects are disabled and live revocation is
+authoritative. Two independent checkout roots produce one project/connection
+identity, while another namespace produces a distinct connection. Another
+repository, absent credential and incomplete capabilities make no request;
+revoked credentials receive `401` for both planes. The dynamic credential and
+wrapper root are removed before Gradle while ordinary environment remains
+unchanged. The race-enabled HTTPS fixture, redirect/root negatives, Go vet and
+macOS ARM64/Windows AMD64 compilation pass. No Gradle cache, typed state,
+decision, learning or optimization is activated.
 
 ### SWL-006 — Gradle HTTP cache integration
 
@@ -541,7 +558,7 @@ customer behavior, architecture, value evidence or direction changes.
 | `SWL-E003` | SWL-002 | [Generator contract](../../specs/poc-sticky-wrapper-generator-v1.md), `internal/stickywrapper`, executable [`check-sticky-wrapper-generator`](../../dev/check-sticky-wrapper-generator), deterministic/read-only/drift/update/downgrade/concurrency/rollback tests, portable compilation and real public-metadata smoke | `DONE` |
 | `SWL-E004` | SWL-003 | [Bootstrap contract](../../specs/poc-sticky-wrapper-bootstrap-v1.md), embedded POSIX/Windows templates and executable [`check-sticky-wrapper-bootstrap`](../../dev/check-sticky-wrapper-bootstrap): checksum-pinned download, safe extraction, internal manifest, atomic concurrent publication, verified offline reuse, public package smokes and native platform CI gates | `DONE` |
 | `SWL-E005` | SWL-004 | [Neutral passthrough contract](../../specs/poc-sticky-wrapper-passthrough-v1.md), machine-readable [boundary](../../specs/poc-sticky-wrapper-passthrough-v1.json), executable [`check-sticky-wrapper-passthrough`](../../dev/check-sticky-wrapper-passthrough) and native platform gates: difficult argv/cwd/streams/environment, ordinary and signal exits, descendants, pre-bootstrap bypass and fail-open Gradle fallback | `DONE` |
-| `SWL-E006` | SWL-005 | Portable scope and credential-bound connection proof | `WAITING` |
+| `SWL-E006` | SWL-005 | [Portable connection contract](../../specs/poc-sticky-wrapper-connection-v1.md), machine-readable [scope boundary](../../specs/poc-sticky-wrapper-connection-v1.json) and executable [`check-sticky-wrapper-connection`](../../dev/check-sticky-wrapper-connection): two clean checkouts share one path-independent project/connection identity; namespace changes separate it; absent/cross-project/incomplete credentials avoid the server; live revocation blocks both planes; redirects and foreign wrapper roots reject; the dynamic secret is scrubbed before Gradle | `DONE` |
 | `SWL-E007` | SWL-006 | Central Gradle HTTP cache producer/consumer/outage proof | `WAITING` |
 | `SWL-E008` | SWL-007 | Decision lifecycle, signed storage and cross-plane negatives | `WAITING` |
 | `SWL-E009` | SWL-008 | No-op and unavailable-service overhead evidence | `WAITING` |
@@ -558,7 +575,7 @@ customer behavior, architecture, value evidence or direction changes.
 
 | Risk | Required response |
 | --- | --- |
-| Wrapper hides or changes Gradle behavior | Stop before SWL-005; passthrough equivalence is mandatory |
+| Wrapper hides or changes Gradle behavior | Stop before cache integration; passthrough equivalence is mandatory |
 | Network access becomes part of every no-op decision | Redesign the local snapshot path; do not raise the overhead gate |
 | Cache objects become action authority | Fail the experiment; separate protocols and credentials are mandatory |
 | Observation breaks Configuration Cache or exceeds budget | Disable that observation class and retain native Gradle |
@@ -573,6 +590,7 @@ customer behavior, architecture, value evidence or direction changes.
 
 | Date | Change |
 | --- | --- |
+| 2026-08-26 | Closed SWL-005. Bound canonical committed endpoint/project scope to the private owner-issued token document, derived checkout-independent project identity plus namespace-specific connection identity, required both read capabilities, honored expiry/live revocation and scrubbed the dynamic credential before Gradle. Two-checkout HTTPS/race evidence and cross-project, missing, capability, namespace, redirect, foreign-root and revoked negatives pass without consuming cache/state; opened SWL-006. |
 | 2026-08-26 | Closed SWL-004. Ordinary wrapper calls now execute the repository Gradle Wrapper through the verified `buildopt run --` launcher with exact argv/cwd/streams/environment/exit behavior; `--gradle` escapes management, exact bypass runs before configuration/bootstrap, ordinary bootstrap failures warn and run direct Gradle, and management fails closed. Linux difficult-argument and signal-tree fixtures plus native macOS/Windows entrypoint gates pass without activating any optimization; opened SWL-005. |
 | 2026-08-26 | Closed SWL-003. Implemented checksum-pinned POSIX/Windows bootstrap for four native packages, safe extraction and internal manifest verification, atomic concurrent user-cache publication and verified zero-network reuse. Synthetic negatives, race/vet, ShellCheck, PowerShell parsing and public `v0.6.1` Linux/Windows-body smokes pass. A real GitHub release-asset redirect corrected the frozen policy to at most five HTTPS-only redirects without weakening the archive checksum authority; opened SWL-004. |
 | 2026-08-26 | Closed SWL-002. Implemented deterministic `wrapper init`, offline/read-only `check` and distribution-only `update`; bound real immutable GitHub release digests without archive download, preserved owner files, rejected drift/downgrade/concurrency and proved full rollback. Linux race/vet, Windows/macOS compilation and public `v0.6.1` metadata smoke pass; opened SWL-003. |

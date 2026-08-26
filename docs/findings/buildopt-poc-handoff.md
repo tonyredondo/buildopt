@@ -229,7 +229,13 @@ codes remain equivalent, signals reach descendants, exact bypass occurs before
 configuration/bootstrap and bootstrap failure falls back to direct Gradle.
 Native macOS/Windows entrypoints exercise the same route. Cache/state,
 observation, learning and optimization remain disabled, so there is still no
-new performance claim.
+new performance claim. `SWL-005` now binds the committed endpoint and project
+scope to the private owner-issued token document. Two clean checkouts share one
+project identity; namespace/generation remain distinct, and missing,
+mismatched, incomplete, redirected or revoked credentials retain native Gradle
+and never reach the child. Automatic cache use and typed-state consumption are
+still disabled. `SWL-006` is next: configure the existing read-only Gradle HTTP
+cache through this exact connection.
 
 No generic whole-profile implementation block followed automatically from that
 failed gate. The separately preregistered
@@ -313,6 +319,7 @@ outside this POC.
 - [Sticky wrapper machine contract](../../specs/poc-sticky-wrapper-learning-v1.md)
 - [Sticky wrapper generator contract](../../specs/poc-sticky-wrapper-generator-v1.md)
 - [Sticky wrapper bootstrap contract](../../specs/poc-sticky-wrapper-bootstrap-v1.md)
+- [Sticky wrapper connection contract](../../specs/poc-sticky-wrapper-connection-v1.md)
 - [Machine-readable V3 summary](../../benchmarks/results/poc-lifetime-breadth-v3/summary.json)
 - [V3 protocol](../../specs/poc-lifetime-breadth-v3.md)
 - [Detailed historical findings](./build-optimization-performance.md)

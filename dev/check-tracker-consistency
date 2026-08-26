@@ -66,9 +66,9 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`STICKY WRAPPER LEARNING POC ACTIVE; PRIOR GENERIC HYPOTHESES STOPPED\`"
-    "**Current phase:** \`SWL-005_PORTABLE_CONNECTION_AND_PROJECT_IDENTITY\`"
+    "**Current phase:** \`SWL-006_GRADLE_HTTP_CACHE_INTEGRATION\`"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
-    "| POC-STICKY-WRAPPER-LEARNING | Test a repository-committed verified wrapper, centralized Gradle cache/state and evidence-gated durable/runtime actions over chronological builds | \`DOING\` | 5/17 |"
+    "| POC-STICKY-WRAPPER-LEARNING | Test a repository-committed verified wrapper, centralized Gradle cache/state and evidence-gated durable/runtime actions over chronological builds | \`DOING\` | 6/17 |"
     "| \`E-403\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-000\` |"
     "| \`E-404\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-001\` |"
     "| \`E-405\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-002\` |"

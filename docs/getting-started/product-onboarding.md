@@ -51,12 +51,12 @@ Gradle arguments are the default. Management is deliberately explicit:
 A leading `--gradle` escapes the reserved management prefix. This keeps Gradle
 tasks named `status` or `explain` working without special treatment.
 
-The wrapper will checksum-verify and cache the pinned BuildOpt distribution,
-invoke the repository's existing Gradle Wrapper and choose native, observe,
-shadow, bounded trial or exact active behavior. The committed configuration may
-name an HTTPS BuildOpt Server and project scope but never contains a token.
-Credentials remain in an environment variable, CI secret/OIDC exchange or
-private file and are not passed to Gradle.
+The wrapper checksum-verifies and caches the pinned BuildOpt distribution,
+invokes the repository's existing Gradle Wrapper and will later choose native,
+observe, shadow, bounded trial or exact active behavior. The committed
+configuration may name an HTTPS BuildOpt Server and project scope but never
+contains a token. The variable named by `credential_env` contains the private
+owner-issued access-token document and is not passed to Gradle.
 
 The file, configuration, routing, bypass, update and credential contract is
 frozen and tested on POSIX- and Windows-shaped parsers. The generator is now
@@ -91,9 +91,13 @@ The committed wrapper now runs ordinary Gradle commands neutrally:
 
 It preserves Gradle arguments, cwd, streams, process cleanup and exit status.
 `BUILDOPT_BYPASS=1 ./buildoptw build` skips configuration and bootstrap and
-runs the repository Gradle Wrapper directly. This completes onboarding only;
-cache/state connection, learning and optimization remain later POC blocks. The
-complete sequence, scorecard and status are in the
+runs the repository Gradle Wrapper directly. With a configured server, the
+verified binary now proves `CACHE_READ` and `STATE_READ` against the exact
+committed project scope. Two clean checkouts use the same project identity;
+missing credentials, forks, mismatches, expiry, revocation or outage retain
+native Gradle. No cache object or typed state is consumed yet. Automatic cache
+use, learning and optimization remain later POC blocks. The complete sequence,
+scorecard and status are in the
 [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md).
 
 ## Install

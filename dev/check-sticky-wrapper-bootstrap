@@ -27,8 +27,8 @@ jq -e '
     .schemaVersion == "buildopt.poc/sticky-wrapper-bootstrap/v1" and
     .workItem == "SWL-003" and
     .inputContract.sha256 == "38614c543483e59d7b039595b4dfb120bdb493b6650f92ae433bbe47e5b909df" and
-    .templates.posix.sha256 == "1a1f2abbce71568ed791da1d1622d5a8c8e72296d36bd2f5f44ca498b84ac325" and
-    .templates.windows.sha256 == "eb575abf87bf196ce811fb33cce2c1950225e11a30e9b7f6e52db288c0ae3127" and
+    .templates.posix.sha256 == "ba8caf8aa8a711c8885d21274039795f8af8971f632106318780a17615a97db9" and
+    .templates.windows.sha256 == "1ade5614c03777df62174abd15a56b89e6e2eb004c193e323ad1659e5bb2aa90" and
     .download.redirectPolicy == "HTTPS_ONLY_MAX_5" and
     .download.archiveSha256RequiredBeforeExtraction != false and
     .archive.traversalRejected and .archive.linksRejected and

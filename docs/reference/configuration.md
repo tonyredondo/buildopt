@@ -46,8 +46,20 @@ updates. The [bootstrap contract](../../specs/poc-sticky-wrapper-bootstrap-v1.md
 defines checksum verification, safe extraction, atomic user-cache publication
 and offline reuse. The
 [passthrough contract](../../specs/poc-sticky-wrapper-passthrough-v1.md)
-defines the now-active neutral Gradle route and pre-bootstrap bypass. Neither
-contract activates cache/state integration or optimization.
+defines the now-active neutral Gradle route and pre-bootstrap bypass. The
+[portable connection contract](../../specs/poc-sticky-wrapper-connection-v1.md)
+now binds the committed endpoint/project scope to an owner-issued private
+credential without using the checkout path. None of these contracts activates
+cache/state consumption or optimization.
+
+When all three server identity fields are present, the variable named by
+`credential_env` contains the exact `buildopt.central/access-token/v1` JSON
+document returned by `buildopt-server central-token issue`, not only its raw
+token field. The document must match `project_scope`, remain unexpired and
+grant `CACHE_READ` plus `STATE_READ`. Missing credentials retain native Gradle
+without network access; mismatch, expiry, revocation or connection failure
+warn and retain native. The wrapper never persists this document and removes
+the dynamically named variable before Gradle starts.
 
 BuildOpt configuration is grouped by trust boundary. Supply a complete group
 or omit it; partial configuration normally disables that optional capability

@@ -8,13 +8,13 @@
   "templates": {
     "posix": {
       "path": "internal/stickywrapper/templates/buildoptw",
-      "sha256": "1a1f2abbce71568ed791da1d1622d5a8c8e72296d36bd2f5f44ca498b84ac325",
-      "bytes": 15067
+      "sha256": "ba8caf8aa8a711c8885d21274039795f8af8971f632106318780a17615a97db9",
+      "bytes": 15653
     },
     "windows": {
       "path": "internal/stickywrapper/templates/buildoptw.bat",
-      "sha256": "eb575abf87bf196ce811fb33cce2c1950225e11a30e9b7f6e52db288c0ae3127",
-      "bytes": 19199
+      "sha256": "1ade5614c03777df62174abd15a56b89e6e2eb004c193e323ad1659e5bb2aa90",
+      "bytes": 19799
     }
   },
   "platforms": {

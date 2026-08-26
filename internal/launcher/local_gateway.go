@@ -686,6 +686,8 @@ func newLocalSecret(size int) ([]byte, string, error) {
 
 var reservedChildEnvironment = []string{
 	bypassEnvironment,
+	stickyWrapperRootEnvironment,
+	"BUILDOPT_TOKEN",
 	pluginAttemptIDEnvironment,
 	pluginSocketEnvironment,
 	pluginTokenEnvironment,
@@ -735,8 +737,19 @@ func replaceEnvironment(
 	environment []string,
 	overrides map[string]string,
 ) []string {
-	reserved := make(map[string]struct{}, len(reservedChildEnvironment))
+	return replaceEnvironmentWithReserved(environment, overrides, nil)
+}
+
+func replaceEnvironmentWithReserved(
+	environment []string,
+	overrides map[string]string,
+	additionalReserved []string,
+) []string {
+	reserved := make(map[string]struct{}, len(reservedChildEnvironment)+len(additionalReserved))
 	for _, key := range reservedChildEnvironment {
+		reserved[key] = struct{}{}
+	}
+	for _, key := range additionalReserved {
 		reserved[key] = struct{}{}
 	}
 
@@ -760,7 +773,13 @@ func replaceEnvironment(
 			appended[key] = struct{}{}
 		}
 	}
-	extraKeys := make([]string, 0, len(overrides)-len(appended))
+	// Invocation-specific reserved names are removal-only. In particular, a
+	// repository-selected credential environment must never be reintroduced
+	// into the Gradle child through an override map.
+	for _, key := range additionalReserved {
+		appended[key] = struct{}{}
+	}
+	extraKeys := make([]string, 0, len(overrides))
 	for key := range overrides {
 		if _, ok := appended[key]; !ok {
 			extraKeys = append(extraKeys, key)

@@ -31,6 +31,7 @@ const (
 // analysis, records the one-command optimization POC contract, and returns the
 // child process exit status.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode int) {
+	var additionalReservedEnvironment []string
 	var optimize *optimizeRun
 	var automaticOptimizeImpact *impactInvocation
 	centralGradleCacheRequested := false
@@ -51,9 +52,10 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 				stderr,
 			)
 		} else {
-			execution = executeChild(
+			execution = executeChildWithReserved(
 				childArgs,
 				environmentOverrides,
+				additionalReservedEnvironment,
 				stdin,
 				childStdout,
 				stderr,
@@ -356,6 +358,37 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 	}
 
 	childArgs := args[2:]
+	if stickyRoot := os.Getenv(stickyWrapperRootEnvironment); stickyRoot != "" {
+		additionalReservedEnvironment = append(
+			additionalReservedEnvironment,
+			stickyWrapperRootEnvironment,
+			"BUILDOPT_TOKEN",
+		)
+		connection, credentialEnvironment, connectionErr :=
+			prepareStickyWrapperConnection(
+				stickyRoot,
+				childArgs,
+				os.Getenv,
+				time.Now().UTC(),
+				nil,
+			)
+		if credentialEnvironment != "" && credentialEnvironment != "BUILDOPT_TOKEN" {
+			additionalReservedEnvironment = append(
+				additionalReservedEnvironment,
+				credentialEnvironment,
+			)
+		}
+		if connection != nil {
+			defer connection.close()
+		}
+		if connectionErr != nil {
+			_, _ = fmt.Fprintf(
+				stderr,
+				"buildopt: sticky wrapper connection unavailable; retaining native Gradle: %v\n",
+				connectionErr,
+			)
+		}
+	}
 	if os.Getenv(bypassEnvironment) == "1" {
 		execution := execute(
 			childArgs,

@@ -70,6 +70,18 @@ missing-wrapper failure and signal propagation to a descendant tree with:
 This is the `SWL-004` implementation gate. It proves a neutral customer
 command and activates no cache, observation, learning or optimization.
 
+Validate portable project identity, private credential discovery, exact read
+capabilities, namespace separation, live revocation and Gradle secret
+isolation with:
+
+```bash
+./dev/check-sticky-wrapper-connection
+```
+
+This is the `SWL-005` connection gate. It authenticates the optional central
+service but does not yet configure Gradle's HTTP cache, consume typed state or
+authorize an optimization.
+
 ## Toolchain lock
 
 [`toolchains.lock.yaml`](./toolchains.lock.yaml) is the source of truth for downloadable development toolchains on the initial `linux-amd64` platform. It is JSON-compatible YAML 1.2 so the Phase 0 validator can parse it with `jq` before the repository adopts a YAML library.

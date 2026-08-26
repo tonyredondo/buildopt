@@ -90,15 +90,25 @@ network.redirectPolicy=https-only-max-5
 network.proxyMode=environment
 EOF
 cp -- "${buildopt_repository}/.buildopt/wrapper.properties" \
-    "${buildopt_test_root}/valid-wrapper.properties"
+	"${buildopt_test_root}/valid-wrapper.properties"
+cat >"${buildopt_repository}/.buildopt/config.toml" <<'EOF'
+schema_version = "buildopt.config/v1"
+mode = "off"
+server_url = "https://buildopt.example.invalid"
+project_scope = "example/passthrough-fixture"
+credential_env = "BUILDOPT_TEAM_TOKEN"
+trial_budget_percent = 5
+EOF
 
 cat >"${buildopt_repository}/gradlew" <<'EOF'
 #!/bin/sh
 printf 'cwd=<%s>\n' "$PWD"
-printf 'passthrough=<%s>\n' "${BUILDOPT_TEST_PASSTHROUGH:-}"
+printf 'passthrough=<%s>\n' "${STICKY_TEST_PASSTHROUGH:-}"
 printf 'bypass=<%s>\n' "${BUILDOPT_BYPASS:-}"
 printf 'internal=<%s>\n' "${BUILDOPT_PLUGIN_TOKEN:-}"
 printf 'wrapper-cache=<%s>\n' "${BUILDOPT_WRAPPER_CACHE_HOME:-}"
+printf 'sticky-root=<%s>\n' "${BUILDOPT_STICKY_WRAPPER_ROOT:-}"
+printf 'credential=<%s>\n' "${BUILDOPT_TEAM_TOKEN:-}"
 buildopt_index=0
 for buildopt_argument do
     printf 'arg[%s]=<%s>\n' "${buildopt_index}" "${buildopt_argument}"
@@ -108,7 +118,7 @@ printf 'stdin=<'
 cat
 printf '>\n'
 printf 'fixture stderr\n' >&2
-exit "${BUILDOPT_TEST_EXIT:-0}"
+exit "${STICKY_TEST_EXIT:-0}"
 EOF
 chmod 0755 "${buildopt_repository}/gradlew"
 
@@ -128,9 +138,9 @@ buildopt_run_capture() {
 }
 
 buildopt_arguments=('' 'two words' '*' "\$HOME" '"quoted"' 'snowman-☃' $'line\nbreak')
-export BUILDOPT_TEST_PASSTHROUGH='inherited-value'
+export STICKY_TEST_PASSTHROUGH='inherited-value'
 export BUILDOPT_WRAPPER_CACHE_HOME="${buildopt_cache}"
-export BUILDOPT_TEST_EXIT=37
+export STICKY_TEST_EXIT=37
 
 buildopt_run_capture direct env -u BUILDOPT_WRAPPER_CACHE_HOME \
     "${buildopt_repository}/gradlew" "${buildopt_arguments[@]}"
@@ -153,9 +163,12 @@ fi
 cmp "${buildopt_test_root}/escaped-direct.exit" "${buildopt_test_root}/escaped-wrapper.exit"
 
 export BUILDOPT_PLUGIN_TOKEN='must-not-reach-gradle'
+export BUILDOPT_TEAM_TOKEN='must-not-reach-gradle'
 buildopt_run_capture scrubbed "${buildopt_repository}/buildoptw" "${buildopt_arguments[@]}"
 grep -Fx 'internal=<>' "${buildopt_test_root}/scrubbed.stdout" >/dev/null
 grep -Fx 'wrapper-cache=<>' "${buildopt_test_root}/scrubbed.stdout" >/dev/null
+grep -Fx 'sticky-root=<>' "${buildopt_test_root}/scrubbed.stdout" >/dev/null
+grep -Fx 'credential=<>' "${buildopt_test_root}/scrubbed.stdout" >/dev/null
 
 set +e
 "${buildopt_repository}/buildoptw" --buildopt unknown \

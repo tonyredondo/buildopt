@@ -60,7 +60,10 @@ The active [Sticky Wrapper Learning POC](./sticky-wrapper-learning-poc-tracker.m
 reuses this completed infrastructure through a repository-committed wrapper.
 It does not add a third plane or another cache server. Gradle objects remain
 opaque, evictable data; observations, trials, signed decisions and cumulative
-economics remain typed state. The wrapper adds portable connection discovery,
+economics remain typed state. Its portable connection is now implemented: the
+committed project scope has the same digest across checkout paths, while the
+private access-token document additionally binds server namespace/generation,
+requires both read capabilities and honors live revocation. The wrapper adds
 an exact local signed-decision fast path and one repeated customer command.
 Those additions have no performance authority until the successor tracker
 closes its own chronological scorecard.

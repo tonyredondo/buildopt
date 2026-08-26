@@ -30,6 +30,7 @@ $GradleWrapper = $null
 function Clear-BuildOptChildEnvironment {
     $Names = @(
         'BUILDOPT_BYPASS', 'BUILDOPT_WRAPPER_CACHE_HOME',
+        'BUILDOPT_STICKY_WRAPPER_ROOT',
         'BUILDOPT_WRAPPER_MANAGEMENT',
         'BUILDOPT_PLUGIN_ATTEMPT_ID', 'BUILDOPT_PLUGIN_SOCKET', 'BUILDOPT_PLUGIN_TOKEN',
         'BUILDOPT_GATEWAY_URL', 'BUILDOPT_GATEWAY_USERNAME', 'BUILDOPT_GATEWAY_PASSWORD',
@@ -55,8 +56,19 @@ function Clear-BuildOptChildEnvironment {
     }
 }
 
+function Clear-BuildOptDirectGradleEnvironment {
+    # Direct Gradle execution has no BuildOpt launcher available to remove a
+    # repository-selected credential name, so clear the private namespace.
+    $Names = @([Environment]::GetEnvironmentVariables('Process').Keys)
+    foreach ($Name in $Names) {
+        if ([string]$Name -clike 'BUILDOPT_*') {
+            [Environment]::SetEnvironmentVariable([string]$Name, $null, 'Process')
+        }
+    }
+}
+
 function Invoke-GradleDirect {
-    Clear-BuildOptChildEnvironment
+    Clear-BuildOptDirectGradleEnvironment
     & $GradleWrapper @WrapperArgs
     exit $LASTEXITCODE
 }
@@ -354,6 +366,7 @@ if ($ManagementInvocation) {
 
 $BootstrapFallbackEnabled = $false
 Clear-BuildOptChildEnvironment
+[Environment]::SetEnvironmentVariable('BUILDOPT_STICKY_WRAPPER_ROOT', $RepositoryRoot, 'Process')
 $BuildOptBinary = Join-Path $InstallRoot 'bin\buildopt.exe'
 # Preserve the public buildopt run -- contract while passing each argument separately.
 $BuildOptArguments = @('run', '--', $GradleWrapper) + $WrapperArgs

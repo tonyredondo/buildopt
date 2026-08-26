@@ -1,6 +1,7 @@
-// Package stickywrapper owns the repository-committed BuildOpt Wrapper files.
-// It deliberately stops before distribution download or Gradle execution;
-// those behaviors belong to later Sticky Wrapper Learning POC blocks.
+// Package stickywrapper owns the repository-committed BuildOpt Wrapper files,
+// their deterministic generation and the invocation-time portable
+// configuration boundary. Download, process execution and authenticated
+// central-service probes remain launcher responsibilities.
 package stickywrapper
 
 import (

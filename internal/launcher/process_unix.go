@@ -19,12 +19,16 @@ func notifyOptimizeLearningContext(parent context.Context) (context.Context, con
 }
 
 func executeChild(childArgs []string, environmentOverrides map[string]string, stdin io.Reader, stdout, stderr io.Writer) childExecution {
+	return executeChildWithReserved(childArgs, environmentOverrides, nil, stdin, stdout, stderr)
+}
+
+func executeChildWithReserved(childArgs []string, environmentOverrides map[string]string, additionalReserved []string, stdin io.Reader, stdout, stderr io.Writer) childExecution {
 	command := exec.Command(childArgs[0], childArgs[1:]...)
 	command.Stdin = stdin
 	command.Stdout = stdout
 	command.Stderr = stderr
 	command.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
-	command.Env = replaceEnvironment(os.Environ(), environmentOverrides)
+	command.Env = replaceEnvironmentWithReserved(os.Environ(), environmentOverrides, additionalReserved)
 	signals := make(chan os.Signal, 2)
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
 	startedAt := time.Now()

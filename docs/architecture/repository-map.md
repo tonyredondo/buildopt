@@ -36,9 +36,9 @@ The current successor experiment is specified by
 [`poc-sticky-wrapper-learning-v1`](../../specs/poc-sticky-wrapper-learning-v1.md)
 and ordered by the
 [`Sticky Wrapper Learning POC Tracker`](../plans/sticky-wrapper-learning-poc-tracker.md).
-Its planned repository-facing files (`buildoptw`, `buildoptw.bat` and
-`.buildopt/`) do not exist yet; `SWL-001..004` own their contract, generator,
-verified bootstrap and passthrough implementation. The existing
+Its generated repository-facing files are owned by `internal/stickywrapper`;
+`SWL-001..005` own their contract, generator, verified bootstrap, passthrough
+and portable connection implementation. The existing
 `internal/sharedcache` and `internal/launcher` packages own the central Gradle
 HTTP cache, typed state and launcher primitives that later blocks will reuse.
 No third cache or state service is planned.
@@ -108,7 +108,7 @@ bytecode using the pinned Wrapper and repository-local JDK 21.
 
 | Normative source | Primary producers | Primary consumers | Conformance evidence |
 |---|---|---|---|
-| `specs/poc-sticky-wrapper-contract-v1.*`, `poc-sticky-wrapper-generator-v1.*` and `poc-sticky-wrapper-bootstrap-v1.*` | `internal/stickywrapper`; `buildopt wrapper` CLI; embedded POSIX/Windows templates | generated repository wrappers and user-cache distributions | `check-sticky-wrapper-contract`, `check-sticky-wrapper-generator`, `check-sticky-wrapper-bootstrap`; portable fixtures, deterministic generation, drift/rollback, checksum, extraction, concurrency and offline-reuse tests |
+| `specs/poc-sticky-wrapper-contract-v1.*`, `poc-sticky-wrapper-generator-v1.*`, `poc-sticky-wrapper-bootstrap-v1.*`, `poc-sticky-wrapper-passthrough-v1.*` and `poc-sticky-wrapper-connection-v1.*` | `internal/stickywrapper`; `internal/launcher`; `buildopt wrapper` CLI; embedded POSIX/Windows templates | generated repository wrappers, user-cache distributions and private central credentials | `check-sticky-wrapper-contract`, `check-sticky-wrapper-generator`, `check-sticky-wrapper-bootstrap`, `check-sticky-wrapper-passthrough`, `check-sticky-wrapper-connection`; portable fixtures, deterministic generation, bootstrap integrity, process parity, scope/capability/revocation and secret-isolation tests |
 | `contracts/jsonschema/adaptive-fragment*.v1.schema.json` and `specs/poc-adaptive-state-portability-v1.*` | adaptive learner and local state writer | `internal/adaptivefragment`; `internal/launcher` HTTPS state adapter | `check-adaptive-fragment-state`, `check-adaptive-fragment-index`, `check-adaptive-state-portability` |
 | `contracts/jsonschema/build-session.v1.schema.json` | `internal/buildsession` | server history/export tooling | `check-build-session-schema`, `check-build-session-export` |
 | `contracts/proto/local-events/v1/` | JVM Gradle plugin | launcher event channel | `check-task-events-proto`, plugin handshake/correlation checks |
