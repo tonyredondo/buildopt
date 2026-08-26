@@ -66,8 +66,8 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`CURRENT GENERIC STRUCTURAL-PROFILE HYPOTHESIS STOPPED; BOUNDED MECHANISM VALUE RETAINED\`"
-    "**Current phase:** \`CURRENT COHORTS FROZEN; LONGITUDINAL CAMPAIGN NEXT\`"
-    "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DOING\` | 16/19 |"
+    "**Current phase:** \`CURRENT VALUE NOT ATTRIBUTABLE; TERMINAL DECISION NEXT\`"
+    "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DOING\` | 18/19 |"
     "| 150 | \`POC-AGGREGATE-OUTPUT-CLOSURE-001\` | Derive every required aggregate output"
     "| \`E-398\` | 2026-08-25 | \`POC-AGGREGATE-OUTPUT-CLOSURE-001\`"
     "| 149 | \`POC-CONFIGURATION-INPUT-BINDING-001\` | Inspect typed Gradle configuration"
