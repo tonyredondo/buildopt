@@ -2692,6 +2692,11 @@ observations bind exact parent/tree identities, changed paths, generic
 change-shape labels, workflow, output contract and JDK. The last reserve equals
 the public branch HEAD observed at 2026-08-25T22:04:09Z.
 
+Before accepting any Kafka timing, validation found that its Java test compile
+task is `NO-SOURCE`; the frozen workflow therefore uses the real
+`core:compileTestScala` task and verifies the original Scala test-class output
+contract. The selected Kafka commit window remains unchanged.
+
 The checker rejects reordering, result-dependent replacement, workflow/output
 scope drift, changed path digests, unknown fields and any timing added before
 the campaign. This manifest contains no performance result.

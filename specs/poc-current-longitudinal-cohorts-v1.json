@@ -34,7 +34,7 @@
       "remoteUrl": "https://github.com/apache/kafka.git",
       "branch": "trunk",
       "jdkToolchain": "temurin-jdk-25",
-      "workflow": ["core:compileTestJava", "--offline", "--no-scan", "--no-daemon", "--max-workers=12"],
+      "workflow": ["core:compileTestScala", "--offline", "--no-scan", "--no-daemon", "--max-workers=12"],
       "requiredOutputs": ["core/build/classes/scala/test/**"]
     },
     {

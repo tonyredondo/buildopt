@@ -23,6 +23,12 @@ Every frozen workflow also passes `--no-scan`. Public repository builds may
 apply Develocity plugins that publish automatically; the POC must not transmit
 runner metadata merely to establish a local performance comparison.
 
+Kafka's frozen test-build workflow invokes `core:compileTestScala`, not the
+`NO-SOURCE` `core:compileTestJava` task. The workflow was corrected before any
+Kafka pair was accepted, validated from clean outputs while offline, and keeps
+the original frozen commit identities and `core/build/classes/scala/test/**`
+output contract.
+
 The manifest proves experimental preregistration, not performance. Builds run
 sequentially in `AF-014C`; reproducible checkouts and caches may be removed only
 after immutable evidence is secured. Production hardening, soak, design
