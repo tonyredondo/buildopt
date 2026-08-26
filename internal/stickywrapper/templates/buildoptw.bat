@@ -134,31 +134,28 @@ if (Test-Path -LiteralPath $InstallRoot) {
                 if (-not (Test-Install $InstallRoot)) { Stop-Wrapper 74 'cached distribution failed verification' }
             } else {
                 $Archive = Join-Path $Work 'distribution.zip'
-                $Handler = $null
-                $Client = $null
                 $Response = $null
                 try {
-                    $Handler = [Net.Http.HttpClientHandler]::new()
-                    $Handler.AllowAutoRedirect = $false
-                    $Client = [Net.Http.HttpClient]::new($Handler)
-                    $Client.Timeout = [Threading.Timeout]::InfiniteTimeSpan
                     $CurrentUri = $Uri
                     $RequestClock = [Diagnostics.Stopwatch]::StartNew()
                     for ($Redirects = 0; $Redirects -le 5; $Redirects++) {
-                        $ConnectCancellation = [Threading.CancellationTokenSource]::new([TimeSpan]::FromSeconds(5))
-                        try {
-                            $Response = $Client.GetAsync($CurrentUri, [Net.Http.HttpCompletionOption]::ResponseHeadersRead, $ConnectCancellation.Token).GetAwaiter().GetResult()
-                        } finally { $ConnectCancellation.Dispose() }
+                        $Request = [Net.HttpWebRequest]::Create($CurrentUri)
+                        $Request.AllowAutoRedirect = $false
+                        $Request.Timeout = 5000
+                        $Request.ReadWriteTimeout = 30000
+                        $Request.Method = 'GET'
+                        $Response = $Request.GetResponse()
                         if ([int]$Response.StatusCode -lt 300 -or [int]$Response.StatusCode -ge 400) { break }
-                        if ($Redirects -eq 5 -or $null -eq $Response.Headers.Location) { Stop-Wrapper 69 'distribution redirect limit was exceeded' }
-                        $NextUri = [Uri]::new($CurrentUri, $Response.Headers.Location)
+                        $Location = $Response.Headers['Location']
+                        if ($Redirects -eq 5 -or [string]::IsNullOrEmpty($Location)) { Stop-Wrapper 69 'distribution redirect limit was exceeded' }
+                        $NextUri = [Uri]::new($CurrentUri, $Location)
                         if ($NextUri.Scheme -cne 'https') { Stop-Wrapper 69 'distribution redirect must use HTTPS' }
                         $Response.Dispose()
                         $Response = $null
                         $CurrentUri = $NextUri
                     }
-                    if (-not $Response.IsSuccessStatusCode) { Stop-Wrapper 69 'distribution download failed' }
-                    $InputStream = $Response.Content.ReadAsStreamAsync().GetAwaiter().GetResult()
+                    if ([int]$Response.StatusCode -lt 200 -or [int]$Response.StatusCode -ge 300) { Stop-Wrapper 69 'distribution download failed' }
+                    $InputStream = $Response.GetResponseStream()
                     $OutputStream = [IO.File]::Create($Archive)
                     try {
                         $Buffer = [byte[]]::new(65536)
@@ -178,8 +175,6 @@ if (Test-Path -LiteralPath $InstallRoot) {
                     Stop-Wrapper 69 'distribution download failed'
                 } finally {
                     if ($null -ne $Response) { $Response.Dispose() }
-                    if ($null -ne $Client) { $Client.Dispose() }
-                    if ($null -ne $Handler) { $Handler.Dispose() }
                 }
                 if ((Get-FileHash -LiteralPath $Archive -Algorithm SHA256).Hash.ToLowerInvariant() -cne $ArchiveSha) {
                     Stop-Wrapper 74 'distribution checksum mismatch'
