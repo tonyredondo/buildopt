@@ -102,12 +102,12 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > **-37.684 s**, and Micronaut remains `INCONCLUSIVE` after a byte-
 > reproducibility rejection. Only **2/5** rows are positive versus the frozen
 > 3/5 target. Those measurements audit earlier behavior but do not represent the
-> current adaptive implementation. The installed measurement harness is now
-> source-bound and validated with separate arms, 18 alternating learning
-> observations, exact selected/native-retained/bypass paths and reconciled
-> phase timing; its controlled fixture makes no performance claim. The next
-> block freezes 20 primary first-parent commits plus ordered reserves per family
-> before timing, followed by at least 15 comparable builds per terminal row.
+> current adaptive implementation. The current installed campaign now closes
+> 100 exact-output pairs across the same five repositories with zero product
+> failures. All 100 candidates retain native Gradle, no fragment activates,
+> only 25 pairs improve and cumulative signed value is **-368.623 seconds**.
+> AF-014D now separates recorded BuildOpt overhead from unresolved Gradle and
+> runner variation before the terminal adaptive-fragment decision.
 
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired

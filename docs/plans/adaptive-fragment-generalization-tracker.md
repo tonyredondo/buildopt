@@ -1,7 +1,7 @@
 # Adaptive Fragment Generalization POC Tracker
 
 **Status:** `IN_PROGRESS`<br>
-**Current block:** `AF-014C — Current longitudinal campaign`<br>
+**Current block:** `AF-014D — Mechanism attribution and generalization analysis`<br>
 **Decision baseline:** the current whole-profile hypothesis remains
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)<br>
 **Last updated:** 2026-08-25
@@ -229,8 +229,8 @@ the correctness authority for cacheability. Repetition alone is not authority.
 | 13 | `AF-013` Historical longitudinal normalization | Preserve the earlier Spring, OpenTelemetry, Kafka, Micronaut and Groovy observations as an immutable no-lookahead audit without treating them as the current implementation scorecard. | `DONE` | AF-010, AF-011 |
 | 14a | `AF-014A` Current installed longitudinal harness | Install one package built from the current SHA and prove isolated, stateful, fully attributed optimized-native-versus-BuildOpt execution through the public command. | `DONE` | AF-012, AF-013 |
 | 14b | `AF-014B` Frozen current commit cohorts | Freeze 20 primary first-parent commits, deterministic reserve queues, workflows, output contracts and exclusion rules for each of the five public repositories before timing. | `DONE` | AF-014A |
-| 14c | `AF-014C` Current longitudinal campaign | Run the current installed binary over the frozen cohorts with chronological learning, alternating arms and exact outputs. | `DOING` | AF-014B |
-| 14d | `AF-014D` Mechanism attribution and generalization analysis | Attribute savings, overhead and regressions to activated fragments, fallback, state, materialization, Gradle execution or unresolved variation. | `WAITING` | AF-014C |
+| 14c | `AF-014C` Current longitudinal campaign | Run the current installed binary over the frozen cohorts with chronological learning, alternating arms and exact outputs. | `DONE` | AF-014B |
+| 14d | `AF-014D` Mechanism attribution and generalization analysis | Attribute savings, overhead and regressions to activated fragments, fallback, state, materialization, Gradle execution or unresolved variation. | `DOING` | AF-014C |
 | 15 | `AF-015` Terminal adaptive-fragment decision | Recompute the complete scorecard from the current campaign and choose continue, specialize or stop without changing thresholds. | `WAITING` | AF-014D |
 
 ## 8. Block definitions and required outcomes
@@ -616,6 +616,17 @@ anchor cache predates it, and no measurement-only build updates authority.
 **Outcome:** one `NET_POSITIVE`, `NET_NEGATIVE`, `INCONCLUSIVE` or
 `INSUFFICIENT_COHORT` row per repository, without a terminal product decision.
 
+**Observed outcome:** `CURRENT_LONGITUDINAL_CAMPAIGN_COMPLETE`. The current
+installed package completed 100 comparable pairs with exact outputs, 25
+positive and 75 negative pairs, zero product failures, 100 native retentions,
+zero selected profiles and zero fragment activations. One Groovy primary
+revision failed during dependency preparation/native control and was retained
+as an exclusion; its next preregistered reserve supplied the twentieth
+comparable pair. The cumulative signed delta is **-368.623 seconds**. Spring,
+Kafka, Micronaut and Groovy are `NET_NEGATIVE`; OpenTelemetry is
+`INCONCLUSIVE`. This closes collection only and makes no terminal product
+decision. Evidence: `AF-E017`.
+
 ### AF-014D — Mechanism attribution and generalization analysis
 
 **Deliverables**
@@ -720,8 +731,8 @@ IDs from the implementation tracker.
 | `AF-E014` | AF-013 | [Longitudinal protocol](../../specs/poc-adaptive-fragment-longitudinal-v1.md), frozen [machine contract](../../specs/poc-adaptive-fragment-longitudinal-v1.json), canonical [five-row result](../../benchmarks/results/adaptive-fragment-longitudinal-v1.json) and [`dev/check-adaptive-fragment-longitudinal`](../../dev/check-adaptive-fragment-longitudinal). Fourteen exact signed direct pairs close Spring/Kafka positive, OpenTelemetry/Groovy negative and Micronaut inconclusive; source digests, no-lookahead bounds, one-time cost, negative builds and threshold/result tamper rejection are recomputed without a fresh timing claim. | `DONE` |
 | `AF-E015` | AF-014A | [Installed harness contract](../../specs/poc-current-longitudinal-harness-v1.md), exact [machine policy](../../specs/poc-current-longitudinal-harness-v1.json), source-bound [18-observation result](../../benchmarks/results/current-longitudinal-harness-v1.json), installed runner [`dev/run-current-longitudinal-harness`](../../dev/run-current-longitudinal-harness) and independent [`dev/check-current-longitudinal-harness`](../../dev/check-current-longitudinal-harness). One package built from `617509d049f1f166994927a413d7952679134f06` preserves separate arm state and alternating order, reconciles external wall time with non-overlapping internal phases, exercises selected, forward native-retained and exact bypass paths, and binds source/package/executable digests. The controlled eight-second omitted workload proves lifecycle reachability only and creates no performance claim. | `DONE` |
 | `AF-E016` | AF-014B | [Cohort contract](../../specs/poc-current-longitudinal-cohorts-v1.md), exact [machine policy](../../specs/poc-current-longitudinal-cohorts-v1.json), timing-free [five-repository manifest](../../benchmarks/results/current-longitudinal-cohorts-v1.json), topology freezer [`dev/freeze-current-longitudinal-cohorts`](../../dev/freeze-current-longitudinal-cohorts) and independent [`dev/check-current-longitudinal-cohorts`](../../dev/check-current-longitudinal-cohorts). Five public first-parent chains bind 100 primary commits and 50 ordered reserves to exact parents, trees, timestamps, changed paths, generic shapes, workflows, output contracts and JDKs. Reorder, scope drift and pre-campaign timing fields fail closed; OpenTelemetry and Groovy use fully qualified Gradle project paths, every public build disables Build Scan publication, and Kafka's real `core:compileTestScala` task was proved from clean offline outputs before accepting timing while retaining the originally frozen commits. Manifest SHA-256 is `8ca7a1b7b9ea2c71eb95f050eff0fdb76c23425141cd0c4f8f104f33782503ee`. | `DONE` |
-| `AF-E017` | AF-014C | Reserved for 75–100 current installed-package control/candidate pairs, raw observations, canonical longitudinal report and checker. | `TODO` |
-| `AF-E018` | AF-014D | Reserved for mechanism/fallback attribution, residual-variation analysis and the recomputable current value scorecard. | `WAITING` |
+| `AF-E017` | AF-014C | [Campaign protocol](../../specs/poc-current-longitudinal-campaign-v1.md), exact [machine policy](../../specs/poc-current-longitudinal-campaign-v1.json), immutable [100-pair raw evidence](../../benchmarks/results/current-longitudinal-raw-v1.json), canonical [five-row report](../../benchmarks/results/current-longitudinal-report-v1.json), installed runner [`dev/run-current-longitudinal-campaign`](../../dev/run-current-longitudinal-campaign) and independent [`dev/check-current-longitudinal-campaign`](../../dev/check-current-longitudinal-campaign). All five repositories close at 20 comparable pairs with exact outputs and zero product failures; 25/100 pairs are positive, 75/100 negative, all 100 retain native Gradle, no profile or fragment activates and cumulative signed value is -368.623 seconds. One Groovy primary dependency/native failure remains recorded and the next frozen reserve supplies its replacement. Calibration records use the nested benchmark-calibration authority rather than conflating incremental learning with a performed benchmark. | `DONE` |
+| `AF-E018` | AF-014D | Reserved for mechanism/fallback attribution, residual-variation analysis and the recomputable current value scorecard. | `TODO` |
 | `AF-E019` | AF-015 | Reserved for the terminal adaptive-fragment decision and its threshold-preserving checker. | `WAITING` |
 
 ## 12. Decision log
@@ -752,6 +763,7 @@ IDs from the implementation tracker.
 
 | Date | Change |
 |---|---|
+| 2026-08-26 | Closed AF-014C as `CURRENT_LONGITUDINAL_CAMPAIGN_COMPLETE`: 100/100 comparable pairs across five current public histories preserve exact outputs with zero product failures; 25 are positive, 75 negative, every invocation retains native Gradle, no profile/fragment activates and cumulative signed value is -368.623 seconds. One Groovy primary dependency/native failure remains explicit and its next frozen reserve supplies the twentieth pair. Opened AF-014D for phase and residual attribution without a terminal decision. |
 | 2026-08-26 | Corrected Groovy's frozen AF-014B workflow to the real `:groovy-json:assemble` project path after a clean public-repository reproduction. AF-014C now prepares dependency modules and Wrapper distributions outside measured wall time at every attempted revision, without copying outputs, task caches or candidate state; Git SHA-1/SHA-256 identities are validated separately from SHA-256 evidence digests. |
 | 2026-08-26 | Closed AF-014B as `CURRENT_LONGITUDINAL_COHORTS_FROZEN`: five timing-free contiguous public first-parent manifests bind 100 primary commits and 50 ordered reserves to exact topology, trees, changed paths, generic shapes, workflows, outputs, JDKs and exclusion policy; opened AF-014C with no observed cohort timing. |
 | 2026-08-26 | Corrected Kafka's frozen AF-014B workflow before accepting Kafka timing: `core:compileTestJava` is `NO-SOURCE`, while `core:compileTestScala` rebuilds 480 test classes offline. The original commit window and output contract remain frozen; AF-014C restarts from zero against the amended manifest. |

@@ -4923,6 +4923,12 @@ both against the frozen cohort with:
 The installed command currently exposes whole-profile selection rather than
 fragment identities. The runner records `NO_FRAGMENT_RUNTIME` instead of
 mislabeling those profiles; `AF-014D` owns the resulting attribution decision.
+The committed AF-014C evidence contains 100 exact-output pairs, zero product
+failures, 25 positive/75 negative deltas, 100 native retentions, zero
+activations and -368.623 seconds cumulative signed value. The runner reads
+`calibration.performed` for benchmark-calibration authority; the broader
+top-level learning flag must not be interpreted as a performed paired
+calibration.
 
 ## Ordinary-build learning economics evidence
 

@@ -529,6 +529,12 @@ keyrings and Wrapper distributions shared symmetrically between the arms.
 It also rejects any attempt to relabel the installed whole-profile runtime as
 adaptive-fragment activation.
 
+The committed campaign closes at 100 comparable exact-output pairs with zero
+product failures. It records 25 positive and 75 negative pairs, 100 native
+retentions, zero activations and -368.623 seconds cumulative signed value.
+One Groovy primary dependency/native failure remains an explicit exclusion and
+the next frozen reserve supplies the twentieth comparable pair.
+
 ## Complete lanes
 
 - `./dev/check-phase-zero` composes the historical Phase 0 gates.

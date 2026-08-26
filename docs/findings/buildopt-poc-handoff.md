@@ -39,6 +39,31 @@ decision.
 
 ## Current public-repository result
 
+The current installed package was run chronologically across 20 comparable
+commits in each of Spring Framework, OpenTelemetry Java Instrumentation, Apache
+Kafka, Micronaut Core and Apache Groovy. Each control/candidate pair used
+separate persistent state, alternating order and byte-exact required-output
+verification. Dependency preparation was outside pair wall time and copied no
+task outputs or BuildOpt policy state.
+
+| Repository | Positive pairs | Signed net | Current outcome |
+| --- | ---: | ---: | --- |
+| Spring Framework | 2/20 | **-130.406 s** | `NET_NEGATIVE` |
+| OpenTelemetry | 11/20 | **-26.044 s** | `INCONCLUSIVE` |
+| Apache Kafka | 2/20 | **-42.309 s** | `NET_NEGATIVE` |
+| Micronaut Core | 4/20 | **-144.656 s** | `NET_NEGATIVE` |
+| Apache Groovy | 6/20 | **-25.207 s** | `NET_NEGATIVE` |
+
+The current campaign closes at 100 exact-output pairs, 25 positive and 75
+negative, zero product failures and **-368.623 seconds** cumulative signed
+value. Every candidate retains native Gradle; no whole profile or adaptive
+fragment activates. This proves current safety and measurement breadth, but it
+does **not** prove current acceleration. AF-014D now determines how much of the
+regression is recorded BuildOpt decision/verification cost and how much is
+unresolved Gradle or runner variation before any terminal decision.
+
+## Historical complete-profile result
+
 One exact BuildOpt executable was used across frozen Spring Framework,
 OpenTelemetry Java Instrumentation, Apache Kafka, Micronaut Core and Apache
 Groovy windows. The run used requested ordinary builds only, kept the robust
@@ -86,6 +111,13 @@ is different.
 
 ## What the evidence says
 
+- The latest current-installed campaign is safe but not valuable yet: 100/100
+  pairs preserve exact outputs with zero product failures, while 75/100 regress
+  and cumulative signed value is -368.623 seconds.
+- No current campaign build activated a whole profile or adaptive fragment.
+  The next decision therefore depends on whether AF-014D attributes the loss to
+  avoidable BuildOpt decision/verification work or unresolved Gradle/runner
+  variation; no current acceleration claim is justified yet.
 - The core idea can create very large value when a learned structural profile
   remains compatible: Kafka's selected replay saves 75.67%.
 - Isolated acceleration is not enough. A profile must recur across real commits
@@ -105,7 +137,7 @@ is different.
   the structural opportunity. This is compatibility evidence, not a timing
   result.
 
-Applying the complete frozen gate yields **`STOP_GENERIC_POC`**. Five criteria
+The earlier complete-profile gate yielded **`STOP_GENERIC_POC`**. Five criteria
 pass: matrix completeness, exact outputs/zero failures, generic selection,
 robust Kafka qualification and bounded Kafka payback. Three fail:
 

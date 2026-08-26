@@ -496,7 +496,7 @@ buildopt_subject() {
                  phase:$result[0].phase,executionMode:$result[0].execution.mode,
                  selectionStatus:(if ($result[0].selection.status // "") == "" then "NOT_PERFORMED" else $result[0].selection.status end),
                  selectionSelected:($result[0].selection.selected // false),
-                 calibrationPerformed:($result[0].calibrationPerformed // false),
+                 calibrationPerformed:($result[0].calibration.performed // false),
                  calibrationCostMs:$result[0].calibration.calibrationCostMs,
                  calibrationPairsMeasured:$result[0].calibration.pairsMeasured,
                  calibrationQualified:($result[0].calibration.qualified // false),

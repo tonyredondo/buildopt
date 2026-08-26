@@ -2710,3 +2710,38 @@ the campaign. This manifest contains no performance result.
 ./dev/check-current-longitudinal-cohorts \
   "$PWD/benchmarks/results/current-longitudinal-cohorts-v1.json"
 ```
+
+## Current installed longitudinal campaign
+
+[`current-longitudinal-raw-v1.json`](./results/current-longitudinal-raw-v1.json)
+and the canonical
+[`current-longitudinal-report-v1.json`](./results/current-longitudinal-report-v1.json)
+are the current `AF-014C` installed-package evidence. One package built from
+`95622d8279ea29c9cf390aa179d8f920d1cbef70` ran the frozen workflow on 20
+comparable chronological revisions per repository. Control and candidate arms
+retain separate checkout, Gradle, daemon, Build Cache and BuildOpt state;
+dependencies are prepared symmetrically outside pair wall time without copying
+task outputs or candidate policy state.
+
+| Repository | Positive pairs | Cumulative signed delta | Outcome |
+| --- | ---: | ---: | --- |
+| Spring Framework | 2/20 | **-130.406 s** | `NET_NEGATIVE` |
+| OpenTelemetry | 11/20 | **-26.044 s** | `INCONCLUSIVE` |
+| Apache Kafka | 2/20 | **-42.309 s** | `NET_NEGATIVE` |
+| Micronaut Core | 4/20 | **-144.656 s** | `NET_NEGATIVE` |
+| Apache Groovy | 6/20 | **-25.207 s** | `NET_NEGATIVE` |
+
+All 100 accepted pairs preserve exact required outputs. Product failures are
+zero, while all 100 candidates retain native Gradle: no whole profile or
+adaptive fragment activates. One Groovy primary revision fails during
+dependency preparation/native control and remains recorded; the next frozen
+reserve supplies Groovy's twentieth comparable pair. The aggregate signed
+delta is **-368.623 seconds** with 25 positive and 75 negative pairs. These
+numbers are not an adaptive-fragment value claim: `AF-014D` must first separate
+recorded BuildOpt phases from unresolved Gradle/runner variation.
+
+```bash
+./dev/check-current-longitudinal-campaign \
+  "$PWD/benchmarks/results/current-longitudinal-raw-v1.json" \
+  "$PWD/benchmarks/results/current-longitudinal-report-v1.json"
+```

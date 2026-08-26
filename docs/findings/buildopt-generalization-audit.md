@@ -142,9 +142,11 @@ Its first proof must happen before another broad timing campaign:
    family before timing (**complete: 100 primary commits and 50 reserves bound
    to exact topology, paths, workflows and outputs with no timing fields**);
 7. collect at least 15 comparable builds per terminal row with chronological
-   learning and exact outputs (**next: AF-014C**); and
+   learning and exact outputs (**complete: 20/20 per repository, 100 exact
+   pairs, zero product failures, 25 positive/75 negative and -368.623 seconds
+   cumulative signed value**); and
 8. attribute activated mechanisms, fallback cost and residual variation before
-   recomputing the terminal decision (**AF-014D/AF-015**).
+   recomputing the terminal decision (**next: AF-014D, then AF-015**).
 
 ## POC conclusion
 

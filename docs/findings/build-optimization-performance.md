@@ -1096,14 +1096,18 @@ negative build. It does not measure the current adaptive implementation.
 All comparable outputs are exact and product failures are zero. This result is
 not obtained by adding isolated Build Impact, patch or locality percentages.
 It reaches only 2/5 positive rows versus the frozen 3/5 breadth requirement.
-The current-value proof is deliberately larger. AF-014A now closes the
-measurement apparatus: one source-bound installed package completed 18
-alternating learning observations and exact selected, forward native-retained
-and bypass scenarios with separate arm state and reconciled phase timing. Its
-controlled eight-second omitted work is not performance evidence. AF-014B now
-freezes five 20-primary-commit cohorts plus ordered reserves before timing;
-AF-014C collects 75–100 comparable current observations, and AF-014D separates
-mechanism value, fallback overhead and unresolved wall-time variation.
+The current-value proof is deliberately larger. AF-014A closes the measurement
+apparatus and AF-014B freezes the inputs before timing. AF-014C now contributes
+100 comparable current installed-package pairs: 20 per public repository, all
+with exact outputs and zero product failures. Only 25 pairs are positive, all
+100 candidates retain native Gradle, no profile or fragment activates and the
+cumulative signed delta is **-368.623 seconds**. Spring, Kafka, Micronaut and
+Groovy are net negative; OpenTelemetry is inconclusive. One Groovy primary
+dependency/native failure remains an explicit exclusion and the next frozen
+reserve supplies its twentieth pair. AF-014D must now separate recorded
+BuildOpt decision/verification cost from unresolved Gradle and runner variation;
+the aggregate regression is not attributed to a mechanism merely because it
+occurred under the candidate arm.
 
 ```bash
 ./dev/check-adaptive-fragment-longitudinal

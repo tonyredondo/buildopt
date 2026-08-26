@@ -147,8 +147,11 @@ now proved the public installed command, separate persistent arms, forward-only
 learning, exact selected/native-retained/bypass paths and reconciled phase
 timing. AF-014B..D must still freeze larger commit cohorts, execute the current
 implementation chronologically and attribute its value before the successor
-enters onboarding. The controlled AF-014A fixture is apparatus evidence, not a
-customer speedup.
+enters onboarding. AF-014C has now completed 100 exact-output current pairs
+with zero product failures, but all 100 invocations retained native Gradle and
+the signed total is -368.623 seconds. AF-014D must attribute recorded BuildOpt
+cost and unresolved variation before this path can be presented as a customer
+speedup. The controlled AF-014A fixture remains apparatus evidence only.
 
 ```bash
 buildopt optimize --json -- build

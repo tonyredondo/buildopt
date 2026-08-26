@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "buildopt.poc/current-longitudinal-report/v1",
+  "workItem": "AF-014C",
+  "capturedAt": "2026-08-26T12:12:09Z",
+  "evaluatedRevision": "95622d8279ea29c9cf390aa179d8f920d1cbef70",
+  "rawSha256": "c682c2a09b97d87eaaca63445c4a1fc53ba420aa42d31d60ca745c31c2f9f339",
+  "summary": {
+    "comparablePairs": 100,
+    "positivePairs": 25,
+    "negativePairs": 75,
+    "selectedProfiles": 0,
+    "nativeRetentions": 100,
+    "fragmentActivations": 0,
+    "exclusions": 1,
+    "productFailures": 0,
+    "cumulativeNetNs": -368622514697
+  },
+  "repositories": [
+    {
+      "key": "apache-groovy",
+      "repositoryId": "apache/groovy",
+      "outcome": "NET_NEGATIVE",
+      "comparablePairs": 20,
+      "positivePairs": 6,
+      "negativePairs": 14,
+      "selectedProfiles": 0,
+      "nativeRetentions": 20,
+      "fragmentActivations": 0,
+      "exclusions": 1,
+      "cumulativeNetNs": -25207309452,
+      "meanSignedDeltaNs": -1260365472,
+      "medianSignedDeltaNs": -2200871165,
+      "p95RegressionNs": 3814207994,
+      "worstRegressionNs": 5150947580
+    },
+    {
+      "key": "apache-kafka",
+      "repositoryId": "apache/kafka",
+      "outcome": "NET_NEGATIVE",
+      "comparablePairs": 20,
+      "positivePairs": 2,
+      "negativePairs": 18,
+      "selectedProfiles": 0,
+      "nativeRetentions": 20,
+      "fragmentActivations": 0,
+      "exclusions": 0,
+      "cumulativeNetNs": -42309439693,
+      "meanSignedDeltaNs": -2115471984,
+      "medianSignedDeltaNs": -1864491063,
+      "p95RegressionNs": 5780458004,
+      "worstRegressionNs": 5905485611
+    },
+    {
+      "key": "micronaut-core",
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "outcome": "NET_NEGATIVE",
+      "comparablePairs": 20,
+      "positivePairs": 4,
+      "negativePairs": 16,
+      "selectedProfiles": 0,
+      "nativeRetentions": 20,
+      "fragmentActivations": 0,
+      "exclusions": 0,
+      "cumulativeNetNs": -144656096015,
+      "meanSignedDeltaNs": -7232804800,
+      "medianSignedDeltaNs": -6708343250,
+      "p95RegressionNs": 18667046373,
+      "worstRegressionNs": 23333711744
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "outcome": "INCONCLUSIVE",
+      "comparablePairs": 20,
+      "positivePairs": 11,
+      "negativePairs": 9,
+      "selectedProfiles": 0,
+      "nativeRetentions": 20,
+      "fragmentActivations": 0,
+      "exclusions": 0,
+      "cumulativeNetNs": -26043969982,
+      "meanSignedDeltaNs": -1302198499,
+      "medianSignedDeltaNs": 266525079,
+      "p95RegressionNs": 10007480654,
+      "worstRegressionNs": 16081900138
+    },
+    {
+      "key": "spring-framework",
+      "repositoryId": "spring-projects/spring-framework",
+      "outcome": "NET_NEGATIVE",
+      "comparablePairs": 20,
+      "positivePairs": 2,
+      "negativePairs": 18,
+      "selectedProfiles": 0,
+      "nativeRetentions": 20,
+      "fragmentActivations": 0,
+      "exclusions": 0,
+      "cumulativeNetNs": -130405699555,
+      "meanSignedDeltaNs": -6520284977,
+      "medianSignedDeltaNs": -7384320013,
+      "p95RegressionNs": 11102658405,
+      "worstRegressionNs": 11321010679
+    }
+  ],
+  "byChangeShape": [
+    {
+      "changeShape": "BUILD_LOGIC_OR_DEPENDENCY",
+      "comparablePairs": 8,
+      "positivePairs": 4,
+      "cumulativeNetNs": 5996947307
+    },
+    {
+      "changeShape": "DOCUMENTATION_ONLY",
+      "comparablePairs": 1,
+      "positivePairs": 1,
+      "cumulativeNetNs": 1358868599
+    },
+    {
+      "changeShape": "MIXED",
+      "comparablePairs": 66,
+      "positivePairs": 15,
+      "cumulativeNetNs": -292179883160
+    },
+    {
+      "changeShape": "OTHER",
+      "comparablePairs": 11,
+      "positivePairs": 1,
+      "cumulativeNetNs": -52640097979
+    },
+    {
+      "changeShape": "PRODUCTION_SOURCE",
+      "comparablePairs": 6,
+      "positivePairs": 4,
+      "cumulativeNetNs": 5243179099
+    },
+    {
+      "changeShape": "TEST_SOURCE",
+      "comparablePairs": 8,
+      "positivePairs": 0,
+      "cumulativeNetNs": -36401528563
+    }
+  ],
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}
