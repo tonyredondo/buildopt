@@ -308,7 +308,7 @@ func TestDiscoveryGradleArgumentsOwnObservationOnlyOptionsWithoutDroppingOwnerPr
 		"--daemon", "--build-cache", "--configure-on-demand", "--console=rich", "-Powner.mode=jvm",
 	}, "/private/discovery.init.gradle")
 	want := []string{
-		"--build-cache", "-Powner.mode=jvm", "--no-daemon", "--no-configure-on-demand", "--console=plain",
+		"--build-cache", "--configure-on-demand", "-Powner.mode=jvm", "--no-daemon", "--console=plain",
 		"--init-script", "/private/discovery.init.gradle", "buildoptImpactDiscovery",
 	}
 	if !reflect.DeepEqual(got, want) {

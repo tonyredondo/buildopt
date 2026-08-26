@@ -91,15 +91,24 @@ if (gradle.getParent() == null) {
     // projectsEvaluated.
     gradle.rootProject { root ->
         def outputContractTask = root.tasks.register("buildoptOutputContract", BuildOptOutputContractTask)
-        def requestedTaskCollections = root.allprojects.collect { project ->
+        def qualifiedEntrypoints = requestedEntrypoints.findAll {
+            (it as String).contains(":")
+        }
+        def unqualifiedEntrypoints = requestedEntrypoints.findAll {
+            !(it as String).contains(":")
+        }
+        def requestedTaskCollections = unqualifiedEntrypoints.isEmpty() ? [] : root.allprojects.collect { project ->
             project.tasks.matching { task ->
-                requestedEntrypoints.any { requestedName ->
-                    def selector = requestedName as String
-                    selector.contains(":") ? task.path == selector : task.name == selector
+                unqualifiedEntrypoints.any { requestedName ->
+                    task.name == (requestedName as String)
                 }
             }
         }
         outputContractTask.configure {
+            // Fully qualified task paths let Gradle configure only their owner
+            // projects. Do not turn a scoped native build into an all-project
+            // configuration merely to observe its outputs.
+            dependsOn(qualifiedEntrypoints)
             dependsOn(requestedTaskCollections)
         }
     }

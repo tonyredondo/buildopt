@@ -73,7 +73,7 @@ func TestOutputContractGradleArgumentsOwnDaemonAndConsoleWithoutDroppingOwnerPro
 		"--daemon", "--build-cache", "--configure-on-demand", "--console=plain", "-Ptarget.posix=false",
 	}, "/private/output-contract.init.gradle")
 	want := []string{
-		"--build-cache", "-Ptarget.posix=false", "--no-daemon", "--no-configure-on-demand", "--console=plain",
+		"--build-cache", "--configure-on-demand", "-Ptarget.posix=false", "--no-daemon", "--console=plain",
 		"--init-script", "/private/output-contract.init.gradle", "buildoptOutputContract",
 	}
 	if !reflect.DeepEqual(got, want) {

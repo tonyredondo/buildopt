@@ -330,13 +330,12 @@ func outputContractGradleArguments(ownerOptions []string, initPath string) []str
 	arguments := make([]string, 0, len(ownerOptions)+4)
 	for _, option := range ownerOptions {
 		if option == "--daemon" || option == "--no-daemon" ||
-			option == "--configure-on-demand" || option == "--no-configure-on-demand" ||
 			strings.HasPrefix(option, "--console=") {
 			continue
 		}
 		arguments = append(arguments, option)
 	}
-	return append(arguments, "--no-daemon", "--no-configure-on-demand", "--console=plain", "--init-script", initPath, "buildoptOutputContract")
+	return append(arguments, "--no-daemon", "--console=plain", "--init-script", initPath, "buildoptOutputContract")
 }
 
 func parseOutputContractSnapshot(raw []byte, entrypoints []string) (outputContractSnapshot, error) {

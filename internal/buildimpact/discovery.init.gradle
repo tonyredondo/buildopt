@@ -26,15 +26,21 @@ if (gradle.getParent() == null) {
     // to add the dependency edges that make this a terminal observation.
     gradle.rootProject { root ->
         def discoveryTask = root.tasks.register("buildoptImpactDiscovery")
-        def requestedTaskCollections = root.allprojects.collect { project ->
+        def qualifiedEntrypoints = requestedEntrypoints.findAll {
+            (it as String).contains(":")
+        }
+        def unqualifiedEntrypoints = requestedEntrypoints.findAll {
+            !(it as String).contains(":")
+        }
+        def requestedTaskCollections = unqualifiedEntrypoints.isEmpty() ? [] : root.allprojects.collect { project ->
             project.tasks.matching { task ->
-                requestedEntrypoints.any { requestedName ->
-                    def selector = requestedName as String
-                    selector.contains(":") ? task.path == selector : task.name == selector
+                unqualifiedEntrypoints.any { requestedName ->
+                    task.name == (requestedName as String)
                 }
             }
         }
         discoveryTask.configure {
+            dependsOn(qualifiedEntrypoints)
             dependsOn(requestedTaskCollections)
         }
     }
@@ -108,13 +114,14 @@ gradle.projectsEvaluated {
     def rootIsDependencyTarget = projectDependenciesByPath.values().any {
         it.contains(root.path)
     }
-    def discoveredProjects = root.allprojects.findAll {
-        it != root || root.subprojects.isEmpty() || rootIsDependencyTarget
+    def configuredProjects = root.allprojects.findAll {
+        projectDependenciesByPath.containsKey(it.path)
+    }
+    def partialProjectModel = configuredProjects.size() != root.allprojects.size()
+    def discoveredProjects = configuredProjects.findAll {
+        it != root || configuredProjects.size() == 1 || rootIsDependencyTarget
     }.sort { left, right -> left.path <=> right.path }.collect { project ->
         def dependencyPaths = projectDependenciesByPath.get(project.path)
-        if (dependencyPaths == null) {
-            throw new GradleException("BuildOpt impact discovery missed evaluated project ${project.path}")
-        }
         def relativeDirectory = root.projectDir.toPath().relativize(project.projectDir.toPath()).toString().replace('\\', '/')
         def sources = relativeDirectory.isEmpty() ? ["src/**"] : [relativeDirectory + "/**"]
         [
@@ -303,6 +310,9 @@ gradle.projectsEvaluated {
         def fallbackReasons = []
         if (externalIncludedBuild) {
             fallbackReasons.add("INCLUDED_BUILD_OUTSIDE_REPOSITORY")
+        }
+        if (partialProjectModel) {
+            fallbackReasons.add("CONFIGURATION_ON_DEMAND_PARTIAL_MODEL")
         }
         if (discoveredEntrypoints.any { it.unknownRelationships }) {
             fallbackReasons.add("UNSUPPORTED_OR_TEST_ENTRYPOINT")
