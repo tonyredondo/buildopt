@@ -31,6 +31,12 @@ dependency or plugin version without treating that expected evolution as an
 exclusion. Preparation attempts, outcomes and total unmeasured wall time remain
 visible in raw evidence.
 
+The per-revision preparation workspace is chronological and incremental. Gradle
+must resolve changed dependency, plugin and classpath inputs, but the runner
+must not force `--rerun-tasks`: rebuilding unaffected tasks would add no
+dependency coverage and would turn preparation into an unmeasured duplicate of
+the requested build.
+
 After a repository closes, the runner retains its immutable `subject.json` and
 removes only that repository's transient checkout, dependency and Gradle-cache
 state. This bounds disk use without changing later observations or the final

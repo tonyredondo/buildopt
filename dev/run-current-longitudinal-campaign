@@ -304,7 +304,7 @@ buildopt_subject() {
                 "${buildopt_seed_cache}" "${buildopt_seed_event}" "${buildopt_jdk}" \
                 "${buildopt_temp}/check-bin/current-longitudinal-campaign" --time \
                 "${buildopt_preparation_duration}" -- \
-                ./gradlew --no-build-cache --rerun-tasks "${buildopt_seed_workflow[@]}" \
+                ./gradlew --no-build-cache "${buildopt_seed_workflow[@]}" \
                 >"${buildopt_logs}/dependency-preparation-${buildopt_attempt}.log" 2>&1 || \
                 buildopt_revision_preparation_status=$?
             [[ -s ${buildopt_preparation_duration} ]] || {
