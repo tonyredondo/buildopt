@@ -480,9 +480,11 @@ func beginOptimizeRun(invocation optimizeInvocation) (*optimizeRun, error) {
 	); err != nil {
 		return nil, err
 	}
-	startedAt := invocation.startedAt.UTC()
+	// Retain Go's monotonic clock reading for phase reconciliation. Convert to
+	// UTC only when serializing timestamps; Time.UTC would otherwise strip it.
+	startedAt := invocation.startedAt
 	if startedAt.IsZero() {
-		startedAt = time.Now().UTC()
+		startedAt = time.Now()
 	}
 	statePath := filepath.Join(invocation.stateDirectory, optimizeStateFile)
 	resultPath := filepath.Join(invocation.stateDirectory, optimizeResultFile)
@@ -495,7 +497,7 @@ func beginOptimizeRun(invocation optimizeInvocation) (*optimizeRun, error) {
 		LastReason: optimizeReasonPending, Bindings: optimizeInvocationBindings(invocation),
 		Budget: optimizeInvocationBudget(invocation), Resume: resume,
 		BuildStarted: false, LastExitCode: 0,
-		UpdatedAt: startedAt.Format(time.RFC3339Nano), ProductionAuthorized: false,
+		UpdatedAt: startedAt.UTC().Format(time.RFC3339Nano), ProductionAuthorized: false,
 	}
 	if err := writeCanonicalPrivateJSON(statePath, state); err != nil {
 		return nil, err
@@ -787,7 +789,7 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		}
 	}
 	selection := run.selection
-	completedAt := time.Now().UTC()
+	completedAt := time.Now()
 	run.state.LastOutcome = optimizeOutcomeNative
 	run.state.LastReason = calibration.Reason
 	run.state.Phase = "NATIVE_RETAINED"
@@ -840,7 +842,7 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 	if selection.Selected {
 		run.state.Bindings.Completeness = optimizeBindingReplay
 	}
-	run.state.UpdatedAt = completedAt.Format(time.RFC3339Nano)
+	run.state.UpdatedAt = completedAt.UTC().Format(time.RFC3339Nano)
 	nativeAuthoritative := !selection.Selected && (!run.incrementalCandidate || run.incrementalFallback.started)
 	nativeStarted := run.childStarted && nativeAuthoritative
 	nativeExitCode := exitCode
@@ -851,8 +853,8 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		SchemaVersion: optimizeResultSchemaVersion,
 		Outcome:       run.state.LastOutcome, Reason: run.state.LastReason,
 		Phase:       run.state.Phase,
-		StartedAt:   run.startedAt.Format(time.RFC3339Nano),
-		CompletedAt: completedAt.Format(time.RFC3339Nano),
+		StartedAt:   run.startedAt.UTC().Format(time.RFC3339Nano),
+		CompletedAt: completedAt.UTC().Format(time.RFC3339Nano),
 		DurationMs:  completedAt.Sub(run.startedAt).Milliseconds(),
 		Generation:  run.state.Generation, Attempt: run.state.Attempt,
 		Bindings: run.state.Bindings, Budget: run.state.Budget, Resume: run.state.Resume,
@@ -907,8 +909,8 @@ func (run *optimizeRun) finish(exitCode int, stdout, stderr io.Writer) error {
 		run.centralStateTime += time.Since(centralStateStartedAt)
 		result.Central = run.central.result
 	}
-	timingCompletedAt := time.Now().UTC()
-	result.CompletedAt = timingCompletedAt.Format(time.RFC3339Nano)
+	timingCompletedAt := time.Now()
+	result.CompletedAt = timingCompletedAt.UTC().Format(time.RFC3339Nano)
 	result.DurationMs = timingCompletedAt.Sub(run.startedAt).Milliseconds()
 	result.NativeRetention = run.nativeRetentionResult(result.Reason, timingCompletedAt)
 	result.Timing = run.timingResult(timingCompletedAt)
