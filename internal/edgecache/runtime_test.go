@@ -77,7 +77,7 @@ func TestRuntimeServesReplicatesReloadsFailsClosedAndStops(t *testing.T) {
 	go func() { serveDone <- runtime.Serve(ctx, listener) }()
 
 	baseURL := "http://" + listener.Addr().String()
-	waitForRuntimeStatus(t, config, func(status RuntimeStatus) bool {
+	waitForRuntimeStatus(t, config, serveDone, func(status RuntimeStatus) bool {
 		return StatusReady(status, time.Now().UTC()) && status.WriteEnabled
 	})
 	payload := []byte("edge-runtime-pending-object")
@@ -95,13 +95,13 @@ func TestRuntimeServesReplicatesReloadsFailsClosedAndStops(t *testing.T) {
 	if response.StatusCode != http.StatusCreated {
 		t.Fatalf("PUT status = %d", response.StatusCode)
 	}
-	waitForRuntimeStatus(t, config, func(status RuntimeStatus) bool {
+	waitForRuntimeStatus(t, config, serveDone, func(status RuntimeStatus) bool {
 		return status.Pending.Replicated == 1 && status.Pending.Queued == 0
 	})
 
 	writePrivateAtomic(t, config.Authority.SnapshotPath, []byte("invalid"))
 	waitForHTTPStatus(t, baseURL+"/cache/runtime-key", http.StatusServiceUnavailable)
-	waitForRuntimeStatus(t, config, func(status RuntimeStatus) bool {
+	waitForRuntimeStatus(t, config, serveDone, func(status RuntimeStatus) bool {
 		return status.State == "NOT_READY" &&
 			status.AuthorityError == "AUTHORITY_UNAVAILABLE"
 	})
@@ -109,18 +109,18 @@ func TestRuntimeServesReplicatesReloadsFailsClosedAndStops(t *testing.T) {
 	next := newRuntimeAuthorityFixture(t, time.Now().UTC().Truncate(time.Second), 2)
 	writePrivateAtomic(t, config.Authority.SnapshotPath, next.authority)
 	waitForHTTPStatus(t, baseURL+"/cache/runtime-key", http.StatusNotFound)
-	waitForRuntimeStatus(t, config, func(status RuntimeStatus) bool {
+	waitForRuntimeStatus(t, config, serveDone, func(status RuntimeStatus) bool {
 		return status.State == "READY" && status.WriteEnabled
 	})
 	writePrivateAtomic(t, config.Authority.SnapshotPath, fixture.authority)
 	waitForHTTPStatus(t, baseURL+"/cache/runtime-key", http.StatusServiceUnavailable)
-	waitForRuntimeStatus(t, config, func(status RuntimeStatus) bool {
+	waitForRuntimeStatus(t, config, serveDone, func(status RuntimeStatus) bool {
 		return status.State == "NOT_READY" &&
 			status.AuthorityError == "AUTHORITY_UNAVAILABLE"
 	})
 	writePrivateAtomic(t, config.Authority.SnapshotPath, next.authority)
 	waitForHTTPStatus(t, baseURL+"/cache/runtime-key", http.StatusNotFound)
-	waitForRuntimeStatus(t, config, func(status RuntimeStatus) bool {
+	waitForRuntimeStatus(t, config, serveDone, func(status RuntimeStatus) bool {
 		return status.State == "READY"
 	})
 
@@ -317,11 +317,17 @@ func writePrivateAtomic(t *testing.T, path string, content []byte) {
 func waitForRuntimeStatus(
 	t *testing.T,
 	config Config,
+	serveDone <-chan error,
 	accept func(RuntimeStatus) bool,
 ) {
 	t.Helper()
 	deadline := time.Now().Add(8 * time.Second)
 	for time.Now().Before(deadline) {
+		select {
+		case err := <-serveDone:
+			t.Fatalf("Edge runtime stopped before status condition: %v", err)
+		default:
+		}
 		status, err := LoadRuntimeStatus(config)
 		if err == nil && accept(status) {
 			return
