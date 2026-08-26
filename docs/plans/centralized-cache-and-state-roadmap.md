@@ -56,6 +56,15 @@ and phase-attributed execution; AF-014B..D evaluate that path over frozen
 current cohorts. These schemas create no remote activation authority and
 cannot be encoded as Gradle cache objects.
 
+The active [Sticky Wrapper Learning POC](./sticky-wrapper-learning-poc-tracker.md)
+reuses this completed infrastructure through a repository-committed wrapper.
+It does not add a third plane or another cache server. Gradle objects remain
+opaque, evictable data; observations, trials, signed decisions and cumulative
+economics remain typed state. The wrapper adds portable connection discovery,
+an exact local signed-decision fast path and one repeated customer command.
+Those additions have no performance authority until the successor tracker
+closes its own chronological scorecard.
+
 ## Target experience
 
 An owner prepares one server host:

@@ -207,6 +207,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-ownership"
         "${buildopt_script_dir}/check-documentation"
         "${buildopt_script_dir}/check-tracker-consistency"
+        "${buildopt_script_dir}/check-sticky-wrapper-learning-plan"
         "${buildopt_script_dir}/check-central-storage-contract"
         "${buildopt_script_dir}/check-central-state-storage"
         "${buildopt_script_dir}/check-central-https-auth"

@@ -119,6 +119,21 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > The result stops this hypothesis; it does not turn historical isolated wins
 > into a current customer claim.
 
+> **New successor experiment:** BuildOpt is now testing a repository-committed
+> wrapper as the sticky customer integration. A maintainer will generate
+> `buildoptw`, `buildoptw.bat`, checksum-pinned wrapper properties and portable
+> non-secret configuration once; developers and CI will then run
+> `./buildoptw <gradle args...>` without a global BuildOpt installation or a
+> hand-authored profile. The wrapper will use the existing Gradle-compatible
+> HTTPS cache and a separate typed decision store to choose native no-op,
+> observation, shadow, bounded trial, exact active profile or reviewed durable
+> patch behavior. Cache objects never authorize actions, server failure retains
+> native Gradle and credentials remain private. This is a frozen POC plan, not
+> a new performance result. Continuation requires positive cumulative value in
+> at least three of five public families after every wrapper, learning, trial,
+> cache and fallback cost. Follow the
+> [Sticky Wrapper Learning POC Tracker](./docs/plans/sticky-wrapper-learning-poc-tracker.md).
+
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired
 > calibration and requires projected payback within five compatible matches.

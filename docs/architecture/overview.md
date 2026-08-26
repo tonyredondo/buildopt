@@ -45,10 +45,35 @@ cache publication, policy activation, task qualification, Build Impact, and
 patch application fail closed because accepting unproven work could change the
 result.
 
+### Planned sticky-wrapper entrypoint
+
+The active successor POC will add a thin repository-committed entrypoint above
+the implemented launcher:
+
+```text
+committed buildoptw / buildoptw.bat
+        |
+        +-- verify/cache pinned BuildOpt distribution
+        +-- read exact local signed decision snapshot
+        +-- optionally synchronize typed state over HTTPS
+        |
+        v
+existing buildopt launcher -> existing Gradle Wrapper
+```
+
+The four planned committed files contain only bootstrap identity and portable
+non-secret configuration. Runtime credentials remain private. A local exact
+decision keeps `NATIVE_NOOP` out of a blocking server lookup; expired,
+incompatible or absent state uses native Gradle. The existing Gradle-cache data
+plane and typed state control plane remain separate. This boundary is frozen in
+the [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
+but is not implemented yet.
+
 ## Components
 
 | Component | Runtime artifact | Responsibility |
 |---|---|---|
+| Repository BuildOpt Wrapper (planned) | `buildoptw`, `buildoptw.bat` | Verifies and bootstraps a pinned BuildOpt distribution and provides one committed local/CI command without storing credentials |
 | CI Launcher | `buildopt` | Preserves argv, environment boundaries, streams, process tree, signals, and child exit status |
 | Local Verifying Cache Gateway | inside `buildopt` | Gives Gradle an invocation-local endpoint, verifies policy and objects, and hides upstream credentials |
 | Gradle plugin | `jvm/gradle-plugin` JAR | Performs the authenticated handshake, configures managed cache inputs, and emits bounded task/build events through public Gradle APIs |
@@ -152,6 +177,12 @@ Server control state                 Edge (optional) ----> Shared blobs
 - **Authority:** signed policy plus explicit repository, namespace, trust,
   operation, and generation bindings. Blob presence or a checksum alone is not
   authorization.
+
+The sticky-wrapper experiment adds typed observations, trials, action decisions
+and a cumulative economic ledger to the control plane. It does not encode them
+as Gradle cache entries. `ACTIVE` remains an exact, expiry-bound decision; cache
+availability alone can never move an action from observation or trial into
+active execution.
 
 In the owner-operated POC, Shared and its local signing key are part of the
 trusted computing base. The deferred hardened profile separates attestation

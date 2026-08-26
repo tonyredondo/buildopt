@@ -1,0 +1,214 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-sticky-wrapper-learning-v1.json"
+buildopt_spec="${buildopt_repo_root}/specs/poc-sticky-wrapper-learning-v1.md"
+buildopt_plan="${buildopt_repo_root}/docs/plans/sticky-wrapper-learning-poc-tracker.md"
+buildopt_tracker="${buildopt_repo_root}/implementation-tracker.md"
+buildopt_rfc="${buildopt_repo_root}/gradle-build-optimization-platform.md"
+
+for buildopt_command in awk grep jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required sticky-wrapper-plan command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+for buildopt_file in \
+    "${buildopt_contract}" \
+    "${buildopt_spec}" \
+    "${buildopt_plan}" \
+    "${buildopt_tracker}" \
+    "${buildopt_rfc}"; do
+    if [[ ! -f "${buildopt_file}" ]]; then
+        printf 'missing sticky-wrapper-plan input: %s\n' "${buildopt_file}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    keys == [
+        "boundaries",
+        "budgets",
+        "customerSurface",
+        "executionDecisions",
+        "hypothesis",
+        "lifecycle",
+        "planes",
+        "predecessor",
+        "schemaVersion",
+        "scorecard",
+        "terminalCampaign",
+        "terminalOutcomes",
+        "workItem"
+    ] and
+    .schemaVersion == "buildopt.poc/sticky-wrapper-learning-contract/v1" and
+    .workItem == "SWL-000" and
+    .predecessor == {
+        workItem: "AF-015",
+        outcome: "STOP_ADAPTIVE_FRAGMENT_POC",
+        authority: "CONTEXT_ONLY"
+    } and
+    .customerSurface.generatedCommittedFiles == [
+        "buildoptw",
+        "buildoptw.bat",
+        ".buildopt/wrapper.properties",
+        ".buildopt/config.toml"
+    ] and
+    .customerSurface.repeatedCommand == "./buildoptw <gradle args...>" and
+    .customerSurface.globalBuildOptInstallationRequired == false and
+    .customerSurface.handAuthoredProfileRequired == false and
+    .customerSurface.committedCredentialAllowed == false and
+    .customerSurface.bootstrap == {
+        immutableHttpsDistribution: true,
+        sha256Required: true,
+        atomicInstallRequired: true,
+        verifiedOfflineReuseRequired: true
+    } and
+    .planes.gradleCache == {
+        protocol: "GRADLE_HTTP_BUILD_CACHE",
+        contents: "OPAQUE_EVICTABLE_GRADLE_OBJECTS",
+        grantsOptimizationAuthority: false
+    } and
+    .planes.buildoptState == {
+        protocol: "TYPED_CANONICAL_HTTPS_STATE",
+        contents: "EVIDENCE_DECISIONS_ACTIONS_AND_ECONOMIC_LEDGER",
+        generationCASRequired: true,
+        servableAsGradleCacheObject: false
+    } and
+    .lifecycle == [
+        "UNSEEN",
+        "OBSERVE",
+        "SHADOW",
+        "TRIAL",
+        "QUALIFIED",
+        "ACTIVE",
+        "SUSPENDED",
+        "RETIRED"
+    ] and
+    .executionDecisions == [
+        "NATIVE_NOOP",
+        "OBSERVE",
+        "SHADOW",
+        "TRIAL",
+        "ACTIVE_RUNTIME_PROFILE",
+        "ACTIVE_DURABLE_PATCH",
+        "SUSPENDED",
+        "RETIRED"
+    ] and
+    .budgets == {
+        nativeRetentionP50NsMax: 100000000,
+        nativeRetentionP95NsMax: 250000000,
+        serverUnavailableP95NsMax: 500000000,
+        additionalTrialComputePermilleMax: 50,
+        concurrentTrialsPerRepositoryMax: 1,
+        paybackCompatibleBuildsMax: 30
+    } and
+    .terminalCampaign == {
+        publicRepositoryFamilies: 5,
+        requestedBuildsPerFamily: 20,
+        validComparableBuildsPerFamilyMin: 15,
+        sameRemoteGradleCacheOpportunity: true,
+        chronologicalNoLookahead: true,
+        exactOutputsByDefault: true,
+        historicalEvidenceAuthority: "CONTEXT_ONLY"
+    } and
+    (.scorecard | length) == 15 and
+    ([.scorecard[].id] | unique | length) == 15 and
+    ([.scorecard[].id] | sort) == ([
+        "ACTIVATION_BREADTH",
+        "BOOTSTRAP_INTEGRITY",
+        "CORRECTNESS",
+        "DURABLE_VALUE",
+        "EXPLAINABILITY",
+        "GENERIC_IMPLEMENTATION",
+        "GRADLE_EQUIVALENCE",
+        "LEARNING_BUDGET",
+        "LONGITUDINAL_CONFIDENCE",
+        "NATIVE_RETENTION_OVERHEAD",
+        "PLANE_SEPARATION",
+        "PORTFOLIO_VALUE",
+        "RUNTIME_VALUE",
+        "TIME_TO_VALUE",
+        "WRAPPER_ONBOARDING"
+    ] | sort) and
+    .terminalOutcomes == [
+        "CONTINUE_STICKY_WRAPPER_LEARNING_POC",
+        "STOP_STICKY_WRAPPER_LEARNING_POC",
+        "INCOMPLETE"
+    ] and
+    .boundaries == {
+        pocOnly: true,
+        productionAuthorized: false,
+        automaticMergeAuthorized: false,
+        soakRequired: false,
+        designPartnerRequired: false,
+        testOptimizationOwned: false,
+        retiredMechanismsReactivated: false
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'sticky-wrapper-learning machine contract is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_ordered_blocks=$(
+    awk '
+        /^\| [0-9]+ \| `SWL-[0-9][0-9][0-9]`/ {
+            if (match($0, /`SWL-[0-9][0-9][0-9]`/)) {
+                print substr($0, RSTART + 1, 7)
+            }
+        }
+    ' "${buildopt_plan}"
+)
+buildopt_expected_blocks=$(
+    awk 'BEGIN { for (block_number = 0; block_number <= 16; block_number++) printf "SWL-%03d\n", block_number }'
+)
+if [[ "${buildopt_ordered_blocks}" != "${buildopt_expected_blocks}" ]]; then
+    printf 'sticky-wrapper tracker must contain ordered blocks SWL-000..SWL-016\n' >&2
+    exit 1
+fi
+
+buildopt_evidence_count=$(
+    # The backticks are literal Markdown syntax.
+    # shellcheck disable=SC2016
+    grep -Ec '^\| `SWL-E[0-9]{3}` \|' "${buildopt_plan}" || true
+)
+if [[ "${buildopt_evidence_count}" != 17 ]]; then
+    printf 'sticky-wrapper tracker expected 17 evidence rows, found %s\n' \
+        "${buildopt_evidence_count}" >&2
+    exit 1
+fi
+
+buildopt_required_text=(
+    "${buildopt_plan}|**Progress:** \`1/17\` blocks complete"
+    "${buildopt_plan}|**Current block:** \`SWL-001\` — repository wrapper contract"
+    "${buildopt_plan}|./buildoptw <gradle args...>"
+    "${buildopt_plan}|The existing central cache and state implementation is reused."
+    "${buildopt_spec}|# Sticky wrapper learning POC v1"
+    "${buildopt_spec}|CONTINUE_STICKY_WRAPPER_LEARNING_POC"
+    "${buildopt_tracker}|STICKY WRAPPER LEARNING POC ACTIVE; PRIOR GENERIC HYPOTHESES STOPPED"
+    "${buildopt_tracker}|SWL-001_REPOSITORY_WRAPPER_CONTRACT"
+    "${buildopt_tracker}|POC-STICKY-WRAPPER-LEARNING"
+    "${buildopt_tracker}|\`E-403\`"
+    "${buildopt_rfc}|generate and commit BuildOpt Wrapper"
+    "${buildopt_rfc}|Sticky Wrapper Learning POC Tracker"
+)
+for buildopt_requirement in "${buildopt_required_text[@]}"; do
+    buildopt_file=${buildopt_requirement%%|*}
+    buildopt_text=${buildopt_requirement#*|}
+    if ! grep -Fq -- "${buildopt_text}" "${buildopt_file}"; then
+        printf 'sticky-wrapper plan is missing required text in %s: %s\n' \
+            "${buildopt_file}" "${buildopt_text}" >&2
+        exit 1
+    fi
+done
+
+printf 'Sticky wrapper learning plan: OK\n'

@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-learning-contract/v1",
+  "workItem": "SWL-000",
+  "hypothesis": "A repository-committed checksum-pinned BuildOpt Wrapper backed by an optional centralized Gradle HTTP cache and a separate typed decision store can learn from ordinary builds, activate only verified profitable actions, and produce positive cumulative wall-time value against optimized native Gradle with negligible native-retention overhead.",
+  "predecessor": {
+    "workItem": "AF-015",
+    "outcome": "STOP_ADAPTIVE_FRAGMENT_POC",
+    "authority": "CONTEXT_ONLY"
+  },
+  "customerSurface": {
+    "generatedCommittedFiles": [
+      "buildoptw",
+      "buildoptw.bat",
+      ".buildopt/wrapper.properties",
+      ".buildopt/config.toml"
+    ],
+    "repeatedCommand": "./buildoptw <gradle args...>",
+    "globalBuildOptInstallationRequired": false,
+    "handAuthoredProfileRequired": false,
+    "committedCredentialAllowed": false,
+    "bootstrap": {
+      "immutableHttpsDistribution": true,
+      "sha256Required": true,
+      "atomicInstallRequired": true,
+      "verifiedOfflineReuseRequired": true
+    }
+  },
+  "planes": {
+    "gradleCache": {
+      "protocol": "GRADLE_HTTP_BUILD_CACHE",
+      "contents": "OPAQUE_EVICTABLE_GRADLE_OBJECTS",
+      "grantsOptimizationAuthority": false
+    },
+    "buildoptState": {
+      "protocol": "TYPED_CANONICAL_HTTPS_STATE",
+      "contents": "EVIDENCE_DECISIONS_ACTIONS_AND_ECONOMIC_LEDGER",
+      "generationCASRequired": true,
+      "servableAsGradleCacheObject": false
+    }
+  },
+  "lifecycle": [
+    "UNSEEN",
+    "OBSERVE",
+    "SHADOW",
+    "TRIAL",
+    "QUALIFIED",
+    "ACTIVE",
+    "SUSPENDED",
+    "RETIRED"
+  ],
+  "executionDecisions": [
+    "NATIVE_NOOP",
+    "OBSERVE",
+    "SHADOW",
+    "TRIAL",
+    "ACTIVE_RUNTIME_PROFILE",
+    "ACTIVE_DURABLE_PATCH",
+    "SUSPENDED",
+    "RETIRED"
+  ],
+  "budgets": {
+    "nativeRetentionP50NsMax": 100000000,
+    "nativeRetentionP95NsMax": 250000000,
+    "serverUnavailableP95NsMax": 500000000,
+    "additionalTrialComputePermilleMax": 50,
+    "concurrentTrialsPerRepositoryMax": 1,
+    "paybackCompatibleBuildsMax": 30
+  },
+  "terminalCampaign": {
+    "publicRepositoryFamilies": 5,
+    "requestedBuildsPerFamily": 20,
+    "validComparableBuildsPerFamilyMin": 15,
+    "sameRemoteGradleCacheOpportunity": true,
+    "chronologicalNoLookahead": true,
+    "exactOutputsByDefault": true,
+    "historicalEvidenceAuthority": "CONTEXT_ONLY"
+  },
+  "scorecard": [
+    {
+      "id": "WRAPPER_ONBOARDING",
+      "requirement": "four generated committed files, one private token source and one repeated wrapper command; no global BuildOpt install or hand-authored profile"
+    },
+    {
+      "id": "BOOTSTRAP_INTEGRITY",
+      "requirement": "all tested distributions are immutable, checksum verified and atomically installed; tamper, redirect and traversal reject"
+    },
+    {
+      "id": "GRADLE_EQUIVALENCE",
+      "requirement": "arguments, environment boundary, streams, process tree, signals and exit status match direct Wrapper behavior on Linux, macOS and Windows"
+    },
+    {
+      "id": "CORRECTNESS",
+      "requirement": "all comparable outputs satisfy their frozen equivalence contract and product-attributable failures equal zero"
+    },
+    {
+      "id": "PLANE_SEPARATION",
+      "requirement": "cache objects never authorize decisions and state objects never become Gradle cache hits"
+    },
+    {
+      "id": "NATIVE_RETENTION_OVERHEAD",
+      "requirement": "local no-op decision path is at most 100 ms p50 and 250 ms p95; unavailable-service fallback is at most 500 ms p95"
+    },
+    {
+      "id": "LEARNING_BUDGET",
+      "requirement": "additional trial compute is at most 5 percent of natural runner-minutes with one concurrent trial per repository"
+    },
+    {
+      "id": "GENERIC_IMPLEMENTATION",
+      "requirement": "no repository-name, task-name, path-extension or manually authored evaluated-profile rules"
+    },
+    {
+      "id": "ACTIVATION_BREADTH",
+      "requirement": "at least three of five public repository families activate or install an independently qualified action"
+    },
+    {
+      "id": "LONGITUDINAL_CONFIDENCE",
+      "requirement": "at least three of five families have a positive paired or block-bootstrap 95 percent lower bound"
+    },
+    {
+      "id": "PORTFOLIO_VALUE",
+      "requirement": "complete signed cumulative net value is positive after all BuildOpt costs"
+    },
+    {
+      "id": "TIME_TO_VALUE",
+      "requirement": "at least three families repay learning and publication within 30 compatible requested builds"
+    },
+    {
+      "id": "DURABLE_VALUE",
+      "requirement": "at least one generic reviewed transformation remains net positive over at least 15 later compatible commits without BuildOpt runtime action dependency"
+    },
+    {
+      "id": "RUNTIME_VALUE",
+      "requirement": "every credited runtime profile has measured active saving and a native counterfactual; inactive actions receive zero saving"
+    },
+    {
+      "id": "EXPLAINABILITY",
+      "requirement": "every invocation exposes a recomputable decision, binding generation, action, fallback reason and gross, cost and net values without secrets"
+    }
+  ],
+  "terminalOutcomes": [
+    "CONTINUE_STICKY_WRAPPER_LEARNING_POC",
+    "STOP_STICKY_WRAPPER_LEARNING_POC",
+    "INCOMPLETE"
+  ],
+  "boundaries": {
+    "pocOnly": true,
+    "productionAuthorized": false,
+    "automaticMergeAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationOwned": false,
+    "retiredMechanismsReactivated": false
+  }
+}

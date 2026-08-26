@@ -14,6 +14,16 @@ package boundaries with:
 ./dev/check-documentation
 ```
 
+Validate the active sticky-wrapper successor hypothesis, machine contract,
+ordered work, frozen thresholds and repository-documentation alignment with:
+
+```bash
+./dev/check-sticky-wrapper-learning-plan
+```
+
+This check validates planning authority only. It does not imply that
+`buildoptw` or its decision lifecycle is implemented yet.
+
 ## Toolchain lock
 
 [`toolchains.lock.yaml`](./toolchains.lock.yaml) is the source of truth for downloadable development toolchains on the initial `linux-amd64` platform. It is JSON-compatible YAML 1.2 so the Phase 0 validator can parse it with `jq` before the repository adopts a YAML library.

@@ -15,6 +15,7 @@ provision tools or create release artifacts document that effect explicitly.
 | Markdown, navigation, package docs | `./dev/check-documentation` |
 | Required paths and baseline shape | `./dev/check-layout` |
 | Normative package structure | `./dev/check-normative-layout` |
+| Active sticky-wrapper POC contract and frozen gates | `./dev/check-sticky-wrapper-learning-plan` |
 | CODEOWNERS/workstream mapping | `./dev/check-ownership` |
 | Shell and workflow syntax/inventory | `./dev/check-lint-toolchains` |
 | Base workflow and immutable pins only | `./dev/check-base-ci --static` |

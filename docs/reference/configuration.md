@@ -1,5 +1,24 @@
 # Configuration reference
 
+## Planned committed wrapper configuration
+
+The sticky-wrapper POC reserves two portable committed configuration files:
+
+| Path | Planned contents | Forbidden contents |
+| --- | --- | --- |
+| `.buildopt/wrapper.properties` | Immutable BuildOpt version, HTTPS distribution URL and SHA-256 | Floating version, credential, redirect authority or machine path |
+| `.buildopt/config.toml` | Canonical server URL, project scope, mode and learning budgets | Token, private key, checkout path or hand-authored active profile |
+
+Runtime credentials will come from a private environment/CI/file source. The
+wrapper will never pass them to Gradle. A verified local decision snapshot may
+avoid a blocking server lookup, but it must be signed, compatible and unexpired.
+Unavailable, invalid or absent state retains native Gradle.
+
+These keys are reserved by the
+[Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
+and are not accepted by the current package yet. `SWL-001` will define their
+exact grammar before implementation.
+
 BuildOpt configuration is grouped by trust boundary. Supply a complete group
 or omit it; partial configuration normally disables that optional capability
 or prevents a persistent service from starting. Values marked secret must not

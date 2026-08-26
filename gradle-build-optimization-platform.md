@@ -75,22 +75,33 @@ Developers will not have to run a build twice manually. Natural builds provide o
 
 The current objective is a **proof of concept**, not a private-beta or production launch. The combined BuildOpt path has demonstrated customer-visible build-time reduction against a well-configured native Gradle baseline across the qualified synthetic Kotlin/Groovy workload matrix. Safe Cache, Runtime Tuning, Build Impact, reviewed task contracts, and Patch Autopilot are measured separately so that value is attributable; the complete path receives its own comparison because overlapping percentages are never added.
 
-The POC onboarding north star is one owner-invoked command:
+The successor POC onboarding north star is one repository-committed wrapper
+and one repeated command:
 
 ```text
-install BuildOpt -> open a Gradle repository -> buildopt optimize build
+generate and commit BuildOpt Wrapper -> ./buildoptw build
 ```
 
-For supported workflows, that command owns output preflight, structural
-discovery, isolated calibration, value/equivalence evaluation, profile
-materialization and later replay. Users do not hand-author BuildOpt manifests,
-graphs, changes files, evidence or profile JSON. This authorizes automatic
-selection only inside the explicitly invoked POC command after every frozen
-correctness, value, tail, payback and fallback gate passes. It does not
-authorize autonomous production promotion: ambiguous or drifted state retains
-optimized native Gradle, generated profiles remain repository-owned and
-reviewable, and `productionAuthorized` remains false. The implementation plan
-is the [one-command onboarding roadmap](./docs/plans/one-command-onboarding-roadmap.md).
+The generated `buildoptw`, `buildoptw.bat`, pinned wrapper properties and
+portable non-secret configuration remain in the customer repository. They
+bootstrap one checksum-verified BuildOpt distribution and invoke the existing
+Gradle Wrapper. The command may run native Gradle, observe, shadow, schedule a
+bounded isolated trial, execute an exact qualified runtime profile or report a
+reviewed durable Gradle patch. Gradle-cache objects and typed BuildOpt decision
+state share an optional owner-operated HTTPS service but never share authority,
+metadata or protocol. Missing, expired, corrupt or incompatible state retains
+optimized native Gradle. Credentials are never committed or passed to Gradle.
+
+This is a new value experiment, not a reinterpretation of the stopped generic
+profile or adaptive-fragment results. The wrapper is onboarding and control
+infrastructure; it succeeds as an accelerator only if its complete
+chronological portfolio, including observation, trial, cache, fallback and
+wrapper costs, beats the same optimized native Gradle cache opportunity across
+the frozen breadth gate. The ordered work and immutable scorecard are in the
+[Sticky Wrapper Learning POC Tracker](./docs/plans/sticky-wrapper-learning-poc-tracker.md).
+The earlier [one-command onboarding roadmap](./docs/plans/one-command-onboarding-roadmap.md)
+and [central cache/state roadmap](./docs/plans/centralized-cache-and-state-roadmap.md)
+remain implemented foundations, not current value authority.
 
 The result authorizes a `CONTINUE` decision for further POC exploration only. It does not prove universal savings or production readiness. The initial realistic change-class matrix in [`poc-breadth-validation-v1`](./specs/poc-breadth-validation-v1.md) qualified 2/8 cells. Attribution and calibrated paired experiments reproduced the bounded Groovy and leaf Kotlin value cells, while shared-source and build-logic Kotlin remained order-sensitive. The terminal decision therefore retained the qualified synthetic claim and prohibited more unchanged replication or product tuning against noisy evidence.
 
@@ -2772,12 +2783,23 @@ In the private beta, this experience is delivered through CI summaries/annotatio
 
 ### 23.1 Onboarding
 
-1. Capture the pre-product command/configuration and create a versioned `baselineDefinition` inside the neutral measurement envelope.
-2. Install the CI Launcher/gateway. In the private beta, provision opaque read/read-write tokens as secrets and pin the deployment ID/public-key fingerprint outside policy; in hardened, replace them with workload identity without changing the command.
-3. Inject the init/settings plugin and validate one Tier 1 combination.
-4. Connect `TestCacheGrant` or accept that test tasks remain uncached.
-5. Establish trust domains, privacy, retention, repositories, and writer policy.
-6. Run initially in Observe or Verified and let natural builds create the model without retrospectively redefining the baseline.
+The active POC generates four portable repository files once and commits them:
+`buildoptw`, `buildoptw.bat`, `.buildopt/wrapper.properties` and
+`.buildopt/config.toml`. The repeated local and CI command is
+`./buildoptw <gradle args...>`. The wrapper verifies a pinned BuildOpt
+distribution, discovers the repository's Gradle Wrapper and obtains credentials
+only from private runtime state.
+
+The first invocations use native Gradle and may contribute bounded observation
+evidence. Trusted CI may run isolated trials within the fixed learning budget.
+Only exact qualified decisions become active; drift, missing authority, expired
+state, service failure and `BUILDOPT_BYPASS=1` retain native Gradle. A cache hit
+does not authorize an action, and no mode owns Test Optimization behavior.
+
+The prior install-plus-`buildopt optimize` flow remains a lower-level maintainer
+surface and implementation foundation. The wrapper experiment must prove that
+the committed surface removes global installation and manual profile steps
+without hiding the complete cost of learning or fallback.
 
 ### 23.2 Main view
 
@@ -3248,6 +3270,15 @@ These choices are deliberately unresolved because they do not help answer the PO
 ### 29.1 Readiness verdict
 
 The original Phase 0 package and walking skeleton are materialized. The combined path cleared `POC-VALUE-G01` on the qualified synthetic workload matrix. `POC-BREADTH-001` initially completed with 2/8 realistic change/DSL cells qualifying. Attribution and calibrated paired experiments raised bounded coverage while the terminal Kotlin decision retained unstable shared/build-logic cells outside the claim. Public-repository replication then qualified only Mockito out of Spotless, Mockito, and SpotBugs, so the bounded synthetic claim remains unchanged. Exact-workflow profiling rejected configuration work and exposed both Spotless's cross-project graph and Mockito's 242.690-second test compilation. The corrected boundary therefore authorizes preregistered Spotless Build Impact and Mockito test-build experiments while retaining no build-preparation hypothesis for SpotBugs. The current implementation truth lives in the tracker and executable checks.
+
+The generic structural-profile POC and its adaptive-fragment successor are now
+both stopped by their frozen terminal gates. The active successor is the
+repository-committed sticky-wrapper learning POC. It reuses the implemented
+launcher, packages, Gradle HTTP cache, typed central state and fail-open
+controls, but grants no authority to the stopped profiles. Its first block
+defines the wrapper contract; its terminal gate requires exact outputs, zero
+product failures, negligible native-retention cost, positive cumulative value,
+positive confidence and payback in at least three of five public families.
 
 The distinction is deliberate:
 

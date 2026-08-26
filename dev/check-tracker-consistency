@@ -65,9 +65,11 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`GENERIC ADAPTIVE-FRAGMENT POC STOPPED; BOUNDED MECHANISM RESEARCH RETAINED\`"
-    "**Current phase:** \`STOP_ADAPTIVE_FRAGMENT_POC\`"
+    "**Overall status:** \`STICKY WRAPPER LEARNING POC ACTIVE; PRIOR GENERIC HYPOTHESES STOPPED\`"
+    "**Current phase:** \`SWL-001_REPOSITORY_WRAPPER_CONTRACT\`"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
+    "| POC-STICKY-WRAPPER-LEARNING | Test a repository-committed verified wrapper, centralized Gradle cache/state and evidence-gated durable/runtime actions over chronological builds | \`DOING\` | 1/17 |"
+    "| \`E-403\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-000\` |"
     "| 150 | \`POC-AGGREGATE-OUTPUT-CLOSURE-001\` | Derive every required aggregate output"
     "| \`E-398\` | 2026-08-25 | \`POC-AGGREGATE-OUTPUT-CLOSURE-001\`"
     "| 149 | \`POC-CONFIGURATION-INPUT-BINDING-001\` | Inspect typed Gradle configuration"

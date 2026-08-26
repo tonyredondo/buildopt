@@ -1,5 +1,13 @@
 # One-command POC onboarding roadmap
 
+> **Successor note:** this roadmap delivered the installed `buildopt optimize`
+> foundation but did not prove generic longitudinal value. The active
+> experiment is now the
+> [Sticky Wrapper Learning POC](./sticky-wrapper-learning-poc-tracker.md),
+> whose repeated customer command is the repository-committed
+> `./buildoptw <gradle args...>`. The material below remains implementation and
+> design context; it is not the current terminal scorecard.
+
 ## North star
 
 BuildOpt's target onboarding experience is:

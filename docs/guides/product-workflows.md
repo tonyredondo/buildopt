@@ -1,5 +1,30 @@
 # Product workflows
 
+## Planned sticky wrapper lifecycle
+
+The active successor POC will make one committed `./buildoptw <gradle args...>`
+command the stable local and CI entrypoint. The wrapper will bootstrap an
+immutable BuildOpt version and emit one decision per invocation:
+
+```text
+NATIVE_NOOP -> OBSERVE -> SHADOW -> TRIAL -> QUALIFIED -> ACTIVE
+                                              |             |
+                                              +------> SUSPENDED -> RETIRED
+```
+
+The lifecycle is evidence-gated rather than a user-selected optimization mode.
+Expensive trials run only in isolated trusted CI within a 5% natural-compute
+budget. Runtime profiles execute only while every exact binding and value lease
+matches. Review-required durable patches become ordinary native Gradle behavior
+after acceptance. Any ambiguity, expiry, service failure or regression retains
+the original Gradle workflow.
+
+Gradle HTTP cache objects are reusable data; they never authorize lifecycle
+transitions. Typed decisions, observations and the economic ledger use the
+separate BuildOpt state plane. This workflow is planned under the
+[Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
+and is not part of the current package yet.
+
 This guide describes what a user or evaluator can do with the current POC and
 which interface owns each result. It is intentionally honest about surfaces
 that remain developer/operator workflows rather than a hosted product.

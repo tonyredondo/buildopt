@@ -30,6 +30,23 @@ The repository is a monorepo because contracts, producers, consumers, fixtures,
 and evidence must change together. It is not a collection of independently
 versioned microservices.
 
+## Active POC ownership
+
+The current successor experiment is specified by
+[`poc-sticky-wrapper-learning-v1`](../../specs/poc-sticky-wrapper-learning-v1.md)
+and ordered by the
+[`Sticky Wrapper Learning POC Tracker`](../plans/sticky-wrapper-learning-poc-tracker.md).
+Its planned repository-facing files (`buildoptw`, `buildoptw.bat` and
+`.buildopt/`) do not exist yet; `SWL-001..004` own their contract, generator,
+verified bootstrap and passthrough implementation. The existing
+`internal/sharedcache` and `internal/launcher` packages own the central Gradle
+HTTP cache, typed state and launcher primitives that later blocks will reuse.
+No third cache or state service is planned.
+
+Run `./dev/check-sticky-wrapper-learning-plan` to validate this planning
+boundary. As implementation begins, this map must name the concrete owning
+paths in the same commit that adds them.
+
 ## Executables and their implementation
 
 | Binary | Entrypoint | Main internal packages | User-facing documentation |

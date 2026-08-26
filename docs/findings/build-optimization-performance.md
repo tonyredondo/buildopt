@@ -41,11 +41,24 @@
 See the [current one-pager](./buildopt-poc-handoff.md) and the
 [terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)
 for the decision-ready summary and raw evidence.
-The next hypothesis, its fixed scorecard, ordered work and documentation
-obligations are tracked separately in the
-[Adaptive Fragment Generalization POC Tracker](../plans/adaptive-fragment-generalization-tracker.md).
-Its AF-010 gate demonstrates independent Build Impact activation on real
-Gradle, and AF-011 now adds direct timing without adding isolated percentages.
+The adaptive-fragment successor has also closed as
+`STOP_ADAPTIVE_FRAGMENT_POC`: its current installed campaign activated no
+fragment and produced no attributable mechanism saving. That track remains
+historical evidence in the
+[Adaptive Fragment Generalization POC Tracker](../plans/adaptive-fragment-generalization-tracker.md),
+not the active direction.
+
+The active hypothesis is now the
+[Sticky Wrapper Learning POC](../plans/sticky-wrapper-learning-poc-tracker.md).
+It tests a repository-committed wrapper, a negligible locally cached native
+decision, ordinary-build evidence, bounded CI trials, the existing central
+Gradle HTTP cache and a separate typed decision store. Its complete-path
+scorecard requires positive cumulative wall-time value beyond optimized native
+Gradle after every BuildOpt cost. This is a preregistered experiment and has no
+new performance result yet.
+
+Historically, AF-010 demonstrated independent Build Impact activation on real
+Gradle, and AF-011 added direct timing without adding isolated percentages.
 Across 48 Gradle 9.6.1 pairs, Build Impact plus the reviewed patch saves
 2,947 ms/68.56% in Groovy and 3,025.25 ms/79.32% in Kotlin, with 8/8 positive
 pairs, exact outputs and zero failures. The patch and controlled HTTP locality

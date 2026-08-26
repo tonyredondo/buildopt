@@ -5,6 +5,31 @@ Windows additionally contains the SCM host `buildopt-service.exe`.
 
 ## `buildopt`
 
+### Generate the planned repository wrapper
+
+```text
+buildopt wrapper init --server https://HOST [--project-scope SCOPE]
+buildopt wrapper check
+buildopt wrapper update --version VERSION
+```
+
+These commands are the frozen target for `SWL-001..003`; they are not
+implemented in the current package. `init` will generate `buildoptw`,
+`buildoptw.bat`, `.buildopt/wrapper.properties` and `.buildopt/config.toml`
+without a credential or machine path. The repeated customer command will be:
+
+```text
+./buildoptw <gradle args...>
+./buildoptw status
+./buildoptw explain
+```
+
+The wrapper will invoke the existing repository Gradle Wrapper through the
+BuildOpt launcher. `BUILDOPT_BYPASS=1` will skip decision, state, cache gateway,
+plugin and observation setup before Gradle starts. Exact syntax and exit
+behavior become authoritative only when the wrapper contract block closes; see
+the [active tracker](../plans/sticky-wrapper-learning-poc-tracker.md).
+
 ### Run a command
 
 ```text

@@ -13,11 +13,20 @@ net value in only one of five families. One of six structurally eligible
 descendants selected a profile, so the frozen terminal decision is
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md).
 
-That decision stops the current whole-profile hypothesis, not the bounded
-mechanisms that worked. The next preregistered direction is an
+That decision stopped the whole-profile hypothesis, not the bounded mechanisms
+that worked. The subsequent
 [adaptive fragment model](../plans/adaptive-fragment-generalization-tracker.md)
-that independently retains, invalidates and composes producer, subgraph, task,
-patch and cache-locality evidence.
+also stopped after its current installed campaign produced zero activations,
+zero attributable mechanism saving and negative cumulative value.
+
+The active preregistered direction is the
+[Sticky Wrapper Learning POC](../plans/sticky-wrapper-learning-poc-tracker.md).
+It changes the integration and economic unit rather than reviving stopped
+profiles: one committed wrapper observes ordinary builds, uses a negligible
+locally cached decision, spends only a bounded CI trial budget and may retain
+either an exact runtime action or a reviewed durable Gradle change. It must
+prove breadth, payback and positive cumulative value beyond optimized native
+Gradle; safe fallback and cache hits alone do not pass.
 
 ## What is generalized today
 

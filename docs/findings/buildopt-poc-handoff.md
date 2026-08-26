@@ -183,6 +183,32 @@ activate generically, repay its own learning/verification cost and beat
 optimized native Gradle over real commit sequences; it cannot reopen these
 thresholds or inherit authority from inactive fragments.
 
+## Active successor experiment
+
+The new [Sticky Wrapper Learning POC](../plans/sticky-wrapper-learning-poc-tracker.md)
+tests a materially different customer and economic model. A maintainer
+generates and commits `buildoptw`, `buildoptw.bat`, checksum-pinned wrapper
+properties and portable non-secret configuration. Every developer and CI run
+then uses one command:
+
+```text
+./buildoptw <gradle args...>
+```
+
+The wrapper can retain native Gradle, observe, shadow, schedule a bounded CI
+trial, execute an exact qualified runtime profile or report a reviewed durable
+Gradle patch. It reuses the existing optional HTTPS service, but Gradle cache
+objects and typed BuildOpt decisions remain separate planes and a cache hit
+never grants action authority. A local signed decision snapshot keeps the
+native path out of a blocking network lookup; outage or drift retains native.
+
+This is currently a preregistered experiment, not a new performance result.
+Continuation requires exact outputs, zero product failures, at most 100-ms p50
+and 250-ms p95 local native-decision overhead, a positive complete portfolio
+and independently positive value/payback in at least three of five public
+families. Every bootstrap, observation, trial, cache, fallback and action cost
+counts. Historical AF observations are context only.
+
 No generic whole-profile implementation block followed automatically from that
 failed gate. The separately preregistered
 [Adaptive Fragment Generalization POC](../plans/adaptive-fragment-generalization-tracker.md)
@@ -261,6 +287,8 @@ outside this POC.
 - [Terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)
 - [Adaptive-fragment terminal scorecard](../../benchmarks/results/adaptive-fragment-terminal-decision-v1.json)
 - [Adaptive-fragment terminal contract](../../specs/poc-adaptive-fragment-terminal-decision-v1.md)
+- [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
+- [Sticky wrapper machine contract](../../specs/poc-sticky-wrapper-learning-v1.md)
 - [Machine-readable V3 summary](../../benchmarks/results/poc-lifetime-breadth-v3/summary.json)
 - [V3 protocol](../../specs/poc-lifetime-breadth-v3.md)
 - [Detailed historical findings](./build-optimization-performance.md)
