@@ -1,0 +1,7 @@
+{
+  "schemaVersion": "buildopt.sticky/revocation/v1",
+  "recordType": "STICKY_REVOCATION",
+  "repositoryScopeSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "epoch": 1,
+  "updatedAt": "2026-08-26T20:00:05Z"
+}

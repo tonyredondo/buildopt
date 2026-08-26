@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.sticky/trial/v1",
+  "recordType": "STICKY_TRIAL",
+  "trialId": "trial-1",
+  "storeGeneration": 3,
+  "idempotencyKey": "8888888888888888888888888888888888888888888888888888888888888888",
+  "actionId": "action-1",
+  "binding": {
+    "repositoryScopeSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "workflow": "pull-request/build",
+    "sourceRevision": "dddddddddddddddddddddddddddddddddddddddd",
+    "gradleVersion": "9.6.1",
+    "wrapperSha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "optionsSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "outputContractSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+    "buildoptExecutableSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+    "revocationEpoch": 0
+  },
+  "isolationDigest": "9999999999999999999999999999999999999999999999999999999999999999",
+  "candidateOutcome": "SUCCESS",
+  "controlOutcome": "SUCCESS",
+  "candidateOutputDigest": "6666666666666666666666666666666666666666666666666666666666666666",
+  "controlOutputDigest": "6666666666666666666666666666666666666666666666666666666666666666",
+  "equivalence": "EXACT",
+  "result": "QUALIFIED",
+  "candidateWallTimeMs": 800,
+  "controlWallTimeMs": 1200,
+  "learningCostMs": 100,
+  "recordedAt": "2026-08-26T20:00:02Z"
+}

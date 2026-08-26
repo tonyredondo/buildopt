@@ -6,7 +6,8 @@ The active successor POC makes one committed `./buildoptw <gradle args...>`
 command the stable local and CI entrypoint. The wrapper bootstraps an immutable
 BuildOpt version, preserves the repository Gradle Wrapper, and uses the
 read-only central cache path when a valid connection is available. Decision
-emission remains a later block:
+consumption is intentionally later, but its canonical state contract is now
+implemented:
 
 ```text
 NATIVE_NOOP -> OBSERVE -> SHADOW -> TRIAL -> QUALIFIED -> ACTIVE
@@ -33,7 +34,9 @@ the existing Gradle-compatible central cache through an invocation-local
 verifying gateway when the private connection is valid. It adds
 `--build-cache` unless explicitly disabled, keeps ordinary consumers read-only,
 and falls back to native Gradle on missing credentials, corruption or outage.
-The `SWL-007..016` decision, learning and value blocks remain future POC work.
+`SWL-007` defines and tests the typed decision/evidence store, signed
+decisions, generation CAS, expiry, revocation and plane separation. The
+selector, observation and trial blocks (`SWL-008..016`) remain future POC work.
 
 This guide describes what a user or evaluator can do with the current POC and
 which interface owns each result. It is intentionally honest about surfaces

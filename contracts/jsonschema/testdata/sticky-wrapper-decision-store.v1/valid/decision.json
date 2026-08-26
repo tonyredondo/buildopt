@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.sticky/decision/v1",
+  "recordType": "STICKY_DECISION",
+  "decisionId": "decision-1",
+  "storeGeneration": 4,
+  "idempotencyKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab",
+  "binding": {
+    "repositoryScopeSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "workflow": "pull-request/build",
+    "sourceRevision": "dddddddddddddddddddddddddddddddddddddddd",
+    "gradleVersion": "9.6.1",
+    "wrapperSha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "optionsSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "outputContractSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+    "buildoptExecutableSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+    "revocationEpoch": 0
+  },
+  "actionId": "action-1",
+  "actionGeneration": 1,
+  "qualificationState": "QUARANTINE_VALIDATED",
+  "rolloutState": "ACTIVE_IN_CI",
+  "executionDecision": "ACTIVE_RUNTIME_PROFILE",
+  "policyDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "cacheContractDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "evidenceRefs": ["6666666666666666666666666666666666666666666666666666666666666666"],
+  "decisionDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "issuedAt": "2026-08-26T20:00:03Z",
+  "expiresAt": "2026-08-26T21:00:03Z",
+  "authentication": {
+    "algorithm": "Ed25519",
+    "keyId": "owner",
+    "signature": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  }
+}

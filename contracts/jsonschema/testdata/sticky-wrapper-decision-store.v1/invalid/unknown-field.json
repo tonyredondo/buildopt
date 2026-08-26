@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "buildopt.sticky/observation/v1",
+  "recordType": "STICKY_OBSERVATION",
+  "observationId": "observation-1",
+  "storeGeneration": 1,
+  "idempotencyKey": "1111111111111111111111111111111111111111111111111111111111111111",
+  "binding": {
+    "repositoryScopeSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "workflow": "pull-request/build",
+    "sourceRevision": "dddddddddddddddddddddddddddddddddddddddd",
+    "gradleVersion": "9.6.1",
+    "wrapperSha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "optionsSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "outputContractSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+    "buildoptExecutableSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+    "revocationEpoch": 0
+  },
+  "observationKind": "REQUESTED_BUILD",
+  "outcome": "SUCCESS",
+  "wallTimeMs": 1200,
+  "evidenceQuality": "EXACT",
+  "recordedAt": "2026-08-26T20:00:00Z",
+  "cacheKey": "never-authority"
+}

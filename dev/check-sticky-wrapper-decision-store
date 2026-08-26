@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+  printf 'usage: %s\n' "$0" >&2
+  exit 64
+fi
+
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+repository_root=$(cd -- "${script_dir}/.." && pwd)
+
+cd -- "${repository_root}"
+./dev/run --toolchain go -- go test -count=1 -race ./internal/stickydecision
+(
+  cd -- dev/schema-validator
+  ../run --toolchain go -- go test -count=1 -run '^TestStickyWrapperDecisionStoreV1Fixtures$' .
+)

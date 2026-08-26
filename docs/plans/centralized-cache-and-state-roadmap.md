@@ -67,9 +67,11 @@ requires both read capabilities and honors live revocation. SWL-006 now uses a
 valid connection to configure Gradle's native HTTP cache through the existing
 invocation-local verifying gateway, with read-only consumer behavior and native
 outage/corruption fallback. The wrapper also adds an exact local signed-decision
-fast path and one repeated customer command; typed state and decision learning
-remain later POC blocks, and cache correctness is not by itself a performance
-claim.
+fast path and one repeated customer command. `SWL-007` now materializes the
+typed sticky-wrapper decision/evidence store over immutable JCS records and the
+existing local/central generation-CAS state boundary; cache correctness is not
+by itself a performance claim. Its selector and learning consumers remain
+later POC blocks.
 
 ## Target experience
 

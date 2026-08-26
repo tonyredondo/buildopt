@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-decision-store/v1",
+  "workItem": "SWL-007",
+  "purpose": "Persist typed sticky-wrapper learning state without allowing Gradle cache objects to authorize actions.",
+  "records": {
+    "immutable": [
+      "STICKY_OBSERVATION",
+      "STICKY_ACTION",
+      "STICKY_TRIAL",
+      "STICKY_DECISION",
+      "STICKY_ECONOMIC_LEDGER"
+    ],
+    "mutablePointers": [
+      "STICKY_STATE_HEAD",
+      "STICKY_REVOCATION"
+    ],
+    "canonicalization": "RFC8785_JCS",
+    "digest": "SHA256_OF_EXACT_CANONICAL_BYTES",
+    "unknownFields": "REJECT"
+  },
+  "binding": [
+    "repositoryScopeSha256",
+    "workflow",
+    "sourceRevision",
+    "gradleVersion",
+    "wrapperSha256",
+    "optionsSha256",
+    "outputContractSha256",
+    "buildoptExecutableSha256",
+    "revocationEpoch"
+  ],
+  "authority": {
+    "decisionSignature": "ED25519",
+    "signatureDomain": "buildopt-sticky-decision/v1",
+    "activeRequires": [
+      "QUARANTINE_VALIDATED",
+      "ACTIVE_IN_CI_OR_ACTIVE_LOCALLY",
+      "NON_EMPTY_EVIDENCE_REFS",
+      "UNEXPIRED_SIGNATURE",
+      "CURRENT_REVOCATION_EPOCH"
+    ],
+    "gradleCacheKeysAuthorizeActions": false,
+    "productionAuthorized": false
+  },
+  "stateMachines": {
+    "qualification": [
+      "UNKNOWN",
+      "OBSERVING",
+      "CONTRACT_QUALIFIED",
+      "QUARANTINE_VALIDATED",
+      "SUSPENDED",
+      "REJECTED"
+    ],
+    "rollout": [
+      "PROPOSED",
+      "SHADOW",
+      "CI_CANARY",
+      "ACTIVE_IN_CI",
+      "ACTIVE_LOCALLY",
+      "SUSPENDED",
+      "ROLLED_BACK"
+    ],
+    "inconclusiveTrialPromotes": false
+  },
+  "persistence": {
+    "local": {
+      "records": "immutable_files",
+      "head": "single_generation_CAS_pointer",
+      "revocation": "private_epoch_file",
+      "cacheNamespace": "separate_opaque_directory"
+    },
+    "central": {
+      "objects": "existing_shared_state_EVIDENCE_namespace",
+      "head": "existing_state_sqlite_generation_CAS",
+      "cacheNamespace": "existing_gradle_blob_store",
+      "distributedCacheAndStateTransaction": false
+    },
+    "replay": "same_idempotency_and_request_fingerprint_returns_original_result",
+    "changedReplay": "reject_with_idempotency_conflict",
+    "staleHead": "reject_without_advancing_head"
+  },
+  "negativeCases": [
+    "unknown_field",
+    "unsupported_schema_version",
+    "cross_scope_binding",
+    "cross_plane_cache_object",
+    "stale_generation",
+    "changed_idempotency_request",
+    "expired_decision",
+    "revoked_decision",
+    "corrupt_head_or_record",
+    "direct_unknown_to_active_transition",
+    "inconclusive_trial_as_activation_evidence",
+    "ledger_formula_mismatch"
+  ],
+  "pocBoundaries": {
+    "automaticMerge": false,
+    "productionRollout": false,
+    "highAvailability": false,
+    "designPartner": false,
+    "soak": false,
+    "testOptimization": "OUT_OF_SCOPE",
+    "nextBlock": "SWL-008"
+  },
+  "conformance": {
+    "jsonSchema": "contracts/jsonschema/sticky-wrapper-decision-store.v1.schema.json",
+    "implementation": "internal/stickydecision",
+    "command": "./dev/check-sticky-wrapper-decision-store"
+  }
+}

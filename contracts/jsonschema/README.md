@@ -261,3 +261,33 @@ real JCS/Ed25519 cross-language vectors. The Java parser/applier, symlink and
 submodule checks, staged application, Git idempotency, and branch-without-PR
 recovery remain with `F0-034`/C4; this schema alone does not close
 `PATCH-BUNDLE-001`.
+
+## Sticky-wrapper decision store v1
+
+[`sticky-wrapper-decision-store.v1.schema.json`](./sticky-wrapper-decision-store.v1.schema.json)
+is the closed JSON union for `SWL-007`. It covers ordinary-build observations,
+action transitions, isolated trials, signed decisions, the cumulative economic
+ledger, the mutable state head and the revocation input. Every control record
+is RFC 8785 JCS canonical JSON addressed by the SHA-256 of its exact bytes;
+Gradle cache keys and blobs are deliberately outside this schema and cannot
+authorize a decision.
+
+The Go implementation in [`internal/stickydecision`](../../internal/stickydecision)
+adds the cross-field guarantees that JSON Schema cannot express: exact action
+state transitions and sequence continuity, evidence-reference resolution,
+trial output equality, ledger arithmetic, Ed25519 verification, expiry and
+revocation, generation CAS, idempotent replay, corruption detection and local
+versus central cache/state separation. Both adapters are POC-only and retain
+native Gradle when state is absent, stale, unavailable or ambiguous.
+
+Run the focused conformance gate with:
+
+```bash
+./dev/check-sticky-wrapper-decision-store
+```
+
+It exercises the local and central stores under the pinned Go toolchain and
+validates the seven positive and six negative JSON vectors with the isolated
+Draft 2020-12 compiler. The central adapter reuses the existing `EVIDENCE`
+state namespace and generation CAS; it does not create another service or
+merge the control and Gradle-cache planes.

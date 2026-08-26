@@ -53,7 +53,18 @@ credential without using the checkout path. The SWL-006 cache contract uses a
 valid connection to configure Gradle's native HTTP cache through a read-only,
 invocation-local verifying gateway. It never turns a developer or pull request
 into a central writer. Typed state and optimization decisions remain separate
-and are not activated by the cache path.
+and are not activated by the cache path. `SWL-007` defines the typed local and
+central decision store that will hold observations, trials, actions and signed
+economics; the store is POC plumbing only and is not consumed by the current
+native-cache path until `SWL-008`.
+
+The local decision-store root is private, user-owned state containing immutable
+JCS records, a generation head, idempotency receipts and a revocation epoch.
+The central adapter reuses the existing authenticated `EVIDENCE` state
+namespace and generation CAS. Gradle cache blobs remain opaque and live in a
+separate data-plane namespace. No decision is valid without its exact binding,
+expiry, revocation epoch and (for activation) owner signature; missing,
+corrupt or ambiguous state retains native Gradle.
 
 When all three server identity fields are present, the variable named by
 `credential_env` contains the exact `buildopt.central/access-token/v1` JSON

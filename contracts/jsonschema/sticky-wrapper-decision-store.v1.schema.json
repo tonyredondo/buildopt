@@ -1,0 +1,558 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/sticky-wrapper-decision-store.v1.schema.json",
+  "title": "BuildOpt sticky-wrapper decision store v1",
+  "description": "Closed canonical document shapes for the sticky-wrapper learning POC. These records are BuildOpt control-plane state and never derive authority from Gradle cache keys or objects.",
+  "oneOf": [
+    { "$ref": "#/$defs/action" },
+    { "$ref": "#/$defs/observation" },
+    { "$ref": "#/$defs/trial" },
+    { "$ref": "#/$defs/decision" },
+    { "$ref": "#/$defs/ledger" },
+    { "$ref": "#/$defs/stateHead" },
+    { "$ref": "#/$defs/revocation" }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40,64}$"
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repositoryScopeSha256",
+        "workflow",
+        "sourceRevision",
+        "gradleVersion",
+        "wrapperSha256",
+        "optionsSha256",
+        "outputContractSha256",
+        "buildoptExecutableSha256",
+        "revocationEpoch"
+      ],
+      "properties": {
+        "repositoryScopeSha256": { "$ref": "#/$defs/digest" },
+        "workflow": { "$ref": "#/$defs/identifier" },
+        "sourceRevision": { "$ref": "#/$defs/revision" },
+        "gradleVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:[-+][A-Za-z0-9.-]+)?$"
+        },
+        "wrapperSha256": { "$ref": "#/$defs/digest" },
+        "optionsSha256": { "$ref": "#/$defs/digest" },
+        "outputContractSha256": { "$ref": "#/$defs/digest" },
+        "buildoptExecutableSha256": { "$ref": "#/$defs/digest" },
+        "revocationEpoch": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "envelope": {
+      "type": "object",
+      "required": [
+        "schemaVersion",
+        "recordType",
+        "storeGeneration",
+        "idempotencyKey",
+        "binding"
+      ],
+      "properties": {
+        "storeGeneration": { "type": "integer", "minimum": 1 },
+        "idempotencyKey": { "$ref": "#/$defs/digest" },
+        "binding": { "$ref": "#/$defs/binding" }
+      }
+    },
+    "qualificationState": {
+      "enum": [
+        "UNKNOWN",
+        "OBSERVING",
+        "CONTRACT_QUALIFIED",
+        "QUARANTINE_VALIDATED",
+        "REJECTED",
+        "SUSPENDED"
+      ]
+    },
+    "rolloutState": {
+      "enum": [
+        "PROPOSED",
+        "SHADOW",
+        "CI_CANARY",
+        "ACTIVE_IN_CI",
+        "ACTIVE_LOCALLY",
+        "SUSPENDED",
+        "ROLLED_BACK"
+      ]
+    },
+    "outcome": {
+      "enum": ["SUCCESS", "BUILD_FAILURE", "INFRA_FAILURE", "CANCELLED"]
+    },
+    "evidenceQuality": {
+      "enum": ["EXACT", "APPROXIMATED", "UNAVAILABLE"]
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "recordType",
+        "actionId",
+        "storeGeneration",
+        "idempotencyKey",
+        "sequence",
+        "transition",
+        "fromQualificationState",
+        "toQualificationState",
+        "fromRolloutState",
+        "toRolloutState",
+        "binding",
+        "occurredAt"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "buildopt.sticky/action/v1" },
+        "recordType": { "const": "STICKY_ACTION" },
+        "actionId": { "$ref": "#/$defs/identifier" },
+        "storeGeneration": { "type": "integer", "minimum": 1 },
+        "idempotencyKey": { "$ref": "#/$defs/digest" },
+        "sequence": { "type": "integer", "minimum": 1 },
+        "transition": {
+          "enum": [
+            "PROPOSE",
+            "BEGIN_SHADOW",
+            "BEGIN_CI_CANARY",
+            "ACTIVATE_IN_CI",
+            "ACTIVATE_LOCALLY",
+            "SUSPEND",
+            "ROLLBACK",
+            "RETIRE"
+          ]
+        },
+        "fromQualificationState": { "$ref": "#/$defs/qualificationState" },
+        "toQualificationState": { "$ref": "#/$defs/qualificationState" },
+        "fromRolloutState": { "$ref": "#/$defs/rolloutState" },
+        "toRolloutState": { "$ref": "#/$defs/rolloutState" },
+        "binding": { "$ref": "#/$defs/binding" },
+        "decisionDigest": { "$ref": "#/$defs/digest" },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/digest" },
+          "maxItems": 256
+        },
+        "occurredAt": { "$ref": "#/$defs/utcTimestamp" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "transition": { "const": "PROPOSE" } } },
+          "then": { "properties": { "sequence": { "const": 1 } } }
+        },
+        {
+          "if": { "not": { "properties": { "transition": { "const": "PROPOSE" } } } },
+          "then": { "properties": { "sequence": { "minimum": 2 } } }
+        },
+        {
+          "if": { "properties": { "transition": { "const": "PROPOSE" } } },
+          "then": {
+            "properties": {
+              "fromQualificationState": { "const": "UNKNOWN" },
+              "toQualificationState": { "const": "OBSERVING" },
+              "fromRolloutState": { "const": "PROPOSED" },
+              "toRolloutState": { "const": "PROPOSED" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "transition": { "const": "BEGIN_SHADOW" } } },
+          "then": {
+            "properties": {
+              "fromQualificationState": { "const": "OBSERVING" },
+              "toQualificationState": { "const": "CONTRACT_QUALIFIED" },
+              "fromRolloutState": { "const": "PROPOSED" },
+              "toRolloutState": { "const": "SHADOW" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "transition": { "const": "BEGIN_CI_CANARY" } } },
+          "then": {
+            "properties": {
+              "fromQualificationState": { "const": "CONTRACT_QUALIFIED" },
+              "toQualificationState": { "const": "QUARANTINE_VALIDATED" },
+              "fromRolloutState": { "const": "SHADOW" },
+              "toRolloutState": { "const": "CI_CANARY" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "transition": { "const": "ACTIVATE_IN_CI" } } },
+          "then": {
+            "properties": {
+              "fromQualificationState": { "const": "QUARANTINE_VALIDATED" },
+              "toQualificationState": { "const": "QUARANTINE_VALIDATED" },
+              "fromRolloutState": { "const": "CI_CANARY" },
+              "toRolloutState": { "const": "ACTIVE_IN_CI" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "transition": { "const": "ACTIVATE_LOCALLY" } } },
+          "then": {
+            "properties": {
+              "fromQualificationState": { "const": "QUARANTINE_VALIDATED" },
+              "toQualificationState": { "const": "QUARANTINE_VALIDATED" },
+              "fromRolloutState": { "const": "ACTIVE_IN_CI" },
+              "toRolloutState": { "const": "ACTIVE_LOCALLY" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "transition": { "const": "SUSPEND" } } },
+          "then": {
+            "properties": {
+              "fromQualificationState": { "enum": ["UNKNOWN", "OBSERVING", "CONTRACT_QUALIFIED", "QUARANTINE_VALIDATED"] },
+              "fromRolloutState": { "enum": ["PROPOSED", "SHADOW", "CI_CANARY", "ACTIVE_IN_CI", "ACTIVE_LOCALLY"] },
+              "toQualificationState": { "const": "SUSPENDED" },
+              "toRolloutState": { "const": "SUSPENDED" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "transition": { "const": "ROLLBACK" } } },
+          "then": {
+            "properties": {
+              "fromQualificationState": { "const": "QUARANTINE_VALIDATED" },
+              "toQualificationState": { "const": "SUSPENDED" },
+              "toRolloutState": { "const": "ROLLED_BACK" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "transition": { "const": "RETIRE" } } },
+          "then": {
+            "properties": {
+              "fromQualificationState": { "const": "SUSPENDED" },
+              "toQualificationState": { "const": "REJECTED" },
+              "fromRolloutState": { "enum": ["SUSPENDED", "ROLLED_BACK"] },
+              "toRolloutState": { "const": "ROLLED_BACK" }
+            }
+          }
+        }
+      ]
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "recordType",
+        "observationId",
+        "storeGeneration",
+        "idempotencyKey",
+        "binding",
+        "observationKind",
+        "outcome",
+        "wallTimeMs",
+        "evidenceQuality",
+        "recordedAt"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "buildopt.sticky/observation/v1" },
+        "recordType": { "const": "STICKY_OBSERVATION" },
+        "observationId": { "$ref": "#/$defs/identifier" },
+        "storeGeneration": { "type": "integer", "minimum": 1 },
+        "idempotencyKey": { "$ref": "#/$defs/digest" },
+        "binding": { "$ref": "#/$defs/binding" },
+        "observationKind": { "const": "REQUESTED_BUILD" },
+        "outcome": { "$ref": "#/$defs/outcome" },
+        "wallTimeMs": { "type": "integer", "minimum": 0 },
+        "outputDigest": { "$ref": "#/$defs/digest" },
+        "evidenceQuality": { "$ref": "#/$defs/evidenceQuality" },
+        "recordedAt": { "$ref": "#/$defs/utcTimestamp" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "evidenceQuality": { "const": "UNAVAILABLE" } } },
+          "then": { "not": { "required": ["outputDigest"] } }
+        }
+      ]
+    },
+    "trial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "recordType",
+        "trialId",
+        "storeGeneration",
+        "idempotencyKey",
+        "actionId",
+        "binding",
+        "isolationDigest",
+        "candidateOutcome",
+        "controlOutcome",
+        "equivalence",
+        "result",
+        "candidateWallTimeMs",
+        "controlWallTimeMs",
+        "learningCostMs",
+        "recordedAt"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "buildopt.sticky/trial/v1" },
+        "recordType": { "const": "STICKY_TRIAL" },
+        "trialId": { "$ref": "#/$defs/identifier" },
+        "storeGeneration": { "type": "integer", "minimum": 1 },
+        "idempotencyKey": { "$ref": "#/$defs/digest" },
+        "actionId": { "$ref": "#/$defs/identifier" },
+        "binding": { "$ref": "#/$defs/binding" },
+        "isolationDigest": { "$ref": "#/$defs/digest" },
+        "candidateOutcome": { "$ref": "#/$defs/outcome" },
+        "controlOutcome": { "$ref": "#/$defs/outcome" },
+        "candidateOutputDigest": { "$ref": "#/$defs/digest" },
+        "controlOutputDigest": { "$ref": "#/$defs/digest" },
+        "equivalence": { "enum": ["EXACT", "REVIEWED", "NONE"] },
+        "result": { "enum": ["QUALIFIED", "RETAIN_NATIVE", "INCONCLUSIVE"] },
+        "candidateWallTimeMs": { "type": "integer", "minimum": 0 },
+        "controlWallTimeMs": { "type": "integer", "minimum": 0 },
+        "learningCostMs": { "type": "integer", "minimum": 0 },
+        "recordedAt": { "$ref": "#/$defs/utcTimestamp" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "equivalence": { "const": "EXACT" } } },
+          "then": {
+            "required": ["candidateOutputDigest", "controlOutputDigest"]
+          }
+        },
+        {
+          "if": { "properties": { "result": { "const": "QUALIFIED" } } },
+          "then": {
+            "properties": {
+              "candidateOutcome": { "const": "SUCCESS" },
+              "controlOutcome": { "const": "SUCCESS" },
+              "equivalence": { "enum": ["EXACT", "REVIEWED"] }
+            }
+          }
+        }
+      ]
+    },
+    "authentication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "keyId", "signature"],
+      "properties": {
+        "algorithm": { "const": "Ed25519" },
+        "keyId": { "$ref": "#/$defs/identifier" },
+        "signature": { "type": "string", "pattern": "^[A-Za-z0-9_-]{86}$" }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "recordType",
+        "decisionId",
+        "storeGeneration",
+        "idempotencyKey",
+        "binding",
+        "actionGeneration",
+        "qualificationState",
+        "rolloutState",
+        "executionDecision",
+        "policyDigest",
+        "cacheContractDigest",
+        "evidenceRefs",
+        "decisionDigest",
+        "issuedAt",
+        "expiresAt",
+        "authentication"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "buildopt.sticky/decision/v1" },
+        "recordType": { "const": "STICKY_DECISION" },
+        "decisionId": { "$ref": "#/$defs/identifier" },
+        "storeGeneration": { "type": "integer", "minimum": 1 },
+        "idempotencyKey": { "$ref": "#/$defs/digest" },
+        "binding": { "$ref": "#/$defs/binding" },
+        "actionId": { "$ref": "#/$defs/identifier" },
+        "actionGeneration": { "type": "integer", "minimum": 0 },
+        "qualificationState": { "$ref": "#/$defs/qualificationState" },
+        "rolloutState": { "$ref": "#/$defs/rolloutState" },
+        "executionDecision": {
+          "enum": [
+            "NATIVE_NOOP",
+            "OBSERVE",
+            "SHADOW",
+            "TRIAL",
+            "ACTIVE_RUNTIME_PROFILE",
+            "ACTIVE_DURABLE_PATCH",
+            "SUSPENDED",
+            "RETIRED"
+          ]
+        },
+        "policyDigest": { "$ref": "#/$defs/digest" },
+        "cacheContractDigest": { "$ref": "#/$defs/digest" },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/digest" },
+          "maxItems": 256
+        },
+        "decisionDigest": { "$ref": "#/$defs/digest" },
+        "issuedAt": { "$ref": "#/$defs/utcTimestamp" },
+        "expiresAt": { "$ref": "#/$defs/utcTimestamp" },
+        "authentication": { "$ref": "#/$defs/authentication" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "executionDecision": {
+                "enum": ["ACTIVE_RUNTIME_PROFILE", "ACTIVE_DURABLE_PATCH"]
+              }
+            }
+          },
+          "then": {
+            "required": ["actionId"],
+            "properties": {
+              "actionGeneration": { "minimum": 1 },
+              "qualificationState": { "const": "QUARANTINE_VALIDATED" },
+              "rolloutState": { "enum": ["ACTIVE_IN_CI", "ACTIVE_LOCALLY"] },
+              "evidenceRefs": { "minItems": 1 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "executionDecision": { "const": "NATIVE_NOOP" } } },
+          "then": {
+            "properties": {
+              "actionGeneration": { "const": 0 },
+              "evidenceRefs": { "maxItems": 0 }
+            },
+            "not": { "required": ["actionId"] }
+          }
+        }
+      ]
+    },
+    "ledgerEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actionId",
+        "observationRef",
+        "grossSavedMs",
+        "buildoptCostMs",
+        "netSavedMs",
+        "outcome",
+        "observedAt"
+      ],
+      "properties": {
+        "actionId": { "$ref": "#/$defs/identifier" },
+        "observationRef": { "$ref": "#/$defs/digest" },
+        "grossSavedMs": { "type": "integer" },
+        "buildoptCostMs": { "type": "integer", "minimum": 0 },
+        "netSavedMs": { "type": "integer" },
+        "outcome": { "$ref": "#/$defs/outcome" },
+        "observedAt": { "$ref": "#/$defs/utcTimestamp" }
+      }
+    },
+    "ledger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "recordType",
+        "ledgerId",
+        "storeGeneration",
+        "idempotencyKey",
+        "binding",
+        "entries",
+        "grossSavedMs",
+        "buildoptCostMs",
+        "netSavedMs",
+        "asOf"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "buildopt.sticky/economic-ledger/v1" },
+        "recordType": { "const": "STICKY_ECONOMIC_LEDGER" },
+        "ledgerId": { "$ref": "#/$defs/identifier" },
+        "storeGeneration": { "type": "integer", "minimum": 1 },
+        "idempotencyKey": { "$ref": "#/$defs/digest" },
+        "binding": { "$ref": "#/$defs/binding" },
+        "supersedesDigest": { "$ref": "#/$defs/digest" },
+        "entries": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 256,
+          "items": { "$ref": "#/$defs/ledgerEntry" }
+        },
+        "grossSavedMs": { "type": "integer" },
+        "buildoptCostMs": { "type": "integer", "minimum": 0 },
+        "netSavedMs": { "type": "integer" },
+        "asOf": { "$ref": "#/$defs/utcTimestamp" }
+      }
+    },
+    "stateHead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "recordType",
+        "plane",
+        "repositoryScopeSha256",
+        "generation",
+        "recordTypeAtHead",
+        "recordDigest",
+        "revocationEpoch",
+        "updatedAt"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "buildopt.sticky/state-head/v1" },
+        "recordType": { "const": "STICKY_STATE_HEAD" },
+        "plane": { "const": "BUILDOPT_STATE" },
+        "repositoryScopeSha256": { "$ref": "#/$defs/digest" },
+        "generation": { "type": "integer", "minimum": 1 },
+        "recordTypeAtHead": {
+          "enum": [
+            "STICKY_ACTION",
+            "STICKY_OBSERVATION",
+            "STICKY_TRIAL",
+            "STICKY_DECISION",
+            "STICKY_ECONOMIC_LEDGER"
+          ]
+        },
+        "recordDigest": { "$ref": "#/$defs/digest" },
+        "revocationEpoch": { "type": "integer", "minimum": 0 },
+        "updatedAt": { "$ref": "#/$defs/utcTimestamp" }
+      }
+    },
+    "revocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "recordType",
+        "repositoryScopeSha256",
+        "epoch",
+        "updatedAt"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "buildopt.sticky/revocation/v1" },
+        "recordType": { "const": "STICKY_REVOCATION" },
+        "repositoryScopeSha256": { "$ref": "#/$defs/digest" },
+        "epoch": { "type": "integer", "minimum": 1 },
+        "updatedAt": { "$ref": "#/$defs/utcTimestamp" }
+      }
+    }
+  }
+}

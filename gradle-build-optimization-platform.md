@@ -3316,9 +3316,10 @@ The generic structural-profile POC and its adaptive-fragment successor are now
 both stopped by their frozen terminal gates. The active successor is the
 repository-committed sticky-wrapper learning POC. It reuses the implemented
 launcher, packages, Gradle HTTP cache, typed central state and fail-open
-controls, but grants no authority to the stopped profiles. Its first two
-implementation blocks have defined the wrapper contract and delivered the
-deterministic maintainer generator; verified cross-platform bootstrap is next.
+controls, but grants no authority to the stopped profiles. Its first seven
+implementation blocks now define the wrapper contract, generator, verified
+bootstrap, passthrough, portable connection, native cache integration and a
+typed decision/evidence store; the next block is the local no-op selector.
 Its terminal gate requires exact outputs, zero
 product failures, negligible native-retention cost, positive cumulative value,
 positive confidence and payback in at least three of five public families.
@@ -3329,6 +3330,15 @@ The distinction is deliberate:
 - Schemas, APIs, state machines, vectors, fixtures, and spikes are materialized and remain regression inputs.
 - Agent discovery and hermetic producer enforcement are explicitly `UNAVAILABLE`; reviewed-source paths remain testable.
 - All synthetic POC value and terminal measurement gates are closed. `POC-BREADTH-G01` remains preliminary and the claim stays bounded. `POC-REALWORLD-001..002` proved pinned compatibility and retained the bounded claim; `POC-PUBLIC-BUILD-TASKS-001` now freezes the Spotless exact-workflow Build Impact and Mockito test-build Safe Cache experiments. Productization remains a separate decision and is not implied by either the bounded `CONTINUE` verdict or public-source replication.
+
+The sticky-wrapper successor now includes `SWL-007`, a POC-only typed decision
+store. It keeps observations, action transitions, trials, signed decisions and
+the economic ledger as canonical immutable control-plane records with one
+generation-CAS head, while Gradle cache objects remain opaque data-plane
+entries. Local files and the existing central `EVIDENCE` state adapter share
+the same validation rules, idempotent replay and revocation/expiry checks; no
+record grants production authority and the next block must still preserve the
+native no-op path.
 
 The normative source is divided as follows: this RFC retains intent, invariants, and gates; `contracts/`, `specs/`, `benchmarks/`, and ADRs retain executable details. If a contract contradicts a safety invariant in this RFC, the contract is corrected; if the invariant needs to change, the corresponding decision is reviewed first.
 
@@ -3351,6 +3361,7 @@ contracts/
     test-cache-grant.v1.schema.json
     test-validation-result.v1.schema.json
     patch-bundle.v1.schema.json
+    sticky-wrapper-decision-store.v1.schema.json
   openapi/
     buildopt-control.v1.yaml
     buildopt-cache-control.v1.yaml

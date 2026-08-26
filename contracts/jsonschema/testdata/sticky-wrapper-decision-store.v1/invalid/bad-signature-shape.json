@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "buildopt.sticky/decision/v1",
+  "recordType": "STICKY_DECISION",
+  "decisionId": "decision-1",
+  "storeGeneration": 1,
+  "idempotencyKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab",
+  "binding": {
+    "repositoryScopeSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "workflow": "pull-request/build",
+    "sourceRevision": "dddddddddddddddddddddddddddddddddddddddd",
+    "gradleVersion": "9.6.1",
+    "wrapperSha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "optionsSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "outputContractSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+    "buildoptExecutableSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+    "revocationEpoch": 0
+  },
+  "actionGeneration": 0,
+  "qualificationState": "OBSERVING",
+  "rolloutState": "PROPOSED",
+  "executionDecision": "OBSERVE",
+  "policyDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "cacheContractDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "evidenceRefs": [],
+  "decisionDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "issuedAt": "2026-08-26T20:00:00Z",
+  "expiresAt": "2026-08-26T21:00:00Z",
+  "authentication": {
+    "algorithm": "Ed25519",
+    "keyId": "owner",
+    "signature": "not-a-signature"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "buildopt.sticky/action/v1",
+  "recordType": "STICKY_ACTION",
+  "actionId": "action-1",
+  "storeGeneration": 2,
+  "idempotencyKey": "7777777777777777777777777777777777777777777777777777777777777777",
+  "sequence": 1,
+  "transition": "PROPOSE",
+  "fromQualificationState": "UNKNOWN",
+  "toQualificationState": "OBSERVING",
+  "fromRolloutState": "PROPOSED",
+  "toRolloutState": "PROPOSED",
+  "binding": {
+    "repositoryScopeSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "workflow": "pull-request/build",
+    "sourceRevision": "dddddddddddddddddddddddddddddddddddddddd",
+    "gradleVersion": "9.6.1",
+    "wrapperSha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "optionsSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "outputContractSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+    "buildoptExecutableSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+    "revocationEpoch": 0
+  },
+  "occurredAt": "2026-08-26T20:00:01Z"
+}

@@ -3,8 +3,8 @@
 ## Status
 
 **Overall:** `IN_PROGRESS`<br>
-**Progress:** `7/17` blocks complete<br>
-**Current block:** `SWL-007` — decision contract and store<br>
+**Progress:** `8/17` blocks complete<br>
+**Current block:** `SWL-008` — native no-op fast path<br>
 **Predecessor:** the adaptive-fragment experiment closed as
 `STOP_ADAPTIVE_FRAGMENT_POC` with zero activations and zero attributable
 saving. Its evidence remains immutable context, not authority for this POC.
@@ -242,7 +242,7 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | 4 | `SWL-004` Gradle passthrough and bypass | Wrapper discovers the repository Gradle Wrapper and preserves complete process behavior | `DONE` | SWL-003 |
 | 5 | `SWL-005` Portable connection and project identity | Non-secret committed endpoint/scope plus private credential discovery | `DONE` | SWL-004 |
 | 6 | `SWL-006` Gradle HTTP cache integration | Existing verifying gateway and central cache operate automatically through the wrapper | `DONE` | SWL-005 |
-| 7 | `SWL-007` Decision contract and store | Typed state machine, signed decisions, generation CAS, expiry, revocation and plane separation | `TODO` | SWL-006 |
+| 7 | `SWL-007` Decision contract and store | Typed state machine, signed decisions, generation CAS, expiry, revocation and plane separation | `DONE` | SWL-006 |
 | 8 | `SWL-008` Native no-op fast path | Exact local snapshot makes native retention independent of a blocking remote lookup | `WAITING` | SWL-007 |
 | 9 | `SWL-009` Ordinary-build observation | Bounded exact timings, outputs, task/graph facts and ledger updates from requested builds | `WAITING` | SWL-008 |
 | 10 | `SWL-010` Budgeted trial orchestration | Isolated paired candidate/native trials run only within the frozen CI compute budget | `WAITING` | SWL-009 |
@@ -425,14 +425,35 @@ functional block.
 
 ### SWL-007 — Decision contract and store
 
-Define canonical action, observation, trial, decision and economic-ledger
-documents. Decisions bind repository, workflow, Gradle, Wrapper, options,
-outputs, action generation, expiry and revocation. Gradle object keys are never
-accepted as action authority.
+Implemented the canonical action, observation, trial, decision and
+economic-ledger documents plus the mutable state-head and revocation inputs.
+The JSON Schema union is closed and JCS-addressed; the Go implementation adds
+the cross-record invariants that a schema cannot express:
 
-Acceptance: lifecycle vectors cover every valid transition plus replay,
-conflict, stale generation, expiry, corruption, cross-plane and cross-scope
-negative cases in local and central storage.
+- qualification and rollout state machines are independent, with every valid
+  transition covered and direct activation, invalid rollback, repeated
+  suspension and premature retirement rejected;
+- action sequences carry the exact prior state, active decisions require
+  earlier resolvable observation/trial evidence, and ledgers resolve their
+  action and observation references;
+- decisions bind repository, workflow, Gradle, Wrapper, options, outputs,
+  action generation, policy/cache-contract digests, expiry and revocation and
+  are verifiable with the owner Ed25519 key;
+- immutable records are published before a single generation-CAS head, with
+  exact idempotent replay and changed-request conflict behavior;
+- local files and the existing central `EVIDENCE` state adapter share the same
+  canonical validation, while opaque Gradle cache objects remain in a separate
+  namespace and cannot authorize an action; and
+- signed ledger arithmetic rejects negative/overflowing or non-reconciled
+  values instead of turning a regression into a false saving.
+
+Acceptance: the focused checker passes every valid transition, replay,
+conflict, stale generation, expiry, revocation, corruption, cross-plane,
+cross-scope, unknown-evidence, unknown-observation and arithmetic-overflow
+negative case in both local and central storage. Seven valid and six invalid
+Draft 2020-12 fixtures are validated with the isolated compiler. This block
+defines storage and authority only; no selector, automatic activation,
+learning loop or wall-time claim is enabled. `SWL-008` is next.
 
 ### SWL-008 — Native no-op fast path
 
@@ -575,7 +596,7 @@ customer behavior, architecture, value evidence or direction changes.
 | `SWL-E005` | SWL-004 | [Neutral passthrough contract](../../specs/poc-sticky-wrapper-passthrough-v1.md), machine-readable [boundary](../../specs/poc-sticky-wrapper-passthrough-v1.json), executable [`check-sticky-wrapper-passthrough`](../../dev/check-sticky-wrapper-passthrough) and native platform gates: difficult argv/cwd/streams/environment, ordinary and signal exits, descendants, pre-bootstrap bypass and fail-open Gradle fallback | `DONE` |
 | `SWL-E006` | SWL-005 | [Portable connection contract](../../specs/poc-sticky-wrapper-connection-v1.md), machine-readable [scope boundary](../../specs/poc-sticky-wrapper-connection-v1.json) and executable [`check-sticky-wrapper-connection`](../../dev/check-sticky-wrapper-connection): two clean checkouts share one path-independent project/connection identity; namespace changes separate it; absent/cross-project/incomplete credentials avoid the server; live revocation blocks both planes; redirects and foreign wrapper roots reject; the dynamic secret is scrubbed before Gradle | `DONE` |
 | `SWL-E007` | SWL-006 | [Sticky-wrapper Gradle cache contract](../../specs/poc-sticky-wrapper-cache-v1.md), machine contract, automatic native cache flag, read-only central policy and race-enabled producer/consumer/corruption/outage integration | `DONE` |
-| `SWL-E008` | SWL-007 | Decision lifecycle, signed storage and cross-plane negatives | `WAITING` |
+| `SWL-E008` | SWL-007 | [Decision-store specification](../../specs/poc-sticky-wrapper-decision-store-v1.md), JSON Schema union and fixtures, `internal/stickydecision`, and executable [`check-sticky-wrapper-decision-store`](../../dev/check-sticky-wrapper-decision-store): all valid state transitions, signed decisions, evidence/ledger references, local and central generation CAS, replay/conflict, expiry, revocation, corruption and cache/state plane separation | `DONE` |
 | `SWL-E009` | SWL-008 | No-op and unavailable-service overhead evidence | `WAITING` |
 | `SWL-E010` | SWL-009 | Ordinary-build observation and phase attribution | `WAITING` |
 | `SWL-E011` | SWL-010 | Bounded trial scheduling and isolation evidence | `WAITING` |
@@ -605,6 +626,7 @@ customer behavior, architecture, value evidence or direction changes.
 
 | Date | Change |
 | --- | --- |
+| 2026-08-27 | Closed SWL-007. Added the canonical JCS decision-store union, signed decision verification, independent qualification/rollout transitions, evidence and ledger cross-links, local filesystem and central EVIDENCE adapters with generation CAS, exact replay/conflict semantics, expiry, revocation, corruption and cache/state plane separation. Seven positive and six negative schema fixtures plus race-enabled local/central conformance pass; opened SWL-008 native no-op fast path. |
 | 2026-08-26 | Closed SWL-006. Connected the committed wrapper to the existing Gradle-compatible central object plane through an invocation-local verifying gateway. A valid read-capable connection automatically enables Gradle's native HTTP cache unless explicitly disabled, preserves the native cache policy for central tasks, keeps ordinary consumers read-only, and retains private managed L1 separation. Race-enabled producer/consumer/outage integration proves exact `FROM-CACHE` outputs, byte-free corruption misses, identical native rebuild outputs, secret isolation and no central PUT from the consumer; opened SWL-007 decision contract and store. |
 | 2026-08-26 | Closed SWL-005. Bound canonical committed endpoint/project scope to the private owner-issued token document, derived checkout-independent project identity plus namespace-specific connection identity, required both read capabilities, honored expiry/live revocation and scrubbed the dynamic credential before Gradle. Two-checkout HTTPS/race evidence and cross-project, missing, capability, namespace, redirect, foreign-root and revoked negatives pass without consuming cache/state; opened SWL-006. |
 | 2026-08-26 | Closed SWL-004. Ordinary wrapper calls now execute the repository Gradle Wrapper through the verified `buildopt run --` launcher with exact argv/cwd/streams/environment/exit behavior; `--gradle` escapes management, exact bypass runs before configuration/bootstrap, ordinary bootstrap failures warn and run direct Gradle, and management fails closed. Linux difficult-argument and signal-tree fixtures plus native macOS/Windows entrypoint gates pass without activating any optimization; opened SWL-005. |

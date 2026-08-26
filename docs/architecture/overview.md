@@ -76,13 +76,15 @@ the central path read-only for ordinary developer and pull-request builds. The
 managed local L1 remains private and BuildOpt-controlled; the central L2 follows
 Gradle's native cache policy so arbitrary cacheable tasks are not silently
 excluded. The existing Gradle-cache data plane and typed state control plane
-remain separate. This boundary is frozen in
+remain separate. `SWL-007` now defines the control-plane records and
+persistence adapters for observations, actions, trials, signed decisions and
+economics; `SWL-008` is the first block allowed to consume a verified local
+snapshot. This boundary is frozen in
 the [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
 and is implemented through deterministic generation, verified package
 bootstrap, exact Gradle passthrough, authenticated portable connection and
-read-only central cache integration. Decision/state learning remains a later POC
-block; this cache contract proves correctness and fallback, not a standalone
-wall-time claim.
+read-only central cache integration. The decision store grants no production
+authority and does not make a standalone wall-time claim.
 
 ## Components
 
@@ -213,6 +215,7 @@ KMS/HSM-backed keys, HA, and recovery objectives.
 | Shared blobs | Server | Immutable content-addressed files on a proven local filesystem |
 | Cache and control metadata | Server | Separate SQLite databases in WAL and `FULL` synchronous mode |
 | BuildOpt portfolio/evidence/checkpoint metadata | Server | Independent `state.sqlite`; immutable manifests plus exact-generation CAS head |
+| Sticky-wrapper observations, actions, trials and decisions | `internal/stickydecision` | Immutable JCS records plus one generation-CAS head; local files or existing central `EVIDENCE` state; no Gradle-cache authority |
 | Edge blobs and metadata | Edge | Bounded local store, durable pending replication, TTL and byte-SLRU |
 | Build sessions | Server exporter | Atomic mode-`0600` immutable JSON plus bounded deterministic JSONL |
 | Patch staging | Java patcher | Private detached Git worktree; exact branch/ref publication only after all postimages match |

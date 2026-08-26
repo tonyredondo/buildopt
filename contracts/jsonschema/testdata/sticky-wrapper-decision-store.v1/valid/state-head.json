@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "buildopt.sticky/state-head/v1",
+  "recordType": "STICKY_STATE_HEAD",
+  "plane": "BUILDOPT_STATE",
+  "repositoryScopeSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "generation": 5,
+  "recordTypeAtHead": "STICKY_ECONOMIC_LEDGER",
+  "recordDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "revocationEpoch": 0,
+  "updatedAt": "2026-08-26T20:00:04Z"
+}
