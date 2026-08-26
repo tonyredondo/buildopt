@@ -175,6 +175,60 @@ func TestTypedStateCASIsAtomicConcurrentAndIdempotent(t *testing.T) {
 	}
 }
 
+func TestTypedStateConcurrentObjectPublicationsRemainAvailable(t *testing.T) {
+	ctx := context.Background()
+	storage := openStateTestStorage(t, ctx, filepath.Join(t.TempDir(), "shared"))
+	defer storage.Close()
+
+	type outcome struct {
+		digest string
+		err    error
+	}
+	const writers = 16
+	start := make(chan struct{})
+	outcomes := make(chan outcome, writers)
+	var group sync.WaitGroup
+	for index := range writers {
+		content := []byte("concurrent-object-" + strconv.Itoa(index))
+		digest := sha256.Sum256(content)
+		expected := hex.EncodeToString(digest[:])
+		group.Add(1)
+		go func() {
+			defer group.Done()
+			<-start
+			object, _, err := storage.PutStateObject(
+				ctx,
+				stateTestScope,
+				StateKindEvidence,
+				expected,
+				bytes.NewReader(content),
+			)
+			outcomes <- outcome{digest: object.SHA256, err: err}
+		}()
+	}
+	close(start)
+	group.Wait()
+	close(outcomes)
+
+	for item := range outcomes {
+		if item.err != nil || item.digest == "" {
+			t.Fatalf("concurrent object publication = %q/%v", item.digest, item.err)
+		}
+		file, err := storage.OpenStateObject(
+			ctx,
+			stateTestScope,
+			StateKindEvidence,
+			item.digest,
+		)
+		if err != nil {
+			t.Fatalf("open concurrent object %s: %v", item.digest, err)
+		}
+		if err := file.Close(); err != nil {
+			t.Fatalf("close concurrent object %s: %v", item.digest, err)
+		}
+	}
+}
+
 func TestTypedStatePartialPublicationNeverBecomesVisible(t *testing.T) {
 	ctx := context.Background()
 	root := filepath.Join(t.TempDir(), "shared")

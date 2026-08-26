@@ -89,7 +89,8 @@ type MetadataStore interface {
 type DiskCapacityProbe func(root string) (total uint64, available uint64, err error)
 
 // Storage owns the process-wide writer lease, immutable blobs, and the three
-// deliberately independent SQLite lifecycles.
+// deliberately independent SQLite lifecycles. Typed-state mutations share one
+// SQLite writer while reads remain concurrent.
 type Storage struct {
 	operationMutex             sync.RWMutex
 	lifecycleMutex             sync.RWMutex
@@ -107,7 +108,7 @@ type Storage struct {
 	cache                      *sqliteMetadata
 	control                    *sqliteMetadata
 	state                      *sqliteMetadata
-	stateCASMutex              sync.Mutex
+	stateMutationMutex         sync.Mutex
 	capacity                   CapacityPolicy
 	reservations               map[*pendingReservation]struct{}
 	blobCleanupPending         bool

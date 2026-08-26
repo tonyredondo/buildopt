@@ -205,6 +205,8 @@ func (storage *Storage) PutStateObject(
 		strings.TrimPrefix(blob.Digest, digestPrefix) != expectedSHA256 {
 		return StateObject{}, false, ErrStateDigestMismatch
 	}
+	storage.stateMutationMutex.Lock()
+	defer storage.stateMutationMutex.Unlock()
 	result, err := storage.state.database.ExecContext(
 		ctx,
 		`INSERT INTO state_objects (
@@ -294,6 +296,10 @@ func (storage *Storage) PutStateManifest(
 		return StateSnapshot{}, false, err
 	}
 	defer finish()
+	storage.reconcileMutex.RLock()
+	defer storage.reconcileMutex.RUnlock()
+	storage.stateMutationMutex.Lock()
+	defer storage.stateMutationMutex.Unlock()
 	transaction, err := storage.state.database.BeginTx(
 		ctx,
 		&sql.TxOptions{Isolation: sql.LevelSerializable},
@@ -525,8 +531,8 @@ func (storage *Storage) CASStateHead(
 	defer finish()
 	storage.reconcileMutex.RLock()
 	defer storage.reconcileMutex.RUnlock()
-	storage.stateCASMutex.Lock()
-	defer storage.stateCASMutex.Unlock()
+	storage.stateMutationMutex.Lock()
+	defer storage.stateMutationMutex.Unlock()
 
 	fingerprint, err := stateCASFingerprint(request)
 	if err != nil {
@@ -891,8 +897,8 @@ func (storage *Storage) MaintainState(
 	defer finish()
 	storage.reconcileMutex.Lock()
 	defer storage.reconcileMutex.Unlock()
-	storage.stateCASMutex.Lock()
-	defer storage.stateCASMutex.Unlock()
+	storage.stateMutationMutex.Lock()
+	defer storage.stateMutationMutex.Unlock()
 	report, err := storage.maintainStateMetadata(ctx, storage.now())
 	if err != nil {
 		return report, err
