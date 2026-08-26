@@ -10,7 +10,7 @@
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
 **Detailed POC tracker:** [Sticky Wrapper Learning POC Tracker](./docs/plans/sticky-wrapper-learning-poc-tracker.md)<br>
 **Closed predecessor:** [Adaptive Fragment Generalization POC Tracker](./docs/plans/adaptive-fragment-generalization-tracker.md)<br>
-**RFC baseline SHA-256:** `20364958f0b10cc2475b332fd60725d375faee54a3c213954439d89cb4d63716`
+**RFC baseline SHA-256:** `0700062563f283f9f3a16ed40b23f71237e64aa09d6495fc7a6680b4c1f03afb`
 
 ---
 
