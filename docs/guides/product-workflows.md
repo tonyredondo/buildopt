@@ -35,8 +35,12 @@ verifying gateway when the private connection is valid. It adds
 `--build-cache` unless explicitly disabled, keeps ordinary consumers read-only,
 and falls back to native Gradle on missing credentials, corruption or outage.
 `SWL-007` defines and tests the typed decision/evidence store, signed
-decisions, generation CAS, expiry, revocation and plane separation. The
-selector, observation and trial blocks (`SWL-008..016`) remain future POC work.
+decisions, generation CAS, expiry, revocation and plane separation. `SWL-008`
+now consumes that store through a read-only native-retention selector: a
+verified local `NATIVE_NOOP` is accepted before Gradle, while active decisions
+remain deferred until action execution is proven. Invalid or unavailable state
+retains native Gradle and refreshes only outside the critical path. Ordinary
+observation and trial blocks (`SWL-009..016`) remain future POC work.
 
 This guide describes what a user or evaluator can do with the current POC and
 which interface owns each result. It is intentionally honest about surfaces

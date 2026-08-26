@@ -54,8 +54,13 @@ It tests a repository-committed wrapper, a negligible locally cached native
 decision, ordinary-build evidence, bounded CI trials, the existing central
 Gradle HTTP cache and a separate typed decision store. Its complete-path
 scorecard requires positive cumulative wall-time value beyond optimized native
-Gradle after every BuildOpt cost. This is a preregistered experiment and has no
-new performance result yet.
+Gradle after every BuildOpt cost. The first block, `SWL-008`, now has a bounded
+retention-cost result: 200 signed local-decision selections on Linux AMD64
+measured **0.492 ms p50 / 1.369 ms p95** for verified local state; missing and
+no-synchronous-refresh fallback stayed below **0.003 ms p95**. The selector
+never performs synchronous network I/O and all invalid state retains native
+Gradle. This is not acceleration evidence; `SWL-009` must attribute
+ordinary-build phases before any value claim is made.
 
 Historically, AF-010 demonstrated independent Build Impact activation on real
 Gradle, and AF-011 added direct timing without adding isolated percentages.

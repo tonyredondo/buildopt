@@ -40,7 +40,8 @@ Its generated repository-facing files are owned by `internal/stickywrapper`;
 `SWL-001..006` own their contract, generator, verified bootstrap, passthrough,
 portable connection and native Gradle HTTP cache integration. `SWL-007` owns
 the canonical decision/evidence records and local/central adapters in
-`internal/stickydecision`. The existing `internal/sharedcache` and
+`internal/stickydecision`; `SWL-008` adds its read-only selector and
+pre-Gradle native-retention budget. The existing `internal/sharedcache` and
 `internal/launcher` packages own the central Gradle HTTP cache, typed state and
 launcher primitives that later blocks will reuse.
 No third cache or state service is planned.
@@ -88,7 +89,7 @@ in `internal/`; cross-process representations belong in `contracts/` first.
 | `internal/platformfs` | Platform-specific no-link/reparse traversal checks | storage and private files |
 | `internal/contractcrypto` | Shared canonical JSON and cryptographic primitives | contract vectors |
 | `internal/metricscatalog` | Versioned metric catalog validation | metrics validator |
-| `internal/stickydecision` | Canonical sticky-wrapper observations, action state, trials, signed decisions, economic ledger, local/central CAS stores and cache/state separation | `SWL-007`; sticky decision-store specification |
+| `internal/stickydecision` | Canonical sticky-wrapper observations, action state, trials, signed decisions, economic ledger, local/central CAS stores, cache/state separation and the read-only native-retention selector | `SWL-007..008`; sticky decision-store and no-op specifications |
 | `internal/generated` | Checked-in generated transport clients | generated-code manifest |
 
 Package comments describe these boundaries in Go documentation. A package may
@@ -113,6 +114,7 @@ bytecode using the pinned Wrapper and repository-local JDK 21.
 |---|---|---|---|
 | `specs/poc-sticky-wrapper-contract-v1.*`, `poc-sticky-wrapper-generator-v1.*`, `poc-sticky-wrapper-bootstrap-v1.*`, `poc-sticky-wrapper-passthrough-v1.*`, `poc-sticky-wrapper-connection-v1.*` and `poc-sticky-wrapper-cache-v1.*` | `internal/stickywrapper`; `internal/launcher`; `buildopt wrapper` CLI; embedded POSIX/Windows templates; `jvm/gradle-plugin` managed cache settings | generated repository wrappers, user-cache distributions, private central credentials and native Gradle HTTP cache objects | `check-sticky-wrapper-contract`, `check-sticky-wrapper-generator`, `check-sticky-wrapper-bootstrap`, `check-sticky-wrapper-passthrough`, `check-sticky-wrapper-connection`, `check-sticky-wrapper-cache`; portable fixtures, deterministic generation, bootstrap integrity, process parity, scope/capability/revocation, cache producer/consumer/outage and secret-isolation tests |
 | `specs/poc-sticky-wrapper-decision-store-v1.*` and `contracts/jsonschema/sticky-wrapper-decision-store.v1.schema.json` | `internal/stickydecision`; owner signing/decision tooling | sticky-wrapper selector and future observation/trial consumers; local files and existing central `EVIDENCE` state | `check-sticky-wrapper-decision-store`; JCS/digest, transition, signature, evidence-reference, ledger, CAS, expiry, revocation, corruption and plane-separation vectors |
+| `specs/poc-sticky-wrapper-noop-v1.*` | `internal/stickydecision` and `cmd/sticky-noop-benchmark` | read-only native-retention decision path before Gradle | `check-sticky-wrapper-noop`; signed local snapshot, missing/corrupt/incompatible fallback, refresh coalescing and p50/p95 budget |
 | `contracts/jsonschema/adaptive-fragment*.v1.schema.json` and `specs/poc-adaptive-state-portability-v1.*` | adaptive learner and local state writer | `internal/adaptivefragment`; `internal/launcher` HTTPS state adapter | `check-adaptive-fragment-state`, `check-adaptive-fragment-index`, `check-adaptive-state-portability` |
 | `contracts/jsonschema/build-session.v1.schema.json` | `internal/buildsession` | server history/export tooling | `check-build-session-schema`, `check-build-session-export` |
 | `contracts/proto/local-events/v1/` | JVM Gradle plugin | launcher event channel | `check-task-events-proto`, plugin handshake/correlation checks |

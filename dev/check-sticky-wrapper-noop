@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_result="${buildopt_repo_root}/benchmarks/results/sticky-wrapper-noop-v1.json"
+buildopt_spec="${buildopt_repo_root}/specs/poc-sticky-wrapper-noop-v1.json"
+buildopt_temporary=$(mktemp "${TMPDIR:-/tmp}/buildopt-sticky-noop.XXXXXX.json")
+trap 'rm -f -- "${buildopt_temporary}"' EXIT
+
+for buildopt_command in jq mktemp; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required sticky-wrapper-noop command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+if [[ ! -f "${buildopt_result}" || ! -f "${buildopt_spec}" ]]; then
+    printf 'sticky-wrapper-noop result or specification is missing\n' >&2
+    exit 1
+fi
+
+"${buildopt_repo_root}/dev/run" --toolchain go -- go run ./cmd/sticky-noop-benchmark \
+    --output "${buildopt_temporary}" --iterations 200
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/sticky-noop-result/v1" and
+    (.iterations | type == "number" and . >= 200) and
+    .pass == true and
+    .cases.verifiedLocal.status == "PASS" and
+    .cases.missingLocal.status == "PASS" and
+    .cases.serviceUnavailable.status == "PASS" and
+    .cases.verifiedLocal.p50Ns <= .requirements.localP50NsMax and
+    .cases.verifiedLocal.p95Ns <= .requirements.localP95NsMax and
+    .cases.serviceUnavailable.p95Ns <= .requirements.unavailableP95NsMax
+' "${buildopt_temporary}" >/dev/null; then
+    printf 'new sticky-wrapper-noop measurement failed its budget\n' >&2
+    exit 1
+fi
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/sticky-wrapper-noop/v1" and
+    .workItem == "SWL-008" and
+    .activeExecution == false and
+    .filesystem.readOnlySelector == true and
+    .filesystem.missingStateCreatesNothing == true and
+    .refresh.networkOnCriticalPath == false and
+    .refresh.coalesced == true and
+    .budgets.verifiedLocalP50NsMax == 100000000 and
+    .budgets.verifiedLocalP95NsMax == 250000000 and
+    .budgets.fallbackP95NsMax == 500000000
+' "${buildopt_spec}" >/dev/null; then
+    printf 'sticky-wrapper-noop specification is malformed\n' >&2
+    exit 1
+fi
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/sticky-noop-result/v1" and
+    .pass == true and
+    .cases.verifiedLocal.status == "PASS" and
+    .cases.missingLocal.status == "PASS" and
+    .cases.serviceUnavailable.status == "PASS" and
+    .cases.verifiedLocal.p50Ns <= .requirements.localP50NsMax and
+    .cases.verifiedLocal.p95Ns <= .requirements.localP95NsMax and
+    .cases.serviceUnavailable.p95Ns <= .requirements.unavailableP95NsMax
+' "${buildopt_result}" >/dev/null; then
+    printf 'versioned sticky-wrapper-noop result is stale or outside budget\n' >&2
+    exit 1
+fi
+
+jq -c '{verifiedLocal: .cases.verifiedLocal, missingLocal: .cases.missingLocal, serviceUnavailable: .cases.serviceUnavailable}' "${buildopt_result}"
+printf 'Sticky wrapper native no-op: OK\n'

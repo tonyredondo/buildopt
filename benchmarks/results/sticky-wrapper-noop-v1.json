@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-noop-result/v1",
+  "capturedAt": "2026-08-26T23:45:59.785621035Z",
+  "iterations": 200,
+  "environment": {
+    "goos": "linux",
+    "goarch": "amd64"
+  },
+  "cases": {
+    "verifiedLocal": {
+      "status": "PASS",
+      "count": 200,
+      "p50Ns": 491514,
+      "p95Ns": 1368733,
+      "maxNs": 1761507,
+      "reason": "VERIFIED_NATIVE_NOOP"
+    },
+    "missingLocal": {
+      "status": "PASS",
+      "count": 200,
+      "p50Ns": 2477,
+      "p95Ns": 2538,
+      "maxNs": 2976,
+      "reason": "NO_LOCAL_SNAPSHOT"
+    },
+    "serviceUnavailable": {
+      "status": "PASS",
+      "count": 200,
+      "p50Ns": 2478,
+      "p95Ns": 2561,
+      "maxNs": 6070,
+      "reason": "NO_SYNCHRONOUS_REFRESH"
+    }
+  },
+  "requirements": {
+    "localP50NsMax": 100000000,
+    "localP95NsMax": 250000000,
+    "unavailableP95NsMax": 500000000
+  },
+  "pass": true
+}

@@ -213,6 +213,7 @@ case "${buildopt_lane}" in
 		"${buildopt_script_dir}/check-sticky-wrapper-bootstrap"
         "${buildopt_script_dir}/check-sticky-wrapper-passthrough"
         "${buildopt_script_dir}/check-sticky-wrapper-decision-store"
+        "${buildopt_script_dir}/check-sticky-wrapper-noop"
         "${buildopt_script_dir}/check-central-storage-contract"
         "${buildopt_script_dir}/check-central-state-storage"
         "${buildopt_script_dir}/check-central-https-auth"

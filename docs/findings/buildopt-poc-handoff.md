@@ -78,6 +78,22 @@ positive, 0/5 have a positive lower confidence bound, signed portfolio value is
 8.656 seconds p95. With zero activated saving, there is no evidence-backed
 bounded fragment class to specialize.
 
+## Sticky-wrapper successor: first measured result
+
+The successor POC has now completed its first implementation block. `SWL-008`
+reads a signed local decision snapshot before Gradle and returns the native
+workflow for every missing, expired, revoked, corrupt, busy or incompatible
+state. A compatible active decision is recognized but deliberately not
+executed yet. On this Linux AMD64 host, 200 synthetic selections measured
+verified-local lookup at **0.492 ms p50 / 1.369 ms p95**; missing-state
+fallback measured **0.0025 ms p50 / 0.0025 ms p95**, and the no-synchronous-
+refresh path measured **0.0025 ms p50 / 0.0026 ms p95**. All three budgets pass.
+
+This is a retention-cost result, not a build-time saving: no optimization was
+activated and no Gradle wall-time claim is made. `SWL-009` is the next step and
+will observe real requested builds with phase attribution so later trials can
+be charged their full cost.
+
 ## Historical complete-profile result
 
 One exact BuildOpt executable was used across frozen Spring Framework,

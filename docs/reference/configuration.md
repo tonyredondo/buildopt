@@ -56,7 +56,12 @@ into a central writer. Typed state and optimization decisions remain separate
 and are not activated by the cache path. `SWL-007` defines the typed local and
 central decision store that will hold observations, trials, actions and signed
 economics; the store is POC plumbing only and is not consumed by the current
-native-cache path until `SWL-008`.
+native-cache path. `SWL-008` adds a read-only selector for signed local
+snapshots: a verified `NATIVE_NOOP` retains native Gradle without a blocking
+lookup, while compatible active decisions are only reported until the later
+execution block. Missing, expired, revoked, corrupt or incompatible state
+retains native Gradle and may trigger a best-effort asynchronous refresh. The
+selector never creates state or contacts the service on the critical path.
 
 The local decision-store root is private, user-owned state containing immutable
 JCS records, a generation head, idempotency receipts and a revocation epoch.

@@ -78,8 +78,10 @@ Gradle's native cache policy so arbitrary cacheable tasks are not silently
 excluded. The existing Gradle-cache data plane and typed state control plane
 remain separate. `SWL-007` now defines the control-plane records and
 persistence adapters for observations, actions, trials, signed decisions and
-economics; `SWL-008` is the first block allowed to consume a verified local
-snapshot. This boundary is frozen in
+economics; `SWL-008` consumes a verified local snapshot through a read-only
+selector. Its lookup is bounded and never performs synchronous network I/O; it
+only retains native Gradle today, while active actions remain deferred to a
+later POC block. This boundary is frozen in
 the [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
 and is implemented through deterministic generation, verified package
 bootstrap, exact Gradle passthrough, authenticated portable connection and

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-noop/v1",
+  "workItem": "SWL-008",
+  "purpose": "Read a verified local sticky decision without blocking native Gradle or executing an action.",
+  "acceptedDecisions": ["NATIVE_NOOP", "ACTIVE_RUNTIME_PROFILE", "ACTIVE_DURABLE_PATCH"],
+  "activeExecution": false,
+  "fallback": {
+    "missing": "NATIVE",
+    "expired": "NATIVE",
+    "revoked": "NATIVE",
+    "corrupt": "NATIVE",
+    "incompatible": "NATIVE",
+    "busy": "NATIVE",
+    "serviceUnavailable": "NATIVE"
+  },
+  "filesystem": {
+    "readOnlySelector": true,
+    "missingStateCreatesNothing": true,
+    "scopeDirectory": "buildopt/sticky/state/<repositoryScopeSha256>"
+  },
+  "refresh": {
+    "networkOnCriticalPath": false,
+    "coalesced": true,
+    "bestEffort": true
+  },
+  "budgets": {
+    "verifiedLocalP50NsMax": 100000000,
+    "verifiedLocalP95NsMax": 250000000,
+    "fallbackP95NsMax": 500000000
+  },
+  "command": "./dev/check-sticky-wrapper-noop",
+  "result": "benchmarks/results/sticky-wrapper-noop-v1.json",
+  "nextBlock": "SWL-009"
+}

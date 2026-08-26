@@ -217,10 +217,25 @@ func (store *LocalStore) Append(
 // Current verifies and returns the current local record. Expiry, revocation,
 // corruption and scope mismatches are fail-closed errors.
 func (store *LocalStore) Current(ctx context.Context) (HeadSnapshot, error) {
+	return store.current(ctx, true)
+}
+
+// CurrentReadOnly verifies and returns the current local record without
+// creating or changing any filesystem entry. Selectors use this method on the
+// hot path so an absent snapshot cannot leave a lock file or directory behind.
+func (store *LocalStore) CurrentReadOnly(ctx context.Context) (HeadSnapshot, error) {
+	return store.current(ctx, false)
+}
+
+func (store *LocalStore) current(ctx context.Context, createLock bool) (HeadSnapshot, error) {
 	if err := validContext(ctx); err != nil {
 		return HeadSnapshot{}, err
 	}
-	lock, err := os.OpenFile(filepath.Join(store.root, localLockFile), os.O_RDWR|os.O_CREATE, 0o600)
+	flags := os.O_RDONLY
+	if createLock {
+		flags = os.O_RDWR | os.O_CREATE
+	}
+	lock, err := os.OpenFile(filepath.Join(store.root, localLockFile), flags, 0o600)
 	if err != nil {
 		return HeadSnapshot{}, err
 	}
@@ -247,6 +262,33 @@ func (store *LocalStore) Current(ctx context.Context) (HeadSnapshot, error) {
 		return HeadSnapshot{}, err
 	}
 	return snapshot, nil
+}
+
+// OpenLocalReadOnly opens an existing local store without creating, chmod-ing
+// or otherwise modifying its root. It is intended for decision selection;
+// writers should continue to use OpenLocalWithOptions.
+func OpenLocalReadOnly(root, scope string, options StoreOptions) (*LocalStore, error) {
+	if root == "" || !filepath.IsAbs(root) || filepath.Clean(root) != root {
+		return nil, fmt.Errorf("%w: local root must be one clean absolute path", ErrInvalidDocument)
+	}
+	if !digestPattern.MatchString(scope) {
+		return nil, fmt.Errorf("%w: local repository scope is invalid", ErrCrossScope)
+	}
+	if options.Now == nil {
+		options.Now = time.Now
+	}
+	if err := validatePrivateDirectory(root); err != nil {
+		return nil, err
+	}
+	for _, directory := range []string{localRecordsDirectory, localCacheDirectory} {
+		if err := validatePrivateDirectory(filepath.Join(root, directory)); err != nil {
+			return nil, err
+		}
+	}
+	if err := validatePrivateFile(filepath.Join(root, localLockFile), false); err != nil {
+		return nil, err
+	}
+	return &LocalStore{root: root, scope: scope, publicKeys: cloneKeys(options.PublicKeys), now: options.Now}, nil
 }
 
 // Revoke advances the local revocation epoch. It never rewrites an immutable
@@ -639,6 +681,37 @@ func ensurePrivateDirectory(path string) error {
 		return err
 	}
 	return os.Chmod(path, 0o700)
+}
+
+func validatePrivateDirectory(path string) error {
+	info, err := os.Lstat(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return ErrNotFound
+	}
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 || info.Mode().Perm() != 0o700 {
+		return ErrCorrupt
+	}
+	return nil
+}
+
+func validatePrivateFile(path string, allowMissing bool) error {
+	info, err := os.Lstat(path)
+	if errors.Is(err, os.ErrNotExist) {
+		if allowMissing {
+			return nil
+		}
+		return ErrNotFound
+	}
+	if err != nil {
+		return err
+	}
+	if !info.Mode().IsRegular() || info.Mode()&os.ModeSymlink != 0 || info.Mode().Perm() != 0o600 {
+		return ErrCorrupt
+	}
+	return nil
 }
 
 func writeImmutable(path string, raw []byte, mode os.FileMode) error {

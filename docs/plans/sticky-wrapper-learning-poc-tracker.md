@@ -3,8 +3,8 @@
 ## Status
 
 **Overall:** `IN_PROGRESS`<br>
-**Progress:** `8/17` blocks complete<br>
-**Current block:** `SWL-008` — native no-op fast path<br>
+**Progress:** `9/17` blocks complete<br>
+**Current block:** `SWL-009` — ordinary-build observation<br>
 **Predecessor:** the adaptive-fragment experiment closed as
 `STOP_ADAPTIVE_FRAGMENT_POC` with zero activations and zero attributable
 saving. Its evidence remains immutable context, not authority for this POC.
@@ -243,8 +243,8 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | 5 | `SWL-005` Portable connection and project identity | Non-secret committed endpoint/scope plus private credential discovery | `DONE` | SWL-004 |
 | 6 | `SWL-006` Gradle HTTP cache integration | Existing verifying gateway and central cache operate automatically through the wrapper | `DONE` | SWL-005 |
 | 7 | `SWL-007` Decision contract and store | Typed state machine, signed decisions, generation CAS, expiry, revocation and plane separation | `DONE` | SWL-006 |
-| 8 | `SWL-008` Native no-op fast path | Exact local snapshot makes native retention independent of a blocking remote lookup | `WAITING` | SWL-007 |
-| 9 | `SWL-009` Ordinary-build observation | Bounded exact timings, outputs, task/graph facts and ledger updates from requested builds | `WAITING` | SWL-008 |
+| 8 | `SWL-008` Native no-op fast path | Exact local snapshot makes native retention independent of a blocking remote lookup | `DONE` | SWL-007 |
+| 9 | `SWL-009` Ordinary-build observation | Bounded exact timings, outputs, task/graph facts and ledger updates from requested builds | `DOING` | SWL-008 |
 | 10 | `SWL-010` Budgeted trial orchestration | Isolated paired candidate/native trials run only within the frozen CI compute budget | `WAITING` | SWL-009 |
 | 11 | `SWL-011` Active execution and suspension | Qualified runtime action, revalidation, counterfactual sampling, regression suspension and native fallback | `WAITING` | SWL-010 |
 | 12 | `SWL-012` Durable native optimization catalog | Generic detectors and reviewable patches for task contracts and graph breadth | `WAITING` | SWL-009 |
@@ -453,7 +453,8 @@ cross-scope, unknown-evidence, unknown-observation and arithmetic-overflow
 negative case in both local and central storage. Seven valid and six invalid
 Draft 2020-12 fixtures are validated with the isolated compiler. This block
 defines storage and authority only; no selector, automatic activation,
-learning loop or wall-time claim is enabled. `SWL-008` is next.
+learning loop or wall-time claim is enabled. `SWL-008` consumes the store
+through the read-only native-retention selector; ordinary observation is next.
 
 ### SWL-008 — Native no-op fast path
 
@@ -465,6 +466,16 @@ expired state returns native and may schedule observation asynchronously.
 Acceptance: the target benchmark class measures at most 100 ms p50 and 250 ms
 p95 pre-Gradle overhead; service outage remains at most 500 ms p95; corrupt or
 incompatible snapshots fail closed without executing an action.
+
+Closed evidence: the deterministic selector and benchmark in
+[`poc-sticky-wrapper-noop-v1`](../../specs/poc-sticky-wrapper-noop-v1.md) read
+only private local state, accept a verified `NATIVE_NOOP`, defer compatible
+active actions, and return native Gradle for missing, expired, revoked,
+corrupt, busy or incompatible state. On this Linux AMD64 host, 200 selections
+recorded verified-local p50/p95 of 0.492/1.369 ms; missing-state fallback was
+0.0025/0.0025 ms and the no-synchronous-refresh case was 0.0025/0.0026 ms.
+All values are retention-cost measurements, not acceleration evidence, and
+the checked-in JSON remains the source of truth. `SWL-009` is now in progress.
 
 ### SWL-009 — Ordinary-build observation
 
@@ -597,7 +608,7 @@ customer behavior, architecture, value evidence or direction changes.
 | `SWL-E006` | SWL-005 | [Portable connection contract](../../specs/poc-sticky-wrapper-connection-v1.md), machine-readable [scope boundary](../../specs/poc-sticky-wrapper-connection-v1.json) and executable [`check-sticky-wrapper-connection`](../../dev/check-sticky-wrapper-connection): two clean checkouts share one path-independent project/connection identity; namespace changes separate it; absent/cross-project/incomplete credentials avoid the server; live revocation blocks both planes; redirects and foreign wrapper roots reject; the dynamic secret is scrubbed before Gradle | `DONE` |
 | `SWL-E007` | SWL-006 | [Sticky-wrapper Gradle cache contract](../../specs/poc-sticky-wrapper-cache-v1.md), machine contract, automatic native cache flag, read-only central policy and race-enabled producer/consumer/corruption/outage integration | `DONE` |
 | `SWL-E008` | SWL-007 | [Decision-store specification](../../specs/poc-sticky-wrapper-decision-store-v1.md), JSON Schema union and fixtures, `internal/stickydecision`, and executable [`check-sticky-wrapper-decision-store`](../../dev/check-sticky-wrapper-decision-store): all valid state transitions, signed decisions, evidence/ledger references, local and central generation CAS, replay/conflict, expiry, revocation, corruption and cache/state plane separation | `DONE` |
-| `SWL-E009` | SWL-008 | No-op and unavailable-service overhead evidence | `WAITING` |
+| `SWL-E009` | SWL-008 | [`poc-sticky-wrapper-noop-v1`](../../specs/poc-sticky-wrapper-noop-v1.md), read-only selector, fail-closed state matrix and [`sticky-wrapper-noop-v1.json`](../../benchmarks/results/sticky-wrapper-noop-v1.json): 200 verified local, missing and no-synchronous-refresh selections stay below the 100 ms p50, 250 ms p95 and 500 ms fallback budgets | `DONE` |
 | `SWL-E010` | SWL-009 | Ordinary-build observation and phase attribution | `WAITING` |
 | `SWL-E011` | SWL-010 | Bounded trial scheduling and isolation evidence | `WAITING` |
 | `SWL-E012` | SWL-011 | Active, counterfactual, suspension and fallback proof | `WAITING` |
@@ -626,6 +637,7 @@ customer behavior, architecture, value evidence or direction changes.
 
 | Date | Change |
 | --- | --- |
+| 2026-08-27 | Closed SWL-008. Added a read-only local selector for signed, scope- and binding-compatible sticky decisions, coalesced best-effort refresh scheduling, fail-closed native fallback and a deterministic pre-Gradle budget benchmark. Two hundred Linux AMD64 selections record 0.492 ms verified-local p50 / 1.369 ms p95, with sub-0.003 ms missing and no-synchronous-refresh fallback; this is retention-cost evidence only, not acceleration. Opened SWL-009 ordinary-build observation. |
 | 2026-08-27 | Closed SWL-007. Added the canonical JCS decision-store union, signed decision verification, independent qualification/rollout transitions, evidence and ledger cross-links, local filesystem and central EVIDENCE adapters with generation CAS, exact replay/conflict semantics, expiry, revocation, corruption and cache/state plane separation. Seven positive and six negative schema fixtures plus race-enabled local/central conformance pass; opened SWL-008 native no-op fast path. |
 | 2026-08-26 | Closed SWL-006. Connected the committed wrapper to the existing Gradle-compatible central object plane through an invocation-local verifying gateway. A valid read-capable connection automatically enables Gradle's native HTTP cache unless explicitly disabled, preserves the native cache policy for central tasks, keeps ordinary consumers read-only, and retains private managed L1 separation. Race-enabled producer/consumer/outage integration proves exact `FROM-CACHE` outputs, byte-free corruption misses, identical native rebuild outputs, secret isolation and no central PUT from the consumer; opened SWL-007 decision contract and store. |
 | 2026-08-26 | Closed SWL-005. Bound canonical committed endpoint/project scope to the private owner-issued token document, derived checkout-independent project identity plus namespace-specific connection identity, required both read capabilities, honored expiry/live revocation and scrubbed the dynamic credential before Gradle. Two-checkout HTTPS/race evidence and cross-project, missing, capability, namespace, redirect, foreign-root and revoked negatives pass without consuming cache/state; opened SWL-006. |

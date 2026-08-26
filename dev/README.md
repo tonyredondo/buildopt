@@ -94,6 +94,22 @@ This is the `SWL-006` integration gate. It enables `--build-cache` by default
 only for a valid connection, preserves `--no-build-cache`, verifies exact
 `FROM-CACHE` outputs and never grants ordinary consumers central write access.
 
+Validate the read-only sticky decision selector and its pre-Gradle retention
+budget with:
+
+```bash
+./dev/check-sticky-wrapper-noop
+```
+
+This is the `SWL-008` gate. It reads only a signed, scope- and binding-bound
+local snapshot; `NATIVE_NOOP` retains native Gradle and compatible `ACTIVE`
+records are reported but not executed yet. Missing, expired, revoked, corrupt,
+busy or incompatible state fails closed to native Gradle without creating
+state or contacting the service. Refresh callbacks are coalesced and run
+outside the build decision path. The checked-in result records p50/p95 lookup
+latency for verified local state and unavailable-service fallback; it is a
+retention-cost budget, not a performance claim.
+
 ## Toolchain lock
 
 [`toolchains.lock.yaml`](./toolchains.lock.yaml) is the source of truth for downloadable development toolchains on the initial `linux-amd64` platform. It is JSON-compatible YAML 1.2 so the Phase 0 validator can parse it with `jq` before the repository adopts a YAML library.
