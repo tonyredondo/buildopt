@@ -33,6 +33,7 @@ func TestBootstrapTemplatesStayWithinPortableFileContract(t *testing.T) {
 	for _, required := range []string{
 		"AllowAutoRedirect = $false",
 		"[Environment]::GetCommandLineArgs()",
+		"$seen -and $item -ceq '--buildopt-wrapper-arguments'",
 		"BUILDOPT_WRAPPER_MANAGEMENT=version-json",
 		"$env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'version-json'",
 		"Security.Cryptography.SHA256",
