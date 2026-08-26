@@ -3,11 +3,14 @@ package launcher
 import (
 	"bytes"
 	"encoding/base64"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/tonyredondo/buildopt/internal/sharedcache"
 )
 
 func TestCentralGradleCacheConnectionIsReadOnlyAndCredentialContained(t *testing.T) {
@@ -74,6 +77,13 @@ func TestCentralGradleCacheConnectionIsReadOnlyAndCredentialContained(t *testing
 		invocation.childArgs[2] != initScript {
 		t.Fatalf("central Gradle invocation = %+v", invocation)
 	}
+	disabledInvocation := gradleInvocation{
+		childArgs: []string{"./gradlew", "--no-build-cache", "build"},
+	}
+	if err := enableConnectedCentralCacheGradle(&disabledInvocation, repository); err == nil ||
+		!strings.Contains(err.Error(), "--no-build-cache") {
+		t.Fatalf("--no-build-cache should opt out of central cache setup, got %v", err)
+	}
 
 	context, err := integration.centralGradleCacheContext(
 		"11111111-1111-4111-8111-111111111111",
@@ -85,6 +95,7 @@ func TestCentralGradleCacheConnectionIsReadOnlyAndCredentialContained(t *testing
 	if context == nil || context.binding == nil || context.cacheClient == nil || !context.binding.allowRead ||
 		context.binding.allowWrite || context.binding.namespace != integration.connection.Cache.Namespace ||
 		context.childEnvironment[managedSharedModeEnvironment] != managedSharedReadOnlyMode ||
+		context.childEnvironment[managedSharedPolicyEnvironment] != managedNativeSharedPolicy ||
 		context.childEnvironment[managedAuthorityContractEnvironment] != centralCacheAuthorityContract {
 		t.Fatalf("central Gradle context = %+v", context)
 	}
@@ -95,6 +106,45 @@ func TestCentralGradleCacheConnectionIsReadOnlyAndCredentialContained(t *testing
 	}
 	if context.binding.credential != token {
 		t.Fatal("gateway did not retain the exact upstream credential")
+	}
+}
+
+func TestStickyWrapperCentralGradleCacheContextIsReadOnly(t *testing.T) {
+	now := time.Now().UTC().Truncate(time.Second)
+	projectScope := "example/sticky-central-project"
+	connection := &stickyWrapperConnection{
+		serverURL:           "http://127.0.0.1:43121",
+		projectScope:        projectScope,
+		projectScopeSHA256:  optimizePortfolioRepositoryScope(projectScope),
+		namespace:           "gradle-9.6.1/linux-amd64/jdk-21/sticky",
+		namespaceGeneration: 1,
+		expiresAt:           now.Add(time.Hour),
+		token:               bytes.Repeat([]byte{0x6b}, sharedcache.CentralTokenBytes),
+		http:                &http.Client{},
+	}
+	context, err := connection.centralGradleCacheContext(
+		"11111111-1111-4111-8111-111111111111",
+		now,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if context == nil || context.binding == nil || context.cacheClient == nil ||
+		!context.binding.allowRead || context.binding.allowWrite ||
+		context.binding.namespace != connection.namespace ||
+		context.childEnvironment[managedSharedModeEnvironment] != managedSharedReadOnlyMode ||
+		context.childEnvironment[managedSharedPolicyEnvironment] != managedNativeSharedPolicy ||
+		context.childEnvironment[managedAuthorityContractEnvironment] != centralCacheAuthorityContract {
+		t.Fatalf("sticky central Gradle context = %+v", context)
+	}
+	if context.binding.credential != base64.RawURLEncoding.EncodeToString(connection.token) {
+		t.Fatalf("sticky central credential = %q", context.binding.credential)
+	}
+	if _, err := connection.centralGradleCacheContext(
+		"11111111-1111-4111-8111-111111111111",
+		now.Add(time.Hour),
+	); err == nil || !strings.Contains(err.Error(), "expired") {
+		t.Fatalf("expired sticky central credential = %v", err)
 	}
 }
 

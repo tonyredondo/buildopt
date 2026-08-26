@@ -165,8 +165,7 @@ func TestLauncherAuthorityUsesExplicitSharedCacheCA(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	gateway.cacheClient.CloseIdleConnections()
-	gateway.cacheClient = authority.cacheClient
+	gateway.setCacheHTTPClient(authority.cacheClient)
 	defer gateway.close()
 
 	status, _, _, err := requestLocalGateway(

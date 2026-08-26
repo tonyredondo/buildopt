@@ -1,10 +1,12 @@
 # Product workflows
 
-## Planned sticky wrapper lifecycle
+## Sticky wrapper lifecycle (POC)
 
-The active successor POC will make one committed `./buildoptw <gradle args...>`
-command the stable local and CI entrypoint. The wrapper will bootstrap an
-immutable BuildOpt version and emit one decision per invocation:
+The active successor POC makes one committed `./buildoptw <gradle args...>`
+command the stable local and CI entrypoint. The wrapper bootstraps an immutable
+BuildOpt version, preserves the repository Gradle Wrapper, and uses the
+read-only central cache path when a valid connection is available. Decision
+emission remains a later block:
 
 ```text
 NATIVE_NOOP -> OBSERVE -> SHADOW -> TRIAL -> QUALIFIED -> ACTIVE
@@ -23,15 +25,15 @@ Gradle HTTP cache objects are reusable data; they never authorize lifecycle
 transitions. Typed decisions, observations and the economic ledger use the
 separate BuildOpt state plane. This workflow is planned under the
 [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
-and is not yet an end-to-end package path.
+and is intentionally still a POC rather than a production rollout path.
 
-`SWL-001` fixed the invocation boundary. All ordinary arguments go to
-Gradle. Only leading `--buildopt` selects `status`, `explain` or `version`, and
-leading `--gradle` escapes that prefix. Exact `BUILDOPT_BYPASS=1` runs the
-repository Gradle Wrapper before configuration or distribution bootstrap. The
-`SWL-002` deterministic generator now creates/checks/updates the committed
-files without downloading an archive. Verified bootstrap remains the next
-block.
+`SWL-001..005` fix the committed files, deterministic generator, verified
+bootstrap, neutral passthrough and portable connection. `SWL-006` now consumes
+the existing Gradle-compatible central cache through an invocation-local
+verifying gateway when the private connection is valid. It adds
+`--build-cache` unless explicitly disabled, keeps ordinary consumers read-only,
+and falls back to native Gradle on missing credentials, corruption or outage.
+The `SWL-007..016` decision, learning and value blocks remain future POC work.
 
 This guide describes what a user or evaluator can do with the current POC and
 which interface owns each result. It is intentionally honest about surfaces

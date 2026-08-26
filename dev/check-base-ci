@@ -413,6 +413,7 @@ case "${buildopt_lane}" in
             "${buildopt_script_dir}/run" \
             -- \
             "${buildopt_script_dir}/check-jvm-release"
+        "${buildopt_script_dir}/check-sticky-wrapper-cache"
         "${buildopt_script_dir}/check-patch-bundle-applier"
         ;;
     rust)

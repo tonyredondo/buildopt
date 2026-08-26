@@ -92,12 +92,14 @@ The committed wrapper now runs ordinary Gradle commands neutrally:
 It preserves Gradle arguments, cwd, streams, process cleanup and exit status.
 `BUILDOPT_BYPASS=1 ./buildoptw build` skips configuration and bootstrap and
 runs the repository Gradle Wrapper directly. With a configured server, the
-verified binary now proves `CACHE_READ` and `STATE_READ` against the exact
-committed project scope. Two clean checkouts use the same project identity;
-missing credentials, forks, mismatches, expiry, revocation or outage retain
-native Gradle. No cache object or typed state is consumed yet. Automatic cache
-use, learning and optimization remain later POC blocks. The complete sequence,
-scorecard and status are in the
+verified binary proves `CACHE_READ` and `STATE_READ` against the exact committed
+project scope and configures Gradle's native HTTP cache in read-only mode. It
+adds `--build-cache` unless the command explicitly uses `--no-build-cache`; the
+central bearer token remains outside Gradle. Two clean checkouts use the same
+project identity; missing credentials, forks, mismatches, expiry, revocation or
+outage retain native Gradle and rebuild normally. Cache objects are consumed by
+Gradle, while typed decisions and learning remain later POC blocks. The complete
+sequence, scorecard and status are in the
 [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md).
 
 ## Install

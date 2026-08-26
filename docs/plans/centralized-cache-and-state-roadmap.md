@@ -60,13 +60,16 @@ The active [Sticky Wrapper Learning POC](./sticky-wrapper-learning-poc-tracker.m
 reuses this completed infrastructure through a repository-committed wrapper.
 It does not add a third plane or another cache server. Gradle objects remain
 opaque, evictable data; observations, trials, signed decisions and cumulative
-economics remain typed state. Its portable connection is now implemented: the
+economics remain typed state. Its portable connection is implemented: the
 committed project scope has the same digest across checkout paths, while the
 private access-token document additionally binds server namespace/generation,
-requires both read capabilities and honors live revocation. The wrapper adds
-an exact local signed-decision fast path and one repeated customer command.
-Those additions have no performance authority until the successor tracker
-closes its own chronological scorecard.
+requires both read capabilities and honors live revocation. SWL-006 now uses a
+valid connection to configure Gradle's native HTTP cache through the existing
+invocation-local verifying gateway, with read-only consumer behavior and native
+outage/corruption fallback. The wrapper also adds an exact local signed-decision
+fast path and one repeated customer command; typed state and decision learning
+remain later POC blocks, and cache correctness is not by itself a performance
+claim.
 
 ## Target experience
 

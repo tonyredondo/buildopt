@@ -28,14 +28,16 @@ const (
 // skeleton or managed runner-slot lifecycle, delivers the WS-005 session
 // ingest when configured, installs the signed A0-007 Gradle bootstrap cache,
 // honors the F0-039 local bypass, exposes read-only structural opportunity
-// analysis, records the one-command optimization POC contract, and returns the
-// child process exit status.
+// analysis, connects a valid sticky-wrapper credential to the read-only
+// central Gradle cache, records the one-command optimization POC contract, and
+// returns the child process exit status.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode int) {
 	var additionalReservedEnvironment []string
 	var optimize *optimizeRun
 	var automaticOptimizeImpact *impactInvocation
 	centralGradleCacheRequested := false
 	var connectedGradleCache *centralOptimizeIntegration
+	var stickyConnection *stickyWrapperConnection
 	childStdout := stdout
 	var impactTiming *impactTimingState
 	execute := func(
@@ -372,6 +374,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 				time.Now().UTC(),
 				nil,
 			)
+		stickyConnection = connection
 		if credentialEnvironment != "" && credentialEnvironment != "BUILDOPT_TOKEN" {
 			additionalReservedEnvironment = append(
 				additionalReservedEnvironment,
@@ -387,6 +390,33 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 				"buildopt: sticky wrapper connection unavailable; retaining native Gradle: %v\n",
 				connectionErr,
 			)
+		}
+	}
+	if stickyConnection != nil {
+		buildCacheConfigured, buildCacheEnabled := gradleBuildCacheMode(childArgs[1:])
+		if !buildCacheConfigured || buildCacheEnabled {
+			stickyInvocation := gradleInvocation{
+				childArgs:   childArgs,
+				environment: gradleEnvironment,
+			}
+			if err := enableConnectedCentralCacheGradle(
+				&stickyInvocation,
+				os.Getenv(stickyWrapperRootEnvironment),
+			); err != nil {
+				_, _ = fmt.Fprintf(
+					stderr,
+					"buildopt: connected central Gradle cache unavailable; retaining local/native cache: %v\n",
+					err,
+				)
+				stickyConnection = nil
+			} else {
+				childArgs = stickyInvocation.childArgs
+				gradleEnvironment = stickyInvocation.environment
+				gradleManagedL1 = stickyInvocation.managedL1
+				gradleNativeOnly = false
+				gradleLocalOnly = false
+				centralGradleCacheRequested = true
+			}
 		}
 	}
 	if os.Getenv(bypassEnvironment) == "1" {
@@ -510,11 +540,18 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		var cacheBinding *gatewayCacheBinding
 		if authority != nil {
 			cacheBinding = authority.cacheBinding
-		} else if centralGradleCacheRequested && centralCacheIntegration != nil {
-			centralCache, gatewayErr = centralCacheIntegration.centralGradleCacheContext(
-				handshake.attemptID,
-				startedAt,
-			)
+		} else if centralGradleCacheRequested {
+			if stickyConnection != nil {
+				centralCache, gatewayErr = stickyConnection.centralGradleCacheContext(
+					handshake.attemptID,
+					startedAt,
+				)
+			} else if centralCacheIntegration != nil {
+				centralCache, gatewayErr = centralCacheIntegration.centralGradleCacheContext(
+					handshake.attemptID,
+					startedAt,
+				)
+			}
 			if gatewayErr != nil {
 				if optimize != nil {
 					optimize.central.result.GradleCacheStatus = "LOCAL_NATIVE_FALLBACK"
@@ -539,11 +576,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		if gatewayErr == nil && gateway != nil {
 			switch {
 			case authority != nil && authority.cacheClient != nil:
-				gateway.cacheClient.CloseIdleConnections()
-				gateway.cacheClient = authority.cacheClient
+				gateway.setCacheHTTPClient(authority.cacheClient)
 			case centralCache != nil:
-				gateway.cacheClient.CloseIdleConnections()
-				gateway.cacheClient = centralCache.cacheClient
+				gateway.setCacheHTTPClient(centralCache.cacheClient)
 			}
 		}
 		if gatewayErr != nil {

@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-sticky-wrapper-cache-v1.json"
+buildopt_init_script="${buildopt_repo_root}/.github/actions/buildopt.init.gradle"
+
+for buildopt_command in find jq; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required sticky-wrapper cache command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/sticky-wrapper-gradle-cache/v1" and
+    .workItem == "SWL-006" and
+    .entrypoint.command == "buildoptw <gradle-args>" and
+    .entrypoint.repositoryWrapper == "gradlew or gradlew.bat" and
+    .connection.requiredCapabilities == ["CACHE_READ", "STATE_READ"] and
+    .connection.defaultMode == "READ_ONLY" and
+    (.connection.tokenPassedToGradle | not) and
+    (.connection.projectScopeIncludesCheckoutPath | not) and
+    .gradle.protocol == "NATIVE_HTTP_BUILD_CACHE" and
+    .gradle.buildCacheFlag == "AUTO_ENABLE_UNLESS_EXPLICITLY_DISABLED" and
+    .gradle.centralPolicy == "GRADLE_NATIVE" and
+    (.gradle.tierOneAllowlistAppliedToCentralTasks | not) and
+    .gradle.argumentsAndExitStatusPreserved and
+    .lifecycle.trustedProducer == "EXPLICIT_WRITE_ONLY_HARNESS" and
+    .lifecycle.consumer == "CLEAN_STICKY_WRAPPER_READ_ONLY_BUILD" and
+    .lifecycle.consumerFromCacheTasksMinimum >= 8 and
+    (.lifecycle.consumerAttemptsPublish | not) and
+    .lifecycle.corruptObject == "VERIFIED_MISS_WITHOUT_BYTES_RETURNED" and
+    .lifecycle.serverOutage == "SUCCESSFUL_NATIVE_REBUILD" and
+    .lifecycle.producerConsumerOutputSHA256Equal and
+    .lifecycle.producerOutageOutputSHA256Equal and
+    .authority == {
+        proofOfConcept: true,
+        performanceClaim: false,
+        productionAuthorized: false,
+        soakRequired: false,
+        designPartnerRequired: false,
+        testOptimization: "OUT_OF_SCOPE"
+    } and
+    (.deferred | index("AUTOMATIC_TRUSTED_WRITER_AUTHORIZATION")) != null and
+    (.deferred | index("BUILDOPT_DECISION_STATE_CONSUMPTION")) != null
+' "${buildopt_contract}" >/dev/null; then
+    printf 'sticky-wrapper Gradle-cache contract is malformed\n' >&2
+    exit 1
+fi
+
+if [[ ! -f "${buildopt_init_script}" ]]; then
+    printf 'missing BuildOpt Gradle init script: %s\n' "${buildopt_init_script}" >&2
+    exit 1
+fi
+
+buildopt_find_single() {
+    local buildopt_root=$1
+    local buildopt_pattern=$2
+    local -a buildopt_candidates
+    if [[ ! -d "${buildopt_root}" ]]; then
+        return 1
+    fi
+    mapfile -t buildopt_candidates < <(
+        find "${buildopt_root}" -maxdepth 1 -type f -name "${buildopt_pattern}" \
+            ! -name '*-sources.jar' ! -name '*-javadoc.jar' -print | sort
+    )
+    if ((${#buildopt_candidates[@]} != 1)); then
+        return 1
+    fi
+    printf '%s\n' "${buildopt_candidates[0]}"
+}
+
+buildopt_plugin_jar=$(buildopt_find_single \
+    "${buildopt_repo_root}/jvm/gradle-plugin/build/libs" \
+    'buildopt-gradle-plugin-*.jar') || {
+    printf 'expected one built Gradle plugin JAR; run check-jvm-release first\n' >&2
+    exit 1
+}
+
+buildopt_gradle_user_home=${GRADLE_USER_HOME:-}
+if [[ -z "${buildopt_gradle_user_home}" ]]; then
+    for buildopt_candidate in \
+        "${buildopt_repo_root}/.tools/gradle-user-home/local" \
+        "${buildopt_repo_root}/.tools/gradle-user-home" \
+        "${HOME}/.gradle"; do
+        if [[ -n "$(find "${buildopt_candidate}" -type f \
+            -path '*/gradle-9.6.1/bin/gradle' -perm -u+x -print -quit 2>/dev/null)" ]]; then
+            buildopt_gradle_user_home=${buildopt_candidate}
+            break
+        fi
+    done
+fi
+if [[ -z "${buildopt_gradle_user_home}" ]]; then
+    printf 'no provisioned Gradle 9.6.1 user home found\n' >&2
+    exit 1
+fi
+mapfile -t buildopt_gradle_candidates < <(
+    find "${buildopt_gradle_user_home}/wrapper/dists/gradle-9.6.1-bin" \
+        -type f -path '*/gradle-9.6.1/bin/gradle' -perm -u+x -print 2>/dev/null | sort
+)
+if ((${#buildopt_gradle_candidates[@]} != 1)); then
+    printf 'expected one provisioned Gradle 9.6.1 executable, found %d\n' \
+        "${#buildopt_gradle_candidates[@]}" >&2
+    exit 1
+fi
+
+cd -- "${buildopt_repo_root}"
+BUILDOPT_STICKY_CENTRAL_GRADLE_CACHE_FIXTURE="${buildopt_repo_root}/fixtures/remote-cache-value" \
+BUILDOPT_STICKY_CENTRAL_GRADLE_CACHE_GRADLE="${buildopt_gradle_candidates[0]}" \
+BUILDOPT_STICKY_CENTRAL_GRADLE_CACHE_INIT_SCRIPT="${buildopt_init_script}" \
+BUILDOPT_STICKY_CENTRAL_GRADLE_CACHE_PLUGIN_JAR="${buildopt_plugin_jar}" \
+GRADLE_USER_HOME="${buildopt_gradle_user_home}" \
+    exec "${buildopt_script_dir}/run" \
+        --toolchain go \
+        -- \
+        go test \
+            -race \
+            -count=1 \
+            -run '^(TestStickyWrapperCentralGradleCacheContextIsReadOnly|TestStickyWrapperCentralGradleCacheProducerConsumerAndOutage|TestLocalGatewayRejectsLateChecksumAsByteFreeMiss)$' \
+            ./internal/launcher

@@ -71,6 +71,8 @@ rejection, missing-secret behavior, both read capabilities, live revocation,
 redirect rejection, foreign-wrapper rejection and dynamic secret scrubbing.
 It also compiles the touched packages for macOS ARM64 and Windows AMD64.
 
-Passing this contract proves only a safe connection boundary. Automatic Gradle
-HTTP-cache use belongs to `SWL-006`; typed state and decisions belong to
-`SWL-007` and later blocks. No build-time or production claim is made.
+Passing this contract proves only a safe connection boundary. The subsequent
+`SWL-006` cache contract consumes a valid connection through the native Gradle
+HTTP cache while keeping the central path read-only; typed state and decisions
+belong to `SWL-007` and later blocks. No build-time or production claim is made
+by this connection contract.

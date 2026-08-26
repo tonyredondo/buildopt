@@ -41,6 +41,10 @@ public final class BuildOptManagedL1Plugin implements Plugin<Settings> {
             "BUILDOPT_MANAGED_CONFIGURATION_POLICY_DIGEST";
     static final String AUTHORITY_CONTRACT_ENVIRONMENT =
             "BUILDOPT_MANAGED_AUTHORITY_CONTRACT";
+    /** Selects the native Gradle cache policy for a verified central-cache POC. */
+    static final String SHARED_POLICY_ENVIRONMENT =
+            "BUILDOPT_MANAGED_SHARED_POLICY";
+    static final String NATIVE_SHARED_POLICY = "GRADLE_NATIVE";
     static final String GATEWAY_URL_ENVIRONMENT = "BUILDOPT_GATEWAY_URL";
     static final String GATEWAY_USERNAME_ENVIRONMENT =
             "BUILDOPT_GATEWAY_USERNAME";
@@ -77,8 +81,17 @@ public final class BuildOptManagedL1Plugin implements Plugin<Settings> {
                                     cache.setRemoveUnusedEntriesAfterDays(
                                             RETENTION_DAYS));
         }
-        settings.getGradle()
-                .beforeProject(new ApplyTierOnePolicyAction());
+        // Tier 1 is intentionally fail-closed for the private local cache. A
+        // verified central cache has the same key and output validation as
+        // Gradle's native HTTP cache, so it must not silently deny arbitrary
+        // @CacheableTask implementations from a customer build.
+        if (!NATIVE_SHARED_POLICY.equals(
+                settings.getProviders()
+                        .environmentVariable(SHARED_POLICY_ENVIRONMENT)
+                        .getOrElse(""))) {
+            settings.getGradle()
+                    .beforeProject(new ApplyTierOnePolicyAction());
+        }
         settings.getGradle()
                 .settingsEvaluated(
                         new ConfigureManagedL1Action(decision, shared));

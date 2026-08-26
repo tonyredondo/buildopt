@@ -62,11 +62,12 @@ type localGateway struct {
 
 	cacheSuppressed bool
 
-	mutex     sync.Mutex
-	listener  net.Listener
-	server    *http.Server
-	serveDone chan error
-	closed    bool
+	mutex         sync.Mutex
+	cacheClientMu sync.RWMutex
+	listener      net.Listener
+	server        *http.Server
+	serveDone     chan error
+	closed        bool
 }
 
 func startLocalGateway() (*localGateway, error) {
@@ -325,11 +326,37 @@ func (gateway *localGateway) close() error {
 	if gateway.release != nil {
 		return gateway.release()
 	}
-	gateway.cacheClient.CloseIdleConnections()
+	gateway.cacheHTTPClient().CloseIdleConnections()
 	return errors.Join(
 		gateway.stopServingLocked(),
 		gateway.spool.close(),
 	)
+}
+
+// setCacheHTTPClient swaps the upstream client before or during serving. The
+// launcher can discover a central-cache transport after the local gateway has
+// started, so the pointer must not race with concurrent HTTP requests.
+func (gateway *localGateway) setCacheHTTPClient(client *http.Client) {
+	if client == nil {
+		return
+	}
+	gateway.cacheClientMu.Lock()
+	previous := gateway.cacheClient
+	gateway.cacheClient = client
+	gateway.cacheClientMu.Unlock()
+	if previous != nil && previous != client {
+		previous.CloseIdleConnections()
+	}
+}
+
+func (gateway *localGateway) cacheHTTPClient() *http.Client {
+	gateway.cacheClientMu.RLock()
+	client := gateway.cacheClient
+	gateway.cacheClientMu.RUnlock()
+	if client == nil {
+		return newGatewayCacheClient()
+	}
+	return client
 }
 
 func (gateway *localGateway) startServingLocked(listener net.Listener) {
@@ -490,7 +517,7 @@ func (gateway *localGateway) serveCache(
 		)
 	}
 
-	response, err := gateway.cacheClient.Do(upstreamRequest)
+	response, err := gateway.cacheHTTPClient().Do(upstreamRequest)
 	if err != nil {
 		gateway.writeUpstreamFailure(writer, request.Method)
 		return
@@ -720,6 +747,7 @@ var reservedChildEnvironment = []string{
 	managedPolicyDigestEnvironment,
 	managedConfigurationDigestEnvironment,
 	managedAuthorityContractEnvironment,
+	managedSharedPolicyEnvironment,
 	gradleBootstrapConfigPathEnvironment,
 	serverURLEnvironment,
 	serverTokenEnvironment,

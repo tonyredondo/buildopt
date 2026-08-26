@@ -10,6 +10,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/tonyredondo/buildopt/internal/sharedcache"
 )
 
 const centralCacheAuthorityContract = "buildopt-central-cache-connection/v1"
@@ -78,10 +80,21 @@ func enableConnectedCentralCacheGradle(
 	if len(invocation.childArgs) == 0 {
 		return errors.New("central Gradle cache command is unavailable")
 	}
+	buildCacheConfigured, buildCacheEnabled := gradleBuildCacheMode(invocation.childArgs[1:])
+	if buildCacheConfigured && !buildCacheEnabled {
+		return errors.New("connected central Gradle cache is incompatible with --no-build-cache")
+	}
+	gradleArguments := append([]string(nil), invocation.childArgs[1:]...)
 	invocation.childArgs = append(
 		[]string{invocation.childArgs[0], "--init-script", initScript},
-		invocation.childArgs[1:]...,
+		gradleArguments...,
 	)
+	if !buildCacheConfigured {
+		invocation.childArgs = append(
+			[]string{invocation.childArgs[0], "--init-script", initScript, "--build-cache"},
+			gradleArguments...,
+		)
+	}
 	if invocation.environment == nil {
 		invocation.environment = make(map[string]string)
 	}
@@ -99,6 +112,60 @@ func enableConnectedCentralCacheGradle(
 	invocation.nativeOnly = false
 	invocation.localOnly = false
 	return nil
+}
+
+// centralGradleCacheContext creates the read-only binding used by one sticky
+// wrapper invocation. The credential remains in the in-memory connection and
+// is never written to the repository or exposed to Gradle.
+func (connection *stickyWrapperConnection) centralGradleCacheContext(
+	attemptID string,
+	now time.Time,
+) (*centralGradleCacheContext, error) {
+	if connection == nil {
+		return nil, nil
+	}
+	if connection.expiresAt.IsZero() || !connection.expiresAt.After(now.UTC()) {
+		return nil, errors.New("sticky wrapper Gradle cache credential is expired")
+	}
+	if connection.http == nil || len(connection.token) != sharedcache.CentralTokenBytes {
+		return nil, errors.New("sticky wrapper Gradle cache connection is incomplete")
+	}
+	authorityDigest := "sha256:" + connection.projectScopeSHA256
+	binding, err := newGatewayCacheBinding(
+		connection.serverURL,
+		connection.token,
+		authorityDigest,
+		attemptID,
+		connection.namespace,
+		true,
+		false,
+		connection.expiresAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &centralGradleCacheContext{
+		binding:     binding,
+		cacheClient: connection.http,
+		childEnvironment: map[string]string{
+			managedSharedModeEnvironment:      managedSharedReadOnlyMode,
+			managedSharedPolicyEnvironment:    managedNativeSharedPolicy,
+			managedAuthorityDigestEnvironment: authorityDigest,
+			managedPolicyDigestEnvironment: centralCacheConnectionDigest(
+				"policy",
+				connection.projectScopeSHA256,
+				connection.namespace,
+				connection.namespaceGeneration,
+			),
+			managedConfigurationDigestEnvironment: centralCacheConnectionDigest(
+				"configuration",
+				connection.projectScopeSHA256,
+				connection.namespace,
+				connection.namespaceGeneration,
+			),
+			managedAuthorityContractEnvironment: centralCacheAuthorityContract,
+		},
+	}, nil
 }
 
 func (integration *centralOptimizeIntegration) centralGradleCacheContext(
@@ -179,6 +246,7 @@ func (integration *centralOptimizeIntegration) centralGradleCacheContext(
 		binding: binding, cacheClient: client.http,
 		childEnvironment: map[string]string{
 			managedSharedModeEnvironment:          managedSharedReadOnlyMode,
+			managedSharedPolicyEnvironment:        managedNativeSharedPolicy,
 			managedAuthorityDigestEnvironment:     authorityDigest,
 			managedPolicyDigestEnvironment:        policyDigest,
 			managedConfigurationDigestEnvironment: configurationDigest,

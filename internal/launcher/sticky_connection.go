@@ -34,6 +34,7 @@ type stickyWrapperConnection struct {
 	connectionScopeSHA256 string
 	namespace             string
 	namespaceGeneration   int64
+	expiresAt             time.Time
 	token                 []byte
 	http                  *http.Client
 }
@@ -101,13 +102,23 @@ func prepareStickyWrapperConnection(
 		projectScopeSHA256:    projectScopeSHA256,
 		connectionScopeSHA256: connectionScopeSHA256,
 		namespace:             document.Namespace, namespaceGeneration: document.NamespaceGeneration,
-		token: token, http: client,
+		expiresAt: documentExpiresAt(document),
+		token:     token, http: client,
 	}
 	if err := connection.probe(context.Background()); err != nil {
 		connection.close()
 		return nil, credentialEnvironment, fmt.Errorf("credential-bound connection rejected: %w", err)
 	}
 	return connection, credentialEnvironment, nil
+}
+
+// documentExpiresAt parses the already-validated token expiry without
+// widening the connection parser's acceptance surface. Keeping the expiry on
+// the in-memory connection lets the Gradle cache binding enforce the same
+// deadline without persisting or re-reading the credential.
+func documentExpiresAt(document centralIssuedTokenDocument) time.Time {
+	expiresAt, _ := time.Parse(time.RFC3339Nano, document.ExpiresAt)
+	return expiresAt
 }
 
 func validateStickyWrapperInvocation(root string, childArgs []string) error {

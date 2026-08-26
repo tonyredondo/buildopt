@@ -25,9 +25,11 @@ const (
 	managedPolicyDigestEnvironment        = "BUILDOPT_MANAGED_POLICY_DIGEST"
 	managedConfigurationDigestEnvironment = "BUILDOPT_MANAGED_CONFIGURATION_POLICY_DIGEST"
 	managedAuthorityContractEnvironment   = "BUILDOPT_MANAGED_AUTHORITY_CONTRACT"
+	managedSharedPolicyEnvironment        = "BUILDOPT_MANAGED_SHARED_POLICY"
 
 	managedSharedReadOnlyMode  = "READ_ONLY"
 	managedSharedReadWriteMode = "READ_WRITE"
+	managedNativeSharedPolicy  = "GRADLE_NATIVE"
 
 	launcherComponentVersion = "0.1.0"
 	pluginComponentVersion   = "0.1.0"

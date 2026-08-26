@@ -9,6 +9,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/fs"
 	"net/http"
@@ -223,6 +224,228 @@ func TestCentralGradleCacheProducerConsumerAndOutage(t *testing.T) {
 	}
 }
 
+func TestStickyWrapperCentralGradleCacheProducerConsumerAndOutage(t *testing.T) {
+	fixture := os.Getenv("BUILDOPT_STICKY_CENTRAL_GRADLE_CACHE_FIXTURE")
+	gradle := os.Getenv("BUILDOPT_STICKY_CENTRAL_GRADLE_CACHE_GRADLE")
+	initScript := os.Getenv("BUILDOPT_STICKY_CENTRAL_GRADLE_CACHE_INIT_SCRIPT")
+	pluginJar := os.Getenv("BUILDOPT_STICKY_CENTRAL_GRADLE_CACHE_PLUGIN_JAR")
+	if fixture == "" || gradle == "" || initScript == "" || pluginJar == "" {
+		t.Skip("sticky-wrapper central Gradle-cache integration is not requested")
+	}
+	for name, path := range map[string]string{
+		"fixture": fixture, "Gradle": gradle, "init script": initScript,
+		"plugin JAR": pluginJar,
+	} {
+		if !filepath.IsAbs(path) {
+			t.Fatalf("%s path is not absolute: %q", name, path)
+		}
+	}
+
+	ctx := context.Background()
+	now := time.Now().UTC().Truncate(time.Millisecond)
+	project := "example/sticky-central-project"
+	namespace := "gradle-9.6.1/linux-amd64/jdk-21/sticky"
+	scope := sharedcache.CentralTokenScope{
+		RepositoryScopeSHA256: optimizePortfolioRepositoryScope(project),
+		Tenant:                "owner-poc",
+		Repository:            project,
+		TrustDomain:           "owner-poc",
+		Namespace:             namespace,
+		NamespaceGeneration:   1,
+	}
+	storage, err := sharedcache.Open(ctx, filepath.Join(t.TempDir(), "storage"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer storage.Close()
+	producerToken, err := storage.IssueCentralToken(ctx, sharedcache.CentralTokenIssueRequest{
+		Scope:        scope,
+		Capabilities: []sharedcache.CentralCapability{sharedcache.CentralCacheWrite},
+		ExpiresAt:    now.Add(time.Hour),
+	}, now)
+	if err != nil {
+		t.Fatal(err)
+	}
+	consumerToken, err := storage.IssueCentralToken(ctx, sharedcache.CentralTokenIssueRequest{
+		Scope: scope,
+		Capabilities: []sharedcache.CentralCapability{
+			sharedcache.CentralCacheRead,
+			sharedcache.CentralStateRead,
+		},
+		ExpiresAt: now.Add(time.Hour),
+	}, now)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	attemptID := "22222222-2222-4222-8222-222222222222"
+	status, _, err := storage.StartAttempt(ctx, sharedcache.StartAttemptRequest{
+		RequestID:                 "sticky-central-start",
+		AttemptID:                 attemptID,
+		AuthorityDigest:           "sha256:" + strings.Repeat("a", 64),
+		Repository:                sharedcache.RepositoryIdentity{Tenant: scope.Tenant, Repository: scope.Repository, TrustDomain: scope.TrustDomain},
+		NamespaceGeneration:       scope.NamespaceGeneration,
+		SourceRevision:            strings.Repeat("a", 40),
+		SourceStateDigest:         "hmac-sha256:" + strings.Repeat("1", 64),
+		PolicyDigest:              "sha256:" + strings.Repeat("2", 64),
+		ConfigurationPolicyDigest: "sha256:" + strings.Repeat("3", 64),
+		CacheContractDigest:       "sha256:" + strings.Repeat("4", 64),
+		OwnerID:                   "sticky-central-owner",
+		LeaseID:                   "sticky-central-lease",
+		LeaseExpiresAt:            now.Add(time.Hour),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	centralHandler, err := sharedcache.NewCentralHTTPSHandler(storage)
+	if err != nil {
+		t.Fatal(err)
+	}
+	capture := newCentralGradleCapture(centralHandler, scope.NamespaceGeneration)
+	server := httptest.NewServer(http.HandlerFunc(func(response http.ResponseWriter, request *http.Request) {
+		// The central handler still enforces its TLS contract. This local fixture
+		// marks loopback requests as TLS 1.3 while the wrapper contract permits
+		// numeric-loopback HTTP for deterministic tests.
+		originalTLS := request.TLS
+		request.TLS = &tls.ConnectionState{Version: tls.VersionTLS13}
+		capture.ServeHTTP(response, request)
+		request.TLS = originalTLS
+	}))
+	t.Cleanup(server.Close)
+
+	producer := startCentralGradleGateway(
+		t, server, producerToken.Token, status.AuthorityDigest, status.AttemptID,
+		scope.Namespace, false, true, producerToken.ExpiresAt,
+	)
+	producerProject := copyCentralGradleFixture(t, fixture, "sticky-producer")
+	producerRun := runCentralGradleFixture(t, gradle, producerProject, producer, true)
+	if strings.Contains(producerRun, " FROM-CACHE") {
+		t.Fatalf("clean sticky producer unexpectedly reused central state\n%s", producerRun)
+	}
+	producerDigest := centralGradleOutputsDigest(t, producerProject)
+	objects := capture.pendingObjects()
+	status, err = storage.AttemptStatus(ctx, status.AttemptID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(objects) < 8 || status.PendingObjectCount != len(objects) {
+		t.Fatalf("sticky producer objects = %d/%d\n%s", len(objects), status.PendingObjectCount, producerRun)
+	}
+	commitCentralGradleAttempt(t, storage, status, objects, time.Now().UTC().Truncate(time.Millisecond))
+	if err := producer.close(); err != nil {
+		t.Fatal(err)
+	}
+
+	consumerProject := copyCentralGradleFixture(t, fixture, "sticky-consumer")
+	writeStickyCentralGradleSettings(t, consumerProject)
+	consumerWrapper := writeStickyCentralGradleWrapper(t, consumerProject, gradle)
+	writeStickyCentralConfig(t, consumerProject, server.URL, project)
+
+	previousDirectory, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chdir(consumerProject); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(previousDirectory) })
+	t.Setenv(stickyWrapperRootEnvironment, consumerProject)
+	t.Setenv("BUILDOPT_STICKY_TEST_TOKEN", stickyConnectionTokenJSON(t, consumerToken))
+	t.Setenv(gradleInitScriptEnvironment, initScript)
+	t.Setenv(gradlePluginJarEnvironment, pluginJar)
+	t.Setenv("XDG_CACHE_HOME", filepath.Join(t.TempDir(), "xdg-cache"))
+	t.Setenv("GRADLE_USER_HOME", filepath.Join(consumerProject, ".gradle-user-home"))
+	t.Setenv(bypassEnvironment, "0")
+	var consumerStdout, consumerStderr bytes.Buffer
+	consumerCode := Run([]string{
+		"run", "--", consumerWrapper,
+		"--no-daemon", "--no-configuration-cache", "remoteCacheFixture",
+	}, nil, &consumerStdout, &consumerStderr)
+	if consumerCode != 0 {
+		t.Fatalf("sticky consumer exit=%d stdout=%s stderr=%s", consumerCode, consumerStdout.String(), consumerStderr.String())
+	}
+	if hits := strings.Count(consumerStdout.String(), " FROM-CACHE"); hits < 8 {
+		t.Fatalf("sticky consumer hits = %d, want at least eight (central GETs=%d PUTs=%d)\nstdout=%s\nstderr=%s", hits, capture.getCount(), capture.putCount(), consumerStdout.String(), consumerStderr.String())
+	}
+	if consumerDigest := centralGradleOutputsDigest(t, consumerProject); consumerDigest != producerDigest {
+		t.Fatalf("sticky consumer outputs = %s, want %s", consumerDigest, producerDigest)
+	}
+	if capture.putCount() != len(objects) {
+		t.Fatalf("sticky read-only consumer PUTs = %d, want producer count %d", capture.putCount(), len(objects))
+	}
+	if strings.Contains(consumerStdout.String(), consumerToken.Token) ||
+		strings.Contains(consumerStderr.String(), consumerToken.Token) {
+		t.Fatal("sticky access token escaped into Gradle output")
+	}
+
+	server.Close()
+	outageProject := copyCentralGradleFixture(t, fixture, "sticky-outage")
+	writeStickyCentralGradleSettings(t, outageProject)
+	outageWrapper := writeStickyCentralGradleWrapper(t, outageProject, gradle)
+	writeStickyCentralConfig(t, outageProject, server.URL, project)
+	if err := os.Chdir(outageProject); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv(stickyWrapperRootEnvironment, outageProject)
+	t.Setenv("GRADLE_USER_HOME", filepath.Join(outageProject, ".gradle-user-home"))
+	var outageStdout, outageStderr bytes.Buffer
+	outageCode := Run([]string{
+		"run", "--", outageWrapper,
+		"--no-daemon", "--no-configuration-cache", "--build-cache", "remoteCacheFixture",
+	}, nil, &outageStdout, &outageStderr)
+	if outageCode != 0 {
+		t.Fatalf("sticky outage exit=%d stdout=%s stderr=%s", outageCode, outageStdout.String(), outageStderr.String())
+	}
+	if strings.Contains(outageStdout.String(), " FROM-CACHE") {
+		t.Fatalf("sticky outage unexpectedly reported a remote hit\n%s", outageStdout.String())
+	}
+	if outageDigest := centralGradleOutputsDigest(t, outageProject); outageDigest != producerDigest {
+		t.Fatalf("sticky outage outputs = %s, want %s", outageDigest, producerDigest)
+	}
+}
+
+func writeStickyCentralGradleSettings(t *testing.T, project string) {
+	t.Helper()
+	if err := os.WriteFile(
+		filepath.Join(project, "settings.gradle"),
+		[]byte("rootProject.name = 'buildopt-remote-cache-value'\n"),
+		0o644,
+	); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func writeStickyCentralGradleWrapper(t *testing.T, project, gradle string) string {
+	t.Helper()
+	wrapper := filepath.Join(project, "gradlew")
+	quotedGradle := "'" + strings.ReplaceAll(gradle, "'", "'\\''") + "'"
+	content := "#!/bin/sh\nexec " + quotedGradle + " \"$@\"\n"
+	if err := os.WriteFile(wrapper, []byte(content), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	writeGradleWrapperProperties(
+		t,
+		project,
+		"distributionUrl=https://services.gradle.org/distributions/gradle-9.6.1-bin.zip\n",
+	)
+	return wrapper
+}
+
+func writeStickyCentralConfig(t *testing.T, project, serverURL, scope string) {
+	t.Helper()
+	configDirectory := filepath.Join(project, ".buildopt")
+	if err := os.MkdirAll(configDirectory, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	content := fmt.Sprintf(
+		"schema_version = \"buildopt.config/v1\"\nmode = \"auto\"\nserver_url = %q\nproject_scope = %q\ncredential_env = \"BUILDOPT_STICKY_TEST_TOKEN\"\ntrial_budget_percent = 5\n",
+		serverURL, scope,
+	)
+	if err := os.WriteFile(filepath.Join(configDirectory, "config.toml"), []byte(content), 0o644); err != nil {
+		t.Fatal(err)
+	}
+}
+
 type centralGradleCapture struct {
 	handler             http.Handler
 	namespaceGeneration int64
@@ -346,7 +569,7 @@ func startCentralGradleGateway(
 	client.CheckRedirect = func(_ *http.Request, _ []*http.Request) error {
 		return http.ErrUseLastResponse
 	}
-	gateway.cacheClient = client
+	gateway.setCacheHTTPClient(client)
 	gateway.username = centralGradleFixtureUsername
 	gateway.password = centralGradleFixturePassword
 	t.Cleanup(func() {

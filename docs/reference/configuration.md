@@ -49,8 +49,11 @@ and offline reuse. The
 defines the now-active neutral Gradle route and pre-bootstrap bypass. The
 [portable connection contract](../../specs/poc-sticky-wrapper-connection-v1.md)
 now binds the committed endpoint/project scope to an owner-issued private
-credential without using the checkout path. None of these contracts activates
-cache/state consumption or optimization.
+credential without using the checkout path. The SWL-006 cache contract uses a
+valid connection to configure Gradle's native HTTP cache through a read-only,
+invocation-local verifying gateway. It never turns a developer or pull request
+into a central writer. Typed state and optimization decisions remain separate
+and are not activated by the cache path.
 
 When all three server identity fields are present, the variable named by
 `credential_env` contains the exact `buildopt.central/access-token/v1` JSON

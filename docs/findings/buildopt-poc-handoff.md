@@ -233,9 +233,12 @@ new performance claim. `SWL-005` now binds the committed endpoint and project
 scope to the private owner-issued token document. Two clean checkouts share one
 project identity; namespace/generation remain distinct, and missing,
 mismatched, incomplete, redirected or revoked credentials retain native Gradle
-and never reach the child. Automatic cache use and typed-state consumption are
-still disabled. `SWL-006` is next: configure the existing read-only Gradle HTTP
-cache through this exact connection.
+and never reach the child. `SWL-006` now consumes the existing Gradle-compatible
+central cache through an invocation-local verifying gateway when the connection
+is valid; the wrapper enables Gradle's native cache unless explicitly disabled,
+keeps ordinary consumers read-only, and falls back to native rebuilds on missing,
+expired, revoked, corrupt or unavailable data. Typed-state consumption and
+decision learning remain later blocks.
 
 No generic whole-profile implementation block followed automatically from that
 failed gate. The separately preregistered

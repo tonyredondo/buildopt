@@ -3,8 +3,8 @@
 ## Status
 
 **Overall:** `IN_PROGRESS`<br>
-**Progress:** `6/17` blocks complete<br>
-**Current block:** `SWL-006` — Gradle HTTP cache integration<br>
+**Progress:** `7/17` blocks complete<br>
+**Current block:** `SWL-007` — decision contract and store<br>
 **Predecessor:** the adaptive-fragment experiment closed as
 `STOP_ADAPTIVE_FRAGMENT_POC` with zero activations and zero attributable
 saving. Its evidence remains immutable context, not authority for this POC.
@@ -241,8 +241,8 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | 3 | `SWL-003` Verified bootstrap | Cross-platform download/cache/install with SHA-256, offline reuse and negative fixtures | `DONE` | SWL-002 |
 | 4 | `SWL-004` Gradle passthrough and bypass | Wrapper discovers the repository Gradle Wrapper and preserves complete process behavior | `DONE` | SWL-003 |
 | 5 | `SWL-005` Portable connection and project identity | Non-secret committed endpoint/scope plus private credential discovery | `DONE` | SWL-004 |
-| 6 | `SWL-006` Gradle HTTP cache integration | Existing verifying gateway and central cache operate automatically through the wrapper | `TODO` | SWL-005 |
-| 7 | `SWL-007` Decision contract and store | Typed state machine, signed decisions, generation CAS, expiry, revocation and plane separation | `WAITING` | SWL-005 |
+| 6 | `SWL-006` Gradle HTTP cache integration | Existing verifying gateway and central cache operate automatically through the wrapper | `DONE` | SWL-005 |
+| 7 | `SWL-007` Decision contract and store | Typed state machine, signed decisions, generation CAS, expiry, revocation and plane separation | `TODO` | SWL-006 |
 | 8 | `SWL-008` Native no-op fast path | Exact local snapshot makes native retention independent of a blocking remote lookup | `WAITING` | SWL-007 |
 | 9 | `SWL-009` Ordinary-build observation | Bounded exact timings, outputs, task/graph facts and ledger updates from requested builds | `WAITING` | SWL-008 |
 | 10 | `SWL-010` Budgeted trial orchestration | Isolated paired candidate/native trials run only within the frozen CI compute budget | `WAITING` | SWL-009 |
@@ -408,6 +408,21 @@ Acceptance: one trusted build publishes, a clean read-only build obtains exact
 `FROM-CACHE` outputs, wrong/corrupt objects miss, outage rebuilds, and a native
 control receives the same remote-cache opportunity in timing experiments.
 
+Closure: a valid sticky-wrapper connection now creates an invocation-local
+verifying gateway bound to the committed project scope, namespace, generation
+and attempt. The launcher adds Gradle's native `--build-cache` flag unless the
+caller explicitly uses `--no-build-cache`, while preserving every other
+argument. The central path is read-only for ordinary consumers and uses
+Gradle's native cache policy for arbitrary cacheable tasks; the private managed
+L1 remains a separate BuildOpt policy. An explicit write-only producer publishes
+the existing eight-task fixture, a clean sticky-wrapper consumer restores all
+required outputs with `FROM-CACHE`, a corrupt object becomes a byte-free miss,
+and a stopped service performs a successful native rebuild with identical
+outputs. The race-enabled integration also proves that the gateway transport
+cannot race with Gradle cache requests. No decision/state document is consumed,
+no automatic writer is granted, and no wall-time advantage is claimed by this
+functional block.
+
 ### SWL-007 — Decision contract and store
 
 Define canonical action, observation, trial, decision and economic-ledger
@@ -559,7 +574,7 @@ customer behavior, architecture, value evidence or direction changes.
 | `SWL-E004` | SWL-003 | [Bootstrap contract](../../specs/poc-sticky-wrapper-bootstrap-v1.md), embedded POSIX/Windows templates and executable [`check-sticky-wrapper-bootstrap`](../../dev/check-sticky-wrapper-bootstrap): checksum-pinned download, safe extraction, internal manifest, atomic concurrent publication, verified offline reuse, public package smokes and native platform CI gates | `DONE` |
 | `SWL-E005` | SWL-004 | [Neutral passthrough contract](../../specs/poc-sticky-wrapper-passthrough-v1.md), machine-readable [boundary](../../specs/poc-sticky-wrapper-passthrough-v1.json), executable [`check-sticky-wrapper-passthrough`](../../dev/check-sticky-wrapper-passthrough) and native platform gates: difficult argv/cwd/streams/environment, ordinary and signal exits, descendants, pre-bootstrap bypass and fail-open Gradle fallback | `DONE` |
 | `SWL-E006` | SWL-005 | [Portable connection contract](../../specs/poc-sticky-wrapper-connection-v1.md), machine-readable [scope boundary](../../specs/poc-sticky-wrapper-connection-v1.json) and executable [`check-sticky-wrapper-connection`](../../dev/check-sticky-wrapper-connection): two clean checkouts share one path-independent project/connection identity; namespace changes separate it; absent/cross-project/incomplete credentials avoid the server; live revocation blocks both planes; redirects and foreign wrapper roots reject; the dynamic secret is scrubbed before Gradle | `DONE` |
-| `SWL-E007` | SWL-006 | Central Gradle HTTP cache producer/consumer/outage proof | `WAITING` |
+| `SWL-E007` | SWL-006 | [Sticky-wrapper Gradle cache contract](../../specs/poc-sticky-wrapper-cache-v1.md), machine contract, automatic native cache flag, read-only central policy and race-enabled producer/consumer/corruption/outage integration | `DONE` |
 | `SWL-E008` | SWL-007 | Decision lifecycle, signed storage and cross-plane negatives | `WAITING` |
 | `SWL-E009` | SWL-008 | No-op and unavailable-service overhead evidence | `WAITING` |
 | `SWL-E010` | SWL-009 | Ordinary-build observation and phase attribution | `WAITING` |
@@ -590,6 +605,7 @@ customer behavior, architecture, value evidence or direction changes.
 
 | Date | Change |
 | --- | --- |
+| 2026-08-26 | Closed SWL-006. Connected the committed wrapper to the existing Gradle-compatible central object plane through an invocation-local verifying gateway. A valid read-capable connection automatically enables Gradle's native HTTP cache unless explicitly disabled, preserves the native cache policy for central tasks, keeps ordinary consumers read-only, and retains private managed L1 separation. Race-enabled producer/consumer/outage integration proves exact `FROM-CACHE` outputs, byte-free corruption misses, identical native rebuild outputs, secret isolation and no central PUT from the consumer; opened SWL-007 decision contract and store. |
 | 2026-08-26 | Closed SWL-005. Bound canonical committed endpoint/project scope to the private owner-issued token document, derived checkout-independent project identity plus namespace-specific connection identity, required both read capabilities, honored expiry/live revocation and scrubbed the dynamic credential before Gradle. Two-checkout HTTPS/race evidence and cross-project, missing, capability, namespace, redirect, foreign-root and revoked negatives pass without consuming cache/state; opened SWL-006. |
 | 2026-08-26 | Closed SWL-004. Ordinary wrapper calls now execute the repository Gradle Wrapper through the verified `buildopt run --` launcher with exact argv/cwd/streams/environment/exit behavior; `--gradle` escapes management, exact bypass runs before configuration/bootstrap, ordinary bootstrap failures warn and run direct Gradle, and management fails closed. Linux difficult-argument and signal-tree fixtures plus native macOS/Windows entrypoint gates pass without activating any optimization; opened SWL-005. |
 | 2026-08-26 | Closed SWL-003. Implemented checksum-pinned POSIX/Windows bootstrap for four native packages, safe extraction and internal manifest verification, atomic concurrent user-cache publication and verified zero-network reuse. Synthetic negatives, race/vet, ShellCheck, PowerShell parsing and public `v0.6.1` Linux/Windows-body smokes pass. A real GitHub release-asset redirect corrected the frozen policy to at most five HTTPS-only redirects without weakening the archive checksum authority; opened SWL-004. |

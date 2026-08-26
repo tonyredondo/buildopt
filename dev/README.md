@@ -79,8 +79,20 @@ isolation with:
 ```
 
 This is the `SWL-005` connection gate. It authenticates the optional central
-service but does not yet configure Gradle's HTTP cache, consume typed state or
-authorize an optimization.
+service and proves the portable credential boundary. The `SWL-006` cache gate
+then configures Gradle's native HTTP cache through that connection; typed state
+and optimization authority remain separate.
+
+Validate sticky-wrapper Gradle HTTP cache reuse, read-only producer/consumer
+separation, corruption and outage fallback with:
+
+```bash
+./dev/check-sticky-wrapper-cache
+```
+
+This is the `SWL-006` integration gate. It enables `--build-cache` by default
+only for a valid connection, preserves `--no-build-cache`, verifies exact
+`FROM-CACHE` outputs and never grants ordinary consumers central write access.
 
 ## Toolchain lock
 

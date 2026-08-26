@@ -45,7 +45,7 @@ cache publication, policy activation, task qualification, Build Impact, and
 patch application fail closed because accepting unproven work could change the
 result.
 
-### Sticky-wrapper entrypoint under construction
+### Sticky-wrapper entrypoint and central cache POC
 
 The active successor POC adds a thin repository-committed entrypoint above the
 implemented launcher. Deterministic generation, verified native-package
@@ -69,13 +69,20 @@ checkout path, additionally binds server/cache namespace and generation, and
 proves `CACHE_READ` plus `STATE_READ` with live revocation. Missing or rejected
 credentials retain native Gradle and never reach the child process. A local exact
 decision keeps `NATIVE_NOOP` out of a blocking server lookup; expired,
-incompatible or absent state uses native Gradle. The existing Gradle-cache data
-plane and typed state control plane remain separate. This boundary is frozen in
+incompatible or absent state uses native Gradle. When the connection is valid,
+the wrapper now configures Gradle's native HTTP cache through an invocation-local
+verifying gateway, enables `--build-cache` unless explicitly disabled, and keeps
+the central path read-only for ordinary developer and pull-request builds. The
+managed local L1 remains private and BuildOpt-controlled; the central L2 follows
+Gradle's native cache policy so arbitrary cacheable tasks are not silently
+excluded. The existing Gradle-cache data plane and typed state control plane
+remain separate. This boundary is frozen in
 the [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
 and is implemented through deterministic generation, verified package
-bootstrap, exact Gradle passthrough and authenticated portable connection.
-Automatic cache/state consumption and learning remain later POC blocks, so this
-is not yet an acceleration claim.
+bootstrap, exact Gradle passthrough, authenticated portable connection and
+read-only central cache integration. Decision/state learning remains a later POC
+block; this cache contract proves correctness and fallback, not a standalone
+wall-time claim.
 
 ## Components
 
