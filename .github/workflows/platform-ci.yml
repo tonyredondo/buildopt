@@ -55,16 +55,16 @@ jobs:
           cat >"$wrapper_root/gradlew" <<'EOF'
           #!/bin/sh
           printf 'cwd=<%s>\n' "$PWD"
-          printf 'value=<%s>\n' "${BUILDOPT_NATIVE_PASSTHROUGH:-}"
+          printf 'value=<%s>\n' "${STICKY_NATIVE_PASSTHROUGH:-}"
           printf 'bypass=<%s>\n' "${BUILDOPT_BYPASS:-}"
           index=0
           for argument do printf 'arg[%s]=<%s>\n' "$index" "$argument"; index=$((index + 1)); done
           cat
           printf 'fixture stderr\n' >&2
-          exit "${BUILDOPT_NATIVE_EXIT:-0}"
+          exit "${STICKY_NATIVE_EXIT:-0}"
           EOF
           chmod 0755 "$wrapper_root/gradlew"
-          export BUILDOPT_NATIVE_PASSTHROUGH=native-value BUILDOPT_NATIVE_EXIT=37
+          export STICKY_NATIVE_PASSTHROUGH=native-value STICKY_NATIVE_EXIT=37
           # The literal text verifies that neither wrapper performs shell expansion.
           # shellcheck disable=SC2016
           arguments=('' 'two words' '*' '$HOME' 'snowman-☃')
@@ -225,13 +225,13 @@ jobs:
             cwd, _ := os.Getwd()
             result := map[string]any{
               "args": os.Args[1:], "cwd": cwd, "stdin": string(input),
-              "value": os.Getenv("BUILDOPT_NATIVE_PASSTHROUGH"),
+              "value": os.Getenv("STICKY_NATIVE_PASSTHROUGH"),
               "bypass": os.Getenv("BUILDOPT_BYPASS"),
               "internal": os.Getenv("BUILDOPT_PLUGIN_TOKEN"),
             }
             _ = json.NewEncoder(os.Stdout).Encode(result)
             _, _ = os.Stderr.WriteString("fixture stderr\n")
-            code, _ := strconv.Atoi(os.Getenv("BUILDOPT_NATIVE_EXIT"))
+            code, _ := strconv.Atoi(os.Getenv("STICKY_NATIVE_EXIT"))
             os.Exit(code)
           }
           '@
@@ -239,8 +239,8 @@ jobs:
           & go build -o "$WrapperRoot\gradle-probe.exe" "$WrapperRoot\probe.go"
           if ($LASTEXITCODE -ne 0) { throw 'Gradle probe build failed' }
           [IO.File]::WriteAllText("$WrapperRoot\gradlew.bat", "@echo off`r`n`"%~dp0gradle-probe.exe`" %*`r`n", [Text.UTF8Encoding]::new($false))
-          $env:BUILDOPT_NATIVE_PASSTHROUGH = 'native-value'
-          $env:BUILDOPT_NATIVE_EXIT = '37'
+          $env:STICKY_NATIVE_PASSTHROUGH = 'native-value'
+          $env:STICKY_NATIVE_EXIT = '37'
           $ProbeArgs = @('', 'two words', '*', '$HOME', 'snowman-☃')
           'input line' | & "$WrapperRoot\gradlew.bat" @ProbeArgs 1>"$env:RUNNER_TEMP\direct.out" 2>"$env:RUNNER_TEMP\direct.err"
           $DirectExit = $LASTEXITCODE
