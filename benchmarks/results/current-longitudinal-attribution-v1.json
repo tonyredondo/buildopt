@@ -1,0 +1,439 @@
+{
+  "schemaVersion": "buildopt.poc/current-longitudinal-attribution/v1",
+  "workItem": "AF-014D",
+  "capturedAt": "2026-08-26T12:12:09Z",
+  "evaluatedRevision": "95622d8279ea29c9cf390aa179d8f920d1cbef70",
+  "rawSha256": "c682c2a09b97d87eaaca63445c4a1fc53ba420aa42d31d60ca745c31c2f9f339",
+  "reportSha256": "c68cb97e9ed6795256f785b3e38ac6fc165e8cf81ba7720a77bcfe5ede41287c",
+  "contractSha256": "1cbf900696aa9fe9d37d09f366d10e3e47a2846fe795c970294c87dc2299277a",
+  "outcome": "CURRENT_VALUE_NOT_ATTRIBUTABLE",
+  "summary": {
+    "comparablePairs": 100,
+    "exactOutputPairs": 100,
+    "positivePairs": 25,
+    "negativePairs": 75,
+    "selectedProfiles": 0,
+    "nativeRetentions": 100,
+    "fragmentActivations": 0,
+    "exclusions": 1,
+    "productFailures": 0,
+    "cumulativeSignedDeltaNs": -368622514697,
+    "recordedBuildOptCostNs": 179029032102,
+    "residualGradleRunnerNs": -189593482595,
+    "attributableMechanismSavingsNs": 0,
+    "dependencyPreparationNs": 7966576830595,
+    "calibrationCostMs": 0,
+    "paybackOrdinal": null,
+    "nativeRetentionMedianNs": 530777013,
+    "nativeRetentionP95Ns": 8655690602,
+    "worstRegressionNs": 23333711744,
+    "diagnostics": {
+      "matchingNs": 161239,
+      "localStateNs": 18151850034,
+      "centralStateNs": 1941549,
+      "discoveryLearningNs": 98384963343,
+      "gradleSetupNs": 2567634,
+      "materializationNs": 0,
+      "outputVerificationNs": 28889844657,
+      "internalUnattributedNs": 17906449,
+      "externalGapNs": 6406545850,
+      "otherRecordedBuildOptNs": 27173251347
+    }
+  },
+  "repositories": [
+    {
+      "key": "apache-groovy",
+      "repositoryId": "apache/groovy",
+      "workflowClass": "ASSEMBLY",
+      "outcome": "NET_NEGATIVE",
+      "comparablePairs": 20,
+      "positivePairs": 6,
+      "negativePairs": 14,
+      "selectedProfiles": 0,
+      "nativeRetentions": 20,
+      "fragmentActivations": 0,
+      "exclusions": 1,
+      "cumulativeSignedDeltaNs": -25207309452,
+      "coldStartSignedDeltaNs": 1629891689,
+      "continuingSignedDeltaNs": -26837201141,
+      "recordedBuildOptCostNs": 11047819122,
+      "residualGradleRunnerNs": -14159490330,
+      "dependencyPreparationNs": 1382995924492,
+      "calibrationCostMs": 0,
+      "paybackOrdinal": null,
+      "nativeRetentionMedianNs": 429320413,
+      "nativeRetentionP95Ns": 833929767,
+      "worstRegressionNs": 5150947580,
+      "diagnostics": {
+        "matchingNs": 37102,
+        "localStateNs": 3594350713,
+        "centralStateNs": 413509,
+        "discoveryLearningNs": 3051896719,
+        "gradleSetupNs": 532639,
+        "materializationNs": 0,
+        "outputVerificationNs": 0,
+        "internalUnattributedNs": 3485609,
+        "externalGapNs": 1373297474,
+        "otherRecordedBuildOptNs": 3023805357
+      }
+    },
+    {
+      "key": "apache-kafka",
+      "repositoryId": "apache/kafka",
+      "workflowClass": "TEST_COMPILATION",
+      "outcome": "NET_NEGATIVE",
+      "comparablePairs": 20,
+      "positivePairs": 2,
+      "negativePairs": 18,
+      "selectedProfiles": 0,
+      "nativeRetentions": 20,
+      "fragmentActivations": 0,
+      "exclusions": 0,
+      "cumulativeSignedDeltaNs": -42309439693,
+      "coldStartSignedDeltaNs": -5905485611,
+      "continuingSignedDeltaNs": -36403954082,
+      "recordedBuildOptCostNs": 10343106992,
+      "residualGradleRunnerNs": -31966332701,
+      "dependencyPreparationNs": 1007255365888,
+      "calibrationCostMs": 0,
+      "paybackOrdinal": null,
+      "nativeRetentionMedianNs": 410810413,
+      "nativeRetentionP95Ns": 1075249395,
+      "worstRegressionNs": 5905485611,
+      "diagnostics": {
+        "matchingNs": 32969,
+        "localStateNs": 3635665743,
+        "centralStateNs": 383519,
+        "discoveryLearningNs": 2227754307,
+        "gradleSetupNs": 412251,
+        "materializationNs": 0,
+        "outputVerificationNs": 150954668,
+        "internalUnattributedNs": 4138805,
+        "externalGapNs": 1232564425,
+        "otherRecordedBuildOptNs": 3091200305
+      }
+    },
+    {
+      "key": "micronaut-core",
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "workflowClass": "ASSEMBLY",
+      "outcome": "NET_NEGATIVE",
+      "comparablePairs": 20,
+      "positivePairs": 4,
+      "negativePairs": 16,
+      "selectedProfiles": 0,
+      "nativeRetentions": 20,
+      "fragmentActivations": 0,
+      "exclusions": 0,
+      "cumulativeSignedDeltaNs": -144656096015,
+      "coldStartSignedDeltaNs": -23333711744,
+      "continuingSignedDeltaNs": -121322384271,
+      "recordedBuildOptCostNs": 79788275181,
+      "residualGradleRunnerNs": -64867820834,
+      "dependencyPreparationNs": 2265945067446,
+      "calibrationCostMs": 0,
+      "paybackOrdinal": null,
+      "nativeRetentionMedianNs": 759285248,
+      "nativeRetentionP95Ns": 10183281357,
+      "worstRegressionNs": 23333711744,
+      "diagnostics": {
+        "matchingNs": 17042,
+        "localStateNs": 3629646983,
+        "centralStateNs": 490539,
+        "discoveryLearningNs": 50412808360,
+        "gradleSetupNs": 700143,
+        "materializationNs": 0,
+        "outputVerificationNs": 17906029427,
+        "internalUnattributedNs": 2706227,
+        "externalGapNs": 1306272128,
+        "otherRecordedBuildOptNs": 6529604332
+      }
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "workflowClass": "SHADOW_JAR",
+      "outcome": "INCONCLUSIVE",
+      "comparablePairs": 20,
+      "positivePairs": 11,
+      "negativePairs": 9,
+      "selectedProfiles": 0,
+      "nativeRetentions": 20,
+      "fragmentActivations": 0,
+      "exclusions": 0,
+      "cumulativeSignedDeltaNs": -26043969982,
+      "coldStartSignedDeltaNs": -16081900138,
+      "continuingSignedDeltaNs": -9962069844,
+      "recordedBuildOptCostNs": 13024772029,
+      "residualGradleRunnerNs": -13019197953,
+      "dependencyPreparationNs": 1874556891356,
+      "calibrationCostMs": 0,
+      "paybackOrdinal": null,
+      "nativeRetentionMedianNs": 523731112,
+      "nativeRetentionP95Ns": 970607553,
+      "worstRegressionNs": 16081900138,
+      "diagnostics": {
+        "matchingNs": 16772,
+        "localStateNs": 3687688728,
+        "centralStateNs": 320882,
+        "discoveryLearningNs": 1244694835,
+        "gradleSetupNs": 514471,
+        "materializationNs": 0,
+        "outputVerificationNs": 0,
+        "internalUnattributedNs": 3597389,
+        "externalGapNs": 1265931126,
+        "otherRecordedBuildOptNs": 6822007826
+      }
+    },
+    {
+      "key": "spring-framework",
+      "repositoryId": "spring-projects/spring-framework",
+      "workflowClass": "PRODUCTION_CLASSES",
+      "outcome": "NET_NEGATIVE",
+      "comparablePairs": 20,
+      "positivePairs": 2,
+      "negativePairs": 18,
+      "selectedProfiles": 0,
+      "nativeRetentions": 20,
+      "fragmentActivations": 0,
+      "exclusions": 0,
+      "cumulativeSignedDeltaNs": -130405699555,
+      "coldStartSignedDeltaNs": -6103346557,
+      "continuingSignedDeltaNs": -124302352998,
+      "recordedBuildOptCostNs": 64825058778,
+      "residualGradleRunnerNs": -65580640777,
+      "dependencyPreparationNs": 1435823581413,
+      "calibrationCostMs": 0,
+      "paybackOrdinal": null,
+      "nativeRetentionMedianNs": 3850541870,
+      "nativeRetentionP95Ns": 4209173150,
+      "worstRegressionNs": 11321010679,
+      "diagnostics": {
+        "matchingNs": 57354,
+        "localStateNs": 3604497867,
+        "centralStateNs": 333100,
+        "discoveryLearningNs": 41447809122,
+        "gradleSetupNs": 408130,
+        "materializationNs": 0,
+        "outputVerificationNs": 10832860562,
+        "internalUnattributedNs": 3978419,
+        "externalGapNs": 1228480697,
+        "otherRecordedBuildOptNs": 7706633527
+      }
+    }
+  ],
+  "byChangeShape": [
+    {
+      "id": "BUILD_LOGIC_OR_DEPENDENCY",
+      "comparablePairs": 8,
+      "positivePairs": 4,
+      "cumulativeSignedDeltaNs": 5996947307,
+      "recordedBuildOptCostNs": 3561438909,
+      "residualGradleRunnerNs": 9558386216,
+      "worstRegressionNs": 1434435611
+    },
+    {
+      "id": "DOCUMENTATION_ONLY",
+      "comparablePairs": 1,
+      "positivePairs": 1,
+      "cumulativeSignedDeltaNs": 1358868599,
+      "recordedBuildOptCostNs": 672608358,
+      "residualGradleRunnerNs": 2031476957,
+      "worstRegressionNs": 0
+    },
+    {
+      "id": "MIXED",
+      "comparablePairs": 66,
+      "positivePairs": 15,
+      "cumulativeSignedDeltaNs": -292179883160,
+      "recordedBuildOptCostNs": 145021961513,
+      "residualGradleRunnerNs": -147157921647,
+      "worstRegressionNs": 23333711744
+    },
+    {
+      "id": "OTHER",
+      "comparablePairs": 11,
+      "positivePairs": 1,
+      "cumulativeSignedDeltaNs": -52640097979,
+      "recordedBuildOptCostNs": 12494482316,
+      "residualGradleRunnerNs": -40145615663,
+      "worstRegressionNs": 11321010679
+    },
+    {
+      "id": "PRODUCTION_SOURCE",
+      "comparablePairs": 6,
+      "positivePairs": 4,
+      "cumulativeSignedDeltaNs": 5243179099,
+      "recordedBuildOptCostNs": 2877345006,
+      "residualGradleRunnerNs": 8120524105,
+      "worstRegressionNs": 3352724761
+    },
+    {
+      "id": "TEST_SOURCE",
+      "comparablePairs": 8,
+      "positivePairs": 0,
+      "cumulativeSignedDeltaNs": -36401528563,
+      "recordedBuildOptCostNs": 14401196000,
+      "residualGradleRunnerNs": -22000332563,
+      "worstRegressionNs": 16587840414
+    }
+  ],
+  "byWorkflowClass": [
+    {
+      "id": "ASSEMBLY",
+      "comparablePairs": 40,
+      "positivePairs": 10,
+      "cumulativeSignedDeltaNs": -169863405467,
+      "recordedBuildOptCostNs": 90836094303,
+      "residualGradleRunnerNs": -79027311164,
+      "worstRegressionNs": 23333711744
+    },
+    {
+      "id": "PRODUCTION_CLASSES",
+      "comparablePairs": 20,
+      "positivePairs": 2,
+      "cumulativeSignedDeltaNs": -130405699555,
+      "recordedBuildOptCostNs": 64825058778,
+      "residualGradleRunnerNs": -65580640777,
+      "worstRegressionNs": 11321010679
+    },
+    {
+      "id": "SHADOW_JAR",
+      "comparablePairs": 20,
+      "positivePairs": 11,
+      "cumulativeSignedDeltaNs": -26043969982,
+      "recordedBuildOptCostNs": 13024772029,
+      "residualGradleRunnerNs": -13019197953,
+      "worstRegressionNs": 16081900138
+    },
+    {
+      "id": "TEST_COMPILATION",
+      "comparablePairs": 20,
+      "positivePairs": 2,
+      "cumulativeSignedDeltaNs": -42309439693,
+      "recordedBuildOptCostNs": 10343106992,
+      "residualGradleRunnerNs": -31966332701,
+      "worstRegressionNs": 5905485611
+    }
+  ],
+  "decisionReasons": [
+    {
+      "value": "AGGREGATE_DIRECT_OUTPUTS_MISSING",
+      "count": 11
+    },
+    {
+      "value": "AGGREGATE_OUTPUT_CLOSURE_GRAPH_INCOMPLETE",
+      "count": 12
+    },
+    {
+      "value": "CONFIGURATION_INPUT_OWNERSHIP_UNPROVEN",
+      "count": 2
+    },
+    {
+      "value": "DISCOVERY_EXECUTION_FAILED",
+      "count": 16
+    },
+    {
+      "value": "GLOBAL_CHANGE_REQUIRES_FULL_GRAPH",
+      "count": 24
+    },
+    {
+      "value": "ORDINARY_LEARNING_ECONOMICS_REJECTED",
+      "count": 23
+    },
+    {
+      "value": "ORDINARY_OBSERVATIONS_PENDING",
+      "count": 2
+    },
+    {
+      "value": "SOURCE_OWNERSHIP_AMBIGUOUS",
+      "count": 10
+    }
+  ],
+  "mechanisms": [
+    {
+      "id": "BUILD_IMPACT",
+      "activations": 0,
+      "observedCostNs": 0,
+      "attributableSavingsNs": 0,
+      "status": "NOT_ACTIVATED"
+    },
+    {
+      "id": "REVIEWED_PATCH_TASK",
+      "activations": 0,
+      "observedCostNs": 0,
+      "attributableSavingsNs": 0,
+      "status": "NOT_ACTIVATED"
+    },
+    {
+      "id": "SAFE_CACHE_LOCALITY",
+      "activations": 0,
+      "observedCostNs": 0,
+      "attributableSavingsNs": 0,
+      "status": "NOT_ACTIVATED"
+    },
+    {
+      "id": "MATCHING",
+      "activations": 0,
+      "observedCostNs": 161239,
+      "attributableSavingsNs": 0,
+      "status": "OBSERVED_COST_ONLY"
+    },
+    {
+      "id": "STATE_SYNC",
+      "activations": 0,
+      "observedCostNs": 18153791583,
+      "attributableSavingsNs": 0,
+      "status": "OBSERVED_COST_ONLY"
+    },
+    {
+      "id": "DISCOVERY_LEARNING",
+      "activations": 0,
+      "observedCostNs": 98384963343,
+      "attributableSavingsNs": 0,
+      "status": "OBSERVED_COST_ONLY"
+    },
+    {
+      "id": "OUTPUT_MATERIALIZATION",
+      "activations": 0,
+      "observedCostNs": 0,
+      "attributableSavingsNs": 0,
+      "status": "NOT_ACTIVATED"
+    },
+    {
+      "id": "OUTPUT_VERIFICATION",
+      "activations": 0,
+      "observedCostNs": 28889844657,
+      "attributableSavingsNs": 0,
+      "status": "OBSERVED_COST_ONLY"
+    },
+    {
+      "id": "GRADLE_SETUP",
+      "activations": 0,
+      "observedCostNs": 2567634,
+      "attributableSavingsNs": 0,
+      "status": "OBSERVED_COST_ONLY"
+    },
+    {
+      "id": "COMPOSED_PATH",
+      "activations": 0,
+      "observedCostNs": 0,
+      "attributableSavingsNs": 0,
+      "status": "NOT_ACTIVATED"
+    },
+    {
+      "id": "NATIVE_RETENTION_PATH",
+      "activations": 100,
+      "observedCostNs": 179029032102,
+      "attributableSavingsNs": 0,
+      "status": "MEASURED"
+    }
+  ],
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

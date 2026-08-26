@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_root=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_raw=${1:-"${buildopt_root}/benchmarks/results/current-longitudinal-raw-v1.json"}
+buildopt_report=${2:-"${buildopt_root}/benchmarks/results/current-longitudinal-report-v1.json"}
+buildopt_attribution=${3:-"${buildopt_root}/benchmarks/results/current-longitudinal-attribution-v1.json"}
+buildopt_contract="${buildopt_root}/specs/poc-current-longitudinal-attribution-v1.json"
+
+if (($# > 3)); then
+    printf 'usage: %s [RAW_JSON REPORT_JSON ATTRIBUTION_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+"${buildopt_root}/dev/check-current-longitudinal-campaign" "${buildopt_raw}" "${buildopt_report}"
+
+(
+    cd -- "${buildopt_root}/dev/current-longitudinal-campaign"
+    "${buildopt_root}/dev/run" --toolchain go -- go test ./...
+    "${buildopt_root}/dev/run" --toolchain go -- go vet ./...
+    "${buildopt_root}/dev/run" --toolchain go -- \
+        go run . --validate-attribution \
+        "${buildopt_raw}" "${buildopt_report}" "${buildopt_contract}" "${buildopt_attribution}"
+)
+
+buildopt_tmp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-af014d.XXXXXX")
+trap 'rm -rf -- "${buildopt_tmp}"' EXIT
+jq '.summary.recordedBuildOptCostNs += 1' "${buildopt_attribution}" >"${buildopt_tmp}/mutated.json"
+if (
+    cd -- "${buildopt_root}/dev/current-longitudinal-campaign"
+    "${buildopt_root}/dev/run" --toolchain go -- \
+        go run . --validate-attribution \
+        "${buildopt_raw}" "${buildopt_report}" "${buildopt_contract}" \
+        "${buildopt_tmp}/mutated.json"
+) >/dev/null 2>&1; then
+    printf 'mutated attribution unexpectedly passed validation\n' >&2
+    exit 1
+fi
+
+printf 'current longitudinal attribution: PASS\n'

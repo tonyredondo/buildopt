@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "buildopt.poc/current-longitudinal-attribution-contract/v1",
+  "workItem": "AF-014D",
+  "sourceSchemas": {
+    "raw": "buildopt.poc/current-longitudinal-raw/v1",
+    "report": "buildopt.poc/current-longitudinal-report/v1"
+  },
+  "workflowClasses": [
+    {
+      "id": "TEST_COMPILATION",
+      "match": "CONTAINS",
+      "pattern": "compileTest"
+    },
+    {
+      "id": "SHADOW_JAR",
+      "match": "CONTAINS",
+      "pattern": "shadowJar"
+    },
+    {
+      "id": "ASSEMBLY",
+      "match": "SUFFIX",
+      "pattern": "assemble"
+    },
+    {
+      "id": "PRODUCTION_CLASSES",
+      "match": "SUFFIX",
+      "pattern": "classes"
+    }
+  ],
+  "mechanisms": [
+    "BUILD_IMPACT",
+    "REVIEWED_PATCH_TASK",
+    "SAFE_CACHE_LOCALITY",
+    "MATCHING",
+    "STATE_SYNC",
+    "DISCOVERY_LEARNING",
+    "OUTPUT_MATERIALIZATION",
+    "OUTPUT_VERIFICATION",
+    "GRADLE_SETUP",
+    "COMPOSED_PATH",
+    "NATIVE_RETENTION_PATH"
+  ],
+  "outcomes": [
+    "CURRENT_VALUE_ATTRIBUTED",
+    "CURRENT_VALUE_NOT_ATTRIBUTABLE"
+  ],
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

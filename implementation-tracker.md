@@ -1,12 +1,12 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `CURRENT GENERIC STRUCTURAL-PROFILE HYPOTHESIS STOPPED; BOUNDED MECHANISM VALUE RETAINED` — the terminal five-repository result preserves exact outputs and bounded Kafka value, but fails repository breadth, descendant selection and native-retention overhead<br>
-**Current phase:** `CURRENT CAMPAIGN COMPLETE; ATTRIBUTION NEXT` — AF-014C completed 100 exact-output current installed-package pairs across five public histories with zero product failures, 25 positive/75 negative deltas, zero selected profiles and -368.623 seconds cumulative signed value. AF-014D now separates recorded BuildOpt cost from Gradle/runner variation before AF-015 decides<br>
+**Current phase:** `CURRENT VALUE NOT ATTRIBUTABLE; TERMINAL DECISION NEXT` — AF-014D attributes 179.029 seconds of recorded BuildOpt path cost and -189.593 seconds of residual Gradle/runner variation across the 100 current exact-output pairs. Native retention is 0.531 seconds p50/8.656 seconds p95; no profile or fragment activated, so attributable mechanism saving is zero. AF-015 now applies the frozen terminal criteria<br>
 **POC functional target:** improve real builds against optimized native Gradle and make that value accessible through one owner-invoked command with zero hand-authored BuildOpt files for supported workflows; ambiguous, drifted or non-value state retains native Gradle<br>
 **POC onboarding north star:** `install BuildOpt -> open a Gradle repository -> buildopt optimize build`; automatic selection is allowed only inside the explicit POC command after qualification, while autonomous production promotion remains out of scope<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
-**Last updated:** 2026-08-25<br>
+**Last updated:** 2026-08-26<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
 **Active POC tracker:** [Adaptive Fragment Generalization POC Tracker](./docs/plans/adaptive-fragment-generalization-tracker.md)<br>
 **RFC baseline SHA-256:** `1b8dd8cdeba756328e127a7146d26040a75a199e205d8e602fa83d83c8a7ad11`
@@ -191,7 +191,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-ORDINARY-LEARNING-ECONOMICS | Learn only from customer-requested builds and reject candidates whose likely compatible lifetime cannot repay discovery/publication | `DONE` | 1/1 | `E-400`; five-match lifetime/payback horizon, ordinary builds only, robust eight-pair gate unchanged |
 | POC-LIFETIME-BREADTH-V3 | Replay one unchanged binary over frozen Spring, OpenTelemetry, Kafka, Micronaut and Groovy windows | `DONE` | 1/1 | `E-401`; 1/5 net-positive families, 1/6 eligible descendants selected, exact outputs and zero failures; functional coverage not proven |
 | POC-FUNCTIONAL-COVERAGE-DECISION | Issue the terminal continue/stop decision for the generic one-command POC | `DONE` | 1/1 | `E-402`; 5/8 criteria pass, terminal `STOP_GENERIC_POC`; no successor was authorized by that result |
-| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | `DOING` | 17/19 | `AF-E001..017`; AF-014C completed 100 current installed-package pairs with exact outputs, zero failures, zero activations and -368.623 seconds cumulative signed value; AF-014D now attributes recorded overhead and unresolved variation in the [active tracker](./docs/plans/adaptive-fragment-generalization-tracker.md) |
+| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | `DOING` | 18/19 | `AF-E001..018`; AF-014D attributes the current 100-pair result to 179.029 seconds recorded BuildOpt cost and -189.593 seconds residual variation, with zero activated-mechanism saving; AF-015 is the remaining terminal decision in the [active tracker](./docs/plans/adaptive-fragment-generalization-tracker.md) |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Not authorized by terminal `STOP_GENERIC_POC` |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -2418,6 +2418,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-08-26 | Closed AF-014D as `CURRENT_VALUE_NOT_ATTRIBUTABLE`: 179.029 seconds of recorded BuildOpt path cost plus -189.593 seconds of residual Gradle/runner variation reconcile the -368.623-second current result; native retention is 0.531 seconds p50/8.656 seconds p95 and zero activations imply zero attributable mechanism saving. Opened AF-015 without moving thresholds | Codex |
 | 2026-08-26 | Closed AF-014C as `CURRENT_LONGITUDINAL_CAMPAIGN_COMPLETE`: 100 current installed-package pairs preserve exact outputs with zero product failures; 25 are positive, 75 negative, every invocation retains native Gradle, no profile/fragment activates and cumulative signed value is -368.623 seconds. One Groovy primary dependency/native failure remains explicit and a frozen reserve supplies the twentieth pair; opened AF-014D attribution | Codex |
 | 2026-08-26 | Closed AF-014B as `CURRENT_LONGITUDINAL_COHORTS_FROZEN`: 100 primary public commits and 50 ordered reserves are bound before timing to exact first-parent topology, trees, changed paths, generic shapes, workflows, outputs, JDKs and exclusion policy; opened AF-014C sequential campaign | Codex |
 | 2026-08-26 | Corrected the frozen Kafka workflow before accepting Kafka timing: `core:compileTestJava` is `NO-SOURCE`; `core:compileTestScala` rebuilds 480 test classes offline under the unchanged commit window and Scala output contract, so AF-014C restarts from zero against the amended manifest | Codex |

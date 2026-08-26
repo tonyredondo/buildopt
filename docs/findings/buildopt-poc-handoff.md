@@ -58,9 +58,16 @@ The current campaign closes at 100 exact-output pairs, 25 positive and 75
 negative, zero product failures and **-368.623 seconds** cumulative signed
 value. Every candidate retains native Gradle; no whole profile or adaptive
 fragment activates. This proves current safety and measurement breadth, but it
-does **not** prove current acceleration. AF-014D now determines how much of the
-regression is recorded BuildOpt decision/verification cost and how much is
-unresolved Gradle or runner variation before any terminal decision.
+does **not** prove current acceleration.
+
+The current attribution separates **179.029 seconds** of recorded BuildOpt
+path cost from **-189.593 seconds** of residual Gradle/runner variation; those
+components reconcile the full -368.623-second signed result. Discovery and
+learning account for 98.385 seconds, output verification 28.890 seconds and
+state access 18.154 seconds. Native retention costs 0.531 seconds p50 and
+8.656 seconds p95. Since no profile or fragment activated, attributable
+mechanism saving is **zero** and the outcome is
+`CURRENT_VALUE_NOT_ATTRIBUTABLE`.
 
 ## Historical complete-profile result
 
@@ -212,12 +219,16 @@ descendant pair and several rejection paths changed afterward. AF-014A now
 proves one current-SHA installed package, separate arm state, chronological
 learning, exact selected/native-retained/bypass behavior and reconciled phase
 timing. Its controlled fixture is apparatus evidence, not a speedup. AF-014B
-has now frozen 20 primary commits plus ten ordered reserves per family before
-timing. The five chains contain 100 primary observations, exact topology,
-generic change shapes and immutable workflow/output/JDK scope. AF-014C/D will
-collect at least 15 comparable builds per terminal row and attribute activated
-mechanisms, fallback cost and residual variation.
-AF-015 will decide from that current campaign only.
+froze 20 primary commits plus ten ordered reserves per family before timing.
+AF-014C then collected 100 comparable exact-output pairs under one installed
+package. AF-014D now attributes the current result: 179.029 seconds of recorded
+BuildOpt cost, -189.593 seconds of residual variation, and zero
+activated-mechanism saving. The largest actionable recorded slice is
+discovery/learning at 98.385 seconds; however, reducing overhead alone cannot
+create customer value when selection coverage remains zero. AF-015 will apply
+the frozen breadth, lifetime, fallback and value criteria to this current
+campaign only, then choose whether to continue, specialize or stop the adaptive
+fragment hypothesis.
 Production hardening, soak, design partners and Test Optimization remain
 outside this POC.
 
@@ -248,3 +259,6 @@ outside this POC.
 - [Adaptive state portability contract](../../specs/poc-adaptive-state-portability-v1.md)
 - [Adaptive longitudinal matrix](../../benchmarks/results/adaptive-fragment-longitudinal-v1.json)
 - [Adaptive longitudinal protocol](../../specs/poc-adaptive-fragment-longitudinal-v1.md)
+- [Current longitudinal raw evidence](../../benchmarks/results/current-longitudinal-raw-v1.json)
+- [Current longitudinal attribution](../../benchmarks/results/current-longitudinal-attribution-v1.json)
+- [Current attribution protocol](../../specs/poc-current-longitudinal-attribution-v1.md)

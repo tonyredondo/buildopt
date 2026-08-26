@@ -240,9 +240,21 @@ func main() {
 	if len(os.Args) >= 5 && os.Args[1] == "--time" && os.Args[3] == "--" {
 		os.Exit(runTimedCommand(os.Args[2], os.Args[4:]))
 	}
+	if len(os.Args) == 5 && os.Args[1] == "--attribute" {
+		runAttribution(os.Args[2], os.Args[3], os.Args[4], "", false)
+		return
+	}
+	if len(os.Args) == 6 && os.Args[1] == "--write-attribution" {
+		runAttribution(os.Args[2], os.Args[3], os.Args[4], os.Args[5], true)
+		return
+	}
+	if len(os.Args) == 6 && os.Args[1] == "--validate-attribution" {
+		runAttribution(os.Args[2], os.Args[3], os.Args[4], os.Args[5], false)
+		return
+	}
 	if (len(os.Args) != 3 || os.Args[1] != "--aggregate") &&
 		(len(os.Args) != 5 || os.Args[1] != "--validate") {
-		fmt.Fprintln(os.Stderr, "usage: current-longitudinal-campaign --time DURATION_FILE -- COMMAND... | --aggregate RAW_JSON | --validate COHORT_JSON RAW_JSON REPORT_JSON")
+		fmt.Fprintln(os.Stderr, "usage: current-longitudinal-campaign --time DURATION_FILE -- COMMAND... | --aggregate RAW_JSON | --validate COHORT_JSON RAW_JSON REPORT_JSON | --attribute RAW_JSON REPORT_JSON CONTRACT_JSON | --write-attribution RAW_JSON REPORT_JSON CONTRACT_JSON ATTRIBUTION_JSON | --validate-attribution RAW_JSON REPORT_JSON CONTRACT_JSON ATTRIBUTION_JSON")
 		os.Exit(64)
 	}
 	rawIndex := 2

@@ -144,9 +144,13 @@ Its first proof must happen before another broad timing campaign:
 7. collect at least 15 comparable builds per terminal row with chronological
    learning and exact outputs (**complete: 20/20 per repository, 100 exact
    pairs, zero product failures, 25 positive/75 negative and -368.623 seconds
-   cumulative signed value**); and
-8. attribute activated mechanisms, fallback cost and residual variation before
-   recomputing the terminal decision (**next: AF-014D, then AF-015**).
+   cumulative signed value**);
+8. attribute activated mechanisms, fallback cost and residual variation
+   (**complete: 179.029 seconds recorded BuildOpt cost, -189.593 seconds
+   residual, zero activated-mechanism saving, 0.531-second p50 and 8.656-second
+   p95 native retention**); and
+9. recompute the frozen terminal decision from current evidence only (**next:
+   AF-015**).
 
 ## POC conclusion
 

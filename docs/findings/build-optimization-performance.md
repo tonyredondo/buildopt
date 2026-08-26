@@ -1109,6 +1109,17 @@ BuildOpt decision/verification cost from unresolved Gradle and runner variation;
 the aggregate regression is not attributed to a mechanism merely because it
 occurred under the candidate arm.
 
+AF-014D now performs that separation. The candidate path records 179.029
+seconds outside Gradle execution, while the control-versus-recorded-Gradle
+residual is -189.593 seconds; together they reconcile the -368.623-second
+signed campaign result. The largest recorded BuildOpt slices are 98.385
+seconds of discovery/learning, 28.890 seconds of output verification and
+18.154 seconds of state access. Native-retention cost is 0.531 seconds p50 and
+8.656 seconds p95. With zero selected profiles and zero activated fragments,
+no saving is attributable to Build Impact, patch, locality, materialization or
+composition. The outcome is `CURRENT_VALUE_NOT_ATTRIBUTABLE`, not an estimate
+of what those inactive mechanisms might have saved.
+
 ```bash
 ./dev/check-adaptive-fragment-longitudinal
 ```

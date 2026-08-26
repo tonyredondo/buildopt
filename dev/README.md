@@ -4930,6 +4930,29 @@ activations and -368.623 seconds cumulative signed value. The runner reads
 top-level learning flag must not be interpreted as a performed paired
 calibration.
 
+## Current longitudinal attribution
+
+Regenerate and validate the `AF-014D` attribution from the immutable raw and
+aggregate campaign evidence:
+
+```bash
+./dev/check-current-longitudinal-attribution
+```
+
+The checker first revalidates `AF-014C`, then regenerates the complete
+attribution from its JSON contract. It separates candidate-side recorded
+BuildOpt intervals from the residual control-versus-recorded-Gradle delta,
+groups results by generic change shape and workflow class, and rejects an
+edited result. It never assigns a favorable pair to an inactive mechanism.
+
+The current report attributes **179.029 seconds** to the recorded BuildOpt
+path and **-189.593 seconds** to residual Gradle/runner variation. No selected
+profile or fragment exists, so attributable mechanism saving is zero and the
+outcome is `CURRENT_VALUE_NOT_ATTRIBUTABLE`. The largest recorded slices are
+discovery/learning (**98.385 s**), output verification (**28.890 s**) and
+local/central state (**18.154 s**). Native-retention overhead is **0.531 s**
+p50 and **8.656 s** p95.
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic

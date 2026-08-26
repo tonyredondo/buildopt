@@ -2745,3 +2745,39 @@ recorded BuildOpt phases from unresolved Gradle/runner variation.
   "$PWD/benchmarks/results/current-longitudinal-raw-v1.json" \
   "$PWD/benchmarks/results/current-longitudinal-report-v1.json"
 ```
+
+## Current longitudinal mechanism attribution
+
+[`current-longitudinal-attribution-v1.json`](./results/current-longitudinal-attribution-v1.json)
+is the deterministic `AF-014D` decomposition of the current 100-pair campaign.
+It is bound to the raw evidence, aggregate report and
+[`poc-current-longitudinal-attribution-v1.json`](../specs/poc-current-longitudinal-attribution-v1.json)
+by SHA-256.
+
+| Attribution | Current total |
+| --- | ---: |
+| Signed control-minus-candidate value | **-368.623 s** |
+| Recorded candidate-side BuildOpt path | **179.029 s** |
+| Residual Gradle/runner delta | **-189.593 s** |
+| Attributable activated-mechanism saving | **0 s** |
+| Native-retention overhead p50 / p95 | **0.531 s / 8.656 s** |
+| Worst single regression | **23.334 s** |
+
+The two top-level components reconcile exactly:
+`-368.623 s = -189.593 s - 179.029 s`. Recorded BuildOpt time contains
+98.385 s of discovery/learning, 28.890 s of output verification, 18.154 s of
+state access, 27.173 s of other recorded work, a 6.407-s external/internal
+gap, and negligible matching/setup/unattributed intervals. Dependency
+preparation is reported separately and remains outside both measured arms.
+
+The result is `CURRENT_VALUE_NOT_ATTRIBUTABLE`. All 100 invocations used the
+native-retention path; no profile, Build Impact fragment, reviewed patch,
+cache-locality fragment, materialization fragment or composed path activated.
+Consequently, favorable individual pairs and residual variation are not
+credited to BuildOpt. Generic grouping reinforces rather than hides that
+result: assembly is -169.863 s, production classes -130.406 s, shadow JAR
+-26.044 s and test compilation -42.309 s cumulative.
+
+```bash
+./dev/check-current-longitudinal-attribution
+```

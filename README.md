@@ -106,8 +106,13 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > 100 exact-output pairs across the same five repositories with zero product
 > failures. All 100 candidates retain native Gradle, no fragment activates,
 > only 25 pairs improve and cumulative signed value is **-368.623 seconds**.
-> AF-014D now separates recorded BuildOpt overhead from unresolved Gradle and
-> runner variation before the terminal adaptive-fragment decision.
+> AF-014D attributes **179.029 seconds** to the recorded BuildOpt path and
+> **-189.593 seconds** to residual Gradle/runner variation. Discovery/learning
+> is the largest recorded slice at **98.385 seconds**; native retention is
+> **0.531 seconds p50 / 8.656 seconds p95**. Because no profile or fragment
+> activated, attributable mechanism saving is **zero** and the current outcome
+> is `CURRENT_VALUE_NOT_ATTRIBUTABLE`. AF-015 now applies the frozen terminal
+> criteria without reinterpreting favorable noise as product value.
 
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired

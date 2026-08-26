@@ -149,9 +149,13 @@ timing. AF-014B..D must still freeze larger commit cohorts, execute the current
 implementation chronologically and attribute its value before the successor
 enters onboarding. AF-014C has now completed 100 exact-output current pairs
 with zero product failures, but all 100 invocations retained native Gradle and
-the signed total is -368.623 seconds. AF-014D must attribute recorded BuildOpt
-cost and unresolved variation before this path can be presented as a customer
-speedup. The controlled AF-014A fixture remains apparatus evidence only.
+the signed total is -368.623 seconds. AF-014D attributes 179.029 seconds to the
+recorded BuildOpt path and -189.593 seconds to residual Gradle/runner
+variation. The native-retention path is 0.531 seconds p50 and 8.656 seconds
+p95; discovery/learning alone records 98.385 seconds. Because no mechanism
+activated, attributable saving is zero. This adaptive successor therefore
+remains outside customer onboarding pending the AF-015 terminal decision. The
+controlled AF-014A fixture remains apparatus evidence only.
 
 ```bash
 buildopt optimize --json -- build

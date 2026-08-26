@@ -535,6 +535,25 @@ retentions, zero activations and -368.623 seconds cumulative signed value.
 One Groovy primary dependency/native failure remains an explicit exclusion and
 the next frozen reserve supplies the twentieth comparable pair.
 
+## Current longitudinal attribution
+
+```bash
+./dev/check-current-longitudinal-attribution
+```
+
+The `AF-014D` gate validates the attribution contract, revalidates the
+`AF-014C` raw/report pair, recomputes every repository, change-shape, workflow,
+decision-reason and mechanism row, and rejects edited output. Its equations
+separate recorded candidate-side BuildOpt cost from residual Gradle/runner
+variation. A positive pair cannot create attributable saving when the raw
+record shows no selected profile or activated fragment.
+
+The committed outcome is `CURRENT_VALUE_NOT_ATTRIBUTABLE`: 100 native
+retentions record 179.029 seconds of BuildOpt path cost, the residual is
+-189.593 seconds, and activated-mechanism saving is zero. This is a static Go
+recomputation over current public-repository evidence; it does not rerun Gradle
+or create a production claim.
+
 ## Complete lanes
 
 - `./dev/check-phase-zero` composes the historical Phase 0 gates.
