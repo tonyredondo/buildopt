@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "buildopt.fixtures/sticky-wrapper-contract-invalid/v1",
+  "cases": [
+    {
+      "id": "PROPERTIES_UNKNOWN_KEY",
+      "file": "wrapper.properties",
+      "operation": "append",
+      "value": "unexpected=value\n",
+      "errorClass": "UNKNOWN_KEY"
+    },
+    {
+      "id": "PROPERTIES_DUPLICATE_KEY",
+      "file": "wrapper.properties",
+      "operation": "append",
+      "value": "schemaVersion=buildopt.wrapper/v1\n",
+      "errorClass": "DUPLICATE_KEY"
+    },
+    {
+      "id": "PROPERTIES_CREDENTIAL_KEY",
+      "file": "wrapper.properties",
+      "operation": "append",
+      "value": "authorization=forbidden-value\n",
+      "errorClass": "SECURITY_SENSITIVE_KEY"
+    },
+    {
+      "id": "PROPERTIES_PLAIN_HTTP",
+      "file": "wrapper.properties",
+      "operation": "replace-first",
+      "old": "https://downloads.example.invalid",
+      "value": "http://downloads.example.invalid",
+      "errorClass": "INSECURE_URL"
+    },
+    {
+      "id": "PROPERTIES_MACHINE_PATH",
+      "file": "wrapper.properties",
+      "operation": "replace-first",
+      "old": "https://downloads.example.invalid/buildopt/v0.6.1/buildopt-0.6.1-linux-amd64.tar.gz",
+      "value": "file:///home/alice/buildopt.tar.gz",
+      "errorClass": "MACHINE_SPECIFIC_VALUE"
+    },
+    {
+      "id": "PROPERTIES_REDIRECT_FOLLOW",
+      "file": "wrapper.properties",
+      "operation": "replace-first",
+      "old": "network.redirectPolicy=reject",
+      "value": "network.redirectPolicy=follow",
+      "errorClass": "INVALID_VALUE"
+    },
+    {
+      "id": "CONFIG_UNKNOWN_KEY",
+      "file": "config.toml",
+      "operation": "append",
+      "value": "unknown = \"value\"\n",
+      "errorClass": "UNKNOWN_KEY"
+    },
+    {
+      "id": "CONFIG_DUPLICATE_KEY",
+      "file": "config.toml",
+      "operation": "append",
+      "value": "mode = \"auto\"\n",
+      "errorClass": "DUPLICATE_KEY"
+    },
+    {
+      "id": "CONFIG_CREDENTIAL_KEY",
+      "file": "config.toml",
+      "operation": "append",
+      "value": "token = \"forbidden-value\"\n",
+      "errorClass": "SECURITY_SENSITIVE_KEY"
+    },
+    {
+      "id": "CONFIG_MACHINE_PATH",
+      "file": "config.toml",
+      "operation": "replace-first",
+      "old": "example/buildopt-pilot",
+      "value": "C:/Users/alice/buildopt",
+      "errorClass": "MACHINE_SPECIFIC_VALUE"
+    },
+    {
+      "id": "CONFIG_PLAIN_HTTP",
+      "file": "config.toml",
+      "operation": "replace-first",
+      "old": "https://buildopt.example.invalid",
+      "value": "http://buildopt.example.invalid",
+      "errorClass": "INSECURE_URL"
+    },
+    {
+      "id": "CONFIG_BUDGET_TOO_HIGH",
+      "file": "config.toml",
+      "operation": "replace-first",
+      "old": "trial_budget_percent = 5",
+      "value": "trial_budget_percent = 6",
+      "errorClass": "INVALID_VALUE"
+    },
+    {
+      "id": "CONFIG_PARTIAL_SERVER_SCOPE",
+      "file": "config.toml",
+      "operation": "replace-first",
+      "old": "project_scope = \"example/buildopt-pilot\"",
+      "value": "project_scope = \"\"",
+      "errorClass": "INCOMPLETE_SERVER_IDENTITY"
+    }
+  ]
+}

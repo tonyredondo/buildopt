@@ -188,16 +188,17 @@ if [[ "${buildopt_evidence_count}" != 17 ]]; then
 fi
 
 buildopt_required_text=(
-    "${buildopt_plan}|**Progress:** \`1/17\` blocks complete"
-    "${buildopt_plan}|**Current block:** \`SWL-001\` — repository wrapper contract"
+    "${buildopt_plan}|**Progress:** \`2/17\` blocks complete"
+    "${buildopt_plan}|**Current block:** \`SWL-002\` — wrapper generator"
     "${buildopt_plan}|./buildoptw <gradle args...>"
     "${buildopt_plan}|The existing central cache and state implementation is reused."
     "${buildopt_spec}|# Sticky wrapper learning POC v1"
     "${buildopt_spec}|CONTINUE_STICKY_WRAPPER_LEARNING_POC"
     "${buildopt_tracker}|STICKY WRAPPER LEARNING POC ACTIVE; PRIOR GENERIC HYPOTHESES STOPPED"
-    "${buildopt_tracker}|SWL-001_REPOSITORY_WRAPPER_CONTRACT"
+    "${buildopt_tracker}|SWL-002_WRAPPER_GENERATOR"
     "${buildopt_tracker}|POC-STICKY-WRAPPER-LEARNING"
     "${buildopt_tracker}|\`E-403\`"
+    "${buildopt_tracker}|\`E-404\`"
     "${buildopt_rfc}|generate and commit BuildOpt Wrapper"
     "${buildopt_rfc}|Sticky Wrapper Learning POC Tracker"
 )

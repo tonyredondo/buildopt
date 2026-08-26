@@ -4,6 +4,9 @@
 *.cmd text eol=crlf
 *.ps1 text eol=crlf
 
+# The sticky-wrapper contract deliberately uses LF for every generated file.
+/fixtures/sticky-wrapper-contract/valid/buildoptw.bat text eol=lf
+
 *.gif binary
 *.gz binary
 *.ico binary

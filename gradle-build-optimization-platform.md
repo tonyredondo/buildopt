@@ -103,6 +103,21 @@ The earlier [one-command onboarding roadmap](./docs/plans/one-command-onboarding
 and [central cache/state roadmap](./docs/plans/centralized-cache-and-state-roadmap.md)
 remain implemented foundations, not current value authority.
 
+`SWL-001` freezes the repository boundary before implementation. Both wrapper
+scripts use UTF-8/LF; only the POSIX script has the Git executable bit.
+`wrapper.properties` is an ordered ASCII `key=value` grammar with one exact
+version, immutable HTTPS URL and lowercase SHA-256 per supported platform,
+5-second connect/30-second read timeouts, rejected redirects and
+environment-only proxy discovery. `config.toml` is a strict flat subset with
+mode, optional HTTPS server identity, private credential-environment name and
+a 0..5% trial budget; it contains no credential or machine path. All ordinary
+arguments remain Gradle arguments. Only a leading `--buildopt` routes to
+management, while leading `--gradle` escapes that prefix.
+`BUILDOPT_BYPASS=1` is checked before configuration or download and invokes the
+repository Gradle Wrapper directly. The exact contract is
+[`poc-sticky-wrapper-contract-v1`](./specs/poc-sticky-wrapper-contract-v1.md);
+the generator and verified bootstrap remain separate subsequent blocks.
+
 The result authorizes a `CONTINUE` decision for further POC exploration only. It does not prove universal savings or production readiness. The initial realistic change-class matrix in [`poc-breadth-validation-v1`](./specs/poc-breadth-validation-v1.md) qualified 2/8 cells. Attribution and calibrated paired experiments reproduced the bounded Groovy and leaf Kotlin value cells, while shared-source and build-logic Kotlin remained order-sensitive. The terminal decision therefore retained the qualified synthetic claim and prohibited more unchanged replication or product tuning against noisy evidence.
 
 The bounded signal was then tested on fixed public repositories. Compatibility was established before timing: source revisions, wrapper/settings files, Gradle distributions, representative tasks, excluded integrations, required outputs, and the installed BuildOpt entry point were pinned and checked. Spotless, Mockito, and SpotBugs entered a preregistered paired comparison against optimized native Gradle. Only Mockito retained no-change parity and cleared the unchanged leaf-source accelerator threshold; Spotless and SpotBugs did not. The terminal result therefore retains the qualified synthetic claim and does not authorize a general public-repository claim, new tuning, or threshold movement. An eight-hour soak, design partners, high availability, enterprise identity, shared multi-tenancy, and production promotion samples are not required. A feature does not justify activation merely because it is safe or technically interesting: when it cannot demonstrate net value for a workload class, BuildOpt keeps it disabled for that class.
@@ -3275,8 +3290,9 @@ The generic structural-profile POC and its adaptive-fragment successor are now
 both stopped by their frozen terminal gates. The active successor is the
 repository-committed sticky-wrapper learning POC. It reuses the implemented
 launcher, packages, Gradle HTTP cache, typed central state and fail-open
-controls, but grants no authority to the stopped profiles. Its first block
-defines the wrapper contract; its terminal gate requires exact outputs, zero
+controls, but grants no authority to the stopped profiles. Its first block has
+defined the wrapper contract and its next block implements the deterministic
+generator; its terminal gate requires exact outputs, zero
 product failures, negligible native-retention cost, positive cumulative value,
 positive confidence and payback in at least three of five public families.
 

@@ -25,6 +25,12 @@ separate BuildOpt state plane. This workflow is planned under the
 [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
 and is not part of the current package yet.
 
+`SWL-001` has now fixed the invocation boundary. All ordinary arguments go to
+Gradle. Only leading `--buildopt` selects `status`, `explain` or `version`, and
+leading `--gradle` escapes that prefix. Exact `BUILDOPT_BYPASS=1` runs the
+repository Gradle Wrapper before configuration or distribution bootstrap. The
+deterministic generator remains the next block.
+
 This guide describes what a user or evaluator can do with the current POC and
 which interface owns each result. It is intentionally honest about surfaces
 that remain developer/operator workflows rather than a hosted product.

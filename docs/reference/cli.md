@@ -5,30 +5,35 @@ Windows additionally contains the SCM host `buildopt-service.exe`.
 
 ## `buildopt`
 
-### Generate the planned repository wrapper
+### Generate the repository wrapper
 
 ```text
-buildopt wrapper init --server https://HOST [--project-scope SCOPE]
+buildopt wrapper init [--server URL --project-scope SCOPE] [--mode auto|observe|off]
 buildopt wrapper check
-buildopt wrapper update --version VERSION
+buildopt wrapper update --version VERSION [--allow-downgrade]
 ```
 
-These commands are the frozen target for `SWL-001..003`; they are not
-implemented in the current package. `init` will generate `buildoptw`,
+This CLI is now frozen by `SWL-001` but is not implemented in the current
+package; `SWL-002` owns that implementation. `init` will generate `buildoptw`,
 `buildoptw.bat`, `.buildopt/wrapper.properties` and `.buildopt/config.toml`
 without a credential or machine path. The repeated customer command will be:
 
 ```text
 ./buildoptw <gradle args...>
-./buildoptw status
-./buildoptw explain
+./buildoptw --buildopt status [--json]
+./buildoptw --buildopt explain [--json]
+./buildoptw --buildopt version [--json]
 ```
 
-The wrapper will invoke the existing repository Gradle Wrapper through the
-BuildOpt launcher. `BUILDOPT_BYPASS=1` will skip decision, state, cache gateway,
-plugin and observation setup before Gradle starts. Exact syntax and exit
-behavior become authoritative only when the wrapper contract block closes; see
-the [active tracker](../plans/sticky-wrapper-learning-poc-tracker.md).
+Every invocation without the first-argument `--buildopt` prefix goes to the
+existing repository Gradle Wrapper. Therefore `./buildoptw status` still runs a
+Gradle task named `status`. A leading `--gradle` is removed and forces the
+remaining arguments to Gradle, including a literal `--buildopt`.
+
+`BUILDOPT_BYPASS=1` skips configuration, distribution bootstrap, decision,
+state, cache gateway, plugin and observation setup and invokes Gradle directly.
+The exact routing, exit codes and fail-open behavior are in the
+[wrapper contract](../../specs/poc-sticky-wrapper-contract-v1.md).
 
 ### Run a command
 

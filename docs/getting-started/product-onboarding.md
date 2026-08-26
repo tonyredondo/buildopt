@@ -23,7 +23,7 @@ lower-level stages. Follow the
 [one-command onboarding roadmap](../plans/one-command-onboarding-roadmap.md)
 for the remaining ordered delivery.
 
-## Planned sticky onboarding experiment
+## Sticky onboarding experiment
 
 The next POC removes the global installation step as well. A maintainer will
 generate and commit four portable files once:
@@ -41,6 +41,16 @@ The repeated developer and CI command will be:
 ./buildoptw build
 ```
 
+Gradle arguments are the default. Management is deliberately explicit:
+
+```text
+./buildoptw --buildopt status [--json]
+./buildoptw --buildopt explain [--json]
+```
+
+A leading `--gradle` escapes the reserved management prefix. This keeps Gradle
+tasks named `status` or `explain` working without special treatment.
+
 The wrapper will checksum-verify and cache the pinned BuildOpt distribution,
 invoke the repository's existing Gradle Wrapper and choose native, observe,
 shadow, bounded trial or exact active behavior. The committed configuration may
@@ -48,8 +58,10 @@ name an HTTPS BuildOpt Server and project scope but never contains a token.
 Credentials remain in an environment variable, CI secret/OIDC exchange or
 private file and are not passed to Gradle.
 
-This command is not implemented yet. The current installation and commands
-below remain the usable path until `SWL-002..004` close. The complete sequence,
+The file, configuration, routing, bypass, update and credential contract is
+now frozen and tested on POSIX- and Windows-shaped parsers. The generator and
+bootstrap are not implemented yet. The current installation and commands below
+remain the usable path until `SWL-002..004` close. The complete sequence,
 scorecard and status are in the
 [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md).
 

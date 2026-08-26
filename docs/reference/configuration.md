@@ -1,10 +1,10 @@
 # Configuration reference
 
-## Planned committed wrapper configuration
+## Committed wrapper configuration contract
 
 The sticky-wrapper POC reserves two portable committed configuration files:
 
-| Path | Planned contents | Forbidden contents |
+| Path | Contracted contents | Forbidden contents |
 | --- | --- | --- |
 | `.buildopt/wrapper.properties` | Immutable BuildOpt version, HTTPS distribution URL and SHA-256 | Floating version, credential, redirect authority or machine path |
 | `.buildopt/config.toml` | Canonical server URL, project scope, mode and learning budgets | Token, private key, checkout path or hand-authored active profile |
@@ -14,10 +14,32 @@ wrapper will never pass them to Gradle. A verified local decision snapshot may
 avoid a blocking server lookup, but it must be signed, compatible and unexpired.
 Unavailable, invalid or absent state retains native Gradle.
 
-These keys are reserved by the
-[Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
-and are not accepted by the current package yet. `SWL-001` will define their
-exact grammar before implementation.
+`wrapper.properties` is ordered ASCII `key=value`, with no whitespace,
+comments, blank lines, escapes, duplicates or unknown keys. It binds exact
+Linux AMD64, macOS AMD64/ARM64 and Windows AMD64 HTTPS URLs and SHA-256 values,
+5-second connect and 30-second read timeouts, rejected redirects and
+environment-only proxy discovery.
+
+`config.toml` is a strict flat subset with exactly these ordered keys:
+
+```text
+schema_version
+mode
+server_url
+project_scope
+credential_env
+trial_budget_percent
+```
+
+`mode` is `auto`, `observe` or `off`. The three server identity fields are all
+empty or all present. Central URLs require HTTPS; numeric loopback HTTP is
+reserved for local fixtures. The credential field names an environment
+variable beginning with `BUILDOPT_`, never its value. Trial budget is 0..5%.
+
+The complete encoding, ordering, URL, path and failure rules are in the
+[sticky wrapper contract](../../specs/poc-sticky-wrapper-contract-v1.md).
+They are not accepted by the current binary until `SWL-002` implements the
+generator and parser.
 
 BuildOpt configuration is grouped by trust boundary. Supply a complete group
 or omit it; partial configuration normally disables that optional capability

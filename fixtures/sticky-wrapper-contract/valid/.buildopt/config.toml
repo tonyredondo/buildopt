@@ -1,0 +1,6 @@
+schema_version = "buildopt.config/v1"
+mode = "auto"
+server_url = "https://buildopt.example.invalid"
+project_scope = "example/buildopt-pilot"
+credential_env = "BUILDOPT_TOKEN"
+trial_budget_percent = 5

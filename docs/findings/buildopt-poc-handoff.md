@@ -209,6 +209,13 @@ and independently positive value/payback in at least three of five public
 families. Every bootstrap, observation, trial, cache, fallback and action cost
 counts. Historical AF observations are context only.
 
+`SWL-001` now freezes the four file formats, immutable per-platform
+distribution identities, strict portable configuration, explicit management
+routing, pre-bootstrap bypass and update/downgrade behavior. POSIX- and
+Windows-shaped parsers agree on the valid fixture and reject all 13 negative
+cases. This is contract evidence only; `SWL-002` must still implement the
+generator and there is no new performance claim.
+
 No generic whole-profile implementation block followed automatically from that
 failed gate. The separately preregistered
 [Adaptive Fragment Generalization POC](../plans/adaptive-fragment-generalization-tracker.md)

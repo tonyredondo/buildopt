@@ -1,0 +1,211 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-contract/v1",
+  "workItem": "SWL-001",
+  "generatedFiles": [
+    {
+      "path": "buildoptw",
+      "encoding": "UTF-8",
+      "bomAllowed": false,
+      "newline": "LF",
+      "finalNewlineRequired": true,
+      "mode": "0755",
+      "maximumBytes": 32768
+    },
+    {
+      "path": "buildoptw.bat",
+      "encoding": "UTF-8",
+      "bomAllowed": false,
+      "newline": "LF",
+      "finalNewlineRequired": true,
+      "mode": "0644",
+      "maximumBytes": 32768
+    },
+    {
+      "path": ".buildopt/wrapper.properties",
+      "encoding": "US-ASCII",
+      "bomAllowed": false,
+      "newline": "LF",
+      "finalNewlineRequired": true,
+      "mode": "0644",
+      "maximumBytes": 16384
+    },
+    {
+      "path": ".buildopt/config.toml",
+      "encoding": "UTF-8",
+      "bomAllowed": false,
+      "newline": "LF",
+      "finalNewlineRequired": true,
+      "mode": "0644",
+      "maximumBytes": 16384
+    }
+  ],
+  "wrapperProperties": {
+    "syntax": "STRICT_KEY_EQUALS_VALUE_V1",
+    "commentsAllowed": false,
+    "blankLinesAllowed": false,
+    "escapesAllowed": false,
+    "unknownKeysRejected": true,
+    "duplicateKeysRejected": true,
+    "orderedKeys": [
+      "schemaVersion",
+      "distributionVersion",
+      "distributionUrl.linux-amd64",
+      "distributionSha256.linux-amd64",
+      "distributionUrl.macos-amd64",
+      "distributionSha256.macos-amd64",
+      "distributionUrl.macos-arm64",
+      "distributionSha256.macos-arm64",
+      "distributionUrl.windows-amd64",
+      "distributionSha256.windows-amd64",
+      "network.connectTimeoutMs",
+      "network.readTimeoutMs",
+      "network.redirectPolicy",
+      "network.proxyMode"
+    ],
+    "schemaVersion": "buildopt.wrapper/v1",
+    "distributionVersionPattern": "^[0-9]+[.][0-9]+[.][0-9]+$",
+    "distributionUrlRequirements": {
+      "scheme": "https",
+      "userinfoAllowed": false,
+      "queryAllowed": false,
+      "fragmentAllowed": false,
+      "versionMustAppearInPath": true,
+      "movingAliasAllowed": false
+    },
+    "distributionSha256Pattern": "^[0-9a-f]{64}$",
+    "supportedPlatforms": [
+      "linux-amd64",
+      "macos-amd64",
+      "macos-arm64",
+      "windows-amd64"
+    ],
+    "connectTimeoutMs": 5000,
+    "readTimeoutMs": 30000,
+    "redirectPolicy": "reject",
+    "proxyMode": "environment"
+  },
+  "configuration": {
+    "syntax": "STRICT_FLAT_TOML_SUBSET_V1",
+    "commentsAllowed": false,
+    "blankLinesAllowed": false,
+    "tablesAllowed": false,
+    "inlineTablesAllowed": false,
+    "arraysAllowed": false,
+    "escapesAllowed": false,
+    "unknownKeysRejected": true,
+    "duplicateKeysRejected": true,
+    "orderedKeys": [
+      "schema_version",
+      "mode",
+      "server_url",
+      "project_scope",
+      "credential_env",
+      "trial_budget_percent"
+    ],
+    "schemaVersion": "buildopt.config/v1",
+    "modes": [
+      "auto",
+      "observe",
+      "off"
+    ],
+    "serverUrl": {
+      "optional": true,
+      "httpsRequired": true,
+      "loopbackHttpAllowed": true,
+      "userinfoAllowed": false,
+      "queryAllowed": false,
+      "fragmentAllowed": false
+    },
+    "projectScopePattern": "^[a-z0-9][a-z0-9._-]{0,62}/[a-z0-9][a-z0-9._-]{0,62}$",
+    "credentialEnvironmentPattern": "^BUILDOPT_[A-Z0-9_]{1,55}$",
+    "trialBudgetPercentMinimum": 0,
+    "trialBudgetPercentMaximum": 5,
+    "serverFieldsAllEmptyOrAllPresent": true
+  },
+  "argumentRouting": {
+    "default": "GRADLE",
+    "managementPrefix": "--buildopt",
+    "gradleEscapePrefix": "--gradle",
+    "managementCommands": [
+      "status",
+      "explain",
+      "version"
+    ],
+    "managementJsonFlag": "--json",
+    "unknownManagementCommandExit": 64,
+    "gradleArgumentsPreservedByteForByte": true
+  },
+  "bypass": {
+    "environment": "BUILDOPT_BYPASS",
+    "enabledValue": "1",
+    "checkedBeforeCommittedConfiguration": true,
+    "distributionBootstrapSkipped": true,
+    "directGradleWrapperRequired": true,
+    "childExitPreserved": true
+  },
+  "maintainerCommands": [
+    "buildopt wrapper init [--server URL --project-scope SCOPE] [--mode auto|observe|off]",
+    "buildopt wrapper check",
+    "buildopt wrapper update --version VERSION [--allow-downgrade]"
+  ],
+  "updatePolicy": {
+    "initRefusesAnyExistingTarget": true,
+    "checkIsReadOnly": true,
+    "updateRequiresCanonicalUndriftedInputs": true,
+    "updateChangesOnlyDistributionIdentity": true,
+    "sameVersionIsIdempotent": true,
+    "downgradeRejectedByDefault": true,
+    "explicitDowngradeFlag": "--allow-downgrade",
+    "allFourFilesPublishedAtomically": true
+  },
+  "network": {
+    "proxySource": "PROCESS_ENVIRONMENT",
+    "committedProxyUrlAllowed": false,
+    "redirectsFollowed": false,
+    "timeoutsConfigurableInProjectConfig": false,
+    "sensitiveEnvironmentValuesLogged": false
+  },
+  "runtimeFailure": {
+    "normalGradleInvocationFallsBackToDirectWrapper": true,
+    "managementInvocationFails": true,
+    "unverifiedBinaryExecuted": false,
+    "wrapperOwnedExitCodes": {
+      "usage": 64,
+      "committedData": 65,
+      "platformOrNetworkUnavailable": 69,
+      "internalBootstrap": 70,
+      "integrityOrArchive": 74,
+      "verifiedBinaryNotExecutable": 126,
+      "gradleWrapperMissing": 127
+    }
+  },
+  "credentialBoundary": {
+    "credentialValuesInGeneratedFiles": false,
+    "credentialValuesInArguments": false,
+    "credentialValuesPassedToGradle": false,
+    "allowedSources": [
+      "ENVIRONMENT_VARIABLE",
+      "CI_OIDC_EXCHANGE",
+      "PRIVATE_TOKEN_FILE"
+    ],
+    "forbiddenCommittedKeyFragments": [
+      "token",
+      "password",
+      "secret",
+      "private_key",
+      "authorization",
+      "proxy_url"
+    ],
+    "machineSpecificValuesRejected": true
+  },
+  "outcome": "STICKY_WRAPPER_CONTRACT_ACCEPTED",
+  "boundaries": {
+    "generatorImplemented": false,
+    "bootstrapImplemented": false,
+    "performanceClaim": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationOwned": false
+  }
+}

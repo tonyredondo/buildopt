@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-sticky-wrapper-contract-v1.json"
+buildopt_fixture_root="${buildopt_repo_root}/fixtures/sticky-wrapper-contract"
+
+if ! command -v jq >/dev/null 2>&1; then
+    printf 'required sticky-wrapper-contract command is unavailable: jq\n' >&2
+    exit 1
+fi
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/sticky-wrapper-contract/v1" and
+    .workItem == "SWL-001" and
+    [.generatedFiles[].path] == [
+        "buildoptw",
+        "buildoptw.bat",
+        ".buildopt/wrapper.properties",
+        ".buildopt/config.toml"
+    ] and
+    [.generatedFiles[].encoding] == ["UTF-8", "UTF-8", "US-ASCII", "UTF-8"] and
+    [.generatedFiles[].newline] == ["LF", "LF", "LF", "LF"] and
+    [.generatedFiles[].mode] == ["0755", "0644", "0644", "0644"] and
+    ([.generatedFiles[] | .bomAllowed == false and .finalNewlineRequired == true] | all) and
+    .wrapperProperties.syntax == "STRICT_KEY_EQUALS_VALUE_V1" and
+    .wrapperProperties.orderedKeys == [
+        "schemaVersion",
+        "distributionVersion",
+        "distributionUrl.linux-amd64",
+        "distributionSha256.linux-amd64",
+        "distributionUrl.macos-amd64",
+        "distributionSha256.macos-amd64",
+        "distributionUrl.macos-arm64",
+        "distributionSha256.macos-arm64",
+        "distributionUrl.windows-amd64",
+        "distributionSha256.windows-amd64",
+        "network.connectTimeoutMs",
+        "network.readTimeoutMs",
+        "network.redirectPolicy",
+        "network.proxyMode"
+    ] and
+    .wrapperProperties.supportedPlatforms == [
+        "linux-amd64",
+        "macos-amd64",
+        "macos-arm64",
+        "windows-amd64"
+    ] and
+    .wrapperProperties.connectTimeoutMs == 5000 and
+    .wrapperProperties.readTimeoutMs == 30000 and
+    .wrapperProperties.redirectPolicy == "reject" and
+    .wrapperProperties.proxyMode == "environment" and
+    .configuration.syntax == "STRICT_FLAT_TOML_SUBSET_V1" and
+    .configuration.orderedKeys == [
+        "schema_version",
+        "mode",
+        "server_url",
+        "project_scope",
+        "credential_env",
+        "trial_budget_percent"
+    ] and
+    .configuration.modes == ["auto", "observe", "off"] and
+    .configuration.trialBudgetPercentMinimum == 0 and
+    .configuration.trialBudgetPercentMaximum == 5 and
+    .argumentRouting == {
+        default: "GRADLE",
+        managementPrefix: "--buildopt",
+        gradleEscapePrefix: "--gradle",
+        managementCommands: ["status", "explain", "version"],
+        managementJsonFlag: "--json",
+        unknownManagementCommandExit: 64,
+        gradleArgumentsPreservedByteForByte: true
+    } and
+    .bypass == {
+        environment: "BUILDOPT_BYPASS",
+        enabledValue: "1",
+        checkedBeforeCommittedConfiguration: true,
+        distributionBootstrapSkipped: true,
+        directGradleWrapperRequired: true,
+        childExitPreserved: true
+    } and
+    .updatePolicy.downgradeRejectedByDefault == true and
+    .updatePolicy.explicitDowngradeFlag == "--allow-downgrade" and
+    .updatePolicy.updateChangesOnlyDistributionIdentity == true and
+    .updatePolicy.allFourFilesPublishedAtomically == true and
+    .runtimeFailure.normalGradleInvocationFallsBackToDirectWrapper == true and
+    .runtimeFailure.unverifiedBinaryExecuted == false and
+    .runtimeFailure.wrapperOwnedExitCodes == {
+        usage: 64,
+        committedData: 65,
+        platformOrNetworkUnavailable: 69,
+        internalBootstrap: 70,
+        integrityOrArchive: 74,
+        verifiedBinaryNotExecutable: 126,
+        gradleWrapperMissing: 127
+    } and
+    .credentialBoundary.credentialValuesInGeneratedFiles == false and
+    .credentialBoundary.credentialValuesInArguments == false and
+    .credentialBoundary.credentialValuesPassedToGradle == false and
+    .outcome == "STICKY_WRAPPER_CONTRACT_ACCEPTED" and
+    .boundaries == {
+        generatorImplemented: false,
+        bootstrapImplemented: false,
+        performanceClaim: false,
+        productionAuthorized: false,
+        soakRequired: false,
+        designPartnerRequired: false,
+        testOptimizationOwned: false
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'sticky-wrapper contract is malformed\n' >&2
+    exit 1
+fi
+
+if ! jq -e '
+    .schemaVersion == "buildopt.fixtures/sticky-wrapper-contract-invalid/v1" and
+    (.cases | length) == 13 and
+    ([.cases[].id] | unique | length) == 13 and
+    ([.cases[].errorClass] | unique | sort) == ([
+        "DUPLICATE_KEY",
+        "INCOMPLETE_SERVER_IDENTITY",
+        "INSECURE_URL",
+        "INVALID_VALUE",
+        "MACHINE_SPECIFIC_VALUE",
+        "SECURITY_SENSITIVE_KEY",
+        "UNKNOWN_KEY"
+    ] | sort)
+' "${buildopt_fixture_root}/invalid-cases.json" >/dev/null; then
+    printf 'sticky-wrapper invalid fixture registry is malformed\n' >&2
+    exit 1
+fi
+
+if [[ ! -x "${buildopt_fixture_root}/valid/buildoptw" ]] ||
+    [[ -x "${buildopt_fixture_root}/valid/buildoptw.bat" ]] ||
+    [[ -x "${buildopt_fixture_root}/valid/.buildopt/wrapper.properties" ]] ||
+    [[ -x "${buildopt_fixture_root}/valid/.buildopt/config.toml" ]]; then
+    printf 'sticky-wrapper fixture executable modes are incorrect\n' >&2
+    exit 1
+fi
+
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -count=1 ./dev/sticky-wrapper-contract-test
+
+printf 'Sticky wrapper contract: STICKY_WRAPPER_CONTRACT_ACCEPTED\n'

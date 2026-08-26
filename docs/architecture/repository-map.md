@@ -108,6 +108,7 @@ bytecode using the pinned Wrapper and repository-local JDK 21.
 
 | Normative source | Primary producers | Primary consumers | Conformance evidence |
 |---|---|---|---|
+| `specs/poc-sticky-wrapper-contract-v1.*` | future `buildopt wrapper` generator | future POSIX/Windows repository wrappers | `check-sticky-wrapper-contract`; portable four-file fixtures and independent parser tests |
 | `contracts/jsonschema/adaptive-fragment*.v1.schema.json` and `specs/poc-adaptive-state-portability-v1.*` | adaptive learner and local state writer | `internal/adaptivefragment`; `internal/launcher` HTTPS state adapter | `check-adaptive-fragment-state`, `check-adaptive-fragment-index`, `check-adaptive-state-portability` |
 | `contracts/jsonschema/build-session.v1.schema.json` | `internal/buildsession` | server history/export tooling | `check-build-session-schema`, `check-build-session-export` |
 | `contracts/proto/local-events/v1/` | JVM Gradle plugin | launcher event channel | `check-task-events-proto`, plugin handshake/correlation checks |
