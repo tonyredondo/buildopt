@@ -335,14 +335,12 @@ if (Test-Path -LiteralPath $InstallRoot) {
     }
 }
 
-if ($ManagementInvocation -and
-    ($WrapperArgs.Count -eq 2 -or ($WrapperArgs.Count -eq 3 -and $WrapperArgs[2] -ceq '--json')) -and
-    $WrapperArgs[0] -ceq '--buildopt' -and $WrapperArgs[1] -ceq 'version') {
-    if ($WrapperArgs.Count -eq 3) {
-        Write-Output "{`"schemaVersion`":`"buildopt.wrapper-status/v1`",`"distributionVersion`":`"$Version`",`"bootstrap`":`"VERIFIED`"}"
-    } else {
-        Write-Output "BuildOpt Wrapper $Version (verified)"
-    }
+if ($env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'version-json') {
+    Write-Output "{`"schemaVersion`":`"buildopt.wrapper-status/v1`",`"distributionVersion`":`"$Version`",`"bootstrap`":`"VERIFIED`"}"
+    exit 0
+}
+if ($env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'version') {
+    Write-Output "BuildOpt Wrapper $Version (verified)"
     exit 0
 }
 if ($ManagementInvocation) {

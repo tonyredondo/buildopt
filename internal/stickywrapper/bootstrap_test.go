@@ -34,6 +34,7 @@ func TestBootstrapTemplatesStayWithinPortableFileContract(t *testing.T) {
 		"AllowAutoRedirect = $false",
 		"[Environment]::GetCommandLineArgs()",
 		"BUILDOPT_WRAPPER_MANAGEMENT=version-json",
+		"$env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'version-json'",
 		"Security.Cryptography.SHA256",
 		"distribution archive contains an unsafe entry",
 		"verified bootstrap unavailable; running Gradle directly",
