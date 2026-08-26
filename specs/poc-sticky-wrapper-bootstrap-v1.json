@@ -13,8 +13,8 @@
     },
     "windows": {
       "path": "internal/stickywrapper/templates/buildoptw.bat",
-      "sha256": "814c0e0772b9cac5788a4730b68ad91932372f3d8552f56c625ee0b3c99c1004",
-      "bytes": 18808
+      "sha256": "1a16d9aeaa57b23116fe8ca3dfeae58959d5b03cce0b6f0bcf12311328c2c724",
+      "bytes": 19044
     }
   },
   "platforms": {

@@ -1,7 +1,10 @@
 @echo off
 setlocal
 set "BUILDOPT_WRAPPER_FILE=%~f0"
-powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "$forward=@();$seen=$false;foreach($item in [Environment]::GetCommandLineArgs()){if($seen){$forward+=,$item}elseif($item -ceq '--buildopt-wrapper-arguments'){$seen=$true}};if(-not $seen){exit 70};$commandArgs=@($args);if($commandArgs.Count -gt 0 -and $commandArgs[0] -ceq '--buildopt-wrapper-arguments'){$commandArgs=@($commandArgs|Select-Object -Skip 1)};if($commandArgs.Count -gt 0 -and $commandArgs[0] -ceq '--buildopt'){$forward=$commandArgs};$raw=[IO.File]::ReadAllText($env:BUILDOPT_WRAPPER_FILE);$marker='# BUILDOPT_'+'POWERSHELL';$offset=$raw.IndexOf($marker);if($offset -lt 0){exit 70};$body=$raw.Substring($offset+$marker.Length);& ([ScriptBlock]::Create($body)) @forward" --buildopt-wrapper-arguments %*
+set "BUILDOPT_WRAPPER_MANAGEMENT="
+if "%~1"=="--buildopt" if "%~2"=="version" if "%~3"=="" set "BUILDOPT_WRAPPER_MANAGEMENT=version"
+if "%~1"=="--buildopt" if "%~2"=="version" if "%~3"=="--json" if "%~4"=="" set "BUILDOPT_WRAPPER_MANAGEMENT=version-json"
+powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "$forward=@();$seen=$false;foreach($item in [Environment]::GetCommandLineArgs()){if($seen){$forward+=,$item}elseif($item -ceq '--buildopt-wrapper-arguments'){$seen=$true}};if(-not $seen){exit 70};if($env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'version'){$forward=@('--buildopt','version')}elseif($env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'version-json'){$forward=@('--buildopt','version','--json')};$raw=[IO.File]::ReadAllText($env:BUILDOPT_WRAPPER_FILE);$marker='# BUILDOPT_'+'POWERSHELL';$offset=$raw.IndexOf($marker);if($offset -lt 0){exit 70};$body=$raw.Substring($offset+$marker.Length);& ([ScriptBlock]::Create($body)) @forward" --buildopt-wrapper-arguments %*
 exit /b %ERRORLEVEL%
 # BUILDOPT_POWERSHELL
 $ErrorActionPreference = 'Stop'
@@ -22,6 +25,7 @@ $GradleWrapper = $null
 function Clear-BuildOptChildEnvironment {
     $Names = @(
         'BUILDOPT_BYPASS', 'BUILDOPT_WRAPPER_CACHE_HOME',
+        'BUILDOPT_WRAPPER_MANAGEMENT',
         'BUILDOPT_PLUGIN_ATTEMPT_ID', 'BUILDOPT_PLUGIN_SOCKET', 'BUILDOPT_PLUGIN_TOKEN',
         'BUILDOPT_GATEWAY_URL', 'BUILDOPT_GATEWAY_USERNAME', 'BUILDOPT_GATEWAY_PASSWORD',
         'BUILDOPT_GATEWAY_GENERATION', 'BUILDOPT_MANAGED_GATEWAY_STATE_ROOT',
