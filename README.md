@@ -120,9 +120,11 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > into a current customer claim.
 
 > **New successor experiment:** BuildOpt is now testing a repository-committed
-> wrapper as the sticky customer integration. A maintainer will generate
+> wrapper as the sticky customer integration. A maintainer can now generate
 > `buildoptw`, `buildoptw.bat`, checksum-pinned wrapper properties and portable
-> non-secret configuration once; developers and CI will then run
+> non-secret configuration deterministically with `buildopt wrapper init`.
+> Verified bootstrap and Gradle passthrough remain the next blocks; once they
+> close, developers and CI will run
 > `./buildoptw <gradle args...>` without a global BuildOpt installation or a
 > hand-authored profile. The wrapper will use the existing Gradle-compatible
 > HTTPS cache and a separate typed decision store to choose native no-op,

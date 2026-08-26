@@ -59,10 +59,25 @@ Credentials remain in an environment variable, CI secret/OIDC exchange or
 private file and are not passed to Gradle.
 
 The file, configuration, routing, bypass, update and credential contract is
-now frozen and tested on POSIX- and Windows-shaped parsers. The generator and
-bootstrap are not implemented yet. The current installation and commands below
-remain the usable path until `SWL-002..004` close. The complete sequence,
-scorecard and status are in the
+frozen and tested on POSIX- and Windows-shaped parsers. The generator is now
+implemented. A maintainer with a current BuildOpt binary can create the
+committed files once with:
+
+```bash
+buildopt wrapper init \
+  --server https://buildopt.example.com \
+  --project-scope owner/repository
+buildopt wrapper check
+git add buildoptw buildoptw.bat .buildopt/wrapper.properties .buildopt/config.toml
+```
+
+`init` pins the latest stable public release and its four GitHub SHA-256 asset
+digests; it does not download an archive. `check` is offline/read-only. Use
+`buildopt wrapper update --version X.Y.Z` for an explicit upgrade. Bootstrap
+and Gradle passthrough are not implemented yet, so these scripts intentionally
+stop before running a build until `SWL-003..004` close. The installed
+`buildopt gradle` path below remains the usable evaluation path meanwhile. The
+complete sequence, scorecard and status are in the
 [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md).
 
 ## Install

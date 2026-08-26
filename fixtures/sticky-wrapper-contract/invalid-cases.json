@@ -26,15 +26,15 @@
       "id": "PROPERTIES_PLAIN_HTTP",
       "file": "wrapper.properties",
       "operation": "replace-first",
-      "old": "https://downloads.example.invalid",
-      "value": "http://downloads.example.invalid",
+      "old": "https://github.com",
+      "value": "http://github.com",
       "errorClass": "INSECURE_URL"
     },
     {
       "id": "PROPERTIES_MACHINE_PATH",
       "file": "wrapper.properties",
       "operation": "replace-first",
-      "old": "https://downloads.example.invalid/buildopt/v0.6.1/buildopt-0.6.1-linux-amd64.tar.gz",
+      "old": "https://github.com/tonyredondo/buildopt/releases/download/v0.6.1/buildopt-0.6.1-linux-amd64.tar.gz",
       "value": "file:///home/alice/buildopt.tar.gz",
       "errorClass": "MACHINE_SPECIFIC_VALUE"
     },

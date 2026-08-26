@@ -1,4 +1,4 @@
 #!/bin/sh
 set -eu
-printf '%s\n' 'BuildOpt Wrapper contract fixture: bootstrap is not implemented.' >&2
+printf '%s\n' 'BuildOpt Wrapper bootstrap is not implemented.' >&2
 exit 70

@@ -64,6 +64,13 @@ exact outputs, portability and product outcomes, then permits continued
 learning only when projected compatible lifetime repays within five matches.
 It never authorizes an extra measurement build or production behavior.
 
+`stickywrapper/` owns the four repository-committed wrapper files and the
+maintainer `init`, read-only `check` and distribution-only `update` commands.
+It resolves immutable public release metadata, validates strict portable
+configuration and publishes through a rollback-safe transaction. It never
+downloads or executes an archive, passes credentials to Gradle or grants
+runtime/performance authority.
+
 `launcher/` contains the dependency-free `WS-001` command passthrough, the
 `WS-002` Linux process-group and signal contract, the `WS-003` plugin handshake,
 and the neutral `WS-004` authenticated local rendezvous used by `cmd/buildopt`.

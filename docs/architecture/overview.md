@@ -45,10 +45,11 @@ cache publication, policy activation, task qualification, Build Impact, and
 patch application fail closed because accepting unproven work could change the
 result.
 
-### Planned sticky-wrapper entrypoint
+### Sticky-wrapper entrypoint under construction
 
-The active successor POC will add a thin repository-committed entrypoint above
-the implemented launcher:
+The active successor POC is adding a thin repository-committed entrypoint above
+the implemented launcher. The deterministic generator exists; bootstrap and
+execution remain subsequent blocks:
 
 ```text
 committed buildoptw / buildoptw.bat
@@ -61,13 +62,14 @@ committed buildoptw / buildoptw.bat
 existing buildopt launcher -> existing Gradle Wrapper
 ```
 
-The four planned committed files contain only bootstrap identity and portable
+The four generated committed files contain only bootstrap identity and portable
 non-secret configuration. Runtime credentials remain private. A local exact
 decision keeps `NATIVE_NOOP` out of a blocking server lookup; expired,
 incompatible or absent state uses native Gradle. The existing Gradle-cache data
 plane and typed state control plane remain separate. This boundary is frozen in
 the [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
-but is not implemented yet.
+and is implemented through deterministic generation only; it is not yet an
+end-to-end customer build path.
 
 ## Components
 

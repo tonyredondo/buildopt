@@ -4,6 +4,22 @@ Go binary installed on CI runners and workstations.
 
 Its boundary includes the launcher, neutral measurement envelope, Local Verifying Cache Gateway, and bypass to the original command.
 
+## Repository wrapper generator
+
+Maintainers can generate and commit the four-file Sticky Wrapper POC surface:
+
+```bash
+buildopt wrapper init --server https://buildopt.example.com --project-scope owner/repository
+buildopt wrapper check
+buildopt wrapper update --version X.Y.Z
+```
+
+`init` resolves immutable public release metadata but does not download an
+archive. `check` is offline and read-only. `update` preserves scripts and owner
+configuration, performs no write for the current version and rejects a
+downgrade unless `--allow-downgrade` is explicit. The generated scripts remain
+inert until the verified bootstrap block is implemented.
+
 ## Passthrough execution
 
 The initial executable surface is:

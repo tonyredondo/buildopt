@@ -3,8 +3,8 @@
 ## Status
 
 **Overall:** `IN_PROGRESS`<br>
-**Progress:** `2/17` blocks complete<br>
-**Current block:** `SWL-002` — wrapper generator<br>
+**Progress:** `3/17` blocks complete<br>
+**Current block:** `SWL-003` — verified bootstrap<br>
 **Predecessor:** the adaptive-fragment experiment closed as
 `STOP_ADAPTIVE_FRAGMENT_POC` with zero activations and zero attributable
 saving. Its evidence remains immutable context, not authority for this POC.
@@ -237,8 +237,8 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | ---: | --- | --- | --- | --- |
 | 0 | `SWL-000` Hypothesis and documentation alignment | Frozen tracker, machine-readable contract and repository-wide POC direction | `DONE` | AF-015 |
 | 1 | `SWL-001` Repository wrapper contract | Exact committed files, properties/config grammar, CLI, bootstrap and authority boundaries | `DONE` | SWL-000 |
-| 2 | `SWL-002` Wrapper generator | `buildopt wrapper init` creates, updates and verifies deterministic portable files | `TODO` | SWL-001 |
-| 3 | `SWL-003` Verified bootstrap | Cross-platform download/cache/install with SHA-256, offline reuse and negative fixtures | `WAITING` | SWL-002 |
+| 2 | `SWL-002` Wrapper generator | `buildopt wrapper init` creates, updates and verifies deterministic portable files | `DONE` | SWL-001 |
+| 3 | `SWL-003` Verified bootstrap | Cross-platform download/cache/install with SHA-256, offline reuse and negative fixtures | `TODO` | SWL-002 |
 | 4 | `SWL-004` Gradle passthrough and bypass | Wrapper discovers the repository Gradle Wrapper and preserves complete process behavior | `WAITING` | SWL-003 |
 | 5 | `SWL-005` Portable connection and project identity | Non-secret committed endpoint/scope plus private credential discovery | `WAITING` | SWL-004 |
 | 6 | `SWL-006` Gradle HTTP cache integration | Existing verifying gateway and central cache operate automatically through the wrapper | `WAITING` | SWL-005 |
@@ -295,13 +295,27 @@ the contract and belong to SWL-002/003.
 
 ### SWL-002 — Wrapper generator
 
-Add `buildopt wrapper init`, `--check` and an explicit `--update-version` path.
-Generation is deterministic and update preserves owner-controlled portable
-configuration while refusing unrelated file changes.
+Implemented `buildopt wrapper init`, offline/read-only `check` and explicit
+`update --version`. `init` resolves stable public GitHub release metadata into
+immutable asset URLs and GitHub-provided SHA-256 digests without downloading
+an archive. Generation is deterministic; existing targets reject before
+metadata access. Update validates the complete current state, preserves both
+scripts and owner-controlled configuration, performs no same-version write and
+requires explicit downgrade authority.
 
 Acceptance: two generations are byte-identical; drift fails `--check`; update
 changes only pinned distribution identity; partial failure leaves all prior
 files intact.
+
+Closure: 15 test functions pass under the race detector. They cover every
+existing target, deterministic bytes, a read-only tree snapshot, script /
+properties / configuration drift, same-version idempotence, owner-config
+preservation, downgrade authority, pre-resolution rejection, concurrent
+writers and an injected mid-publication rollback with no transaction residue.
+The package passes `go vet` and compiles for Windows AMD64 and macOS ARM64. A
+real Linux smoke resolved public `v0.6.1`, generated modes `0755/0644`, checked
+all bytes, performed an idempotent update and rejected a second init with code
+65. No archive was downloaded or executed.
 
 ### SWL-003 — Verified bootstrap
 
@@ -494,7 +508,7 @@ customer behavior, architecture, value evidence or direction changes.
 | --- | --- | --- | --- |
 | `SWL-E001` | SWL-000 | Frozen hypothesis, machine contract, detailed tracker and aligned repository documentation | `DONE` |
 | `SWL-E002` | SWL-001 | [Repository wrapper protocol](../../specs/poc-sticky-wrapper-contract-v1.md), exact [machine contract](../../specs/poc-sticky-wrapper-contract-v1.json), portable [fixtures](../../fixtures/sticky-wrapper-contract/README.md) and executable [`check-sticky-wrapper-contract`](../../dev/check-sticky-wrapper-contract): four paths, strict properties/config grammars, POSIX/Windows agreement, 13 negative cases, argument routing, bypass and downgrade semantics | `DONE` |
-| `SWL-E003` | SWL-002 | Wrapper generator, drift/update tests and atomic generation | `WAITING` |
+| `SWL-E003` | SWL-002 | [Generator contract](../../specs/poc-sticky-wrapper-generator-v1.md), `internal/stickywrapper`, executable [`check-sticky-wrapper-generator`](../../dev/check-sticky-wrapper-generator), deterministic/read-only/drift/update/downgrade/concurrency/rollback tests, portable compilation and real public-metadata smoke | `DONE` |
 | `SWL-E004` | SWL-003 | Cross-platform verified bootstrap and negative matrix | `WAITING` |
 | `SWL-E005` | SWL-004 | Gradle passthrough, signals, bypass and exit parity | `WAITING` |
 | `SWL-E006` | SWL-005 | Portable scope and credential-bound connection proof | `WAITING` |
@@ -529,5 +543,6 @@ customer behavior, architecture, value evidence or direction changes.
 
 | Date | Change |
 | --- | --- |
+| 2026-08-26 | Closed SWL-002. Implemented deterministic `wrapper init`, offline/read-only `check` and distribution-only `update`; bound real immutable GitHub release digests without archive download, preserved owner files, rejected drift/downgrade/concurrency and proved full rollback. Linux race/vet, Windows/macOS compilation and public `v0.6.1` metadata smoke pass; opened SWL-003. |
 | 2026-08-26 | Closed SWL-001. Frozen four portable file formats, strict ordered properties and flat-TOML configuration, four platform distributions, HTTPS/checksum/timeouts/proxy/redirect rules, unambiguous `--buildopt`/`--gradle` routing, pre-bootstrap bypass, update/downgrade semantics and fixed error behavior. Both parser shapes accept the canonical fixture and reject all 13 negative cases; opened SWL-002. |
 | 2026-08-26 | Opened the successor POC after AF-015. Frozen the repository-committed wrapper surface, separate Gradle-cache and typed-state planes, lifecycle, budgets, 17-block sequence and terminal value scorecard; completed SWL-000 and opened SWL-001. |

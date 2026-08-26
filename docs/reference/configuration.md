@@ -38,8 +38,11 @@ variable beginning with `BUILDOPT_`, never its value. Trial budget is 0..5%.
 
 The complete encoding, ordering, URL, path and failure rules are in the
 [sticky wrapper contract](../../specs/poc-sticky-wrapper-contract-v1.md).
-They are not accepted by the current binary until `SWL-002` implements the
-generator and parser.
+The current binary generates and validates them through `buildopt wrapper`.
+The [generator contract](../../specs/poc-sticky-wrapper-generator-v1.md)
+defines deterministic creation, read-only drift detection and release-only
+updates. The generated scripts do not bootstrap a distribution until
+`SWL-003` closes.
 
 BuildOpt configuration is grouped by trust boundary. Supply a complete group
 or omit it; partial configuration normally disables that optional capability

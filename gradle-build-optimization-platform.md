@@ -116,7 +116,20 @@ management, while leading `--gradle` escapes that prefix.
 `BUILDOPT_BYPASS=1` is checked before configuration or download and invokes the
 repository Gradle Wrapper directly. The exact contract is
 [`poc-sticky-wrapper-contract-v1`](./specs/poc-sticky-wrapper-contract-v1.md);
-the generator and verified bootstrap remain separate subsequent blocks.
+the implemented generator is specified by
+[`poc-sticky-wrapper-generator-v1`](./specs/poc-sticky-wrapper-generator-v1.md),
+while verified bootstrap remains a separate subsequent block.
+
+`SWL-002` implements `buildopt wrapper init`, offline/read-only `check` and
+distribution-only `update`. The generator resolves a stable public GitHub
+release into four immutable asset URLs and GitHub-provided SHA-256 digests but
+does not download an archive. Identical inputs produce identical bytes; init
+refuses any target before metadata access; update requires canonical current
+state, preserves scripts/configuration, performs no same-version write and
+requires explicit downgrade authority. A repository transaction stages and
+flushes all files, preserves prior bytes and restores the complete old state
+after any publication failure. Bootstrap, Gradle passthrough and performance
+authority remain false.
 
 The result authorizes a `CONTINUE` decision for further POC exploration only. It does not prove universal savings or production readiness. The initial realistic change-class matrix in [`poc-breadth-validation-v1`](./specs/poc-breadth-validation-v1.md) qualified 2/8 cells. Attribution and calibrated paired experiments reproduced the bounded Groovy and leaf Kotlin value cells, while shared-source and build-logic Kotlin remained order-sensitive. The terminal decision therefore retained the qualified synthetic claim and prohibited more unchanged replication or product tuning against noisy evidence.
 
@@ -3290,9 +3303,10 @@ The generic structural-profile POC and its adaptive-fragment successor are now
 both stopped by their frozen terminal gates. The active successor is the
 repository-committed sticky-wrapper learning POC. It reuses the implemented
 launcher, packages, Gradle HTTP cache, typed central state and fail-open
-controls, but grants no authority to the stopped profiles. Its first block has
-defined the wrapper contract and its next block implements the deterministic
-generator; its terminal gate requires exact outputs, zero
+controls, but grants no authority to the stopped profiles. Its first two
+implementation blocks have defined the wrapper contract and delivered the
+deterministic maintainer generator; verified cross-platform bootstrap is next.
+Its terminal gate requires exact outputs, zero
 product failures, negligible native-retention cost, positive cumulative value,
 positive confidence and payback in at least three of five public families.
 

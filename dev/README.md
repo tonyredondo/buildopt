@@ -34,6 +34,19 @@ fixtures, routing and update semantics with:
 This is the `SWL-001` contract gate. It does not generate or bootstrap a
 customer wrapper.
 
+Validate the implemented deterministic generator, read-only drift check,
+distribution-only update, downgrade boundary, rollback behavior and Windows /
+macOS compilation with:
+
+```bash
+./dev/check-sticky-wrapper-generator
+```
+
+This is the `SWL-002` implementation gate. It resolves release metadata in a
+separate real smoke, but the deterministic gate itself is offline. It never
+downloads or executes a distribution archive; verified bootstrap belongs to
+`SWL-003`.
+
 ## Toolchain lock
 
 [`toolchains.lock.yaml`](./toolchains.lock.yaml) is the source of truth for downloadable development toolchains on the initial `linux-amd64` platform. It is JSON-compatible YAML 1.2 so the Phase 0 validator can parse it with `jq` before the repository adopts a YAML library.

@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_work=$(mktemp -d)
+trap 'rm -rf -- "${buildopt_work}"' EXIT
+buildopt_contract="${buildopt_repo_root}/specs/poc-sticky-wrapper-generator-v1.json"
+
+cd -- "${buildopt_repo_root}"
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/sticky-wrapper-generator/v1" and
+    .workItem == "SWL-002" and
+    .inputContract.sha256 == "6a3f9a9f0e6c784a8078eddb6189268c699d242748d962365f56ed02c6038c0b" and
+    .generation.targetCount == 4 and
+    .generation.deterministic == true and
+    .generation.checkOffline == true and
+    .generation.checkReadOnly == true and
+    .generation.sameVersionUpdateWrites == false and
+    .generation.updateRequiresCanonicalCurrentState == true and
+    .generation.updatePreservesScriptsAndOwnerConfiguration == true and
+    .generation.downgradeRequiresExplicitFlag == true and
+    .generation.rollbackOnFailure == true and
+    .portableValidation.unitTestFunctions == 15 and
+    .failureCodes == {
+        usage: 64,
+        committedDataOrDrift: 65,
+        releaseMetadataUnavailable: 69,
+        internalOrTransaction: 70
+    } and
+    .outcome == "STICKY_WRAPPER_GENERATOR_ACCEPTED" and
+    .boundaries.generatorImplemented == true and
+    .boundaries.bootstrapImplemented == false and
+    .boundaries.distributionDownloaded == false and
+    .boundaries.distributionExecuted == false and
+    .boundaries.performanceClaim == false and
+    .boundaries.productionAuthorized == false and
+    .boundaries.testOptimizationOwned == false
+' "${buildopt_contract}" >/dev/null; then
+    printf 'sticky-wrapper generator contract is malformed\n' >&2
+    exit 1
+fi
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test -race -count=1 ./internal/stickywrapper
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go vet ./internal/stickywrapper ./internal/launcher ./cmd/buildopt
+GOOS=windows GOARCH=amd64 "${buildopt_script_dir}/run" --toolchain go -- \
+    go test -c -o "${buildopt_work}/sticky-wrapper-windows-amd64.test.exe" \
+    ./internal/stickywrapper
+GOOS=darwin GOARCH=arm64 "${buildopt_script_dir}/run" --toolchain go -- \
+    go test -c -o "${buildopt_work}/sticky-wrapper-darwin-arm64.test" \
+    ./internal/stickywrapper
+
+test -s "${buildopt_work}/sticky-wrapper-windows-amd64.test.exe"
+test -s "${buildopt_work}/sticky-wrapper-darwin-arm64.test"
+printf 'Sticky wrapper generator: STICKY_WRAPPER_GENERATOR_ACCEPTED\n'

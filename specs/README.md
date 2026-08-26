@@ -11,6 +11,7 @@ the exact cross-component contract.
 |---|---|
 | [`poc-sticky-wrapper-learning-v1.md`](./poc-sticky-wrapper-learning-v1.md) and [`poc-sticky-wrapper-learning-v1.json`](./poc-sticky-wrapper-learning-v1.json) | `SWL-000`; active successor POC contract |
 | [`poc-sticky-wrapper-contract-v1.md`](./poc-sticky-wrapper-contract-v1.md) and [`poc-sticky-wrapper-contract-v1.json`](./poc-sticky-wrapper-contract-v1.json) | `SWL-001`; generated files, strict configuration, argument routing and update boundary |
+| [`poc-sticky-wrapper-generator-v1.md`](./poc-sticky-wrapper-generator-v1.md) and [`poc-sticky-wrapper-generator-v1.json`](./poc-sticky-wrapper-generator-v1.json) | `SWL-002`; deterministic init/check/update, immutable release metadata and rollback-safe publication |
 | [`poc-adaptive-fragment-contract-v1.md`](./poc-adaptive-fragment-contract-v1.md) and [`poc-adaptive-fragment-contract-v1.json`](./poc-adaptive-fragment-contract-v1.json) | `AF-001` |
 | [`poc-adaptive-fragment-state-v1.md`](./poc-adaptive-fragment-state-v1.md) and [`poc-adaptive-fragment-state-v1.json`](./poc-adaptive-fragment-state-v1.json) | `AF-002` |
 | [`poc-adaptive-fragment-index-v1.md`](./poc-adaptive-fragment-index-v1.md) and [`poc-adaptive-fragment-index-v1.json`](./poc-adaptive-fragment-index-v1.json) | `AF-003` |

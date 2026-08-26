@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-generator/v1",
+  "workItem": "SWL-002",
+  "inputContract": {
+    "path": "specs/poc-sticky-wrapper-contract-v1.json",
+    "sha256": "6a3f9a9f0e6c784a8078eddb6189268c699d242748d962365f56ed02c6038c0b"
+  },
+  "commands": {
+    "init": "buildopt wrapper init [--server URL --project-scope SCOPE] [--mode auto|observe|off]",
+    "check": "buildopt wrapper check",
+    "update": "buildopt wrapper update --version VERSION [--allow-downgrade]"
+  },
+  "releaseMetadata": {
+    "provider": "GITHUB_RELEASE_API",
+    "repository": "tonyredondo/buildopt",
+    "latestResolvedBeforeCommit": true,
+    "exactVersionTagRequired": true,
+    "stablePublicReleaseRequired": true,
+    "archiveDownloaded": false,
+    "archiveExecuted": false,
+    "assetDigestSource": "GITHUB_SHA256_DIGEST",
+    "redirectsAllowed": false,
+    "connectTimeoutMs": 5000,
+    "requestTimeoutMs": 30000,
+    "proxySource": "PROCESS_ENVIRONMENT",
+    "optionalCredentialEnvironment": "GITHUB_TOKEN"
+  },
+  "generation": {
+    "targetCount": 4,
+    "deterministic": true,
+    "initRefusesExistingTargetBeforeMetadataResolution": true,
+    "checkOffline": true,
+    "checkReadOnly": true,
+    "sameVersionUpdateWrites": false,
+    "updateRequiresCanonicalCurrentState": true,
+    "updatePreservesScriptsAndOwnerConfiguration": true,
+    "downgradeRequiresExplicitFlag": true,
+    "transactionLock": true,
+    "stagedWrites": true,
+    "priorFilesBackedUp": true,
+    "rollbackOnFailure": true,
+    "transactionResidueAllowed": false
+  },
+  "portableValidation": {
+    "linuxAmd64RuntimeTested": true,
+    "windowsAmd64Compiled": true,
+    "macosArm64Compiled": true,
+    "canonicalRelease": "0.6.1",
+    "canonicalReleaseAssetCount": 4,
+    "realPublicMetadataResolved": true,
+    "unitTestFunctions": 15,
+    "raceDetector": true,
+    "goVet": true
+  },
+  "failureCodes": {
+    "usage": 64,
+    "committedDataOrDrift": 65,
+    "releaseMetadataUnavailable": 69,
+    "internalOrTransaction": 70
+  },
+  "outcome": "STICKY_WRAPPER_GENERATOR_ACCEPTED",
+  "boundaries": {
+    "generatorImplemented": true,
+    "bootstrapImplemented": false,
+    "distributionDownloaded": false,
+    "distributionExecuted": false,
+    "gradlePassthroughImplemented": false,
+    "performanceClaim": false,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimizationOwned": false
+  }
+}

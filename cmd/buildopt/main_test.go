@@ -50,7 +50,7 @@ const (
 	managedL1RetentionEnvironment  = "BUILDOPT_MANAGED_L1_RETENTION_DAYS"
 	gatewayReadyPath               = "/_buildopt/ready"
 	gatewayGenerationHeader        = "BuildOpt-Gateway-Connection-Generation"
-	expectedUsage                  = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt optimize [options] [--] <gradle args...>\n       buildopt connect https://HOST[:PORT] --token-file PATH [--ca-file PATH]\n       buildopt sync\n       buildopt poc --changes-file PATH [options]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt profile input [options]\n       buildopt profile outputs [options]\n       buildopt profile propose [options]\n       buildopt profile analyze [options]\n       buildopt profile measure [options]\n       buildopt profile qualify [options]\n       buildopt profile evaluate [options]\n       buildopt profile aggregate [options]\n       buildopt profile discover [options]\n       buildopt profile native-observe [options]\n       buildopt profile native-context [options]\n       buildopt profile native-preflight [options]\n       buildopt profile quarantine [options]\n       buildopt doctor\n"
+	expectedUsage                  = "usage: buildopt run -- <command> [args...]\n       buildopt gradle [gradle args...]\n       buildopt optimize [options] [--] <gradle args...>\n       buildopt connect https://HOST[:PORT] --token-file PATH [--ca-file PATH]\n       buildopt sync\n       buildopt poc --changes-file PATH [options]\n       buildopt impact --repository-id OWNER/REPO --changes-file PATH [options]\n       buildopt profile input [options]\n       buildopt profile outputs [options]\n       buildopt profile propose [options]\n       buildopt profile analyze [options]\n       buildopt profile measure [options]\n       buildopt profile qualify [options]\n       buildopt profile evaluate [options]\n       buildopt profile aggregate [options]\n       buildopt profile discover [options]\n       buildopt profile native-observe [options]\n       buildopt profile native-context [options]\n       buildopt profile native-preflight [options]\n       buildopt profile quarantine [options]\n       buildopt wrapper init [--server URL --project-scope SCOPE] [--mode auto|observe|off]\n       buildopt doctor\n"
 )
 
 type helperObservation struct {
@@ -86,6 +86,23 @@ func TestBuildoptCLI(t *testing.T) {
 	clearManagedL1Environment(t)
 
 	buildoptBinary := buildBuildopt(t)
+
+	t.Run("exposes the repository wrapper generator", func(t *testing.T) {
+		command := exec.Command(buildoptBinary, "wrapper", "--help")
+		var stdout bytes.Buffer
+		var stderr bytes.Buffer
+		command.Stdout = &stdout
+		command.Stderr = &stderr
+		if err := command.Run(); err != nil {
+			t.Fatalf("wrapper help failed: %v\n%s", err, stderr.String())
+		}
+		if !strings.Contains(stdout.String(), "buildopt wrapper init") ||
+			!strings.Contains(stdout.String(), "buildopt wrapper check") ||
+			!strings.Contains(stdout.String(), "buildopt wrapper update") ||
+			stderr.Len() != 0 {
+			t.Fatalf("wrapper help stdout/stderr = %q/%q", stdout.String(), stderr.String())
+		}
+	})
 
 	t.Run("preserves process contract and nonzero exit", func(t *testing.T) {
 		helperBinary, err := os.Executable()

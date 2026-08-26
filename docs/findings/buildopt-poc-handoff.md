@@ -209,12 +209,18 @@ and independently positive value/payback in at least three of five public
 families. Every bootstrap, observation, trial, cache, fallback and action cost
 counts. Historical AF observations are context only.
 
-`SWL-001` now freezes the four file formats, immutable per-platform
-distribution identities, strict portable configuration, explicit management
-routing, pre-bootstrap bypass and update/downgrade behavior. POSIX- and
-Windows-shaped parsers agree on the valid fixture and reject all 13 negative
-cases. This is contract evidence only; `SWL-002` must still implement the
-generator and there is no new performance claim.
+`SWL-001` freezes the four file formats, immutable per-platform distribution
+identities, strict portable configuration, explicit management routing,
+pre-bootstrap bypass and update/downgrade behavior. `SWL-002` now implements
+`buildopt wrapper init`, offline/read-only `check` and distribution-only
+`update`. Generation is byte-deterministic, refuses existing targets before
+network access, uses GitHub-provided SHA-256 asset digests, preserves owner
+configuration, requires explicit downgrade authority and rolls all files back
+after an injected mid-publication failure. Linux runtime tests pass under the
+race detector and the generator compiles for Windows AMD64 and macOS ARM64. A
+real metadata smoke generated and checked `v0.6.1` without downloading an
+archive. Bootstrap and Gradle execution remain unimplemented until
+`SWL-003..004`; there is still no new performance claim.
 
 No generic whole-profile implementation block followed automatically from that
 failed gate. The separately preregistered
@@ -296,6 +302,7 @@ outside this POC.
 - [Adaptive-fragment terminal contract](../../specs/poc-adaptive-fragment-terminal-decision-v1.md)
 - [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
 - [Sticky wrapper machine contract](../../specs/poc-sticky-wrapper-learning-v1.md)
+- [Sticky wrapper generator contract](../../specs/poc-sticky-wrapper-generator-v1.md)
 - [Machine-readable V3 summary](../../benchmarks/results/poc-lifetime-breadth-v3/summary.json)
 - [V3 protocol](../../specs/poc-lifetime-breadth-v3.md)
 - [Detailed historical findings](./build-optimization-performance.md)

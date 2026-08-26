@@ -13,10 +13,24 @@ buildopt wrapper check
 buildopt wrapper update --version VERSION [--allow-downgrade]
 ```
 
-This CLI is now frozen by `SWL-001` but is not implemented in the current
-package; `SWL-002` owns that implementation. `init` will generate `buildoptw`,
-`buildoptw.bat`, `.buildopt/wrapper.properties` and `.buildopt/config.toml`
-without a credential or machine path. The repeated customer command will be:
+This maintainer CLI is implemented by `SWL-002`. `init` resolves the latest
+stable public BuildOpt release into immutable URLs and GitHub-provided SHA-256
+digests, then generates `buildoptw`, `buildoptw.bat`,
+`.buildopt/wrapper.properties` and `.buildopt/config.toml` without a credential
+value or machine path. It refuses if any target already exists. `--server` and
+`--project-scope` must be supplied together; their private token remains in
+`BUILDOPT_TOKEN`.
+
+`check` is offline and read-only: non-canonical bytes, modes, order, values,
+links or missing files fail without repair. `update` first requires a clean
+canonical state, changes only release version/URLs/checksums and leaves both
+scripts and owner configuration byte-identical. Repeating a version performs
+no write; a downgrade requires `--allow-downgrade`. All writes are staged and
+rolled back as one four-file transaction on failure.
+
+The generated scripts intentionally report that bootstrap is unavailable
+until `SWL-003` closes. Therefore the repeated customer command remains a
+future surface:
 
 ```text
 ./buildoptw <gradle args...>
@@ -34,6 +48,8 @@ remaining arguments to Gradle, including a literal `--buildopt`.
 state, cache gateway, plugin and observation setup and invokes Gradle directly.
 The exact routing, exit codes and fail-open behavior are in the
 [wrapper contract](../../specs/poc-sticky-wrapper-contract-v1.md).
+Generator behavior and evidence are in the
+[generator contract](../../specs/poc-sticky-wrapper-generator-v1.md).
 
 ### Run a command
 
