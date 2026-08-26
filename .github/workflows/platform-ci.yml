@@ -258,7 +258,8 @@ jobs:
           }
           $env:BUILDOPT_PLUGIN_TOKEN = 'must-not-reach-gradle'
           'input line' | & "$WrapperRoot\buildoptw.bat" @ProbeArgs 1>"$env:RUNNER_TEMP\scrubbed.out" 2>"$env:RUNNER_TEMP\scrubbed.err"
-          if ((Get-Content -Raw "$env:RUNNER_TEMP\scrubbed.out") -notmatch '"internal":""') { throw 'private BuildOpt environment reached Gradle' }
+          $ScrubbedExit = $LASTEXITCODE
+          if ($ScrubbedExit -ne 37 -or (Get-Content -Raw "$env:RUNNER_TEMP\scrubbed.out") -notmatch '"internal":""') { throw 'private BuildOpt environment reached Gradle' }
           Remove-Item Env:BUILDOPT_PLUGIN_TOKEN
           Move-Item "$WrapperRoot\.buildopt\wrapper.properties" "$WrapperRoot\.buildopt\wrapper.properties.saved"
           $env:BUILDOPT_BYPASS = '1'
@@ -269,6 +270,7 @@ jobs:
               (Get-FileHash "$env:RUNNER_TEMP\direct.out").Hash -ne (Get-FileHash "$env:RUNNER_TEMP\bypass.out").Hash -or
               (Get-FileHash "$env:RUNNER_TEMP\direct.err").Hash -ne (Get-FileHash "$env:RUNNER_TEMP\bypass.err").Hash) { throw 'pre-bootstrap bypass parity failed' }
           Move-Item "$WrapperRoot\.buildopt\wrapper.properties.saved" "$WrapperRoot\.buildopt\wrapper.properties"
+          exit 0
       - name: Build, package, install, upgrade, and launch
         shell: pwsh
         run: |
