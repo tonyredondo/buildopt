@@ -28,7 +28,7 @@ jq -e '
     .workItem == "SWL-003" and
     .inputContract.sha256 == "38614c543483e59d7b039595b4dfb120bdb493b6650f92ae433bbe47e5b909df" and
     .templates.posix.sha256 == "22846bbb63f24f0a422b1b1024ee74af22f7977faccb4676f617ee71e89e4334" and
-    .templates.windows.sha256 == "6e0e8ef5ac15d151fb6e229337638344b9753ffa0a554957c2e210587780be22" and
+    .templates.windows.sha256 == "231e6c93870d635a1f392df58d0d5313a9fca8dc1deee979dea423f37f563b58" and
     .download.redirectPolicy == "HTTPS_ONLY_MAX_5" and
     .download.archiveSha256RequiredBeforeExtraction != false and
     .archive.traversalRejected and .archive.linksRejected and

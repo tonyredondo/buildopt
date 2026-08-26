@@ -66,6 +66,16 @@ if ($Uri.Scheme -cne 'https' -or -not [string]::IsNullOrEmpty($Uri.UserInfo) -or
 }
 
 $MarkerLines = @('buildopt.wrapper-install/v1', $Version, $Platform, $ArchiveSha)
+function Get-Sha256Hex([string]$Path) {
+    $InputStream = [IO.File]::OpenRead($Path)
+    try {
+        $Hasher = [Security.Cryptography.SHA256]::Create()
+        try {
+            return ([BitConverter]::ToString($Hasher.ComputeHash($InputStream))).Replace('-', '').ToLowerInvariant()
+        } finally { $Hasher.Dispose() }
+    } finally { $InputStream.Dispose() }
+}
+
 function Test-Manifest([string]$Root) {
     if (-not (Test-Path -LiteralPath $Root -PathType Container)) { return $false }
     $RootItem = Get-Item -LiteralPath $Root -Force
@@ -84,7 +94,7 @@ function Test-Manifest([string]$Root) {
         }
         $Target = Join-Path $Root ($Matches[2].Replace('/', '\'))
         if (-not (Test-Path -LiteralPath $Target -PathType Leaf)) { return $false }
-        if ((Get-FileHash -LiteralPath $Target -Algorithm SHA256).Hash.ToLowerInvariant() -cne $Matches[1]) { return $false }
+        if ((Get-Sha256Hex $Target) -cne $Matches[1]) { return $false }
         $Count++
     }
     return $Count -ge 4
@@ -176,7 +186,7 @@ if (Test-Path -LiteralPath $InstallRoot) {
                 } finally {
                     if ($null -ne $Response) { $Response.Dispose() }
                 }
-                if ((Get-FileHash -LiteralPath $Archive -Algorithm SHA256).Hash.ToLowerInvariant() -cne $ArchiveSha) {
+                if ((Get-Sha256Hex $Archive) -cne $ArchiveSha) {
                     Stop-Wrapper 74 'distribution checksum mismatch'
                 }
                 Add-Type -AssemblyName System.IO.Compression.FileSystem

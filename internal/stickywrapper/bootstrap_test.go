@@ -31,7 +31,7 @@ func TestBootstrapTemplatesStayWithinPortableFileContract(t *testing.T) {
 	}
 	for _, required := range []string{
 		"AllowAutoRedirect = $false",
-		"Get-FileHash",
+		"Security.Cryptography.SHA256",
 		"distribution archive contains an unsafe entry",
 		"Gradle passthrough belongs to SWL-004",
 	} {
