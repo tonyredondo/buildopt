@@ -1,7 +1,7 @@
 @echo off
 setlocal
 set "BUILDOPT_WRAPPER_FILE=%~f0"
-powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "$raw=[IO.File]::ReadAllText($env:BUILDOPT_WRAPPER_FILE);$marker='# BUILDOPT_'+'POWERSHELL';$offset=$raw.IndexOf($marker);if($offset -lt 0){exit 70};$body=$raw.Substring($offset+$marker.Length);& ([ScriptBlock]::Create($body)) @args" -- %*
+powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "$forward=@();$seen=$false;foreach($item in [Environment]::GetCommandLineArgs()){if($seen){$forward+=,$item}elseif($item -ceq '--buildopt-wrapper-arguments'){$seen=$true}};if(-not $seen){exit 70};$raw=[IO.File]::ReadAllText($env:BUILDOPT_WRAPPER_FILE);$marker='# BUILDOPT_'+'POWERSHELL';$offset=$raw.IndexOf($marker);if($offset -lt 0){exit 70};$body=$raw.Substring($offset+$marker.Length);& ([ScriptBlock]::Create($body)) @forward" --buildopt-wrapper-arguments %*
 exit /b %ERRORLEVEL%
 # BUILDOPT_POWERSHELL
 $ErrorActionPreference = 'Stop'
