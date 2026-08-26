@@ -52,6 +52,21 @@ function Invoke-GradleDirect {
     exit $LASTEXITCODE
 }
 
+function Invoke-NativePassthrough([string]$FilePath, [string[]]$Arguments) {
+    $StartInfo = [Diagnostics.ProcessStartInfo]::new()
+    $StartInfo.FileName = $FilePath
+    $StartInfo.UseShellExecute = $false
+    foreach ($Argument in $Arguments) {
+        [void]$StartInfo.ArgumentList.Add($Argument)
+    }
+    $Process = [Diagnostics.Process]::Start($StartInfo)
+    if ($null -eq $Process) { Stop-Wrapper 126 'verified BuildOpt binary could not start' }
+    try {
+        $Process.WaitForExit()
+        return $Process.ExitCode
+    } finally { $Process.Dispose() }
+}
+
 function Stop-Wrapper([int]$Code, [string]$Message) {
     if ($BootstrapFallbackEnabled) {
         [Console]::Error.WriteLine('buildoptw: verified bootstrap unavailable; running Gradle directly')
@@ -311,5 +326,7 @@ if ($ManagementInvocation) {
 $BootstrapFallbackEnabled = $false
 Clear-BuildOptChildEnvironment
 $BuildOptBinary = Join-Path $InstallRoot 'bin\buildopt.exe'
-& $BuildOptBinary run -- $GradleWrapper @WrapperArgs
-exit $LASTEXITCODE
+# Preserve the public buildopt run -- contract while passing each argument separately.
+$BuildOptArguments = @('run', '--', $GradleWrapper) + $WrapperArgs
+$BuildOptExitCode = Invoke-NativePassthrough $BuildOptBinary $BuildOptArguments
+exit $BuildOptExitCode
