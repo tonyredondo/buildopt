@@ -95,6 +95,15 @@ bootstrap, exact Gradle passthrough, authenticated portable connection and
 read-only central cache integration. The decision store grants no production
 authority and does not make a standalone wall-time claim.
 
+The installed two-machine proof exercises this boundary with a trusted
+producer and a clean read-only consumer in separate containers. The wrapper
+preloads and verifies one archive by version/platform/SHA-256, keeps pending
+Gradle cache objects invisible until owner commit, then restores cacheable
+tasks over HTTPS after a service restart. During an outage it executes the
+ordinary Gradle Wrapper and reproduces the same outputs. The central cache
+credential and optional POC CA path are launcher inputs and are scrubbed before
+Gradle starts; neither can authorize a BuildOpt decision.
+
 ## Components
 
 | Component | Runtime artifact | Responsibility |

@@ -3,8 +3,8 @@
 ## Status
 
 **Overall:** `IN_PROGRESS`<br>
-**Progress:** `14/17` blocks complete<br>
-**Current block:** `SWL-014` — two-machine installed proof<br>
+**Progress:** `15/17` blocks complete<br>
+**Current block:** `SWL-015` — frozen public longitudinal campaign<br>
 **Predecessor:** the adaptive-fragment experiment closed as
 `STOP_ADAPTIVE_FRAGMENT_POC` with zero activations and zero attributable
 saving. Its evidence remains immutable context, not authority for this POC.
@@ -249,8 +249,8 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | 11 | `SWL-011` Active execution and suspension | Qualified runtime action, revalidation, counterfactual sampling, regression suspension and native fallback | `DONE` | SWL-010 |
 | 12 | `SWL-012` Durable native optimization catalog | Generic detectors and reviewable patches for task contracts and graph breadth | `DONE` | SWL-009 |
 | 13 | `SWL-013` Customer status and explanation | Human/JSON decision, cumulative economics, cache metrics and exact fallback explanation | `DONE` | SWL-011, SWL-012 |
-| 14 | `SWL-014` Two-machine installed proof | Clean producer/consumer checkouts share cache/state through HTTPS and survive outage | `TODO` | SWL-013 |
-| 15 | `SWL-015` Frozen public longitudinal campaign | Current installed wrapper over preregistered chronological windows in five families | `WAITING` | SWL-014 |
+| 14 | `SWL-014` Two-machine installed proof | Clean producer/consumer checkouts share cache/state through HTTPS and survive outage | `DONE` | SWL-013 |
+| 15 | `SWL-015` Frozen public longitudinal campaign | Current installed wrapper over preregistered chronological windows in five families | `TODO` | SWL-014 |
 | 16 | `SWL-016` Terminal decision | Recompute the immutable scorecard and continue or stop without threshold movement | `WAITING` | SWL-015 |
 
 ## Block contracts
@@ -622,14 +622,31 @@ Status: `DONE`; see `E-416` and `SWL-E014`. SWL-014 is now the next block.
 ### SWL-014 — Two-machine installed proof
 
 Generate and commit the wrapper in an external fixture repository. A trusted
-producer and clean consumer use the public package, central HTTPS service and
-separate credentials. Exercise online, offline snapshot, outage, revocation,
-cache corruption and decision drift.
+producer and clean consumer use the verified package, central HTTPS service
+and separate credentials. Exercise restart, pending-publication visibility,
+cache reuse and service outage through the same committed `./buildoptw`
+command. The wrapper archive is preloaded only into the user cache; the
+launcher still verifies its internal manifest and outer SHA-256 before use.
 
-Acceptance: the customer command is only `./buildoptw <args>`; exact outputs,
-private credentials, cache/state separation and native fallback pass on two
-isolated machines or containers and the native OS CI matrix validates wrapper
-bootstrap behavior.
+Closure: [`poc-sticky-wrapper-two-machine-v1.md`](../../specs/poc-sticky-wrapper-two-machine-v1.md),
+its machine contract and [`check-sticky-wrapper-two-machine`](../../dev/check-sticky-wrapper-two-machine)
+prove the installed path in isolated 4-CPU/8-GiB containers. The producer
+publishes two Gradle cache objects, a same-generation read records
+`OWNER_COMMIT_REQUIRED`, the owner commits and restarts the HTTPS service, and
+the clean read-only consumer restores **2 tasks from cache**. Producer,
+consumer and outage runs produce the same required output SHA-256
+(`170ffd3f...077baeb` in the checked result). With the service offline, the
+wrapper performs a native Gradle rebuild with zero central hits and the same
+output. The distribution archive is verified in both machines, credentials
+remain outside Gradle/logs, and the configuration/decision planes stay
+separate. Phase durations are recorded (producer **7.985 s**, consumer
+**8.060 s**, outage **7.469 s**) for a later fair timing experiment; this block
+makes no wall-time or profile-qualification claim.
+
+The checked result is
+[`sticky-wrapper-two-machine-v1.json`](../../benchmarks/results/sticky-wrapper-two-machine-v1.json).
+Soak, design-partner validation, production authority and Test Optimization
+remain out of scope. `SWL-015` is now the next block.
 
 ### SWL-015 — Frozen public longitudinal campaign
 
@@ -695,7 +712,7 @@ customer behavior, architecture, value evidence or direction changes.
 | `SWL-E012` | SWL-011 | [`poc-sticky-wrapper-active-v1`](../../specs/poc-sticky-wrapper-active-v1.md), generic active runner and [`sticky-wrapper-active-v1.json`](../../benchmarks/results/sticky-wrapper-active-v1.json): current negative trial rejected, one exact synthetic active execution, three suspensions, four native retentions, signed binding revalidation and direct-command fallback | `DONE` |
 | `SWL-E013` | SWL-012 | Durable detector/patch breadth and value evidence | `DONE` |
 | `SWL-E014` | SWL-013 | Recomputable customer status/explanation contract | `DONE` |
-| `SWL-E015` | SWL-014 | Two-machine installed wrapper evidence | `TODO` |
+| `SWL-E015` | SWL-014 | [Two-machine installed wrapper evidence](../../benchmarks/results/sticky-wrapper-two-machine-v1.json), verified bootstrap, owner-commit visibility, read-only central cache hit, output equality and native outage fallback | `DONE` |
 | `SWL-E016` | SWL-015 | Frozen five-family longitudinal campaign | `WAITING` |
 | `SWL-E017` | SWL-016 | Immutable terminal scorecard and continue/stop decision | `WAITING` |
 
@@ -718,6 +735,7 @@ customer behavior, architecture, value evidence or direction changes.
 
 | Date | Change |
 | --- | --- |
+| 2026-08-27 | Closed SWL-014. The committed sticky wrapper bootstrapped one verified archive in isolated producer/consumer containers, published two Gradle cache objects over HTTPS, kept pending reads invisible until owner commit, restored two tasks from a clean read-only machine, and rebuilt the same output during service outage. Durations are recorded for the next timing experiment; no wall-time or profile-qualification claim is made. Opened SWL-015 frozen public longitudinal campaign. |
 | 2026-08-27 | Closed SWL-013. Added read-only customer `status` and `explain` management commands to both generated wrapper templates, with one recomputable human/JSON report model, explicit unavailable metrics, exact bindings, native fallback reasons and tamper rejection. Ordinary Gradle tasks named `status` or `explain` remain unambiguous. Opened SWL-014 two-machine installed proof. |
 | 2026-08-27 | Closed SWL-012. Added the generic durable native catalog for task-contract and graph-breadth opportunities, exact reviewable recipes, isolated apply/revert proofs and a strict 4-CPU/16-GiB evidence report. The task-contract detector is shared by Kotlin and Groovy; the reviewed patch saves 64.1% and 74.7% respectively across 16/16 exact pairs. Graph proposals remain structural-only with durable timing unmeasured. Opened SWL-013 customer status and explanation. |
 | 2026-08-27 | Closed SWL-011. Added the generic signed-decision active runner, direct candidate/native execution, exact required-output hashing, native counterfactual sampling, fail-closed suspension and native fallback. The checked-in SWL-010 report remains unauthorized because it is negative; synthetic control-flow evidence records one active execution, three suspensions and four native retentions. Opened SWL-012 durable native optimization catalog. |

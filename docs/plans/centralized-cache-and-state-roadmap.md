@@ -73,6 +73,16 @@ existing local/central generation-CAS state boundary; cache correctness is not
 by itself a performance claim. Its selector and learning consumers remain
 later POC blocks.
 
+### Installed two-machine proof
+
+The sticky-wrapper POC now exercises this architecture with separate producer
+and consumer containers. A verified archive is cached by version/platform/SHA,
+two Gradle objects remain pending until owner commit, and a restarted HTTPS
+service serves them to a read-only consumer. Service outage is an ordinary
+native Gradle rebuild with byte-identical output. The proof is recorded in
+[`sticky-wrapper-two-machine-v1.json`](../../benchmarks/results/sticky-wrapper-two-machine-v1.json)
+and intentionally reports phase durations only; it is not a speedup result.
+
 ## Target experience
 
 An owner prepares one server host:

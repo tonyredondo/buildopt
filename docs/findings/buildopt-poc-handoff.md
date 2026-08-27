@@ -149,9 +149,29 @@ but durable graph timing is deliberately **not measured yet**. This is
 promising synthetic POC evidence, not customer coverage or automatic patch
 authority.
 
-The next block is `SWL-013`: expose this evidence through customer-readable
-`status` and `explain` output, including cumulative economics, cache use and the
-precise reason native fallback or an action was selected.
+`SWL-013` is now complete: the wrapper exposes customer-readable `status` and
+`explain` output with recomputable economics, cache facts and exact fallback
+reasons. The next installed-path question is whether the committed wrapper
+works when a second machine consumes the same central cache.
+
+## Current installed two-machine proof
+
+`SWL-014` proves the transport and lifecycle, not acceleration. Two isolated
+4-CPU/8-GiB containers use the committed `./buildoptw` command and the same
+SHA-verified archive. A trusted producer publishes two Gradle cache objects;
+the consumer uses a separate read-only credential after the owner commits and
+restarts the HTTPS service. The consumer restores **2 tasks from cache** and
+the producer, consumer and outage rebuilds all emit the same required output
+SHA-256. When the service is offline, the wrapper records **0 central hits**
+and falls back to native Gradle successfully. The observed phases are **7.985
+s producer**, **8.060 s consumer** and **7.469 s outage**. Credentials are not
+visible to Gradle or logs, and pending objects remain invisible before owner
+commit.
+
+This is a functional installed-path result; it sets `wallTimeClaim=false` and
+does not qualify a profile. The next evidence must compare the same wrapper
+against optimized native Gradle over a frozen chronological public campaign,
+including both positive and negative commits and all wrapper/cache costs.
 
 ## Historical complete-profile result
 

@@ -188,14 +188,14 @@ if [[ "${buildopt_evidence_count}" != 17 ]]; then
 fi
 
 buildopt_required_text=(
-    "${buildopt_plan}|**Progress:** \`14/17\` blocks complete"
-    "${buildopt_plan}|**Current block:** \`SWL-014\` — two-machine installed proof"
+    "${buildopt_plan}|**Progress:** \`15/17\` blocks complete"
+    "${buildopt_plan}|**Current block:** \`SWL-015\` — frozen public longitudinal campaign"
     "${buildopt_plan}|./buildoptw <gradle args...>"
     "${buildopt_plan}|The existing central cache and state implementation is reused."
     "${buildopt_spec}|# Sticky wrapper learning POC v1"
     "${buildopt_spec}|CONTINUE_STICKY_WRAPPER_LEARNING_POC"
     "${buildopt_tracker}|STICKY WRAPPER LEARNING POC ACTIVE; PRIOR GENERIC HYPOTHESES STOPPED"
-    "${buildopt_tracker}|SWL-014_TWO_MACHINE_INSTALLED_PROOF"
+    "${buildopt_tracker}|SWL-015_FROZEN_PUBLIC_LONGITUDINAL_CAMPAIGN"
     "${buildopt_tracker}|POC-STICKY-WRAPPER-LEARNING"
     "${buildopt_tracker}|\`E-403\`"
     "${buildopt_tracker}|\`E-404\`"
@@ -211,6 +211,8 @@ buildopt_required_text=(
     "${buildopt_tracker}|\`E-414\`"
     "${buildopt_tracker}|\`E-415\`"
     "${buildopt_tracker}|\`E-416\`"
+    "${buildopt_plan}|\`SWL-E015\`"
+    "${buildopt_plan}|poc-sticky-wrapper-two-machine-v1.md"
     "${buildopt_rfc}|generate and commit BuildOpt Wrapper"
     "${buildopt_rfc}|Sticky Wrapper Learning POC Tracker"
 )

@@ -59,6 +59,10 @@ It loads only validated local observations and decision snapshots, renders one
 model as human text or JSON, and keeps missing evidence and native fallback
 explicit. The generated wrapper templates own the unambiguous `--buildopt`
 management routing; no report path grants action authority.
+The SWL-014 installed proof is owned by `dev/run-poc-central-two-machine`,
+`dev/central-two-machine-client` and `dev/check-sticky-wrapper-two-machine`,
+with its normative contract in `specs/poc-sticky-wrapper-two-machine-v1.*` and
+its checked result in `benchmarks/results/sticky-wrapper-two-machine-v1.json`.
 
 Run `./dev/check-sticky-wrapper-learning-plan` to validate this planning
 boundary. As implementation begins, this map must name the concrete owning
@@ -138,6 +142,7 @@ bytecode using the pinned Wrapper and repository-local JDK 21.
 | `specs/poc-sticky-wrapper-trial-v1.*` and `contracts/jsonschema/sticky-wrapper-trial.v1.schema.json` | `internal/stickytrial`, `cmd/sticky-trial-benchmark` | bounded candidate/native reports and exact required-output hashes | `check-sticky-wrapper-trial`; alternating order, trusted-CI budget, eight-root isolation, cancellation/concurrency fixtures and four exact-output pairs |
 | `specs/poc-sticky-wrapper-active-v1.*` and `contracts/jsonschema/sticky-wrapper-active.v1.schema.json` | `internal/stickyactive`, `cmd/sticky-active-benchmark` | active execution records, counterfactual comparison and suspension/fallback reasons | `check-sticky-wrapper-active`; negative qualification, direct-command execution, exact outputs, regression, drift, expiry, revocation, bypass and failure vectors |
 | `specs/poc-sticky-wrapper-durable-catalog-v1.*` and `contracts/jsonschema/sticky-wrapper-durable-catalog.v1.schema.json` | `internal/durablecatalog`, `cmd/sticky-durable-catalog-benchmark` | review-only native task/graph proposals, exact source recipes and isolated transaction evidence | `check-sticky-wrapper-durable-catalog`; two DSL families, eight paired task-contract measurements, exact output hashes, apply/revert and structural graph proposals |
+| `specs/poc-sticky-wrapper-two-machine-v1.*` | `dev/run-poc-central-two-machine`, `dev/central-two-machine-client` | installed wrapper archive, central Gradle cache objects and separate producer/consumer credentials | `check-sticky-wrapper-two-machine`; isolated HTTPS restart, owner-commit visibility, read-only cache hit, exact output equality and native outage fallback |
 | `contracts/jsonschema/adaptive-fragment*.v1.schema.json` and `specs/poc-adaptive-state-portability-v1.*` | adaptive learner and local state writer | `internal/adaptivefragment`; `internal/launcher` HTTPS state adapter | `check-adaptive-fragment-state`, `check-adaptive-fragment-index`, `check-adaptive-state-portability` |
 | `contracts/jsonschema/build-session.v1.schema.json` | `internal/buildsession` | server history/export tooling | `check-build-session-schema`, `check-build-session-export` |
 | `contracts/proto/local-events/v1/` | JVM Gradle plugin | launcher event channel | `check-task-events-proto`, plugin handshake/correlation checks |

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-two-machine/v1",
+  "workItem": "SWL-014",
+  "customerCommand": "./buildoptw <gradle-args>",
+  "topology": {
+    "producer": "TRUSTED_CACHE_WRITER",
+    "consumer": "CLEAN_READ_ONLY_MACHINE",
+    "transport": "HTTPS_TLS_1_3_MINIMUM",
+    "isolation": "DOCKER_CONTAINERS",
+    "clientCpuLimit": 4,
+    "clientMemoryBytes": 8589934592
+  },
+  "bootstrap": {
+    "distributionVersion": "SEMVER_PINNED_PER_RUN",
+    "archiveSha256": "REQUIRED",
+    "cacheKey": "VERSION_PLATFORM_ARCHIVE_SHA256",
+    "verification": "INTERNAL_MANIFEST_AND_ARCHIVE_SHA256"
+  },
+  "acceptance": {
+    "producerPendingRead": "OWNER_COMMIT_REQUIRED",
+    "consumerMinimumFromCacheTasks": 1,
+    "outageFromCacheTasks": 0,
+    "requiredOutputEquality": "PRODUCER_CONSUMER_OUTAGE_SHA256",
+    "privateCredentialsInGradle": false,
+    "nativeFallbackOnOutage": true,
+    "profileQualificationRequired": false,
+    "wallTimeClaim": false
+  },
+  "negativeCoverage": [
+    "LIVE_CREDENTIAL_REVOCATION",
+    "WRAPPER_CACHE_CORRUPTION",
+    "COMMITTED_CONFIGURATION_DRIFT",
+    "CENTRAL_SERVICE_OUTAGE"
+  ],
+  "authority": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

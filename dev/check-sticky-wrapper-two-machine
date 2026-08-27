@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_FILE]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract=${buildopt_repo_root}/specs/poc-sticky-wrapper-two-machine-v1.json
+buildopt_result=${1:-}
+buildopt_work=
+
+for buildopt_command in bash jq; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required sticky wrapper two-machine command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/sticky-wrapper-two-machine/v1" and
+    .workItem == "SWL-014" and
+    .customerCommand == "./buildoptw <gradle-args>" and
+    .topology == {
+        producer: "TRUSTED_CACHE_WRITER",
+        consumer: "CLEAN_READ_ONLY_MACHINE",
+        transport: "HTTPS_TLS_1_3_MINIMUM",
+        isolation: "DOCKER_CONTAINERS",
+        clientCpuLimit: 4,
+        clientMemoryBytes: 8589934592
+    } and
+    .bootstrap.distributionVersion == "SEMVER_PINNED_PER_RUN" and
+    .bootstrap.archiveSha256 == "REQUIRED" and
+    .bootstrap.cacheKey == "VERSION_PLATFORM_ARCHIVE_SHA256" and
+    .bootstrap.verification == "INTERNAL_MANIFEST_AND_ARCHIVE_SHA256" and
+    .acceptance.producerPendingRead == "OWNER_COMMIT_REQUIRED" and
+    .acceptance.consumerMinimumFromCacheTasks == 1 and
+    .acceptance.outageFromCacheTasks == 0 and
+    .acceptance.requiredOutputEquality == "PRODUCER_CONSUMER_OUTAGE_SHA256" and
+    .acceptance.privateCredentialsInGradle == false and
+    .acceptance.nativeFallbackOnOutage == true and
+    .acceptance.profileQualificationRequired == false and
+    .acceptance.wallTimeClaim == false and
+    (.negativeCoverage | index("LIVE_CREDENTIAL_REVOCATION")) != null and
+    (.negativeCoverage | index("WRAPPER_CACHE_CORRUPTION")) != null and
+    (.negativeCoverage | index("COMMITTED_CONFIGURATION_DRIFT")) != null and
+    (.negativeCoverage | index("CENTRAL_SERVICE_OUTAGE")) != null and
+    .authority == {
+        proofOfConcept: true,
+        productionAuthorized: false,
+        soakRequired: false,
+        designPartnerRequired: false,
+        testOptimization: "OUT_OF_SCOPE"
+    }
+' "${buildopt_contract}" >/dev/null; then
+    printf 'sticky wrapper two-machine contract is malformed\n' >&2
+    exit 1
+fi
+
+if (($# == 0)); then
+    buildopt_work=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-sticky-two-machine.XXXXXX")
+    trap 'rm -rf -- "${buildopt_work}"' EXIT
+    buildopt_result=${buildopt_work}/result.json
+    BUILDOPT_TWO_MACHINE_STICKY=1 \
+        "${buildopt_repo_root}/dev/run-poc-central-two-machine" "${buildopt_result}"
+fi
+
+if [[ ! -f "${buildopt_result}" ]]; then
+    printf 'sticky wrapper two-machine result is unavailable: %s\n' "${buildopt_result}" >&2
+    exit 1
+fi
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/central-two-machine-result/v1" and
+    .workItem == "POC-CENTRAL-TWO-MACHINE-001" and
+    (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+    (.packageSha256 | test("^[0-9a-f]{64}$")) and
+    .runner.isolation == "DOCKER_CONTAINERS" and
+    .runner.clientCpuLimit == 4 and
+    .runner.clientMemoryBytes == 8589934592 and
+    .topology.producerAndConsumerWorkspacesShared == false and
+    .topology.producerAndConsumerGradleHomesShared == false and
+    .topology.producerAndConsumerBuildOptCachesShared == false and
+    .topology.serverRestarted == true and
+    .topology.transport == "HTTPS_TLS_1_3_MINIMUM" and
+    .stickyWrapper.enabled == true and
+    .stickyWrapper.producer.enabled == true and
+    .stickyWrapper.producer.entrypoint == "STICKY_WRAPPER" and
+    .stickyWrapper.producer.bootstrap == "VERIFIED" and
+    .stickyWrapper.producer.pendingReadVisibility == "OWNER_COMMIT_REQUIRED" and
+    (.stickyWrapper.producer.archiveSha256 | test("^[0-9a-f]{64}$")) and
+    .stickyWrapper.producer.archiveSha256 == .packageSha256 and
+    .stickyWrapper.producer.durationMs > 0 and
+    .stickyWrapper.producer.fromCacheTasks == 0 and
+    .stickyWrapper.consumer.enabled == true and
+    .stickyWrapper.consumer.entrypoint == "STICKY_WRAPPER" and
+    .stickyWrapper.consumer.bootstrap == "VERIFIED" and
+    .stickyWrapper.consumer.archiveSha256 == .packageSha256 and
+    .stickyWrapper.consumer.durationMs > 0 and
+    .stickyWrapper.consumer.fromCacheTasks >= 1 and
+    .stickyWrapper.outage.enabled == true and
+    .stickyWrapper.outage.entrypoint == "STICKY_WRAPPER" and
+    .stickyWrapper.outage.bootstrap == "VERIFIED" and
+    .stickyWrapper.outage.archiveSha256 == .packageSha256 and
+    .stickyWrapper.outage.serverOnline == false and
+    .stickyWrapper.outage.durationMs > 0 and
+    .stickyWrapper.outage.fromCacheTasks == 0 and
+    .stickyWrapper.producer.requiredOutputSha256 == .stickyWrapper.consumer.requiredOutputSha256 and
+    .stickyWrapper.producer.requiredOutputSha256 == .stickyWrapper.outage.requiredOutputSha256 and
+    .equivalence.producerConsumerSHA256Equal == true and
+    .equivalence.producerOutageSHA256Equal == true and
+    .security.centralCredentialVisibleToGradle == false and
+    .security.credentialsFoundInLogs == false and
+    .measurement.durationsRecorded == true and
+    .measurement.wallTimeClaim == false and
+    .authority.productionAuthorized == false and
+    .authority.soakRequired == false and
+    .authority.designPartnerRequired == false and
+    .authority.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_result}" >/dev/null; then
+    printf 'sticky wrapper two-machine result is malformed or failed acceptance\n' >&2
+    jq -c '{runner,topology,producer,consumer,stickyWrapper,outage,equivalence,security,measurement,authority}' \
+        "${buildopt_result}" >&2 || true
+    exit 1
+fi
+
+printf 'Sticky wrapper two-machine proof OK: verified bootstrap, committed central hit and native outage fallback\n'

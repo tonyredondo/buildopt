@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "buildopt.poc/central-two-machine-result/v1",
+  "workItem": "POC-CENTRAL-TWO-MACHINE-001",
+  "capturedAt": "2026-08-27T02:54:31Z",
+  "buildoptRevision": "cb70f694dea2ae6f22caee18a5c8821a0990870c",
+  "packageSha256": "eb055e6f107fbf5ce8ed34c88a5a3a40fd6609664a7410bbcb2925ebd476be29",
+  "source": {
+    "baseRevision": "14cd451352adaf3900fa3701ffc37a1324e9adf2",
+    "targetRevision": "3a2015c000297f4fac6b0bee6e66eede28afe434"
+  },
+  "runner": {
+    "isolation": "DOCKER_CONTAINERS",
+    "imageId": "sha256:6b91655fa3bee3e69c3486a00492e159050c5e91182d37d01120542eb37a3e64",
+    "clientCpuLimit": 4,
+    "clientMemoryBytes": 8589934592,
+    "javaVersion": "21.0.11+10",
+    "gradleVersion": "9.6.1"
+  },
+  "topology": {
+    "producerAndConsumerWorkspacesShared": false,
+    "producerAndConsumerGradleHomesShared": false,
+    "producerAndConsumerBuildOptCachesShared": false,
+    "serverStatePersisted": true,
+    "serverRestarted": true,
+    "transport": "HTTPS_TLS_1_3_MINIMUM"
+  },
+  "producer": {
+    "profileQualified": false,
+    "optimizeDurationMs": 11311,
+    "cacheBuildDurationMs": 8062,
+    "cacheObjectsCommitted": 2,
+    "publication": "COMMITTED"
+  },
+  "consumer": {
+    "selectionSource": null,
+    "cacheMode": "READ_ONLY",
+    "cacheStatus": "GATEWAY_ACTIVE",
+    "durationMs": 11267,
+    "fromCacheTasks": 2
+  },
+  "stickyWrapper": {
+    "enabled": true,
+    "producer": {
+      "enabled": true,
+      "requiredOutputSha256": "170ffd3fb6c6a70b16d3b2fed126868a40177dfaffa0ce3cbad32b17e077baeb",
+      "durationMs": 7985,
+      "fromCacheTasks": 0,
+      "entrypoint": "STICKY_WRAPPER",
+      "bootstrap": "VERIFIED",
+      "archiveSha256": "eb055e6f107fbf5ce8ed34c88a5a3a40fd6609664a7410bbcb2925ebd476be29",
+      "pendingReadVisibility": "OWNER_COMMIT_REQUIRED"
+    },
+    "consumer": {
+      "enabled": true,
+      "requiredOutputSha256": "170ffd3fb6c6a70b16d3b2fed126868a40177dfaffa0ce3cbad32b17e077baeb",
+      "durationMs": 8060,
+      "fromCacheTasks": 2,
+      "entrypoint": "STICKY_WRAPPER",
+      "bootstrap": "VERIFIED",
+      "archiveSha256": "eb055e6f107fbf5ce8ed34c88a5a3a40fd6609664a7410bbcb2925ebd476be29"
+    },
+    "outage": {
+      "enabled": true,
+      "requiredOutputSha256": "170ffd3fb6c6a70b16d3b2fed126868a40177dfaffa0ce3cbad32b17e077baeb",
+      "durationMs": 7469,
+      "fromCacheTasks": 0,
+      "serverOnline": false,
+      "entrypoint": "STICKY_WRAPPER",
+      "bootstrap": "VERIFIED",
+      "archiveSha256": "eb055e6f107fbf5ce8ed34c88a5a3a40fd6609664a7410bbcb2925ebd476be29"
+    }
+  },
+  "outage": {
+    "serverOnline": false,
+    "verifiedProfileSnapshot": false,
+    "cacheStatus": "GATEWAY_ACTIVE",
+    "durationMs": 7878,
+    "fromCacheTasks": 0
+  },
+  "equivalence": {
+    "requiredOutputSha256": "170ffd3fb6c6a70b16d3b2fed126868a40177dfaffa0ce3cbad32b17e077baeb",
+    "producerConsumerSHA256Equal": true,
+    "producerOutageSHA256Equal": true
+  },
+  "security": {
+    "producerCapability": "READ_WRITE",
+    "consumerCapability": "READ_ONLY",
+    "centralCredentialVisibleToGradle": false,
+    "credentialsFoundInLogs": false
+  },
+  "measurement": {
+    "durationsRecorded": true,
+    "wallTimeClaim": false,
+    "nextWorkItem": "POC-CENTRAL-END-TO-END-VALUE-001"
+  },
+  "authority": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

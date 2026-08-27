@@ -27,6 +27,15 @@ evidence around that execution and uses conservative fallbacks: a rejected
 cache entry becomes a normal cache miss, an unqualified optimization is not
 applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
+> **Installed two-machine proof:** the committed `./buildoptw` command now
+> bootstraps one SHA-verified archive on isolated producer and consumer
+> machines, publishes two Gradle cache tasks over HTTPS, and restores both on a
+> clean read-only consumer after owner commit and service restart. An offline
+> run falls back to native Gradle and reproduces the exact output. This is
+> functional POC evidence (`wallTimeClaim=false`), not a speedup claim. See
+> the [checked result](./benchmarks/results/sticky-wrapper-two-machine-v1.json)
+> and [contract](./specs/poc-sticky-wrapper-two-machine-v1.md).
+
 > **Reviewed-profile research:** this is an owner-operated proof of concept. In a fresh
 > preregistered balanced rerun, the same generic structural Build Impact method
 > qualified independently on Spring, OpenTelemetry, Kafka, Micronaut, and

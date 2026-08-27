@@ -106,6 +106,23 @@ input bindings. Unknown values remain unavailable; the wrapper never turns an
 unverified decision into authorization. The prefix is explicit so Gradle
 tasks named `status` or `explain` retain their normal meaning.
 
+### Installed two-machine path
+
+The committed wrapper is also exercised across a trusted producer and a clean
+read-only consumer. The producer's pending cache objects are not visible until
+the owner commits them; after an HTTPS service restart the consumer restores
+the same cacheable tasks, and a service outage becomes an ordinary native
+Gradle rebuild. Run the functional proof with:
+
+```bash
+./dev/check-sticky-wrapper-two-machine \
+  benchmarks/results/sticky-wrapper-two-machine-v1.json
+```
+
+This proof checks bootstrap, credentials, isolation and exact outputs. Its
+phase durations are inputs to a later value experiment, not an acceleration
+claim.
+
 ### Ordinary-build observation
 
 When observation is enabled, the launcher appends one canonical record per

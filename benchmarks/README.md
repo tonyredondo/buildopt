@@ -129,6 +129,33 @@ with:
 ./dev/check-sticky-wrapper-status
 ```
 
+## Sticky-wrapper installed two-machine proof
+
+[`sticky-wrapper-two-machine-v1.json`](./results/sticky-wrapper-two-machine-v1.json)
+is the first proof of the committed wrapper across isolated producer and
+consumer machines. Both clients bootstrap the same pinned archive through the
+wrapper cache and use the central Gradle HTTP cache over HTTPS; the producer is
+write-capable and the consumer is read-only. A read during the producer's
+pending generation is recorded as `OWNER_COMMIT_REQUIRED`, then the owner
+commits and restarts the service before the consumer runs.
+
+The clean consumer restored **2 tasks from cache** and produced the exact
+required output SHA-256 as the producer. With the service offline and local
+outputs removed, the same `./buildoptw` command rebuilt natively with **0
+central hits** and produced the same SHA-256. The observed phase durations were
+**7.985 s producer**, **8.060 s consumer** and **7.469 s outage**. These are
+functional phase measurements, not comparable candidate/control arms; the
+result deliberately sets `wallTimeClaim=false` and does not qualify a profile.
+Credentials are absent from Gradle/logs, and the cache and typed decision
+planes remain separate.
+
+Validate the checked result with:
+
+```bash
+./dev/check-sticky-wrapper-two-machine \
+  benchmarks/results/sticky-wrapper-two-machine-v1.json
+```
+
 ## Central two-machine functional evidence
 
 [`poc-central-two-machine-v1.json`](./results/poc-central-two-machine-v1.json)

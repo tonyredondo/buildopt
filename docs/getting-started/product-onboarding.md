@@ -340,6 +340,15 @@ time on Ktor** and **56.41% on Beam**, with exact outputs and 8/8 positive
 pairs. Running the service remains optional and operator-owned; this is bounded
 POC evidence, not production qualification.
 
+The installed two-machine proof is tracked separately in the [sticky-wrapper
+two-machine specification](../../specs/poc-sticky-wrapper-two-machine-v1.md)
+and [result](../../benchmarks/results/sticky-wrapper-two-machine-v1.json). It
+uses only the committed `./buildoptw` command: a trusted producer publishes two
+Gradle cache objects, a clean read-only consumer restores both after owner
+commit and service restart, and an offline run falls back to native Gradle with
+identical outputs. This validates onboarding, transport and isolation; its
+phase times are diagnostic and deliberately make no speedup claim.
+
 The separate
 [Ktor lifetime result](../../benchmarks/results/poc-profile-lifetime-v1/README.md)
 shows the economic limitation behind this onboarding. One matching replay
