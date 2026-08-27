@@ -51,10 +51,13 @@ Gradle arguments are the default. Management is deliberately explicit:
 A leading `--gradle` escapes the reserved management prefix. This keeps Gradle
 tasks named `status` or `explain` working without special treatment.
 
-The wrapper checksum-verifies and caches the pinned BuildOpt distribution,
-invokes the repository's existing Gradle Wrapper and can choose native,
-observe, shadow, bounded trial or exact active behavior as the POC earns that
-authority. The committed
+The wrapper checksum-verifies and caches the pinned BuildOpt distribution and
+invokes the repository's existing Gradle Wrapper. Today the installed path
+supports native execution, bounded observation, optional central Gradle cache,
+status/explanation and fail-open behavior. Shadow, bounded trial, exact active
+execution and durable-patch reporting exist as separately checked POC
+components; `SWL-014B` must connect them to this customer command before the
+documentation may describe them as one working lifecycle. The committed
 configuration may name an HTTPS BuildOpt Server and project scope but never
 contains a token. The variable named by `credential_env` contains the private
 owner-issued access-token document and is not passed to Gradle.
@@ -99,7 +102,8 @@ adds `--build-cache` unless the command explicitly uses `--no-build-cache`; the
 central bearer token remains outside Gradle. Two clean checkouts use the same
 project identity; missing credentials, forks, mismatches, expiry, revocation or
 outage retain native Gradle and rebuild normally. Cache objects are consumed by
-Gradle, while typed decisions and learning remain later POC blocks. The complete
+Gradle, while typed decisions and learning remain a separate, not-yet-composed
+POC path. The complete
 sequence, scorecard and status are in the
 [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md).
 
@@ -141,6 +145,14 @@ net improvement. The active-execution boundary is implemented for generic
 direct commands, but it still rejects this negative report and suspends on
 regression, output mismatch, cancellation or candidate failure; it does not
 silently turn a signed decision into an optimization claim.
+
+The first five-repository longitudinal wrapper sample is also compatibility
+evidence, not value evidence. Its v1 harness enabled `--build-cache` only for
+control and exercised candidate no-op/light observation with a zero trial
+budget. It is retained as `DIAGNOSTIC_ONLY`. The corrected route first requires
+cache-symmetric arms, the end-to-end lifecycle above, generic testable actions
+in at least three public families and positive installed-path trials. Only then
+will `SWL-015 v2` run the expensive chronological campaign.
 
 The current durable-opportunity experiment is separate from the wrapper's
 runtime path. `SWL-012` detected the same missing task-contract shape in Kotlin

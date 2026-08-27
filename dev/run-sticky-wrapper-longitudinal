@@ -598,7 +598,7 @@ buildopt_report_filter='{schemaVersion:"buildopt.poc/sticky-wrapper-longitudinal
     exactPairs:([.repositories[].observations[]|select(.exactOutputs)]|length),
     productFailures:.productFailures,
     cumulativeSignedDeltaNs:([.repositories[].observations[].signedDeltaNs]|add // 0),
-    state:(if ([.repositories[].observations|length]|min) >= 15 then "READY_FOR_SWL_016" else "INCOMPLETE" end)},
+    state:"DIAGNOSTIC_ONLY"},
   repositories:[.repositories[]|{key,repositoryId,sampleLimit,observations,exclusions,
     comparablePairs:(.observations|length),positivePairs:([.observations[]|select(.signedDeltaNs > 0)]|length),
     negativePairs:([.observations[]|select(.signedDeltaNs < 0)]|length),
@@ -607,4 +607,4 @@ jq "${buildopt_report_filter}" \
     "${buildopt_output}/raw.json" >"${buildopt_output}/report.json"
 chmod 0600 "${buildopt_output}/raw.json" "${buildopt_output}/report.json"
 buildopt_success=true
-printf 'SWL-015 sticky-wrapper longitudinal evidence written to %s\n' "${buildopt_output}"
+printf 'SWL-015 v1 diagnostic-only evidence written to %s\n' "${buildopt_output}"

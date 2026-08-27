@@ -103,6 +103,16 @@ The earlier [one-command onboarding roadmap](./docs/plans/one-command-onboarding
 and [central cache/state roadmap](./docs/plans/centralized-cache-and-state-roadmap.md)
 remain implemented foundations, not current value authority.
 
+The first bounded longitudinal wrapper sample is compatibility evidence only.
+Its v1 harness injected `--build-cache` into control but not candidate and
+configured candidate with no central identity and a zero trial budget, so the
+candidate exercised native no-op/light observation rather than the lifecycle
+above. The sample remains immutable as `DIAGNOSTIC_ONLY`. Before further public
+timing, the active route requires a cache-symmetric v2 protocol, one real
+wrapper-driven observation-to-action composition, generic testable actions in
+at least three of five families, and positive installed-path value for those
+actions. These prerequisites do not change the terminal scorecard.
+
 `SWL-001` freezes the repository boundary before implementation. Both wrapper
 scripts use UTF-8/LF; only the POSIX script has the Git executable bit.
 `wrapper.properties` is an ordered ASCII `key=value` grammar with one exact
@@ -2837,6 +2847,13 @@ Only exact qualified decisions become active; drift, missing authority, expired
 state, service failure and `BUILDOPT_BYPASS=1` retain native Gradle. A cache hit
 does not authorize an action, and no mode owns Test Optimization behavior.
 
+That paragraph is the target customer lifecycle. The current implementation
+has separately checked observation, trial, active-execution and durable-catalog
+components, but their end-to-end composition behind ordinary `./buildoptw`
+invocations is the explicit `SWL-014B` gate. Until it passes, ordinary unconfigured
+wrapper invocations remain native no-op/light observation and receive no
+optimization-value credit.
+
 The prior install-plus-`buildopt optimize` flow remains a lower-level maintainer
 surface and implementation foundation. The wrapper experiment must prove that
 the committed surface removes global installation and manual profile steps
@@ -3316,13 +3333,23 @@ The generic structural-profile POC and its adaptive-fragment successor are now
 both stopped by their frozen terminal gates. The active successor is the
 repository-committed sticky-wrapper learning POC. It reuses the implemented
 launcher, packages, Gradle HTTP cache, typed central state and fail-open
-controls, but grants no authority to the stopped profiles. Its first seven
-implementation blocks now define the wrapper contract, generator, verified
-bootstrap, passthrough, portable connection, native cache integration and a
-typed decision/evidence store; the next block is the local no-op selector.
-Its terminal gate requires exact outputs, zero
-product failures, negligible native-retention cost, positive cumulative value,
-positive confidence and payback in at least three of five public families.
+controls, but grants no authority to the stopped profiles. Sixteen of its
+twenty-two current blocks are closed: wrapper contract/generation/bootstrap,
+passthrough, portable connection, native cache integration, typed decision
+state, bounded no-op/observation costs, isolated trial/active mechanism proofs,
+the durable opportunity catalog, customer explanation and the installed
+two-machine cache path.
+
+The route audit opened `SWL-014A` before any full longitudinal campaign. The
+retained five-family v1 sample used asymmetric cache activation and no active
+action, while the v1 checker could declare readiness from pair count alone.
+`SWL-014A..D` now require cache-symmetric measurement, real customer-path
+lifecycle composition, independently testable generic actions in at least
+three families and positive installed active-path value. Only then may
+`SWL-015 v2` measure chronological cumulative value. The unchanged terminal
+gate requires exact outputs, zero product failures, negligible native-retention
+cost, positive cumulative value, positive confidence and payback in at least
+three of five public families.
 
 The distinction is deliberate:
 
@@ -3331,14 +3358,14 @@ The distinction is deliberate:
 - Agent discovery and hermetic producer enforcement are explicitly `UNAVAILABLE`; reviewed-source paths remain testable.
 - All synthetic POC value and terminal measurement gates are closed. `POC-BREADTH-G01` remains preliminary and the claim stays bounded. `POC-REALWORLD-001..002` proved pinned compatibility and retained the bounded claim; `POC-PUBLIC-BUILD-TASKS-001` now freezes the Spotless exact-workflow Build Impact and Mockito test-build Safe Cache experiments. Productization remains a separate decision and is not implied by either the bounded `CONTINUE` verdict or public-source replication.
 
-The sticky-wrapper successor now includes `SWL-007`, a POC-only typed decision
-store. It keeps observations, action transitions, trials, signed decisions and
-the economic ledger as canonical immutable control-plane records with one
-generation-CAS head, while Gradle cache objects remain opaque data-plane
-entries. Local files and the existing central `EVIDENCE` state adapter share
-the same validation rules, idempotent replay and revocation/expiry checks; no
-record grants production authority and the next block must still preserve the
-native no-op path.
+The sticky-wrapper successor includes a POC-only typed decision store. It keeps
+observations, action transitions, trials, signed decisions and the economic
+ledger as canonical immutable control-plane records with one generation-CAS
+head, while Gradle cache objects remain opaque data-plane entries. Local files
+and the existing central `EVIDENCE` state adapter share the same validation
+rules, idempotent replay and revocation/expiry checks. Those contracts and the
+benchmark runners do not by themselves prove customer-path composition or
+value; `SWL-014B..D` own that missing evidence.
 
 The normative source is divided as follows: this RFC retains intent, invariants, and gates; `contracts/`, `specs/`, `benchmarks/`, and ADRs retain executable details. If a contract contradicts a safety invariant in this RFC, the contract is corrected; if the invariant needs to change, the corresponding decision is reviewed first.
 

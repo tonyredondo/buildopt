@@ -94,12 +94,22 @@ result. `SWL-010` adds a trusted-CI trial plane that runs isolated candidate
 and native commands with separate checkout, Gradle/cache/daemon and BuildOpt
 state roots; it is budgeted, order-balanced and exact-output checked. Its first
 result is negative for value, so the trial plane remains diagnostic and cannot
-activate an action. This boundary is frozen in
+activate an action. `internal/stickyactive` and `internal/durablecatalog` also
+prove isolated execution/suspension and review-only patch mechanics, but none of
+those benchmark-owned packages is called from the ordinary launcher today.
+`SWL-014B` owns the missing composition from observation through signed active
+decision and economics behind the committed wrapper. This boundary is frozen in
 the [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
 and is implemented through deterministic generation, verified package
 bootstrap, exact Gradle passthrough, authenticated portable connection and
 read-only central cache integration. The decision store grants no production
 authority and does not make a standalone wall-time claim.
+
+The original longitudinal v1 harness is not architecture evidence for that
+composition. It configured no central identity and zero trial budget and gave
+`--build-cache` only to control. The versioned v2 route requires symmetric cache
+opportunity plus explicit lifecycle/action/ledger records before a campaign can
+become terminal-ready.
 
 The installed two-machine proof exercises this boundary with a trusted
 producer and a clean read-only consumer in separate containers. The wrapper

@@ -136,14 +136,14 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > atomically cache the pinned native package, with verified zero-network warm
 > reuse. Developers and CI can now run `./buildoptw <gradle args...>` without a
 > global BuildOpt installation or a
-> hand-authored profile. The wrapper will use the existing Gradle-compatible
-> HTTPS cache and a separate typed decision store to choose native no-op,
-> observation, shadow, bounded trial, exact active profile or reviewed durable
-> patch behavior. Cache objects never authorize actions, server failure retains
-> native Gradle and credentials remain private. This is a frozen POC plan, not
-> a new performance result. Continuation requires positive cumulative value in
-> at least three of five public families after every wrapper, learning, trial,
-> cache and fallback cost. Follow the
+> hand-authored profile. The implemented wrapper currently provides verified
+> bootstrap, passthrough, optional Gradle-compatible HTTPS cache, bounded
+> observation and native fallback. The POC target is to connect its separate
+> typed decision, trial, active-execution and durable-patch components into one
+> lifecycle behind that command. Cache objects never authorize actions, server
+> failure retains native Gradle and credentials remain private. Continuation
+> requires positive cumulative value in at least three of five public families
+> after every wrapper, learning, trial, cache and fallback cost. Follow the
 > [Sticky Wrapper Learning POC Tracker](./docs/plans/sticky-wrapper-learning-poc-tracker.md).
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,
@@ -154,8 +154,7 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > complete: BuildOpt averages 7.534 s versus 6.979 s for optimized native
 > Gradle (0/4 positive pairs), while all 4/4 output trees match exactly. The
 > result is a safe-measurement proof and a current overhead warning, not a
-> speedup claim; no action is activated until the next block removes that
-> overhead and re-proves positive value.
+> speedup claim; it authorizes no action.
 
 > **Wrapper overhead hardening:** the common sticky-wrapper path now resolves
 > to native Gradle without starting BuildOpt services when no configured
@@ -168,15 +167,18 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > results, not a Gradle speedup claim; the full numbers and reproducible check
 > are in the [overhead contract](./specs/poc-sticky-wrapper-noop-overhead-v1.md).
 
-> **First public longitudinal signal:** a bounded `SWL-015` run compared the
+> **Historical longitudinal diagnostic:** a bounded `SWL-015 v1` run compared the
 > committed `./buildoptw` command with optimized native Gradle on one frozen
 > current revision in each of Spring Framework, OpenTelemetry Java
 > Instrumentation, Apache Kafka, Micronaut Core and Apache Groovy. The five
 > pairs produced exact required outputs with zero product failures; **2/5**
-> were positive and **3/5** negative, for **-22.149 s** signed value. This is
-> an intentionally incomplete, control-first diagnostic sample, not a
-> general speedup claim. The campaign must reach at least 15 comparable pairs
-> per family with alternating order before the terminal decision. See the
+> were positive and **3/5** negative, for **-22.149 s** signed value. A route
+> audit found that v1 injected `--build-cache` only into control and exercised
+> candidate no-op/light observation with no trial or action. It is now immutable
+> `DIAGNOSTIC_ONLY` compatibility evidence and cannot feed the terminal
+> decision. Before `SWL-015 v2`, the POC must prove cache-symmetric arms, connect
+> the full learning/action lifecycle, find generic actions in at least 3/5
+> families and demonstrate positive installed-path value. See the
 > [sample evidence](./benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md).
 
 > **Ordinary-build learning economics:** the POC now learns only from builds

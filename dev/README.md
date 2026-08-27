@@ -21,8 +21,11 @@ ordered work, frozen thresholds and repository-documentation alignment with:
 ./dev/check-sticky-wrapper-learning-plan
 ```
 
-This check validates planning authority only. It does not imply that
-`buildoptw` or its decision lifecycle is implemented yet.
+This check validates planning authority only. The wrapper primitives exist,
+but it does not prove that the observation, trial, active-action and durable
+paths are composed behind one customer invocation. The current route requires
+`SWL-014A..D` before the longitudinal v2 campaign may run; the retained v1
+sample is diagnostic-only.
 
 Validate the frozen four-file format, both parser shapes, all negative
 fixtures, routing and update semantics with:
@@ -152,6 +155,34 @@ The checked-in result is intentionally not a speedup claim: candidate mean is
 7.534 s versus 6.979 s for optimized native Gradle (0/4 positive pairs).
 Budget, isolation and equivalence must pass before any later active action can
 be considered.
+
+Validate the separately implemented active-action, durable-catalog, status and
+two-machine contracts with:
+
+```bash
+./dev/check-sticky-wrapper-active
+./dev/check-sticky-wrapper-durable-catalog
+./dev/check-sticky-wrapper-status
+./dev/check-sticky-wrapper-two-machine
+```
+
+These checks close `SWL-011..014` in isolation. They do not prove that an
+ordinary customer invocation composes the entire learning lifecycle. That
+composition belongs to `SWL-014B`, after the protocol-fairness work in
+`SWL-014A`.
+
+The old longitudinal entrypoints remain available only to validate the frozen
+v1 diagnostic evidence:
+
+```bash
+./dev/check-sticky-wrapper-longitudinal \
+  "$PWD/benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1"
+```
+
+`dev/run-sticky-wrapper-longitudinal` now labels any new v1 output
+`DIAGNOSTIC_ONLY`, and the checker rejects v1 evidence that claims terminal
+readiness. The v2 runner and checker are deliverables of `SWL-014A`; do not
+spend the public longitudinal campaign budget before `SWL-014A..D` pass.
 
 ## Toolchain lock
 

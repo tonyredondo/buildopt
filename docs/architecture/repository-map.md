@@ -65,6 +65,12 @@ The SWL-014 installed proof is owned by `dev/run-poc-central-two-machine`,
 `dev/central-two-machine-client` and `dev/check-sticky-wrapper-two-machine`,
 with its normative contract in `specs/poc-sticky-wrapper-two-machine-v1.*` and
 its checked result in `benchmarks/results/sticky-wrapper-two-machine-v1.json`.
+`SWL-014A` is currently owned by the detailed tracker and
+`specs/poc-sticky-wrapper-longitudinal-v2.*`; the v2 runner/checker are not yet
+implemented. `SWL-014B` will add the first launcher-owned composition of
+`internal/stickyobservation`, `internal/stickytrial`, `internal/stickydecision`,
+`internal/stickyactive` and the economic ledger. Until then, those packages are
+separate mechanism proofs rather than one customer execution path.
 
 Run `./dev/check-sticky-wrapper-learning-plan` to validate this planning
 boundary. As implementation begins, this map must name the concrete owning
@@ -146,6 +152,7 @@ bytecode using the pinned Wrapper and repository-local JDK 21.
 | `specs/poc-sticky-wrapper-active-v1.*` and `contracts/jsonschema/sticky-wrapper-active.v1.schema.json` | `internal/stickyactive`, `cmd/sticky-active-benchmark` | active execution records, counterfactual comparison and suspension/fallback reasons | `check-sticky-wrapper-active`; negative qualification, direct-command execution, exact outputs, regression, drift, expiry, revocation, bypass and failure vectors |
 | `specs/poc-sticky-wrapper-durable-catalog-v1.*` and `contracts/jsonschema/sticky-wrapper-durable-catalog.v1.schema.json` | `internal/durablecatalog`, `cmd/sticky-durable-catalog-benchmark` | review-only native task/graph proposals, exact source recipes and isolated transaction evidence | `check-sticky-wrapper-durable-catalog`; two DSL families, eight paired task-contract measurements, exact output hashes, apply/revert and structural graph proposals |
 | `specs/poc-sticky-wrapper-two-machine-v1.*` | `dev/run-poc-central-two-machine`, `dev/central-two-machine-client` | installed wrapper archive, central Gradle cache objects and separate producer/consumer credentials | `check-sticky-wrapper-two-machine`; isolated HTTPS restart, owner-commit visibility, read-only cache hit, exact output equality and native outage fallback |
+| `specs/poc-sticky-wrapper-longitudinal-v1.*` and `specs/poc-sticky-wrapper-longitudinal-v2.*` | v1 diagnostic runner/checker today; v2 runner/checker in `SWL-014A` | historical cache-asymmetric no-op evidence versus the future cache-symmetric, lifecycle-aware campaign | v1 sample remains `DIAGNOSTIC_ONLY`; v2 must reject unequal cache policy, missing action/ledger evidence and sample-count-only readiness |
 | `contracts/jsonschema/adaptive-fragment*.v1.schema.json` and `specs/poc-adaptive-state-portability-v1.*` | adaptive learner and local state writer | `internal/adaptivefragment`; `internal/launcher` HTTPS state adapter | `check-adaptive-fragment-state`, `check-adaptive-fragment-index`, `check-adaptive-state-portability` |
 | `contracts/jsonschema/build-session.v1.schema.json` | `internal/buildsession` | server history/export tooling | `check-build-session-schema`, `check-build-session-export` |
 | `contracts/proto/local-events/v1/` | JVM Gradle plugin | launcher event channel | `check-task-events-proto`, plugin handshake/correlation checks |

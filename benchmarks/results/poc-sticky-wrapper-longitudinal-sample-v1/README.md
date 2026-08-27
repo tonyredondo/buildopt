@@ -1,15 +1,19 @@
 # Sticky-wrapper longitudinal sample
 
-This directory contains the first bounded diagnostic sample for `SWL-015`.
+This directory contains the retained bounded diagnostic sample from
+`SWL-015 v1`.
 It runs the repository-committed `./buildoptw` command against the same frozen
 Gradle workflow as optimized native Gradle on one current first-parent revision
 per public repository family.
 
-The sample is intentionally incomplete: `SWL_MAX_PRIMARY_PER_FAMILY=1` was
-used to obtain a fast signal while preserving the frozen cohort and protocol.
-It is not eligible for the `SWL-016` terminal decision, which requires at
-least 15 comparable pairs in every family. All accepted pairs still require
-successful arms, byte-identical required outputs, and a signed wall-time delta.
+The sample is permanently `DIAGNOSTIC_ONLY`. In addition to using one
+control-first revision per family, the v1 runner injected `--build-cache` only
+into control and configured candidate with no server identity and zero trial
+budget. Candidate therefore exercised no-op/light observation rather than a
+trial or active optimization. It is not eligible for `SWL-016`; the corrected
+v2 protocol supersedes it without rewriting these observations. All accepted
+pairs still required successful arms, byte-identical required outputs and a
+signed wall-time delta.
 
 ## Observed result
 
@@ -47,11 +51,9 @@ the arithmetic without rerunning the repositories:
 
 ## Interpretation
 
-This sample proves that the wrapper can run substantial public Gradle builds,
-preserve exact outputs and expose a measurable comparison. It does **not** yet
-show a reliable general improvement: the net result is negative and the
-sample has only one order, one revision per family and no longitudinal reuse.
-The next measurement must expand the same frozen cohort to at least 15
-comparable pairs per family, alternate arm order, and retain every positive
-and negative observation before deciding whether the idea creates durable
-customer value.
+This sample proves that the wrapper can run substantial public Gradle builds
+and preserve exact outputs. Its signed deltas are not attributable product
+value because the arms had different cache activation and no BuildOpt action
+executed. The next measurement does not expand this v1 runner. It first closes
+`SWL-014A..D`, then uses the cache-symmetric, lifecycle-aware v2 protocol over
+the same frozen public-family breadth.

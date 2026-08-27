@@ -25,6 +25,11 @@ done
     exit 1
 }
 
+if jq -e '.summary.state == "READY_FOR_SWL_016"' "${buildopt_report}" >/dev/null; then
+    printf 'SWL-015 v1 evidence is diagnostic-only and cannot authorize SWL-016\n' >&2
+    exit 1
+fi
+
 jq -e '
   .schemaVersion == "buildopt.poc/sticky-wrapper-longitudinal/v1" and
   .workItem == "SWL-015" and
@@ -118,7 +123,8 @@ jq -e '
   (.summary.positivePairs | type == "number") and
   (.summary.negativePairs | type == "number") and
   .summary.exactPairs == .summary.comparablePairs and
-  .summary.state == (if ([.repositories[].comparablePairs] | min) >= 15 then "READY_FOR_SWL_016" else "INCOMPLETE" end) and
+  (.summary.state == "DIAGNOSTIC_ONLY" or
+    (.summary.state == "INCOMPLETE" and ([.repositories[].comparablePairs] | min) < 15)) and
   .boundaries.proofOfConcept == true and
   .boundaries.productionAuthorized == false
 ' "${buildopt_report}" >/dev/null
@@ -130,4 +136,4 @@ buildopt_report_summary=$(jq -c '{pairs:.summary.comparablePairs,positive:.summa
     exit 1
 }
 
-printf 'SWL-015 sticky-wrapper longitudinal evidence: valid\n'
+printf 'SWL-015 v1 sticky-wrapper longitudinal evidence: valid diagnostic only\n'

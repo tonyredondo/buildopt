@@ -79,6 +79,16 @@ and central-cache setup when no configured consumer needs them. See the
 and [overhead contract](../../specs/poc-sticky-wrapper-noop-overhead-v1.md)
 for the schema, evidence labels and measured guardrails.
 
+Configuration keys do not imply that the automatic learning lifecycle is
+already connected. An empty server identity or missing credential selects the
+native no-op/light-observation path; `trial_budget_percent = 0` forbids trial
+spending. The historical SWL-015 v1 runner used exactly that combination and is
+diagnostic-only. The corrected v2 campaign requires an explicit project
+connection, nonzero bounded budget where trials are needed, identical cache
+policy in both arms and lifecycle/action/ledger evidence. `SWL-014B` remains the
+implementation gate for consuming qualified active decisions in ordinary
+wrapper invocations.
+
 The local decision-store root is private, user-owned state containing immutable
 JCS records, a generation head, idempotency receipts and a revocation epoch.
 The central adapter reuses the existing authenticated `EVIDENCE` state

@@ -9,12 +9,12 @@ learns the relationship between a Git change, the requested workflow, the task
 graph and its outputs; when the evidence is strong enough, it rebuilds only the
 necessary graph and restores verified unaffected outputs.
 
-The intended experience has no repository-specific BuildOpt files:
+The current onboarding hypothesis uses four generated portable repository
+files, but no hand-authored optimization profile:
 
 ```text
-install BuildOpt
-cd <a Gradle repository>
-buildopt optimize <the existing Gradle workflow>
+generate and commit BuildOpt Wrapper once
+./buildoptw <the existing Gradle workflow>
 ```
 
 This is an owner-operated proof of concept. The current question is whether
@@ -165,10 +165,11 @@ but durable graph timing is deliberately **not measured yet**. This is
 promising synthetic POC evidence, not customer coverage or automatic patch
 authority.
 
-`SWL-013` is now complete: the wrapper exposes customer-readable `status` and
+`SWL-013` is complete: the wrapper exposes customer-readable `status` and
 `explain` output with recomputable economics, cache facts and exact fallback
-reasons. The next installed-path question is whether the committed wrapper
-works when a second machine consumes the same central cache.
+reasons. These commands can display stored state, but the normal wrapper path
+does not yet compose the observer, trial, signed decision, active runner and
+durable catalog into one automatic lifecycle.
 
 ## Current installed two-machine proof
 
@@ -185,18 +186,17 @@ visible to Gradle or logs, and pending objects remain invisible before owner
 commit.
 
 This is a functional installed-path result; it sets `wallTimeClaim=false` and
-does not qualify a profile. The next evidence must compare the same wrapper
-against optimized native Gradle over a frozen chronological public campaign,
-including both positive and negative commits and all wrapper/cache costs.
+does not qualify a profile.
 
-## First longitudinal signal from the committed wrapper
+## Historical longitudinal diagnostic
 
-The first bounded `SWL-015` sample now performs that comparison on one frozen
-current revision in each of five public repository families. It runs the exact
-same workflow in two isolated worktrees: optimized native Gradle as control and
-the committed `./buildoptw` command as candidate. Dependency preparation is
-outside pair wall time, and a pair is accepted only when both arms succeed and
-the required outputs are byte-identical.
+The bounded `SWL-015 v1` sample ran one frozen current revision in each of five
+public repository families. Both arms used isolated worktrees and every pair
+required successful execution and byte-identical outputs. A later route audit
+found that the runner injected `--build-cache` only into control, while
+candidate had no server identity and a zero trial budget and therefore used
+no-op/light observation. The numbers below measure compatibility and wrapper
+cost under that asymmetric protocol, not learning or optimization value.
 
 | Repository | Native control | BuildOpt wrapper | Signed delta | Result |
 | --- | ---: | ---: | ---: | --- |
@@ -206,19 +206,19 @@ the required outputs are byte-identical.
 | Micronaut Core | 494.033 s | 511.159 s | -17.126 s / -3.47% | Negative |
 | Apache Groovy | 128.134 s | 127.765 s | +0.370 s / +0.29% | Positive |
 
-The sample is intentionally `INCOMPLETE`: it contains one `CONTROL_FIRST` pair
-per family, so it has no order balance, longitudinal recurrence or terminal
-confidence. It does give the first comparable signal for the installed
-wrapper: **2/5 positive pairs, 3/5 negative pairs, -22.149 s signed total,
-5/5 exact outputs and zero product failures**. This is not yet a promising
-general speedup; it is an honest early indication that the current wrapper is
-near parity on two workloads and slower on three.
+The sample contains one `CONTROL_FIRST` pair per family, **2/5 positive pairs,
+3/5 negative pairs, -22.149 s signed total, 5/5 exact outputs and zero product
+failures**. It is now immutable `DIAGNOSTIC_ONLY` evidence. It cannot contribute
+to an activation, confidence, payback or terminal criterion.
 
 The machine-readable sample is
 [`poc-sticky-wrapper-longitudinal-sample-v1`](../../benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md).
-The frozen campaign remains open and must reach at least 15 comparable pairs
-per family, with alternating order and all negative rows retained, before the
-terminal `SWL-016` decision. No profile is activated from this sample.
+The corrected path is deliberately staged: `SWL-014A` freezes cache-symmetric
+arms and lifecycle-aware readiness; `SWL-014B` connects the real wrapper-driven
+learning/action loop; `SWL-014C` requires generic testable actions in at least
+three public families; and `SWL-014D` proves positive installed-path value.
+Only then may `SWL-015 v2` spend the longitudinal campaign budget, followed by
+the unchanged `SWL-016` terminal scorecard.
 
 ## Historical complete-profile result
 
@@ -337,19 +337,23 @@ then uses one command:
 ./buildoptw <gradle args...>
 ```
 
-The wrapper can retain native Gradle, observe, shadow, schedule a bounded CI
-trial, execute an exact qualified runtime profile or report a reviewed durable
-Gradle patch. It reuses the existing optional HTTPS service, but Gradle cache
-objects and typed BuildOpt decisions remain separate planes and a cache hit
-never grants action authority. A local signed decision snapshot keeps the
-native path out of a blocking network lookup; outage or drift retains native.
+The target wrapper lifecycle can retain native Gradle, observe, shadow,
+schedule a bounded CI trial, execute an exact qualified runtime profile or
+report a reviewed durable Gradle patch. Today those mechanisms are separately
+checked; only bootstrap, passthrough, cache, light observation, status and
+fail-open behavior are composed behind ordinary `./buildoptw`. It reuses the
+existing optional HTTPS service, but Gradle cache objects and typed BuildOpt
+decisions remain separate planes and a cache hit never grants action authority.
 
 This is currently a preregistered experiment, not a new performance result.
 Continuation requires exact outputs, zero product failures, at most 100-ms p50
 and 250-ms p95 local native-decision overhead, a positive complete portfolio
 and independently positive value/payback in at least three of five public
 families. Every bootstrap, observation, trial, cache, fallback and action cost
-counts. Historical AF observations are context only.
+counts. Historical AF observations and the cache-asymmetric SWL-015 v1 sample
+are context only. The immediate work is `SWL-014A..D`; the expensive
+longitudinal campaign is intentionally blocked until the actual customer path
+can activate and measure generic actions.
 
 `SWL-001` freezes the four file formats, immutable per-platform distribution
 identities, strict portable configuration, explicit management routing,

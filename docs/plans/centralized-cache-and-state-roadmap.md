@@ -70,8 +70,10 @@ outage/corruption fallback. The wrapper also adds an exact local signed-decision
 fast path and one repeated customer command. `SWL-007` now materializes the
 typed sticky-wrapper decision/evidence store over immutable JCS records and the
 existing local/central generation-CAS state boundary; cache correctness is not
-by itself a performance claim. Its selector and learning consumers remain
-later POC blocks.
+by itself a performance claim. The selector, trial and active runners are
+separately checked but are not yet composed into the ordinary wrapper path.
+`SWL-014B` owns that connection; `SWL-014A` first corrects the longitudinal
+protocol so both arms receive identical Gradle cache opportunity.
 
 ### Installed two-machine proof
 

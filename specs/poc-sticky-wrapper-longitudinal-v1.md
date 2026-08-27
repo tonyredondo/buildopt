@@ -1,6 +1,15 @@
 # Sticky wrapper longitudinal campaign v1
 
-Status: accepted POC measurement contract for `SWL-015`.
+Status: retained historical diagnostic contract; superseded by
+[`poc-sticky-wrapper-longitudinal-v2`](./poc-sticky-wrapper-longitudinal-v2.md)
+before terminal timing.
+
+The v1 runner injected `--build-cache` only into control and configured
+candidate with no server identity and a zero trial budget. Its checked sample
+therefore proves compatibility and exact outputs for no-op/light observation,
+not the sticky learning/action hypothesis. It is `DIAGNOSTIC_ONLY` and cannot
+feed `SWL-016`. The JSON contract remains unchanged so the historical evidence
+keeps its original digest.
 
 ## Purpose
 

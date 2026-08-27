@@ -10,6 +10,8 @@ buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 buildopt_contract="${buildopt_repo_root}/specs/poc-sticky-wrapper-learning-v1.json"
 buildopt_spec="${buildopt_repo_root}/specs/poc-sticky-wrapper-learning-v1.md"
+buildopt_longitudinal_v2_contract="${buildopt_repo_root}/specs/poc-sticky-wrapper-longitudinal-v2.json"
+buildopt_longitudinal_v2_spec="${buildopt_repo_root}/specs/poc-sticky-wrapper-longitudinal-v2.md"
 buildopt_plan="${buildopt_repo_root}/docs/plans/sticky-wrapper-learning-poc-tracker.md"
 buildopt_tracker="${buildopt_repo_root}/implementation-tracker.md"
 buildopt_rfc="${buildopt_repo_root}/gradle-build-optimization-platform.md"
@@ -25,6 +27,8 @@ done
 for buildopt_file in \
     "${buildopt_contract}" \
     "${buildopt_spec}" \
+    "${buildopt_longitudinal_v2_contract}" \
+    "${buildopt_longitudinal_v2_spec}" \
     "${buildopt_plan}" \
     "${buildopt_tracker}" \
     "${buildopt_rfc}"; do
@@ -159,10 +163,35 @@ if ! jq -e '
     exit 1
 fi
 
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/sticky-wrapper-longitudinal/v2" and
+    .workItem == "SWL-015" and
+    .status == "BLOCKED_BY_SWL_014A_TO_SWL_014D" and
+    .historicalV1.classification == "DIAGNOSTIC_ONLY" and
+    .historicalV1.terminalAuthority == false and
+    [.preconditions[].workItem] == ["SWL-014A", "SWL-014B", "SWL-014C", "SWL-014D"] and
+    .cohort.families == 5 and
+    .cohort.minimumComparablePerFamily == 15 and
+    .arms.workflowArgumentsIdentical == true and
+    .arms.sameLocalCacheOpportunity == true and
+    .arms.sameRemoteCacheOpportunity == true and
+    .arms.runnerMayInjectFlagIntoOneArmOnly == false and
+    .readiness.sampleCountAloneIsSufficient == false and
+    .readiness.allPreconditionsRequired == true and
+    .readiness.completeLifecycleEvidenceRequired == true and
+    .readiness.signedEconomicLedgerRequired == true and
+    .stopEarly.minimumFamiliesWithTestableActions == 3 and
+    .stopEarly.minimumFamiliesPassingInstalledValueGate == 3 and
+    .boundaries.terminalThresholdsChanged == false
+' "${buildopt_longitudinal_v2_contract}" >/dev/null; then
+    printf 'sticky-wrapper longitudinal v2 contract is malformed\n' >&2
+    exit 1
+fi
+
 buildopt_ordered_blocks=$(
     awk '
-        /^\| (8A|[0-9]+) \| `SWL-[0-9][0-9][0-9]A?`/ {
-            if (match($0, /`SWL-[0-9][0-9][0-9]A?`/)) {
+        /^\| (8A|14[A-D]|[0-9]+) \| `SWL-[0-9][0-9][0-9][A-D]?`/ {
+            if (match($0, /`SWL-[0-9][0-9][0-9][A-D]?`/)) {
                 block = substr($0, RSTART + 1, RLENGTH - 2)
                 print block
             }
@@ -174,12 +203,17 @@ buildopt_expected_blocks=$(
         BEGIN {
             for (block_number = 0; block_number <= 8; block_number++) printf "SWL-%03d\n", block_number
             print "SWL-008A"
-            for (block_number = 9; block_number <= 16; block_number++) printf "SWL-%03d\n", block_number
+            for (block_number = 9; block_number <= 14; block_number++) printf "SWL-%03d\n", block_number
+            print "SWL-014A"
+            print "SWL-014B"
+            print "SWL-014C"
+            print "SWL-014D"
+            for (block_number = 15; block_number <= 16; block_number++) printf "SWL-%03d\n", block_number
         }
     '
 )
 if [[ "${buildopt_ordered_blocks}" != "${buildopt_expected_blocks}" ]]; then
-    printf 'sticky-wrapper tracker must contain ordered blocks SWL-000..SWL-008A..SWL-016\n' >&2
+    printf 'sticky-wrapper tracker must contain ordered blocks SWL-000..SWL-008A..SWL-014A..D..SWL-016\n' >&2
     exit 1
 fi
 
@@ -188,21 +222,21 @@ buildopt_evidence_count=$(
     # shellcheck disable=SC2016
     grep -Ec '^\| `SWL-E[0-9]{3}` \|' "${buildopt_plan}" || true
 )
-if [[ "${buildopt_evidence_count}" != 18 ]]; then
-    printf 'sticky-wrapper tracker expected 18 evidence rows, found %s\n' \
+if [[ "${buildopt_evidence_count}" != 23 ]]; then
+    printf 'sticky-wrapper tracker expected 23 evidence rows, found %s\n' \
         "${buildopt_evidence_count}" >&2
     exit 1
 fi
 
 buildopt_required_text=(
-    "${buildopt_plan}|**Progress:** \`16/18\` blocks complete"
-    "${buildopt_plan}|**Current block:** \`SWL-015\` — frozen public longitudinal campaign"
+    "${buildopt_plan}|**Progress:** \`16/22\` blocks complete"
+    "${buildopt_plan}|**Current block:** \`SWL-014A\` — protocol and comparison-fairness correction"
     "${buildopt_plan}|./buildoptw <gradle args...>"
     "${buildopt_plan}|The existing central cache and state implementation is reused."
     "${buildopt_spec}|# Sticky wrapper learning POC v1"
     "${buildopt_spec}|CONTINUE_STICKY_WRAPPER_LEARNING_POC"
     "${buildopt_tracker}|STICKY WRAPPER LEARNING POC ACTIVE; PRIOR GENERIC HYPOTHESES STOPPED"
-    "${buildopt_tracker}|SWL-015_FROZEN_PUBLIC_LONGITUDINAL_CAMPAIGN"
+    "${buildopt_tracker}|SWL-014A_PROTOCOL_AND_COMPARISON_FAIRNESS"
     "${buildopt_tracker}|POC-STICKY-WRAPPER-LEARNING"
     "${buildopt_tracker}|\`E-403\`"
     "${buildopt_tracker}|\`E-404\`"
@@ -218,11 +252,16 @@ buildopt_required_text=(
     "${buildopt_tracker}|\`E-414\`"
     "${buildopt_tracker}|\`E-415\`"
     "${buildopt_tracker}|\`E-416\`"
+    "${buildopt_tracker}|\`E-418\`"
     "${buildopt_plan}|\`SWL-E015\`"
     "${buildopt_plan}|\`SWL-E018\`"
+    "${buildopt_plan}|\`SWL-E019\`"
+    "${buildopt_plan}|\`SWL-E023\`"
     "${buildopt_plan}|poc-sticky-wrapper-noop-overhead-v1.md"
     "${buildopt_plan}|check-sticky-wrapper-noop-overhead"
     "${buildopt_plan}|poc-sticky-wrapper-two-machine-v1.md"
+    "${buildopt_longitudinal_v2_spec}|# Sticky wrapper longitudinal campaign v2"
+    "${buildopt_longitudinal_v2_spec}|Sample count alone cannot produce \`READY_FOR_SWL_016\`."
     "${buildopt_rfc}|generate and commit BuildOpt Wrapper"
     "${buildopt_rfc}|Sticky Wrapper Learning POC Tracker"
 )

@@ -5,9 +5,9 @@
 The active successor POC makes one committed `./buildoptw <gradle args...>`
 command the stable local and CI entrypoint. The wrapper bootstraps an immutable
 BuildOpt version, preserves the repository Gradle Wrapper, and uses the
-read-only central cache path when a valid connection is available. Decision
-consumption is intentionally later, but its canonical state contract is now
-implemented:
+read-only central cache path when a valid connection is available. The
+following is the target lifecycle; its canonical state and individual
+mechanisms exist, but the customer-path composition is not complete yet:
 
 ```text
 NATIVE_NOOP -> OBSERVE -> SHADOW -> TRIAL -> QUALIFIED -> ACTIVE
@@ -15,7 +15,8 @@ NATIVE_NOOP -> OBSERVE -> SHADOW -> TRIAL -> QUALIFIED -> ACTIVE
                                               +------> SUSPENDED -> RETIRED
 ```
 
-The lifecycle is evidence-gated rather than a user-selected optimization mode.
+The intended lifecycle is evidence-gated rather than a user-selected
+optimization mode.
 Expensive trials run only in isolated trusted CI within a 5% natural-compute
 budget. Runtime profiles execute only while every exact binding and value lease
 matches. Review-required durable patches become ordinary native Gradle behavior
@@ -62,9 +63,33 @@ checked-in local overhead result is **9 ms p95** for the native no-op path and
 **38 ms p95** for light observation over direct execution; these are startup
 guardrails, not build-time savings.
 
+### Route to the composed lifecycle
+
+The first `SWL-015 v1` diagnostic cannot validate the diagram above. Its runner
+added `--build-cache` only to control and configured candidate with no server
+identity and zero trial budget, so candidate used native no-op/light
+observation. It remains useful compatibility evidence but is
+`DIAGNOSTIC_ONLY`.
+
+The corrected order is:
+
+1. `SWL-014A`: enforce identical cache opportunity and lifecycle-aware
+   readiness in a versioned campaign protocol;
+2. `SWL-014B`: connect the existing observer, detector, trial, decision, active
+   runner, suspension and ledger behind `./buildoptw`;
+3. `SWL-014C`: find independently testable generic actions in at least three of
+   the five frozen public families;
+4. `SWL-014D`: prove positive conservative value through the installed wrapper;
+5. `SWL-015 v2`: measure the resulting transitions and cumulative economics
+   across chronological commits; and
+6. `SWL-016`: apply the unchanged terminal scorecard.
+
+Sample count alone never makes the campaign ready. Missing lifecycle, action or
+ledger evidence keeps it incomplete.
+
 ### Active runtime boundary
 
-`SWL-011` implements the next control boundary without pretending that the
+`SWL-011` implements the isolated control boundary without pretending that the
 current negative trial is profitable. A profile is eligible only when its
 signed decision is valid, unexpired, unrevoked, exactly bound to the current
 workflow and marked `ACTIVE_RUNTIME_PROFILE`. The runner executes direct
@@ -85,7 +110,8 @@ speedup claim:
 The current result contains one positive active scenario (about 24.6 ms saved),
 three suspensions and four native retentions. The checked-in SWL-010 report is
 still rejected with `TRIAL_NOT_PROFITABLE`; only a future repository-level
-paired result can authorize a real action.
+paired result can authorize a real action. `SWL-014B` owns integration of this
+runner into the customer wrapper path.
 
 ### Durable native opportunity catalog
 

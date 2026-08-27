@@ -23,8 +23,9 @@ The active preregistered direction is the
 [Sticky Wrapper Learning POC](../plans/sticky-wrapper-learning-poc-tracker.md).
 It changes the integration and economic unit rather than reviving stopped
 profiles: one committed wrapper observes ordinary builds, uses a negligible
-locally cached decision, spends only a bounded CI trial budget and may retain
-either an exact runtime action or a reviewed durable Gradle change. It must
+locally cached decision and is intended to spend only a bounded CI trial budget
+before retaining either an exact runtime action or a reviewed durable Gradle
+change. Those components are not yet composed into one customer path. It must
 prove breadth, payback and positive cumulative value beyond optimized native
 Gradle; safe fallback and cache hits alone do not pass.
 
@@ -37,7 +38,7 @@ Gradle; safe fallback and cache hits alone do not pass.
 | Output discovery | Reads Gradle-owned outputs and rejects missing, external, symlinked or ambiguous declarations. | A root aggregate workflow can legitimately declare a very broad output surface. |
 | Structural proposal | Uses typed project/task relationships and changed-project ownership; no repository-name branch is allowed. | Unknown relationships, excessive candidate task sets and no reduction retain native. |
 | Durable native catalog | Detects repeated task-contract gaps and over-broad declared graph edges, then emits digest-bound, reviewable and exactly reversible native Gradle recipes. | The current strict POC report finds the same task-contract detector in Kotlin and Groovy, with 64.1% and 74.7% savings across 16/16 exact pairs. Graph breadth is proposal-only until durable timing is measured. |
-| Measurement / decision | Alternating native/candidate observations verify outputs, execution shape, interval, fallback and payback. | Observations now accumulate across useful invocations with zero measurement-only workflows; weak value still retains native. |
+| Measurement / decision | Alternating native/candidate observations can verify outputs, execution shape, interval, fallback and payback. | Individual observation/trial/active mechanisms are checked, but `SWL-014B` must compose them behind `./buildoptw`; current longitudinal v1 rows contain no active action or ledger. |
 | Verified output materialization | Captures required outputs omitted by a candidate in digest-bound private state, then restores only exact missing bytes before candidate execution. | Composed and timed on all five public subjects; stale, missing or corrupt payloads cannot authorize candidate output. |
 | Aggregate workflow partition | Groups directly changed output producers by generic lifecycle selector and variant, while exact unaffected outputs remain materializable. | Transfers to public workflows: Kafka selects 3/64 projects, Micronaut 22/75 and Groovy 2/37. |
 | Portfolio / central state | Reuses exact compatible evidence across checkouts or machines. | Reuse cannot infer lifetime or value from another profile/repository. |
@@ -149,40 +150,30 @@ measured candidate or an explicit native verdict.
 
 ## Next generalization steps
 
-The detailed order, outcomes and documentation obligations live in the
-[Adaptive Fragment Generalization POC Tracker](../plans/adaptive-fragment-generalization-tracker.md).
-Its first proof must happen before another broad timing campaign:
+The detailed order and stop conditions now live in the
+[Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md).
+The route deliberately prevents another broad timing campaign from measuring
+an inactive wrapper:
 
-1. define independently compatible fragments and immutable lifecycle state
-   (**complete**);
-2. make compatibility lookup negligible and prove fragment applicability over
-   frozen histories without lookahead (**complete: 6/6 eligible Kafka
-   descendants retain a structural fragment; only 1/6 retained the whole
-   profile**);
-3. learn value and decay from ordinary builds using a signed economic ledger
-   (**complete: immutable checkpoints accept requested builds only, resume
-   under exact bindings and isolate regression to dependent fragments**);
-4. activate and directly measure only compositions whose individual fragments
-   retain correctness and positive value authority; and
-5. install one current-SHA package and prove isolated, stateful, phase-attributed
-   control/candidate execution (**complete: 18 alternating learning
-   observations plus exact selected, forward native-retained and bypass
-   scenarios; apparatus evidence only**);
-6. freeze 20 primary first-parent commits plus an ordered reserve queue per
-   family before timing (**complete: 100 primary commits and 50 reserves bound
-   to exact topology, paths, workflows and outputs with no timing fields**);
-7. collect at least 15 comparable builds per terminal row with chronological
-   learning and exact outputs (**complete: 20/20 per repository, 100 exact
-   pairs, zero product failures, 25 positive/75 negative and -368.623 seconds
-   cumulative signed value**);
-8. attribute activated mechanisms, fallback cost and residual variation
-   (**complete: 179.029 seconds recorded BuildOpt cost, -189.593 seconds
-   residual, zero activated-mechanism saving, 0.531-second p50 and 8.656-second
-   p95 native retention**); and
-9. recompute the frozen terminal decision from current evidence only
-   (**complete: 9/15 criteria pass; activation 0/71, breadth 0/5, positive
-   confidence 0/5, portfolio -368.623 seconds, payback 0 and native-retention
-   tails fail; outcome `STOP_ADAPTIVE_FRAGMENT_POC`**).
+1. **Correct comparison fairness (`SWL-014A`).** Both arms receive identical
+   Gradle arguments and native/remote cache opportunity. Historical v1 remains
+   diagnostic-only, and readiness requires lifecycle evidence rather than row
+   count alone.
+2. **Compose the real lifecycle (`SWL-014B`).** Ordinary observation, generic
+   proposal, trusted-CI trial, qualification, signed decision, active execution,
+   counterfactual, suspension and economics must all run through `./buildoptw`.
+3. **Screen public opportunity breadth (`SWL-014C`).** The same generic
+   detectors must expose independently testable actions in at least three of
+   five frozen families. Fewer than three stops the experiment early.
+4. **Prove installed active value (`SWL-014D`).** Balanced pairs through the
+   customer wrapper must preserve outputs and show positive conservative value
+   after every recurring and learning cost in at least three families.
+5. **Run the chronological campaign (`SWL-015 v2`).** Only admitted actions are
+   followed over at least 15 comparable commits per family; no-action commits,
+   regressions, exclusions and all costs remain visible.
+6. **Apply the frozen decision (`SWL-016`).** The unchanged scorecard requires
+   activation breadth, confidence, cumulative value, payback and durable/runtime
+   evidence. Compatibility or cache hits alone cannot continue the POC.
 
 ## POC conclusion
 

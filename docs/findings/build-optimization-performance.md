@@ -51,9 +51,8 @@ commit and service restart, while an outage performs a native rebuild with the
 same output. The final clean-SHA run measured 11.027 s (producer), 7.938 s
 (consumer) and 7.435 s (outage). This proves bootstrap, isolation, credentials and
 fail-open behavior, but it is not a candidate/control timing comparison and
-therefore makes no acceleration claim. The next experiment must compare this
-installed path against optimized native Gradle over a frozen chronological
-commit window.
+therefore makes no acceleration claim. Before longitudinal timing, the installed
+path must first compose and prove a real qualified action.
 
 The adaptive-fragment successor has also closed as
 `STOP_ADAPTIVE_FRAGMENT_POC`: its current installed campaign activated no
@@ -62,13 +61,15 @@ historical evidence in the
 [Adaptive Fragment Generalization POC Tracker](../plans/adaptive-fragment-generalization-tracker.md),
 not the active direction.
 
-### First sticky-wrapper longitudinal signal
+### Historical sticky-wrapper longitudinal diagnostic
 
-The first bounded `SWL-015` run now compares the repository-committed
-`./buildoptw` command with the same frozen workflow under optimized native
-Gradle on one current revision in each of five public repository families. Each
-arm has its own worktree, Gradle home, native cache and BuildOpt state; the
-required outputs are byte-hashed before a pair is accepted.
+The bounded `SWL-015 v1` run exercised the repository-committed `./buildoptw`
+command on one current revision in each of five public families. Each arm had
+its own worktree, Gradle home, native cache and BuildOpt state, and every
+accepted pair had byte-identical required outputs. A later route audit found
+that the runner added `--build-cache` only to control and configured candidate
+with no server identity and zero trial budget, so candidate used no-op/light
+observation rather than a learned action.
 
 | Repository | Native control | BuildOpt wrapper | Signed delta | Result |
 | --- | ---: | ---: | ---: | --- |
@@ -78,23 +79,20 @@ required outputs are byte-hashed before a pair is accepted.
 | Micronaut Core | 494.033 s | 511.159 s | -17.126 s / -3.47% | Negative |
 | Apache Groovy | 128.134 s | 127.765 s | +0.370 s / +0.29% | Positive |
 
-This diagnostic sample is `INCOMPLETE`, not a terminal value result: only one
-`CONTROL_FIRST` pair was run per family, so it has no order balance and no
-longitudinal recurrence. It does nevertheless provide a useful early signal:
+This diagnostic sample is `DIAGNOSTIC_ONLY`, not a terminal value result: only
+one `CONTROL_FIRST` pair was run per family, it has no order balance or
+longitudinal recurrence, and its cache opportunity is asymmetric. It provides
+compatibility and wrapper-cost evidence:
 **2/5 positive pairs, 3/5 negative pairs, -22.149 s signed total, 5/5 exact
-outputs and zero product failures**. It currently points to parity or a small
-regression rather than a general acceleration claim. The complete evidence is
+outputs and zero product failures**. Those deltas cannot be attributed to a
+BuildOpt action. The complete evidence is
 [`poc-sticky-wrapper-longitudinal-sample-v1`](../../benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md).
 
-The experiment remains open. The same frozen protocol must reach at least 15
-comparable pairs per family, with alternating order and every negative row
-retained, before `SWL-016` can decide whether the sticky-wrapper hypothesis
-creates durable customer value. The first bounded runner also exposed a
-harness-only final-summary failure after all subject records had been written.
-The report was regenerated from those immutable subject records, and the
-runner now passes its multi-line jq programs as explicit arguments. That repair
-has been validated against the retained records; one follow-up bounded run
-must still exercise it live before the full campaign is treated as complete.
+The experiment remains open under a corrected protocol. `SWL-014A` freezes
+cache-symmetric arms and lifecycle-aware readiness; `SWL-014B` composes the real
+wrapper-driven learning/action loop; `SWL-014C` requires generic testable actions
+in at least three public families; and `SWL-014D` proves their installed-path
+value. Only `SWL-015 v2` may produce terminal longitudinal evidence.
 
 The active hypothesis is now the
 [Sticky Wrapper Learning POC](../plans/sticky-wrapper-learning-poc-tracker.md).

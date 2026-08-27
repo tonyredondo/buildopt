@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-longitudinal/v2",
+  "workItem": "SWL-015",
+  "status": "BLOCKED_BY_SWL_014A_TO_SWL_014D",
+  "purpose": "Measure the real sticky-wrapper learning and action lifecycle against cache-equivalent optimized native Gradle over frozen chronological public commits.",
+  "historicalV1": {
+    "classification": "DIAGNOSTIC_ONLY",
+    "terminalAuthority": false,
+    "reason": "The control alone received an injected build-cache flag and the candidate executed no-op/light observation with no trial or active action."
+  },
+  "preconditions": [
+    {
+      "workItem": "SWL-014A",
+      "gate": "CACHE_SYMMETRIC_PROTOCOL_AND_LIFECYCLE_AWARE_CHECKER"
+    },
+    {
+      "workItem": "SWL-014B",
+      "gate": "REAL_WRAPPER_END_TO_END_LEARNING_AND_ACTION_COMPOSITION"
+    },
+    {
+      "workItem": "SWL-014C",
+      "gate": "GENERIC_TESTABLE_ACTIONS_IN_AT_LEAST_THREE_OF_FIVE_FAMILIES"
+    },
+    {
+      "workItem": "SWL-014D",
+      "gate": "INSTALLED_ACTIVE_PATH_POSITIVE_CONSERVATIVE_VALUE_IN_AT_LEAST_THREE_FAMILIES"
+    }
+  ],
+  "cohort": {
+    "manifest": "benchmarks/results/current-longitudinal-cohorts-v1.json",
+    "manifestSha256": "8ca7a1b7b9ea2c71eb95f050eff0fdb76c23425141cd0c4f8f104f33782503ee",
+    "families": 5,
+    "targetComparablePerFamily": 20,
+    "minimumComparablePerFamily": 15,
+    "chronologicalNoLookahead": true
+  },
+  "arms": {
+    "controlEntrypoint": "./gradlew",
+    "candidateEntrypoint": "./buildoptw",
+    "workflowArgumentsIdentical": true,
+    "buildCachePolicy": "IDENTICAL_EXPLICIT_FROZEN_WORKFLOW_POLICY",
+    "sameLocalCacheOpportunity": true,
+    "sameRemoteCacheOpportunity": true,
+    "sameRemoteNamespaceAndNetworkProfile": true,
+    "runnerMayInjectFlagIntoOneArmOnly": false,
+    "separateCheckoutsHomesGradleAndBuildOptState": true,
+    "candidateStatePersistsChronologically": true,
+    "order": "CONTROL_FIRST_THEN_CANDIDATE_FIRST_ALTERNATING"
+  },
+  "candidateEvidenceRequired": [
+    "LIFECYCLE_STATE",
+    "EXECUTION_DECISION",
+    "DECISION_GENERATION",
+    "ACTION_ID",
+    "BINDING_DIGEST",
+    "ACTUAL_ACTION_EXECUTED",
+    "PHASE_ATTRIBUTION",
+    "GROSS_COST_NET_LEDGER",
+    "OUTPUT_EQUIVALENCE",
+    "PRODUCT_OUTCOME",
+    "COUNTERFACTUAL_STATUS"
+  ],
+  "readiness": {
+    "sampleCountAloneIsSufficient": false,
+    "allPreconditionsRequired": true,
+    "armSymmetryRequired": true,
+    "exactOrReviewedOutputsRequired": true,
+    "productFailuresAllowed": 0,
+    "completeLifecycleEvidenceRequired": true,
+    "deterministicCheckpointsRequired": true,
+    "signedEconomicLedgerRequired": true,
+    "readyState": "READY_FOR_SWL_016"
+  },
+  "stopEarly": {
+    "minimumFamiliesWithTestableActions": 3,
+    "minimumFamiliesPassingInstalledValueGate": 3,
+    "outcome": "STOP_STICKY_WRAPPER_LEARNING_POC"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "automaticMergeAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE",
+    "terminalThresholdsChanged": false
+  }
+}
