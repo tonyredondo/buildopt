@@ -657,7 +657,10 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 	}
 	if config.gradleSharedBuildCacheSeed != "" {
 		destination := arm.buildCacheRoot
-		if err := linkMeasurementCacheSeed(config.gradleSharedBuildCacheSeed, destination); err != nil {
+		// The shared seed is immutable. Restore a private writable copy for the
+		// arm instead of hard-linking entries into Gradle's live cache: Gradle
+		// updates metadata (including the seed marker) during daemon warm-up.
+		if err := copyMeasurementCacheSeed(config.gradleSharedBuildCacheSeed, destination); err != nil {
 			return arm, fmt.Errorf("seed %s native build cache: %w", name, err)
 		}
 	}
@@ -666,7 +669,7 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 		// existed and is immutable. Reuse that identical seed directly instead
 		// of rebuilding the base revision only to recreate an already-bound
 		// cache. The target warm-up still proves the exact measured task shape.
-		if err := linkMeasurementCacheSeed(config.gradleSharedBuildCacheSeed, arm.cacheSeed); err != nil {
+		if err := copyMeasurementCacheSeed(config.gradleSharedBuildCacheSeed, arm.cacheSeed); err != nil {
 			return arm, fmt.Errorf("snapshot authoritative %s native build cache: %w", name, err)
 		}
 		return prepareStructuralBoundCacheDaemonWarmup(config, arm, progress)
@@ -676,14 +679,10 @@ func prepareStructuralMeasurementArm(config structuralMeasurementConfig, root, n
 		if err := os.RemoveAll(cache); err != nil {
 			return arm, fmt.Errorf("replace %s native build cache: %w", name, err)
 		}
-		restoreSeed := copyMeasurementCacheSeed
-		if config.gradleSharedBuildCacheSeed != "" {
-			restoreSeed = linkMeasurementCacheSeed
-		}
-		if err := restoreSeed(sharedCacheSeed, cache); err != nil {
+		if err := copyMeasurementCacheSeed(sharedCacheSeed, cache); err != nil {
 			return arm, fmt.Errorf("share %s native build-cache seed: %w", name, err)
 		}
-		if err := linkMeasurementCacheSeed(sharedCacheSeed, arm.cacheSeed); err != nil {
+		if err := copyMeasurementCacheSeed(sharedCacheSeed, arm.cacheSeed); err != nil {
 			return arm, fmt.Errorf("snapshot shared %s native build cache: %w", name, err)
 		}
 		if config.gradleSharedBuildCacheSeed != "" {
@@ -1037,11 +1036,7 @@ func resetStructuralArm(config structuralMeasurementConfig, arm structuralMeasur
 		if err := os.RemoveAll(cache); err != nil {
 			return fmt.Errorf("clear isolated native build cache: %w", err)
 		}
-		restoreSeed := copyMeasurementCacheSeed
-		if config.gradleSharedBuildCacheSeed != "" {
-			restoreSeed = linkMeasurementCacheSeed
-		}
-		if err := restoreSeed(arm.cacheSeed, cache); err != nil {
+		if err := copyMeasurementCacheSeed(arm.cacheSeed, cache); err != nil {
 			return fmt.Errorf("restore isolated native build cache: %w", err)
 		}
 	}
