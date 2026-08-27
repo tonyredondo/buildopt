@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-active-result/v1",
+  "recordType": "STICKY_WRAPPER_ACTIVE_BENCHMARK",
+  "capturedAt": "2026-08-27T00:00:00Z",
+  "environment": { "goos": "linux", "goarch": "amd64" },
+  "trialReport": "benchmarks/results/sticky-wrapper-trial-v1.json",
+  "qualification": {
+    "authorized": false,
+    "reason": "TRIAL_NOT_PROFITABLE",
+    "pairs": 4,
+    "minimumPairs": 4,
+    "positivePairs": 0,
+    "exactOutputPairs": 4,
+    "cancelledPairs": 0,
+    "candidateMeanMs": 7533.782126,
+    "nativeMeanMs": 6978.77450725,
+    "meanSavedMs": -555.00761875
+  },
+  "scenarios": [{
+    "name": "qualified-positive",
+    "result": {
+      "schemaVersion": "buildopt.sticky/active-execution/v1",
+      "recordType": "STICKY_WRAPPER_ACTIVE_EXECUTION",
+      "invocation": 1,
+      "startedAt": "2026-08-27T00:00:00Z",
+      "completedAt": "2026-08-27T00:00:01Z",
+      "status": "ACTIVE_EXECUTED",
+      "reason": "ACTIVE_COUNTERFACTUAL_PASSED",
+      "decision": "ACTIVE_RUNTIME_PROFILE",
+      "actionId": "benchmark/qualified-positive",
+      "selected": "CANDIDATE",
+      "candidateExecuted": true,
+      "counterfactual": true,
+      "suspended": false,
+      "exactOutputs": true,
+      "savingNs": 1000000,
+      "candidate": { "outcome": "SUCCESS", "exitCode": 0, "durationNs": 1000000, "outputSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "outputBytes": 4 },
+      "native": { "outcome": "SUCCESS", "exitCode": 0, "durationNs": 2000000, "outputSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "outputBytes": 4 }
+    }
+  }],
+  "summary": {
+    "scenarioCount": 1,
+    "activeExecutions": 1,
+    "suspensions": 0,
+    "nativeRetentions": 0,
+    "candidateExecutions": 1,
+    "nativeExecutions": 1,
+    "exactCounterfactuals": 1,
+    "positiveSavingMs": 1,
+    "negativeQualificationSeen": true
+  },
+  "pass": true
+}

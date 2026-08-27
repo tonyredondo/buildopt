@@ -74,6 +74,13 @@ atomically publish a user-cache installation. They never pass credentials to
 Gradle or grant runtime/performance authority; Gradle passthrough belongs to
 SWL-004.
 
+`stickyactive/` owns the SWL-011 fail-closed execution boundary. It accepts a
+signed, exact-bound runtime profile only after revalidation, runs candidate and
+authoritative native commands without a shell, compares required output hashes,
+and suspends a profile on failure, mismatch or regression. It deliberately
+contains no repository, task-name or filename rules and makes no production or
+performance claim from synthetic control-flow timings.
+
 `launcher/` contains the dependency-free `WS-001` command passthrough, the
 `WS-002` Linux process-group and signal contract, the `WS-003` plugin handshake,
 and the neutral `WS-004` authenticated local rendezvous used by `cmd/buildopt`.

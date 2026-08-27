@@ -50,6 +50,31 @@ no active optimization is authorized. This is the required fail-closed
 behavior: a trial can produce evidence without changing ordinary developer
 builds.
 
+### Active runtime boundary
+
+`SWL-011` implements the next control boundary without pretending that the
+current negative trial is profitable. A profile is eligible only when its
+signed decision is valid, unexpired, unrevoked, exactly bound to the current
+workflow and marked `ACTIVE_RUNTIME_PROFILE`. The runner executes direct
+candidate/native commands without a shell and hashes the declared outputs.
+When the counterfactual cadence is due, native Gradle runs as the authority;
+any candidate failure, cancellation, output mismatch or tolerance breach
+suspends the profile and retains native execution until a new decision
+generation is supplied. Bypass, drift and unavailable state retain native
+without attempting the candidate.
+
+The focused evidence is synthetic control-flow coverage, not a repository
+speedup claim:
+
+```bash
+./dev/check-sticky-wrapper-active
+```
+
+The current result contains one positive active scenario (about 24.6 ms saved),
+three suspensions and four native retentions. The checked-in SWL-010 report is
+still rejected with `TRIAL_NOT_PROFITABLE`; only a future repository-level
+paired result can authorize a real action.
+
 ### Ordinary-build observation
 
 When observation is enabled, the launcher appends one canonical record per

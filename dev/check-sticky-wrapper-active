@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-sticky-wrapper-active-v1.json"
+buildopt_schema="${buildopt_repo_root}/contracts/jsonschema/sticky-wrapper-active.v1.schema.json"
+buildopt_result="${buildopt_repo_root}/benchmarks/results/sticky-wrapper-active-v1.json"
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-sticky-active.XXXXXX")
+trap 'rm -rf -- "${buildopt_temporary}"' EXIT
+
+for buildopt_command in jq mktemp; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required sticky-wrapper-active command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+if [[ ! -f "${buildopt_spec}" || ! -f "${buildopt_schema}" || ! -f "${buildopt_result}" ]]; then
+    printf 'sticky-wrapper-active specification, schema or result is missing\n' >&2
+    exit 1
+fi
+
+jq -e '
+    .schemaVersion == "buildopt.poc/sticky-wrapper-active/v1" and
+    .workItem == "SWL-011" and
+    .activeExecution.revalidatesDecisionEveryInvocation == true and
+    .activeExecution.requiresCounterfactual == true and
+    .activeExecution.candidateRunsWithoutShell == true and
+    .suspension.onCandidateFailure == "SUSPEND_AND_RETAIN_NATIVE" and
+    .suspension.onOutputMismatch == "SUSPEND_AND_RETAIN_NATIVE" and
+    .suspension.onRegression == "SUSPEND_AND_RETAIN_NATIVE" and
+    .fallback.bypass == "NATIVE" and
+    .fallback.invalidDecision == "NATIVE" and
+    .qualification.currentTrial.authorized == false and
+    .qualification.currentTrial.reason == "TRIAL_NOT_PROFITABLE"
+' "${buildopt_spec}" >/dev/null
+
+buildopt_binary="${buildopt_temporary}/sticky-active-benchmark"
+"${buildopt_repo_root}/dev/run" --toolchain go -- \
+    go build -buildvcs=false -trimpath -o "${buildopt_binary}" \
+    ./cmd/sticky-active-benchmark
+"${buildopt_repo_root}/dev/run" --toolchain go -- \
+    go -C "${buildopt_repo_root}/dev/schema-validator" test . \
+    -run 'TestStickyActiveV1' -count=1 >/dev/null
+buildopt_new_result="${buildopt_temporary}/result.json"
+"${buildopt_binary}" --output "${buildopt_new_result}" \
+    --trial-report "${buildopt_repo_root}/benchmarks/results/sticky-wrapper-trial-v1.json"
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/sticky-active-result/v1" and
+    .recordType == "STICKY_WRAPPER_ACTIVE_BENCHMARK" and
+    .pass == true and
+    .qualification.authorized == false and
+    .qualification.reason == "TRIAL_NOT_PROFITABLE" and
+    .summary.scenarioCount == 8 and
+    .summary.activeExecutions == 1 and
+    .summary.suspensions == 3 and
+    .summary.nativeRetentions == 4 and
+    .summary.negativeQualificationSeen == true and
+    ([.scenarios[] | select(.name == "qualified-positive") | .result.status] | . == ["ACTIVE_EXECUTED"]) and
+    ([.scenarios[] | select(.name == "regression-suspends") | .result.reason] | . == ["CANDIDATE_REGRESSION"]) and
+    ([.scenarios[] | select(.name == "output-mismatch") | .result.reason] | . == ["OUTPUT_MISMATCH"]) and
+    all(.scenarios[]; .result.selected == "NATIVE" or .result.selected == "CANDIDATE")
+' "${buildopt_new_result}" >/dev/null; then
+    printf 'sticky active execution benchmark failed its scenario contract\n' >&2
+    exit 1
+fi
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/sticky-active-result/v1" and
+    .pass == true and
+    .qualification.authorized == false and
+    .qualification.reason == "TRIAL_NOT_PROFITABLE" and
+    .summary.activeExecutions == 1 and
+    .summary.suspensions == 3 and
+    .summary.nativeRetentions == 4
+' "${buildopt_result}" >/dev/null; then
+    printf 'versioned sticky active result is stale or malformed\n' >&2
+    exit 1
+fi
+
+jq -c '{qualification,summary,scenarios: [.scenarios[] | {name,status:.result.status,reason:.result.reason,candidateExecuted:.result.candidateExecuted,exactOutputs:.result.exactOutputs,savingMs:(.result.savingNs/1000000)}]}' "${buildopt_new_result}"
+printf 'Sticky wrapper active execution and suspension: OK\n'

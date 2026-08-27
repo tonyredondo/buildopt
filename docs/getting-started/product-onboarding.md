@@ -52,8 +52,9 @@ A leading `--gradle` escapes the reserved management prefix. This keeps Gradle
 tasks named `status` or `explain` working without special treatment.
 
 The wrapper checksum-verifies and caches the pinned BuildOpt distribution,
-invokes the repository's existing Gradle Wrapper and will later choose native,
-observe, shadow, bounded trial or exact active behavior. The committed
+invokes the repository's existing Gradle Wrapper and can choose native,
+observe, shadow, bounded trial or exact active behavior as the POC earns that
+authority. The committed
 configuration may name an HTTPS BuildOpt Server and project scope but never
 contains a token. The variable named by `credential_env` contains the private
 owner-issued access-token document and is not passed to Gradle.
@@ -107,7 +108,10 @@ bounded paired-trial harness (`./dev/check-sticky-wrapper-trial`) with the
 candidate and optimized native Gradle in isolated roots. The first four-pair
 sample is exact but currently slower (7.534 s versus 6.979 s, 0/4 positive),
 so ordinary users remain on native Gradle until a later experiment proves a
-net improvement.
+net improvement. The active-execution boundary is implemented for generic
+direct commands, but it still rejects this negative report and suspends on
+regression, output mismatch, cancellation or candidate failure; it does not
+silently turn a signed decision into an optimization claim.
 
 ## Install
 

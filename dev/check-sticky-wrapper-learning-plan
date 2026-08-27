@@ -188,14 +188,14 @@ if [[ "${buildopt_evidence_count}" != 17 ]]; then
 fi
 
 buildopt_required_text=(
-    "${buildopt_plan}|**Progress:** \`11/17\` blocks complete"
-    "${buildopt_plan}|**Current block:** \`SWL-011\` — active execution and suspension"
+    "${buildopt_plan}|**Progress:** \`12/17\` blocks complete"
+    "${buildopt_plan}|**Current block:** \`SWL-012\` — durable native optimization catalog"
     "${buildopt_plan}|./buildoptw <gradle args...>"
     "${buildopt_plan}|The existing central cache and state implementation is reused."
     "${buildopt_spec}|# Sticky wrapper learning POC v1"
     "${buildopt_spec}|CONTINUE_STICKY_WRAPPER_LEARNING_POC"
     "${buildopt_tracker}|STICKY WRAPPER LEARNING POC ACTIVE; PRIOR GENERIC HYPOTHESES STOPPED"
-    "${buildopt_tracker}|SWL-011_ACTIVE_EXECUTION_AND_SUSPENSION"
+    "${buildopt_tracker}|SWL-012_DURABLE_NATIVE_OPTIMIZATION_CATALOG"
     "${buildopt_tracker}|POC-STICKY-WRAPPER-LEARNING"
     "${buildopt_tracker}|\`E-403\`"
     "${buildopt_tracker}|\`E-404\`"
@@ -208,6 +208,7 @@ buildopt_required_text=(
     "${buildopt_tracker}|\`E-411\`"
     "${buildopt_tracker}|\`E-412\`"
     "${buildopt_tracker}|\`E-413\`"
+    "${buildopt_tracker}|\`E-414\`"
     "${buildopt_rfc}|generate and commit BuildOpt Wrapper"
     "${buildopt_rfc}|Sticky Wrapper Learning POC Tracker"
 )

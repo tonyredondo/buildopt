@@ -114,10 +114,20 @@ declared **180 s** (5%) trial ceiling. The mechanism is safe and the evidence
 accounting works, but this path does not yet provide customer value on this
 fixture; no action is activated.
 
-The next step is `SWL-011`: diagnose the candidate overhead and add a
-revalidation/suspension path before attempting any active execution. A runtime
-or cache action must beat optimized native Gradle with exact outputs and a
-positive paired result; otherwise the wrapper must remain native.
+`SWL-011` now supplies that revalidation and suspension boundary. Its generic
+runner rechecks signed bindings on every invocation, executes candidate and
+authoritative native commands without a shell, compares required output hashes
+and retains native after any failure or regression. The focused result has one
+synthetic active execution (about 24.6 ms saved), three suspensions and four
+native retentions. The real SWL-010 report remains unauthorized because it is
+negative (7.534 s candidate versus 6.979 s optimized native, 0/4 positive), so
+this is safety/control-flow evidence rather than customer value. A runtime or
+cache action still needs a positive repository-level paired result before the
+wrapper may execute it for a customer.
+
+The next block is `SWL-012`: detect generic durable native optimization
+opportunities and validate reviewable reversible patches against optimized
+native Gradle.
 
 ## Historical complete-profile result
 

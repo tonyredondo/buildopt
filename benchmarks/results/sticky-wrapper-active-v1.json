@@ -1,0 +1,275 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-active-result/v1",
+  "recordType": "STICKY_WRAPPER_ACTIVE_BENCHMARK",
+  "capturedAt": "2026-08-27T01:22:51.471498744Z",
+  "environment": {
+    "goos": "linux",
+    "goarch": "amd64"
+  },
+  "trialReport": "benchmarks/results/sticky-wrapper-trial-v1.json",
+  "qualification": {
+    "authorized": false,
+    "reason": "TRIAL_NOT_PROFITABLE",
+    "pairs": 4,
+    "minimumPairs": 4,
+    "positivePairs": 0,
+    "exactOutputPairs": 4,
+    "cancelledPairs": 0,
+    "candidateMeanMs": 7533.782126,
+    "nativeMeanMs": 6978.77450725,
+    "meanSavedMs": -555.0076187499999
+  },
+  "scenarios": [
+    {
+      "name": "qualified-positive",
+      "result": {
+        "schemaVersion": "buildopt.sticky/active-execution/v1",
+        "recordType": "STICKY_WRAPPER_ACTIVE_EXECUTION",
+        "invocation": 1,
+        "startedAt": "2026-08-27T01:22:51.471498744Z",
+        "completedAt": "2026-08-27T01:22:51.471498744Z",
+        "status": "ACTIVE_EXECUTED",
+        "reason": "ACTIVE_COUNTERFACTUAL_PASSED",
+        "decision": "ACTIVE_RUNTIME_PROFILE",
+        "actionId": "benchmark/qualified-positive",
+        "selected": "CANDIDATE",
+        "candidateExecuted": true,
+        "counterfactual": true,
+        "suspended": false,
+        "exactOutputs": true,
+        "savingNs": 24550171,
+        "candidate": {
+          "outcome": "SUCCESS",
+          "exitCode": 0,
+          "durationNs": 5754272,
+          "outputSha256": "f2ef8dcc10593195f7376d6db7c031e8437a355c49eb3b99d00c89237010859f",
+          "outputBytes": 4
+        },
+        "native": {
+          "outcome": "SUCCESS",
+          "exitCode": 0,
+          "durationNs": 30304443,
+          "outputSha256": "f2ef8dcc10593195f7376d6db7c031e8437a355c49eb3b99d00c89237010859f",
+          "outputBytes": 4
+        }
+      }
+    },
+    {
+      "name": "regression-suspends",
+      "result": {
+        "schemaVersion": "buildopt.sticky/active-execution/v1",
+        "recordType": "STICKY_WRAPPER_ACTIVE_EXECUTION",
+        "invocation": 1,
+        "startedAt": "2026-08-27T01:22:51.471498744Z",
+        "completedAt": "2026-08-27T01:22:51.471498744Z",
+        "status": "SUSPENDED",
+        "reason": "CANDIDATE_REGRESSION",
+        "decision": "ACTIVE_RUNTIME_PROFILE",
+        "actionId": "benchmark/regression-suspends",
+        "selected": "NATIVE",
+        "candidateExecuted": true,
+        "counterfactual": true,
+        "suspended": true,
+        "exactOutputs": true,
+        "savingNs": 0,
+        "candidate": {
+          "outcome": "SUCCESS",
+          "exitCode": 0,
+          "durationNs": 53366654,
+          "outputSha256": "f2ef8dcc10593195f7376d6db7c031e8437a355c49eb3b99d00c89237010859f",
+          "outputBytes": 4
+        },
+        "native": {
+          "outcome": "SUCCESS",
+          "exitCode": 0,
+          "durationNs": 20159818,
+          "outputSha256": "f2ef8dcc10593195f7376d6db7c031e8437a355c49eb3b99d00c89237010859f",
+          "outputBytes": 4
+        }
+      }
+    },
+    {
+      "name": "output-mismatch",
+      "result": {
+        "schemaVersion": "buildopt.sticky/active-execution/v1",
+        "recordType": "STICKY_WRAPPER_ACTIVE_EXECUTION",
+        "invocation": 1,
+        "startedAt": "2026-08-27T01:22:51.471498744Z",
+        "completedAt": "2026-08-27T01:22:51.471498744Z",
+        "status": "SUSPENDED",
+        "reason": "OUTPUT_MISMATCH",
+        "decision": "ACTIVE_RUNTIME_PROFILE",
+        "actionId": "benchmark/output-mismatch",
+        "selected": "NATIVE",
+        "candidateExecuted": true,
+        "counterfactual": true,
+        "suspended": true,
+        "exactOutputs": false,
+        "savingNs": 0,
+        "candidate": {
+          "outcome": "SUCCESS",
+          "exitCode": 0,
+          "durationNs": 20953013,
+          "outputSha256": "f1748b546da60597a11d3372b69c9b009ab941309066929a3653344c91718364",
+          "outputBytes": 9
+        },
+        "native": {
+          "outcome": "SUCCESS",
+          "exitCode": 0,
+          "durationNs": 34851162,
+          "outputSha256": "b1dcde44addb118de2b5afca4480f12a1062ec71dee69e3aad8475228960b9f1",
+          "outputBytes": 6
+        }
+      }
+    },
+    {
+      "name": "bypass",
+      "result": {
+        "schemaVersion": "buildopt.sticky/active-execution/v1",
+        "recordType": "STICKY_WRAPPER_ACTIVE_EXECUTION",
+        "invocation": 1,
+        "startedAt": "2026-08-27T01:22:51.471498744Z",
+        "completedAt": "2026-08-27T01:22:51.471498744Z",
+        "status": "NATIVE_RETAINED",
+        "reason": "BYPASS",
+        "decision": "",
+        "selected": "NATIVE",
+        "candidateExecuted": false,
+        "counterfactual": false,
+        "suspended": false,
+        "exactOutputs": false,
+        "savingNs": 0,
+        "native": {
+          "outcome": "SUCCESS",
+          "exitCode": 0,
+          "durationNs": 33553586,
+          "outputSha256": "f2ef8dcc10593195f7376d6db7c031e8437a355c49eb3b99d00c89237010859f",
+          "outputBytes": 4
+        }
+      }
+    },
+    {
+      "name": "binding-drift",
+      "result": {
+        "schemaVersion": "buildopt.sticky/active-execution/v1",
+        "recordType": "STICKY_WRAPPER_ACTIVE_EXECUTION",
+        "invocation": 1,
+        "startedAt": "2026-08-27T01:22:51.471498744Z",
+        "completedAt": "2026-08-27T01:22:51.471498744Z",
+        "status": "NATIVE_RETAINED",
+        "reason": "DECISION_BINDING_MISMATCH",
+        "decision": "ACTIVE_RUNTIME_PROFILE",
+        "actionId": "benchmark/binding-drift",
+        "selected": "NATIVE",
+        "candidateExecuted": false,
+        "counterfactual": false,
+        "suspended": false,
+        "exactOutputs": false,
+        "savingNs": 0,
+        "native": {
+          "outcome": "SUCCESS",
+          "exitCode": 0,
+          "durationNs": 32511333,
+          "outputSha256": "f2ef8dcc10593195f7376d6db7c031e8437a355c49eb3b99d00c89237010859f",
+          "outputBytes": 4
+        }
+      }
+    },
+    {
+      "name": "expired-decision",
+      "result": {
+        "schemaVersion": "buildopt.sticky/active-execution/v1",
+        "recordType": "STICKY_WRAPPER_ACTIVE_EXECUTION",
+        "invocation": 1,
+        "startedAt": "2026-08-27T03:22:51.471498744Z",
+        "completedAt": "2026-08-27T03:22:51.471498744Z",
+        "status": "NATIVE_RETAINED",
+        "reason": "DECISION_EXPIRED",
+        "decision": "",
+        "selected": "NATIVE",
+        "candidateExecuted": false,
+        "counterfactual": false,
+        "suspended": false,
+        "exactOutputs": false,
+        "savingNs": 0,
+        "native": {
+          "outcome": "SUCCESS",
+          "exitCode": 0,
+          "durationNs": 25643779,
+          "outputSha256": "f2ef8dcc10593195f7376d6db7c031e8437a355c49eb3b99d00c89237010859f",
+          "outputBytes": 4
+        }
+      }
+    },
+    {
+      "name": "revoked-decision",
+      "result": {
+        "schemaVersion": "buildopt.sticky/active-execution/v1",
+        "recordType": "STICKY_WRAPPER_ACTIVE_EXECUTION",
+        "invocation": 1,
+        "startedAt": "2026-08-27T01:22:51.471498744Z",
+        "completedAt": "2026-08-27T01:22:51.471498744Z",
+        "status": "NATIVE_RETAINED",
+        "reason": "DECISION_REVOKED",
+        "decision": "",
+        "selected": "NATIVE",
+        "candidateExecuted": false,
+        "counterfactual": false,
+        "suspended": false,
+        "exactOutputs": false,
+        "savingNs": 0,
+        "native": {
+          "outcome": "SUCCESS",
+          "exitCode": 0,
+          "durationNs": 26577820,
+          "outputSha256": "f2ef8dcc10593195f7376d6db7c031e8437a355c49eb3b99d00c89237010859f",
+          "outputBytes": 4
+        }
+      }
+    },
+    {
+      "name": "candidate-failure",
+      "result": {
+        "schemaVersion": "buildopt.sticky/active-execution/v1",
+        "recordType": "STICKY_WRAPPER_ACTIVE_EXECUTION",
+        "invocation": 1,
+        "startedAt": "2026-08-27T01:22:51.471498744Z",
+        "completedAt": "2026-08-27T01:22:51.471498744Z",
+        "status": "SUSPENDED",
+        "reason": "CANDIDATE_FAILURE",
+        "decision": "ACTIVE_RUNTIME_PROFILE",
+        "actionId": "benchmark/candidate-failure",
+        "selected": "NATIVE",
+        "candidateExecuted": true,
+        "counterfactual": false,
+        "suspended": true,
+        "exactOutputs": false,
+        "savingNs": 0,
+        "candidate": {
+          "outcome": "FAILURE",
+          "exitCode": 37,
+          "durationNs": 15097894
+        },
+        "native": {
+          "outcome": "SUCCESS",
+          "exitCode": 0,
+          "durationNs": 26721889,
+          "outputSha256": "f2ef8dcc10593195f7376d6db7c031e8437a355c49eb3b99d00c89237010859f",
+          "outputBytes": 4
+        }
+      }
+    }
+  ],
+  "summary": {
+    "scenarioCount": 8,
+    "activeExecutions": 1,
+    "suspensions": 3,
+    "nativeRetentions": 4,
+    "candidateExecutions": 4,
+    "nativeExecutions": 8,
+    "exactCounterfactuals": 2,
+    "positiveSavingMs": 24.550171,
+    "negativeQualificationSeen": true
+  },
+  "pass": true
+}

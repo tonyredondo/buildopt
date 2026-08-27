@@ -216,6 +216,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-sticky-wrapper-noop"
         "${buildopt_script_dir}/check-sticky-wrapper-observation"
         "${buildopt_script_dir}/check-sticky-wrapper-trial"
+        "${buildopt_script_dir}/check-sticky-wrapper-active"
         "${buildopt_script_dir}/check-central-storage-contract"
         "${buildopt_script_dir}/check-central-state-storage"
         "${buildopt_script_dir}/check-central-https-auth"

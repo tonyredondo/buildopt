@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/sticky-wrapper-active.v1.schema.json",
+  "title": "BuildOpt sticky-wrapper active execution v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "recordType", "capturedAt", "environment", "trialReport",
+    "qualification", "scenarios", "summary", "pass"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "buildopt.poc/sticky-active-result/v1" },
+    "recordType": { "const": "STICKY_WRAPPER_ACTIVE_BENCHMARK" },
+    "capturedAt": { "$ref": "#/$defs/timestamp" },
+    "environment": { "$ref": "#/$defs/environment" },
+    "trialReport": { "type": "string", "minLength": 1 },
+    "qualification": { "$ref": "#/$defs/qualification" },
+    "scenarios": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "result"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "result": { "$ref": "#/$defs/execution" }
+        }
+      }
+    },
+    "summary": { "$ref": "#/$defs/summary" },
+    "pass": { "const": true }
+  },
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["goos", "goarch"],
+      "properties": {
+        "goos": { "type": "string", "minLength": 1 },
+        "goarch": { "type": "string", "minLength": 1 }
+      }
+    },
+    "qualification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorized", "reason", "pairs", "minimumPairs", "positivePairs",
+        "exactOutputPairs", "cancelledPairs", "candidateMeanMs", "nativeMeanMs",
+        "meanSavedMs"
+      ],
+      "properties": {
+        "authorized": { "const": false },
+        "reason": { "const": "TRIAL_NOT_PROFITABLE" },
+        "pairs": { "type": "integer", "minimum": 4 },
+        "minimumPairs": { "const": 4 },
+        "positivePairs": { "const": 0 },
+        "exactOutputPairs": { "type": "integer", "minimum": 0 },
+        "cancelledPairs": { "const": 0 },
+        "candidateMeanMs": { "type": "number", "minimum": 0 },
+        "nativeMeanMs": { "type": "number", "minimum": 0 },
+        "meanSavedMs": { "type": "number", "maximum": 0 }
+      }
+    },
+    "arm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome", "exitCode", "durationNs"],
+      "properties": {
+        "outcome": { "enum": ["SUCCESS", "FAILURE", "CANCELLED", "INFRA_FAILURE"] },
+        "exitCode": { "type": "integer" },
+        "durationNs": { "type": "integer", "minimum": 0 },
+        "outputSha256": { "$ref": "#/$defs/digest" },
+        "outputBytes": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion", "recordType", "invocation", "startedAt", "completedAt",
+        "status", "reason", "decision", "selected", "candidateExecuted",
+        "counterfactual", "suspended", "exactOutputs", "savingNs"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "buildopt.sticky/active-execution/v1" },
+        "recordType": { "const": "STICKY_WRAPPER_ACTIVE_EXECUTION" },
+        "invocation": { "type": "integer", "minimum": 1 },
+        "startedAt": { "$ref": "#/$defs/timestamp" },
+        "completedAt": { "$ref": "#/$defs/timestamp" },
+        "status": { "enum": ["NATIVE_RETAINED", "ACTIVE_EXECUTED", "SUSPENDED"] },
+        "reason": { "type": "string", "minLength": 1 },
+        "decision": { "type": "string" },
+        "actionId": { "type": "string", "minLength": 1 },
+        "selected": { "enum": ["NATIVE", "CANDIDATE"] },
+        "candidateExecuted": { "type": "boolean" },
+        "counterfactual": { "type": "boolean" },
+        "suspended": { "type": "boolean" },
+        "exactOutputs": { "type": "boolean" },
+        "savingNs": { "type": "integer" },
+        "candidate": { "$ref": "#/$defs/arm" },
+        "native": { "$ref": "#/$defs/arm" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scenarioCount", "activeExecutions", "suspensions", "nativeRetentions",
+        "candidateExecutions", "nativeExecutions", "exactCounterfactuals",
+        "positiveSavingMs", "negativeQualificationSeen"
+      ],
+      "properties": {
+        "scenarioCount": { "type": "integer", "minimum": 1 },
+        "activeExecutions": { "type": "integer", "minimum": 0 },
+        "suspensions": { "type": "integer", "minimum": 0 },
+        "nativeRetentions": { "type": "integer", "minimum": 0 },
+        "candidateExecutions": { "type": "integer", "minimum": 0 },
+        "nativeExecutions": { "type": "integer", "minimum": 0 },
+        "exactCounterfactuals": { "type": "integer", "minimum": 0 },
+        "positiveSavingMs": { "type": "number", "minimum": 0 },
+        "negativeQualificationSeen": { "const": true }
+      }
+    }
+  }
+}

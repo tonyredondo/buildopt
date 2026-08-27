@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-active-result/v1",
+  "recordType": "STICKY_WRAPPER_ACTIVE_BENCHMARK",
+  "capturedAt": "2026-08-27T00:00:00Z",
+  "environment": { "goos": "linux", "goarch": "amd64" },
+  "trialReport": "trial.json",
+  "qualification": {
+    "authorized": false,
+    "reason": "TRIAL_NOT_PROFITABLE",
+    "pairs": 4,
+    "minimumPairs": 4,
+    "positivePairs": 0,
+    "exactOutputPairs": 4,
+    "cancelledPairs": 0,
+    "candidateMeanMs": 8,
+    "nativeMeanMs": 7,
+    "meanSavedMs": -1
+  },
+  "scenarios": [{
+    "name": "native-retention",
+    "result": {
+      "schemaVersion": "buildopt.sticky/active-execution/v1",
+      "recordType": "STICKY_WRAPPER_ACTIVE_EXECUTION",
+      "invocation": 1,
+      "startedAt": "2026-08-27T00:00:00Z",
+      "completedAt": "2026-08-27T00:00:01Z",
+      "status": "NATIVE_RETAINED",
+      "reason": "BYPASS",
+      "decision": "",
+      "selected": "NATIVE",
+      "candidateExecuted": false,
+      "counterfactual": false,
+      "suspended": false,
+      "exactOutputs": false,
+      "savingNs": 0,
+      "native": { "outcome": "SUCCESS", "exitCode": 0, "durationNs": 1000000 }
+    }
+  }],
+  "summary": {
+    "scenarioCount": 1,
+    "activeExecutions": 0,
+    "suspensions": 0,
+    "nativeRetentions": 0,
+    "candidateExecutions": 0,
+    "nativeExecutions": 0,
+    "exactCounterfactuals": 0,
+    "positiveSavingMs": 0,
+    "negativeQualificationSeen": true
+  },
+  "pass": false
+}

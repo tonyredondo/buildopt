@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-active/v1",
+  "workItem": "SWL-011",
+  "purpose": "Execute only a revalidated qualified runtime profile and suspend it on any correctness or value regression.",
+  "activeExecution": {
+    "revalidatesDecisionEveryInvocation": true,
+    "requiresSignedDecision": true,
+    "requiresExactBinding": true,
+    "requiresQuarantineValidated": true,
+    "requiresCounterfactual": true,
+    "candidateRunsWithoutShell": true,
+    "repositorySpecificRules": false,
+    "decisionMustBe": "ACTIVE_RUNTIME_PROFILE"
+  },
+  "qualification": {
+    "minimumPairs": 4,
+    "allPairsMustBeExact": true,
+    "allPairsMustBeCandidatePositive": true,
+    "currentTrial": {
+      "source": "benchmarks/results/sticky-wrapper-trial-v1.json",
+      "authorized": false,
+      "reason": "TRIAL_NOT_PROFITABLE",
+      "candidateMeanMs": 7533.782126,
+      "nativeMeanMs": 6978.77450725,
+      "meanSavedMs": -555.00761875,
+      "positivePairs": 0,
+      "exactOutputPairs": 4
+    }
+  },
+  "suspension": {
+    "onCandidateFailure": "SUSPEND_AND_RETAIN_NATIVE",
+    "onNativeCounterfactualFailure": "SUSPEND_AND_RETAIN_NATIVE",
+    "onOutputMismatch": "SUSPEND_AND_RETAIN_NATIVE",
+    "onRegression": "SUSPEND_AND_RETAIN_NATIVE",
+    "afterSuspension": "NATIVE_UNTIL_NEW_DECISION_GENERATION"
+  },
+  "fallback": {
+    "bypass": "NATIVE",
+    "invalidDecision": "NATIVE",
+    "expiredDecision": "NATIVE",
+    "revokedDecision": "NATIVE",
+    "bindingDrift": "NATIVE",
+    "unsupportedDecision": "NATIVE",
+    "cancelledInvocation": "NATIVE"
+  },
+  "result": "benchmarks/results/sticky-wrapper-active-v1.json",
+  "command": "./dev/check-sticky-wrapper-active",
+  "nextBlock": "SWL-012"
+}

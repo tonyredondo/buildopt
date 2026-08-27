@@ -59,6 +59,33 @@ allowed. Re-run the fixture with:
 ./dev/check-sticky-wrapper-trial
 ```
 
+## Sticky-wrapper active execution evidence
+
+[`sticky-wrapper-active-v1.json`](./results/sticky-wrapper-active-v1.json)
+records the first fail-closed active-execution control boundary. The checked-in
+SWL-010 trial is intentionally rejected because its candidate is slower than
+optimized native Gradle (`7.534 s` versus `6.979 s`, `0/4` positive pairs).
+The benchmark then exercises eight generic direct-command scenarios: one
+qualified candidate with a positive native counterfactual, three suspensions
+(regression, output mismatch and candidate failure), and four native retentions
+(bypass, binding drift, expiry and revocation). The synthetic active case saves
+about **24.6 ms** with byte-identical output; it is control-flow evidence, not a
+customer build-time claim.
+
+The runner revalidates the signed decision and exact binding on every
+invocation, never invokes a shell, and permanently retains native execution
+after a decisive failure until a new decision generation arrives. Validate the
+schema, the current negative qualification and every scenario with:
+
+```bash
+./dev/check-sticky-wrapper-active
+```
+
+SWL-011 proves safe activation mechanics only. It does not promote the current
+negative trial, and it does not turn synthetic timings into repository-level
+value evidence. SWL-012 is the next block for durable native optimization
+proposals.
+
 ## Central two-machine functional evidence
 
 [`poc-central-two-machine-v1.json`](./results/poc-central-two-machine-v1.json)
