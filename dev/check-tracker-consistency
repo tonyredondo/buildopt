@@ -65,10 +65,11 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`STICKY WRAPPER LEARNING POC ACTIVE; PRIOR GENERIC HYPOTHESES STOPPED\`"
-    "**Current phase:** \`SWL-016_TERMINAL_DECISION\`"
+    "**Overall status:** \`FRESH GENERIC OPTIMIZATION POC ACTIVE; HISTORICAL PERFORMANCE DATA DIAGNOSTIC ONLY\`"
+    "**Current phase:** \`SWL-FRESH-001_COMPLETE_GENERIC_PRODUCERS\`"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
-    "| POC-STICKY-WRAPPER-LEARNING | Test a repository-committed verified wrapper, centralized Gradle cache/state and evidence-gated durable/runtime actions over chronological builds | \`DOING\` | 21/22 resolved |"
+    "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
+    "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`DOING\` | 1/7 |"
     "| \`E-403\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-000\` |"
     "| \`E-404\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-001\` |"
     "| \`E-405\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-002\` |"
@@ -89,6 +90,7 @@ buildopt_required_tracker_text=(
     "| \`E-420\` | 2026-08-27 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-014A\` |"
     "| \`E-421\` | 2026-08-27 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-014B\` |"
     "| \`E-422\` | 2026-08-27 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-014C\` |"
+    "| \`E-423\` | 2026-08-27 | \`POC-FRESH-GENERIC-OPTIMIZATION\`, \`SWL-FRESH-000\` |"
     "| 150 | \`POC-AGGREGATE-OUTPUT-CLOSURE-001\` | Derive every required aggregate output"
     "| \`E-398\` | 2026-08-25 | \`POC-AGGREGATE-OUTPUT-CLOSURE-001\`"
     "| 149 | \`POC-CONFIGURATION-INPUT-BINDING-001\` | Inspect typed Gradle configuration"

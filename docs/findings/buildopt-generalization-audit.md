@@ -151,40 +151,27 @@ measured candidate or an explicit native verdict.
 ## Next generalization steps
 
 The detailed order and stop conditions now live in the
-[Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md).
-The route deliberately prevents another broad timing campaign from measuring
-an inactive wrapper:
+[Fresh Generic Optimization POC Tracker](../plans/fresh-generic-optimization-poc-tracker.md).
+The active route starts from zero BuildOpt evidence:
 
-1. **Correct comparison fairness (`SWL-014A`).** Both arms receive identical
-   Gradle arguments and native/remote cache opportunity. Historical v1 remains
-   diagnostic-only, and readiness requires lifecycle evidence rather than row
-   count alone.
-2. **Compose the real lifecycle (`SWL-014B`).** Ordinary observation, generic
-   proposal, trusted-CI trial, qualification, signed decision, active execution,
-   counterfactual, suspension and economics must all run through `./buildoptw`.
-3. **Screen public opportunity breadth (`SWL-014C`, complete).** The two frozen
-   generic adapters exposed 0/5 complete testable actions. Structural graph
-   rows existed for Spring, Micronaut and Kafka, but no exact candidate-plan and
-   omitted-critical-path binding existed; task-proposal input was unavailable.
-4. **Installed value and longitudinal campaign (`SWL-014D`, `SWL-015 v2`).**
-   Skipped by the preregistered SWL-014C stop transition; timing without an
-   admissible action would not test generalization.
-5. **Apply the frozen decision (`SWL-016`).** The unchanged scorecard requires
-   activation breadth, confidence, cumulative value, payback and durable/runtime
-   evidence. Compatibility or cache hits alone cannot continue the POC.
+1. implement complete generic task-contract and declared-graph producers;
+2. capture a current five-family cohort from clean state;
+3. separate conclusive `NO_OPPORTUNITY` from `INPUT_UNAVAILABLE` before
+   applying the three-of-five breadth gate;
+4. measure installed active value only for complete actions;
+5. run a fresh chronological campaign only after installed value passes; and
+6. issue the terminal scorecard from fresh evidence only.
 
 This route no longer leaves implementation choices implicit: the
-[v2 machine contract](../../specs/poc-sticky-wrapper-longitudinal-v2.json)
-fixes per-arm state topology, the launcher composition point, two generic
+[fresh machine contract](../../specs/poc-fresh-generic-optimization-v1.json)
+fixes the evidence boundary, per-arm state topology, two generic
 detectors, result schemas, statistical algorithms, files/checks and early-stop
 outcomes. Changing one is a new preregistered experiment, not normal block
 implementation.
 
-Only declared graph scope currently has a generic public input path. The
-task-contract detector remains synthetic because no safe generic public source
-producer exists; the screen records it as unavailable instead of special-casing
-repositories. Public breadth must therefore come from the unchanged installed
-profile/critical-path graph route or the experiment stops.
+The previous screen proved that neither detector had a complete public input
+path across the cohort. `SWL-FRESH-001` closes that producer gap before the
+route is allowed to interpret public breadth.
 
 ## POC conclusion
 

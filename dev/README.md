@@ -14,14 +14,22 @@ package boundaries with:
 ./dev/check-documentation
 ```
 
-Validate the active sticky-wrapper successor hypothesis, machine contract,
-ordered work, frozen thresholds and repository-documentation alignment with:
+Validate the active fresh-evidence route, its forbidden historical inputs,
+typed completeness outcomes and exact next block with:
+
+```bash
+./dev/check-fresh-generic-optimization-plan
+```
+
+Validate the superseded sticky-wrapper route as immutable diagnostic history
+with:
 
 ```bash
 ./dev/check-sticky-wrapper-learning-plan
 ```
 
-This check validates planning authority only. `SWL-014B` separately proves
+The fresh check owns current planning authority. The historical check preserves
+the old contract only. `SWL-014B` separately proves
 that observation, trial, value, signed active execution, suspension and ledger
 status are composed behind the customer invocation. Validate that lifecycle
 with:

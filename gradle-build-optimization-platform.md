@@ -97,13 +97,16 @@ profile or adaptive-fragment results. The wrapper is onboarding and control
 infrastructure; it succeeds as an accelerator only if its complete
 chronological portfolio, including observation, trial, cache, fallback and
 wrapper costs, beats the same optimized native Gradle cache opportunity across
-the frozen breadth gate. The ordered work and immutable scorecard are in the
-[Sticky Wrapper Learning POC Tracker](./docs/plans/sticky-wrapper-learning-poc-tracker.md).
+the frozen breadth gate. The active ordered work and immutable evidence
+boundary are in the
+[Fresh Generic Optimization POC Tracker](./docs/plans/fresh-generic-optimization-poc-tracker.md).
+The earlier sticky-wrapper tracker is retained as diagnostic history only.
 The earlier [one-command onboarding roadmap](./docs/plans/one-command-onboarding-roadmap.md)
 and [central cache/state roadmap](./docs/plans/centralized-cache-and-state-roadmap.md)
 remain implemented foundations, not current value authority.
 
-The first bounded longitudinal wrapper sample is compatibility evidence only.
+All pre-freeze BuildOpt performance evidence is diagnostic only. The first
+bounded longitudinal wrapper sample is compatibility evidence only.
 Its v1 harness injected `--build-cache` into control but not candidate and
 configured candidate with no central identity and a zero trial budget, so the
 candidate exercised native no-op/light observation rather than the lifecycle
@@ -3330,8 +3333,8 @@ These choices are deliberately unresolved because they do not help answer the PO
 The original Phase 0 package and walking skeleton are materialized. The combined path cleared `POC-VALUE-G01` on the qualified synthetic workload matrix. `POC-BREADTH-001` initially completed with 2/8 realistic change/DSL cells qualifying. Attribution and calibrated paired experiments raised bounded coverage while the terminal Kotlin decision retained unstable shared/build-logic cells outside the claim. Public-repository replication then qualified only Mockito out of Spotless, Mockito, and SpotBugs, so the bounded synthetic claim remains unchanged. Exact-workflow profiling rejected configuration work and exposed both Spotless's cross-project graph and Mockito's 242.690-second test compilation. The corrected boundary therefore authorizes preregistered Spotless Build Impact and Mockito test-build experiments while retaining no build-preparation hypothesis for SpotBugs. The current implementation truth lives in the tracker and executable checks.
 
 The generic structural-profile POC and its adaptive-fragment successor are now
-both stopped by their frozen terminal gates. The active successor is the
-repository-committed sticky-wrapper learning POC. It reuses the implemented
+both stopped by their frozen terminal gates. The active successor is the fresh
+generic optimization POC. It reuses the implemented
 launcher, packages, Gradle HTTP cache, typed central state and fail-open
 controls, but grants no authority to the stopped profiles. Sixteen of its
 twenty-two current blocks are closed: wrapper contract/generation/bootstrap,
@@ -3340,7 +3343,7 @@ state, bounded no-op/observation costs, isolated trial/active mechanism proofs,
 the durable opportunity catalog, customer explanation and the installed
 two-machine cache path.
 
-The route audit opened `SWL-014A` before any full longitudinal campaign. The
+The original route audit opened `SWL-014A` before any full longitudinal campaign. The
 retained five-family v1 sample used asymmetric cache activation and no active
 action, while the v1 checker could declare readiness from pair count alone.
 `SWL-014A..D` now require cache-symmetric measurement, real customer-path
@@ -3361,9 +3364,15 @@ new composition root is `internal/launcher/sticky_learning.go`; the only public
 opportunity detectors are the existing task-contract and declared-graph-scope
 detectors. Installed value uses eight-pair deterministic LCG bootstrap and
 nearest-rank arm p95; chronological confidence uses deterministic circular
-moving-block bootstrap over signed net value. A failed breadth/value pre-gate
-skips the expensive campaign and opens `SWL-016`, which remains the sole
-terminal authority. These are frozen POC decisions, not production policy.
+moving-block bootstrap over signed net value. A later audit found that the 0/5
+opportunity result lacked complete public producer inputs, so unavailable input
+had been treated as absence of opportunity. That result and the v2 route now
+have no terminal authority. The active fresh contract starts from zero BuildOpt
+evidence, implements complete typed producers first, blocks rather than stops
+on `INPUT_UNAVAILABLE` or `PRODUCER_FAILED`, and permits a terminal decision
+only from fresh complete evidence. Hosted CI verifies contracts but never
+decides wall-time thresholds. These are frozen POC decisions, not production
+policy.
 
 The distinction is deliberate:
 

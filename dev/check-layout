@@ -708,6 +708,7 @@ buildopt_required_files=(
     "fixtures/central-two-machine/unrelated/src/main/java/dev/buildopt/fixture/Unrelated.java"
     "dev/check-documentation"
     "dev/check-tracker-consistency"
+    "dev/check-fresh-generic-optimization-plan"
     "dev/check-sticky-wrapper-learning-plan"
     "dev/check-sticky-wrapper-learning-lifecycle"
     "dev/documentation-validator/main.go"

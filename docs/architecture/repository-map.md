@@ -32,10 +32,12 @@ versioned microservices.
 
 ## Active POC ownership
 
-The current successor experiment is specified by
-[`poc-sticky-wrapper-learning-v1`](../../specs/poc-sticky-wrapper-learning-v1.md)
+The current experiment is specified by
+[`poc-fresh-generic-optimization-v1`](../../specs/poc-fresh-generic-optimization-v1.md)
 and ordered by the
-[`Sticky Wrapper Learning POC Tracker`](../plans/sticky-wrapper-learning-poc-tracker.md).
+[`Fresh Generic Optimization POC Tracker`](../plans/fresh-generic-optimization-poc-tracker.md).
+It reuses the sticky-wrapper implementation described below but accepts no
+historical BuildOpt evidence as an experiment input.
 Its generated repository-facing files are owned by `internal/stickywrapper`;
 `SWL-001..006` own their contract, generator, verified bootstrap, passthrough,
 portable connection and native Gradle HTTP cache integration. `SWL-007` owns
@@ -65,13 +67,15 @@ The SWL-014 installed proof is owned by `dev/run-poc-central-two-machine`,
 `dev/central-two-machine-client` and `dev/check-sticky-wrapper-two-machine`,
 with its normative contract in `specs/poc-sticky-wrapper-two-machine-v1.*` and
 its checked result in `benchmarks/results/sticky-wrapper-two-machine-v1.json`.
-`SWL-014A` is closed by the detailed tracker,
+The historical `SWL-014A` route is preserved by the diagnostic tracker,
 `specs/poc-sticky-wrapper-longitudinal-v2.*`, the preflight-only
 `dev/run-sticky-wrapper-longitudinal-v2`, its checker and fixture test. The
 checked zero-pair result lives at
 `benchmarks/results/sticky-wrapper-longitudinal-v2-preflight.json`. Final
-campaign/result-directory behavior remains an exact `SWL-015` modification
-after `SWL-014C/D` provide the public opportunity and value evidence it consumes.
+campaign/result-directory behavior belonged to the old `SWL-015` route. The
+active replacement is owned by `specs/poc-fresh-generic-optimization-v1.*`,
+`docs/plans/fresh-generic-optimization-poc-tracker.md` and
+`dev/check-fresh-generic-optimization-plan`.
 
 `SWL-014B` added the only launcher-owned composition root at
 `internal/launcher/sticky_learning.go`, plus shared deterministic value
@@ -83,12 +87,14 @@ statistics in `internal/stickyvalue`. It adapts
 `SWL-014D` owns the installed active-value command and checker. The exact file
 manifests and commands are locked in the v2 machine contract. The composed
 fixture and status evidence are checked by
-`dev/check-sticky-wrapper-learning-lifecycle`; `SWL-014C` now owns the public
-opportunity screen.
+`dev/check-sticky-wrapper-learning-lifecycle`; the old public opportunity
+screen is diagnostic-only. `SWL-FRESH-001` next owns complete generic public
+evidence producers.
 
-Run `./dev/check-sticky-wrapper-learning-plan` to validate this planning
-boundary. As implementation begins, this map must name the concrete owning
-paths in the same commit that adds them.
+Run `./dev/check-fresh-generic-optimization-plan` to validate current planning
+authority and `./dev/check-sticky-wrapper-learning-plan` to preserve the
+superseded route. As implementation begins, this map must name the concrete
+owning paths in the same commit that adds them.
 
 ## Executables and their implementation
 

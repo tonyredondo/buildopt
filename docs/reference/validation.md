@@ -15,7 +15,8 @@ provision tools or create release artifacts document that effect explicitly.
 | Markdown, navigation, package docs | `./dev/check-documentation` |
 | Required paths and baseline shape | `./dev/check-layout` |
 | Normative package structure | `./dev/check-normative-layout` |
-| Active sticky-wrapper POC contract and frozen gates | `./dev/check-sticky-wrapper-learning-plan` |
+| Active fresh generic optimization route and evidence boundary | `./dev/check-fresh-generic-optimization-plan` |
+| Superseded sticky-wrapper diagnostic contract | `./dev/check-sticky-wrapper-learning-plan` |
 | Sticky-wrapper files, parsers, routing and update contract | `./dev/check-sticky-wrapper-contract` |
 | Sticky-wrapper deterministic generator, drift, downgrade, rollback and portable compilation | `./dev/check-sticky-wrapper-generator` |
 | Sticky-wrapper checksum bootstrap, safe extraction, atomic cache publication and offline reuse | `./dev/check-sticky-wrapper-bootstrap` |

@@ -103,8 +103,8 @@ delegates to it, and shared conservative value statistics live in
 non-zero committed trial budget, explicit `BUILDOPT_STICKY_LEARNING=1` and an
 owner token with state-write/cache-read/state-read authority. This boundary is
 frozen in the
-[Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
-and its [v2 machine contract](../../specs/poc-sticky-wrapper-longitudinal-v2.json).
+[Fresh Generic Optimization POC Tracker](../plans/fresh-generic-optimization-poc-tracker.md)
+and its [fresh machine contract](../../specs/poc-fresh-generic-optimization-v1.json).
 Every candidate, native and counterfactual child remains owned by the launcher
 process supervisor through explicit active/trial executor adapters.
 It builds on deterministic generation, verified package bootstrap, exact
@@ -117,14 +117,14 @@ exit semantics.
 
 The original longitudinal v1 harness is not architecture evidence for that
 composition. It configured no central identity and zero trial budget and gave
-`--build-cache` only to control. The versioned v2 route requires symmetric cache
+`--build-cache` only to control. The active fresh route requires symmetric cache
 opportunity through separate per-arm writable namespaces that start empty,
 plus explicit lifecycle/action/ledger records before a campaign
 can become terminal-ready. Only the existing task-contract and
-declared-graph-scope detectors may enter the public opportunity gate. Because
-the current code has no generic public producer for task-contract input, that
-detector reports explicit input unavailability; only the existing installed
-profile/critical-path graph route can currently produce a public action.
+declared-graph-scope detectors may enter the public opportunity gate.
+`SWL-FRESH-001` must first implement complete generic public producers for
+both; incomplete input blocks the experiment and cannot count as absence of
+opportunity.
 
 The installed two-machine proof exercises this boundary with a trusted
 producer and a clean read-only consumer in separate containers. The wrapper

@@ -15,7 +15,7 @@ before running the product.
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
 | Review the POC idea, mechanisms, current value, and next steps | [Current POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
-| Follow the active successor experiment | [Sticky Wrapper Learning POC Tracker](./plans/sticky-wrapper-learning-poc-tracker.md) | [Learning contract](../specs/poc-sticky-wrapper-learning-v1.md), [corrected longitudinal protocol](../specs/poc-sticky-wrapper-longitudinal-v2.md), [wrapper contract](../specs/poc-sticky-wrapper-contract-v1.md), [product onboarding](./getting-started/product-onboarding.md) |
+| Follow the active fresh-evidence experiment | [Fresh Generic Optimization POC Tracker](./plans/fresh-generic-optimization-poc-tracker.md) | [Fresh contract](../specs/poc-fresh-generic-optimization-v1.md), [diagnostic sticky tracker](./plans/sticky-wrapper-learning-poc-tracker.md), [wrapper contract](../specs/poc-sticky-wrapper-contract-v1.md), [product onboarding](./getting-started/product-onboarding.md) |
 | Review the stopped adaptive hypothesis | [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md) | [Terminal decision](../specs/poc-adaptive-fragment-terminal-decision-v1.md), [current generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the implemented onboarding foundation | [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md) | [Product onboarding](./getting-started/product-onboarding.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
 | Plan optional shared state across machines | [Centralized cache and state POC roadmap](./plans/centralized-cache-and-state-roadmap.md) | [Storage contract](../specs/poc-central-storage-contract-v1.md), [architecture overview](./architecture/overview.md) |
@@ -65,10 +65,11 @@ before running the product.
 
 ### Plans
 
+- [Fresh Generic Optimization POC Tracker](./plans/fresh-generic-optimization-poc-tracker.md):
+  the active zero-history route, complete producer gate, fresh public capture,
+  installed value and chronological decision sequence.
 - [Sticky Wrapper Learning POC Tracker](./plans/sticky-wrapper-learning-poc-tracker.md):
-  the active post-AF hypothesis, repository-committed wrapper contract,
-  cache/state separation, decision lifecycle, frozen scorecard, 17 ordered
-  blocks and documentation obligations.
+  the superseded diagnostic route and retained wrapper/lifecycle history.
 - [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md):
   the completed post-`STOP_GENERIC_POC` hypothesis, terminal
   `STOP_ADAPTIVE_FRAGMENT_POC` scorecard, ordered AF-001..AF-015 work, evidence

@@ -23,9 +23,19 @@ not whether it is ready for production. Soak, design-partner validation,
 production SLOs, autonomous rollout and Test Optimization are outside this
 decision.
 
+## Current experiment status
+
+There is deliberately no current performance percentage yet. The experiment
+has been reset to zero BuildOpt observations because the previous public screen
+used incomplete producer inputs. Every result below is retained only as
+historical diagnostic context; none may authorize, seed or stop the active
+experiment. The current route is to complete the generic producers, capture
+fresh evidence on five public families, prove opportunity breadth, then measure
+installed and chronological value.
+
 ## Mechanisms
 
-| Mechanism | Purpose | Current evidence |
+| Mechanism | Purpose | Historical diagnostic evidence |
 | --- | --- | --- |
 | **Structural Build Impact** | Derive the smallest sufficient Gradle graph for the exact change and requested workflow. | Produces large isolated target wins, including Kafka's current **21.43%** qualified target saving, but compatible descendants are much rarer than target calibrations. |
 | **Verified output materialization** | Restore byte-exact outputs from unaffected producers so the reduced graph remains correct. | Fail-closed correctness is strong: the current five-repository run verifies 27 exact-output builds with zero product failures. |
@@ -37,16 +47,16 @@ decision.
 | **Local/HTTP cache and central state** | Carry verified task outputs and profiles between builds or machines. | Supporting infrastructure; useful for transport and persistence, but not the primary acceleration claim. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource and state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
 
-## Current public-repository result
+## Discarded historical public-repository result
 
-The current installed package was run chronologically across 20 comparable
+The previous installed package was run chronologically across 20 comparable
 commits in each of Spring Framework, OpenTelemetry Java Instrumentation, Apache
 Kafka, Micronaut Core and Apache Groovy. Each control/candidate pair used
 separate persistent state, alternating order and byte-exact required-output
 verification. Dependency preparation was outside pair wall time and copied no
 task outputs or BuildOpt policy state.
 
-| Repository | Positive pairs | Signed net | Current outcome |
+| Repository | Positive pairs | Signed net | Historical outcome |
 | --- | ---: | ---: | --- |
 | Spring Framework | 2/20 | **-130.406 s** | `NET_NEGATIVE` |
 | OpenTelemetry | 11/20 | **-26.044 s** | `INCONCLUSIVE` |
@@ -78,7 +88,7 @@ positive, 0/5 have a positive lower confidence bound, signed portfolio value is
 8.656 seconds p95. With zero activated saving, there is no evidence-backed
 bounded fragment class to specialize.
 
-## Sticky-wrapper successor: first measured result
+## Historical sticky-wrapper measurements
 
 The successor POC has now completed its first implementation block. `SWL-008`
 reads a signed local decision snapshot before Gradle and returns the native
@@ -171,7 +181,7 @@ reasons. These commands can display stored state, but the normal wrapper path
 does not yet compose the observer, trial, signed decision, active runner and
 durable catalog into one automatic lifecycle.
 
-## Current installed two-machine proof
+## Historical installed two-machine proof
 
 `SWL-014` proves the transport and lifecycle, not acceleration. Two isolated
 4-CPU/8-GiB containers use the committed `./buildoptw` command and the same
@@ -251,7 +261,7 @@ zero product failures. The signed total is +50.544 seconds, but that number is
 descriptive only: repository percentages are not averaged and mechanism
 percentages are not added.
 
-## Current fragment-composition result
+## Historical fragment-composition result
 
 AF-011 ran 48 new Gradle 9.6.1 pairs on one controlled workflow, always against
 the complete optimized native workflow and with identical required outputs.
@@ -270,7 +280,7 @@ composition cannot hide the failed 7/8 constituent gate. Cache locality is not
 claimed as part of that composition because its remote-cache object contract
 is different.
 
-## What the evidence says
+## What the historical evidence says
 
 - The latest current-installed campaign is safe but not valuable yet: 100/100
   pairs preserve exact outputs with zero product failures, while 75/100 regress
@@ -310,7 +320,7 @@ robust Kafka qualification and bounded Kafka payback. Three fail:
 - one observed pre-Gradle economic rejection at 4,098 ms, above the 500-ms
   median and 1,000-ms p95 limits.
 
-## Conclusion and terminal direction
+## Historical conclusion and active direction
 
 The generic structural-profile hypothesis and its adaptive-fragment successor
 both stop here. This is not a claim that BuildOpt never works: Kafka pays back
@@ -348,36 +358,37 @@ fail-open behavior are composed behind ordinary `./buildoptw`. It reuses the
 existing optional HTTPS service, but Gradle cache objects and typed BuildOpt
 decisions remain separate planes and a cache hit never grants action authority.
 
-This is currently a preregistered experiment, not a new performance result.
+This is currently a preregistered fresh-evidence experiment, not a new
+performance result.
 Continuation requires exact outputs, zero product failures, at most 100-ms p50
 and 250-ms p95 local native-decision overhead, a positive complete portfolio
 and independently positive value/payback in at least three of five public
 families. Every bootstrap, observation, trial, cache, fallback and action cost
-counts. Historical AF observations and the cache-asymmetric SWL-015 v1 sample
-are context only. `SWL-014A/B` closed without claiming public-build value, and
-the checked `SWL-014C` opportunity screen has now stopped the expensive
-installed and longitudinal campaigns at **0/5** admissible actions. The next
-work is not more timing: `SWL-016` must issue the immutable terminal decision
-and name the missing generic action inputs explicitly.
+counts. All historical BuildOpt observations, profiles, timing rows, cohorts
+and decisions are context only and are forbidden inputs. The earlier
+`SWL-014C` screen reported **0/5** actions because its inputs lacked complete
+public task and graph producers; it proves an evidence-pipeline gap, not
+absence of generic opportunity. It has no terminal authority. The next work is
+`SWL-FRESH-001`: implement complete typed producers before any public capture
+or timing.
 
-That path is now implementation-locked rather than left to a later agent:
+The replacement path is implementation-locked rather than left to a later agent:
 separate per-arm cache namespaces start empty; one
 launcher composition connects observation through signed active/suspended
 decisions; only the existing task-contract and declared-graph-scope detectors
 may enter the five-family screen; and deterministic installed/chronological
-statistics decide value. Fewer than three families at either pre-gate skips the
-campaign and goes directly to the independent terminal decision. The checked
-zero-pair preflight is `VALIDATED_NOT_READY`: workflow/cache/service/empty-seed
-identities match, all writable roots and remote namespaces are separate, and
-all four forbidden asymmetries reject. The next concrete deliverable is the
-independent `SWL-016` terminal decision from the checked stop evidence, not a
-public timing run.
+statistics decide value. Missing producer input blocks the experiment and can
+never count as zero opportunity. After complete fresh capture, fewer than
+three families with real actions may stop the campaign. Hosted CI validates
+contracts only; wall-time gates use the declared controlled runner. The exact
+route is in the
+[fresh tracker](../plans/fresh-generic-optimization-poc-tracker.md).
 
-The task-contract result is deliberately unavailable in that public screen:
-the repository has a safe detector and synthetic evidence, but no generic
-public input producer. The route will not invent a source parser to rescue the
-score. The declared-graph path reuses the installed profile proposal and
-critical-path tooling; it alone must establish public breadth or the POC stops.
+The old task-contract result is deliberately unavailable in that public
+screen: the repository has a safe detector and synthetic evidence, but no
+generic public input producer. The active route fixes that missing producer
+and requires typed completeness for both detector families before scoring
+breadth.
 
 `SWL-001` freezes the four file formats, immutable per-platform distribution
 identities, strict portable configuration, explicit management routing,
@@ -489,6 +500,8 @@ outside this POC.
 - [Adaptive-fragment terminal scorecard](../../benchmarks/results/adaptive-fragment-terminal-decision-v1.json)
 - [Adaptive-fragment terminal contract](../../specs/poc-adaptive-fragment-terminal-decision-v1.md)
 - [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
+- [Fresh Generic Optimization POC Tracker](../plans/fresh-generic-optimization-poc-tracker.md)
+- [Fresh generic optimization contract](../../specs/poc-fresh-generic-optimization-v1.md)
 - [Sticky wrapper machine contract](../../specs/poc-sticky-wrapper-learning-v1.md)
 - [Sticky wrapper generator contract](../../specs/poc-sticky-wrapper-generator-v1.md)
 - [Sticky wrapper bootstrap contract](../../specs/poc-sticky-wrapper-bootstrap-v1.md)

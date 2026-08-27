@@ -2,9 +2,10 @@
 
 ## Status
 
-**Overall:** `IN_PROGRESS`<br>
-**Progress:** `21/22` blocks resolved (`19` completed, `2` skipped by checked stop evidence)<br>
-**Current block:** `SWL-016` — terminal decision from immutable SWL-014C stop evidence<br>
+**Overall:** `SUPERSEDED_DIAGNOSTIC_ONLY`<br>
+**Progress:** `21/22` historical blocks resolved; no block in this tracker is active<br>
+**Current block:** none — continue with
+[`SWL-FRESH-001`](./fresh-generic-optimization-poc-tracker.md)<br>
 **Predecessor:** the adaptive-fragment experiment closed as
 `STOP_ADAPTIVE_FRAGMENT_POC` with zero activations and zero attributable
 saving. Its evidence remains immutable context, not authority for this POC.
@@ -33,6 +34,13 @@ Gradle Wrapper, preserves Gradle arguments and process behavior, and chooses
 among native execution, observation, bounded trial, qualified action and
 fallback. A customer does not install BuildOpt globally, hand-author a profile,
 or copy BuildOpt internals into CI.
+
+> This tracker is retained as an audit record. Its `SWL-014C` result used
+> historical evidence that did not contain the generic producer inputs needed
+> to distinguish `NO_OPPORTUNITY` from `INPUT_UNAVAILABLE`. The result remains
+> a useful diagnosis of that missing producer, but it has no terminal authority
+> and cannot skip fresh work. The active route starts with zero BuildOpt
+> evidence in the [fresh tracker](./fresh-generic-optimization-poc-tracker.md).
 
 ## Why this is a new experiment
 
@@ -289,10 +297,11 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | 15 | `SWL-015` Frozen public longitudinal campaign v2 | Exercise real no-op/observe/trial/active transitions over preregistered chronological windows in five families | `SKIPPED_BY_SWL_014C` | SWL-014D |
 | 16 | `SWL-016` Terminal decision | Recompute the immutable scorecard from v2 evidence or an earlier immutable stop gate and continue or stop without threshold movement | `TODO` | SWL-015, or stop evidence from SWL-014C/014D |
 
-## Agent execution contract — decisions already made
+## Historical execution contract — decisions preserved for audit
 
-This section is normative for the remaining work. Another implementation agent
-must execute it; it must not redesign it. In particular, the agent must not
+This section was normative for the superseded route. It is preserved so the
+old evidence remains explainable, but no implementation agent may execute it
+as current work. In particular, a historical reconstruction must not
 rename a frozen artifact, add a detector, change a threshold or statistics
 method, share writable cache state across arms, convert a skipped campaign into
 an incomplete success, or treat sample count as readiness. If repository

@@ -56,7 +56,7 @@ and phase-attributed execution; AF-014B..D evaluate that path over frozen
 current cohorts. These schemas create no remote activation authority and
 cannot be encoded as Gradle cache objects.
 
-The active [Sticky Wrapper Learning POC](./sticky-wrapper-learning-poc-tracker.md)
+The active [Fresh Generic Optimization POC](./fresh-generic-optimization-poc-tracker.md)
 reuses this completed infrastructure through a repository-committed wrapper.
 It does not add a third plane or another cache server. Gradle objects remain
 opaque, evictable data; observations, trials, signed decisions and cumulative
@@ -76,8 +76,8 @@ separately checked but are not yet composed into the ordinary wrapper path.
 `internal/launcher/sticky_learning.go`; `SWL-014A` first corrects the
 longitudinal protocol so both arms receive identical Gradle cache opportunity
 through separate writable namespaces that start empty. The
-exact route is normative in
-[`poc-sticky-wrapper-longitudinal-v2.json`](../../specs/poc-sticky-wrapper-longitudinal-v2.json).
+exact fresh route is normative in
+[`poc-fresh-generic-optimization-v1.json`](../../specs/poc-fresh-generic-optimization-v1.json).
 
 ### Installed two-machine proof
 

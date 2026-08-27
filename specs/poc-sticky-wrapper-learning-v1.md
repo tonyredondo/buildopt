@@ -1,5 +1,7 @@
 # Sticky wrapper learning POC v1
 
+Status: superseded architecture contract; retained for diagnostic history.
+
 ## Purpose
 
 This contract preregisters the successor experiment after
@@ -10,8 +12,10 @@ native-retention cost.
 
 The exact machine contract is
 [`poc-sticky-wrapper-learning-v1.json`](./poc-sticky-wrapper-learning-v1.json).
-The ordered implementation and documentation obligations are in the
+The historical implementation and documentation obligations are in the
 [`Sticky Wrapper Learning POC Tracker`](../docs/plans/sticky-wrapper-learning-poc-tracker.md).
+The active experiment is
+[`poc-fresh-generic-optimization-v1`](./poc-fresh-generic-optimization-v1.md).
 
 ## Customer surface
 

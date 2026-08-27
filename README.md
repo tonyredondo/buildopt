@@ -128,7 +128,7 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > The result stops this hypothesis; it does not turn historical isolated wins
 > into a current customer claim.
 
-> **New successor experiment:** BuildOpt is now testing a repository-committed
+> **Active fresh-evidence experiment:** BuildOpt is testing a repository-committed
 > wrapper as the sticky customer integration. A maintainer can now generate
 > `buildoptw`, `buildoptw.bat`, checksum-pinned wrapper properties and portable
 > non-secret configuration deterministically with `buildopt wrapper init`.
@@ -143,12 +143,14 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > failure retains native Gradle and credentials remain private. Continuation
 > requires positive cumulative value in at least three of five public families
 > after every wrapper, learning, trial, cache and fallback cost. Follow the
-> [Sticky Wrapper Learning POC Tracker](./docs/plans/sticky-wrapper-learning-poc-tracker.md).
+> [Fresh Generic Optimization POC Tracker](./docs/plans/fresh-generic-optimization-poc-tracker.md).
 > The deterministic lifecycle proof and all ten native-fallback negatives are
 > checked by `./dev/check-sticky-wrapper-learning-lifecycle`. The subsequent
-> frozen public opportunity gate found **0/5** families with a complete generic,
-> independently testable action. It therefore stopped before installed timing
-> or the longitudinal campaign; `SWL-016` is now the only remaining decision.
+> The first public opportunity gate found **0/5** complete actions, but a route
+> audit proved that its historical inputs lacked the generic public producers
+> needed to distinguish missing input from no opportunity. That result is now
+> diagnostic-only. The active experiment starts from zero BuildOpt evidence,
+> implements complete producers first, then captures and measures fresh data.
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,
 > append-only phase timing and provenance for requested Gradle builds. The
@@ -183,11 +185,12 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > decision. Cache-symmetric arms and lifecycle composition were subsequently
 > proven, but the generic opportunity screen produced **0/5** complete actions:
 > structural graph observations lacked exact candidate-plan/critical-path
-> bindings and the public task-proposal input was unavailable. The frozen state
-> machine therefore skips installed-value timing and `SWL-015 v2`. See the
+> bindings and the public task-proposal input was unavailable. It therefore
+> diagnoses the missing evidence path rather than the product opportunity. See the
 > [sample evidence](./benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md)
 > [opportunity result](./benchmarks/results/sticky-wrapper-opportunity-gate-v1.json)
-> and the [locked v2 execution contract](./specs/poc-sticky-wrapper-longitudinal-v2.json).
+> and the [superseded v2 contract](./specs/poc-sticky-wrapper-longitudinal-v2.json).
+> Neither is an input to the [fresh contract](./specs/poc-fresh-generic-optimization-v1.md).
 
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired

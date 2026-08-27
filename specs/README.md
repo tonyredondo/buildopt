@@ -7,11 +7,18 @@ path. Start with the [documentation portal](../docs/README.md) or
 [architecture overview](../docs/architecture/overview.md), then return here for
 the exact cross-component contract.
 
+The active POC contract is
+[`poc-fresh-generic-optimization-v1.md`](./poc-fresh-generic-optimization-v1.md)
+with its adjacent machine-readable JSON. It starts from zero BuildOpt evidence,
+requires complete generic producers before public measurement and treats every
+older performance result as diagnostic-only input without decision authority.
+
 | Specification | Owning item |
 |---|---|
-| [`poc-sticky-wrapper-learning-v1.md`](./poc-sticky-wrapper-learning-v1.md) and [`poc-sticky-wrapper-learning-v1.json`](./poc-sticky-wrapper-learning-v1.json) | `SWL-000`; active successor POC contract |
+| [`poc-fresh-generic-optimization-v1.md`](./poc-fresh-generic-optimization-v1.md) and [`poc-fresh-generic-optimization-v1.json`](./poc-fresh-generic-optimization-v1.json) | `SWL-FRESH-000`; active fresh-evidence POC contract |
+| [`poc-sticky-wrapper-learning-v1.md`](./poc-sticky-wrapper-learning-v1.md) and [`poc-sticky-wrapper-learning-v1.json`](./poc-sticky-wrapper-learning-v1.json) | `SWL-000`; superseded sticky-wrapper architecture contract |
 | [`poc-sticky-wrapper-learning-lifecycle-v1.md`](./poc-sticky-wrapper-learning-lifecycle-v1.md) and [`poc-sticky-wrapper-learning-lifecycle-v1.json`](./poc-sticky-wrapper-learning-lifecycle-v1.json) | `SWL-014B`; composed lifecycle, value and native-fallback proof |
-| [`poc-sticky-wrapper-opportunity-gate-v1.md`](./poc-sticky-wrapper-opportunity-gate-v1.md) and [`poc-sticky-wrapper-opportunity-gate-v1.json`](./poc-sticky-wrapper-opportunity-gate-v1.json) | `SWL-014C`; digest-bound five-family generic opportunity screen and checked early-stop authority |
+| [`poc-sticky-wrapper-opportunity-gate-v1.md`](./poc-sticky-wrapper-opportunity-gate-v1.md) and [`poc-sticky-wrapper-opportunity-gate-v1.json`](./poc-sticky-wrapper-opportunity-gate-v1.json) | `SWL-014C`; superseded diagnostic screen that proves the old producer-input gap, without terminal authority |
 | [`poc-sticky-wrapper-contract-v1.md`](./poc-sticky-wrapper-contract-v1.md) and [`poc-sticky-wrapper-contract-v1.json`](./poc-sticky-wrapper-contract-v1.json) | `SWL-001`; generated files, strict configuration, argument routing and update boundary |
 | [`poc-sticky-wrapper-generator-v1.md`](./poc-sticky-wrapper-generator-v1.md) and [`poc-sticky-wrapper-generator-v1.json`](./poc-sticky-wrapper-generator-v1.json) | `SWL-002`; deterministic init/check/update, immutable release metadata and rollback-safe publication |
 | [`poc-sticky-wrapper-bootstrap-v1.md`](./poc-sticky-wrapper-bootstrap-v1.md) and [`poc-sticky-wrapper-bootstrap-v1.json`](./poc-sticky-wrapper-bootstrap-v1.json) | `SWL-003`; verified native-package download, safe extraction, atomic user-cache publication and offline reuse |
@@ -28,7 +35,7 @@ the exact cross-component contract.
 | [`poc-sticky-wrapper-status-v1.md`](./poc-sticky-wrapper-status-v1.md) and [`poc-sticky-wrapper-status-v1.json`](./poc-sticky-wrapper-status-v1.json) | `SWL-013`; read-only customer status/explanation, recomputable human/JSON output, explicit unavailable values and native fallback reasons |
 | [`poc-sticky-wrapper-two-machine-v1.md`](./poc-sticky-wrapper-two-machine-v1.md) and [`poc-sticky-wrapper-two-machine-v1.json`](./poc-sticky-wrapper-two-machine-v1.json) | `SWL-014`; installed sticky-wrapper bootstrap, central HTTPS cache reuse, owner commit visibility and native outage fallback |
 | [`poc-sticky-wrapper-longitudinal-v1.md`](./poc-sticky-wrapper-longitudinal-v1.md) and [`poc-sticky-wrapper-longitudinal-v1.json`](./poc-sticky-wrapper-longitudinal-v1.json) | Historical `SWL-015 v1`; immutable diagnostic-only five-family protocol and sample. It used asymmetric cache activation and no active action, so it has no terminal authority. |
-| [`poc-sticky-wrapper-longitudinal-v2.md`](./poc-sticky-wrapper-longitudinal-v2.md) and [`poc-sticky-wrapper-longitudinal-v2.json`](./poc-sticky-wrapper-longitudinal-v2.json) | Corrected `SWL-014A..016` route and autonomous execution contract: checked cache-symmetric zero-pair preflight, separate identically seeded arm caches, exact composition/detector/file manifests, deterministic installed/longitudinal statistics, public opportunity/value pre-gates and sole `SWL-016` terminal authority. |
+| [`poc-sticky-wrapper-longitudinal-v2.md`](./poc-sticky-wrapper-longitudinal-v2.md) and [`poc-sticky-wrapper-longitudinal-v2.json`](./poc-sticky-wrapper-longitudinal-v2.json) | Superseded diagnostic `SWL-014A..016` route. Its frozen JSON records the old state machine for audit, but the incomplete-input 0/5 result has no current terminal authority. |
 | [`poc-adaptive-fragment-contract-v1.md`](./poc-adaptive-fragment-contract-v1.md) and [`poc-adaptive-fragment-contract-v1.json`](./poc-adaptive-fragment-contract-v1.json) | `AF-001` |
 | [`poc-adaptive-fragment-state-v1.md`](./poc-adaptive-fragment-state-v1.md) and [`poc-adaptive-fragment-state-v1.json`](./poc-adaptive-fragment-state-v1.json) | `AF-002` |
 | [`poc-adaptive-fragment-index-v1.md`](./poc-adaptive-fragment-index-v1.md) and [`poc-adaptive-fragment-index-v1.json`](./poc-adaptive-fragment-index-v1.json) | `AF-003` |

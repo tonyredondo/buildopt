@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "buildopt.poc/fresh-generic-optimization/v1",
+  "workItem": "SWL-FRESH",
+  "status": "SWL_FRESH_001_GENERIC_PRODUCERS",
+  "purpose": "Generate current complete generic optimization evidence before measuring public breadth or value.",
+  "historicalEvidence": {
+    "classification": "DIAGNOSTIC_ONLY",
+    "experimentInputAllowed": false,
+    "terminalAuthority": false,
+    "forbiddenInputs": [
+      "benchmarks/results/current-longitudinal-raw-v1.json",
+      "benchmarks/results/current-longitudinal-cohorts-v1.json",
+      "benchmarks/results/sticky-wrapper-opportunity-gate-v1.json",
+      "ANY_PRE_FREEZE_BUILDOPT_OBSERVATION_PROFILE_DECISION_CACHE_OR_TIMING_RESULT"
+    ]
+  },
+  "subjects": [
+    "spring-framework",
+    "opentelemetry-java-instrumentation",
+    "apache-kafka",
+    "micronaut-core",
+    "apache-groovy"
+  ],
+  "producerOutcomes": {
+    "conclusive": ["TESTABLE_ACTIONS", "NO_OPPORTUNITY", "NOT_APPLICABLE"],
+    "incomplete": ["INPUT_UNAVAILABLE", "PRODUCER_FAILED"],
+    "incompleteMayStopExperiment": false
+  },
+  "detectors": ["TASK_CONTRACT_JAVA_V1", "DECLARED_GRAPH_SCOPE_V1"],
+  "rules": {
+    "repositoryNameRulesAllowed": false,
+    "taskNameRulesAllowed": false,
+    "pathExtensionRulesAllowed": false,
+    "manualProfilesAllowed": false,
+    "zeroFillUnavailableCostsAllowed": false,
+    "hostedCiTimingThresholdsAllowed": false,
+    "requiredOutputEquivalence": "BYTE_EXACT",
+    "productFailureBudget": 0,
+    "publicBreadthRequired": 3,
+    "publicFamilyCount": 5,
+    "installedPairsPerAction": 8,
+    "primaryCommitsPerFamily": 20,
+    "reserveCommitsPerFamily": 10,
+    "minimumComparablePerFamily": 15
+  },
+  "blocks": [
+    {"id": "SWL-FRESH-000", "state": "DONE", "outcome": "FRESH_ROUTE_PREREGISTERED"},
+    {"id": "SWL-FRESH-001", "state": "TODO", "outcome": "COMPLETE_GENERIC_PRODUCERS"},
+    {"id": "SWL-FRESH-002", "state": "WAITING", "outcome": "FRESH_COHORT_AND_CAPTURE"},
+    {"id": "SWL-FRESH-003", "state": "WAITING", "outcome": "INPUT_COMPLETE_PUBLIC_OPPORTUNITY_GATE"},
+    {"id": "SWL-FRESH-004", "state": "WAITING", "outcome": "INSTALLED_ACTIVE_VALUE"},
+    {"id": "SWL-FRESH-005", "state": "WAITING", "outcome": "FRESH_CHRONOLOGICAL_CAMPAIGN"},
+    {"id": "SWL-FRESH-006", "state": "WAITING", "outcome": "TERMINAL_DECISION"}
+  ],
+  "transitions": {
+    "SWL-FRESH-001": "SWL-FRESH-002_ONLY_AFTER_ALL_FIXTURE_OUTCOMES_AND_BOTH_DSLS_PASS",
+    "SWL-FRESH-002": "SWL-FRESH-003_ONLY_AFTER_FIVE_FRESH_BOUND_CAPTURE",
+    "SWL-FRESH-003": "BLOCK_ON_INCOMPLETE_INPUT_ELSE_SWL-FRESH-004_OR_SWL-FRESH-006",
+    "SWL-FRESH-004": "SWL-FRESH-005_IF_THREE_FAMILIES_PASS_ELSE_SWL-FRESH-006",
+    "SWL-FRESH-005": "SWL-FRESH-006_ONLY_AFTER_COMPLETE_CAMPAIGN"
+  },
+  "nextBlock": {
+    "id": "SWL-FRESH-001",
+    "create": [
+      "internal/durablecatalog/public_evidence.go",
+      "internal/durablecatalog/public_evidence_test.go",
+      "cmd/sticky-evidence-capture/main.go",
+      "cmd/sticky-evidence-capture/main_test.go",
+      "fixtures/sticky-evidence-capture/README.md",
+      "dev/run-sticky-evidence-producers",
+      "dev/check-sticky-evidence-producers"
+    ],
+    "requiredFixtureCoverage": [
+      "KOTLIN_DSL_TESTABLE_ACTION",
+      "GROOVY_DSL_TESTABLE_ACTION",
+      "NO_OPPORTUNITY",
+      "NOT_APPLICABLE",
+      "INPUT_UNAVAILABLE",
+      "PRODUCER_FAILED"
+    ],
+    "requiredChecks": [
+      "go test -race ./internal/durablecatalog ./cmd/sticky-evidence-capture",
+      "go vet ./...",
+      "./dev/check-sticky-evidence-producers",
+      "./dev/check-fresh-generic-optimization-plan",
+      "./dev/check-tracker-consistency",
+      "./dev/check-layout",
+      "./dev/check-normative-layout",
+      "./dev/check-documentation",
+      "./dev/check-base-ci --static",
+      "git diff --check"
+    ]
+  }
+}

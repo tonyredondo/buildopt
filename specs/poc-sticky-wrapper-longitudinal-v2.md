@@ -1,6 +1,12 @@
 # Sticky wrapper longitudinal campaign v2
 
-Status: preregistered POC measurement contract; blocked by `SWL-014C/D`.
+Status: superseded diagnostic contract; not an input to the active experiment.
+
+The v2 route is preserved so its methodology and result remain auditable. Its
+public screen consumed historical evidence without complete generic producers,
+so `INPUT_UNAVAILABLE` was effectively counted as zero opportunity. It cannot
+authorize a terminal decision or skip fresh measurement. The replacement
+contract is [fresh generic optimization v1](./poc-fresh-generic-optimization-v1.md).
 
 ## Why v2 exists
 

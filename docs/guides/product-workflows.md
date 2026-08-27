@@ -26,7 +26,7 @@ the original Gradle workflow.
 Gradle HTTP cache objects are reusable data; they never authorize lifecycle
 transitions. Typed decisions, observations and the economic ledger use the
 separate BuildOpt state plane. This workflow is planned under the
-[Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
+[Fresh Generic Optimization POC Tracker](../plans/fresh-generic-optimization-poc-tracker.md)
 and is intentionally still a POC rather than a production rollout path.
 
 `SWL-001..005` fix the committed files, deterministic generator, verified
@@ -71,28 +71,29 @@ identity and zero trial budget, so candidate used native no-op/light
 observation. It remains useful compatibility evidence but is
 `DIAGNOSTIC_ONLY`.
 
-The corrected order is:
+The active fresh-evidence order is:
 
-1. `SWL-014A`: enforce identical cache opportunity and lifecycle-aware
-   readiness in a versioned campaign protocol;
-2. `SWL-014B` (complete): connect the existing observer, detector, trial,
-   decision, active runner, suspension and ledger behind `./buildoptw`;
-3. `SWL-014C` (complete with stop evidence): the two frozen generic adapters
-   found 0/5 families with a complete independently testable action;
-4. `SWL-014D` and `SWL-015 v2`: skipped by the preregistered early-stop rule,
-   avoiding an installed timing campaign with no admissible action; and
-5. `SWL-016`: apply the unchanged terminal scorecard to that stop evidence.
+1. implement complete generic task-contract and declared-graph producers;
+2. freeze current public revisions and capture every observation, trace and
+   output binding from empty BuildOpt state;
+3. require conclusive producer outcomes in all five families before scoring
+   opportunity breadth;
+4. time installed actions only after at least three families expose complete
+   generic actions;
+5. run the fresh chronological campaign only after installed value passes; and
+6. issue a terminal decision only from fresh complete evidence.
 
 Sample count alone never makes the campaign ready. Missing lifecycle, action or
 ledger evidence keeps it incomplete. The exact implementation paths, evidence
 keys, two allowed detector adapters, cache topology, deterministic confidence
 algorithms and early-stop outcomes are frozen in the
-[v2 machine contract](../../specs/poc-sticky-wrapper-longitudinal-v2.json).
+[fresh machine contract](../../specs/poc-fresh-generic-optimization-v1.json).
 An implementation agent executes that contract; it does not choose substitutes.
 The checked opportunity result is
 [`sticky-wrapper-opportunity-gate-v1.json`](../../benchmarks/results/sticky-wrapper-opportunity-gate-v1.json).
 Its Spring/Micronaut/Kafka graph-row counts are input-availability diagnostics,
-not savings estimates; no timing was performed after the 0/5 gate.
+not savings estimates or terminal evidence. No historical result feeds the
+active experiment.
 
 ### Active runtime boundary
 

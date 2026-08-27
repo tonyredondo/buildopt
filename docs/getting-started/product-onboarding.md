@@ -105,8 +105,8 @@ project identity; missing credentials, forks, mismatches, expiry, revocation or
 outage retain native Gradle and rebuild normally. Cache objects are consumed by
 Gradle, while typed decisions and learning remain a separate, not-yet-composed
 POC path. The complete
-sequence, scorecard and status are in the
-[Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md).
+active evidence sequence, scorecard and status are in the
+[Fresh Generic Optimization POC Tracker](../plans/fresh-generic-optimization-poc-tracker.md).
 
 When no server credential or explicit BuildOpt integration is configured, the
 wrapper takes a supervised native fast path: it does not start the gateway,

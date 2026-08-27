@@ -647,9 +647,9 @@ if [[ "${buildopt_evidence_count}" != 23 ]]; then
 fi
 
 buildopt_required_text=(
-    "${buildopt_plan}|**Progress:** \`21/22\` blocks resolved"
-    "${buildopt_plan}|**Current block:** \`SWL-016\` — terminal decision from immutable SWL-014C stop evidence"
-    "${buildopt_plan}|## Agent execution contract — decisions already made"
+    "${buildopt_plan}|**Progress:** \`21/22\` historical blocks resolved; no block in this tracker is active"
+    "${buildopt_plan}|**Current block:** none — continue with"
+    "${buildopt_plan}|## Historical execution contract — decisions preserved for audit"
     "${buildopt_longitudinal_v2_contract}|SEPARATE_PER_ARM_EMPTY_AT_CAMPAIGN_START"
     "${buildopt_plan}|\`internal/launcher/sticky_learning.go\` is the only new composition root"
     "${buildopt_plan}|\`TASK_CONTRACT_JAVA_V1\`"
@@ -659,8 +659,8 @@ buildopt_required_text=(
     "${buildopt_plan}|The existing central cache and state implementation is reused."
     "${buildopt_spec}|# Sticky wrapper learning POC v1"
     "${buildopt_spec}|CONTINUE_STICKY_WRAPPER_LEARNING_POC"
-    "${buildopt_tracker}|STICKY WRAPPER LEARNING POC ACTIVE; PRIOR GENERIC HYPOTHESES STOPPED"
-    "${buildopt_tracker}|SWL-016_TERMINAL_DECISION"
+    "${buildopt_tracker}|FRESH GENERIC OPTIMIZATION POC ACTIVE; HISTORICAL PERFORMANCE DATA DIAGNOSTIC ONLY"
+    "${buildopt_tracker}|SWL-FRESH-001_COMPLETE_GENERIC_PRODUCERS"
     "${buildopt_tracker}|POC-STICKY-WRAPPER-LEARNING"
     "${buildopt_tracker}|\`E-403\`"
     "${buildopt_tracker}|\`E-404\`"
@@ -681,6 +681,7 @@ buildopt_required_text=(
     "${buildopt_tracker}|\`E-420\`"
     "${buildopt_tracker}|\`E-421\`"
     "${buildopt_tracker}|\`E-422\`"
+    "${buildopt_tracker}|\`E-423\`"
     "${buildopt_plan}|\`SWL-E015\`"
     "${buildopt_plan}|\`SWL-E018\`"
     "${buildopt_plan}|\`SWL-E019\`"
@@ -693,7 +694,7 @@ buildopt_required_text=(
     "${buildopt_longitudinal_v2_spec}|## Autonomous execution boundary"
     "${buildopt_longitudinal_v2_spec}|## Frozen statistics"
     "${buildopt_rfc}|generate and commit BuildOpt Wrapper"
-    "${buildopt_rfc}|Sticky Wrapper Learning POC Tracker"
+    "${buildopt_rfc}|Fresh Generic Optimization POC Tracker"
 )
 for buildopt_requirement in "${buildopt_required_text[@]}"; do
     buildopt_file=${buildopt_requirement%%|*}
