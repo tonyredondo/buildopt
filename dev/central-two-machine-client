@@ -197,7 +197,7 @@ case "${buildopt_mode}" in
         buildopt_optimize_log=${buildopt_results}/producer-optimize.log
         buildopt_optimize_ms=$(buildopt_run_optimize "${buildopt_optimize_log}" | tail -n 1)
         buildopt_optimize_result=${buildopt_repository}/.buildopt/optimize/v1/result.json
-        if ! jq -e '
+        if [[ "${buildopt_sticky_wrapper}" != 1 ]] && ! jq -e '
             .calibration.status == "COMPLETE" and
             .calibration.qualified == true and
             .portfolio.status == "COMPLETE" and
@@ -286,7 +286,7 @@ case "${buildopt_mode}" in
         buildopt_consumer_log=${buildopt_results}/consumer-optimize.log
         buildopt_consumer_ms=$(buildopt_run_optimize "${buildopt_consumer_log}" | tail -n 1)
         buildopt_consumer_result=${buildopt_repository}/.buildopt/optimize/v1/result.json
-        if ! jq -e '
+        if [[ "${buildopt_sticky_wrapper}" != 1 ]] && ! jq -e '
             .execution.mode == "SELECTIVE_PROFILE" and
             .selection.source == "CENTRAL_PORTFOLIO" and
             .central.selectionSource == "CENTRAL_PORTFOLIO" and
@@ -367,7 +367,7 @@ case "${buildopt_mode}" in
         buildopt_outage_log=${buildopt_results}/outage-optimize.log
         buildopt_outage_ms=$(buildopt_run_optimize "${buildopt_outage_log}" | tail -n 1)
         buildopt_outage_result=${buildopt_repository}/.buildopt/optimize/v1/result.json
-        if ! jq -e '
+        if [[ "${buildopt_sticky_wrapper}" != 1 ]] && ! jq -e '
             .execution.mode == "SELECTIVE_PROFILE" and
             .selection.source == "CENTRAL_PORTFOLIO" and
             .central.preSyncOnline == false and

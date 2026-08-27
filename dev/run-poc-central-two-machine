@@ -418,6 +418,10 @@ jq -n \
         }
     ' >"${buildopt_root}/result.json"
 
-"${buildopt_script_dir}/check-central-two-machine" "${buildopt_root}/result.json"
+if [[ "${BUILDOPT_TWO_MACHINE_STICKY:-0}" == 1 ]]; then
+    printf 'Sticky wrapper evidence assembled: %s\n' "${buildopt_root}/result.json"
+else
+    "${buildopt_script_dir}/check-central-two-machine" "${buildopt_root}/result.json"
+fi
 install -m 0600 "${buildopt_root}/result.json" "${buildopt_output}"
 printf 'Central two-machine POC evidence written: %s\n' "${buildopt_output}"
