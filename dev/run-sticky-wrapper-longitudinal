@@ -111,16 +111,23 @@ buildopt_remove_build_outputs() {
     find "${buildopt_repository}" -type d \( -name build -o -name .gradle \) -prune -exec rm -rf -- {} +
 }
 
-buildopt_materialize_revision() {
-    local buildopt_source=$1 buildopt_revision=$2 buildopt_destination=$3
-    rm -rf -- "${buildopt_destination}"
-    mkdir -p -- "${buildopt_destination}"
-    # Use an archive instead of linked worktrees. Some large Gradle repositories
-    # contain build logic that is sensitive to the restrictive mode inherited by
-    # temporary worktrees; archive extraction gives both arms a complete,
-    # ordinary checkout while the source repository remains immutable.
-    git -C "${buildopt_source}" archive --format=tar "${buildopt_revision}" |
-        tar --same-permissions -xf - -C "${buildopt_destination}"
+buildopt_normalize_checkout_permissions() {
+    local buildopt_repository=$1
+    # The runner keeps its temporary state private with umask 077. Normalize
+    # only the materialized checkout so Gradle build logic sees the same
+    # readable source files as it would in an ordinary developer checkout.
+    find "${buildopt_repository}" -type d -exec chmod u+rwx,go+rx {} +
+    find "${buildopt_repository}" -type f -exec chmod u+rw,go+r {} +
+}
+
+buildopt_assert_worktree_materialized() {
+    local buildopt_repository=$1
+    if ! git -C "${buildopt_repository}" diff --quiet ||
+        ! git -C "${buildopt_repository}" diff --cached --quiet; then
+        printf 'SWL-015 checkout has missing or modified tracked files: %s\n' \
+            "${buildopt_repository}" >&2
+        return 1
+    fi
 }
 
 buildopt_restore_candidate_state() {
@@ -357,8 +364,12 @@ buildopt_subject() {
         return 0
     fi
 
-    buildopt_materialize_revision "${buildopt_source}" "${buildopt_anchor}" "${buildopt_control}"
-    buildopt_materialize_revision "${buildopt_source}" "${buildopt_anchor}" "${buildopt_candidate}"
+    git -C "${buildopt_source}" worktree add -q --detach "${buildopt_control}" "${buildopt_anchor}"
+    git -C "${buildopt_source}" worktree add -q --detach "${buildopt_candidate}" "${buildopt_anchor}"
+    buildopt_normalize_checkout_permissions "${buildopt_control}"
+    buildopt_normalize_checkout_permissions "${buildopt_candidate}"
+    buildopt_assert_worktree_materialized "${buildopt_control}"
+    buildopt_assert_worktree_materialized "${buildopt_candidate}"
     buildopt_sync_dependency_state "${buildopt_seed_gradle}" "${buildopt_control_gradle}"
     buildopt_sync_dependency_state "${buildopt_seed_gradle}" "${buildopt_candidate_gradle}"
     buildopt_prepare_distribution "${buildopt_candidate_cache}"
@@ -405,8 +416,12 @@ buildopt_subject() {
             buildopt_prepare_successes=$((buildopt_prepare_successes + 1))
             buildopt_sync_dependency_state "${buildopt_seed_gradle}" "${buildopt_control_gradle}"
             buildopt_sync_dependency_state "${buildopt_seed_gradle}" "${buildopt_candidate_gradle}"
-            buildopt_materialize_revision "${buildopt_source}" "${buildopt_revision_under_test}" "${buildopt_control}"
-            buildopt_materialize_revision "${buildopt_source}" "${buildopt_revision_under_test}" "${buildopt_candidate}"
+            git -C "${buildopt_control}" checkout -q --detach "${buildopt_revision_under_test}"
+            git -C "${buildopt_candidate}" checkout -q --detach "${buildopt_revision_under_test}"
+            buildopt_normalize_checkout_permissions "${buildopt_control}"
+            buildopt_normalize_checkout_permissions "${buildopt_candidate}"
+            buildopt_assert_worktree_materialized "${buildopt_control}"
+            buildopt_assert_worktree_materialized "${buildopt_candidate}"
             buildopt_restore_candidate_state "${buildopt_candidate}" "${buildopt_candidate_state}"
             buildopt_write_wrapper "${buildopt_candidate}"
             BUILDOPT_REPOSITORY_ID=${buildopt_repository_id}
