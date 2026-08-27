@@ -14,12 +14,29 @@ package boundaries with:
 ./dev/check-documentation
 ```
 
-Validate the active fresh-evidence route, its forbidden historical inputs,
+Validate the closed fresh-evidence route, its forbidden historical inputs,
 typed completeness outcomes and exact next block with:
 
 ```bash
 ./dev/check-fresh-generic-optimization-plan
 ```
+
+That route is now a closed predecessor. Validate the active change-aware
+successor contract, ordered gates and documentation authority with:
+
+```bash
+./dev/check-change-aware-producer-closure-plan
+```
+
+Recompute the generic opportunity selection from the terminal fresh decision,
+the frozen five-family cohort, current observations and the new contract with:
+
+```bash
+./dev/check-generic-opportunity-discovery
+```
+
+The result selects a change-to-input-to-producer hypothesis and rejects timing
+or activation. It is not performance evidence.
 
 Validate the implemented generic task-contract and declared-graph producers,
 their Kotlin/Groovy fixtures, all five typed outcome states and deterministic

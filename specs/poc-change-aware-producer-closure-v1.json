@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-closure/v1",
+  "workItem": "SWL-CHANGE",
+  "status": "HYPOTHESIS_PREREGISTERED",
+  "selectedHypothesis": "CHANGE_AWARE_PRODUCER_CLOSURE_V1",
+  "purpose": "Test whether complete Gradle producer and change evidence can expose safe partial-work actions across public repository histories before any timing campaign.",
+  "predecessor": {
+    "decision": "STOP_FRESH_GENERIC_POC_FOR_CURRENT_DETECTOR_SET",
+    "freshEvidenceMayInformHypothesis": true,
+    "predecessorTimingMayBeImported": false,
+    "predecessorActionsMayBePromoted": false
+  },
+  "subjects": [
+    "spring-framework",
+    "opentelemetry-java-instrumentation",
+    "apache-kafka",
+    "micronaut-core",
+    "apache-groovy"
+  ],
+  "hypothesis": {
+    "input": "A requested Gradle workflow, complete task and producer graph, exact required-output closure, and changed paths between adjacent public revisions.",
+    "action": "Execute only the producer closure affected by the change and restore or retain every required unaffected output through byte-exact evidence.",
+    "safeFallback": "Run the original optimized-native Gradle workflow before mutation whenever ownership, producer lineage, output closure, compatibility, or evidence is incomplete.",
+    "materialDifference": "Unlike DECLARED_GRAPH_SCOPE_V1, the detector evaluates a real cross-revision change against complete producer ownership instead of searching for a smaller graph on one unchanged revision.",
+    "repositorySpecificRulesAllowed": false,
+    "taskNameRulesAllowed": false,
+    "pathExtensionRulesAllowed": false,
+    "manualProfilesAllowed": false
+  },
+  "discoveryGate": {
+    "completeFamilyInputsRequired": 5,
+    "familiesWithActionsRequired": 3,
+    "requiredOutputEquivalence": "BYTE_EXACT",
+    "productFailureBudget": 0,
+    "timingAuthorizedBeforeBreadth": false,
+    "activationAuthorizedBeforeValue": false,
+    "hostedCiTimingThresholdsAllowed": false
+  },
+  "freshCapture": {
+    "primaryCommitsPerFamily": 20,
+    "reserveCommitsPerFamily": 10,
+    "minimumConclusiveTransitionsPerFamily": 5,
+    "historicalBuildOptStateAllowed": false,
+    "historicalTimingRowsAllowed": false,
+    "ordinaryRequestedBuildsOnly": true
+  },
+  "blocks": [
+    {"id": "SWL-CHANGE-000", "state": "DONE", "outcome": "CHANGE_AWARE_HYPOTHESIS_SELECTED_AND_PREREGISTERED"},
+    {"id": "SWL-CHANGE-001", "state": "TODO", "outcome": "COMPLETE_CHANGE_AND_PRODUCER_EVIDENCE"},
+    {"id": "SWL-CHANGE-002", "state": "WAITING", "outcome": "FIVE_FAMILY_ACTION_BREADTH_DECISION"},
+    {"id": "SWL-CHANGE-003", "state": "WAITING", "outcome": "INSTALLED_VALUE_IF_AUTHORIZED"},
+    {"id": "SWL-CHANGE-004", "state": "WAITING", "outcome": "CHRONOLOGICAL_VALUE_IF_AUTHORIZED"},
+    {"id": "SWL-CHANGE-005", "state": "WAITING", "outcome": "TERMINAL_CONTINUE_OR_STOP_DECISION"}
+  ],
+  "nextBlock": {
+    "id": "SWL-CHANGE-001",
+    "state": "TODO",
+    "decision": "CAPTURE_COMPLETE_CHANGE_AWARE_PRODUCER_EVIDENCE_WITHOUT_TIMING"
+  }
+}

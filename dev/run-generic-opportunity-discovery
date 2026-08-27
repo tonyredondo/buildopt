@@ -1,0 +1,169 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s OUTPUT\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_terminal=${BUILDOPT_DISCOVERY_TERMINAL:-${buildopt_repo_root}/benchmarks/results/fresh-generic-terminal-decision-v1.json}
+buildopt_cohort=${BUILDOPT_DISCOVERY_COHORT:-${buildopt_repo_root}/benchmarks/results/fresh-generic-optimization-v1/cohort.json}
+buildopt_observations=${BUILDOPT_DISCOVERY_OBSERVATIONS:-${buildopt_repo_root}/benchmarks/results/fresh-generic-optimization-v1/observations.jsonl}
+buildopt_contract=${BUILDOPT_DISCOVERY_CONTRACT:-${buildopt_repo_root}/specs/poc-change-aware-producer-closure-v1.json}
+
+for buildopt_command in awk jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required opportunity-discovery command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+[[ ${buildopt_output} == /* && ! -e ${buildopt_output} ]] || {
+    printf 'opportunity-discovery output must be a new absolute path\n' >&2
+    exit 1
+}
+for buildopt_input in "${buildopt_terminal}" "${buildopt_cohort}" "${buildopt_observations}" "${buildopt_contract}"; do
+    [[ -f ${buildopt_input} && -s ${buildopt_input} ]] || {
+        printf 'opportunity-discovery input is unavailable: %s\n' "${buildopt_input}" >&2
+        exit 1
+    }
+done
+
+jq -e '.decision == "STOP_FRESH_GENERIC_POC_FOR_CURRENT_DETECTOR_SET" and
+       .speedupClaim == false and .timingRows.status == "NOT_CREATED"' \
+    "${buildopt_terminal}" >/dev/null || {
+    printf 'terminal predecessor authority is invalid\n' >&2
+    exit 1
+}
+jq -e '.schemaVersion == "buildopt.poc/change-aware-producer-closure/v1" and
+       .status == "HYPOTHESIS_PREREGISTERED" and
+       .selectedHypothesis == "CHANGE_AWARE_PRODUCER_CLOSURE_V1" and
+       .discoveryGate.familiesWithActionsRequired == 3 and
+       .discoveryGate.timingAuthorizedBeforeBreadth == false and
+       .discoveryGate.activationAuthorizedBeforeValue == false' \
+    "${buildopt_contract}" >/dev/null || {
+    printf 'change-aware machine contract is invalid\n' >&2
+    exit 1
+}
+
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-opportunity-discovery.XXXXXX")
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+
+jq -s '
+  group_by(.family) |
+  map({
+    family: .[0].family,
+    observations: length,
+    repositoryRevisions: (map(.repositoryRevision) | unique | length),
+    graphComplete: all(.graph.tasks | length > 0),
+    graphTaskCount: (map(.graph.tasks | length) | max),
+    targetTaskTypes: (map(.task.type) | unique),
+    requiredOutputSnapshots: (map(.task.outputSnapshotSha256) | unique | length)
+  }) | sort_by(.family)
+' "${buildopt_observations}" >"${buildopt_temp}/observation-summary.json"
+
+jq -e '(.families | length) == 5 and
+       ([.families[].family] | unique | length) == 5 and
+       ([.families[] | (.primary | length)] | all(. == 20)) and
+       ([.families[] | (.reserve | length)] | all(. == 10)) and
+       ([.families[] | (.requiredOutputs | length)] | all(. > 0))' \
+    "${buildopt_cohort}" >/dev/null || {
+    printf 'opportunity-discovery cohort is incomplete\n' >&2
+    exit 1
+}
+jq -e 'length == 5 and all(.graphComplete)' \
+    "${buildopt_temp}/observation-summary.json" >/dev/null || {
+    printf 'opportunity-discovery graph evidence is incomplete\n' >&2
+    exit 1
+}
+
+buildopt_terminal_sha=$(sha256sum "${buildopt_terminal}" | awk '{print $1}')
+buildopt_cohort_sha=$(sha256sum "${buildopt_cohort}" | awk '{print $1}')
+buildopt_observations_sha=$(sha256sum "${buildopt_observations}" | awk '{print $1}')
+buildopt_contract_sha=$(sha256sum "${buildopt_contract}" | awk '{print $1}')
+
+jq -n \
+    --arg terminalSha "${buildopt_terminal_sha}" \
+    --arg cohortSha "${buildopt_cohort_sha}" \
+    --arg observationsSha "${buildopt_observations_sha}" \
+    --arg contractSha "${buildopt_contract_sha}" \
+    --slurpfile terminal "${buildopt_terminal}" \
+    --slurpfile cohort "${buildopt_cohort}" \
+    --slurpfile observations "${buildopt_temp}/observation-summary.json" \
+    --slurpfile contract "${buildopt_contract}" '
+  ($cohort[0].families | map(.primary | length) | add) as $primary |
+  ($cohort[0].families | map(.reserve | length) | add) as $reserve |
+  ($observations[0] | map(select(.graphComplete)) | length) as $completeGraphs |
+  ($observations[0] | map(.repositoryRevisions) | min) as $minimumRevisions |
+  {
+    schemaVersion: "buildopt.poc/generic-opportunity-discovery/v1",
+    workItem: "SWL-CHANGE-000",
+    generatedAt: $terminal[0].generatedAt,
+    evidence: {
+      terminalDecisionSha256: $terminalSha,
+      freshCohortSha256: $cohortSha,
+      freshObservationsSha256: $observationsSha,
+      selectedContractSha256: $contractSha,
+      historicalTimingImported: false,
+      historicalActionImported: false
+    },
+    predecessor: {
+      decision: $terminal[0].decision,
+      actionBreadth: 1,
+      requiredBreadth: $contract[0].discoveryGate.familiesWithActionsRequired,
+      timingRows: $terminal[0].timingRows.status
+    },
+    availableFreshInputs: {
+      families: ($cohort[0].families | length),
+      completeRequestedGraphs: $completeGraphs,
+      exactOutputContracts: ($cohort[0].families | map(select(.requiredOutputs | length > 0)) | length),
+      primaryCommits: $primary,
+      reserveCommits: $reserve,
+      minimumObservedRevisionsPerFamily: $minimumRevisions,
+      observations: $observations[0]
+    },
+    candidates: [
+      {
+        hypothesisId: "CURRENT_TASK_CONTRACT_AND_DECLARED_GRAPH_V1",
+        disposition: "REJECTED_TERMINAL",
+        reason: "CONCLUSIVE_ACTION_BREADTH_1_OF_5"
+      },
+      {
+        hypothesisId: "STANDARD_ARCHIVE_CACHE_ADAPTER_V2",
+        disposition: "REJECTED_NOT_MATERIALLY_BROADER",
+        reason: "CURRENT_EVIDENCE_CANNOT_PROVE_NATIVE_CACHEABILITY_OR_CROSS_REVISION_VALUE"
+      },
+      {
+        hypothesisId: "SINGLE_REVISION_STABLE_OUTPUT_REUSE_V1",
+        disposition: "REJECTED_INSUFFICIENT_DISCRIMINATION",
+        reason: "FOUR_FAMILIES_HAVE_ONLY_ONE_OBSERVED_REVISION_AND_REPEATED_SAME_REVISION_OUTPUTS_DO_NOT_PROVE_CROSS_COMMIT_REUSE"
+      },
+      {
+        hypothesisId: "CHANGE_AWARE_PRODUCER_CLOSURE_V1",
+        disposition: "SELECTED_FOR_IMPLEMENTATION",
+        reason: "FIVE_COMPLETE_GRAPHS_AND_150_FROZEN_COMMITS_CAN_SUPPORT_FRESH_CHANGE_TO_PRODUCER_EVIDENCE",
+        missingEvidence: [
+          "ADJACENT_REVISION_CHANGED_PATHS",
+          "FINALIZED_TASK_INPUT_OWNERSHIP",
+          "DIRECT_AND_TRANSITIVE_OUTPUT_PRODUCER_LINEAGE",
+          "EXACT_OMITTED_REQUIRED_OUTPUT_CLOSURE"
+        ]
+      }
+    ],
+    decision: {
+      outcome: "PREREGISTER_CHANGE_AWARE_PRODUCER_CLOSURE_V1",
+      nextBlock: "SWL-CHANGE-001",
+      performanceTimingAuthorized: false,
+      actionActivationAuthorized: false,
+      breadthMustPassBeforeTiming: true,
+      requiredActionBreadth: "3_OF_5",
+      requiredOutputEquivalence: "BYTE_EXACT",
+      productFailureBudget: 0
+    }
+  }
+' >"${buildopt_output}"
+
+printf 'generic opportunity discovery written to %s\n' "${buildopt_output}"

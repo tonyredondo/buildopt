@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_checked="${buildopt_repo_root}/benchmarks/results/generic-opportunity-discovery-v1.json"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-check-opportunity-discovery.XXXXXX")
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+
+for buildopt_command in cmp jq; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required opportunity-discovery checker command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+"${buildopt_script_dir}/run-generic-opportunity-discovery" "${buildopt_temp}/recomputed.json" >/dev/null
+cmp --silent "${buildopt_checked}" "${buildopt_temp}/recomputed.json" || {
+    printf 'generic opportunity discovery evidence is stale\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.poc/generic-opportunity-discovery/v1" and
+  .workItem == "SWL-CHANGE-000" and
+  .predecessor.actionBreadth == 1 and .predecessor.requiredBreadth == 3 and
+  .predecessor.timingRows == "NOT_CREATED" and
+  .availableFreshInputs.families == 5 and
+  .availableFreshInputs.completeRequestedGraphs == 5 and
+  .availableFreshInputs.exactOutputContracts == 5 and
+  .availableFreshInputs.primaryCommits == 100 and
+  .availableFreshInputs.reserveCommits == 50 and
+  (.candidates | length) == 4 and
+  ([.candidates[] | select(.disposition == "SELECTED_FOR_IMPLEMENTATION") | .hypothesisId] ==
+    ["CHANGE_AWARE_PRODUCER_CLOSURE_V1"]) and
+  .decision.outcome == "PREREGISTER_CHANGE_AWARE_PRODUCER_CLOSURE_V1" and
+  .decision.nextBlock == "SWL-CHANGE-001" and
+  .decision.performanceTimingAuthorized == false and
+  .decision.actionActivationAuthorized == false and
+  .decision.requiredActionBreadth == "3_OF_5" and
+  .decision.requiredOutputEquivalence == "BYTE_EXACT" and
+  .decision.productFailureBudget == 0
+' "${buildopt_checked}" >/dev/null || {
+    printf 'generic opportunity discovery decision is invalid\n' >&2
+    exit 1
+}
+
+jq '.decision = "CONTINUE_FRESH_GENERIC_POC"' \
+    "${buildopt_repo_root}/benchmarks/results/fresh-generic-terminal-decision-v1.json" \
+    >"${buildopt_temp}/tampered-terminal.json"
+if BUILDOPT_DISCOVERY_TERMINAL="${buildopt_temp}/tampered-terminal.json" \
+    "${buildopt_script_dir}/run-generic-opportunity-discovery" "${buildopt_temp}/bad-terminal-result.json" \
+    >/dev/null 2>&1; then
+    printf 'generic opportunity discovery accepted a tampered predecessor decision\n' >&2
+    exit 1
+fi
+
+jq '.families = .families[0:4]' \
+    "${buildopt_repo_root}/benchmarks/results/fresh-generic-optimization-v1/cohort.json" \
+    >"${buildopt_temp}/incomplete-cohort.json"
+if BUILDOPT_DISCOVERY_COHORT="${buildopt_temp}/incomplete-cohort.json" \
+    "${buildopt_script_dir}/run-generic-opportunity-discovery" "${buildopt_temp}/incomplete-result.json" \
+    >/dev/null 2>&1; then
+    printf 'generic opportunity discovery accepted an incomplete cohort\n' >&2
+    exit 1
+fi
+
+printf 'generic opportunity discovery contract: PASS\n'

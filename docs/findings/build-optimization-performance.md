@@ -37,6 +37,12 @@
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
   Runtime Tuning, Hot State and standard Copy are retired; historical Jar,
   Patch and Edge experiments remain scoped supporting evidence.
+- **The next experiment changes the selection dimension rather than rerunning
+  a terminal detector.** `CHANGE_AWARE_PRODUCER_CLOSURE_V1` will map real
+  adjacent-commit changes through finalized Gradle inputs and producer lineage.
+  Five graphs, five exact output contracts and 150 frozen commits are available;
+  action breadth and wall-time value remain unmeasured. Timing opens only after
+  conclusive evidence in 5/5 and safe actions in at least 3/5 families.
 
 See the [current one-pager](./buildopt-poc-handoff.md) and the
 [terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)

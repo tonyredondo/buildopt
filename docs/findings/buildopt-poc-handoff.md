@@ -340,7 +340,7 @@ activate generically, repay its own learning/verification cost and beat
 optimized native Gradle over real commit sequences; it cannot reopen these
 thresholds or inherit authority from inactive fragments.
 
-## Active successor experiment
+## Closed fresh-evidence predecessor and active change-aware successor
 
 The new [Sticky Wrapper Learning POC](../plans/sticky-wrapper-learning-poc-tracker.md)
 tests a materially different customer and economic model. A maintainer
@@ -360,9 +360,9 @@ fail-open behavior are composed behind ordinary `./buildoptw`. It reuses the
 existing optional HTTPS service, but Gradle cache objects and typed BuildOpt
 decisions remain separate planes and a cache hit never grants action authority.
 
-This is currently a preregistered fresh-evidence experiment, not a new
-performance result.
-Continuation requires exact outputs, zero product failures, at most 100-ms p50
+This route was a preregistered fresh-evidence experiment, not a performance
+result. Its continuation gates required exact outputs, zero product failures,
+at most 100-ms p50
 and 250-ms p95 local native-decision overhead, a positive complete portfolio
 and independently positive value/payback in at least three of five public
 families. Every bootstrap, observation, trial, cache, fallback and action cost
@@ -385,23 +385,28 @@ cannot reach enough public families to justify expensive timing. A successor
 must start with a broader generic detector hypothesis, not another campaign on
 the sole Spring action.
 
-The replacement path is implementation-locked rather than left to a later agent:
-separate per-arm cache namespaces start empty; one
-launcher composition connects observation through signed active/suspended
-decisions; only the existing task-contract and declared-graph-scope detectors
-may enter the five-family screen; and deterministic installed/chronological
-statistics decide value. Missing producer input blocks the experiment and can
-never count as zero opportunity. After complete fresh capture, fewer than
-three families with real actions may stop the campaign. Hosted CI validates
-contracts only; wall-time gates use the declared controlled runner. The exact
-route is in the
+The successor is now preregistered as
+[`CHANGE_AWARE_PRODUCER_CLOSURE_V1`](../plans/change-aware-producer-closure-poc-tracker.md).
+It uses real adjacent-revision changes, finalized Gradle inputs and complete
+direct/transitive producer lineage to derive the exact work and required-output
+closure for each change. The deterministic
+[selection result](../../benchmarks/results/generic-opportunity-discovery-v1.json)
+rejects a rerun of the terminal detectors, a standard archive-cache adapter and
+single-revision reuse as the next generic experiment. This is a selected
+hypothesis, not a speed result: it has **zero authorized timings and zero
+authorized activations** until all five families provide conclusive evidence
+and at least three expose a safe action.
+
+The closed predecessor remains implementation-locked as historical evidence:
+separate per-arm cache namespaces started empty, only the task-contract and
+declared-graph detectors entered its breadth screen, and no timing opened after
+the 1/5 result. The exact terminal route remains in the
 [fresh tracker](../plans/fresh-generic-optimization-poc-tracker.md).
 
-The old task-contract result is deliberately unavailable in that public
-screen: the repository has a safe detector and synthetic evidence, but no
-generic public input producer. The active route fixes that missing producer
-and requires typed completeness for both detector families before scoring
-breadth.
+The old task-contract result was deliberately unavailable in that public
+screen. The route added generic public producers and required typed
+completeness for both detector families before scoring breadth; that completed
+screen is now immutable predecessor evidence.
 
 `SWL-001` freezes the four file formats, immutable per-platform distribution
 identities, strict portable configuration, explicit management routing,

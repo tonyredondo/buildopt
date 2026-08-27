@@ -15,6 +15,28 @@ goes to paired, bounded build-time experiments against an optimized native
 Gradle control. `./dev/check-beta-gradle-fixtures` owns the bounded
 small/medium/large Gradle build matrix and makes no performance claim.
 
+## Current generic opportunity selection
+
+[`generic-opportunity-discovery-v1.json`](./results/generic-opportunity-discovery-v1.json)
+is the deterministic `SWL-CHANGE-000` decision over the closed fresh route,
+the five-family cohort, current observations and the new machine contract. The
+available substrate contains five complete requested graphs, five exact output
+contracts, 100 primary commits and 50 frozen reserves. The stopped detector set
+reaches only one family.
+
+The selection rejects another run of those detectors, a standard archive-cache
+adapter and single-revision stable-output reuse. It chooses
+`CHANGE_AWARE_PRODUCER_CLOSURE_V1`: capture actual adjacent-commit changes,
+finalized task inputs and direct/transitive output producers, then derive an
+exact affected and omitted-output closure. These inputs are not present yet,
+so the result contains no timing, action or activation claim. Timing remains
+blocked until evidence is conclusive in all five families and safe actions
+exist in at least three.
+
+```bash
+./dev/check-generic-opportunity-discovery
+```
+
 ## Sticky-wrapper observation sample
 
 The deterministic

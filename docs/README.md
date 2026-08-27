@@ -15,7 +15,7 @@ before running the product.
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
 | Review the POC idea, mechanisms, current value, and next steps | [Current POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
-| Follow the active fresh-evidence experiment | [Fresh Generic Optimization POC Tracker](./plans/fresh-generic-optimization-poc-tracker.md) | [Fresh contract](../specs/poc-fresh-generic-optimization-v1.md), [diagnostic sticky tracker](./plans/sticky-wrapper-learning-poc-tracker.md), [wrapper contract](../specs/poc-sticky-wrapper-contract-v1.md), [product onboarding](./getting-started/product-onboarding.md) |
+| Follow the active generic experiment | [Change-aware Producer Closure POC Tracker](./plans/change-aware-producer-closure-poc-tracker.md) | [Change-aware contract](../specs/poc-change-aware-producer-closure-v1.md), [closed fresh route](./plans/fresh-generic-optimization-poc-tracker.md), [wrapper contract](../specs/poc-sticky-wrapper-contract-v1.md), [product onboarding](./getting-started/product-onboarding.md) |
 | Review the stopped adaptive hypothesis | [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md) | [Terminal decision](../specs/poc-adaptive-fragment-terminal-decision-v1.md), [current generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the implemented onboarding foundation | [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md) | [Product onboarding](./getting-started/product-onboarding.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
 | Plan optional shared state across machines | [Centralized cache and state POC roadmap](./plans/centralized-cache-and-state-roadmap.md) | [Storage contract](../specs/poc-central-storage-contract-v1.md), [architecture overview](./architecture/overview.md) |
@@ -65,9 +65,13 @@ before running the product.
 
 ### Plans
 
+- [Change-aware Producer Closure POC Tracker](./plans/change-aware-producer-closure-poc-tracker.md):
+  the active successor hypothesis, ordered evidence/breadth/value gates and
+  explicit prohibition on timing before safe actions exist in at least three
+  of five public Gradle families.
 - [Fresh Generic Optimization POC Tracker](./plans/fresh-generic-optimization-poc-tracker.md):
-  the active zero-history route, complete producer gate, fresh public capture,
-  installed value and chronological decision sequence.
+  the closed zero-history predecessor, complete producer gate, fresh public
+  capture and terminal 1/5 action-breadth decision.
 - [Sticky Wrapper Learning POC Tracker](./plans/sticky-wrapper-learning-poc-tracker.md):
   the superseded diagnostic route and retained wrapper/lifecycle history.
 - [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md):

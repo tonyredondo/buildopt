@@ -8,14 +8,17 @@ path. Start with the [documentation portal](../docs/README.md) or
 the exact cross-component contract.
 
 The active POC contract is
-[`poc-fresh-generic-optimization-v1.md`](./poc-fresh-generic-optimization-v1.md)
-with its adjacent machine-readable JSON. It starts from zero BuildOpt evidence,
-requires complete generic producers before public measurement and treats every
-older performance result as diagnostic-only input without decision authority.
+[`poc-change-aware-producer-closure-v1.md`](./poc-change-aware-producer-closure-v1.md)
+with its adjacent machine-readable JSON. It asks whether actual adjacent-commit
+changes can be mapped through finalized Gradle inputs and output producers to
+an exact required producer closure. It authorizes fresh evidence production
+only; timing and activation remain blocked until safe actions exist in at least
+three of five public families.
 
 | Specification | Owning item |
 |---|---|
-| [`poc-fresh-generic-optimization-v1.md`](./poc-fresh-generic-optimization-v1.md) and [`poc-fresh-generic-optimization-v1.json`](./poc-fresh-generic-optimization-v1.json) | `SWL-FRESH-000`; active fresh-evidence POC contract |
+| [`poc-change-aware-producer-closure-v1.md`](./poc-change-aware-producer-closure-v1.md) and [`poc-change-aware-producer-closure-v1.json`](./poc-change-aware-producer-closure-v1.json) | `SWL-CHANGE-000`; active successor hypothesis and ordered POC gates |
+| [`poc-fresh-generic-optimization-v1.md`](./poc-fresh-generic-optimization-v1.md) and [`poc-fresh-generic-optimization-v1.json`](./poc-fresh-generic-optimization-v1.json) | `SWL-FRESH-000`; closed fresh-evidence predecessor with terminal 1/5 action breadth |
 | [`poc-sticky-wrapper-learning-v1.md`](./poc-sticky-wrapper-learning-v1.md) and [`poc-sticky-wrapper-learning-v1.json`](./poc-sticky-wrapper-learning-v1.json) | `SWL-000`; superseded sticky-wrapper architecture contract |
 | [`poc-sticky-wrapper-learning-lifecycle-v1.md`](./poc-sticky-wrapper-learning-lifecycle-v1.md) and [`poc-sticky-wrapper-learning-lifecycle-v1.json`](./poc-sticky-wrapper-learning-lifecycle-v1.json) | `SWL-014B`; composed lifecycle, value and native-fallback proof |
 | [`poc-sticky-wrapper-opportunity-gate-v1.md`](./poc-sticky-wrapper-opportunity-gate-v1.md) and [`poc-sticky-wrapper-opportunity-gate-v1.json`](./poc-sticky-wrapper-opportunity-gate-v1.json) | `SWL-014C`; superseded diagnostic screen that proves the old producer-input gap, without terminal authority |

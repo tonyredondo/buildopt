@@ -128,7 +128,7 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > The result stops this hypothesis; it does not turn historical isolated wins
 > into a current customer claim.
 
-> **Active fresh-evidence experiment:** BuildOpt is testing a repository-committed
+> **Closed fresh-evidence experiment:** BuildOpt tested a repository-committed
 > wrapper as the sticky customer integration. A maintainer can now generate
 > `buildoptw`, `buildoptw.bat`, checksum-pinned wrapper properties and portable
 > non-secret configuration deterministically with `buildopt wrapper init`.
@@ -149,7 +149,7 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > opportunity gate found **0/5** complete actions, but a route
 > audit proved that its historical inputs lacked the generic public producers
 > needed to distinguish missing input from no opportunity. That result is now
-> diagnostic-only. The active experiment starts from zero BuildOpt evidence,
+> diagnostic-only. The closed experiment started from zero BuildOpt evidence,
 > now has complete generic producers with typed conclusive and incomplete
 > outcomes. The five-family cohort is now frozen and captured from empty
 > state: all five inputs are complete, one Spring task-contract action is
@@ -161,6 +161,18 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > payback and overhead were not measured because timing never opened. This
 > rejects these two detectors as a broad route; it does not claim that Gradle
 > itself cannot be improved by a different generic mechanism.
+
+> **Next generic hypothesis:** BuildOpt has preregistered
+> `CHANGE_AWARE_PRODUCER_CLOSURE_V1`. Instead of searching an unchanged task
+> graph for a smaller fixed scope, it will map real adjacent-commit changes
+> through finalized Gradle inputs and direct/transitive output producers to the
+> exact work and output closure required by that change. The current evidence
+> provides five complete graphs, five exact output contracts and 100 primary
+> plus 50 reserve commits, but it does not yet provide change-to-producer
+> ownership. No action or performance claim exists yet: all five families must
+> first produce conclusive evidence and at least three must expose a safe action
+> before timing is allowed. Follow the
+> [change-aware tracker](./docs/plans/change-aware-producer-closure-poc-tracker.md).
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,
 > append-only phase timing and provenance for requested Gradle builds. The

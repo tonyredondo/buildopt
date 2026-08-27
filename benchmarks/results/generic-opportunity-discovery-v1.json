@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "buildopt.poc/generic-opportunity-discovery/v1",
+  "workItem": "SWL-CHANGE-000",
+  "generatedAt": "2026-08-27T19:10:16Z",
+  "evidence": {
+    "terminalDecisionSha256": "3a86c3234c92a409a9bb22a3be534d5c9e425a2dfb6c562499aa4d8a6e55ee60",
+    "freshCohortSha256": "792fba0176d473e78af169d61224bed3182e066bbb794dcadb04fb0673dab022",
+    "freshObservationsSha256": "6fa43aea1ca521d0f37bd93ca510b180ee2f5fbb5b2e0b37725f83d50f1bbb12",
+    "selectedContractSha256": "eaf050be44250504c91d2bf969fbd6be49500237cacb90cccd4c321ce44b8c2c",
+    "historicalTimingImported": false,
+    "historicalActionImported": false
+  },
+  "predecessor": {
+    "decision": "STOP_FRESH_GENERIC_POC_FOR_CURRENT_DETECTOR_SET",
+    "actionBreadth": 1,
+    "requiredBreadth": 3,
+    "timingRows": "NOT_CREATED"
+  },
+  "availableFreshInputs": {
+    "families": 5,
+    "completeRequestedGraphs": 5,
+    "exactOutputContracts": 5,
+    "primaryCommits": 100,
+    "reserveCommits": 50,
+    "minimumObservedRevisionsPerFamily": 1,
+    "observations": [
+      {
+        "family": "apache-groovy",
+        "observations": 1,
+        "repositoryRevisions": 1,
+        "graphComplete": true,
+        "graphTaskCount": 10,
+        "targetTaskTypes": [
+          "org.gradle.api.tasks.bundling.Jar_Decorated"
+        ],
+        "requiredOutputSnapshots": 1
+      },
+      {
+        "family": "apache-kafka",
+        "observations": 1,
+        "repositoryRevisions": 1,
+        "graphComplete": true,
+        "graphTaskCount": 11,
+        "targetTaskTypes": [
+          "org.gradle.api.tasks.bundling.Jar_Decorated"
+        ],
+        "requiredOutputSnapshots": 1
+      },
+      {
+        "family": "micronaut-core",
+        "observations": 1,
+        "repositoryRevisions": 1,
+        "graphComplete": true,
+        "graphTaskCount": 8,
+        "targetTaskTypes": [
+          "org.gradle.api.tasks.bundling.Jar_Decorated"
+        ],
+        "requiredOutputSnapshots": 1
+      },
+      {
+        "family": "opentelemetry-java-instrumentation",
+        "observations": 1,
+        "repositoryRevisions": 1,
+        "graphComplete": true,
+        "graphTaskCount": 10,
+        "targetTaskTypes": [
+          "org.gradle.api.tasks.bundling.Jar_Decorated"
+        ],
+        "requiredOutputSnapshots": 1
+      },
+      {
+        "family": "spring-framework",
+        "observations": 3,
+        "repositoryRevisions": 1,
+        "graphComplete": true,
+        "graphTaskCount": 7,
+        "targetTaskTypes": [
+          "org.springframework.build.architecture.ArchitectureCheck_Decorated"
+        ],
+        "requiredOutputSnapshots": 1
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "hypothesisId": "CURRENT_TASK_CONTRACT_AND_DECLARED_GRAPH_V1",
+      "disposition": "REJECTED_TERMINAL",
+      "reason": "CONCLUSIVE_ACTION_BREADTH_1_OF_5"
+    },
+    {
+      "hypothesisId": "STANDARD_ARCHIVE_CACHE_ADAPTER_V2",
+      "disposition": "REJECTED_NOT_MATERIALLY_BROADER",
+      "reason": "CURRENT_EVIDENCE_CANNOT_PROVE_NATIVE_CACHEABILITY_OR_CROSS_REVISION_VALUE"
+    },
+    {
+      "hypothesisId": "SINGLE_REVISION_STABLE_OUTPUT_REUSE_V1",
+      "disposition": "REJECTED_INSUFFICIENT_DISCRIMINATION",
+      "reason": "FOUR_FAMILIES_HAVE_ONLY_ONE_OBSERVED_REVISION_AND_REPEATED_SAME_REVISION_OUTPUTS_DO_NOT_PROVE_CROSS_COMMIT_REUSE"
+    },
+    {
+      "hypothesisId": "CHANGE_AWARE_PRODUCER_CLOSURE_V1",
+      "disposition": "SELECTED_FOR_IMPLEMENTATION",
+      "reason": "FIVE_COMPLETE_GRAPHS_AND_150_FROZEN_COMMITS_CAN_SUPPORT_FRESH_CHANGE_TO_PRODUCER_EVIDENCE",
+      "missingEvidence": [
+        "ADJACENT_REVISION_CHANGED_PATHS",
+        "FINALIZED_TASK_INPUT_OWNERSHIP",
+        "DIRECT_AND_TRANSITIVE_OUTPUT_PRODUCER_LINEAGE",
+        "EXACT_OMITTED_REQUIRED_OUTPUT_CLOSURE"
+      ]
+    }
+  ],
+  "decision": {
+    "outcome": "PREREGISTER_CHANGE_AWARE_PRODUCER_CLOSURE_V1",
+    "nextBlock": "SWL-CHANGE-001",
+    "performanceTimingAuthorized": false,
+    "actionActivationAuthorized": false,
+    "breadthMustPassBeforeTiming": true,
+    "requiredActionBreadth": "3_OF_5",
+    "requiredOutputEquivalence": "BYTE_EXACT",
+    "productFailureBudget": 0
+  }
+}
