@@ -142,8 +142,8 @@ commits and restarts the service before the consumer runs.
 The clean consumer restored **2 tasks from cache** and produced the exact
 required output SHA-256 as the producer. With the service offline and local
 outputs removed, the same `./buildoptw` command rebuilt natively with **0
-central hits** and produced the same SHA-256. The observed phase durations were
-**7.985 s producer**, **8.060 s consumer** and **7.469 s outage**. These are
+central hits** and produced the same SHA-256. The final clean-SHA phase durations
+were **11.027 s producer**, **7.938 s consumer** and **7.435 s outage**. These are
 functional phase measurements, not comparable candidate/control arms; the
 result deliberately sets `wallTimeClaim=false` and does not qualify a profile.
 Credentials are absent from Gradle/logs, and the cache and typed decision
