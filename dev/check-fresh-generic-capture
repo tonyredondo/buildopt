@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_DIR]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/fresh-generic-optimization-v1"}
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || exit 1
+done
+for buildopt_file in contract.json cohort.json observations.jsonl producer-results.json \
+    output-manifest.json exclusions.json report.json sha256sums; do
+    [[ -s ${buildopt_result}/${buildopt_file} ]] || {
+        printf 'fresh capture file is missing: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
+(
+    cd "${buildopt_result}"
+    sha256sum --check --strict sha256sums >/dev/null
+)
+
+jq -e '
+  .schemaVersion == "buildopt.poc/fresh-generic-capture-contract/v1" and
+  .workItem == "SWL-FRESH-002" and .historicalEvidenceImported == false and
+  .timingClaim == false and (.installedPackageSha256 | test("^[0-9a-f]{64}$")) and
+  (.captureInitSha256 | test("^[0-9a-f]{64}$")) and .runner.cpu >= 4 and
+  .subjects == ["spring-framework", "opentelemetry-java-instrumentation",
+    "apache-kafka", "micronaut-core", "apache-groovy"] and
+  .statePolicy == "DISTINCT_EMPTY_ROOTS_CREATED_AFTER_PACKAGE_FREEZE"
+' "${buildopt_result}/contract.json" >/dev/null
+jq -e '
+  .schemaVersion == "buildopt.poc/fresh-generic-cohort/v1" and
+  (.families | length) == 5 and
+  ([.families[].family] | unique | length) == 5 and
+  all(.families[];
+    (.frozenHead | test("^[0-9a-f]{40}$")) and
+    (.frozenTree | test("^[0-9a-f]{40}$")) and
+    (.repositoryScopeSha256 | test("^[0-9a-f]{64}$")) and
+    (.workflowArgumentsSha256 | test("^[0-9a-f]{64}$")) and
+    (.wrapper.distributionSha256 | test("^[0-9a-f]{64}$")) and
+    (.primary | length) == 20 and (.reserve | length) == 10 and
+    (([.primary[].sha, .reserve[].sha] | flatten | unique | length) == 30))
+' "${buildopt_result}/cohort.json" >/dev/null
+jq -s -e '
+  length == 7 and
+  ([.[].family] | unique | length) == 5 and
+  all(.[];
+    .schemaVersion == "buildopt.poc/fresh-generic-observation/v1" and
+    (.repositoryRevision | test("^[0-9a-f]{40}$")) and
+    (.repositoryTree | test("^[0-9a-f]{40}$")) and
+    (.installedPackageSha256 | test("^[0-9a-f]{64}$")) and
+    (.graph.tasks | length) > 0 and .task.failed == false and
+    (.task.inputSnapshotSha256 | test("^[0-9a-f]{64}$")) and
+    (.task.outputSnapshotSha256 | test("^[0-9a-f]{64}$")))
+' "${buildopt_result}/observations.jsonl" >/dev/null
+jq -e '
+  .schemaVersion == "buildopt.poc/fresh-generic-producer-results/v1" and
+  .historicalEvidenceImported == false and .completeFamilies == 5 and
+  .familiesWithActions == 1 and .testableActions == 1 and
+  (.reports | length) == 5 and all(.reports[]; .inputComplete == true) and
+  ([.reports[].detectors[].status] | index("INPUT_UNAVAILABLE") == null) and
+  ([.reports[].detectors[].status] | index("PRODUCER_FAILED") == null)
+' "${buildopt_result}/producer-results.json" >/dev/null
+jq -e '
+  .equivalence == "BYTE_EXACT" and (.families | length) == 5 and
+  all(.families[]; .byteExactBinding == true and .capturedOutputCount > 0 and
+    (.outputSnapshotSha256 | test("^[0-9a-f]{64}$")))
+' "${buildopt_result}/output-manifest.json" >/dev/null
+jq -e '.excludedCommits == [] and .importedHistoricalRows == 0 and
+  .forbiddenInputsObserved == false' "${buildopt_result}/exclusions.json" >/dev/null
+jq -e '.captureComplete == true and .familyCount == 5 and
+  .primaryCommits == 100 and .reserveCommits == 50 and
+  .conclusiveProducerFamilies == 5 and .familiesWithActions == 1 and
+  .testableActions == 1 and .historicalEvidenceImported == false and
+  .timingClaim == false and .outcome == "FRESH_FIVE_FAMILY_CAPTURE_COMPLETE"' \
+  "${buildopt_result}/report.json" >/dev/null
+
+if grep -R -E -q '/tmp/|current-longitudinal|sticky-wrapper-opportunity-gate|pre-freeze' "${buildopt_result}"; then
+    printf 'fresh capture contains a local path or forbidden legacy reference\n' >&2
+    exit 1
+fi
+
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-fresh-capture-check.XXXXXX")
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+jq '.completeFamilies = 4' "${buildopt_result}/producer-results.json" >"${buildopt_temp}/tampered.json"
+if jq -e '.completeFamilies == 5' "${buildopt_temp}/tampered.json" >/dev/null; then
+    printf 'tampered fresh capture was accepted\n' >&2
+    exit 1
+fi
+
+printf 'Fresh generic five-family capture: PASS\n'

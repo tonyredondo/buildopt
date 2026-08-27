@@ -32,6 +32,18 @@ review-only action evidence with:
 This check never reads historical BuildOpt evidence, executes a public build,
 times an action or grants patch/runtime authority.
 
+Validate the frozen five-family capture, its 100 primary and 50 reserve
+revisions, package/source bindings, normalized observations, byte-exact output
+manifests and complete producer outcomes with:
+
+```bash
+./dev/check-fresh-generic-capture
+```
+
+The paired `run-fresh-generic-capture` command is an evidence finalizer for
+explicit public-history, clean-checkout, fresh-state and frozen-package roots.
+It does not import historical BuildOpt results or make a timing claim.
+
 Validate the superseded sticky-wrapper route as immutable diagnostic history
 with:
 

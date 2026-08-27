@@ -371,10 +371,12 @@ and decisions are context only and are forbidden inputs. The earlier
 `SWL-014C` screen reported **0/5** actions because its inputs lacked complete
 public task and graph producers; it proves an evidence-pipeline gap, not
 absence of generic opportunity. It has no terminal authority. The producer
-proof is complete without importing historical data. The next work is
-`SWL-FRESH-002`: freeze the five current public families and capture new
-observations, traces and byte-exact output bindings from empty state before any
-candidate/native timing.
+proof is complete without importing historical data. The fresh five-family
+capture now binds 100 primary plus 50 reserve commits, five conclusive producer
+inputs and byte-exact current outputs to one package digest. It exposes one
+Spring task-contract action and no safe declared-graph reduction.
+`SWL-FRESH-003` independently recomputes whether that is below the fixed
+three-family breadth gate before any timing is allowed.
 
 The replacement path is implementation-locked rather than left to a later agent:
 separate per-arm cache namespaces start empty; one

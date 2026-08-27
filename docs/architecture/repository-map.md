@@ -93,7 +93,10 @@ screen is diagnostic-only. The complete replacement producer is owned by
 `fixtures/sticky-evidence-capture` and the paired producer runner/checker. It
 emits review-only, digest-bound task or graph actions and keeps unavailable
 input distinct from conclusive no-opportunity evidence. `SWL-FRESH-002` now
-owns the first five-family capture from empty state.
+owns `dev/fresh-evidence.init.gradle`, the paired fresh capture runner/checker
+and `benchmarks/results/fresh-generic-optimization-v1`. The capture binds one
+package to five clean current workflows and 150 preselected revisions without
+turning capture duration into performance evidence.
 
 Run `./dev/check-fresh-generic-optimization-plan` to validate current planning
 authority and `./dev/check-sticky-wrapper-learning-plan` to preserve the

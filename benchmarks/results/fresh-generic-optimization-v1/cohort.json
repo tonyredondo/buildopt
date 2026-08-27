@@ -1,0 +1,886 @@
+{
+  "schemaVersion": "buildopt.poc/fresh-generic-cohort/v1",
+  "generatedAt": "2026-08-27T19:10:16Z",
+  "families": [
+    {
+      "family": "spring-framework",
+      "dsl": "KOTLIN",
+      "frozenHead": "17e0daf8a16085bd553f1e71bc8a15542dbcd417",
+      "frozenTree": "3f32024e21f6b09119522e623285b41bdc951841",
+      "repositoryScopeSha256": "934e58e06025aea6573a098dd24344004665af1515eabef500f87dc103d46957",
+      "workflow": [
+        ":spring-core:checkArchitectureMain",
+        "--no-daemon",
+        "--no-build-cache",
+        "--no-configuration-cache"
+      ],
+      "workflowArgumentsSha256": "2e8387b2258c5de2b2cf2518adb40ebf27552dfa96e35b257f8740f0b18d17a7",
+      "wrapper": {
+        "distributionUrl": "https://services.gradle.org/distributions/gradle-9.7.1-bin.zip",
+        "distributionSha256": "acd53f1edaf02f1a8ff99879f8a34b302661a057d9b063ae9e35b552f804d20a"
+      },
+      "jdk": "temurin-jdk-25",
+      "requiredOutputs": [
+        "spring-core/build/checkArchitectureMain"
+      ],
+      "primary": [
+        {
+          "sha": "af466ccf63bc55f82961b6627fe0c97c43a54632",
+          "tree": "2361b052f9a844aee15641baaccbc1ee56711035",
+          "committedAt": "2026-08-20T16:19:37+02:00"
+        },
+        {
+          "sha": "59a784cb7ebfbb7f701067d5a4c2c5403be31a49",
+          "tree": "14b41fc0574986d0815dc8e95359f2a470796171",
+          "committedAt": "2026-08-20T16:27:18+02:00"
+        },
+        {
+          "sha": "6ee3ef6af5e215b854b0901e6a43737e86318c31",
+          "tree": "53efe3209fa32012a2e569d7679ae9090931228b",
+          "committedAt": "2026-08-20T16:32:05+02:00"
+        },
+        {
+          "sha": "df72838ce1e4885a4799a915bf9dccf6b09dea2e",
+          "tree": "72ef34edc5dc9eba865c64b4b2f5d014cb838b10",
+          "committedAt": "2026-08-20T18:18:13+02:00"
+        },
+        {
+          "sha": "89047909ea4bcda166c1f6d69fabb8d2cfde5073",
+          "tree": "72ef34edc5dc9eba865c64b4b2f5d014cb838b10",
+          "committedAt": "2026-08-20T18:26:02+02:00"
+        },
+        {
+          "sha": "8473ec3e25e508107693701bb26ebe43fdabe23a",
+          "tree": "f3731e80122a2510ba4d3317c008bd931d371d3b",
+          "committedAt": "2026-08-21T13:15:14+02:00"
+        },
+        {
+          "sha": "68d438c9ffea359847829b624918d779b1bcf60d",
+          "tree": "7a2a0ecbaf9b986501c971413abb98f484e1ad0f",
+          "committedAt": "2026-08-21T13:23:54+02:00"
+        },
+        {
+          "sha": "fb240829b3ce4a893f77612b6557eaf014ea389a",
+          "tree": "619062148704c2ac546b1107e106a2299d300f2c",
+          "committedAt": "2026-08-21T14:11:04+02:00"
+        },
+        {
+          "sha": "9dabfe98e89499fb78f30de7dc1714eabd6b9804",
+          "tree": "d3293c6928172211e75908fb678b9006be19b704",
+          "committedAt": "2026-08-21T15:21:13+02:00"
+        },
+        {
+          "sha": "aee39843f8c0f283f5f9cb1a0590af76470357fd",
+          "tree": "1184f43a8d15665e559e389752f5236ffc2ef8a0",
+          "committedAt": "2026-08-22T12:09:56+02:00"
+        },
+        {
+          "sha": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+          "tree": "738fceccedd61aa09fbad335e86d42b8c8654538",
+          "committedAt": "2026-08-22T13:28:57+02:00"
+        },
+        {
+          "sha": "ac95b96c21906f644e85028fa4df96fcb8cc2c65",
+          "tree": "f5c75101297d64b742bc09397c15df6550ac352f",
+          "committedAt": "2026-08-24T12:18:48+02:00"
+        },
+        {
+          "sha": "79a75a5762115809bc4dd8e96de39b36e21187a5",
+          "tree": "b0306e9d6839b17411c6a2ec8b3c9c71e36050f6",
+          "committedAt": "2026-08-24T12:36:28+02:00"
+        },
+        {
+          "sha": "b28569119fe7193adb4035d156b00b701c810a89",
+          "tree": "2ba164a180dcb2e32f7cce1f0758cd7ec13a48e2",
+          "committedAt": "2026-08-24T17:21:41+01:00"
+        },
+        {
+          "sha": "a00fb1b5aeaa7d4722ed86b93978f8c7935e0c65",
+          "tree": "2501309910f9be46f637ec9452e3bf6b6553a383",
+          "committedAt": "2026-08-26T13:34:57+02:00"
+        },
+        {
+          "sha": "6e9534df4d743776463d61d8362ef42dbfadb730",
+          "tree": "e7c1cbc3236ae6b10a2dbc04e750f43d3ac78ab7",
+          "committedAt": "2026-08-26T16:36:40+02:00"
+        },
+        {
+          "sha": "7daf1013aa89e6b80142437fccecc0be2bfbd7fb",
+          "tree": "5de680134597c5fc72d063fa2c198665b394c6c7",
+          "committedAt": "2026-08-27T14:37:23+02:00"
+        },
+        {
+          "sha": "1b354f2705f624ea090eab2bd6099a6c4c2a22fe",
+          "tree": "96faa842ac164f57ced249b7a7375bbde8129f1b",
+          "committedAt": "2026-08-27T16:50:58+02:00"
+        },
+        {
+          "sha": "d883602919438b89d69d1189b2ebc258918a8a37",
+          "tree": "f978000e23927453e677a8f7444bb81006717ae1",
+          "committedAt": "2026-08-27T16:57:58+02:00"
+        },
+        {
+          "sha": "17e0daf8a16085bd553f1e71bc8a15542dbcd417",
+          "tree": "3f32024e21f6b09119522e623285b41bdc951841",
+          "committedAt": "2026-08-27T17:00:41+02:00"
+        }
+      ],
+      "reserve": [
+        {
+          "sha": "fd95ab16baa2353416e96bddbd979169a9618260",
+          "tree": "85ca69bfa4e2b93deaf2e4ab5027297dbce2dfcb",
+          "committedAt": "2026-08-19T17:45:47+02:00"
+        },
+        {
+          "sha": "f067d40f0a646a98d0e2735a34b6e31f0e3f2c97",
+          "tree": "527211e78415a7d4382db393fb9975592f108fac",
+          "committedAt": "2026-08-19T18:19:04+02:00"
+        },
+        {
+          "sha": "e8e293a706002a42859a86044fc103a3f5e255be",
+          "tree": "2c61fa21c408aa432653fa9dacd481cebb14122e",
+          "committedAt": "2026-08-19T18:26:46+02:00"
+        },
+        {
+          "sha": "526c706d1c33863b16591ef0507170e02365229b",
+          "tree": "da9527b305dee7bd88ddc145a0b16fde58b238bc",
+          "committedAt": "2026-08-19T18:41:13+02:00"
+        },
+        {
+          "sha": "e9e00e325780351c2175b164e625967723d63dab",
+          "tree": "56533015bbeffa15c609d675758d82f3024312be",
+          "committedAt": "2026-08-20T10:59:06+02:00"
+        },
+        {
+          "sha": "555ac3768dba24d5034c331bc96fe7f8dfd5c15c",
+          "tree": "4eb0cbe50d8651d92273338b94163aaf41c0e4e4",
+          "committedAt": "2026-08-20T12:45:02+02:00"
+        },
+        {
+          "sha": "4a64537ac6c786dfda289c3dd21549546758c179",
+          "tree": "d2d405c7d52e0de3a6b4e71fed85c29cc3a4dde5",
+          "committedAt": "2026-08-20T14:13:55+02:00"
+        },
+        {
+          "sha": "2730d77f828644b570eb558e917217ecf0d9e12c",
+          "tree": "5bb3708ddd7fe09e49f0882a0b36421d12bfd4fa",
+          "committedAt": "2026-08-20T14:13:55+02:00"
+        },
+        {
+          "sha": "74b6a5ba3ee5645cd2f5f99fa9c1cefeea95c9f1",
+          "tree": "2f92623b30e08e1d70fa44e12661e487761d366e",
+          "committedAt": "2026-08-20T14:57:50+02:00"
+        },
+        {
+          "sha": "bcfa6c3c4fc9133229bcf252827989555ec009a7",
+          "tree": "78c170c5f96e921af931bcdff801f133f0cad18d",
+          "committedAt": "2026-08-20T15:56:20+02:00"
+        }
+      ]
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "dsl": "KOTLIN",
+      "frozenHead": "afbbe587251f192e0a38733cee1261f2b14d0f9f",
+      "frozenTree": "4aea6f48a3ac7cc1b0431cf91fa673801b56b135",
+      "repositoryScopeSha256": "9a24ee587b7d3703bcac3eed541a260c1ef7c544e12e2a72240b90abd6f856d2",
+      "workflow": [
+        ":javaagent:jar",
+        "--no-daemon",
+        "--no-build-cache",
+        "--no-configuration-cache"
+      ],
+      "workflowArgumentsSha256": "7d46c6eb8b44bee5243b6ad58b750176d2dab2823b4e30d34730c209991877ff",
+      "wrapper": {
+        "distributionUrl": "https://services.gradle.org/distributions/gradle-9.7.1-bin.zip",
+        "distributionSha256": "acd53f1edaf02f1a8ff99879f8a34b302661a057d9b063ae9e35b552f804d20a"
+      },
+      "jdk": "temurin-jdk-21",
+      "requiredOutputs": [
+        "javaagent/build/libs/opentelemetry-javaagent.jar"
+      ],
+      "primary": [
+        {
+          "sha": "3c9d984a50a273f7ee1a8dea8d4fcae91cfb2477",
+          "tree": "bc412b9b2e79fb469f6e8d7c277595391099cf17",
+          "committedAt": "2026-08-26T09:24:18+03:00"
+        },
+        {
+          "sha": "b896ddd18ce3da585a28db0b76156ca14673c521",
+          "tree": "2de64938a079f886249f9298cdca4ccce6422024",
+          "committedAt": "2026-08-26T10:24:37+03:00"
+        },
+        {
+          "sha": "4816b4dd47e3506156e0658e80cb6469b2ce3504",
+          "tree": "b73449a4b6b061ee084643b7bcd6b78acccd19db",
+          "committedAt": "2026-08-26T10:29:06+03:00"
+        },
+        {
+          "sha": "6f9ca5672ce84edbbe36ce0e14386c31d68f479f",
+          "tree": "a8b25333c8858f0ca0178f95d55cb2e039726d1f",
+          "committedAt": "2026-08-26T14:18:11+03:00"
+        },
+        {
+          "sha": "5233c7f7ee051f073a1882c2afcfe7e6d3227504",
+          "tree": "4301d92046fcadc9ac462eaae90f1801b40d0b2a",
+          "committedAt": "2026-08-26T07:42:39-07:00"
+        },
+        {
+          "sha": "e1c3a73aa0c5869e7e027fdc30d2c7c0bf0a278f",
+          "tree": "fc790e1961df4bf4d4461b0d2e5e6deb7f6ca59c",
+          "committedAt": "2026-08-26T07:43:09-07:00"
+        },
+        {
+          "sha": "2d2e3a1351a7cfa0571a674db4a21f0a2e8ad259",
+          "tree": "7f517b34a90e7cc3b9d98eb2ee2e906284a6907e",
+          "committedAt": "2026-08-26T07:51:04-07:00"
+        },
+        {
+          "sha": "2ad3d80e5ce2597b416b01851f4433ae02cd780c",
+          "tree": "c8f4e60a24090db4f60f057f639d30e98dd19b6c",
+          "committedAt": "2026-08-26T07:52:48-07:00"
+        },
+        {
+          "sha": "1495e7b710008c11b9c27f2f6a5a241b11018675",
+          "tree": "8f12b94844aa6073d187deba7a547071915627e6",
+          "committedAt": "2026-08-26T07:52:55-07:00"
+        },
+        {
+          "sha": "24d13b574b9fa7f20237ec8efb902ff915c6d134",
+          "tree": "f5ff1930ad1b1c4a76005227e2060a230c64b755",
+          "committedAt": "2026-08-26T07:54:08-07:00"
+        },
+        {
+          "sha": "5e9cc855181f95c9b1f80bcaaaf3fbaeab543dac",
+          "tree": "e68e0ce64ae4be623bd11a63d083ea49dedd4d6d",
+          "committedAt": "2026-08-26T19:44:04+03:00"
+        },
+        {
+          "sha": "8ed163b8fc2f460348fa324932b0a3b34cc85c8b",
+          "tree": "1561c8d9dd63445ec0828b3bf8209cb79e2c162b",
+          "committedAt": "2026-08-26T17:07:52Z"
+        },
+        {
+          "sha": "c22bcfba2669b1b93e547a4916d28db981d000e6",
+          "tree": "cb29a1fdd8cd5eec8a11d0c957970ed5ca770c09",
+          "committedAt": "2026-08-27T08:50:14+03:00"
+        },
+        {
+          "sha": "120a79cd09d99fe054fb4f63d8e5c4c90e2cae20",
+          "tree": "16eb6ed0430a01ae1b5e7d214ee56880bd61a394",
+          "committedAt": "2026-08-27T09:38:35+03:00"
+        },
+        {
+          "sha": "a5c07d233ed734535d78dca66e778c3bf509e3de",
+          "tree": "dae4dd52aa46f99dda1d57ecb43b9eafd113627e",
+          "committedAt": "2026-08-27T10:34:19+03:00"
+        },
+        {
+          "sha": "9977200a6cb934b7de50562b317bedcb0c9abf43",
+          "tree": "652e8cd7453c50c4743a09af2c9d18cfb2d57d11",
+          "committedAt": "2026-08-27T15:28:13+03:00"
+        },
+        {
+          "sha": "503971b98fa6e9b076e33331e22b0ca7fded602c",
+          "tree": "ca56fadd9f48933ae1002f62b981b5c85d0e685b",
+          "committedAt": "2026-08-27T07:23:02-07:00"
+        },
+        {
+          "sha": "6d0480624ee4cac4b1cfb58eb9fde8930e9e17a4",
+          "tree": "eb20b93dd1d27645ff043174c838fa76458ec4ea",
+          "committedAt": "2026-08-27T07:30:17-07:00"
+        },
+        {
+          "sha": "6d18c89b77f2ff3aa9e6861e8ae4cba721a53110",
+          "tree": "b79692f9066692679f1e0d1ea486f6939041031e",
+          "committedAt": "2026-08-27T07:39:10-07:00"
+        },
+        {
+          "sha": "afbbe587251f192e0a38733cee1261f2b14d0f9f",
+          "tree": "4aea6f48a3ac7cc1b0431cf91fa673801b56b135",
+          "committedAt": "2026-08-27T17:14:12Z"
+        }
+      ],
+      "reserve": [
+        {
+          "sha": "049fc9c6474dc62702dd754fa293672fdc1af716",
+          "tree": "37d14e8439d6938b9a3ffe8a4cc03cdf9bf61144",
+          "committedAt": "2026-08-25T14:05:40+03:00"
+        },
+        {
+          "sha": "3791351cde2c4c865c776ef255a3041fec98a008",
+          "tree": "82e2ff1a4ae948bfa669b2a520e049432cc5a04d",
+          "committedAt": "2026-08-25T14:07:51+03:00"
+        },
+        {
+          "sha": "22d33b008db9c709deb102718eebf3aeebd7cb3d",
+          "tree": "4070b5f2e14c666e7bd8fe95c87148d2c95a87d6",
+          "committedAt": "2026-08-25T14:23:21+03:00"
+        },
+        {
+          "sha": "ec1bb39df777c42d1c043a4bba7b4246655a8bc6",
+          "tree": "8a198a562b46e530516c2b1b7f40f14ceac2d29d",
+          "committedAt": "2026-08-25T15:08:05+03:00"
+        },
+        {
+          "sha": "bb6908966fb187cf5abeb9e586ac524a0208e7e7",
+          "tree": "9ddbdd636cd71cf9003b3fb76f0139d3cbeafc39",
+          "committedAt": "2026-08-25T15:26:13+03:00"
+        },
+        {
+          "sha": "200ed04011fef82dbcbab4905471571654363c7c",
+          "tree": "8e96ab09ec8079a28e75cea55df8cf469ef9001e",
+          "committedAt": "2026-08-25T15:46:24+03:00"
+        },
+        {
+          "sha": "73bec73c80f74944c55564eb07b98b62b15b814f",
+          "tree": "c4e50f6ed7b39e4f0405c7cfa25168e7a5edef81",
+          "committedAt": "2026-08-25T06:23:41-07:00"
+        },
+        {
+          "sha": "57c630b802811aac03ba9a4207799167b14c10b5",
+          "tree": "ea63ad3754fa0a4a3cbe672e7bccd420657f10e5",
+          "committedAt": "2026-08-25T10:27:59-07:00"
+        },
+        {
+          "sha": "f4c3dc3583f8b3e0e546bb2b4c3c5d2fa6ec9954",
+          "tree": "5b4f13c5f25a09949cff0f2ae62e5733214882fd",
+          "committedAt": "2026-08-25T19:12:48Z"
+        },
+        {
+          "sha": "f0ce273c3705eb81610417492cba410f34012e5e",
+          "tree": "985a7efcefc40a3277014358d672270acedc564d",
+          "committedAt": "2026-08-26T09:01:46+03:00"
+        }
+      ]
+    },
+    {
+      "family": "apache-kafka",
+      "dsl": "GROOVY",
+      "frozenHead": "db8a0925513a76d1a4f13df00867c7491a4b3ce7",
+      "frozenTree": "1f89c1971a6d6c4ac78234117ddb0d69fa408bb1",
+      "repositoryScopeSha256": "b558318775cdc6ddf375512e908cf6bccd7eeb3e52dab5a90be34546e5d8d720",
+      "workflow": [
+        ":clients:jar",
+        "--no-daemon",
+        "--no-build-cache",
+        "--no-configuration-cache"
+      ],
+      "workflowArgumentsSha256": "370d1db86b5f67b0a71f22ac0ab62dd41d68f53da9528685a8133f9af68aaca7",
+      "wrapper": {
+        "distributionUrl": "https://services.gradle.org/distributions/gradle-9.7.1-bin.zip",
+        "distributionSha256": "acd53f1edaf02f1a8ff99879f8a34b302661a057d9b063ae9e35b552f804d20a"
+      },
+      "jdk": "temurin-jdk-17",
+      "requiredOutputs": [
+        "clients/build/libs/kafka-clients.jar"
+      ],
+      "primary": [
+        {
+          "sha": "12bb49ddf97422d7c28cbd4ac2b3c425f73b2fa5",
+          "tree": "e20dd74c894fcbc35b4df541a995a42235796c17",
+          "committedAt": "2026-08-25T02:54:36+08:00"
+        },
+        {
+          "sha": "254612f9126bd6137f05663b43723870fd49cb36",
+          "tree": "4c516b7123634dd8916ad821846c1d1768930889",
+          "committedAt": "2026-08-25T02:57:47+08:00"
+        },
+        {
+          "sha": "6b82d1f8dfd489ec9da93ca036369d927baf6cd7",
+          "tree": "89d11338700133cbd40206bdeeb293d5bff7d7ed",
+          "committedAt": "2026-08-25T03:04:18+08:00"
+        },
+        {
+          "sha": "5ad7e0e3f343241f030c77eac7f87ac449522fc1",
+          "tree": "d60a35839af192deaf1c39d23ea6058ddcda8290",
+          "committedAt": "2026-08-25T09:11:08+08:00"
+        },
+        {
+          "sha": "21a2e9a227b17443d60cead4b6c2a54eb952653f",
+          "tree": "3612f2769c62fc2cfc6c33b2fef283c035857a08",
+          "committedAt": "2026-08-25T10:00:26+08:00"
+        },
+        {
+          "sha": "263b02ebc6e409863b0431b87e2323fcb1e0dfb9",
+          "tree": "30d6b5c9bf2d63b583a5215c7b6cda0bac5db7bb",
+          "committedAt": "2026-08-25T14:32:28+08:00"
+        },
+        {
+          "sha": "d8683419f26b36d2221eda20575981cb6375fb26",
+          "tree": "8493efaccfbddb0b87d14a892fcdd4ce3b675823",
+          "committedAt": "2026-08-25T14:52:26+08:00"
+        },
+        {
+          "sha": "d3b8b1bd023dc3d8dff4f7f85af5963de0214b11",
+          "tree": "1ae9d8e26dcddea55d8b5de9221affcdaba2697e",
+          "committedAt": "2026-08-25T13:20:58+05:30"
+        },
+        {
+          "sha": "74e37d733b9515823c5100ce30ad1211f25a6b3f",
+          "tree": "4cb7c4d629885842842601e472d571419b87fe7e",
+          "committedAt": "2026-08-26T08:43:04+08:00"
+        },
+        {
+          "sha": "191a7fb15f706f7eb77657008b0fc0512bb46d6e",
+          "tree": "b9d51872fdc271ba0b1b840c8cce2d6680215b51",
+          "committedAt": "2026-08-26T14:15:23+08:00"
+        },
+        {
+          "sha": "1fa934068284f85b7ef06189e658d805604ab709",
+          "tree": "8df8ee2664a7deb1cd3a60856877eb8359e7c286",
+          "committedAt": "2026-08-26T09:52:17+01:00"
+        },
+        {
+          "sha": "8eb07f3e7b9eba2a858365560f841aa3ba0859ba",
+          "tree": "7eec8fbdd74dff07140daca21912def4b8b5cff5",
+          "committedAt": "2026-08-26T20:27:23+08:00"
+        },
+        {
+          "sha": "c7b03474ebf7909e11fca3559f801b1312f14d1f",
+          "tree": "b0276fa4c96ae37648fb968db5ec2e2930be0450",
+          "committedAt": "2026-08-26T15:40:13+01:00"
+        },
+        {
+          "sha": "ea8a27d6ee88f7e447d207a59e635a0b160c1761",
+          "tree": "1c7b912af58857f6e506eb6e9a6a861308aa0816",
+          "committedAt": "2026-08-26T23:07:54+08:00"
+        },
+        {
+          "sha": "313a7743113f3cf393243c8925eff99c375218d0",
+          "tree": "b88a607fcc0f759da8a30449ff6b662dbc8f8dc6",
+          "committedAt": "2026-08-26T23:57:24+08:00"
+        },
+        {
+          "sha": "20d81283e880410100aa5934430d9a74c6cc65f9",
+          "tree": "518d9ff482d8f60315ec889d681eb3944747c899",
+          "committedAt": "2026-08-27T01:47:48+08:00"
+        },
+        {
+          "sha": "66c197c9f9749715de55f9a415e6aade73ac7830",
+          "tree": "12254c13f1f3ef477aabc507b48a51d35eaeebe9",
+          "committedAt": "2026-08-27T03:52:11+08:00"
+        },
+        {
+          "sha": "21ff2e4f8beb439f48e90ac0dda98139a00caab4",
+          "tree": "f7cb4c22e5bb23fb19c548712598ad62327fdd38",
+          "committedAt": "2026-08-27T17:34:29+08:00"
+        },
+        {
+          "sha": "d5b3cd62f4fe12f04ddae3f0e27c912296c4922a",
+          "tree": "f4b2f7b1b69604e1076592178c3ee785d20958e7",
+          "committedAt": "2026-08-27T21:28:09+08:00"
+        },
+        {
+          "sha": "db8a0925513a76d1a4f13df00867c7491a4b3ce7",
+          "tree": "1f89c1971a6d6c4ac78234117ddb0d69fa408bb1",
+          "committedAt": "2026-08-27T22:03:17+05:30"
+        }
+      ],
+      "reserve": [
+        {
+          "sha": "68ee27313642a7a8935b359b4ce27643f7c68de8",
+          "tree": "4c5e805b186c0ae46a2897b564bb47f756fb0da7",
+          "committedAt": "2026-08-23T19:48:49+08:00"
+        },
+        {
+          "sha": "9f1512a245ea75b773213dd36f6f0e6ee95a2176",
+          "tree": "58aceeac3c3beafa98d14f66679e35c35a93fa4e",
+          "committedAt": "2026-08-23T23:11:12+08:00"
+        },
+        {
+          "sha": "20aa07522d9b95782d2b6d1db700457745c5ea2e",
+          "tree": "38be3fcdcec9c84db0ce2676457727fb3d221579",
+          "committedAt": "2026-08-24T01:00:35+08:00"
+        },
+        {
+          "sha": "3d790171db6f3ad6f0c03aec7362a1b83964c21d",
+          "tree": "2593b7ca6e02c6dc084427c4403f3b79350fc5c2",
+          "committedAt": "2026-08-24T01:10:39+08:00"
+        },
+        {
+          "sha": "61488cf2c7e65dc5a6e889f5f9374ff1504f5cba",
+          "tree": "2c96a92f02ca05f7fd9bfbb5e56d846f66fd82f1",
+          "committedAt": "2026-08-23T18:51:24+01:00"
+        },
+        {
+          "sha": "ee5f55f7e151245a0ec38dd343ac0b06309a04a3",
+          "tree": "57c5543f5a6737d48a89b717039a0fbeac39b12a",
+          "committedAt": "2026-08-24T17:25:45+08:00"
+        },
+        {
+          "sha": "808bbe535b1ca8e4c80e2e124db01184ef907858",
+          "tree": "0c54f49ca631463f4f97201539c4a13ce31f6be2",
+          "committedAt": "2026-08-24T18:14:44+08:00"
+        },
+        {
+          "sha": "83a5eadde884f5ad2845ca5896ae83167b781bf8",
+          "tree": "c5a09adbaaab0f28096ca24744f11d2535977727",
+          "committedAt": "2026-08-24T21:06:32+08:00"
+        },
+        {
+          "sha": "3e0bc2801e223a74c126f25496c3ff5caaca0b52",
+          "tree": "b892da2e00b5c6f3e68a73ebe27c21e06daac3de",
+          "committedAt": "2026-08-24T15:59:00+02:00"
+        },
+        {
+          "sha": "61e0b5b04f5195c5721a1bc0fe116979a19c7586",
+          "tree": "987bb9b7fdd600413c0d137591919325f08e19b5",
+          "committedAt": "2026-08-24T12:19:48-04:00"
+        }
+      ]
+    },
+    {
+      "family": "micronaut-core",
+      "dsl": "KOTLIN",
+      "frozenHead": "c419ce675423bf1847a95e5900799347317ba5a0",
+      "frozenTree": "d199cd8dae931aa18053e8024c03a28f0b1f466d",
+      "repositoryScopeSha256": "5e18c99b3e0767228446ba02caa59ebf9498b37f132bd12c2b52ab4d5532cbee",
+      "workflow": [
+        ":micronaut-core:jar",
+        "--no-daemon",
+        "--no-build-cache",
+        "--no-configuration-cache"
+      ],
+      "workflowArgumentsSha256": "fe1112ec063b96a72f56ed9a0cb101f9da7cdcf864ca598b733f2580a09dbd5b",
+      "wrapper": {
+        "distributionUrl": "https://services.gradle.org/distributions/gradle-9.7.1-bin.zip",
+        "distributionSha256": "acd53f1edaf02f1a8ff99879f8a34b302661a057d9b063ae9e35b552f804d20a"
+      },
+      "jdk": "temurin-jdk-25",
+      "requiredOutputs": [
+        "core/build/libs/micronaut-core.jar"
+      ],
+      "primary": [
+        {
+          "sha": "54d38f397e622b2fa5f8bc72fc04bd5ea87c6d8a",
+          "tree": "952c5e458b646c0b5bd74c028747d2a482567e46",
+          "committedAt": "2026-08-16T15:58:25+02:00"
+        },
+        {
+          "sha": "9de1e04f6696b528fdad36e38df781a2cb48fc04",
+          "tree": "5c60ef8beba159787b00c293bda054899e88c71d",
+          "committedAt": "2026-08-17T07:38:48+02:00"
+        },
+        {
+          "sha": "e129f3ced1c5fc03f2318cfe07db1556499725d4",
+          "tree": "5929d995b4eeb11fe03cf2cf5dc67e985ef3cf93",
+          "committedAt": "2026-08-17T08:37:15+02:00"
+        },
+        {
+          "sha": "a6b836422f6d89cd935906280e98fd95345833f9",
+          "tree": "bea91377e6daf17d151864b90d345c9eedada944",
+          "committedAt": "2026-08-18T07:42:12+02:00"
+        },
+        {
+          "sha": "1bef76de158433f9a164dd9320e2fad3b31dbf46",
+          "tree": "5598320dff50dc4197ee8246f84efbfa91b9f544",
+          "committedAt": "2026-08-18T10:58:14+02:00"
+        },
+        {
+          "sha": "2db0fd7dd0ce5c26faf72f05852e88ddea466a7e",
+          "tree": "bbc35b00c68049f61599762c0c282792a8491320",
+          "committedAt": "2026-08-18T16:14:31+02:00"
+        },
+        {
+          "sha": "e8773c4db69ccae2bfac5559c7a71c92b58a422c",
+          "tree": "8f6225086bdd99d101d43c82d40f51ab81177073",
+          "committedAt": "2026-08-19T03:41:30Z"
+        },
+        {
+          "sha": "234085479fde13fbfdeed63970ca3f9455f3eb0c",
+          "tree": "fa77339f230cda02897de67512dc1b9456962ab7",
+          "committedAt": "2026-08-19T09:13:44+02:00"
+        },
+        {
+          "sha": "eb0070fe38e91dec6d0b781e9421355cb3ce68dd",
+          "tree": "d2ab6db3efc207d8f0623d4ce8b30a8378d9a212",
+          "committedAt": "2026-08-20T02:56:55Z"
+        },
+        {
+          "sha": "f070bf5e42ed4708930802f7229ef549105d2207",
+          "tree": "ad28c0e55ec41997da5c793f42742c28f763ff55",
+          "committedAt": "2026-08-20T07:42:22+02:00"
+        },
+        {
+          "sha": "a23044d47d3c73e863047bbe55abcc0a7eb29ae2",
+          "tree": "23a7682e8bfd776547b1a42af9687c19cfbe14ad",
+          "committedAt": "2026-08-20T12:13:29+02:00"
+        },
+        {
+          "sha": "4bff1e8107a86f6ce9617b827cacfc3bced3e985",
+          "tree": "9cb2304e02affbe7b67e4987319a04c1cc8af0a2",
+          "committedAt": "2026-08-20T22:34:35+02:00"
+        },
+        {
+          "sha": "05cdf6f0d17c7160050697dfaf7e3042ddd2579c",
+          "tree": "e2322af468a433359899be8e8f96702533e48098",
+          "committedAt": "2026-08-21T03:15:42Z"
+        },
+        {
+          "sha": "ffbaf590c5902d0c906a2e59e538e6e578a00eaa",
+          "tree": "e298edcff4d41d894ee0bd2a817f91df89c9fadd",
+          "committedAt": "2026-08-21T08:39:28+02:00"
+        },
+        {
+          "sha": "0663b01d521557d7769b9c83b8700450087d0f43",
+          "tree": "08031ea1fa731fd0525ef32b911cf404141d7ce9",
+          "committedAt": "2026-08-21T14:20:48+02:00"
+        },
+        {
+          "sha": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+          "tree": "69d637b6d8b445ff41809df9fd1d2394bf7c1893",
+          "committedAt": "2026-08-21T16:40:19+02:00"
+        },
+        {
+          "sha": "784e7ff015460df6fb6a7742bb4a8f5e20bb2256",
+          "tree": "2cc896cd6634c43d1778d68fc8e0a4dd5db2d75b",
+          "committedAt": "2026-08-24T09:40:57+02:00"
+        },
+        {
+          "sha": "f06bb3693f9851421c86ca95c4621699be194b7f",
+          "tree": "4ebf90662cc486c650588b56851d44d070b04f77",
+          "committedAt": "2026-08-25T15:33:23+02:00"
+        },
+        {
+          "sha": "88d07edeb51e663fad6f1375abcad48e4f9b99c0",
+          "tree": "4b7942ddedc956b6aefc776bed20acbe366c432f",
+          "committedAt": "2026-08-25T18:29:41+02:00"
+        },
+        {
+          "sha": "c419ce675423bf1847a95e5900799347317ba5a0",
+          "tree": "d199cd8dae931aa18053e8024c03a28f0b1f466d",
+          "committedAt": "2026-08-27T18:33:29+02:00"
+        }
+      ],
+      "reserve": [
+        {
+          "sha": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+          "tree": "75d8826068f20aa41dd285bfc2d61ec8dbcbddc1",
+          "committedAt": "2026-08-05T09:37:13+02:00"
+        },
+        {
+          "sha": "f8b4e5ce89b24fa8bc0a1bee867847e03ab51184",
+          "tree": "47fd9fc16e1e2a9ebbfcb39c560bfc2ccdb7a5bf",
+          "committedAt": "2026-08-11T10:20:49+02:00"
+        },
+        {
+          "sha": "a898c29504a7cd3301131cfb1441d41078e27d16",
+          "tree": "e8e6560fc9e0c0302b0cfde1c479b1222f7ac92f",
+          "committedAt": "2026-08-11T13:07:25+02:00"
+        },
+        {
+          "sha": "ee76087d1a392696f3e92a6d3ed092b2ecfc44b1",
+          "tree": "b60d504c2dc049a25f6b442331f837ab2a324084",
+          "committedAt": "2026-08-14T11:41:03+02:00"
+        },
+        {
+          "sha": "b868a19567c7f00e195b4fb3e21dacdb585728e5",
+          "tree": "ccfa62d1423aac9ef1f1b5dc8bfed001e38fee84",
+          "committedAt": "2026-08-14T11:41:17+02:00"
+        },
+        {
+          "sha": "197938e99b52fbc568432b73d19bf1fa3d7c65e9",
+          "tree": "a5f53664e64b4f37ec9a6ca4808e11571372ee71",
+          "committedAt": "2026-08-14T17:19:27+02:00"
+        },
+        {
+          "sha": "dc03ff09a0c03cb6d79737b389d80251a98b7376",
+          "tree": "7a913faee6a89fe2b096cc59fb04090c045b9eec",
+          "committedAt": "2026-08-14T17:19:41+02:00"
+        },
+        {
+          "sha": "42c14e7f6f0ea07a769f6dd3d46c24a7c5de790c",
+          "tree": "44bac9b824184567c282de71b1c9ed7a3a04054c",
+          "committedAt": "2026-08-14T18:11:46+02:00"
+        },
+        {
+          "sha": "3b3dccd8178033cf0e338054e532b45910b5b45e",
+          "tree": "5f3cd79f603a114ff57ff62d134da95d446b4ee1",
+          "committedAt": "2026-08-14T22:40:13+02:00"
+        },
+        {
+          "sha": "e1b601cb256e1ebc50162dda3f0b1e193d6db1fb",
+          "tree": "ed49e1e998cc873b86dc041a6f45ca382b11acf0",
+          "committedAt": "2026-08-15T20:32:37+02:00"
+        }
+      ]
+    },
+    {
+      "family": "apache-groovy",
+      "dsl": "GROOVY",
+      "frozenHead": "655b70f3fdb34dcb8e98fc141c68647f92a27e82",
+      "frozenTree": "4f1530c7517c355cc274550d2dceb0014d290770",
+      "repositoryScopeSha256": "6a8704d3907d2c424c8d6ecab9ea2dcc72ccfd3187547ecc2e2b31b735f22b63",
+      "workflow": [
+        ":jar",
+        "--no-daemon",
+        "--no-build-cache",
+        "--no-configuration-cache"
+      ],
+      "workflowArgumentsSha256": "ec6b132cbe16005525326d1582c2dd91ec22194ad5e7f3309bd04ab67eaf8a11",
+      "wrapper": {
+        "distributionUrl": "https://services.gradle.org/distributions/gradle-9.7.1-bin.zip",
+        "distributionSha256": "acd53f1edaf02f1a8ff99879f8a34b302661a057d9b063ae9e35b552f804d20a"
+      },
+      "jdk": "temurin-jdk-17",
+      "requiredOutputs": [
+        "build/libs/groovy-raw.jar"
+      ],
+      "primary": [
+        {
+          "sha": "e797296544630578ef410594575e6eadac415ab1",
+          "tree": "5666c6d38145606477fd65d7c776a91e94acf306",
+          "committedAt": "2026-08-24T13:00:00+10:00"
+        },
+        {
+          "sha": "ed23cd59779d9f4f63aeeb243e5a34badcfba485",
+          "tree": "b50cc12c29d24c5c776425bedc94100e29fc286d",
+          "committedAt": "2026-08-24T21:00:01+10:00"
+        },
+        {
+          "sha": "760775b68011eacdb01f3028ad50ae419f90b49c",
+          "tree": "8f2b35b1ec933e14e2ecfcf6bd51e5fcbee700c4",
+          "committedAt": "2026-08-24T21:02:42+10:00"
+        },
+        {
+          "sha": "0ae7a97cd7d4a1bf9e4e8d8dec234bd3fc533647",
+          "tree": "1af2244a70c07995c72916dd95c330c417c4f5fc",
+          "committedAt": "2026-08-24T21:12:58+10:00"
+        },
+        {
+          "sha": "94af75b37a6f096f0425299bcf8f005357afc27a",
+          "tree": "77c804e2a3b686c761fb74ac1909352fb2754d75",
+          "committedAt": "2026-08-24T21:24:55+10:00"
+        },
+        {
+          "sha": "a41ff9145e5287ec88a03692913716931dc83fdf",
+          "tree": "63e62999bb54d57c2b24a97a9768fb95f59f04cc",
+          "committedAt": "2026-08-24T21:37:54+10:00"
+        },
+        {
+          "sha": "e4a7451c4c67ab012e0f0fd17f59b3856ed7c135",
+          "tree": "492610e9772ea3ebf80128fd740a2d9e1bd61fde",
+          "committedAt": "2026-08-24T21:45:14+10:00"
+        },
+        {
+          "sha": "d353a680058742600ab86468479479b578ce23a2",
+          "tree": "e26837f5ba7a505f41f96ddb5b02d107cd106712",
+          "committedAt": "2026-08-25T06:43:11+10:00"
+        },
+        {
+          "sha": "5b1efb9c1d54cac34fa722008765fe49c37012a6",
+          "tree": "b38bf33789fe2bcd8955c1206c01ef6ba7490643",
+          "committedAt": "2026-08-25T06:43:11+10:00"
+        },
+        {
+          "sha": "56964ab775786f5be385d4feb2aab9df028813d1",
+          "tree": "f269385af51647732bea6b3f86963079fe255071",
+          "committedAt": "2026-08-25T07:15:30+10:00"
+        },
+        {
+          "sha": "25d04f29fae63701c0aa90393f5c618de872b764",
+          "tree": "45ef54f711a356d4e4a381c9c9f3a7d04a69b2fb",
+          "committedAt": "2026-08-26T01:25:06+09:00"
+        },
+        {
+          "sha": "67d9d0a28a4eb73707b3feb891e3865b519b4d43",
+          "tree": "541bb20cd9ab3aa3f4a1d7ee5625c6253333cd8a",
+          "committedAt": "2026-08-26T02:18:32+09:00"
+        },
+        {
+          "sha": "66cc817bb9335113f5563e61dcf4717dbbe36975",
+          "tree": "dca30ac3e391abcbc3c6d783aae0fe68a3eb4d24",
+          "committedAt": "2026-08-26T02:23:11+09:00"
+        },
+        {
+          "sha": "9b27c4cb9f3fa4d849aa21d9cc0e3dfbbd3957fb",
+          "tree": "e297ad409e302cfc08e25def05755d325dc3a901",
+          "committedAt": "2026-08-26T02:31:45+09:00"
+        },
+        {
+          "sha": "768a2795add005e78b29160829ec57fda408e736",
+          "tree": "4e0cddd3e24ee4c1ccbb6cb4c3d19176f5881744",
+          "committedAt": "2026-08-26T07:40:10+10:00"
+        },
+        {
+          "sha": "47f3b75e70158a5d8099fd26be0b3140b703d507",
+          "tree": "e27299493ce2b6b22d6e792994579a4bd33d2691",
+          "committedAt": "2026-08-26T07:43:26+10:00"
+        },
+        {
+          "sha": "b73d71c0b0b67d6296d1dcc57d3ffc5b7cd33629",
+          "tree": "8810b7142b798844ac9e7ff9c01cdebfbf8fe54e",
+          "committedAt": "2026-08-26T10:18:00+10:00"
+        },
+        {
+          "sha": "bad0b1d6c7bd3c5f6d8ad92acbc037dfa138bf9b",
+          "tree": "c947badfb5f44b225942346eff7b0abbe4deb3d2",
+          "committedAt": "2026-08-26T22:18:52+09:00"
+        },
+        {
+          "sha": "914da787bb357e4fcc952ebf33e4d34a6a9055c9",
+          "tree": "0ca035fb895bae931a3b1003b0b26846188691ed",
+          "committedAt": "2026-08-26T22:22:31+09:00"
+        },
+        {
+          "sha": "655b70f3fdb34dcb8e98fc141c68647f92a27e82",
+          "tree": "4f1530c7517c355cc274550d2dceb0014d290770",
+          "committedAt": "2026-08-27T00:22:52+09:00"
+        }
+      ],
+      "reserve": [
+        {
+          "sha": "0a33cb24792d473f0f80a71b89b63c3a9167f6e1",
+          "tree": "13343a30aac12c302fd759ceee09bfd787605aad",
+          "committedAt": "2026-08-24T00:04:07+09:00"
+        },
+        {
+          "sha": "b30f281849f32b399b871359e0036040a70f849a",
+          "tree": "ca24b8aa07ded5f2a16b1b93a46fb82151637004",
+          "committedAt": "2026-08-24T00:18:54+09:00"
+        },
+        {
+          "sha": "e5ea4eb8bf9782e0c121aa29dac79a5f388cc656",
+          "tree": "f2d1118ecbc3aa8813c16207b524fee286d62a07",
+          "committedAt": "2026-08-24T01:22:39+09:00"
+        },
+        {
+          "sha": "c9066393a6a11c89e188bea72f2c976186661574",
+          "tree": "0aa4c7ca4a0872868987a9371640bd287b46730a",
+          "committedAt": "2026-08-24T01:30:46+09:00"
+        },
+        {
+          "sha": "7f877b34aff79d817f89e48b741bb3966ba9b188",
+          "tree": "252822506599de61945db163acfb81ad77d423a1",
+          "committedAt": "2026-08-24T07:28:09+10:00"
+        },
+        {
+          "sha": "0f217d25d3ae3caeadd88b404699ac384e0c37e1",
+          "tree": "f0e3c498a3a456080243207dc7f14aef1931d116",
+          "committedAt": "2026-08-24T07:28:24+10:00"
+        },
+        {
+          "sha": "fc3808097367cc9133facaa64e62dcd449e2ae49",
+          "tree": "0075f6273c5f3ae0373f6fe627d7d8c7d850b016",
+          "committedAt": "2026-08-24T07:30:13+10:00"
+        },
+        {
+          "sha": "54286983347bd4c70727ef664f5b9973fdb9da6f",
+          "tree": "4c0509886c6dc3c564345072725434bb77825dae",
+          "committedAt": "2026-08-24T07:46:11+10:00"
+        },
+        {
+          "sha": "05b836c64f164d435f8524715019c1c5a0b4c906",
+          "tree": "3479b0de70721fc9aa6749a741b01149dcee7728",
+          "committedAt": "2026-08-24T07:56:04+10:00"
+        },
+        {
+          "sha": "3190f42b54556e08d5bd104f53e39f6711438e49",
+          "tree": "5201d54ea7767e2f7cea1cfa4aaeb9a76c8850a7",
+          "committedAt": "2026-08-24T11:01:05+10:00"
+        }
+      ]
+    }
+  ]
+}

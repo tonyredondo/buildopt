@@ -1,0 +1,305 @@
+{
+  "schemaVersion": "buildopt.poc/fresh-generic-observation/v1",
+  "family": "spring-framework",
+  "repositoryRevision": "17e0daf8a16085bd553f1e71bc8a15542dbcd417",
+  "repositoryTree": "3f32024e21f6b09119522e623285b41bdc951841",
+  "installedPackageSha256": "bfbc07658e08781e3881bc2d9f9e9d2f3f7ae22c536b5cbf9557a038d2553f32",
+  "repositoryScopeSha256": "934e58e06025aea6573a098dd24344004665af1515eabef500f87dc103d46957",
+  "requestedBuildOrdinal": 1,
+  "graph": {
+    "requested": [
+      ":spring-core:checkArchitectureMain"
+    ],
+    "tasks": [
+      ":spring-core:checkKotlinGradlePluginConfigurationErrors",
+      ":spring-core:javapoetRepackJar",
+      ":spring-core:objenesisRepackJar",
+      ":spring-core:compileKotlin",
+      ":spring-core:compileJava",
+      ":spring-core:processResources",
+      ":spring-core:checkArchitectureMain"
+    ]
+  },
+  "task": {
+    "path": ":spring-core:checkArchitectureMain",
+    "type": "org.springframework.build.architecture.ArchitectureCheck_Decorated",
+    "durationMs": 2811,
+    "executed": true,
+    "upToDate": false,
+    "skipped": false,
+    "failed": false,
+    "cacheableType": false,
+    "declaredInputFileCount": 1153,
+    "declaredInputPropertyCount": 1,
+    "declaredOutputCount": 1,
+    "taskActionCount": 0,
+    "inputSnapshotSha256": "d5de8c44563fdea63eb06b0a11038b3a4c7fd50c5d6fd908036b6bc225af7b24",
+    "outputSnapshotSha256": "be2f08c20b1bd835a30370bbd635380cf51461b718b9d3093b94e8c1aaf43a7c"
+  },
+  "capturedOutputs": [
+    "checkArchitectureMain"
+  ]
+}
+{
+  "schemaVersion": "buildopt.poc/fresh-generic-observation/v1",
+  "family": "spring-framework",
+  "repositoryRevision": "17e0daf8a16085bd553f1e71bc8a15542dbcd417",
+  "repositoryTree": "3f32024e21f6b09119522e623285b41bdc951841",
+  "installedPackageSha256": "bfbc07658e08781e3881bc2d9f9e9d2f3f7ae22c536b5cbf9557a038d2553f32",
+  "repositoryScopeSha256": "934e58e06025aea6573a098dd24344004665af1515eabef500f87dc103d46957",
+  "requestedBuildOrdinal": 2,
+  "graph": {
+    "requested": [
+      ":spring-core:checkArchitectureMain"
+    ],
+    "tasks": [
+      ":spring-core:checkKotlinGradlePluginConfigurationErrors",
+      ":spring-core:javapoetRepackJar",
+      ":spring-core:objenesisRepackJar",
+      ":spring-core:compileKotlin",
+      ":spring-core:compileJava",
+      ":spring-core:processResources",
+      ":spring-core:checkArchitectureMain"
+    ]
+  },
+  "task": {
+    "path": ":spring-core:checkArchitectureMain",
+    "type": "org.springframework.build.architecture.ArchitectureCheck_Decorated",
+    "durationMs": 3512,
+    "executed": true,
+    "upToDate": false,
+    "skipped": false,
+    "failed": false,
+    "cacheableType": false,
+    "declaredInputFileCount": 1153,
+    "declaredInputPropertyCount": 1,
+    "declaredOutputCount": 1,
+    "taskActionCount": 0,
+    "inputSnapshotSha256": "d5de8c44563fdea63eb06b0a11038b3a4c7fd50c5d6fd908036b6bc225af7b24",
+    "outputSnapshotSha256": "be2f08c20b1bd835a30370bbd635380cf51461b718b9d3093b94e8c1aaf43a7c"
+  },
+  "capturedOutputs": [
+    "checkArchitectureMain"
+  ]
+}
+{
+  "schemaVersion": "buildopt.poc/fresh-generic-observation/v1",
+  "family": "spring-framework",
+  "repositoryRevision": "17e0daf8a16085bd553f1e71bc8a15542dbcd417",
+  "repositoryTree": "3f32024e21f6b09119522e623285b41bdc951841",
+  "installedPackageSha256": "bfbc07658e08781e3881bc2d9f9e9d2f3f7ae22c536b5cbf9557a038d2553f32",
+  "repositoryScopeSha256": "934e58e06025aea6573a098dd24344004665af1515eabef500f87dc103d46957",
+  "requestedBuildOrdinal": 3,
+  "graph": {
+    "requested": [
+      ":spring-core:checkArchitectureMain"
+    ],
+    "tasks": [
+      ":spring-core:checkKotlinGradlePluginConfigurationErrors",
+      ":spring-core:javapoetRepackJar",
+      ":spring-core:objenesisRepackJar",
+      ":spring-core:compileKotlin",
+      ":spring-core:compileJava",
+      ":spring-core:processResources",
+      ":spring-core:checkArchitectureMain"
+    ]
+  },
+  "task": {
+    "path": ":spring-core:checkArchitectureMain",
+    "type": "org.springframework.build.architecture.ArchitectureCheck_Decorated",
+    "durationMs": 3136,
+    "executed": true,
+    "upToDate": false,
+    "skipped": false,
+    "failed": false,
+    "cacheableType": false,
+    "declaredInputFileCount": 1153,
+    "declaredInputPropertyCount": 1,
+    "declaredOutputCount": 1,
+    "taskActionCount": 0,
+    "inputSnapshotSha256": "d5de8c44563fdea63eb06b0a11038b3a4c7fd50c5d6fd908036b6bc225af7b24",
+    "outputSnapshotSha256": "be2f08c20b1bd835a30370bbd635380cf51461b718b9d3093b94e8c1aaf43a7c"
+  },
+  "capturedOutputs": [
+    "checkArchitectureMain"
+  ]
+}
+{
+  "schemaVersion": "buildopt.poc/fresh-generic-observation/v1",
+  "family": "opentelemetry-java-instrumentation",
+  "repositoryRevision": "afbbe587251f192e0a38733cee1261f2b14d0f9f",
+  "repositoryTree": "4aea6f48a3ac7cc1b0431cf91fa673801b56b135",
+  "installedPackageSha256": "bfbc07658e08781e3881bc2d9f9e9d2f3f7ae22c536b5cbf9557a038d2553f32",
+  "repositoryScopeSha256": "9a24ee587b7d3703bcac3eed541a260c1ef7c544e12e2a72240b90abd6f856d2",
+  "requestedBuildOrdinal": 1,
+  "graph": {
+    "requested": [
+      ":javaagent:jar"
+    ],
+    "tasks": [
+      ":custom-checks:compileJava",
+      ":custom-checks:compileGroovy",
+      ":custom-checks:processResources",
+      ":custom-checks:classes",
+      ":custom-checks:jar",
+      ":javaagent:compileJava",
+      ":javaagent:compileGroovy",
+      ":javaagent:processResources",
+      ":javaagent:classes",
+      ":javaagent:jar"
+    ]
+  },
+  "task": {
+    "path": ":javaagent:jar",
+    "type": "org.gradle.api.tasks.bundling.Jar_Decorated",
+    "durationMs": 38,
+    "executed": true,
+    "upToDate": false,
+    "skipped": false,
+    "failed": false,
+    "cacheableType": false,
+    "declaredInputFileCount": 15,
+    "declaredInputPropertyCount": 28,
+    "declaredOutputCount": 1,
+    "taskActionCount": 0,
+    "inputSnapshotSha256": "a110da812e4dd556300a0fe8794dd43a2eeefaa14a2cd8f8627b55f17c2bc10c",
+    "outputSnapshotSha256": "b8a07a48bb1a84de712544fdf377175a455fda86f2aefa08244e230ec8c4f753"
+  },
+  "capturedOutputs": [
+    "opentelemetry-javaagent-2.32.0-SNAPSHOT-dontuse.jar"
+  ]
+}
+{
+  "schemaVersion": "buildopt.poc/fresh-generic-observation/v1",
+  "family": "apache-kafka",
+  "repositoryRevision": "db8a0925513a76d1a4f13df00867c7491a4b3ce7",
+  "repositoryTree": "1f89c1971a6d6c4ac78234117ddb0d69fa408bb1",
+  "installedPackageSha256": "bfbc07658e08781e3881bc2d9f9e9d2f3f7ae22c536b5cbf9557a038d2553f32",
+  "repositoryScopeSha256": "b558318775cdc6ddf375512e908cf6bccd7eeb3e52dab5a90be34546e5d8d720",
+  "requestedBuildOrdinal": 1,
+  "graph": {
+    "requested": [
+      ":clients:jar"
+    ],
+    "tasks": [
+      ":generator:compileJava",
+      ":generator:processResources",
+      ":generator:classes",
+      ":generator:jar",
+      ":clients:processMessages",
+      ":clients:compileJava",
+      ":clients:processResources",
+      ":clients:classes",
+      ":clients:createVersionFile",
+      ":clients:shadowJar",
+      ":clients:jar"
+    ]
+  },
+  "task": {
+    "path": ":clients:jar",
+    "type": "org.gradle.api.tasks.bundling.Jar_Decorated",
+    "durationMs": 35,
+    "executed": false,
+    "upToDate": false,
+    "skipped": true,
+    "failed": false,
+    "cacheableType": false,
+    "declaredInputFileCount": 3307,
+    "declaredInputPropertyCount": 28,
+    "declaredOutputCount": 1,
+    "taskActionCount": 0,
+    "inputSnapshotSha256": "92e608792811b83403a1dad38fb1aa44bfe0938fd260512dafc4a874952bd6bf",
+    "outputSnapshotSha256": "9b78b4468ee5d73e1555b190201f45bc781c699f61894f837cf3ab4cc2e05ae6"
+  },
+  "capturedOutputs": [
+    "kafka-clients-4.5.0-SNAPSHOT.jar"
+  ]
+}
+{
+  "schemaVersion": "buildopt.poc/fresh-generic-observation/v1",
+  "family": "micronaut-core",
+  "repositoryRevision": "c419ce675423bf1847a95e5900799347317ba5a0",
+  "repositoryTree": "d199cd8dae931aa18053e8024c03a28f0b1f466d",
+  "installedPackageSha256": "bfbc07658e08781e3881bc2d9f9e9d2f3f7ae22c536b5cbf9557a038d2553f32",
+  "repositoryScopeSha256": "5e18c99b3e0767228446ba02caa59ebf9498b37f132bd12c2b52ab4d5532cbee",
+  "requestedBuildOrdinal": 1,
+  "graph": {
+    "requested": [
+      ":micronaut-core:jar"
+    ],
+    "tasks": [
+      ":micronaut-core:compileJava",
+      ":micronaut-core:compileGroovy",
+      ":micronaut-core:generateNativeImageProperties",
+      ":micronaut-core:micronautVersionInfo",
+      ":micronaut-core:processResources",
+      ":micronaut-core:classes",
+      ":micronaut-core:generatePomFileForMavenPublication",
+      ":micronaut-core:jar"
+    ]
+  },
+  "task": {
+    "path": ":micronaut-core:jar",
+    "type": "org.gradle.api.tasks.bundling.Jar_Decorated",
+    "durationMs": 101,
+    "executed": true,
+    "upToDate": false,
+    "skipped": false,
+    "failed": false,
+    "cacheableType": false,
+    "declaredInputFileCount": 484,
+    "declaredInputPropertyCount": 42,
+    "declaredOutputCount": 1,
+    "taskActionCount": 0,
+    "inputSnapshotSha256": "ceedc533e0ddea65f4dfe18629e726cd071fafe48f981906604e73736a9a18e9",
+    "outputSnapshotSha256": "db6c94c900828d3d9fe7d277a99396df92c85aa22f0772f41a5ba91d7dd8db01"
+  },
+  "capturedOutputs": [
+    "micronaut-core-5.2.0-SNAPSHOT.jar"
+  ]
+}
+{
+  "schemaVersion": "buildopt.poc/fresh-generic-observation/v1",
+  "family": "apache-groovy",
+  "repositoryRevision": "655b70f3fdb34dcb8e98fc141c68647f92a27e82",
+  "repositoryTree": "4f1530c7517c355cc274550d2dceb0014d290770",
+  "installedPackageSha256": "bfbc07658e08781e3881bc2d9f9e9d2f3f7ae22c536b5cbf9557a038d2553f32",
+  "repositoryScopeSha256": "6a8704d3907d2c424c8d6ecab9ea2dcc72ccfd3187547ecc2e2b31b735f22b63",
+  "requestedBuildOrdinal": 1,
+  "graph": {
+    "requested": [
+      ":jar"
+    ],
+    "tasks": [
+      ":generateGrammarSource",
+      ":compileJava",
+      ":dgmConverter",
+      ":generateReleaseInfo",
+      ":bootstrapJar",
+      ":compileGroovy",
+      ":processResources",
+      ":classes",
+      ":osgiClasses",
+      ":jar"
+    ]
+  },
+  "task": {
+    "path": ":jar",
+    "type": "org.gradle.api.tasks.bundling.Jar_Decorated",
+    "durationMs": 6815,
+    "executed": true,
+    "upToDate": false,
+    "skipped": false,
+    "failed": false,
+    "cacheableType": false,
+    "declaredInputFileCount": 4152,
+    "declaredInputPropertyCount": 42,
+    "declaredOutputCount": 1,
+    "taskActionCount": 0,
+    "inputSnapshotSha256": "f83499937cd23ae4a5dbbf6409dd2d795bb683d9d4623960b7bb838df2c76919",
+    "outputSnapshotSha256": "0a6c3efb9073b46fe04c5bee8d8b62f0710579b09de4dc9bce5a26bd32ad9e90"
+  },
+  "capturedOutputs": [
+    "groovy-raw-6.0.0-SNAPSHOT-raw.jar"
+  ]
+}

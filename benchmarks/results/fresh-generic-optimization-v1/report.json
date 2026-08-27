@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "buildopt.poc/fresh-generic-capture-report/v1",
+  "workItem": "SWL-FRESH-002",
+  "generatedAt": "2026-08-27T19:10:16Z",
+  "installedPackageSha256": "bfbc07658e08781e3881bc2d9f9e9d2f3f7ae22c536b5cbf9557a038d2553f32",
+  "captureComplete": true,
+  "familyCount": 5,
+  "primaryCommits": 100,
+  "reserveCommits": 50,
+  "conclusiveProducerFamilies": 5,
+  "familiesWithActions": 1,
+  "testableActions": 1,
+  "historicalEvidenceImported": false,
+  "timingClaim": false,
+  "outcome": "FRESH_FIVE_FAMILY_CAPTURE_COMPLETE"
+}

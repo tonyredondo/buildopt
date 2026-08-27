@@ -151,8 +151,11 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > needed to distinguish missing input from no opportunity. That result is now
 > diagnostic-only. The active experiment starts from zero BuildOpt evidence,
 > now has complete generic producers with typed conclusive and incomplete
-> outcomes. The next block freezes the five-family cohort and captures fresh
-> data from empty state before any new timing.
+> outcomes. The five-family cohort is now frozen and captured from empty
+> state: all five inputs are complete, one Spring task-contract action is
+> testable and no declared-graph action is safe. The next block independently
+> recomputes the breadth gate; timing opens only if at least three families
+> expose actions.
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,
 > append-only phase timing and provenance for requested Gradle builds. The

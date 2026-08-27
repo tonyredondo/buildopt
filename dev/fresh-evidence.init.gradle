@@ -1,0 +1,85 @@
+import groovy.json.JsonOutput
+import java.nio.file.Files
+import java.security.MessageDigest
+import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.TaskAction
+
+def tracePath = System.getenv('BUILDOPT_FRESH_TRACE')
+if (tracePath == null || tracePath.trim().isEmpty()) {
+    throw new GradleException('BUILDOPT_FRESH_TRACE must name an absolute output file')
+}
+def traceFile = new File(tracePath)
+if (!traceFile.isAbsolute()) {
+    throw new GradleException('BUILDOPT_FRESH_TRACE must be absolute')
+}
+traceFile.parentFile.mkdirs()
+def targetPaths = (System.getenv('BUILDOPT_FRESH_TARGETS') ?: '')
+    .split(',')
+    .collect { it.trim() }
+    .findAll { !it.isEmpty() }
+    .toSet()
+if (targetPaths.isEmpty()) {
+    throw new GradleException('BUILDOPT_FRESH_TARGETS must name at least one exact task path')
+}
+
+def sha256 = { byte[] value ->
+    MessageDigest.getInstance('SHA-256').digest(value).encodeHex().toString()
+}
+def fileSetDigest = { Set<File> roots ->
+    def entries = []
+    roots.findAll { it.exists() }.sort { left, right -> left.absolutePath <=> right.absolutePath }.each { root ->
+        if (root.isFile()) {
+            entries << [path: root.absolutePath, sha256: sha256(root.bytes), size: root.length()]
+        }
+        else {
+            Files.walk(root.toPath()).withCloseable { paths ->
+                paths.filter { Files.isRegularFile(it) }.sorted().forEach { path ->
+                    def file = path.toFile()
+                    entries << [path: file.absolutePath, sha256: sha256(file.bytes), size: file.length()]
+                }
+            }
+        }
+    }
+    sha256(JsonOutput.toJson(entries).getBytes('UTF-8'))
+}
+def starts = [:]
+
+gradle.taskGraph.whenReady { graph ->
+    traceFile << JsonOutput.toJson([
+        kind: 'GRAPH',
+        requested: gradle.startParameter.taskNames,
+        tasks: graph.allTasks.collect { it.path },
+    ]) + '\n'
+}
+
+gradle.taskGraph.beforeTask { task ->
+    starts[task.path] = System.nanoTime()
+}
+
+gradle.taskGraph.afterTask { task, state ->
+    if (!targetPaths.contains(task.path)) {
+        return
+    }
+    def taskActions = task.class.methods.count { it.getAnnotation(TaskAction) != null }
+    def inputFiles = task.inputs.files.files
+    def outputFiles = task.outputs.files.files
+    long elapsedMs = ((System.nanoTime() - starts[task.path]) / 1_000_000L) as long
+    traceFile << JsonOutput.toJson([
+        kind: 'TASK',
+        path: task.path,
+        type: task.class.name,
+        durationMs: elapsedMs > 0L ? elapsedMs : 1L,
+        executed: !state.skipped && !state.upToDate && state.failure == null,
+        upToDate: state.upToDate,
+        skipped: state.skipped,
+        failed: state.failure != null,
+        cacheableType: task.class.getAnnotation(CacheableTask) != null,
+        declaredInputFileCount: inputFiles.size(),
+        declaredInputPropertyCount: task.inputs.properties.size(),
+        declaredOutputCount: outputFiles.size(),
+        taskActionCount: taskActions,
+        inputSnapshotSha256: fileSetDigest(inputFiles),
+        outputSnapshotSha256: fileSetDigest(outputFiles),
+        outputs: outputFiles.findAll { it.exists() }.collect { it.absolutePath }.sort(),
+    ]) + '\n'
+}

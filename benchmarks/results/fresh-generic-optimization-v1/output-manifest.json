@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "buildopt.poc/fresh-generic-output-manifest/v1",
+  "generatedAt": "2026-08-27T19:10:16Z",
+  "equivalence": "BYTE_EXACT",
+  "families": [
+    {
+      "family": "spring-framework",
+      "outputContract": [
+        "spring-core/build/checkArchitectureMain"
+      ],
+      "outputSnapshotSha256": "be2f08c20b1bd835a30370bbd635380cf51461b718b9d3093b94e8c1aaf43a7c",
+      "capturedOutputCount": 1,
+      "byteExactBinding": true
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "outputContract": [
+        "javaagent/build/libs/opentelemetry-javaagent.jar"
+      ],
+      "outputSnapshotSha256": "b8a07a48bb1a84de712544fdf377175a455fda86f2aefa08244e230ec8c4f753",
+      "capturedOutputCount": 1,
+      "byteExactBinding": true
+    },
+    {
+      "family": "apache-kafka",
+      "outputContract": [
+        "clients/build/libs/kafka-clients.jar"
+      ],
+      "outputSnapshotSha256": "9b78b4468ee5d73e1555b190201f45bc781c699f61894f837cf3ab4cc2e05ae6",
+      "capturedOutputCount": 1,
+      "byteExactBinding": true
+    },
+    {
+      "family": "micronaut-core",
+      "outputContract": [
+        "core/build/libs/micronaut-core.jar"
+      ],
+      "outputSnapshotSha256": "db6c94c900828d3d9fe7d277a99396df92c85aa22f0772f41a5ba91d7dd8db01",
+      "capturedOutputCount": 1,
+      "byteExactBinding": true
+    },
+    {
+      "family": "apache-groovy",
+      "outputContract": [
+        "build/libs/groovy-raw.jar"
+      ],
+      "outputSnapshotSha256": "0a6c3efb9073b46fe04c5bee8d8b62f0710579b09de4dc9bce5a26bd32ad9e90",
+      "capturedOutputCount": 1,
+      "byteExactBinding": true
+    }
+  ]
+}

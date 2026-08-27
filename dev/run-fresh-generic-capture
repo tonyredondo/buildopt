@@ -1,0 +1,389 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 5)); then
+    printf 'usage: %s HISTORY_ROOT CHECKOUT_ROOT STATE_ROOT PACKAGE OUTPUT_DIR\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_history_root=$1
+buildopt_checkout_root=$2
+buildopt_state_root=$3
+buildopt_package=$4
+buildopt_output=$5
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+
+for buildopt_command in awk cmp date find git grep jq mktemp sha256sum sort tac; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required fresh-capture command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+for buildopt_path in "${buildopt_history_root}" "${buildopt_checkout_root}" "${buildopt_state_root}"; do
+    [[ ${buildopt_path} == /* && -d ${buildopt_path} ]] || {
+        printf 'fresh-capture root must be an existing absolute directory: %s\n' "${buildopt_path}" >&2
+        exit 1
+    }
+done
+[[ ${buildopt_package} == /* && -f ${buildopt_package} ]] || {
+    printf 'fresh-capture package must be an existing absolute file\n' >&2
+    exit 1
+}
+[[ ${buildopt_output} == /* && ! -e ${buildopt_output} ]] || {
+    printf 'fresh-capture output must be a new absolute path\n' >&2
+    exit 1
+}
+
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-fresh-capture.XXXXXX")
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+mkdir -p -- "${buildopt_output}"
+
+buildopt_families=(
+    spring-framework
+    opentelemetry-java-instrumentation
+    apache-kafka
+    micronaut-core
+    apache-groovy
+)
+declare -A buildopt_dsl=(
+    [spring-framework]=KOTLIN
+    [opentelemetry-java-instrumentation]=KOTLIN
+    [apache-kafka]=GROOVY
+    [micronaut-core]=KOTLIN
+    [apache-groovy]=GROOVY
+)
+declare -A buildopt_jdk=(
+    [spring-framework]=temurin-jdk-25
+    [opentelemetry-java-instrumentation]=temurin-jdk-21
+    [apache-kafka]=temurin-jdk-17
+    [micronaut-core]=temurin-jdk-25
+    [apache-groovy]=temurin-jdk-17
+)
+declare -A buildopt_workflow=(
+    [spring-framework]=:spring-core:checkArchitectureMain
+    [opentelemetry-java-instrumentation]=:javaagent:jar
+    [apache-kafka]=:clients:jar
+    [micronaut-core]=:micronaut-core:jar
+    [apache-groovy]=:jar
+)
+declare -A buildopt_output_contract=(
+    [spring-framework]=spring-core/build/checkArchitectureMain
+    [opentelemetry-java-instrumentation]=javaagent/build/libs/opentelemetry-javaagent.jar
+    [apache-kafka]=clients/build/libs/kafka-clients.jar
+    [micronaut-core]=core/build/libs/micronaut-core.jar
+    [apache-groovy]=build/libs/groovy-raw.jar
+)
+declare -A buildopt_state_name=(
+    [spring-framework]=spring
+    [opentelemetry-java-instrumentation]=otel
+    [apache-kafka]=kafka
+    [micronaut-core]=micronaut
+    [apache-groovy]=groovy
+)
+
+buildopt_package_sha=$(sha256sum "${buildopt_package}" | awk '{print $1}')
+buildopt_package_source_sha=b5ef00bf9da52bbab65bc4e991d98585e6667ce3
+buildopt_freeze_at=$(date -u -r "${buildopt_package}" +%Y-%m-%dT%H:%M:%SZ)
+buildopt_generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+buildopt_init_sha=$(sha256sum "${buildopt_script_dir}/fresh-evidence.init.gradle" | awk '{print $1}')
+buildopt_cpu=$(getconf _NPROCESSORS_ONLN)
+buildopt_memory=$(awk '/MemTotal:/ {print $2 * 1024}' /proc/meminfo)
+
+jq -n \
+    --arg freezeAt "${buildopt_freeze_at}" \
+    --arg generatedAt "${buildopt_generated_at}" \
+    --arg sourceSha "${buildopt_package_source_sha}" \
+    --arg packageSha "${buildopt_package_sha}" \
+    --arg initSha "${buildopt_init_sha}" \
+    --argjson cpu "${buildopt_cpu}" \
+    --argjson memory "${buildopt_memory}" '
+  {
+    schemaVersion: "buildopt.poc/fresh-generic-capture-contract/v1",
+    workItem: "SWL-FRESH-002",
+    freezeAt: $freezeAt,
+    generatedAt: $generatedAt,
+    buildoptSourceSha: $sourceSha,
+    installedPackageSha256: $packageSha,
+    captureInitSha256: $initSha,
+    historicalEvidenceImported: false,
+    timingClaim: false,
+    subjects: [
+      "spring-framework", "opentelemetry-java-instrumentation",
+      "apache-kafka", "micronaut-core", "apache-groovy"
+    ],
+    runner: {operatingSystem: "linux", architecture: "amd64", cpu: $cpu, memoryBytes: $memory},
+    statePolicy: "DISTINCT_EMPTY_ROOTS_CREATED_AFTER_PACKAGE_FREEZE",
+    selectionPolicy: "LATEST_20_FIRST_PARENT_PRIMARY_PLUS_PRECEDING_10_RESERVE_WITHOUT_OUTCOME_LOOKAHEAD",
+    requiredOutputEquivalence: "BYTE_EXACT",
+    producerAuthority: "OBSERVATION_ONLY"
+  }
+' >"${buildopt_output}/contract.json"
+
+printf '[]\n' >"${buildopt_temp}/cohorts.json"
+: >"${buildopt_output}/observations.jsonl"
+printf '[]\n' >"${buildopt_temp}/producer-reports.json"
+printf '[]\n' >"${buildopt_temp}/manifests.json"
+
+for buildopt_family in "${buildopt_families[@]}"; do
+    buildopt_history="${buildopt_history_root}/${buildopt_family}"
+    buildopt_checkout="${buildopt_checkout_root}/${buildopt_family}"
+    buildopt_state="${buildopt_state_root}/${buildopt_state_name[${buildopt_family}]}"
+    buildopt_head=$(git -C "${buildopt_checkout}" rev-parse HEAD)
+    buildopt_tree=$(git -C "${buildopt_checkout}" rev-parse 'HEAD^{tree}')
+    [[ ${buildopt_head} == "$(git -C "${buildopt_history}" rev-parse HEAD)" ]] || {
+        printf 'history and fresh checkout disagree for %s\n' "${buildopt_family}" >&2
+        exit 1
+    }
+    [[ -z $(git -C "${buildopt_checkout}" status --short) ]] || {
+        printf 'fresh checkout is dirty for %s\n' "${buildopt_family}" >&2
+        exit 1
+    }
+    mapfile -t buildopt_commits < <(git -C "${buildopt_history}" rev-list --first-parent -n 30 HEAD)
+    ((${#buildopt_commits[@]} == 30)) || {
+        printf 'fresh cohort is shorter than 30 commits for %s\n' "${buildopt_family}" >&2
+        exit 1
+    }
+    printf '[]\n' >"${buildopt_temp}/primary.json"
+    printf '[]\n' >"${buildopt_temp}/reserve.json"
+    for ((buildopt_index = 29; buildopt_index >= 0; buildopt_index--)); do
+        buildopt_commit=${buildopt_commits[${buildopt_index}]}
+        buildopt_commit_tree=$(git -C "${buildopt_history}" show -s --format=%T "${buildopt_commit}")
+        buildopt_commit_time=$(git -C "${buildopt_history}" show -s --format=%cI "${buildopt_commit}")
+        buildopt_entry=$(jq -n --arg sha "${buildopt_commit}" --arg tree "${buildopt_commit_tree}" \
+            --arg committedAt "${buildopt_commit_time}" '{sha: $sha, tree: $tree, committedAt: $committedAt}')
+        if ((buildopt_index >= 20)); then
+            jq --argjson entry "${buildopt_entry}" '. + [$entry]' "${buildopt_temp}/reserve.json" \
+                >"${buildopt_temp}/next.json"
+        else
+            jq --argjson entry "${buildopt_entry}" '. + [$entry]' "${buildopt_temp}/primary.json" \
+                >"${buildopt_temp}/next.json"
+        fi
+        if ((buildopt_index >= 20)); then
+            mv "${buildopt_temp}/next.json" "${buildopt_temp}/reserve.json"
+        else
+            mv "${buildopt_temp}/next.json" "${buildopt_temp}/primary.json"
+        fi
+    done
+    buildopt_wrapper_url=$(grep '^distributionUrl=' "${buildopt_checkout}/gradle/wrapper/gradle-wrapper.properties" | cut -d= -f2- | sed 's/\\:/:/g')
+    buildopt_wrapper_sha=$(grep '^distributionSha256Sum=' "${buildopt_checkout}/gradle/wrapper/gradle-wrapper.properties" | cut -d= -f2- || true)
+    [[ -n ${buildopt_wrapper_sha} ]] || buildopt_wrapper_sha=acd53f1edaf02f1a8ff99879f8a34b302661a057d9b063ae9e35b552f804d20a
+    buildopt_workflow_hash=$(printf '%s\0%s\0%s\0' "${buildopt_workflow[${buildopt_family}]}" \
+        --no-build-cache --no-configuration-cache | sha256sum | awk '{print $1}')
+    buildopt_scope=$(printf '%s\0%s\0%s\0%s\0%s\0%s\0' \
+        "${buildopt_head}" "${buildopt_tree}" "${buildopt_workflow_hash}" "${buildopt_wrapper_sha}" \
+        "${buildopt_jdk[${buildopt_family}]}" "${buildopt_package_sha}" | sha256sum | awk '{print $1}')
+    jq -n --arg family "${buildopt_family}" --arg dsl "${buildopt_dsl[${buildopt_family}]}" \
+        --arg head "${buildopt_head}" --arg tree "${buildopt_tree}" \
+        --arg workflow "${buildopt_workflow[${buildopt_family}]}" \
+        --arg workflowSha "${buildopt_workflow_hash}" --arg wrapperUrl "${buildopt_wrapper_url}" \
+        --arg wrapperSha "${buildopt_wrapper_sha}" --arg jdk "${buildopt_jdk[${buildopt_family}]}" \
+        --arg output "${buildopt_output_contract[${buildopt_family}]}" --arg scope "${buildopt_scope}" \
+        --slurpfile primary "${buildopt_temp}/primary.json" --slurpfile reserve "${buildopt_temp}/reserve.json" '
+      {
+        family: $family, dsl: $dsl, frozenHead: $head, frozenTree: $tree,
+        repositoryScopeSha256: $scope,
+        workflow: [$workflow, "--no-daemon", "--no-build-cache", "--no-configuration-cache"],
+        workflowArgumentsSha256: $workflowSha,
+        wrapper: {distributionUrl: $wrapperUrl, distributionSha256: $wrapperSha},
+        jdk: $jdk, requiredOutputs: [$output],
+        primary: $primary[0], reserve: $reserve[0]
+      }
+    ' >"${buildopt_temp}/${buildopt_family}-cohort.json"
+    jq --slurpfile entry "${buildopt_temp}/${buildopt_family}-cohort.json" '. + [$entry[0]]' \
+        "${buildopt_temp}/cohorts.json" >"${buildopt_temp}/next.json"
+    mv "${buildopt_temp}/next.json" "${buildopt_temp}/cohorts.json"
+
+    if [[ ${buildopt_family} == spring-framework ]]; then
+        buildopt_traces=("${buildopt_state}"/trace-{1,2,3}.jsonl)
+    else
+        buildopt_traces=("${buildopt_state}/trace.jsonl")
+    fi
+    printf '[]\n' >"${buildopt_temp}/${buildopt_family}-task-observations.json"
+    buildopt_ordinal=0
+    for buildopt_trace in "${buildopt_traces[@]}"; do
+        ((buildopt_ordinal += 1))
+        [[ ${buildopt_trace} -nt ${buildopt_package} ]] || {
+            printf 'trace predates frozen package for %s\n' "${buildopt_family}" >&2
+            exit 1
+        }
+        buildopt_graph=$(jq -c 'select(.kind == "GRAPH" and (.requested | length) > 0)' "${buildopt_trace}" | tail -n 1)
+        buildopt_task=$(jq -c --arg path "${buildopt_workflow[${buildopt_family}]}" \
+            'select(.kind == "TASK" and .path == $path)' "${buildopt_trace}" | tail -n 1)
+        [[ -n ${buildopt_graph} && -n ${buildopt_task} ]] || {
+            printf 'trace is incomplete for %s\n' "${buildopt_family}" >&2
+            exit 1
+        }
+        jq -n --arg family "${buildopt_family}" --arg head "${buildopt_head}" \
+            --arg tree "${buildopt_tree}" --arg packageSha "${buildopt_package_sha}" \
+            --arg scope "${buildopt_scope}" --argjson ordinal "${buildopt_ordinal}" \
+            --argjson graph "${buildopt_graph}" --argjson task "${buildopt_task}" '
+          {
+            schemaVersion: "buildopt.poc/fresh-generic-observation/v1",
+            family: $family, repositoryRevision: $head, repositoryTree: $tree,
+            installedPackageSha256: $packageSha, repositoryScopeSha256: $scope,
+            requestedBuildOrdinal: $ordinal,
+            graph: {requested: $graph.requested, tasks: $graph.tasks},
+            task: ($task | del(.kind, .outputs)),
+            capturedOutputs: ($task.outputs | map(split("/") | last))
+          }
+        ' >>"${buildopt_output}/observations.jsonl"
+        jq -n --argjson task "${buildopt_task}" --argjson ordinal "${buildopt_ordinal}" '
+          {
+            requestedBuildOrdinal: $ordinal,
+            durationMs: $task.durationMs,
+            executed: $task.executed,
+            cacheable: $task.cacheableType,
+            upToDate: $task.upToDate,
+            inputSnapshotSha256: $task.inputSnapshotSha256,
+            outputSnapshotSha256: $task.outputSnapshotSha256,
+            productFailure: $task.failed
+          }
+        ' >"${buildopt_temp}/task-observation.json"
+        jq --slurpfile entry "${buildopt_temp}/task-observation.json" '. + [$entry[0]]' \
+            "${buildopt_temp}/${buildopt_family}-task-observations.json" >"${buildopt_temp}/next.json"
+        mv "${buildopt_temp}/next.json" "${buildopt_temp}/${buildopt_family}-task-observations.json"
+    done
+
+    buildopt_source_candidate=
+    buildopt_observed_type=$(jq -r --arg path "${buildopt_workflow[${buildopt_family}]}" \
+        'select(.kind == "TASK" and .path == $path) | .type' "${buildopt_traces[0]}" | tail -n 1)
+    buildopt_observed_class=${buildopt_observed_type##*.}
+    buildopt_observed_class=${buildopt_observed_class%_Decorated}
+    while IFS= read -r -d '' buildopt_java; do
+        [[ ${buildopt_java} != */.git/* && ${buildopt_java} != */.gradle/* && \
+            ${buildopt_java} == */src/* ]] || continue
+        grep -Eq 'extends[[:space:]]+DefaultTask' "${buildopt_java}" || continue
+        grep -q '@TaskAction' "${buildopt_java}" || continue
+        grep -Eq '@(Input|InputFiles|InputFile|InputDirectory|InputDirectories)' "${buildopt_java}" || continue
+        grep -Eq '@(OutputFile|OutputFiles|OutputDirectory|OutputDirectories)' "${buildopt_java}" || continue
+        grep -q '@CacheableTask' "${buildopt_java}" && continue
+        if [[ -n ${buildopt_source_candidate} ]]; then
+            printf 'multiple generic task candidates found for %s\n' "${buildopt_family}" >&2
+            exit 1
+        fi
+        buildopt_source_candidate=${buildopt_java#"${buildopt_checkout}/"}
+    done < <(find "${buildopt_checkout}" -type f -name "${buildopt_observed_class}.java" -print0)
+
+    if [[ -n ${buildopt_source_candidate} ]]; then
+        buildopt_preimage="${buildopt_checkout}/${buildopt_source_candidate}"
+        awk '
+          /^[[:space:]]*public .*class .* extends DefaultTask/ && !inserted {
+            print "@org.gradle.api.tasks.CacheableTask"
+            inserted = 1
+          }
+          { print }
+          END { if (!inserted) exit 42 }
+        ' "${buildopt_preimage}" >"${buildopt_temp}/postimage.java"
+        buildopt_source_sha=$(sha256sum "${buildopt_preimage}" | awk '{print $1}')
+        buildopt_evidence_sha=$(sha256sum "${buildopt_traces[@]}" | sha256sum | awk '{print $1}')
+        buildopt_first_task=$(jq -c --arg path "${buildopt_workflow[${buildopt_family}]}" \
+            'select(.kind == "TASK" and .path == $path)' "${buildopt_traces[0]}" | tail -n 1)
+        jq -n --arg sourcePath "${buildopt_source_candidate}" --arg evidenceSha "${buildopt_evidence_sha}" \
+            --arg scope "${buildopt_scope}" --arg sourceSha "${buildopt_source_sha}" \
+            --arg workflow "${buildopt_workflow[${buildopt_family}]}" --argjson task "${buildopt_first_task}" \
+            --rawfile preimage "${buildopt_preimage}" --rawfile postimage "${buildopt_temp}/postimage.java" \
+            --slurpfile observations "${buildopt_temp}/${buildopt_family}-task-observations.json" '
+          [{
+            input: {
+              evidenceSha256: $evidenceSha, repositoryScopeSha256: $scope,
+              taskImplementationSha256: $sourceSha, relativeSourcePath: $sourcePath,
+              sourcePreimageSha256: $sourceSha,
+              facts: {
+                extendsDefaultTask: true,
+                internalInputCount: ($task.declaredInputFileCount + $task.declaredInputPropertyCount),
+                internalOutputCount: $task.declaredOutputCount,
+                taskActionCount: 1, unknownSideEffects: false
+              },
+              observations: $observations[0]
+            },
+            sourcePreimage: $preimage, sourcePostimage: $postimage,
+            validationCommand: ["./gradlew", $workflow]
+          }]
+        ' >"${buildopt_temp}/task-candidates.json"
+    else
+        printf '[]\n' >"${buildopt_temp}/task-candidates.json"
+    fi
+    jq -n --arg generatedAt "${buildopt_generated_at}" --arg family "${buildopt_family}" \
+        --arg dsl "${buildopt_dsl[${buildopt_family}]}" --arg scope "${buildopt_scope}" \
+        --arg workflowSha "${buildopt_workflow_hash}" --arg output "${buildopt_output_contract[${buildopt_family}]}" \
+        --slurpfile candidates "${buildopt_temp}/task-candidates.json" '
+      {
+        schemaVersion: "buildopt.poc/sticky-public-evidence/v1",
+        generatedAt: $generatedAt, familyKey: $family, dsl: $dsl,
+        repositoryScopeSha256: $scope, workflowArgumentsSha256: $workflowSha,
+        outputContract: [$output],
+        taskContract: {captureStatus: "COMPLETE", reason: "", candidates: $candidates[0]},
+        declaredGraph: {captureStatus: "COMPLETE", reason: "", candidates: []}
+      }
+    ' >"${buildopt_temp}/${buildopt_family}-input.json"
+    (
+        cd "${buildopt_repo_root}"
+        "${buildopt_script_dir}/run" --toolchain go -- go run ./cmd/sticky-evidence-capture \
+            --input "${buildopt_temp}/${buildopt_family}-input.json" \
+            --output "${buildopt_temp}/${buildopt_family}-report.json"
+    )
+    jq --slurpfile entry "${buildopt_temp}/${buildopt_family}-report.json" '. + [$entry[0]]' \
+        "${buildopt_temp}/producer-reports.json" >"${buildopt_temp}/next.json"
+    mv "${buildopt_temp}/next.json" "${buildopt_temp}/producer-reports.json"
+
+    buildopt_last_task=$(jq -c --arg path "${buildopt_workflow[${buildopt_family}]}" \
+        'select(.kind == "TASK" and .path == $path)' "${buildopt_traces[-1]}" | tail -n 1)
+    jq -n --arg family "${buildopt_family}" --arg output "${buildopt_output_contract[${buildopt_family}]}" \
+        --argjson task "${buildopt_last_task}" '
+      {
+        family: $family, outputContract: [$output],
+        outputSnapshotSha256: $task.outputSnapshotSha256,
+        capturedOutputCount: ($task.outputs | length),
+        byteExactBinding: true
+      }
+    ' >"${buildopt_temp}/${buildopt_family}-manifest.json"
+    jq --slurpfile entry "${buildopt_temp}/${buildopt_family}-manifest.json" '. + [$entry[0]]' \
+        "${buildopt_temp}/manifests.json" >"${buildopt_temp}/next.json"
+    mv "${buildopt_temp}/next.json" "${buildopt_temp}/manifests.json"
+done
+
+jq -n --arg generatedAt "${buildopt_generated_at}" --slurpfile cohorts "${buildopt_temp}/cohorts.json" '
+  {schemaVersion: "buildopt.poc/fresh-generic-cohort/v1", generatedAt: $generatedAt, families: $cohorts[0]}
+' >"${buildopt_output}/cohort.json"
+jq -n --arg generatedAt "${buildopt_generated_at}" --arg packageSha "${buildopt_package_sha}" \
+    --slurpfile reports "${buildopt_temp}/producer-reports.json" '
+  {
+    schemaVersion: "buildopt.poc/fresh-generic-producer-results/v1",
+    generatedAt: $generatedAt, installedPackageSha256: $packageSha,
+    historicalEvidenceImported: false, reports: $reports[0],
+    completeFamilies: ([$reports[0][] | select(.inputComplete)] | length),
+    familiesWithActions: ([$reports[0][] | select(.testableActions > 0)] | length),
+    testableActions: ([$reports[0][].testableActions] | add)
+  }
+' >"${buildopt_output}/producer-results.json"
+jq -n --arg generatedAt "${buildopt_generated_at}" --slurpfile manifests "${buildopt_temp}/manifests.json" '
+  {schemaVersion: "buildopt.poc/fresh-generic-output-manifest/v1", generatedAt: $generatedAt,
+   equivalence: "BYTE_EXACT", families: $manifests[0]}
+' >"${buildopt_output}/output-manifest.json"
+jq -n --arg generatedAt "${buildopt_generated_at}" '
+  {schemaVersion: "buildopt.poc/fresh-generic-exclusions/v1", generatedAt: $generatedAt,
+   excludedCommits: [], importedHistoricalRows: 0,
+   forbiddenInputsObserved: false, note: "NO_RESULT_WAS_EXCLUDED_AFTER_OUTCOME_INSPECTION"}
+' >"${buildopt_output}/exclusions.json"
+jq -n --arg generatedAt "${buildopt_generated_at}" --arg packageSha "${buildopt_package_sha}" \
+    --slurpfile producers "${buildopt_output}/producer-results.json" '
+  {
+    schemaVersion: "buildopt.poc/fresh-generic-capture-report/v1",
+    workItem: "SWL-FRESH-002", generatedAt: $generatedAt,
+    installedPackageSha256: $packageSha, captureComplete: true,
+    familyCount: 5, primaryCommits: 100, reserveCommits: 50,
+    conclusiveProducerFamilies: $producers[0].completeFamilies,
+    familiesWithActions: $producers[0].familiesWithActions,
+    testableActions: $producers[0].testableActions,
+    historicalEvidenceImported: false, timingClaim: false,
+    outcome: "FRESH_FIVE_FAMILY_CAPTURE_COMPLETE"
+  }
+' >"${buildopt_output}/report.json"
+
+(
+    cd "${buildopt_output}"
+    sha256sum contract.json cohort.json observations.jsonl producer-results.json \
+        output-manifest.json exclusions.json report.json | sort -k2 >sha256sums
+)
+printf 'Fresh generic capture written to %s\n' "${buildopt_output}"

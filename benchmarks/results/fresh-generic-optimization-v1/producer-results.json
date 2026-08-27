@@ -1,0 +1,190 @@
+{
+  "schemaVersion": "buildopt.poc/fresh-generic-producer-results/v1",
+  "generatedAt": "2026-08-27T19:10:16Z",
+  "installedPackageSha256": "bfbc07658e08781e3881bc2d9f9e9d2f3f7ae22c536b5cbf9557a038d2553f32",
+  "historicalEvidenceImported": false,
+  "reports": [
+    {
+      "schemaVersion": "buildopt.poc/sticky-public-evidence/v1",
+      "generatedAt": "2026-08-27T19:10:16Z",
+      "familyKey": "spring-framework",
+      "dsl": "KOTLIN",
+      "repositoryScopeSha256": "934e58e06025aea6573a098dd24344004665af1515eabef500f87dc103d46957",
+      "workflowArgumentsSha256": "2e8387b2258c5de2b2cf2518adb40ebf27552dfa96e35b257f8740f0b18d17a7",
+      "outputContract": [
+        "spring-core/build/checkArchitectureMain"
+      ],
+      "detectors": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "TESTABLE_ACTIONS",
+          "reason": "COMPLETE_INDEPENDENTLY_TESTABLE_ACTIONS",
+          "actions": [
+            {
+              "actionId": "cb2a4c28b90a6f65af7350346efe063de1b1a8a0bed8b70a49f26bf2780ae0da",
+              "detectorId": "TASK_CONTRACT_JAVA_V1",
+              "actionKind": "TASK_CONTRACT",
+              "bindingDigest": "b8773bd55edab014293b359068c2def51d3868f1f1c5a50a84e8dfb11cffc332",
+              "relativeSourcePath": "buildSrc/src/main/java/org/springframework/build/architecture/ArchitectureCheck.java",
+              "evidenceSha256": "1510b49eea8c6b081c2c037fb33fbaa31a9509d88776f6b3b7463166bbf9465b",
+              "taskImplementationSha256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+              "inputSnapshotSha256": "d5de8c44563fdea63eb06b0a11038b3a4c7fd50c5d6fd908036b6bc225af7b24",
+              "outputSnapshotSha256": "be2f08c20b1bd835a30370bbd635380cf51461b718b9d3093b94e8c1aaf43a7c",
+              "requestedBuilds": 3,
+              "declaredInputCount": 1154,
+              "declaredOutputCount": 1,
+              "cacheableBefore": false,
+              "requestedWorkflowReachable": true,
+              "outputContract": [
+                "spring-core/build/checkArchitectureMain"
+              ],
+              "validationCommand": [
+                "./gradlew",
+                ":spring-core:checkArchitectureMain"
+              ],
+              "transaction": {
+                "appliedOutsideCheckout": true,
+                "checkoutUnchanged": true,
+                "exactRevertRestoredPreimage": true,
+                "preimageSha256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+                "postimageSha256": "dd75bc28223141ac121f6377f7ba95832fd250739861196f60120264dd4c2d1d",
+                "rejectedProposalMutations": 0
+              },
+              "trialCost": {
+                "status": "UNAVAILABLE_NOT_MEASURED"
+              },
+              "validationCost": {
+                "status": "UNAVAILABLE_NOT_MEASURED"
+              },
+              "publicationCost": {
+                "status": "UNAVAILABLE_NOT_MEASURED"
+              },
+              "ownerReviewRequired": true,
+              "patchAuthorized": false,
+              "activationAuthorized": false
+            }
+          ]
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "NO_OPPORTUNITY",
+          "reason": "COMPLETE_EVIDENCE_HAS_NO_SAFE_ACTION",
+          "actions": []
+        }
+      ],
+      "inputComplete": true,
+      "testableActions": 1
+    },
+    {
+      "schemaVersion": "buildopt.poc/sticky-public-evidence/v1",
+      "generatedAt": "2026-08-27T19:10:16Z",
+      "familyKey": "opentelemetry-java-instrumentation",
+      "dsl": "KOTLIN",
+      "repositoryScopeSha256": "9a24ee587b7d3703bcac3eed541a260c1ef7c544e12e2a72240b90abd6f856d2",
+      "workflowArgumentsSha256": "7d46c6eb8b44bee5243b6ad58b750176d2dab2823b4e30d34730c209991877ff",
+      "outputContract": [
+        "javaagent/build/libs/opentelemetry-javaagent.jar"
+      ],
+      "detectors": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "NOT_APPLICABLE",
+          "reason": "NO_JAVA_CUSTOM_TASK_IN_REQUESTED_WORKFLOW",
+          "actions": []
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "NO_OPPORTUNITY",
+          "reason": "COMPLETE_EVIDENCE_HAS_NO_SAFE_ACTION",
+          "actions": []
+        }
+      ],
+      "inputComplete": true,
+      "testableActions": 0
+    },
+    {
+      "schemaVersion": "buildopt.poc/sticky-public-evidence/v1",
+      "generatedAt": "2026-08-27T19:10:16Z",
+      "familyKey": "apache-kafka",
+      "dsl": "GROOVY",
+      "repositoryScopeSha256": "b558318775cdc6ddf375512e908cf6bccd7eeb3e52dab5a90be34546e5d8d720",
+      "workflowArgumentsSha256": "370d1db86b5f67b0a71f22ac0ab62dd41d68f53da9528685a8133f9af68aaca7",
+      "outputContract": [
+        "clients/build/libs/kafka-clients.jar"
+      ],
+      "detectors": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "NOT_APPLICABLE",
+          "reason": "NO_JAVA_CUSTOM_TASK_IN_REQUESTED_WORKFLOW",
+          "actions": []
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "NO_OPPORTUNITY",
+          "reason": "COMPLETE_EVIDENCE_HAS_NO_SAFE_ACTION",
+          "actions": []
+        }
+      ],
+      "inputComplete": true,
+      "testableActions": 0
+    },
+    {
+      "schemaVersion": "buildopt.poc/sticky-public-evidence/v1",
+      "generatedAt": "2026-08-27T19:10:16Z",
+      "familyKey": "micronaut-core",
+      "dsl": "KOTLIN",
+      "repositoryScopeSha256": "5e18c99b3e0767228446ba02caa59ebf9498b37f132bd12c2b52ab4d5532cbee",
+      "workflowArgumentsSha256": "fe1112ec063b96a72f56ed9a0cb101f9da7cdcf864ca598b733f2580a09dbd5b",
+      "outputContract": [
+        "core/build/libs/micronaut-core.jar"
+      ],
+      "detectors": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "NOT_APPLICABLE",
+          "reason": "NO_JAVA_CUSTOM_TASK_IN_REQUESTED_WORKFLOW",
+          "actions": []
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "NO_OPPORTUNITY",
+          "reason": "COMPLETE_EVIDENCE_HAS_NO_SAFE_ACTION",
+          "actions": []
+        }
+      ],
+      "inputComplete": true,
+      "testableActions": 0
+    },
+    {
+      "schemaVersion": "buildopt.poc/sticky-public-evidence/v1",
+      "generatedAt": "2026-08-27T19:10:16Z",
+      "familyKey": "apache-groovy",
+      "dsl": "GROOVY",
+      "repositoryScopeSha256": "6a8704d3907d2c424c8d6ecab9ea2dcc72ccfd3187547ecc2e2b31b735f22b63",
+      "workflowArgumentsSha256": "ec6b132cbe16005525326d1582c2dd91ec22194ad5e7f3309bd04ab67eaf8a11",
+      "outputContract": [
+        "build/libs/groovy-raw.jar"
+      ],
+      "detectors": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "NOT_APPLICABLE",
+          "reason": "NO_JAVA_CUSTOM_TASK_IN_REQUESTED_WORKFLOW",
+          "actions": []
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "NO_OPPORTUNITY",
+          "reason": "COMPLETE_EVIDENCE_HAS_NO_SAFE_ACTION",
+          "actions": []
+        }
+      ],
+      "inputComplete": true,
+      "testableActions": 0
+    }
+  ],
+  "completeFamilies": 5,
+  "familiesWithActions": 1,
+  "testableActions": 1
+}
