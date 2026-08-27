@@ -257,6 +257,7 @@ case "${buildopt_mode}" in
             buildopt_wrapper_hits=$(grep -c ' FROM-CACHE' "${buildopt_wrapper_log}" || true)
             if ((buildopt_wrapper_hits < 1)); then
                 printf 'producer sticky wrapper reported no central FROM-CACHE task\n' >&2
+                tail -n 160 "${buildopt_wrapper_log}" >&2 || true
                 exit 1
             fi
             buildopt_wrapper_digest=$(buildopt_output_digest)
@@ -336,6 +337,7 @@ case "${buildopt_mode}" in
             buildopt_wrapper_hits=$(grep -c ' FROM-CACHE' "${buildopt_wrapper_log}" || true)
             if ((buildopt_wrapper_hits < 1)); then
                 printf 'consumer sticky wrapper reported no central FROM-CACHE task\n' >&2
+                tail -n 160 "${buildopt_wrapper_log}" >&2 || true
                 exit 1
             fi
             buildopt_wrapper_digest=$(buildopt_output_digest)
