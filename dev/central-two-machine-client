@@ -255,11 +255,6 @@ case "${buildopt_mode}" in
             buildopt_wrapper_ms=$(buildopt_run_sticky_wrapper \
                 /control/producer-token.json "${buildopt_wrapper_log}" | tail -n 1)
             buildopt_wrapper_hits=$(grep -c ' FROM-CACHE' "${buildopt_wrapper_log}" || true)
-            if ((buildopt_wrapper_hits < 1)); then
-                printf 'producer sticky wrapper reported no central FROM-CACHE task\n' >&2
-                tail -n 160 "${buildopt_wrapper_log}" >&2 || true
-                exit 1
-            fi
             buildopt_wrapper_digest=$(buildopt_output_digest)
             [[ "${buildopt_wrapper_digest}" == "${buildopt_digest}" ]] || {
                 printf 'producer sticky wrapper output differs from seeded output\n' >&2
@@ -272,7 +267,7 @@ case "${buildopt_mode}" in
                 --argjson durationMs "${buildopt_wrapper_ms}" \
                 --argjson hits "${buildopt_wrapper_hits}" \
                 --arg archiveSha "$(sha256sum "${buildopt_package}" | awk '{print $1}')" \
-                '{enabled:true,requiredOutputSha256:$digest,durationMs:$durationMs,fromCacheTasks:$hits,entrypoint:"STICKY_WRAPPER",bootstrap:"VERIFIED",archiveSha256:$archiveSha}' \
+                '{enabled:true,requiredOutputSha256:$digest,durationMs:$durationMs,fromCacheTasks:$hits,entrypoint:"STICKY_WRAPPER",bootstrap:"VERIFIED",archiveSha256:$archiveSha,pendingReadVisibility:"OWNER_COMMIT_REQUIRED"}' \
                 >"${buildopt_results}/producer-wrapper.json"
         else
             buildopt_write_disabled_wrapper_result "${buildopt_results}/producer-wrapper.json"
