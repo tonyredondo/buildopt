@@ -50,9 +50,13 @@ jobs:
           done
 
       - name: Prime the checksum-pinned Gradle Wrapper
+        env:
+          GRADLE_USER_HOME: ${{ github.workspace }}/.tools/gradle-user-home/local
         run: ./dev/run -- ./gradlew --no-daemon --version
 
       - name: Run documentation, Go, and Java checks
+        env:
+          GRADLE_USER_HOME: ${{ github.workspace }}/.tools/gradle-user-home/local
         run: |
           set -euo pipefail
           BUILDOPT_JAVA17_HOME="${JAVA_HOME}" \
