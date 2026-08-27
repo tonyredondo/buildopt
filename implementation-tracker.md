@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `FRESH GENERIC OPTIMIZATION POC ACTIVE; HISTORICAL PERFORMANCE DATA DIAGNOSTIC ONLY` — the current experiment starts from zero BuildOpt evidence and tests one committed wrapper, shared Gradle cache/state and generic durable or runtime actions against optimized native Gradle<br>
-**Current phase:** `SWL-FRESH-002_FRESH_COHORT_AND_CAPTURE` — freeze the current five-family cohort and capture all observations, traces and outputs from empty BuildOpt state<br>
+**Overall status:** `STOP_FRESH_GENERIC_POC_FOR_CURRENT_DETECTOR_SET` — fresh inputs and outputs are complete, but task-contract plus declared-graph detection exposes actions in only 1/5 public families against the fixed 3/5 breadth requirement<br>
+**Current phase:** none — `SWL-FRESH-004` and `005` were not authorized, value remains unmeasured, and any successor requires a new preregistered generic detector hypothesis<br>
 **POC functional target:** produce positive cumulative wall-time value against optimized native Gradle across chronological customer-requested builds, including every wrapper, observation, trial, cache, fallback and action cost<br>
 **POC onboarding north star:** `generate and commit BuildOpt Wrapper -> ./buildoptw build`; no global BuildOpt installation, hand-authored profile or committed credential is required<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
