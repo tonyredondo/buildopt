@@ -113,6 +113,18 @@ direct commands, but it still rejects this negative report and suspends on
 regression, output mismatch, cancellation or candidate failure; it does not
 silently turn a signed decision into an optimization claim.
 
+The current durable-opportunity experiment is separate from the wrapper's
+runtime path. `SWL-012` detected the same missing task-contract shape in Kotlin
+and Groovy fixtures and produced an owner-reviewed, exactly reversible native
+Gradle recipe. In the strict 4-CPU/16-GiB campaign it reduced mean task time by
+**64.1%** for Kotlin (2.438 s -> 0.875 s) and **74.7%** for Groovy
+(3.574 s -> 0.903 s), with **8/8** positive pairs and exact outputs in each
+family. This is synthetic POC evidence; it does not authorize automatic
+patching or claim customer coverage. The graph-breadth detector is currently
+proposal-only until its durable timing is measured. See the
+[durable catalog report](../../benchmarks/results/sticky-wrapper-durable-catalog-v1.json)
+and [SWL-012 specification](../../specs/poc-sticky-wrapper-durable-catalog-v1.md).
+
 ## Install
 
 Published packages currently cover Linux AMD64, macOS Intel and Apple Silicon,

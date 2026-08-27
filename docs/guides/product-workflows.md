@@ -75,6 +75,21 @@ three suspensions and four native retentions. The checked-in SWL-010 report is
 still rejected with `TRIAL_NOT_PROFITABLE`; only a future repository-level
 paired result can authorize a real action.
 
+### Durable native opportunity catalog
+
+`SWL-012` adds a review-only catalog for opportunities that can become ordinary
+native Gradle behavior after acceptance. It currently recognizes two generic
+shapes: an expensive custom task missing a stable input/output contract, and a
+declared workflow whose dependency breadth exceeds the observed required
+outputs. The current strict POC evidence accepts the task-contract detector in
+both Kotlin and Groovy (64.1% and 74.7% mean savings over eight exact pairs per
+family). Every recipe is digest-bound, validated and exactly reversible outside
+the checkout; no proposal is merged or activated automatically. Graph breadth
+is still structural-only until its durable timing is measured. See the
+[durable catalog specification](../../specs/poc-sticky-wrapper-durable-catalog-v1.md),
+[current report](../../benchmarks/results/sticky-wrapper-durable-catalog-v1.json)
+and `./dev/check-sticky-wrapper-durable-catalog`.
+
 ### Ordinary-build observation
 
 When observation is enabled, the launcher appends one canonical record per

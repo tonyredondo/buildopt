@@ -3,8 +3,8 @@
 ## Status
 
 **Overall:** `IN_PROGRESS`<br>
-**Progress:** `12/17` blocks complete<br>
-**Current block:** `SWL-012` — durable native optimization catalog<br>
+**Progress:** `13/17` blocks complete<br>
+**Current block:** `SWL-013` — customer status and explanation<br>
 **Predecessor:** the adaptive-fragment experiment closed as
 `STOP_ADAPTIVE_FRAGMENT_POC` with zero activations and zero attributable
 saving. Its evidence remains immutable context, not authority for this POC.
@@ -247,8 +247,8 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | 9 | `SWL-009` Ordinary-build observation | Bounded exact timings, outputs, task/graph facts and ledger updates from requested builds | `DONE` | SWL-008 |
 | 10 | `SWL-010` Budgeted trial orchestration | Isolated paired candidate/native trials run only within the frozen CI compute budget | `DONE` | SWL-009 |
 | 11 | `SWL-011` Active execution and suspension | Qualified runtime action, revalidation, counterfactual sampling, regression suspension and native fallback | `DONE` | SWL-010 |
-| 12 | `SWL-012` Durable native optimization catalog | Generic detectors and reviewable patches for task contracts and graph breadth | `WAITING` | SWL-009 |
-| 13 | `SWL-013` Customer status and explanation | Human/JSON decision, cumulative economics, cache metrics and exact fallback explanation | `WAITING` | SWL-011, SWL-012 |
+| 12 | `SWL-012` Durable native optimization catalog | Generic detectors and reviewable patches for task contracts and graph breadth | `DONE` | SWL-009 |
+| 13 | `SWL-013` Customer status and explanation | Human/JSON decision, cumulative economics, cache metrics and exact fallback explanation | `TODO` | SWL-011, SWL-012 |
 | 14 | `SWL-014` Two-machine installed proof | Clean producer/consumer checkouts share cache/state through HTTPS and survive outage | `WAITING` | SWL-013 |
 | 15 | `SWL-015` Frozen public longitudinal campaign | Current installed wrapper over preregistered chronological windows in five families | `WAITING` | SWL-014 |
 | 16 | `SWL-016` Terminal decision | Recompute the immutable scorecard and continue or stop without threshold movement | `WAITING` | SWL-015 |
@@ -547,7 +547,7 @@ outputs; three scenarios suspend and four retain native. This is a control-flow
 proof only, not customer-repository performance evidence or activation
 authority.
 
-Status: `DONE`; see `E-414` and `SWL-E012`. SWL-012 is the next block.
+Status: `DONE`; see `E-414` and `SWL-E012`. SWL-012 is closed and SWL-013 is next.
 
 ### SWL-012 — Durable native optimization catalog
 
@@ -565,6 +565,32 @@ Acceptance: at least two repository families expose one candidate from the
 same structural detector; accepted patches preserve complete native workflows
 and outputs, show positive paired wall time, revert exactly, and require no
 BuildOpt runtime action after merge.
+
+Implementation and evidence: `internal/durablecatalog` and
+`cmd/sticky-durable-catalog-benchmark` expose the two detector classes with
+strict typed inputs, digest-bound recipes and an apply/revert transaction that
+never mutates a checkout. The checked-in
+[`sticky-wrapper-durable-catalog-v1.json`](../../benchmarks/results/sticky-wrapper-durable-catalog-v1.json)
+was regenerated from the current strict `linux-amd64-4c-16g-v1` campaign at
+revision `1d93570c02147eda8671253663d50605bff9f25a`:
+
+- the same task-contract detector accepts Kotlin and Groovy families;
+- the reviewed task patch is byte-exact, reversible and needs no BuildOpt
+  runtime after acceptance;
+- Kotlin averages **2.438 s -> 0.875 s**, saving **1.563 s / 64.1%** with
+  **8/8** positive pairs and exact outputs;
+- Groovy averages **3.574 s -> 0.903 s**, saving **2.671 s / 74.7%** with
+  **8/8** positive pairs and exact outputs; and
+- the graph detector proposes a generic **3 -> 2 project** transformation for
+  both DSLs, but durable graph timing remains explicitly **unmeasured**.
+
+This is promising synthetic POC evidence, not customer coverage or automatic
+patch authority. The task detector passes the current value gate in both
+families; the graph class remains proposal-only until a separate native timing
+experiment proves that the committed dependency change preserves outputs and
+has positive wall-time value.
+
+Status: `DONE`; see `E-415` and `SWL-E013`. SWL-013 is now the next block.
 
 ### SWL-013 — Customer status and explanation
 
@@ -651,8 +677,8 @@ customer behavior, architecture, value evidence or direction changes.
 | `SWL-E010` | SWL-009 | [`poc-sticky-wrapper-observation-v1`](../../specs/poc-sticky-wrapper-observation-v1.md), private append-only recorder, real Wrapper checker and [`sticky-wrapper-observation-v1.json`](../../benchmarks/results/sticky-wrapper-observation-v1.json): two successful Gradle 9.6.1 observations with Configuration Cache present, exact phase reconciliation, provenance hashes, child-environment scrubbing and tamper rejection; 19.876 s cold and 3.732 s reuse wall time | `DONE` |
 | `SWL-E011` | SWL-010 | [`poc-sticky-wrapper-trial-v1`](../../specs/poc-sticky-wrapper-trial-v1.md), bounded scheduler, direct isolated runner and [`sticky-wrapper-trial-v1.json`](../../benchmarks/results/sticky-wrapper-trial-v1.json): four alternating candidate/native pairs, eight invocations, eight private roots, exact output hashes, 58.050 s used of a 180 s ceiling; candidate 7.534 s versus native 6.979 s, 0/4 positive | `DONE` |
 | `SWL-E012` | SWL-011 | [`poc-sticky-wrapper-active-v1`](../../specs/poc-sticky-wrapper-active-v1.md), generic active runner and [`sticky-wrapper-active-v1.json`](../../benchmarks/results/sticky-wrapper-active-v1.json): current negative trial rejected, one exact synthetic active execution, three suspensions, four native retentions, signed binding revalidation and direct-command fallback | `DONE` |
-| `SWL-E013` | SWL-012 | Durable detector/patch breadth and value evidence | `WAITING` |
-| `SWL-E014` | SWL-013 | Recomputable customer status/explanation contract | `WAITING` |
+| `SWL-E013` | SWL-012 | Durable detector/patch breadth and value evidence | `DONE` |
+| `SWL-E014` | SWL-013 | Recomputable customer status/explanation contract | `TODO` |
 | `SWL-E015` | SWL-014 | Two-machine installed wrapper evidence | `WAITING` |
 | `SWL-E016` | SWL-015 | Frozen five-family longitudinal campaign | `WAITING` |
 | `SWL-E017` | SWL-016 | Immutable terminal scorecard and continue/stop decision | `WAITING` |
@@ -676,6 +702,7 @@ customer behavior, architecture, value evidence or direction changes.
 
 | Date | Change |
 | --- | --- |
+| 2026-08-27 | Closed SWL-012. Added the generic durable native catalog for task-contract and graph-breadth opportunities, exact reviewable recipes, isolated apply/revert proofs and a strict 4-CPU/16-GiB evidence report. The task-contract detector is shared by Kotlin and Groovy; the reviewed patch saves 64.1% and 74.7% respectively across 16/16 exact pairs. Graph proposals remain structural-only with durable timing unmeasured. Opened SWL-013 customer status and explanation. |
 | 2026-08-27 | Closed SWL-011. Added the generic signed-decision active runner, direct candidate/native execution, exact required-output hashing, native counterfactual sampling, fail-closed suspension and native fallback. The checked-in SWL-010 report remains unauthorized because it is negative; synthetic control-flow evidence records one active execution, three suspensions and four native retentions. Opened SWL-012 durable native optimization catalog. |
 | 2026-08-27 | Closed SWL-010. Added trusted-CI-only budgeted paired trials with balanced order, eight-root isolation, direct command execution, exact output hashing, cancellation/concurrency accounting and a 5% compute ceiling. The checked-in four-pair Gradle 8.14.3 result is exact but negative: 7.534 s candidate versus 6.979 s optimized native, 0/4 positive pairs and 58.050 s used of a 180 s ceiling. Opened SWL-011 to diagnose overhead before any active action. |
 | 2026-08-27 | Closed SWL-009. Added the private append-only ordinary-build observation plane, phase timing/provenance schema and real Wrapper checker. Two Gradle 9.6.1 invocations with Configuration Cache present record 19.876 s cold and 3.732 s reuse wall time; exact timing reconciles and unavailable phases remain unavailable. Opened SWL-010 budgeted candidate/native trials. |

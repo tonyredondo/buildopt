@@ -1,0 +1,389 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-durable-catalog/v1",
+  "recordType": "STICKY_WRAPPER_DURABLE_CATALOG",
+  "workItem": "SWL-012",
+  "capturedAt": "2026-08-27T02:03:28Z",
+  "buildoptRevision": "1d93570c02147eda8671253663d50605bff9f25a",
+  "sourceEvidence": "benchmarks/results/sticky-wrapper-durable-catalog-coverage-v1.json",
+  "sourceEvidenceSha256": "2becfdb9dbbb03bbc639b7a932346c93d830a30edf573a42c748e4591e69b2ca",
+  "taskContractOpportunities": [
+    {
+      "family": "SYNTHETIC_GROOVY_DSL",
+      "dsl": "GROOVY",
+      "detector": "TASK_CONTRACT",
+      "input": {
+        "evidenceSha256": "cac883801c4f254ecc7d147e621425410046b639345dcc5d32d367977b5ae220",
+        "repositoryScopeSha256": "666b765af963bbaa1d59eea34a7057862f304cc2350ee9233cd3c5ed24e1f2f8",
+        "taskImplementationSha256": "392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083",
+        "relativeSourcePath": "fixtures/poc-value/reviewed-task/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java",
+        "sourcePreimageSha256": "392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083",
+        "facts": {
+          "extendsDefaultTask": true,
+          "internalInputCount": 1,
+          "internalOutputCount": 1,
+          "taskActionCount": 1,
+          "unknownSideEffects": false
+        },
+        "observations": [
+          {
+            "requestedBuildOrdinal": 1,
+            "durationMs": 4102,
+            "executed": true,
+            "cacheable": false,
+            "upToDate": false,
+            "inputSnapshotSha256": "e7be0389b0562a25a9cdadb4df91ddc0bd4c93d8fe7c55a470cc469766503e76",
+            "outputSnapshotSha256": "f1ef5154bd4625459d3075cb102bf76bbe1549794f0da6f05e5df8a97ebfe55a",
+            "productFailure": false
+          },
+          {
+            "requestedBuildOrdinal": 2,
+            "durationMs": 4167,
+            "executed": true,
+            "cacheable": false,
+            "upToDate": false,
+            "inputSnapshotSha256": "e7be0389b0562a25a9cdadb4df91ddc0bd4c93d8fe7c55a470cc469766503e76",
+            "outputSnapshotSha256": "f1ef5154bd4625459d3075cb102bf76bbe1549794f0da6f05e5df8a97ebfe55a",
+            "productFailure": false
+          },
+          {
+            "requestedBuildOrdinal": 3,
+            "durationMs": 3282,
+            "executed": true,
+            "cacheable": false,
+            "upToDate": false,
+            "inputSnapshotSha256": "e7be0389b0562a25a9cdadb4df91ddc0bd4c93d8fe7c55a470cc469766503e76",
+            "outputSnapshotSha256": "f1ef5154bd4625459d3075cb102bf76bbe1549794f0da6f05e5df8a97ebfe55a",
+            "productFailure": false
+          }
+        ]
+      },
+      "proposal": {
+        "status": "PROPOSED",
+        "kind": "TASK_CONTRACT_PATCH",
+        "relativeSourcePath": "fixtures/poc-value/reviewed-task/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java",
+        "sourcePreimageSha256": "392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083",
+        "medianRepeatedCostMs": 4102,
+        "requestedBuilds": 3,
+        "suggestedAnnotations": [
+          "CacheableTask",
+          "Input",
+          "OutputFile"
+        ],
+        "recipeHint": "CUSTOM_TASK_CONTRACT_JAVA_V1",
+        "ownerReviewRequired": true,
+        "transactionalValidationRequired": true,
+        "exactRevertRequired": true,
+        "patchAuthorized": false,
+        "activationAuthorized": false
+      },
+      "recipe": {
+        "id": "CUSTOM_TASK_CONTRACT_JAVA_V1",
+        "version": "1.0",
+        "targetPath": "fixtures/poc-value/reviewed-task/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java",
+        "transformation": "ADD_EXACT_CACHEABLE_TASK_INPUT_OUTPUT_CONTRACT",
+        "preimageSha256": "392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083",
+        "postimageSha256": "79fa100a4e2d962dd506259311f90ecb92ad62500391d140065b6f157a172a2b",
+        "ownerReviewRequired": true,
+        "exactRevertRequired": true,
+        "automaticMergeAuthorized": false
+      },
+      "transaction": {
+        "appliedOutsideCheckout": true,
+        "checkoutUnchanged": true,
+        "exactRevertRestoredPreimage": true,
+        "preimageSha256": "392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083",
+        "postimageSha256": "79fa100a4e2d962dd506259311f90ecb92ad62500391d140065b6f157a172a2b",
+        "rejectedProposalMutations": 0
+      },
+      "measurement": {
+        "pairs": 8,
+        "controlMeanMs": 3573.5,
+        "candidateMeanMs": 902.875,
+        "meanSavedMs": 2670.625,
+        "meanReductionRatio": 0.7473415419056947,
+        "interval95SavedMs": [
+          2023,
+          3313.5
+        ],
+        "positivePairs": 8,
+        "requiredOutputsIdentical": true,
+        "productAttributableFailures": 0,
+        "buildoptRequiredAfterAcceptance": false
+      },
+      "acceptedForPoc": true
+    },
+    {
+      "family": "SYNTHETIC_KOTLIN_DSL",
+      "dsl": "KOTLIN",
+      "detector": "TASK_CONTRACT",
+      "input": {
+        "evidenceSha256": "1b36a1101c0b5dd366951367604e35b9c2a9464a2582ec2ea3fa4669ad29357c",
+        "repositoryScopeSha256": "d71eeb246e0cb15e109758e8b6c19763b1f943f41ba4e93aa73ba370b374a9d2",
+        "taskImplementationSha256": "392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083",
+        "relativeSourcePath": "fixtures/poc-value/reviewed-task/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java",
+        "sourcePreimageSha256": "392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083",
+        "facts": {
+          "extendsDefaultTask": true,
+          "internalInputCount": 1,
+          "internalOutputCount": 1,
+          "taskActionCount": 1,
+          "unknownSideEffects": false
+        },
+        "observations": [
+          {
+            "requestedBuildOrdinal": 1,
+            "durationMs": 2747,
+            "executed": true,
+            "cacheable": false,
+            "upToDate": false,
+            "inputSnapshotSha256": "c67f01ef8ab1ce598cf2fb4f727c36c6d312c5f99f3f73aef2716fa44a2a797a",
+            "outputSnapshotSha256": "f1ef5154bd4625459d3075cb102bf76bbe1549794f0da6f05e5df8a97ebfe55a",
+            "productFailure": false
+          },
+          {
+            "requestedBuildOrdinal": 2,
+            "durationMs": 2542,
+            "executed": true,
+            "cacheable": false,
+            "upToDate": false,
+            "inputSnapshotSha256": "c67f01ef8ab1ce598cf2fb4f727c36c6d312c5f99f3f73aef2716fa44a2a797a",
+            "outputSnapshotSha256": "f1ef5154bd4625459d3075cb102bf76bbe1549794f0da6f05e5df8a97ebfe55a",
+            "productFailure": false
+          },
+          {
+            "requestedBuildOrdinal": 3,
+            "durationMs": 2144,
+            "executed": true,
+            "cacheable": false,
+            "upToDate": false,
+            "inputSnapshotSha256": "c67f01ef8ab1ce598cf2fb4f727c36c6d312c5f99f3f73aef2716fa44a2a797a",
+            "outputSnapshotSha256": "f1ef5154bd4625459d3075cb102bf76bbe1549794f0da6f05e5df8a97ebfe55a",
+            "productFailure": false
+          }
+        ]
+      },
+      "proposal": {
+        "status": "PROPOSED",
+        "kind": "TASK_CONTRACT_PATCH",
+        "relativeSourcePath": "fixtures/poc-value/reviewed-task/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java",
+        "sourcePreimageSha256": "392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083",
+        "medianRepeatedCostMs": 2542,
+        "requestedBuilds": 3,
+        "suggestedAnnotations": [
+          "CacheableTask",
+          "Input",
+          "OutputFile"
+        ],
+        "recipeHint": "CUSTOM_TASK_CONTRACT_JAVA_V1",
+        "ownerReviewRequired": true,
+        "transactionalValidationRequired": true,
+        "exactRevertRequired": true,
+        "patchAuthorized": false,
+        "activationAuthorized": false
+      },
+      "recipe": {
+        "id": "CUSTOM_TASK_CONTRACT_JAVA_V1",
+        "version": "1.0",
+        "targetPath": "fixtures/poc-value/reviewed-task/buildSrc/src/main/java/dev/buildopt/pilot/GeneratePilotManifest.java",
+        "transformation": "ADD_EXACT_CACHEABLE_TASK_INPUT_OUTPUT_CONTRACT",
+        "preimageSha256": "392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083",
+        "postimageSha256": "79fa100a4e2d962dd506259311f90ecb92ad62500391d140065b6f157a172a2b",
+        "ownerReviewRequired": true,
+        "exactRevertRequired": true,
+        "automaticMergeAuthorized": false
+      },
+      "transaction": {
+        "appliedOutsideCheckout": true,
+        "checkoutUnchanged": true,
+        "exactRevertRestoredPreimage": true,
+        "preimageSha256": "392e0197d9143304d8ce3c1a598aa552d62e5f2cc200a5766c5d06e516ca5083",
+        "postimageSha256": "79fa100a4e2d962dd506259311f90ecb92ad62500391d140065b6f157a172a2b",
+        "rejectedProposalMutations": 0
+      },
+      "measurement": {
+        "pairs": 8,
+        "controlMeanMs": 2437.875,
+        "candidateMeanMs": 875.375,
+        "meanSavedMs": 1562.5,
+        "meanReductionRatio": 0.6409270368661232,
+        "interval95SavedMs": [
+          1325.125,
+          1811
+        ],
+        "positivePairs": 8,
+        "requiredOutputsIdentical": true,
+        "productAttributableFailures": 0,
+        "buildoptRequiredAfterAcceptance": false
+      },
+      "acceptedForPoc": true
+    }
+  ],
+  "graphBreadthOpportunities": [
+    {
+      "family": "SYNTHETIC_GROOVY_DSL",
+      "dsl": "GROOVY",
+      "detector": "GRAPH_BREADTH",
+      "input": {
+        "evidenceSha256": "a31d87df85f9035251f0b4a895141d6ccbb73a3d690365bd512e27a8a052566c",
+        "repositoryScopeSha256": "666b765af963bbaa1d59eea34a7057862f304cc2350ee9233cd3c5ed24e1f2f8",
+        "manifestSha256": "deda5650859362db4b4e392927bb1789409570473d56ebd2941d0394e0b51a33",
+        "graphSha256": "b5f3cbbb9866f117292d4dfa06c4b124aad7ad05ca9e55934a008a586bd25b82",
+        "workflow": "assemble",
+        "observations": [
+          {
+            "requestedBuildOrdinal": 1,
+            "fullProjectCount": 3,
+            "candidateProjectCount": 2,
+            "fullOutputSha256": "4f58cf43b25bf93a373e0694785e720fa3abc3f1fb97ffa700b17e9b29a79a13",
+            "candidateOutputSha256": "4f58cf43b25bf93a373e0694785e720fa3abc3f1fb97ffa700b17e9b29a79a13",
+            "productFailure": false
+          },
+          {
+            "requestedBuildOrdinal": 2,
+            "fullProjectCount": 3,
+            "candidateProjectCount": 2,
+            "fullOutputSha256": "4f58cf43b25bf93a373e0694785e720fa3abc3f1fb97ffa700b17e9b29a79a13",
+            "candidateOutputSha256": "4f58cf43b25bf93a373e0694785e720fa3abc3f1fb97ffa700b17e9b29a79a13",
+            "productFailure": false
+          },
+          {
+            "requestedBuildOrdinal": 3,
+            "fullProjectCount": 3,
+            "candidateProjectCount": 2,
+            "fullOutputSha256": "4f58cf43b25bf93a373e0694785e720fa3abc3f1fb97ffa700b17e9b29a79a13",
+            "candidateOutputSha256": "4f58cf43b25bf93a373e0694785e720fa3abc3f1fb97ffa700b17e9b29a79a13",
+            "productFailure": false
+          }
+        ]
+      },
+      "proposal": {
+        "status": "PROPOSED",
+        "kind": "GRAPH_BREADTH",
+        "workflow": "assemble",
+        "fullProjectCount": 3,
+        "candidateProjectCount": 2,
+        "omittedProjectCount": 1,
+        "requestedBuilds": 3,
+        "recipeHint": "DECLARED_GRAPH_SCOPE_V1",
+        "ownerReviewRequired": true,
+        "transactionalValidationRequired": true,
+        "exactRevertRequired": true,
+        "patchAuthorized": false,
+        "activationAuthorized": false
+      },
+      "recipe": {
+        "id": "DECLARED_GRAPH_SCOPE_V1",
+        "version": "1.0",
+        "targetPath": "fixtures/poc-value/combined-impact/build.gradle",
+        "transformation": "REMOVE_EXACT_UNRELATED_DECLARED_DEPENDENCY",
+        "preimageSha256": "1e419766ea8ba1dc91f73daf534ac2b6ac0d3830badb7c58b83233f6dbc2e9b2",
+        "postimageSha256": "7b0c41a357f4252a611404eccecb801db9f27401de5bf5b9f9d14d8405fc4f7e",
+        "ownerReviewRequired": true,
+        "exactRevertRequired": true,
+        "automaticMergeAuthorized": false
+      },
+      "transaction": {
+        "appliedOutsideCheckout": true,
+        "checkoutUnchanged": true,
+        "exactRevertRestoredPreimage": true,
+        "preimageSha256": "1e419766ea8ba1dc91f73daf534ac2b6ac0d3830badb7c58b83233f6dbc2e9b2",
+        "postimageSha256": "7b0c41a357f4252a611404eccecb801db9f27401de5bf5b9f9d14d8405fc4f7e",
+        "rejectedProposalMutations": 0
+      },
+      "valueStatus": "STRUCTURAL_PROPOSAL_ONLY__DURABLE_TIMING_NOT_MEASURED"
+    },
+    {
+      "family": "SYNTHETIC_KOTLIN_DSL",
+      "dsl": "KOTLIN",
+      "detector": "GRAPH_BREADTH",
+      "input": {
+        "evidenceSha256": "79d88eb89e5f068d817f1b1b6a8181c1f9208b9e53f4b3ee89abbf170725fe52",
+        "repositoryScopeSha256": "d71eeb246e0cb15e109758e8b6c19763b1f943f41ba4e93aa73ba370b374a9d2",
+        "manifestSha256": "ddba6ad477293b2a6fce13469f045b80f826158b1a67f1d128429ae78cb8327d",
+        "graphSha256": "6c5fefb9962f757bc0f53a635225e92d60806981479c6b673bfa83879885ab6d",
+        "workflow": "assemble",
+        "observations": [
+          {
+            "requestedBuildOrdinal": 1,
+            "fullProjectCount": 3,
+            "candidateProjectCount": 2,
+            "fullOutputSha256": "4f58cf43b25bf93a373e0694785e720fa3abc3f1fb97ffa700b17e9b29a79a13",
+            "candidateOutputSha256": "4f58cf43b25bf93a373e0694785e720fa3abc3f1fb97ffa700b17e9b29a79a13",
+            "productFailure": false
+          },
+          {
+            "requestedBuildOrdinal": 2,
+            "fullProjectCount": 3,
+            "candidateProjectCount": 2,
+            "fullOutputSha256": "4f58cf43b25bf93a373e0694785e720fa3abc3f1fb97ffa700b17e9b29a79a13",
+            "candidateOutputSha256": "4f58cf43b25bf93a373e0694785e720fa3abc3f1fb97ffa700b17e9b29a79a13",
+            "productFailure": false
+          },
+          {
+            "requestedBuildOrdinal": 3,
+            "fullProjectCount": 3,
+            "candidateProjectCount": 2,
+            "fullOutputSha256": "4f58cf43b25bf93a373e0694785e720fa3abc3f1fb97ffa700b17e9b29a79a13",
+            "candidateOutputSha256": "4f58cf43b25bf93a373e0694785e720fa3abc3f1fb97ffa700b17e9b29a79a13",
+            "productFailure": false
+          }
+        ]
+      },
+      "proposal": {
+        "status": "PROPOSED",
+        "kind": "GRAPH_BREADTH",
+        "workflow": "assemble",
+        "fullProjectCount": 3,
+        "candidateProjectCount": 2,
+        "omittedProjectCount": 1,
+        "requestedBuilds": 3,
+        "recipeHint": "DECLARED_GRAPH_SCOPE_V1",
+        "ownerReviewRequired": true,
+        "transactionalValidationRequired": true,
+        "exactRevertRequired": true,
+        "patchAuthorized": false,
+        "activationAuthorized": false
+      },
+      "recipe": {
+        "id": "DECLARED_GRAPH_SCOPE_V1",
+        "version": "1.0",
+        "targetPath": "fixtures/poc-value/combined-impact/build.gradle.kts",
+        "transformation": "REMOVE_EXACT_UNRELATED_DECLARED_DEPENDENCY",
+        "preimageSha256": "fc5ed9fe59ff13cba22422918afaa4c335ca15dde2a1a734d3145ff070e45221",
+        "postimageSha256": "3431d8f74dcf62e4ec963efaf9aac3a1513e21f20a7e69cec5d80c6f2fc68010",
+        "ownerReviewRequired": true,
+        "exactRevertRequired": true,
+        "automaticMergeAuthorized": false
+      },
+      "transaction": {
+        "appliedOutsideCheckout": true,
+        "checkoutUnchanged": true,
+        "exactRevertRestoredPreimage": true,
+        "preimageSha256": "fc5ed9fe59ff13cba22422918afaa4c335ca15dde2a1a734d3145ff070e45221",
+        "postimageSha256": "3431d8f74dcf62e4ec963efaf9aac3a1513e21f20a7e69cec5d80c6f2fc68010",
+        "rejectedProposalMutations": 0
+      },
+      "valueStatus": "STRUCTURAL_PROPOSAL_ONLY__DURABLE_TIMING_NOT_MEASURED"
+    }
+  ],
+  "summary": {
+    "taskContractFamilies": 2,
+    "taskContractAccepted": 2,
+    "graphBreadthFamilies": 2,
+    "graphBreadthProposals": 2,
+    "sharedTaskDetector": true,
+    "positiveTaskPairs": 16,
+    "exactTaskPairs": 16,
+    "buildoptRequiredAfterPatch": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "syntheticRepositoryFamilies": true,
+    "customerCoverageClaimed": false,
+    "automaticMergeAuthorized": false,
+    "buildoptRuntimeRequiredAfterPatch": false,
+    "graphDurableValueMeasured": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "pass": false
+}

@@ -49,7 +49,11 @@ launcher primitives that later blocks will reuse.
 signed decisions, runs direct candidate/native commands, hashes required
 outputs, samples native counterfactuals and suspends regressive profiles. It is
 an execution-control POC, not a repository-specific optimization catalog.
-No third cache or state service is planned.
+`internal/durablecatalog` owns the review-only SWL-012 catalog: structural
+task-contract and graph-breadth detectors, digest-bound recipes and exact
+apply/revert proofs. Its proposals never merge or authorize runtime actions;
+accepted task recipes leave plain native Gradle in charge. No third cache or
+state service is planned.
 
 Run `./dev/check-sticky-wrapper-learning-plan` to validate this planning
 boundary. As implementation begins, this map must name the concrete owning
@@ -98,6 +102,7 @@ in `internal/`; cross-process representations belong in `contracts/` first.
 | `internal/stickyobservation` | Private append-only ordinary-build observations, phase reconciliation, provenance and Configuration Cache evidence; no action authority | `SWL-009`; `poc-sticky-wrapper-observation-v1` |
 | `internal/stickytrial` | Trusted-CI-only paired-trial scheduler, direct command runner, isolation digests, output equivalence and budget accounting; no action authority | `SWL-010`; `poc-sticky-wrapper-trial-v1` |
 | `internal/stickyactive` | Revalidated active runtime profiles, native counterfactuals, exact-output checks, regression suspension and fail-closed native fallback; no shell or repository-specific rules | `SWL-011`; `poc-sticky-wrapper-active-v1` |
+| `internal/durablecatalog` | Generic task-contract and graph-breadth opportunity detection, digest-bound reviewable recipes and exact apply/revert transactions; no automatic merge or runtime authority | `SWL-012`; `poc-sticky-wrapper-durable-catalog-v1` |
 | `internal/generated` | Checked-in generated transport clients | generated-code manifest |
 
 Package comments describe these boundaries in Go documentation. A package may
@@ -126,6 +131,7 @@ bytecode using the pinned Wrapper and repository-local JDK 21.
 | `specs/poc-sticky-wrapper-observation-v1.*` and `contracts/jsonschema/sticky-wrapper-observation.v1.schema.json` | `internal/launcher` and `internal/stickyobservation` | ordinary Wrapper timing/provenance records and the checked-in observation dataset | `check-sticky-wrapper-observation`; real Wrapper invocations, append/load/tamper vectors, phase reconciliation and Configuration Cache reuse |
 | `specs/poc-sticky-wrapper-trial-v1.*` and `contracts/jsonschema/sticky-wrapper-trial.v1.schema.json` | `internal/stickytrial`, `cmd/sticky-trial-benchmark` | bounded candidate/native reports and exact required-output hashes | `check-sticky-wrapper-trial`; alternating order, trusted-CI budget, eight-root isolation, cancellation/concurrency fixtures and four exact-output pairs |
 | `specs/poc-sticky-wrapper-active-v1.*` and `contracts/jsonschema/sticky-wrapper-active.v1.schema.json` | `internal/stickyactive`, `cmd/sticky-active-benchmark` | active execution records, counterfactual comparison and suspension/fallback reasons | `check-sticky-wrapper-active`; negative qualification, direct-command execution, exact outputs, regression, drift, expiry, revocation, bypass and failure vectors |
+| `specs/poc-sticky-wrapper-durable-catalog-v1.*` and `contracts/jsonschema/sticky-wrapper-durable-catalog.v1.schema.json` | `internal/durablecatalog`, `cmd/sticky-durable-catalog-benchmark` | review-only native task/graph proposals, exact source recipes and isolated transaction evidence | `check-sticky-wrapper-durable-catalog`; two DSL families, eight paired task-contract measurements, exact output hashes, apply/revert and structural graph proposals |
 | `contracts/jsonschema/adaptive-fragment*.v1.schema.json` and `specs/poc-adaptive-state-portability-v1.*` | adaptive learner and local state writer | `internal/adaptivefragment`; `internal/launcher` HTTPS state adapter | `check-adaptive-fragment-state`, `check-adaptive-fragment-index`, `check-adaptive-state-portability` |
 | `contracts/jsonschema/build-session.v1.schema.json` | `internal/buildsession` | server history/export tooling | `check-build-session-schema`, `check-build-session-export` |
 | `contracts/proto/local-events/v1/` | JVM Gradle plugin | launcher event channel | `check-task-events-proto`, plugin handshake/correlation checks |

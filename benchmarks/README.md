@@ -83,8 +83,36 @@ schema, the current negative qualification and every scenario with:
 
 SWL-011 proves safe activation mechanics only. It does not promote the current
 negative trial, and it does not turn synthetic timings into repository-level
-value evidence. SWL-012 is the next block for durable native optimization
-proposals.
+value evidence.
+
+## Sticky-wrapper durable native catalog
+
+[`sticky-wrapper-durable-catalog-v1.json`](./results/sticky-wrapper-durable-catalog-v1.json)
+is the current SWL-012 result. It is generated from a fresh strict
+`linux-amd64-4c-16g-v1` campaign at BuildOpt revision
+`1d93570c02147eda8671253663d50605bff9f25a` and records two generic
+opportunity classes: missing task input/output contracts and over-broad
+declared graph edges. The detector is structural; repository names and frozen
+paths are provenance only.
+
+The task-contract recipe is review-only, applies and reverts byte-for-byte
+outside the checkout, and leaves plain native Gradle in charge after
+acceptance:
+
+| Family | Control mean | Reviewed patch mean | Mean saving | Positive pairs | Outputs |
+|---|---:|---:|---:|---:|---|
+| Kotlin DSL | 2.438 s | 0.875 s | **1.563 s / 64.1%** | 8/8 | Exact |
+| Groovy DSL | 3.574 s | 0.903 s | **2.671 s / 74.7%** | 8/8 | Exact |
+
+The graph detector produces one 3 -> 2 project proposal for each DSL and the
+observed output digest remains exact, but durable graph timing is intentionally
+unmeasured. The dataset is promising synthetic POC evidence, not customer
+coverage, automatic merge authority or a claim that every Gradle repository
+will improve. Validate the catalog and its source evidence with:
+
+```bash
+./dev/check-sticky-wrapper-durable-catalog
+```
 
 ## Central two-machine functional evidence
 

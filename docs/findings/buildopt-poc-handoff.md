@@ -32,7 +32,7 @@ decision.
 | **Structural profile rebinding** | Reuse learned evidence only when Wrapper, workflow, producer lineage, output contract and change family remain compatible. | Safely rejects drift and selected one of six structurally eligible Kafka descendants in the current run. |
 | **Ordinary-build learning economics** | Learn only from builds the user requested and stop when the expected compatible lifetime cannot repay discovery. | Four repositories stopped after one requested build and avoided 64 additional learning builds. |
 | **Cross-repository hypothesis prior** | Use generic task implementation, plugin, Gradle and graph/output features to decide what to investigate first in a new repository. | Four opaque source scopes rank three hypothesis classes identically for two holdouts and after all repository identities are replaced. Priors never transfer correctness, value or activation. |
-| **Durable patch-opportunity learning** | Detect repeated expensive task-contract problems, propose an owner-reviewed reversible source patch and validate it independently. | One generic detector feeds an exact reviewed recipe that saves **67.28% Kotlin** and **68.01% Groovy** across 16 native Gradle pairs with exact outputs. BuildOpt is not needed after acceptance; recipe coverage remains specific. |
+| **Durable patch-opportunity learning** | Detect repeated expensive task-contract problems, propose an owner-reviewed reversible source patch and validate it independently. | The strict current rerun accepts the same detector in Kotlin and Groovy: **64.1%** and **74.7%** faster respectively across **16/16** exact pairs. BuildOpt is not needed after acceptance; recipe coverage remains a POC signal, not customer coverage. |
 | **Conflict-aware fragment planner** | Compose only qualified fragments whose dependencies, exclusions, authorities and direct joint economics remain valid; otherwise use native Gradle. | Direct timing now shows that the reviewed patch and Build Impact can save 68.56% Groovy and 79.32% Kotlin together, but Kotlin Build Impact reaches only 6/8 positive isolated pairs. The frozen constituent gate therefore retains qualified fragments instead of authorizing the composition. |
 | **Local/HTTP cache and central state** | Carry verified task outputs and profiles between builds or machines. | Supporting infrastructure; useful for transport and persistence, but not the primary acceleration claim. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource and state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
@@ -125,9 +125,33 @@ this is safety/control-flow evidence rather than customer value. A runtime or
 cache action still needs a positive repository-level paired result before the
 wrapper may execute it for a customer.
 
-The next block is `SWL-012`: detect generic durable native optimization
-opportunities and validate reviewable reversible patches against optimized
-native Gradle.
+`SWL-012` now tests whether a learned opportunity can become a durable native
+Gradle change instead of paying BuildOpt runtime cost forever. Its catalog uses
+typed task inputs/outputs and dependency relationships, never repository names,
+and every proposal is review-only with an exact apply/revert transaction.
+
+The fresh strict-runner result is
+[`sticky-wrapper-durable-catalog-v1.json`](../../benchmarks/results/sticky-wrapper-durable-catalog-v1.json)
+from `linux-amd64-4c-16g-v1` at BuildOpt revision
+`1d93570c02147eda8671253663d50605bff9f25a`. The same task-contract detector
+accepted two DSL families:
+
+| Family | Native control | Reviewed patch | Mean saving | Positive pairs | Outputs |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Kotlin DSL | 2.438 s | 0.875 s | **1.563 s / 64.1%** | **8/8** | Exact |
+| Groovy DSL | 3.574 s | 0.903 s | **2.671 s / 74.7%** | **8/8** | Exact |
+
+The task patch adds the missing native cache/input/output contract, so plain
+Gradle remains responsible for future builds after owner review. BuildOpt is
+not required after acceptance, and the report records zero product failures.
+The graph detector also proposes a generic 3 -> 2 project scope for both DSLs,
+but durable graph timing is deliberately **not measured yet**. This is
+promising synthetic POC evidence, not customer coverage or automatic patch
+authority.
+
+The next block is `SWL-013`: expose this evidence through customer-readable
+`status` and `explain` output, including cumulative economics, cache use and the
+precise reason native fallback or an action was selected.
 
 ## Historical complete-profile result
 

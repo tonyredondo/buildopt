@@ -12,6 +12,7 @@ buildopt_spec="${buildopt_repo_root}/specs/poc-sticky-wrapper-durable-catalog-v1
 buildopt_schema="${buildopt_repo_root}/contracts/jsonschema/sticky-wrapper-durable-catalog.v1.schema.json"
 buildopt_result="${buildopt_repo_root}/benchmarks/results/sticky-wrapper-durable-catalog-v1.json"
 buildopt_coverage="${buildopt_repo_root}/benchmarks/results/sticky-wrapper-durable-catalog-coverage-v1.json"
+buildopt_coverage_relative="benchmarks/results/sticky-wrapper-durable-catalog-coverage-v1.json"
 buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-sticky-durable-catalog.XXXXXX")
 trap 'rm -rf -- "${buildopt_temporary}"' EXIT
 
@@ -82,13 +83,13 @@ buildopt_binary="${buildopt_temporary}/sticky-durable-catalog-benchmark"
 
 buildopt_generated="${buildopt_temporary}/catalog.json"
 "${buildopt_binary}" --root "${buildopt_repo_root}" \
-    --coverage "${buildopt_coverage}" --output "${buildopt_generated}"
+    --coverage "${buildopt_coverage_relative}" --output "${buildopt_generated}"
 if ! cmp -- "${buildopt_generated}" "${buildopt_result}"; then
     printf 'checked-in durable catalog is stale; regenerate from current evidence\n' >&2
     exit 1
 fi
 "${buildopt_binary}" --root "${buildopt_repo_root}" \
-    --coverage "${buildopt_coverage}" --validate "${buildopt_result}" >/dev/null
+    --coverage "${buildopt_coverage_relative}" --validate "${buildopt_result}" >/dev/null
 
 if ! jq -e '
     .schemaVersion == "buildopt.poc/sticky-durable-catalog/v1" and

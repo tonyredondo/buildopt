@@ -36,6 +36,7 @@ Gradle; safe fallback and cache hits alone do not pass.
 | Change and workflow discovery | Derives provider/local revisions, exact changed paths and requested Gradle entrypoints. | Global/build-logic ambiguity retains native. |
 | Output discovery | Reads Gradle-owned outputs and rejects missing, external, symlinked or ambiguous declarations. | A root aggregate workflow can legitimately declare a very broad output surface. |
 | Structural proposal | Uses typed project/task relationships and changed-project ownership; no repository-name branch is allowed. | Unknown relationships, excessive candidate task sets and no reduction retain native. |
+| Durable native catalog | Detects repeated task-contract gaps and over-broad declared graph edges, then emits digest-bound, reviewable and exactly reversible native Gradle recipes. | The current strict POC report finds the same task-contract detector in Kotlin and Groovy, with 64.1% and 74.7% savings across 16/16 exact pairs. Graph breadth is proposal-only until durable timing is measured. |
 | Measurement / decision | Alternating native/candidate observations verify outputs, execution shape, interval, fallback and payback. | Observations now accumulate across useful invocations with zero measurement-only workflows; weak value still retains native. |
 | Verified output materialization | Captures required outputs omitted by a candidate in digest-bound private state, then restores only exact missing bytes before candidate execution. | Composed and timed on all five public subjects; stale, missing or corrupt payloads cannot authorize candidate output. |
 | Aggregate workflow partition | Groups directly changed output producers by generic lifecycle selector and variant, while exact unaffected outputs remain materializable. | Transfers to public workflows: Kafka selects 3/64 projects, Micronaut 22/75 and Groovy 2/37. |
@@ -44,6 +45,26 @@ Gradle; safe fallback and cache hits alone do not pass.
 
 Runtime Tuning, Hot State and standard Copy remain retired. The standard `Jar`
 adapter and Patch Autopilot retain only their exact qualified scopes.
+
+### Current durable-catalog evidence
+
+The new [durable native catalog report](../../benchmarks/results/sticky-wrapper-durable-catalog-v1.json)
+was generated from a fresh `linux-amd64-4c-16g-v1` campaign at BuildOpt
+revision `1d93570c02147eda8671253663d50605bff9f25a`. A single structural
+detector accepts a missing native task contract in both DSL families:
+
+| Family | Control mean | Reviewed-patch mean | Saving | Positive pairs | Required outputs |
+|---|---:|---:|---:|---:|---|
+| Kotlin DSL | 2.438 s | 0.875 s | **64.1%** | 8/8 | Exact |
+| Groovy DSL | 3.574 s | 0.903 s | **74.7%** | 8/8 | Exact |
+
+The proposed source recipe is applied and reverted outside the checkout, and
+plain native Gradle remains the runtime after acceptance. A second detector
+proposes removing one unrelated dependency edge from a 3-project workflow in
+both DSLs; its candidate preserves the observed output digest, but no durable
+wall-time measurement has been made. The report therefore demonstrates
+cross-DSL detector breadth and a strong reviewed-task signal, not universal
+customer value or automatic patching.
 
 ## Historical target-qualification evidence
 
