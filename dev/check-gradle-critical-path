@@ -10,7 +10,27 @@ buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
 buildopt_fixture=${buildopt_repo_root}/fixtures/gradle-correlation
 buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-critical-path.XXXXXX")
-trap 'rm -rf -- "${buildopt_temporary}"' EXIT
+
+buildopt_cleanup() {
+    local buildopt_status=${1}
+    local buildopt_artifact
+
+    if ((buildopt_status != 0)); then
+        printf 'Gradle critical-path diagnostics from %s\n' "${buildopt_temporary}" >&2
+        for buildopt_artifact in inactive.log gradle.log report.json graph.jsonl; do
+            if [[ -f ${buildopt_temporary}/${buildopt_artifact} ]]; then
+                printf '%s\n' "--- ${buildopt_artifact}" >&2
+                sed -n '1,240p' "${buildopt_temporary}/${buildopt_artifact}" >&2
+            fi
+        done
+        printf '%s\n' '--- working tree' >&2
+        git -C "${buildopt_repo_root}" status --porcelain --untracked-files=all >&2
+    fi
+    rm -rf -- "${buildopt_temporary}"
+    exit "${buildopt_status}"
+}
+
+trap 'buildopt_cleanup "$?"' EXIT
 buildopt_before=$(git -C "${buildopt_repo_root}" status --porcelain --untracked-files=all)
 
 for buildopt_command in git jq; do
