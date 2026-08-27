@@ -29,9 +29,11 @@ There is deliberately no current performance percentage yet. The experiment
 has been reset to zero BuildOpt observations because the previous public screen
 used incomplete producer inputs. Every result below is retained only as
 historical diagnostic context; none may authorize, seed or stop the active
-experiment. The current route is to complete the generic producers, capture
-fresh evidence on five public families, prove opportunity breadth, then measure
-installed and chronological value.
+experiment. The generic producers are now complete and distinguish testable
+actions, conclusive no-opportunity/not-applicable results and incomplete input
+or producer failure. The current route is to capture fresh evidence on five
+public families, prove opportunity breadth, then measure installed and
+chronological value.
 
 ## Mechanisms
 
@@ -368,9 +370,11 @@ counts. All historical BuildOpt observations, profiles, timing rows, cohorts
 and decisions are context only and are forbidden inputs. The earlier
 `SWL-014C` screen reported **0/5** actions because its inputs lacked complete
 public task and graph producers; it proves an evidence-pipeline gap, not
-absence of generic opportunity. It has no terminal authority. The next work is
-`SWL-FRESH-001`: implement complete typed producers before any public capture
-or timing.
+absence of generic opportunity. It has no terminal authority. The producer
+proof is complete without importing historical data. The next work is
+`SWL-FRESH-002`: freeze the five current public families and capture new
+observations, traces and byte-exact output bindings from empty state before any
+candidate/native timing.
 
 The replacement path is implementation-locked rather than left to a later agent:
 separate per-arm cache namespaces start empty; one
@@ -502,6 +506,7 @@ outside this POC.
 - [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
 - [Fresh Generic Optimization POC Tracker](../plans/fresh-generic-optimization-poc-tracker.md)
 - [Fresh generic optimization contract](../../specs/poc-fresh-generic-optimization-v1.md)
+- [Fresh generic producer evidence](../../benchmarks/results/sticky-evidence-producers-v1.json)
 - [Sticky wrapper machine contract](../../specs/poc-sticky-wrapper-learning-v1.md)
 - [Sticky wrapper generator contract](../../specs/poc-sticky-wrapper-generator-v1.md)
 - [Sticky wrapper bootstrap contract](../../specs/poc-sticky-wrapper-bootstrap-v1.md)

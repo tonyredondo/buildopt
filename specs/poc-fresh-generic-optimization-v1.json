@@ -1,7 +1,7 @@
 {
   "schemaVersion": "buildopt.poc/fresh-generic-optimization/v1",
   "workItem": "SWL-FRESH",
-  "status": "SWL_FRESH_001_GENERIC_PRODUCERS",
+  "status": "SWL_FRESH_002_FRESH_CAPTURE",
   "purpose": "Generate current complete generic optimization evidence before measuring public breadth or value.",
   "historicalEvidence": {
     "classification": "DIAGNOSTIC_ONLY",
@@ -45,8 +45,8 @@
   },
   "blocks": [
     {"id": "SWL-FRESH-000", "state": "DONE", "outcome": "FRESH_ROUTE_PREREGISTERED"},
-    {"id": "SWL-FRESH-001", "state": "TODO", "outcome": "COMPLETE_GENERIC_PRODUCERS"},
-    {"id": "SWL-FRESH-002", "state": "WAITING", "outcome": "FRESH_COHORT_AND_CAPTURE"},
+    {"id": "SWL-FRESH-001", "state": "DONE", "outcome": "COMPLETE_GENERIC_PRODUCERS"},
+    {"id": "SWL-FRESH-002", "state": "TODO", "outcome": "FRESH_COHORT_AND_CAPTURE"},
     {"id": "SWL-FRESH-003", "state": "WAITING", "outcome": "INPUT_COMPLETE_PUBLIC_OPPORTUNITY_GATE"},
     {"id": "SWL-FRESH-004", "state": "WAITING", "outcome": "INSTALLED_ACTIVE_VALUE"},
     {"id": "SWL-FRESH-005", "state": "WAITING", "outcome": "FRESH_CHRONOLOGICAL_CAMPAIGN"},
@@ -60,28 +60,28 @@
     "SWL-FRESH-005": "SWL-FRESH-006_ONLY_AFTER_COMPLETE_CAMPAIGN"
   },
   "nextBlock": {
-    "id": "SWL-FRESH-001",
+    "id": "SWL-FRESH-002",
     "create": [
-      "internal/durablecatalog/public_evidence.go",
-      "internal/durablecatalog/public_evidence_test.go",
-      "cmd/sticky-evidence-capture/main.go",
-      "cmd/sticky-evidence-capture/main_test.go",
-      "fixtures/sticky-evidence-capture/README.md",
-      "dev/run-sticky-evidence-producers",
-      "dev/check-sticky-evidence-producers"
+      "benchmarks/results/fresh-generic-optimization-v1/contract.json",
+      "benchmarks/results/fresh-generic-optimization-v1/cohort.json",
+      "benchmarks/results/fresh-generic-optimization-v1/observations.jsonl",
+      "benchmarks/results/fresh-generic-optimization-v1/producer-results.json",
+      "benchmarks/results/fresh-generic-optimization-v1/output-manifest.json",
+      "benchmarks/results/fresh-generic-optimization-v1/exclusions.json",
+      "benchmarks/results/fresh-generic-optimization-v1/report.json",
+      "benchmarks/results/fresh-generic-optimization-v1/sha256sums",
+      "dev/run-fresh-generic-capture",
+      "dev/check-fresh-generic-capture"
     ],
-    "requiredFixtureCoverage": [
-      "KOTLIN_DSL_TESTABLE_ACTION",
-      "GROOVY_DSL_TESTABLE_ACTION",
-      "NO_OPPORTUNITY",
-      "NOT_APPLICABLE",
-      "INPUT_UNAVAILABLE",
-      "PRODUCER_FAILED"
+    "requiredSubjects": [
+      "spring-framework",
+      "opentelemetry-java-instrumentation",
+      "apache-kafka",
+      "micronaut-core",
+      "apache-groovy"
     ],
     "requiredChecks": [
-      "go test -race ./internal/durablecatalog ./cmd/sticky-evidence-capture",
-      "go vet ./...",
-      "./dev/check-sticky-evidence-producers",
+      "./dev/check-fresh-generic-capture",
       "./dev/check-fresh-generic-optimization-plan",
       "./dev/check-tracker-consistency",
       "./dev/check-layout",
@@ -89,6 +89,9 @@
       "./dev/check-documentation",
       "./dev/check-base-ci --static",
       "git diff --check"
-    ]
+    ],
+    "selectionPolicy": "20_FIRST_PARENT_PRIMARY_PLUS_10_CHRONOLOGICAL_RESERVE_WITHOUT_BUILDOPT_OUTCOME_LOOKAHEAD",
+    "requiredBinding": "CURRENT_SOURCE_SHA_INSTALLED_PACKAGE_SHA_REPOSITORY_TREE_WORKFLOW_WRAPPER_JDK_RESOURCES_OUTPUTS",
+    "initialState": "NEW_DISTINCT_GRADLE_BUILDOPT_CACHE_AND_DECISION_ROOTS"
   }
 }

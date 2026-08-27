@@ -21,7 +21,7 @@ done
 
 jq -e '
     .schemaVersion == "buildopt.poc/fresh-generic-optimization/v1" and
-    .status == "SWL_FRESH_001_GENERIC_PRODUCERS" and
+    .status == "SWL_FRESH_002_FRESH_CAPTURE" and
     .historicalEvidence.classification == "DIAGNOSTIC_ONLY" and
     .historicalEvidence.experimentInputAllowed == false and
     .historicalEvidence.terminalAuthority == false and
@@ -53,12 +53,13 @@ jq -e '
       "SWL-FRESH-003", "SWL-FRESH-004", "SWL-FRESH-005", "SWL-FRESH-006"
     ] and
     [.blocks[].state] == [
-      "DONE", "TODO", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING"
+      "DONE", "DONE", "TODO", "WAITING", "WAITING", "WAITING", "WAITING"
     ] and
-    .nextBlock.id == "SWL-FRESH-001" and
-    (.nextBlock.create | length) == 7 and
-    (.nextBlock.requiredFixtureCoverage | length) == 6 and
-    (.nextBlock.requiredChecks | length) == 10
+    .nextBlock.id == "SWL-FRESH-002" and
+    (.nextBlock.create | length) == 10 and
+    (.nextBlock.requiredSubjects | length) == 5 and
+    (.nextBlock.requiredChecks | length) == 8 and
+    .nextBlock.initialState == "NEW_DISTINCT_GRADLE_BUILDOPT_CACHE_AND_DECISION_ROOTS"
 ' "${buildopt_contract}" >/dev/null || {
     printf 'fresh generic optimization machine contract is inconsistent\n' >&2
     exit 1
@@ -67,11 +68,11 @@ jq -e '
 # Backticks below are literal Markdown syntax.
 # shellcheck disable=SC2016
 buildopt_required_text=(
-    '**Progress:** `1/7` blocks complete'
-    '**Current block:** `SWL-FRESH-001` — implement complete generic public evidence producers'
+    '**Progress:** `2/7` blocks complete'
+    '**Current block:** `SWL-FRESH-002` — freeze the five-family cohort and capture all evidence from empty state'
     '`PRODUCER_FAILED` block the breadth gate; they can never create stop evidence.'
     'CI verifies code, schemas and checked evidence only.'
-    'Implement `SWL-FRESH-001` exactly as specified above.'
+    'Implement `SWL-FRESH-002` exactly as specified above.'
 )
 
 for buildopt_text in "${buildopt_required_text[@]}"; do

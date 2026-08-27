@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-public-evidence/v1",
+  "generatedAt": "2026-08-27T00:00:00Z",
+  "familyKey": "groovy-fixture",
+  "dsl": "GROOVY",
+  "repositoryScopeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "workflowArgumentsSha256": "2222222222222222222222222222222222222222222222222222222222222222",
+  "outputContract": ["build/libs/app.jar"],
+  "taskContract": {
+    "captureStatus": "COMPLETE",
+    "reason": "",
+    "candidates": []
+  },
+  "declaredGraph": {
+    "captureStatus": "COMPLETE",
+    "reason": "",
+    "candidates": [
+      {
+        "input": {
+          "evidenceSha256": "8888888888888888888888888888888888888888888888888888888888888888",
+          "repositoryScopeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+          "manifestSha256": "9999999999999999999999999999999999999999999999999999999999999999",
+          "graphSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "workflow": "assemble",
+          "observations": [
+            {"requestedBuildOrdinal": 1, "fullProjectCount": 12, "candidateProjectCount": 4, "fullOutputSha256": "6666666666666666666666666666666666666666666666666666666666666666", "candidateOutputSha256": "6666666666666666666666666666666666666666666666666666666666666666", "productFailure": false},
+            {"requestedBuildOrdinal": 2, "fullProjectCount": 12, "candidateProjectCount": 4, "fullOutputSha256": "6666666666666666666666666666666666666666666666666666666666666666", "candidateOutputSha256": "6666666666666666666666666666666666666666666666666666666666666666", "productFailure": false},
+            {"requestedBuildOrdinal": 3, "fullProjectCount": 12, "candidateProjectCount": 4, "fullOutputSha256": "6666666666666666666666666666666666666666666666666666666666666666", "candidateOutputSha256": "6666666666666666666666666666666666666666666666666666666666666666", "productFailure": false}
+          ]
+        },
+        "candidatePlanSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bindingDigest": "9999999999999999999999999999999999999999999999999999999999999999",
+		"omittedCriticalPathSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+		"exactOutputClosureSha256": "6666666666666666666666666666666666666666666666666666666666666666",
+        "projectedSavingNs": 900000000,
+        "sourcePreimage": "tasks.named(\"assemble\") { dependsOn(\":a:jar\", \"b:jar\") }",
+        "sourcePostimage": "tasks.named(\"assemble\") { dependsOn(\":a:jar\") }",
+        "validationCommand": ["./gradlew", "assemble"]
+      }
+    ]
+  }
+}

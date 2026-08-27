@@ -21,6 +21,17 @@ typed completeness outcomes and exact next block with:
 ./dev/check-fresh-generic-optimization-plan
 ```
 
+Validate the implemented generic task-contract and declared-graph producers,
+their Kotlin/Groovy fixtures, all five typed outcome states and deterministic
+review-only action evidence with:
+
+```bash
+./dev/check-sticky-evidence-producers
+```
+
+This check never reads historical BuildOpt evidence, executes a public build,
+times an action or grants patch/runtime authority.
+
 Validate the superseded sticky-wrapper route as immutable diagnostic history
 with:
 

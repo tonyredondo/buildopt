@@ -1,0 +1,160 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-evidence-producers-result/v1",
+  "workItem": "SWL-FRESH-001",
+  "generatedAt": "2026-08-27T00:00:00Z",
+  "sourceSha256": "fcd745971aff1e444566d7d55d98c501ff0250f949f8bbedead891adcaacef5b",
+  "historicalEvidenceImported": false,
+  "repositorySpecificRules": false,
+  "coverage": [
+    "KOTLIN_DSL_TESTABLE_ACTION",
+    "GROOVY_DSL_TESTABLE_ACTION",
+    "NO_OPPORTUNITY",
+    "NOT_APPLICABLE",
+    "INPUT_UNAVAILABLE",
+    "PRODUCER_FAILED"
+  ],
+  "fixtureReports": [
+    {
+      "schemaVersion": "buildopt.poc/sticky-public-evidence/v1",
+      "generatedAt": "2026-08-27T00:00:00Z",
+      "familyKey": "kotlin-fixture",
+      "dsl": "KOTLIN",
+      "repositoryScopeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "workflowArgumentsSha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "outputContract": [
+        "build/libs/app.jar"
+      ],
+      "detectors": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "TESTABLE_ACTIONS",
+          "reason": "COMPLETE_INDEPENDENTLY_TESTABLE_ACTIONS",
+          "actions": [
+            {
+              "actionId": "d47f933b559e6af74464bd639681ad3e01fcfc82a4f86f82940b0374f386a795",
+              "detectorId": "TASK_CONTRACT_JAVA_V1",
+              "actionKind": "TASK_CONTRACT",
+              "bindingDigest": "3a820ed02f606196a1f773c3464c0cbfea59f490784fb3b46de6c2289b713a90",
+              "relativeSourcePath": "buildSrc/src/main/java/Generate.java",
+              "evidenceSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+              "taskImplementationSha256": "7777777777777777777777777777777777777777777777777777777777777777",
+              "inputSnapshotSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+              "outputSnapshotSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+              "requestedBuilds": 3,
+              "declaredInputCount": 1,
+              "declaredOutputCount": 1,
+              "cacheableBefore": false,
+              "requestedWorkflowReachable": true,
+              "outputContract": [
+                "build/libs/app.jar"
+              ],
+              "validationCommand": [
+                "./gradlew",
+                "assemble"
+              ],
+              "transaction": {
+                "appliedOutsideCheckout": true,
+                "checkoutUnchanged": true,
+                "exactRevertRestoredPreimage": true,
+                "preimageSha256": "86ac98b0636aee65999cf640b62b513a632494d23427442a5db9f10ee3a72cf7",
+                "postimageSha256": "c9a786a507191a3e3657a290215505b4ea4cc0467a1c061e080c9448c4d44c87",
+                "rejectedProposalMutations": 0
+              },
+              "trialCost": {
+                "status": "UNAVAILABLE_NOT_MEASURED"
+              },
+              "validationCost": {
+                "status": "UNAVAILABLE_NOT_MEASURED"
+              },
+              "publicationCost": {
+                "status": "UNAVAILABLE_NOT_MEASURED"
+              },
+              "ownerReviewRequired": true,
+              "patchAuthorized": false,
+              "activationAuthorized": false
+            }
+          ]
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "NO_OPPORTUNITY",
+          "reason": "COMPLETE_EVIDENCE_HAS_NO_SAFE_ACTION",
+          "actions": []
+        }
+      ],
+      "inputComplete": true,
+      "testableActions": 1
+    },
+    {
+      "schemaVersion": "buildopt.poc/sticky-public-evidence/v1",
+      "generatedAt": "2026-08-27T00:00:00Z",
+      "familyKey": "groovy-fixture",
+      "dsl": "GROOVY",
+      "repositoryScopeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "workflowArgumentsSha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "outputContract": [
+        "build/libs/app.jar"
+      ],
+      "detectors": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "NOT_APPLICABLE",
+          "reason": "NO_JAVA_CUSTOM_TASK_IN_REQUESTED_WORKFLOW",
+          "actions": []
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "TESTABLE_ACTIONS",
+          "reason": "COMPLETE_INDEPENDENTLY_TESTABLE_ACTIONS",
+          "actions": [
+            {
+              "actionId": "f1845dd43f2def3cf7e50c5469f8317554694ed619fbf1ba74b90fea4d71db04",
+              "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+              "actionKind": "GRAPH_BREADTH",
+              "bindingDigest": "e6bf7ddf8f4696c92b74cace02ef26f820e05561449ed4b2c00395a06aa4b902",
+              "candidatePlanSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "evidenceSha256": "8888888888888888888888888888888888888888888888888888888888888888",
+              "fullGraphSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "omittedCriticalPathSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "exactOutputClosureSha256": "6666666666666666666666666666666666666666666666666666666666666666",
+              "requestedBuilds": 3,
+              "cacheableBefore": false,
+              "requestedWorkflowReachable": true,
+              "outputContract": [
+                "build/libs/app.jar"
+              ],
+              "validationCommand": [
+                "./gradlew",
+                "assemble"
+              ],
+              "transaction": {
+                "appliedOutsideCheckout": true,
+                "checkoutUnchanged": true,
+                "exactRevertRestoredPreimage": true,
+                "preimageSha256": "e94c1d3e9d8718ae7ca6405aa76b85c0bd5d0d82895d6e622f144ac4aa54d8da",
+                "postimageSha256": "4c38cdfb38a77d7d3ef40c24970a9b02d43c460611e2d1888b1f43e5dbada965",
+                "rejectedProposalMutations": 0
+              },
+              "projectedSavingNs": 900000000,
+              "trialCost": {
+                "status": "UNAVAILABLE_NOT_MEASURED"
+              },
+              "validationCost": {
+                "status": "UNAVAILABLE_NOT_MEASURED"
+              },
+              "publicationCost": {
+                "status": "UNAVAILABLE_NOT_MEASURED"
+              },
+              "ownerReviewRequired": true,
+              "patchAuthorized": false,
+              "activationAuthorized": false
+            }
+          ]
+        }
+      ],
+      "inputComplete": true,
+      "testableActions": 1
+    }
+  ],
+  "outcome": "COMPLETE_GENERIC_PRODUCERS"
+}

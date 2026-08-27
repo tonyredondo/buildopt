@@ -88,8 +88,12 @@ statistics in `internal/stickyvalue`. It adapts
 manifests and commands are locked in the v2 machine contract. The composed
 fixture and status evidence are checked by
 `dev/check-sticky-wrapper-learning-lifecycle`; the old public opportunity
-screen is diagnostic-only. `SWL-FRESH-001` next owns complete generic public
-evidence producers.
+screen is diagnostic-only. The complete replacement producer is owned by
+`internal/durablecatalog/public_evidence.go`, `cmd/sticky-evidence-capture`,
+`fixtures/sticky-evidence-capture` and the paired producer runner/checker. It
+emits review-only, digest-bound task or graph actions and keeps unavailable
+input distinct from conclusive no-opportunity evidence. `SWL-FRESH-002` now
+owns the first five-family capture from empty state.
 
 Run `./dev/check-fresh-generic-optimization-plan` to validate current planning
 authority and `./dev/check-sticky-wrapper-learning-plan` to preserve the

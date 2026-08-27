@@ -145,12 +145,14 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > after every wrapper, learning, trial, cache and fallback cost. Follow the
 > [Fresh Generic Optimization POC Tracker](./docs/plans/fresh-generic-optimization-poc-tracker.md).
 > The deterministic lifecycle proof and all ten native-fallback negatives are
-> checked by `./dev/check-sticky-wrapper-learning-lifecycle`. The subsequent
-> The first public opportunity gate found **0/5** complete actions, but a route
+> checked by `./dev/check-sticky-wrapper-learning-lifecycle`. The first public
+> opportunity gate found **0/5** complete actions, but a route
 > audit proved that its historical inputs lacked the generic public producers
 > needed to distinguish missing input from no opportunity. That result is now
 > diagnostic-only. The active experiment starts from zero BuildOpt evidence,
-> implements complete producers first, then captures and measures fresh data.
+> now has complete generic producers with typed conclusive and incomplete
+> outcomes. The next block freezes the five-family cohort and captures fresh
+> data from empty state before any new timing.
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,
 > append-only phase timing and provenance for requested Gradle builds. The

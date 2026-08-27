@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [result.json]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/sticky-evidence-producers-v1.json"}
+
+for buildopt_command in cmp jq mktemp; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required evidence checker command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+[[ -s ${buildopt_result} ]] || {
+    printf 'fresh generic producer result is unavailable\n' >&2
+    exit 1
+}
+
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-fresh-producer-check.XXXXXX")
+trap 'rm -rf -- "${buildopt_temporary}"' EXIT
+"${buildopt_script_dir}/run-sticky-evidence-producers" \
+    "${buildopt_temporary}/regenerated.json" >/dev/null
+
+cmp -s -- "${buildopt_result}" "${buildopt_temporary}/regenerated.json" || {
+    printf 'fresh generic producer evidence is stale or non-reproducible\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.poc/sticky-evidence-producers-result/v1" and
+  .workItem == "SWL-FRESH-001" and
+  .historicalEvidenceImported == false and
+  .repositorySpecificRules == false and
+  .coverage == [
+    "KOTLIN_DSL_TESTABLE_ACTION",
+    "GROOVY_DSL_TESTABLE_ACTION",
+    "NO_OPPORTUNITY",
+    "NOT_APPLICABLE",
+    "INPUT_UNAVAILABLE",
+    "PRODUCER_FAILED"
+  ] and
+  .outcome == "COMPLETE_GENERIC_PRODUCERS" and
+  (.sourceSha256 | test("^[0-9a-f]{64}$")) and
+  (.fixtureReports | length) == 2 and
+  [.fixtureReports[].dsl] == ["KOTLIN", "GROOVY"] and
+  all(.fixtureReports[];
+    .schemaVersion == "buildopt.poc/sticky-public-evidence/v1" and
+    .inputComplete == true and .testableActions == 1 and
+    (.detectors | length) == 2 and
+    ([.detectors[].status] | index("TESTABLE_ACTIONS") != null) and
+    all(.detectors[].actions[];
+      .ownerReviewRequired == true and
+      .patchAuthorized == false and
+      .activationAuthorized == false and
+      .trialCost.status == "UNAVAILABLE_NOT_MEASURED" and
+      .validationCost.status == "UNAVAILABLE_NOT_MEASURED" and
+      .publicationCost.status == "UNAVAILABLE_NOT_MEASURED" and
+      (.transaction.preimageSha256 | test("^[0-9a-f]{64}$")) and
+      (.transaction.postimageSha256 | test("^[0-9a-f]{64}$"))))
+' "${buildopt_result}" >/dev/null || {
+    printf 'fresh generic producer evidence contract is invalid\n' >&2
+    exit 1
+}
+
+jq '.fixtureReports[0].inputComplete = false' "${buildopt_result}" \
+    >"${buildopt_temporary}/tampered.json"
+if cmp -s -- "${buildopt_temporary}/tampered.json" \
+    "${buildopt_temporary}/regenerated.json"; then
+    printf 'tampered fresh producer evidence was accepted\n' >&2
+    exit 1
+fi
+
+printf 'Fresh generic evidence producers: PASS\n'

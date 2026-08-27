@@ -208,6 +208,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-documentation"
         "${buildopt_script_dir}/check-tracker-consistency"
 		"${buildopt_script_dir}/check-fresh-generic-optimization-plan"
+		"${buildopt_script_dir}/check-sticky-evidence-producers"
 		"${buildopt_script_dir}/check-sticky-wrapper-learning-plan"
 		"${buildopt_script_dir}/check-sticky-wrapper-contract"
 		"${buildopt_script_dir}/check-sticky-wrapper-generator"

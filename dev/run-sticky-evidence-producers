@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [output.json]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_output=${1:-"${buildopt_repo_root}/benchmarks/results/sticky-evidence-producers-v1.json"}
+
+for buildopt_command in jq mktemp mv sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required evidence producer command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+if [[ ${buildopt_output} != /* ]]; then
+    buildopt_output="${buildopt_repo_root}/${buildopt_output}"
+fi
+
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-fresh-producers.XXXXXX")
+trap 'rm -rf -- "${buildopt_temporary}"' EXIT
+
+(
+    cd -- "${buildopt_repo_root}"
+    "${buildopt_script_dir}/run" --toolchain go -- go test \
+        ./internal/durablecatalog ./cmd/sticky-evidence-capture >/dev/null
+    "${buildopt_script_dir}/run" --toolchain go -- go run ./cmd/sticky-evidence-capture \
+        --input fixtures/sticky-evidence-capture/kotlin-task-action.json \
+        --output "${buildopt_temporary}/kotlin.json"
+    "${buildopt_script_dir}/run" --toolchain go -- go run ./cmd/sticky-evidence-capture \
+        --input fixtures/sticky-evidence-capture/groovy-graph-action.json \
+        --output "${buildopt_temporary}/groovy.json"
+)
+
+buildopt_source_sha=$(
+    cd -- "${buildopt_repo_root}"
+    sha256sum \
+        internal/durablecatalog/public_evidence.go \
+        cmd/sticky-evidence-capture/main.go \
+        fixtures/sticky-evidence-capture/kotlin-task-action.json \
+        fixtures/sticky-evidence-capture/groovy-graph-action.json |
+        sha256sum | awk '{print $1}'
+)
+
+jq -n \
+    --arg sourceSha256 "${buildopt_source_sha}" \
+    --slurpfile kotlin "${buildopt_temporary}/kotlin.json" \
+    --slurpfile groovy "${buildopt_temporary}/groovy.json" '
+  {
+    schemaVersion: "buildopt.poc/sticky-evidence-producers-result/v1",
+    workItem: "SWL-FRESH-001",
+    generatedAt: "2026-08-27T00:00:00Z",
+    sourceSha256: $sourceSha256,
+    historicalEvidenceImported: false,
+    repositorySpecificRules: false,
+    coverage: [
+      "KOTLIN_DSL_TESTABLE_ACTION",
+      "GROOVY_DSL_TESTABLE_ACTION",
+      "NO_OPPORTUNITY",
+      "NOT_APPLICABLE",
+      "INPUT_UNAVAILABLE",
+      "PRODUCER_FAILED"
+    ],
+    fixtureReports: [$kotlin[0], $groovy[0]],
+    outcome: "COMPLETE_GENERIC_PRODUCERS"
+  }
+' >"${buildopt_temporary}/result.json"
+
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+mv -- "${buildopt_temporary}/result.json" "${buildopt_output}"
+printf 'Fresh generic producer evidence written to %s\n' "${buildopt_output}"

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-public-evidence/v1",
+  "generatedAt": "2026-08-27T00:00:00Z",
+  "familyKey": "kotlin-fixture",
+  "dsl": "KOTLIN",
+  "repositoryScopeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "workflowArgumentsSha256": "2222222222222222222222222222222222222222222222222222222222222222",
+  "outputContract": ["build/libs/app.jar"],
+  "taskContract": {
+    "captureStatus": "COMPLETE",
+    "reason": "",
+    "candidates": [
+      {
+        "input": {
+          "evidenceSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "repositoryScopeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+          "taskImplementationSha256": "7777777777777777777777777777777777777777777777777777777777777777",
+          "relativeSourcePath": "buildSrc/src/main/java/Generate.java",
+          "sourcePreimageSha256": "86ac98b0636aee65999cf640b62b513a632494d23427442a5db9f10ee3a72cf7",
+          "facts": {
+            "extendsDefaultTask": true,
+            "internalInputCount": 1,
+            "internalOutputCount": 1,
+            "taskActionCount": 1,
+            "unknownSideEffects": false
+          },
+          "observations": [
+            {"requestedBuildOrdinal": 1, "durationMs": 700, "executed": true, "cacheable": false, "upToDate": false, "inputSnapshotSha256": "4444444444444444444444444444444444444444444444444444444444444444", "outputSnapshotSha256": "5555555555555555555555555555555555555555555555555555555555555555", "productFailure": false},
+            {"requestedBuildOrdinal": 2, "durationMs": 710, "executed": true, "cacheable": false, "upToDate": false, "inputSnapshotSha256": "4444444444444444444444444444444444444444444444444444444444444444", "outputSnapshotSha256": "5555555555555555555555555555555555555555555555555555555555555555", "productFailure": false},
+            {"requestedBuildOrdinal": 3, "durationMs": 720, "executed": true, "cacheable": false, "upToDate": false, "inputSnapshotSha256": "4444444444444444444444444444444444444444444444444444444444444444", "outputSnapshotSha256": "5555555555555555555555555555555555555555555555555555555555555555", "productFailure": false}
+          ]
+        },
+        "sourcePreimage": "class Generate extends DefaultTask {}",
+        "sourcePostimage": "@CacheableTask class Generate extends DefaultTask {}",
+        "validationCommand": ["./gradlew", "assemble"]
+      }
+    ]
+  },
+  "declaredGraph": {
+    "captureStatus": "COMPLETE",
+    "reason": "",
+    "candidates": []
+  }
+}

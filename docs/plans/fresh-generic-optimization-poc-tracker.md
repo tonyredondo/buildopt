@@ -3,8 +3,8 @@
 ## Status
 
 **Overall:** `IN_PROGRESS`<br>
-**Progress:** `1/7` blocks complete<br>
-**Current block:** `SWL-FRESH-001` — implement complete generic public evidence producers<br>
+**Progress:** `2/7` blocks complete<br>
+**Current block:** `SWL-FRESH-002` — freeze the five-family cohort and capture all evidence from empty state<br>
 **Supersedes:** the stopped route in
 [`sticky-wrapper-learning-poc-tracker.md`](./sticky-wrapper-learning-poc-tracker.md).
 That route and its results remain auditable diagnostics, but none is an input
@@ -70,8 +70,8 @@ candidate plan, cost and timing row after the freeze.
 | Order | Block | Deliverable | State | Dependency |
 | ---: | --- | --- | --- | --- |
 | 0 | `SWL-FRESH-000` Route reset | Fresh-evidence contract, tracker, documentation and executable plan checker | `DONE` | route audit |
-| 1 | `SWL-FRESH-001` Complete generic producers | Produce task-contract and declared-graph action inputs from current Gradle evidence, with typed completeness outcomes | `TODO` | SWL-FRESH-000 |
-| 2 | `SWL-FRESH-002` Fresh cohort and capture | Freeze current public revisions and create all observations, traces and output bindings from empty state | `WAITING` | SWL-FRESH-001 |
+| 1 | `SWL-FRESH-001` Complete generic producers | Produce task-contract and declared-graph action inputs from current Gradle evidence, with typed completeness outcomes | `DONE` | SWL-FRESH-000 |
+| 2 | `SWL-FRESH-002` Fresh cohort and capture | Freeze current public revisions and create all observations, traces and output bindings from empty state | `TODO` | SWL-FRESH-001 |
 | 3 | `SWL-FRESH-003` Five-family opportunity gate | Independently recompute complete generic actions and require breadth before timing | `WAITING` | SWL-FRESH-002 |
 | 4 | `SWL-FRESH-004` Installed active-value gate | Run exact installed candidate/native trials for every admitted action | `WAITING` | SWL-FRESH-003 |
 | 5 | `SWL-FRESH-005` Chronological campaign | Exercise native, observe, trial, qualified, active and fallback states across fresh commit windows | `WAITING` | SWL-FRESH-004 |
@@ -174,7 +174,7 @@ pass. Otherwise stop and name the failed criteria. Incomplete inputs produce
 | Evidence | Block | Required evidence | State |
 | --- | --- | --- | --- |
 | `SWL-FRESH-E001` | SWL-FRESH-000 | This tracker, machine contract, aligned documentation and executable checker | `DONE` |
-| `SWL-FRESH-E002` | SWL-FRESH-001 | Generic producer implementation, Kotlin/Groovy fixtures and typed completeness evidence | `WAITING` |
+| `SWL-FRESH-E002` | SWL-FRESH-001 | Generic producer implementation, Kotlin/Groovy fixtures and typed completeness evidence | `DONE` — [`sticky-evidence-producers-v1.json`](../../benchmarks/results/sticky-evidence-producers-v1.json) |
 | `SWL-FRESH-E003` | SWL-FRESH-002 | Fresh five-family cohort and capture directory bound to current package digest | `WAITING` |
 | `SWL-FRESH-E004` | SWL-FRESH-003 | Input-complete five-family opportunity report and independent recomputation | `WAITING` |
 | `SWL-FRESH-E005` | SWL-FRESH-004 | Installed eight-pair action results and complete cost ledger | `WAITING` |
@@ -183,7 +183,9 @@ pass. Otherwise stop and name the failed criteria. Incomplete inputs produce
 
 ## Immediate next action
 
-Implement `SWL-FRESH-001` exactly as specified above. Do not clone or time the
-five public repositories yet. The next commit must prove that the producers can
-distinguish a genuine lack of opportunity from missing input; otherwise any
-public 0/N result would repeat the methodological error this tracker replaces.
+Implement `SWL-FRESH-002` exactly as specified above. Freeze all five public
+subjects before reading any BuildOpt outcome, create 20 primary plus ten
+chronological reserve revisions per family, and bind every capture to the same
+current installed package. Start with new distinct Gradle, BuildOpt, cache and
+decision roots. Do not import any historical BuildOpt row, profile, timing,
+cohort or decision, and do not time candidate/native actions in this block.
