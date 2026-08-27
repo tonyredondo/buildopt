@@ -12,8 +12,9 @@ conservative native no-op path:
 - it does not start a gateway, plugin handshake, managed L1, central cache
   probe or Gradle bootstrap state;
 - it scrubs BuildOpt-only variables before starting the repository Wrapper; and
-- on Unix, the no-observation case replaces the idle launcher with the native
-  Wrapper process so process groups and signals retain their existing contract.
+- the no-observation case still uses the lightweight process supervisor so the
+  Wrapper remains in an isolated process group and descendant signals retain
+  their existing contract; only optional BuildOpt infrastructure is removed.
 
 This is not an optimization decision. It only avoids unnecessary BuildOpt work;
 Gradle remains the executor and its own cache/Configuration Cache remain the
@@ -29,7 +30,7 @@ also keeps that path so its diagnostics are not hidden.
 | --- | --- |
 | unset, `1`, `light` | Record bounded provenance and timings without spawning Git; the executable digest is computed concurrently when possible and the recorder directory is created only after the child exits. |
 | `full` | Include the best-effort Git source revision lookup for diagnostic campaigns. |
-| `0` | Do not create observation state; use the native process fast path when the standard streams permit it. |
+| `0` | Do not create observation state; use the lightweight process-supervisor path that preserves the native process-group and signal contract. |
 
 Unknown values retain the existing full launcher path rather than silently
 changing the requested diagnostic mode. Observation failures remain diagnostic

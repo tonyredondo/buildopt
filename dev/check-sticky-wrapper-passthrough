@@ -243,6 +243,7 @@ chmod 0755 "${buildopt_repository}/gradlew"
 mv -- "${buildopt_test_root}/signal-helper.go" "${buildopt_test_root}/signal-helper.source"
 cp -- "${buildopt_test_root}/valid-wrapper.properties" \
     "${buildopt_repository}/.buildopt/wrapper.properties"
+unset BUILDOPT_PLUGIN_TOKEN BUILDOPT_TEAM_TOKEN
 
 buildopt_signal_case() {
     local buildopt_label=$1
@@ -269,7 +270,23 @@ buildopt_signal_case() {
     [[ -s "${buildopt_leader_ready}" && -s "${buildopt_descendant_ready}" ]]
     kill -TERM "${buildopt_pid}"
     local buildopt_exit=0
+    local buildopt_deadline=$((SECONDS + 15))
     set +e
+    while kill -0 "${buildopt_pid}" 2>/dev/null && ((SECONDS < buildopt_deadline)); do
+        sleep 0.05
+    done
+    if kill -0 "${buildopt_pid}" 2>/dev/null; then
+        printf 'signal forwarding did not finish before the 15-second deadline\n' >&2
+        jq -c '.' "${buildopt_leader_ready}" >&2 || true
+        jq -c '.' "${buildopt_descendant_ready}" >&2 || true
+        ps -o pid,ppid,pgid,sid,stat,cmd -p "${buildopt_pid}" >&2 || true
+        buildopt_leader_pgid=$(jq -r '.pgid // empty' "${buildopt_leader_ready}" 2>/dev/null || true)
+        if [[ "${buildopt_leader_pgid}" =~ ^[1-9][0-9]*$ ]]; then
+            kill -KILL -- "-${buildopt_leader_pgid}" 2>/dev/null || true
+        else
+            kill -KILL "${buildopt_pid}" 2>/dev/null || true
+        fi
+    fi
     wait "${buildopt_pid}"
     buildopt_exit=$?
     set -e

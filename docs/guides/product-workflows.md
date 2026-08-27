@@ -58,8 +58,8 @@ default ordinary observer is now `light`: it skips the pre-build Git lookup and
 creates its private recorder only after the child exits. The executable digest
 runs concurrently with the child when possible. `full` observation is an
 explicit diagnostic choice, while `0` disables recording entirely. The
-checked-in local overhead result is **11 ms p95** for the native no-op path and
-**34 ms p95** for light observation over direct execution; these are startup
+checked-in local overhead result is **9 ms p95** for the native no-op path and
+**38 ms p95** for light observation over direct execution; these are startup
 guardrails, not build-time savings.
 
 ### Active runtime boundary

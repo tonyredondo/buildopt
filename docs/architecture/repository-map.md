@@ -42,7 +42,7 @@ portable connection and native Gradle HTTP cache integration. `SWL-007` owns
 the canonical decision/evidence records and local/central adapters in
 `internal/stickydecision`; `SWL-008` adds its read-only selector and
 pre-Gradle native-retention budget; `SWL-008A` connects the sticky-wrapper
-native fast path and lazy observer in `internal/launcher`; `SWL-009` adds
+supervised native fast path and lazy observer in `internal/launcher`; `SWL-009` adds
 ordinary-build observations in `internal/stickyobservation`. The existing
 `internal/sharedcache` and
 `internal/launcher` packages own the central Gradle HTTP cache, typed state and

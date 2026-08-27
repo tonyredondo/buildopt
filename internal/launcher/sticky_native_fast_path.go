@@ -138,8 +138,9 @@ func stickyNativeExplicitIntegrationRequested(getenv func(string) string) bool {
 // created lazily and written only after Gradle exits, so optional diagnostics
 // cannot delay startup or alter the child process. Its optional executable
 // digest may run concurrently, but is never part of the build critical path.
-// The direct exec path removes the BuildOpt parent entirely when no observer
-// is requested.
+// The child still runs through the lightweight process supervisor even when
+// no observer is requested. That preserves the WS-002 process-group contract;
+// the fast path removes only optional BuildOpt infrastructure.
 func runStickyNativeNoop(
 	path stickyNativeNoopPath,
 	childArgs []string,
@@ -160,10 +161,6 @@ func runStickyNativeNoop(
 	var observation *ordinaryObservationState
 	if path.observationMode != ordinaryObservationModeDisabled {
 		observation = newOrdinaryObservationStateAt(path.root, childArgs, startedAt)
-	}
-	if observation == nil && nativeGradleProcessReplacementSupported(stdin, stdout, stderr) {
-		err := replaceWithNativeGradleProcessWithReserved(childArgs, nil, reserved)
-		return launchErrorExitCode(childArgs[0], err, stderr)
 	}
 	if observation != nil {
 		decisionFinishedAt := time.Now()

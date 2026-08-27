@@ -131,8 +131,8 @@ bounded startup overhead with:
 
 This is the `SWL-008A` gate. It validates the checked-in local microbenchmark
 and requires at least 20 interleaved samples for direct execution, native
-no-op and light observation. The current result records **11 ms p95** native
-no-op overhead, **34 ms p95** light-observation overhead and **0.104 ms p95**
+no-op and light observation. The current result records **9 ms p95** native
+no-op overhead, **38 ms p95** light-observation overhead and **0.093 ms p95**
 pre-child decision time. The light executable digest runs concurrently when
 possible. These are wrapper-cost guardrails, not Gradle speedup claims. The
 no-op path skips gateway, plugin, managed-L1 and central cache work when no

@@ -9,7 +9,9 @@
     "startsManagedL1": false,
     "probesCentralCache": false,
     "scrubsBuildOptEnvironment": true,
-    "unixReplacesIdleLauncher": true
+    "unixReplacesIdleLauncher": false,
+    "usesLightweightProcessSupervisor": true,
+    "preservesProcessGroupSignals": true
   },
   "observationModes": {
     "default": "light",

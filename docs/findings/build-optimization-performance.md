@@ -110,8 +110,8 @@ never performs synchronous network I/O and all invalid state retains native
 Gradle. `SWL-008A` connects that boundary to the committed wrapper: an
 unconfigured invocation skips gateway, plugin-handshake, managed-L1 and
 central-cache setup, and observation defaults to lazy `light` mode. The checked
-20-sample local result adds **11 ms p95** for native no-op and **34 ms p95** for
-light observation over direct execution, with **0.104 ms p95** pre-child
+20-sample local result adds **9 ms p95** for native no-op and **38 ms p95** for
+light observation over direct execution, with **0.093 ms p95** pre-child
 decision time. The light observer computes the executable digest concurrently
 with the child when possible. These are wrapper-cost guardrails, not
 acceleration evidence;

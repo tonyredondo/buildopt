@@ -99,9 +99,9 @@ starting a gateway, plugin handshake, managed L1 or central-cache probe. The
 default observer is `light`: it skips the pre-build Git lookup, computes the
 executable digest concurrently with the child when possible and creates its
 private recorder only after the child exits. On this Linux host, 20 interleaved
-samples measured **+11 ms p95** for the native no-op path and **+34 ms p95** for
+samples measured **+9 ms p95** for the native no-op path and **+38 ms p95** for
 light observation over direct execution; light pre-child decision time was
-**0.104 ms p95**. The result passes the POC guardrails, but it is wrapper-cost
+**0.093 ms p95**. The result passes the POC guardrails, but it is wrapper-cost
 evidence rather than a Gradle speedup claim. `full` observation remains an
 explicit diagnostic mode and `0` disables recording. See the
 [overhead specification](../../specs/poc-sticky-wrapper-noop-overhead-v1.md)

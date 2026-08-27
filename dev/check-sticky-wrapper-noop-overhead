@@ -30,6 +30,9 @@ jq -e '
     .nativePath.startsManagedL1 == false and
     .nativePath.probesCentralCache == false and
     .nativePath.scrubsBuildOptEnvironment == true and
+    .nativePath.unixReplacesIdleLauncher == false and
+    .nativePath.usesLightweightProcessSupervisor == true and
+    .nativePath.preservesProcessGroupSignals == true and
     .observationModes.default == "light" and
     .observationModes.full == "git_revision_lookup" and
     .observationModes.disabled == "0" and

@@ -32,7 +32,7 @@ Gradle; safe fallback and cache hits alone do not pass.
 
 | Layer | Generic behavior | Current boundary |
 | --- | --- | --- |
-| Installation / launcher | Native packages locate the Wrapper and preserve argv, exit and signal behavior; the sticky wrapper skips unused infrastructure and lazily records light observations. | Linux, macOS and Windows lifecycle is tested; the local 20-sample wrapper-cost result is +11 ms p95 native no-op and +34 ms p95 light observation over direct execution. Comparable build-time breadth evidence is Linux. |
+| Installation / launcher | Native packages locate the Wrapper and preserve argv, exit and signal behavior; the sticky wrapper skips unused infrastructure and lazily records light observations. | Linux, macOS and Windows lifecycle is tested; the local 20-sample wrapper-cost result is +9 ms p95 native no-op and +38 ms p95 light observation over direct execution. Comparable build-time breadth evidence is Linux. |
 | Change and workflow discovery | Derives provider/local revisions, exact changed paths and requested Gradle entrypoints. | Global/build-logic ambiguity retains native. |
 | Output discovery | Reads Gradle-owned outputs and rejects missing, external, symlinked or ambiguous declarations. | A root aggregate workflow can legitimately declare a very broad output surface. |
 | Structural proposal | Uses typed project/task relationships and changed-project ownership; no repository-name branch is allowed. | Unknown relationships, excessive candidate task sets and no reduction retain native. |

@@ -46,10 +46,10 @@ The current Linux result records:
 | Mode | p50 | p95 | p95 over direct |
 | --- | ---: | ---: | ---: |
 | Direct process | 2 ms | 3 ms | — |
-| Native no-op | 11 ms | 13 ms | **+11 ms** |
-| Light observation | 34 ms | 36 ms | **+34 ms** |
+| Native no-op | 10 ms | 11 ms | **+9 ms** |
+| Light observation | 33 ms | 40 ms | **+38 ms** |
 
-Light observation's pre-child decision work is **0.104 ms p95**. The result
+Light observation's pre-child decision work is **0.093 ms p95**. The result
 passes the POC guardrails of 100 ms native no-op overhead, 250 ms light
 observation overhead and 100 ms light decision time. The default observer
 skips the pre-build Git lookup, computes its executable digest concurrently with
