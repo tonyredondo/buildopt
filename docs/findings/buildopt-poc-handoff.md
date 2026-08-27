@@ -163,8 +163,8 @@ the consumer uses a separate read-only credential after the owner commits and
 restarts the HTTPS service. The consumer restores **2 tasks from cache** and
 the producer, consumer and outage rebuilds all emit the same required output
 SHA-256. When the service is offline, the wrapper records **0 central hits**
-and falls back to native Gradle successfully. The observed phases are **7.985
-s producer**, **8.060 s consumer** and **7.469 s outage**. Credentials are not
+and falls back to native Gradle successfully. The final clean-SHA run observed
+**11.027 s producer**, **7.938 s consumer** and **7.435 s outage**. Credentials are not
 visible to Gradle or logs, and pending objects remain invisible before owner
 commit.
 

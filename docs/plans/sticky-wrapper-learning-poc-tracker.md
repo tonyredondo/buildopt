@@ -639,8 +639,8 @@ consumer and outage runs produce the same required output SHA-256
 wrapper performs a native Gradle rebuild with zero central hits and the same
 output. The distribution archive is verified in both machines, credentials
 remain outside Gradle/logs, and the configuration/decision planes stay
-separate. Phase durations are recorded (producer **7.985 s**, consumer
-**8.060 s**, outage **7.469 s**) for a later fair timing experiment; this block
+separate. The final clean-SHA run records producer **11.027 s**, consumer
+**7.938 s** and outage **7.435 s** for a later fair timing experiment; this block
 makes no wall-time or profile-qualification claim.
 
 The checked result is

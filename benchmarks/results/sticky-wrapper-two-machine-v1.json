@@ -1,16 +1,16 @@
 {
   "schemaVersion": "buildopt.poc/central-two-machine-result/v1",
   "workItem": "POC-CENTRAL-TWO-MACHINE-001",
-  "capturedAt": "2026-08-27T02:54:31Z",
-  "buildoptRevision": "cb70f694dea2ae6f22caee18a5c8821a0990870c",
-  "packageSha256": "eb055e6f107fbf5ce8ed34c88a5a3a40fd6609664a7410bbcb2925ebd476be29",
+  "capturedAt": "2026-08-27T03:07:53Z",
+  "buildoptRevision": "b53d29e1bd48ec92acdd6147540c991d85ba2edf",
+  "packageSha256": "209aa7af2a961ec30aeff093375e2ffc064ba2fb79e0b76d1fefec50a02ec7b0",
   "source": {
-    "baseRevision": "14cd451352adaf3900fa3701ffc37a1324e9adf2",
-    "targetRevision": "3a2015c000297f4fac6b0bee6e66eede28afe434"
+    "baseRevision": "7cdebed30e5e9d466d0248841f99ce5684ea9d15",
+    "targetRevision": "3469f982ad290c735cfdf7cf8aacf1dd9f1b78d4"
   },
   "runner": {
     "isolation": "DOCKER_CONTAINERS",
-    "imageId": "sha256:6b91655fa3bee3e69c3486a00492e159050c5e91182d37d01120542eb37a3e64",
+    "imageId": "sha256:86e03386350c5bce46bf03c8a5c6b2c6602c7d27d57fd47d49596c6f59b62af6",
     "clientCpuLimit": 4,
     "clientMemoryBytes": 8589934592,
     "javaVersion": "21.0.11+10",
@@ -26,8 +26,8 @@
   },
   "producer": {
     "profileQualified": false,
-    "optimizeDurationMs": 11311,
-    "cacheBuildDurationMs": 8062,
+    "optimizeDurationMs": 15717,
+    "cacheBuildDurationMs": 12158,
     "cacheObjectsCommitted": 2,
     "publication": "COMMITTED"
   },
@@ -35,7 +35,7 @@
     "selectionSource": null,
     "cacheMode": "READ_ONLY",
     "cacheStatus": "GATEWAY_ACTIVE",
-    "durationMs": 11267,
+    "durationMs": 15726,
     "fromCacheTasks": 2
   },
   "stickyWrapper": {
@@ -43,38 +43,38 @@
     "producer": {
       "enabled": true,
       "requiredOutputSha256": "170ffd3fb6c6a70b16d3b2fed126868a40177dfaffa0ce3cbad32b17e077baeb",
-      "durationMs": 7985,
+      "durationMs": 11027,
       "fromCacheTasks": 0,
       "entrypoint": "STICKY_WRAPPER",
       "bootstrap": "VERIFIED",
-      "archiveSha256": "eb055e6f107fbf5ce8ed34c88a5a3a40fd6609664a7410bbcb2925ebd476be29",
+      "archiveSha256": "209aa7af2a961ec30aeff093375e2ffc064ba2fb79e0b76d1fefec50a02ec7b0",
       "pendingReadVisibility": "OWNER_COMMIT_REQUIRED"
     },
     "consumer": {
       "enabled": true,
       "requiredOutputSha256": "170ffd3fb6c6a70b16d3b2fed126868a40177dfaffa0ce3cbad32b17e077baeb",
-      "durationMs": 8060,
+      "durationMs": 7938,
       "fromCacheTasks": 2,
       "entrypoint": "STICKY_WRAPPER",
       "bootstrap": "VERIFIED",
-      "archiveSha256": "eb055e6f107fbf5ce8ed34c88a5a3a40fd6609664a7410bbcb2925ebd476be29"
+      "archiveSha256": "209aa7af2a961ec30aeff093375e2ffc064ba2fb79e0b76d1fefec50a02ec7b0"
     },
     "outage": {
       "enabled": true,
       "requiredOutputSha256": "170ffd3fb6c6a70b16d3b2fed126868a40177dfaffa0ce3cbad32b17e077baeb",
-      "durationMs": 7469,
+      "durationMs": 7435,
       "fromCacheTasks": 0,
       "serverOnline": false,
       "entrypoint": "STICKY_WRAPPER",
       "bootstrap": "VERIFIED",
-      "archiveSha256": "eb055e6f107fbf5ce8ed34c88a5a3a40fd6609664a7410bbcb2925ebd476be29"
+      "archiveSha256": "209aa7af2a961ec30aeff093375e2ffc064ba2fb79e0b76d1fefec50a02ec7b0"
     }
   },
   "outage": {
     "serverOnline": false,
     "verifiedProfileSnapshot": false,
     "cacheStatus": "GATEWAY_ACTIVE",
-    "durationMs": 7878,
+    "durationMs": 8115,
     "fromCacheTasks": 0
   },
   "equivalence": {

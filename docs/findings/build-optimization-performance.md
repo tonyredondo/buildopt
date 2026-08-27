@@ -48,8 +48,8 @@ The sticky-wrapper two-machine proof is now functional end to end. A verified
 producer and a clean read-only consumer use the same committed wrapper and
 archive over an HTTPS Gradle cache; two tasks restore from cache after owner
 commit and service restart, while an outage performs a native rebuild with the
-same output. The measured phases are 7.985 s (producer), 8.060 s (consumer)
-and 7.469 s (outage). This proves bootstrap, isolation, credentials and
+same output. The final clean-SHA run measured 11.027 s (producer), 7.938 s
+(consumer) and 7.435 s (outage). This proves bootstrap, isolation, credentials and
 fail-open behavior, but it is not a candidate/control timing comparison and
 therefore makes no acceleration claim. The next experiment must compare this
 installed path against optimized native Gradle over a frozen chronological
