@@ -86,9 +86,10 @@ buildopt_release=${buildopt_root}/release
 mkdir -p -- "${buildopt_release}" "${buildopt_root}/package"
 buildopt_archive=$(
     "${buildopt_repo_root}/packaging/linux/package.sh" \
-        --version 0.1.99-centralpoc --output "${buildopt_release}"
+        --version 0.1.99 --output "${buildopt_release}"
 )
 cp -- "${buildopt_archive}" "${buildopt_inputs}/buildopt.tar.gz"
+buildopt_package_sha=$(sha256sum "${buildopt_inputs}/buildopt.tar.gz" | awk '{print $1}')
 tar -xzf "${buildopt_archive}" -C "${buildopt_root}/package"
 mapfile -t buildopt_installers < <(
     find "${buildopt_root}/package" -mindepth 2 -maxdepth 2 -type f -name install.sh -print
@@ -112,11 +113,49 @@ cp -R -- "${buildopt_repo_root}/fixtures/central-two-machine/." \
     "${buildopt_source_repository}/"
 find "${buildopt_source_repository}" -type d -name build -prune -exec rm -rf -- {} +
 find "${buildopt_source_repository}" -type d -name .gradle -prune -exec rm -rf -- {} +
+if [[ "${BUILDOPT_TWO_MACHINE_STICKY:-0}" == 1 ]]; then
+    mkdir -p -- "${buildopt_source_repository}/.buildopt"
+    cp -- "${buildopt_repo_root}/internal/stickywrapper/templates/buildoptw" \
+        "${buildopt_source_repository}/buildoptw"
+    cp -- "${buildopt_repo_root}/internal/stickywrapper/templates/buildoptw.bat" \
+        "${buildopt_source_repository}/buildoptw.bat"
+    chmod 0755 "${buildopt_source_repository}/buildoptw"
+    chmod 0644 "${buildopt_source_repository}/buildoptw.bat"
+    cat >"${buildopt_source_repository}/.buildopt/wrapper.properties" <<EOF
+schemaVersion=buildopt.wrapper/v1
+distributionVersion=0.1.99
+distributionUrl.linux-amd64=https://github.com/tonyredondo/buildopt/releases/download/v0.1.99/buildopt-0.1.99-linux-amd64.tar.gz
+distributionSha256.linux-amd64=${buildopt_package_sha}
+distributionUrl.macos-amd64=https://github.com/tonyredondo/buildopt/releases/download/v0.1.99/buildopt-0.1.99-darwin-amd64.tar.gz
+distributionSha256.macos-amd64=${buildopt_package_sha}
+distributionUrl.macos-arm64=https://github.com/tonyredondo/buildopt/releases/download/v0.1.99/buildopt-0.1.99-darwin-arm64.tar.gz
+distributionSha256.macos-arm64=${buildopt_package_sha}
+distributionUrl.windows-amd64=https://github.com/tonyredondo/buildopt/releases/download/v0.1.99/buildopt-0.1.99-windows-amd64.zip
+distributionSha256.windows-amd64=${buildopt_package_sha}
+network.connectTimeoutMs=5000
+network.readTimeoutMs=30000
+network.redirectPolicy=https-only-max-5
+network.proxyMode=environment
+EOF
+    cat >"${buildopt_source_repository}/.buildopt/config.toml" <<'EOF'
+schema_version = "buildopt.config/v1"
+mode = "auto"
+server_url = "https://central:8443"
+project_scope = "buildopt/central-two-machine"
+credential_env = "BUILDOPT_TOKEN"
+trial_budget_percent = 5
+EOF
+    chmod 0644 "${buildopt_source_repository}/.buildopt/wrapper.properties" \
+        "${buildopt_source_repository}/.buildopt/config.toml"
+fi
 git -C "${buildopt_source_repository}" init -q -b main
 git -C "${buildopt_source_repository}" config user.email buildopt@example.invalid
 git -C "${buildopt_source_repository}" config user.name 'BuildOpt fixture'
 git -C "${buildopt_source_repository}" config commit.gpgsign false
 git -C "${buildopt_source_repository}" add .
+if [[ "${BUILDOPT_TWO_MACHINE_STICKY:-0}" == 1 ]]; then
+    git -C "${buildopt_source_repository}" add -f .buildopt/config.toml .buildopt/wrapper.properties
+fi
 GIT_AUTHOR_DATE=2026-01-01T00:00:00Z \
 GIT_COMMITTER_DATE=2026-01-01T00:00:00Z \
     git -C "${buildopt_source_repository}" commit -qm 'central base'
@@ -298,8 +337,11 @@ jq -n \
     --slurpfile commit "${buildopt_control}/commit.json" \
     --slurpfile consumer "${buildopt_consumer}/results/consumer.json" \
     --slurpfile consumerOptimize "${buildopt_consumer}/results/consumer-optimize-result.json" \
+    --slurpfile producerWrapper "${buildopt_producer}/results/producer-wrapper.json" \
+    --slurpfile consumerWrapper "${buildopt_consumer}/results/consumer-wrapper.json" \
     --slurpfile outage "${buildopt_consumer}/results/outage.json" \
-    --slurpfile outageOptimize "${buildopt_consumer}/results/outage-optimize-result.json" '
+    --slurpfile outageOptimize "${buildopt_consumer}/results/outage-optimize-result.json" \
+    --slurpfile outageWrapper "${buildopt_consumer}/results/outage-wrapper.json" '
         {
             schemaVersion: "buildopt.poc/central-two-machine-result/v1",
             workItem: "POC-CENTRAL-TWO-MACHINE-001",
@@ -336,6 +378,12 @@ jq -n \
                 cacheStatus:$consumerOptimize[0].central.gradleCacheStatus,
                 durationMs:$consumer[0].durationMs,
                 fromCacheTasks:$consumer[0].fromCacheTasks
+            },
+            stickyWrapper: {
+                enabled: ($producerWrapper[0].enabled == true),
+                producer: $producerWrapper[0],
+                consumer: $consumerWrapper[0],
+                outage: $outageWrapper[0]
             },
             outage: {
                 serverOnline:false,

@@ -18,6 +18,22 @@ import (
 	"github.com/tonyredondo/buildopt/internal/sharedcache"
 )
 
+func TestStickyConnectionCAOverrideIsBoundedAndPrivate(t *testing.T) {
+	caPath := filepath.Join(t.TempDir(), "ca.pem")
+	if err := os.WriteFile(caPath, []byte("not-a-certificate"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := newStickyConnectionHTTPClientWithCA("https://example.com", caPath); err == nil {
+		t.Fatal("invalid CA file was accepted")
+	}
+	if _, err := stickyWrapperRootCAs(filepath.Join(t.TempDir(), "missing.pem")); err == nil {
+		t.Fatal("missing CA file was accepted")
+	}
+	if _, err := stickyWrapperRootCAs(filepath.Join("relative.pem")); err == nil {
+		t.Fatal("relative CA file was accepted")
+	}
+}
+
 func TestStickyConnectionIsPortableScopedAndRevocable(t *testing.T) {
 	ctx := context.Background()
 	now := time.Now().UTC().Truncate(time.Second)

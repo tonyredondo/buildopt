@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/base64"
 	"encoding/hex"
 	"errors"
@@ -12,6 +13,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -24,7 +26,11 @@ import (
 
 const (
 	stickyWrapperRootEnvironment = "BUILDOPT_STICKY_WRAPPER_ROOT"
-	stickyConnectionTimeout      = 10 * time.Second
+	// stickyWrapperCAEnvironment is an owner-operated POC override for a
+	// private service CA. Production deployments use the host trust store;
+	// the launcher reserves this path before starting Gradle.
+	stickyWrapperCAEnvironment = "BUILDOPT_STICKY_CA_FILE"
+	stickyConnectionTimeout    = 10 * time.Second
 )
 
 type stickyWrapperConnection struct {
@@ -91,7 +97,10 @@ func prepareStickyWrapperConnection(
 		document,
 	)
 	if client == nil {
-		client, err = newStickyConnectionHTTPClient(serverURL)
+		client, err = newStickyConnectionHTTPClientWithCA(
+			serverURL,
+			getenv(stickyWrapperCAEnvironment),
+		)
 		if err != nil {
 			clear(token)
 			return nil, credentialEnvironment, err
@@ -217,12 +226,20 @@ func stickyConnectionScopeSHA256(
 }
 
 func newStickyConnectionHTTPClient(serverURL string) (*http.Client, error) {
+	return newStickyConnectionHTTPClientWithCA(serverURL, "")
+}
+
+func newStickyConnectionHTTPClientWithCA(serverURL, caFile string) (*http.Client, error) {
 	if _, err := canonicalStickyServerURL(serverURL); err != nil {
+		return nil, err
+	}
+	rootCAs, err := stickyWrapperRootCAs(caFile)
+	if err != nil {
 		return nil, err
 	}
 	transport := &http.Transport{
 		Proxy:             http.ProxyFromEnvironment,
-		TLSClientConfig:   &tls.Config{MinVersion: tls.VersionTLS13},
+		TLSClientConfig:   &tls.Config{MinVersion: tls.VersionTLS13, RootCAs: rootCAs},
 		ForceAttemptHTTP2: true, MaxIdleConns: 2, MaxIdleConnsPerHost: 2,
 		IdleConnTimeout: 30 * time.Second,
 	}
@@ -233,6 +250,30 @@ func newStickyConnectionHTTPClient(serverURL string) (*http.Client, error) {
 			return errors.New("wrapper connection redirects are disabled")
 		},
 	}, nil
+}
+
+func stickyWrapperRootCAs(caFile string) (*x509.CertPool, error) {
+	if caFile == "" {
+		return nil, nil
+	}
+	if !filepath.IsAbs(caFile) || filepath.Clean(caFile) != caFile {
+		return nil, errors.New("sticky wrapper CA file must be one clean absolute path")
+	}
+	raw, err := os.ReadFile(caFile)
+	if err != nil {
+		return nil, fmt.Errorf("read sticky wrapper CA file: %w", err)
+	}
+	if len(raw) == 0 || len(raw) > 1<<20 {
+		return nil, errors.New("sticky wrapper CA file is empty or too large")
+	}
+	pool, err := x509.SystemCertPool()
+	if err != nil || pool == nil {
+		pool = x509.NewCertPool()
+	}
+	if !pool.AppendCertsFromPEM(raw) {
+		return nil, errors.New("sticky wrapper CA file contains no certificate")
+	}
+	return pool, nil
 }
 
 func canonicalStickyServerURL(serverURL string) (string, error) {

@@ -11,6 +11,11 @@ case "${buildopt_mode}" in
     producer | consumer | outage) ;;
     *) printf 'unsupported central two-machine mode: %s\n' "${buildopt_mode}" >&2; exit 64 ;;
 esac
+buildopt_sticky_wrapper=${BUILDOPT_TWO_MACHINE_STICKY:-0}
+case "${buildopt_sticky_wrapper}" in
+    0 | 1) ;;
+    *) printf 'BUILDOPT_TWO_MACHINE_STICKY must be 0 or 1\n' >&2; exit 64 ;;
+esac
 
 buildopt_workspace=/workspace
 buildopt_repository=${buildopt_workspace}/repository
@@ -79,6 +84,45 @@ export LC_ALL=C.UTF-8
 export TZ=UTC
 mkdir -p -- "${HOME}" "${XDG_CACHE_HOME}" "${GRADLE_USER_HOME}"
 
+buildopt_prepare_sticky_distribution() {
+    [[ "${buildopt_sticky_wrapper}" == 1 && "${buildopt_mode}" != outage ]] || return 0
+    local buildopt_archive_sha buildopt_package_root_name buildopt_version
+    local buildopt_wrapper_parent buildopt_wrapper_install buildopt_wrapper_stage
+    buildopt_archive_sha=$(sha256sum "${buildopt_package}" | awk '{print $1}')
+    mapfile -t buildopt_package_roots < <(
+        find "${buildopt_package_root}" -mindepth 1 -maxdepth 1 -type d -name 'buildopt-*' -print
+    )
+    if ((${#buildopt_package_roots[@]} != 1)); then
+        printf 'expected one BuildOpt distribution root, found %d\n' \
+            "${#buildopt_package_roots[@]}" >&2
+        exit 1
+    fi
+    buildopt_package_root_name=$(basename "${buildopt_package_roots[0]}")
+    buildopt_version=${buildopt_package_root_name#buildopt-}
+    buildopt_version=${buildopt_version%-linux-amd64}
+    buildopt_wrapper_parent="${XDG_CACHE_HOME}/buildopt/wrapper/distributions/${buildopt_version}/linux-amd64"
+    buildopt_wrapper_install="${buildopt_wrapper_parent}/${buildopt_archive_sha}"
+    buildopt_wrapper_stage="${buildopt_wrapper_parent}/.buildopt-wrapper-stage"
+    mkdir -p -- "${buildopt_wrapper_parent}"
+    rm -rf -- "${buildopt_wrapper_stage}"
+    cp -R -- "${buildopt_package_roots[0]}" "${buildopt_wrapper_stage}"
+    printf '%s\n%s\n%s\n%s\n' \
+        buildopt.wrapper-install/v1 "${buildopt_version}" linux-amd64 "${buildopt_archive_sha}" \
+        >"${buildopt_wrapper_stage}/.buildopt-wrapper-install"
+    mv -- "${buildopt_wrapper_stage}" "${buildopt_wrapper_install}"
+    (
+        cd -- "${buildopt_repository}"
+        BUILDOPT_WRAPPER_CACHE_HOME="${XDG_CACHE_HOME}" \
+            ./buildoptw --buildopt version --json
+    ) >"${buildopt_results}/wrapper-version.json"
+}
+buildopt_prepare_sticky_distribution
+
+buildopt_write_disabled_wrapper_result() {
+    local buildopt_result=$1
+    jq -n '{enabled:false,entrypoint:"BUILDOPT_COMMAND"}' >"${buildopt_result}"
+}
+
 buildopt_output_digest() {
     mapfile -t buildopt_outputs < <(
         find "${buildopt_repository}/app/build/libs" -maxdepth 1 -type f -name 'central-app-*.jar' -print 2>/dev/null
@@ -104,6 +148,29 @@ buildopt_run_optimize() {
     ) 2>&1 | tee "${buildopt_log}"
     buildopt_completed=$(date +%s%N)
     printf '%s\n' "$(((buildopt_completed - buildopt_started) / 1000000))"
+}
+
+buildopt_run_sticky_wrapper() {
+    local buildopt_token_document=$1
+    local buildopt_log=$2
+    local buildopt_started buildopt_completed
+    buildopt_started=$(date +%s%N)
+    (
+        cd -- "${buildopt_repository}"
+        BUILDOPT_TOKEN=$(cat "${buildopt_token_document}") \
+        BUILDOPT_STICKY_CA_FILE="${buildopt_ca}" \
+            ./buildoptw --no-daemon --no-configuration-cache --console=plain assemble
+    ) 2>&1 | tee "${buildopt_log}"
+    buildopt_completed=$(date +%s%N)
+    printf '%s\n' "$(((buildopt_completed - buildopt_started) / 1000000))"
+}
+
+buildopt_reset_local_build() {
+    find "${buildopt_repository}" -type d -name build -prune -exec rm -rf -- {} +
+    find "${GRADLE_USER_HOME}/caches" -mindepth 1 -maxdepth 1 \
+        -type d -name 'build-cache-*' -exec rm -rf -- {} + 2>/dev/null || true
+    find "${XDG_CACHE_HOME}/buildopt/state/l1" -mindepth 1 -maxdepth 1 \
+        -exec rm -rf -- {} + 2>/dev/null || true
 }
 
 buildopt_assert_no_credentials() {
@@ -182,6 +249,33 @@ case "${buildopt_mode}" in
             --argjson cacheBuildMs "${buildopt_cache_ms}" \
             '{requiredOutputSha256:$digest,optimizeDurationMs:$optimizeMs,cacheBuildDurationMs:$cacheBuildMs}' \
             >"${buildopt_results}/producer.json"
+        if [[ "${buildopt_sticky_wrapper}" == 1 ]]; then
+            buildopt_reset_local_build
+            buildopt_wrapper_log=${buildopt_results}/producer-wrapper.log
+            buildopt_wrapper_ms=$(buildopt_run_sticky_wrapper \
+                /control/producer-token.json "${buildopt_wrapper_log}" | tail -n 1)
+            buildopt_wrapper_hits=$(grep -c ' FROM-CACHE' "${buildopt_wrapper_log}" || true)
+            if ((buildopt_wrapper_hits < 1)); then
+                printf 'producer sticky wrapper reported no central FROM-CACHE task\n' >&2
+                exit 1
+            fi
+            buildopt_wrapper_digest=$(buildopt_output_digest)
+            [[ "${buildopt_wrapper_digest}" == "${buildopt_digest}" ]] || {
+                printf 'producer sticky wrapper output differs from seeded output\n' >&2
+                exit 1
+            }
+            buildopt_assert_no_credentials \
+                "${buildopt_wrapper_log}" "${buildopt_producer_token}" "${buildopt_consumer_token}"
+            jq -n \
+                --arg digest "${buildopt_wrapper_digest}" \
+                --argjson durationMs "${buildopt_wrapper_ms}" \
+                --argjson hits "${buildopt_wrapper_hits}" \
+                --arg archiveSha "$(sha256sum "${buildopt_package}" | awk '{print $1}')" \
+                '{enabled:true,requiredOutputSha256:$digest,durationMs:$durationMs,fromCacheTasks:$hits,entrypoint:"STICKY_WRAPPER",bootstrap:"VERIFIED",archiveSha256:$archiveSha}' \
+                >"${buildopt_results}/producer-wrapper.json"
+        else
+            buildopt_write_disabled_wrapper_result "${buildopt_results}/producer-wrapper.json"
+        fi
         ;;
     consumer)
         (
@@ -234,6 +328,33 @@ case "${buildopt_mode}" in
             --argjson hits "${buildopt_hits}" \
             '{requiredOutputSha256:$digest,durationMs:$durationMs,fromCacheTasks:$hits}' \
             >"${buildopt_results}/consumer.json"
+        if [[ "${buildopt_sticky_wrapper}" == 1 ]]; then
+            buildopt_reset_local_build
+            buildopt_wrapper_log=${buildopt_results}/consumer-wrapper.log
+            buildopt_wrapper_ms=$(buildopt_run_sticky_wrapper \
+                /control/consumer-token.json "${buildopt_wrapper_log}" | tail -n 1)
+            buildopt_wrapper_hits=$(grep -c ' FROM-CACHE' "${buildopt_wrapper_log}" || true)
+            if ((buildopt_wrapper_hits < 1)); then
+                printf 'consumer sticky wrapper reported no central FROM-CACHE task\n' >&2
+                exit 1
+            fi
+            buildopt_wrapper_digest=$(buildopt_output_digest)
+            [[ "${buildopt_wrapper_digest}" == "${buildopt_expected}" ]] || {
+                printf 'consumer sticky wrapper output differs from producer\n' >&2
+                exit 1
+            }
+            buildopt_assert_no_credentials \
+                "${buildopt_wrapper_log}" "${buildopt_producer_token}" "${buildopt_consumer_token}"
+            jq -n \
+                --arg digest "${buildopt_wrapper_digest}" \
+                --argjson durationMs "${buildopt_wrapper_ms}" \
+                --argjson hits "${buildopt_wrapper_hits}" \
+                --arg archiveSha "$(sha256sum "${buildopt_package}" | awk '{print $1}')" \
+                '{enabled:true,requiredOutputSha256:$digest,durationMs:$durationMs,fromCacheTasks:$hits,entrypoint:"STICKY_WRAPPER",bootstrap:"VERIFIED",archiveSha256:$archiveSha}' \
+                >"${buildopt_results}/consumer-wrapper.json"
+        else
+            buildopt_write_disabled_wrapper_result "${buildopt_results}/consumer-wrapper.json"
+        fi
         ;;
     outage)
         if [[ ! -d "${buildopt_repository}/.buildopt/central/v1/snapshots" ]]; then
@@ -280,5 +401,32 @@ case "${buildopt_mode}" in
             --argjson durationMs "${buildopt_outage_ms}" \
             '{requiredOutputSha256:$digest,durationMs:$durationMs,fromCacheTasks:0,serverOnline:false}' \
             >"${buildopt_results}/outage.json"
+        if [[ "${buildopt_sticky_wrapper}" == 1 ]]; then
+            buildopt_reset_local_build
+            buildopt_wrapper_log=${buildopt_results}/outage-wrapper.log
+            buildopt_wrapper_ms=$(buildopt_run_sticky_wrapper \
+                /control/consumer-token.json "${buildopt_wrapper_log}" | tail -n 1)
+            buildopt_wrapper_hits=$(grep -c ' FROM-CACHE' "${buildopt_wrapper_log}" || true)
+            if ((buildopt_wrapper_hits != 0)); then
+                printf 'outage sticky wrapper unexpectedly reused %d central cache tasks\n' \
+                    "${buildopt_wrapper_hits}" >&2
+                exit 1
+            fi
+            buildopt_wrapper_digest=$(buildopt_output_digest)
+            [[ "${buildopt_wrapper_digest}" == "${buildopt_expected}" ]] || {
+                printf 'outage sticky wrapper output differs from producer\n' >&2
+                exit 1
+            }
+            buildopt_assert_no_credentials \
+                "${buildopt_wrapper_log}" "${buildopt_producer_token}" "${buildopt_consumer_token}"
+            jq -n \
+                --arg digest "${buildopt_wrapper_digest}" \
+                --argjson durationMs "${buildopt_wrapper_ms}" \
+                --arg archiveSha "$(sha256sum "${buildopt_package}" | awk '{print $1}')" \
+                '{enabled:true,requiredOutputSha256:$digest,durationMs:$durationMs,fromCacheTasks:0,serverOnline:false,entrypoint:"STICKY_WRAPPER",bootstrap:"VERIFIED",archiveSha256:$archiveSha}' \
+                >"${buildopt_results}/outage-wrapper.json"
+        else
+            buildopt_write_disabled_wrapper_result "${buildopt_results}/outage-wrapper.json"
+        fi
         ;;
 esac

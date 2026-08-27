@@ -389,6 +389,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		additionalReservedEnvironment = append(
 			additionalReservedEnvironment,
 			stickyWrapperRootEnvironment,
+			stickyWrapperCAEnvironment,
 			"BUILDOPT_TOKEN",
 			stickyObservationOutputEnvironment,
 			stickyObservationModeEnvironment,
