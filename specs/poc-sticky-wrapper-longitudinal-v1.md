@@ -17,8 +17,9 @@ eight-hour soak or Test Optimization.
 
 ## Fair comparison
 
-For each revision the control and candidate use separate worktrees, user
-homes, Gradle homes, native build-cache directories and BuildOpt state. The
+For each revision the control and candidate use separate materialized
+checkouts, user homes, Gradle homes, native build-cache directories and
+BuildOpt state. The
 first pair runs control first and the next pair runs candidate first, then the
 order alternates. Dependency and Wrapper preparation runs before the timed
 pair and is recorded separately; it never copies task outputs, native task

@@ -16,7 +16,7 @@
     "control": "existing Gradle Wrapper with --build-cache and frozen workflow",
     "candidate": "committed ./buildoptw with the same Gradle arguments",
     "order": "CONTROL_FIRST_THEN_CANDIDATE_FIRST_ALTERNATING",
-    "stateIsolation": "separate checkout, HOME, XDG_CACHE_HOME, GRADLE_USER_HOME and BuildOpt state per arm",
+    "stateIsolation": "separate materialized checkout, HOME, XDG_CACHE_HOME, GRADLE_USER_HOME and BuildOpt state per arm",
     "candidateStateOnly": true
   },
   "timing": {
