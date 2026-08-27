@@ -187,6 +187,18 @@ Operating-system capabilities and externally supplied commands such as Docker, G
 ./dev/bootstrap --toolchain syft
 ```
 
+Some compatibility fixtures also exercise Gradle 8.14.3. Provision that
+checksum-pinned distribution under the ignored `.tools/` tree with:
+
+```bash
+./dev/bootstrap-gradle-compat
+```
+
+The helper is idempotent, verifies the official SHA-256 before extraction,
+and is used by the sticky-wrapper trial and compatibility checks. It does not
+change the repository's customer Gradle Wrapper, which remains pinned to
+Gradle 9.6.1.
+
 The bootstrap downloads the immutable URL from the lock, verifies its SHA-256 before extraction, rejects unsafe archive paths, handles the locked binary, ZIP, `tar.gz`, and `tar.xz` layouts, runs target-specific version and runtime probes, and installs atomically under `.tools/toolchains/`. A second invocation verifies and reuses the existing installation without another download. It never uses `sudo` or modifies global tools.
 
 Set `BUILDOPT_TOOLS_ROOT` to keep the ignored tool state in another local directory. The repository lock remains the source of truth. Every successful bootstrap marks that root so cleanup cannot be redirected at an arbitrary existing directory.

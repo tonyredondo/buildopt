@@ -52,7 +52,9 @@ jobs:
       - name: Prime the checksum-pinned Gradle Wrapper
         env:
           GRADLE_USER_HOME: ${{ github.workspace }}/.tools/gradle-user-home/local
-        run: ./dev/run -- ./gradlew --no-daemon --version
+        run: |
+          ./dev/run -- ./gradlew --no-daemon --version
+          ./dev/bootstrap-gradle-compat
 
       - name: Run documentation, Go, and Java checks
         env:

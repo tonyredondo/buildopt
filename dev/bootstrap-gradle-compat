@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_version=8.14.3
+buildopt_url=https://services.gradle.org/distributions/gradle-8.14.3-bin.zip
+buildopt_sha256=bd71102213493060956ec229d946beee57158dbd89d0e62b91bca0fa2c5f3531
+buildopt_root=${BUILDOPT_GRADLE_COMPAT_ROOT:-"${buildopt_repo_root}/.tools/gradle-compat"}
+buildopt_archive="${buildopt_root}/gradle-${buildopt_version}-bin.zip"
+buildopt_home="${buildopt_root}/gradle-${buildopt_version}"
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-gradle-compat.XXXXXX")
+
+buildopt_cleanup() {
+    case "${buildopt_temporary}" in
+        "${TMPDIR:-/tmp}"/buildopt-gradle-compat.*)
+            rm -rf -- "${buildopt_temporary}"
+            ;;
+        *)
+            printf 'refusing unsafe temporary cleanup path: %s\n' \
+                "${buildopt_temporary}" >&2
+            return 1
+            ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in curl grep mktemp mv rm sha256sum unzip; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required Gradle compatibility command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+if [[ -z "${buildopt_root}" || "${buildopt_root}" == "/" ]]; then
+    printf 'refusing unsafe Gradle compatibility root: %s\n' \
+        "${buildopt_root:-<empty>}" >&2
+    exit 1
+fi
+mkdir -p -- "${buildopt_root}"
+
+if [[ ! -f "${buildopt_archive}" ]] ||
+    ! printf '%s  %s\n' "${buildopt_sha256}" "${buildopt_archive}" |
+        sha256sum -c - >/dev/null 2>&1; then
+    buildopt_download="${buildopt_temporary}/gradle-${buildopt_version}-bin.zip"
+    curl \
+        --fail \
+        --location \
+        --proto '=https' \
+        --retry 3 \
+        --retry-delay 1 \
+        --show-error \
+        --silent \
+        --output "${buildopt_download}" \
+        "${buildopt_url}"
+    printf '%s  %s\n' "${buildopt_sha256}" "${buildopt_download}" |
+        sha256sum -c - >/dev/null
+    mv -f -- "${buildopt_download}" "${buildopt_archive}"
+fi
+
+if [[ ! -x "${buildopt_home}/bin/gradle" ]]; then
+    buildopt_extract="${buildopt_temporary}/extract"
+    mkdir -- "${buildopt_extract}"
+    unzip -q "${buildopt_archive}" -d "${buildopt_extract}"
+    if [[ ! -x "${buildopt_extract}/gradle-${buildopt_version}/bin/gradle" ]]; then
+        printf 'Gradle %s archive has an unexpected layout\n' \
+            "${buildopt_version}" >&2
+        exit 1
+    fi
+    if [[ -e "${buildopt_home}" ]]; then
+        printf 'Gradle compatibility destination is not a valid installation: %s\n' \
+            "${buildopt_home}" >&2
+        exit 1
+    fi
+    mv -- "${buildopt_extract}/gradle-${buildopt_version}" "${buildopt_home}"
+fi
+
+if [[ ! -x "${buildopt_home}/bin/gradle" ]]; then
+    printf 'provisioned Gradle compatibility distribution is missing: %s\n' \
+        "${buildopt_home}/bin/gradle" >&2
+    exit 1
+fi
+if ! buildopt_version_output=$(
+    "${buildopt_home}/bin/gradle" --no-daemon --version 2>&1
+); then
+    printf 'provisioned Gradle compatibility distribution failed its version probe\n' >&2
+    exit 1
+fi
+if ! grep -Fq "Gradle ${buildopt_version}" <<<"${buildopt_version_output}"; then
+    printf 'provisioned Gradle compatibility distribution does not match %s\n' \
+        "${buildopt_version}" >&2
+    exit 1
+fi
+
+printf '%s\n' "${buildopt_home}"
