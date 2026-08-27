@@ -38,6 +38,11 @@ negative deltas, native failures, dependency exclusions and incomplete sample
 counts remain visible. A bounded run is reported as `INCOMPLETE`, never as a
 terminal decision.
 
+After each family is written, the runner compacts its temporary checkouts and
+dependency homes while retaining the auditable subject JSON, observations and
+exclusions. This keeps the multi-family campaign above its disk floor without
+changing either measured arm or the reported evidence.
+
 ## Running it
 
 The default runner attempts all 20 primary commits per family and consumes a
