@@ -42,16 +42,20 @@ func TestHelperProcess(t *testing.T) {
 func TestRunnerActivatesOnlyWithExactDecisionAndSuspendsRegression(t *testing.T) {
 	root := t.TempDir()
 	now := time.Date(2026, 8, 27, 20, 0, 0, 0, time.UTC)
-	profile, privateKey := testProfile(t, root, now, 2, 5, 25, "same", "same")
+	profile, privateKey := testProfile(t, root, now, 0, 0, 25, "same", "same")
 	runner, err := New(profile)
 	if err != nil {
 		t.Fatal(err)
 	}
+	runner.execute = deterministicExecutor(t, map[string]time.Duration{
+		"candidate": 2 * time.Millisecond,
+		"native":    5 * time.Millisecond,
+	})
 	first, err := runner.Run(context.Background(), false)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if first.Status != StatusActiveExecuted || first.Reason != ReasonActive || !first.CandidateExecuted || !first.Counterfactual || !first.ExactOutputs || first.Selected != SelectedCandidate || first.SavingNs <= 0 {
+	if first.Status != StatusActiveExecuted || first.Reason != ReasonActive || !first.CandidateExecuted || !first.Counterfactual || !first.ExactOutputs || first.Selected != SelectedCandidate || first.SavingNs != int64(3*time.Millisecond) {
 		t.Fatalf("active execution = %+v", first)
 	}
 	if first.Candidate == nil || first.Native == nil {
@@ -68,6 +72,10 @@ func TestRunnerActivatesOnlyWithExactDecisionAndSuspendsRegression(t *testing.T)
 	if err != nil {
 		t.Fatal(err)
 	}
+	regressedRunner.execute = deterministicExecutor(t, map[string]time.Duration{
+		"candidate-regression": 60 * time.Millisecond,
+		"native-regression":    1 * time.Millisecond,
+	})
 	regressed, err := regressedRunner.Run(context.Background(), false)
 	if err != nil {
 		t.Fatal(err)
@@ -81,6 +89,29 @@ func TestRunnerActivatesOnlyWithExactDecisionAndSuspendsRegression(t *testing.T)
 	}
 	if second.Status != StatusSuspended || second.Reason != ReasonPreviouslySuspended || second.CandidateExecuted || second.Native == nil {
 		t.Fatalf("post-suspension execution = %+v", second)
+	}
+}
+
+func deterministicExecutor(t *testing.T, durations map[string]time.Duration) commandExecutor {
+	t.Helper()
+	return func(ctx context.Context, command Command, outputs []string) ArmResult {
+		t.Helper()
+		if err := ctx.Err(); err != nil {
+			return ArmResult{Outcome: OutcomeCancelled, ExitCode: 130}
+		}
+		duration, ok := durations[filepath.Base(command.Dir)]
+		if !ok {
+			t.Fatalf("no deterministic duration for %s", command.Dir)
+		}
+		if len(outputs) != 1 || outputs[0] != "out.txt" {
+			t.Fatalf("unexpected deterministic outputs: %v", outputs)
+		}
+		return ArmResult{
+			Outcome:      OutcomeSuccess,
+			DurationNs:   duration.Nanoseconds(),
+			OutputSHA256: digest("deterministic-output"),
+			OutputBytes:  4,
+		}
 	}
 }
 

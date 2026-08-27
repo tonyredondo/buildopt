@@ -81,6 +81,10 @@ type Profile struct {
 	Now                         func() time.Time
 }
 
+// commandExecutor separates lifecycle policy from process timing. New always
+// installs runCommand; package tests can inject deterministic arm evidence.
+type commandExecutor func(context.Context, Command, []string) ArmResult
+
 // ArmResult records one command attempt. Diagnostics stay in memory and are
 // never written to evidence because they can contain repository details.
 type ArmResult struct {
@@ -179,6 +183,7 @@ func QualifyTrial(report stickytrial.Report, minimumPairs int) Qualification {
 type Runner struct {
 	mu        sync.Mutex
 	profile   Profile
+	execute commandExecutor
 	invocation uint64
 	suspended bool
 }
@@ -198,7 +203,7 @@ func New(profile Profile) (*Runner, error) {
 	profile.Candidate = copyCommand(profile.Candidate)
 	profile.Native = copyCommand(profile.Native)
 	profile.PublicKeys = copyKeys(profile.PublicKeys)
-	return &Runner{profile: profile}, nil
+	return &Runner{profile: profile, execute: runCommand}, nil
 }
 
 func validateProfile(profile Profile) error {
@@ -283,7 +288,7 @@ func (runner *Runner) Run(ctx context.Context, bypass bool) (Execution, error) {
 	}
 	nativeOnly := func(reason string, status string) (Execution, error) {
 		execution.Status, execution.Reason = status, reason
-		execution.Native = armPointer(runCommand(ctx, runner.profile.Native, runner.profile.RequiredOutputs))
+		execution.Native = armPointer(runner.execute(ctx, runner.profile.Native, runner.profile.RequiredOutputs))
 		return finish()
 	}
 	if bypass {
@@ -308,13 +313,13 @@ func (runner *Runner) Run(ctx context.Context, bypass bool) (Execution, error) {
 		return nativeOnly(ReasonCancelled, StatusNativeRetained)
 	}
 	execution.CandidateExecuted = true
-	candidate := runCommand(ctx, runner.profile.Candidate, runner.profile.RequiredOutputs)
+	candidate := runner.execute(ctx, runner.profile.Candidate, runner.profile.RequiredOutputs)
 	execution.Candidate = armPointer(candidate)
 	if candidate.Outcome != OutcomeSuccess {
 		runner.suspended = true
 		execution.Suspended = true
 		execution.Status, execution.Reason = StatusSuspended, reasonForArm(candidate, ReasonCandidateFailure)
-		execution.Native = armPointer(runCommand(ctx, runner.profile.Native, runner.profile.RequiredOutputs))
+		execution.Native = armPointer(runner.execute(ctx, runner.profile.Native, runner.profile.RequiredOutputs))
 		return finish()
 	}
 	if runner.invocation%runner.profile.CounterfactualEvery != 0 {
@@ -323,7 +328,7 @@ func (runner *Runner) Run(ctx context.Context, bypass bool) (Execution, error) {
 		return finish()
 	}
 	execution.Counterfactual = true
-	native := runCommand(ctx, runner.profile.Native, runner.profile.RequiredOutputs)
+	native := runner.execute(ctx, runner.profile.Native, runner.profile.RequiredOutputs)
 	execution.Native = armPointer(native)
 	if native.Outcome != OutcomeSuccess {
 		runner.suspended = true
