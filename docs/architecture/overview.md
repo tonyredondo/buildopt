@@ -93,13 +93,11 @@ Configuration Cache state without granting authority or changing the Gradle
 result. `SWL-010` adds a trusted-CI trial plane that runs isolated candidate
 and native commands with separate checkout, Gradle/cache/daemon and BuildOpt
 state roots; it is budgeted, order-balanced and exact-output checked. Its first
-result is negative for value, so the trial plane remains diagnostic and cannot
-activate an action. `internal/stickyactive` and `internal/durablecatalog` also
-prove isolated execution/suspension and review-only patch mechanics, but none of
-those benchmark-owned packages is called from the ordinary launcher today.
-`SWL-014B` owns the missing composition from observation through signed active
-decision and economics behind the committed wrapper. Its only new composition
-root is `internal/launcher/sticky_learning.go`; `internal/launcher/run.go`
+result is negative for value, so that historical trial remains diagnostic.
+`internal/stickyactive` proves isolated execution/suspension and
+`internal/durablecatalog` keeps patches review-only. `SWL-014B` now composes
+observation through signed active decision and economics behind the committed
+wrapper. Its only composition root is `internal/launcher/sticky_learning.go`; `internal/launcher/run.go`
 delegates to it, and shared conservative value statistics live in
 `internal/stickyvalue`. Trusted learning additionally requires mode `auto`, a
 non-zero committed trial budget, explicit `BUILDOPT_STICKY_LEARNING=1` and an
@@ -107,6 +105,8 @@ owner token with state-write/cache-read/state-read authority. This boundary is
 frozen in the
 [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
 and its [v2 machine contract](../../specs/poc-sticky-wrapper-longitudinal-v2.json).
+Every candidate, native and counterfactual child remains owned by the launcher
+process supervisor through explicit active/trial executor adapters.
 It builds on deterministic generation, verified package bootstrap, exact
 Gradle passthrough, authenticated portable connection and read-only central
 cache integration. The decision store grants no production authority and does

@@ -21,11 +21,17 @@ ordered work, frozen thresholds and repository-documentation alignment with:
 ./dev/check-sticky-wrapper-learning-plan
 ```
 
-This check validates planning authority only. The wrapper primitives exist,
-but it does not prove that the observation, trial, active-action and durable
-paths are composed behind one customer invocation. The current route requires
-`SWL-014A..D` before the longitudinal v2 campaign may run; the retained v1
-sample is diagnostic-only.
+This check validates planning authority only. `SWL-014B` separately proves
+that observation, trial, value, signed active execution, suspension and ledger
+status are composed behind the customer invocation. Validate that lifecycle
+with:
+
+```bash
+./dev/check-sticky-wrapper-learning-lifecycle
+```
+
+The remaining route requires `SWL-014C/D` before the longitudinal v2 campaign
+may run; the retained v1 sample is diagnostic-only.
 
 Validate the frozen four-file format, both parser shapes, all negative
 fixtures, routing and update semantics with:

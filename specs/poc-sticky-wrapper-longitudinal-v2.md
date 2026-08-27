@@ -1,6 +1,6 @@
 # Sticky wrapper longitudinal campaign v2
 
-Status: preregistered POC measurement contract; blocked by `SWL-014B..D`.
+Status: preregistered POC measurement contract; blocked by `SWL-014C/D`.
 
 ## Why v2 exists
 
@@ -16,8 +16,8 @@ That evidence remains immutable and useful for compatibility. It is
 
 ## Preconditions
 
-Timing cannot start until all four gates pass. `SWL-014A` is now complete;
-`SWL-014B..D` remain open:
+Timing cannot start until all four gates pass. `SWL-014A/B` are now complete;
+`SWL-014C/D` remain open:
 
 1. `SWL-014A` proves arm symmetry and a checker that rejects timing-only
    readiness.
@@ -46,8 +46,8 @@ file manifest and focused validation commands for every remaining block.
 one valid zero-pair fixture, four named negative fixtures and checked result
 prove arm symmetry without executing or timing a customer build.
 
-The final campaign mode deliberately remains blocked until `SWL-014B..D`
-define and prove the real lifecycle/action evidence it must consume. `SWL-015`
+The final campaign mode deliberately remains blocked until `SWL-014C/D`
+define and prove the public opportunity/value evidence it must consume. `SWL-015`
 owns the exact later modifications to the same runner, checker and fixture
 test; this avoids inventing a future evidence adapter during preflight work.
 

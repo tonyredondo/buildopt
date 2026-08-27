@@ -213,10 +213,11 @@ to an activation, confidence, payback or terminal criterion.
 
 The machine-readable sample is
 [`poc-sticky-wrapper-longitudinal-sample-v1`](../../benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md).
-The corrected path is deliberately staged: `SWL-014A` has now proved
+The corrected path is deliberately staged: `SWL-014A` proved
 cache-symmetric arms and lifecycle-aware zero-pair readiness;
-`SWL-014B` connects the real wrapper-driven
-learning/action loop; `SWL-014C` requires generic testable actions in at least
+`SWL-014B` now connects the real wrapper-driven learning/action loop, including
+value qualification, active counterfactual, suspension and status economics;
+`SWL-014C` requires generic testable actions in at least
 three public families; and `SWL-014D` proves positive installed-path value.
 Only then may `SWL-015 v2` spend the longitudinal campaign budget, followed by
 the unchanged `SWL-016` terminal scorecard.
@@ -352,8 +353,8 @@ and 250-ms p95 local native-decision overhead, a positive complete portfolio
 and independently positive value/payback in at least three of five public
 families. Every bootstrap, observation, trial, cache, fallback and action cost
 counts. Historical AF observations and the cache-asymmetric SWL-015 v1 sample
-are context only. `SWL-014A` is closed without timing a customer build; the
-immediate work is `SWL-014B..D`. The expensive
+are context only. `SWL-014A/B` are closed without claiming public-build value;
+the immediate work is `SWL-014C/D`. The expensive
 longitudinal campaign is intentionally blocked until the actual customer path
 can activate and measure generic actions.
 

@@ -92,6 +92,30 @@ func TestRunnerActivatesOnlyWithExactDecisionAndSuspendsRegression(t *testing.T)
 	}
 }
 
+func TestRunWithExecutorUsesCallerOwnedProcessBoundary(t *testing.T) {
+	root := t.TempDir()
+	now := time.Date(2026, 8, 27, 20, 0, 0, 0, time.UTC)
+	profile, _ := testProfile(t, root, now, 0, 0, 25, "same", "same")
+	runner, err := New(profile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	calls := 0
+	execution, err := runner.RunWithExecutor(context.Background(), false, func(context.Context, Command, []string) ArmResult {
+		calls++
+		return ArmResult{Outcome: OutcomeSuccess, DurationNs: int64(time.Millisecond), OutputSHA256: digest("same"), OutputBytes: 4}
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if calls != 2 || execution.Status != StatusActiveExecuted || !execution.ExactOutputs {
+		t.Fatalf("adapter calls=%d execution=%+v", calls, execution)
+	}
+	if _, err := runner.RunWithExecutor(context.Background(), false, nil); err == nil {
+		t.Fatal("nil executor accepted")
+	}
+}
+
 func deterministicExecutor(t *testing.T, durations map[string]time.Duration) commandExecutor {
 	t.Helper()
 	return func(ctx context.Context, command Command, outputs []string) ArmResult {
@@ -128,7 +152,9 @@ func TestRunnerFailClosedDecisionAndOutputCases(t *testing.T) {
 		{name: "expiry", mutate: func(profile *Profile) { profile.Now = func() time.Time { return now.Add(2 * time.Hour) } }, reason: ReasonExpiredDecision},
 		{name: "revocation", mutate: func(profile *Profile) { profile.RevocationEpoch = 1 }, reason: ReasonRevokedDecision},
 		{name: "candidate failure", mutate: func(profile *Profile) { profile.Candidate = helperCommand(t, root, "candidate-failure", "same", 1, 37) }, reason: ReasonCandidateFailure},
-		{name: "output mismatch", mutate: func(profile *Profile) { profile.Candidate = helperCommand(t, root, "candidate-mismatch", "candidate", 1, 0) }, reason: ReasonOutputMismatch},
+		{name: "output mismatch", mutate: func(profile *Profile) {
+			profile.Candidate = helperCommand(t, root, "candidate-mismatch", "candidate", 1, 0)
+		}, reason: ReasonOutputMismatch},
 	}
 	for _, testCase := range cases {
 		t.Run(testCase.name, func(t *testing.T) {
@@ -200,9 +226,9 @@ func testProfile(t *testing.T, root string, now time.Time, candidateDelay, nativ
 	actionID := "action/active-test"
 	profile := Profile{
 		ActionID: actionID, ExpectedBinding: binding,
-		PublicKeys: map[string]ed25519.PublicKey{"owner": publicKey},
-		Candidate: helperCommand(t, root, "candidate", candidateValue, candidateDelay, 0),
-		Native: helperCommand(t, root, "native", nativeValue, nativeDelay, 0),
+		PublicKeys:      map[string]ed25519.PublicKey{"owner": publicKey},
+		Candidate:       helperCommand(t, root, "candidate", candidateValue, candidateDelay, 0),
+		Native:          helperCommand(t, root, "native", nativeValue, nativeDelay, 0),
 		RequiredOutputs: []string{"out.txt"}, CounterfactualEvery: 1,
 		RegressionTolerancePermille: uint64(tolerance), Now: func() time.Time { return now },
 	}

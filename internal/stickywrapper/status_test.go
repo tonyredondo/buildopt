@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/tonyredondo/buildopt/internal/stickydecision"
 	"github.com/tonyredondo/buildopt/internal/stickyobservation"
 )
 
@@ -138,5 +139,41 @@ func TestStatusMeasurementRejectsUnavailableZero(t *testing.T) {
 	}
 	if err := report.Validate(); err == nil {
 		t.Fatal("unavailable numeric zero was accepted")
+	}
+}
+
+func TestBuildStatusLoadsVerifiedLifecycleEconomics(t *testing.T) {
+	root := t.TempDir()
+	if _, err := (Generator{Root: root, Resolver: &fakeResolver{latest: fixtureRelease("1.2.3", 'a')}}).Init(context.Background(), configuredFixture()); err != nil {
+		t.Fatal(err)
+	}
+	source, err := os.ReadFile(filepath.Join("..", "..", "benchmarks", "results", "sticky-wrapper-learning-lifecycle-v1.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var document map[string]any
+	if err := json.Unmarshal(source, &document); err != nil {
+		t.Fatal(err)
+	}
+	scope := stickyobservation.ScopeForRoot("example/pilot")
+	ledger := document["ledger"].(map[string]any)
+	binding := ledger["binding"].(map[string]any)
+	binding["repositoryScopeSha256"] = scope
+	raw, err := json.Marshal(document)
+	if err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(t.TempDir(), "lifecycle.json")
+	if err := os.WriteFile(path, raw, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv(learningLifecycleOutputEnv, path)
+	t.Setenv("XDG_CACHE_HOME", t.TempDir())
+	report, err := BuildStatus(root, "STATUS")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.Trials.Count.Value == nil || *report.Trials.Count.Value != 4 || report.Economics.NetSavedMs.Value == nil || *report.Economics.NetSavedMs.Value != 2 || report.Decision.StoredDecision != stickydecision.ExecutionRetired || !report.Fallback.Applied {
+		t.Fatalf("lifecycle status = %+v", report)
 	}
 }

@@ -75,8 +75,8 @@ The corrected order is:
 
 1. `SWL-014A`: enforce identical cache opportunity and lifecycle-aware
    readiness in a versioned campaign protocol;
-2. `SWL-014B`: connect the existing observer, detector, trial, decision, active
-   runner, suspension and ledger behind `./buildoptw`;
+2. `SWL-014B` (complete): connect the existing observer, detector, trial,
+   decision, active runner, suspension and ledger behind `./buildoptw`;
 3. `SWL-014C`: find independently testable generic actions in at least three of
    the five frozen public families;
 4. `SWL-014D`: prove positive conservative value through the installed wrapper;

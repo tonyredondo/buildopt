@@ -114,6 +114,39 @@ func TestRunPairedRequiresExactOutputsAndTwoInvocations(t *testing.T) {
 	}
 }
 
+func TestRunPairedWithExecutorUsesCallerOwnedProcessBoundary(t *testing.T) {
+	root := t.TempDir()
+	isolation := testIsolation(root)
+	for _, path := range isolation.paths() {
+		if err := os.MkdirAll(path, 0o700); err != nil {
+			t.Fatal(err)
+		}
+	}
+	scheduler, err := NewScheduler(Budget{NaturalRunnerNs: 1_000_000, MaxExtraPermille: 500, MaxConcurrent: 1, TrustedCI: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	assignment, err := scheduler.Assign("adapter", 100_000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	calls := 0
+	execute := func(context.Context, Command, Isolation, []string) ArmResult {
+		calls++
+		return ArmResult{Outcome: OutcomeSuccess, DurationNs: 10_000, OutputSHA256: Digest("same"), OutputBytes: 4}
+	}
+	trial, err := RunPairedWithExecutor(context.Background(), assignment, isolation,
+		Command{Program: "/bin/true", Dir: isolation.CandidateDir, Env: []string{"PATH=/usr/bin:/bin"}},
+		Command{Program: "/bin/true", Dir: isolation.NativeDir, Env: []string{"PATH=/usr/bin:/bin"}},
+		[]string{"build/out.txt"}, execute)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if calls != 2 || trial.InvocationCount != 2 || trial.Equivalence != EquivalenceExact {
+		t.Fatalf("adapter calls=%d trial=%+v", calls, trial)
+	}
+}
+
 func TestRunPairedRetainsInconclusiveAndCancellation(t *testing.T) {
 	root := t.TempDir()
 	isolation := testIsolation(root)

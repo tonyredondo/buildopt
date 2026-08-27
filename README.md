@@ -136,15 +136,17 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > atomically cache the pinned native package, with verified zero-network warm
 > reuse. Developers and CI can now run `./buildoptw <gradle args...>` without a
 > global BuildOpt installation or a
-> hand-authored profile. The implemented wrapper currently provides verified
+> hand-authored profile. The implemented wrapper now composes verified
 > bootstrap, passthrough, optional Gradle-compatible HTTPS cache, bounded
-> observation and native fallback. The POC target is to connect its separate
-> typed decision, trial, active-execution and durable-patch components into one
-> lifecycle behind that command. Cache objects never authorize actions, server
+> observation, budgeted paired trials, conservative value qualification,
+> signed active execution, suspension and native fallback. Cache objects never authorize actions, server
 > failure retains native Gradle and credentials remain private. Continuation
 > requires positive cumulative value in at least three of five public families
 > after every wrapper, learning, trial, cache and fallback cost. Follow the
 > [Sticky Wrapper Learning POC Tracker](./docs/plans/sticky-wrapper-learning-poc-tracker.md).
+> The deterministic lifecycle proof and all ten native-fallback negatives are
+> checked by `./dev/check-sticky-wrapper-learning-lifecycle`; public repository
+> value still depends on the next opportunity and installed-value gates.
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,
 > append-only phase timing and provenance for requested Gradle builds. The

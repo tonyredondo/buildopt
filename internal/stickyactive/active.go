@@ -81,9 +81,14 @@ type Profile struct {
 	Now                         func() time.Time
 }
 
-// commandExecutor separates lifecycle policy from process timing. New always
-// installs runCommand; package tests can inject deterministic arm evidence.
-type commandExecutor func(context.Context, Command, []string) ArmResult
+// Executor runs one complete arm and returns bounded evidence. The launcher
+// adapter uses this seam to preserve its process-group and signal contract;
+// package users that do not need that integration keep using Run.
+type Executor func(context.Context, Command, []string) ArmResult
+
+// commandExecutor keeps package-local deterministic fixtures source
+// compatible while the exported adapter is used by the launcher.
+type commandExecutor = Executor
 
 // ArmResult records one command attempt. Diagnostics stay in memory and are
 // never written to evidence because they can contain repository details.
@@ -183,7 +188,7 @@ func QualifyTrial(report stickytrial.Report, minimumPairs int) Qualification {
 type Runner struct {
 	mu        sync.Mutex
 	profile   Profile
-	execute commandExecutor
+	execute Executor
 	invocation uint64
 	suspended bool
 }
@@ -267,6 +272,21 @@ func copyKeys(keys map[string]ed25519.PublicKey) map[string]ed25519.PublicKey {
 // profile runs the candidate and, when due, an isolated native counterfactual;
 // any failure or regression suspends the profile before another candidate run.
 func (runner *Runner) Run(ctx context.Context, bypass bool) (Execution, error) {
+	return runner.runWithExecutor(ctx, bypass, runner.execute)
+}
+
+// RunWithExecutor applies the same fail-closed lifecycle policy while routing
+// candidate, native and counterfactual processes through the caller-owned
+// executor. This is the only supported adapter for the launcher composition
+// root; a nil executor is rejected before state or child execution.
+func (runner *Runner) RunWithExecutor(ctx context.Context, bypass bool, execute Executor) (Execution, error) {
+	if execute == nil {
+		return Execution{}, errors.New("sticky active executor is nil")
+	}
+	return runner.runWithExecutor(ctx, bypass, execute)
+}
+
+func (runner *Runner) runWithExecutor(ctx context.Context, bypass bool, execute Executor) (Execution, error) {
 	if runner == nil {
 		return Execution{}, errors.New("sticky active runner is nil")
 	}
@@ -288,7 +308,7 @@ func (runner *Runner) Run(ctx context.Context, bypass bool) (Execution, error) {
 	}
 	nativeOnly := func(reason string, status string) (Execution, error) {
 		execution.Status, execution.Reason = status, reason
-		execution.Native = armPointer(runner.execute(ctx, runner.profile.Native, runner.profile.RequiredOutputs))
+		execution.Native = armPointer(execute(ctx, runner.profile.Native, runner.profile.RequiredOutputs))
 		return finish()
 	}
 	if bypass {
@@ -313,13 +333,13 @@ func (runner *Runner) Run(ctx context.Context, bypass bool) (Execution, error) {
 		return nativeOnly(ReasonCancelled, StatusNativeRetained)
 	}
 	execution.CandidateExecuted = true
-	candidate := runner.execute(ctx, runner.profile.Candidate, runner.profile.RequiredOutputs)
+	candidate := execute(ctx, runner.profile.Candidate, runner.profile.RequiredOutputs)
 	execution.Candidate = armPointer(candidate)
 	if candidate.Outcome != OutcomeSuccess {
 		runner.suspended = true
 		execution.Suspended = true
 		execution.Status, execution.Reason = StatusSuspended, reasonForArm(candidate, ReasonCandidateFailure)
-		execution.Native = armPointer(runner.execute(ctx, runner.profile.Native, runner.profile.RequiredOutputs))
+		execution.Native = armPointer(execute(ctx, runner.profile.Native, runner.profile.RequiredOutputs))
 		return finish()
 	}
 	if runner.invocation%runner.profile.CounterfactualEvery != 0 {
@@ -328,7 +348,7 @@ func (runner *Runner) Run(ctx context.Context, bypass bool) (Execution, error) {
 		return finish()
 	}
 	execution.Counterfactual = true
-	native := runner.execute(ctx, runner.profile.Native, runner.profile.RequiredOutputs)
+	native := execute(ctx, runner.profile.Native, runner.profile.RequiredOutputs)
 	execution.Native = armPointer(native)
 	if native.Outcome != OutcomeSuccess {
 		runner.suspended = true

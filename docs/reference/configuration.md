@@ -85,9 +85,12 @@ native no-op/light-observation path; `trial_budget_percent = 0` forbids trial
 spending. The historical SWL-015 v1 runner used exactly that combination and is
 diagnostic-only. The corrected v2 campaign requires an explicit project
 connection, nonzero bounded budget where trials are needed, identical cache
-policy in both arms and lifecycle/action/ledger evidence. `SWL-014B` remains the
-implementation gate for consuming qualified active decisions in ordinary
-wrapper invocations.
+policy in both arms and lifecycle/action/ledger evidence. The composed path now
+requires `BUILDOPT_STICKY_LEARNING=1`, committed `mode = "auto"`, non-zero
+`trial_budget_percent` and a token with `CACHE_READ`, `STATE_READ` and
+`STATE_WRITE`. The switch, token and optional
+`BUILDOPT_STICKY_LIFECYCLE_OUTPUT` diagnostic path are scrubbed before Gradle.
+Absent authority retains native execution.
 
 The local decision-store root is private, user-owned state containing immutable
 JCS records, a generation head, idempotency receipts and a revocation epoch.

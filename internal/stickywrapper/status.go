@@ -21,6 +21,7 @@ import (
 const (
 	StatusSchemaVersion          = "buildopt.sticky/status/v1"
 	ordinaryObservationOutputEnv = "BUILDOPT_STICKY_OBSERVATION_OUTPUT"
+	learningLifecycleOutputEnv   = "BUILDOPT_STICKY_LIFECYCLE_OUTPUT"
 )
 
 // Measurement is an explicitly available or unavailable value. A missing
@@ -65,9 +66,9 @@ type ObservationStatus struct {
 	CacheTime     Measurement `json:"cacheTimeMs"`
 }
 
-// TrialStatus is intentionally unavailable until the POC writes a local,
-// verified trial ledger. It prevents ordinary observations from being
-// mistaken for candidate/control experiments.
+// TrialStatus is unavailable until a scope-bound lifecycle result is present.
+// It prevents ordinary observations from being mistaken for candidate/control
+// experiments.
 type TrialStatus struct {
 	Count  Measurement `json:"count"`
 	Reason string      `json:"reason"`
@@ -82,8 +83,8 @@ type CacheStatus struct {
 	Reason    string      `json:"reason"`
 }
 
-// EconomicsStatus is populated only by a verified signed ledger. No local
-// ledger is currently exposed by the wrapper status command.
+// EconomicsStatus is populated only by a validated, scope-bound lifecycle
+// ledger. Missing evidence remains unavailable rather than zero.
 type EconomicsStatus struct {
 	GrossSavedMs   Measurement `json:"grossSavedMs"`
 	BuildOptCostMs Measurement `json:"buildoptCostMs"`
@@ -215,11 +216,95 @@ func BuildStatus(root, reportType string) (StatusReport, error) {
 			BuildOptSHA256:  last.Provenance.BuildOptSHA256,
 		}
 	}
+	if lifecycle, lifecycleErr := loadLearningLifecycleStatus(scope); lifecycleErr != nil {
+		return StatusReport{}, lifecycleErr
+	} else if lifecycle != nil {
+		report.Trials = lifecycle.trials
+		report.Economics = lifecycle.economics
+		report.Decision = lifecycle.decision
+		report.Fallback = FallbackStatus{Applied: true, Reason: "The composed fixture suspended and retired the regressed action; native Gradle is retained."}
+	}
 	report.Explanation = explainReport(report)
 	if err := report.Validate(); err != nil {
 		return StatusReport{}, err
 	}
 	return report, nil
+}
+
+type learningLifecycleStatus struct {
+	trials    TrialStatus
+	economics EconomicsStatus
+	decision  DecisionStatus
+}
+
+func loadLearningLifecycleStatus(scope string) (*learningLifecycleStatus, error) {
+	path := os.Getenv(learningLifecycleOutputEnv)
+	if path == "" {
+		cacheRoot, err := os.UserCacheDir()
+		if err != nil {
+			return nil, nil
+		}
+		path = filepath.Join(cacheRoot, "buildopt", "sticky", "state", scope, "lifecycle.json")
+	}
+	if !filepath.IsAbs(path) || filepath.Clean(path) != path {
+		return nil, errors.New("learning lifecycle path must be one clean absolute path")
+	}
+	raw, err := os.ReadFile(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, fmt.Errorf("read learning lifecycle: %w", err)
+	}
+	var document struct {
+		SchemaVersion string                        `json:"schemaVersion"`
+		Ledger        stickydecision.EconomicLedger `json:"ledger"`
+		Recomputed    struct {
+			PairEffectsNs []int64 `json:"pairEffectsNs"`
+			Qualified     bool    `json:"qualified"`
+		} `json:"recomputed"`
+		Outcome string `json:"outcome"`
+	}
+	var envelope map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &envelope); err != nil {
+		return nil, errors.New("learning lifecycle evidence is invalid")
+	}
+	for name, target := range map[string]any{
+		"schemaVersion": &document.SchemaVersion, "ledger": &document.Ledger,
+		"recomputed": &document.Recomputed, "outcome": &document.Outcome,
+	} {
+		value, ok := envelope[name]
+		if !ok || json.Unmarshal(value, target) != nil {
+			return nil, errors.New("learning lifecycle evidence is incomplete")
+		}
+	}
+	ledgerRaw, err := stickydecision.MarshalCanonical(document.Ledger)
+	if err != nil {
+		return nil, errors.New("learning lifecycle ledger is invalid")
+	}
+	if decoded, decodeErr := stickydecision.DecodeDocument(ledgerRaw, time.Now().UTC()); decodeErr != nil || decoded.Ledger == nil {
+		return nil, errors.New("learning lifecycle ledger is invalid")
+	}
+	if document.SchemaVersion != "buildopt.poc/sticky-wrapper-learning-lifecycle/v1" ||
+		document.Outcome != "LIFECYCLE_COMPOSED_NATIVE_FALLBACK_PROVEN" ||
+		!document.Recomputed.Qualified || len(document.Recomputed.PairEffectsNs) == 0 ||
+		document.Ledger.Binding.RepositoryScopeSHA256 != scope ||
+		document.Ledger.BuildOptCostMs > uint64(^uint64(0)>>1) ||
+		document.Ledger.NetSavedMs != document.Ledger.GrossSavedMs-int64(document.Ledger.BuildOptCostMs) {
+		return nil, errors.New("learning lifecycle evidence does not reconcile")
+	}
+	count := int64(len(document.Recomputed.PairEffectsNs))
+	gross, cost, net := document.Ledger.GrossSavedMs, int64(document.Ledger.BuildOptCostMs), document.Ledger.NetSavedMs
+	return &learningLifecycleStatus{
+		trials: TrialStatus{Count: availableMeasurement(count, "pairs"), Reason: "Verified paired lifecycle evidence is available."},
+		economics: EconomicsStatus{
+			GrossSavedMs:   availableMeasurement(gross, "milliseconds"),
+			BuildOptCostMs: availableMeasurement(cost, "milliseconds"),
+			NetSavedMs:     availableMeasurement(net, "milliseconds"),
+			Reason:         "Values come from the verified economic ledger and include signed regressions.",
+		},
+		decision: DecisionStatus{State: "NATIVE", StoredDecision: stickydecision.ExecutionRetired, Reason: "The lifecycle retired its suspended action; native Gradle is retained.", Generation: document.Ledger.StoreGeneration},
+	}, nil
 }
 
 func loadOrdinaryObservations(root string, config Config, scope string) ([]stickyobservation.Record, error) {

@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_result="${buildopt_root}/benchmarks/results/sticky-wrapper-learning-lifecycle-v1.json"
+buildopt_spec="${buildopt_root}/specs/poc-sticky-wrapper-learning-lifecycle-v1.json"
+buildopt_posix_wrapper="${buildopt_root}/internal/stickywrapper/templates/buildoptw"
+buildopt_windows_wrapper="${buildopt_root}/internal/stickywrapper/templates/buildoptw.bat"
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+cd -- "${buildopt_root}"
+
+for buildopt_wrapper in "${buildopt_posix_wrapper}" "${buildopt_windows_wrapper}"; do
+    rg -F 'BUILDOPT_STICKY_LEARNING' "${buildopt_wrapper}" >/dev/null
+    rg -F 'BUILDOPT_STICKY_LIFECYCLE_OUTPUT' "${buildopt_wrapper}" >/dev/null
+done
+
+"${buildopt_root}/dev/run" --toolchain go -- go test -race \
+    ./internal/launcher ./internal/stickyobservation ./internal/stickytrial \
+    ./internal/stickydecision ./internal/stickyactive ./internal/stickyvalue \
+    ./internal/stickywrapper
+
+jq -e '
+  .schemaVersion == "buildopt.specs/sticky-wrapper-learning-lifecycle/v1" and
+  .workItem == "SWL-014B" and
+  .compositionRoot == "internal/launcher/sticky_learning.go" and
+  .learningEnvironment == "BUILDOPT_STICKY_LEARNING" and
+  .maximumTrialBudgetPercent == 5 and
+  .processOwner == "internal/launcher.executeChildWithReserved" and
+  .requiredCapabilities == ["CACHE_READ", "STATE_READ", "STATE_WRITE"] and
+  .valueEntrypoint == "stickyvalue.Evaluate" and
+  .result == "benchmarks/results/sticky-wrapper-learning-lifecycle-v1.json" and
+  .successOutcome == "LIFECYCLE_COMPOSED_NATIVE_FALLBACK_PROVEN"
+' "${buildopt_spec}" >/dev/null
+
+jq -e '
+  (keys | sort) == ([
+    "schemaVersion", "workItem", "generatedAt", "fixture", "transitions",
+    "ordinaryInvocations", "negativeCases", "ledger", "recomputed", "outcome"
+  ] | sort) and
+  .schemaVersion == "buildopt.poc/sticky-wrapper-learning-lifecycle/v1" and
+  .workItem == "SWL-014B" and
+  .outcome == "LIFECYCLE_COMPOSED_NATIVE_FALLBACK_PROVEN" and
+  (.transitions | length) == 7 and
+  ([.transitions[].reason] == [
+    "UNSEEN_TO_OBSERVE", "OBSERVE_TO_SHADOW", "SHADOW_TO_TRIAL",
+    "TRIAL_TO_QUALIFIED", "QUALIFIED_TO_ACTIVE", "ACTIVE_TO_SUSPENDED",
+    "SUSPENDED_TO_RETIRED"
+  ]) and
+  (all(.transitions[];
+    (keys | sort) == (["sequence", "from", "to", "decisionGeneration",
+      "actionId", "bindingDigest", "evidenceIds", "reason"] | sort) and
+    (.bindingDigest | test("^[0-9a-f]{64}$")) and
+    (all(.evidenceIds[]; test("^[0-9a-f]{64}$"))))) and
+  ([.negativeCases[].name] | sort) == ([
+    "MODE_OBSERVE", "MODE_OFF", "BYPASS", "MISSING_LEARNING_ENVIRONMENT",
+    "MISSING_STATE_WRITE", "ZERO_TRIAL_BUDGET", "EXPIRED_DECISION",
+    "DRIFTED_BINDING", "REVOKED_DECISION", "REGRESSED_OUTPUT_OR_VALUE"
+  ] | sort) and
+  (all(.negativeCases[]; .nativeRetained == true)) and
+  .recomputed.qualified == true and
+  .recomputed.lowerBoundNs > 0 and
+  .recomputed.netSavingNs == (.recomputed.grossSavingNs - .recomputed.totalCostNs) and
+  .ledger.netSavedMs == (.ledger.grossSavedMs - .ledger.buildOptCostMs) and
+  (all(.ledger.entries[]; .netSavedMs == (.grossSavedMs - .buildOptCostMs))) and
+  .ordinaryInvocations[0].selected == "CANDIDATE" and
+  .ordinaryInvocations[1].selected == "NATIVE" and
+  .ordinaryInvocations[1].suspended == true
+' "${buildopt_result}" >/dev/null
+
+printf 'sticky wrapper learning lifecycle: PASS\n'

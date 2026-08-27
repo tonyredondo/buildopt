@@ -3,8 +3,8 @@
 ## Status
 
 **Overall:** `IN_PROGRESS`<br>
-**Progress:** `17/22` blocks complete<br>
-**Current block:** `SWL-014B` — end-to-end learning/action composition<br>
+**Progress:** `18/22` blocks complete<br>
+**Current block:** `SWL-014C` — public opportunity and activation pre-gate<br>
 **Predecessor:** the adaptive-fragment experiment closed as
 `STOP_ADAPTIVE_FRAGMENT_POC` with zero activations and zero attributable
 saving. Its evidence remains immutable context, not authority for this POC.
@@ -283,8 +283,8 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | 13 | `SWL-013` Customer status and explanation | Human/JSON decision, cumulative economics, cache metrics and exact fallback explanation | `DONE` | SWL-011, SWL-012 |
 | 14 | `SWL-014` Two-machine installed proof | Clean producer/consumer checkouts share cache/state through HTTPS and survive outage | `DONE` | SWL-013 |
 | 14A | `SWL-014A` Protocol and comparison-fairness correction | Preserve v1 as diagnostic-only; freeze cache-symmetric v2 arms, required lifecycle evidence and campaign preflight | `DONE` | SWL-014 |
-| 14B | `SWL-014B` End-to-end learning/action composition | Connect observation, proposal, shadow, trial, qualification, signed decision, active execution, suspension and economics to the real wrapper | `IN_PROGRESS` | SWL-014A |
-| 14C | `SWL-014C` Public opportunity and activation pre-gate | Apply only generic detectors to all five frozen families and prove at least three independently testable actions before longitudinal spending | `WAITING` | SWL-014B |
+| 14B | `SWL-014B` End-to-end learning/action composition | Connect observation, proposal, shadow, trial, qualification, signed decision, active execution, suspension and economics to the real wrapper | `DONE` | SWL-014A |
+| 14C | `SWL-014C` Public opportunity and activation pre-gate | Apply only generic detectors to all five frozen families and prove at least three independently testable actions before longitudinal spending | `TODO` | SWL-014B |
 | 14D | `SWL-014D` Installed active-path value gate | Run balanced candidate/native trials through `./buildoptw`; require exact outputs, positive conservative value and complete cost attribution | `WAITING` | SWL-014C |
 | 15 | `SWL-015` Frozen public longitudinal campaign v2 | Exercise real no-op/observe/trial/active transitions over preregistered chronological windows in five families | `WAITING` | SWL-014D |
 | 16 | `SWL-016` Terminal decision | Recompute the immutable scorecard from v2 evidence or an earlier immutable stop gate and continue or stop without threshold movement | `WAITING` | SWL-015, or stop evidence from SWL-014C/014D |
@@ -956,8 +956,8 @@ Deliverables:
   fixtures named in the machine contract; and
 - [x] check in `benchmarks/results/sticky-wrapper-longitudinal-v2-preflight.json`.
 
-The final campaign cannot consume lifecycle/action evidence until
-`SWL-014B..D` create and prove it. Therefore `SWL-015`, not this block, owns
+The final campaign cannot consume public opportunity/value evidence until
+`SWL-014C/D` create and prove it. Therefore `SWL-015`, not this block, owns
 the exact manifest entries that modify these three scripts with final campaign
 and result-directory modes. This dependency correction prevents a preflight
 implementation from inventing an unowned future evidence interface.
@@ -1000,6 +1000,14 @@ than benchmark-only commands. Every transition and gross/cost/net value is
 visible through `status --json` and recomputes from immutable evidence. The
 same checker must prove mode `observe`, mode `off`, bypass, missing write
 authority and exhausted budget retain native Gradle without an action.
+
+Closed by `SWL-E020`. The launcher now owns one composition root and explicit
+active/trial executor adapters; conservative value uses checked integer
+arithmetic and complete costs. The committed fixture traverses all seven
+required transitions, reports paired value and a signed-ledger-shaped status,
+then suspends and retires a regression. All ten negative cases retain native
+execution. This is deterministic lifecycle evidence only, not a public-build
+speedup claim.
 
 ### SWL-014C — Public opportunity and activation pre-gate
 
@@ -1138,8 +1146,8 @@ customer behavior, architecture, value evidence or direction changes.
 | `SWL-E016` | SWL-015 v1 | [Bounded five-family diagnostic sample](../../benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md): 5/5 compatible exact-output pairs, 2/5 positive, 3/5 negative and -22.149 s signed total; cache-asymmetric no-op/light-observation evidence only | `DONE — DIAGNOSTIC_ONLY` |
 | `SWL-E017` | SWL-016 | Immutable terminal scorecard and continue/stop decision | `WAITING` |
 | `SWL-E019` | SWL-014A | Cache-symmetric v2 protocol, historical-v1 classification, locked autonomous execution contract, canonical zero-pair preflight, lifecycle-aware checker and four exact negative fixtures | `DONE` |
-| `SWL-E020` | SWL-014B | Real wrapper-driven lifecycle composition and recomputable transition/economic evidence | `IN_PROGRESS` |
-| `SWL-E021` | SWL-014C | Five-family generic opportunity screen and at-least-three-family activation pre-gate | `WAITING` |
+| `SWL-E020` | SWL-014B | Real wrapper-driven lifecycle composition and recomputable transition/economic evidence | `DONE` — `./dev/check-sticky-wrapper-learning-lifecycle`; seven transitions, four exact profitable fixture pairs, ten native-fallback negatives and reconciled signed economics |
+| `SWL-E021` | SWL-014C | Five-family generic opportunity screen and at-least-three-family activation pre-gate | `TODO` |
 | `SWL-E022` | SWL-014D | Installed active-path candidate/native value evidence for every admitted action | `WAITING` |
 | `SWL-E023` | SWL-015 v2 | Complete chronological lifecycle, action and cumulative-value campaign evidence | `WAITING` |
 
@@ -1167,6 +1175,7 @@ customer behavior, architecture, value evidence or direction changes.
 | Date | Change |
 | --- | --- |
 | 2026-08-27 | Closed SWL-014A. Added the canonical zero-pair v2 preflight runner/checker, exact valid and four negative fixtures, separate planned writable-root and remote-namespace identities, identical frozen workflow/cache/service/empty-seed bindings, explicit authorized learning fields and a checked `VALIDATED_NOT_READY` result. Moved final campaign-mode modification of the same scripts into the exact SWL-015 manifest because lifecycle/action evidence does not exist before SWL-014B..D; opened SWL-014B. |
+| 2026-08-27 | Closed SWL-014B. Added the sole launcher composition root, launcher-owned active/trial process adapters, explicit trusted-learning eligibility and scrubbing, checked `stickyvalue` statistics, lifecycle/status evidence and ten fail-closed cases. Opened SWL-014C; no public-family timing or activation breadth is claimed by the deterministic fixture. |
 | 2026-08-27 | Hardened the corrected sticky-wrapper route into an autonomous execution contract. Froze separate initially empty writable cache namespaces, per-arm chronological persistence, an external monotonic timing boundary, the launcher composition root and trusted-learning trigger, the two allowed generic detectors, exact evidence schemas, deterministic installed/longitudinal statistics, exact file/check manifests and conditional early-stop transitions into SWL-016. SWL-014A remains open only for its v2 runner, checker, five fixtures and checked zero-pair preflight. |
 | 2026-08-27 | Audited the sticky-wrapper route before expanding SWL-015. The retained v1 sample compared control `--build-cache` with a no-op/light-observation candidate, while benchmark-only trial, active and durable packages were not composed into the normal wrapper path. Reclassified that sample as `DIAGNOSTIC_ONLY`, preserved every terminal threshold and inserted SWL-014A..D for comparison fairness, end-to-end composition, five-family opportunity breadth and installed active-path value before a versioned SWL-015 v2 campaign. |
 | 2026-08-27 | Closed SWL-008A and hardened its signal boundary. Unconfigured invocations skip gateway, plugin handshake, managed L1, central-cache probes and bootstrap state; ordinary observation defaults to lazy light mode, with explicit full and disabled modes. The light executable digest runs concurrently when possible instead of delaying startup. The no-op path now retains the lightweight process supervisor so descendant signal forwarding and cleanup remain intact. The regenerated 20-sample Linux microbenchmark records +9 ms p95 native no-op overhead, +38 ms p95 light-observation overhead and 0.093 ms p95 pre-child decision time, all within the frozen guardrails. The passthrough fixture also exercises the unconfigured no-op path and bounded signal cleanup. This is wrapper-cost evidence only; no Gradle speedup or action authority is claimed. |

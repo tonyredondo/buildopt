@@ -390,5 +390,17 @@ if [[ -n "${PATH:-}" ]]; then
 else
     export PATH="${buildopt_tool_home}/bin"
 fi
+# Discard a caller-inherited Bash command hash after changing PATH. Without
+# this, an already-resolved global binary can bypass the locked toolchain.
+hash -r
+
+# Resolve an unqualified tool name directly inside the verified distribution.
+# This also avoids host launchers that intercept PATH lookup (for example Snap
+# command shims) after the project toolchain has already been selected.
+buildopt_command=$1
+if [[ "${buildopt_command}" != */* && -x "${buildopt_tool_home}/bin/${buildopt_command}" ]]; then
+    shift
+    set -- "${buildopt_tool_home}/bin/${buildopt_command}" "$@"
+fi
 
 exec "$@"

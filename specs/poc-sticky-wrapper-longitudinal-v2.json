@@ -14,7 +14,7 @@
     "agentMayChangeThresholds": false,
     "agentMayAddDetectors": false,
     "agentMayRenameArtifacts": false,
-    "activeBlock": "SWL-014B",
+    "activeBlock": "SWL-014C",
     "activeBlockCompleted": [
       "V2_PROTOCOL_AND_MACHINE_CONTRACT_PREREGISTERED",
       "V1_CLASSIFIED_DIAGNOSTIC_ONLY",
@@ -441,7 +441,7 @@
     },
     {
       "workItem": "SWL-014B",
-      "state": "IN_PROGRESS",
+      "state": "DONE",
       "create": [
         "internal/launcher/sticky_learning.go",
         "internal/launcher/sticky_learning_test.go",
@@ -538,7 +538,7 @@
     },
     {
       "workItem": "SWL-014C",
-      "state": "WAITING",
+      "state": "TODO",
       "create": [
         "internal/durablecatalog/public_screen.go",
         "internal/durablecatalog/public_screen_test.go",

@@ -17,6 +17,14 @@ small/medium/large Gradle build matrix and makes no performance claim.
 
 ## Sticky-wrapper observation sample
 
+The deterministic
+[`sticky-wrapper-learning-lifecycle-v1.json`](./results/sticky-wrapper-learning-lifecycle-v1.json)
+proves SWL-014B composition, not customer acceleration. Four exact fixture
+pairs produce a positive conservative interval and a reconciled net value;
+the next active observation regresses, suspends and retires the action. Ten
+missing-authority or invalid-state cases retain native Gradle. Validate the
+record with `./dev/check-sticky-wrapper-learning-lifecycle`.
+
 [`sticky-wrapper-observation-v1.json`](./results/sticky-wrapper-observation-v1.json)
 is the first ordinary-build observation sample from the repository-committed
 wrapper. Two real Gradle 9.6.1 Wrapper invocations completed successfully with

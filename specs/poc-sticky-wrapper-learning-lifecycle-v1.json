@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.specs/sticky-wrapper-learning-lifecycle/v1",
+  "workItem": "SWL-014B",
+  "compositionRoot": "internal/launcher/sticky_learning.go",
+  "learningEnvironment": "BUILDOPT_STICKY_LEARNING",
+  "maximumTrialBudgetPercent": 5,
+  "processOwner": "internal/launcher.executeChildWithReserved",
+  "requiredCapabilities": ["CACHE_READ", "STATE_READ", "STATE_WRITE"],
+  "valueEntrypoint": "stickyvalue.Evaluate",
+  "result": "benchmarks/results/sticky-wrapper-learning-lifecycle-v1.json",
+  "successOutcome": "LIFECYCLE_COMPOSED_NATIVE_FALLBACK_PROVEN"
+}

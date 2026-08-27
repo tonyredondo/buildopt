@@ -20,6 +20,11 @@ Reproducible Gradle repositories and scenarios for the golden lane, TestKit, cac
 
 Fixtures must declare their wrapper, JDK, plugins, seed, and expected result; they do not depend on accidental workstation state.
 
+`sticky-wrapper-learning/` is the SWL-014B repository-independent composition
+fixture. It injects only the frozen clock, detector, trial and publisher seams,
+then proves qualification, active counterfactual, suspension, retirement and
+ten native-fallback cases without repository or task-name rules.
+
 `adaptive-fragment-activation/` is the `AF-010` real Gradle 9.6.1 proof. Two
 independent deterministic producers feed one reproducible bundle. Unrelated
 changes restore both exact producer outputs, localized changes rebuild only

@@ -81,6 +81,11 @@ and suspends a profile on failure, mismatch or regression. It deliberately
 contains no repository, task-name or filename rules and makes no production or
 performance claim from synthetic control-flow timings.
 
+`stickyvalue/` owns SWL-014B's repository-independent paired value evaluator.
+It uses checked signed integers, a deterministic paired bootstrap, nearest-rank
+p95 and nine explicit cost categories. Missing cost or inexact/failed evidence
+cannot qualify an action; qualification is evidence, never execution authority.
+
 `launcher/` contains the dependency-free `WS-001` command passthrough, the
 `WS-002` Linux process-group and signal contract, the `WS-003` plugin handshake,
 and the neutral `WS-004` authenticated local rendezvous used by `cmd/buildopt`.

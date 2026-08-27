@@ -201,7 +201,7 @@ validate_longitudinal_v2() {
     .autonomousExecution.agentMayChangeThresholds == false and
     .autonomousExecution.agentMayAddDetectors == false and
     .autonomousExecution.agentMayRenameArtifacts == false and
-    .autonomousExecution.activeBlock == "SWL-014B" and
+    .autonomousExecution.activeBlock == "SWL-014C" and
     .autonomousExecution.activeBlockCompleted == [
         "V2_PROTOCOL_AND_MACHINE_CONTRACT_PREREGISTERED",
         "V1_CLASSIFIED_DIAGNOSTIC_ONLY",
@@ -348,7 +348,7 @@ validate_longitudinal_v2() {
         "SWL-014A", "SWL-014B", "SWL-014C", "SWL-014D", "SWL-015", "SWL-016"
     ] and
     [.implementationManifests[].state] == [
-        "DONE", "IN_PROGRESS", "WAITING", "WAITING", "WAITING", "WAITING"
+        "DONE", "DONE", "TODO", "WAITING", "WAITING", "WAITING"
     ] and
     all(.implementationManifests[];
         (.focusedChecks | length) >= 1 and
@@ -390,7 +390,7 @@ validate_longitudinal_v2() {
         "internal/stickyvalue/evaluate.go",
         "internal/stickyvalue/evaluate_test.go"
     ] and
-    .implementationManifests[1].state == "IN_PROGRESS" and
+    .implementationManifests[1].state == "DONE" and
     .implementationManifests[1].modify == [
         "internal/launcher/run.go",
         "internal/launcher/sticky_native_fast_path.go",
@@ -639,8 +639,8 @@ if [[ "${buildopt_evidence_count}" != 23 ]]; then
 fi
 
 buildopt_required_text=(
-    "${buildopt_plan}|**Progress:** \`17/22\` blocks complete"
-    "${buildopt_plan}|**Current block:** \`SWL-014B\` — end-to-end learning/action composition"
+    "${buildopt_plan}|**Progress:** \`18/22\` blocks complete"
+    "${buildopt_plan}|**Current block:** \`SWL-014C\` — public opportunity and activation pre-gate"
     "${buildopt_plan}|## Agent execution contract — decisions already made"
     "${buildopt_longitudinal_v2_contract}|SEPARATE_PER_ARM_EMPTY_AT_CAMPAIGN_START"
     "${buildopt_plan}|\`internal/launcher/sticky_learning.go\` is the only new composition root"
@@ -652,7 +652,7 @@ buildopt_required_text=(
     "${buildopt_spec}|# Sticky wrapper learning POC v1"
     "${buildopt_spec}|CONTINUE_STICKY_WRAPPER_LEARNING_POC"
     "${buildopt_tracker}|STICKY WRAPPER LEARNING POC ACTIVE; PRIOR GENERIC HYPOTHESES STOPPED"
-    "${buildopt_tracker}|SWL-014B_END_TO_END_LEARNING_COMPOSITION"
+    "${buildopt_tracker}|SWL-014C_PUBLIC_OPPORTUNITY_GATE"
     "${buildopt_tracker}|POC-STICKY-WRAPPER-LEARNING"
     "${buildopt_tracker}|\`E-403\`"
     "${buildopt_tracker}|\`E-404\`"
@@ -671,6 +671,7 @@ buildopt_required_text=(
     "${buildopt_tracker}|\`E-418\`"
     "${buildopt_tracker}|\`E-419\`"
     "${buildopt_tracker}|\`E-420\`"
+    "${buildopt_tracker}|\`E-421\`"
     "${buildopt_plan}|\`SWL-E015\`"
     "${buildopt_plan}|\`SWL-E018\`"
     "${buildopt_plan}|\`SWL-E019\`"

@@ -71,19 +71,20 @@ its checked result in `benchmarks/results/sticky-wrapper-two-machine-v1.json`.
 checked zero-pair result lives at
 `benchmarks/results/sticky-wrapper-longitudinal-v2-preflight.json`. Final
 campaign/result-directory behavior remains an exact `SWL-015` modification
-after `SWL-014B..D` provide the evidence interface it consumes.
+after `SWL-014C/D` provide the public opportunity and value evidence it consumes.
 
-`SWL-014B` will add the only launcher-owned composition root at
+`SWL-014B` added the only launcher-owned composition root at
 `internal/launcher/sticky_learning.go`, plus shared deterministic value
-statistics in `internal/stickyvalue`. It will adapt
+statistics in `internal/stickyvalue`. It adapts
 `internal/stickyobservation`, `internal/stickytrial`,
 `internal/stickydecision`, `internal/stickyactive`,
 `internal/durablecatalog` and the economic ledger. `SWL-014C` then owns
 `internal/durablecatalog/public_screen.go` and the public opportunity gate;
 `SWL-014D` owns the installed active-value command and checker. The exact file
-manifests and commands are locked in the v2 machine contract. Until 014B is
-complete, the existing packages remain separate mechanism proofs rather than
-one customer execution path.
+manifests and commands are locked in the v2 machine contract. The composed
+fixture and status evidence are checked by
+`dev/check-sticky-wrapper-learning-lifecycle`; `SWL-014C` now owns the public
+opportunity screen.
 
 Run `./dev/check-sticky-wrapper-learning-plan` to validate this planning
 boundary. As implementation begins, this map must name the concrete owning

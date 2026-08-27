@@ -38,8 +38,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 	stickyRoot := os.Getenv(stickyWrapperRootEnvironment)
 	if stickyRoot != "" {
 		if childArgs := ordinaryChildArguments(args); childArgs != nil {
-			if path, ok := prepareStickyNativeNoopPath(stickyRoot, childArgs, os.Getenv); ok {
-				return runStickyNativeNoop(path, childArgs, runStartedAt, stdin, stdout, stderr)
+			entry := prepareStickyLearningEntry(stickyRoot, childArgs, os.Getenv)
+			if entry.nativeOnly {
+				return runStickyNativeNoop(entry.nativePath, childArgs, runStartedAt, stdin, stdout, stderr)
 			}
 		}
 		ordinaryObservation = newOrdinaryObservationStateAt(
@@ -404,6 +405,8 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			"BUILDOPT_TOKEN",
 			stickyObservationOutputEnvironment,
 			stickyObservationModeEnvironment,
+			stickyLearningEnvironment,
+			"BUILDOPT_STICKY_LIFECYCLE_OUTPUT",
 		)
 		connectionStartedAt := time.Now()
 		connection, credentialEnvironment, connectionErr :=
@@ -433,6 +436,16 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 				"buildopt: sticky wrapper connection unavailable; retaining native Gradle: %v\n",
 				connectionErr,
 			)
+		}
+		if os.Getenv(stickyLearningEnvironment) == "1" {
+			config, reason := stickyLearningEligibility(stickyRoot, stickyConnection, os.Getenv)
+			if reason != "ELIGIBLE" {
+				_, _ = fmt.Fprintf(stderr, "buildopt: sticky learning unavailable (%s); retaining native Gradle\n", reason)
+			} else if err := runTrustedStickyLearning(context.Background(), stickyLearningContext{
+				Root: stickyRoot, Config: config, Connection: stickyConnection,
+			}); err != nil {
+				_, _ = fmt.Fprintf(stderr, "buildopt: sticky learning failed closed: %v; retaining native Gradle\n", err)
+			}
 		}
 	}
 	if stickyConnection != nil {

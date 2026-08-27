@@ -88,15 +88,20 @@ outputs and zero product failures**. Those deltas cannot be attributed to a
 BuildOpt action. The complete evidence is
 [`poc-sticky-wrapper-longitudinal-sample-v1`](../../benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md).
 
-The experiment remains open under a corrected protocol. `SWL-014A` freezes
-cache-symmetric arms and lifecycle-aware readiness; `SWL-014B` composes the real
-wrapper-driven learning/action loop; `SWL-014C` requires generic testable actions
+The experiment remains open under a corrected protocol. `SWL-014A` froze
+cache-symmetric arms and lifecycle-aware readiness; `SWL-014B` now composes the real
+wrapper-driven learning/action loop and proves conservative value plus native
+fallback in a repository-independent fixture; `SWL-014C` requires generic testable actions
 in at least three public families; and `SWL-014D` proves their installed-path
 value. Only `SWL-015 v2` may produce terminal longitudinal evidence.
 The [v2 machine contract](../../specs/poc-sticky-wrapper-longitudinal-v2.json)
 now fixes the exact cache topology, composition point, detector set, result
 schemas, confidence algorithms and stop transitions; no new timing is claimed
 by that planning closure.
+The lifecycle fixture reports four exact profitable pairs, 3.1 microseconds of
+net synthetic value after 0.9 microseconds of explicit costs, then proves that
+a later regression suspends and retires the action. These deterministic values
+test composition and arithmetic only; they are not public-repository speedup.
 The task-contract detector has no generic public input producer and therefore
 cannot contribute public breadth in this route; only the installed graph-scope
 pipeline can do so without adding a new hypothesis after results are known.

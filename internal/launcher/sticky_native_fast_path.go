@@ -35,6 +35,9 @@ func prepareStickyNativeNoopPath(
 	if getenv == nil || root == "" || len(childArgs) == 0 {
 		return stickyNativeNoopPath{}, false
 	}
+	if strings.TrimSpace(getenv(stickyLearningEnvironment)) == "1" {
+		return stickyNativeNoopPath{}, false
+	}
 	if err := validateStickyWrapperInvocation(root, childArgs); err != nil {
 		return stickyNativeNoopPath{}, false
 	}
@@ -154,6 +157,8 @@ func runStickyNativeNoop(
 		"BUILDOPT_TOKEN",
 		stickyObservationOutputEnvironment,
 		stickyObservationModeEnvironment,
+		stickyLearningEnvironment,
+		"BUILDOPT_STICKY_LIFECYCLE_OUTPUT",
 	}
 	if path.credentialEnvironment != "" && path.credentialEnvironment != "BUILDOPT_TOKEN" {
 		reserved = append(reserved, path.credentialEnvironment)

@@ -23,7 +23,12 @@ func executeChild(childArgs []string, environmentOverrides map[string]string, st
 }
 
 func executeChildWithReserved(childArgs []string, environmentOverrides map[string]string, additionalReserved []string, stdin io.Reader, stdout, stderr io.Writer) childExecution {
+	return executeChildWithReservedDirectory(childArgs, environmentOverrides, additionalReserved, "", stdin, stdout, stderr)
+}
+
+func executeChildWithReservedDirectory(childArgs []string, environmentOverrides map[string]string, additionalReserved []string, directory string, stdin io.Reader, stdout, stderr io.Writer) childExecution {
 	command := exec.Command(childArgs[0], childArgs[1:]...)
+	command.Dir = directory
 	command.Stdin = stdin
 	command.Stdout = stdout
 	command.Stderr = stderr

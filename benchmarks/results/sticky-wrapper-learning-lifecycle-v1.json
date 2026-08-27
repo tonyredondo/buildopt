@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-learning-lifecycle/v1",
+  "workItem": "SWL-014B",
+  "generatedAt": "2026-08-27T00:00:00Z",
+  "fixture": {
+    "name": "GENERIC_RUNTIME_ACTION",
+    "learningGate": "TRUSTED_CI_EXPLICIT",
+    "trialBudgetPercent": 5,
+    "customerProcessOwner": "internal/launcher.executeChildWithReserved"
+  },
+  "transitions": [
+    {"sequence": 1, "from": "UNSEEN", "to": "OBSERVE", "decisionGeneration": 0, "actionId": "runtime-profile-v1", "bindingDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "evidenceIds": ["1111111111111111111111111111111111111111111111111111111111111111"], "reason": "UNSEEN_TO_OBSERVE"},
+    {"sequence": 2, "from": "OBSERVE", "to": "SHADOW", "decisionGeneration": 1, "actionId": "runtime-profile-v1", "bindingDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "evidenceIds": ["2222222222222222222222222222222222222222222222222222222222222222"], "reason": "OBSERVE_TO_SHADOW"},
+    {"sequence": 3, "from": "SHADOW", "to": "TRIAL", "decisionGeneration": 2, "actionId": "runtime-profile-v1", "bindingDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "evidenceIds": ["3333333333333333333333333333333333333333333333333333333333333333"], "reason": "SHADOW_TO_TRIAL"},
+    {"sequence": 4, "from": "TRIAL", "to": "QUALIFIED", "decisionGeneration": 3, "actionId": "runtime-profile-v1", "bindingDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "evidenceIds": ["4444444444444444444444444444444444444444444444444444444444444444"], "reason": "TRIAL_TO_QUALIFIED"},
+    {"sequence": 5, "from": "QUALIFIED", "to": "ACTIVE", "decisionGeneration": 4, "actionId": "runtime-profile-v1", "bindingDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "evidenceIds": ["5555555555555555555555555555555555555555555555555555555555555555"], "reason": "QUALIFIED_TO_ACTIVE"},
+    {"sequence": 6, "from": "ACTIVE", "to": "SUSPENDED", "decisionGeneration": 5, "actionId": "runtime-profile-v1", "bindingDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "evidenceIds": ["6666666666666666666666666666666666666666666666666666666666666666"], "reason": "ACTIVE_TO_SUSPENDED"},
+    {"sequence": 7, "from": "SUSPENDED", "to": "RETIRED", "decisionGeneration": 6, "actionId": "runtime-profile-v1", "bindingDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "evidenceIds": ["7777777777777777777777777777777777777777777777777777777777777777"], "reason": "SUSPENDED_TO_RETIRED"}
+  ],
+  "ordinaryInvocations": [
+    {"sequence": 1, "observation": "stickyobservation.Record", "decision": "stickydecision.Decision", "execution": "stickyactive.Execution", "selected": "CANDIDATE", "counterfactual": true, "exactOutputs": true, "savingNs": 1000},
+    {"sequence": 2, "observation": "stickyobservation.Record", "decision": "stickydecision.Decision", "execution": "stickyactive.Execution", "selected": "NATIVE", "counterfactual": true, "exactOutputs": true, "savingNs": -500, "suspended": true}
+  ],
+  "negativeCases": [
+    {"name": "MODE_OBSERVE", "nativeRetained": true},
+    {"name": "MODE_OFF", "nativeRetained": true},
+    {"name": "BYPASS", "nativeRetained": true},
+    {"name": "MISSING_LEARNING_ENVIRONMENT", "nativeRetained": true},
+    {"name": "MISSING_STATE_WRITE", "nativeRetained": true},
+    {"name": "ZERO_TRIAL_BUDGET", "nativeRetained": true},
+    {"name": "EXPIRED_DECISION", "nativeRetained": true},
+    {"name": "DRIFTED_BINDING", "nativeRetained": true},
+    {"name": "REVOKED_DECISION", "nativeRetained": true},
+    {"name": "REGRESSED_OUTPUT_OR_VALUE", "nativeRetained": true}
+  ],
+  "ledger": {
+    "schemaVersion": "buildopt.sticky/economic-ledger/v1",
+    "recordType": "STICKY_ECONOMIC_LEDGER",
+	"ledgerId": "learning-lifecycle-ledger-v1",
+	"storeGeneration": 7,
+	"idempotencyKey": "8888888888888888888888888888888888888888888888888888888888888888",
+	"binding": {
+	  "repositoryScopeSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+	  "workflow": "sticky-learning-fixture",
+	  "sourceRevision": "1111111111111111111111111111111111111111",
+	  "gradleVersion": "9.6.1",
+	  "wrapperSha256": "2222222222222222222222222222222222222222222222222222222222222222",
+	  "optionsSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+	  "outputContractSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+	  "buildoptExecutableSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+	  "revocationEpoch": 0
+	},
+    "entries": [
+	  {"actionId": "runtime-profile-v1", "observationRef": "1111111111111111111111111111111111111111111111111111111111111111", "grossSavedMs": 4, "buildOptCostMs": 1, "netSavedMs": 3, "outcome": "SUCCESS", "observedAt": "2026-08-27T00:00:01Z"},
+	  {"actionId": "runtime-profile-v1", "observationRef": "6666666666666666666666666666666666666666666666666666666666666666", "grossSavedMs": -1, "buildOptCostMs": 0, "netSavedMs": -1, "outcome": "SUCCESS", "observedAt": "2026-08-27T00:00:02Z"}
+    ],
+	"grossSavedMs": 3,
+	"buildOptCostMs": 1,
+	"netSavedMs": 2,
+	"asOf": "2026-08-27T00:00:02Z"
+  },
+  "recomputed": {
+    "pairEffectsNs": [1000, 1000, 1000, 1000],
+    "meanEffectNs": 1000,
+    "lowerBoundNs": 1000,
+    "upperBoundNs": 1000,
+    "positivePairCount": 4,
+    "nativeP95Ns": 2000,
+    "candidateP95Ns": 1000,
+    "grossSavingNs": 4000,
+    "totalCostNs": 900,
+    "netSavingNs": 3100,
+    "qualified": true,
+    "reasons": ["QUALIFIED_CONSERVATIVE_VALUE"]
+  },
+  "outcome": "LIFECYCLE_COMPOSED_NATIVE_FALLBACK_PROVEN"
+}

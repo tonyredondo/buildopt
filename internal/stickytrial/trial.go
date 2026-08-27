@@ -265,6 +265,10 @@ type Command struct {
 	Env     []string
 }
 
+// Executor runs one isolated arm. The launcher supplies this adapter so every
+// customer-triggered process retains its process-group and signal semantics.
+type Executor func(context.Context, Command, Isolation, []string) ArmResult
+
 func validateCommand(command Command, expectedDir string) error {
 	if command.Program == "" || command.Dir == "" || command.Dir != expectedDir || !filepath.IsAbs(command.Dir) || filepath.Clean(command.Dir) != command.Dir || len(command.Env) == 0 {
 		return errors.New("sticky trial command is not explicit")
@@ -322,8 +326,17 @@ type PairedTrial struct {
 // RunPaired executes exactly two arms in the preassigned order. A cancelled
 // command releases unused budget and retains the native result semantics.
 func RunPaired(ctx context.Context, assignment Assignment, isolation Isolation, candidate, native Command, outputs []string) (PairedTrial, error) {
+	return RunPairedWithExecutor(ctx, assignment, isolation, candidate, native, outputs, runArm)
+}
+
+// RunPairedWithExecutor preserves scheduling, isolation, equivalence and
+// budget accounting while delegating only direct process execution.
+func RunPairedWithExecutor(ctx context.Context, assignment Assignment, isolation Isolation, candidate, native Command, outputs []string, execute Executor) (PairedTrial, error) {
 	if ctx == nil || !assignment.valid() || assignment.Pair != int(assignment.Sequence) {
 		return PairedTrial{}, errReservation
+	}
+	if execute == nil {
+		return PairedTrial{}, errors.New("sticky trial executor is nil")
 	}
 	if err := validateIsolation(isolation); err != nil {
 		return PairedTrial{}, err
@@ -355,9 +368,9 @@ func RunPaired(ctx context.Context, assignment Assignment, isolation Isolation, 
 		_, _ = assignment.scheduler.Cancel(assignment, 0)
 		return PairedTrial{}, errors.New("sticky trial order is invalid")
 	}
-	first = runArm(ctx, firstCommand, isolation, outputs)
+	first = execute(ctx, firstCommand, isolation, outputs)
 	trial.InvocationCount++
-	second = runArm(ctx, secondCommand, isolation, outputs)
+	second = execute(ctx, secondCommand, isolation, outputs)
 	trial.InvocationCount++
 	if assignment.Order == CandidateFirst {
 		trial.Candidate, trial.Native = first, second

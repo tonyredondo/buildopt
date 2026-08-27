@@ -54,10 +54,11 @@ tasks named `status` or `explain` working without special treatment.
 The wrapper checksum-verifies and caches the pinned BuildOpt distribution and
 invokes the repository's existing Gradle Wrapper. Today the installed path
 supports native execution, bounded observation, optional central Gradle cache,
-status/explanation and fail-open behavior. Shadow, bounded trial, exact active
-execution and durable-patch reporting exist as separately checked POC
-components; `SWL-014B` must connect them to this customer command before the
-documentation may describe them as one working lifecycle. The committed
+status/explanation and fail-open behavior. The learning POC now composes shadow,
+bounded trial, conservative qualification, exact active execution, suspension
+and ledger reporting behind the same command. Learning remains opt-in and
+requires the committed budget, explicit environment switch and write-capable
+owner credential; otherwise the command retains native Gradle. The committed
 configuration may name an HTTPS BuildOpt Server and project scope but never
 contains a token. The variable named by `credential_env` contains the private
 owner-issued access-token document and is not passed to Gradle.

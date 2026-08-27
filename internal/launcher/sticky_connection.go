@@ -33,6 +33,12 @@ const (
 	stickyConnectionTimeout    = 10 * time.Second
 )
 
+const (
+	stickyCacheReadCapability  = sharedcache.CentralCacheRead
+	stickyStateReadCapability  = sharedcache.CentralStateRead
+	stickyStateWriteCapability = sharedcache.CentralStateWrite
+)
+
 type stickyWrapperConnection struct {
 	serverURL             string
 	projectScope          string
@@ -42,7 +48,15 @@ type stickyWrapperConnection struct {
 	namespaceGeneration   int64
 	expiresAt             time.Time
 	token                 []byte
+	capabilities          []sharedcache.CentralCapability
 	http                  *http.Client
+}
+
+func (connection *stickyWrapperConnection) hasCapability(capability sharedcache.CentralCapability) bool {
+	if connection == nil {
+		return false
+	}
+	return centralHasCapability(connection.capabilities, capability)
 }
 
 func (connection *stickyWrapperConnection) close() {
@@ -113,6 +127,7 @@ func prepareStickyWrapperConnection(
 		namespace:             document.Namespace, namespaceGeneration: document.NamespaceGeneration,
 		expiresAt: documentExpiresAt(document),
 		token:     token, http: client,
+		capabilities: append([]sharedcache.CentralCapability(nil), document.Capabilities...),
 	}
 	if err := connection.probe(context.Background()); err != nil {
 		connection.close()
