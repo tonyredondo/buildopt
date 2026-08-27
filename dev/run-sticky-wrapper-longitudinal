@@ -158,6 +158,18 @@ buildopt_save_candidate_state() {
     cp -a --reflink=auto "${buildopt_repository}/.buildopt/." "${buildopt_state}/"
 }
 
+buildopt_compact_subject() {
+    local buildopt_subject_root=$1 buildopt_path
+    # Keep the auditable subject.json/observations/exclusions, but release the
+    # multi-gigabyte checkout and dependency homes before the next family.
+    for buildopt_path in source control candidate seed-home seed-gradle seed-cache \
+        control-home control-gradle control-cache candidate-home candidate-gradle \
+        candidate-cache candidate-state logs; do
+        [[ -e ${buildopt_subject_root}/${buildopt_path} ]] &&
+            rm -rf -- "${buildopt_subject_root:?}/${buildopt_path}"
+    done
+}
+
 buildopt_directory_fingerprint() {
     local buildopt_directory=$1
     if [[ ! -d ${buildopt_directory} ]]; then
@@ -543,6 +555,8 @@ buildopt_subject() {
 
 for buildopt_index in 0 1 2 3 4; do
     buildopt_subject "${buildopt_index}"
+    buildopt_key=$(jq -r ".repositories[${buildopt_index}].policy.key" "${buildopt_cohort}")
+    buildopt_compact_subject "${buildopt_temp}/subjects/${buildopt_key}"
     buildopt_free=$(df -Pk "${TMPDIR:-/tmp}" | awk 'NR == 2 {print $4 * 1024}')
     ((buildopt_free >= 8589934592)) || {
         printf 'SWL-015 disk floor crossed after family %d\n' "${buildopt_index}" >&2
