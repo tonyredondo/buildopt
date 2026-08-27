@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-report/v1",
+  "generatedAt": "2026-08-27T21:24:17.652353992Z",
+  "family": "spring-framework",
+  "dsl": "KOTLIN",
+  "baseRevision": "d883602919438b89d69d1189b2ebc258918a8a37",
+  "targetRevision": "17e0daf8a16085bd553f1e71bc8a15542dbcd417",
+  "status": "TESTABLE_ACTIONS",
+  "reason": "EXACT_CHANGE_AWARE_PRODUCER_CLOSURE",
+  "changedPaths": [
+    "spring-core/src/main/java/org/springframework/core/env/CommandLineArgs.java"
+  ],
+  "requestedTasks": [
+    ":spring-core:checkArchitectureMain"
+  ],
+  "requiredOutputs": [
+    "spring-core/build/checkArchitectureMain"
+  ],
+  "affectedInputTasks": [
+    ":spring-core:compileJava",
+    ":spring-core:compileKotlin"
+  ],
+  "requiredProducers": [
+    ":spring-core:checkArchitectureMain"
+  ],
+  "candidateTasks": [
+    ":spring-core:checkArchitectureMain",
+    ":spring-core:compileJava",
+    ":spring-core:compileKotlin"
+  ],
+  "omittedTasks": [
+    ":spring-core:checkKotlinGradlePluginConfigurationErrors",
+    ":spring-core:javapoetRepackJar",
+    ":spring-core:objenesisRepackJar",
+    ":spring-core:processResources"
+  ],
+  "omittedOutputs": [
+    {
+      "producerTask": ":spring-core:javapoetRepackJar",
+      "path": "spring-core/build/libs/spring-javapoet-repack-0.10.0.jar",
+      "kind": "FILE",
+      "sha256": "44f626eed79def0bc72ef00c3844d05f80755a83f29afdefd68665f6f69a13fd"
+    },
+    {
+      "producerTask": ":spring-core:objenesisRepackJar",
+      "path": "spring-core/build/libs/spring-objenesis-repack-3.5.jar",
+      "kind": "FILE",
+      "sha256": "066f61072767a9f18192c16fc7a6981508daafc04c1c52ee16ba9d9e49b2c4b3"
+    },
+    {
+      "producerTask": ":spring-core:processResources",
+      "path": "spring-core/build/resources/main",
+      "kind": "DIRECTORY",
+      "sha256": "e51888369604e441c97af9132fcb5058bf8b9176762a5d4ce44db7b364769b8b"
+    }
+  ],
+  "actionBindingSha256": "48172d65fd48833341fd5e8d08ab1503bb3424a327a565ebc28d4851885617be",
+  "inputComplete": true,
+  "testableActions": 1,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

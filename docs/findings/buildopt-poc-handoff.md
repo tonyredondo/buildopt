@@ -26,14 +26,15 @@ decision.
 ## Current experiment status
 
 There is deliberately no current performance percentage yet. The experiment
-has been reset to zero BuildOpt observations because the previous public screen
-used incomplete producer inputs. Every result below is retained only as
+started from zero BuildOpt observations because the previous public screen
+used incomplete producer inputs. Every older result below is retained only as
 historical diagnostic context; none may authorize, seed or stop the active
-experiment. The generic producers are now complete and distinguish testable
-actions, conclusive no-opportunity/not-applicable results and incomplete input
-or producer failure. The current route is to capture fresh evidence on five
-public families, prove opportunity breadth, then measure installed and
-chronological value.
+experiment. The fresh change-aware producer has now completed 25/25 conclusive
+adjacent-commit transitions across all five public families. Spring exposes
+one exact testable action; the other four Spring transitions and all 20
+OpenTelemetry, Kafka, Micronaut and Groovy transitions safely report
+`NO_SAFE_ACTION`. The next block independently recomputes the fixed 3/5-family
+breadth gate. No action has run and no wall time has been measured.
 
 ## Mechanisms
 
@@ -385,7 +386,7 @@ cannot reach enough public families to justify expensive timing. A successor
 must start with a broader generic detector hypothesis, not another campaign on
 the sole Spring action.
 
-The successor is now preregistered as
+The successor was preregistered as
 [`CHANGE_AWARE_PRODUCER_CLOSURE_V1`](../plans/change-aware-producer-closure-poc-tracker.md).
 It uses real adjacent-revision changes, finalized Gradle inputs and complete
 direct/transitive producer lineage to derive the exact work and required-output
@@ -393,9 +394,21 @@ closure for each change. The deterministic
 [selection result](../../benchmarks/results/generic-opportunity-discovery-v1.json)
 rejects a rerun of the terminal detectors, a standard archive-cache adapter and
 single-revision reuse as the next generic experiment. This is a selected
-hypothesis, not a speed result: it has **zero authorized timings and zero
-authorized activations** until all five families provide conclusive evidence
-and at least three expose a safe action.
+hypothesis, not a speed result. Its first fresh evidence block is now complete:
+
+| Family | Conclusive transitions | Testable actions |
+| --- | ---: | ---: |
+| Spring Framework | 5/5 | 1 |
+| OpenTelemetry | 5/5 | 0 |
+| Apache Kafka | 5/5 | 0 |
+| Micronaut Core | 5/5 | 0 |
+| Apache Groovy | 5/5 | 0 |
+
+The producer therefore proves complete evidence and safe retention on
+uncertainty, but not broad value. It still has **zero authorized timings and
+zero authorized activations**. `SWL-CHANGE-002` must independently recompute
+the unchanged 3/5-family breadth threshold before any timing can open; it may
+not reinterpret complete `NO_SAFE_ACTION` results as missing evidence.
 
 The closed predecessor remains implementation-locked as historical evidence:
 separate per-arm cache namespaces started empty, only the task-contract and

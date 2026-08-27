@@ -28,13 +28,23 @@ The selection rejects another run of those detectors, a standard archive-cache
 adapter and single-revision stable-output reuse. It chooses
 `CHANGE_AWARE_PRODUCER_CLOSURE_V1`: capture actual adjacent-commit changes,
 finalized task inputs and direct/transitive output producers, then derive an
-exact affected and omitted-output closure. These inputs are not present yet,
-so the result contains no timing, action or activation claim. Timing remains
-blocked until evidence is conclusive in all five families and safe actions
-exist in at least three.
+exact affected and omitted-output closure.
+
+[`change-aware-producer-fixtures-v1.json`](./results/change-aware-producer-fixtures-v1.json)
+proves the typed producer/analyzer contract across Gradle 8.14.3 and 9.6.1
+with Kotlin and Groovy DSL. The
+[`public capture`](./results/change-aware-producer-closure-v1/README.md) then
+records five adjacent first-parent transitions in each frozen public family.
+All 25 transitions are conclusive and all five inputs are complete. Spring
+exposes one exact testable action; the remaining 24 transitions return
+`NO_SAFE_ACTION`. This is action-construction evidence only: wall time is
+unmeasured and activation remains unauthorized. The next block independently
+recomputes the unchanged 3/5-family breadth gate before timing can open.
 
 ```bash
 ./dev/check-generic-opportunity-discovery
+./dev/check-change-aware-producer-fixtures --static
+./dev/check-change-aware-public-capture
 ```
 
 ## Sticky-wrapper observation sample

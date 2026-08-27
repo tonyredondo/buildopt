@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-report/v1",
+  "generatedAt": "2026-08-27T21:32:01.569000434Z",
+  "family": "opentelemetry-java-instrumentation",
+  "dsl": "KOTLIN",
+  "baseRevision": "6d18c89b77f2ff3aa9e6861e8ae4cba721a53110",
+  "targetRevision": "afbbe587251f192e0a38733cee1261f2b14d0f9f",
+  "status": "NO_SAFE_ACTION",
+  "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+  "changedPaths": [
+    "instrumentation-api/src/main/java/io/opentelemetry/instrumentation/api/internal/HttpProtocolUtil.java",
+    "instrumentation/ratpack/ratpack-1.4/testing/src/main/java/io/opentelemetry/instrumentation/ratpack/client/AbstractRatpackHttpClientTest.java",
+    "instrumentation/ratpack/ratpack-1.7/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/ratpack/v1_7/RatpackProtocolVersionAttributesExtractor.java",
+    "instrumentation/ratpack/ratpack-1.7/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/ratpack/v1_7/RatpackSingletons.java",
+    "instrumentation/ratpack/ratpack-1.7/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/ratpack/v1_7/RequestActionSupportInstrumentation.java",
+    "instrumentation/ratpack/ratpack-1.7/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/ratpack/v1_7/RatpackHttpProtocolVersionTest.java",
+    "instrumentation/ratpack/ratpack-1.7/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/ratpack/v1_7/client/RatpackForkedHttpClientTest.java",
+    "instrumentation/ratpack/ratpack-1.7/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/ratpack/v1_7/client/RatpackHttpClientTest.java",
+    "instrumentation/ratpack/ratpack-1.7/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/ratpack/v1_7/client/RatpackPooledHttpClientTest.java",
+    "instrumentation/ratpack/ratpack-1.7/library/src/main/java/io/opentelemetry/instrumentation/ratpack/v1_7/internal/RatpackHttpProtocolVersion.java"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "requiredOutputs": [
+    "javaagent/build/libs/opentelemetry-javaagent.jar"
+  ],
+  "affectedInputTasks": [],
+  "requiredProducers": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

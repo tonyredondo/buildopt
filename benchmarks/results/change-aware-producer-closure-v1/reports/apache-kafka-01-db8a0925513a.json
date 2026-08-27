@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-report/v1",
+  "generatedAt": "2026-08-27T21:41:19.360318657Z",
+  "family": "apache-kafka",
+  "dsl": "GROOVY",
+  "baseRevision": "d5b3cd62f4fe12f04ddae3f0e27c912296c4922a",
+  "targetRevision": "db8a0925513a76d1a4f13df00867c7491a4b3ce7",
+  "status": "NO_SAFE_ACTION",
+  "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+  "changedPaths": [
+    "raft/src/test/java/org/apache/kafka/raft/KafkaRaftClientTest.java",
+    "server/src/test/java/org/apache/kafka/server/KRaftClusterTest.java"
+  ],
+  "requestedTasks": [
+    ":clients:jar"
+  ],
+  "requiredOutputs": [
+    "clients/build/libs/kafka-clients.jar"
+  ],
+  "affectedInputTasks": [],
+  "requiredProducers": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

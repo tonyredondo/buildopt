@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_result=${buildopt_root}/benchmarks/results/change-aware-producer-closure-v1
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+(
+    cd -- "${buildopt_result}"
+    sha256sum --check --strict sha256sums >/dev/null
+)
+jq -e '
+  .schemaVersion=="buildopt.poc/change-aware-public-capture-contract/v1" and
+  .workItem=="SWL-CHANGE-001" and
+  .requiredConclusiveTransitionsPerFamily==5 and
+  .ordinaryRequestedBuildsOnly and
+  (.historicalBuildOptStateImported|not) and
+  (.historicalTimingImported|not) and
+  (.performanceMeasured|not) and
+  (.activationAuthorized|not)
+' "${buildopt_result}/contract.json" >/dev/null
+jq -e '
+  .schemaVersion=="buildopt.poc/change-aware-public-capture-summary/v1" and
+  .workItem=="SWL-CHANGE-001" and .status=="COMPLETE" and
+  .familyCount==5 and .completeFamilies==5 and
+  ([.families[].family]|sort)==["apache-groovy","apache-kafka","micronaut-core","opentelemetry-java-instrumentation","spring-framework"] and
+  all(.families[]; .inputComplete and .conclusiveTransitions==5 and .attemptedTransitions==5) and
+  ([.families[].actionTransitions]|add)==1 and
+  (.families[]|select(.family=="spring-framework")|.actionTransitions)==1 and
+  all(.families[]|select(.family!="spring-framework"); .actionTransitions==0) and
+  (.performanceMeasured|not) and (.activationAuthorized|not)
+' "${buildopt_result}/summary.json" >/dev/null
+jq -se '
+  length==25 and
+  all(.[];
+    (.status=="TESTABLE_ACTIONS" or .status=="NO_SAFE_ACTION" or .status=="NOT_APPLICABLE" or .status=="INPUT_UNAVAILABLE" or .status=="PRODUCER_FAILED") and
+    (.captureSha256|test("^[0-9a-f]{64}$")) and
+    (.reportSha256|test("^[0-9a-f]{64}$")) and
+    (.performanceMeasured|not) and (.activationAuthorized|not)
+  ) and
+  (group_by(.family)|length)==5 and
+  all(group_by(.family)[]; ([.[]|select(.status=="TESTABLE_ACTIONS" or .status=="NO_SAFE_ACTION" or .status=="NOT_APPLICABLE")]|length)==5) and
+  ([.[]|select(.status=="TESTABLE_ACTIONS")]|length)==1
+' "${buildopt_result}/transitions.jsonl" >/dev/null
+
+while IFS= read -r buildopt_row; do
+    buildopt_capture=$(jq -r '.capture' <<<"${buildopt_row}")
+    buildopt_report=$(jq -r '.report' <<<"${buildopt_row}")
+    buildopt_capture_sha=$(jq -r '.captureSha256' <<<"${buildopt_row}")
+    buildopt_report_sha=$(jq -r '.reportSha256' <<<"${buildopt_row}")
+    [[ $(sha256sum "${buildopt_result}/${buildopt_capture}" | awk '{print $1}') == "${buildopt_capture_sha}" ]]
+    [[ $(sha256sum "${buildopt_result}/${buildopt_report}" | awk '{print $1}') == "${buildopt_report_sha}" ]]
+done <"${buildopt_result}/transitions.jsonl"
+
+printf 'change-aware public capture: PASS\n'

@@ -38,6 +38,26 @@ the frozen five-family cohort, current observations and the new contract with:
 The result selects a change-to-input-to-producer hypothesis and rejects timing
 or activation. It is not performance evidence.
 
+Validate the implemented change-aware producer/analyzer contract and the
+checked five-family capture with:
+
+```bash
+./dev/check-change-aware-producer-fixtures
+./dev/check-change-aware-public-capture
+```
+
+The fixture check reruns Gradle 8.14.3/9.6.1 with Kotlin/Groovy by default;
+pass `--static` to validate only the checked evidence. To reproduce the public
+capture from explicitly prepared Git histories, use:
+
+```bash
+./dev/run-change-aware-public-capture HISTORY_ROOT OUTPUT_DIR
+```
+
+The public runner selects adjacent first-parent transitions from the frozen
+cohort, captures ordinary requested builds and emits typed closure decisions.
+It does not time or activate an action.
+
 Validate the implemented generic task-contract and declared-graph producers,
 their Kotlin/Groovy fixtures, all five typed outcome states and deterministic
 review-only action evidence with:

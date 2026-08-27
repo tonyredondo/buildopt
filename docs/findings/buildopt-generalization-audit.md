@@ -151,27 +151,27 @@ measured candidate or an explicit native verdict.
 ## Next generalization steps
 
 The detailed order and stop conditions now live in the
-[Fresh Generic Optimization POC Tracker](../plans/fresh-generic-optimization-poc-tracker.md).
-The active route starts from zero BuildOpt evidence:
+[Change-aware Producer Closure POC Tracker](../plans/change-aware-producer-closure-poc-tracker.md).
+The stopped fresh route proved complete input but only 1/5 action breadth. Its
+successor asks a materially different question: can an actual adjacent-commit
+change be mapped through finalized task inputs and direct/transitive producers
+to a smaller exact output closure?
 
-1. implement complete generic task-contract and declared-graph producers;
-2. capture a current five-family cohort from clean state;
-3. separate conclusive `NO_OPPORTUNITY` from `INPUT_UNAVAILABLE` before
-   applying the three-of-five breadth gate;
-4. measure installed active value only for complete actions;
-5. run a fresh chronological campaign only after installed value passes; and
-6. issue the terminal scorecard from fresh evidence only.
+The first successor block is complete. Across five frozen public families,
+25/25 adjacent transitions are conclusive and every family input is complete.
+Spring exposes one exact testable action; the remaining 24 transitions return
+`NO_SAFE_ACTION`. This proves that the producer works and fails closed, not
+that the opportunity is broad or valuable. The remaining route is:
 
-This route no longer leaves implementation choices implicit: the
-[fresh machine contract](../../specs/poc-fresh-generic-optimization-v1.json)
-fixes the evidence boundary, per-arm state topology, two generic
-detectors, result schemas, statistical algorithms, files/checks and early-stop
-outcomes. Changing one is a new preregistered experiment, not normal block
-implementation.
+1. independently recompute the unchanged three-of-five action-breadth gate;
+2. measure installed active value only if breadth passes;
+3. run a fresh chronological campaign only after installed value passes; and
+4. issue the terminal scorecard without importing predecessor timings or
+   moving thresholds.
 
-The previous screen proved that neither detector had a complete public input
-path across the cohort. `SWL-FRESH-001` closes that producer gap before the
-route is allowed to interpret public breadth.
+No current action has run and no current wall-time claim exists. If the breadth
+gate fails, the route stops before timing rather than spending builds on an
+opportunity that cannot meet the generic POC target.
 
 ## POC conclusion
 

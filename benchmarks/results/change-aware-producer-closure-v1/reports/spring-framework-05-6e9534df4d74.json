@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-report/v1",
+  "generatedAt": "2026-08-27T21:30:07.204882543Z",
+  "family": "spring-framework",
+  "dsl": "KOTLIN",
+  "baseRevision": "a00fb1b5aeaa7d4722ed86b93978f8c7935e0c65",
+  "targetRevision": "6e9534df4d743776463d61d8362ef42dbfadb730",
+  "status": "NO_SAFE_ACTION",
+  "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+  "changedPaths": [
+    "spring-beans/src/main/java/org/springframework/beans/PropertyEditorRegistrySupport.java",
+    "spring-beans/src/test/java/org/springframework/beans/PropertyEditorRegistrySupportTests.java"
+  ],
+  "requestedTasks": [
+    ":spring-core:checkArchitectureMain"
+  ],
+  "requiredOutputs": [
+    "spring-core/build/checkArchitectureMain"
+  ],
+  "affectedInputTasks": [],
+  "requiredProducers": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

@@ -1,0 +1,179 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import java.nio.file.Files
+import java.nio.file.LinkOption
+import java.security.MessageDigest
+import java.time.Instant
+
+// Init scripts are inherited by buildSrc and included builds. This producer
+// observes only the top-level useful workflow selected by the caller.
+if (gradle.getParent() == null) {
+    def requireAbsoluteOutput = {
+        def value = System.getenv("BUILDOPT_CHANGE_CAPTURE_OUTPUT")
+        if (value == null || value.isBlank()) {
+            throw new GradleException("BUILDOPT_CHANGE_CAPTURE_OUTPUT is required")
+        }
+        def output = new File(value)
+        if (!output.isAbsolute()) {
+            throw new GradleException("BUILDOPT_CHANGE_CAPTURE_OUTPUT must be absolute")
+        }
+        output
+    }
+    def requireText = { String name ->
+        def value = System.getenv(name)
+        if (value == null || value.isBlank()) {
+            throw new GradleException("${name} is required")
+        }
+        value
+    }
+    def requireStringList = { String name ->
+        def raw = requireText(name)
+        def value = new JsonSlurper().parseText(raw)
+        if (!(value instanceof List) || value.isEmpty() ||
+            value.any { !(it instanceof String) || it.isBlank() }) {
+            throw new GradleException("${name} must be a non-empty JSON string array")
+        }
+        value.collect { it as String }.toSorted().unique()
+    }
+
+    def outputFile = requireAbsoluteOutput()
+    def family = requireText("BUILDOPT_CHANGE_FAMILY")
+    def dsl = requireText("BUILDOPT_CHANGE_DSL")
+    def baseRevision = requireText("BUILDOPT_CHANGE_BASE")
+    def targetRevision = requireText("BUILDOPT_CHANGE_TARGET")
+    def changedPaths = requireStringList("BUILDOPT_CHANGE_PATHS")
+    def requestedTasks = requireStringList("BUILDOPT_CHANGE_REQUESTED_TASKS")
+    def requiredOutputs = requireStringList("BUILDOPT_CHANGE_REQUIRED_OUTPUTS")
+    def observedTasks = null
+    def dependencyPaths = null
+
+    def sha256Bytes = { byte[] value ->
+        MessageDigest.getInstance("SHA-256").digest(value).encodeHex().toString()
+    }
+    def digestPath
+    digestPath = { java.nio.file.Path root ->
+        if (Files.isSymbolicLink(root)) {
+            throw new GradleException("symbolic output is unsupported: ${root}")
+        }
+        if (Files.isRegularFile(root, LinkOption.NOFOLLOW_LINKS)) {
+            return sha256Bytes(Files.readAllBytes(root))
+        }
+        if (!Files.isDirectory(root, LinkOption.NOFOLLOW_LINKS)) {
+            throw new GradleException("output path has unsupported type: ${root}")
+        }
+        def entries = []
+        Files.walk(root).withCloseable { paths ->
+            paths.sorted().forEach { path ->
+                if (path == root) {
+                    return
+                }
+                if (Files.isSymbolicLink(path)) {
+                    throw new GradleException("symbolic output member is unsupported: ${path}")
+                }
+                if (Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS)) {
+                    entries << [
+                        path: root.relativize(path).toString().replace('\\', '/'),
+                        sha256: sha256Bytes(Files.readAllBytes(path)),
+                        size: Files.size(path),
+                    ]
+                }
+            }
+        }
+        sha256Bytes(JsonOutput.toJson(entries).getBytes("UTF-8"))
+    }
+
+    gradle.rootProject { root ->
+        def captureTask = root.tasks.register("buildoptChangeAwareCapture") {
+            group = "buildopt"
+            description = "Captures an exact, non-authorizing task producer closure"
+            dependsOn(requestedTasks)
+            doLast {
+                if (observedTasks == null || dependencyPaths == null) {
+                    throw new GradleException("BuildOpt change-aware task graph is unavailable")
+                }
+                def repositoryRoot = root.projectDir.toPath().toAbsolutePath().normalize()
+                def repositoryPath = { File file ->
+                    def absolute = file.toPath().toAbsolutePath().normalize()
+                    if (!absolute.startsWith(repositoryRoot)) {
+                        return null
+                    }
+                    def relative = repositoryRoot.relativize(absolute).toString().replace('\\', '/')
+                    relative.isEmpty() ? null : relative
+                }
+                def kind = { File file ->
+                    Files.isDirectory(file.toPath(), LinkOption.NOFOLLOW_LINKS) ? "DIRECTORY" : "FILE"
+                }
+                def captureStatus = "COMPLETE"
+                def captureReason = ""
+                def tasks = []
+                try {
+                    tasks = observedTasks.collect { task ->
+                        def inputsByIdentity = new TreeMap<String, Map>()
+                        // Gradle has already proved that a NO-SOURCE task consumed
+                        // no files. Querying some compile task providers afterward
+                        // can nevertheless attempt toolchain inference and fail.
+                        if (!task.state.noSource) {
+                            task.inputs.files.files.each { file ->
+                                def relative = repositoryPath(file)
+                                if (relative != null && Files.exists(file.toPath(), LinkOption.NOFOLLOW_LINKS)) {
+                                    def pathKind = kind(file)
+                                    inputsByIdentity.put("${pathKind}\u0000${relative}", [path: relative, kind: pathKind])
+                                }
+                            }
+                        }
+                        def outputsByIdentity = new TreeMap<String, Map>()
+                        task.outputs.files.files.each { file ->
+                            def relative = repositoryPath(file)
+                            if (relative != null) {
+                                def exists = Files.exists(file.toPath(), LinkOption.NOFOLLOW_LINKS)
+                                def pathKind = exists ? kind(file) : "FILE"
+                                outputsByIdentity.put("${pathKind}\u0000${relative}", [
+                                    path: relative,
+                                    kind: pathKind,
+                                    sha256: exists ? digestPath(file.toPath()) : "",
+                                    exists: exists,
+                                ])
+                            }
+                        }
+                        [
+                            path: task.path,
+                            dependsOn: dependencyPaths.get(task.path),
+                            inputs: inputsByIdentity.values() as List,
+                            outputs: outputsByIdentity.values() as List,
+                        ]
+                    }.sort { left, right -> left.path <=> right.path }
+                } catch (Exception ignored) {
+                    captureStatus = "UNAVAILABLE"
+                    captureReason = "TASK_EVIDENCE_UNAVAILABLE"
+                    tasks = []
+                }
+                def capture = [
+                    schemaVersion: "buildopt.poc/change-aware-producer-capture/v1",
+                    generatedAt: Instant.now().toString(),
+                    family: family,
+                    dsl: dsl,
+                    baseRevision: baseRevision,
+                    targetRevision: targetRevision,
+                    status: captureStatus,
+                    reason: captureReason,
+                    changedPaths: changedPaths,
+                    requestedTasks: requestedTasks,
+                    requiredOutputs: requiredOutputs,
+                    tasks: tasks,
+                ]
+                outputFile.parentFile.mkdirs()
+                outputFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(capture)) + "\n"
+            }
+        }
+        gradle.taskGraph.whenReady { graph ->
+            def capture = captureTask.get()
+            if (!graph.hasTask(capture)) {
+                throw new GradleException("BuildOpt change-aware capture task is absent from the graph")
+            }
+            observedTasks = List.copyOf(graph.allTasks.findAll { it != capture })
+            dependencyPaths = observedTasks.collectEntries { task ->
+                [(task.path): graph.getDependencies(task).findAll { it != capture }.collect { it.path }.toSorted()]
+            }
+        }
+    }
+}

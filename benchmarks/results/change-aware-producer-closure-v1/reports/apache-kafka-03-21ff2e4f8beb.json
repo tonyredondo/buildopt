@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-report/v1",
+  "generatedAt": "2026-08-27T21:43:02.333221149Z",
+  "family": "apache-kafka",
+  "dsl": "GROOVY",
+  "baseRevision": "66c197c9f9749715de55f9a415e6aade73ac7830",
+  "targetRevision": "21ff2e4f8beb439f48e90ac0dda98139a00caab4",
+  "status": "NO_SAFE_ACTION",
+  "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+  "changedPaths": [
+    "streams/src/test/java/org/apache/kafka/streams/processor/LogAndSkipOnInvalidTimestampTest.java",
+    "streams/src/test/java/org/apache/kafka/streams/processor/ReadOnlyStoreTest.java",
+    "streams/src/test/java/org/apache/kafka/streams/processor/TimestampExtractorTest.java",
+    "streams/src/test/java/org/apache/kafka/streams/processor/UsePartitionTimeOnInvalidTimestampTest.java",
+    "streams/src/test/java/org/apache/kafka/streams/processor/WallclockTimestampExtractorTest.java"
+  ],
+  "requestedTasks": [
+    ":clients:jar"
+  ],
+  "requiredOutputs": [
+    "clients/build/libs/kafka-clients.jar"
+  ],
+  "affectedInputTasks": [],
+  "requiredProducers": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-report/v1",
+  "generatedAt": "2026-08-27T21:48:14.688957066Z",
+  "family": "micronaut-core",
+  "dsl": "KOTLIN",
+  "baseRevision": "f06bb3693f9851421c86ca95c4621699be194b7f",
+  "targetRevision": "88d07edeb51e663fad6f1375abcad48e4f9b99c0",
+  "status": "NO_SAFE_ACTION",
+  "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+  "changedPaths": [
+    "core-processor/src/main/java/io/micronaut/aop/writer/ProxyingBeanDefinitionWriter.java",
+    "core-processor/src/main/java/io/micronaut/inject/writer/BeanDefinitionWriter.java",
+    "inject-java/src/test/groovy/io/micronaut/aop/compile/PreDestroyInterceptorCompileSpec.groovy"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "requiredOutputs": [
+    "core/build/libs/micronaut-core.jar"
+  ],
+  "affectedInputTasks": [],
+  "requiredProducers": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

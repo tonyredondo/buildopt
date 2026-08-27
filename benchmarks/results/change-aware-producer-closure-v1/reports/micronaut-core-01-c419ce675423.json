@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-report/v1",
+  "generatedAt": "2026-08-27T21:47:15.051377075Z",
+  "family": "micronaut-core",
+  "dsl": "KOTLIN",
+  "baseRevision": "88d07edeb51e663fad6f1375abcad48e4f9b99c0",
+  "targetRevision": "c419ce675423bf1847a95e5900799347317ba5a0",
+  "status": "NO_SAFE_ACTION",
+  "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+  "changedPaths": [
+    ".github/workflows/central-sync.yml",
+    ".github/workflows/publish-snapshot.yml",
+    ".github/workflows/release.yml"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "requiredOutputs": [
+    "core/build/libs/micronaut-core.jar"
+  ],
+  "affectedInputTasks": [],
+  "requiredProducers": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

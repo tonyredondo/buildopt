@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [--static]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_evidence=${buildopt_root}/benchmarks/results/change-aware-producer-fixtures-v1.json
+buildopt_mode=${1:-dynamic}
+case ${buildopt_mode} in
+    dynamic | --static) ;;
+    *)
+        printf 'usage: %s [--static]\n' "$0" >&2
+        exit 64
+        ;;
+esac
+for buildopt_command in cmp jq mktemp; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/change-aware-producer-fixtures/v1" and
+  .status == "COMPLETE" and
+  .coverage == ["affected","unaffected","ambiguous","global","missing-output","producer-failure"] and
+  (.producerSha256 | test("^[0-9a-f]{64}$")) and
+  (.results | length == 4) and
+  ([.results[].gradleVersion] | unique == ["8.14.3","9.6.1"]) and
+  ([.results[].dsl] | unique == ["GROOVY","KOTLIN"]) and
+  (all(.results[];
+    (.cases | length == 6) and
+    (.cases[0] | .name == "affected" and .status == "TESTABLE_ACTIONS" and .reason == "EXACT_CHANGE_AWARE_PRODUCER_CLOSURE" and .inputComplete and .testableActions == 1 and (.candidateTasks | length == 2) and (.omittedOutputs | length == 1)) and
+    (.cases[1] | .name == "unaffected" and .status == "TESTABLE_ACTIONS" and .inputComplete and .testableActions == 1) and
+    (.cases[2] | .name == "ambiguous" and .status == "NO_SAFE_ACTION" and .reason == "REQUIRED_OUTPUT_PRODUCER_AMBIGUOUS") and
+    (.cases[3] | .name == "global" and .status == "NO_SAFE_ACTION" and .reason == "CHANGE_INPUT_OWNERSHIP_UNPROVEN") and
+    (.cases[4] | .name == "missing-output" and .status == "NO_SAFE_ACTION" and .reason == "OMITTED_OUTPUT_EVIDENCE_INCOMPLETE") and
+    (.cases[5] | .name == "producer-failure" and .status == "PRODUCER_FAILED" and .reason == "GRADLE_CAPTURE_FAILED") and
+    all(.cases[]; (.performanceMeasured | not) and (.activationAuthorized | not))
+  ))
+' "${buildopt_evidence}" >/dev/null
+
+if [[ ${buildopt_mode} == --static ]]; then
+    printf 'change-aware producer fixture evidence: PASS (static)\n'
+    exit 0
+fi
+
+buildopt_temporary=$(mktemp /tmp/buildopt-change-aware-fixtures.XXXXXX.json)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-change-aware-fixtures.*.json)
+            rm -f -- "${buildopt_temporary}"
+            ;;
+        *)
+            printf 'refusing to clean unexpected fixture output: %s\n' "${buildopt_temporary}" >&2
+            return 1
+            ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+"${buildopt_root}/dev/run-change-aware-producer-fixtures" "${buildopt_temporary}"
+cmp --silent "${buildopt_evidence}" "${buildopt_temporary}" || {
+    printf 'change-aware producer fixture evidence is stale\n' >&2
+    diff -u "${buildopt_evidence}" "${buildopt_temporary}" >&2 || true
+    exit 1
+}
+
+printf 'change-aware producer fixtures: PASS\n'

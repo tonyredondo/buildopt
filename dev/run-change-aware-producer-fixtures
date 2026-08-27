@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: dev/run-change-aware-producer-fixtures OUTPUT_JSON\n' >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_output=$1
+if [[ ${buildopt_output} != /* ]]; then
+    buildopt_output=${PWD}/${buildopt_output}
+fi
+for buildopt_command in cp jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-change-aware-fixtures.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-change-aware-fixtures.*)
+            rm -rf -- "${buildopt_temporary}"
+            ;;
+        *)
+            printf 'refusing to clean unexpected fixture root: %s\n' "${buildopt_temporary}" >&2
+            return 1
+            ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+buildopt_analyzer=${buildopt_temporary}/change-aware-producer
+"${buildopt_root}/dev/run" --toolchain go -- go build -o "${buildopt_analyzer}" ./cmd/change-aware-producer
+: >"${buildopt_temporary}/results.jsonl"
+
+buildopt_gradle_bin() {
+    case $1 in
+        8.14.3)
+            printf '%s\n' "${buildopt_root}/.tools/gradle-compat/gradle-8.14.3/bin/gradle"
+            ;;
+        9.6.1)
+            printf '%s\n' "${buildopt_root}/.tools/gradle-user-home/local/wrapper/dists/gradle-9.6.1-bin/4ticwg1pgcbps2hj28r8so764/gradle-9.6.1/bin/gradle"
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+buildopt_analyze_case() {
+    local buildopt_case_name=$1
+    local buildopt_capture=$2
+    local buildopt_report=$3
+    "${buildopt_analyzer}" --input "${buildopt_capture}" --output "${buildopt_report}"
+    jq -c --arg name "${buildopt_case_name}" '{name:$name,status,reason,inputComplete,testableActions,performanceMeasured,activationAuthorized,candidateTasks,omittedTasks,omittedOutputs}' \
+        "${buildopt_report}" >>"${buildopt_temporary}/cases.jsonl"
+}
+
+buildopt_run_fixture() {
+    local buildopt_gradle_version=$1
+    local buildopt_dsl=$2
+    local buildopt_case_root=${buildopt_temporary}/${buildopt_gradle_version}-${buildopt_dsl}
+    local buildopt_repository=${buildopt_case_root}/repository
+    local buildopt_capture=${buildopt_case_root}/capture.json
+    local buildopt_gradle
+    buildopt_gradle=$(buildopt_gradle_bin "${buildopt_gradle_version}")
+    [[ -x ${buildopt_gradle} ]] || {
+        printf 'Gradle %s is unavailable\n' "${buildopt_gradle_version}" >&2
+        return 1
+    }
+    mkdir -p -- "${buildopt_case_root}"
+    cp -a -- "${buildopt_root}/fixtures/aggregate-output-closure/${buildopt_dsl,,}" "${buildopt_repository}"
+    : >"${buildopt_temporary}/cases.jsonl"
+
+    env \
+        BUILDOPT_CHANGE_CAPTURE_OUTPUT="${buildopt_capture}" \
+        BUILDOPT_CHANGE_FAMILY="fixture-${buildopt_dsl,,}" \
+        BUILDOPT_CHANGE_DSL="${buildopt_dsl}" \
+        BUILDOPT_CHANGE_BASE=1111111111111111111111111111111111111111 \
+        BUILDOPT_CHANGE_TARGET=2222222222222222222222222222222222222222 \
+        BUILDOPT_CHANGE_PATHS='["changed/input.txt"]' \
+        BUILDOPT_CHANGE_REQUESTED_TASKS='[":changed:bundleAll"]' \
+        BUILDOPT_CHANGE_REQUIRED_OUTPUTS='["changed/build/custom-output/payload.bin","stable/build/custom-output/payload.bin"]' \
+        GRADLE_USER_HOME="${buildopt_root}/.tools/gradle-user-home/local" \
+        "${buildopt_root}/dev/run" -- "${buildopt_gradle}" --no-daemon \
+            -p "${buildopt_repository}" -I "${buildopt_root}/dev/change-aware-producer.init.gradle" \
+            buildoptChangeAwareCapture >/dev/null
+
+    buildopt_analyze_case affected "${buildopt_capture}" "${buildopt_case_root}/affected.json"
+
+    jq '.changedPaths=["stable/input.txt"]' "${buildopt_capture}" >"${buildopt_case_root}/unaffected-capture.json"
+    buildopt_analyze_case unaffected "${buildopt_case_root}/unaffected-capture.json" "${buildopt_case_root}/unaffected.json"
+
+    jq '(.tasks[] | select(.path == ":stable:emitPayload") | .outputs[0]) as $output |
+        .tasks |= map(if .path == ":changed:emitPayload" then .outputs += [$output] else . end)' \
+        "${buildopt_capture}" >"${buildopt_case_root}/ambiguous-capture.json"
+    buildopt_analyze_case ambiguous "${buildopt_case_root}/ambiguous-capture.json" "${buildopt_case_root}/ambiguous.json"
+
+    local buildopt_settings=settings.gradle.kts
+    [[ ${buildopt_dsl} == GROOVY ]] && buildopt_settings=settings.gradle
+    jq --arg path "${buildopt_settings}" '.changedPaths=[$path]' \
+        "${buildopt_capture}" >"${buildopt_case_root}/global-capture.json"
+    buildopt_analyze_case global "${buildopt_case_root}/global-capture.json" "${buildopt_case_root}/global.json"
+
+    jq '.tasks |= map(if .path == ":stable:emitPayload" then
+        .outputs |= map(.exists=false | .sha256="") else . end)' \
+        "${buildopt_capture}" >"${buildopt_case_root}/missing-output-capture.json"
+    buildopt_analyze_case missing-output "${buildopt_case_root}/missing-output-capture.json" "${buildopt_case_root}/missing-output.json"
+
+    jq '.status="FAILED" | .reason="GRADLE_CAPTURE_FAILED" | .tasks=[]' \
+        "${buildopt_capture}" >"${buildopt_case_root}/producer-failure-capture.json"
+    buildopt_analyze_case producer-failure "${buildopt_case_root}/producer-failure-capture.json" "${buildopt_case_root}/producer-failure.json"
+
+    jq -sc --arg gradleVersion "${buildopt_gradle_version}" --arg dsl "${buildopt_dsl}" \
+        '{gradleVersion:$gradleVersion,dsl:$dsl,cases:.}' "${buildopt_temporary}/cases.jsonl" \
+        >>"${buildopt_temporary}/results.jsonl"
+}
+
+for buildopt_gradle_version in 8.14.3 9.6.1; do
+    for buildopt_dsl in KOTLIN GROOVY; do
+        buildopt_run_fixture "${buildopt_gradle_version}" "${buildopt_dsl}"
+    done
+done
+
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+jq -s --arg producerSha256 "$(sha256sum "${buildopt_root}/dev/change-aware-producer.init.gradle" | awk '{print $1}')" '
+    {
+      schemaVersion:"buildopt.evidence/change-aware-producer-fixtures/v1",
+      status:"COMPLETE",
+      producerSha256:$producerSha256,
+      coverage:["affected","unaffected","ambiguous","global","missing-output","producer-failure"],
+      results:.
+    }' "${buildopt_temporary}/results.jsonl" >"${buildopt_output}"

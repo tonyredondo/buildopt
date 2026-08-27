@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-public-capture-contract/v1",
+  "workItem": "SWL-CHANGE-001",
+  "generatedAt": "2026-08-27T21:23:12Z",
+  "cohortSha256": "792fba0176d473e78af169d61224bed3182e066bbb794dcadb04fb0673dab022",
+  "producerSha256": "17861ebdebf49b8142eb64d46b6b04c45fbd62c224c0a301ad89015c3fedda8a",
+  "selectionPolicy": "REVERSE_CHRONOLOGICAL_PRIMARY_THEN_RESERVE_TARGETS_WITH_FIRST_PARENT_BASE_UNTIL_FIVE_CONCLUSIVE_TRANSITIONS",
+  "requiredConclusiveTransitionsPerFamily": 5,
+  "ordinaryRequestedBuildsOnly": true,
+  "historicalBuildOptStateImported": false,
+  "historicalTimingImported": false,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

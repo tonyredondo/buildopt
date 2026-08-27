@@ -53,8 +53,8 @@ before running the product.
 ### Findings and recommendations
 
 - [BuildOpt POC one-pager](./findings/buildopt-poc-handoff.md): concise project
-  idea, mechanism portfolio, terminal five-repository wall-time evidence,
-  current conclusion, and customer-general POC roadmap.
+  idea, mechanism portfolio, historical wall-time evidence, current fresh
+  five-family change-aware result, and customer-general POC roadmap.
 - [Build Optimization performance findings](./findings/build-optimization-performance.md):
   measured contribution by component, current activation decisions, evidence
   boundaries, and the recommended experimental roadmap.
@@ -66,9 +66,10 @@ before running the product.
 ### Plans
 
 - [Change-aware Producer Closure POC Tracker](./plans/change-aware-producer-closure-poc-tracker.md):
-  the active successor hypothesis, ordered evidence/breadth/value gates and
-  explicit prohibition on timing before safe actions exist in at least three
-  of five public Gradle families.
+  the active successor hypothesis, completed 25-transition producer capture,
+  next independent breadth decision, ordered value gates and explicit
+  prohibition on timing before safe actions exist in at least three of five
+  public Gradle families.
 - [Fresh Generic Optimization POC Tracker](./plans/fresh-generic-optimization-poc-tracker.md):
   the closed zero-history predecessor, complete producer gate, fresh public
   capture and terminal 1/5 action-breadth decision.

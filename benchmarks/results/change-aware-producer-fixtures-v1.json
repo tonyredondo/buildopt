@@ -1,0 +1,423 @@
+{
+  "schemaVersion": "buildopt.evidence/change-aware-producer-fixtures/v1",
+  "status": "COMPLETE",
+  "producerSha256": "17861ebdebf49b8142eb64d46b6b04c45fbd62c224c0a301ad89015c3fedda8a",
+  "coverage": [
+    "affected",
+    "unaffected",
+    "ambiguous",
+    "global",
+    "missing-output",
+    "producer-failure"
+  ],
+  "results": [
+    {
+      "gradleVersion": "8.14.3",
+      "dsl": "KOTLIN",
+      "cases": [
+        {
+          "name": "affected",
+          "status": "TESTABLE_ACTIONS",
+          "reason": "EXACT_CHANGE_AWARE_PRODUCER_CLOSURE",
+          "inputComplete": true,
+          "testableActions": 1,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [
+            ":changed:bundleAll",
+            ":changed:emitPayload"
+          ],
+          "omittedTasks": [
+            ":stable:emitPayload"
+          ],
+          "omittedOutputs": [
+            {
+              "producerTask": ":stable:emitPayload",
+              "path": "stable/build/custom-output/payload.bin",
+              "kind": "FILE",
+              "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+            }
+          ]
+        },
+        {
+          "name": "unaffected",
+          "status": "TESTABLE_ACTIONS",
+          "reason": "EXACT_CHANGE_AWARE_PRODUCER_CLOSURE",
+          "inputComplete": true,
+          "testableActions": 1,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [
+            ":changed:bundleAll",
+            ":stable:emitPayload"
+          ],
+          "omittedTasks": [
+            ":changed:emitPayload"
+          ],
+          "omittedOutputs": [
+            {
+              "producerTask": ":changed:emitPayload",
+              "path": "changed/build/custom-output/payload.bin",
+              "kind": "FILE",
+              "sha256": "f34848ca92665c342abd5816c9e3eda0e82180671195362bcd0080544a3bc2ac"
+            }
+          ]
+        },
+        {
+          "name": "ambiguous",
+          "status": "NO_SAFE_ACTION",
+          "reason": "REQUIRED_OUTPUT_PRODUCER_AMBIGUOUS",
+          "inputComplete": true,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        },
+        {
+          "name": "global",
+          "status": "NO_SAFE_ACTION",
+          "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+          "inputComplete": true,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        },
+        {
+          "name": "missing-output",
+          "status": "NO_SAFE_ACTION",
+          "reason": "OMITTED_OUTPUT_EVIDENCE_INCOMPLETE",
+          "inputComplete": true,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        },
+        {
+          "name": "producer-failure",
+          "status": "PRODUCER_FAILED",
+          "reason": "GRADLE_CAPTURE_FAILED",
+          "inputComplete": false,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        }
+      ]
+    },
+    {
+      "gradleVersion": "8.14.3",
+      "dsl": "GROOVY",
+      "cases": [
+        {
+          "name": "affected",
+          "status": "TESTABLE_ACTIONS",
+          "reason": "EXACT_CHANGE_AWARE_PRODUCER_CLOSURE",
+          "inputComplete": true,
+          "testableActions": 1,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [
+            ":changed:bundleAll",
+            ":changed:emitPayload"
+          ],
+          "omittedTasks": [
+            ":stable:emitPayload"
+          ],
+          "omittedOutputs": [
+            {
+              "producerTask": ":stable:emitPayload",
+              "path": "stable/build/custom-output/payload.bin",
+              "kind": "FILE",
+              "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+            }
+          ]
+        },
+        {
+          "name": "unaffected",
+          "status": "TESTABLE_ACTIONS",
+          "reason": "EXACT_CHANGE_AWARE_PRODUCER_CLOSURE",
+          "inputComplete": true,
+          "testableActions": 1,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [
+            ":changed:bundleAll",
+            ":stable:emitPayload"
+          ],
+          "omittedTasks": [
+            ":changed:emitPayload"
+          ],
+          "omittedOutputs": [
+            {
+              "producerTask": ":changed:emitPayload",
+              "path": "changed/build/custom-output/payload.bin",
+              "kind": "FILE",
+              "sha256": "f34848ca92665c342abd5816c9e3eda0e82180671195362bcd0080544a3bc2ac"
+            }
+          ]
+        },
+        {
+          "name": "ambiguous",
+          "status": "NO_SAFE_ACTION",
+          "reason": "REQUIRED_OUTPUT_PRODUCER_AMBIGUOUS",
+          "inputComplete": true,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        },
+        {
+          "name": "global",
+          "status": "NO_SAFE_ACTION",
+          "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+          "inputComplete": true,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        },
+        {
+          "name": "missing-output",
+          "status": "NO_SAFE_ACTION",
+          "reason": "OMITTED_OUTPUT_EVIDENCE_INCOMPLETE",
+          "inputComplete": true,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        },
+        {
+          "name": "producer-failure",
+          "status": "PRODUCER_FAILED",
+          "reason": "GRADLE_CAPTURE_FAILED",
+          "inputComplete": false,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        }
+      ]
+    },
+    {
+      "gradleVersion": "9.6.1",
+      "dsl": "KOTLIN",
+      "cases": [
+        {
+          "name": "affected",
+          "status": "TESTABLE_ACTIONS",
+          "reason": "EXACT_CHANGE_AWARE_PRODUCER_CLOSURE",
+          "inputComplete": true,
+          "testableActions": 1,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [
+            ":changed:bundleAll",
+            ":changed:emitPayload"
+          ],
+          "omittedTasks": [
+            ":stable:emitPayload"
+          ],
+          "omittedOutputs": [
+            {
+              "producerTask": ":stable:emitPayload",
+              "path": "stable/build/custom-output/payload.bin",
+              "kind": "FILE",
+              "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+            }
+          ]
+        },
+        {
+          "name": "unaffected",
+          "status": "TESTABLE_ACTIONS",
+          "reason": "EXACT_CHANGE_AWARE_PRODUCER_CLOSURE",
+          "inputComplete": true,
+          "testableActions": 1,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [
+            ":changed:bundleAll",
+            ":stable:emitPayload"
+          ],
+          "omittedTasks": [
+            ":changed:emitPayload"
+          ],
+          "omittedOutputs": [
+            {
+              "producerTask": ":changed:emitPayload",
+              "path": "changed/build/custom-output/payload.bin",
+              "kind": "FILE",
+              "sha256": "f34848ca92665c342abd5816c9e3eda0e82180671195362bcd0080544a3bc2ac"
+            }
+          ]
+        },
+        {
+          "name": "ambiguous",
+          "status": "NO_SAFE_ACTION",
+          "reason": "REQUIRED_OUTPUT_PRODUCER_AMBIGUOUS",
+          "inputComplete": true,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        },
+        {
+          "name": "global",
+          "status": "NO_SAFE_ACTION",
+          "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+          "inputComplete": true,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        },
+        {
+          "name": "missing-output",
+          "status": "NO_SAFE_ACTION",
+          "reason": "OMITTED_OUTPUT_EVIDENCE_INCOMPLETE",
+          "inputComplete": true,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        },
+        {
+          "name": "producer-failure",
+          "status": "PRODUCER_FAILED",
+          "reason": "GRADLE_CAPTURE_FAILED",
+          "inputComplete": false,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        }
+      ]
+    },
+    {
+      "gradleVersion": "9.6.1",
+      "dsl": "GROOVY",
+      "cases": [
+        {
+          "name": "affected",
+          "status": "TESTABLE_ACTIONS",
+          "reason": "EXACT_CHANGE_AWARE_PRODUCER_CLOSURE",
+          "inputComplete": true,
+          "testableActions": 1,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [
+            ":changed:bundleAll",
+            ":changed:emitPayload"
+          ],
+          "omittedTasks": [
+            ":stable:emitPayload"
+          ],
+          "omittedOutputs": [
+            {
+              "producerTask": ":stable:emitPayload",
+              "path": "stable/build/custom-output/payload.bin",
+              "kind": "FILE",
+              "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+            }
+          ]
+        },
+        {
+          "name": "unaffected",
+          "status": "TESTABLE_ACTIONS",
+          "reason": "EXACT_CHANGE_AWARE_PRODUCER_CLOSURE",
+          "inputComplete": true,
+          "testableActions": 1,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [
+            ":changed:bundleAll",
+            ":stable:emitPayload"
+          ],
+          "omittedTasks": [
+            ":changed:emitPayload"
+          ],
+          "omittedOutputs": [
+            {
+              "producerTask": ":changed:emitPayload",
+              "path": "changed/build/custom-output/payload.bin",
+              "kind": "FILE",
+              "sha256": "f34848ca92665c342abd5816c9e3eda0e82180671195362bcd0080544a3bc2ac"
+            }
+          ]
+        },
+        {
+          "name": "ambiguous",
+          "status": "NO_SAFE_ACTION",
+          "reason": "REQUIRED_OUTPUT_PRODUCER_AMBIGUOUS",
+          "inputComplete": true,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        },
+        {
+          "name": "global",
+          "status": "NO_SAFE_ACTION",
+          "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+          "inputComplete": true,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        },
+        {
+          "name": "missing-output",
+          "status": "NO_SAFE_ACTION",
+          "reason": "OMITTED_OUTPUT_EVIDENCE_INCOMPLETE",
+          "inputComplete": true,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        },
+        {
+          "name": "producer-failure",
+          "status": "PRODUCER_FAILED",
+          "reason": "GRADLE_CAPTURE_FAILED",
+          "inputComplete": false,
+          "testableActions": 0,
+          "performanceMeasured": false,
+          "activationAuthorized": false,
+          "candidateTasks": [],
+          "omittedTasks": [],
+          "omittedOutputs": []
+        }
+      ]
+    }
+  ]
+}

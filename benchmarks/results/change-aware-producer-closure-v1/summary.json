@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-public-capture-summary/v1",
+  "workItem": "SWL-CHANGE-001",
+  "generatedAt": "2026-08-27T21:23:12Z",
+  "status": "COMPLETE",
+  "familyCount": 5,
+  "completeFamilies": 5,
+  "families": [
+    {
+      "family": "apache-groovy",
+      "dsl": "GROOVY",
+      "attemptedTransitions": 5,
+      "conclusiveTransitions": 5,
+      "actionTransitions": 0,
+      "outcomes": {
+        "NO_SAFE_ACTION": 5
+      },
+      "inputComplete": true
+    },
+    {
+      "family": "apache-kafka",
+      "dsl": "GROOVY",
+      "attemptedTransitions": 5,
+      "conclusiveTransitions": 5,
+      "actionTransitions": 0,
+      "outcomes": {
+        "NO_SAFE_ACTION": 5
+      },
+      "inputComplete": true
+    },
+    {
+      "family": "micronaut-core",
+      "dsl": "KOTLIN",
+      "attemptedTransitions": 5,
+      "conclusiveTransitions": 5,
+      "actionTransitions": 0,
+      "outcomes": {
+        "NO_SAFE_ACTION": 5
+      },
+      "inputComplete": true
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "dsl": "KOTLIN",
+      "attemptedTransitions": 5,
+      "conclusiveTransitions": 5,
+      "actionTransitions": 0,
+      "outcomes": {
+        "NO_SAFE_ACTION": 5
+      },
+      "inputComplete": true
+    },
+    {
+      "family": "spring-framework",
+      "dsl": "KOTLIN",
+      "attemptedTransitions": 5,
+      "conclusiveTransitions": 5,
+      "actionTransitions": 1,
+      "outcomes": {
+        "NO_SAFE_ACTION": 4,
+        "TESTABLE_ACTIONS": 1
+      },
+      "inputComplete": true
+    }
+  ],
+  "performanceMeasured": false,
+  "activationAuthorized": false,
+  "outcome": "FRESH_CHANGE_AND_PRODUCER_EVIDENCE_COMPLETE"
+}

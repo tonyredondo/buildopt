@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-report/v1",
+  "generatedAt": "2026-08-27T21:57:55.420124952Z",
+  "family": "apache-groovy",
+  "dsl": "GROOVY",
+  "baseRevision": "47f3b75e70158a5d8099fd26be0b3140b703d507",
+  "targetRevision": "b73d71c0b0b67d6296d1dcc57d3ffc5b7cd33629",
+  "status": "NO_SAFE_ACTION",
+  "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+  "changedPaths": [
+    "subprojects/groovy-csv/src/main/java/groovy/csv/CsvBuilder.java",
+    "subprojects/groovy-csv/src/main/java/groovy/csv/CsvSlurper.java",
+    "subprojects/groovy-csv/src/spec/doc/csv-userguide.adoc",
+    "subprojects/groovy-csv/src/spec/test/groovy/csv/CsvBuilderTest.groovy",
+    "subprojects/groovy-csv/src/spec/test/groovy/csv/CsvSlurperTest.groovy"
+  ],
+  "requestedTasks": [
+    ":jar"
+  ],
+  "requiredOutputs": [
+    "build/libs/groovy-raw.jar"
+  ],
+  "affectedInputTasks": [],
+  "requiredProducers": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

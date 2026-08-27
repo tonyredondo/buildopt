@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-report/v1",
+  "generatedAt": "2026-08-27T21:56:20.104280840Z",
+  "family": "apache-groovy",
+  "dsl": "GROOVY",
+  "baseRevision": "b73d71c0b0b67d6296d1dcc57d3ffc5b7cd33629",
+  "targetRevision": "bad0b1d6c7bd3c5f6d8ad92acbc037dfa138bf9b",
+  "status": "NO_SAFE_ACTION",
+  "reason": "REQUIRED_OUTPUT_PRODUCER_MISSING",
+  "changedPaths": [
+    "src/main/java/org/apache/groovy/parser/antlr4/AstBuilder.java"
+  ],
+  "requestedTasks": [
+    ":jar"
+  ],
+  "requiredOutputs": [
+    "build/libs/groovy-raw.jar"
+  ],
+  "affectedInputTasks": [
+    ":compileJava"
+  ],
+  "requiredProducers": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

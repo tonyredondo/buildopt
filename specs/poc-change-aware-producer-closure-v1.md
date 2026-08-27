@@ -2,6 +2,11 @@
 
 Status: `HYPOTHESIS_PREREGISTERED`.
 
+Execution status: the frozen hypothesis remains unchanged. `SWL-CHANGE-001`
+has completed its fresh five-family evidence capture; `SWL-CHANGE-002` is the
+next independent gate. This note reports execution progress and does not amend
+the preregistered contract or thresholds below.
+
 ## Question
 
 Can BuildOpt use complete Gradle producer ownership plus the actual paths

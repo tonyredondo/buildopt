@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-report/v1",
+  "generatedAt": "2026-08-27T21:53:12.915913804Z",
+  "family": "apache-groovy",
+  "dsl": "GROOVY",
+  "baseRevision": "914da787bb357e4fcc952ebf33e4d34a6a9055c9",
+  "targetRevision": "655b70f3fdb34dcb8e98fc141c68647f92a27e82",
+  "status": "NO_SAFE_ACTION",
+  "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+  "changedPaths": [
+    "src/main/java/org/codehaus/groovy/runtime/MetaClassHelper.java",
+    "src/test/groovy/org/codehaus/groovy/runtime/MetaClassHelperTest.java"
+  ],
+  "requestedTasks": [
+    ":jar"
+  ],
+  "requiredOutputs": [
+    "build/libs/groovy-raw.jar"
+  ],
+  "affectedInputTasks": [],
+  "requiredProducers": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

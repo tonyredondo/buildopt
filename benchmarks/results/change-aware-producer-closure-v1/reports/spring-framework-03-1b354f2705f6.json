@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-report/v1",
+  "generatedAt": "2026-08-27T21:27:14.434078969Z",
+  "family": "spring-framework",
+  "dsl": "KOTLIN",
+  "baseRevision": "7daf1013aa89e6b80142437fccecc0be2bfbd7fb",
+  "targetRevision": "1b354f2705f624ea090eab2bd6099a6c4c2a22fe",
+  "status": "NO_SAFE_ACTION",
+  "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+  "changedPaths": [
+    "spring-jdbc/src/main/java/org/springframework/jdbc/core/metadata/CallMetaDataProviderFactory.java",
+    "spring-jdbc/src/main/java/org/springframework/jdbc/core/metadata/DerbyCallMetaDataProvider.java",
+    "spring-jdbc/src/main/java/org/springframework/jdbc/core/metadata/DerbyTableMetaDataProvider.java",
+    "spring-jdbc/src/main/java/org/springframework/jdbc/core/metadata/TableMetaDataProviderFactory.java",
+    "spring-jdbc/src/main/java/org/springframework/jdbc/datasource/embedded/DerbyEmbeddedDatabaseConfigurer.java",
+    "spring-jdbc/src/main/java/org/springframework/jdbc/datasource/embedded/EmbeddedDatabaseConfigurers.java",
+    "spring-jdbc/src/main/java/org/springframework/jdbc/datasource/embedded/EmbeddedDatabaseType.java",
+    "spring-jdbc/src/main/java/org/springframework/jdbc/support/incrementer/DerbyMaxValueIncrementer.java",
+    "spring-orm/src/main/java/org/springframework/orm/jpa/vendor/Database.java"
+  ],
+  "requestedTasks": [
+    ":spring-core:checkArchitectureMain"
+  ],
+  "requiredOutputs": [
+    "spring-core/build/checkArchitectureMain"
+  ],
+  "affectedInputTasks": [],
+  "requiredProducers": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

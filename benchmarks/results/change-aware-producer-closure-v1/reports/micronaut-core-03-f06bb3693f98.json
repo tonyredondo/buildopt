@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-report/v1",
+  "generatedAt": "2026-08-27T21:49:13.045771294Z",
+  "family": "micronaut-core",
+  "dsl": "KOTLIN",
+  "baseRevision": "784e7ff015460df6fb6a7742bb4a8f5e20bb2256",
+  "targetRevision": "f06bb3693f9851421c86ca95c4621699be194b7f",
+  "status": "NO_SAFE_ACTION",
+  "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+  "changedPaths": [
+    "inject-python-test/src/test/groovy/io/micronaut/python/annotation/processing/test/ConfigurationBuilderSpec.groovy",
+    "inject-python-test/src/test/groovy/io/micronaut/python/compiler/GenerateToStringEqualsSpec.groovy",
+    "inject-python/src/main/java/io/micronaut/python/processing/PythonStubGenerator.java",
+    "inject-python/src/test/java/io/micronaut/python/compiler/PyronautCompilerTest.java"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "requiredOutputs": [
+    "core/build/libs/micronaut-core.jar"
+  ],
+  "affectedInputTasks": [],
+  "requiredProducers": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-report/v1",
+  "generatedAt": "2026-08-27T21:28:39.873769088Z",
+  "family": "spring-framework",
+  "dsl": "KOTLIN",
+  "baseRevision": "6e9534df4d743776463d61d8362ef42dbfadb730",
+  "targetRevision": "7daf1013aa89e6b80142437fccecc0be2bfbd7fb",
+  "status": "NO_SAFE_ACTION",
+  "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+  "changedPaths": [
+    "spring-test/src/main/java/org/springframework/mock/web/MockHttpServletRequest.java",
+    "spring-test/src/test/java/org/springframework/mock/web/MockHttpServletRequestTests.java",
+    "spring-web/src/testFixtures/java/org/springframework/web/testfixture/servlet/MockHttpServletRequest.java"
+  ],
+  "requestedTasks": [
+    ":spring-core:checkArchitectureMain"
+  ],
+  "requiredOutputs": [
+    "spring-core/build/checkArchitectureMain"
+  ],
+  "affectedInputTasks": [],
+  "requiredProducers": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

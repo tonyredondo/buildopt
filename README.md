@@ -162,16 +162,15 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > rejects these two detectors as a broad route; it does not claim that Gradle
 > itself cannot be improved by a different generic mechanism.
 
-> **Next generic hypothesis:** BuildOpt has preregistered
-> `CHANGE_AWARE_PRODUCER_CLOSURE_V1`. Instead of searching an unchanged task
-> graph for a smaller fixed scope, it will map real adjacent-commit changes
-> through finalized Gradle inputs and direct/transitive output producers to the
-> exact work and output closure required by that change. The current evidence
-> provides five complete graphs, five exact output contracts and 100 primary
-> plus 50 reserve commits, but it does not yet provide change-to-producer
-> ownership. No action or performance claim exists yet: all five families must
-> first produce conclusive evidence and at least three must expose a safe action
-> before timing is allowed. Follow the
+> **Current generic hypothesis:** BuildOpt now maps real adjacent-commit
+> changes through finalized Gradle inputs and direct/transitive output
+> producers to the exact work and output closure required by that change. The
+> fresh producer completed 25/25 conclusive transitions across Spring,
+> OpenTelemetry, Kafka, Micronaut and Groovy. Spring exposes one exact testable
+> action; the other 24 transitions safely retain the ordinary requested graph.
+> No wall time was measured and no action was activated. The next block must
+> independently recompute whether safe actions reach the unchanged 3/5-family
+> breadth gate before any timing is allowed. Follow the
 > [change-aware tracker](./docs/plans/change-aware-producer-closure-poc-tracker.md).
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,

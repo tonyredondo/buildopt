@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-report/v1",
+  "generatedAt": "2026-08-27T21:42:10.397187300Z",
+  "family": "apache-kafka",
+  "dsl": "GROOVY",
+  "baseRevision": "21ff2e4f8beb439f48e90ac0dda98139a00caab4",
+  "targetRevision": "d5b3cd62f4fe12f04ddae3f0e27c912296c4922a",
+  "status": "NO_SAFE_ACTION",
+  "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+  "changedPaths": [
+    "docker/native/Dockerfile"
+  ],
+  "requestedTasks": [
+    ":clients:jar"
+  ],
+  "requiredOutputs": [
+    "clients/build/libs/kafka-clients.jar"
+  ],
+  "affectedInputTasks": [],
+  "requiredProducers": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

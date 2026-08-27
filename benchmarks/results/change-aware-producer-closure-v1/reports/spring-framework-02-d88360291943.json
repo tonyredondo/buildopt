@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-producer-report/v1",
+  "generatedAt": "2026-08-27T21:25:47.295809829Z",
+  "family": "spring-framework",
+  "dsl": "KOTLIN",
+  "baseRevision": "1b354f2705f624ea090eab2bd6099a6c4c2a22fe",
+  "targetRevision": "d883602919438b89d69d1189b2ebc258918a8a37",
+  "status": "NO_SAFE_ACTION",
+  "reason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+  "changedPaths": [
+    "framework-docs/modules/ROOT/pages/data-access/jdbc/embedded-database-support.adoc",
+    "framework-docs/modules/ROOT/pages/data-access/jdbc/packages.adoc",
+    "framework-docs/modules/ROOT/pages/data-access/jdbc/simple.adoc"
+  ],
+  "requestedTasks": [
+    ":spring-core:checkArchitectureMain"
+  ],
+  "requiredOutputs": [
+    "spring-core/build/checkArchitectureMain"
+  ],
+  "affectedInputTasks": [],
+  "requiredProducers": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}
