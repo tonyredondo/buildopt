@@ -17,3 +17,11 @@ func replaceWithNativeGradleProcess(
 ) error {
 	panic("native Gradle process replacement is unavailable on Windows")
 }
+
+func replaceWithNativeGradleProcessWithReserved(
+	childArgs []string,
+	environmentOverrides map[string]string,
+	additionalReserved []string,
+) error {
+	panic("native Gradle process replacement is unavailable on Windows")
+}

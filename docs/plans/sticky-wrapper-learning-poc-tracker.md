@@ -3,7 +3,7 @@
 ## Status
 
 **Overall:** `IN_PROGRESS`<br>
-**Progress:** `15/17` blocks complete<br>
+**Progress:** `16/18` blocks complete<br>
 **Current block:** `SWL-015` — frozen public longitudinal campaign (diagnostic sample captured)<br>
 **Predecessor:** the adaptive-fragment experiment closed as
 `STOP_ADAPTIVE_FRAGMENT_POC` with zero activations and zero attributable
@@ -244,7 +244,8 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | 6 | `SWL-006` Gradle HTTP cache integration | Existing verifying gateway and central cache operate automatically through the wrapper | `DONE` | SWL-005 |
 | 7 | `SWL-007` Decision contract and store | Typed state machine, signed decisions, generation CAS, expiry, revocation and plane separation | `DONE` | SWL-006 |
 | 8 | `SWL-008` Native no-op fast path | Exact local snapshot makes native retention independent of a blocking remote lookup | `DONE` | SWL-007 |
-| 9 | `SWL-009` Ordinary-build observation | Bounded exact timings, outputs, task/graph facts and ledger updates from requested builds | `DONE` | SWL-008 |
+| 8A | `SWL-008A` Sticky-wrapper native retention integration | Native no-op execution and lazy light observation avoid unnecessary launcher infrastructure | `DONE` | SWL-008 |
+| 9 | `SWL-009` Ordinary-build observation | Bounded exact timings, outputs, task/graph facts and ledger updates from requested builds | `DONE` | SWL-008A |
 | 10 | `SWL-010` Budgeted trial orchestration | Isolated paired candidate/native trials run only within the frozen CI compute budget | `DONE` | SWL-009 |
 | 11 | `SWL-011` Active execution and suspension | Qualified runtime action, revalidation, counterfactual sampling, regression suspension and native fallback | `DONE` | SWL-010 |
 | 12 | `SWL-012` Durable native optimization catalog | Generic detectors and reviewable patches for task contracts and graph breadth | `DONE` | SWL-009 |
@@ -476,7 +477,47 @@ recorded verified-local p50/p95 of 0.492/1.369 ms; missing-state fallback was
 0.0025/0.0025 ms and the no-synchronous-refresh case was 0.0025/0.0026 ms.
 All values are retention-cost measurements, not acceleration evidence, and
 the checked-in JSON remains the source of truth. `SWL-009` is complete and
-`SWL-010` is now in progress.
+`SWL-008A` and the later blocks extend this retention boundary without changing
+the selector's fail-closed authority.
+
+### SWL-008A — Sticky-wrapper native retention integration
+
+Connect the native-retention idea to the customer-facing `buildoptw` execution
+path. When no server credential and no explicit BuildOpt integration are
+configured, the wrapper must validate its boundary and let the repository's
+native Gradle Wrapper run without starting a gateway, plugin handshake,
+managed L1, central-cache probe or bootstrap state. BuildOpt-only environment
+variables are removal-only and never become Gradle inputs. A configured
+credential or explicit integration keeps the established instrumented path;
+malformed committed configuration retains that path so its diagnostics are not
+hidden.
+
+The ordinary observer is deliberately lazy and has explicit modes:
+
+| Mode | Behavior |
+| --- | --- |
+| unset, `1`, `light` | Bounded light observation; no pre-build Git lookup, executable digest computed concurrently when possible, and recorder creation only after the child exits |
+| `full` | Explicit diagnostic mode that also attempts source-revision evidence |
+| `0` | No observation state; use the native process fast path when possible |
+| unknown | Retain the established full launcher path |
+
+Acceptance requires exact passthrough and child-environment scrubbing, no
+gateway/handshake/cache setup on the implicit native path, lazy recorder
+creation, and an interleaved local overhead result with at least 20 samples.
+This block does not claim a Gradle speedup and does not authorize an
+optimization action. It only prevents wrapper plumbing from erasing the value
+of later cache or Build Impact experiments.
+
+Closed evidence: [`poc-sticky-wrapper-noop-overhead-v1`](../../specs/poc-sticky-wrapper-noop-overhead-v1.md),
+the native fast-path implementation and focused tests, plus the executable
+[`check-sticky-wrapper-noop-overhead`](../../dev/check-sticky-wrapper-noop-overhead)
+validate the checked-in 20-sample Linux result. Direct execution is 2 ms p50 /
+3 ms p95;
+the native no-op path adds **11 ms p95**, light observation adds **34 ms p95**,
+and light pre-child decision work is **0.104 ms p95**. All values pass the
+100/250/100 ms POC guardrails. The result is retention-cost evidence only;
+`SWL-009` remains the ordinary-build observation contract and `SWL-015` the
+current longitudinal value campaign.
 
 ### SWL-009 — Ordinary-build observation
 
@@ -498,9 +539,12 @@ reuse invocation **3.732 s**. Exact decision work is **53.8/57.4 ms** and
 exact child-Gradle work is **19.821/3.673 s**. Every record reconciles its
 timing object, binds the Wrapper/BuildOpt/argument digests, rejects tampering,
 and keeps network, bootstrap and post-build observation unavailable rather
-than inventing zeros. The output path and mode are scrubbed from the child;
-observation failures remain diagnostic and never change the requested exit
-code. This is cost-accounting evidence, not a speedup claim.
+than inventing zeros. The default path now uses light observation, with the
+executable digest computed concurrently when possible; `full` is
+explicit for diagnostic source-revision evidence and `0` disables recording.
+The output path and mode are scrubbed from the child; observation failures
+remain diagnostic and never change the requested exit code. This is
+cost-accounting evidence, not a speedup claim.
 
 ### SWL-010 — Budgeted trial orchestration
 
@@ -723,6 +767,7 @@ customer behavior, architecture, value evidence or direction changes.
 | `SWL-E007` | SWL-006 | [Sticky-wrapper Gradle cache contract](../../specs/poc-sticky-wrapper-cache-v1.md), machine contract, automatic native cache flag, read-only central policy and race-enabled producer/consumer/corruption/outage integration | `DONE` |
 | `SWL-E008` | SWL-007 | [Decision-store specification](../../specs/poc-sticky-wrapper-decision-store-v1.md), JSON Schema union and fixtures, `internal/stickydecision`, and executable [`check-sticky-wrapper-decision-store`](../../dev/check-sticky-wrapper-decision-store): all valid state transitions, signed decisions, evidence/ledger references, local and central generation CAS, replay/conflict, expiry, revocation, corruption and cache/state plane separation | `DONE` |
 | `SWL-E009` | SWL-008 | [`poc-sticky-wrapper-noop-v1`](../../specs/poc-sticky-wrapper-noop-v1.md), read-only selector, fail-closed state matrix and [`sticky-wrapper-noop-v1.json`](../../benchmarks/results/sticky-wrapper-noop-v1.json): 200 verified local, missing and no-synchronous-refresh selections stay below the 100 ms p50, 250 ms p95 and 500 ms fallback budgets | `DONE` |
+| `SWL-E018` | SWL-008A | [`poc-sticky-wrapper-noop-overhead-v1`](../../specs/poc-sticky-wrapper-noop-overhead-v1.md), native sticky-wrapper fast path, lazy light observer, focused launcher tests and [`sticky-wrapper-noop-overhead-v1.json`](../../benchmarks/results/sticky-wrapper-noop-overhead-v1.json): 20 interleaved Linux samples record 11 ms p95 native no-op overhead, 34 ms p95 light-observation overhead and 0.104 ms p95 pre-child decision time; the light executable digest runs concurrently when possible; all 100/250/100 ms POC guardrails pass | `DONE` |
 | `SWL-E010` | SWL-009 | [`poc-sticky-wrapper-observation-v1`](../../specs/poc-sticky-wrapper-observation-v1.md), private append-only recorder, real Wrapper checker and [`sticky-wrapper-observation-v1.json`](../../benchmarks/results/sticky-wrapper-observation-v1.json): two successful Gradle 9.6.1 observations with Configuration Cache present, exact phase reconciliation, provenance hashes, child-environment scrubbing and tamper rejection; 19.876 s cold and 3.732 s reuse wall time | `DONE` |
 | `SWL-E011` | SWL-010 | [`poc-sticky-wrapper-trial-v1`](../../specs/poc-sticky-wrapper-trial-v1.md), bounded scheduler, direct isolated runner and [`sticky-wrapper-trial-v1.json`](../../benchmarks/results/sticky-wrapper-trial-v1.json): four alternating candidate/native pairs, eight invocations, eight private roots, exact output hashes, 58.050 s used of a 180 s ceiling; candidate 7.534 s versus native 6.979 s, 0/4 positive | `DONE` |
 | `SWL-E012` | SWL-011 | [`poc-sticky-wrapper-active-v1`](../../specs/poc-sticky-wrapper-active-v1.md), generic active runner and [`sticky-wrapper-active-v1.json`](../../benchmarks/results/sticky-wrapper-active-v1.json): current negative trial rejected, one exact synthetic active execution, three suspensions, four native retentions, signed binding revalidation and direct-command fallback | `DONE` |
@@ -751,6 +796,7 @@ customer behavior, architecture, value evidence or direction changes.
 
 | Date | Change |
 | --- | --- |
+| 2026-08-27 | Closed SWL-008A. Connected sticky-wrapper native retention to the real launcher: unconfigured invocations skip gateway, plugin handshake, managed L1, central-cache probes and bootstrap state; ordinary observation defaults to lazy light mode, with explicit full and disabled modes. The light executable digest now runs concurrently when possible instead of delaying startup. A 20-sample Linux microbenchmark records +11 ms p95 native no-op overhead, +34 ms p95 light-observation overhead and 0.104 ms p95 pre-child decision time, all within the frozen guardrails. This is wrapper-cost evidence only; no Gradle speedup or action authority is claimed. |
 | 2026-08-27 | Closed SWL-014. The committed sticky wrapper bootstrapped one verified archive in isolated producer/consumer containers, published two Gradle cache objects over HTTPS, kept pending reads invisible until owner commit, restored two tasks from a clean read-only machine, and rebuilt the same output during service outage. Durations are recorded for the next timing experiment; no wall-time or profile-qualification claim is made. Opened SWL-015 frozen public longitudinal campaign. |
 | 2026-08-27 | Captured the first SWL-015 diagnostic sample across Spring Framework, OpenTelemetry Java Instrumentation, Apache Kafka, Micronaut Core and Apache Groovy. All five candidate/control pairs produced exact required outputs with zero product failures; two were positive and three negative for -22.149 seconds signed value. The sample is `INCOMPLETE` and cannot feed SWL-016 until the balanced 15-per-family gate is met. A harness-only final-aggregation failure was repaired by passing jq programs explicitly; one follow-up run remains before the full campaign is considered closed. |
 | 2026-08-27 | Closed SWL-013. Added read-only customer `status` and `explain` management commands to both generated wrapper templates, with one recomputable human/JSON report model, explicit unavailable metrics, exact bindings, native fallback reasons and tamper rejection. Ordinary Gradle tasks named `status` or `explain` remain unambiguous. Opened SWL-014 two-machine installed proof. |

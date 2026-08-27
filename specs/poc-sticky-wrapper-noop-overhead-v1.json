@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-noop-overhead/v1",
+  "workItem": "SWL-008A",
+  "purpose": "Keep the committed sticky wrapper's native retention path and light observation below a bounded startup cost.",
+  "nativePath": {
+    "requiresNoServerCredential": true,
+    "startsGateway": false,
+    "startsPluginHandshake": false,
+    "startsManagedL1": false,
+    "probesCentralCache": false,
+    "scrubsBuildOptEnvironment": true,
+    "unixReplacesIdleLauncher": true
+  },
+  "observationModes": {
+    "default": "light",
+    "full": "git_revision_lookup",
+    "disabled": "0",
+    "unknownValue": "retain_existing_full_path",
+    "lightBuildOptDigest": "best_effort_async",
+    "lightDigestNotReady": "unavailable_digest"
+  },
+  "measurement": {
+    "interleaved": true,
+    "warmups": 2,
+    "minimumIterations": 20,
+    "pairedOverheadDefinition": "candidate_duration_minus_direct_duration",
+    "preChildDecisionReportedSeparately": true,
+    "criticalPathParallelism": false,
+    "result": "benchmarks/results/sticky-wrapper-noop-overhead-v1.json",
+    "generator": "dev/run-sticky-wrapper-noop-overhead",
+    "checker": "dev/check-sticky-wrapper-noop-overhead"
+  },
+  "budgets": {
+    "nativeNoopP95OverDirectMsMax": 100,
+    "lightObservationP95OverDirectMsMax": 250,
+    "lightDecisionP95MsMax": 100
+  },
+  "buildSpeedClaim": false
+}

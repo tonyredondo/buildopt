@@ -36,6 +36,13 @@ jq -e '
     .timing.unavailableHasNoDuration == true and
     .timing.reconcilesToTotal == true and
     .timing.causalSavingsClaimed == false and
+    .observationModes.default == "light" and
+    .observationModes.full == "git_revision_lookup" and
+    .observationModes.disabled == "0" and
+    .observationModes.lightBuildOptDigest == "best_effort_async" and
+    .observationModes.lightDigestNotReady == "unavailable_digest" and
+    .recorder.lazyCreation == true and
+    .recorder.postBuildOnly == true and
     .childBoundary.gradleArgumentsChanged == false and
     .childBoundary.exitCodeChanged == false and
     .nextBlock == "SWL-010"

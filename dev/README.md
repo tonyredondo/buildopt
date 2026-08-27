@@ -122,6 +122,23 @@ child-environment scrubbing, tamper rejection and wall-time reconciliation.
 The result is diagnostic cost evidence only; observation cannot authorize an
 action or alter the requested Gradle result.
 
+Validate the sticky-wrapper native no-op path, lazy light observation and
+bounded startup overhead with:
+
+```bash
+./dev/check-sticky-wrapper-noop-overhead
+```
+
+This is the `SWL-008A` gate. It validates the checked-in local microbenchmark
+and requires at least 20 interleaved samples for direct execution, native
+no-op and light observation. The current result records **11 ms p95** native
+no-op overhead, **34 ms p95** light-observation overhead and **0.104 ms p95**
+pre-child decision time. The light executable digest runs concurrently when
+possible. These are wrapper-cost guardrails, not Gradle speedup claims. The
+no-op path skips gateway, plugin, managed-L1 and central cache work when no
+configured consumer needs them; `full` observation remains an explicit
+diagnostic mode.
+
 Validate the trusted-CI paired candidate/native trial and its 5% learning
 budget with:
 

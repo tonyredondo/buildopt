@@ -15,25 +15,35 @@ import (
 const (
 	stickyObservationOutputEnvironment = "BUILDOPT_STICKY_OBSERVATION_OUTPUT"
 	stickyObservationModeEnvironment   = "BUILDOPT_STICKY_OBSERVATION"
+	ordinaryObservationModeLight       = "light"
+	ordinaryObservationModeFull        = "full"
+	ordinaryObservationModeDisabled    = "disabled"
 )
 
 // ordinaryObservationState is intentionally a best-effort companion to the
 // requested Gradle build. It never changes arguments, cache policy or exit
 // status; failures to write evidence are reported after the build.
 type ordinaryObservationState struct {
-	root       string
-	recorder   *stickyobservation.Recorder
-	record     stickyobservation.Record
-	startedAt  time.Time
-	connection time.Time
-	cacheStart time.Time
-	gradleRun  childExecution
-	gradleSeen bool
-	obsStart   time.Time
+	root         string
+	outputPath   string
+	recorder     *stickyobservation.Recorder
+	buildOptHash <-chan string
+	record       stickyobservation.Record
+	startedAt    time.Time
+	connection   time.Time
+	cacheStart   time.Time
+	gradleRun    childExecution
+	gradleSeen   bool
+	obsStart     time.Time
 }
 
 func newOrdinaryObservationState(root string, args []string) *ordinaryObservationState {
-	if root == "" || os.Getenv(stickyObservationModeEnvironment) == "0" || !isGradleChild(args) {
+	return newOrdinaryObservationStateAt(root, args, time.Now().UTC())
+}
+
+func newOrdinaryObservationStateAt(root string, args []string, startedAt time.Time) *ordinaryObservationState {
+	mode, ok := stickyObservationMode(os.Getenv)
+	if root == "" || !ok || mode == ordinaryObservationModeDisabled || !isGradleChild(args) {
 		return nil
 	}
 	absolute, err := filepath.Abs(root)
@@ -53,16 +63,23 @@ func newOrdinaryObservationState(root string, args []string) *ordinaryObservatio
 		}
 		output = filepath.Join(cacheRoot, "buildopt", "sticky", "observations", scope, "builds.jsonl")
 	}
-	recorder, err := stickyobservation.NewRecorder(output)
-	if err != nil {
-		return nil
+	if startedAt.IsZero() {
+		startedAt = time.Now().UTC()
 	}
-	startedAt := time.Now().UTC()
+	provenance := ordinaryObservationProvenanceForMode(absolute, scope, args, mode)
+	var buildOptHash <-chan string
+	if mode == ordinaryObservationModeLight {
+		// Hashing the launcher binary can be relatively expensive on a cold
+		// filesystem. Do it concurrently with Gradle and keep the explicit
+		// unavailable digest when a short build exits first; it must never
+		// delay the requested build's start or completion.
+		buildOptHash = startOrdinaryObservationBuildOptHash()
+	}
 	record := stickyobservation.Record{
 		SchemaVersion: stickyobservation.SchemaVersion,
 		RecordType:    stickyobservation.RecordType,
 		ObservationID: "build-" + stickyobservation.Digest(startedAt.Format(time.RFC3339Nano), strings.Join(args, "\x00"))[:24],
-		Provenance:    ordinaryObservationProvenance(absolute, scope, args),
+		Provenance:    provenance,
 		StartedAt:     startedAt.Format(time.RFC3339Nano),
 		ConfigurationCache: stickyobservation.ConfigurationCache{
 			Requested: hasGradleArgument(args, "--configuration-cache"),
@@ -78,11 +95,16 @@ func newOrdinaryObservationState(root string, args []string) *ordinaryObservatio
 	record.Timing.Bootstrap = stickyobservation.Phase{Evidence: "UNAVAILABLE"}
 	record.IdempotencyKey = stickyobservation.Digest(record.ObservationID, record.Provenance.ArgumentsSHA256)
 	return &ordinaryObservationState{
-		root: root, recorder: recorder, record: record, startedAt: startedAt,
+		root: root, outputPath: output, buildOptHash: buildOptHash,
+		record: record, startedAt: startedAt,
 	}
 }
 
 func ordinaryObservationProvenance(root, scope string, args []string) stickyobservation.Provenance {
+	return ordinaryObservationProvenanceForMode(root, scope, args, ordinaryObservationModeFull)
+}
+
+func ordinaryObservationProvenanceForMode(root, scope string, args []string, mode string) stickyobservation.Provenance {
 	provenance := stickyobservation.Provenance{
 		RepositoryScopeSHA256:  scope,
 		SourceRevisionEvidence: "UNAVAILABLE",
@@ -91,11 +113,13 @@ func ordinaryObservationProvenance(root, scope string, args []string) stickyobse
 		BuildOptSHA256:         stickyobservation.Digest("unavailable-buildopt"),
 		ArgumentsSHA256:        stickyobservation.Digest("gradle-arguments-v1", strings.Join(args, "\x00")),
 	}
-	if revision, err := gitOutput(root, "rev-parse", "HEAD"); err == nil {
-		revision = strings.ToLower(strings.TrimSpace(revision))
-		if validMeasurementRevision(revision) {
-			provenance.SourceRevision = revision
-			provenance.SourceRevisionEvidence = "EXACT"
+	if mode == ordinaryObservationModeFull {
+		if revision, err := gitOutput(root, "rev-parse", "HEAD"); err == nil {
+			revision = strings.ToLower(strings.TrimSpace(revision))
+			if validMeasurementRevision(revision) {
+				provenance.SourceRevision = revision
+				provenance.SourceRevisionEvidence = "EXACT"
+			}
 		}
 	}
 	if version, err := centralGradleVersion(root); err == nil {
@@ -104,12 +128,44 @@ func ordinaryObservationProvenance(root, scope string, args []string) stickyobse
 	if hash, err := optimizeFileSHA256(filepath.Join(root, "gradle", "wrapper", "gradle-wrapper.properties"), true); err == nil {
 		provenance.WrapperSHA256 = hash
 	}
-	if executable, err := os.Executable(); err == nil {
-		if hash, hashErr := optimizeFileSHA256(executable, false); hashErr == nil {
-			provenance.BuildOptSHA256 = hash
+	if mode == ordinaryObservationModeFull {
+		if executable, err := os.Executable(); err == nil {
+			if hash, hashErr := optimizeFileSHA256(executable, false); hashErr == nil {
+				provenance.BuildOptSHA256 = hash
+			}
 		}
 	}
 	return provenance
+}
+
+func startOrdinaryObservationBuildOptHash() <-chan string {
+	result := make(chan string, 1)
+	go func() {
+		hash := ""
+		if executable, err := os.Executable(); err == nil {
+			if value, hashErr := optimizeFileSHA256(executable, false); hashErr == nil {
+				hash = value
+			}
+		}
+		result <- hash
+	}()
+	return result
+}
+
+func stickyObservationMode(getenv func(string) string) (string, bool) {
+	if getenv == nil {
+		return ordinaryObservationModeDisabled, false
+	}
+	switch strings.ToLower(strings.TrimSpace(getenv(stickyObservationModeEnvironment))) {
+	case "", "1", ordinaryObservationModeLight:
+		return ordinaryObservationModeLight, true
+	case ordinaryObservationModeFull:
+		return ordinaryObservationModeFull, true
+	case "0":
+		return ordinaryObservationModeDisabled, true
+	default:
+		return ordinaryObservationModeDisabled, false
+	}
 }
 
 func isGradleChild(args []string) bool {
@@ -214,8 +270,24 @@ func (state *ordinaryObservationState) finishObservation(at time.Time) {
 }
 
 func (state *ordinaryObservationState) finish(exitCode int, completedAt time.Time) error {
-	if state == nil || state.recorder == nil {
+	if state == nil || state.outputPath == "" {
 		return nil
+	}
+	if state.buildOptHash != nil {
+		select {
+		case hash := <-state.buildOptHash:
+			if hash != "" {
+				state.record.Provenance.BuildOptSHA256 = hash
+			}
+		default:
+		}
+	}
+	if state.recorder == nil {
+		recorder, err := stickyobservation.NewRecorder(state.outputPath)
+		if err != nil {
+			return err
+		}
+		state.recorder = recorder
 	}
 	if completedAt.Before(state.startedAt) {
 		completedAt = state.startedAt

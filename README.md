@@ -157,6 +157,17 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > speedup claim; no action is activated until the next block removes that
 > overhead and re-proves positive value.
 
+> **Wrapper overhead hardening:** the common sticky-wrapper path now resolves
+> to native Gradle without starting BuildOpt services when no configured
+> consumer needs them. Ordinary observation defaults to a lazy `light` mode;
+> it skips the pre-build Git lookup, computes the executable digest concurrently
+> when possible and writes its private record only after the child exits. A
+> 20-sample local microbenchmark measured **+11 ms p95** for
+> native no-op and **+34 ms p95** for light observation over direct execution,
+> with **0.104 ms p95** pre-child decision time. These are bounded wrapper-cost
+> results, not a Gradle speedup claim; the full numbers and reproducible check
+> are in the [overhead contract](./specs/poc-sticky-wrapper-noop-overhead-v1.md).
+
 > **First public longitudinal signal:** a bounded `SWL-015` run compared the
 > committed `./buildoptw` command with optimized native Gradle on one frozen
 > current revision in each of Spring Framework, OpenTelemetry Java

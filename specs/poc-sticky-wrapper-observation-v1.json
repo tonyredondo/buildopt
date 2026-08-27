@@ -16,6 +16,18 @@
     "reconcilesToTotal": true,
     "causalSavingsClaimed": false
   },
+  "observationModes": {
+    "default": "light",
+    "full": "git_revision_lookup",
+    "disabled": "0",
+    "unknownValue": "retain_existing_full_path",
+    "lightBuildOptDigest": "best_effort_async",
+    "lightDigestNotReady": "unavailable_digest"
+  },
+  "recorder": {
+    "lazyCreation": true,
+    "postBuildOnly": true
+  },
   "childBoundary": {
     "scrubbedEnvironment": ["BUILDOPT_STICKY_OBSERVATION", "BUILDOPT_STICKY_OBSERVATION_OUTPUT"],
     "gradleArgumentsChanged": false,

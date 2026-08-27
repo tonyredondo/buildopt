@@ -81,8 +81,14 @@ persistence adapters for observations, actions, trials, signed decisions and
 economics; `SWL-008` consumes a verified local snapshot through a read-only
 selector. Its lookup is bounded and never performs synchronous network I/O; it
 only retains native Gradle today, while active actions remain deferred to a
-later POC block. `SWL-009` adds a separate observation plane for ordinary
-Wrapper invocations: it records phase timing, provenance, outcome and
+later POC block. `SWL-008A` connects that retention boundary to the committed
+sticky wrapper: an invocation with no server credential or explicit BuildOpt
+integration skips gateway, plugin-handshake, managed-L1 and central-cache
+setup, while preserving the native Gradle process contract. Its ordinary
+observer defaults to lazy `light` mode and computes the executable digest
+concurrently when possible; `full` source-revision lookup and `0` disablement
+are explicit choices. `SWL-009` adds a separate observation plane
+for ordinary Wrapper invocations: it records phase timing, provenance, outcome and
 Configuration Cache state without granting authority or changing the Gradle
 result. `SWL-010` adds a trusted-CI trial plane that runs isolated candidate
 and native commands with separate checkout, Gradle/cache/daemon and BuildOpt

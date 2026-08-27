@@ -12,14 +12,22 @@ Each completed wrapper invocation appends one canonical JSON line to a private
 user-cache file. The path is derived from a project scope and can be overridden
 for a checker with `BUILDOPT_STICKY_OBSERVATION_OUTPUT`; committed files never
 contain the checkout path or a credential. A sibling lock prevents concurrent
-invocations from interleaving records. Writes are best effort and never change
-the requested build's exit code.
+invocations from interleaving records. The default `light` mode avoids a
+pre-build Git command, starts the expensive BuildOpt executable digest
+concurrently with Gradle, and creates the recorder only after the child exits,
+so a normal wrapper call pays only the bounded decision cost before Gradle
+starts. If a short build finishes before that digest is ready, the record keeps
+the explicit unavailable digest instead of delaying completion.
+`full` mode is reserved for diagnostic runs that explicitly need a best-effort
+source-revision lookup. Writes are best effort and never change the requested
+build's exit code.
 
 The record binds:
 
 - a repository scope, source revision evidence, Gradle version and Wrapper
   digest;
-- the BuildOpt executable and Gradle argument digests;
+- the BuildOpt executable and Gradle argument digests (the executable digest is
+  best-effort in `light` mode and exact in `full` mode when available);
 - the outcome (`SUCCESS`, `BUILD_FAILURE`, `INFRA_FAILURE` or `CANCELLED`);
 - canonical UTC start/end timestamps and the original exit code; and
 - whether Configuration Cache was requested and whether its state directory
@@ -55,7 +63,10 @@ records and the corresponding Gradle output, not by this flag alone.
 If recording fails, the wrapper reports a diagnostic and retains the native
 Gradle result. `BUILDOPT_BYPASS=1` and `BUILDOPT_STICKY_OBSERVATION=0` disable
 the observer before it creates a directory or opens a connection. The Gradle
-child never receives the output path or mode variables.
+child never receives the output path or mode variables. The separate
+sticky-wrapper no-op contract measures this startup trade-off and proves that
+the no-op path does not start a gateway, plugin handshake, managed L1 or
+central-cache probe when none is configured.
 
 ## Validation
 

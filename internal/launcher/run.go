@@ -32,10 +32,21 @@ const (
 // central Gradle cache, records the one-command optimization POC contract, and
 // returns the child process exit status.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode int) {
+	runStartedAt := time.Now().UTC()
 	var additionalReservedEnvironment []string
 	var ordinaryObservation *ordinaryObservationState
-	if root := os.Getenv(stickyWrapperRootEnvironment); root != "" {
-		ordinaryObservation = newOrdinaryObservationState(root, ordinaryChildArguments(args))
+	stickyRoot := os.Getenv(stickyWrapperRootEnvironment)
+	if stickyRoot != "" {
+		if childArgs := ordinaryChildArguments(args); childArgs != nil {
+			if path, ok := prepareStickyNativeNoopPath(stickyRoot, childArgs, os.Getenv); ok {
+				return runStickyNativeNoop(path, childArgs, runStartedAt, stdin, stdout, stderr)
+			}
+		}
+		ordinaryObservation = newOrdinaryObservationStateAt(
+			stickyRoot,
+			ordinaryChildArguments(args),
+			runStartedAt,
+		)
 		if ordinaryObservation != nil {
 			defer func() {
 				if err := ordinaryObservation.finish(runExitCode, time.Now().UTC()); err != nil {

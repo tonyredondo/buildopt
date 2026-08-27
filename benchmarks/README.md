@@ -31,6 +31,40 @@ and observation cost without altering Gradle's result. Validate it with:
 ./dev/check-sticky-wrapper-observation
 ```
 
+## Sticky-wrapper native no-op overhead
+
+[`sticky-wrapper-noop-overhead-v1.json`](./results/sticky-wrapper-noop-overhead-v1.json)
+measures the cost of the committed wrapper when it has nothing useful to
+activate. The interleaved local microbenchmark compares direct execution,
+the native no-op path and the default light observer over 20 warmed samples.
+It is deliberately separate from build-time scorecards: the workload is a
+small Wrapper-shaped process, so the result answers only whether the wrapper
+gets out of the way when Gradle should remain native.
+
+The current Linux result records:
+
+| Mode | p50 | p95 | p95 over direct |
+| --- | ---: | ---: | ---: |
+| Direct process | 2 ms | 3 ms | — |
+| Native no-op | 11 ms | 13 ms | **+11 ms** |
+| Light observation | 34 ms | 36 ms | **+34 ms** |
+
+Light observation's pre-child decision work is **0.104 ms p95**. The result
+passes the POC guardrails of 100 ms native no-op overhead, 250 ms light
+observation overhead and 100 ms light decision time. The default observer
+skips the pre-build Git lookup, computes its executable digest concurrently with
+the child when possible, and creates its recorder only after Gradle exits;
+`BUILDOPT_STICKY_OBSERVATION=full` remains an explicit diagnostic mode, and `0`
+disables recording. These numbers do not claim a faster Gradle build; they
+prevent wrapper plumbing from obscuring the value of later cache or Build Impact
+experiments.
+
+Validate the checked result with:
+
+```bash
+./dev/check-sticky-wrapper-noop-overhead
+```
+
 ## Sticky-wrapper paired-trial evidence
 
 [`sticky-wrapper-trial-v1.json`](./results/sticky-wrapper-trial-v1.json) is the

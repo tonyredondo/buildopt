@@ -50,6 +50,18 @@ no active optimization is authorized. This is the required fail-closed
 behavior: a trial can produce evidence without changing ordinary developer
 builds.
 
+`SWL-008A` adds the corresponding sticky-wrapper fast path for the common case
+where no server credential or explicit BuildOpt integration is configured. It
+validates the committed wrapper and then lets native Gradle run without
+starting a gateway, plugin handshake, managed L1 or central-cache probe. The
+default ordinary observer is now `light`: it skips the pre-build Git lookup and
+creates its private recorder only after the child exits. The executable digest
+runs concurrently with the child when possible. `full` observation is an
+explicit diagnostic choice, while `0` disables recording entirely. The
+checked-in local overhead result is **11 ms p95** for the native no-op path and
+**34 ms p95** for light observation over direct execution; these are startup
+guardrails, not build-time savings.
+
 ### Active runtime boundary
 
 `SWL-011` implements the next control boundary without pretending that the

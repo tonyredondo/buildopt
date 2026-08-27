@@ -107,8 +107,15 @@ retention-cost result: 200 signed local-decision selections on Linux AMD64
 measured **0.492 ms p50 / 1.369 ms p95** for verified local state; missing and
 no-synchronous-refresh fallback stayed below **0.003 ms p95**. The selector
 never performs synchronous network I/O and all invalid state retains native
-Gradle. This is not acceleration evidence; `SWL-009` must attribute
-ordinary-build phases before any value claim is made.
+Gradle. `SWL-008A` connects that boundary to the committed wrapper: an
+unconfigured invocation skips gateway, plugin-handshake, managed-L1 and
+central-cache setup, and observation defaults to lazy `light` mode. The checked
+20-sample local result adds **11 ms p95** for native no-op and **34 ms p95** for
+light observation over direct execution, with **0.104 ms p95** pre-child
+decision time. The light observer computes the executable digest concurrently
+with the child when possible. These are wrapper-cost guardrails, not
+acceleration evidence;
+`SWL-009` still owns ordinary-build phase attribution before any value claim.
 
 Historically, AF-010 demonstrated independent Build Impact activation on real
 Gradle, and AF-011 added direct timing without adding isolated percentages.

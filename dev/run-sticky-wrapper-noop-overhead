@@ -1,0 +1,205 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# < 2 || $# > 3)); then
+    printf 'usage: %s OUTPUT_JSON BUILDOPT_BINARY [ITERATIONS]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_binary=$2
+buildopt_iterations=${3:-20}
+if [[ "${buildopt_output}" != /* || -e "${buildopt_output}" ||
+    ! -x "${buildopt_binary}" ||
+    ! "${buildopt_iterations}" =~ ^[0-9]+$ ||
+    "${buildopt_iterations}" -lt 10 || "${buildopt_iterations}" -gt 200 ]]; then
+    printf 'invalid sticky-wrapper overhead benchmark input\n' >&2
+    exit 64
+fi
+
+buildopt_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-wrapper-overhead.XXXXXX")
+buildopt_cleanup() {
+    if [[ "${buildopt_root}" == "${TMPDIR:-/tmp}/buildopt-wrapper-overhead."* ]]; then
+        rm -rf -- "${buildopt_root}"
+    fi
+}
+trap buildopt_cleanup EXIT
+
+for buildopt_command in awk date env jq mktemp rm sha256sum tr uname; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required sticky-wrapper overhead command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+mkdir -p -- "${buildopt_root}/.buildopt"
+cat >"${buildopt_root}/.buildopt/config.toml" <<'EOF'
+schema_version = "buildopt.config/v1"
+mode = "auto"
+server_url = ""
+project_scope = ""
+credential_env = ""
+trial_budget_percent = 5
+EOF
+cat >"${buildopt_root}/gradlew" <<'EOF'
+#!/usr/bin/env sh
+set -eu
+printf '%s\n' 'sticky-wrapper-overhead-fixture'
+EOF
+chmod 0755 "${buildopt_root}/gradlew"
+
+buildopt_direct_samples=()
+buildopt_noop_samples=()
+buildopt_light_samples=()
+buildopt_direct_logs="${buildopt_root}/direct.log"
+buildopt_noop_logs="${buildopt_root}/noop.log"
+buildopt_light_logs="${buildopt_root}/light.log"
+buildopt_observation_output="${buildopt_root}/observations.jsonl"
+
+buildopt_measure() {
+    local buildopt_mode=$1
+    local buildopt_started
+    local buildopt_completed
+    local buildopt_status
+    buildopt_started=$(date +%s%N)
+    set +e
+    case "${buildopt_mode}" in
+        DIRECT)
+            (cd -- "${buildopt_root}" && ./gradlew help) >>"${buildopt_direct_logs}" 2>&1
+            buildopt_status=$?
+            ;;
+        NATIVE_NOOP)
+            (cd -- "${buildopt_root}" &&
+                BUILDOPT_STICKY_WRAPPER_ROOT="${buildopt_root}" \
+                BUILDOPT_STICKY_OBSERVATION=0 \
+                "${buildopt_binary}" run -- "${buildopt_root}/gradlew" help) \
+                >>"${buildopt_noop_logs}" 2>&1
+            buildopt_status=$?
+            ;;
+        LIGHT_OBSERVATION)
+            (cd -- "${buildopt_root}" &&
+                BUILDOPT_STICKY_WRAPPER_ROOT="${buildopt_root}" \
+                BUILDOPT_STICKY_OBSERVATION=light \
+                BUILDOPT_STICKY_OBSERVATION_OUTPUT="${buildopt_observation_output}" \
+                "${buildopt_binary}" run -- "${buildopt_root}/gradlew" help) \
+                >>"${buildopt_light_logs}" 2>&1
+            buildopt_status=$?
+            ;;
+        *)
+            printf 'unknown sticky-wrapper overhead mode: %s\n' "${buildopt_mode}" >&2
+            exit 64
+            ;;
+    esac
+    set -e
+    buildopt_completed=$(date +%s%N)
+    if ((buildopt_status != 0)); then
+        printf 'sticky-wrapper overhead mode failed: %s\n' "${buildopt_mode}" >&2
+        exit 1
+    fi
+    buildopt_duration_ms=$(((buildopt_completed - buildopt_started) / 1000000))
+    case "${buildopt_mode}" in
+        DIRECT) buildopt_direct_samples+=("${buildopt_duration_ms}") ;;
+        NATIVE_NOOP) buildopt_noop_samples+=("${buildopt_duration_ms}") ;;
+        LIGHT_OBSERVATION) buildopt_light_samples+=("${buildopt_duration_ms}") ;;
+    esac
+}
+
+# Warm the executable and the shell fixture before recording samples.
+for _ in 1 2; do
+    buildopt_measure DIRECT
+    buildopt_measure NATIVE_NOOP
+    buildopt_measure LIGHT_OBSERVATION
+done
+buildopt_direct_samples=()
+buildopt_noop_samples=()
+buildopt_light_samples=()
+: >"${buildopt_direct_logs}"
+: >"${buildopt_noop_logs}"
+: >"${buildopt_light_logs}"
+: >"${buildopt_observation_output}"
+
+for ((buildopt_iteration = 0; buildopt_iteration < buildopt_iterations; buildopt_iteration++)); do
+    buildopt_measure DIRECT
+    buildopt_measure NATIVE_NOOP
+    buildopt_measure LIGHT_OBSERVATION
+done
+
+buildopt_json_array() {
+    printf '%s\n' "$@" | jq -Rsc 'split("\n") | map(select(length > 0) | tonumber)'
+}
+buildopt_summary() {
+    jq -cn --argjson samples "$1" '
+        ($samples | sort) as $sorted |
+        {
+            samplesMs: $sorted,
+            p50Ms: $sorted[((($sorted | length) * 0.50) | ceil) - 1],
+            p95Ms: $sorted[((($sorted | length) * 0.95) | ceil) - 1],
+            maxMs: $sorted[-1]
+        }
+    '
+}
+buildopt_deltas() {
+    jq -cn --argjson direct "$1" --argjson candidate "$2" '
+        [range(0; ($direct | length)) | ($candidate[.] - $direct[.])]
+    '
+}
+
+buildopt_direct_json=$(buildopt_json_array "${buildopt_direct_samples[@]}")
+buildopt_noop_json=$(buildopt_json_array "${buildopt_noop_samples[@]}")
+buildopt_light_json=$(buildopt_json_array "${buildopt_light_samples[@]}")
+buildopt_direct_summary=$(buildopt_summary "${buildopt_direct_json}")
+buildopt_noop_summary=$(buildopt_summary "${buildopt_noop_json}")
+buildopt_light_summary=$(buildopt_summary "${buildopt_light_json}")
+buildopt_noop_deltas=$(buildopt_deltas "${buildopt_direct_json}" "${buildopt_noop_json}")
+buildopt_light_deltas=$(buildopt_deltas "${buildopt_direct_json}" "${buildopt_light_json}")
+buildopt_noop_delta_summary=$(buildopt_summary "${buildopt_noop_deltas}")
+buildopt_light_delta_summary=$(buildopt_summary "${buildopt_light_deltas}")
+buildopt_decision_json=$(jq -sc '[.[].timing.decision.durationNs / 1000000]' "${buildopt_observation_output}")
+buildopt_decision_summary=$(buildopt_summary "${buildopt_decision_json}")
+buildopt_binary_sha256=$(sha256sum "${buildopt_binary}" | awk '{print $1}')
+buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+jq -n \
+    --arg schema "buildopt.poc/sticky-wrapper-noop-overhead/v1" \
+    --arg capturedAt "${buildopt_captured_at}" \
+    --arg operatingSystem "$(uname -s | tr '[:upper:]' '[:lower:]')" \
+    --arg architecture "$(uname -m)" \
+    --arg binarySha256 "${buildopt_binary_sha256}" \
+    --argjson iterations "${buildopt_iterations}" \
+    --argjson direct "${buildopt_direct_summary}" \
+    --argjson noop "${buildopt_noop_summary}" \
+    --argjson light "${buildopt_light_summary}" \
+    --argjson noopDelta "${buildopt_noop_delta_summary}" \
+    --argjson lightDelta "${buildopt_light_delta_summary}" \
+    --argjson decision "${buildopt_decision_summary}" \
+    --argjson requirements '{"nativeNoopP95OverDirectMsMax":100,"lightObservationP95OverDirectMsMax":250,"lightDecisionP95MsMax":100}' \
+    '
+    {
+        schemaVersion: $schema,
+        capturedAt: $capturedAt,
+        environment: {
+            operatingSystem: $operatingSystem,
+            architecture: $architecture
+        },
+        buildoptBinarySha256: $binarySha256,
+        iterations: $iterations,
+        requirements: $requirements,
+        modes: {
+            direct: $direct,
+            nativeNoop: ($noop + {overheadVsDirect: $noopDelta}),
+            lightObservation: ($light + {
+                overheadVsDirect: $lightDelta,
+                decision: $decision
+            })
+        }
+    } as $root |
+    $root + {pass: (
+        $root.modes.nativeNoop.overheadVsDirect.p95Ms <= $root.requirements.nativeNoopP95OverDirectMsMax and
+        $root.modes.lightObservation.overheadVsDirect.p95Ms <= $root.requirements.lightObservationP95OverDirectMsMax and
+        $root.modes.lightObservation.decision.p95Ms <= $root.requirements.lightDecisionP95MsMax
+    )}
+    ' \
+    >"${buildopt_output}.tmp"
+mv -- "${buildopt_output}.tmp" "${buildopt_output}"
+jq -c '{schemaVersion,iterations,pass,requirements,modes}' "${buildopt_output}"

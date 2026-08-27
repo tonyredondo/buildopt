@@ -63,15 +63,21 @@ execution block. Missing, expired, revoked, corrupt or incompatible state
 retains native Gradle and may trigger a best-effort asynchronous refresh. The
 selector never creates state or contacts the service on the critical path.
 
-Ordinary Wrapper observations are a separate diagnostic stream. Unless
-disabled, `buildoptw` records one private append-only JSONL record per
-invocation under the user cache, including provenance, outcome, Configuration
-Cache state and reconciled phase timing. Set `BUILDOPT_STICKY_OBSERVATION=0`
-to disable it, or set `BUILDOPT_STICKY_OBSERVATION_OUTPUT` to an absolute
-private JSONL path for a controlled POC run. These variables are removed from
-the Gradle child environment and never authorize cache reads or optimization
-actions. See the [observation specification](../../specs/poc-sticky-wrapper-observation-v1.md)
-for the schema and evidence labels.
+Ordinary Wrapper observations are a separate diagnostic stream. By default,
+`buildoptw` uses `light` mode: it records one private append-only JSONL record
+per invocation under the user cache, skips the pre-build Git lookup, computes
+the executable digest concurrently with the child when possible and creates the
+recorder only after the child exits. Set
+`BUILDOPT_STICKY_OBSERVATION=full` for a controlled diagnostic run that also
+requests best-effort source-revision evidence, or set it to `0` to disable
+recording entirely. `BUILDOPT_STICKY_OBSERVATION_OUTPUT` can point to an
+absolute private JSONL path for a checker. These variables are removed from the
+Gradle child environment and never authorize cache reads or optimization
+actions. The common no-op wrapper path also avoids gateway, plugin, managed-L1
+and central-cache setup when no configured consumer needs them. See the
+[observation specification](../../specs/poc-sticky-wrapper-observation-v1.md)
+and [overhead contract](../../specs/poc-sticky-wrapper-noop-overhead-v1.md)
+for the schema, evidence labels and measured guardrails.
 
 The local decision-store root is private, user-owned state containing immutable
 JCS records, a generation head, idempotency receipts and a revocation epoch.

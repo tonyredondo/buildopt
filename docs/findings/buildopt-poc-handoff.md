@@ -92,8 +92,24 @@ refresh path measured **0.0025 ms p50 / 0.0026 ms p95**. All three budgets pass.
 This is a retention-cost result, not a build-time saving: no optimization was
 activated and no Gradle wall-time claim is made.
 
+The follow-up `SWL-008A` measurement removes avoidable cost from the committed
+wrapper itself. When no server credential or explicit BuildOpt integration is
+present, the wrapper validates its boundary and lets native Gradle run without
+starting a gateway, plugin handshake, managed L1 or central-cache probe. The
+default observer is `light`: it skips the pre-build Git lookup, computes the
+executable digest concurrently with the child when possible and creates its
+private recorder only after the child exits. On this Linux host, 20 interleaved
+samples measured **+11 ms p95** for the native no-op path and **+34 ms p95** for
+light observation over direct execution; light pre-child decision time was
+**0.104 ms p95**. The result passes the POC guardrails, but it is wrapper-cost
+evidence rather than a Gradle speedup claim. `full` observation remains an
+explicit diagnostic mode and `0` disables recording. See the
+[overhead specification](../../specs/poc-sticky-wrapper-noop-overhead-v1.md)
+and [checked result](../../benchmarks/results/sticky-wrapper-noop-overhead-v1.json).
+
 `SWL-009` now observes ordinary requested Wrapper builds without changing
-their arguments or result. The first checked-in sample contains two successful
+their arguments or result. The default path uses light observation; the first
+checked-in sample contains two successful
 Gradle 9.6.1 invocations with Configuration Cache present. The first run took
 **19.876 s** of observed wall time and the second took **3.732 s**; the second
 reused Configuration Cache and the records reconcile every measured phase plus

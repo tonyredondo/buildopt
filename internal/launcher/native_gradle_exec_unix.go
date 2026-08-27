@@ -26,6 +26,17 @@ func replaceWithNativeGradleProcess(
 	childArgs []string,
 	environmentOverrides map[string]string,
 ) error {
+	return replaceWithNativeGradleProcessWithReserved(childArgs, environmentOverrides, nil)
+}
+
+// replaceWithNativeGradleProcessWithReserved removes the otherwise idle
+// BuildOpt parent while also scrubbing invocation-specific credentials. The
+// reserved names are removal-only and never become Gradle inputs.
+func replaceWithNativeGradleProcessWithReserved(
+	childArgs []string,
+	environmentOverrides map[string]string,
+	additionalReserved []string,
+) error {
 	path, err := exec.LookPath(childArgs[0])
 	if err != nil {
 		return err
@@ -33,6 +44,6 @@ func replaceWithNativeGradleProcess(
 	return nativeGradleExec(
 		path,
 		childArgs,
-		replaceEnvironment(os.Environ(), environmentOverrides),
+		replaceEnvironmentWithReserved(os.Environ(), environmentOverrides, additionalReserved),
 	)
 }

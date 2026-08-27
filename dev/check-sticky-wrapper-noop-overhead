@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-sticky-wrapper-noop-overhead-v1.json"
+buildopt_result="${buildopt_repo_root}/benchmarks/results/sticky-wrapper-noop-overhead-v1.json"
+
+if ! command -v jq >/dev/null 2>&1; then
+    printf 'required sticky-wrapper overhead command is unavailable: jq\n' >&2
+    exit 1
+fi
+if [[ ! -f "${buildopt_spec}" || ! -f "${buildopt_result}" ]]; then
+	printf 'sticky-wrapper overhead specification or result is missing\n' >&2
+	exit 1
+fi
+
+jq -e '
+    .schemaVersion == "buildopt.poc/sticky-wrapper-noop-overhead/v1" and
+    .workItem == "SWL-008A" and
+    (.purpose | type == "string") and
+    .nativePath.requiresNoServerCredential == true and
+    .nativePath.startsGateway == false and
+    .nativePath.startsPluginHandshake == false and
+    .nativePath.startsManagedL1 == false and
+    .nativePath.probesCentralCache == false and
+    .nativePath.scrubsBuildOptEnvironment == true and
+    .observationModes.default == "light" and
+    .observationModes.full == "git_revision_lookup" and
+    .observationModes.disabled == "0" and
+    .observationModes.lightBuildOptDigest == "best_effort_async" and
+    .observationModes.lightDigestNotReady == "unavailable_digest" and
+    .measurement.interleaved == true and
+    .measurement.preChildDecisionReportedSeparately == true and
+    .measurement.criticalPathParallelism == false and
+    .budgets.nativeNoopP95OverDirectMsMax == 100 and
+    .budgets.lightObservationP95OverDirectMsMax == 250 and
+    .budgets.lightDecisionP95MsMax == 100 and
+    .buildSpeedClaim == false
+' "${buildopt_spec}" >/dev/null
+
+if [[ ! -f "${buildopt_result}" ]]; then
+    printf 'sticky-wrapper overhead result is missing: %s\n' "${buildopt_result}" >&2
+    exit 1
+fi
+
+jq -e '
+    def summary($minimum):
+        try . as $mode |
+            ($mode | type == "object") and
+            (["maxMs", "p50Ms", "p95Ms", "samplesMs"] | all(.[]; . as $key | $mode | has($key))) and
+            (($mode.samplesMs | type) == "array") and
+            (($mode.samplesMs | length) >= $minimum) and
+            ($mode.samplesMs | all(.[]; type == "number" and . >= 0)) and
+            (($mode.p50Ms | type) == "number" and $mode.p50Ms >= 0) and
+            (($mode.p95Ms | type) == "number" and $mode.p95Ms >= $mode.p50Ms) and
+            (($mode.maxMs | type) == "number" and $mode.maxMs >= $mode.p95Ms)
+        catch false;
+    def delta_summary($minimum):
+        try . as $delta |
+            ($delta | type == "object") and
+            (($delta | keys | sort) == ["maxMs", "p50Ms", "p95Ms", "samplesMs"]) and
+            (($delta.samplesMs | type) == "array") and
+            (($delta.samplesMs | length) == $minimum) and
+            ($delta.samplesMs | all(.[]; type == "number")) and
+            (($delta.p50Ms | type) == "number") and
+            (($delta.p95Ms | type) == "number") and
+            (($delta.maxMs | type) == "number")
+        catch false;
+    .iterations as $iterations |
+    keys == [
+        "buildoptBinarySha256",
+        "capturedAt",
+        "environment",
+        "iterations",
+        "modes",
+        "pass",
+        "requirements",
+        "schemaVersion"
+    ] and
+    .schemaVersion == "buildopt.poc/sticky-wrapper-noop-overhead/v1" and
+    (.capturedAt | type == "string" and test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")) and
+    (.buildoptBinarySha256 | type == "string" and test("^[0-9a-f]{64}$")) and
+    (.iterations | type == "number" and floor == . and . >= 20 and . <= 200) and
+    .environment == {
+        "architecture": .environment.architecture,
+        "operatingSystem": .environment.operatingSystem
+    } and
+    (.environment.architecture | type == "string" and length > 0) and
+    (.environment.operatingSystem | type == "string" and length > 0) and
+    .requirements == {
+        "lightDecisionP95MsMax": 100,
+        "lightObservationP95OverDirectMsMax": 250,
+        "nativeNoopP95OverDirectMsMax": 100
+    } and
+    (.modes | keys == ["direct", "lightObservation", "nativeNoop"]) and
+    (.modes.direct | summary($iterations)) and
+    (.modes.nativeNoop | summary($iterations)) and
+    (.modes.lightObservation | summary($iterations)) and
+    (.modes.nativeNoop.overheadVsDirect | delta_summary($iterations)) and
+    (.modes.lightObservation.overheadVsDirect | delta_summary($iterations)) and
+    (.modes.lightObservation.decision | delta_summary($iterations)) and
+    .modes.nativeNoop.overheadVsDirect.p95Ms <= .requirements.nativeNoopP95OverDirectMsMax and
+    .modes.lightObservation.overheadVsDirect.p95Ms <= .requirements.lightObservationP95OverDirectMsMax and
+    .modes.lightObservation.decision.p95Ms <= .requirements.lightDecisionP95MsMax and
+    .pass == true
+' "${buildopt_result}" >/dev/null
+
+jq -c '{pass,iterations,requirements,modes:{direct:.modes.direct|{p50Ms,p95Ms,maxMs},nativeNoop:.modes.nativeNoop|{p50Ms,p95Ms,maxMs,overheadP95:.overheadVsDirect.p95Ms},lightObservation:.modes.lightObservation|{p50Ms,p95Ms,maxMs,overheadP95:.overheadVsDirect.p95Ms,decisionP95:.decision.p95Ms}}}' "${buildopt_result}"
+printf 'Sticky wrapper no-op overhead: OK\n'

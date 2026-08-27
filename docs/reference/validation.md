@@ -21,6 +21,7 @@ provision tools or create release artifacts document that effect explicitly.
 | Sticky-wrapper checksum bootstrap, safe extraction, atomic cache publication and offline reuse | `./dev/check-sticky-wrapper-bootstrap` |
 | Sticky-wrapper portable connection, capability probes, revocation and secret isolation | `./dev/check-sticky-wrapper-connection` |
 | Sticky-wrapper Gradle HTTP cache reuse, read-only policy, corruption and outage fallback | `./dev/check-sticky-wrapper-cache` |
+| Sticky-wrapper native no-op path, lazy light observation and startup overhead | `./dev/check-sticky-wrapper-noop-overhead` |
 | Sticky-wrapper active execution, counterfactuals, suspension and native fallback | `./dev/check-sticky-wrapper-active` |
 | CODEOWNERS/workstream mapping | `./dev/check-ownership` |
 | Shell and workflow syntax/inventory | `./dev/check-lint-toolchains` |

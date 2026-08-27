@@ -103,6 +103,16 @@ Gradle, while typed decisions and learning remain later POC blocks. The complete
 sequence, scorecard and status are in the
 [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md).
 
+When no server credential or explicit BuildOpt integration is configured, the
+wrapper takes a native fast path: it does not start the gateway, plugin
+handshake, managed L1 or central-cache probe. Ordinary observation defaults to
+`light`, which skips the pre-build Git lookup, computes the executable digest
+concurrently with the child when possible and creates its recorder only after
+Gradle exits. Use `BUILDOPT_STICKY_OBSERVATION=full` only for a diagnostic run
+that needs source-revision evidence, or `0` to disable recording. This keeps
+the one-command onboarding path cheap while preserving the same native Gradle
+fallback and output contract.
+
 ### Inspect the current wrapper state
 
 The committed wrapper exposes two read-only management commands:
