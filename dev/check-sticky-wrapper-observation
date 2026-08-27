@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-sticky-wrapper-observation-v1.json"
+buildopt_result="${buildopt_repo_root}/benchmarks/results/sticky-wrapper-observation-v1.json"
+buildopt_source="${buildopt_repo_root}/fixtures/gradle-handshake"
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-sticky-observation.XXXXXX")
+trap 'rm -rf -- "${buildopt_temporary}"' EXIT
+
+for buildopt_command in awk cp find grep jq mktemp sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required sticky-wrapper-observation command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+[[ -f "${buildopt_spec}" ]] || {
+    printf 'sticky-wrapper-observation specification is missing\n' >&2
+    exit 1
+}
+
+jq -e '
+    .schemaVersion == "buildopt.poc/sticky-wrapper-observation/v1" and
+    .workItem == "SWL-009" and
+    .recordSchema == "contracts/jsonschema/sticky-wrapper-observation.v1.schema.json" and
+    .storage.appendOnly == true and
+    .storage.writeFailure == "diagnostic_only_native_result_preserved" and
+    .timing.unavailableHasNoDuration == true and
+    .timing.reconcilesToTotal == true and
+    .timing.causalSavingsClaimed == false and
+    .childBoundary.gradleArgumentsChanged == false and
+    .childBoundary.exitCodeChanged == false and
+    .nextBlock == "SWL-010"
+' "${buildopt_spec}" >/dev/null
+
+if [[ -f "${buildopt_result}" ]]; then
+    jq -e '
+    .schemaVersion == "buildopt.sticky/ordinary-observation/v1" and
+    .recordType == "STICKY_ORDINARY_BUILD_OBSERVATION" and
+    (.invocationCount | type == "number" and . >= 2) and
+    (.records | type == "array" and length >= 2) and
+    all(.records[];
+        .outcome == "SUCCESS" and
+        .exitCode == 0 and
+        .configurationCache.requested == true and
+        .configurationCache.state == "PRESENT" and
+        .timing.totalNs > 0 and
+        .timing.gradle.evidence == "EXACT" and
+        .timing.gradle.durationNs > 0 and
+        .timing.unattributedNs >= 0
+    )
+' "${buildopt_result}" >/dev/null
+fi
+
+buildopt_fixture="${buildopt_temporary}/fixture"
+cp -R -- "${buildopt_source}" "${buildopt_fixture}"
+buildopt_gradle="${buildopt_repo_root}/.tools/gradle-compat/gradle-9.6.1/bin/gradle"
+if [[ ! -x "${buildopt_gradle}" ]]; then
+    buildopt_gradle="${buildopt_repo_root}/.tools/gradle-compat/gradle-8.14.3/bin/gradle"
+fi
+
+mkdir -p -- "${buildopt_fixture}/gradle/wrapper"
+cp -- "${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.properties" \
+    "${buildopt_fixture}/gradle/wrapper/gradle-wrapper.properties"
+if [[ ! -x "${buildopt_gradle}" ]]; then
+    printf 'repository-local Gradle compatibility binary is unavailable\n' >&2
+    exit 1
+fi
+
+cat >"${buildopt_fixture}/gradlew" <<EOF
+#!/usr/bin/env sh
+set -eu
+if [ -n "\${BUILDOPT_STICKY_OBSERVATION_OUTPUT-}" ] ||
+   [ -n "\${BUILDOPT_STICKY_OBSERVATION-}" ]; then
+    printf '%s\n' 'sticky observation environment leaked to Gradle child' >&2
+    exit 99
+fi
+exec "${buildopt_gradle}" "\$@"
+EOF
+chmod 0755 "${buildopt_fixture}/gradlew"
+rm -f -- "${buildopt_fixture}/gradlew.bat"
+
+buildopt_output="${buildopt_temporary}/observations.jsonl"
+buildopt_gradle_home="${buildopt_temporary}/gradle-home"
+mkdir -p -- "${buildopt_gradle_home}"
+chmod 0700 "${buildopt_gradle_home}"
+buildopt_binary="${buildopt_temporary}/buildopt"
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go build -buildvcs=false -trimpath -o "${buildopt_binary}" ./cmd/buildopt
+
+buildopt_run=(
+    "${buildopt_script_dir}/run" --toolchain temurin-jdk-21 --
+    env
+    BUILDOPT_STICKY_WRAPPER_ROOT="${buildopt_fixture}"
+    BUILDOPT_STICKY_OBSERVATION_OUTPUT="${buildopt_output}"
+    GRADLE_USER_HOME="${buildopt_gradle_home}"
+    "${buildopt_binary}" run -- "${buildopt_fixture}/gradlew"
+    --no-daemon --offline --configuration-cache help
+)
+pushd "${buildopt_fixture}" >/dev/null
+if ! "${buildopt_run[@]}" >"${buildopt_temporary}/first.log" 2>&1; then
+    cat "${buildopt_temporary}/first.log" >&2
+    exit 1
+fi
+if ! "${buildopt_run[@]}" >"${buildopt_temporary}/second.log" 2>&1; then
+    cat "${buildopt_temporary}/second.log" >&2
+    exit 1
+fi
+popd >/dev/null
+
+grep -Fq 'BUILD SUCCESSFUL' "${buildopt_temporary}/first.log"
+grep -Fq 'BUILD SUCCESSFUL' "${buildopt_temporary}/second.log"
+grep -Eq 'Reusing configuration cache|Configuration cache entry reused' "${buildopt_temporary}/second.log" || {
+    printf 'second ordinary build did not reuse Configuration Cache\n' >&2
+    cat "${buildopt_temporary}/second.log" >&2
+    exit 1
+}
+
+[[ -f "${buildopt_output}" ]] || {
+    printf 'ordinary observation JSONL was not written\n' >&2
+    cat "${buildopt_temporary}/first.log" >&2
+    cat "${buildopt_temporary}/second.log" >&2
+    exit 1
+}
+if [[ "$(wc -l <"${buildopt_output}")" -ne 2 ]]; then
+    printf 'ordinary observation record count is not two\n' >&2
+    exit 1
+fi
+
+jq -s -e '
+    length == 2 and
+    all(.[];
+        .schemaVersion == "buildopt.sticky/ordinary-observation/v1" and
+        .recordType == "STICKY_ORDINARY_BUILD_OBSERVATION" and
+        .outcome == "SUCCESS" and .exitCode == 0 and
+        .configurationCache.requested == true and
+        .configurationCache.state == "PRESENT" and
+        .timing.totalNs > 0 and
+        .timing.gradle.evidence == "EXACT" and
+        .timing.gradle.durationNs > 0 and
+        .timing.unattributedNs >= 0 and
+        (.timing.totalNs ==
+            .timing.unattributedNs +
+            (if .timing.decision.evidence == "UNAVAILABLE" then 0 else .timing.decision.durationNs end) +
+            (if .timing.network.evidence == "UNAVAILABLE" then 0 else .timing.network.durationNs end) +
+            (if .timing.cache.evidence == "UNAVAILABLE" then 0 else .timing.cache.durationNs end) +
+            (if .timing.gradle.evidence == "UNAVAILABLE" then 0 else .timing.gradle.durationNs end) +
+            (if .timing.observation.evidence == "UNAVAILABLE" then 0 else .timing.observation.durationNs end) +
+            (if .timing.wrapper.evidence == "UNAVAILABLE" then 0 else .timing.wrapper.durationNs end) +
+            (if .timing.bootstrap.evidence == "UNAVAILABLE" then 0 else .timing.bootstrap.durationNs end))
+    )
+' "${buildopt_output}" >/dev/null
+
+jq -s '{schemaVersion:"buildopt.sticky/ordinary-observation/v1", recordType:"STICKY_ORDINARY_BUILD_OBSERVATION", capturedAt:(now | todateiso8601), environment:{goos:(env.GOOS // "linux"), goarch:(env.GOARCH // "amd64")}, invocationCount:length, records:[.[] | {observationId,outcome,exitCode,provenance,configurationCache,timing}]}' "${buildopt_output}"
+printf 'Sticky wrapper ordinary observation: OK\n'

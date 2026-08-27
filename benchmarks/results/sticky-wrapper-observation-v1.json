@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "buildopt.sticky/ordinary-observation/v1",
+  "recordType": "STICKY_ORDINARY_BUILD_OBSERVATION",
+  "capturedAt": "2026-08-27T00:18:17Z",
+  "environment": {"goos": "linux", "goarch": "amd64"},
+  "invocationCount": 2,
+  "records": [
+    {
+      "observationId": "build-59037b1d2467af464621bc84",
+      "outcome": "SUCCESS",
+      "exitCode": 0,
+      "provenance": {
+        "argumentsSha256": "e237dddd9824577088c974fcd08e4572f296254eec9cf5565512d396d51e65ee",
+        "buildoptSha256": "49062203e883baec91e5ffa6d5af068e6262caa04126199623379f1d04e14417",
+        "gradleVersion": "9.6.1",
+        "repositoryScopeSha256": "b209c4a4cf955246fc30c5a96e6c907fe65a896d2b416c0805ab625f54591418",
+        "sourceRevisionEvidence": "UNAVAILABLE",
+        "wrapperSha256": "9a5899ae4710614c4ed47550f0089dddf197b4504dbbb2f27346d06106f9f95c"
+      },
+      "configurationCache": {"requested": true, "state": "PRESENT"},
+      "timing": {
+        "bootstrap": {"evidence": "UNAVAILABLE"},
+        "cache": {"durationNs": 789572, "evidence": "APPROXIMATED"},
+        "decision": {"durationNs": 53845388, "evidence": "EXACT"},
+        "gradle": {"durationNs": 19821196992, "evidence": "EXACT"},
+        "network": {"evidence": "UNAVAILABLE"},
+        "observation": {"evidence": "UNAVAILABLE"},
+        "totalNs": 19876265687,
+        "unattributedNs": 433735,
+        "wrapper": {"evidence": "UNAVAILABLE"}
+      }
+    },
+    {
+      "observationId": "build-d56837cb1e0be307dbda455e",
+      "outcome": "SUCCESS",
+      "exitCode": 0,
+      "provenance": {
+        "argumentsSha256": "e237dddd9824577088c974fcd08e4572f296254eec9cf5565512d396d51e65ee",
+        "buildoptSha256": "49062203e883baec91e5ffa6d5af068e6262caa04126199623379f1d04e14417",
+        "gradleVersion": "9.6.1",
+        "repositoryScopeSha256": "b209c4a4cf955246fc30c5a96e6c907fe65a896d2b416c0805ab625f54591418",
+        "sourceRevisionEvidence": "UNAVAILABLE",
+        "wrapperSha256": "9a5899ae4710614c4ed47550f0089dddf197b4504dbbb2f27346d06106f9f95c"
+      },
+      "configurationCache": {"requested": true, "state": "PRESENT"},
+      "timing": {
+        "bootstrap": {"evidence": "UNAVAILABLE"},
+        "cache": {"durationNs": 924918, "evidence": "APPROXIMATED"},
+        "decision": {"durationNs": 57419628, "evidence": "EXACT"},
+        "gradle": {"durationNs": 3673132853, "evidence": "EXACT"},
+        "network": {"evidence": "UNAVAILABLE"},
+        "observation": {"evidence": "UNAVAILABLE"},
+        "totalNs": 3731956723,
+        "unattributedNs": 479324,
+        "wrapper": {"evidence": "UNAVAILABLE"}
+      }
+    }
+  ]
+}

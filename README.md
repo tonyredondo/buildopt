@@ -137,6 +137,13 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > cache and fallback cost. Follow the
 > [Sticky Wrapper Learning POC Tracker](./docs/plans/sticky-wrapper-learning-poc-tracker.md).
 
+> **Ordinary-build evidence:** the sticky wrapper now records private,
+> append-only phase timing and provenance for requested Gradle builds. The
+> first real sample shows 19.876 s for a cold Gradle 9.6.1 invocation and
+> 3.732 s when Configuration Cache is reused; this is instrumentation evidence,
+> not a speedup claim. The paired trial block will compare candidate actions
+> directly with optimized native Gradle.
+
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired
 > calibration and requires projected payback within five compatible matches.

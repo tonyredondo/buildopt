@@ -15,6 +15,22 @@ goes to paired, bounded build-time experiments against an optimized native
 Gradle control. `./dev/check-beta-gradle-fixtures` owns the bounded
 small/medium/large Gradle build matrix and makes no performance claim.
 
+## Sticky-wrapper observation sample
+
+[`sticky-wrapper-observation-v1.json`](./results/sticky-wrapper-observation-v1.json)
+is the first ordinary-build observation sample from the repository-committed
+wrapper. Two real Gradle 9.6.1 Wrapper invocations completed successfully with
+Configuration Cache present: **19.876 s** on the cold invocation and **3.732 s**
+on the reuse invocation. The records retain **53.8/57.4 ms** of exact decision
+work and **19.821/3.673 s** of exact child-Gradle time; cache hand-off is
+labelled approximated and unavailable phases remain unavailable. This dataset
+does not claim acceleration. It verifies that later trials can charge wrapper
+and observation cost without altering Gradle's result. Validate it with:
+
+```bash
+./dev/check-sticky-wrapper-observation
+```
+
 ## Central two-machine functional evidence
 
 [`poc-central-two-machine-v1.json`](./results/poc-central-two-machine-v1.json)

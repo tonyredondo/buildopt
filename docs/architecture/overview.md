@@ -81,7 +81,10 @@ persistence adapters for observations, actions, trials, signed decisions and
 economics; `SWL-008` consumes a verified local snapshot through a read-only
 selector. Its lookup is bounded and never performs synchronous network I/O; it
 only retains native Gradle today, while active actions remain deferred to a
-later POC block. This boundary is frozen in
+later POC block. `SWL-009` adds a separate observation plane for ordinary
+Wrapper invocations: it records phase timing, provenance, outcome and
+Configuration Cache state without granting authority or changing the Gradle
+result. This boundary is frozen in
 the [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
 and is implemented through deterministic generation, verified package
 bootstrap, exact Gradle passthrough, authenticated portable connection and
@@ -100,6 +103,7 @@ authority and does not make a standalone wall-time claim.
 | Edge Cache | `buildopt-edge` | Provides a bounded nearby read-through/pending-write cache while Shared retains commit and collision authority |
 | Build Impact | `buildopt-impact` | Discovers the declared Gradle graph and verifies repository-owned generated impact state |
 | Adaptive fragment model | `internal/adaptivefragment` | Defines path-independent fragment identity, immutable state/economics, non-authorizing structural priors and conflict-aware pre-Gradle composition plans; no runtime activation yet |
+| Ordinary-build observation | `internal/stickyobservation` | Appends private, canonical observations with phase timing, provenance, outcome and Configuration Cache evidence; no decision authority |
 | Patch engine | `jvm/patcher` JAR | Verifies signed exact bundles, applies them in a detached worktree, and supports draft-only delivery and exact revert |
 | Windows service host | `buildopt-service.exe` | Runs server or Edge under Windows SCM with the supplied private config |
 
@@ -217,7 +221,8 @@ KMS/HSM-backed keys, HA, and recovery objectives.
 | Shared blobs | Server | Immutable content-addressed files on a proven local filesystem |
 | Cache and control metadata | Server | Separate SQLite databases in WAL and `FULL` synchronous mode |
 | BuildOpt portfolio/evidence/checkpoint metadata | Server | Independent `state.sqlite`; immutable manifests plus exact-generation CAS head |
-| Sticky-wrapper observations, actions, trials and decisions | `internal/stickydecision` | Immutable JCS records plus one generation-CAS head; local files or existing central `EVIDENCE` state; no Gradle-cache authority |
+| Sticky-wrapper decisions, actions, trials and economics | `internal/stickydecision` | Immutable JCS records plus one generation-CAS head; local files or existing central `EVIDENCE` state; no Gradle-cache authority |
+| Ordinary-wrapper observations | `internal/stickyobservation` | Private append-only JSONL, per-record canonical validation and an exclusive append lock; unavailable phases remain unavailable |
 | Edge blobs and metadata | Edge | Bounded local store, durable pending replication, TTL and byte-SLRU |
 | Build sessions | Server exporter | Atomic mode-`0600` immutable JSON plus bounded deterministic JSONL |
 | Patch staging | Java patcher | Private detached Git worktree; exact branch/ref publication only after all postimages match |

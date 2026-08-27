@@ -40,7 +40,24 @@ now consumes that store through a read-only native-retention selector: a
 verified local `NATIVE_NOOP` is accepted before Gradle, while active decisions
 remain deferred until action execution is proven. Invalid or unavailable state
 retains native Gradle and refreshes only outside the critical path. Ordinary
-observation and trial blocks (`SWL-009..016`) remain future POC work.
+`SWL-009` now records ordinary requested builds in a separate private JSONL
+observation plane; it measures wrapper, decision, cache and Gradle boundaries
+without changing the command or authorizing an action. Trial orchestration
+remains a later POC block.
+
+### Ordinary-build observation
+
+When observation is enabled, the launcher appends one canonical record per
+ordinary Wrapper invocation. The record includes exact provenance hashes,
+outcome and exit code, Configuration Cache state, and phase timing. A phase is
+`EXACT`, `APPROXIMATED` or `UNAVAILABLE`; unavailable data is never represented
+as zero. Records are private, append-only and independently loadable, so the
+learning loop can charge its own overhead before considering a trial.
+
+Set `BUILDOPT_STICKY_OBSERVATION=0` to disable this diagnostic plane. The
+default output is under the user cache in a repository-scope directory; set
+`BUILDOPT_STICKY_OBSERVATION_OUTPUT` only for a private test destination.
+Validate the contract with `./dev/check-sticky-wrapper-observation`.
 
 This guide describes what a user or evaluator can do with the current POC and
 which interface owns each result. It is intentionally honest about surfaces

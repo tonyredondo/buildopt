@@ -752,6 +752,8 @@ var reservedChildEnvironment = []string{
 	serverURLEnvironment,
 	serverTokenEnvironment,
 	exportContextEnvironment,
+	stickyObservationOutputEnvironment,
+	stickyObservationModeEnvironment,
 	gradleSafeCacheEnvironment,
 	gradleStandardJarCacheEnvironment,
 	gradlePOCEdgeCacheURLEnvironment,

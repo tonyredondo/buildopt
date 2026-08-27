@@ -90,9 +90,21 @@ fallback measured **0.0025 ms p50 / 0.0025 ms p95**, and the no-synchronous-
 refresh path measured **0.0025 ms p50 / 0.0026 ms p95**. All three budgets pass.
 
 This is a retention-cost result, not a build-time saving: no optimization was
-activated and no Gradle wall-time claim is made. `SWL-009` is the next step and
-will observe real requested builds with phase attribution so later trials can
-be charged their full cost.
+activated and no Gradle wall-time claim is made.
+
+`SWL-009` now observes ordinary requested Wrapper builds without changing
+their arguments or result. The first checked-in sample contains two successful
+Gradle 9.6.1 invocations with Configuration Cache present. The first run took
+**19.876 s** of observed wall time and the second took **3.732 s**; the second
+reused Configuration Cache and the records reconcile every measured phase plus
+the residual. Decision work was **53.8/57.4 ms**, while Gradle itself was
+**19.821/3.673 s**. Network, bootstrap and post-build observation are marked
+`UNAVAILABLE` rather than silently counted as zero. This is instrumentation
+evidence, not a speedup claim; it gives the next trial block an honest cost
+ledger.
+
+The next step is `SWL-010`: run isolated, budgeted candidate/native trials and
+publish paired data against optimized native Gradle.
 
 ## Historical complete-profile result
 

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-observation/v1",
+  "workItem": "SWL-009",
+  "purpose": "Record bounded facts from ordinary requested Gradle builds without changing execution or granting authority.",
+  "recordSchema": "contracts/jsonschema/sticky-wrapper-observation.v1.schema.json",
+  "storage": {
+    "format": "canonical_jsonl",
+    "scope": "private_user_cache/project_scope",
+    "appendOnly": true,
+    "concurrentWriters": "sibling_exclusive_lock",
+    "writeFailure": "diagnostic_only_native_result_preserved"
+  },
+  "timing": {
+    "phases": ["decision", "network", "cache", "gradle", "observation", "wrapper", "bootstrap", "unattributed"],
+    "unavailableHasNoDuration": true,
+    "reconcilesToTotal": true,
+    "causalSavingsClaimed": false
+  },
+  "childBoundary": {
+    "scrubbedEnvironment": ["BUILDOPT_STICKY_OBSERVATION", "BUILDOPT_STICKY_OBSERVATION_OUTPUT"],
+    "gradleArgumentsChanged": false,
+    "exitCodeChanged": false
+  },
+  "commands": {
+    "focused": "./dev/check-sticky-wrapper-observation",
+    "schema": "./dev/run --toolchain go -- go test ./dev/schema-validator -run StickyWrapperObservation"
+  },
+  "result": "benchmarks/results/sticky-wrapper-observation-v1.json",
+  "nextBlock": "SWL-010"
+}

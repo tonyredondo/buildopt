@@ -3,8 +3,8 @@
 ## Status
 
 **Overall:** `IN_PROGRESS`<br>
-**Progress:** `9/17` blocks complete<br>
-**Current block:** `SWL-009` — ordinary-build observation<br>
+**Progress:** `10/17` blocks complete<br>
+**Current block:** `SWL-010` — budgeted trial orchestration<br>
 **Predecessor:** the adaptive-fragment experiment closed as
 `STOP_ADAPTIVE_FRAGMENT_POC` with zero activations and zero attributable
 saving. Its evidence remains immutable context, not authority for this POC.
@@ -244,8 +244,8 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | 6 | `SWL-006` Gradle HTTP cache integration | Existing verifying gateway and central cache operate automatically through the wrapper | `DONE` | SWL-005 |
 | 7 | `SWL-007` Decision contract and store | Typed state machine, signed decisions, generation CAS, expiry, revocation and plane separation | `DONE` | SWL-006 |
 | 8 | `SWL-008` Native no-op fast path | Exact local snapshot makes native retention independent of a blocking remote lookup | `DONE` | SWL-007 |
-| 9 | `SWL-009` Ordinary-build observation | Bounded exact timings, outputs, task/graph facts and ledger updates from requested builds | `DOING` | SWL-008 |
-| 10 | `SWL-010` Budgeted trial orchestration | Isolated paired candidate/native trials run only within the frozen CI compute budget | `WAITING` | SWL-009 |
+| 9 | `SWL-009` Ordinary-build observation | Bounded exact timings, outputs, task/graph facts and ledger updates from requested builds | `DONE` | SWL-008 |
+| 10 | `SWL-010` Budgeted trial orchestration | Isolated paired candidate/native trials run only within the frozen CI compute budget | `DOING` | SWL-009 |
 | 11 | `SWL-011` Active execution and suspension | Qualified runtime action, revalidation, counterfactual sampling, regression suspension and native fallback | `WAITING` | SWL-010 |
 | 12 | `SWL-012` Durable native optimization catalog | Generic detectors and reviewable patches for task contracts and graph breadth | `WAITING` | SWL-009 |
 | 13 | `SWL-013` Customer status and explanation | Human/JSON decision, cumulative economics, cache metrics and exact fallback explanation | `WAITING` | SWL-011, SWL-012 |
@@ -475,7 +475,8 @@ corrupt, busy or incompatible state. On this Linux AMD64 host, 200 selections
 recorded verified-local p50/p95 of 0.492/1.369 ms; missing-state fallback was
 0.0025/0.0025 ms and the no-synchronous-refresh case was 0.0025/0.0026 ms.
 All values are retention-cost measurements, not acceleration evidence, and
-the checked-in JSON remains the source of truth. `SWL-009` is now in progress.
+the checked-in JSON remains the source of truth. `SWL-009` is complete and
+`SWL-010` is now in progress.
 
 ### SWL-009 — Ordinary-build observation
 
@@ -487,6 +488,19 @@ only source of natural outcomes.
 Acceptance: bounded observation preserves Configuration Cache, reconciles wall
 time, emits exact provenance and can be disabled independently when its p95
 budget is exceeded.
+
+Closed evidence: [`poc-sticky-wrapper-observation-v1`](../../specs/poc-sticky-wrapper-observation-v1.md),
+the Draft 2020-12 schema, private append-only recorder and executable
+[`check-sticky-wrapper-observation`](../../dev/check-sticky-wrapper-observation)
+run two real Gradle 9.6.1 Wrapper invocations. Both succeed with
+Configuration Cache present; the cold invocation records **19.876 s** and the
+reuse invocation **3.732 s**. Exact decision work is **53.8/57.4 ms** and
+exact child-Gradle work is **19.821/3.673 s**. Every record reconciles its
+timing object, binds the Wrapper/BuildOpt/argument digests, rejects tampering,
+and keeps network, bootstrap and post-build observation unavailable rather
+than inventing zeros. The output path and mode are scrubbed from the child;
+observation failures remain diagnostic and never change the requested exit
+code. This is cost-accounting evidence, not a speedup claim.
 
 ### SWL-010 — Budgeted trial orchestration
 
@@ -609,8 +623,8 @@ customer behavior, architecture, value evidence or direction changes.
 | `SWL-E007` | SWL-006 | [Sticky-wrapper Gradle cache contract](../../specs/poc-sticky-wrapper-cache-v1.md), machine contract, automatic native cache flag, read-only central policy and race-enabled producer/consumer/corruption/outage integration | `DONE` |
 | `SWL-E008` | SWL-007 | [Decision-store specification](../../specs/poc-sticky-wrapper-decision-store-v1.md), JSON Schema union and fixtures, `internal/stickydecision`, and executable [`check-sticky-wrapper-decision-store`](../../dev/check-sticky-wrapper-decision-store): all valid state transitions, signed decisions, evidence/ledger references, local and central generation CAS, replay/conflict, expiry, revocation, corruption and cache/state plane separation | `DONE` |
 | `SWL-E009` | SWL-008 | [`poc-sticky-wrapper-noop-v1`](../../specs/poc-sticky-wrapper-noop-v1.md), read-only selector, fail-closed state matrix and [`sticky-wrapper-noop-v1.json`](../../benchmarks/results/sticky-wrapper-noop-v1.json): 200 verified local, missing and no-synchronous-refresh selections stay below the 100 ms p50, 250 ms p95 and 500 ms fallback budgets | `DONE` |
-| `SWL-E010` | SWL-009 | Ordinary-build observation and phase attribution | `WAITING` |
-| `SWL-E011` | SWL-010 | Bounded trial scheduling and isolation evidence | `WAITING` |
+| `SWL-E010` | SWL-009 | [`poc-sticky-wrapper-observation-v1`](../../specs/poc-sticky-wrapper-observation-v1.md), private append-only recorder, real Wrapper checker and [`sticky-wrapper-observation-v1.json`](../../benchmarks/results/sticky-wrapper-observation-v1.json): two successful Gradle 9.6.1 observations with Configuration Cache present, exact phase reconciliation, provenance hashes, child-environment scrubbing and tamper rejection; 19.876 s cold and 3.732 s reuse wall time | `DONE` |
+| `SWL-E011` | SWL-010 | Bounded trial scheduling and isolation evidence | `DOING` |
 | `SWL-E012` | SWL-011 | Active, counterfactual, suspension and fallback proof | `WAITING` |
 | `SWL-E013` | SWL-012 | Durable detector/patch breadth and value evidence | `WAITING` |
 | `SWL-E014` | SWL-013 | Recomputable customer status/explanation contract | `WAITING` |
@@ -637,6 +651,7 @@ customer behavior, architecture, value evidence or direction changes.
 
 | Date | Change |
 | --- | --- |
+| 2026-08-27 | Closed SWL-009. Added the private append-only ordinary-build observation plane, phase timing/provenance schema and real Wrapper checker. Two Gradle 9.6.1 invocations with Configuration Cache present record 19.876 s cold and 3.732 s reuse wall time; exact timing reconciles and unavailable phases remain unavailable. Opened SWL-010 budgeted candidate/native trials. |
 | 2026-08-27 | Closed SWL-008. Added a read-only local selector for signed, scope- and binding-compatible sticky decisions, coalesced best-effort refresh scheduling, fail-closed native fallback and a deterministic pre-Gradle budget benchmark. Two hundred Linux AMD64 selections record 0.492 ms verified-local p50 / 1.369 ms p95, with sub-0.003 ms missing and no-synchronous-refresh fallback; this is retention-cost evidence only, not acceleration. Opened SWL-009 ordinary-build observation. |
 | 2026-08-27 | Closed SWL-007. Added the canonical JCS decision-store union, signed decision verification, independent qualification/rollout transitions, evidence and ledger cross-links, local filesystem and central EVIDENCE adapters with generation CAS, exact replay/conflict semantics, expiry, revocation, corruption and cache/state plane separation. Seven positive and six negative schema fixtures plus race-enabled local/central conformance pass; opened SWL-008 native no-op fast path. |
 | 2026-08-26 | Closed SWL-006. Connected the committed wrapper to the existing Gradle-compatible central object plane through an invocation-local verifying gateway. A valid read-capable connection automatically enables Gradle's native HTTP cache unless explicitly disabled, preserves the native cache policy for central tasks, keeps ordinary consumers read-only, and retains private managed L1 separation. Race-enabled producer/consumer/outage integration proves exact `FROM-CACHE` outputs, byte-free corruption misses, identical native rebuild outputs, secret isolation and no central PUT from the consumer; opened SWL-007 decision contract and store. |

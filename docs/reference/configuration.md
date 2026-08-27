@@ -63,6 +63,16 @@ execution block. Missing, expired, revoked, corrupt or incompatible state
 retains native Gradle and may trigger a best-effort asynchronous refresh. The
 selector never creates state or contacts the service on the critical path.
 
+Ordinary Wrapper observations are a separate diagnostic stream. Unless
+disabled, `buildoptw` records one private append-only JSONL record per
+invocation under the user cache, including provenance, outcome, Configuration
+Cache state and reconciled phase timing. Set `BUILDOPT_STICKY_OBSERVATION=0`
+to disable it, or set `BUILDOPT_STICKY_OBSERVATION_OUTPUT` to an absolute
+private JSONL path for a controlled POC run. These variables are removed from
+the Gradle child environment and never authorize cache reads or optimization
+actions. See the [observation specification](../../specs/poc-sticky-wrapper-observation-v1.md)
+for the schema and evidence labels.
+
 The local decision-store root is private, user-owned state containing immutable
 JCS records, a generation head, idempotency receipts and a revocation epoch.
 The central adapter reuses the existing authenticated `EVIDENCE` state

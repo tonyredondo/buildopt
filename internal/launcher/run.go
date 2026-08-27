@@ -33,6 +33,17 @@ const (
 // returns the child process exit status.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode int) {
 	var additionalReservedEnvironment []string
+	var ordinaryObservation *ordinaryObservationState
+	if root := os.Getenv(stickyWrapperRootEnvironment); root != "" {
+		ordinaryObservation = newOrdinaryObservationState(root, ordinaryChildArguments(args))
+		if ordinaryObservation != nil {
+			defer func() {
+				if err := ordinaryObservation.finish(runExitCode, time.Now().UTC()); err != nil {
+					_, _ = fmt.Fprintf(stderr, "buildopt: ordinary observation unavailable: %v\n", err)
+				}
+			}()
+		}
+	}
 	var optimize *optimizeRun
 	var automaticOptimizeImpact *impactInvocation
 	centralGradleCacheRequested := false
@@ -44,6 +55,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		childArgs []string,
 		environmentOverrides map[string]string,
 	) childExecution {
+		if ordinaryObservation != nil {
+			ordinaryObservation.finishCache(time.Now())
+		}
 		var execution childExecution
 		if impactTiming != nil {
 			execution = impactTiming.execute(
@@ -66,6 +80,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		if optimize != nil {
 			optimize.childStarted = execution.started
 			optimize.childExecution = execution
+		}
+		if ordinaryObservation != nil {
+			ordinaryObservation.finishGradle(execution, childArgs)
 		}
 		return execution
 	}
@@ -275,6 +292,14 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			return exitConfiguration
 		}
 		getenv := os.Getenv
+		if ordinaryObservation != nil && os.Getenv(gradleSafeCacheEnvironment) == "" {
+			getenv = func(name string) string {
+				if name == gradleSafeCacheEnvironment {
+					return "1"
+				}
+				return os.Getenv(name)
+			}
+		}
 		if qualifiedPOCProfile {
 			getenv = qualifiedPOCProfileEnvironment(os.Getenv, impactStandardJarCache, impactPOCEdgeCacheURL)
 		} else if explicitStandardJarCache || impactStandardJarCache {
@@ -365,7 +390,10 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			additionalReservedEnvironment,
 			stickyWrapperRootEnvironment,
 			"BUILDOPT_TOKEN",
+			stickyObservationOutputEnvironment,
+			stickyObservationModeEnvironment,
 		)
+		connectionStartedAt := time.Now()
 		connection, credentialEnvironment, connectionErr :=
 			prepareStickyWrapperConnection(
 				stickyRoot,
@@ -374,6 +402,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 				time.Now().UTC(),
 				nil,
 			)
+		if ordinaryObservation != nil {
+			ordinaryObservation.markConnection(connectionStartedAt, connection != nil)
+		}
 		stickyConnection = connection
 		if credentialEnvironment != "" && credentialEnvironment != "BUILDOPT_TOKEN" {
 			additionalReservedEnvironment = append(
@@ -699,6 +730,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		reportPluginHandshake(handshakeResult, stderr)
 	}
 	exitCode := childWaitExitCode(childArgs[0], execution.err, stderr)
+	if ordinaryObservation != nil && serverConfigured {
+		ordinaryObservation.startObservation()
+	}
 	if serverConfigured && gateway != nil && handshake != nil {
 		outcome := sessionOutcome(execution, exitCode)
 		record := sessioningest.NewRecord(
@@ -738,6 +772,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		)
 		cancel()
 		reportSessionIngest(record.SessionID, result, ingestErr, stderr)
+	}
+	if ordinaryObservation != nil && serverConfigured {
+		ordinaryObservation.finishObservation(time.Now())
 	}
 	if gateway != nil {
 		reportLocalGatewayClose(gateway.close(), stderr)

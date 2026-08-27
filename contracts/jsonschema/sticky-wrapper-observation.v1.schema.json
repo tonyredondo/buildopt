@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/sticky-wrapper-observation.v1.schema.json",
+  "title": "BuildOpt sticky-wrapper ordinary-build observation v1",
+  "description": "A bounded, append-only observation of one requested Gradle build. It records facts for later POC trials but never grants optimization authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "observationId",
+    "idempotencyKey",
+    "provenance",
+    "outcome",
+    "exitCode",
+    "startedAt",
+    "completedAt",
+    "timing",
+    "configurationCache"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "buildopt.sticky/ordinary-observation/v1" },
+    "recordType": { "const": "STICKY_ORDINARY_BUILD_OBSERVATION" },
+    "observationId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$" },
+    "idempotencyKey": { "$ref": "#/$defs/digest" },
+    "provenance": { "$ref": "#/$defs/provenance" },
+    "outcome": { "enum": ["SUCCESS", "BUILD_FAILURE", "INFRA_FAILURE", "CANCELLED"] },
+    "exitCode": { "type": "integer", "minimum": 0, "maximum": 255 },
+    "startedAt": { "$ref": "#/$defs/utcTimestamp" },
+    "completedAt": { "$ref": "#/$defs/utcTimestamp" },
+    "timing": { "$ref": "#/$defs/timing" },
+    "configurationCache": { "$ref": "#/$defs/configurationCache" }
+  },
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40,64}$"
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence"],
+      "properties": {
+        "durationNs": { "type": "integer", "minimum": 0 },
+        "evidence": { "enum": ["EXACT", "APPROXIMATED", "UNAVAILABLE"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "evidence": { "const": "UNAVAILABLE" } } },
+          "then": { "not": { "required": ["durationNs"] } }
+        },
+        {
+          "if": { "properties": { "evidence": { "enum": ["EXACT", "APPROXIMATED"] } } },
+          "then": { "required": ["durationNs"] }
+        }
+      ]
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "totalNs",
+        "decision",
+        "network",
+        "cache",
+        "gradle",
+        "observation",
+        "wrapper",
+        "bootstrap",
+        "unattributedNs"
+      ],
+      "properties": {
+        "totalNs": { "type": "integer", "minimum": 1 },
+        "decision": { "$ref": "#/$defs/phase" },
+        "network": { "$ref": "#/$defs/phase" },
+        "cache": { "$ref": "#/$defs/phase" },
+        "gradle": { "$ref": "#/$defs/phase" },
+        "observation": { "$ref": "#/$defs/phase" },
+        "wrapper": { "$ref": "#/$defs/phase" },
+        "bootstrap": { "$ref": "#/$defs/phase" },
+        "unattributedNs": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repositoryScopeSha256",
+        "sourceRevisionEvidence",
+        "gradleVersion",
+        "wrapperSha256",
+        "buildoptSha256",
+        "argumentsSha256"
+      ],
+      "properties": {
+        "repositoryScopeSha256": { "$ref": "#/$defs/digest" },
+        "sourceRevision": { "$ref": "#/$defs/revision" },
+        "sourceRevisionEvidence": { "enum": ["EXACT", "UNAVAILABLE"] },
+        "gradleVersion": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "wrapperSha256": { "$ref": "#/$defs/digest" },
+        "buildoptSha256": { "$ref": "#/$defs/digest" },
+        "argumentsSha256": { "$ref": "#/$defs/digest" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "sourceRevisionEvidence": { "const": "EXACT" } } },
+          "then": { "required": ["sourceRevision"] }
+        },
+        {
+          "if": { "properties": { "sourceRevisionEvidence": { "const": "UNAVAILABLE" } } },
+          "then": { "not": { "required": ["sourceRevision"] } }
+        }
+      ]
+    },
+    "configurationCache": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requested", "state"],
+      "properties": {
+        "requested": { "type": "boolean" },
+        "state": { "enum": ["NOT_REQUESTED", "PRESENT", "ABSENT", "UNAVAILABLE"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "requested": { "const": false } } },
+          "then": { "properties": { "state": { "const": "NOT_REQUESTED" } } }
+        }
+      ]
+    }
+  }
+}

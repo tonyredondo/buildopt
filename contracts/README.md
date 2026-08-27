@@ -26,6 +26,7 @@ Normative source for versioned schemas, interfaces, and cross-language conforman
 | `jsonschema/central-state-head.v1.schema.json` | `POC-CENTRAL-STORAGE-CONTRACT-001` |
 | `jsonschema/central-state-cas.v1.schema.json` | `POC-CENTRAL-STORAGE-CONTRACT-001` |
 | `jsonschema/sticky-wrapper-decision-store.v1.schema.json` | `SWL-007` |
+| `jsonschema/sticky-wrapper-observation.v1.schema.json` | `SWL-009` |
 | `openapi/buildopt-control.v1.yaml` | `F0-017` |
 | `openapi/buildopt-cache-control.v1.yaml` | `F0-017` |
 | `openapi/test-optimization.v1.yaml` | `F0-018` |

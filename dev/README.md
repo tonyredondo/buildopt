@@ -110,6 +110,18 @@ outside the build decision path. The checked-in result records p50/p95 lookup
 latency for verified local state and unavailable-service fallback; it is a
 retention-cost budget, not a performance claim.
 
+Validate ordinary sticky-wrapper observations and their phase accounting with:
+
+```bash
+./dev/check-sticky-wrapper-observation
+```
+
+This is the `SWL-009` gate. It runs two real Gradle Wrapper invocations with
+Configuration Cache, verifies private append-only JSONL records, provenance,
+child-environment scrubbing, tamper rejection and wall-time reconciliation.
+The result is diagnostic cost evidence only; observation cannot authorize an
+action or alter the requested Gradle result.
+
 ## Toolchain lock
 
 [`toolchains.lock.yaml`](./toolchains.lock.yaml) is the source of truth for downloadable development toolchains on the initial `linux-amd64` platform. It is JSON-compatible YAML 1.2 so the Phase 0 validator can parse it with `jq` before the repository adopts a YAML library.
