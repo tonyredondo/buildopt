@@ -1,0 +1,527 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+umask 077
+export LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC
+
+if (($# != 1)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/output/directory\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_cohort="${buildopt_root}/benchmarks/results/current-longitudinal-cohorts-v1.json"
+buildopt_contract="${buildopt_root}/specs/poc-sticky-wrapper-longitudinal-v1.json"
+buildopt_max_primary=${SWL_MAX_PRIMARY_PER_FAMILY:-20}
+if [[ ! ${buildopt_max_primary} =~ ^[0-9]+$ ]] || ((buildopt_max_primary < 1 || buildopt_max_primary > 20)); then
+    printf 'SWL_MAX_PRIMARY_PER_FAMILY must be an integer from 1 through 20\n' >&2
+    exit 64
+fi
+[[ ! -e ${buildopt_output} ]] || {
+    printf 'SWL-015 output already exists: %s\n' "${buildopt_output}" >&2
+    exit 1
+}
+[[ -z $(git -C "${buildopt_root}" status --porcelain=v1 --untracked-files=all) ]] || {
+    printf 'SWL-015 package source must be a clean Git tree\n' >&2
+    exit 1
+}
+
+for buildopt_command in awk cp date df find git grep jq mktemp sha256sum sort stat tar; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'SWL-015 runner requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -f ${buildopt_cohort} && -f ${buildopt_contract} ]] || {
+    printf 'SWL-015 frozen cohort or contract is missing\n' >&2
+    exit 70
+}
+[[ $(sha256sum "${buildopt_cohort}" | awk '{print $1}') == \
+    8ca7a1b7b9ea2c71eb95f050eff0fdb76c23425141cd0c4f8f104f33782503ee ]] || {
+    printf 'SWL-015 frozen cohort digest drifted\n' >&2
+    exit 70
+}
+buildopt_free=$(df -Pk "${TMPDIR:-/tmp}" | awk 'NR == 2 {print $4 * 1024}')
+((buildopt_free >= 8589934592)) || {
+    printf 'SWL-015 requires at least 8 GiB free\n' >&2
+    exit 1
+}
+
+buildopt_success=false
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-swl015.XXXXXX")
+buildopt_cleanup() {
+    if [[ ${buildopt_success} == true ]]; then
+        [[ ${buildopt_temp} == "${TMPDIR:-/tmp}/buildopt-swl015."* ]] && rm -rf -- "${buildopt_temp}"
+    else
+        printf 'SWL-015 diagnostic state retained at %s\n' "${buildopt_temp}" >&2
+    fi
+}
+trap buildopt_cleanup EXIT
+
+mkdir -p -- "${buildopt_temp}/release" "${buildopt_temp}/package" \
+    "${buildopt_temp}/subjects" "${buildopt_temp}/timer"
+buildopt_revision=$(git -C "${buildopt_root}" rev-parse HEAD)
+buildopt_version=0.15.0
+env GRADLE_USER_HOME="${buildopt_root}/.tools/gradle-user-home/local" \
+    "${buildopt_root}/packaging/linux/package.sh" --version "${buildopt_version}" \
+    --output "${buildopt_temp}/release" >"${buildopt_temp}/package.out" 2>"${buildopt_temp}/package.err"
+buildopt_archive="${buildopt_temp}/release/buildopt-${buildopt_version}-linux-amd64.tar.gz"
+[[ -f ${buildopt_archive} ]] || {
+    printf 'SWL-015 package archive is missing\n' >&2
+    exit 70
+}
+tar -xzf "${buildopt_archive}" -C "${buildopt_temp}/package"
+mapfile -t buildopt_package_roots < <(
+    find "${buildopt_temp}/package" -mindepth 1 -maxdepth 1 -type d -name "buildopt-${buildopt_version}-linux-amd64" -print
+)
+(( ${#buildopt_package_roots[@]} == 1 )) || {
+    printf 'SWL-015 expected one packaged distribution root\n' >&2
+    exit 70
+}
+buildopt_package_root=${buildopt_package_roots[0]}
+buildopt_archive_sha=$(sha256sum "${buildopt_archive}" | awk '{print $1}')
+buildopt_cohort_sha=$(sha256sum "${buildopt_cohort}" | awk '{print $1}')
+buildopt_contract_sha=$(sha256sum "${buildopt_contract}" | awk '{print $1}')
+
+(
+    cd -- "${buildopt_root}/dev/current-longitudinal-campaign"
+    "${buildopt_root}/dev/run" --toolchain go -- \
+        go build -o "${buildopt_temp}/timer/current-longitudinal-campaign" .
+)
+buildopt_timer="${buildopt_temp}/timer/current-longitudinal-campaign"
+
+buildopt_event() {
+    local buildopt_path=$1 buildopt_parent=$2
+    jq -n --arg before "${buildopt_parent}" '{before:$before}' >"${buildopt_path}"
+}
+
+buildopt_sync_dependency_state() {
+    local buildopt_source=$1 buildopt_destination=$2 buildopt_relative
+    for buildopt_relative in caches/modules-2 caches/keyrings wrapper/dists; do
+        [[ -d ${buildopt_source}/${buildopt_relative} ]] || continue
+        mkdir -p -- "${buildopt_destination}/${buildopt_relative}"
+        cp -a --reflink=auto "${buildopt_source}/${buildopt_relative}/." \
+            "${buildopt_destination}/${buildopt_relative}/"
+    done
+}
+
+buildopt_remove_build_outputs() {
+    local buildopt_repository=$1
+    find "${buildopt_repository}" -type d \( -name build -o -name .gradle \) -prune -exec rm -rf -- {} +
+}
+
+buildopt_directory_fingerprint() {
+    local buildopt_directory=$1
+    if [[ ! -d ${buildopt_directory} ]]; then
+        printf 'ABSENT' | sha256sum | awk '{print $1}'
+        return
+    fi
+    (
+        cd -- "${buildopt_directory}"
+        find . -type f -printf '%P\t%s\n' | sort | sha256sum | awk '{print $1}'
+    )
+}
+
+buildopt_output_fingerprint() {
+    local buildopt_repository=$1 buildopt_patterns_json=$2 buildopt_manifest=$3
+    local buildopt_pattern buildopt_pattern_root buildopt_pattern_name buildopt_relative
+    : >"${buildopt_manifest}.paths"
+    while IFS= read -r buildopt_pattern; do
+        [[ -n ${buildopt_pattern} && ${buildopt_pattern} != /* && ${buildopt_pattern} != *'..'* ]] || return 1
+        if [[ ${buildopt_pattern} == *'/**' ]]; then
+            buildopt_pattern_root=${buildopt_pattern%/**}
+            [[ -d ${buildopt_repository}/${buildopt_pattern_root} ]] || continue
+            find "${buildopt_repository}/${buildopt_pattern_root}" -type f -printf '%P\n' |
+                sed "s#^#${buildopt_pattern_root}/#" >>"${buildopt_manifest}.paths"
+        elif [[ ${buildopt_pattern} == *'*'* ]]; then
+            buildopt_pattern_root=${buildopt_pattern%/*}
+            buildopt_pattern_name=${buildopt_pattern##*/}
+            [[ -d ${buildopt_repository}/${buildopt_pattern_root} ]] || continue
+            find "${buildopt_repository}/${buildopt_pattern_root}" -maxdepth 1 -type f \
+                -name "${buildopt_pattern_name}" -printf '%P\n' |
+                sed "s#^#${buildopt_pattern_root}/#" >>"${buildopt_manifest}.paths"
+        else
+            [[ -f ${buildopt_repository}/${buildopt_pattern} ]] &&
+                printf '%s\n' "${buildopt_pattern}" >>"${buildopt_manifest}.paths"
+        fi
+    done < <(jq -r '.[]' <<<"${buildopt_patterns_json}")
+    sort -u -o "${buildopt_manifest}.paths" "${buildopt_manifest}.paths"
+    [[ -s ${buildopt_manifest}.paths ]] || return 1
+    : >"${buildopt_manifest}"
+    while IFS= read -r buildopt_relative; do
+        [[ -f ${buildopt_repository}/${buildopt_relative} && ! -L ${buildopt_repository}/${buildopt_relative} ]] || return 1
+        printf '%s\t%s\t%s\n' \
+            "$(sha256sum "${buildopt_repository}/${buildopt_relative}" | awk '{print $1}')" \
+            "$(stat -c '%s' "${buildopt_repository}/${buildopt_relative}")" \
+            "${buildopt_relative}" >>"${buildopt_manifest}"
+    done <"${buildopt_manifest}.paths"
+    BUILDOPT_OUTPUT_SHA=$(sha256sum "${buildopt_manifest}" | awk '{print $1}')
+    BUILDOPT_OUTPUT_COUNT=$(wc -l <"${buildopt_manifest}" | tr -d ' ')
+}
+
+buildopt_prepare_distribution() {
+    local buildopt_cache=$1 buildopt_parent buildopt_install buildopt_stage
+    buildopt_parent="${buildopt_cache}/buildopt/wrapper/distributions/${buildopt_version}/linux-amd64"
+    buildopt_install="${buildopt_parent}/${buildopt_archive_sha}"
+    if [[ -e ${buildopt_install} ]]; then
+        [[ -f ${buildopt_install}/.buildopt-wrapper-install ]] || return 1
+        return 0
+    fi
+    buildopt_stage="${buildopt_parent}/.buildopt-wrapper-stage"
+    mkdir -p -- "${buildopt_parent}"
+    rm -rf -- "${buildopt_stage}"
+    cp -R -- "${buildopt_package_root}" "${buildopt_stage}"
+    printf '%s\n%s\n%s\n%s\n' buildopt.wrapper-install/v1 "${buildopt_version}" \
+        linux-amd64 "${buildopt_archive_sha}" >"${buildopt_stage}/.buildopt-wrapper-install"
+    mv -- "${buildopt_stage}" "${buildopt_install}"
+}
+
+buildopt_write_wrapper() {
+    local buildopt_repository=$1
+    mkdir -p -- "${buildopt_repository}/.buildopt"
+    cp -- "${buildopt_root}/internal/stickywrapper/templates/buildoptw" \
+        "${buildopt_repository}/buildoptw"
+    cp -- "${buildopt_root}/internal/stickywrapper/templates/buildoptw.bat" \
+        "${buildopt_repository}/buildoptw.bat"
+    chmod 0755 "${buildopt_repository}/buildoptw"
+    chmod 0644 "${buildopt_repository}/buildoptw.bat"
+    cat >"${buildopt_repository}/.buildopt/wrapper.properties" <<EOF
+schemaVersion=buildopt.wrapper/v1
+distributionVersion=${buildopt_version}
+distributionUrl.linux-amd64=https://github.com/tonyredondo/buildopt/releases/download/v${buildopt_version}/buildopt-${buildopt_version}-linux-amd64.tar.gz
+distributionSha256.linux-amd64=${buildopt_archive_sha}
+distributionUrl.macos-amd64=https://github.com/tonyredondo/buildopt/releases/download/v${buildopt_version}/buildopt-${buildopt_version}-darwin-amd64.tar.gz
+distributionSha256.macos-amd64=${buildopt_archive_sha}
+distributionUrl.macos-arm64=https://github.com/tonyredondo/buildopt/releases/download/v${buildopt_version}/buildopt-${buildopt_version}-darwin-arm64.tar.gz
+distributionSha256.macos-arm64=${buildopt_archive_sha}
+distributionUrl.windows-amd64=https://github.com/tonyredondo/buildopt/releases/download/v${buildopt_version}/buildopt-${buildopt_version}-windows-amd64.zip
+distributionSha256.windows-amd64=${buildopt_archive_sha}
+network.connectTimeoutMs=5000
+network.readTimeoutMs=30000
+network.redirectPolicy=https-only-max-5
+network.proxyMode=environment
+EOF
+    cat >"${buildopt_repository}/.buildopt/config.toml" <<'EOF'
+schema_version = "buildopt.config/v1"
+mode = "auto"
+server_url = ""
+project_scope = ""
+credential_env = ""
+trial_budget_percent = 0
+EOF
+    chmod 0644 "${buildopt_repository}/.buildopt/wrapper.properties" \
+        "${buildopt_repository}/.buildopt/config.toml"
+}
+
+buildopt_run_arm() {
+    local buildopt_kind=$1 buildopt_repository=$2 buildopt_home=$3 buildopt_gradle=$4
+    local buildopt_cache=$5 buildopt_jdk=$6 buildopt_duration=$7 buildopt_log=$8
+    local buildopt_status=0
+    local -a buildopt_args=()
+    if [[ ${buildopt_kind} == control ]]; then
+        buildopt_args=(./gradlew --build-cache "${BUILDOPT_WORKFLOW_ARGS[@]}")
+    else
+        buildopt_args=(./buildoptw "${BUILDOPT_WORKFLOW_ARGS[@]}")
+    fi
+    mkdir -p -- "${buildopt_home}" "${buildopt_gradle}" "${buildopt_cache}"
+    buildopt_remove_build_outputs "${buildopt_repository}"
+    # Keep environment construction in one place so both arms have identical
+    # process boundaries and timing semantics.
+    set +e
+    (
+        cd -- "${buildopt_repository}"
+        if [[ ${buildopt_kind} == candidate ]]; then
+            env -u BUILDOPT_BYPASS -u BUILDOPT_TOKEN \
+                HOME="${buildopt_home}" XDG_CACHE_HOME="${buildopt_cache}" \
+                GRADLE_USER_HOME="${buildopt_gradle}" CI=true GITHUB_ACTIONS=true \
+                GITHUB_SERVER_URL=https://github.com GITHUB_REPOSITORY="${BUILDOPT_REPOSITORY_ID}" \
+                GITHUB_REPOSITORY_ID="${BUILDOPT_NUMERIC_ID}" GITHUB_SHA="${BUILDOPT_REVISION}" \
+                BUILDOPT_WRAPPER_CACHE_HOME="${buildopt_cache}" \
+                "${buildopt_root}/dev/run" --toolchain "${buildopt_jdk}" -- \
+                "${buildopt_timer}" --time "${buildopt_duration}" -- "${buildopt_args[@]}"
+        else
+            env -u BUILDOPT_BYPASS -u BUILDOPT_TOKEN \
+                HOME="${buildopt_home}" XDG_CACHE_HOME="${buildopt_cache}" \
+                GRADLE_USER_HOME="${buildopt_gradle}" CI=true GITHUB_ACTIONS=true \
+                GITHUB_SERVER_URL=https://github.com GITHUB_REPOSITORY="${BUILDOPT_REPOSITORY_ID}" \
+                GITHUB_REPOSITORY_ID="${BUILDOPT_NUMERIC_ID}" GITHUB_SHA="${BUILDOPT_REVISION}" \
+                "${buildopt_root}/dev/run" --toolchain "${buildopt_jdk}" -- \
+                "${buildopt_timer}" --time "${buildopt_duration}" -- "${buildopt_args[@]}"
+        fi
+    ) >"${buildopt_log}" 2>&1
+    buildopt_status=$?
+    set -e
+    BUILDOPT_STATUS=${buildopt_status}
+}
+
+buildopt_subject() {
+    local buildopt_index=$1
+    local buildopt_policy buildopt_key buildopt_repository_id buildopt_remote buildopt_branch buildopt_jdk
+    local buildopt_workflow buildopt_outputs buildopt_anchor buildopt_numeric_id
+    buildopt_policy=$(jq -c ".repositories[${buildopt_index}].policy" "${buildopt_cohort}")
+    buildopt_key=$(jq -r '.key' <<<"${buildopt_policy}")
+    buildopt_repository_id=$(jq -r '.repositoryId' <<<"${buildopt_policy}")
+    buildopt_remote=$(jq -r '.remoteUrl' <<<"${buildopt_policy}")
+    buildopt_branch=$(jq -r '.branch' <<<"${buildopt_policy}")
+    buildopt_jdk=$(jq -r '.jdkToolchain' <<<"${buildopt_policy}")
+    buildopt_workflow=$(jq -c '.workflow' <<<"${buildopt_policy}")
+    buildopt_outputs=$(jq -c '.requiredOutputs' <<<"${buildopt_policy}")
+    buildopt_anchor=$(jq -r ".repositories[${buildopt_index}].anchor.revision" "${buildopt_cohort}")
+    buildopt_numeric_id=$((9101500 + buildopt_index))
+    mapfile -t BUILDOPT_WORKFLOW_ARGS < <(jq -r '.[]' <<<"${buildopt_workflow}")
+    local -a buildopt_seed_workflow=()
+    while IFS= read -r buildopt_argument; do
+        [[ ${buildopt_argument} == --offline ]] || buildopt_seed_workflow+=("${buildopt_argument}")
+    done < <(jq -r '.[]' <<<"${buildopt_workflow}")
+
+    local buildopt_subject_root="${buildopt_temp}/subjects/${buildopt_key}"
+    local buildopt_source="${buildopt_subject_root}/source"
+    local buildopt_control="${buildopt_subject_root}/control"
+    local buildopt_candidate="${buildopt_subject_root}/candidate"
+    local buildopt_seed_home="${buildopt_subject_root}/seed-home"
+    local buildopt_seed_gradle="${buildopt_subject_root}/seed-gradle"
+    local buildopt_seed_cache="${buildopt_subject_root}/seed-cache"
+    local buildopt_control_home="${buildopt_subject_root}/control-home"
+    local buildopt_control_gradle="${buildopt_subject_root}/control-gradle"
+    local buildopt_control_cache="${buildopt_subject_root}/control-cache"
+    local buildopt_candidate_home="${buildopt_subject_root}/candidate-home"
+    local buildopt_candidate_gradle="${buildopt_subject_root}/candidate-gradle"
+    local buildopt_candidate_cache="${buildopt_subject_root}/candidate-cache"
+    local buildopt_logs="${buildopt_subject_root}/logs"
+    local buildopt_observations="${buildopt_subject_root}/observations.jsonl"
+    local buildopt_exclusions="${buildopt_subject_root}/exclusions.jsonl"
+    mkdir -p -- "${buildopt_subject_root}" "${buildopt_logs}" "${buildopt_seed_home}" \
+        "${buildopt_seed_gradle}" "${buildopt_seed_cache}"
+    : >"${buildopt_observations}"
+    : >"${buildopt_exclusions}"
+
+    printf 'SWL-015 %s: clone and dependency preparation\n' "${buildopt_repository_id}"
+    git clone -q --filter=blob:none --no-checkout "${buildopt_remote}" "${buildopt_source}"
+    git -C "${buildopt_source}" fetch -q --depth=96 origin "${buildopt_branch}"
+    git -C "${buildopt_source}" checkout -q --detach "${buildopt_anchor}"
+    buildopt_event "${buildopt_subject_root}/event.json" "$(git -C "${buildopt_source}" rev-parse HEAD^1)"
+
+    local buildopt_prepare_duration="${buildopt_logs}/dependency-preparation-anchor.duration"
+    local buildopt_prepare_status=0
+    (
+        cd -- "${buildopt_source}"
+        env HOME="${buildopt_seed_home}" XDG_CACHE_HOME="${buildopt_seed_cache}" \
+            GRADLE_USER_HOME="${buildopt_seed_gradle}" CI=true GITHUB_ACTIONS=true \
+            "${buildopt_root}/dev/run" --toolchain "${buildopt_jdk}" -- \
+            "${buildopt_timer}" --time "${buildopt_prepare_duration}" -- \
+            ./gradlew --no-build-cache "${buildopt_seed_workflow[@]}"
+    ) >"${buildopt_logs}/dependency-preparation-anchor.log" 2>&1 || buildopt_prepare_status=$?
+    [[ -s ${buildopt_prepare_duration} ]] || {
+        printf 'SWL-015 %s: anchor preparation timer failed\n' "${buildopt_repository_id}" >&2
+        return 1
+    }
+    local buildopt_prepare_attempts=1 buildopt_prepare_successes=0 buildopt_prepare_failures=0
+    local buildopt_prepare_wall_ns
+    buildopt_prepare_wall_ns=$(<"${buildopt_prepare_duration}")
+    ((buildopt_prepare_status == 0)) && buildopt_prepare_successes=1 || buildopt_prepare_failures=1
+    if ((buildopt_prepare_status != 0)); then
+        jq -n --arg reason "DEPENDENCY_UNAVAILABLE_AFTER_PREPARATION" \
+            '{reason:$reason,detail:"ANCHOR_PREPARATION_FAILED"}' >"${buildopt_subject_root}/subject.json"
+        return 0
+    fi
+
+    git -C "${buildopt_source}" worktree add -q --detach "${buildopt_control}" "${buildopt_anchor}"
+    git -C "${buildopt_source}" worktree add -q --detach "${buildopt_candidate}" "${buildopt_anchor}"
+    buildopt_sync_dependency_state "${buildopt_seed_gradle}" "${buildopt_control_gradle}"
+    buildopt_sync_dependency_state "${buildopt_seed_gradle}" "${buildopt_candidate_gradle}"
+    buildopt_prepare_distribution "${buildopt_candidate_cache}"
+    buildopt_write_wrapper "${buildopt_candidate}"
+
+    local buildopt_attempt=0 buildopt_accepted=0 buildopt_queue_source buildopt_queue_key buildopt_entry
+    for buildopt_queue_source in PRIMARY RESERVE; do
+        buildopt_queue_key=primary
+        [[ ${buildopt_queue_source} == RESERVE ]] && buildopt_queue_key=reserves
+        while IFS= read -r buildopt_entry; do
+            ((buildopt_accepted < buildopt_max_primary)) || break 2
+            buildopt_attempt=$((buildopt_attempt + 1))
+            local buildopt_revision_under_test buildopt_parent buildopt_ordinal buildopt_shape
+            buildopt_revision_under_test=$(jq -r '.revision' <<<"${buildopt_entry}")
+            buildopt_parent=$(jq -r '.parentRevision' <<<"${buildopt_entry}")
+            buildopt_ordinal=$(jq -r '.ordinal' <<<"${buildopt_entry}")
+            buildopt_shape=$(jq -r '.changeShape' <<<"${buildopt_entry}")
+            git -C "${buildopt_source}" checkout -q --detach "${buildopt_revision_under_test}"
+            buildopt_event "${buildopt_subject_root}/event.json" "${buildopt_parent}"
+            buildopt_prepare_duration="${buildopt_logs}/dependency-preparation-${buildopt_attempt}.duration"
+            buildopt_prepare_status=0
+            (
+                cd -- "${buildopt_source}"
+                env HOME="${buildopt_seed_home}" XDG_CACHE_HOME="${buildopt_seed_cache}" \
+                    GRADLE_USER_HOME="${buildopt_seed_gradle}" CI=true GITHUB_ACTIONS=true \
+                    "${buildopt_root}/dev/run" --toolchain "${buildopt_jdk}" -- \
+                    "${buildopt_timer}" --time "${buildopt_prepare_duration}" -- \
+                    ./gradlew --no-build-cache "${buildopt_seed_workflow[@]}"
+            ) >"${buildopt_logs}/dependency-preparation-${buildopt_attempt}.log" 2>&1 || buildopt_prepare_status=$?
+            [[ -s ${buildopt_prepare_duration} ]] || return 1
+            buildopt_prepare_attempts=$((buildopt_prepare_attempts + 1))
+            buildopt_prepare_wall_ns=$((buildopt_prepare_wall_ns + $(<"${buildopt_prepare_duration}")))
+            if ((buildopt_prepare_status != 0)); then
+                buildopt_prepare_failures=$((buildopt_prepare_failures + 1))
+                jq -cn --arg source "${buildopt_queue_source}" --argjson entry "${buildopt_entry}" \
+                    --argjson attempt "${buildopt_attempt}" \
+                    '{cohortAttempt:$attempt,source:$source,frozenOrdinal:$entry.ordinal,revision:$entry.revision,
+                      reason:"DEPENDENCY_UNAVAILABLE_AFTER_PREPARATION",detail:"REVISION_PREPARATION_FAILED"}' \
+                    >>"${buildopt_exclusions}"
+                continue
+            fi
+            buildopt_prepare_successes=$((buildopt_prepare_successes + 1))
+            buildopt_sync_dependency_state "${buildopt_seed_gradle}" "${buildopt_control_gradle}"
+            buildopt_sync_dependency_state "${buildopt_seed_gradle}" "${buildopt_candidate_gradle}"
+            git -C "${buildopt_control}" checkout -q --detach "${buildopt_revision_under_test}"
+            git -C "${buildopt_candidate}" checkout -q --detach "${buildopt_revision_under_test}"
+            buildopt_write_wrapper "${buildopt_candidate}"
+            BUILDOPT_REPOSITORY_ID=${buildopt_repository_id}
+            BUILDOPT_NUMERIC_ID=${buildopt_numeric_id}
+            BUILDOPT_REVISION=${buildopt_revision_under_test}
+            local buildopt_order=CONTROL_FIRST
+            local -a buildopt_arms=(control candidate)
+            (( (buildopt_accepted + 1) % 2 == 0 )) && {
+                buildopt_order=CANDIDATE_FIRST
+                buildopt_arms=(candidate control)
+            }
+            local buildopt_control_duration="${buildopt_logs}/${buildopt_attempt}-control.duration"
+            local buildopt_candidate_duration="${buildopt_logs}/${buildopt_attempt}-candidate.duration"
+            local buildopt_control_log="${buildopt_logs}/${buildopt_attempt}-control.log"
+            local buildopt_candidate_log="${buildopt_logs}/${buildopt_attempt}-candidate.log"
+            local buildopt_arm
+            for buildopt_arm in "${buildopt_arms[@]}"; do
+                if [[ ${buildopt_arm} == control ]]; then
+                    buildopt_run_arm control "${buildopt_control}" "${buildopt_control_home}" \
+                        "${buildopt_control_gradle}" "${buildopt_control_cache}" "${buildopt_jdk}" \
+                        "${buildopt_control_duration}" "${buildopt_control_log}"
+                    buildopt_control_status=${BUILDOPT_STATUS}
+                else
+                    buildopt_run_arm candidate "${buildopt_candidate}" "${buildopt_candidate_home}" \
+                        "${buildopt_candidate_gradle}" "${buildopt_candidate_cache}" "${buildopt_jdk}" \
+                        "${buildopt_candidate_duration}" "${buildopt_candidate_log}"
+                    buildopt_candidate_status=${BUILDOPT_STATUS}
+                fi
+            done
+            [[ -s ${buildopt_control_duration} && -s ${buildopt_candidate_duration} ]] || return 1
+            if ((buildopt_control_status != 0 || buildopt_candidate_status != 0)); then
+                jq -cn --arg source "${buildopt_queue_source}" --argjson entry "${buildopt_entry}" \
+                    --argjson attempt "${buildopt_attempt}" --argjson control "${buildopt_control_status}" \
+                    --argjson candidate "${buildopt_candidate_status}" \
+                    '{cohortAttempt:$attempt,source:$source,frozenOrdinal:$entry.ordinal,revision:$entry.revision,
+                      reason:(if $candidate != 0 then "CANDIDATE_BUILD_FAILURE" else "NATIVE_BUILD_FAILURE" end),
+                      detail:({controlExitCode:$control,candidateExitCode:$candidate})}' >>"${buildopt_exclusions}"
+                continue
+            fi
+            buildopt_output_fingerprint "${buildopt_control}" "${buildopt_outputs}" \
+                "${buildopt_logs}/${buildopt_attempt}-control-output.tsv" || {
+                jq -cn --arg source "${buildopt_queue_source}" --argjson entry "${buildopt_entry}" \
+                    --argjson attempt "${buildopt_attempt}" \
+                    '{cohortAttempt:$attempt,source:$source,frozenOrdinal:$entry.ordinal,revision:$entry.revision,
+                      reason:"RUNNER_ENVIRONMENT_FAILURE",detail:"CONTROL_REQUIRED_OUTPUT_MISSING"}' \
+                    >>"${buildopt_exclusions}"
+                continue
+            }
+            local buildopt_control_sha=${BUILDOPT_OUTPUT_SHA} buildopt_control_count=${BUILDOPT_OUTPUT_COUNT}
+            buildopt_output_fingerprint "${buildopt_candidate}" "${buildopt_outputs}" \
+                "${buildopt_logs}/${buildopt_attempt}-candidate-output.tsv" || {
+                jq -cn --arg source "${buildopt_queue_source}" --argjson entry "${buildopt_entry}" \
+                    --argjson attempt "${buildopt_attempt}" \
+                    '{cohortAttempt:$attempt,source:$source,frozenOrdinal:$entry.ordinal,revision:$entry.revision,
+                      reason:"CANDIDATE_OUTPUT_MISSING",detail:"CANDIDATE_REQUIRED_OUTPUT_MISSING"}' \
+                    >>"${buildopt_exclusions}"
+                continue
+            }
+            local buildopt_candidate_sha=${BUILDOPT_OUTPUT_SHA} buildopt_candidate_count=${BUILDOPT_OUTPUT_COUNT}
+            local buildopt_control_ns buildopt_candidate_ns
+            buildopt_control_ns=$(<"${buildopt_control_duration}")
+            buildopt_candidate_ns=$(<"${buildopt_candidate_duration}")
+            if [[ ${buildopt_control_sha} != "${buildopt_candidate_sha}" ||
+                ${buildopt_control_count} -ne ${buildopt_candidate_count} ]]; then
+                jq -cn --arg source "${buildopt_queue_source}" --argjson entry "${buildopt_entry}" \
+                    --argjson attempt "${buildopt_attempt}" \
+                    '{cohortAttempt:$attempt,source:$source,frozenOrdinal:$entry.ordinal,revision:$entry.revision,
+                      reason:"OUTPUT_MISMATCH",detail:"CONTROL_AND_CANDIDATE_OUTPUTS_DIFFER"}' >>"${buildopt_exclusions}"
+                continue
+            fi
+            buildopt_accepted=$((buildopt_accepted + 1))
+            local buildopt_control_hits buildopt_candidate_hits
+            buildopt_control_hits=$(grep -c ' FROM-CACHE' "${buildopt_control_log}" || true)
+            buildopt_candidate_hits=$(grep -c ' FROM-CACHE' "${buildopt_candidate_log}" || true)
+            jq -cn --arg source "${buildopt_queue_source}" --argjson attempt "${buildopt_attempt}" \
+                --argjson ordinal "${buildopt_ordinal}" --arg revision "${buildopt_revision_under_test}" \
+                --arg parent "${buildopt_parent}" --arg shape "${buildopt_shape}" --arg order "${buildopt_order}" \
+                --argjson sequence "${buildopt_accepted}" --argjson controlWall "${buildopt_control_ns}" \
+                --argjson candidateWall "${buildopt_candidate_ns}" --arg controlOutput "${buildopt_control_sha}" \
+                --arg candidateOutput "${buildopt_candidate_sha}" --argjson outputCount "${buildopt_control_count}" \
+                --argjson controlHits "${buildopt_control_hits}" --argjson candidateHits "${buildopt_candidate_hits}" \
+                --arg state "$(buildopt_directory_fingerprint "${buildopt_candidate}/.buildopt")" \
+                '{cohortAttempt:$attempt,sequence:$sequence,source:$source,frozenOrdinal:$ordinal,revision:$revision,
+                  parentRevision:$parent,changeShape:$shape,order:$order,
+                  control:{wallNs:$controlWall,exitCode:0,outputSha256:$controlOutput,outputCount:$outputCount,
+                    fromCacheTasks:$controlHits},candidate:{wallNs:$candidateWall,exitCode:0,outputSha256:$candidateOutput,
+                    outputCount:$outputCount,fromCacheTasks:$candidateHits,buildoptStateSha256:$state},
+                  exactOutputs:true,signedDeltaNs:($controlWall-$candidateWall)}' >>"${buildopt_observations}"
+            printf 'SWL-015 %s: comparable pair %d/%d %.12s (%s)\n' "${buildopt_repository_id}" \
+                "${buildopt_accepted}" "${buildopt_max_primary}" "${buildopt_revision_under_test}" "${buildopt_order}"
+        done < <(jq -c ".repositories[${buildopt_index}].${buildopt_queue_key}[]" "${buildopt_cohort}")
+    done
+
+    jq -n --argjson policy "${buildopt_policy}" --argjson attempts "${buildopt_prepare_attempts}" \
+        --argjson successes "${buildopt_prepare_successes}" --argjson failures "${buildopt_prepare_failures}" \
+        --argjson wall "${buildopt_prepare_wall_ns}" --argjson max "${buildopt_max_primary}" \
+        --slurpfile observations "${buildopt_observations}" --slurpfile exclusions "${buildopt_exclusions}" \
+        '{key:$policy.key,repositoryId:$policy.repositoryId,workflow:$policy.workflow,requiredOutputs:$policy.requiredOutputs,
+          sampleLimit:$max,dependencyPreparation:{mode:"ANCHOR_AND_EACH_ATTEMPT_UNMEASURED",attempts:$attempts,
+            successes:$successes,failures:$failures,wallNs:$wall,includedInPairWall:false},
+          observations:$observations,exclusions:$exclusions}' >"${buildopt_subject_root}/subject.json"
+    printf 'SWL-015 %s complete: %d comparable, %d excluded\n' "${buildopt_repository_id}" \
+        "${buildopt_accepted}" "$(wc -l <"${buildopt_exclusions}" | tr -d ' ')"
+}
+
+for buildopt_index in 0 1 2 3 4; do
+    buildopt_subject "${buildopt_index}"
+    buildopt_free=$(df -Pk "${TMPDIR:-/tmp}" | awk 'NR == 2 {print $4 * 1024}')
+    ((buildopt_free >= 8589934592)) || {
+        printf 'SWL-015 disk floor crossed after family %d\n' "${buildopt_index}" >&2
+        exit 1
+    }
+done
+
+buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+mkdir -p -- "${buildopt_output}"
+jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revision}" \
+    --arg archive "${buildopt_archive_sha}" --arg cohort "${buildopt_cohort_sha}" \
+    --arg contract "${buildopt_contract_sha}" --argjson max "${buildopt_max_primary}" \
+    --slurpfile spring "${buildopt_temp}/subjects/spring-framework/subject.json" \
+    --slurpfile otel "${buildopt_temp}/subjects/opentelemetry-java-instrumentation/subject.json" \
+    --slurpfile kafka "${buildopt_temp}/subjects/apache-kafka/subject.json" \
+    --slurpfile micronaut "${buildopt_temp}/subjects/micronaut-core/subject.json" \
+    --slurpfile groovy "${buildopt_temp}/subjects/apache-groovy/subject.json" '
+      {schemaVersion:"buildopt.poc/sticky-wrapper-longitudinal-raw/v1",workItem:"SWL-015",
+       capturedAt:$capturedAt,evaluatedRevision:$revision,packageArchiveSha256:$archive,
+       cohortSha256:$cohort,contractSha256:$contract,sampleLimitPerFamily:$max,
+       repositories:[$spring[0],$otel[0],$kafka[0],$micronaut[0],$groovy[0]],
+       productFailures:([[$spring[0],$otel[0],$kafka[0],$micronaut[0],$groovy[0]][] | .exclusions[] |
+         select(.reason == "CANDIDATE_BUILD_FAILURE" or .reason == "OUTPUT_MISMATCH" or .reason == "CANDIDATE_OUTPUT_MISSING")] | length),
+       boundaries:{proofOfConcept:true,productionAuthorized:false,soakRequired:false,
+         designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE",wallTimeClaim:($max == 20)}}
+    ' >"${buildopt_output}/raw.json"
+
+jq '{schemaVersion:"buildopt.poc/sticky-wrapper-longitudinal-report/v1",workItem:.workItem,
+    capturedAt:.capturedAt,evaluatedRevision:.evaluatedRevision,packageArchiveSha256:.packageArchiveSha256,
+    cohortSha256:.cohortSha256,contractSha256:.contractSha256,sampleLimitPerFamily:.sampleLimitPerFamily,
+    summary:{families:(.repositories|length),comparablePairs:( [.repositories[].observations|length] | add),
+      positivePairs:([.repositories[].observations[]|select(.signedDeltaNs > 0)]|length),
+      negativePairs:([.repositories[].observations[]|select(.signedDeltaNs < 0)]|length),
+      exactPairs:([.repositories[].observations[]|select(.exactOutputs)]|length),
+      productFailures:.productFailures,
+      cumulativeSignedDeltaNs:([.repositories[].observations[].signedDeltaNs]|add // 0),
+      state:(if ([.repositories[].observations|length]|min) >= 15 then "READY_FOR_SWL_016" else "INCOMPLETE" end)},
+    repositories:[.repositories[]|{key,repositoryId,sampleLimit,observations,exclusions,
+      comparablePairs:(.observations|length),positivePairs:([.observations[]|select(.signedDeltaNs > 0)]|length),
+      negativePairs:([.observations[]|select(.signedDeltaNs < 0)]|length),
+      cumulativeSignedDeltaNs:([.observations[].signedDeltaNs]|add // 0)}],boundaries:.boundaries}' \
+    "${buildopt_output}/raw.json" >"${buildopt_output}/report.json"
+chmod 0600 "${buildopt_output}/raw.json" "${buildopt_output}/report.json"
+buildopt_success=true
+printf 'SWL-015 sticky-wrapper longitudinal evidence written to %s\n' "${buildopt_output}"

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-longitudinal/v1",
+  "workItem": "SWL-015",
+  "purpose": "Compare the repository-committed BuildOpt Wrapper with optimized native Gradle across frozen chronological public commits.",
+  "cohort": {
+    "manifest": "benchmarks/results/current-longitudinal-cohorts-v1.json",
+    "manifestSha256": "8ca7a1b7b9ea2c71eb95f050eff0fdb76c23425141cd0c4f8f104f33782503ee",
+    "families": 5,
+    "primaryPerFamily": 20,
+    "reservePerFamily": 10,
+    "minimumComparablePerFamily": 15,
+    "selection": "PRIMARY_THEN_NEXT_UNUSED_RESERVE",
+    "timingFreeze": true
+  },
+  "arms": {
+    "control": "existing Gradle Wrapper with --build-cache and frozen workflow",
+    "candidate": "committed ./buildoptw with the same Gradle arguments",
+    "order": "CONTROL_FIRST_THEN_CANDIDATE_FIRST_ALTERNATING",
+    "stateIsolation": "separate checkout, HOME, XDG_CACHE_HOME, GRADLE_USER_HOME and BuildOpt state per arm",
+    "candidateStateOnly": true
+  },
+  "timing": {
+    "clock": "external Go monotonic timer",
+    "dependencyPreparation": "anchor and every attempted revision, outside pair wall time",
+    "outputs": "required output manifest SHA-256 and file count",
+    "configurationCache": "frozen workflow decides; runner does not add or remove it",
+    "lookahead": false
+  },
+  "acceptance": {
+    "comparablePairMinimum": 15,
+    "exactOutputsRequired": true,
+    "productFailuresAllowed": 0,
+    "allPositiveAndNegativeRowsPreserved": true,
+    "candidateEntrypoint": "STICKY_WRAPPER",
+    "incompleteCampaignState": "INCOMPLETE",
+    "completeCampaignState": "READY_FOR_SWL_016"
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE",
+    "repositorySpecificRules": false,
+    "wallTimeClaimBeforeCompletion": false
+  }
+}

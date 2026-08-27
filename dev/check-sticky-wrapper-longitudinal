@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)) || [[ $1 != /* ]]; then
+    printf 'usage: %s /absolute/output/directory\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract="${buildopt_root}/specs/poc-sticky-wrapper-longitudinal-v1.json"
+buildopt_cohort="${buildopt_root}/benchmarks/results/current-longitudinal-cohorts-v1.json"
+buildopt_raw="${buildopt_output}/raw.json"
+buildopt_report="${buildopt_output}/report.json"
+
+for buildopt_command in jq sha256sum grep; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'SWL-015 checker requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -f ${buildopt_contract} && -f ${buildopt_cohort} && -f ${buildopt_raw} && -f ${buildopt_report} ]] || {
+    printf 'SWL-015 contract, cohort or evidence file is missing\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.poc/sticky-wrapper-longitudinal/v1" and
+  .workItem == "SWL-015" and
+  .cohort.families == 5 and
+  .cohort.primaryPerFamily == 20 and
+  .cohort.reservePerFamily == 10 and
+  .cohort.minimumComparablePerFamily == 15 and
+  .cohort.timingFreeze == true and
+  (.arms.control | type == "string")
+' "${buildopt_contract}" >/dev/null
+
+[[ $(sha256sum "${buildopt_cohort}" | awk '{print $1}') == \
+    8ca7a1b7b9ea2c71eb95f050eff0fdb76c23425141cd0c4f8f104f33782503ee ]] || {
+    printf 'SWL-015 cohort digest is not the frozen value\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.poc/sticky-wrapper-longitudinal-raw/v1" and
+  .workItem == "SWL-015" and
+  (.evaluatedRevision | test("^[0-9a-f]{40,64}$")) and
+  (.packageArchiveSha256 | test("^[0-9a-f]{64}$")) and
+  .cohortSha256 == "8ca7a1b7b9ea2c71eb95f050eff0fdb76c23425141cd0c4f8f104f33782503ee" and
+  (.contractSha256 | test("^[0-9a-f]{64}$")) and
+  (.sampleLimitPerFamily | type == "number" and . >= 1 and . <= 20) and
+  (.repositories | length == 5) and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false and
+  .boundaries.soakRequired == false and
+  .boundaries.designPartnerRequired == false and
+  .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_raw}" >/dev/null
+
+buildopt_expected_keys=$(jq -c '[.repositories[].policy.key] | sort' "${buildopt_cohort}")
+buildopt_actual_keys=$(jq -c '[.repositories[].key] | sort' "${buildopt_raw}")
+[[ ${buildopt_expected_keys} == "${buildopt_actual_keys}" ]] || {
+    printf 'SWL-015 repository family set differs from the frozen cohort\n' >&2
+    exit 1
+}
+
+if grep -Fq 'BUILDOPT_TOKEN' "${buildopt_raw}" || grep -Fq 'BUILDOPT_TOKEN' "${buildopt_report}"; then
+    printf 'SWL-015 evidence contains a credential variable name\n' >&2
+    exit 1
+fi
+
+buildopt_invalid=0
+while IFS= read -r buildopt_key; do
+    buildopt_policy=$(jq -c --arg key "${buildopt_key}" '.repositories[] | select(.policy.key == $key).policy' "${buildopt_cohort}")
+    buildopt_subject=$(jq -c --arg key "${buildopt_key}" '.repositories[] | select(.key == $key)' "${buildopt_raw}")
+    jq -e --argjson policy "${buildopt_policy}" '
+      .repositoryId == $policy.repositoryId and
+      .workflow == $policy.workflow and
+      .requiredOutputs == $policy.requiredOutputs and
+      (.observations | type == "array") and (.exclusions | type == "array")
+    ' <<<"${buildopt_subject}" >/dev/null || buildopt_invalid=1
+    while IFS= read -r buildopt_observation; do
+        buildopt_revision=$(jq -r '.revision' <<<"${buildopt_observation}")
+        buildopt_frozen=$(jq -c --arg revision "${buildopt_revision}" \
+            '([.repositories[] | ([.primary[], .reserves[]] | .[]) | select(.revision == $revision)] | length)' \
+            "${buildopt_cohort}")
+        [[ ${buildopt_frozen} == 1 ]] || buildopt_invalid=1
+        jq -e '
+          (.sequence | type == "number" and . >= 1) and
+          (.frozenOrdinal | type == "number" and . >= 1 and . <= 30) and
+          (.revision | test("^[0-9a-f]{40,64}$")) and
+          (.parentRevision | test("^[0-9a-f]{40,64}$")) and
+          (.order == "CONTROL_FIRST" or .order == "CANDIDATE_FIRST") and
+          (.control.wallNs | type == "number" and . > 0) and
+          (.candidate.wallNs | type == "number" and . > 0) and
+          .control.exitCode == 0 and .candidate.exitCode == 0 and
+          .exactOutputs == true and
+          (.control.outputSha256 | test("^[0-9a-f]{64}$")) and
+          (.candidate.outputSha256 | test("^[0-9a-f]{64}$")) and
+          .control.outputSha256 == .candidate.outputSha256 and
+          .control.outputCount == .candidate.outputCount and
+          .signedDeltaNs == (.control.wallNs - .candidate.wallNs) and
+          (.candidate.fromCacheTasks | type == "number" and . >= 0)
+        ' <<<"${buildopt_observation}" >/dev/null || buildopt_invalid=1
+    done < <(jq -c '.observations[]' <<<"${buildopt_subject}")
+done < <(jq -r '.repositories[].key' "${buildopt_raw}")
+((buildopt_invalid == 0)) || {
+    printf 'SWL-015 raw observations failed structural validation\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion == "buildopt.poc/sticky-wrapper-longitudinal-report/v1" and
+  .workItem == "SWL-015" and
+  .summary.families == 5 and
+  (.summary.comparablePairs | type == "number") and
+  (.summary.positivePairs | type == "number") and
+  (.summary.negativePairs | type == "number") and
+  .summary.exactPairs == .summary.comparablePairs and
+  .summary.state == (if ([.repositories[].comparablePairs] | min) >= 15 then "READY_FOR_SWL_016" else "INCOMPLETE" end) and
+  .boundaries.proofOfConcept == true and
+  .boundaries.productionAuthorized == false
+' "${buildopt_report}" >/dev/null
+
+buildopt_raw_summary=$(jq -c '{pairs:([.repositories[].observations|length]|add),positive:([.repositories[].observations[]|select(.signedDeltaNs > 0)]|length),negative:([.repositories[].observations[]|select(.signedDeltaNs < 0)]|length),failures:.productFailures}' "${buildopt_raw}")
+buildopt_report_summary=$(jq -c '{pairs:.summary.comparablePairs,positive:.summary.positivePairs,negative:.summary.negativePairs,failures:.summary.productFailures}' "${buildopt_report}")
+[[ ${buildopt_raw_summary} == "${buildopt_report_summary}" ]] || {
+    printf 'SWL-015 report summary does not match raw observations\n' >&2
+    exit 1
+}
+
+printf 'SWL-015 sticky-wrapper longitudinal evidence: valid\n'
