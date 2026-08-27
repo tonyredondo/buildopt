@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [result.json]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/sticky-wrapper-opportunity-gate-v1.json"}
+
+for buildopt_command in cmp jq mktemp sha256sum; do
+    command -v "${buildopt_command}" >/dev/null || {
+        printf 'required opportunity checker command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+[[ -s ${buildopt_result} ]] || {
+    printf 'sticky wrapper opportunity result is unavailable\n' >&2
+    exit 1
+}
+
+"${buildopt_script_dir}/run" --toolchain go -- go run ./cmd/sticky-opportunity-screen \
+    --root "${buildopt_repo_root}" \
+    --contract specs/poc-sticky-wrapper-opportunity-gate-v1.json \
+    --validate "${buildopt_result}"
+
+jq -e '
+  .schemaVersion == "buildopt.poc/sticky-wrapper-opportunity-gate/v1" and
+  .workItem == "SWL-014C" and
+  .cohortManifestSha256 == "8ca7a1b7b9ea2c71eb95f050eff0fdb76c23425141cd0c4f8f104f33782503ee" and
+  .detectorOrder == ["TASK_CONTRACT_JAVA_V1", "DECLARED_GRAPH_SCOPE_V1"] and
+  .minimumPassingFamilies == 3 and .passingFamilies == 0 and
+  .gatePassed == false and .outcome == "SWL_014C_WITH_STOP_EVIDENCE" and
+  (.families | length) == 5 and
+  ([.families[].familyKey] | sort) == [
+    "apache-groovy", "apache-kafka", "micronaut-core",
+    "opentelemetry-java-instrumentation", "spring-framework"
+  ] and
+  all(.families[];
+    .passed == false and .reason == "NO_TESTABLE_ACTION" and
+    (.testableActions | length) == 0 and
+    (.detectorResults | length) == 2 and
+    .detectorResults[0].detectorId == "TASK_CONTRACT_JAVA_V1" and
+    .detectorResults[0].status == "INPUT_UNAVAILABLE" and
+    .detectorResults[0].reason == "INPUT_UNAVAILABLE_NO_GENERIC_SOURCE_PRODUCER" and
+    .detectorResults[1].detectorId == "DECLARED_GRAPH_SCOPE_V1" and
+    .detectorResults[1].status == "INPUT_UNAVAILABLE" and
+    (.detectorResults[1].reason == "GRAPH_PROPOSAL_INPUT_UNAVAILABLE" or
+     .detectorResults[1].reason == "EXACT_CANDIDATE_PLAN_INPUT_UNAVAILABLE") and
+    all(.detectorResults[]; (.inputEvidenceSha256 | test("^[0-9a-f]{64}$")) and
+      (.actionIds | length) == 0))
+' "${buildopt_result}" >/dev/null || {
+    printf 'sticky wrapper opportunity result contract is invalid\n' >&2
+    exit 1
+}
+
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-opportunity-check.XXXXXX")
+trap 'rm -rf -- "${buildopt_temporary}"' EXIT
+
+jq '.passingFamilies = 3 | .gatePassed = true | .outcome = "READY_FOR_SWL_014D"' \
+    "${buildopt_result}" >"${buildopt_temporary}/tampered-result.json"
+if "${buildopt_script_dir}/run" --toolchain go -- go run ./cmd/sticky-opportunity-screen \
+    --root "${buildopt_repo_root}" \
+    --contract specs/poc-sticky-wrapper-opportunity-gate-v1.json \
+    --validate "${buildopt_temporary}/tampered-result.json" >/dev/null 2>&1; then
+    printf 'tampered opportunity result was accepted\n' >&2
+    exit 1
+fi
+
+cp -- "${buildopt_repo_root}/specs/poc-sticky-wrapper-opportunity-gate-v1.json" \
+    "${buildopt_temporary}/contract.json"
+jq '.sourceEvidence.sha256 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"' \
+    "${buildopt_temporary}/contract.json" >"${buildopt_temporary}/drifted-contract.json"
+if "${buildopt_script_dir}/run" --toolchain go -- go run ./cmd/sticky-opportunity-screen \
+    --root "${buildopt_repo_root}" --contract "${buildopt_temporary}/drifted-contract.json" \
+    --validate "${buildopt_result}" >/dev/null 2>&1; then
+    printf 'drifted opportunity source binding was accepted\n' >&2
+    exit 1
+fi
+
+printf 'Sticky wrapper opportunity gate: 0/5, stop evidence verified\n'

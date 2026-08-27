@@ -162,16 +162,14 @@ an inactive wrapper:
 2. **Compose the real lifecycle (`SWL-014B`).** Ordinary observation, generic
    proposal, trusted-CI trial, qualification, signed decision, active execution,
    counterfactual, suspension and economics must all run through `./buildoptw`.
-3. **Screen public opportunity breadth (`SWL-014C`).** The same generic
-   detectors must expose independently testable actions in at least three of
-   five frozen families. Fewer than three stops the experiment early.
-4. **Prove installed active value (`SWL-014D`).** Balanced pairs through the
-   customer wrapper must preserve outputs and show positive conservative value
-   after every recurring and learning cost in at least three families.
-5. **Run the chronological campaign (`SWL-015 v2`).** Only admitted actions are
-   followed over at least 15 comparable commits per family; no-action commits,
-   regressions, exclusions and all costs remain visible.
-6. **Apply the frozen decision (`SWL-016`).** The unchanged scorecard requires
+3. **Screen public opportunity breadth (`SWL-014C`, complete).** The two frozen
+   generic adapters exposed 0/5 complete testable actions. Structural graph
+   rows existed for Spring, Micronaut and Kafka, but no exact candidate-plan and
+   omitted-critical-path binding existed; task-proposal input was unavailable.
+4. **Installed value and longitudinal campaign (`SWL-014D`, `SWL-015 v2`).**
+   Skipped by the preregistered SWL-014C stop transition; timing without an
+   admissible action would not test generalization.
+5. **Apply the frozen decision (`SWL-016`).** The unchanged scorecard requires
    activation breadth, confidence, cumulative value, payback and durable/runtime
    evidence. Compatibility or cache hits alone cannot continue the POC.
 

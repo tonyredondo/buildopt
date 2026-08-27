@@ -145,8 +145,10 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > after every wrapper, learning, trial, cache and fallback cost. Follow the
 > [Sticky Wrapper Learning POC Tracker](./docs/plans/sticky-wrapper-learning-poc-tracker.md).
 > The deterministic lifecycle proof and all ten native-fallback negatives are
-> checked by `./dev/check-sticky-wrapper-learning-lifecycle`; public repository
-> value still depends on the next opportunity and installed-value gates.
+> checked by `./dev/check-sticky-wrapper-learning-lifecycle`. The subsequent
+> frozen public opportunity gate found **0/5** families with a complete generic,
+> independently testable action. It therefore stopped before installed timing
+> or the longitudinal campaign; `SWL-016` is now the only remaining decision.
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,
 > append-only phase timing and provenance for requested Gradle builds. The
@@ -178,10 +180,13 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > audit found that v1 injected `--build-cache` only into control and exercised
 > candidate no-op/light observation with no trial or action. It is now immutable
 > `DIAGNOSTIC_ONLY` compatibility evidence and cannot feed the terminal
-> decision. Before `SWL-015 v2`, the POC must prove cache-symmetric arms, connect
-> the full learning/action lifecycle, find generic actions in at least 3/5
-> families and demonstrate positive installed-path value. See the
+> decision. Cache-symmetric arms and lifecycle composition were subsequently
+> proven, but the generic opportunity screen produced **0/5** complete actions:
+> structural graph observations lacked exact candidate-plan/critical-path
+> bindings and the public task-proposal input was unavailable. The frozen state
+> machine therefore skips installed-value timing and `SWL-015 v2`. See the
 > [sample evidence](./benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md)
+> [opportunity result](./benchmarks/results/sticky-wrapper-opportunity-gate-v1.json)
 > and the [locked v2 execution contract](./specs/poc-sticky-wrapper-longitudinal-v2.json).
 
 > **Ordinary-build learning economics:** the POC now learns only from builds

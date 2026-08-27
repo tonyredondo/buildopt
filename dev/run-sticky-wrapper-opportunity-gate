@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [output.json]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_output=${1:-"${buildopt_repo_root}/benchmarks/results/sticky-wrapper-opportunity-gate-v1.json"}
+
+if [[ ${buildopt_output} != /* ]]; then
+    buildopt_output="${buildopt_repo_root}/${buildopt_output}"
+fi
+
+"${buildopt_script_dir}/run" --toolchain go -- go run ./cmd/sticky-opportunity-screen \
+    --root "${buildopt_repo_root}" \
+    --contract specs/poc-sticky-wrapper-opportunity-gate-v1.json \
+    --output "${buildopt_output}"
+
+printf 'Sticky wrapper opportunity evidence written to %s\n' "${buildopt_output}"

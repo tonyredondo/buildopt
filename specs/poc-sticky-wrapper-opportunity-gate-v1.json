@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-opportunity-gate-contract/v1",
+  "workItem": "SWL-014C",
+  "generatedAt": "2026-08-27T16:48:06Z",
+  "cohortManifest": {
+    "path": "benchmarks/results/current-longitudinal-cohorts-v1.json",
+    "sha256": "8ca7a1b7b9ea2c71eb95f050eff0fdb76c23425141cd0c4f8f104f33782503ee"
+  },
+  "sourceEvidence": {
+    "path": "benchmarks/results/current-longitudinal-raw-v1.json",
+    "sha256": "c682c2a09b97d87eaaca63445c4a1fc53ba420aa42d31d60ca745c31c2f9f339"
+  },
+  "detectorOrder": [
+    "TASK_CONTRACT_JAVA_V1",
+    "DECLARED_GRAPH_SCOPE_V1"
+  ],
+  "minimumPassingFamilies": 3,
+  "maximumCompatibleBuildsToRepay": 30,
+  "costs": {
+    "trialCostNs": 0,
+    "validationCostNs": 0,
+    "publicationCostNs": 0
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "repositoryNameRulesAllowed": false,
+    "taskNameRulesAllowed": false,
+    "pathExtensionRulesAllowed": false,
+    "manualEvaluatedProfilesAllowed": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

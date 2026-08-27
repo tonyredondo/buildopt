@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-opportunity-gate/v1",
+  "workItem": "SWL-014C",
+  "generatedAt": "2026-08-27T16:48:06Z",
+  "cohortManifestSha256": "8ca7a1b7b9ea2c71eb95f050eff0fdb76c23425141cd0c4f8f104f33782503ee",
+  "detectorOrder": [
+    "TASK_CONTRACT_JAVA_V1",
+    "DECLARED_GRAPH_SCOPE_V1"
+  ],
+  "families": [
+    {
+      "familyKey": "apache-groovy",
+      "revisionWindowSha256": "e47a757c45d29a055dc7cd20ffdfd60056b91396e06df57255b538ec95a76837",
+      "detectorResults": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "INPUT_UNAVAILABLE",
+          "reason": "INPUT_UNAVAILABLE_NO_GENERIC_SOURCE_PRODUCER",
+          "inputEvidenceSha256": "8105b976a914c3c25fac56c527ca00f5ca2631f4ad5c30dd6af5817fe86edf1e",
+          "actionIds": []
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "INPUT_UNAVAILABLE",
+          "reason": "GRAPH_PROPOSAL_INPUT_UNAVAILABLE",
+          "inputEvidenceSha256": "8105b976a914c3c25fac56c527ca00f5ca2631f4ad5c30dd6af5817fe86edf1e",
+          "actionIds": []
+        }
+      ],
+      "testableActions": [],
+      "passed": false,
+      "reason": "NO_TESTABLE_ACTION"
+    },
+    {
+      "familyKey": "apache-kafka",
+      "revisionWindowSha256": "18b954c02778117bf81446875c39d6634622f0fac195615260525dec6eb1ed0b",
+      "detectorResults": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "INPUT_UNAVAILABLE",
+          "reason": "INPUT_UNAVAILABLE_NO_GENERIC_SOURCE_PRODUCER",
+          "inputEvidenceSha256": "412e898f0692dd3576181e7de79442763590073e8de8dcfba068ff2c85e7e297",
+          "actionIds": []
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "INPUT_UNAVAILABLE",
+          "reason": "EXACT_CANDIDATE_PLAN_INPUT_UNAVAILABLE",
+          "inputEvidenceSha256": "412e898f0692dd3576181e7de79442763590073e8de8dcfba068ff2c85e7e297",
+          "actionIds": []
+        }
+      ],
+      "testableActions": [],
+      "passed": false,
+      "reason": "NO_TESTABLE_ACTION"
+    },
+    {
+      "familyKey": "micronaut-core",
+      "revisionWindowSha256": "2141e66bd2eaf997d89daf9740339f5489d826c860cc5c376fffd1dedef335d3",
+      "detectorResults": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "INPUT_UNAVAILABLE",
+          "reason": "INPUT_UNAVAILABLE_NO_GENERIC_SOURCE_PRODUCER",
+          "inputEvidenceSha256": "b833315cad0b0d0632ca902ff811024a2a2dcc50553599ffefcb723f0999d96d",
+          "actionIds": []
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "INPUT_UNAVAILABLE",
+          "reason": "EXACT_CANDIDATE_PLAN_INPUT_UNAVAILABLE",
+          "inputEvidenceSha256": "b833315cad0b0d0632ca902ff811024a2a2dcc50553599ffefcb723f0999d96d",
+          "actionIds": []
+        }
+      ],
+      "testableActions": [],
+      "passed": false,
+      "reason": "NO_TESTABLE_ACTION"
+    },
+    {
+      "familyKey": "opentelemetry-java-instrumentation",
+      "revisionWindowSha256": "1188afefe1a390e24dd44405e21a2c8962a6106886c747de9a25083aa75ca55e",
+      "detectorResults": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "INPUT_UNAVAILABLE",
+          "reason": "INPUT_UNAVAILABLE_NO_GENERIC_SOURCE_PRODUCER",
+          "inputEvidenceSha256": "f585f25314c8a9629bc54b2f4c05e9ece5cd32ada07e68c991c66d94d2ff4729",
+          "actionIds": []
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "INPUT_UNAVAILABLE",
+          "reason": "GRAPH_PROPOSAL_INPUT_UNAVAILABLE",
+          "inputEvidenceSha256": "f585f25314c8a9629bc54b2f4c05e9ece5cd32ada07e68c991c66d94d2ff4729",
+          "actionIds": []
+        }
+      ],
+      "testableActions": [],
+      "passed": false,
+      "reason": "NO_TESTABLE_ACTION"
+    },
+    {
+      "familyKey": "spring-framework",
+      "revisionWindowSha256": "43d78ffb9877e6aa4495cb8d40fc39cda02413d8eb54e16aa664cf306b4092f3",
+      "detectorResults": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "INPUT_UNAVAILABLE",
+          "reason": "INPUT_UNAVAILABLE_NO_GENERIC_SOURCE_PRODUCER",
+          "inputEvidenceSha256": "feff7f52e553de365adbb489ddd08af3a783f2b0cedc5a4d1fedbccea5b5c0b4",
+          "actionIds": []
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "INPUT_UNAVAILABLE",
+          "reason": "EXACT_CANDIDATE_PLAN_INPUT_UNAVAILABLE",
+          "inputEvidenceSha256": "feff7f52e553de365adbb489ddd08af3a783f2b0cedc5a4d1fedbccea5b5c0b4",
+          "actionIds": []
+        }
+      ],
+      "testableActions": [],
+      "passed": false,
+      "reason": "NO_TESTABLE_ACTION"
+    }
+  ],
+  "passingFamilies": 0,
+  "minimumPassingFamilies": 3,
+  "gatePassed": false,
+  "outcome": "SWL_014C_WITH_STOP_EVIDENCE"
+}

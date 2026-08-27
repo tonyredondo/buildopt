@@ -213,14 +213,15 @@ to an activation, confidence, payback or terminal criterion.
 
 The machine-readable sample is
 [`poc-sticky-wrapper-longitudinal-sample-v1`](../../benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md).
-The corrected path is deliberately staged: `SWL-014A` proved
-cache-symmetric arms and lifecycle-aware zero-pair readiness;
-`SWL-014B` now connects the real wrapper-driven learning/action loop, including
-value qualification, active counterfactual, suspension and status economics;
-`SWL-014C` requires generic testable actions in at least
-three public families; and `SWL-014D` proves positive installed-path value.
-Only then may `SWL-015 v2` spend the longitudinal campaign budget, followed by
-the unchanged `SWL-016` terminal scorecard.
+The corrected path was deliberately staged: `SWL-014A` proved cache-symmetric
+arms and lifecycle-aware zero-pair readiness, and `SWL-014B` connected the real
+wrapper-driven learning/action loop. `SWL-014C` then ran the two preregistered
+generic adapters over all five families and found **0/5 complete independently
+testable actions**. The task-proposal input is unavailable; Spring (16 graph
+rows), Micronaut (8) and Kafka (1) lack exact candidate-plan/critical-path
+bindings, while OpenTelemetry and Groovy have no graph rows. These are input
+counts, not savings. The frozen stop rule therefore skips `SWL-014D` and
+`SWL-015 v2`; only the unchanged `SWL-016` terminal scorecard remains.
 
 ## Historical complete-profile result
 
@@ -353,10 +354,11 @@ and 250-ms p95 local native-decision overhead, a positive complete portfolio
 and independently positive value/payback in at least three of five public
 families. Every bootstrap, observation, trial, cache, fallback and action cost
 counts. Historical AF observations and the cache-asymmetric SWL-015 v1 sample
-are context only. `SWL-014A/B` are closed without claiming public-build value;
-the immediate work is `SWL-014C/D`. The expensive
-longitudinal campaign is intentionally blocked until the actual customer path
-can activate and measure generic actions.
+are context only. `SWL-014A/B` closed without claiming public-build value, and
+the checked `SWL-014C` opportunity screen has now stopped the expensive
+installed and longitudinal campaigns at **0/5** admissible actions. The next
+work is not more timing: `SWL-016` must issue the immutable terminal decision
+and name the missing generic action inputs explicitly.
 
 That path is now implementation-locked rather than left to a later agent:
 separate per-arm cache namespaces start empty; one
@@ -368,8 +370,8 @@ campaign and goes directly to the independent terminal decision. The checked
 zero-pair preflight is `VALIDATED_NOT_READY`: workflow/cache/service/empty-seed
 identities match, all writable roots and remote namespaces are separate, and
 all four forbidden asymmetries reject. The next concrete deliverable is the
-real wrapper-driven lifecycle composition in `SWL-014B`, not a public timing
-run.
+independent `SWL-016` terminal decision from the checked stop evidence, not a
+public timing run.
 
 The task-contract result is deliberately unavailable in that public screen:
 the repository has a safe detector and synthetic evidence, but no generic

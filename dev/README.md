@@ -30,8 +30,17 @@ with:
 ./dev/check-sticky-wrapper-learning-lifecycle
 ```
 
-The remaining route requires `SWL-014C/D` before the longitudinal v2 campaign
-may run; the retained v1 sample is diagnostic-only.
+The public opportunity gate is now checked with:
+
+```bash
+./dev/check-sticky-wrapper-opportunity-gate
+```
+
+It recomputes the two frozen detector adapters from the bound five-family
+cohort and raw evidence, then checks source drift and result tampering. The
+current result is 0/5 complete actions, so `SWL-014D` and `SWL-015 v2` are
+skipped and only `SWL-016` remains. The retained v1 timing sample is still
+diagnostic-only; the opportunity screen itself makes no timing claim.
 
 Validate the frozen four-file format, both parser shapes, all negative
 fixtures, routing and update semantics with:

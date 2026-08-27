@@ -88,12 +88,12 @@ outputs and zero product failures**. Those deltas cannot be attributed to a
 BuildOpt action. The complete evidence is
 [`poc-sticky-wrapper-longitudinal-sample-v1`](../../benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md).
 
-The experiment remains open under a corrected protocol. `SWL-014A` froze
-cache-symmetric arms and lifecycle-aware readiness; `SWL-014B` now composes the real
-wrapper-driven learning/action loop and proves conservative value plus native
-fallback in a repository-independent fixture; `SWL-014C` requires generic testable actions
-in at least three public families; and `SWL-014D` proves their installed-path
-value. Only `SWL-015 v2` may produce terminal longitudinal evidence.
+The corrected protocol has now reached its early-stop gate. `SWL-014A` froze
+cache-symmetric arms and lifecycle-aware readiness; `SWL-014B` composed the real
+wrapper-driven learning/action loop; and the `SWL-014C` public screen found
+**0/5** families with a complete generic testable action. It creates no timing
+claim and skips `SWL-014D` plus `SWL-015 v2`; only `SWL-016` may now issue the
+terminal decision from immutable stop evidence.
 The [v2 machine contract](../../specs/poc-sticky-wrapper-longitudinal-v2.json)
 now fixes the exact cache topology, composition point, detector set, result
 schemas, confidence algorithms and stop transitions; no new timing is claimed

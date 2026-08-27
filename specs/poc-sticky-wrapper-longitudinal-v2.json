@@ -1,7 +1,7 @@
 {
   "schemaVersion": "buildopt.poc/sticky-wrapper-longitudinal/v2",
   "workItem": "SWL-015",
-  "status": "BLOCKED_BY_SWL_014B_TO_SWL_014D",
+  "status": "SWL_014C_STOP_EVIDENCE_READY_FOR_SWL_016",
   "purpose": "Measure the real sticky-wrapper learning and action lifecycle against cache-equivalent optimized native Gradle over frozen chronological public commits.",
   "historicalV1": {
     "classification": "DIAGNOSTIC_ONLY",
@@ -14,7 +14,7 @@
     "agentMayChangeThresholds": false,
     "agentMayAddDetectors": false,
     "agentMayRenameArtifacts": false,
-    "activeBlock": "SWL-014C",
+    "activeBlock": "SWL-016",
     "activeBlockCompleted": [
       "V2_PROTOCOL_AND_MACHINE_CONTRACT_PREREGISTERED",
       "V1_CLASSIFIED_DIAGNOSTIC_ONLY",
@@ -24,13 +24,20 @@
       "V2_PREFLIGHT_RUNNER_IMPLEMENTED",
       "V2_LIFECYCLE_AWARE_CHECKER_IMPLEMENTED",
       "ZERO_PAIR_AND_NEGATIVE_FIXTURES_VERIFIED",
-      "CHECKED_PREFLIGHT_EVIDENCE"
-    ],
-    "activeBlockPending": [
+      "CHECKED_PREFLIGHT_EVIDENCE",
       "END_TO_END_CUSTOMER_PATH_COMPOSITION",
       "SHARED_VALUE_API",
       "LIFECYCLE_FIXTURE_AND_NEGATIVES",
-      "CHECKED_LIFECYCLE_EVIDENCE"
+      "CHECKED_LIFECYCLE_EVIDENCE",
+      "FIVE_FAMILY_GENERIC_OPPORTUNITY_SCREEN",
+      "INDEPENDENT_OPPORTUNITY_GATE_CHECK",
+      "SWL_014C_STOP_EVIDENCE",
+      "SWL_014D_AND_SWL_015_SKIPPED"
+    ],
+    "activeBlockPending": [
+      "TERMINAL_DECISION_IMPLEMENTATION",
+      "TERMINAL_DECISION_RECOMPUTATION",
+      "TERMINAL_DECISION_EVIDENCE"
     ],
     "completionProtocol": {
       "sourceControlledLanguage": "ENGLISH",
@@ -538,7 +545,7 @@
     },
     {
       "workItem": "SWL-014C",
-      "state": "TODO",
+      "state": "DONE_WITH_STOP_EVIDENCE",
       "create": [
         "internal/durablecatalog/public_screen.go",
         "internal/durablecatalog/public_screen_test.go",
@@ -623,7 +630,7 @@
     },
     {
       "workItem": "SWL-014D",
-      "state": "WAITING",
+      "state": "SKIPPED_BY_SWL_014C",
       "create": [
         "cmd/sticky-active-value/main.go",
         "dev/run-sticky-wrapper-active-value",
@@ -703,7 +710,7 @@
     },
     {
       "workItem": "SWL-015",
-      "state": "WAITING",
+      "state": "SKIPPED_BY_SWL_014C",
       "modify": [
         "dev/run-sticky-wrapper-longitudinal-v2",
         "dev/check-sticky-wrapper-longitudinal-v2",
@@ -784,7 +791,7 @@
     },
     {
       "workItem": "SWL-016",
-      "state": "WAITING",
+      "state": "TODO",
       "create": [
         "cmd/sticky-wrapper-terminal-decision/main.go",
         "dev/check-sticky-wrapper-terminal-decision",

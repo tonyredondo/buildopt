@@ -3,8 +3,8 @@
 ## Status
 
 **Overall:** `IN_PROGRESS`<br>
-**Progress:** `18/22` blocks complete<br>
-**Current block:** `SWL-014C` — public opportunity and activation pre-gate<br>
+**Progress:** `21/22` blocks resolved (`19` completed, `2` skipped by checked stop evidence)<br>
+**Current block:** `SWL-016` — terminal decision from immutable SWL-014C stop evidence<br>
 **Predecessor:** the adaptive-fragment experiment closed as
 `STOP_ADAPTIVE_FRAGMENT_POC` with zero activations and zero attributable
 saving. Its evidence remains immutable context, not authority for this POC.
@@ -284,10 +284,10 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | 14 | `SWL-014` Two-machine installed proof | Clean producer/consumer checkouts share cache/state through HTTPS and survive outage | `DONE` | SWL-013 |
 | 14A | `SWL-014A` Protocol and comparison-fairness correction | Preserve v1 as diagnostic-only; freeze cache-symmetric v2 arms, required lifecycle evidence and campaign preflight | `DONE` | SWL-014 |
 | 14B | `SWL-014B` End-to-end learning/action composition | Connect observation, proposal, shadow, trial, qualification, signed decision, active execution, suspension and economics to the real wrapper | `DONE` | SWL-014A |
-| 14C | `SWL-014C` Public opportunity and activation pre-gate | Apply only generic detectors to all five frozen families and prove at least three independently testable actions before longitudinal spending | `TODO` | SWL-014B |
-| 14D | `SWL-014D` Installed active-path value gate | Run balanced candidate/native trials through `./buildoptw`; require exact outputs, positive conservative value and complete cost attribution | `WAITING` | SWL-014C |
-| 15 | `SWL-015` Frozen public longitudinal campaign v2 | Exercise real no-op/observe/trial/active transitions over preregistered chronological windows in five families | `WAITING` | SWL-014D |
-| 16 | `SWL-016` Terminal decision | Recompute the immutable scorecard from v2 evidence or an earlier immutable stop gate and continue or stop without threshold movement | `WAITING` | SWL-015, or stop evidence from SWL-014C/014D |
+| 14C | `SWL-014C` Public opportunity and activation pre-gate | Apply only generic detectors to all five frozen families and prove at least three independently testable actions before longitudinal spending | `DONE_WITH_STOP_EVIDENCE` | SWL-014B |
+| 14D | `SWL-014D` Installed active-path value gate | Run balanced candidate/native trials through `./buildoptw`; require exact outputs, positive conservative value and complete cost attribution | `SKIPPED_BY_SWL_014C` | SWL-014C |
+| 15 | `SWL-015` Frozen public longitudinal campaign v2 | Exercise real no-op/observe/trial/active transitions over preregistered chronological windows in five families | `SKIPPED_BY_SWL_014C` | SWL-014D |
+| 16 | `SWL-016` Terminal decision | Recompute the immutable scorecard from v2 evidence or an earlier immutable stop gate and continue or stop without threshold movement | `TODO` | SWL-015, or stop evidence from SWL-014C/014D |
 
 ## Agent execution contract — decisions already made
 
@@ -1030,6 +1030,17 @@ to repay its bounded trial. If fewer than three qualify, stop the experiment
 without spending the 75-or-more builds required by `SWL-015 v2`, using the
 early-stop state machine above.
 
+Closed by `SWL-E021` as `DONE_WITH_STOP_EVIDENCE`. The independent screen found
+**0/5 passing families** and emitted no testable actions. The task-contract
+adapter is explicitly unavailable because the frozen public evidence has no
+generic task-proposal producer. The graph adapter found 16 structural rows for
+Spring Framework, eight for Micronaut Core and one for Apache Kafka, while
+OpenTelemetry Java Instrumentation and Apache Groovy had none; no family had
+the exact candidate plan, binding and omitted critical-path evidence required
+to price an action. These counts are structural observations, not projected
+savings. Per the frozen early-stop transition, `SWL-014D` and `SWL-015 v2` are
+skipped and `SWL-016` is the only next block.
+
 ### SWL-014D — Installed active-path value gate
 
 For every action admitted by `SWL-014C`, run balanced candidate/native pairs
@@ -1147,9 +1158,9 @@ customer behavior, architecture, value evidence or direction changes.
 | `SWL-E017` | SWL-016 | Immutable terminal scorecard and continue/stop decision | `WAITING` |
 | `SWL-E019` | SWL-014A | Cache-symmetric v2 protocol, historical-v1 classification, locked autonomous execution contract, canonical zero-pair preflight, lifecycle-aware checker and four exact negative fixtures | `DONE` |
 | `SWL-E020` | SWL-014B | Real wrapper-driven lifecycle composition and recomputable transition/economic evidence | `DONE` — `./dev/check-sticky-wrapper-learning-lifecycle`; seven transitions, four exact profitable fixture pairs, ten native-fallback negatives and reconciled signed economics |
-| `SWL-E021` | SWL-014C | Five-family generic opportunity screen and at-least-three-family activation pre-gate | `TODO` |
-| `SWL-E022` | SWL-014D | Installed active-path candidate/native value evidence for every admitted action | `WAITING` |
-| `SWL-E023` | SWL-015 v2 | Complete chronological lifecycle, action and cumulative-value campaign evidence | `WAITING` |
+| `SWL-E021` | SWL-014C | [Five-family generic opportunity screen](../../benchmarks/results/sticky-wrapper-opportunity-gate-v1.json) and independent [`check-sticky-wrapper-opportunity-gate`](../../dev/check-sticky-wrapper-opportunity-gate): both preregistered adapters ran in order; 0/5 families produced a complete independently testable action; task proposals were unavailable and graph observations lacked an exact candidate plan/critical-path binding | `DONE — STOP_EVIDENCE` |
+| `SWL-E022` | SWL-014D | Installed active-path candidate/native value evidence for every admitted action | `SKIPPED_BY_SWL_014C` |
+| `SWL-E023` | SWL-015 v2 | Complete chronological lifecycle, action and cumulative-value campaign evidence | `SKIPPED_BY_SWL_014C` |
 
 ## Risks and stop conditions
 
@@ -1174,6 +1185,7 @@ customer behavior, architecture, value evidence or direction changes.
 
 | Date | Change |
 | --- | --- |
+| 2026-08-27 | Closed SWL-014C with immutable stop evidence. The two frozen generic detector adapters screened all five public families and produced 0/5 complete testable actions: the task-contract input producer is unavailable, while structural graph rows in Spring (16), Micronaut (8) and Kafka (1) lack exact candidate-plan and omitted-critical-path bindings; OpenTelemetry and Groovy expose no graph rows. No timing or savings claim was made. Per the preregistered state machine, SWL-014D and SWL-015 v2 are skipped and SWL-016 is next. |
 | 2026-08-27 | Closed SWL-014A. Added the canonical zero-pair v2 preflight runner/checker, exact valid and four negative fixtures, separate planned writable-root and remote-namespace identities, identical frozen workflow/cache/service/empty-seed bindings, explicit authorized learning fields and a checked `VALIDATED_NOT_READY` result. Moved final campaign-mode modification of the same scripts into the exact SWL-015 manifest because lifecycle/action evidence does not exist before SWL-014B..D; opened SWL-014B. |
 | 2026-08-27 | Closed SWL-014B. Added the sole launcher composition root, launcher-owned active/trial process adapters, explicit trusted-learning eligibility and scrubbing, checked `stickyvalue` statistics, lifecycle/status evidence and ten fail-closed cases. Opened SWL-014C; no public-family timing or activation breadth is claimed by the deterministic fixture. |
 | 2026-08-27 | Hardened the corrected sticky-wrapper route into an autonomous execution contract. Froze separate initially empty writable cache namespaces, per-arm chronological persistence, an external monotonic timing boundary, the launcher composition root and trusted-learning trigger, the two allowed generic detectors, exact evidence schemas, deterministic installed/longitudinal statistics, exact file/check manifests and conditional early-stop transitions into SWL-016. SWL-014A remains open only for its v2 runner, checker, five fixtures and checked zero-pair preflight. |

@@ -77,12 +77,11 @@ The corrected order is:
    readiness in a versioned campaign protocol;
 2. `SWL-014B` (complete): connect the existing observer, detector, trial,
    decision, active runner, suspension and ledger behind `./buildoptw`;
-3. `SWL-014C`: find independently testable generic actions in at least three of
-   the five frozen public families;
-4. `SWL-014D`: prove positive conservative value through the installed wrapper;
-5. `SWL-015 v2`: measure the resulting transitions and cumulative economics
-   across chronological commits; and
-6. `SWL-016`: apply the unchanged terminal scorecard.
+3. `SWL-014C` (complete with stop evidence): the two frozen generic adapters
+   found 0/5 families with a complete independently testable action;
+4. `SWL-014D` and `SWL-015 v2`: skipped by the preregistered early-stop rule,
+   avoiding an installed timing campaign with no admissible action; and
+5. `SWL-016`: apply the unchanged terminal scorecard to that stop evidence.
 
 Sample count alone never makes the campaign ready. Missing lifecycle, action or
 ledger evidence keeps it incomplete. The exact implementation paths, evidence
@@ -90,6 +89,10 @@ keys, two allowed detector adapters, cache topology, deterministic confidence
 algorithms and early-stop outcomes are frozen in the
 [v2 machine contract](../../specs/poc-sticky-wrapper-longitudinal-v2.json).
 An implementation agent executes that contract; it does not choose substitutes.
+The checked opportunity result is
+[`sticky-wrapper-opportunity-gate-v1.json`](../../benchmarks/results/sticky-wrapper-opportunity-gate-v1.json).
+Its Spring/Micronaut/Kafka graph-row counts are input-availability diagnostics,
+not savings estimates; no timing was performed after the 0/5 gate.
 
 ### Active runtime boundary
 
