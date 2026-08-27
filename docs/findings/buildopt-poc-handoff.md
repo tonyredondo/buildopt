@@ -103,8 +103,21 @@ the residual. Decision work was **53.8/57.4 ms**, while Gradle itself was
 evidence, not a speedup claim; it gives the next trial block an honest cost
 ledger.
 
-The next step is `SWL-010`: run isolated, budgeted candidate/native trials and
-publish paired data against optimized native Gradle.
+`SWL-010` now runs those trials only in trusted CI. Four alternating pairs
+(eight direct invocations) use separate checkouts, Gradle homes, daemon/cache
+roots and BuildOpt state roots, and every required output is hashed. The first
+checked-in result is exact but negative: BuildOpt averages **7.534 s** versus
+**6.979 s** for optimized native Gradle, for **-0.555 s** mean saving and
+**0/4** positive pairs. All **4/4** output trees match and all **8/8**
+invocations succeed. The observed extra compute is **58.050 s**, below the
+declared **180 s** (5%) trial ceiling. The mechanism is safe and the evidence
+accounting works, but this path does not yet provide customer value on this
+fixture; no action is activated.
+
+The next step is `SWL-011`: diagnose the candidate overhead and add a
+revalidation/suspension path before attempting any active execution. A runtime
+or cache action must beat optimized native Gradle with exact outputs and a
+positive paired result; otherwise the wrapper must remain native.
 
 ## Historical complete-profile result
 

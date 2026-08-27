@@ -2,7 +2,7 @@
 
 Normative source for versioned schemas, interfaces, and cross-language conformance vectors.
 
-`F0-010` owns the namespace structure defined in RFC §29.2. Each later item materializes and tests only the artifacts it owns; `F0-011` materialized the immutable build-session schema, `F0-012` materialized the aggregate experiment and action-transition lifecycles, `F0-013` materialized evidence, policy, and finite resource-profile contracts, `F0-014` materialized durable attempt and atomic commit authorization contracts, `F0-015` materialized signed Test Optimization grant/result contracts, `F0-016` materialized the declarative PatchBundle envelope and bundle vectors, `F0-017` materialized the BuildOpt control and internal cache-control HTTP boundaries, `F0-018` materialized the Test Optimization HTTP boundary, `F0-019` materialized the local task-event IDL, `F0-024` materialized the first metric catalog, `SWL-007` materialized the sticky-wrapper decision/state union and conformance vectors, and `POC-CENTRAL-STORAGE-CONTRACT-001` materialized the optional cross-machine state boundary.
+`F0-010` owns the namespace structure defined in RFC §29.2. Each later item materializes and tests only the artifacts it owns; `F0-011` materialized the immutable build-session schema, `F0-012` materialized the aggregate experiment and action-transition lifecycles, `F0-013` materialized evidence, policy, and finite resource-profile contracts, `F0-014` materialized durable attempt and atomic commit authorization contracts, `F0-015` materialized signed Test Optimization grant/result contracts, `F0-016` materialized the declarative PatchBundle envelope and bundle vectors, `F0-017` materialized the BuildOpt control and internal cache-control HTTP boundaries, `F0-018` materialized the Test Optimization HTTP boundary, `F0-019` materialized the local task-event IDL, `F0-024` materialized the first metric catalog, `SWL-007` materialized the sticky-wrapper decision/state union and conformance vectors, `SWL-010` materialized the bounded paired-trial schema and fixtures, and `POC-CENTRAL-STORAGE-CONTRACT-001` materialized the optional cross-machine state boundary.
 
 | Contract path | Owning item |
 |---|---|
@@ -27,6 +27,7 @@ Normative source for versioned schemas, interfaces, and cross-language conforman
 | `jsonschema/central-state-cas.v1.schema.json` | `POC-CENTRAL-STORAGE-CONTRACT-001` |
 | `jsonschema/sticky-wrapper-decision-store.v1.schema.json` | `SWL-007` |
 | `jsonschema/sticky-wrapper-observation.v1.schema.json` | `SWL-009` |
+| `jsonschema/sticky-wrapper-trial.v1.schema.json` | `SWL-010` |
 | `openapi/buildopt-control.v1.yaml` | `F0-017` |
 | `openapi/buildopt-cache-control.v1.yaml` | `F0-017` |
 | `openapi/test-optimization.v1.yaml` | `F0-018` |

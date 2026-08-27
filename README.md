@@ -141,8 +141,12 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > append-only phase timing and provenance for requested Gradle builds. The
 > first real sample shows 19.876 s for a cold Gradle 9.6.1 invocation and
 > 3.732 s when Configuration Cache is reused; this is instrumentation evidence,
-> not a speedup claim. The paired trial block will compare candidate actions
-> directly with optimized native Gradle.
+> not a speedup claim. The first four-pair candidate/native trial is now
+> complete: BuildOpt averages 7.534 s versus 6.979 s for optimized native
+> Gradle (0/4 positive pairs), while all 4/4 output trees match exactly. The
+> result is a safe-measurement proof and a current overhead warning, not a
+> speedup claim; no action is activated until the next block removes that
+> overhead and re-proves positive value.
 
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired

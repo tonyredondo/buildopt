@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "buildopt.sticky/paired-trial/v1",
+  "recordType": "STICKY_WRAPPER_PAIRED_TRIAL",
+  "capturedAt": "2026-08-27T00:00:00Z",
+  "gradleVersion": "8.14.3",
+  "trustedCI": true,
+  "orderPolicy": "ALTERNATING_PAIR_PARITY",
+  "noLookahead": true,
+  "invocationPolicy": "EXACTLY_TWO_DIRECT_COMMANDS_PER_TRIAL",
+  "isolationPolicy": "EIGHT_DISTINCT_PRIVATE_ROOTS",
+  "budget": {
+    "naturalRunnerNs": 100000000,
+    "limitNs": 5000000,
+    "reservedNs": 0,
+    "usedNs": 4000000,
+    "activeTrials": 0,
+    "maxConcurrent": 1,
+    "exhausted": false
+  },
+  "trials": [
+    {
+      "schemaVersion": "buildopt.sticky/paired-trial/v1",
+      "recordType": "STICKY_WRAPPER_PAIRED_TRIAL",
+      "trialId": "trial-1",
+      "sequence": 1,
+      "pair": 1,
+      "order": "CANDIDATE_FIRST",
+      "assignmentBeforeRun": true,
+      "isolationDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "invocationCount": 2,
+      "candidate": {"outcome": "SUCCESS", "exitCode": 0, "durationNs": 2000000, "outputSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "outputBytes": 128},
+      "native": {"outcome": "SUCCESS", "exitCode": 0, "durationNs": 2000000, "outputSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "outputBytes": 128},
+      "equivalence": "EXACT",
+      "result": "PARITY",
+      "naturalRunnerNs": 100000000,
+      "budgetLimitNs": 5000000,
+      "reservedExtraNs": 4000000,
+      "actualExtraNs": 4000000,
+      "startedAt": "2026-08-27T00:00:00Z",
+      "completedAt": "2026-08-27T00:00:01Z",
+      "cancellation": false
+    }
+  ],
+  "candidateMeanMs": 2,
+  "nativeMeanMs": 2,
+  "meanSavedMs": 0,
+  "positivePairs": 0,
+  "exactOutputPairs": 1,
+  "cancelledPairs": 0,
+  "totalInvocations": 2
+}

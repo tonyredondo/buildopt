@@ -42,8 +42,13 @@ remain deferred until action execution is proven. Invalid or unavailable state
 retains native Gradle and refreshes only outside the critical path. Ordinary
 `SWL-009` now records ordinary requested builds in a separate private JSONL
 observation plane; it measures wrapper, decision, cache and Gradle boundaries
-without changing the command or authorizing an action. Trial orchestration
-remains a later POC block.
+without changing the command or authorizing an action. Trial orchestration is
+available only in trusted CI: `SWL-010` runs four alternating, fully-isolated
+candidate/native pairs under a 5% compute ceiling. The first checked-in trial
+is exact but negative (7.534 s candidate vs 6.979 s native, 0/4 positive), so
+no active optimization is authorized. This is the required fail-closed
+behavior: a trial can produce evidence without changing ordinary developer
+builds.
 
 ### Ordinary-build observation
 
@@ -58,6 +63,8 @@ Set `BUILDOPT_STICKY_OBSERVATION=0` to disable this diagnostic plane. The
 default output is under the user cache in a repository-scope directory; set
 `BUILDOPT_STICKY_OBSERVATION_OUTPUT` only for a private test destination.
 Validate the contract with `./dev/check-sticky-wrapper-observation`.
+
+Validate the bounded trial harness with `./dev/check-sticky-wrapper-trial`.
 
 This guide describes what a user or evaluator can do with the current POC and
 which interface owns each result. It is intentionally honest about surfaces

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-trial/v1",
+  "workItem": "SWL-010",
+  "purpose": "Bounded paired candidate/native trials for the sticky-wrapper learning POC",
+  "assignment": {
+    "beforeOutcome": true,
+    "order": "ALTERNATING_PAIR_PARITY",
+    "candidateFirstPairs": "odd",
+    "nativeFirstPairs": "even",
+    "noLookahead": true,
+    "oneActiveTrialPerRepository": true
+  },
+  "execution": {
+    "trustedCIOnly": true,
+    "customerBuildIsAuthoritative": true,
+    "invocationsPerTrial": 2,
+    "shell": false,
+    "localDeveloperDuplication": false,
+    "cancelReleasesUnusedReservation": true,
+    "nonEquivalentResult": "INCONCLUSIVE",
+    "performanceClaim": false
+  },
+  "isolation": {
+    "separateCheckout": true,
+    "separateGradleHome": true,
+    "separateDaemon": true,
+    "separateCache": true,
+    "separateBuildOptState": true,
+    "requiredOutputEquivalence": "EXACT_SHA256"
+  },
+  "budget": {
+    "maxExtraPermille": 50,
+    "maxConcurrentPerRepository": 1,
+    "reservationBeforeRun": true,
+    "actualCostIsCandidatePlusNative": true,
+    "cancelReleasesUnusedReservation": true,
+    "exhaustedAction": "RETAIN_NATIVE_AND_DO_NOT_SCHEDULE"
+  },
+  "authority": {
+    "proofOfConcept": true,
+    "trustedCIOnly": true,
+    "productionAuthorized": false,
+    "performanceClaim": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "nextBlock": "SWL-011"
+}

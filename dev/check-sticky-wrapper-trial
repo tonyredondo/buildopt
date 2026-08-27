@@ -1,0 +1,161 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+case "${BUILDOPT_STICKY_TRIAL_RECORD:-0}" in
+    0 | 1) ;;
+    *)
+        printf 'BUILDOPT_STICKY_TRIAL_RECORD must be 0 or 1\n' >&2
+        exit 64
+        ;;
+esac
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-sticky-wrapper-trial-v1.json"
+buildopt_result="${buildopt_repo_root}/benchmarks/results/sticky-wrapper-trial-v1.json"
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-sticky-trial.XXXXXX")
+trap 'rm -rf -- "${buildopt_temporary}"' EXIT
+
+for buildopt_command in find git jq mktemp sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required sticky-wrapper-trial command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.poc/sticky-wrapper-trial/v1" and
+    .workItem == "SWL-010" and
+    .assignment.beforeOutcome == true and
+    .assignment.order == "ALTERNATING_PAIR_PARITY" and
+    .execution.customerBuildIsAuthoritative == true and
+    .execution.invocationsPerTrial == 2 and
+    .execution.shell == false and
+    .execution.localDeveloperDuplication == false and
+    .isolation.separateCheckout == true and
+    .isolation.separateGradleHome == true and
+    .isolation.separateDaemon == true and
+    .isolation.separateCache == true and
+    .isolation.separateBuildOptState == true and
+    .budget.maxExtraPermille == 50 and
+    .budget.maxConcurrentPerRepository == 1 and
+    .budget.cancelReleasesUnusedReservation == true and
+    .authority.trustedCIOnly == true and
+    .authority.productionAuthorized == false and
+    .authority.performanceClaim == false and
+    .nextBlock == "SWL-011"
+' "${buildopt_spec}" >/dev/null
+
+buildopt_gradle="${buildopt_repo_root}/.tools/gradle-compat/gradle-8.14.3/bin/gradle"
+if [[ ! -x "${buildopt_gradle}" ]]; then
+    printf 'repository-local Gradle 8.14.3 is unavailable\n' >&2
+    exit 1
+fi
+buildopt_plugin_jar=$(find "${buildopt_repo_root}/jvm/gradle-plugin/build/libs" \
+    -maxdepth 1 -type f -name 'buildopt-gradle-plugin-*.jar' \
+    ! -name '*-sources.jar' ! -name '*-javadoc.jar' -print | sort)
+if [[ $(wc -l <<<"${buildopt_plugin_jar}") -ne 1 || ! -f "${buildopt_plugin_jar}" ]]; then
+    printf 'expected exactly one Gradle plugin JAR\n' >&2
+    exit 1
+fi
+
+buildopt_template="${buildopt_temporary}/template"
+mkdir -p "${buildopt_template}/src/main/java/demo"
+printf '%s\n' "plugins { id 'java' }" >"${buildopt_template}/build.gradle"
+printf '%s\n' "rootProject.name = 'sticky-trial-fixture'" >"${buildopt_template}/settings.gradle"
+cat >"${buildopt_template}/gradlew" <<'EOF'
+#!/usr/bin/env sh
+set -eu
+if [ -n "${BUILDOPT_L1_STATE_ROOT-}" ] ||
+   [ -n "${BUILDOPT_STICKY_OBSERVATION_OUTPUT-}" ] ||
+   [ -n "${BUILDOPT_STICKY_OBSERVATION-}" ]; then
+    printf '%s\n' 'BuildOpt private state leaked to the Gradle child' >&2
+    exit 99
+fi
+exec __BUILDOPT_GRADLE__ "$@"
+EOF
+sed -i "s#__BUILDOPT_GRADLE__#${buildopt_gradle}#" "${buildopt_template}/gradlew"
+chmod 0755 "${buildopt_template}/gradlew"
+for buildopt_index in $(seq 1 256); do
+    buildopt_name=$(printf 'C%03d' "${buildopt_index}")
+    printf 'package demo; public final class %s { public static String value() { return "%s"; } }\n' \
+        "${buildopt_name}" "${buildopt_name}" \
+        >"${buildopt_template}/src/main/java/demo/${buildopt_name}.java"
+done
+
+buildopt_binary="${buildopt_temporary}/buildopt"
+"${buildopt_repo_root}/dev/run" --toolchain go -- \
+    go build -buildvcs=false -trimpath -o "${buildopt_binary}" \
+    ./cmd/buildopt
+buildopt_benchmark="${buildopt_temporary}/sticky-trial-benchmark"
+"${buildopt_repo_root}/dev/run" --toolchain go -- \
+    go build -buildvcs=false -trimpath -o "${buildopt_benchmark}" \
+    ./cmd/sticky-trial-benchmark
+
+buildopt_report="${buildopt_temporary}/trial.json"
+CI=true \
+BUILDOPT_GRADLE_INIT_SCRIPT="${buildopt_repo_root}/.github/actions/buildopt.init.gradle" \
+BUILDOPT_GRADLE_PLUGIN_JAR="${buildopt_plugin_jar}" \
+    "${buildopt_repo_root}/dev/run" --toolchain temurin-jdk-21 -- \
+    "${buildopt_benchmark}" \
+    --candidate "${buildopt_binary}" \
+    --template "${buildopt_template}" \
+    --gradle "${buildopt_gradle}" \
+    --gradle-version 8.14.3 \
+    --output "${buildopt_report}" \
+    --pairs 4 \
+    --natural-runner-seconds 3600 \
+    --estimate-seconds 40 >/dev/null
+
+jq -e '
+    .schemaVersion == "buildopt.sticky/paired-trial/v1" and
+    .recordType == "STICKY_WRAPPER_PAIRED_TRIAL" and
+    .gradleVersion == "8.14.3" and
+    .trustedCI == true and .orderPolicy == "ALTERNATING_PAIR_PARITY" and
+    .noLookahead == true and
+    .invocationPolicy == "EXACTLY_TWO_DIRECT_COMMANDS_PER_TRIAL" and
+    .isolationPolicy == "EIGHT_DISTINCT_PRIVATE_ROOTS" and
+    (.trials | length) == 4 and
+    (.totalInvocations == 8) and
+    (.budget.maxConcurrent == 1) and
+    (.budget.limitNs == (.budget.naturalRunnerNs * 50 / 1000)) and
+    (.budget.usedNs <= .budget.limitNs) and
+    ([.trials[].actualExtraNs] | add) == .budget.usedNs and
+    ([.trials[].order] | map(select(. == "CANDIDATE_FIRST")) | length) == 2 and
+    ([.trials[].order] | map(select(. == "NATIVE_FIRST")) | length) == 2 and
+    all(.trials[];
+        .assignmentBeforeRun == true and
+        .invocationCount == 2 and
+        .equivalence == "EXACT" and
+        .candidate.outcome == "SUCCESS" and
+        .native.outcome == "SUCCESS" and
+        .candidate.outputSha256 == .native.outputSha256 and
+        .actualExtraNs == (.candidate.durationNs + .native.durationNs)
+    ) and
+    ([.trials[].isolationDigest] | unique | length) == 4
+' "${buildopt_report}" >/dev/null
+
+if [[ "${BUILDOPT_STICKY_TRIAL_RECORD:-0}" == "1" ]]; then
+    cp -- "${buildopt_report}" "${buildopt_result}"
+    chmod 0644 "${buildopt_result}"
+fi
+
+if [[ -f "${buildopt_result}" ]]; then
+    jq -e '
+        .schemaVersion == "buildopt.sticky/paired-trial/v1" and
+        .recordType == "STICKY_WRAPPER_PAIRED_TRIAL" and
+        .noLookahead == true and
+        .totalInvocations == 8 and
+        (.trials | length) == 4 and
+        (.budget.usedNs <= .budget.limitNs) and
+        all(.trials[]; .assignmentBeforeRun == true and .invocationCount == 2)
+    ' "${buildopt_result}" >/dev/null
+fi
+
+jq -c '{gradleVersion, budget, candidateMeanMs, nativeMeanMs, meanSavedMs, positivePairs, exactOutputPairs, totalInvocations, trials: [.trials[] | {pair,order,candidateMs:(.candidate.durationNs/1000000),nativeMs:(.native.durationNs/1000000),result,equivalence}]}' "${buildopt_report}"
+printf 'Sticky wrapper paired trial orchestration: OK\n'

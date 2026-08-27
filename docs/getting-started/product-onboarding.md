@@ -102,6 +102,13 @@ Gradle, while typed decisions and learning remain later POC blocks. The complete
 sequence, scorecard and status are in the
 [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md).
 
+Value qualification is separate from installation. Trusted CI can run the
+bounded paired-trial harness (`./dev/check-sticky-wrapper-trial`) with the
+candidate and optimized native Gradle in isolated roots. The first four-pair
+sample is exact but currently slower (7.534 s versus 6.979 s, 0/4 positive),
+so ordinary users remain on native Gradle until a later experiment proves a
+net improvement.
+
 ## Install
 
 Published packages currently cover Linux AMD64, macOS Intel and Apple Silicon,

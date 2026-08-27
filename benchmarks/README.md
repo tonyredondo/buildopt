@@ -31,6 +31,34 @@ and observation cost without altering Gradle's result. Validate it with:
 ./dev/check-sticky-wrapper-observation
 ```
 
+## Sticky-wrapper paired-trial evidence
+
+[`sticky-wrapper-trial-v1.json`](./results/sticky-wrapper-trial-v1.json) is the
+first bounded candidate-versus-native experiment for the sticky wrapper. It
+runs four alternating pairs (eight direct Gradle invocations) against the same
+256-class Java fixture on Gradle 8.14.3. Each pair has a separate checkout,
+Gradle home, daemon/cache root and BuildOpt state root; required output trees
+are hashed before a result is accepted. The scheduler reserves the trial
+budget before execution and charges only observed command time.
+
+The result is deliberately negative for acceleration: BuildOpt averages
+**7.534 s** versus **6.979 s** for optimized native Gradle, a mean difference
+of **-0.555 s** (candidate slower) with **0/4 positive pairs**. Output
+equivalence is exact in **4/4 pairs**, all **8/8 invocations** succeed, and
+the observed additional compute is **58.050 s**, or **32.3% of the 180 s
+trial ceiling** (the ceiling is 5% of the declared 3,600 s natural runner
+window). This proves the scheduler, isolation and evidence accounting; it
+does not authorize an active action or support a product speedup claim.
+
+The negative result is useful: the current candidate path still pays more
+wrapper/plugin/cache-management work than the native cache on this workload.
+The next block must measure and remove that overhead before any activation is
+allowed. Re-run the fixture with:
+
+```bash
+./dev/check-sticky-wrapper-trial
+```
+
 ## Central two-machine functional evidence
 
 [`poc-central-two-machine-v1.json`](./results/poc-central-two-machine-v1.json)

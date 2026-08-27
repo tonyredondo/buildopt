@@ -122,6 +122,20 @@ child-environment scrubbing, tamper rejection and wall-time reconciliation.
 The result is diagnostic cost evidence only; observation cannot authorize an
 action or alter the requested Gradle result.
 
+Validate the trusted-CI paired candidate/native trial and its 5% learning
+budget with:
+
+```bash
+./dev/check-sticky-wrapper-trial
+```
+
+This is the `SWL-010` gate. It runs four alternating pairs through direct
+commands, with eight distinct private roots and exact required-output hashes.
+The checked-in result is intentionally not a speedup claim: candidate mean is
+7.534 s versus 6.979 s for optimized native Gradle (0/4 positive pairs).
+Budget, isolation and equivalence must pass before any later active action can
+be considered.
+
 ## Toolchain lock
 
 [`toolchains.lock.yaml`](./toolchains.lock.yaml) is the source of truth for downloadable development toolchains on the initial `linux-amd64` platform. It is JSON-compatible YAML 1.2 so the Phase 0 validator can parse it with `jq` before the repository adopts a YAML library.

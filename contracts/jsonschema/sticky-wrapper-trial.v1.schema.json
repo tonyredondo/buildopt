@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/sticky-wrapper-trial.v1.schema.json",
+  "title": "BuildOpt sticky-wrapper paired trial v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "recordType", "capturedAt", "gradleVersion", "trustedCI",
+    "orderPolicy", "noLookahead", "invocationPolicy", "isolationPolicy", "budget",
+    "trials", "candidateMeanMs", "nativeMeanMs", "meanSavedMs", "positivePairs",
+    "exactOutputPairs", "cancelledPairs", "totalInvocations"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "buildopt.sticky/paired-trial/v1" },
+    "recordType": { "const": "STICKY_WRAPPER_PAIRED_TRIAL" },
+    "capturedAt": { "$ref": "#/$defs/timestamp" },
+    "gradleVersion": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "trustedCI": { "const": true },
+    "orderPolicy": { "const": "ALTERNATING_PAIR_PARITY" },
+    "noLookahead": { "const": true },
+    "invocationPolicy": { "const": "EXACTLY_TWO_DIRECT_COMMANDS_PER_TRIAL" },
+    "isolationPolicy": { "const": "EIGHT_DISTINCT_PRIVATE_ROOTS" },
+    "budget": { "$ref": "#/$defs/budget" },
+    "trials": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/trial" } },
+    "candidateMeanMs": { "type": "number", "minimum": 0 },
+    "nativeMeanMs": { "type": "number", "minimum": 0 },
+    "meanSavedMs": { "type": "number" },
+    "positivePairs": { "type": "integer", "minimum": 0 },
+    "exactOutputPairs": { "type": "integer", "minimum": 0 },
+    "cancelledPairs": { "type": "integer", "minimum": 0 },
+    "totalInvocations": { "type": "integer", "minimum": 0 }
+  },
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["naturalRunnerNs", "limitNs", "reservedNs", "usedNs", "activeTrials", "maxConcurrent", "exhausted"],
+      "properties": {
+        "naturalRunnerNs": { "type": "integer", "minimum": 1 },
+        "limitNs": { "type": "integer", "minimum": 1 },
+        "reservedNs": { "type": "integer", "minimum": 0 },
+        "usedNs": { "type": "integer", "minimum": 0 },
+        "activeTrials": { "const": 0 },
+        "maxConcurrent": { "const": 1 },
+        "exhausted": { "const": false }
+      }
+    },
+    "order": { "enum": ["CANDIDATE_FIRST", "NATIVE_FIRST"] },
+    "outcome": { "enum": ["SUCCESS", "FAILURE", "CANCELLED", "INFRA_FAILURE"] },
+    "arm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome", "exitCode", "durationNs"],
+      "properties": {
+        "outcome": { "$ref": "#/$defs/outcome" },
+        "exitCode": { "type": "integer" },
+        "durationNs": { "type": "integer", "minimum": 0 },
+        "outputSha256": { "$ref": "#/$defs/digest" },
+        "outputBytes": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "trial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion", "recordType", "trialId", "sequence", "pair", "order",
+        "assignmentBeforeRun", "isolationDigest", "invocationCount", "candidate", "native",
+        "equivalence", "result", "naturalRunnerNs", "budgetLimitNs", "reservedExtraNs",
+        "actualExtraNs", "startedAt", "completedAt", "cancellation"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "buildopt.sticky/paired-trial/v1" },
+        "recordType": { "const": "STICKY_WRAPPER_PAIRED_TRIAL" },
+        "trialId": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "sequence": { "type": "integer", "minimum": 1 },
+        "pair": { "type": "integer", "minimum": 1 },
+        "order": { "$ref": "#/$defs/order" },
+        "assignmentBeforeRun": { "const": true },
+        "isolationDigest": { "$ref": "#/$defs/digest" },
+        "invocationCount": { "const": 2 },
+        "candidate": { "$ref": "#/$defs/arm" },
+        "native": { "$ref": "#/$defs/arm" },
+        "equivalence": { "enum": ["EXACT", "NONE"] },
+        "result": { "enum": ["CANDIDATE_FASTER", "NATIVE_FASTER", "PARITY", "INCONCLUSIVE"] },
+        "naturalRunnerNs": { "type": "integer", "minimum": 1 },
+        "budgetLimitNs": { "type": "integer", "minimum": 1 },
+        "reservedExtraNs": { "type": "integer", "minimum": 1 },
+        "actualExtraNs": { "type": "integer", "minimum": 0 },
+        "startedAt": { "$ref": "#/$defs/timestamp" },
+        "completedAt": { "$ref": "#/$defs/timestamp" },
+        "cancellation": { "type": "boolean" }
+      }
+    }
+  }
+}

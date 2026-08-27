@@ -84,7 +84,11 @@ only retains native Gradle today, while active actions remain deferred to a
 later POC block. `SWL-009` adds a separate observation plane for ordinary
 Wrapper invocations: it records phase timing, provenance, outcome and
 Configuration Cache state without granting authority or changing the Gradle
-result. This boundary is frozen in
+result. `SWL-010` adds a trusted-CI trial plane that runs isolated candidate
+and native commands with separate checkout, Gradle/cache/daemon and BuildOpt
+state roots; it is budgeted, order-balanced and exact-output checked. Its first
+result is negative for value, so the trial plane remains diagnostic and cannot
+activate an action. This boundary is frozen in
 the [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
 and is implemented through deterministic generation, verified package
 bootstrap, exact Gradle passthrough, authenticated portable connection and
@@ -104,6 +108,7 @@ authority and does not make a standalone wall-time claim.
 | Build Impact | `buildopt-impact` | Discovers the declared Gradle graph and verifies repository-owned generated impact state |
 | Adaptive fragment model | `internal/adaptivefragment` | Defines path-independent fragment identity, immutable state/economics, non-authorizing structural priors and conflict-aware pre-Gradle composition plans; no runtime activation yet |
 | Ordinary-build observation | `internal/stickyobservation` | Appends private, canonical observations with phase timing, provenance, outcome and Configuration Cache evidence; no decision authority |
+| Budgeted sticky trials | `internal/stickytrial`, `cmd/sticky-trial-benchmark` | Runs trusted-CI-only alternating candidate/native pairs in eight distinct private roots, charges observed compute and requires exact output hashes; no activation authority |
 | Patch engine | `jvm/patcher` JAR | Verifies signed exact bundles, applies them in a detached worktree, and supports draft-only delivery and exact revert |
 | Windows service host | `buildopt-service.exe` | Runs server or Edge under Windows SCM with the supplied private config |
 

@@ -3,8 +3,8 @@
 ## Status
 
 **Overall:** `IN_PROGRESS`<br>
-**Progress:** `10/17` blocks complete<br>
-**Current block:** `SWL-010` — budgeted trial orchestration<br>
+**Progress:** `11/17` blocks complete<br>
+**Current block:** `SWL-011` — active execution and suspension<br>
 **Predecessor:** the adaptive-fragment experiment closed as
 `STOP_ADAPTIVE_FRAGMENT_POC` with zero activations and zero attributable
 saving. Its evidence remains immutable context, not authority for this POC.
@@ -245,7 +245,7 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | 7 | `SWL-007` Decision contract and store | Typed state machine, signed decisions, generation CAS, expiry, revocation and plane separation | `DONE` | SWL-006 |
 | 8 | `SWL-008` Native no-op fast path | Exact local snapshot makes native retention independent of a blocking remote lookup | `DONE` | SWL-007 |
 | 9 | `SWL-009` Ordinary-build observation | Bounded exact timings, outputs, task/graph facts and ledger updates from requested builds | `DONE` | SWL-008 |
-| 10 | `SWL-010` Budgeted trial orchestration | Isolated paired candidate/native trials run only within the frozen CI compute budget | `DOING` | SWL-009 |
+| 10 | `SWL-010` Budgeted trial orchestration | Isolated paired candidate/native trials run only within the frozen CI compute budget | `DONE` | SWL-009 |
 | 11 | `SWL-011` Active execution and suspension | Qualified runtime action, revalidation, counterfactual sampling, regression suspension and native fallback | `WAITING` | SWL-010 |
 | 12 | `SWL-012` Durable native optimization catalog | Generic detectors and reviewable patches for task contracts and graph breadth | `WAITING` | SWL-009 |
 | 13 | `SWL-013` Customer status and explanation | Human/JSON decision, cumulative economics, cache metrics and exact fallback explanation | `WAITING` | SWL-011, SWL-012 |
@@ -509,9 +509,21 @@ compatible lifetime can repay them. The customer's requested result remains
 authoritative. Trials use separate checkout, Gradle home, daemon, cache and
 BuildOpt state and cannot exceed 5% of natural runner-minutes.
 
-Acceptance: deterministic fixtures prove scheduling, budget exhaustion,
-concurrency, cancellation, exact outputs, order balance, no-lookahead evidence
-and zero hidden local duplicate builds.
+Closed evidence: [`poc-sticky-wrapper-trial-v1`](../../specs/poc-sticky-wrapper-trial-v1.md),
+its Draft 2020-12 schema and executable [`check-sticky-wrapper-trial`](../../dev/check-sticky-wrapper-trial)
+run four alternating pairs (eight direct invocations) against a 256-class
+Gradle 8.14.3 fixture. Every pair uses eight distinct private roots, balances
+execution order, assigns before running either arm, and hashes required output
+trees exactly. The observed trial cost is **58.050 s** against a **180 s**
+ceiling (5% of a declared 3,600 s natural runner window); all eight commands
+succeed and all four output pairs match exactly.
+
+The value result is intentionally negative: candidate mean wall time is
+**7.534 s**, optimized native Gradle is **6.979 s**, mean saving is
+**-0.555 s**, and **0/4** pairs are positive. The scheduler and evidence
+accounting pass, but this candidate is not authorized to activate. The result
+is retained as overhead evidence and the next block must reduce that cost
+before active execution is attempted.
 
 ### SWL-011 — Active execution and suspension
 
@@ -624,8 +636,8 @@ customer behavior, architecture, value evidence or direction changes.
 | `SWL-E008` | SWL-007 | [Decision-store specification](../../specs/poc-sticky-wrapper-decision-store-v1.md), JSON Schema union and fixtures, `internal/stickydecision`, and executable [`check-sticky-wrapper-decision-store`](../../dev/check-sticky-wrapper-decision-store): all valid state transitions, signed decisions, evidence/ledger references, local and central generation CAS, replay/conflict, expiry, revocation, corruption and cache/state plane separation | `DONE` |
 | `SWL-E009` | SWL-008 | [`poc-sticky-wrapper-noop-v1`](../../specs/poc-sticky-wrapper-noop-v1.md), read-only selector, fail-closed state matrix and [`sticky-wrapper-noop-v1.json`](../../benchmarks/results/sticky-wrapper-noop-v1.json): 200 verified local, missing and no-synchronous-refresh selections stay below the 100 ms p50, 250 ms p95 and 500 ms fallback budgets | `DONE` |
 | `SWL-E010` | SWL-009 | [`poc-sticky-wrapper-observation-v1`](../../specs/poc-sticky-wrapper-observation-v1.md), private append-only recorder, real Wrapper checker and [`sticky-wrapper-observation-v1.json`](../../benchmarks/results/sticky-wrapper-observation-v1.json): two successful Gradle 9.6.1 observations with Configuration Cache present, exact phase reconciliation, provenance hashes, child-environment scrubbing and tamper rejection; 19.876 s cold and 3.732 s reuse wall time | `DONE` |
-| `SWL-E011` | SWL-010 | Bounded trial scheduling and isolation evidence | `DOING` |
-| `SWL-E012` | SWL-011 | Active, counterfactual, suspension and fallback proof | `WAITING` |
+| `SWL-E011` | SWL-010 | [`poc-sticky-wrapper-trial-v1`](../../specs/poc-sticky-wrapper-trial-v1.md), bounded scheduler, direct isolated runner and [`sticky-wrapper-trial-v1.json`](../../benchmarks/results/sticky-wrapper-trial-v1.json): four alternating candidate/native pairs, eight invocations, eight private roots, exact output hashes, 58.050 s used of a 180 s ceiling; candidate 7.534 s versus native 6.979 s, 0/4 positive | `DONE` |
+| `SWL-E012` | SWL-011 | Active, counterfactual, suspension and fallback proof | `DOING` |
 | `SWL-E013` | SWL-012 | Durable detector/patch breadth and value evidence | `WAITING` |
 | `SWL-E014` | SWL-013 | Recomputable customer status/explanation contract | `WAITING` |
 | `SWL-E015` | SWL-014 | Two-machine installed wrapper evidence | `WAITING` |
@@ -651,6 +663,7 @@ customer behavior, architecture, value evidence or direction changes.
 
 | Date | Change |
 | --- | --- |
+| 2026-08-27 | Closed SWL-010. Added trusted-CI-only budgeted paired trials with balanced order, eight-root isolation, direct command execution, exact output hashing, cancellation/concurrency accounting and a 5% compute ceiling. The checked-in four-pair Gradle 8.14.3 result is exact but negative: 7.534 s candidate versus 6.979 s optimized native, 0/4 positive pairs and 58.050 s used of a 180 s ceiling. Opened SWL-011 to diagnose overhead before any active action. |
 | 2026-08-27 | Closed SWL-009. Added the private append-only ordinary-build observation plane, phase timing/provenance schema and real Wrapper checker. Two Gradle 9.6.1 invocations with Configuration Cache present record 19.876 s cold and 3.732 s reuse wall time; exact timing reconciles and unavailable phases remain unavailable. Opened SWL-010 budgeted candidate/native trials. |
 | 2026-08-27 | Closed SWL-008. Added a read-only local selector for signed, scope- and binding-compatible sticky decisions, coalesced best-effort refresh scheduling, fail-closed native fallback and a deterministic pre-Gradle budget benchmark. Two hundred Linux AMD64 selections record 0.492 ms verified-local p50 / 1.369 ms p95, with sub-0.003 ms missing and no-synchronous-refresh fallback; this is retention-cost evidence only, not acceleration. Opened SWL-009 ordinary-build observation. |
 | 2026-08-27 | Closed SWL-007. Added the canonical JCS decision-store union, signed decision verification, independent qualification/rollout transitions, evidence and ledger cross-links, local filesystem and central EVIDENCE adapters with generation CAS, exact replay/conflict semantics, expiry, revocation, corruption and cache/state plane separation. Seven positive and six negative schema fixtures plus race-enabled local/central conformance pass; opened SWL-008 native no-op fast path. |
