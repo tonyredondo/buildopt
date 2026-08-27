@@ -255,6 +255,7 @@ buildopt_client_run() {
         run --rm
         --name "${buildopt_active_client}"
         --network "${buildopt_network}"
+        --env "BUILDOPT_TWO_MACHINE_STICKY=${BUILDOPT_TWO_MACHINE_STICKY:-0}"
         --cpus 4
         --memory 8g
         --user "$(id -u):$(id -g)"
@@ -272,6 +273,7 @@ buildopt_client_run() {
             run --rm
             --name "${buildopt_active_client}"
             --network none
+            --env "BUILDOPT_TWO_MACHINE_STICKY=${BUILDOPT_TWO_MACHINE_STICKY:-0}"
             --cpus 4
             --memory 8g
             --user "$(id -u):$(id -g)"
