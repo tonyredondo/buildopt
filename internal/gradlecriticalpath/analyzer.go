@@ -325,8 +325,7 @@ func criticalPaths(tasks []Task) ([]BuildSummary, error) {
 			if err != nil {
 				return nil, err
 			}
-			if score.Duration > best.Duration ||
-				(score.Duration == best.Duration && strings.Join(score.Tasks, "\x00") < strings.Join(best.Tasks, "\x00")) {
+			if betterPath(score, best) {
 				best = score
 			}
 		}
@@ -366,8 +365,7 @@ func longestPath(identity, buildPath string, tasks map[string]Task, memo map[str
 		if err != nil {
 			return pathScore{}, err
 		}
-		if score.Duration > best.Duration ||
-			(score.Duration == best.Duration && strings.Join(score.Tasks, "\x00") < strings.Join(best.Tasks, "\x00")) {
+		if betterPath(score, best) {
 			best = score
 		}
 	}
@@ -376,6 +374,24 @@ func longestPath(identity, buildPath string, tasks map[string]Task, memo map[str
 	best.Tasks = append(append([]string(nil), best.Tasks...), identity)
 	memo[identity] = best
 	return best, nil
+}
+
+// betterPath keeps the structural chain meaningful when Gradle's millisecond
+// trace resolution reports multiple task paths with the same duration.
+func betterPath(candidate, current pathScore) bool {
+	if len(candidate.Tasks) == 0 {
+		return false
+	}
+	if len(current.Tasks) == 0 {
+		return true
+	}
+	if candidate.Duration != current.Duration {
+		return candidate.Duration > current.Duration
+	}
+	if len(candidate.Tasks) != len(current.Tasks) {
+		return len(candidate.Tasks) > len(current.Tasks)
+	}
+	return strings.Join(candidate.Tasks, "\x00") < strings.Join(current.Tasks, "\x00")
 }
 
 func taskOutcome(end taskEnd) string {

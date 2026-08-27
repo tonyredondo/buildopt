@@ -43,6 +43,32 @@ func TestAnalyzeFindsLongestDependencyChain(t *testing.T) {
 	}
 }
 
+func TestAnalyzeKeepsStructuralPathWhenDurationsRoundToZero(t *testing.T) {
+	root := t.TempDir()
+	graph := filepath.Join(root, "graph.jsonl")
+	operations := filepath.Join(root, "operations-log.txt")
+	writeLines(t, graph, GraphDocument{
+		SchemaVersion: GraphSchema, BuildPath: ":",
+		Tasks: []GraphTask{
+			{Identity: ":a", Path: ":a", TaskClass: "A"},
+			{Identity: ":b", Path: ":b", TaskClass: "B", Dependencies: []string{":a"}},
+			{Identity: ":c", Path: ":c", TaskClass: "C"},
+		},
+	})
+	writeOperation(t, operations, 1, 100, 100, ":", ":a", "A", nil)
+	writeOperation(t, operations, 2, 100, 100, ":", ":b", "B", nil)
+	writeOperation(t, operations, 3, 100, 100, ":", ":c", "C", nil)
+
+	report, err := Analyze(operations, graph, "candidate")
+	if err != nil {
+		t.Fatalf("analyze zero-duration tasks: %v", err)
+	}
+	if report.Summary.MainBuildCriticalPathMs != 0 ||
+		!equal(report.Summary.MainBuildCriticalPathTasks, []string{":a", ":b"}) {
+		t.Fatalf("unexpected zero-duration critical path: %+v", report.Summary)
+	}
+}
+
 func TestAnalyzeRejectsCycleAndIncompleteOperations(t *testing.T) {
 	root := t.TempDir()
 	graph := filepath.Join(root, "graph.jsonl")
