@@ -55,6 +55,7 @@ jobs:
         run: |
           ./dev/run -- ./gradlew --no-daemon --version
           ./dev/bootstrap-gradle-compat
+          ./dev/run -- ./gradlew --no-daemon :jvm:gradle-plugin:clean :jvm:gradle-plugin:jar
 
       - name: Run documentation, Go, and Java checks
         env:
