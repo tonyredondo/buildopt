@@ -73,6 +73,19 @@ buildopt_gradle="${buildopt_repo_root}/.tools/gradle-compat/gradle-9.6.1/bin/gra
 if [[ ! -x "${buildopt_gradle}" ]]; then
     buildopt_gradle="${buildopt_repo_root}/.tools/gradle-compat/gradle-8.14.3/bin/gradle"
 fi
+if [[ ! -x "${buildopt_gradle}" ]]; then
+    buildopt_primed_gradle_home=${GRADLE_USER_HOME:-"${HOME}/.gradle"}
+    for buildopt_gradle_version in 9.6.1 8.14.3; do
+        buildopt_gradle_candidate=$(find \
+            "${buildopt_primed_gradle_home}/wrapper/dists/gradle-${buildopt_gradle_version}-bin" \
+            -type f -path "*/gradle-${buildopt_gradle_version}/bin/gradle" \
+            -perm -111 -print -quit 2>/dev/null || true)
+        if [[ -n "${buildopt_gradle_candidate}" ]]; then
+            buildopt_gradle=${buildopt_gradle_candidate}
+            break
+        fi
+    done
+fi
 
 mkdir -p -- "${buildopt_fixture}/gradle/wrapper"
 cp -- "${buildopt_repo_root}/gradle/wrapper/gradle-wrapper.properties" \
