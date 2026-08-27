@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+export LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_runner="${buildopt_root}/dev/run-sticky-wrapper-longitudinal-v2"
+buildopt_checker="${buildopt_root}/dev/check-sticky-wrapper-longitudinal-v2"
+buildopt_fixtures="${buildopt_root}/fixtures/sticky-wrapper-longitudinal-v2"
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-swl014a-test.XXXXXX")
+trap 'rm -rf -- "${buildopt_temporary}"' EXIT
+
+buildopt_expect_failure() {
+    local buildopt_fixture=$1 buildopt_reason=$2 buildopt_error
+    buildopt_error="${buildopt_temporary}/${buildopt_fixture}.err"
+    if "${buildopt_checker}" --preflight \
+        "${buildopt_fixtures}/${buildopt_fixture}.json" >"${buildopt_temporary}/unexpected.out" \
+        2>"${buildopt_error}"; then
+        printf 'checker accepted invalid fixture: %s\n' "${buildopt_fixture}" >&2
+        exit 1
+    fi
+    grep -Fxq "${buildopt_reason}" "${buildopt_error}" || {
+        printf 'fixture %s did not fail with %s\n' "${buildopt_fixture}" "${buildopt_reason}" >&2
+        exit 1
+    }
+}
+
+"${buildopt_checker}" --preflight "${buildopt_fixtures}/valid-zero-pair.json" \
+    >"${buildopt_temporary}/valid.out"
+grep -Fq 'VALIDATED_NOT_READY' "${buildopt_temporary}/valid.out"
+
+buildopt_expect_failure invalid-asymmetric-cache ASYMMETRIC_CACHE_POLICY
+buildopt_expect_failure invalid-missing-lifecycle MISSING_LIFECYCLE_EVIDENCE_FIELD
+buildopt_expect_failure invalid-zero-budget-learning ZERO_BUDGET_CLAIMED_AS_LEARNING
+buildopt_expect_failure invalid-shared-state-root SHARED_OR_UNBOUND_WRITABLE_STATE
+
+buildopt_generated="${buildopt_temporary}/generated.json"
+"${buildopt_runner}" --preflight-only "${buildopt_generated}" \
+    >"${buildopt_temporary}/runner.out"
+"${buildopt_checker}" --preflight "${buildopt_generated}" \
+    >"${buildopt_temporary}/generated.out"
+jq -cS -j 'del(.generatedAt)' "${buildopt_generated}" >"${buildopt_temporary}/generated-normalized"
+jq -cS -j 'del(.generatedAt)' "${buildopt_fixtures}/valid-zero-pair.json" \
+    >"${buildopt_temporary}/fixture-normalized"
+cmp -s "${buildopt_temporary}/generated-normalized" \
+    "${buildopt_temporary}/fixture-normalized" || {
+    printf 'generated preflight differs from the valid fixture\n' >&2
+    exit 1
+}
+
+if "${buildopt_runner}" --preflight-only "${buildopt_generated}" \
+    >"${buildopt_temporary}/existing.out" 2>"${buildopt_temporary}/existing.err"; then
+    printf 'runner overwrote an existing preflight result\n' >&2
+    exit 1
+fi
+grep -Fq 'already exists' "${buildopt_temporary}/existing.err"
+
+set +e
+"${buildopt_runner}" relative.json >"${buildopt_temporary}/usage.out" \
+    2>"${buildopt_temporary}/usage.err"
+buildopt_usage_status=$?
+set -e
+[[ ${buildopt_usage_status} -eq 64 ]] || {
+    printf 'runner invalid usage returned %d instead of 64\n' "${buildopt_usage_status}" >&2
+    exit 1
+}
+
+printf 'SWL-014A v2 runner/checker fixtures: OK\n'

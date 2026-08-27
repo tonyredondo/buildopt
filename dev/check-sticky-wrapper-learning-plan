@@ -190,7 +190,7 @@ validate_longitudinal_v2() {
     ] and
     .schemaVersion == "buildopt.poc/sticky-wrapper-longitudinal/v2" and
     .workItem == "SWL-015" and
-    .status == "BLOCKED_BY_SWL_014A_TO_SWL_014D" and
+    .status == "BLOCKED_BY_SWL_014B_TO_SWL_014D" and
     .historicalV1.classification == "DIAGNOSTIC_ONLY" and
     .historicalV1.terminalAuthority == false and
     [.preconditions[].workItem] == ["SWL-014A", "SWL-014B", "SWL-014C", "SWL-014D"] and
@@ -201,12 +201,23 @@ validate_longitudinal_v2() {
     .autonomousExecution.agentMayChangeThresholds == false and
     .autonomousExecution.agentMayAddDetectors == false and
     .autonomousExecution.agentMayRenameArtifacts == false and
-    .autonomousExecution.activeBlock == "SWL-014A" and
-    .autonomousExecution.activeBlockPending == [
-        "V2_RUNNER_WITH_PREFLIGHT_ONLY_MODE",
-        "V2_LIFECYCLE_AWARE_CHECKER",
-        "ZERO_PAIR_VALID_AND_NEGATIVE_FIXTURES",
+    .autonomousExecution.activeBlock == "SWL-014B" and
+    .autonomousExecution.activeBlockCompleted == [
+        "V2_PROTOCOL_AND_MACHINE_CONTRACT_PREREGISTERED",
+        "V1_CLASSIFIED_DIAGNOSTIC_ONLY",
+        "V1_CHECKER_REJECTS_TERMINAL_READINESS",
+        "RFC_TRACKERS_AND_CUSTOMER_DOCUMENTATION_ALIGNED",
+        "IMPLEMENTATION_DECISIONS_AND_FILE_MANIFESTS_LOCKED",
+        "V2_PREFLIGHT_RUNNER_IMPLEMENTED",
+        "V2_LIFECYCLE_AWARE_CHECKER_IMPLEMENTED",
+        "ZERO_PAIR_AND_NEGATIVE_FIXTURES_VERIFIED",
         "CHECKED_PREFLIGHT_EVIDENCE"
+    ] and
+    .autonomousExecution.activeBlockPending == [
+        "END_TO_END_CUSTOMER_PATH_COMPOSITION",
+        "SHARED_VALUE_API",
+        "LIFECYCLE_FIXTURE_AND_NEGATIVES",
+        "CHECKED_LIFECYCLE_EVIDENCE"
     ] and
     .autonomousExecution.completionProtocol.oneCommitPerCompletedBlock == true and
     .autonomousExecution.completionProtocol.pushBranch == "main" and
@@ -336,6 +347,9 @@ validate_longitudinal_v2() {
     [.implementationManifests[].workItem] == [
         "SWL-014A", "SWL-014B", "SWL-014C", "SWL-014D", "SWL-015", "SWL-016"
     ] and
+    [.implementationManifests[].state] == [
+        "DONE", "IN_PROGRESS", "WAITING", "WAITING", "WAITING", "WAITING"
+    ] and
     all(.implementationManifests[];
         (.focusedChecks | length) >= 1 and
         has("resultContract") and
@@ -343,11 +357,15 @@ validate_longitudinal_v2() {
         ((.modify // []) | length) == ((.modify // []) | unique | length) and
         (.documentation | length) == (.documentation | unique | length)
     ) and
-    .implementationManifests[0].state == "IN_PROGRESS" and
+    .implementationManifests[0].state == "DONE" and
     .implementationManifests[0].create[0:3] == [
         "dev/run-sticky-wrapper-longitudinal-v2",
         "dev/check-sticky-wrapper-longitudinal-v2",
         "dev/test-sticky-wrapper-longitudinal-v2"
+    ] and
+    .implementationManifests[0].modify == [
+        "dev/check-sticky-wrapper-learning-plan",
+        "dev/check-tracker-consistency"
     ] and
     .implementationManifests[0].resultContract.schemaVersion ==
         "buildopt.poc/sticky-wrapper-longitudinal-preflight/v2" and
@@ -372,6 +390,7 @@ validate_longitudinal_v2() {
         "internal/stickyvalue/evaluate.go",
         "internal/stickyvalue/evaluate_test.go"
     ] and
+    .implementationManifests[1].state == "IN_PROGRESS" and
     .implementationManifests[1].modify == [
         "internal/launcher/run.go",
         "internal/launcher/sticky_native_fast_path.go",
@@ -425,6 +444,11 @@ validate_longitudinal_v2() {
         "sha256sums.txt",
         "README.md"
     ] and
+    .implementationManifests[4].modify == [
+        "dev/run-sticky-wrapper-longitudinal-v2",
+        "dev/check-sticky-wrapper-longitudinal-v2",
+        "dev/test-sticky-wrapper-longitudinal-v2"
+    ] and
     .implementationManifests[4].resultContract.readyOutcome == "READY_FOR_SWL_016" and
     .implementationManifests[4].resultContract.rowSchemaVersion ==
         "buildopt.poc/sticky-wrapper-longitudinal-row/v2" and
@@ -452,6 +476,7 @@ validate_longitudinal_v2() {
             "specs/poc-sticky-wrapper-longitudinal-v2.json",
             "specs/README.md",
             "docs/architecture/repository-map.md",
+            "docs/findings/buildopt-poc-handoff.md",
             "dev/README.md"
         ],
         [
@@ -558,6 +583,7 @@ buildopt_negative_mutations=(
     '.detectorCatalog[0].agentMayCreateProducerInThisRoute = true'
     '.implementationManifests[0].resultContract.validZeroPairReadyForSWL016 = true'
     '.implementationManifests[4].requiredResultFiles = []'
+    '.implementationManifests[4].modify = []'
     '.implementationManifests[0].create += [.implementationManifests[0].create[0]]'
     '.implementationManifests[2].documentation[0] = "docs/invented.md"'
     '.stopEarly.terminalOutcomeProducedBeforeSWL016 = true'
@@ -613,8 +639,8 @@ if [[ "${buildopt_evidence_count}" != 23 ]]; then
 fi
 
 buildopt_required_text=(
-    "${buildopt_plan}|**Progress:** \`16/22\` blocks complete"
-    "${buildopt_plan}|**Current block:** \`SWL-014A\` — protocol and comparison-fairness correction"
+    "${buildopt_plan}|**Progress:** \`17/22\` blocks complete"
+    "${buildopt_plan}|**Current block:** \`SWL-014B\` — end-to-end learning/action composition"
     "${buildopt_plan}|## Agent execution contract — decisions already made"
     "${buildopt_longitudinal_v2_contract}|SEPARATE_PER_ARM_EMPTY_AT_CAMPAIGN_START"
     "${buildopt_plan}|\`internal/launcher/sticky_learning.go\` is the only new composition root"
@@ -626,7 +652,7 @@ buildopt_required_text=(
     "${buildopt_spec}|# Sticky wrapper learning POC v1"
     "${buildopt_spec}|CONTINUE_STICKY_WRAPPER_LEARNING_POC"
     "${buildopt_tracker}|STICKY WRAPPER LEARNING POC ACTIVE; PRIOR GENERIC HYPOTHESES STOPPED"
-    "${buildopt_tracker}|SWL-014A_PROTOCOL_AND_COMPARISON_FAIRNESS"
+    "${buildopt_tracker}|SWL-014B_END_TO_END_LEARNING_COMPOSITION"
     "${buildopt_tracker}|POC-STICKY-WRAPPER-LEARNING"
     "${buildopt_tracker}|\`E-403\`"
     "${buildopt_tracker}|\`E-404\`"
@@ -644,6 +670,7 @@ buildopt_required_text=(
     "${buildopt_tracker}|\`E-416\`"
     "${buildopt_tracker}|\`E-418\`"
     "${buildopt_tracker}|\`E-419\`"
+    "${buildopt_tracker}|\`E-420\`"
     "${buildopt_plan}|\`SWL-E015\`"
     "${buildopt_plan}|\`SWL-E018\`"
     "${buildopt_plan}|\`SWL-E019\`"

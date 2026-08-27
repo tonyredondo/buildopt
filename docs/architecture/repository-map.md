@@ -65,12 +65,13 @@ The SWL-014 installed proof is owned by `dev/run-poc-central-two-machine`,
 `dev/central-two-machine-client` and `dev/check-sticky-wrapper-two-machine`,
 with its normative contract in `specs/poc-sticky-wrapper-two-machine-v1.*` and
 its checked result in `benchmarks/results/sticky-wrapper-two-machine-v1.json`.
-`SWL-014A` is currently owned by the detailed tracker and
-`specs/poc-sticky-wrapper-longitudinal-v2.*`; the v2 runner/checker are not yet
-implemented. Their frozen paths are `dev/run-sticky-wrapper-longitudinal-v2`,
-`dev/check-sticky-wrapper-longitudinal-v2` and
-`dev/test-sticky-wrapper-longitudinal-v2`; the preflight result will live at
-`benchmarks/results/sticky-wrapper-longitudinal-v2-preflight.json`.
+`SWL-014A` is closed by the detailed tracker,
+`specs/poc-sticky-wrapper-longitudinal-v2.*`, the preflight-only
+`dev/run-sticky-wrapper-longitudinal-v2`, its checker and fixture test. The
+checked zero-pair result lives at
+`benchmarks/results/sticky-wrapper-longitudinal-v2-preflight.json`. Final
+campaign/result-directory behavior remains an exact `SWL-015` modification
+after `SWL-014B..D` provide the evidence interface it consumes.
 
 `SWL-014B` will add the only launcher-owned composition root at
 `internal/launcher/sticky_learning.go`, plus shared deterministic value

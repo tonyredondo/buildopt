@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+set -euo pipefail
+export LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC
+
+if (($# != 2)) || [[ $1 != --preflight || $2 != /* ]]; then
+    printf 'usage: %s --preflight /absolute/result.json\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_result=$2
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract="${buildopt_root}/specs/poc-sticky-wrapper-longitudinal-v2.json"
+buildopt_cohort="${buildopt_root}/benchmarks/results/current-longitudinal-cohorts-v1.json"
+
+for buildopt_command in awk cmp jq mktemp rm sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'SWL-014A preflight checker requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -f ${buildopt_contract} && -f ${buildopt_cohort} && -f ${buildopt_result} ]] || {
+    printf 'INVALID_PREFLIGHT_SCHEMA\n' >&2
+    exit 1
+}
+
+buildopt_fail() {
+    printf '%s\n' "$1" >&2
+    exit 1
+}
+
+buildopt_canonical=$(mktemp "${TMPDIR:-/tmp}/buildopt-swl014a-canonical.XXXXXX")
+trap 'rm -f -- "${buildopt_canonical}"' EXIT
+jq -cS -j . "${buildopt_result}" >"${buildopt_canonical}" 2>/dev/null || \
+    buildopt_fail INVALID_PREFLIGHT_SCHEMA
+cmp -s "${buildopt_result}" "${buildopt_canonical}" || \
+    buildopt_fail INVALID_PREFLIGHT_ENCODING
+
+buildopt_contract_sha=$(sha256sum "${buildopt_contract}" | awk '{print $1}')
+buildopt_cohort_sha=$(sha256sum "${buildopt_cohort}" | awk '{print $1}')
+buildopt_expected_cohort_sha=$(jq -r '.cohort.manifestSha256' "${buildopt_contract}")
+[[ ${buildopt_cohort_sha} == "${buildopt_expected_cohort_sha}" ]] || \
+    buildopt_fail INVALID_PREFLIGHT_SCHEMA
+buildopt_workflow_sha=$(
+    jq -cS -j '[.repositories[] | {familyKey:.policy.key,workflow:.policy.workflow}]' \
+        "${buildopt_cohort}" | sha256sum | awk '{print $1}'
+)
+buildopt_cache_policy_sha=$(
+    jq -cS -j \
+        '{buildCachePolicy:.arms.buildCachePolicy,
+          dependencyPreparation:.cacheTopology.dependencyPreparation,
+          localBuildCache:.cacheTopology.local.localBuildCache,
+          remoteService:.cacheTopology.remote.serviceInstance,
+          remoteNetwork:.cacheTopology.remote.networkRouteTLSAndLimits,
+          remoteSeed:.cacheTopology.remote.seedContents}' \
+        "${buildopt_contract}" | sha256sum | awk '{print $1}'
+)
+buildopt_remote_service_sha=$(
+    jq -cS -j \
+        '{serviceInstance:.cacheTopology.remote.serviceInstance,
+          networkRouteTLSAndLimits:.cacheTopology.remote.networkRouteTLSAndLimits}' \
+        "${buildopt_contract}" | sha256sum | awk '{print $1}'
+)
+buildopt_remote_seed_sha=$(printf '' | sha256sum | awk '{print $1}')
+
+jq -e --arg contract "${buildopt_contract_sha}" --arg cohort "${buildopt_cohort_sha}" '
+  keys == ["arms","candidateEvidenceFields","cohortManifestSha256","comparison",
+    "contractSha256","generatedAt","learning","outcome","pairCount",
+    "readyForSWL016","schemaVersion","workItem"] and
+  .schemaVersion == "buildopt.poc/sticky-wrapper-longitudinal-preflight/v2" and
+  .workItem == "SWL-014A" and .contractSha256 == $contract and
+  .cohortManifestSha256 == $cohort and
+  (.generatedAt | test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{9}Z$")) and
+  (.pairCount | type == "number") and (.arms | type == "array" and length == 2) and
+  all(.arms[];
+    keys == ["buildOptStateRootSha256","cachePolicySha256","checkoutRootSha256",
+      "entrypoint","gradleUserHomeSha256","id","localBuildCacheRootSha256",
+      "remoteNamespace","remoteSeedSha256","remoteServiceScopeSha256",
+      "workflowArgumentsSha256"] and
+    (.workflowArgumentsSha256 | test("^[0-9a-f]{64}$")) and
+    (.cachePolicySha256 | test("^[0-9a-f]{64}$")) and
+    (.checkoutRootSha256 | test("^[0-9a-f]{64}$")) and
+    (.gradleUserHomeSha256 | test("^[0-9a-f]{64}$")) and
+    (.localBuildCacheRootSha256 | test("^[0-9a-f]{64}$")) and
+    (.buildOptStateRootSha256 | test("^[0-9a-f]{64}$")) and
+    (.remoteServiceScopeSha256 | test("^[0-9a-f]{64}$")) and
+    (.remoteSeedSha256 | test("^[0-9a-f]{64}$")) and
+    (.remoteNamespace | test("^[a-z0-9-]+$"))) and
+  (.comparison | keys) == ["cachePolicyIdentical","crossArmVisibilityAbsent",
+    "remoteNamespacesDistinct","remoteSeedsIdentical","workflowArgumentsIdentical",
+    "writableRootsDistinct"] and
+  (.learning | keys) == ["learningEnvironmentEnabled","mode",
+    "requiredCapabilitiesPresent","trialBudgetPercent"] and
+  (.candidateEvidenceFields | type == "array") and
+  (.readyForSWL016 | type == "boolean") and (.outcome | type == "string")
+' "${buildopt_result}" >/dev/null || buildopt_fail INVALID_PREFLIGHT_SCHEMA
+
+buildopt_control=$(jq -c '.arms[0]' "${buildopt_result}")
+buildopt_candidate=$(jq -c '.arms[1]' "${buildopt_result}")
+jq -e --arg workflow "${buildopt_workflow_sha}" \
+    --arg policy "${buildopt_cache_policy_sha}" \
+    --arg service "${buildopt_remote_service_sha}" \
+    --arg seed "${buildopt_remote_seed_sha}" '
+  .arms[0].id == "CONTROL" and .arms[0].entrypoint == "./gradlew" and
+  .arms[1].id == "CANDIDATE" and .arms[1].entrypoint == "./buildoptw" and
+  all(.arms[]; .workflowArgumentsSha256 == $workflow and
+    .cachePolicySha256 == $policy and .remoteServiceScopeSha256 == $service and
+    .remoteSeedSha256 == $seed) and
+  .comparison.workflowArgumentsIdentical == true and
+  .comparison.cachePolicyIdentical == true and
+  .comparison.remoteSeedsIdentical == true
+' "${buildopt_result}" >/dev/null || buildopt_fail ASYMMETRIC_CACHE_POLICY
+
+buildopt_expected_evidence=$(jq -c '.candidateEvidenceRequired' "${buildopt_contract}")
+buildopt_actual_evidence=$(jq -c '.candidateEvidenceFields' "${buildopt_result}")
+[[ ${buildopt_actual_evidence} == "${buildopt_expected_evidence}" ]] || \
+    buildopt_fail MISSING_LIFECYCLE_EVIDENCE_FIELD
+
+jq -e '
+  .learning.mode == "auto" and
+  (.learning.trialBudgetPercent | type == "number" and . > 0 and . <= 5) and
+  .learning.learningEnvironmentEnabled == true and
+  .learning.requiredCapabilitiesPresent == true
+' "${buildopt_result}" >/dev/null || buildopt_fail ZERO_BUDGET_CLAIMED_AS_LEARNING
+
+jq -e '
+  .comparison.writableRootsDistinct == true and
+  .comparison.remoteNamespacesDistinct == true and
+  .comparison.crossArmVisibilityAbsent == true and
+  .arms[0].remoteNamespace != .arms[1].remoteNamespace and
+  ([.arms[] | .checkoutRootSha256,.gradleUserHomeSha256,
+    .localBuildCacheRootSha256,.buildOptStateRootSha256] | length) == 8 and
+  ([.arms[] | .checkoutRootSha256,.gradleUserHomeSha256,
+    .localBuildCacheRootSha256,.buildOptStateRootSha256] | unique | length) == 8
+' "${buildopt_result}" >/dev/null || buildopt_fail SHARED_OR_UNBOUND_WRITABLE_STATE
+
+jq -e '
+  .pairCount == 0 and .readyForSWL016 == false and
+  .outcome == "VALIDATED_NOT_READY"
+' "${buildopt_result}" >/dev/null || buildopt_fail INVALID_PREFLIGHT_READINESS
+
+# Retain these variables as explicit evidence that both arm records were read
+# independently before the cross-arm assertions above.
+[[ -n ${buildopt_control} && -n ${buildopt_candidate} ]] || \
+    buildopt_fail INVALID_PREFLIGHT_SCHEMA
+printf 'SWL-014A v2 preflight: VALIDATED_NOT_READY\n'

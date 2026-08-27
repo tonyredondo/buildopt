@@ -213,8 +213,9 @@ to an activation, confidence, payback or terminal criterion.
 
 The machine-readable sample is
 [`poc-sticky-wrapper-longitudinal-sample-v1`](../../benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md).
-The corrected path is deliberately staged: `SWL-014A` freezes cache-symmetric
-arms and lifecycle-aware readiness; `SWL-014B` connects the real wrapper-driven
+The corrected path is deliberately staged: `SWL-014A` has now proved
+cache-symmetric arms and lifecycle-aware zero-pair readiness;
+`SWL-014B` connects the real wrapper-driven
 learning/action loop; `SWL-014C` requires generic testable actions in at least
 three public families; and `SWL-014D` proves positive installed-path value.
 Only then may `SWL-015 v2` spend the longitudinal campaign budget, followed by
@@ -351,7 +352,8 @@ and 250-ms p95 local native-decision overhead, a positive complete portfolio
 and independently positive value/payback in at least three of five public
 families. Every bootstrap, observation, trial, cache, fallback and action cost
 counts. Historical AF observations and the cache-asymmetric SWL-015 v1 sample
-are context only. The immediate work is `SWL-014A..D`; the expensive
+are context only. `SWL-014A` is closed without timing a customer build; the
+immediate work is `SWL-014B..D`. The expensive
 longitudinal campaign is intentionally blocked until the actual customer path
 can activate and measure generic actions.
 
@@ -361,9 +363,12 @@ launcher composition connects observation through signed active/suspended
 decisions; only the existing task-contract and declared-graph-scope detectors
 may enter the five-family screen; and deterministic installed/chronological
 statistics decide value. Fewer than three families at either pre-gate skips the
-campaign and goes directly to the independent terminal decision. The next
-concrete deliverable remains the zero-pair v2 preflight runner/checker, not a
-new public timing run.
+campaign and goes directly to the independent terminal decision. The checked
+zero-pair preflight is `VALIDATED_NOT_READY`: workflow/cache/service/empty-seed
+identities match, all writable roots and remote namespaces are separate, and
+all four forbidden asymmetries reject. The next concrete deliverable is the
+real wrapper-driven lifecycle composition in `SWL-014B`, not a public timing
+run.
 
 The task-contract result is deliberately unavailable in that public screen:
 the repository has a safe detector and synthetic evidence, but no generic

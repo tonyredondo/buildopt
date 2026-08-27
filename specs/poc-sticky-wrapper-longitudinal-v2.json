@@ -1,7 +1,7 @@
 {
   "schemaVersion": "buildopt.poc/sticky-wrapper-longitudinal/v2",
   "workItem": "SWL-015",
-  "status": "BLOCKED_BY_SWL_014A_TO_SWL_014D",
+  "status": "BLOCKED_BY_SWL_014B_TO_SWL_014D",
   "purpose": "Measure the real sticky-wrapper learning and action lifecycle against cache-equivalent optimized native Gradle over frozen chronological public commits.",
   "historicalV1": {
     "classification": "DIAGNOSTIC_ONLY",
@@ -14,19 +14,23 @@
     "agentMayChangeThresholds": false,
     "agentMayAddDetectors": false,
     "agentMayRenameArtifacts": false,
-    "activeBlock": "SWL-014A",
+    "activeBlock": "SWL-014B",
     "activeBlockCompleted": [
       "V2_PROTOCOL_AND_MACHINE_CONTRACT_PREREGISTERED",
       "V1_CLASSIFIED_DIAGNOSTIC_ONLY",
       "V1_CHECKER_REJECTS_TERMINAL_READINESS",
       "RFC_TRACKERS_AND_CUSTOMER_DOCUMENTATION_ALIGNED",
-      "IMPLEMENTATION_DECISIONS_AND_FILE_MANIFESTS_LOCKED"
+      "IMPLEMENTATION_DECISIONS_AND_FILE_MANIFESTS_LOCKED",
+      "V2_PREFLIGHT_RUNNER_IMPLEMENTED",
+      "V2_LIFECYCLE_AWARE_CHECKER_IMPLEMENTED",
+      "ZERO_PAIR_AND_NEGATIVE_FIXTURES_VERIFIED",
+      "CHECKED_PREFLIGHT_EVIDENCE"
     ],
     "activeBlockPending": [
-      "V2_RUNNER_WITH_PREFLIGHT_ONLY_MODE",
-      "V2_LIFECYCLE_AWARE_CHECKER",
-      "ZERO_PAIR_VALID_AND_NEGATIVE_FIXTURES",
-      "CHECKED_PREFLIGHT_EVIDENCE"
+      "END_TO_END_CUSTOMER_PATH_COMPOSITION",
+      "SHARED_VALUE_API",
+      "LIFECYCLE_FIXTURE_AND_NEGATIVES",
+      "CHECKED_LIFECYCLE_EVIDENCE"
     ],
     "completionProtocol": {
       "sourceControlledLanguage": "ENGLISH",
@@ -350,7 +354,7 @@
   "implementationManifests": [
     {
       "workItem": "SWL-014A",
-      "state": "IN_PROGRESS",
+      "state": "DONE",
       "create": [
         "dev/run-sticky-wrapper-longitudinal-v2",
         "dev/check-sticky-wrapper-longitudinal-v2",
@@ -362,6 +366,10 @@
         "fixtures/sticky-wrapper-longitudinal-v2/invalid-shared-state-root.json",
         "benchmarks/results/sticky-wrapper-longitudinal-v2-preflight.json"
       ],
+      "modify": [
+        "dev/check-sticky-wrapper-learning-plan",
+        "dev/check-tracker-consistency"
+      ],
       "documentation": [
         "docs/plans/sticky-wrapper-learning-poc-tracker.md",
         "implementation-tracker.md",
@@ -369,6 +377,7 @@
         "specs/poc-sticky-wrapper-longitudinal-v2.json",
         "specs/README.md",
         "docs/architecture/repository-map.md",
+        "docs/findings/buildopt-poc-handoff.md",
         "dev/README.md"
       ],
       "resultContract": {
@@ -432,7 +441,7 @@
     },
     {
       "workItem": "SWL-014B",
-      "state": "WAITING",
+      "state": "IN_PROGRESS",
       "create": [
         "internal/launcher/sticky_learning.go",
         "internal/launcher/sticky_learning_test.go",
@@ -695,6 +704,11 @@
     {
       "workItem": "SWL-015",
       "state": "WAITING",
+      "modify": [
+        "dev/run-sticky-wrapper-longitudinal-v2",
+        "dev/check-sticky-wrapper-longitudinal-v2",
+        "dev/test-sticky-wrapper-longitudinal-v2"
+      ],
       "resultDirectory": "benchmarks/results/poc-sticky-wrapper-longitudinal-v2",
       "requiredResultFiles": [
         "contract.json",

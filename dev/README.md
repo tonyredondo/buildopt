@@ -181,10 +181,10 @@ v1 diagnostic evidence:
 
 `dev/run-sticky-wrapper-longitudinal` now labels any new v1 output
 `DIAGNOSTIC_ONLY`, and the checker rejects v1 evidence that claims terminal
-readiness. The v2 runner and checker are deliverables of `SWL-014A`; do not
-spend the public longitudinal campaign budget before `SWL-014A..D` pass.
+readiness. The v2 preflight runner and checker are delivered by `SWL-014A`; do
+not spend the public longitudinal campaign budget before `SWL-014B..D` pass.
 
-The remaining `SWL-014A` implementation is intentionally exact. Create:
+`SWL-014A` created exactly:
 
 ```text
 dev/run-sticky-wrapper-longitudinal-v2
@@ -202,6 +202,10 @@ catalog, statistical algorithms, early-stop transitions and all subsequent
 file manifests are normative in
 `specs/poc-sticky-wrapper-longitudinal-v2.{md,json}`. An implementation agent
 must not choose replacements for them.
+
+Final campaign and result-directory modes are intentionally not guessed by
+the preflight block. `SWL-015` owns exact modifications to these same three
+scripts after `SWL-014B..D` provide checked lifecycle/action evidence.
 
 ## Toolchain lock
 

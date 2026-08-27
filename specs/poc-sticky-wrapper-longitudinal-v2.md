@@ -1,6 +1,6 @@
 # Sticky wrapper longitudinal campaign v2
 
-Status: preregistered POC measurement contract; blocked by `SWL-014A..D`.
+Status: preregistered POC measurement contract; blocked by `SWL-014B..D`.
 
 ## Why v2 exists
 
@@ -16,7 +16,8 @@ That evidence remains immutable and useful for compatibility. It is
 
 ## Preconditions
 
-Timing cannot start until all four gates pass:
+Timing cannot start until all four gates pass. `SWL-014A` is now complete;
+`SWL-014B..D` remain open:
 
 1. `SWL-014A` proves arm symmetry and a checker that rejects timing-only
    readiness.
@@ -41,12 +42,14 @@ statistics method, share a writable cache namespace between arms, move a
 threshold or bypass a failed pre-gate. The machine contract contains the exact
 file manifest and focused validation commands for every remaining block.
 
-`SWL-014A` is partly complete. The v2 contract, v1 diagnostic classification,
-v1 false-readiness rejection, documentation alignment and the decisions in
-this section are complete. The remaining work is exactly the v2 runner with a
-`--preflight-only` mode, its lifecycle-aware checker, one valid zero-pair
-fixture, four named negative fixtures and the checked preflight result. No
-other `SWL-014A` work is implied.
+`SWL-014A` is complete. Its preflight-only runner, lifecycle-aware checker,
+one valid zero-pair fixture, four named negative fixtures and checked result
+prove arm symmetry without executing or timing a customer build.
+
+The final campaign mode deliberately remains blocked until `SWL-014B..D`
+define and prove the real lifecycle/action evidence it must consume. `SWL-015`
+owns the exact later modifications to the same runner, checker and fixture
+test; this avoids inventing a future evidence adapter during preflight work.
 
 All remaining evidence uses RFC 8785 JCS, rejects unknown fields, writes
 canonical UTC RFC 3339 nanosecond timestamps, lowercase hexadecimal SHA-256
@@ -218,7 +221,8 @@ percentile lower bound and must be positive.
 
 The machine contract freezes every created file. The primary outputs are:
 
-- `SWL-014A`: `dev/run-sticky-wrapper-longitudinal-v2`,
+- `SWL-014A`: the preflight-only
+  `dev/run-sticky-wrapper-longitudinal-v2`,
   `dev/check-sticky-wrapper-longitudinal-v2`, its fixture test and
   `benchmarks/results/sticky-wrapper-longitudinal-v2-preflight.json`;
 - `SWL-014B`: the launcher composition, `internal/stickyvalue`, lifecycle
@@ -227,7 +231,8 @@ The machine contract freezes every created file. The primary outputs are:
   `sticky-wrapper-opportunity-gate-v1.json`;
 - `SWL-014D`: the installed active-value runner, checker/spec and
   `sticky-wrapper-active-value-v1.json`;
-- `SWL-015`: `benchmarks/results/poc-sticky-wrapper-longitudinal-v2/`; and
+- `SWL-015`: complete the same v2 runner/checker/test with final campaign mode
+  and write `benchmarks/results/poc-sticky-wrapper-longitudinal-v2/`; and
 - `SWL-016`: the independent terminal checker/spec and
   `sticky-wrapper-terminal-decision-v1.json`.
 

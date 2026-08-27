@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+umask 077
+export LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC
+
+if (($# != 2)) || [[ $1 != --preflight-only || $2 != /* ]]; then
+    printf 'usage: %s --preflight-only /absolute/output.json\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$2
+buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(CDPATH='' cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract="${buildopt_root}/specs/poc-sticky-wrapper-longitudinal-v2.json"
+buildopt_cohort="${buildopt_root}/benchmarks/results/current-longitudinal-cohorts-v1.json"
+
+for buildopt_command in awk chmod date dirname jq mktemp mv rm sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'SWL-014A preflight runner requires %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ -f ${buildopt_contract} && -f ${buildopt_cohort} ]] || {
+    printf 'SWL-014A v2 contract or frozen cohort is missing\n' >&2
+    exit 70
+}
+[[ ! -e ${buildopt_output} ]] || {
+    printf 'SWL-014A preflight output already exists: %s\n' "${buildopt_output}" >&2
+    exit 1
+}
+buildopt_output_parent=$(dirname -- "${buildopt_output}")
+[[ -d ${buildopt_output_parent} && ! -L ${buildopt_output_parent} ]] || {
+    printf 'SWL-014A preflight output parent must be an existing real directory\n' >&2
+    exit 1
+}
+
+buildopt_contract_sha=$(sha256sum "${buildopt_contract}" | awk '{print $1}')
+buildopt_cohort_sha=$(sha256sum "${buildopt_cohort}" | awk '{print $1}')
+buildopt_expected_cohort_sha=$(jq -r '.cohort.manifestSha256' "${buildopt_contract}")
+[[ ${buildopt_cohort_sha} == "${buildopt_expected_cohort_sha}" ]] || {
+    printf 'SWL-014A frozen cohort digest drifted\n' >&2
+    exit 70
+}
+
+buildopt_hash_identity() {
+    local buildopt_arm=$1 buildopt_kind=$2
+    printf 'buildopt-sticky-wrapper-v2-preflight-root/v1\0%s\0%s' \
+        "${buildopt_arm}" "${buildopt_kind}" | sha256sum | awk '{print $1}'
+}
+
+buildopt_workflow_sha=$(
+    jq -cS -j '[.repositories[] | {familyKey:.policy.key,workflow:.policy.workflow}]' \
+        "${buildopt_cohort}" | sha256sum | awk '{print $1}'
+)
+buildopt_cache_policy_sha=$(
+    jq -cS -j \
+        '{buildCachePolicy:.arms.buildCachePolicy,
+          dependencyPreparation:.cacheTopology.dependencyPreparation,
+          localBuildCache:.cacheTopology.local.localBuildCache,
+          remoteService:.cacheTopology.remote.serviceInstance,
+          remoteNetwork:.cacheTopology.remote.networkRouteTLSAndLimits,
+          remoteSeed:.cacheTopology.remote.seedContents}' \
+        "${buildopt_contract}" | sha256sum | awk '{print $1}'
+)
+buildopt_remote_service_sha=$(
+    jq -cS -j \
+        '{serviceInstance:.cacheTopology.remote.serviceInstance,
+          networkRouteTLSAndLimits:.cacheTopology.remote.networkRouteTLSAndLimits}' \
+        "${buildopt_contract}" | sha256sum | awk '{print $1}'
+)
+buildopt_remote_seed_sha=$(printf '' | sha256sum | awk '{print $1}')
+buildopt_control_namespace="swl-v2-control-${buildopt_cohort_sha:0:16}"
+buildopt_candidate_namespace="swl-v2-candidate-${buildopt_cohort_sha:0:16}"
+buildopt_evidence_fields=$(jq -c '.candidateEvidenceRequired' "${buildopt_contract}")
+buildopt_generated_at=$(date -u +%Y-%m-%dT%H:%M:%S.%NZ)
+
+buildopt_stage=$(mktemp \
+    "${buildopt_output_parent}/.${buildopt_output##*/}.stage.XXXXXX")
+buildopt_cleanup() {
+    rm -f -- "${buildopt_stage}"
+}
+trap buildopt_cleanup EXIT
+
+# Every digest below identifies a canonical planned root, never a host path.
+# The final campaign materializes these identities as separate private roots.
+jq -cS -j -n \
+    --arg contract "${buildopt_contract_sha}" \
+    --arg cohort "${buildopt_cohort_sha}" \
+    --arg generatedAt "${buildopt_generated_at}" \
+    --arg workflow "${buildopt_workflow_sha}" \
+    --arg cachePolicy "${buildopt_cache_policy_sha}" \
+    --arg remoteService "${buildopt_remote_service_sha}" \
+    --arg remoteSeed "${buildopt_remote_seed_sha}" \
+    --arg controlNamespace "${buildopt_control_namespace}" \
+    --arg candidateNamespace "${buildopt_candidate_namespace}" \
+    --arg controlCheckout "$(buildopt_hash_identity CONTROL CHECKOUT)" \
+    --arg controlGradle "$(buildopt_hash_identity CONTROL GRADLE_USER_HOME)" \
+    --arg controlCache "$(buildopt_hash_identity CONTROL LOCAL_BUILD_CACHE)" \
+    --arg controlState "$(buildopt_hash_identity CONTROL BUILDOPT_STATE)" \
+    --arg candidateCheckout "$(buildopt_hash_identity CANDIDATE CHECKOUT)" \
+    --arg candidateGradle "$(buildopt_hash_identity CANDIDATE GRADLE_USER_HOME)" \
+    --arg candidateCache "$(buildopt_hash_identity CANDIDATE LOCAL_BUILD_CACHE)" \
+    --arg candidateState "$(buildopt_hash_identity CANDIDATE BUILDOPT_STATE)" \
+    --argjson evidence "${buildopt_evidence_fields}" \
+    '{schemaVersion:"buildopt.poc/sticky-wrapper-longitudinal-preflight/v2",
+      workItem:"SWL-014A",contractSha256:$contract,cohortManifestSha256:$cohort,
+      generatedAt:$generatedAt,pairCount:0,
+      arms:[
+        {id:"CONTROL",entrypoint:"./gradlew",workflowArgumentsSha256:$workflow,
+         cachePolicySha256:$cachePolicy,checkoutRootSha256:$controlCheckout,
+         gradleUserHomeSha256:$controlGradle,localBuildCacheRootSha256:$controlCache,
+         buildOptStateRootSha256:$controlState,remoteServiceScopeSha256:$remoteService,
+         remoteNamespace:$controlNamespace,remoteSeedSha256:$remoteSeed},
+        {id:"CANDIDATE",entrypoint:"./buildoptw",workflowArgumentsSha256:$workflow,
+         cachePolicySha256:$cachePolicy,checkoutRootSha256:$candidateCheckout,
+         gradleUserHomeSha256:$candidateGradle,localBuildCacheRootSha256:$candidateCache,
+         buildOptStateRootSha256:$candidateState,remoteServiceScopeSha256:$remoteService,
+         remoteNamespace:$candidateNamespace,remoteSeedSha256:$remoteSeed}],
+      comparison:{workflowArgumentsIdentical:true,cachePolicyIdentical:true,
+        writableRootsDistinct:true,remoteNamespacesDistinct:true,
+        remoteSeedsIdentical:true,crossArmVisibilityAbsent:true},
+      learning:{mode:"auto",trialBudgetPercent:5,learningEnvironmentEnabled:true,
+        requiredCapabilitiesPresent:true},candidateEvidenceFields:$evidence,
+      readyForSWL016:false,outcome:"VALIDATED_NOT_READY"}' >"${buildopt_stage}"
+
+chmod 0600 "${buildopt_stage}"
+mv -- "${buildopt_stage}" "${buildopt_output}"
+trap - EXIT
+printf 'SWL-014A v2 zero-pair preflight written to %s\n' "${buildopt_output}"
