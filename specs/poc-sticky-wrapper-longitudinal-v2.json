@@ -8,23 +8,61 @@
     "terminalAuthority": false,
     "reason": "The control alone received an injected build-cache flag and the candidate executed no-op/light observation with no trial or active action."
   },
-  "preconditions": [
-    {
-      "workItem": "SWL-014A",
-      "gate": "CACHE_SYMMETRIC_PROTOCOL_AND_LIFECYCLE_AWARE_CHECKER"
-    },
-    {
-      "workItem": "SWL-014B",
-      "gate": "REAL_WRAPPER_END_TO_END_LEARNING_AND_ACTION_COMPOSITION"
-    },
-    {
-      "workItem": "SWL-014C",
-      "gate": "GENERIC_TESTABLE_ACTIONS_IN_AT_LEAST_THREE_OF_FIVE_FAMILIES"
-    },
-    {
-      "workItem": "SWL-014D",
-      "gate": "INSTALLED_ACTIVE_PATH_POSITIVE_CONSERVATIVE_VALUE_IN_AT_LEAST_THREE_FAMILIES"
+  "autonomousExecution": {
+    "decisionsLocked": true,
+    "agentMayReinterpret": false,
+    "agentMayChangeThresholds": false,
+    "agentMayAddDetectors": false,
+    "agentMayRenameArtifacts": false,
+    "activeBlock": "SWL-014A",
+    "activeBlockCompleted": [
+      "V2_PROTOCOL_AND_MACHINE_CONTRACT_PREREGISTERED",
+      "V1_CLASSIFIED_DIAGNOSTIC_ONLY",
+      "V1_CHECKER_REJECTS_TERMINAL_READINESS",
+      "RFC_TRACKERS_AND_CUSTOMER_DOCUMENTATION_ALIGNED",
+      "IMPLEMENTATION_DECISIONS_AND_FILE_MANIFESTS_LOCKED"
+    ],
+    "activeBlockPending": [
+      "V2_RUNNER_WITH_PREFLIGHT_ONLY_MODE",
+      "V2_LIFECYCLE_AWARE_CHECKER",
+      "ZERO_PAIR_VALID_AND_NEGATIVE_FIXTURES",
+      "CHECKED_PREFLIGHT_EVIDENCE"
+    ],
+    "completionProtocol": {
+      "sourceControlledLanguage": "ENGLISH",
+      "oneCommitPerCompletedBlock": true,
+      "pushBranch": "main",
+      "requiredRepositoryChecks": [
+        "./dev/check-sticky-wrapper-learning-plan",
+        "./dev/check-tracker-consistency",
+        "./dev/check-layout",
+        "./dev/check-normative-layout",
+        "./dev/check-documentation",
+        "./dev/check-base-ci --static",
+        "git diff --check"
+      ],
+      "requiredFinalState": [
+        "WORKTREE_CLEAN",
+        "HEAD_EQUALS_ORIGIN_MAIN",
+        "HEAD_EQUALS_REMOTE_MAIN"
+      ],
+      "remoteUnavailableOutcome": "BLOCKED_WITH_LOCAL_SHA_AND_VALIDATION_REPORTED"
     }
+  },
+  "encodingRules": {
+    "canonicalJson": "RFC8785_JCS",
+    "unknownFields": "REJECT",
+    "timestamp": "UTC_RFC3339_NANO_CANONICAL",
+    "digest": "LOWERCASE_HEX_SHA256",
+    "duration": "SIGNED_INT64_NANOSECONDS",
+    "sourcePath": "REPOSITORY_RELATIVE_FORWARD_SLASH",
+    "unavailableValue": "EXPLICIT_TYPED_UNAVAILABLE_NEVER_ZERO_FILL"
+  },
+  "preconditions": [
+    {"workItem": "SWL-014A", "gate": "CACHE_SYMMETRIC_PROTOCOL_AND_LIFECYCLE_AWARE_CHECKER"},
+    {"workItem": "SWL-014B", "gate": "REAL_WRAPPER_END_TO_END_LEARNING_AND_ACTION_COMPOSITION"},
+    {"workItem": "SWL-014C", "gate": "GENERIC_TESTABLE_ACTIONS_IN_AT_LEAST_THREE_OF_FIVE_FAMILIES"},
+    {"workItem": "SWL-014D", "gate": "INSTALLED_ACTIVE_PATH_POSITIVE_CONSERVATIVE_VALUE_IN_AT_LEAST_THREE_FAMILIES"}
   ],
   "cohort": {
     "manifest": "benchmarks/results/current-longitudinal-cohorts-v1.json",
@@ -41,12 +79,746 @@
     "buildCachePolicy": "IDENTICAL_EXPLICIT_FROZEN_WORKFLOW_POLICY",
     "sameLocalCacheOpportunity": true,
     "sameRemoteCacheOpportunity": true,
-    "sameRemoteNamespaceAndNetworkProfile": true,
+    "sameNetworkProfile": true,
+    "sameRemoteNamespace": false,
     "runnerMayInjectFlagIntoOneArmOnly": false,
     "separateCheckoutsHomesGradleAndBuildOptState": true,
     "candidateStatePersistsChronologically": true,
     "order": "CONTROL_FIRST_THEN_CANDIDATE_FIRST_ALTERNATING"
   },
+  "cacheTopology": {
+    "dependencyPreparation": {
+      "timed": false,
+      "policy": "IDENTICAL_READ_ONLY_DEPENDENCY_SEED_PER_ARM",
+      "taskOutputsCopied": false,
+      "configurationCacheCopied": false,
+      "localBuildCacheCopiedAfterCampaignStart": false
+    },
+    "local": {
+      "checkout": "SEPARATE_PERSISTENT_PER_FAMILY_AND_ARM_ADVANCED_CHRONOLOGICALLY",
+      "gradleUserHome": "SEPARATE_PERSISTENT_PER_FAMILY_AND_ARM",
+      "daemonRegistry": "SEPARATE_PERSISTENT_PER_FAMILY_AND_ARM",
+      "configurationCache": "SEPARATE_PERSISTENT_PER_FAMILY_AND_ARM",
+      "localBuildCache": "SEPARATE_PERSISTENT_PER_FAMILY_AND_ARM_INITIAL_EMPTY",
+      "workspaceOutputs": "PERSIST_WITHIN_ARM_UNLESS_THE_FROZEN_WORKFLOW_CLEANS_THEM",
+      "controlBuildOptState": "EMPTY_INERT_PRIVATE_ROOT",
+      "candidateBuildOptState": "PRIVATE_PERSISTENT_PER_FAMILY_ACROSS_COMMITS"
+    },
+    "remote": {
+      "serviceInstance": "SAME_OWNER_OPERATED_SERVICE",
+      "networkRouteTLSAndLimits": "IDENTICAL",
+      "namespacePolicy": "SEPARATE_PER_ARM_EMPTY_AT_CAMPAIGN_START",
+      "seedContents": "EMPTY_REMOTE_GRADLE_OBJECT_SET",
+      "sameNamespace": false,
+      "crossArmWriteVisibility": false,
+      "seedDigestRequired": true,
+      "seedFrozenBeforeFirstMeasuredPair": true,
+      "writesPersistChronologicallyWithinArm": true
+    }
+  },
+  "measurementBoundary": {
+    "clock": "EXTERNAL_GO_MONOTONIC",
+    "start": "IMMEDIATELY_BEFORE_DIRECT_COMMAND_START",
+    "stop": "AFTER_DIRECT_COMMAND_WAIT_AND_REQUIRED_PROCESS_TREE_CLEANUP",
+    "included": [
+      "WRAPPER_DECISION",
+      "BUILDOPT_NETWORK_AND_STATE",
+      "BUILDOPT_ACTION",
+      "GRADLE_PROCESS",
+      "OUTPUT_VERIFICATION_REQUIRED_BEFORE_NEXT_ARM"
+    ],
+    "untimed": [
+      "CHECKOUT_ADVANCE",
+      "DEPENDENCY_AND_DISTRIBUTION_PREPARATION",
+      "CANONICAL_EMPTY_CACHE_NAMESPACE_CREATION",
+      "RUNNER_RESULT_SERIALIZATION_AFTER_BOTH_ARMS"
+    ],
+    "runnerFingerprintFields": [
+      "OS",
+      "ARCH",
+      "LOGICAL_CPU_COUNT",
+      "CPU_QUOTA",
+      "MEMORY_LIMIT_BYTES",
+      "JAVA_RUNTIME",
+      "GRADLE_VERSION"
+    ],
+    "fixedFourCpuRunnerRequired": false,
+    "sameFingerprintWithinPairRequired": true,
+    "resourceDriftOutcome": "EXCLUDED_RUNNER_RESOURCE_DRIFT",
+    "failedArmComparable": false
+  },
+  "lifecycleComposition": {
+    "compositionRoot": "internal/launcher/sticky_learning.go",
+    "compositionTest": "internal/launcher/sticky_learning_test.go",
+    "launcherEntry": "internal/launcher/run.go",
+    "learningEnvironment": "BUILDOPT_STICKY_LEARNING",
+    "learningEnabledValue": "1",
+    "learningEnvironmentScrubbedBeforeGradle": true,
+    "trustedTrialRequirements": [
+      "CONFIG_MODE_AUTO",
+      "TRIAL_BUDGET_PERCENT_GREATER_THAN_ZERO",
+      "BUILDOPT_STICKY_LEARNING_EQUALS_1",
+      "TOKEN_HAS_STATE_WRITE",
+      "TOKEN_HAS_CACHE_READ_AND_STATE_READ"
+    ],
+    "ordinaryFlow": [
+      "LOAD_COMMITTED_CONFIG_AND_EXACT_BINDING",
+      "SELECT_VERIFIED_LOCAL_DECISION_WITHOUT_BLOCKING_NETWORK",
+      "RUN_EXACT_ACTIVE_RUNTIME_ACTION_OR_NATIVE_GRADLE",
+      "APPEND_BOUNDED_ORDINARY_OBSERVATION",
+      "APPEND_SIGNED_LEDGER_ENTRY_WHEN_COUNTERFACTUAL_VALUE_EXISTS",
+      "SCHEDULE_ASYNCHRONOUS_STATE_REFRESH"
+    ],
+    "trustedLearningFlow": [
+      "LOAD_GENERIC_PROPOSALS",
+      "RECORD_SHADOW_TRANSITION",
+      "RESERVE_COMMITTED_TRIAL_BUDGET_UP_TO_FIVE_PERCENT",
+      "RUN_ISOLATED_ALTERNATING_NATIVE_AND_CANDIDATE_PAIRS",
+      "EVALUATE_EXACT_OUTPUTS_AND_CONSERVATIVE_VALUE",
+      "PUBLISH_SIGNED_QUALIFIED_OR_SUSPENDED_DECISION_BY_GENERATION_CAS"
+    ],
+    "durableFlow": [
+      "EMIT_REVIEW_ONLY_PATCH_TRANSACTION",
+      "REQUIRE_OWNER_REVIEW_OUTSIDE_BUILDOPT",
+      "VERIFY_POSTIMAGE_BINDING_AFTER_APPLY",
+      "RUN_PLAIN_NATIVE_GRADLE",
+      "NEVER_AUTO_MERGE_OR_MUTATE_THE_LONG_LIVED_CHECKOUT"
+    ],
+    "packageOwners": {
+      "observation": "internal/stickyobservation",
+      "trial": "internal/stickytrial",
+      "decisionAndLedger": "internal/stickydecision",
+      "activeExecution": "internal/stickyactive",
+      "durableDetection": "internal/durablecatalog",
+      "valueStatistics": "internal/stickyvalue",
+      "customerStatus": "internal/stickywrapper/status.go"
+    },
+    "valueApi": {
+      "package": "internal/stickyvalue",
+      "entrypoint": "Evaluate(pairs []Pair, costs Costs) (Evaluation, error)",
+      "pairFields": [
+        "pairId",
+        "order",
+        "nativeWallNs",
+        "candidateWallNs",
+        "outputsEquivalent",
+        "nativeFailure",
+        "candidateFailure"
+      ],
+      "costFields": [
+        "bootstrapNs",
+        "observationNs",
+        "trialNs",
+        "cacheNs",
+        "stateNs",
+        "fallbackNs",
+        "executionNs",
+        "publicationNs",
+        "validationNs"
+      ],
+      "evaluationFields": [
+        "pairEffectsNs",
+        "meanEffectNs",
+        "lowerBoundNs",
+        "upperBoundNs",
+        "positivePairCount",
+        "nativeP95Ns",
+        "candidateP95Ns",
+        "grossSavingNs",
+        "totalCostNs",
+        "netSavingNs",
+        "qualified",
+        "reasons"
+      ],
+      "integerArithmetic": "SIGNED_INT64_WITH_CHECKED_OVERFLOW",
+      "unknownOrMissingCost": "UNAVAILABLE_AND_NOT_QUALIFIED"
+    },
+    "privateTestSeams": [
+      "stickyLearningClock",
+      "stickyLearningDetector",
+      "stickyLearningTrialRunner",
+      "stickyLearningDecisionPublisher"
+    ],
+    "processExecution": {
+      "customerProcessOwner": "internal/launcher.executeChildWithReserved",
+      "processGroupAndSignalContract": "WS-002_UNCHANGED",
+      "stickyActiveRequiredAdapter": "stickyactive.Runner.RunWithExecutor",
+      "stickyTrialRequiredAdapter": "stickytrial.RunPairedWithExecutor",
+      "existingCompatibilityMethodsRemain": [
+        "stickyactive.Runner.Run",
+        "stickytrial.RunPaired"
+      ],
+      "directOsExecAllowedFromCustomerPath": false,
+      "candidateNativeAndCounterfactualUseSameLauncherExecutor": true
+    },
+    "mechanicalFreedom": [
+      "UNEXPORTED_HELPER_SIGNATURES",
+      "LOCAL_ERROR_WRAPPING",
+      "TEST_FIXTURE_ID_VALUES"
+    ]
+  },
+  "detectorCatalog": [
+    {
+      "id": "TASK_CONTRACT_JAVA_V1",
+      "implementation": "internal/durablecatalog.TaskProposal",
+      "inputProducer": "NO_GENERIC_PUBLIC_INPUT_PRODUCER_IN_CURRENT_CODEBASE",
+      "publicScreenOutcome": "INPUT_UNAVAILABLE_NO_GENERIC_SOURCE_PRODUCER",
+      "agentMayCreateProducerInThisRoute": false,
+      "recipe": "CUSTOM_TASK_CONTRACT_JAVA_V1",
+      "minimumRecurringObservations": 3,
+      "projectedSaving": "MINIMUM_ELIGIBLE_TASK_DURATION_ACROSS_THE_LAST_THREE_EXACT_RECURRENCES",
+      "ownerReviewRequired": true
+    },
+    {
+      "id": "DECLARED_GRAPH_SCOPE_V1",
+      "implementation": "internal/durablecatalog.DetectGraphBreadthOpportunity",
+      "inputProducer": "EXISTING_INSTALLED_PROFILE_PROPOSAL_AND_CRITICAL_PATH_PIPELINE",
+      "producerCommands": [
+        "buildopt profile outputs",
+        "buildopt profile input --confirm",
+        "buildopt profile propose",
+        "gradle-critical-path"
+      ],
+      "producerInputs": "FROZEN_COHORT_REPOSITORY_WORKFLOW_REQUIRED_OUTPUTS_AND_CHANGED_PATHS",
+      "publicScreenOutcomeWhenUnsupported": "INPUT_UNAVAILABLE_GRAPH_PROPOSAL_RETAINED_NATIVE",
+      "recipe": "DECLARED_GRAPH_SCOPE_V1",
+      "minimumRecurringObservations": 3,
+      "projectedSaving": "MINIMUM_OMITTED_CRITICAL_PATH_CONTRIBUTION_ACROSS_THE_LAST_THREE_EXACT_RECURRENCES",
+      "ownerReviewRequired": true
+    }
+  ],
+  "opportunityGate": {
+    "families": 5,
+    "minimumPassingFamilies": 3,
+    "detectorsMustRunInDeclaredOrder": ["TASK_CONTRACT_JAVA_V1", "DECLARED_GRAPH_SCOPE_V1"],
+    "projection": {
+      "trialAndValidationCostIncluded": true,
+      "compatibleBuildsToRepayFormula": "CEIL((TRIAL_COST_NS + VALIDATION_COST_NS + PUBLICATION_COST_NS) / PROJECTED_SAVING_NS)",
+      "maximumCompatibleBuildsToRepay": 30,
+      "nonPositiveProjectedSavingRejects": true
+    },
+    "actionIdentity": "SHA256(buildopt-sticky-public-action-v1\\0DETECTOR_ID\\0REPOSITORY_SCOPE_SHA256\\0WORKFLOW_ARGUMENTS_SHA256\\0CANDIDATE_PLAN_SHA256)",
+    "graphObservationPipeline": [
+      "RUN_PROFILE_OUTPUTS_FROM_FROZEN_WORKFLOW_AND_REQUIRED_OUTPUTS",
+      "CREATE_ISOLATED_CONFIRMED_OWNER_INPUT_NOT_COMMITTED_TO_SUBJECT",
+      "RUN_PROFILE_PROPOSE_FOR_EXACT_PARENT_TO_REVISION_DIFF",
+      "RETAIN_NATIVE_WHEN_PROPOSAL_IS_UNSUPPORTED_OR_INCOMPLETE",
+      "RUN_FULL_AND_PROPOSED_CANDIDATE_WITH_OPERATION_TRACE_AND_TASK_GRAPH",
+      "REQUIRE_EXACT_FROZEN_REQUIRED_OUTPUTS",
+      "COMPUTE_OMITTED_CRITICAL_PATH_CONTRIBUTION_WITH_gradlecriticalpath.Analyze",
+      "REQUIRE_THREE_RECURRING_IDENTICAL_ACTION_IDENTITIES"
+    ],
+    "unsupportedDetectorResultIsVisible": true,
+    "repositoryNameRulesAllowed": false,
+    "taskNameRulesAllowed": false,
+    "pathExtensionRulesAllowed": false,
+    "manualEvaluatedProfilesAllowed": false
+  },
+  "statistics": {
+    "installedActivePath": {
+      "minimumPairsPerAction": 8,
+      "order": "ALTERNATING_BALANCED",
+      "effectNs": "NATIVE_WALL_NS_MINUS_CANDIDATE_WALL_NS",
+      "bootstrap": "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95",
+      "lcgInitialState": "(2654435761 * (REPLICATE_INDEX + 1)) MOD 2^32",
+      "lcgStep": "(1664525 * STATE + 1013904223) MOD 2^32",
+      "lowerIndexZeroBased": 102,
+      "upperIndexZeroBased": 3993,
+      "meanSavingMustBePositive": true,
+      "lower95BoundMustBePositive": true,
+      "positivePairMajorityRequired": true,
+      "p95Method": "NEAREST_RANK_PER_ARM",
+      "p95Condition": "CANDIDATE_P95_NS_LESS_THAN_OR_EQUAL_TO_NATIVE_P95_NS",
+      "productFailuresAllowed": 0,
+      "exactOrReviewedOutputsRequired": true
+    },
+    "longitudinal": {
+      "minimumComparablePerFamily": 15,
+      "effectNs": "SIGNED_NET_SAVED_NS_AFTER_ALL_BUILDOPT_COSTS",
+      "method": "DETERMINISTIC_CIRCULAR_MOVING_BLOCK_BOOTSTRAP",
+      "replicates": 10000,
+      "blockLength": "CEIL_SQRT_COMPARABLE_BUILD_COUNT",
+      "seed": "BIG_ENDIAN_UINT64_FIRST_8_BYTES_SHA256(buildopt-sticky-wrapper-longitudinal-v2\\0FAMILY_KEY)",
+      "zeroSeedReplacementHex": "9e3779b97f4a7c15",
+      "prng": "XORSHIFT64_13_7_17",
+      "lowerConfidencePercentile": 5,
+      "lowerIndexZeroBased": 499,
+      "positiveLowerBoundRequired": true,
+      "chronologicalOrderPreservedInsideBlocks": true
+    }
+  },
+  "implementationManifests": [
+    {
+      "workItem": "SWL-014A",
+      "state": "IN_PROGRESS",
+      "create": [
+        "dev/run-sticky-wrapper-longitudinal-v2",
+        "dev/check-sticky-wrapper-longitudinal-v2",
+        "dev/test-sticky-wrapper-longitudinal-v2",
+        "fixtures/sticky-wrapper-longitudinal-v2/valid-zero-pair.json",
+        "fixtures/sticky-wrapper-longitudinal-v2/invalid-asymmetric-cache.json",
+        "fixtures/sticky-wrapper-longitudinal-v2/invalid-missing-lifecycle.json",
+        "fixtures/sticky-wrapper-longitudinal-v2/invalid-zero-budget-learning.json",
+        "fixtures/sticky-wrapper-longitudinal-v2/invalid-shared-state-root.json",
+        "benchmarks/results/sticky-wrapper-longitudinal-v2-preflight.json"
+      ],
+      "documentation": [
+        "docs/plans/sticky-wrapper-learning-poc-tracker.md",
+        "implementation-tracker.md",
+        "specs/poc-sticky-wrapper-longitudinal-v2.md",
+        "specs/poc-sticky-wrapper-longitudinal-v2.json",
+        "specs/README.md",
+        "docs/architecture/repository-map.md",
+        "dev/README.md"
+      ],
+      "resultContract": {
+        "schemaVersion": "buildopt.poc/sticky-wrapper-longitudinal-preflight/v2",
+        "topLevelKeys": [
+          "schemaVersion",
+          "workItem",
+          "contractSha256",
+          "cohortManifestSha256",
+          "generatedAt",
+          "pairCount",
+          "arms",
+          "comparison",
+          "learning",
+          "candidateEvidenceFields",
+          "readyForSWL016",
+          "outcome"
+        ],
+        "armKeys": [
+          "id",
+          "entrypoint",
+          "workflowArgumentsSha256",
+          "cachePolicySha256",
+          "checkoutRootSha256",
+          "gradleUserHomeSha256",
+          "localBuildCacheRootSha256",
+          "buildOptStateRootSha256",
+          "remoteServiceScopeSha256",
+          "remoteNamespace",
+          "remoteSeedSha256"
+        ],
+        "comparisonKeys": [
+          "workflowArgumentsIdentical",
+          "cachePolicyIdentical",
+          "writableRootsDistinct",
+          "remoteNamespacesDistinct",
+          "remoteSeedsIdentical",
+          "crossArmVisibilityAbsent"
+        ],
+        "learningKeys": [
+          "mode",
+          "trialBudgetPercent",
+          "learningEnvironmentEnabled",
+          "requiredCapabilitiesPresent"
+        ],
+        "validZeroPairOutcome": "VALIDATED_NOT_READY",
+        "validZeroPairCount": 0,
+        "validZeroPairReadyForSWL016": false,
+        "invalidFixtureReasons": [
+          "ASYMMETRIC_CACHE_POLICY",
+          "MISSING_LIFECYCLE_EVIDENCE_FIELD",
+          "ZERO_BUDGET_CLAIMED_AS_LEARNING",
+          "SHARED_OR_UNBOUND_WRITABLE_STATE"
+        ]
+      },
+      "focusedChecks": [
+        "./dev/test-sticky-wrapper-longitudinal-v2",
+        "./dev/check-sticky-wrapper-longitudinal-v2 --preflight benchmarks/results/sticky-wrapper-longitudinal-v2-preflight.json",
+        "./dev/check-sticky-wrapper-learning-plan"
+      ]
+    },
+    {
+      "workItem": "SWL-014B",
+      "state": "WAITING",
+      "create": [
+        "internal/launcher/sticky_learning.go",
+        "internal/launcher/sticky_learning_test.go",
+        "internal/stickyvalue/evaluate.go",
+        "internal/stickyvalue/evaluate_test.go",
+        "fixtures/sticky-wrapper-learning/README.md",
+        "dev/check-sticky-wrapper-learning-lifecycle",
+        "specs/poc-sticky-wrapper-learning-lifecycle-v1.md",
+        "specs/poc-sticky-wrapper-learning-lifecycle-v1.json",
+        "benchmarks/results/sticky-wrapper-learning-lifecycle-v1.json"
+      ],
+      "modify": [
+        "internal/launcher/run.go",
+        "internal/launcher/sticky_native_fast_path.go",
+        "internal/launcher/sticky_connection.go",
+        "internal/stickytrial/trial.go",
+        "internal/stickyactive/active.go",
+        "internal/stickywrapper/status.go"
+      ],
+      "documentation": [
+        "README.md",
+        "docs/plans/sticky-wrapper-learning-poc-tracker.md",
+        "implementation-tracker.md",
+        "specs/README.md",
+        "docs/findings/buildopt-poc-handoff.md",
+        "docs/findings/build-optimization-performance.md",
+        "docs/architecture/overview.md",
+        "docs/architecture/repository-map.md",
+        "docs/getting-started/product-onboarding.md",
+        "docs/guides/product-workflows.md",
+        "docs/reference/configuration.md"
+      ],
+      "resultContract": {
+        "schemaVersion": "buildopt.poc/sticky-wrapper-learning-lifecycle/v1",
+        "canonicalSources": {
+          "ordinaryObservation": "stickyobservation.Record",
+          "pairedTrial": "stickytrial.PairedTrial",
+          "actionTransition": "stickydecision.ActionRecord",
+          "signedDecision": "stickydecision.Decision",
+          "economicLedger": "stickydecision.EconomicLedger",
+          "activeExecution": "stickyactive.Execution",
+          "qualification": "stickyvalue.Evaluation"
+        },
+        "topLevelKeys": [
+          "schemaVersion",
+          "workItem",
+          "generatedAt",
+          "fixture",
+          "transitions",
+          "ordinaryInvocations",
+          "negativeCases",
+          "ledger",
+          "recomputed",
+          "outcome"
+        ],
+        "transitionKeys": [
+          "sequence",
+          "from",
+          "to",
+          "decisionGeneration",
+          "actionId",
+          "bindingDigest",
+          "evidenceIds",
+          "reason"
+        ],
+        "requiredTransitions": [
+          "UNSEEN_TO_OBSERVE",
+          "OBSERVE_TO_SHADOW",
+          "SHADOW_TO_TRIAL",
+          "TRIAL_TO_QUALIFIED",
+          "QUALIFIED_TO_ACTIVE",
+          "ACTIVE_TO_SUSPENDED",
+          "SUSPENDED_TO_RETIRED"
+        ],
+        "negativeCases": [
+          "MODE_OBSERVE",
+          "MODE_OFF",
+          "BYPASS",
+          "MISSING_LEARNING_ENVIRONMENT",
+          "MISSING_STATE_WRITE",
+          "ZERO_TRIAL_BUDGET",
+          "EXPIRED_DECISION",
+          "DRIFTED_BINDING",
+          "REVOKED_DECISION",
+          "REGRESSED_OUTPUT_OR_VALUE"
+        ],
+        "successOutcome": "LIFECYCLE_COMPOSED_NATIVE_FALLBACK_PROVEN"
+      },
+      "focusedChecks": [
+        "go test -race ./internal/launcher ./internal/stickyobservation ./internal/stickytrial ./internal/stickydecision ./internal/stickyactive ./internal/stickyvalue ./internal/stickywrapper",
+        "./dev/check-sticky-wrapper-learning-lifecycle",
+        "./dev/check-sticky-wrapper-status"
+      ]
+    },
+    {
+      "workItem": "SWL-014C",
+      "state": "WAITING",
+      "create": [
+        "internal/durablecatalog/public_screen.go",
+        "internal/durablecatalog/public_screen_test.go",
+        "cmd/sticky-opportunity-screen/main.go",
+        "dev/run-sticky-wrapper-opportunity-gate",
+        "dev/check-sticky-wrapper-opportunity-gate",
+        "specs/poc-sticky-wrapper-opportunity-gate-v1.md",
+        "specs/poc-sticky-wrapper-opportunity-gate-v1.json",
+        "benchmarks/results/sticky-wrapper-opportunity-gate-v1.json"
+      ],
+      "documentation": [
+        "README.md",
+        "docs/plans/sticky-wrapper-learning-poc-tracker.md",
+        "implementation-tracker.md",
+        "specs/README.md",
+        "docs/findings/buildopt-poc-handoff.md",
+        "docs/findings/build-optimization-performance.md",
+        "docs/findings/buildopt-generalization-audit.md",
+        "docs/guides/product-workflows.md"
+      ],
+      "resultContract": {
+        "schemaVersion": "buildopt.poc/sticky-wrapper-opportunity-gate/v1",
+        "canonicalSources": {
+          "taskContractProposal": "adaptivefragment.PatchOpportunity_FROM_internal/durablecatalog.TaskProposal",
+          "graphBreadthProposal": "durablecatalog.GraphBreadthOpportunity",
+          "patchTransaction": "durablecatalog.PatchTransaction"
+        },
+        "topLevelKeys": [
+          "schemaVersion",
+          "workItem",
+          "generatedAt",
+          "cohortManifestSha256",
+          "detectorOrder",
+          "families",
+          "passingFamilies",
+          "minimumPassingFamilies",
+          "gatePassed",
+          "outcome"
+        ],
+        "familyKeys": [
+          "familyKey",
+          "revisionWindowSha256",
+          "detectorResults",
+          "testableActions",
+          "passed",
+          "reason"
+        ],
+        "actionKeys": [
+          "actionId",
+          "detectorId",
+          "actionKind",
+          "bindingDigest",
+          "recurringObservationIds",
+          "recurrenceCount",
+          "projectedSavingNs",
+          "trialCostNs",
+          "validationCostNs",
+          "publicationCostNs",
+          "compatibleBuildsToRepay",
+          "outputContract",
+          "ownerReviewRequired"
+        ],
+        "detectorResultKeys": [
+          "detectorId",
+          "status",
+          "reason",
+          "inputEvidenceSha256",
+          "actionIds"
+        ],
+        "detectorStatuses": [
+          "TESTABLE_ACTIONS",
+          "NO_OPPORTUNITY",
+          "INPUT_UNAVAILABLE"
+        ],
+        "passOutcome": "READY_FOR_SWL_014D",
+        "stopOutcome": "SWL_014C_WITH_STOP_EVIDENCE"
+      },
+      "focusedChecks": [
+        "go test -race ./internal/durablecatalog ./cmd/sticky-opportunity-screen",
+        "./dev/check-sticky-wrapper-opportunity-gate"
+      ]
+    },
+    {
+      "workItem": "SWL-014D",
+      "state": "WAITING",
+      "create": [
+        "cmd/sticky-active-value/main.go",
+        "dev/run-sticky-wrapper-active-value",
+        "dev/check-sticky-wrapper-active-value",
+        "specs/poc-sticky-wrapper-active-value-v1.md",
+        "specs/poc-sticky-wrapper-active-value-v1.json",
+        "benchmarks/results/sticky-wrapper-active-value-v1.json"
+      ],
+      "documentation": [
+        "README.md",
+        "docs/plans/sticky-wrapper-learning-poc-tracker.md",
+        "implementation-tracker.md",
+        "specs/README.md",
+        "docs/findings/buildopt-poc-handoff.md",
+        "docs/findings/build-optimization-performance.md",
+        "docs/guides/product-workflows.md"
+      ],
+      "resultContract": {
+        "schemaVersion": "buildopt.poc/sticky-wrapper-active-value/v1",
+        "canonicalSources": {
+          "pairedTrial": "stickytrial.PairedTrial",
+          "activeExecution": "stickyactive.Execution",
+          "qualification": "stickyvalue.Evaluation",
+          "decision": "stickydecision.Decision",
+          "ledger": "stickydecision.EconomicLedger"
+        },
+        "topLevelKeys": [
+          "schemaVersion",
+          "workItem",
+          "generatedAt",
+          "opportunityResultSha256",
+          "actions",
+          "passingFamilies",
+          "minimumPassingFamilies",
+          "gatePassed",
+          "outcome"
+        ],
+        "actionKeys": [
+          "actionId",
+          "familyKey",
+          "decisionGeneration",
+          "bindingDigest",
+          "pairs",
+          "meanSavingNs",
+          "lower95Ns",
+          "upper95Ns",
+          "positivePairs",
+          "nativeP95Ns",
+          "candidateP95Ns",
+          "grossSavingNs",
+          "trialCostNs",
+          "validationCostNs",
+          "publicationCostNs",
+          "executionCostNs",
+          "netSavingNs",
+          "outputEquivalence",
+          "productFailures",
+          "passed",
+          "reason"
+        ],
+        "pairKeys": [
+          "pair",
+          "order",
+          "nativeWallNs",
+          "candidateWallNs",
+          "effectNs",
+          "outputDigest",
+          "candidateActionExecuted"
+        ],
+        "passOutcome": "READY_FOR_SWL_015",
+        "stopOutcome": "SWL_014D_WITH_STOP_EVIDENCE"
+      },
+      "focusedChecks": [
+        "go test -race ./internal/stickyvalue ./cmd/sticky-active-value",
+        "./dev/check-sticky-wrapper-active-value"
+      ]
+    },
+    {
+      "workItem": "SWL-015",
+      "state": "WAITING",
+      "resultDirectory": "benchmarks/results/poc-sticky-wrapper-longitudinal-v2",
+      "requiredResultFiles": [
+        "contract.json",
+        "cohort.json",
+        "rows.jsonl",
+        "exclusions.json",
+        "checkpoints.jsonl",
+        "decisions.jsonl",
+        "ledger.jsonl",
+        "report.json",
+        "sha256sums.txt",
+        "README.md"
+      ],
+      "documentation": [
+        "README.md",
+        "docs/plans/sticky-wrapper-learning-poc-tracker.md",
+        "implementation-tracker.md",
+        "specs/README.md",
+        "docs/findings/buildopt-poc-handoff.md",
+        "docs/findings/build-optimization-performance.md",
+        "docs/findings/buildopt-generalization-audit.md",
+        "docs/guides/product-workflows.md"
+      ],
+      "resultContract": {
+        "rowSchemaVersion": "buildopt.poc/sticky-wrapper-longitudinal-row/v2",
+        "canonicalSources": {
+          "observation": "stickyobservation.Record_DIGEST_REFERENCE",
+          "actionTransition": "stickydecision.ActionRecord_DIGEST_REFERENCE",
+          "decision": "stickydecision.Decision_DIGEST_REFERENCE",
+          "ledger": "stickydecision.EconomicLedger_DIGEST_REFERENCE",
+          "activeExecution": "stickyactive.Execution_DIGEST_REFERENCE"
+        },
+        "rowKeys": [
+          "schemaVersion",
+          "familyKey",
+          "sequence",
+          "revision",
+          "pairOrder",
+          "nativeWallNs",
+          "candidateWallNs",
+          "nativeOutcome",
+          "candidateOutcome",
+          "outputEquivalence",
+          "lifecycleState",
+          "executionDecision",
+          "decisionGeneration",
+          "actionId",
+          "bindingDigest",
+          "actualActionExecuted",
+          "counterfactualStatus",
+          "grossSavingNs",
+          "totalBuildOptCostNs",
+          "netSavingNs",
+          "checkpointSha256",
+          "ledgerEntrySha256"
+        ],
+        "reportSchemaVersion": "buildopt.poc/sticky-wrapper-longitudinal-report/v2",
+        "reportKeys": [
+          "schemaVersion",
+          "workItem",
+          "generatedAt",
+          "contractSha256",
+          "cohortManifestSha256",
+          "families",
+          "portfolio",
+          "readiness",
+          "outcome"
+        ],
+        "readyOutcome": "READY_FOR_SWL_016",
+        "incompleteOutcome": "INCOMPLETE"
+      },
+      "focusedChecks": ["./dev/check-sticky-wrapper-longitudinal-v2 benchmarks/results/poc-sticky-wrapper-longitudinal-v2"]
+    },
+    {
+      "workItem": "SWL-016",
+      "state": "WAITING",
+      "create": [
+        "cmd/sticky-wrapper-terminal-decision/main.go",
+        "dev/check-sticky-wrapper-terminal-decision",
+        "specs/poc-sticky-wrapper-terminal-decision-v1.md",
+        "specs/poc-sticky-wrapper-terminal-decision-v1.json",
+        "benchmarks/results/sticky-wrapper-terminal-decision-v1.json"
+      ],
+      "documentation": [
+        "README.md",
+        "gradle-build-optimization-platform.md",
+        "docs/plans/sticky-wrapper-learning-poc-tracker.md",
+        "implementation-tracker.md",
+        "specs/README.md",
+        "docs/findings/buildopt-poc-handoff.md",
+        "docs/findings/build-optimization-performance.md",
+        "docs/findings/buildopt-generalization-audit.md"
+      ],
+      "resultContract": {
+        "schemaVersion": "buildopt.poc/sticky-wrapper-terminal-decision/v1",
+        "inputModes": [
+          "LONGITUDINAL_V2_READY",
+          "SWL_014C_STOP_EVIDENCE",
+          "SWL_014D_STOP_EVIDENCE"
+        ],
+        "topLevelKeys": [
+          "schemaVersion",
+          "workItem",
+          "generatedAt",
+          "inputMode",
+          "inputDigests",
+          "criteria",
+          "failedCriteria",
+          "wrapperUsability",
+          "acceleration",
+          "terminalOutcome"
+        ],
+        "terminalOutcomes": [
+          "CONTINUE_STICKY_WRAPPER_LEARNING_POC",
+          "STOP_STICKY_WRAPPER_LEARNING_POC",
+          "INCOMPLETE"
+        ]
+      },
+      "focusedChecks": [
+        "go test -race ./cmd/sticky-wrapper-terminal-decision",
+        "./dev/check-sticky-wrapper-terminal-decision"
+      ]
+    }
+  ],
   "candidateEvidenceRequired": [
     "LIFECYCLE_STATE",
     "EXECUTION_DECISION",
@@ -74,7 +846,22 @@
   "stopEarly": {
     "minimumFamiliesWithTestableActions": 3,
     "minimumFamiliesPassingInstalledValueGate": 3,
-    "outcome": "STOP_STICKY_WRAPPER_LEARNING_POC"
+    "terminalAuthority": "SWL-016_ONLY",
+    "onOpportunityFailure": {
+      "completedBlock": "SWL-014C",
+      "blockState": "DONE_WITH_STOP_EVIDENCE",
+      "evidenceOutcome": "SWL_014C_WITH_STOP_EVIDENCE",
+      "skipped": ["SWL-014D", "SWL-015"],
+      "next": "SWL-016"
+    },
+    "onInstalledValueFailure": {
+      "completedBlock": "SWL-014D",
+      "blockState": "DONE_WITH_STOP_EVIDENCE",
+      "evidenceOutcome": "SWL_014D_WITH_STOP_EVIDENCE",
+      "skipped": ["SWL-015"],
+      "next": "SWL-016"
+    },
+    "terminalOutcomeProducedBeforeSWL016": false
   },
   "boundaries": {
     "proofOfConcept": true,

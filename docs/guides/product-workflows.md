@@ -85,7 +85,11 @@ The corrected order is:
 6. `SWL-016`: apply the unchanged terminal scorecard.
 
 Sample count alone never makes the campaign ready. Missing lifecycle, action or
-ledger evidence keeps it incomplete.
+ledger evidence keeps it incomplete. The exact implementation paths, evidence
+keys, two allowed detector adapters, cache topology, deterministic confidence
+algorithms and early-stop outcomes are frozen in the
+[v2 machine contract](../../specs/poc-sticky-wrapper-longitudinal-v2.json).
+An implementation agent executes that contract; it does not choose substitutes.
 
 ### Active runtime boundary
 

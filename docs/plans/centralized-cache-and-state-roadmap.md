@@ -72,8 +72,12 @@ typed sticky-wrapper decision/evidence store over immutable JCS records and the
 existing local/central generation-CAS state boundary; cache correctness is not
 by itself a performance claim. The selector, trial and active runners are
 separately checked but are not yet composed into the ordinary wrapper path.
-`SWL-014B` owns that connection; `SWL-014A` first corrects the longitudinal
-protocol so both arms receive identical Gradle cache opportunity.
+`SWL-014B` owns that connection through the single frozen composition root
+`internal/launcher/sticky_learning.go`; `SWL-014A` first corrects the
+longitudinal protocol so both arms receive identical Gradle cache opportunity
+through separate writable namespaces that start empty. The
+exact route is normative in
+[`poc-sticky-wrapper-longitudinal-v2.json`](../../specs/poc-sticky-wrapper-longitudinal-v2.json).
 
 ### Installed two-machine proof
 

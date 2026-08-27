@@ -175,6 +175,19 @@ an inactive wrapper:
    activation breadth, confidence, cumulative value, payback and durable/runtime
    evidence. Compatibility or cache hits alone cannot continue the POC.
 
+This route no longer leaves implementation choices implicit: the
+[v2 machine contract](../../specs/poc-sticky-wrapper-longitudinal-v2.json)
+fixes per-arm state topology, the launcher composition point, two generic
+detectors, result schemas, statistical algorithms, files/checks and early-stop
+outcomes. Changing one is a new preregistered experiment, not normal block
+implementation.
+
+Only declared graph scope currently has a generic public input path. The
+task-contract detector remains synthetic because no safe generic public source
+producer exists; the screen records it as unavailable instead of special-casing
+repositories. Public breadth must therefore come from the unchanged installed
+profile/critical-path graph route or the experiment stops.
+
 ## POC conclusion
 
 BuildOpt's defensible idea remains an evidence-gated optimizer on top of native

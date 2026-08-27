@@ -3351,6 +3351,20 @@ gate requires exact outputs, zero product failures, negligible native-retention
 cost, positive cumulative value, positive confidence and payback in at least
 three of five public families.
 
+The remaining route is implementation-locked in the detailed tracker and v2
+machine contract. Equivalent cache opportunity means separate per-arm writable
+namespaces that start empty, not one shared namespace. Dependencies and
+distributions may be prepared outside timing, but Gradle task outputs may not.
+External monotonic timing includes the complete command path and rejects
+within-pair resource-fingerprint drift. The only
+new composition root is `internal/launcher/sticky_learning.go`; the only public
+opportunity detectors are the existing task-contract and declared-graph-scope
+detectors. Installed value uses eight-pair deterministic LCG bootstrap and
+nearest-rank arm p95; chronological confidence uses deterministic circular
+moving-block bootstrap over signed net value. A failed breadth/value pre-gate
+skips the expensive campaign and opens `SWL-016`, which remains the sole
+terminal authority. These are frozen POC decisions, not production policy.
+
 The distinction is deliberate:
 
 - Accepted decisions record architecture and safety; they do not prove implementation or value.

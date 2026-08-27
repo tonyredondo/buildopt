@@ -287,7 +287,208 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | 14C | `SWL-014C` Public opportunity and activation pre-gate | Apply only generic detectors to all five frozen families and prove at least three independently testable actions before longitudinal spending | `WAITING` | SWL-014B |
 | 14D | `SWL-014D` Installed active-path value gate | Run balanced candidate/native trials through `./buildoptw`; require exact outputs, positive conservative value and complete cost attribution | `WAITING` | SWL-014C |
 | 15 | `SWL-015` Frozen public longitudinal campaign v2 | Exercise real no-op/observe/trial/active transitions over preregistered chronological windows in five families | `WAITING` | SWL-014D |
-| 16 | `SWL-016` Terminal decision | Recompute the immutable scorecard from v2 evidence and continue or stop without threshold movement | `WAITING` | SWL-015 |
+| 16 | `SWL-016` Terminal decision | Recompute the immutable scorecard from v2 evidence or an earlier immutable stop gate and continue or stop without threshold movement | `WAITING` | SWL-015, or stop evidence from SWL-014C/014D |
+
+## Agent execution contract — decisions already made
+
+This section is normative for the remaining work. Another implementation agent
+must execute it; it must not redesign it. In particular, the agent must not
+rename a frozen artifact, add a detector, change a threshold or statistics
+method, share writable cache state across arms, convert a skipped campaign into
+an incomplete success, or treat sample count as readiness. If repository
+evidence makes one of these decisions impossible, the block is `BLOCKED` and
+the conflict is reported; the agent does not substitute a new design.
+
+### Common completion protocol
+
+For each completed block:
+
+1. start from a clean `main` matching `origin/main` and inspect the exact diff;
+2. create/modify only the paths in that block's manifest plus the documentation
+   rows explicitly owned by that block;
+3. run the focused checks in the manifest, then
+   `./dev/check-sticky-wrapper-learning-plan`,
+   `./dev/check-tracker-consistency`, `./dev/check-layout`,
+   `./dev/check-normative-layout`, `./dev/check-documentation`, exact
+   ShellCheck/actionlint where applicable, `./dev/check-base-ci --static` and
+   `git diff --check`;
+4. update this tracker, `implementation-tracker.md`, the evidence row and every
+   document required by the documentation update contract;
+5. create one English commit for that block, push `main`, then verify a clean
+   worktree and equality of `HEAD`, `origin/main` and remote `main`; and
+6. if credentials or the remote are unavailable, report `BLOCKED` with the
+   validated local SHA. Do not report the block complete.
+
+No soak, design-partner run, automatic merge, production gate or Test
+Optimization work is part of this route.
+
+Every new evidence document uses RFC 8785 JCS, rejects unknown fields, writes
+canonical UTC RFC 3339 nanosecond timestamps, lowercase hexadecimal SHA-256
+digests, signed 64-bit nanosecond durations and repository-relative paths with
+forward slashes. Unavailable values are explicit typed outcomes and are never
+represented as zero.
+
+### Measurement state topology
+
+Control and candidate always use the same explicit Gradle argument vector and
+the same cache policy. They do **not** use one writable namespace. Each family
+and arm receives:
+
+- one separate checkout advanced chronologically through the frozen commits;
+- one separate persistent Gradle user home, daemon registry, Configuration
+  Cache, local Build Cache and workspace outputs;
+- an identically seeded read-only dependency/distribution state prepared
+  outside timing, with no task outputs; and
+- one separate initially empty remote namespace before the first measured pair,
+  through the same service/TLS/network limits.
+
+Remote writes persist within an arm but are never visible to the other arm.
+The control gets an empty inert BuildOpt root. Candidate decision/evidence
+state is private and persists across compatible commits. No task output,
+Configuration Cache, post-start local cache entry or BuildOpt state may be
+copied between arms. Both local Build Caches also start empty. The preflight
+evidence records all root/empty-seed/namespace digests and rejects equality of
+writable paths or namespaces.
+
+Wall time uses an external Go monotonic clock from immediately before direct
+command start until the direct command has been waited and its required process
+tree is clean. Wrapper, decision, state/network, action, Gradle and required
+output verification before the next arm all count. Checkout advance,
+dependency/distribution preparation, empty namespace creation and result
+serialization after both arms do not. The runner records OS, architecture,
+logical CPUs, CPU quota, memory limit, Java and Gradle; this POC does not force
+a 4-CPU runner, but a fingerprint change within a pair excludes that pair as
+`EXCLUDED_RUNNER_RESOURCE_DRIFT`.
+
+### Composition and trigger
+
+`internal/launcher/sticky_learning.go` is the only new composition root;
+`internal/launcher/run.go` delegates to it. It adapts the existing
+`stickyobservation`, `stickytrial`, `stickydecision`, `stickyactive` and
+`durablecatalog` packages. Shared qualification statistics live in the new
+`internal/stickyvalue` package and are consumed by active execution and the
+independent value checker. Private test seams are named
+`stickyLearningClock`, `stickyLearningDetector`,
+`stickyLearningTrialRunner` and `stickyLearningDecisionPublisher`; they exist
+only to inject deterministic fixture behavior, never repository rules.
+
+Every customer-triggered native, candidate and counterfactual process remains
+owned by `internal/launcher.executeChildWithReserved` so the existing WS-002
+process-group, signal and exit-code contract is unchanged. `SWL-014B` adds
+executor-injection adapters named `stickyactive.Runner.RunWithExecutor` and
+`stickytrial.RunPairedWithExecutor`; their existing direct-run methods remain
+compatibility wrappers. Calling `os/exec` directly from the composed customer
+path is forbidden. Unexported helper signatures, local error wrapping and
+fixture identifier values are mechanical implementation freedom; they may not
+change any observable contract or evidence field.
+
+The shared value owner is `internal/stickyvalue`. Its only public calculation
+entry point for this route is
+`Evaluate(pairs []Pair, costs Costs) (Evaluation, error)`. The exact `Pair`,
+`Costs` and `Evaluation` fields are frozen in the v2 machine contract. It uses
+checked signed 64-bit integer arithmetic; any unknown or missing cost makes the
+evaluation unavailable and not qualified.
+
+An ordinary call loads the exact binding, selects a verified local decision
+without blocking on a network lookup, executes an exact active runtime action
+or native Gradle, appends bounded evidence and records ledger value only when
+a counterfactual exists. Refresh is asynchronous. Trusted trials require all
+of: mode `auto`, non-zero committed trial budget,
+`BUILDOPT_STICKY_LEARNING=1`, `STATE_WRITE`, `CACHE_READ` and `STATE_READ` in
+the owner token. The variable and token are scrubbed before Gradle. `observe`
+never trials or activates; `off` and bypass stay native before state access.
+The scheduler reserves the exact committed non-zero `trial_budget_percent`,
+never more than five percent; it does not silently round a smaller owner budget
+up to five percent.
+
+Durable proposals remain review-only. Apply/revert happens in an isolated
+transaction; an owner applies any accepted patch. The wrapper only verifies
+the postimage binding and executes plain native Gradle. There is no automatic
+merge or mutation of the long-lived checkout.
+
+### Frozen generic detectors
+
+`SWL-014C` runs exactly two detector adapters, in this order:
+
+1. `TASK_CONTRACT_JAVA_V1` -> `internal/durablecatalog.TaskProposal` ->
+   `CUSTOM_TASK_CONTRACT_JAVA_V1`. The current repository has no generic public
+   producer for its `PatchOpportunityInput`; every public family therefore
+   records `INPUT_UNAVAILABLE_NO_GENERIC_SOURCE_PRODUCER`. This route may not
+   invent a source parser after seeing results;
+2. `DECLARED_GRAPH_SCOPE_V1` ->
+   `internal/durablecatalog.DetectGraphBreadthOpportunity` ->
+   `DECLARED_GRAPH_SCOPE_V1`, fed only by the installed `profile outputs`,
+   isolated `profile input --confirm`, `profile propose` and
+   `gradlecriticalpath.Analyze` pipeline using the frozen repository,
+   workflow, required outputs and changed paths.
+
+Each needs three exact recurring observations. Task projection is the minimum
+eligible task duration in those three recurrences. Graph projection is the
+minimum omitted critical-path contribution in those recurrences. Repayment is
+`ceil((trial + validation + publication cost) / projected saving)` and must be
+at most 30 compatible builds. A non-positive projection rejects. Repository
+name, task name, path extension and manual evaluated-profile rules are banned.
+
+Graph screening runs the full and proposed candidate with operation/task-graph
+traces for three recurring identical action identities, requires the frozen
+outputs, and projects the minimum omitted critical-path contribution. An
+unsupported/incomplete proposal is visible `INPUT_UNAVAILABLE`, not an action.
+Action identity is the SHA-256 formula frozen in the machine contract over
+detector, repository scope, workflow arguments and candidate plan. No other
+detector or fallback heuristic may be added in this route.
+
+### Frozen statistics
+
+`SWL-014D` uses eight balanced alternating pairs per action. The signed effect
+is `native wall ns - candidate wall ns`. Confidence uses the existing
+4,096-replicate deterministic 32-bit LCG paired bootstrap: initial state
+`2654435761 * (replicate + 1) mod 2^32`, step
+`1664525 * state + 1013904223 mod 2^32`, sorted bounds at zero-based indices
+102 and 3993. Passing requires positive mean, positive lower bound, a strict
+majority of positive pairs, exact/reviewed outputs, zero product failures and
+nearest-rank candidate p95 no greater than native p95.
+
+`SWL-015` uses signed **net** saving after every BuildOpt cost. Per-family
+confidence uses 10,000 deterministic circular moving-block bootstrap
+replicates over at least 15 chronological values. Block length is
+`ceil(sqrt(n))`; block order is preserved with circular wrap. Xorshift64
+steps `(13,7,17)` use the first eight big-endian bytes of
+`SHA-256("buildopt-sticky-wrapper-longitudinal-v2\\0" + familyKey)`; zero uses
+`0x9e3779b97f4a7c15`. Sorted index 499 is the one-sided fifth-percentile lower
+bound and must be positive.
+
+### Exact remaining file manifests
+
+The complete machine-readable lists and focused commands are in
+[`poc-sticky-wrapper-longitudinal-v2.json`](../../specs/poc-sticky-wrapper-longitudinal-v2.json).
+The owning paths are fixed as follows:
+
+| Block | New implementation/evidence paths |
+| --- | --- |
+| `SWL-014A` | `dev/run-sticky-wrapper-longitudinal-v2`, `dev/check-sticky-wrapper-longitudinal-v2`, `dev/test-sticky-wrapper-longitudinal-v2`, `fixtures/sticky-wrapper-longitudinal-v2/*`, `benchmarks/results/sticky-wrapper-longitudinal-v2-preflight.json` |
+| `SWL-014B` | `internal/launcher/sticky_learning.go`, its test, `internal/stickyvalue/*`, `fixtures/sticky-wrapper-learning/README.md`, lifecycle spec/check/result |
+| `SWL-014C` | `internal/durablecatalog/public_screen.go`, `cmd/sticky-opportunity-screen/main.go`, opportunity runner/check/spec/result |
+| `SWL-014D` | `cmd/sticky-active-value/main.go`, installed-value runner/check/spec/result |
+| `SWL-015` | the v2 runner/checker from 014A and `benchmarks/results/poc-sticky-wrapper-longitudinal-v2/` |
+| `SWL-016` | `cmd/sticky-wrapper-terminal-decision/main.go`, terminal checker/spec/result |
+
+Each manifest also lists the exact documentation paths, evidence schema
+version, top-level/record keys and accepted outcome strings. Those JSON arrays
+are normative. A later agent may populate their values and advance the block
+state, but it may not add a field, substitute a path or reinterpret an outcome
+without first reporting the contract as blocked.
+
+### Early-stop state machine
+
+- If fewer than three families pass `SWL-014C`, close it as
+  `DONE_WITH_STOP_EVIDENCE`, mark `SWL-014D` and `SWL-015`
+  `SKIPPED_BY_SWL_014C`, and make `SWL-016` the next block.
+- If fewer than three families pass `SWL-014D`, close it as
+  `DONE_WITH_STOP_EVIDENCE`, mark `SWL-015` `SKIPPED_BY_SWL_014D`, and make
+  `SWL-016` the next block.
+- The opportunity/value result JSON is the stop evidence. Only `SWL-016` emits
+  `STOP_STICKY_WRAPPER_LEARNING_POC`; skipped work is never reported as
+  `INCOMPLETE` or silently rerun.
 
 ## Block contracts
 
@@ -739,17 +940,29 @@ optimization.
 
 Deliverables:
 
-- [`poc-sticky-wrapper-longitudinal-v2`](../../specs/poc-sticky-wrapper-longitudinal-v2.md)
-  and its machine contract;
-- runner/checker preflight that rejects asymmetric `--build-cache`, missing
-  lifecycle evidence, zero-budget masquerading as learning, or an unbound
-  candidate state root;
-- explicit `DIAGNOSTIC_ONLY` classification for the retained v1 sample; and
-- aligned RFC, trackers, one-pager, onboarding, workflows and findings.
+- [x] [`poc-sticky-wrapper-longitudinal-v2`](../../specs/poc-sticky-wrapper-longitudinal-v2.md)
+  and its machine contract are preregistered;
+- [x] the retained v1 sample is explicitly `DIAGNOSTIC_ONLY` and its checker
+  rejects terminal readiness;
+- [x] RFC, trackers, one-pager, onboarding, workflows and findings describe the
+  corrected route;
+- [x] cache topology, lifecycle composition, detector catalog, statistics,
+  early-stop transitions and exact file manifests are locked;
+- [ ] create `dev/run-sticky-wrapper-longitudinal-v2` with
+  `--preflight-only OUTPUT` and the final campaign mode;
+- [ ] create `dev/check-sticky-wrapper-longitudinal-v2` with
+  `--preflight RESULT` and final result-directory modes;
+- [ ] create `dev/test-sticky-wrapper-longitudinal-v2` plus the exact five JSON
+  fixtures named in the machine contract; and
+- [ ] check in `benchmarks/results/sticky-wrapper-longitudinal-v2-preflight.json`.
 
 Acceptance: a zero-pair fixture proves both arms receive the same native cache
 opportunity and the checker cannot emit `READY_FOR_SWL_016` from wall-time rows
-alone. No new performance claim is made in this block.
+alone. The four negatives independently reject asymmetric cache policy,
+missing lifecycle evidence, zero-budget learning and a shared/unbound state
+root. Run the three `SWL-014A` focused commands in the machine contract, then
+the common completion protocol. No new performance claim is made in this
+block.
 
 ### SWL-014B — End-to-end learning/action composition
 
@@ -760,11 +973,20 @@ result may publish a signed decision; and the next compatible wrapper
 invocation must actually execute, counterfactually revalidate or suspend that
 action. Missing or invalid state remains native.
 
+Implementation is confined to the exact `SWL-014B` manifest. The launcher
+composition and `internal/stickyvalue` are new; the existing domain packages
+remain authoritative. The repository-independent fixture supplies its proposal
+through `stickyLearningDetector`; it must not hard-code a repository/task/path
+rule. The fixture token has explicit state-write authority and the learning
+environment switch; negative cases omit each prerequisite independently.
+
 Acceptance: one repository-independent fixture traverses
 `UNSEEN -> OBSERVE -> SHADOW -> TRIAL -> QUALIFIED -> ACTIVE`, plus expiry,
 drift, regression, revocation and suspension paths, through `./buildoptw` rather
 than benchmark-only commands. Every transition and gross/cost/net value is
-visible through `status --json` and recomputes from immutable evidence.
+visible through `status --json` and recomputes from immutable evidence. The
+same checker must prove mode `observe`, mode `off`, bypass, missing write
+authority and exhausted budget retain native Gradle without an action.
 
 ### SWL-014C — Public opportunity and activation pre-gate
 
@@ -774,10 +996,18 @@ is an opportunity screen, not the longitudinal value campaign. Runtime actions
 must be executable through the wrapper; durable actions remain review-only and
 must have an isolated apply/revert transaction.
 
+The runner executes only `TASK_CONTRACT_JAVA_V1` and
+`DECLARED_GRAPH_SCOPE_V1` in the declared order and writes
+`benchmarks/results/sticky-wrapper-opportunity-gate-v1.json`. The independent
+checker recomputes recurrence, projected saving, all costs and repayment from
+raw evidence. An unsupported family is retained with an explicit reason; it is
+not replaced after results are seen.
+
 Acceptance: at least three of five families expose one independently testable
 action with a complete output contract and enough projected compatible builds
 to repay its bounded trial. If fewer than three qualify, stop the experiment
-without spending the 75-or-more builds required by `SWL-015 v2`.
+without spending the 75-or-more builds required by `SWL-015 v2`, using the
+early-stop state machine above.
 
 ### SWL-014D — Installed active-path value gate
 
@@ -787,11 +1017,18 @@ opportunity. The candidate must consume the actual signed decision or reviewed
 durable transaction that would be used later; direct benchmark-only runners do
 not qualify.
 
+Every action receives exactly eight alternating pairs and is evaluated by
+`internal/stickyvalue` using the frozen LCG interval and nearest-rank arm p95.
+The runner writes `benchmarks/results/sticky-wrapper-active-value-v1.json`; the
+checker recomputes the interval, p95, ledger reconciliation and family count
+from raw pairs. No failed action may be substituted after timing.
+
 Acceptance: exact/reviewed outputs, zero product-attributable failures,
 positive mean saving, positive conservative lower bound, no p95 regression,
 complete learning/execution cost attribution and proven native fallback. At
 least three families must pass before `SWL-015 v2` opens. A failed action is
-suspended or retired and receives zero value credit.
+suspended or retired and receives zero value credit. Fewer than three uses the
+early-stop state machine instead of opening the campaign.
 
 ### SWL-015 — Frozen public longitudinal campaign v2
 
@@ -806,6 +1043,12 @@ outputs, complete phase attribution, deterministic checkpoints and a signed
 economic ledger. Candidate rows identify the selected lifecycle decision and
 whether a runtime or durable action actually executed. No repository-specific
 product rule or post-result threshold change is allowed.
+
+The per-family confidence calculation is the frozen deterministic circular
+moving-block bootstrap above. The result directory contains raw rows,
+exclusions, immutable checkpoints, signed ledgers, a report and their digests;
+`dev/check-sticky-wrapper-longitudinal-v2` independently rebuilds every
+aggregate before it can emit `READY_FOR_SWL_016`.
 
 Historical diagnostic: [`poc-sticky-wrapper-longitudinal-sample-v1`](../../benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md)
 completed one `CONTROL_FIRST` pair in each frozen family. All five pairs
@@ -826,8 +1069,10 @@ the v2 preflight supersedes that harness path before new timing is accepted.
 
 ### SWL-016 — Terminal decision
 
-Recompute the frozen scorecard from SWL-015 v2 only. Historical mechanism results
-are context, not passing inputs. Report wrapper usability separately from
+Recompute the frozen scorecard from SWL-015 v2 only when the campaign ran. If
+SWL-014C or SWL-014D produced stop evidence, consume that evidence and the
+explicit skipped-block states instead. Historical mechanism results are
+context, not passing inputs. Report wrapper usability separately from
 acceleration and name every failed criterion.
 
 Acceptance: an independent checker reproduces the result and rejects edited
@@ -879,7 +1124,7 @@ customer behavior, architecture, value evidence or direction changes.
 | `SWL-E015` | SWL-014 | [Two-machine installed wrapper evidence](../../benchmarks/results/sticky-wrapper-two-machine-v1.json), verified bootstrap, owner-commit visibility, read-only central cache hit, output equality and native outage fallback | `DONE` |
 | `SWL-E016` | SWL-015 v1 | [Bounded five-family diagnostic sample](../../benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md): 5/5 compatible exact-output pairs, 2/5 positive, 3/5 negative and -22.149 s signed total; cache-asymmetric no-op/light-observation evidence only | `DONE — DIAGNOSTIC_ONLY` |
 | `SWL-E017` | SWL-016 | Immutable terminal scorecard and continue/stop decision | `WAITING` |
-| `SWL-E019` | SWL-014A | Cache-symmetric v2 protocol, historical-v1 classification, campaign preflight and aligned documentation | `IN_PROGRESS` |
+| `SWL-E019` | SWL-014A | Cache-symmetric v2 protocol, historical-v1 classification, locked autonomous execution contract and file manifests; v2 runner/checker/fixtures/preflight remain pending | `IN_PROGRESS` |
 | `SWL-E020` | SWL-014B | Real wrapper-driven lifecycle composition and recomputable transition/economic evidence | `WAITING` |
 | `SWL-E021` | SWL-014C | Five-family generic opportunity screen and at-least-three-family activation pre-gate | `WAITING` |
 | `SWL-E022` | SWL-014D | Installed active-path candidate/native value evidence for every admitted action | `WAITING` |
@@ -908,6 +1153,7 @@ customer behavior, architecture, value evidence or direction changes.
 
 | Date | Change |
 | --- | --- |
+| 2026-08-27 | Hardened the corrected sticky-wrapper route into an autonomous execution contract. Froze separate initially empty writable cache namespaces, per-arm chronological persistence, an external monotonic timing boundary, the launcher composition root and trusted-learning trigger, the two allowed generic detectors, exact evidence schemas, deterministic installed/longitudinal statistics, exact file/check manifests and conditional early-stop transitions into SWL-016. SWL-014A remains open only for its v2 runner, checker, five fixtures and checked zero-pair preflight. |
 | 2026-08-27 | Audited the sticky-wrapper route before expanding SWL-015. The retained v1 sample compared control `--build-cache` with a no-op/light-observation candidate, while benchmark-only trial, active and durable packages were not composed into the normal wrapper path. Reclassified that sample as `DIAGNOSTIC_ONLY`, preserved every terminal threshold and inserted SWL-014A..D for comparison fairness, end-to-end composition, five-family opportunity breadth and installed active-path value before a versioned SWL-015 v2 campaign. |
 | 2026-08-27 | Closed SWL-008A and hardened its signal boundary. Unconfigured invocations skip gateway, plugin handshake, managed L1, central-cache probes and bootstrap state; ordinary observation defaults to lazy light mode, with explicit full and disabled modes. The light executable digest runs concurrently when possible instead of delaying startup. The no-op path now retains the lightweight process supervisor so descendant signal forwarding and cleanup remain intact. The regenerated 20-sample Linux microbenchmark records +9 ms p95 native no-op overhead, +38 ms p95 light-observation overhead and 0.093 ms p95 pre-child decision time, all within the frozen guardrails. The passthrough fixture also exercises the unconfigured no-op path and bounded signal cleanup. This is wrapper-cost evidence only; no Gradle speedup or action authority is claimed. |
 | 2026-08-27 | Closed SWL-014. The committed sticky wrapper bootstrapped one verified archive in isolated producer/consumer containers, published two Gradle cache objects over HTTPS, kept pending reads invisible until owner commit, restored two tasks from a clean read-only machine, and rebuilt the same output during service outage. Durations were recorded without a wall-time or profile-qualification claim. This originally opened SWL-015 v1; the later route audit superseded that sequence with SWL-014A..D. |

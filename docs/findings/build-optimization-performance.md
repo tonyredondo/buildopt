@@ -93,6 +93,13 @@ cache-symmetric arms and lifecycle-aware readiness; `SWL-014B` composes the real
 wrapper-driven learning/action loop; `SWL-014C` requires generic testable actions
 in at least three public families; and `SWL-014D` proves their installed-path
 value. Only `SWL-015 v2` may produce terminal longitudinal evidence.
+The [v2 machine contract](../../specs/poc-sticky-wrapper-longitudinal-v2.json)
+now fixes the exact cache topology, composition point, detector set, result
+schemas, confidence algorithms and stop transitions; no new timing is claimed
+by that planning closure.
+The task-contract detector has no generic public input producer and therefore
+cannot contribute public breadth in this route; only the installed graph-scope
+pipeline can do so without adding a new hypothesis after results are known.
 
 The active hypothesis is now the
 [Sticky Wrapper Learning POC](../plans/sticky-wrapper-learning-poc-tracker.md).

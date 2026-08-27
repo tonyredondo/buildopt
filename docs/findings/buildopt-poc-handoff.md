@@ -355,6 +355,22 @@ are context only. The immediate work is `SWL-014A..D`; the expensive
 longitudinal campaign is intentionally blocked until the actual customer path
 can activate and measure generic actions.
 
+That path is now implementation-locked rather than left to a later agent:
+separate per-arm cache namespaces start empty; one
+launcher composition connects observation through signed active/suspended
+decisions; only the existing task-contract and declared-graph-scope detectors
+may enter the five-family screen; and deterministic installed/chronological
+statistics decide value. Fewer than three families at either pre-gate skips the
+campaign and goes directly to the independent terminal decision. The next
+concrete deliverable remains the zero-pair v2 preflight runner/checker, not a
+new public timing run.
+
+The task-contract result is deliberately unavailable in that public screen:
+the repository has a safe detector and synthetic evidence, but no generic
+public input producer. The route will not invent a source parser to rescue the
+score. The declared-graph path reuses the installed profile proposal and
+critical-path tooling; it alone must establish public breadth or the POC stops.
+
 `SWL-001` freezes the four file formats, immutable per-platform distribution
 identities, strict portable configuration, explicit management routing,
 pre-bootstrap bypass and update/downgrade behavior. `SWL-002` implements

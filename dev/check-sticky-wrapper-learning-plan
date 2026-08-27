@@ -16,7 +16,7 @@ buildopt_plan="${buildopt_repo_root}/docs/plans/sticky-wrapper-learning-poc-trac
 buildopt_tracker="${buildopt_repo_root}/implementation-tracker.md"
 buildopt_rfc="${buildopt_repo_root}/gradle-build-optimization-platform.md"
 
-for buildopt_command in awk grep jq; do
+for buildopt_command in awk grep jq mktemp; do
     if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
         printf 'required sticky-wrapper-plan command is unavailable: %s\n' \
             "${buildopt_command}" >&2
@@ -163,7 +163,31 @@ if ! jq -e '
     exit 1
 fi
 
-if ! jq -e '
+validate_longitudinal_v2() {
+    jq -e '
+    keys == [
+        "arms",
+        "autonomousExecution",
+        "boundaries",
+        "cacheTopology",
+        "candidateEvidenceRequired",
+        "cohort",
+        "detectorCatalog",
+        "encodingRules",
+        "historicalV1",
+        "implementationManifests",
+        "lifecycleComposition",
+        "measurementBoundary",
+        "opportunityGate",
+        "preconditions",
+        "purpose",
+        "readiness",
+        "schemaVersion",
+        "statistics",
+        "status",
+        "stopEarly",
+        "workItem"
+    ] and
     .schemaVersion == "buildopt.poc/sticky-wrapper-longitudinal/v2" and
     .workItem == "SWL-015" and
     .status == "BLOCKED_BY_SWL_014A_TO_SWL_014D" and
@@ -172,21 +196,381 @@ if ! jq -e '
     [.preconditions[].workItem] == ["SWL-014A", "SWL-014B", "SWL-014C", "SWL-014D"] and
     .cohort.families == 5 and
     .cohort.minimumComparablePerFamily == 15 and
+    .autonomousExecution.decisionsLocked == true and
+    .autonomousExecution.agentMayReinterpret == false and
+    .autonomousExecution.agentMayChangeThresholds == false and
+    .autonomousExecution.agentMayAddDetectors == false and
+    .autonomousExecution.agentMayRenameArtifacts == false and
+    .autonomousExecution.activeBlock == "SWL-014A" and
+    .autonomousExecution.activeBlockPending == [
+        "V2_RUNNER_WITH_PREFLIGHT_ONLY_MODE",
+        "V2_LIFECYCLE_AWARE_CHECKER",
+        "ZERO_PAIR_VALID_AND_NEGATIVE_FIXTURES",
+        "CHECKED_PREFLIGHT_EVIDENCE"
+    ] and
+    .autonomousExecution.completionProtocol.oneCommitPerCompletedBlock == true and
+    .autonomousExecution.completionProtocol.pushBranch == "main" and
+    .autonomousExecution.completionProtocol.requiredRepositoryChecks == [
+        "./dev/check-sticky-wrapper-learning-plan",
+        "./dev/check-tracker-consistency",
+        "./dev/check-layout",
+        "./dev/check-normative-layout",
+        "./dev/check-documentation",
+        "./dev/check-base-ci --static",
+        "git diff --check"
+    ] and
+    .encodingRules == {
+        canonicalJson: "RFC8785_JCS",
+        unknownFields: "REJECT",
+        timestamp: "UTC_RFC3339_NANO_CANONICAL",
+        digest: "LOWERCASE_HEX_SHA256",
+        duration: "SIGNED_INT64_NANOSECONDS",
+        sourcePath: "REPOSITORY_RELATIVE_FORWARD_SLASH",
+        unavailableValue: "EXPLICIT_TYPED_UNAVAILABLE_NEVER_ZERO_FILL"
+    } and
     .arms.workflowArgumentsIdentical == true and
     .arms.sameLocalCacheOpportunity == true and
     .arms.sameRemoteCacheOpportunity == true and
+    .arms.sameNetworkProfile == true and
+    .arms.sameRemoteNamespace == false and
     .arms.runnerMayInjectFlagIntoOneArmOnly == false and
+    .cacheTopology.dependencyPreparation.timed == false and
+    .cacheTopology.dependencyPreparation.taskOutputsCopied == false and
+    .cacheTopology.local.controlBuildOptState == "EMPTY_INERT_PRIVATE_ROOT" and
+    .cacheTopology.local.candidateBuildOptState == "PRIVATE_PERSISTENT_PER_FAMILY_ACROSS_COMMITS" and
+    .cacheTopology.local.localBuildCache ==
+        "SEPARATE_PERSISTENT_PER_FAMILY_AND_ARM_INITIAL_EMPTY" and
+    .cacheTopology.remote.namespacePolicy == "SEPARATE_PER_ARM_EMPTY_AT_CAMPAIGN_START" and
+    .cacheTopology.remote.seedContents == "EMPTY_REMOTE_GRADLE_OBJECT_SET" and
+    .cacheTopology.remote.sameNamespace == false and
+    .cacheTopology.remote.crossArmWriteVisibility == false and
+    .cacheTopology.remote.seedDigestRequired == true and
+    .measurementBoundary.clock == "EXTERNAL_GO_MONOTONIC" and
+    .measurementBoundary.start == "IMMEDIATELY_BEFORE_DIRECT_COMMAND_START" and
+    .measurementBoundary.stop ==
+        "AFTER_DIRECT_COMMAND_WAIT_AND_REQUIRED_PROCESS_TREE_CLEANUP" and
+    .measurementBoundary.fixedFourCpuRunnerRequired == false and
+    .measurementBoundary.sameFingerprintWithinPairRequired == true and
+    .measurementBoundary.resourceDriftOutcome == "EXCLUDED_RUNNER_RESOURCE_DRIFT" and
+    .measurementBoundary.failedArmComparable == false and
+    .lifecycleComposition.compositionRoot == "internal/launcher/sticky_learning.go" and
+    .lifecycleComposition.learningEnvironment == "BUILDOPT_STICKY_LEARNING" and
+    .lifecycleComposition.learningEnabledValue == "1" and
+    .lifecycleComposition.learningEnvironmentScrubbedBeforeGradle == true and
+    .lifecycleComposition.packageOwners.valueStatistics == "internal/stickyvalue" and
+    .lifecycleComposition.valueApi.package == "internal/stickyvalue" and
+    .lifecycleComposition.valueApi.entrypoint ==
+        "Evaluate(pairs []Pair, costs Costs) (Evaluation, error)" and
+    .lifecycleComposition.valueApi.pairFields == [
+        "pairId", "order", "nativeWallNs", "candidateWallNs",
+        "outputsEquivalent", "nativeFailure", "candidateFailure"
+    ] and
+    .lifecycleComposition.valueApi.costFields == [
+        "bootstrapNs", "observationNs", "trialNs", "cacheNs", "stateNs",
+        "fallbackNs", "executionNs", "publicationNs", "validationNs"
+    ] and
+    .lifecycleComposition.valueApi.evaluationFields == [
+        "pairEffectsNs", "meanEffectNs", "lowerBoundNs", "upperBoundNs",
+        "positivePairCount", "nativeP95Ns", "candidateP95Ns",
+        "grossSavingNs", "totalCostNs", "netSavingNs", "qualified", "reasons"
+    ] and
+    .lifecycleComposition.valueApi.integerArithmetic ==
+        "SIGNED_INT64_WITH_CHECKED_OVERFLOW" and
+    .lifecycleComposition.valueApi.unknownOrMissingCost ==
+        "UNAVAILABLE_AND_NOT_QUALIFIED" and
+    .lifecycleComposition.processExecution.customerProcessOwner ==
+        "internal/launcher.executeChildWithReserved" and
+    .lifecycleComposition.processExecution.processGroupAndSignalContract ==
+        "WS-002_UNCHANGED" and
+    .lifecycleComposition.processExecution.stickyActiveRequiredAdapter ==
+        "stickyactive.Runner.RunWithExecutor" and
+    .lifecycleComposition.processExecution.stickyTrialRequiredAdapter ==
+        "stickytrial.RunPairedWithExecutor" and
+    .lifecycleComposition.processExecution.directOsExecAllowedFromCustomerPath == false and
+    .lifecycleComposition.processExecution.candidateNativeAndCounterfactualUseSameLauncherExecutor == true and
+    [.detectorCatalog[].id] == ["TASK_CONTRACT_JAVA_V1", "DECLARED_GRAPH_SCOPE_V1"] and
+    [.detectorCatalog[].implementation] == [
+        "internal/durablecatalog.TaskProposal",
+        "internal/durablecatalog.DetectGraphBreadthOpportunity"
+    ] and
+    .detectorCatalog[0].inputProducer ==
+        "NO_GENERIC_PUBLIC_INPUT_PRODUCER_IN_CURRENT_CODEBASE" and
+    .detectorCatalog[0].publicScreenOutcome ==
+        "INPUT_UNAVAILABLE_NO_GENERIC_SOURCE_PRODUCER" and
+    .detectorCatalog[0].agentMayCreateProducerInThisRoute == false and
+    .detectorCatalog[1].inputProducer ==
+        "EXISTING_INSTALLED_PROFILE_PROPOSAL_AND_CRITICAL_PATH_PIPELINE" and
+    .detectorCatalog[1].producerCommands == [
+        "buildopt profile outputs",
+        "buildopt profile input --confirm",
+        "buildopt profile propose",
+        "gradle-critical-path"
+    ] and
+    .opportunityGate.families == 5 and
+    .opportunityGate.minimumPassingFamilies == 3 and
+    .opportunityGate.detectorsMustRunInDeclaredOrder == [
+        "TASK_CONTRACT_JAVA_V1",
+        "DECLARED_GRAPH_SCOPE_V1"
+    ] and
+    .opportunityGate.projection.maximumCompatibleBuildsToRepay == 30 and
+    .opportunityGate.actionIdentity ==
+        "SHA256(buildopt-sticky-public-action-v1\\0DETECTOR_ID\\0REPOSITORY_SCOPE_SHA256\\0WORKFLOW_ARGUMENTS_SHA256\\0CANDIDATE_PLAN_SHA256)" and
+    (.opportunityGate.graphObservationPipeline | length) == 8 and
+    .opportunityGate.unsupportedDetectorResultIsVisible == true and
+    .opportunityGate.repositoryNameRulesAllowed == false and
+    .opportunityGate.taskNameRulesAllowed == false and
+    .opportunityGate.pathExtensionRulesAllowed == false and
+    .opportunityGate.manualEvaluatedProfilesAllowed == false and
+    .statistics.installedActivePath.minimumPairsPerAction == 8 and
+    .statistics.installedActivePath.bootstrap == "DETERMINISTIC_LCG_PAIRED_BOOTSTRAP_4096_TWO_SIDED_95" and
+    .statistics.installedActivePath.lowerIndexZeroBased == 102 and
+    .statistics.installedActivePath.upperIndexZeroBased == 3993 and
+    .statistics.installedActivePath.positivePairMajorityRequired == true and
+    .statistics.installedActivePath.p95Condition == "CANDIDATE_P95_NS_LESS_THAN_OR_EQUAL_TO_NATIVE_P95_NS" and
+    .statistics.longitudinal.minimumComparablePerFamily == 15 and
+    .statistics.longitudinal.method == "DETERMINISTIC_CIRCULAR_MOVING_BLOCK_BOOTSTRAP" and
+    .statistics.longitudinal.replicates == 10000 and
+    .statistics.longitudinal.blockLength == "CEIL_SQRT_COMPARABLE_BUILD_COUNT" and
+    .statistics.longitudinal.prng == "XORSHIFT64_13_7_17" and
+    .statistics.longitudinal.lowerIndexZeroBased == 499 and
+    [.implementationManifests[].workItem] == [
+        "SWL-014A", "SWL-014B", "SWL-014C", "SWL-014D", "SWL-015", "SWL-016"
+    ] and
+    all(.implementationManifests[];
+        (.focusedChecks | length) >= 1 and
+        has("resultContract") and
+        ((.create // []) | length) == ((.create // []) | unique | length) and
+        ((.modify // []) | length) == ((.modify // []) | unique | length) and
+        (.documentation | length) == (.documentation | unique | length)
+    ) and
+    .implementationManifests[0].state == "IN_PROGRESS" and
+    .implementationManifests[0].create[0:3] == [
+        "dev/run-sticky-wrapper-longitudinal-v2",
+        "dev/check-sticky-wrapper-longitudinal-v2",
+        "dev/test-sticky-wrapper-longitudinal-v2"
+    ] and
+    .implementationManifests[0].resultContract.schemaVersion ==
+        "buildopt.poc/sticky-wrapper-longitudinal-preflight/v2" and
+    .implementationManifests[0].resultContract.topLevelKeys == [
+        "schemaVersion", "workItem", "contractSha256", "cohortManifestSha256",
+        "generatedAt", "pairCount", "arms", "comparison", "learning",
+        "candidateEvidenceFields", "readyForSWL016", "outcome"
+    ] and
+    .implementationManifests[0].resultContract.validZeroPairOutcome ==
+        "VALIDATED_NOT_READY" and
+    .implementationManifests[0].resultContract.validZeroPairCount == 0 and
+    .implementationManifests[0].resultContract.validZeroPairReadyForSWL016 == false and
+    .implementationManifests[0].resultContract.invalidFixtureReasons == [
+        "ASYMMETRIC_CACHE_POLICY",
+        "MISSING_LIFECYCLE_EVIDENCE_FIELD",
+        "ZERO_BUDGET_CLAIMED_AS_LEARNING",
+        "SHARED_OR_UNBOUND_WRITABLE_STATE"
+    ] and
+    .implementationManifests[1].create[0:4] == [
+        "internal/launcher/sticky_learning.go",
+        "internal/launcher/sticky_learning_test.go",
+        "internal/stickyvalue/evaluate.go",
+        "internal/stickyvalue/evaluate_test.go"
+    ] and
+    .implementationManifests[1].modify == [
+        "internal/launcher/run.go",
+        "internal/launcher/sticky_native_fast_path.go",
+        "internal/launcher/sticky_connection.go",
+        "internal/stickytrial/trial.go",
+        "internal/stickyactive/active.go",
+        "internal/stickywrapper/status.go"
+    ] and
+    .implementationManifests[1].resultContract.schemaVersion ==
+        "buildopt.poc/sticky-wrapper-learning-lifecycle/v1" and
+    .implementationManifests[1].resultContract.topLevelKeys == [
+        "schemaVersion", "workItem", "generatedAt", "fixture", "transitions",
+        "ordinaryInvocations", "negativeCases", "ledger", "recomputed", "outcome"
+    ] and
+    .implementationManifests[1].resultContract.successOutcome ==
+        "LIFECYCLE_COMPOSED_NATIVE_FALLBACK_PROVEN" and
+    .implementationManifests[1].resultContract.canonicalSources.qualification ==
+        "stickyvalue.Evaluation" and
+    .implementationManifests[2].resultContract.schemaVersion ==
+        "buildopt.poc/sticky-wrapper-opportunity-gate/v1" and
+    .implementationManifests[2].resultContract.topLevelKeys == [
+        "schemaVersion", "workItem", "generatedAt", "cohortManifestSha256",
+        "detectorOrder", "families", "passingFamilies", "minimumPassingFamilies",
+        "gatePassed", "outcome"
+    ] and
+    .implementationManifests[2].resultContract.passOutcome == "READY_FOR_SWL_014D" and
+    .implementationManifests[2].resultContract.stopOutcome ==
+        "SWL_014C_WITH_STOP_EVIDENCE" and
+    .implementationManifests[2].resultContract.canonicalSources.graphBreadthProposal ==
+        "durablecatalog.GraphBreadthOpportunity" and
+    .implementationManifests[3].resultContract.schemaVersion ==
+        "buildopt.poc/sticky-wrapper-active-value/v1" and
+    .implementationManifests[3].resultContract.topLevelKeys == [
+        "schemaVersion", "workItem", "generatedAt", "opportunityResultSha256",
+        "actions", "passingFamilies", "minimumPassingFamilies", "gatePassed", "outcome"
+    ] and
+    .implementationManifests[3].resultContract.passOutcome == "READY_FOR_SWL_015" and
+    .implementationManifests[3].resultContract.stopOutcome ==
+        "SWL_014D_WITH_STOP_EVIDENCE" and
+    .implementationManifests[3].resultContract.canonicalSources.pairedTrial ==
+        "stickytrial.PairedTrial" and
+    .implementationManifests[4].requiredResultFiles == [
+        "contract.json",
+        "cohort.json",
+        "rows.jsonl",
+        "exclusions.json",
+        "checkpoints.jsonl",
+        "decisions.jsonl",
+        "ledger.jsonl",
+        "report.json",
+        "sha256sums.txt",
+        "README.md"
+    ] and
+    .implementationManifests[4].resultContract.readyOutcome == "READY_FOR_SWL_016" and
+    .implementationManifests[4].resultContract.rowSchemaVersion ==
+        "buildopt.poc/sticky-wrapper-longitudinal-row/v2" and
+    .implementationManifests[4].resultContract.reportSchemaVersion ==
+        "buildopt.poc/sticky-wrapper-longitudinal-report/v2" and
+    .implementationManifests[4].resultContract.canonicalSources.ledger ==
+        "stickydecision.EconomicLedger_DIGEST_REFERENCE" and
+    .implementationManifests[5].resultContract.schemaVersion ==
+        "buildopt.poc/sticky-wrapper-terminal-decision/v1" and
+    .implementationManifests[5].resultContract.topLevelKeys == [
+        "schemaVersion", "workItem", "generatedAt", "inputMode", "inputDigests",
+        "criteria", "failedCriteria", "wrapperUsability", "acceleration",
+        "terminalOutcome"
+    ] and
+    .implementationManifests[5].resultContract.inputModes == [
+        "LONGITUDINAL_V2_READY",
+        "SWL_014C_STOP_EVIDENCE",
+        "SWL_014D_STOP_EVIDENCE"
+    ] and
+    [.implementationManifests[].documentation] == [
+        [
+            "docs/plans/sticky-wrapper-learning-poc-tracker.md",
+            "implementation-tracker.md",
+            "specs/poc-sticky-wrapper-longitudinal-v2.md",
+            "specs/poc-sticky-wrapper-longitudinal-v2.json",
+            "specs/README.md",
+            "docs/architecture/repository-map.md",
+            "dev/README.md"
+        ],
+        [
+            "README.md",
+            "docs/plans/sticky-wrapper-learning-poc-tracker.md",
+            "implementation-tracker.md",
+            "specs/README.md",
+            "docs/findings/buildopt-poc-handoff.md",
+            "docs/findings/build-optimization-performance.md",
+            "docs/architecture/overview.md",
+            "docs/architecture/repository-map.md",
+            "docs/getting-started/product-onboarding.md",
+            "docs/guides/product-workflows.md",
+            "docs/reference/configuration.md"
+        ],
+        [
+            "README.md",
+            "docs/plans/sticky-wrapper-learning-poc-tracker.md",
+            "implementation-tracker.md",
+            "specs/README.md",
+            "docs/findings/buildopt-poc-handoff.md",
+            "docs/findings/build-optimization-performance.md",
+            "docs/findings/buildopt-generalization-audit.md",
+            "docs/guides/product-workflows.md"
+        ],
+        [
+            "README.md",
+            "docs/plans/sticky-wrapper-learning-poc-tracker.md",
+            "implementation-tracker.md",
+            "specs/README.md",
+            "docs/findings/buildopt-poc-handoff.md",
+            "docs/findings/build-optimization-performance.md",
+            "docs/guides/product-workflows.md"
+        ],
+        [
+            "README.md",
+            "docs/plans/sticky-wrapper-learning-poc-tracker.md",
+            "implementation-tracker.md",
+            "specs/README.md",
+            "docs/findings/buildopt-poc-handoff.md",
+            "docs/findings/build-optimization-performance.md",
+            "docs/findings/buildopt-generalization-audit.md",
+            "docs/guides/product-workflows.md"
+        ],
+        [
+            "README.md",
+            "gradle-build-optimization-platform.md",
+            "docs/plans/sticky-wrapper-learning-poc-tracker.md",
+            "implementation-tracker.md",
+            "specs/README.md",
+            "docs/findings/buildopt-poc-handoff.md",
+            "docs/findings/build-optimization-performance.md",
+            "docs/findings/buildopt-generalization-audit.md"
+        ]
+    ] and
     .readiness.sampleCountAloneIsSufficient == false and
     .readiness.allPreconditionsRequired == true and
     .readiness.completeLifecycleEvidenceRequired == true and
     .readiness.signedEconomicLedgerRequired == true and
     .stopEarly.minimumFamiliesWithTestableActions == 3 and
     .stopEarly.minimumFamiliesPassingInstalledValueGate == 3 and
+    .stopEarly.terminalAuthority == "SWL-016_ONLY" and
+    .stopEarly.onOpportunityFailure == {
+        completedBlock: "SWL-014C",
+        blockState: "DONE_WITH_STOP_EVIDENCE",
+        evidenceOutcome: "SWL_014C_WITH_STOP_EVIDENCE",
+        skipped: ["SWL-014D", "SWL-015"],
+        next: "SWL-016"
+    } and
+    .stopEarly.onInstalledValueFailure == {
+        completedBlock: "SWL-014D",
+        blockState: "DONE_WITH_STOP_EVIDENCE",
+        evidenceOutcome: "SWL_014D_WITH_STOP_EVIDENCE",
+        skipped: ["SWL-015"],
+        next: "SWL-016"
+    } and
+    .stopEarly.terminalOutcomeProducedBeforeSWL016 == false and
     .boundaries.terminalThresholdsChanged == false
-' "${buildopt_longitudinal_v2_contract}" >/dev/null; then
+' "$1" >/dev/null
+}
+
+if ! validate_longitudinal_v2 "${buildopt_longitudinal_v2_contract}"; then
     printf 'sticky-wrapper longitudinal v2 contract is malformed\n' >&2
     exit 1
 fi
+
+while IFS= read -r buildopt_owned_path; do
+    if [[ ! -f "${buildopt_repo_root}/${buildopt_owned_path}" ]]; then
+        printf 'sticky-wrapper longitudinal v2 manifest references a missing existing path: %s\n' \
+            "${buildopt_owned_path}" >&2
+        exit 1
+    fi
+done < <(
+    jq -r '.implementationManifests[] | (.modify[]?, .documentation[])' \
+        "${buildopt_longitudinal_v2_contract}" | sort -u
+)
+
+buildopt_negative_contract=$(mktemp "${TMPDIR:-/tmp}/buildopt-sticky-v2-negative.XXXXXX")
+trap 'rm -f -- "${buildopt_negative_contract}"' EXIT
+buildopt_negative_mutations=(
+    '.cacheTopology.remote.sameNamespace = true'
+    '.statistics.installedActivePath.minimumPairsPerAction = 4'
+    '.detectorCatalog += [{"id":"REPOSITORY_SPECIAL_CASE"}]'
+    '.detectorCatalog[0].agentMayCreateProducerInThisRoute = true'
+    '.implementationManifests[0].resultContract.validZeroPairReadyForSWL016 = true'
+    '.implementationManifests[4].requiredResultFiles = []'
+    '.implementationManifests[0].create += [.implementationManifests[0].create[0]]'
+    '.implementationManifests[2].documentation[0] = "docs/invented.md"'
+    '.stopEarly.terminalOutcomeProducedBeforeSWL016 = true'
+)
+for buildopt_mutation in "${buildopt_negative_mutations[@]}"; do
+    jq "${buildopt_mutation}" "${buildopt_longitudinal_v2_contract}" > \
+        "${buildopt_negative_contract}"
+    if validate_longitudinal_v2 "${buildopt_negative_contract}"; then
+        printf 'sticky-wrapper longitudinal v2 validator accepted forbidden mutation: %s\n' \
+            "${buildopt_mutation}" >&2
+        exit 1
+    fi
+done
 
 buildopt_ordered_blocks=$(
     awk '
@@ -231,6 +615,12 @@ fi
 buildopt_required_text=(
     "${buildopt_plan}|**Progress:** \`16/22\` blocks complete"
     "${buildopt_plan}|**Current block:** \`SWL-014A\` — protocol and comparison-fairness correction"
+    "${buildopt_plan}|## Agent execution contract — decisions already made"
+    "${buildopt_longitudinal_v2_contract}|SEPARATE_PER_ARM_EMPTY_AT_CAMPAIGN_START"
+    "${buildopt_plan}|\`internal/launcher/sticky_learning.go\` is the only new composition root"
+    "${buildopt_plan}|\`TASK_CONTRACT_JAVA_V1\`"
+    "${buildopt_longitudinal_v2_contract}|DETERMINISTIC_CIRCULAR_MOVING_BLOCK_BOOTSTRAP"
+    "${buildopt_plan}|\`SKIPPED_BY_SWL_014C\`"
     "${buildopt_plan}|./buildoptw <gradle args...>"
     "${buildopt_plan}|The existing central cache and state implementation is reused."
     "${buildopt_spec}|# Sticky wrapper learning POC v1"
@@ -253,6 +643,7 @@ buildopt_required_text=(
     "${buildopt_tracker}|\`E-415\`"
     "${buildopt_tracker}|\`E-416\`"
     "${buildopt_tracker}|\`E-418\`"
+    "${buildopt_tracker}|\`E-419\`"
     "${buildopt_plan}|\`SWL-E015\`"
     "${buildopt_plan}|\`SWL-E018\`"
     "${buildopt_plan}|\`SWL-E019\`"
@@ -262,6 +653,8 @@ buildopt_required_text=(
     "${buildopt_plan}|poc-sticky-wrapper-two-machine-v1.md"
     "${buildopt_longitudinal_v2_spec}|# Sticky wrapper longitudinal campaign v2"
     "${buildopt_longitudinal_v2_spec}|Sample count alone cannot produce \`READY_FOR_SWL_016\`."
+    "${buildopt_longitudinal_v2_spec}|## Autonomous execution boundary"
+    "${buildopt_longitudinal_v2_spec}|## Frozen statistics"
     "${buildopt_rfc}|generate and commit BuildOpt Wrapper"
     "${buildopt_rfc}|Sticky Wrapper Learning POC Tracker"
 )

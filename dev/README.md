@@ -184,6 +184,25 @@ v1 diagnostic evidence:
 readiness. The v2 runner and checker are deliverables of `SWL-014A`; do not
 spend the public longitudinal campaign budget before `SWL-014A..D` pass.
 
+The remaining `SWL-014A` implementation is intentionally exact. Create:
+
+```text
+dev/run-sticky-wrapper-longitudinal-v2
+dev/check-sticky-wrapper-longitudinal-v2
+dev/test-sticky-wrapper-longitudinal-v2
+fixtures/sticky-wrapper-longitudinal-v2/{valid-zero-pair,invalid-asymmetric-cache,invalid-missing-lifecycle,invalid-zero-budget-learning,invalid-shared-state-root}.json
+benchmarks/results/sticky-wrapper-longitudinal-v2-preflight.json
+```
+
+The runner exposes `--preflight-only OUTPUT`; the checker exposes
+`--preflight RESULT`. The fixture test must prove the valid zero-pair result is
+not terminal-ready and each named invalid condition rejects independently.
+Cache topology, persistent arm state, the later composition root, detector
+catalog, statistical algorithms, early-stop transitions and all subsequent
+file manifests are normative in
+`specs/poc-sticky-wrapper-longitudinal-v2.{md,json}`. An implementation agent
+must not choose replacements for them.
+
 ## Toolchain lock
 
 [`toolchains.lock.yaml`](./toolchains.lock.yaml) is the source of truth for downloadable development toolchains on the initial `linux-amd64` platform. It is JSON-compatible YAML 1.2 so the Phase 0 validator can parse it with `jq` before the repository adopts a YAML library.

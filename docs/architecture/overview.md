@@ -98,18 +98,33 @@ activate an action. `internal/stickyactive` and `internal/durablecatalog` also
 prove isolated execution/suspension and review-only patch mechanics, but none of
 those benchmark-owned packages is called from the ordinary launcher today.
 `SWL-014B` owns the missing composition from observation through signed active
-decision and economics behind the committed wrapper. This boundary is frozen in
-the [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
-and is implemented through deterministic generation, verified package
-bootstrap, exact Gradle passthrough, authenticated portable connection and
-read-only central cache integration. The decision store grants no production
-authority and does not make a standalone wall-time claim.
+decision and economics behind the committed wrapper. Its only new composition
+root is `internal/launcher/sticky_learning.go`; `internal/launcher/run.go`
+delegates to it, and shared conservative value statistics live in
+`internal/stickyvalue`. Trusted learning additionally requires mode `auto`, a
+non-zero committed trial budget, explicit `BUILDOPT_STICKY_LEARNING=1` and an
+owner token with state-write/cache-read/state-read authority. This boundary is
+frozen in the
+[Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
+and its [v2 machine contract](../../specs/poc-sticky-wrapper-longitudinal-v2.json).
+It builds on deterministic generation, verified package bootstrap, exact
+Gradle passthrough, authenticated portable connection and read-only central
+cache integration. The decision store grants no production authority and does
+not make a standalone wall-time claim. Native, candidate and counterfactual
+children still use the launcher's existing process supervisor; executor
+adapters in `stickyactive` and `stickytrial` must not bypass WS-002 signal or
+exit semantics.
 
 The original longitudinal v1 harness is not architecture evidence for that
 composition. It configured no central identity and zero trial budget and gave
 `--build-cache` only to control. The versioned v2 route requires symmetric cache
-opportunity plus explicit lifecycle/action/ledger records before a campaign can
-become terminal-ready.
+opportunity through separate per-arm writable namespaces that start empty,
+plus explicit lifecycle/action/ledger records before a campaign
+can become terminal-ready. Only the existing task-contract and
+declared-graph-scope detectors may enter the public opportunity gate. Because
+the current code has no generic public producer for task-contract input, that
+detector reports explicit input unavailability; only the existing installed
+profile/critical-path graph route can currently produce a public action.
 
 The installed two-machine proof exercises this boundary with a trusted
 producer and a clean read-only consumer in separate containers. The wrapper

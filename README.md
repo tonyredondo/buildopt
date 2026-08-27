@@ -179,7 +179,8 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > decision. Before `SWL-015 v2`, the POC must prove cache-symmetric arms, connect
 > the full learning/action lifecycle, find generic actions in at least 3/5
 > families and demonstrate positive installed-path value. See the
-> [sample evidence](./benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md).
+> [sample evidence](./benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md)
+> and the [locked v2 execution contract](./specs/poc-sticky-wrapper-longitudinal-v2.json).
 
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired
