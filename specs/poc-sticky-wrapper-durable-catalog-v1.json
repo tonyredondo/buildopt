@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-durable-catalog/v1",
+  "workItem": "SWL-012",
+  "purpose": "IDENTIFY_REVIEWABLE_DURABLE_NATIVE_OPPORTUNITIES",
+  "opportunityClasses": [
+    {
+      "id": "TASK_CONTRACT",
+      "detector": "REPEATABLE_EXPENSIVE_MISSING_IO_CONTRACT",
+      "recipe": "CUSTOM_TASK_CONTRACT_JAVA_V1",
+      "nativeExecutionAfterAcceptance": true
+    },
+    {
+      "id": "GRAPH_BREADTH",
+      "detector": "STABLE_OUTPUT_PRESERVING_DECLARED_WORKFLOW_REDUCTION",
+      "recipe": "DECLARED_GRAPH_SCOPE_V1",
+      "nativeExecutionAfterAcceptance": true
+    }
+  ],
+  "authority": {
+    "detectorStatus": "PROPOSED",
+    "ownerReviewRequired": true,
+    "transactionalValidationRequired": true,
+    "exactRevertRequired": true,
+    "automaticMergeAuthorized": false,
+    "activationAuthorized": false
+  },
+  "valueGate": {
+    "minimumPairs": 8,
+    "positiveMajorityRequired": true,
+    "positiveLower95BoundRequired": true,
+    "exactRequiredOutputs": true,
+    "maximumProductAttributableFailures": 0,
+    "buildoptRuntimeRequiredAfterAcceptance": false
+  },
+  "currentEvidence": {
+    "report": "benchmarks/results/sticky-wrapper-durable-catalog-v1.json",
+    "syntheticFamilies": ["KOTLIN_DSL", "GROOVY_DSL"],
+    "customerCoverageClaimed": false,
+    "graphDurableValueMeasured": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "automaticPatchApplication": false,
+    "productionAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/sticky-wrapper-durable-catalog.v1.schema.json",
+  "title": "BuildOpt sticky-wrapper durable native catalog v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "recordType", "workItem", "capturedAt", "buildoptRevision",
+    "sourceEvidence", "sourceEvidenceSha256", "taskContractOpportunities",
+    "graphBreadthOpportunities", "summary", "boundaries", "pass"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "buildopt.poc/sticky-durable-catalog/v1" },
+    "recordType": { "const": "STICKY_WRAPPER_DURABLE_CATALOG" },
+    "workItem": { "const": "SWL-012" },
+    "capturedAt": { "$ref": "#/$defs/timestamp" },
+    "buildoptRevision": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "sourceEvidence": { "type": "string", "minLength": 1 },
+    "sourceEvidenceSha256": { "$ref": "#/$defs/digest" },
+    "taskContractOpportunities": {
+      "type": "array", "minItems": 2,
+      "items": { "$ref": "#/$defs/taskEntry" }
+    },
+    "graphBreadthOpportunities": {
+      "type": "array", "minItems": 2,
+      "items": { "$ref": "#/$defs/graphEntry" }
+    },
+    "summary": { "$ref": "#/$defs/summary" },
+    "boundaries": { "$ref": "#/$defs/boundaries" },
+    "pass": { "const": true }
+  },
+  "$defs": {
+    "timestamp": {
+      "type": "string", "format": "date-time", "pattern": "Z$"
+    },
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "taskEntry": {
+      "type": "object", "additionalProperties": false,
+      "required": ["family", "dsl", "detector", "input", "proposal", "recipe", "transaction", "measurement", "acceptedForPoc"],
+      "properties": {
+        "family": { "type": "string", "minLength": 1 },
+        "dsl": { "enum": ["KOTLIN", "GROOVY"] },
+        "detector": { "const": "TASK_CONTRACT" },
+        "input": { "$ref": "#/$defs/taskInput" },
+        "proposal": { "$ref": "#/$defs/taskProposal" },
+        "recipe": { "$ref": "#/$defs/recipe" },
+        "transaction": { "$ref": "#/$defs/transaction" },
+        "measurement": { "$ref": "#/$defs/measurement" },
+        "acceptedForPoc": { "const": true }
+      }
+    },
+    "taskInput": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evidenceSha256", "repositoryScopeSha256", "taskImplementationSha256", "relativeSourcePath", "sourcePreimageSha256", "facts", "observations"],
+      "properties": {
+        "evidenceSha256": { "$ref": "#/$defs/digest" },
+        "repositoryScopeSha256": { "$ref": "#/$defs/digest" },
+        "taskImplementationSha256": { "$ref": "#/$defs/digest" },
+        "relativeSourcePath": { "type": "string", "minLength": 1 },
+        "sourcePreimageSha256": { "$ref": "#/$defs/digest" },
+        "facts": {
+          "type": "object", "additionalProperties": false,
+          "required": ["extendsDefaultTask", "internalInputCount", "internalOutputCount", "taskActionCount", "unknownSideEffects"],
+          "properties": {
+            "extendsDefaultTask": { "const": true },
+            "internalInputCount": { "type": "integer", "minimum": 1 },
+            "internalOutputCount": { "type": "integer", "minimum": 1 },
+            "taskActionCount": { "const": 1 },
+            "unknownSideEffects": { "const": false }
+          }
+        },
+        "observations": {
+          "type": "array", "minItems": 3,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["requestedBuildOrdinal", "durationMs", "executed", "cacheable", "upToDate", "inputSnapshotSha256", "outputSnapshotSha256", "productFailure"],
+            "properties": {
+              "requestedBuildOrdinal": { "type": "integer", "minimum": 1 },
+              "durationMs": { "type": "integer", "minimum": 1 },
+              "executed": { "const": true },
+              "cacheable": { "const": false },
+              "upToDate": { "const": false },
+              "inputSnapshotSha256": { "$ref": "#/$defs/digest" },
+              "outputSnapshotSha256": { "$ref": "#/$defs/digest" },
+              "productFailure": { "const": false }
+            }
+          }
+        }
+      }
+    },
+    "taskProposal": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "kind", "relativeSourcePath", "sourcePreimageSha256", "medianRepeatedCostMs", "requestedBuilds", "suggestedAnnotations", "recipeHint", "ownerReviewRequired", "transactionalValidationRequired", "exactRevertRequired", "patchAuthorized", "activationAuthorized"],
+      "properties": {
+        "status": { "const": "PROPOSED" },
+        "kind": { "const": "TASK_CONTRACT_PATCH" },
+        "relativeSourcePath": { "type": "string", "minLength": 1 },
+        "sourcePreimageSha256": { "$ref": "#/$defs/digest" },
+        "medianRepeatedCostMs": { "type": "integer", "minimum": 500 },
+        "requestedBuilds": { "type": "integer", "minimum": 3 },
+        "suggestedAnnotations": { "const": ["CacheableTask", "Input", "OutputFile"] },
+        "recipeHint": { "const": "CUSTOM_TASK_CONTRACT_JAVA_V1" },
+        "ownerReviewRequired": { "const": true },
+        "transactionalValidationRequired": { "const": true },
+        "exactRevertRequired": { "const": true },
+        "patchAuthorized": { "const": false },
+        "activationAuthorized": { "const": false }
+      }
+    },
+    "graphEntry": {
+      "type": "object", "additionalProperties": false,
+      "required": ["family", "dsl", "detector", "input", "proposal", "recipe", "transaction", "valueStatus"],
+      "properties": {
+        "family": { "type": "string", "minLength": 1 },
+        "dsl": { "enum": ["KOTLIN", "GROOVY"] },
+        "detector": { "const": "GRAPH_BREADTH" },
+        "input": { "$ref": "#/$defs/graphInput" },
+        "proposal": { "$ref": "#/$defs/graphProposal" },
+        "recipe": { "$ref": "#/$defs/recipe" },
+        "transaction": { "$ref": "#/$defs/transaction" },
+        "valueStatus": { "const": "STRUCTURAL_PROPOSAL_ONLY__DURABLE_TIMING_NOT_MEASURED" }
+      }
+    },
+    "graphInput": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evidenceSha256", "repositoryScopeSha256", "manifestSha256", "graphSha256", "workflow", "observations"],
+      "properties": {
+        "evidenceSha256": { "$ref": "#/$defs/digest" },
+        "repositoryScopeSha256": { "$ref": "#/$defs/digest" },
+        "manifestSha256": { "$ref": "#/$defs/digest" },
+        "graphSha256": { "$ref": "#/$defs/digest" },
+        "workflow": { "type": "string", "minLength": 1 },
+        "observations": {
+          "type": "array", "minItems": 3,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["requestedBuildOrdinal", "fullProjectCount", "candidateProjectCount", "fullOutputSha256", "candidateOutputSha256", "productFailure"],
+            "properties": {
+              "requestedBuildOrdinal": { "type": "integer", "minimum": 1 },
+              "fullProjectCount": { "type": "integer", "minimum": 1 },
+              "candidateProjectCount": { "type": "integer", "minimum": 1 },
+              "fullOutputSha256": { "$ref": "#/$defs/digest" },
+              "candidateOutputSha256": { "$ref": "#/$defs/digest" },
+              "productFailure": { "const": false }
+            }
+          }
+        }
+      }
+    },
+    "graphProposal": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "kind", "workflow", "fullProjectCount", "candidateProjectCount", "omittedProjectCount", "requestedBuilds", "recipeHint", "ownerReviewRequired", "transactionalValidationRequired", "exactRevertRequired", "patchAuthorized", "activationAuthorized"],
+      "properties": {
+        "status": { "const": "PROPOSED" },
+        "kind": { "const": "GRAPH_BREADTH" },
+        "workflow": { "type": "string", "minLength": 1 },
+        "fullProjectCount": { "type": "integer", "minimum": 1 },
+        "candidateProjectCount": { "type": "integer", "minimum": 1 },
+        "omittedProjectCount": { "type": "integer", "minimum": 1 },
+        "requestedBuilds": { "type": "integer", "minimum": 3 },
+        "recipeHint": { "const": "DECLARED_GRAPH_SCOPE_V1" },
+        "ownerReviewRequired": { "const": true },
+        "transactionalValidationRequired": { "const": true },
+        "exactRevertRequired": { "const": true },
+        "patchAuthorized": { "const": false },
+        "activationAuthorized": { "const": false }
+      }
+    },
+    "recipe": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version", "targetPath", "transformation", "preimageSha256", "postimageSha256", "ownerReviewRequired", "exactRevertRequired", "automaticMergeAuthorized"],
+      "properties": {
+        "id": { "enum": ["CUSTOM_TASK_CONTRACT_JAVA_V1", "DECLARED_GRAPH_SCOPE_V1"] },
+        "version": { "const": "1.0" },
+        "targetPath": { "type": "string", "minLength": 1 },
+        "transformation": { "type": "string", "minLength": 1 },
+        "preimageSha256": { "$ref": "#/$defs/digest" },
+        "postimageSha256": { "$ref": "#/$defs/digest" },
+        "ownerReviewRequired": { "const": true },
+        "exactRevertRequired": { "const": true },
+        "automaticMergeAuthorized": { "const": false }
+      }
+    },
+    "transaction": {
+      "type": "object", "additionalProperties": false,
+      "required": ["appliedOutsideCheckout", "checkoutUnchanged", "exactRevertRestoredPreimage", "preimageSha256", "postimageSha256", "rejectedProposalMutations"],
+      "properties": {
+        "appliedOutsideCheckout": { "const": true },
+        "checkoutUnchanged": { "const": true },
+        "exactRevertRestoredPreimage": { "const": true },
+        "preimageSha256": { "$ref": "#/$defs/digest" },
+        "postimageSha256": { "$ref": "#/$defs/digest" },
+        "rejectedProposalMutations": { "const": 0 }
+      }
+    },
+    "measurement": {
+      "type": "object", "additionalProperties": false,
+      "required": ["pairs", "controlMeanMs", "candidateMeanMs", "meanSavedMs", "meanReductionRatio", "interval95SavedMs", "positivePairs", "requiredOutputsIdentical", "productAttributableFailures", "buildoptRequiredAfterAcceptance"],
+      "properties": {
+        "pairs": { "type": "integer", "minimum": 8 },
+        "controlMeanMs": { "type": "number", "exclusiveMinimum": 0 },
+        "candidateMeanMs": { "type": "number", "minimum": 0 },
+        "meanSavedMs": { "type": "number", "exclusiveMinimum": 0 },
+        "meanReductionRatio": { "type": "number", "exclusiveMinimum": 0 },
+        "interval95SavedMs": { "type": "array", "prefixItems": [{ "type": "number", "exclusiveMinimum": 0 }, { "type": "number" }], "minItems": 2, "maxItems": 2 },
+        "positivePairs": { "type": "integer", "minimum": 5 },
+        "requiredOutputsIdentical": { "const": true },
+        "productAttributableFailures": { "const": 0 },
+        "buildoptRequiredAfterAcceptance": { "const": false }
+      }
+    },
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["taskContractFamilies", "taskContractAccepted", "graphBreadthFamilies", "graphBreadthProposals", "sharedTaskDetector", "positiveTaskPairs", "exactTaskPairs", "buildoptRequiredAfterPatch"],
+      "properties": {
+        "taskContractFamilies": { "const": 2 },
+        "taskContractAccepted": { "const": 2 },
+        "graphBreadthFamilies": { "const": 2 },
+        "graphBreadthProposals": { "const": 2 },
+        "sharedTaskDetector": { "const": true },
+        "positiveTaskPairs": { "type": "integer", "minimum": 8 },
+        "exactTaskPairs": { "const": 16 },
+        "buildoptRequiredAfterPatch": { "const": false }
+      }
+    },
+    "boundaries": {
+      "type": "object", "additionalProperties": false,
+      "required": ["proofOfConcept", "syntheticRepositoryFamilies", "customerCoverageClaimed", "automaticMergeAuthorized", "buildoptRuntimeRequiredAfterPatch", "graphDurableValueMeasured", "testOptimization"],
+      "properties": {
+        "proofOfConcept": { "const": true },
+        "syntheticRepositoryFamilies": { "const": true },
+        "customerCoverageClaimed": { "const": false },
+        "automaticMergeAuthorized": { "const": false },
+        "buildoptRuntimeRequiredAfterPatch": { "const": false },
+        "graphDurableValueMeasured": { "const": false },
+        "testOptimization": { "const": "OUT_OF_SCOPE" }
+      }
+    }
+  }
+}

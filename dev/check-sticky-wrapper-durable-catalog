@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_spec="${buildopt_repo_root}/specs/poc-sticky-wrapper-durable-catalog-v1.json"
+buildopt_schema="${buildopt_repo_root}/contracts/jsonschema/sticky-wrapper-durable-catalog.v1.schema.json"
+buildopt_result="${buildopt_repo_root}/benchmarks/results/sticky-wrapper-durable-catalog-v1.json"
+buildopt_coverage="${buildopt_repo_root}/benchmarks/results/sticky-wrapper-durable-catalog-coverage-v1.json"
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-sticky-durable-catalog.XXXXXX")
+trap 'rm -rf -- "${buildopt_temporary}"' EXIT
+
+for buildopt_command in find jq mktemp; do
+    if ! command -v "${buildopt_command}" >/dev/null 2>&1; then
+        printf 'required sticky durable catalog command is unavailable: %s\n' \
+            "${buildopt_command}" >&2
+        exit 1
+    fi
+done
+
+for buildopt_file in "${buildopt_spec}" "${buildopt_schema}" \
+    "${buildopt_result}" "${buildopt_coverage}"; do
+    if [[ ! -f "${buildopt_file}" ]]; then
+        printf 'missing sticky durable catalog input: %s\n' "${buildopt_file}" >&2
+        exit 1
+    fi
+done
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/sticky-durable-catalog/v1" and
+    .workItem == "SWL-012" and
+    ([.opportunityClasses[].id] | sort) == ["GRAPH_BREADTH", "TASK_CONTRACT"] and
+    all(.opportunityClasses[]; .nativeExecutionAfterAcceptance == true) and
+    .authority == {
+        detectorStatus: "PROPOSED",
+        ownerReviewRequired: true,
+        transactionalValidationRequired: true,
+        exactRevertRequired: true,
+        automaticMergeAuthorized: false,
+        activationAuthorized: false
+    } and
+    .valueGate.minimumPairs == 8 and
+    .valueGate.positiveMajorityRequired == true and
+    .valueGate.positiveLower95BoundRequired == true and
+    .valueGate.exactRequiredOutputs == true and
+    .valueGate.maximumProductAttributableFailures == 0 and
+    .valueGate.buildoptRuntimeRequiredAfterAcceptance == false and
+    .currentEvidence.report == "benchmarks/results/sticky-wrapper-durable-catalog-v1.json" and
+    .currentEvidence.syntheticFamilies == ["KOTLIN_DSL", "GROOVY_DSL"] and
+    .currentEvidence.customerCoverageClaimed == false and
+    .currentEvidence.graphDurableValueMeasured == false and
+    .boundaries == {
+        proofOfConcept: true,
+        automaticPatchApplication: false,
+        productionAuthorized: false,
+        testOptimization: "OUT_OF_SCOPE"
+    }
+' "${buildopt_spec}" >/dev/null; then
+    printf 'sticky durable catalog specification is malformed\n' >&2
+    exit 1
+fi
+
+buildopt_go=$(find "${buildopt_repo_root}/.tools/toolchains" -type f \
+    -path '*/bin/go' -perm -111 -print | sort | head -1)
+if [[ -z "${buildopt_go}" ]]; then
+    printf 'repository-local Go toolchain is unavailable\n' >&2
+    exit 1
+fi
+
+buildopt_binary="${buildopt_temporary}/sticky-durable-catalog-benchmark"
+"${buildopt_repo_root}/dev/run" --toolchain go -- \
+    "${buildopt_go}" build -buildvcs=false -trimpath \
+    -o "${buildopt_binary}" "${buildopt_repo_root}/cmd/sticky-durable-catalog-benchmark"
+"${buildopt_repo_root}/dev/run" --toolchain go -- \
+    "${buildopt_go}" -C "${buildopt_repo_root}/dev/schema-validator" test . \
+    -run 'TestStickyDurableCatalogV1' -count=1 >/dev/null
+
+buildopt_generated="${buildopt_temporary}/catalog.json"
+"${buildopt_binary}" --root "${buildopt_repo_root}" \
+    --coverage "${buildopt_coverage}" --output "${buildopt_generated}"
+if ! cmp -- "${buildopt_generated}" "${buildopt_result}"; then
+    printf 'checked-in durable catalog is stale; regenerate from current evidence\n' >&2
+    exit 1
+fi
+"${buildopt_binary}" --root "${buildopt_repo_root}" \
+    --coverage "${buildopt_coverage}" --validate "${buildopt_result}" >/dev/null
+
+if ! jq -e '
+    .schemaVersion == "buildopt.poc/sticky-durable-catalog/v1" and
+    .workItem == "SWL-012" and .pass == true and
+    (.taskContractOpportunities | length) == 2 and
+    (.graphBreadthOpportunities | length) == 2 and
+    .summary.taskContractAccepted == 2 and
+    .summary.graphBreadthProposals == 2 and
+    .summary.sharedTaskDetector == true and
+    .summary.positiveTaskPairs >= 8 and
+    .summary.exactTaskPairs == 16 and
+    .summary.buildoptRequiredAfterPatch == false and
+    all(.taskContractOpportunities[];
+        .acceptedForPoc == true and
+        .proposal.patchAuthorized == false and
+        .proposal.activationAuthorized == false and
+        .recipe.automaticMergeAuthorized == false and
+        .measurement.requiredOutputsIdentical == true and
+        .measurement.productAttributableFailures == 0) and
+    all(.graphBreadthOpportunities[];
+        .proposal.status == "PROPOSED" and
+        .proposal.patchAuthorized == false and
+        .proposal.activationAuthorized == false and
+        .valueStatus == "STRUCTURAL_PROPOSAL_ONLY__DURABLE_TIMING_NOT_MEASURED") and
+    .boundaries.customerCoverageClaimed == false and
+    .boundaries.graphDurableValueMeasured == false
+' "${buildopt_result}" >/dev/null; then
+    printf 'checked-in durable catalog failed its report contract\n' >&2
+    exit 1
+fi
+
+jq -c '{summary, tasks: [.taskContractOpportunities[] | {dsl, savedMs:.measurement.meanSavedMs, ratio:.measurement.meanReductionRatio, positivePairs:.measurement.positivePairs}], graphs: [.graphBreadthOpportunities[] | {dsl, fullProjects:.proposal.fullProjectCount, candidateProjects:.proposal.candidateProjectCount, valueStatus}]}' "${buildopt_result}"
+printf 'Sticky wrapper durable native catalog: OK\n'
