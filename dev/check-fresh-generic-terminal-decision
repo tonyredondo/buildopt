@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/fresh-generic-terminal-decision-v1.json"}
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-fresh-terminal.XXXXXX")
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+"${buildopt_script_dir}/run-fresh-generic-terminal-decision" "${buildopt_temp}/regenerated.json" >/dev/null
+cmp -s "${buildopt_result}" "${buildopt_temp}/regenerated.json" || {
+    printf 'fresh generic terminal decision is stale or not reproducible\n' >&2
+    exit 1
+}
+jq -e '
+  .schemaVersion == "buildopt.poc/fresh-generic-terminal-decision/v1" and
+  .workItem == "SWL-FRESH-006" and .evidence.historicalEvidenceImported == false and
+  (.evidence.freshCaptureReportSha256 | test("^[0-9a-f]{64}$")) and
+  (.evidence.opportunityGateSha256 | test("^[0-9a-f]{64}$")) and
+  .executedBlocks == ["SWL-FRESH-000", "SWL-FRESH-001", "SWL-FRESH-002",
+    "SWL-FRESH-003", "SWL-FRESH-006"] and
+  .notAuthorizedBlocks == ["SWL-FRESH-004", "SWL-FRESH-005"] and
+  ([.scorecard[] | select(.criterion == "PUBLIC_ACTION_BREADTH" and .status == "FAIL")] | length) == 1 and
+  ([.scorecard[] | select(.status == "NOT_MEASURED_NOT_AUTHORIZED")] | length) == 5 and
+  ([.scorecard[] | select(has("value"))] | length) == 0 and
+  .timingRows.status == "NOT_CREATED" and .speedupClaim == false and
+  .decision == "STOP_FRESH_GENERIC_POC_FOR_CURRENT_DETECTOR_SET" and
+  .recommendedNextHypothesis ==
+    "ADD_OR_REDESIGN_GENERIC_EVIDENCE_BACKED_DETECTORS_BEFORE_ANY_NEW_PERFORMANCE_CAMPAIGN"
+' "${buildopt_result}" >/dev/null || {
+    printf 'fresh generic terminal decision contract is invalid\n' >&2
+    exit 1
+}
+jq '.speedupClaim = true' "${buildopt_result}" >"${buildopt_temp}/tampered.json"
+if cmp -s "${buildopt_temp}/tampered.json" "${buildopt_temp}/regenerated.json"; then
+    printf 'tampered fresh terminal claim was accepted\n' >&2
+    exit 1
+fi
+printf 'Fresh generic terminal decision: PASS\n'

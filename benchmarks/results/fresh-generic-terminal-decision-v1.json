@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "buildopt.poc/fresh-generic-terminal-decision/v1",
+  "workItem": "SWL-FRESH-006",
+  "generatedAt": "2026-08-27T19:10:16Z",
+  "evidence": {
+    "freshCaptureReportSha256": "cf513de4f71d9a47ec040dcc2028d449238be6e0cecdf516fdeb33269b285e2b",
+    "opportunityGateSha256": "3df23a32c87ac38a2e086059e294a000b30ab5c4ba89a4751242477cc9c56349",
+    "historicalEvidenceImported": false
+  },
+  "executedBlocks": [
+    "SWL-FRESH-000",
+    "SWL-FRESH-001",
+    "SWL-FRESH-002",
+    "SWL-FRESH-003",
+    "SWL-FRESH-006"
+  ],
+  "notAuthorizedBlocks": [
+    "SWL-FRESH-004",
+    "SWL-FRESH-005"
+  ],
+  "scorecard": [
+    {
+      "criterion": "FRESH_INPUT_COMPLETENESS",
+      "status": "PASS",
+      "evidence": "5_OF_5_CONCLUSIVE"
+    },
+    {
+      "criterion": "CAPTURE_OUTPUT_BINDING",
+      "status": "PASS",
+      "evidence": "5_OF_5_BYTE_EXACT_BINDINGS"
+    },
+    {
+      "criterion": "PUBLIC_ACTION_BREADTH",
+      "status": "FAIL",
+      "evidence": "1_OF_5_VERSUS_REQUIRED_3_OF_5"
+    },
+    {
+      "criterion": "INSTALLED_ACTIVE_VALUE",
+      "status": "NOT_MEASURED_NOT_AUTHORIZED"
+    },
+    {
+      "criterion": "CHRONOLOGICAL_CUMULATIVE_VALUE",
+      "status": "NOT_MEASURED_NOT_AUTHORIZED"
+    },
+    {
+      "criterion": "POSITIVE_FAMILY_CONFIDENCE",
+      "status": "NOT_MEASURED_NOT_AUTHORIZED"
+    },
+    {
+      "criterion": "PAYBACK",
+      "status": "NOT_MEASURED_NOT_AUTHORIZED"
+    },
+    {
+      "criterion": "NATIVE_RETENTION_OVERHEAD",
+      "status": "NOT_MEASURED_NOT_AUTHORIZED"
+    },
+    {
+      "criterion": "PRODUCT_ATTRIBUTABLE_FAILURES",
+      "status": "PASS",
+      "evidence": "0_CAPTURE_FAILURES"
+    }
+  ],
+  "timingRows": {
+    "status": "NOT_CREATED",
+    "reason": "PUBLIC_ACTION_BREADTH_FAILED_BEFORE_TIMING"
+  },
+  "speedupClaim": false,
+  "decision": "STOP_FRESH_GENERIC_POC_FOR_CURRENT_DETECTOR_SET",
+  "conclusion": "CURRENT_TASK_CONTRACT_AND_DECLARED_GRAPH_DETECTORS_DO_NOT_EXPOSE_BROAD_ENOUGH_PUBLIC_ACTIONS",
+  "nonConclusion": "THIS_DOES_NOT_PROVE_THAT_GRADLE_BUILDS_HAVE_NO_GENERIC_OPTIMIZATION_OPPORTUNITY",
+  "recommendedNextHypothesis": "ADD_OR_REDESIGN_GENERIC_EVIDENCE_BACKED_DETECTORS_BEFORE_ANY_NEW_PERFORMANCE_CAMPAIGN"
+}

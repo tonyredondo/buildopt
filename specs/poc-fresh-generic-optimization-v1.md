@@ -1,6 +1,6 @@
 # Fresh generic optimization POC v1
 
-Status: active preregistered execution contract.
+Status: terminal `STOP_FRESH_GENERIC_POC_FOR_CURRENT_DETECTOR_SET`.
 
 This contract resets BuildOpt performance evidence to zero. It tests the
 current implementation only, starting with complete generic evidence producers
@@ -16,3 +16,10 @@ The experiment must never interpret unavailable producer input as absence of
 optimization opportunity. Hosted CI checks schemas and reproducibility; it
 does not decide wall-time thresholds. Performance evidence is generated on the
 declared controlled runner from new checkouts and empty BuildOpt state.
+
+The completed fresh screen has conclusive inputs in all five families but
+exposes an action only in Spring, below the frozen three-family minimum.
+Installed timing and the chronological campaign were therefore not authorized.
+No timing rows were created and no speedup, regression, confidence, payback or
+overhead value is claimed. A successor requires a newly preregistered generic
+detector hypothesis; this result cannot be reused as a performance baseline.

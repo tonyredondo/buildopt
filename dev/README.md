@@ -54,6 +54,16 @@ fresh family and enforce the fixed three-family breadth gate with:
 The current result is complete but stops at 1/5 families. It deliberately
 does not run timing whose most favorable result could not pass breadth.
 
+Recompute the terminal scorecard and verify that unmeasured value fields remain
+typed rather than zero-filled with:
+
+```bash
+./dev/check-fresh-generic-terminal-decision
+```
+
+This closes the current detector set. It makes no speedup claim and authorizes
+no installed or chronological timing after the failed breadth gate.
+
 Validate the superseded sticky-wrapper route as immutable diagnostic history
 with:
 

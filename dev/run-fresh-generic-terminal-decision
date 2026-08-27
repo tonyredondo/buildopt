@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [OUTPUT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_capture="${buildopt_repo_root}/benchmarks/results/fresh-generic-optimization-v1"
+buildopt_gate="${buildopt_repo_root}/benchmarks/results/fresh-generic-opportunity-gate-v1.json"
+buildopt_output=${1:-"${buildopt_repo_root}/benchmarks/results/fresh-generic-terminal-decision-v1.json"}
+[[ ${buildopt_output} == /* ]] || buildopt_output="${buildopt_repo_root}/${buildopt_output}"
+
+"${buildopt_script_dir}/check-fresh-generic-capture" "${buildopt_capture}" >/dev/null
+"${buildopt_script_dir}/check-fresh-generic-opportunity-gate" "${buildopt_gate}" >/dev/null
+buildopt_capture_sha=$(sha256sum "${buildopt_capture}/report.json" | awk '{print $1}')
+buildopt_gate_sha=$(sha256sum "${buildopt_gate}" | awk '{print $1}')
+buildopt_generated_at=$(jq -r '.generatedAt' "${buildopt_gate}")
+
+jq -n --arg generatedAt "${buildopt_generated_at}" --arg captureSha "${buildopt_capture_sha}" \
+    --arg gateSha "${buildopt_gate_sha}" --slurpfile gate "${buildopt_gate}" '
+  {
+    schemaVersion: "buildopt.poc/fresh-generic-terminal-decision/v1",
+    workItem: "SWL-FRESH-006",
+    generatedAt: $generatedAt,
+    evidence: {
+      freshCaptureReportSha256: $captureSha,
+      opportunityGateSha256: $gateSha,
+      historicalEvidenceImported: false
+    },
+    executedBlocks: [
+      "SWL-FRESH-000", "SWL-FRESH-001", "SWL-FRESH-002",
+      "SWL-FRESH-003", "SWL-FRESH-006"
+    ],
+    notAuthorizedBlocks: ["SWL-FRESH-004", "SWL-FRESH-005"],
+    scorecard: [
+      {criterion: "FRESH_INPUT_COMPLETENESS", status: "PASS", evidence: "5_OF_5_CONCLUSIVE"},
+      {criterion: "CAPTURE_OUTPUT_BINDING", status: "PASS", evidence: "5_OF_5_BYTE_EXACT_BINDINGS"},
+      {criterion: "PUBLIC_ACTION_BREADTH", status: "FAIL", evidence:
+        (($gate[0].familiesExposingActions | tostring) + "_OF_5_VERSUS_REQUIRED_" +
+          ($gate[0].breadthRequired | tostring) + "_OF_5")},
+      {criterion: "INSTALLED_ACTIVE_VALUE", status: "NOT_MEASURED_NOT_AUTHORIZED"},
+      {criterion: "CHRONOLOGICAL_CUMULATIVE_VALUE", status: "NOT_MEASURED_NOT_AUTHORIZED"},
+      {criterion: "POSITIVE_FAMILY_CONFIDENCE", status: "NOT_MEASURED_NOT_AUTHORIZED"},
+      {criterion: "PAYBACK", status: "NOT_MEASURED_NOT_AUTHORIZED"},
+      {criterion: "NATIVE_RETENTION_OVERHEAD", status: "NOT_MEASURED_NOT_AUTHORIZED"},
+      {criterion: "PRODUCT_ATTRIBUTABLE_FAILURES", status: "PASS", evidence: "0_CAPTURE_FAILURES"}
+    ],
+    timingRows: {status: "NOT_CREATED", reason: "PUBLIC_ACTION_BREADTH_FAILED_BEFORE_TIMING"},
+    speedupClaim: false,
+    decision: "STOP_FRESH_GENERIC_POC_FOR_CURRENT_DETECTOR_SET",
+    conclusion: "CURRENT_TASK_CONTRACT_AND_DECLARED_GRAPH_DETECTORS_DO_NOT_EXPOSE_BROAD_ENOUGH_PUBLIC_ACTIONS",
+    nonConclusion: "THIS_DOES_NOT_PROVE_THAT_GRADLE_BUILDS_HAVE_NO_GENERIC_OPTIMIZATION_OPPORTUNITY",
+    recommendedNextHypothesis: "ADD_OR_REDESIGN_GENERIC_EVIDENCE_BACKED_DETECTORS_BEFORE_ANY_NEW_PERFORMANCE_CAMPAIGN"
+  }
+' >"${buildopt_output}"
+printf 'Fresh generic terminal decision written to %s\n' "${buildopt_output}"

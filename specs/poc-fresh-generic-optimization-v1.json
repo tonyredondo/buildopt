@@ -1,8 +1,8 @@
 {
   "schemaVersion": "buildopt.poc/fresh-generic-optimization/v1",
   "workItem": "SWL-FRESH",
-  "status": "SWL_FRESH_006_TERMINAL_DECISION",
-  "purpose": "Issue the terminal decision after the conclusive one-of-five public breadth result prevented timing.",
+  "status": "TERMINAL_STOP_INSUFFICIENT_PUBLIC_BREADTH",
+  "purpose": "Preserve the terminal stop for the current detector set after the conclusive one-of-five breadth result prevented timing.",
   "historicalEvidence": {
     "classification": "DIAGNOSTIC_ONLY",
     "experimentInputAllowed": false,
@@ -50,7 +50,7 @@
     {"id": "SWL-FRESH-003", "state": "DONE", "outcome": "STOP_INSUFFICIENT_PUBLIC_BREADTH"},
     {"id": "SWL-FRESH-004", "state": "NOT_AUTHORIZED", "outcome": "BREADTH_GATE_DID_NOT_OPEN_TIMING"},
     {"id": "SWL-FRESH-005", "state": "NOT_AUTHORIZED", "outcome": "INSTALLED_GATE_DID_NOT_OPEN_CAMPAIGN"},
-    {"id": "SWL-FRESH-006", "state": "TODO", "outcome": "TERMINAL_DECISION"}
+    {"id": "SWL-FRESH-006", "state": "DONE", "outcome": "STOP_FRESH_GENERIC_POC_FOR_CURRENT_DETECTOR_SET"}
   ],
   "transitions": {
     "SWL-FRESH-001": "SWL-FRESH-002_ONLY_AFTER_ALL_FIXTURE_OUTCOMES_AND_BOTH_DSLS_PASS",
@@ -60,21 +60,12 @@
     "SWL-FRESH-005": "SWL-FRESH-006_ONLY_AFTER_COMPLETE_CAMPAIGN"
   },
   "nextBlock": {
-    "id": "SWL-FRESH-006",
-    "create": [
-      "benchmarks/results/fresh-generic-terminal-decision-v1.json",
-      "dev/run-fresh-generic-terminal-decision",
-      "dev/check-fresh-generic-terminal-decision"
-    ],
-    "requiredSubjects": [
-      "spring-framework",
-      "opentelemetry-java-instrumentation",
-      "apache-kafka",
-      "micronaut-core",
-      "apache-groovy"
-    ],
+    "id": null,
+    "state": "NO_AUTHORIZED_SUCCESSOR",
     "requiredChecks": [
       "./dev/check-fresh-generic-terminal-decision",
+      "./dev/check-fresh-generic-opportunity-gate",
+      "./dev/check-fresh-generic-capture",
       "./dev/check-fresh-generic-optimization-plan",
       "./dev/check-tracker-consistency",
       "./dev/check-layout",
@@ -83,8 +74,7 @@
       "./dev/check-base-ci --static",
       "git diff --check"
     ],
-    "selectionPolicy": "TERMINAL_SCORECARD_FROM_CHECKED_FRESH_CAPTURE_AND_OPPORTUNITY_GATE_ONLY",
-    "requiredBinding": "CAPTURE_DIGEST_OPPORTUNITY_GATE_DIGEST_FROZEN_THRESHOLDS_TYPED_UNMEASURED_VALUE",
-    "initialState": "TIMING_AND_CHRONOLOGICAL_CAMPAIGN_NOT_AUTHORIZED"
+    "decision": "STOP_FRESH_GENERIC_POC_FOR_CURRENT_DETECTOR_SET",
+    "successorPolicy": "PREREGISTER_NEW_GENERIC_DETECTOR_HYPOTHESIS_BEFORE_ANY_NEW_TIMING"
   }
 }

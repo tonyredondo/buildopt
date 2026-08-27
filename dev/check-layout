@@ -716,6 +716,8 @@ buildopt_required_files=(
     "dev/check-fresh-generic-capture"
     "dev/run-fresh-generic-opportunity-gate"
     "dev/check-fresh-generic-opportunity-gate"
+    "dev/run-fresh-generic-terminal-decision"
+    "dev/check-fresh-generic-terminal-decision"
     "cmd/sticky-evidence-capture/main.go"
     "cmd/sticky-evidence-capture/main_test.go"
     "internal/durablecatalog/public_evidence.go"

@@ -2,9 +2,9 @@
 
 ## Status
 
-**Overall:** `IN_PROGRESS`<br>
-**Progress:** `4/7` blocks complete; two downstream blocks were not authorized<br>
-**Current block:** `SWL-FRESH-006` — issue the terminal decision from the conclusive breadth gate<br>
+**Overall:** `STOPPED_CURRENT_DETECTOR_SET`<br>
+**Progress:** route terminal; five blocks executed and two downstream blocks were not authorized<br>
+**Current block:** none; `SWL-FRESH-006` issued the terminal decision<br>
 **Supersedes:** the stopped route in
 [`sticky-wrapper-learning-poc-tracker.md`](./sticky-wrapper-learning-poc-tracker.md).
 That route and its results remain auditable diagnostics, but none is an input
@@ -75,7 +75,7 @@ candidate plan, cost and timing row after the freeze.
 | 3 | `SWL-FRESH-003` Five-family opportunity gate | Independently recompute complete generic actions and require breadth before timing | `DONE` | SWL-FRESH-002 |
 | 4 | `SWL-FRESH-004` Installed active-value gate | Run exact installed candidate/native trials for every admitted action | `NOT_AUTHORIZED` | breadth gate failed 1/5 vs 3/5 |
 | 5 | `SWL-FRESH-005` Chronological campaign | Exercise native, observe, trial, qualified, active and fallback states across fresh commit windows | `NOT_AUTHORIZED` | installed timing did not open |
-| 6 | `SWL-FRESH-006` Terminal decision | Recompute correctness, breadth, cumulative value, confidence, payback and overhead without threshold movement | `TODO` | conclusive SWL-FRESH-003 gate |
+| 6 | `SWL-FRESH-006` Terminal decision | Recompute correctness, breadth, cumulative value, confidence, payback and overhead without threshold movement | `DONE` | conclusive SWL-FRESH-003 gate |
 
 ## Execution contract
 
@@ -183,6 +183,15 @@ families, payback, native-retention overhead and zero product-failure gates all
 pass. Otherwise stop and name the failed criteria. Incomplete inputs produce
 `INCOMPLETE`, not a stop or continue decision.
 
+The terminal scorecard is `STOP_FRESH_GENERIC_POC_FOR_CURRENT_DETECTOR_SET`.
+Fresh input completeness, output binding and zero capture failures pass. Public
+action breadth fails at 1/5 versus the fixed 3/5 requirement. Installed value,
+chronological value, confidence, payback and native-retention overhead are
+typed `NOT_MEASURED_NOT_AUTHORIZED`; they are not zero and do not support a
+performance claim. The result rejects the current task-contract plus
+declared-graph detector set as a broad POC route. It does not prove that Gradle
+builds lack other generic optimization opportunities.
+
 ## Evidence ledger
 
 | Evidence | Block | Required evidence | State |
@@ -193,12 +202,11 @@ pass. Otherwise stop and name the failed criteria. Incomplete inputs produce
 | `SWL-FRESH-E004` | SWL-FRESH-003 | Input-complete five-family opportunity report and independent recomputation | `DONE` — [`fresh-generic-opportunity-gate-v1.json`](../../benchmarks/results/fresh-generic-opportunity-gate-v1.json) |
 | `SWL-FRESH-E005` | SWL-FRESH-004 | Installed eight-pair action results and complete cost ledger | `NOT_AUTHORIZED` — public breadth upper bound is 1/5 |
 | `SWL-FRESH-E006` | SWL-FRESH-005 | Fresh chronological rows, checkpoints, ledgers and report | `NOT_AUTHORIZED` — installed active-value gate did not open |
-| `SWL-FRESH-E007` | SWL-FRESH-006 | Independent terminal scorecard | `WAITING` |
+| `SWL-FRESH-E007` | SWL-FRESH-006 | Independent terminal scorecard | `DONE` — [`fresh-generic-terminal-decision-v1.json`](../../benchmarks/results/fresh-generic-terminal-decision-v1.json) |
 
 ## Immediate next action
 
-Implement `SWL-FRESH-006` exactly as specified above. Bind the terminal
-scorecard to the checked capture and opportunity-gate digests, preserve the
-1/5 versus 3/5 breadth result, mark value/confidence/payback/overhead as not
-measured because timing was not authorized, and stop this detector set without
-turning absence of broad actions into a Gradle performance claim.
+There is no authorized successor inside `SWL-FRESH`. Any new experiment must
+first define and preregister a materially broader, generic, evidence-backed
+detector hypothesis. It must not reopen timing from the single Spring action or
+reuse this terminal result as a performance baseline.

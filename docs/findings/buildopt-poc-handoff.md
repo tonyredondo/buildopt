@@ -378,8 +378,12 @@ Spring task-contract action and no safe declared-graph reduction.
 `SWL-FRESH-003` independently confirms **1/5** action breadth against the fixed
 **3/5** gate. Because even perfect Spring economics cannot raise that upper
 bound, installed timing and the chronological campaign were not authorized.
-The terminal scorecard must stop this detector set without presenting
-unmeasured value, confidence, payback or overhead as zero.
+The terminal scorecard now stops this detector set without presenting
+unmeasured value, confidence, payback or overhead as zero. The result is not a
+performance regression or speedup result: it says the current two detectors
+cannot reach enough public families to justify expensive timing. A successor
+must start with a broader generic detector hypothesis, not another campaign on
+the sole Spring action.
 
 The replacement path is implementation-locked rather than left to a later agent:
 separate per-arm cache namespaces start empty; one

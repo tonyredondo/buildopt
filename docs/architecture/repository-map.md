@@ -100,6 +100,9 @@ turning capture duration into performance evidence.
 `dev/run-fresh-generic-opportunity-gate` and its checker then recount actions
 from detector reports rather than trusting the capture summary. Their checked
 result enforces the frozen 3/5 breadth threshold before any timing can start.
+`dev/run-fresh-generic-terminal-decision` and its checker own the terminal
+scorecard. They bind the capture and opportunity report by digest and preserve
+unmeasured economics as typed states instead of manufacturing zero values.
 
 Run `./dev/check-fresh-generic-optimization-plan` to validate current planning
 authority and `./dev/check-sticky-wrapper-learning-plan` to preserve the

@@ -21,7 +21,7 @@ done
 
 jq -e '
     .schemaVersion == "buildopt.poc/fresh-generic-optimization/v1" and
-    .status == "SWL_FRESH_006_TERMINAL_DECISION" and
+    .status == "TERMINAL_STOP_INSUFFICIENT_PUBLIC_BREADTH" and
     .historicalEvidence.classification == "DIAGNOSTIC_ONLY" and
     .historicalEvidence.experimentInputAllowed == false and
     .historicalEvidence.terminalAuthority == false and
@@ -53,13 +53,11 @@ jq -e '
       "SWL-FRESH-003", "SWL-FRESH-004", "SWL-FRESH-005", "SWL-FRESH-006"
     ] and
     [.blocks[].state] == [
-      "DONE", "DONE", "DONE", "DONE", "NOT_AUTHORIZED", "NOT_AUTHORIZED", "TODO"
+      "DONE", "DONE", "DONE", "DONE", "NOT_AUTHORIZED", "NOT_AUTHORIZED", "DONE"
     ] and
-    .nextBlock.id == "SWL-FRESH-006" and
-    (.nextBlock.create | length) == 3 and
-    (.nextBlock.requiredSubjects | length) == 5 and
-    (.nextBlock.requiredChecks | length) == 8 and
-    .nextBlock.initialState == "TIMING_AND_CHRONOLOGICAL_CAMPAIGN_NOT_AUTHORIZED"
+    .nextBlock.id == null and .nextBlock.state == "NO_AUTHORIZED_SUCCESSOR" and
+    (.nextBlock.requiredChecks | length) == 10 and
+    .nextBlock.decision == "STOP_FRESH_GENERIC_POC_FOR_CURRENT_DETECTOR_SET"
 ' "${buildopt_contract}" >/dev/null || {
     printf 'fresh generic optimization machine contract is inconsistent\n' >&2
     exit 1
@@ -68,11 +66,12 @@ jq -e '
 # Backticks below are literal Markdown syntax.
 # shellcheck disable=SC2016
 buildopt_required_text=(
-    '**Progress:** `4/7` blocks complete; two downstream blocks were not authorized'
-    '**Current block:** `SWL-FRESH-006` — issue the terminal decision from the conclusive breadth gate'
+    '**Overall:** `STOPPED_CURRENT_DETECTOR_SET`'
+    '**Progress:** route terminal; five blocks executed and two downstream blocks were not authorized'
+    '**Current block:** none; `SWL-FRESH-006` issued the terminal decision'
     '`PRODUCER_FAILED` block the breadth gate; they can never create stop evidence.'
     'CI verifies code, schemas and checked evidence only.'
-    'Implement `SWL-FRESH-006` exactly as specified above.'
+    'There is no authorized successor inside `SWL-FRESH`.'
 )
 
 for buildopt_text in "${buildopt_required_text[@]}"; do

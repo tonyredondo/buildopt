@@ -156,8 +156,11 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > testable and no declared-graph action is safe. Independent recomputation
 > confirms **1/5** action breadth against the fixed **3/5** threshold, so
 > installed timing and the chronological campaign are not authorized. The
-> remaining work is a terminal scorecard that records this detector-set stop
-> without claiming that Gradle itself cannot be improved.
+> terminal scorecard now records
+> `STOP_FRESH_GENERIC_POC_FOR_CURRENT_DETECTOR_SET`. Value, confidence,
+> payback and overhead were not measured because timing never opened. This
+> rejects these two detectors as a broad route; it does not claim that Gradle
+> itself cannot be improved by a different generic mechanism.
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,
 > append-only phase timing and provenance for requested Gradle builds. The
