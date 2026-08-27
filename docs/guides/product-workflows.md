@@ -90,6 +90,22 @@ is still structural-only until its durable timing is measured. See the
 [current report](../../benchmarks/results/sticky-wrapper-durable-catalog-v1.json)
 and `./dev/check-sticky-wrapper-durable-catalog`.
 
+### Wrapper status and explanation
+
+Use the reserved management prefix to inspect the sticky-wrapper learning
+state without changing anything:
+
+```bash
+./buildoptw --buildopt status
+./buildoptw --buildopt explain --json
+```
+
+The commands report one recomputable model containing decision state, ordinary
+observations, cache/trial/economic availability, fallback reason and exact
+input bindings. Unknown values remain unavailable; the wrapper never turns an
+unverified decision into authorization. The prefix is explicit so Gradle
+tasks named `status` or `explain` retain their normal meaning.
+
 ### Ordinary-build observation
 
 When observation is enabled, the launcher appends one canonical record per

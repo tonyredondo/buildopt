@@ -314,14 +314,30 @@ else
 fi
 
 if [ "${buildopt_management}" -eq 1 ] &&
-    [ "${1:-}" = '--buildopt' ] && [ "${2:-}" = version ] &&
-    { [ "$#" -eq 2 ] || { [ "$#" -eq 3 ] && [ "${3:-}" = '--json' ]; }; }; then
-    if [ "$#" -eq 3 ]; then
-        printf '{"schemaVersion":"buildopt.wrapper-status/v1","distributionVersion":"%s","bootstrap":"VERIFIED"}\n' "${buildopt_version}"
-    else
-        printf 'BuildOpt Wrapper %s (verified)\n' "${buildopt_version}"
-    fi
-    exit 0
+	[ "${1:-}" = '--buildopt' ] && [ "${2:-}" = version ] &&
+	{ [ "$#" -eq 2 ] || { [ "$#" -eq 3 ] && [ "${3:-}" = '--json' ]; }; }; then
+	if [ "$#" -eq 3 ]; then
+		printf '{"schemaVersion":"buildopt.wrapper-status/v1","distributionVersion":"%s","bootstrap":"VERIFIED"}\n' "${buildopt_version}"
+	else
+		printf 'BuildOpt Wrapper %s (verified)\n' "${buildopt_version}"
+	fi
+	exit 0
+fi
+
+if [ "${buildopt_management}" -eq 1 ] &&
+	{ [ "${2:-}" = status ] || [ "${2:-}" = explain ]; }; then
+	case "$#" in
+		2)
+			exec "${buildopt_install_root}/bin/buildopt" wrapper "${2}" --root "${buildopt_script_dir}"
+			;;
+		3)
+			[ "${3:-}" = '--json' ] || buildopt_fail 64 'unknown or invalid management command'
+			exec "${buildopt_install_root}/bin/buildopt" wrapper "${2}" --root "${buildopt_script_dir}" --json
+			;;
+		*)
+			buildopt_fail 64 'unknown or invalid management command'
+			;;
+	esac
 fi
 
 if [ "${buildopt_management}" -eq 1 ]; then

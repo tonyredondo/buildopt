@@ -114,6 +114,21 @@ will improve. Validate the catalog and its source evidence with:
 ./dev/check-sticky-wrapper-durable-catalog
 ```
 
+## Sticky-wrapper customer status
+
+`SWL-013` adds `./buildoptw --buildopt status` and `./buildoptw --buildopt
+explain [--json]` as a read-only view over the same validated report model.
+This is observability evidence, not a speedup result: an empty wrapper reports
+native fallback and `UNAVAILABLE` observations, cache counts, trials and
+economics rather than inventing zeros. The report includes only bounded
+digests and facts; credentials and checkout paths are excluded. Tampered
+observation logs and unverified decisions fail closed. Validate the surface
+with:
+
+```bash
+./dev/check-sticky-wrapper-status
+```
+
 ## Central two-machine functional evidence
 
 [`poc-central-two-machine-v1.json`](./results/poc-central-two-machine-v1.json)

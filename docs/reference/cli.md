@@ -29,13 +29,26 @@ no write; a downgrade requires `--allow-downgrade`. All writes are staged and
 rolled back as one four-file transaction on failure.
 
 The generated scripts now bootstrap and verify the pinned native distribution
-in a user cache. The implemented management command is:
+in a user cache. The implemented management commands are:
 
 ```text
 ./buildoptw --buildopt version [--json]
+./buildoptw --buildopt status [--json]
+./buildoptw --buildopt explain [--json]
 ```
 
-The repeated customer command remains the next-block surface:
+`status` is a read-only summary of the current wrapper decision, ordinary-build
+observations, cache facts, trial/economic availability, fallback reason and
+latest validated bindings. `explain` prints the same report model with a
+human-readable explanation of why native Gradle or a verified action is used.
+`--json` emits the exact structured report used to render the human output.
+Missing evidence is `UNAVAILABLE`, never zero. These commands do not create or
+modify repository, cache, decision or observation files, and an unverified
+decision always retains native Gradle. Credentials and checkout paths are
+excluded from both forms. Validate the contract with
+`./dev/check-sticky-wrapper-status`.
+
+The repeated customer command remains:
 
 ```text
 ./buildoptw <gradle args...>

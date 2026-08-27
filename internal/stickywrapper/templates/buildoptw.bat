@@ -4,7 +4,11 @@ set "BUILDOPT_WRAPPER_FILE=%~f0"
 set "BUILDOPT_WRAPPER_MANAGEMENT="
 if "%~1"=="--buildopt" if "%~2"=="version" if "%~3"=="" set "BUILDOPT_WRAPPER_MANAGEMENT=version"
 if "%~1"=="--buildopt" if "%~2"=="version" if "%~3"=="--json" if "%~4"=="" set "BUILDOPT_WRAPPER_MANAGEMENT=version-json"
-powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "$forward=@();$seen=$false;foreach($item in [Environment]::GetCommandLineArgs()){if($seen -and $item -ceq '--buildopt-wrapper-arguments'){break};if($seen){$forward+=,$item}elseif($item -ceq '--buildopt-wrapper-arguments'){$seen=$true}};if(-not $seen){exit 70};if($env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'version'){$forward=@('--buildopt','version')}elseif($env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'version-json'){$forward=@('--buildopt','version','--json')};$raw=[IO.File]::ReadAllText($env:BUILDOPT_WRAPPER_FILE);$marker='# BUILDOPT_'+'POWERSHELL';$offset=$raw.IndexOf($marker);if($offset -lt 0){exit 70};$body=$raw.Substring($offset+$marker.Length);& ([ScriptBlock]::Create($body)) @forward" --buildopt-wrapper-arguments %*
+if "%~1"=="--buildopt" if "%~2"=="status" if "%~3"=="" set "BUILDOPT_WRAPPER_MANAGEMENT=status"
+if "%~1"=="--buildopt" if "%~2"=="status" if "%~3"=="--json" if "%~4"=="" set "BUILDOPT_WRAPPER_MANAGEMENT=status-json"
+if "%~1"=="--buildopt" if "%~2"=="explain" if "%~3"=="" set "BUILDOPT_WRAPPER_MANAGEMENT=explain"
+if "%~1"=="--buildopt" if "%~2"=="explain" if "%~3"=="--json" if "%~4"=="" set "BUILDOPT_WRAPPER_MANAGEMENT=explain-json"
+powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "$forward=@();$seen=$false;foreach($item in [Environment]::GetCommandLineArgs()){if($seen -and $item -ceq '--buildopt-wrapper-arguments'){break};if($seen){$forward+=,$item}elseif($item -ceq '--buildopt-wrapper-arguments'){$seen=$true}};if(-not $seen){exit 70};if($env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'version'){$forward=@('--buildopt','version')}elseif($env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'version-json'){$forward=@('--buildopt','version','--json')}elseif($env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'status'){$forward=@('--buildopt','status')}elseif($env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'status-json'){$forward=@('--buildopt','status','--json')}elseif($env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'explain'){$forward=@('--buildopt','explain')}elseif($env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'explain-json'){$forward=@('--buildopt','explain','--json')};$raw=[IO.File]::ReadAllText($env:BUILDOPT_WRAPPER_FILE);$marker='# BUILDOPT_'+'POWERSHELL';$offset=$raw.IndexOf($marker);if($offset -lt 0){exit 70};$body=$raw.Substring($offset+$marker.Length);& ([ScriptBlock]::Create($body)) @forward" --buildopt-wrapper-arguments %*
 exit /b %ERRORLEVEL%
 # BUILDOPT_POWERSHELL
 $ErrorActionPreference = 'Stop'
@@ -360,6 +364,15 @@ if ($env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'version') {
     Write-Output "BuildOpt Wrapper $Version (verified)"
     exit 0
 }
+$BuildOptBinary = Join-Path $InstallRoot 'bin\buildopt.exe'
+if ($env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'status' -or $env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'status-json' -or
+    $env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'explain' -or $env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'explain-json') {
+    $ReportCommand = if ($env:BUILDOPT_WRAPPER_MANAGEMENT -like 'status*') { 'status' } else { 'explain' }
+    $ReportArguments = @('wrapper', $ReportCommand, '--root', $RepositoryRoot)
+    if ($env:BUILDOPT_WRAPPER_MANAGEMENT -like '*-json') { $ReportArguments += '--json' }
+    $ReportExitCode = Invoke-NativePassthrough $BuildOptBinary $ReportArguments
+    exit $ReportExitCode
+}
 if ($ManagementInvocation) {
     Stop-Wrapper 64 'unknown or invalid management command'
 }
@@ -367,7 +380,6 @@ if ($ManagementInvocation) {
 $BootstrapFallbackEnabled = $false
 Clear-BuildOptChildEnvironment
 [Environment]::SetEnvironmentVariable('BUILDOPT_STICKY_WRAPPER_ROOT', $RepositoryRoot, 'Process')
-$BuildOptBinary = Join-Path $InstallRoot 'bin\buildopt.exe'
 # Preserve the public buildopt run -- contract while passing each argument separately.
 $BuildOptArguments = @('run', '--', $GradleWrapper) + $WrapperArgs
 $BuildOptExitCode = Invoke-NativePassthrough $BuildOptBinary $BuildOptArguments

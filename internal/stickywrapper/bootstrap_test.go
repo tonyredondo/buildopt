@@ -24,6 +24,7 @@ func TestBootstrapTemplatesStayWithinPortableFileContract(t *testing.T) {
 		"distribution archive contains a link or unsafe entry",
 		"cached distribution failed verification",
 		"verified bootstrap unavailable; running Gradle directly",
+		"wrapper \"${2}\" --root",
 		"run --",
 	} {
 		if !strings.Contains(string(posixWrapper), required) {
@@ -37,6 +38,8 @@ func TestBootstrapTemplatesStayWithinPortableFileContract(t *testing.T) {
 		"[Array]::IndexOf($WrapperArgs, '--buildopt-wrapper-arguments')",
 		"BUILDOPT_WRAPPER_MANAGEMENT=version-json",
 		"$env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'version-json'",
+		"$env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'status-json'",
+		"$env:BUILDOPT_WRAPPER_MANAGEMENT -ceq 'explain-json'",
 		"Security.Cryptography.SHA256",
 		"distribution archive contains an unsafe entry",
 		"verified bootstrap unavailable; running Gradle directly",

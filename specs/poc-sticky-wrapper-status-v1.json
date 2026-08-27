@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-status/v1",
+  "workItem": "SWL-013",
+  "purpose": "Expose a read-only, recomputable customer view of sticky-wrapper decisions, observations, cache facts, costs and fallbacks.",
+  "commands": {
+    "status": "./buildoptw --buildopt status [--json]",
+    "explain": "./buildoptw --buildopt explain [--json]",
+    "gradleTaskEscape": "./buildoptw status"
+  },
+  "report": {
+    "schemaVersion": "buildopt.sticky/status/v1",
+    "types": ["STATUS", "EXPLAIN"],
+    "requiredSections": [
+      "wrapper",
+      "decision",
+      "observations",
+      "trials",
+      "cache",
+      "economics",
+      "fallback",
+      "bindings",
+      "explanation"
+    ],
+    "measurementStates": ["AVAILABLE", "UNAVAILABLE"],
+    "unavailableHasNoNumericValue": true,
+    "humanAndJsonUseOneReportModel": true
+  },
+  "safety": {
+    "readOnly": true,
+    "credentialsExposed": false,
+    "checkoutPathsExposed": false,
+    "tamperedObservationLogRejected": true,
+    "unverifiedDecisionRetainsNativeGradle": true,
+    "arithmeticMismatchRejected": true
+  },
+  "boundaries": {
+    "pocOnly": true,
+    "decisionAuthorization": false,
+    "performanceClaim": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "checker": "./dev/check-sticky-wrapper-status"
+}

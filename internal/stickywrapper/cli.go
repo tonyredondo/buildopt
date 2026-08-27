@@ -6,12 +6,16 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
-// Usage is the complete maintainer CLI surface owned by SWL-002.
+// Usage is the maintainer and read-only customer CLI surface owned by the
+// sticky wrapper. Status and explain never modify repository or cache state.
 const Usage = "usage: buildopt wrapper init [--server URL --project-scope SCOPE] [--mode auto|observe|off]\n" +
 	"       buildopt wrapper check\n" +
-	"       buildopt wrapper update --version VERSION [--allow-downgrade]\n"
+	"       buildopt wrapper update --version VERSION [--allow-downgrade]\n" +
+	"       buildopt wrapper status [--root ABSOLUTE_PATH] [--json]\n" +
+	"       buildopt wrapper explain [--root ABSOLUTE_PATH] [--json]\n"
 
 // RunCLI executes the wrapper generator in the current repository directory.
 func RunCLI(args []string, stdout, stderr io.Writer) int {
@@ -56,10 +60,56 @@ func runCLI(args []string, stdout, stderr io.Writer, generator Generator) int {
 		return 0
 	case "update":
 		return runUpdate(context.Background(), generator, args[1:], stdout, stderr)
+	case "status":
+		return runReport("STATUS", generator, args[1:], stdout, stderr)
+	case "explain":
+		return runReport("EXPLAIN", generator, args[1:], stdout, stderr)
 	default:
 		_, _ = io.WriteString(stderr, Usage)
 		return 64
 	}
+}
+
+func runReport(reportType string, generator Generator, args []string, stdout, stderr io.Writer) int {
+	jsonOutput := false
+	root := generator.Root
+	rootSet := false
+	for len(args) > 0 {
+		switch args[0] {
+		case "--json":
+			if jsonOutput {
+				_, _ = io.WriteString(stderr, Usage)
+				return 64
+			}
+			jsonOutput = true
+			args = args[1:]
+		case "--root":
+			if rootSet || len(args) < 2 {
+				_, _ = io.WriteString(stderr, Usage)
+				return 64
+			}
+			rootSet = true
+			root = args[1]
+			args = args[2:]
+		default:
+			_, _ = io.WriteString(stderr, Usage)
+			return 64
+		}
+	}
+	if root == "" {
+		_, _ = io.WriteString(stderr, "buildopt: wrapper status root is unavailable\n")
+		return 65
+	}
+	report, err := BuildStatus(root, reportType)
+	if err != nil {
+		_, _ = fmt.Fprintf(stderr, "buildopt: wrapper %s unavailable: %v\n", strings.ToLower(reportType), err)
+		return 65
+	}
+	if err := WriteReport(report, jsonOutput, stdout); err != nil {
+		_, _ = fmt.Fprintf(stderr, "buildopt: write wrapper %s: %v\n", strings.ToLower(reportType), err)
+		return 70
+	}
+	return 0
 }
 
 func runInit(

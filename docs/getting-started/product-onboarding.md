@@ -103,6 +103,24 @@ Gradle, while typed decisions and learning remain later POC blocks. The complete
 sequence, scorecard and status are in the
 [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md).
 
+### Inspect the current wrapper state
+
+The committed wrapper exposes two read-only management commands:
+
+```bash
+./buildoptw --buildopt status
+./buildoptw --buildopt explain --json
+```
+
+`status` summarizes the current decision, observed builds, cache facts,
+fallback and available timings. `explain` includes the exact binding and the
+reason native Gradle was retained or an action was deferred. Both forms use
+one validated report model; `--json` is the machine-readable representation.
+Missing observations, trials or economics are `UNAVAILABLE`, never zero. The
+commands do not write repository or private state, and an unverified decision
+always retains native Gradle. Keep the `--buildopt` prefix: without it,
+`./buildoptw status` is an ordinary Gradle task invocation.
+
 Value qualification is separate from installation. Trusted CI can run the
 bounded paired-trial harness (`./dev/check-sticky-wrapper-trial`) with the
 candidate and optimized native Gradle in isolated roots. The first four-pair

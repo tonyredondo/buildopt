@@ -5,6 +5,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -72,6 +73,33 @@ func TestCLIErrorCodesAndUsage(t *testing.T) {
 	var stderr bytes.Buffer
 	if exit := runCLI([]string{"--help"}, &stdout, &stderr, generator); exit != 0 || stdout.String() != Usage || stderr.Len() != 0 {
 		t.Fatalf("help exit/stdout/stderr = %d/%q/%q", exit, stdout.String(), stderr.String())
+	}
+}
+
+func TestCLIStatusAndExplainAreReadOnlyManagementCommands(t *testing.T) {
+	root := t.TempDir()
+	generator := Generator{Root: root, Resolver: &fakeResolver{latest: fixtureRelease("1.2.3", 'a')}}
+	if _, err := generator.Init(context.Background(), configuredFixture()); err != nil {
+		t.Fatal(err)
+	}
+	before := captureTree(t, root)
+	for _, testCase := range []struct {
+		name string
+		args []string
+		want string
+	}{
+		{name: "status json", args: []string{"status", "--root", root, "--json"}, want: `"reportType": "STATUS"`},
+		{name: "explain human", args: []string{"explain", "--root", root}, want: "Decision: native"},
+	} {
+		t.Run(testCase.name, func(t *testing.T) {
+			var stdout, stderr bytes.Buffer
+			if exit := runCLI(testCase.args, &stdout, &stderr, generator); exit != 0 || stderr.Len() != 0 || !strings.Contains(stdout.String(), testCase.want) {
+				t.Fatalf("exit/stdout/stderr = %d/%q/%q", exit, stdout.String(), stderr.String())
+			}
+		})
+	}
+	if after := captureTree(t, root); !reflect.DeepEqual(before, after) {
+		t.Fatalf("status/explain modified repository: before=%#v after=%#v", before, after)
 	}
 }
 

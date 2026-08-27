@@ -54,6 +54,11 @@ task-contract and graph-breadth detectors, digest-bound recipes and exact
 apply/revert proofs. Its proposals never merge or authorize runtime actions;
 accepted task recipes leave plain native Gradle in charge. No third cache or
 state service is planned.
+`internal/stickywrapper/status.go` owns the SWL-013 read-only customer report.
+It loads only validated local observations and decision snapshots, renders one
+model as human text or JSON, and keeps missing evidence and native fallback
+explicit. The generated wrapper templates own the unambiguous `--buildopt`
+management routing; no report path grants action authority.
 
 Run `./dev/check-sticky-wrapper-learning-plan` to validate this planning
 boundary. As implementation begins, this map must name the concrete owning
@@ -103,6 +108,7 @@ in `internal/`; cross-process representations belong in `contracts/` first.
 | `internal/stickytrial` | Trusted-CI-only paired-trial scheduler, direct command runner, isolation digests, output equivalence and budget accounting; no action authority | `SWL-010`; `poc-sticky-wrapper-trial-v1` |
 | `internal/stickyactive` | Revalidated active runtime profiles, native counterfactuals, exact-output checks, regression suspension and fail-closed native fallback; no shell or repository-specific rules | `SWL-011`; `poc-sticky-wrapper-active-v1` |
 | `internal/durablecatalog` | Generic task-contract and graph-breadth opportunity detection, digest-bound reviewable recipes and exact apply/revert transactions; no automatic merge or runtime authority | `SWL-012`; `poc-sticky-wrapper-durable-catalog-v1` |
+| `internal/stickywrapper` | Repository wrapper generation/bootstrap and read-only status/explanation reports; no credential exposure or action authorization | `SWL-001..004, SWL-013`; `poc-sticky-wrapper-status-v1` |
 | `internal/generated` | Checked-in generated transport clients | generated-code manifest |
 
 Package comments describe these boundaries in Go documentation. A package may

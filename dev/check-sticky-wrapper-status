@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-sticky-wrapper-status-v1.json"
+
+for buildopt_command in jq mktemp sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required sticky-wrapper-status command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.poc/sticky-wrapper-status/v1" and
+    .workItem == "SWL-013" and
+    .commands.status == "./buildoptw --buildopt status [--json]" and
+    .commands.explain == "./buildoptw --buildopt explain [--json]" and
+    .commands.gradleTaskEscape == "./buildoptw status" and
+    .report.schemaVersion == "buildopt.sticky/status/v1" and
+    .report.types == ["STATUS", "EXPLAIN"] and
+    (.report.requiredSections | length) == 9 and
+    .report.measurementStates == ["AVAILABLE", "UNAVAILABLE"] and
+    .report.unavailableHasNoNumericValue and
+    .report.humanAndJsonUseOneReportModel and
+    .safety.readOnly and
+    (.safety.credentialsExposed | not) and
+    (.safety.checkoutPathsExposed | not) and
+    .safety.tamperedObservationLogRejected and
+    .safety.unverifiedDecisionRetainsNativeGradle and
+    .safety.arithmeticMismatchRejected and
+    .boundaries.pocOnly and
+    (.boundaries.decisionAuthorization | not) and
+    (.boundaries.performanceClaim | not) and
+    .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_contract}" >/dev/null
+
+buildopt_test_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-sticky-status.XXXXXX")
+trap 'rm -rf -- "${buildopt_test_root}"' EXIT
+buildopt_repository="${buildopt_test_root}/repository"
+buildopt_cache="${buildopt_test_root}/cache"
+mkdir -p -- "${buildopt_repository}/.buildopt" "${buildopt_cache}"
+cp -- "${buildopt_repo_root}/internal/stickywrapper/templates/buildoptw" "${buildopt_repository}/buildoptw"
+cp -- "${buildopt_repo_root}/internal/stickywrapper/templates/buildoptw.bat" "${buildopt_repository}/buildoptw.bat"
+cp -- "${buildopt_repo_root}/fixtures/sticky-wrapper-contract/valid/.buildopt/wrapper.properties" "${buildopt_repository}/.buildopt/wrapper.properties"
+cp -- "${buildopt_repo_root}/fixtures/sticky-wrapper-contract/valid/.buildopt/config.toml" "${buildopt_repository}/.buildopt/config.toml"
+chmod 0755 "${buildopt_repository}/buildoptw"
+chmod 0644 "${buildopt_repository}/buildoptw.bat" "${buildopt_repository}/.buildopt/wrapper.properties" "${buildopt_repository}/.buildopt/config.toml"
+
+buildopt_install="${buildopt_cache}/buildopt/wrapper/distributions/0.6.1/linux-amd64/a543acda9ec47914f25f1b4994e9337aae5873fa89d32bedb807d078357307f9"
+mkdir -p -- "${buildopt_install}/bin" "${buildopt_install}/lib"
+"${buildopt_repo_root}/dev/run" --toolchain go -- go build -buildvcs=false -trimpath -o "${buildopt_install}/bin/buildopt" ./cmd/buildopt
+for buildopt_binary in buildopt-impact buildopt-server buildopt-edge; do
+    printf '#!/bin/sh\nexit 0\n' >"${buildopt_install}/bin/${buildopt_binary}"
+    chmod 0755 "${buildopt_install}/bin/${buildopt_binary}"
+done
+printf 'plugin\n' >"${buildopt_install}/lib/buildopt-gradle-plugin-0.6.1.jar"
+printf 'agent\n' >"${buildopt_install}/lib/buildopt-jvm-agent-0.6.1.jar"
+printf 'init\n' >"${buildopt_install}/lib/buildopt.init.gradle"
+(
+    cd -- "${buildopt_install}"
+    sha256sum bin/* lib/* >SHA256SUMS
+)
+printf '%s\n%s\n%s\n%s\n' buildopt.wrapper-install/v1 0.6.1 linux-amd64 \
+    a543acda9ec47914f25f1b4994e9337aae5873fa89d32bedb807d078357307f9 \
+    >"${buildopt_install}/.buildopt-wrapper-install"
+
+buildopt_json="${buildopt_test_root}/status.json"
+(
+    cd -- "${buildopt_repository}"
+    BUILDOPT_WRAPPER_CACHE_HOME="${buildopt_cache}" ./buildoptw --buildopt status --json
+) >"${buildopt_json}"
+jq -e '
+    .schemaVersion == "buildopt.sticky/status/v1" and
+    .reportType == "STATUS" and
+    .decision.state == "NATIVE" and
+    .observations.count == 0 and
+    .observations.wallTimeMs.state == "UNAVAILABLE" and
+    (.observations.wallTimeMs | has("value") | not) and
+    (.explanation | length) >= 5 and
+    ([.. | strings] | map(select(test("BUILDOPT_|/tmp/"))) | length) == 0
+' "${buildopt_json}" >/dev/null
+
+(
+    cd -- "${buildopt_repository}"
+    BUILDOPT_WRAPPER_CACHE_HOME="${buildopt_cache}" ./buildoptw --buildopt explain
+) >"${buildopt_test_root}/explain.txt"
+grep -F 'Decision: native' "${buildopt_test_root}/explain.txt" >/dev/null
+grep -F 'Observations: none recorded yet.' "${buildopt_test_root}/explain.txt" >/dev/null
+
+printf '{"tampered":true}\n' >"${buildopt_test_root}/tampered.jsonl"
+set +e
+(
+    cd -- "${buildopt_repository}"
+    BUILDOPT_WRAPPER_CACHE_HOME="${buildopt_cache}" \
+        BUILDOPT_STICKY_OBSERVATION_OUTPUT="${buildopt_test_root}/tampered.jsonl" \
+        ./buildoptw --buildopt status --json
+) >"${buildopt_test_root}/tampered.stdout" 2>"${buildopt_test_root}/tampered.stderr"
+buildopt_tampered_exit=$?
+set -e
+[[ "${buildopt_tampered_exit}" == 65 ]]
+[[ ! -s "${buildopt_test_root}/tampered.stdout" ]]
+
+printf 'Sticky wrapper status: STATUS_AND_EXPLAIN_ACCEPTED\n'
