@@ -173,6 +173,37 @@ does not qualify a profile. The next evidence must compare the same wrapper
 against optimized native Gradle over a frozen chronological public campaign,
 including both positive and negative commits and all wrapper/cache costs.
 
+## First longitudinal signal from the committed wrapper
+
+The first bounded `SWL-015` sample now performs that comparison on one frozen
+current revision in each of five public repository families. It runs the exact
+same workflow in two isolated worktrees: optimized native Gradle as control and
+the committed `./buildoptw` command as candidate. Dependency preparation is
+outside pair wall time, and a pair is accepted only when both arms succeed and
+the required outputs are byte-identical.
+
+| Repository | Native control | BuildOpt wrapper | Signed delta | Result |
+| --- | ---: | ---: | ---: | --- |
+| Spring Framework | 283.944 s | 289.226 s | -5.282 s / -1.86% | Negative |
+| OpenTelemetry Java Instrumentation | 512.194 s | 517.979 s | -5.786 s / -1.13% | Negative |
+| Apache Kafka | 210.889 s | 205.213 s | +5.676 s / +2.69% | Positive |
+| Micronaut Core | 494.033 s | 511.159 s | -17.126 s / -3.47% | Negative |
+| Apache Groovy | 128.134 s | 127.765 s | +0.370 s / +0.29% | Positive |
+
+The sample is intentionally `INCOMPLETE`: it contains one `CONTROL_FIRST` pair
+per family, so it has no order balance, longitudinal recurrence or terminal
+confidence. It does give the first comparable signal for the installed
+wrapper: **2/5 positive pairs, 3/5 negative pairs, -22.149 s signed total,
+5/5 exact outputs and zero product failures**. This is not yet a promising
+general speedup; it is an honest early indication that the current wrapper is
+near parity on two workloads and slower on three.
+
+The machine-readable sample is
+[`poc-sticky-wrapper-longitudinal-sample-v1`](../../benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md).
+The frozen campaign remains open and must reach at least 15 comparable pairs
+per family, with alternating order and all negative rows retained, before the
+terminal `SWL-016` decision. No profile is activated from this sample.
+
 ## Historical complete-profile result
 
 One exact BuildOpt executable was used across frozen Spring Framework,

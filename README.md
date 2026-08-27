@@ -157,6 +157,17 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > speedup claim; no action is activated until the next block removes that
 > overhead and re-proves positive value.
 
+> **First public longitudinal signal:** a bounded `SWL-015` run compared the
+> committed `./buildoptw` command with optimized native Gradle on one frozen
+> current revision in each of Spring Framework, OpenTelemetry Java
+> Instrumentation, Apache Kafka, Micronaut Core and Apache Groovy. The five
+> pairs produced exact required outputs with zero product failures; **2/5**
+> were positive and **3/5** negative, for **-22.149 s** signed value. This is
+> an intentionally incomplete, control-first diagnostic sample, not a
+> general speedup claim. The campaign must reach at least 15 comparable pairs
+> per family with alternating order before the terminal decision. See the
+> [sample evidence](./benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md).
+
 > **Ordinary-build learning economics:** the POC now learns only from builds
 > the user already requested. It predicts structural recurrence before paired
 > calibration and requires projected payback within five compatible matches.

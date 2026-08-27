@@ -541,14 +541,17 @@ buildopt_subject() {
         done < <(jq -c ".repositories[${buildopt_index}].${buildopt_queue_key}[]" "${buildopt_cohort}")
     done
 
+    local buildopt_subject_filter
+    # shellcheck disable=SC2016  # The jq program intentionally uses jq variables.
+    buildopt_subject_filter='{key:$policy.key,repositoryId:$policy.repositoryId,workflow:$policy.workflow,requiredOutputs:$policy.requiredOutputs,
+      sampleLimit:$max,dependencyPreparation:{mode:"ANCHOR_AND_EACH_ATTEMPT_UNMEASURED",attempts:$attempts,
+        successes:$successes,failures:$failures,wallNs:$wall,includedInPairWall:false},
+      observations:$observations,exclusions:$exclusions}'
     jq -n --argjson policy "${buildopt_policy}" --argjson attempts "${buildopt_prepare_attempts}" \
         --argjson successes "${buildopt_prepare_successes}" --argjson failures "${buildopt_prepare_failures}" \
         --argjson wall "${buildopt_prepare_wall_ns}" --argjson max "${buildopt_max_primary}" \
         --slurpfile observations "${buildopt_observations}" --slurpfile exclusions "${buildopt_exclusions}" \
-        '{key:$policy.key,repositoryId:$policy.repositoryId,workflow:$policy.workflow,requiredOutputs:$policy.requiredOutputs,
-          sampleLimit:$max,dependencyPreparation:{mode:"ANCHOR_AND_EACH_ATTEMPT_UNMEASURED",attempts:$attempts,
-            successes:$successes,failures:$failures,wallNs:$wall,includedInPairWall:false},
-          observations:$observations,exclusions:$exclusions}' >"${buildopt_subject_root}/subject.json"
+        "${buildopt_subject_filter}" >"${buildopt_subject_root}/subject.json"
     printf 'SWL-015 %s complete: %d comparable, %d excluded\n' "${buildopt_repository_id}" \
         "${buildopt_accepted}" "$(wc -l <"${buildopt_exclusions}" | tr -d ' ')"
 }
@@ -566,6 +569,15 @@ done
 
 buildopt_captured_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 mkdir -p -- "${buildopt_output}"
+# shellcheck disable=SC2016  # The jq program intentionally uses jq variables.
+buildopt_raw_filter='{schemaVersion:"buildopt.poc/sticky-wrapper-longitudinal-raw/v1",workItem:"SWL-015",
+  capturedAt:$capturedAt,evaluatedRevision:$revision,packageArchiveSha256:$archive,
+  cohortSha256:$cohort,contractSha256:$contract,sampleLimitPerFamily:$max,
+  repositories:[$spring[0],$otel[0],$kafka[0],$micronaut[0],$groovy[0]],
+  productFailures:([[$spring[0],$otel[0],$kafka[0],$micronaut[0],$groovy[0]][] | .exclusions[] |
+    select(.reason == "CANDIDATE_BUILD_FAILURE" or .reason == "OUTPUT_MISMATCH" or .reason == "CANDIDATE_OUTPUT_MISSING")] | length),
+  boundaries:{proofOfConcept:true,productionAuthorized:false,soakRequired:false,
+    designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE",wallTimeClaim:($max == 20)}}'
 jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revision}" \
     --arg archive "${buildopt_archive_sha}" --arg cohort "${buildopt_cohort_sha}" \
     --arg contract "${buildopt_contract_sha}" --argjson max "${buildopt_max_primary}" \
@@ -573,31 +585,25 @@ jq -n --arg capturedAt "${buildopt_captured_at}" --arg revision "${buildopt_revi
     --slurpfile otel "${buildopt_temp}/subjects/opentelemetry-java-instrumentation/subject.json" \
     --slurpfile kafka "${buildopt_temp}/subjects/apache-kafka/subject.json" \
     --slurpfile micronaut "${buildopt_temp}/subjects/micronaut-core/subject.json" \
-    --slurpfile groovy "${buildopt_temp}/subjects/apache-groovy/subject.json" '
-      {schemaVersion:"buildopt.poc/sticky-wrapper-longitudinal-raw/v1",workItem:"SWL-015",
-       capturedAt:$capturedAt,evaluatedRevision:$revision,packageArchiveSha256:$archive,
-       cohortSha256:$cohort,contractSha256:$contract,sampleLimitPerFamily:$max,
-       repositories:[$spring[0],$otel[0],$kafka[0],$micronaut[0],$groovy[0]],
-       productFailures:([[$spring[0],$otel[0],$kafka[0],$micronaut[0],$groovy[0]][] | .exclusions[] |
-         select(.reason == "CANDIDATE_BUILD_FAILURE" or .reason == "OUTPUT_MISMATCH" or .reason == "CANDIDATE_OUTPUT_MISSING")] | length),
-       boundaries:{proofOfConcept:true,productionAuthorized:false,soakRequired:false,
-         designPartnerRequired:false,testOptimization:"OUT_OF_SCOPE",wallTimeClaim:($max == 20)}}
-    ' >"${buildopt_output}/raw.json"
+    --slurpfile groovy "${buildopt_temp}/subjects/apache-groovy/subject.json" \
+    "${buildopt_raw_filter}" >"${buildopt_output}/raw.json"
 
-jq '{schemaVersion:"buildopt.poc/sticky-wrapper-longitudinal-report/v1",workItem:.workItem,
-    capturedAt:.capturedAt,evaluatedRevision:.evaluatedRevision,packageArchiveSha256:.packageArchiveSha256,
-    cohortSha256:.cohortSha256,contractSha256:.contractSha256,sampleLimitPerFamily:.sampleLimitPerFamily,
-    summary:{families:(.repositories|length),comparablePairs:( [.repositories[].observations|length] | add),
-      positivePairs:([.repositories[].observations[]|select(.signedDeltaNs > 0)]|length),
-      negativePairs:([.repositories[].observations[]|select(.signedDeltaNs < 0)]|length),
-      exactPairs:([.repositories[].observations[]|select(.exactOutputs)]|length),
-      productFailures:.productFailures,
-      cumulativeSignedDeltaNs:([.repositories[].observations[].signedDeltaNs]|add // 0),
-      state:(if ([.repositories[].observations|length]|min) >= 15 then "READY_FOR_SWL_016" else "INCOMPLETE" end)},
-    repositories:[.repositories[]|{key,repositoryId,sampleLimit,observations,exclusions,
-      comparablePairs:(.observations|length),positivePairs:([.observations[]|select(.signedDeltaNs > 0)]|length),
-      negativePairs:([.observations[]|select(.signedDeltaNs < 0)]|length),
-      cumulativeSignedDeltaNs:([.observations[].signedDeltaNs]|add // 0)}],boundaries:.boundaries}' \
+# shellcheck disable=SC2016  # The jq program intentionally uses jq variables.
+buildopt_report_filter='{schemaVersion:"buildopt.poc/sticky-wrapper-longitudinal-report/v1",workItem:.workItem,
+  capturedAt:.capturedAt,evaluatedRevision:.evaluatedRevision,packageArchiveSha256:.packageArchiveSha256,
+  cohortSha256:.cohortSha256,contractSha256:.contractSha256,sampleLimitPerFamily:.sampleLimitPerFamily,
+  summary:{families:(.repositories|length),comparablePairs:( [.repositories[].observations|length] | add),
+    positivePairs:([.repositories[].observations[]|select(.signedDeltaNs > 0)]|length),
+    negativePairs:([.repositories[].observations[]|select(.signedDeltaNs < 0)]|length),
+    exactPairs:([.repositories[].observations[]|select(.exactOutputs)]|length),
+    productFailures:.productFailures,
+    cumulativeSignedDeltaNs:([.repositories[].observations[].signedDeltaNs]|add // 0),
+    state:(if ([.repositories[].observations|length]|min) >= 15 then "READY_FOR_SWL_016" else "INCOMPLETE" end)},
+  repositories:[.repositories[]|{key,repositoryId,sampleLimit,observations,exclusions,
+    comparablePairs:(.observations|length),positivePairs:([.observations[]|select(.signedDeltaNs > 0)]|length),
+    negativePairs:([.observations[]|select(.signedDeltaNs < 0)]|length),
+    cumulativeSignedDeltaNs:([.observations[].signedDeltaNs]|add // 0)}],boundaries:.boundaries}'
+jq "${buildopt_report_filter}" \
     "${buildopt_output}/raw.json" >"${buildopt_output}/report.json"
 chmod 0600 "${buildopt_output}/raw.json" "${buildopt_output}/report.json"
 buildopt_success=true

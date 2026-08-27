@@ -4,7 +4,7 @@
 
 **Overall:** `IN_PROGRESS`<br>
 **Progress:** `15/17` blocks complete<br>
-**Current block:** `SWL-015` — frozen public longitudinal campaign<br>
+**Current block:** `SWL-015` — frozen public longitudinal campaign (diagnostic sample captured)<br>
 **Predecessor:** the adaptive-fragment experiment closed as
 `STOP_ADAPTIVE_FRAGMENT_POC` with zero activations and zero attributable
 saving. Its evidence remains immutable context, not authority for this POC.
@@ -250,7 +250,7 @@ An incomplete campaign is `INCOMPLETE`, not a reason to move thresholds.
 | 12 | `SWL-012` Durable native optimization catalog | Generic detectors and reviewable patches for task contracts and graph breadth | `DONE` | SWL-009 |
 | 13 | `SWL-013` Customer status and explanation | Human/JSON decision, cumulative economics, cache metrics and exact fallback explanation | `DONE` | SWL-011, SWL-012 |
 | 14 | `SWL-014` Two-machine installed proof | Clean producer/consumer checkouts share cache/state through HTTPS and survive outage | `DONE` | SWL-013 |
-| 15 | `SWL-015` Frozen public longitudinal campaign | Current installed wrapper over preregistered chronological windows in five families | `TODO` | SWL-014 |
+| 15 | `SWL-015` Frozen public longitudinal campaign | Current installed wrapper over preregistered chronological windows in five families | `IN_PROGRESS` | SWL-014 |
 | 16 | `SWL-016` Terminal decision | Recompute the immutable scorecard and continue or stop without threshold movement | `WAITING` | SWL-015 |
 
 ## Block contracts
@@ -661,6 +661,22 @@ outputs, complete phase attribution, deterministic checkpoints and a signed
 economic ledger. No repository-specific product rule or post-result threshold
 change is allowed.
 
+Diagnostic sample: [`poc-sticky-wrapper-longitudinal-sample-v1`](../../benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md)
+completed one `CONTROL_FIRST` pair in each frozen family. All five pairs
+completed successfully with exact required outputs and zero product failures;
+two were positive and three were negative, for a signed portfolio delta of
+**-22.149 seconds**. This is useful implementation evidence, but it is not a
+balanced estimate and does not satisfy the 15-pair acceptance minimum. The
+campaign remains `IN_PROGRESS` and `SWL-016` remains blocked.
+
+The first bounded execution also exposed a harness-only final-aggregation
+failure after all five subject records had been written. The raw subject
+records were retained and the checked `raw.json`/`report.json` were regenerated
+from those records without changing any observation. The runner now passes its
+multi-line jq programs as explicit arguments, and that finalization path has
+been validated against the retained records; a subsequent bounded run will
+confirm it in the live process before the full campaign is treated as closed.
+
 ### SWL-016 — Terminal decision
 
 Recompute the frozen scorecard from SWL-015 only. Historical mechanism results
@@ -713,7 +729,7 @@ customer behavior, architecture, value evidence or direction changes.
 | `SWL-E013` | SWL-012 | Durable detector/patch breadth and value evidence | `DONE` |
 | `SWL-E014` | SWL-013 | Recomputable customer status/explanation contract | `DONE` |
 | `SWL-E015` | SWL-014 | [Two-machine installed wrapper evidence](../../benchmarks/results/sticky-wrapper-two-machine-v1.json), verified bootstrap, owner-commit visibility, read-only central cache hit, output equality and native outage fallback | `DONE` |
-| `SWL-E016` | SWL-015 | Frozen five-family longitudinal campaign | `WAITING` |
+| `SWL-E016` | SWL-015 | [Bounded five-family diagnostic sample](../../benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md): 5/5 comparable pairs, 5/5 exact outputs, 2/5 positive, 3/5 negative, -22.149 s signed total; below the 15-per-family completion gate | `IN_PROGRESS` |
 | `SWL-E017` | SWL-016 | Immutable terminal scorecard and continue/stop decision | `WAITING` |
 
 ## Risks and stop conditions
@@ -736,6 +752,7 @@ customer behavior, architecture, value evidence or direction changes.
 | Date | Change |
 | --- | --- |
 | 2026-08-27 | Closed SWL-014. The committed sticky wrapper bootstrapped one verified archive in isolated producer/consumer containers, published two Gradle cache objects over HTTPS, kept pending reads invisible until owner commit, restored two tasks from a clean read-only machine, and rebuilt the same output during service outage. Durations are recorded for the next timing experiment; no wall-time or profile-qualification claim is made. Opened SWL-015 frozen public longitudinal campaign. |
+| 2026-08-27 | Captured the first SWL-015 diagnostic sample across Spring Framework, OpenTelemetry Java Instrumentation, Apache Kafka, Micronaut Core and Apache Groovy. All five candidate/control pairs produced exact required outputs with zero product failures; two were positive and three negative for -22.149 seconds signed value. The sample is `INCOMPLETE` and cannot feed SWL-016 until the balanced 15-per-family gate is met. A harness-only final-aggregation failure was repaired by passing jq programs explicitly; one follow-up run remains before the full campaign is considered closed. |
 | 2026-08-27 | Closed SWL-013. Added read-only customer `status` and `explain` management commands to both generated wrapper templates, with one recomputable human/JSON report model, explicit unavailable metrics, exact bindings, native fallback reasons and tamper rejection. Ordinary Gradle tasks named `status` or `explain` remain unambiguous. Opened SWL-014 two-machine installed proof. |
 | 2026-08-27 | Closed SWL-012. Added the generic durable native catalog for task-contract and graph-breadth opportunities, exact reviewable recipes, isolated apply/revert proofs and a strict 4-CPU/16-GiB evidence report. The task-contract detector is shared by Kotlin and Groovy; the reviewed patch saves 64.1% and 74.7% respectively across 16/16 exact pairs. Graph proposals remain structural-only with durable timing unmeasured. Opened SWL-013 customer status and explanation. |
 | 2026-08-27 | Closed SWL-011. Added the generic signed-decision active runner, direct candidate/native execution, exact required-output hashing, native counterfactual sampling, fail-closed suspension and native fallback. The checked-in SWL-010 report remains unauthorized because it is negative; synthetic control-flow evidence records one active execution, three suspensions and four native retentions. Opened SWL-012 durable native optimization catalog. |

@@ -1,0 +1,287 @@
+{
+  "schemaVersion": "buildopt.poc/sticky-wrapper-longitudinal-raw/v1",
+  "workItem": "SWL-015",
+  "capturedAt": "2026-08-27T05:28:58Z",
+  "evaluatedRevision": "e1c88254d27a63ba3582b6491d7f1dde04ab8d28",
+  "packageArchiveSha256": "d69302cad3d37116e59a32417f8acaec64685df0c27546ab699a0ef6a74a5e28",
+  "cohortSha256": "8ca7a1b7b9ea2c71eb95f050eff0fdb76c23425141cd0c4f8f104f33782503ee",
+  "contractSha256": "996cd8c1617b607262c5bf3b7de4f27feb3757be85d9d3818d49b5b2514ecfa1",
+  "sampleLimitPerFamily": 1,
+  "repositories": [
+    {
+      "key": "spring-framework",
+      "repositoryId": "spring-projects/spring-framework",
+      "workflow": [
+        "classes",
+        "--offline",
+        "--no-scan",
+        "--no-daemon",
+        "--max-workers=12"
+      ],
+      "requiredOutputs": [
+        "spring-jms/build/classes/**"
+      ],
+      "sampleLimit": 1,
+      "dependencyPreparation": {
+        "mode": "ANCHOR_AND_EACH_ATTEMPT_UNMEASURED",
+        "attempts": 2,
+        "successes": 2,
+        "failures": 0,
+        "wallNs": 279636528343,
+        "includedInPairWall": false
+      },
+      "observations": [
+        {
+          "cohortAttempt": 1,
+          "sequence": 1,
+          "source": "PRIMARY",
+          "frozenOrdinal": 1,
+          "revision": "daa8c10031e35f1a447917474f203789e009d3b5",
+          "parentRevision": "7da47f8c473e5b48939418adc9b2427b0890501f",
+          "changeShape": "MIXED",
+          "order": "CONTROL_FIRST",
+          "control": {
+            "wallNs": 283944017712,
+            "exitCode": 0,
+            "outputSha256": "e80451682e5dfbf5f43d8052a653e64b1fe7ba70f15074b59ea9f488902c80eb",
+            "outputCount": 163,
+            "fromCacheTasks": 0
+          },
+          "candidate": {
+            "wallNs": 289226461896,
+            "exitCode": 0,
+            "outputSha256": "e80451682e5dfbf5f43d8052a653e64b1fe7ba70f15074b59ea9f488902c80eb",
+            "outputCount": 163,
+            "fromCacheTasks": 0,
+            "buildoptStateSha256": "610db999645ffc60164d26682695faecea9e47b64f5c887e97a289024eec4960"
+          },
+          "exactOutputs": true,
+          "signedDeltaNs": -5282444184
+        }
+      ],
+      "exclusions": []
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "repositoryId": "open-telemetry/opentelemetry-java-instrumentation",
+      "workflow": [
+        ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0:javaagent:shadowJar",
+        "--offline",
+        "--no-scan",
+        "--no-daemon",
+        "--max-workers=12"
+      ],
+      "requiredOutputs": [
+        "instrumentation/spring/spring-webmvc/spring-webmvc-6.0/javaagent/build/libs/*.jar"
+      ],
+      "sampleLimit": 1,
+      "dependencyPreparation": {
+        "mode": "ANCHOR_AND_EACH_ATTEMPT_UNMEASURED",
+        "attempts": 2,
+        "successes": 2,
+        "failures": 0,
+        "wallNs": 614532684954,
+        "includedInPairWall": false
+      },
+      "observations": [
+        {
+          "cohortAttempt": 1,
+          "sequence": 1,
+          "source": "PRIMARY",
+          "frozenOrdinal": 1,
+          "revision": "aa996db4b68d98c4a9018f17736c4459404c57ab",
+          "parentRevision": "8545ffb71b2e54d2a3468134070c79a00c76714a",
+          "changeShape": "MIXED",
+          "order": "CONTROL_FIRST",
+          "control": {
+            "wallNs": 512193714418,
+            "exitCode": 0,
+            "outputSha256": "4f9beb2a849e469708121e68e239d68ce9f3483d1dc877148fc309ec38dd0b41",
+            "outputCount": 1,
+            "fromCacheTasks": 0
+          },
+          "candidate": {
+            "wallNs": 517979432243,
+            "exitCode": 0,
+            "outputSha256": "4f9beb2a849e469708121e68e239d68ce9f3483d1dc877148fc309ec38dd0b41",
+            "outputCount": 1,
+            "fromCacheTasks": 0,
+            "buildoptStateSha256": "610db999645ffc60164d26682695faecea9e47b64f5c887e97a289024eec4960"
+          },
+          "exactOutputs": true,
+          "signedDeltaNs": -5785717825
+        }
+      ],
+      "exclusions": []
+    },
+    {
+      "key": "apache-kafka",
+      "repositoryId": "apache/kafka",
+      "workflow": [
+        "core:compileTestScala",
+        "--offline",
+        "--no-scan",
+        "--no-daemon",
+        "--max-workers=12"
+      ],
+      "requiredOutputs": [
+        "core/build/classes/scala/test/**"
+      ],
+      "sampleLimit": 1,
+      "dependencyPreparation": {
+        "mode": "ANCHOR_AND_EACH_ATTEMPT_UNMEASURED",
+        "attempts": 2,
+        "successes": 2,
+        "failures": 0,
+        "wallNs": 255984140039,
+        "includedInPairWall": false
+      },
+      "observations": [
+        {
+          "cohortAttempt": 1,
+          "sequence": 1,
+          "source": "PRIMARY",
+          "frozenOrdinal": 1,
+          "revision": "02d0b030ae12b41aa581da6df4c2ca891d35d3db",
+          "parentRevision": "ce7c89312a8b63fe979a102d45f1e37d50181557",
+          "changeShape": "MIXED",
+          "order": "CONTROL_FIRST",
+          "control": {
+            "wallNs": 210889114055,
+            "exitCode": 0,
+            "outputSha256": "b7993dddbaae0a9efbf15ea691994bfa280705536f6a0644e1064c349ff0af06",
+            "outputCount": 480,
+            "fromCacheTasks": 0
+          },
+          "candidate": {
+            "wallNs": 205213408270,
+            "exitCode": 0,
+            "outputSha256": "b7993dddbaae0a9efbf15ea691994bfa280705536f6a0644e1064c349ff0af06",
+            "outputCount": 480,
+            "fromCacheTasks": 0,
+            "buildoptStateSha256": "610db999645ffc60164d26682695faecea9e47b64f5c887e97a289024eec4960"
+          },
+          "exactOutputs": true,
+          "signedDeltaNs": 5675705785
+        }
+      ],
+      "exclusions": []
+    },
+    {
+      "key": "micronaut-core",
+      "repositoryId": "micronaut-projects/micronaut-core",
+      "workflow": [
+        "assemble",
+        "--offline",
+        "--no-scan",
+        "--no-daemon",
+        "--max-workers=12"
+      ],
+      "requiredOutputs": [
+        "http-client-jdk/build/libs/**"
+      ],
+      "sampleLimit": 1,
+      "dependencyPreparation": {
+        "mode": "ANCHOR_AND_EACH_ATTEMPT_UNMEASURED",
+        "attempts": 2,
+        "successes": 2,
+        "failures": 0,
+        "wallNs": 579207320607,
+        "includedInPairWall": false
+      },
+      "observations": [
+        {
+          "cohortAttempt": 1,
+          "sequence": 1,
+          "source": "PRIMARY",
+          "frozenOrdinal": 1,
+          "revision": "b963c8fce122421171de9f3ebf90328c1b935bd6",
+          "parentRevision": "3083f40df534736e508a5e97c4cd6b7fbd41caad",
+          "changeShape": "MIXED",
+          "order": "CONTROL_FIRST",
+          "control": {
+            "wallNs": 494033193978,
+            "exitCode": 0,
+            "outputSha256": "a8f0433c32305f1dc78c908a913a82508403181b7d9cdb274b85cc1f7d3d2030",
+            "outputCount": 3,
+            "fromCacheTasks": 0
+          },
+          "candidate": {
+            "wallNs": 511159257917,
+            "exitCode": 0,
+            "outputSha256": "a8f0433c32305f1dc78c908a913a82508403181b7d9cdb274b85cc1f7d3d2030",
+            "outputCount": 3,
+            "fromCacheTasks": 0,
+            "buildoptStateSha256": "610db999645ffc60164d26682695faecea9e47b64f5c887e97a289024eec4960"
+          },
+          "exactOutputs": true,
+          "signedDeltaNs": -17126063939
+        }
+      ],
+      "exclusions": []
+    },
+    {
+      "key": "apache-groovy",
+      "repositoryId": "apache/groovy",
+      "workflow": [
+        ":groovy-json:assemble",
+        "--offline",
+        "--no-scan",
+        "--no-daemon",
+        "--max-workers=12"
+      ],
+      "requiredOutputs": [
+        "subprojects/groovy-json/build/classes/java/main/**",
+        "subprojects/groovy-json/build/resources/main/**"
+      ],
+      "sampleLimit": 1,
+      "dependencyPreparation": {
+        "mode": "ANCHOR_AND_EACH_ATTEMPT_UNMEASURED",
+        "attempts": 2,
+        "successes": 2,
+        "failures": 0,
+        "wallNs": 202695473866,
+        "includedInPairWall": false
+      },
+      "observations": [
+        {
+          "cohortAttempt": 1,
+          "sequence": 1,
+          "source": "PRIMARY",
+          "frozenOrdinal": 1,
+          "revision": "fcab925d215e3589e9ef2c9e7876d1b37df9a01f",
+          "parentRevision": "b46ebb25e7bcba7269c9185aa0e965e02c50db06",
+          "changeShape": "MIXED",
+          "order": "CONTROL_FIRST",
+          "control": {
+            "wallNs": 128134470500,
+            "exitCode": 0,
+            "outputSha256": "a67419ddf5ae28d5ad2dd14ebd1fe8ae1ba257677639d0c8682e05b9fc2828a0",
+            "outputCount": 67,
+            "fromCacheTasks": 0
+          },
+          "candidate": {
+            "wallNs": 127764794560,
+            "exitCode": 0,
+            "outputSha256": "a67419ddf5ae28d5ad2dd14ebd1fe8ae1ba257677639d0c8682e05b9fc2828a0",
+            "outputCount": 67,
+            "fromCacheTasks": 0,
+            "buildoptStateSha256": "610db999645ffc60164d26682695faecea9e47b64f5c887e97a289024eec4960"
+          },
+          "exactOutputs": true,
+          "signedDeltaNs": 369675940
+        }
+      ],
+      "exclusions": []
+    }
+  ],
+  "productFailures": 0,
+  "boundaries": {
+    "proofOfConcept": true,
+    "productionAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE",
+    "wallTimeClaim": false
+  }
+}

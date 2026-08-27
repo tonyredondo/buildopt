@@ -62,6 +62,40 @@ historical evidence in the
 [Adaptive Fragment Generalization POC Tracker](../plans/adaptive-fragment-generalization-tracker.md),
 not the active direction.
 
+### First sticky-wrapper longitudinal signal
+
+The first bounded `SWL-015` run now compares the repository-committed
+`./buildoptw` command with the same frozen workflow under optimized native
+Gradle on one current revision in each of five public repository families. Each
+arm has its own worktree, Gradle home, native cache and BuildOpt state; the
+required outputs are byte-hashed before a pair is accepted.
+
+| Repository | Native control | BuildOpt wrapper | Signed delta | Result |
+| --- | ---: | ---: | ---: | --- |
+| Spring Framework | 283.944 s | 289.226 s | -5.282 s / -1.86% | Negative |
+| OpenTelemetry Java Instrumentation | 512.194 s | 517.979 s | -5.786 s / -1.13% | Negative |
+| Apache Kafka | 210.889 s | 205.213 s | +5.676 s / +2.69% | Positive |
+| Micronaut Core | 494.033 s | 511.159 s | -17.126 s / -3.47% | Negative |
+| Apache Groovy | 128.134 s | 127.765 s | +0.370 s / +0.29% | Positive |
+
+This diagnostic sample is `INCOMPLETE`, not a terminal value result: only one
+`CONTROL_FIRST` pair was run per family, so it has no order balance and no
+longitudinal recurrence. It does nevertheless provide a useful early signal:
+**2/5 positive pairs, 3/5 negative pairs, -22.149 s signed total, 5/5 exact
+outputs and zero product failures**. It currently points to parity or a small
+regression rather than a general acceleration claim. The complete evidence is
+[`poc-sticky-wrapper-longitudinal-sample-v1`](../../benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1/README.md).
+
+The experiment remains open. The same frozen protocol must reach at least 15
+comparable pairs per family, with alternating order and every negative row
+retained, before `SWL-016` can decide whether the sticky-wrapper hypothesis
+creates durable customer value. The first bounded runner also exposed a
+harness-only final-summary failure after all subject records had been written.
+The report was regenerated from those immutable subject records, and the
+runner now passes its multi-line jq programs as explicit arguments. That repair
+has been validated against the retained records; one follow-up bounded run
+must still exercise it live before the full campaign is treated as complete.
+
 The active hypothesis is now the
 [Sticky Wrapper Learning POC](../plans/sticky-wrapper-learning-poc-tracker.md).
 It tests a repository-committed wrapper, a negligible locally cached native

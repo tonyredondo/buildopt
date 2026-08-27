@@ -156,6 +156,41 @@ Validate the checked result with:
   benchmarks/results/sticky-wrapper-two-machine-v1.json
 ```
 
+## Sticky-wrapper longitudinal diagnostic sample
+
+The first bounded run of `SWL-015` executes the same committed `./buildoptw`
+workflow against one frozen current revision in each of five public families:
+Spring Framework, OpenTelemetry Java Instrumentation, Apache Kafka, Micronaut
+Core and Apache Groovy. Control and candidate use separate worktrees, Gradle
+homes, native caches and BuildOpt state; dependency preparation is recorded
+outside pair wall time and every accepted pair requires exact output hashes.
+
+The sample is intentionally `INCOMPLETE`: it uses one `CONTROL_FIRST` pair per
+family to obtain an early signal, while the contract requires at least 15
+comparable pairs per family for the terminal decision.
+
+| Repository | Native control | `./buildoptw` | Signed delta | Result | Outputs |
+| --- | ---: | ---: | ---: | --- | --- |
+| Spring Framework | 283.944 s | 289.226 s | -5.282 s / -1.86% | Negative | Exact |
+| OpenTelemetry Java Instrumentation | 512.194 s | 517.979 s | -5.786 s / -1.13% | Negative | Exact |
+| Apache Kafka | 210.889 s | 205.213 s | +5.676 s / +2.69% | Positive | Exact |
+| Micronaut Core | 494.033 s | 511.159 s | -17.126 s / -3.47% | Negative | Exact |
+| Apache Groovy | 128.134 s | 127.765 s | +0.370 s / +0.29% | Positive | Exact |
+
+Across the five pairs, BuildOpt is positive in **2/5** and negative in
+**3/5**, for **-22.149 s** signed portfolio value. All **5/5** output manifests
+match and there are **0 product failures**. Every pair ran control first, so
+the numbers are diagnostic rather than a balanced estimate; they do not prove
+longitudinal or general customer value. The raw and derived evidence is in
+[`poc-sticky-wrapper-longitudinal-sample-v1`](./results/poc-sticky-wrapper-longitudinal-sample-v1/README.md).
+
+Validate the sample with:
+
+```bash
+./dev/check-sticky-wrapper-longitudinal \
+  benchmarks/results/poc-sticky-wrapper-longitudinal-sample-v1
+```
+
 ## Central two-machine functional evidence
 
 [`poc-central-two-machine-v1.json`](./results/poc-central-two-machine-v1.json)
