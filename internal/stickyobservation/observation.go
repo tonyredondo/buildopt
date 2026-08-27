@@ -105,7 +105,7 @@ func NewRecorder(path string) (*Recorder, error) {
 		return nil, fmt.Errorf("create ordinary observation directory: %w", err)
 	}
 	info, err := os.Stat(parent)
-	if err != nil || !info.IsDir() || info.Mode().Perm()&0o077 != 0 {
+	if err != nil || !privateObservationDirectoryInfo(info) {
 		return nil, errors.New("ordinary observation directory is not private")
 	}
 	return &Recorder{path: path}, nil
@@ -151,7 +151,7 @@ func (recorder *Recorder) Append(record Record) error {
 		return fmt.Errorf("open ordinary observation log: %w", err)
 	}
 	defer file.Close()
-	if info, statErr := file.Stat(); statErr != nil || info.Mode().Perm()&0o077 != 0 {
+	if info, statErr := file.Stat(); statErr != nil || !privateObservationFileInfo(info) {
 		return errors.New("ordinary observation log is not private")
 	}
 	if _, err := file.Write(raw); err != nil {
@@ -176,7 +176,7 @@ func Load(path string) ([]Record, error) {
 	}
 	defer file.Close()
 	info, err := file.Stat()
-	if err != nil || !info.Mode().IsRegular() || info.Mode().Perm()&0o077 != 0 || info.Size() > 64<<20 {
+	if err != nil || !privateObservationFileInfo(info) || info.Size() > 64<<20 {
 		return nil, errors.New("ordinary observation log is unsafe or too large")
 	}
 	decoder := json.NewDecoder(io.LimitReader(file, 64<<20+1))
