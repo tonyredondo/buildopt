@@ -92,6 +92,31 @@ func TestPrepareGradleInvocation(t *testing.T) {
 	}
 }
 
+func TestResolveGradleAssetsFromVerifiedArchiveLayout(t *testing.T) {
+	root := t.TempDir()
+	bin := filepath.Join(root, "bin")
+	lib := filepath.Join(root, "lib")
+	if err := os.MkdirAll(bin, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(lib, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	executable := filepath.Join(bin, "buildopt")
+	writeGradleTestFile(t, executable)
+	initScript := filepath.Join(lib, "buildopt.init.gradle")
+	pluginJar := filepath.Join(lib, "buildopt-gradle-plugin-0.1.99.jar")
+	writeGradleTestFile(t, initScript)
+	writeGradleTestFile(t, pluginJar)
+	gotInit, gotPlugin, err := resolveGradleAssetsFromExecutable(executable)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if gotInit != initScript || gotPlugin != pluginJar {
+		t.Fatalf("archive assets = %q/%q, want %q/%q", gotInit, gotPlugin, initScript, pluginJar)
+	}
+}
+
 func TestParseGradleProductOptions(t *testing.T) {
 	t.Run("keeps ordinary Gradle arguments", func(t *testing.T) {
 		arguments := []string{"--parallel", "test"}

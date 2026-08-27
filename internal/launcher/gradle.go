@@ -353,15 +353,31 @@ func resolveGradleAssets() (string, string, error) {
 	if err != nil {
 		return "", "", fmt.Errorf("resolve BuildOpt executable symlinks: %w", err)
 	}
+	return resolveGradleAssetsFromExecutable(executable)
+}
+
+// resolveGradleAssetsFromExecutable accepts both layouts shipped by BuildOpt:
+// an installed prefix uses share/buildopt, while the sticky wrapper cache
+// keeps the verified release archive's bin/lib tree intact. Keeping this
+// fallback here lets the wrapper execute the same packaged assets without
+// running an installer inside every repository.
+func resolveGradleAssetsFromExecutable(executable string) (string, string, error) {
+	var initScript, pluginJar string
 	share := filepath.Join(filepath.Dir(filepath.Dir(executable)), "share", "buildopt")
 	initScript = filepath.Join(share, "buildopt.init.gradle")
 	pluginJar = filepath.Join(share, "buildopt-gradle-plugin.jar")
-	if !regularFile(initScript) || !regularFile(pluginJar) {
-		return "", "", errors.New(
-			"packaged Gradle assets are unavailable; reinstall BuildOpt or set BUILDOPT_GRADLE_INIT_SCRIPT and BUILDOPT_GRADLE_PLUGIN_JAR",
-		)
+	if regularFile(initScript) && regularFile(pluginJar) {
+		return initScript, pluginJar, nil
 	}
-	return initScript, pluginJar, nil
+	lib := filepath.Join(filepath.Dir(filepath.Dir(executable)), "lib")
+	initScript = filepath.Join(lib, "buildopt.init.gradle")
+	pluginCandidates, globErr := filepath.Glob(filepath.Join(lib, "buildopt-gradle-plugin-*.jar"))
+	if globErr == nil && regularFile(initScript) && len(pluginCandidates) == 1 && regularFile(pluginCandidates[0]) {
+		return initScript, pluginCandidates[0], nil
+	}
+	return "", "", errors.New(
+		"packaged Gradle assets are unavailable; reinstall BuildOpt or set BUILDOPT_GRADLE_INIT_SCRIPT and BUILDOPT_GRADLE_PLUGIN_JAR",
+	)
 }
 
 func gradleWrapperName(goos string) string {
