@@ -107,8 +107,21 @@ buildopt_sync_dependency_state() {
 }
 
 buildopt_remove_build_outputs() {
-    local buildopt_repository=$1
-    find "${buildopt_repository}" -type d \( -name build -o -name .gradle \) -prune -exec rm -rf -- {} +
+    local buildopt_repository=$1 buildopt_directory buildopt_parent buildopt_name
+    # A Gradle repository can legitimately contain a Java package named
+    # `build` (Spring does) or an Action under `.github/actions/build`. Only
+    # remove a directory when its immediate parent is itself a Gradle project;
+    # this keeps source packages intact while clearing project outputs.
+    while IFS= read -r buildopt_directory; do
+        buildopt_name=${buildopt_directory##*/}
+        buildopt_parent=${buildopt_directory%/"${buildopt_name}"}
+        if find "${buildopt_parent}" -maxdepth 1 -type f \
+            \( -name '*.gradle' -o -name '*.gradle.kts' -o \
+               -name 'settings.gradle' -o -name 'settings.gradle.kts' \) \
+            -print -quit | grep -q .; then
+            rm -rf -- "${buildopt_directory}"
+        fi
+    done < <(find "${buildopt_repository}" -type d \( -name build -o -name .gradle \) -prune -print)
 }
 
 buildopt_normalize_checkout_permissions() {
