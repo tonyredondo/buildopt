@@ -18,6 +18,7 @@ provision tools or create release artifacts document that effect explicitly.
 | Active fresh generic optimization route and evidence boundary | `./dev/check-fresh-generic-optimization-plan` |
 | Generic task/graph producers, typed completeness and deterministic evidence | `./dev/check-sticky-evidence-producers` |
 | Fresh five-family cohort, capture bindings, producer completeness and exact outputs | `./dev/check-fresh-generic-capture` |
+| Independent fresh action recount and fixed public-breadth gate | `./dev/check-fresh-generic-opportunity-gate` |
 | Superseded sticky-wrapper diagnostic contract | `./dev/check-sticky-wrapper-learning-plan` |
 | Sticky-wrapper files, parsers, routing and update contract | `./dev/check-sticky-wrapper-contract` |
 | Sticky-wrapper deterministic generator, drift, downgrade, rollback and portable compilation | `./dev/check-sticky-wrapper-generator` |

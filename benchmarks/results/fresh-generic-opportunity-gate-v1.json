@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "buildopt.poc/fresh-generic-opportunity-gate/v1",
+  "workItem": "SWL-FRESH-003",
+  "generatedAt": "2026-08-27T19:10:16Z",
+  "inputs": {
+    "captureContractSha256": "e20151ea6518ace48151e849bf0d08798730e7223850998679e9cd7ec75ea44a",
+    "cohortSha256": "792fba0176d473e78af169d61224bed3182e066bbb794dcadb04fb0673dab022",
+    "observationsSha256": "6fa43aea1ca521d0f37bd93ca510b180ee2f5fbb5b2e0b37725f83d50f1bbb12",
+    "producerResultsSha256": "0f4c53837a9e11259468f8691daaea0d4e1f3376e562d0670770689d6994198c",
+    "outputManifestSha256": "b6dc716a232886fd08ca9307aa0bcdb544aedd17e815026f5d050c49ec6c167d",
+    "historicalEvidenceImported": false
+  },
+  "familyAssessments": [
+    {
+      "family": "spring-framework",
+      "inputComplete": true,
+      "detectorStatuses": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "TESTABLE_ACTIONS"
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "NO_OPPORTUNITY"
+        }
+      ],
+      "independentlyCountedActions": 1,
+      "exposesCompleteAction": true
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "inputComplete": true,
+      "detectorStatuses": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "NOT_APPLICABLE"
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "NO_OPPORTUNITY"
+        }
+      ],
+      "independentlyCountedActions": 0,
+      "exposesCompleteAction": false
+    },
+    {
+      "family": "apache-kafka",
+      "inputComplete": true,
+      "detectorStatuses": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "NOT_APPLICABLE"
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "NO_OPPORTUNITY"
+        }
+      ],
+      "independentlyCountedActions": 0,
+      "exposesCompleteAction": false
+    },
+    {
+      "family": "micronaut-core",
+      "inputComplete": true,
+      "detectorStatuses": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "NOT_APPLICABLE"
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "NO_OPPORTUNITY"
+        }
+      ],
+      "independentlyCountedActions": 0,
+      "exposesCompleteAction": false
+    },
+    {
+      "family": "apache-groovy",
+      "inputComplete": true,
+      "detectorStatuses": [
+        {
+          "detectorId": "TASK_CONTRACT_JAVA_V1",
+          "status": "NOT_APPLICABLE"
+        },
+        {
+          "detectorId": "DECLARED_GRAPH_SCOPE_V1",
+          "status": "NO_OPPORTUNITY"
+        }
+      ],
+      "independentlyCountedActions": 0,
+      "exposesCompleteAction": false
+    }
+  ],
+  "completeProducerFamilies": 5,
+  "incompleteProducerFamilies": 0,
+  "familiesExposingActions": 1,
+  "breadthRequired": 3,
+  "breadthUpperBound": 1,
+  "breadthPass": false,
+  "downstreamEconomicRecomputation": {
+    "status": "NOT_RUN_MATHEMATICALLY_IRRELEVANT_AFTER_BREADTH_FAILURE",
+    "reason": "NO_COST_ASSUMPTION_CAN_INCREASE_THE_NUMBER_OF_FAMILIES_EXPOSING_ACTIONS"
+  },
+  "timingAuthorized": false,
+  "chronologicalCampaignAuthorized": false,
+  "outcome": "STOP_INSUFFICIENT_PUBLIC_BREADTH",
+  "nextBlock": "SWL-FRESH-006"
+}

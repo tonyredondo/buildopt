@@ -97,6 +97,9 @@ owns `dev/fresh-evidence.init.gradle`, the paired fresh capture runner/checker
 and `benchmarks/results/fresh-generic-optimization-v1`. The capture binds one
 package to five clean current workflows and 150 preselected revisions without
 turning capture duration into performance evidence.
+`dev/run-fresh-generic-opportunity-gate` and its checker then recount actions
+from detector reports rather than trusting the capture summary. Their checked
+result enforces the frozen 3/5 breadth threshold before any timing can start.
 
 Run `./dev/check-fresh-generic-optimization-plan` to validate current planning
 authority and `./dev/check-sticky-wrapper-learning-plan` to preserve the

@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_result=${1:-"${buildopt_repo_root}/benchmarks/results/fresh-generic-opportunity-gate-v1.json"}
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-fresh-gate.XXXXXX")
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+
+"${buildopt_script_dir}/run-fresh-generic-opportunity-gate" "${buildopt_temp}/regenerated.json" >/dev/null
+cmp -s "${buildopt_result}" "${buildopt_temp}/regenerated.json" || {
+    printf 'fresh generic opportunity gate is stale or not independently reproducible\n' >&2
+    exit 1
+}
+jq -e '
+  .schemaVersion == "buildopt.poc/fresh-generic-opportunity-gate/v1" and
+  .workItem == "SWL-FRESH-003" and .inputs.historicalEvidenceImported == false and
+  all(.inputs[] | select(type == "string"); test("^[0-9a-f]{64}$")) and
+  (.familyAssessments | length) == 5 and
+  ([.familyAssessments[].family] | unique | length) == 5 and
+  all(.familyAssessments[]; .inputComplete == true and
+    (.detectorStatuses | length) == 2) and
+  .completeProducerFamilies == 5 and .incompleteProducerFamilies == 0 and
+  .familiesExposingActions == 1 and .breadthRequired == 3 and
+  .breadthUpperBound == 1 and .breadthPass == false and
+  .downstreamEconomicRecomputation.status ==
+    "NOT_RUN_MATHEMATICALLY_IRRELEVANT_AFTER_BREADTH_FAILURE" and
+  .timingAuthorized == false and .chronologicalCampaignAuthorized == false and
+  .outcome == "STOP_INSUFFICIENT_PUBLIC_BREADTH" and .nextBlock == "SWL-FRESH-006"
+' "${buildopt_result}" >/dev/null || {
+    printf 'fresh generic opportunity gate contract is invalid\n' >&2
+    exit 1
+}
+
+jq '.breadthUpperBound = 3' "${buildopt_result}" >"${buildopt_temp}/tampered.json"
+if cmp -s "${buildopt_temp}/tampered.json" "${buildopt_temp}/regenerated.json"; then
+    printf 'tampered opportunity breadth was accepted\n' >&2
+    exit 1
+fi
+printf 'Fresh generic five-family opportunity gate: PASS\n'

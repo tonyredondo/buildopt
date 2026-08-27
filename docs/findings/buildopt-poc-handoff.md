@@ -375,8 +375,11 @@ proof is complete without importing historical data. The fresh five-family
 capture now binds 100 primary plus 50 reserve commits, five conclusive producer
 inputs and byte-exact current outputs to one package digest. It exposes one
 Spring task-contract action and no safe declared-graph reduction.
-`SWL-FRESH-003` independently recomputes whether that is below the fixed
-three-family breadth gate before any timing is allowed.
+`SWL-FRESH-003` independently confirms **1/5** action breadth against the fixed
+**3/5** gate. Because even perfect Spring economics cannot raise that upper
+bound, installed timing and the chronological campaign were not authorized.
+The terminal scorecard must stop this detector set without presenting
+unmeasured value, confidence, payback or overhead as zero.
 
 The replacement path is implementation-locked rather than left to a later agent:
 separate per-arm cache namespaces start empty; one

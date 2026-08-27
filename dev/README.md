@@ -44,6 +44,16 @@ The paired `run-fresh-generic-capture` command is an evidence finalizer for
 explicit public-history, clean-checkout, fresh-state and frozen-package roots.
 It does not import historical BuildOpt results or make a timing claim.
 
+Independently recompute the action count from both detector results in every
+fresh family and enforce the fixed three-family breadth gate with:
+
+```bash
+./dev/check-fresh-generic-opportunity-gate
+```
+
+The current result is complete but stops at 1/5 families. It deliberately
+does not run timing whose most favorable result could not pass breadth.
+
 Validate the superseded sticky-wrapper route as immutable diagnostic history
 with:
 

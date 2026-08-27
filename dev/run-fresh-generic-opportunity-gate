@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [OUTPUT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_capture="${buildopt_repo_root}/benchmarks/results/fresh-generic-optimization-v1"
+buildopt_output=${1:-"${buildopt_repo_root}/benchmarks/results/fresh-generic-opportunity-gate-v1.json"}
+[[ ${buildopt_output} == /* ]] || buildopt_output="${buildopt_repo_root}/${buildopt_output}"
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || exit 1
+done
+"${buildopt_script_dir}/check-fresh-generic-capture" "${buildopt_capture}" >/dev/null
+
+buildopt_contract_sha=$(sha256sum "${buildopt_capture}/contract.json" | awk '{print $1}')
+buildopt_cohort_sha=$(sha256sum "${buildopt_capture}/cohort.json" | awk '{print $1}')
+buildopt_observations_sha=$(sha256sum "${buildopt_capture}/observations.jsonl" | awk '{print $1}')
+buildopt_producers_sha=$(sha256sum "${buildopt_capture}/producer-results.json" | awk '{print $1}')
+buildopt_outputs_sha=$(sha256sum "${buildopt_capture}/output-manifest.json" | awk '{print $1}')
+buildopt_generated_at=$(jq -r '.generatedAt' "${buildopt_capture}/report.json")
+
+jq -n \
+    --arg generatedAt "${buildopt_generated_at}" \
+    --arg contractSha "${buildopt_contract_sha}" \
+    --arg cohortSha "${buildopt_cohort_sha}" \
+    --arg observationsSha "${buildopt_observations_sha}" \
+    --arg producersSha "${buildopt_producers_sha}" \
+    --arg outputsSha "${buildopt_outputs_sha}" \
+    --slurpfile producers "${buildopt_capture}/producer-results.json" '
+  def conclusive:
+    . == "TESTABLE_ACTIONS" or . == "NO_OPPORTUNITY" or . == "NOT_APPLICABLE";
+  def family_assessment:
+    . as $report |
+    ([.detectors[].actions[]] | length) as $actions |
+    {
+      family: .familyKey,
+      inputComplete: (.inputComplete == true and
+        (.detectors | length) == 2 and all(.detectors[].status; conclusive)),
+      detectorStatuses: [.detectors[] | {detectorId, status}],
+      independentlyCountedActions: $actions,
+      exposesCompleteAction: ($actions > 0)
+    };
+  [$producers[0].reports[] | family_assessment] as $families |
+  ([$families[] | select(.inputComplete)] | length) as $complete |
+  ([$families[] | select(.exposesCompleteAction)] | length) as $actionFamilies |
+  {
+    schemaVersion: "buildopt.poc/fresh-generic-opportunity-gate/v1",
+    workItem: "SWL-FRESH-003",
+    generatedAt: $generatedAt,
+    inputs: {
+      captureContractSha256: $contractSha,
+      cohortSha256: $cohortSha,
+      observationsSha256: $observationsSha,
+      producerResultsSha256: $producersSha,
+      outputManifestSha256: $outputsSha,
+      historicalEvidenceImported: false
+    },
+    familyAssessments: $families,
+    completeProducerFamilies: $complete,
+    incompleteProducerFamilies: (5 - $complete),
+    familiesExposingActions: $actionFamilies,
+    breadthRequired: 3,
+    breadthUpperBound: $actionFamilies,
+    breadthPass: ($complete == 5 and $actionFamilies >= 3),
+    downstreamEconomicRecomputation: {
+      status: (if $complete < 5 then "BLOCKED_INCOMPLETE_INPUT"
+        elif $actionFamilies < 3 then "NOT_RUN_MATHEMATICALLY_IRRELEVANT_AFTER_BREADTH_FAILURE"
+        else "REQUIRED_BEFORE_TIMING" end),
+      reason: "NO_COST_ASSUMPTION_CAN_INCREASE_THE_NUMBER_OF_FAMILIES_EXPOSING_ACTIONS"
+    },
+    timingAuthorized: ($complete == 5 and $actionFamilies >= 3),
+    chronologicalCampaignAuthorized: false,
+    outcome: (if $complete < 5 then "BLOCKED_INCOMPLETE_INPUT"
+      elif $actionFamilies < 3 then "STOP_INSUFFICIENT_PUBLIC_BREADTH"
+      else "OPEN_INSTALLED_ACTIVE_VALUE" end),
+    nextBlock: (if $complete < 5 then "SWL-FRESH-003"
+      elif $actionFamilies < 3 then "SWL-FRESH-006" else "SWL-FRESH-004" end)
+  }
+' >"${buildopt_output}"
+printf 'Fresh generic opportunity gate written to %s\n' "${buildopt_output}"

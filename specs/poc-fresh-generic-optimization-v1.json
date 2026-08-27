@@ -1,8 +1,8 @@
 {
   "schemaVersion": "buildopt.poc/fresh-generic-optimization/v1",
   "workItem": "SWL-FRESH",
-  "status": "SWL_FRESH_003_OPPORTUNITY_GATE",
-  "purpose": "Independently recompute public opportunity breadth from the complete fresh capture before any timing.",
+  "status": "SWL_FRESH_006_TERMINAL_DECISION",
+  "purpose": "Issue the terminal decision after the conclusive one-of-five public breadth result prevented timing.",
   "historicalEvidence": {
     "classification": "DIAGNOSTIC_ONLY",
     "experimentInputAllowed": false,
@@ -47,10 +47,10 @@
     {"id": "SWL-FRESH-000", "state": "DONE", "outcome": "FRESH_ROUTE_PREREGISTERED"},
     {"id": "SWL-FRESH-001", "state": "DONE", "outcome": "COMPLETE_GENERIC_PRODUCERS"},
     {"id": "SWL-FRESH-002", "state": "DONE", "outcome": "FRESH_COHORT_AND_CAPTURE"},
-    {"id": "SWL-FRESH-003", "state": "TODO", "outcome": "INPUT_COMPLETE_PUBLIC_OPPORTUNITY_GATE"},
-    {"id": "SWL-FRESH-004", "state": "WAITING", "outcome": "INSTALLED_ACTIVE_VALUE"},
-    {"id": "SWL-FRESH-005", "state": "WAITING", "outcome": "FRESH_CHRONOLOGICAL_CAMPAIGN"},
-    {"id": "SWL-FRESH-006", "state": "WAITING", "outcome": "TERMINAL_DECISION"}
+    {"id": "SWL-FRESH-003", "state": "DONE", "outcome": "STOP_INSUFFICIENT_PUBLIC_BREADTH"},
+    {"id": "SWL-FRESH-004", "state": "NOT_AUTHORIZED", "outcome": "BREADTH_GATE_DID_NOT_OPEN_TIMING"},
+    {"id": "SWL-FRESH-005", "state": "NOT_AUTHORIZED", "outcome": "INSTALLED_GATE_DID_NOT_OPEN_CAMPAIGN"},
+    {"id": "SWL-FRESH-006", "state": "TODO", "outcome": "TERMINAL_DECISION"}
   ],
   "transitions": {
     "SWL-FRESH-001": "SWL-FRESH-002_ONLY_AFTER_ALL_FIXTURE_OUTCOMES_AND_BOTH_DSLS_PASS",
@@ -60,11 +60,11 @@
     "SWL-FRESH-005": "SWL-FRESH-006_ONLY_AFTER_COMPLETE_CAMPAIGN"
   },
   "nextBlock": {
-    "id": "SWL-FRESH-003",
+    "id": "SWL-FRESH-006",
     "create": [
-      "benchmarks/results/fresh-generic-opportunity-gate-v1.json",
-      "dev/run-fresh-generic-opportunity-gate",
-      "dev/check-fresh-generic-opportunity-gate"
+      "benchmarks/results/fresh-generic-terminal-decision-v1.json",
+      "dev/run-fresh-generic-terminal-decision",
+      "dev/check-fresh-generic-terminal-decision"
     ],
     "requiredSubjects": [
       "spring-framework",
@@ -74,7 +74,7 @@
       "apache-groovy"
     ],
     "requiredChecks": [
-      "./dev/check-fresh-generic-opportunity-gate",
+      "./dev/check-fresh-generic-terminal-decision",
       "./dev/check-fresh-generic-optimization-plan",
       "./dev/check-tracker-consistency",
       "./dev/check-layout",
@@ -83,8 +83,8 @@
       "./dev/check-base-ci --static",
       "git diff --check"
     ],
-    "selectionPolicy": "INDEPENDENT_RECOMPUTATION_FROM_CHECKED_FRESH_CAPTURE_ONLY",
-    "requiredBinding": "CAPTURE_DIGEST_PRODUCER_DIGEST_FIVE_COMPLETE_FAMILIES_TWO_DETECTORS",
-    "initialState": "NO_TIMING_OR_RUNTIME_ACTIVATION"
+    "selectionPolicy": "TERMINAL_SCORECARD_FROM_CHECKED_FRESH_CAPTURE_AND_OPPORTUNITY_GATE_ONLY",
+    "requiredBinding": "CAPTURE_DIGEST_OPPORTUNITY_GATE_DIGEST_FROZEN_THRESHOLDS_TYPED_UNMEASURED_VALUE",
+    "initialState": "TIMING_AND_CHRONOLOGICAL_CAMPAIGN_NOT_AUTHORIZED"
   }
 }

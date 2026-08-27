@@ -714,6 +714,8 @@ buildopt_required_files=(
     "dev/fresh-evidence.init.gradle"
     "dev/run-fresh-generic-capture"
     "dev/check-fresh-generic-capture"
+    "dev/run-fresh-generic-opportunity-gate"
+    "dev/check-fresh-generic-opportunity-gate"
     "cmd/sticky-evidence-capture/main.go"
     "cmd/sticky-evidence-capture/main_test.go"
     "internal/durablecatalog/public_evidence.go"

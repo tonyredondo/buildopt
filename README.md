@@ -153,9 +153,11 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > now has complete generic producers with typed conclusive and incomplete
 > outcomes. The five-family cohort is now frozen and captured from empty
 > state: all five inputs are complete, one Spring task-contract action is
-> testable and no declared-graph action is safe. The next block independently
-> recomputes the breadth gate; timing opens only if at least three families
-> expose actions.
+> testable and no declared-graph action is safe. Independent recomputation
+> confirms **1/5** action breadth against the fixed **3/5** threshold, so
+> installed timing and the chronological campaign are not authorized. The
+> remaining work is a terminal scorecard that records this detector-set stop
+> without claiming that Gradle itself cannot be improved.
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,
 > append-only phase timing and provenance for requested Gradle builds. The

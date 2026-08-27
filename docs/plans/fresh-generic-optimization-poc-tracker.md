@@ -3,8 +3,8 @@
 ## Status
 
 **Overall:** `IN_PROGRESS`<br>
-**Progress:** `3/7` blocks complete<br>
-**Current block:** `SWL-FRESH-003` — independently recompute the five-family opportunity gate<br>
+**Progress:** `4/7` blocks complete; two downstream blocks were not authorized<br>
+**Current block:** `SWL-FRESH-006` — issue the terminal decision from the conclusive breadth gate<br>
 **Supersedes:** the stopped route in
 [`sticky-wrapper-learning-poc-tracker.md`](./sticky-wrapper-learning-poc-tracker.md).
 That route and its results remain auditable diagnostics, but none is an input
@@ -72,10 +72,10 @@ candidate plan, cost and timing row after the freeze.
 | 0 | `SWL-FRESH-000` Route reset | Fresh-evidence contract, tracker, documentation and executable plan checker | `DONE` | route audit |
 | 1 | `SWL-FRESH-001` Complete generic producers | Produce task-contract and declared-graph action inputs from current Gradle evidence, with typed completeness outcomes | `DONE` | SWL-FRESH-000 |
 | 2 | `SWL-FRESH-002` Fresh cohort and capture | Freeze current public revisions and create all observations, traces and output bindings from empty state | `DONE` | SWL-FRESH-001 |
-| 3 | `SWL-FRESH-003` Five-family opportunity gate | Independently recompute complete generic actions and require breadth before timing | `TODO` | SWL-FRESH-002 |
-| 4 | `SWL-FRESH-004` Installed active-value gate | Run exact installed candidate/native trials for every admitted action | `WAITING` | SWL-FRESH-003 |
-| 5 | `SWL-FRESH-005` Chronological campaign | Exercise native, observe, trial, qualified, active and fallback states across fresh commit windows | `WAITING` | SWL-FRESH-004 |
-| 6 | `SWL-FRESH-006` Terminal decision | Recompute correctness, breadth, cumulative value, confidence, payback and overhead without threshold movement | `WAITING` | SWL-FRESH-005 or conclusive gates |
+| 3 | `SWL-FRESH-003` Five-family opportunity gate | Independently recompute complete generic actions and require breadth before timing | `DONE` | SWL-FRESH-002 |
+| 4 | `SWL-FRESH-004` Installed active-value gate | Run exact installed candidate/native trials for every admitted action | `NOT_AUTHORIZED` | breadth gate failed 1/5 vs 3/5 |
+| 5 | `SWL-FRESH-005` Chronological campaign | Exercise native, observe, trial, qualified, active and fallback states across fresh commit windows | `NOT_AUTHORIZED` | installed timing did not open |
+| 6 | `SWL-FRESH-006` Terminal decision | Recompute correctness, breadth, cumulative value, confidence, payback and overhead without threshold movement | `TODO` | conclusive SWL-FRESH-003 gate |
 
 ## Execution contract
 
@@ -152,6 +152,13 @@ payback. At least three families must expose a complete action to open timing.
 A complete screen with fewer than three may produce legitimate stop evidence
 for `SWL-FRESH-006`; an incomplete screen may not.
 
+The independent gate recomputed five complete producer families and exactly
+one family exposing an action. The fixed three-family breadth gate therefore
+fails even under the most favorable possible economics for Spring. Installed
+timing and the chronological campaign are not authorized: they cannot change
+the number of families with an action and would create cost without decision
+value.
+
 ### SWL-FRESH-004 — Installed active-value gate
 
 For every admitted action, use the installed `./buildoptw` path for exactly
@@ -183,15 +190,15 @@ pass. Otherwise stop and name the failed criteria. Incomplete inputs produce
 | `SWL-FRESH-E001` | SWL-FRESH-000 | This tracker, machine contract, aligned documentation and executable checker | `DONE` |
 | `SWL-FRESH-E002` | SWL-FRESH-001 | Generic producer implementation, Kotlin/Groovy fixtures and typed completeness evidence | `DONE` — [`sticky-evidence-producers-v1.json`](../../benchmarks/results/sticky-evidence-producers-v1.json) |
 | `SWL-FRESH-E003` | SWL-FRESH-002 | Fresh five-family cohort and capture directory bound to current package digest | `DONE` — [`fresh-generic-optimization-v1`](../../benchmarks/results/fresh-generic-optimization-v1/report.json) |
-| `SWL-FRESH-E004` | SWL-FRESH-003 | Input-complete five-family opportunity report and independent recomputation | `WAITING` |
-| `SWL-FRESH-E005` | SWL-FRESH-004 | Installed eight-pair action results and complete cost ledger | `WAITING` |
-| `SWL-FRESH-E006` | SWL-FRESH-005 | Fresh chronological rows, checkpoints, ledgers and report | `WAITING` |
+| `SWL-FRESH-E004` | SWL-FRESH-003 | Input-complete five-family opportunity report and independent recomputation | `DONE` — [`fresh-generic-opportunity-gate-v1.json`](../../benchmarks/results/fresh-generic-opportunity-gate-v1.json) |
+| `SWL-FRESH-E005` | SWL-FRESH-004 | Installed eight-pair action results and complete cost ledger | `NOT_AUTHORIZED` — public breadth upper bound is 1/5 |
+| `SWL-FRESH-E006` | SWL-FRESH-005 | Fresh chronological rows, checkpoints, ledgers and report | `NOT_AUTHORIZED` — installed active-value gate did not open |
 | `SWL-FRESH-E007` | SWL-FRESH-006 | Independent terminal scorecard | `WAITING` |
 
 ## Immediate next action
 
-Implement `SWL-FRESH-003` exactly as specified above. Recompute both detector
-results from the checked fresh capture, reject incomplete inputs, and count a
-family only when it exposes at least one complete action. If fewer than three
-families qualify, record a conclusive breadth stop and transition directly to
-`SWL-FRESH-006`; do not run installed timing or a chronological campaign.
+Implement `SWL-FRESH-006` exactly as specified above. Bind the terminal
+scorecard to the checked capture and opportunity-gate digests, preserve the
+1/5 versus 3/5 breadth result, mark value/confidence/payback/overhead as not
+measured because timing was not authorized, and stop this detector set without
+turning absence of broad actions into a Gradle performance claim.
