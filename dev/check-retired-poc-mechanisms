@@ -71,7 +71,9 @@ for buildopt_variable in \
         [[ -z "${buildopt_hit}" ]] && continue
         case "${buildopt_hit}" in
             "${buildopt_root}/internal/launcher/local_gateway.go" | \
-                "${buildopt_root}/internal/launcher/gradle_test.go") ;;
+                "${buildopt_root}/internal/launcher/gradle_test.go" | \
+                "${buildopt_root}/internal/launcher/sticky_native_fast_path.go" | \
+                "${buildopt_root}/internal/launcher/sticky_native_fast_path_test.go") ;;
             *)
                 printf 'retired environment variable remains active: %s in %s\n' \
                     "${buildopt_variable}" "${buildopt_hit}" >&2
