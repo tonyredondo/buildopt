@@ -90,8 +90,18 @@ base/target captures, changed paths, classifier reports and checksums. Groovy
 and Spring each reach five relevant action transitions; Kafka, Micronaut and
 OpenTelemetry exhaust their 30-transition budgets. The aggregate therefore
 reports two complete and two action families out of five. This is capture
-evidence only: no candidate ran, no wall time was measured and the independent
-breadth decision has not yet been issued.
+evidence only: no candidate ran and no wall time was measured.
+
+[`request-aligned-breadth-gate-v1.json`](./results/request-aligned-breadth-gate-v1.json)
+is the independent `SWL-REQUEST-004` decision. It ignores the aggregate
+summary, verifies ledger-bound digests and regenerates all 110 reports from
+raw base/target captures. Groovy and Spring are the only complete/action
+families: **2/5** complete inputs versus required **5/5**, and **2/5** action
+families versus required **3/5**. Product failures are zero. A falsified
+summary leaves the result unchanged, while a report falsified and rehashed in
+the ledger is rejected. The gate returns
+`STOP_INCOMPLETE_REQUEST_ALIGNED_INPUT`; installed and chronological timing
+are not authorized.
 
 ```bash
 ./dev/check-generic-opportunity-discovery
@@ -103,6 +113,7 @@ breadth decision has not yet been issued.
 ./dev/check-request-aligned-producer
 ./dev/check-request-aligned-classifier
 ./dev/check-request-aligned-public-capture
+./dev/check-request-aligned-breadth-gate
 ```
 
 ## Sticky-wrapper observation sample

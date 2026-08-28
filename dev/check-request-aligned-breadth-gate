@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_capture=${buildopt_root}/benchmarks/results/request-aligned-public-capture-v1
+buildopt_result=${1:-${buildopt_root}/benchmarks/results/request-aligned-breadth-gate-v1.json}
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-breadth-check.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-request-breadth-check.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected breadth-check root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+"${buildopt_root}/dev/run-request-aligned-breadth-gate" "${buildopt_capture}" \
+    "${buildopt_temporary}/regenerated.json" >/dev/null
+cmp -s "${buildopt_result}" "${buildopt_temporary}/regenerated.json" || {
+    printf 'request-aligned breadth gate is stale or not reproducible\n' >&2
+    exit 1
+}
+jq -e '
+  .schemaVersion=="buildopt.poc/request-aligned-breadth-gate/v1" and
+  .workItem=="SWL-REQUEST-004" and
+  all(.inputs[]|select(type=="string");test("^[0-9a-f]{64}$")) and
+  (.inputs.summaryConsumed|not) and (.inputs.historicalEvidenceImported|not) and
+  .expectedFamilies==["apache-groovy","apache-kafka","micronaut-core",
+    "opentelemetry-java-instrumentation","spring-framework"] and
+  .observedFamilies==.expectedFamilies and .reportsRegenerated==110 and
+  (.familyAssessments|length)==5 and
+  all(.familyAssessments[];.ordinalChainComplete and .revisionChainComplete) and
+  ([.familyAssessments[]|select(.inputComplete)|.family]==["apache-groovy","spring-framework"]) and
+  ([.familyAssessments[]|select(.exposesExactAction)|.family]==["apache-groovy","spring-framework"]) and
+  ([.familyAssessments[]|select(.family=="apache-groovy")|
+    .observedTransitions==7 and .relevantTransitions==5 and .exactActions==5 and .productFailures==0]|length)==1 and
+  ([.familyAssessments[]|select(.family=="spring-framework")|
+    .observedTransitions==13 and .relevantTransitions==5 and .exactActions==5 and .productFailures==0]|length)==1 and
+  all(.familyAssessments[]|select(.family!="apache-groovy" and .family!="spring-framework");
+    .observedTransitions==30 and .relevantTransitions==0 and .exactActions==0 and .productFailures==0 and
+    (.inputComplete|not) and (.exposesExactAction|not)) and
+  .completeInputFamilies==2 and .completeInputFamiliesRequired==5 and
+  .relevantTransitionsPerFamilyRequired==5 and
+  .familiesExposingExactActions==2 and .familiesExposingExactActionsRequired==3 and
+  .productFailures==0 and .productFailureBudget==0 and
+  .failedCriteria==["COMPLETE_FAMILY_INPUTS","PUBLIC_ACTION_BREADTH"] and
+  (.breadthPass|not) and (.timingAuthorized|not) and (.activationAuthorized|not) and
+  .outcome=="STOP_INCOMPLETE_REQUEST_ALIGNED_INPUT" and .nextBlock=="SWL-REQUEST-007"
+' "${buildopt_result}" >/dev/null || {
+    printf 'request-aligned breadth gate contract is invalid\n' >&2
+    exit 1
+}
+
+cp -a -- "${buildopt_capture}" "${buildopt_temporary}/summary-tampered"
+jq '.completeFamilies=5 | .actionFamilies=5 | .families|=map(.inputComplete=true|.relevantTransitions=5|.actionTransitions=5)' \
+    "${buildopt_temporary}/summary-tampered/summary.json" \
+    >"${buildopt_temporary}/summary-tampered/summary.changed"
+mv -- "${buildopt_temporary}/summary-tampered/summary.changed" \
+    "${buildopt_temporary}/summary-tampered/summary.json"
+"${buildopt_root}/dev/run-request-aligned-breadth-gate" \
+    "${buildopt_temporary}/summary-tampered" "${buildopt_temporary}/summary-independent.json" >/dev/null
+cmp -s "${buildopt_result}" "${buildopt_temporary}/summary-independent.json" || {
+    printf 'breadth decision trusted the aggregate summary\n' >&2
+    exit 1
+}
+
+cp -a -- "${buildopt_capture}" "${buildopt_temporary}/report-tampered"
+buildopt_report=reports/spring-framework-02-f067d40f0a64.json
+jq '.candidateTasks=[]' "${buildopt_temporary}/report-tampered/${buildopt_report}" \
+    >"${buildopt_temporary}/report-tampered/report.changed"
+mv -- "${buildopt_temporary}/report-tampered/report.changed" \
+    "${buildopt_temporary}/report-tampered/${buildopt_report}"
+buildopt_tampered_sha=$(sha256sum "${buildopt_temporary}/report-tampered/${buildopt_report}" | awk '{print $1}')
+jq -c --arg report "${buildopt_report}" --arg sha "${buildopt_tampered_sha}" \
+    'if .report==$report then .reportSha256=$sha else . end' \
+    "${buildopt_temporary}/report-tampered/transitions.jsonl" \
+    >"${buildopt_temporary}/report-tampered/transitions.changed"
+mv -- "${buildopt_temporary}/report-tampered/transitions.changed" \
+    "${buildopt_temporary}/report-tampered/transitions.jsonl"
+if "${buildopt_root}/dev/run-request-aligned-breadth-gate" \
+    "${buildopt_temporary}/report-tampered" "${buildopt_temporary}/must-not-exist.json" \
+    >/dev/null 2>&1; then
+    printf 'tampered action report was accepted after ledger rehash\n' >&2
+    exit 1
+fi
+
+printf 'Request-aligned five-family breadth gate: PASS\n'

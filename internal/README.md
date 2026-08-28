@@ -209,7 +209,7 @@ enables an additional mechanism from structure alone.
 No type in this directory replaces the normative schemas, OpenAPI, or Protobuf definitions in `contracts/`.
 
 `requestaligned/` owns the observation and classification boundaries for
-`SWL-REQUEST-001..003`. It
+`SWL-REQUEST-001..004`. It
 canonicalizes the exact request and graph-affecting portable bindings, derives
 a checkout-independent SHA-256 identity, and discovers only existing outputs
 with one current producer in the finalized graph. Missing, ambiguous and
@@ -219,7 +219,8 @@ producer closure and binds every omitted current output. Unsafe or full-graph
 cases emit no action. The package does not execute candidates or authorize
 timing. The public-capture runner applies that package to 110 chronological
 transitions and preserves raw inputs plus reconstructed reports; it does not
-turn the aggregate summary into breadth authority.
+turn the aggregate summary into breadth authority. The separate breadth runner
+regenerates all 110 reports before counting complete inputs and exact actions.
 
 `generated/openapi/` contains the checked-in Go transport binding derived from
 the normative OpenAPI documents. It is regenerated through

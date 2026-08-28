@@ -1,0 +1,249 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0 && $# != 2)); then
+    printf 'usage: %s [CAPTURE_DIR OUTPUT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_route_contract=${buildopt_root}/specs/poc-request-aligned-learning-v1.json
+buildopt_capture=${1:-${buildopt_root}/benchmarks/results/request-aligned-public-capture-v1}
+buildopt_output=${2:-${buildopt_root}/benchmarks/results/request-aligned-breadth-gate-v1.json}
+[[ ${buildopt_capture} == /* && -d ${buildopt_capture} ]] || {
+    printf 'capture directory must be an existing absolute path\n' >&2
+    exit 1
+}
+[[ ${buildopt_output} == /* ]] || buildopt_output=${PWD}/${buildopt_output}
+
+for buildopt_command in awk basename cmp jq mktemp sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-breadth.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-request-breadth.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected breadth root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+jq -e '
+  .schemaVersion=="buildopt.poc/request-aligned-learning-contract/v1" and
+  .workItem=="SWL-REQUEST-000" and
+  .breadthGate.completeFamilyInputsRequired==5 and
+  .breadthGate.relevantTransitionsPerFamilyRequired==5 and
+  .breadthGate.familiesWithActionsRequired==3 and
+  .breadthGate.productFailureBudget==0 and
+  (.breadthGate.timingAuthorizedBeforeBreadth|not) and
+  (.breadthGate.activationAuthorizedBeforeValue|not) and
+  (.subjects|length)==5 and ([.subjects[]]|unique|length)==5
+' "${buildopt_route_contract}" >/dev/null || {
+    printf 'request-aligned route contract is invalid\n' >&2
+    exit 1
+}
+jq -e '
+  .schemaVersion=="buildopt.poc/request-aligned-public-capture-contract/v1" and
+  .workItem=="SWL-REQUEST-003" and
+  .requiredRelevantTransitionsPerFamily==5 and .transitionBudgetPerFamily==30 and
+  .ordinaryRequestedBuildsOnly and .exactRequestPreserved and
+  (.historicalBuildOptStateImported|not) and
+  (.historicalBuildOptTimingImported|not) and
+  (.historicalBuildOptActionImported|not) and
+  (.performanceMeasured|not) and (.activationAuthorized|not)
+' "${buildopt_capture}/contract.json" >/dev/null || {
+    printf 'request-aligned capture contract is invalid\n' >&2
+    exit 1
+}
+
+buildopt_classifier=${buildopt_temporary}/request-aligned-classifier
+env GOCACHE="${buildopt_temporary}/go-cache" \
+    "${buildopt_root}/dev/run" --toolchain go -- \
+    go build -o "${buildopt_classifier}" ./cmd/request-aligned-classifier
+: >"${buildopt_temporary}/assessments.jsonl"
+
+while IFS= read -r buildopt_row; do
+    buildopt_family=$(jq -er '.family | select(test("^[a-z0-9-]+$"))' <<<"${buildopt_row}")
+    buildopt_base=$(jq -er '.baseRevision | select(test("^[0-9a-f]{40}$"))' <<<"${buildopt_row}")
+    buildopt_target=$(jq -er '.targetRevision | select(test("^[0-9a-f]{40}$"))' <<<"${buildopt_row}")
+    buildopt_base_path=$(jq -er '.baseCapture | select(test("^captures/[a-z0-9-]+/[0-9a-f]{40}\\.json$"))' <<<"${buildopt_row}")
+    buildopt_target_path=$(jq -er '.targetCapture | select(test("^captures/[a-z0-9-]+/[0-9a-f]{40}\\.json$"))' <<<"${buildopt_row}")
+    buildopt_report_path=$(jq -er '.report | select(test("^reports/[a-z0-9-]+-[0-9]{2}-[0-9a-f]{12}\\.json$"))' <<<"${buildopt_row}")
+    buildopt_expected_base_sha=$(jq -er '.baseCaptureSha256 | select(test("^[0-9a-f]{64}$"))' <<<"${buildopt_row}")
+    buildopt_expected_target_sha=$(jq -er '.targetCaptureSha256 | select(test("^[0-9a-f]{64}$"))' <<<"${buildopt_row}")
+    buildopt_expected_report_sha=$(jq -er '.reportSha256 | select(test("^[0-9a-f]{64}$"))' <<<"${buildopt_row}")
+    jq -e '
+      .exactArgumentsPreserved and (.performanceMeasured|not) and
+      (.activationAuthorized|not)
+    ' <<<"${buildopt_row}" >/dev/null || {
+        printf 'transition ledger authority is invalid: %s\n' "${buildopt_report_path}" >&2
+        exit 1
+    }
+    [[ ${buildopt_base_path} == "captures/${buildopt_family}/${buildopt_base}.json" &&
+       ${buildopt_target_path} == "captures/${buildopt_family}/${buildopt_target}.json" ]] || {
+        printf 'transition capture path does not match its family or revision: %s\n' "${buildopt_report_path}" >&2
+        exit 1
+    }
+    buildopt_actual_base_sha=$(sha256sum "${buildopt_capture}/${buildopt_base_path}" | awk '{print $1}')
+    buildopt_actual_target_sha=$(sha256sum "${buildopt_capture}/${buildopt_target_path}" | awk '{print $1}')
+    buildopt_actual_report_sha=$(sha256sum "${buildopt_capture}/${buildopt_report_path}" | awk '{print $1}')
+    [[ ${buildopt_actual_base_sha} == "${buildopt_expected_base_sha}" &&
+       ${buildopt_actual_target_sha} == "${buildopt_expected_target_sha}" &&
+       ${buildopt_actual_report_sha} == "${buildopt_expected_report_sha}" ]] || {
+        printf 'transition evidence digest mismatch: %s\n' "${buildopt_report_path}" >&2
+        exit 1
+    }
+
+    buildopt_transition=${buildopt_temporary}/transition.json
+    jq -n \
+        --arg generatedAt "$(jq -r '.generatedAt' <<<"${buildopt_row}")" \
+        --arg base "${buildopt_base}" --arg target "${buildopt_target}" \
+        --argjson changedPaths "$(jq -c '.changedPaths' <<<"${buildopt_row}")" \
+        --slurpfile baseCapture "${buildopt_capture}/${buildopt_base_path}" \
+        --slurpfile targetCapture "${buildopt_capture}/${buildopt_target_path}" '
+      {
+        schemaVersion:"buildopt.poc/request-aligned-transition/v1",
+        generatedAt:$generatedAt,baseRevision:$base,targetRevision:$target,
+        changedPaths:$changedPaths,baseCapture:$baseCapture[0],targetCapture:$targetCapture[0]
+      }
+    ' >"${buildopt_transition}"
+    buildopt_regenerated=${buildopt_temporary}/$(basename -- "${buildopt_report_path}")
+    "${buildopt_classifier}" --input "${buildopt_transition}" --output "${buildopt_regenerated}"
+    cmp -s "${buildopt_capture}/${buildopt_report_path}" "${buildopt_regenerated}" || {
+        printf 'report is not reproducible from its captures: %s\n' "${buildopt_report_path}" >&2
+        exit 1
+    }
+
+    jq -ce \
+        --arg family "${buildopt_family}" \
+        --argjson attemptOrdinal "$(jq -r '.attemptOrdinal' <<<"${buildopt_row}")" \
+        --arg reportSha256 "${buildopt_actual_report_sha}" '
+      . as $report |
+      (($report.status=="RELEVANT_COMPLETE") and $report.inputComplete and
+        $report.testableActions==1 and ($report.changedPaths|length)>0 and
+        ($report.gradleArguments|length)>0 and ($report.requestedTasks|length)>0 and
+        ($report.affectedInputTasks|length)>0 and ($report.candidateTasks|length)>0 and
+        ($report.omittedTasks|length)>0 and ($report.omittedOutputs|length)>0 and
+        ($report.actionBindingSha256|test("^[0-9a-f]{64}$")) and
+        all($report.omittedOutputs[];
+          (.producerTask as $producer | $report.omittedTasks|index($producer)) != null and
+          (.path|type)=="string" and (.path|length)>0 and
+          (.kind=="FILE" or .kind=="DIRECTORY") and
+          (.sha256|test("^[0-9a-f]{64}$")))) as $completeAction |
+      select($report.schemaVersion=="buildopt.poc/request-aligned-classification/v1") |
+      select(($report.performanceMeasured|not) and ($report.activationAuthorized|not)) |
+      {family:$family,attemptOrdinal:$attemptOrdinal,baseRevision:$report.baseRevision,
+       targetRevision:$report.targetRevision,status:$report.status,reason:$report.reason,
+       inputComplete:$report.inputComplete,completeAction:$completeAction,
+       producerFailed:($report.status=="PRODUCER_FAILED"),
+       reportSha256:$reportSha256,
+       actionBindingSha256:($report.actionBindingSha256 // null)}
+    ' "${buildopt_regenerated}" >>"${buildopt_temporary}/assessments.jsonl" || {
+        printf 'regenerated report contract is invalid: %s\n' "${buildopt_report_path}" >&2
+        exit 1
+    }
+done <"${buildopt_capture}/transitions.jsonl"
+
+buildopt_generated_at=$(jq -r '.generatedAt' "${buildopt_capture}/contract.json")
+buildopt_route_sha=$(sha256sum "${buildopt_route_contract}" | awk '{print $1}')
+buildopt_capture_contract_sha=$(sha256sum "${buildopt_capture}/contract.json" | awk '{print $1}')
+buildopt_transitions_sha=$(sha256sum "${buildopt_capture}/transitions.jsonl" | awk '{print $1}')
+buildopt_classifier_sha=$(sha256sum "${buildopt_root}/internal/requestaligned/classification.go" | awk '{print $1}')
+buildopt_family_inputs_required=$(jq -r '.breadthGate.completeFamilyInputsRequired' "${buildopt_route_contract}")
+buildopt_relevant_required=$(jq -r '.breadthGate.relevantTransitionsPerFamilyRequired' "${buildopt_route_contract}")
+buildopt_breadth_required=$(jq -r '.breadthGate.familiesWithActionsRequired' "${buildopt_route_contract}")
+buildopt_failure_budget=$(jq -r '.breadthGate.productFailureBudget' "${buildopt_route_contract}")
+buildopt_transition_budget=$(jq -r '.transitionBudgetPerFamily' "${buildopt_capture}/contract.json")
+
+jq -s \
+    --arg generatedAt "${buildopt_generated_at}" \
+    --arg routeSha "${buildopt_route_sha}" \
+    --arg captureContractSha "${buildopt_capture_contract_sha}" \
+    --arg transitionsSha "${buildopt_transitions_sha}" \
+    --arg classifierSha "${buildopt_classifier_sha}" \
+    --argjson familyInputsRequired "${buildopt_family_inputs_required}" \
+    --argjson relevantRequired "${buildopt_relevant_required}" \
+    --argjson breadthRequired "${buildopt_breadth_required}" \
+    --argjson failureBudget "${buildopt_failure_budget}" \
+    --argjson transitionBudget "${buildopt_transition_budget}" \
+    --slurpfile route "${buildopt_route_contract}" '
+  def family_assessment:
+    (sort_by(.attemptOrdinal)) as $rows |
+    ($rows[0].family) as $family |
+    {
+      family:$family,
+      observedTransitions:($rows|length),
+      distinctOrdinals:([$rows[].attemptOrdinal]|unique|length),
+      distinctTransitions:([$rows[]|(.baseRevision+":"+.targetRevision)]|unique|length),
+      distinctReports:([$rows[].reportSha256]|unique|length),
+      ordinalChainComplete:([$rows[].attemptOrdinal]==[range(1; ($rows|length)+1)]),
+      revisionChainComplete:([range(1; ($rows|length)) as $index |
+        $rows[$index].baseRevision==$rows[$index-1].targetRevision]|all),
+      relevantTransitions:([$rows[]|select(.status=="RELEVANT_COMPLETE" and .inputComplete)]|length),
+      exactActions:([$rows[]|select(.completeAction)]|length),
+      productFailures:([$rows[]|select(.producerFailed)]|length),
+      statuses:($rows|group_by(.status)|map({key:.[0].status,value:length})|from_entries),
+      actionBindings:[$rows[]|select(.completeAction)|
+        {baseRevision,targetRevision,reportSha256,actionBindingSha256}]
+    } |
+    .inputComplete=(.observedTransitions>= $relevantRequired and
+      .observedTransitions<= $transitionBudget and
+      .distinctOrdinals==.observedTransitions and
+      .distinctTransitions==.observedTransitions and
+      .distinctReports==.observedTransitions and
+      .ordinalChainComplete and .revisionChainComplete and
+      .relevantTransitions>= $relevantRequired and .productFailures==0) |
+    .exposesExactAction=(.exactActions>0);
+  (sort_by(.family)|group_by(.family)|map(family_assessment)) as $families |
+  ([$families[]|select(.inputComplete)]|length) as $completeFamilies |
+  ([$families[]|select(.exposesExactAction)]|length) as $actionFamilies |
+  ([$families[].productFailures]|add) as $productFailures |
+  ($route[0].subjects|sort) as $expectedFamilies |
+  ($completeFamilies==$familyInputsRequired and [$families[].family]==$expectedFamilies and
+    $actionFamilies>=$breadthRequired and $productFailures<=$failureBudget) as $pass |
+  {
+    schemaVersion:"buildopt.poc/request-aligned-breadth-gate/v1",
+    workItem:"SWL-REQUEST-004",
+    generatedAt:$generatedAt,
+    inputs:{
+      routeContractSha256:$routeSha,
+      captureContractSha256:$captureContractSha,
+      transitionsLedgerSha256:$transitionsSha,
+      classifierSourceSha256:$classifierSha,
+      summaryConsumed:false,
+      historicalEvidenceImported:false
+    },
+    expectedFamilies:$expectedFamilies,
+    observedFamilies:[$families[].family],
+    reportsRegenerated:([$families[].observedTransitions]|add),
+    familyAssessments:$families,
+    completeInputFamilies:$completeFamilies,
+    completeInputFamiliesRequired:$familyInputsRequired,
+    relevantTransitionsPerFamilyRequired:$relevantRequired,
+    familiesExposingExactActions:$actionFamilies,
+    familiesExposingExactActionsRequired:$breadthRequired,
+    productFailures:$productFailures,
+    productFailureBudget:$failureBudget,
+    failedCriteria:([
+      if $completeFamilies!=$familyInputsRequired or [$families[].family]!=$expectedFamilies
+        then "COMPLETE_FAMILY_INPUTS" else empty end,
+      if $actionFamilies<$breadthRequired then "PUBLIC_ACTION_BREADTH" else empty end,
+      if $productFailures>$failureBudget then "PRODUCT_FAILURE_BUDGET" else empty end
+    ]),
+    breadthPass:$pass,
+    timingAuthorized:$pass,
+    activationAuthorized:false,
+    outcome:(if $productFailures>$failureBudget then "STOP_PRODUCT_FAILURE_BUDGET_EXCEEDED"
+      elif $completeFamilies!=$familyInputsRequired or [$families[].family]!=$expectedFamilies
+        then "STOP_INCOMPLETE_REQUEST_ALIGNED_INPUT"
+      elif $actionFamilies<$breadthRequired then "STOP_INSUFFICIENT_REQUEST_ALIGNED_BREADTH"
+      else "OPEN_REQUEST_ALIGNED_INSTALLED_VALUE" end),
+    nextBlock:(if $pass then "SWL-REQUEST-005" else "SWL-REQUEST-007" end)
+  }
+' "${buildopt_temporary}/assessments.jsonl" >"${buildopt_output}"
+
+printf 'Request-aligned breadth gate written to %s\n' "${buildopt_output}"

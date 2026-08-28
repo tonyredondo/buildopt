@@ -1,0 +1,204 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-breadth-gate/v1",
+  "workItem": "SWL-REQUEST-004",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "inputs": {
+    "routeContractSha256": "c502c69b60bf267a6e98246f7fceafc79e7b2a0a36f973396b41098f95a4c878",
+    "captureContractSha256": "c2636f1bab49448fe7d717323d2acc84998b9ab559d7d162ee85c56f0b31e022",
+    "transitionsLedgerSha256": "402f061a6677c8cf7666f61efdd07168108bb25cc25070b43d303c0ce918bc4b",
+    "classifierSourceSha256": "66ffe41c3d176b0427761259970990d003446c7a314930709e06e52e41998fb3",
+    "summaryConsumed": false,
+    "historicalEvidenceImported": false
+  },
+  "expectedFamilies": [
+    "apache-groovy",
+    "apache-kafka",
+    "micronaut-core",
+    "opentelemetry-java-instrumentation",
+    "spring-framework"
+  ],
+  "observedFamilies": [
+    "apache-groovy",
+    "apache-kafka",
+    "micronaut-core",
+    "opentelemetry-java-instrumentation",
+    "spring-framework"
+  ],
+  "reportsRegenerated": 110,
+  "familyAssessments": [
+    {
+      "family": "apache-groovy",
+      "observedTransitions": 7,
+      "distinctOrdinals": 7,
+      "distinctTransitions": 7,
+      "distinctReports": 7,
+      "ordinalChainComplete": true,
+      "revisionChainComplete": true,
+      "relevantTransitions": 5,
+      "exactActions": 5,
+      "productFailures": 0,
+      "statuses": {
+        "IRRELEVANT_TO_REQUEST": 2,
+        "RELEVANT_COMPLETE": 5
+      },
+      "actionBindings": [
+        {
+          "baseRevision": "b30f281849f32b399b871359e0036040a70f849a",
+          "targetRevision": "e5ea4eb8bf9782e0c121aa29dac79a5f388cc656",
+          "reportSha256": "ed5e1f6ff1cc906ba1830354c4aa453c31cbf3031a337e29ed11879f8fb5c125",
+          "actionBindingSha256": "cd15670644c4f2e310e0ee0b59f8bd0829581e2d587f0fe016769ada87c4ebfb"
+        },
+        {
+          "baseRevision": "e5ea4eb8bf9782e0c121aa29dac79a5f388cc656",
+          "targetRevision": "c9066393a6a11c89e188bea72f2c976186661574",
+          "reportSha256": "acd58d3969870d7988a4d4ae0725057e5802399ab59850633e59ad98b575ee19",
+          "actionBindingSha256": "db910361301e81e52baabd0309b08db4e6c62971ed7a6fb5691d08daa596dc68"
+        },
+        {
+          "baseRevision": "c9066393a6a11c89e188bea72f2c976186661574",
+          "targetRevision": "7f877b34aff79d817f89e48b741bb3966ba9b188",
+          "reportSha256": "18c51ec523017018daca73c91109b94ad310bac059def854fdc612ed164b6d6c",
+          "actionBindingSha256": "d6603d48f56954bb2e17e5abf86a88ccab93bfc6fdf3099073f7bf14f0dfd881"
+        },
+        {
+          "baseRevision": "7f877b34aff79d817f89e48b741bb3966ba9b188",
+          "targetRevision": "0f217d25d3ae3caeadd88b404699ac384e0c37e1",
+          "reportSha256": "8071dfe7cb9cf72a6d3c905ab7a71cd8245cf7c8a02b512da92d02dcae8e3533",
+          "actionBindingSha256": "adeaaa571ac9d323e9f58513355b414e58bd8dbc850dbdc47c0ce6c40a7a0039"
+        },
+        {
+          "baseRevision": "0f217d25d3ae3caeadd88b404699ac384e0c37e1",
+          "targetRevision": "fc3808097367cc9133facaa64e62dcd449e2ae49",
+          "reportSha256": "e0841094a5414f2c97fff8f614ca9ac88278e8eabd0ecaa9282675e5331a7838",
+          "actionBindingSha256": "863dc4044b7e8589be97e7ebf133cdd9f34b6be0bc2507ae56ba52c26fe8271b"
+        }
+      ],
+      "inputComplete": true,
+      "exposesExactAction": true
+    },
+    {
+      "family": "apache-kafka",
+      "observedTransitions": 30,
+      "distinctOrdinals": 30,
+      "distinctTransitions": 30,
+      "distinctReports": 30,
+      "ordinalChainComplete": true,
+      "revisionChainComplete": true,
+      "relevantTransitions": 0,
+      "exactActions": 0,
+      "productFailures": 0,
+      "statuses": {
+        "GLOBAL_OR_AMBIGUOUS": 30
+      },
+      "actionBindings": [],
+      "inputComplete": false,
+      "exposesExactAction": false
+    },
+    {
+      "family": "micronaut-core",
+      "observedTransitions": 30,
+      "distinctOrdinals": 30,
+      "distinctTransitions": 30,
+      "distinctReports": 30,
+      "ordinalChainComplete": true,
+      "revisionChainComplete": true,
+      "relevantTransitions": 0,
+      "exactActions": 0,
+      "productFailures": 0,
+      "statuses": {
+        "GLOBAL_OR_AMBIGUOUS": 13,
+        "INPUT_UNAVAILABLE": 1,
+        "IRRELEVANT_TO_REQUEST": 16
+      },
+      "actionBindings": [],
+      "inputComplete": false,
+      "exposesExactAction": false
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "observedTransitions": 30,
+      "distinctOrdinals": 30,
+      "distinctTransitions": 30,
+      "distinctReports": 30,
+      "ordinalChainComplete": true,
+      "revisionChainComplete": true,
+      "relevantTransitions": 0,
+      "exactActions": 0,
+      "productFailures": 0,
+      "statuses": {
+        "GLOBAL_OR_AMBIGUOUS": 11,
+        "IRRELEVANT_TO_REQUEST": 19
+      },
+      "actionBindings": [],
+      "inputComplete": false,
+      "exposesExactAction": false
+    },
+    {
+      "family": "spring-framework",
+      "observedTransitions": 13,
+      "distinctOrdinals": 13,
+      "distinctTransitions": 13,
+      "distinctReports": 13,
+      "ordinalChainComplete": true,
+      "revisionChainComplete": true,
+      "relevantTransitions": 5,
+      "exactActions": 5,
+      "productFailures": 0,
+      "statuses": {
+        "GLOBAL_OR_AMBIGUOUS": 1,
+        "IRRELEVANT_TO_REQUEST": 7,
+        "RELEVANT_COMPLETE": 5
+      },
+      "actionBindings": [
+        {
+          "baseRevision": "fd95ab16baa2353416e96bddbd979169a9618260",
+          "targetRevision": "f067d40f0a646a98d0e2735a34b6e31f0e3f2c97",
+          "reportSha256": "f70c356005e33edc4a12b8afb12c4e3b08861e8590bb40ed1fa8be2ae3c16fd3",
+          "actionBindingSha256": "74f015d99d750f78d6094a92f11d65e4727a9e3774b5d9cacabdd41913e6a808"
+        },
+        {
+          "baseRevision": "f067d40f0a646a98d0e2735a34b6e31f0e3f2c97",
+          "targetRevision": "e8e293a706002a42859a86044fc103a3f5e255be",
+          "reportSha256": "9abcde0cf763bee4f73adb8e7ccaeaf8f94b331743d574971b199c75edf0aa05",
+          "actionBindingSha256": "6da2fcf884bf514fa583a31ca6ad2690de6c2e4fa8875a734b289f099717be7a"
+        },
+        {
+          "baseRevision": "bcfa6c3c4fc9133229bcf252827989555ec009a7",
+          "targetRevision": "af466ccf63bc55f82961b6627fe0c97c43a54632",
+          "reportSha256": "16b62e557837876a0c2f4e36194c067f7fcc6261b6c8062616bd635b7e4d17f6",
+          "actionBindingSha256": "7a3a3ddfa5685913400089927f3b2b2acd3675eaef5ceeb752b5f80cfc7aa59b"
+        },
+        {
+          "baseRevision": "af466ccf63bc55f82961b6627fe0c97c43a54632",
+          "targetRevision": "59a784cb7ebfbb7f701067d5a4c2c5403be31a49",
+          "reportSha256": "1ff7639d3e99aa03c73bc9cfe23be6b0d79b16ffdac978ea49a2d480ceadd606",
+          "actionBindingSha256": "0a496692b680b6c3bf6fdac143beb1b80355b753bb549aadb757b3e7016d3450"
+        },
+        {
+          "baseRevision": "59a784cb7ebfbb7f701067d5a4c2c5403be31a49",
+          "targetRevision": "6ee3ef6af5e215b854b0901e6a43737e86318c31",
+          "reportSha256": "ea860d4a515df9b41ca77cac2184819bf36a20ff5e40b15890a8173deeac44bb",
+          "actionBindingSha256": "87ae183544e3643937d6973eee41c522f956907502485205228ed2f4e5a007ab"
+        }
+      ],
+      "inputComplete": true,
+      "exposesExactAction": true
+    }
+  ],
+  "completeInputFamilies": 2,
+  "completeInputFamiliesRequired": 5,
+  "relevantTransitionsPerFamilyRequired": 5,
+  "familiesExposingExactActions": 2,
+  "familiesExposingExactActionsRequired": 3,
+  "productFailures": 0,
+  "productFailureBudget": 0,
+  "failedCriteria": [
+    "COMPLETE_FAMILY_INPUTS",
+    "PUBLIC_ACTION_BREADTH"
+  ],
+  "breadthPass": false,
+  "timingAuthorized": false,
+  "activationAuthorized": false,
+  "outcome": "STOP_INCOMPLETE_REQUEST_ALIGNED_INPUT",
+  "nextBlock": "SWL-REQUEST-007"
+}

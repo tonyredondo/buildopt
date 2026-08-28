@@ -127,13 +127,16 @@ unique current-output discovery and all five transition statuses on Gradle 8/9
 `dev/check-request-aligned-public-capture` own the checked 110-transition
 ledger under `benchmarks/results/request-aligned-public-capture-v1/`. Groovy
 and Spring complete the relevant cohort; the other three families exhaust the
-budget. `SWL-REQUEST-004` owns the independent breadth decision; no new runtime
-optimizer exists yet.
+budget. `dev/run-request-aligned-breadth-gate` and
+`dev/check-request-aligned-breadth-gate` own the independent 110-report
+decision at `benchmarks/results/request-aligned-breadth-gate-v1.json`. It fails
+at 2/5 complete/action families; no new runtime optimizer exists.
 
 Run `./dev/check-request-aligned-successor-selection` and
 `./dev/check-request-aligned-producer` and
 `./dev/check-request-aligned-classifier` and
-`./dev/check-request-aligned-public-capture` to validate the active route,
+`./dev/check-request-aligned-public-capture` and
+`./dev/check-request-aligned-breadth-gate` to validate the active route,
 `./dev/check-change-aware-producer-closure-plan` for its closed
 predecessor, `./dev/check-fresh-generic-optimization-plan` for the earlier
 fresh route and `./dev/check-sticky-wrapper-learning-plan` to preserve the

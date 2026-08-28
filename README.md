@@ -190,12 +190,15 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > the versioned Groovy JAR is discovered from `:jar`, and incomplete ownership
 > fails typed. The adjacent-transition classifier adds 32 scenarios covering
 > all five frozen statuses, exact relevant closures, current renamed outputs
-> and fail-closed no-action outcomes. The fresh public capture now preserves
+> and fail-closed no-action outcomes. The fresh public capture preserves
 > **110** chronological transitions. Groovy and Spring each reach five relevant
 > exact actions; Kafka, Micronaut and OpenTelemetry exhaust their fixed
-> 30-transition budgets, leaving only **2/5** complete/action families. The
-> independent breadth reconstruction is next. This is observation evidence,
-> not a speed result; timing and activation remain unauthorized. Follow the
+> 30-transition budgets. Independent reconstruction verifies all **110/110**
+> reports and confirms only **2/5** complete inputs versus required **5/5** and
+> **2/5** action families versus required **3/5**, with zero product failures.
+> The breadth gate therefore fails before timing; installed and chronological
+> measurements are not authorized, and the terminal scorecard is next. This
+> is not a speed result. Follow the
 > [request-aligned tracker](./docs/plans/request-aligned-learning-poc-tracker.md).
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,

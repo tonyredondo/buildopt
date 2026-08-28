@@ -1,8 +1,8 @@
 {
   "schemaVersion": "buildopt.poc/request-aligned-learning-contract/v1",
   "workItem": "SWL-REQUEST-000",
-  "status": "PUBLIC_CAPTURE_COMPLETE",
-  "currentBlock": "SWL-REQUEST-004",
+  "status": "BREADTH_GATE_FAILED",
+  "currentBlock": "SWL-REQUEST-007",
   "purpose": "Test whether recurring ordinary Gradle requests expose safe change-aware partial-work actions when evidence is aligned to the command the customer actually ran.",
   "predecessor": {
     "decision": "STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR",
@@ -76,24 +76,24 @@
     },
     {
       "id": "SWL-REQUEST-004",
-      "state": "TODO",
-      "outcome": "INDEPENDENT_ACTION_BREADTH_DECISION"
+      "state": "DONE",
+      "outcome": "STOP_INCOMPLETE_REQUEST_ALIGNED_INPUT"
     },
     {
       "id": "SWL-REQUEST-005",
-      "state": "WAITING",
-      "outcome": "INSTALLED_VALUE_IF_AUTHORIZED"
+      "state": "NOT_AUTHORIZED",
+      "outcome": "INSTALLED_VALUE_NOT_AUTHORIZED_BY_BREADTH_GATE"
     },
     {
       "id": "SWL-REQUEST-006",
-      "state": "WAITING",
-      "outcome": "CHRONOLOGICAL_VALUE_IF_AUTHORIZED"
+      "state": "NOT_AUTHORIZED",
+      "outcome": "CHRONOLOGICAL_VALUE_NOT_AUTHORIZED_BY_BREADTH_GATE"
     },
     {
       "id": "SWL-REQUEST-007",
-      "state": "WAITING",
+      "state": "TODO",
       "outcome": "TERMINAL_CONTINUE_OR_STOP_DECISION"
     }
   ],
-  "nextBlock": "SWL-REQUEST-004"
+  "nextBlock": "SWL-REQUEST-007"
 }

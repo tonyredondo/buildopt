@@ -89,11 +89,10 @@ The active request-aligned evidence order is:
 4. capture five relevant ordinary transitions in each public family (complete:
    Groovy and Spring qualify; the other three exhaust their budgets);
 5. independently rebuild all 110 reports and require five complete families
-   plus at least three action families (next);
-6. time installed actions only after at least three families expose complete
-   generic actions;
-7. run a chronological campaign only after installed value passes; and
-8. issue a terminal decision only from fresh complete evidence.
+   plus at least three action families (complete: 2/5 meets neither threshold);
+6. do not run installed timing because breadth failed;
+7. do not run a chronological campaign because installed value did not open;
+8. issue the terminal decision from fresh reconstructed evidence (next).
 
 Sample count alone never makes the campaign ready. Missing lifecycle, action or
 ledger evidence keeps it incomplete. The exact implementation paths, evidence

@@ -172,13 +172,15 @@ fixed requested graph; the remaining Groovy case bound a stale unversioned JAR
 instead of the current versioned producer output.
 
 The predecessor capture remains 25/25 conclusive but only **1/5** action-broad.
-The new route has completed identity, current-output ownership, adjacent
-relevance classification and fresh public capture. Across 110 chronological
-transitions, Groovy and Spring each reach five relevant exact actions. Kafka,
-Micronaut and OpenTelemetry exhaust their 30-transition budgets, leaving only
-**2/5** complete/action families in the aggregate. `SWL-REQUEST-004` must now
-reconstruct every report independently. Only a verified 5/5 complete and 3/5
-action-breadth result can open timing.
+The new route completed identity, current-output ownership, adjacent relevance
+classification, fresh public capture and independent breadth reconstruction.
+Across 110 chronological transitions, Groovy and Spring each reach five
+relevant exact actions. Kafka, Micronaut and OpenTelemetry exhaust their
+30-transition budgets with zero relevant transitions. Rebuilding all 110
+reports confirms only **2/5** complete inputs versus required **5/5** and
+**2/5** action families versus required **3/5**. The result is not an aggregate
+summary interpretation: summary falsification has no effect and report
+falsification is rejected.
 
 No current action ran and no current wall-time claim exists. Installed and
 chronological timing were not authorized. The terminal scorecard records
@@ -187,8 +189,8 @@ confidence, payback and overhead typed as unmeasured rather than zero. The new
 `REQUEST_ALIGNED_RECURRENT_CLOSURE_V1` route does not relabel those negatives:
 it preserves the exact customer command, waits for relevant recurrent changes
 and discovers current outputs generically. Producer and classifier
-implementation and public capture are complete; independent breadth is next,
-while timing and activation remain closed.
+implementation and independent breadth are complete. The breadth failure keeps
+timing and activation closed; the terminal scorecard is next.
 
 ## POC conclusion
 

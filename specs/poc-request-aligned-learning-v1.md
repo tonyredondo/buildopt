@@ -1,6 +1,6 @@
 # Request-aligned recurrent learning POC contract
 
-Status: `PUBLIC_CAPTURE_COMPLETE`.
+Status: `BREADTH_GATE_FAILED`.
 
 ## Question
 
@@ -9,9 +9,10 @@ customer actually repeats across commits, instead of pairing arbitrary changes
 with one fixed leaf workflow, and then deliver cumulative wall-time value over
 optimized native Gradle?
 
-The route now has an observation producer, adjacent-transition classifier and
-a fresh five-family public capture. It does not authorize timing, execution of
-a candidate or reuse of historical BuildOpt timings and actions.
+The route now has an observation producer, adjacent-transition classifier,
+fresh five-family public capture and independent breadth decision. The gate
+does not authorize timing, execution of a candidate or reuse of historical
+BuildOpt timings and actions.
 
 ## Implemented producer boundary
 
@@ -59,10 +60,23 @@ and 14 unsafe outcomes; OpenTelemetry exhausts 30 with 19 irrelevant and 11
 global or ambiguous outcomes. Therefore only two of five family inputs are
 complete and only those two families expose actions.
 
-This is capture evidence, not the independent breadth decision. The next block
-must reconstruct every report from raw captures and apply the frozen gate
-without trusting the aggregate summary. No candidate ran and no wall-time
-measurement opened.
+This is capture evidence, not the independent breadth decision. No candidate
+ran and no wall-time measurement opened.
+
+## Independent breadth decision
+
+`SWL-REQUEST-004` ignores the aggregate summary, verifies every ledger-bound
+capture and report digest and regenerates all **110/110** classifier reports
+from raw base/target observations. A deliberately falsified summary does not
+change the result, while a report falsified and rehashed in the ledger is
+rejected by reconstruction.
+
+Groovy and Spring each provide five relevant exact actions. Kafka, Micronaut
+and OpenTelemetry provide no relevant transition within the frozen 30-attempt
+budget. Therefore the route has **2/5** complete inputs against required
+**5/5** and **2/5** action families against required **3/5**. There are zero
+product failures, but both breadth criteria fail. Installed and chronological
+timing are not authorized; `SWL-REQUEST-007` is the next and only open block.
 
 ## Why the predecessor stopped
 

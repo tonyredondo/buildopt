@@ -80,8 +80,21 @@ with:
 The checker verifies every digest and first-parent chain, reconstructs all 110
 classifier reports from their raw captures and confirms exact arguments. The
 checked result has two complete/action families, Groovy and Spring. It contains
-no timing or activation authority; `SWL-REQUEST-004` owns the independent
-breadth decision.
+no timing or activation authority.
+
+Recompute the independent breadth decision without consuming the aggregate
+summary with:
+
+```bash
+./dev/run-request-aligned-breadth-gate
+./dev/check-request-aligned-breadth-gate
+```
+
+The checker rebuilds all 110 reports, proves that summary falsification has no
+effect and rejects a report falsified even when its ledger digest is updated.
+Only Groovy and Spring satisfy the five-relevant-transition input and expose
+exact actions: 2/5 complete inputs versus required 5/5 and 2/5 action families
+versus required 3/5. Timing remains closed and `SWL-REQUEST-007` is next.
 
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:

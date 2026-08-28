@@ -46,9 +46,12 @@ ambiguous or outside-graph ownership fails typed. The adjacent-transition
 classifier adds 32 cases across all five statuses, derives exact relevant
 closures, binds current renamed outputs and emits no action for unsafe or
 full-graph cases. The fresh 110-transition capture completes Groovy and Spring
-but not Kafka, Micronaut or OpenTelemetry, leaving 2/5 complete/action
-families. Independent breadth reconstruction is next. Public timing,
-activation and any speedup claim remain unauthorized.
+but not Kafka, Micronaut or OpenTelemetry. Independent reconstruction now
+verifies all 110 reports and confirms **2/5** complete inputs versus required
+**5/5**, and **2/5** action families versus required **3/5**, with zero product
+failures. The gate stops before installed or chronological timing. The next
+block is the terminal scorecard; activation and any speedup claim remain
+unauthorized.
 
 ## Mechanisms
 

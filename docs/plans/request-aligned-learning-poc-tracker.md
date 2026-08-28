@@ -2,11 +2,11 @@
 
 ## Status
 
-**Overall:** `PUBLIC_CAPTURE_COMPLETE`
+**Overall:** `BREADTH_GATE_FAILED`
 
-**Progress:** four of eight blocks complete
+**Progress:** five blocks executed; two timing blocks not authorized
 
-**Current block:** `SWL-REQUEST-004`
+**Current block:** `SWL-REQUEST-007`
 
 **Predecessor:** the [change-aware producer route](./change-aware-producer-closure-poc-tracker.md)
 stopped before timing at 1/5 action breadth. No predecessor timing or action is
@@ -67,10 +67,10 @@ discovers current outputs from producer tasks and binds their exact bytes.
 | 1 | `SWL-REQUEST-001` Request identity and current-output producer | Canonical request identity, current producer-output discovery and typed observation schema | `DONE` | SWL-REQUEST-000 |
 | 2 | `SWL-REQUEST-002` Relevance classifier and fixtures | Classify relevant, irrelevant, global, ambiguous, unavailable and failed transitions across Gradle 8/9 and Kotlin/Groovy | `DONE` | SWL-REQUEST-001 |
 | 3 | `SWL-REQUEST-003` Fresh public recurrent-request capture | Capture five relevant ordinary transitions in each frozen family without importing historical BuildOpt evidence | `DONE` | SWL-REQUEST-002 |
-| 4 | `SWL-REQUEST-004` Independent breadth gate | Rebuild reports and require complete actions in at least 3/5 families | `TODO` | SWL-REQUEST-003 |
-| 5 | `SWL-REQUEST-005` Installed value | Eight balanced pairs per admitted action with exact outputs and complete costs | `WAITING` | breadth passes |
-| 6 | `SWL-REQUEST-006` Chronological value | At least 15 comparable relevant transitions per admitted family with cumulative economics | `WAITING` | installed value passes |
-| 7 | `SWL-REQUEST-007` Terminal decision | Continue or stop from correctness, breadth, value, confidence, payback, overhead and failures | `WAITING` | all authorized predecessors |
+| 4 | `SWL-REQUEST-004` Independent breadth gate | Rebuild reports and require complete actions in at least 3/5 families | `DONE` | SWL-REQUEST-003 |
+| 5 | `SWL-REQUEST-005` Installed value | Eight balanced pairs per admitted action with exact outputs and complete costs | `NOT AUTHORIZED` | breadth failed at 2/5 complete/action families |
+| 6 | `SWL-REQUEST-006` Chronological value | At least 15 comparable relevant transitions per admitted family with cumulative economics | `NOT AUTHORIZED` | installed value did not open |
+| 7 | `SWL-REQUEST-007` Terminal decision | Continue or stop from correctness, breadth, value, confidence, payback, overhead and failures | `TODO` | conclusive breadth gate |
 
 ## Block contracts
 
@@ -164,6 +164,17 @@ Require five complete family inputs, five relevant transitions per family and
 at least three families with one exact action. Incomplete relevant evidence
 blocks; fewer than three action families stops the route before timing.
 
+Implemented outcome: [`request-aligned-breadth-gate-v1.json`](../../benchmarks/results/request-aligned-breadth-gate-v1.json)
+does not consume `summary.json`. It verifies the route, capture and ledger
+digests, rebuilds all **110/110** reports from the raw base/target captures and
+independently validates every exact omitted-output binding. Groovy and Spring
+each provide five relevant exact actions, but Kafka, Micronaut and
+OpenTelemetry provide zero relevant transitions within the frozen 30-attempt
+budget. The result is therefore **2/5** complete inputs versus required **5/5**
+and **2/5** action families versus required **3/5**. Product failures remain
+**0**. The gate returns `STOP_INCOMPLETE_REQUEST_ALIGNED_INPUT`, keeps timing
+and activation false and routes directly to `SWL-REQUEST-007`.
+
 ### SWL-REQUEST-005 — Installed value
 
 Run eight alternating candidate/native pairs for every admitted family on the
@@ -194,10 +205,10 @@ than zero.
 | `SWL-REQUEST-E002` | SWL-REQUEST-001 | Request identity, current-output producer and negative fixtures | `DONE` — [`request-aligned-producer-fixtures-v1.json`](../../benchmarks/results/request-aligned-producer-fixtures-v1.json) |
 | `SWL-REQUEST-E003` | SWL-REQUEST-002 | Relevance classifier and Gradle/DSL fixture matrix | `DONE` — [`request-aligned-classifier-fixtures-v1.json`](../../benchmarks/results/request-aligned-classifier-fixtures-v1.json) |
 | `SWL-REQUEST-E004` | SWL-REQUEST-003 | Fresh five-family recurrent-request ledger | `DONE` — [`request-aligned-public-capture-v1`](../../benchmarks/results/request-aligned-public-capture-v1/summary.json) |
-| `SWL-REQUEST-E005` | SWL-REQUEST-004 | Independent breadth decision | `TODO` |
-| `SWL-REQUEST-E006` | SWL-REQUEST-005 | Installed paired value and cost ledger | `WAITING` |
-| `SWL-REQUEST-E007` | SWL-REQUEST-006 | Chronological cumulative value | `WAITING` |
-| `SWL-REQUEST-E008` | SWL-REQUEST-007 | Terminal scorecard | `WAITING` |
+| `SWL-REQUEST-E005` | SWL-REQUEST-004 | Independent breadth decision | `DONE` — [`request-aligned-breadth-gate-v1.json`](../../benchmarks/results/request-aligned-breadth-gate-v1.json) |
+| `SWL-REQUEST-E006` | SWL-REQUEST-005 | Installed paired value and cost ledger | `NOT AUTHORIZED` |
+| `SWL-REQUEST-E007` | SWL-REQUEST-006 | Chronological cumulative value | `NOT AUTHORIZED` |
+| `SWL-REQUEST-E008` | SWL-REQUEST-007 | Terminal scorecard | `TODO` |
 
 ## Documentation contract
 
@@ -212,12 +223,10 @@ than zero.
 
 ## Immediate next action
 
-Implement `SWL-REQUEST-004` exactly as specified: ignore the aggregate summary,
-verify the immutable ledger and rebuild every classifier report from its raw
-capture before counting completeness or actions. Apply the unchanged five
-complete-family, five-relevant-transition and three-action-family requirements.
-The checked aggregate suggests the gate will stop at two complete/action
-families, but that is not authoritative until the independent reconstruction
-proves it.
+Implement `SWL-REQUEST-007`: regenerate the terminal scorecard from the
+selection, producer, classifier, public-capture and breadth evidence. Record
+the two downstream timing blocks as not authorized, preserve unavailable
+economics as typed values rather than zeros and issue the route-level continue
+or stop decision without importing historical performance.
 
-No successor timing is authorized by `SWL-REQUEST-003`.
+No timing is authorized by `SWL-REQUEST-004`.

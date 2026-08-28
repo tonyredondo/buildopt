@@ -79,10 +79,11 @@ optimized-native invocation remains authoritative.
 The public-capture runner applies that same generic boundary to a frozen exact
 request over chronological first-parent histories. It records raw base/target
 observations, changed paths and independently reproducible classifier reports.
-The current 110-transition capture completes Groovy and Spring but not Kafka,
-Micronaut or OpenTelemetry. The aggregate counts are not decision authority;
-the next block must reconstruct every report before applying the frozen breadth
-gate. No runtime optimizer or candidate activation was added by this capture.
+The 110-transition capture completes Groovy and Spring but not Kafka,
+Micronaut or OpenTelemetry. The independent gate ignores the aggregate summary,
+reconstructs every report and confirms 2/5 complete/action families against
+the frozen 5/5-complete and 3/5-action requirements. No runtime optimizer,
+candidate activation or timing was authorized.
 
 The four generated committed files contain only bootstrap identity and portable
 non-secret configuration. Runtime credentials remain private. The implemented
