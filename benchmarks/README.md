@@ -103,6 +103,15 @@ the ledger is rejected. The gate returns
 `STOP_INCOMPLETE_REQUEST_ALIGNED_INPUT`; installed and chronological timing
 are not authorized.
 
+[`request-aligned-terminal-decision-v1.json`](./results/request-aligned-terminal-decision-v1.json)
+is the digest-bound `SWL-REQUEST-007` conclusion. It records capture integrity,
+**110/110** report reconstruction, **110/110** exact request preservation,
+**10/10** static output bindings and zero product failures as passing evidence.
+It also preserves the failed **2/5 versus 5/5** completeness gate and **2/5
+versus 3/5** action-breadth gate. No action ran, no timing row exists, and the
+five value/economic criteria remain `NOT_MEASURED_NOT_AUTHORIZED`. The decision
+stops this detector without making a speedup claim or authorizing a successor.
+
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
@@ -114,6 +123,7 @@ are not authorized.
 ./dev/check-request-aligned-classifier
 ./dev/check-request-aligned-public-capture
 ./dev/check-request-aligned-breadth-gate
+./dev/check-request-aligned-terminal-decision
 ```
 
 ## Sticky-wrapper observation sample

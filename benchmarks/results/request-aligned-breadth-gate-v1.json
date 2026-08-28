@@ -3,7 +3,7 @@
   "workItem": "SWL-REQUEST-004",
   "generatedAt": "2026-08-28T08:47:13Z",
   "inputs": {
-    "routeContractSha256": "c502c69b60bf267a6e98246f7fceafc79e7b2a0a36f973396b41098f95a4c878",
+    "routeContractSha256": "bf4287a52883ab211631a02d5330375573e8130e699a5aa6eea0a79bc765d1b6",
     "captureContractSha256": "c2636f1bab49448fe7d717323d2acc84998b9ab559d7d162ee85c56f0b31e022",
     "transitionsLedgerSha256": "402f061a6677c8cf7666f61efdd07168108bb25cc25070b43d303c0ce918bc4b",
     "classifierSourceSha256": "66ffe41c3d176b0427761259970990d003446c7a314930709e06e52e41998fb3",

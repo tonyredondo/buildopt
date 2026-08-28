@@ -15,7 +15,7 @@ before running the product.
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
 | Review the POC idea, mechanisms, current value, and next steps | [Current POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
-| Follow the active generic experiment | [Request-aligned Recurrent Learning POC Tracker](./plans/request-aligned-learning-poc-tracker.md) | [Active contract](../specs/poc-request-aligned-learning-v1.md), [breadth decision](../benchmarks/results/request-aligned-breadth-gate-v1.json), [closed change-aware route](./plans/change-aware-producer-closure-poc-tracker.md) |
+| Review the latest generic experiment | [Request-aligned Recurrent Learning POC Tracker](./plans/request-aligned-learning-poc-tracker.md) | [Terminal decision](../benchmarks/results/request-aligned-terminal-decision-v1.json), [contract](../specs/poc-request-aligned-learning-v1.md), [closed change-aware route](./plans/change-aware-producer-closure-poc-tracker.md) |
 | Review the stopped adaptive hypothesis | [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md) | [Terminal decision](../specs/poc-adaptive-fragment-terminal-decision-v1.md), [current generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the implemented onboarding foundation | [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md) | [Product onboarding](./getting-started/product-onboarding.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
 | Plan optional shared state across machines | [Centralized cache and state POC roadmap](./plans/centralized-cache-and-state-roadmap.md) | [Storage contract](../specs/poc-central-storage-contract-v1.md), [architecture overview](./architecture/overview.md) |
@@ -66,10 +66,10 @@ before running the product.
 ### Plans
 
 - [Request-aligned Recurrent Learning POC Tracker](./plans/request-aligned-learning-poc-tracker.md):
-  the active successor, implemented exact ordinary-request identity/current
+  the closed latest route, implemented exact ordinary-request identity/current
   producer-output discovery, relevance classifier and 110-transition fresh
   public capture. Independent reconstruction confirms only 2/5 complete/action
-  families, so timing is not authorized and the terminal scorecard is next.
+  families; its terminal scorecard authorizes no timing, speedup or successor.
 - [Change-aware Producer Closure POC Tracker](./plans/change-aware-producer-closure-poc-tracker.md):
   the closed successor hypothesis, completed 25-transition producer capture,
   independently failed 1/5-versus-3/5 breadth gate, unauthorized timing blocks

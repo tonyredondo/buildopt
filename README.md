@@ -178,7 +178,7 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > Review the closed
 > [change-aware tracker](./docs/plans/change-aware-producer-closure-poc-tracker.md).
 
-> **Current experiment:** cause reconstruction shows why the preceding route
+> **Latest generic experiment:** cause reconstruction shows why the preceding route
 > lacked breadth: **23/24** negative transitions changed no declared input in
 > the fixed requested graph, while one Groovy row used a stale unversioned JAR
 > path instead of the current producer output. BuildOpt now tests
@@ -196,9 +196,12 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > 30-transition budgets. Independent reconstruction verifies all **110/110**
 > reports and confirms only **2/5** complete inputs versus required **5/5** and
 > **2/5** action families versus required **3/5**, with zero product failures.
-> The breadth gate therefore fails before timing; installed and chronological
-> measurements are not authorized, and the terminal scorecard is next. This
-> is not a speed result. Follow the
+> The terminal scorecard therefore stops this detector before timing. It passes
+> capture integrity, 110/110 report reconstruction and request preservation,
+> 10/10 exact output bindings and zero product failures, but fails the frozen
+> completeness and breadth thresholds. Installed value, chronological value,
+> confidence, payback and overhead remain explicitly unmeasured. This is not a
+> speed result and no successor is automatically authorized. Review the closed
 > [request-aligned tracker](./docs/plans/request-aligned-learning-poc-tracker.md).
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,

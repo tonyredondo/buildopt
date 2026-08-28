@@ -30,9 +30,9 @@ The repository is a monorepo because contracts, producers, consumers, fixtures,
 and evidence must change together. It is not a collection of independently
 versioned microservices.
 
-## Active POC ownership
+## Latest generic POC ownership
 
-The current experiment is specified by
+The latest closed experiment is specified by
 [`poc-request-aligned-learning-v1`](../../specs/poc-request-aligned-learning-v1.md)
 and ordered by the
 [`Request-aligned Recurrent Learning POC Tracker`](../plans/request-aligned-learning-poc-tracker.md).
@@ -114,7 +114,7 @@ summary, then applies the frozen 3/5-family pre-timing gate. The terminal runner
 binds those inputs by digest and preserves every unmeasured economic criterion
 as a typed state.
 
-The active request-aligned contract is owned by
+The closed request-aligned contract is owned by
 `specs/poc-request-aligned-learning-v1.*`,
 `docs/plans/request-aligned-learning-poc-tracker.md`,
 `internal/requestaligned`, `cmd/request-aligned-producer`,
@@ -130,13 +130,17 @@ and Spring complete the relevant cohort; the other three families exhaust the
 budget. `dev/run-request-aligned-breadth-gate` and
 `dev/check-request-aligned-breadth-gate` own the independent 110-report
 decision at `benchmarks/results/request-aligned-breadth-gate-v1.json`. It fails
-at 2/5 complete/action families; no new runtime optimizer exists.
+at 2/5 complete/action families. The terminal runner/checker bind that decision
+and all upstream evidence in
+`benchmarks/results/request-aligned-terminal-decision-v1.json`; no timing,
+speedup, successor or new runtime optimizer exists.
 
 Run `./dev/check-request-aligned-successor-selection` and
 `./dev/check-request-aligned-producer` and
 `./dev/check-request-aligned-classifier` and
 `./dev/check-request-aligned-public-capture` and
-`./dev/check-request-aligned-breadth-gate` to validate the active route,
+`./dev/check-request-aligned-breadth-gate` and
+`./dev/check-request-aligned-terminal-decision` to validate the closed route,
 `./dev/check-change-aware-producer-closure-plan` for its closed
 predecessor, `./dev/check-fresh-generic-optimization-plan` for the earlier
 fresh route and `./dev/check-sticky-wrapper-learning-plan` to preserve the

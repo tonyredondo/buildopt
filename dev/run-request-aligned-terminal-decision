@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [OUTPUT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_capture=${buildopt_root}/benchmarks/results/request-aligned-public-capture-v1
+buildopt_gate=${buildopt_root}/benchmarks/results/request-aligned-breadth-gate-v1.json
+buildopt_route=${buildopt_root}/specs/poc-request-aligned-learning-v1.json
+buildopt_selection=${buildopt_root}/benchmarks/results/request-aligned-successor-selection-v1.json
+buildopt_producer=${buildopt_root}/benchmarks/results/request-aligned-producer-fixtures-v1.json
+buildopt_classifier=${buildopt_root}/benchmarks/results/request-aligned-classifier-fixtures-v1.json
+buildopt_output=${1:-${buildopt_root}/benchmarks/results/request-aligned-terminal-decision-v1.json}
+[[ ${buildopt_output} == /* ]] || buildopt_output=${PWD}/${buildopt_output}
+
+for buildopt_command in awk jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+"${buildopt_root}/dev/check-request-aligned-breadth-gate" "${buildopt_gate}" >/dev/null
+
+buildopt_route_sha=$(sha256sum "${buildopt_route}" | awk '{print $1}')
+buildopt_selection_sha=$(sha256sum "${buildopt_selection}" | awk '{print $1}')
+buildopt_producer_sha=$(sha256sum "${buildopt_producer}" | awk '{print $1}')
+buildopt_classifier_sha=$(sha256sum "${buildopt_classifier}" | awk '{print $1}')
+buildopt_capture_contract_sha=$(sha256sum "${buildopt_capture}/contract.json" | awk '{print $1}')
+buildopt_transitions_sha=$(sha256sum "${buildopt_capture}/transitions.jsonl" | awk '{print $1}')
+buildopt_gate_sha=$(sha256sum "${buildopt_gate}" | awk '{print $1}')
+buildopt_generated_at=$(jq -r '.generatedAt' "${buildopt_gate}")
+
+jq -n \
+    --arg generatedAt "${buildopt_generated_at}" \
+    --arg routeSha "${buildopt_route_sha}" \
+    --arg selectionSha "${buildopt_selection_sha}" \
+    --arg producerSha "${buildopt_producer_sha}" \
+    --arg classifierSha "${buildopt_classifier_sha}" \
+    --arg captureContractSha "${buildopt_capture_contract_sha}" \
+    --arg transitionsSha "${buildopt_transitions_sha}" \
+    --arg gateSha "${buildopt_gate_sha}" \
+    --slurpfile gate "${buildopt_gate}" '
+  {
+    schemaVersion:"buildopt.poc/request-aligned-terminal-decision/v1",
+    workItem:"SWL-REQUEST-007",
+    generatedAt:$generatedAt,
+    evidence:{
+      routeContractSha256:$routeSha,
+      successorSelectionSha256:$selectionSha,
+      producerFixturesSha256:$producerSha,
+      classifierFixturesSha256:$classifierSha,
+      captureContractSha256:$captureContractSha,
+      transitionsLedgerSha256:$transitionsSha,
+      breadthGateSha256:$gateSha,
+      historicalTimingImported:false,
+      historicalActionImported:false
+    },
+    executedBlocks:["SWL-REQUEST-000","SWL-REQUEST-001","SWL-REQUEST-002",
+      "SWL-REQUEST-003","SWL-REQUEST-004","SWL-REQUEST-007"],
+    notAuthorizedBlocks:["SWL-REQUEST-005","SWL-REQUEST-006"],
+    scorecard:[
+      {criterion:"FRESH_CAPTURE_INTEGRITY",status:"PASS",evidence:"110_TRANSITIONS_ACROSS_5_FAMILIES"},
+      {criterion:"REPORT_REPRODUCIBILITY",status:"PASS",evidence:
+        (($gate[0].reportsRegenerated|tostring)+"_OF_110_REBUILT_FROM_RAW_CAPTURE")},
+      {criterion:"EXACT_REQUEST_PRESERVATION",status:"PASS",evidence:"110_OF_110_ARGUMENT_VECTORS_PRESERVED"},
+      {criterion:"STATIC_ACTION_OUTPUT_BINDING",status:"PASS",evidence:
+        (([$gate[0].familyAssessments[].exactActions]|add|tostring)+"_OF_10_ACTIONS_HAVE_EXACT_OMITTED_OUTPUT_BINDINGS")},
+      {criterion:"FRESH_INPUT_COMPLETENESS",status:"FAIL",evidence:
+        (($gate[0].completeInputFamilies|tostring)+"_OF_5_VERSUS_REQUIRED_"+
+          ($gate[0].completeInputFamiliesRequired|tostring)+"_OF_5")},
+      {criterion:"PUBLIC_ACTION_BREADTH",status:"FAIL",evidence:
+        (($gate[0].familiesExposingExactActions|tostring)+"_OF_5_VERSUS_REQUIRED_"+
+          ($gate[0].familiesExposingExactActionsRequired|tostring)+"_OF_5")},
+      {criterion:"INSTALLED_ACTIVE_VALUE",status:"NOT_MEASURED_NOT_AUTHORIZED"},
+      {criterion:"CHRONOLOGICAL_CUMULATIVE_VALUE",status:"NOT_MEASURED_NOT_AUTHORIZED"},
+      {criterion:"POSITIVE_FAMILY_CONFIDENCE",status:"NOT_MEASURED_NOT_AUTHORIZED"},
+      {criterion:"PAYBACK",status:"NOT_MEASURED_NOT_AUTHORIZED"},
+      {criterion:"NATIVE_RETENTION_OVERHEAD",status:"NOT_MEASURED_NOT_AUTHORIZED"},
+      {criterion:"PRODUCT_ATTRIBUTABLE_FAILURES",status:"PASS",evidence:
+        (($gate[0].productFailures|tostring)+"_CAPTURE_OR_CLASSIFIER_FAILURES")}
+    ],
+    timingRows:{status:"NOT_CREATED",reason:"REQUEST_ALIGNED_COMPLETENESS_AND_ACTION_BREADTH_FAILED_BEFORE_TIMING"},
+    actionExecution:{status:"NOT_RUN_NOT_AUTHORIZED",families:["apache-groovy","spring-framework"]},
+    speedupClaim:false,
+    decision:"STOP_REQUEST_ALIGNED_RECURRENT_CLOSURE_POC_FOR_CURRENT_DETECTOR",
+    conclusion:"REQUEST_ALIGNED_DETECTOR_IS_CORRECT_WHEN_APPLICABLE_BUT_DOES_NOT_PRODUCE_COMPLETE_GENERIC_BREADTH",
+    nonConclusion:"THIS_DOES_NOT_PROVE_THAT_GRADLE_BUILDS_HAVE_NO_DIFFERENT_GENERIC_OPTIMIZATION_OPPORTUNITY",
+    successorAuthorized:false,
+    recommendedNextWork:"ANALYZE_GLOBAL_AMBIGUOUS_AND_REQUEST_RELEVANCE_CAUSES_BEFORE_SELECTING_A_MATERIALLY_DIFFERENT_GENERIC_HYPOTHESIS"
+  }
+' >"${buildopt_output}"
+
+printf 'Request-aligned terminal decision written to %s\n' "${buildopt_output}"

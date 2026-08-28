@@ -2,11 +2,11 @@
 
 ## Status
 
-**Overall:** `BREADTH_GATE_FAILED`
+**Overall:** `STOPPED_CURRENT_REQUEST_ALIGNED_DETECTOR`
 
-**Progress:** five blocks executed; two timing blocks not authorized
+**Progress:** six blocks executed; two timing blocks not authorized
 
-**Current block:** `SWL-REQUEST-007`
+**Current block:** none; `SWL-REQUEST-007` issued the terminal decision
 
 **Predecessor:** the [change-aware producer route](./change-aware-producer-closure-poc-tracker.md)
 stopped before timing at 1/5 action breadth. No predecessor timing or action is
@@ -70,7 +70,7 @@ discovers current outputs from producer tasks and binds their exact bytes.
 | 4 | `SWL-REQUEST-004` Independent breadth gate | Rebuild reports and require complete actions in at least 3/5 families | `DONE` | SWL-REQUEST-003 |
 | 5 | `SWL-REQUEST-005` Installed value | Eight balanced pairs per admitted action with exact outputs and complete costs | `NOT AUTHORIZED` | breadth failed at 2/5 complete/action families |
 | 6 | `SWL-REQUEST-006` Chronological value | At least 15 comparable relevant transitions per admitted family with cumulative economics | `NOT AUTHORIZED` | installed value did not open |
-| 7 | `SWL-REQUEST-007` Terminal decision | Continue or stop from correctness, breadth, value, confidence, payback, overhead and failures | `TODO` | conclusive breadth gate |
+| 7 | `SWL-REQUEST-007` Terminal decision | Continue or stop from correctness, breadth, value, confidence, payback, overhead and failures | `DONE` | conclusive breadth gate |
 
 ## Block contracts
 
@@ -197,6 +197,18 @@ family confidence, payback, native-retention overhead and zero-failure gates
 all pass without threshold movement. Unavailable values remain typed rather
 than zero.
 
+Implemented outcome: the digest-bound terminal scorecard passes fresh-capture
+integrity, **110/110** report reconstruction, **110/110** exact request
+preservation, **10/10** static omitted-output bindings and zero product
+failures. It fails the two preregistered pre-timing gates: complete input is
+**2/5** versus required **5/5**, and public action breadth is **2/5** versus
+required **3/5**. Installed value, chronological value, positive-family
+confidence, payback and native-retention overhead remain
+`NOT_MEASURED_NOT_AUTHORIZED`; no timing row or action execution exists. The
+decision is `STOP_REQUEST_ALIGNED_RECURRENT_CLOSURE_POC_FOR_CURRENT_DETECTOR`.
+This stops this detector, not the search for a materially different generic
+Gradle optimization opportunity.
+
 ## Evidence ledger
 
 | Evidence | Block | Required evidence | State |
@@ -208,7 +220,7 @@ than zero.
 | `SWL-REQUEST-E005` | SWL-REQUEST-004 | Independent breadth decision | `DONE` — [`request-aligned-breadth-gate-v1.json`](../../benchmarks/results/request-aligned-breadth-gate-v1.json) |
 | `SWL-REQUEST-E006` | SWL-REQUEST-005 | Installed paired value and cost ledger | `NOT AUTHORIZED` |
 | `SWL-REQUEST-E007` | SWL-REQUEST-006 | Chronological cumulative value | `NOT AUTHORIZED` |
-| `SWL-REQUEST-E008` | SWL-REQUEST-007 | Terminal scorecard | `TODO` |
+| `SWL-REQUEST-E008` | SWL-REQUEST-007 | Terminal scorecard | `DONE` — [`request-aligned-terminal-decision-v1.json`](../../benchmarks/results/request-aligned-terminal-decision-v1.json) |
 
 ## Documentation contract
 
@@ -223,10 +235,9 @@ than zero.
 
 ## Immediate next action
 
-Implement `SWL-REQUEST-007`: regenerate the terminal scorecard from the
-selection, producer, classifier, public-capture and breadth evidence. Record
-the two downstream timing blocks as not authorized, preserve unavailable
-economics as typed values rather than zeros and issue the route-level continue
-or stop decision without importing historical performance.
-
-No timing is authorized by `SWL-REQUEST-004`.
+No successor is authorized by this route. Before selecting another experiment,
+analyze why Kafka and OpenTelemetry were predominantly
+`GLOBAL_OR_AMBIGUOUS` and why Micronaut mixed irrelevant and unsafe changes.
+That analysis may select a materially different generic hypothesis, but it
+must not relabel missing evidence, loosen the frozen gates or reuse historical
+performance as current proof.

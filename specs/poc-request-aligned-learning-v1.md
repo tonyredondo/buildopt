@@ -1,6 +1,6 @@
 # Request-aligned recurrent learning POC contract
 
-Status: `BREADTH_GATE_FAILED`.
+Status: `STOPPED_CURRENT_REQUEST_ALIGNED_DETECTOR`.
 
 ## Question
 
@@ -76,7 +76,25 @@ and OpenTelemetry provide no relevant transition within the frozen 30-attempt
 budget. Therefore the route has **2/5** complete inputs against required
 **5/5** and **2/5** action families against required **3/5**. There are zero
 product failures, but both breadth criteria fail. Installed and chronological
-timing are not authorized; `SWL-REQUEST-007` is the next and only open block.
+timing are not authorized.
+
+## Terminal decision
+
+`SWL-REQUEST-007` binds the final route contract, selection evidence,
+producer/classifier fixtures, immutable capture ledger and independent breadth
+gate by SHA-256. Its scorecard passes fresh-capture integrity, **110/110**
+report reconstruction, **110/110** exact request preservation, **10/10**
+static omitted-output bindings and zero product failures. It fails the frozen
+completeness and breadth criteria above.
+
+No action ran and no timing row exists. Installed value, chronological value,
+positive-family confidence, payback and native-retention overhead remain
+`NOT_MEASURED_NOT_AUTHORIZED`; they are not represented as zeros. The terminal
+decision is
+`STOP_REQUEST_ALIGNED_RECURRENT_CLOSURE_POC_FOR_CURRENT_DETECTOR`. It authorizes
+neither a speedup claim nor a successor. This is a conclusion about this
+detector, not proof that Gradle builds have no materially different generic
+optimization opportunity.
 
 ## Why the predecessor stopped
 

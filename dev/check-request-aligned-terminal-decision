@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_result=${1:-${buildopt_root}/benchmarks/results/request-aligned-terminal-decision-v1.json}
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-terminal.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-request-terminal.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected terminal root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+buildopt_validate_result() {
+    jq -e '
+      .schemaVersion=="buildopt.poc/request-aligned-terminal-decision/v1" and
+      .workItem=="SWL-REQUEST-007" and
+      all(.evidence[]|select(type=="string");test("^[0-9a-f]{64}$")) and
+      (.evidence.historicalTimingImported|not) and
+      (.evidence.historicalActionImported|not) and
+      .executedBlocks==["SWL-REQUEST-000","SWL-REQUEST-001","SWL-REQUEST-002",
+        "SWL-REQUEST-003","SWL-REQUEST-004","SWL-REQUEST-007"] and
+      .notAuthorizedBlocks==["SWL-REQUEST-005","SWL-REQUEST-006"] and
+      (.scorecard|length)==12 and
+      ([.scorecard[]|select(.criterion=="FRESH_CAPTURE_INTEGRITY" and .status=="PASS" and
+        .evidence=="110_TRANSITIONS_ACROSS_5_FAMILIES")]|length)==1 and
+      ([.scorecard[]|select(.criterion=="REPORT_REPRODUCIBILITY" and .status=="PASS" and
+        .evidence=="110_OF_110_REBUILT_FROM_RAW_CAPTURE")]|length)==1 and
+      ([.scorecard[]|select(.criterion=="EXACT_REQUEST_PRESERVATION" and .status=="PASS" and
+        .evidence=="110_OF_110_ARGUMENT_VECTORS_PRESERVED")]|length)==1 and
+      ([.scorecard[]|select(.criterion=="STATIC_ACTION_OUTPUT_BINDING" and .status=="PASS" and
+        .evidence=="10_OF_10_ACTIONS_HAVE_EXACT_OMITTED_OUTPUT_BINDINGS")]|length)==1 and
+      ([.scorecard[]|select(.criterion=="FRESH_INPUT_COMPLETENESS" and .status=="FAIL" and
+        .evidence=="2_OF_5_VERSUS_REQUIRED_5_OF_5")]|length)==1 and
+      ([.scorecard[]|select(.criterion=="PUBLIC_ACTION_BREADTH" and .status=="FAIL" and
+        .evidence=="2_OF_5_VERSUS_REQUIRED_3_OF_5")]|length)==1 and
+      ([.scorecard[]|select(.status=="NOT_MEASURED_NOT_AUTHORIZED")]|length)==5 and
+      ([.scorecard[]|select(has("value"))]|length)==0 and
+      ([.scorecard[]|select(.criterion=="PRODUCT_ATTRIBUTABLE_FAILURES" and .status=="PASS" and
+        .evidence=="0_CAPTURE_OR_CLASSIFIER_FAILURES")]|length)==1 and
+      .timingRows=={status:"NOT_CREATED",reason:"REQUEST_ALIGNED_COMPLETENESS_AND_ACTION_BREADTH_FAILED_BEFORE_TIMING"} and
+      .actionExecution=={status:"NOT_RUN_NOT_AUTHORIZED",families:["apache-groovy","spring-framework"]} and
+      (.speedupClaim|not) and
+      .decision=="STOP_REQUEST_ALIGNED_RECURRENT_CLOSURE_POC_FOR_CURRENT_DETECTOR" and
+      .conclusion=="REQUEST_ALIGNED_DETECTOR_IS_CORRECT_WHEN_APPLICABLE_BUT_DOES_NOT_PRODUCE_COMPLETE_GENERIC_BREADTH" and
+      .nonConclusion=="THIS_DOES_NOT_PROVE_THAT_GRADLE_BUILDS_HAVE_NO_DIFFERENT_GENERIC_OPTIMIZATION_OPPORTUNITY" and
+      (.successorAuthorized|not) and
+      .recommendedNextWork=="ANALYZE_GLOBAL_AMBIGUOUS_AND_REQUEST_RELEVANCE_CAUSES_BEFORE_SELECTING_A_MATERIALLY_DIFFERENT_GENERIC_HYPOTHESIS"
+    ' "$1" >/dev/null
+}
+
+"${buildopt_root}/dev/run-request-aligned-terminal-decision" \
+    "${buildopt_temporary}/regenerated.json" >/dev/null
+cmp -s "${buildopt_result}" "${buildopt_temporary}/regenerated.json" || {
+    printf 'request-aligned terminal decision is stale or not reproducible\n' >&2
+    exit 1
+}
+buildopt_validate_result "${buildopt_result}" || {
+    printf 'request-aligned terminal decision contract is invalid\n' >&2
+    exit 1
+}
+
+jq '.speedupClaim=true|.successorAuthorized=true' "${buildopt_result}" \
+    >"${buildopt_temporary}/tampered-authority.json"
+if buildopt_validate_result "${buildopt_temporary}/tampered-authority.json"; then
+    printf 'invented speedup or successor authority was accepted\n' >&2
+    exit 1
+fi
+jq '.scorecard|=map(if .status=="NOT_MEASURED_NOT_AUTHORIZED" then .status="PASS"|.value=0 else . end)' \
+    "${buildopt_result}" >"${buildopt_temporary}/tampered-economics.json"
+if buildopt_validate_result "${buildopt_temporary}/tampered-economics.json"; then
+    printf 'invented zero-valued economics were accepted\n' >&2
+    exit 1
+fi
+
+printf 'Request-aligned terminal decision: PASS\n'

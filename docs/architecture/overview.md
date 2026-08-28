@@ -64,8 +64,8 @@ committed buildoptw / buildoptw.bat
 existing buildopt launcher -> existing Gradle Wrapper
 ```
 
-`REQUEST_ALIGNED_RECURRENT_CLOSURE_V1` now has an observation-only producer,
-adjacent-transition classifier and fresh public-capture boundary.
+The closed `REQUEST_ALIGNED_RECURRENT_CLOSURE_V1` route has an observation-only
+producer, adjacent-transition classifier and fresh public-capture boundary.
 It canonically binds exact Gradle arguments and requested tasks, Gradle and
 Wrapper identity, portable JDK facts, a safe environment aggregate, build
 logic and the finalized requested graph. Current outputs are repository-
@@ -82,8 +82,9 @@ observations, changed paths and independently reproducible classifier reports.
 The 110-transition capture completes Groovy and Spring but not Kafka,
 Micronaut or OpenTelemetry. The independent gate ignores the aggregate summary,
 reconstructs every report and confirms 2/5 complete/action families against
-the frozen 5/5-complete and 3/5-action requirements. No runtime optimizer,
-candidate activation or timing was authorized.
+the frozen 5/5-complete and 3/5-action requirements. Its terminal decision
+preserves five economic criteria as unmeasured and authorizes no speedup or
+successor. No runtime optimizer, candidate activation or timing was authorized.
 
 The four generated committed files contain only bootstrap identity and portable
 non-secret configuration. Runtime credentials remain private. The implemented

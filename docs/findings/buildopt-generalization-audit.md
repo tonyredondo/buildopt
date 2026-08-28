@@ -19,7 +19,7 @@ that worked. The subsequent
 also stopped after its current installed campaign produced zero activations,
 zero attributable mechanism saving and negative cumulative value.
 
-The active experimental direction is
+The latest closed experimental direction is
 [request-aligned recurrent learning](../plans/request-aligned-learning-poc-tracker.md).
 It reuses the committed wrapper but changes the evidence unit: BuildOpt learns
 from the exact Gradle command the customer actually repeats and only from
@@ -39,8 +39,8 @@ exact argv, derives only exact relevant producer closures and binds renamed
 current outputs without filename rules. Unsafe and full-graph cases emit no
 action. The subsequent 110-transition public capture completes Groovy and
 Spring but not Kafka, Micronaut or OpenTelemetry, leaving 2/5 complete/action
-families. This still proves no acceleration; independent breadth reconstruction
-is next.
+families. Independent breadth reconstruction confirms those counts and the
+terminal scorecard stops the current detector without acceleration evidence.
 
 ## What is generalized today
 
@@ -51,7 +51,7 @@ is next.
 | Output discovery | Reads Gradle-owned outputs and rejects missing, external, symlinked or ambiguous declarations. | A root aggregate workflow can legitimately declare a very broad output surface. |
 | Structural proposal | Uses typed project/task relationships and changed-project ownership; no repository-name branch is allowed. | Unknown relationships, excessive candidate task sets and no reduction retain native. |
 | Durable native catalog | Detects repeated task-contract gaps and over-broad declared graph edges, then emits digest-bound, reviewable and exactly reversible native Gradle recipes. | The current strict POC report finds the same task-contract detector in Kotlin and Groovy, with 64.1% and 74.7% savings across 16/16 exact pairs. Graph breadth is proposal-only until durable timing is measured. |
-| Measurement / decision | Alternating native/candidate observations can verify outputs, execution shape, interval, fallback and payback. | The wrapper lifecycle is composed, but the active request-aligned route has not passed breadth; it therefore has no candidate timing, activation or economic ledger yet. |
+| Measurement / decision | Alternating native/candidate observations can verify outputs, execution shape, interval, fallback and payback. | The wrapper lifecycle is composed, but the closed request-aligned route did not pass breadth; it therefore has no candidate timing, activation or economic ledger. |
 | Verified output materialization | Captures required outputs omitted by a candidate in digest-bound private state, then restores only exact missing bytes before candidate execution. | Composed and timed on all five public subjects; stale, missing or corrupt payloads cannot authorize candidate output. |
 | Aggregate workflow partition | Groups directly changed output producers by generic lifecycle selector and variant, while exact unaffected outputs remain materializable. | Transfers to public workflows: Kafka selects 3/64 projects, Micronaut 22/75 and Groovy 2/37. |
 | Portfolio / central state | Reuses exact compatible evidence across checkouts or machines. | Reuse cannot infer lifetime or value from another profile/repository. |
@@ -183,14 +183,17 @@ summary interpretation: summary falsification has no effect and report
 falsification is rejected.
 
 No current action ran and no current wall-time claim exists. Installed and
-chronological timing were not authorized. The terminal scorecard records
-`STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR` and keeps value,
-confidence, payback and overhead typed as unmeasured rather than zero. The new
+chronological timing were not authorized. The predecessor terminal scorecard
+records `STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR`. The
 `REQUEST_ALIGNED_RECURRENT_CLOSURE_V1` route does not relabel those negatives:
 it preserves the exact customer command, waits for relevant recurrent changes
 and discovers current outputs generically. Producer and classifier
-implementation and independent breadth are complete. The breadth failure keeps
-timing and activation closed; the terminal scorecard is next.
+implementation and independent breadth are complete. Its own terminal decision
+is `STOP_REQUEST_ALIGNED_RECURRENT_CLOSURE_POC_FOR_CURRENT_DETECTOR`; value,
+confidence, payback and overhead remain typed as unmeasured rather than zero.
+No successor is authorized. The next useful work is cause analysis of global,
+ambiguous and request-irrelevant rows before choosing a materially different
+generic hypothesis.
 
 ## POC conclusion
 

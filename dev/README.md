@@ -28,7 +28,7 @@ successor contract, ordered gates and terminal authority with:
 ./dev/check-change-aware-producer-closure-plan
 ```
 
-Recompute the 24 negative causes and validate the active request-aligned
+Recompute the 24 negative causes and validate the closed request-aligned
 recurrent-learning contract, tracker and selected successor with:
 
 ```bash
@@ -94,7 +94,20 @@ The checker rebuilds all 110 reports, proves that summary falsification has no
 effect and rejects a report falsified even when its ledger digest is updated.
 Only Groovy and Spring satisfy the five-relevant-transition input and expose
 exact actions: 2/5 complete inputs versus required 5/5 and 2/5 action families
-versus required 3/5. Timing remains closed and `SWL-REQUEST-007` is next.
+versus required 3/5. Timing remains closed.
+
+Regenerate and validate the route-level terminal scorecard with:
+
+```bash
+./dev/run-request-aligned-terminal-decision
+./dev/check-request-aligned-terminal-decision
+```
+
+The checker binds the final machine contract, selection, producer, classifier,
+capture ledger and breadth gate by SHA-256. It records five economic criteria
+as `NOT_MEASURED_NOT_AUTHORIZED`, rejects invented zero values, timings,
+speedups or successor authority, and closes the current detector without
+claiming that no different generic Gradle opportunity exists.
 
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:

@@ -7,19 +7,19 @@ path. Start with the [documentation portal](../docs/README.md) or
 [architecture overview](../docs/architecture/overview.md), then return here for
 the exact cross-component contract.
 
-The active POC contract is
+The latest generic POC contract is
 [`poc-request-aligned-learning-v1.md`](./poc-request-aligned-learning-v1.md)
 with its adjacent machine-readable JSON. It asks whether ordinary repeated
 customer commands can provide request-aligned change, input, producer and
 current-output evidence broadly enough to justify a value experiment. Identity,
 output production, adjacent-transition classification, fresh five-family
-capture and independent breadth are implemented. The gate fails at 2/5
-complete/action families, so timing and activation remain blocked and the
-terminal scorecard is next.
+capture, independent breadth and the terminal decision are implemented. The
+gate fails at 2/5 complete/action families, so timing and activation remain
+blocked and the current detector is stopped without a successor.
 
 | Specification | Owning item |
 |---|---|
-| [`poc-request-aligned-learning-v1.md`](./poc-request-aligned-learning-v1.md) and [`poc-request-aligned-learning-v1.json`](./poc-request-aligned-learning-v1.json) | `SWL-REQUEST-000..007`; active request-aligned route, independently failed 2/5 complete/action breadth gate, unauthorized timing blocks and terminal decision next |
+| [`poc-request-aligned-learning-v1.md`](./poc-request-aligned-learning-v1.md) and [`poc-request-aligned-learning-v1.json`](./poc-request-aligned-learning-v1.json) | `SWL-REQUEST-000..007`; closed request-aligned route, independently failed 2/5 complete/action breadth gate, unauthorized timing blocks and terminal stop |
 | [`poc-change-aware-producer-closure-v1.md`](./poc-change-aware-producer-closure-v1.md) and [`poc-change-aware-producer-closure-v1.json`](./poc-change-aware-producer-closure-v1.json) | `SWL-CHANGE-000..005`; frozen successor hypothesis and terminal stop after the 1/5-versus-3/5 breadth failure |
 | [`poc-fresh-generic-optimization-v1.md`](./poc-fresh-generic-optimization-v1.md) and [`poc-fresh-generic-optimization-v1.json`](./poc-fresh-generic-optimization-v1.json) | `SWL-FRESH-000`; closed fresh-evidence predecessor with terminal 1/5 action breadth |
 | [`poc-sticky-wrapper-learning-v1.md`](./poc-sticky-wrapper-learning-v1.md) and [`poc-sticky-wrapper-learning-v1.json`](./poc-sticky-wrapper-learning-v1.json) | `SWL-000`; superseded sticky-wrapper architecture contract |

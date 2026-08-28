@@ -221,6 +221,9 @@ timing. The public-capture runner applies that package to 110 chronological
 transitions and preserves raw inputs plus reconstructed reports; it does not
 turn the aggregate summary into breadth authority. The separate breadth runner
 regenerates all 110 reports before counting complete inputs and exact actions.
+The terminal runner then binds those immutable inputs by digest and preserves
+unmeasured economics as typed values; the package still executes no candidate
+and grants no successor authority.
 
 `generated/openapi/` contains the checked-in Go transport binding derived from
 the normative OpenAPI documents. It is regenerated through

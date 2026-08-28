@@ -30,10 +30,10 @@ recorded in the
 [Change-aware Producer Closure POC Tracker](../plans/change-aware-producer-closure-poc-tracker.md).
 Its cause analysis opens the
 [Request-aligned Recurrent Learning POC Tracker](../plans/request-aligned-learning-poc-tracker.md):
-the implemented producer and classifier learn only from exact ordinary request
+the closed producer and classifier route learns only from exact ordinary request
 identities, current producer outputs and adjacent changes relevant to that
-request, without changing the user's Gradle command. Fresh public capture is
-next; no action is active yet.
+request, without changing the user's Gradle command. Its terminal gate stops at
+2/5 complete/action families; no action, timing or successor is active.
 The wrapper remains reusable POC infrastructure, not a production rollout path
 or evidence that a generic acceleration mechanism has qualified.
 
@@ -79,7 +79,7 @@ identity and zero trial budget, so candidate used native no-op/light
 observation. It remains useful compatibility evidence but is
 `DIAGNOSTIC_ONLY`.
 
-The active request-aligned evidence order is:
+The closed request-aligned evidence order is:
 
 1. bind the exact repeated Gradle argv plus Wrapper/JDK/build-logic identity
    (complete);
@@ -92,7 +92,9 @@ The active request-aligned evidence order is:
    plus at least three action families (complete: 2/5 meets neither threshold);
 6. do not run installed timing because breadth failed;
 7. do not run a chronological campaign because installed value did not open;
-8. issue the terminal decision from fresh reconstructed evidence (next).
+8. issue the terminal decision from fresh reconstructed evidence (complete:
+   stop the current detector, preserve unavailable economics and authorize no
+   successor).
 
 Sample count alone never makes the campaign ready. Missing lifecycle, action or
 ledger evidence keeps it incomplete. The exact implementation paths, evidence

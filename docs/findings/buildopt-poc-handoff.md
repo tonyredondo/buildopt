@@ -35,8 +35,8 @@ uses a stale unversioned required JAR while the current producer emits a
 versioned JAR. The stopped detector paired arbitrary commits with one fixed
 leaf workflow; those rows cannot honestly become optimization actions.
 
-The current experimental route is
-`REQUEST_ALIGNED_RECURRENT_CLOSURE_V1`. BuildOpt will learn from the exact
+The latest experimental route was
+`REQUEST_ALIGNED_RECURRENT_CLOSURE_V1`. BuildOpt learned from the exact
 ordinary Gradle command a customer repeats, wait for changes relevant to that
 requested graph and discover current outputs from producer tasks. Its first
 two implementation blocks now pass Gradle 8/9 × Kotlin/Groovy: canonical identity
@@ -49,9 +49,12 @@ full-graph cases. The fresh 110-transition capture completes Groovy and Spring
 but not Kafka, Micronaut or OpenTelemetry. Independent reconstruction now
 verifies all 110 reports and confirms **2/5** complete inputs versus required
 **5/5**, and **2/5** action families versus required **3/5**, with zero product
-failures. The gate stops before installed or chronological timing. The next
-block is the terminal scorecard; activation and any speedup claim remain
-unauthorized.
+failures. Its terminal scorecard passes capture integrity, **110/110** report
+reconstruction and exact request preservation, and **10/10** static output
+bindings, but it stops the detector at those frozen breadth failures. No
+candidate ran and no timing row exists. Installed value, chronological value,
+confidence, payback and overhead remain `NOT_MEASURED_NOT_AUTHORIZED`; no
+speedup or successor is authorized.
 
 ## Mechanisms
 
@@ -439,16 +442,20 @@ The subsequent independent
 groups those negatives into 23 declared-input-disjoint transitions and one
 current-output discovery drift. It rejects unsafe relabelling, more arbitrary
 commit sampling, a one-row filename repair as a breadth claim and cache
-transport as an equal-opportunity speed claim. The selected
+transport as an equal-opportunity speed claim. The selected and now closed
 [request-aligned route](../plans/request-aligned-learning-poc-tracker.md)
 preserves the user's command and the unchanged 3/5 gate. Request identity,
 current producer-output discovery and adjacent relevance classification are
 complete. The fresh capture now contains **110** chronological transitions:
 Groovy and Spring each produce five relevant exact actions, while Kafka,
 Micronaut and OpenTelemetry exhaust their 30-transition budgets. The aggregate
-is therefore **2/5 complete and 2/5 action-broad**. The next block independently
-reconstructs every report and applies the unchanged gate; no candidate
-execution or timing has opened.
+is therefore **2/5 complete and 2/5 action-broad**. Independent reconstruction
+verifies every report, and the terminal decision
+`STOP_REQUEST_ALIGNED_RECURRENT_CLOSURE_POC_FOR_CURRENT_DETECTOR` closes this
+detector without candidate execution, timing, a speedup claim or automatic
+successor. The recommended work is cause analysis of the global, ambiguous and
+request-irrelevant public rows before selecting a materially different generic
+hypothesis.
 
 The closed predecessor remains implementation-locked as historical evidence:
 separate per-arm cache namespaces started empty, only the task-contract and
