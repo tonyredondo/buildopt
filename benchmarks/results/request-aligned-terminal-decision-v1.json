@@ -7,9 +7,9 @@
     "successorSelectionSha256": "811544b1fbe277a6b6fe00c0ce64f8a6e9a87340a4c02383e8e55c1657777111",
     "producerFixturesSha256": "03be3cadc89cd162b86af685d593271526d5a9aaaa6785dd9044ed4fefd5fdea",
     "classifierFixturesSha256": "44d23fdf75fff4feb6d6a195dc63812a801b53774a15cd5eb263c99ec17f7e49",
-    "captureContractSha256": "c2636f1bab49448fe7d717323d2acc84998b9ab559d7d162ee85c56f0b31e022",
+    "captureContractSha256": "e5dbf35bc239eb6e3c7169c69dce33c4d617509027f3547f68c4ca33f9c6f65c",
     "transitionsLedgerSha256": "402f061a6677c8cf7666f61efdd07168108bb25cc25070b43d303c0ce918bc4b",
-    "breadthGateSha256": "0a5723d43f6e27af394d7d72639c85836700027e18881759daccccec14e54319",
+    "breadthGateSha256": "a6797d35b9d126ba4f763d62beee59a2919e69d50dbd29a13dd89b08f51f9190",
     "historicalTimingImported": false,
     "historicalActionImported": false
   },

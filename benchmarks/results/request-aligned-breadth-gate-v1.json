@@ -4,7 +4,7 @@
   "generatedAt": "2026-08-28T08:47:13Z",
   "inputs": {
     "routeContractSha256": "bf4287a52883ab211631a02d5330375573e8130e699a5aa6eea0a79bc765d1b6",
-    "captureContractSha256": "c2636f1bab49448fe7d717323d2acc84998b9ab559d7d162ee85c56f0b31e022",
+    "captureContractSha256": "e5dbf35bc239eb6e3c7169c69dce33c4d617509027f3547f68c4ca33f9c6f65c",
     "transitionsLedgerSha256": "402f061a6677c8cf7666f61efdd07168108bb25cc25070b43d303c0ce918bc4b",
     "classifierSourceSha256": "781f56de23e895f88bc5874ba5eead6179924482645ce7424742b81d27474614",
     "summaryConsumed": false,
