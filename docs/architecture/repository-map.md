@@ -114,16 +114,19 @@ summary, then applies the frozen 3/5-family pre-timing gate. The terminal runner
 binds those inputs by digest and preserves every unmeasured economic criterion
 as a typed state.
 
-The active request-aligned selection is owned by
+The active request-aligned contract is owned by
 `specs/poc-request-aligned-learning-v1.*`,
 `docs/plans/request-aligned-learning-poc-tracker.md`,
-`dev/run-request-aligned-successor-selection` and its checker. Its checked
-result reconstructs the 24 negative predecessor causes and opens only
-`SWL-REQUEST-001`. That block will add canonical request identity and current
-producer-output evidence; no new runtime optimizer exists yet.
+`internal/requestaligned`, `cmd/request-aligned-producer`,
+`dev/request-aligned-producer.init.gradle` and the `dev/run-request-aligned-*`
+runners. The selection result reconstructs the 24 predecessor causes; the
+checked producer matrix then proves portable canonical identity and unique
+current-output discovery on Gradle 8/9 × Kotlin/Groovy. It opens only the
+`SWL-REQUEST-002` relevance classifier; no new runtime optimizer exists yet.
 
-Run `./dev/check-request-aligned-successor-selection` to validate the active
-route, `./dev/check-change-aware-producer-closure-plan` for its closed
+Run `./dev/check-request-aligned-successor-selection` and
+`./dev/check-request-aligned-producer` to validate the active route,
+`./dev/check-change-aware-producer-closure-plan` for its closed
 predecessor, `./dev/check-fresh-generic-optimization-plan` for the earlier
 fresh route and `./dev/check-sticky-wrapper-learning-plan` to preserve the
 superseded diagnostic route.

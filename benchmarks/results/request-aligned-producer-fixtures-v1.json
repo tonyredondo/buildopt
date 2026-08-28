@@ -1,0 +1,199 @@
+{
+  "schemaVersion": "buildopt.evidence/request-aligned-producer-fixtures/v1",
+  "workItem": "SWL-REQUEST-001",
+  "status": "COMPLETE",
+  "producerSha256": "1864a5d96ecff3a1199d3e1d180a5d9e2a8886ccf26a508022e4657ad82d8693",
+  "implementationSha256": "44182ead468a35bdf7a0fec737c8cd7827a6693e2a126c0436f2b00f8598132f",
+  "coverage": [
+    "checkout-path",
+    "argument-vector",
+    "requested-tasks",
+    "Gradle-version",
+    "Wrapper",
+    "JDK",
+    "environment",
+    "build-logic",
+    "task-graph",
+    "current-versioned-output",
+    "ambiguous-producer",
+    "missing-output",
+    "outside-graph"
+  ],
+  "results": [
+    {
+      "gradleVersion": "8.14.3",
+      "dsl": "KOTLIN",
+      "status": "COMPLETE",
+      "requestIdentitySha256": "5a708fedc04b83946b8ba44c3fd317e656b2eb25ff0ca47e5d14ee137c8e31d2",
+      "relocatedRequestIdentitySha256": "5a708fedc04b83946b8ba44c3fd317e656b2eb25ff0ca47e5d14ee137c8e31d2",
+      "checkoutPathIndependent": true,
+      "compatibilityDimensionsChanged": [
+        "GRADLE_ARGUMENT_VECTOR",
+        "REQUESTED_TASKS",
+        "GRADLE_VERSION",
+        "WRAPPER",
+        "JDK",
+        "ENVIRONMENT",
+        "BUILD_LOGIC",
+        "TASK_GRAPH"
+      ],
+      "currentJar": {
+        "producerTask": ":jar",
+        "path": "build/libs/groovy-raw-6.0.0-SNAPSHOT-raw.jar",
+        "sha256": "fa9477e9938cbf25995f61696ee863fd30b71bb7d6e0ad5d86b91a2b8fd4ccb9"
+      },
+      "currentOutputCount": 5,
+      "negatives": [
+        {
+          "name": "ambiguous-producer",
+          "status": "UNAVAILABLE",
+          "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS"
+        },
+        {
+          "name": "missing-output",
+          "status": "UNAVAILABLE",
+          "reason": "CURRENT_PRODUCER_OUTPUTS_EMPTY"
+        },
+        {
+          "name": "outside-graph",
+          "status": "UNAVAILABLE",
+          "reason": "REQUESTED_TASK_UNAVAILABLE"
+        }
+      ],
+      "performanceMeasured": false,
+      "activationAuthorized": false
+    },
+    {
+      "gradleVersion": "8.14.3",
+      "dsl": "GROOVY",
+      "status": "COMPLETE",
+      "requestIdentitySha256": "45531374f59010cc8e22dd8616f54daddeab42f1830ce67a5063822f73849e9a",
+      "relocatedRequestIdentitySha256": "45531374f59010cc8e22dd8616f54daddeab42f1830ce67a5063822f73849e9a",
+      "checkoutPathIndependent": true,
+      "compatibilityDimensionsChanged": [
+        "GRADLE_ARGUMENT_VECTOR",
+        "REQUESTED_TASKS",
+        "GRADLE_VERSION",
+        "WRAPPER",
+        "JDK",
+        "ENVIRONMENT",
+        "BUILD_LOGIC",
+        "TASK_GRAPH"
+      ],
+      "currentJar": {
+        "producerTask": ":jar",
+        "path": "build/libs/groovy-raw-6.0.0-SNAPSHOT-raw.jar",
+        "sha256": "fa9477e9938cbf25995f61696ee863fd30b71bb7d6e0ad5d86b91a2b8fd4ccb9"
+      },
+      "currentOutputCount": 5,
+      "negatives": [
+        {
+          "name": "ambiguous-producer",
+          "status": "UNAVAILABLE",
+          "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS"
+        },
+        {
+          "name": "missing-output",
+          "status": "UNAVAILABLE",
+          "reason": "CURRENT_PRODUCER_OUTPUTS_EMPTY"
+        },
+        {
+          "name": "outside-graph",
+          "status": "UNAVAILABLE",
+          "reason": "REQUESTED_TASK_UNAVAILABLE"
+        }
+      ],
+      "performanceMeasured": false,
+      "activationAuthorized": false
+    },
+    {
+      "gradleVersion": "9.6.1",
+      "dsl": "KOTLIN",
+      "status": "COMPLETE",
+      "requestIdentitySha256": "14c6d6895e395f2d796e84120bd7cd27fb7b7c3ec52790a355994b4610d4b667",
+      "relocatedRequestIdentitySha256": "14c6d6895e395f2d796e84120bd7cd27fb7b7c3ec52790a355994b4610d4b667",
+      "checkoutPathIndependent": true,
+      "compatibilityDimensionsChanged": [
+        "GRADLE_ARGUMENT_VECTOR",
+        "REQUESTED_TASKS",
+        "GRADLE_VERSION",
+        "WRAPPER",
+        "JDK",
+        "ENVIRONMENT",
+        "BUILD_LOGIC",
+        "TASK_GRAPH"
+      ],
+      "currentJar": {
+        "producerTask": ":jar",
+        "path": "build/libs/groovy-raw-6.0.0-SNAPSHOT-raw.jar",
+        "sha256": "7b19e37703ad2f712d075ac53b28cb24a55c528f2c9408a86772bb529d003b4f"
+      },
+      "currentOutputCount": 5,
+      "negatives": [
+        {
+          "name": "ambiguous-producer",
+          "status": "UNAVAILABLE",
+          "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS"
+        },
+        {
+          "name": "missing-output",
+          "status": "UNAVAILABLE",
+          "reason": "CURRENT_PRODUCER_OUTPUTS_EMPTY"
+        },
+        {
+          "name": "outside-graph",
+          "status": "UNAVAILABLE",
+          "reason": "REQUESTED_TASK_UNAVAILABLE"
+        }
+      ],
+      "performanceMeasured": false,
+      "activationAuthorized": false
+    },
+    {
+      "gradleVersion": "9.6.1",
+      "dsl": "GROOVY",
+      "status": "COMPLETE",
+      "requestIdentitySha256": "bee563462e6130ef2372a06ded27d319937b61018ea9f113d3b29082bd5b0020",
+      "relocatedRequestIdentitySha256": "bee563462e6130ef2372a06ded27d319937b61018ea9f113d3b29082bd5b0020",
+      "checkoutPathIndependent": true,
+      "compatibilityDimensionsChanged": [
+        "GRADLE_ARGUMENT_VECTOR",
+        "REQUESTED_TASKS",
+        "GRADLE_VERSION",
+        "WRAPPER",
+        "JDK",
+        "ENVIRONMENT",
+        "BUILD_LOGIC",
+        "TASK_GRAPH"
+      ],
+      "currentJar": {
+        "producerTask": ":jar",
+        "path": "build/libs/groovy-raw-6.0.0-SNAPSHOT-raw.jar",
+        "sha256": "7b19e37703ad2f712d075ac53b28cb24a55c528f2c9408a86772bb529d003b4f"
+      },
+      "currentOutputCount": 5,
+      "negatives": [
+        {
+          "name": "ambiguous-producer",
+          "status": "UNAVAILABLE",
+          "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS"
+        },
+        {
+          "name": "missing-output",
+          "status": "UNAVAILABLE",
+          "reason": "CURRENT_PRODUCER_OUTPUTS_EMPTY"
+        },
+        {
+          "name": "outside-graph",
+          "status": "UNAVAILABLE",
+          "reason": "REQUESTED_TASK_UNAVAILABLE"
+        }
+      ],
+      "performanceMeasured": false,
+      "activationAuthorized": false
+    }
+  ],
+  "performanceMeasured": false,
+  "activationAuthorized": false,
+  "outcome": "REQUEST_IDENTITY_AND_CURRENT_OUTPUT_PRODUCER_COMPLETE"
+}

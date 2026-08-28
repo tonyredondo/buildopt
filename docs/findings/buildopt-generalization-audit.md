@@ -19,7 +19,7 @@ that worked. The subsequent
 also stopped after its current installed campaign produced zero activations,
 zero attributable mechanism saving and negative cumulative value.
 
-The active preregistered direction is
+The active experimental direction is
 [request-aligned recurrent learning](../plans/request-aligned-learning-poc-tracker.md).
 It reuses the committed wrapper but changes the evidence unit: BuildOpt learns
 from the exact Gradle command the customer actually repeats and only from
@@ -27,6 +27,12 @@ adjacent changes relevant to that requested graph. Current outputs come from
 their Gradle producer tasks. It must still prove breadth, payback and positive
 cumulative value beyond optimized native Gradle; safe fallback and cache hits
 alone do not pass.
+
+Its observation producer now passes Gradle 8.14.3/9.6.1 with Kotlin/Groovy:
+canonical request identities are checkout-independent, all eight compatibility
+bindings separate identities, and the current versioned Groovy JAR is found
+from its unique producer. Missing, ambiguous and outside-graph ownership is
+typed unavailable. This closes an evidence gap but proves no acceleration.
 
 ## What is generalized today
 
@@ -157,13 +163,12 @@ breadth. Cause analysis shows 23/24 negatives changed no declared input in the
 fixed requested graph; the remaining Groovy case bound a stale unversioned JAR
 instead of the current versioned producer output.
 
-The first successor block is complete. Across five frozen public families,
-25/25 adjacent transitions are conclusive and every family input is complete.
-Spring exposes one exact testable action; the remaining 24 transitions return
-`NO_SAFE_ACTION`. Independent reconstruction from the raw captures confirms
-that all five inputs are complete but only **1/5** families exposes an action,
-below the frozen **3/5** gate. This proves that the producer works and fails
-closed, but that this detector is not broad enough to justify a value campaign.
+The predecessor capture remains 25/25 conclusive but only **1/5** action-broad.
+The new route has completed its first implementation block: request identity
+and current-output ownership are reproducible across the four Gradle/DSL
+fixtures. `SWL-REQUEST-002` must now prove that adjacent changes can be
+classified and converted into complete relevant producer closures without
+repository rules. Only then can fresh five-family collection begin.
 
 No current action ran and no current wall-time claim exists. Installed and
 chronological timing were not authorized. The terminal scorecard records

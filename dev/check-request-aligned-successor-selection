@@ -28,7 +28,7 @@ buildopt_validate_result() {
     jq -e '
   .schemaVersion=="buildopt.poc/request-aligned-learning-contract/v1" and
   .workItem=="SWL-REQUEST-000" and
-  .status=="PREREGISTERED" and
+  .status=="PRODUCER_COMPLETE" and .currentBlock=="SWL-REQUEST-002" and
   .predecessor.decision=="STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR" and
   .hypothesis.id=="REQUEST_ALIGNED_RECURRENT_CLOSURE_V1" and
   .hypothesis.commandSubstitutionAllowed==false and
@@ -41,10 +41,10 @@ buildopt_validate_result() {
   .breadthGate.relevantTransitionsPerFamilyRequired==5 and
   .breadthGate.familiesWithActionsRequired==3 and
   .breadthGate.timingAuthorizedBeforeBreadth==false and
-  .nextBlock=="SWL-REQUEST-001" and
-  ([.blocks[]|select(.state=="DONE")]|length)==1 and
+  .nextBlock=="SWL-REQUEST-002" and
+  ([.blocks[]|select(.state=="DONE")]|length)==2 and
   ([.blocks[]|select(.state=="TODO")]|length)==1 and
-  ([.blocks[]|select(.state=="WAITING")]|length)==6
+  ([.blocks[]|select(.state=="WAITING")]|length)==5
 ' "${buildopt_contract}" >/dev/null || {
     printf 'request-aligned machine contract is invalid\n' >&2
     exit 1
@@ -53,9 +53,9 @@ buildopt_validate_result() {
 # Backticks below are literal Markdown syntax.
 # shellcheck disable=SC2016
 buildopt_required_plan_text=(
-    '**Overall:** `PREREGISTERED`'
-    '**Progress:** one of eight blocks complete'
-    '**Current block:** `SWL-REQUEST-001`'
+    '**Overall:** `PRODUCER_COMPLETE`'
+    '**Progress:** two of eight blocks complete'
+    '**Current block:** `SWL-REQUEST-002`'
     '23/24'
     '`REQUEST_ALIGNED_RECURRENT_CLOSURE_V1`'
     'No successor timing is authorized'

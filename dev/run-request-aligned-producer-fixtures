@@ -1,0 +1,216 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: dev/run-request-aligned-producer-fixtures OUTPUT_JSON\n' >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_output=$1
+[[ ${buildopt_output} == /* ]] || buildopt_output=${PWD}/${buildopt_output}
+for buildopt_command in cp jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-aligned-producer.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-request-aligned-producer.*)
+            rm -rf -- "${buildopt_temporary}"
+            ;;
+        *)
+            printf 'refusing to clean unexpected producer root: %s\n' "${buildopt_temporary}" >&2
+            return 1
+            ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+buildopt_producer=${buildopt_temporary}/request-aligned-producer
+env GOCACHE="${buildopt_temporary}/go-cache" \
+    "${buildopt_root}/dev/run" --toolchain go -- \
+    go build -o "${buildopt_producer}" ./cmd/request-aligned-producer
+: >"${buildopt_temporary}/results.jsonl"
+
+buildopt_gradle_bin() {
+    case $1 in
+        8.14.3)
+            printf '%s\n' "${buildopt_root}/.tools/gradle-compat/gradle-8.14.3/bin/gradle"
+            ;;
+        9.6.1)
+            printf '%s\n' "${buildopt_root}/.tools/gradle-user-home/local/wrapper/dists/gradle-9.6.1-bin/4ticwg1pgcbps2hj28r8so764/gradle-9.6.1/bin/gradle"
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+buildopt_capture() {
+    local buildopt_gradle=$1
+    local buildopt_repository=$2
+    local buildopt_capture_path=$3
+    env \
+        BUILDOPT_REQUEST_CAPTURE_OUTPUT="${buildopt_capture_path}" \
+        BUILDOPT_REQUEST_ARGUMENTS='[":jar","--no-daemon"]' \
+        BUILDOPT_REQUEST_TASKS='[":jar"]' \
+        BUILDOPT_REQUEST_GENERATED_AT=2026-08-28T00:00:00Z \
+        ORG_GRADLE_PROJECT_fixtureMode=request-aligned \
+        GRADLE_USER_HOME="${buildopt_root}/.tools/gradle-user-home/local" \
+        "${buildopt_root}/dev/run" -- \
+        "${buildopt_gradle}" --no-daemon -p "${buildopt_repository}" \
+        -I "${buildopt_root}/dev/request-aligned-producer.init.gradle" \
+        buildoptRequestAlignedCapture >/dev/null
+    jq -c . "${buildopt_capture_path}" >"${buildopt_capture_path}.normalized"
+    mv "${buildopt_capture_path}.normalized" "${buildopt_capture_path}"
+}
+
+buildopt_observe() {
+    local buildopt_capture_path=$1
+    local buildopt_observation_path=$2
+    "${buildopt_producer}" --input "${buildopt_capture_path}" --output "${buildopt_observation_path}"
+}
+
+buildopt_variant_identity() {
+    local buildopt_name=$1
+    local buildopt_filter=$2
+    local buildopt_capture_path=$3
+    local buildopt_case_root=$4
+    jq "${buildopt_filter}" "${buildopt_capture_path}" >"${buildopt_case_root}/${buildopt_name}-capture.json"
+    buildopt_observe "${buildopt_case_root}/${buildopt_name}-capture.json" \
+        "${buildopt_case_root}/${buildopt_name}.json"
+    jq -r '.requestIdentitySha256' "${buildopt_case_root}/${buildopt_name}.json"
+}
+
+buildopt_run_fixture() {
+    local buildopt_gradle_version=$1
+    local buildopt_dsl=$2
+    local buildopt_case_root=${buildopt_temporary}/${buildopt_gradle_version}-${buildopt_dsl}
+    local buildopt_first=${buildopt_case_root}/checkout-a
+    local buildopt_second=${buildopt_case_root}/checkout-b
+    local buildopt_gradle
+    buildopt_gradle=$(buildopt_gradle_bin "${buildopt_gradle_version}")
+    [[ -x ${buildopt_gradle} ]] || {
+        printf 'Gradle %s is unavailable\n' "${buildopt_gradle_version}" >&2
+        return 1
+    }
+    mkdir -p -- "${buildopt_case_root}"
+    cp -a -- "${buildopt_root}/fixtures/request-aligned/${buildopt_dsl,,}" "${buildopt_first}"
+    mkdir -p -- "${buildopt_first}/gradle/wrapper"
+    printf 'distributionUrl=https\\://services.gradle.org/distributions/gradle-%s-bin.zip\n' \
+        "${buildopt_gradle_version}" >"${buildopt_first}/gradle/wrapper/gradle-wrapper.properties"
+    cp -a -- "${buildopt_first}" "${buildopt_second}"
+
+    buildopt_capture "${buildopt_gradle}" "${buildopt_first}" "${buildopt_case_root}/capture-a.json"
+    buildopt_observe "${buildopt_case_root}/capture-a.json" "${buildopt_case_root}/observation-a.json"
+    buildopt_capture "${buildopt_gradle}" "${buildopt_second}" "${buildopt_case_root}/capture-b.json"
+    buildopt_observe "${buildopt_case_root}/capture-b.json" "${buildopt_case_root}/observation-b.json"
+
+    local buildopt_identity
+    local buildopt_relocated_identity
+    buildopt_identity=$(jq -r '.requestIdentitySha256' "${buildopt_case_root}/observation-a.json")
+    buildopt_relocated_identity=$(jq -r '.requestIdentitySha256' "${buildopt_case_root}/observation-b.json")
+    [[ ${buildopt_identity} == "${buildopt_relocated_identity}" ]] || {
+        printf 'request identity depends on checkout path: %s %s\n' "${buildopt_gradle_version}" "${buildopt_dsl}" >&2
+        return 1
+    }
+
+    local buildopt_argument_identity
+    local buildopt_requested_task_identity
+    local buildopt_gradle_identity
+    local buildopt_wrapper_identity
+    local buildopt_jdk_identity
+    local buildopt_environment_identity
+    local buildopt_logic_identity
+    local buildopt_graph_identity
+    buildopt_argument_identity=$(buildopt_variant_identity arguments '.gradleArguments += ["--stacktrace"]' "${buildopt_case_root}/capture-a.json" "${buildopt_case_root}")
+    buildopt_requested_task_identity=$(buildopt_variant_identity requested-task '.requestedTasks=[":compileJava"]' "${buildopt_case_root}/capture-a.json" "${buildopt_case_root}")
+    buildopt_gradle_identity=$(buildopt_variant_identity gradle-version '.gradleVersion="7.6.4"' "${buildopt_case_root}/capture-a.json" "${buildopt_case_root}")
+    buildopt_wrapper_identity=$(buildopt_variant_identity wrapper '.wrapperFiles[0].sha256=("9"*64)' "${buildopt_case_root}/capture-a.json" "${buildopt_case_root}")
+    buildopt_jdk_identity=$(buildopt_variant_identity jdk '.javaRuntime.version="17.0.12"' "${buildopt_case_root}/capture-a.json" "${buildopt_case_root}")
+    buildopt_environment_identity=$(buildopt_variant_identity environment '.environmentBindingSha256=("7"*64)' "${buildopt_case_root}/capture-a.json" "${buildopt_case_root}")
+    buildopt_logic_identity=$(buildopt_variant_identity build-logic '.buildLogicFiles[0].sha256=("8"*64)' "${buildopt_case_root}/capture-a.json" "${buildopt_case_root}")
+    buildopt_graph_identity=$(buildopt_variant_identity task-graph '.tasks |= map(if .path==":jar" then .dependsOn=[] else . end)' "${buildopt_case_root}/capture-a.json" "${buildopt_case_root}")
+    for buildopt_changed_identity in \
+        "${buildopt_argument_identity}" "${buildopt_requested_task_identity}" \
+        "${buildopt_gradle_identity}" "${buildopt_wrapper_identity}" \
+        "${buildopt_jdk_identity}" "${buildopt_environment_identity}" \
+        "${buildopt_logic_identity}" "${buildopt_graph_identity}"; do
+        [[ ${buildopt_changed_identity} != "${buildopt_identity}" ]] || {
+            printf 'compatibility mutation did not change request identity\n' >&2
+            return 1
+        }
+    done
+
+    local buildopt_jar_path=build/libs/groovy-raw-6.0.0-SNAPSHOT-raw.jar
+    jq -e --arg path "${buildopt_jar_path}" '
+      .status=="COMPLETE" and .reason=="CURRENT_REQUEST_AND_OUTPUT_EVIDENCE_COMPLETE" and
+      ([.currentOutputs[]|select(.producerTask==":jar" and .path==$path and .kind=="FILE" and (.sha256|test("^[0-9a-f]{64}$")))]|length)==1 and
+      (.performanceMeasured|not) and (.activationAuthorized|not)
+    ' "${buildopt_case_root}/observation-a.json" >/dev/null
+
+    jq '(.tasks[]|select(.path==":jar")|.outputs[0]) as $output |
+        .tasks |= map(if .path==":compileJava" then .outputs += [$output] else . end)' \
+        "${buildopt_case_root}/capture-a.json" >"${buildopt_case_root}/ambiguous-capture.json"
+    buildopt_observe "${buildopt_case_root}/ambiguous-capture.json" "${buildopt_case_root}/ambiguous.json"
+    jq -e '.status=="UNAVAILABLE" and .reason=="CURRENT_OUTPUT_PRODUCER_AMBIGUOUS"' \
+        "${buildopt_case_root}/ambiguous.json" >/dev/null
+
+    jq '.tasks |= map(.outputs=[])' "${buildopt_case_root}/capture-a.json" >"${buildopt_case_root}/missing-capture.json"
+    buildopt_observe "${buildopt_case_root}/missing-capture.json" "${buildopt_case_root}/missing.json"
+    jq -e '.status=="UNAVAILABLE" and .reason=="CURRENT_PRODUCER_OUTPUTS_EMPTY"' \
+        "${buildopt_case_root}/missing.json" >/dev/null
+
+    jq '.requestedTasks=[":outsideGraph"]' "${buildopt_case_root}/capture-a.json" >"${buildopt_case_root}/outside-graph-capture.json"
+    buildopt_observe "${buildopt_case_root}/outside-graph-capture.json" "${buildopt_case_root}/outside-graph.json"
+    jq -e '.status=="UNAVAILABLE" and .reason=="REQUESTED_TASK_UNAVAILABLE"' \
+        "${buildopt_case_root}/outside-graph.json" >/dev/null
+
+    jq -n \
+        --arg gradleVersion "${buildopt_gradle_version}" --arg dsl "${buildopt_dsl}" \
+        --arg identity "${buildopt_identity}" --arg relocated "${buildopt_relocated_identity}" \
+        --arg jarPath "${buildopt_jar_path}" \
+        --arg jarSha "$(jq -r --arg path "${buildopt_jar_path}" '.currentOutputs[]|select(.path==$path)|.sha256' "${buildopt_case_root}/observation-a.json")" \
+        --argjson outputCount "$(jq '.currentOutputs|length' "${buildopt_case_root}/observation-a.json")" '
+      {
+        gradleVersion:$gradleVersion,dsl:$dsl,
+        status:"COMPLETE",requestIdentitySha256:$identity,
+        relocatedRequestIdentitySha256:$relocated,checkoutPathIndependent:($identity==$relocated),
+        compatibilityDimensionsChanged:["GRADLE_ARGUMENT_VECTOR","REQUESTED_TASKS","GRADLE_VERSION","WRAPPER","JDK","ENVIRONMENT","BUILD_LOGIC","TASK_GRAPH"],
+        currentJar:{producerTask:":jar",path:$jarPath,sha256:$jarSha},
+        currentOutputCount:$outputCount,
+        negatives:[
+          {name:"ambiguous-producer",status:"UNAVAILABLE",reason:"CURRENT_OUTPUT_PRODUCER_AMBIGUOUS"},
+          {name:"missing-output",status:"UNAVAILABLE",reason:"CURRENT_PRODUCER_OUTPUTS_EMPTY"},
+          {name:"outside-graph",status:"UNAVAILABLE",reason:"REQUESTED_TASK_UNAVAILABLE"}
+        ],
+        performanceMeasured:false,activationAuthorized:false
+      }
+    ' >>"${buildopt_temporary}/results.jsonl"
+}
+
+for buildopt_gradle_version in 8.14.3 9.6.1; do
+    for buildopt_dsl in KOTLIN GROOVY; do
+        buildopt_run_fixture "${buildopt_gradle_version}" "${buildopt_dsl}"
+    done
+done
+
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+jq -s \
+    --arg producerSha256 "$(sha256sum "${buildopt_root}/dev/request-aligned-producer.init.gradle" | awk '{print $1}')" \
+    --arg implementationSha256 "$(sha256sum "${buildopt_root}/internal/requestaligned/observation.go" | awk '{print $1}')" '
+  {
+    schemaVersion:"buildopt.evidence/request-aligned-producer-fixtures/v1",
+    workItem:"SWL-REQUEST-001",status:"COMPLETE",
+    producerSha256:$producerSha256,implementationSha256:$implementationSha256,
+    coverage:["checkout-path","argument-vector","requested-tasks","Gradle-version","Wrapper","JDK","environment","build-logic","task-graph","current-versioned-output","ambiguous-producer","missing-output","outside-graph"],
+    results:.,performanceMeasured:false,activationAuthorized:false,
+    outcome:"REQUEST_IDENTITY_AND_CURRENT_OUTPUT_PRODUCER_COMPLETE"
+  }
+' "${buildopt_temporary}/results.jsonl" >"${buildopt_output}"
+
+printf 'Request-aligned producer fixture evidence written to %s\n' "${buildopt_output}"

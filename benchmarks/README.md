@@ -67,6 +67,14 @@ equal-opportunity speed claim. It preregisters request-aligned recurrent
 learning with the unchanged 3/5 pre-timing gate. No candidate ran and no new
 timing or speedup exists.
 
+[`request-aligned-producer-fixtures-v1.json`](./results/request-aligned-producer-fixtures-v1.json)
+is the `SWL-REQUEST-001` observation matrix. Four real Gradle rows cover
+8.14.3/9.6.1 and Kotlin/Groovy DSL. They prove checkout-independent canonical
+request identity, separation across eight graph-affecting bindings, current
+unique producer-output discovery and the versioned Groovy JAR. Missing,
+ambiguous and outside-graph producers return typed `UNAVAILABLE`. The complete
+JSON regenerates byte for byte; it contains no timing or activation claim.
+
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
@@ -74,6 +82,7 @@ timing or speedup exists.
 ./dev/check-change-aware-breadth-gate
 ./dev/check-change-aware-terminal-decision
 ./dev/check-request-aligned-successor-selection
+./dev/check-request-aligned-producer
 ```
 
 ## Sticky-wrapper observation sample

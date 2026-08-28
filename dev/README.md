@@ -36,8 +36,17 @@ recurrent-learning contract, tracker and selected successor with:
 ```
 
 This selection check proves 23 fixed-request input-disjoint transitions and
-one current-output discovery drift. It authorizes `SWL-REQUEST-001` producer
-work only; it does not run a candidate or authorize timing.
+one current-output discovery drift. The authorized producer block is now
+complete. Validate its canonical identity and current-output matrix with:
+
+```bash
+./dev/check-request-aligned-producer
+```
+
+The dynamic check runs Gradle 8.14.3/9.6.1 with Kotlin/Groovy and compares the
+regenerated evidence byte for byte; `--static` validates the checked result
+without running Gradle. It observes only and opens `SWL-REQUEST-002`; it does
+not run a candidate or authorize timing.
 
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:

@@ -208,6 +208,13 @@ enables an additional mechanism from structure alone.
 
 No type in this directory replaces the normative schemas, OpenAPI, or Protobuf definitions in `contracts/`.
 
+`requestaligned/` owns the observation-only `SWL-REQUEST-001` boundary. It
+canonicalizes the exact request and graph-affecting portable bindings, derives
+a checkout-independent SHA-256 identity, and discovers only existing outputs
+with one current producer in the finalized graph. Missing, ambiguous and
+outside-graph ownership returns typed unavailable evidence. The package does
+not classify changes, execute candidates or authorize timing.
+
 `generated/openapi/` contains the checked-in Go transport binding derived from
 the normative OpenAPI documents. It is regenerated through
 `./dev/generate-code --artifact openapi-go-client-v1` and never edited

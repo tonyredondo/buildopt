@@ -52,7 +52,12 @@ buildopt_generated_at=$(jq -r '.generatedAt' "${buildopt_terminal}")
 buildopt_terminal_sha=$(sha256sum "${buildopt_terminal}" | cut -d' ' -f1)
 buildopt_transitions_sha=$(sha256sum "${buildopt_capture}/transitions.jsonl" | cut -d' ' -f1)
 buildopt_capture_contract_sha=$(sha256sum "${buildopt_capture}/contract.json" | cut -d' ' -f1)
-buildopt_selected_contract_sha=$(sha256sum "${buildopt_contract}" | cut -d' ' -f1)
+# Bind the immutable selection authority, not mutable execution progress. Later
+# blocks may advance status/nextBlock without rewriting SWL-REQUEST-000 history.
+buildopt_selected_contract_sha=$(
+    jq -cS '{schemaVersion,workItem,purpose,predecessor,subjects,hypothesis,evidence,classification,breadthGate}' \
+        "${buildopt_contract}" | sha256sum | cut -d' ' -f1
+)
 
 jq -n \
     --arg generatedAt "${buildopt_generated_at}" \

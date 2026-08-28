@@ -28,19 +28,23 @@ decision.
 There is deliberately no new performance percentage. The latest complete
 change-aware producer has 25/25 conclusive adjacent transitions across all five
 public families, but only Spring exposes an action: **1/5** versus the fixed
-**3/5** pre-timing gate. No action ran and no wall time was measured. Cause
-reconstruction now explains the failure: **23/24** negative transitions change
+**3/5** pre-timing gate. Cause reconstruction explains the failure:
+**23/24** negative transitions change
 no declared input in the fixed requested graph, and the remaining Groovy row
 uses a stale unversioned required JAR while the current producer emits a
 versioned JAR. The stopped detector paired arbitrary commits with one fixed
 leaf workflow; those rows cannot honestly become optimization actions.
 
-The current preregistered route is
+The current experimental route is
 `REQUEST_ALIGNED_RECURRENT_CLOSURE_V1`. BuildOpt will learn from the exact
 ordinary Gradle command a customer repeats, wait for changes relevant to that
-requested graph and discover current outputs from producer tasks. This route
-authorizes only the next producer block. Public timing, activation and any
-speedup claim remain unauthorized.
+requested graph and discover current outputs from producer tasks. Its first
+implementation block now passes Gradle 8/9 × Kotlin/Groovy: canonical identity
+is independent of checkout path, all eight graph-affecting bindings change the
+identity, the versioned Groovy JAR is resolved from `:jar`, and missing,
+ambiguous or outside-graph ownership fails typed. The next block is the
+relevance classifier. Public timing, activation and any speedup claim remain
+unauthorized.
 
 ## Mechanisms
 
@@ -430,9 +434,10 @@ current-output discovery drift. It rejects unsafe relabelling, more arbitrary
 commit sampling, a one-row filename repair as a breadth claim and cache
 transport as an equal-opportunity speed claim. The selected
 [request-aligned route](../plans/request-aligned-learning-poc-tracker.md)
-preserves the user's command and the unchanged 3/5 gate. Its next block adds
-request identity and current producer-output evidence; no candidate execution
-or timing has opened.
+preserves the user's command and the unchanged 3/5 gate. Its request identity
+and current producer-output block is complete; the next block must classify
+adjacent changes and construct exact relevant producer closures. No candidate
+execution or timing has opened.
 
 The closed predecessor remains implementation-locked as historical evidence:
 separate per-arm cache namespaces started empty, only the task-contract and

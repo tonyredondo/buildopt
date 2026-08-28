@@ -1,0 +1,228 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import java.nio.file.Files
+import java.nio.file.LinkOption
+import java.security.MessageDigest
+import java.time.Instant
+
+// Init scripts are inherited by buildSrc and included builds. This producer
+// observes only the top-level ordinary request selected by the caller.
+if (gradle.getParent() == null) {
+    def requireText = { String name ->
+        def value = System.getenv(name)
+        if (value == null || value.isBlank()) {
+            throw new GradleException("${name} is required")
+        }
+        value
+    }
+    def requireStringList = { String name ->
+        def value = new JsonSlurper().parseText(requireText(name))
+        if (!(value instanceof List) || value.isEmpty() ||
+            value.any { !(it instanceof String) || it.isEmpty() || it.indexOf('\u0000') >= 0 }) {
+            throw new GradleException("${name} must be a non-empty JSON string array")
+        }
+        value.collect { it as String }
+    }
+    def outputFile = new File(requireText("BUILDOPT_REQUEST_CAPTURE_OUTPUT"))
+    if (!outputFile.isAbsolute()) {
+        throw new GradleException("BUILDOPT_REQUEST_CAPTURE_OUTPUT must be absolute")
+    }
+    def gradleArguments = requireStringList("BUILDOPT_REQUEST_ARGUMENTS")
+    def requestedTasks = requireStringList("BUILDOPT_REQUEST_TASKS").toSorted().unique()
+    def generatedAt = System.getenv("BUILDOPT_REQUEST_GENERATED_AT") ?: Instant.now().toString()
+    def observedTasks = null
+    def dependencyPaths = null
+
+    def sha256Bytes = { byte[] value ->
+        MessageDigest.getInstance("SHA-256").digest(value).encodeHex().toString()
+    }
+    def digestPath
+    digestPath = { java.nio.file.Path root ->
+        if (Files.isSymbolicLink(root)) {
+            throw new GradleException("symbolic evidence is unsupported: ${root}")
+        }
+        if (Files.isRegularFile(root, LinkOption.NOFOLLOW_LINKS)) {
+            return sha256Bytes(Files.readAllBytes(root))
+        }
+        if (!Files.isDirectory(root, LinkOption.NOFOLLOW_LINKS)) {
+            throw new GradleException("evidence path has unsupported type: ${root}")
+        }
+        def entries = []
+        Files.walk(root).withCloseable { paths ->
+            paths.sorted().forEach { path ->
+                if (path == root) {
+                    return
+                }
+                if (Files.isSymbolicLink(path)) {
+                    throw new GradleException("symbolic evidence member is unsupported: ${path}")
+                }
+                if (Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS)) {
+                    entries << [
+                        path: root.relativize(path).toString().replace('\\', '/'),
+                        sha256: sha256Bytes(Files.readAllBytes(path)),
+                        size: Files.size(path),
+                    ]
+                }
+            }
+        }
+        sha256Bytes(JsonOutput.toJson(entries).getBytes("UTF-8"))
+    }
+    def environmentNames = ["CI", "GRADLE_OPTS", "JAVA_TOOL_OPTIONS", "JDK_JAVA_OPTIONS"] as Set
+    System.getenv().keySet().findAll { it.startsWith("ORG_GRADLE_PROJECT_") }.each { environmentNames.add(it) }
+    def environmentRows = environmentNames.toSorted().collect { name ->
+        def value = System.getenv(name)
+        "${name}\u0000${value == null ? '<ABSENT>' : sha256Bytes(value.getBytes('UTF-8'))}"
+    }
+    def environmentBinding = sha256Bytes(JsonOutput.toJson(environmentRows).getBytes("UTF-8"))
+
+    gradle.rootProject { root ->
+        def captureTask = root.tasks.register("buildoptRequestAlignedCapture") {
+            group = "buildopt"
+            description = "Captures one exact ordinary request without authorizing an optimization"
+            dependsOn(requestedTasks)
+            doLast {
+                if (observedTasks == null || dependencyPaths == null) {
+                    throw new GradleException("BuildOpt request-aligned task graph is unavailable")
+                }
+                def repositoryRoot = root.projectDir.toPath().toAbsolutePath().normalize()
+                def repositoryPath = { File file ->
+                    def absolute = file.toPath().toAbsolutePath().normalize()
+                    if (!absolute.startsWith(repositoryRoot)) {
+                        return null
+                    }
+                    def relative = repositoryRoot.relativize(absolute).toString().replace('\\', '/')
+                    relative.isEmpty() ? null : relative
+                }
+                def kind = { File file ->
+                    Files.isDirectory(file.toPath(), LinkOption.NOFOLLOW_LINKS) ? "DIRECTORY" : "FILE"
+                }
+                def fileBinding = { File file ->
+                    def relative = repositoryPath(file)
+                    if (relative == null || !Files.isRegularFile(file.toPath(), LinkOption.NOFOLLOW_LINKS) ||
+                        Files.isSymbolicLink(file.toPath())) {
+                        return null
+                    }
+                    [path: relative, sha256: sha256Bytes(Files.readAllBytes(file.toPath()))]
+                }
+                def captureStatus = "COMPLETE"
+                def captureReason = ""
+                def tasks = []
+                def wrapperFiles = []
+                def buildLogicFiles = []
+                try {
+                    def wrapperCandidates = [
+                        root.file("gradle/wrapper/gradle-wrapper.properties"),
+                        root.file("gradle/wrapper/gradle-wrapper.jar"),
+                    ]
+                    wrapperFiles = wrapperCandidates.collect { fileBinding(it) }.findAll { it != null }.sort { it.path }
+                    if (wrapperFiles.isEmpty()) {
+                        throw new GradleException("Gradle Wrapper evidence is unavailable")
+                    }
+
+                    def buildLogicCandidates = new TreeMap<String, File>()
+                    def addBuildLogic = { File file ->
+                        def relative = repositoryPath(file)
+                        if (relative != null && Files.isRegularFile(file.toPath(), LinkOption.NOFOLLOW_LINKS)) {
+                            buildLogicCandidates.put(relative, file)
+                        }
+                    }
+                    [root.file("settings.gradle"), root.file("settings.gradle.kts"), root.file("gradle.properties"),
+                     root.file("gradle/libs.versions.toml")].each { addBuildLogic(it) }
+                    root.allprojects.each { project -> addBuildLogic(project.buildFile) }
+                    [root.file("buildSrc"), root.file("build-logic"), root.file("gradle")].each { directory ->
+                        if (!Files.isDirectory(directory.toPath(), LinkOption.NOFOLLOW_LINKS)) {
+                            return
+                        }
+                        Files.walk(directory.toPath()).withCloseable { paths ->
+                            paths.sorted().forEach { path ->
+                                if (!Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS) || Files.isSymbolicLink(path)) {
+                                    return
+                                }
+                                def relative = repositoryRoot.relativize(path.toAbsolutePath().normalize()).toString().replace('\\', '/')
+                                if (relative.startsWith("gradle/wrapper/") || relative.contains("/.gradle/") ||
+                                    relative.contains("/build/")) {
+                                    return
+                                }
+                                def name = path.fileName.toString()
+                                if (relative.startsWith("buildSrc/") || relative.startsWith("build-logic/") ||
+                                    name.endsWith(".gradle") || name.endsWith(".gradle.kts") ||
+                                    name.endsWith(".toml") || name.endsWith(".properties")) {
+                                    addBuildLogic(path.toFile())
+                                }
+                            }
+                        }
+                    }
+                    buildLogicFiles = buildLogicCandidates.values().collect { fileBinding(it) }.findAll { it != null }
+                    if (buildLogicFiles.isEmpty()) {
+                        throw new GradleException("build-logic evidence is unavailable")
+                    }
+
+                    tasks = observedTasks.collect { task ->
+                        def inputs = new TreeMap<String, Map>()
+                        if (!task.state.noSource) {
+                            task.inputs.files.files.each { file ->
+                                def relative = repositoryPath(file)
+                                if (relative != null && Files.exists(file.toPath(), LinkOption.NOFOLLOW_LINKS)) {
+                                    def pathKind = kind(file)
+                                    inputs.put("${pathKind}\u0000${relative}", [path: relative, kind: pathKind])
+                                }
+                            }
+                        }
+                        def outputs = new TreeMap<String, Map>()
+                        task.outputs.files.files.each { file ->
+                            def relative = repositoryPath(file)
+                            if (relative != null) {
+                                def exists = Files.exists(file.toPath(), LinkOption.NOFOLLOW_LINKS)
+                                def pathKind = exists ? kind(file) : "FILE"
+                                outputs.put("${pathKind}\u0000${relative}", [
+                                    path: relative,
+                                    kind: pathKind,
+                                    sha256: exists ? digestPath(file.toPath()) : "",
+                                    exists: exists,
+                                ])
+                            }
+                        }
+                        [path: task.path, dependsOn: dependencyPaths.get(task.path), inputs: inputs.values() as List,
+                         outputs: outputs.values() as List]
+                    }.sort { left, right -> left.path <=> right.path }
+                } catch (Exception ignored) {
+                    captureStatus = "UNAVAILABLE"
+                    captureReason = "REQUEST_OR_PRODUCER_EVIDENCE_UNAVAILABLE"
+                    tasks = []
+                }
+                def capture = [
+                    schemaVersion: "buildopt.poc/request-aligned-producer-capture/v1",
+                    generatedAt: generatedAt,
+                    status: captureStatus,
+                    reason: captureReason,
+                    gradleArguments: gradleArguments,
+                    requestedTasks: requestedTasks,
+                    gradleVersion: gradle.gradleVersion,
+                    javaRuntime: [
+                        version: System.getProperty("java.version"),
+                        vendor: System.getProperty("java.vendor"),
+                        runtimeName: System.getProperty("java.runtime.name"),
+                        vmName: System.getProperty("java.vm.name"),
+                        architecture: System.getProperty("os.arch"),
+                    ],
+                    environmentBindingSha256: environmentBinding,
+                    wrapperFiles: wrapperFiles,
+                    buildLogicFiles: buildLogicFiles,
+                    tasks: tasks,
+                ]
+                outputFile.parentFile.mkdirs()
+                outputFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(capture)) + "\n"
+            }
+        }
+        gradle.taskGraph.whenReady { graph ->
+            def capture = captureTask.get()
+            if (!graph.hasTask(capture)) {
+                throw new GradleException("BuildOpt request-aligned capture task is absent from the graph")
+            }
+            observedTasks = List.copyOf(graph.allTasks.findAll { it != capture })
+            dependencyPaths = observedTasks.collectEntries { task ->
+                [(task.path): graph.getDependencies(task).findAll { it != capture }.collect { it.path }.toSorted()]
+            }
+        }
+    }
+}

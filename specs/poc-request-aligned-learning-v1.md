@@ -1,6 +1,6 @@
 # Request-aligned recurrent learning POC contract
 
-Status: `HYPOTHESIS_PREREGISTERED`.
+Status: `REQUEST_IDENTITY_AND_CURRENT_OUTPUT_PRODUCER_COMPLETE`.
 
 ## Question
 
@@ -11,6 +11,19 @@ optimized native Gradle?
 
 This block selects an evidence route. It does not authorize timing, execution
 of a candidate or reuse of historical BuildOpt timings and actions.
+
+## Implemented producer boundary
+
+`SWL-REQUEST-001` now materializes a checkout-independent identity over the
+exact Gradle arguments, requested tasks, Gradle and Wrapper bindings, portable
+JDK facts, relevant environment digest, build logic and finalized task graph.
+It also discovers existing outputs from their current unique producer rather
+than guessing a version-sensitive filename. The checked Gradle 8.14.3/9.6.1
+Kotlin/Groovy matrix reproduces the versioned Groovy JAR and returns typed
+`UNAVAILABLE` outcomes for missing, ambiguous and outside-graph producers.
+
+This is observation evidence only. It does not classify adjacent changes,
+execute a reduced graph, activate an action or measure wall time.
 
 ## Why the predecessor stopped
 

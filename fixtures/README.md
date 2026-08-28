@@ -20,6 +20,12 @@ Reproducible Gradle repositories and scenarios for the golden lane, TestKit, cac
 
 Fixtures must declare their wrapper, JDK, plugins, seed, and expected result; they do not depend on accidental workstation state.
 
+`request-aligned/` contains minimal Kotlin and Groovy Java-library builds for
+the `SWL-REQUEST-001` producer matrix. Both emit the same reproducible,
+versioned `groovy-raw-6.0.0-SNAPSHOT-raw.jar`; Gradle 8.14.3/9.6.1 runs prove
+portable request identity, current producer ownership and typed negative
+outcomes without measuring or activating an optimization.
+
 `sticky-wrapper-learning/` is the SWL-014B repository-independent composition
 fixture. It injects only the frozen clock, detector, trial and publisher seams,
 then proves qualification, active counterfactual, suspension, retirement and

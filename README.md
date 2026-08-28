@@ -181,11 +181,15 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > **Current experiment:** cause reconstruction shows why the preceding route
 > lacked breadth: **23/24** negative transitions changed no declared input in
 > the fixed requested graph, while one Groovy row used a stale unversioned JAR
-> path instead of the current producer output. BuildOpt now preregisters
+> path instead of the current producer output. BuildOpt now tests
 > `REQUEST_ALIGNED_RECURRENT_CLOSURE_V1`: learn only from ordinary repeated
 > customer commands, wait for changes relevant to that exact requested graph
-> and discover outputs from current producer tasks. This is a selected route,
-> not a speed result; timing and activation remain unauthorized. Follow the
+> and discover outputs from current producer tasks. Its first implementation
+> block now passes Gradle 8/9 × Kotlin/Groovy: request identities survive
+> checkout relocation, all eight compatibility bindings separate identities,
+> the versioned Groovy JAR is discovered from `:jar`, and incomplete ownership
+> fails typed. This is observation evidence, not a speed result; timing and
+> activation remain unauthorized. Follow the
 > [request-aligned tracker](./docs/plans/request-aligned-learning-poc-tracker.md).
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,

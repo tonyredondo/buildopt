@@ -2,11 +2,11 @@
 
 ## Status
 
-**Overall:** `PREREGISTERED`
+**Overall:** `PRODUCER_COMPLETE`
 
-**Progress:** one of eight blocks complete
+**Progress:** two of eight blocks complete
 
-**Current block:** `SWL-REQUEST-001`
+**Current block:** `SWL-REQUEST-002`
 
 **Predecessor:** the [change-aware producer route](./change-aware-producer-closure-poc-tracker.md)
 stopped before timing at 1/5 action breadth. No predecessor timing or action is
@@ -64,8 +64,8 @@ discovers current outputs from producer tasks and binds their exact bytes.
 | Order | Block | Deliverable | State | Dependency |
 | ---: | --- | --- | --- | --- |
 | 0 | `SWL-REQUEST-000` Cause analysis and hypothesis selection | Recompute all predecessor negatives, reject non-material reruns and preregister the new route | `DONE` | terminal SWL-CHANGE evidence |
-| 1 | `SWL-REQUEST-001` Request identity and current-output producer | Canonical request identity, current producer-output discovery and typed observation schema | `TODO` | SWL-REQUEST-000 |
-| 2 | `SWL-REQUEST-002` Relevance classifier and fixtures | Classify relevant, irrelevant, global, ambiguous, unavailable and failed transitions across Gradle 8/9 and Kotlin/Groovy | `WAITING` | SWL-REQUEST-001 |
+| 1 | `SWL-REQUEST-001` Request identity and current-output producer | Canonical request identity, current producer-output discovery and typed observation schema | `DONE` | SWL-REQUEST-000 |
+| 2 | `SWL-REQUEST-002` Relevance classifier and fixtures | Classify relevant, irrelevant, global, ambiguous, unavailable and failed transitions across Gradle 8/9 and Kotlin/Groovy | `TODO` | SWL-REQUEST-001 |
 | 3 | `SWL-REQUEST-003` Fresh public recurrent-request capture | Capture five relevant ordinary transitions in each frozen family without importing historical BuildOpt evidence | `WAITING` | SWL-REQUEST-002 |
 | 4 | `SWL-REQUEST-004` Independent breadth gate | Rebuild reports and require complete actions in at least 3/5 families | `WAITING` | SWL-REQUEST-003 |
 | 5 | `SWL-REQUEST-005` Installed value | Eight balanced pairs per admitted action with exact outputs and complete costs | `WAITING` | breadth passes |
@@ -102,6 +102,16 @@ Fixtures must prove stable identity across checkout paths and distinct identity
 for task vector, Wrapper, JDK or build-logic changes. They must also reproduce
 the Groovy versioned-JAR case and reject missing, ambiguous and outside-graph
 producers. The producer is observation-only: no action, timing or mutation.
+
+Implemented outcome: the canonical identity binds the exact argument and
+requested-task vectors, Gradle version, Wrapper, portable JDK facts, safe
+environment aggregate, build logic and finalized task graph. The producer
+captures repository-relative current outputs and unique ownership across the
+Gradle 8.14.3/9.6.1 Kotlin/Groovy matrix. Two checkout roots yield the same
+identity; every compatibility mutation changes it. Reproducible archive
+settings make the versioned Groovy JAR stable across independent reruns, and
+missing, ambiguous and outside-graph ownership fails typed. No timing or
+activation occurred.
 
 ### SWL-REQUEST-002 — Relevance classifier and fixtures
 
@@ -163,8 +173,8 @@ than zero.
 | Evidence | Block | Required evidence | State |
 | --- | --- | --- | --- |
 | `SWL-REQUEST-E001` | SWL-REQUEST-000 | Recomputed cause analysis, rejected alternatives, selected hypothesis and frozen route | `DONE` — [`request-aligned-successor-selection-v1.json`](../../benchmarks/results/request-aligned-successor-selection-v1.json) |
-| `SWL-REQUEST-E002` | SWL-REQUEST-001 | Request identity, current-output producer and negative fixtures | `TODO` |
-| `SWL-REQUEST-E003` | SWL-REQUEST-002 | Relevance classifier and Gradle/DSL fixture matrix | `WAITING` |
+| `SWL-REQUEST-E002` | SWL-REQUEST-001 | Request identity, current-output producer and negative fixtures | `DONE` — [`request-aligned-producer-fixtures-v1.json`](../../benchmarks/results/request-aligned-producer-fixtures-v1.json) |
+| `SWL-REQUEST-E003` | SWL-REQUEST-002 | Relevance classifier and Gradle/DSL fixture matrix | `TODO` |
 | `SWL-REQUEST-E004` | SWL-REQUEST-003 | Fresh five-family recurrent-request ledger | `WAITING` |
 | `SWL-REQUEST-E005` | SWL-REQUEST-004 | Independent breadth decision | `WAITING` |
 | `SWL-REQUEST-E006` | SWL-REQUEST-005 | Installed paired value and cost ledger | `WAITING` |
@@ -184,9 +194,9 @@ than zero.
 
 ## Immediate next action
 
-Implement `SWL-REQUEST-001` exactly as specified: canonical request identity,
-current output discovery and observation-only fixtures. Do not implement the
-classifier, run public repositories, time a candidate or alter the frozen
-breadth/value gates in that block.
+Implement `SWL-REQUEST-002` exactly as specified: classify adjacent request
+transitions, construct the relevant producer closure and prove every typed
+outcome in the Gradle/DSL fixture matrix. Do not run public repositories, time
+a candidate or alter the frozen breadth/value gates in that block.
 
-No successor timing is authorized by `SWL-REQUEST-000`.
+No successor timing is authorized by `SWL-REQUEST-001`.

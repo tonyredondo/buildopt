@@ -30,8 +30,10 @@ recorded in the
 [Change-aware Producer Closure POC Tracker](../plans/change-aware-producer-closure-poc-tracker.md).
 Its cause analysis opens the
 [Request-aligned Recurrent Learning POC Tracker](../plans/request-aligned-learning-poc-tracker.md):
-the next producer will learn only from exact ordinary request identities and
-current producer outputs, without changing the user's Gradle command.
+the implemented producer learns only from exact ordinary request identities
+and current producer outputs, without changing the user's Gradle command. The
+next block classifies whether an adjacent change is relevant to that request;
+no action is active yet.
 The wrapper remains reusable POC infrastructure, not a production rollout path
 or evidence that a generic acceleration mechanism has qualified.
 
