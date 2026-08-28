@@ -223,8 +223,14 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > unsafe alias, output mismatch, cycle, outside-graph owner and post-candidate
 > appearance fails closed. Reconstructing all 110 historical rows still yields
 > **5/0/2/1/5**, so the repair improves correctness but does not open timing.
-> The next block records exact commands already observed through the wrapper;
-> no action, timing or speedup is authorized. Follow the
+> The wrapper now also records those exact commands after Gradle exits. Its
+> private bounded portfolio hashes argument boundaries and the portable working
+> directory rather than storing raw arguments or checkout paths, binds optional
+> finalized evidence to the same invocation, loses no
+> updates across 16 concurrent writers and keeps incomplete, failed, cancelled
+> and bypassed requests ineligible. It needs no server and starts no additional
+> Gradle build. Fresh five-family capture is next; no action, timing or speedup
+> is authorized. Follow the
 > [active tracker](./docs/plans/observed-request-portfolio-poc-tracker.md).
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,

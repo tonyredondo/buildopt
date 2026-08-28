@@ -222,6 +222,7 @@ case "${buildopt_lane}" in
 		"${buildopt_script_dir}/check-request-aligned-terminal-decision"
 		"${buildopt_script_dir}/check-request-aligned-terminal-cause-audit"
 		"${buildopt_script_dir}/check-request-aligned-evidence-precision" --static
+		"${buildopt_script_dir}/check-observed-request-portfolio" --static
 		"${buildopt_script_dir}/check-sticky-evidence-producers"
 		"${buildopt_script_dir}/check-sticky-wrapper-learning-plan"
 		"${buildopt_script_dir}/check-sticky-wrapper-contract"

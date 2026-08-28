@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: dev/run-observed-request-portfolio-fixtures OUTPUT_JSON\n' >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_output=$1
+[[ ${buildopt_output} == /* ]] || buildopt_output=${PWD}/${buildopt_output}
+buildopt_temporary=$(mktemp -d /tmp/buildopt-observed-request-portfolio.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-observed-request-portfolio.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected portfolio root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+env GOCACHE="${buildopt_temporary}/go-cache" \
+    "${buildopt_root}/dev/run" --toolchain go -- \
+    go run ./dev/observed-request-portfolio-fixture "${buildopt_output}" "${buildopt_root}"
+
+printf 'Observed request portfolio fixtures: PASS\n'

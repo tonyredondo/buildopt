@@ -118,6 +118,15 @@ result. `SWL-010` adds a trusted-CI trial plane that runs isolated candidate
 and native commands with separate checkout, Gradle/cache/daemon and BuildOpt
 state roots; it is budgeted, order-balanced and exact-output checked. Its first
 result is negative for value, so that historical trial remains diagnostic.
+The active observed-request portfolio adds a narrower local plane under
+`internal/requestportfolio`. The launcher derives length-framed identities from
+the exact argv it already received and the repository-relative working
+directory, then writes the bounded canonical snapshot
+only after the child exits. Optional compatibility, requested-task and graph
+evidence is accepted only when it binds that same argv digest. Raw arguments
+are not stored; incomplete, failed, cancelled and bypassed requests cannot
+become candidates. This local write does not depend on Shared state and starts
+no Gradle build, so an unavailable server cannot change the customer command.
 `internal/stickyactive` proves isolated execution/suspension and
 `internal/durablecatalog` keeps patches review-only. `SWL-014B` now composes
 observation through signed active decision and economics behind the committed

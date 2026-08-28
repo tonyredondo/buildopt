@@ -134,7 +134,20 @@ The dynamic check regenerates Gradle 8.14.3/9.6.1 × Kotlin/Groovy evidence;
 110-row counterfactual. It covers ordered equivalent producers, explicit
 absence, post-candidate revalidation, compatibility/request-graph separation
 and request-relevant build-logic drift. It runs no candidate and measures no
-wall time. `SWL-PORTFOLIO-002` owns the next exact-request portfolio lifecycle.
+wall time.
+
+Validate the exact observed-request portfolio lifecycle with:
+
+```bash
+./dev/check-observed-request-portfolio
+```
+
+The checker regenerates the private canonical portfolio, exercises the real
+launcher, runs concurrent updates under the race detector, checks deterministic
+128-entry retention and rejects mismatched evidence or invented authority. The
+wrapper writes only after the existing Gradle invocation, stores a framed argv
+digest rather than raw arguments and needs no server. It does not execute a
+candidate or measure wall time. `SWL-PORTFOLIO-003` owns fresh public capture.
 
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:

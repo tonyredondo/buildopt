@@ -204,7 +204,12 @@ are bindable, absence is revalidated after a candidate, and compatibility,
 requested graph and unrelated build logic are separate identities. Unsafe
 alias/output shapes fail closed. Rebuilding the historical audit still yields
 **5/0/2/1/5**, so this is a correctness improvement rather than a speed result.
-Exact observed-request portfolio lifecycle is next; timing remains unauthorized.
+The exact portfolio lifecycle is now implemented post-build: raw arguments are
+not persisted, same-invocation evidence is required, 16 concurrent writers lose
+no updates, retention is bounded to 128 identities and all incomplete, failed,
+cancelled or bypassed requests remain ineligible. It works without the server
+and starts no extra build. Fresh five-family capture is next; timing remains
+unauthorized.
 
 ## POC conclusion
 

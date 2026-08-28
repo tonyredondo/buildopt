@@ -147,6 +147,7 @@ func stickyNativeExplicitIntegrationRequested(getenv func(string) string) bool {
 func runStickyNativeNoop(
 	path stickyNativeNoopPath,
 	childArgs []string,
+	requestPortfolio *requestPortfolioState,
 	startedAt time.Time,
 	stdin io.Reader,
 	stdout, stderr io.Writer,
@@ -157,6 +158,7 @@ func runStickyNativeNoop(
 		"BUILDOPT_TOKEN",
 		stickyObservationOutputEnvironment,
 		stickyObservationModeEnvironment,
+		requestPortfolioOutputEnvironment,
 		stickyLearningEnvironment,
 		"BUILDOPT_STICKY_LIFECYCLE_OUTPUT",
 	}
@@ -172,7 +174,10 @@ func runStickyNativeNoop(
 		observation.markConnection(decisionFinishedAt, false)
 		observation.finishCache(decisionFinishedAt)
 	}
-	execution := executeChildWithReserved(childArgs, nil, reserved, stdin, stdout, stderr)
+	execution := executeChildWithReserved(childArgs, requestPortfolio.childEnvironment(nil), reserved, stdin, stdout, stderr)
+	if requestPortfolio != nil {
+		requestPortfolio.finishGradle(execution)
+	}
 	exitCode := 0
 	if execution.started {
 		exitCode = childWaitExitCode(childArgs[0], execution.err, stderr)

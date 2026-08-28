@@ -133,6 +133,19 @@ rebuilds the frozen cause audit and preserves the Spring/OpenTelemetry/Kafka/
 Micronaut/Groovy counterfactual at **5/0/2/1/5**. This is precision evidence,
 not wall-time or action evidence.
 
+[`observed-request-portfolio-lifecycle-v1.json`](./results/observed-request-portfolio-lifecycle-v1.json)
+is the `SWL-PORTFOLIO-002` runtime lifecycle proof. It binds exact argument
+boundaries and the repository-relative working directory without persisting raw
+arguments or checkout paths, separates compatibility from the
+finalized requested graph, and accepts graph evidence only from the same
+invocation. The checked scenarios keep incomplete, failed, cancelled and
+bypassed requests ineligible; the recurrent exact request becomes eligible
+only after successful complete evidence. Sixteen concurrent writers lose no
+updates, and deterministic retention keeps 128 of 135 identities. The store is
+private, canonical, atomic and local when the server is absent. It starts no
+extra Gradle build, measures no wall time and grants no selection or activation
+authority.
+
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
@@ -147,6 +160,7 @@ not wall-time or action evidence.
 ./dev/check-request-aligned-terminal-decision
 ./dev/check-request-aligned-terminal-cause-audit
 ./dev/check-request-aligned-evidence-precision
+./dev/check-observed-request-portfolio
 ```
 
 ## Sticky-wrapper observation sample

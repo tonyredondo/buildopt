@@ -29,23 +29,34 @@ const (
 // ingest when configured, installs the signed A0-007 Gradle bootstrap cache,
 // honors the F0-039 local bypass, exposes read-only structural opportunity
 // analysis, connects a valid sticky-wrapper credential to the read-only
-// central Gradle cache, records the one-command optimization POC contract, and
-// returns the child process exit status.
+// central Gradle cache, records the one-command optimization POC contract and
+// the exact post-build request portfolio, and returns the child process exit
+// status.
 func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode int) {
 	runStartedAt := time.Now().UTC()
 	var additionalReservedEnvironment []string
 	var ordinaryObservation *ordinaryObservationState
+	var requestPortfolio *requestPortfolioState
 	stickyRoot := os.Getenv(stickyWrapperRootEnvironment)
 	if stickyRoot != "" {
-		if childArgs := ordinaryChildArguments(args); childArgs != nil {
+		childArgs := ordinaryChildArguments(args)
+		requestPortfolio = newRequestPortfolioStateAt(stickyRoot, childArgs, runStartedAt)
+		if requestPortfolio != nil {
+			defer func() {
+				if err := requestPortfolio.finish(runExitCode, time.Now().UTC()); err != nil {
+					_, _ = fmt.Fprintf(stderr, "buildopt: request portfolio unavailable: %v\n", err)
+				}
+			}()
+		}
+		if childArgs != nil {
 			entry := prepareStickyLearningEntry(stickyRoot, childArgs, os.Getenv)
 			if entry.nativeOnly {
-				return runStickyNativeNoop(entry.nativePath, childArgs, runStartedAt, stdin, stdout, stderr)
+				return runStickyNativeNoop(entry.nativePath, childArgs, requestPortfolio, runStartedAt, stdin, stdout, stderr)
 			}
 		}
 		ordinaryObservation = newOrdinaryObservationStateAt(
 			stickyRoot,
-			ordinaryChildArguments(args),
+			childArgs,
 			runStartedAt,
 		)
 		if ordinaryObservation != nil {
@@ -67,6 +78,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		childArgs []string,
 		environmentOverrides map[string]string,
 	) childExecution {
+		environmentOverrides = requestPortfolio.childEnvironment(environmentOverrides)
 		if ordinaryObservation != nil {
 			ordinaryObservation.finishCache(time.Now())
 		}
@@ -95,6 +107,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		}
 		if ordinaryObservation != nil {
 			ordinaryObservation.finishGradle(execution, childArgs)
+		}
+		if requestPortfolio != nil {
+			requestPortfolio.finishGradle(execution)
 		}
 		return execution
 	}
@@ -405,6 +420,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			"BUILDOPT_TOKEN",
 			stickyObservationOutputEnvironment,
 			stickyObservationModeEnvironment,
+			requestPortfolioOutputEnvironment,
 			stickyLearningEnvironment,
 			"BUILDOPT_STICKY_LIFECYCLE_OUTPUT",
 		)

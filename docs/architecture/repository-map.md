@@ -146,6 +146,16 @@ matrix at `benchmarks/results/request-aligned-evidence-precision-v1.json`.
 The v1 producer/classifier behavior remains available for historical ledger
 reconstruction; neither version authorizes an action or timing by itself.
 
+`internal/requestportfolio` owns the private bounded exact-request snapshot,
+canonical atomic publication, concurrent merge, lifecycle and same-invocation
+evidence binding. `internal/launcher/request_portfolio.go` attaches that write
+to the existing sticky-wrapper invocation after Gradle exits. The deterministic
+generator and checker live at `dev/observed-request-portfolio-fixture`,
+`dev/run-observed-request-portfolio-fixtures` and
+`dev/check-observed-request-portfolio`; their checked result is
+`benchmarks/results/observed-request-portfolio-lifecycle-v1.json`. This boundary
+records opportunity inputs only and has no selector or action authority.
+
 Run `./dev/check-request-aligned-successor-selection` and
 `./dev/check-request-aligned-producer` and
 `./dev/check-request-aligned-classifier` and
@@ -153,7 +163,8 @@ Run `./dev/check-request-aligned-successor-selection` and
 `./dev/check-request-aligned-breadth-gate` and
 `./dev/check-request-aligned-terminal-decision` to validate the closed route,
 `./dev/check-request-aligned-evidence-precision` for the active route's first
-completed correctness block,
+completed correctness block, `./dev/check-observed-request-portfolio` for its
+exact post-build lifecycle,
 `./dev/check-change-aware-producer-closure-plan` for its closed
 predecessor, `./dev/check-fresh-generic-optimization-plan` for the earlier
 fresh route and `./dev/check-sticky-wrapper-learning-plan` to preserve the

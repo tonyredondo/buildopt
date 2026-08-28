@@ -288,6 +288,9 @@ func clearStickyNativeIntegrationEnvironment(t *testing.T) {
 		managedL1ModeChildEnvironment,
 		managedL1RetentionChildEnvironment,
 		gradleBootstrapConfigPathEnvironment,
+		requestPortfolioOutputEnvironment,
+		requestPortfolioEvidenceEnvironment,
+		requestPortfolioObservationIDEnvironment,
 		"BUILDOPT_RUNTIME_CHECKSTYLE_MAX_HEAP",
 		"BUILDOPT_CACHE_STANDARD_COPY_TASKS",
 	} {

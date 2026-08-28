@@ -105,10 +105,12 @@ The closed request-aligned evidence order is:
 The active observed-request portfolio successor first completed a versioned
 evidence-precision layer: ordered equivalent producers, explicit absent
 outputs, absence revalidation and separate compatibility/request-graph
-identity pass Gradle 8/9 × Kotlin/Groovy. The next block records only exact
-commands already received by the committed wrapper. It may not parse CI files,
-substitute commands, start an extra Gradle build or use these correctness
-repairs as timing authority.
+identity pass Gradle 8/9 × Kotlin/Groovy. The committed wrapper now also records
+only exact commands it already received. After Gradle exits, it merges a framed
+argv digest, repository identity, counts, outcome and optional same-invocation
+graph evidence into a private bounded local portfolio. It may not parse CI
+files, substitute commands, start an extra Gradle build or use these correctness
+records as timing authority. Fresh public capture is the next block.
 
 Sample count alone never makes the campaign ready. Missing lifecycle, action or
 ledger evidence keeps it incomplete. The exact implementation paths, evidence

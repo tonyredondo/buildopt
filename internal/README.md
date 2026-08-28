@@ -135,6 +135,14 @@ floors consumed by Shared, managed L1, and export.
 trust-root and private-file boundary, strict semantic validation, and durable
 monotonic policy/revocation state used independently by launcher and Shared.
 
+`requestportfolio/` owns the active POC's local exact-request observation
+boundary. It stores only a length-framed argv digest, a portable working-
+directory digest, compatibility and finalized requested-graph evidence, merges
+concurrent post-build outcomes
+under a private atomic file, and retains at most 128 identities. Incomplete,
+failed, cancelled and bypassed entries remain typed and ineligible; this package
+does not select or activate optimizations.
+
 `sharedcache/` owns the A0-004..A0-006 single-node storage and publication
 boundary used by `buildopt-server`: private same-filesystem SHA-256 blobs, a
 process-lifetime writer lease, independently migrated WAL-mode

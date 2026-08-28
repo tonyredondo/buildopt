@@ -28,6 +28,7 @@ provision tools or create release artifacts document that effect explicitly.
 | Request-aligned terminal scorecard, digest binding and typed unmeasured economics | `./dev/check-request-aligned-terminal-decision` |
 | Post-terminal cause reconstruction and observed-request portfolio selection | `./dev/check-request-aligned-terminal-cause-audit` |
 | Observed-request evidence precision across Gradle 8/9 and Kotlin/Groovy | `./dev/check-request-aligned-evidence-precision` |
+| Exact observed-request lifecycle, concurrency, bounds and fail-closed authority | `./dev/check-observed-request-portfolio` |
 | Generic task/graph producers, typed completeness and deterministic evidence | `./dev/check-sticky-evidence-producers` |
 | Fresh five-family cohort, capture bindings, producer completeness and exact outputs | `./dev/check-fresh-generic-capture` |
 | Independent fresh action recount and fixed public-breadth gate | `./dev/check-fresh-generic-opportunity-gate` |

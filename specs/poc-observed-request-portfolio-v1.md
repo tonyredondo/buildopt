@@ -42,9 +42,13 @@ opportunity unit, not a weaker correctness gate.
 `SWL-PORTFOLIO-001` has implemented the three evidence-precision primitives
 and tested their negative boundaries across Gradle 8/9 × Kotlin/Groovy. Its
 checked result preserves the counterfactual at **5/0/2/1/5**, executes no
-action and measures no wall time. `SWL-PORTFOLIO-002` now adds a durable portfolio
-of exact observed requests without adding work to the customer's invocation.
-`SWL-PORTFOLIO-003` starts from zero portfolio state and captures the frozen
+action and measures no wall time. `SWL-PORTFOLIO-002` adds a durable, private
+and bounded portfolio of exact observed requests after the customer build
+exits. It hashes argument boundaries, binds optional finalized evidence to the
+same invocation, preserves typed incomplete/failed/cancelled/bypassed outcomes,
+serializes concurrent updates and remains local when the server is unavailable.
+It starts no Gradle build and grants no action authority. `SWL-PORTFOLIO-003`
+starts from zero portfolio state and captures the frozen
 five-family cohort. `SWL-PORTFOLIO-004` independently rebuilds every report and
 applies the unchanged 5/5 completeness and 3/5 action-breadth gate.
 

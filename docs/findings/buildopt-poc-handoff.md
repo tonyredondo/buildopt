@@ -473,10 +473,14 @@ bindings, post-candidate absence revalidation and separate compatibility/
 request-graph identity. Unordered peers, hash/kind mismatches, outside-graph
 owners, cycles, malformed output evidence and an output appearing after the
 candidate all fail closed. The independently rebuilt counterfactual remains
-**5/0/2/1/5**, so no wall-time claim is created. The next step is to persist the
-exact recurrent command portfolio already observed by the wrapper without
-starting extra builds or parsing CI configuration; fresh portfolio capture and
-all value timing remain pending. See the
+**5/0/2/1/5**, so no wall-time claim is created. The wrapper now persists that
+exact recurrent portfolio after the existing build: it hashes argument
+boundaries and the portable working directory, binds optional evidence to the
+same invocation, keeps 128 identities
+and preserves typed incomplete, failed, cancelled and bypassed outcomes. A
+16-writer fixture loses no updates, and server absence still leaves the local
+observation. No command is substituted and no extra Gradle build starts. Fresh
+five-family capture and all value timing remain pending. See the
 [active tracker](../plans/observed-request-portfolio-poc-tracker.md).
 
 The closed predecessor remains implementation-locked as historical evidence:
