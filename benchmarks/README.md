@@ -38,13 +38,21 @@ records five adjacent first-parent transitions in each frozen public family.
 All 25 transitions are conclusive and all five inputs are complete. Spring
 exposes one exact testable action; the remaining 24 transitions return
 `NO_SAFE_ACTION`. This is action-construction evidence only: wall time is
-unmeasured and activation remains unauthorized. The next block independently
-recomputes the unchanged 3/5-family breadth gate before timing can open.
+unmeasured and activation remains unauthorized.
+
+[`change-aware-breadth-gate-v1.json`](./results/change-aware-breadth-gate-v1.json)
+is the independent `SWL-CHANGE-002` decision. It ignores the aggregate summary,
+rebuilds every report from its captured Gradle evidence, verifies the ledger
+digests and only then counts complete actions. All five family inputs pass,
+but action breadth is **1/5** against the frozen **3/5** requirement. Installed
+timing and chronological value are therefore not authorized; this is a breadth
+failure, not a measured regression or speedup.
 
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
 ./dev/check-change-aware-public-capture
+./dev/check-change-aware-breadth-gate
 ```
 
 ## Sticky-wrapper observation sample

@@ -2,11 +2,13 @@
 
 ## Status
 
-**Overall:** `CHANGE_EVIDENCE_COMPLETE`
+**Overall:** `BREADTH_GATE_FAILED`
 
-**Progress:** 2/6 blocks complete
+**Progress:** three blocks executed, two downstream blocks not authorized and
+one terminal block remaining
 
-**Current block:** `SWL-CHANGE-002` — independently recompute the five-family breadth gate
+**Current block:** `SWL-CHANGE-005` — issue the terminal stop decision without
+inventing unmeasured value
 
 **Predecessor:** the terminal
 [`SWL-FRESH`](./fresh-generic-optimization-poc-tracker.md) route remains closed
@@ -35,10 +37,10 @@ the five public Gradle families.
 | ---: | --- | --- | --- | --- |
 | 0 | `SWL-CHANGE-000` Hypothesis selection | Deterministic candidate analysis, selected hypothesis, machine contract and route | `DONE` | terminal SWL-FRESH evidence |
 | 1 | `SWL-CHANGE-001` Complete change-aware evidence | Capture changed paths, complete task/input/output producers and required-output closure from fresh ordinary builds | `DONE` | SWL-CHANGE-000 |
-| 2 | `SWL-CHANGE-002` Five-family breadth gate | Independently require complete input and actions in at least 3/5 families | `TODO` | SWL-CHANGE-001 |
-| 3 | `SWL-CHANGE-003` Installed value | Eight balanced pairs for every admitted action, exact outputs and complete cost ledger | `WAITING` | breadth at least 3/5 |
-| 4 | `SWL-CHANGE-004` Chronological value | Run at least 15 comparable transitions per admitted family with persistent per-arm state | `WAITING` | installed value passes in at least 3/5 |
-| 5 | `SWL-CHANGE-005` Terminal decision | Recompute correctness, breadth, value, confidence, payback, overhead and failures | `WAITING` | conclusive preceding gate |
+| 2 | `SWL-CHANGE-002` Five-family breadth gate | Independently require complete input and actions in at least 3/5 families | `DONE` | SWL-CHANGE-001 |
+| 3 | `SWL-CHANGE-003` Installed value | Eight balanced pairs for every admitted action, exact outputs and complete cost ledger | `NOT AUTHORIZED` | breadth failed at 1/5 |
+| 4 | `SWL-CHANGE-004` Chronological value | Run at least 15 comparable transitions per admitted family with persistent per-arm state | `NOT AUTHORIZED` | installed value did not open |
+| 5 | `SWL-CHANGE-005` Terminal decision | Recompute correctness, breadth, value, confidence, payback, overhead and failures | `TODO` | conclusive breadth gate |
 
 ## Block contracts
 
@@ -91,6 +93,14 @@ producer closure and exact omitted-output closure. At least three families
 must expose a complete action. Incomplete evidence blocks; fewer than three
 complete actions stops the route before timing.
 
+Outcome: [`change-aware-breadth-gate-v1.json`](../../benchmarks/results/change-aware-breadth-gate-v1.json)
+does not consume `summary.json`. It rebuilds all 25 reports from their captures,
+checks every report and ledger digest, validates exact omitted-output bindings
+and then recounts breadth. All five inputs are complete, but Spring is the only
+family exposing a complete action: **1/5** versus the frozen **3/5** threshold.
+The gate therefore returns `STOP_INSUFFICIENT_CHANGE_AWARE_BREADTH`, keeps
+timing and activation false, and routes directly to the terminal decision.
+
 ### SWL-CHANGE-003 — Installed value
 
 Run eight balanced alternating candidate/native pairs per admitted family on
@@ -119,15 +129,15 @@ criteria. Unavailable values remain typed unavailable rather than zero.
 | --- | --- | --- | --- |
 | `SWL-CHANGE-E001` | SWL-CHANGE-000 | Deterministic discovery result, machine contract, tracker and executable checker | `DONE` |
 | `SWL-CHANGE-E002` | SWL-CHANGE-001 | Fresh five-family producer/change/closure capture | `DONE` |
-| `SWL-CHANGE-E003` | SWL-CHANGE-002 | Independently recomputed breadth decision | `TODO` |
-| `SWL-CHANGE-E004` | SWL-CHANGE-003 | Installed paired evidence and full cost ledger | `WAITING` |
-| `SWL-CHANGE-E005` | SWL-CHANGE-004 | Chronological rows, checkpoints and cumulative report | `WAITING` |
-| `SWL-CHANGE-E006` | SWL-CHANGE-005 | Independent terminal scorecard | `WAITING` |
+| `SWL-CHANGE-E003` | SWL-CHANGE-002 | Independently recomputed breadth decision | `DONE` — [`change-aware-breadth-gate-v1.json`](../../benchmarks/results/change-aware-breadth-gate-v1.json) |
+| `SWL-CHANGE-E004` | SWL-CHANGE-003 | Installed paired evidence and full cost ledger | `NOT AUTHORIZED` — breadth failed before timing |
+| `SWL-CHANGE-E005` | SWL-CHANGE-004 | Chronological rows, checkpoints and cumulative report | `NOT AUTHORIZED` — installed value did not open |
+| `SWL-CHANGE-E006` | SWL-CHANGE-005 | Independent terminal scorecard | `TODO` |
 
 ## Immediate next action
 
-Implement `SWL-CHANGE-002` by independently reading the immutable transition
-ledger and reports, recomputing completeness and safe-action breadth, and
-applying the unchanged 3/5 threshold. Do not benchmark, activate the Spring
-action, import historical profiles or reinterpret `NO_SAFE_ACTION` as missing
-evidence.
+Implement `SWL-CHANGE-005` by binding the immutable capture and breadth result,
+recording correctness and input completeness as passed, breadth as failed and
+all economic criteria as `NOT_MEASURED_NOT_AUTHORIZED`. Do not benchmark or
+activate the sole Spring action, move the 3/5 threshold, import historical
+timings or claim that a different generic hypothesis cannot improve Gradle.

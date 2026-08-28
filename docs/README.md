@@ -67,9 +67,8 @@ before running the product.
 
 - [Change-aware Producer Closure POC Tracker](./plans/change-aware-producer-closure-poc-tracker.md):
   the active successor hypothesis, completed 25-transition producer capture,
-  next independent breadth decision, ordered value gates and explicit
-  prohibition on timing before safe actions exist in at least three of five
-  public Gradle families.
+  independently failed 1/5-versus-3/5 breadth gate, unauthorized timing blocks
+  and next terminal decision.
 - [Fresh Generic Optimization POC Tracker](./plans/fresh-generic-optimization-poc-tracker.md):
   the closed zero-history predecessor, complete producer gate, fresh public
   capture and terminal 1/5 action-breadth decision.

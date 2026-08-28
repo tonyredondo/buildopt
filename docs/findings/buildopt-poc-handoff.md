@@ -33,8 +33,10 @@ experiment. The fresh change-aware producer has now completed 25/25 conclusive
 adjacent-commit transitions across all five public families. Spring exposes
 one exact testable action; the other four Spring transitions and all 20
 OpenTelemetry, Kafka, Micronaut and Groovy transitions safely report
-`NO_SAFE_ACTION`. The next block independently recomputes the fixed 3/5-family
-breadth gate. No action has run and no wall time has been measured.
+`NO_SAFE_ACTION`. Independent reconstruction confirms **1/5** action breadth
+against the fixed **3/5** gate. No action has run, no wall time has been
+measured and the two timing blocks are not authorized. The next block is the
+terminal decision for this detector hypothesis.
 
 ## Mechanisms
 
@@ -405,10 +407,13 @@ hypothesis, not a speed result. Its first fresh evidence block is now complete:
 | Apache Groovy | 5/5 | 0 |
 
 The producer therefore proves complete evidence and safe retention on
-uncertainty, but not broad value. It still has **zero authorized timings and
-zero authorized activations**. `SWL-CHANGE-002` must independently recompute
-the unchanged 3/5-family breadth threshold before any timing can open; it may
-not reinterpret complete `NO_SAFE_ACTION` results as missing evidence.
+uncertainty, but not broad value. `SWL-CHANGE-002` rebuilt every report from
+the raw capture, ignored the aggregate summary and confirmed only **1/5**
+action breadth against the unchanged **3/5** threshold. It still has **zero
+authorized timings and zero authorized activations**. Installed and
+chronological value are not measured because this detector cannot meet the
+generic breadth target even if the sole Spring action were infinitely fast.
+The remaining work is the terminal scorecard, not a Spring-only benchmark.
 
 The closed predecessor remains implementation-locked as historical evidence:
 separate per-arm cache namespaces started empty, only the task-contract and

@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_capture=${buildopt_root}/benchmarks/results/change-aware-producer-closure-v1
+buildopt_result=${1:-${buildopt_root}/benchmarks/results/change-aware-breadth-gate-v1.json}
+buildopt_temporary=$(mktemp -d /tmp/buildopt-change-aware-breadth-check.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-change-aware-breadth-check.*)
+            rm -rf -- "${buildopt_temporary}"
+            ;;
+        *)
+            printf 'refusing to clean unexpected breadth-check root: %s\n' "${buildopt_temporary}" >&2
+            return 1
+            ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+"${buildopt_root}/dev/run-change-aware-breadth-gate" "${buildopt_capture}" \
+    "${buildopt_temporary}/regenerated.json" >/dev/null
+cmp -s "${buildopt_result}" "${buildopt_temporary}/regenerated.json" || {
+    printf 'change-aware breadth gate is stale or not reproducible\n' >&2
+    exit 1
+}
+jq -e '
+  .schemaVersion=="buildopt.poc/change-aware-breadth-gate/v1" and
+  .workItem=="SWL-CHANGE-002" and
+  (.inputs.routeContractSha256|test("^[0-9a-f]{64}$")) and
+  (.inputs.captureContractSha256|test("^[0-9a-f]{64}$")) and
+  (.inputs.transitionsLedgerSha256|test("^[0-9a-f]{64}$")) and
+  (.inputs.summaryConsumed|not) and (.inputs.historicalEvidenceImported|not) and
+  .expectedFamilies==["apache-groovy","apache-kafka","micronaut-core",
+    "opentelemetry-java-instrumentation","spring-framework"] and
+  .observedFamilies==.expectedFamilies and (.familyAssessments|length)==5 and
+  all(.familyAssessments[];
+    .observedTransitions==5 and .distinctTransitions==5 and .distinctReports==5 and
+    .dslConsistent and .conclusiveTransitions==5 and .inputComplete) and
+  .completeInputFamilies==5 and .completeInputFamiliesRequired==5 and
+  .familiesExposingCompleteActions==1 and
+  .familiesExposingCompleteActionsRequired==3 and
+  ([.familyAssessments[]|select(.exposesCompleteAction)|.family]==["spring-framework"]) and
+  ([.familyAssessments[].independentlyDerivedCompleteActions]|add)==1 and
+  (.breadthPass|not) and (.timingAuthorized|not) and (.activationAuthorized|not) and
+  .outcome=="STOP_INSUFFICIENT_CHANGE_AWARE_BREADTH" and
+  .nextBlock=="SWL-CHANGE-005"
+' "${buildopt_result}" >/dev/null || {
+    printf 'change-aware breadth gate contract is invalid\n' >&2
+    exit 1
+}
+
+cp -a -- "${buildopt_capture}" "${buildopt_temporary}/summary-tampered"
+jq '.families|=map(.actionTransitions=5) | .familiesExposingActions=5' \
+    "${buildopt_temporary}/summary-tampered/summary.json" \
+    >"${buildopt_temporary}/summary-tampered/summary.changed"
+mv -- "${buildopt_temporary}/summary-tampered/summary.changed" \
+    "${buildopt_temporary}/summary-tampered/summary.json"
+"${buildopt_root}/dev/run-change-aware-breadth-gate" \
+    "${buildopt_temporary}/summary-tampered" "${buildopt_temporary}/summary-independent.json" >/dev/null
+cmp -s "${buildopt_result}" "${buildopt_temporary}/summary-independent.json" || {
+    printf 'breadth decision trusted the aggregate summary\n' >&2
+    exit 1
+}
+
+cp -a -- "${buildopt_capture}" "${buildopt_temporary}/report-tampered"
+buildopt_report=reports/spring-framework-01-17e0daf8a160.json
+jq '.candidateTasks=[]' "${buildopt_temporary}/report-tampered/${buildopt_report}" \
+    >"${buildopt_temporary}/report-tampered/report.changed"
+mv -- "${buildopt_temporary}/report-tampered/report.changed" \
+    "${buildopt_temporary}/report-tampered/${buildopt_report}"
+buildopt_tampered_sha=$(sha256sum "${buildopt_temporary}/report-tampered/${buildopt_report}" | awk '{print $1}')
+jq -c --arg report "${buildopt_report}" --arg sha "${buildopt_tampered_sha}" \
+    'if .report==$report then .reportSha256=$sha else . end' \
+    "${buildopt_temporary}/report-tampered/transitions.jsonl" \
+    >"${buildopt_temporary}/report-tampered/transitions.changed"
+mv -- "${buildopt_temporary}/report-tampered/transitions.changed" \
+    "${buildopt_temporary}/report-tampered/transitions.jsonl"
+if "${buildopt_root}/dev/run-change-aware-breadth-gate" \
+    "${buildopt_temporary}/report-tampered" "${buildopt_temporary}/must-not-exist.json" \
+    >/dev/null 2>&1; then
+    printf 'tampered action report was accepted after ledger rehash\n' >&2
+    exit 1
+fi
+
+printf 'Change-aware five-family breadth gate: PASS\n'

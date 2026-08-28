@@ -160,18 +160,15 @@ to a smaller exact output closure?
 The first successor block is complete. Across five frozen public families,
 25/25 adjacent transitions are conclusive and every family input is complete.
 Spring exposes one exact testable action; the remaining 24 transitions return
-`NO_SAFE_ACTION`. This proves that the producer works and fails closed, not
-that the opportunity is broad or valuable. The remaining route is:
+`NO_SAFE_ACTION`. Independent reconstruction from the raw captures confirms
+that all five inputs are complete but only **1/5** families exposes an action,
+below the frozen **3/5** gate. This proves that the producer works and fails
+closed, but that this detector is not broad enough to justify a value campaign.
 
-1. independently recompute the unchanged three-of-five action-breadth gate;
-2. measure installed active value only if breadth passes;
-3. run a fresh chronological campaign only after installed value passes; and
-4. issue the terminal scorecard without importing predecessor timings or
-   moving thresholds.
-
-No current action has run and no current wall-time claim exists. If the breadth
-gate fails, the route stops before timing rather than spending builds on an
-opportunity that cannot meet the generic POC target.
+No current action has run and no current wall-time claim exists. Installed and
+chronological timing are not authorized. The remaining route is only the
+terminal scorecard, which must record the breadth failure and keep value,
+confidence, payback and overhead typed as unmeasured rather than zero.
 
 ## POC conclusion
 

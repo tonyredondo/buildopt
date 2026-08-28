@@ -2,10 +2,12 @@
 
 Status: `HYPOTHESIS_PREREGISTERED`.
 
-Execution status: the frozen hypothesis remains unchanged. `SWL-CHANGE-001`
-has completed its fresh five-family evidence capture; `SWL-CHANGE-002` is the
-next independent gate. This note reports execution progress and does not amend
-the preregistered contract or thresholds below.
+Execution status: the frozen hypothesis remains unchanged. `SWL-CHANGE-002`
+independently reconstructed all 25 reports and found complete actions in only
+one of five families versus the fixed three-family requirement. Installed and
+chronological timing are not authorized; `SWL-CHANGE-005` is the next terminal
+decision. This note reports execution progress and does not amend the
+preregistered contract or thresholds below.
 
 ## Question
 

@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "buildopt.poc/change-aware-breadth-gate/v1",
+  "workItem": "SWL-CHANGE-002",
+  "generatedAt": "2026-08-27T21:23:12Z",
+  "inputs": {
+    "routeContractSha256": "eaf050be44250504c91d2bf969fbd6be49500237cacb90cccd4c321ce44b8c2c",
+    "captureContractSha256": "dffe95f2b6deff06b4a707c3b0933aec2813c09d62aa4031cb736b9cfb13f66d",
+    "transitionsLedgerSha256": "c4aafa6bf7c1ab54152271c1a2a130a8913c9f1ec69062dd2b0e961fbb3d170c",
+    "summaryConsumed": false,
+    "historicalEvidenceImported": false
+  },
+  "expectedFamilies": [
+    "apache-groovy",
+    "apache-kafka",
+    "micronaut-core",
+    "opentelemetry-java-instrumentation",
+    "spring-framework"
+  ],
+  "observedFamilies": [
+    "apache-groovy",
+    "apache-kafka",
+    "micronaut-core",
+    "opentelemetry-java-instrumentation",
+    "spring-framework"
+  ],
+  "familyAssessments": [
+    {
+      "family": "apache-groovy",
+      "dsl": "GROOVY",
+      "observedTransitions": 5,
+      "distinctTransitions": 5,
+      "distinctReports": 5,
+      "dslConsistent": true,
+      "conclusiveTransitions": 5,
+      "statuses": {
+        "NO_SAFE_ACTION": 5
+      },
+      "independentlyDerivedCompleteActions": 0,
+      "exposesCompleteAction": false,
+      "actionBindings": [],
+      "inputComplete": true
+    },
+    {
+      "family": "apache-kafka",
+      "dsl": "GROOVY",
+      "observedTransitions": 5,
+      "distinctTransitions": 5,
+      "distinctReports": 5,
+      "dslConsistent": true,
+      "conclusiveTransitions": 5,
+      "statuses": {
+        "NO_SAFE_ACTION": 5
+      },
+      "independentlyDerivedCompleteActions": 0,
+      "exposesCompleteAction": false,
+      "actionBindings": [],
+      "inputComplete": true
+    },
+    {
+      "family": "micronaut-core",
+      "dsl": "KOTLIN",
+      "observedTransitions": 5,
+      "distinctTransitions": 5,
+      "distinctReports": 5,
+      "dslConsistent": true,
+      "conclusiveTransitions": 5,
+      "statuses": {
+        "NO_SAFE_ACTION": 5
+      },
+      "independentlyDerivedCompleteActions": 0,
+      "exposesCompleteAction": false,
+      "actionBindings": [],
+      "inputComplete": true
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "dsl": "KOTLIN",
+      "observedTransitions": 5,
+      "distinctTransitions": 5,
+      "distinctReports": 5,
+      "dslConsistent": true,
+      "conclusiveTransitions": 5,
+      "statuses": {
+        "NO_SAFE_ACTION": 5
+      },
+      "independentlyDerivedCompleteActions": 0,
+      "exposesCompleteAction": false,
+      "actionBindings": [],
+      "inputComplete": true
+    },
+    {
+      "family": "spring-framework",
+      "dsl": "KOTLIN",
+      "observedTransitions": 5,
+      "distinctTransitions": 5,
+      "distinctReports": 5,
+      "dslConsistent": true,
+      "conclusiveTransitions": 5,
+      "statuses": {
+        "NO_SAFE_ACTION": 4,
+        "TESTABLE_ACTIONS": 1
+      },
+      "independentlyDerivedCompleteActions": 1,
+      "exposesCompleteAction": true,
+      "actionBindings": [
+        {
+          "baseRevision": "d883602919438b89d69d1189b2ebc258918a8a37",
+          "targetRevision": "17e0daf8a16085bd553f1e71bc8a15542dbcd417",
+          "reportSha256": "6fcdf957da18b7ca0a4b6b85d794996580a4f35021871bf48e1ce156df407aec",
+          "actionBindingSha256": "48172d65fd48833341fd5e8d08ab1503bb3424a327a565ebc28d4851885617be"
+        }
+      ],
+      "inputComplete": true
+    }
+  ],
+  "completeInputFamilies": 5,
+  "completeInputFamiliesRequired": 5,
+  "familiesExposingCompleteActions": 1,
+  "familiesExposingCompleteActionsRequired": 3,
+  "breadthPass": false,
+  "timingAuthorized": false,
+  "activationAuthorized": false,
+  "outcome": "STOP_INSUFFICIENT_CHANGE_AWARE_BREADTH",
+  "nextBlock": "SWL-CHANGE-005"
+}

@@ -1,0 +1,198 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0 && $# != 2)); then
+    printf 'usage: %s [CAPTURE_DIR OUTPUT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_route_contract=${buildopt_root}/specs/poc-change-aware-producer-closure-v1.json
+buildopt_capture=${1:-${buildopt_root}/benchmarks/results/change-aware-producer-closure-v1}
+buildopt_output=${2:-${buildopt_root}/benchmarks/results/change-aware-breadth-gate-v1.json}
+[[ ${buildopt_capture} == /* && -d ${buildopt_capture} ]] || {
+    printf 'capture directory must be an existing absolute path\n' >&2
+    exit 1
+}
+[[ ${buildopt_output} == /* ]] || buildopt_output=${PWD}/${buildopt_output}
+
+for buildopt_command in awk basename cmp jq mktemp sha256sum sort; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-change-aware-breadth.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-change-aware-breadth.*)
+            rm -rf -- "${buildopt_temporary}"
+            ;;
+        *)
+            printf 'refusing to clean unexpected breadth root: %s\n' "${buildopt_temporary}" >&2
+            return 1
+            ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+jq -e '
+  .schemaVersion=="buildopt.poc/change-aware-producer-closure/v1" and
+  .workItem=="SWL-CHANGE" and
+  .discoveryGate.completeFamilyInputsRequired==5 and
+  .discoveryGate.familiesWithActionsRequired==3 and
+  .discoveryGate.requiredOutputEquivalence=="BYTE_EXACT" and
+  (.discoveryGate.timingAuthorizedBeforeBreadth|not) and
+  (.discoveryGate.activationAuthorizedBeforeValue|not) and
+  (.subjects|length)==5 and ([.subjects[]]|unique|length)==5
+' "${buildopt_route_contract}" >/dev/null || {
+    printf 'change-aware route contract is invalid\n' >&2
+    exit 1
+}
+jq -e '
+  .schemaVersion=="buildopt.poc/change-aware-public-capture-contract/v1" and
+  .workItem=="SWL-CHANGE-001" and
+  .requiredConclusiveTransitionsPerFamily==5 and
+  .ordinaryRequestedBuildsOnly and
+  (.historicalBuildOptStateImported|not) and
+  (.historicalTimingImported|not) and
+  (.performanceMeasured|not) and
+  (.activationAuthorized|not)
+' "${buildopt_capture}/contract.json" >/dev/null || {
+    printf 'change-aware capture contract is invalid\n' >&2
+    exit 1
+}
+
+buildopt_analyzer=${buildopt_temporary}/change-aware-producer
+"${buildopt_root}/dev/run" --toolchain go -- go build -o "${buildopt_analyzer}" ./cmd/change-aware-producer
+: >"${buildopt_temporary}/assessments.jsonl"
+
+while IFS= read -r buildopt_row; do
+    buildopt_capture_path=$(jq -er '.capture | select(test("^captures/[A-Za-z0-9._-]+\\.json$"))' <<<"${buildopt_row}")
+    buildopt_report_path=$(jq -er '.report | select(test("^reports/[A-Za-z0-9._-]+\\.json$"))' <<<"${buildopt_row}")
+    buildopt_expected_capture_sha=$(jq -er '.captureSha256 | select(test("^[0-9a-f]{64}$"))' <<<"${buildopt_row}")
+    buildopt_expected_report_sha=$(jq -er '.reportSha256 | select(test("^[0-9a-f]{64}$"))' <<<"${buildopt_row}")
+    buildopt_actual_capture_sha=$(sha256sum "${buildopt_capture}/${buildopt_capture_path}" | awk '{print $1}')
+    buildopt_actual_report_sha=$(sha256sum "${buildopt_capture}/${buildopt_report_path}" | awk '{print $1}')
+    [[ ${buildopt_actual_capture_sha} == "${buildopt_expected_capture_sha}" &&
+       ${buildopt_actual_report_sha} == "${buildopt_expected_report_sha}" ]] || {
+        printf 'transition evidence digest mismatch: %s\n' "${buildopt_report_path}" >&2
+        exit 1
+    }
+
+    buildopt_regenerated=${buildopt_temporary}/$(basename -- "${buildopt_report_path}")
+    "${buildopt_analyzer}" --input "${buildopt_capture}/${buildopt_capture_path}" \
+        --output "${buildopt_regenerated}"
+    cmp -s "${buildopt_capture}/${buildopt_report_path}" "${buildopt_regenerated}" || {
+        printf 'report is not reproducible from its capture: %s\n' "${buildopt_report_path}" >&2
+        exit 1
+    }
+
+    jq -ce --arg reportSha256 "${buildopt_actual_report_sha}" '
+      def conclusive:
+        .=="TESTABLE_ACTIONS" or .=="NO_SAFE_ACTION" or .=="NOT_APPLICABLE";
+      . as $report |
+      ($report.status|conclusive) as $conclusive |
+      (($report.status=="TESTABLE_ACTIONS") and
+        $report.inputComplete and $report.testableActions==1 and
+        ($report.changedPaths|length)>0 and ($report.requestedTasks|length)>0 and
+        ($report.requiredOutputs|length)>0 and ($report.affectedInputTasks|length)>0 and
+        ($report.requiredProducers|length)>0 and ($report.candidateTasks|length)>0 and
+        ($report.omittedTasks|length)>0 and ($report.omittedOutputs|length)>0 and
+        ($report.actionBindingSha256|test("^[0-9a-f]{64}$")) and
+        all($report.omittedOutputs[];
+          (.producerTask as $producer | $report.omittedTasks|index($producer)) != null and
+          (.path|type)=="string" and (.path|length)>0 and
+          (.kind=="FILE" or .kind=="DIRECTORY") and
+          (.sha256|test("^[0-9a-f]{64}$")))) as $completeAction |
+      select($report.schemaVersion=="buildopt.poc/change-aware-producer-report/v1") |
+      select(($report.performanceMeasured|not) and ($report.activationAuthorized|not)) |
+      {family:$report.family,dsl:$report.dsl,baseRevision:$report.baseRevision,
+       targetRevision:$report.targetRevision,status:$report.status,
+       conclusive:$conclusive,inputComplete:$report.inputComplete,
+       completeAction:$completeAction,reportSha256:$reportSha256,
+       actionBindingSha256:($report.actionBindingSha256 // null)}
+    ' "${buildopt_regenerated}" >>"${buildopt_temporary}/assessments.jsonl" || {
+        printf 'regenerated report contract is invalid: %s\n' "${buildopt_report_path}" >&2
+        exit 1
+    }
+done <"${buildopt_capture}/transitions.jsonl"
+
+buildopt_generated_at=$(jq -r '.generatedAt' "${buildopt_capture}/contract.json")
+buildopt_route_sha=$(sha256sum "${buildopt_route_contract}" | awk '{print $1}')
+buildopt_capture_contract_sha=$(sha256sum "${buildopt_capture}/contract.json" | awk '{print $1}')
+buildopt_transitions_sha=$(sha256sum "${buildopt_capture}/transitions.jsonl" | awk '{print $1}')
+buildopt_family_inputs_required=$(jq -r '.discoveryGate.completeFamilyInputsRequired' "${buildopt_route_contract}")
+buildopt_breadth_required=$(jq -r '.discoveryGate.familiesWithActionsRequired' "${buildopt_route_contract}")
+buildopt_transitions_required=$(jq -r '.requiredConclusiveTransitionsPerFamily' "${buildopt_capture}/contract.json")
+
+jq -s \
+    --arg generatedAt "${buildopt_generated_at}" \
+    --arg routeSha "${buildopt_route_sha}" \
+    --arg captureContractSha "${buildopt_capture_contract_sha}" \
+    --arg transitionsSha "${buildopt_transitions_sha}" \
+    --argjson familyInputsRequired "${buildopt_family_inputs_required}" \
+    --argjson breadthRequired "${buildopt_breadth_required}" \
+    --argjson transitionsRequired "${buildopt_transitions_required}" \
+    --slurpfile route "${buildopt_route_contract}" '
+  def family_assessment:
+    . as $rows |
+    ($rows[0].family) as $family |
+    {
+      family:$family,
+      dsl:$rows[0].dsl,
+      observedTransitions:($rows|length),
+      distinctTransitions:([$rows[]|(.baseRevision+":"+.targetRevision)]|unique|length),
+      distinctReports:([$rows[].reportSha256]|unique|length),
+      dslConsistent:(([$rows[].dsl]|unique|length)==1),
+      conclusiveTransitions:([$rows[]|select(.conclusive and .inputComplete)]|length),
+      statuses:($rows|group_by(.status)|map({key:.[0].status,value:length})|from_entries),
+      independentlyDerivedCompleteActions:([$rows[]|select(.completeAction)]|length),
+      exposesCompleteAction:(([$rows[]|select(.completeAction)]|length)>0),
+      actionBindings:[$rows[]|select(.completeAction)|
+        {baseRevision,targetRevision,reportSha256,actionBindingSha256}]
+    } |
+    .inputComplete=(.observedTransitions==$transitionsRequired and
+      .distinctTransitions==$transitionsRequired and
+      .distinctReports==$transitionsRequired and .dslConsistent and
+      .conclusiveTransitions==$transitionsRequired);
+  (sort_by(.family)|group_by(.family)|map(family_assessment)) as $families |
+  ([$families[]|select(.inputComplete)]|length) as $completeFamilies |
+  ([$families[]|select(.exposesCompleteAction)]|length) as $actionFamilies |
+  ($route[0].subjects|sort) as $expectedFamilies |
+  {
+    schemaVersion:"buildopt.poc/change-aware-breadth-gate/v1",
+    workItem:"SWL-CHANGE-002",
+    generatedAt:$generatedAt,
+    inputs:{
+      routeContractSha256:$routeSha,
+      captureContractSha256:$captureContractSha,
+      transitionsLedgerSha256:$transitionsSha,
+      summaryConsumed:false,
+      historicalEvidenceImported:false
+    },
+    expectedFamilies:$expectedFamilies,
+    observedFamilies:[$families[].family],
+    familyAssessments:$families,
+    completeInputFamilies:$completeFamilies,
+    completeInputFamiliesRequired:$familyInputsRequired,
+    familiesExposingCompleteActions:$actionFamilies,
+    familiesExposingCompleteActionsRequired:$breadthRequired,
+    breadthPass:($completeFamilies==$familyInputsRequired and
+      [$families[].family]==$expectedFamilies and $actionFamilies>=$breadthRequired),
+    timingAuthorized:($completeFamilies==$familyInputsRequired and
+      [$families[].family]==$expectedFamilies and $actionFamilies>=$breadthRequired),
+    activationAuthorized:false,
+    outcome:(if $completeFamilies!=$familyInputsRequired or [$families[].family]!=$expectedFamilies
+      then "BLOCKED_INCOMPLETE_INPUT"
+      elif $actionFamilies<$breadthRequired then "STOP_INSUFFICIENT_CHANGE_AWARE_BREADTH"
+      else "OPEN_CHANGE_AWARE_INSTALLED_VALUE" end),
+    nextBlock:(if $completeFamilies!=$familyInputsRequired or [$families[].family]!=$expectedFamilies
+      then "SWL-CHANGE-002"
+      elif $actionFamilies<$breadthRequired then "SWL-CHANGE-005"
+      else "SWL-CHANGE-003" end)
+  }
+' "${buildopt_temporary}/assessments.jsonl" >"${buildopt_output}"
+
+printf 'Change-aware breadth gate written to %s\n' "${buildopt_output}"

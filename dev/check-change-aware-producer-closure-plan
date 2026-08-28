@@ -55,13 +55,14 @@ jq -e '
 # Backticks below are literal Markdown syntax.
 # shellcheck disable=SC2016
 buildopt_required_plan_text=(
-    '**Overall:** `CHANGE_EVIDENCE_COMPLETE`'
-    '**Progress:** 2/6 blocks complete'
-    '**Current block:** `SWL-CHANGE-002`'
+    '**Overall:** `BREADTH_GATE_FAILED`'
+    '**Progress:** three blocks executed'
+    '**Current block:** `SWL-CHANGE-005`'
     '`CHANGE_AWARE_PRODUCER_CLOSURE_V1` is selected for implementation.'
     'At least three families'
     'All 25 transitions are conclusive'
-    'Do not benchmark, activate the Spring'
+    '**1/5** versus the frozen **3/5** threshold'
+    'Do not benchmark or'
 )
 for buildopt_text in "${buildopt_required_plan_text[@]}"; do
     grep -Fq -- "${buildopt_text}" "${buildopt_plan}" || {

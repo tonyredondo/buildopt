@@ -18,6 +18,7 @@ provision tools or create release artifacts document that effect explicitly.
 | Closed fresh generic predecessor and evidence boundary | `./dev/check-fresh-generic-optimization-plan` |
 | Change-aware producer/analyzer fixtures across Gradle and DSL variants | `./dev/check-change-aware-producer-fixtures` |
 | Fresh five-family change-aware transition capture | `./dev/check-change-aware-public-capture` |
+| Independent change-aware report reconstruction and fixed 3/5 breadth gate | `./dev/check-change-aware-breadth-gate` |
 | Generic task/graph producers, typed completeness and deterministic evidence | `./dev/check-sticky-evidence-producers` |
 | Fresh five-family cohort, capture bindings, producer completeness and exact outputs | `./dev/check-fresh-generic-capture` |
 | Independent fresh action recount and fixed public-breadth gate | `./dev/check-fresh-generic-opportunity-gate` |

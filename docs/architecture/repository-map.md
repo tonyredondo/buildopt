@@ -103,6 +103,12 @@ result enforces the frozen 3/5 breadth threshold before any timing can start.
 `dev/run-fresh-generic-terminal-decision` and its checker own the terminal
 scorecard. They bind the capture and opportunity report by digest and preserve
 unmeasured economics as typed states instead of manufacturing zero values.
+The successor change-aware path is owned by `internal/changeaware`,
+`cmd/change-aware-producer`, `dev/change-aware-producer.init.gradle` and the
+`dev/run-change-aware-*` runners. Its public capture keeps raw Gradle evidence,
+typed reports and an immutable transition ledger separate. The breadth runner
+rebuilds every report from raw capture rather than trusting the aggregate
+summary, then applies the frozen 3/5-family pre-timing gate.
 
 Run `./dev/check-fresh-generic-optimization-plan` to validate current planning
 authority and `./dev/check-sticky-wrapper-learning-plan` to preserve the

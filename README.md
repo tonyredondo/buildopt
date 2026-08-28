@@ -168,9 +168,11 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > fresh producer completed 25/25 conclusive transitions across Spring,
 > OpenTelemetry, Kafka, Micronaut and Groovy. Spring exposes one exact testable
 > action; the other 24 transitions safely retain the ordinary requested graph.
-> No wall time was measured and no action was activated. The next block must
-> independently recompute whether safe actions reach the unchanged 3/5-family
-> breadth gate before any timing is allowed. Follow the
+> No wall time was measured and no action was activated. Independent report
+> reconstruction confirms only **1/5** action breadth against the unchanged
+> **3/5** threshold, so installed and chronological timing are not authorized.
+> The next block records the terminal stop decision without treating unmeasured
+> economics as zero. Follow the
 > [change-aware tracker](./docs/plans/change-aware-producer-closure-poc-tracker.md).
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,

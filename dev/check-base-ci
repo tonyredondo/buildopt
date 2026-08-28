@@ -212,6 +212,7 @@ case "${buildopt_lane}" in
 		"${buildopt_script_dir}/check-generic-opportunity-discovery"
 		"${buildopt_script_dir}/check-change-aware-producer-fixtures" --static
 		"${buildopt_script_dir}/check-change-aware-public-capture"
+		"${buildopt_script_dir}/check-change-aware-breadth-gate"
 		"${buildopt_script_dir}/check-sticky-evidence-producers"
 		"${buildopt_script_dir}/check-sticky-wrapper-learning-plan"
 		"${buildopt_script_dir}/check-sticky-wrapper-contract"
