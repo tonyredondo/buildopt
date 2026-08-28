@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "24d13b574b9fa7f20237ec8efb902ff915c6d134",
+  "targetRevision": "5e9cc855181f95c9b1f80bcaaaf3fbaeab543dac",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "instrumentation/lettuce/lettuce-5.1/library/src/main/java/io/opentelemetry/instrumentation/lettuce/v5_1/LettuceDbAttributesGetter.java",
+    "instrumentation/lettuce/lettuce-5.1/library/src/main/java/io/opentelemetry/instrumentation/lettuce/v5_1/OpenTelemetryTracing.java",
+    "instrumentation/lettuce/lettuce-5.1/library/src/test/java/io/opentelemetry/instrumentation/lettuce/v5_1/LettuceDbAttributesGetterTest.java",
+    "instrumentation/lettuce/lettuce-5.1/testing/src/main/java/io/opentelemetry/instrumentation/lettuce/v5_1/AbstractLettuceAsyncClientTest.java",
+    "instrumentation/lettuce/lettuce-5.1/testing/src/main/java/io/opentelemetry/instrumentation/lettuce/v5_1/AbstractLettuceClientTest.java",
+    "instrumentation/lettuce/lettuce-5.1/testing/src/main/java/io/opentelemetry/instrumentation/lettuce/v5_1/AbstractLettuceReactiveClientTest.java",
+    "instrumentation/lettuce/lettuce-5.1/testing/src/main/java/io/opentelemetry/instrumentation/lettuce/v5_1/AbstractLettuceSyncClientAuthTest.java",
+    "instrumentation/lettuce/lettuce-5.1/testing/src/main/java/io/opentelemetry/instrumentation/lettuce/v5_1/AbstractLettuceSyncClientTest.java"
+  ],
+  "gradleArguments": [
+    ":javaagent:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "requestIdentitySha256": "a3b6c0614ae9aa7863544648c52bca07b65cceb0b1ed6c7d26408271ced66cc6",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

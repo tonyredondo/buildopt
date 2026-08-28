@@ -1,0 +1,168 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_result=${buildopt_root}/benchmarks/results/request-aligned-public-capture-v1
+buildopt_cohort=${buildopt_root}/benchmarks/results/fresh-generic-optimization-v1/cohort.json
+for buildopt_command in cmp jq mktemp sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+(
+    cd -- "${buildopt_result}"
+    sha256sum --check --strict sha256sums >/dev/null
+)
+jq -e \
+    --arg cohort "$(sha256sum "${buildopt_cohort}" | awk '{print $1}')" \
+    --arg producer "$(sha256sum "${buildopt_root}/internal/requestaligned/observation.go" | awk '{print $1}')" \
+    --arg classifier "$(sha256sum "${buildopt_root}/internal/requestaligned/classification.go" | awk '{print $1}')" \
+    --arg init "$(sha256sum "${buildopt_root}/dev/request-aligned-producer.init.gradle" | awk '{print $1}')" '
+  .schemaVersion=="buildopt.poc/request-aligned-public-capture-contract/v1" and
+  .workItem=="SWL-REQUEST-003" and .cohortSha256==$cohort and
+  .producerSha256==$producer and .classifierSha256==$classifier and .initSha256==$init and
+  .selectionPolicy=="CHRONOLOGICAL_RESERVE_THEN_PRIMARY_FIRST_PARENT_UNTIL_FIVE_RELEVANT_COMPLETE_OR_THIRTY_TRANSITIONS" and
+  .requiredRelevantTransitionsPerFamily==5 and .transitionBudgetPerFamily==30 and
+  .ordinaryRequestedBuildsOnly and .exactRequestPreserved and
+  (.historicalBuildOptStateImported|not) and (.historicalBuildOptTimingImported|not) and
+  (.historicalBuildOptActionImported|not) and (.performanceMeasured|not) and
+  (.activationAuthorized|not)
+' "${buildopt_result}/contract.json" >/dev/null || {
+    printf 'request-aligned public capture contract is invalid\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion=="buildopt.poc/request-aligned-public-capture-summary/v1" and
+  .workItem=="SWL-REQUEST-003" and .status=="COMPLETE" and .familyCount==5 and
+  ([.families[].family]|sort)==["apache-groovy","apache-kafka","micronaut-core","opentelemetry-java-instrumentation","spring-framework"] and
+  all(.families[];
+    .attemptedTransitions>=5 and .attemptedTransitions<=30 and
+    .relevantTransitions>=0 and .relevantTransitions<=.attemptedTransitions and
+    .actionTransitions>=0 and .actionTransitions<=.relevantTransitions and
+    ((.stopReason=="RELEVANT_TARGET_MET" and .relevantTransitions>=5) or
+     (.stopReason=="TRANSITION_BUDGET_EXHAUSTED" and .attemptedTransitions==30 and .relevantTransitions<5)) and
+    (.inputComplete==(.relevantTransitions>=5))
+  ) and
+  (.completeFamilies==([.families[]|select(.inputComplete)]|length)) and
+  (.actionFamilies==([.families[]|select(.actionTransitions>0)]|length)) and
+  (.performanceMeasured|not) and (.activationAuthorized|not) and
+  .outcome=="FRESH_RECURRENT_REQUEST_CAPTURE_COMPLETE"
+' "${buildopt_result}/summary.json" >/dev/null || {
+    printf 'request-aligned public capture summary is invalid\n' >&2
+    exit 1
+}
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-public-check.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-request-public-check.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected checker root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+buildopt_classifier=${buildopt_temporary}/request-aligned-classifier
+env GOCACHE="${buildopt_temporary}/go-cache" \
+    "${buildopt_root}/dev/run" --toolchain go -- \
+    go build -o "${buildopt_classifier}" ./cmd/request-aligned-classifier
+
+jq -se '
+  length>=25 and length<=150 and
+  all(.[];
+    (.attemptOrdinal|type)=="number" and .attemptOrdinal>=1 and .attemptOrdinal<=30 and
+    (.baseRevision|test("^[0-9a-f]{40}$")) and (.targetRevision|test("^[0-9a-f]{40}$")) and
+    (.baseCapture|test("^captures/[a-z0-9-]+/[0-9a-f]{40}\\.json$")) and
+    (.targetCapture|test("^captures/[a-z0-9-]+/[0-9a-f]{40}\\.json$")) and
+    (.report|test("^reports/[a-z0-9-]+-[0-9]{2}-[0-9a-f]{12}\\.json$")) and
+    (.baseCaptureSha256|test("^[0-9a-f]{64}$")) and
+    (.targetCaptureSha256|test("^[0-9a-f]{64}$")) and
+    (.reportSha256|test("^[0-9a-f]{64}$")) and
+    (.status=="RELEVANT_COMPLETE" or .status=="IRRELEVANT_TO_REQUEST" or
+     .status=="GLOBAL_OR_AMBIGUOUS" or .status=="INPUT_UNAVAILABLE" or
+     .status=="PRODUCER_FAILED") and
+    .exactArgumentsPreserved and (.performanceMeasured|not) and (.activationAuthorized|not)
+  ) and (group_by(.family)|length)==5
+' "${buildopt_result}/transitions.jsonl" >/dev/null || {
+    printf 'request-aligned transition ledger is invalid\n' >&2
+    exit 1
+}
+
+jq -se --slurpfile summary "${buildopt_result}/summary.json" '
+  group_by(.family)|map({
+    family:.[0].family,attemptedTransitions:length,
+    relevantTransitions:([.[]|select(.status=="RELEVANT_COMPLETE")]|length),
+    actionTransitions:([.[]|select(.status=="RELEVANT_COMPLETE" and .testableActions==1)]|length),
+    irrelevantTransitions:([.[]|select(.status=="IRRELEVANT_TO_REQUEST")]|length),
+    unsafeTransitions:([.[]|select(.status=="GLOBAL_OR_AMBIGUOUS" or .status=="INPUT_UNAVAILABLE" or .status=="PRODUCER_FAILED")]|length)
+  }) as $actual|
+  all($actual[]; . as $row |
+    ($summary[0].families[]|select(.family==$row.family)|
+      .attemptedTransitions==$row.attemptedTransitions and
+      .relevantTransitions==$row.relevantTransitions and
+      .actionTransitions==$row.actionTransitions and
+      .irrelevantTransitions==$row.irrelevantTransitions and
+      .unsafeTransitions==$row.unsafeTransitions))
+' "${buildopt_result}/transitions.jsonl" >/dev/null || {
+    printf 'request-aligned summary does not match the transition ledger\n' >&2
+    exit 1
+}
+
+while IFS= read -r buildopt_family; do
+    mapfile -t buildopt_rows < <(jq -c --arg family "${buildopt_family}" 'select(.family==$family)' \
+        "${buildopt_result}/transitions.jsonl")
+    buildopt_previous_target=
+    buildopt_expected_ordinal=1
+    for buildopt_row in "${buildopt_rows[@]}"; do
+        buildopt_ordinal=$(jq -r '.attemptOrdinal' <<<"${buildopt_row}")
+        buildopt_base=$(jq -r '.baseRevision' <<<"${buildopt_row}")
+        buildopt_target=$(jq -r '.targetRevision' <<<"${buildopt_row}")
+        [[ ${buildopt_ordinal} == "${buildopt_expected_ordinal}" ]] || {
+            printf '%s ledger ordinal is not contiguous\n' "${buildopt_family}" >&2
+            exit 1
+        }
+        if [[ -n ${buildopt_previous_target} && ${buildopt_base} != "${buildopt_previous_target}" ]]; then
+            printf '%s ledger is not a first-parent chain\n' "${buildopt_family}" >&2
+            exit 1
+        fi
+        buildopt_previous_target=${buildopt_target}
+        ((buildopt_expected_ordinal += 1))
+
+        buildopt_base_capture=$(jq -r '.baseCapture' <<<"${buildopt_row}")
+        buildopt_target_capture=$(jq -r '.targetCapture' <<<"${buildopt_row}")
+        buildopt_report=$(jq -r '.report' <<<"${buildopt_row}")
+        [[ $(sha256sum "${buildopt_result}/${buildopt_base_capture}" | awk '{print $1}') == \
+            "$(jq -r '.baseCaptureSha256' <<<"${buildopt_row}")" ]]
+        [[ $(sha256sum "${buildopt_result}/${buildopt_target_capture}" | awk '{print $1}') == \
+            "$(jq -r '.targetCaptureSha256' <<<"${buildopt_row}")" ]]
+        [[ $(sha256sum "${buildopt_result}/${buildopt_report}" | awk '{print $1}') == \
+            "$(jq -r '.reportSha256' <<<"${buildopt_row}")" ]]
+
+        jq -n \
+            --arg generatedAt "$(jq -r '.generatedAt' <<<"${buildopt_row}")" \
+            --arg base "${buildopt_base}" --arg target "${buildopt_target}" \
+            --argjson changedPaths "$(jq -c '.changedPaths' <<<"${buildopt_row}")" \
+            --slurpfile baseCapture "${buildopt_result}/${buildopt_base_capture}" \
+            --slurpfile targetCapture "${buildopt_result}/${buildopt_target_capture}" '
+          {
+            schemaVersion:"buildopt.poc/request-aligned-transition/v1",
+            generatedAt:$generatedAt,baseRevision:$base,targetRevision:$target,
+            changedPaths:$changedPaths,baseCapture:$baseCapture[0],targetCapture:$targetCapture[0]
+          }
+        ' >"${buildopt_temporary}/transition.json"
+        "${buildopt_classifier}" --input "${buildopt_temporary}/transition.json" \
+            --output "${buildopt_temporary}/report.json"
+        cmp -s "${buildopt_result}/${buildopt_report}" "${buildopt_temporary}/report.json" || {
+            printf '%s report does not regenerate: %s\n' "${buildopt_family}" "${buildopt_report}" >&2
+            exit 1
+        }
+    done
+done < <(jq -r '.families[].family' "${buildopt_result}/summary.json")
+
+printf 'Request-aligned public capture: PASS\n'

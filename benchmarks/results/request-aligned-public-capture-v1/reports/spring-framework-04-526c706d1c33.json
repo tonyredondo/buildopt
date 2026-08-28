@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "e8e293a706002a42859a86044fc103a3f5e255be",
+  "targetRevision": "526c706d1c33863b16591ef0507170e02365229b",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "framework-docs/modules/ROOT/pages/core/aop/schema.adoc",
+    "framework-docs/modules/ROOT/pages/core/appendix/xml-custom.adoc",
+    "framework-docs/modules/ROOT/pages/data-access/transaction/strategies.adoc",
+    "framework-docs/modules/ROOT/pages/testing/resttestclient.adoc",
+    "framework-docs/modules/ROOT/pages/testing/testcontext-framework/ctx-management/groovy.adoc",
+    "framework-docs/modules/ROOT/pages/web/webflux/config.adoc",
+    "framework-docs/modules/ROOT/pages/web/webmvc-test.adoc",
+    "framework-docs/modules/ROOT/pages/web/webmvc/mvc-config/content-negotiation.adoc"
+  ],
+  "gradleArguments": [
+    ":spring-core:checkArchitectureMain",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":spring-core:checkArchitectureMain"
+  ],
+  "requestIdentitySha256": "128575a183222e73c0c9754b03540933c7132f98f5117bc524075e947c7a9262",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

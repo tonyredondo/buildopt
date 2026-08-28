@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "c22bcfba2669b1b93e547a4916d28db981d000e6",
+  "targetRevision": "120a79cd09d99fe054fb4f63d8e5c4c90e2cae20",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "instrumentation/openai/openai-java-1.1/library/src/main/java/io/opentelemetry/instrumentation/openai/v1_1/StreamListener.java",
+    "instrumentation/openai/openai-java-1.1/testing/src/main/java/io/opentelemetry/instrumentation/openai/v1_1/AbstractChatTest.java",
+    "instrumentation/openai/openai-java-1.1/testing/src/main/resources/mappings/io.opentelemetry.instrumentation.openai.v1_1.abstractchattest.streammalformedchoiceindex.yaml"
+  ],
+  "gradleArguments": [
+    ":javaagent:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "requestIdentitySha256": "a3b6c0614ae9aa7863544648c52bca07b65cceb0b1ed6c7d26408271ced66cc6",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "5e9cc855181f95c9b1f80bcaaaf3fbaeab543dac",
+  "targetRevision": "8ed163b8fc2f460348fa324932b0a3b34cc85c8b",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "instrumentation/jmx-metrics/library/kafka-connect.md",
+    "instrumentation/jmx-metrics/library/src/main/resources/jmx/rules/experimental-kafka-connect.yaml",
+    "instrumentation/jmx-metrics/library/src/test/java/io/opentelemetry/instrumentation/jmx/rules/TargetSystemTest.java",
+    "instrumentation/jmx-metrics/library/src/test/java/io/opentelemetry/instrumentation/jmx/rules/WeaverContainer.java",
+    "instrumentation/jmx-metrics/library/src/test/java/io/opentelemetry/instrumentation/jmx/rules/kafka/KafkaConnectTest.java",
+    "instrumentation/jmx-metrics/model/kafka-connect.yaml"
+  ],
+  "gradleArguments": [
+    ":javaagent:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "requestIdentitySha256": "a3b6c0614ae9aa7863544648c52bca07b65cceb0b1ed6c7d26408271ced66cc6",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "83a5eadde884f5ad2845ca5896ae83167b781bf8",
+  "targetRevision": "3e0bc2801e223a74c126f25496c3ff5caaca0b52",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS",
+  "changedPaths": [
+    "clients/clients-integration-tests/src/test/java/org/apache/kafka/clients/admin/AlterConfigsIntegrationTest.java",
+    "core/src/main/scala/kafka/server/ConfigAdminManager.scala",
+    "core/src/main/scala/kafka/server/DynamicBrokerConfig.scala",
+    "core/src/main/scala/kafka/server/KafkaApis.scala",
+    "core/src/main/scala/kafka/server/KafkaConfig.scala",
+    "core/src/test/scala/unit/kafka/server/ConfigAdminManagerTest.scala",
+    "core/src/test/scala/unit/kafka/server/KafkaConfigTest.scala",
+    "server/src/main/java/org/apache/kafka/server/config/DynamicBrokerConfig.java",
+    "server/src/main/java/org/apache/kafka/server/config/DynamicConfig.java"
+  ],
+  "gradleArguments": [
+    ":clients:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":clients:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": false,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

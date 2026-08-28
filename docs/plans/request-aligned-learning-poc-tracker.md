@@ -2,11 +2,11 @@
 
 ## Status
 
-**Overall:** `CLASSIFIER_COMPLETE`
+**Overall:** `PUBLIC_CAPTURE_COMPLETE`
 
-**Progress:** three of eight blocks complete
+**Progress:** four of eight blocks complete
 
-**Current block:** `SWL-REQUEST-003`
+**Current block:** `SWL-REQUEST-004`
 
 **Predecessor:** the [change-aware producer route](./change-aware-producer-closure-poc-tracker.md)
 stopped before timing at 1/5 action breadth. No predecessor timing or action is
@@ -66,8 +66,8 @@ discovers current outputs from producer tasks and binds their exact bytes.
 | 0 | `SWL-REQUEST-000` Cause analysis and hypothesis selection | Recompute all predecessor negatives, reject non-material reruns and preregister the new route | `DONE` | terminal SWL-CHANGE evidence |
 | 1 | `SWL-REQUEST-001` Request identity and current-output producer | Canonical request identity, current producer-output discovery and typed observation schema | `DONE` | SWL-REQUEST-000 |
 | 2 | `SWL-REQUEST-002` Relevance classifier and fixtures | Classify relevant, irrelevant, global, ambiguous, unavailable and failed transitions across Gradle 8/9 and Kotlin/Groovy | `DONE` | SWL-REQUEST-001 |
-| 3 | `SWL-REQUEST-003` Fresh public recurrent-request capture | Capture five relevant ordinary transitions in each frozen family without importing historical BuildOpt evidence | `TODO` | SWL-REQUEST-002 |
-| 4 | `SWL-REQUEST-004` Independent breadth gate | Rebuild reports and require complete actions in at least 3/5 families | `WAITING` | SWL-REQUEST-003 |
+| 3 | `SWL-REQUEST-003` Fresh public recurrent-request capture | Capture five relevant ordinary transitions in each frozen family without importing historical BuildOpt evidence | `DONE` | SWL-REQUEST-002 |
+| 4 | `SWL-REQUEST-004` Independent breadth gate | Rebuild reports and require complete actions in at least 3/5 families | `TODO` | SWL-REQUEST-003 |
 | 5 | `SWL-REQUEST-005` Installed value | Eight balanced pairs per admitted action with exact outputs and complete costs | `WAITING` | breadth passes |
 | 6 | `SWL-REQUEST-006` Chronological value | At least 15 comparable relevant transitions per admitted family with cumulative economics | `WAITING` | installed value passes |
 | 7 | `SWL-REQUEST-007` Terminal decision | Continue or stop from correctness, breadth, value, confidence, payback, overhead and failures | `WAITING` | all authorized predecessors |
@@ -147,6 +147,16 @@ is exhausted. Irrelevant transitions remain in the ledger but do not satisfy
 the five-transition requirement. No repository-specific selection or hidden
 reserve replacement is allowed.
 
+Implemented outcome: the immutable capture contains 110 chronological
+transitions and no imported BuildOpt observation, timing or decision. Groovy
+reaches five relevant action-bearing transitions after seven attempts and
+Spring after 13. Kafka exhausts 30 transitions with 30 global-or-ambiguous
+outcomes. Micronaut exhausts 30 with 16 irrelevant and 14 unsafe outcomes;
+OpenTelemetry exhausts 30 with 19 irrelevant and 11 global-or-ambiguous
+outcomes. The aggregate result is therefore two complete families and two
+action families out of five. These counts are descriptive only until the next
+block independently rebuilds all reports.
+
 ### SWL-REQUEST-004 — Independent breadth gate
 
 Ignore any aggregate summary and regenerate every report from its capture.
@@ -183,8 +193,8 @@ than zero.
 | `SWL-REQUEST-E001` | SWL-REQUEST-000 | Recomputed cause analysis, rejected alternatives, selected hypothesis and frozen route | `DONE` — [`request-aligned-successor-selection-v1.json`](../../benchmarks/results/request-aligned-successor-selection-v1.json) |
 | `SWL-REQUEST-E002` | SWL-REQUEST-001 | Request identity, current-output producer and negative fixtures | `DONE` — [`request-aligned-producer-fixtures-v1.json`](../../benchmarks/results/request-aligned-producer-fixtures-v1.json) |
 | `SWL-REQUEST-E003` | SWL-REQUEST-002 | Relevance classifier and Gradle/DSL fixture matrix | `DONE` — [`request-aligned-classifier-fixtures-v1.json`](../../benchmarks/results/request-aligned-classifier-fixtures-v1.json) |
-| `SWL-REQUEST-E004` | SWL-REQUEST-003 | Fresh five-family recurrent-request ledger | `TODO` |
-| `SWL-REQUEST-E005` | SWL-REQUEST-004 | Independent breadth decision | `WAITING` |
+| `SWL-REQUEST-E004` | SWL-REQUEST-003 | Fresh five-family recurrent-request ledger | `DONE` — [`request-aligned-public-capture-v1`](../../benchmarks/results/request-aligned-public-capture-v1/summary.json) |
+| `SWL-REQUEST-E005` | SWL-REQUEST-004 | Independent breadth decision | `TODO` |
 | `SWL-REQUEST-E006` | SWL-REQUEST-005 | Installed paired value and cost ledger | `WAITING` |
 | `SWL-REQUEST-E007` | SWL-REQUEST-006 | Chronological cumulative value | `WAITING` |
 | `SWL-REQUEST-E008` | SWL-REQUEST-007 | Terminal scorecard | `WAITING` |
@@ -202,10 +212,12 @@ than zero.
 
 ## Immediate next action
 
-Implement `SWL-REQUEST-003` exactly as specified: start from zero BuildOpt
-observations and capture chronological ordinary requests until each frozen
-public family reaches five `RELEVANT_COMPLETE` transitions or its 30-transition
-budget is exhausted. Preserve every irrelevant and unsafe result in the ledger.
-Do not time or activate a candidate in this block.
+Implement `SWL-REQUEST-004` exactly as specified: ignore the aggregate summary,
+verify the immutable ledger and rebuild every classifier report from its raw
+capture before counting completeness or actions. Apply the unchanged five
+complete-family, five-relevant-transition and three-action-family requirements.
+The checked aggregate suggests the gate will stop at two complete/action
+families, but that is not authoritative until the independent reconstruction
+proves it.
 
-No successor timing is authorized by `SWL-REQUEST-002`.
+No successor timing is authorized by `SWL-REQUEST-003`.

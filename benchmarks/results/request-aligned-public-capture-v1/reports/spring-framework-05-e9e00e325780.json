@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "526c706d1c33863b16591ef0507170e02365229b",
+  "targetRevision": "e9e00e325780351c2175b164e625967723d63dab",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "REQUEST_IDENTITY_CHANGED",
+  "changedPaths": [
+    "gradle/wrapper/gradle-wrapper.properties"
+  ],
+  "gradleArguments": [
+    ":spring-core:checkArchitectureMain",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":spring-core:checkArchitectureMain"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

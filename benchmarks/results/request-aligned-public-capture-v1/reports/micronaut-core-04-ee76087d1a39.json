@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "a898c29504a7cd3301131cfb1441d41078e27d16",
+  "targetRevision": "ee76087d1a392696f3e92a6d3ed092b2ecfc44b1",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "inject-python/src/main/java/io/micronaut/python/processing/PythonEnvironment.java",
+    "inject-python/src/main/java/io/micronaut/python/processing/PythonStubGenerator.java",
+    "inject-python/src/main/java/io/micronaut/python/processing/annotation/PythonAnnotationMetadataBuilder.java",
+    "inject-python/src/main/java/io/micronaut/python/processing/visitor/ControllerScriptElementProcessor.java",
+    "inject-python/src/main/java/io/micronaut/python/processing/visitor/PythonScriptElement.java",
+    "inject-python/src/main/java/io/micronaut/python/processing/visitor/ScriptDef.java",
+    "inject-python/src/main/resources/GRAALPY-VFS/io.micronaut/micronaut-inject-python/src/micronaut_processor.py",
+    "inject-python/src/test/java/io/micronaut/python/processing/PythonAstParserTest.java",
+    "src/main/docs/guide/languageSupport/python/moduleScripts.adoc",
+    "src/main/docs/guide/languageSupport/python/moduleScripts/testing.adoc",
+    "src/main/docs/guide/toc.yml",
+    "test-suite-python/src/test/python/example/ModuleSpec.py",
+    "test-suite-python/src/test/python/example/module_routes.py"
+  ],
+  "gradleArguments": [
+    ":micronaut-core:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "requestIdentitySha256": "55158a12d461d0f3da978ef442be3433e5ebe2e4be465b62a4b2cebf3208b39b",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "f0ce273c3705eb81610417492cba410f34012e5e",
+  "targetRevision": "3c9d984a50a273f7ee1a8dea8d4fcae91cfb2477",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "instrumentation/influxdb-2.4/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/influxdb/v2_4/InfluxDbClientTest.java"
+  ],
+  "gradleArguments": [
+    ":javaagent:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "requestIdentitySha256": "a4a9a890b6b81c4d67b2ee9528bce4e058c2b859be38e3cabfd515ce0d2b8a9f",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

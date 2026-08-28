@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "f070bf5e42ed4708930802f7229ef549105d2207",
+  "targetRevision": "a23044d47d3c73e863047bbe55abcc0a7eb29ae2",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "REQUEST_IDENTITY_CHANGED",
+  "changedPaths": [
+    ".github/workflows/python.yml",
+    "gradle/libs.versions.toml"
+  ],
+  "gradleArguments": [
+    ":micronaut-core:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "9f1512a245ea75b773213dd36f6f0e6ee95a2176",
+  "targetRevision": "20aa07522d9b95782d2b6d1db700457745c5ea2e",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS",
+  "changedPaths": [
+    ".asf.yaml"
+  ],
+  "gradleArguments": [
+    ":clients:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":clients:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": false,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

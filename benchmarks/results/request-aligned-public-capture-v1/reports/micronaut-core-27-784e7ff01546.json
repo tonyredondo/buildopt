@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+  "targetRevision": "784e7ff015460df6fb6a7742bb4a8f5e20bb2256",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "REQUEST_IDENTITY_CHANGED",
+  "changedPaths": [
+    "gradle/libs.versions.toml",
+    "http/src/main/java/io/micronaut/http/Destination.java",
+    "http/src/main/java/io/micronaut/http/HttpHeaders.java",
+    "http/src/main/java/io/micronaut/http/HttpRequest.java",
+    "http/src/main/java/io/micronaut/http/Mode.java",
+    "http/src/main/java/io/micronaut/http/SecFetch.java",
+    "http/src/main/java/io/micronaut/http/Site.java",
+    "http/src/test/groovy/io/micronaut/http/HttpHeadersSpec.groovy",
+    "http/src/test/java/io/micronaut/http/DestinationTest.java",
+    "http/src/test/java/io/micronaut/http/ModeTest.java",
+    "http/src/test/java/io/micronaut/http/SecFetchTest.java",
+    "http/src/test/java/io/micronaut/http/SiteTest.java"
+  ],
+  "gradleArguments": [
+    ":micronaut-core:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

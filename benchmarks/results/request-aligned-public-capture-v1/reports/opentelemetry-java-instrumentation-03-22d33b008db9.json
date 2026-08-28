@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "3791351cde2c4c865c776ef255a3041fec98a008",
+  "targetRevision": "22d33b008db9c709deb102718eebf3aeebd7cb3d",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    ".github/agents/knowledge/javaagent-singletons-patterns.md",
+    ".github/copilot-instructions.md",
+    ".github/instructions/java-style.instructions.md",
+    "docs/contributing/style-guide.md",
+    "instrumentation/hbase/hbase-client-common-1.0/javaagent/src/main/java/org/apache/hadoop/hbase/ipc/OpenTelemetryCallUtil.java",
+    "instrumentation/jdbc/library/src/main/java/io/opentelemetry/instrumentation/jdbc/internal/JdbcData.java",
+    "instrumentation/kafka/kafka-clients/kafka-clients-common-0.11/library/src/main/java/io/opentelemetry/instrumentation/kafkaclients/common/v0_11/internal/KafkaConsumerContextUtil.java",
+    "instrumentation/kafka/kafka-clients/kafka-clients-common-0.11/library/src/main/java/io/opentelemetry/instrumentation/kafkaclients/common/v0_11/internal/KafkaUtil.java",
+    "instrumentation/netty/netty-3.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/netty/v3_8/client/HttpClientRequestTracingHandler.java",
+    "instrumentation/netty/netty-3.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/netty/v3_8/client/HttpClientResponseTracingHandler.java",
+    "instrumentation/netty/netty-3.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/netty/v3_8/server/HttpServerRequestTracingHandler.java",
+    "instrumentation/netty/netty-3.8/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/netty/v3_8/server/HttpServerResponseTracingHandler.java",
+    "instrumentation/okhttp/okhttp-3.0/library/src/main/java/io/opentelemetry/instrumentation/okhttp/v3_0/TracingCallFactory.java",
+    "instrumentation/reactor/reactor-netty/reactor-netty-1.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/reactornetty/v1_0/InstrumentationContexts.java",
+    "instrumentation/servlet/servlet-3.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/servlet/v3_0/snippet/ServletOutputStreamInjectionState.java",
+    "instrumentation/spring/spring-cloud-aws-3.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/spring/cloud/aws/v3_0/SpringAwsUtil.java",
+    "instrumentation/spring/spring-kafka-2.7/library/src/main/java/io/opentelemetry/instrumentation/spring/kafka/v2_7/InstrumentedBatchInterceptor.java",
+    "instrumentation/spring/spring-kafka-2.7/library/src/main/java/io/opentelemetry/instrumentation/spring/kafka/v2_7/InstrumentedRecordInterceptor.java",
+    "instrumentation/thrift-0.13/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/thrift/v0_13/ThriftSingletons.java",
+    "instrumentation/tomcat/tomcat-jdbc-8.5/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/tomcat/jdbc/v8_5/TomcatJdbcSingletons.java",
+    "instrumentation/vertx/vertx-redis-client-4.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/vertx/redisclient/v4_0/VertxRedisClientSingletons.java",
+    "instrumentation/vertx/vertx-sql-client/vertx-sql-client-4.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/vertx/sqlclient/v4_0/VertxSqlClientSingletons.java",
+    "instrumentation/vertx/vertx-sql-client/vertx-sql-client-5.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/vertx/sqlclient/v5_0/VertxSqlClientSingletons.java",
+    "smoke-tests/extensions/extension/src/main/java/io/opentelemetry/smoketest/extensions/inlined/SmokeInlinedInstrumentation.java"
+  ],
+  "gradleArguments": [
+    ":javaagent:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "requestIdentitySha256": "c1a8cfa6cd57a783c79fdf88af2cf9a775035689dc1e5ebfc3b49951723fcd03",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

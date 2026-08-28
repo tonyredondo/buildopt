@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "b30f281849f32b399b871359e0036040a70f849a",
+  "targetRevision": "e5ea4eb8bf9782e0c121aa29dac79a5f388cc656",
+  "status": "RELEVANT_COMPLETE",
+  "reason": "EXACT_RELEVANT_PRODUCER_CLOSURE",
+  "changedPaths": [
+    "src/main/java/groovy/concurrent/AwaitableAdapterRegistry.java",
+    "src/main/java/groovy/io/LineColumnReader.java",
+    "src/main/java/groovy/lang/NumberRange.java",
+    "src/main/java/org/apache/groovy/parser/antlr4/AstBuilder.java",
+    "src/main/java/org/codehaus/groovy/ast/FieldNode.java",
+    "src/main/java/org/codehaus/groovy/classgen/asm/ClosureWriter.java",
+    "src/main/java/org/codehaus/groovy/classgen/asm/sc/StaticTypesMethodReferenceExpressionWriter.java",
+    "src/main/java/org/codehaus/groovy/runtime/MetaClassHelper.java",
+    "src/test/groovy/org/codehaus/groovy/runtime/memoize/CacheCleanupTest.groovy",
+    "src/test/groovy/org/codehaus/groovy/util/ManagedConcurrentValueMapTest.groovy",
+    "subprojects/groovy-ant/src/main/java/groovy/ant/AntBuilder.java",
+    "subprojects/groovy-console/src/main/groovy/groovy/console/ui/text/TextEditor.java",
+    "subprojects/groovy-contracts/src/main/java/org/apache/groovy/contracts/ast/LoopVariantASTTransformation.java",
+    "subprojects/groovy-ginq/src/main/groovy/org/apache/groovy/ginq/provider/collection/runtime/Null.groovy",
+    "subprojects/groovy-ginq/src/main/groovy/org/apache/groovy/ginq/provider/collection/runtime/WindowImpl.java",
+    "subprojects/groovy-groovydoc/src/main/java/org/codehaus/groovy/tools/groovydoc/antlr4/GroovyDocParser.java",
+    "subprojects/groovy-groovydoc/src/main/java/org/codehaus/groovy/tools/groovydoc/antlr4/GroovydocJavaVisitor.java",
+    "subprojects/groovy-json/src/main/java/org/apache/groovy/json/internal/JsonFastParser.java",
+    "subprojects/groovy-json/src/main/java/org/apache/groovy/json/internal/JsonParserLax.java",
+    "subprojects/groovy-xml/src/test/groovy/groovy/xml/FactorySupportTest.java"
+  ],
+  "gradleArguments": [
+    ":jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":jar"
+  ],
+  "requestIdentitySha256": "aef499b3b9051db893f5e811d68a8d6e0ba4f0a50fc251b9479d5d1f26388233",
+  "affectedInputTasks": [
+    ":compileJava"
+  ],
+  "candidateTasks": [
+    ":bootstrapJar",
+    ":classes",
+    ":compileGroovy",
+    ":compileJava",
+    ":dgmConverter",
+    ":jar",
+    ":osgiClasses"
+  ],
+  "omittedTasks": [
+    ":generateGrammarSource",
+    ":generateReleaseInfo",
+    ":processResources"
+  ],
+  "omittedOutputs": [
+    {
+      "producerTask": ":generateGrammarSource",
+      "path": "build/generated/sources/antlr4",
+      "kind": "DIRECTORY",
+      "sha256": "622226073387da73e1528ee8e1dde3190e2ee406321b799f65451b585a3b6eb0"
+    },
+    {
+      "producerTask": ":generateReleaseInfo",
+      "path": "build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "sha256": "21d6ccfde80a4b9fbdaa2f2dd802972c17f2d1d1d1df54c6b7f3585986f324bc"
+    },
+    {
+      "producerTask": ":processResources",
+      "path": "build/resources/main",
+      "kind": "DIRECTORY",
+      "sha256": "86e0781ba285376c7a43ede57c8cccf4461240ce3d8f552a39634a84bc6d4c7e"
+    }
+  ],
+  "actionBindingSha256": "cd15670644c4f2e310e0ee0b59f8bd0829581e2d587f0fe016769ada87c4ebfb",
+  "inputComplete": true,
+  "testableActions": 1,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

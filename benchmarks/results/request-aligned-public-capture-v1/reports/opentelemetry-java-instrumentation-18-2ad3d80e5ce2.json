@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "2d2e3a1351a7cfa0571a674db4a21f0a2e8ad259",
+  "targetRevision": "2ad3d80e5ce2597b416b01851f4433ae02cd780c",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "REQUEST_IDENTITY_CHANGED",
+  "changedPaths": [
+    "instrumentation/internal/internal-class-loader/compile-stub/src/main/java/io/opentelemetry/javaagent/bootstrap/internal/classloader/stub/ClassLoader.java",
+    "instrumentation/internal/internal-class-loader/javaagent/build.gradle.kts",
+    "instrumentation/internal/internal-class-loader/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/internal/classloader/BootDelegationInstrumentation.java",
+    "instrumentation/internal/internal-class-loader/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/internal/classloader/ClassLoaderInstrumentationModule.java",
+    "instrumentation/internal/internal-class-loader/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/internal/classloader/DefineClassInstrumentation.java",
+    "instrumentation/internal/internal-class-loader/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/internal/classloader/LoadInjectedClassInstrumentation.java",
+    "instrumentation/internal/internal-class-loader/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/internal/classloader/ResourceInjectionInstrumentation.java"
+  ],
+  "gradleArguments": [
+    ":javaagent:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

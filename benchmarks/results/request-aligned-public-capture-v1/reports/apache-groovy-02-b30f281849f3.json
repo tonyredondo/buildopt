@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "0a33cb24792d473f0f80a71b89b63c3a9167f6e1",
+  "targetRevision": "b30f281849f32b399b871359e0036040a70f849a",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "gradle/verification-metadata.xml",
+    "versions.properties"
+  ],
+  "gradleArguments": [
+    ":jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":jar"
+  ],
+  "requestIdentitySha256": "aef499b3b9051db893f5e811d68a8d6e0ba4f0a50fc251b9479d5d1f26388233",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

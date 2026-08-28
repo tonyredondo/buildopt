@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "f8b4e5ce89b24fa8bc0a1bee867847e03ab51184",
+  "targetRevision": "a898c29504a7cd3301131cfb1441d41078e27d16",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "inject-python-test/src/test/groovy/io/micronaut/python/compiler/PyronautCompilerSpec.groovy",
+    "inject-python/src/main/java/io/micronaut/python/compiler/PyronautCompiler.java",
+    "inject-python/src/main/java/io/micronaut/python/compiler/PyronautJavaCompiler.java",
+    "inject-python/src/main/java/io/micronaut/python/processing/PythonAnnotationProcessor.java",
+    "inject-python/src/main/java/io/micronaut/python/processing/PythonAstParser.java",
+    "inject-python/src/main/resources/GRAALPY-VFS/io.micronaut/micronaut-inject-python/src/micronaut_transformer.py",
+    "inject-python/src/test/java/io/micronaut/python/compiler/PyronautCompilerIncrementalTest.java",
+    "inject-python/src/test/java/io/micronaut/python/compiler/PyronautCompilerTest.java"
+  ],
+  "gradleArguments": [
+    ":micronaut-core:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "requestIdentitySha256": "55158a12d461d0f3da978ef442be3433e5ebe2e4be465b62a4b2cebf3208b39b",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

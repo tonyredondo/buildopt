@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "b896ddd18ce3da585a28db0b76156ca14673c521",
+  "targetRevision": "4816b4dd47e3506156e0658e80cb6469b2ce3504",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "REQUEST_IDENTITY_CHANGED",
+  "changedPaths": [
+    "instrumentation/jms/jms-1.1/javaagent/build.gradle.kts",
+    "instrumentation/reactor/reactor-kafka-1.0/javaagent/build.gradle.kts",
+    "instrumentation/spring/spring-jms/spring-jms-2.0/javaagent/build.gradle.kts",
+    "instrumentation/spring/spring-pulsar-1.0/javaagent/build.gradle.kts",
+    "instrumentation/vertx/vertx-kafka-client-3.6/vertx-kafka-client-3.6-testing/build.gradle.kts",
+    "instrumentation/vertx/vertx-kafka-client-3.6/vertx-kafka-client-4-testing/build.gradle.kts",
+    "instrumentation/vertx/vertx-kafka-client-3.6/vertx-kafka-client-5-testing/build.gradle.kts"
+  ],
+  "gradleArguments": [
+    ":javaagent:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

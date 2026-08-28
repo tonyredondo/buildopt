@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "b868a19567c7f00e195b4fb3e21dacdb585728e5",
+  "targetRevision": "197938e99b52fbc568432b73d19bf1fa3d7c65e9",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    ".github/workflows/central-sync.yml",
+    ".github/workflows/graalvm-dev.yml",
+    ".github/workflows/graalvm-latest.yml",
+    ".github/workflows/gradle.yml",
+    ".github/workflows/publish-snapshot.yml",
+    ".github/workflows/python.yml",
+    ".github/workflows/release.yml",
+    ".github/workflows/sonatype.yml"
+  ],
+  "gradleArguments": [
+    ":micronaut-core:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "requestIdentitySha256": "55158a12d461d0f3da978ef442be3433e5ebe2e4be465b62a4b2cebf3208b39b",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

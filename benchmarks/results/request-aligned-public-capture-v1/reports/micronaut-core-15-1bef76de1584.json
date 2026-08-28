@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "a6b836422f6d89cd935906280e98fd95345833f9",
+  "targetRevision": "1bef76de158433f9a164dd9320e2fad3b31dbf46",
+  "status": "INPUT_UNAVAILABLE",
+  "reason": "OMITTED_OUTPUT_EVIDENCE_INCOMPLETE",
+  "changedPaths": [
+    "core/src/main/java/io/micronaut/core/io/service/ServiceScanner.java",
+    "core/src/main/java/io/micronaut/core/util/NativeImageUtils.java",
+    "core/src/test/java/io/micronaut/core/io/service/SoftServiceLoaderTest.java"
+  ],
+  "gradleArguments": [
+    ":micronaut-core:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "requestIdentitySha256": "08239003565745bb7f9741ad67e74f450276e295f4066679c2e4cf119af8799c",
+  "affectedInputTasks": [
+    ":micronaut-core:compileJava"
+  ],
+  "candidateTasks": [
+    ":micronaut-core:classes",
+    ":micronaut-core:compileGroovy",
+    ":micronaut-core:compileJava",
+    ":micronaut-core:jar"
+  ],
+  "omittedTasks": [
+    ":micronaut-core:generateNativeImageProperties",
+    ":micronaut-core:generatePomFileForMavenPublication",
+    ":micronaut-core:micronautVersionInfo",
+    ":micronaut-core:processResources"
+  ],
+  "omittedOutputs": [],
+  "inputComplete": false,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

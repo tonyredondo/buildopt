@@ -58,7 +58,30 @@ Kotlin/Groovy matrix with:
 The dynamic check regenerates 32 scenarios byte for byte. `--static` validates
 the checked evidence without running Gradle. Only complete relevant partial
 requests describe an action; every unsafe or full-graph case emits none. This
-opens fresh public capture at `SWL-REQUEST-003`, not timing or activation.
+made fresh public capture possible at `SWL-REQUEST-003`; it did not authorize
+timing or activation.
+
+Regenerate the bounded five-family public capture from clean public mirrors
+with:
+
+```bash
+./dev/run-request-aligned-public-capture OUTPUT_DIR MIRROR_ROOT
+```
+
+The runner processes ten reserve plus 20 primary first-parent transitions per
+family until five relevant transitions are found or the fixed budget is
+exhausted. Validate the checked capture without rebuilding public repositories
+with:
+
+```bash
+./dev/check-request-aligned-public-capture
+```
+
+The checker verifies every digest and first-parent chain, reconstructs all 110
+classifier reports from their raw captures and confirms exact arguments. The
+checked result has two complete/action families, Groovy and Spring. It contains
+no timing or activation authority; `SWL-REQUEST-004` owns the independent
+breadth decision.
 
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:

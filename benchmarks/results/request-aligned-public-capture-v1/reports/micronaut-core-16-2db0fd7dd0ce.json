@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "1bef76de158433f9a164dd9320e2fad3b31dbf46",
+  "targetRevision": "2db0fd7dd0ce5c26faf72f05852e88ddea466a7e",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "inject-python/src/main/resources/GRAALPY-VFS/io.micronaut/micronaut-inject-python/src/micronaut_transformer.py",
+    "inject-python/src/test/java/io/micronaut/python/processing/PythonAstParserTest.java"
+  ],
+  "gradleArguments": [
+    ":micronaut-core:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "requestIdentitySha256": "08239003565745bb7f9741ad67e74f450276e295f4066679c2e4cf119af8799c",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

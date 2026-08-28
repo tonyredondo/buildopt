@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-public-capture-contract/v1",
+  "workItem": "SWL-REQUEST-003",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "cohortSha256": "792fba0176d473e78af169d61224bed3182e066bbb794dcadb04fb0673dab022",
+  "producerSha256": "44182ead468a35bdf7a0fec737c8cd7827a6693e2a126c0436f2b00f8598132f",
+  "classifierSha256": "66ffe41c3d176b0427761259970990d003446c7a314930709e06e52e41998fb3",
+  "initSha256": "1864a5d96ecff3a1199d3e1d180a5d9e2a8886ccf26a508022e4657ad82d8693",
+  "selectionPolicy": "CHRONOLOGICAL_RESERVE_THEN_PRIMARY_FIRST_PARENT_UNTIL_FIVE_RELEVANT_COMPLETE_OR_THIRTY_TRANSITIONS",
+  "requiredRelevantTransitionsPerFamily": 5,
+  "transitionBudgetPerFamily": 30,
+  "ordinaryRequestedBuildsOnly": true,
+  "exactRequestPreserved": true,
+  "historicalBuildOptStateImported": false,
+  "historicalBuildOptTimingImported": false,
+  "historicalBuildOptActionImported": false,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

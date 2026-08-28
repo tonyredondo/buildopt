@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "f06bb3693f9851421c86ca95c4621699be194b7f",
+  "targetRevision": "88d07edeb51e663fad6f1375abcad48e4f9b99c0",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "core-processor/src/main/java/io/micronaut/aop/writer/ProxyingBeanDefinitionWriter.java",
+    "core-processor/src/main/java/io/micronaut/inject/writer/BeanDefinitionWriter.java",
+    "inject-java/src/test/groovy/io/micronaut/aop/compile/PreDestroyInterceptorCompileSpec.groovy"
+  ],
+  "gradleArguments": [
+    ":micronaut-core:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "requestIdentitySha256": "db1df34743605efc38474ec1a59802bc6c31edbad7022515f69b7f9594eff04f",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

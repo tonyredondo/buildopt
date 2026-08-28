@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "6f9ca5672ce84edbbe36ce0e14386c31d68f479f",
+  "targetRevision": "5233c7f7ee051f073a1882c2afcfe7e6d3227504",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "instrumentation/apache-commons-pool-2.0/library/src/test/java/io/opentelemetry/instrumentation/apachecommonspool/v2_0/CommonsPoolInstrumentationTest.java",
+    "instrumentation/apache-commons-pool-2.0/testing/src/main/java/io/opentelemetry/instrumentation/apachecommonspool/AbstractCommonsPoolInstrumentationTest.java"
+  ],
+  "gradleArguments": [
+    ":javaagent:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "requestIdentitySha256": "85b209597de3222394a4c617cac9b6126b5c427d7c6eda3aa425ab0adad7df89",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

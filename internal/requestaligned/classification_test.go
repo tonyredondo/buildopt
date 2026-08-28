@@ -40,6 +40,10 @@ func TestClassifyRequiredStates(t *testing.T) {
 			status: ClassificationIrrelevant, reason: "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
 		},
 		{
+			name: "identical tree", mutate: func(value *Transition) { value.ChangedPaths = []string{} },
+			status: ClassificationIrrelevant, reason: "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+		},
+		{
 			name: "global identity drift", mutate: func(value *Transition) {
 				value.TargetCapture.BuildLogicFiles[0].SHA256 = strings.Repeat("9", 64)
 			},

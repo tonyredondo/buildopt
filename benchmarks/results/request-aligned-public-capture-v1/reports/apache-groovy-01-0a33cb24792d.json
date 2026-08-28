@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "350d4adde69da7cd40467b653353100c90cd4d59",
+  "targetRevision": "0a33cb24792d473f0f80a71b89b63c3a9167f6e1",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "subprojects/groovy-json/src/test/groovy/groovy/json/JsonSlurperLaxTest.groovy"
+  ],
+  "gradleArguments": [
+    ":jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":jar"
+  ],
+  "requestIdentitySha256": "aef499b3b9051db893f5e811d68a8d6e0ba4f0a50fc251b9479d5d1f26388233",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

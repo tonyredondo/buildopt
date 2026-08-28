@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "7f877b34aff79d817f89e48b741bb3966ba9b188",
+  "targetRevision": "0f217d25d3ae3caeadd88b404699ac384e0c37e1",
+  "status": "RELEVANT_COMPLETE",
+  "reason": "EXACT_RELEVANT_PRODUCER_CLOSURE",
+  "changedPaths": [
+    "src/main/java/org/codehaus/groovy/transform/stc/StaticTypeCheckingVisitor.java",
+    "src/test/groovy/bugs/Groovy7165.groovy",
+    "src/test/groovy/groovy/transform/stc/ConstructorsSTCTest.groovy",
+    "src/test/groovy/groovy/transform/stc/FieldsAndPropertiesSTCTest.groovy",
+    "src/test/groovy/org/codehaus/groovy/classgen/asm/sc/StaticCompileConstructorsTest.groovy"
+  ],
+  "gradleArguments": [
+    ":jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":jar"
+  ],
+  "requestIdentitySha256": "aef499b3b9051db893f5e811d68a8d6e0ba4f0a50fc251b9479d5d1f26388233",
+  "affectedInputTasks": [
+    ":compileJava"
+  ],
+  "candidateTasks": [
+    ":bootstrapJar",
+    ":classes",
+    ":compileGroovy",
+    ":compileJava",
+    ":dgmConverter",
+    ":jar",
+    ":osgiClasses"
+  ],
+  "omittedTasks": [
+    ":generateGrammarSource",
+    ":generateReleaseInfo",
+    ":processResources"
+  ],
+  "omittedOutputs": [
+    {
+      "producerTask": ":generateGrammarSource",
+      "path": "build/generated/sources/antlr4",
+      "kind": "DIRECTORY",
+      "sha256": "622226073387da73e1528ee8e1dde3190e2ee406321b799f65451b585a3b6eb0"
+    },
+    {
+      "producerTask": ":generateReleaseInfo",
+      "path": "build/release-info/groovy-release-info.properties",
+      "kind": "FILE",
+      "sha256": "21d6ccfde80a4b9fbdaa2f2dd802972c17f2d1d1d1df54c6b7f3585986f324bc"
+    },
+    {
+      "producerTask": ":processResources",
+      "path": "build/resources/main",
+      "kind": "DIRECTORY",
+      "sha256": "86e0781ba285376c7a43ede57c8cccf4461240ce3d8f552a39634a84bc6d4c7e"
+    }
+  ],
+  "actionBindingSha256": "adeaaa571ac9d323e9f58513355b414e58bd8dbc850dbdc47c0ce6c40a7a0039",
+  "inputComplete": true,
+  "testableActions": 1,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

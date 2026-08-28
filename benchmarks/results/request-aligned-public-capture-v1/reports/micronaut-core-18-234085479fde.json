@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "e8773c4db69ccae2bfac5559c7a71c92b58a422c",
+  "targetRevision": "234085479fde13fbfdeed63970ca3f9455f3eb0c",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "REQUEST_IDENTITY_CHANGED",
+  "changedPaths": [
+    "core-processor/src/main/java/io/micronaut/context/visitor/ConfigurationMetadataWriterVisitor.java",
+    "core-processor/src/main/java/io/micronaut/inject/configuration/JsonSchemaConfigurationMetadataWriter.java",
+    "http-server-netty/src/main/java/io/micronaut/http/server/netty/multipart/FormDemuxer.java",
+    "http-server-tck/src/main/java/io/micronaut/http/server/tck/tests/cors/CorsSimpleRequestTest.java",
+    "http-server-tck/src/main/java/io/micronaut/http/server/tck/tests/cors/SimpleRequestWithCorsNotEnabledTest.java",
+    "inject-java/src/test/groovy/io/micronaut/inject/configuration/ConfigurationJsonSchemaSpec.groovy",
+    "inject/src/test/java/io/micronaut/context/DefaultApplicationContextTest.java",
+    "src/main/docs/guide/httpServer/transfers.adoc",
+    "test-suite-http-server-tck-jdk/build.gradle.kts",
+    "test-suite-http-server-tck-netty/build.gradle.kts"
+  ],
+  "gradleArguments": [
+    ":micronaut-core:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

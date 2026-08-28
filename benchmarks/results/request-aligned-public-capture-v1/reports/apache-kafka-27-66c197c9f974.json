@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "20d81283e880410100aa5934430d9a74c6cc65f9",
+  "targetRevision": "66c197c9f9749715de55f9a415e6aade73ac7830",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS",
+  "changedPaths": [
+    "streams/src/test/java/org/apache/kafka/streams/state/HostInfoTest.java",
+    "streams/src/test/java/org/apache/kafka/streams/state/StateSerdesTest.java",
+    "streams/src/test/java/org/apache/kafka/streams/state/StoresTest.java",
+    "streams/src/test/java/org/apache/kafka/streams/state/StreamsMetadataTest.java"
+  ],
+  "gradleArguments": [
+    ":clients:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":clients:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": false,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

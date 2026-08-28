@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "e1b601cb256e1ebc50162dda3f0b1e193d6db1fb",
+  "targetRevision": "54d38f397e622b2fa5f8bc72fc04bd5ea87c6d8a",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    ".agents/skills/coding/SKILL.md",
+    ".agents/skills/gradle/SKILL.md",
+    "context-python/src/main/java/io/micronaut/context/python/annotation/PythonModule.java",
+    "inject-python-test/src/test/groovy/io/micronaut/python/compiler/PyronautCompilerSpec.groovy",
+    "inject-python/src/main/java/io/micronaut/python/compiler/IncrementalCompilation.java",
+    "inject-python/src/main/java/io/micronaut/python/processing/PythonAstParser.java",
+    "inject-python/src/main/java/io/micronaut/python/processing/PythonStubGenerator.java",
+    "inject-python/src/main/java/io/micronaut/python/processing/visitor/ScriptDef.java",
+    "test-suite-python/src/test/python/example/test_main.py"
+  ],
+  "gradleArguments": [
+    ":micronaut-core:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "requestIdentitySha256": "08239003565745bb7f9741ad67e74f450276e295f4066679c2e4cf119af8799c",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

@@ -123,12 +123,17 @@ The active request-aligned contract is owned by
 runners. The selection result reconstructs the 24 predecessor causes; the
 checked producer and classifier matrices then prove portable canonical identity,
 unique current-output discovery and all five transition statuses on Gradle 8/9
-× Kotlin/Groovy. They open only `SWL-REQUEST-003` fresh public capture; no new
-runtime optimizer exists yet.
+× Kotlin/Groovy. `dev/run-request-aligned-public-capture` and
+`dev/check-request-aligned-public-capture` own the checked 110-transition
+ledger under `benchmarks/results/request-aligned-public-capture-v1/`. Groovy
+and Spring complete the relevant cohort; the other three families exhaust the
+budget. `SWL-REQUEST-004` owns the independent breadth decision; no new runtime
+optimizer exists yet.
 
 Run `./dev/check-request-aligned-successor-selection` and
 `./dev/check-request-aligned-producer` and
-`./dev/check-request-aligned-classifier` to validate the active route,
+`./dev/check-request-aligned-classifier` and
+`./dev/check-request-aligned-public-capture` to validate the active route,
 `./dev/check-change-aware-producer-closure-plan` for its closed
 predecessor, `./dev/check-fresh-generic-optimization-plan` for the earlier
 fresh route and `./dev/check-sticky-wrapper-learning-plan` to preserve the

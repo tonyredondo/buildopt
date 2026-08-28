@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "1fa934068284f85b7ef06189e658d805604ab709",
+  "targetRevision": "8eb07f3e7b9eba2a858365560f841aa3ba0859ba",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS",
+  "changedPaths": [
+    "docker/jvm/Dockerfile",
+    "docker/test/fixtures/file-input/server.properties",
+    "docker/test/fixtures/mode/combined/docker-compose.yml",
+    "docker/test/fixtures/mode/isolated/docker-compose.yml"
+  ],
+  "gradleArguments": [
+    ":clients:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":clients:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": false,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

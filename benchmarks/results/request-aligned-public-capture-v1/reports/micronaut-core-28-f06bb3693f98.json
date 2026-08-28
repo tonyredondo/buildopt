@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "784e7ff015460df6fb6a7742bb4a8f5e20bb2256",
+  "targetRevision": "f06bb3693f9851421c86ca95c4621699be194b7f",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "inject-python-test/src/test/groovy/io/micronaut/python/annotation/processing/test/ConfigurationBuilderSpec.groovy",
+    "inject-python-test/src/test/groovy/io/micronaut/python/compiler/GenerateToStringEqualsSpec.groovy",
+    "inject-python/src/main/java/io/micronaut/python/processing/PythonStubGenerator.java",
+    "inject-python/src/test/java/io/micronaut/python/compiler/PyronautCompilerTest.java"
+  ],
+  "gradleArguments": [
+    ":micronaut-core:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "requestIdentitySha256": "db1df34743605efc38474ec1a59802bc6c31edbad7022515f69b7f9594eff04f",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

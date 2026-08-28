@@ -185,14 +185,17 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > `REQUEST_ALIGNED_RECURRENT_CLOSURE_V1`: learn only from ordinary repeated
 > customer commands, wait for changes relevant to that exact requested graph
 > and discover outputs from current producer tasks. Its first two implementation
-> blocks now pass Gradle 8/9 × Kotlin/Groovy: request identities survive
+> implementation blocks pass Gradle 8/9 × Kotlin/Groovy: request identities survive
 > checkout relocation, all eight compatibility bindings separate identities,
 > the versioned Groovy JAR is discovered from `:jar`, and incomplete ownership
 > fails typed. The adjacent-transition classifier adds 32 scenarios covering
 > all five frozen statuses, exact relevant closures, current renamed outputs
-> and fail-closed no-action outcomes. Fresh five-family recurrent-request
-> capture is next. This is observation evidence, not a speed result; timing
-> and activation remain unauthorized. Follow the
+> and fail-closed no-action outcomes. The fresh public capture now preserves
+> **110** chronological transitions. Groovy and Spring each reach five relevant
+> exact actions; Kafka, Micronaut and OpenTelemetry exhaust their fixed
+> 30-transition budgets, leaving only **2/5** complete/action families. The
+> independent breadth reconstruction is next. This is observation evidence,
+> not a speed result; timing and activation remain unauthorized. Follow the
 > [request-aligned tracker](./docs/plans/request-aligned-learning-poc-tracker.md).
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,

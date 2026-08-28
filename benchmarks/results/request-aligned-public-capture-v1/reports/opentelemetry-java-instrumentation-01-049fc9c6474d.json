@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "09ba49d1f3f07bdecdec8e0d02086300c7de9a45",
+  "targetRevision": "049fc9c6474dc62702dd754fa293672fdc1af716",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "instrumentation/elasticsearch/elasticsearch-transport-5.3/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/v5_3/springdata/Elasticsearch53SpringRepositoryTest.java",
+    "instrumentation/elasticsearch/elasticsearch-transport-5.3/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/v5_3/springdata/Elasticsearch53SpringTemplateTest.java",
+    "instrumentation/elasticsearch/elasticsearch-transport-6.0/javaagent/src/elasticsearch7Test/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/v7_0/Elasticsearch7TransportClientTest.java",
+    "instrumentation/elasticsearch/elasticsearch-transport-common-5.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/common/v5_0/ElasticsearchActionNames.java",
+    "instrumentation/elasticsearch/elasticsearch-transport-common-5.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/common/v5_0/ElasticsearchTransportAttributesGetter.java",
+    "instrumentation/elasticsearch/elasticsearch-transport-common-5.0/testing/src/main/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/common/v5_0/AbstractElasticsearchNodeClientTest.java",
+    "instrumentation/elasticsearch/elasticsearch-transport-common-5.0/testing/src/main/java/io/opentelemetry/javaagent/instrumentation/elasticsearch/transport/common/v5_0/AbstractElasticsearchTransportClientTest.java"
+  ],
+  "gradleArguments": [
+    ":javaagent:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "requestIdentitySha256": "c1a8cfa6cd57a783c79fdf88af2cf9a775035689dc1e5ebfc3b49951723fcd03",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

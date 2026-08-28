@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+  "targetRevision": "f8b4e5ce89b24fa8bc0a1bee867847e03ab51184",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "REQUEST_IDENTITY_CHANGED",
+  "changedPaths": [
+    "inject-python/build.gradle.kts",
+    "inject-python/src/main/java/io/micronaut/python/compiler/IncrementalCompilation.java",
+    "inject-python/src/main/java/io/micronaut/python/compiler/PyronautCompiler.java",
+    "inject-python/src/main/java/io/micronaut/python/compiler/PyronautJavaCompiler.java",
+    "inject-python/src/main/java/io/micronaut/python/processing/PythonProcessingSession.java",
+    "inject-python/src/test/java/io/micronaut/python/compiler/PyronautCompilerIncrementalTest.java"
+  ],
+  "gradleArguments": [
+    ":micronaut-core:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "f067d40f0a646a98d0e2735a34b6e31f0e3f2c97",
+  "targetRevision": "e8e293a706002a42859a86044fc103a3f5e255be",
+  "status": "RELEVANT_COMPLETE",
+  "reason": "EXACT_RELEVANT_PRODUCER_CLOSURE",
+  "changedPaths": [
+    "spring-core/src/main/java/org/springframework/core/convert/Property.java",
+    "spring-core/src/test/java/org/springframework/core/convert/PropertyTests.java"
+  ],
+  "gradleArguments": [
+    ":spring-core:checkArchitectureMain",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":spring-core:checkArchitectureMain"
+  ],
+  "requestIdentitySha256": "128575a183222e73c0c9754b03540933c7132f98f5117bc524075e947c7a9262",
+  "affectedInputTasks": [
+    ":spring-core:compileJava",
+    ":spring-core:compileKotlin"
+  ],
+  "candidateTasks": [
+    ":spring-core:checkArchitectureMain",
+    ":spring-core:compileJava",
+    ":spring-core:compileKotlin"
+  ],
+  "omittedTasks": [
+    ":spring-core:checkKotlinGradlePluginConfigurationErrors",
+    ":spring-core:javapoetRepackJar",
+    ":spring-core:objenesisRepackJar",
+    ":spring-core:processResources"
+  ],
+  "omittedOutputs": [
+    {
+      "producerTask": ":spring-core:javapoetRepackJar",
+      "path": "spring-core/build/libs/spring-javapoet-repack-0.10.0.jar",
+      "kind": "FILE",
+      "sha256": "44f626eed79def0bc72ef00c3844d05f80755a83f29afdefd68665f6f69a13fd"
+    },
+    {
+      "producerTask": ":spring-core:objenesisRepackJar",
+      "path": "spring-core/build/libs/spring-objenesis-repack-3.5.jar",
+      "kind": "FILE",
+      "sha256": "066f61072767a9f18192c16fc7a6981508daafc04c1c52ee16ba9d9e49b2c4b3"
+    },
+    {
+      "producerTask": ":spring-core:processResources",
+      "path": "spring-core/build/resources/main",
+      "kind": "DIRECTORY",
+      "sha256": "e51888369604e441c97af9132fcb5058bf8b9176762a5d4ce44db7b364769b8b"
+    }
+  ],
+  "actionBindingSha256": "6da2fcf884bf514fa583a31ca6ad2690de6c2e4fa8875a734b289f099717be7a",
+  "inputComplete": true,
+  "testableActions": 1,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

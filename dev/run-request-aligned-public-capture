@@ -1,0 +1,256 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 2)); then
+    printf 'usage: dev/run-request-aligned-public-capture HISTORY_ROOT OUTPUT_DIR\n' >&2
+    exit 64
+fi
+
+buildopt_history_root=$1
+buildopt_output=$2
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_cohort=${buildopt_root}/benchmarks/results/fresh-generic-optimization-v1/cohort.json
+[[ ${buildopt_history_root} == /* && -d ${buildopt_history_root} ]] || {
+    printf 'history root must be an existing absolute directory\n' >&2
+    exit 1
+}
+[[ ${buildopt_output} == /* && ! -e ${buildopt_output} ]] || {
+    printf 'output must be a new absolute path\n' >&2
+    exit 1
+}
+for buildopt_command in date git jq mktemp sha256sum sort xargs; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-public.XXXXXX)
+buildopt_worktree=
+buildopt_worktree_history=
+buildopt_cleanup_worktree() {
+    if [[ -n ${buildopt_worktree:-} && -n ${buildopt_worktree_history:-} && -e ${buildopt_worktree} ]]; then
+        git -C "${buildopt_worktree_history}" worktree remove --force "${buildopt_worktree}" >/dev/null 2>&1 || true
+    fi
+    buildopt_worktree=
+    buildopt_worktree_history=
+}
+buildopt_cleanup() {
+    buildopt_cleanup_worktree
+    case ${buildopt_temporary} in
+        /tmp/buildopt-request-public.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected capture root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+mkdir -p -- "${buildopt_output}/captures" "${buildopt_output}/reports"
+buildopt_classifier=${buildopt_temporary}/request-aligned-classifier
+env GOCACHE="${buildopt_temporary}/go-cache" \
+    "${buildopt_root}/dev/run" --toolchain go -- \
+    go build -o "${buildopt_classifier}" ./cmd/request-aligned-classifier
+: >"${buildopt_output}/transitions.jsonl"
+
+buildopt_generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+jq -n \
+    --arg generatedAt "${buildopt_generated_at}" \
+    --arg cohortSha256 "$(sha256sum "${buildopt_cohort}" | awk '{print $1}')" \
+    --arg producerSha256 "$(sha256sum "${buildopt_root}/internal/requestaligned/observation.go" | awk '{print $1}')" \
+    --arg classifierSha256 "$(sha256sum "${buildopt_root}/internal/requestaligned/classification.go" | awk '{print $1}')" \
+    --arg initSha256 "$(sha256sum "${buildopt_root}/dev/request-aligned-producer.init.gradle" | awk '{print $1}')" '
+  {
+    schemaVersion:"buildopt.poc/request-aligned-public-capture-contract/v1",
+    workItem:"SWL-REQUEST-003",generatedAt:$generatedAt,
+    cohortSha256:$cohortSha256,producerSha256:$producerSha256,
+    classifierSha256:$classifierSha256,initSha256:$initSha256,
+    selectionPolicy:"CHRONOLOGICAL_RESERVE_THEN_PRIMARY_FIRST_PARENT_UNTIL_FIVE_RELEVANT_COMPLETE_OR_THIRTY_TRANSITIONS",
+    requiredRelevantTransitionsPerFamily:5,transitionBudgetPerFamily:30,
+    ordinaryRequestedBuildsOnly:true,exactRequestPreserved:true,
+    historicalBuildOptStateImported:false,historicalBuildOptTimingImported:false,
+    historicalBuildOptActionImported:false,performanceMeasured:false,
+    activationAuthorized:false
+  }
+' >"${buildopt_output}/contract.json"
+
+buildopt_failed_capture() {
+    local buildopt_path=$1
+    local buildopt_arguments=$2
+    local buildopt_requested=$3
+    jq -n --arg generatedAt "${buildopt_generated_at}" \
+        --argjson arguments "${buildopt_arguments}" --argjson requested "${buildopt_requested}" '
+      {
+        schemaVersion:"buildopt.poc/request-aligned-producer-capture/v1",
+        generatedAt:$generatedAt,status:"FAILED",reason:"GRADLE_CAPTURE_FAILED",
+        gradleArguments:$arguments,requestedTasks:$requested,gradleVersion:"",
+        javaRuntime:{version:"",vendor:"",runtimeName:"",vmName:"",architecture:""},
+        environmentBindingSha256:"",wrapperFiles:[],buildLogicFiles:[],tasks:[]
+      }
+    ' >"${buildopt_path}"
+}
+
+buildopt_capture_revision() {
+    local buildopt_family=$1
+    local buildopt_history=$2
+    local buildopt_revision=$3
+    local buildopt_jdk=$4
+    local buildopt_arguments_json=$5
+    local buildopt_requested_json=$6
+    local buildopt_capture=${buildopt_output}/captures/${buildopt_family}/${buildopt_revision}.json
+    local buildopt_log=${buildopt_temporary}/${buildopt_family}-${buildopt_revision}.log
+    if [[ -f ${buildopt_capture} ]]; then
+        return
+    fi
+    mkdir -p -- "$(dirname -- "${buildopt_capture}")"
+    mapfile -t buildopt_invocation < <(jq -r '.[]' <<<"${buildopt_arguments_json}")
+    buildopt_worktree=${buildopt_temporary}/worktree
+    buildopt_worktree_history=${buildopt_history}
+    git -C "${buildopt_history}" worktree add --detach "${buildopt_worktree}" "${buildopt_revision}" >/dev/null
+    if ! env \
+        BUILDOPT_REQUEST_CAPTURE_OUTPUT="${buildopt_capture}" \
+        BUILDOPT_REQUEST_ARGUMENTS="${buildopt_arguments_json}" \
+        BUILDOPT_REQUEST_TASKS="${buildopt_requested_json}" \
+        BUILDOPT_REQUEST_GENERATED_AT="${buildopt_generated_at}" \
+        GRADLE_USER_HOME="${buildopt_root}/.tools/gradle-user-home/local" \
+        "${buildopt_root}/dev/run" --toolchain "${buildopt_jdk}" -- \
+            "${buildopt_worktree}/gradlew" "${buildopt_invocation[@]:1}" \
+            --project-dir "${buildopt_worktree}" \
+            -I "${buildopt_root}/dev/request-aligned-producer.init.gradle" \
+            buildoptRequestAlignedCapture >"${buildopt_log}" 2>&1; then
+        buildopt_failed_capture "${buildopt_capture}" "${buildopt_arguments_json}" "${buildopt_requested_json}"
+    fi
+    buildopt_cleanup_worktree
+    jq -c . "${buildopt_capture}" >"${buildopt_temporary}/normalized-capture.json"
+    mv "${buildopt_temporary}/normalized-capture.json" "${buildopt_capture}"
+}
+
+mapfile -t buildopt_families < <(jq -r '.families[].family' "${buildopt_cohort}")
+for buildopt_family in "${buildopt_families[@]}"; do
+    buildopt_history=${buildopt_history_root}/${buildopt_family}
+    git -C "${buildopt_history}" rev-parse --git-dir >/dev/null 2>&1 || {
+        printf 'missing Git history for %s\n' "${buildopt_family}" >&2
+        exit 1
+    }
+    buildopt_dsl=$(jq -r --arg family "${buildopt_family}" '.families[]|select(.family==$family)|.dsl' "${buildopt_cohort}")
+    buildopt_jdk=$(jq -r --arg family "${buildopt_family}" '.families[]|select(.family==$family)|.jdk' "${buildopt_cohort}")
+    buildopt_arguments_json=$(jq -c --arg family "${buildopt_family}" '.families[]|select(.family==$family)|.workflow' "${buildopt_cohort}")
+    buildopt_requested_json=$(jq -nc --arg task "$(jq -r '.[0]' <<<"${buildopt_arguments_json}")" '[$task]')
+    mapfile -t buildopt_targets < <(jq -r --arg family "${buildopt_family}" '
+      .families[]|select(.family==$family)|(.reserve[]?.sha),(.primary[]?.sha)
+    ' "${buildopt_cohort}")
+    ((${#buildopt_targets[@]} == 30)) || {
+        printf '%s does not have the frozen 30-transition budget\n' "${buildopt_family}" >&2
+        exit 1
+    }
+    buildopt_relevant=0
+    buildopt_ordinal=0
+    buildopt_previous_target=
+
+    for buildopt_target in "${buildopt_targets[@]}"; do
+        ((buildopt_relevant >= 5)) && break
+        ((buildopt_ordinal += 1))
+        buildopt_base=$(git -C "${buildopt_history}" rev-parse "${buildopt_target}^1")
+        if [[ -n ${buildopt_previous_target} && ${buildopt_base} != "${buildopt_previous_target}" ]]; then
+            printf '%s target sequence is not first-parent chronological at ordinal %d\n' \
+                "${buildopt_family}" "${buildopt_ordinal}" >&2
+            exit 1
+        fi
+        buildopt_capture_revision "${buildopt_family}" "${buildopt_history}" "${buildopt_base}" \
+            "${buildopt_jdk}" "${buildopt_arguments_json}" "${buildopt_requested_json}"
+        buildopt_capture_revision "${buildopt_family}" "${buildopt_history}" "${buildopt_target}" \
+            "${buildopt_jdk}" "${buildopt_arguments_json}" "${buildopt_requested_json}"
+        buildopt_previous_target=${buildopt_target}
+
+        mapfile -d '' -t buildopt_changed_paths < <(
+            git -C "${buildopt_history}" diff --name-only --diff-filter=ACMRTUXB -z \
+                "${buildopt_base}" "${buildopt_target}"
+        )
+        if ((${#buildopt_changed_paths[@]} == 0)); then
+            buildopt_changed_json='[]'
+        else
+            buildopt_changed_json=$(printf '%s\0' "${buildopt_changed_paths[@]}" | jq -Rs 'split("\u0000")[:-1]')
+        fi
+        buildopt_slug=${buildopt_family}-$(printf '%02d' "${buildopt_ordinal}")-${buildopt_target:0:12}
+        buildopt_report=${buildopt_output}/reports/${buildopt_slug}.json
+        buildopt_transition=${buildopt_temporary}/${buildopt_slug}-transition.json
+        jq -n --arg generatedAt "${buildopt_generated_at}" \
+            --arg base "${buildopt_base}" --arg target "${buildopt_target}" \
+            --argjson changedPaths "${buildopt_changed_json}" \
+            --slurpfile baseCapture "${buildopt_output}/captures/${buildopt_family}/${buildopt_base}.json" \
+            --slurpfile targetCapture "${buildopt_output}/captures/${buildopt_family}/${buildopt_target}.json" '
+          {
+            schemaVersion:"buildopt.poc/request-aligned-transition/v1",
+            generatedAt:$generatedAt,baseRevision:$base,targetRevision:$target,
+            changedPaths:$changedPaths,baseCapture:$baseCapture[0],targetCapture:$targetCapture[0]
+          }
+        ' >"${buildopt_transition}"
+        "${buildopt_classifier}" --input "${buildopt_transition}" --output "${buildopt_report}"
+        buildopt_status=$(jq -r '.status' "${buildopt_report}")
+        [[ ${buildopt_status} == RELEVANT_COMPLETE ]] && ((buildopt_relevant += 1)) || true
+
+        jq -nc \
+            --arg generatedAt "${buildopt_generated_at}" --arg family "${buildopt_family}" \
+            --arg dsl "${buildopt_dsl}" --arg base "${buildopt_base}" --arg target "${buildopt_target}" \
+            --arg baseCapture "captures/${buildopt_family}/${buildopt_base}.json" \
+            --arg targetCapture "captures/${buildopt_family}/${buildopt_target}.json" \
+            --arg report "reports/${buildopt_slug}.json" \
+            --argjson expectedArguments "${buildopt_arguments_json}" \
+            --arg baseCaptureSha256 "$(sha256sum "${buildopt_output}/captures/${buildopt_family}/${buildopt_base}.json" | awk '{print $1}')" \
+            --arg targetCaptureSha256 "$(sha256sum "${buildopt_output}/captures/${buildopt_family}/${buildopt_target}.json" | awk '{print $1}')" \
+            --arg reportSha256 "$(sha256sum "${buildopt_report}" | awk '{print $1}')" \
+            --argjson ordinal "${buildopt_ordinal}" --argjson changedPaths "${buildopt_changed_json}" \
+            --slurpfile result "${buildopt_report}" '
+          {
+            generatedAt:$generatedAt,family:$family,dsl:$dsl,attemptOrdinal:$ordinal,
+            baseRevision:$base,targetRevision:$target,changedPaths:$changedPaths,
+            baseCapture:$baseCapture,baseCaptureSha256:$baseCaptureSha256,
+            targetCapture:$targetCapture,targetCaptureSha256:$targetCaptureSha256,
+            report:$report,reportSha256:$reportSha256,
+            status:$result[0].status,reason:$result[0].reason,
+            inputComplete:$result[0].inputComplete,
+            testableActions:$result[0].testableActions,
+            candidateTaskCount:($result[0].candidateTasks|length),
+            omittedTaskCount:($result[0].omittedTasks|length),
+            omittedOutputCount:($result[0].omittedOutputs|length),
+            exactArgumentsPreserved:($result[0].gradleArguments==$expectedArguments),
+            performanceMeasured:$result[0].performanceMeasured,
+            activationAuthorized:$result[0].activationAuthorized
+          }
+        ' >>"${buildopt_output}/transitions.jsonl"
+        printf '%s %d/5 relevant after %d/%d: %s %s\n' \
+            "${buildopt_family}" "${buildopt_relevant}" "${buildopt_ordinal}" \
+            "${#buildopt_targets[@]}" "${buildopt_target:0:12}" "${buildopt_status}"
+    done
+done
+
+jq -s --arg generatedAt "${buildopt_generated_at}" '
+  group_by(.family)|map({
+    family:.[0].family,dsl:.[0].dsl,attemptedTransitions:length,
+    relevantTransitions:([.[]|select(.status=="RELEVANT_COMPLETE")]|length),
+    actionTransitions:([.[]|select(.status=="RELEVANT_COMPLETE" and .testableActions==1)]|length),
+    irrelevantTransitions:([.[]|select(.status=="IRRELEVANT_TO_REQUEST")]|length),
+    unsafeTransitions:([.[]|select(.status=="GLOBAL_OR_AMBIGUOUS" or .status=="INPUT_UNAVAILABLE" or .status=="PRODUCER_FAILED")]|length),
+    outcomes:(group_by(.status)|map({key:.[0].status,value:length})|from_entries),
+    stopReason:(if ([.[]|select(.status=="RELEVANT_COMPLETE")]|length)>=5 then "RELEVANT_TARGET_MET" else "TRANSITION_BUDGET_EXHAUSTED" end),
+    inputComplete:(([.[]|select(.status=="RELEVANT_COMPLETE")]|length)>=5)
+  }) as $families|{
+    schemaVersion:"buildopt.poc/request-aligned-public-capture-summary/v1",
+    workItem:"SWL-REQUEST-003",generatedAt:$generatedAt,status:"COMPLETE",
+    familyCount:($families|length),completeFamilies:([$families[]|select(.inputComplete)]|length),
+    actionFamilies:([$families[]|select(.actionTransitions>0)]|length),families:$families,
+    performanceMeasured:false,activationAuthorized:false,
+    outcome:"FRESH_RECURRENT_REQUEST_CAPTURE_COMPLETE"
+  }
+' "${buildopt_output}/transitions.jsonl" >"${buildopt_output}/summary.json"
+
+(
+    cd -- "${buildopt_output}"
+    find . -type f ! -name sha256sums -print0 | LC_ALL=C sort -z |
+        xargs -0 sha256sum >"${buildopt_temporary}/sha256sums"
+    mv "${buildopt_temporary}/sha256sums" sha256sums
+)
+
+jq -e '.status=="COMPLETE" and .familyCount==5' "${buildopt_output}/summary.json" >/dev/null || {
+    printf 'request-aligned public capture is incomplete: %s\n' "${buildopt_output}" >&2
+    exit 1
+}
+printf 'Request-aligned public capture written to %s\n' "${buildopt_output}"

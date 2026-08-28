@@ -1,6 +1,6 @@
 # Request-aligned recurrent learning POC contract
 
-Status: `RELEVANCE_CLASSIFIER_COMPLETE`.
+Status: `PUBLIC_CAPTURE_COMPLETE`.
 
 ## Question
 
@@ -9,9 +9,9 @@ customer actually repeats across commits, instead of pairing arbitrary changes
 with one fixed leaf workflow, and then deliver cumulative wall-time value over
 optimized native Gradle?
 
-The route now has an observation producer and adjacent-transition classifier.
-It does not authorize timing, execution of a candidate or reuse of historical
-BuildOpt timings and actions.
+The route now has an observation producer, adjacent-transition classifier and
+a fresh five-family public capture. It does not authorize timing, execution of
+a candidate or reuse of historical BuildOpt timings and actions.
 
 ## Implemented producer boundary
 
@@ -43,6 +43,26 @@ and producer failure emit no action and retain the exact native request.
 The checked Gradle 8.14.3/9.6.1 Kotlin/Groovy matrix covers eight scenarios per
 row (32 total), including a renamed current output. It proves all five status
 classes, exact argument preservation and zero timing or activation authority.
+
+## Implemented public-capture boundary
+
+`SWL-REQUEST-003` starts from zero BuildOpt observations and processes the
+frozen first-parent histories with the exact preregistered ordinary request.
+It keeps every relevant, irrelevant and unsafe transition in the ledger and
+stops per family only after five relevant transitions or the fixed
+30-transition budget.
+
+The checked capture contains 110 transitions. Groovy reaches five relevant
+actions in seven attempts and Spring reaches five in 13. Kafka exhausts 30
+transitions as global or ambiguous. Micronaut exhausts 30 with 16 irrelevant
+and 14 unsafe outcomes; OpenTelemetry exhausts 30 with 19 irrelevant and 11
+global or ambiguous outcomes. Therefore only two of five family inputs are
+complete and only those two families expose actions.
+
+This is capture evidence, not the independent breadth decision. The next block
+must reconstruct every report from raw captures and apply the frozen gate
+without trusting the aggregate summary. No candidate ran and no wall-time
+measurement opened.
 
 ## Why the predecessor stopped
 

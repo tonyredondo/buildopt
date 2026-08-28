@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "503971b98fa6e9b076e33331e22b0ca7fded602c",
+  "targetRevision": "6d0480624ee4cac4b1cfb58eb9fde8930e9e17a4",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "REQUEST_IDENTITY_CHANGED",
+  "changedPaths": [
+    "CHANGELOG.md",
+    "docs/declarative-configuration-example.yaml",
+    "docs/instrumentation-list.yaml",
+    "instrumentation/opensearch/README.md",
+    "instrumentation/opensearch/opensearch-java-3.0/javaagent/build.gradle.kts",
+    "instrumentation/opensearch/opensearch-java-3.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/opensearch/v3_0/OpenSearchSingletons.java",
+    "instrumentation/opensearch/opensearch-java-3.0/javaagent/src/test/java/io/opentelemetry/javaagent/instrumentation/opensearch/v3_0/OpenSearchDisabledCaptureSearchQueryTest.java",
+    "instrumentation/opensearch/opensearch-java-3.0/metadata.yaml"
+  ],
+  "gradleArguments": [
+    ":javaagent:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

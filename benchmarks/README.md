@@ -83,6 +83,16 @@ and relevant full graph. All five status classes pass; only a partial relevant
 request emits one exact action and current omitted-output binding. Exact argv
 is preserved and performance/activation remain false.
 
+[`request-aligned-public-capture-v1`](./results/request-aligned-public-capture-v1/summary.json)
+is the fresh `SWL-REQUEST-003` public ledger. It contains 110 chronological
+first-parent transitions from zero BuildOpt observations and preserves raw
+base/target captures, changed paths, classifier reports and checksums. Groovy
+and Spring each reach five relevant action transitions; Kafka, Micronaut and
+OpenTelemetry exhaust their 30-transition budgets. The aggregate therefore
+reports two complete and two action families out of five. This is capture
+evidence only: no candidate ran, no wall time was measured and the independent
+breadth decision has not yet been issued.
+
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
@@ -92,6 +102,7 @@ is preserved and performance/activation remain false.
 ./dev/check-request-aligned-successor-selection
 ./dev/check-request-aligned-producer
 ./dev/check-request-aligned-classifier
+./dev/check-request-aligned-public-capture
 ```
 
 ## Sticky-wrapper observation sample

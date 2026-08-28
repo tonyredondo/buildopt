@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "ea8a27d6ee88f7e447d207a59e635a0b160c1761",
+  "targetRevision": "313a7743113f3cf393243c8925eff99c375218d0",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS",
+  "changedPaths": [
+    "streams/src/test/java/org/apache/kafka/streams/processor/internals/metrics/ProcessorNodeMetricsTest.java",
+    "streams/src/test/java/org/apache/kafka/streams/processor/internals/metrics/StreamsMetricsImplTest.java",
+    "streams/src/test/java/org/apache/kafka/streams/processor/internals/metrics/TaskMetricsTest.java",
+    "streams/src/test/java/org/apache/kafka/streams/processor/internals/metrics/ThreadMetricsTest.java",
+    "streams/src/test/java/org/apache/kafka/streams/processor/internals/metrics/TopicMetricsTest.java"
+  ],
+  "gradleArguments": [
+    ":clients:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":clients:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": false,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

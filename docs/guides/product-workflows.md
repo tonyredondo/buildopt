@@ -86,11 +86,14 @@ The active request-aligned evidence order is:
 2. discover current required outputs from their producer tasks (complete);
 3. classify relevant, irrelevant, global, ambiguous and unavailable changes
    (complete across 32 Gradle/DSL cases);
-4. capture five relevant ordinary transitions in each public family (next);
-5. time installed actions only after at least three families expose complete
+4. capture five relevant ordinary transitions in each public family (complete:
+   Groovy and Spring qualify; the other three exhaust their budgets);
+5. independently rebuild all 110 reports and require five complete families
+   plus at least three action families (next);
+6. time installed actions only after at least three families expose complete
    generic actions;
-6. run a chronological campaign only after installed value passes; and
-7. issue a terminal decision only from fresh complete evidence.
+7. run a chronological campaign only after installed value passes; and
+8. issue a terminal decision only from fresh complete evidence.
 
 Sample count alone never makes the campaign ready. Missing lifecycle, action or
 ledger evidence keeps it incomplete. The exact implementation paths, evidence

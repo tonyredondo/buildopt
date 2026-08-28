@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "4816b4dd47e3506156e0658e80cb6469b2ce3504",
+  "targetRevision": "6f9ca5672ce84edbbe36ce0e14386c31d68f479f",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "REQUEST_IDENTITY_CHANGED",
+  "changedPaths": [
+    ".github/renovate.json5",
+    "benchmark-overhead-jmh/build.gradle.kts",
+    "benchmark-overhead/gradle/wrapper/gradle-wrapper.properties",
+    "conventions/build.gradle.kts",
+    "dependencyManagement/build.gradle.kts",
+    "examples/distro/gradle/wrapper/gradle-wrapper.properties",
+    "examples/distro/smoke-tests/build.gradle.kts",
+    "examples/extension/build.gradle.kts",
+    "examples/extension/gradle/wrapper/gradle-wrapper.properties",
+    "gradle-plugins/gradle/wrapper/gradle-wrapper.properties",
+    "gradle/wrapper/gradle-wrapper.properties",
+    "mise.toml",
+    "smoke-tests-otel-starter/spring-boot-4/build.gradle.kts",
+    "smoke-tests/build.gradle.kts",
+    "smoke-tests/images/spring-boot/build.gradle.kts",
+    "testing/dependencies-shaded-for-testing/build.gradle.kts"
+  ],
+  "gradleArguments": [
+    ":javaagent:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

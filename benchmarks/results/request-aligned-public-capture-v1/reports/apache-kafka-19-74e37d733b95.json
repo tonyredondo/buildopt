@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "d3b8b1bd023dc3d8dff4f7f85af5963de0214b11",
+  "targetRevision": "74e37d733b9515823c5100ce30ad1211f25a6b3f",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS",
+  "changedPaths": [
+    "build.gradle",
+    "streams/test-utils/src/test/java/org/apache/kafka/streams/KeyValueStoreFacadeTest.java",
+    "streams/test-utils/src/test/java/org/apache/kafka/streams/TestTopicsTest.java",
+    "streams/test-utils/src/test/java/org/apache/kafka/streams/TopologyTestDriverTest.java",
+    "streams/test-utils/src/test/java/org/apache/kafka/streams/WindowStoreFacadeTest.java",
+    "streams/test-utils/src/test/java/org/apache/kafka/streams/test/MockProcessorContextAPITest.java",
+    "streams/test-utils/src/test/java/org/apache/kafka/streams/test/TestRecordTest.java",
+    "streams/test-utils/src/test/java/org/apache/kafka/streams/test/wordcount/WindowedWordCountProcessorTest.java"
+  ],
+  "gradleArguments": [
+    ":clients:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":clients:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": false,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

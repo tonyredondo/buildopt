@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "2ad3d80e5ce2597b416b01851f4433ae02cd780c",
+  "targetRevision": "1495e7b710008c11b9c27f2f6a5a241b11018675",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "REQUEST_IDENTITY_CHANGED",
+  "changedPaths": [
+    "instrumentation/lettuce/lettuce-5.1/javaagent/build.gradle.kts",
+    "instrumentation/lettuce/lettuce-5.1/javaagent/src/testLettuce60/java/io/opentelemetry/javaagent/instrumentation/lettuce/v5_1/Lettuce60CommandNameTest.java",
+    "instrumentation/lettuce/lettuce-5.1/library/src/main/java/io/opentelemetry/instrumentation/lettuce/v5_1/OpenTelemetryTracing.java"
+  ],
+  "gradleArguments": [
+    ":javaagent:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

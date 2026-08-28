@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "42c14e7f6f0ea07a769f6dd3d46c24a7c5de790c",
+  "targetRevision": "3b3dccd8178033cf0e338054e532b45910b5b45e",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "REQUEST_IDENTITY_CHANGED",
+  "changedPaths": [
+    "inject-python-test/build.gradle.kts",
+    "inject-python-test/src/test/groovy/io/micronaut/python/annotation/processing/test/ModuleScriptSpec.groovy",
+    "inject-python-test/src/test/groovy/io/micronaut/python/compiler/PyronautCompilerSpec.groovy",
+    "inject-python/src/main/java/io/micronaut/python/processing/PythonStubGenerator.java",
+    "inject-python/src/main/java/io/micronaut/python/processing/annotation/PythonElementAnnotationMetadataFactory.java",
+    "inject-python/src/main/java/io/micronaut/python/processing/visitor/PythonScriptElement.java",
+    "inject-python/src/main/resources/GRAALPY-VFS/io.micronaut/micronaut-inject-python/src/micronaut_processor.py",
+    "test-suite-python/src/test/python/example/ModuleSpec.py"
+  ],
+  "gradleArguments": [
+    ":micronaut-core:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

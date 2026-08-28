@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-public-capture-summary/v1",
+  "workItem": "SWL-REQUEST-003",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "status": "COMPLETE",
+  "familyCount": 5,
+  "completeFamilies": 2,
+  "actionFamilies": 2,
+  "families": [
+    {
+      "family": "apache-groovy",
+      "dsl": "GROOVY",
+      "attemptedTransitions": 7,
+      "relevantTransitions": 5,
+      "actionTransitions": 5,
+      "irrelevantTransitions": 2,
+      "unsafeTransitions": 0,
+      "outcomes": {
+        "IRRELEVANT_TO_REQUEST": 2,
+        "RELEVANT_COMPLETE": 5
+      },
+      "stopReason": "RELEVANT_TARGET_MET",
+      "inputComplete": true
+    },
+    {
+      "family": "apache-kafka",
+      "dsl": "GROOVY",
+      "attemptedTransitions": 30,
+      "relevantTransitions": 0,
+      "actionTransitions": 0,
+      "irrelevantTransitions": 0,
+      "unsafeTransitions": 30,
+      "outcomes": {
+        "GLOBAL_OR_AMBIGUOUS": 30
+      },
+      "stopReason": "TRANSITION_BUDGET_EXHAUSTED",
+      "inputComplete": false
+    },
+    {
+      "family": "micronaut-core",
+      "dsl": "KOTLIN",
+      "attemptedTransitions": 30,
+      "relevantTransitions": 0,
+      "actionTransitions": 0,
+      "irrelevantTransitions": 16,
+      "unsafeTransitions": 14,
+      "outcomes": {
+        "GLOBAL_OR_AMBIGUOUS": 13,
+        "INPUT_UNAVAILABLE": 1,
+        "IRRELEVANT_TO_REQUEST": 16
+      },
+      "stopReason": "TRANSITION_BUDGET_EXHAUSTED",
+      "inputComplete": false
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "dsl": "KOTLIN",
+      "attemptedTransitions": 30,
+      "relevantTransitions": 0,
+      "actionTransitions": 0,
+      "irrelevantTransitions": 19,
+      "unsafeTransitions": 11,
+      "outcomes": {
+        "GLOBAL_OR_AMBIGUOUS": 11,
+        "IRRELEVANT_TO_REQUEST": 19
+      },
+      "stopReason": "TRANSITION_BUDGET_EXHAUSTED",
+      "inputComplete": false
+    },
+    {
+      "family": "spring-framework",
+      "dsl": "KOTLIN",
+      "attemptedTransitions": 13,
+      "relevantTransitions": 5,
+      "actionTransitions": 5,
+      "irrelevantTransitions": 7,
+      "unsafeTransitions": 1,
+      "outcomes": {
+        "GLOBAL_OR_AMBIGUOUS": 1,
+        "IRRELEVANT_TO_REQUEST": 7,
+        "RELEVANT_COMPLETE": 5
+      },
+      "stopReason": "RELEVANT_TARGET_MET",
+      "inputComplete": true
+    }
+  ],
+  "performanceMeasured": false,
+  "activationAuthorized": false,
+  "outcome": "FRESH_RECURRENT_REQUEST_CAPTURE_COMPLETE"
+}

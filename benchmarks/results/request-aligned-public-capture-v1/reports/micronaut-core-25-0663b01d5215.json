@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "ffbaf590c5902d0c906a2e59e538e6e578a00eaa",
+  "targetRevision": "0663b01d521557d7769b9c83b8700450087d0f43",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/KotlinNativeElementsHelper.kt",
+    "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/annotation/KotlinAnnotationMetadataBuilder.kt",
+    "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/beans/BeanDefinitionProcessor.kt",
+    "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/extensions.kt",
+    "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/AbstractKotlinElement.kt",
+    "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/AbstractKotlinPropertyAccessorMethodElement.kt",
+    "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/KotlinClassElement.kt",
+    "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/KotlinMethodElement.kt",
+    "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/KotlinNativeElement.kt",
+    "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/KotlinVisitorContext.kt"
+  ],
+  "gradleArguments": [
+    ":micronaut-core:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "requestIdentitySha256": "a104cbb7e3aadb04037fa125e428231ea71793ab02a8868a56279bf8e2ba5d7a",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

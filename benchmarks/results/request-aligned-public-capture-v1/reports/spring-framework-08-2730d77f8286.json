@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "4a64537ac6c786dfda289c3dd21549546758c179",
+  "targetRevision": "2730d77f828644b570eb558e917217ecf0d9e12c",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "spring-test/src/test/java/org/springframework/test/web/servlet/request/MockHttpServletRequestBuilderTests.java",
+    "spring-web/src/main/java/org/springframework/http/HttpHeaders.java",
+    "spring-web/src/main/java/org/springframework/web/HttpMediaTypeNotSupportedException.java",
+    "spring-web/src/main/java/org/springframework/web/server/UnsupportedMediaTypeStatusException.java",
+    "spring-web/src/testFixtures/java/org/springframework/web/testfixture/method/MvcAnnotationPredicates.java"
+  ],
+  "gradleArguments": [
+    ":spring-core:checkArchitectureMain",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":spring-core:checkArchitectureMain"
+  ],
+  "requestIdentitySha256": "54baba81f6abb95dc2ebdcd985fa9327f3f069d209c39698b2abe3f57830b11c",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

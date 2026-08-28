@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "a5c07d233ed734535d78dca66e778c3bf509e3de",
+  "targetRevision": "9977200a6cb934b7de50562b317bedcb0c9abf43",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "REQUEST_IDENTITY_CHANGED",
+  "changedPaths": [
+    "instrumentation/pekko/pekko-actor-1.0/javaagent/build.gradle.kts",
+    "instrumentation/pekko/pekko-actor-1.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/pekkoactor/v1_0/PekkoActorInstrumentationModule.java",
+    "instrumentation/pekko/pekko-actor-1.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/pekkoactor/v1_0/PekkoBatchingExecutorInstrumentation.java",
+    "instrumentation/pekko/pekko-actor-1.0/javaagent/src/main/java/io/opentelemetry/javaagent/instrumentation/pekkoactor/v1_0/VirtualFields.java",
+    "instrumentation/pekko/pekko-actor-1.0/javaagent/src/test/scala/io/opentelemetry/javaagent/instrumentation/pekkoactor/v1_0/PekkoBatchedTaskTest.scala"
+  ],
+  "gradleArguments": [
+    ":javaagent:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

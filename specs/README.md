@@ -12,12 +12,13 @@ The active POC contract is
 with its adjacent machine-readable JSON. It asks whether ordinary repeated
 customer commands can provide request-aligned change, input, producer and
 current-output evidence broadly enough to justify a value experiment. Identity,
-output production and adjacent-transition classification are implemented;
-timing and activation remain blocked.
+output production, adjacent-transition classification and fresh five-family
+capture are implemented; independent breadth, timing and activation remain
+blocked.
 
 | Specification | Owning item |
 |---|---|
-| [`poc-request-aligned-learning-v1.md`](./poc-request-aligned-learning-v1.md) and [`poc-request-aligned-learning-v1.json`](./poc-request-aligned-learning-v1.json) | `SWL-REQUEST-000..007`; active request-aligned recurrent-learning route, completed identity/output producer and relevance classifier, frozen 3/5 pre-timing gate and exact native fallback |
+| [`poc-request-aligned-learning-v1.md`](./poc-request-aligned-learning-v1.md) and [`poc-request-aligned-learning-v1.json`](./poc-request-aligned-learning-v1.json) | `SWL-REQUEST-000..007`; active request-aligned recurrent-learning route, completed identity/output producer, relevance classifier and 110-transition public capture, frozen 3/5 pre-timing gate and exact native fallback |
 | [`poc-change-aware-producer-closure-v1.md`](./poc-change-aware-producer-closure-v1.md) and [`poc-change-aware-producer-closure-v1.json`](./poc-change-aware-producer-closure-v1.json) | `SWL-CHANGE-000..005`; frozen successor hypothesis and terminal stop after the 1/5-versus-3/5 breadth failure |
 | [`poc-fresh-generic-optimization-v1.md`](./poc-fresh-generic-optimization-v1.md) and [`poc-fresh-generic-optimization-v1.json`](./poc-fresh-generic-optimization-v1.json) | `SWL-FRESH-000`; closed fresh-evidence predecessor with terminal 1/5 action breadth |
 | [`poc-sticky-wrapper-learning-v1.md`](./poc-sticky-wrapper-learning-v1.md) and [`poc-sticky-wrapper-learning-v1.json`](./poc-sticky-wrapper-learning-v1.json) | `SWL-000`; superseded sticky-wrapper architecture contract |

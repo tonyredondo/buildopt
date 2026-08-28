@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "b963c8fce122421171de9f3ebf90328c1b935bd6",
+  "targetRevision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "REQUEST_IDENTITY_CHANGED",
+  "changedPaths": [
+    "context-propagation/src/test/kotlin/io/micronaut/context/propagation/client/ClientFilterPropagatedContextSpec.kt",
+    "http-client-core/build.gradle.kts",
+    "http-client-core/src/main/java/io/micronaut/http/client/interceptor/HttpClientIntroductionAdvice.java"
+  ],
+  "gradleArguments": [
+    ":micronaut-core:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":micronaut-core:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

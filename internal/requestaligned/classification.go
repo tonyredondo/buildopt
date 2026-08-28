@@ -63,7 +63,7 @@ func Classify(transition Transition) (Classification, error) {
 	if transition.SchemaVersion != TransitionSchemaVersion || transition.GeneratedAt == "" ||
 		!validRevision(transition.BaseRevision) || !validRevision(transition.TargetRevision) ||
 		transition.BaseRevision == transition.TargetRevision ||
-		validateStringSet(transition.ChangedPaths, safeRepositoryPath) != nil {
+		validateStringSetAllowEmpty(transition.ChangedPaths, safeRepositoryPath) != nil {
 		return Classification{}, errors.New("request-aligned transition identity is invalid")
 	}
 

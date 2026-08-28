@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "3d790171db6f3ad6f0c03aec7362a1b83964c21d",
+  "targetRevision": "61488cf2c7e65dc5a6e889f5f9374ff1504f5cba",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS",
+  "changedPaths": [
+    "server-common/src/main/java/org/apache/kafka/server/common/MetadataVersion.java",
+    "server-common/src/test/java/org/apache/kafka/server/common/MetadataVersionTest.java",
+    "test-common/test-common-internal-api/src/main/java/org/apache/kafka/common/test/api/ClusterTest.java"
+  ],
+  "gradleArguments": [
+    ":clients:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":clients:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": false,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

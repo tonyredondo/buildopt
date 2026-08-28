@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "d8683419f26b36d2221eda20575981cb6375fb26",
+  "targetRevision": "d3b8b1bd023dc3d8dff4f7f85af5963de0214b11",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS",
+  "changedPaths": [
+    "clients/src/main/java/org/apache/kafka/clients/MetadataSnapshot.java",
+    "clients/src/main/java/org/apache/kafka/clients/producer/internals/BuiltInPartitioner.java",
+    "clients/src/main/java/org/apache/kafka/clients/producer/internals/ChunkedRecordAccumulator.java",
+    "clients/src/main/java/org/apache/kafka/clients/producer/internals/ProducerBatch.java",
+    "clients/src/main/java/org/apache/kafka/clients/producer/internals/RecordAccumulator.java",
+    "jmh-benchmarks/src/main/java/org/apache/kafka/jmh/producer/RecordAccumulatorReadyBenchmark.java"
+  ],
+  "gradleArguments": [
+    ":clients:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":clients:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": false,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

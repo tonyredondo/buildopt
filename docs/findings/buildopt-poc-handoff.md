@@ -45,8 +45,10 @@ identity, the versioned Groovy JAR is resolved from `:jar`, and missing,
 ambiguous or outside-graph ownership fails typed. The adjacent-transition
 classifier adds 32 cases across all five statuses, derives exact relevant
 closures, binds current renamed outputs and emits no action for unsafe or
-full-graph cases. Fresh five-family capture is next. Public timing, activation
-and any speedup claim remain unauthorized.
+full-graph cases. The fresh 110-transition capture completes Groovy and Spring
+but not Kafka, Micronaut or OpenTelemetry, leaving 2/5 complete/action
+families. Independent breadth reconstruction is next. Public timing,
+activation and any speedup claim remain unauthorized.
 
 ## Mechanisms
 
@@ -438,8 +440,12 @@ transport as an equal-opportunity speed claim. The selected
 [request-aligned route](../plans/request-aligned-learning-poc-tracker.md)
 preserves the user's command and the unchanged 3/5 gate. Request identity,
 current producer-output discovery and adjacent relevance classification are
-complete; the next block captures fresh recurrent ordinary requests across all
-five public families. No candidate execution or timing has opened.
+complete. The fresh capture now contains **110** chronological transitions:
+Groovy and Spring each produce five relevant exact actions, while Kafka,
+Micronaut and OpenTelemetry exhaust their 30-transition budgets. The aggregate
+is therefore **2/5 complete and 2/5 action-broad**. The next block independently
+reconstructs every report and applies the unchanged gate; no candidate
+execution or timing has opened.
 
 The closed predecessor remains implementation-locked as historical evidence:
 separate per-arm cache namespaces started empty, only the task-contract and

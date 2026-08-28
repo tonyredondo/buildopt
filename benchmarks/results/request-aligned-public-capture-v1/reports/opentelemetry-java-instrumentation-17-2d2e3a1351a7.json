@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "e1c3a73aa0c5869e7e027fdc30d2c7c0bf0a278f",
+  "targetRevision": "2d2e3a1351a7cfa0571a674db4a21f0a2e8ad259",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "REQUEST_IDENTITY_CHANGED",
+  "changedPaths": [
+    "testing/agent-exporter/build.gradle.kts",
+    "testing/agent-exporter/src/main/java/io/opentelemetry/javaagent/testing/provider/AgentTestExporterCustomizerProvider.java",
+    "testing/agent-exporter/src/main/java/io/opentelemetry/javaagent/testing/provider/AgentTestLogRecordExporterComponentProvider.java",
+    "testing/agent-exporter/src/main/java/io/opentelemetry/javaagent/testing/provider/AgentTestMetricExporterComponentProvider.java",
+    "testing/agent-exporter/src/main/java/io/opentelemetry/javaagent/testing/provider/AgentTestSpanExporterComponentProvider.java",
+    "testing/agent-exporter/src/main/java/io/opentelemetry/javaagent/testing/util/KeysVerifyingPropagator.java"
+  ],
+  "gradleArguments": [
+    ":javaagent:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "66c197c9f9749715de55f9a415e6aade73ac7830",
+  "targetRevision": "21ff2e4f8beb439f48e90ac0dda98139a00caab4",
+  "status": "GLOBAL_OR_AMBIGUOUS",
+  "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS",
+  "changedPaths": [
+    "streams/src/test/java/org/apache/kafka/streams/processor/LogAndSkipOnInvalidTimestampTest.java",
+    "streams/src/test/java/org/apache/kafka/streams/processor/ReadOnlyStoreTest.java",
+    "streams/src/test/java/org/apache/kafka/streams/processor/TimestampExtractorTest.java",
+    "streams/src/test/java/org/apache/kafka/streams/processor/UsePartitionTimeOnInvalidTimestampTest.java",
+    "streams/src/test/java/org/apache/kafka/streams/processor/WallclockTimestampExtractorTest.java"
+  ],
+  "gradleArguments": [
+    ":clients:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":clients:jar"
+  ],
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": false,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

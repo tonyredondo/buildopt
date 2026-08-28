@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-classification/v1",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "baseRevision": "73bec73c80f74944c55564eb07b98b62b15b814f",
+  "targetRevision": "57c630b802811aac03ba9a4207799167b14c10b5",
+  "status": "IRRELEVANT_TO_REQUEST",
+  "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+  "changedPaths": [
+    "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/JmxTelemetry.java",
+    "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/JmxTelemetryBuilder.java",
+    "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/ExperimentalJmxMetricHandler.java",
+    "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/engine/BeanFinder.java",
+    "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/engine/JmxMetricInsight.java",
+    "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/engine/MetricDef.java",
+    "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/handler/CassandraCompactionProgressHandler.java",
+    "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/handler/HandlerRegistry.java",
+    "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/yaml/JmxConfig.java",
+    "instrumentation/jmx-metrics/library/src/main/java/io/opentelemetry/instrumentation/jmx/internal/yaml/RuleParser.java",
+    "instrumentation/jmx-metrics/library/src/test/java/io/opentelemetry/instrumentation/jmx/internal/engine/MetricAggregationTest.java",
+    "instrumentation/jmx-metrics/library/src/test/java/io/opentelemetry/instrumentation/jmx/rules/HandlerTest.java"
+  ],
+  "gradleArguments": [
+    ":javaagent:jar",
+    "--no-daemon",
+    "--no-build-cache",
+    "--no-configuration-cache"
+  ],
+  "requestedTasks": [
+    ":javaagent:jar"
+  ],
+  "requestIdentitySha256": "a4a9a890b6b81c4d67b2ee9528bce4e058c2b859be38e3cabfd515ce0d2b8a9f",
+  "affectedInputTasks": [],
+  "candidateTasks": [],
+  "omittedTasks": [],
+  "omittedOutputs": [],
+  "inputComplete": true,
+  "testableActions": 0,
+  "performanceMeasured": false,
+  "activationAuthorized": false
+}

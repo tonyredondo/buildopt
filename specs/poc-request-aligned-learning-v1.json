@@ -1,8 +1,8 @@
 {
   "schemaVersion": "buildopt.poc/request-aligned-learning-contract/v1",
   "workItem": "SWL-REQUEST-000",
-  "status": "CLASSIFIER_COMPLETE",
-  "currentBlock": "SWL-REQUEST-003",
+  "status": "PUBLIC_CAPTURE_COMPLETE",
+  "currentBlock": "SWL-REQUEST-004",
   "purpose": "Test whether recurring ordinary Gradle requests expose safe change-aware partial-work actions when evidence is aligned to the command the customer actually ran.",
   "predecessor": {
     "decision": "STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR",
@@ -71,12 +71,12 @@
     },
     {
       "id": "SWL-REQUEST-003",
-      "state": "TODO",
-      "outcome": "FRESH_FIVE_FAMILY_RECURRENT_REQUEST_CAPTURE"
+      "state": "DONE",
+      "outcome": "FRESH_FIVE_FAMILY_RECURRENT_REQUEST_CAPTURE_COMPLETE"
     },
     {
       "id": "SWL-REQUEST-004",
-      "state": "WAITING",
+      "state": "TODO",
       "outcome": "INDEPENDENT_ACTION_BREADTH_DECISION"
     },
     {
@@ -95,5 +95,5 @@
       "outcome": "TERMINAL_CONTINUE_OR_STOP_DECISION"
     }
   ],
-  "nextBlock": "SWL-REQUEST-003"
+  "nextBlock": "SWL-REQUEST-004"
 }
