@@ -109,6 +109,19 @@ as `NOT_MEASURED_NOT_AUTHORIZED`, rejects invented zero values, timings,
 speedups or successor authority, and closes the current detector without
 claiming that no different generic Gradle opportunity exists.
 
+Rebuild every terminal non-action cause and validate the selected observed-
+request portfolio route with:
+
+```bash
+./dev/run-request-aligned-terminal-cause-audit
+./dev/check-request-aligned-terminal-cause-audit
+```
+
+The audit distinguishes correct request irrelevance from over-broad identity,
+dependency-ordered equivalent producers and a proven absent optional output.
+It derives the **5/0/2/1/5** counterfactual from raw capture, rejects invented
+breadth or timing authority and opens only `SWL-PORTFOLIO-001`.
+
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:
 

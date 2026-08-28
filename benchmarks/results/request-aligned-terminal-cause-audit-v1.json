@@ -1,0 +1,153 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-terminal-cause-audit/v1",
+  "workItem": "SWL-PORTFOLIO-000",
+  "generatedAt": "2026-08-28T08:47:13Z",
+  "evidence": {
+    "routeContractSha256": "41af57eb7c142ca1e5552e7de7963351c623d7fd22e19b1502cbe7e689a55dad",
+    "terminalDecisionSha256": "ac18d3b45b9469403f3e5333d4cafe349ff5760a413fe5968a2278b38a62d8d2",
+    "captureContractSha256": "c2636f1bab49448fe7d717323d2acc84998b9ab559d7d162ee85c56f0b31e022",
+    "transitionsSha256": "402f061a6677c8cf7666f61efdd07168108bb25cc25070b43d303c0ce918bc4b",
+    "transitionCount": 110,
+    "historicalTimingImported": false,
+    "historicalActionImported": false
+  },
+  "population": {
+    "transitions": 110,
+    "currentActionRows": 10,
+    "nonActionRows": 100
+  },
+  "causeAnalysis": [
+    {
+      "cause": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+      "transitions": 44,
+      "families": [
+        "apache-groovy",
+        "micronaut-core",
+        "opentelemetry-java-instrumentation",
+        "spring-framework"
+      ],
+      "requestInputIntersections": 0,
+      "recoverableRelevantRows": 0,
+      "recoverableActionRows": 0,
+      "disposition": "EXPECTED_NATIVE_RETENTION_FOR_THIS_EXACT_REQUEST"
+    },
+    {
+      "cause": "REQUEST_IDENTITY_CHANGED",
+      "transitions": 25,
+      "families": [
+        "micronaut-core",
+        "opentelemetry-java-instrumentation",
+        "spring-framework"
+      ],
+      "requestInputIntersections": 0,
+      "identityPatterns": [
+        {
+          "pattern": "BUILD_LOGIC_ONLY_STABLE_REQUEST_GRAPH",
+          "transitions": 22
+        },
+        {
+          "pattern": "WRAPPER_AND_GRADLE_VERSION_CHANGED_STABLE_REQUEST_GRAPH",
+          "transitions": 2
+        },
+        {
+          "pattern": "WRAPPER_GRADLE_VERSION_AND_BUILD_LOGIC_CHANGED_STABLE_REQUEST_GRAPH",
+          "transitions": 1
+        }
+      ],
+      "recoverableRelevantRows": 0,
+      "recoverableActionRows": 0,
+      "disposition": "IDENTITY_PRECISION_CAN_IMPROVE_CLASSIFICATION_BUT_CANNOT_CREATE_REQUEST_RELEVANCE"
+    },
+    {
+      "cause": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS",
+      "transitions": 30,
+      "families": [
+        "apache-kafka"
+      ],
+      "requestInputIntersections": 44,
+      "equivalentOutputPath": "clients/build/libs/kafka-clients-4.5.0-SNAPSHOT.jar",
+      "equivalentProducers": [
+        ":clients:jar",
+        ":clients:shadowJar"
+      ],
+      "dependencyOrdered": true,
+      "sameBytesWithinCapture": true,
+      "requiresAbsentOutputBinding": true,
+      "recoverableRelevantRows": 2,
+      "recoverableActionRows": 2,
+      "disposition": "GENERIC_EQUIVALENT_PRODUCER_GROUP_PLUS_ABSENCE_BINDING_CAN_RECOVER_TWO_RELEVANT_KAFKA_ROWS"
+    },
+    {
+      "cause": "OMITTED_OUTPUT_EVIDENCE_INCOMPLETE",
+      "transitions": 1,
+      "families": [
+        "micronaut-core"
+      ],
+      "requestInputIntersections": 2,
+      "absentOutputPath": "core/build/generated/resources/native-image-properties",
+      "recoverableRelevantRows": 1,
+      "recoverableActionRows": 1,
+      "disposition": "GENERIC_ABSENCE_BINDING_CAN_RECOVER_ONE_RELEVANT_MICRONAUT_ROW"
+    }
+  ],
+  "counterfactual": {
+    "familyAssessments": [
+      {
+        "family": "spring-framework",
+        "observedTransitions": 13,
+        "currentRelevantActions": 5,
+        "recoverableRelevantActions": 0,
+        "counterfactualRelevantActions": 5,
+        "meetsFiveRelevantActions": true
+      },
+      {
+        "family": "opentelemetry-java-instrumentation",
+        "observedTransitions": 30,
+        "currentRelevantActions": 0,
+        "recoverableRelevantActions": 0,
+        "counterfactualRelevantActions": 0,
+        "meetsFiveRelevantActions": false
+      },
+      {
+        "family": "apache-kafka",
+        "observedTransitions": 30,
+        "currentRelevantActions": 0,
+        "recoverableRelevantActions": 2,
+        "counterfactualRelevantActions": 2,
+        "meetsFiveRelevantActions": false
+      },
+      {
+        "family": "micronaut-core",
+        "observedTransitions": 30,
+        "currentRelevantActions": 0,
+        "recoverableRelevantActions": 1,
+        "counterfactualRelevantActions": 1,
+        "meetsFiveRelevantActions": false
+      },
+      {
+        "family": "apache-groovy",
+        "observedTransitions": 7,
+        "currentRelevantActions": 5,
+        "recoverableRelevantActions": 0,
+        "counterfactualRelevantActions": 5,
+        "meetsFiveRelevantActions": true
+      }
+    ],
+    "currentActionFamilies": 2,
+    "recoverableActionFamilies": 4,
+    "familiesMeetingFiveRelevant": 2,
+    "requiredFamiliesMeetingFive": 5,
+    "evidenceRepairsSatisfyGate": false
+  },
+  "decision": {
+    "outcome": "PREREGISTER_OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1",
+    "selectedHypothesis": "OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1",
+    "reason": "EVIDENCE_REPAIRS_RECOVER_THREE_RELEVANT_ROWS_BUT_FIXED_SINGLE_REQUESTS_STILL_MEET_THE_FIVE_RELEVANT_THRESHOLD_IN_ONLY_TWO_OF_FIVE_FAMILIES",
+    "nextBlock": "SWL-PORTFOLIO-001",
+    "commandSubstitutionAllowed": false,
+    "repositoryRulesAllowed": false,
+    "performanceTimingAuthorized": false,
+    "actionActivationAuthorized": false,
+    "speedupClaim": false
+  }
+}

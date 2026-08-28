@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "buildopt.poc/observed-request-portfolio-contract/v1",
+  "workItem": "SWL-PORTFOLIO-000",
+  "status": "ACTIVE",
+  "currentBlock": "SWL-PORTFOLIO-001",
+  "purpose": "Determine whether BuildOpt can learn safe generic partial-work actions from the portfolio of exact Gradle commands a customer actually repeats, rather than from one frozen request per repository.",
+  "predecessor": {
+    "decision": "STOP_REQUEST_ALIGNED_RECURRENT_CLOSURE_POC_FOR_CURRENT_DETECTOR",
+    "terminalResult": "benchmarks/results/request-aligned-terminal-decision-v1.json",
+    "causeAudit": "benchmarks/results/request-aligned-terminal-cause-audit-v1.json"
+  },
+  "hypothesis": {
+    "id": "OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1",
+    "input": "Exact ordinary Gradle argv vectors observed through the committed wrapper, their portable request identities, adjacent source changes, finalized requested graphs and current producer output state.",
+    "action": "Learn relevance and candidate closures independently for each recurrent request identity, then select only a previously observed request/action pair with complete current evidence.",
+    "safeFallback": "Run the exact original optimized-native Gradle command when no recurrent identity, relevant change, complete producer state or qualified action exists.",
+    "materialDifference": "The stopped route evaluated one fixed leaf request per repository. This route learns the distribution of commands the customer actually runs and never substitutes a broader benchmark command to manufacture relevance.",
+    "repositorySpecificRulesAllowed": false,
+    "taskNameRulesAllowed": false,
+    "pathExtensionRulesAllowed": false,
+    "manualProfilesAllowed": false,
+    "commandSubstitutionAllowed": false
+  },
+  "evidenceRepairs": {
+    "dependencyOrderedEquivalentProducerGroups": true,
+    "explicitAbsentOutputBindings": true,
+    "requestGraphAndCompatibilityIdentitySeparated": true,
+    "repairsAloneAuthorizeTiming": false
+  },
+  "breadthGate": {
+    "completeFamilyInputsRequired": 5,
+    "relevantTransitionsPerFamilyRequired": 5,
+    "familiesWithActionsRequired": 3,
+    "productFailureBudget": 0,
+    "timingAuthorizedBeforeBreadth": false,
+    "activationAuthorizedBeforeValue": false,
+    "hostedCiTimingThresholdsAllowed": false
+  },
+  "blocks": [
+    {
+      "id": "SWL-PORTFOLIO-000",
+      "state": "DONE",
+      "outcome": "TERMINAL_CAUSES_RECONSTRUCTED_AND_OBSERVED_REQUEST_PORTFOLIO_SELECTED"
+    },
+    {
+      "id": "SWL-PORTFOLIO-001",
+      "state": "TODO",
+      "outcome": "EVIDENCE_PRECISION_PRIMITIVES_AND_NEGATIVE_FIXTURES"
+    },
+    {
+      "id": "SWL-PORTFOLIO-002",
+      "state": "WAITING",
+      "outcome": "EXACT_OBSERVED_REQUEST_PORTFOLIO_AND_LIFECYCLE"
+    },
+    {
+      "id": "SWL-PORTFOLIO-003",
+      "state": "WAITING",
+      "outcome": "FRESH_FIVE_FAMILY_OBSERVED_PORTFOLIO_CAPTURE"
+    },
+    {
+      "id": "SWL-PORTFOLIO-004",
+      "state": "WAITING",
+      "outcome": "INDEPENDENT_PORTFOLIO_BREADTH_GATE"
+    },
+    {
+      "id": "SWL-PORTFOLIO-005",
+      "state": "WAITING",
+      "outcome": "INSTALLED_VALUE_IF_AUTHORIZED"
+    },
+    {
+      "id": "SWL-PORTFOLIO-006",
+      "state": "WAITING",
+      "outcome": "CHRONOLOGICAL_CUMULATIVE_VALUE_IF_AUTHORIZED"
+    },
+    {
+      "id": "SWL-PORTFOLIO-007",
+      "state": "WAITING",
+      "outcome": "TERMINAL_CONTINUE_OR_STOP_DECISION"
+    }
+  ],
+  "nextBlock": "SWL-PORTFOLIO-001"
+}

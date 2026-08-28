@@ -112,6 +112,16 @@ versus 3/5** action-breadth gate. No action ran, no timing row exists, and the
 five value/economic criteria remain `NOT_MEASURED_NOT_AUTHORIZED`. The decision
 stops this detector without making a speedup claim or authorizing a successor.
 
+[`request-aligned-terminal-cause-audit-v1.json`](./results/request-aligned-terminal-cause-audit-v1.json)
+is the user-authorized independent post-terminal analysis. It reconstructs all
+100 non-action rows: 44 exact-request irrelevant rows, 25 identity-drift rows
+with zero request-input intersections, 30 Kafka equivalent-producer rows and
+one Micronaut absent-output row. Generic evidence repairs can recover three
+relevant action opportunities, but the counterfactual family counts remain
+**5/0/2/1/5** and only two families meet the five-row input threshold. The
+result selects the observed recurrent request portfolio as the next hypothesis;
+it contains no timing, action execution or speedup claim.
+
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
@@ -124,6 +134,7 @@ stops this detector without making a speedup claim or authorizing a successor.
 ./dev/check-request-aligned-public-capture
 ./dev/check-request-aligned-breadth-gate
 ./dev/check-request-aligned-terminal-decision
+./dev/check-request-aligned-terminal-cause-audit
 ```
 
 ## Sticky-wrapper observation sample

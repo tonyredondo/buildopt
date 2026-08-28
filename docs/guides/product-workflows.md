@@ -34,6 +34,12 @@ the closed producer and classifier route learns only from exact ordinary request
 identities, current producer outputs and adjacent changes relevant to that
 request, without changing the user's Gradle command. Its terminal gate stops at
 2/5 complete/action families; no action, timing or successor is active.
+The independent post-terminal audit then opens the
+[Observed Recurrent Request Portfolio POC Tracker](../plans/observed-request-portfolio-poc-tracker.md).
+The active hypothesis observes multiple exact commands already invoked through
+the wrapper and learns each identity independently. It never widens or replaces
+the customer's command. Evidence precision and portfolio capture remain open,
+so this route currently authorizes neither activation nor a speedup claim.
 The wrapper remains reusable POC infrastructure, not a production rollout path
 or evidence that a generic acceleration mechanism has qualified.
 

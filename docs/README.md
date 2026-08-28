@@ -15,7 +15,7 @@ before running the product.
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
 | Review the POC idea, mechanisms, current value, and next steps | [Current POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
-| Review the latest generic experiment | [Request-aligned Recurrent Learning POC Tracker](./plans/request-aligned-learning-poc-tracker.md) | [Terminal decision](../benchmarks/results/request-aligned-terminal-decision-v1.json), [contract](../specs/poc-request-aligned-learning-v1.md), [closed change-aware route](./plans/change-aware-producer-closure-poc-tracker.md) |
+| Review the latest generic experiment | [Observed Recurrent Request Portfolio POC Tracker](./plans/observed-request-portfolio-poc-tracker.md) | [Cause audit](../benchmarks/results/request-aligned-terminal-cause-audit-v1.json), [contract](../specs/poc-observed-request-portfolio-v1.md), [closed request-aligned route](./plans/request-aligned-learning-poc-tracker.md) |
 | Review the stopped adaptive hypothesis | [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md) | [Terminal decision](../specs/poc-adaptive-fragment-terminal-decision-v1.md), [current generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the implemented onboarding foundation | [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md) | [Product onboarding](./getting-started/product-onboarding.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
 | Plan optional shared state across machines | [Centralized cache and state POC roadmap](./plans/centralized-cache-and-state-roadmap.md) | [Storage contract](../specs/poc-central-storage-contract-v1.md), [architecture overview](./architecture/overview.md) |
@@ -65,6 +65,9 @@ before running the product.
 
 ### Plans
 
+- [Observed Recurrent Request Portfolio POC Tracker](./plans/observed-request-portfolio-poc-tracker.md):
+  the active route, terminal cause baseline, exact evidence-precision work and
+  ordered proof over commands actually observed through the wrapper.
 - [Request-aligned Recurrent Learning POC Tracker](./plans/request-aligned-learning-poc-tracker.md):
   the closed latest route, implemented exact ordinary-request identity/current
   producer-output discovery, relevance classifier and 110-transition fresh

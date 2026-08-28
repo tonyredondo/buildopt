@@ -26,6 +26,7 @@ provision tools or create release artifacts document that effect explicitly.
 | Fresh request-aligned five-family capture, hashes, chains and report reconstruction | `./dev/check-request-aligned-public-capture` |
 | Independent request-aligned 110-report reconstruction and frozen completeness/breadth gate | `./dev/check-request-aligned-breadth-gate` |
 | Request-aligned terminal scorecard, digest binding and typed unmeasured economics | `./dev/check-request-aligned-terminal-decision` |
+| Post-terminal cause reconstruction and observed-request portfolio selection | `./dev/check-request-aligned-terminal-cause-audit` |
 | Generic task/graph producers, typed completeness and deterministic evidence | `./dev/check-sticky-evidence-producers` |
 | Fresh five-family cohort, capture bindings, producer completeness and exact outputs | `./dev/check-fresh-generic-capture` |
 | Independent fresh action recount and fixed public-breadth gate | `./dev/check-fresh-generic-opportunity-gate` |

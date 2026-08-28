@@ -191,9 +191,14 @@ and discovers current outputs generically. Producer and classifier
 implementation and independent breadth are complete. Its own terminal decision
 is `STOP_REQUEST_ALIGNED_RECURRENT_CLOSURE_POC_FOR_CURRENT_DETECTOR`; value,
 confidence, payback and overhead remain typed as unmeasured rather than zero.
-No successor is authorized. The next useful work is cause analysis of global,
-ambiguous and request-irrelevant rows before choosing a materially different
-generic hypothesis.
+That route authorized no successor. The subsequent user-authorized independent
+[terminal cause audit](../../benchmarks/results/request-aligned-terminal-cause-audit-v1.json)
+reconstructs all 100 non-actions. Evidence precision can recover two Kafka and
+one Micronaut relevant rows, but the fixed-request counterfactual remains
+**5/0/2/1/5** and only two families meet the five-row input threshold. It
+therefore selects `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1`: learn across exact
+commands already observed through the wrapper, without command substitution or
+repository rules. Evidence primitives are next; timing remains unauthorized.
 
 ## POC conclusion
 

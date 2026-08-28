@@ -453,9 +453,23 @@ is therefore **2/5 complete and 2/5 action-broad**. Independent reconstruction
 verifies every report, and the terminal decision
 `STOP_REQUEST_ALIGNED_RECURRENT_CLOSURE_POC_FOR_CURRENT_DETECTOR` closes this
 detector without candidate execution, timing, a speedup claim or automatic
-successor. The recommended work is cause analysis of the global, ambiguous and
-request-irrelevant public rows before selecting a materially different generic
-hypothesis.
+successor. The subsequent user-authorized independent
+[terminal cause audit](../../benchmarks/results/request-aligned-terminal-cause-audit-v1.json)
+explains all 100 non-actions. Forty-four are correct exact-request irrelevance;
+all 25 identity changes also have zero request-input intersections. A generic
+dependency-ordered producer group can recover two Kafka rows, and explicit
+absent-output binding can recover one Micronaut row. The resulting family
+counterfactual is **5/0/2/1/5**, so evidence repair alone still leaves only two
+families with five relevant transitions.
+
+The active hypothesis is therefore
+`OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1`: BuildOpt should learn across the
+exact commands a customer actually repeats instead of treating one fixed leaf
+request as the repository's whole opportunity surface. It may not widen,
+replace or invent a command, and product logic remains free of repository and
+task-name rules. The first block implements evidence precision; fresh portfolio
+capture and all value timing remain pending. See the
+[active tracker](../plans/observed-request-portfolio-poc-tracker.md).
 
 The closed predecessor remains implementation-locked as historical evidence:
 separate per-arm cache namespaces started empty, only the task-contract and

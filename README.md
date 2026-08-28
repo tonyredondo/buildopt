@@ -178,7 +178,7 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > Review the closed
 > [change-aware tracker](./docs/plans/change-aware-producer-closure-poc-tracker.md).
 
-> **Latest generic experiment:** cause reconstruction shows why the preceding route
+> **Closed request-aligned experiment:** cause reconstruction shows why the preceding route
 > lacked breadth: **23/24** negative transitions changed no declared input in
 > the fixed requested graph, while one Groovy row used a stale unversioned JAR
 > path instead of the current producer output. BuildOpt now tests
@@ -203,6 +203,22 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > confidence, payback and overhead remain explicitly unmeasured. This is not a
 > speed result and no successor is automatically authorized. Review the closed
 > [request-aligned tracker](./docs/plans/request-aligned-learning-poc-tracker.md).
+
+> **Active generic experiment:** the independent terminal cause audit explains
+> all 100 request-aligned non-actions. Forty-four are correctly irrelevant to
+> the exact command. All 25 identity-change rows also have zero intersections
+> with that request's inputs, so a narrower identity would improve labels but
+> create no actions. Kafka has a generic dependency-ordered alias between
+> `:clients:jar` and `:clients:shadowJar` that, together with explicit absence
+> binding, can recover two relevant rows; Micronaut has one bindable absent
+> optional output. Even after those repairs, relevant action rows are only
+> **5/0/2/1/5** across Spring, OpenTelemetry, Kafka, Micronaut and Groovy.
+> BuildOpt therefore now tests
+> `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1`: learn across the exact set of
+> commands the customer actually repeats, without replacing any command or
+> adding repository rules. The first evidence-precision block is open; no
+> action, timing or speedup is authorized. Follow the
+> [active tracker](./docs/plans/observed-request-portfolio-poc-tracker.md).
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,
 > append-only phase timing and provenance for requested Gradle builds. The

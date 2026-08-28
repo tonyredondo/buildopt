@@ -8,6 +8,12 @@
 
 **Current block:** none; `SWL-REQUEST-007` issued the terminal decision
 
+**Post-terminal note:** this route authorized no successor. A later explicit
+user authorization opened an independent
+[cause audit](../../benchmarks/results/request-aligned-terminal-cause-audit-v1.json),
+which selected the separate
+[observed request portfolio route](./observed-request-portfolio-poc-tracker.md).
+
 **Predecessor:** the [change-aware producer route](./change-aware-producer-closure-poc-tracker.md)
 stopped before timing at 1/5 action breadth. No predecessor timing or action is
 imported.

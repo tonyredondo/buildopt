@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [OUTPUT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_capture=${buildopt_root}/benchmarks/results/request-aligned-public-capture-v1
+buildopt_terminal=${buildopt_root}/benchmarks/results/request-aligned-terminal-decision-v1.json
+buildopt_route=${buildopt_root}/specs/poc-observed-request-portfolio-v1.json
+buildopt_output=${1:-${buildopt_root}/benchmarks/results/request-aligned-terminal-cause-audit-v1.json}
+[[ ${buildopt_output} == /* ]] || buildopt_output=${PWD}/${buildopt_output}
+
+command -v mktemp >/dev/null 2>&1 || {
+    printf 'mktemp is required\n' >&2
+    exit 1
+}
+
+"${buildopt_root}/dev/check-request-aligned-terminal-decision" "${buildopt_terminal}" >/dev/null
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-cause-audit.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-request-cause-audit.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected cause-audit root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+env GOCACHE="${buildopt_temporary}/go-cache" \
+    "${buildopt_root}/dev/run" --toolchain go -- \
+    go build -o "${buildopt_temporary}/request-aligned-cause-audit" \
+    ./cmd/request-aligned-cause-audit
+
+"${buildopt_temporary}/request-aligned-cause-audit" \
+    --capture-dir "${buildopt_capture}" \
+    --terminal "${buildopt_terminal}" \
+    --route-contract "${buildopt_route}" \
+    --output "${buildopt_output}"
+
+printf 'Request-aligned terminal cause audit written to %s\n' "${buildopt_output}"

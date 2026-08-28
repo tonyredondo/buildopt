@@ -8,17 +8,15 @@ path. Start with the [documentation portal](../docs/README.md) or
 the exact cross-component contract.
 
 The latest generic POC contract is
-[`poc-request-aligned-learning-v1.md`](./poc-request-aligned-learning-v1.md)
-with its adjacent machine-readable JSON. It asks whether ordinary repeated
-customer commands can provide request-aligned change, input, producer and
-current-output evidence broadly enough to justify a value experiment. Identity,
-output production, adjacent-transition classification, fresh five-family
-capture, independent breadth and the terminal decision are implemented. The
-gate fails at 2/5 complete/action families, so timing and activation remain
-blocked and the current detector is stopped without a successor.
+[`poc-observed-request-portfolio-v1.md`](./poc-observed-request-portfolio-v1.md)
+with its adjacent machine-readable JSON. It tests learning across the exact
+portfolio of recurrent commands the customer actually invokes. The terminal
+cause audit selected the route, but evidence primitives, portfolio capture and
+all value gates remain open. Timing and activation are not authorized.
 
 | Specification | Owning item |
 |---|---|
+| [`poc-observed-request-portfolio-v1.md`](./poc-observed-request-portfolio-v1.md) and [`poc-observed-request-portfolio-v1.json`](./poc-observed-request-portfolio-v1.json) | `SWL-PORTFOLIO-000..007`; active exact-command portfolio route selected from the terminal 5/0/2/1/5 cause counterfactual |
 | [`poc-request-aligned-learning-v1.md`](./poc-request-aligned-learning-v1.md) and [`poc-request-aligned-learning-v1.json`](./poc-request-aligned-learning-v1.json) | `SWL-REQUEST-000..007`; closed request-aligned route, independently failed 2/5 complete/action breadth gate, unauthorized timing blocks and terminal stop |
 | [`poc-change-aware-producer-closure-v1.md`](./poc-change-aware-producer-closure-v1.md) and [`poc-change-aware-producer-closure-v1.json`](./poc-change-aware-producer-closure-v1.json) | `SWL-CHANGE-000..005`; frozen successor hypothesis and terminal stop after the 1/5-versus-3/5 breadth failure |
 | [`poc-fresh-generic-optimization-v1.md`](./poc-fresh-generic-optimization-v1.md) and [`poc-fresh-generic-optimization-v1.json`](./poc-fresh-generic-optimization-v1.json) | `SWL-FRESH-000`; closed fresh-evidence predecessor with terminal 1/5 action breadth |

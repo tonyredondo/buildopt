@@ -220,6 +220,7 @@ case "${buildopt_lane}" in
 		"${buildopt_script_dir}/check-request-aligned-public-capture"
 		"${buildopt_script_dir}/check-request-aligned-breadth-gate"
 		"${buildopt_script_dir}/check-request-aligned-terminal-decision"
+		"${buildopt_script_dir}/check-request-aligned-terminal-cause-audit"
 		"${buildopt_script_dir}/check-sticky-evidence-producers"
 		"${buildopt_script_dir}/check-sticky-wrapper-learning-plan"
 		"${buildopt_script_dir}/check-sticky-wrapper-contract"

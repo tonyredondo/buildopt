@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_result=${1:-${buildopt_root}/benchmarks/results/request-aligned-terminal-cause-audit-v1.json}
+buildopt_contract=${buildopt_root}/specs/poc-observed-request-portfolio-v1.json
+buildopt_plan=${buildopt_root}/docs/plans/observed-request-portfolio-poc-tracker.md
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-cause-check.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-request-cause-check.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected cause-check root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+jq -e '
+  .schemaVersion=="buildopt.poc/observed-request-portfolio-contract/v1" and
+  .workItem=="SWL-PORTFOLIO-000" and .status=="ACTIVE" and
+  .currentBlock=="SWL-PORTFOLIO-001" and
+  .hypothesis.id=="OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1" and
+  (.hypothesis.repositorySpecificRulesAllowed|not) and
+  (.hypothesis.commandSubstitutionAllowed|not) and
+  .evidenceRepairs.dependencyOrderedEquivalentProducerGroups and
+  .evidenceRepairs.explicitAbsentOutputBindings and
+  .evidenceRepairs.requestGraphAndCompatibilityIdentitySeparated and
+  (.evidenceRepairs.repairsAloneAuthorizeTiming|not) and
+  .breadthGate.completeFamilyInputsRequired==5 and
+  .breadthGate.relevantTransitionsPerFamilyRequired==5 and
+  .breadthGate.familiesWithActionsRequired==3 and
+  (.breadthGate.timingAuthorizedBeforeBreadth|not) and
+  ([.blocks[]|select(.state=="DONE")]|length)==1 and
+  ([.blocks[]|select(.state=="TODO")]|length)==1 and
+  ([.blocks[]|select(.state=="WAITING")]|length)==6 and
+  .nextBlock=="SWL-PORTFOLIO-001"
+' "${buildopt_contract}" >/dev/null || {
+    printf 'observed request portfolio machine contract is invalid\n' >&2
+    exit 1
+}
+
+# Backticks below are literal Markdown syntax.
+# shellcheck disable=SC2016
+buildopt_required_plan_text=(
+    '**Overall:** `ACTIVE`'
+    '**Current block:** `SWL-PORTFOLIO-001`'
+    '**5/0/2/1/5**'
+    '`OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1`'
+    'It may not parse CI YAML as authority'
+)
+for buildopt_text in "${buildopt_required_plan_text[@]}"; do
+    grep -Fq -- "${buildopt_text}" "${buildopt_plan}" || {
+        printf 'observed request portfolio tracker is missing: %s\n' "${buildopt_text}" >&2
+        exit 1
+    }
+done
+
+buildopt_validate_result() {
+    jq -e '
+      .schemaVersion=="buildopt.poc/request-aligned-terminal-cause-audit/v1" and
+      .workItem=="SWL-PORTFOLIO-000" and
+      all(.evidence[]|select(type=="string");test("^[0-9a-f]{64}$")) and
+      .evidence.transitionCount==110 and
+      (.evidence.historicalTimingImported|not) and
+      (.evidence.historicalActionImported|not) and
+      .population=={transitions:110,currentActionRows:10,nonActionRows:100} and
+      ([.causeAnalysis[]|select(.cause=="NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS" and
+        .transitions==44 and .requestInputIntersections==0 and .recoverableActionRows==0)]|length)==1 and
+      ([.causeAnalysis[]|select(.cause=="REQUEST_IDENTITY_CHANGED" and
+        .transitions==25 and .requestInputIntersections==0 and .recoverableActionRows==0 and
+        ([.identityPatterns[].transitions]|add)==25)]|length)==1 and
+      ([.causeAnalysis[]|select(.cause=="CURRENT_OUTPUT_PRODUCER_AMBIGUOUS" and
+        .transitions==30 and .equivalentOutputPath=="clients/build/libs/kafka-clients-4.5.0-SNAPSHOT.jar" and
+        .equivalentProducers==[":clients:jar",":clients:shadowJar"] and .dependencyOrdered and
+        .sameBytesWithinCapture and .requiresAbsentOutputBinding and
+        .recoverableRelevantRows==2 and .recoverableActionRows==2)]|length)==1 and
+      ([.causeAnalysis[]|select(.cause=="OMITTED_OUTPUT_EVIDENCE_INCOMPLETE" and
+        .transitions==1 and .absentOutputPath=="core/build/generated/resources/native-image-properties" and
+        .recoverableRelevantRows==1 and .recoverableActionRows==1)]|length)==1 and
+      .counterfactual.currentActionFamilies==2 and
+      .counterfactual.recoverableActionFamilies==4 and
+      .counterfactual.familiesMeetingFiveRelevant==2 and
+      .counterfactual.requiredFamiliesMeetingFive==5 and
+      (.counterfactual.evidenceRepairsSatisfyGate|not) and
+      [.counterfactual.familyAssessments[]|{family,counterfactualRelevantActions}] == [
+        {family:"spring-framework",counterfactualRelevantActions:5},
+        {family:"opentelemetry-java-instrumentation",counterfactualRelevantActions:0},
+        {family:"apache-kafka",counterfactualRelevantActions:2},
+        {family:"micronaut-core",counterfactualRelevantActions:1},
+        {family:"apache-groovy",counterfactualRelevantActions:5}
+      ] and
+      .decision.outcome=="PREREGISTER_OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1" and
+      .decision.selectedHypothesis=="OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1" and
+      .decision.nextBlock=="SWL-PORTFOLIO-001" and
+      (.decision.commandSubstitutionAllowed|not) and
+      (.decision.repositoryRulesAllowed|not) and
+      (.decision.performanceTimingAuthorized|not) and
+      (.decision.actionActivationAuthorized|not) and
+      (.decision.speedupClaim|not)
+    ' "$1" >/dev/null
+}
+
+"${buildopt_root}/dev/run-request-aligned-terminal-cause-audit" \
+    "${buildopt_temporary}/regenerated.json" >/dev/null
+cmp -s "${buildopt_result}" "${buildopt_temporary}/regenerated.json" || {
+    printf 'request-aligned terminal cause audit is stale or not reproducible\n' >&2
+    exit 1
+}
+buildopt_validate_result "${buildopt_result}" || {
+    printf 'request-aligned terminal cause-audit contract is invalid\n' >&2
+    exit 1
+}
+
+jq '.counterfactual.familiesMeetingFiveRelevant=5|.counterfactual.evidenceRepairsSatisfyGate=true' \
+    "${buildopt_result}" >"${buildopt_temporary}/tampered-breadth.json"
+if buildopt_validate_result "${buildopt_temporary}/tampered-breadth.json"; then
+    printf 'invented counterfactual breadth was accepted\n' >&2
+    exit 1
+fi
+jq '.decision.performanceTimingAuthorized=true|.decision.speedupClaim=true' \
+    "${buildopt_result}" >"${buildopt_temporary}/tampered-authority.json"
+if buildopt_validate_result "${buildopt_temporary}/tampered-authority.json"; then
+    printf 'invented timing authority was accepted\n' >&2
+    exit 1
+fi
+
+printf 'Request-aligned terminal cause audit: PASS\n'
