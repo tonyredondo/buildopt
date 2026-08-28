@@ -4,9 +4,9 @@
 
 **Overall:** `ACTIVE`
 
-**Progress:** one analysis block complete; implementation and public proof not yet run
+**Progress:** two of eight blocks complete; exact observed-request portfolio lifecycle is next
 
-**Current block:** `SWL-PORTFOLIO-001`
+**Current block:** `SWL-PORTFOLIO-002`
 
 **Selected hypothesis:** `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1`
 
@@ -61,8 +61,8 @@ model—not those repairs—must establish broader opportunity.
 | Order | Block | Deliverable | State | Dependency |
 | ---: | --- | --- | --- | --- |
 | 0 | `SWL-PORTFOLIO-000` Terminal cause audit and route selection | Rebuild all 110 rows, quantify recoverability and preregister the materially different hypothesis | `DONE` | terminal request-aligned evidence |
-| 1 | `SWL-PORTFOLIO-001` Evidence precision primitives | Dependency-ordered equivalent producer groups, explicit absent-output bindings and split compatibility/request-graph identity | `TODO` | SWL-PORTFOLIO-000 |
-| 2 | `SWL-PORTFOLIO-002` Exact observed request portfolio | Persist exact recurrent argv identities, counts and lifecycle without extra builds or command substitution | `WAITING` | SWL-PORTFOLIO-001 |
+| 1 | `SWL-PORTFOLIO-001` Evidence precision primitives | Dependency-ordered equivalent producer groups, explicit absent-output bindings and split compatibility/request-graph identity | `DONE` | SWL-PORTFOLIO-000 |
+| 2 | `SWL-PORTFOLIO-002` Exact observed request portfolio | Persist exact recurrent argv identities, counts and lifecycle without extra builds or command substitution | `TODO` | SWL-PORTFOLIO-001 |
 | 3 | `SWL-PORTFOLIO-003` Fresh public portfolio capture | Start empty and capture ordinary observed requests across the frozen five-family cohort | `WAITING` | SWL-PORTFOLIO-002 |
 | 4 | `SWL-PORTFOLIO-004` Independent breadth gate | Rebuild every row; require 5/5 complete inputs, five relevant rows per family and exact actions in 3/5 | `WAITING` | SWL-PORTFOLIO-003 |
 | 5 | `SWL-PORTFOLIO-005` Installed value | Eight balanced pairs per admitted action with exact outputs and complete BuildOpt costs | `WAITING` | passing breadth only |
@@ -94,6 +94,16 @@ Required fixtures: Gradle 8.14.3 and 9.6.1, Kotlin and Groovy, positive
 dependency-ordered aliases, positive absent-state binding, and every negative
 listed above. Re-run the frozen 110-row audit and require the counterfactual
 counts **5/0/2/1/5**. Do not execute an action or measure wall time.
+
+Implemented outcome: [`request-aligned-evidence-precision-v1.json`](../../benchmarks/results/request-aligned-evidence-precision-v1.json)
+passes Gradle 8.14.3/9.6.1 × Kotlin/Groovy. The v2 evidence model accepts only
+dependency-ordered identical producer aliases, binds present and absent output
+states, revalidates absence after the candidate boundary, and separates strict
+compatibility, exact requested graph and repository-wide build-logic drift.
+All unordered, hash/kind mismatch, outside-graph, cycle, malformed and
+post-candidate appearance negatives fail closed. The independently regenerated
+historical counterfactual remains **5/0/2/1/5**. No action ran and no wall time
+was measured.
 
 ### SWL-PORTFOLIO-002 — Exact observed request portfolio
 
@@ -155,8 +165,8 @@ than becoming zero. A stopped route authorizes no successor automatically.
 | Evidence | Block | Required evidence | State |
 | --- | --- | --- | --- |
 | `SWL-PORTFOLIO-E001` | SWL-PORTFOLIO-000 | Rebuilt terminal cause audit and selected hypothesis | `DONE` — [`request-aligned-terminal-cause-audit-v1.json`](../../benchmarks/results/request-aligned-terminal-cause-audit-v1.json) |
-| `SWL-PORTFOLIO-E002` | SWL-PORTFOLIO-001 | Cross-Gradle/DSL evidence precision fixtures and frozen-ledger counterfactual | `TODO` |
-| `SWL-PORTFOLIO-E003` | SWL-PORTFOLIO-002 | Exact observed request portfolio lifecycle | `WAITING` |
+| `SWL-PORTFOLIO-E002` | SWL-PORTFOLIO-001 | Cross-Gradle/DSL evidence precision fixtures and frozen-ledger counterfactual | `DONE` — [`request-aligned-evidence-precision-v1.json`](../../benchmarks/results/request-aligned-evidence-precision-v1.json) |
+| `SWL-PORTFOLIO-E003` | SWL-PORTFOLIO-002 | Exact observed request portfolio lifecycle | `TODO` |
 | `SWL-PORTFOLIO-E004` | SWL-PORTFOLIO-003 | Fresh five-family portfolio ledger | `WAITING` |
 | `SWL-PORTFOLIO-E005` | SWL-PORTFOLIO-004 | Independent breadth decision | `WAITING` |
 | `SWL-PORTFOLIO-E006` | SWL-PORTFOLIO-005 | Installed paired value and cost ledger | `WAITING` |

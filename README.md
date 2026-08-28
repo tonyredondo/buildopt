@@ -216,8 +216,15 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > BuildOpt therefore now tests
 > `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1`: learn across the exact set of
 > commands the customer actually repeats, without replacing any command or
-> adding repository rules. The first evidence-precision block is open; no
-> action, timing or speedup is authorized. Follow the
+> adding repository rules. The first evidence-precision block is complete. Its
+> Gradle 8/9 × Kotlin/Groovy matrix accepts dependency-ordered identical
+> producer aliases, binds and revalidates absent outputs, and separates
+> compatibility, exact requested graph and unrelated build-logic drift. Every
+> unsafe alias, output mismatch, cycle, outside-graph owner and post-candidate
+> appearance fails closed. Reconstructing all 110 historical rows still yields
+> **5/0/2/1/5**, so the repair improves correctness but does not open timing.
+> The next block records exact commands already observed through the wrapper;
+> no action, timing or speedup is authorized. Follow the
 > [active tracker](./docs/plans/observed-request-portfolio-poc-tracker.md).
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,

@@ -1,0 +1,234 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: dev/run-request-aligned-evidence-precision-fixtures OUTPUT_JSON\n' >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_output=$1
+[[ ${buildopt_output} == /* ]] || buildopt_output=${PWD}/${buildopt_output}
+for buildopt_command in cp jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-evidence-precision.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-request-evidence-precision.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected precision root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+buildopt_producer=${buildopt_temporary}/request-aligned-producer
+buildopt_classifier=${buildopt_temporary}/request-aligned-classifier
+env GOCACHE="${buildopt_temporary}/go-cache" "${buildopt_root}/dev/run" --toolchain go -- \
+    go build -o "${buildopt_producer}" ./cmd/request-aligned-producer
+env GOCACHE="${buildopt_temporary}/go-cache" "${buildopt_root}/dev/run" --toolchain go -- \
+    go build -o "${buildopt_classifier}" ./cmd/request-aligned-classifier
+: >"${buildopt_temporary}/results.jsonl"
+
+buildopt_gradle_bin() {
+    case $1 in
+        8.14.3) printf '%s\n' "${buildopt_root}/.tools/gradle-compat/gradle-8.14.3/bin/gradle" ;;
+        9.6.1) printf '%s\n' "${buildopt_root}/.tools/gradle-user-home/local/wrapper/dists/gradle-9.6.1-bin/4ticwg1pgcbps2hj28r8so764/gradle-9.6.1/bin/gradle" ;;
+        *) return 1 ;;
+    esac
+}
+
+buildopt_capture() {
+    local buildopt_gradle=$1
+    local buildopt_repository=$2
+    local buildopt_capture_path=$3
+    env \
+        BUILDOPT_REQUEST_CAPTURE_OUTPUT="${buildopt_capture_path}.v1" \
+        BUILDOPT_REQUEST_ARGUMENTS='[":bundle","--no-daemon"]' \
+        BUILDOPT_REQUEST_TASKS='[":bundle"]' \
+        BUILDOPT_REQUEST_GENERATED_AT=2026-08-28T00:00:00Z \
+        GRADLE_USER_HOME="${buildopt_root}/.tools/gradle-user-home/local" \
+        "${buildopt_root}/dev/run" -- \
+        "${buildopt_gradle}" --no-daemon -p "${buildopt_repository}" \
+        -I "${buildopt_root}/dev/request-aligned-producer.init.gradle" \
+        buildoptRequestAlignedCapture >/dev/null
+    jq -c '.schemaVersion="buildopt.poc/request-aligned-producer-capture/v2"' \
+        "${buildopt_capture_path}.v1" >"${buildopt_capture_path}"
+}
+
+buildopt_observe() {
+    "${buildopt_producer}" --input "$1" --output "$2"
+}
+
+buildopt_assert_unavailable() {
+    local buildopt_capture_path=$1
+    local buildopt_reason=$2
+    local buildopt_observation_path=$3
+    buildopt_observe "${buildopt_capture_path}" "${buildopt_observation_path}"
+    jq -e --arg reason "${buildopt_reason}" \
+        '.status=="UNAVAILABLE" and .reason==$reason and (.performanceMeasured|not) and (.activationAuthorized|not)' \
+        "${buildopt_observation_path}" >/dev/null
+}
+
+buildopt_transition() {
+    local buildopt_base=$1
+    local buildopt_target=$2
+    local buildopt_changed=$3
+    local buildopt_path=$4
+    jq -n \
+        --argjson changedPaths "${buildopt_changed}" \
+        --slurpfile baseCapture "${buildopt_base}" \
+        --slurpfile targetCapture "${buildopt_target}" '
+      {
+        schemaVersion:"buildopt.poc/request-aligned-transition/v2",
+        generatedAt:"2026-08-28T00:00:00Z",
+        baseRevision:("a"*40),targetRevision:("b"*40),changedPaths:$changedPaths,
+        baseCapture:$baseCapture[0],targetCapture:$targetCapture[0]
+      }
+    ' >"${buildopt_path}"
+}
+
+buildopt_classify_case() {
+    local buildopt_name=$1
+    local buildopt_base=$2
+    local buildopt_target=$3
+    local buildopt_changed=$4
+    local buildopt_case_root=$5
+    buildopt_transition "${buildopt_base}" "${buildopt_target}" "${buildopt_changed}" \
+        "${buildopt_case_root}/${buildopt_name}-transition.json"
+    "${buildopt_classifier}" --input "${buildopt_case_root}/${buildopt_name}-transition.json" \
+        --output "${buildopt_case_root}/${buildopt_name}.json"
+}
+
+buildopt_run_fixture() {
+    local buildopt_gradle_version=$1
+    local buildopt_dsl=$2
+    local buildopt_case_root=${buildopt_temporary}/${buildopt_gradle_version}-${buildopt_dsl}
+    local buildopt_repository=${buildopt_case_root}/repository
+    local buildopt_gradle
+    buildopt_gradle=$(buildopt_gradle_bin "${buildopt_gradle_version}")
+    [[ -x ${buildopt_gradle} ]] || {
+        printf 'Gradle %s is unavailable\n' "${buildopt_gradle_version}" >&2
+        return 1
+    }
+    mkdir -p -- "${buildopt_case_root}"
+    cp -a -- "${buildopt_root}/fixtures/request-aligned-precision/${buildopt_dsl,,}" "${buildopt_repository}"
+    mkdir -p -- "${buildopt_repository}/gradle/wrapper"
+    printf 'distributionUrl=https\\://services.gradle.org/distributions/gradle-%s-bin.zip\n' \
+        "${buildopt_gradle_version}" >"${buildopt_repository}/gradle/wrapper/gradle-wrapper.properties"
+    buildopt_capture "${buildopt_gradle}" "${buildopt_repository}" "${buildopt_case_root}/capture.json"
+    buildopt_observe "${buildopt_case_root}/capture.json" "${buildopt_case_root}/observation.json"
+
+    jq '(.tasks[]|select(.path==":rightAlias")|.dependsOn)=[] |
+        (.tasks[]|select(.path==":bundle")|.dependsOn)+=[":rightProducer"]' \
+        "${buildopt_case_root}/capture.json" >"${buildopt_case_root}/unordered.json"
+    jq '(.tasks[]|select(.path==":rightAlias")|.outputs[0].sha256)=("9"*64)' \
+        "${buildopt_case_root}/capture.json" >"${buildopt_case_root}/hash-mismatch.json"
+    jq '(.tasks[]|select(.path==":rightAlias")|.outputs[0].kind)="DIRECTORY"' \
+        "${buildopt_case_root}/capture.json" >"${buildopt_case_root}/kind-mismatch.json"
+    jq '.tasks += [{path:":outside",dependsOn:[],inputs:[],outputs:[{path:"build/outside.bin",kind:"FILE",sha256:("8"*64),exists:true}]}]' \
+        "${buildopt_case_root}/capture.json" >"${buildopt_case_root}/outside.json"
+    jq '(.tasks[]|select(.path==":rightProducer")|.dependsOn)=[":rightAlias"]' \
+        "${buildopt_case_root}/capture.json" >"${buildopt_case_root}/cycle.json"
+    jq '(.tasks[]|select(.path==":rightProducer")|.outputs[0].sha256)=""' \
+        "${buildopt_case_root}/capture.json" >"${buildopt_case_root}/malformed.json"
+
+    buildopt_assert_unavailable "${buildopt_case_root}/unordered.json" EQUIVALENT_PRODUCERS_UNORDERED "${buildopt_case_root}/unordered-observation.json"
+    buildopt_assert_unavailable "${buildopt_case_root}/hash-mismatch.json" EQUIVALENT_PRODUCER_STATE_MISMATCH "${buildopt_case_root}/hash-observation.json"
+    buildopt_assert_unavailable "${buildopt_case_root}/kind-mismatch.json" EQUIVALENT_PRODUCER_KIND_MISMATCH "${buildopt_case_root}/kind-observation.json"
+    buildopt_assert_unavailable "${buildopt_case_root}/outside.json" TASK_OUTSIDE_REQUESTED_GRAPH "${buildopt_case_root}/outside-observation.json"
+    buildopt_assert_unavailable "${buildopt_case_root}/cycle.json" TASK_GRAPH_CYCLIC "${buildopt_case_root}/cycle-observation.json"
+    if buildopt_observe "${buildopt_case_root}/malformed.json" "${buildopt_case_root}/malformed-observation.json" 2>/dev/null; then
+        printf 'malformed output evidence was accepted\n' >&2
+        return 1
+    fi
+
+    jq '(.gradleVersion)="0.0-test"' "${buildopt_case_root}/capture.json" >"${buildopt_case_root}/compatibility.json"
+    jq '(.tasks[]|select(.path==":bundle")|.dependsOn)+=[":rightProducer"]' \
+        "${buildopt_case_root}/capture.json" >"${buildopt_case_root}/graph.json"
+    jq '(.buildLogicFiles[0].sha256)=("7"*64)' \
+        "${buildopt_case_root}/capture.json" >"${buildopt_case_root}/build-logic.json"
+
+    buildopt_classify_case affected "${buildopt_case_root}/capture.json" "${buildopt_case_root}/capture.json" \
+        '["inputs/left.txt"]' "${buildopt_case_root}"
+    buildopt_classify_case compatibility "${buildopt_case_root}/capture.json" "${buildopt_case_root}/compatibility.json" \
+        '["inputs/left.txt"]' "${buildopt_case_root}"
+    buildopt_classify_case graph "${buildopt_case_root}/capture.json" "${buildopt_case_root}/graph.json" \
+        '["inputs/left.txt"]' "${buildopt_case_root}"
+    buildopt_classify_case irrelevant-build-logic "${buildopt_case_root}/capture.json" "${buildopt_case_root}/build-logic.json" \
+        '["build.gradle"]' "${buildopt_case_root}"
+    buildopt_classify_case relevant-build-logic "${buildopt_case_root}/capture.json" "${buildopt_case_root}/build-logic.json" \
+        '["inputs/left.txt"]' "${buildopt_case_root}"
+
+    jq -e '.status=="COMPLETE" and
+      ([.currentOutputStates[]|select(.path=="build/right.bin" and .exists and .producerTasks==[":rightAlias",":rightProducer"])]|length)==1 and
+      ([.currentOutputStates[]|select(.path=="build/optional.bin" and (.exists|not) and .sha256=="")]|length)==1' \
+        "${buildopt_case_root}/observation.json" >/dev/null
+    jq -e '.status=="RELEVANT_COMPLETE" and .reason=="EXACT_RELEVANT_PRODUCER_CLOSURE" and .testableActions==1 and
+      .candidateTasks==[":bundle",":leftProducer"] and .omittedTasks==[":optionalProducer",":rightAlias",":rightProducer"] and
+      ([.omittedOutputStates[]|select(.path=="build/right.bin" and .producerTasks==[":rightAlias",":rightProducer"] and .exists)]|length)==1 and
+      ([.omittedOutputStates[]|select(.path=="build/optional.bin" and (.exists|not))]|length)==1' \
+        "${buildopt_case_root}/affected.json" >/dev/null
+    jq '.omittedOutputStates' "${buildopt_case_root}/affected.json" >"${buildopt_case_root}/expected-states.json"
+    "${buildopt_producer}" --input "${buildopt_case_root}/capture.json" \
+        --validate-output-states "${buildopt_case_root}/expected-states.json"
+    jq '(.tasks[]|select(.path==":optionalProducer")|.outputs[0]) |= (.exists=true|.sha256=("6"*64))' \
+        "${buildopt_case_root}/capture.json" >"${buildopt_case_root}/absence-broken.json"
+    if "${buildopt_producer}" --input "${buildopt_case_root}/absence-broken.json" \
+        --validate-output-states "${buildopt_case_root}/expected-states.json" 2>/dev/null; then
+        printf 'an output appearing after the candidate was accepted\n' >&2
+        return 1
+    fi
+
+    jq -e '.status=="GLOBAL_OR_AMBIGUOUS" and .reason=="REQUEST_COMPATIBILITY_CHANGED"' "${buildopt_case_root}/compatibility.json" >/dev/null
+    jq -e '.status=="GLOBAL_OR_AMBIGUOUS" and .reason=="REQUEST_GRAPH_CHANGED"' "${buildopt_case_root}/graph.json" >/dev/null
+    jq -e '.status=="IRRELEVANT_TO_REQUEST" and .reason=="BUILD_LOGIC_CHANGED_IRRELEVANT_TO_REQUEST"' "${buildopt_case_root}/irrelevant-build-logic.json" >/dev/null
+    jq -e '.status=="GLOBAL_OR_AMBIGUOUS" and .reason=="BUILD_LOGIC_CHANGED_WITH_RELEVANT_REQUEST_INPUT"' "${buildopt_case_root}/relevant-build-logic.json" >/dev/null
+
+    jq -n --arg gradleVersion "${buildopt_gradle_version}" --arg dsl "${buildopt_dsl}" \
+        --slurpfile observation "${buildopt_case_root}/observation.json" \
+        --slurpfile affected "${buildopt_case_root}/affected.json" '
+      {
+        gradleVersion:$gradleVersion,dsl:$dsl,status:"COMPLETE",
+        equivalentProducerTasks:($observation[0].currentOutputStates[]|select(.path=="build/right.bin")|.producerTasks),
+        absentOutput:($observation[0].currentOutputStates[]|select(.path=="build/optional.bin")),
+        candidateTasks:$affected[0].candidateTasks,omittedTasks:$affected[0].omittedTasks,
+        omittedOutputStates:$affected[0].omittedOutputStates,
+        rejectedEvidence:["UNORDERED_PEERS","HASH_MISMATCH","KIND_MISMATCH","OWNER_OUTSIDE_REQUEST_GRAPH","TASK_GRAPH_CYCLE","MALFORMED_OUTPUT"],
+        driftClassifications:["REQUEST_COMPATIBILITY_CHANGED","REQUEST_GRAPH_CHANGED","BUILD_LOGIC_CHANGED_IRRELEVANT_TO_REQUEST","BUILD_LOGIC_CHANGED_WITH_RELEVANT_REQUEST_INPUT"],
+        stableAbsenceRevalidated:true,appearingOutputRejected:true,
+        performanceMeasured:false,activationAuthorized:false
+      }
+    ' >>"${buildopt_temporary}/results.jsonl"
+}
+
+for buildopt_gradle_version in 8.14.3 9.6.1; do
+    for buildopt_dsl in KOTLIN GROOVY; do
+        buildopt_run_fixture "${buildopt_gradle_version}" "${buildopt_dsl}"
+    done
+done
+
+"${buildopt_root}/dev/run-request-aligned-terminal-cause-audit" \
+    "${buildopt_temporary}/historical-counterfactual.json" >/dev/null
+
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+jq -s \
+    --arg observationSha256 "$(sha256sum "${buildopt_root}/internal/requestaligned/observation.go" | awk '{print $1}')" \
+    --arg classificationSha256 "$(sha256sum "${buildopt_root}/internal/requestaligned/classification.go" | awk '{print $1}')" \
+    --slurpfile audit "${buildopt_temporary}/historical-counterfactual.json" '
+  {
+    schemaVersion:"buildopt.evidence/request-aligned-evidence-precision-fixtures/v1",
+    workItem:"SWL-PORTFOLIO-001",status:"COMPLETE",
+    observationSha256:$observationSha256,classificationSha256:$classificationSha256,
+    coverage:["ORDERED_EQUIVALENT_PRODUCERS","EXPLICIT_ABSENT_OUTPUT","POST_CANDIDATE_ABSENCE_REVALIDATION","STRICT_COMPATIBILITY_IDENTITY","REQUEST_GRAPH_IDENTITY","REQUEST_RELEVANT_BUILD_LOGIC_DRIFT"],
+    results:.,historicalCounterfactual:($audit[0].counterfactual.familyAssessments |
+      map({key:.family,value:.counterfactualRelevantActions}) | from_entries),
+    performanceMeasured:false,activationAuthorized:false,
+    outcome:"REQUEST_ALIGNED_EVIDENCE_PRECISION_COMPLETE"
+  }
+' "${buildopt_temporary}/results.jsonl" >"${buildopt_output}"
+
+printf 'Request-aligned evidence precision written to %s\n' "${buildopt_output}"

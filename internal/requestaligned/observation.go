@@ -15,8 +15,10 @@ import (
 )
 
 const (
-	CaptureSchemaVersion     = "buildopt.poc/request-aligned-producer-capture/v1"
-	ObservationSchemaVersion = "buildopt.poc/request-aligned-observation/v1"
+	CaptureSchemaVersionV1     = "buildopt.poc/request-aligned-producer-capture/v1"
+	ObservationSchemaVersionV1 = "buildopt.poc/request-aligned-observation/v1"
+	CaptureSchemaVersion       = "buildopt.poc/request-aligned-producer-capture/v2"
+	ObservationSchemaVersion   = "buildopt.poc/request-aligned-observation/v2"
 
 	CaptureComplete    = "COMPLETE"
 	CaptureUnavailable = "UNAVAILABLE"
@@ -68,33 +70,46 @@ type ProducerOutput struct {
 	SHA256       string `json:"sha256"`
 }
 
+// OutputState binds one current output to every equivalent producer in the
+// exact requested graph. An absent state deliberately carries no digest.
+type OutputState struct {
+	ProducerTasks []string `json:"producerTasks"`
+	Path          string   `json:"path"`
+	Kind          string   `json:"kind"`
+	SHA256        string   `json:"sha256"`
+	Exists        bool     `json:"exists"`
+}
+
 // Observation is a validated, non-authorizing request identity and current
 // producer-output inventory.
 type Observation struct {
-	SchemaVersion            string                     `json:"schemaVersion"`
-	GeneratedAt              string                     `json:"generatedAt"`
-	Status                   string                     `json:"status"`
-	Reason                   string                     `json:"reason"`
-	GradleArguments          []string                   `json:"gradleArguments"`
-	RequestedTasks           []string                   `json:"requestedTasks"`
-	GradleVersion            string                     `json:"gradleVersion"`
-	JavaRuntime              JavaRuntime                `json:"javaRuntime"`
-	EnvironmentBindingSHA256 string                     `json:"environmentBindingSha256"`
-	WrapperSHA256            string                     `json:"wrapperSha256"`
-	BuildLogicSHA256         string                     `json:"buildLogicSha256"`
-	TaskGraphSHA256          string                     `json:"taskGraphSha256"`
-	RequestIdentitySHA256    string                     `json:"requestIdentitySha256"`
-	Tasks                    []changeaware.TaskEvidence `json:"tasks"`
-	CurrentOutputs           []ProducerOutput           `json:"currentOutputs"`
-	PerformanceMeasured      bool                       `json:"performanceMeasured"`
-	ActivationAuthorized     bool                       `json:"activationAuthorized"`
+	SchemaVersion               string                     `json:"schemaVersion"`
+	GeneratedAt                 string                     `json:"generatedAt"`
+	Status                      string                     `json:"status"`
+	Reason                      string                     `json:"reason"`
+	GradleArguments             []string                   `json:"gradleArguments"`
+	RequestedTasks              []string                   `json:"requestedTasks"`
+	GradleVersion               string                     `json:"gradleVersion"`
+	JavaRuntime                 JavaRuntime                `json:"javaRuntime"`
+	EnvironmentBindingSHA256    string                     `json:"environmentBindingSha256"`
+	WrapperSHA256               string                     `json:"wrapperSha256"`
+	BuildLogicSHA256            string                     `json:"buildLogicSha256"`
+	TaskGraphSHA256             string                     `json:"taskGraphSha256"`
+	RequestIdentitySHA256       string                     `json:"requestIdentitySha256"`
+	CompatibilityIdentitySHA256 string                     `json:"compatibilityIdentitySha256,omitempty"`
+	RequestGraphIdentitySHA256  string                     `json:"requestGraphIdentitySha256,omitempty"`
+	Tasks                       []changeaware.TaskEvidence `json:"tasks"`
+	CurrentOutputs              []ProducerOutput           `json:"currentOutputs"`
+	CurrentOutputStates         []OutputState              `json:"currentOutputStates,omitempty"`
+	PerformanceMeasured         bool                       `json:"performanceMeasured"`
+	ActivationAuthorized        bool                       `json:"activationAuthorized"`
 }
 
 // Produce validates a capture and derives its checkout-independent identity.
 // Ambiguous or missing output ownership remains typed unavailable.
 func Produce(capture Capture) (Observation, error) {
 	observation := baseObservation(capture)
-	if capture.SchemaVersion != CaptureSchemaVersion || capture.GeneratedAt == "" {
+	if (capture.SchemaVersion != CaptureSchemaVersionV1 && capture.SchemaVersion != CaptureSchemaVersion) || capture.GeneratedAt == "" {
 		return Observation{}, errors.New("request-aligned capture identity is invalid")
 	}
 	switch capture.Status {
@@ -140,6 +155,13 @@ func Produce(capture Capture) (Observation, error) {
 		if _, exists := tasks[requested]; !exists {
 			return unavailable(observation, "REQUESTED_TASK_UNAVAILABLE"), nil
 		}
+	}
+	if capture.SchemaVersion == CaptureSchemaVersion && taskGraphCyclic(tasks) {
+		return unavailable(observation, "TASK_GRAPH_CYCLIC"), nil
+	}
+
+	if capture.SchemaVersion == CaptureSchemaVersion {
+		return produceV2(observation, capture, tasks, graphRows, wrapperRows, wrapperSHA, buildSHA)
 	}
 
 	outputs := []ProducerOutput{}
@@ -196,8 +218,12 @@ func Produce(capture Capture) (Observation, error) {
 }
 
 func baseObservation(capture Capture) Observation {
+	schemaVersion := ObservationSchemaVersion
+	if capture.SchemaVersion == CaptureSchemaVersionV1 {
+		schemaVersion = ObservationSchemaVersionV1
+	}
 	return Observation{
-		SchemaVersion: ObservationSchemaVersion, GeneratedAt: capture.GeneratedAt,
+		SchemaVersion: schemaVersion, GeneratedAt: capture.GeneratedAt,
 		GradleArguments: append([]string(nil), capture.GradleArguments...),
 		RequestedTasks:  append([]string(nil), capture.RequestedTasks...),
 		GradleVersion:   capture.GradleVersion, JavaRuntime: capture.JavaRuntime,
@@ -205,6 +231,172 @@ func baseObservation(capture Capture) Observation {
 		Tasks:                    append([]changeaware.TaskEvidence(nil), capture.Tasks...),
 		CurrentOutputs:           []ProducerOutput{}, PerformanceMeasured: false, ActivationAuthorized: false,
 	}
+}
+
+func produceV2(
+	observation Observation,
+	capture Capture,
+	tasks map[string]changeaware.TaskEvidence,
+	graphRows []string,
+	wrapperRows []string,
+	wrapperSHA string,
+	buildSHA string,
+) (Observation, error) {
+	requiredGraph := taskAncestors(tasks, capture.RequestedTasks)
+	if len(requiredGraph) != len(tasks) {
+		return unavailable(observation, "TASK_OUTSIDE_REQUESTED_GRAPH"), nil
+	}
+
+	type outputOwner struct {
+		task   string
+		output changeaware.OutputEvidence
+	}
+	byPath := map[string][]outputOwner{}
+	for taskPath, task := range tasks {
+		for _, output := range task.Outputs {
+			byPath[output.Path] = append(byPath[output.Path], outputOwner{task: taskPath, output: output})
+		}
+	}
+	if len(byPath) == 0 {
+		return unavailable(observation, "CURRENT_PRODUCER_OUTPUTS_EMPTY"), nil
+	}
+
+	states := make([]OutputState, 0, len(byPath))
+	for _, owners := range byPath {
+		first := owners[0].output
+		producerTasks := make([]string, 0, len(owners))
+		for _, owner := range owners {
+			if !requiredGraph[owner.task] {
+				return unavailable(observation, "EQUIVALENT_PRODUCER_OUTSIDE_REQUEST_GRAPH"), nil
+			}
+			if owner.output.Kind != first.Kind {
+				return unavailable(observation, "EQUIVALENT_PRODUCER_KIND_MISMATCH"), nil
+			}
+			if owner.output.Exists != first.Exists || owner.output.SHA256 != first.SHA256 {
+				return unavailable(observation, "EQUIVALENT_PRODUCER_STATE_MISMATCH"), nil
+			}
+			producerTasks = append(producerTasks, owner.task)
+		}
+		sort.Strings(producerTasks)
+		if len(producerTasks) > 1 && !hasOrderedProducerPair(tasks, producerTasks) {
+			return unavailable(observation, "EQUIVALENT_PRODUCERS_UNORDERED"), nil
+		}
+		states = append(states, OutputState{
+			ProducerTasks: producerTasks, Path: first.Path, Kind: first.Kind,
+			SHA256: first.SHA256, Exists: first.Exists,
+		})
+	}
+	sortOutputStates(states)
+
+	graphSHA := digest("buildopt-request-task-graph-v2", graphRows...)
+	runtimeSHA := digest("buildopt-request-java-runtime-v2",
+		capture.JavaRuntime.Version, capture.JavaRuntime.Vendor,
+		capture.JavaRuntime.RuntimeName, capture.JavaRuntime.VMName,
+		capture.JavaRuntime.Architecture)
+	argumentSHA := digest("buildopt-request-gradle-arguments-v2", capture.GradleArguments...)
+	requested := append([]string(nil), capture.RequestedTasks...)
+	sort.Strings(requested)
+	requestedSHA := digest("buildopt-request-task-roots-v2", requested...)
+	compatibilitySHA := digest("buildopt-request-compatibility-v2",
+		capture.GradleVersion, runtimeSHA, capture.EnvironmentBindingSHA256, wrapperSHA,
+		digest("buildopt-request-wrapper-files-v2", wrapperRows...))
+	requestGraphSHA := digest("buildopt-request-graph-identity-v2", argumentSHA, requestedSHA, graphSHA)
+
+	observation.Status, observation.Reason = StatusComplete, "CURRENT_REQUEST_AND_OUTPUT_EVIDENCE_COMPLETE"
+	observation.WrapperSHA256 = wrapperSHA
+	observation.BuildLogicSHA256 = buildSHA
+	observation.TaskGraphSHA256 = graphSHA
+	observation.CompatibilityIdentitySHA256 = compatibilitySHA
+	observation.RequestGraphIdentitySHA256 = requestGraphSHA
+	observation.RequestIdentitySHA256 = digest("buildopt-request-identity-v2", compatibilitySHA, requestGraphSHA)
+	observation.CurrentOutputStates = states
+	return observation, nil
+}
+
+func hasOrderedProducerPair(tasks map[string]changeaware.TaskEvidence, producers []string) bool {
+	for index, left := range producers {
+		for _, right := range producers[index+1:] {
+			if taskReachable(tasks, left, right) || taskReachable(tasks, right, left) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func taskReachable(tasks map[string]changeaware.TaskEvidence, from, target string) bool {
+	seen := map[string]bool{}
+	pending := append([]string(nil), tasks[from].DependsOn...)
+	for len(pending) > 0 {
+		current := pending[len(pending)-1]
+		pending = pending[:len(pending)-1]
+		if current == target {
+			return true
+		}
+		if seen[current] {
+			continue
+		}
+		seen[current] = true
+		pending = append(pending, tasks[current].DependsOn...)
+	}
+	return false
+}
+
+func sortOutputStates(values []OutputState) {
+	sort.Slice(values, func(i, j int) bool {
+		if values[i].Path != values[j].Path {
+			return values[i].Path < values[j].Path
+		}
+		if values[i].Kind != values[j].Kind {
+			return values[i].Kind < values[j].Kind
+		}
+		return strings.Join(values[i].ProducerTasks, "\x00") < strings.Join(values[j].ProducerTasks, "\x00")
+	})
+}
+
+// ValidateOutputStates re-observes current output evidence and proves that
+// every expected present output is unchanged and every expected absence is
+// still absent after a candidate request.
+func ValidateOutputStates(expected []OutputState, current Capture) error {
+	if current.SchemaVersion != CaptureSchemaVersion {
+		return errors.New("output-state revalidation requires a v2 capture")
+	}
+	observation, err := Produce(current)
+	if err != nil {
+		return err
+	}
+	if observation.Status != StatusComplete {
+		return errors.New("current output-state evidence is unavailable")
+	}
+	actual := map[string]OutputState{}
+	for _, state := range observation.CurrentOutputStates {
+		actual[outputStateIdentity(state)] = state
+	}
+	for _, state := range expected {
+		if err := validateOutputState(state); err != nil {
+			return err
+		}
+		value, exists := actual[outputStateIdentity(state)]
+		if !exists || value.Exists != state.Exists || value.SHA256 != state.SHA256 {
+			return errors.New("output state changed after candidate request")
+		}
+	}
+	return nil
+}
+
+func outputStateIdentity(value OutputState) string {
+	producers := append([]string(nil), value.ProducerTasks...)
+	sort.Strings(producers)
+	return strings.Join(producers, "\x00") + "\x01" + value.Kind + "\x00" + value.Path
+}
+
+func validateOutputState(value OutputState) error {
+	if validateStringSet(value.ProducerTasks, safeTaskPath) != nil || !safeRepositoryPath(value.Path) ||
+		(value.Kind != "FILE" && value.Kind != "DIRECTORY") ||
+		(value.Exists && !validSHA(value.SHA256)) || (!value.Exists && value.SHA256 != "") {
+		return errors.New("expected output state is invalid")
+	}
+	return nil
 }
 
 func unavailable(observation Observation, reason string) Observation {

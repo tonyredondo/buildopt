@@ -10,8 +10,10 @@ import (
 )
 
 const (
-	TransitionSchemaVersion     = "buildopt.poc/request-aligned-transition/v1"
-	ClassificationSchemaVersion = "buildopt.poc/request-aligned-classification/v1"
+	TransitionSchemaVersionV1     = "buildopt.poc/request-aligned-transition/v1"
+	ClassificationSchemaVersionV1 = "buildopt.poc/request-aligned-classification/v1"
+	TransitionSchemaVersion       = "buildopt.poc/request-aligned-transition/v2"
+	ClassificationSchemaVersion   = "buildopt.poc/request-aligned-classification/v2"
 
 	ClassificationRelevantComplete  = "RELEVANT_COMPLETE"
 	ClassificationIrrelevant        = "IRRELEVANT_TO_REQUEST"
@@ -49,6 +51,7 @@ type Classification struct {
 	CandidateTasks        []string                  `json:"candidateTasks"`
 	OmittedTasks          []string                  `json:"omittedTasks"`
 	OmittedOutputs        []changeaware.BoundOutput `json:"omittedOutputs"`
+	OmittedOutputStates   []OutputState             `json:"omittedOutputStates,omitempty"`
 	ActionBindingSHA256   string                    `json:"actionBindingSha256,omitempty"`
 	InputComplete         bool                      `json:"inputComplete"`
 	TestableActions       int                       `json:"testableActions"`
@@ -60,11 +63,20 @@ type Classification struct {
 // affected/omitted producer closure for the target revision.
 func Classify(transition Transition) (Classification, error) {
 	report := baseClassification(transition)
-	if transition.SchemaVersion != TransitionSchemaVersion || transition.GeneratedAt == "" ||
+	if (transition.SchemaVersion != TransitionSchemaVersionV1 && transition.SchemaVersion != TransitionSchemaVersion) ||
+		transition.GeneratedAt == "" ||
 		!validRevision(transition.BaseRevision) || !validRevision(transition.TargetRevision) ||
 		transition.BaseRevision == transition.TargetRevision ||
 		validateStringSetAllowEmpty(transition.ChangedPaths, safeRepositoryPath) != nil {
 		return Classification{}, errors.New("request-aligned transition identity is invalid")
+	}
+	expectedCaptureSchema := CaptureSchemaVersion
+	if transition.SchemaVersion == TransitionSchemaVersionV1 {
+		expectedCaptureSchema = CaptureSchemaVersionV1
+	}
+	if transition.BaseCapture.SchemaVersion != expectedCaptureSchema ||
+		transition.TargetCapture.SchemaVersion != expectedCaptureSchema {
+		return Classification{}, errors.New("request-aligned transition and capture versions differ")
 	}
 
 	base, err := Produce(transition.BaseCapture)
@@ -87,6 +99,9 @@ func Classify(transition Transition) (Classification, error) {
 			return classified(report, ClassificationGlobalOrAmbiguous, reason, false), nil
 		}
 		return classified(report, ClassificationInputUnavailable, reason, false), nil
+	}
+	if transition.SchemaVersion == TransitionSchemaVersion {
+		return classifyV2(report, transition, base, target)
 	}
 	if base.RequestIdentitySHA256 != target.RequestIdentitySHA256 {
 		return classified(report, ClassificationGlobalOrAmbiguous, "REQUEST_IDENTITY_CHANGED", true), nil
@@ -180,13 +195,127 @@ func Classify(transition Transition) (Classification, error) {
 func baseClassification(transition Transition) Classification {
 	changed := append([]string(nil), transition.ChangedPaths...)
 	sort.Strings(changed)
+	schemaVersion := ClassificationSchemaVersion
+	if transition.SchemaVersion == TransitionSchemaVersionV1 {
+		schemaVersion = ClassificationSchemaVersionV1
+	}
 	return Classification{
-		SchemaVersion: ClassificationSchemaVersion, GeneratedAt: transition.GeneratedAt,
+		SchemaVersion: schemaVersion, GeneratedAt: transition.GeneratedAt,
 		BaseRevision: transition.BaseRevision, TargetRevision: transition.TargetRevision,
 		ChangedPaths: changed, AffectedInputTasks: []string{}, CandidateTasks: []string{},
 		OmittedTasks: []string{}, OmittedOutputs: []changeaware.BoundOutput{},
 		PerformanceMeasured: false, ActivationAuthorized: false,
 	}
+}
+
+func classifyV2(
+	report Classification,
+	transition Transition,
+	base Observation,
+	target Observation,
+) (Classification, error) {
+	if base.CompatibilityIdentitySHA256 != target.CompatibilityIdentitySHA256 {
+		return classified(report, ClassificationGlobalOrAmbiguous, "REQUEST_COMPATIBILITY_CHANGED", true), nil
+	}
+	if base.RequestGraphIdentitySHA256 != target.RequestGraphIdentitySHA256 {
+		return classified(report, ClassificationGlobalOrAmbiguous, "REQUEST_GRAPH_CHANGED", true), nil
+	}
+	report.RequestIdentitySHA256 = target.RequestIdentitySHA256
+
+	tasks := make(map[string]changeaware.TaskEvidence, len(target.Tasks))
+	reverse := map[string][]string{}
+	for _, task := range target.Tasks {
+		tasks[task.Path] = task
+	}
+	for _, task := range target.Tasks {
+		for _, dependency := range task.DependsOn {
+			reverse[dependency] = append(reverse[dependency], task.Path)
+		}
+	}
+	if taskGraphCyclic(tasks) {
+		return classified(report, ClassificationGlobalOrAmbiguous, "TASK_GRAPH_CYCLIC", true), nil
+	}
+
+	affectedSeeds := map[string]bool{}
+	for _, changed := range transition.ChangedPaths {
+		for taskPath, task := range tasks {
+			if taskConsumesPath(task, changed) {
+				affectedSeeds[taskPath] = true
+			}
+		}
+	}
+	buildLogicChanged := base.BuildLogicSHA256 != target.BuildLogicSHA256
+	if len(affectedSeeds) == 0 {
+		reason := "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS"
+		if buildLogicChanged {
+			reason = "BUILD_LOGIC_CHANGED_IRRELEVANT_TO_REQUEST"
+		}
+		return classified(report, ClassificationIrrelevant, reason, true), nil
+	}
+	if buildLogicChanged {
+		return classified(report, ClassificationGlobalOrAmbiguous, "BUILD_LOGIC_CHANGED_WITH_RELEVANT_REQUEST_INPUT", true), nil
+	}
+	report.AffectedInputTasks = sortedSet(affectedSeeds)
+
+	requiredGraph := taskAncestors(tasks, target.RequestedTasks)
+	affectedGraph := taskDescendants(reverse, report.AffectedInputTasks)
+	candidate := map[string]bool{}
+	omitted := map[string]bool{}
+	for taskPath := range requiredGraph {
+		if affectedGraph[taskPath] {
+			candidate[taskPath] = true
+		} else {
+			omitted[taskPath] = true
+		}
+	}
+	if len(candidate) == 0 {
+		return classified(report, ClassificationGlobalOrAmbiguous, "AFFECTED_TASK_OUTSIDE_REQUESTED_GRAPH", true), nil
+	}
+	report.CandidateTasks = sortedSet(candidate)
+	report.OmittedTasks = sortedSet(omitted)
+
+	statesByTask := map[string][]OutputState{}
+	for _, state := range target.CurrentOutputStates {
+		for _, producer := range state.ProducerTasks {
+			statesByTask[producer] = append(statesByTask[producer], state)
+		}
+	}
+	selected := map[string]OutputState{}
+	for _, taskPath := range report.OmittedTasks {
+		for _, output := range tasks[taskPath].Outputs {
+			var matched *OutputState
+			for _, state := range statesByTask[taskPath] {
+				if state.Path == output.Path && state.Kind == output.Kind {
+					copy := state
+					matched = &copy
+					break
+				}
+			}
+			if matched == nil || matched.Exists != output.Exists || matched.SHA256 != output.SHA256 {
+				return classified(report, ClassificationInputUnavailable, "CURRENT_OUTPUT_STATE_BINDING_MISSING", false), nil
+			}
+			for _, producer := range matched.ProducerTasks {
+				if !omitted[producer] {
+					return classified(report, ClassificationInputUnavailable, "OUTPUT_STATE_CROSSES_CANDIDATE_BOUNDARY", false), nil
+				}
+			}
+			selected[outputStateIdentity(*matched)] = *matched
+		}
+	}
+	for _, state := range selected {
+		report.OmittedOutputStates = append(report.OmittedOutputStates, state)
+	}
+	sortOutputStates(report.OmittedOutputStates)
+
+	report = classified(report, ClassificationRelevantComplete, "RELEVANT_REQUEST_INPUT_COMPLETE", true)
+	if len(report.OmittedTasks) > 0 && len(report.OmittedOutputStates) > 0 {
+		report.Reason = "EXACT_RELEVANT_PRODUCER_CLOSURE"
+		report.TestableActions = 1
+		report.ActionBindingSHA256 = classificationBindingV2(report)
+	} else {
+		report.Reason = "FULL_REQUEST_GRAPH_REQUIRED"
+	}
+	return report, nil
 }
 
 func classified(report Classification, status, reason string, complete bool) Classification {
@@ -291,6 +420,23 @@ func classificationBinding(report Classification) string {
 		parts = append(parts, output.ProducerTask, output.Path, output.Kind, output.SHA256)
 	}
 	return digest("buildopt-request-aligned-action-binding-v1", parts...)
+}
+
+func classificationBindingV2(report Classification) string {
+	parts := []string{"buildopt-request-aligned-action-v2", report.RequestIdentitySHA256,
+		report.BaseRevision, report.TargetRevision}
+	parts = append(parts, report.ChangedPaths...)
+	parts = append(parts, report.CandidateTasks...)
+	for _, state := range report.OmittedOutputStates {
+		parts = append(parts, state.ProducerTasks...)
+		parts = append(parts, state.Path, state.Kind, state.SHA256)
+		if state.Exists {
+			parts = append(parts, "PRESENT")
+		} else {
+			parts = append(parts, "ABSENT")
+		}
+	}
+	return digest("buildopt-request-aligned-action-binding-v2", parts...)
 }
 
 func validRevision(value string) bool {

@@ -198,7 +198,13 @@ one Micronaut relevant rows, but the fixed-request counterfactual remains
 **5/0/2/1/5** and only two families meet the five-row input threshold. It
 therefore selects `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1`: learn across exact
 commands already observed through the wrapper, without command substitution or
-repository rules. Evidence primitives are next; timing remains unauthorized.
+repository rules. The evidence primitives are now complete across Gradle 8/9 ×
+Kotlin/Groovy: ordered identical producer aliases and explicit absent outputs
+are bindable, absence is revalidated after a candidate, and compatibility,
+requested graph and unrelated build logic are separate identities. Unsafe
+alias/output shapes fail closed. Rebuilding the historical audit still yields
+**5/0/2/1/5**, so this is a correctness improvement rather than a speed result.
+Exact observed-request portfolio lifecycle is next; timing remains unauthorized.
 
 ## POC conclusion
 

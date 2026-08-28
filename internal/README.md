@@ -225,6 +225,14 @@ The terminal runner then binds those immutable inputs by digest and preserves
 unmeasured economics as typed values; the package still executes no candidate
 and grants no successor authority.
 
+The versioned v2 boundary used by `SWL-PORTFOLIO-001` additionally permits an
+output to have multiple producers only when the producers are dependency-
+ordered and report the same path, kind, existence and bytes. It represents
+absence explicitly and revalidates it after a candidate, while separating
+strict compatibility identity from the exact request graph and broader build-
+logic inventory. The v1 behavior remains available solely to reproduce the
+checked historical ledger.
+
 `generated/openapi/` contains the checked-in Go transport binding derived from
 the normative OpenAPI documents. It is regenerated through
 `./dev/generate-code --artifact openapi-go-client-v1` and never edited

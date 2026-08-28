@@ -22,7 +22,7 @@ trap buildopt_cleanup EXIT
 jq -e '
   .schemaVersion=="buildopt.poc/observed-request-portfolio-contract/v1" and
   .workItem=="SWL-PORTFOLIO-000" and .status=="ACTIVE" and
-  .currentBlock=="SWL-PORTFOLIO-001" and
+  .currentBlock=="SWL-PORTFOLIO-002" and
   .hypothesis.id=="OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1" and
   (.hypothesis.repositorySpecificRulesAllowed|not) and
   (.hypothesis.commandSubstitutionAllowed|not) and
@@ -34,10 +34,10 @@ jq -e '
   .breadthGate.relevantTransitionsPerFamilyRequired==5 and
   .breadthGate.familiesWithActionsRequired==3 and
   (.breadthGate.timingAuthorizedBeforeBreadth|not) and
-  ([.blocks[]|select(.state=="DONE")]|length)==1 and
+  ([.blocks[]|select(.state=="DONE")]|length)==2 and
   ([.blocks[]|select(.state=="TODO")]|length)==1 and
-  ([.blocks[]|select(.state=="WAITING")]|length)==6 and
-  .nextBlock=="SWL-PORTFOLIO-001"
+  ([.blocks[]|select(.state=="WAITING")]|length)==5 and
+  .nextBlock=="SWL-PORTFOLIO-002"
 ' "${buildopt_contract}" >/dev/null || {
     printf 'observed request portfolio machine contract is invalid\n' >&2
     exit 1
@@ -47,7 +47,7 @@ jq -e '
 # shellcheck disable=SC2016
 buildopt_required_plan_text=(
     '**Overall:** `ACTIVE`'
-    '**Current block:** `SWL-PORTFOLIO-001`'
+    '**Current block:** `SWL-PORTFOLIO-002`'
     '**5/0/2/1/5**'
     '`OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1`'
     'It may not parse CI YAML as authority'

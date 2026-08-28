@@ -102,6 +102,14 @@ The closed request-aligned evidence order is:
    stop the current detector, preserve unavailable economics and authorize no
    successor).
 
+The active observed-request portfolio successor first completed a versioned
+evidence-precision layer: ordered equivalent producers, explicit absent
+outputs, absence revalidation and separate compatibility/request-graph
+identity pass Gradle 8/9 × Kotlin/Groovy. The next block records only exact
+commands already received by the committed wrapper. It may not parse CI files,
+substitute commands, start an extra Gradle build or use these correctness
+repairs as timing authority.
+
 Sample count alone never makes the campaign ready. Missing lifecycle, action or
 ledger evidence keeps it incomplete. The exact implementation paths, evidence
 keys, two allowed detector adapters, cache topology, deterministic confidence

@@ -2,8 +2,8 @@
   "schemaVersion": "buildopt.evidence/request-aligned-classifier-fixtures/v1",
   "workItem": "SWL-REQUEST-002",
   "status": "COMPLETE",
-  "classifierSha256": "66ffe41c3d176b0427761259970990d003446c7a314930709e06e52e41998fb3",
-  "producerSha256": "44182ead468a35bdf7a0fec737c8cd7827a6693e2a126c0436f2b00f8598132f",
+  "classifierSha256": "781f56de23e895f88bc5874ba5eead6179924482645ce7424742b81d27474614",
+  "producerSha256": "f20c3ba2240705479bae26793bab308bcc5d3269877d7428f6fcf099900d93f1",
   "coverage": [
     "affected",
     "irrelevant",

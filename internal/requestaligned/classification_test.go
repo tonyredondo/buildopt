@@ -114,7 +114,7 @@ func validTransition() Transition {
 	base := classifierCapture()
 	target := classifierCapture()
 	return Transition{
-		SchemaVersion: TransitionSchemaVersion, GeneratedAt: "2026-08-28T00:00:00Z",
+		SchemaVersion: TransitionSchemaVersionV1, GeneratedAt: "2026-08-28T00:00:00Z",
 		BaseRevision: strings.Repeat("a", 40), TargetRevision: strings.Repeat("b", 40),
 		ChangedPaths: []string{"inputs/left.txt"}, BaseCapture: base, TargetCapture: target,
 	}
@@ -123,7 +123,7 @@ func validTransition() Transition {
 func classifierCapture() Capture {
 	digest := func(value string) string { return strings.Repeat(value, 64) }
 	return Capture{
-		SchemaVersion: CaptureSchemaVersion, GeneratedAt: "2026-08-28T00:00:00Z",
+		SchemaVersion: CaptureSchemaVersionV1, GeneratedAt: "2026-08-28T00:00:00Z",
 		Status: CaptureComplete, GradleArguments: []string{":bundle", "--no-daemon"},
 		RequestedTasks: []string{":bundle"}, GradleVersion: "9.6.1",
 		JavaRuntime: JavaRuntime{Version: "21.0.12", Vendor: "Eclipse Adoptium",
@@ -140,5 +140,72 @@ func classifierCapture() Capture {
 				Inputs:  []changeaware.PathEvidence{{Path: "build/left.bin", Kind: "FILE"}, {Path: "build/right-v2.bin", Kind: "FILE"}},
 				Outputs: []changeaware.OutputEvidence{{Path: "build/bundle.bin", Kind: "FILE", SHA256: digest("f"), Exists: true}}},
 		},
+	}
+}
+
+func TestClassifyV2BindsEquivalentAndAbsentOmittedStates(t *testing.T) {
+	transition := precisionTransition()
+	report, err := Classify(transition)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.Status != ClassificationRelevantComplete || report.Reason != "EXACT_RELEVANT_PRODUCER_CLOSURE" ||
+		report.TestableActions != 1 || report.ActionBindingSHA256 == "" ||
+		!reflect.DeepEqual(report.CandidateTasks, []string{":bundle", ":leftProducer"}) ||
+		!reflect.DeepEqual(report.OmittedTasks, []string{":optionalProducer", ":rightAlias", ":rightProducer"}) {
+		t.Fatalf("unexpected v2 classification: %+v", report)
+	}
+	if len(report.OmittedOutputStates) != 2 {
+		t.Fatalf("unexpected omitted states: %+v", report.OmittedOutputStates)
+	}
+	if state := findOutputState(t, report.OmittedOutputStates, "build/optional.bin"); state.Exists {
+		t.Fatalf("absent output became present: %+v", state)
+	}
+	if state := findOutputState(t, report.OmittedOutputStates, "build/right.bin"); !reflect.DeepEqual(state.ProducerTasks, []string{":rightAlias", ":rightProducer"}) {
+		t.Fatalf("equivalent producers were not bound together: %+v", state)
+	}
+}
+
+func TestClassifyV2SeparatesCompatibilityGraphAndBuildLogicDrift(t *testing.T) {
+	tests := []struct {
+		name   string
+		mutate func(*Transition)
+		status string
+		reason string
+	}{
+		{name: "compatibility", mutate: func(value *Transition) { value.TargetCapture.GradleVersion = "8.14.3" },
+			status: ClassificationGlobalOrAmbiguous, reason: "REQUEST_COMPATIBILITY_CHANGED"},
+		{name: "graph", mutate: func(value *Transition) {
+			value.TargetCapture.Tasks[4].DependsOn = append(value.TargetCapture.Tasks[4].DependsOn, ":rightProducer")
+		},
+			status: ClassificationGlobalOrAmbiguous, reason: "REQUEST_GRAPH_CHANGED"},
+		{name: "irrelevant build logic", mutate: func(value *Transition) {
+			value.ChangedPaths = []string{"build.gradle"}
+			value.TargetCapture.BuildLogicFiles[0].SHA256 = strings.Repeat("9", 64)
+		}, status: ClassificationIrrelevant, reason: "BUILD_LOGIC_CHANGED_IRRELEVANT_TO_REQUEST"},
+		{name: "relevant build logic", mutate: func(value *Transition) {
+			value.TargetCapture.BuildLogicFiles[0].SHA256 = strings.Repeat("9", 64)
+		}, status: ClassificationGlobalOrAmbiguous, reason: "BUILD_LOGIC_CHANGED_WITH_RELEVANT_REQUEST_INPUT"},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			transition := precisionTransition()
+			test.mutate(&transition)
+			report, err := Classify(transition)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if report.Status != test.status || report.Reason != test.reason || report.TestableActions != 0 {
+				t.Fatalf("unexpected v2 drift classification: %+v", report)
+			}
+		})
+	}
+}
+
+func precisionTransition() Transition {
+	return Transition{
+		SchemaVersion: TransitionSchemaVersion, GeneratedAt: "2026-08-28T00:00:00Z",
+		BaseRevision: strings.Repeat("a", 40), TargetRevision: strings.Repeat("b", 40),
+		ChangedPaths: []string{"inputs/left.txt"}, BaseCapture: precisionCapture(), TargetCapture: precisionCapture(),
 	}
 }

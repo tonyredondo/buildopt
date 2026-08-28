@@ -467,8 +467,16 @@ The active hypothesis is therefore
 exact commands a customer actually repeats instead of treating one fixed leaf
 request as the repository's whole opportunity surface. It may not widen,
 replace or invent a command, and product logic remains free of repository and
-task-name rules. The first block implements evidence precision; fresh portfolio
-capture and all value timing remain pending. See the
+task-name rules. Its first block is now complete: Gradle 8/9 × Kotlin/Groovy
+fixtures prove dependency-ordered equivalent producers, explicit absent-output
+bindings, post-candidate absence revalidation and separate compatibility/
+request-graph identity. Unordered peers, hash/kind mismatches, outside-graph
+owners, cycles, malformed output evidence and an output appearing after the
+candidate all fail closed. The independently rebuilt counterfactual remains
+**5/0/2/1/5**, so no wall-time claim is created. The next step is to persist the
+exact recurrent command portfolio already observed by the wrapper without
+starting extra builds or parsing CI configuration; fresh portfolio capture and
+all value timing remain pending. See the
 [active tracker](../plans/observed-request-portfolio-poc-tracker.md).
 
 The closed predecessor remains implementation-locked as historical evidence:

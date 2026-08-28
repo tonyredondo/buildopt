@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [--static]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_evidence=${buildopt_root}/benchmarks/results/request-aligned-evidence-precision-v1.json
+buildopt_mode=${1:-dynamic}
+case ${buildopt_mode} in dynamic | --static) ;; *) printf 'usage: %s [--static]\n' "$0" >&2; exit 64 ;; esac
+for buildopt_command in cmp jq mktemp sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_observation_sha=$(sha256sum "${buildopt_root}/internal/requestaligned/observation.go" | awk '{print $1}')
+buildopt_classification_sha=$(sha256sum "${buildopt_root}/internal/requestaligned/classification.go" | awk '{print $1}')
+buildopt_validate() {
+    jq -e --arg observation "${buildopt_observation_sha}" --arg classification "${buildopt_classification_sha}" '
+      .schemaVersion=="buildopt.evidence/request-aligned-evidence-precision-fixtures/v1" and
+      .workItem=="SWL-PORTFOLIO-001" and .status=="COMPLETE" and
+      .observationSha256==$observation and .classificationSha256==$classification and
+      .coverage==["ORDERED_EQUIVALENT_PRODUCERS","EXPLICIT_ABSENT_OUTPUT","POST_CANDIDATE_ABSENCE_REVALIDATION","STRICT_COMPATIBILITY_IDENTITY","REQUEST_GRAPH_IDENTITY","REQUEST_RELEVANT_BUILD_LOGIC_DRIFT"] and
+      (.results|length)==4 and ([.results[].gradleVersion]|unique)==["8.14.3","9.6.1"] and
+      ([.results[].dsl]|unique)==["GROOVY","KOTLIN"] and
+      all(.results[];
+        .status=="COMPLETE" and .equivalentProducerTasks==[":rightAlias",":rightProducer"] and
+        .absentOutput=={producerTasks:[":optionalProducer"],path:"build/optional.bin",kind:"FILE",sha256:"",exists:false} and
+        .candidateTasks==[":bundle",":leftProducer"] and
+        .omittedTasks==[":optionalProducer",":rightAlias",":rightProducer"] and
+        ([.omittedOutputStates[]|select(.path=="build/right.bin" and .producerTasks==[":rightAlias",":rightProducer"] and .exists)]|length)==1 and
+        ([.omittedOutputStates[]|select(.path=="build/optional.bin" and (.exists|not) and .sha256=="")]|length)==1 and
+        .rejectedEvidence==["UNORDERED_PEERS","HASH_MISMATCH","KIND_MISMATCH","OWNER_OUTSIDE_REQUEST_GRAPH","TASK_GRAPH_CYCLE","MALFORMED_OUTPUT"] and
+        .driftClassifications==["REQUEST_COMPATIBILITY_CHANGED","REQUEST_GRAPH_CHANGED","BUILD_LOGIC_CHANGED_IRRELEVANT_TO_REQUEST","BUILD_LOGIC_CHANGED_WITH_RELEVANT_REQUEST_INPUT"] and
+        .stableAbsenceRevalidated and .appearingOutputRejected and
+        (.performanceMeasured|not) and (.activationAuthorized|not)
+      ) and
+      .historicalCounterfactual=={
+        "apache-groovy":5,"apache-kafka":2,"micronaut-core":1,
+        "opentelemetry-java-instrumentation":0,"spring-framework":5
+      } and
+      (.performanceMeasured|not) and (.activationAuthorized|not) and
+      .outcome=="REQUEST_ALIGNED_EVIDENCE_PRECISION_COMPLETE"
+    ' "$1" >/dev/null
+}
+
+buildopt_validate "${buildopt_evidence}" || {
+    printf 'request-aligned evidence precision contract is invalid\n' >&2
+    exit 1
+}
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-evidence-precision-check.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-request-evidence-precision-check.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected precision-check root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+"${buildopt_root}/dev/run-request-aligned-terminal-cause-audit" \
+    "${buildopt_temporary}/counterfactual.json" >/dev/null
+jq -e --slurpfile evidence "${buildopt_evidence}" '
+  (.counterfactual.familyAssessments | map({key:.family,value:.counterfactualRelevantActions}) | from_entries) ==
+  $evidence[0].historicalCounterfactual
+' "${buildopt_temporary}/counterfactual.json" >/dev/null || {
+    printf 'historical 5/0/2/1/5 counterfactual is not reproducible\n' >&2
+    exit 1
+}
+
+jq '.historicalCounterfactual["apache-kafka"]=3' "${buildopt_evidence}" >"${buildopt_temporary}/tampered.json"
+if buildopt_validate "${buildopt_temporary}/tampered.json"; then
+    printf 'invented counterfactual recovery was accepted\n' >&2
+    exit 1
+fi
+
+if [[ ${buildopt_mode} == --static ]]; then
+    printf 'Request-aligned evidence precision: PASS (static)\n'
+    exit 0
+fi
+
+"${buildopt_root}/dev/run-request-aligned-evidence-precision-fixtures" "${buildopt_temporary}/regenerated.json"
+cmp -s "${buildopt_evidence}" "${buildopt_temporary}/regenerated.json" || {
+    printf 'request-aligned evidence precision is stale\n' >&2
+    diff -u "${buildopt_evidence}" "${buildopt_temporary}/regenerated.json" >&2 || true
+    exit 1
+}
+
+printf 'Request-aligned evidence precision: PASS\n'

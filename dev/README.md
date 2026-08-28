@@ -119,8 +119,22 @@ request portfolio route with:
 
 The audit distinguishes correct request irrelevance from over-broad identity,
 dependency-ordered equivalent producers and a proven absent optional output.
-It derives the **5/0/2/1/5** counterfactual from raw capture, rejects invented
-breadth or timing authority and opens only `SWL-PORTFOLIO-001`.
+It derives the **5/0/2/1/5** counterfactual from raw capture and rejects
+invented breadth or timing authority. The evidence repair it selected is now
+complete.
+
+Validate the portfolio evidence-precision primitives with:
+
+```bash
+./dev/check-request-aligned-evidence-precision
+```
+
+The dynamic check regenerates Gradle 8.14.3/9.6.1 × Kotlin/Groovy evidence;
+`--static` validates the checked matrix while still reconstructing the frozen
+110-row counterfactual. It covers ordered equivalent producers, explicit
+absence, post-candidate revalidation, compatibility/request-graph separation
+and request-relevant build-logic drift. It runs no candidate and measures no
+wall time. `SWL-PORTFOLIO-002` owns the next exact-request portfolio lifecycle.
 
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:

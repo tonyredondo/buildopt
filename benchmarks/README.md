@@ -122,6 +122,17 @@ relevant action opportunities, but the counterfactual family counts remain
 result selects the observed recurrent request portfolio as the next hypothesis;
 it contains no timing, action execution or speedup claim.
 
+[`request-aligned-evidence-precision-v1.json`](./results/request-aligned-evidence-precision-v1.json)
+is the `SWL-PORTFOLIO-001` correctness matrix. Four real Gradle rows cover
+8.14.3/9.6.1 and Kotlin/Groovy. They prove dependency-ordered equivalent
+producer groups, explicit present/absent output states, post-candidate absence
+revalidation, strict compatibility identity, exact request-graph identity and
+request-relevant build-logic drift. Six unsafe evidence shapes and an output
+that appears after the candidate are rejected. The checker independently
+rebuilds the frozen cause audit and preserves the Spring/OpenTelemetry/Kafka/
+Micronaut/Groovy counterfactual at **5/0/2/1/5**. This is precision evidence,
+not wall-time or action evidence.
+
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
@@ -135,6 +146,7 @@ it contains no timing, action execution or speedup claim.
 ./dev/check-request-aligned-breadth-gate
 ./dev/check-request-aligned-terminal-decision
 ./dev/check-request-aligned-terminal-cause-audit
+./dev/check-request-aligned-evidence-precision
 ```
 
 ## Sticky-wrapper observation sample

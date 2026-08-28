@@ -1,6 +1,7 @@
 package requestaligned
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 
@@ -132,7 +133,7 @@ func TestProduceRejectsInvalidBindingsAndPreservesFailedBoundary(t *testing.T) {
 func validCapture() Capture {
 	digest := func(value string) string { return strings.Repeat(value, 64) }
 	return Capture{
-		SchemaVersion: CaptureSchemaVersion, GeneratedAt: "2026-08-28T00:00:00Z",
+		SchemaVersion: CaptureSchemaVersionV1, GeneratedAt: "2026-08-28T00:00:00Z",
 		Status: CaptureComplete, GradleArguments: []string{":jar", "--no-daemon"},
 		RequestedTasks: []string{":jar"}, GradleVersion: "9.6.1",
 		JavaRuntime: JavaRuntime{
@@ -156,4 +157,108 @@ func validCapture() Capture {
 			},
 		},
 	}
+}
+
+func TestProduceV2AcceptsOrderedEquivalentProducersAndAbsentOutput(t *testing.T) {
+	capture := precisionCapture()
+	observation, err := Produce(capture)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if observation.Status != StatusComplete || observation.CompatibilityIdentitySHA256 == "" ||
+		observation.RequestGraphIdentitySHA256 == "" || len(observation.CurrentOutputStates) != 4 {
+		t.Fatalf("unexpected v2 observation: %+v", observation)
+	}
+	if state := findOutputState(t, observation.CurrentOutputStates, "build/right.bin"); !reflect.DeepEqual(state.ProducerTasks, []string{":rightAlias", ":rightProducer"}) || !state.Exists {
+		t.Fatalf("equivalent producer group was not retained: %+v", state)
+	}
+	if state := findOutputState(t, observation.CurrentOutputStates, "build/optional.bin"); state.Exists || state.SHA256 != "" {
+		t.Fatalf("absence was not represented explicitly: %+v", state)
+	}
+}
+
+func TestProduceV2RejectsUnsafeEquivalentProducerEvidence(t *testing.T) {
+	tests := []struct {
+		name   string
+		mutate func(*Capture)
+		reason string
+	}{
+		{name: "unordered peers", mutate: func(value *Capture) {
+			value.Tasks[2].DependsOn = nil
+			value.Tasks[4].DependsOn = append(value.Tasks[4].DependsOn, ":rightProducer")
+		}, reason: "EQUIVALENT_PRODUCERS_UNORDERED"},
+		{name: "different hash", mutate: func(value *Capture) { value.Tasks[2].Outputs[0].SHA256 = strings.Repeat("9", 64) }, reason: "EQUIVALENT_PRODUCER_STATE_MISMATCH"},
+		{name: "different kind", mutate: func(value *Capture) { value.Tasks[2].Outputs[0].Kind = "DIRECTORY" }, reason: "EQUIVALENT_PRODUCER_KIND_MISMATCH"},
+		{name: "outside requested graph", mutate: func(value *Capture) {
+			value.Tasks = append(value.Tasks, changeaware.TaskEvidence{Path: ":outside", Outputs: value.Tasks[1].Outputs})
+		}, reason: "TASK_OUTSIDE_REQUESTED_GRAPH"},
+		{name: "cycle", mutate: func(value *Capture) { value.Tasks[1].DependsOn = []string{":rightAlias"} }, reason: "TASK_GRAPH_CYCLIC"},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			capture := precisionCapture()
+			test.mutate(&capture)
+			observation, err := Produce(capture)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if observation.Status != StatusUnavailable || observation.Reason != test.reason {
+				t.Fatalf("unexpected rejection: %+v", observation)
+			}
+		})
+	}
+}
+
+func TestValidateOutputStatesPreservesAbsence(t *testing.T) {
+	capture := precisionCapture()
+	observation, err := Produce(capture)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected := []OutputState{findOutputState(t, observation.CurrentOutputStates, "build/optional.bin")}
+	if err := ValidateOutputStates(expected, capture); err != nil {
+		t.Fatalf("stable absence was rejected: %v", err)
+	}
+	capture.Tasks[3].Outputs[0].Exists = true
+	capture.Tasks[3].Outputs[0].SHA256 = strings.Repeat("8", 64)
+	if err := ValidateOutputStates(expected, capture); err == nil {
+		t.Fatal("an output appearing after the candidate was accepted")
+	}
+}
+
+func precisionCapture() Capture {
+	digest := func(value string) string { return strings.Repeat(value, 64) }
+	return Capture{
+		SchemaVersion: CaptureSchemaVersion, GeneratedAt: "2026-08-28T00:00:00Z",
+		Status: CaptureComplete, GradleArguments: []string{":bundle", "--no-daemon"},
+		RequestedTasks: []string{":bundle"}, GradleVersion: "9.6.1",
+		JavaRuntime: JavaRuntime{Version: "21.0.12", Vendor: "Eclipse Adoptium",
+			RuntimeName: "OpenJDK Runtime Environment", VMName: "OpenJDK 64-Bit Server VM", Architecture: "amd64"},
+		EnvironmentBindingSHA256: digest("a"),
+		WrapperFiles:             []FileBinding{{Path: "gradle/wrapper/gradle-wrapper.properties", SHA256: digest("b")}},
+		BuildLogicFiles:          []FileBinding{{Path: "build.gradle", SHA256: digest("c")}},
+		Tasks: []changeaware.TaskEvidence{
+			{Path: ":leftProducer", Inputs: []changeaware.PathEvidence{{Path: "inputs/left.txt", Kind: "FILE"}},
+				Outputs: []changeaware.OutputEvidence{{Path: "build/left.bin", Kind: "FILE", SHA256: digest("d"), Exists: true}}},
+			{Path: ":rightProducer", Inputs: []changeaware.PathEvidence{{Path: "inputs/right.txt", Kind: "FILE"}},
+				Outputs: []changeaware.OutputEvidence{{Path: "build/right.bin", Kind: "FILE", SHA256: digest("e"), Exists: true}}},
+			{Path: ":rightAlias", DependsOn: []string{":rightProducer"},
+				Outputs: []changeaware.OutputEvidence{{Path: "build/right.bin", Kind: "FILE", SHA256: digest("e"), Exists: true}}},
+			{Path: ":optionalProducer", Outputs: []changeaware.OutputEvidence{{Path: "build/optional.bin", Kind: "FILE", Exists: false}}},
+			{Path: ":bundle", DependsOn: []string{":leftProducer", ":rightAlias", ":optionalProducer"},
+				Inputs:  []changeaware.PathEvidence{{Path: "build/left.bin", Kind: "FILE"}, {Path: "build/right.bin", Kind: "FILE"}},
+				Outputs: []changeaware.OutputEvidence{{Path: "build/bundle.bin", Kind: "FILE", SHA256: digest("f"), Exists: true}}},
+		},
+	}
+}
+
+func findOutputState(t *testing.T, values []OutputState, path string) OutputState {
+	t.Helper()
+	for _, value := range values {
+		if value.Path == path {
+			return value
+		}
+	}
+	t.Fatalf("output state %s was not found: %+v", path, values)
+	return OutputState{}
 }

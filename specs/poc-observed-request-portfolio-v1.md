@@ -39,8 +39,10 @@ opportunity unit, not a weaker correctness gate.
 
 ## Ordered proof
 
-`SWL-PORTFOLIO-001` implements the three evidence-precision primitives and
-tests their negative boundaries. `SWL-PORTFOLIO-002` adds a durable portfolio
+`SWL-PORTFOLIO-001` has implemented the three evidence-precision primitives
+and tested their negative boundaries across Gradle 8/9 × Kotlin/Groovy. Its
+checked result preserves the counterfactual at **5/0/2/1/5**, executes no
+action and measures no wall time. `SWL-PORTFOLIO-002` now adds a durable portfolio
 of exact observed requests without adding work to the customer's invocation.
 `SWL-PORTFOLIO-003` starts from zero portfolio state and captures the frozen
 five-family cohort. `SWL-PORTFOLIO-004` independently rebuilds every report and

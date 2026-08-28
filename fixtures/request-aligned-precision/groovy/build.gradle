@@ -1,0 +1,33 @@
+def leftOutput = layout.buildDirectory.file('left.bin')
+def rightOutput = layout.buildDirectory.file('right.bin')
+def optionalOutput = layout.buildDirectory.file('optional.bin')
+def bundleOutput = layout.buildDirectory.file('bundle.bin')
+
+def leftProducer = tasks.register('leftProducer') {
+    inputs.file('inputs/left.txt')
+    outputs.file(leftOutput)
+    doLast { leftOutput.get().asFile.text = file('inputs/left.txt').text }
+}
+
+def rightProducer = tasks.register('rightProducer') {
+    inputs.file('inputs/right.txt')
+    outputs.file(rightOutput)
+    doLast { rightOutput.get().asFile.text = file('inputs/right.txt').text }
+}
+
+def rightAlias = tasks.register('rightAlias') {
+    dependsOn(rightProducer)
+    outputs.file(rightOutput)
+}
+
+def optionalProducer = tasks.register('optionalProducer') {
+    outputs.file(optionalOutput)
+    onlyIf { false }
+}
+
+tasks.register('bundle') {
+    dependsOn(leftProducer, rightAlias, optionalProducer)
+    inputs.files(leftOutput, rightOutput)
+    outputs.file(bundleOutput)
+    doLast { bundleOutput.get().asFile.text = leftOutput.get().asFile.text + rightOutput.get().asFile.text }
+}

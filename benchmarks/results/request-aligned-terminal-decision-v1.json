@@ -5,11 +5,11 @@
   "evidence": {
     "routeContractSha256": "bf4287a52883ab211631a02d5330375573e8130e699a5aa6eea0a79bc765d1b6",
     "successorSelectionSha256": "811544b1fbe277a6b6fe00c0ce64f8a6e9a87340a4c02383e8e55c1657777111",
-    "producerFixturesSha256": "40a8e16fa67ae68e4dbcab3ce09953996f490121c7140a9e1174082a050f590b",
-    "classifierFixturesSha256": "69c2c383b9824f22bc3048170f0bd2cc583394a15a923c28cad76e3bacb2d007",
+    "producerFixturesSha256": "03be3cadc89cd162b86af685d593271526d5a9aaaa6785dd9044ed4fefd5fdea",
+    "classifierFixturesSha256": "44d23fdf75fff4feb6d6a195dc63812a801b53774a15cd5eb263c99ec17f7e49",
     "captureContractSha256": "c2636f1bab49448fe7d717323d2acc84998b9ab559d7d162ee85c56f0b31e022",
     "transitionsLedgerSha256": "402f061a6677c8cf7666f61efdd07168108bb25cc25070b43d303c0ce918bc4b",
-    "breadthGateSha256": "2fd2cd34156f9cea28868dc77a544ef5b706964889cf7a81ad930c0d40b5b17a",
+    "breadthGateSha256": "0a5723d43f6e27af394d7d72639c85836700027e18881759daccccec14e54319",
     "historicalTimingImported": false,
     "historicalActionImported": false
   },

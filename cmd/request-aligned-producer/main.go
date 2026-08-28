@@ -19,14 +19,27 @@ func main() {
 	flags := flag.NewFlagSet("request-aligned-producer", flag.ExitOnError)
 	input := flags.String("input", "", "request-aligned Gradle capture")
 	output := flags.String("output", "", "typed request observation")
+	validateStates := flags.String("validate-output-states", "", "expected output-state array to revalidate")
 	_ = flags.Parse(os.Args[1:])
-	if flags.NArg() != 0 || *input == "" || *output == "" {
-		fmt.Fprintln(os.Stderr, "usage: request-aligned-producer --input PATH --output PATH")
+	produceMode := *output != "" && *validateStates == ""
+	validateMode := *output == "" && *validateStates != ""
+	if flags.NArg() != 0 || *input == "" || (!produceMode && !validateMode) {
+		fmt.Fprintln(os.Stderr, "usage: request-aligned-producer --input PATH (--output PATH | --validate-output-states PATH)")
 		os.Exit(64)
 	}
 	var capture requestaligned.Capture
 	if err := readStrict(*input, &capture); err != nil {
 		fail(err)
+	}
+	if validateMode {
+		var expected []requestaligned.OutputState
+		if err := readStrict(*validateStates, &expected); err != nil {
+			fail(err)
+		}
+		if err := requestaligned.ValidateOutputStates(expected, capture); err != nil {
+			fail(err)
+		}
+		return
 	}
 	observation, err := requestaligned.Produce(capture)
 	if err != nil {
