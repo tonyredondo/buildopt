@@ -1,0 +1,35 @@
+def leftOutput = layout.buildDirectory.file('left.bin')
+def rightOutput = layout.buildDirectory.file('right-v2.bin')
+
+def leftProducer = tasks.register('leftProducer') {
+    inputs.file('inputs/left.txt').withPathSensitivity(PathSensitivity.RELATIVE)
+    outputs.file(leftOutput)
+    doLast {
+        leftOutput.get().asFile.with {
+            parentFile.mkdirs()
+            text = file('inputs/left.txt').text
+        }
+    }
+}
+
+def rightProducer = tasks.register('rightProducer') {
+    inputs.file('inputs/right.txt').withPathSensitivity(PathSensitivity.RELATIVE)
+    outputs.file(rightOutput)
+    doLast {
+        rightOutput.get().asFile.with {
+            parentFile.mkdirs()
+            text = file('inputs/right.txt').text
+        }
+    }
+}
+
+tasks.register('bundle') {
+    dependsOn(leftProducer, rightProducer)
+    inputs.files(leftOutput, rightOutput).withPathSensitivity(PathSensitivity.RELATIVE)
+    def bundleOutput = layout.buildDirectory.file('bundle.bin')
+    outputs.file(bundleOutput)
+    doLast {
+        bundleOutput.get().asFile.text =
+            leftOutput.get().asFile.text + rightOutput.get().asFile.text
+    }
+}

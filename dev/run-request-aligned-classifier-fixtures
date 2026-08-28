@@ -1,0 +1,218 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: dev/run-request-aligned-classifier-fixtures OUTPUT_JSON\n' >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_output=$1
+[[ ${buildopt_output} == /* ]] || buildopt_output=${PWD}/${buildopt_output}
+for buildopt_command in cp jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-classifier.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-request-classifier.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected classifier root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+buildopt_classifier=${buildopt_temporary}/request-aligned-classifier
+env GOCACHE="${buildopt_temporary}/go-cache" \
+    "${buildopt_root}/dev/run" --toolchain go -- \
+    go build -o "${buildopt_classifier}" ./cmd/request-aligned-classifier
+: >"${buildopt_temporary}/results.jsonl"
+
+buildopt_gradle_bin() {
+    case $1 in
+        8.14.3) printf '%s\n' "${buildopt_root}/.tools/gradle-compat/gradle-8.14.3/bin/gradle" ;;
+        9.6.1) printf '%s\n' "${buildopt_root}/.tools/gradle-user-home/local/wrapper/dists/gradle-9.6.1-bin/4ticwg1pgcbps2hj28r8so764/gradle-9.6.1/bin/gradle" ;;
+        *) return 1 ;;
+    esac
+}
+
+buildopt_capture() {
+    local buildopt_gradle=$1
+    local buildopt_repository=$2
+    local buildopt_capture_path=$3
+    env \
+        BUILDOPT_REQUEST_CAPTURE_OUTPUT="${buildopt_capture_path}" \
+        BUILDOPT_REQUEST_ARGUMENTS='[":bundle","--no-daemon"]' \
+        BUILDOPT_REQUEST_TASKS='[":bundle"]' \
+        BUILDOPT_REQUEST_GENERATED_AT=2026-08-28T00:00:00Z \
+        ORG_GRADLE_PROJECT_fixtureMode=request-classifier \
+        GRADLE_USER_HOME="${buildopt_root}/.tools/gradle-user-home/local" \
+        "${buildopt_root}/dev/run" -- \
+        "${buildopt_gradle}" --no-daemon -p "${buildopt_repository}" \
+        -I "${buildopt_root}/dev/request-aligned-producer.init.gradle" \
+        buildoptRequestAlignedCapture >/dev/null
+    jq -c . "${buildopt_capture_path}" >"${buildopt_capture_path}.normalized"
+    mv "${buildopt_capture_path}.normalized" "${buildopt_capture_path}"
+}
+
+buildopt_transition() {
+    local buildopt_base=$1
+    local buildopt_target=$2
+    local buildopt_changed=$3
+    local buildopt_path=$4
+    jq -n \
+        --arg generatedAt 2026-08-28T00:00:00Z \
+        --arg baseRevision aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+        --arg targetRevision bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb \
+        --argjson changedPaths "${buildopt_changed}" \
+        --slurpfile baseCapture "${buildopt_base}" \
+        --slurpfile targetCapture "${buildopt_target}" '
+      {
+        schemaVersion:"buildopt.poc/request-aligned-transition/v1",
+        generatedAt:$generatedAt,baseRevision:$baseRevision,targetRevision:$targetRevision,
+        changedPaths:$changedPaths,baseCapture:$baseCapture[0],targetCapture:$targetCapture[0]
+      }
+    ' >"${buildopt_path}"
+}
+
+buildopt_classify() {
+    local buildopt_transition_path=$1
+    local buildopt_report_path=$2
+    "${buildopt_classifier}" --input "${buildopt_transition_path}" --output "${buildopt_report_path}"
+}
+
+buildopt_case() {
+    local buildopt_name=$1
+    local buildopt_base=$2
+    local buildopt_target=$3
+    local buildopt_changed=$4
+    local buildopt_case_root=$5
+    buildopt_transition "${buildopt_base}" "${buildopt_target}" "${buildopt_changed}" \
+        "${buildopt_case_root}/${buildopt_name}-transition.json"
+    buildopt_classify "${buildopt_case_root}/${buildopt_name}-transition.json" \
+        "${buildopt_case_root}/${buildopt_name}.json"
+}
+
+buildopt_run_fixture() {
+    local buildopt_gradle_version=$1
+    local buildopt_dsl=$2
+    local buildopt_case_root=${buildopt_temporary}/${buildopt_gradle_version}-${buildopt_dsl}
+    local buildopt_repository=${buildopt_case_root}/repository
+    local buildopt_gradle
+    buildopt_gradle=$(buildopt_gradle_bin "${buildopt_gradle_version}")
+    [[ -x ${buildopt_gradle} ]] || {
+        printf 'Gradle %s is unavailable\n' "${buildopt_gradle_version}" >&2
+        return 1
+    }
+    mkdir -p -- "${buildopt_case_root}"
+    cp -a -- "${buildopt_root}/fixtures/request-aligned-classifier/${buildopt_dsl,,}" "${buildopt_repository}"
+    mkdir -p -- "${buildopt_repository}/gradle/wrapper"
+    printf 'distributionUrl=https\\://services.gradle.org/distributions/gradle-%s-bin.zip\n' \
+        "${buildopt_gradle_version}" >"${buildopt_repository}/gradle/wrapper/gradle-wrapper.properties"
+    buildopt_capture "${buildopt_gradle}" "${buildopt_repository}" "${buildopt_case_root}/capture.json"
+
+    cp -- "${buildopt_case_root}/capture.json" "${buildopt_case_root}/base.json"
+    cp -- "${buildopt_case_root}/capture.json" "${buildopt_case_root}/target.json"
+    jq '(.tasks[]|select(.path==":rightProducer")|.outputs[0].path)="build/right-v1.bin"' \
+        "${buildopt_case_root}/capture.json" >"${buildopt_case_root}/renamed-base.json"
+    jq '(.buildLogicFiles[0].sha256)=("9"*64)' \
+        "${buildopt_case_root}/capture.json" >"${buildopt_case_root}/global-target.json"
+    jq '(.tasks[]|select(.path==":rightProducer")|.outputs[0]) as $output |
+        (.tasks[]|select(.path==":leftProducer")|.outputs) += [$output]' \
+        "${buildopt_case_root}/capture.json" >"${buildopt_case_root}/ambiguous-target.json"
+    jq '.tasks |= map(.outputs=[])' \
+        "${buildopt_case_root}/capture.json" >"${buildopt_case_root}/missing-target.json"
+    jq '.status="FAILED"|.reason="GRADLE_CAPTURE_FAILED"|.tasks=[]' \
+        "${buildopt_case_root}/capture.json" >"${buildopt_case_root}/failed-target.json"
+
+    buildopt_case affected "${buildopt_case_root}/base.json" "${buildopt_case_root}/target.json" \
+        '["inputs/left.txt"]' "${buildopt_case_root}"
+    buildopt_case irrelevant "${buildopt_case_root}/base.json" "${buildopt_case_root}/target.json" \
+        '["docs/note.md"]' "${buildopt_case_root}"
+    buildopt_case global "${buildopt_case_root}/base.json" "${buildopt_case_root}/global-target.json" \
+        '["build.gradle"]' "${buildopt_case_root}"
+    buildopt_case ambiguous "${buildopt_case_root}/base.json" "${buildopt_case_root}/ambiguous-target.json" \
+        '["inputs/left.txt"]' "${buildopt_case_root}"
+    buildopt_case renamed "${buildopt_case_root}/renamed-base.json" "${buildopt_case_root}/target.json" \
+        '["inputs/left.txt"]' "${buildopt_case_root}"
+    buildopt_case missing "${buildopt_case_root}/base.json" "${buildopt_case_root}/missing-target.json" \
+        '["inputs/left.txt"]' "${buildopt_case_root}"
+    buildopt_case producer-failure "${buildopt_case_root}/base.json" "${buildopt_case_root}/failed-target.json" \
+        '["inputs/left.txt"]' "${buildopt_case_root}"
+    buildopt_case full-graph "${buildopt_case_root}/base.json" "${buildopt_case_root}/target.json" \
+        '["inputs/left.txt","inputs/right.txt"]' "${buildopt_case_root}"
+
+    jq -e '.status=="RELEVANT_COMPLETE" and .reason=="EXACT_RELEVANT_PRODUCER_CLOSURE" and
+      .testableActions==1 and .affectedInputTasks==[":leftProducer"] and
+      .candidateTasks==[":bundle",":leftProducer"] and .omittedTasks==[":rightProducer"] and
+      .omittedOutputs==[{
+        producerTask:":rightProducer",path:"build/right-v2.bin",kind:"FILE",sha256:.omittedOutputs[0].sha256
+      }] and (.actionBindingSha256|test("^[0-9a-f]{64}$"))' \
+        "${buildopt_case_root}/affected.json" >/dev/null
+    jq -e '.status=="IRRELEVANT_TO_REQUEST" and .testableActions==0' \
+        "${buildopt_case_root}/irrelevant.json" >/dev/null
+    jq -e '.status=="GLOBAL_OR_AMBIGUOUS" and .reason=="REQUEST_IDENTITY_CHANGED"' \
+        "${buildopt_case_root}/global.json" >/dev/null
+    jq -e '.status=="GLOBAL_OR_AMBIGUOUS" and .reason=="CURRENT_OUTPUT_PRODUCER_AMBIGUOUS"' \
+        "${buildopt_case_root}/ambiguous.json" >/dev/null
+    jq -e '.status=="RELEVANT_COMPLETE" and .testableActions==1 and
+      .omittedOutputs[0].path=="build/right-v2.bin"' "${buildopt_case_root}/renamed.json" >/dev/null
+    jq -e '.status=="INPUT_UNAVAILABLE" and .reason=="CURRENT_PRODUCER_OUTPUTS_EMPTY"' \
+        "${buildopt_case_root}/missing.json" >/dev/null
+    jq -e '.status=="PRODUCER_FAILED" and .reason=="REQUEST_PRODUCER_FAILED"' \
+        "${buildopt_case_root}/producer-failure.json" >/dev/null
+    jq -e '.status=="RELEVANT_COMPLETE" and .reason=="FULL_REQUEST_GRAPH_REQUIRED" and
+      .testableActions==0 and .omittedOutputs==[]' "${buildopt_case_root}/full-graph.json" >/dev/null
+
+    jq -n \
+        --arg gradleVersion "${buildopt_gradle_version}" --arg dsl "${buildopt_dsl}" \
+        --slurpfile affected "${buildopt_case_root}/affected.json" \
+        --slurpfile irrelevant "${buildopt_case_root}/irrelevant.json" \
+        --slurpfile global "${buildopt_case_root}/global.json" \
+        --slurpfile ambiguous "${buildopt_case_root}/ambiguous.json" \
+        --slurpfile renamed "${buildopt_case_root}/renamed.json" \
+        --slurpfile missing "${buildopt_case_root}/missing.json" \
+        --slurpfile failure "${buildopt_case_root}/producer-failure.json" \
+        --slurpfile full "${buildopt_case_root}/full-graph.json" '
+      {
+        gradleVersion:$gradleVersion,dsl:$dsl,status:"COMPLETE",
+        scenarios:[
+          {name:"affected",status:$affected[0].status,reason:$affected[0].reason,testableActions:$affected[0].testableActions,actionBindingSha256:$affected[0].actionBindingSha256,omittedOutputs:$affected[0].omittedOutputs},
+          {name:"irrelevant",status:$irrelevant[0].status,reason:$irrelevant[0].reason,testableActions:$irrelevant[0].testableActions},
+          {name:"global",status:$global[0].status,reason:$global[0].reason,testableActions:$global[0].testableActions},
+          {name:"ambiguous",status:$ambiguous[0].status,reason:$ambiguous[0].reason,testableActions:$ambiguous[0].testableActions},
+          {name:"renamed-output",status:$renamed[0].status,reason:$renamed[0].reason,testableActions:$renamed[0].testableActions,omittedOutputs:$renamed[0].omittedOutputs},
+          {name:"missing-output",status:$missing[0].status,reason:$missing[0].reason,testableActions:$missing[0].testableActions},
+          {name:"producer-failure",status:$failure[0].status,reason:$failure[0].reason,testableActions:$failure[0].testableActions},
+          {name:"full-graph",status:$full[0].status,reason:$full[0].reason,testableActions:$full[0].testableActions}
+        ],
+        exactArgumentsPreserved:($affected[0].gradleArguments==[":bundle","--no-daemon"]),
+        performanceMeasured:false,activationAuthorized:false
+      }
+    ' >>"${buildopt_temporary}/results.jsonl"
+}
+
+for buildopt_gradle_version in 8.14.3 9.6.1; do
+    for buildopt_dsl in KOTLIN GROOVY; do
+        buildopt_run_fixture "${buildopt_gradle_version}" "${buildopt_dsl}"
+    done
+done
+
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+jq -s \
+    --arg classifierSha256 "$(sha256sum "${buildopt_root}/internal/requestaligned/classification.go" | awk '{print $1}')" \
+    --arg producerSha256 "$(sha256sum "${buildopt_root}/internal/requestaligned/observation.go" | awk '{print $1}')" '
+  {
+    schemaVersion:"buildopt.evidence/request-aligned-classifier-fixtures/v1",
+    workItem:"SWL-REQUEST-002",status:"COMPLETE",
+    classifierSha256:$classifierSha256,producerSha256:$producerSha256,
+    coverage:["affected","irrelevant","global","ambiguous","renamed-output","missing-output","producer-failure","full-graph"],
+    results:.,performanceMeasured:false,activationAuthorized:false,
+    outcome:"RELEVANCE_CLASSIFIER_AND_FIXTURE_MATRIX_COMPLETE"
+  }
+' "${buildopt_temporary}/results.jsonl" >"${buildopt_output}"
+
+printf 'Request-aligned classifier fixture evidence written to %s\n' "${buildopt_output}"

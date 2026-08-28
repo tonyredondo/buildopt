@@ -184,12 +184,15 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > path instead of the current producer output. BuildOpt now tests
 > `REQUEST_ALIGNED_RECURRENT_CLOSURE_V1`: learn only from ordinary repeated
 > customer commands, wait for changes relevant to that exact requested graph
-> and discover outputs from current producer tasks. Its first implementation
-> block now passes Gradle 8/9 × Kotlin/Groovy: request identities survive
+> and discover outputs from current producer tasks. Its first two implementation
+> blocks now pass Gradle 8/9 × Kotlin/Groovy: request identities survive
 > checkout relocation, all eight compatibility bindings separate identities,
 > the versioned Groovy JAR is discovered from `:jar`, and incomplete ownership
-> fails typed. This is observation evidence, not a speed result; timing and
-> activation remain unauthorized. Follow the
+> fails typed. The adjacent-transition classifier adds 32 scenarios covering
+> all five frozen statuses, exact relevant closures, current renamed outputs
+> and fail-closed no-action outcomes. Fresh five-family recurrent-request
+> capture is next. This is observation evidence, not a speed result; timing
+> and activation remain unauthorized. Follow the
 > [request-aligned tracker](./docs/plans/request-aligned-learning-poc-tracker.md).
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,

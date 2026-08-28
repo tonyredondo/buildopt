@@ -75,6 +75,14 @@ unique producer-output discovery and the versioned Groovy JAR. Missing,
 ambiguous and outside-graph producers return typed `UNAVAILABLE`. The complete
 JSON regenerates byte for byte; it contains no timing or activation claim.
 
+[`request-aligned-classifier-fixtures-v1.json`](./results/request-aligned-classifier-fixtures-v1.json)
+is the `SWL-REQUEST-002` adjacent-transition matrix. Its four Gradle/DSL rows
+contain eight scenarios each: affected, irrelevant, identity-global,
+ambiguous ownership, renamed current output, missing output, producer failure
+and relevant full graph. All five status classes pass; only a partial relevant
+request emits one exact action and current omitted-output binding. Exact argv
+is preserved and performance/activation remain false.
+
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
@@ -83,6 +91,7 @@ JSON regenerates byte for byte; it contains no timing or activation claim.
 ./dev/check-change-aware-terminal-decision
 ./dev/check-request-aligned-successor-selection
 ./dev/check-request-aligned-producer
+./dev/check-request-aligned-classifier
 ```
 
 ## Sticky-wrapper observation sample

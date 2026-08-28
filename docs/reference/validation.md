@@ -22,6 +22,7 @@ provision tools or create release artifacts document that effect explicitly.
 | Change-aware terminal scorecard and typed unmeasured economics | `./dev/check-change-aware-terminal-decision` |
 | Request-aligned cause analysis, selected hypothesis and frozen route | `./dev/check-request-aligned-successor-selection` |
 | Request-aligned identity and current producer-output matrix | `./dev/check-request-aligned-producer` |
+| Request-aligned relevance classifier and Gradle/DSL matrix | `./dev/check-request-aligned-classifier` |
 | Generic task/graph producers, typed completeness and deterministic evidence | `./dev/check-sticky-evidence-producers` |
 | Fresh five-family cohort, capture bindings, producer completeness and exact outputs | `./dev/check-fresh-generic-capture` |
 | Independent fresh action recount and fixed public-breadth gate | `./dev/check-fresh-generic-opportunity-gate` |

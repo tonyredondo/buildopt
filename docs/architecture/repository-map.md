@@ -118,14 +118,17 @@ The active request-aligned contract is owned by
 `specs/poc-request-aligned-learning-v1.*`,
 `docs/plans/request-aligned-learning-poc-tracker.md`,
 `internal/requestaligned`, `cmd/request-aligned-producer`,
+`cmd/request-aligned-classifier`,
 `dev/request-aligned-producer.init.gradle` and the `dev/run-request-aligned-*`
 runners. The selection result reconstructs the 24 predecessor causes; the
-checked producer matrix then proves portable canonical identity and unique
-current-output discovery on Gradle 8/9 × Kotlin/Groovy. It opens only the
-`SWL-REQUEST-002` relevance classifier; no new runtime optimizer exists yet.
+checked producer and classifier matrices then prove portable canonical identity,
+unique current-output discovery and all five transition statuses on Gradle 8/9
+× Kotlin/Groovy. They open only `SWL-REQUEST-003` fresh public capture; no new
+runtime optimizer exists yet.
 
 Run `./dev/check-request-aligned-successor-selection` and
-`./dev/check-request-aligned-producer` to validate the active route,
+`./dev/check-request-aligned-producer` and
+`./dev/check-request-aligned-classifier` to validate the active route,
 `./dev/check-change-aware-producer-closure-plan` for its closed
 predecessor, `./dev/check-fresh-generic-optimization-plan` for the earlier
 fresh route and `./dev/check-sticky-wrapper-learning-plan` to preserve the

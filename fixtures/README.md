@@ -26,6 +26,12 @@ versioned `groovy-raw-6.0.0-SNAPSHOT-raw.jar`; Gradle 8.14.3/9.6.1 runs prove
 portable request identity, current producer ownership and typed negative
 outcomes without measuring or activating an optimization.
 
+`request-aligned-classifier/` contains matching Kotlin and Groovy producer
+graphs for `SWL-REQUEST-002`. Across Gradle 8.14.3/9.6.1, eight scenarios per
+DSL/version row prove all five transition statuses, exact relevant closure,
+renamed current-output binding and fail-closed no-action outcomes without
+timing or activation.
+
 `sticky-wrapper-learning/` is the SWL-014B repository-independent composition
 fixture. It injects only the frozen clock, detector, trial and publisher seams,
 then proves qualification, active counterfactual, suspension, retirement and

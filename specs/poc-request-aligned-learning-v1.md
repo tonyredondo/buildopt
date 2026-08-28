@@ -1,6 +1,6 @@
 # Request-aligned recurrent learning POC contract
 
-Status: `REQUEST_IDENTITY_AND_CURRENT_OUTPUT_PRODUCER_COMPLETE`.
+Status: `RELEVANCE_CLASSIFIER_COMPLETE`.
 
 ## Question
 
@@ -9,8 +9,9 @@ customer actually repeats across commits, instead of pairing arbitrary changes
 with one fixed leaf workflow, and then deliver cumulative wall-time value over
 optimized native Gradle?
 
-This block selects an evidence route. It does not authorize timing, execution
-of a candidate or reuse of historical BuildOpt timings and actions.
+The route now has an observation producer and adjacent-transition classifier.
+It does not authorize timing, execution of a candidate or reuse of historical
+BuildOpt timings and actions.
 
 ## Implemented producer boundary
 
@@ -22,8 +23,26 @@ than guessing a version-sensitive filename. The checked Gradle 8.14.3/9.6.1
 Kotlin/Groovy matrix reproduces the versioned Groovy JAR and returns typed
 `UNAVAILABLE` outcomes for missing, ambiguous and outside-graph producers.
 
-This is observation evidence only. It does not classify adjacent changes,
-execute a reduced graph, activate an action or measure wall time.
+This is observation evidence only. It does not execute a reduced graph,
+activate an action or measure wall time.
+
+## Implemented relevance boundary
+
+`SWL-REQUEST-002` consumes two complete observations plus the changed paths
+between their revisions. It preserves the exact request and classifies every
+transition as one of `RELEVANT_COMPLETE`, `IRRELEVANT_TO_REQUEST`,
+`GLOBAL_OR_AMBIGUOUS`, `INPUT_UNAVAILABLE` or `PRODUCER_FAILED`.
+
+Only a relevant and complete transition can describe a partial-work action.
+That action is the affected producer closure within the requested graph, while
+every omitted required output is bound to its current unique producer and
+byte evidence. A complete request graph remains `RELEVANT_COMPLETE` but emits
+no invented reduction. Identity drift, ambiguous ownership, missing outputs
+and producer failure emit no action and retain the exact native request.
+
+The checked Gradle 8.14.3/9.6.1 Kotlin/Groovy matrix covers eight scenarios per
+row (32 total), including a renamed current output. It proves all five status
+classes, exact argument preservation and zero timing or activation authority.
 
 ## Why the predecessor stopped
 

@@ -1,0 +1,322 @@
+{
+  "schemaVersion": "buildopt.evidence/request-aligned-classifier-fixtures/v1",
+  "workItem": "SWL-REQUEST-002",
+  "status": "COMPLETE",
+  "classifierSha256": "d07224882f140b431a88a1bfbbb638c98514ba231e86fa7f93b0ad978b19ffef",
+  "producerSha256": "44182ead468a35bdf7a0fec737c8cd7827a6693e2a126c0436f2b00f8598132f",
+  "coverage": [
+    "affected",
+    "irrelevant",
+    "global",
+    "ambiguous",
+    "renamed-output",
+    "missing-output",
+    "producer-failure",
+    "full-graph"
+  ],
+  "results": [
+    {
+      "gradleVersion": "8.14.3",
+      "dsl": "KOTLIN",
+      "status": "COMPLETE",
+      "scenarios": [
+        {
+          "name": "affected",
+          "status": "RELEVANT_COMPLETE",
+          "reason": "EXACT_RELEVANT_PRODUCER_CLOSURE",
+          "testableActions": 1,
+          "actionBindingSha256": "6966bc37fe0f457b47b2a239402b472d4887878e6011eb548772a22e1af27f65",
+          "omittedOutputs": [
+            {
+              "producerTask": ":rightProducer",
+              "path": "build/right-v2.bin",
+              "kind": "FILE",
+              "sha256": "55c97802b397ef4da0d8e2ecf4a8fa33c1f4755da0eacec54c62cacbbcfd9713"
+            }
+          ]
+        },
+        {
+          "name": "irrelevant",
+          "status": "IRRELEVANT_TO_REQUEST",
+          "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+          "testableActions": 0
+        },
+        {
+          "name": "global",
+          "status": "GLOBAL_OR_AMBIGUOUS",
+          "reason": "REQUEST_IDENTITY_CHANGED",
+          "testableActions": 0
+        },
+        {
+          "name": "ambiguous",
+          "status": "GLOBAL_OR_AMBIGUOUS",
+          "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS",
+          "testableActions": 0
+        },
+        {
+          "name": "renamed-output",
+          "status": "RELEVANT_COMPLETE",
+          "reason": "EXACT_RELEVANT_PRODUCER_CLOSURE",
+          "testableActions": 1,
+          "omittedOutputs": [
+            {
+              "producerTask": ":rightProducer",
+              "path": "build/right-v2.bin",
+              "kind": "FILE",
+              "sha256": "55c97802b397ef4da0d8e2ecf4a8fa33c1f4755da0eacec54c62cacbbcfd9713"
+            }
+          ]
+        },
+        {
+          "name": "missing-output",
+          "status": "INPUT_UNAVAILABLE",
+          "reason": "CURRENT_PRODUCER_OUTPUTS_EMPTY",
+          "testableActions": 0
+        },
+        {
+          "name": "producer-failure",
+          "status": "PRODUCER_FAILED",
+          "reason": "REQUEST_PRODUCER_FAILED",
+          "testableActions": 0
+        },
+        {
+          "name": "full-graph",
+          "status": "RELEVANT_COMPLETE",
+          "reason": "FULL_REQUEST_GRAPH_REQUIRED",
+          "testableActions": 0
+        }
+      ],
+      "exactArgumentsPreserved": true,
+      "performanceMeasured": false,
+      "activationAuthorized": false
+    },
+    {
+      "gradleVersion": "8.14.3",
+      "dsl": "GROOVY",
+      "status": "COMPLETE",
+      "scenarios": [
+        {
+          "name": "affected",
+          "status": "RELEVANT_COMPLETE",
+          "reason": "EXACT_RELEVANT_PRODUCER_CLOSURE",
+          "testableActions": 1,
+          "actionBindingSha256": "1a7ce07dc80b973d45e6ed6252f69a6663190eb59c6b7c26d025bdee473e1b06",
+          "omittedOutputs": [
+            {
+              "producerTask": ":rightProducer",
+              "path": "build/right-v2.bin",
+              "kind": "FILE",
+              "sha256": "55c97802b397ef4da0d8e2ecf4a8fa33c1f4755da0eacec54c62cacbbcfd9713"
+            }
+          ]
+        },
+        {
+          "name": "irrelevant",
+          "status": "IRRELEVANT_TO_REQUEST",
+          "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+          "testableActions": 0
+        },
+        {
+          "name": "global",
+          "status": "GLOBAL_OR_AMBIGUOUS",
+          "reason": "REQUEST_IDENTITY_CHANGED",
+          "testableActions": 0
+        },
+        {
+          "name": "ambiguous",
+          "status": "GLOBAL_OR_AMBIGUOUS",
+          "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS",
+          "testableActions": 0
+        },
+        {
+          "name": "renamed-output",
+          "status": "RELEVANT_COMPLETE",
+          "reason": "EXACT_RELEVANT_PRODUCER_CLOSURE",
+          "testableActions": 1,
+          "omittedOutputs": [
+            {
+              "producerTask": ":rightProducer",
+              "path": "build/right-v2.bin",
+              "kind": "FILE",
+              "sha256": "55c97802b397ef4da0d8e2ecf4a8fa33c1f4755da0eacec54c62cacbbcfd9713"
+            }
+          ]
+        },
+        {
+          "name": "missing-output",
+          "status": "INPUT_UNAVAILABLE",
+          "reason": "CURRENT_PRODUCER_OUTPUTS_EMPTY",
+          "testableActions": 0
+        },
+        {
+          "name": "producer-failure",
+          "status": "PRODUCER_FAILED",
+          "reason": "REQUEST_PRODUCER_FAILED",
+          "testableActions": 0
+        },
+        {
+          "name": "full-graph",
+          "status": "RELEVANT_COMPLETE",
+          "reason": "FULL_REQUEST_GRAPH_REQUIRED",
+          "testableActions": 0
+        }
+      ],
+      "exactArgumentsPreserved": true,
+      "performanceMeasured": false,
+      "activationAuthorized": false
+    },
+    {
+      "gradleVersion": "9.6.1",
+      "dsl": "KOTLIN",
+      "status": "COMPLETE",
+      "scenarios": [
+        {
+          "name": "affected",
+          "status": "RELEVANT_COMPLETE",
+          "reason": "EXACT_RELEVANT_PRODUCER_CLOSURE",
+          "testableActions": 1,
+          "actionBindingSha256": "a52760d67409a401725916d918168d54888738844292644cce592393d59da342",
+          "omittedOutputs": [
+            {
+              "producerTask": ":rightProducer",
+              "path": "build/right-v2.bin",
+              "kind": "FILE",
+              "sha256": "55c97802b397ef4da0d8e2ecf4a8fa33c1f4755da0eacec54c62cacbbcfd9713"
+            }
+          ]
+        },
+        {
+          "name": "irrelevant",
+          "status": "IRRELEVANT_TO_REQUEST",
+          "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+          "testableActions": 0
+        },
+        {
+          "name": "global",
+          "status": "GLOBAL_OR_AMBIGUOUS",
+          "reason": "REQUEST_IDENTITY_CHANGED",
+          "testableActions": 0
+        },
+        {
+          "name": "ambiguous",
+          "status": "GLOBAL_OR_AMBIGUOUS",
+          "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS",
+          "testableActions": 0
+        },
+        {
+          "name": "renamed-output",
+          "status": "RELEVANT_COMPLETE",
+          "reason": "EXACT_RELEVANT_PRODUCER_CLOSURE",
+          "testableActions": 1,
+          "omittedOutputs": [
+            {
+              "producerTask": ":rightProducer",
+              "path": "build/right-v2.bin",
+              "kind": "FILE",
+              "sha256": "55c97802b397ef4da0d8e2ecf4a8fa33c1f4755da0eacec54c62cacbbcfd9713"
+            }
+          ]
+        },
+        {
+          "name": "missing-output",
+          "status": "INPUT_UNAVAILABLE",
+          "reason": "CURRENT_PRODUCER_OUTPUTS_EMPTY",
+          "testableActions": 0
+        },
+        {
+          "name": "producer-failure",
+          "status": "PRODUCER_FAILED",
+          "reason": "REQUEST_PRODUCER_FAILED",
+          "testableActions": 0
+        },
+        {
+          "name": "full-graph",
+          "status": "RELEVANT_COMPLETE",
+          "reason": "FULL_REQUEST_GRAPH_REQUIRED",
+          "testableActions": 0
+        }
+      ],
+      "exactArgumentsPreserved": true,
+      "performanceMeasured": false,
+      "activationAuthorized": false
+    },
+    {
+      "gradleVersion": "9.6.1",
+      "dsl": "GROOVY",
+      "status": "COMPLETE",
+      "scenarios": [
+        {
+          "name": "affected",
+          "status": "RELEVANT_COMPLETE",
+          "reason": "EXACT_RELEVANT_PRODUCER_CLOSURE",
+          "testableActions": 1,
+          "actionBindingSha256": "854c0bcf906be7d1fa24106676b80983d9998d6cab996c01b9ccb1ce11f592f1",
+          "omittedOutputs": [
+            {
+              "producerTask": ":rightProducer",
+              "path": "build/right-v2.bin",
+              "kind": "FILE",
+              "sha256": "55c97802b397ef4da0d8e2ecf4a8fa33c1f4755da0eacec54c62cacbbcfd9713"
+            }
+          ]
+        },
+        {
+          "name": "irrelevant",
+          "status": "IRRELEVANT_TO_REQUEST",
+          "reason": "NO_CHANGED_PATH_INTERSECTS_REQUEST_INPUTS",
+          "testableActions": 0
+        },
+        {
+          "name": "global",
+          "status": "GLOBAL_OR_AMBIGUOUS",
+          "reason": "REQUEST_IDENTITY_CHANGED",
+          "testableActions": 0
+        },
+        {
+          "name": "ambiguous",
+          "status": "GLOBAL_OR_AMBIGUOUS",
+          "reason": "CURRENT_OUTPUT_PRODUCER_AMBIGUOUS",
+          "testableActions": 0
+        },
+        {
+          "name": "renamed-output",
+          "status": "RELEVANT_COMPLETE",
+          "reason": "EXACT_RELEVANT_PRODUCER_CLOSURE",
+          "testableActions": 1,
+          "omittedOutputs": [
+            {
+              "producerTask": ":rightProducer",
+              "path": "build/right-v2.bin",
+              "kind": "FILE",
+              "sha256": "55c97802b397ef4da0d8e2ecf4a8fa33c1f4755da0eacec54c62cacbbcfd9713"
+            }
+          ]
+        },
+        {
+          "name": "missing-output",
+          "status": "INPUT_UNAVAILABLE",
+          "reason": "CURRENT_PRODUCER_OUTPUTS_EMPTY",
+          "testableActions": 0
+        },
+        {
+          "name": "producer-failure",
+          "status": "PRODUCER_FAILED",
+          "reason": "REQUEST_PRODUCER_FAILED",
+          "testableActions": 0
+        },
+        {
+          "name": "full-graph",
+          "status": "RELEVANT_COMPLETE",
+          "reason": "FULL_REQUEST_GRAPH_REQUIRED",
+          "testableActions": 0
+        }
+      ],
+      "exactArgumentsPreserved": true,
+      "performanceMeasured": false,
+      "activationAuthorized": false
+    }
+  ],
+  "performanceMeasured": false,
+  "activationAuthorized": false,
+  "outcome": "RELEVANCE_CLASSIFIER_AND_FIXTURE_MATRIX_COMPLETE"
+}

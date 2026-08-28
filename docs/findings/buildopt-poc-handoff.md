@@ -39,12 +39,14 @@ The current experimental route is
 `REQUEST_ALIGNED_RECURRENT_CLOSURE_V1`. BuildOpt will learn from the exact
 ordinary Gradle command a customer repeats, wait for changes relevant to that
 requested graph and discover current outputs from producer tasks. Its first
-implementation block now passes Gradle 8/9 × Kotlin/Groovy: canonical identity
+two implementation blocks now pass Gradle 8/9 × Kotlin/Groovy: canonical identity
 is independent of checkout path, all eight graph-affecting bindings change the
 identity, the versioned Groovy JAR is resolved from `:jar`, and missing,
-ambiguous or outside-graph ownership fails typed. The next block is the
-relevance classifier. Public timing, activation and any speedup claim remain
-unauthorized.
+ambiguous or outside-graph ownership fails typed. The adjacent-transition
+classifier adds 32 cases across all five statuses, derives exact relevant
+closures, binds current renamed outputs and emits no action for unsafe or
+full-graph cases. Fresh five-family capture is next. Public timing, activation
+and any speedup claim remain unauthorized.
 
 ## Mechanisms
 
@@ -434,10 +436,10 @@ current-output discovery drift. It rejects unsafe relabelling, more arbitrary
 commit sampling, a one-row filename repair as a breadth claim and cache
 transport as an equal-opportunity speed claim. The selected
 [request-aligned route](../plans/request-aligned-learning-poc-tracker.md)
-preserves the user's command and the unchanged 3/5 gate. Its request identity
-and current producer-output block is complete; the next block must classify
-adjacent changes and construct exact relevant producer closures. No candidate
-execution or timing has opened.
+preserves the user's command and the unchanged 3/5 gate. Request identity,
+current producer-output discovery and adjacent relevance classification are
+complete; the next block captures fresh recurrent ordinary requests across all
+five public families. No candidate execution or timing has opened.
 
 The closed predecessor remains implementation-locked as historical evidence:
 separate per-arm cache namespaces started empty, only the task-contract and

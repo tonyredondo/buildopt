@@ -45,8 +45,20 @@ complete. Validate its canonical identity and current-output matrix with:
 
 The dynamic check runs Gradle 8.14.3/9.6.1 with Kotlin/Groovy and compares the
 regenerated evidence byte for byte; `--static` validates the checked result
-without running Gradle. It observes only and opens `SWL-REQUEST-002`; it does
-not run a candidate or authorize timing.
+without running Gradle. It observes only; it does not run a candidate or
+authorize timing.
+
+Validate the adjacent-transition classifier and its Gradle 8/9 ×
+Kotlin/Groovy matrix with:
+
+```bash
+./dev/check-request-aligned-classifier
+```
+
+The dynamic check regenerates 32 scenarios byte for byte. `--static` validates
+the checked evidence without running Gradle. Only complete relevant partial
+requests describe an action; every unsafe or full-graph case emits none. This
+opens fresh public capture at `SWL-REQUEST-003`, not timing or activation.
 
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:

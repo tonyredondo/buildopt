@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [--static]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_evidence=${buildopt_root}/benchmarks/results/request-aligned-classifier-fixtures-v1.json
+buildopt_mode=${1:-dynamic}
+case ${buildopt_mode} in dynamic | --static) ;; *) printf 'usage: %s [--static]\n' "$0" >&2; exit 64 ;; esac
+for buildopt_command in cmp jq mktemp sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_classifier_sha=$(sha256sum "${buildopt_root}/internal/requestaligned/classification.go" | awk '{print $1}')
+buildopt_producer_sha=$(sha256sum "${buildopt_root}/internal/requestaligned/observation.go" | awk '{print $1}')
+jq -e --arg classifier "${buildopt_classifier_sha}" --arg producer "${buildopt_producer_sha}" '
+  .schemaVersion=="buildopt.evidence/request-aligned-classifier-fixtures/v1" and
+  .workItem=="SWL-REQUEST-002" and .status=="COMPLETE" and
+  .classifierSha256==$classifier and .producerSha256==$producer and
+  .coverage==["affected","irrelevant","global","ambiguous","renamed-output","missing-output","producer-failure","full-graph"] and
+  (.results|length)==4 and
+  ([.results[].gradleVersion]|unique)==["8.14.3","9.6.1"] and
+  ([.results[].dsl]|unique)==["GROOVY","KOTLIN"] and
+  all(.results[];
+    .status=="COMPLETE" and .exactArgumentsPreserved and
+    (.scenarios|length)==8 and
+    ([.scenarios[]|select(.name=="affected" and .status=="RELEVANT_COMPLETE" and .testableActions==1 and .omittedOutputs[0].path=="build/right-v2.bin")]|length)==1 and
+    ([.scenarios[]|select(.name=="irrelevant" and .status=="IRRELEVANT_TO_REQUEST" and .testableActions==0)]|length)==1 and
+    ([.scenarios[]|select(.name=="global" and .status=="GLOBAL_OR_AMBIGUOUS" and .testableActions==0)]|length)==1 and
+    ([.scenarios[]|select(.name=="ambiguous" and .status=="GLOBAL_OR_AMBIGUOUS" and .testableActions==0)]|length)==1 and
+    ([.scenarios[]|select(.name=="renamed-output" and .status=="RELEVANT_COMPLETE" and .testableActions==1 and .omittedOutputs[0].path=="build/right-v2.bin")]|length)==1 and
+    ([.scenarios[]|select(.name=="missing-output" and .status=="INPUT_UNAVAILABLE" and .testableActions==0)]|length)==1 and
+    ([.scenarios[]|select(.name=="producer-failure" and .status=="PRODUCER_FAILED" and .testableActions==0)]|length)==1 and
+    ([.scenarios[]|select(.name=="full-graph" and .status=="RELEVANT_COMPLETE" and .reason=="FULL_REQUEST_GRAPH_REQUIRED" and .testableActions==0)]|length)==1 and
+    (.performanceMeasured|not) and (.activationAuthorized|not)
+  ) and
+  (.performanceMeasured|not) and (.activationAuthorized|not) and
+  .outcome=="RELEVANCE_CLASSIFIER_AND_FIXTURE_MATRIX_COMPLETE"
+' "${buildopt_evidence}" >/dev/null || {
+    printf 'request-aligned classifier fixture contract is invalid\n' >&2
+    exit 1
+}
+
+if [[ ${buildopt_mode} == --static ]]; then
+    printf 'Request-aligned classifier fixtures: PASS (static)\n'
+    exit 0
+fi
+
+buildopt_temporary=$(mktemp /tmp/buildopt-request-classifier.XXXXXX.json)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-request-classifier.*.json) rm -f -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected classifier output: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+"${buildopt_root}/dev/run-request-aligned-classifier-fixtures" "${buildopt_temporary}"
+cmp -s "${buildopt_evidence}" "${buildopt_temporary}" || {
+    printf 'request-aligned classifier fixture evidence is stale\n' >&2
+    diff -u "${buildopt_evidence}" "${buildopt_temporary}" >&2 || true
+    exit 1
+}
+
+printf 'Request-aligned classifier fixtures: PASS\n'

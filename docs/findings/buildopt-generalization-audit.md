@@ -33,6 +33,11 @@ canonical request identities are checkout-independent, all eight compatibility
 bindings separate identities, and the current versioned Groovy JAR is found
 from its unique producer. Missing, ambiguous and outside-graph ownership is
 typed unavailable. This closes an evidence gap but proves no acceleration.
+The adjacent-transition classifier now also passes 32 Gradle 8/9 ×
+Kotlin/Groovy scenarios. It distinguishes all five frozen statuses, preserves
+exact argv, derives only exact relevant producer closures and binds renamed
+current outputs without filename rules. Unsafe and full-graph cases emit no
+action. This still proves no acceleration; fresh public capture is next.
 
 ## What is generalized today
 
@@ -164,11 +169,12 @@ fixed requested graph; the remaining Groovy case bound a stale unversioned JAR
 instead of the current versioned producer output.
 
 The predecessor capture remains 25/25 conclusive but only **1/5** action-broad.
-The new route has completed its first implementation block: request identity
-and current-output ownership are reproducible across the four Gradle/DSL
-fixtures. `SWL-REQUEST-002` must now prove that adjacent changes can be
-classified and converted into complete relevant producer closures without
-repository rules. Only then can fresh five-family collection begin.
+The new route has completed its first two implementation blocks: request
+identity, current-output ownership and adjacent relevance classification are
+reproducible across the four Gradle/DSL rows. `SWL-REQUEST-003` must now collect
+five fresh relevant ordinary transitions per public family within the frozen
+30-transition budgets. Only an independently reconstructed 3/5 action-breadth
+result can open timing.
 
 No current action ran and no current wall-time claim exists. Installed and
 chronological timing were not authorized. The terminal scorecard records
@@ -176,8 +182,9 @@ chronological timing were not authorized. The terminal scorecard records
 confidence, payback and overhead typed as unmeasured rather than zero. The new
 `REQUEST_ALIGNED_RECURRENT_CLOSURE_V1` route does not relabel those negatives:
 it preserves the exact customer command, waits for relevant recurrent changes
-and discovers current outputs generically. Only producer implementation is
-authorized; public capture, timing and activation remain closed.
+and discovers current outputs generically. Producer and classifier
+implementation are complete; public capture is next, while timing and
+activation remain closed.
 
 ## POC conclusion
 

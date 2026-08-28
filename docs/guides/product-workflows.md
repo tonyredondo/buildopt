@@ -30,10 +30,10 @@ recorded in the
 [Change-aware Producer Closure POC Tracker](../plans/change-aware-producer-closure-poc-tracker.md).
 Its cause analysis opens the
 [Request-aligned Recurrent Learning POC Tracker](../plans/request-aligned-learning-poc-tracker.md):
-the implemented producer learns only from exact ordinary request identities
-and current producer outputs, without changing the user's Gradle command. The
-next block classifies whether an adjacent change is relevant to that request;
-no action is active yet.
+the implemented producer and classifier learn only from exact ordinary request
+identities, current producer outputs and adjacent changes relevant to that
+request, without changing the user's Gradle command. Fresh public capture is
+next; no action is active yet.
 The wrapper remains reusable POC infrastructure, not a production rollout path
 or evidence that a generic acceleration mechanism has qualified.
 
@@ -81,10 +81,12 @@ observation. It remains useful compatibility evidence but is
 
 The active request-aligned evidence order is:
 
-1. bind the exact repeated Gradle argv plus Wrapper/JDK/build-logic identity;
-2. discover current required outputs from their producer tasks;
-3. classify relevant, irrelevant, global, ambiguous and unavailable changes;
-4. capture five relevant ordinary transitions in each public family;
+1. bind the exact repeated Gradle argv plus Wrapper/JDK/build-logic identity
+   (complete);
+2. discover current required outputs from their producer tasks (complete);
+3. classify relevant, irrelevant, global, ambiguous and unavailable changes
+   (complete across 32 Gradle/DSL cases);
+4. capture five relevant ordinary transitions in each public family (next);
 5. time installed actions only after at least three families expose complete
    generic actions;
 6. run a chronological campaign only after installed value passes; and

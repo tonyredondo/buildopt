@@ -64,14 +64,17 @@ committed buildoptw / buildoptw.bat
 existing buildopt launcher -> existing Gradle Wrapper
 ```
 
-`REQUEST_ALIGNED_RECURRENT_CLOSURE_V1` now has an observation-only producer.
+`REQUEST_ALIGNED_RECURRENT_CLOSURE_V1` now has an observation-only producer and
+adjacent-transition classifier.
 It canonically binds exact Gradle arguments and requested tasks, Gradle and
 Wrapper identity, portable JDK facts, a safe environment aggregate, build
 logic and the finalized requested graph. Current outputs are repository-
 relative and owned by a unique producer; missing, ambiguous or outside-graph
-ownership is typed unavailable. The next classifier will attach adjacent-
-revision changes to this evidence. Nothing in this producer authorizes action
-or timing, so the original optimized-native invocation remains authoritative.
+ownership is typed unavailable. The classifier attaches adjacent-revision
+changes, derives an exact affected producer closure only from finalized inputs
+and binds every omitted current output. Unsafe or full-graph cases emit no
+action. Nothing in this path authorizes execution or timing, so the original
+optimized-native invocation remains authoritative.
 
 The four generated committed files contain only bootstrap identity and portable
 non-secret configuration. Runtime credentials remain private. The implemented
