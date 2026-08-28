@@ -63,7 +63,7 @@ buildopt_required_plan_text=(
     'All 25 transitions are conclusive'
     '**1/5** versus the frozen **3/5** threshold'
     '`STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR`'
-    'No successor is authorized'
+    'No successor was authorized by this terminal result'
 )
 for buildopt_text in "${buildopt_required_plan_text[@]}"; do
     grep -Fq -- "${buildopt_text}" "${buildopt_plan}" || {

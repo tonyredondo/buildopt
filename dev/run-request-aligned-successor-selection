@@ -1,0 +1,144 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [OUTPUT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_capture=${buildopt_root}/benchmarks/results/change-aware-producer-closure-v1
+buildopt_terminal=${buildopt_root}/benchmarks/results/change-aware-terminal-decision-v1.json
+buildopt_contract=${buildopt_root}/specs/poc-request-aligned-learning-v1.json
+buildopt_output=${1:-${buildopt_root}/benchmarks/results/request-aligned-successor-selection-v1.json}
+[[ ${buildopt_output} == /* ]] || buildopt_output=${PWD}/${buildopt_output}
+
+for buildopt_command in jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+"${buildopt_root}/dev/check-change-aware-terminal-decision" >/dev/null
+
+buildopt_reports=$(jq -s '.' "${buildopt_capture}"/reports/*.json)
+buildopt_total=$(jq 'length' <<<"${buildopt_reports}")
+buildopt_actions=$(jq '[.[]|select(.status=="TESTABLE_ACTIONS")]|length' <<<"${buildopt_reports}")
+buildopt_no_safe=$(jq '[.[]|select(.status=="NO_SAFE_ACTION")]|length' <<<"${buildopt_reports}")
+buildopt_disjoint=$(jq '[.[]|select(.reason=="CHANGE_INPUT_OWNERSHIP_UNPROVEN" and (.affectedInputTasks|length)==0)]|length' <<<"${buildopt_reports}")
+buildopt_disjoint_families=$(jq '[.[]|select(.reason=="CHANGE_INPUT_OWNERSHIP_UNPROVEN" and (.affectedInputTasks|length)==0)|.family]|unique|length' <<<"${buildopt_reports}")
+buildopt_output_drift=$(jq '[.[]|select(.reason=="REQUIRED_OUTPUT_PRODUCER_MISSING" and (.affectedInputTasks|length)>0)]|length' <<<"${buildopt_reports}")
+
+[[ ${buildopt_total} == 25 && ${buildopt_actions} == 1 && ${buildopt_no_safe} == 24 &&
+    ${buildopt_disjoint} == 23 && ${buildopt_disjoint_families} == 5 && ${buildopt_output_drift} == 1 ]] || {
+    printf 'predecessor cause population changed\n' >&2
+    exit 1
+}
+
+buildopt_groovy_capture=$(jq -r 'select(.reason=="REQUIRED_OUTPUT_PRODUCER_MISSING")|.capture' "${buildopt_capture}/transitions.jsonl")
+[[ -n ${buildopt_groovy_capture} ]] || {
+    printf 'Groovy output-drift capture is missing\n' >&2
+    exit 1
+}
+buildopt_required_output=$(jq -r '.requiredOutputs|if length==1 then .[0] else empty end' "${buildopt_capture}/${buildopt_groovy_capture}")
+buildopt_current_output=$(jq -r '[.tasks[]|select(.path==":jar")|.outputs[]|select(.exists)|.path]|if length==1 then .[0] else empty end' "${buildopt_capture}/${buildopt_groovy_capture}")
+[[ ${buildopt_required_output} == build/libs/groovy-raw.jar &&
+    ${buildopt_current_output} == build/libs/groovy-raw-6.0.0-SNAPSHOT-raw.jar ]] || {
+    printf 'Groovy output-drift evidence changed\n' >&2
+    exit 1
+}
+
+buildopt_generated_at=$(jq -r '.generatedAt' "${buildopt_terminal}")
+buildopt_terminal_sha=$(sha256sum "${buildopt_terminal}" | cut -d' ' -f1)
+buildopt_transitions_sha=$(sha256sum "${buildopt_capture}/transitions.jsonl" | cut -d' ' -f1)
+buildopt_capture_contract_sha=$(sha256sum "${buildopt_capture}/contract.json" | cut -d' ' -f1)
+buildopt_selected_contract_sha=$(sha256sum "${buildopt_contract}" | cut -d' ' -f1)
+
+jq -n \
+    --arg generatedAt "${buildopt_generated_at}" \
+    --arg terminalSha "${buildopt_terminal_sha}" \
+    --arg transitionsSha "${buildopt_transitions_sha}" \
+    --arg captureContractSha "${buildopt_capture_contract_sha}" \
+    --arg selectedContractSha "${buildopt_selected_contract_sha}" \
+    --arg requiredOutput "${buildopt_required_output}" \
+    --arg currentOutput "${buildopt_current_output}" \
+    --argjson total "${buildopt_total}" \
+    --argjson actions "${buildopt_actions}" \
+    --argjson noSafe "${buildopt_no_safe}" \
+    --argjson disjoint "${buildopt_disjoint}" \
+    --argjson disjointFamilies "${buildopt_disjoint_families}" \
+    --argjson outputDrift "${buildopt_output_drift}" '
+  {
+    schemaVersion:"buildopt.poc/request-aligned-successor-selection/v1",
+    workItem:"SWL-REQUEST-000",
+    generatedAt:$generatedAt,
+    evidence:{
+      predecessorTerminalSha256:$terminalSha,
+      predecessorCaptureContractSha256:$captureContractSha,
+      predecessorTransitionsSha256:$transitionsSha,
+      selectedContractSha256:$selectedContractSha,
+      historicalTimingImported:false,
+      historicalActionImported:false
+    },
+    predecessor:{
+      decision:"STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR",
+      transitions:$total,
+      testableActions:$actions,
+      noSafeActions:$noSafe,
+      performanceMeasured:false,
+      actionExecuted:false
+    },
+    causeAnalysis:[
+      {
+        cause:"DECLARED_INPUT_DISJOINT_FROM_FIXED_REQUEST_GRAPH",
+        predecessorReason:"CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+        transitions:$disjoint,
+        families:$disjointFamilies,
+        interpretation:"THE_CHANGED_PATHS_ARE_NOT_DECLARED_INPUTS_OF_THE_FIXED_REQUESTED_GRAPH_AND_CANNOT_BE_COUNTED_AS_OMITTED_WORK"
+      },
+      {
+        cause:"CURRENT_REQUIRED_OUTPUT_DISCOVERY_MISSING",
+        predecessorReason:"REQUIRED_OUTPUT_PRODUCER_MISSING",
+        transitions:$outputDrift,
+        families:1,
+        frozenRequiredOutput:$requiredOutput,
+        currentProducerOutput:$currentOutput,
+        interpretation:"THE_VERSIONED_CURRENT_OUTPUT_MUST_BE_DISCOVERED_FROM_THE_PRODUCER_TASK_RATHER_THAN_A_FILENAME_TEMPLATE"
+      }
+    ],
+    candidates:[
+      {id:"RELABEL_UNOWNED_AS_UNAFFECTED",disposition:"REJECTED_UNSAFE",reason:"ABSENCE_FROM_DECLARED_INPUTS_DOES_NOT_AUTHORIZE_SEMANTIC_OWNERSHIP_OR_CREATE_WORK_TO_OMIT"},
+      {id:"MORE_ARBITRARY_COMMITS_SAME_FIXED_WORKFLOW",disposition:"REJECTED_NOT_MATERIALLY_DIFFERENT",reason:"REPEATS_WORKLOAD_CHANGE_MISALIGNMENT_AND_DOES_NOT_MODEL_RECURRENT_CUSTOMER_REQUESTS"},
+      {id:"CURRENT_OUTPUT_DISCOVERY_ONLY",disposition:"REJECTED_INSUFFICIENT_BREADTH",reason:"REPAIRS_ONE_GROOVY_TRANSITION_BUT_CANNOT_ESTABLISH_THREE_FAMILY_ACTION_BREADTH"},
+      {id:"REMOTE_CACHE_TRANSPORT_ONLY",disposition:"REJECTED_NATIVE_EQUIVALENT",reason:"TRANSPORT_IS_SUPPORTING_INFRASTRUCTURE_AND_CANNOT_BEAT_AN_EQUAL_NATIVE_GRADLE_CACHE_OPPORTUNITY_BY_ITSELF"},
+      {id:"REQUEST_ALIGNED_RECURRENT_CLOSURE_V1",disposition:"SELECTED_FOR_IMPLEMENTATION",reason:"ORDINARY_WRAPPER_REQUESTS_CAN_CAPTURE_RECURRENT_COMMAND_IDENTITY_RELEVANT_CHANGES_CURRENT_OUTPUTS_AND_COMPLETE_PRODUCER_CLOSURE_WITHOUT_REPOSITORY_RULES"}
+    ],
+    selectedHypothesis:{
+      id:"REQUEST_ALIGNED_RECURRENT_CLOSURE_V1",
+      materialDifference:"LEARN_FROM_REPEATED_CUSTOMER_REQUEST_IDENTITIES_AND_RELEVANT_CHANGES_INSTEAD_OF_PAIRING_ARBITRARY_COMMITS_WITH_ONE_FIXED_LEAF_WORKFLOW",
+      commandSubstitutionAllowed:false,
+      repositorySpecificRulesAllowed:false,
+      currentOutputDiscoveryRequired:true,
+      irrelevantTransitionsCountAsActions:false,
+      optimizedNativeFallbackRequired:true
+    },
+    frozenBreadthGate:{
+      completeFamilyInputsRequired:5,
+      relevantTransitionsPerFamilyRequired:5,
+      familiesWithActionsRequired:3,
+      requiredOutputEquivalence:"BYTE_EXACT",
+      productFailureBudget:0,
+      timingAuthorizedBeforeBreadth:false,
+      hostedCiTimingThresholdsAllowed:false
+    },
+    decision:{
+      outcome:"PREREGISTER_REQUEST_ALIGNED_RECURRENT_CLOSURE_V1",
+      nextBlock:"SWL-REQUEST-001",
+      performanceTimingAuthorized:false,
+      actionActivationAuthorized:false,
+      speedupClaim:false
+    }
+  }
+' >"${buildopt_output}"
+
+printf 'Request-aligned successor selection written to %s\n' "${buildopt_output}"

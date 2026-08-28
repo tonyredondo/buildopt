@@ -214,6 +214,7 @@ case "${buildopt_lane}" in
 		"${buildopt_script_dir}/check-change-aware-public-capture"
 		"${buildopt_script_dir}/check-change-aware-breadth-gate"
 		"${buildopt_script_dir}/check-change-aware-terminal-decision"
+		"${buildopt_script_dir}/check-request-aligned-successor-selection"
 		"${buildopt_script_dir}/check-sticky-evidence-producers"
 		"${buildopt_script_dir}/check-sticky-wrapper-learning-plan"
 		"${buildopt_script_dir}/check-sticky-wrapper-contract"

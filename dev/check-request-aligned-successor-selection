@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_result=${1:-${buildopt_root}/benchmarks/results/request-aligned-successor-selection-v1.json}
+buildopt_contract=${buildopt_root}/specs/poc-request-aligned-learning-v1.json
+buildopt_plan=${buildopt_root}/docs/plans/request-aligned-learning-poc-tracker.md
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-aligned-selection.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-request-aligned-selection.*)
+            rm -rf -- "${buildopt_temporary}"
+            ;;
+        *)
+            printf 'refusing to clean unexpected selection root: %s\n' "${buildopt_temporary}" >&2
+            return 1
+            ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+buildopt_validate_result() {
+    jq -e '
+  .schemaVersion=="buildopt.poc/request-aligned-learning-contract/v1" and
+  .workItem=="SWL-REQUEST-000" and
+  .status=="PREREGISTERED" and
+  .predecessor.decision=="STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR" and
+  .hypothesis.id=="REQUEST_ALIGNED_RECURRENT_CLOSURE_V1" and
+  .hypothesis.commandSubstitutionAllowed==false and
+  .hypothesis.repositorySpecificRulesAllowed==false and
+  .evidence.ordinaryRequestedBuildsOnly==true and
+  .evidence.currentProducerOutputDiscoveryRequired==true and
+  .evidence.historicalBuildOptTimingAllowed==false and
+  .evidence.historicalBuildOptActionAllowed==false and
+  .breadthGate.completeFamilyInputsRequired==5 and
+  .breadthGate.relevantTransitionsPerFamilyRequired==5 and
+  .breadthGate.familiesWithActionsRequired==3 and
+  .breadthGate.timingAuthorizedBeforeBreadth==false and
+  .nextBlock=="SWL-REQUEST-001" and
+  ([.blocks[]|select(.state=="DONE")]|length)==1 and
+  ([.blocks[]|select(.state=="TODO")]|length)==1 and
+  ([.blocks[]|select(.state=="WAITING")]|length)==6
+' "${buildopt_contract}" >/dev/null || {
+    printf 'request-aligned machine contract is invalid\n' >&2
+    exit 1
+}
+
+# Backticks below are literal Markdown syntax.
+# shellcheck disable=SC2016
+buildopt_required_plan_text=(
+    '**Overall:** `PREREGISTERED`'
+    '**Progress:** one of eight blocks complete'
+    '**Current block:** `SWL-REQUEST-001`'
+    '23/24'
+    '`REQUEST_ALIGNED_RECURRENT_CLOSURE_V1`'
+    'No successor timing is authorized'
+)
+for buildopt_text in "${buildopt_required_plan_text[@]}"; do
+    grep -Fq -- "${buildopt_text}" "${buildopt_plan}" || {
+        printf 'request-aligned tracker is missing: %s\n' "${buildopt_text}" >&2
+        exit 1
+    }
+done
+
+"${buildopt_root}/dev/run-request-aligned-successor-selection" \
+    "${buildopt_temporary}/regenerated.json" >/dev/null
+cmp -s "${buildopt_result}" "${buildopt_temporary}/regenerated.json" || {
+    printf 'request-aligned successor selection is stale or not reproducible\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion=="buildopt.poc/request-aligned-successor-selection/v1" and
+  .workItem=="SWL-REQUEST-000" and
+  all(.evidence[]|select(type=="string");test("^[0-9a-f]{64}$")) and
+  (.evidence.historicalTimingImported|not) and
+  (.evidence.historicalActionImported|not) and
+  .predecessor=={
+    decision:"STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR",
+    transitions:25,
+    testableActions:1,
+    noSafeActions:24,
+    performanceMeasured:false,
+    actionExecuted:false
+  } and
+  ([.causeAnalysis[]|select(.cause=="DECLARED_INPUT_DISJOINT_FROM_FIXED_REQUEST_GRAPH" and .transitions==23 and .families==5)]|length)==1 and
+  ([.causeAnalysis[]|select(.cause=="CURRENT_REQUIRED_OUTPUT_DISCOVERY_MISSING" and .transitions==1 and .families==1 and .frozenRequiredOutput=="build/libs/groovy-raw.jar" and .currentProducerOutput=="build/libs/groovy-raw-6.0.0-SNAPSHOT-raw.jar")]|length)==1 and
+  ([.candidates[]|select(.disposition|startswith("REJECTED"))]|length)==4 and
+  ([.candidates[]|select(.id=="REQUEST_ALIGNED_RECURRENT_CLOSURE_V1" and .disposition=="SELECTED_FOR_IMPLEMENTATION")]|length)==1 and
+  .selectedHypothesis.commandSubstitutionAllowed==false and
+  .selectedHypothesis.repositorySpecificRulesAllowed==false and
+  .selectedHypothesis.currentOutputDiscoveryRequired==true and
+  .selectedHypothesis.irrelevantTransitionsCountAsActions==false and
+  .frozenBreadthGate.completeFamilyInputsRequired==5 and
+  .frozenBreadthGate.relevantTransitionsPerFamilyRequired==5 and
+  .frozenBreadthGate.familiesWithActionsRequired==3 and
+  .frozenBreadthGate.timingAuthorizedBeforeBreadth==false and
+  .decision=={
+    outcome:"PREREGISTER_REQUEST_ALIGNED_RECURRENT_CLOSURE_V1",
+    nextBlock:"SWL-REQUEST-001",
+    performanceTimingAuthorized:false,
+    actionActivationAuthorized:false,
+    speedupClaim:false
+  }
+' "$1" >/dev/null
+}
+
+buildopt_validate_result "${buildopt_result}" || {
+    printf 'request-aligned successor selection contract is invalid\n' >&2
+    exit 1
+}
+
+jq '.causeAnalysis[0].transitions=22' "${buildopt_result}" >"${buildopt_temporary}/tampered-causes.json"
+if buildopt_validate_result "${buildopt_temporary}/tampered-causes.json"; then
+    printf 'tampered cause count was accepted\n' >&2
+    exit 1
+fi
+jq '.decision.performanceTimingAuthorized=true|.decision.speedupClaim=true' \
+    "${buildopt_result}" >"${buildopt_temporary}/tampered-authority.json"
+if buildopt_validate_result "${buildopt_temporary}/tampered-authority.json"; then
+    printf 'unauthorized timing claim was accepted\n' >&2
+    exit 1
+fi
+
+printf 'Request-aligned successor selection: PASS\n'

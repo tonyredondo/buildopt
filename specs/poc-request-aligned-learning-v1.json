@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-learning-contract/v1",
+  "workItem": "SWL-REQUEST-000",
+  "status": "PREREGISTERED",
+  "purpose": "Test whether recurring ordinary Gradle requests expose safe change-aware partial-work actions when evidence is aligned to the command the customer actually ran.",
+  "predecessor": {
+    "decision": "STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR",
+    "result": "benchmarks/results/change-aware-terminal-decision-v1.json"
+  },
+  "subjects": [
+    "spring-framework",
+    "opentelemetry-java-instrumentation",
+    "apache-kafka",
+    "micronaut-core",
+    "apache-groovy"
+  ],
+  "hypothesis": {
+    "id": "REQUEST_ALIGNED_RECURRENT_CLOSURE_V1",
+    "input": "Ordinary repeated BuildOpt Wrapper invocations, adjacent Git changes, the complete requested Gradle graph, finalized declared task inputs, current producer outputs and exact required-output evidence.",
+    "action": "For an unchanged request identity, test only a strict affected producer closure when the current change intersects the requested graph and every omitted required output is bound exactly.",
+    "safeFallback": "Run the original optimized-native Gradle command whenever request recurrence, change relevance, producer ownership, current output discovery, compatibility or evidence is incomplete.",
+    "materialDifference": "The stopped detector paired one fixed leaf workflow with arbitrary adjacent commits. This hypothesis learns only from the command the customer actually repeats and treats changes outside that requested graph as non-evidence rather than optimization actions.",
+    "repositorySpecificRulesAllowed": false,
+    "taskNameRulesAllowed": false,
+    "pathExtensionRulesAllowed": false,
+    "manualProfilesAllowed": false,
+    "commandSubstitutionAllowed": false
+  },
+  "evidence": {
+    "ordinaryRequestedBuildsOnly": true,
+    "exactRequestIdentityRequired": true,
+    "adjacentRevisionChangesRequired": true,
+    "currentProducerOutputDiscoveryRequired": true,
+    "declaredInputIntersectionRequired": true,
+    "requiredOutputEquivalence": "BYTE_EXACT",
+    "historicalBuildOptTimingAllowed": false,
+    "historicalBuildOptActionAllowed": false
+  },
+  "classification": [
+    "RELEVANT_COMPLETE",
+    "IRRELEVANT_TO_REQUEST",
+    "GLOBAL_OR_AMBIGUOUS",
+    "INPUT_UNAVAILABLE",
+    "PRODUCER_FAILED"
+  ],
+  "breadthGate": {
+    "completeFamilyInputsRequired": 5,
+    "relevantTransitionsPerFamilyRequired": 5,
+    "familiesWithActionsRequired": 3,
+    "productFailureBudget": 0,
+    "timingAuthorizedBeforeBreadth": false,
+    "activationAuthorizedBeforeValue": false,
+    "hostedCiTimingThresholdsAllowed": false
+  },
+  "blocks": [
+    {
+      "id": "SWL-REQUEST-000",
+      "state": "DONE",
+      "outcome": "REQUEST_ALIGNED_RECURRENT_CLOSURE_SELECTED_AND_PREREGISTERED"
+    },
+    {
+      "id": "SWL-REQUEST-001",
+      "state": "TODO",
+      "outcome": "REQUEST_IDENTITY_AND_CURRENT_OUTPUT_PRODUCER"
+    },
+    {
+      "id": "SWL-REQUEST-002",
+      "state": "WAITING",
+      "outcome": "RELEVANCE_CLASSIFIER_AND_FIXTURE_MATRIX"
+    },
+    {
+      "id": "SWL-REQUEST-003",
+      "state": "WAITING",
+      "outcome": "FRESH_FIVE_FAMILY_RECURRENT_REQUEST_CAPTURE"
+    },
+    {
+      "id": "SWL-REQUEST-004",
+      "state": "WAITING",
+      "outcome": "INDEPENDENT_ACTION_BREADTH_DECISION"
+    },
+    {
+      "id": "SWL-REQUEST-005",
+      "state": "WAITING",
+      "outcome": "INSTALLED_VALUE_IF_AUTHORIZED"
+    },
+    {
+      "id": "SWL-REQUEST-006",
+      "state": "WAITING",
+      "outcome": "CHRONOLOGICAL_VALUE_IF_AUTHORIZED"
+    },
+    {
+      "id": "SWL-REQUEST-007",
+      "state": "WAITING",
+      "outcome": "TERMINAL_CONTINUE_OR_STOP_DECISION"
+    }
+  ],
+  "nextBlock": "SWL-REQUEST-001"
+}

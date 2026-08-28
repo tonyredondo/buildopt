@@ -25,8 +25,13 @@ the original Gradle workflow.
 
 Gradle HTTP cache objects are reusable data; they never authorize lifecycle
 transitions. Typed decisions, observations and the economic ledger use the
-separate BuildOpt state plane. The latest detector experiment is recorded in
-the closed [Change-aware Producer Closure POC Tracker](../plans/change-aware-producer-closure-poc-tracker.md).
+separate BuildOpt state plane. The latest closed detector experiment is
+recorded in the
+[Change-aware Producer Closure POC Tracker](../plans/change-aware-producer-closure-poc-tracker.md).
+Its cause analysis opens the
+[Request-aligned Recurrent Learning POC Tracker](../plans/request-aligned-learning-poc-tracker.md):
+the next producer will learn only from exact ordinary request identities and
+current producer outputs, without changing the user's Gradle command.
 The wrapper remains reusable POC infrastructure, not a production rollout path
 or evidence that a generic acceleration mechanism has qualified.
 
@@ -72,29 +77,28 @@ identity and zero trial budget, so candidate used native no-op/light
 observation. It remains useful compatibility evidence but is
 `DIAGNOSTIC_ONLY`.
 
-The active fresh-evidence order is:
+The active request-aligned evidence order is:
 
-1. implement complete generic task-contract and declared-graph producers;
-2. freeze current public revisions and capture every observation, trace and
-   output binding from empty BuildOpt state;
-3. require conclusive producer outcomes in all five families before scoring
-   opportunity breadth;
-4. time installed actions only after at least three families expose complete
+1. bind the exact repeated Gradle argv plus Wrapper/JDK/build-logic identity;
+2. discover current required outputs from their producer tasks;
+3. classify relevant, irrelevant, global, ambiguous and unavailable changes;
+4. capture five relevant ordinary transitions in each public family;
+5. time installed actions only after at least three families expose complete
    generic actions;
-5. run the fresh chronological campaign only after installed value passes; and
-6. issue a terminal decision only from fresh complete evidence.
+6. run a chronological campaign only after installed value passes; and
+7. issue a terminal decision only from fresh complete evidence.
 
 Sample count alone never makes the campaign ready. Missing lifecycle, action or
 ledger evidence keeps it incomplete. The exact implementation paths, evidence
 keys, two allowed detector adapters, cache topology, deterministic confidence
 algorithms and early-stop outcomes are frozen in the
-[fresh machine contract](../../specs/poc-fresh-generic-optimization-v1.json).
+[request-aligned machine contract](../../specs/poc-request-aligned-learning-v1.json).
 An implementation agent executes that contract; it does not choose substitutes.
 The checked opportunity result is
 [`sticky-wrapper-opportunity-gate-v1.json`](../../benchmarks/results/sticky-wrapper-opportunity-gate-v1.json).
 Its Spring/Micronaut/Kafka graph-row counts are input-availability diagnostics,
-not savings estimates or terminal evidence. No historical result feeds the
-active experiment.
+not savings estimates or terminal evidence. No historical timing or action
+feeds the active experiment.
 
 ### Active runtime boundary
 

@@ -147,8 +147,10 @@ optimization.
 
 ## Immediate next action
 
-No successor is authorized by this terminal result. Before any additional
-timing, analyze the 24 `NO_SAFE_ACTION` causes and select a materially different
-repository-independent hypothesis with capturable evidence and an unchanged
-pre-timing breadth gate. Do not rerun this detector, benchmark the sole Spring
-action or convert missing economics into zero.
+No successor was authorized by this terminal result. The subsequent
+[request-aligned cause analysis](../../benchmarks/results/request-aligned-successor-selection-v1.json)
+completed that separate decision: 23/24 negatives are declared-input-disjoint
+from the fixed requested graph and one is current-output filename drift. It
+opens the [request-aligned tracker](./request-aligned-learning-poc-tracker.md)
+without rerunning this detector, benchmarking the sole Spring action or
+converting missing economics into zero.

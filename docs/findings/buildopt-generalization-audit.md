@@ -19,15 +19,14 @@ that worked. The subsequent
 also stopped after its current installed campaign produced zero activations,
 zero attributable mechanism saving and negative cumulative value.
 
-The active preregistered direction is the
-[Sticky Wrapper Learning POC](../plans/sticky-wrapper-learning-poc-tracker.md).
-It changes the integration and economic unit rather than reviving stopped
-profiles: one committed wrapper observes ordinary builds, uses a negligible
-locally cached decision and is intended to spend only a bounded CI trial budget
-before retaining either an exact runtime action or a reviewed durable Gradle
-change. Those components are not yet composed into one customer path. It must
-prove breadth, payback and positive cumulative value beyond optimized native
-Gradle; safe fallback and cache hits alone do not pass.
+The active preregistered direction is
+[request-aligned recurrent learning](../plans/request-aligned-learning-poc-tracker.md).
+It reuses the committed wrapper but changes the evidence unit: BuildOpt learns
+from the exact Gradle command the customer actually repeats and only from
+adjacent changes relevant to that requested graph. Current outputs come from
+their Gradle producer tasks. It must still prove breadth, payback and positive
+cumulative value beyond optimized native Gradle; safe fallback and cache hits
+alone do not pass.
 
 ## What is generalized today
 
@@ -38,7 +37,7 @@ Gradle; safe fallback and cache hits alone do not pass.
 | Output discovery | Reads Gradle-owned outputs and rejects missing, external, symlinked or ambiguous declarations. | A root aggregate workflow can legitimately declare a very broad output surface. |
 | Structural proposal | Uses typed project/task relationships and changed-project ownership; no repository-name branch is allowed. | Unknown relationships, excessive candidate task sets and no reduction retain native. |
 | Durable native catalog | Detects repeated task-contract gaps and over-broad declared graph edges, then emits digest-bound, reviewable and exactly reversible native Gradle recipes. | The current strict POC report finds the same task-contract detector in Kotlin and Groovy, with 64.1% and 74.7% savings across 16/16 exact pairs. Graph breadth is proposal-only until durable timing is measured. |
-| Measurement / decision | Alternating native/candidate observations can verify outputs, execution shape, interval, fallback and payback. | Individual observation/trial/active mechanisms are checked, but `SWL-014B` must compose them behind `./buildoptw`; current longitudinal v1 rows contain no active action or ledger. |
+| Measurement / decision | Alternating native/candidate observations can verify outputs, execution shape, interval, fallback and payback. | The wrapper lifecycle is composed, but the active request-aligned route has not passed breadth; it therefore has no candidate timing, activation or economic ledger yet. |
 | Verified output materialization | Captures required outputs omitted by a candidate in digest-bound private state, then restores only exact missing bytes before candidate execution. | Composed and timed on all five public subjects; stale, missing or corrupt payloads cannot authorize candidate output. |
 | Aggregate workflow partition | Groups directly changed output producers by generic lifecycle selector and variant, while exact unaffected outputs remain materializable. | Transfers to public workflows: Kafka selects 3/64 projects, Micronaut 22/75 and Groovy 2/37. |
 | Portfolio / central state | Reuses exact compatible evidence across checkouts or machines. | Reuse cannot infer lifetime or value from another profile/repository. |
@@ -152,11 +151,11 @@ bounded mechanism has already satisfied its own evidence contract.
 ## Next generalization steps
 
 The detailed order and stop conditions now live in the
-[Change-aware Producer Closure POC Tracker](../plans/change-aware-producer-closure-poc-tracker.md).
-The stopped fresh route proved complete input but only 1/5 action breadth. Its
-successor asks a materially different question: can an actual adjacent-commit
-change be mapped through finalized task inputs and direct/transitive producers
-to a smaller exact output closure?
+[Request-aligned Recurrent Learning POC Tracker](../plans/request-aligned-learning-poc-tracker.md).
+The stopped change-aware route proved complete input but only 1/5 action
+breadth. Cause analysis shows 23/24 negatives changed no declared input in the
+fixed requested graph; the remaining Groovy case bound a stale unversioned JAR
+instead of the current versioned producer output.
 
 The first successor block is complete. Across five frozen public families,
 25/25 adjacent transitions are conclusive and every family input is complete.
@@ -169,10 +168,11 @@ closed, but that this detector is not broad enough to justify a value campaign.
 No current action ran and no current wall-time claim exists. Installed and
 chronological timing were not authorized. The terminal scorecard records
 `STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR` and keeps value,
-confidence, payback and overhead typed as unmeasured rather than zero. This
-closes the current detector. Any successor must begin with analysis of the 24
-conclusive `NO_SAFE_ACTION` causes and a materially different generic
-hypothesis, not another timing campaign.
+confidence, payback and overhead typed as unmeasured rather than zero. The new
+`REQUEST_ALIGNED_RECURRENT_CLOSURE_V1` route does not relabel those negatives:
+it preserves the exact customer command, waits for relevant recurrent changes
+and discovers current outputs generically. Only producer implementation is
+authorized; public capture, timing and activation remain closed.
 
 ## POC conclusion
 

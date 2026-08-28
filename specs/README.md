@@ -8,16 +8,15 @@ path. Start with the [documentation portal](../docs/README.md) or
 the exact cross-component contract.
 
 The active POC contract is
-[`poc-change-aware-producer-closure-v1.md`](./poc-change-aware-producer-closure-v1.md)
-with its adjacent machine-readable JSON. It asks whether actual adjacent-commit
-changes can be mapped through finalized Gradle inputs and output producers to
-an exact required producer closure. It authorizes fresh evidence production
-only. Independent reconstruction found safe actions in only one of five public
-families versus the fixed three-family requirement, so timing and activation
-remain blocked. The route is terminally stopped for this detector.
+[`poc-request-aligned-learning-v1.md`](./poc-request-aligned-learning-v1.md)
+with its adjacent machine-readable JSON. It asks whether ordinary repeated
+customer commands can provide request-aligned change, input, producer and
+current-output evidence broadly enough to justify a value experiment. It
+authorizes producer implementation only; timing and activation remain blocked.
 
 | Specification | Owning item |
 |---|---|
+| [`poc-request-aligned-learning-v1.md`](./poc-request-aligned-learning-v1.md) and [`poc-request-aligned-learning-v1.json`](./poc-request-aligned-learning-v1.json) | `SWL-REQUEST-000..007`; active request-aligned recurrent-learning route, frozen 3/5 pre-timing gate and exact native fallback |
 | [`poc-change-aware-producer-closure-v1.md`](./poc-change-aware-producer-closure-v1.md) and [`poc-change-aware-producer-closure-v1.json`](./poc-change-aware-producer-closure-v1.json) | `SWL-CHANGE-000..005`; frozen successor hypothesis and terminal stop after the 1/5-versus-3/5 breadth failure |
 | [`poc-fresh-generic-optimization-v1.md`](./poc-fresh-generic-optimization-v1.md) and [`poc-fresh-generic-optimization-v1.json`](./poc-fresh-generic-optimization-v1.json) | `SWL-FRESH-000`; closed fresh-evidence predecessor with terminal 1/5 action breadth |
 | [`poc-sticky-wrapper-learning-v1.md`](./poc-sticky-wrapper-learning-v1.md) and [`poc-sticky-wrapper-learning-v1.json`](./poc-sticky-wrapper-learning-v1.json) | `SWL-000`; superseded sticky-wrapper architecture contract |

@@ -21,12 +21,23 @@ typed completeness outcomes and exact next block with:
 ./dev/check-fresh-generic-optimization-plan
 ```
 
-That route is now a closed predecessor. Validate the active change-aware
-successor contract, ordered gates and documentation authority with:
+That route is now a closed predecessor. Validate the closed change-aware
+successor contract, ordered gates and terminal authority with:
 
 ```bash
 ./dev/check-change-aware-producer-closure-plan
 ```
+
+Recompute the 24 negative causes and validate the active request-aligned
+recurrent-learning contract, tracker and selected successor with:
+
+```bash
+./dev/check-request-aligned-successor-selection
+```
+
+This selection check proves 23 fixed-request input-disjoint transitions and
+one current-output discovery drift. It authorizes `SWL-REQUEST-001` producer
+work only; it does not run a candidate or authorize timing.
 
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:

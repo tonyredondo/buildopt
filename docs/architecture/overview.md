@@ -49,8 +49,9 @@ result.
 
 The POC includes a thin repository-committed entrypoint above the implemented
 launcher. Deterministic generation, verified native-package bootstrap and
-neutral Gradle process passthrough remain available even though the latest
-generic detector experiment is terminally stopped:
+neutral Gradle process passthrough remain available. The active experiment now
+uses that entrypoint to key evidence by the exact ordinary request a customer
+repeats; it does not substitute a different Gradle command:
 
 ```text
 committed buildoptw / buildoptw.bat
@@ -62,6 +63,13 @@ committed buildoptw / buildoptw.bat
         v
 existing buildopt launcher -> existing Gradle Wrapper
 ```
+
+`REQUEST_ALIGNED_RECURRENT_CLOSURE_V1` will attach adjacent-revision changes,
+the finalized requested graph and current producer outputs to that request
+identity. Changes outside the requested graph remain evidence but cannot count
+as actions. Missing, global, ambiguous or drifted evidence retains the original
+optimized-native invocation before mutation. This route is preregistered but
+its producer is not implemented yet, so it carries no current speedup claim.
 
 The four generated committed files contain only bootstrap identity and portable
 non-secret configuration. Runtime credentials remain private. The implemented
@@ -118,7 +126,7 @@ exit semantics.
 
 The original longitudinal v1 harness is not architecture evidence for that
 composition. It configured no central identity and zero trial budget and gave
-`--build-cache` only to control. The active fresh route requires symmetric cache
+`--build-cache` only to control. The closed fresh route required symmetric cache
 opportunity through separate per-arm writable namespaces that start empty,
 plus explicit lifecycle/action/ledger records before a campaign
 can become terminal-ready. Only the existing task-contract and

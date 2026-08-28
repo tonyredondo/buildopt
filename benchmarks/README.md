@@ -56,12 +56,24 @@ payback and native-retention overhead remain `NOT_MEASURED_NOT_AUTHORIZED`.
 The sole Spring action was not executed and the result authorizes neither a
 speedup claim nor an automatic successor.
 
+[`request-aligned-successor-selection-v1.json`](./results/request-aligned-successor-selection-v1.json)
+is the subsequent `SWL-REQUEST-000` cause analysis and route selection. It
+reconstructs all predecessor reports: 23/24 negative transitions have no
+changed path in the fixed requested graph's declared inputs, and the remaining
+Groovy row binds an unversioned required JAR while the current producer emits a
+versioned JAR. The result rejects unsafe relabelling, more arbitrary commits,
+the one-row output repair as a breadth claim and cache transport as an
+equal-opportunity speed claim. It preregisters request-aligned recurrent
+learning with the unchanged 3/5 pre-timing gate. No candidate ran and no new
+timing or speedup exists.
+
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
 ./dev/check-change-aware-public-capture
 ./dev/check-change-aware-breadth-gate
 ./dev/check-change-aware-terminal-decision
+./dev/check-request-aligned-successor-selection
 ```
 
 ## Sticky-wrapper observation sample

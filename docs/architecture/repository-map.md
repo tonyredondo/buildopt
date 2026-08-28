@@ -33,11 +33,12 @@ versioned microservices.
 ## Active POC ownership
 
 The current experiment is specified by
-[`poc-fresh-generic-optimization-v1`](../../specs/poc-fresh-generic-optimization-v1.md)
+[`poc-request-aligned-learning-v1`](../../specs/poc-request-aligned-learning-v1.md)
 and ordered by the
-[`Fresh Generic Optimization POC Tracker`](../plans/fresh-generic-optimization-poc-tracker.md).
-It reuses the sticky-wrapper implementation described below but accepts no
-historical BuildOpt evidence as an experiment input.
+[`Request-aligned Recurrent Learning POC Tracker`](../plans/request-aligned-learning-poc-tracker.md).
+It reuses the sticky-wrapper implementation described below, preserves the
+customer's exact Gradle command and accepts no historical BuildOpt timing or
+action as an experiment input.
 Its generated repository-facing files are owned by `internal/stickywrapper`;
 `SWL-001..006` own their contract, generator, verified bootstrap, passthrough,
 portable connection and native Gradle HTTP cache integration. `SWL-007` owns
@@ -73,7 +74,8 @@ The historical `SWL-014A` route is preserved by the diagnostic tracker,
 checked zero-pair result lives at
 `benchmarks/results/sticky-wrapper-longitudinal-v2-preflight.json`. Final
 campaign/result-directory behavior belonged to the old `SWL-015` route. The
-active replacement is owned by `specs/poc-fresh-generic-optimization-v1.*`,
+closed fresh-evidence replacement is owned by
+`specs/poc-fresh-generic-optimization-v1.*`,
 `docs/plans/fresh-generic-optimization-poc-tracker.md` and
 `dev/check-fresh-generic-optimization-plan`.
 
@@ -112,10 +114,19 @@ summary, then applies the frozen 3/5-family pre-timing gate. The terminal runner
 binds those inputs by digest and preserves every unmeasured economic criterion
 as a typed state.
 
-Run `./dev/check-change-aware-producer-closure-plan` to validate the latest
-closed route, `./dev/check-fresh-generic-optimization-plan` for its predecessor
-and `./dev/check-sticky-wrapper-learning-plan` to preserve the superseded
-diagnostic route.
+The active request-aligned selection is owned by
+`specs/poc-request-aligned-learning-v1.*`,
+`docs/plans/request-aligned-learning-poc-tracker.md`,
+`dev/run-request-aligned-successor-selection` and its checker. Its checked
+result reconstructs the 24 negative predecessor causes and opens only
+`SWL-REQUEST-001`. That block will add canonical request identity and current
+producer-output evidence; no new runtime optimizer exists yet.
+
+Run `./dev/check-request-aligned-successor-selection` to validate the active
+route, `./dev/check-change-aware-producer-closure-plan` for its closed
+predecessor, `./dev/check-fresh-generic-optimization-plan` for the earlier
+fresh route and `./dev/check-sticky-wrapper-learning-plan` to preserve the
+superseded diagnostic route.
 
 ## Executables and their implementation
 

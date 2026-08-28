@@ -162,7 +162,7 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > rejects these two detectors as a broad route; it does not claim that Gradle
 > itself cannot be improved by a different generic mechanism.
 
-> **Current generic hypothesis:** BuildOpt now maps real adjacent-commit
+> **Closed change-aware hypothesis:** BuildOpt mapped real adjacent-commit
 > changes through finalized Gradle inputs and direct/transitive output
 > producers to the exact work and output closure required by that change. The
 > fresh producer completed 25/25 conclusive transitions across Spring,
@@ -173,9 +173,20 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > **3/5** threshold, so installed and chronological timing are not authorized.
 > The terminal decision is
 > `STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR`; unmeasured
-> economics remain typed rather than zero, and no successor is automatically
-> authorized. Follow the
+> economics remain typed rather than zero. Its own terminal result authorized
+> no successor; the independent cause analysis below selected a new route.
+> Review the closed
 > [change-aware tracker](./docs/plans/change-aware-producer-closure-poc-tracker.md).
+
+> **Current experiment:** cause reconstruction shows why the preceding route
+> lacked breadth: **23/24** negative transitions changed no declared input in
+> the fixed requested graph, while one Groovy row used a stale unversioned JAR
+> path instead of the current producer output. BuildOpt now preregisters
+> `REQUEST_ALIGNED_RECURRENT_CLOSURE_V1`: learn only from ordinary repeated
+> customer commands, wait for changes relevant to that exact requested graph
+> and discover outputs from current producer tasks. This is a selected route,
+> not a speed result; timing and activation remain unauthorized. Follow the
+> [request-aligned tracker](./docs/plans/request-aligned-learning-poc-tracker.md).
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,
 > append-only phase timing and provenance for requested Gradle builds. The

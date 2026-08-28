@@ -25,20 +25,22 @@ decision.
 
 ## Current experiment status
 
-There is deliberately no current performance percentage. The experiment
-started from zero BuildOpt observations because the previous public screen
-used incomplete producer inputs. Every older result below is retained only as
-historical diagnostic context; none authorized, seeded or stopped the fresh
-experiment. The change-aware producer completed 25/25 conclusive
-adjacent-commit transitions across all five public families. Spring exposes
-one exact testable action; the other four Spring transitions and all 20
-OpenTelemetry, Kafka, Micronaut and Groovy transitions safely report
-`NO_SAFE_ACTION`. Independent reconstruction confirms **1/5** action breadth
-against the fixed **3/5** gate. No action has run, no wall time has been
-measured and the two timing blocks were not authorized. The terminal decision
-is `STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR`. This detector
-is complete but not broad enough for generic value measurement; it does not
-prove that a materially different generic Gradle optimization cannot work.
+There is deliberately no new performance percentage. The latest complete
+change-aware producer has 25/25 conclusive adjacent transitions across all five
+public families, but only Spring exposes an action: **1/5** versus the fixed
+**3/5** pre-timing gate. No action ran and no wall time was measured. Cause
+reconstruction now explains the failure: **23/24** negative transitions change
+no declared input in the fixed requested graph, and the remaining Groovy row
+uses a stale unversioned required JAR while the current producer emits a
+versioned JAR. The stopped detector paired arbitrary commits with one fixed
+leaf workflow; those rows cannot honestly become optimization actions.
+
+The current preregistered route is
+`REQUEST_ALIGNED_RECURRENT_CLOSURE_V1`. BuildOpt will learn from the exact
+ordinary Gradle command a customer repeats, wait for changes relevant to that
+requested graph and discover current outputs from producer tasks. This route
+authorizes only the next producer block. Public timing, activation and any
+speedup claim remain unauthorized.
 
 ## Mechanisms
 
@@ -345,7 +347,7 @@ activate generically, repay its own learning/verification cost and beat
 optimized native Gradle over real commit sequences; it cannot reopen these
 thresholds or inherit authority from inactive fragments.
 
-## Closed fresh-evidence predecessor and active change-aware successor
+## Closed fresh-evidence and change-aware predecessors
 
 The new [Sticky Wrapper Learning POC](../plans/sticky-wrapper-learning-poc-tracker.md)
 tests a materially different customer and economic model. A maintainer
@@ -420,6 +422,17 @@ benchmark. Input completeness, report reconstruction, static output binding
 and zero capture/analyzer failures pass; breadth fails. Installed value,
 chronological value, confidence, payback and overhead remain explicitly
 unmeasured, and no successor is automatically authorized.
+
+The subsequent independent
+[cause analysis](../../benchmarks/results/request-aligned-successor-selection-v1.json)
+groups those negatives into 23 declared-input-disjoint transitions and one
+current-output discovery drift. It rejects unsafe relabelling, more arbitrary
+commit sampling, a one-row filename repair as a breadth claim and cache
+transport as an equal-opportunity speed claim. The selected
+[request-aligned route](../plans/request-aligned-learning-poc-tracker.md)
+preserves the user's command and the unchanged 3/5 gate. Its next block adds
+request identity and current producer-output evidence; no candidate execution
+or timing has opened.
 
 The closed predecessor remains implementation-locked as historical evidence:
 separate per-arm cache namespaces started empty, only the task-contract and

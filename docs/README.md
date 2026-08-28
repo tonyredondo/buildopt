@@ -15,7 +15,7 @@ before running the product.
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
 | Review the POC idea, mechanisms, current value, and next steps | [Current POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
-| Review the latest generic experiment | [Change-aware Producer Closure POC Tracker](./plans/change-aware-producer-closure-poc-tracker.md) | [Change-aware contract](../specs/poc-change-aware-producer-closure-v1.md), [terminal result](../benchmarks/results/change-aware-terminal-decision-v1.json), [closed fresh route](./plans/fresh-generic-optimization-poc-tracker.md) |
+| Follow the active generic experiment | [Request-aligned Recurrent Learning POC Tracker](./plans/request-aligned-learning-poc-tracker.md) | [Active contract](../specs/poc-request-aligned-learning-v1.md), [selection result](../benchmarks/results/request-aligned-successor-selection-v1.json), [closed change-aware route](./plans/change-aware-producer-closure-poc-tracker.md) |
 | Review the stopped adaptive hypothesis | [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md) | [Terminal decision](../specs/poc-adaptive-fragment-terminal-decision-v1.md), [current generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the implemented onboarding foundation | [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md) | [Product onboarding](./getting-started/product-onboarding.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
 | Plan optional shared state across machines | [Centralized cache and state POC roadmap](./plans/centralized-cache-and-state-roadmap.md) | [Storage contract](../specs/poc-central-storage-contract-v1.md), [architecture overview](./architecture/overview.md) |
@@ -53,8 +53,8 @@ before running the product.
 ### Findings and recommendations
 
 - [BuildOpt POC one-pager](./findings/buildopt-poc-handoff.md): concise project
-  idea, mechanism portfolio, historical wall-time evidence, current fresh
-  five-family change-aware result, and customer-general POC roadmap.
+  idea, mechanism portfolio, historical wall-time evidence, the latest
+  five-family cause analysis, and the active customer-general POC route.
 - [Build Optimization performance findings](./findings/build-optimization-performance.md):
   measured contribution by component, current activation decisions, evidence
   boundaries, and the recommended experimental roadmap.
@@ -65,6 +65,9 @@ before running the product.
 
 ### Plans
 
+- [Request-aligned Recurrent Learning POC Tracker](./plans/request-aligned-learning-poc-tracker.md):
+  the active successor, exact ordinary-request identity, current producer-output
+  discovery, five-family breadth gate and ordered evidence-before-timing route.
 - [Change-aware Producer Closure POC Tracker](./plans/change-aware-producer-closure-poc-tracker.md):
   the closed successor hypothesis, completed 25-transition producer capture,
   independently failed 1/5-versus-3/5 breadth gate, unauthorized timing blocks

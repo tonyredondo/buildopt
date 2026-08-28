@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "buildopt.poc/request-aligned-successor-selection/v1",
+  "workItem": "SWL-REQUEST-000",
+  "generatedAt": "2026-08-27T21:23:12Z",
+  "evidence": {
+    "predecessorTerminalSha256": "9c88fc5d63b9dcfcf9f67893e343599d01cbebfd78a299cb9bdac10140d8417a",
+    "predecessorCaptureContractSha256": "dffe95f2b6deff06b4a707c3b0933aec2813c09d62aa4031cb736b9cfb13f66d",
+    "predecessorTransitionsSha256": "c4aafa6bf7c1ab54152271c1a2a130a8913c9f1ec69062dd2b0e961fbb3d170c",
+    "selectedContractSha256": "fbde09546c62eba22adddaed797696876935d6a75edd8fa393e84cc44e8c8b87",
+    "historicalTimingImported": false,
+    "historicalActionImported": false
+  },
+  "predecessor": {
+    "decision": "STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR",
+    "transitions": 25,
+    "testableActions": 1,
+    "noSafeActions": 24,
+    "performanceMeasured": false,
+    "actionExecuted": false
+  },
+  "causeAnalysis": [
+    {
+      "cause": "DECLARED_INPUT_DISJOINT_FROM_FIXED_REQUEST_GRAPH",
+      "predecessorReason": "CHANGE_INPUT_OWNERSHIP_UNPROVEN",
+      "transitions": 23,
+      "families": 5,
+      "interpretation": "THE_CHANGED_PATHS_ARE_NOT_DECLARED_INPUTS_OF_THE_FIXED_REQUESTED_GRAPH_AND_CANNOT_BE_COUNTED_AS_OMITTED_WORK"
+    },
+    {
+      "cause": "CURRENT_REQUIRED_OUTPUT_DISCOVERY_MISSING",
+      "predecessorReason": "REQUIRED_OUTPUT_PRODUCER_MISSING",
+      "transitions": 1,
+      "families": 1,
+      "frozenRequiredOutput": "build/libs/groovy-raw.jar",
+      "currentProducerOutput": "build/libs/groovy-raw-6.0.0-SNAPSHOT-raw.jar",
+      "interpretation": "THE_VERSIONED_CURRENT_OUTPUT_MUST_BE_DISCOVERED_FROM_THE_PRODUCER_TASK_RATHER_THAN_A_FILENAME_TEMPLATE"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "RELABEL_UNOWNED_AS_UNAFFECTED",
+      "disposition": "REJECTED_UNSAFE",
+      "reason": "ABSENCE_FROM_DECLARED_INPUTS_DOES_NOT_AUTHORIZE_SEMANTIC_OWNERSHIP_OR_CREATE_WORK_TO_OMIT"
+    },
+    {
+      "id": "MORE_ARBITRARY_COMMITS_SAME_FIXED_WORKFLOW",
+      "disposition": "REJECTED_NOT_MATERIALLY_DIFFERENT",
+      "reason": "REPEATS_WORKLOAD_CHANGE_MISALIGNMENT_AND_DOES_NOT_MODEL_RECURRENT_CUSTOMER_REQUESTS"
+    },
+    {
+      "id": "CURRENT_OUTPUT_DISCOVERY_ONLY",
+      "disposition": "REJECTED_INSUFFICIENT_BREADTH",
+      "reason": "REPAIRS_ONE_GROOVY_TRANSITION_BUT_CANNOT_ESTABLISH_THREE_FAMILY_ACTION_BREADTH"
+    },
+    {
+      "id": "REMOTE_CACHE_TRANSPORT_ONLY",
+      "disposition": "REJECTED_NATIVE_EQUIVALENT",
+      "reason": "TRANSPORT_IS_SUPPORTING_INFRASTRUCTURE_AND_CANNOT_BEAT_AN_EQUAL_NATIVE_GRADLE_CACHE_OPPORTUNITY_BY_ITSELF"
+    },
+    {
+      "id": "REQUEST_ALIGNED_RECURRENT_CLOSURE_V1",
+      "disposition": "SELECTED_FOR_IMPLEMENTATION",
+      "reason": "ORDINARY_WRAPPER_REQUESTS_CAN_CAPTURE_RECURRENT_COMMAND_IDENTITY_RELEVANT_CHANGES_CURRENT_OUTPUTS_AND_COMPLETE_PRODUCER_CLOSURE_WITHOUT_REPOSITORY_RULES"
+    }
+  ],
+  "selectedHypothesis": {
+    "id": "REQUEST_ALIGNED_RECURRENT_CLOSURE_V1",
+    "materialDifference": "LEARN_FROM_REPEATED_CUSTOMER_REQUEST_IDENTITIES_AND_RELEVANT_CHANGES_INSTEAD_OF_PAIRING_ARBITRARY_COMMITS_WITH_ONE_FIXED_LEAF_WORKFLOW",
+    "commandSubstitutionAllowed": false,
+    "repositorySpecificRulesAllowed": false,
+    "currentOutputDiscoveryRequired": true,
+    "irrelevantTransitionsCountAsActions": false,
+    "optimizedNativeFallbackRequired": true
+  },
+  "frozenBreadthGate": {
+    "completeFamilyInputsRequired": 5,
+    "relevantTransitionsPerFamilyRequired": 5,
+    "familiesWithActionsRequired": 3,
+    "requiredOutputEquivalence": "BYTE_EXACT",
+    "productFailureBudget": 0,
+    "timingAuthorizedBeforeBreadth": false,
+    "hostedCiTimingThresholdsAllowed": false
+  },
+  "decision": {
+    "outcome": "PREREGISTER_REQUEST_ALIGNED_RECURRENT_CLOSURE_V1",
+    "nextBlock": "SWL-REQUEST-001",
+    "performanceTimingAuthorized": false,
+    "actionActivationAuthorized": false,
+    "speedupClaim": false
+  }
+}
