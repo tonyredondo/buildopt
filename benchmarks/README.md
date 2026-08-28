@@ -48,11 +48,20 @@ but action breadth is **1/5** against the frozen **3/5** requirement. Installed
 timing and chronological value are therefore not authorized; this is a breadth
 failure, not a measured regression or speedup.
 
+[`change-aware-terminal-decision-v1.json`](./results/change-aware-terminal-decision-v1.json)
+closes this detector route. The digest-bound scorecard passes complete fresh
+input, report reconstruction, static action binding and zero capture/analyzer
+failures; breadth fails. Installed and chronological value, confidence,
+payback and native-retention overhead remain `NOT_MEASURED_NOT_AUTHORIZED`.
+The sole Spring action was not executed and the result authorizes neither a
+speedup claim nor an automatic successor.
+
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
 ./dev/check-change-aware-public-capture
 ./dev/check-change-aware-breadth-gate
+./dev/check-change-aware-terminal-decision
 ```
 
 ## Sticky-wrapper observation sample

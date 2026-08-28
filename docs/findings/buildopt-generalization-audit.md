@@ -145,8 +145,9 @@ reasons only about:
 - measured wall time, uncertainty, failures, fallback and payback.
 
 No latest terminal decision depends on a repository-name rule. A new Gradle
-repository can run `buildopt optimize <workflow>` and receives either a
-measured candidate or an explicit native verdict.
+repository can run `buildopt optimize <workflow>`, but the current generic
+detector authorizes no broad action: it retains native Gradle unless a separate
+bounded mechanism has already satisfied its own evidence contract.
 
 ## Next generalization steps
 
@@ -165,10 +166,13 @@ that all five inputs are complete but only **1/5** families exposes an action,
 below the frozen **3/5** gate. This proves that the producer works and fails
 closed, but that this detector is not broad enough to justify a value campaign.
 
-No current action has run and no current wall-time claim exists. Installed and
-chronological timing are not authorized. The remaining route is only the
-terminal scorecard, which must record the breadth failure and keep value,
-confidence, payback and overhead typed as unmeasured rather than zero.
+No current action ran and no current wall-time claim exists. Installed and
+chronological timing were not authorized. The terminal scorecard records
+`STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR` and keeps value,
+confidence, payback and overhead typed as unmeasured rather than zero. This
+closes the current detector. Any successor must begin with analysis of the 24
+conclusive `NO_SAFE_ACTION` causes and a materially different generic
+hypothesis, not another timing campaign.
 
 ## POC conclusion
 

@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_result=${1:-${buildopt_root}/benchmarks/results/change-aware-terminal-decision-v1.json}
+buildopt_temporary=$(mktemp -d /tmp/buildopt-change-aware-terminal.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-change-aware-terminal.*)
+            rm -rf -- "${buildopt_temporary}"
+            ;;
+        *)
+            printf 'refusing to clean unexpected terminal root: %s\n' "${buildopt_temporary}" >&2
+            return 1
+            ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+"${buildopt_root}/dev/run-change-aware-terminal-decision" \
+    "${buildopt_temporary}/regenerated.json" >/dev/null
+cmp -s "${buildopt_result}" "${buildopt_temporary}/regenerated.json" || {
+    printf 'change-aware terminal decision is stale or not reproducible\n' >&2
+    exit 1
+}
+jq -e '
+  .schemaVersion=="buildopt.poc/change-aware-terminal-decision/v1" and
+  .workItem=="SWL-CHANGE-005" and
+  all(.evidence[]|select(type=="string");test("^[0-9a-f]{64}$")) and
+  (.evidence.historicalEvidenceImported|not) and
+  .executedBlocks==["SWL-CHANGE-000","SWL-CHANGE-001","SWL-CHANGE-002","SWL-CHANGE-005"] and
+  .notAuthorizedBlocks==["SWL-CHANGE-003","SWL-CHANGE-004"] and
+  ([.scorecard[]|select(.criterion=="PUBLIC_ACTION_BREADTH" and .status=="FAIL" and
+    .evidence=="1_OF_5_VERSUS_REQUIRED_3_OF_5")]|length)==1 and
+  ([.scorecard[]|select(.status=="NOT_MEASURED_NOT_AUTHORIZED")]|length)==5 and
+  ([.scorecard[]|select(has("value"))]|length)==0 and
+  .timingRows.status=="NOT_CREATED" and
+  .actionExecution=={status:"NOT_RUN_NOT_AUTHORIZED",family:"spring-framework"} and
+  (.speedupClaim|not) and
+  .decision=="STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR" and
+  .conclusion=="CHANGE_AWARE_PRODUCER_CLOSURE_IS_COMPLETE_BUT_NOT_BROAD_ENOUGH_FOR_GENERIC_VALUE_MEASUREMENT" and
+  (.successorAuthorized|not) and
+  .recommendedNextWork=="ANALYZE_NO_SAFE_ACTION_CAUSES_AND_SELECT_A_MATERIALLY_DIFFERENT_GENERIC_HYPOTHESIS_BEFORE_MORE_TIMING"
+' "${buildopt_result}" >/dev/null || {
+    printf 'change-aware terminal decision contract is invalid\n' >&2
+    exit 1
+}
+
+jq '.speedupClaim=true' "${buildopt_result}" >"${buildopt_temporary}/tampered-speedup.json"
+if cmp -s "${buildopt_temporary}/tampered-speedup.json" "${buildopt_temporary}/regenerated.json"; then
+    printf 'tampered speedup claim was accepted\n' >&2
+    exit 1
+fi
+jq '.scorecard|=map(if .status=="NOT_MEASURED_NOT_AUTHORIZED" then .status="PASS"|.value=0 else . end)' \
+    "${buildopt_result}" >"${buildopt_temporary}/tampered-economics.json"
+if cmp -s "${buildopt_temporary}/tampered-economics.json" "${buildopt_temporary}/regenerated.json"; then
+    printf 'invented zero-valued economics were accepted\n' >&2
+    exit 1
+fi
+
+printf 'Change-aware terminal decision: PASS\n'

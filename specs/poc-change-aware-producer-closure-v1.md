@@ -2,12 +2,12 @@
 
 Status: `HYPOTHESIS_PREREGISTERED`.
 
-Execution status: the frozen hypothesis remains unchanged. `SWL-CHANGE-002`
-independently reconstructed all 25 reports and found complete actions in only
-one of five families versus the fixed three-family requirement. Installed and
-chronological timing are not authorized; `SWL-CHANGE-005` is the next terminal
-decision. This note reports execution progress and does not amend the
-preregistered contract or thresholds below.
+Execution status: the frozen hypothesis remains unchanged. The terminal
+decision is `STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR`.
+All 25 reports reconstruct and all five inputs are complete, but only one
+family exposes an action versus the fixed three-family requirement. Installed
+and chronological timing were not authorized. This note reports execution
+status and does not amend the preregistered contract or thresholds below.
 
 ## Question
 

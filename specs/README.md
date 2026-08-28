@@ -14,11 +14,11 @@ changes can be mapped through finalized Gradle inputs and output producers to
 an exact required producer closure. It authorizes fresh evidence production
 only. Independent reconstruction found safe actions in only one of five public
 families versus the fixed three-family requirement, so timing and activation
-remain blocked and the terminal decision is next.
+remain blocked. The route is terminally stopped for this detector.
 
 | Specification | Owning item |
 |---|---|
-| [`poc-change-aware-producer-closure-v1.md`](./poc-change-aware-producer-closure-v1.md) and [`poc-change-aware-producer-closure-v1.json`](./poc-change-aware-producer-closure-v1.json) | `SWL-CHANGE-000..005`; frozen successor hypothesis, completed producer evidence, failed 1/5-versus-3/5 breadth gate and next terminal decision |
+| [`poc-change-aware-producer-closure-v1.md`](./poc-change-aware-producer-closure-v1.md) and [`poc-change-aware-producer-closure-v1.json`](./poc-change-aware-producer-closure-v1.json) | `SWL-CHANGE-000..005`; frozen successor hypothesis and terminal stop after the 1/5-versus-3/5 breadth failure |
 | [`poc-fresh-generic-optimization-v1.md`](./poc-fresh-generic-optimization-v1.md) and [`poc-fresh-generic-optimization-v1.json`](./poc-fresh-generic-optimization-v1.json) | `SWL-FRESH-000`; closed fresh-evidence predecessor with terminal 1/5 action breadth |
 | [`poc-sticky-wrapper-learning-v1.md`](./poc-sticky-wrapper-learning-v1.md) and [`poc-sticky-wrapper-learning-v1.json`](./poc-sticky-wrapper-learning-v1.json) | `SWL-000`; superseded sticky-wrapper architecture contract |
 | [`poc-sticky-wrapper-learning-lifecycle-v1.md`](./poc-sticky-wrapper-learning-lifecycle-v1.md) and [`poc-sticky-wrapper-learning-lifecycle-v1.json`](./poc-sticky-wrapper-learning-lifecycle-v1.json) | `SWL-014B`; composed lifecycle, value and native-fallback proof |

@@ -47,9 +47,10 @@ result.
 
 ### Sticky-wrapper entrypoint and central cache POC
 
-The active successor POC adds a thin repository-committed entrypoint above the
-implemented launcher. Deterministic generation, verified native-package
-bootstrap and neutral Gradle process passthrough now exist:
+The POC includes a thin repository-committed entrypoint above the implemented
+launcher. Deterministic generation, verified native-package bootstrap and
+neutral Gradle process passthrough remain available even though the latest
+generic detector experiment is terminally stopped:
 
 ```text
 committed buildoptw / buildoptw.bat

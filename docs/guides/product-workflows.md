@@ -2,8 +2,8 @@
 
 ## Sticky wrapper lifecycle (POC)
 
-The active successor POC makes one committed `./buildoptw <gradle args...>`
-command the stable local and CI entrypoint. The wrapper bootstraps an immutable
+The implemented POC makes one committed `./buildoptw <gradle args...>` command
+the stable local and CI entrypoint. The wrapper bootstraps an immutable
 BuildOpt version, preserves the repository Gradle Wrapper, and uses the
 read-only central cache path when a valid connection is available. The
 following is the target lifecycle; its canonical state and individual
@@ -25,9 +25,10 @@ the original Gradle workflow.
 
 Gradle HTTP cache objects are reusable data; they never authorize lifecycle
 transitions. Typed decisions, observations and the economic ledger use the
-separate BuildOpt state plane. This workflow is planned under the
-[Fresh Generic Optimization POC Tracker](../plans/fresh-generic-optimization-poc-tracker.md)
-and is intentionally still a POC rather than a production rollout path.
+separate BuildOpt state plane. The latest detector experiment is recorded in
+the closed [Change-aware Producer Closure POC Tracker](../plans/change-aware-producer-closure-poc-tracker.md).
+The wrapper remains reusable POC infrastructure, not a production rollout path
+or evidence that a generic acceleration mechanism has qualified.
 
 `SWL-001..005` fix the committed files, deterministic generator, verified
 bootstrap, neutral passthrough and portable connection. `SWL-006` now consumes

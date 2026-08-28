@@ -2,13 +2,12 @@
 
 ## Status
 
-**Overall:** `BREADTH_GATE_FAILED`
+**Overall:** `STOPPED_CURRENT_CHANGE_AWARE_DETECTOR`
 
-**Progress:** three blocks executed, two downstream blocks not authorized and
-one terminal block remaining
+**Progress:** four blocks executed and two downstream timing blocks were not
+authorized
 
-**Current block:** `SWL-CHANGE-005` — issue the terminal stop decision without
-inventing unmeasured value
+**Current block:** none; `SWL-CHANGE-005` issued the terminal decision
 
 **Predecessor:** the terminal
 [`SWL-FRESH`](./fresh-generic-optimization-poc-tracker.md) route remains closed
@@ -40,7 +39,7 @@ the five public Gradle families.
 | 2 | `SWL-CHANGE-002` Five-family breadth gate | Independently require complete input and actions in at least 3/5 families | `DONE` | SWL-CHANGE-001 |
 | 3 | `SWL-CHANGE-003` Installed value | Eight balanced pairs for every admitted action, exact outputs and complete cost ledger | `NOT AUTHORIZED` | breadth failed at 1/5 |
 | 4 | `SWL-CHANGE-004` Chronological value | Run at least 15 comparable transitions per admitted family with persistent per-arm state | `NOT AUTHORIZED` | installed value did not open |
-| 5 | `SWL-CHANGE-005` Terminal decision | Recompute correctness, breadth, value, confidence, payback, overhead and failures | `TODO` | conclusive breadth gate |
+| 5 | `SWL-CHANGE-005` Terminal decision | Recompute correctness, breadth, value, confidence, payback, overhead and failures | `DONE` | conclusive breadth gate |
 
 ## Block contracts
 
@@ -123,6 +122,18 @@ family confidence, payback, native-retention overhead and zero-failure gates
 all pass without threshold movement. Otherwise stop and name the failed
 criteria. Unavailable values remain typed unavailable rather than zero.
 
+Outcome: [`change-aware-terminal-decision-v1.json`](../../benchmarks/results/change-aware-terminal-decision-v1.json)
+binds the frozen route, capture ledger and breadth result by SHA-256. Fresh
+input completeness, 25/25 report reconstruction, the sole static exact-output
+binding and zero capture/analyzer failures pass. Public action breadth fails at
+**1/5** versus **3/5**. Installed value, chronological value, family
+confidence, payback and native-retention overhead remain
+`NOT_MEASURED_NOT_AUTHORIZED`; no timing row or action execution exists. The
+terminal decision is
+`STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR`. It rejects this
+detector as the generic value route, not every possible generic Gradle
+optimization.
+
 ## Evidence ledger
 
 | Evidence | Block | Required evidence | State |
@@ -132,12 +143,12 @@ criteria. Unavailable values remain typed unavailable rather than zero.
 | `SWL-CHANGE-E003` | SWL-CHANGE-002 | Independently recomputed breadth decision | `DONE` — [`change-aware-breadth-gate-v1.json`](../../benchmarks/results/change-aware-breadth-gate-v1.json) |
 | `SWL-CHANGE-E004` | SWL-CHANGE-003 | Installed paired evidence and full cost ledger | `NOT AUTHORIZED` — breadth failed before timing |
 | `SWL-CHANGE-E005` | SWL-CHANGE-004 | Chronological rows, checkpoints and cumulative report | `NOT AUTHORIZED` — installed value did not open |
-| `SWL-CHANGE-E006` | SWL-CHANGE-005 | Independent terminal scorecard | `TODO` |
+| `SWL-CHANGE-E006` | SWL-CHANGE-005 | Independent terminal scorecard | `DONE` — [`change-aware-terminal-decision-v1.json`](../../benchmarks/results/change-aware-terminal-decision-v1.json) |
 
 ## Immediate next action
 
-Implement `SWL-CHANGE-005` by binding the immutable capture and breadth result,
-recording correctness and input completeness as passed, breadth as failed and
-all economic criteria as `NOT_MEASURED_NOT_AUTHORIZED`. Do not benchmark or
-activate the sole Spring action, move the 3/5 threshold, import historical
-timings or claim that a different generic hypothesis cannot improve Gradle.
+No successor is authorized by this terminal result. Before any additional
+timing, analyze the 24 `NO_SAFE_ACTION` causes and select a materially different
+repository-independent hypothesis with capturable evidence and an unchanged
+pre-timing breadth gate. Do not rerun this detector, benchmark the sole Spring
+action or convert missing economics into zero.

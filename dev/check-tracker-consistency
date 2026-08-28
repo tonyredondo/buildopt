@@ -65,12 +65,12 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`CHANGE_AWARE_BREADTH_GATE_FAILED\`"
-    "**Current phase:** \`SWL-CHANGE-005\`"
+    "**Overall status:** \`STOPPED_CHANGE_AWARE_PRODUCER_CLOSURE\`"
+    "**Current phase:** none"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"
-    "| POC-CHANGE-AWARE-PRODUCER-CLOSURE | Test whether real commit changes plus complete Gradle producer ownership expose safe partial-work actions broadly | \`DOING\` | 3 executed; 2 not authorized; 1 remaining |"
+    "| POC-CHANGE-AWARE-PRODUCER-CLOSURE | Test whether real commit changes plus complete Gradle producer ownership expose safe partial-work actions broadly | \`STOPPED\` | 4 executed; 2 not authorized |"
     "| \`E-403\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-000\` |"
     "| \`E-404\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-001\` |"
     "| \`E-405\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-002\` |"
@@ -99,6 +99,7 @@ buildopt_required_tracker_text=(
     "| \`E-428\` | 2026-08-27 | \`POC-CHANGE-AWARE-PRODUCER-CLOSURE\`, \`SWL-CHANGE-000\` |"
     "| \`E-429\` | 2026-08-28 | \`POC-CHANGE-AWARE-PRODUCER-CLOSURE\`, \`SWL-CHANGE-001\` |"
     "| \`E-430\` | 2026-08-28 | \`POC-CHANGE-AWARE-PRODUCER-CLOSURE\`, \`SWL-CHANGE-002\` |"
+    "| \`E-431\` | 2026-08-28 | \`POC-CHANGE-AWARE-PRODUCER-CLOSURE\`, \`SWL-CHANGE-005\` |"
     "| 155 | \`POC-CHANGE-AWARE-PRODUCER-CLOSURE-001\` | Starting from the terminal fresh 1/5 breadth result"
     "| 150 | \`POC-AGGREGATE-OUTPUT-CLOSURE-001\` | Derive every required aggregate output"
     "| \`E-398\` | 2026-08-25 | \`POC-AGGREGATE-OUTPUT-CLOSURE-001\`"

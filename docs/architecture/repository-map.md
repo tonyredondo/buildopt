@@ -108,12 +108,14 @@ The successor change-aware path is owned by `internal/changeaware`,
 `dev/run-change-aware-*` runners. Its public capture keeps raw Gradle evidence,
 typed reports and an immutable transition ledger separate. The breadth runner
 rebuilds every report from raw capture rather than trusting the aggregate
-summary, then applies the frozen 3/5-family pre-timing gate.
+summary, then applies the frozen 3/5-family pre-timing gate. The terminal runner
+binds those inputs by digest and preserves every unmeasured economic criterion
+as a typed state.
 
-Run `./dev/check-fresh-generic-optimization-plan` to validate current planning
-authority and `./dev/check-sticky-wrapper-learning-plan` to preserve the
-superseded route. As implementation begins, this map must name the concrete
-owning paths in the same commit that adds them.
+Run `./dev/check-change-aware-producer-closure-plan` to validate the latest
+closed route, `./dev/check-fresh-generic-optimization-plan` for its predecessor
+and `./dev/check-sticky-wrapper-learning-plan` to preserve the superseded
+diagnostic route.
 
 ## Executables and their implementation
 

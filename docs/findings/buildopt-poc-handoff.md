@@ -25,18 +25,20 @@ decision.
 
 ## Current experiment status
 
-There is deliberately no current performance percentage yet. The experiment
+There is deliberately no current performance percentage. The experiment
 started from zero BuildOpt observations because the previous public screen
 used incomplete producer inputs. Every older result below is retained only as
-historical diagnostic context; none may authorize, seed or stop the active
-experiment. The fresh change-aware producer has now completed 25/25 conclusive
+historical diagnostic context; none authorized, seeded or stopped the fresh
+experiment. The change-aware producer completed 25/25 conclusive
 adjacent-commit transitions across all five public families. Spring exposes
 one exact testable action; the other four Spring transitions and all 20
 OpenTelemetry, Kafka, Micronaut and Groovy transitions safely report
 `NO_SAFE_ACTION`. Independent reconstruction confirms **1/5** action breadth
 against the fixed **3/5** gate. No action has run, no wall time has been
-measured and the two timing blocks are not authorized. The next block is the
-terminal decision for this detector hypothesis.
+measured and the two timing blocks were not authorized. The terminal decision
+is `STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR`. This detector
+is complete but not broad enough for generic value measurement; it does not
+prove that a materially different generic Gradle optimization cannot work.
 
 ## Mechanisms
 
@@ -413,7 +415,11 @@ action breadth against the unchanged **3/5** threshold. It still has **zero
 authorized timings and zero authorized activations**. Installed and
 chronological value are not measured because this detector cannot meet the
 generic breadth target even if the sole Spring action were infinitely fast.
-The remaining work is the terminal scorecard, not a Spring-only benchmark.
+The terminal scorecard therefore closes this detector without a Spring-only
+benchmark. Input completeness, report reconstruction, static output binding
+and zero capture/analyzer failures pass; breadth fails. Installed value,
+chronological value, confidence, payback and overhead remain explicitly
+unmeasured, and no successor is automatically authorized.
 
 The closed predecessor remains implementation-locked as historical evidence:
 separate per-arm cache namespaces started empty, only the task-contract and
