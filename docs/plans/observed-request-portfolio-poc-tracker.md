@@ -4,9 +4,9 @@
 
 **Overall:** `ACTIVE`
 
-**Progress:** three of eight blocks complete; fresh public portfolio capture is next
+**Progress:** four of eight blocks complete; independent breadth reconstruction is next
 
-**Current block:** `SWL-PORTFOLIO-003`
+**Current block:** `SWL-PORTFOLIO-004`
 
 **Selected hypothesis:** `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1`
 
@@ -63,8 +63,8 @@ model—not those repairs—must establish broader opportunity.
 | 0 | `SWL-PORTFOLIO-000` Terminal cause audit and route selection | Rebuild all 110 rows, quantify recoverability and preregister the materially different hypothesis | `DONE` | terminal request-aligned evidence |
 | 1 | `SWL-PORTFOLIO-001` Evidence precision primitives | Dependency-ordered equivalent producer groups, explicit absent-output bindings and split compatibility/request-graph identity | `DONE` | SWL-PORTFOLIO-000 |
 | 2 | `SWL-PORTFOLIO-002` Exact observed request portfolio | Persist exact recurrent argv identities, counts and lifecycle without extra builds or command substitution | `DONE` | SWL-PORTFOLIO-001 |
-| 3 | `SWL-PORTFOLIO-003` Fresh public portfolio capture | Start empty and capture ordinary observed requests across the frozen five-family cohort | `TODO` | SWL-PORTFOLIO-002 |
-| 4 | `SWL-PORTFOLIO-004` Independent breadth gate | Rebuild every row; require 5/5 complete inputs, five relevant rows per family and exact actions in 3/5 | `WAITING` | SWL-PORTFOLIO-003 |
+| 3 | `SWL-PORTFOLIO-003` Fresh public portfolio capture | Start empty and capture ordinary observed requests across the frozen five-family cohort | `DONE` | SWL-PORTFOLIO-002 |
+| 4 | `SWL-PORTFOLIO-004` Independent breadth gate | Rebuild every row; require 5/5 complete inputs, five relevant rows per family and exact actions in 3/5 | `TODO` | SWL-PORTFOLIO-003 |
 | 5 | `SWL-PORTFOLIO-005` Installed value | Eight balanced pairs per admitted action with exact outputs and complete BuildOpt costs | `WAITING` | passing breadth only |
 | 6 | `SWL-PORTFOLIO-006` Chronological value | At least 15 comparable relevant transitions per admitted family with persistent isolated state | `WAITING` | passing installed value only |
 | 7 | `SWL-PORTFOLIO-007` Terminal decision | Continue or stop from correctness, breadth, value, confidence, payback, overhead and failures | `WAITING` | conclusive preceding gate |
@@ -141,6 +141,31 @@ within the preregistered budget until every family has five relevant transitions
 or the budget is exhausted. Do not replace a sparse request with an unobserved
 broader command.
 
+Implemented outcome: the checked
+[`observed-request-public-portfolio-v1`](../../benchmarks/results/observed-request-public-portfolio-v1/summary.json)
+ledger contains 128 ordinary observations and 113 adjacent same-command
+transitions from one digest-bound executable and empty BuildOpt state. The
+launcher piggybacks finalized graph, task-input and output evidence on the
+existing invocation; it starts no additional Gradle build. Deterministic gzip
+storage reduces the checked evidence size while every SHA-256 continues to
+address the uncompressed canonical JSON.
+
+| Family | Observations | Comparable | Relevant / action | Complete | Stop reason |
+| --- | ---: | ---: | ---: | --- | --- |
+| Spring Framework | 30 | 27 | 5 / 5 | yes | relevant target met |
+| OpenTelemetry Java Instrumentation | 30 | 25 | 0 / 0 | no | budget exhausted |
+| Apache Kafka | 27 | 24 | 5 / 5 | yes | relevant target met |
+| Micronaut Core | 30 | 21 | 2 / 2 | no | budget exhausted |
+| Apache Groovy | 11 | 8 | 5 / 5 | yes | relevant target met |
+
+The capture therefore reports **3/5 complete families** and **4/5 families
+with at least one action-bearing transition**, with zero build or product
+failures. OpenTelemetry has two and Micronaut has six typed
+`TASK_INPUT_EVIDENCE_UNAVAILABLE` transitions; these stay incomplete rather
+than becoming false zero-opportunity rows. This is capture evidence only:
+performance, selection and activation remain false. `SWL-PORTFOLIO-004` must
+independently reconstruct every row before applying the unchanged gate.
+
 ### SWL-PORTFOLIO-004 — Independent breadth gate
 
 Ignore aggregate summaries. Verify capture/report digests, regenerate every
@@ -179,8 +204,8 @@ than becoming zero. A stopped route authorizes no successor automatically.
 | `SWL-PORTFOLIO-E001` | SWL-PORTFOLIO-000 | Rebuilt terminal cause audit and selected hypothesis | `DONE` — [`request-aligned-terminal-cause-audit-v1.json`](../../benchmarks/results/request-aligned-terminal-cause-audit-v1.json) |
 | `SWL-PORTFOLIO-E002` | SWL-PORTFOLIO-001 | Cross-Gradle/DSL evidence precision fixtures and frozen-ledger counterfactual | `DONE` — [`request-aligned-evidence-precision-v1.json`](../../benchmarks/results/request-aligned-evidence-precision-v1.json) |
 | `SWL-PORTFOLIO-E003` | SWL-PORTFOLIO-002 | Exact observed request portfolio lifecycle | `DONE` — [`observed-request-portfolio-lifecycle-v1.json`](../../benchmarks/results/observed-request-portfolio-lifecycle-v1.json) |
-| `SWL-PORTFOLIO-E004` | SWL-PORTFOLIO-003 | Fresh five-family portfolio ledger | `TODO` |
-| `SWL-PORTFOLIO-E005` | SWL-PORTFOLIO-004 | Independent breadth decision | `WAITING` |
+| `SWL-PORTFOLIO-E004` | SWL-PORTFOLIO-003 | Fresh five-family portfolio ledger | `DONE` — [`observed-request-public-portfolio-v1`](../../benchmarks/results/observed-request-public-portfolio-v1/summary.json) |
+| `SWL-PORTFOLIO-E005` | SWL-PORTFOLIO-004 | Independent breadth decision | `TODO` |
 | `SWL-PORTFOLIO-E006` | SWL-PORTFOLIO-005 | Installed paired value and cost ledger | `WAITING` |
 | `SWL-PORTFOLIO-E007` | SWL-PORTFOLIO-006 | Chronological cumulative value | `WAITING` |
 | `SWL-PORTFOLIO-E008` | SWL-PORTFOLIO-007 | Terminal scorecard | `WAITING` |

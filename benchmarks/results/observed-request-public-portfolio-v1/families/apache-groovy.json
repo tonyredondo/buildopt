@@ -1,0 +1,17 @@
+{
+  "family": "apache-groovy",
+  "dsl": "GROOVY",
+  "observations": 11,
+  "comparableTransitions": 8,
+  "relevantTransitions": 5,
+  "actionTransitions": 5,
+  "productFailures": 0,
+  "buildFailures": 0,
+  "stopReason": "RELEVANT_TARGET_MET",
+  "inputComplete": true,
+  "portfolio": "portfolios/apache-groovy.json",
+  "portfolioSha256": "27dd64c52b84a00ba205cc79600d964ac72de4799934f06c3c5cac94c98e7056",
+  "performanceMeasured": false,
+  "selectionAuthorized": false,
+  "activationAuthorized": false
+}

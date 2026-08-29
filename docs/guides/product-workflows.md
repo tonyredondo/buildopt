@@ -110,7 +110,15 @@ only exact commands it already received. After Gradle exits, it merges a framed
 argv digest, repository identity, counts, outcome and optional same-invocation
 graph evidence into a private bounded local portfolio. It may not parse CI
 files, substitute commands, start an extra Gradle build or use these correctness
-records as timing authority. Fresh public capture is the next block.
+records as timing authority. Fresh public capture now piggybacks finalized
+top-level graph, completed-task input and output evidence on the same Gradle
+invocation. It preserves the original argv, starts no extra build and keeps
+each unavailable capture phase typed. The checked campaign records 128
+observations and 113 transitions: Spring, Kafka and Groovy are complete;
+Micronaut has two action rows; OpenTelemetry has none. That is 3/5 complete and
+4/5 action-bearing families with zero failures, but it is not a breadth
+decision or performance result. The next block independently reconstructs
+every row before applying the unchanged 5/5 completeness and 3/5 action gate.
 
 Sample count alone never makes the campaign ready. Missing lifecycle, action or
 ledger evidence keeps it incomplete. The exact implementation paths, evidence

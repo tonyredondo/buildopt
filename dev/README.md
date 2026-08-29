@@ -147,7 +147,28 @@ launcher, runs concurrent updates under the race detector, checks deterministic
 128-entry retention and rejects mismatched evidence or invented authority. The
 wrapper writes only after the existing Gradle invocation, stores a framed argv
 digest rather than raw arguments and needs no server. It does not execute a
-candidate or measure wall time. `SWL-PORTFOLIO-003` owns fresh public capture.
+candidate or measure wall time. Fresh public capture is now complete and
+`SWL-PORTFOLIO-004` owns independent breadth reconstruction.
+
+Capture and validate the fresh public request portfolio with:
+
+```bash
+./dev/check-observed-request-portfolio-capture
+./dev/check-observed-request-portfolio-config HISTORY_ROOT
+./dev/run-observed-request-public-portfolio HISTORY_ROOT OUTPUT_DIR
+./dev/compact-observed-request-public-portfolio RAW_DIR COMPACT_DIR
+./dev/check-observed-request-public-portfolio [COMPACT_DIR]
+```
+
+The capture checker proves same-invocation Gradle evidence without an extra
+build. The configuration checker validates the frozen ordinary commands in the
+five prepared public histories. The runner starts from empty state, preserves
+typed incomplete evidence and emits no timing or activation. The compactor
+uses deterministic gzip while retaining uncompressed content digests. The
+final checker rebuilds the exact executable and verifies every binding,
+chronological row, portfolio and compressed artifact; it does not rerun the
+public builds or apply the independent breadth decision owned by
+`SWL-PORTFOLIO-004`.
 
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:

@@ -1,0 +1,17 @@
+{
+  "family": "apache-kafka",
+  "dsl": "GROOVY",
+  "observations": 27,
+  "comparableTransitions": 24,
+  "relevantTransitions": 5,
+  "actionTransitions": 5,
+  "productFailures": 0,
+  "buildFailures": 0,
+  "stopReason": "RELEVANT_TARGET_MET",
+  "inputComplete": true,
+  "portfolio": "portfolios/apache-kafka.json",
+  "portfolioSha256": "44a5d4fafdac1791fa47af175f6f2005df29adc6d9f2d6d636cfe0b3efa3a0a6",
+  "performanceMeasured": false,
+  "selectionAuthorized": false,
+  "activationAuthorized": false
+}

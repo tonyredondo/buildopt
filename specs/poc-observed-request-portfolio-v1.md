@@ -48,9 +48,21 @@ exits. It hashes argument boundaries, binds optional finalized evidence to the
 same invocation, preserves typed incomplete/failed/cancelled/bypassed outcomes,
 serializes concurrent updates and remains local when the server is unavailable.
 It starts no Gradle build and grants no action authority. `SWL-PORTFOLIO-003`
-starts from zero portfolio state and captures the frozen
-five-family cohort. `SWL-PORTFOLIO-004` independently rebuilds every report and
-applies the unchanged 5/5 completeness and 3/5 action-breadth gate.
+then starts from zero portfolio state and captures the frozen five-family
+cohort with one executable. Same-invocation evidence is collected from the
+finalized task graph and completed tasks without an extra Gradle invocation.
+Unavailable task inputs are typed separately from repository, Wrapper,
+build-logic, graph and output unavailability; an incomplete typed capture is
+not a product failure. Canonical JSON evidence is stored as deterministic gzip,
+while content digests continue to address the uncompressed bytes.
+
+The checked capture contains 128 observations and 113 transitions. Spring,
+Kafka and Groovy are complete; Micronaut has two relevant/action transitions
+and OpenTelemetry has none. The result is **3/5 complete families** and **4/5
+families with at least one action**, with zero product or build failures.
+Performance, selection and activation remain false. `SWL-PORTFOLIO-004` must
+independently rebuild every report and apply the unchanged 5/5 completeness and
+3/5 action-breadth gate; the capture summary itself cannot make that decision.
 
 Only a passing breadth gate can open installed timing in
 `SWL-PORTFOLIO-005`. Only passing installed value can open chronological value

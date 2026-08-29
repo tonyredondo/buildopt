@@ -121,12 +121,18 @@ result is negative for value, so that historical trial remains diagnostic.
 The active observed-request portfolio adds a narrower local plane under
 `internal/requestportfolio`. The launcher derives length-framed identities from
 the exact argv it already received and the repository-relative working
-directory, then writes the bounded canonical snapshot
-only after the child exits. Optional compatibility, requested-task and graph
-evidence is accepted only when it binds that same argv digest. Raw arguments
-are not stored; incomplete, failed, cancelled and bypassed requests cannot
-become candidates. This local write does not depend on Shared state and starts
-no Gradle build, so an unavailable server cannot change the customer command.
+directory. When public capture is configured, an embedded init script observes
+the finalized top-level task graph and snapshots each completed task's input
+files while Gradle still owns the correct task lock. The launcher consumes that
+private canonical file only after the child exits, verifies that it binds the
+original argv digest and merges it into the bounded portfolio. It never changes
+the customer argv or starts a second Gradle build. Repository, Wrapper,
+build-logic, graph, input and output evidence failures remain distinct typed
+states; incomplete evidence cannot become a candidate or a product failure.
+Raw arguments and checkout paths are not stored. Detailed campaign evidence is
+compressed deterministically, with digests continuing to address canonical
+uncompressed JSON. This local write does not depend on Shared state, so an
+unavailable server cannot change the customer command.
 `internal/stickyactive` proves isolated execution/suspension and
 `internal/durablecatalog` keeps patches review-only. `SWL-014B` now composes
 observation through signed active decision and economics behind the committed

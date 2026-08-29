@@ -19,28 +19,24 @@ that worked. The subsequent
 also stopped after its current installed campaign produced zero activations,
 zero attributable mechanism saving and negative cumulative value.
 
-The latest closed experimental direction is
-[request-aligned recurrent learning](../plans/request-aligned-learning-poc-tracker.md).
-It reuses the committed wrapper but changes the evidence unit: BuildOpt learns
-from the exact Gradle command the customer actually repeats and only from
-adjacent changes relevant to that requested graph. Current outputs come from
-their Gradle producer tasks. It must still prove breadth, payback and positive
-cumulative value beyond optimized native Gradle; safe fallback and cache hits
-alone do not pass.
+The active experimental direction is the
+[observed recurrent request portfolio](../plans/observed-request-portfolio-poc-tracker.md).
+It keeps the exact command as the evidence unit but learns across the portfolio
+of commands a customer actually repeats, rather than forcing one leaf command
+onto every commit. The committed wrapper captures finalized graph, task-input
+and output evidence in the same invocation and never substitutes a broader
+benchmark command.
 
-Its observation producer now passes Gradle 8.14.3/9.6.1 with Kotlin/Groovy:
-canonical request identities are checkout-independent, all eight compatibility
-bindings separate identities, and the current versioned Groovy JAR is found
-from its unique producer. Missing, ambiguous and outside-graph ownership is
-typed unavailable. This closes an evidence gap but proves no acceleration.
-The adjacent-transition classifier now also passes 32 Gradle 8/9 ×
-Kotlin/Groovy scenarios. It distinguishes all five frozen statuses, preserves
-exact argv, derives only exact relevant producer closures and binds renamed
-current outputs without filename rules. Unsafe and full-graph cases emit no
-action. The subsequent 110-transition public capture completes Groovy and
-Spring but not Kafka, Micronaut or OpenTelemetry, leaving 2/5 complete/action
-families. Independent breadth reconstruction confirms those counts and the
-terminal scorecard stops the current detector without acceleration evidence.
+The fresh five-family ledger contains 128 observations and 113 adjacent
+same-command transitions from empty BuildOpt state. Spring, Kafka and Groovy
+reach the five-transition target; Micronaut exposes two exact action rows and
+OpenTelemetry none. The result is 3/5 complete families and 4/5 families with
+some action opportunity, with zero product or build failures. OpenTelemetry
+and Micronaut retain typed task-input unavailability rather than being counted
+as false negatives. This is stronger structural breadth than the stopped
+fixed-request route, but it still proves no acceleration: timing, selection and
+activation remain closed until an independent reconstruction applies the
+unchanged breadth gate.
 
 ## What is generalized today
 

@@ -174,7 +174,8 @@ func runStickyNativeNoop(
 		observation.markConnection(decisionFinishedAt, false)
 		observation.finishCache(decisionFinishedAt)
 	}
-	execution := executeChildWithReserved(childArgs, requestPortfolio.childEnvironment(nil), reserved, stdin, stdout, stderr)
+	executionArgs := requestPortfolio.prepareChild(childArgs)
+	execution := executeChildWithReserved(executionArgs, requestPortfolio.childEnvironment(nil), reserved, stdin, stdout, stderr)
 	if requestPortfolio != nil {
 		requestPortfolio.finishGradle(execution)
 	}

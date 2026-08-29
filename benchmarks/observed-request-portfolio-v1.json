@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "buildopt.poc/observed-request-portfolio-config/v1",
+  "cohort": "benchmarks/results/fresh-generic-optimization-v1/cohort.json",
+  "selectionPolicy": "FIXED_CYCLIC_PUBLIC_GRADLE_LIFECYCLE_REQUESTS",
+  "observationBudgetPerFamily": 30,
+  "requiredRelevantTransitionsPerFamily": 5,
+  "commandsPerFamily": 3,
+  "ordinaryRequestsOnly": true,
+  "operatorSelected": true,
+  "productRepositoryRules": false,
+  "families": [
+    {
+      "family": "spring-framework",
+      "commands": [
+        [":spring-core:classes", "--no-daemon", "--no-build-cache", "--no-configuration-cache"],
+        [":spring-core:testClasses", "--no-daemon", "--no-build-cache", "--no-configuration-cache"],
+        [":spring-core:checkArchitectureMain", "--no-daemon", "--no-build-cache", "--no-configuration-cache"]
+      ]
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "commands": [
+        [":javaagent:classes", "--no-daemon", "--no-build-cache", "--no-configuration-cache"],
+        [":javaagent:testClasses", "--no-daemon", "--no-build-cache", "--no-configuration-cache"],
+        [":javaagent:jar", "--no-daemon", "--no-build-cache", "--no-configuration-cache"]
+      ]
+    },
+    {
+      "family": "apache-kafka",
+      "commands": [
+        [":clients:classes", "--no-daemon", "--no-build-cache", "--no-configuration-cache"],
+        [":clients:testClasses", "--no-daemon", "--no-build-cache", "--no-configuration-cache"],
+        [":clients:jar", "--no-daemon", "--no-build-cache", "--no-configuration-cache"]
+      ]
+    },
+    {
+      "family": "micronaut-core",
+      "commands": [
+        [":micronaut-core:classes", "--no-daemon", "--no-build-cache", "--no-configuration-cache"],
+        [":micronaut-core:testClasses", "--no-daemon", "--no-build-cache", "--no-configuration-cache"],
+        [":micronaut-core:jar", "--no-daemon", "--no-build-cache", "--no-configuration-cache"]
+      ]
+    },
+    {
+      "family": "apache-groovy",
+      "commands": [
+        [":classes", "--no-daemon", "--no-build-cache", "--no-configuration-cache"],
+        [":testClasses", "--no-daemon", "--no-build-cache", "--no-configuration-cache"],
+        [":jar", "--no-daemon", "--no-build-cache", "--no-configuration-cache"]
+      ]
+    }
+  ]
+}

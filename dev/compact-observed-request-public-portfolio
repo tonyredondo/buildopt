@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+if (($# != 2)); then
+    printf 'usage: %s SOURCE_DIR DESTINATION_DIR\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_source=$1
+buildopt_destination=$2
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+for buildopt_command in cp find gzip jq mkdir mktemp mv sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+[[ ${buildopt_source} == /* && -d ${buildopt_source} ]] || {
+    printf 'source must be an existing absolute directory\n' >&2
+    exit 1
+}
+[[ ${buildopt_destination} == /* && ! -e ${buildopt_destination} ]] || {
+    printf 'destination must be an unused absolute path\n' >&2
+    exit 1
+}
+for buildopt_file in contract.json summary.json observations.jsonl transitions.jsonl; do
+    [[ -f ${buildopt_source}/${buildopt_file} && ! -L ${buildopt_source}/${buildopt_file} ]] || {
+        printf 'completed portfolio metadata is missing: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
+jq -e '
+  .schemaVersion=="buildopt.poc/observed-request-public-portfolio-summary/v1" and
+  .status=="COMPLETE" and .familyCount==5
+' "${buildopt_source}/summary.json" >/dev/null || {
+    printf 'source portfolio is not finalized\n' >&2
+    exit 1
+}
+if find "${buildopt_source}" -type l -print -quit | grep -q .; then
+    printf 'source portfolio contains a symbolic link\n' >&2
+    exit 1
+fi
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-observed-portfolio-compact.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-observed-portfolio-compact.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected compaction root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+buildopt_result=${buildopt_temporary}/result
+mkdir -p -- "${buildopt_result}"
+cp -a -- "${buildopt_source}/families" "${buildopt_source}/portfolios" "${buildopt_result}/"
+cp -a -- "${buildopt_source}/observations.jsonl" "${buildopt_source}/transitions.jsonl" "${buildopt_result}/"
+
+buildopt_safe_reference() {
+    local buildopt_relative=$1
+    [[ -n ${buildopt_relative} && ${buildopt_relative} != /* && ${buildopt_relative} != *'..'* &&
+       ${buildopt_relative} != *'//'* && ${buildopt_relative} != *$'\n'* ]]
+}
+
+buildopt_compact_reference() {
+    local buildopt_relative=$1
+    local buildopt_expected=$2
+    [[ -n ${buildopt_expected} ]] || return 0
+    buildopt_safe_reference "${buildopt_relative}" || {
+        printf 'unsafe portfolio reference: %s\n' "${buildopt_relative}" >&2
+        return 1
+    }
+    local buildopt_input=${buildopt_source}/${buildopt_relative}
+    local buildopt_output=${buildopt_result}/${buildopt_relative}.gz
+    [[ -f ${buildopt_input} && ! -L ${buildopt_input} ]] || {
+        printf 'referenced portfolio evidence is missing: %s\n' "${buildopt_relative}" >&2
+        return 1
+    }
+    [[ $(sha256sum "${buildopt_input}" | awk '{print $1}') == "${buildopt_expected}" ]] || {
+        printf 'portfolio evidence digest mismatch: %s\n' "${buildopt_relative}" >&2
+        return 1
+    }
+    mkdir -p -- "$(dirname -- "${buildopt_output}")"
+    gzip -n -9 -c -- "${buildopt_input}" >"${buildopt_output}"
+    chmod 0600 "${buildopt_output}"
+    [[ $(gzip -cd -- "${buildopt_output}" | sha256sum | awk '{print $1}') == "${buildopt_expected}" ]] || {
+        printf 'compressed portfolio evidence failed round trip: %s\n' "${buildopt_relative}" >&2
+        return 1
+    }
+}
+
+while IFS=$'\t' read -r buildopt_capture buildopt_capture_sha buildopt_evidence buildopt_evidence_sha; do
+    buildopt_compact_reference "${buildopt_capture}" "${buildopt_capture_sha}"
+    buildopt_compact_reference "${buildopt_evidence}" "${buildopt_evidence_sha}"
+done < <(jq -r '[.capture,.captureSha256,.evidence,.evidenceSha256]|@tsv' "${buildopt_source}/observations.jsonl")
+while IFS=$'\t' read -r buildopt_report buildopt_report_sha; do
+    buildopt_compact_reference "${buildopt_report}" "${buildopt_report_sha}"
+done < <(jq -r 'select(.reportSha256!="")|[.report,.reportSha256]|@tsv' "${buildopt_source}/transitions.jsonl")
+
+while IFS=$'\t' read -r buildopt_portfolio buildopt_portfolio_sha; do
+    buildopt_safe_reference "${buildopt_portfolio}" || {
+        printf 'unsafe family portfolio reference: %s\n' "${buildopt_portfolio}" >&2
+        exit 1
+    }
+    [[ $(sha256sum "${buildopt_source}/${buildopt_portfolio}" | awk '{print $1}') == "${buildopt_portfolio_sha}" ]] || {
+        printf 'family portfolio digest mismatch: %s\n' "${buildopt_portfolio}" >&2
+        exit 1
+    }
+done < <(jq -r '[.portfolio,.portfolioSha256]|@tsv' "${buildopt_source}"/families/*.json)
+
+buildopt_compactor_sha=$(sha256sum "${buildopt_root}/dev/compact-observed-request-public-portfolio" | awk '{print $1}')
+jq --arg compactorSha256 "${buildopt_compactor_sha}" '
+  .storage={
+    encoding:"GZIP_RFC1952",deterministicHeader:true,compressionLevel:9,
+    physicalPathSuffix:".gz",contentDigestsAddressUncompressedJson:true,
+    compactorSha256:$compactorSha256
+  }
+' "${buildopt_source}/contract.json" >"${buildopt_result}/contract.json"
+jq '
+  .storageEncoding="GZIP_RFC1952" |
+  .contentDigestsAddressUncompressedJson=true
+' "${buildopt_source}/summary.json" >"${buildopt_result}/summary.json"
+chmod 0600 "${buildopt_result}/contract.json" "${buildopt_result}/summary.json"
+mkdir -p -- "$(dirname -- "${buildopt_destination}")"
+mv -- "${buildopt_result}" "${buildopt_destination}"
+printf 'Observed request public portfolio compacted: %s\n' "${buildopt_destination}"

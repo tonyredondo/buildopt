@@ -1,0 +1,17 @@
+{
+  "family": "micronaut-core",
+  "dsl": "KOTLIN",
+  "observations": 30,
+  "comparableTransitions": 21,
+  "relevantTransitions": 2,
+  "actionTransitions": 2,
+  "productFailures": 0,
+  "buildFailures": 0,
+  "stopReason": "OBSERVATION_BUDGET_EXHAUSTED",
+  "inputComplete": false,
+  "portfolio": "portfolios/micronaut-core.json",
+  "portfolioSha256": "d5ed2de07060abfca98c00d7069b427a386b068488c8cb4a5e971eecd9582f14",
+  "performanceMeasured": false,
+  "selectionAuthorized": false,
+  "activationAuthorized": false
+}

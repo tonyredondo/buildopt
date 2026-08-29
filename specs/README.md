@@ -10,9 +10,11 @@ the exact cross-component contract.
 The latest generic POC contract is
 [`poc-observed-request-portfolio-v1.md`](./poc-observed-request-portfolio-v1.md)
 with its adjacent machine-readable JSON. It tests learning across the exact
-portfolio of recurrent commands the customer actually invokes. The terminal
-cause audit selected the route, but evidence primitives, portfolio capture and
-all value gates remain open. Timing and activation are not authorized.
+portfolio of recurrent commands the customer actually invokes. Evidence
+primitives and fresh capture are complete: 128 observations produce 113
+transitions, 3/5 complete families and 4/5 action-bearing families with zero
+failures. Independent breadth reconstruction and all value gates remain open;
+timing and activation are not authorized.
 
 | Specification | Owning item |
 |---|---|

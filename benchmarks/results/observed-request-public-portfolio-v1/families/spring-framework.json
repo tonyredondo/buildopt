@@ -1,0 +1,17 @@
+{
+  "family": "spring-framework",
+  "dsl": "KOTLIN",
+  "observations": 30,
+  "comparableTransitions": 27,
+  "relevantTransitions": 5,
+  "actionTransitions": 5,
+  "productFailures": 0,
+  "buildFailures": 0,
+  "stopReason": "RELEVANT_TARGET_MET",
+  "inputComplete": true,
+  "portfolio": "portfolios/spring-framework.json",
+  "portfolioSha256": "8449cf0fb658924bb1eb90375038fa033afd0c7e2a8c87005d8e46b651dbbd69",
+  "performanceMeasured": false,
+  "selectionAuthorized": false,
+  "activationAuthorized": false
+}

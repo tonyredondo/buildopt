@@ -2,7 +2,7 @@
   "schemaVersion": "buildopt.poc/observed-request-portfolio-contract/v1",
   "workItem": "SWL-PORTFOLIO-000",
   "status": "ACTIVE",
-  "currentBlock": "SWL-PORTFOLIO-003",
+  "currentBlock": "SWL-PORTFOLIO-004",
   "purpose": "Determine whether BuildOpt can learn safe generic partial-work actions from the portfolio of exact Gradle commands a customer actually repeats, rather than from one frozen request per repository.",
   "predecessor": {
     "decision": "STOP_REQUEST_ALIGNED_RECURRENT_CLOSURE_POC_FOR_CURRENT_DETECTOR",
@@ -54,12 +54,12 @@
     },
     {
       "id": "SWL-PORTFOLIO-003",
-      "state": "TODO",
-      "outcome": "FRESH_FIVE_FAMILY_OBSERVED_PORTFOLIO_CAPTURE"
+      "state": "DONE",
+      "outcome": "FRESH_PORTFOLIO_CAPTURED_128_OBSERVATIONS_113_TRANSITIONS_3_OF_5_COMPLETE_4_OF_5_ACTION_BEARING_ZERO_FAILURES"
     },
     {
       "id": "SWL-PORTFOLIO-004",
-      "state": "WAITING",
+      "state": "TODO",
       "outcome": "INDEPENDENT_PORTFOLIO_BREADTH_GATE"
     },
     {
@@ -78,5 +78,17 @@
       "outcome": "TERMINAL_CONTINUE_OR_STOP_DECISION"
     }
   ],
-  "nextBlock": "SWL-PORTFOLIO-003"
+  "latestEvidence": {
+    "path": "benchmarks/results/observed-request-public-portfolio-v1/summary.json",
+    "observations": 128,
+    "transitions": 113,
+    "completeFamilies": 3,
+    "actionBearingFamilies": 4,
+    "productFailures": 0,
+    "buildFailures": 0,
+    "performanceMeasured": false,
+    "selectionAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextBlock": "SWL-PORTFOLIO-004"
 }

@@ -340,6 +340,23 @@ func LoadEvidence(path, observationID, argumentsSHA256 string) (Evidence, error)
 	return evidence, evidence.Validate(observationID, argumentsSHA256)
 }
 
+// WriteEvidence publishes finalized evidence from the same Gradle invocation
+// as one canonical private file. Callers must bind the evidence to the exact
+// observation and argument digest before publishing it.
+func WriteEvidence(path string, evidence Evidence) error {
+	if path == "" || !filepath.IsAbs(path) || filepath.Clean(path) != path {
+		return errors.New("observed request evidence path must be one clean absolute path")
+	}
+	parentInfo, err := os.Lstat(filepath.Dir(path))
+	if err != nil || !privateDirectoryInfo(parentInfo) {
+		return errors.New("observed request evidence directory is not private")
+	}
+	if err := evidence.Validate(evidence.ObservationID, evidence.ArgumentsSHA256); err != nil {
+		return err
+	}
+	return writeCanonicalAtomic(path, evidence)
+}
+
 func (observation Observation) Validate() error {
 	if !digestPattern.MatchString(observation.ObservationID) || !digestPattern.MatchString(observation.RepositoryScopeSHA256) ||
 		!digestPattern.MatchString(observation.ArgumentsSHA256) || !digestPattern.MatchString(observation.WorkingDirectorySHA256) ||

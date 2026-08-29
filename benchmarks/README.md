@@ -146,6 +146,17 @@ private, canonical, atomic and local when the server is absent. It starts no
 extra Gradle build, measures no wall time and grants no selection or activation
 authority.
 
+[`observed-request-public-portfolio-v1`](./results/observed-request-public-portfolio-v1/summary.json)
+is the fresh `SWL-PORTFOLIO-003` five-family ledger. One exact executable
+records 128 ordinary invocations and 113 adjacent same-command transitions
+without substituting commands or starting an additional Gradle build. Spring,
+Kafka and Groovy reach five relevant transitions; Micronaut records two and
+OpenTelemetry records none. The capture therefore has 3/5 complete families
+and 4/5 families with at least one action-bearing row, with zero build or
+product failures. Every detailed artifact is stored as deterministic gzip and
+verified against the SHA-256 of its uncompressed canonical JSON. This is
+structural capture evidence: it contains no timing, selection or activation.
+
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
@@ -161,6 +172,7 @@ authority.
 ./dev/check-request-aligned-terminal-cause-audit
 ./dev/check-request-aligned-evidence-precision
 ./dev/check-observed-request-portfolio
+./dev/check-observed-request-public-portfolio
 ```
 
 ## Sticky-wrapper observation sample

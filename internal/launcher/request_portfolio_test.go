@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -12,7 +13,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/tonyredondo/buildopt/internal/changeaware"
 	"github.com/tonyredondo/buildopt/internal/contractcrypto"
+	"github.com/tonyredondo/buildopt/internal/requestaligned"
 	"github.com/tonyredondo/buildopt/internal/requestportfolio"
 	"github.com/tonyredondo/buildopt/internal/sharedcache"
 )
@@ -64,11 +67,63 @@ func TestStickyWrapperPersistsExactRequestPortfolioAfterNativeBuild(t *testing.T
 		t.Fatal(err)
 	}
 	parts := strings.Split(strings.TrimSpace(string(child)), "|")
-	if len(parts) != 4 || parts[0] != "4" || parts[1] != "" || parts[2] != evidencePath || len(parts[3]) != 64 {
+	if len(parts) != 4 || parts[0] != "6" || parts[1] != "" || parts[2] != evidencePath || len(parts[3]) != 64 {
 		t.Fatalf("child arguments/environment = %q", child)
 	}
 	if stderr.Len() != 0 {
 		t.Fatalf("unexpected diagnostics: %s", stderr.String())
+	}
+}
+
+func TestRequestPortfolioMaterializesSameInvocationCapture(t *testing.T) {
+	root := writeStickyNativeNoopFixture(t)
+	t.Chdir(root)
+	private := filepath.Join(root, "private")
+	evidencePath := filepath.Join(private, "request-evidence.json")
+	capturePath := filepath.Join(private, "request-capture.json")
+	t.Setenv(requestPortfolioEvidenceEnvironment, evidencePath)
+	t.Setenv(requestPortfolioCaptureEnvironment, capturePath)
+	started := time.Date(2026, 8, 28, 18, 0, 0, 0, time.UTC)
+	args := []string{filepath.Join(root, gradleWrapperName(runtime.GOOS)), ":bundle", "--no-daemon"}
+	state := newRequestPortfolioStateAt(root, args, started)
+	prepared := state.prepareChild(args)
+	if len(prepared) != len(args)+2 || prepared[len(args)] != "--init-script" ||
+		prepared[len(args)+1] != evidencePath+".init.gradle" ||
+		state.argumentsSHA != requestportfolio.ArgumentsSHA256(args[1:]) {
+		t.Fatalf("prepared arguments/state = %q/%+v", prepared, state)
+	}
+	digest := func(value string) string { return strings.Repeat(value, 64) }
+	capture := requestaligned.Capture{
+		SchemaVersion: requestaligned.CaptureSchemaVersion, GeneratedAt: started.Format(time.RFC3339Nano),
+		Status: requestaligned.CaptureComplete, GradleArguments: args[1:], RequestedTasks: []string{":bundle"},
+		GradleVersion: "9.6.1", JavaRuntime: requestaligned.JavaRuntime{
+			Version: "21.0.12", Vendor: "Eclipse Adoptium", RuntimeName: "OpenJDK Runtime Environment",
+			VMName: "OpenJDK 64-Bit Server VM", Architecture: "amd64",
+		},
+		EnvironmentBindingSHA256: digest("a"),
+		WrapperFiles:             []requestaligned.FileBinding{{Path: "gradle/wrapper/gradle-wrapper.properties", SHA256: digest("b")}},
+		BuildLogicFiles:          []requestaligned.FileBinding{{Path: "build.gradle", SHA256: digest("c")}},
+		Tasks: []changeaware.TaskEvidence{{Path: ":bundle", Outputs: []changeaware.OutputEvidence{{
+			Path: "build/bundle.bin", Kind: "FILE", SHA256: digest("d"), Exists: true,
+		}}}},
+	}
+	raw, err := json.Marshal(capture)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(capturePath, raw, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := state.materializeEvidence(); err != nil {
+		t.Fatal(err)
+	}
+	evidence, err := requestportfolio.LoadEvidence(evidencePath, state.observationID, state.argumentsSHA)
+	if err != nil || len(evidence.RequestedTasks) != 1 || evidence.RequestedTasks[0] != ":bundle" {
+		t.Fatalf("evidence = %+v/%v", evidence, err)
+	}
+	state.cleanupCaptureArtifacts()
+	if _, err := os.Lstat(state.initScriptPath); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("init script survived cleanup: %v", err)
 	}
 }
 

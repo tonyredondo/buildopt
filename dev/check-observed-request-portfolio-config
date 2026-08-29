@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+if (($# < 1 || $# > 2)); then
+    printf 'usage: %s HISTORY_ROOT [--static]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_history_root=$1
+buildopt_mode=${2:-dynamic}
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_config=${buildopt_root}/benchmarks/observed-request-portfolio-v1.json
+buildopt_cohort=${buildopt_root}/benchmarks/results/fresh-generic-optimization-v1/cohort.json
+[[ ${buildopt_history_root} == /* && -d ${buildopt_history_root} ]] || {
+    printf 'history root must be an existing absolute directory\n' >&2
+    exit 1
+}
+[[ ${buildopt_mode} == dynamic || ${buildopt_mode} == --static ]] || {
+    printf 'usage: %s HISTORY_ROOT [--static]\n' "$0" >&2
+    exit 64
+}
+
+jq -e --slurpfile cohort "${buildopt_cohort}" '
+  .schemaVersion=="buildopt.poc/observed-request-portfolio-config/v1" and
+  .cohort=="benchmarks/results/fresh-generic-optimization-v1/cohort.json" and
+  .selectionPolicy=="FIXED_CYCLIC_PUBLIC_GRADLE_LIFECYCLE_REQUESTS" and
+  .observationBudgetPerFamily==30 and .requiredRelevantTransitionsPerFamily==5 and
+  .commandsPerFamily==3 and .ordinaryRequestsOnly and .operatorSelected and
+  (.productRepositoryRules|not) and (.families|length)==5 and
+  ([.families[].family]|unique|length)==5 and
+  ([.families[].family]|sort)==([$cohort[0].families[].family]|sort) and
+  ([.families[]|select((.commands|length)!=3)]|length)==0 and
+  ([.families[].commands[]|select(
+    (length!=4) or (.[0]|test("^(:[A-Za-z0-9_.-]+)+$")|not) or
+    .[1]!="--no-daemon" or .[2]!="--no-build-cache" or .[3]!="--no-configuration-cache"
+  )]|length)==0
+' "${buildopt_config}" >/dev/null || {
+    printf 'observed request portfolio config is invalid\n' >&2
+    exit 1
+}
+
+if [[ ${buildopt_mode} == --static ]]; then
+    printf 'Observed request portfolio config: PASS (static)\n'
+    exit 0
+fi
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-config.XXXXXX)
+buildopt_worktree=
+buildopt_history=
+buildopt_cleanup() {
+    if [[ -n ${buildopt_worktree:-} && -n ${buildopt_history:-} && -e ${buildopt_worktree} ]]; then
+        git -C "${buildopt_history}" worktree remove --force "${buildopt_worktree}" >/dev/null 2>&1 || true
+    fi
+    case ${buildopt_temporary} in
+        /tmp/buildopt-request-config.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected config root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+mapfile -t buildopt_families < <(jq -r '.families[].family' "${buildopt_config}")
+for buildopt_family in "${buildopt_families[@]}"; do
+    buildopt_history=${buildopt_history_root}/${buildopt_family}
+    buildopt_head=$(jq -r --arg family "${buildopt_family}" '.families[]|select(.family==$family)|.frozenHead' "${buildopt_cohort}")
+    buildopt_jdk=$(jq -r --arg family "${buildopt_family}" '.families[]|select(.family==$family)|.jdk' "${buildopt_cohort}")
+    mapfile -t buildopt_tasks < <(jq -r --arg family "${buildopt_family}" \
+        '.families[]|select(.family==$family)|.commands[][0]' "${buildopt_config}")
+    buildopt_worktree=${buildopt_temporary}/worktree
+    git -C "${buildopt_history}" worktree add --detach "${buildopt_worktree}" "${buildopt_head}" >/dev/null
+    if ! (cd -- "${buildopt_worktree}" && env GRADLE_USER_HOME="${buildopt_root}/.tools/gradle-user-home/local" \
+        "${buildopt_root}/dev/run" --toolchain "${buildopt_jdk}" -- \
+        "${buildopt_worktree}/gradlew" "${buildopt_tasks[@]}" --dry-run --no-daemon \
+        --no-build-cache --no-configuration-cache) >"${buildopt_temporary}/${buildopt_family}.log" 2>&1; then
+        cat "${buildopt_temporary}/${buildopt_family}.log" >&2
+        exit 1
+    fi
+    git -C "${buildopt_history}" worktree remove --force "${buildopt_worktree}" >/dev/null
+    buildopt_worktree=
+    printf '%s: commands available at frozen head\n' "${buildopt_family}"
+done
+
+printf 'Observed request portfolio config: PASS\n'

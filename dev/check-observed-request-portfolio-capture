@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-portfolio-capture.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-request-portfolio-capture.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected capture root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+buildopt_project=${buildopt_temporary}/project
+buildopt_private=${buildopt_temporary}/private
+mkdir -p -- "${buildopt_project}/gradle/wrapper" "${buildopt_private}"
+cp -- "${buildopt_root}/gradlew" "${buildopt_project}/gradlew"
+cp -- "${buildopt_root}/gradle/wrapper/gradle-wrapper.jar" \
+    "${buildopt_root}/gradle/wrapper/gradle-wrapper.properties" \
+    "${buildopt_project}/gradle/wrapper/"
+cat >"${buildopt_project}/settings.gradle" <<'EOF'
+rootProject.name = 'observed-request-portfolio-capture'
+EOF
+cat >"${buildopt_project}/build.gradle" <<'EOF'
+tasks.register('prepare') {
+    def output = layout.buildDirectory.file('prepared.txt')
+    outputs.file(output)
+    doLast { output.get().asFile.text = 'prepared\n' }
+}
+tasks.register('bundle') {
+    dependsOn 'prepare'
+    def output = layout.buildDirectory.file('bundle.txt')
+    outputs.file(output)
+    doLast { output.get().asFile.text = file('build/prepared.txt').text }
+}
+tasks.register('fail') {
+    doLast { throw new GradleException('intentional portfolio failure') }
+}
+EOF
+
+buildopt_binary=${buildopt_temporary}/buildopt
+env GOCACHE="${buildopt_temporary}/go-cache" \
+    "${buildopt_root}/dev/run" --toolchain go -- \
+    go build -o "${buildopt_binary}" ./cmd/buildopt
+
+buildopt_portfolio=${buildopt_private}/requests.json
+buildopt_run() {
+    local buildopt_name=$1
+    shift
+    if ! (cd -- "${buildopt_project}" && env \
+        BUILDOPT_STICKY_WRAPPER_ROOT="${buildopt_project}" \
+        BUILDOPT_STICKY_OBSERVATION=0 \
+        BUILDOPT_REQUEST_PORTFOLIO_OUTPUT="${buildopt_portfolio}" \
+        BUILDOPT_REQUEST_PORTFOLIO_EVIDENCE="${buildopt_private}/${buildopt_name}-evidence.json" \
+        BUILDOPT_REQUEST_PORTFOLIO_CAPTURE="${buildopt_private}/${buildopt_name}-capture.json" \
+        GRADLE_USER_HOME="${buildopt_root}/.tools/gradle-user-home/local" \
+        "${buildopt_root}/dev/run" --toolchain temurin-jdk-21 -- \
+        "${buildopt_binary}" run -- "${buildopt_project}/gradlew" "$@") \
+        >"${buildopt_temporary}/${buildopt_name}.log" 2>&1; then
+        cat "${buildopt_temporary}/${buildopt_name}.log" >&2
+        return 1
+    fi
+}
+
+buildopt_run bundle-1 :bundle --no-daemon --no-build-cache --no-configuration-cache
+buildopt_run bundle-2 :bundle --no-daemon --no-build-cache --no-configuration-cache
+if buildopt_run failure :fail --no-daemon --no-build-cache --no-configuration-cache 2>/dev/null; then
+    printf 'the intentional Gradle failure unexpectedly succeeded\n' >&2
+    exit 1
+fi
+
+jq -e '
+  .schemaVersion=="buildopt.poc/observed-request-portfolio/v1" and
+  .generation==3 and (.entries|length)==2 and
+  ([.entries[]|select(.requestedTasks==[":bundle"] and .observationCount==2 and
+    .eligibleObservationCount==2 and .outcomes.success==2 and
+    .lifecycle=="EVIDENCE_COMPLETE" and .candidateEligible)]|length)==1 and
+  ([.entries[]|select(.observationCount==1 and .outcomes.buildFailure==1 and
+    .eligibleObservationCount==0 and (.candidateEligible|not))]|length)==1 and
+  (.selectionAuthorized|not) and (.activationAuthorized|not) and (.performanceMeasured|not)
+' "${buildopt_portfolio}" >/dev/null
+
+for buildopt_capture in bundle-1 bundle-2; do
+    jq -e '
+      .schemaVersion=="buildopt.poc/request-aligned-producer-capture/v2" and
+      .status=="COMPLETE" and .reason=="" and
+      .gradleArguments==[":bundle","--no-daemon","--no-build-cache","--no-configuration-cache"] and
+      .requestedTasks==[":bundle"] and
+      ([.tasks[].path]|index(":prepare")!=null) and
+      ([.tasks[].path]|index(":bundle")!=null) and
+      ([.tasks[].path|select(startswith(":buildopt"))]|length)==0
+    ' "${buildopt_private}/${buildopt_capture}-capture.json" >/dev/null
+done
+
+for buildopt_evidence in "${buildopt_private}"/*-evidence.json; do
+    [[ $(stat -c '%a' "${buildopt_evidence}") == 600 ]] || {
+        printf 'evidence is not private: %s\n' "${buildopt_evidence}" >&2
+        exit 1
+    }
+done
+find "${buildopt_private}" -name '*.init.gradle' -print -quit | grep -q . && {
+    printf 'an internal observation init script survived the invocation\n' >&2
+    exit 1
+}
+
+printf 'Observed request portfolio same-invocation capture: PASS\n'

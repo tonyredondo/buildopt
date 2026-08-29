@@ -25,36 +25,22 @@ decision.
 
 ## Current experiment status
 
-There is deliberately no new performance percentage. The latest complete
-change-aware producer has 25/25 conclusive adjacent transitions across all five
-public families, but only Spring exposes an action: **1/5** versus the fixed
-**3/5** pre-timing gate. Cause reconstruction explains the failure:
-**23/24** negative transitions change
-no declared input in the fixed requested graph, and the remaining Groovy row
-uses a stale unversioned required JAR while the current producer emits a
-versioned JAR. The stopped detector paired arbitrary commits with one fixed
-leaf workflow; those rows cannot honestly become optimization actions.
+There is deliberately no new performance percentage. The active
+`OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1` route learns across the exact Gradle
+commands customers actually repeat, rather than pairing every commit with one
+fixed leaf command. One digest-bound executable captured 128 ordinary requests
+and 113 adjacent same-command transitions from empty BuildOpt state, without
+starting an extra Gradle build or changing argv.
 
-The latest experimental route was
-`REQUEST_ALIGNED_RECURRENT_CLOSURE_V1`. BuildOpt learned from the exact
-ordinary Gradle command a customer repeats, wait for changes relevant to that
-requested graph and discover current outputs from producer tasks. Its first
-two implementation blocks now pass Gradle 8/9 × Kotlin/Groovy: canonical identity
-is independent of checkout path, all eight graph-affecting bindings change the
-identity, the versioned Groovy JAR is resolved from `:jar`, and missing,
-ambiguous or outside-graph ownership fails typed. The adjacent-transition
-classifier adds 32 cases across all five statuses, derives exact relevant
-closures, binds current renamed outputs and emits no action for unsafe or
-full-graph cases. The fresh 110-transition capture completes Groovy and Spring
-but not Kafka, Micronaut or OpenTelemetry. Independent reconstruction now
-verifies all 110 reports and confirms **2/5** complete inputs versus required
-**5/5**, and **2/5** action families versus required **3/5**, with zero product
-failures. Its terminal scorecard passes capture integrity, **110/110** report
-reconstruction and exact request preservation, and **10/10** static output
-bindings, but it stops the detector at those frozen breadth failures. No
-candidate ran and no timing row exists. Installed value, chronological value,
-confidence, payback and overhead remain `NOT_MEASURED_NOT_AUTHORIZED`; no
-speedup or successor is authorized.
+Spring, Kafka and Groovy each reach five relevant/action transitions.
+Micronaut records two and OpenTelemetry records none, yielding **3/5 complete
+families** and **4/5 action-bearing families**, with zero build or product
+failures. OpenTelemetry and Micronaut keep unavailable task-input evidence
+typed and incomplete rather than manufacturing opportunity. This demonstrates
+broader generic structural opportunity, not acceleration. Selection,
+activation and timing remain false. The next block independently reconstructs
+all 113 transitions and applies the unchanged 5/5 completeness plus 3/5 action
+gate before any wall-time experiment can open.
 
 ## Mechanisms
 

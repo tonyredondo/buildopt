@@ -16,6 +16,9 @@ const (
 	requestPortfolioOutputEnvironment        = "BUILDOPT_REQUEST_PORTFOLIO_OUTPUT"
 	requestPortfolioEvidenceEnvironment      = "BUILDOPT_REQUEST_PORTFOLIO_EVIDENCE"
 	requestPortfolioObservationIDEnvironment = "BUILDOPT_REQUEST_PORTFOLIO_OBSERVATION_ID"
+	requestPortfolioCaptureEnvironment       = "BUILDOPT_REQUEST_PORTFOLIO_CAPTURE"
+	requestPortfolioArgumentsEnvironment     = "BUILDOPT_REQUEST_PORTFOLIO_ARGUMENTS"
+	requestPortfolioGeneratedAtEnvironment   = "BUILDOPT_REQUEST_PORTFOLIO_GENERATED_AT"
 )
 
 // requestPortfolioState is a post-build observation companion. It consumes
@@ -34,6 +37,12 @@ type requestPortfolioState struct {
 	bypassed                 bool
 	execution                childExecution
 	executionSeen            bool
+	capturePath              string
+	preserveCapture          bool
+	initScriptPath           string
+	captureArguments         string
+	capturePrepared          bool
+	captureErr               error
 }
 
 func newRequestPortfolioStateAt(root string, childArgs []string, startedAt time.Time) *requestPortfolioState {
@@ -90,12 +99,17 @@ func (state *requestPortfolioState) childEnvironment(existing map[string]string)
 	if state == nil || state.evidencePath == "" {
 		return existing
 	}
-	result := make(map[string]string, len(existing)+2)
+	result := make(map[string]string, len(existing)+5)
 	for name, value := range existing {
 		result[name] = value
 	}
 	result[requestPortfolioEvidenceEnvironment] = state.evidencePath
 	result[requestPortfolioObservationIDEnvironment] = state.observationID
+	if state.capturePrepared {
+		result[requestPortfolioCaptureEnvironment] = state.capturePath
+		result[requestPortfolioArgumentsEnvironment] = state.captureArguments
+		result[requestPortfolioGeneratedAtEnvironment] = state.startedAt.UTC().Format(time.RFC3339Nano)
+	}
 	return result
 }
 
@@ -111,6 +125,7 @@ func (state *requestPortfolioState) finish(exitCode int, completedAt time.Time) 
 	if state == nil || state.outputPath == "" {
 		return nil
 	}
+	defer state.cleanupCaptureArtifacts()
 	if completedAt.Before(state.startedAt) {
 		completedAt = state.startedAt
 	}
@@ -135,14 +150,21 @@ func (state *requestPortfolioState) finish(exitCode int, completedAt time.Time) 
 	var evidenceErr error
 	if state.evidencePath != "" {
 		evidence, err := requestportfolio.LoadEvidence(state.evidencePath, state.observationID, state.argumentsSHA)
-		if err != nil {
-			evidenceErr = err
-		} else {
+		if err != nil && state.captureErr == nil && state.capturePrepared && !state.bypassed {
+			evidenceErr = state.materializeEvidence()
+			evidence, err = requestportfolio.LoadEvidence(state.evidencePath, state.observationID, state.argumentsSHA)
+		}
+		if state.captureErr != nil {
+			evidenceErr = errors.Join(evidenceErr, state.captureErr)
+		}
+		if err == nil {
 			observation.CompatibilityIdentitySHA256 = evidence.CompatibilityIdentitySHA256
 			observation.CompatibilityEvidence = "EXACT"
 			observation.RequestedTasks = append([]string(nil), evidence.RequestedTasks...)
 			observation.RequestGraphIdentitySHA256 = evidence.RequestGraphIdentitySHA256
 			observation.RequestGraphEvidence = "EXACT"
+		} else {
+			evidenceErr = errors.Join(evidenceErr, err)
 		}
 	}
 	store, err := requestportfolio.NewStore(state.outputPath)

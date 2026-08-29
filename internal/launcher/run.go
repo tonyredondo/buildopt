@@ -78,6 +78,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		childArgs []string,
 		environmentOverrides map[string]string,
 	) childExecution {
+		executionArgs := requestPortfolio.prepareChild(childArgs)
 		environmentOverrides = requestPortfolio.childEnvironment(environmentOverrides)
 		if ordinaryObservation != nil {
 			ordinaryObservation.finishCache(time.Now())
@@ -85,7 +86,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		var execution childExecution
 		if impactTiming != nil {
 			execution = impactTiming.execute(
-				childArgs,
+				executionArgs,
 				environmentOverrides,
 				stdin,
 				childStdout,
@@ -93,7 +94,7 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 			)
 		} else {
 			execution = executeChildWithReserved(
-				childArgs,
+				executionArgs,
 				environmentOverrides,
 				additionalReservedEnvironment,
 				stdin,

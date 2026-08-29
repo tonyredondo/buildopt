@@ -1,0 +1,17 @@
+{
+  "family": "opentelemetry-java-instrumentation",
+  "dsl": "KOTLIN",
+  "observations": 30,
+  "comparableTransitions": 25,
+  "relevantTransitions": 0,
+  "actionTransitions": 0,
+  "productFailures": 0,
+  "buildFailures": 0,
+  "stopReason": "OBSERVATION_BUDGET_EXHAUSTED",
+  "inputComplete": false,
+  "portfolio": "portfolios/opentelemetry-java-instrumentation.json",
+  "portfolioSha256": "d2439aa1724380cfd47b9d8fa7e2c570edc3c8b21477a3a30be95c0d4522e5d7",
+  "performanceMeasured": false,
+  "selectionAuthorized": false,
+  "activationAuthorized": false
+}
