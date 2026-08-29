@@ -166,10 +166,12 @@ five prepared public histories. The runner starts from empty state, preserves
 typed incomplete evidence and emits no timing or activation. The compactor
 uses deterministic gzip while retaining uncompressed content digests. The
 final checker compiles the executable, verifies every portable source binding,
-chronological row, portfolio and compressed artifact, and preserves the digest
-of the path-dependent Go binary that performed the campaign. It does not rerun
-the public builds, claim byte reproduction of that binary or apply the
-independent breadth decision owned by `SWL-PORTFOLIO-004`.
+chronological row, portfolio and compressed artifact, and preserves the
+path-dependent campaign launcher and Go binary digests as historical
+provenance. A separate digest over the ordered launcher source contents makes
+the current-source binding independent of checkout location. The checker does
+not rerun the public builds, claim byte reproduction of the campaign binary or
+apply the independent breadth decision owned by `SWL-PORTFOLIO-004`.
 
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:

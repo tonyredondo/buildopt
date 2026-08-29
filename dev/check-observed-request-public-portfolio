@@ -45,11 +45,21 @@ buildopt_sha() {
     sha256sum "$1" | awk '{print $1}'
 }
 
+# Hash the ordered content digests rather than sha256sum's path-bearing output.
+# This binding must remain identical when CI checks out the same sources under
+# a different absolute directory.
+buildopt_combined_content_sha() {
+    local buildopt_file
+    for buildopt_file in "$@"; do
+        buildopt_sha "${buildopt_file}"
+    done | sha256sum | awk '{print $1}'
+}
+
 buildopt_expected_runner=$(buildopt_sha "${buildopt_root}/dev/run-observed-request-public-portfolio")
 buildopt_expected_classifier=$(buildopt_sha "${buildopt_root}/internal/requestaligned/classification.go")
-buildopt_expected_launcher=$(sha256sum \
+buildopt_expected_launcher=$(buildopt_combined_content_sha \
     "${buildopt_root}/internal/launcher/request_portfolio.go" \
-    "${buildopt_root}/internal/launcher/request_portfolio_capture.go" | sha256sum | awk '{print $1}')
+    "${buildopt_root}/internal/launcher/request_portfolio_capture.go")
 buildopt_expected_init=$(buildopt_sha "${buildopt_root}/internal/launcher/request_portfolio.init.gradle")
 buildopt_expected_compactor=$(buildopt_sha "${buildopt_root}/dev/compact-observed-request-public-portfolio")
 env GOCACHE="${buildopt_temporary}/go-cache" "${buildopt_root}/dev/run" --toolchain go -- \
@@ -71,7 +81,8 @@ jq -e \
   .workItem=="SWL-PORTFOLIO-003" and
   .configSha256==$config and .cohortSha256==$cohort and
   (.executableSha256|test("^[0-9a-f]{64}$")) and .runnerSha256==$runner and
-  .classifierSha256==$classifier and .launcherSha256==$launcher and .initSha256==$init and
+  .classifierSha256==$classifier and (.launcherSha256|test("^[0-9a-f]{64}$")) and
+  .portableLauncherSourceSha256==$launcher and .initSha256==$init and
   .schedule=="FIXED_THREE_COMMAND_CYCLE_OVER_CHRONOLOGICAL_FIRST_PARENT_COMMITS" and
   .comparison=="PREVIOUS_SUCCESSFUL_OBSERVATION_OF_THE_SAME_EXACT_COMMAND" and
   .observationBudgetPerFamily==30 and .requiredRelevantTransitionsPerFamily==5 and
