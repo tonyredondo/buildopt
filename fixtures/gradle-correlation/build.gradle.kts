@@ -11,6 +11,13 @@ layout.buildDirectory.set(layout.dir(fixtureOutputRoot.map { it.resolve("root") 
 subprojects {
     layout.buildDirectory.set(layout.dir(fixtureOutputRoot.map { it.resolve(project.name) }))
     pluginManager.apply("dev.buildopt.correlation-fixture")
+
+    // The root clean task owns every fixture output directory. Keep both
+    // subproject workers parallel with each other, but never let clean remove
+    // their barrier markers after either worker has announced readiness.
+    tasks.named("correlationFixture") {
+        mustRunAfter(rootProject.tasks.named("clean"))
+    }
 }
 
 tasks.named("clean") {
