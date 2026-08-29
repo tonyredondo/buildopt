@@ -84,7 +84,7 @@ func prepareNewPrivateObservationPath(path string) error {
 		return fmt.Errorf("create observed request capture directory: %w", err)
 	}
 	info, err := os.Lstat(parent)
-	if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 || info.Mode().Perm()&0o077 != 0 {
+	if err != nil || !privateManagedDirectoryInfo(info) {
 		return errors.New("observed request capture directory is not private")
 	}
 	if _, err := os.Lstat(path); err == nil {
@@ -135,7 +135,7 @@ func (state *requestPortfolioState) cleanupCaptureArtifacts() {
 
 func loadRequestPortfolioCapture(path string) (requestaligned.Capture, error) {
 	info, err := os.Lstat(path)
-	if err != nil || !info.Mode().IsRegular() || info.Mode().Perm()&0o077 != 0 || info.Size() < 1 || info.Size() > maximumRequestPortfolioCaptureBytes {
+	if err != nil || !privateGatewayFileInfo(info) || info.Size() < 1 || info.Size() > maximumRequestPortfolioCaptureBytes {
 		return requestaligned.Capture{}, errors.New("observed request capture file is unsafe or too large")
 	}
 	file, err := os.Open(path)
