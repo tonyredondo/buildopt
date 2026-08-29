@@ -1389,12 +1389,13 @@ func TestReconcileCannotCollectBlobBetweenPendingPublishAndMetadata(
 
 func TestStartupReconciliationRepairsAuditAndDeletesOrphans(t *testing.T) {
 	ctx := context.Background()
+	testNow := time.Now().UTC().Truncate(time.Second)
 	root := filepath.Join(t.TempDir(), "shared")
 	storage, err := Open(ctx, root)
 	if err != nil {
 		t.Fatal(err)
 	}
-	storage.clock = func() time.Time { return lifecycleTestNow }
+	storage.clock = func() time.Time { return testNow }
 	publicKey, privateKey, err := ed25519.GenerateKey(nil)
 	if err != nil {
 		t.Fatal(err)
@@ -1405,6 +1406,7 @@ func TestStartupReconciliationRepairsAuditAndDeletesOrphans(t *testing.T) {
 		"owner-one",
 		8,
 	)
+	request.LeaseExpiresAt = testNow.Add(time.Hour)
 	if _, _, err := storage.StartAttempt(ctx, request); err != nil {
 		t.Fatal(err)
 	}
@@ -1417,9 +1419,8 @@ func TestStartupReconciliationRepairsAuditAndDeletesOrphans(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	verified := verifyLifecycleDecision(
-		t,
-		map[string]ed25519.PublicKey{testDecisionKeyID: publicKey},
+	verified, err := VerifyCommitDecision(
+		ctx,
 		signLifecycleDecision(
 			t,
 			privateKey,
@@ -1427,9 +1428,15 @@ func TestStartupReconciliationRepairsAuditAndDeletesOrphans(t *testing.T) {
 			"decision-startup-repair",
 			[]CommitObject{pending.Object},
 			testRevocationEpoch,
-			lifecycleTestNow,
+			testNow,
 		),
+		map[string]ed25519.PublicKey{testDecisionKeyID: publicKey},
+		testRevocationEpoch,
+		testNow,
 	)
+	if err != nil {
+		t.Fatal(err)
+	}
 	storage.testHooks.beforeControlIndex = func() error {
 		return errors.New("control unavailable")
 	}
@@ -1458,6 +1465,8 @@ func TestStartupReconciliationRepairsAuditAndDeletesOrphans(t *testing.T) {
 	if err != nil {
 		t.Fatalf("startup reconcile: %v", err)
 	}
+	// Keep cache-entry expiry inside the fixture's lifecycle window.
+	reopened.clock = func() time.Time { return testNow }
 	defer reopened.Close()
 	assertRowCount(
 		t,
