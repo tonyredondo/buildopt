@@ -148,7 +148,7 @@ launcher, runs concurrent updates under the race detector, checks deterministic
 wrapper writes only after the existing Gradle invocation, stores a framed argv
 digest rather than raw arguments and needs no server. It does not execute a
 candidate or measure wall time. Fresh public capture is now complete and
-`SWL-PORTFOLIO-004` owns independent breadth reconstruction.
+the independent breadth decision is checked separately.
 
 Capture and validate the fresh public request portfolio with:
 
@@ -170,8 +170,24 @@ chronological row, portfolio and compressed artifact, and preserves the
 path-dependent campaign launcher and Go binary digests as historical
 provenance. A separate digest over the ordered launcher source contents makes
 the current-source binding independent of checkout location. The checker does
-not rerun the public builds, claim byte reproduction of the campaign binary or
-apply the independent breadth decision owned by `SWL-PORTFOLIO-004`.
+not rerun the public builds or claim byte reproduction of the campaign binary.
+
+Capture the reportable `base -> target` change inputs from the prepared public
+Git histories, then reproduce the independent breadth decision with:
+
+```bash
+./dev/capture-observed-request-portfolio-changes HISTORY_ROOT \
+  "$PWD/benchmarks/results/observed-request-public-portfolio-v1/transitions.jsonl" \
+  "$PWD/benchmarks/results/observed-request-public-portfolio-changes-v1.jsonl"
+./dev/check-observed-request-portfolio-breadth-gate
+```
+
+The checked manifest is the immutable independent source for changed paths;
+the gate does not read `summary.json`. It verifies 128 observations,
+regenerates 105 reports and validates eight typed unavailable rows. Summary,
+report and change-manifest tampering fail closed. The checked result passes
+exact-action breadth at 4/5 but fails complete inputs at 3/5 versus 5/5, so no
+candidate or timing campaign is authorized and `SWL-PORTFOLIO-007` is next.
 
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:

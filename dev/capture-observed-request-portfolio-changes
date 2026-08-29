@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+if (($# != 3)); then
+    printf 'usage: %s HISTORY_ROOT TRANSITIONS_JSONL OUTPUT_JSONL\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_history_root=$1
+buildopt_transitions=$2
+buildopt_output=$3
+[[ ${buildopt_history_root} == /* && -d ${buildopt_history_root} ]] || {
+    printf 'history root must be an existing absolute directory\n' >&2
+    exit 1
+}
+[[ ${buildopt_transitions} == /* && -f ${buildopt_transitions} && ! -L ${buildopt_transitions} ]] || {
+    printf 'transitions ledger must be an existing absolute regular file\n' >&2
+    exit 1
+}
+[[ ${buildopt_output} == /* ]] || {
+    printf 'output must be an absolute path\n' >&2
+    exit 1
+}
+for buildopt_command in git jq mktemp; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-observed-portfolio-changes.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-observed-portfolio-changes.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected change root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+: >"${buildopt_temporary}/changes.jsonl"
+
+while IFS= read -r buildopt_row; do
+    buildopt_report=$(jq -er '.report' <<<"${buildopt_row}")
+    [[ -n ${buildopt_report} ]] || continue
+    buildopt_family=$(jq -er '.family | select(test("^[a-z0-9-]+$"))' <<<"${buildopt_row}")
+    buildopt_ordinal=$(jq -er '.observationOrdinal | select(type=="number" and .>=1 and .<=30)' <<<"${buildopt_row}")
+    buildopt_base=$(jq -er '.baseRevision | select(test("^[0-9a-f]{40}$"))' <<<"${buildopt_row}")
+    buildopt_target=$(jq -er '.targetRevision | select(test("^[0-9a-f]{40}$"))' <<<"${buildopt_row}")
+    buildopt_history=${buildopt_history_root}/${buildopt_family}
+    git -C "${buildopt_history}" cat-file -e "${buildopt_base}^{commit}" 2>/dev/null || {
+        printf 'base revision is unavailable for %s: %s\n' "${buildopt_family}" "${buildopt_base}" >&2
+        exit 1
+    }
+    git -C "${buildopt_history}" cat-file -e "${buildopt_target}^{commit}" 2>/dev/null || {
+        printf 'target revision is unavailable for %s: %s\n' "${buildopt_family}" "${buildopt_target}" >&2
+        exit 1
+    }
+    # Match the frozen capture contract: deleted paths cannot intersect the
+    # target invocation's current task inputs and were intentionally excluded.
+    git -C "${buildopt_history}" diff --name-only --diff-filter=ACMRTUXB -z \
+        "${buildopt_base}" "${buildopt_target}" \
+        >"${buildopt_temporary}/paths"
+    buildopt_changed_paths=$(jq -Rs 'split("\u0000")[:-1]' <"${buildopt_temporary}/paths")
+    jq -nc --arg family "${buildopt_family}" --argjson observationOrdinal "${buildopt_ordinal}" \
+        --arg baseRevision "${buildopt_base}" --arg targetRevision "${buildopt_target}" \
+        --argjson changedPaths "${buildopt_changed_paths}" '
+      {family:$family,observationOrdinal:$observationOrdinal,baseRevision:$baseRevision,
+       targetRevision:$targetRevision,changedPaths:$changedPaths}
+    ' >>"${buildopt_temporary}/changes.jsonl"
+done <"${buildopt_transitions}"
+
+jq -s -e '
+  length==105 and
+  (map(.family+":"+(.observationOrdinal|tostring))|unique|length)==length and
+  all(.[];
+    (.family|test("^[a-z0-9-]+$")) and .observationOrdinal>=1 and .observationOrdinal<=30 and
+    (.baseRevision|test("^[0-9a-f]{40}$")) and (.targetRevision|test("^[0-9a-f]{40}$")) and
+    (.changedPaths|type)=="array" and all(.changedPaths[];type=="string" and length>0))
+' "${buildopt_temporary}/changes.jsonl" >/dev/null || {
+    printf 'captured change manifest is incomplete or invalid\n' >&2
+    exit 1
+}
+install -m 0600 "${buildopt_temporary}/changes.jsonl" "${buildopt_output}"
+printf 'Observed request portfolio changes: 105 report inputs captured\n'

@@ -1,0 +1,405 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+if (($# != 0 && $# != 3)); then
+    printf 'usage: %s [CAPTURE_DIR CHANGE_MANIFEST OUTPUT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_route_contract=${buildopt_root}/specs/poc-observed-request-portfolio-v1.json
+buildopt_config=${buildopt_root}/benchmarks/observed-request-portfolio-v1.json
+buildopt_cohort=${buildopt_root}/benchmarks/results/fresh-generic-optimization-v1/cohort.json
+buildopt_capture=${1:-${buildopt_root}/benchmarks/results/observed-request-public-portfolio-v1}
+buildopt_changes=${2:-${buildopt_root}/benchmarks/results/observed-request-public-portfolio-changes-v1.jsonl}
+buildopt_output=${3:-${buildopt_root}/benchmarks/results/observed-request-portfolio-breadth-gate-v1.json}
+[[ ${buildopt_capture} == /* && -d ${buildopt_capture} ]] || {
+    printf 'capture directory must be an existing absolute path\n' >&2
+    exit 1
+}
+[[ ${buildopt_changes} == /* && -f ${buildopt_changes} && ! -L ${buildopt_changes} ]] || {
+    printf 'change manifest must be an existing absolute regular file\n' >&2
+    exit 1
+}
+[[ ${buildopt_output} == /* ]] || buildopt_output=${PWD}/${buildopt_output}
+for buildopt_command in awk cmp gzip jq mktemp sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-observed-portfolio-breadth.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-observed-portfolio-breadth.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected breadth root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+mkdir -p "${buildopt_temporary}/captures" "${buildopt_temporary}/reports"
+
+buildopt_sha() {
+    sha256sum "$1" | awk '{print $1}'
+}
+
+buildopt_safe_reference() {
+    local buildopt_relative=$1
+    [[ -n ${buildopt_relative} && ${buildopt_relative} != /* && ${buildopt_relative} != *'..'* &&
+       ${buildopt_relative} != *'//'* && ${buildopt_relative} != *$'\n'* ]]
+}
+
+buildopt_materialize() {
+    local buildopt_relative=$1
+    local buildopt_expected=$2
+    local buildopt_destination=$3
+    buildopt_safe_reference "${buildopt_relative}" || return 1
+    local buildopt_physical=${buildopt_capture}/${buildopt_relative}.gz
+    [[ -f ${buildopt_physical} && ! -L ${buildopt_physical} ]] || return 1
+    gzip -t -- "${buildopt_physical}" || return 1
+    gzip -cd -- "${buildopt_physical}" >"${buildopt_destination}"
+    [[ $(buildopt_sha "${buildopt_destination}") == "${buildopt_expected}" ]]
+}
+
+jq -e '
+  .schemaVersion=="buildopt.poc/observed-request-portfolio-contract/v1" and
+  .workItem=="SWL-PORTFOLIO-000" and .currentBlock=="SWL-PORTFOLIO-007" and
+  ([.blocks[]|select(.id=="SWL-PORTFOLIO-004" and .state=="DONE" and
+    .outcome=="STOP_INCOMPLETE_OBSERVED_REQUEST_PORTFOLIO_INPUT")]|length)==1 and
+  ([.blocks[]|select((.id=="SWL-PORTFOLIO-005" or .id=="SWL-PORTFOLIO-006") and
+    .state=="NOT_AUTHORIZED")]|length)==2 and .nextBlock=="SWL-PORTFOLIO-007" and
+  .breadthGate.completeFamilyInputsRequired==5 and
+  .breadthGate.relevantTransitionsPerFamilyRequired==5 and
+  .breadthGate.familiesWithActionsRequired==3 and
+  .breadthGate.productFailureBudget==0 and
+  (.breadthGate.timingAuthorizedBeforeBreadth|not) and
+  (.breadthGate.activationAuthorizedBeforeValue|not)
+' "${buildopt_route_contract}" >/dev/null || {
+    printf 'observed request portfolio route contract is invalid\n' >&2
+    exit 1
+}
+jq -e '
+  .schemaVersion=="buildopt.poc/observed-request-public-portfolio-contract/v1" and
+  .workItem=="SWL-PORTFOLIO-003" and
+  .comparison=="PREVIOUS_SUCCESSFUL_OBSERVATION_OF_THE_SAME_EXACT_COMMAND" and
+  .observationBudgetPerFamily==30 and .requiredRelevantTransitionsPerFamily==5 and
+  .sameInvocationEvidence and .extraGradleBuilds==0 and .ordinaryRequestsOnly and
+  .exactRequestPreserved and (.historicalBuildOptStateImported|not) and
+  (.historicalBuildOptTimingImported|not) and (.historicalBuildOptActionImported|not) and
+  (.performanceMeasured|not) and (.selectionAuthorized|not) and (.activationAuthorized|not) and
+  .storage.encoding=="GZIP_RFC1952" and .storage.contentDigestsAddressUncompressedJson
+' "${buildopt_capture}/contract.json" >/dev/null || {
+    printf 'observed request portfolio capture contract is invalid\n' >&2
+    exit 1
+}
+
+jq -s '.' "${buildopt_capture}/observations.jsonl" >"${buildopt_temporary}/observations.json"
+jq -s '.' "${buildopt_changes}" >"${buildopt_temporary}/changes.json"
+jq -e --slurpfile config "${buildopt_config}" --slurpfile cohort "${buildopt_cohort}" '
+  def commands($family): $config[0].families[]|select(.family==$family)|.commands;
+  def targets($family): $cohort[0].families[]|select(.family==$family)|[.reserve[].sha,.primary[].sha];
+  length==128 and
+  ([.[].family]|unique|sort)==([ $config[0].families[].family ]|sort) and
+  all(.[];
+    .exitCode==0 and (.productFailure|not) and .performanceMeasured==false and
+    .activationAuthorized==false and .observationOrdinal>=1 and .observationOrdinal<=30 and
+    .commandIndex==((.observationOrdinal-1)%3) and
+    .command==commands(.family)[.commandIndex] and
+    .revision==targets(.family)[.observationOrdinal-1] and
+    (.captureSha256|test("^[0-9a-f]{64}$")) and
+    ((.captureComplete and .exactArgumentsPreserved and
+      (.argumentsSha256|test("^[0-9a-f]{64}$")) and
+      (.evidenceSha256|test("^[0-9a-f]{64}$"))) or
+     ((.captureComplete|not) and .exactArgumentsPreserved and .argumentsSha256=="" and
+      .evidenceSha256=="")))
+' "${buildopt_temporary}/observations.json" >/dev/null || {
+    printf 'observation ledger is invalid\n' >&2
+    exit 1
+}
+jq -e '
+  length==105 and
+  (map(.family+":"+(.observationOrdinal|tostring))|unique|length)==length and
+  all(.[];
+    (.family|test("^[a-z0-9-]+$")) and .observationOrdinal>=1 and .observationOrdinal<=30 and
+    (.baseRevision|test("^[0-9a-f]{40}$")) and (.targetRevision|test("^[0-9a-f]{40}$")) and
+    (.changedPaths|type)=="array" and all(.changedPaths[];type=="string" and length>0))
+' "${buildopt_temporary}/changes.json" >/dev/null || {
+    printf 'independent change manifest is invalid\n' >&2
+    exit 1
+}
+
+# Materialize and verify every observation, including the 15 baseline rows and
+# the eight typed incomplete rows that cannot produce classifier reports.
+while IFS= read -r buildopt_observation; do
+    buildopt_family=$(jq -er '.family | select(test("^[a-z0-9-]+$"))' <<<"${buildopt_observation}")
+    buildopt_ordinal=$(jq -er '.observationOrdinal' <<<"${buildopt_observation}")
+    buildopt_capture_ref=$(jq -er '.capture' <<<"${buildopt_observation}")
+    buildopt_capture_sha=$(jq -er '.captureSha256 | select(test("^[0-9a-f]{64}$"))' <<<"${buildopt_observation}")
+    buildopt_materialized=${buildopt_temporary}/captures/${buildopt_family}-${buildopt_ordinal}.json
+    buildopt_materialize "${buildopt_capture_ref}" "${buildopt_capture_sha}" "${buildopt_materialized}" || {
+        printf 'capture is invalid: %s\n' "${buildopt_capture_ref}" >&2
+        exit 1
+    }
+    buildopt_evidence_sha=$(jq -r '.evidenceSha256' <<<"${buildopt_observation}")
+    if [[ -n ${buildopt_evidence_sha} ]]; then
+        buildopt_evidence_ref=$(jq -er '.evidence' <<<"${buildopt_observation}")
+        buildopt_materialize "${buildopt_evidence_ref}" "${buildopt_evidence_sha}" \
+            "${buildopt_temporary}/captures/${buildopt_family}-${buildopt_ordinal}-evidence.json" || {
+            printf 'same-invocation evidence is invalid: %s\n' "${buildopt_evidence_ref}" >&2
+            exit 1
+        }
+    fi
+done <"${buildopt_capture}/observations.jsonl"
+
+buildopt_classifier=${buildopt_temporary}/request-aligned-classifier
+env GOCACHE="${buildopt_temporary}/go-cache" "${buildopt_root}/dev/run" --toolchain go -- \
+    go build -o "${buildopt_classifier}" ./cmd/request-aligned-classifier
+: >"${buildopt_temporary}/assessments.jsonl"
+buildopt_row_count=0
+
+while IFS= read -r buildopt_row; do
+    ((buildopt_row_count += 1))
+    buildopt_family=$(jq -er '.family | select(test("^[a-z0-9-]+$"))' <<<"${buildopt_row}")
+    buildopt_ordinal=$(jq -er '.observationOrdinal | select(type=="number" and .>=1 and .<=30)' <<<"${buildopt_row}")
+    buildopt_command_index=$(jq -er '.commandIndex | select(type=="number" and .>=0 and .<3)' <<<"${buildopt_row}")
+    buildopt_target=$(jq -er '.targetRevision | select(test("^[0-9a-f]{40}$"))' <<<"${buildopt_row}")
+    buildopt_target_observation=$(jq -ce --arg family "${buildopt_family}" \
+        --argjson ordinal "${buildopt_ordinal}" --arg target "${buildopt_target}" \
+        --argjson commandIndex "${buildopt_command_index}" --argjson command "$(jq -c '.command' <<<"${buildopt_row}")" '
+      [.[]|select(.family==$family and .observationOrdinal==$ordinal and .revision==$target and
+        .commandIndex==$commandIndex and .command==$command)] | select(length==1) | .[0]
+    ' "${buildopt_temporary}/observations.json") || {
+        printf 'transition does not bind one target observation: %s/%s\n' "${buildopt_family}" "${buildopt_ordinal}" >&2
+        exit 1
+    }
+    jq -e '
+      .performanceMeasured==false and .activationAuthorized==false and
+      (.status|IN("RELEVANT_COMPLETE","IRRELEVANT_TO_REQUEST","GLOBAL_OR_AMBIGUOUS","INPUT_UNAVAILABLE"))
+    ' <<<"${buildopt_row}" >/dev/null || {
+        printf 'transition row authority is invalid: %s/%s\n' "${buildopt_family}" "${buildopt_ordinal}" >&2
+        exit 1
+    }
+
+    buildopt_report_ref=$(jq -r '.report' <<<"${buildopt_row}")
+    buildopt_report_sha=$(jq -r '.reportSha256' <<<"${buildopt_row}")
+    if [[ -z ${buildopt_report_ref} ]]; then
+        jq -e --argjson target "${buildopt_target_observation}" '
+          .status=="INPUT_UNAVAILABLE" and .reason=="SAME_INVOCATION_EVIDENCE_INCOMPLETE" and
+          .baseRevision=="" and .reportSha256=="" and (.inputComplete|not) and
+          .testableActions==0 and .candidateTaskCount==0 and .omittedTaskCount==0 and
+          .omittedOutputCount==0 and ($target.captureComplete|not) and
+          $target.exactArgumentsPreserved and $target.exitCode==0 and ($target.productFailure|not)
+        ' <<<"${buildopt_row}" >/dev/null || {
+            printf 'typed unavailable transition is invalid: %s/%s\n' "${buildopt_family}" "${buildopt_ordinal}" >&2
+            exit 1
+        }
+        jq -e '.status=="UNAVAILABLE" and .reason=="TASK_INPUT_EVIDENCE_UNAVAILABLE"' \
+            "${buildopt_temporary}/captures/${buildopt_family}-${buildopt_ordinal}.json" >/dev/null || {
+            printf 'typed unavailable transition lacks capture evidence: %s/%s\n' "${buildopt_family}" "${buildopt_ordinal}" >&2
+            exit 1
+        }
+        jq -nc --arg family "${buildopt_family}" --argjson ordinal "${buildopt_ordinal}" \
+            --arg targetRevision "${buildopt_target}" '
+          {family:$family,observationOrdinal:$ordinal,targetRevision:$targetRevision,
+           rowKind:"TYPED_INPUT_UNAVAILABLE",status:"INPUT_UNAVAILABLE",reason:"SAME_INVOCATION_EVIDENCE_INCOMPLETE",
+           inputComplete:false,completeAction:false,productFailure:false,reportSha256:null,
+           actionBindingSha256:null}
+        ' >>"${buildopt_temporary}/assessments.jsonl"
+        continue
+    fi
+
+    [[ ${buildopt_report_ref} =~ ^reports/${buildopt_family}/[0-9]{2}-[0-9a-f]{12}\.json$ &&
+       ${buildopt_report_sha} =~ ^[0-9a-f]{64}$ ]] || {
+        printf 'transition report reference is invalid: %s\n' "${buildopt_report_ref}" >&2
+        exit 1
+    }
+    buildopt_expected_report=${buildopt_temporary}/reports/${buildopt_row_count}-expected.json
+    buildopt_materialize "${buildopt_report_ref}" "${buildopt_report_sha}" "${buildopt_expected_report}" || {
+        printf 'transition report digest is invalid: %s\n' "${buildopt_report_ref}" >&2
+        exit 1
+    }
+    buildopt_base=$(jq -er '.baseRevision | select(test("^[0-9a-f]{40}$"))' <<<"${buildopt_row}")
+    buildopt_base_observation=$(jq -ce --arg family "${buildopt_family}" --arg base "${buildopt_base}" \
+        --argjson commandIndex "${buildopt_command_index}" --argjson ordinal "${buildopt_ordinal}" '
+      [.[]|select(.family==$family and .revision==$base and .commandIndex==$commandIndex and
+        .observationOrdinal<$ordinal and .exitCode==0 and (.productFailure|not) and
+        .captureComplete and .exactArgumentsPreserved)] | select(length==1) | .[0]
+    ' "${buildopt_temporary}/observations.json") || {
+        printf 'transition does not bind one successful base observation: %s/%s\n' "${buildopt_family}" "${buildopt_ordinal}" >&2
+        exit 1
+    }
+    buildopt_latest_base=$(jq -r --arg family "${buildopt_family}" --argjson commandIndex "${buildopt_command_index}" \
+        --argjson ordinal "${buildopt_ordinal}" '
+      [.[]|select(.family==$family and .commandIndex==$commandIndex and .observationOrdinal<$ordinal and
+        .exitCode==0 and (.productFailure|not) and .captureComplete and .exactArgumentsPreserved)] |
+      sort_by(.observationOrdinal) | last | .revision
+    ' "${buildopt_temporary}/observations.json")
+    [[ ${buildopt_latest_base} == "${buildopt_base}" ]] || {
+        printf 'transition skipped a later successful observation: %s/%s\n' "${buildopt_family}" "${buildopt_ordinal}" >&2
+        exit 1
+    }
+    buildopt_changed_paths=$(jq -ce --arg family "${buildopt_family}" --argjson ordinal "${buildopt_ordinal}" \
+        --arg base "${buildopt_base}" --arg target "${buildopt_target}" '
+      [.[]|select(.family==$family and .observationOrdinal==$ordinal and .baseRevision==$base and
+        .targetRevision==$target)] | select(length==1) | .[0].changedPaths
+    ' "${buildopt_temporary}/changes.json") || {
+        printf 'transition lacks one independent change set: %s/%s\n' "${buildopt_family}" "${buildopt_ordinal}" >&2
+        exit 1
+    }
+    jq -e --argjson changedPaths "${buildopt_changed_paths}" '.changedPaths==$changedPaths' \
+        "${buildopt_expected_report}" >/dev/null || {
+        printf 'report changed paths do not match independent Git evidence: %s\n' "${buildopt_report_ref}" >&2
+        exit 1
+    }
+
+    buildopt_transition=${buildopt_temporary}/transition-${buildopt_row_count}.json
+    jq -n --arg generatedAt "$(jq -r '.generatedAt' <<<"${buildopt_row}")" \
+        --arg base "${buildopt_base}" --arg target "${buildopt_target}" \
+        --argjson changedPaths "${buildopt_changed_paths}" \
+        --slurpfile baseCapture "${buildopt_temporary}/captures/${buildopt_family}-$(jq -r '.observationOrdinal' <<<"${buildopt_base_observation}").json" \
+        --slurpfile targetCapture "${buildopt_temporary}/captures/${buildopt_family}-${buildopt_ordinal}.json" '
+      {schemaVersion:"buildopt.poc/request-aligned-transition/v2",generatedAt:$generatedAt,
+       baseRevision:$base,targetRevision:$target,changedPaths:$changedPaths,
+       baseCapture:$baseCapture[0],targetCapture:$targetCapture[0]}
+    ' >"${buildopt_transition}"
+    buildopt_regenerated=${buildopt_temporary}/reports/${buildopt_row_count}-regenerated.json
+    "${buildopt_classifier}" --input "${buildopt_transition}" --output "${buildopt_regenerated}"
+    cmp -s "${buildopt_expected_report}" "${buildopt_regenerated}" || {
+        printf 'report is not reproducible from independent inputs: %s\n' "${buildopt_report_ref}" >&2
+        exit 1
+    }
+    jq -e --argjson row "${buildopt_row}" '
+      .status==$row.status and .reason==$row.reason and .inputComplete==$row.inputComplete and
+      .testableActions==$row.testableActions and (.candidateTasks|length)==$row.candidateTaskCount and
+      (.omittedTasks|length)==$row.omittedTaskCount and (.omittedOutputs|length)==$row.omittedOutputCount
+    ' "${buildopt_regenerated}" >/dev/null || {
+        printf 'transition ledger does not match regenerated report: %s\n' "${buildopt_report_ref}" >&2
+        exit 1
+    }
+    jq -ce --arg family "${buildopt_family}" --argjson ordinal "${buildopt_ordinal}" \
+        --arg reportSha256 "${buildopt_report_sha}" '
+      . as $report |
+      (($report.status=="RELEVANT_COMPLETE") and $report.inputComplete and
+        $report.testableActions==1 and ($report.changedPaths|length)>0 and
+        ($report.gradleArguments|length)>0 and ($report.requestedTasks|length)>0 and
+        ($report.affectedInputTasks|length)>0 and ($report.candidateTasks|length)>0 and
+        ($report.omittedTasks|length)>0 and ($report.omittedOutputStates|length)>0 and
+        ($report.actionBindingSha256|test("^[0-9a-f]{64}$")) and
+        all($report.omittedOutputStates[];
+          (.producerTasks|type)=="array" and (.producerTasks|length)>0 and
+          all(.producerTasks[];(. as $producer|$report.omittedTasks|index($producer))!=null) and
+          (.path|type)=="string" and (.path|length)>0 and
+          (.kind=="FILE" or .kind=="DIRECTORY") and
+          ((.exists and (.sha256|test("^[0-9a-f]{64}$"))) or
+           ((.exists|not) and .sha256=="")))) as $completeAction |
+      select(.schemaVersion=="buildopt.poc/request-aligned-classification/v2") |
+      select((.performanceMeasured|not) and (.activationAuthorized|not)) |
+      {family:$family,observationOrdinal:$ordinal,baseRevision:.baseRevision,targetRevision:.targetRevision,
+       rowKind:"REGENERATED_REPORT",status:.status,reason:.reason,inputComplete:.inputComplete,
+       completeAction:$completeAction,productFailure:false,reportSha256:$reportSha256,
+       actionBindingSha256:(.actionBindingSha256 // null)}
+    ' "${buildopt_regenerated}" >>"${buildopt_temporary}/assessments.jsonl" || {
+        printf 'regenerated report contract is invalid: %s\n' "${buildopt_report_ref}" >&2
+        exit 1
+    }
+done <"${buildopt_capture}/transitions.jsonl"
+
+buildopt_generated_at=$(jq -r '.generatedAt' "${buildopt_capture}/contract.json")
+buildopt_family_inputs_required=$(jq -r '.breadthGate.completeFamilyInputsRequired' "${buildopt_route_contract}")
+buildopt_relevant_required=$(jq -r '.breadthGate.relevantTransitionsPerFamilyRequired' "${buildopt_route_contract}")
+buildopt_breadth_required=$(jq -r '.breadthGate.familiesWithActionsRequired' "${buildopt_route_contract}")
+buildopt_failure_budget=$(jq -r '.breadthGate.productFailureBudget' "${buildopt_route_contract}")
+
+jq -s --arg generatedAt "${buildopt_generated_at}" \
+    --arg routeSha "$(buildopt_sha "${buildopt_route_contract}")" \
+    --arg captureContractSha "$(buildopt_sha "${buildopt_capture}/contract.json")" \
+    --arg observationsSha "$(buildopt_sha "${buildopt_capture}/observations.jsonl")" \
+    --arg transitionsSha "$(buildopt_sha "${buildopt_capture}/transitions.jsonl")" \
+    --arg changesSha "$(buildopt_sha "${buildopt_changes}")" \
+    --arg classifierSha "$(buildopt_sha "${buildopt_root}/internal/requestaligned/classification.go")" \
+    --arg changeCaptureSha "$(buildopt_sha "${buildopt_root}/dev/capture-observed-request-portfolio-changes")" \
+    --arg gateRunnerSha "$(buildopt_sha "${buildopt_root}/dev/run-observed-request-portfolio-breadth-gate")" \
+    --argjson familyInputsRequired "${buildopt_family_inputs_required}" \
+    --argjson relevantRequired "${buildopt_relevant_required}" \
+    --argjson breadthRequired "${buildopt_breadth_required}" \
+    --argjson failureBudget "${buildopt_failure_budget}" \
+    --slurpfile config "${buildopt_config}" --slurpfile observations "${buildopt_temporary}/observations.json" '
+  def family_assessment:
+    sort_by(.observationOrdinal) as $rows |
+    ($rows[0].family) as $family |
+    ($observations[0]|map(select(.family==$family))) as $familyObservations |
+    ($familyObservations|sort_by(.commandIndex,.observationOrdinal)|group_by(.commandIndex)|
+      map(([.[]|select(.exitCode==0 and (.productFailure|not) and .captureComplete and
+        .exactArgumentsPreserved)]|first|.observationOrdinal))|map(select(.!=null))) as $baselineOrdinals |
+    (([$familyObservations[].observationOrdinal]-$baselineOrdinals)|sort) as $expectedTransitionOrdinals |
+    {
+      family:$family,
+      observations:($familyObservations|length),
+      transitionRows:($rows|length),
+      baselineCount:($baselineOrdinals|length),
+      transitionCoverageComplete:(([$rows[].observationOrdinal]|sort)==$expectedTransitionOrdinals),
+      distinctOrdinals:([$rows[].observationOrdinal]|unique|length),
+      distinctTargets:([$rows[].targetRevision]|unique|length),
+      reportsRegenerated:([$rows[]|select(.rowKind=="REGENERATED_REPORT")]|length),
+      typedInputUnavailable:([$rows[]|select(.rowKind=="TYPED_INPUT_UNAVAILABLE")]|length),
+      relevantTransitions:([$rows[]|select(.status=="RELEVANT_COMPLETE" and .inputComplete)]|length),
+      exactActions:([$rows[]|select(.completeAction)]|length),
+      productFailures:([$familyObservations[]|select(.productFailure)]|length),
+      buildFailures:([$familyObservations[]|select(.exitCode!=0)]|length),
+      statuses:($rows|group_by(.status)|map({key:.[0].status,value:length})|from_entries),
+      actionBindings:[$rows[]|select(.completeAction)|
+        {observationOrdinal,baseRevision,targetRevision,reportSha256,actionBindingSha256}]
+    } |
+    .allRowsReconstructed=(.baselineCount==3 and .transitionRows==(.observations-3) and
+      .transitionCoverageComplete and
+      .distinctOrdinals==.transitionRows and .distinctTargets==.transitionRows and
+      .reportsRegenerated+.typedInputUnavailable==.transitionRows) |
+    .inputComplete=(.allRowsReconstructed and .relevantTransitions>=$relevantRequired and
+      .productFailures==0 and .buildFailures==0) |
+    .exposesExactAction=(.exactActions>0);
+  (sort_by(.family)|group_by(.family)|map(family_assessment)) as $families |
+  ([$families[]|select(.inputComplete)]|length) as $completeFamilies |
+  ([$families[]|select(.exposesExactAction)]|length) as $actionFamilies |
+  ([$families[].productFailures]|add) as $productFailures |
+  ([$families[].buildFailures]|add) as $buildFailures |
+  ([ $config[0].families[].family ]|sort) as $expectedFamilies |
+  ($completeFamilies==$familyInputsRequired and [$families[].family]==$expectedFamilies and
+    $actionFamilies>=$breadthRequired and $productFailures<=$failureBudget) as $pass |
+  {
+    schemaVersion:"buildopt.poc/observed-request-portfolio-breadth-gate/v1",
+    workItem:"SWL-PORTFOLIO-004",generatedAt:$generatedAt,
+    inputs:{routeContractSha256:$routeSha,captureContractSha256:$captureContractSha,
+      observationsLedgerSha256:$observationsSha,transitionsLedgerSha256:$transitionsSha,
+      independentChangeManifestSha256:$changesSha,classifierSourceSha256:$classifierSha,
+      changeCaptureSourceSha256:$changeCaptureSha,gateRunnerSourceSha256:$gateRunnerSha,
+      changeManifestOrigin:"GIT_DIFF_NAME_ONLY_ACMRTUXB",summaryConsumed:false,
+      historicalBuildOptEvidenceImported:false},
+    expectedFamilies:$expectedFamilies,observedFamilies:[$families[].family],
+    observationsVerified:([$families[].observations]|add),
+    transitionRowsReconstructed:([$families[].transitionRows]|add),
+    reportsRegenerated:([$families[].reportsRegenerated]|add),
+    typedInputUnavailableRows:([$families[].typedInputUnavailable]|add),
+    familyAssessments:$families,
+    completeInputFamilies:$completeFamilies,completeInputFamiliesRequired:$familyInputsRequired,
+    relevantTransitionsPerFamilyRequired:$relevantRequired,
+    familiesExposingExactActions:$actionFamilies,
+    familiesExposingExactActionsRequired:$breadthRequired,
+    productFailures:$productFailures,productFailureBudget:$failureBudget,buildFailures:$buildFailures,
+    failedCriteria:([
+      if $completeFamilies!=$familyInputsRequired or [$families[].family]!=$expectedFamilies
+        then "COMPLETE_FAMILY_INPUTS" else empty end,
+      if $actionFamilies<$breadthRequired then "PUBLIC_ACTION_BREADTH" else empty end,
+      if $productFailures>$failureBudget then "PRODUCT_FAILURE_BUDGET" else empty end
+    ]),
+    breadthPass:$pass,timingAuthorized:$pass,selectionAuthorized:false,activationAuthorized:false,
+    outcome:(if $productFailures>$failureBudget then "STOP_PRODUCT_FAILURE_BUDGET_EXCEEDED"
+      elif $completeFamilies!=$familyInputsRequired or [$families[].family]!=$expectedFamilies
+        then "STOP_INCOMPLETE_OBSERVED_REQUEST_PORTFOLIO_INPUT"
+      elif $actionFamilies<$breadthRequired then "STOP_INSUFFICIENT_OBSERVED_REQUEST_PORTFOLIO_BREADTH"
+      else "OPEN_OBSERVED_REQUEST_PORTFOLIO_INSTALLED_VALUE" end),
+    nextBlock:(if $pass then "SWL-PORTFOLIO-005" else "SWL-PORTFOLIO-007" end)
+  }
+' "${buildopt_temporary}/assessments.jsonl" >"${buildopt_output}"
+
+printf 'Observed request portfolio breadth gate written to %s\n' "${buildopt_output}"

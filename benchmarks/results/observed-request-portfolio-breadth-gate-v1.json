@@ -1,0 +1,298 @@
+{
+  "schemaVersion": "buildopt.poc/observed-request-portfolio-breadth-gate/v1",
+  "workItem": "SWL-PORTFOLIO-004",
+  "generatedAt": "2026-08-28T22:48:43Z",
+  "inputs": {
+    "routeContractSha256": "aebd7c08e0b737d94ece39a31038b1144cb8b06e704729108db44c9959a8bd08",
+    "captureContractSha256": "944883f227576cc72bbc6282dbf4b27b296d886b1c133d0b94bd6a64ab79d219",
+    "observationsLedgerSha256": "078a9df7b61edf1c2bef149a79e5a34329427b751a427d67d7950e1a6b1131ca",
+    "transitionsLedgerSha256": "0f44bf1b83c1ca8c153f6ee4eec7f0880cb0e17eb38ca022b819f53c781d7ec7",
+    "independentChangeManifestSha256": "603418803ff45bd3f87341d4c30a38c659f7f21e355e17ea0c2663c43343bf7f",
+    "classifierSourceSha256": "781f56de23e895f88bc5874ba5eead6179924482645ce7424742b81d27474614",
+    "changeCaptureSourceSha256": "da59a58fd9363ac072f845876588a8cb84083d1e94f442d3a4eb12cdca5ef385",
+    "gateRunnerSourceSha256": "5af825f5e85faf5e2f7507e9a6d07a619b7ef82ee500e70684c1c271f9c4ef21",
+    "changeManifestOrigin": "GIT_DIFF_NAME_ONLY_ACMRTUXB",
+    "summaryConsumed": false,
+    "historicalBuildOptEvidenceImported": false
+  },
+  "expectedFamilies": [
+    "apache-groovy",
+    "apache-kafka",
+    "micronaut-core",
+    "opentelemetry-java-instrumentation",
+    "spring-framework"
+  ],
+  "observedFamilies": [
+    "apache-groovy",
+    "apache-kafka",
+    "micronaut-core",
+    "opentelemetry-java-instrumentation",
+    "spring-framework"
+  ],
+  "observationsVerified": 128,
+  "transitionRowsReconstructed": 113,
+  "reportsRegenerated": 105,
+  "typedInputUnavailableRows": 8,
+  "familyAssessments": [
+    {
+      "family": "apache-groovy",
+      "observations": 11,
+      "transitionRows": 8,
+      "baselineCount": 3,
+      "transitionCoverageComplete": true,
+      "distinctOrdinals": 8,
+      "distinctTargets": 8,
+      "reportsRegenerated": 8,
+      "typedInputUnavailable": 0,
+      "relevantTransitions": 5,
+      "exactActions": 5,
+      "productFailures": 0,
+      "buildFailures": 0,
+      "statuses": {
+        "GLOBAL_OR_AMBIGUOUS": 3,
+        "RELEVANT_COMPLETE": 5
+      },
+      "actionBindings": [
+        {
+          "observationOrdinal": 4,
+          "baseRevision": "0a33cb24792d473f0f80a71b89b63c3a9167f6e1",
+          "targetRevision": "c9066393a6a11c89e188bea72f2c976186661574",
+          "reportSha256": "7df89d18edc6ab31480a25f2e5423188ffd35d0ff72e85dc8ea229e7ddfce993",
+          "actionBindingSha256": "45d312e281504821b9c0743fe6c458bc242057ec6425256d835d51ad21f7bbd0"
+        },
+        {
+          "observationOrdinal": 5,
+          "baseRevision": "b30f281849f32b399b871359e0036040a70f849a",
+          "targetRevision": "7f877b34aff79d817f89e48b741bb3966ba9b188",
+          "reportSha256": "dba56ae2137ebdea0b4311374ee0c5b28254481407567380283e4a52ba50c041",
+          "actionBindingSha256": "d294f3cf5e32e581be8b4100d1b3c74445a9afdc2b2112fc87c1750dea239864"
+        },
+        {
+          "observationOrdinal": 6,
+          "baseRevision": "e5ea4eb8bf9782e0c121aa29dac79a5f388cc656",
+          "targetRevision": "0f217d25d3ae3caeadd88b404699ac384e0c37e1",
+          "reportSha256": "0071f86a985bc3be592215a569703be85aded93cf9f47bddec40f1b4052e81d9",
+          "actionBindingSha256": "1eb61c0219880791bb6fbadd40a987f66323e4e673614aca0eb30318a0409835"
+        },
+        {
+          "observationOrdinal": 7,
+          "baseRevision": "c9066393a6a11c89e188bea72f2c976186661574",
+          "targetRevision": "fc3808097367cc9133facaa64e62dcd449e2ae49",
+          "reportSha256": "a169058e4521ba8fa6fa8b9ce12f946818d6bc2e92dd115abfd8e0d4d68fd104",
+          "actionBindingSha256": "3acd2b12d27386e690a02b6e2ab707a7906387a223178a58676984f8cf4f0377"
+        },
+        {
+          "observationOrdinal": 11,
+          "baseRevision": "54286983347bd4c70727ef664f5b9973fdb9da6f",
+          "targetRevision": "e797296544630578ef410594575e6eadac415ab1",
+          "reportSha256": "15c3bfc52955756185fbb8f2d0380f45c0763e9e3f9df83f79886990668317a8",
+          "actionBindingSha256": "41eba5c381d36b1aec627571731986149d5616eaa2a38d7c86f9ea70c063300a"
+        }
+      ],
+      "allRowsReconstructed": true,
+      "inputComplete": true,
+      "exposesExactAction": true
+    },
+    {
+      "family": "apache-kafka",
+      "observations": 27,
+      "transitionRows": 24,
+      "baselineCount": 3,
+      "transitionCoverageComplete": true,
+      "distinctOrdinals": 24,
+      "distinctTargets": 24,
+      "reportsRegenerated": 24,
+      "typedInputUnavailable": 0,
+      "relevantTransitions": 5,
+      "exactActions": 5,
+      "productFailures": 0,
+      "buildFailures": 0,
+      "statuses": {
+        "GLOBAL_OR_AMBIGUOUS": 2,
+        "IRRELEVANT_TO_REQUEST": 17,
+        "RELEVANT_COMPLETE": 5
+      },
+      "actionBindings": [
+        {
+          "observationOrdinal": 8,
+          "baseRevision": "61488cf2c7e65dc5a6e889f5f9374ff1504f5cba",
+          "targetRevision": "83a5eadde884f5ad2845ca5896ae83167b781bf8",
+          "reportSha256": "5d49cd03073f04c701d8bc1f0d7308ca174dd1cb86fdc3a305c180807b462a9d",
+          "actionBindingSha256": "4e71c7c88b4a1b278c6f86fad3105c3fd7eb1d35a39ad91dfa0b97659b9c5139"
+        },
+        {
+          "observationOrdinal": 18,
+          "baseRevision": "21a2e9a227b17443d60cead4b6c2a54eb952653f",
+          "targetRevision": "d3b8b1bd023dc3d8dff4f7f85af5963de0214b11",
+          "reportSha256": "82ebe1e1482d0ad52d8c4d2d46ff59c892fb7a7104806bdc0eb7e27244ac5ec0",
+          "actionBindingSha256": "5db5b9792e977cd7173b33c01f3a32ee5bafe8b6a74da5eda7b9413573a2bf00"
+        },
+        {
+          "observationOrdinal": 23,
+          "baseRevision": "191a7fb15f706f7eb77657008b0fc0512bb46d6e",
+          "targetRevision": "c7b03474ebf7909e11fca3559f801b1312f14d1f",
+          "reportSha256": "58c2a9f28b752feedda4929bd422ec43b4beb437c4b7397caa7cf012857037da",
+          "actionBindingSha256": "eb18ae7c186dca81fb1e714faf51b57334d0f07d00e3fb58cded5dfd128a4b40"
+        },
+        {
+          "observationOrdinal": 26,
+          "baseRevision": "c7b03474ebf7909e11fca3559f801b1312f14d1f",
+          "targetRevision": "20d81283e880410100aa5934430d9a74c6cc65f9",
+          "reportSha256": "8064d460a8abf3c5654275ae9eef611870a62cedf83c968351f44bb73d51ae33",
+          "actionBindingSha256": "8d889f6972fc4d7318c873bad353afaecf98ffa2fafc1d1c6d3216413e99bd20"
+        },
+        {
+          "observationOrdinal": 27,
+          "baseRevision": "ea8a27d6ee88f7e447d207a59e635a0b160c1761",
+          "targetRevision": "66c197c9f9749715de55f9a415e6aade73ac7830",
+          "reportSha256": "a3b7bab8fc3d8a2088569e1eca259524562cc33acd45231ab44a33081b429baa",
+          "actionBindingSha256": "071abfbebad2c17d7e4b3036f8ec226080583fc049da6a1fb1279cd3f702b340"
+        }
+      ],
+      "allRowsReconstructed": true,
+      "inputComplete": true,
+      "exposesExactAction": true
+    },
+    {
+      "family": "micronaut-core",
+      "observations": 30,
+      "transitionRows": 27,
+      "baselineCount": 3,
+      "transitionCoverageComplete": true,
+      "distinctOrdinals": 27,
+      "distinctTargets": 27,
+      "reportsRegenerated": 21,
+      "typedInputUnavailable": 6,
+      "relevantTransitions": 2,
+      "exactActions": 2,
+      "productFailures": 0,
+      "buildFailures": 0,
+      "statuses": {
+        "GLOBAL_OR_AMBIGUOUS": 5,
+        "INPUT_UNAVAILABLE": 6,
+        "IRRELEVANT_TO_REQUEST": 14,
+        "RELEVANT_COMPLETE": 2
+      },
+      "actionBindings": [
+        {
+          "observationOrdinal": 15,
+          "baseRevision": "9de1e04f6696b528fdad36e38df781a2cb48fc04",
+          "targetRevision": "1bef76de158433f9a164dd9320e2fad3b31dbf46",
+          "reportSha256": "3039ca52d4df488058c75431f366ed671368ca12a3c7e52f8a706782307def94",
+          "actionBindingSha256": "e638974a3474c797839f15b9d34578edd21a33613548d5e616b6ec46ad201dbe"
+        },
+        {
+          "observationOrdinal": 16,
+          "baseRevision": "e129f3ced1c5fc03f2318cfe07db1556499725d4",
+          "targetRevision": "2db0fd7dd0ce5c26faf72f05852e88ddea466a7e",
+          "reportSha256": "5f2182b3a1585b1304c468d344ca2a8441a93055b8ba1759e51cea55aa80c6dc",
+          "actionBindingSha256": "620979bb11db2905418da6cd67aa2c9e701365addcec4dfbbbdcf231fa2534ca"
+        }
+      ],
+      "allRowsReconstructed": true,
+      "inputComplete": false,
+      "exposesExactAction": true
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "observations": 30,
+      "transitionRows": 27,
+      "baselineCount": 3,
+      "transitionCoverageComplete": true,
+      "distinctOrdinals": 27,
+      "distinctTargets": 27,
+      "reportsRegenerated": 25,
+      "typedInputUnavailable": 2,
+      "relevantTransitions": 0,
+      "exactActions": 0,
+      "productFailures": 0,
+      "buildFailures": 0,
+      "statuses": {
+        "GLOBAL_OR_AMBIGUOUS": 3,
+        "INPUT_UNAVAILABLE": 2,
+        "IRRELEVANT_TO_REQUEST": 22
+      },
+      "actionBindings": [],
+      "allRowsReconstructed": true,
+      "inputComplete": false,
+      "exposesExactAction": false
+    },
+    {
+      "family": "spring-framework",
+      "observations": 30,
+      "transitionRows": 27,
+      "baselineCount": 3,
+      "transitionCoverageComplete": true,
+      "distinctOrdinals": 27,
+      "distinctTargets": 27,
+      "reportsRegenerated": 27,
+      "typedInputUnavailable": 0,
+      "relevantTransitions": 5,
+      "exactActions": 5,
+      "productFailures": 0,
+      "buildFailures": 0,
+      "statuses": {
+        "GLOBAL_OR_AMBIGUOUS": 6,
+        "IRRELEVANT_TO_REQUEST": 16,
+        "RELEVANT_COMPLETE": 5
+      },
+      "actionBindings": [
+        {
+          "observationOrdinal": 4,
+          "baseRevision": "fd95ab16baa2353416e96bddbd979169a9618260",
+          "targetRevision": "526c706d1c33863b16591ef0507170e02365229b",
+          "reportSha256": "99205afe0f5eca9edaa73864ff03bbfd76bdcb15e96be31db4f6d5254304212b",
+          "actionBindingSha256": "bca7a7e321b108d53ffd9676909e4de4fcf99ded51e2af2b8fbff6a8d82296b8"
+        },
+        {
+          "observationOrdinal": 11,
+          "baseRevision": "2730d77f828644b570eb558e917217ecf0d9e12c",
+          "targetRevision": "af466ccf63bc55f82961b6627fe0c97c43a54632",
+          "reportSha256": "5b0fa97ea02b19ff4fa5c994d68d05392759679b41550c6276efde0a3aa5e05b",
+          "actionBindingSha256": "f16a050f2a1098118867b3fd97448f5c97937afe58ee6389e9e3e43494547755"
+        },
+        {
+          "observationOrdinal": 12,
+          "baseRevision": "74b6a5ba3ee5645cd2f5f99fa9c1cefeea95c9f1",
+          "targetRevision": "59a784cb7ebfbb7f701067d5a4c2c5403be31a49",
+          "reportSha256": "662b816671fffecb80cbf42ccab8165cebd73a5a86f10240007b5f95023f5fd3",
+          "actionBindingSha256": "0b20c5f951cf1b7ba79eb74e6881a122c036045743b23cea6f40182e6e7793d5"
+        },
+        {
+          "observationOrdinal": 13,
+          "baseRevision": "bcfa6c3c4fc9133229bcf252827989555ec009a7",
+          "targetRevision": "6ee3ef6af5e215b854b0901e6a43737e86318c31",
+          "reportSha256": "7521a4de78da0c753756f6376a99f98ce48e66136b238761e7077abdd8efc32a",
+          "actionBindingSha256": "ab161b1f67cc3ef4ca492813610a67327baab73a9938b20c790718449e429ca9"
+        },
+        {
+          "observationOrdinal": 30,
+          "baseRevision": "7daf1013aa89e6b80142437fccecc0be2bfbd7fb",
+          "targetRevision": "17e0daf8a16085bd553f1e71bc8a15542dbcd417",
+          "reportSha256": "8b4baedd24bfa734a7b2cb7a9468f2343a1d0e2abcea851108ba9a12e0fbfca1",
+          "actionBindingSha256": "d0e06a7b4b0fb5d2275493fafe25cc769d156aa850aab2432f6e9b5cf45f45d4"
+        }
+      ],
+      "allRowsReconstructed": true,
+      "inputComplete": true,
+      "exposesExactAction": true
+    }
+  ],
+  "completeInputFamilies": 3,
+  "completeInputFamiliesRequired": 5,
+  "relevantTransitionsPerFamilyRequired": 5,
+  "familiesExposingExactActions": 4,
+  "familiesExposingExactActionsRequired": 3,
+  "productFailures": 0,
+  "productFailureBudget": 0,
+  "buildFailures": 0,
+  "failedCriteria": [
+    "COMPLETE_FAMILY_INPUTS"
+  ],
+  "breadthPass": false,
+  "timingAuthorized": false,
+  "selectionAuthorized": false,
+  "activationAuthorized": false,
+  "outcome": "STOP_INCOMPLETE_OBSERVED_REQUEST_PORTFOLIO_INPUT",
+  "nextBlock": "SWL-PORTFOLIO-007"
+}

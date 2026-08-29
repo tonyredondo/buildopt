@@ -116,9 +116,12 @@ invocation. It preserves the original argv, starts no extra build and keeps
 each unavailable capture phase typed. The checked campaign records 128
 observations and 113 transitions: Spring, Kafka and Groovy are complete;
 Micronaut has two action rows; OpenTelemetry has none. That is 3/5 complete and
-4/5 action-bearing families with zero failures, but it is not a breadth
-decision or performance result. The next block independently reconstructs
-every row before applying the unchanged 5/5 completeness and 3/5 action gate.
+4/5 action-bearing families with zero failures. The independent gate verifies
+all 128 observations, reconstructs every transition, regenerates 105 reports
+from separately captured public-Git change sets and validates eight typed
+unavailable rows. Action breadth passes, but the unchanged 5/5 completeness
+gate fails at 3/5. This is not a performance result: timing and activation stay
+closed and only the terminal decision is authorized.
 
 Sample count alone never makes the campaign ready. Missing lifecycle, action or
 ledger evidence keeps it incomplete. The exact implementation paths, evidence

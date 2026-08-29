@@ -32,6 +32,7 @@ provision tools or create release artifacts document that effect explicitly.
 | Same-invocation request evidence without an extra Gradle build | `./dev/check-observed-request-portfolio-capture` |
 | Frozen five-family command configuration against prepared public histories | `./dev/check-observed-request-portfolio-config HISTORY_ROOT` |
 | Fresh observed-request ledger, bindings, chronology and deterministic compressed artifacts | `./dev/check-observed-request-public-portfolio` |
+| Independent observed-request row reconstruction and frozen breadth decision | `./dev/check-observed-request-portfolio-breadth-gate` |
 | Generic task/graph producers, typed completeness and deterministic evidence | `./dev/check-sticky-evidence-producers` |
 | Fresh five-family cohort, capture bindings, producer completeness and exact outputs | `./dev/check-fresh-generic-capture` |
 | Independent fresh action recount and fixed public-breadth gate | `./dev/check-fresh-generic-opportunity-gate` |

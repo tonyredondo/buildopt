@@ -562,7 +562,7 @@ the raw evidence.
 The current package result is reproducible with
 `./dev/check-magic-end-to-end-value-v2`.
 The latest breadth decisions are reproducible with
-`./dev/check-automatic-breadth-transfer`.
+`./dev/check-observed-request-portfolio-breadth-gate`.
 
 ## Component ownership and configuration
 

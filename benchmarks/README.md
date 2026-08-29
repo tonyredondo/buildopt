@@ -157,6 +157,16 @@ product failures. Every detailed artifact is stored as deterministic gzip and
 verified against the SHA-256 of its uncompressed canonical JSON. This is
 structural capture evidence: it contains no timing, selection or activation.
 
+[`observed-request-portfolio-breadth-gate-v1.json`](./results/observed-request-portfolio-breadth-gate-v1.json)
+is the independent `SWL-PORTFOLIO-004` decision. It ignores the aggregate
+summary, verifies all 128 observations, reconstructs all 113 transition rows,
+regenerates 105 classifier reports from independently captured public-Git
+change sets and validates eight typed incomplete captures. Exact-action
+breadth passes at 4/5 versus 3/5, but input completeness fails at 3/5 versus
+5/5 because OpenTelemetry has zero relevant transitions and Micronaut has two.
+The result routes directly to the terminal decision with timing, selection and
+activation false. It is structural gate evidence, not a speedup result.
+
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
@@ -173,6 +183,7 @@ structural capture evidence: it contains no timing, selection or activation.
 ./dev/check-request-aligned-evidence-precision
 ./dev/check-observed-request-portfolio
 ./dev/check-observed-request-public-portfolio
+./dev/check-observed-request-portfolio-breadth-gate
 ```
 
 ## Sticky-wrapper observation sample

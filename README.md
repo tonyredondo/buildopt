@@ -229,8 +229,12 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > finalized evidence to the same invocation, loses no
 > updates across 16 concurrent writers and keeps incomplete, failed, cancelled
 > and bypassed requests ineligible. It needs no server and starts no additional
-> Gradle build. Fresh five-family capture is next; no action, timing or speedup
-> is authorized. Follow the
+> Gradle build. The fresh five-family campaign records 128 observations and 113
+> transitions. Independent reconstruction regenerates 105 reports from
+> separately captured public-Git changes and validates eight typed unavailable
+> rows. Action breadth passes at **4/5**, but complete inputs fail at **3/5**
+> versus required **5/5**. Installed and chronological timing are therefore not
+> authorized; only the terminal decision remains open. Follow the
 > [active tracker](./docs/plans/observed-request-portfolio-poc-tracker.md).
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,

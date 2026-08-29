@@ -11,14 +11,15 @@ The latest generic POC contract is
 [`poc-observed-request-portfolio-v1.md`](./poc-observed-request-portfolio-v1.md)
 with its adjacent machine-readable JSON. It tests learning across the exact
 portfolio of recurrent commands the customer actually invokes. Evidence
-primitives and fresh capture are complete: 128 observations produce 113
-transitions, 3/5 complete families and 4/5 action-bearing families with zero
-failures. Independent breadth reconstruction and all value gates remain open;
-timing and activation are not authorized.
+primitives, fresh capture and independent breadth reconstruction are complete:
+128 observations produce 113 reconstructed transitions, 3/5 complete families
+and 4/5 exact-action families with zero failures. The unchanged 5/5 input gate
+fails, so installed and chronological value are not authorized; timing and
+activation remain false and the terminal decision is next.
 
 | Specification | Owning item |
 |---|---|
-| [`poc-observed-request-portfolio-v1.md`](./poc-observed-request-portfolio-v1.md) and [`poc-observed-request-portfolio-v1.json`](./poc-observed-request-portfolio-v1.json) | `SWL-PORTFOLIO-000..007`; active exact-command portfolio route selected from the terminal 5/0/2/1/5 cause counterfactual |
+| [`poc-observed-request-portfolio-v1.md`](./poc-observed-request-portfolio-v1.md) and [`poc-observed-request-portfolio-v1.json`](./poc-observed-request-portfolio-v1.json) | `SWL-PORTFOLIO-000..007`; active exact-command route at terminal decision after the independently reconstructed 3/5 completeness failure |
 | [`poc-request-aligned-learning-v1.md`](./poc-request-aligned-learning-v1.md) and [`poc-request-aligned-learning-v1.json`](./poc-request-aligned-learning-v1.json) | `SWL-REQUEST-000..007`; closed request-aligned route, independently failed 2/5 complete/action breadth gate, unauthorized timing blocks and terminal stop |
 | [`poc-change-aware-producer-closure-v1.md`](./poc-change-aware-producer-closure-v1.md) and [`poc-change-aware-producer-closure-v1.json`](./poc-change-aware-producer-closure-v1.json) | `SWL-CHANGE-000..005`; frozen successor hypothesis and terminal stop after the 1/5-versus-3/5 breadth failure |
 | [`poc-fresh-generic-optimization-v1.md`](./poc-fresh-generic-optimization-v1.md) and [`poc-fresh-generic-optimization-v1.json`](./poc-fresh-generic-optimization-v1.json) | `SWL-FRESH-000`; closed fresh-evidence predecessor with terminal 1/5 action breadth |

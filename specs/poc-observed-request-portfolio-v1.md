@@ -60,14 +60,25 @@ The checked capture contains 128 observations and 113 transitions. Spring,
 Kafka and Groovy are complete; Micronaut has two relevant/action transitions
 and OpenTelemetry has none. The result is **3/5 complete families** and **4/5
 families with at least one action**, with zero product or build failures.
-Performance, selection and activation remain false. `SWL-PORTFOLIO-004` must
-independently rebuild every report and apply the unchanged 5/5 completeness and
-3/5 action-breadth gate; the capture summary itself cannot make that decision.
+Performance, selection and activation remain false. `SWL-PORTFOLIO-004`
+independently verified all 128 observations and reconstructed all 113
+transition rows without consuming the capture summary. A separate manifest
+derives the 105 reportable change sets from public Git history; the classifier
+reproduces all 105 reports byte for byte, while the remaining eight rows are
+validated as typed task-input-unavailable captures. Summary falsification,
+report rehashing and change-manifest tampering all fail closed.
 
-Only a passing breadth gate can open installed timing in
-`SWL-PORTFOLIO-005`. Only passing installed value can open chronological value
-in `SWL-PORTFOLIO-006`. `SWL-PORTFOLIO-007` issues the terminal continue/stop
-decision. A failed gate routes directly to the terminal decision without
+The unchanged gate fails only input completeness: Spring, Kafka and Groovy
+provide **3/5** complete inputs versus required **5/5**. Exact-action breadth
+passes at **4/5** versus required **3/5**, and build/product failures are zero.
+The outcome is `STOP_INCOMPLETE_OBSERVED_REQUEST_PORTFOLIO_INPUT`; timing,
+selection and activation remain false, and installed/chronological value are
+not authorized.
+
+Only a passing breadth gate could open installed timing in
+`SWL-PORTFOLIO-005`, so that block and chronological value in
+`SWL-PORTFOLIO-006` are not authorized. `SWL-PORTFOLIO-007` is now the only
+open block and must issue the terminal continue/stop decision without
 inventing zero-valued economics.
 
 ## Non-goals

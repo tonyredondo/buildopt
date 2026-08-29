@@ -33,14 +33,15 @@ and 113 adjacent same-command transitions from empty BuildOpt state, without
 starting an extra Gradle build or changing argv.
 
 Spring, Kafka and Groovy each reach five relevant/action transitions.
-Micronaut records two and OpenTelemetry records none, yielding **3/5 complete
-families** and **4/5 action-bearing families**, with zero build or product
-failures. OpenTelemetry and Micronaut keep unavailable task-input evidence
-typed and incomplete rather than manufacturing opportunity. This demonstrates
-broader generic structural opportunity, not acceleration. Selection,
-activation and timing remain false. The next block independently reconstructs
-all 113 transitions and applies the unchanged 5/5 completeness plus 3/5 action
-gate before any wall-time experiment can open.
+Micronaut records two and OpenTelemetry records none. The independent gate
+verifies all 128 observations, reconstructs all 113 transitions, regenerates
+105 classifier reports from separately captured public-Git change sets and
+validates eight typed unavailable rows. Exact-action breadth passes at **4/5**
+versus **3/5**, but input completeness fails at **3/5** versus required
+**5/5**, with zero build or product failures. This demonstrates broader generic
+structural opportunity, not acceleration. Selection, activation and timing
+remain false; installed and chronological timing are not authorized, and the
+terminal decision is the only next block.
 
 ## Mechanisms
 

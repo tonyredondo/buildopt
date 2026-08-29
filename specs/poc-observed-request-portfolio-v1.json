@@ -2,7 +2,7 @@
   "schemaVersion": "buildopt.poc/observed-request-portfolio-contract/v1",
   "workItem": "SWL-PORTFOLIO-000",
   "status": "ACTIVE",
-  "currentBlock": "SWL-PORTFOLIO-004",
+  "currentBlock": "SWL-PORTFOLIO-007",
   "purpose": "Determine whether BuildOpt can learn safe generic partial-work actions from the portfolio of exact Gradle commands a customer actually repeats, rather than from one frozen request per repository.",
   "predecessor": {
     "decision": "STOP_REQUEST_ALIGNED_RECURRENT_CLOSURE_POC_FOR_CURRENT_DETECTOR",
@@ -59,36 +59,41 @@
     },
     {
       "id": "SWL-PORTFOLIO-004",
-      "state": "TODO",
-      "outcome": "INDEPENDENT_PORTFOLIO_BREADTH_GATE"
+      "state": "DONE",
+      "outcome": "STOP_INCOMPLETE_OBSERVED_REQUEST_PORTFOLIO_INPUT"
     },
     {
       "id": "SWL-PORTFOLIO-005",
-      "state": "WAITING",
-      "outcome": "INSTALLED_VALUE_IF_AUTHORIZED"
+      "state": "NOT_AUTHORIZED",
+      "outcome": "INSTALLED_VALUE_NOT_AUTHORIZED_BY_BREADTH_GATE"
     },
     {
       "id": "SWL-PORTFOLIO-006",
-      "state": "WAITING",
-      "outcome": "CHRONOLOGICAL_CUMULATIVE_VALUE_IF_AUTHORIZED"
+      "state": "NOT_AUTHORIZED",
+      "outcome": "CHRONOLOGICAL_VALUE_NOT_AUTHORIZED_BY_BREADTH_GATE"
     },
     {
       "id": "SWL-PORTFOLIO-007",
-      "state": "WAITING",
+      "state": "TODO",
       "outcome": "TERMINAL_CONTINUE_OR_STOP_DECISION"
     }
   ],
   "latestEvidence": {
-    "path": "benchmarks/results/observed-request-public-portfolio-v1/summary.json",
-    "observations": 128,
-    "transitions": 113,
-    "completeFamilies": 3,
-    "actionBearingFamilies": 4,
+    "path": "benchmarks/results/observed-request-portfolio-breadth-gate-v1.json",
+    "observationsVerified": 128,
+    "transitionRowsReconstructed": 113,
+    "reportsRegenerated": 105,
+    "typedInputUnavailableRows": 8,
+    "completeInputFamilies": 3,
+    "completeInputFamiliesRequired": 5,
+    "familiesExposingExactActions": 4,
+    "familiesExposingExactActionsRequired": 3,
     "productFailures": 0,
     "buildFailures": 0,
+    "breadthPass": false,
     "performanceMeasured": false,
     "selectionAuthorized": false,
     "activationAuthorized": false
   },
-  "nextBlock": "SWL-PORTFOLIO-004"
+  "nextBlock": "SWL-PORTFOLIO-007"
 }

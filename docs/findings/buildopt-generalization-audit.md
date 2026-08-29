@@ -28,15 +28,15 @@ and output evidence in the same invocation and never substitutes a broader
 benchmark command.
 
 The fresh five-family ledger contains 128 observations and 113 adjacent
-same-command transitions from empty BuildOpt state. Spring, Kafka and Groovy
-reach the five-transition target; Micronaut exposes two exact action rows and
-OpenTelemetry none. The result is 3/5 complete families and 4/5 families with
-some action opportunity, with zero product or build failures. OpenTelemetry
-and Micronaut retain typed task-input unavailability rather than being counted
-as false negatives. This is stronger structural breadth than the stopped
+same-command transitions from empty BuildOpt state. The independent gate now
+verifies every observation, derives 105 change sets from public Git history,
+regenerates all 105 classifier reports and validates eight typed unavailable
+rows. Spring, Kafka and Groovy satisfy input completeness; Micronaut exposes
+two exact action rows and OpenTelemetry none. Exact-action breadth passes at
+4/5 versus 3/5, but complete inputs fail at 3/5 versus 5/5, with zero product
+or build failures. This is stronger structural breadth than the stopped
 fixed-request route, but it still proves no acceleration: timing, selection and
-activation remain closed until an independent reconstruction applies the
-unchanged breadth gate.
+activation remain closed, and only the terminal decision is authorized.
 
 ## What is generalized today
 
@@ -161,51 +161,22 @@ bounded mechanism has already satisfied its own evidence contract.
 ## Next generalization steps
 
 The detailed order and stop conditions now live in the
-[Request-aligned Recurrent Learning POC Tracker](../plans/request-aligned-learning-poc-tracker.md).
-The stopped change-aware route proved complete input but only 1/5 action
-breadth. Cause analysis shows 23/24 negatives changed no declared input in the
-fixed requested graph; the remaining Groovy case bound a stale unversioned JAR
-instead of the current versioned producer output.
+[Observed Recurrent Request Portfolio POC Tracker](../plans/observed-request-portfolio-poc-tracker.md).
+The route has completed evidence precision, exact-request lifecycle, fresh
+five-family capture and independent breadth reconstruction. Across 128 ordinary
+observations, the gate reconstructs all 113 transitions: 105 reports are
+regenerated from independently captured public-Git change sets and eight
+unavailable rows remain typed. Spring, Kafka and Groovy each reach five
+relevant exact actions; Micronaut reaches two and OpenTelemetry zero.
 
-The predecessor capture remains 25/25 conclusive but only **1/5** action-broad.
-The new route completed identity, current-output ownership, adjacent relevance
-classification, fresh public capture and independent breadth reconstruction.
-Across 110 chronological transitions, Groovy and Spring each reach five
-relevant exact actions. Kafka, Micronaut and OpenTelemetry exhaust their
-30-transition budgets with zero relevant transitions. Rebuilding all 110
-reports confirms only **2/5** complete inputs versus required **5/5** and
-**2/5** action families versus required **3/5**. The result is not an aggregate
-summary interpretation: summary falsification has no effect and report
-falsification is rejected.
-
-No current action ran and no current wall-time claim exists. Installed and
-chronological timing were not authorized. The predecessor terminal scorecard
-records `STOP_CHANGE_AWARE_PRODUCER_CLOSURE_POC_FOR_CURRENT_DETECTOR`. The
-`REQUEST_ALIGNED_RECURRENT_CLOSURE_V1` route does not relabel those negatives:
-it preserves the exact customer command, waits for relevant recurrent changes
-and discovers current outputs generically. Producer and classifier
-implementation and independent breadth are complete. Its own terminal decision
-is `STOP_REQUEST_ALIGNED_RECURRENT_CLOSURE_POC_FOR_CURRENT_DETECTOR`; value,
-confidence, payback and overhead remain typed as unmeasured rather than zero.
-That route authorized no successor. The subsequent user-authorized independent
-[terminal cause audit](../../benchmarks/results/request-aligned-terminal-cause-audit-v1.json)
-reconstructs all 100 non-actions. Evidence precision can recover two Kafka and
-one Micronaut relevant rows, but the fixed-request counterfactual remains
-**5/0/2/1/5** and only two families meet the five-row input threshold. It
-therefore selects `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1`: learn across exact
-commands already observed through the wrapper, without command substitution or
-repository rules. The evidence primitives are now complete across Gradle 8/9 ×
-Kotlin/Groovy: ordered identical producer aliases and explicit absent outputs
-are bindable, absence is revalidated after a candidate, and compatibility,
-requested graph and unrelated build logic are separate identities. Unsafe
-alias/output shapes fail closed. Rebuilding the historical audit still yields
-**5/0/2/1/5**, so this is a correctness improvement rather than a speed result.
-The exact portfolio lifecycle is now implemented post-build: raw arguments are
-not persisted, same-invocation evidence is required, 16 concurrent writers lose
-no updates, retention is bounded to 128 identities and all incomplete, failed,
-cancelled or bypassed requests remain ineligible. It works without the server
-and starts no extra build. Fresh five-family capture is next; timing remains
-unauthorized.
+The result passes action breadth at **4/5** versus required **3/5**, but fails
+complete inputs at **3/5** versus required **5/5**. Summary falsification has no
+effect, and changing either a report or the independent change manifest is
+rejected. Therefore no current action ran, installed and chronological timing
+are not authorized, and no current wall-time claim exists.
+`SWL-PORTFOLIO-007` must now issue the terminal decision from these facts and
+preserve value, confidence, payback and overhead as unmeasured rather than
+inventing zero economics.
 
 ## POC conclusion
 

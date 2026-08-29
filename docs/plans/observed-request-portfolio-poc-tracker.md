@@ -4,9 +4,9 @@
 
 **Overall:** `ACTIVE`
 
-**Progress:** four of eight blocks complete; independent breadth reconstruction is next
+**Progress:** five blocks executed; two timing blocks not authorized
 
-**Current block:** `SWL-PORTFOLIO-004`
+**Current block:** `SWL-PORTFOLIO-007`
 
 **Selected hypothesis:** `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1`
 
@@ -64,10 +64,10 @@ model—not those repairs—must establish broader opportunity.
 | 1 | `SWL-PORTFOLIO-001` Evidence precision primitives | Dependency-ordered equivalent producer groups, explicit absent-output bindings and split compatibility/request-graph identity | `DONE` | SWL-PORTFOLIO-000 |
 | 2 | `SWL-PORTFOLIO-002` Exact observed request portfolio | Persist exact recurrent argv identities, counts and lifecycle without extra builds or command substitution | `DONE` | SWL-PORTFOLIO-001 |
 | 3 | `SWL-PORTFOLIO-003` Fresh public portfolio capture | Start empty and capture ordinary observed requests across the frozen five-family cohort | `DONE` | SWL-PORTFOLIO-002 |
-| 4 | `SWL-PORTFOLIO-004` Independent breadth gate | Rebuild every row; require 5/5 complete inputs, five relevant rows per family and exact actions in 3/5 | `TODO` | SWL-PORTFOLIO-003 |
-| 5 | `SWL-PORTFOLIO-005` Installed value | Eight balanced pairs per admitted action with exact outputs and complete BuildOpt costs | `WAITING` | passing breadth only |
-| 6 | `SWL-PORTFOLIO-006` Chronological value | At least 15 comparable relevant transitions per admitted family with persistent isolated state | `WAITING` | passing installed value only |
-| 7 | `SWL-PORTFOLIO-007` Terminal decision | Continue or stop from correctness, breadth, value, confidence, payback, overhead and failures | `WAITING` | conclusive preceding gate |
+| 4 | `SWL-PORTFOLIO-004` Independent breadth gate | Rebuild every row; require 5/5 complete inputs, five relevant rows per family and exact actions in 3/5 | `DONE` | SWL-PORTFOLIO-003 |
+| 5 | `SWL-PORTFOLIO-005` Installed value | Eight balanced pairs per admitted action with exact outputs and complete BuildOpt costs | `NOT AUTHORIZED` | breadth failed at 3/5 complete inputs |
+| 6 | `SWL-PORTFOLIO-006` Chronological value | At least 15 comparable relevant transitions per admitted family with persistent isolated state | `NOT AUTHORIZED` | installed value did not open |
+| 7 | `SWL-PORTFOLIO-007` Terminal decision | Continue or stop from correctness, breadth, value, confidence, payback, overhead and failures | `TODO` | conclusive breadth gate |
 
 ## Autonomous block contracts
 
@@ -163,8 +163,8 @@ with at least one action-bearing transition**, with zero build or product
 failures. OpenTelemetry has two and Micronaut has six typed
 `TASK_INPUT_EVIDENCE_UNAVAILABLE` transitions; these stay incomplete rather
 than becoming false zero-opportunity rows. This is capture evidence only:
-performance, selection and activation remain false. `SWL-PORTFOLIO-004` must
-independently reconstruct every row before applying the unchanged gate.
+performance, selection and activation remain false. The following independent
+gate, rather than this aggregate, owns the decision.
 
 ### SWL-PORTFOLIO-004 — Independent breadth gate
 
@@ -173,6 +173,19 @@ classification and output-state binding, and apply the unchanged thresholds:
 all five inputs complete, five relevant transitions per family, exact actions
 in at least three families and zero product failures. Failure routes to
 `SWL-PORTFOLIO-007`; it cannot open timing.
+
+Implemented outcome: [`observed-request-portfolio-breadth-gate-v1.json`](../../benchmarks/results/observed-request-portfolio-breadth-gate-v1.json)
+ignores `summary.json`, verifies all **128** observations and reconstructs all
+**113** transition rows. It independently derives the 105 reportable change
+sets from public Git history, regenerates those 105 classifier reports byte for
+byte and validates the remaining eight typed task-input-unavailable rows from
+their captures. Spring, Kafka and Groovy are the only complete families, so
+input completeness fails at **3/5** versus required **5/5**. Spring, Kafka,
+Micronaut and Groovy expose exact actions, so action breadth passes at **4/5**
+versus required **3/5**. Build and product failures remain zero. The gate
+returns `STOP_INCOMPLETE_OBSERVED_REQUEST_PORTFOLIO_INPUT`, keeps timing,
+selection and activation false, marks `SWL-PORTFOLIO-005/006` not authorized
+and opens only `SWL-PORTFOLIO-007`.
 
 ### SWL-PORTFOLIO-005 — Installed value
 
@@ -205,10 +218,10 @@ than becoming zero. A stopped route authorizes no successor automatically.
 | `SWL-PORTFOLIO-E002` | SWL-PORTFOLIO-001 | Cross-Gradle/DSL evidence precision fixtures and frozen-ledger counterfactual | `DONE` — [`request-aligned-evidence-precision-v1.json`](../../benchmarks/results/request-aligned-evidence-precision-v1.json) |
 | `SWL-PORTFOLIO-E003` | SWL-PORTFOLIO-002 | Exact observed request portfolio lifecycle | `DONE` — [`observed-request-portfolio-lifecycle-v1.json`](../../benchmarks/results/observed-request-portfolio-lifecycle-v1.json) |
 | `SWL-PORTFOLIO-E004` | SWL-PORTFOLIO-003 | Fresh five-family portfolio ledger | `DONE` — [`observed-request-public-portfolio-v1`](../../benchmarks/results/observed-request-public-portfolio-v1/summary.json) |
-| `SWL-PORTFOLIO-E005` | SWL-PORTFOLIO-004 | Independent breadth decision | `TODO` |
-| `SWL-PORTFOLIO-E006` | SWL-PORTFOLIO-005 | Installed paired value and cost ledger | `WAITING` |
-| `SWL-PORTFOLIO-E007` | SWL-PORTFOLIO-006 | Chronological cumulative value | `WAITING` |
-| `SWL-PORTFOLIO-E008` | SWL-PORTFOLIO-007 | Terminal scorecard | `WAITING` |
+| `SWL-PORTFOLIO-E005` | SWL-PORTFOLIO-004 | Independent breadth decision | `DONE` — [`observed-request-portfolio-breadth-gate-v1.json`](../../benchmarks/results/observed-request-portfolio-breadth-gate-v1.json) |
+| `SWL-PORTFOLIO-E006` | SWL-PORTFOLIO-005 | Installed paired value and cost ledger | `NOT AUTHORIZED` |
+| `SWL-PORTFOLIO-E007` | SWL-PORTFOLIO-006 | Chronological cumulative value | `NOT AUTHORIZED` |
+| `SWL-PORTFOLIO-E008` | SWL-PORTFOLIO-007 | Terminal scorecard | `TODO` |
 
 ## Documentation contract
 

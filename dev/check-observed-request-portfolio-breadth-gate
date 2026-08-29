@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_capture=${buildopt_root}/benchmarks/results/observed-request-public-portfolio-v1
+buildopt_changes=${buildopt_root}/benchmarks/results/observed-request-public-portfolio-changes-v1.jsonl
+buildopt_result=${1:-${buildopt_root}/benchmarks/results/observed-request-portfolio-breadth-gate-v1.json}
+buildopt_temporary=$(mktemp -d /tmp/buildopt-observed-portfolio-breadth-check.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-observed-portfolio-breadth-check.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected breadth-check root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+"${buildopt_root}/dev/run-observed-request-portfolio-breadth-gate" \
+    "${buildopt_capture}" "${buildopt_changes}" "${buildopt_temporary}/regenerated.json" >/dev/null
+cmp -s "${buildopt_result}" "${buildopt_temporary}/regenerated.json" || {
+    printf 'observed request portfolio breadth gate is stale or not reproducible\n' >&2
+    exit 1
+}
+jq -e '
+  .schemaVersion=="buildopt.poc/observed-request-portfolio-breadth-gate/v1" and
+  .workItem=="SWL-PORTFOLIO-004" and
+  (.inputs.routeContractSha256|test("^[0-9a-f]{64}$")) and
+  (.inputs.captureContractSha256|test("^[0-9a-f]{64}$")) and
+  (.inputs.observationsLedgerSha256|test("^[0-9a-f]{64}$")) and
+  (.inputs.transitionsLedgerSha256|test("^[0-9a-f]{64}$")) and
+  (.inputs.independentChangeManifestSha256|test("^[0-9a-f]{64}$")) and
+  (.inputs.classifierSourceSha256|test("^[0-9a-f]{64}$")) and
+  (.inputs.changeCaptureSourceSha256|test("^[0-9a-f]{64}$")) and
+  (.inputs.gateRunnerSourceSha256|test("^[0-9a-f]{64}$")) and
+  .inputs.changeManifestOrigin=="GIT_DIFF_NAME_ONLY_ACMRTUXB" and
+  (.inputs.summaryConsumed|not) and (.inputs.historicalBuildOptEvidenceImported|not) and
+  .expectedFamilies==["apache-groovy","apache-kafka","micronaut-core",
+    "opentelemetry-java-instrumentation","spring-framework"] and
+  .observedFamilies==.expectedFamilies and
+  .observationsVerified==128 and .transitionRowsReconstructed==113 and
+  .reportsRegenerated==105 and .typedInputUnavailableRows==8 and
+  (.familyAssessments|length)==5 and
+  all(.familyAssessments[];.baselineCount==3 and .transitionCoverageComplete and .allRowsReconstructed) and
+  ([.familyAssessments[]|select(.inputComplete)|.family]==
+    ["apache-groovy","apache-kafka","spring-framework"]) and
+  ([.familyAssessments[]|select(.exposesExactAction)|.family]==
+    ["apache-groovy","apache-kafka","micronaut-core","spring-framework"]) and
+  ([.familyAssessments[]|select(.family=="apache-groovy")|
+    .observations==11 and .transitionRows==8 and .reportsRegenerated==8 and
+    .typedInputUnavailable==0 and .relevantTransitions==5 and .exactActions==5]|length)==1 and
+  ([.familyAssessments[]|select(.family=="apache-kafka")|
+    .observations==27 and .transitionRows==24 and .reportsRegenerated==24 and
+    .typedInputUnavailable==0 and .relevantTransitions==5 and .exactActions==5]|length)==1 and
+  ([.familyAssessments[]|select(.family=="micronaut-core")|
+    .observations==30 and .transitionRows==27 and .reportsRegenerated==21 and
+    .typedInputUnavailable==6 and .relevantTransitions==2 and .exactActions==2]|length)==1 and
+  ([.familyAssessments[]|select(.family=="opentelemetry-java-instrumentation")|
+    .observations==30 and .transitionRows==27 and .reportsRegenerated==25 and
+    .typedInputUnavailable==2 and .relevantTransitions==0 and .exactActions==0]|length)==1 and
+  ([.familyAssessments[]|select(.family=="spring-framework")|
+    .observations==30 and .transitionRows==27 and .reportsRegenerated==27 and
+    .typedInputUnavailable==0 and .relevantTransitions==5 and .exactActions==5]|length)==1 and
+  .completeInputFamilies==3 and .completeInputFamiliesRequired==5 and
+  .relevantTransitionsPerFamilyRequired==5 and
+  .familiesExposingExactActions==4 and .familiesExposingExactActionsRequired==3 and
+  .productFailures==0 and .productFailureBudget==0 and .buildFailures==0 and
+  .failedCriteria==["COMPLETE_FAMILY_INPUTS"] and
+  (.breadthPass|not) and (.timingAuthorized|not) and
+  (.selectionAuthorized|not) and (.activationAuthorized|not) and
+  .outcome=="STOP_INCOMPLETE_OBSERVED_REQUEST_PORTFOLIO_INPUT" and
+  .nextBlock=="SWL-PORTFOLIO-007"
+' "${buildopt_result}" >/dev/null || {
+    printf 'observed request portfolio breadth gate contract is invalid\n' >&2
+    exit 1
+}
+
+# The decision must not depend on the aggregate capture summary.
+cp -a -- "${buildopt_capture}" "${buildopt_temporary}/summary-tampered"
+jq '.completeFamilies=5 | .actionFamilies=5 |
+  .families|=map(.inputComplete=true|.relevantTransitions=5|.actionTransitions=5)' \
+    "${buildopt_temporary}/summary-tampered/summary.json" \
+    >"${buildopt_temporary}/summary-tampered/summary.changed"
+mv -- "${buildopt_temporary}/summary-tampered/summary.changed" \
+    "${buildopt_temporary}/summary-tampered/summary.json"
+"${buildopt_root}/dev/run-observed-request-portfolio-breadth-gate" \
+    "${buildopt_temporary}/summary-tampered" "${buildopt_changes}" \
+    "${buildopt_temporary}/summary-independent.json" >/dev/null
+cmp -s "${buildopt_result}" "${buildopt_temporary}/summary-independent.json" || {
+    printf 'breadth decision trusted the aggregate summary\n' >&2
+    exit 1
+}
+
+# Rehashing a modified report in the transition ledger cannot make it
+# authoritative because the classifier must reproduce it from separate inputs.
+cp -a -- "${buildopt_capture}" "${buildopt_temporary}/report-tampered"
+buildopt_report=reports/spring-framework/04-526c706d1c33.json
+gzip -cd -- "${buildopt_temporary}/report-tampered/${buildopt_report}.gz" \
+    >"${buildopt_temporary}/report.json"
+jq '.candidateTasks=[]' "${buildopt_temporary}/report.json" >"${buildopt_temporary}/report.changed"
+gzip -n -9 -c "${buildopt_temporary}/report.changed" \
+    >"${buildopt_temporary}/report-tampered/${buildopt_report}.gz"
+buildopt_tampered_sha=$(sha256sum "${buildopt_temporary}/report.changed" | awk '{print $1}')
+jq -c --arg report "${buildopt_report}" --arg sha "${buildopt_tampered_sha}" '
+  if .report==$report then .reportSha256=$sha else . end
+' "${buildopt_temporary}/report-tampered/transitions.jsonl" \
+    >"${buildopt_temporary}/report-tampered/transitions.changed"
+mv -- "${buildopt_temporary}/report-tampered/transitions.changed" \
+    "${buildopt_temporary}/report-tampered/transitions.jsonl"
+if "${buildopt_root}/dev/run-observed-request-portfolio-breadth-gate" \
+    "${buildopt_temporary}/report-tampered" "${buildopt_changes}" \
+    "${buildopt_temporary}/must-not-exist.json" >/dev/null 2>&1; then
+    printf 'tampered report was accepted after ledger rehash\n' >&2
+    exit 1
+fi
+
+# A changed-path claim is independently bound to the public Git history, not
+# copied from the classifier report.
+jq -c 'if .family=="spring-framework" and .observationOrdinal==4
+  then .changedPaths += ["forged/input.java"] else . end' "${buildopt_changes}" \
+    >"${buildopt_temporary}/changes-tampered.jsonl"
+if "${buildopt_root}/dev/run-observed-request-portfolio-breadth-gate" \
+    "${buildopt_capture}" "${buildopt_temporary}/changes-tampered.jsonl" \
+    "${buildopt_temporary}/must-not-exist-changes.json" >/dev/null 2>&1; then
+    printf 'tampered independent change manifest was accepted\n' >&2
+    exit 1
+fi
+
+printf 'Observed request portfolio independent breadth gate: PASS\n'
