@@ -251,6 +251,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-build-optimization-performance" >/dev/null
         "${buildopt_script_dir}/check-durable-native-optimization" >/dev/null
         "${buildopt_script_dir}/check-durable-native-correctness" >/dev/null
+        "${buildopt_script_dir}/check-durable-native-terminal-decision" >/dev/null
         "${buildopt_script_dir}/check-verified-request-hit-safety-contract" >/dev/null
         "${buildopt_script_dir}/check-verified-request-hit-shadow-replay" --static >/dev/null
         "${buildopt_script_dir}/check-verified-output-materialization" >/dev/null

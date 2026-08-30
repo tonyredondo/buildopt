@@ -39,14 +39,14 @@ jq -e '
   .boundaries.testOptimization == "OUT_OF_SCOPE"
 ' specs/poc-durable-native-optimization-v1.json >/dev/null
 
-rg -q '^\*\*Status:\*\* active' docs/plans/durable-native-optimization-poc-tracker.md
+rg -q '^\*\*Status:\*\* closed' docs/plans/durable-native-optimization-poc-tracker.md
 rg -q '`DNO-001`.*`DONE`' docs/plans/durable-native-optimization-poc-tracker.md
 rg -q '`DNO-002`.*`DONE`' docs/plans/durable-native-optimization-poc-tracker.md
 rg -q '`DNO-003`.*`DONE`' docs/plans/durable-native-optimization-poc-tracker.md
 rg -q '`DNO-004`.*`DONE_STOP`' docs/plans/durable-native-optimization-poc-tracker.md
 rg -q '`DNO-005`.*`NOT_AUTHORIZED`' docs/plans/durable-native-optimization-poc-tracker.md
 rg -q '`DNO-006`.*`NOT_AUTHORIZED`' docs/plans/durable-native-optimization-poc-tracker.md
-rg -q '`DNO-007`.*`IN_PROGRESS`' docs/plans/durable-native-optimization-poc-tracker.md
+rg -q '`DNO-007`.*`DONE`' docs/plans/durable-native-optimization-poc-tracker.md
 rg -q 'A failed gate closes every dependent block as `NOT_AUTHORIZED`' \
     specs/poc-durable-native-optimization-v1.md
 

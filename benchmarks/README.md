@@ -9,7 +9,9 @@ digest-bound candidates. Patch transactions pass, but the correctness gate
 stops after one Micronaut candidate fails Gradle's missing-normalization
 validation. Spring and OpenTelemetry pass exact-output/cache restoration.
 Paired and longitudinal timing are not authorized, so this route contains no
-speedup result.
+speedup result. Its terminal decision is
+`STOP_DURABLE_NATIVE_OPTIMIZATION_POC`; the normalization-aware follow-up is a
+recommendation, not an authorized experiment.
 
 Seeds, images, toolchains, runner classes, and digests are part of the evidence. A benchmark never authorizes a security capability.
 

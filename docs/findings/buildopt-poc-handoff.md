@@ -50,6 +50,15 @@ fixture matrix stop unrun and DNO paired/longitudinal timing is not authorized.
 The result shows that generic cacheability discovery must prove portable input
 normalization, not merely count input/output annotations.
 
+`DNO-007` closes the route as `STOP_DURABLE_NATIVE_OPTIMIZATION_POC`. Contract
+immutability, source breadth and reversible source transactions pass;
+zero-failure correctness does not. Paired value, twenty-commit value and the
+installed proposal UX were never authorized, so the current DNO result has no
+speedup percentage. The most concrete next hypothesis is a separately frozen
+normalization-aware detector that admits marker-only patches only when every
+file input is already normalized and treats any missing normalization as a
+distinct owner-reviewed semantic correction.
+
 The now-closed
 `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1` route learned across the exact Gradle
 commands customers actually repeat, rather than pairing every commit with one
@@ -638,7 +647,7 @@ outside this POC.
 
 ## Evidence
 
-- [Durable native optimization active tracker](../plans/durable-native-optimization-poc-tracker.md)
+- [Durable native optimization closed tracker](../plans/durable-native-optimization-poc-tracker.md)
 - [Durable native optimization frozen contract](../../specs/poc-durable-native-optimization-v1.md)
 - [Verified request hit terminal shadow result](../../benchmarks/results/verified-request-hit-shadow-replay-v1.json)
 - [Verified request hit closed tracker](../plans/verified-request-hit-poc-tracker.md)

@@ -1,6 +1,6 @@
 # Durable native optimization POC v1
 
-Status: preregistered contract for `DNO-001..007`.
+Status: closed with terminal `STOP_DURABLE_NATIVE_OPTIMIZATION_POC`.
 
 ## Hypothesis
 
@@ -68,4 +68,6 @@ owns no wall-time threshold.
 
 ```bash
 ./dev/check-durable-native-optimization
+./dev/check-durable-native-correctness
+./dev/check-durable-native-terminal-decision
 ```

@@ -43,3 +43,13 @@ Validate the checked result and the external-checkout patch driver with:
 ```bash
 ./dev/check-durable-native-correctness
 ```
+
+`terminal-decision.json` closes `DNO-007` and the route with
+`STOP_DURABLE_NATIVE_OPTIMIZATION_POC`. It binds the frozen contract, source
+audit, patch plan and correctness evidence by SHA-256. Paired value,
+longitudinal value and installed proposal UX remain explicitly unauthorized;
+the scorecard contains no speedup claim. Validate it with:
+
+```bash
+./dev/check-durable-native-terminal-decision
+```

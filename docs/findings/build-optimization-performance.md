@@ -59,6 +59,10 @@
   path normalization. That one product failure exceeds the frozen zero-failure
   budget. Groovy and fixtures were stopped rather than counted as zero;
   DNO-005/006 and every new speedup claim remain unauthorized.
+  `DNO-007` therefore closes the route as
+  `STOP_DURABLE_NATIVE_OPTIMIZATION_POC`. A normalization-aware detector is a
+  future hypothesis only; it has not inherited timing or implementation
+  authority.
 
 See the [current one-pager](./buildopt-poc-handoff.md) and the
 [terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)

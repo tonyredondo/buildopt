@@ -1,7 +1,7 @@
 # Durable Native Optimization POC Tracker
 
-**Status:** active<br>
-**Current block:** `DNO-007`<br>
+**Status:** closed<br>
+**Current block:** none<br>
 **Terminal outcomes:** `CONTINUE_DURABLE_NATIVE_OPTIMIZATION_POC` or
 `STOP_DURABLE_NATIVE_OPTIMIZATION_POC`
 
@@ -23,7 +23,7 @@ as differentiation by itself.
 | `DNO-004` | Fixture and public-candidate correctness matrix | DNO-003 | Exact required outputs and zero product failures | `DONE_STOP` |
 | `DNO-005` | Installed paired value | DNO-004 | Frozen value threshold in at least 3/5 families | `NOT_AUTHORIZED` |
 | `DNO-006` | Twenty-commit durable value per admitted family | DNO-005 | Positive signed portfolio, at least 3/5 positive families and finite payback | `NOT_AUTHORIZED` |
-| `DNO-007` | One-command proposal UX and terminal scorecard | DNO-006 or first failed prerequisite | Truthful terminal decision; no unmeasured value presented as zero | `IN_PROGRESS` |
+| `DNO-007` | One-command proposal UX and terminal scorecard | DNO-006 or first failed prerequisite | Truthful terminal decision; no unmeasured value presented as zero | `DONE` |
 
 ## Detector catalog
 
@@ -53,6 +53,23 @@ detector does not prove. Groovy and the fixture matrix were therefore stopped,
 not recorded as zero. `DNO-005` and `DNO-006` are not authorized; `DNO-007`
 must now issue the terminal scorecard and may recommend a separately
 preregistered normalization-aware successor.
+
+## Terminal decision
+
+`STOP_DURABLE_NATIVE_OPTIMIZATION_POC` is the only decision supported by v1.
+The route passes contract immutability, source breadth and reversible patch
+transactions, then fails the zero-product-failure correctness gate. Paired
+value, longitudinal value and the installed proposal UX remain typed
+`NOT_MEASURED_NOT_AUTHORIZED` or `NOT_IMPLEMENTED_NOT_AUTHORIZED`; they are not
+reported as zero and no speedup claim exists.
+
+The result does not prove durable native optimization has no value. It proves
+that the first generic detector—declared input/output annotations plus a
+marker-only patch—is insufficiently semantic. A possible successor must be a
+new preregistered experiment that distinguishes already-normalized file inputs
+from missing-normalization tasks, treats any new normalization as an explicit
+owner-reviewed patch class and repeats fresh breadth/correctness before timing.
+This recommendation is not automatic successor authority.
 
 ## Measurement and stop policy
 

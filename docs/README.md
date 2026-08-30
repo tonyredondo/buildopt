@@ -54,7 +54,7 @@ before running the product.
 
 - [BuildOpt POC one-pager](./findings/buildopt-poc-handoff.md): concise project
   idea, mechanism portfolio, historical wall-time evidence, the latest
-  five-family cause analysis, and the active customer-general POC route.
+  five-family cause analysis, and the latest closed customer-general POC route.
 - [Build Optimization performance findings](./findings/build-optimization-performance.md):
   measured contribution by component, current activation decisions, evidence
   boundaries, and the recommended experimental roadmap.
@@ -66,9 +66,9 @@ before running the product.
 ### Plans
 
 - [Durable Native Optimization POC Tracker](./plans/durable-native-optimization-poc-tracker.md):
-  the active seven-block route from generic source opportunities through
-  reversible compilation, exact correctness, paired and chronological value,
-  one-command proposal UX and a terminal decision.
+  the closed seven-block route from generic source opportunities through a
+  marker-only correctness stop; paired value, chronological value and proposal
+  UX were not authorized.
 - [Verified Request Hit POC Tracker](./plans/verified-request-hit-poc-tracker.md):
   the closed seven-block route from structural opportunity through a complete
   safety contract, shadow replay, Gradle-free execution, installed value,

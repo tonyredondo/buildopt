@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "buildopt.evidence/durable-native-terminal-decision/v1",
+  "decision": "STOP_DURABLE_NATIVE_OPTIMIZATION_POC",
+  "evidenceBindings": {
+    "contractSha256": "7270cab3dc3714842c0da99ec76245f839dcf277b50abb8fc30a363fd7159d69",
+    "opportunityReportSha256": "0fb5b24cf417873d770e909d9fb5badd18212337be018b13f94bbbc4e13d7748",
+    "patchPlanSha256": "bdd973f3044e77091c976f155f300643476cd51c4d325bf910da806410505398",
+    "correctnessSha256": "2e3a18dcea38db9869252d8c9760a390fe5cb64e8b0c7806ef13e372cf317b6f"
+  },
+  "criteria": [
+    {
+      "id": "FROZEN_CONTRACT",
+      "status": "PASS",
+      "observed": "Four detectors, marker-only compiler and ordered gates frozen before execution"
+    },
+    {
+      "id": "SOURCE_BREADTH",
+      "status": "PASS",
+      "observed": "5/5 conclusive families and 4/5 action-bearing families"
+    },
+    {
+      "id": "REVERSIBLE_TRANSACTION",
+      "status": "PASS",
+      "observed": "8/8 idempotent applies and 8/8 exact reverts"
+    },
+    {
+      "id": "ZERO_FAILURE_CORRECTNESS",
+      "status": "FAIL",
+      "required": "0 product failures",
+      "observed": "1 product failure: Micronaut missing normalization for sourceDirectory"
+    },
+    {
+      "id": "PAIRED_VALUE",
+      "status": "NOT_MEASURED_NOT_AUTHORIZED"
+    },
+    {
+      "id": "LONGITUDINAL_VALUE",
+      "status": "NOT_MEASURED_NOT_AUTHORIZED"
+    },
+    {
+      "id": "INSTALLED_PROPOSAL_UX",
+      "status": "NOT_IMPLEMENTED_NOT_AUTHORIZED"
+    }
+  ],
+  "facts": {
+    "exactOutputPassFamilies": 2,
+    "failedFamilies": 1,
+    "notRunFamilies": 1,
+    "noActionFamilies": 1,
+    "productFailures": 1,
+    "pairedTimingSamples": 0,
+    "longitudinalCommits": 0,
+    "speedupClaim": false,
+    "automaticMergeAuthorized": false,
+    "successorAuthorized": false
+  },
+  "conclusion": "A marker-only task detector is not generically safe because declared file inputs can still lack portable normalization semantics.",
+  "recommendation": {
+    "status": "UNAUTHORIZED_FUTURE_HYPOTHESIS",
+    "nextContract": "NORMALIZATION_AWARE_CACHEABILITY_V2",
+    "requirements": [
+      "admit marker-only patches only when every file input already has an explicit normalization strategy",
+      "treat missing normalization as a separate owner-reviewed semantic patch class",
+      "rerun fresh five-family breadth and correctness before any timing"
+    ]
+  }
+}

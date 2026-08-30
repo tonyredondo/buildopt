@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+scorecard=benchmarks/results/durable-native-optimization-v1/terminal-decision.json
+
+check_binding() {
+    local key=$1
+    local path=$2
+    local expected actual
+    expected=$(jq -r ".evidenceBindings.${key}" "$scorecard")
+    actual=$(sha256sum "$path")
+    actual=${actual%% *}
+    [[ $actual == "$expected" ]]
+}
+
+check_binding contractSha256 specs/poc-durable-native-optimization-v1.json
+check_binding opportunityReportSha256 benchmarks/results/durable-native-optimization-v1/opportunity-report.json
+check_binding patchPlanSha256 benchmarks/results/durable-native-optimization-v1/patch-plan.json
+check_binding correctnessSha256 benchmarks/results/durable-native-optimization-v1/correctness.json
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/durable-native-terminal-decision/v1" and
+  .decision == "STOP_DURABLE_NATIVE_OPTIMIZATION_POC" and
+  ([.criteria[] | select(.status == "PASS")] | length) == 3 and
+  ([.criteria[] | select(.status == "FAIL")] | length) == 1 and
+  ([.criteria[] | select(.status == "NOT_MEASURED_NOT_AUTHORIZED")] | length) == 2 and
+  ([.criteria[] | select(.status == "NOT_IMPLEMENTED_NOT_AUTHORIZED")] | length) == 1 and
+  (.criteria[] | select(.id == "ZERO_FAILURE_CORRECTNESS") | .status) == "FAIL" and
+  .facts == {
+    exactOutputPassFamilies: 2,
+    failedFamilies: 1,
+    notRunFamilies: 1,
+    noActionFamilies: 1,
+    productFailures: 1,
+    pairedTimingSamples: 0,
+    longitudinalCommits: 0,
+    speedupClaim: false,
+    automaticMergeAuthorized: false,
+    successorAuthorized: false
+  } and
+  .recommendation.status == "UNAUTHORIZED_FUTURE_HYPOTHESIS" and
+  .recommendation.nextContract == "NORMALIZATION_AWARE_CACHEABILITY_V2"
+' "$scorecard" >/dev/null
+
+rg -q '^\*\*Status:\*\* closed' docs/plans/durable-native-optimization-poc-tracker.md
+rg -q '`DNO-007`.*`DONE`' docs/plans/durable-native-optimization-poc-tracker.md
+rg -q 'STOP_DURABLE_NATIVE_OPTIMIZATION_POC' docs/plans/durable-native-optimization-poc-tracker.md
+
+printf 'DNO-007 terminal decision verified: STOP; timing and proposal UX were not authorized\n'

@@ -177,14 +177,17 @@ bounded mechanism has already satisfied its own evidence contract.
 
 ## Next generalization steps
 
-The detailed active order and stop conditions now live in the
+The detailed closed order and stop conditions now live in the
 [Durable Native Optimization POC Tracker](../plans/durable-native-optimization-poc-tracker.md).
-The new route no longer tries to carry a dynamic decision on every build. It
+The route no longer tries to carry a dynamic decision on every build. It
 first audits five exact public revisions for generic source-bound corrections,
 then compiles only digest-bound reversible patches. No timing is authorized
 until at least three families expose actions and exact-output correctness
 passes. Accepted patches run as optimized native Gradle with no BuildOpt
-runtime on the candidate path.
+runtime on the candidate path. DNO v1 does not reach timing: Micronaut's
+missing-normalization failure closes the route as
+`STOP_DURABLE_NATIVE_OPTIMIZATION_POC` and leaves a normalization-aware
+successor as an unauthorized recommendation.
 
 The verified-request-hit route is now a closed predecessor. Its 8/8 synthetic
 shadow result and 2/4 public output-state breadth explain why a durable source

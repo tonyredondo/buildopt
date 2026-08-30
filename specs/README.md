@@ -7,7 +7,7 @@ path. Start with the [documentation portal](../docs/README.md) or
 [architecture overview](../docs/architecture/overview.md), then return here for
 the exact cross-component contract.
 
-The active generic POC contract is
+The latest generic POC contract is
 [`poc-durable-native-optimization-v1.md`](./poc-durable-native-optimization-v1.md)
 with its adjacent machine-readable JSON. It asks whether BuildOpt can find and
 validate generic, reversible Gradle-source corrections that keep improving
@@ -17,7 +17,7 @@ value gates.
 
 | Specification | Owning item |
 |---|---|
-| [`poc-durable-native-optimization-v1.md`](./poc-durable-native-optimization-v1.md), [`poc-durable-native-optimization-v1.json`](./poc-durable-native-optimization-v1.json) and [frozen subjects](./poc-durable-native-optimization-v1.subjects.json) | `DNO-001..007`; the marker-only route reaches correctness but stops after Micronaut exposes a missing-normalization detector gap. Paired and longitudinal timing are not authorized; terminal `DNO-007` remains |
+| [`poc-durable-native-optimization-v1.md`](./poc-durable-native-optimization-v1.md), [`poc-durable-native-optimization-v1.json`](./poc-durable-native-optimization-v1.json) and [frozen subjects](./poc-durable-native-optimization-v1.subjects.json) | `DNO-001..007`; closed `STOP_DURABLE_NATIVE_OPTIMIZATION_POC` after Micronaut exposes a missing-normalization detector gap. Paired/longitudinal timing and proposal UX were not authorized |
 | [`poc-verified-request-hit-v1.md`](./poc-verified-request-hit-v1.md) and [`poc-verified-request-hit-v1.json`](./poc-verified-request-hit-v1.json) | `VRH-001..003`; stopped whole-request-hit route after 8/8 synthetic shadow matches but 2/4 public exact-output breadth and zero complete historical safety admissions; `VRH-004..007` are not authorized |
 | [`poc-observed-request-portfolio-v1.md`](./poc-observed-request-portfolio-v1.md) and [`poc-observed-request-portfolio-v1.json`](./poc-observed-request-portfolio-v1.json) | `SWL-PORTFOLIO-000..007`; closed exact-command route after independently reconstructed 3/5 completeness, typed unmeasured economics and terminal stop |
 | [`poc-request-aligned-learning-v1.md`](./poc-request-aligned-learning-v1.md) and [`poc-request-aligned-learning-v1.json`](./poc-request-aligned-learning-v1.json) | `SWL-REQUEST-000..007`; closed request-aligned route, independently failed 2/5 complete/action breadth gate, unauthorized timing blocks and terminal stop |

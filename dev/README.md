@@ -272,6 +272,16 @@ exhausts the zero-product-failure budget, so this command verifies that timing
 and the dependent value blocks remain unauthorized; it does not run the public
 builds again.
 
+Validate the terminal scorecard with:
+
+```bash
+./dev/check-durable-native-terminal-decision
+```
+
+The scorecard binds all DNO v1 evidence by digest and requires the stopped
+decision, typed unmeasured economics, absent proposal UX and no speedup,
+automatic-merge or successor-authority claim.
+
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:
 
