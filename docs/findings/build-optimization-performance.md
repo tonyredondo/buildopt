@@ -50,6 +50,12 @@
   2/4 candidate families reach the frozen breadth threshold and zero
   historical rows contain the later complete safety record. The route stops
   before Gradle-free execution or timing; it makes no speedup claim.
+- **The active experiment now tests durable native corrections instead of a
+  per-build runtime decision.** Fresh DNO evidence completes 5/5 source audits
+  and finds eight strict task-contract candidates across 4/5 families. All
+  eight compile into digest-bound additive plans, apply idempotently and revert
+  exactly. These are breadth and transaction results only; correctness and
+  timing remain unmeasured until DNO-004 and DNO-005.
 
 See the [current one-pager](./buildopt-poc-handoff.md) and the
 [terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)

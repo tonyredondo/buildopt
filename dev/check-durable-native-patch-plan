@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if (($# != 2)) || [[ $1 != '--source-root' ]]; then
+    printf 'usage: %s --source-root DIR\n' "$0" >&2
+    exit 64
+fi
+
+source_root=$2
+evidence=benchmarks/results/durable-native-optimization-v1/patch-plan.json
+tmp_dir=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-dno-patch.XXXXXX")
+cleanup() { rm -rf -- "$tmp_dir"; }
+trap cleanup EXIT
+
+./dev/run --toolchain go -- go test ./internal/durablenative ./cmd/durable-native-patch-plan
+./dev/run --toolchain go -- go run ./cmd/durable-native-patch-plan \
+    --source-root "$source_root" --output "$tmp_dir/patch-plan.json"
+cmp "$evidence" "$tmp_dir/patch-plan.json"
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/durable-native-patch-plan/v1" and
+  (.patches | length) == 8 and .applied == 8 and .exactReverts == 8 and
+  .timingAuthorized == false and
+  all(.patches[];
+    .patch.schemaVersion == "buildopt.patch/add-cacheable-task-marker/v1" and
+    (.patch.insertedText | contains("@org.gradle.api.tasks.CacheableTask")))
+' "$evidence" >/dev/null
+
+printf 'DNO-003 patch compiler OK: 8/8 plans apply idempotently and revert exactly; drift and ambiguity rejected\n'

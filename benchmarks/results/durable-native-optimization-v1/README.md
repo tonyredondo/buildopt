@@ -22,3 +22,8 @@ Recompute it from prepared public histories with:
 Without `--source-root`, the checker validates the checked evidence, analyzer
 digest, unit tests and negative breadth fixture without requiring local public
 clones.
+
+`patch-plan.json` is the `DNO-003` transaction evidence. All eight candidates
+compile to the same generic fully qualified annotation, apply idempotently and
+revert to the exact original source bytes. Drift and ambiguous declarations
+fail closed. The plan still contains no candidate execution or timing.

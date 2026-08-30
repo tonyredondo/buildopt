@@ -249,6 +249,17 @@ eight candidates. Omitting `--source-root` runs the portable static evidence,
 analyzer-digest, negative-fixture and unit-test checks. Neither mode runs or
 times Gradle.
 
+Recompute the reversible patch plans with:
+
+```bash
+./dev/check-durable-native-patch-plan \
+  --source-root /path/to/five-public-histories
+```
+
+The check compiles all eight candidates, applies each twice, reverts each twice
+and compares exact source bytes. It also rejects digest drift and ambiguous
+class declarations. It does not edit the supplied repositories.
+
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:
 

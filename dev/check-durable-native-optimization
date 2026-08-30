@@ -42,7 +42,8 @@ jq -e '
 rg -q '^\*\*Status:\*\* active' docs/plans/durable-native-optimization-poc-tracker.md
 rg -q '`DNO-001`.*`DONE`' docs/plans/durable-native-optimization-poc-tracker.md
 rg -q '`DNO-002`.*`DONE`' docs/plans/durable-native-optimization-poc-tracker.md
-rg -q '`DNO-003`.*`IN_PROGRESS`' docs/plans/durable-native-optimization-poc-tracker.md
+rg -q '`DNO-003`.*`DONE`' docs/plans/durable-native-optimization-poc-tracker.md
+rg -q '`DNO-004`.*`IN_PROGRESS`' docs/plans/durable-native-optimization-poc-tracker.md
 rg -q 'A failed gate closes every dependent block as `NOT_AUTHORIZED`' \
     specs/poc-durable-native-optimization-v1.md
 

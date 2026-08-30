@@ -39,6 +39,11 @@ pre-timing gate. Eight candidates were found across Groovy, Micronaut,
 OpenTelemetry and Spring; Kafka is a valid no-action control because its custom
 tasks are already cacheable. No patch has run and no new speedup is claimed.
 
+`DNO-003` compiles all eight opportunities into digest-bound additive patch
+transactions. Apply and revert are byte-exact and idempotent; source drift and
+ambiguous declarations reject. The next gate is real Gradle correctness, not
+timing.
+
 The now-closed
 `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1` route learned across the exact Gradle
 commands customers actually repeat, rather than pairing every commit with one
