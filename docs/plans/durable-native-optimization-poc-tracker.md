@@ -1,7 +1,7 @@
 # Durable Native Optimization POC Tracker
 
 **Status:** active<br>
-**Current block:** `DNO-002`<br>
+**Current block:** `DNO-003`<br>
 **Terminal outcomes:** `CONTINUE_DURABLE_NATIVE_OPTIMIZATION_POC` or
 `STOP_DURABLE_NATIVE_OPTIMIZATION_POC`
 
@@ -18,8 +18,8 @@ as differentiation by itself.
 | Block | Deliverable | Entry gate | Exit gate | State |
 | --- | --- | --- | --- | --- |
 | `DNO-001` | Frozen catalog, thresholds, authority and documentation ledger | User-selected materially different hypothesis | Contract validator rejects drift and every old route remains terminal | `DONE` |
-| `DNO-002` | Five-family source opportunity report | DNO-001 | 5/5 conclusive and at least 3/5 source-bound action families; no timing | `IN_PROGRESS` |
-| `DNO-003` | Generic digest-bound patch compiler and exact transaction | DNO-002 pass | Idempotent apply, exact revert, ambiguous/drifted sources rejected | `WAITING` |
+| `DNO-002` | Five-family source opportunity report | DNO-001 | 5/5 conclusive and at least 3/5 source-bound action families; no timing | `DONE` |
+| `DNO-003` | Generic digest-bound patch compiler and exact transaction | DNO-002 pass | Idempotent apply, exact revert, ambiguous/drifted sources rejected | `IN_PROGRESS` |
 | `DNO-004` | Fixture and public-candidate correctness matrix | DNO-003 | Exact required outputs and zero product failures | `WAITING` |
 | `DNO-005` | Installed paired value | DNO-004 | Frozen value threshold in at least 3/5 families | `WAITING` |
 | `DNO-006` | Twenty-commit durable value per admitted family | DNO-005 | Positive signed portfolio, at least 3/5 positive families and finite payback | `WAITING` |

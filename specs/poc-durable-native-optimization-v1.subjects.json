@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.specs/poc-durable-native-optimization-subjects/v1",
+  "families": [
+    {
+      "key": "apache-groovy",
+      "repository": "https://github.com/apache/groovy.git",
+      "revision": "655b70f3fdb34dcb8e98fc141c68647f92a27e82"
+    },
+    {
+      "key": "apache-kafka",
+      "repository": "https://github.com/apache/kafka.git",
+      "revision": "db8a0925513a76d1a4f13df00867c7491a4b3ce7"
+    },
+    {
+      "key": "micronaut-core",
+      "repository": "https://github.com/micronaut-projects/micronaut-core.git",
+      "revision": "428ddeb3ad2acdabef2027cc06af3bf46865956a"
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "repository": "https://github.com/open-telemetry/opentelemetry-java-instrumentation.git",
+      "revision": "3300ac68822ed4dbade73496f2fffd3a2c6e32ed"
+    },
+    {
+      "key": "spring-framework",
+      "repository": "https://github.com/spring-projects/spring-framework.git",
+      "revision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee"
+    }
+  ]
+}

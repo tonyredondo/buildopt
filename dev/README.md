@@ -237,6 +237,18 @@ source audit, the 3/5 pre-timing action-breadth gate, exact-output correctness,
 paired and chronological value thresholds, and the POC-only authority
 boundary. Historical results cannot satisfy a DNO gate.
 
+Recompute the first five-family DNO source audit with:
+
+```bash
+./dev/check-durable-native-opportunity-audit \
+  --source-root /path/to/five-public-histories
+```
+
+The checked report passes 5/5 completeness and 4/5 source-action breadth with
+eight candidates. Omitting `--source-root` runs the portable static evidence,
+analyzer-digest, negative-fixture and unit-test checks. Neither mode runs or
+times Gradle.
+
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:
 

@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "buildopt.evidence/durable-native-opportunity/v1",
+  "contractRevision": "cc8ac552c7e87667ddad6dce7edc0ec0794ad1d5",
+  "analyzerSha256": "1644ca234a502a35e6761921548d7cb7fab42b86d666126214b60afc497c68c0",
+  "families": [
+    {
+      "key": "apache-groovy",
+      "repository": "https://github.com/apache/groovy.git",
+      "revision": "655b70f3fdb34dcb8e98fc141c68647f92a27e82",
+      "complete": true,
+      "candidates": [
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/DispatchMetricsSummary.groovy",
+          "className": "DispatchMetricsSummary",
+          "language": "GROOVY",
+          "inputCount": 2,
+          "outputCount": 1,
+          "sourceSha256": "f9520c1deac2204520b8b0963129f69974f69745e000609c6ac8b9932096904a"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/PerformanceTestSummary.groovy",
+          "className": "PerformanceTestSummary",
+          "language": "GROOVY",
+          "inputCount": 1,
+          "outputCount": 1,
+          "sourceSha256": "0cf022f96d7016246e0b4e53ef35a280cf1f120334f547b1ffb047959e09d669"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/ReleaseInfoGenerator.groovy",
+          "className": "ReleaseInfoGenerator",
+          "language": "GROOVY",
+          "inputCount": 3,
+          "outputCount": 1,
+          "sourceSha256": "f8a19e811b900e3f2f59c47a15af421f1533cae21da726bc2b351e2aa6791082"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/WriteExtensionDescriptorTask.groovy",
+          "className": "WriteExtensionDescriptorTask",
+          "language": "GROOVY",
+          "inputCount": 4,
+          "outputCount": 1,
+          "sourceSha256": "269236e1fc349457f1d2c0d0c4403562ca30588ff99ecedc939325a0ba1e5f3e"
+        }
+      ],
+      "unavailableDetectors": [
+        "RECURRENT_CLEAN_ELISION",
+        "DECLARED_GRAPH_SCOPE",
+        "INTERNAL_COMPILE_CLASSPATH"
+      ]
+    },
+    {
+      "key": "apache-kafka",
+      "repository": "https://github.com/apache/kafka.git",
+      "revision": "db8a0925513a76d1a4f13df00867c7491a4b3ce7",
+      "complete": true,
+      "candidates": [],
+      "unavailableDetectors": [
+        "RECURRENT_CLEAN_ELISION",
+        "DECLARED_GRAPH_SCOPE",
+        "INTERNAL_COMPILE_CLASSPATH"
+      ]
+    },
+    {
+      "key": "micronaut-core",
+      "repository": "https://github.com/micronaut-projects/micronaut-core.git",
+      "revision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+      "complete": true,
+      "candidates": [
+        {
+          "path": "buildSrc/src/main/groovy/io/micronaut/build/internal/python/PythonVfsBytecodeCompile.java",
+          "className": "PythonVfsBytecodeCompile",
+          "language": "JAVA",
+          "inputCount": 3,
+          "outputCount": 1,
+          "sourceSha256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca"
+        }
+      ],
+      "unavailableDetectors": [
+        "RECURRENT_CLEAN_ELISION",
+        "DECLARED_GRAPH_SCOPE",
+        "INTERNAL_COMPILE_CLASSPATH"
+      ]
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "repository": "https://github.com/open-telemetry/opentelemetry-java-instrumentation.git",
+      "revision": "3300ac68822ed4dbade73496f2fffd3a2c6e32ed",
+      "complete": true,
+      "candidates": [
+        {
+          "path": "conventions/src/main/kotlin/io/opentelemetry/instrumentation/gradle/GenerateInstrumentationVersionClassTask.kt",
+          "className": "GenerateInstrumentationVersionClassTask",
+          "language": "KOTLIN",
+          "inputCount": 2,
+          "outputCount": 1,
+          "sourceSha256": "c552ee58dd683179598ab224c25af623e0e0050a9e03de971c6ee16a26e92643"
+        }
+      ],
+      "unavailableDetectors": [
+        "RECURRENT_CLEAN_ELISION",
+        "DECLARED_GRAPH_SCOPE",
+        "INTERNAL_COMPILE_CLASSPATH"
+      ]
+    },
+    {
+      "key": "spring-framework",
+      "repository": "https://github.com/spring-projects/spring-framework.git",
+      "revision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+      "complete": true,
+      "candidates": [
+        {
+          "path": "buildSrc/src/main/java/org/springframework/build/architecture/ArchitectureCheck.java",
+          "className": "ArchitectureCheck",
+          "language": "JAVA",
+          "inputCount": 3,
+          "outputCount": 1,
+          "sourceSha256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04"
+        },
+        {
+          "path": "buildSrc/src/main/java/org/springframework/build/shadow/ShadowSource.java",
+          "className": "ShadowSource",
+          "language": "JAVA",
+          "inputCount": 3,
+          "outputCount": 1,
+          "sourceSha256": "d37ef96c4150c022e2387a85addefec50a17e89403c25fa87de1adda0f0573d3"
+        }
+      ],
+      "unavailableDetectors": [
+        "RECURRENT_CLEAN_ELISION",
+        "DECLARED_GRAPH_SCOPE",
+        "INTERNAL_COMPILE_CLASSPATH"
+      ]
+    }
+  ],
+  "completeFamilies": 5,
+  "actionFamilies": 4,
+  "requiredActionFamilies": 3,
+  "decision": "PASS_SOURCE_ACTION_BREADTH",
+  "timingAuthorized": false
+}

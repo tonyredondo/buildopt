@@ -2,6 +2,12 @@
 
 Reproducible workloads for measuring causal savings, overhead, queues, additional compute, and behavior under failure.
 
+The active fresh route begins with the
+[durable native optimization evidence](./results/durable-native-optimization-v1/README.md).
+Its source audit passes 5/5 completeness and 4/5 action breadth with eight
+digest-bound candidates. It contains no timing; paired measurement remains
+closed until patch compilation and exact-output correctness pass.
+
 Seeds, images, toolchains, runner classes, and digests are part of the evidence. A benchmark never authorizes a security capability.
 
 [`beta-v1.yaml`](./beta-v1.yaml) is the materialized `F0-032`

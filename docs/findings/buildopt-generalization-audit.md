@@ -190,6 +190,13 @@ The verified-request-hit route is now a closed predecessor. Its 8/8 synthetic
 shadow result and 2/4 public output-state breadth explain why a durable source
 correction is worth testing, but cannot authorize or time any DNO action.
 
+`DNO-002` now provides the first fresh result. A source-only analyzer completes
+all five frozen revisions and finds eight strict custom-task contracts across
+four families: Groovy (4), Micronaut (1), OpenTelemetry (1) and Spring (2).
+Kafka is conclusively no-action because its two custom tasks already declare
+cacheability. The 4/5 result passes the frozen 3/5 breadth gate and opens only
+the digest-bound patch compiler; it is not correctness or performance evidence.
+
 The closed predecessor evidence remains in the
 [Observed Recurrent Request Portfolio POC Tracker](../plans/observed-request-portfolio-poc-tracker.md).
 The route has completed evidence precision, exact-request lifecycle, fresh

@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+usage() {
+    printf 'usage: %s [--source-root DIR]\n' "$0" >&2
+    exit 64
+}
+
+source_root=''
+if (($# == 2)) && [[ $1 == '--source-root' ]]; then
+    source_root=$2
+elif (($# != 0)); then
+    usage
+fi
+
+evidence=benchmarks/results/durable-native-optimization-v1/opportunity-report.json
+
+./dev/run --toolchain go -- go test ./internal/durablenative ./cmd/durable-native-audit
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/durable-native-opportunity/v1" and
+  .contractRevision == "cc8ac552c7e87667ddad6dce7edc0ec0794ad1d5" and
+  .completeFamilies == 5 and
+  .actionFamilies == 4 and
+  .requiredActionFamilies == 3 and
+  .decision == "PASS_SOURCE_ACTION_BREADTH" and
+  .timingAuthorized == false and
+  (.families | length) == 5 and
+  ([.families[] | select(.complete == true)] | length) == 5 and
+  ([.families[] | select((.candidates | length) > 0)] | length) == 4 and
+  ([.families[].candidates[]] | length) == 8 and
+  all(.families[].candidates[];
+    (.sourceSha256 | test("^[0-9a-f]{64}$")) and
+    .inputCount > 0 and .outputCount > 0 and
+    (.language == "JAVA" or .language == "GROOVY" or .language == "KOTLIN")) and
+  all(.families[]; .unavailableDetectors == [
+    "RECURRENT_CLEAN_ELISION",
+    "DECLARED_GRAPH_SCOPE",
+    "INTERNAL_COMPILE_CLASSPATH"
+  ])
+' "$evidence" >/dev/null
+
+analyzer_sha=$(
+    for path in cmd/durable-native-audit/main.go internal/durablenative/scanner.go; do
+        printf '%s\0' "$path"
+        command cat "$path"
+        printf '\0'
+    done | sha256sum | cut -d' ' -f1
+)
+[[ $(jq -r '.analyzerSha256' "$evidence") == "$analyzer_sha" ]]
+
+tmp_dir=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-dno-audit.XXXXXX")
+cleanup() { rm -rf -- "$tmp_dir"; }
+trap cleanup EXIT
+
+jq '.decision = "PASS_SOURCE_ACTION_BREADTH" | .actionFamilies = 2' "$evidence" >"$tmp_dir/forged.json"
+if jq -e '.actionFamilies >= .requiredActionFamilies' "$tmp_dir/forged.json" >/dev/null; then
+    printf 'forged breadth unexpectedly passed\n' >&2
+    exit 1
+fi
+
+if [[ -n $source_root ]]; then
+    ./dev/run --toolchain go -- go run ./cmd/durable-native-audit \
+        --source-root "$source_root" \
+        --contract-revision cc8ac552c7e87667ddad6dce7edc0ec0794ad1d5 \
+        --output "$tmp_dir/recomputed.json"
+    cmp "$evidence" "$tmp_dir/recomputed.json"
+fi
+
+printf 'DNO-002 opportunity audit OK: 5/5 conclusive, 4/5 action families, 8 source-bound candidates, no timing\n'

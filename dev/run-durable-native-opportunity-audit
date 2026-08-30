@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if (($# != 2)); then
+    printf 'usage: %s SOURCE_ROOT OUTPUT\n' "$0" >&2
+    exit 64
+fi
+
+source_root=$1
+output=$2
+contract_revision=$(git rev-parse HEAD)
+
+./dev/run --toolchain go -- go run ./cmd/durable-native-audit \
+    --source-root "$source_root" \
+    --contract-revision "$contract_revision" \
+    --output "$output"

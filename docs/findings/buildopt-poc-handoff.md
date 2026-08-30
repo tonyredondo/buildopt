@@ -33,6 +33,12 @@ classes, a 5/5 source-audit requirement, 3/5 action breadth, exact correctness,
 paired value and twenty-commit longitudinal gates. No new DNO performance
 percentage exists yet; historical results cannot satisfy these gates.
 
+The fresh `DNO-002` audit is now complete: 5/5 public revisions are
+conclusive and 4/5 expose at least one source-bound action, passing the 3/5
+pre-timing gate. Eight candidates were found across Groovy, Micronaut,
+OpenTelemetry and Spring; Kafka is a valid no-action control because its custom
+tasks are already cacheable. No patch has run and no new speedup is claimed.
+
 The now-closed
 `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1` route learned across the exact Gradle
 commands customers actually repeat, rather than pairing every commit with one
