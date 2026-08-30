@@ -32,6 +32,13 @@ DSL/version row prove all five transition statuses, exact relevant closure,
 renamed current-output binding and fail-closed no-action outcomes without
 timing or activation.
 
+`verified-request-hit-shadow/` contains the minimal Kotlin and Groovy
+`VRH-003` shadow repositories. Gradle 8.14.3/9.6.1 runs the same deterministic
+cacheable request twice per cell while BuildOpt predicts but never acts. A
+separate incorrect-output fixture proves first-mismatch quarantine and a
+subsequent native replay without another prediction. It contains no timing or
+Gradle-free execution path.
+
 `sticky-wrapper-learning/` is the SWL-014B repository-independent composition
 fixture. It injects only the frozen clock, detector, trial and publisher seams,
 then proves qualification, active counterfactual, suspension, retirement and

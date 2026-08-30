@@ -1,0 +1,24 @@
+import org.gradle.api.tasks.CacheableTask
+
+@CacheableTask
+abstract class RequestHitOutput extends DefaultTask {
+    @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
+    abstract RegularFileProperty getPayload()
+
+    @OutputFile
+    abstract RegularFileProperty getResult()
+
+    @TaskAction
+    void generate() {
+        def suffix = System.getenv('BUILDOPT_SHADOW_MISMATCH') ?: ''
+        def output = result.get().asFile
+        output.parentFile.mkdirs()
+        output.text = payload.get().asFile.text + suffix
+    }
+}
+
+tasks.register('requestHitOutput', RequestHitOutput) {
+    payload = layout.projectDirectory.file('inputs/payload.txt')
+    result = layout.buildDirectory.file('request-hit/result.txt')
+}

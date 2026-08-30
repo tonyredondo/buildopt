@@ -196,6 +196,16 @@ evaluator starts zero Gradle invocations, selects zero actions and records zero
 timing samples. This opens shadow replay only and is not hit-rate or speedup
 evidence.
 
+[`verified-request-hit-shadow-replay-v1.json`](./results/verified-request-hit-shadow-replay-v1.json)
+is the terminal `VRH-003` shadow result. The real Gradle 8.14.3/9.6.1 ×
+Kotlin/Groovy matrix produces 8/8 exact repeated matches, and one deliberate
+output mismatch quarantines the identity before its next native replay. The
+checked public corpus contains 34/69 exact output-state rows and 35/69
+mismatches; only 2/4 candidate families reach the frozen five-row threshold,
+and zero historical rows contain the later complete VRH-002 safety record.
+The decision therefore stops before Gradle-free execution. The result contains
+zero actions, zero timing samples and no speedup claim.
+
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
@@ -216,6 +226,7 @@ evidence.
 ./dev/check-observed-request-portfolio-terminal-decision
 ./dev/check-verified-request-hit-eligibility-audit
 ./dev/check-verified-request-hit-safety-contract
+./dev/check-verified-request-hit-shadow-replay --static
 ```
 
 ## Sticky-wrapper observation sample

@@ -1,8 +1,8 @@
 {
   "schemaVersion": "buildopt.poc/verified-request-hit-contract/v1",
   "workItem": "VRH-000",
-  "status": "ACTIVE",
-  "currentBlock": "VRH-003",
+  "status": "STOPPED",
+  "currentBlock": "NONE",
   "generatedAt": "2026-08-30T00:00:00Z",
   "purpose": "Determine whether BuildOpt can safely satisfy an exact recurrent Gradle request from verified prior outputs without starting Gradle, then prove cumulative customer wall-time value beyond optimized native Gradle.",
   "predecessor": {
@@ -61,48 +61,59 @@
     },
     {
       "id": "VRH-003",
-      "state": "TODO",
+      "state": "DONE",
       "deliverable": "Shadow replay against native Gradle with zero user-visible action",
-      "dependsOn": "VRH-002"
+      "dependsOn": "VRH-002",
+      "outcome": "STOP_VERIFIED_REQUEST_HIT_BEFORE_GRADLE_FREE_EXECUTION"
     },
     {
       "id": "VRH-004",
-      "state": "WAITING",
+      "state": "NOT_AUTHORIZED",
       "deliverable": "Real Gradle-free output materialization and exact-result execution",
-      "dependsOn": "VRH-003"
+      "dependsOn": "VRH-003",
+      "outcome": "SHADOW_BREADTH_AND_COMPLETE_PUBLIC_SAFETY_ADMISSION_FAILED"
     },
     {
       "id": "VRH-005",
-      "state": "WAITING",
+      "state": "NOT_AUTHORIZED",
       "deliverable": "Installed balanced paired value against optimized native Gradle",
-      "dependsOn": "VRH-004"
+      "dependsOn": "VRH-004",
+      "outcome": "GRADLE_FREE_EXECUTION_NOT_AUTHORIZED"
     },
     {
       "id": "VRH-006",
-      "state": "WAITING",
+      "state": "NOT_AUTHORIZED",
       "deliverable": "Chronological combined-value replay across all five public families",
-      "dependsOn": "VRH-005"
+      "dependsOn": "VRH-005",
+      "outcome": "INSTALLED_VALUE_NOT_AUTHORIZED"
     },
     {
       "id": "VRH-007",
-      "state": "WAITING",
+      "state": "NOT_AUTHORIZED",
       "deliverable": "Terminal continue or stop decision",
-      "dependsOn": "VRH-006"
+      "dependsOn": "VRH-006",
+      "outcome": "ROUTE_STOPPED_AT_VRH_003"
     }
   ],
   "latestEvidence": {
-    "path": "benchmarks/results/verified-request-hit-safety-contract-v1.json",
-    "completeContractFixtures": 1,
-    "negativeFixtures": 37,
-    "typedNativeRetentions": 37,
-    "gradleInvocations": 0,
+    "path": "benchmarks/results/verified-request-hit-shadow-replay-v1.json",
+    "syntheticShadowMatches": 8,
+    "syntheticShadowMatchesRequired": 8,
+    "mismatchQuarantines": 1,
+    "publicPotentialRows": 69,
+    "publicExactOutputRows": 34,
+    "publicOutputMismatchRows": 35,
+    "publicFamiliesMeetingExactOutputBreadth": 2,
+    "publicFamiliesRequired": 3,
+    "publicSafetyAdmittedRows": 0,
+    "gradleInvocations": 14,
     "actionSelections": 0,
     "timingSamples": 0,
     "performanceMeasured": false,
     "selectionAuthorized": false,
     "activationAuthorized": false,
     "speedupClaim": false,
-    "decision": "OPEN_VERIFIED_REQUEST_HIT_SHADOW_REPLAY"
+    "decision": "STOP_VERIFIED_REQUEST_HIT_BEFORE_GRADLE_FREE_EXECUTION"
   },
-  "nextBlock": "VRH-003"
+  "nextBlock": "NONE"
 }

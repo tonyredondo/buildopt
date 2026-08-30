@@ -1,0 +1,225 @@
+{
+  "schemaVersion": "buildopt.poc/verified-request-hit-shadow-replay/v1",
+  "workItem": "VRH-003",
+  "generatedAt": "2026-08-30T00:00:00Z",
+  "inputs": {
+    "routeContractSha256": "876ebb578d79e0f80684d20ceb0c382b97b728671ddfcade2469d465559f8b9e",
+    "safetySchemaSha256": "740982e74f12db8fe0456b03a41c8b57839218ff16525069925b24379f7f8aa7",
+    "shadowImplementationSha256": "c7995de1505fd4f3e3ea24be60badbf0706b5e0ceb18d35afe8db2ffc8729fb8",
+    "evaluatorSourceSha256": "125d20e135a49da7252b51dabd8cfb7c74469ca17c4b91a4225eb01a13c8303b",
+    "fixtureTreeSha256": "bf0048cdde7e43900096c71d11a29c2ee18955ba658bea775198296eed8874f8",
+    "publicContractSha256": "944883f227576cc72bbc6282dbf4b27b296d886b1c133d0b94bd6a64ab79d219",
+    "publicObservationsSha256": "078a9df7b61edf1c2bef149a79e5a34329427b751a427d67d7950e1a6b1131ca",
+    "publicTransitionsSha256": "0f44bf1b83c1ca8c153f6ee4eec7f0880cb0e17eb38ca022b819f53c781d7ec7",
+    "publicSummarySha256": "5e8015ae717106a42c5cda18900538fd53238f91540e21621428d4bd30b68a9c"
+  },
+  "thresholds": {
+    "syntheticRepeatsPerCell": 2,
+    "syntheticCellsRequired": 4,
+    "publicExactRowsPerFamilyRequired": 5,
+    "publicFamiliesRequired": 3,
+    "productFailureBudget": 0
+  },
+  "synthetic": {
+    "cases": [
+      {
+        "gradleVersion": "8.14.3",
+        "dsl": "KOTLIN",
+        "repeatCount": 2,
+        "exactMatches": 2,
+        "nativeInvocations": 3,
+        "recordSha256": "3acfa7fb68f714fb20152f6b4fbf2e1556e02bdd071386827279cc24d77b7026"
+      },
+      {
+        "gradleVersion": "8.14.3",
+        "dsl": "GROOVY",
+        "repeatCount": 2,
+        "exactMatches": 2,
+        "nativeInvocations": 3,
+        "recordSha256": "c8b648797f7614efb1cda409808fe8824cc2a07307ea3be3bb2a7d86296e8e7d"
+      },
+      {
+        "gradleVersion": "9.6.1",
+        "dsl": "KOTLIN",
+        "repeatCount": 2,
+        "exactMatches": 2,
+        "nativeInvocations": 3,
+        "recordSha256": "c6bf69486652cdc445e6d45e1fb26b349504f7c0be60e73ed25d6de23bc12593"
+      },
+      {
+        "gradleVersion": "9.6.1",
+        "dsl": "GROOVY",
+        "repeatCount": 2,
+        "exactMatches": 2,
+        "nativeInvocations": 3,
+        "recordSha256": "e699a8436ff5163257634a3f93fd4745fbf94d2c8a5674f215e4dac1c0c16325"
+      }
+    ],
+    "exactMatches": 8,
+    "requiredMatches": 8,
+    "matrixPass": true,
+    "mismatch": {
+      "gradleVersion": "9.6.1",
+      "dsl": "KOTLIN",
+      "firstDisposition": "SHADOW_MISMATCH_QUARANTINED",
+      "firstReason": "NATIVE_OUTPUT_MISMATCH",
+      "nextDisposition": "SHADOW_NOT_PREDICTED",
+      "nextReason": "IDENTITY_QUARANTINED:NATIVE_OUTPUT_MISMATCH",
+      "firstMismatchQuarantined": true,
+      "nextReplayPredicted": false,
+      "nativeExecutedBothTimes": true
+    },
+    "quarantinePass": true
+  },
+  "public": {
+    "families": [
+      {
+        "family": "apache-kafka",
+        "dsl": "GROOVY",
+        "potentialRows": 17,
+        "nativeOutcomeMatches": 17,
+        "nativeOutputMatches": 0,
+        "nativeOutputMismatches": 17,
+        "safetyAdmittedRows": 0,
+        "exactOutputOrdinals": [],
+        "mismatchedOutputOrdinals": [
+          4,
+          5,
+          6,
+          7,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          21,
+          22,
+          24,
+          25
+        ],
+        "retentionReason": "HISTORICAL_VRH002_SAFETY_RECORD_UNAVAILABLE"
+      },
+      {
+        "family": "micronaut-core",
+        "dsl": "KOTLIN",
+        "potentialRows": 14,
+        "nativeOutcomeMatches": 14,
+        "nativeOutputMatches": 12,
+        "nativeOutputMismatches": 2,
+        "safetyAdmittedRows": 0,
+        "exactOutputOrdinals": [
+          4,
+          6,
+          7,
+          12,
+          13,
+          18,
+          19,
+          21,
+          22,
+          27,
+          28,
+          30
+        ],
+        "mismatchedOutputOrdinals": [
+          9,
+          10
+        ],
+        "retentionReason": "HISTORICAL_VRH002_SAFETY_RECORD_UNAVAILABLE"
+      },
+      {
+        "family": "opentelemetry-java-instrumentation",
+        "dsl": "KOTLIN",
+        "potentialRows": 22,
+        "nativeOutcomeMatches": 22,
+        "nativeOutputMatches": 22,
+        "nativeOutputMismatches": 0,
+        "safetyAdmittedRows": 0,
+        "exactOutputOrdinals": [
+          4,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          17,
+          18,
+          19,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30
+        ],
+        "mismatchedOutputOrdinals": [],
+        "retentionReason": "HISTORICAL_VRH002_SAFETY_RECORD_UNAVAILABLE"
+      },
+      {
+        "family": "spring-framework",
+        "dsl": "KOTLIN",
+        "potentialRows": 16,
+        "nativeOutcomeMatches": 16,
+        "nativeOutputMatches": 0,
+        "nativeOutputMismatches": 16,
+        "safetyAdmittedRows": 0,
+        "exactOutputOrdinals": [],
+        "mismatchedOutputOrdinals": [
+          8,
+          9,
+          10,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29
+        ],
+        "retentionReason": "HISTORICAL_VRH002_SAFETY_RECORD_UNAVAILABLE"
+      }
+    ],
+    "potentialRows": 69,
+    "nativeOutputMatches": 34,
+    "nativeOutputMismatches": 35,
+    "safetyAdmittedRows": 0,
+    "familiesMeetingExactOutputBreadth": 2,
+    "familiesMeetingAdmissionBreadth": 0,
+    "outputBreadthPass": false,
+    "admissionBreadthPass": false
+  },
+  "totals": {
+    "gradleInvocations": 14,
+    "predictions": 9,
+    "shadowMatches": 8,
+    "quarantinedIdentities": 1,
+    "actionSelections": 0,
+    "timingSamples": 0
+  },
+  "authority": {
+    "selectionAuthorized": false,
+    "activationAuthorized": false,
+    "performanceMeasured": false,
+    "speedupClaim": false
+  },
+  "decision": "STOP_VERIFIED_REQUEST_HIT_BEFORE_GRADLE_FREE_EXECUTION",
+  "conclusion": "SHADOW_MECHANICS_PASS_BUT_PUBLIC_BREADTH_AND_COMPLETE_SAFETY_ADMISSION_FAIL",
+  "nextBlock": "NONE"
+}

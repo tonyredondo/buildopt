@@ -2,16 +2,17 @@
 
 ## Status
 
-**Overall:** `ACTIVE`
+**Overall:** `STOPPED`
 
-**Current block:** `VRH-003 — shadow replay`
+**Current block:** none
 
 **Completed:** `VRH-001 — eligibility and capture-diagnostic audit`; `VRH-002 —
-complete fail-closed safety contract`
+complete fail-closed safety contract`; `VRH-003 — shadow replay and terminal
+breadth decision`
 
-**Next decision:** predict only identities admitted by the complete safety
-contract, run native Gradle unchanged and compare the prediction with the real
-outcome and repository effects.
+**Next decision:** none inside this route. `VRH-004..007` are not authorized.
+Preserve the negative public evidence and select a materially different,
+preregistered hypothesis before opening another implementation route.
 
 ## POC objective
 
@@ -67,11 +68,11 @@ structural ceiling: none is yet safe, selected, executed or timed.
 | ---: | --- | --- | --- | --- |
 | 1 | `VRH-001` Eligibility and diagnostic audit | Independent action-potential counts; preserve historical provenance; bounded forward diagnostics | 113 rows partition exactly, 4/5 potential-hit threshold passes, 8 unavailable rows remain typed, no authority invented | `DONE` |
 | 2 | `VRH-002` Safety contract | Versioned request-hit record, verifier and negative matrix | Every required fact is represented; all 37 missing/drifted/unsafe fixtures retain native; zero Gradle/action/timing | `DONE` |
-| 3 | `VRH-003` Shadow replay | Predict hits but execute native Gradle and compare result/output states | Repeated exact matches across Gradle 8/9, Kotlin/Groovy and eligible public rows; mismatch quarantine works | `TODO` |
-| 4 | `VRH-004` Gradle-free execution | Verified output materialization and successful return without Gradle | Process-level proof that Gradle never starts; exact outputs/outcome; fail-open native fallback | `WAITING` |
-| 5 | `VRH-005` Installed paired value | Controlled balanced candidate/native measurements | Positive signed mean and lower bound, non-regressive p95, exact outputs and full cost accounting in at least three families | `WAITING` |
-| 6 | `VRH-006` Chronological combined value | Request hit + partial graph + native policy over all five histories | Signed cumulative savings, hit/action/fallback counts, payback and native-retention overhead; no averaged repository percentages | `WAITING` |
-| 7 | `VRH-007` Terminal decision | Digest-bound continue or stop scorecard | Correctness, installed value, cumulative value, breadth, overhead and failure gates evaluated without threshold movement | `WAITING` |
+| 3 | `VRH-003` Shadow replay | Predict hits but execute native Gradle and compare result/output states | 8/8 synthetic matches, mismatch quarantine and the frozen public breadth/admission decision are reproduced with no action or timing | `DONE — STOP` |
+| 4 | `VRH-004` Gradle-free execution | Verified output materialization and successful return without Gradle | Process-level proof that Gradle never starts; exact outputs/outcome; fail-open native fallback | `NOT AUTHORIZED` |
+| 5 | `VRH-005` Installed paired value | Controlled balanced candidate/native measurements | Positive signed mean and lower bound, non-regressive p95, exact outputs and full cost accounting in at least three families | `NOT AUTHORIZED` |
+| 6 | `VRH-006` Chronological combined value | Request hit + partial graph + native policy over all five histories | Signed cumulative savings, hit/action/fallback counts, payback and native-retention overhead; no averaged repository percentages | `NOT AUTHORIZED` |
+| 7 | `VRH-007` Terminal decision | Digest-bound continue or stop scorecard | Correctness, installed value, cumulative value, breadth, overhead and failure gates evaluated without threshold movement | `NOT AUTHORIZED` |
 
 ## Autonomous contracts
 
@@ -137,9 +138,38 @@ mismatch quarantines the identity and requires new evidence; it may not be
 averaged away. Hosted CI may exercise correctness fixtures but owns no wall-time
 threshold.
 
+This block is complete with a terminal stop. The frozen mechanical threshold
+passes: Gradle 8.14.3 and 9.6.1, each with Kotlin and Groovy DSL, produce two
+exact shadow agreements per cell (**8/8** total). One deliberately incorrect
+output prediction is quarantined on its first native mismatch; the next replay
+runs native again without predicting. The harness starts **14** native Gradle
+invocations, selects **zero** actions and records **zero** timing samples.
+
+The public breadth input is diagnostic native evidence from the checked
+ordinary-request corpus, not a retrospective safety record. Across its **69**
+potential request-hit rows, native outcomes agree in every row but exact output
+states agree in only **34** and differ in **35**:
+
+| Public family | Potential rows | Exact native output states | Mismatches | Complete VRH-002 admissions |
+| --- | ---: | ---: | ---: | ---: |
+| Apache Kafka | 17 | 0 | 17 | 0 |
+| Micronaut Core | 14 | 12 | 2 | 0 |
+| OpenTelemetry Java Instrumentation | 22 | 22 | 0 | 0 |
+| Spring Framework | 16 | 0 | 16 | 0 |
+| **Total** | **69** | **34** | **35** | **0** |
+
+Only **2/4** candidate public families reach five exact-output rows, below the
+frozen **3-family** breadth threshold. More importantly, those historical
+captures predate the complete VRH-002 record and therefore cannot prove the
+full safety/materialization contract after the fact; safety-admitted public
+rows remain **0**. Reinterpreting structural rows as safe would move the gate
+after seeing the data. The decision is therefore
+`STOP_VERIFIED_REQUEST_HIT_BEFORE_GRADLE_FREE_EXECUTION`.
+
 ### VRH-004 — Gradle-free execution
 
-After the preregistered repeated-shadow threshold passes, implement the real
+Not authorized. Had the complete shadow threshold passed, this block would
+implement the real
 action. Restore all required outputs atomically, verify them, return the bound
 successful result and prove at process level that no Gradle launcher, daemon or
 child JVM starts. Any restore/verify failure removes partial materialization and
@@ -148,7 +178,8 @@ it `NATIVE_NOOP` or a native cache hit.
 
 ### VRH-005 — Installed paired value
 
-Install the same package a user receives. On the controlled runner, execute at
+Not authorized because no Gradle-free action exists. Its frozen contract would
+install the same package a user receives and execute at
 least eight balanced alternating pairs per admitted family against optimized
 native Gradle with identical dependency/cache opportunities. Time outside both
 arms, include lookup, restore, verification and fallback, and validate exact
@@ -157,7 +188,8 @@ measurements and may not be weakened after results appear.
 
 ### VRH-006 — Chronological combined value
 
-Replay the five public first-parent histories with persistent but arm-isolated
+Not authorized. Its frozen contract would replay the five public first-parent
+histories with persistent but arm-isolated
 state. Apply one generic policy: potential irrelevant requests may become
 verified hits; relevant rows may use a separately qualified exact partial
 graph; global, ambiguous, unavailable or unsafe rows run native. Record every
@@ -166,7 +198,9 @@ overall. Do not add or average percentages from different workloads.
 
 ### VRH-007 — Terminal decision
 
-Continue only if there are zero correctness/product failures, the installed
+Not authorized as a separate block because the prerequisite chain stopped at
+VRH-003. Its frozen decision would continue only if there were zero
+correctness/product failures, the installed
 action beats optimized native Gradle with confidence in at least three families,
 chronological cumulative savings are positive, payback is finite and native-
 retention overhead stays within its frozen budget. Otherwise stop this

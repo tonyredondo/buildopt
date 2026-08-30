@@ -37,15 +37,19 @@
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
   Runtime Tuning, Hot State and standard Copy are retired; historical Jar,
   Patch and Edge experiments remain scoped supporting evidence.
-- **The active experiment targets Gradle's fixed invocation cost.** The closed
+- **The latest experiment targeted Gradle's fixed invocation cost and stopped
+  before execution.** The closed
   request-portfolio route found 69/113 same-command transitions with no changed
   request input and 17 exact partial-graph rows. `VERIFIED_REQUEST_HIT_V1`
   investigates whether a complete identity and output contract can satisfy
   those repeated requests without starting Gradle. Its eligibility input passes
   at 4/5 families. The fail-closed safety record now admits one complete fixture
   and retains native Gradle for 37/37 missing, drifted, unsafe, expired or
-  revoked variants. No row has been shadowed, executed or timed; shadow replay
-  is next.
+  revoked variants. Shadow mechanics then pass 8/8 synthetic repetitions and
+  first-mismatch quarantine. Public output states agree in 34/69 rows, but only
+  2/4 candidate families reach the frozen breadth threshold and zero
+  historical rows contain the later complete safety record. The route stops
+  before Gradle-free execution or timing; it makes no speedup claim.
 
 See the [current one-pager](./buildopt-poc-handoff.md) and the
 [terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)

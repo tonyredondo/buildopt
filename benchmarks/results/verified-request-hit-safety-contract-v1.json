@@ -3,7 +3,7 @@
   "workItem": "VRH-002",
   "generatedAt": "2026-08-30T00:00:00Z",
   "inputs": {
-    "routeContractSha256": "6289827f2f5dffea8c072ff04df23989e2739e831e27b801da7dba2a91befe9c",
+    "routeContractSha256": "876ebb578d79e0f80684d20ceb0c382b97b728671ddfcade2469d465559f8b9e",
     "recordSchemaSha256": "740982e74f12db8fe0456b03a41c8b57839218ff16525069925b24379f7f8aa7",
     "recordFixtureSha256": "9ae19c6f24ba19a0566c82cb91611fe34c1140638c8b7c589fce21b2b7bd4698",
     "negativeMatrixSha256": "8291c76ec2b6f811b250e5e9a1cfb424842bffda3af0ee47d5f378e7410741d3",

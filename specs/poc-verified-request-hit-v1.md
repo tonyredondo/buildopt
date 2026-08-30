@@ -31,6 +31,22 @@ activation is authorized by this count. The following safety block is now
 complete: one closed canonical record passes and all 37 missing, drifted or
 unsafe mutations retain native Gradle with typed reasons.
 
+The shadow block is also complete and stops this route. The real Gradle
+8.14.3/9.6.1 × Kotlin/Groovy fixture matrix produces **8/8** repeated exact
+agreements and the first deliberate native-output mismatch quarantines its
+identity. The checked public corpus is materially weaker: only **34/69**
+potential rows preserve the exact output state, split across only **2/4**
+candidate families meeting the frozen five-row threshold; **35/69** mismatch.
+None of those historical rows contains the complete VRH-002 safety record,
+because the capture predates that contract. Public safety admission is
+therefore **0**, not inferred retrospectively.
+
+The terminal decision is
+`STOP_VERIFIED_REQUEST_HIT_BEFORE_GRADLE_FREE_EXECUTION`. No Gradle-free action
+was built, selected or timed, so the route makes no hit-rate or speedup claim.
+The checked [shadow evidence](../benchmarks/results/verified-request-hit-shadow-replay-v1.json)
+records 14 native fixture invocations, zero actions and zero timing samples.
+
 Eight `testClasses` captures remain typed unavailable. The historical files
 preserve only `TASK_INPUT_EVIDENCE_UNAVAILABLE`, so their exact exception cannot
 be reconstructed after the fact. The current v2 producer now emits bounded
@@ -76,19 +92,24 @@ contains 37/37 typed native retentions, zero actions and zero timing samples.
    positive contract and 37 negative fixtures verify canonical identity,
    drift, missing evidence, side effects, external inputs, failed outcomes,
    expiry and revocation without action or timing.
-3. **Shadow replay.** Predict a hit, still run native Gradle, and compare all
-   required outputs and outcomes. A mismatch quarantines the identity.
-4. **Gradle-free execution.** Restore outputs and return the prior success only
-   after repeated exact shadow agreement; prove no Gradle process starts.
-5. **Installed paired value.** On the controlled runner, compare the installed
+3. **Shadow replay.** Complete with terminal stop: the synthetic mechanics and
+   quarantine pass, but public exact-output breadth and complete safety
+   admission fail.
+4. **Gradle-free execution.** Not authorized. Its frozen contract would restore
+   outputs and return the prior success only after repeated exact shadow
+   agreement while proving no Gradle process starts.
+5. **Installed paired value.** Not authorized. Its frozen contract would compare
+   the installed
    action with optimized native Gradle using balanced alternating pairs and
    identical outputs. Hosted CI owns correctness, not timing thresholds.
-6. **Chronological combined value.** Replay the five public families with the
+6. **Chronological combined value.** Not authorized. Its frozen contract would
+   replay the five public families with the
    frozen policy: irrelevant requests may hit, relevant requests may use the
    qualified partial graph, and global/ambiguous/unavailable requests run
    native. Report signed cumulative wall time; never add percentages from
    different workloads.
-7. **Terminal decision.** Continue only with zero correctness failures,
+7. **Terminal decision.** Not authorized as a separate block because the route
+   stopped at shadow breadth. Its frozen contract would continue only with zero correctness failures,
    positive installed and cumulative value, acceptable native-retention
    overhead and stable family breadth. Otherwise stop this hypothesis.
 

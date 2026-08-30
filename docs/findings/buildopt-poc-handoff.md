@@ -45,7 +45,7 @@ unchanged 5/5 completeness gate failed. Installed and chronological value,
 positive-family confidence, payback and native-retention overhead remain
 `NOT_MEASURED_NOT_AUTHORIZED`; no speedup claim or successor is authorized.
 
-The user has now authorized a materially different seven-block successor,
+The user then authorized a materially different seven-block successor,
 `VERIFIED_REQUEST_HIT_V1`. Its first audit partitions those same 113 verified
 rows into **17 partial-graph opportunities, 69 potential whole-request hits and
 27 native fallbacks**. Four families have at least five potential hit rows,
@@ -53,9 +53,14 @@ passing the frozen 3/5 input threshold at **4/5**. The combined 86/113 rows are
 a **76.1% structural ceiling**, not hit rate or speedup. The complete
 fail-closed record now passes one positive fixture and rejects **37/37**
 missing, drifted, unsafe, expired or revoked variants with typed native
-retention. This is contract evidence only: public shadow execution, real
-Gradle-free execution and timing remain closed. The current block is shadow
-replay.
+retention. Shadow mechanics pass **8/8** synthetic Gradle/DSL repetitions and
+quarantine the deliberate first mismatch. The public corpus, however, preserves
+exact output states in only **34/69** potential rows: Micronaut contributes
+12/14 and OpenTelemetry 22/22, while Kafka and Spring contribute 0/17 and 0/16.
+Only **2/4** candidate families meet the frozen breadth threshold, and none of
+the historical rows contains the later complete safety record. The route is
+therefore stopped before Gradle-free execution or timing; no speedup is
+claimed.
 
 ## Mechanisms
 
@@ -69,7 +74,7 @@ replay.
 | **Durable patch-opportunity learning** | Detect repeated expensive task-contract problems, propose an owner-reviewed reversible source patch and validate it independently. | The strict current rerun accepts the same detector in Kotlin and Groovy: **64.1%** and **74.7%** faster respectively across **16/16** exact pairs. BuildOpt is not needed after acceptance; recipe coverage remains a POC signal, not customer coverage. |
 | **Conflict-aware fragment planner** | Compose only qualified fragments whose dependencies, exclusions, authorities and direct joint economics remain valid; otherwise use native Gradle. | Direct timing now shows that the reviewed patch and Build Impact can save 68.56% Groovy and 79.32% Kotlin together, but Kotlin Build Impact reaches only 6/8 positive isolated pairs. The frozen constituent gate therefore retains qualified fragments instead of authorizing the composition. |
 | **Local/HTTP cache and central state** | Carry verified task outputs and profiles between builds or machines. | Supporting infrastructure; useful for transport and persistence, but not the primary acceleration claim. |
-| **Verified request hit** | Restore every verified prior output for the same exact compatible request and return the prior successful result without starting Gradle. | 69/113 structural opportunities; the safety contract passes 1 complete fixture and rejects 37/37 negative variants. No public row is shadowed, executed or timed yet. |
+| **Verified request hit** | Restore every verified prior output for the same exact compatible request and return the prior successful result without starting Gradle. | 69/113 structural opportunities; the safety contract passes 1 complete fixture and rejects 37/37 negatives. Shadow mechanics pass 8/8 synthetic replays, but public exact-output breadth is only 2/4 families and complete historical safety admission is zero. The route stops before action or timing. |
 | **Runtime Tuning, Hot State and standard Copy** | Earlier broad resource and state hypotheses. | Retired after neutral, unstable or regressive end-to-end evidence. |
 
 ## Discarded historical public-repository result
@@ -608,6 +613,8 @@ outside this POC.
 
 ## Evidence
 
+- [Verified request hit terminal shadow result](../../benchmarks/results/verified-request-hit-shadow-replay-v1.json)
+- [Verified request hit closed tracker](../plans/verified-request-hit-poc-tracker.md)
 - [Lifetime breadth V3 result](../../benchmarks/results/poc-lifetime-breadth-v3/README.md)
 - [Terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)
 - [Adaptive-fragment terminal scorecard](../../benchmarks/results/adaptive-fragment-terminal-decision-v1.json)

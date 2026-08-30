@@ -141,8 +141,11 @@ graph and implementation, complete transitive inputs, present and absent
 outputs, task safety, prior success, expiry, revocation and content-addressed
 materialization. Its verifier only returns contract-complete evidence or a
 typed native-retention reason. It does not select an action, write outputs,
-start or suppress Gradle, or measure time; those capabilities remain in later
-`VRH` blocks.
+start or suppress Gradle, or measure time. Its shadow layer compares the exact
+native outcome/output state and quarantines the first mismatch without changing
+the native invocation. The completed shadow experiment stops before later
+`VRH` execution blocks: 8/8 synthetic repetitions agree, but public exact-
+output breadth and complete historical safety admission fail their frozen gate.
 `internal/stickyactive` proves isolated execution/suspension and
 `internal/durablecatalog` keeps patches review-only. `SWL-014B` now composes
 observation through signed active decision and economics behind the committed

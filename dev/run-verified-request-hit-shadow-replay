@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+if (($# != 1)); then
+  printf 'usage: %s OUTPUT_JSON\n' "$0" >&2
+  exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_output=$1
+[[ ${buildopt_output} == /* ]] || buildopt_output=${PWD}/${buildopt_output}
+buildopt_gradle8=${buildopt_root}/.tools/gradle-compat/gradle-8.14.3/bin/gradle
+mapfile -t buildopt_gradle9_candidates < <(
+  find "${buildopt_root}/.tools/gradle-user-home/local/wrapper/dists/gradle-9.6.1-bin" \
+    -type f -path '*/gradle-9.6.1/bin/gradle' -perm -u+x -print 2>/dev/null | sort
+)
+[[ -x ${buildopt_gradle8} && ${#buildopt_gradle9_candidates[@]} == 1 ]] || {
+  printf 'pinned Gradle 8.14.3 and 9.6.1 distributions are required\n' >&2
+  exit 1
+}
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-hit-shadow-run.XXXXXX)
+buildopt_cleanup() {
+  case ${buildopt_temporary} in
+    /tmp/buildopt-request-hit-shadow-run.*) rm -rf -- "${buildopt_temporary}" ;;
+    *) printf 'refusing to clean unexpected shadow root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+  esac
+}
+trap buildopt_cleanup EXIT
+
+env GOCACHE="${buildopt_temporary}/go-cache" \
+  "${buildopt_root}/dev/run" --toolchain go -- \
+  go build -o "${buildopt_temporary}/request-hit-shadow-evaluator" ./dev/request-hit-shadow-evaluator
+
+env GRADLE_USER_HOME="${buildopt_temporary}/gradle-user-home" \
+  "${buildopt_root}/dev/run" -- \
+  "${buildopt_temporary}/request-hit-shadow-evaluator" \
+  "${buildopt_root}/fixtures/verified-request-hit-shadow" \
+  "${buildopt_gradle8}" "${buildopt_gradle9_candidates[0]}" \
+  "${buildopt_root}/benchmarks/results/observed-request-public-portfolio-v1" \
+  "${buildopt_root}/specs/poc-verified-request-hit-v1.json" \
+  "${buildopt_root}/contracts/jsonschema/verified-request-hit-safety-record.v1.schema.json" \
+  "${buildopt_output}"
+
+printf 'Verified request hit shadow replay written to %s\n' "${buildopt_output}"

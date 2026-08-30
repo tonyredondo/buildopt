@@ -213,6 +213,19 @@ regenerates the deterministic evidence. One complete fixture passes and 37/37
 negative mutations return typed native retention. The evaluator starts no
 Gradle invocation, selects no action and records no timing.
 
+Validate the terminal verified-request-hit shadow replay with:
+
+```bash
+./dev/check-verified-request-hit-shadow-replay --static
+```
+
+Omit `--static` to regenerate the real Gradle 8.14.3/9.6.1 × Kotlin/Groovy
+matrix. The checker always reruns the request-hit race tests and verifies the
+checked public corpus. The synthetic matrix passes 8/8 exact repetitions and
+proves first-mismatch quarantine, but public exact-output breadth reaches only
+2/4 candidate families and complete historical VRH-002 admissions remain zero.
+The resulting stop authorizes no Gradle-free action or timing campaign.
+
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:
 

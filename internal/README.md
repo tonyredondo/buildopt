@@ -149,6 +149,11 @@ framed request, repository/toolchain/graph/input/output/task/prior-success
 facts, checks expiry and revocation, and returns stable native-retention
 reasons for every unsafe boundary. A complete result is input to shadow replay,
 not selection, materialization, execution or performance authority. Its
+concurrency-safe shadow model records native outcome/output agreement and
+quarantines an identity on its first mismatch; a quarantined identity still
+runs native and cannot be predicted again until new canonical record evidence
+changes its digest. Neither an exact match nor quarantine grants action or
+timing authority. Its
 `testkit/` subpackage exists only for the committed negative matrix and
 deterministic conformance evidence.
 

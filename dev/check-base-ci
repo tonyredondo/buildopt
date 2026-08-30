@@ -250,6 +250,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-onboarding-performance"
         "${buildopt_script_dir}/check-build-optimization-performance" >/dev/null
         "${buildopt_script_dir}/check-verified-request-hit-safety-contract" >/dev/null
+        "${buildopt_script_dir}/check-verified-request-hit-shadow-replay" --static >/dev/null
         "${buildopt_script_dir}/check-verified-output-materialization" >/dev/null
         "${buildopt_script_dir}/check-aggregate-workflow-partition" >/dev/null
         "${buildopt_script_dir}/check-automatic-breadth-transfer-v2" \
