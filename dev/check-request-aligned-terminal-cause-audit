@@ -21,7 +21,11 @@ trap buildopt_cleanup EXIT
 
 jq -e '
   .schemaVersion=="buildopt.poc/observed-request-portfolio-contract/v1" and
-  .workItem=="SWL-PORTFOLIO-000" and .status=="ACTIVE" and
+  .workItem=="SWL-PORTFOLIO-000" and
+  .status=="STOPPED_CURRENT_OBSERVED_REQUEST_PORTFOLIO_DETECTOR" and
+  .currentBlock=="NONE" and .nextBlock==null and
+  any(.blocks[]; .id=="SWL-PORTFOLIO-007" and .state=="DONE" and
+    .outcome=="STOP_OBSERVED_RECURRENT_REQUEST_PORTFOLIO_POC_FOR_CURRENT_DETECTOR") and
   .hypothesis.id=="OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1" and
   (.hypothesis.repositorySpecificRulesAllowed|not) and
   (.hypothesis.commandSubstitutionAllowed|not) and
@@ -43,7 +47,7 @@ jq -e '
 # Backticks below are literal Markdown syntax.
 # shellcheck disable=SC2016
 buildopt_required_plan_text=(
-    '**Overall:** `ACTIVE`'
+    '**Overall:** `STOPPED_CURRENT_OBSERVED_REQUEST_PORTFOLIO_DETECTOR`'
     '**5/0/2/1/5**'
     '`OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1`'
     'It may not parse CI YAML as authority'
