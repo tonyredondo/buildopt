@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+for buildopt_command in jq mktemp rg; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+buildopt_temporary=$(mktemp -d /tmp/buildopt-capture-diagnostic.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-capture-diagnostic.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected diagnostic root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+mkdir -p "${buildopt_temporary}/gradle/wrapper"
+printf '%s\n' 'rootProject.name = "capture-diagnostic"' >"${buildopt_temporary}/settings.gradle"
+printf '%s\n' \
+    'distributionUrl=https\://services.gradle.org/distributions/gradle-9.6.1-bin.zip' \
+    >"${buildopt_temporary}/gradle/wrapper/gradle-wrapper.properties"
+printf 'fixture-wrapper\n' >"${buildopt_temporary}/gradle/wrapper/gradle-wrapper.jar"
+printf '%s\n' \
+    'def reads = 0' \
+    'def countedInput = providers.provider {' \
+    '    reads += 1' \
+    '    if (reads >= 4) { throw new GradleException("sensitive /home/example message") }' \
+    '    file("input.txt")' \
+    '}' \
+    'tasks.register("broken") {' \
+    '    inputs.files(countedInput)' \
+    '    outputs.file(layout.buildDirectory.file("broken.txt"))' \
+    '    doLast {' \
+    '        layout.buildDirectory.file("broken.txt").get().asFile.parentFile.mkdirs()' \
+    '        layout.buildDirectory.file("broken.txt").get().asFile.text = "output"' \
+    '    }' \
+    '}' >"${buildopt_temporary}/build.gradle"
+printf 'input\n' >"${buildopt_temporary}/input.txt"
+
+GRADLE_USER_HOME="${buildopt_root}/.tools/gradle-user-home" \
+BUILDOPT_REQUEST_PORTFOLIO_CAPTURE="${buildopt_temporary}/capture.json" \
+BUILDOPT_REQUEST_PORTFOLIO_ARGUMENTS='["broken","--no-daemon"]' \
+BUILDOPT_REQUEST_PORTFOLIO_GENERATED_AT='2026-08-30T00:00:00Z' \
+    "${buildopt_root}/dev/run" -- "${buildopt_root}/gradlew" --no-daemon \
+    -p "${buildopt_temporary}" --init-script \
+    "${buildopt_root}/internal/launcher/request_portfolio.init.gradle" broken \
+    >"${buildopt_temporary}/stdout.log" 2>"${buildopt_temporary}/stderr.log"
+
+jq -e '
+  .schemaVersion=="buildopt.poc/request-aligned-producer-capture/v2" and
+  .status=="UNAVAILABLE" and .reason=="TASK_INPUT_EVIDENCE_UNAVAILABLE" and
+  .requestedTasks==[":broken"] and (.tasks|length)==0 and
+  .diagnostics.phase==.reason and (.diagnostics.inputFailures|length)==1 and
+  .diagnostics.inputFailures[0].taskPath==":broken" and
+  .diagnostics.inputFailures[0].failureClass=="org.gradle.api.GradleException" and
+  (.diagnostics.missingAfterTaskPaths|length)==0 and (.diagnostics.truncated|not)
+' "${buildopt_temporary}/capture.json" >/dev/null
+if rg -n 'sensitive|/home/example' "${buildopt_temporary}/capture.json"; then
+    printf 'capture exposed an exception message\n' >&2
+    exit 1
+fi
+[[ -f ${buildopt_temporary}/build/broken.txt ]] || {
+    printf 'diagnostic observer changed the successful Gradle task result\n' >&2
+    exit 1
+}
+
+printf 'request portfolio capture diagnostics: PASS\n'

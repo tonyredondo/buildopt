@@ -130,6 +130,60 @@ func TestProduceRejectsInvalidBindingsAndPreservesFailedBoundary(t *testing.T) {
 	}
 }
 
+func TestProducePreservesBoundedUnavailableCaptureDiagnostics(t *testing.T) {
+	capture := precisionCapture()
+	capture.Status, capture.Reason, capture.Tasks = CaptureUnavailable, "TASK_INPUT_EVIDENCE_UNAVAILABLE", nil
+	capture.Diagnostics = &CaptureDiagnostics{
+		Phase: "TASK_INPUT_EVIDENCE_UNAVAILABLE",
+		InputFailures: []CaptureInputFailure{
+			{TaskPath: ":compileTestJava", FailureClass: "org.gradle.api.GradleException"},
+		},
+		MissingAfterTaskPaths: []string{":testClasses"},
+	}
+	observation, err := Produce(capture)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if observation.Status != StatusUnavailable || observation.Reason != "TASK_INPUT_EVIDENCE_UNAVAILABLE" ||
+		observation.PerformanceMeasured || observation.ActivationAuthorized {
+		t.Fatalf("diagnostic capture changed authority: %+v", observation)
+	}
+}
+
+func TestProduceRejectsUnsafeOrMisboundCaptureDiagnostics(t *testing.T) {
+	tests := []struct {
+		name   string
+		mutate func(*CaptureDiagnostics)
+	}{
+		{name: "wrong phase", mutate: func(value *CaptureDiagnostics) { value.Phase = "OTHER" }},
+		{name: "exception message", mutate: func(value *CaptureDiagnostics) { value.InputFailures[0].FailureClass = "failure\n/home/user" }},
+		{name: "duplicate task", mutate: func(value *CaptureDiagnostics) { value.MissingAfterTaskPaths = []string{":compileTestJava"} }},
+		{name: "unsorted failures", mutate: func(value *CaptureDiagnostics) {
+			value.InputFailures = append(value.InputFailures, CaptureInputFailure{TaskPath: ":a", FailureClass: "java.lang.IllegalStateException"})
+		}},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			capture := precisionCapture()
+			capture.Status, capture.Reason, capture.Tasks = CaptureUnavailable, "TASK_INPUT_EVIDENCE_UNAVAILABLE", nil
+			capture.Diagnostics = &CaptureDiagnostics{
+				Phase:         "TASK_INPUT_EVIDENCE_UNAVAILABLE",
+				InputFailures: []CaptureInputFailure{{TaskPath: ":compileTestJava", FailureClass: "org.gradle.api.GradleException"}},
+			}
+			test.mutate(capture.Diagnostics)
+			if _, err := Produce(capture); err == nil {
+				t.Fatal("unsafe diagnostics were accepted")
+			}
+		})
+	}
+
+	complete := precisionCapture()
+	complete.Diagnostics = &CaptureDiagnostics{Phase: "TASK_INPUT_EVIDENCE_UNAVAILABLE", MissingAfterTaskPaths: []string{":testClasses"}}
+	if _, err := Produce(complete); err == nil {
+		t.Fatal("diagnostics on a complete capture were accepted")
+	}
+}
+
 func validCapture() Capture {
 	digest := func(value string) string { return strings.Repeat(value, 64) }
 	return Capture{

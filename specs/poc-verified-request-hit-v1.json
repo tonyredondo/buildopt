@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "buildopt.poc/verified-request-hit-contract/v1",
+  "workItem": "VRH-000",
+  "status": "ACTIVE",
+  "currentBlock": "VRH-002",
+  "generatedAt": "2026-08-30T00:00:00Z",
+  "purpose": "Determine whether BuildOpt can safely satisfy an exact recurrent Gradle request from verified prior outputs without starting Gradle, then prove cumulative customer wall-time value beyond optimized native Gradle.",
+  "predecessor": {
+    "decision": "STOP_OBSERVED_RECURRENT_REQUEST_PORTFOLIO_POC_FOR_CURRENT_DETECTOR",
+    "terminalResult": "benchmarks/results/observed-request-portfolio-terminal-decision-v1.json",
+    "breadthResult": "benchmarks/results/observed-request-portfolio-breadth-gate-v1.json"
+  },
+  "hypothesis": {
+    "id": "VERIFIED_REQUEST_HIT_V1",
+    "action": "For the same exact request and compatible environment, restore every verified prior output state and return the prior successful result without starting Gradle only when the complete safety contract proves that no relevant input or execution fact changed.",
+    "safeFallback": "Run the exact original optimized-native Gradle command whenever evidence is absent, incomplete, stale, ambiguous or unsafe.",
+    "materialDifferenceFromGradleCache": "A Gradle cache hit still starts Gradle and pays JVM or daemon connection, configuration, graph construction and scheduling. VERIFIED_REQUEST_HIT is valuable only if it safely avoids that complete invocation cost.",
+    "materialDifferenceFromNativeNoop": "NATIVE_NOOP means BuildOpt delegates to native Gradle. VERIFIED_REQUEST_HIT is a distinct successful action that does not start Gradle.",
+    "materialDifferenceFromRetiredHotState": "Hot State reused a plan but still executed Gradle. VERIFIED_REQUEST_HIT must avoid Gradle entirely and is evaluated under a new safety and value contract.",
+    "repositorySpecificRulesAllowed": false,
+    "taskNameRulesAllowed": false,
+    "manualProfilesAllowed": false,
+    "timingInHostedCiAllowed": false
+  },
+  "eligibilityGate": {
+    "potentialRequestHitRowsPerFamilyRequired": 5,
+    "familiesWithPotentialRequestHitsRequired": 3,
+    "productFailureBudget": 0,
+    "timingAuthorized": false,
+    "selectionAuthorized": false,
+    "activationAuthorized": false
+  },
+  "safetyContractRequiredFacts": [
+    "EXACT_ARGUMENT_VECTOR_AND_WORKING_DIRECTORY",
+    "WRAPPER_GRADLE_JDK_AND_ENVIRONMENT_COMPATIBILITY",
+    "FINALIZED_REQUEST_GRAPH_IDENTITY",
+    "TASK_IMPLEMENTATION_AND_BUILD_LOGIC_IDENTITY",
+    "COMPLETE_TRANSITIVE_REPOSITORY_AND_EXTERNAL_INPUTS",
+    "COMPLETE_PRESENT_AND_ABSENT_OUTPUT_STATES",
+    "LOCAL_STATE_DESTROYABLES_AND_SIDE_EFFECT_BOUNDARIES",
+    "CACHEABILITY_TRACKING_AND_PRIOR_SUCCESS_OUTCOME"
+  ],
+  "combinedPolicy": {
+    "irrelevantTransition": "VERIFIED_REQUEST_HIT_AFTER_QUALIFICATION",
+    "relevantTransition": "EXACT_PARTIAL_GRAPH_AFTER_QUALIFICATION",
+    "globalAmbiguousOrUnavailableTransition": "NATIVE_GRADLE",
+    "percentagesAcrossDifferentWorkloadsMayBeAdded": false
+  },
+  "blocks": [
+    {
+      "id": "VRH-001",
+      "state": "DONE",
+      "deliverable": "Independent eligibility and capture-diagnostic audit",
+      "outcome": "OPEN_VERIFIED_REQUEST_HIT_SAFETY_CONTRACT"
+    },
+    {
+      "id": "VRH-002",
+      "state": "TODO",
+      "deliverable": "Complete fail-closed safety contract and negative fixture matrix"
+    },
+    {
+      "id": "VRH-003",
+      "state": "WAITING",
+      "deliverable": "Shadow replay against native Gradle with zero user-visible action",
+      "dependsOn": "VRH-002"
+    },
+    {
+      "id": "VRH-004",
+      "state": "WAITING",
+      "deliverable": "Real Gradle-free output materialization and exact-result execution",
+      "dependsOn": "VRH-003"
+    },
+    {
+      "id": "VRH-005",
+      "state": "WAITING",
+      "deliverable": "Installed balanced paired value against optimized native Gradle",
+      "dependsOn": "VRH-004"
+    },
+    {
+      "id": "VRH-006",
+      "state": "WAITING",
+      "deliverable": "Chronological combined-value replay across all five public families",
+      "dependsOn": "VRH-005"
+    },
+    {
+      "id": "VRH-007",
+      "state": "WAITING",
+      "deliverable": "Terminal continue or stop decision",
+      "dependsOn": "VRH-006"
+    }
+  ],
+  "latestEvidence": {
+    "path": "benchmarks/results/verified-request-hit-eligibility-audit-v1.json",
+    "potentialRequestHitRows": 69,
+    "partialGraphActionRows": 17,
+    "nativeFallbackRows": 27,
+    "familiesWithPotentialRequestHits": 4,
+    "familiesWithPotentialRequestHitsRequired": 3,
+    "performanceMeasured": false,
+    "selectionAuthorized": false,
+    "activationAuthorized": false,
+    "speedupClaim": false,
+    "decision": "OPEN_VERIFIED_REQUEST_HIT_SAFETY_CONTRACT"
+  },
+  "nextBlock": "VRH-002"
+}

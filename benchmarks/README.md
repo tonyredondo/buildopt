@@ -177,6 +177,17 @@ positive-family confidence, payback and native-retention overhead remain
 `NOT_MEASURED_NOT_AUTHORIZED`. No action or timing row exists, no speedup is
 claimed and no successor is authorized.
 
+[`verified-request-hit-eligibility-audit-v1.json`](./results/verified-request-hit-eligibility-audit-v1.json)
+is the `VRH-001` successor-input audit authorized separately by the user after
+the predecessor stopped. It partitions all 113 independently reconstructed
+same-command transitions into 17 partial-graph rows, 69 potential whole-request
+hits and 27 native fallbacks. Kafka, Micronaut, OpenTelemetry and Spring each
+have at least five potential hit rows, so the frozen 3/5 family input passes at
+4/5. The 69 rows and the combined 86/113 ceiling are structural opportunity,
+not safe eligibility or measured speedup. Eight historical `testClasses` rows
+remain typed unavailable; future v2 captures add bounded task/class diagnostics
+without exception messages or action authority.
+
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
@@ -195,6 +206,7 @@ claimed and no successor is authorized.
 ./dev/check-observed-request-public-portfolio
 ./dev/check-observed-request-portfolio-breadth-gate
 ./dev/check-observed-request-portfolio-terminal-decision
+./dev/check-verified-request-hit-eligibility-audit
 ```
 
 ## Sticky-wrapper observation sample

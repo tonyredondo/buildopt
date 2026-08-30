@@ -37,12 +37,13 @@
 - **Mechanism effects remain non-additive.** Safe Cache is native-cache parity;
   Runtime Tuning, Hot State and standard Copy are retired; historical Jar,
   Patch and Edge experiments remain scoped supporting evidence.
-- **The next experiment changes the selection dimension rather than rerunning
-  a terminal detector.** `CHANGE_AWARE_PRODUCER_CLOSURE_V1` will map real
-  adjacent-commit changes through finalized Gradle inputs and producer lineage.
-  Five graphs, five exact output contracts and 150 frozen commits are available;
-  action breadth and wall-time value remain unmeasured. Timing opens only after
-  conclusive evidence in 5/5 and safe actions in at least 3/5 families.
+- **The active experiment targets Gradle's fixed invocation cost.** The closed
+  request-portfolio route found 69/113 same-command transitions with no changed
+  request input and 17 exact partial-graph rows. `VERIFIED_REQUEST_HIT_V1`
+  investigates whether a complete identity and output contract can satisfy
+  those repeated requests without starting Gradle. Its eligibility input passes
+  at 4/5 families, but no row is safe, executed or timed yet; the next block is
+  the fail-closed safety contract.
 
 See the [current one-pager](./buildopt-poc-handoff.md) and the
 [terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)

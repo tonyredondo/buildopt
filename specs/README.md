@@ -8,18 +8,15 @@ path. Start with the [documentation portal](../docs/README.md) or
 the exact cross-component contract.
 
 The latest generic POC contract is
-[`poc-observed-request-portfolio-v1.md`](./poc-observed-request-portfolio-v1.md)
-with its adjacent machine-readable JSON. It tests learning across the exact
-portfolio of recurrent commands the customer actually invokes. Evidence
-primitives, fresh capture and independent breadth reconstruction are complete:
-128 observations produce 113 reconstructed transitions, 3/5 complete families
-and 4/5 exact-action families with zero failures. The unchanged 5/5 input gate
-fails, so installed and chronological value are not authorized. The terminal
-scorecard keeps every economic value typed as unmeasured and closes the current
-detector without timing, activation, a speedup claim or successor authority.
+[`poc-verified-request-hit-v1.md`](./poc-verified-request-hit-v1.md) with its
+adjacent machine-readable JSON. It asks whether an exact recurrent request can
+restore verified outputs and return success without starting Gradle. Its first
+structural audit passes the frozen input at 4/5 families; safety, execution and
+timing remain closed.
 
 | Specification | Owning item |
 |---|---|
+| [`poc-verified-request-hit-v1.md`](./poc-verified-request-hit-v1.md) and [`poc-verified-request-hit-v1.json`](./poc-verified-request-hit-v1.json) | `VRH-001..007`; active whole-request-hit route with a completed 4/5 structural eligibility audit and no action or timing authority |
 | [`poc-observed-request-portfolio-v1.md`](./poc-observed-request-portfolio-v1.md) and [`poc-observed-request-portfolio-v1.json`](./poc-observed-request-portfolio-v1.json) | `SWL-PORTFOLIO-000..007`; closed exact-command route after independently reconstructed 3/5 completeness, typed unmeasured economics and terminal stop |
 | [`poc-request-aligned-learning-v1.md`](./poc-request-aligned-learning-v1.md) and [`poc-request-aligned-learning-v1.json`](./poc-request-aligned-learning-v1.json) | `SWL-REQUEST-000..007`; closed request-aligned route, independently failed 2/5 complete/action breadth gate, unauthorized timing blocks and terminal stop |
 | [`poc-change-aware-producer-closure-v1.md`](./poc-change-aware-producer-closure-v1.md) and [`poc-change-aware-producer-closure-v1.json`](./poc-change-aware-producer-closure-v1.json) | `SWL-CHANGE-000..005`; frozen successor hypothesis and terminal stop after the 1/5-versus-3/5 breadth failure |

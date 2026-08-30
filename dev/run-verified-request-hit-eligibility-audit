@@ -1,0 +1,226 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+if (($# != 0 && $# != 3)); then
+    printf 'usage: %s [BREADTH_JSON TERMINAL_JSON OUTPUT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_route=${buildopt_root}/specs/poc-verified-request-hit-v1.json
+buildopt_breadth=${1:-${buildopt_root}/benchmarks/results/observed-request-portfolio-breadth-gate-v1.json}
+buildopt_terminal=${2:-${buildopt_root}/benchmarks/results/observed-request-portfolio-terminal-decision-v1.json}
+buildopt_output=${3:-${buildopt_root}/benchmarks/results/verified-request-hit-eligibility-audit-v1.json}
+buildopt_capture=${buildopt_root}/benchmarks/results/observed-request-public-portfolio-v1
+buildopt_transitions=${buildopt_capture}/transitions.jsonl
+buildopt_observations=${buildopt_capture}/observations.jsonl
+buildopt_historical_init=${buildopt_capture}/implementation/request_portfolio.init.gradle
+[[ ${buildopt_breadth} == /* && -f ${buildopt_breadth} && ! -L ${buildopt_breadth} &&
+   ${buildopt_terminal} == /* && -f ${buildopt_terminal} && ! -L ${buildopt_terminal} ]] || {
+    printf 'breadth and terminal inputs must be absolute regular files\n' >&2
+    exit 1
+}
+[[ ${buildopt_output} == /* ]] || buildopt_output=${PWD}/${buildopt_output}
+for buildopt_command in awk gzip jq mktemp sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf '%s is required\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+buildopt_sha() {
+    sha256sum "$1" | awk '{print $1}'
+}
+
+buildopt_temporary=$(mktemp -d /tmp/buildopt-verified-request-hit-audit.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-verified-request-hit-audit.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected audit root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+jq -e '
+  .schemaVersion=="buildopt.poc/verified-request-hit-contract/v1" and
+  .workItem=="VRH-000" and .status=="ACTIVE" and .currentBlock=="VRH-002" and
+  ([.blocks[]|select(.id=="VRH-001" and .state=="DONE" and
+    .outcome=="OPEN_VERIFIED_REQUEST_HIT_SAFETY_CONTRACT")]|length)==1 and
+  ([.blocks[]|select(.id=="VRH-002" and .state=="TODO")]|length)==1 and
+  .eligibilityGate.potentialRequestHitRowsPerFamilyRequired==5 and
+  .eligibilityGate.familiesWithPotentialRequestHitsRequired==3 and
+  .eligibilityGate.productFailureBudget==0 and
+  (.eligibilityGate.timingAuthorized|not) and
+  (.eligibilityGate.selectionAuthorized|not) and
+  (.eligibilityGate.activationAuthorized|not) and
+  .nextBlock=="VRH-002"
+' "${buildopt_route}" >/dev/null || {
+    printf 'verified request hit route contract is invalid\n' >&2
+    exit 1
+}
+
+buildopt_breadth_sha=$(buildopt_sha "${buildopt_breadth}")
+buildopt_transitions_sha=$(buildopt_sha "${buildopt_transitions}")
+buildopt_observations_sha=$(buildopt_sha "${buildopt_observations}")
+jq -e --arg transitions "${buildopt_transitions_sha}" '
+  .schemaVersion=="buildopt.poc/observed-request-portfolio-breadth-gate/v1" and
+  .transitionRowsReconstructed==113 and .reportsRegenerated==105 and
+  .typedInputUnavailableRows==8 and .productFailures==0 and .buildFailures==0 and
+  .inputs.transitionsLedgerSha256==$transitions and
+  (.timingAuthorized|not) and (.selectionAuthorized|not) and
+  (.activationAuthorized|not)
+' "${buildopt_breadth}" >/dev/null || {
+    printf 'independent breadth input is invalid\n' >&2
+    exit 1
+}
+jq -e --arg breadth "${buildopt_breadth_sha}" '
+  .schemaVersion=="buildopt.poc/observed-request-portfolio-terminal-decision/v1" and
+  .evidence.breadthGateSha256==$breadth and
+  .decision=="STOP_OBSERVED_RECURRENT_REQUEST_PORTFOLIO_POC_FOR_CURRENT_DETECTOR" and
+  (.speedupClaim|not) and (.successorAuthorized|not) and
+  .timingRows.status=="NOT_CREATED" and .actionExecution.status=="NOT_RUN_NOT_AUTHORIZED"
+' "${buildopt_terminal}" >/dev/null || {
+    printf 'closed terminal input is invalid\n' >&2
+    exit 1
+}
+[[ $(buildopt_sha "${buildopt_historical_init}") == "$(jq -r '.initSha256' "${buildopt_capture}/contract.json")" ]] || {
+    printf 'historical capture implementation does not match its registered digest\n' >&2
+    exit 1
+}
+
+jq -s '.' "${buildopt_transitions}" >"${buildopt_temporary}/transitions.json"
+jq -s '.' "${buildopt_observations}" >"${buildopt_temporary}/observations.json"
+jq -e --slurpfile breadth "${buildopt_breadth}" '
+  length==113 and
+  (map(.family+":"+(.observationOrdinal|tostring))|unique|length)==length and
+  ([.[].family]|unique|sort)==($breadth[0].expectedFamilies|sort) and
+  all(.[ ];
+    (.status|IN("RELEVANT_COMPLETE","IRRELEVANT_TO_REQUEST","GLOBAL_OR_AMBIGUOUS","INPUT_UNAVAILABLE")) and
+    (.performanceMeasured|not) and (.activationAuthorized|not))
+' "${buildopt_temporary}/transitions.json" >/dev/null || {
+    printf 'transition population is invalid\n' >&2
+    exit 1
+}
+
+: >"${buildopt_temporary}/diagnostic-gaps.jsonl"
+while IFS= read -r buildopt_row; do
+    buildopt_family=$(jq -er '.family' <<<"${buildopt_row}")
+    buildopt_ordinal=$(jq -er '.observationOrdinal' <<<"${buildopt_row}")
+    buildopt_observation=$(jq -ce --arg family "${buildopt_family}" --argjson ordinal "${buildopt_ordinal}" '
+      [.[]|select(.family==$family and .observationOrdinal==$ordinal and (.captureComplete|not))] |
+      select(length==1) | .[0]
+    ' "${buildopt_temporary}/observations.json") || {
+        printf 'unavailable transition lacks one observation: %s/%s\n' "${buildopt_family}" "${buildopt_ordinal}" >&2
+        exit 1
+    }
+    buildopt_capture_ref=$(jq -er '.capture' <<<"${buildopt_observation}")
+    [[ ${buildopt_capture_ref} =~ ^captures/[a-z0-9-]+/[0-9]{2}-[0-9a-f]{12}\.json$ ]] || {
+        printf 'unsafe capture reference: %s\n' "${buildopt_capture_ref}" >&2
+        exit 1
+    }
+    buildopt_physical=${buildopt_capture}/${buildopt_capture_ref}.gz
+    gzip -t -- "${buildopt_physical}"
+    gzip -cd -- "${buildopt_physical}" >"${buildopt_temporary}/unavailable.json"
+    [[ $(buildopt_sha "${buildopt_temporary}/unavailable.json") == "$(jq -r '.captureSha256' <<<"${buildopt_observation}")" ]] || {
+        printf 'unavailable capture digest mismatch: %s/%s\n' "${buildopt_family}" "${buildopt_ordinal}" >&2
+        exit 1
+    }
+    jq -e '.status=="UNAVAILABLE" and .reason=="TASK_INPUT_EVIDENCE_UNAVAILABLE" and (.tasks|length)==0' \
+        "${buildopt_temporary}/unavailable.json" >/dev/null
+    jq -nc --arg family "${buildopt_family}" --argjson ordinal "${buildopt_ordinal}" \
+        --arg revision "$(jq -r '.revision' <<<"${buildopt_observation}")" \
+        --arg gradleVersion "$(jq -r '.gradleVersion' "${buildopt_temporary}/unavailable.json")" \
+        --argjson requestedTasks "$(jq -c '.requestedTasks' "${buildopt_temporary}/unavailable.json")" '
+      {family:$family,observationOrdinal:$ordinal,revision:$revision,gradleVersion:$gradleVersion,
+       requestedTasks:$requestedTasks,reason:"TASK_INPUT_EVIDENCE_UNAVAILABLE",
+       exactHistoricalCauseRecoverable:false}
+    ' >>"${buildopt_temporary}/diagnostic-gaps.jsonl"
+done < <(jq -c '.[]|select(.status=="INPUT_UNAVAILABLE")' "${buildopt_temporary}/transitions.json")
+jq -s 'sort_by(.family,.observationOrdinal)' "${buildopt_temporary}/diagnostic-gaps.jsonl" \
+    >"${buildopt_temporary}/diagnostic-gaps.json"
+
+buildopt_required=$(jq -r '.eligibilityGate.potentialRequestHitRowsPerFamilyRequired' "${buildopt_route}")
+buildopt_families_required=$(jq -r '.eligibilityGate.familiesWithPotentialRequestHitsRequired' "${buildopt_route}")
+buildopt_failure_budget=$(jq -r '.eligibilityGate.productFailureBudget' "${buildopt_route}")
+mkdir -p "$(dirname -- "${buildopt_output}")"
+buildopt_result=${buildopt_temporary}/result.json
+jq -n \
+    --arg generatedAt "$(jq -r '.generatedAt' "${buildopt_route}")" \
+    --arg routeSha256 "$(buildopt_sha "${buildopt_route}")" \
+    --arg breadthSha256 "${buildopt_breadth_sha}" \
+    --arg terminalSha256 "$(buildopt_sha "${buildopt_terminal}")" \
+    --arg transitionsSha256 "${buildopt_transitions_sha}" \
+    --arg observationsSha256 "${buildopt_observations_sha}" \
+    --arg historicalInitSha256 "$(buildopt_sha "${buildopt_historical_init}")" \
+    --arg currentInitSha256 "$(buildopt_sha "${buildopt_root}/internal/launcher/request_portfolio.init.gradle")" \
+    --arg diagnosticModelSha256 "$(buildopt_sha "${buildopt_root}/internal/requestaligned/observation.go")" \
+    --arg runnerSha256 "$(buildopt_sha "${buildopt_root}/dev/run-verified-request-hit-eligibility-audit")" \
+    --argjson required "${buildopt_required}" --argjson familiesRequired "${buildopt_families_required}" \
+    --argjson failureBudget "${buildopt_failure_budget}" \
+    --slurpfile breadth "${buildopt_breadth}" --slurpfile rows "${buildopt_temporary}/transitions.json" \
+    --slurpfile gaps "${buildopt_temporary}/diagnostic-gaps.json" '
+  def family_rows($family): $rows[0]|map(select(.family==$family));
+  def assessment($family):
+    family_rows($family) as $familyRows |
+    ($familyRows|map(select(.status=="RELEVANT_COMPLETE"))|length) as $partial |
+    ($familyRows|map(select(.status=="IRRELEVANT_TO_REQUEST"))|length) as $hits |
+    ($familyRows|map(select(.status=="GLOBAL_OR_AMBIGUOUS" or .status=="INPUT_UNAVAILABLE"))|length) as $native |
+    {family:$family,transitionRows:($familyRows|length),partialGraphActionRows:$partial,
+     potentialRequestHitRows:$hits,nativeFallbackRows:$native,
+     globalOrAmbiguousRows:($familyRows|map(select(.status=="GLOBAL_OR_AMBIGUOUS"))|length),
+     inputUnavailableRows:($familyRows|map(select(.status=="INPUT_UNAVAILABLE"))|length),
+     productFailures:0,buildFailures:0,partitionComplete:(($partial+$hits+$native)==($familyRows|length)),
+     requestHitOpportunityPass:($hits >= $required)};
+  [$breadth[0].expectedFamilies[]|assessment(.)] as $families |
+  ($families|map(.partialGraphActionRows)|add) as $partialTotal |
+  ($families|map(.potentialRequestHitRows)|add) as $hitTotal |
+  ($families|map(.nativeFallbackRows)|add) as $nativeTotal |
+  ($families|map(select(.requestHitOpportunityPass))|length) as $passingFamilies |
+  {schemaVersion:"buildopt.poc/verified-request-hit-eligibility-audit/v1",workItem:"VRH-001",
+   generatedAt:$generatedAt,
+   inputs:{routeContractSha256:$routeSha256,breadthGateSha256:$breadthSha256,
+     terminalDecisionSha256:$terminalSha256,transitionsLedgerSha256:$transitionsSha256,
+     observationsLedgerSha256:$observationsSha256,historicalInitSha256:$historicalInitSha256,
+     currentInitSha256:$currentInitSha256,diagnosticModelSha256:$diagnosticModelSha256,
+     runnerSha256:$runnerSha256,upstreamBreadthIndependentlyChecked:true,
+     historicalTimingImported:false,historicalActionImported:false},
+   thresholds:{potentialRequestHitRowsPerFamilyRequired:$required,
+     familiesWithPotentialRequestHitsRequired:$familiesRequired,productFailureBudget:$failureBudget},
+   familyAssessments:$families,
+   totals:{transitionRows:($partialTotal+$hitTotal+$nativeTotal),partialGraphActionRows:$partialTotal,
+     potentialRequestHitRows:$hitTotal,nativeFallbackRows:$nativeTotal,
+     combinedPotentialActionRows:($partialTotal+$hitTotal),
+     potentialRequestHitRatio:($hitTotal/($partialTotal+$hitTotal+$nativeTotal)),
+     combinedPotentialActionRatio:(($partialTotal+$hitTotal)/($partialTotal+$hitTotal+$nativeTotal)),
+     familiesWithPotentialRequestHits:$passingFamilies,productFailures:0,buildFailures:0},
+   captureDiagnosticGaps:$gaps[0],
+   captureDiagnostics:{historicalExactCauseRecoverable:false,
+     historicalRowsRemainTypedUnavailable:true,futureDiagnosticsBounded:true,
+     futureDiagnosticsExposeExceptionMessages:false,futureDiagnosticsChangeAuthority:false},
+   eligibilityPass:($passingFamilies >= $familiesRequired and ($partialTotal+$hitTotal+$nativeTotal)==113 and
+     ($gaps[0]|length)==8),
+   authority:{performanceMeasured:false,timingAuthorized:false,selectionAuthorized:false,
+     activationAuthorized:false,speedupClaim:false},
+   outcome:(if $passingFamilies >= $familiesRequired then
+     "OPEN_VERIFIED_REQUEST_HIT_SAFETY_CONTRACT" else "STOP_INSUFFICIENT_VERIFIED_REQUEST_HIT_OPPORTUNITY" end),
+   nextBlock:(if $passingFamilies >= $familiesRequired then "VRH-002" else null end),
+   conclusion:"STRUCTURAL_OPPORTUNITY_ONLY_NOT_SAFE_ELIGIBILITY_OR_MEASURED_VALUE"}
+' >"${buildopt_result}"
+
+jq -e '
+  .totals.transitionRows==113 and .totals.partialGraphActionRows==17 and
+  .totals.potentialRequestHitRows==69 and .totals.nativeFallbackRows==27 and
+  .totals.combinedPotentialActionRows==86 and .totals.familiesWithPotentialRequestHits==4 and
+  (.familyAssessments|length)==5 and all(.familyAssessments[];.partitionComplete) and
+  (.captureDiagnosticGaps|length)==8 and .eligibilityPass and
+  .outcome=="OPEN_VERIFIED_REQUEST_HIT_SAFETY_CONTRACT" and .nextBlock=="VRH-002" and
+  (.authority.performanceMeasured|not) and (.authority.timingAuthorized|not) and
+  (.authority.selectionAuthorized|not) and (.authority.activationAuthorized|not) and
+  (.authority.speedupClaim|not)
+' "${buildopt_result}" >/dev/null || {
+    printf 'verified request hit eligibility audit did not meet its frozen contract\n' >&2
+    exit 1
+}
+mv -- "${buildopt_result}" "${buildopt_output}"
+printf 'verified request hit eligibility audit: PASS (%s)\n' "${buildopt_output}"

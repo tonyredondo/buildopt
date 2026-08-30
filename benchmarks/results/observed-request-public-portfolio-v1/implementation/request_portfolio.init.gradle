@@ -83,8 +83,8 @@ if (gradle.getParent() == null) {
         graph.afterTask { task, taskState ->
             try {
                 inputFilesByTask.put(task.path, task.state.noSource ? [] : List.copyOf(task.inputs.files.files))
-            } catch (Exception failure) {
-                inputCaptureFailures.add([taskPath: task.path, failureClass: failure.getClass().getName()])
+            } catch (Exception ignored) {
+                inputCaptureFailures.add(task.path)
             }
         }
         def requested = [] as Set
@@ -112,28 +112,12 @@ if (gradle.getParent() == null) {
         def wrapperFiles = []
         def buildLogicFiles = []
         def tasks = []
-        def captureDiagnostics = null
         try {
             if (observedTasks == null || dependencyPaths == null || requestedTasks == null || requestedTasks.isEmpty()) {
                 throw new GradleException("finalized requested task graph is unavailable")
             }
             capturePhase = "TASK_INPUT_EVIDENCE_UNAVAILABLE"
-            def failedTaskPaths = inputCaptureFailures.collect { it.taskPath } as Set
-            def missingAfterTaskPaths = observedTasks.collect { it.path }.findAll {
-                !inputFilesByTask.containsKey(it) && !failedTaskPaths.contains(it)
-            }.toSorted()
-            if (!inputCaptureFailures.isEmpty() || !missingAfterTaskPaths.isEmpty()) {
-                def orderedFailures = inputCaptureFailures.sort { left, right -> left.taskPath <=> right.taskPath }
-                def maximumDiagnostics = 32
-                def retainedFailures = orderedFailures.take(maximumDiagnostics)
-                def remaining = maximumDiagnostics - retainedFailures.size()
-                def retainedMissing = missingAfterTaskPaths.take(remaining)
-                captureDiagnostics = [
-                    phase: capturePhase,
-                    inputFailures: retainedFailures,
-                    missingAfterTaskPaths: retainedMissing,
-                    truncated: orderedFailures.size() + missingAfterTaskPaths.size() > maximumDiagnostics,
-                ]
+            if (!inputCaptureFailures.isEmpty() || inputFilesByTask.size() != observedTasks.size()) {
                 throw new GradleException("task input evidence is unavailable")
             }
             capturePhase = "REPOSITORY_EVIDENCE_UNAVAILABLE"
@@ -262,9 +246,6 @@ if (gradle.getParent() == null) {
             buildLogicFiles: buildLogicFiles,
             tasks: tasks,
         ]
-        if (captureDiagnostics != null) {
-            capture.diagnostics = captureDiagnostics
-        }
         def parent = outputFile.toPath().parent
         def temporary = Files.createTempFile(parent, ".request-portfolio-", ".json")
         try {

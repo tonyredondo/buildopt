@@ -60,7 +60,14 @@ buildopt_expected_classifier=$(buildopt_sha "${buildopt_root}/internal/requestal
 buildopt_expected_launcher=$(buildopt_combined_content_sha \
     "${buildopt_root}/internal/launcher/request_portfolio.go" \
     "${buildopt_root}/internal/launcher/request_portfolio_capture.go")
-buildopt_expected_init=$(buildopt_sha "${buildopt_root}/internal/launcher/request_portfolio.init.gradle")
+# The campaign is closed evidence. Verify the exact implementation registered
+# at capture time instead of forcing the living producer to remain immutable.
+buildopt_historical_init=${buildopt_capture}/implementation/request_portfolio.init.gradle
+[[ -f ${buildopt_historical_init} && ! -L ${buildopt_historical_init} ]] || {
+    printf 'historical observed-request init implementation is missing\n' >&2
+    exit 1
+}
+buildopt_expected_init=$(buildopt_sha "${buildopt_historical_init}")
 buildopt_expected_compactor=$(buildopt_sha "${buildopt_root}/dev/compact-observed-request-public-portfolio")
 env GOCACHE="${buildopt_temporary}/go-cache" "${buildopt_root}/dev/run" --toolchain go -- \
     go build -o "${buildopt_temporary}/buildopt" ./cmd/buildopt

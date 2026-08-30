@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_breadth=${buildopt_root}/benchmarks/results/observed-request-portfolio-breadth-gate-v1.json
+buildopt_terminal=${buildopt_root}/benchmarks/results/observed-request-portfolio-terminal-decision-v1.json
+buildopt_expected=${buildopt_root}/benchmarks/results/verified-request-hit-eligibility-audit-v1.json
+buildopt_temporary=$(mktemp -d /tmp/buildopt-verified-request-hit-check.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-verified-request-hit-check.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected checker root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+# The predecessor checker owns full row reconstruction. This block consumes
+# that independently verified boundary instead of reimplementing it.
+"${buildopt_root}/dev/check-observed-request-portfolio-breadth-gate"
+"${buildopt_root}/dev/run-verified-request-hit-eligibility-audit" \
+    "${buildopt_breadth}" "${buildopt_terminal}" "${buildopt_temporary}/actual.json"
+cmp -s "${buildopt_expected}" "${buildopt_temporary}/actual.json" || {
+    printf 'verified request hit eligibility evidence is stale\n' >&2
+    exit 1
+}
+
+jq '.familyAssessments[1].potentialRequestHitRows = 18' "${buildopt_breadth}" \
+    >"${buildopt_temporary}/forged-breadth.json"
+if "${buildopt_root}/dev/run-verified-request-hit-eligibility-audit" \
+    "${buildopt_temporary}/forged-breadth.json" "${buildopt_terminal}" \
+    "${buildopt_temporary}/forged-result.json" >/dev/null 2>&1; then
+    printf 'forged upstream breadth evidence was accepted\n' >&2
+    exit 1
+fi
+
+jq '.authority.performanceMeasured = true' "${buildopt_expected}" >"${buildopt_temporary}/forged-authority.json"
+if cmp -s "${buildopt_temporary}/forged-authority.json" "${buildopt_temporary}/actual.json"; then
+    printf 'invented timing authority matched regenerated evidence\n' >&2
+    exit 1
+fi
+
+jq -e '
+  .conclusion=="STRUCTURAL_OPPORTUNITY_ONLY_NOT_SAFE_ELIGIBILITY_OR_MEASURED_VALUE" and
+  .captureDiagnostics.historicalExactCauseRecoverable==false and
+  .captureDiagnostics.historicalRowsRemainTypedUnavailable and
+  .captureDiagnostics.futureDiagnosticsBounded and
+  (.captureDiagnostics.futureDiagnosticsExposeExceptionMessages|not) and
+  (.captureDiagnostics.futureDiagnosticsChangeAuthority|not)
+' "${buildopt_expected}" >/dev/null
+
+printf 'verified request hit eligibility audit: PASS\n'

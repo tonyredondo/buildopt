@@ -19,7 +19,7 @@ that worked. The subsequent
 also stopped after its current installed campaign produced zero activations,
 zero attributable mechanism saving and negative cumulative value.
 
-The latest experimental direction was the now-closed
+The latest completed experimental direction was the now-closed
 [observed recurrent request portfolio](../plans/observed-request-portfolio-poc-tracker.md).
 It keeps the exact command as the evidence unit but learns across the portfolio
 of commands a customer actually repeats, rather than forcing one leaf command
@@ -38,6 +38,13 @@ or build failures. This is stronger structural breadth than the stopped
 fixed-request route, but it still proves no acceleration: timing, selection and
 activation remain closed. The terminal scorecard stops this detector without a
 speedup claim or successor authority; its unmeasured economics remain typed.
+
+After that terminal decision, the user explicitly authorized the materially
+different [Verified Request Hit POC](../plans/verified-request-hit-poc-tracker.md).
+Its first audit keeps all predecessor rows unchanged and finds 69 potential
+whole-request hits, 17 partial-graph actions and 27 native fallbacks. Four of
+five families meet the frozen five-row request-hit input. This opens only the
+complete safety contract: none of those 69 rows is yet safe, executed or timed.
 
 ## What is generalized today
 
@@ -161,7 +168,14 @@ bounded mechanism has already satisfied its own evidence contract.
 
 ## Next generalization steps
 
-The detailed order and stop conditions now live in the
+The detailed active order and stop conditions now live in the
+[Verified Request Hit POC Tracker](../plans/verified-request-hit-poc-tracker.md).
+The next block must prove a complete fail-closed identity over argv/cwd,
+Wrapper/Gradle/JDK/environment, request graph, task implementation, repository
+and external inputs, present/absent outputs, local state, destroyables,
+side effects, cacheability and prior success. Only then may shadow replay begin.
+
+The closed predecessor evidence remains in the
 [Observed Recurrent Request Portfolio POC Tracker](../plans/observed-request-portfolio-poc-tracker.md).
 The route has completed evidence precision, exact-request lifecycle, fresh
 five-family capture and independent breadth reconstruction. Across 128 ordinary
@@ -176,12 +190,13 @@ effect, and changing either a report or the independent change manifest is
 rejected. Therefore no current action ran, installed and chronological timing
 are not authorized, and no current wall-time claim exists.
 
-The terminal scorecard now closes this detector as
+The terminal scorecard closes that detector as
 `STOP_OBSERVED_RECURRENT_REQUEST_PORTFOLIO_POC_FOR_CURRENT_DETECTOR`. It binds
 the independent breadth result and unchanged policy, preserves installed and
 chronological value, confidence, payback and overhead as
 `NOT_MEASURED_NOT_AUTHORIZED`, and creates neither a speedup claim nor automatic
-successor authority. The observed request portfolio improved structural action
+successor authority by itself. The later user-authorized successor uses a
+different whole-request hypothesis. The observed request portfolio improved structural action
 breadth, but it did not establish complete enough fresh evidence to test
 generic customer value.
 

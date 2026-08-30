@@ -140,6 +140,7 @@ Validate the exact observed-request portfolio lifecycle with:
 
 ```bash
 ./dev/check-observed-request-portfolio
+./dev/check-request-portfolio-capture-diagnostics
 ```
 
 The checker regenerates the private canonical portfolio, exercises the real
@@ -181,6 +182,7 @@ Git histories, then reproduce the independent breadth decision with:
   "$PWD/benchmarks/results/observed-request-public-portfolio-changes-v1.jsonl"
 ./dev/check-observed-request-portfolio-breadth-gate
 ./dev/check-observed-request-portfolio-terminal-decision
+./dev/check-verified-request-hit-eligibility-audit
 ```
 
 The checked manifest is the immutable independent source for changed paths;
@@ -191,6 +193,13 @@ exact-action breadth at 4/5 but fails complete inputs at 3/5 versus 5/5, so no
 candidate or timing campaign is authorized. The terminal checker binds that
 result to the unchanged policy, rejects moved thresholds, invented zero-valued
 economics and successor authority, and reproduces the final stop decision.
+
+The verified-request-hit eligibility checker reruns that independent breadth
+boundary, then partitions every transition into partial-graph opportunity,
+potential whole-request hit or mandatory native fallback. It verifies the
+frozen historical init implementation, regenerates the 4/5 input decision and
+rejects forged upstream evidence or invented timing authority. It executes no
+action and benchmarks no wall time.
 
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:

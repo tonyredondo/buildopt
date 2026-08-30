@@ -29,11 +29,13 @@ provision tools or create release artifacts document that effect explicitly.
 | Post-terminal cause reconstruction and observed-request portfolio selection | `./dev/check-request-aligned-terminal-cause-audit` |
 | Observed-request evidence precision across Gradle 8/9 and Kotlin/Groovy | `./dev/check-request-aligned-evidence-precision` |
 | Exact observed-request lifecycle, concurrency, bounds and fail-closed authority | `./dev/check-observed-request-portfolio` |
+| Real Gradle task-input capture diagnostic boundary and message redaction | `./dev/check-request-portfolio-capture-diagnostics` |
 | Same-invocation request evidence without an extra Gradle build | `./dev/check-observed-request-portfolio-capture` |
 | Frozen five-family command configuration against prepared public histories | `./dev/check-observed-request-portfolio-config HISTORY_ROOT` |
 | Fresh observed-request ledger, bindings, chronology and deterministic compressed artifacts | `./dev/check-observed-request-public-portfolio` |
 | Independent observed-request row reconstruction and frozen breadth decision | `./dev/check-observed-request-portfolio-breadth-gate` |
 | Observed-request terminal scorecard, immutable policy and typed unmeasured economics | `./dev/check-observed-request-portfolio-terminal-decision` |
+| Verified-request-hit structural eligibility, historical provenance and authority boundary | `./dev/check-verified-request-hit-eligibility-audit` |
 | Generic task/graph producers, typed completeness and deterministic evidence | `./dev/check-sticky-evidence-producers` |
 | Fresh five-family cohort, capture bindings, producer completeness and exact outputs | `./dev/check-fresh-generic-capture` |
 | Independent fresh action recount and fixed public-breadth gate | `./dev/check-fresh-generic-opportunity-gate` |

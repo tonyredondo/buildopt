@@ -29,6 +29,8 @@ const (
 	StatusFailed      = "PRODUCER_FAILED"
 )
 
+const maximumCaptureDiagnosticFailures = 32
+
 // Capture is the portable evidence emitted after one ordinary requested
 // Gradle graph has completed. It contains no candidate or timing authority.
 type Capture struct {
@@ -44,6 +46,25 @@ type Capture struct {
 	WrapperFiles             []FileBinding              `json:"wrapperFiles"`
 	BuildLogicFiles          []FileBinding              `json:"buildLogicFiles"`
 	Tasks                    []changeaware.TaskEvidence `json:"tasks"`
+	Diagnostics              *CaptureDiagnostics        `json:"diagnostics,omitempty"`
+}
+
+// CaptureDiagnostics preserves bounded, non-sensitive failure facts without
+// changing the fail-closed classification of an unavailable capture. Exception
+// messages are deliberately excluded because they can contain machine paths or
+// user-controlled values.
+type CaptureDiagnostics struct {
+	Phase                 string                `json:"phase"`
+	InputFailures         []CaptureInputFailure `json:"inputFailures"`
+	MissingAfterTaskPaths []string              `json:"missingAfterTaskPaths"`
+	Truncated             bool                  `json:"truncated"`
+}
+
+// CaptureInputFailure identifies the task and exception class at the failed
+// Gradle input-file boundary. It never contains an exception message.
+type CaptureInputFailure struct {
+	TaskPath     string `json:"taskPath"`
+	FailureClass string `json:"failureClass"`
 }
 
 // JavaRuntime contains portable JVM compatibility facts. java.home and other
@@ -114,19 +135,19 @@ func Produce(capture Capture) (Observation, error) {
 	}
 	switch capture.Status {
 	case CaptureUnavailable:
-		if capture.Reason == "" || len(capture.Tasks) != 0 {
+		if capture.Reason == "" || len(capture.Tasks) != 0 || validateCaptureDiagnostics(capture) != nil {
 			return Observation{}, errors.New("unavailable request-aligned capture is invalid")
 		}
 		observation.Status, observation.Reason = StatusUnavailable, capture.Reason
 		return observation, nil
 	case CaptureFailed:
-		if capture.Reason == "" || len(capture.Tasks) != 0 {
+		if capture.Reason == "" || len(capture.Tasks) != 0 || capture.Diagnostics != nil {
 			return Observation{}, errors.New("failed request-aligned capture is invalid")
 		}
 		observation.Status, observation.Reason = StatusFailed, capture.Reason
 		return observation, nil
 	case CaptureComplete:
-		if capture.Reason != "" {
+		if capture.Reason != "" || capture.Diagnostics != nil {
 			return Observation{}, errors.New("complete request-aligned capture has a failure reason")
 		}
 	default:
@@ -215,6 +236,38 @@ func Produce(capture Capture) (Observation, error) {
 		digest("buildopt-request-build-logic-files-v1", buildRows...))
 	observation.CurrentOutputs = outputs
 	return observation, nil
+}
+
+func validateCaptureDiagnostics(capture Capture) error {
+	diagnostics := capture.Diagnostics
+	if diagnostics == nil {
+		return nil
+	}
+	if capture.SchemaVersion != CaptureSchemaVersion || capture.Reason != "TASK_INPUT_EVIDENCE_UNAVAILABLE" ||
+		diagnostics.Phase != capture.Reason ||
+		len(diagnostics.InputFailures)+len(diagnostics.MissingAfterTaskPaths) == 0 ||
+		len(diagnostics.InputFailures)+len(diagnostics.MissingAfterTaskPaths) > maximumCaptureDiagnosticFailures {
+		return errors.New("capture diagnostics are invalid")
+	}
+	previous := ""
+	seen := map[string]bool{}
+	for _, failure := range diagnostics.InputFailures {
+		if !safeTaskPath(failure.TaskPath) || !safeToken(failure.FailureClass) ||
+			failure.TaskPath <= previous || seen[failure.TaskPath] {
+			return errors.New("capture input diagnostics are invalid")
+		}
+		previous = failure.TaskPath
+		seen[failure.TaskPath] = true
+	}
+	previous = ""
+	for _, path := range diagnostics.MissingAfterTaskPaths {
+		if !safeTaskPath(path) || path <= previous || seen[path] {
+			return errors.New("capture missing-task diagnostics are invalid")
+		}
+		previous = path
+		seen[path] = true
+	}
+	return nil
 }
 
 func baseObservation(capture Capture) Observation {

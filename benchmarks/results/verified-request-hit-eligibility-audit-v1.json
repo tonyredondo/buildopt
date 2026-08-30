@@ -1,0 +1,211 @@
+{
+  "schemaVersion": "buildopt.poc/verified-request-hit-eligibility-audit/v1",
+  "workItem": "VRH-001",
+  "generatedAt": "2026-08-30T00:00:00Z",
+  "inputs": {
+    "routeContractSha256": "fd8ff779a2171febc1db64693c0d2e8f51b338cf494f212b23735c86bf1f9808",
+    "breadthGateSha256": "3fce9bb753d9716f7f295dc3039d86342a805916c00c3e51e583ec8af46cb9af",
+    "terminalDecisionSha256": "a45ad9f8969172b755e65dfff10ddc2643af5060110840f1eef8d94113d301ca",
+    "transitionsLedgerSha256": "0f44bf1b83c1ca8c153f6ee4eec7f0880cb0e17eb38ca022b819f53c781d7ec7",
+    "observationsLedgerSha256": "078a9df7b61edf1c2bef149a79e5a34329427b751a427d67d7950e1a6b1131ca",
+    "historicalInitSha256": "b6d5a035fba219ec38c591004898ab607a3997cbd29759663e576eb363855e81",
+    "currentInitSha256": "aefc60b0c30b7872107cafdcb6c5f11e52180f3e2a6087e4450a4cde26762132",
+    "diagnosticModelSha256": "2a4df73931e94c2d001913fa03c1e777e2827d733865bab320e3261200fab61f",
+    "runnerSha256": "083cebe2f4842b39a5f8fefa8197070ffe84ae4846aab11a534d5e3889028e57",
+    "upstreamBreadthIndependentlyChecked": true,
+    "historicalTimingImported": false,
+    "historicalActionImported": false
+  },
+  "thresholds": {
+    "potentialRequestHitRowsPerFamilyRequired": 5,
+    "familiesWithPotentialRequestHitsRequired": 3,
+    "productFailureBudget": 0
+  },
+  "familyAssessments": [
+    {
+      "family": "apache-groovy",
+      "transitionRows": 8,
+      "partialGraphActionRows": 5,
+      "potentialRequestHitRows": 0,
+      "nativeFallbackRows": 3,
+      "globalOrAmbiguousRows": 3,
+      "inputUnavailableRows": 0,
+      "productFailures": 0,
+      "buildFailures": 0,
+      "partitionComplete": true,
+      "requestHitOpportunityPass": false
+    },
+    {
+      "family": "apache-kafka",
+      "transitionRows": 24,
+      "partialGraphActionRows": 5,
+      "potentialRequestHitRows": 17,
+      "nativeFallbackRows": 2,
+      "globalOrAmbiguousRows": 2,
+      "inputUnavailableRows": 0,
+      "productFailures": 0,
+      "buildFailures": 0,
+      "partitionComplete": true,
+      "requestHitOpportunityPass": true
+    },
+    {
+      "family": "micronaut-core",
+      "transitionRows": 27,
+      "partialGraphActionRows": 2,
+      "potentialRequestHitRows": 14,
+      "nativeFallbackRows": 11,
+      "globalOrAmbiguousRows": 5,
+      "inputUnavailableRows": 6,
+      "productFailures": 0,
+      "buildFailures": 0,
+      "partitionComplete": true,
+      "requestHitOpportunityPass": true
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "transitionRows": 27,
+      "partialGraphActionRows": 0,
+      "potentialRequestHitRows": 22,
+      "nativeFallbackRows": 5,
+      "globalOrAmbiguousRows": 3,
+      "inputUnavailableRows": 2,
+      "productFailures": 0,
+      "buildFailures": 0,
+      "partitionComplete": true,
+      "requestHitOpportunityPass": true
+    },
+    {
+      "family": "spring-framework",
+      "transitionRows": 27,
+      "partialGraphActionRows": 5,
+      "potentialRequestHitRows": 16,
+      "nativeFallbackRows": 6,
+      "globalOrAmbiguousRows": 6,
+      "inputUnavailableRows": 0,
+      "productFailures": 0,
+      "buildFailures": 0,
+      "partitionComplete": true,
+      "requestHitOpportunityPass": true
+    }
+  ],
+  "totals": {
+    "transitionRows": 113,
+    "partialGraphActionRows": 17,
+    "potentialRequestHitRows": 69,
+    "nativeFallbackRows": 27,
+    "combinedPotentialActionRows": 86,
+    "potentialRequestHitRatio": 0.6106194690265486,
+    "combinedPotentialActionRatio": 0.7610619469026548,
+    "familiesWithPotentialRequestHits": 4,
+    "productFailures": 0,
+    "buildFailures": 0
+  },
+  "captureDiagnosticGaps": [
+    {
+      "family": "micronaut-core",
+      "observationOrdinal": 2,
+      "revision": "f8b4e5ce89b24fa8bc0a1bee867847e03ab51184",
+      "gradleVersion": "9.6.1",
+      "requestedTasks": [
+        ":micronaut-core:testClasses"
+      ],
+      "reason": "TASK_INPUT_EVIDENCE_UNAVAILABLE",
+      "exactHistoricalCauseRecoverable": false
+    },
+    {
+      "family": "micronaut-core",
+      "observationOrdinal": 5,
+      "revision": "b868a19567c7f00e195b4fb3e21dacdb585728e5",
+      "gradleVersion": "9.6.1",
+      "requestedTasks": [
+        ":micronaut-core:testClasses"
+      ],
+      "reason": "TASK_INPUT_EVIDENCE_UNAVAILABLE",
+      "exactHistoricalCauseRecoverable": false
+    },
+    {
+      "family": "micronaut-core",
+      "observationOrdinal": 8,
+      "revision": "42c14e7f6f0ea07a769f6dd3d46c24a7c5de790c",
+      "gradleVersion": "9.6.1",
+      "requestedTasks": [
+        ":micronaut-core:testClasses"
+      ],
+      "reason": "TASK_INPUT_EVIDENCE_UNAVAILABLE",
+      "exactHistoricalCauseRecoverable": false
+    },
+    {
+      "family": "micronaut-core",
+      "observationOrdinal": 11,
+      "revision": "54d38f397e622b2fa5f8bc72fc04bd5ea87c6d8a",
+      "gradleVersion": "9.6.1",
+      "requestedTasks": [
+        ":micronaut-core:testClasses"
+      ],
+      "reason": "TASK_INPUT_EVIDENCE_UNAVAILABLE",
+      "exactHistoricalCauseRecoverable": false
+    },
+    {
+      "family": "micronaut-core",
+      "observationOrdinal": 20,
+      "revision": "f070bf5e42ed4708930802f7229ef549105d2207",
+      "gradleVersion": "9.6.1",
+      "requestedTasks": [
+        ":micronaut-core:testClasses"
+      ],
+      "reason": "TASK_INPUT_EVIDENCE_UNAVAILABLE",
+      "exactHistoricalCauseRecoverable": false
+    },
+    {
+      "family": "micronaut-core",
+      "observationOrdinal": 23,
+      "revision": "05cdf6f0d17c7160050697dfaf7e3042ddd2579c",
+      "gradleVersion": "9.6.1",
+      "requestedTasks": [
+        ":micronaut-core:testClasses"
+      ],
+      "reason": "TASK_INPUT_EVIDENCE_UNAVAILABLE",
+      "exactHistoricalCauseRecoverable": false
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "observationOrdinal": 5,
+      "revision": "bb6908966fb187cf5abeb9e586ac524a0208e7e7",
+      "gradleVersion": "9.7.0",
+      "requestedTasks": [
+        ":javaagent:testClasses"
+      ],
+      "reason": "TASK_INPUT_EVIDENCE_UNAVAILABLE",
+      "exactHistoricalCauseRecoverable": false
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "observationOrdinal": 20,
+      "revision": "24d13b574b9fa7f20237ec8efb902ff915c6d134",
+      "gradleVersion": "9.7.1",
+      "requestedTasks": [
+        ":javaagent:testClasses"
+      ],
+      "reason": "TASK_INPUT_EVIDENCE_UNAVAILABLE",
+      "exactHistoricalCauseRecoverable": false
+    }
+  ],
+  "captureDiagnostics": {
+    "historicalExactCauseRecoverable": false,
+    "historicalRowsRemainTypedUnavailable": true,
+    "futureDiagnosticsBounded": true,
+    "futureDiagnosticsExposeExceptionMessages": false,
+    "futureDiagnosticsChangeAuthority": false
+  },
+  "eligibilityPass": true,
+  "authority": {
+    "performanceMeasured": false,
+    "timingAuthorized": false,
+    "selectionAuthorized": false,
+    "activationAuthorized": false,
+    "speedupClaim": false
+  },
+  "outcome": "OPEN_VERIFIED_REQUEST_HIT_SAFETY_CONTRACT",
+  "nextBlock": "VRH-002",
+  "conclusion": "STRUCTURAL_OPPORTUNITY_ONLY_NOT_SAFE_ELIGIBILITY_OR_MEASURED_VALUE"
+}
