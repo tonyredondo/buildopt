@@ -1,7 +1,7 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `DURABLE_NATIVE_OPTIMIZATION_POC_STOPPED` — marker-only cacheability discovery is not generically safe<br>
-**Current phase:** none; terminal `STOP_DURABLE_NATIVE_OPTIMIZATION_POC`<br>
+**Current phase:** `NONE` — terminal `STOP_DURABLE_NATIVE_OPTIMIZATION_POC`<br>
 **POC functional target:** produce positive cumulative wall-time value against optimized native Gradle across chronological customer-requested builds, including every wrapper, observation, trial, cache, fallback and action cost<br>
 **POC onboarding north star:** `generate and commit BuildOpt Wrapper -> ./buildoptw build`; no global BuildOpt installation, hand-authored profile or committed credential is required<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
