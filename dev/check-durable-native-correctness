@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+evidence=benchmarks/results/durable-native-optimization-v1/correctness.json
+
+./dev/run --toolchain go -- go test ./internal/durablenative ./cmd/durable-native-patch
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/durable-native-correctness/v1" and
+  .gate == {
+    requiredExactOutputs: true,
+    productFailureBudget: 0,
+    observedProductFailures: 1,
+    decision: "FAIL",
+    timingAuthorized: false
+  } and
+  (.families | length) == 5 and
+  ([.families[].key] | unique | length) == 5 and
+  ([.families[] | select(.status == "PASS")] | length) == 2 and
+  ([.families[] | select(.status == "FAIL")] | length) == 1 and
+  ([.families[] | select(.status == "NOT_RUN_GATE_CLOSED")] | length) == 1 and
+  ([.families[] | select(.status == "CONCLUSIVE_NO_ACTION")] | length) == 1 and
+  all(.families[] | select(.status == "PASS"); .exactRequiredOutputs == true) and
+  (.families[] | select(.key == "micronaut-core") |
+    .candidate.result == "PRODUCT_FAILURE" and
+    .candidate.validationProblem == "missing_normalization_annotation" and
+    .candidate.property == "sourceDirectory" and
+    .candidate.cacheReuseObserved == false) and
+  .fixtures.status == "NOT_RUN_GATE_CLOSED" and
+  .diagnosis.recoverability == "REQUIRES_NEW_PREREGISTERED_CONTRACT" and
+  .resolution == {
+    "DNO-004": "DONE_STOP",
+    "DNO-005": "NOT_AUTHORIZED",
+    "DNO-006": "NOT_AUTHORIZED",
+    next: "DNO-007"
+  }
+' "$evidence" >/dev/null
+
+printf 'DNO-004 correctness result verified: 2 pass, 1 product failure, timing not authorized\n'

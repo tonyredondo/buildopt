@@ -50,12 +50,15 @@
   2/4 candidate families reach the frozen breadth threshold and zero
   historical rows contain the later complete safety record. The route stops
   before Gradle-free execution or timing; it makes no speedup claim.
-- **The active experiment now tests durable native corrections instead of a
-  per-build runtime decision.** Fresh DNO evidence completes 5/5 source audits
-  and finds eight strict task-contract candidates across 4/5 families. All
-  eight compile into digest-bound additive plans, apply idempotently and revert
-  exactly. These are breadth and transaction results only; correctness and
-  timing remain unmeasured until DNO-004 and DNO-005.
+- **The durable marker-only experiment has reached a correctness stop before
+  timing.** Fresh DNO evidence completes 5/5 source audits and finds eight
+  strict task-contract candidates across 4/5 families. All eight compile into
+  digest-bound additive plans, apply idempotently and revert exactly. Spring
+  and OpenTelemetry then preserve exact outputs and restore from cache, but
+  Micronaut fails Gradle validation because a directory input has no declared
+  path normalization. That one product failure exceeds the frozen zero-failure
+  budget. Groovy and fixtures were stopped rather than counted as zero;
+  DNO-005/006 and every new speedup claim remain unauthorized.
 
 See the [current one-pager](./buildopt-poc-handoff.md) and the
 [terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)

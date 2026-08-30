@@ -260,6 +260,18 @@ The check compiles all eight candidates, applies each twice, reverts each twice
 and compares exact source bytes. It also rejects digest drift and ambiguous
 class declarations. It does not edit the supplied repositories.
 
+Validate the frozen public-candidate correctness result with:
+
+```bash
+./dev/check-durable-native-correctness
+```
+
+The result records exact-output/cache-restoration passes for Spring and
+OpenTelemetry and one Gradle validation failure in Micronaut. The failure
+exhausts the zero-product-failure budget, so this command verifies that timing
+and the dependent value blocks remain unauthorized; it does not run the public
+builds again.
+
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:
 

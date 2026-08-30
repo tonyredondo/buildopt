@@ -190,12 +190,16 @@ The verified-request-hit route is now a closed predecessor. Its 8/8 synthetic
 shadow result and 2/4 public output-state breadth explain why a durable source
 correction is worth testing, but cannot authorize or time any DNO action.
 
-`DNO-002` now provides the first fresh result. A source-only analyzer completes
-all five frozen revisions and finds eight strict custom-task contracts across
-four families: Groovy (4), Micronaut (1), OpenTelemetry (1) and Spring (2).
-Kafka is conclusively no-action because its two custom tasks already declare
-cacheability. The 4/5 result passes the frozen 3/5 breadth gate and opens only
-the digest-bound patch compiler; it is not correctness or performance evidence.
+The DNO route now supplies a complete v1 detector diagnosis. Its source-only
+analyzer completes all five frozen revisions and finds eight strict custom-task
+contracts across four families: Groovy (4), Micronaut (1), OpenTelemetry (1)
+and Spring (2). All eight compile into reversible marker-only patches. Spring
+and OpenTelemetry validate with exact outputs and cache restoration, but
+Micronaut proves the detector is too weak: `@InputDirectory` without an
+explicit normalization strategy is not a portable cache input and Gradle
+rejects the candidate. Because v1 froze the compiler to `@CacheableTask` only,
+repairing this requires a new normalization-aware contract rather than moving
+the correctness gate. No DNO timing or general speedup evidence exists.
 
 The closed predecessor evidence remains in the
 [Observed Recurrent Request Portfolio POC Tracker](../plans/observed-request-portfolio-poc-tracker.md).

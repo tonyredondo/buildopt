@@ -27,3 +27,19 @@ clones.
 compile to the same generic fully qualified annotation, apply idempotently and
 revert to the exact original source bytes. Drift and ambiguous declarations
 fail closed. The plan still contains no candidate execution or timing.
+
+`correctness.json` is the terminal `DNO-004` correctness result. Spring and
+OpenTelemetry preserve their required outputs exactly and restore the patched
+tasks from Gradle's build cache. Micronaut fails Gradle validation because an
+`@InputDirectory` lacks a normalization strategy. The marker-only compiler is
+not authorized to infer that missing semantic contract, so the frozen
+zero-product-failure gate fails at one failure. Groovy and the remaining
+fixture matrix were not run after the stop; they are not represented as zero.
+`DNO-005` and `DNO-006` are consequently not authorized, and this evidence
+makes no wall-time claim.
+
+Validate the checked result and the external-checkout patch driver with:
+
+```bash
+./dev/check-durable-native-correctness
+```

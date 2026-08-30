@@ -5,8 +5,11 @@ Reproducible workloads for measuring causal savings, overhead, queues, additiona
 The active fresh route begins with the
 [durable native optimization evidence](./results/durable-native-optimization-v1/README.md).
 Its source audit passes 5/5 completeness and 4/5 action breadth with eight
-digest-bound candidates. It contains no timing; paired measurement remains
-closed until patch compilation and exact-output correctness pass.
+digest-bound candidates. Patch transactions pass, but the correctness gate
+stops after one Micronaut candidate fails Gradle's missing-normalization
+validation. Spring and OpenTelemetry pass exact-output/cache restoration.
+Paired and longitudinal timing are not authorized, so this route contains no
+speedup result.
 
 Seeds, images, toolchains, runner classes, and digests are part of the evidence. A benchmark never authorizes a security capability.
 

@@ -25,7 +25,7 @@ decision.
 
 ## Current experiment status
 
-The active route is now `DURABLE_NATIVE_OPTIMIZATION_V1`. It tests whether
+The latest route is `DURABLE_NATIVE_OPTIMIZATION_V1`. It tests whether
 BuildOpt can turn generic source evidence into an owner-reviewed, exactly
 reversible Gradle patch whose value persists across later commits while native
 Gradle remains the only build runtime. `DNO-001` freezes four opportunity
@@ -41,8 +41,14 @@ tasks are already cacheable. No patch has run and no new speedup is claimed.
 
 `DNO-003` compiles all eight opportunities into digest-bound additive patch
 transactions. Apply and revert are byte-exact and idempotent; source drift and
-ambiguous declarations reject. The next gate is real Gradle correctness, not
-timing.
+ambiguous declarations reject. Real Gradle correctness then passes for Spring
+and OpenTelemetry with exact outputs and `FROM_CACHE` restoration, but fails
+for Micronaut: `sourceDirectory` is an `@InputDirectory` without an explicit
+normalization strategy. Adding only `@CacheableTask` makes Gradle reject that
+build. This is one product failure against a budget of zero, so Groovy and the
+fixture matrix stop unrun and DNO paired/longitudinal timing is not authorized.
+The result shows that generic cacheability discovery must prove portable input
+normalization, not merely count input/output annotations.
 
 The now-closed
 `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1` route learned across the exact Gradle

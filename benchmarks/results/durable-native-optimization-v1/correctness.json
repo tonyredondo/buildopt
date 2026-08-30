@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "buildopt.evidence/durable-native-correctness/v1",
+  "contract": "specs/poc-durable-native-optimization-v1.json",
+  "patchPlan": "benchmarks/results/durable-native-optimization-v1/patch-plan.json",
+  "gate": {
+    "requiredExactOutputs": true,
+    "productFailureBudget": 0,
+    "observedProductFailures": 1,
+    "decision": "FAIL",
+    "timingAuthorized": false
+  },
+  "families": [
+    {
+      "key": "apache-groovy",
+      "revision": "655b70f3fdb34dcb8e98fc141c68647f92a27e82",
+      "admittedCandidates": 4,
+      "status": "NOT_RUN_GATE_CLOSED",
+      "reason": "Micronaut exhausted the zero-product-failure budget before this family ran"
+    },
+    {
+      "key": "apache-kafka",
+      "revision": "db8a0925513a76d1a4f13df00867c7491a4b3ce7",
+      "admittedCandidates": 0,
+      "status": "CONCLUSIVE_NO_ACTION"
+    },
+    {
+      "key": "micronaut-core",
+      "revision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+      "admittedCandidates": 1,
+      "status": "FAIL",
+      "control": {
+        "task": ":micronaut-context-python:compileVfsPythonBytecode",
+        "result": "PASS",
+        "requiredOutputTreeSha256": "83e8178509dbe205b432968e8983cb8f00d6b1150300f348ec3b5d25e72a36d7"
+      },
+      "candidate": {
+        "result": "PRODUCT_FAILURE",
+        "failingTask": ":micronaut-inject-python:compileVfsPythonBytecode",
+        "validationProblem": "missing_normalization_annotation",
+        "property": "sourceDirectory",
+        "annotation": "InputDirectory",
+        "cacheReuseObserved": false
+      }
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "revision": "3300ac68822ed4dbade73496f2fffd3a2c6e32ed",
+      "admittedCandidates": 1,
+      "status": "PASS",
+      "requiredOutputSha256": "305fee0dc2e0c09d129626c112488ae476365c846dfa7fcf5dfade3d37a36166",
+      "exactRequiredOutputs": true,
+      "cacheReuse": {
+        "task": ":instrumentation:okhttp:okhttp-3.0:library:generateInstrumentationVersionClass",
+        "outcome": "FROM_CACHE"
+      }
+    },
+    {
+      "key": "spring-framework",
+      "revision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+      "admittedCandidates": 2,
+      "status": "PASS",
+      "requiredOutputTreeSha256": "e0228f8db4db4ad30ebe1db9abe7c466630495891f93078bd069a4122abeb45f",
+      "exactRequiredOutputs": true,
+      "cacheReuse": [
+        {
+          "task": ":spring-core:checkArchitectureMain",
+          "outcome": "FROM_CACHE"
+        },
+        {
+          "task": ":spring-core:javapoetSource",
+          "outcome": "FROM_CACHE"
+        },
+        {
+          "task": ":spring-core:objenesisSource",
+          "outcome": "FROM_CACHE"
+        }
+      ]
+    }
+  ],
+  "fixtures": {
+    "status": "NOT_RUN_GATE_CLOSED",
+    "reason": "The first public product failure terminates DNO-004 before remaining correctness work"
+  },
+  "diagnosis": {
+    "detectorGap": "Declared file inputs are not necessarily portable cache inputs",
+    "compilerBoundary": "DNO v1 can add only CacheableTask and cannot add or infer normalization semantics",
+    "recoverability": "REQUIRES_NEW_PREREGISTERED_CONTRACT",
+    "minimumSuccessorChange": "Require an explicit Gradle normalization strategy for every file input before admitting marker-only patches"
+  },
+  "resolution": {
+    "DNO-004": "DONE_STOP",
+    "DNO-005": "NOT_AUTHORIZED",
+    "DNO-006": "NOT_AUTHORIZED",
+    "next": "DNO-007"
+  }
+}

@@ -1,7 +1,7 @@
 # Durable Native Optimization POC Tracker
 
 **Status:** active<br>
-**Current block:** `DNO-004`<br>
+**Current block:** `DNO-007`<br>
 **Terminal outcomes:** `CONTINUE_DURABLE_NATIVE_OPTIMIZATION_POC` or
 `STOP_DURABLE_NATIVE_OPTIMIZATION_POC`
 
@@ -20,10 +20,10 @@ as differentiation by itself.
 | `DNO-001` | Frozen catalog, thresholds, authority and documentation ledger | User-selected materially different hypothesis | Contract validator rejects drift and every old route remains terminal | `DONE` |
 | `DNO-002` | Five-family source opportunity report | DNO-001 | 5/5 conclusive and at least 3/5 source-bound action families; no timing | `DONE` |
 | `DNO-003` | Generic digest-bound patch compiler and exact transaction | DNO-002 pass | Idempotent apply, exact revert, ambiguous/drifted sources rejected | `DONE` |
-| `DNO-004` | Fixture and public-candidate correctness matrix | DNO-003 | Exact required outputs and zero product failures | `IN_PROGRESS` |
-| `DNO-005` | Installed paired value | DNO-004 | Frozen value threshold in at least 3/5 families | `WAITING` |
-| `DNO-006` | Twenty-commit durable value per admitted family | DNO-005 | Positive signed portfolio, at least 3/5 positive families and finite payback | `WAITING` |
-| `DNO-007` | One-command proposal UX and terminal scorecard | DNO-006 or first failed prerequisite | Truthful terminal decision; no unmeasured value presented as zero | `WAITING` |
+| `DNO-004` | Fixture and public-candidate correctness matrix | DNO-003 | Exact required outputs and zero product failures | `DONE_STOP` |
+| `DNO-005` | Installed paired value | DNO-004 | Frozen value threshold in at least 3/5 families | `NOT_AUTHORIZED` |
+| `DNO-006` | Twenty-commit durable value per admitted family | DNO-005 | Positive signed portfolio, at least 3/5 positive families and finite payback | `NOT_AUTHORIZED` |
+| `DNO-007` | One-command proposal UX and terminal scorecard | DNO-006 or first failed prerequisite | Truthful terminal decision; no unmeasured value presented as zero | `IN_PROGRESS` |
 
 ## Detector catalog
 
@@ -36,6 +36,23 @@ as differentiation by itself.
 
 An unavailable compiler cannot contribute to breadth. Repository and task names
 are evidence labels only and may not influence detection.
+
+## Correctness outcome
+
+The frozen marker-only compiler is not safe for every candidate admitted by
+the first detector. Spring's two candidates and OpenTelemetry's candidate
+preserve exact required outputs and restore from Gradle's build cache.
+Micronaut's candidate fails Gradle validation because its `sourceDirectory` is
+an `@InputDirectory` without a path-normalization annotation. That is a product
+failure introduced by the patch, exhausting the zero-failure budget.
+
+The failure is actionable but cannot be repaired inside DNO v1: the frozen
+compiler may add only `@CacheableTask`, while choosing `RELATIVE`, `NAME_ONLY`,
+`NONE`, `CLASSPATH` or `COMPILE_CLASSPATH` requires task semantics the current
+detector does not prove. Groovy and the fixture matrix were therefore stopped,
+not recorded as zero. `DNO-005` and `DNO-006` are not authorized; `DNO-007`
+must now issue the terminal scorecard and may recommend a separately
+preregistered normalization-aware successor.
 
 ## Measurement and stop policy
 
