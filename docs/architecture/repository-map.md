@@ -135,7 +135,7 @@ and all upstream evidence in
 `benchmarks/results/request-aligned-terminal-decision-v1.json`; no timing,
 speedup, successor or new runtime optimizer exists.
 
-The active observed-request portfolio route reuses `internal/requestaligned`
+The closed observed-request portfolio route reuses `internal/requestaligned`
 through its versioned v2 boundary. `OutputState` groups only dependency-ordered
 producers with identical current path, kind, existence and bytes; absence is a
 first-class state revalidated after a candidate. Compatibility and exact
@@ -162,9 +162,11 @@ Run `./dev/check-request-aligned-successor-selection` and
 `./dev/check-request-aligned-public-capture` and
 `./dev/check-request-aligned-breadth-gate` and
 `./dev/check-request-aligned-terminal-decision` to validate the closed route,
-`./dev/check-request-aligned-evidence-precision` for the active route's first
-completed correctness block, `./dev/check-observed-request-portfolio` for its
-exact post-build lifecycle,
+`./dev/check-request-aligned-evidence-precision` for the portfolio route's
+correctness boundary, `./dev/check-observed-request-portfolio` for its exact
+post-build lifecycle, and
+`./dev/check-observed-request-portfolio-terminal-decision` for its closed
+terminal scorecard,
 `./dev/check-change-aware-producer-closure-plan` for its closed
 predecessor, `./dev/check-fresh-generic-optimization-plan` for the earlier
 fresh route and `./dev/check-sticky-wrapper-learning-plan` to preserve the

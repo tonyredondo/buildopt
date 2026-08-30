@@ -25,8 +25,8 @@ decision.
 
 ## Current experiment status
 
-There is deliberately no new performance percentage. The active
-`OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1` route learns across the exact Gradle
+There is deliberately no new performance percentage. The now-closed
+`OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1` route learned across the exact Gradle
 commands customers actually repeat, rather than pairing every commit with one
 fixed leaf command. One digest-bound executable captured 128 ordinary requests
 and 113 adjacent same-command transitions from empty BuildOpt state, without
@@ -40,8 +40,10 @@ validates eight typed unavailable rows. Exact-action breadth passes at **4/5**
 versus **3/5**, but input completeness fails at **3/5** versus required
 **5/5**, with zero build or product failures. This demonstrates broader generic
 structural opportunity, not acceleration. Selection, activation and timing
-remain false; installed and chronological timing are not authorized, and the
-terminal decision is the only next block.
+remain false. The terminal scorecard closes the current detector because the
+unchanged 5/5 completeness gate failed. Installed and chronological value,
+positive-family confidence, payback and native-retention overhead remain
+`NOT_MEASURED_NOT_AUTHORIZED`; no speedup claim or successor is authorized.
 
 ## Mechanisms
 
@@ -330,7 +332,7 @@ robust Kafka qualification and bounded Kafka payback. Three fail:
 - one observed pre-Gradle economic rejection at 4,098 ms, above the 500-ms
   median and 1,000-ms p95 limits.
 
-## Historical conclusion and active direction
+## Historical conclusion and latest tested direction
 
 The generic structural-profile hypothesis and its adaptive-fragment successor
 both stop here. This is not a claim that BuildOpt never works: Kafka pays back
@@ -449,12 +451,12 @@ absent-output binding can recover one Micronaut row. The resulting family
 counterfactual is **5/0/2/1/5**, so evidence repair alone still leaves only two
 families with five relevant transitions.
 
-The active hypothesis is therefore
+The latest tested hypothesis was
 `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1`: BuildOpt should learn across the
 exact commands a customer actually repeats instead of treating one fixed leaf
 request as the repository's whole opportunity surface. It may not widen,
 replace or invent a command, and product logic remains free of repository and
-task-name rules. Its first block is now complete: Gradle 8/9 × Kotlin/Groovy
+task-name rules. Gradle 8/9 × Kotlin/Groovy
 fixtures prove dependency-ordered equivalent producers, explicit absent-output
 bindings, post-candidate absence revalidation and separate compatibility/
 request-graph identity. Unordered peers, hash/kind mismatches, outside-graph
@@ -467,8 +469,15 @@ same invocation, keeps 128 identities
 and preserves typed incomplete, failed, cancelled and bypassed outcomes. A
 16-writer fixture loses no updates, and server absence still leaves the local
 observation. No command is substituted and no extra Gradle build starts. Fresh
-five-family capture and all value timing remain pending. See the
-[active tracker](../plans/observed-request-portfolio-poc-tracker.md).
+five-family capture records 128 observations and 113 transitions. Independent
+reconstruction reproduces 105 reports and preserves eight unavailable rows as
+typed rather than zero. Exact-action breadth passes at **4/5**, but complete
+inputs fail at **3/5** versus required **5/5**. The terminal scorecard therefore
+closes the current detector without running an action or timing campaign;
+installed value, chronological value, confidence, payback and native-retention
+overhead remain `NOT_MEASURED_NOT_AUTHORIZED`. There is no speedup claim and no
+automatic successor. See the
+[closed tracker](../plans/observed-request-portfolio-poc-tracker.md).
 
 The closed predecessor remains implementation-locked as historical evidence:
 separate per-arm cache namespaces started empty, only the task-contract and
@@ -590,6 +599,8 @@ outside this POC.
 - [Terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)
 - [Adaptive-fragment terminal scorecard](../../benchmarks/results/adaptive-fragment-terminal-decision-v1.json)
 - [Adaptive-fragment terminal contract](../../specs/poc-adaptive-fragment-terminal-decision-v1.md)
+- [Observed-request portfolio terminal scorecard](../../benchmarks/results/observed-request-portfolio-terminal-decision-v1.json)
+- [Observed-request portfolio closed tracker](../plans/observed-request-portfolio-poc-tracker.md)
 - [Sticky Wrapper Learning POC Tracker](../plans/sticky-wrapper-learning-poc-tracker.md)
 - [Fresh Generic Optimization POC Tracker](../plans/fresh-generic-optimization-poc-tracker.md)
 - [Fresh generic optimization contract](../../specs/poc-fresh-generic-optimization-v1.md)

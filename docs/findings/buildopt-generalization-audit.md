@@ -19,7 +19,7 @@ that worked. The subsequent
 also stopped after its current installed campaign produced zero activations,
 zero attributable mechanism saving and negative cumulative value.
 
-The active experimental direction is the
+The latest experimental direction was the now-closed
 [observed recurrent request portfolio](../plans/observed-request-portfolio-poc-tracker.md).
 It keeps the exact command as the evidence unit but learns across the portfolio
 of commands a customer actually repeats, rather than forcing one leaf command
@@ -36,7 +36,8 @@ two exact action rows and OpenTelemetry none. Exact-action breadth passes at
 4/5 versus 3/5, but complete inputs fail at 3/5 versus 5/5, with zero product
 or build failures. This is stronger structural breadth than the stopped
 fixed-request route, but it still proves no acceleration: timing, selection and
-activation remain closed, and only the terminal decision is authorized.
+activation remain closed. The terminal scorecard stops this detector without a
+speedup claim or successor authority; its unmeasured economics remain typed.
 
 ## What is generalized today
 
@@ -174,9 +175,15 @@ complete inputs at **3/5** versus required **5/5**. Summary falsification has no
 effect, and changing either a report or the independent change manifest is
 rejected. Therefore no current action ran, installed and chronological timing
 are not authorized, and no current wall-time claim exists.
-`SWL-PORTFOLIO-007` must now issue the terminal decision from these facts and
-preserve value, confidence, payback and overhead as unmeasured rather than
-inventing zero economics.
+
+The terminal scorecard now closes this detector as
+`STOP_OBSERVED_RECURRENT_REQUEST_PORTFOLIO_POC_FOR_CURRENT_DETECTOR`. It binds
+the independent breadth result and unchanged policy, preserves installed and
+chronological value, confidence, payback and overhead as
+`NOT_MEASURED_NOT_AUTHORIZED`, and creates neither a speedup claim nor automatic
+successor authority. The observed request portfolio improved structural action
+breadth, but it did not establish complete enough fresh evidence to test
+generic customer value.
 
 ## POC conclusion
 

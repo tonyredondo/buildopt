@@ -2,11 +2,11 @@
 
 ## Status
 
-**Overall:** `ACTIVE`
+**Overall:** `STOPPED_CURRENT_OBSERVED_REQUEST_PORTFOLIO_DETECTOR`
 
-**Progress:** five blocks executed; two timing blocks not authorized
+**Progress:** six blocks executed; two timing blocks not authorized
 
-**Current block:** `SWL-PORTFOLIO-007`
+**Current block:** none
 
 **Selected hypothesis:** `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1`
 
@@ -67,7 +67,7 @@ model—not those repairs—must establish broader opportunity.
 | 4 | `SWL-PORTFOLIO-004` Independent breadth gate | Rebuild every row; require 5/5 complete inputs, five relevant rows per family and exact actions in 3/5 | `DONE` | SWL-PORTFOLIO-003 |
 | 5 | `SWL-PORTFOLIO-005` Installed value | Eight balanced pairs per admitted action with exact outputs and complete BuildOpt costs | `NOT AUTHORIZED` | breadth failed at 3/5 complete inputs |
 | 6 | `SWL-PORTFOLIO-006` Chronological value | At least 15 comparable relevant transitions per admitted family with persistent isolated state | `NOT AUTHORIZED` | installed value did not open |
-| 7 | `SWL-PORTFOLIO-007` Terminal decision | Continue or stop from correctness, breadth, value, confidence, payback, overhead and failures | `TODO` | conclusive breadth gate |
+| 7 | `SWL-PORTFOLIO-007` Terminal decision | Continue or stop from correctness, breadth, value, confidence, payback, overhead and failures | `DONE` | conclusive breadth gate |
 
 ## Autonomous block contracts
 
@@ -210,6 +210,17 @@ positive-family confidence, payback, native-retention overhead and zero-failure
 gates pass without moving thresholds. Any unavailable value stays typed rather
 than becoming zero. A stopped route authorizes no successor automatically.
 
+Implemented outcome: [`observed-request-portfolio-terminal-decision-v1.json`](../../benchmarks/results/observed-request-portfolio-terminal-decision-v1.json)
+binds the independent breadth result and the unchanged policy without depending
+on the mutable tracker lifecycle. Fresh correctness, action breadth, zero
+failures and threshold immutability pass. Complete inputs fail at **3/5**
+versus required **5/5**. Installed value, chronological value, positive-family
+confidence, payback and native-retention overhead remain
+`NOT_MEASURED_NOT_AUTHORIZED`; no zero values are invented. The terminal result
+is `STOP_OBSERVED_RECURRENT_REQUEST_PORTFOLIO_POC_FOR_CURRENT_DETECTOR`, creates
+no speedup claim and authorizes no successor. A separate user decision is
+required before any materially different hypothesis may begin.
+
 ## Evidence ledger
 
 | Evidence | Block | Required evidence | State |
@@ -221,7 +232,7 @@ than becoming zero. A stopped route authorizes no successor automatically.
 | `SWL-PORTFOLIO-E005` | SWL-PORTFOLIO-004 | Independent breadth decision | `DONE` — [`observed-request-portfolio-breadth-gate-v1.json`](../../benchmarks/results/observed-request-portfolio-breadth-gate-v1.json) |
 | `SWL-PORTFOLIO-E006` | SWL-PORTFOLIO-005 | Installed paired value and cost ledger | `NOT AUTHORIZED` |
 | `SWL-PORTFOLIO-E007` | SWL-PORTFOLIO-006 | Chronological cumulative value | `NOT AUTHORIZED` |
-| `SWL-PORTFOLIO-E008` | SWL-PORTFOLIO-007 | Terminal scorecard | `TODO` |
+| `SWL-PORTFOLIO-E008` | SWL-PORTFOLIO-007 | Terminal scorecard | `DONE` — [`observed-request-portfolio-terminal-decision-v1.json`](../../benchmarks/results/observed-request-portfolio-terminal-decision-v1.json) |
 
 ## Documentation contract
 

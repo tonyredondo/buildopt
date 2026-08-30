@@ -180,6 +180,7 @@ Git histories, then reproduce the independent breadth decision with:
   "$PWD/benchmarks/results/observed-request-public-portfolio-v1/transitions.jsonl" \
   "$PWD/benchmarks/results/observed-request-public-portfolio-changes-v1.jsonl"
 ./dev/check-observed-request-portfolio-breadth-gate
+./dev/check-observed-request-portfolio-terminal-decision
 ```
 
 The checked manifest is the immutable independent source for changed paths;
@@ -187,7 +188,9 @@ the gate does not read `summary.json`. It verifies 128 observations,
 regenerates 105 reports and validates eight typed unavailable rows. Summary,
 report and change-manifest tampering fail closed. The checked result passes
 exact-action breadth at 4/5 but fails complete inputs at 3/5 versus 5/5, so no
-candidate or timing campaign is authorized and `SWL-PORTFOLIO-007` is next.
+candidate or timing campaign is authorized. The terminal checker binds that
+result to the unchanged policy, rejects moved thresholds, invented zero-valued
+economics and successor authority, and reproduces the final stop decision.
 
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:

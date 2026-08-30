@@ -562,7 +562,8 @@ the raw evidence.
 The current package result is reproducible with
 `./dev/check-magic-end-to-end-value-v2`.
 The latest breadth decisions are reproducible with
-`./dev/check-observed-request-portfolio-breadth-gate`.
+`./dev/check-observed-request-portfolio-breadth-gate` and the closed terminal
+scorecard with `./dev/check-observed-request-portfolio-terminal-decision`.
 
 ## Component ownership and configuration
 

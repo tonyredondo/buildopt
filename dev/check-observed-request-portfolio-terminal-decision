@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+if (($# > 1)); then
+    printf 'usage: %s [RESULT_JSON]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_result=${1:-${buildopt_root}/benchmarks/results/observed-request-portfolio-terminal-decision-v1.json}
+buildopt_gate=${buildopt_root}/benchmarks/results/observed-request-portfolio-breadth-gate-v1.json
+buildopt_route=${buildopt_root}/specs/poc-observed-request-portfolio-v1.json
+buildopt_temporary=$(mktemp -d /tmp/buildopt-observed-portfolio-terminal-check.XXXXXX)
+buildopt_cleanup() {
+    case ${buildopt_temporary} in
+        /tmp/buildopt-observed-portfolio-terminal-check.*) rm -rf -- "${buildopt_temporary}" ;;
+        *) printf 'refusing to clean unexpected terminal-check root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+    esac
+}
+trap buildopt_cleanup EXIT
+
+buildopt_validate_result() {
+    local buildopt_candidate=$1
+    jq -cS '.decisionPolicy' "${buildopt_candidate}" >"${buildopt_temporary}/candidate-policy.json"
+    local buildopt_policy_sha
+    buildopt_policy_sha=$(sha256sum "${buildopt_temporary}/candidate-policy.json" | awk '{print $1}')
+    local buildopt_gate_sha
+    buildopt_gate_sha=$(sha256sum "${buildopt_gate}" | awk '{print $1}')
+
+    jq -e --arg policySha "${buildopt_policy_sha}" --arg gateSha "${buildopt_gate_sha}" '
+      .schemaVersion=="buildopt.poc/observed-request-portfolio-terminal-decision/v1" and
+      .workItem=="SWL-PORTFOLIO-007" and
+      .evidence.breadthGateSha256==$gateSha and
+      .evidence.decisionPolicySha256==$policySha and
+      .evidence.decisionInput=="INDEPENDENT_FRESH_BREADTH_GATE_ONLY" and
+      (.evidence.routeContractConsumedForDecision|not) and
+      (.evidence.historicalTimingImported|not) and
+      (.evidence.historicalActionImported|not) and
+      .decisionPolicy=={
+        completeInputFamiliesRequired:5,
+        relevantTransitionsPerFamilyRequired:5,
+        familiesExposingExactActionsRequired:3,
+        productFailureBudget:0,
+        timingAuthorizedBeforeBreadth:false,
+        activationAuthorizedBeforeValue:false,
+        requiredTerminalCriteria:[
+          "FRESH_CAPTURE_CORRECTNESS","FRESH_INPUT_COMPLETENESS","PUBLIC_ACTION_BREADTH",
+          "INSTALLED_ACTIVE_VALUE","CHRONOLOGICAL_CUMULATIVE_VALUE",
+          "POSITIVE_FAMILY_CONFIDENCE","PAYBACK","NATIVE_RETENTION_OVERHEAD",
+          "PRODUCT_AND_BUILD_FAILURES","THRESHOLD_IMMUTABILITY"
+        ]
+      } and
+      .executedBlocks==["SWL-PORTFOLIO-000","SWL-PORTFOLIO-001","SWL-PORTFOLIO-002",
+        "SWL-PORTFOLIO-003","SWL-PORTFOLIO-004","SWL-PORTFOLIO-007"] and
+      .notAuthorizedBlocks==["SWL-PORTFOLIO-005","SWL-PORTFOLIO-006"] and
+      (.scorecard|length)==10 and
+      ([.scorecard[]|select(.criterion=="FRESH_CAPTURE_CORRECTNESS" and .status=="PASS" and
+        .evidence=="128_OBSERVATIONS_113_TRANSITIONS_105_REPORTS_8_TYPED_UNAVAILABLE")]|length)==1 and
+      ([.scorecard[]|select(.criterion=="FRESH_INPUT_COMPLETENESS" and .status=="FAIL" and
+        .evidence=="3_OF_5_VERSUS_REQUIRED_5_OF_5")]|length)==1 and
+      ([.scorecard[]|select(.criterion=="PUBLIC_ACTION_BREADTH" and .status=="PASS" and
+        .evidence=="4_OF_5_VERSUS_REQUIRED_3_OF_5")]|length)==1 and
+      ([.scorecard[]|select(.status=="NOT_MEASURED_NOT_AUTHORIZED")]|length)==5 and
+      ([.scorecard[]|select(has("value"))]|length)==0 and
+      ([.scorecard[]|select(.criterion=="PRODUCT_AND_BUILD_FAILURES" and .status=="PASS" and
+        .evidence=="0_PRODUCT_FAILURES_0_BUILD_FAILURES")]|length)==1 and
+      ([.scorecard[]|select(.criterion=="THRESHOLD_IMMUTABILITY" and .status=="PASS" and
+        .evidence=="PREREGISTERED_POLICY_DIGEST_BOUND")]|length)==1 and
+      .exactActionFamilies==["apache-groovy","apache-kafka","micronaut-core","spring-framework"] and
+      .timingRows=={status:"NOT_CREATED",reason:"COMPLETE_FAMILY_INPUT_GATE_FAILED_BEFORE_TIMING"} and
+      .actionExecution=={status:"NOT_RUN_NOT_AUTHORIZED"} and
+      (.speedupClaim|not) and
+      .decision=="STOP_OBSERVED_RECURRENT_REQUEST_PORTFOLIO_POC_FOR_CURRENT_DETECTOR" and
+      .conclusion=="EXACT_GENERIC_ACTIONS_EXIST_IN_FOUR_FAMILIES_BUT_FRESH_INPUT_COMPLETENESS_IS_INSUFFICIENT_TO_EVALUATE_INSTALLED_OR_CUMULATIVE_CUSTOMER_VALUE" and
+      .nonConclusion=="THIS_DOES_NOT_PROVE_THAT_GRADLE_BUILDS_HAVE_NO_DIFFERENT_GENERIC_OPTIMIZATION_OPPORTUNITY" and
+      (.successorAuthorized|not) and
+      .recommendedNextWork=="ANALYZE_TYPED_INPUT_UNAVAILABLE_AND_ZERO_RELEVANCE_CAUSES_BEFORE_THE_USER_SELECTS_A_MATERIALLY_DIFFERENT_HYPOTHESIS"
+    ' "${buildopt_candidate}" >/dev/null
+}
+
+"${buildopt_root}/dev/run-observed-request-portfolio-terminal-decision" \
+    "${buildopt_temporary}/regenerated.json" >/dev/null
+cmp -s "${buildopt_result}" "${buildopt_temporary}/regenerated.json" || {
+    printf 'observed request portfolio terminal decision is stale or not reproducible\n' >&2
+    exit 1
+}
+buildopt_validate_result "${buildopt_result}" || {
+    printf 'observed request portfolio terminal decision contract is invalid\n' >&2
+    exit 1
+}
+jq -e '
+  .schemaVersion=="buildopt.poc/observed-request-portfolio-contract/v1" and
+  .status=="STOPPED_CURRENT_OBSERVED_REQUEST_PORTFOLIO_DETECTOR" and
+  .currentBlock=="NONE" and .nextBlock==null and
+  ([.blocks[]|select(.state=="DONE")]|length)==6 and
+  ([.blocks[]|select(.state=="NOT_AUTHORIZED")]|length)==2 and
+  ([.blocks[]|select(.id=="SWL-PORTFOLIO-007" and .state=="DONE" and
+    .outcome=="STOP_OBSERVED_RECURRENT_REQUEST_PORTFOLIO_POC_FOR_CURRENT_DETECTOR")]|length)==1 and
+  .latestEvidence.path=="benchmarks/results/observed-request-portfolio-terminal-decision-v1.json" and
+  .latestEvidence.decision=="STOP_OBSERVED_RECURRENT_REQUEST_PORTFOLIO_POC_FOR_CURRENT_DETECTOR" and
+  (.latestEvidence.performanceMeasured|not) and
+  (.latestEvidence.selectionAuthorized|not) and
+  (.latestEvidence.activationAuthorized|not) and
+  (.latestEvidence.speedupClaim|not) and
+  (.latestEvidence.successorAuthorized|not)
+' "${buildopt_route}" >/dev/null || {
+    printf 'observed request portfolio terminal route contract is invalid\n' >&2
+    exit 1
+}
+
+jq '.speedupClaim=true|.successorAuthorized=true|.decision="CONTINUE"' "${buildopt_result}" \
+    >"${buildopt_temporary}/tampered-authority.json"
+if buildopt_validate_result "${buildopt_temporary}/tampered-authority.json"; then
+    printf 'invented speedup or successor authority was accepted\n' >&2
+    exit 1
+fi
+jq '.scorecard|=map(if .status=="NOT_MEASURED_NOT_AUTHORIZED"
+  then .status="PASS"|.value=0 else . end)' "${buildopt_result}" \
+    >"${buildopt_temporary}/tampered-economics.json"
+if buildopt_validate_result "${buildopt_temporary}/tampered-economics.json"; then
+    printf 'invented zero-valued economics were accepted\n' >&2
+    exit 1
+fi
+jq '.decisionPolicy.completeInputFamiliesRequired=3|
+  .scorecard|=map(if .criterion=="FRESH_INPUT_COMPLETENESS" then .status="PASS" else . end)' \
+    "${buildopt_result}" >"${buildopt_temporary}/tampered-threshold.json"
+if buildopt_validate_result "${buildopt_temporary}/tampered-threshold.json"; then
+    printf 'moved completeness threshold was accepted\n' >&2
+    exit 1
+fi
+
+printf 'Observed request portfolio terminal decision: PASS\n'

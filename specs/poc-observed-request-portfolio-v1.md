@@ -77,9 +77,13 @@ not authorized.
 
 Only a passing breadth gate could open installed timing in
 `SWL-PORTFOLIO-005`, so that block and chronological value in
-`SWL-PORTFOLIO-006` are not authorized. `SWL-PORTFOLIO-007` is now the only
-open block and must issue the terminal continue/stop decision without
-inventing zero-valued economics.
+`SWL-PORTFOLIO-006` were not authorized. The digest-bound terminal scorecard
+passes fresh correctness, action breadth, zero failures and threshold
+immutability, while complete inputs fail at **3/5**. Installed value,
+chronological value, positive-family confidence, payback and native-retention
+overhead remain `NOT_MEASURED_NOT_AUTHORIZED`. The route is therefore closed as
+`STOP_OBSERVED_RECURRENT_REQUEST_PORTFOLIO_POC_FOR_CURRENT_DETECTOR`, with no
+speedup claim or automatically authorized successor.
 
 ## Non-goals
 

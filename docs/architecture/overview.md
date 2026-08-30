@@ -49,9 +49,10 @@ result.
 
 The POC includes a thin repository-committed entrypoint above the implemented
 launcher. Deterministic generation, verified native-package bootstrap and
-neutral Gradle process passthrough remain available. The active experiment now
-uses that entrypoint to key evidence by the exact ordinary request a customer
-repeats; it does not substitute a different Gradle command:
+neutral Gradle process passthrough remain available. The latest experiment
+used that entrypoint to key evidence by the exact ordinary request a customer
+repeats; it did not substitute a different Gradle command. The route is now
+closed after its frozen input-completeness gate failed:
 
 ```text
 committed buildoptw / buildoptw.bat
@@ -118,7 +119,7 @@ result. `SWL-010` adds a trusted-CI trial plane that runs isolated candidate
 and native commands with separate checkout, Gradle/cache/daemon and BuildOpt
 state roots; it is budgeted, order-balanced and exact-output checked. Its first
 result is negative for value, so that historical trial remains diagnostic.
-The active observed-request portfolio adds a narrower local plane under
+The closed observed-request portfolio experiment added a narrower local plane under
 `internal/requestportfolio`. The launcher derives length-framed identities from
 the exact argv it already received and the repository-relative working
 directory. When public capture is configured, an embedded init script observes

@@ -64,11 +64,18 @@ buildopt_materialize() {
 
 jq -e '
   .schemaVersion=="buildopt.poc/observed-request-portfolio-contract/v1" and
-  .workItem=="SWL-PORTFOLIO-000" and .currentBlock=="SWL-PORTFOLIO-007" and
+  .workItem=="SWL-PORTFOLIO-000" and
+  ((.status=="ACTIVE" and .currentBlock=="SWL-PORTFOLIO-007" and
+      ([.blocks[]|select(.id=="SWL-PORTFOLIO-007" and .state=="TODO")]|length)==1 and
+      .nextBlock=="SWL-PORTFOLIO-007") or
+   (.status=="STOPPED_CURRENT_OBSERVED_REQUEST_PORTFOLIO_DETECTOR" and .currentBlock=="NONE" and
+      ([.blocks[]|select(.id=="SWL-PORTFOLIO-007" and .state=="DONE" and
+        .outcome=="STOP_OBSERVED_RECURRENT_REQUEST_PORTFOLIO_POC_FOR_CURRENT_DETECTOR")]|length)==1 and
+      .nextBlock==null)) and
   ([.blocks[]|select(.id=="SWL-PORTFOLIO-004" and .state=="DONE" and
     .outcome=="STOP_INCOMPLETE_OBSERVED_REQUEST_PORTFOLIO_INPUT")]|length)==1 and
   ([.blocks[]|select((.id=="SWL-PORTFOLIO-005" or .id=="SWL-PORTFOLIO-006") and
-    .state=="NOT_AUTHORIZED")]|length)==2 and .nextBlock=="SWL-PORTFOLIO-007" and
+    .state=="NOT_AUTHORIZED")]|length)==2 and
   .breadthGate.completeFamilyInputsRequired==5 and
   .breadthGate.relevantTransitionsPerFamilyRequired==5 and
   .breadthGate.familiesWithActionsRequired==3 and

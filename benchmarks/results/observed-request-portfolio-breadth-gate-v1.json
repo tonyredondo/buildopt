@@ -3,14 +3,14 @@
   "workItem": "SWL-PORTFOLIO-004",
   "generatedAt": "2026-08-28T22:48:43Z",
   "inputs": {
-    "routeContractSha256": "aebd7c08e0b737d94ece39a31038b1144cb8b06e704729108db44c9959a8bd08",
+    "routeContractSha256": "895aef9a98eca412ebf83dd155d61a6fb866e61da131ead0fc3809bd957674b0",
     "captureContractSha256": "944883f227576cc72bbc6282dbf4b27b296d886b1c133d0b94bd6a64ab79d219",
     "observationsLedgerSha256": "078a9df7b61edf1c2bef149a79e5a34329427b751a427d67d7950e1a6b1131ca",
     "transitionsLedgerSha256": "0f44bf1b83c1ca8c153f6ee4eec7f0880cb0e17eb38ca022b819f53c781d7ec7",
     "independentChangeManifestSha256": "603418803ff45bd3f87341d4c30a38c659f7f21e355e17ea0c2663c43343bf7f",
     "classifierSourceSha256": "781f56de23e895f88bc5874ba5eead6179924482645ce7424742b81d27474614",
     "changeCaptureSourceSha256": "da59a58fd9363ac072f845876588a8cb84083d1e94f442d3a4eb12cdca5ef385",
-    "gateRunnerSourceSha256": "5af825f5e85faf5e2f7507e9a6d07a619b7ef82ee500e70684c1c271f9c4ef21",
+    "gateRunnerSourceSha256": "cb012b3e630585c9a7ba92a4f7674a62ff89e6196b319b1f6c5619e2ee22c4d4",
     "changeManifestOrigin": "GIT_DIFF_NAME_ONLY_ACMRTUXB",
     "summaryConsumed": false,
     "historicalBuildOptEvidenceImported": false

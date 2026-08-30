@@ -167,6 +167,16 @@ breadth passes at 4/5 versus 3/5, but input completeness fails at 3/5 versus
 The result routes directly to the terminal decision with timing, selection and
 activation false. It is structural gate evidence, not a speedup result.
 
+[`observed-request-portfolio-terminal-decision-v1.json`](./results/observed-request-portfolio-terminal-decision-v1.json)
+is the `SWL-PORTFOLIO-007` terminal scorecard. It binds the independently
+reconstructed breadth result and a canonical digest of the unchanged decision
+policy without depending on the tracker's mutable lifecycle state. Fresh
+correctness, 4/5 action breadth, zero failures and threshold immutability pass;
+complete inputs fail at 3/5 versus 5/5. Installed and chronological value,
+positive-family confidence, payback and native-retention overhead remain
+`NOT_MEASURED_NOT_AUTHORIZED`. No action or timing row exists, no speedup is
+claimed and no successor is authorized.
+
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
@@ -184,6 +194,7 @@ activation false. It is structural gate evidence, not a speedup result.
 ./dev/check-observed-request-portfolio
 ./dev/check-observed-request-public-portfolio
 ./dev/check-observed-request-portfolio-breadth-gate
+./dev/check-observed-request-portfolio-terminal-decision
 ```
 
 ## Sticky-wrapper observation sample

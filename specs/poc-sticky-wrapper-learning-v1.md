@@ -14,8 +14,9 @@ The exact machine contract is
 [`poc-sticky-wrapper-learning-v1.json`](./poc-sticky-wrapper-learning-v1.json).
 The historical implementation and documentation obligations are in the
 [`Sticky Wrapper Learning POC Tracker`](../docs/plans/sticky-wrapper-learning-poc-tracker.md).
-The active experiment is
-[`poc-fresh-generic-optimization-v1`](./poc-fresh-generic-optimization-v1.md).
+The immediate successor was
+[`poc-fresh-generic-optimization-v1`](./poc-fresh-generic-optimization-v1.md),
+which is now closed and retained as historical evidence.
 
 ## Customer surface
 

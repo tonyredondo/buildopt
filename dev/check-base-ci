@@ -224,7 +224,7 @@ case "${buildopt_lane}" in
 		"${buildopt_script_dir}/check-request-aligned-evidence-precision" --static
 		"${buildopt_script_dir}/check-observed-request-portfolio" --static
 		"${buildopt_script_dir}/check-observed-request-public-portfolio"
-		"${buildopt_script_dir}/check-observed-request-portfolio-breadth-gate"
+		"${buildopt_script_dir}/check-observed-request-portfolio-terminal-decision"
 		"${buildopt_script_dir}/check-sticky-evidence-producers"
 		"${buildopt_script_dir}/check-sticky-wrapper-learning-plan"
 		"${buildopt_script_dir}/check-sticky-wrapper-contract"

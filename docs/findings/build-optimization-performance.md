@@ -112,7 +112,7 @@ The task-contract detector has no generic public input producer and therefore
 cannot contribute public breadth in this route; only the installed graph-scope
 pipeline can do so without adding a new hypothesis after results are known.
 
-The active hypothesis is now the
+The retained wrapper infrastructure is documented in the
 [Sticky Wrapper Learning POC](../plans/sticky-wrapper-learning-poc-tracker.md).
 It tests a repository-committed wrapper, a negligible locally cached native
 decision, ordinary-build evidence, bounded CI trials, the existing central

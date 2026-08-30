@@ -27,19 +27,12 @@ Gradle HTTP cache objects are reusable data; they never authorize lifecycle
 transitions. Typed decisions, observations and the economic ledger use the
 separate BuildOpt state plane. The latest closed detector experiment is
 recorded in the
-[Change-aware Producer Closure POC Tracker](../plans/change-aware-producer-closure-poc-tracker.md).
-Its cause analysis opens the
-[Request-aligned Recurrent Learning POC Tracker](../plans/request-aligned-learning-poc-tracker.md):
-the closed producer and classifier route learns only from exact ordinary request
-identities, current producer outputs and adjacent changes relevant to that
-request, without changing the user's Gradle command. Its terminal gate stops at
-2/5 complete/action families; no action, timing or successor is active.
-The independent post-terminal audit then opens the
 [Observed Recurrent Request Portfolio POC Tracker](../plans/observed-request-portfolio-poc-tracker.md).
-The active hypothesis observes multiple exact commands already invoked through
-the wrapper and learns each identity independently. It never widens or replaces
-the customer's command. Evidence precision and portfolio capture remain open,
-so this route currently authorizes neither activation nor a speedup claim.
+It observes multiple exact commands already invoked through the wrapper and
+learns each identity independently without widening or replacing the customer's
+command. Its independent gate passes exact-action breadth at 4/5 but fails
+complete inputs at 3/5 versus 5/5. The terminal scorecard therefore authorizes
+no action, timing, speedup claim or successor.
 The wrapper remains reusable POC infrastructure, not a production rollout path
 or evidence that a generic acceleration mechanism has qualified.
 
@@ -102,7 +95,7 @@ The closed request-aligned evidence order is:
    stop the current detector, preserve unavailable economics and authorize no
    successor).
 
-The active observed-request portfolio successor first completed a versioned
+The closed observed-request portfolio route completed a versioned
 evidence-precision layer: ordered equivalent producers, explicit absent
 outputs, absence revalidation and separate compatibility/request-graph
 identity pass Gradle 8/9 × Kotlin/Groovy. The committed wrapper now also records
@@ -121,7 +114,9 @@ all 128 observations, reconstructs every transition, regenerates 105 reports
 from separately captured public-Git change sets and validates eight typed
 unavailable rows. Action breadth passes, but the unchanged 5/5 completeness
 gate fails at 3/5. This is not a performance result: timing and activation stay
-closed and only the terminal decision is authorized.
+closed. The terminal scorecard preserves all value criteria as
+`NOT_MEASURED_NOT_AUTHORIZED` and stops the current detector without authorizing
+a successor.
 
 Sample count alone never makes the campaign ready. Missing lifecycle, action or
 ledger evidence keeps it incomplete. The exact implementation paths, evidence

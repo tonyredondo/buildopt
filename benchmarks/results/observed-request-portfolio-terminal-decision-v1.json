@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "buildopt.poc/observed-request-portfolio-terminal-decision/v1",
+  "workItem": "SWL-PORTFOLIO-007",
+  "generatedAt": "2026-08-28T22:48:43Z",
+  "evidence": {
+    "breadthGateSha256": "3fce9bb753d9716f7f295dc3039d86342a805916c00c3e51e583ec8af46cb9af",
+    "decisionPolicySha256": "ee5afcbab371edff49ebd61478e08e19ef003c02ab8033aa075392fb1e25cfe5",
+    "decisionInput": "INDEPENDENT_FRESH_BREADTH_GATE_ONLY",
+    "routeContractConsumedForDecision": false,
+    "historicalTimingImported": false,
+    "historicalActionImported": false
+  },
+  "decisionPolicy": {
+    "activationAuthorizedBeforeValue": false,
+    "completeInputFamiliesRequired": 5,
+    "familiesExposingExactActionsRequired": 3,
+    "productFailureBudget": 0,
+    "relevantTransitionsPerFamilyRequired": 5,
+    "requiredTerminalCriteria": [
+      "FRESH_CAPTURE_CORRECTNESS",
+      "FRESH_INPUT_COMPLETENESS",
+      "PUBLIC_ACTION_BREADTH",
+      "INSTALLED_ACTIVE_VALUE",
+      "CHRONOLOGICAL_CUMULATIVE_VALUE",
+      "POSITIVE_FAMILY_CONFIDENCE",
+      "PAYBACK",
+      "NATIVE_RETENTION_OVERHEAD",
+      "PRODUCT_AND_BUILD_FAILURES",
+      "THRESHOLD_IMMUTABILITY"
+    ],
+    "timingAuthorizedBeforeBreadth": false
+  },
+  "executedBlocks": [
+    "SWL-PORTFOLIO-000",
+    "SWL-PORTFOLIO-001",
+    "SWL-PORTFOLIO-002",
+    "SWL-PORTFOLIO-003",
+    "SWL-PORTFOLIO-004",
+    "SWL-PORTFOLIO-007"
+  ],
+  "notAuthorizedBlocks": [
+    "SWL-PORTFOLIO-005",
+    "SWL-PORTFOLIO-006"
+  ],
+  "scorecard": [
+    {
+      "criterion": "FRESH_CAPTURE_CORRECTNESS",
+      "status": "PASS",
+      "evidence": "128_OBSERVATIONS_113_TRANSITIONS_105_REPORTS_8_TYPED_UNAVAILABLE"
+    },
+    {
+      "criterion": "FRESH_INPUT_COMPLETENESS",
+      "status": "FAIL",
+      "evidence": "3_OF_5_VERSUS_REQUIRED_5_OF_5"
+    },
+    {
+      "criterion": "PUBLIC_ACTION_BREADTH",
+      "status": "PASS",
+      "evidence": "4_OF_5_VERSUS_REQUIRED_3_OF_5"
+    },
+    {
+      "criterion": "INSTALLED_ACTIVE_VALUE",
+      "status": "NOT_MEASURED_NOT_AUTHORIZED"
+    },
+    {
+      "criterion": "CHRONOLOGICAL_CUMULATIVE_VALUE",
+      "status": "NOT_MEASURED_NOT_AUTHORIZED"
+    },
+    {
+      "criterion": "POSITIVE_FAMILY_CONFIDENCE",
+      "status": "NOT_MEASURED_NOT_AUTHORIZED"
+    },
+    {
+      "criterion": "PAYBACK",
+      "status": "NOT_MEASURED_NOT_AUTHORIZED"
+    },
+    {
+      "criterion": "NATIVE_RETENTION_OVERHEAD",
+      "status": "NOT_MEASURED_NOT_AUTHORIZED"
+    },
+    {
+      "criterion": "PRODUCT_AND_BUILD_FAILURES",
+      "status": "PASS",
+      "evidence": "0_PRODUCT_FAILURES_0_BUILD_FAILURES"
+    },
+    {
+      "criterion": "THRESHOLD_IMMUTABILITY",
+      "status": "PASS",
+      "evidence": "PREREGISTERED_POLICY_DIGEST_BOUND"
+    }
+  ],
+  "exactActionFamilies": [
+    "apache-groovy",
+    "apache-kafka",
+    "micronaut-core",
+    "spring-framework"
+  ],
+  "timingRows": {
+    "status": "NOT_CREATED",
+    "reason": "COMPLETE_FAMILY_INPUT_GATE_FAILED_BEFORE_TIMING"
+  },
+  "actionExecution": {
+    "status": "NOT_RUN_NOT_AUTHORIZED"
+  },
+  "speedupClaim": false,
+  "decision": "STOP_OBSERVED_RECURRENT_REQUEST_PORTFOLIO_POC_FOR_CURRENT_DETECTOR",
+  "conclusion": "EXACT_GENERIC_ACTIONS_EXIST_IN_FOUR_FAMILIES_BUT_FRESH_INPUT_COMPLETENESS_IS_INSUFFICIENT_TO_EVALUATE_INSTALLED_OR_CUMULATIVE_CUSTOMER_VALUE",
+  "nonConclusion": "THIS_DOES_NOT_PROVE_THAT_GRADLE_BUILDS_HAVE_NO_DIFFERENT_GENERIC_OPTIMIZATION_OPPORTUNITY",
+  "successorAuthorized": false,
+  "recommendedNextWork": "ANALYZE_TYPED_INPUT_UNAVAILABLE_AND_ZERO_RELEVANCE_CAUSES_BEFORE_THE_USER_SELECTS_A_MATERIALLY_DIFFERENT_HYPOTHESIS"
+}

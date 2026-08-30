@@ -234,8 +234,10 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > separately captured public-Git changes and validates eight typed unavailable
 > rows. Action breadth passes at **4/5**, but complete inputs fail at **3/5**
 > versus required **5/5**. Installed and chronological timing are therefore not
-> authorized; only the terminal decision remains open. Follow the
-> [active tracker](./docs/plans/observed-request-portfolio-poc-tracker.md).
+> authorized. The terminal scorecard preserves those thresholds, keeps value,
+> confidence, payback and native-retention overhead typed as unmeasured, and
+> closes the current detector without a speedup claim or automatic successor.
+> Follow the [closed tracker](./docs/plans/observed-request-portfolio-poc-tracker.md).
 
 > **Ordinary-build evidence:** the sticky wrapper now records private,
 > append-only phase timing and provenance for requested Gradle builds. The
