@@ -2,8 +2,8 @@
 
 ## Product specification and technical design
 
-**Status:** master POC architecture RFC — generic structural value qualifies across public Gradle families; one-command onboarding is the next product-direction objective<br>
-**Last technical review:** August 16, 2026<br>
+**Status:** master POC architecture RFC — active durable-native-optimization experiment; historical runtime-selection routes remain terminal<br>
+**Last technical review:** August 31, 2026<br>
 **Working name:** Gradle Build Optimization<br>
 **Scope:** autonomous optimization of Gradle builds in CI and local environments<br>
 **Relationship with Test Optimization:** complementary product with explicit ownership: Build Optimization optimizes build work; Test Optimization retains test selection, execution, and policy
@@ -74,6 +74,15 @@ The solution combines four pillars:
 Developers will not have to run a build twice manually. Natural builds provide observations; any additional repetitions required for validation run automatically in CI within a budget and isolated environments. Local environments consume already validated policies but create their own Configuration Cache entries.
 
 The current objective is a **proof of concept**, not a private-beta or production launch. The combined BuildOpt path has demonstrated customer-visible build-time reduction against a well-configured native Gradle baseline across the qualified synthetic Kotlin/Groovy workload matrix. Safe Cache, Runtime Tuning, Build Impact, reviewed task contracts, and Patch Autopilot are measured separately so that value is attributable; the complete path receives its own comparison because overlapping percentages are never added.
+
+The active experiment tests a narrower durable hypothesis: detect generic
+Gradle source/build-logic corrections, compile an owner-reviewed reversible
+patch, prove exact outputs and value, then leave optimized native Gradle as the
+only runtime. Its frozen catalog and ordered stop gates are defined in the
+[durable native optimization specification](./specs/poc-durable-native-optimization-v1.md)
+and [tracker](./docs/plans/durable-native-optimization-poc-tracker.md).
+Historical runtime-selection evidence is motivation only and cannot satisfy a
+new breadth, correctness or timing gate.
 
 The successor POC onboarding north star is one repository-committed wrapper
 and one repeated command:

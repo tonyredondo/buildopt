@@ -25,7 +25,15 @@ decision.
 
 ## Current experiment status
 
-There is deliberately no new performance percentage. The now-closed
+The active route is now `DURABLE_NATIVE_OPTIMIZATION_V1`. It tests whether
+BuildOpt can turn generic source evidence into an owner-reviewed, exactly
+reversible Gradle patch whose value persists across later commits while native
+Gradle remains the only build runtime. `DNO-001` freezes four opportunity
+classes, a 5/5 source-audit requirement, 3/5 action breadth, exact correctness,
+paired value and twenty-commit longitudinal gates. No new DNO performance
+percentage exists yet; historical results cannot satisfy these gates.
+
+The now-closed
 `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1` route learned across the exact Gradle
 commands customers actually repeat, rather than pairing every commit with one
 fixed leaf command. One digest-bound executable captured 128 ordinary requests
@@ -613,6 +621,8 @@ outside this POC.
 
 ## Evidence
 
+- [Durable native optimization active tracker](../plans/durable-native-optimization-poc-tracker.md)
+- [Durable native optimization frozen contract](../../specs/poc-durable-native-optimization-v1.md)
 - [Verified request hit terminal shadow result](../../benchmarks/results/verified-request-hit-shadow-replay-v1.json)
 - [Verified request hit closed tracker](../plans/verified-request-hit-poc-tracker.md)
 - [Lifetime breadth V3 result](../../benchmarks/results/poc-lifetime-breadth-v3/README.md)

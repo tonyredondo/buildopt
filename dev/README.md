@@ -226,6 +226,17 @@ proves first-mismatch quarantine, but public exact-output breadth reaches only
 2/4 candidate families and complete historical VRH-002 admissions remain zero.
 The resulting stop authorizes no Gradle-free action or timing campaign.
 
+Validate the active durable-native-optimization contract with:
+
+```bash
+./dev/check-durable-native-optimization
+```
+
+The checker freezes the four generic opportunity classes, the 5/5 complete
+source audit, the 3/5 pre-timing action-breadth gate, exact-output correctness,
+paired and chronological value thresholds, and the POC-only authority
+boundary. Historical results cannot satisfy a DNO gate.
+
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:
 

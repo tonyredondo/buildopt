@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "buildopt.specs/poc-durable-native-optimization/v1",
+  "workItem": "DNO",
+  "objective": "PERSIST_VERIFIED_OPTIMIZATIONS_IN_NATIVE_GRADLE_CONFIGURATION",
+  "baseline": "OPTIMIZED_NATIVE_GRADLE",
+  "catalog": [
+    {
+      "id": "COMPLETE_CUSTOM_TASK_CONTRACT",
+      "action": "ADD_CACHEABLE_TASK_MARKER_V1",
+      "requires": [
+        "CUSTOM_DEFAULT_TASK_IMPLEMENTATION",
+        "TASK_ACTION",
+        "DECLARED_INPUT",
+        "DECLARED_OUTPUT",
+        "NO_CACHEABLE_TASK_MARKER",
+        "NO_DISABLE_CACHING_MARKER"
+      ],
+      "ownerReviewRequired": true
+    },
+    {
+      "id": "RECURRENT_CLEAN_ELISION",
+      "action": "REMOVE_CLEAN_FROM_RECURRENT_WORKFLOW",
+      "requires": ["REPEATED_EXACT_REQUEST", "CLEAN_PRESENT", "CLEANLESS_EXACT_OUTPUT_PROOF"],
+      "ownerReviewRequired": true
+    },
+    {
+      "id": "DECLARED_GRAPH_SCOPE",
+      "action": "REMOVE_EXACT_UNRELATED_DECLARED_EDGE",
+      "requires": ["SOURCE_EDGE_BINDING", "COMPLETE_REQUIRED_OUTPUT_CLOSURE", "OUTPUT_PRESERVING_REDUCTION"],
+      "ownerReviewRequired": true
+    },
+    {
+      "id": "INTERNAL_COMPILE_CLASSPATH",
+      "action": "NARROW_API_TO_IMPLEMENTATION",
+      "requires": ["UNPUBLISHED_INTERNAL_MODULE", "PUBLIC_ABI_ABSENCE", "CONSUMER_COMPILATION_PROOF", "PUBLISHED_METADATA_UNCHANGED"],
+      "ownerReviewRequired": true
+    }
+  ],
+  "gates": {
+    "breadth": {
+      "completeFamilies": 5,
+      "minimumActionFamilies": 3,
+      "repositoryOrTaskNameRulesAllowed": false,
+      "timingAllowedBeforePass": false
+    },
+    "correctness": {
+      "exactRequiredOutputs": true,
+      "productFailureBudget": 0,
+      "exactRevert": true,
+      "gradleVersions": ["8.14.3", "9.6.1"],
+      "dsls": ["GROOVY", "KOTLIN"]
+    },
+    "pairedValue": {
+      "pairsPerFamily": 8,
+      "minimumPositivePairs": 6,
+      "minimumSavedMs": 500,
+      "minimumReductionRatio": 0.02,
+      "positiveLower95Bound": true,
+      "minimumPositiveFamilies": 3
+    },
+    "longitudinalValue": {
+      "minimumCommitsPerFamily": 20,
+      "minimumPositiveFamilies": 3,
+      "positivePortfolioSignedMs": true,
+      "finitePayback": true,
+      "buildoptRuntimeRequiredAfterPatch": false
+    }
+  },
+  "measurement": {
+    "hostedCiOwnsWallTimeGate": false,
+    "balancedAlternatingPairs": true,
+    "percentagesAddedAcrossMechanisms": false,
+    "regressionsRetainedWithSign": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "automaticMergeAuthorized": false,
+    "productionHardeningAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

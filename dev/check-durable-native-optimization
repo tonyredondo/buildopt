@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-durable-native-optimization/v1" and
+  .workItem == "DNO" and
+  .objective == "PERSIST_VERIFIED_OPTIMIZATIONS_IN_NATIVE_GRADLE_CONFIGURATION" and
+  .baseline == "OPTIMIZED_NATIVE_GRADLE" and
+  (.catalog | map(.id)) == [
+    "COMPLETE_CUSTOM_TASK_CONTRACT",
+    "RECURRENT_CLEAN_ELISION",
+    "DECLARED_GRAPH_SCOPE",
+    "INTERNAL_COMPILE_CLASSPATH"
+  ] and
+  .gates.breadth == {
+    completeFamilies: 5,
+    minimumActionFamilies: 3,
+    repositoryOrTaskNameRulesAllowed: false,
+    timingAllowedBeforePass: false
+  } and
+  .gates.correctness.exactRequiredOutputs == true and
+  .gates.correctness.productFailureBudget == 0 and
+  .gates.pairedValue.pairsPerFamily == 8 and
+  .gates.pairedValue.minimumPositiveFamilies == 3 and
+  .gates.longitudinalValue.minimumCommitsPerFamily == 20 and
+  .gates.longitudinalValue.minimumPositiveFamilies == 3 and
+  .measurement.hostedCiOwnsWallTimeGate == false and
+  .boundaries.proofOfConcept == true and
+  .boundaries.automaticMergeAuthorized == false and
+  .boundaries.soakRequired == false and
+  .boundaries.designPartnerRequired == false and
+  .boundaries.testOptimization == "OUT_OF_SCOPE"
+' specs/poc-durable-native-optimization-v1.json >/dev/null
+
+rg -q '^\*\*Status:\*\* active' docs/plans/durable-native-optimization-poc-tracker.md
+rg -q '`DNO-001`.*`DONE`' docs/plans/durable-native-optimization-poc-tracker.md
+rg -q '`DNO-002`.*`IN_PROGRESS`' docs/plans/durable-native-optimization-poc-tracker.md
+rg -q 'A failed gate closes every dependent block as `NOT_AUTHORIZED`' \
+    specs/poc-durable-native-optimization-v1.md
+
+printf 'DNO contract OK: four frozen detectors, 5/5 completeness, 3/5 breadth and ordered stop gates\n'

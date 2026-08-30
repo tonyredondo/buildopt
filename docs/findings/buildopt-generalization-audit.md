@@ -178,11 +178,17 @@ bounded mechanism has already satisfied its own evidence contract.
 ## Next generalization steps
 
 The detailed active order and stop conditions now live in the
-[Verified Request Hit POC Tracker](../plans/verified-request-hit-poc-tracker.md).
-The next block must prove a complete fail-closed identity over argv/cwd,
-Wrapper/Gradle/JDK/environment, request graph, task implementation, repository
-and external inputs, present/absent outputs, local state, destroyables,
-side effects, cacheability and prior success. Only then may shadow replay begin.
+[Durable Native Optimization POC Tracker](../plans/durable-native-optimization-poc-tracker.md).
+The new route no longer tries to carry a dynamic decision on every build. It
+first audits five exact public revisions for generic source-bound corrections,
+then compiles only digest-bound reversible patches. No timing is authorized
+until at least three families expose actions and exact-output correctness
+passes. Accepted patches run as optimized native Gradle with no BuildOpt
+runtime on the candidate path.
+
+The verified-request-hit route is now a closed predecessor. Its 8/8 synthetic
+shadow result and 2/4 public output-state breadth explain why a durable source
+correction is worth testing, but cannot authorize or time any DNO action.
 
 The closed predecessor evidence remains in the
 [Observed Recurrent Request Portfolio POC Tracker](../plans/observed-request-portfolio-poc-tracker.md).

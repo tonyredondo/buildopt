@@ -7,18 +7,17 @@ path. Start with the [documentation portal](../docs/README.md) or
 [architecture overview](../docs/architecture/overview.md), then return here for
 the exact cross-component contract.
 
-The latest generic POC contract is
-[`poc-verified-request-hit-v1.md`](./poc-verified-request-hit-v1.md) with its
-adjacent machine-readable JSON. It asks whether an exact recurrent request can
-restore verified outputs and return success without starting Gradle. Its
-structural audit passes at 4/5 families and its complete fail-closed safety
-contract rejects 37/37 negative fixtures. Shadow mechanics pass 8/8 synthetic
-replays, but public exact-output breadth reaches only 2/4 candidate families
-and complete historical safety admission is zero. The route stops before real
-execution or timing.
+The active generic POC contract is
+[`poc-durable-native-optimization-v1.md`](./poc-durable-native-optimization-v1.md)
+with its adjacent machine-readable JSON. It asks whether BuildOpt can find and
+validate generic, reversible Gradle-source corrections that keep improving
+native Gradle after one owner-reviewed commit. Historical experiments motivate
+the frozen detector catalog but cannot satisfy its breadth, correctness or
+value gates.
 
 | Specification | Owning item |
 |---|---|
+| [`poc-durable-native-optimization-v1.md`](./poc-durable-native-optimization-v1.md) and [`poc-durable-native-optimization-v1.json`](./poc-durable-native-optimization-v1.json) | `DNO-001..007`; active durable native optimization route, starting with a five-family source audit and stopping before timing unless 3/5 source-bound action breadth and exact correctness pass |
 | [`poc-verified-request-hit-v1.md`](./poc-verified-request-hit-v1.md) and [`poc-verified-request-hit-v1.json`](./poc-verified-request-hit-v1.json) | `VRH-001..003`; stopped whole-request-hit route after 8/8 synthetic shadow matches but 2/4 public exact-output breadth and zero complete historical safety admissions; `VRH-004..007` are not authorized |
 | [`poc-observed-request-portfolio-v1.md`](./poc-observed-request-portfolio-v1.md) and [`poc-observed-request-portfolio-v1.json`](./poc-observed-request-portfolio-v1.json) | `SWL-PORTFOLIO-000..007`; closed exact-command route after independently reconstructed 3/5 completeness, typed unmeasured economics and terminal stop |
 | [`poc-request-aligned-learning-v1.md`](./poc-request-aligned-learning-v1.md) and [`poc-request-aligned-learning-v1.json`](./poc-request-aligned-learning-v1.json) | `SWL-REQUEST-000..007`; closed request-aligned route, independently failed 2/5 complete/action breadth gate, unauthorized timing blocks and terminal stop |
