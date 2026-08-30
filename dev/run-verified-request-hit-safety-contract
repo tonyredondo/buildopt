@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+  printf 'usage: %s OUTPUT_JSON\n' "$0" >&2
+  exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_output=$1
+if [[ ${buildopt_output} != /* ]]; then
+  buildopt_output=${PWD}/${buildopt_output}
+fi
+
+"${buildopt_root}/dev/run" --toolchain go -- go run ./dev/request-hit-safety-evaluator \
+  "${buildopt_root}/specs/poc-verified-request-hit-v1.json" \
+  "${buildopt_root}/contracts/jsonschema/verified-request-hit-safety-record.v1.schema.json" \
+  "${buildopt_root}/contracts/jsonschema/testdata/verified-request-hit-safety-record.v1/valid/complete.json" \
+  "${buildopt_root}/contracts/jsonschema/testdata/verified-request-hit-safety-record.v1/negative-matrix.json" \
+  "${buildopt_output}"
+
+printf 'verified request hit safety evidence: %s\n' "${buildopt_output}"

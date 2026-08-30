@@ -143,6 +143,15 @@ under a private atomic file, and retains at most 128 identities. Incomplete,
 failed, cancelled and bypassed entries remain typed and ineligible; this package
 does not select or activate optimizations.
 
+`requesthit/` owns the `VRH-002` fail-closed whole-request safety record and
+pure verifier. It canonicalizes closed evidence with JCS, binds the exact
+framed request, repository/toolchain/graph/input/output/task/prior-success
+facts, checks expiry and revocation, and returns stable native-retention
+reasons for every unsafe boundary. A complete result is input to shadow replay,
+not selection, materialization, execution or performance authority. Its
+`testkit/` subpackage exists only for the committed negative matrix and
+deterministic conformance evidence.
+
 `sharedcache/` owns the A0-004..A0-006 single-node storage and publication
 boundary used by `buildopt-server`: private same-filesystem SHA-256 blobs, a
 process-lifetime writer lease, independently migrated WAL-mode

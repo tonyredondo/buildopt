@@ -134,6 +134,15 @@ Raw arguments and checkout paths are not stored. Detailed campaign evidence is
 compressed deterministically, with digests continuing to address canonical
 uncompressed JSON. This local write does not depend on Shared state, so an
 unavailable server cannot change the customer command.
+The successor safety boundary lives in `internal/requesthit`. It consumes no
+cache hit as authority: an immutable RFC 8785 record binds the exact framed
+request, portable repository identity, Wrapper/Gradle/JDK/environment, final
+graph and implementation, complete transitive inputs, present and absent
+outputs, task safety, prior success, expiry, revocation and content-addressed
+materialization. Its verifier only returns contract-complete evidence or a
+typed native-retention reason. It does not select an action, write outputs,
+start or suppress Gradle, or measure time; those capabilities remain in later
+`VRH` blocks.
 `internal/stickyactive` proves isolated execution/suspension and
 `internal/durablecatalog` keeps patches review-only. `SWL-014B` now composes
 observation through signed active decision and economics behind the committed

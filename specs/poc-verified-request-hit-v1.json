@@ -2,7 +2,7 @@
   "schemaVersion": "buildopt.poc/verified-request-hit-contract/v1",
   "workItem": "VRH-000",
   "status": "ACTIVE",
-  "currentBlock": "VRH-002",
+  "currentBlock": "VRH-003",
   "generatedAt": "2026-08-30T00:00:00Z",
   "purpose": "Determine whether BuildOpt can safely satisfy an exact recurrent Gradle request from verified prior outputs without starting Gradle, then prove cumulative customer wall-time value beyond optimized native Gradle.",
   "predecessor": {
@@ -55,12 +55,13 @@
     },
     {
       "id": "VRH-002",
-      "state": "TODO",
-      "deliverable": "Complete fail-closed safety contract and negative fixture matrix"
+      "state": "DONE",
+      "deliverable": "Complete fail-closed safety contract and negative fixture matrix",
+      "outcome": "OPEN_VERIFIED_REQUEST_HIT_SHADOW_REPLAY"
     },
     {
       "id": "VRH-003",
-      "state": "WAITING",
+      "state": "TODO",
       "deliverable": "Shadow replay against native Gradle with zero user-visible action",
       "dependsOn": "VRH-002"
     },
@@ -90,17 +91,18 @@
     }
   ],
   "latestEvidence": {
-    "path": "benchmarks/results/verified-request-hit-eligibility-audit-v1.json",
-    "potentialRequestHitRows": 69,
-    "partialGraphActionRows": 17,
-    "nativeFallbackRows": 27,
-    "familiesWithPotentialRequestHits": 4,
-    "familiesWithPotentialRequestHitsRequired": 3,
+    "path": "benchmarks/results/verified-request-hit-safety-contract-v1.json",
+    "completeContractFixtures": 1,
+    "negativeFixtures": 37,
+    "typedNativeRetentions": 37,
+    "gradleInvocations": 0,
+    "actionSelections": 0,
+    "timingSamples": 0,
     "performanceMeasured": false,
     "selectionAuthorized": false,
     "activationAuthorized": false,
     "speedupClaim": false,
-    "decision": "OPEN_VERIFIED_REQUEST_HIT_SAFETY_CONTRACT"
+    "decision": "OPEN_VERIFIED_REQUEST_HIT_SHADOW_REPLAY"
   },
-  "nextBlock": "VRH-002"
+  "nextBlock": "VRH-003"
 }

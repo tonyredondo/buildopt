@@ -5,11 +5,11 @@
   "evidence": {
     "routeContractSha256": "bf4287a52883ab211631a02d5330375573e8130e699a5aa6eea0a79bc765d1b6",
     "successorSelectionSha256": "811544b1fbe277a6b6fe00c0ce64f8a6e9a87340a4c02383e8e55c1657777111",
-    "producerFixturesSha256": "03be3cadc89cd162b86af685d593271526d5a9aaaa6785dd9044ed4fefd5fdea",
-    "classifierFixturesSha256": "44d23fdf75fff4feb6d6a195dc63812a801b53774a15cd5eb263c99ec17f7e49",
-    "captureContractSha256": "e5dbf35bc239eb6e3c7169c69dce33c4d617509027f3547f68c4ca33f9c6f65c",
+    "producerFixturesSha256": "a7e357758e77b84586549068f7a980ed514b1649023426014c3f0695667012b3",
+    "classifierFixturesSha256": "89638d4a4ecfed9f9edd2c2c4c1571634502934ff99258eee714dd8fa91598d8",
+    "captureContractSha256": "724550be7878e476e1121443145638ccc497f6706ceec8172ccbfab483f50a97",
     "transitionsLedgerSha256": "402f061a6677c8cf7666f61efdd07168108bb25cc25070b43d303c0ce918bc4b",
-    "breadthGateSha256": "a6797d35b9d126ba4f763d62beee59a2919e69d50dbd29a13dd89b08f51f9190",
+    "breadthGateSha256": "264f75c1c8030d16296c20abb0002bd52a44858b60fd8258a21b0146dc7da512",
     "historicalTimingImported": false,
     "historicalActionImported": false
   },

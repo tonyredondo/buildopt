@@ -43,8 +43,12 @@ After that terminal decision, the user explicitly authorized the materially
 different [Verified Request Hit POC](../plans/verified-request-hit-poc-tracker.md).
 Its first audit keeps all predecessor rows unchanged and finds 69 potential
 whole-request hits, 17 partial-graph actions and 27 native fallbacks. Four of
-five families meet the frozen five-row request-hit input. This opens only the
-complete safety contract: none of those 69 rows is yet safe, executed or timed.
+five families meet the frozen five-row request-hit input. The successor's
+complete safety record now binds exact request, environment, graph, inputs,
+present/absent outputs, task semantics, prior success, expiry, revocation and
+content-addressed materialization. Its 37/37 negative variants retain native
+Gradle with typed reasons. This opens shadow replay only: none of the 69
+historical opportunities has been shadowed, executed or timed.
 
 ## What is generalized today
 
@@ -60,6 +64,7 @@ complete safety contract: none of those 69 rows is yet safe, executed or timed.
 | Aggregate workflow partition | Groups directly changed output producers by generic lifecycle selector and variant, while exact unaffected outputs remain materializable. | Transfers to public workflows: Kafka selects 3/64 projects, Micronaut 22/75 and Groovy 2/37. |
 | Portfolio / central state | Reuses exact compatible evidence across checkouts or machines. | Reuse cannot infer lifetime or value from another profile/repository. |
 | Gradle-compatible cache | Supports local and optional HTTP/HTTPS reuse with safe miss/outage behavior. | Cache is supporting infrastructure; native-cache parity is not a speed advantage. |
+| Verified request safety | Canonically binds every fact required to consider satisfying an exact request without Gradle. | One complete fixture passes and 37/37 negative mutations retain native; public shadow agreement and value are not yet measured. |
 
 Runtime Tuning, Hot State and standard Copy remain retired. The standard `Jar`
 adapter and Patch Autopilot retain only their exact qualified scopes.

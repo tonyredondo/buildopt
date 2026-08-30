@@ -27,7 +27,9 @@ Kafka, Micronaut, OpenTelemetry and Spring each contain at least five potential
 whole-request-hit rows; Groovy contains none but has five partial-graph rows.
 The preregistered eligibility threshold therefore passes at 4/5 families versus
 3/5 required and opens only the safety-contract block. No timing, selection or
-activation is authorized by this count.
+activation is authorized by this count. The following safety block is now
+complete: one closed canonical record passes and all 37 missing, drifted or
+unsafe mutations retain native Gradle with typed reasons.
 
 Eight `testClasses` captures remain typed unavailable. The historical files
 preserve only `TASK_INPUT_EVIDENCE_UNAVAILABLE`, so their exact exception cannot
@@ -55,14 +57,25 @@ Before any shadow or real action, one record must prove all of the following:
 `VERIFIED_REQUEST_HIT` is a distinct action and must prove that Gradle was not
 started.
 
+The normative record shape is
+[`verified-request-hit-safety-record.v1.schema.json`](../contracts/jsonschema/verified-request-hit-safety-record.v1.schema.json).
+`internal/requesthit` canonicalizes it with RFC 8785, computes its SHA-256 and
+compares it with a current probe without starting Gradle. Present output bytes
+may already match the workspace or remain absent with an exact immutable
+materialization object; changed bytes, a missing or corrupt object, or an
+unexpected formerly absent output retain native Gradle. The checked
+[safety evidence](../benchmarks/results/verified-request-hit-safety-contract-v1.json)
+contains 37/37 typed native retentions, zero actions and zero timing samples.
+
 ## Ordered route
 
 1. **Eligibility audit.** Reconstruct the current portfolio into potential
    request hits, partial-graph actions and native fallbacks. Improve future
    capture diagnostics without reclassifying historical unavailable rows.
-2. **Safety contract.** Implement every invariant above plus negative fixtures
-   for drift, missing evidence, side effects, external inputs and failed prior
-   outcomes.
+2. **Safety contract.** Complete: every invariant above is represented; one
+   positive contract and 37 negative fixtures verify canonical identity,
+   drift, missing evidence, side effects, external inputs, failed outcomes,
+   expiry and revocation without action or timing.
 3. **Shadow replay.** Predict a hit, still run native Gradle, and compare all
    required outputs and outcomes. A mismatch quarantines the identity.
 4. **Gradle-free execution.** Restore outputs and return the prior success only

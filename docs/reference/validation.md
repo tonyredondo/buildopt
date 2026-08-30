@@ -36,6 +36,7 @@ provision tools or create release artifacts document that effect explicitly.
 | Independent observed-request row reconstruction and frozen breadth decision | `./dev/check-observed-request-portfolio-breadth-gate` |
 | Observed-request terminal scorecard, immutable policy and typed unmeasured economics | `./dev/check-observed-request-portfolio-terminal-decision` |
 | Verified-request-hit structural eligibility, historical provenance and authority boundary | `./dev/check-verified-request-hit-eligibility-audit` |
+| Verified-request-hit canonical safety record, schema and 37 typed native-retention fixtures | `./dev/check-verified-request-hit-safety-contract` |
 | Generic task/graph producers, typed completeness and deterministic evidence | `./dev/check-sticky-evidence-producers` |
 | Fresh five-family cohort, capture bindings, producer completeness and exact outputs | `./dev/check-fresh-generic-capture` |
 | Independent fresh action recount and fixed public-breadth gate | `./dev/check-fresh-generic-opportunity-gate` |

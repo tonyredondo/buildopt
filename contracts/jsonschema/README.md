@@ -2,6 +2,26 @@
 
 Versioned JSON Schema 2020-12 contracts for exportable records and signed commands.
 
+## Verified request hit safety record v1
+
+[`verified-request-hit-safety-record.v1.schema.json`](./verified-request-hit-safety-record.v1.schema.json)
+is the closed `VRH-002` evidence shape. It requires the exact framed request,
+portable repository and toolchain identities, finalized graph/build logic,
+complete repository/external inputs, present and absent outputs, immutable
+content-addressed materialization, safe task facts and a verified successful
+prior result. The Go verifier adds equality, ordering, expiry, revocation and
+workspace/materialization checks that JSON Schema cannot express.
+
+Run the schema, canonical record and 37-case semantic matrix with:
+
+```bash
+./dev/check-verified-request-hit-safety-contract
+```
+
+The complete verdict is input to shadow replay only. It never selects an
+action, starts or suppresses Gradle, writes an output, or grants timing
+authority.
+
 ## Adaptive fragment state v1
 
 The four `AF-002` schemas define immutable adaptive fragment generations,

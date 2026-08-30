@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "buildopt.poc/verified-request-hit-safety-record/v1",
+  "recordType": "VERIFIED_REQUEST_HIT_SAFETY_RECORD",
+  "recordId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "capturedAt": "2026-08-30T08:00:00Z",
+  "expiresAt": "2026-12-31T23:59:59Z",
+  "revocationEpoch": 7,
+  "request": {
+    "argumentEncoding": "UINT64_BE_LENGTH_PREFIXED_UTF8_V1",
+    "argumentCount": 3,
+    "argumentsSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "workingDirectory": ".",
+    "repositoryScopeSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "repositoryIdentitySha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+  },
+  "execution": {
+    "wrapperSha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "gradleVersion": "9.6.1",
+    "gradleDistributionSha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "jdkVendor": "Eclipse Adoptium",
+    "jdkVersion": "21.0.12+8",
+    "jdkRuntimeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "safeEnvironmentSha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "requestGraphSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "taskImplementationSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+    "buildLogicSha256": "5555555555555555555555555555555555555555555555555555555555555555"
+  },
+  "inputs": {
+    "repositoryInputsComplete": true,
+    "repositoryManifestSha256": "6666666666666666666666666666666666666666666666666666666666666666",
+    "externalInputsComplete": true,
+    "externalInputs": [
+      {
+        "kind": "DEPENDENCY_LOCK",
+        "identity": "gradle:verification-metadata",
+        "present": true,
+        "sha256": "7777777777777777777777777777777777777777777777777777777777777777"
+      },
+      {
+        "kind": "TOOLCHAIN",
+        "identity": "jdk:21.0.12+8:linux-amd64",
+        "present": true,
+        "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+      }
+    ]
+  },
+  "outputs": {
+    "complete": true,
+    "states": [
+      {
+        "path": "app/build/libs/app.jar",
+        "kind": "FILE",
+        "exists": true,
+        "tracked": true,
+        "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+        "size": 4096,
+        "mode": 420,
+        "materializationRef": "sha256:9999999999999999999999999999999999999999999999999999999999999999"
+      },
+      {
+        "path": "app/build/reports/optional.txt",
+        "kind": "FILE",
+        "exists": false,
+        "tracked": true,
+        "size": 0,
+        "mode": 0
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "path": ":app:jar",
+      "cacheable": true,
+      "tracked": true,
+      "alwaysRun": false,
+      "localState": false,
+      "destroyables": false,
+      "untrackedWrites": false,
+      "sideEffects": false
+    }
+  ],
+  "priorResult": {
+    "outcome": "SUCCESS",
+    "exitCode": 0,
+    "outputsVerified": true
+  }
+}

@@ -28,6 +28,7 @@ Normative source for versioned schemas, interfaces, and cross-language conforman
 | `jsonschema/sticky-wrapper-decision-store.v1.schema.json` | `SWL-007` |
 | `jsonschema/sticky-wrapper-observation.v1.schema.json` | `SWL-009` |
 | `jsonschema/sticky-wrapper-trial.v1.schema.json` | `SWL-010` |
+| `jsonschema/verified-request-hit-safety-record.v1.schema.json` | `VRH-002` |
 | `openapi/buildopt-control.v1.yaml` | `F0-017` |
 | `openapi/buildopt-cache-control.v1.yaml` | `F0-017` |
 | `openapi/test-optimization.v1.yaml` | `F0-018` |

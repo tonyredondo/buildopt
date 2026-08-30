@@ -42,8 +42,10 @@
   request input and 17 exact partial-graph rows. `VERIFIED_REQUEST_HIT_V1`
   investigates whether a complete identity and output contract can satisfy
   those repeated requests without starting Gradle. Its eligibility input passes
-  at 4/5 families, but no row is safe, executed or timed yet; the next block is
-  the fail-closed safety contract.
+  at 4/5 families. The fail-closed safety record now admits one complete fixture
+  and retains native Gradle for 37/37 missing, drifted, unsafe, expired or
+  revoked variants. No row has been shadowed, executed or timed; shadow replay
+  is next.
 
 See the [current one-pager](./buildopt-poc-handoff.md) and the
 [terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)

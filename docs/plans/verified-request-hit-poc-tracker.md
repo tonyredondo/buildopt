@@ -4,12 +4,14 @@
 
 **Overall:** `ACTIVE`
 
-**Current block:** `VRH-002 — complete fail-closed safety contract`
+**Current block:** `VRH-003 — shadow replay`
 
-**Completed:** `VRH-001 — eligibility and capture-diagnostic audit`
+**Completed:** `VRH-001 — eligibility and capture-diagnostic audit`; `VRH-002 —
+complete fail-closed safety contract`
 
-**Next decision:** prove that a whole-request hit can be classified safely
-before shadowing or measuring one.
+**Next decision:** predict only identities admitted by the complete safety
+contract, run native Gradle unchanged and compare the prediction with the real
+outcome and repository effects.
 
 ## POC objective
 
@@ -64,8 +66,8 @@ structural ceiling: none is yet safe, selected, executed or timed.
 | Order | Block | Deliverable | Done when | State |
 | ---: | --- | --- | --- | --- |
 | 1 | `VRH-001` Eligibility and diagnostic audit | Independent action-potential counts; preserve historical provenance; bounded forward diagnostics | 113 rows partition exactly, 4/5 potential-hit threshold passes, 8 unavailable rows remain typed, no authority invented | `DONE` |
-| 2 | `VRH-002` Safety contract | Versioned request-hit record, verifier and negative matrix | Every required fact is represented; all missing/drifted/unsafe cases retain native; no action or timing | `TODO` |
-| 3 | `VRH-003` Shadow replay | Predict hits but execute native Gradle and compare result/output states | Repeated exact matches across Gradle 8/9, Kotlin/Groovy and eligible public rows; mismatch quarantine works | `WAITING` |
+| 2 | `VRH-002` Safety contract | Versioned request-hit record, verifier and negative matrix | Every required fact is represented; all 37 missing/drifted/unsafe fixtures retain native; zero Gradle/action/timing | `DONE` |
+| 3 | `VRH-003` Shadow replay | Predict hits but execute native Gradle and compare result/output states | Repeated exact matches across Gradle 8/9, Kotlin/Groovy and eligible public rows; mismatch quarantine works | `TODO` |
 | 4 | `VRH-004` Gradle-free execution | Verified output materialization and successful return without Gradle | Process-level proof that Gradle never starts; exact outputs/outcome; fail-open native fallback | `WAITING` |
 | 5 | `VRH-005` Installed paired value | Controlled balanced candidate/native measurements | Positive signed mean and lower bound, non-regressive p95, exact outputs and full cost accounting in at least three families | `WAITING` |
 | 6 | `VRH-006` Chronological combined value | Request hit + partial graph + native policy over all five histories | Signed cumulative savings, hit/action/fallback counts, payback and native-retention overhead; no averaged repository percentages | `WAITING` |
@@ -110,6 +112,21 @@ side-effectful/always-run/untracked task, missing output, altered output,
 previous failure/cancellation and expired/revoked evidence. Every negative must
 produce typed native retention. The block starts no extra Gradle build, selects
 nothing and measures no time.
+
+This block is complete. The closed Draft 2020-12 record and Go verifier bind
+all eight required fact families. Argument identity uses an exact uint64
+length-framed byte sequence; repository paths remain portable; present outputs
+carry content-addressed references while expected absence is explicit. A
+present matching workspace output is acceptable, and a missing workspace
+output is acceptable only when its exact immutable materialization object is
+available. An altered workspace output, missing or corrupt object, or
+unexpected formerly absent output retains native Gradle before any write.
+
+The committed matrix contains one complete fixture and 37 independent negative
+mutations. All 37 return `RETAIN_NATIVE_GRADLE` with their expected typed
+reason. The evaluator starts zero Gradle invocations, selects zero actions and
+collects zero timing samples. `SAFETY_CONTRACT_COMPLETE` is classification
+evidence for shadow replay only; it is not a `VERIFIED_REQUEST_HIT` action.
 
 ### VRH-003 — Shadow replay
 

@@ -188,6 +188,14 @@ not safe eligibility or measured speedup. Eight historical `testClasses` rows
 remain typed unavailable; future v2 captures add bounded task/class diagnostics
 without exception messages or action authority.
 
+[`verified-request-hit-safety-contract-v1.json`](./results/verified-request-hit-safety-contract-v1.json)
+is the deterministic `VRH-002` contract result. One complete canonical record
+passes as `SAFETY_CONTRACT_COMPLETE`; 37 independent missing, drifted, unsafe,
+expired or revoked variants all return typed `RETAIN_NATIVE_GRADLE`. The
+evaluator starts zero Gradle invocations, selects zero actions and records zero
+timing samples. This opens shadow replay only and is not hit-rate or speedup
+evidence.
+
 ```bash
 ./dev/check-generic-opportunity-discovery
 ./dev/check-change-aware-producer-fixtures --static
@@ -207,6 +215,7 @@ without exception messages or action authority.
 ./dev/check-observed-request-portfolio-breadth-gate
 ./dev/check-observed-request-portfolio-terminal-decision
 ./dev/check-verified-request-hit-eligibility-audit
+./dev/check-verified-request-hit-safety-contract
 ```
 
 ## Sticky-wrapper observation sample

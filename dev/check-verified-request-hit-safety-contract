@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+
+if (($# != 0)); then
+  printf 'usage: %s\n' "$0" >&2
+  exit 64
+fi
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_expected=${buildopt_root}/benchmarks/results/verified-request-hit-safety-contract-v1.json
+buildopt_temporary=$(mktemp -d /tmp/buildopt-request-hit-safety-check.XXXXXX)
+buildopt_cleanup() {
+  case ${buildopt_temporary} in
+    /tmp/buildopt-request-hit-safety-check.*) rm -rf -- "${buildopt_temporary}" ;;
+    *) printf 'refusing to clean unexpected checker root: %s\n' "${buildopt_temporary}" >&2; return 1 ;;
+  esac
+}
+trap buildopt_cleanup EXIT
+
+"${buildopt_root}/dev/run" --toolchain go -- go test -count=1 -race ./internal/requesthit/...
+(
+  cd -- "${buildopt_root}/dev/schema-validator"
+  ../run --toolchain go -- go test -count=1 -run '^TestVerifiedRequestHitSafetyRecordV1$' .
+)
+"${buildopt_root}/dev/run-verified-request-hit-safety-contract" "${buildopt_temporary}/actual.json" >/dev/null
+cmp -s "${buildopt_expected}" "${buildopt_temporary}/actual.json" || {
+  printf 'verified request hit safety evidence is stale\n' >&2
+  exit 1
+}
+
+jq -e '
+  .workItem == "VRH-002" and
+  .positive.pass and
+  .positive.disposition == "SAFETY_CONTRACT_COMPLETE" and
+  (.positive.selectionAuthorized | not) and
+  (.positive.activationAuthorized | not) and
+  (.positive.performanceMeasured | not) and
+  .totals.negativeCases == 37 and
+  .totals.typedNativeRetentions == 37 and
+  .totals.gradleInvocations == 0 and
+  .totals.actionSelections == 0 and
+  .totals.timingSamples == 0 and
+  ([.negativeCases[] | select(.pass and .disposition == "RETAIN_NATIVE_GRADLE" and (.actualReason | length > 0))] | length) == 37 and
+  .assertions.everyRequiredFactRepresented and
+  .assertions.canonicalRoundTripStable and
+  .assertions.unknownFieldsRejected and
+  .assertions.everyNegativeRetainsNative and
+  .assertions.everyNegativeReasonTyped and
+  .assertions.noSelectionAuthorized and
+  .assertions.noActivationAuthorized and
+  .assertions.noPerformanceMeasured and
+  .outcome == "OPEN_VERIFIED_REQUEST_HIT_SHADOW_REPLAY" and
+  .nextBlock == "VRH-003"
+' "${buildopt_expected}" >/dev/null
+
+jq '.negativeCases[0].actualReason = ""' "${buildopt_expected}" >"${buildopt_temporary}/forged.json"
+if jq -e '([.negativeCases[] | select(.pass and .disposition == "RETAIN_NATIVE_GRADLE" and (.actualReason | length > 0))] | length) == 37' "${buildopt_temporary}/forged.json" >/dev/null; then
+  printf 'untyped native retention was accepted\n' >&2
+  exit 1
+fi
+
+printf 'verified request hit safety contract: PASS\n'

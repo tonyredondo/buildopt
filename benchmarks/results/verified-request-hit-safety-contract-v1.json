@@ -1,0 +1,337 @@
+{
+  "schemaVersion": "buildopt.poc/verified-request-hit-safety-contract-evidence/v1",
+  "workItem": "VRH-002",
+  "generatedAt": "2026-08-30T00:00:00Z",
+  "inputs": {
+    "routeContractSha256": "6289827f2f5dffea8c072ff04df23989e2739e831e27b801da7dba2a91befe9c",
+    "recordSchemaSha256": "740982e74f12db8fe0456b03a41c8b57839218ff16525069925b24379f7f8aa7",
+    "recordFixtureSha256": "9ae19c6f24ba19a0566c82cb91611fe34c1140638c8b7c589fce21b2b7bd4698",
+    "negativeMatrixSha256": "8291c76ec2b6f811b250e5e9a1cfb424842bffda3af0ee47d5f378e7410741d3",
+    "canonicalRecordSha256": "a2dda81bf5d4e6a863dbe04f13e0b3df5c69f2770ba1d38096242ddff271c4f6"
+  },
+  "positive": {
+    "disposition": "SAFETY_CONTRACT_COMPLETE",
+    "reason": "",
+    "selectionAuthorized": false,
+    "activationAuthorized": false,
+    "performanceMeasured": false,
+    "pass": true
+  },
+  "negativeCases": [
+    {
+      "name": "argument evidence missing",
+      "mutation": "ARGUMENT_UNAVAILABLE",
+      "expectedReason": "ARGUMENT_VECTOR_UNAVAILABLE",
+      "actualReason": "ARGUMENT_VECTOR_UNAVAILABLE",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "argument vector drift",
+      "mutation": "ARGUMENT_DRIFT",
+      "expectedReason": "ARGUMENT_VECTOR_DRIFT",
+      "actualReason": "ARGUMENT_VECTOR_DRIFT",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "working directory drift",
+      "mutation": "CWD_DRIFT",
+      "expectedReason": "WORKING_DIRECTORY_DRIFT",
+      "actualReason": "WORKING_DIRECTORY_DRIFT",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "repository identity drift",
+      "mutation": "REPOSITORY_DRIFT",
+      "expectedReason": "REPOSITORY_IDENTITY_DRIFT",
+      "actualReason": "REPOSITORY_IDENTITY_DRIFT",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "wrapper drift",
+      "mutation": "WRAPPER_DRIFT",
+      "expectedReason": "WRAPPER_DRIFT",
+      "actualReason": "WRAPPER_DRIFT",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "Gradle drift",
+      "mutation": "GRADLE_DRIFT",
+      "expectedReason": "GRADLE_DRIFT",
+      "actualReason": "GRADLE_DRIFT",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "JDK drift",
+      "mutation": "JDK_DRIFT",
+      "expectedReason": "JDK_DRIFT",
+      "actualReason": "JDK_DRIFT",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "safe environment drift",
+      "mutation": "ENVIRONMENT_DRIFT",
+      "expectedReason": "ENVIRONMENT_DRIFT",
+      "actualReason": "ENVIRONMENT_DRIFT",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "request graph drift",
+      "mutation": "GRAPH_DRIFT",
+      "expectedReason": "REQUEST_GRAPH_DRIFT",
+      "actualReason": "REQUEST_GRAPH_DRIFT",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "task implementation drift",
+      "mutation": "TASK_IMPLEMENTATION_DRIFT",
+      "expectedReason": "TASK_IMPLEMENTATION_DRIFT",
+      "actualReason": "TASK_IMPLEMENTATION_DRIFT",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "build logic drift",
+      "mutation": "BUILD_LOGIC_DRIFT",
+      "expectedReason": "BUILD_LOGIC_DRIFT",
+      "actualReason": "BUILD_LOGIC_DRIFT",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "repository input inventory incomplete",
+      "mutation": "REPOSITORY_INPUTS_INCOMPLETE",
+      "expectedReason": "REPOSITORY_INPUTS_INCOMPLETE",
+      "actualReason": "REPOSITORY_INPUTS_INCOMPLETE",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "repository input changed",
+      "mutation": "REPOSITORY_INPUT_DRIFT",
+      "expectedReason": "REPOSITORY_INPUT_DRIFT",
+      "actualReason": "REPOSITORY_INPUT_DRIFT",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "external input inventory incomplete",
+      "mutation": "EXTERNAL_INPUTS_INCOMPLETE",
+      "expectedReason": "EXTERNAL_INPUTS_INCOMPLETE",
+      "actualReason": "EXTERNAL_INPUTS_INCOMPLETE",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "external input missing",
+      "mutation": "EXTERNAL_INPUT_MISSING",
+      "expectedReason": "EXTERNAL_INPUT_MISSING",
+      "actualReason": "EXTERNAL_INPUT_MISSING",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "external input changed",
+      "mutation": "EXTERNAL_INPUT_DRIFT",
+      "expectedReason": "EXTERNAL_INPUT_DRIFT",
+      "actualReason": "EXTERNAL_INPUT_DRIFT",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "output contract incomplete",
+      "mutation": "OUTPUT_CONTRACT_INCOMPLETE",
+      "expectedReason": "OUTPUT_CONTRACT_INCOMPLETE",
+      "actualReason": "OUTPUT_CONTRACT_INCOMPLETE",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "output inventory drift",
+      "mutation": "OUTPUT_CONTRACT_DRIFT",
+      "expectedReason": "OUTPUT_CONTRACT_DRIFT",
+      "actualReason": "OUTPUT_CONTRACT_DRIFT",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "untracked output",
+      "mutation": "UNTRACKED_OUTPUT",
+      "expectedReason": "UNTRACKED_OUTPUT",
+      "actualReason": "UNTRACKED_OUTPUT",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "required output missing",
+      "mutation": "OUTPUT_MISSING",
+      "expectedReason": "OUTPUT_MISSING",
+      "actualReason": "OUTPUT_MISSING",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "required output altered",
+      "mutation": "OUTPUT_ALTERED",
+      "expectedReason": "OUTPUT_ALTERED",
+      "actualReason": "OUTPUT_ALTERED",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "expected absent output present",
+      "mutation": "ABSENT_OUTPUT_PRESENT",
+      "expectedReason": "ABSENT_OUTPUT_PRESENT",
+      "actualReason": "ABSENT_OUTPUT_PRESENT",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "materialization reference changed",
+      "mutation": "MATERIALIZATION_INVALID",
+      "expectedReason": "MATERIALIZATION_REFERENCE_INVALID",
+      "actualReason": "MATERIALIZATION_REFERENCE_INVALID",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "task inventory missing",
+      "mutation": "TASK_INVENTORY_UNAVAILABLE",
+      "expectedReason": "TASK_INVENTORY_UNAVAILABLE",
+      "actualReason": "TASK_INVENTORY_UNAVAILABLE",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "non-cacheable task",
+      "mutation": "NON_CACHEABLE_TASK",
+      "expectedReason": "NON_CACHEABLE_TASK",
+      "actualReason": "NON_CACHEABLE_TASK",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "untracked task",
+      "mutation": "UNTRACKED_TASK",
+      "expectedReason": "UNTRACKED_TASK",
+      "actualReason": "UNTRACKED_TASK",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "always-run task",
+      "mutation": "ALWAYS_RUN_TASK",
+      "expectedReason": "ALWAYS_RUN_TASK",
+      "actualReason": "ALWAYS_RUN_TASK",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "local state declaration",
+      "mutation": "LOCAL_STATE",
+      "expectedReason": "LOCAL_STATE_DECLARED",
+      "actualReason": "LOCAL_STATE_DECLARED",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "destroyables declaration",
+      "mutation": "DESTROYABLES",
+      "expectedReason": "DESTROYABLES_DECLARED",
+      "actualReason": "DESTROYABLES_DECLARED",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "untracked write",
+      "mutation": "UNTRACKED_WRITE",
+      "expectedReason": "UNTRACKED_WRITE_DECLARED",
+      "actualReason": "UNTRACKED_WRITE_DECLARED",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "side effect",
+      "mutation": "SIDE_EFFECT",
+      "expectedReason": "SIDE_EFFECTFUL_TASK",
+      "actualReason": "SIDE_EFFECTFUL_TASK",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "previous build failure",
+      "mutation": "PRIOR_FAILURE",
+      "expectedReason": "PRIOR_BUILD_FAILURE",
+      "actualReason": "PRIOR_BUILD_FAILURE",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "previous cancellation",
+      "mutation": "PRIOR_CANCELLATION",
+      "expectedReason": "PRIOR_BUILD_CANCELLED",
+      "actualReason": "PRIOR_BUILD_CANCELLED",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "previous outputs unverified",
+      "mutation": "PRIOR_OUTPUTS_UNVERIFIED",
+      "expectedReason": "PRIOR_OUTPUTS_UNVERIFIED",
+      "actualReason": "PRIOR_OUTPUTS_UNVERIFIED",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "expired evidence",
+      "mutation": "EXPIRED",
+      "expectedReason": "EVIDENCE_EXPIRED",
+      "actualReason": "EVIDENCE_EXPIRED",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "revoked evidence",
+      "mutation": "REVOKED",
+      "expectedReason": "EVIDENCE_REVOKED",
+      "actualReason": "EVIDENCE_REVOKED",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    },
+    {
+      "name": "current evidence incomplete",
+      "mutation": "EVIDENCE_INCOMPLETE",
+      "expectedReason": "CURRENT_EVIDENCE_INCOMPLETE",
+      "actualReason": "CURRENT_EVIDENCE_INCOMPLETE",
+      "disposition": "RETAIN_NATIVE_GRADLE",
+      "pass": true
+    }
+  ],
+  "totals": {
+    "negativeCases": 37,
+    "typedNativeRetentions": 37,
+    "gradleInvocations": 0,
+    "actionSelections": 0,
+    "timingSamples": 0
+  },
+  "assertions": {
+    "everyRequiredFactRepresented": true,
+    "canonicalRoundTripStable": true,
+    "unknownFieldsRejected": true,
+    "everyNegativeRetainsNative": true,
+    "everyNegativeReasonTyped": true,
+    "noSelectionAuthorized": true,
+    "noActivationAuthorized": true,
+    "noPerformanceMeasured": true
+  },
+  "outcome": "OPEN_VERIFIED_REQUEST_HIT_SHADOW_REPLAY",
+  "nextBlock": "VRH-003"
+}

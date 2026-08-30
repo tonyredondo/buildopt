@@ -201,6 +201,18 @@ frozen historical init implementation, regenerates the 4/5 input decision and
 rejects forged upstream evidence or invented timing authority. It executes no
 action and benchmarks no wall time.
 
+Validate the complete verified-request-hit safety record with:
+
+```bash
+./dev/check-verified-request-hit-safety-contract
+```
+
+The checker compiles the closed Draft 2020-12 schema, verifies RFC 8785
+canonical round trips, runs the Go verifier under the race detector and
+regenerates the deterministic evidence. One complete fixture passes and 37/37
+negative mutations return typed native retention. The evaluator starts no
+Gradle invocation, selects no action and records no timing.
+
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:
 

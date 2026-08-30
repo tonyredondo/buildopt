@@ -2,7 +2,7 @@
   "schemaVersion": "buildopt.evidence/request-aligned-evidence-precision-fixtures/v1",
   "workItem": "SWL-PORTFOLIO-001",
   "status": "COMPLETE",
-  "observationSha256": "f20c3ba2240705479bae26793bab308bcc5d3269877d7428f6fcf099900d93f1",
+  "observationSha256": "2a4df73931e94c2d001913fa03c1e777e2827d733865bab320e3261200fab61f",
   "classificationSha256": "781f56de23e895f88bc5874ba5eead6179924482645ce7424742b81d27474614",
   "coverage": [
     "ORDERED_EQUIVALENT_PRODUCERS",

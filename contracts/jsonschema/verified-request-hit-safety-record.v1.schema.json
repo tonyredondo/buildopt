@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/verified-request-hit-safety-record.v1.schema.json",
+  "title": "BuildOpt verified request hit safety record v1",
+  "description": "Closed immutable evidence captured from one successful native Gradle request. Shape validity never authorizes selection, materialization, execution, or timing.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "recordType",
+    "recordId",
+    "capturedAt",
+    "expiresAt",
+    "revocationEpoch",
+    "request",
+    "execution",
+    "inputs",
+    "outputs",
+    "tasks",
+    "priorResult"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "buildopt.poc/verified-request-hit-safety-record/v1"},
+    "recordType": {"const": "VERIFIED_REQUEST_HIT_SAFETY_RECORD"},
+    "recordId": {"$ref": "#/$defs/digest"},
+    "capturedAt": {"$ref": "#/$defs/utcTimestamp"},
+    "expiresAt": {"$ref": "#/$defs/utcTimestamp"},
+    "revocationEpoch": {"type": "integer", "minimum": 0},
+    "request": {"$ref": "#/$defs/request"},
+    "execution": {"$ref": "#/$defs/execution"},
+    "inputs": {"$ref": "#/$defs/inputs"},
+    "outputs": {"$ref": "#/$defs/outputs"},
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10000,
+      "items": {"$ref": "#/$defs/task"}
+    },
+    "priorResult": {"$ref": "#/$defs/priorResult"}
+  },
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "pattern": "^[^/\\\\][^\\\\]*$"
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "argumentEncoding",
+        "argumentCount",
+        "argumentsSha256",
+        "workingDirectory",
+        "repositoryScopeSha256",
+        "repositoryIdentitySha256"
+      ],
+      "properties": {
+        "argumentEncoding": {"const": "UINT64_BE_LENGTH_PREFIXED_UTF8_V1"},
+        "argumentCount": {"type": "integer", "minimum": 1, "maximum": 65536},
+        "argumentsSha256": {"$ref": "#/$defs/digest"},
+        "workingDirectory": {"$ref": "#/$defs/relativePath"},
+        "repositoryScopeSha256": {"$ref": "#/$defs/digest"},
+        "repositoryIdentitySha256": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wrapperSha256",
+        "gradleVersion",
+        "gradleDistributionSha256",
+        "jdkVendor",
+        "jdkVersion",
+        "jdkRuntimeSha256",
+        "safeEnvironmentSha256",
+        "requestGraphSha256",
+        "taskImplementationSha256",
+        "buildLogicSha256"
+      ],
+      "properties": {
+        "wrapperSha256": {"$ref": "#/$defs/digest"},
+        "gradleVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:[-+][A-Za-z0-9.-]+)?$"
+        },
+        "gradleDistributionSha256": {"$ref": "#/$defs/digest"},
+        "jdkVendor": {"type": "string", "minLength": 1, "maxLength": 256},
+        "jdkVersion": {"type": "string", "minLength": 1, "maxLength": 256},
+        "jdkRuntimeSha256": {"$ref": "#/$defs/digest"},
+        "safeEnvironmentSha256": {"$ref": "#/$defs/digest"},
+        "requestGraphSha256": {"$ref": "#/$defs/digest"},
+        "taskImplementationSha256": {"$ref": "#/$defs/digest"},
+        "buildLogicSha256": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repositoryInputsComplete",
+        "repositoryManifestSha256",
+        "externalInputsComplete",
+        "externalInputs"
+      ],
+      "properties": {
+        "repositoryInputsComplete": {"const": true},
+        "repositoryManifestSha256": {"$ref": "#/$defs/digest"},
+        "externalInputsComplete": {"const": true},
+        "externalInputs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10000,
+          "items": {"$ref": "#/$defs/externalInput"}
+        }
+      }
+    },
+    "externalInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "identity", "present", "sha256"],
+      "properties": {
+        "kind": {"type": "string", "minLength": 1, "maxLength": 128},
+        "identity": {"type": "string", "minLength": 1, "maxLength": 4096},
+        "present": {"const": true},
+        "sha256": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["complete", "states"],
+      "properties": {
+        "complete": {"const": true},
+        "states": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100000,
+          "items": {"$ref": "#/$defs/output"}
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "kind", "exists", "tracked", "size", "mode"],
+      "properties": {
+        "path": {"$ref": "#/$defs/relativePath"},
+        "kind": {"enum": ["FILE", "DIRECTORY"]},
+        "exists": {"type": "boolean"},
+        "tracked": {"const": true},
+        "sha256": {"$ref": "#/$defs/digest"},
+        "size": {"type": "integer", "minimum": 0},
+        "mode": {"type": "integer", "minimum": 0, "maximum": 511},
+        "materializationRef": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"exists": {"const": true}}},
+          "then": {"required": ["sha256", "materializationRef"]}
+        },
+        {
+          "if": {"properties": {"exists": {"const": false}}},
+          "then": {
+            "properties": {"size": {"const": 0}, "mode": {"const": 0}},
+            "not": {"anyOf": [{"required": ["sha256"]}, {"required": ["materializationRef"]}]}
+          }
+        }
+      ]
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "cacheable",
+        "tracked",
+        "alwaysRun",
+        "localState",
+        "destroyables",
+        "untrackedWrites",
+        "sideEffects"
+      ],
+      "properties": {
+        "path": {"type": "string", "pattern": "^(:[A-Za-z0-9_.-]+)+$"},
+        "cacheable": {"const": true},
+        "tracked": {"const": true},
+        "alwaysRun": {"const": false},
+        "localState": {"const": false},
+        "destroyables": {"const": false},
+        "untrackedWrites": {"const": false},
+        "sideEffects": {"const": false}
+      }
+    },
+    "priorResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome", "exitCode", "outputsVerified"],
+      "properties": {
+        "outcome": {"const": "SUCCESS"},
+        "exitCode": {"const": 0},
+        "outputsVerified": {"const": true}
+      }
+    }
+  }
+}

@@ -3,9 +3,9 @@
   "workItem": "SWL-PORTFOLIO-000",
   "generatedAt": "2026-08-28T08:47:13Z",
   "evidence": {
-    "routeContractSha256": "c0bc2b55857f1f17b0be1984b08f79ef7b481ed4e894ba6243d509852c93e757",
-    "terminalDecisionSha256": "71212399cfaf847976c1ccf73138c172c3d47709b2a7d426ce61d03f572b1f65",
-    "captureContractSha256": "e5dbf35bc239eb6e3c7169c69dce33c4d617509027f3547f68c4ca33f9c6f65c",
+    "routeContractSha256": "895aef9a98eca412ebf83dd155d61a6fb866e61da131ead0fc3809bd957674b0",
+    "terminalDecisionSha256": "0043fbc5ec4ad0cf68ede38a2f56f644f1ca3d6084b39bd5e9473d7e9bb3bf8c",
+    "captureContractSha256": "724550be7878e476e1121443145638ccc497f6706ceec8172ccbfab483f50a97",
     "transitionsSha256": "402f061a6677c8cf7666f61efdd07168108bb25cc25070b43d303c0ce918bc4b",
     "transitionCount": 110,
     "historicalTimingImported": false,
