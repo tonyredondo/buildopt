@@ -49,8 +49,8 @@ jq -e '
   .recommendation.nextContract == "NORMALIZATION_AWARE_CACHEABILITY_V2"
 ' "$scorecard" >/dev/null
 
-rg -q '^\*\*Status:\*\* closed' docs/plans/durable-native-optimization-poc-tracker.md
-rg -q '`DNO-007`.*`DONE`' docs/plans/durable-native-optimization-poc-tracker.md
-rg -q 'STOP_DURABLE_NATIVE_OPTIMIZATION_POC' docs/plans/durable-native-optimization-poc-tracker.md
+grep -Eq '^\*\*Status:\*\* closed' docs/plans/durable-native-optimization-poc-tracker.md
+grep -Eq "\`DNO-007\`.*\`DONE\`" docs/plans/durable-native-optimization-poc-tracker.md
+grep -Fq 'STOP_DURABLE_NATIVE_OPTIMIZATION_POC' docs/plans/durable-native-optimization-poc-tracker.md
 
 printf 'DNO-007 terminal decision verified: STOP; timing and proposal UX were not authorized\n'
