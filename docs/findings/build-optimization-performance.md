@@ -2,6 +2,15 @@
 
 ## Current Executive Summary
 
+- **Change-scoped critical-path discovery stopped on trace completeness.** The
+  fresh five-family reconstruction is 1/5 conclusive and 0/5 actionable.
+  Micronaut is a conclusive no-action row: its prior candidate removed 110
+  tasks and 4,731 ms of cumulative work, but zero removed tasks were on the
+  critical path and that path grew 178.875 ms. Groovy, Kafka, OpenTelemetry and
+  Spring retain change/output evidence but no operation/DAG critical-path trace.
+  Missing traces are incomplete, not zero opportunity. No Gradle process,
+  candidate build or timing sample ran.
+
 - **The terminal portfolio now selects one discovery-only successor.** The
   checked `CPSS-001` reconstruction rejects another iteration of locality,
   fragment learning, normalization-aware cacheability, recurrence-first

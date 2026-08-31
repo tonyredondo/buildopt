@@ -1,0 +1,10 @@
+{
+  "schemaVersion":"buildopt.specs/poc-change-scoped-critical-path-discovery-subjects/v1",
+  "subjects":[
+    {"family":"apache-groovy","structuralEvidencePath":"benchmarks/results/poc-lifetime-breadth-v3/apache-groovy/qualification-capture.json","structuralEvidenceSha256":"4d24c2f97efd17c0329e68ea616b0283b9063e6ad6d6f058a31a24e0b7fe4d74","criticalPathEvidencePath":null},
+    {"family":"apache-kafka","structuralEvidencePath":"benchmarks/results/poc-lifetime-breadth-v3/apache-kafka/qualification-capture.json","structuralEvidenceSha256":"867dee330c5d9b2925eb944edb0e77c57641549f53971fc13385090796b371a6","criticalPathEvidencePath":null},
+    {"family":"micronaut-core","structuralEvidencePath":"benchmarks/results/poc-quarantine-critical-path-attribution-v1/source-summary.json","structuralEvidenceSha256":"acfabd831eac7c04243283895ffe8c547c942029f32a996d2bcec9b0d38eaa26","criticalPathEvidencePath":"benchmarks/results/poc-quarantine-critical-path-attribution-v1/attribution.json","criticalPathEvidenceSha256":"0639dd79ca27b0d649263747e3900db45601d4a423ccfc6ca90324698d6d1804"},
+    {"family":"opentelemetry-java-instrumentation","structuralEvidencePath":"benchmarks/results/poc-lifetime-breadth-v3/opentelemetry-java-instrumentation/qualification-capture.json","structuralEvidenceSha256":"d7316ea6c5995ee9565481e9cd19f09d35585a5d43ebd5bc4ef0ce366208b910","criticalPathEvidencePath":null},
+    {"family":"spring-framework","structuralEvidencePath":"benchmarks/results/poc-lifetime-breadth-v3/spring-framework/qualification-capture.json","structuralEvidenceSha256":"48b61f219134d7c9a1ae183b7897a6439ec97a9cf61a4859de4d1db9cb015ca4","criticalPathEvidencePath":null}
+  ]
+}

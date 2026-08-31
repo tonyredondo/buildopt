@@ -6,6 +6,8 @@ The corrected [remote cache locality v3 evidence](./results/remote-cache-localit
 
 The checked [critical-path successor selection](./results/critical-path-successor-selection-v1.json) reconstructs decisive evidence for six candidate routes and selects only change-scoped critical-path discovery. It authorizes no public build or timing; a later route must first find at least 500 ms/2% causally avoidable work in 3/5 families.
 
+The fresh [change-scoped critical-path discovery](./results/change-scoped-critical-path-discovery-v1.json) reconstructs all five rows from source-bound structural evidence and retained native traces. Only Micronaut has complete task-DAG critical-path attribution, and it is a conclusive no-action row; the 1/5 conclusive, 0/5 actionable result stops before builds and timing.
+
 The latest closed route is documented by the
 [remote cache locality v2 evidence](./results/remote-cache-locality-value-v2/README.md).
 `RCL-001` freezes identical graph/key/object/output opportunity, one unshaped

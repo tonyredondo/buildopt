@@ -1,0 +1,10 @@
+{
+  "schemaVersion":"buildopt.specs/poc-change-scoped-critical-path-discovery/v1",
+  "workItem":"CSCPD",
+  "status":{"currentBlock":null,"completedBlocks":["CSCPD-001","CSCPD-002","CSCPD-005"],"publicBuildAuthorized":false,"timingAuthorized":false},
+  "inputs":{"sourceAndExistingNativeTracesOnly":true,"historicalTimingMaySupplyRows":false},
+  "gate":{"familiesRequired":5,"conclusiveFamiliesRequired":5,"actionFamiliesRequired":3,"minimumAvoidableWallTimeMs":500,"minimumAvoidableRatio":0.02,"productFailureBudget":0},
+  "classification":["ACTIONABLE_CRITICAL_PATH","CONCLUSIVE_NO_ACTION","INCOMPLETE_NO_CRITICAL_PATH_TRACE","INCOMPLETE_AMBIGUOUS_BINDING"],
+  "boundaries":{"repositoryOrTaskNameRulesAllowed":false,"candidateBuildsAllowed":false,"publicSourceWritesAllowed":false,"testOptimization":"OUT_OF_SCOPE"},
+  "decision":"STOP_CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_EXISTING_EVIDENCE"
+}

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+buildopt_report=benchmarks/results/change-scoped-critical-path-discovery-v1.json
+buildopt_tmp=$(mktemp)
+trap 'rm -f "${buildopt_tmp}"' EXIT
+./dev/run-change-scoped-critical-path-discovery "${buildopt_tmp}"
+cmp -s "${buildopt_report}" "${buildopt_tmp}" || { printf 'change-scoped critical-path report is stale\n' >&2; exit 1; }
+
+jq -e '
+  .schemaVersion=="buildopt.evidence/change-scoped-critical-path-discovery/v1" and
+  (.rows|length)==5 and ([.rows[].family]|sort)==["apache-groovy","apache-kafka","micronaut-core","opentelemetry-java-instrumentation","spring-framework"] and
+  ([.rows[]|select(.classification=="INCOMPLETE_NO_CRITICAL_PATH_TRACE")]|length)==4 and
+  ([.rows[]|select(.classification=="CONCLUSIVE_NO_ACTION")]|length)==1 and
+  ([.rows[]|select(.actionable)]|length)==0 and
+  .summary=={families:5,conclusiveFamilies:1,actionableFamilies:0,requiredConclusiveFamilies:5,requiredActionableFamilies:3,productFailures:0,gradleStarts:0,candidateBuilds:0,timingSamples:0,decision:"STOP_CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_EXISTING_EVIDENCE"}
+' "${buildopt_report}" >/dev/null
+
+jq -e '.status.currentBlock==null and .status.completedBlocks==["CSCPD-001","CSCPD-002","CSCPD-005"] and (.status.publicBuildAuthorized|not) and (.status.timingAuthorized|not) and .decision=="STOP_CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_EXISTING_EVIDENCE"' specs/poc-change-scoped-critical-path-discovery-v1.json >/dev/null
+printf 'CSCPD existing-evidence discovery OK: 1/5 conclusive, 0/5 actionable, zero builds\n'

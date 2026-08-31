@@ -25,12 +25,17 @@ decision.
 
 ## Current experiment status
 
-The current checked decision is `SELECT_CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_V1`.
-`CPSS-001` reconstructs decisive evidence for six candidate routes and selects source/existing-trace
-discovery only. It authorizes no public build, action or timing. A successor
-contract must first classify all five families and expose at least 500 ms and
-2% causally avoidable critical-path work in at least three families, without
-repository/task-name rules or imported historical timing rows.
+The latest route is terminal
+`STOP_CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_EXISTING_EVIDENCE`. Its fresh report
+is 1/5 conclusive and 0/5 actionable. Micronaut has complete retained
+critical-path evidence but no eliminated task on that path; Groovy, Kafka,
+OpenTelemetry and Spring lack retained operation/DAG traces. Missing evidence
+is not converted into zero opportunity. No Gradle process, candidate build,
+timing sample or public-source write occurred.
+
+The predecessor decision `SELECT_CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_V1`
+selected source/existing-trace discovery only and froze the 5/5 conclusive,
+3/5 actionable, 500-ms/2% gate that the route has now failed.
 
 The terminal route is `REMOTE_CACHE_LOCALITY_VALUE_V3`. It preserves the v2 stop
 but completes all five fresh correctness rows, uses two native producers to

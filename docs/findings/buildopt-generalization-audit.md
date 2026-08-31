@@ -20,6 +20,12 @@ Successor execution and timing remain closed until a new contract proves 5/5
 conclusive discovery and at least 3/5 families with 500 ms/2% causally
 avoidable critical-path work.
 
+The selected [existing-evidence discovery](../plans/change-scoped-critical-path-discovery-v1.md)
+then stops at 1/5 conclusive and 0/5 actionable. Only Micronaut has retained
+task-DAG critical-path attribution, and it shows no eliminated critical-path
+work. The other four families remain incomplete rather than being relabelled
+as no-action. No candidate execution or timing follows this failed gate.
+
 The terminal [remote-cache locality v3 route](../plans/remote-cache-locality-value-v3-poc-tracker.md)
 corrects the v2 early-stop design. It must complete all five rows, binds one
 primary public artifact per family and distinguishes native instability from an

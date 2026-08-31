@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+buildopt_output=${1:-benchmarks/results/change-scoped-critical-path-discovery-v1.json}
+buildopt_subjects=specs/poc-change-scoped-critical-path-discovery-v1.subjects.json
+buildopt_rows=$(mktemp)
+trap 'rm -f "${buildopt_rows}"' EXIT
+
+jq -c '.subjects[]' "${buildopt_subjects}" | while IFS= read -r buildopt_subject; do
+    buildopt_family=$(jq -r .family <<<"${buildopt_subject}")
+    buildopt_structural=$(jq -r .structuralEvidencePath <<<"${buildopt_subject}")
+    buildopt_expected_sha=$(jq -r .structuralEvidenceSha256 <<<"${buildopt_subject}")
+    [[ "$(sha256sum "${buildopt_structural}" | awk '{print $1}')" == "${buildopt_expected_sha}" ]]
+    buildopt_critical=$(jq -r '.criticalPathEvidencePath // empty' <<<"${buildopt_subject}")
+    if [[ -z "${buildopt_critical}" ]]; then
+        jq -e '.schemaVersion=="buildopt.evidence/automatic-breadth-subject/v3" and .native.authoritative and .native.started and .native.exitCode==0 and .discovery.status=="COMPLETE"' "${buildopt_structural}" >/dev/null
+        jq -nc --arg family "${buildopt_family}" --arg path "${buildopt_structural}" --arg sha "${buildopt_expected_sha}" '{family:$family,structuralEvidence:{path:$path,sha256:$sha},criticalPathEvidence:null,classification:"INCOMPLETE_NO_CRITICAL_PATH_TRACE",avoidableCriticalPathMs:null,avoidableRatio:null,actionable:false}' >>"${buildopt_rows}"
+        continue
+    fi
+
+    buildopt_critical_sha=$(jq -r .criticalPathEvidenceSha256 <<<"${buildopt_subject}")
+    [[ "$(sha256sum "${buildopt_critical}" | awk '{print $1}')" == "${buildopt_critical_sha}" ]]
+    jq -e '.schemaVersion=="buildopt.evidence/poc-compatible-portfolio-value/v1" and .repository.id=="micronaut-projects/micronaut-core"' "${buildopt_structural}" >/dev/null
+    jq -e --arg sourceSha "${buildopt_expected_sha}" '.sourceSummarySha256==$sourceSha and .method=="LONGEST_HARD_DEPENDENCY_CHAIN_BY_TASK_DURATION" and .attribution.eliminated.criticalPathMembership==0 and .attribution.mainBuildCriticalPathDeltaMs==178.875 and .causalMeasurement.requiredOutputSha256!=null and (.causalMeasurement.qualified|not)' "${buildopt_critical}" >/dev/null
+    buildopt_eliminated_tasks=$(jq -r .attribution.eliminated.taskCount "${buildopt_critical}")
+    buildopt_eliminated_ms=$(jq -r '(-.attribution.taskCountDelta) as $tasks | if $tasks==.attribution.eliminated.taskCount then (-.attribution.cumulativeTaskDurationDeltaMs) else error("task delta mismatch") end' "${buildopt_critical}")
+    buildopt_membership=$(jq -r .attribution.eliminated.criticalPathMembership "${buildopt_critical}")
+    buildopt_cp_delta=$(jq -r .attribution.mainBuildCriticalPathDeltaMs "${buildopt_critical}")
+    jq -nc --arg family "${buildopt_family}" --arg path "${buildopt_structural}" --arg sha "${buildopt_expected_sha}" --arg cpPath "${buildopt_critical}" --arg cpSha "${buildopt_critical_sha}" --argjson tasks "${buildopt_eliminated_tasks}" --argjson cumulativeMs "${buildopt_eliminated_ms}" --argjson membership "${buildopt_membership}" --argjson cpDelta "${buildopt_cp_delta}" '{family:$family,structuralEvidence:{path:$path,sha256:$sha},criticalPathEvidence:{path:$cpPath,sha256:$cpSha,eliminatedTasks:$tasks,eliminatedCumulativeTaskMs:$cumulativeMs,eliminatedCriticalPathMembership:$membership,criticalPathDeltaMs:$cpDelta},classification:"CONCLUSIVE_NO_ACTION",avoidableCriticalPathMs:0,avoidableRatio:0,actionable:false}' >>"${buildopt_rows}"
+done
+
+jq -c -s '{schemaVersion:"buildopt.evidence/change-scoped-critical-path-discovery/v1",workItem:"CSCPD-002",rows:.,summary:{families:5,conclusiveFamilies:([.[]|select(.classification=="ACTIONABLE_CRITICAL_PATH" or .classification=="CONCLUSIVE_NO_ACTION")]|length),actionableFamilies:([.[]|select(.actionable)]|length),requiredConclusiveFamilies:5,requiredActionableFamilies:3,productFailures:0,gradleStarts:0,candidateBuilds:0,timingSamples:0,decision:"STOP_CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_EXISTING_EVIDENCE"}}' "${buildopt_rows}" >"${buildopt_output}"
