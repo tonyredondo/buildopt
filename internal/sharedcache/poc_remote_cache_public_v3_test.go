@@ -251,7 +251,11 @@ func runRCL3PublicGradle(t *testing.T, subject rcl3PublicSubject, home, remoteUR
 func prepareRCL3GradleHome(t *testing.T, home string) {
 	t.Helper()
 	sharedDistributions := filepath.Join(filepath.Dir(home), "wrapper-distributions")
+	sharedModules := filepath.Join(filepath.Dir(home), "dependency-modules")
 	if err := os.MkdirAll(sharedDistributions, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(sharedModules, 0o700); err != nil {
 		t.Fatal(err)
 	}
 	wrapper := filepath.Join(home, "wrapper")
@@ -261,6 +265,18 @@ func prepareRCL3GradleHome(t *testing.T, home string) {
 	distributions := filepath.Join(wrapper, "dists")
 	if _, err := os.Lstat(distributions); os.IsNotExist(err) {
 		if err := os.Symlink(sharedDistributions, distributions); err != nil {
+			t.Fatal(err)
+		}
+	} else if err != nil {
+		t.Fatal(err)
+	}
+	caches := filepath.Join(home, "caches")
+	if err := os.MkdirAll(caches, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	modules := filepath.Join(caches, "modules-2")
+	if _, err := os.Lstat(modules); os.IsNotExist(err) {
+		if err := os.Symlink(sharedModules, modules); err != nil {
 			t.Fatal(err)
 		}
 	} else if err != nil {
