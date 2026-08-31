@@ -2,6 +2,16 @@
 
 ## Current Executive Summary
 
+- **The terminal portfolio now selects one discovery-only successor.** The
+  checked `CPSS-001` reconstruction rejects another iteration of locality,
+  fragment learning, normalization-aware cacheability, recurrence-first
+  opportunity screening and Gradle-free request hits. It selects change-scoped
+  critical-path discovery because Build Impact retains the largest substantial
+  generic signal, while acknowledging that only two families isolate it and
+  the later detector activated 0/71 eligible builds. No public build or timing
+  is open: fresh discovery must be 5/5 conclusive and expose at least 500 ms and
+  2% causally avoidable work in 3/5 families.
+
 - **Remote-cache locality v3 stopped after complete controlled paired timing.** It preserves v2,
   completes all five correctness rows, freezes source-bound primary artifacts
   and separates native output instability from Edge-only failures. The production

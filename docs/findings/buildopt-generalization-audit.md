@@ -13,7 +13,14 @@ net value in only one of five families. One of six structurally eligible
 descendants selected a profile, so the frozen terminal decision is
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md).
 
-The active [remote-cache locality v3 route](../plans/remote-cache-locality-value-v3-poc-tracker.md)
+The checked [critical-path successor selection](../plans/critical-path-successor-selection-v1.md)
+reconstructs decisive evidence for six candidate routes and selects only change-scoped critical-path
+discovery. Historical Build Impact results are motivation, not fresh rows.
+Successor execution and timing remain closed until a new contract proves 5/5
+conclusive discovery and at least 3/5 families with 500 ms/2% causally
+avoidable critical-path work.
+
+The terminal [remote-cache locality v3 route](../plans/remote-cache-locality-value-v3-poc-tracker.md)
 corrects the v2 early-stop design. It must complete all five rows, binds one
 primary public artifact per family and distinguishes native instability from an
 Edge-only failure. Its production Edge harness and fixed profile pass. Public

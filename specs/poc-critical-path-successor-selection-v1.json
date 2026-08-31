@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "buildopt.specs/poc-critical-path-successor-selection/v1",
+  "workItem": "CPSS-001",
+  "objective": "SELECT_ONE_MATERIALLY_DIFFERENT_GENERIC_SUCCESSOR_FROM_TERMINAL_EVIDENCE",
+  "evidenceOnly": true,
+  "publicBuildAuthorized": false,
+  "timingAuthorized": false,
+  "selectionGate": {
+    "conclusiveFamiliesRequired": 5,
+    "actionFamiliesRequired": 3,
+    "minimumAvoidableWallTimeMs": 500,
+    "minimumAvoidableRatio": 0.02,
+    "productFailureBudget": 0,
+    "repositoryOrTaskNameRulesAllowed": false
+  },
+  "decision": "SELECT_CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_V1",
+  "successorExecutionAuthorized": false
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-successor-selection/v1",
+  "workItem": "CPSS-001",
+  "bindings": [
+    {"path":"benchmarks/results/poc-general-build-value-v1.json","sha256":"6c2f746cc17706724a3153603f3b2dad48387ab0facc217575ed1619f96a118d"},
+    {"path":"benchmarks/results/adaptive-fragment-terminal-decision-v1.json","sha256":"436ddc8d0ee2f56e4c0be502b5b0134a803a83c4072f8ae617ff19a6a9a70019"},
+    {"path":"benchmarks/results/verified-request-hit-shadow-replay-v1.json","sha256":"741037a865961a4e4148a24e68f57b569a1068c047c8656631ff43dd5d348fba"},
+    {"path":"benchmarks/results/normalization-aware-cacheability-v2/terminal-decision.json","sha256":"0db20ce5001a21640ab771d25d6cd4f82e1ad62942863783dcafba6e1943f151"},
+    {"path":"benchmarks/results/economic-opportunity-first-v1/terminal-decision.json","sha256":"080ce9727bea3a5b6c62034fdaa8d3ccb5f1d8099fb02d50a0dbbbd333bd3972"},
+    {"path":"benchmarks/results/remote-cache-locality-value-v3/terminal-decision.json","sha256":"e43df618969dbcfef4d568497e5f8846663ac65663c851c51ddb3c343145d731"}
+  ],
+  "candidates": [
+    {"id":"CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY","decision":"SELECT_SOURCE_TRACE_DISCOVERY_ONLY","observed":"3 substantial end-to-end signals; 2 independently Build-Impact-qualified families; later activation 0/71","reason":"largest retained generic signal with a falsifiable pre-build breadth gate"},
+    {"id":"ADAPTIVE_FRAGMENT_LEARNING","decision":"REJECT_CURRENT_DETECTOR","observed":"0/71 activations; 0/5 positive families","reason":"no current action or attributable savings"},
+    {"id":"NORMALIZATION_AWARE_CACHEABILITY","decision":"REJECT_CURRENT_ROUTE","observed":"4/9 public candidates fully proved","reason":"complete zero-failure correctness prerequisite failed"},
+    {"id":"ECONOMIC_OPPORTUNITY_FIRST","decision":"REJECT_CURRENT_ROUTE","observed":"1/5 native-ceiling probe families","reason":"recurrence breadth failed before builds"},
+    {"id":"REMOTE_CACHE_LOCALITY","decision":"REJECT_CURRENT_ROUTE","observed":"0/3 timed eligible families qualified","reason":"controlled value breadth failed"},
+    {"id":"GRADLE_FREE_REQUEST_HIT","decision":"REJECT_CURRENT_ROUTE","observed":"2/4 public families meet exact-output breadth; 0/4 meet complete safety admission","reason":"public breadth and complete safety admission failed before execution"}
+  ],
+  "selected": {
+    "id": "CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_V1",
+    "scope": "SOURCE_AND_EXISTING_NATIVE_TRACE_CLASSIFICATION_ONLY",
+    "freshFamiliesRequired": 5,
+    "actionFamiliesRequired": 3,
+    "minimumAvoidableWallTimeMs": 500,
+    "minimumAvoidableRatio": 0.02,
+    "historicalTimingMaySupplyFreshRows": false,
+    "publicBuildAuthorized": false,
+    "timingAuthorized": false,
+    "successorExecutionAuthorized": false
+  },
+  "decision": "SELECT_CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_V1"
+}

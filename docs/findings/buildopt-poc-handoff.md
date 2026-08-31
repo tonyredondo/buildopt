@@ -25,7 +25,14 @@ decision.
 
 ## Current experiment status
 
-The active route is `REMOTE_CACHE_LOCALITY_VALUE_V3`. It preserves the v2 stop
+The current checked decision is `SELECT_CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_V1`.
+`CPSS-001` reconstructs decisive evidence for six candidate routes and selects source/existing-trace
+discovery only. It authorizes no public build, action or timing. A successor
+contract must first classify all five families and expose at least 500 ms and
+2% causally avoidable critical-path work in at least three families, without
+repository/task-name rules or imported historical timing rows.
+
+The terminal route is `REMOTE_CACHE_LOCALITY_VALUE_V3`. It preserves the v2 stop
 but completes all five fresh correctness rows, uses two native producers to
 classify native output instability separately, and freezes one primary binary
 artifact per public build definition. `RCL3-002` proves the production Edge

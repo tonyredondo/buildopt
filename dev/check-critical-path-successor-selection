@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+buildopt_report=benchmarks/results/critical-path-successor-selection-v1.json
+buildopt_spec=specs/poc-critical-path-successor-selection-v1.json
+
+jq -e '
+  .schemaVersion=="buildopt.specs/poc-critical-path-successor-selection/v1" and
+  .workItem=="CPSS-001" and .evidenceOnly and
+  (.publicBuildAuthorized|not) and (.timingAuthorized|not) and
+  .selectionGate=={conclusiveFamiliesRequired:5,actionFamiliesRequired:3,minimumAvoidableWallTimeMs:500,minimumAvoidableRatio:0.02,productFailureBudget:0,repositoryOrTaskNameRulesAllowed:false} and
+  .decision=="SELECT_CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_V1" and
+  (.successorExecutionAuthorized|not)
+' "${buildopt_spec}" >/dev/null
+
+jq -e '
+  .schemaVersion=="buildopt.evidence/critical-path-successor-selection/v1" and
+  .workItem=="CPSS-001" and (.bindings|length)==6 and (.candidates|length)==6 and
+  ([.candidates[].id]|sort)==["ADAPTIVE_FRAGMENT_LEARNING","CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY","ECONOMIC_OPPORTUNITY_FIRST","GRADLE_FREE_REQUEST_HIT","NORMALIZATION_AWARE_CACHEABILITY","REMOTE_CACHE_LOCALITY"] and
+  ([.candidates[]|select(.decision|startswith("SELECT"))]|length)==1 and
+  .selected=={id:"CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_V1",scope:"SOURCE_AND_EXISTING_NATIVE_TRACE_CLASSIFICATION_ONLY",freshFamiliesRequired:5,actionFamiliesRequired:3,minimumAvoidableWallTimeMs:500,minimumAvoidableRatio:0.02,historicalTimingMaySupplyFreshRows:false,publicBuildAuthorized:false,timingAuthorized:false,successorExecutionAuthorized:false} and
+  .decision=="SELECT_CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_V1"
+' "${buildopt_report}" >/dev/null
+
+while IFS=$'\t' read -r buildopt_path buildopt_sha; do
+    [[ "$(sha256sum "${buildopt_path}" | awk '{print $1}')" == "${buildopt_sha}" ]]
+done < <(jq -r '.bindings[]|[.path,.sha256]|@tsv' "${buildopt_report}")
+
+jq -e '
+  .portfolio.directPositiveTargets==3 and .portfolio.strictlyReplicatedInstalledTargets==1 and
+  (.portfolio.broadGeneralAcceleratorQualified|not) and
+  ([.targets[]|select(any(.componentSupport[]; .name=="BUILD_IMPACT" and .status=="QUALIFIED_DIRECT_ARM"))]|length)==2 and
+  ([.targets[]|select(any(.componentSupport[]; .name=="BUILD_IMPACT" and .status=="POSITIVE_NOT_INDEPENDENTLY_QUALIFIED"))]|length)==1
+' benchmarks/results/poc-general-build-value-v1.json >/dev/null
+jq -e '.summary.eligibleDescendantBuilds==71 and .summary.activatedEligibleBuilds==0 and .summary.positiveFamilies==0 and .summary.attributableMechanismSavingsNs==0' benchmarks/results/adaptive-fragment-terminal-decision-v1.json >/dev/null
+jq -e '.public.familiesMeetingExactOutputBreadth==2 and .public.familiesMeetingAdmissionBreadth==0 and .totals.actionSelections==0 and .decision=="STOP_VERIFIED_REQUEST_HIT_BEFORE_GRADLE_FREE_EXECUTION"' benchmarks/results/verified-request-hit-shadow-replay-v1.json >/dev/null
+jq -e '.failedPrerequisite=="NAC-004" and (.retainedClaims|index("FOUR_OF_NINE_PUBLIC_CANDIDATES_FULLY_PROVED"))!=null' benchmarks/results/normalization-aware-cacheability-v2/terminal-decision.json >/dev/null
+jq -e '.sourceGate.nativeCeilingProbeFamilies==1 and .sourceGate.requiredNativeCeilingProbeFamilies==3' benchmarks/results/economic-opportunity-first-v1/terminal-decision.json >/dev/null
+jq -e '.value.controlledQualifiedFamilies==0 and .decision=="STOP_REMOTE_CACHE_LOCALITY_VALUE_V3"' benchmarks/results/remote-cache-locality-value-v3/terminal-decision.json >/dev/null
+
+printf 'CPSS-001 successor selection OK: one source/trace-only route selected; builds and timing closed\n'

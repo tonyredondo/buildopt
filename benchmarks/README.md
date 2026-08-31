@@ -4,6 +4,8 @@ Reproducible workloads for measuring causal savings, overhead, queues, additiona
 
 The corrected [remote cache locality v3 evidence](./results/remote-cache-locality-value-v3/README.md) completes 5/5 correctness rows and 24/24 controlled pairs with zero product failures. Zero of three eligible families passes every frozen value criterion, so the route stops before installed economics and makes no viability claim.
 
+The checked [critical-path successor selection](./results/critical-path-successor-selection-v1.json) reconstructs decisive evidence for six candidate routes and selects only change-scoped critical-path discovery. It authorizes no public build or timing; a later route must first find at least 500 ms/2% causally avoidable work in 3/5 families.
+
 The latest closed route is documented by the
 [remote cache locality v2 evidence](./results/remote-cache-locality-value-v2/README.md).
 `RCL-001` freezes identical graph/key/object/output opportunity, one unshaped
