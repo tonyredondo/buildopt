@@ -47,6 +47,7 @@ buildopt_free_bytes=$(df --output=avail -B1 /tmp | tail -n 1 | tr -d ' ')
 
 buildopt_temp=$(mktemp -d "/tmp/buildopt-cscpc-${buildopt_family}.XXXXXX")
 buildopt_runtime=$(mktemp -d "/tmp/buildopt-automatic-breadth.XXXXXX")
+rmdir -- "${buildopt_runtime}"
 buildopt_success=false
 buildopt_cleanup() {
     if [[ ${buildopt_success} == true ]]; then
