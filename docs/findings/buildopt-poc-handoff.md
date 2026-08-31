@@ -39,6 +39,12 @@ contract, not timing.
 The predecessor existing-evidence route stopped honestly at 1/5 conclusive and
 0/5 actionable because it did not possess the four traces later captured here.
 
+`CHANGE_SCOPED_CANDIDATE_CORRECTNESS_V1` is now active. Its frozen four-family
+route permits two native observations and one candidate per family, comparing
+the final required-output manifest byte for byte with the fresh CSCPN native
+baseline. Twelve Gradle starts are authorized; timing and speedup claims remain
+closed until 4/4 candidates are exact with zero product failures.
+
 The predecessor decision `SELECT_CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_V1`
 selected source/existing-trace discovery only and froze the 5/5 conclusive,
 3/5 actionable, 500-ms/2% gate that the route has now failed.

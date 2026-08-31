@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.specs/poc-change-scoped-candidate-correctness/v1",
+  "workItem": "CSCPC",
+  "status": {
+    "currentBlock": "CSCPC-002",
+    "completedBlocks": ["CSCPC-001"],
+    "timingAuthorized": false
+  },
+  "inputs": {
+    "discoveryReport": "benchmarks/results/change-scoped-critical-path-native-classification-v1.json",
+    "discoveryDecision": "AUTHORIZE_CHANGE_SCOPED_CANDIDATE_CORRECTNESS_CONTRACT",
+    "actionFamilies": 4
+  },
+  "execution": {
+    "requestedInvocationsPerFamily": 3,
+    "expectedModes": ["OPTIMIZED_NATIVE", "OPTIMIZED_NATIVE", "INCREMENTAL_CANDIDATE"],
+    "maximumGradleStarts": 12,
+    "sequential": true,
+    "maximumWorkers": 12,
+    "timeoutMinutesPerInvocation": 30,
+    "minimumFreeDiskBytesBeforeFamily": 8589934592
+  },
+  "gate": {
+    "familiesRequired": 4,
+    "exactCandidateFamiliesRequired": 4,
+    "productFailureBudget": 0
+  },
+  "boundaries": {
+    "publicSourceWritesAllowed": false,
+    "comparativeTimingAllowed": false,
+    "repositoryOrTaskNameRulesAllowed": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

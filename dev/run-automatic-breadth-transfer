@@ -72,11 +72,15 @@ if [[ -n ${buildopt_native_portfolio}${buildopt_native_portfolio_context}${build
     buildopt_native_portfolio_requested=true
 fi
 buildopt_requested_invocations=${BUILDOPT_AUTOMATIC_BREADTH_INVOCATIONS:-}
-if [[ -n ${buildopt_requested_invocations} &&
-    (! ${buildopt_requested_invocations} =~ ^[1-9][0-9]*$ ||
-     ${buildopt_requested_invocations} -gt 18 || ${buildopt_protocol} != v4) ]]; then
-    printf 'automatic breadth invocation override requires protocol v4 and 1..18 invocations\n' >&2
-    exit 64
+if [[ -n ${buildopt_requested_invocations} ]]; then
+    case ${buildopt_protocol}:${buildopt_requested_invocations} in
+        v3:3) ;;
+        v4:[1-9] | v4:1[0-8]) ;;
+        *)
+            printf 'automatic breadth invocation override requires v3:3 or v4:1..18\n' >&2
+            exit 64
+            ;;
+    esac
 fi
 case ${buildopt_process_mode} in
     daemon | no-daemon) buildopt_process_flag=--${buildopt_process_mode} ;;

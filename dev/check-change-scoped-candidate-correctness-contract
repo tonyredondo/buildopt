@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+buildopt_contract=specs/poc-change-scoped-candidate-correctness-v1.json
+buildopt_subjects=specs/poc-change-scoped-candidate-correctness-v1.subjects.json
+
+jq -e '
+  .schemaVersion=="buildopt.specs/poc-change-scoped-candidate-correctness/v1" and
+  .status.currentBlock=="CSCPC-002" and .status.completedBlocks==["CSCPC-001"] and
+  (.status.timingAuthorized|not) and
+  .inputs.actionFamilies==4 and
+  .execution.requestedInvocationsPerFamily==3 and
+  .execution.expectedModes==["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"] and
+  .execution.maximumGradleStarts==12 and
+  .gate=={familiesRequired:4,exactCandidateFamiliesRequired:4,productFailureBudget:0} and
+  (.boundaries.publicSourceWritesAllowed|not) and
+  (.boundaries.comparativeTimingAllowed|not) and
+  (.boundaries.repositoryOrTaskNameRulesAllowed|not)
+' "${buildopt_contract}" >/dev/null
+
+[[ $(sha256sum "$(jq -r '.sourceSubjects.path' "${buildopt_subjects}")" | awk '{print $1}') == \
+    $(jq -r '.sourceSubjects.sha256' "${buildopt_subjects}") ]]
+[[ $(sha256sum "$(jq -r '.discoveryReport.path' "${buildopt_subjects}")" | awk '{print $1}') == \
+    $(jq -r '.discoveryReport.sha256' "${buildopt_subjects}") ]]
+jq -e '
+  .schemaVersion=="buildopt.specs/poc-change-scoped-candidate-correctness-subjects/v1" and
+  (.subjects|length)==4 and
+  ([.subjects[].family]|sort)==["apache-groovy","apache-kafka","opentelemetry-java-instrumentation","spring-framework"] and
+  all(.subjects[]; (.candidateEntrypoints|length)==1 and
+    (.nativeManifestSha256|test("^[0-9a-f]{64}$")))
+' "${buildopt_subjects}" >/dev/null
+while IFS=$'\t' read -r buildopt_path buildopt_sha; do
+    [[ $(sha256sum "${buildopt_path}" | awk '{print $1}') == "${buildopt_sha}" ]]
+done < <(jq -r '.subjects[]|[.nativeManifestPath,.nativeManifestSha256]|@tsv' "${buildopt_subjects}")
+
+jq -e '
+  .summary.decision=="AUTHORIZE_CHANGE_SCOPED_CANDIDATE_CORRECTNESS_CONTRACT" and
+  .summary.conclusiveFamilies==5 and .summary.actionableFamilies==4
+' benchmarks/results/change-scoped-critical-path-native-classification-v1.json >/dev/null
+
+printf 'CSCPC contract OK: four exact-output candidates, twelve untimed Gradle starts maximum\n'

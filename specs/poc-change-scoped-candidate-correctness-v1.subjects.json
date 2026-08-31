@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "buildopt.specs/poc-change-scoped-candidate-correctness-subjects/v1",
+  "sourceSubjects": {
+    "path": "specs/poc-qualified-lifetime-v2.json",
+    "sha256": "3ad2c259e99f64064bf6d0cb1287a7b6ab3d1ea1a47a75d0d59a4976f51a1f4e"
+  },
+  "discoveryReport": {
+    "path": "benchmarks/results/change-scoped-critical-path-native-classification-v1.json",
+    "sha256": "64ad3a506d4b5c66077235daed574e095044c91f9705687177f40674132679d5"
+  },
+  "subjects": [
+    {
+      "family": "apache-groovy",
+      "candidateEntrypoints": [":groovy-json:classes"],
+      "nativeManifestPath": "benchmarks/results/change-scoped-critical-path-native-capture-v1/apache-groovy/outputs.tsv",
+      "nativeManifestSha256": "f14502d957dd93152164033b981ec8231918153d41184c6927e77a6871dc9199"
+    },
+    {
+      "family": "apache-kafka",
+      "candidateEntrypoints": [":clients:testClasses"],
+      "nativeManifestPath": "benchmarks/results/change-scoped-critical-path-native-capture-v1/apache-kafka/outputs.tsv",
+      "nativeManifestSha256": "38b69fe6430981b464a6475fdba9db92ae658ec926242f9ca9e6114c02a339f6"
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "candidateEntrypoints": [":instrumentation:spring:spring-boot-autoconfigure:testClasses"],
+      "nativeManifestPath": "benchmarks/results/change-scoped-critical-path-native-capture-v1/opentelemetry-java-instrumentation/outputs.tsv",
+      "nativeManifestSha256": "31ffdf0f0ab2e0f41e32a9227ca673f2ad9930283922cac3c89b432519483115"
+    },
+    {
+      "family": "spring-framework",
+      "candidateEntrypoints": [":spring-jms:testClasses"],
+      "nativeManifestPath": "benchmarks/results/change-scoped-critical-path-native-capture-v1/spring-framework/outputs.tsv",
+      "nativeManifestSha256": "7e72e91e7ab4c03c1abec0c65dab08eddf8bde282f50a31759504fde17e620f8"
+    }
+  ]
+}

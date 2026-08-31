@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 2)); then
+    printf 'usage: %s FAMILY NEW_OUTPUT_DIRECTORY\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_family=$1
+buildopt_output=$2
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_subjects="${buildopt_repo_root}/specs/poc-change-scoped-candidate-correctness-v1.subjects.json"
+buildopt_source_subjects="${buildopt_repo_root}/specs/poc-qualified-lifetime-v2.json"
+
+[[ ${buildopt_output} == /* && ! -e ${buildopt_output} ]] || {
+    printf 'output must be a new absolute directory\n' >&2
+    exit 64
+}
+buildopt_subject=$(jq -ce --arg family "${buildopt_family}" '
+    [.subjects[] | select(.family==$family)] |
+    if length==1 then .[0] else error("expected one candidate subject") end
+' "${buildopt_subjects}")
+
+buildopt_source_sha=$(jq -r '.sourceSubjects.sha256' "${buildopt_subjects}")
+[[ $(sha256sum "${buildopt_source_subjects}" | awk '{print $1}') == "${buildopt_source_sha}" ]]
+buildopt_discovery=$(jq -r '.discoveryReport.path' "${buildopt_subjects}")
+buildopt_discovery_sha=$(jq -r '.discoveryReport.sha256' "${buildopt_subjects}")
+[[ $(sha256sum "${buildopt_repo_root}/${buildopt_discovery}" | awk '{print $1}') == \
+    "${buildopt_discovery_sha}" ]]
+jq -e --arg family "${buildopt_family}" '
+    .summary.decision=="AUTHORIZE_CHANGE_SCOPED_CANDIDATE_CORRECTNESS_CONTRACT" and
+    any(.rows[]; .family==$family and .actionable==true)
+' "${buildopt_repo_root}/${buildopt_discovery}" >/dev/null
+
+buildopt_native_manifest=$(jq -r '.nativeManifestPath' <<<"${buildopt_subject}")
+buildopt_native_sha=$(jq -r '.nativeManifestSha256' <<<"${buildopt_subject}")
+[[ $(sha256sum "${buildopt_repo_root}/${buildopt_native_manifest}" | awk '{print $1}') == \
+    "${buildopt_native_sha}" ]]
+buildopt_source_subjects_sha=$(sha256sum "${buildopt_source_subjects}" | awk '{print $1}')
+
+buildopt_free_bytes=$(df --output=avail -B1 /tmp | tail -n 1 | tr -d ' ')
+((buildopt_free_bytes >= 8589934592)) || {
+    printf 'less than 8 GiB free before %s\n' "${buildopt_family}" >&2
+    exit 1
+}
+
+buildopt_temp=$(mktemp -d "/tmp/buildopt-cscpc-${buildopt_family}.XXXXXX")
+buildopt_runtime=$(mktemp -d "/tmp/buildopt-automatic-breadth.XXXXXX")
+buildopt_success=false
+buildopt_cleanup() {
+    if [[ ${buildopt_success} == true ]]; then
+        rm -rf -- "${buildopt_temp}" "${buildopt_runtime}"
+    else
+        printf 'candidate diagnostic retained at %s and %s\n' \
+            "${buildopt_temp}" "${buildopt_runtime}" >&2
+    fi
+}
+trap buildopt_cleanup EXIT
+buildopt_raw="${buildopt_temp}/raw"
+mkdir -p -- "${buildopt_raw}"
+
+env BUILDOPT_AUTOMATIC_BREADTH_PROTOCOL=v3 \
+    BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_FILE="${buildopt_source_subjects}" \
+    BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256="${buildopt_source_subjects_sha}" \
+    BUILDOPT_AUTOMATIC_BREADTH_INVOCATIONS=3 \
+    BUILDOPT_AUTOMATIC_BREADTH_PROCESS_MODE=no-daemon \
+    BUILDOPT_AUTOMATIC_BREADTH_RETAIN_ROOT=true \
+    BUILDOPT_AUTOMATIC_BREADTH_ROOT="${buildopt_runtime}" \
+    "${buildopt_repo_root}/dev/run-automatic-breadth-transfer" \
+    "${buildopt_raw}" "${buildopt_family}"
+
+buildopt_repository="${buildopt_runtime}/${buildopt_family}/repository"
+buildopt_raw_subject="${buildopt_raw}/${buildopt_family}"
+[[ -d ${buildopt_repository}/.git && -f ${buildopt_raw_subject}/capture.json ]]
+git -C "${buildopt_repository}" diff --quiet
+git -C "${buildopt_repository}" diff --cached --quiet
+
+mapfile -t buildopt_modes < <(for buildopt_sequence in 01 02 03; do
+    jq -r '.execution.mode' "${buildopt_raw_subject}/invocation-${buildopt_sequence}.json"
+done)
+[[ ${buildopt_modes[*]} == 'OPTIMIZED_NATIVE OPTIMIZED_NATIVE INCREMENTAL_CANDIDATE' ]] || {
+    printf 'unexpected execution modes for %s: %s\n' "${buildopt_family}" "${buildopt_modes[*]}" >&2
+    exit 1
+}
+for buildopt_sequence in 01 02 03; do
+    jq -e '.execution.started==true and .execution.exitCode==0' \
+        "${buildopt_raw_subject}/invocation-${buildopt_sequence}.json" >/dev/null
+done
+jq -e --argjson expected "$(jq '.candidateEntrypoints' <<<"${buildopt_subject}")" '
+    .discovery.candidateEntrypoints==$expected and
+    .discovery.aggregatePartition.status=="COMPLETE" and
+    .discovery.materialization.status=="CAPTURED"
+' "${buildopt_raw_subject}/invocation-03.json" >/dev/null
+
+buildopt_structural=$(jq -r --arg family "${buildopt_family}" \
+    '.rows[] | select(.family==$family) | .structuralEvidence.path' \
+    "${buildopt_repo_root}/${buildopt_discovery}")
+buildopt_candidate_manifest="${buildopt_temp}/candidate-outputs.tsv"
+: >"${buildopt_candidate_manifest}"
+while IFS= read -r buildopt_pattern; do
+    buildopt_prefix=${buildopt_pattern%/**}
+    if [[ -f "${buildopt_repository}/${buildopt_prefix}" ]]; then
+        printf '%s\t%s\n' \
+            "$(sha256sum "${buildopt_repository}/${buildopt_prefix}" | awk '{print $1}')" \
+            "${buildopt_prefix#./}" >>"${buildopt_candidate_manifest}"
+    elif [[ -d "${buildopt_repository}/${buildopt_prefix}" ]]; then
+        while IFS= read -r -d '' buildopt_file; do
+            printf '%s\t%s\n' "$(sha256sum "${buildopt_file}" | awk '{print $1}')" \
+                "${buildopt_file#"${buildopt_repository}/"}" >>"${buildopt_candidate_manifest}"
+        done < <(find "${buildopt_repository}/${buildopt_prefix}" -type f -print0 | sort -z)
+    fi
+done < <(jq -r '.discovery.requiredOutputs[]' "${buildopt_repo_root}/${buildopt_structural}")
+sort -u -o "${buildopt_candidate_manifest}" "${buildopt_candidate_manifest}"
+cmp -s "${buildopt_repo_root}/${buildopt_native_manifest}" "${buildopt_candidate_manifest}" || {
+    diff -u "${buildopt_repo_root}/${buildopt_native_manifest}" \
+        "${buildopt_candidate_manifest}" | head -n 120 >&2 || true
+    printf 'candidate outputs differ from fresh native baseline for %s\n' \
+        "${buildopt_family}" >&2
+    exit 1
+}
+
+buildopt_candidate_count=$(wc -l <"${buildopt_candidate_manifest}" | tr -d ' ')
+buildopt_candidate_sha=$(sha256sum "${buildopt_candidate_manifest}" | awk '{print $1}')
+buildopt_final="${buildopt_temp}/final"
+mkdir -p -- "${buildopt_final}"
+cp -- "${buildopt_raw_subject}/capture.json" \
+    "${buildopt_raw_subject}/invocation-01.json" \
+    "${buildopt_raw_subject}/invocation-02.json" \
+    "${buildopt_raw_subject}/invocation-03.json" \
+    "${buildopt_candidate_manifest}" "${buildopt_final}/"
+jq -n \
+    --arg family "${buildopt_family}" \
+    --arg targetRevision "$(jq -r '.targetRevision' "${buildopt_raw_subject}/capture.json")" \
+    --arg discoveryPath "${buildopt_discovery}" --arg discoverySha "${buildopt_discovery_sha}" \
+    --arg nativeManifestPath "${buildopt_native_manifest}" --arg nativeManifestSha "${buildopt_native_sha}" \
+    --arg candidateManifestSha "${buildopt_candidate_sha}" \
+    --arg executableSha "$(jq -r '.buildopt.executableSha256' "${buildopt_raw_subject}/capture.json")" \
+    --argjson outputCount "${buildopt_candidate_count}" \
+    --argjson freeBytesBefore "${buildopt_free_bytes}" \
+    --argjson candidateEntrypoints "$(jq '.candidateEntrypoints' <<<"${buildopt_subject}")" '
+    {schemaVersion:"buildopt.evidence/change-scoped-candidate-correctness/v1",
+     family:$family,targetRevision:$targetRevision,buildoptExecutableSha256:$executableSha,
+     discovery:{path:$discoveryPath,sha256:$discoverySha},
+     candidateEntrypoints:$candidateEntrypoints,
+     invocations:{count:3,modes:["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"],
+       gradleStarts:3,candidateBuilds:1,timingSamples:0},
+     outputs:{nativeManifest:{path:$nativeManifestPath,sha256:$nativeManifestSha},
+       candidateManifest:{path:"candidate-outputs.tsv",sha256:$candidateManifestSha},
+       count:$outputCount,identical:true},
+     resourceEnvelope:{freeBytesBefore:$freeBytesBefore,maximumWorkers:12,timeoutMinutesPerInvocation:30},
+     publicSourceModified:false,productFailures:0,timingAuthorized:false}
+' >"${buildopt_final}/correctness.json"
+
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+mv -- "${buildopt_final}" "${buildopt_output}"
+buildopt_success=true
+printf 'candidate correctness %s: %s exact outputs, diagnostic only\n' \
+    "${buildopt_family}" "${buildopt_candidate_count}"
