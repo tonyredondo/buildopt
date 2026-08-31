@@ -3,15 +3,12 @@
 Reproducible workloads for measuring causal savings, overhead, queues, additional compute, and behavior under failure.
 
 The active fresh route begins with the
-[durable native optimization evidence](./results/durable-native-optimization-v1/README.md).
-Its source audit passes 5/5 completeness and 4/5 action breadth with eight
-digest-bound candidates. Patch transactions pass, but the correctness gate
-stops after one Micronaut candidate fails Gradle's missing-normalization
-validation. Spring and OpenTelemetry pass exact-output/cache restoration.
-Paired and longitudinal timing are not authorized, so this route contains no
-speedup result. Its terminal decision is
-`STOP_DURABLE_NATIVE_OPTIMIZATION_POC`; the normalization-aware follow-up is a
-recommendation, not an authorized experiment.
+[normalization-aware cacheability v2 evidence](./results/normalization-aware-cacheability-v2/README.md).
+`NAC-001` freezes the normalization classes, exact five-family source cohort,
+zero-failure correctness matrix and value gates. No v2 candidate has been
+admitted, patched, built or timed yet. The closed
+[DNO v1 evidence](./results/durable-native-optimization-v1/README.md) explains
+the missing-normalization failure but cannot satisfy any v2 row.
 
 Seeds, images, toolchains, runner classes, and digests are part of the evidence. A benchmark never authorizes a security capability.
 

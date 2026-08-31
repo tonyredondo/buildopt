@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "buildopt.specs/poc-normalization-aware-cacheability/v2",
+  "workItem": "NAC",
+  "objective": "PROVE_PORTABLE_CACHEABILITY_CORRECTIONS_WITH_EXPLICIT_NORMALIZATION",
+  "baseline": "OPTIMIZED_NATIVE_GRADLE",
+  "predecessor": {
+    "workItem": "DNO",
+    "terminal": "STOP_DURABLE_NATIVE_OPTIMIZATION_POC",
+    "mayMotivate": true,
+    "maySupplyEvidenceRows": false
+  },
+  "cohort": {
+    "completeFamilies": 5,
+    "reuseExactSourceRevisionsToIsolateDetectorChange": true,
+    "freshV2EvidenceRequired": true
+  },
+  "normalization": {
+    "portablePrimaryStrategies": [
+      "PATH_SENSITIVE_RELATIVE",
+      "PATH_SENSITIVE_NAME_ONLY",
+      "PATH_SENSITIVE_NONE",
+      "CLASSPATH",
+      "COMPILE_CLASSPATH"
+    ],
+    "explicitButRejectedStrategies": ["PATH_SENSITIVE_ABSOLUTE"],
+    "supplementaryAnnotations": ["NORMALIZE_LINE_ENDINGS", "IGNORE_EMPTY_DIRECTORIES"],
+    "inferredStrategiesAllowed": false
+  },
+  "actions": [
+    {
+      "id": "ADD_CACHEABLE_TASK_MARKER_V2",
+      "requires": [
+        "COMPLETE_CUSTOM_TASK_CONTRACT",
+        "EVERY_FILE_INPUT_HAS_PORTABLE_PRIMARY_NORMALIZATION",
+        "NO_CACHEABLE_TASK_MARKER",
+        "NO_DISABLE_CACHING_MARKER"
+      ],
+      "ownerReviewRequired": true
+    },
+    {
+      "id": "ADD_RELATIVE_PATH_NORMALIZATION_AND_CACHEABLE_MARKER_V1",
+      "eligibleInputAnnotations": ["INPUT_FILE", "INPUT_FILES", "INPUT_DIRECTORY", "INPUT_DIRECTORIES"],
+      "requires": [
+        "COMPLETE_CUSTOM_TASK_CONTRACT",
+        "MISSING_PRIMARY_NORMALIZATION",
+        "TWO_ROOT_BYTE_EXACT_NATIVE_OUTPUTS",
+        "CONTENT_MUTATION_INVALIDATES",
+        "RELATIVE_PATH_MUTATION_INVALIDATES",
+        "CROSS_ROOT_CACHE_RESTORE_EXACT",
+        "OWNER_SEMANTIC_REVIEW"
+      ],
+      "ownerReviewRequired": true
+    }
+  ],
+  "gates": {
+    "breadth": {
+      "completeFamilies": 5,
+      "minimumActionFamilies": 3,
+      "repositoryOrTaskNameRulesAllowed": false,
+      "timingAllowedBeforePass": false
+    },
+    "correctness": {
+      "exactRequiredOutputs": true,
+      "productFailureBudget": 0,
+      "exactRevert": true,
+      "contentMutationRequired": true,
+      "relativePathMutationRequired": true,
+      "crossRootRestoreRequired": true,
+      "gradleVersions": ["8.14.3", "9.6.1"],
+      "dsls": ["GROOVY", "KOTLIN"]
+    },
+    "pairedValue": {
+      "pairsPerFamily": 8,
+      "minimumPositivePairs": 6,
+      "minimumSavedMs": 500,
+      "minimumReductionRatio": 0.02,
+      "positiveLower95Bound": true,
+      "minimumPositiveFamilies": 3
+    },
+    "longitudinalValue": {
+      "minimumCommitsPerFamily": 20,
+      "minimumPositiveFamilies": 3,
+      "positivePortfolioSignedMs": true,
+      "finitePayback": true,
+      "buildoptRuntimeRequiredAfterPatch": false
+    }
+  },
+  "measurement": {
+    "hostedCiOwnsWallTimeGate": false,
+    "balancedAlternatingPairs": true,
+    "percentagesAddedAcrossMechanisms": false,
+    "regressionsRetainedWithSign": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "automaticMergeAuthorized": false,
+    "productionHardeningAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

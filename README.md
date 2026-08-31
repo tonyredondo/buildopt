@@ -27,6 +27,14 @@ evidence around that execution and uses conservative fallbacks: a rejected
 cache entry becomes a normal cache miss, an unqualified optimization is not
 applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
+> **Active POC experiment:** BuildOpt is now testing normalization-aware
+> cacheability patches that remain in the repository and run as native Gradle.
+> Marker-only proposals require portable normalization on every file input;
+> missing normalization is a separate owner-reviewed relative-path proposal
+> with relocation and mutation proof. The contract is frozen, but no v2
+> candidate or timing result exists yet. See the
+> [active tracker](./docs/plans/normalization-aware-cacheability-poc-tracker.md).
+
 > **Installed two-machine proof:** the committed `./buildoptw` command now
 > bootstraps one SHA-verified archive on isolated producer and consumer
 > machines, publishes two Gradle cache tasks over HTTPS, and restores both on a

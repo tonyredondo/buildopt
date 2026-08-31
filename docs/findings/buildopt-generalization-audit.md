@@ -177,17 +177,17 @@ bounded mechanism has already satisfied its own evidence contract.
 
 ## Next generalization steps
 
-The detailed closed order and stop conditions now live in the
-[Durable Native Optimization POC Tracker](../plans/durable-native-optimization-poc-tracker.md).
+The active order and stop conditions now live in the
+[Normalization-Aware Cacheability POC Tracker](../plans/normalization-aware-cacheability-poc-tracker.md).
 The route no longer tries to carry a dynamic decision on every build. It
-first audits five exact public revisions for generic source-bound corrections,
-then compiles only digest-bound reversible patches. No timing is authorized
-until at least three families expose actions and exact-output correctness
-passes. Accepted patches run as optimized native Gradle with no BuildOpt
-runtime on the candidate path. DNO v1 does not reach timing: Micronaut's
-missing-normalization failure closes the route as
-`STOP_DURABLE_NATIVE_OPTIMIZATION_POC` and leaves a normalization-aware
-successor as an unauthorized recommendation.
+first repeats a fresh audit over five exact public revisions, classifies every
+file input by portable normalization and compiles only digest-bound reversible
+patches. Marker-only patches require an already complete portable input
+contract. The only missing-normalization action v2 may propose is reviewed
+relative path sensitivity after two-root, content-mutation and path-mutation
+proof. No timing is authorized until at least three families expose actions
+and zero-failure correctness passes. Accepted patches run as optimized native
+Gradle with no BuildOpt runtime on the candidate path.
 
 The verified-request-hit route is now a closed predecessor. Its 8/8 synthetic
 shadow result and 2/4 public output-state breadth explain why a durable source
@@ -203,6 +203,13 @@ explicit normalization strategy is not a portable cache input and Gradle
 rejects the candidate. Because v1 froze the compiler to `@CacheableTask` only,
 repairing this requires a new normalization-aware contract rather than moving
 the correctness gate. No DNO timing or general speedup evidence exists.
+
+That new contract is now frozen as `NORMALIZATION_AWARE_CACHEABILITY_V2`.
+`NAC-001` is planning authority only: the exact source cohort is reused to
+isolate the detector change, while every v2 classification, patch, build and
+timing row must be fresh. No repository/task-name rule, silent normalization
+inference or automatic merge is allowed. `NAC-002` is the next executable
+block and no v2 performance claim exists yet.
 
 The closed predecessor evidence remains in the
 [Observed Recurrent Request Portfolio POC Tracker](../plans/observed-request-portfolio-poc-tracker.md).

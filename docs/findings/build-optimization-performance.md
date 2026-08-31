@@ -60,9 +60,13 @@
   budget. Groovy and fixtures were stopped rather than counted as zero;
   DNO-005/006 and every new speedup claim remain unauthorized.
   `DNO-007` therefore closes the route as
-  `STOP_DURABLE_NATIVE_OPTIMIZATION_POC`. A normalization-aware detector is a
-  future hypothesis only; it has not inherited timing or implementation
-  authority.
+  `STOP_DURABLE_NATIVE_OPTIMIZATION_POC`. The newly authorized
+  `NORMALIZATION_AWARE_CACHEABILITY_V2` route now freezes that detector as a
+  separate experiment: marker-only admission requires complete portable input
+  normalization, while missing normalization is a reviewed relative-path
+  correction requiring relocation and mutation proof. `NAC-001` contains no
+  candidate execution or speedup result; fresh five-family classification is
+  next. The v2 route has not inherited any DNO timing or candidate result.
 
 See the [current one-pager](./buildopt-poc-handoff.md) and the
 [terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)

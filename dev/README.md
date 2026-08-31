@@ -282,6 +282,19 @@ The scorecard binds all DNO v1 evidence by digest and requires the stopped
 decision, typed unmeasured economics, absent proposal UX and no speedup,
 automatic-merge or successor-authority claim.
 
+Validate the active normalization-aware cacheability successor with:
+
+```bash
+./dev/check-normalization-aware-cacheability
+```
+
+The `NAC-001` checker freezes the two action classes, portable primary
+normalization strategies, reviewed-relative proof requirements, exact
+five-family cohort, zero-failure correctness and paired/longitudinal value
+gates. It also verifies that DNO v1 remains terminal and that `NAC-002` is the
+only open implementation block. It runs no public build and makes no speedup
+claim.
+
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:
 

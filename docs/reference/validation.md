@@ -504,6 +504,16 @@ The historical eight-hour soak harness is outside the active POC. It is not a
 quickstart, owner-lab, CI, or value-gate requirement; reconsider it only after
 the POC proves enough net value to justify productization.
 
+### Normalization-aware cacheability contract
+
+```bash
+./dev/check-normalization-aware-cacheability
+```
+
+This static `NAC-001` gate freezes portable file-input normalization, the only
+reviewed missing-normalization action, the exact five-family source cohort and
+the zero-failure/value stop conditions. It does not execute or time Gradle.
+
 ## Adaptive fragment longitudinal evidence
 
 ```bash

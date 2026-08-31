@@ -25,13 +25,15 @@ decision.
 
 ## Current experiment status
 
-The latest route is `DURABLE_NATIVE_OPTIMIZATION_V1`. It tests whether
+The latest route is `NORMALIZATION_AWARE_CACHEABILITY_V2`. It tests whether
 BuildOpt can turn generic source evidence into an owner-reviewed, exactly
-reversible Gradle patch whose value persists across later commits while native
-Gradle remains the only build runtime. `DNO-001` freezes four opportunity
-classes, a 5/5 source-audit requirement, 3/5 action breadth, exact correctness,
-paired value and twenty-commit longitudinal gates. No new DNO performance
-percentage exists yet; historical results cannot satisfy these gates.
+reversible Gradle cacheability patch whose value persists across later commits
+while native Gradle remains the only build runtime. `NAC-001` freezes a 5/5
+source-audit requirement, 3/5 action breadth, exact correctness, paired value
+and twenty-commit longitudinal gates. It distinguishes tasks whose file inputs
+already declare portable normalization from tasks that need an explicit
+reviewed relative-path correction. No v2 candidate has run and no v2
+performance percentage exists yet.
 
 The fresh `DNO-002` audit is now complete: 5/5 public revisions are
 conclusive and 4/5 expose at least one source-bound action, passing the 3/5
@@ -50,14 +52,18 @@ fixture matrix stop unrun and DNO paired/longitudinal timing is not authorized.
 The result shows that generic cacheability discovery must prove portable input
 normalization, not merely count input/output annotations.
 
-`DNO-007` closes the route as `STOP_DURABLE_NATIVE_OPTIMIZATION_POC`. Contract
+`DNO-007` closes the predecessor as `STOP_DURABLE_NATIVE_OPTIMIZATION_POC`. Contract
 immutability, source breadth and reversible source transactions pass;
 zero-failure correctness does not. Paired value, twenty-commit value and the
 installed proposal UX were never authorized, so the current DNO result has no
-speedup percentage. The most concrete next hypothesis is a separately frozen
-normalization-aware detector that admits marker-only patches only when every
-file input is already normalized and treats any missing normalization as a
-distinct owner-reviewed semantic correction.
+speedup percentage. The successor is now separately frozen: marker-only patches
+are admitted only when every file input already has portable normalization.
+Missing normalization is a different action, limited to reviewed
+`PathSensitivity.RELATIVE` after native two-root output equivalence, content
+and relative-path invalidation, and cross-root cache restoration. The same five
+source revisions are reused only to isolate this detector change; DNO evidence
+cannot satisfy a v2 row. `NAC-002` must now perform the fresh classification
+before any patch, build or timing is authorized.
 
 The now-closed
 `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1` route learned across the exact Gradle
