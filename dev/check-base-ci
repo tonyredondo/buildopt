@@ -263,6 +263,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-remote-cache-locality-harness" >/dev/null
         "${buildopt_script_dir}/check-remote-cache-locality-public-correctness" >/dev/null
         "${buildopt_script_dir}/check-remote-cache-locality-terminal-decision" >/dev/null
+        "${buildopt_script_dir}/check-remote-cache-locality-value-v3" >/dev/null
         "${buildopt_script_dir}/check-verified-request-hit-safety-contract" >/dev/null
         "${buildopt_script_dir}/check-verified-request-hit-shadow-replay" --static >/dev/null
         "${buildopt_script_dir}/check-verified-output-materialization" >/dev/null

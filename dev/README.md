@@ -24,6 +24,12 @@ public gate with:
 ./dev/check-remote-cache-locality-terminal-decision
 ```
 
+Validate the active corrected v3 contract with:
+
+```bash
+./dev/check-remote-cache-locality-value-v3
+```
+
 Validate the closed economic-first contract with:
 
 ```bash

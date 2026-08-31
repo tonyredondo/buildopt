@@ -13,6 +13,12 @@ net value in only one of five families. One of six structurally eligible
 descendants selected a profile, so the frozen terminal decision is
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md).
 
+The active [remote-cache locality v3 route](../plans/remote-cache-locality-value-v3-poc-tracker.md)
+corrects the v2 early-stop design. It must complete all five rows, binds one
+primary public artifact per family and distinguishes native instability from an
+Edge-only failure. Its fixed controlled network envelope can qualify mechanism
+economics, but a real remote path remains necessary for product viability.
+
 The closed [remote-cache locality route](../plans/remote-cache-locality-value-poc-tracker.md)
 tested a product unit that does not require structural-profile recurrence.
 `RCL-001` freezes the same native graph, cache keys, immutable object bytes and

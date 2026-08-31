@@ -1,0 +1,15 @@
+{
+  "schemaVersion":"buildopt.specs/poc-remote-cache-locality-value/v3",
+  "workItem":"RCL3",
+  "objective":"MEASURE_CONTROLLED_PUBLIC_REMOTE_CACHE_LOCALITY_VALUE",
+  "baseline":"OPTIMIZED_NATIVE_GRADLE_DIRECT_TO_IMMUTABLE_HTTP_CACHE",
+  "status":{"currentBlock":"RCL3-002","completedBlocks":["RCL3-001"],"publicBuildAuthorized":false,"timingAuthorized":false},
+  "predecessor":{"v2MayMotivateDesign":true,"v2MaySupplyEvidenceRows":false,"v2TerminalDecision":"STOP_REMOTE_CACHE_LOCALITY_VALUE_POC"},
+  "correctness":{"familiesMustComplete":5,"failFastAcrossFamilies":false,"nativeProducersPerFamily":2,"directConsumersPerFamily":1,"edgeConsumersPerFamily":1,"minimumEligibleFamilies":3,"nativeMismatchProductFailure":false,"edgeOnlyMismatchProductFailure":true,"localGradleCacheEnabled":false,"measuredWritesAllowed":false},
+  "network":{"model":"LOOPBACK_SHAPED_FIXED_PUBLIC_WORKLOAD_ENVELOPE","latencyPerSuccessfulOriginGetMs":30,"bandwidthBytesPerSecond":104857600,"packetLossRatio":0,"edgeShaped":false,"realCustomerPathClaimed":false},
+  "warmValue":{"pairsPerEligibleFamily":8,"minimumPositivePairs":6,"minimumSavedMs":500,"minimumReductionRatio":0.02,"positiveLower95Bound":true,"p95NonRegressive":true,"minimumPositiveFamilies":3,"productFailureBudget":0},
+  "installedValue":{"cacheConsumingBuildsPerPassingFamily":20,"minimumNetPositiveFamilies":3,"positiveSignedPortfolioMs":true,"maximumPaybackCacheConsumingBuilds":10,"includeSeed":true,"includeEdgeFill":true,"includeVerification":true,"includeOperation":true},
+  "forbiddenMechanisms":["BUILD_IMPACT","TASK_SELECTION","PUBLIC_SOURCE_PATCH","OUTPUT_MATERIALIZATION","RUNTIME_TUNING","TEST_OPTIMIZATION"],
+  "blocks":["RCL3-001","RCL3-002","RCL3-003","RCL3-004","RCL3-005","RCL3-006"],
+  "boundaries":{"controlledMechanismClaimPossible":true,"realPathProductViabilityClaimPossible":false,"productionAuthorized":false,"automaticMergeAuthorized":false,"testOptimization":"OUT_OF_SCOPE"}
+}

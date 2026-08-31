@@ -8,6 +8,11 @@ equal-opportunity contract, fixture proof, stopped public gate and typed
 unmeasured value. The closed EOF route remains checked by
 `./dev/check-economic-opportunity-first`.
 
+The active corrected v3 planning contract is checked by
+`./dev/check-remote-cache-locality-value-v3`; it freezes non-fail-fast five-
+family correctness, source-bound primary outputs and the controlled network
+claim boundary.
+
 The closed NAC v2 route is checked by
 `./dev/check-normalization-aware-cacheability`,
 `./dev/check-normalization-aware-cacheability-source-classification`,
@@ -29,6 +34,7 @@ provision tools or create release artifacts document that effect explicitly.
 
 | Change | Command |
 |---|---|
+| Remote-cache-locality v3 corrected five-family planning contract | `./dev/check-remote-cache-locality-value-v3` |
 | Remote-cache-locality v2 contract, cohort, equal opportunity, costs and authority | `./dev/check-remote-cache-locality-value` |
 | Remote-cache-locality fixture key parity and verified failure behavior | `./dev/check-remote-cache-locality-harness` |
 | Remote-cache-locality public exact-output stop and independent gate recount | `./dev/check-remote-cache-locality-public-correctness` |

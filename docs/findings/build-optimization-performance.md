@@ -2,6 +2,12 @@
 
 ## Current Executive Summary
 
+- **Remote-cache locality v3 is active and planning-only.** It preserves v2,
+  completes all five correctness rows, freezes source-bound primary artifacts
+  and separates native output instability from Edge-only failures. Later timing
+  uses a fixed 30-ms/100-MiB/s controlled envelope; it cannot alone prove a real
+  deployment path. No v3 public build or timing exists yet.
+
 - **The latest successor, equal-opportunity cache locality, stopped before
   timing.** `RCL-001` compares optimized native Gradle direct to fixed
   remote-cache objects with the identical graph through a verifying local

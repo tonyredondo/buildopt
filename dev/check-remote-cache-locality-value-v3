@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-remote-cache-locality-value/v3" and
+  .workItem == "RCL3" and .status.currentBlock == "RCL3-002" and
+  .status.completedBlocks == ["RCL3-001"] and
+  (.status.publicBuildAuthorized | not) and (.status.timingAuthorized | not) and
+  .predecessor.v2MaySupplyEvidenceRows == false and
+  .correctness == {familiesMustComplete:5,failFastAcrossFamilies:false,
+    nativeProducersPerFamily:2,directConsumersPerFamily:1,edgeConsumersPerFamily:1,
+    minimumEligibleFamilies:3,nativeMismatchProductFailure:false,
+    edgeOnlyMismatchProductFailure:true,localGradleCacheEnabled:false,measuredWritesAllowed:false} and
+  .network == {model:"LOOPBACK_SHAPED_FIXED_PUBLIC_WORKLOAD_ENVELOPE",
+    latencyPerSuccessfulOriginGetMs:30,bandwidthBytesPerSecond:104857600,
+    packetLossRatio:0,edgeShaped:false,realCustomerPathClaimed:false} and
+  .warmValue.pairsPerEligibleFamily == 8 and .warmValue.minimumPositivePairs == 6 and
+  .warmValue.minimumSavedMs == 500 and .warmValue.minimumReductionRatio == 0.02 and
+  .warmValue.minimumPositiveFamilies == 3 and .warmValue.productFailureBudget == 0 and
+  .installedValue.cacheConsumingBuildsPerPassingFamily == 20 and
+  .installedValue.maximumPaybackCacheConsumingBuilds == 10 and
+  (.forbiddenMechanisms | length) == 6 and
+  .blocks == ["RCL3-001","RCL3-002","RCL3-003","RCL3-004","RCL3-005","RCL3-006"] and
+  .boundaries.controlledMechanismClaimPossible and
+  (.boundaries.realPathProductViabilityClaimPossible | not)
+' specs/poc-remote-cache-locality-value-v3.json >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-remote-cache-locality-value-subjects/v3" and
+  .reusePolicy == "SUBJECT_SELECTION_ONLY_ALL_V3_EXECUTION_FRESH" and
+  (.families | length) == 5 and ([.families[].key] | unique | length) == 5 and
+  all(.families[]; (.revision | test("^[0-9a-f]{40}$")) and
+      .primaryOutput.kind == "SINGLE_PRIMARY_BINARY_JAR" and
+      (.primaryOutput.include | length) > 0 and
+      (.sourceBinding.sha256 | test("^[0-9a-f]{64}$")))
+' specs/poc-remote-cache-locality-value-v3.subjects.json >/dev/null
+
+grep -Fq "**Current block:** \`RCL3-002\`" docs/plans/remote-cache-locality-value-v3-poc-tracker.md
+printf 'RCL3 contract OK: five-family non-fail-fast correction frozen\n'

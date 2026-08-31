@@ -2,6 +2,8 @@
 
 Reproducible workloads for measuring causal savings, overhead, queues, additional compute, and behavior under failure.
 
+The active corrected route is indexed by the [remote cache locality v3 evidence](./results/remote-cache-locality-value-v3/README.md). It completes all five correctness rows, separates native instability from Edge failures and freezes one controlled 30-ms/100-MiB/s envelope before timing. No v3 public build or timing exists yet.
+
 The latest closed route is documented by the
 [remote cache locality v2 evidence](./results/remote-cache-locality-value-v2/README.md).
 `RCL-001` freezes identical graph/key/object/output opportunity, one unshaped
