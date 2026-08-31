@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+buildopt_family=
+buildopt_checkout=
+buildopt_result=
+while (($#)); do
+    case "$1" in
+        --family) buildopt_family=${2:-}; shift 2 ;;
+        --checkout) buildopt_checkout=${2:-}; shift 2 ;;
+        --result) buildopt_result=${2:-}; shift 2 ;;
+        *) printf 'usage: %s --family KEY --checkout PATH --result PATH\n' "$0" >&2; exit 64 ;;
+    esac
+done
+if [[ -z "${buildopt_family}" || -z "${buildopt_checkout}" || -z "${buildopt_result}" ]]; then
+    printf 'usage: %s --family KEY --checkout PATH --result PATH\n' "$0" >&2
+    exit 64
+fi
+buildopt_checkout=$(realpath "${buildopt_checkout}")
+buildopt_result=$(realpath -m "${buildopt_result}")
+buildopt_subjects=specs/poc-remote-cache-locality-value-v3.subjects.json
+buildopt_java_sha=$(jq -r '.artifacts[]|select(.id=="temurin-jdk-21")|.sha256' dev/toolchains.lock.yaml)
+buildopt_java_home="$(pwd)/.tools/toolchains/temurin-jdk-21-${buildopt_java_sha:0:16}"
+[[ -x "${buildopt_java_home}/bin/java" ]]
+export JAVA_HOME=${buildopt_java_home}
+export PATH="${JAVA_HOME}/bin:${PATH}"
+buildopt_subject=$(jq -ce --arg family "${buildopt_family}" --arg checkout "${buildopt_checkout}" '
+  .families[] | select(.key==$family) |
+  {family:.key,revision,checkout:$checkout,workflow,
+   outputInclude:.primaryOutput.include,outputExclude:.primaryOutput.exclude,
+   initScript:("'"$(pwd)"'/dev/remote-cache-locality.init.gradle")}
+' "${buildopt_subjects}")
+if [[ -z "${buildopt_subject}" ]]; then
+    printf 'unknown RCL3 family: %s\n' "${buildopt_family}" >&2
+    exit 64
+fi
+[[ "$(git -C "${buildopt_checkout}" rev-parse HEAD)" == "$(jq -r .revision <<<"${buildopt_subject}")" ]]
+[[ -z "$(git -C "${buildopt_checkout}" status --porcelain=v1)" ]]
+buildopt_source_path=$(jq -r --arg family "${buildopt_family}" '.families[]|select(.key==$family)|.sourceBinding.path' "${buildopt_subjects}")
+buildopt_source_sha=$(jq -r --arg family "${buildopt_family}" '.families[]|select(.key==$family)|.sourceBinding.sha256' "${buildopt_subjects}")
+[[ "$(sha256sum "${buildopt_checkout}/${buildopt_source_path}" | awk '{print $1}')" == "${buildopt_source_sha}" ]]
+mkdir -p "$(dirname "${buildopt_result}")"
+BUILDOPT_RCL3_SUBJECT="${buildopt_subject}" BUILDOPT_RCL3_RESULT="${buildopt_result}" \
+    ./dev/run --toolchain go -- go test -v -timeout 45m -count=1 -run '^TestRCL3PublicCorrectness$' ./internal/sharedcache
+jq -e --arg family "${buildopt_family}" '.family==$family and .schemaVersion=="buildopt.evidence/remote-cache-locality-public-row/v3"' "${buildopt_result}" >/dev/null
+printf 'RCL3 public correctness row captured: %s -> %s\n' "${buildopt_family}" "${buildopt_result}"

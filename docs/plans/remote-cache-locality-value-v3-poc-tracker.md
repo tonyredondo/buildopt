@@ -12,6 +12,11 @@
 | `RCL3-005` | Twenty-build cost/payback ledger per passing family | `WAITING` |
 | `RCL3-006` | Terminal controlled-mechanism and product-viability decision | `WAITING` |
 
+Execution preflight corrected the Micronaut task selector to
+`:micronaut-core:jar` after the frozen `:core:jar` selector failed before any
+producer build or evidence row. The source-bound output and every gate remain
+unchanged.
+
 V2 remains immutable. V3 does not fail fast across families and does not treat
 a native output mismatch as a BuildOpt failure. It selects only primary binary
 artifacts separately exposed by public build definitions. Every v3 build and

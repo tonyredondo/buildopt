@@ -1,7 +1,7 @@
 # Remote Cache Locality Value POC v3
 
-Status: `RCL3-001` complete; `RCL3-002` is current. No v3 public build or
-timing sample exists yet.
+Status: `RCL3-001/002` complete; `RCL3-003` is current. No v3 timing sample
+exists yet.
 
 ## Correction from v2
 
@@ -33,6 +33,12 @@ Primary outputs and their source bindings are frozen in the adjacent subjects
 file. Auxiliary test fixtures, source archives and documentation archives are
 excluded only where the public build definition exposes them as separate
 classified artifacts. The rule cannot change after execution.
+
+Execution preflight corrected Micronaut's logical project selector from
+`:core:jar` to `:micronaut-core:jar`. Its settings include directory `core` but
+the public settings plugin standardizes the Gradle project name. The invalid
+selector failed before a producer build or evidence row existed; the primary
+output, source binding, thresholds and classification rules did not change.
 
 ## Network profile
 

@@ -137,6 +137,7 @@ buildopt_required_tracker_text=(
     "| \`E-462\` | 2026-08-31 | \`POC-REMOTE-CACHE-LOCALITY-VALUE-V2\`, \`RCL-006\` |"
     "| \`E-463\` | 2026-08-31 | \`POC-REMOTE-CACHE-LOCALITY-VALUE-V3\`, \`RCL3-001\` |"
     "| \`E-464\` | 2026-08-31 | \`POC-REMOTE-CACHE-LOCALITY-VALUE-V3\`, \`RCL3-002\` |"
+    "| \`E-465\` | 2026-08-31 | \`POC-REMOTE-CACHE-LOCALITY-VALUE-V3\`, \`RCL3-003\` execution preflight |"
     "| 157 | \`POC-OBSERVED-REQUEST-PORTFOLIO-001\` | Reconstruct all terminal request-aligned causes"
     "| 156 | \`POC-REQUEST-ALIGNED-RECURRENT-LEARNING-001\` | Reconstruct every terminal change-aware negative"
     "| 155 | \`POC-CHANGE-AWARE-PRODUCER-CLOSURE-001\` | Starting from the terminal fresh 1/5 breadth result"

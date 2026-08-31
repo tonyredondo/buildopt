@@ -603,6 +603,7 @@ buildopt_required_files=(
     "dev/check-remote-cache-locality-value"
     "dev/check-remote-cache-locality-value-v3"
     "dev/check-remote-cache-locality-harness-v3"
+    "dev/run-remote-cache-locality-v3-public-row"
     "dev/check-remote-cache-locality-harness"
     "dev/check-remote-cache-locality-public-correctness"
     "dev/check-remote-cache-locality-terminal-decision"
