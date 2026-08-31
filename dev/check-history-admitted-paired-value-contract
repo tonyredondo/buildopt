@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+contract=specs/poc-history-admitted-paired-value-v1.json
+jq -e '
+ .schemaVersion=="buildopt.specs/poc-history-admitted-paired-value/v1" and
+ .status.currentBlock=="HAPV-002" and .status.completedBlocks==["HAPV-001"] and
+ .subject.family=="apache-kafka" and .subject.targetRevision=="2e961afeff5cb27d60767a783edf20be00cc28e8" and
+ .execution.protocol=="v3" and .execution.fresh and .execution.ordinaryInvocations==17 and
+ .execution.pairs==8 and .execution.balancedAlternating and .execution.maximumGradleStarts==17 and
+ .gate=={requiredOutputCount:4440,exactOutputsRequired:true,productFailureBudget:0,minimumPositivePairs:8,minimumMeanSavedMs:500,minimumReductionRatio:0.02,positiveInterval95LowerBoundRequired:true,candidateP95NonRegressionRequired:true,maximumBreakEvenMatches:5} and
+ (.boundaries.historicalTimingReuseAllowed|not) and (.boundaries.repositorySpecificRulesAllowed|not) and
+ (.boundaries.productionAuthorized|not) and .boundaries.testOptimization=="OUT_OF_SCOPE"
+' "$contract" >/dev/null
+path=$(jq -r '.subject.correctness.path' "$contract")
+[[ $(sha256sum "$path"|awk '{print $1}') == $(jq -r '.subject.correctness.sha256' "$contract") ]]
+jq -e '.outputs.count==4440 and .outputs.identical and .productFailures==0' "$path" >/dev/null
+printf 'HAPV contract OK: Kafka 8-pair full-path value, 17 starts maximum\n'
