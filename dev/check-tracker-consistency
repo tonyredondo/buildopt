@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`DURABLE_NATIVE_OPTIMIZATION_POC_STOPPED\`"
-    "**Current phase:** \`NONE\`"
+    "**Overall status:** \`NORMALIZATION_AWARE_CACHEABILITY_POC_ACTIVE\`"
+    "**Current phase:** \`NAC-002\`"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"
@@ -74,6 +74,7 @@ buildopt_required_tracker_text=(
     "| POC-REQUEST-ALIGNED-RECURRENT-LEARNING | Learn only from exact ordinary Gradle requests and changes relevant to their current producer graph | \`STOPPED\` | 6 executed; 2 not authorized |"
     "| POC-OBSERVED-REQUEST-PORTFOLIO | Learn across the exact portfolio of recurrent commands the customer actually invokes, without command substitution or repository rules | \`STOPPED\` | 6 blocks executed; 2 not authorized |"
     "| POC-DURABLE-NATIVE-OPTIMIZATION | Detect and validate generic reversible Gradle-source corrections whose value persists without BuildOpt on the build path | \`STOPPED\` | 7/7 resolved |"
+    "| POC-NORMALIZATION-AWARE-CACHEABILITY | Prove portable owner-reviewed task cacheability corrections with explicit file-input normalization and durable native value | \`DOING\` | 1/7 |"
     "| \`E-403\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-000\` |"
     "| \`E-404\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-001\` |"
     "| \`E-405\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-002\` |"
@@ -120,6 +121,7 @@ buildopt_required_tracker_text=(
     "| \`E-449\` | 2026-08-31 | \`POC-DURABLE-NATIVE-OPTIMIZATION\`, \`DNO-003\` |"
     "| \`E-450\` | 2026-08-31 | \`POC-DURABLE-NATIVE-OPTIMIZATION\`, \`DNO-004\` |"
     "| \`E-451\` | 2026-08-31 | \`POC-DURABLE-NATIVE-OPTIMIZATION\`, \`DNO-007\` |"
+    "| \`E-452\` | 2026-08-31 | \`POC-NORMALIZATION-AWARE-CACHEABILITY\`, \`NAC-001\` |"
     "| 157 | \`POC-OBSERVED-REQUEST-PORTFOLIO-001\` | Reconstruct all terminal request-aligned causes"
     "| 156 | \`POC-REQUEST-ALIGNED-RECURRENT-LEARNING-001\` | Reconstruct every terminal change-aware negative"
     "| 155 | \`POC-CHANGE-AWARE-PRODUCER-CLOSURE-001\` | Starting from the terminal fresh 1/5 breadth result"
