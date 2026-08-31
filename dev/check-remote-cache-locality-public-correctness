@@ -60,8 +60,9 @@ for buildopt_bound in contractSha256 subjectsSha256 harnessSha256; do
     }
 done
 
+buildopt_evidence_commit=$(git log -1 --format=%H -- "${buildopt_report}")
 while IFS=$'\t' read -r buildopt_path buildopt_expected; do
-    buildopt_actual=$(sha256sum "${buildopt_path}" | awk '{print $1}')
+    buildopt_actual=$(git show "${buildopt_evidence_commit}:${buildopt_path}" | sha256sum | awk '{print $1}')
     [[ "${buildopt_actual}" == "${buildopt_expected}" ]] || {
         printf 'RCL lab binding drift: %s\n' "${buildopt_path}" >&2
         exit 1
