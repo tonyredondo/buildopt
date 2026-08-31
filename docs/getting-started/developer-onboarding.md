@@ -186,3 +186,9 @@ the diff.
 
 Run `./dev/check-platform-compatibility` after touching portable file, process,
 storage, CLI, packaging, or service code.
+
+For NAC v2 source-classifier work, run the focused Go tests and then
+`./dev/check-normalization-aware-cacheability-source-classification SOURCE_ROOT`,
+where `SOURCE_ROOT` contains the five repositories named by the frozen subject
+manifest. This reads exact Git objects only; it must not use DNO JSON or start
+a candidate Gradle build.

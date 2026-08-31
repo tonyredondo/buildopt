@@ -4,9 +4,9 @@ Reproducible workloads for measuring causal savings, overhead, queues, additiona
 
 The active fresh route begins with the
 [normalization-aware cacheability v2 evidence](./results/normalization-aware-cacheability-v2/README.md).
-`NAC-001` freezes the normalization classes, exact five-family source cohort,
-zero-failure correctness matrix and value gates. No v2 candidate has been
-admitted, patched, built or timed yet. The closed
+`NAC-002` passes fresh source breadth at 5/5 conclusive and 4/5 action families,
+with eight marker-only and one reviewed-relative candidate. No v2 candidate has
+been patched, built or timed yet. The closed
 [DNO v1 evidence](./results/durable-native-optimization-v1/README.md) explains
 the missing-normalization failure but cannot satisfy any v2 row.
 

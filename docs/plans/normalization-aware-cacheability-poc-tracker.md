@@ -1,7 +1,7 @@
 # Normalization-Aware Cacheability POC Tracker
 
 **Status:** active<br>
-**Current block:** `NAC-002`<br>
+**Current block:** `NAC-003`<br>
 **Terminal outcomes:** `CONTINUE_NORMALIZATION_AWARE_CACHEABILITY_POC` or
 `STOP_NORMALIZATION_AWARE_CACHEABILITY_POC`
 
@@ -34,8 +34,8 @@ economics qualify.
 | Block | Deliverable | Entry gate | Exit gate | State |
 | --- | --- | --- | --- | --- |
 | `NAC-001` | Frozen normalization model, exact cohort, thresholds, authority and documentation ledger | User-authorized successor to closed DNO v1 | Contract checker rejects drift and DNO remains terminal | `DONE` |
-| `NAC-002` | Fresh five-family source classification | NAC-001 | 5/5 conclusive and at least 3/5 action families after normalization classification; no DNO report consumed and no timing | `TODO` |
-| `NAC-003` | Relocation/mutation fixture matrix and digest-bound compiler | NAC-002 pass | Gradle 8.14.3/9.6.1 × Kotlin/Groovy pass; marker-only and reviewed-relative transactions apply idempotently, revert byte-exact and reject ambiguity/drift | `WAITING` |
+| `NAC-002` | Fresh five-family source classification | NAC-001 | 5/5 conclusive and 4/5 action families after normalization classification; no DNO report consumed and no timing | `DONE` |
+| `NAC-003` | Relocation/mutation fixture matrix and digest-bound compiler | NAC-002 pass | Gradle 8.14.3/9.6.1 × Kotlin/Groovy pass; marker-only and reviewed-relative transactions apply idempotently, revert byte-exact and reject ambiguity/drift | `TODO` |
 | `NAC-004` | Public-candidate correctness and portability matrix | NAC-003 | Exact outputs, content/path invalidation, cross-root restore, fallback and zero product failures for every admitted candidate | `WAITING` |
 | `NAC-005` | Installed paired value against optimized native Gradle | NAC-004 | Eight balanced pairs per family; frozen value threshold in at least 3/5 families | `WAITING` |
 | `NAC-006` | Twenty-commit durable value per admitted family | NAC-005 | At least 3/5 positive families, positive signed portfolio and finite payback without BuildOpt on candidate build path | `WAITING` |

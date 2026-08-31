@@ -514,6 +514,16 @@ This static `NAC-001` gate freezes portable file-input normalization, the only
 reviewed missing-normalization action, the exact five-family source cohort and
 the zero-failure/value stop conditions. It does not execute or time Gradle.
 
+Reconstruct the `NAC-002` row counts from the checked report with:
+
+```bash
+./dev/check-normalization-aware-cacheability-source-classification
+```
+
+For full local proof, pass a directory containing the five frozen Git clones.
+The checker then reruns the v2 classifier byte for byte and verifies every
+source SHA-256. It starts no Gradle build and authorizes no timing.
+
 ## Adaptive fragment longitudinal evidence
 
 ```bash

@@ -1,0 +1,712 @@
+{
+  "schemaVersion": "buildopt.evidence/normalization-aware-cacheability-source-classification/v2",
+  "contractRevision": "7013e059",
+  "analyzerSha256": "337909e86b6ebddf713a262d6f4339d431b72bf5f1d5abe7bb04dcc551b5a3f6",
+  "evidenceSource": "FRESH_FROZEN_GIT_SOURCE_ONLY",
+  "families": [
+    {
+      "key": "apache-groovy",
+      "repository": "https://github.com/apache/groovy.git",
+      "revision": "655b70f3fdb34dcb8e98fc141c68647f92a27e82",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/CheckstyleHtmlReport.groovy",
+          "className": "CheckstyleHtmlReport",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 41,
+            "startColumn": 1,
+            "endLine": 41,
+            "endColumn": 47
+          },
+          "sourceSha256": "7b0200d6eb02ea9909b9c31fc4cac79813f4c77d6e781bb190235e865a3085cb",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "source",
+              "declarationSpan": {
+                "startLine": 42,
+                "startColumn": 5,
+                "endLine": 46,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILE",
+              "binding": "configFile",
+              "declarationSpan": {
+                "startLine": 47,
+                "startColumn": 5,
+                "endLine": 50,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "checkstyleReportFile",
+              "declarationSpan": {
+                "startLine": 51,
+                "startColumn": 5,
+                "endLine": 55,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/DgmConverter.groovy",
+          "className": "DgmConverter",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 43,
+            "startColumn": 1,
+            "endLine": 43,
+            "endColumn": 39
+          },
+          "sourceSha256": "e30bb4e4d6fd0d5727e122e2a72564fa29925c556751c209a6cb55acf1aecda0",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "sources",
+              "declarationSpan": {
+                "startLine": 52,
+                "startColumn": 5,
+                "endLine": 55,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "classpath",
+              "declarationSpan": {
+                "startLine": 56,
+                "startColumn": 5,
+                "endLine": 59,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "CLASSPATH"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/DispatchMetricsSummary.groovy",
+          "className": "DispatchMetricsSummary",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 52,
+            "startColumn": 1,
+            "endLine": 52,
+            "endColumn": 49
+          },
+          "sourceSha256": "f9520c1deac2204520b8b0963129f69974f69745e000609c6ac8b9932096904a",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILE",
+              "binding": "classLoadLog",
+              "declarationSpan": {
+                "startLine": 54,
+                "startColumn": 5,
+                "endLine": 57,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILE",
+              "binding": "workloadJson",
+              "declarationSpan": {
+                "startLine": 58,
+                "startColumn": 5,
+                "endLine": 61,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "MARKER_ONLY_ELIGIBLE",
+          "reason": "EVERY_FILE_INPUT_HAS_PORTABLE_PRIMARY_NORMALIZATION"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/DocGDK.groovy",
+          "className": "DocGDK",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 47,
+            "startColumn": 1,
+            "endLine": 47,
+            "endColumn": 33
+          },
+          "sourceSha256": "4f7a0cc9d0306b466fd6e1d440516bd1a568dd86331597e69ef0f3105777ccf7",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "classpath",
+              "declarationSpan": {
+                "startLine": 51,
+                "startColumn": 5,
+                "endLine": 54,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "CLASSPATH"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_DIRECTORY",
+              "binding": "mocksDirectory",
+              "declarationSpan": {
+                "startLine": 55,
+                "startColumn": 5,
+                "endLine": 58,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/GenerateGDKMocks.groovy",
+          "className": "GenerateGDKMocks",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 45,
+            "startColumn": 1,
+            "endLine": 45,
+            "endColumn": 43
+          },
+          "sourceSha256": "4f796b5e94802b7c5e9e6f6559eea22a93f2da86581f78ff1a6b438eb8302078",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "classpath",
+              "declarationSpan": {
+                "startLine": 49,
+                "startColumn": 5,
+                "endLine": 52,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "CLASSPATH"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/PerformanceTestSummary.groovy",
+          "className": "PerformanceTestSummary",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 33,
+            "startColumn": 1,
+            "endLine": 33,
+            "endColumn": 49
+          },
+          "sourceSha256": "0cf022f96d7016246e0b4e53ef35a280cf1f120334f547b1ffb047959e09d669",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "csvFiles",
+              "declarationSpan": {
+                "startLine": 34,
+                "startColumn": 5,
+                "endLine": 37,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "MARKER_ONLY_ELIGIBLE",
+          "reason": "EVERY_FILE_INPUT_HAS_PORTABLE_PRIMARY_NORMALIZATION"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/ReleaseInfoGenerator.groovy",
+          "className": "ReleaseInfoGenerator",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 33,
+            "startColumn": 1,
+            "endLine": 33,
+            "endColumn": 47
+          },
+          "sourceSha256": "f8a19e811b900e3f2f59c47a15af421f1533cae21da726bc2b351e2aa6791082",
+          "fileInputs": [],
+          "decision": "MARKER_ONLY_ELIGIBLE",
+          "reason": "NO_FILE_INPUT_REQUIRES_NORMALIZATION"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/SwingBuilderWidgetDocTask.groovy",
+          "className": "SwingBuilderWidgetDocTask",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 46,
+            "startColumn": 1,
+            "endLine": 46,
+            "endColumn": 52
+          },
+          "sourceSha256": "dafe0a29de2c977f6c4560424cf6156f8c3797d7559ee3a8178af1d3c47545e9",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "classpath",
+              "declarationSpan": {
+                "startLine": 52,
+                "startColumn": 5,
+                "endLine": 55,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "CLASSPATH"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/ValidateActionsTask.groovy",
+          "className": "ValidateActionsTask",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 51,
+            "startColumn": 1,
+            "endLine": 51,
+            "endColumn": 46
+          },
+          "sourceSha256": "ca52a1aaa5b00b4a318307f8b5942ec3d861ec32bbc1d5f619be48f0e0020d62",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "workflowFiles",
+              "declarationSpan": {
+                "startLine": 64,
+                "startColumn": 5,
+                "endLine": 66,
+                "endColumn": 1
+              },
+              "primaryNormalization": [],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/WriteExtensionDescriptorTask.groovy",
+          "className": "WriteExtensionDescriptorTask",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 30,
+            "startColumn": 1,
+            "endLine": 30,
+            "endColumn": 55
+          },
+          "sourceSha256": "269236e1fc349457f1d2c0d0c4403562ca30588ff99ecedc939325a0ba1e5f3e",
+          "fileInputs": [],
+          "decision": "MARKER_ONLY_ELIGIBLE",
+          "reason": "NO_FILE_INPUT_REQUIRES_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "key": "apache-kafka",
+      "repository": "https://github.com/apache/kafka.git",
+      "revision": "db8a0925513a76d1a4f13df00867c7491a4b3ce7",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "api-checker/gradle-plugins/src/main/java/org/apache/kafka/gradle/KafkaInternalApiCheckerTask.java",
+          "className": "KafkaInternalApiCheckerTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 51,
+            "startColumn": 1,
+            "endLine": 51,
+            "endColumn": 61
+          },
+          "sourceSha256": "b6474c868974ab1b3072e4d8fb604634e57cc23a94272b614ba24814b84d51f8",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getClassDirs",
+              "declarationSpan": {
+                "startLine": 168,
+                "startColumn": 5,
+                "endLine": 171,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "jar",
+              "declarationSpan": {
+                "startLine": 176,
+                "startColumn": 1,
+                "endLine": 178,
+                "endColumn": 1
+              },
+              "primaryNormalization": [],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getKafkaDependencyJars",
+              "declarationSpan": {
+                "startLine": 180,
+                "startColumn": 5,
+                "endLine": 183,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "api-checker/gradle-plugins/src/main/java/org/apache/kafka/gradle/KafkaPublicApiCheckerTask.java",
+          "className": "KafkaPublicApiCheckerTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 53,
+            "startColumn": 1,
+            "endLine": 53,
+            "endColumn": 59
+          },
+          "sourceSha256": "89df55dd128ff03c204740d20a55786cfbbb7753a9a67785561d7462a680a3ed",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILE",
+              "binding": "getJavadocJarPath",
+              "declarationSpan": {
+                "startLine": 155,
+                "startColumn": 5,
+                "endLine": 159,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getProjectJarFiles",
+              "declarationSpan": {
+                "startLine": 162,
+                "startColumn": 5,
+                "endLine": 166,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getReferenceJarFiles",
+              "declarationSpan": {
+                "startLine": 169,
+                "startColumn": 5,
+                "endLine": 173,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        }
+      ]
+    },
+    {
+      "key": "micronaut-core",
+      "repository": "https://github.com/micronaut-projects/micronaut-core.git",
+      "revision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "buildSrc/src/main/groovy/io/micronaut/build/internal/python/PythonCompile.java",
+          "className": "PythonCompile",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 52,
+            "startColumn": 1,
+            "endLine": 52,
+            "endColumn": 56
+          },
+          "sourceSha256": "e702ba88c6456cd7997e695cb2b865bee8236ce776ac49f8d268bfd1f7af58ba",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getSource",
+              "declarationSpan": {
+                "startLine": 57,
+                "startColumn": 5,
+                "endLine": 60,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getCompilerClasspath",
+              "declarationSpan": {
+                "startLine": 77,
+                "startColumn": 5,
+                "endLine": 79,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "CLASSPATH"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getClasspath",
+              "declarationSpan": {
+                "startLine": 80,
+                "startColumn": 5,
+                "endLine": 82,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "CLASSPATH"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "MARKER_ONLY_ELIGIBLE",
+          "reason": "EVERY_FILE_INPUT_HAS_PORTABLE_PRIMARY_NORMALIZATION"
+        },
+        {
+          "path": "buildSrc/src/main/groovy/io/micronaut/build/internal/python/PythonVfsBytecodeCompile.java",
+          "className": "PythonVfsBytecodeCompile",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 35,
+            "startColumn": 1,
+            "endLine": 35,
+            "endColumn": 67
+          },
+          "sourceSha256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "fileInputs": [
+            {
+              "kind": "INPUT_DIRECTORY",
+              "binding": "getSourceDirectory",
+              "declarationSpan": {
+                "startLine": 39,
+                "startColumn": 5,
+                "endLine": 41,
+                "endColumn": 1
+              },
+              "primaryNormalization": [],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getCompilerClasspath",
+              "declarationSpan": {
+                "startLine": 48,
+                "startColumn": 5,
+                "endLine": 50,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "CLASSPATH"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "REVIEWED_RELATIVE_PROOF_REQUIRED",
+          "reason": "MISSING_PRIMARY_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "repository": "https://github.com/open-telemetry/opentelemetry-java-instrumentation.git",
+      "revision": "3300ac68822ed4dbade73496f2fffd3a2c6e32ed",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "conventions/src/main/kotlin/io/opentelemetry/instrumentation/gradle/CheckMavenPublicationCoordinatesTask.kt",
+          "className": "CheckMavenPublicationCoordinatesTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 14,
+            "startColumn": 1,
+            "endLine": 14,
+            "endColumn": 67
+          },
+          "sourceSha256": "787153f1cccd404df041b19122242dc371f9f11f945f617898e78a1ac9b545c7",
+          "fileInputs": [],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        },
+        {
+          "path": "conventions/src/main/kotlin/io/opentelemetry/instrumentation/gradle/GenerateInstrumentationVersionClassTask.kt",
+          "className": "GenerateInstrumentationVersionClassTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 15,
+            "startColumn": 1,
+            "endLine": 15,
+            "endColumn": 70
+          },
+          "sourceSha256": "c552ee58dd683179598ab224c25af623e0e0050a9e03de971c6ee16a26e92643",
+          "fileInputs": [],
+          "decision": "MARKER_ONLY_ELIGIBLE",
+          "reason": "NO_FILE_INPUT_REQUIRES_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "key": "spring-framework",
+      "repository": "https://github.com/spring-projects/spring-framework.git",
+      "revision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "buildSrc/src/main/java/org/springframework/build/architecture/ArchitectureCheck.java",
+          "className": "ArchitectureCheck",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 59,
+            "startColumn": 1,
+            "endLine": 59,
+            "endColumn": 60
+          },
+          "sourceSha256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getInputClasses",
+              "declarationSpan": {
+                "startLine": 109,
+                "startColumn": 2,
+                "endLine": 114,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": [
+                "IGNORE_EMPTY_DIRECTORIES"
+              ]
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getResourcesDirectory",
+              "declarationSpan": {
+                "startLine": 117,
+                "startColumn": 1,
+                "endLine": 121,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "MARKER_ONLY_ELIGIBLE",
+          "reason": "EVERY_FILE_INPUT_HAS_PORTABLE_PRIMARY_NORMALIZATION"
+        },
+        {
+          "path": "buildSrc/src/main/java/org/springframework/build/shadow/ShadowSource.java",
+          "className": "ShadowSource",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 52,
+            "startColumn": 1,
+            "endLine": 52,
+            "endColumn": 46
+          },
+          "sourceSha256": "d37ef96c4150c022e2387a85addefec50a17e89403c25fa87de1adda0f0573d3",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getConfigurations",
+              "declarationSpan": {
+                "startLine": 61,
+                "startColumn": 2,
+                "endLine": 64,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "CLASSPATH"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "MARKER_ONLY_ELIGIBLE",
+          "reason": "EVERY_FILE_INPUT_HAS_PORTABLE_PRIMARY_NORMALIZATION"
+        }
+      ]
+    }
+  ],
+  "conclusiveFamilies": 5,
+  "actionFamilies": 4,
+  "requiredActionFamilies": 3,
+  "decision": "PASS_SOURCE_ACTION_BREADTH",
+  "compilationAuthorized": true,
+  "timingAuthorized": false
+}

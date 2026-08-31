@@ -61,12 +61,14 @@
   DNO-005/006 and every new speedup claim remain unauthorized.
   `DNO-007` therefore closes the route as
   `STOP_DURABLE_NATIVE_OPTIMIZATION_POC`. The newly authorized
-  `NORMALIZATION_AWARE_CACHEABILITY_V2` route now freezes that detector as a
+  `NORMALIZATION_AWARE_CACHEABILITY_V2` route treats that detector as a
   separate experiment: marker-only admission requires complete portable input
   normalization, while missing normalization is a reviewed relative-path
-  correction requiring relocation and mutation proof. `NAC-001` contains no
-  candidate execution or speedup result; fresh five-family classification is
-  next. The v2 route has not inherited any DNO timing or candidate result.
+  correction requiring relocation and mutation proof. Fresh `NAC-002` source
+  evidence passes at 5/5 conclusive and 4/5 action families, with eight
+  marker-only rows and one reviewed-relative row. No patch, candidate build or
+  timing exists, and the v2 route has inherited no DNO evidence row or value
+  claim.
 
 See the [current one-pager](./buildopt-poc-handoff.md) and the
 [terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)

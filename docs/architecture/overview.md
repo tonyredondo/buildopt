@@ -451,3 +451,9 @@ RFC/ADR decision
 
 Generated clients are the exception: their normative IDL is edited first and
 their checked-in source is regenerated. Never edit generated output directly.
+
+For the bounded NAC v2 POC, `internal/normalizationaware` owns source-fact
+classification and `cmd/normalization-aware-cacheability-audit` owns frozen Git
+traversal and evidence serialization. Neither component patches source, starts
+Gradle or reads predecessor evidence. Patch compilation remains a later,
+separate `NAC-003` boundary.

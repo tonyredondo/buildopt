@@ -62,8 +62,10 @@ Missing normalization is a different action, limited to reviewed
 `PathSensitivity.RELATIVE` after native two-root output equivalence, content
 and relative-path invalidation, and cross-root cache restoration. The same five
 source revisions are reused only to isolate this detector change; DNO evidence
-cannot satisfy a v2 row. `NAC-002` must now perform the fresh classification
-before any patch, build or timing is authorized.
+cannot satisfy a v2 row. `NAC-002` now passes fresh source breadth at **5/5
+conclusive** and **4/5 action families**, with eight marker-only rows and one
+Micronaut reviewed-relative row. No public patch or candidate build ran and no
+timing is authorized. `NAC-003` is next.
 
 The now-closed
 `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1` route learned across the exact Gradle

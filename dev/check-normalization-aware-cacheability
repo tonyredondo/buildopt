@@ -24,6 +24,16 @@ jq -e '
     reuseExactSourceRevisionsToIsolateDetectorChange: true,
     freshV2EvidenceRequired: true
   } and
+  .sourceClassification == {
+    block: "NAC-002",
+    evidence: "benchmarks/results/normalization-aware-cacheability-v2/source-classification.json",
+    conclusiveFamilies: 5,
+    actionFamilies: 4,
+    markerOnlyCandidates: 8,
+    reviewedRelativeProofCandidates: 1,
+    decision: "PASS_SOURCE_ACTION_BREADTH",
+    timingAuthorized: false
+  } and
   .normalization.portablePrimaryStrategies == [
     "PATH_SENSITIVE_RELATIVE",
     "PATH_SENSITIVE_NAME_ONLY",
@@ -77,10 +87,10 @@ jq -e '
 ' specs/poc-normalization-aware-cacheability-v2.subjects.json >/dev/null
 
 grep -Eq '^\*\*Status:\*\* active' docs/plans/normalization-aware-cacheability-poc-tracker.md
-grep -Eq "^\*\*Current block:\*\* \`NAC-002\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
+grep -Eq "^\*\*Current block:\*\* \`NAC-003\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
 grep -Eq "\`NAC-001\`.*\`DONE\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
-grep -Eq "\`NAC-002\`.*\`TODO\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
-grep -Eq "\`NAC-003\`.*\`WAITING\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
+grep -Eq "\`NAC-002\`.*\`DONE\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
+grep -Eq "\`NAC-003\`.*\`TODO\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
 grep -Fq 'DNO v1 remains closed and supplies no v2 evidence row or timing sample.' \
     docs/plans/normalization-aware-cacheability-poc-tracker.md
 grep -Fq "\`PathSensitivity.ABSOLUTE\` is explicit but not portable and is rejected." \
@@ -88,4 +98,4 @@ grep -Fq "\`PathSensitivity.ABSOLUTE\` is explicit but not portable and is rejec
 grep -Fq "Status: closed with terminal \`STOP_DURABLE_NATIVE_OPTIMIZATION_POC\`." \
     specs/poc-durable-native-optimization-v1.md
 
-printf 'NAC contract OK: explicit normalization, fresh evidence and stop gates frozen; NAC-002 is next\n'
+printf 'NAC contract OK: NAC-002 source breadth passed without timing; NAC-003 is next\n'

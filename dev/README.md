@@ -288,12 +288,22 @@ Validate the active normalization-aware cacheability successor with:
 ./dev/check-normalization-aware-cacheability
 ```
 
-The `NAC-001` checker freezes the two action classes, portable primary
+The contract checker freezes the two action classes, portable primary
 normalization strategies, reviewed-relative proof requirements, exact
 five-family cohort, zero-failure correctness and paired/longitudinal value
-gates. It also verifies that DNO v1 remains terminal and that `NAC-002` is the
-only open implementation block. It runs no public build and makes no speedup
-claim.
+gates. `NAC-002` has passed and `NAC-003` is now the only open block.
+
+Validate the checked source classification statically, or rerun it from five
+local frozen Git clones, with:
+
+```bash
+./dev/check-normalization-aware-cacheability-source-classification [SOURCE_ROOT]
+```
+
+The independent checker derives 5/5 conclusive and 4/5 action families from
+candidate rows, rejects DNO evidence dependencies and, with `SOURCE_ROOT`,
+regenerates the report and verifies every source digest. It runs no Gradle
+build and makes no speedup claim.
 
 Recompute the generic opportunity selection from the terminal fresh decision,
 the frozen five-family cohort, current observations and the new contract with:

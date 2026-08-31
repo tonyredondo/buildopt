@@ -305,6 +305,7 @@ dedicated, and compatible with the platform storage policy.
 | Cross-component behavior | `specs/` | fixture and owning `dev/check-*` |
 | CLI parsing/composition | `cmd/<binary>/` | internal package and CLI reference |
 | Reusable Go behavior | owning `internal/<package>/` | package tests and architecture docs |
+| NAC v2 source classification | `internal/normalizationaware/` and `cmd/normalization-aware-cacheability-audit/` | frozen subject manifest, checked report and independent checker |
 | Gradle behavior | `jvm/gradle-plugin/` | Tier 1 fixtures and capability matrix |
 | Patch recipe | `jvm/patcher/` | bundle/recipe specs and exact revert proof |
 | CI installation | `.github/`, `.gitlab/`, `action.yml` | native packages, release workflow, and recovery runbook |

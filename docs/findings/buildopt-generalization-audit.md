@@ -204,12 +204,15 @@ rejects the candidate. Because v1 froze the compiler to `@CacheableTask` only,
 repairing this requires a new normalization-aware contract rather than moving
 the correctness gate. No DNO timing or general speedup evidence exists.
 
-That new contract is now frozen as `NORMALIZATION_AWARE_CACHEABILITY_V2`.
-`NAC-001` is planning authority only: the exact source cohort is reused to
-isolate the detector change, while every v2 classification, patch, build and
-timing row must be fresh. No repository/task-name rule, silent normalization
-inference or automatic merge is allowed. `NAC-002` is the next executable
-block and no v2 performance claim exists yet.
+That new contract is now active as `NORMALIZATION_AWARE_CACHEABILITY_V2`.
+`NAC-002` regenerated all source facts from the exact five frozen revisions and
+passed breadth at **5/5 conclusive** and **4/5 action families**. Eight rows are
+marker-only eligible and Micronaut contributes one separate
+reviewed-relative-proof-required row. The independent checker derives counts
+from rows, reruns the classifier and verifies source digests without consuming
+DNO evidence. No repository/task-name rule or silent normalization inference
+is allowed. `NAC-003` is next; no v2 patch, build, timing or performance claim
+exists yet.
 
 The closed predecessor evidence remains in the
 [Observed Recurrent Request Portfolio POC Tracker](../plans/observed-request-portfolio-poc-tracker.md).

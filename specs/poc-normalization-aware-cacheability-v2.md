@@ -1,6 +1,7 @@
 # Normalization-aware cacheability POC v2
 
-Status: active at `NAC-001`; implementation and timing are not yet authorized.
+Status: active at `NAC-003`; source classification passed, while candidate
+builds and timing remain unauthorized.
 
 ## Hypothesis
 

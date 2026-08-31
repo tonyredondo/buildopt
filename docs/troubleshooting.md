@@ -177,3 +177,11 @@ BUILDOPT_BYPASS=1 buildopt run -- ./gradlew build
 
 For broader incidents, follow the [base recovery runbook](../runbooks/base-recovery.md)
 and preserve state/log evidence before rollback or removal.
+
+## NAC v2 source classification differs locally
+
+Run `git cat-file -t <frozen-revision>` in each subject repository and rerun
+`./dev/check-normalization-aware-cacheability-source-classification SOURCE_ROOT`.
+A missing revision, changed source digest or byte-different report is source
+drift and must fail closed. Do not substitute a DNO report, patch public source
+or run Gradle to repair a source-classification mismatch.

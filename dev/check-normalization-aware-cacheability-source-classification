@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if (($# > 1)); then
+    printf 'usage: %s [SOURCE_ROOT]\n' "$0" >&2
+    exit 64
+fi
+
+report=benchmarks/results/normalization-aware-cacheability-v2/source-classification.json
+
+# Reconstruct the gate from candidate rows. Aggregate fields are outputs to
+# cross-check, never evidence inputs.
+jq -e '
+  .schemaVersion == "buildopt.evidence/normalization-aware-cacheability-source-classification/v2" and
+  .contractRevision == "7013e059" and
+  .evidenceSource == "FRESH_FROZEN_GIT_SOURCE_ONLY" and
+  (.families | length) == 5 and
+  ([.families[].key] | unique | length) == 5 and
+  all(.families[]; .conclusive == true) and
+  ([.families[] | select(any(.candidates[];
+      .decision == "MARKER_ONLY_ELIGIBLE" or
+      .decision == "REVIEWED_RELATIVE_PROOF_REQUIRED"))] | length) as $actions |
+  ([.families[] | select(.conclusive == true)] | length) as $conclusive |
+  .conclusiveFamilies == $conclusive and
+  .actionFamilies == $actions and
+  $conclusive == 5 and $actions >= 3 and
+  .requiredActionFamilies == 3 and
+  .decision == "PASS_SOURCE_ACTION_BREADTH" and
+  .compilationAuthorized == true and
+  .timingAuthorized == false and
+  all(.families[].candidates[];
+    (.path | type == "string" and length > 0) and
+    (.className | type == "string" and length > 0) and
+    (.sourceSha256 | test("^[0-9a-f]{64}$")) and
+    (.declarationSpan.startLine > 0 and .declarationSpan.endLine > 0) and
+    (.decision | IN(
+      "MARKER_ONLY_ELIGIBLE",
+      "REVIEWED_RELATIVE_PROOF_REQUIRED",
+      "EXPLICIT_NON_PORTABLE",
+      "ALREADY_CACHEABLE",
+      "DISABLED_CACHING",
+      "INCOMPLETE_OR_AMBIGUOUS",
+      "NO_ACTION")) and
+    all(.fileInputs[];
+      (.kind | IN("INPUT_FILE", "INPUT_FILES", "INPUT_DIRECTORY", "INPUT_DIRECTORIES")) and
+      (.binding | type == "string" and length > 0) and
+      (.declarationSpan.startLine > 0 and .declarationSpan.endLine > 0) and
+      all(.primaryNormalization[]; IN(
+        "PATH_SENSITIVE_RELATIVE", "PATH_SENSITIVE_NAME_ONLY", "PATH_SENSITIVE_NONE",
+        "PATH_SENSITIVE_ABSOLUTE", "CLASSPATH", "COMPILE_CLASSPATH")) and
+      all(.supplementaryNormalization[]; IN("NORMALIZE_LINE_ENDINGS", "IGNORE_EMPTY_DIRECTORIES"))))
+' "$report" >/dev/null
+
+if rg -q 'durable-native-optimization-v1/opportunity-report|poc-durable-native-optimization-v1.subjects' \
+    cmd/normalization-aware-cacheability-audit internal/normalizationaware "$report"; then
+    printf 'NAC-002 classifier must not consume DNO evidence inputs\n' >&2
+    exit 1
+fi
+
+if (($# == 1)); then
+    source_root=$1
+    temporary_report=$(mktemp)
+    trap 'rm -f "$temporary_report"' EXIT
+    go run ./cmd/normalization-aware-cacheability-audit \
+        --source-root "$source_root" \
+        --contract-revision 7013e059 \
+        --output "$temporary_report"
+    cmp --silent "$report" "$temporary_report"
+
+    while IFS=$'\t' read -r family revision path expected; do
+        actual=$(git -C "$source_root/$family" show "$revision:$path" | sha256sum | cut -d' ' -f1)
+        if [[ $actual != "$expected" ]]; then
+            printf '%s:%s source drift: expected %s, got %s\n' "$family" "$path" "$expected" "$actual" >&2
+            exit 1
+        fi
+    done < <(jq -r '.families[] | .key as $key | .revision as $revision | .candidates[] | [$key, $revision, .path, .sourceSha256] | @tsv' "$report")
+fi
+
+printf 'NAC-002 source classification OK: 5/5 conclusive, 4/5 action families, no timing\n'

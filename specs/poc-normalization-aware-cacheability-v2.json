@@ -14,6 +14,16 @@
     "reuseExactSourceRevisionsToIsolateDetectorChange": true,
     "freshV2EvidenceRequired": true
   },
+  "sourceClassification": {
+    "block": "NAC-002",
+    "evidence": "benchmarks/results/normalization-aware-cacheability-v2/source-classification.json",
+    "conclusiveFamilies": 5,
+    "actionFamilies": 4,
+    "markerOnlyCandidates": 8,
+    "reviewedRelativeProofCandidates": 1,
+    "decision": "PASS_SOURCE_ACTION_BREADTH",
+    "timingAuthorized": false
+  },
   "normalization": {
     "portablePrimaryStrategies": [
       "PATH_SENSITIVE_RELATIVE",

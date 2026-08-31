@@ -464,3 +464,10 @@ Wrapper, argv, scope, base/target, discovery and budget bindings pass.
 
 
 See [CI integration](../guides/ci-integration.md).
+
+## NAC v2 audit inputs
+
+The source audit has no product configuration. Its CLI accepts an explicit
+source root, frozen subject manifest, contract revision and output path. The
+source root is local operator input and is never persisted in checked evidence;
+repository and task names are labels, not classifier rules.
