@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+./dev/run --toolchain go -- go test ./internal/normalizationaware
+
+evidence=benchmarks/results/normalization-aware-cacheability-v2/patch-plan.json
+jq -e '
+  .schemaVersion == "buildopt.evidence/normalization-aware-cacheability-patch-plan/v2" and
+  (.patches | length) == 8 and .applied == 8 and .exactReverts == 8 and
+  (.reviewedRelative | length) == 1 and
+  .reviewedRelative[0].status == "PROOF_AND_OWNER_REVIEW_REQUIRED_BEFORE_PUBLIC_COMPILATION" and
+  .timingAuthorized == false and
+  all(.patches[]; .patch.action == "ADD_CACHEABLE_TASK_MARKER_V2")
+' "$evidence" >/dev/null
+
+if [[ -n ${NAC_SOURCE_ROOT:-} ]]; then
+    temporary_plan=$(mktemp)
+    trap 'rm -f "$temporary_plan"' EXIT
+    ./dev/run --toolchain go -- go run ./cmd/normalization-aware-cacheability-patch-plan \
+        --source-root "$NAC_SOURCE_ROOT" --output "$temporary_plan"
+    cmp --silent "$evidence" "$temporary_plan"
+fi
+
+if [[ ${NAC_RUN_GRADLE_MATRIX:-0} != 1 ]]; then
+    printf 'NAC-003 compiler static proof OK; set NAC_RUN_GRADLE_MATRIX=1 for the real 4-row Gradle matrix\n'
+    exit 0
+fi
+
+gradle_8=.tools/gradle-compat/gradle-8.14.3/bin/gradle
+gradle_9=$(find .tools/gradle-user-home/wrapper/dists/gradle-9.6.1-bin -type f -path '*/gradle-9.6.1/bin/gradle' -print -quit)
+for executable in "$gradle_8" "$gradle_9"; do
+    [[ -x $executable ]] || { printf 'required Gradle executable unavailable: %s\n' "$executable" >&2; exit 1; }
+done
+
+temporary_root=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-nac003.XXXXXX")
+trap 'rm -rf -- "$temporary_root"' EXIT
+
+for version in 8.14.3 9.6.1; do
+    if [[ $version == 8.14.3 ]]; then gradle=$gradle_8; else gradle=$gradle_9; fi
+    for dsl in groovy kotlin; do
+        fixture="$temporary_root/$version-$dsl"
+        cp -R "fixtures/normalization-aware-cacheability/$dsl" "$fixture"
+        gradle_home="$temporary_root/gradle-home-$version-$dsl"
+        "$gradle" -p "$fixture" --gradle-user-home "$gradle_home" --no-daemon --build-cache portableInput >/dev/null
+        first=$(sha256sum "$fixture/build/portable.txt" | cut -d' ' -f1)
+        "$gradle" -p "$fixture" --gradle-user-home "$gradle_home" --no-daemon --build-cache clean portableInput --info >"$temporary_root/$version-$dsl.log"
+        second=$(sha256sum "$fixture/build/portable.txt" | cut -d' ' -f1)
+        [[ $first == "$second" ]]
+        grep -Fq 'FROM-CACHE' "$temporary_root/$version-$dsl.log"
+        printf 'NAC-003 Gradle %s %s: exact output and cache restore\n' "$version" "$dsl"
+    done
+done
+
+printf 'NAC-003 compiler and Gradle matrix OK: 4/4 rows\n'

@@ -1,5 +1,13 @@
 # Troubleshooting
 
+## Normalization-aware evidence
+
+If the compiler checker cannot find a global Go installation, use the checked
+toolchain path already embedded through `./dev/run --toolchain go --`. A public
+Gradle failure must be classified separately from an intentionally interrupted
+bounded run: the NAC v2 terminal ledger records the latter as incomplete, not
+as a product failure or a zero-valued timing result.
+
 Start with the narrowest symptom. Preserve the original Gradle command, exit
 status, relevant non-secret diagnostics, exact Git SHA, platform, and
 `buildopt doctor` output. Never include tokens, credentials, raw authority

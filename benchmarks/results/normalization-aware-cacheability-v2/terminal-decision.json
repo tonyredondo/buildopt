@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "buildopt.evidence/normalization-aware-cacheability-terminal/v2",
+  "block": "NAC-007",
+  "decision": "STOP_NORMALIZATION_AWARE_CACHEABILITY_POC",
+  "failedPrerequisite": "NAC-004",
+  "scorecard": {
+    "NAC-001": "PASS",
+    "NAC-002": "PASS",
+    "NAC-003": "PASS",
+    "NAC-004": "FAIL_INCOMPLETE_PUBLIC_CORRECTNESS",
+    "NAC-005": "NOT_AUTHORIZED",
+    "NAC-006": "NOT_AUTHORIZED",
+    "NAC-007": "DONE"
+  },
+  "retainedClaims": [
+    "SOURCE_BREADTH_5_OF_5_CONCLUSIVE_4_OF_5_ACTION",
+    "DIGEST_BOUND_PATCH_TRANSACTIONS_8_OF_8_EXACT_REVERT",
+    "SYNTHETIC_GRADLE_MATRIX_4_OF_4",
+    "FOUR_OF_NINE_PUBLIC_CANDIDATES_FULLY_PROVED",
+    "ZERO_OBSERVED_PRODUCT_FAILURES"
+  ],
+  "rejectedClaims": [
+    "COMPLETE_PUBLIC_CORRECTNESS",
+    "PAIRED_VALUE",
+    "LONGITUDINAL_VALUE",
+    "SPEEDUP",
+    "AUTOMATIC_MERGE",
+    "PRODUCTION_READINESS"
+  ],
+  "measuredWallTime": false,
+  "successorAuthorized": false
+}

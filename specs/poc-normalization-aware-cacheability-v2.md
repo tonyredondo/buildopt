@@ -96,4 +96,16 @@ but owns no wall-time threshold.
 
 ```bash
 ./dev/check-normalization-aware-cacheability
+./dev/check-normalization-aware-cacheability-compiler
+./dev/check-normalization-aware-cacheability-public-correctness
 ```
+
+## Resolution
+
+The route closed at `NAC-007` as
+`STOP_NORMALIZATION_AWARE_CACHEABILITY_POC`. `NAC-003` passed the frozen
+compiler and four-row synthetic matrix. `NAC-004` fully proved 4/9 admitted
+candidates, with zero observed product failures, but did not complete the
+every-candidate matrix after the bounded Groovy performance-input run was
+interrupted. Under the unchanged gate this makes `NAC-005` and `NAC-006`
+`NOT_AUTHORIZED`; no wall-time or speedup claim exists.

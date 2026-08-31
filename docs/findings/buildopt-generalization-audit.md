@@ -204,15 +204,22 @@ rejects the candidate. Because v1 froze the compiler to `@CacheableTask` only,
 repairing this requires a new normalization-aware contract rather than moving
 the correctness gate. No DNO timing or general speedup evidence exists.
 
-That new contract is now active as `NORMALIZATION_AWARE_CACHEABILITY_V2`.
+That contract is now closed as `NORMALIZATION_AWARE_CACHEABILITY_V2`.
 `NAC-002` regenerated all source facts from the exact five frozen revisions and
 passed breadth at **5/5 conclusive** and **4/5 action families**. Eight rows are
 marker-only eligible and Micronaut contributes one separate
 reviewed-relative-proof-required row. The independent checker derives counts
 from rows, reruns the classifier and verifies source digests without consuming
 DNO evidence. No repository/task-name rule or silent normalization inference
-is allowed. `NAC-003` is next; no v2 patch, build, timing or performance claim
-exists yet.
+is allowed. `NAC-003` passed its digest-bound compiler and 4/4 synthetic Gradle
+matrix. Public proof then completed 4/9 candidates: Micronaut's reviewed
+relative action, OpenTelemetry and both Spring classes restore correctly across
+absolute roots, with Micronaut content/path invalidation and native fallback
+also passing. The bounded Groovy run did not finish the required every-candidate
+matrix, so `NAC-004` failed incomplete with zero observed product failures.
+`NAC-005/006` were not authorized and `NAC-007` closed the route as
+`STOP_NORMALIZATION_AWARE_CACHEABILITY_POC`; no timing or performance claim
+exists.
 
 The closed predecessor evidence remains in the
 [Observed Recurrent Request Portfolio POC Tracker](../plans/observed-request-portfolio-poc-tracker.md).

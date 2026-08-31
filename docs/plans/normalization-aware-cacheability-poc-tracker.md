@@ -1,7 +1,7 @@
 # Normalization-Aware Cacheability POC Tracker
 
-**Status:** active<br>
-**Current block:** `NAC-003`<br>
+**Status:** closed — `STOP_NORMALIZATION_AWARE_CACHEABILITY_POC`<br>
+**Current block:** none; all seven blocks are resolved<br>
 **Terminal outcomes:** `CONTINUE_NORMALIZATION_AWARE_CACHEABILITY_POC` or
 `STOP_NORMALIZATION_AWARE_CACHEABILITY_POC`
 
@@ -35,11 +35,11 @@ economics qualify.
 | --- | --- | --- | --- | --- |
 | `NAC-001` | Frozen normalization model, exact cohort, thresholds, authority and documentation ledger | User-authorized successor to closed DNO v1 | Contract checker rejects drift and DNO remains terminal | `DONE` |
 | `NAC-002` | Fresh five-family source classification | NAC-001 | 5/5 conclusive and 4/5 action families after normalization classification; no DNO report consumed and no timing | `DONE` |
-| `NAC-003` | Relocation/mutation fixture matrix and digest-bound compiler | NAC-002 pass | Gradle 8.14.3/9.6.1 × Kotlin/Groovy pass; marker-only and reviewed-relative transactions apply idempotently, revert byte-exact and reject ambiguity/drift | `TODO` |
-| `NAC-004` | Public-candidate correctness and portability matrix | NAC-003 | Exact outputs, content/path invalidation, cross-root restore, fallback and zero product failures for every admitted candidate | `WAITING` |
-| `NAC-005` | Installed paired value against optimized native Gradle | NAC-004 | Eight balanced pairs per family; frozen value threshold in at least 3/5 families | `WAITING` |
-| `NAC-006` | Twenty-commit durable value per admitted family | NAC-005 | At least 3/5 positive families, positive signed portfolio and finite payback without BuildOpt on candidate build path | `WAITING` |
-| `NAC-007` | One-command proposal/review/revert UX and terminal scorecard | NAC-006 or first failed prerequisite | Truthful terminal decision; no unmeasured value or automatic merge authority invented | `WAITING` |
+| `NAC-003` | Relocation/mutation fixture matrix and digest-bound compiler | NAC-002 pass | Gradle 8.14.3/9.6.1 × Kotlin/Groovy pass; marker-only and reviewed-relative transactions apply idempotently, revert byte-exact and reject ambiguity/drift | `DONE` |
+| `NAC-004` | Public-candidate correctness and portability matrix | NAC-003 | Exact outputs, content/path invalidation, cross-root restore, fallback and zero product failures for every admitted candidate | `STOPPED` — 4/9 candidates fully proved; the bounded Groovy run left the complete matrix unmet |
+| `NAC-005` | Installed paired value against optimized native Gradle | NAC-004 | Eight balanced pairs per family; frozen value threshold in at least 3/5 families | `NOT_AUTHORIZED` |
+| `NAC-006` | Twenty-commit durable value per admitted family | NAC-005 | At least 3/5 positive families, positive signed portfolio and finite payback without BuildOpt on candidate build path | `NOT_AUTHORIZED` |
+| `NAC-007` | One-command proposal/review/revert UX and terminal scorecard | NAC-006 or first failed prerequisite | Truthful terminal decision; no unmeasured value or automatic merge authority invented | `DONE` — terminal scorecard only; installed UX was not authorized |
 
 ## Action classes
 
@@ -92,6 +92,25 @@ Patch creation, validation and review costs enter payback.
 
 The first failed prerequisite closes all dependent blocks as
 `NOT_AUTHORIZED`; `NAC-007` records the terminal scorecard.
+
+## Terminal result
+
+`NAC-003` passes its four-row Gradle matrix and all eight marker-only patch
+transactions apply idempotently and revert byte-exact. The reviewed-relative
+Micronaut candidate also passes native fallback, content and relative-path
+invalidation, cross-root restoration and exact output comparison. Fresh
+OpenTelemetry and Spring executions restore all exercised task instances from
+the shared cache in a second absolute root.
+
+`NAC-004` nevertheless does not pass: only 4/9 admitted candidate classes
+received the complete proof. Apache Groovy's `performanceTests` input producer
+requires four versions with 350 compile iterations each; the bounded public
+run was interrupted during the first version and is not classified as a
+product failure. The zero observed product failures therefore remains true,
+but it cannot substitute for the frozen every-candidate gate. `NAC-005` and
+`NAC-006` are `NOT_AUTHORIZED`, no wall-time sample or speedup exists, and
+`NAC-007` records `STOP_NORMALIZATION_AWARE_CACHEABILITY_POC` without
+authorizing installed proposal UX, automatic merge, or a successor.
 
 ## Documentation ledger
 

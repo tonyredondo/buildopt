@@ -66,9 +66,13 @@
   normalization, while missing normalization is a reviewed relative-path
   correction requiring relocation and mutation proof. Fresh `NAC-002` source
   evidence passes at 5/5 conclusive and 4/5 action families, with eight
-  marker-only rows and one reviewed-relative row. No patch, candidate build or
-  timing exists, and the v2 route has inherited no DNO evidence row or value
-  claim.
+  marker-only rows and one reviewed-relative row. Its compiler and 4/4
+  synthetic matrix pass, but public correctness completes only 4/9 candidates.
+  The bounded Groovy performance-input build stops before the full matrix,
+  without a product failure. The unchanged every-candidate gate therefore
+  closes NAC-005/006 as not authorized and NAC-007 records
+  `STOP_NORMALIZATION_AWARE_CACHEABILITY_POC`. No wall-time sample, speedup or
+  inherited DNO value claim exists.
 
 See the [current one-pager](./buildopt-poc-handoff.md) and the
 [terminal functional-coverage decision](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md)

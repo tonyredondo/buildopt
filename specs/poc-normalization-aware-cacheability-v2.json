@@ -24,6 +24,17 @@
     "decision": "PASS_SOURCE_ACTION_BREADTH",
     "timingAuthorized": false
   },
+  "resolution": {
+    "block": "NAC-007",
+    "decision": "STOP_NORMALIZATION_AWARE_CACHEABILITY_POC",
+    "failedPrerequisite": "NAC-004",
+    "fullyProvedCandidates": 4,
+    "admittedCandidates": 9,
+    "productFailures": 0,
+    "pairedValue": "NOT_AUTHORIZED",
+    "longitudinalValue": "NOT_AUTHORIZED",
+    "measuredWallTime": false
+  },
   "normalization": {
     "portablePrimaryStrategies": [
       "PATH_SENSITIVE_RELATIVE",

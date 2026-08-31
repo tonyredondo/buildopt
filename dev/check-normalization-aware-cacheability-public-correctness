@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+report="$root_dir/benchmarks/results/normalization-aware-cacheability-v2/public-correctness.json"
+classification="$root_dir/benchmarks/results/normalization-aware-cacheability-v2/source-classification.json"
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/normalization-aware-cacheability-public-correctness/v2" and
+  .freshEvidence == true and
+  .dnoEvidenceConsumed == false and
+  .candidateCount == 9 and
+  ([.rows[].classes[]] | length) == 9 and
+  ([.rows[] | select(.result == "PASS") | .classes[]] | length) == .fullyProvedCandidates and
+  .productFailures == 0 and
+  .gate.zeroProductFailures == true and
+  .gate.everyCandidateExactOutputs == false and
+  .gate.decision == "FAIL_INCOMPLETE_PUBLIC_CORRECTNESS" and
+  .gate.timingAuthorized == false and
+  .dependentBlocks["NAC-005"] == "NOT_AUTHORIZED" and
+  .dependentBlocks["NAC-006"] == "NOT_AUTHORIZED" and
+  .dependentBlocks["NAC-007"] == "AUTHORIZED_TERMINAL_STOP"
+' "$report" >/dev/null
+
+classified=$(jq '[.families[].candidates[] | select(.decision == "MARKER_ONLY_ELIGIBLE" or .decision == "REVIEWED_RELATIVE_PROOF_REQUIRED")] | length' "$classification")
+reported=$(jq '[.rows[].classes[]] | length' "$report")
+test "$classified" -eq "$reported"
+
+echo "normalization-aware cacheability public correctness: PASS (gate closed honestly)"

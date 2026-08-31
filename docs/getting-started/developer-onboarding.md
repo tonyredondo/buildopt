@@ -1,5 +1,12 @@
 # Developer onboarding
 
+For the closed normalization-aware cacheability evidence, run the static
+contract checks with
+`./dev/check-normalization-aware-cacheability-compiler` and
+`./dev/check-normalization-aware-cacheability-public-correctness`. Set
+`NAC_RUN_GRADLE_MATRIX=1` only when intentionally repeating the four-row local
+Gradle fixture matrix; public candidate builds are not part of Base CI.
+
 This guide takes a contributor from a clean checkout to a focused, reproducible
 change. Repository content, code, comments, examples, commits, and pull requests
 are written in English.

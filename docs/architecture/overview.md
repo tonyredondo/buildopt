@@ -1,5 +1,14 @@
 # Architecture overview
 
+## Normalization-aware cacheability evidence tooling
+
+The `normalizationaware` package owns the versioned source classifier and
+digest-bound patch transaction. Its CLIs emit plans and apply or revert them
+only against an explicitly supplied checkout root. They do not execute Gradle,
+infer normalization from repository/task names, merge patches, or authorize
+timing. The NAC v2 route is terminally stopped; these commands remain evidence
+and exact-revert tooling, not an active optimization path.
+
 This document explains the architecture implemented by the current repository.
 The [master RFC](../../gradle-build-optimization-platform.md) remains the source
 of product decisions and invariants; executable details live in

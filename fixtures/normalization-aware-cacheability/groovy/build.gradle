@@ -1,0 +1,32 @@
+import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.TaskAction
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
+
+plugins {
+    id 'base'
+}
+
+@CacheableTask
+abstract class PortableInputTask extends DefaultTask {
+    @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
+    abstract DirectoryProperty getInputDirectory()
+
+    @OutputFile
+    abstract RegularFileProperty getOutputFile()
+
+    @TaskAction
+    void generate() {
+        outputFile.get().asFile.text = inputDirectory.file('value.txt').get().asFile.text
+    }
+}
+
+tasks.register('portableInput', PortableInputTask) {
+    inputDirectory.set(layout.projectDirectory.dir('input'))
+    outputFile.set(layout.buildDirectory.file('portable.txt'))
+}

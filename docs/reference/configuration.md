@@ -1,5 +1,12 @@
 # Configuration reference
 
+## Normalization-aware compiler checks
+
+`NAC_SOURCE_ROOT` optionally points the compiler checker at a directory holding
+the five frozen family checkouts and requires byte-identical regeneration of
+the checked patch plan. `NAC_RUN_GRADLE_MATRIX=1` enables the real synthetic
+Gradle matrix. Neither setting authorizes public source mutation or timing.
+
 ## Committed wrapper configuration contract
 
 The sticky-wrapper POC reserves two portable committed configuration files:

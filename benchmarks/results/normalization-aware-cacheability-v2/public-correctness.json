@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "buildopt.evidence/normalization-aware-cacheability-public-correctness/v2",
+  "block": "NAC-004",
+  "sourceClassification": "source-classification.json",
+  "patchPlan": "patch-plan.json",
+  "freshEvidence": true,
+  "dnoEvidenceConsumed": false,
+  "candidateCount": 9,
+  "fullyProvedCandidates": 4,
+  "productFailures": 0,
+  "rows": [
+    {
+      "family": "micronaut-core",
+      "classes": ["PythonVfsBytecodeCompile"],
+      "action": "ADD_RELATIVE_PATH_NORMALIZATION_AND_CACHEABLE_MARKER_V1",
+      "result": "PASS",
+      "facts": ["NATIVE_FALLBACK_PASS", "CONTENT_MUTATION_INVALIDATED", "RELATIVE_PATH_MUTATION_INVALIDATED", "CROSS_ROOT_FROM_CACHE", "CROSS_ROOT_OUTPUT_SHA256_MATCH", "EXACT_REVERT"]
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "classes": ["GenerateInstrumentationVersionClassTask"],
+      "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+      "result": "PASS",
+      "facts": ["CROSS_ROOT_FROM_CACHE", "EXACT_REVERT"]
+    },
+    {
+      "family": "spring-framework",
+      "classes": ["ArchitectureCheck", "ShadowSource"],
+      "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+      "result": "PASS",
+      "facts": ["THREE_TASK_INSTANCES_PASS", "THREE_TASK_INSTANCES_CROSS_ROOT_FROM_CACHE", "EXACT_REVERT"]
+    },
+    {
+      "family": "apache-groovy",
+      "classes": ["DispatchMetricsSummary", "PerformanceTestSummary", "ReleaseInfoGenerator", "WriteExtensionDescriptorTask"],
+      "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+      "result": "INCOMPLETE_BOUNDED_RUN",
+      "facts": ["PUBLIC_BUILD_STARTED", "PERFORMANCE_INPUT_PRODUCER_REQUIRES_FOUR_VERSIONS_TIMES_350_COMPILATIONS", "RUN_INTERRUPTED_WITHOUT_PRODUCT_FAILURE", "REQUIRED_MATRIX_NOT_COMPLETE"]
+    },
+    {
+      "family": "micronaut-core",
+      "classes": ["PythonCompile"],
+      "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+      "result": "NOT_RUN_AFTER_GATE_CLOSED",
+      "facts": []
+    }
+  ],
+  "gate": {
+    "everyCandidateExactOutputs": false,
+    "everyCandidateContentMutation": false,
+    "everyCandidateRelativePathMutation": false,
+    "everyCandidateCrossRootRestore": false,
+    "everyCandidateNativeFallback": false,
+    "zeroProductFailures": true,
+    "decision": "FAIL_INCOMPLETE_PUBLIC_CORRECTNESS",
+    "timingAuthorized": false
+  },
+  "dependentBlocks": {
+    "NAC-005": "NOT_AUTHORIZED",
+    "NAC-006": "NOT_AUTHORIZED",
+    "NAC-007": "AUTHORIZED_TERMINAL_STOP"
+  }
+}

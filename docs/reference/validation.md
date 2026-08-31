@@ -1,5 +1,14 @@
 # Validation reference
 
+The closed NAC v2 route is checked by
+`./dev/check-normalization-aware-cacheability`,
+`./dev/check-normalization-aware-cacheability-source-classification`,
+`./dev/check-normalization-aware-cacheability-compiler`, and
+`./dev/check-normalization-aware-cacheability-public-correctness`. The compiler
+check is static by default; `NAC_RUN_GRADLE_MATRIX=1` repeats its four real
+fixture builds. Hosted CI verifies contracts only and never supplies a
+wall-time gate.
+
 BuildOpt uses focused checks as executable evidence. Run the smallest gate that
 owns the changed contract, then add broader composition only when the change
 crosses components or platforms.

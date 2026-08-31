@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "buildopt.evidence/normalization-aware-cacheability-patch-plan/v2",
+  "classificationSha256": "c1514e9cfaa690b1347cda3f12c9aff672b0bce52bd3781b1b0471c175524b9c",
+  "compilerSha256": "a6e57e41aec149de4699f6539c04e0557a79fc7f93e4de9d3170472cd9e7f24b",
+  "patches": [
+    {
+      "family": "apache-groovy",
+      "revision": "655b70f3fdb34dcb8e98fc141c68647f92a27e82",
+      "patch": {
+        "schemaVersion": "buildopt.patch/normalization-aware-cacheability/v2",
+        "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+        "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/DispatchMetricsSummary.groovy",
+        "className": "DispatchMetricsSummary",
+        "expectedSourceSha256": "f9520c1deac2204520b8b0963129f69974f69745e000609c6ac8b9932096904a",
+        "patchedSourceSha256": "afac97f0bb8b1b8935bf68bc23fd06b5d9edf3f6dba22bf1544e6e42b45ab63a",
+        "edits": [
+          {
+            "offset": 2399,
+            "insertedText": "@org.gradle.api.tasks.CacheableTask\n"
+          }
+        ]
+      }
+    },
+    {
+      "family": "apache-groovy",
+      "revision": "655b70f3fdb34dcb8e98fc141c68647f92a27e82",
+      "patch": {
+        "schemaVersion": "buildopt.patch/normalization-aware-cacheability/v2",
+        "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+        "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/PerformanceTestSummary.groovy",
+        "className": "PerformanceTestSummary",
+        "expectedSourceSha256": "0cf022f96d7016246e0b4e53ef35a280cf1f120334f547b1ffb047959e09d669",
+        "patchedSourceSha256": "d54d1ce7be39b4b9cf406bd454e099644a46e69bf63ac39b20b08582094cfd93",
+        "edits": [
+          {
+            "offset": 1257,
+            "insertedText": "@org.gradle.api.tasks.CacheableTask\n"
+          }
+        ]
+      }
+    },
+    {
+      "family": "apache-groovy",
+      "revision": "655b70f3fdb34dcb8e98fc141c68647f92a27e82",
+      "patch": {
+        "schemaVersion": "buildopt.patch/normalization-aware-cacheability/v2",
+        "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+        "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/ReleaseInfoGenerator.groovy",
+        "className": "ReleaseInfoGenerator",
+        "expectedSourceSha256": "f8a19e811b900e3f2f59c47a15af421f1533cae21da726bc2b351e2aa6791082",
+        "patchedSourceSha256": "9ecea5de62d018fbb947be55c9bcc45f4ffd4baf950d23fd5a3b32940caa25b9",
+        "edits": [
+          {
+            "offset": 1215,
+            "insertedText": "@org.gradle.api.tasks.CacheableTask\n"
+          }
+        ]
+      }
+    },
+    {
+      "family": "apache-groovy",
+      "revision": "655b70f3fdb34dcb8e98fc141c68647f92a27e82",
+      "patch": {
+        "schemaVersion": "buildopt.patch/normalization-aware-cacheability/v2",
+        "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+        "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/WriteExtensionDescriptorTask.groovy",
+        "className": "WriteExtensionDescriptorTask",
+        "expectedSourceSha256": "269236e1fc349457f1d2c0d0c4403562ca30588ff99ecedc939325a0ba1e5f3e",
+        "patchedSourceSha256": "ff680bb358ed341902f30d1f4a75745ff4513782ffe308461111a68548da343f",
+        "edits": [
+          {
+            "offset": 1131,
+            "insertedText": "@org.gradle.api.tasks.CacheableTask\n"
+          }
+        ]
+      }
+    },
+    {
+      "family": "micronaut-core",
+      "revision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+      "patch": {
+        "schemaVersion": "buildopt.patch/normalization-aware-cacheability/v2",
+        "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+        "path": "buildSrc/src/main/groovy/io/micronaut/build/internal/python/PythonCompile.java",
+        "className": "PythonCompile",
+        "expectedSourceSha256": "e702ba88c6456cd7997e695cb2b865bee8236ce776ac49f8d268bfd1f7af58ba",
+        "patchedSourceSha256": "442d962a086bc2038f26b574d348705dc35d3e102f3bfa709634b618c3d557c4",
+        "edits": [
+          {
+            "offset": 1871,
+            "insertedText": "@org.gradle.api.tasks.CacheableTask\n"
+          }
+        ]
+      }
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "revision": "3300ac68822ed4dbade73496f2fffd3a2c6e32ed",
+      "patch": {
+        "schemaVersion": "buildopt.patch/normalization-aware-cacheability/v2",
+        "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+        "path": "conventions/src/main/kotlin/io/opentelemetry/instrumentation/gradle/GenerateInstrumentationVersionClassTask.kt",
+        "className": "GenerateInstrumentationVersionClassTask",
+        "expectedSourceSha256": "c552ee58dd683179598ab224c25af623e0e0050a9e03de971c6ee16a26e92643",
+        "patchedSourceSha256": "da3b62aa3cb272ae838291c905cf87daaf131b190dc4aa459b9c79a433d72779",
+        "edits": [
+          {
+            "offset": 372,
+            "insertedText": "@org.gradle.api.tasks.CacheableTask\n"
+          }
+        ]
+      }
+    },
+    {
+      "family": "spring-framework",
+      "revision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+      "patch": {
+        "schemaVersion": "buildopt.patch/normalization-aware-cacheability/v2",
+        "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+        "path": "buildSrc/src/main/java/org/springframework/build/architecture/ArchitectureCheck.java",
+        "className": "ArchitectureCheck",
+        "expectedSourceSha256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+        "patchedSourceSha256": "dd75bc28223141ac121f6377f7ba95832fd250739861196f60120264dd4c2d1d",
+        "edits": [
+          {
+            "offset": 2452,
+            "insertedText": "@org.gradle.api.tasks.CacheableTask\n"
+          }
+        ]
+      }
+    },
+    {
+      "family": "spring-framework",
+      "revision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+      "patch": {
+        "schemaVersion": "buildopt.patch/normalization-aware-cacheability/v2",
+        "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+        "path": "buildSrc/src/main/java/org/springframework/build/shadow/ShadowSource.java",
+        "className": "ShadowSource",
+        "expectedSourceSha256": "d37ef96c4150c022e2387a85addefec50a17e89403c25fa87de1adda0f0573d3",
+        "patchedSourceSha256": "f5932636ecf6269f12e5b8b9107f32aea6b673d7990c729331fc79973b423144",
+        "edits": [
+          {
+            "offset": 1901,
+            "insertedText": "@org.gradle.api.tasks.CacheableTask\n"
+          }
+        ]
+      }
+    }
+  ],
+  "reviewedRelative": [
+    {
+      "family": "micronaut-core",
+      "revision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+      "path": "buildSrc/src/main/groovy/io/micronaut/build/internal/python/PythonVfsBytecodeCompile.java",
+      "className": "PythonVfsBytecodeCompile",
+      "status": "PROOF_AND_OWNER_REVIEW_REQUIRED_BEFORE_PUBLIC_COMPILATION"
+    }
+  ],
+  "applied": 8,
+  "exactReverts": 8,
+  "timingAuthorized": false
+}

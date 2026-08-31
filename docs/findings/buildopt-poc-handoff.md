@@ -25,15 +25,21 @@ decision.
 
 ## Current experiment status
 
-The latest route is `NORMALIZATION_AWARE_CACHEABILITY_V2`. It tests whether
+The latest route is the now-closed `NORMALIZATION_AWARE_CACHEABILITY_V2`. It tested whether
 BuildOpt can turn generic source evidence into an owner-reviewed, exactly
 reversible Gradle cacheability patch whose value persists across later commits
 while native Gradle remains the only build runtime. `NAC-001` freezes a 5/5
 source-audit requirement, 3/5 action breadth, exact correctness, paired value
 and twenty-commit longitudinal gates. It distinguishes tasks whose file inputs
 already declare portable normalization from tasks that need an explicit
-reviewed relative-path correction. No v2 candidate has run and no v2
-performance percentage exists yet.
+reviewed relative-path correction. Source breadth passed 5/5 conclusive and
+4/5 action families, and the compiler plus 4/4 synthetic Gradle matrix passed.
+Public correctness fully proved 4/9 candidate classes, including Micronaut's
+reviewed-relative content/path/relocation/fallback checks, but the bounded
+Groovy performance-input run left the every-candidate matrix incomplete.
+`NAC-005/006` were therefore not authorized and `NAC-007` closed the route as
+`STOP_NORMALIZATION_AWARE_CACHEABILITY_POC`. No v2 performance percentage,
+automatic merge authority or successor exists.
 
 The fresh `DNO-002` audit is now complete: 5/5 public revisions are
 conclusive and 4/5 expose at least one source-bound action, passing the 3/5
@@ -62,10 +68,11 @@ Missing normalization is a different action, limited to reviewed
 `PathSensitivity.RELATIVE` after native two-root output equivalence, content
 and relative-path invalidation, and cross-root cache restoration. The same five
 source revisions are reused only to isolate this detector change; DNO evidence
-cannot satisfy a v2 row. `NAC-002` now passes fresh source breadth at **5/5
+cannot satisfy a v2 row. `NAC-002` passed fresh source breadth at **5/5
 conclusive** and **4/5 action families**, with eight marker-only rows and one
-Micronaut reviewed-relative row. No public patch or candidate build ran and no
-timing is authorized. `NAC-003` is next.
+Micronaut reviewed-relative row. The later compiler proof passed, but complete
+public correctness did not; timing remained unauthorized through terminal
+`NAC-007`.
 
 The now-closed
 `OBSERVED_RECURRENT_REQUEST_PORTFOLIO_V1` route learned across the exact Gradle

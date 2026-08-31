@@ -2,11 +2,12 @@
 
 Reproducible workloads for measuring causal savings, overhead, queues, additional compute, and behavior under failure.
 
-The active fresh route begins with the
+The latest closed route is documented by the
 [normalization-aware cacheability v2 evidence](./results/normalization-aware-cacheability-v2/README.md).
-`NAC-002` passes fresh source breadth at 5/5 conclusive and 4/5 action families,
-with eight marker-only and one reviewed-relative candidate. No v2 candidate has
-been patched, built or timed yet. The closed
+The route passes fresh source breadth at 5/5 conclusive and 4/5 action families,
+with eight marker-only and one reviewed-relative candidate. Compiler proof
+passes, but only 4/9 public candidates complete the correctness matrix, so
+paired and longitudinal timing were not authorized and no speedup is claimed. The closed
 [DNO v1 evidence](./results/durable-native-optimization-v1/README.md) explains
 the missing-normalization failure but cannot satisfy any v2 row.
 
