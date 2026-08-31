@@ -86,11 +86,17 @@ jq -e '
   all(.families[]; (.revision | test("^[0-9a-f]{40}$")))
 ' specs/poc-normalization-aware-cacheability-v2.subjects.json >/dev/null
 
-grep -Eq '^\*\*Status:\*\* active' docs/plans/normalization-aware-cacheability-poc-tracker.md
-grep -Eq "^\*\*Current block:\*\* \`NAC-003\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
+grep -Fq '**Status:** closed — ' \
+    docs/plans/normalization-aware-cacheability-poc-tracker.md
+grep -Fq '**Current block:** none; all seven blocks are resolved' \
+    docs/plans/normalization-aware-cacheability-poc-tracker.md
 grep -Eq "\`NAC-001\`.*\`DONE\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
 grep -Eq "\`NAC-002\`.*\`DONE\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
-grep -Eq "\`NAC-003\`.*\`TODO\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
+grep -Eq "\`NAC-003\`.*\`DONE\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
+grep -Eq "\`NAC-004\`.*\`STOPPED\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
+grep -Eq "\`NAC-005\`.*\`NOT_AUTHORIZED\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
+grep -Eq "\`NAC-006\`.*\`NOT_AUTHORIZED\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
+grep -Eq "\`NAC-007\`.*\`DONE\`" docs/plans/normalization-aware-cacheability-poc-tracker.md
 grep -Fq 'DNO v1 remains closed and supplies no v2 evidence row or timing sample.' \
     docs/plans/normalization-aware-cacheability-poc-tracker.md
 grep -Fq "\`PathSensitivity.ABSOLUTE\` is explicit but not portable and is rejected." \
@@ -98,4 +104,14 @@ grep -Fq "\`PathSensitivity.ABSOLUTE\` is explicit but not portable and is rejec
 grep -Fq "Status: closed with terminal \`STOP_DURABLE_NATIVE_OPTIMIZATION_POC\`." \
     specs/poc-durable-native-optimization-v1.md
 
-printf 'NAC contract OK: NAC-002 source breadth passed without timing; NAC-003 is next\n'
+jq -e '
+  .schemaVersion == "buildopt.evidence/normalization-aware-cacheability-terminal/v2" and
+  .decision == "STOP_NORMALIZATION_AWARE_CACHEABILITY_POC" and
+  .failedPrerequisite == "NAC-004" and
+  .scorecard["NAC-005"] == "NOT_AUTHORIZED" and
+  .scorecard["NAC-006"] == "NOT_AUTHORIZED" and
+  .measuredWallTime == false and
+  .successorAuthorized == false
+' benchmarks/results/normalization-aware-cacheability-v2/terminal-decision.json >/dev/null
+
+printf 'NAC contract OK: terminal stop preserves incomplete correctness and unauthorized timing\n'
