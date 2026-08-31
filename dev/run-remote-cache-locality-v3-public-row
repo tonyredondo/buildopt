@@ -5,11 +5,13 @@ cd "$(dirname "$0")/.."
 buildopt_family=
 buildopt_checkout=
 buildopt_result=
+buildopt_timing_result=
 while (($#)); do
     case "$1" in
         --family) buildopt_family=${2:-}; shift 2 ;;
         --checkout) buildopt_checkout=${2:-}; shift 2 ;;
         --result) buildopt_result=${2:-}; shift 2 ;;
+        --timing-result) buildopt_timing_result=${2:-}; shift 2 ;;
         *) printf 'usage: %s --family KEY --checkout PATH --result PATH\n' "$0" >&2; exit 64 ;;
     esac
 done
@@ -19,6 +21,9 @@ if [[ -z "${buildopt_family}" || -z "${buildopt_checkout}" || -z "${buildopt_res
 fi
 buildopt_checkout=$(realpath "${buildopt_checkout}")
 buildopt_result=$(realpath -m "${buildopt_result}")
+if [[ -n "${buildopt_timing_result}" ]]; then
+    buildopt_timing_result=$(realpath -m "${buildopt_timing_result}")
+fi
 buildopt_subjects=specs/poc-remote-cache-locality-value-v3.subjects.json
 buildopt_java_home=
 buildopt_java_installations=
@@ -51,7 +56,10 @@ buildopt_source_path=$(jq -r --arg family "${buildopt_family}" '.families[]|sele
 buildopt_source_sha=$(jq -r --arg family "${buildopt_family}" '.families[]|select(.key==$family)|.sourceBinding.sha256' "${buildopt_subjects}")
 [[ "$(sha256sum "${buildopt_checkout}/${buildopt_source_path}" | awk '{print $1}')" == "${buildopt_source_sha}" ]]
 mkdir -p "$(dirname "${buildopt_result}")"
-BUILDOPT_RCL3_SUBJECT="${buildopt_subject}" BUILDOPT_RCL3_RESULT="${buildopt_result}" \
+if [[ -n "${buildopt_timing_result}" ]]; then
+    mkdir -p "$(dirname "${buildopt_timing_result}")"
+fi
+BUILDOPT_RCL3_SUBJECT="${buildopt_subject}" BUILDOPT_RCL3_RESULT="${buildopt_result}" BUILDOPT_RCL3_TIMING_RESULT="${buildopt_timing_result}" \
     ./dev/run --toolchain go -- go test -v -timeout 45m -count=1 -run '^TestRCL3PublicCorrectness$' ./internal/sharedcache
 jq -e --arg family "${buildopt_family}" '.family==$family and .schemaVersion=="buildopt.evidence/remote-cache-locality-public-row/v3"' "${buildopt_result}" >/dev/null
 printf 'RCL3 public correctness row captured: %s -> %s\n' "${buildopt_family}" "${buildopt_result}"

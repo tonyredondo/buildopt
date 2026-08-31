@@ -36,6 +36,7 @@ type rcl3PublicSubject struct {
 
 type rcl3PublicBuild struct {
 	Succeeded      bool     `json:"succeeded"`
+	DurationMs     int64    `json:"durationMs"`
 	PrimaryPath    string   `json:"primaryPath"`
 	PrimaryBytes   int64    `json:"primaryBytes"`
 	PrimarySHA256  string   `json:"primarySha256"`
@@ -188,6 +189,9 @@ func TestRCL3PublicCorrectness(t *testing.T) {
 	defer edgeServer.Close()
 	edge := runRCL3PublicGradle(t, subject, filepath.Join(root, "edge-home"), pocRemoteCacheEndpoint(edgeServer.URL), false, true)
 	edgeTraffic := metrics.snapshot()
+	if timingPath := os.Getenv("BUILDOPT_RCL3_TIMING_RESULT"); timingPath != "" {
+		runRCL3PublicTiming(t, subject, directServer.URL, edgeServer.URL, filepath.Join(root, "direct-home"), filepath.Join(root, "edge-home"), producerA.PrimarySHA256, metrics, timingPath)
+	}
 
 	nativeStable := producerA.PrimarySHA256 == producerB.PrimarySHA256
 	directExact := nativeStable && direct.PrimarySHA256 == producerA.PrimarySHA256
@@ -240,14 +244,107 @@ func runRCL3PublicGradle(t *testing.T, subject rcl3PublicSubject, home, remoteUR
 	command := exec.Command(gradle, args...)
 	command.Dir = subject.Checkout
 	command.Env = append(os.Environ(), "GRADLE_USER_HOME="+home, "BUILDOPT_RCL_CACHE_URL="+remoteURL, fmt.Sprintf("BUILDOPT_RCL_CACHE_PUSH=%d", boolInt(push)))
+	started := time.Now()
 	output, err := command.CombinedOutput()
+	duration := time.Since(started).Milliseconds()
 	if err != nil {
 		t.Fatalf("%s build failed: %v\n%s", subject.Family, err, output)
 	}
 	if !bytes.Contains(output, []byte("BUILD SUCCESSFUL")) {
 		t.Fatalf("%s build lacks success marker\n%s", subject.Family, output)
 	}
-	return inspectRCL3PublicBuild(t, subject, output)
+	result := inspectRCL3PublicBuild(t, subject, output)
+	result.DurationMs = duration
+	return result
+}
+
+type rcl3TimingPair struct {
+	Pair                 int    `json:"pair"`
+	Order                string `json:"order"`
+	DirectDurationMs     int64  `json:"directDurationMs"`
+	EdgeDurationMs       int64  `json:"edgeDurationMs"`
+	SavedMs              int64  `json:"savedMs"`
+	DirectOriginRequests int    `json:"directOriginRequests"`
+	DirectOriginBytes    int64  `json:"directOriginBytes"`
+	EdgeOriginRequests   int    `json:"edgeOriginRequests"`
+	EdgeOriginBytes      int64  `json:"edgeOriginBytes"`
+	OutputsIdentical     bool   `json:"outputsIdentical"`
+	ProductFailure       bool   `json:"productAttributableFailure"`
+}
+
+func runRCL3PublicTiming(t *testing.T, subject rcl3PublicSubject, directBaseURL, edgeBaseURL, directHome, edgeHome, expectedOutput string, metrics *pocRemoteCacheMetrics, resultPath string) {
+	t.Helper()
+	orders := []string{"DIRECT_FIRST", "EDGE_FIRST", "DIRECT_FIRST", "EDGE_FIRST", "DIRECT_FIRST", "EDGE_FIRST", "DIRECT_FIRST", "EDGE_FIRST"}
+	pairs := make([]rcl3TimingPair, 0, len(orders))
+	for index, order := range orders {
+		var direct, edge rcl3PublicBuild
+		var directTraffic, edgeTraffic pocRemoteCacheMetricSnapshot
+		if order == "DIRECT_FIRST" {
+			metrics.reset()
+			direct = runRCL3PublicGradle(t, subject, directHome, pocRemoteCacheEndpoint(directBaseURL), false, true)
+			directTraffic = metrics.snapshot()
+			metrics.reset()
+			edge = runRCL3PublicGradle(t, subject, edgeHome, pocRemoteCacheEndpoint(edgeBaseURL), false, true)
+			edgeTraffic = metrics.snapshot()
+		} else {
+			metrics.reset()
+			edge = runRCL3PublicGradle(t, subject, edgeHome, pocRemoteCacheEndpoint(edgeBaseURL), false, true)
+			edgeTraffic = metrics.snapshot()
+			metrics.reset()
+			direct = runRCL3PublicGradle(t, subject, directHome, pocRemoteCacheEndpoint(directBaseURL), false, true)
+			directTraffic = metrics.snapshot()
+		}
+		exact := direct.PrimarySHA256 == expectedOutput && edge.PrimarySHA256 == expectedOutput
+		failure := !exact || edgeTraffic.Requests != 0
+		pairs = append(pairs, rcl3TimingPair{Pair: index + 1, Order: order, DirectDurationMs: direct.DurationMs, EdgeDurationMs: edge.DurationMs, SavedMs: direct.DurationMs - edge.DurationMs, DirectOriginRequests: directTraffic.Requests, DirectOriginBytes: directTraffic.Bytes, EdgeOriginRequests: edgeTraffic.Requests, EdgeOriginBytes: edgeTraffic.Bytes, OutputsIdentical: exact, ProductFailure: failure})
+		t.Logf("%s timing pair %d/8: direct=%dms edge=%dms saved=%dms", subject.Family, index+1, direct.DurationMs, edge.DurationMs, direct.DurationMs-edge.DurationMs)
+	}
+	directMean, edgeMean, savedMean, ratio, lower95, positive, directP95, edgeP95 := summarizeRCL3Timing(pairs)
+	qualified := positive >= 6 && savedMean >= 500 && ratio >= 0.02 && lower95 > 0 && edgeP95 <= directP95
+	for _, pair := range pairs {
+		qualified = qualified && !pair.ProductFailure
+	}
+	result := map[string]any{"schemaVersion": "buildopt.evidence/remote-cache-locality-timing-row/v3", "family": subject.Family, "revision": subject.Revision, "pairs": pairs, "summary": map[string]any{"pairs": 8, "positivePairs": positive, "directMeanMs": directMean, "edgeMeanMs": edgeMean, "meanSavedMs": savedMean, "reductionRatio": ratio, "bootstrapLower95SavedMs": lower95, "directP95Ms": directP95, "edgeP95Ms": edgeP95, "qualified": qualified}}
+	encoded, err := json.MarshalIndent(result, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(resultPath, append(encoded, '\n'), 0o600); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func summarizeRCL3Timing(pairs []rcl3TimingPair) (float64, float64, float64, float64, float64, int, int64, int64) {
+	var directTotal, edgeTotal, savedTotal int64
+	positive := 0
+	directValues := make([]int64, len(pairs))
+	edgeValues := make([]int64, len(pairs))
+	for index, pair := range pairs {
+		directTotal += pair.DirectDurationMs
+		edgeTotal += pair.EdgeDurationMs
+		savedTotal += pair.SavedMs
+		if pair.SavedMs > 0 {
+			positive++
+		}
+		directValues[index], edgeValues[index] = pair.DirectDurationMs, pair.EdgeDurationMs
+	}
+	bootstrap := make([]float64, 4096)
+	for sample := range bootstrap {
+		state := uint32(2654435761 * uint64(sample+1))
+		var sum int64
+		for draw := 0; draw < len(pairs); draw++ {
+			state = 1664525*state + 1013904223
+			sum += pairs[int(state)%len(pairs)].SavedMs
+		}
+		bootstrap[sample] = float64(sum) / float64(len(pairs))
+	}
+	sort.Float64s(bootstrap)
+	sort.Slice(directValues, func(i, j int) bool { return directValues[i] < directValues[j] })
+	sort.Slice(edgeValues, func(i, j int) bool { return edgeValues[i] < edgeValues[j] })
+	directMean := float64(directTotal) / float64(len(pairs))
+	edgeMean := float64(edgeTotal) / float64(len(pairs))
+	savedMean := float64(savedTotal) / float64(len(pairs))
+	return directMean, edgeMean, savedMean, float64(savedTotal) / float64(directTotal), bootstrap[102], positive, directValues[len(directValues)-1], edgeValues[len(edgeValues)-1]
 }
 
 func prepareRCL3GradleHome(t *testing.T, home string) {
