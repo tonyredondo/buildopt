@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "buildopt.evidence/change-scoped-candidate-correctness-result/v1",
+  "workItem": "CSCPC",
+  "status": "DONE_STOP",
+  "decision": "STOP_CHANGE_SCOPED_CANDIDATE_CORRECTNESS",
+  "contract": {
+    "path": "specs/poc-change-scoped-candidate-correctness-v1.json",
+    "sha256": "d6fd356d438f5b620946b85a38955b1efc188e874a3faca5dd4de097b2523b27"
+  },
+  "attempt": {
+    "family": "apache-groovy",
+    "requestedInvocations": 3,
+    "completedInvocations": 1,
+    "executionModes": ["OPTIMIZED_NATIVE"],
+    "gradleStarts": 1,
+    "candidateBuilds": 0,
+    "timingSamples": 0,
+    "productFailures": 0,
+    "stopReason": "ORDINARY_LEARNING_ECONOMICS_REJECTED",
+    "economicsReason": "COMPATIBLE_LIFETIME_INSUFFICIENT",
+    "historicalCompatibleMatches": 1,
+    "capture": {
+      "path": "benchmarks/results/change-scoped-candidate-correctness-v1/apache-groovy/invocation-01.json.gz",
+      "sha256": "873ea7dc262762a1a5083ba70eac9537e6021c2b8d0f6a60938b3445b4ef9053",
+      "uncompressedSha256": "846d3732a4706c2278347ad22fda7e30d6c8b1308343e84e89efde3cd5a32ef0"
+    }
+  },
+  "gate": {
+    "requiredExactFamilies": 4,
+    "exactFamilies": 0,
+    "attemptedFamilies": 1,
+    "unattemptedFamilies": 3,
+    "passed": false
+  },
+  "remainingGradleStartsNotConsumed": 11,
+  "timingAuthorized": false,
+  "pairedValueContractAuthorized": false
+}

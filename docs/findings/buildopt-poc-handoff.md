@@ -25,7 +25,18 @@ decision.
 
 ## Current experiment status
 
-The latest route completes as
+The latest route stops as `STOP_CHANGE_SCOPED_CANDIDATE_CORRECTNESS`.
+Its first Groovy optimized-native invocation succeeded, but the current
+ordinary-learning economics gate retained native because the exact history
+provided one compatible match rather than the five required to justify
+learning cost. The frozen route therefore stopped after one Gradle start with
+zero candidates, zero timing samples and zero product failures. Kafka,
+OpenTelemetry and Spring were not run, and the remaining eleven permitted
+starts were not consumed. The 4/4 exact-candidate prerequisite failed, so
+paired value remains unauthorized; forging state to bypass this product gate
+would not be valid evidence.
+
+The preceding route completed as
 `AUTHORIZE_CHANGE_SCOPED_CANDIDATE_CORRECTNESS_CONTRACT`. Four bounded
 exact-revision optimized-native diagnostics close the missing operation/DAG
 evidence for Groovy, Kafka, OpenTelemetry and Spring; Micronaut retains its
@@ -39,11 +50,11 @@ contract, not timing.
 The predecessor existing-evidence route stopped honestly at 1/5 conclusive and
 0/5 actionable because it did not possess the four traces later captured here.
 
-`CHANGE_SCOPED_CANDIDATE_CORRECTNESS_V1` is now active. Its frozen four-family
+`CHANGE_SCOPED_CANDIDATE_CORRECTNESS_V1` is now closed. Its frozen four-family
 route permits two native observations and one candidate per family, comparing
 the final required-output manifest byte for byte with the fresh CSCPN native
 baseline. Twelve Gradle starts are authorized; timing and speedup claims remain
-closed until 4/4 candidates are exact with zero product failures.
+closed because no candidate became eligible from empty state.
 
 The predecessor decision `SELECT_CHANGE_SCOPED_CRITICAL_PATH_DISCOVERY_V1`
 selected source/existing-trace discovery only and froze the 5/5 conclusive,

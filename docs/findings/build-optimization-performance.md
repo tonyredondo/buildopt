@@ -1237,6 +1237,18 @@ Validate the current scorecard with:
 
 ## Historical adaptive longitudinal normalization
 
+## Change-scoped candidate entry result
+
+The untimed CSCPC route did not reach candidate correctness or performance.
+Its first Groovy optimized-native invocation succeeded, but the production
+decision path returned `NATIVE_RETAINED / ORDINARY_LEARNING_ECONOMICS_REJECTED`:
+the exact repository history offered one compatible match versus the five
+needed to authorize learning. The frozen stop condition prevented the other
+three families and eleven remaining starts. Totals are one native Gradle start,
+zero candidates, zero timing samples and zero product failures. Instrumented
+duration is not used as performance evidence, and no paired-value successor is
+authorized.
+
 AF-013 binds the previous direct chronological measurements into one canonical
 five-repository report rather than rerunning them after seeing the result. It
 recomputes 14 signed control/candidate deltas against optimized native Gradle,

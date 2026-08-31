@@ -7,7 +7,9 @@ buildopt_subjects=specs/poc-change-scoped-candidate-correctness-v1.subjects.json
 
 jq -e '
   .schemaVersion=="buildopt.specs/poc-change-scoped-candidate-correctness/v1" and
-  .status.currentBlock=="CSCPC-002" and .status.completedBlocks==["CSCPC-001"] and
+  .status.currentBlock=="CSCPC-004" and
+  .status.completedBlocks==["CSCPC-001","CSCPC-002","CSCPC-003","CSCPC-004"] and
+  .status.decision=="STOP_CHANGE_SCOPED_CANDIDATE_CORRECTNESS" and
   (.status.timingAuthorized|not) and
   .inputs.actionFamilies==4 and
   .execution.requestedInvocationsPerFamily==3 and
@@ -39,4 +41,4 @@ jq -e '
   .summary.conclusiveFamilies==5 and .summary.actionableFamilies==4
 ' benchmarks/results/change-scoped-critical-path-native-classification-v1.json >/dev/null
 
-printf 'CSCPC contract OK: four exact-output candidates, twelve untimed Gradle starts maximum\n'
+printf 'CSCPC contract OK: terminal stop retained, timing unauthorized\n'

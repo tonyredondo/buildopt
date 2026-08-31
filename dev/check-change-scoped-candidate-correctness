@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+report=benchmarks/results/change-scoped-candidate-correctness-v1.json
+capture=benchmarks/results/change-scoped-candidate-correctness-v1/apache-groovy/invocation-01.json.gz
+contract=specs/poc-change-scoped-candidate-correctness-v1.json
+
+[[ $(sha256sum "${capture}" | awk '{print $1}') == \
+    $(jq -r '.attempt.capture.sha256' "${report}") ]]
+[[ $(sha256sum "${contract}" | awk '{print $1}') == \
+    $(jq -r '.contract.sha256' "${report}") ]]
+
+buildopt_invocation=$(gzip -dc -- "${capture}")
+jq -e '
+  .schemaVersion=="buildopt.poc/optimize-result/v1" and
+  .execution=={mode:"OPTIMIZED_NATIVE",authoritative:true,started:true,exitCode:0} and
+  .outcome=="NATIVE_RETAINED" and .phase=="NATIVE_RETAINED" and
+  .reason=="ORDINARY_LEARNING_ECONOMICS_REJECTED" and
+  .incrementalLearning.ordinaryEconomics.schemaVersion==
+    "buildopt.poc/ordinary-learning-economics/v1" and
+  .incrementalLearning.ordinaryEconomics.decision=="NATIVE_RETAINED" and
+  .incrementalLearning.ordinaryEconomics.reason=="COMPATIBLE_LIFETIME_INSUFFICIENT" and
+  .incrementalLearning.ordinaryEconomics.requestedBuilds==1 and
+  .incrementalLearning.ordinaryEconomics.historicalCompatibleMatches==1 and
+  (.incrementalLearning.ordinaryEconomics.calibrationAuthorized|not) and
+  (.productionAuthorized|not) and .testOptimization=="OUT_OF_SCOPE"
+' <<<"${buildopt_invocation}" >/dev/null
+
+jq -e --arg invocationSha "$(gzip -dc -- "${capture}" | sha256sum | awk '{print $1}')" '
+  .schemaVersion=="buildopt.evidence/change-scoped-candidate-correctness-result/v1" and
+  .workItem=="CSCPC" and .status=="DONE_STOP" and
+  .decision=="STOP_CHANGE_SCOPED_CANDIDATE_CORRECTNESS" and
+  .attempt.family=="apache-groovy" and
+  .attempt.requestedInvocations==3 and .attempt.completedInvocations==1 and
+  .attempt.executionModes==["OPTIMIZED_NATIVE"] and
+  .attempt.gradleStarts==1 and .attempt.candidateBuilds==0 and
+  .attempt.timingSamples==0 and .attempt.productFailures==0 and
+  .attempt.stopReason=="ORDINARY_LEARNING_ECONOMICS_REJECTED" and
+  .attempt.economicsReason=="COMPATIBLE_LIFETIME_INSUFFICIENT" and
+  .attempt.historicalCompatibleMatches==1 and
+  .attempt.capture.path=="benchmarks/results/change-scoped-candidate-correctness-v1/apache-groovy/invocation-01.json.gz" and
+  .attempt.capture.uncompressedSha256==$invocationSha and
+  .gate=={requiredExactFamilies:4,exactFamilies:0,attemptedFamilies:1,
+    unattemptedFamilies:3,passed:false} and
+  (.timingAuthorized|not) and (.pairedValueContractAuthorized|not) and
+  .remainingGradleStartsNotConsumed==11
+' "${report}" >/dev/null
+
+printf 'CSCPC result OK: stopped after 1 native build, 0 candidates, timing unauthorized\n'

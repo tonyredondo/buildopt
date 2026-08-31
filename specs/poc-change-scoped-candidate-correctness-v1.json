@@ -2,8 +2,9 @@
   "schemaVersion": "buildopt.specs/poc-change-scoped-candidate-correctness/v1",
   "workItem": "CSCPC",
   "status": {
-    "currentBlock": "CSCPC-002",
-    "completedBlocks": ["CSCPC-001"],
+    "currentBlock": "CSCPC-004",
+    "completedBlocks": ["CSCPC-001", "CSCPC-002", "CSCPC-003", "CSCPC-004"],
+    "decision": "STOP_CHANGE_SCOPED_CANDIDATE_CORRECTNESS",
     "timingAuthorized": false
   },
   "inputs": {

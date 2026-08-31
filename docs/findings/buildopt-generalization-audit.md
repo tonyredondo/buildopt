@@ -284,6 +284,16 @@ generic customer value.
 
 ## POC conclusion
 
+The later change-scoped candidate-correctness route also closes negatively,
+but before candidate execution. On the first exact Groovy revision the native
+build succeeded and discovery found the structural candidate; ordinary
+economics then returned `COMPATIBLE_LIFETIME_INSUFFICIENT` because only one
+compatible historical match was available against the required five. The
+route stopped as specified: 1/4 families attempted, zero candidates, zero
+timing samples and zero product failures. This is a general product constraint,
+not an output-correctness result, and candidate state was not fabricated to
+bypass it.
+
 BuildOpt's defensible idea remains an evidence-gated optimizer on top of native
 Gradle, not a faster reimplementation of Gradle's cache. The current complete-
 profile implementation demonstrates bounded target value and strong safety,
