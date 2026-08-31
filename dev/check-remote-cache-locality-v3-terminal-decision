@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+buildopt_terminal=benchmarks/results/remote-cache-locality-value-v3/terminal-decision.json
+jq -e '
+  .schemaVersion=="buildopt.evidence/remote-cache-locality-terminal-decision/v3" and .workItem=="RCL3-006" and
+  .criteria==[
+    {id:"PUBLIC_CORRECTNESS",required:"5/5_CONCLUSIVE_3/5_ELIGIBLE_ZERO_FAILURES",observed:"5/5_CONCLUSIVE_3/5_ELIGIBLE_ZERO_FAILURES",status:"PASS"},
+    {id:"CONTROLLED_PAIRED_VALUE",required:"3/5_QUALIFIED",observed:"0/5_QUALIFIED",status:"FAIL"},
+    {id:"INSTALLED_ECONOMICS",required:"3/5_NET_POSITIVE_PAYBACK_WITHIN_10",observed:"NOT_MEASURED_FAILED_PREREQUISITE",status:"UNAVAILABLE"},
+    {id:"REAL_PATH_PRODUCT_VIABILITY",required:"REAL_CUSTOMER_REMOTE_PATH",observed:"CONTROLLED_LOOPBACK_ONLY",status:"UNAVAILABLE"}
+  ] and
+  .blocks=={"RCL3-001":"DONE","RCL3-002":"DONE","RCL3-003":"DONE","RCL3-004":"DONE_STOP","RCL3-005":"NOT_RUN_FAILED_PREREQUISITE","RCL3-006":"DONE"} and
+  .value=={controlledQualifiedFamilies:0,installedBuilds:"NOT_MEASURED_FAILED_PREREQUISITE",paybackCacheConsumingBuilds:"NOT_MEASURED_FAILED_PREREQUISITE",signedPortfolioMs:"NOT_MEASURED_FAILED_PREREQUISITE"} and
+  (.controlledMechanismQualified|not) and (.realPathProductViabilityProven|not) and .decision=="STOP_REMOTE_CACHE_LOCALITY_VALUE_V3"
+' "${buildopt_terminal}" >/dev/null
+[[ "$(sha256sum specs/poc-remote-cache-locality-value-v3.json | awk '{print $1}')" == "$(jq -r .bindings.contractSha256 "${buildopt_terminal}")" ]]
+[[ "$(sha256sum benchmarks/results/remote-cache-locality-value-v3/public-correctness.json | awk '{print $1}')" == "$(jq -r .bindings.correctnessSha256 "${buildopt_terminal}")" ]]
+[[ "$(sha256sum benchmarks/results/remote-cache-locality-value-v3/paired-value.json | awk '{print $1}')" == "$(jq -r .bindings.pairedValueSha256 "${buildopt_terminal}")" ]]
+./dev/check-remote-cache-locality-v3-paired-value >/dev/null
+printf 'RCL3-006 terminal OK: controlled locality stopped at 0/3 qualified families\n'

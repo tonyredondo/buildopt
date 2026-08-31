@@ -30,6 +30,8 @@ Validate the active corrected v3 contract with:
 ./dev/check-remote-cache-locality-value-v3
 ./dev/check-remote-cache-locality-harness-v3
 ./dev/check-remote-cache-locality-v3-public-correctness
+./dev/check-remote-cache-locality-v3-paired-value
+./dev/check-remote-cache-locality-v3-terminal-decision
 ```
 
 Validate the closed economic-first contract with:

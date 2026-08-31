@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "buildopt.evidence/remote-cache-locality-terminal-decision/v3",
+  "workItem": "RCL3-006",
+  "capturedAt": "2026-08-31T18:17:03Z",
+  "buildoptRevision": "045d44802bd8c7be02f762106afacb5fef21d10a",
+  "bindings": {
+    "contractSha256": "fc69def3c208e7fcfcf6830f20d6de222907f70ee81d1c5f7854618b079fbabf",
+    "correctnessSha256": "a1ec1a4060c77ecdba16b2fa4e8abd88227b4099f8ed037dc60f733a6438e1cd",
+    "pairedValueSha256": "1d41c83583e2e2cc7e3df694ac6873e997b09a711a1cdcd74264d86726a52a17"
+  },
+  "criteria": [
+    {
+      "id": "PUBLIC_CORRECTNESS",
+      "required": "5/5_CONCLUSIVE_3/5_ELIGIBLE_ZERO_FAILURES",
+      "observed": "5/5_CONCLUSIVE_3/5_ELIGIBLE_ZERO_FAILURES",
+      "status": "PASS"
+    },
+    {
+      "id": "CONTROLLED_PAIRED_VALUE",
+      "required": "3/5_QUALIFIED",
+      "observed": "0/5_QUALIFIED",
+      "status": "FAIL"
+    },
+    {
+      "id": "INSTALLED_ECONOMICS",
+      "required": "3/5_NET_POSITIVE_PAYBACK_WITHIN_10",
+      "observed": "NOT_MEASURED_FAILED_PREREQUISITE",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "id": "REAL_PATH_PRODUCT_VIABILITY",
+      "required": "REAL_CUSTOMER_REMOTE_PATH",
+      "observed": "CONTROLLED_LOOPBACK_ONLY",
+      "status": "UNAVAILABLE"
+    }
+  ],
+  "blocks": {
+    "RCL3-001": "DONE",
+    "RCL3-002": "DONE",
+    "RCL3-003": "DONE",
+    "RCL3-004": "DONE_STOP",
+    "RCL3-005": "NOT_RUN_FAILED_PREREQUISITE",
+    "RCL3-006": "DONE"
+  },
+  "value": {
+    "controlledQualifiedFamilies": 0,
+    "installedBuilds": "NOT_MEASURED_FAILED_PREREQUISITE",
+    "signedPortfolioMs": "NOT_MEASURED_FAILED_PREREQUISITE",
+    "paybackCacheConsumingBuilds": "NOT_MEASURED_FAILED_PREREQUISITE"
+  },
+  "controlledMechanismQualified": false,
+  "realPathProductViabilityProven": false,
+  "decision": "STOP_REMOTE_CACHE_LOCALITY_VALUE_V3"
+}

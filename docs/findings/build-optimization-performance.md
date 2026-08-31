@@ -2,14 +2,16 @@
 
 ## Current Executive Summary
 
-- **Remote-cache locality v3 is active in controlled paired timing.** It preserves v2,
+- **Remote-cache locality v3 stopped after complete controlled paired timing.** It preserves v2,
   completes all five correctness rows, freezes source-bound primary artifacts
   and separates native output instability from Edge-only failures. The production
   Edge safety harness and fixed profile pass. Correctness is 5/5 conclusive and
-  3/5 eligible with zero product failures; Groovy, OpenTelemetry and Spring now
-  enter eight balanced pairs. Timing
+  3/5 eligible with zero product failures. Across 24/24 pairs, Groovy misses the
+  2% threshold, OpenTelemetry is negative, and Spring's corrected bootstrap
+  lower bound crosses zero. Zero of three families qualifies, so installed
+  economics is not run and no product-viability claim exists. Timing
   uses a fixed 30-ms/100-MiB/s controlled envelope; it cannot alone prove a real
-  deployment path. No v3 public build or timing exists yet.
+  deployment path. The measured controlled result does not qualify the mechanism.
 
 - **The latest successor, equal-opportunity cache locality, stopped before
   timing.** `RCL-001` compares optimized native Gradle direct to fixed

@@ -31,8 +31,9 @@ classify native output instability separately, and freezes one primary binary
 artifact per public build definition. `RCL3-002` proves the production Edge
 safety harness and fixed network calibration. `RCL3-003` completes 5/5 rows:
 Groovy, OpenTelemetry and Spring are eligible, Kafka is natively unstable and
-Micronaut has zero cache hits, with zero product failures. `RCL3-004` now runs
-eight controlled pairs for each eligible family. The owner lab
+Micronaut has zero cache hits, with zero product failures. `RCL3-004` completes
+24/24 controlled pairs, but 0/3 families passes every frozen value criterion.
+`RCL3-005` is not run after that failed prerequisite and the route stops. The owner lab
 has no real customer remote origin, so any later timing is limited to a frozen
 30-ms/100-MiB/s controlled envelope and cannot alone prove product viability.
 

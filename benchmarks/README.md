@@ -2,7 +2,7 @@
 
 Reproducible workloads for measuring causal savings, overhead, queues, additional compute, and behavior under failure.
 
-The active corrected route is indexed by the [remote cache locality v3 evidence](./results/remote-cache-locality-value-v3/README.md). Its production Edge harness and controlled 30-ms/100-MiB/s profile pass. Fresh correctness is 5/5 conclusive, 3/5 eligible and zero-failure; controlled paired timing is now open.
+The corrected [remote cache locality v3 evidence](./results/remote-cache-locality-value-v3/README.md) completes 5/5 correctness rows and 24/24 controlled pairs with zero product failures. Zero of three eligible families passes every frozen value criterion, so the route stops before installed economics and makes no viability claim.
 
 The latest closed route is documented by the
 [remote cache locality v2 evidence](./results/remote-cache-locality-value-v2/README.md).

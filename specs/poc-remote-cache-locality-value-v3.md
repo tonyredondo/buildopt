@@ -1,7 +1,8 @@
 # Remote Cache Locality Value POC v3
 
-Status: `RCL3-001/002` complete; `RCL3-003` is current. No v3 timing sample
-exists yet.
+Status: terminal `STOP_REMOTE_CACHE_LOCALITY_VALUE_V3`. All five correctness
+rows and all 24 controlled pairs complete; installed economics was not run
+after the controlled-value prerequisite failed.
 
 ## Correction from v2
 

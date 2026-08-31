@@ -17,9 +17,10 @@ The active [remote-cache locality v3 route](../plans/remote-cache-locality-value
 corrects the v2 early-stop design. It must complete all five rows, binds one
 primary public artifact per family and distinguishes native instability from an
 Edge-only failure. Its production Edge harness and fixed profile pass. Public
-correctness is 5/5 conclusive, 3/5 eligible and has zero product failures, so
-controlled paired timing is open. Its controlled envelope can qualify mechanism
-economics, but a real remote path remains necessary for product viability.
+correctness is 5/5 conclusive, 3/5 eligible and has zero product failures. All
+24 controlled pairs complete, but 0/3 families passes every value criterion;
+the route stops before installed economics. The controlled envelope does not
+qualify mechanism economics, and a real remote path remains necessary for product viability.
 
 The closed [remote-cache locality route](../plans/remote-cache-locality-value-poc-tracker.md)
 tested a product unit that does not require structural-profile recurrence.

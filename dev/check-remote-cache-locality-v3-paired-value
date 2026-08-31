@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+buildopt_report=benchmarks/results/remote-cache-locality-value-v3/paired-value.json
+jq -e '
+  .schemaVersion=="buildopt.evidence/remote-cache-locality-paired-value/v3" and .workItem=="RCL3-004" and
+  (.rows|length)==3 and ([.rows[].family]|sort)==["apache-groovy","opentelemetry-java-instrumentation","spring-framework"] and
+  all(.rows[];
+    (.pairs|length)==8 and ([.pairs[].pair]|sort)==[1,2,3,4,5,6,7,8] and
+    [.pairs[].order]==["DIRECT_FIRST","EDGE_FIRST","DIRECT_FIRST","EDGE_FIRST","DIRECT_FIRST","EDGE_FIRST","DIRECT_FIRST","EDGE_FIRST"] and
+    all(.pairs[]; .savedMs==(.directDurationMs-.edgeDurationMs) and .outputsIdentical and (.productAttributableFailure|not) and .edgeOriginRequests==0) and
+    .summary.pairs==8 and .summary.positivePairs==([.pairs[]|select(.savedMs>0)]|length) and
+    .summary.directMeanMs==([.pairs[].directDurationMs]|add/8) and .summary.edgeMeanMs==([.pairs[].edgeDurationMs]|add/8) and
+    .summary.meanSavedMs==([.pairs[].savedMs]|add/8) and .summary.reductionRatio==(([.pairs[].savedMs]|add)/([.pairs[].directDurationMs]|add)) and
+    .summary.directP95Ms==([.pairs[].directDurationMs]|max) and .summary.edgeP95Ms==([.pairs[].edgeDurationMs]|max)) and
+  ([.rows[]|select(.summary.qualified)]|length)==0 and
+  .summary=={eligibleFamilies:3,completeFamilies:3,totalPairs:24,qualifiedFamilies:0,requiredQualifiedFamilies:3,productAttributableFailures:0,decision:"STOP_RCL3_004_VALUE_GATE"}
+' "${buildopt_report}" >/dev/null
+[[ "$(sha256sum specs/poc-remote-cache-locality-value-v3.json | awk '{print $1}')" == "$(jq -r .contractSha256 "${buildopt_report}")" ]]
+[[ "$(sha256sum benchmarks/results/remote-cache-locality-value-v3/public-correctness.json | awk '{print $1}')" == "$(jq -r .correctnessSha256 "${buildopt_report}")" ]]
+buildopt_tmp=$(mktemp -d)
+trap 'rm -rf "${buildopt_tmp}"' EXIT
+while IFS= read -r buildopt_family; do
+    jq --arg family "${buildopt_family}" '.rows[]|select(.family==$family)' "${buildopt_report}" >"${buildopt_tmp}/${buildopt_family}.json"
+    buildopt_before=$(jq -S -c .summary "${buildopt_tmp}/${buildopt_family}.json")
+    BUILDOPT_RCL3_RECOMPUTE_TIMING="${buildopt_tmp}/${buildopt_family}.json" ./dev/run --toolchain go -- go test -count=1 -run '^TestRCL3RecomputeTimingSummary$' ./internal/sharedcache >/dev/null
+    buildopt_after=$(jq -S -c .summary "${buildopt_tmp}/${buildopt_family}.json")
+    [[ "${buildopt_before}" == "${buildopt_after}" ]] || { printf 'RCL3 paired summary does not reconstruct: %s\n' "${buildopt_family}" >&2; exit 1; }
+done < <(jq -r '.rows[].family' "${buildopt_report}")
+printf 'RCL3-004 paired value OK: 24/24 pairs, 0/3 qualified, zero product failures\n'
