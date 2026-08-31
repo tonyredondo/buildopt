@@ -14,8 +14,14 @@ package boundaries with:
 ./dev/check-documentation
 ```
 
-Validate the active economic-first planning contract, frozen cohort, formulas,
-budgets and no-build authority boundary with:
+Validate the active equal-opportunity cache-locality contract, frozen cohort,
+cost accounting and no-public-build/no-timing authority boundary with:
+
+```bash
+./dev/check-remote-cache-locality-value
+```
+
+Validate the closed economic-first contract with:
 
 ```bash
 ./dev/check-economic-opportunity-first

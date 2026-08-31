@@ -25,23 +25,19 @@ decision.
 
 ## Current experiment status
 
-The active route is `ECONOMIC_OPPORTUNITY_FIRST_V1`. `EOF-001` freezes a
-chronological source-only preflight that must reject opportunities unable to
-repay every incremental selection, qualification, materialization and native-
-retention cost within five compatible matches. Prior experiments may motivate
-features but cannot supply an EOF row; future commits, repository names and
-task names cannot affect classification. `EOF-002` now reconstructs 320 fresh
-rows and all five families conclusively, but only Kafka reaches the five-match
-recurrence threshold. The 1/5 result misses the frozen 3/5 gate, so
-`EOF-003..005` were not authorized. No native ceiling observation, candidate,
-timing pair or speedup exists; `EOF-006` closes the route as
-`STOP_ECONOMIC_OPPORTUNITY_FIRST_POC`.
+The active route is `REMOTE_CACHE_LOCALITY_VALUE_V2`. `RCL-001` now freezes an
+equal-opportunity comparison: optimized native Gradle reads fixed immutable
+objects directly from an owner-operated remote cache, while the identical
+native graph reads those objects through a verifying local BuildOpt Edge/L1.
+The five revisions, workflows and outputs are frozen; all RCL evidence must be
+fresh. The terminal path must be unshaped, and seed, fill, verification,
+operation and fallback costs all enter signed product value. Historical shaped
+WAN and mixed graph-reduction wins are motivation only.
 
-The terminal recommendation is a separately preregistered remote-cache-locality
-test: optimized native Gradle direct to a fixed remote cache versus the same
-native graph and exact objects through a prewarmed verifying BuildOpt Edge/L1.
-This removes per-change profile recurrence from the value path. It is a
-recommendation only, not authority or a retained historical speedup claim.
+No public build, cache seed, timing pair or new speedup exists. `RCL-002` must
+first prove identical graphs, keys, bytes, outcomes and outputs plus read-only,
+corruption and outage behavior in deterministic fixtures. Timing cannot begin
+before fresh public correctness reaches 5/5 conclusive and 3/5 eligible.
 
 The latest closed route is `NORMALIZATION_AWARE_CACHEABILITY_V2`. It tested whether
 BuildOpt can turn generic source evidence into an owner-reviewed, exactly

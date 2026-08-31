@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "buildopt.specs/poc-remote-cache-locality-value-subjects/v2",
+  "reusePolicy": "SUBJECT_SELECTION_ONLY_ALL_RCL_EVIDENCE_FRESH",
+  "families": [
+    {"key":"apache-groovy","repository":"https://github.com/apache/groovy.git","revision":"14fa934340c46bc1ee96cba7ae594258bd8d0fd0","workflow":["jar"],"requiredOutputs":["build/libs/*.jar"]},
+    {"key":"apache-kafka","repository":"https://github.com/apache/kafka.git","revision":"2e961afeff5cb27d60767a783edf20be00cc28e8","workflow":["assemble"],"requiredOutputs":["clients/build/libs/*.jar"]},
+    {"key":"micronaut-core","repository":"https://github.com/micronaut-projects/micronaut-core.git","revision":"eb60c6c35f355750c6bced793e85c30629d27c4e","workflow":["assemble"],"requiredOutputs":["core/build/libs/*.jar"]},
+    {"key":"opentelemetry-java-instrumentation","repository":"https://github.com/open-telemetry/opentelemetry-java-instrumentation.git","revision":"f330e4c0b764d80dcc1f7c6d4c01e305593c49f1","workflow":["assemble"],"requiredOutputs":["instrumentation/spring/spring-web/spring-web-6.0/library/build/libs/*.jar"]},
+    {"key":"spring-framework","repository":"https://github.com/spring-projects/spring-framework.git","revision":"1c4b20287f1d8f635867fb58c576849f9313e907","workflow":["testClasses"],"requiredOutputs":["spring-core/build/classes/**"]}
+  ]
+}

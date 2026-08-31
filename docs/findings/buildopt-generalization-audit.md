@@ -13,17 +13,14 @@ net value in only one of five families. One of six structurally eligible
 descendants selected a profile, so the frozen terminal decision is
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md).
 
-The active [economic opportunity first route](../plans/economic-opportunity-first-poc-tracker.md)
-tests the common economic failure directly. It freezes chronological
-no-lookahead source facts, a 500-ms decision budget, complete signed cost
-accounting and a five-compatible-match payback ceiling before any candidate
-build. The fresh `EOF-002` ledger reconstructs 320 rows and 5/5 conclusive
-families, but only Kafka reaches five owner-only matches. At 1/5 versus 3/5,
-the route stops before native planning observations or candidate execution.
-Terminal `EOF-006` records `STOP_ECONOMIC_OPPORTUNITY_FIRST_POC`. It recommends
-testing remote-cache locality as a separate product unit because that path does
-not require structural-profile recurrence. Any such route must compare the same
-native graph and cache objects and collect fresh five-family evidence.
+The active [remote-cache locality route](../plans/remote-cache-locality-value-poc-tracker.md)
+tests a product unit that does not require structural-profile recurrence.
+`RCL-001` freezes the same native graph, cache keys, immutable object bytes and
+outputs in both arms, a five-family breadth gate and complete seed/fill/operation
+cost accounting. Historical shaped-network and mixed-mechanism wins supply no
+row. `RCL-002` must prove the harness before public correctness, and timing
+remains closed until 5/5 families are conclusive and at least 3/5 have sufficient
+remote-cache opportunity.
 
 That decision stopped the whole-profile hypothesis, not the bounded mechanisms
 that worked. The subsequent

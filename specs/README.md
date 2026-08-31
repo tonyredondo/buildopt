@@ -7,15 +7,15 @@ path. Start with the [documentation portal](../docs/README.md) or
 [architecture overview](../docs/architecture/overview.md), then return here for
 the exact cross-component contract.
 
-The latest generic POC contract is
-[`poc-economic-opportunity-first-v1.md`](./poc-economic-opportunity-first-v1.md)
-with its adjacent machine-readable JSON and frozen subjects. It asks whether a
-cheap chronological source-only screen can avoid spending customer wall time
-on opportunities that cannot plausibly repay. Historical experiments motivate
-the contract but cannot satisfy an evidence row.
+The active POC contract is
+[`poc-remote-cache-locality-value-v2.md`](./poc-remote-cache-locality-value-v2.md)
+with its adjacent machine-readable JSON and frozen subjects. It isolates cache
+read locality with the same native graph and immutable objects in both arms and
+counts every fill and operating cost. Historical results cannot satisfy a row.
 
 | Specification | Owning item |
 |---|---|
+| [`poc-remote-cache-locality-value-v2.md`](./poc-remote-cache-locality-value-v2.md), [`poc-remote-cache-locality-value-v2.json`](./poc-remote-cache-locality-value-v2.json) and [frozen subjects](./poc-remote-cache-locality-value-v2.subjects.json) | `RCL-001` complete: equal-opportunity contract frozen before public builds or timing; `RCL-002` is current |
 | [`poc-economic-opportunity-first-v1.md`](./poc-economic-opportunity-first-v1.md), [`poc-economic-opportunity-first-v1.json`](./poc-economic-opportunity-first-v1.json), [ledger config](./poc-economic-opportunity-first-v1.ledger.json) and [frozen subjects](./poc-economic-opportunity-first-v1.subjects.json) | Closed at `EOF-006`: source recurrence stopped at 1/5 versus 3/5; later value blocks were not authorized and no speedup exists |
 | [`poc-normalization-aware-cacheability-v2.md`](./poc-normalization-aware-cacheability-v2.md), [`poc-normalization-aware-cacheability-v2.json`](./poc-normalization-aware-cacheability-v2.json) and [frozen subjects](./poc-normalization-aware-cacheability-v2.subjects.json) | Closed at `NAC-007`: compiler proof passes, but public correctness is complete for only 4/9 candidates; `NAC-005/006` were not authorized and no speedup exists |
 | [`poc-durable-native-optimization-v1.md`](./poc-durable-native-optimization-v1.md), [`poc-durable-native-optimization-v1.json`](./poc-durable-native-optimization-v1.json) and [frozen subjects](./poc-durable-native-optimization-v1.subjects.json) | Closed `DNO-001..007` route and terminal `STOP_DURABLE_NATIVE_OPTIMIZATION_POC`. Micronaut exposes the missing-normalization detector gap; paired/longitudinal timing and proposal UX were not authorized |

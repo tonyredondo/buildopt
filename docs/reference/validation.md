@@ -1,9 +1,10 @@
 # Validation reference
 
-The active planning-only EOF route is checked by
-`./dev/check-economic-opportunity-first`. It validates the contract, exact
-cohort, signed formulas, budgets and authority boundary without running Gradle
-or creating timing evidence.
+The active planning-only RCL route is checked by
+`./dev/check-remote-cache-locality-value`. It validates the equal-opportunity
+contract, exact cohort, complete cost accounting and authority boundary without
+public builds, cache seeding or timing. The closed EOF route remains checked by
+`./dev/check-economic-opportunity-first`.
 
 The closed NAC v2 route is checked by
 `./dev/check-normalization-aware-cacheability`,
@@ -26,6 +27,7 @@ provision tools or create release artifacts document that effect explicitly.
 
 | Change | Command |
 |---|---|
+| Remote-cache-locality v2 contract, cohort, equal opportunity, costs and authority | `./dev/check-remote-cache-locality-value` |
 | Economic-first contract, frozen cohort, formulas, budgets and authority boundary | `./dev/check-economic-opportunity-first` |
 | Economic-first 320-row source recurrence ledger and independent breadth recount | `./dev/check-economic-opportunity-source-ledger [HISTORY_ROOT]` |
 | Economic-first terminal stop, evidence digests and typed unmeasured value | `./dev/check-economic-opportunity-terminal-decision` |

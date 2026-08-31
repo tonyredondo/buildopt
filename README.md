@@ -27,16 +27,13 @@ evidence around that execution and uses conservative fallbacks: a rejected
 cache entry becomes a normal cache miss, an unqualified optimization is not
 applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
-> **Active POC experiment:** BuildOpt is now testing whether a cheap,
-> source-only economic preflight can reject unlikely-to-repay opportunities
-> before discovery, calibration or materialization. The contract requires
-> chronological no-lookahead evidence, counts every incremental cost and keeps
-> the 3/5 net-positive-family product boundary. The fresh `EOF-002` ledger is
-> 5/5 conclusive but reaches only 1/5 recurrence families, so native ceiling
-> observations, candidate builds and timing were not authorized. Terminal
-> `EOF-006` closes the route without a speedup or successor claim and recommends
-> a separately preregistered equal-opportunity cache-locality test. See the
-> [closed tracker](./docs/plans/economic-opportunity-first-poc-tracker.md).
+> **Active POC experiment:** `REMOTE_CACHE_LOCALITY_VALUE_V2` tests BuildOpt as
+> a verifying local Edge/L1 against optimized native Gradle reading the same
+> immutable remote-cache objects directly. `RCL-001` freezes the exact graph,
+> key/object/output parity, unshaped remote path, five-family breadth and full
+> seed/fill/operation cost accounting. No public build, cache seed or timing is
+> authorized yet; `RCL-002` must first prove the equal-opportunity harness and
+> safe failure behavior. See the [active tracker](./docs/plans/remote-cache-locality-value-poc-tracker.md).
 
 > **Installed two-machine proof:** the committed `./buildoptw` command now
 > bootstraps one SHA-verified archive on isolated producer and consumer

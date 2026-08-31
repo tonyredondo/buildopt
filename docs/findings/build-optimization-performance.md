@@ -2,18 +2,13 @@
 
 ## Current Executive Summary
 
-- **The active successor is economic-first and currently planning-only.**
-  `EOF-001` freezes a source-only chronological preflight, 500-ms decision
-  budget, five-match payback ceiling and complete signed incremental costs.
-  The fresh 320-row ledger reaches 5/5 conclusive families, but only Kafka has
-  at least five owner-only matches: 1/5 versus the frozen 3/5 gate. Native
-  planning observations and candidate timing are therefore not authorized;
-  no EOF speedup exists.
-- **The retained next hypothesis is equal-opportunity cache locality.** Compare
-  optimized native Gradle direct to the same remote cache objects against the
-  identical graph through a prewarmed verifying BuildOpt Edge/L1. This avoids
-  per-change profile recurrence, but historical locality results are motivation
-  only; a new five-family contract and fresh timings are required.
+- **The active successor is equal-opportunity cache locality and remains
+  planning-only.** `RCL-001` compares optimized native Gradle direct to fixed
+  remote-cache objects with the identical graph through a verifying local
+  BuildOpt Edge/L1. It freezes five families, one unshaped remote path, exact
+  key/object/output parity and complete seed/fill/operation costs. Historical
+  locality results supply no row. `RCL-002` must prove the harness before any
+  public build, and no new timing or speedup exists.
 - **The current decision is `STOP_GENERIC_POC`, derived from lifetime breadth
   V3 rather than isolated target calibration.** One exact executable ran the
   frozen Spring, OpenTelemetry,

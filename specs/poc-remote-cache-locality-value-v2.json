@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "buildopt.specs/poc-remote-cache-locality-value/v2",
+  "workItem": "RCL",
+  "objective": "PROVE_REMOTE_CACHE_LOCALITY_PRODUCT_VALUE",
+  "baseline": "OPTIMIZED_NATIVE_GRADLE_DIRECT_TO_REMOTE_SHARED",
+  "status": {
+    "currentBlock": "RCL-002",
+    "completedBlocks": ["RCL-001"],
+    "publicBuildAuthorized": false,
+    "timingAuthorized": false
+  },
+  "predecessors": {
+    "mayMotivateDesign": true,
+    "maySupplyEvidenceRows": false,
+    "shapedNetworkMaySatisfyTerminalGate": false,
+    "mixedMechanismResultsMaySatisfyTerminalGate": false
+  },
+  "cohort": {
+    "completeFamilies": 5,
+    "freshEvidenceRequired": true,
+    "repositoryOrTaskNameRulesAllowed": false
+  },
+  "singleChangedInput": "CACHE_READ_LOCATION",
+  "control": "GRADLE_HTTP_BUILD_CACHE_DIRECT_TO_SHARED",
+  "candidate": "GRADLE_HTTP_BUILD_CACHE_TO_VERIFYING_LOCAL_EDGE_L1",
+  "equalOpportunity": {
+    "sameGradleCommand": true,
+    "sameGraph": true,
+    "sameTaskOutcomes": true,
+    "sameRequestedCacheKeys": true,
+    "sameCommittedObjectSha256AndLength": true,
+    "sameRequiredOutputs": true,
+    "readOnlyMeasuredArms": true,
+    "nativeLocalCacheEnabled": false,
+    "independentEquivalentHomes": true,
+    "candidateWarmOriginReadsMaximum": 0
+  },
+  "network": {
+    "terminalProfile": "FROZEN_UNSHAPED_OWNER_OPERATED_REMOTE_PATH",
+    "freezeBeforeFirstPair": true,
+    "recordRunnerRouteRttAndTransferSamples": true,
+    "shapedProfilesDiagnosticOnly": true
+  },
+  "costAccounting": {
+    "unit": "SIGNED_MILLISECONDS",
+    "futureStateMayPrewarm": false,
+    "includeSeed": true,
+    "includeEdgeFill": true,
+    "includeVerification": true,
+    "includeStartupAndOperation": true,
+    "includeFallbackAndNativeRetention": true,
+    "unknownCost": "UNAVAILABLE_NOT_ZERO"
+  },
+  "gates": {
+    "publicCorrectness": {
+      "conclusiveFamilies": 5,
+      "minimumEligibleFamilies": 3,
+      "minimumRestoredObjectsPerEligibleFamily": 4,
+      "minimumRestoredBytesPerEligibleFamily": 8388608,
+      "timingAllowedBeforePass": false
+    },
+    "warmValue": {
+      "pairsPerEligibleFamily": 8,
+      "minimumPositivePairs": 6,
+      "minimumSavedMs": 500,
+      "minimumReductionRatio": 0.02,
+      "positiveLower95Bound": true,
+      "p95NonRegressive": true,
+      "minimumPositiveFamilies": 3,
+      "productFailureBudget": 0
+    },
+    "installedValue": {
+      "minimumOrdinaryBuildsPerPassingFamily": 20,
+      "minimumNetPositiveFamilies": 3,
+      "positiveSignedPortfolioMs": true,
+      "maximumPaybackCacheConsumingBuilds": 10,
+      "allMissesFallbacksAndCostsRetained": true
+    }
+  },
+  "blocks": ["RCL-001", "RCL-002", "RCL-003", "RCL-004", "RCL-005", "RCL-006"],
+  "forbiddenMechanisms": [
+    "BUILD_IMPACT", "TASK_SELECTION", "PUBLIC_SOURCE_PATCH",
+    "OUTPUT_MATERIALIZATION", "RUNTIME_TUNING", "TEST_OPTIMIZATION"
+  ],
+  "measurement": {
+    "hostedCiOwnsWallTimeGate": false,
+    "predecessorTimingsReusable": false,
+    "thresholdsMayMoveAfterMeasurement": false,
+    "failedPairsMayBeDiscarded": false
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "publicSourcePatchAuthorized": false,
+    "productionAuthorized": false,
+    "automaticMergeAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}
