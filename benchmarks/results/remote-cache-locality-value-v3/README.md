@@ -7,3 +7,8 @@ timing sample exists. V2 evidence supplies no v3 row.
 - [`specs/poc-remote-cache-locality-value-v3.json`](../../../specs/poc-remote-cache-locality-value-v3.json)
 - [`specs/poc-remote-cache-locality-value-v3.subjects.json`](../../../specs/poc-remote-cache-locality-value-v3.subjects.json)
 - [`docs/plans/remote-cache-locality-value-v3-poc-tracker.md`](../../../docs/plans/remote-cache-locality-value-v3-poc-tracker.md)
+
+[`harness-proof.json`](./harness-proof.json) closes `RCL3-002`: production Edge
+committed reads, offline restart, corruption-as-miss and unsafe-use negatives
+pass freshly. Five 1-MiB calibration GETs land at 41.045–41.668 ms under the
+frozen 30-ms plus 100-MiB/s profile. Public builds and value timings remain zero.

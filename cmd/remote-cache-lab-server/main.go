@@ -16,6 +16,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"time"
 )
 
 type cacheEntry struct {
@@ -25,15 +26,19 @@ type cacheEntry struct {
 }
 
 type cacheState struct {
-	root string
-	mu   sync.Mutex
-	puts int64
-	gets int64
+	root      string
+	mu        sync.Mutex
+	puts      int64
+	gets      int64
+	latency   time.Duration
+	bandwidth int64
 }
 
 func main() {
 	listen := flag.String("listen", "127.0.0.1:0", "loopback listen address")
 	root := flag.String("root", "", "object directory")
+	latency := flag.Duration("get-latency", 0, "delay added to each successful GET")
+	bandwidth := flag.Int64("get-bandwidth", 0, "successful GET bytes per second; zero disables shaping")
 	flag.Parse()
 	if *root == "" {
 		log.Fatal("--root is required")
@@ -41,7 +46,7 @@ func main() {
 	if err := os.MkdirAll(*root, 0o700); err != nil {
 		log.Fatal(err)
 	}
-	state := &cacheState{root: *root}
+	state := &cacheState{root: *root, latency: *latency, bandwidth: *bandwidth}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/cache/", state.cache)
 	mux.HandleFunc("/manifest", state.manifest)
@@ -104,6 +109,13 @@ func (state *cacheState) cache(response http.ResponseWriter, request *http.Reque
 		state.mu.Lock()
 		state.gets++
 		state.mu.Unlock()
+		delay := state.latency
+		if state.bandwidth > 0 {
+			delay += time.Duration(int64(time.Second) * int64(len(payload)) / state.bandwidth)
+		}
+		if delay > 0 {
+			time.Sleep(delay)
+		}
 		response.Header().Set("Content-Length", fmt.Sprint(len(payload)))
 		_, _ = response.Write(payload)
 	default:
@@ -137,7 +149,7 @@ func (state *cacheState) manifest(response http.ResponseWriter, _ *http.Request)
 	puts, gets := state.puts, state.gets
 	state.mu.Unlock()
 	response.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(response).Encode(map[string]any{"entries": entries, "objectCount": len(entries), "objectBytes": bytes, "puts": puts, "getHits": gets})
+	_ = json.NewEncoder(response).Encode(map[string]any{"entries": entries, "objectCount": len(entries), "objectBytes": bytes, "puts": puts, "getHits": gets, "getLatencyMs": state.latency.Milliseconds(), "getBandwidthBytesPerSecond": state.bandwidth})
 }
 
 func (state *cacheState) reset(response http.ResponseWriter, request *http.Request) {

@@ -1,0 +1,18 @@
+{
+  "schemaVersion":"buildopt.evidence/remote-cache-locality-harness/v3",
+  "workItem":"RCL3-002",
+  "capturedAt":"2026-08-31T11:55:00Z",
+  "buildoptRevision":"eded67a70585769c0003ad3881135a3699f5f638",
+  "bindings":[
+    {"path":"cmd/remote-cache-lab-server/main.go","sha256":"225cf77ead77f8dabd50773abf2909ef415703eac504b0b60d68a2e8c56b7419"},
+    {"path":"cmd/remote-cache-lab-server/main_test.go","sha256":"1d7258d5061b8f3b09c70435b5e838a7998980bd731aac84a72c3dfdf585aeb9"},
+    {"path":"internal/edgecache/store.go","sha256":"6cd5cfa5ff51d4a65a11d26a44e0bb0a4bf32762a0b52fd4f2f9b9515ebe30b5"},
+    {"path":"internal/edgecache/store_test.go","sha256":"42083bb1eb5f335b9a32a3f4e63aa60d0b32a0056b6d8e14dcad3cfdbee40f37"},
+    {"path":"internal/sharedcache/edge_read_through_test.go","sha256":"71cd8aa85c447071514e7c67e9aeb7806a4a6b057537bd2779bab996e0f93815"}
+  ],
+  "productionEdge":{"committedReadVerified":true,"offlineRestart":true,"corruptionBecomesMiss":true,"unsafeProxyRejected":true,"measuredWrites":0},
+  "networkCalibration":{"payloadBytes":1048576,"samplesSeconds":[0.041668,0.041081,0.041392,0.041586,0.041045],"expectedMinimumSeconds":0.040,"expectedMaximumSeconds":0.060,"configuredLatencyMs":30,"configuredBandwidthBytesPerSecond":104857600,"passed":true},
+  "publicBuilds":0,
+  "timingValueSamples":0,
+  "decision":"PASS_RCL3_HARNESS"
+}

@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+buildopt_evidence=benchmarks/results/remote-cache-locality-value-v3/harness-proof.json
+jq -e '
+  .schemaVersion == "buildopt.evidence/remote-cache-locality-harness/v3" and
+  .workItem == "RCL3-002" and (.bindings | length) == 5 and
+  .productionEdge == {committedReadVerified:true,offlineRestart:true,
+    corruptionBecomesMiss:true,unsafeProxyRejected:true,measuredWrites:0} and
+  .networkCalibration.payloadBytes == 1048576 and
+  (.networkCalibration.samplesSeconds | length) == 5 and
+  all(.networkCalibration.samplesSeconds[]; . >= 0.040 and . <= 0.060) and
+  .networkCalibration.configuredLatencyMs == 30 and
+  .networkCalibration.configuredBandwidthBytesPerSecond == 104857600 and
+  .networkCalibration.passed and .publicBuilds == 0 and .timingValueSamples == 0 and
+  .decision == "PASS_RCL3_HARNESS"
+' "${buildopt_evidence}" >/dev/null
+
+while IFS=$'\t' read -r buildopt_path buildopt_expected; do
+    buildopt_actual=$(sha256sum "${buildopt_path}" | awk '{print $1}')
+    [[ "${buildopt_actual}" == "${buildopt_expected}" ]] || {
+        printf 'RCL3 harness source drift: %s\n' "${buildopt_path}" >&2
+        exit 1
+    }
+done < <(jq -r '.bindings[] | [.path,.sha256] | @tsv' "${buildopt_evidence}")
+
+./dev/run --toolchain go -- go test -count=1 ./cmd/remote-cache-lab-server
+printf 'RCL3-002 harness OK: production Edge and fixed network profile verified\n'

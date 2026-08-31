@@ -16,7 +16,8 @@ descendants selected a profile, so the frozen terminal decision is
 The active [remote-cache locality v3 route](../plans/remote-cache-locality-value-v3-poc-tracker.md)
 corrects the v2 early-stop design. It must complete all five rows, binds one
 primary public artifact per family and distinguishes native instability from an
-Edge-only failure. Its fixed controlled network envelope can qualify mechanism
+Edge-only failure. Its production Edge harness and fixed profile pass; fresh
+five-family public correctness is next. Its controlled envelope can qualify mechanism
 economics, but a real remote path remains necessary for product viability.
 
 The closed [remote-cache locality route](../plans/remote-cache-locality-value-poc-tracker.md)

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 func TestCacheRoundTripAndManifest(t *testing.T) {
@@ -34,5 +35,16 @@ func TestCacheRoundTripAndManifest(t *testing.T) {
 	}
 	if manifest.ObjectCount != 1 || manifest.ObjectBytes != 7 || manifest.Puts != 1 || manifest.GetHits != 1 {
 		t.Fatalf("manifest = %+v", manifest)
+	}
+}
+
+func TestSuccessfulGetAppliesFrozenShape(t *testing.T) {
+	state := &cacheState{root: t.TempDir(), latency: 10 * time.Millisecond, bandwidth: 1000}
+	putResponse := httptest.NewRecorder()
+	state.cache(putResponse, httptest.NewRequest(http.MethodPut, "/cache/key", bytes.NewBuffer(make([]byte, 10))))
+	started := time.Now()
+	state.cache(httptest.NewRecorder(), httptest.NewRequest(http.MethodGet, "/cache/key", nil))
+	if elapsed := time.Since(started); elapsed < 20*time.Millisecond {
+		t.Fatalf("shaped GET elapsed = %v, want at least 20ms", elapsed)
 	}
 }
