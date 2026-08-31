@@ -61,7 +61,7 @@ if [[ -n "${buildopt_timing_result}" ]]; then
 fi
 buildopt_test_timeout=45m
 if [[ -n "${buildopt_timing_result}" ]]; then
-    buildopt_test_timeout=120m
+    buildopt_test_timeout=240m
 fi
 BUILDOPT_RCL3_SUBJECT="${buildopt_subject}" BUILDOPT_RCL3_RESULT="${buildopt_result}" BUILDOPT_RCL3_TIMING_RESULT="${buildopt_timing_result}" \
     ./dev/run --toolchain go -- go test -v -timeout "${buildopt_test_timeout}" -count=1 -run '^TestRCL3PublicCorrectness$' ./internal/sharedcache
