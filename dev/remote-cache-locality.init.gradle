@@ -1,0 +1,18 @@
+import org.gradle.caching.http.HttpBuildCache
+
+settingsEvaluated { settings ->
+    def endpoint = System.getenv('BUILDOPT_RCL_CACHE_URL')
+    if (endpoint == null || endpoint.isEmpty()) {
+        throw new GradleException('BUILDOPT_RCL_CACHE_URL is required')
+    }
+    settings.buildCache {
+        local {
+            enabled = false
+        }
+        remote(HttpBuildCache) {
+            url = uri(endpoint.endsWith('/') ? endpoint : endpoint + '/')
+            push = System.getenv('BUILDOPT_RCL_CACHE_PUSH') == '1'
+            allowInsecureProtocol = true
+        }
+    }
+}

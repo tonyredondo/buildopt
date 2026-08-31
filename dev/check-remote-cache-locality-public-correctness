@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_report=benchmarks/results/remote-cache-locality-value-v2/public-correctness.json
+buildopt_spec=specs/poc-remote-cache-locality-value-v2.json
+buildopt_subjects=specs/poc-remote-cache-locality-value-v2.subjects.json
+buildopt_harness=benchmarks/results/remote-cache-locality-value-v2/harness-proof.json
+
+jq -e --slurpfile spec "${buildopt_spec}" --slurpfile subjects "${buildopt_subjects}" '
+  def sha256: type == "string" and test("^[0-9a-f]{64}$");
+  .schemaVersion == "buildopt.evidence/remote-cache-locality-public-correctness/v2" and
+  .workItem == "RCL-003" and (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+  (.contractSha256 | sha256) and (.subjectsSha256 | sha256) and (.harnessSha256 | sha256) and
+  (.labBindings | length) == 3 and all(.labBindings[]; (.sha256 | sha256)) and
+  (.rows | length) == 5 and
+  ([.rows[].family] == [$subjects[0].families[].key]) and
+  ([.rows[].revision] == [$subjects[0].families[].revision]) and
+  ([.rows[].workflow] == [$subjects[0].families[].workflow]) and
+  (.rows | map(select(.decision != "NOT_RUN_GATE_CLOSED")) | length) as $conclusive |
+  (.rows | map(select(.outputsIdentical == true and
+      .remoteObjectCount >= $spec[0].gates.publicCorrectness.minimumRestoredObjectsPerEligibleFamily and
+      .remoteObjectBytes >= $spec[0].gates.publicCorrectness.minimumRestoredBytesPerEligibleFamily)) | length) as $eligible |
+  (.rows | map(select(.decision == "NOT_RUN_GATE_CLOSED")) | length) as $notRun |
+  (.rows | map(select(.outputsIdentical == false)) | length) as $mismatches |
+  (.rows | map(select(.productAttributableFailure == true)) | length) as $failures |
+  $conclusive == 2 and $eligible == 0 and $notRun == 3 and $mismatches == 1 and $failures == 0 and
+  .rows[0].remoteObjectCount == 45 and .rows[0].remoteObjectBytes == 6904026 and
+  .rows[0].consumerFromCacheCount == 39 and .rows[0].consumerRemoteWrites == 0 and
+  .rows[0].producerOutputSetSha256 == .rows[0].consumerOutputSetSha256 and
+  .rows[0].decision == "INELIGIBLE_INSUFFICIENT_OBJECT_BYTES" and
+  .rows[1].remoteObjectCount == 60 and .rows[1].remoteObjectBytes == 170907353 and
+  .rows[1].consumerFromCacheCount == 58 and .rows[1].consumerRemoteWrites == 0 and
+  .rows[1].producerOutputSetSha256 != .rows[1].consumerOutputSetSha256 and
+  .rows[1].mismatch.producerSha256 != .rows[1].mismatch.consumerSha256 and
+  .rows[1].decision == "STOP_REQUIRED_OUTPUT_MISMATCH" and
+  .summary == {families:5,conclusiveFamilies:$conclusive,eligibleFamilies:$eligible,
+    notRunGateClosedFamilies:$notRun,productAttributableFailures:$failures,
+    requiredOutputMismatches:$mismatches,publicCandidateEdgeBuilds:0,timingSamples:0,
+    decision:"STOP_PUBLIC_CORRECTNESS_GATE"}
+' "${buildopt_report}" >/dev/null
+
+for buildopt_bound in contractSha256 subjectsSha256 harnessSha256; do
+    case "${buildopt_bound}" in
+        contractSha256) buildopt_path=${buildopt_spec} ;;
+        subjectsSha256) buildopt_path=${buildopt_subjects} ;;
+        harnessSha256) buildopt_path=${buildopt_harness} ;;
+    esac
+    buildopt_expected=$(jq -r ".${buildopt_bound}" "${buildopt_report}")
+    buildopt_actual=$(sha256sum "${buildopt_path}" | awk '{print $1}')
+    [[ "${buildopt_actual}" == "${buildopt_expected}" ]] || {
+        printf 'RCL public evidence binding drift: %s\n' "${buildopt_path}" >&2
+        exit 1
+    }
+done
+
+while IFS=$'\t' read -r buildopt_path buildopt_expected; do
+    buildopt_actual=$(sha256sum "${buildopt_path}" | awk '{print $1}')
+    [[ "${buildopt_actual}" == "${buildopt_expected}" ]] || {
+        printf 'RCL lab binding drift: %s\n' "${buildopt_path}" >&2
+        exit 1
+    }
+done < <(jq -r '.labBindings[] | [.path,.sha256] | @tsv' "${buildopt_report}")
+
+./dev/run --toolchain go -- go test -count=1 ./cmd/remote-cache-lab-server
+printf 'RCL-003 public correctness OK: stopped at exact-output gate, no timing authorized\n'

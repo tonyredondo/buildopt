@@ -4,9 +4,9 @@
   "objective": "PROVE_REMOTE_CACHE_LOCALITY_PRODUCT_VALUE",
   "baseline": "OPTIMIZED_NATIVE_GRADLE_DIRECT_TO_REMOTE_SHARED",
   "status": {
-    "currentBlock": "RCL-003",
-    "completedBlocks": ["RCL-001", "RCL-002"],
-    "publicBuildAuthorized": true,
+    "currentBlock": null,
+    "completedBlocks": ["RCL-001", "RCL-002", "RCL-003", "RCL-006"],
+    "publicBuildAuthorized": false,
     "timingAuthorized": false
   },
   "predecessors": {
@@ -78,6 +78,17 @@
     }
   },
   "blocks": ["RCL-001", "RCL-002", "RCL-003", "RCL-004", "RCL-005", "RCL-006"],
+  "blockedBlocks": ["RCL-004", "RCL-005"],
+  "resolution": {
+    "decision": "STOP_REMOTE_CACHE_LOCALITY_VALUE_POC",
+    "failedPrerequisite": "RCL-003",
+    "conclusiveFamilies": 2,
+    "eligibleFamilies": 0,
+    "requiredOutputMismatches": 1,
+    "timingMeasured": false,
+    "speedupClaimed": false,
+    "successorAuthorized": false
+  },
   "forbiddenMechanisms": [
     "BUILD_IMPACT", "TASK_SELECTION", "PUBLIC_SOURCE_PATCH",
     "OUTPUT_MATERIALIZATION", "RUNTIME_TUNING", "TEST_OPTIMIZATION"

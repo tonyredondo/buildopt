@@ -25,7 +25,7 @@ decision.
 
 ## Current experiment status
 
-The active route is `REMOTE_CACHE_LOCALITY_VALUE_V2`. `RCL-001` now freezes an
+The latest route is `REMOTE_CACHE_LOCALITY_VALUE_V2`. `RCL-001` freezes an
 equal-opportunity comparison: optimized native Gradle reads fixed immutable
 objects directly from an owner-operated remote cache, while the identical
 native graph reads those objects through a verifying local BuildOpt Edge/L1.
@@ -34,10 +34,12 @@ fresh. The terminal path must be unshaped, and seed, fill, verification,
 operation and fallback costs all enter signed product value. Historical shaped
 WAN and mixed graph-reduction wins are motivation only.
 
-No public build, timing pair or new speedup exists. `RCL-002` proves identical
-native keys plus read-only, corruption and outage behavior in deterministic
-fixtures. `RCL-003` now owns fresh public correctness. Timing cannot begin
-before fresh public correctness reaches 5/5 conclusive and 3/5 eligible.
+`RCL-002` proves identical native keys plus read-only, corruption and outage
+behavior. `RCL-003` then stops at 2/5 conclusive and 0/5 eligible: Groovy is
+exact but supplies 6.90 MB versus the 8-MiB gate; Kafka supplies 170.91 MB and
+58 hits but its frozen required test-fixtures JAR differs. Three rows close as
+not run. `RCL-004/005` were not authorized, so no timing or speedup exists;
+`RCL-006` records `STOP_REMOTE_CACHE_LOCALITY_VALUE_POC`.
 
 The latest closed route is `NORMALIZATION_AWARE_CACHEABILITY_V2`. It tested whether
 BuildOpt can turn generic source evidence into an owner-reviewed, exactly

@@ -1,9 +1,11 @@
 # Validation reference
 
-The active planning-only RCL route is checked by
-`./dev/check-remote-cache-locality-value`. It validates the equal-opportunity
-contract, exact cohort, complete cost accounting and authority boundary without
-public builds, cache seeding or timing. The closed EOF route remains checked by
+The closed RCL route is checked by `./dev/check-remote-cache-locality-value`,
+`./dev/check-remote-cache-locality-harness`,
+`./dev/check-remote-cache-locality-public-correctness` and
+`./dev/check-remote-cache-locality-terminal-decision`. They reconstruct the
+equal-opportunity contract, fixture proof, stopped public gate and typed
+unmeasured value. The closed EOF route remains checked by
 `./dev/check-economic-opportunity-first`.
 
 The closed NAC v2 route is checked by
@@ -28,6 +30,9 @@ provision tools or create release artifacts document that effect explicitly.
 | Change | Command |
 |---|---|
 | Remote-cache-locality v2 contract, cohort, equal opportunity, costs and authority | `./dev/check-remote-cache-locality-value` |
+| Remote-cache-locality fixture key parity and verified failure behavior | `./dev/check-remote-cache-locality-harness` |
+| Remote-cache-locality public exact-output stop and independent gate recount | `./dev/check-remote-cache-locality-public-correctness` |
+| Remote-cache-locality terminal stop and typed unmeasured value | `./dev/check-remote-cache-locality-terminal-decision` |
 | Economic-first contract, frozen cohort, formulas, budgets and authority boundary | `./dev/check-economic-opportunity-first` |
 | Economic-first 320-row source recurrence ledger and independent breadth recount | `./dev/check-economic-opportunity-source-ledger [HISTORY_ROOT]` |
 | Economic-first terminal stop, evidence digests and typed unmeasured value | `./dev/check-economic-opportunity-terminal-decision` |

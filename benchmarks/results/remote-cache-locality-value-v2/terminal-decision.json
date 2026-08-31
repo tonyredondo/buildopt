@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "buildopt.evidence/remote-cache-locality-terminal-decision/v2",
+  "workItem": "RCL-006",
+  "capturedAt": "2026-08-31T11:17:00Z",
+  "contractSha256": "827a3227b400d851f4c8113f6f1296f89e8bd8570204b9d4679b7d257740ff1f",
+  "subjectsSha256": "82f7fa3554b93ba5a241dac0db59c7c39d16892eec9b6bd477a7b2623d765b4a",
+  "harnessSha256": "547af236501fe91370a1e9f958988bd41e2be220e2e6e599b0fe703abe63e952",
+  "publicCorrectnessSha256": "15e3421853ceb782fc1d3289ad503c33e2ab02f3be5cf3743b8180b5eff0a8e5",
+  "criteria": [
+    {"id":"EQUAL_OPPORTUNITY_HARNESS","required":true,"status":"PASS"},
+    {"id":"PUBLIC_CONCLUSIVE_FAMILIES","required":5,"observed":2,"status":"FAIL"},
+    {"id":"PUBLIC_ELIGIBLE_FAMILIES","required":3,"observed":0,"status":"FAIL"},
+    {"id":"EXACT_REQUIRED_OUTPUTS","required":true,"observed":false,"status":"FAIL"},
+    {"id":"WARM_VALUE_FAMILIES","required":3,"observed":"NOT_MEASURED_NOT_AUTHORIZED","status":"UNAVAILABLE"},
+    {"id":"INSTALLED_NET_VALUE_FAMILIES","required":3,"observed":"NOT_MEASURED_NOT_AUTHORIZED","status":"UNAVAILABLE"},
+    {"id":"PRODUCT_FAILURE_BUDGET","required":0,"observed":0,"status":"PASS"}
+  ],
+  "blocks": {
+    "RCL-001":"DONE",
+    "RCL-002":"DONE",
+    "RCL-003":"DONE_STOP",
+    "RCL-004":"NOT_AUTHORIZED",
+    "RCL-005":"NOT_AUTHORIZED",
+    "RCL-006":"DONE"
+  },
+  "value": {
+    "warmPairs": "NOT_MEASURED_NOT_AUTHORIZED",
+    "installedBuilds": "NOT_MEASURED_NOT_AUTHORIZED",
+    "signedPortfolioMs": "NOT_MEASURED_NOT_AUTHORIZED",
+    "paybackCacheConsumingBuilds": "NOT_MEASURED_NOT_AUTHORIZED",
+    "speedupClaimed": false
+  },
+  "decision": "STOP_REMOTE_CACHE_LOCALITY_VALUE_POC",
+  "failedPrerequisite": "RCL-003",
+  "successorAuthorized": false
+}

@@ -1,7 +1,8 @@
 # Remote Cache Locality Value POC v2
 
-Status: `RCL-001` complete. This block freezes the experiment before any
-public build, cache seed or timing sample. `RCL-002` is next.
+Status: closed at `RCL-006` with `STOP_REMOTE_CACHE_LOCALITY_VALUE_POC`.
+`RCL-003` stopped at the public exact-output prerequisite; `RCL-004/005` were
+not authorized and no timing or speedup exists.
 
 ## Hypothesis
 
@@ -97,4 +98,16 @@ automatic merge, soak, design partners, pricing, SLOs or Test Optimization.
 
 ```bash
 ./dev/check-remote-cache-locality-value
+./dev/check-remote-cache-locality-harness
+./dev/check-remote-cache-locality-public-correctness
+./dev/check-remote-cache-locality-terminal-decision
 ```
+
+## Current resolution
+
+The deterministic harness passes. Fresh public producer/consumer evidence then
+completes two rows before the frozen stop: Groovy restores 39 objects and exact
+output but supplies only 6,904,026 bytes; Kafka supplies 60 objects and
+170,907,353 bytes with 58 hits, but its required test-fixtures JAR differs.
+The other three rows are `NOT_RUN_GATE_CLOSED`. Completeness is 2/5 and
+eligibility 0/5, so warm and installed value remain unavailable.

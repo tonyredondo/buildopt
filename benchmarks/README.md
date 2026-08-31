@@ -2,12 +2,12 @@
 
 Reproducible workloads for measuring causal savings, overhead, queues, additional compute, and behavior under failure.
 
-The active planning-only route is documented by the
+The latest closed route is documented by the
 [remote cache locality v2 evidence](./results/remote-cache-locality-value-v2/README.md).
 `RCL-001` freezes identical graph/key/object/output opportunity, one unshaped
-remote path and complete fill/operation cost accounting. No public build,
-timing or speedup exists; `RCL-002` passes its deterministic harness proof and
-`RCL-003` is fresh untimed public correctness. The closed predecessor is documented by the
+remote path and complete fill/operation cost accounting. `RCL-002` passes its
+harness, but `RCL-003` stops at 2/5 conclusive, 0/5 eligible and one frozen
+required-output mismatch. No timing or speedup exists. The predecessor is documented by the
 [economic opportunity first evidence](./results/economic-opportunity-first-v1/README.md).
 Its fresh 320-row chronological source ledger is 5/5 conclusive but reaches
 only 1/5 recurrence families against the required 3/5. Native planning

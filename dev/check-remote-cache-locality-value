@@ -13,7 +13,7 @@ jq -e '
   .workItem == "RCL" and
   .objective == "PROVE_REMOTE_CACHE_LOCALITY_PRODUCT_VALUE" and
   .baseline == "OPTIMIZED_NATIVE_GRADLE_DIRECT_TO_REMOTE_SHARED" and
-  .status == {currentBlock:"RCL-003",completedBlocks:["RCL-001","RCL-002"],publicBuildAuthorized:true,timingAuthorized:false} and
+  .status == {currentBlock:null,completedBlocks:["RCL-001","RCL-002","RCL-003","RCL-006"],publicBuildAuthorized:false,timingAuthorized:false} and
   .predecessors.maySupplyEvidenceRows == false and
   .predecessors.shapedNetworkMaySatisfyTerminalGate == false and
   .predecessors.mixedMechanismResultsMaySatisfyTerminalGate == false and
@@ -39,6 +39,10 @@ jq -e '
   .gates.installedValue.positiveSignedPortfolioMs and
   .gates.installedValue.maximumPaybackCacheConsumingBuilds == 10 and
   .blocks == ["RCL-001","RCL-002","RCL-003","RCL-004","RCL-005","RCL-006"] and
+  .blockedBlocks == ["RCL-004","RCL-005"] and
+  .resolution == {decision:"STOP_REMOTE_CACHE_LOCALITY_VALUE_POC",failedPrerequisite:"RCL-003",
+    conclusiveFamilies:2,eligibleFamilies:0,requiredOutputMismatches:1,
+    timingMeasured:false,speedupClaimed:false,successorAuthorized:false} and
   (.forbiddenMechanisms | length) == 6 and
   (.measurement.hostedCiOwnsWallTimeGate | not) and
   (.measurement.predecessorTimingsReusable | not) and
@@ -59,15 +63,12 @@ jq -e '
       (.workflow | length) > 0 and (.requiredOutputs | length) > 0)
 ' specs/poc-remote-cache-locality-value-v2.subjects.json >/dev/null
 
-grep -Fq "**Current block:** \`RCL-003\`" docs/plans/remote-cache-locality-value-poc-tracker.md
+grep -Fq '**Current block:** none; all six blocks are resolved' docs/plans/remote-cache-locality-value-poc-tracker.md
 grep -Eq "\`RCL-001\`.*\`DONE\`" docs/plans/remote-cache-locality-value-poc-tracker.md
-for block in RCL-003 RCL-004 RCL-005 RCL-006; do
-    if [[ "${block}" == RCL-003 ]]; then
-        grep -Eq "\`${block}\`.*\`TODO\`" docs/plans/remote-cache-locality-value-poc-tracker.md
-    else
-        grep -Eq "\`${block}\`.*\`WAITING\`" docs/plans/remote-cache-locality-value-poc-tracker.md
-    fi
-done
+grep -Eq "\`RCL-003\`.*\`DONE_STOP\`" docs/plans/remote-cache-locality-value-poc-tracker.md
+grep -Eq "\`RCL-004\`.*\`NOT_AUTHORIZED\`" docs/plans/remote-cache-locality-value-poc-tracker.md
+grep -Eq "\`RCL-005\`.*\`NOT_AUTHORIZED\`" docs/plans/remote-cache-locality-value-poc-tracker.md
+grep -Eq "\`RCL-006\`.*\`DONE\`" docs/plans/remote-cache-locality-value-poc-tracker.md
 grep -Fq 'zero public builds and zero timing samples' benchmarks/results/remote-cache-locality-value-v2/README.md
 
-printf 'RCL contract OK: equal-opportunity locality v2 frozen before public builds or timing\n'
+printf 'RCL contract OK: terminal public-correctness stop preserves unmeasured value\n'

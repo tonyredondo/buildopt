@@ -2,13 +2,14 @@
 
 ## Current Executive Summary
 
-- **The active successor is equal-opportunity cache locality and remains
-  planning-only.** `RCL-001` compares optimized native Gradle direct to fixed
+- **The latest successor, equal-opportunity cache locality, stopped before
+  timing.** `RCL-001` compares optimized native Gradle direct to fixed
   remote-cache objects with the identical graph through a verifying local
   BuildOpt Edge/L1. It freezes five families, one unshaped remote path, exact
   key/object/output parity and complete seed/fill/operation costs. Historical
-  locality results supply no row. `RCL-002` passes the harness; `RCL-003` owns
-  fresh untimed public correctness, and no new timing or speedup exists.
+  locality results supply no row. `RCL-002` passes the harness; `RCL-003` stops
+  at 2/5 conclusive, 0/5 eligible and one frozen required-output mismatch.
+  `RCL-004/005` were not authorized, so no new timing or speedup exists.
 - **The current decision is `STOP_GENERIC_POC`, derived from lifetime breadth
   V3 rather than isolated target calibration.** One exact executable ran the
   frozen Spring, OpenTelemetry,

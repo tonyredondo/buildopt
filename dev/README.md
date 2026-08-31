@@ -14,11 +14,14 @@ package boundaries with:
 ./dev/check-documentation
 ```
 
-Validate the active equal-opportunity cache-locality contract, frozen cohort,
-cost accounting and no-public-build/no-timing authority boundary with:
+Validate the closed equal-opportunity cache-locality contract and its stopped
+public gate with:
 
 ```bash
 ./dev/check-remote-cache-locality-value
+./dev/check-remote-cache-locality-harness
+./dev/check-remote-cache-locality-public-correctness
+./dev/check-remote-cache-locality-terminal-decision
 ```
 
 Validate the closed economic-first contract with:

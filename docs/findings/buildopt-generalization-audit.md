@@ -13,14 +13,14 @@ net value in only one of five families. One of six structurally eligible
 descendants selected a profile, so the frozen terminal decision is
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md).
 
-The active [remote-cache locality route](../plans/remote-cache-locality-value-poc-tracker.md)
-tests a product unit that does not require structural-profile recurrence.
+The closed [remote-cache locality route](../plans/remote-cache-locality-value-poc-tracker.md)
+tested a product unit that does not require structural-profile recurrence.
 `RCL-001` freezes the same native graph, cache keys, immutable object bytes and
 outputs in both arms, a five-family breadth gate and complete seed/fill/operation
 cost accounting. Historical shaped-network and mixed-mechanism wins supply no
-row. `RCL-002` proves the harness; `RCL-003` owns public correctness, and timing
-remains closed until 5/5 families are conclusive and at least 3/5 have sufficient
-remote-cache opportunity.
+row. `RCL-002` proves the harness, but `RCL-003` stops at 2/5 conclusive and
+0/5 eligible after Groovy misses the byte gate and Kafka's frozen required
+test-fixtures JAR differs. Timing never opened.
 
 That decision stopped the whole-profile hypothesis, not the bounded mechanisms
 that worked. The subsequent

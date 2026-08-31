@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_terminal=benchmarks/results/remote-cache-locality-value-v2/terminal-decision.json
+buildopt_public=benchmarks/results/remote-cache-locality-value-v2/public-correctness.json
+
+./dev/check-remote-cache-locality-value >/dev/null
+./dev/check-remote-cache-locality-public-correctness >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/remote-cache-locality-terminal-decision/v2" and
+  .workItem == "RCL-006" and (.criteria | length) == 7 and
+  ([.criteria[] | select(.status == "PASS")] | length) == 2 and
+  ([.criteria[] | select(.status == "FAIL")] | length) == 3 and
+  ([.criteria[] | select(.status == "UNAVAILABLE")] | length) == 2 and
+  .blocks == {"RCL-001":"DONE","RCL-002":"DONE","RCL-003":"DONE_STOP",
+    "RCL-004":"NOT_AUTHORIZED","RCL-005":"NOT_AUTHORIZED","RCL-006":"DONE"} and
+  .value.warmPairs == "NOT_MEASURED_NOT_AUTHORIZED" and
+  .value.installedBuilds == "NOT_MEASURED_NOT_AUTHORIZED" and
+  .value.signedPortfolioMs == "NOT_MEASURED_NOT_AUTHORIZED" and
+  .value.paybackCacheConsumingBuilds == "NOT_MEASURED_NOT_AUTHORIZED" and
+  (.value.speedupClaimed | not) and
+  .decision == "STOP_REMOTE_CACHE_LOCALITY_VALUE_POC" and
+  .failedPrerequisite == "RCL-003" and (.successorAuthorized | not)
+' "${buildopt_terminal}" >/dev/null
+
+while IFS=$'\t' read -r buildopt_field buildopt_path; do
+    buildopt_expected=$(jq -r ".${buildopt_field}" "${buildopt_terminal}")
+    buildopt_actual=$(sha256sum "${buildopt_path}" | awk '{print $1}')
+    [[ "${buildopt_actual}" == "${buildopt_expected}" ]] || {
+        printf 'RCL terminal binding drift: %s\n' "${buildopt_path}" >&2
+        exit 1
+    }
+done <<'EOF'
+contractSha256	specs/poc-remote-cache-locality-value-v2.json
+subjectsSha256	specs/poc-remote-cache-locality-value-v2.subjects.json
+harnessSha256	benchmarks/results/remote-cache-locality-value-v2/harness-proof.json
+publicCorrectnessSha256	benchmarks/results/remote-cache-locality-value-v2/public-correctness.json
+EOF
+
+jq -e --slurpfile public "${buildopt_public}" '
+  ($public[0].rows | map(select(.decision != "NOT_RUN_GATE_CLOSED")) | length) == 2 and
+  ($public[0].rows | map(select(.outputsIdentical == true and .remoteObjectCount >= 4 and .remoteObjectBytes >= 8388608)) | length) == 0 and
+  ($public[0].rows | map(select(.outputsIdentical == false)) | length) == 1 and
+  .criteria[] as $criterion |
+  if $criterion.id == "PUBLIC_CONCLUSIVE_FAMILIES" then $criterion.observed == 2
+  elif $criterion.id == "PUBLIC_ELIGIBLE_FAMILIES" then $criterion.observed == 0
+  elif $criterion.id == "EXACT_REQUIRED_OUTPUTS" then $criterion.observed == false
+  else true end
+' "${buildopt_terminal}" >/dev/null
+
+printf 'RCL-006 terminal decision OK: stopped at RCL-003 with timing unavailable\n'

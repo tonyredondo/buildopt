@@ -27,14 +27,14 @@ evidence around that execution and uses conservative fallbacks: a rejected
 cache entry becomes a normal cache miss, an unqualified optimization is not
 applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
-> **Active POC experiment:** `REMOTE_CACHE_LOCALITY_VALUE_V2` tests BuildOpt as
+> **Latest POC experiment:** `REMOTE_CACHE_LOCALITY_VALUE_V2` tested BuildOpt as
 > a verifying local Edge/L1 against optimized native Gradle reading the same
 > immutable remote-cache objects directly. `RCL-001` freezes the exact graph,
 > key/object/output parity, unshaped remote path, five-family breadth and full
-> seed/fill/operation cost accounting. No public build, cache seed or timing is
-> authorized yet. `RCL-002` now proves the equal-opportunity harness and safe
-> failure behavior; `RCL-003` is fresh untimed public correctness. See the
-> [active tracker](./docs/plans/remote-cache-locality-value-poc-tracker.md).
+> seed/fill/operation cost accounting. `RCL-002` proves the harness, but public
+> correctness stops at 2/5 conclusive, 0/5 eligible and one frozen required-
+> output mismatch. `RCL-004/005` were not authorized; no timing or speedup
+> exists. See the [closed tracker](./docs/plans/remote-cache-locality-value-poc-tracker.md).
 
 > **Installed two-machine proof:** the committed `./buildoptw` command now
 > bootstraps one SHA-verified archive on isolated producer and consumer

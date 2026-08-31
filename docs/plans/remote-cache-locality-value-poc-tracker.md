@@ -1,7 +1,7 @@
 # Remote Cache Locality Value POC Tracker
 
-**Status:** active — contract frozen, no public build or timing yet<br>
-**Current block:** `RCL-003`<br>
+**Status:** closed — `STOP_REMOTE_CACHE_LOCALITY_VALUE_POC`<br>
+**Current block:** none; all six blocks are resolved<br>
 **Terminal outcomes:** `QUALIFY_REMOTE_CACHE_LOCALITY_PRODUCT` or
 `STOP_REMOTE_CACHE_LOCALITY_VALUE_POC`
 
@@ -26,10 +26,10 @@ cache read locality changes; all incremental costs must repay.
 | --- | --- | --- | --- | --- |
 | `RCL-001` | Human/machine contract, cohort, costs, gates, checker and documentation ledger | User-authorized successor after EOF stop | Static contracts pass without public builds, cache seed or timing | `DONE` |
 | `RCL-002` | Equal-opportunity harness and deterministic fixture proof | RCL-001 | Same graph/key/object/output manifests; read-only, corruption, outage and forbidden-mechanism negatives pass | `DONE` |
-| `RCL-003` | Fresh five-family producer/consumer correctness and opportunity report | RCL-002 | 5/5 conclusive; at least 3/5 restore four objects and 8 MiB with exact outputs | `TODO` |
-| `RCL-004` | Eight balanced warm-locality pairs per eligible family | RCL-003 | At least 3/5 pass 6/8 positive, 500 ms, 2%, positive lower bound, p95 and correctness gates | `WAITING` |
-| `RCL-005` | Cold-fill and twenty-build installed economic ledger | RCL-004 | At least 3/5 net positive; portfolio positive; payback within ten consuming builds | `WAITING` |
-| `RCL-006` | Installed explanation and terminal scorecard | RCL-005 or first failed prerequisite | Truthful terminal decision with unavailable fields preserved | `WAITING` |
+| `RCL-003` | Fresh five-family producer/consumer correctness and opportunity report | RCL-002 | 5/5 conclusive; at least 3/5 restore four objects and 8 MiB with exact outputs | `DONE_STOP` — 2/5 conclusive, 0/5 eligible, one required-output mismatch |
+| `RCL-004` | Eight balanced warm-locality pairs per eligible family | RCL-003 | At least 3/5 pass 6/8 positive, 500 ms, 2%, positive lower bound, p95 and correctness gates | `NOT_AUTHORIZED` |
+| `RCL-005` | Cold-fill and twenty-build installed economic ledger | RCL-004 | At least 3/5 net positive; portfolio positive; payback within ten consuming builds | `NOT_AUTHORIZED` |
+| `RCL-006` | Installed explanation and terminal scorecard | RCL-005 or first failed prerequisite | Truthful terminal decision with unavailable fields preserved | `DONE` — terminal stop only |
 
 ## RCL-002 required proof
 
@@ -47,6 +47,18 @@ untimed public producer/consumer correctness after the harness passes.
 `RCL-004` is the first timing block. Hosted CI validates deterministic
 contracts and correctness only. No block patches public source or authorizes
 production, automatic merge, soak, design partners or Test Optimization.
+
+## Terminal result
+
+Groovy restores 39 of 45 objects and reproduces its required JAR exactly, but
+the committed object set is 6,904,026 bytes, below the frozen 8-MiB gate. Kafka
+exposes 60 objects and 170,907,353 bytes and restores 58 tasks, but its required
+`test-fixtures.jar` differs between producer and consumer while the main client
+JAR remains identical. The frozen output glob cannot be narrowed after seeing
+the result. The stop condition closes the remaining three rows as
+`NOT_RUN_GATE_CLOSED`, leaves `RCL-004/005` unauthorized and records no timing
+or speedup. This does not disprove cache locality; it rejects this frozen cohort
+and output contract as a valid product-value experiment.
 
 ## Documentation ledger
 

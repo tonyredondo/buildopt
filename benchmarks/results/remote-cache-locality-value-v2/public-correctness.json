@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "buildopt.evidence/remote-cache-locality-public-correctness/v2",
+  "workItem": "RCL-003",
+  "capturedAt": "2026-08-31T11:15:00Z",
+  "buildoptRevision": "b73943e1155259f57f0525d61f195f951ac377e9",
+  "contractSha256": "827a3227b400d851f4c8113f6f1296f89e8bd8570204b9d4679b7d257740ff1f",
+  "subjectsSha256": "82f7fa3554b93ba5a241dac0db59c7c39d16892eec9b6bd477a7b2623d765b4a",
+  "harnessSha256": "547af236501fe91370a1e9f958988bd41e2be220e2e6e599b0fe703abe63e952",
+  "labBindings": [
+    {"path":"cmd/remote-cache-lab-server/main.go","sha256":"473266fa958e874319ffbe8160e7923e6b25b38fa9b6639dcd88c918a85f09a7"},
+    {"path":"cmd/remote-cache-lab-server/main_test.go","sha256":"eff8594032666f9843b8785342a8357b9c202c777d7b363d41d9444b269ba172"},
+    {"path":"dev/remote-cache-locality.init.gradle","sha256":"939770569f2b8229953b949b234046859e1a73497f327cd64d06d175a982bd8d"}
+  ],
+  "rows": [
+    {
+      "family":"apache-groovy",
+      "revision":"14fa934340c46bc1ee96cba7ae594258bd8d0fd0",
+      "workflow":["jar"],
+      "producerSucceeded":true,
+      "consumerSucceeded":true,
+      "remoteObjectCount":45,
+      "remoteObjectBytes":6904026,
+      "consumerFromCacheCount":39,
+      "consumerRemoteWrites":0,
+      "producerOutputSetSha256":"8346847904229a876411738e59230f6ef0cf8cebc6cc72f4f7d6c54c20246bbb",
+      "consumerOutputSetSha256":"8346847904229a876411738e59230f6ef0cf8cebc6cc72f4f7d6c54c20246bbb",
+      "outputsIdentical":true,
+      "productAttributableFailure":false,
+      "decision":"INELIGIBLE_INSUFFICIENT_OBJECT_BYTES"
+    },
+    {
+      "family":"apache-kafka",
+      "revision":"2e961afeff5cb27d60767a783edf20be00cc28e8",
+      "workflow":["assemble"],
+      "producerSucceeded":true,
+      "consumerSucceeded":true,
+      "remoteObjectCount":60,
+      "remoteObjectBytes":170907353,
+      "consumerFromCacheCount":58,
+      "consumerRemoteWrites":0,
+      "producerOutputSetSha256":"4d3b34d07b870002cd04cebff2c9fc9827c29c33a9060a604382e02750553c0c",
+      "consumerOutputSetSha256":"fa67334dd2f995c193e29616dfc0d83bed0fc8a737055a9e2061161349f850aa",
+      "outputsIdentical":false,
+      "mismatch": {
+        "path":"clients/build/libs/kafka-clients-4.4.0-SNAPSHOT-test-fixtures.jar",
+        "producerSha256":"a145929296d619e63fe68c15903f1d4b2aa0f7e82d984d9e2ba0798d01b817d5",
+        "consumerSha256":"deacbb85aaef6b36745d4f4228540fd2cba422e17e9140c504ba0758864e49a9",
+        "unchangedSiblingSha256":"c21145bb6f35b15ac5a33783b88834d54a3721c841fb2a2328ae88690a183139"
+      },
+      "productAttributableFailure":false,
+      "decision":"STOP_REQUIRED_OUTPUT_MISMATCH"
+    },
+    {"family":"micronaut-core","revision":"eb60c6c35f355750c6bced793e85c30629d27c4e","workflow":["assemble"],"decision":"NOT_RUN_GATE_CLOSED"},
+    {"family":"opentelemetry-java-instrumentation","revision":"f330e4c0b764d80dcc1f7c6d4c01e305593c49f1","workflow":["assemble"],"decision":"NOT_RUN_GATE_CLOSED"},
+    {"family":"spring-framework","revision":"1c4b20287f1d8f635867fb58c576849f9313e907","workflow":["testClasses"],"decision":"NOT_RUN_GATE_CLOSED"}
+  ],
+  "summary": {
+    "families":5,
+    "conclusiveFamilies":2,
+    "eligibleFamilies":0,
+    "notRunGateClosedFamilies":3,
+    "productAttributableFailures":0,
+    "requiredOutputMismatches":1,
+    "publicCandidateEdgeBuilds":0,
+    "timingSamples":0,
+    "decision":"STOP_PUBLIC_CORRECTNESS_GATE"
+  }
+}
