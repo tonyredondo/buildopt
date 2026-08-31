@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+buildopt_report=benchmarks/results/remote-cache-locality-value-v3/public-correctness.json
+buildopt_subjects=specs/poc-remote-cache-locality-value-v3.subjects.json
+
+jq -e --slurpfile subjects "${buildopt_subjects}" '
+  .schemaVersion=="buildopt.evidence/remote-cache-locality-public-correctness/v3" and
+  .workItem=="RCL3-003" and (.rows|length)==5 and
+  ([.rows[].family]|sort)==([$subjects[0].families[].key]|sort) and
+  all(.rows[]; . as $row |
+    $row.revision==($subjects[0].families[]|select(.key==$row.family).revision) and
+    $row.producerA.succeeded and $row.producerB.succeeded and
+    $row.directConsumer.succeeded and $row.edgeConsumer.succeeded and
+    ($row.remoteManifest.objectCount>=0) and ($row.remoteManifest.objectBytes>=0) and
+    $row.directOrigin.requests>=0 and $row.edgeConsumerOrigin.requests==0 and
+    (($row.decision=="ELIGIBLE_EXACT") ==
+      ($row.nativeStable and $row.directExact and $row.edgeExact and
+       $row.directConsumer.fromCacheCount>0 and $row.edgeConsumer.fromCacheCount>0)) and
+    (($row.decision=="NATIVE_OUTPUT_UNSTABLE") == ($row.nativeStable|not)) and
+    (($row.decision=="INCOMPLETE_NO_CACHE_HITS") ==
+      ($row.nativeStable and $row.directExact and $row.edgeExact and
+       ($row.directConsumer.fromCacheCount==0 or $row.edgeConsumer.fromCacheCount==0))) and
+    ($row.productAttributableFailure == ($row.decision=="EDGE_PRODUCT_FAILURE"))) and
+  ([.rows[]|select(.decision=="ELIGIBLE_EXACT")]|length)==3 and
+  ([.rows[]|select(.decision=="NATIVE_OUTPUT_UNSTABLE")]|length)==1 and
+  ([.rows[]|select(.decision=="INCOMPLETE_NO_CACHE_HITS")]|length)==1 and
+  ([.rows[]|select(.productAttributableFailure)]|length)==0 and
+  .summary=={families:5,conclusiveFamilies:5,eligibleFamilies:3,
+    nativeUnstableFamilies:1,noCacheOpportunityFamilies:1,
+    productAttributableFailures:0,decision:"PASS_PUBLIC_CORRECTNESS_OPEN_RCL3_004"}
+' "${buildopt_report}" >/dev/null
+
+[[ "$(sha256sum specs/poc-remote-cache-locality-value-v3.json | awk '{print $1}')" == "$(jq -r .contractSha256 "${buildopt_report}")" ]]
+[[ "$(sha256sum "${buildopt_subjects}" | awk '{print $1}')" == "$(jq -r .subjectsSha256 "${buildopt_report}")" ]]
+
+buildopt_tampered=$(mktemp)
+trap 'rm -f "${buildopt_tampered}"' EXIT
+jq '.summary.eligibleFamilies=4' "${buildopt_report}" >"${buildopt_tampered}"
+if jq -e '([.rows[]|select(.decision=="ELIGIBLE_EXACT")]|length)==.summary.eligibleFamilies' "${buildopt_tampered}" >/dev/null; then
+    printf 'RCL3 checker accepted a forged eligible-family summary\n' >&2
+    exit 1
+fi
+printf 'RCL3-003 correctness OK: 5/5 conclusive, 3/5 eligible, zero product failures\n'

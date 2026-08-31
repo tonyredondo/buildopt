@@ -12,3 +12,8 @@ timing sample exists. V2 evidence supplies no v3 row.
 committed reads, offline restart, corruption-as-miss and unsafe-use negatives
 pass freshly. Five 1-MiB calibration GETs land at 41.045–41.668 ms under the
 frozen 30-ms plus 100-MiB/s profile. Public builds and value timings remain zero.
+
+[`public-correctness.json`](./public-correctness.json) closes `RCL3-003` with
+all five rows complete. Groovy, OpenTelemetry and Spring are exact and eligible;
+Kafka is natively unstable and Micronaut exposes zero cache hits. There are zero
+product-attributable failures, so the frozen 3/5 gate opens `RCL3-004` timing.

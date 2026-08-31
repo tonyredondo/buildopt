@@ -1,14 +1,14 @@
 # Remote Cache Locality Value v3 POC Tracker
 
 **Status:** active — corrected five-family protocol frozen<br>
-**Current block:** `RCL3-003`
+**Current block:** `RCL3-004`
 
 | Block | Deliverable | State |
 |---|---|---|
 | `RCL3-001` | Fresh contract, five source-bound primary outputs, non-fail-fast correctness, controlled network and economics | `DONE` |
 | `RCL3-002` | Production Edge harness and fixed-profile calibration | `DONE` |
-| `RCL3-003` | Four fresh correctness builds for all five families | `TODO` |
-| `RCL3-004` | Eight balanced direct/Edge pairs per eligible family | `WAITING` |
+| `RCL3-003` | Four fresh correctness builds for all five families | `DONE` |
+| `RCL3-004` | Eight balanced direct/Edge pairs per eligible family | `TODO` |
 | `RCL3-005` | Twenty-build cost/payback ledger per passing family | `WAITING` |
 | `RCL3-006` | Terminal controlled-mechanism and product-viability decision | `WAITING` |
 

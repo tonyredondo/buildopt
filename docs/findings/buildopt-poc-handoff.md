@@ -29,8 +29,10 @@ The active route is `REMOTE_CACHE_LOCALITY_VALUE_V3`. It preserves the v2 stop
 but completes all five fresh correctness rows, uses two native producers to
 classify native output instability separately, and freezes one primary binary
 artifact per public build definition. `RCL3-002` proves the production Edge
-safety harness and fixed network calibration; `RCL3-003` is now executing all
-five public correctness rows. The owner lab
+safety harness and fixed network calibration. `RCL3-003` completes 5/5 rows:
+Groovy, OpenTelemetry and Spring are eligible, Kafka is natively unstable and
+Micronaut has zero cache hits, with zero product failures. `RCL3-004` now runs
+eight controlled pairs for each eligible family. The owner lab
 has no real customer remote origin, so any later timing is limited to a frozen
 30-ms/100-MiB/s controlled envelope and cannot alone prove product viability.
 

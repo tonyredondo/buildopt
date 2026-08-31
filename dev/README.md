@@ -29,6 +29,7 @@ Validate the active corrected v3 contract with:
 ```bash
 ./dev/check-remote-cache-locality-value-v3
 ./dev/check-remote-cache-locality-harness-v3
+./dev/check-remote-cache-locality-v3-public-correctness
 ```
 
 Validate the closed economic-first contract with:

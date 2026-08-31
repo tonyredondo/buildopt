@@ -3,7 +3,7 @@
   "workItem":"RCL3",
   "objective":"MEASURE_CONTROLLED_PUBLIC_REMOTE_CACHE_LOCALITY_VALUE",
   "baseline":"OPTIMIZED_NATIVE_GRADLE_DIRECT_TO_IMMUTABLE_HTTP_CACHE",
-  "status":{"currentBlock":"RCL3-003","completedBlocks":["RCL3-001","RCL3-002"],"publicBuildAuthorized":true,"timingAuthorized":false},
+  "status":{"currentBlock":"RCL3-004","completedBlocks":["RCL3-001","RCL3-002","RCL3-003"],"publicBuildAuthorized":true,"timingAuthorized":true},
   "predecessor":{"v2MayMotivateDesign":true,"v2MaySupplyEvidenceRows":false,"v2TerminalDecision":"STOP_REMOTE_CACHE_LOCALITY_VALUE_POC"},
   "correctness":{"familiesMustComplete":5,"failFastAcrossFamilies":false,"nativeProducersPerFamily":2,"directConsumersPerFamily":1,"edgeConsumersPerFamily":1,"minimumEligibleFamilies":3,"nativeMismatchProductFailure":false,"edgeOnlyMismatchProductFailure":true,"localGradleCacheEnabled":false,"measuredWritesAllowed":false},
   "network":{"model":"LOOPBACK_SHAPED_FIXED_PUBLIC_WORKLOAD_ENVELOPE","latencyPerSuccessfulOriginGetMs":30,"bandwidthBytesPerSecond":104857600,"packetLossRatio":0,"edgeShaped":false,"realCustomerPathClaimed":false},

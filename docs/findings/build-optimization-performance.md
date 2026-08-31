@@ -2,10 +2,12 @@
 
 ## Current Executive Summary
 
-- **Remote-cache locality v3 is active in public correctness.** It preserves v2,
+- **Remote-cache locality v3 is active in controlled paired timing.** It preserves v2,
   completes all five correctness rows, freezes source-bound primary artifacts
   and separates native output instability from Edge-only failures. The production
-  Edge safety harness and fixed profile pass; no public correctness row exists yet. Later timing
+  Edge safety harness and fixed profile pass. Correctness is 5/5 conclusive and
+  3/5 eligible with zero product failures; Groovy, OpenTelemetry and Spring now
+  enter eight balanced pairs. Timing
   uses a fixed 30-ms/100-MiB/s controlled envelope; it cannot alone prove a real
   deployment path. No v3 public build or timing exists yet.
 
