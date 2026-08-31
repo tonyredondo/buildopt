@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.evidence/remote-cache-locality-harness/v2",
+  "workItem": "RCL-002",
+  "capturedAt": "2026-08-31T10:58:00Z",
+  "buildoptRevision": "c798c9c7b1dec12b757613fc9899faaac78a3b0f",
+  "sourceBindings": [
+    {"path":"internal/edgecache/store.go","sha256":"6cd5cfa5ff51d4a65a11d26a44e0bb0a4bf32762a0b52fd4f2f9b9515ebe30b5"},
+    {"path":"internal/edgecache/store_test.go","sha256":"42083bb1eb5f335b9a32a3f4e63aa60d0b32a0056b6d8e14dcad3cfdbee40f37"},
+    {"path":"internal/edgecache/proxy.go","sha256":"704d96da9c5b916d049a1a1fdbbd93c72092e5237449690d04138b9c0f80a54c"},
+    {"path":"internal/edgecache/proxy_test.go","sha256":"dbcbdf688f5706d56e3e2745af7bcfc4891a01ee9df22edd0b71ed152f7a150a"},
+    {"path":"fixtures/gradle-correlation/buildSrc/src/main/java/dev/buildopt/fixtures/correlation/CorrelationFixturePlugin.java","sha256":"2a0ba98f94582612df1535bfbb881952c046b757efc6576bb6caccaeed3b0581"},
+    {"path":"dev/check-gradle-correlation-fixture","sha256":"6dd865383642d93b52b8f789566182e4c945bf0ef33e0f94d8a5b3d859eab7d5"}
+  ],
+  "proofs": {
+    "nativeGradleSameKeyAcrossEquivalentTasks": true,
+    "parallelColdMissThenTwoFromCache": true,
+    "configurationCacheReused": true,
+    "committedReadThroughVerified": true,
+    "offlineRestartServesVerifiedBytes": true,
+    "nonCommittedAndCorruptResponsesRejected": true,
+    "corruptDurableBlobBecomesMiss": true,
+    "unsafeProxyUseRejected": true,
+    "readOnlyCandidateWrites": 0,
+    "publicBuilds": 0,
+    "timingSamples": 0
+  },
+  "negativeClasses": [
+    "SOURCE_DRIFT", "CACHE_KEY_DRIFT", "OBJECT_DIGEST_DRIFT",
+    "OBJECT_LENGTH_DRIFT", "CORRUPT_EDGE_OBJECT", "NON_COMMITTED_OBJECT",
+    "MEASURED_WRITE", "WARM_ORIGIN_READ", "MISSING_TELEMETRY",
+    "FORBIDDEN_MECHANISM"
+  ],
+  "decision": "PASS_EQUAL_OPPORTUNITY_HARNESS"
+}

@@ -1,7 +1,7 @@
 # Remote Cache Locality Value POC Tracker
 
 **Status:** active — contract frozen, no public build or timing yet<br>
-**Current block:** `RCL-002`<br>
+**Current block:** `RCL-003`<br>
 **Terminal outcomes:** `QUALIFY_REMOTE_CACHE_LOCALITY_PRODUCT` or
 `STOP_REMOTE_CACHE_LOCALITY_VALUE_POC`
 
@@ -25,8 +25,8 @@ cache read locality changes; all incremental costs must repay.
 | Block | Deliverable | Entry gate | Exit gate | State |
 | --- | --- | --- | --- | --- |
 | `RCL-001` | Human/machine contract, cohort, costs, gates, checker and documentation ledger | User-authorized successor after EOF stop | Static contracts pass without public builds, cache seed or timing | `DONE` |
-| `RCL-002` | Equal-opportunity harness and deterministic fixture proof | RCL-001 | Same graph/key/object/output manifests; read-only, corruption, outage and forbidden-mechanism negatives pass | `TODO` |
-| `RCL-003` | Fresh five-family producer/consumer correctness and opportunity report | RCL-002 | 5/5 conclusive; at least 3/5 restore four objects and 8 MiB with exact outputs | `WAITING` |
+| `RCL-002` | Equal-opportunity harness and deterministic fixture proof | RCL-001 | Same graph/key/object/output manifests; read-only, corruption, outage and forbidden-mechanism negatives pass | `DONE` |
+| `RCL-003` | Fresh five-family producer/consumer correctness and opportunity report | RCL-002 | 5/5 conclusive; at least 3/5 restore four objects and 8 MiB with exact outputs | `TODO` |
 | `RCL-004` | Eight balanced warm-locality pairs per eligible family | RCL-003 | At least 3/5 pass 6/8 positive, 500 ms, 2%, positive lower bound, p95 and correctness gates | `WAITING` |
 | `RCL-005` | Cold-fill and twenty-build installed economic ledger | RCL-004 | At least 3/5 net positive; portfolio positive; payback within ten consuming builds | `WAITING` |
 | `RCL-006` | Installed explanation and terminal scorecard | RCL-005 or first failed prerequisite | Truthful terminal decision with unavailable fields preserved | `WAITING` |

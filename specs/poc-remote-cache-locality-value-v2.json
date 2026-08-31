@@ -4,9 +4,9 @@
   "objective": "PROVE_REMOTE_CACHE_LOCALITY_PRODUCT_VALUE",
   "baseline": "OPTIMIZED_NATIVE_GRADLE_DIRECT_TO_REMOTE_SHARED",
   "status": {
-    "currentBlock": "RCL-002",
-    "completedBlocks": ["RCL-001"],
-    "publicBuildAuthorized": false,
+    "currentBlock": "RCL-003",
+    "completedBlocks": ["RCL-001", "RCL-002"],
+    "publicBuildAuthorized": true,
     "timingAuthorized": false
   },
   "predecessors": {

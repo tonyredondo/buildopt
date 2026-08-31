@@ -34,9 +34,9 @@ fresh. The terminal path must be unshaped, and seed, fill, verification,
 operation and fallback costs all enter signed product value. Historical shaped
 WAN and mixed graph-reduction wins are motivation only.
 
-No public build, cache seed, timing pair or new speedup exists. `RCL-002` must
-first prove identical graphs, keys, bytes, outcomes and outputs plus read-only,
-corruption and outage behavior in deterministic fixtures. Timing cannot begin
+No public build, timing pair or new speedup exists. `RCL-002` proves identical
+native keys plus read-only, corruption and outage behavior in deterministic
+fixtures. `RCL-003` now owns fresh public correctness. Timing cannot begin
 before fresh public correctness reaches 5/5 conclusive and 3/5 eligible.
 
 The latest closed route is `NORMALIZATION_AWARE_CACHEABILITY_V2`. It tested whether

@@ -32,8 +32,9 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > immutable remote-cache objects directly. `RCL-001` freezes the exact graph,
 > key/object/output parity, unshaped remote path, five-family breadth and full
 > seed/fill/operation cost accounting. No public build, cache seed or timing is
-> authorized yet; `RCL-002` must first prove the equal-opportunity harness and
-> safe failure behavior. See the [active tracker](./docs/plans/remote-cache-locality-value-poc-tracker.md).
+> authorized yet. `RCL-002` now proves the equal-opportunity harness and safe
+> failure behavior; `RCL-003` is fresh untimed public correctness. See the
+> [active tracker](./docs/plans/remote-cache-locality-value-poc-tracker.md).
 
 > **Installed two-machine proof:** the committed `./buildoptw` command now
 > bootstraps one SHA-verified archive on isolated producer and consumer

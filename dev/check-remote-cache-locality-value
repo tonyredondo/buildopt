@@ -13,7 +13,7 @@ jq -e '
   .workItem == "RCL" and
   .objective == "PROVE_REMOTE_CACHE_LOCALITY_PRODUCT_VALUE" and
   .baseline == "OPTIMIZED_NATIVE_GRADLE_DIRECT_TO_REMOTE_SHARED" and
-  .status == {currentBlock:"RCL-002",completedBlocks:["RCL-001"],publicBuildAuthorized:false,timingAuthorized:false} and
+  .status == {currentBlock:"RCL-003",completedBlocks:["RCL-001","RCL-002"],publicBuildAuthorized:true,timingAuthorized:false} and
   .predecessors.maySupplyEvidenceRows == false and
   .predecessors.shapedNetworkMaySatisfyTerminalGate == false and
   .predecessors.mixedMechanismResultsMaySatisfyTerminalGate == false and
@@ -59,11 +59,15 @@ jq -e '
       (.workflow | length) > 0 and (.requiredOutputs | length) > 0)
 ' specs/poc-remote-cache-locality-value-v2.subjects.json >/dev/null
 
-grep -Fq "**Current block:** \`RCL-002\`" docs/plans/remote-cache-locality-value-poc-tracker.md
+grep -Fq "**Current block:** \`RCL-003\`" docs/plans/remote-cache-locality-value-poc-tracker.md
 grep -Eq "\`RCL-001\`.*\`DONE\`" docs/plans/remote-cache-locality-value-poc-tracker.md
 for block in RCL-003 RCL-004 RCL-005 RCL-006; do
-    grep -Eq "\`${block}\`.*\`WAITING\`" docs/plans/remote-cache-locality-value-poc-tracker.md
+    if [[ "${block}" == RCL-003 ]]; then
+        grep -Eq "\`${block}\`.*\`TODO\`" docs/plans/remote-cache-locality-value-poc-tracker.md
+    else
+        grep -Eq "\`${block}\`.*\`WAITING\`" docs/plans/remote-cache-locality-value-poc-tracker.md
+    fi
 done
-grep -Fq 'No public build, cache seed, timing' benchmarks/results/remote-cache-locality-value-v2/README.md
+grep -Fq 'zero public builds and zero timing samples' benchmarks/results/remote-cache-locality-value-v2/README.md
 
 printf 'RCL contract OK: equal-opportunity locality v2 frozen before public builds or timing\n'

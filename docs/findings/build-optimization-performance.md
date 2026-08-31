@@ -7,8 +7,8 @@
   remote-cache objects with the identical graph through a verifying local
   BuildOpt Edge/L1. It freezes five families, one unshaped remote path, exact
   key/object/output parity and complete seed/fill/operation costs. Historical
-  locality results supply no row. `RCL-002` must prove the harness before any
-  public build, and no new timing or speedup exists.
+  locality results supply no row. `RCL-002` passes the harness; `RCL-003` owns
+  fresh untimed public correctness, and no new timing or speedup exists.
 - **The current decision is `STOP_GENERIC_POC`, derived from lifetime breadth
   V3 rather than isolated target calibration.** One exact executable ran the
   frozen Spring, OpenTelemetry,

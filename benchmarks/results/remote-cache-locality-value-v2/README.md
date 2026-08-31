@@ -11,5 +11,8 @@ Authoritative contracts:
 - [`specs/poc-remote-cache-locality-value-v2.subjects.json`](../../../specs/poc-remote-cache-locality-value-v2.subjects.json)
 - [`docs/plans/remote-cache-locality-value-poc-tracker.md`](../../../docs/plans/remote-cache-locality-value-poc-tracker.md)
 
-`RCL-002` is next. It must prove the equal-opportunity harness and failure
-behavior with deterministic fixtures before any public correctness or timing.
+[`harness-proof.json`](./harness-proof.json) closes `RCL-002`. Its independent
+checker binds six source files and reruns native Gradle key parity, verified
+committed read-through, offline restart, corruption-as-miss and unsafe-proxy
+negatives. It records zero public builds and zero timing samples. `RCL-003` is
+next and may collect only fresh untimed public producer/consumer correctness.

@@ -18,7 +18,7 @@ tests a product unit that does not require structural-profile recurrence.
 `RCL-001` freezes the same native graph, cache keys, immutable object bytes and
 outputs in both arms, a five-family breadth gate and complete seed/fill/operation
 cost accounting. Historical shaped-network and mixed-mechanism wins supply no
-row. `RCL-002` must prove the harness before public correctness, and timing
+row. `RCL-002` proves the harness; `RCL-003` owns public correctness, and timing
 remains closed until 5/5 families are conclusive and at least 3/5 have sufficient
 remote-cache opportunity.
 

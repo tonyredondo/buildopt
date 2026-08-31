@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_evidence=benchmarks/results/remote-cache-locality-value-v2/harness-proof.json
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/remote-cache-locality-harness/v2" and
+  .workItem == "RCL-002" and
+  (.buildoptRevision | test("^[0-9a-f]{40}$")) and
+  (.sourceBindings | length) == 6 and
+  ([.sourceBindings[].path] | unique | length) == 6 and
+  all(.sourceBindings[]; (.sha256 | test("^[0-9a-f]{64}$"))) and
+  .proofs.nativeGradleSameKeyAcrossEquivalentTasks and
+  .proofs.parallelColdMissThenTwoFromCache and
+  .proofs.configurationCacheReused and
+  .proofs.committedReadThroughVerified and
+  .proofs.offlineRestartServesVerifiedBytes and
+  .proofs.nonCommittedAndCorruptResponsesRejected and
+  .proofs.corruptDurableBlobBecomesMiss and
+  .proofs.unsafeProxyUseRejected and
+  .proofs.readOnlyCandidateWrites == 0 and .proofs.publicBuilds == 0 and
+  .proofs.timingSamples == 0 and (.negativeClasses | length) == 10 and
+  .decision == "PASS_EQUAL_OPPORTUNITY_HARNESS"
+' "${buildopt_evidence}" >/dev/null
+
+while IFS=$'\t' read -r buildopt_path buildopt_expected; do
+    buildopt_actual=$(sha256sum "${buildopt_path}" | awk '{print $1}')
+    if [[ "${buildopt_actual}" != "${buildopt_expected}" ]]; then
+        printf 'RCL harness source drift: %s\n' "${buildopt_path}" >&2
+        exit 1
+    fi
+done < <(jq -r '.sourceBindings[] | [.path,.sha256] | @tsv' "${buildopt_evidence}")
+
+./dev/run --toolchain go -- go test -count=1 ./internal/edgecache ./internal/sharedcache \
+    -run 'Test(ReadThroughPersistsVerifiedCommitAndServesOfflineAfterRestart|ReadThroughRejectsNonCommittedAndCorruptResponses|CorruptDurableBlobBecomesMissAndWriterLeaseIsExclusive|ProxyRejectsUnsafeListenerAndInvalidHTTPUse|EdgeReadThroughUsesRealCommittedSharedRouteAndSurvivesOfflineRestart)$'
+
+printf 'RCL-002 harness OK: key parity and verified failure behavior reconstruct\n'
