@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-economic-opportunity-first/v1" and
+  .workItem == "EOF" and
+  .objective == "PROVE_ECONOMIC_FIRST_GENERIC_BUILD_OPTIMIZATION" and
+  .baseline == "OPTIMIZED_NATIVE_GRADLE" and
+  .status == {
+    currentBlock: "EOF-002",
+    completedBlocks: ["EOF-001"],
+    candidateBuildAuthorized: false,
+    timingAuthorized: false
+  } and
+  .predecessors.mayMotivateDesign == true and
+  .predecessors.maySupplyEvidenceRows == false and
+  .cohort == {
+    completeFamilies: 5,
+    freshEvidenceRequired: true,
+    chronologicalFirstParent: true,
+    futureObservationsAllowed: false,
+    repositoryOrTaskNameRulesAllowed: false
+  } and
+  (.sourceOnlyInputs | length) == 6 and
+  (.decisions | length) == 7 and
+  (.decisions | index("ADMIT_NATIVE_CEILING_PROBE")) != null and
+  .economics.unit == "SIGNED_MILLISECONDS" and
+  .economics.compatibleMatchesLowerBoundMinimum == 5 and
+  .economics.maximumPaybackMatches == 5 and
+  .economics.unknownValue == "UNAVAILABLE_NOT_ZERO" and
+  .economics.allIncrementalCostsIncluded == true and
+  .gates.sourceLedger == {
+    conclusiveFamilies: 5,
+    minimumNativeCeilingProbeFamilies: 3,
+    candidateBuildAllowedBeforePass: false
+  } and
+  .gates.preflight.maximumDecisionMs == 500 and
+  .gates.preflight.maximumP95Ms == 1000 and
+  .gates.preflight.noLookahead == true and
+  .gates.preflight.nameInvariant == true and
+  .gates.nativeCeiling == {
+    freshOptimizedNativeObservationsPerFamily: 1,
+    minimumPlanningPositiveFamilies: 3,
+    candidateBuildAllowedBeforePass: false,
+    performanceClaimAuthorized: false
+  } and
+  .gates.minimalProof.pairsPerAdmittedFamily == 1 and
+  .gates.minimalProof.productFailureBudget == 0 and
+  .gates.minimalProof.minimumPositiveFamilies == 3 and
+  .gates.installedValue.minimumLaterCommitsPerAdmittedFamily == 20 and
+  .gates.installedValue.minimumNetPositiveFamilies == 3 and
+  .gates.installedValue.positiveSignedPortfolioMs == true and
+  .blocks == ["EOF-001", "EOF-002", "EOF-003", "EOF-004", "EOF-005", "EOF-006"] and
+  .measurement.hostedCiOwnsWallTimeGate == false and
+  .measurement.predecessorTimingsReusable == false and
+  .boundaries.publicSourcePatchAuthorized == false and
+  .boundaries.productionAuthorized == false and
+  .boundaries.testOptimization == "OUT_OF_SCOPE"
+' specs/poc-economic-opportunity-first-v1.json >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-economic-opportunity-first-subjects/v1" and
+  .reusePolicy == "ANCHOR_REVISIONS_ONLY_PREDECESSOR_REPORTS_FORBIDDEN_AS_EVIDENCE" and
+  .history == {
+    kind: "CHRONOLOGICAL_FIRST_PARENT",
+    minimumPriorCommits: 64,
+    minimumLaterCommitsForInstalledValue: 20
+  } and
+  (.families | length) == 5 and
+  ([.families[].key] | unique | length) == 5 and
+  ([.families[].repository] | unique | length) == 5 and
+  ([.families[].anchorRevision] | unique | length) == 5 and
+  all(.families[]; (.anchorRevision | test("^[0-9a-f]{40}$")))
+' specs/poc-economic-opportunity-first-v1.subjects.json >/dev/null
+
+grep -Fq '**Status:** active' docs/plans/economic-opportunity-first-poc-tracker.md
+grep -Fq "**Current block:** \`EOF-002\`" docs/plans/economic-opportunity-first-poc-tracker.md
+grep -Eq "\`EOF-001\`.*\`DONE\`" docs/plans/economic-opportunity-first-poc-tracker.md
+grep -Eq "\`EOF-002\`.*\`TODO\`" docs/plans/economic-opportunity-first-poc-tracker.md
+for block in EOF-003 EOF-004 EOF-005 EOF-006; do
+    grep -Eq "\`${block}\`.*\`WAITING\`" docs/plans/economic-opportunity-first-poc-tracker.md
+done
+grep -Fq 'No candidate Gradle build, fresh' benchmarks/results/economic-opportunity-first-v1/README.md
+grep -Fq 'STOP_NORMALIZATION_AWARE_CACHEABILITY_POC' benchmarks/results/normalization-aware-cacheability-v2/terminal-decision.json
+
+printf 'EOF contract OK: planning frozen; source ledger next; builds and timing unauthorized\n'

@@ -75,17 +75,16 @@ Developers will not have to run a build twice manually. Natural builds provide o
 
 The current objective is a **proof of concept**, not a private-beta or production launch. The combined BuildOpt path has demonstrated customer-visible build-time reduction against a well-configured native Gradle baseline across the qualified synthetic Kotlin/Groovy workload matrix. Safe Cache, Runtime Tuning, Build Impact, reviewed task contracts, and Patch Autopilot are measured separately so that value is attributable; the complete path receives its own comparison because overlapping percentages are never added.
 
-The active experiment tests a narrower durable hypothesis: detect generic
-Gradle task cacheability corrections with explicit portable file-input
-normalization, compile an owner-reviewed reversible patch, prove exact outputs
-and value, then leave optimized native Gradle as the only runtime. Its frozen
-normalization model and ordered stop gates are defined in the
-[normalization-aware cacheability specification](./specs/poc-normalization-aware-cacheability-v2.md)
-and [tracker](./docs/plans/normalization-aware-cacheability-poc-tracker.md).
-The closed marker-only DNO route explains the missing-normalization failure but
-cannot supply a v2 evidence row or timing sample. The same exact public source
-revisions are reused only to isolate the detector change; every v2 analysis,
-patch and build must be generated again.
+The active experiment tests an economic-first hypothesis: reject generic
+opportunities that cannot plausibly repay before spending customer wall time
+on discovery, calibration or materialization. Its chronological source-only
+model, complete signed-cost formula, five-match payback ceiling and ordered
+stop gates are defined in the
+[economic opportunity first specification](./specs/poc-economic-opportunity-first-v1.md)
+and [tracker](./docs/plans/economic-opportunity-first-poc-tracker.md).
+Closed experiments may motivate the model but cannot supply a fresh evidence
+row. `EOF-001` is planning only; candidate builds and timing remain
+unauthorized until the source-ledger gate passes.
 
 The successor POC onboarding north star is one repository-committed wrapper
 and one repeated command:

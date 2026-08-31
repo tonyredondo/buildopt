@@ -25,7 +25,20 @@ decision.
 
 ## Current experiment status
 
-The latest route is the now-closed `NORMALIZATION_AWARE_CACHEABILITY_V2`. It tested whether
+The active route is `ECONOMIC_OPPORTUNITY_FIRST_V1`. `EOF-001` freezes a
+chronological source-only preflight that must reject opportunities unable to
+repay every incremental selection, qualification, materialization and native-
+retention cost within five compatible matches. Prior experiments may motivate
+features but cannot supply an EOF row; future commits, repository names and
+task names cannot affect classification. `EOF-002` must produce 5/5 conclusive
+families and at least 3/5 native-ceiling probes without running Gradle. `EOF-003`
+may then record one optimized-native observation per admitted family; only
+three positive planning opportunities authorize a candidate. Product viability
+still requires 3/5 net-positive families, positive signed portfolio value,
+exact outputs and zero product failures. No EOF candidate, timing pair or
+speedup exists yet.
+
+The latest closed route is `NORMALIZATION_AWARE_CACHEABILITY_V2`. It tested whether
 BuildOpt can turn generic source evidence into an owner-reviewed, exactly
 reversible Gradle cacheability patch whose value persists across later commits
 while native Gradle remains the only build runtime. `NAC-001` freezes a 5/5

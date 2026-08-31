@@ -13,6 +13,14 @@ net value in only one of five families. One of six structurally eligible
 descendants selected a profile, so the frozen terminal decision is
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md).
 
+The active [economic opportunity first route](../plans/economic-opportunity-first-poc-tracker.md)
+tests the common economic failure directly. It freezes chronological
+no-lookahead source facts, a 500-ms decision budget, complete signed cost
+accounting and a five-compatible-match payback ceiling before any candidate
+build. `EOF-001` creates no performance evidence; `EOF-002` must independently
+reach 5/5 conclusive and 3/5 recurrence candidates or stop before native
+planning observations.
+
 That decision stopped the whole-profile hypothesis, not the bounded mechanisms
 that worked. The subsequent
 [adaptive fragment model](../plans/adaptive-fragment-generalization-tracker.md)

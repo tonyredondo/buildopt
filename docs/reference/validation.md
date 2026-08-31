@@ -1,5 +1,10 @@
 # Validation reference
 
+The active planning-only EOF route is checked by
+`./dev/check-economic-opportunity-first`. It validates the contract, exact
+cohort, signed formulas, budgets and authority boundary without running Gradle
+or creating timing evidence.
+
 The closed NAC v2 route is checked by
 `./dev/check-normalization-aware-cacheability`,
 `./dev/check-normalization-aware-cacheability-source-classification`,
@@ -21,6 +26,7 @@ provision tools or create release artifacts document that effect explicitly.
 
 | Change | Command |
 |---|---|
+| Economic-first contract, frozen cohort, formulas, budgets and authority boundary | `./dev/check-economic-opportunity-first` |
 | Markdown, navigation, package docs | `./dev/check-documentation` |
 | Required paths and baseline shape | `./dev/check-layout` |
 | Normative package structure | `./dev/check-normative-layout` |
@@ -512,6 +518,19 @@ filesystem, or cancellation behavior.
 The historical eight-hour soak harness is outside the active POC. It is not a
 quickstart, owner-lab, CI, or value-gate requirement; reconsider it only after
 the POC proves enough net value to justify productization.
+
+### Economic opportunity first contract
+
+```bash
+./dev/check-economic-opportunity-first
+```
+
+This static `EOF-001` gate freezes chronological source inputs, no-lookahead
+and name invariance, signed economics, the exact anchor cohort and all stop
+conditions. Candidate builds and timing remain unauthorized until the fresh
+`EOF-002` source ledger passes 5/5 conclusive and 3/5 native-ceiling probes;
+`EOF-003` must then bound positive planning potential in three families using
+fresh optimized-native observations.
 
 ### Normalization-aware cacheability contract
 

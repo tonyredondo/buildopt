@@ -8,15 +8,15 @@ path. Start with the [documentation portal](../docs/README.md) or
 the exact cross-component contract.
 
 The latest generic POC contract is
-[`poc-durable-native-optimization-v1.md`](./poc-durable-native-optimization-v1.md)
-with its adjacent machine-readable JSON. It asks whether BuildOpt can find and
-validate generic, reversible Gradle-source corrections that keep improving
-native Gradle after one owner-reviewed commit. Historical experiments motivate
-the frozen detector catalog but cannot satisfy its breadth, correctness or
-value gates.
+[`poc-economic-opportunity-first-v1.md`](./poc-economic-opportunity-first-v1.md)
+with its adjacent machine-readable JSON and frozen subjects. It asks whether a
+cheap chronological source-only screen can avoid spending customer wall time
+on opportunities that cannot plausibly repay. Historical experiments motivate
+the contract but cannot satisfy an evidence row.
 
 | Specification | Owning item |
 |---|---|
+| [`poc-economic-opportunity-first-v1.md`](./poc-economic-opportunity-first-v1.md), [`poc-economic-opportunity-first-v1.json`](./poc-economic-opportunity-first-v1.json) and [frozen subjects](./poc-economic-opportunity-first-v1.subjects.json) | `EOF-001` planning complete; `EOF-002` source-only recurrence ledger is next. Candidate builds and timing remain unauthorized |
 | [`poc-normalization-aware-cacheability-v2.md`](./poc-normalization-aware-cacheability-v2.md), [`poc-normalization-aware-cacheability-v2.json`](./poc-normalization-aware-cacheability-v2.json) and [frozen subjects](./poc-normalization-aware-cacheability-v2.subjects.json) | Closed at `NAC-007`: compiler proof passes, but public correctness is complete for only 4/9 candidates; `NAC-005/006` were not authorized and no speedup exists |
 | [`poc-durable-native-optimization-v1.md`](./poc-durable-native-optimization-v1.md), [`poc-durable-native-optimization-v1.json`](./poc-durable-native-optimization-v1.json) and [frozen subjects](./poc-durable-native-optimization-v1.subjects.json) | Closed `DNO-001..007` route and terminal `STOP_DURABLE_NATIVE_OPTIMIZATION_POC`. Micronaut exposes the missing-normalization detector gap; paired/longitudinal timing and proposal UX were not authorized |
 | [`poc-verified-request-hit-v1.md`](./poc-verified-request-hit-v1.md) and [`poc-verified-request-hit-v1.json`](./poc-verified-request-hit-v1.json) | `VRH-001..003`; stopped whole-request-hit route after 8/8 synthetic shadow matches but 2/4 public exact-output breadth and zero complete historical safety admissions; `VRH-004..007` are not authorized |

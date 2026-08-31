@@ -2,7 +2,12 @@
 
 Reproducible workloads for measuring causal savings, overhead, queues, additional compute, and behavior under failure.
 
-The latest closed route is documented by the
+The active planning-only route is documented by the
+[economic opportunity first evidence](./results/economic-opportunity-first-v1/README.md).
+It freezes a chronological, source-only economic screen and keeps candidate
+builds and timing unauthorized until a fresh 5/5-conclusive, 3/5-recurrence
+ledger passes and native planning potential is bounded. The latest closed route
+is documented by the
 [normalization-aware cacheability v2 evidence](./results/normalization-aware-cacheability-v2/README.md).
 The route passes fresh source breadth at 5/5 conclusive and 4/5 action families,
 with eight marker-only and one reviewed-relative candidate. Compiler proof

@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "buildopt.specs/poc-economic-opportunity-first/v1",
+  "workItem": "EOF",
+  "objective": "PROVE_ECONOMIC_FIRST_GENERIC_BUILD_OPTIMIZATION",
+  "baseline": "OPTIMIZED_NATIVE_GRADLE",
+  "status": {
+    "currentBlock": "EOF-002",
+    "completedBlocks": ["EOF-001"],
+    "candidateBuildAuthorized": false,
+    "timingAuthorized": false
+  },
+  "predecessors": {
+    "mayMotivateDesign": true,
+    "maySupplyEvidenceRows": false,
+    "terminalDecisions": [
+      "STOP_GENERIC_POC",
+      "STOP_ADAPTIVE_FRAGMENT_POC",
+      "STOP_DURABLE_NATIVE_OPTIMIZATION_POC",
+      "STOP_NORMALIZATION_AWARE_CACHEABILITY_POC"
+    ]
+  },
+  "cohort": {
+    "completeFamilies": 5,
+    "freshEvidenceRequired": true,
+    "chronologicalFirstParent": true,
+    "futureObservationsAllowed": false,
+    "repositoryOrTaskNameRulesAllowed": false
+  },
+  "sourceOnlyInputs": [
+    "CANONICAL_REQUEST",
+    "LOCAL_FIRST_PARENT_GIT_METADATA",
+    "CHANGED_PATHS",
+    "SOURCE_OWNED_GRADLE_FILES",
+    "STILL_BOUND_VERIFIED_GRAPH",
+    "PRIOR_EOF_OBSERVATIONS"
+  ],
+  "decisions": [
+    "ADMIT_NATIVE_CEILING_PROBE",
+    "REJECT_INSUFFICIENT_RECURRENCE",
+    "REJECT_INSUFFICIENT_VALUE_CEILING",
+    "REJECT_EXCESSIVE_PAYBACK",
+    "REJECT_BINDING_DRIFT",
+    "REJECT_INCOMPLETE_OR_AMBIGUOUS",
+    "NO_ACTION"
+  ],
+  "economics": {
+    "unit": "SIGNED_MILLISECONDS",
+    "compatibleMatchesLowerBoundMinimum": 5,
+    "planningNetFormula": "compatibleMatchesLowerBound*potentialSavedMsPerMatch-qualificationBudgetMs-materializationBudgetMs-nativeRetentionBudgetMs-selectionBudgetMs",
+    "planningPaybackFormula": "ceil(totalIncrementalCostMs/potentialSavedMsPerMatch)",
+    "maximumPaybackMatches": 5,
+    "unknownValue": "UNAVAILABLE_NOT_ZERO",
+    "allIncrementalCostsIncluded": true
+  },
+  "gates": {
+    "sourceLedger": {
+      "conclusiveFamilies": 5,
+      "minimumNativeCeilingProbeFamilies": 3,
+      "candidateBuildAllowedBeforePass": false
+    },
+    "preflight": {
+      "maximumDecisionMs": 500,
+      "maximumP95Ms": 1000,
+      "deterministicReplay": true,
+      "noLookahead": true,
+      "nameInvariant": true,
+      "sourceDriftRejected": true
+    },
+    "nativeCeiling": {
+      "freshOptimizedNativeObservationsPerFamily": 1,
+      "minimumPlanningPositiveFamilies": 3,
+      "candidateBuildAllowedBeforePass": false,
+      "performanceClaimAuthorized": false
+    },
+    "minimalProof": {
+      "pairsPerAdmittedFamily": 1,
+      "balancedOrderAcrossFamilies": true,
+      "positiveLowerBoundRequired": true,
+      "exactRequiredOutputs": true,
+      "nativeFallbackRequired": true,
+      "productFailureBudget": 0,
+      "minimumPositiveFamilies": 3
+    },
+    "installedValue": {
+      "minimumLaterCommitsPerAdmittedFamily": 20,
+      "minimumNetPositiveFamilies": 3,
+      "positiveSignedPortfolioMs": true,
+      "finitePayback": true,
+      "allRejectionsAndFallbacksRetained": true
+    }
+  },
+  "blocks": ["EOF-001", "EOF-002", "EOF-003", "EOF-004", "EOF-005", "EOF-006"],
+  "measurement": {
+    "hostedCiOwnsWallTimeGate": false,
+    "predecessorTimingsReusable": false,
+    "percentagesAddedAcrossMechanisms": false,
+    "regressionsRetainedWithSign": true
+  },
+  "boundaries": {
+    "proofOfConcept": true,
+    "publicSourcePatchAuthorized": false,
+    "productionAuthorized": false,
+    "automaticMergeAuthorized": false,
+    "soakRequired": false,
+    "designPartnerRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

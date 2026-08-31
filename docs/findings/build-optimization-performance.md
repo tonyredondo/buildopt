@@ -2,6 +2,13 @@
 
 ## Current Executive Summary
 
+- **The active successor is economic-first and currently planning-only.**
+  `EOF-001` freezes a source-only chronological preflight, 500-ms decision
+  budget, five-match payback ceiling and complete signed incremental costs.
+  Fresh source breadth must reach 5/5 conclusive and 3/5 recurrence candidates;
+  fresh optimized-native planning observations must then be positive in three
+  families before one minimal candidate/control proof is authorized. No EOF
+  timing or speedup exists yet.
 - **The current decision is `STOP_GENERIC_POC`, derived from lifetime breadth
   V3 rather than isolated target calibration.** One exact executable ran the
   frozen Spring, OpenTelemetry,

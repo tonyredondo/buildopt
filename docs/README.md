@@ -15,7 +15,7 @@ before running the product.
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
 | Review the POC idea, mechanisms, current value, and next steps | [Current POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
-| Review the latest generic experiment | [Normalization-Aware Cacheability POC Tracker](./plans/normalization-aware-cacheability-poc-tracker.md) | [Frozen contract](../specs/poc-normalization-aware-cacheability-v2.md), [generalization audit](./findings/buildopt-generalization-audit.md), [closed DNO route](./plans/durable-native-optimization-poc-tracker.md) |
+| Review the latest generic experiment | [Economic Opportunity First POC Tracker](./plans/economic-opportunity-first-poc-tracker.md) | [Frozen contract](../specs/poc-economic-opportunity-first-v1.md), [generalization audit](./findings/buildopt-generalization-audit.md), [closed NAC route](./plans/normalization-aware-cacheability-poc-tracker.md) |
 | Review the stopped adaptive hypothesis | [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md) | [Terminal decision](../specs/poc-adaptive-fragment-terminal-decision-v1.md), [current generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the implemented onboarding foundation | [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md) | [Product onboarding](./getting-started/product-onboarding.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
 | Plan optional shared state across machines | [Centralized cache and state POC roadmap](./plans/centralized-cache-and-state-roadmap.md) | [Storage contract](../specs/poc-central-storage-contract-v1.md), [architecture overview](./architecture/overview.md) |
@@ -65,8 +65,11 @@ before running the product.
 
 ### Plans
 
+- [Economic Opportunity First POC Tracker](./plans/economic-opportunity-first-poc-tracker.md):
+  the active six-block route that rejects economically implausible work from
+  chronological source facts before authorizing a minimal candidate proof.
 - [Normalization-Aware Cacheability POC Tracker](./plans/normalization-aware-cacheability-poc-tracker.md):
-  the active seven-block route that separates already-normalized marker-only
+  the closed seven-block route that separates already-normalized marker-only
   actions from reviewed relative-path normalization, then repeats fresh breadth,
   correctness and value gates before making any speedup claim.
 - [Durable Native Optimization POC Tracker](./plans/durable-native-optimization-poc-tracker.md):

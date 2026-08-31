@@ -27,13 +27,14 @@ evidence around that execution and uses conservative fallbacks: a rejected
 cache entry becomes a normal cache miss, an unqualified optimization is not
 applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
-> **Active POC experiment:** BuildOpt is now testing normalization-aware
-> cacheability patches that remain in the repository and run as native Gradle.
-> Marker-only proposals require portable normalization on every file input;
-> missing normalization is a separate owner-reviewed relative-path proposal
-> with relocation and mutation proof. The contract is frozen, but no v2
-> candidate or timing result exists yet. See the
-> [active tracker](./docs/plans/normalization-aware-cacheability-poc-tracker.md).
+> **Active POC experiment:** BuildOpt is now testing whether a cheap,
+> source-only economic preflight can reject unlikely-to-repay opportunities
+> before discovery, calibration or materialization. The contract requires
+> chronological no-lookahead evidence, counts every incremental cost and keeps
+> the 3/5 net-positive-family product boundary. `EOF-001` is planning only; no
+> candidate build or fresh timing exists yet. A later block may collect one
+> optimized-native observation per source-admitted family before any candidate. See the
+> [active tracker](./docs/plans/economic-opportunity-first-poc-tracker.md).
 
 > **Installed two-machine proof:** the committed `./buildoptw` command now
 > bootstraps one SHA-verified archive on isolated producer and consumer

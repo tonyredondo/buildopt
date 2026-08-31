@@ -14,6 +14,16 @@ package boundaries with:
 ./dev/check-documentation
 ```
 
+Validate the active economic-first planning contract, frozen cohort, formulas,
+budgets and no-build authority boundary with:
+
+```bash
+./dev/check-economic-opportunity-first
+```
+
+`EOF-001` is planning only. The checker does not run Gradle or create timing
+evidence; `EOF-002` is the next source-only block.
+
 Validate the closed fresh-evidence route, its forbidden historical inputs,
 typed completeness outcomes and exact next block with:
 
@@ -282,7 +292,7 @@ The scorecard binds all DNO v1 evidence by digest and requires the stopped
 decision, typed unmeasured economics, absent proposal UX and no speedup,
 automatic-merge or successor-authority claim.
 
-Validate the active normalization-aware cacheability successor with:
+Validate the closed normalization-aware cacheability predecessor with:
 
 ```bash
 ./dev/check-normalization-aware-cacheability
@@ -291,7 +301,7 @@ Validate the active normalization-aware cacheability successor with:
 The contract checker freezes the two action classes, portable primary
 normalization strategies, reviewed-relative proof requirements, exact
 five-family cohort, zero-failure correctness and paired/longitudinal value
-gates. `NAC-002` has passed and `NAC-003` is now the only open block.
+gates and its terminal stop.
 
 Validate the checked source classification statically, or rerun it from five
 local frozen Git clones, with:
