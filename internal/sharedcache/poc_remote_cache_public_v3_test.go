@@ -220,6 +220,7 @@ func TestRCL3PublicCorrectness(t *testing.T) {
 func runRCL3PublicGradle(t *testing.T, subject rcl3PublicSubject, home, remoteURL string, push, buildCache bool) rcl3PublicBuild {
 	t.Helper()
 	t.Logf("%s: clean then build (cache=%t push=%t)", subject.Family, buildCache, push)
+	prepareRCL3GradleHome(t, home)
 	gradle := filepath.Join(subject.Checkout, "gradlew")
 	clean := exec.Command(gradle, "--no-daemon", "--no-build-cache", "--no-configuration-cache", "--console=plain", "--max-workers=4", "clean")
 	clean.Dir = subject.Checkout
@@ -245,6 +246,26 @@ func runRCL3PublicGradle(t *testing.T, subject rcl3PublicSubject, home, remoteUR
 		t.Fatalf("%s build lacks success marker\n%s", subject.Family, output)
 	}
 	return inspectRCL3PublicBuild(t, subject, output)
+}
+
+func prepareRCL3GradleHome(t *testing.T, home string) {
+	t.Helper()
+	sharedDistributions := filepath.Join(filepath.Dir(home), "wrapper-distributions")
+	if err := os.MkdirAll(sharedDistributions, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	wrapper := filepath.Join(home, "wrapper")
+	if err := os.MkdirAll(wrapper, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	distributions := filepath.Join(wrapper, "dists")
+	if _, err := os.Lstat(distributions); os.IsNotExist(err) {
+		if err := os.Symlink(sharedDistributions, distributions); err != nil {
+			t.Fatal(err)
+		}
+	} else if err != nil {
+		t.Fatal(err)
+	}
 }
 
 func inspectRCL3PublicBuild(t *testing.T, subject rcl3PublicSubject, output []byte) rcl3PublicBuild {
