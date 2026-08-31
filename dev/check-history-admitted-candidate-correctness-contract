@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+contract=specs/poc-history-admitted-candidate-correctness-v1.json
+jq -e '
+  .schemaVersion=="buildopt.specs/poc-history-admitted-candidate-correctness/v1" and
+  .status.currentBlock=="HACC-002" and .status.completedBlocks==["HACC-001"] and
+  .subject.family=="apache-kafka" and
+  .subject.targetRevision=="2e961afeff5cb27d60767a783edf20be00cc28e8" and
+  .subject.changeFamily=="DEPENDENCY_SOURCE" and .subject.changedProjects==[":clients"] and
+  .subject.candidateEntrypoints==[":clients:testClasses"] and
+  .subject.historicalSelectionEvidence.compatibleMatches>=5 and
+  (.subject.historicalSelectionEvidence.resultReuseAllowed|not) and
+  .execution.fresh and .execution.maximumGradleStarts==3 and
+  .execution.expectedModes==["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"] and
+  .gate=={exactCandidateFamiliesRequired:1,productFailureBudget:0} and
+  (.boundaries.stateForgeryAllowed|not) and
+  (.boundaries.publicSourceWritesAllowed|not) and
+  (.boundaries.comparativeTimingAllowed|not)
+' "$contract" >/dev/null
+
+for binding in historicalSelectionEvidence nativeManifest; do
+  path=$(jq -r ".subject.${binding}.path" "$contract")
+  expected=$(jq -r ".subject.${binding}.sha256" "$contract")
+  [[ $(sha256sum "$path" | awk '{print $1}') == "$expected" ]]
+done
+jq -e '
+  .targetRevision=="2e961afeff5cb27d60767a783edf20be00cc28e8" and
+  .discovery.changeFamily=="DEPENDENCY_SOURCE" and
+  .discovery.changedProjects==[":clients"] and
+  .discovery.candidateEntrypoints==[":clients:testClasses"] and
+  .incrementalLearning.ordinaryEconomics.historicalCompatibleMatches==12
+' benchmarks/results/poc-lifetime-breadth-v3/apache-kafka/qualification-capture.json >/dev/null
+
+printf 'HACC contract OK: one fresh naturally admitted Kafka candidate, three starts maximum\n'

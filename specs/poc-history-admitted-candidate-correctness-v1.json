@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "buildopt.specs/poc-history-admitted-candidate-correctness/v1",
+  "workItem": "HACC",
+  "status": {"currentBlock":"HACC-002","completedBlocks":["HACC-001"],"timingAuthorized":false},
+  "subject": {
+    "family": "apache-kafka",
+    "targetRevision": "2e961afeff5cb27d60767a783edf20be00cc28e8",
+    "changeFamily": "DEPENDENCY_SOURCE",
+    "changedProjects": [":clients"],
+    "candidateEntrypoints": [":clients:testClasses"],
+    "historicalSelectionEvidence": {
+      "path": "benchmarks/results/poc-lifetime-breadth-v3/apache-kafka/qualification-capture.json",
+      "sha256": "867dee330c5d9b2925eb944edb0e77c57641549f53971fc13385090796b371a6",
+      "compatibleMatches": 12,
+      "resultReuseAllowed": false
+    },
+    "nativeManifest": {
+      "path": "benchmarks/results/change-scoped-critical-path-native-capture-v1/apache-kafka/outputs.tsv",
+      "sha256": "38b69fe6430981b464a6475fdba9db92ae658ec926242f9ca9e6114c02a339f6"
+    }
+  },
+  "execution": {
+    "fresh": true,
+    "expectedModes": ["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"],
+    "maximumGradleStarts": 3,
+    "maximumWorkers": 12,
+    "timeoutMinutesPerInvocation": 30
+  },
+  "gate": {"exactCandidateFamiliesRequired":1,"productFailureBudget":0},
+  "boundaries": {"stateForgeryAllowed":false,"publicSourceWritesAllowed":false,"comparativeTimingAllowed":false,"testOptimization":"OUT_OF_SCOPE"}
+}

@@ -1239,6 +1239,12 @@ Validate the current scorecard with:
 
 ## Change-scoped candidate entry result
 
+The follow-up `HISTORY_ADMITTED_CANDIDATE_CORRECTNESS_V1` selects Kafka because
+the exact prior source/history binding contained twelve compatible matches.
+That is admission evidence only. A fresh native/native/candidate sequence and
+exact-output comparison are required before any separate timing contract can
+be considered.
+
 The untimed CSCPC route did not reach candidate correctness or performance.
 Its first Groovy optimized-native invocation succeeded, but the production
 decision path returned `NATIVE_RETAINED / ORDINARY_LEARNING_ECONOMICS_REJECTED`:

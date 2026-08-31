@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`CHANGE_SCOPED_CANDIDATE_CORRECTNESS_STOPPED\`"
-    "**Current phase:** \`CSCPC-004\`"
+    "**Overall status:** \`HISTORY_ADMITTED_CANDIDATE_CORRECTNESS_ACTIVE\`"
+    "**Current phase:** \`HACC-002\`"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"
@@ -82,6 +82,7 @@ buildopt_required_tracker_text=(
     "| POC-CHANGE-SCOPED-CRITICAL-PATH-DISCOVERY | Classify exact change/output bindings against retained native task-DAG critical paths before candidate execution | \`STOPPED\` | 3 resolved; 2 not run |"
     "| POC-CHANGE-SCOPED-CRITICAL-PATH-NATIVE-CAPTURE | Close the missing trace gap with bounded exact-revision optimized-native diagnostics | \`DONE\` | 4/4 |"
     "| POC-CHANGE-SCOPED-CANDIDATE-CORRECTNESS | Prove exact outputs for the four critical-path action families before timing | \`STOPPED\` | 4/4 resolved |"
+    "| POC-HISTORY-ADMITTED-CANDIDATE-CORRECTNESS | Prove candidate correctness on an exact row naturally admitted by the five-match economic gate | \`DOING\` | 1/4 |"
     "| \`E-403\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-000\` |"
     "| \`E-404\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-001\` |"
     "| \`E-405\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-002\` |"
@@ -148,6 +149,7 @@ buildopt_required_tracker_text=(
     "| \`E-469\` | 2026-08-31 | \`POC-CRITICAL-PATH-SUCCESSOR-SELECTION\`, \`CPSS-001\` |"
     "| \`E-470\` | 2026-08-31 | \`POC-CHANGE-SCOPED-CRITICAL-PATH-DISCOVERY\`, \`CSCPD-001/002/005\` |"
     "| \`E-473\` | 2026-08-31 | \`POC-CHANGE-SCOPED-CANDIDATE-CORRECTNESS\`, \`CSCPC-002..004\` |"
+    "| \`E-474\` | 2026-09-01 | \`POC-HISTORY-ADMITTED-CANDIDATE-CORRECTNESS\`, \`HACC-001\` |"
     "| 157 | \`POC-OBSERVED-REQUEST-PORTFOLIO-001\` | Reconstruct all terminal request-aligned causes"
     "| 156 | \`POC-REQUEST-ALIGNED-RECURRENT-LEARNING-001\` | Reconstruct every terminal change-aware negative"
     "| 155 | \`POC-CHANGE-AWARE-PRODUCER-CLOSURE-001\` | Starting from the terminal fresh 1/5 breadth result"

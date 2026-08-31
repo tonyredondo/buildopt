@@ -284,6 +284,12 @@ generic customer value.
 
 ## POC conclusion
 
+The authorized successor isolates the naturally history-admitted Kafka row.
+Its twelve bound compatible matches may select the row but cannot be reused as
+fresh correctness or performance evidence. The route allows three untimed
+starts and requires the real product to enter its candidate without state
+intervention.
+
 The later change-scoped candidate-correctness route also closes negatively,
 but before candidate execution. On the first exact Groovy revision the native
 build succeeded and discovery found the structural candidate; ordinary
