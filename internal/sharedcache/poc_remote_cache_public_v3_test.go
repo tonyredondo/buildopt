@@ -222,6 +222,56 @@ func TestRCL3PublicCorrectness(t *testing.T) {
 	}
 }
 
+func TestRCL3RecomputeTimingSummary(t *testing.T) {
+	input := os.Getenv("BUILDOPT_RCL3_RECOMPUTE_TIMING")
+	if input == "" {
+		t.Skip("RCL3 timing summary recomputation is not requested")
+	}
+	var row struct {
+		SchemaVersion string           `json:"schemaVersion"`
+		Family        string           `json:"family"`
+		Revision      string           `json:"revision"`
+		Pairs         []rcl3TimingPair `json:"pairs"`
+		Summary       map[string]any   `json:"summary"`
+	}
+	raw, err := os.ReadFile(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := json.Unmarshal(raw, &row); err != nil {
+		t.Fatal(err)
+	}
+	if len(row.Pairs) != 8 {
+		t.Fatalf("timing pairs = %d, want 8", len(row.Pairs))
+	}
+	directMean, edgeMean, savedMean, ratio, lower95, positive, directP95, edgeP95 := summarizeRCL3Timing(row.Pairs)
+	qualified := positive >= 6 && savedMean >= 500 && ratio >= 0.02 && lower95 > 0 && edgeP95 <= directP95
+	for _, pair := range row.Pairs {
+		qualified = qualified && !pair.ProductFailure
+	}
+	row.Summary = map[string]any{"pairs": 8, "positivePairs": positive, "directMeanMs": directMean, "edgeMeanMs": edgeMean, "meanSavedMs": savedMean, "reductionRatio": ratio, "bootstrapLower95SavedMs": lower95, "directP95Ms": directP95, "edgeP95Ms": edgeP95, "qualified": qualified}
+	updated, err := json.MarshalIndent(row, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(input, append(updated, '\n'), 0o600); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestRCL3TimingBootstrapResamplesWithReplacement(t *testing.T) {
+	pairs := make([]rcl3TimingPair, 8)
+	for index := range pairs {
+		pairs[index].DirectDurationMs = 10_000
+		pairs[index].EdgeDurationMs = 10_000 - int64(index*100)
+		pairs[index].SavedMs = int64(index * 100)
+	}
+	_, _, mean, _, lower95, _, _, _ := summarizeRCL3Timing(pairs)
+	if lower95 >= mean {
+		t.Fatalf("bootstrap lower95 = %v, mean = %v; samples did not vary", lower95, mean)
+	}
+}
+
 func runRCL3PublicGradle(t *testing.T, subject rcl3PublicSubject, home, remoteURL string, push, buildCache bool) rcl3PublicBuild {
 	t.Helper()
 	t.Logf("%s: clean then build (cache=%t push=%t)", subject.Family, buildCache, push)
@@ -334,7 +384,8 @@ func summarizeRCL3Timing(pairs []rcl3TimingPair) (float64, float64, float64, flo
 		var sum int64
 		for draw := 0; draw < len(pairs); draw++ {
 			state = 1664525*state + 1013904223
-			sum += pairs[int(state)%len(pairs)].SavedMs
+			index := int((uint64(state) * uint64(len(pairs))) >> 32)
+			sum += pairs[index].SavedMs
 		}
 		bootstrap[sample] = float64(sum) / float64(len(pairs))
 	}
