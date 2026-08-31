@@ -59,7 +59,11 @@ mkdir -p "$(dirname "${buildopt_result}")"
 if [[ -n "${buildopt_timing_result}" ]]; then
     mkdir -p "$(dirname "${buildopt_timing_result}")"
 fi
+buildopt_test_timeout=45m
+if [[ -n "${buildopt_timing_result}" ]]; then
+    buildopt_test_timeout=120m
+fi
 BUILDOPT_RCL3_SUBJECT="${buildopt_subject}" BUILDOPT_RCL3_RESULT="${buildopt_result}" BUILDOPT_RCL3_TIMING_RESULT="${buildopt_timing_result}" \
-    ./dev/run --toolchain go -- go test -v -timeout 45m -count=1 -run '^TestRCL3PublicCorrectness$' ./internal/sharedcache
+    ./dev/run --toolchain go -- go test -v -timeout "${buildopt_test_timeout}" -count=1 -run '^TestRCL3PublicCorrectness$' ./internal/sharedcache
 jq -e --arg family "${buildopt_family}" '.family==$family and .schemaVersion=="buildopt.evidence/remote-cache-locality-public-row/v3"' "${buildopt_result}" >/dev/null
 printf 'RCL3 public correctness row captured: %s -> %s\n' "${buildopt_family}" "${buildopt_result}"
