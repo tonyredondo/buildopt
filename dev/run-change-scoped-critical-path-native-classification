@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s OUTPUT_JSON\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_subjects="${buildopt_repo_root}/specs/poc-change-scoped-critical-path-native-capture-v1.subjects.json"
+buildopt_evidence_root="${buildopt_repo_root}/benchmarks/results/change-scoped-critical-path-native-capture-v1"
+buildopt_temp=$(mktemp -d)
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+
+"${buildopt_repo_root}/dev/run" --toolchain go -- go build \
+    -o "${buildopt_temp}/gradle-critical-path" ./cmd/gradle-critical-path
+
+buildopt_rows="${buildopt_temp}/rows.jsonl"
+: >"${buildopt_rows}"
+while IFS= read -r buildopt_subject; do
+    buildopt_family=$(jq -r '.family' <<<"${buildopt_subject}")
+    buildopt_capture_required=$(jq -r '.captureRequired' <<<"${buildopt_subject}")
+    buildopt_structural=$(jq -r '.structuralEvidencePath' <<<"${buildopt_subject}")
+    buildopt_structural_sha=$(jq -r '.structuralEvidenceSha256' <<<"${buildopt_subject}")
+    [[ $(sha256sum "${buildopt_repo_root}/${buildopt_structural}" | awk '{print $1}') == \
+        "${buildopt_structural_sha}" ]] || {
+        printf 'structural evidence drift for %s\n' "${buildopt_family}" >&2
+        exit 1
+    }
+
+    if [[ ${buildopt_capture_required} == false ]]; then
+        buildopt_critical=$(jq -r '.retainedCriticalPathEvidencePath' <<<"${buildopt_subject}")
+        buildopt_critical_sha=$(jq -r '.retainedCriticalPathEvidenceSha256' <<<"${buildopt_subject}")
+        [[ $(sha256sum "${buildopt_repo_root}/${buildopt_critical}" | awk '{print $1}') == \
+            "${buildopt_critical_sha}" ]] || {
+            printf 'retained critical-path evidence drift for %s\n' "${buildopt_family}" >&2
+            exit 1
+        }
+        jq -n --arg family "${buildopt_family}" \
+            --arg structuralPath "${buildopt_structural}" --arg structuralSha "${buildopt_structural_sha}" \
+            --arg criticalPath "${buildopt_critical}" --arg criticalSha "${buildopt_critical_sha}" '
+            {family:$family,structuralEvidence:{path:$structuralPath,sha256:$structuralSha},
+             criticalPathEvidence:{path:$criticalPath,sha256:$criticalSha,source:"RETAINED_BOUND_TRACE"},
+             nativeCriticalPathMs:null,avoidableCriticalPathMs:0,avoidableCriticalPathRatio:0,
+             avoidableCriticalPathTasks:[],classification:"CONCLUSIVE_NO_ACTION",actionable:false,
+             gradleStarts:0,candidateBuilds:0,timingSamples:0,productFailures:0}
+        ' >>"${buildopt_rows}"
+        continue
+    fi
+
+    buildopt_dir="${buildopt_evidence_root}/${buildopt_family}"
+    buildopt_capture="${buildopt_dir}/capture.json"
+    [[ -f ${buildopt_capture} ]] || {
+        printf 'missing native capture for %s\n' "${buildopt_family}" >&2
+        exit 1
+    }
+    for buildopt_key in operationsTrace taskGraph analysis outputs; do
+        buildopt_path=$(jq -r ".artifacts.${buildopt_key}.path" "${buildopt_capture}")
+        buildopt_expected_sha=$(jq -r ".artifacts.${buildopt_key}.sha256" "${buildopt_capture}")
+        [[ $(sha256sum "${buildopt_dir}/${buildopt_path}" | awk '{print $1}') == \
+            "${buildopt_expected_sha}" ]] || {
+            printf '%s artifact drift for %s\n' "${buildopt_key}" "${buildopt_family}" >&2
+            exit 1
+        }
+    done
+    [[ $(jq -r '.targetRevision' "${buildopt_capture}") == \
+        $(jq -r '.targetRevision' <<<"${buildopt_subject}") ]]
+    [[ $(jq -r '.structuralEvidence.sha256' "${buildopt_capture}") == \
+        "${buildopt_structural_sha}" ]]
+    [[ $(jq -r '.nativeDiagnostic.exitCode' "${buildopt_capture}") == 0 ]]
+    [[ $(jq -r '.nativeDiagnostic.timingEvidence' "${buildopt_capture}") == false ]]
+    [[ $(jq -r '.candidateBuild' "${buildopt_capture}") == false ]]
+
+    gzip -dc "${buildopt_dir}/operations-log.txt.gz" >"${buildopt_temp}/${buildopt_family}-operations.txt"
+    "${buildopt_temp}/gradle-critical-path" \
+        --operations "${buildopt_temp}/${buildopt_family}-operations.txt" \
+        --graph "${buildopt_dir}/task-graph.jsonl" --arm control \
+        >"${buildopt_temp}/${buildopt_family}-analysis.json"
+    cmp -s "${buildopt_dir}/analysis.json" "${buildopt_temp}/${buildopt_family}-analysis.json" || {
+        printf 'analysis is not reconstructible for %s\n' "${buildopt_family}" >&2
+        exit 1
+    }
+
+    buildopt_metrics=$(jq -n \
+        --slurpfile analysis "${buildopt_dir}/analysis.json" \
+        --slurpfile structural "${buildopt_repo_root}/${buildopt_structural}" '
+        def project_of_task:
+          (.identity | split(":")) as $parts |
+          if ($parts|length)==2 then ":" else ":" + ($parts[1:-1]|join(":")) end;
+        ($structural[0].discovery.aggregatePartition.materializedProjects) as $materialized |
+        ($analysis[0].builds[] | select(.buildPath==":") | .criticalPathDurationMs) as $critical |
+        [$analysis[0].tasks[] |
+          select(.buildPath==":" and .criticalPath==true) |
+          . + {project:project_of_task} |
+          select(.project as $project | $materialized | index($project))] as $avoidable |
+        ($avoidable | map(.durationMs) | add // 0) as $avoidableMs |
+        {nativeCriticalPathMs:$critical,avoidableCriticalPathMs:$avoidableMs,
+         avoidableCriticalPathRatio:(if $critical==0 then 0 else $avoidableMs/$critical end),
+         avoidableCriticalPathTasks:[$avoidable[]|{identity,durationMs,project}]}
+    ')
+    buildopt_actionable=$(jq -r '
+        .avoidableCriticalPathMs>=500 and .avoidableCriticalPathRatio>=0.02
+    ' <<<"${buildopt_metrics}")
+    if [[ ${buildopt_actionable} == true ]]; then
+        buildopt_classification=ACTIONABLE_CRITICAL_PATH
+    else
+        buildopt_classification=CONCLUSIVE_NO_ACTION
+    fi
+    jq -n \
+        --arg family "${buildopt_family}" \
+        --arg structuralPath "${buildopt_structural}" --arg structuralSha "${buildopt_structural_sha}" \
+        --arg capturePath "benchmarks/results/change-scoped-critical-path-native-capture-v1/${buildopt_family}/capture.json" \
+        --arg captureSha "$(sha256sum "${buildopt_capture}" | awk '{print $1}')" \
+        --arg classification "${buildopt_classification}" --argjson actionable "${buildopt_actionable}" \
+        --argjson metrics "${buildopt_metrics}" '
+        {family:$family,structuralEvidence:{path:$structuralPath,sha256:$structuralSha},
+         criticalPathEvidence:{path:$capturePath,sha256:$captureSha,source:"FRESH_NATIVE_DIAGNOSTIC"}} +
+        $metrics + {classification:$classification,actionable:$actionable,
+        gradleStarts:1,candidateBuilds:0,timingSamples:0,productFailures:0}
+    ' >>"${buildopt_rows}"
+done < <(jq -c '.subjects[]' "${buildopt_subjects}")
+
+jq -s '
+  sort_by(.family) as $rows |
+  ($rows|map(select(.classification=="ACTIONABLE_CRITICAL_PATH" or .classification=="CONCLUSIVE_NO_ACTION"))|length) as $conclusive |
+  ($rows|map(select(.actionable))|length) as $actionable |
+  ($rows|map(.gradleStarts)|add) as $starts |
+  ($rows|map(.productFailures)|add) as $failures |
+  {schemaVersion:"buildopt.evidence/change-scoped-critical-path-native-classification/v1",
+   workItem:"CSCPN-003",rows:$rows,
+   summary:{families:($rows|length),conclusiveFamilies:$conclusive,actionableFamilies:$actionable,
+    requiredConclusiveFamilies:5,requiredActionableFamilies:3,productFailures:$failures,
+    gradleStarts:$starts,candidateBuilds:0,timingSamples:0,
+    decision:(if $conclusive==5 and $actionable>=3 and $failures==0
+      then "AUTHORIZE_CHANGE_SCOPED_CANDIDATE_CORRECTNESS_CONTRACT"
+      else "STOP_CHANGE_SCOPED_CRITICAL_PATH_NATIVE_CAPTURE" end)}}
+' "${buildopt_rows}" >"${buildopt_output}"

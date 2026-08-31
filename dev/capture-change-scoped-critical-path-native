@@ -1,0 +1,182 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 2)); then
+    printf 'usage: %s FAMILY NEW_OUTPUT_DIRECTORY\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_family=$1
+buildopt_output=$2
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_subjects="${buildopt_repo_root}/specs/poc-change-scoped-critical-path-native-capture-v1.subjects.json"
+
+[[ ${buildopt_output} == /* && ! -e ${buildopt_output} ]] || {
+    printf 'output must be a new absolute directory\n' >&2
+    exit 64
+}
+
+buildopt_subject=$(jq -ce --arg family "${buildopt_family}" '
+    [.subjects[] | select(.family == $family and .captureRequired == true)] |
+    if length == 1 then .[0] else error("expected one capture subject") end
+' "${buildopt_subjects}")
+buildopt_remote=$(jq -r '.remoteUrl' <<<"${buildopt_subject}")
+buildopt_revision=$(jq -r '.targetRevision' <<<"${buildopt_subject}")
+buildopt_jdk=$(jq -r '.jdkToolchain' <<<"${buildopt_subject}")
+buildopt_structural=$(jq -r '.structuralEvidencePath' <<<"${buildopt_subject}")
+buildopt_expected_structural_sha=$(jq -r '.structuralEvidenceSha256' <<<"${buildopt_subject}")
+buildopt_actual_structural_sha=$(sha256sum "${buildopt_repo_root}/${buildopt_structural}" | awk '{print $1}')
+[[ ${buildopt_actual_structural_sha} == "${buildopt_expected_structural_sha}" ]] || {
+    printf 'structural evidence drift for %s\n' "${buildopt_family}" >&2
+    exit 1
+}
+
+buildopt_free_bytes=$(df --output=avail -B1 /tmp | tail -n 1 | tr -d ' ')
+((buildopt_free_bytes >= 8589934592)) || {
+    printf 'less than 8 GiB free before %s\n' "${buildopt_family}" >&2
+    exit 1
+}
+
+buildopt_temp=$(mktemp -d "/tmp/buildopt-cscpn-${buildopt_family}.XXXXXX")
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+buildopt_checkout="${buildopt_temp}/checkout"
+buildopt_capture="${buildopt_temp}/capture"
+mkdir -p -- "${buildopt_checkout}" "${buildopt_capture}"
+
+git -C "${buildopt_checkout}" init -q
+git -C "${buildopt_checkout}" remote add origin "${buildopt_remote}"
+git -C "${buildopt_checkout}" fetch -q --depth=1 origin "${buildopt_revision}"
+git -C "${buildopt_checkout}" checkout -q --detach FETCH_HEAD
+[[ $(git -C "${buildopt_checkout}" rev-parse HEAD) == "${buildopt_revision}" ]]
+[[ -z $(git -C "${buildopt_checkout}" status --short) ]]
+
+buildopt_source_archive_sha=$(git -C "${buildopt_checkout}" archive HEAD | sha256sum | awk '{print $1}')
+buildopt_wrapper_sha=$(sha256sum "${buildopt_checkout}/gradlew" | awk '{print $1}')
+buildopt_graph="${buildopt_capture}/task-graph.jsonl"
+buildopt_trace_prefix="${buildopt_capture}/operations"
+buildopt_trace="${buildopt_trace_prefix}-log.txt"
+buildopt_log="${buildopt_capture}/gradle.log"
+buildopt_gradle_home="${buildopt_repo_root}/.tools/gradle-user-home/local"
+
+mapfile -t buildopt_entrypoints < <(jq -r '.entrypoints[]?' <<<"${buildopt_subject}")
+buildopt_entrypoints_file=$(jq -r '.entrypointsFile // empty' <<<"${buildopt_subject}")
+if [[ -n ${buildopt_entrypoints_file} ]]; then
+    mapfile -t buildopt_entrypoints < <(sed -e '/^[[:space:]]*#/d' -e '/^[[:space:]]*$/d' \
+        "${buildopt_repo_root}/${buildopt_entrypoints_file}")
+fi
+((${#buildopt_entrypoints[@]} > 0)) || {
+    printf 'no entrypoints for %s\n' "${buildopt_family}" >&2
+    exit 1
+}
+
+buildopt_java_paths=$(find "${buildopt_repo_root}/.tools/toolchains" -mindepth 1 -maxdepth 1 \
+    -type d -name 'temurin-jdk-*' -printf '%p\n' | sort | paste -sd, -)
+buildopt_start_epoch=$(date +%s)
+set +e
+(
+    cd -- "${buildopt_checkout}"
+    env -u CI -u GITHUB_ACTIONS \
+        BUILDOPT_TASK_GRAPH_OUTPUT="${buildopt_graph}" \
+        GRADLE_OPTS="-Dorg.gradle.internal.operations.trace=${buildopt_trace_prefix}" \
+        GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_repo_root}/dev/run" --toolchain "${buildopt_jdk}" -- \
+        timeout 30m ./gradlew --no-daemon --console=plain --parallel --max-workers=12 \
+        --init-script "${buildopt_repo_root}/dev/gradle-critical-path.init.gradle" \
+        "-Dorg.gradle.java.installations.paths=${buildopt_java_paths}" \
+        -Dorg.gradle.java.installations.auto-detect=false \
+        "${buildopt_entrypoints[@]}"
+) >"${buildopt_log}" 2>&1
+buildopt_exit_code=$?
+set -e
+buildopt_end_epoch=$(date +%s)
+
+[[ ${buildopt_exit_code} -eq 0 ]] || {
+    tail -n 120 "${buildopt_log}" >&2
+    printf 'native diagnostic failed for %s with exit %s\n' "${buildopt_family}" "${buildopt_exit_code}" >&2
+    exit "${buildopt_exit_code}"
+}
+git -C "${buildopt_checkout}" diff --quiet
+git -C "${buildopt_checkout}" diff --cached --quiet
+[[ -s ${buildopt_trace} && -s ${buildopt_graph} ]] || {
+    printf 'missing operation trace or task graph for %s\n' "${buildopt_family}" >&2
+    exit 1
+}
+
+"${buildopt_repo_root}/dev/run" --toolchain go -- go build \
+    -o "${buildopt_temp}/gradle-critical-path" ./cmd/gradle-critical-path
+"${buildopt_temp}/gradle-critical-path" --operations "${buildopt_trace}" \
+    --graph "${buildopt_graph}" --arm control >"${buildopt_capture}/analysis.json"
+# Gradle's diagnostic switch also emits human/tree renderings. The analyzer
+# consumes only the operation log; keep the evidence set minimal and bound.
+find "${buildopt_capture}" -maxdepth 1 -type f \
+    \( -name 'operations-tree.json' -o -name 'operations-tree.txt' \) -delete
+rm -f -- "${buildopt_log}"
+
+buildopt_output_manifest="${buildopt_capture}/outputs.tsv"
+: >"${buildopt_output_manifest}"
+while IFS= read -r buildopt_pattern; do
+    buildopt_prefix=${buildopt_pattern%/**}
+    if [[ -f "${buildopt_checkout}/${buildopt_prefix}" ]]; then
+        buildopt_relative=${buildopt_prefix#./}
+        printf '%s\t%s\n' "$(sha256sum "${buildopt_checkout}/${buildopt_prefix}" | awk '{print $1}')" \
+            "${buildopt_relative}" >>"${buildopt_output_manifest}"
+    elif [[ -d "${buildopt_checkout}/${buildopt_prefix}" ]]; then
+        while IFS= read -r -d '' buildopt_file; do
+            buildopt_relative=${buildopt_file#"${buildopt_checkout}/"}
+            printf '%s\t%s\n' "$(sha256sum "${buildopt_file}" | awk '{print $1}')" \
+                "${buildopt_relative}" >>"${buildopt_output_manifest}"
+        done < <(find "${buildopt_checkout}/${buildopt_prefix}" -type f -print0 | sort -z)
+    fi
+done < <(jq -r '.discovery.requiredOutputs[]' "${buildopt_repo_root}/${buildopt_structural}")
+sort -u -o "${buildopt_output_manifest}" "${buildopt_output_manifest}"
+buildopt_output_count=$(wc -l <"${buildopt_output_manifest}" | tr -d ' ')
+((buildopt_output_count > 0)) || {
+    printf 'no required outputs observed for %s\n' "${buildopt_family}" >&2
+    exit 1
+}
+
+gzip -9 "${buildopt_trace}"
+buildopt_trace_gz="${buildopt_trace}.gz"
+jq -n \
+    --arg family "${buildopt_family}" \
+    --arg repositoryId "$(jq -r '.repositoryId' <<<"${buildopt_subject}")" \
+    --arg revision "${buildopt_revision}" \
+    --arg sourceArchiveSha256 "${buildopt_source_archive_sha}" \
+    --arg wrapperSha256 "${buildopt_wrapper_sha}" \
+    --arg structuralEvidencePath "${buildopt_structural}" \
+    --arg structuralEvidenceSha256 "${buildopt_actual_structural_sha}" \
+    --arg operationsTraceSha256 "$(sha256sum "${buildopt_trace_gz}" | awk '{print $1}')" \
+    --arg taskGraphSha256 "$(sha256sum "${buildopt_graph}" | awk '{print $1}')" \
+    --arg analysisSha256 "$(sha256sum "${buildopt_capture}/analysis.json" | awk '{print $1}')" \
+    --arg outputsSha256 "$(sha256sum "${buildopt_output_manifest}" | awk '{print $1}')" \
+    --argjson outputCount "${buildopt_output_count}" \
+    --argjson diagnosticDurationSeconds "$((buildopt_end_epoch - buildopt_start_epoch))" \
+    --argjson freeBytesBefore "${buildopt_free_bytes}" \
+    --argjson entrypoints "$(printf '%s\n' "${buildopt_entrypoints[@]}" | jq -R . | jq -s .)" '
+    {
+      schemaVersion:"buildopt.evidence/change-scoped-critical-path-native-capture/v1",
+      family:$family,
+      repositoryId:$repositoryId,
+      targetRevision:$revision,
+      sourceArchiveSha256:$sourceArchiveSha256,
+      wrapperSha256:$wrapperSha256,
+      structuralEvidence:{path:$structuralEvidencePath,sha256:$structuralEvidenceSha256},
+      entrypoints:$entrypoints,
+      nativeDiagnostic:{exitCode:0,gradleStarts:1,durationSeconds:$diagnosticDurationSeconds,timingEvidence:false},
+      artifacts:{
+        operationsTrace:{path:"operations-log.txt.gz",sha256:$operationsTraceSha256},
+        taskGraph:{path:"task-graph.jsonl",sha256:$taskGraphSha256},
+        analysis:{path:"analysis.json",sha256:$analysisSha256},
+        outputs:{path:"outputs.tsv",sha256:$outputsSha256,count:$outputCount}
+      },
+      resourceEnvelope:{freeBytesBefore:$freeBytesBefore,maximumWorkers:12,timeoutMinutes:30},
+      publicSourceModified:false,
+      candidateBuild:false,
+      productFailures:0
+    }
+' >"${buildopt_capture}/capture.json"
+
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+mv -- "${buildopt_capture}" "${buildopt_output}"
+printf 'captured %s: %s outputs, diagnostic only\n' "${buildopt_family}" "${buildopt_output_count}"

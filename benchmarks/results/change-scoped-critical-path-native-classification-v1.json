@@ -1,0 +1,447 @@
+{
+  "schemaVersion": "buildopt.evidence/change-scoped-critical-path-native-classification/v1",
+  "workItem": "CSCPN-003",
+  "rows": [
+    {
+      "family": "apache-groovy",
+      "structuralEvidence": {
+        "path": "benchmarks/results/poc-lifetime-breadth-v3/apache-groovy/qualification-capture.json",
+        "sha256": "4d24c2f97efd17c0329e68ea616b0283b9063e6ad6d6f058a31a24e0b7fe4d74"
+      },
+      "criticalPathEvidence": {
+        "path": "benchmarks/results/change-scoped-critical-path-native-capture-v1/apache-groovy/capture.json",
+        "sha256": "1d74647a45263dea0dc623c816ff704295a26d33ee8f41d08b6284ec1afa26f5",
+        "source": "FRESH_NATIVE_DIAGNOSTIC"
+      },
+      "nativeCriticalPathMs": 76896,
+      "avoidableCriticalPathMs": 76896,
+      "avoidableCriticalPathRatio": 1,
+      "avoidableCriticalPathTasks": [
+        {
+          "identity": ":bootstrapJar",
+          "durationMs": 850,
+          "project": ":"
+        },
+        {
+          "identity": ":compileGroovy",
+          "durationMs": 6193,
+          "project": ":"
+        },
+        {
+          "identity": ":compileJava",
+          "durationMs": 18010,
+          "project": ":"
+        },
+        {
+          "identity": ":dgmConverter",
+          "durationMs": 719,
+          "project": ":"
+        },
+        {
+          "identity": ":generateGrammarSource",
+          "durationMs": 1801,
+          "project": ":"
+        },
+        {
+          "identity": ":groovy-console:classes",
+          "durationMs": 0,
+          "project": ":groovy-console"
+        },
+        {
+          "identity": ":groovy-console:compileGroovy",
+          "durationMs": 13768,
+          "project": ":groovy-console"
+        },
+        {
+          "identity": ":groovy-console:compileJava",
+          "durationMs": 8,
+          "project": ":groovy-console"
+        },
+        {
+          "identity": ":groovy-console:jar",
+          "durationMs": 116,
+          "project": ":groovy-console"
+        },
+        {
+          "identity": ":groovy-groovysh:classes",
+          "durationMs": 1,
+          "project": ":groovy-groovysh"
+        },
+        {
+          "identity": ":groovy-groovysh:compileGroovy",
+          "durationMs": 8329,
+          "project": ":groovy-groovysh"
+        },
+        {
+          "identity": ":groovy-groovysh:compileJava",
+          "durationMs": 1,
+          "project": ":groovy-groovysh"
+        },
+        {
+          "identity": ":groovy-swing:classes",
+          "durationMs": 0,
+          "project": ":groovy-swing"
+        },
+        {
+          "identity": ":groovy-swing:compileGroovy",
+          "durationMs": 20438,
+          "project": ":groovy-swing"
+        },
+        {
+          "identity": ":groovy-swing:compileJava",
+          "durationMs": 2724,
+          "project": ":groovy-swing"
+        },
+        {
+          "identity": ":groovy-swing:jar",
+          "durationMs": 100,
+          "project": ":groovy-swing"
+        },
+        {
+          "identity": ":jar",
+          "durationMs": 3497,
+          "project": ":"
+        },
+        {
+          "identity": ":osgiClasses",
+          "durationMs": 341,
+          "project": ":"
+        }
+      ],
+      "classification": "ACTIONABLE_CRITICAL_PATH",
+      "actionable": true,
+      "gradleStarts": 1,
+      "candidateBuilds": 0,
+      "timingSamples": 0,
+      "productFailures": 0
+    },
+    {
+      "family": "apache-kafka",
+      "structuralEvidence": {
+        "path": "benchmarks/results/poc-lifetime-breadth-v3/apache-kafka/qualification-capture.json",
+        "sha256": "867dee330c5d9b2925eb944edb0e77c57641549f53971fc13385090796b371a6"
+      },
+      "criticalPathEvidence": {
+        "path": "benchmarks/results/change-scoped-critical-path-native-capture-v1/apache-kafka/capture.json",
+        "sha256": "039893fb52278eb8fac033b41966161ba2d3a06ac5d3e2a9418dfebd7674ebbe",
+        "source": "FRESH_NATIVE_DIAGNOSTIC"
+      },
+      "nativeCriticalPathMs": 243154,
+      "avoidableCriticalPathMs": 216756,
+      "avoidableCriticalPathRatio": 0.891435057617806,
+      "avoidableCriticalPathTasks": [
+        {
+          "identity": ":coordinator-common:compileJava",
+          "durationMs": 922,
+          "project": ":coordinator-common"
+        },
+        {
+          "identity": ":core:compileJava",
+          "durationMs": 4,
+          "project": ":core"
+        },
+        {
+          "identity": ":core:compileScala",
+          "durationMs": 88924,
+          "project": ":core"
+        },
+        {
+          "identity": ":core:compileTestJava",
+          "durationMs": 24,
+          "project": ":core"
+        },
+        {
+          "identity": ":core:compileTestScala",
+          "durationMs": 85100,
+          "project": ":core"
+        },
+        {
+          "identity": ":core:testClasses",
+          "durationMs": 0,
+          "project": ":core"
+        },
+        {
+          "identity": ":generator:classes",
+          "durationMs": 1,
+          "project": ":generator"
+        },
+        {
+          "identity": ":generator:compileJava",
+          "durationMs": 9044,
+          "project": ":generator"
+        },
+        {
+          "identity": ":generator:jar",
+          "durationMs": 41,
+          "project": ":generator"
+        },
+        {
+          "identity": ":group-coordinator:compileJava",
+          "durationMs": 6264,
+          "project": ":group-coordinator"
+        },
+        {
+          "identity": ":metadata:compileJava",
+          "durationMs": 6067,
+          "project": ":metadata"
+        },
+        {
+          "identity": ":raft:compileJava",
+          "durationMs": 1092,
+          "project": ":raft"
+        },
+        {
+          "identity": ":server-common:compileJava",
+          "durationMs": 4500,
+          "project": ":server-common"
+        },
+        {
+          "identity": ":server:compileJava",
+          "durationMs": 1299,
+          "project": ":server"
+        },
+        {
+          "identity": ":storage:compileJava",
+          "durationMs": 8447,
+          "project": ":storage"
+        },
+        {
+          "identity": ":storage:storage-api:compileJava",
+          "durationMs": 851,
+          "project": ":storage:storage-api"
+        },
+        {
+          "identity": ":test-common:test-common-runtime:compileJava",
+          "durationMs": 4176,
+          "project": ":test-common:test-common-runtime"
+        }
+      ],
+      "classification": "ACTIONABLE_CRITICAL_PATH",
+      "actionable": true,
+      "gradleStarts": 1,
+      "candidateBuilds": 0,
+      "timingSamples": 0,
+      "productFailures": 0
+    },
+    {
+      "family": "micronaut-core",
+      "structuralEvidence": {
+        "path": "benchmarks/results/poc-quarantine-critical-path-attribution-v1/source-summary.json",
+        "sha256": "acfabd831eac7c04243283895ffe8c547c942029f32a996d2bcec9b0d38eaa26"
+      },
+      "criticalPathEvidence": {
+        "path": "benchmarks/results/poc-quarantine-critical-path-attribution-v1/attribution.json",
+        "sha256": "0639dd79ca27b0d649263747e3900db45601d4a423ccfc6ca90324698d6d1804",
+        "source": "RETAINED_BOUND_TRACE"
+      },
+      "nativeCriticalPathMs": null,
+      "avoidableCriticalPathMs": 0,
+      "avoidableCriticalPathRatio": 0,
+      "avoidableCriticalPathTasks": [],
+      "classification": "CONCLUSIVE_NO_ACTION",
+      "actionable": false,
+      "gradleStarts": 0,
+      "candidateBuilds": 0,
+      "timingSamples": 0,
+      "productFailures": 0
+    },
+    {
+      "family": "opentelemetry-java-instrumentation",
+      "structuralEvidence": {
+        "path": "benchmarks/results/poc-lifetime-breadth-v3/opentelemetry-java-instrumentation/qualification-capture.json",
+        "sha256": "d7316ea6c5995ee9565481e9cd19f09d35585a5d43ebd5bc4ef0ce366208b910"
+      },
+      "criticalPathEvidence": {
+        "path": "benchmarks/results/change-scoped-critical-path-native-capture-v1/opentelemetry-java-instrumentation/capture.json",
+        "sha256": "12c3f2d4748b3a31afc7727c0aeb95aa90bca82e8ac759ce28f76d1b53060d4a",
+        "source": "FRESH_NATIVE_DIAGNOSTIC"
+      },
+      "nativeCriticalPathMs": 313839,
+      "avoidableCriticalPathMs": 119021,
+      "avoidableCriticalPathRatio": 0.3792422229232186,
+      "avoidableCriticalPathTasks": [
+        {
+          "identity": ":instrumentation:spring:spring-cloud-aws-3.0:javaagent:compileTestGroovy",
+          "durationMs": 2,
+          "project": ":instrumentation:spring:spring-cloud-aws-3.0:javaagent"
+        },
+        {
+          "identity": ":instrumentation:spring:spring-cloud-aws-3.0:javaagent:compileTestJava",
+          "durationMs": 119018,
+          "project": ":instrumentation:spring:spring-cloud-aws-3.0:javaagent"
+        },
+        {
+          "identity": ":instrumentation:spring:spring-cloud-aws-3.0:javaagent:testClasses",
+          "durationMs": 1,
+          "project": ":instrumentation:spring:spring-cloud-aws-3.0:javaagent"
+        }
+      ],
+      "classification": "ACTIONABLE_CRITICAL_PATH",
+      "actionable": true,
+      "gradleStarts": 1,
+      "candidateBuilds": 0,
+      "timingSamples": 0,
+      "productFailures": 0
+    },
+    {
+      "family": "spring-framework",
+      "structuralEvidence": {
+        "path": "benchmarks/results/poc-lifetime-breadth-v3/spring-framework/qualification-capture.json",
+        "sha256": "48b61f219134d7c9a1ae183b7897a6439ec97a9cf61a4859de4d1db9cb015ca4"
+      },
+      "criticalPathEvidence": {
+        "path": "benchmarks/results/change-scoped-critical-path-native-capture-v1/spring-framework/capture.json",
+        "sha256": "4c293d18a1b4712948966a9443e0efbeb2245ad0ac10fe1e809ec10cb4dccc87",
+        "source": "FRESH_NATIVE_DIAGNOSTIC"
+      },
+      "nativeCriticalPathMs": 295555,
+      "avoidableCriticalPathMs": 295555,
+      "avoidableCriticalPathRatio": 1,
+      "avoidableCriticalPathTasks": [
+        {
+          "identity": ":spring-aop:compileJava",
+          "durationMs": 13729,
+          "project": ":spring-aop"
+        },
+        {
+          "identity": ":spring-aop:compileKotlin",
+          "durationMs": 7,
+          "project": ":spring-aop"
+        },
+        {
+          "identity": ":spring-beans:compileJava",
+          "durationMs": 20773,
+          "project": ":spring-beans"
+        },
+        {
+          "identity": ":spring-beans:compileKotlin",
+          "durationMs": 11659,
+          "project": ":spring-beans"
+        },
+        {
+          "identity": ":spring-context:compileJava",
+          "durationMs": 20802,
+          "project": ":spring-context"
+        },
+        {
+          "identity": ":spring-context:compileKotlin",
+          "durationMs": 11908,
+          "project": ":spring-context"
+        },
+        {
+          "identity": ":spring-core:compileJava",
+          "durationMs": 22359,
+          "project": ":spring-core"
+        },
+        {
+          "identity": ":spring-core:compileKotlin",
+          "durationMs": 23422,
+          "project": ":spring-core"
+        },
+        {
+          "identity": ":spring-core:javapoetRepackJar",
+          "durationMs": 1824,
+          "project": ":spring-core"
+        },
+        {
+          "identity": ":spring-test:classes",
+          "durationMs": 0,
+          "project": ":spring-test"
+        },
+        {
+          "identity": ":spring-test:compileJava",
+          "durationMs": 13463,
+          "project": ":spring-test"
+        },
+        {
+          "identity": ":spring-test:compileKotlin",
+          "durationMs": 11150,
+          "project": ":spring-test"
+        },
+        {
+          "identity": ":spring-test:compileTestFixturesJava",
+          "durationMs": 1,
+          "project": ":spring-test"
+        },
+        {
+          "identity": ":spring-test:compileTestFixturesKotlin",
+          "durationMs": 3,
+          "project": ":spring-test"
+        },
+        {
+          "identity": ":spring-test:compileTestJava",
+          "durationMs": 13225,
+          "project": ":spring-test"
+        },
+        {
+          "identity": ":spring-test:compileTestKotlin",
+          "durationMs": 8449,
+          "project": ":spring-test"
+        },
+        {
+          "identity": ":spring-test:jar",
+          "durationMs": 166,
+          "project": ":spring-test"
+        },
+        {
+          "identity": ":spring-test:testClasses",
+          "durationMs": 0,
+          "project": ":spring-test"
+        },
+        {
+          "identity": ":spring-test:testFixturesClasses",
+          "durationMs": 0,
+          "project": ":spring-test"
+        },
+        {
+          "identity": ":spring-test:testFixturesJar",
+          "durationMs": 4,
+          "project": ":spring-test"
+        },
+        {
+          "identity": ":spring-web:compileJava",
+          "durationMs": 62478,
+          "project": ":spring-web"
+        },
+        {
+          "identity": ":spring-web:compileKotlin",
+          "durationMs": 16137,
+          "project": ":spring-web"
+        },
+        {
+          "identity": ":spring-webmvc:compileJava",
+          "durationMs": 27431,
+          "project": ":spring-webmvc"
+        },
+        {
+          "identity": ":spring-webmvc:compileKotlin",
+          "durationMs": 9574,
+          "project": ":spring-webmvc"
+        },
+        {
+          "identity": ":spring-websocket:compileJava",
+          "durationMs": 6991,
+          "project": ":spring-websocket"
+        }
+      ],
+      "classification": "ACTIONABLE_CRITICAL_PATH",
+      "actionable": true,
+      "gradleStarts": 1,
+      "candidateBuilds": 0,
+      "timingSamples": 0,
+      "productFailures": 0
+    }
+  ],
+  "summary": {
+    "families": 5,
+    "conclusiveFamilies": 5,
+    "actionableFamilies": 4,
+    "requiredConclusiveFamilies": 5,
+    "requiredActionableFamilies": 3,
+    "productFailures": 0,
+    "gradleStarts": 4,
+    "candidateBuilds": 0,
+    "timingSamples": 0,
+    "decision": "AUTHORIZE_CHANGE_SCOPED_CANDIDATE_CORRECTNESS_CONTRACT"
+  }
+}

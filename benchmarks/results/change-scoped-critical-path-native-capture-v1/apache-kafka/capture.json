@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "buildopt.evidence/change-scoped-critical-path-native-capture/v1",
+  "family": "apache-kafka",
+  "repositoryId": "apache/kafka",
+  "targetRevision": "2e961afeff5cb27d60767a783edf20be00cc28e8",
+  "sourceArchiveSha256": "f5eda5bdef368e879cdfa7831ca2900710c07bf6a2a02d63b1b946d0923f3a47",
+  "wrapperSha256": "b5d28d5bfe461fd4d90cc2abba7176514fb659c4d960818a6d2b7a2c14708f8a",
+  "structuralEvidence": {
+    "path": "benchmarks/results/poc-lifetime-breadth-v3/apache-kafka/qualification-capture.json",
+    "sha256": "867dee330c5d9b2925eb944edb0e77c57641549f53971fc13385090796b371a6"
+  },
+  "entrypoints": [
+    "testClasses"
+  ],
+  "nativeDiagnostic": {
+    "exitCode": 0,
+    "gradleStarts": 1,
+    "durationSeconds": 284,
+    "timingEvidence": false
+  },
+  "artifacts": {
+    "operationsTrace": {
+      "path": "operations-log.txt.gz",
+      "sha256": "2ea8b7053262086242522abfeabac76596c926ff5b4c93428852cbc6c8f37988"
+    },
+    "taskGraph": {
+      "path": "task-graph.jsonl",
+      "sha256": "d0490f17a3885788b55e6a9aae37522a75dc7296f67f433e7cc1bd2d2bae93b1"
+    },
+    "analysis": {
+      "path": "analysis.json",
+      "sha256": "5f047e5ea271e4c18ce65002d5ceffc741947a3f12d628324c219c08da6de3be"
+    },
+    "outputs": {
+      "path": "outputs.tsv",
+      "sha256": "38b69fe6430981b464a6475fdba9db92ae658ec926242f9ca9e6114c02a339f6",
+      "count": 4440
+    }
+  },
+  "resourceEnvelope": {
+    "freeBytesBefore": 11762352128,
+    "maximumWorkers": 12,
+    "timeoutMinutes": 30
+  },
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "productFailures": 0
+}

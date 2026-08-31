@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+buildopt_report=benchmarks/results/change-scoped-critical-path-native-classification-v1.json
+buildopt_tmp=$(mktemp)
+trap 'rm -f "${buildopt_tmp}"' EXIT
+./dev/run-change-scoped-critical-path-native-classification "${buildopt_tmp}"
+cmp -s "${buildopt_report}" "${buildopt_tmp}" || {
+    printf 'change-scoped native critical-path report is stale\n' >&2
+    exit 1
+}
+
+jq -e '
+  .schemaVersion=="buildopt.evidence/change-scoped-critical-path-native-classification/v1" and
+  (.rows|length)==5 and
+  ([.rows[].family]|sort)==["apache-groovy","apache-kafka","micronaut-core","opentelemetry-java-instrumentation","spring-framework"] and
+  ([.rows[]|select(.classification=="ACTIONABLE_CRITICAL_PATH")]|length)>=3 and
+  ([.rows[]|select(.classification=="CONCLUSIVE_NO_ACTION")]|length)>=1 and
+  ([.rows[]|select(.avoidableCriticalPathMs<0 or .avoidableCriticalPathRatio<0 or .avoidableCriticalPathRatio>1)]|length)==0 and
+  ([.rows[]|.gradleStarts]|add)==4 and
+  ([.rows[]|.candidateBuilds]|add)==0 and
+  ([.rows[]|.timingSamples]|add)==0 and
+  ([.rows[]|.productFailures]|add)==0 and
+  .summary.families==5 and .summary.conclusiveFamilies==5 and
+  .summary.actionableFamilies>=3 and .summary.gradleStarts==4 and
+  .summary.candidateBuilds==0 and .summary.timingSamples==0 and
+  .summary.productFailures==0 and
+  .summary.decision=="AUTHORIZE_CHANGE_SCOPED_CANDIDATE_CORRECTNESS_CONTRACT"
+' "${buildopt_report}" >/dev/null
+
+printf 'CSCPN native capture OK: 5/5 conclusive, %s/5 actionable, four diagnostics, zero candidates\n' \
+    "$(jq -r '.summary.actionableFamilies' "${buildopt_report}")"

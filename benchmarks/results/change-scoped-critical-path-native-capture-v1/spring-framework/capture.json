@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "buildopt.evidence/change-scoped-critical-path-native-capture/v1",
+  "family": "spring-framework",
+  "repositoryId": "spring-projects/spring-framework",
+  "targetRevision": "1c4b20287f1d8f635867fb58c576849f9313e907",
+  "sourceArchiveSha256": "36ad1014111e46be23ae2ea7a5707936eb77f2563de967b31ce8d2bab1c01b1f",
+  "wrapperSha256": "fb68debc1b1acf8ec55dc0d5e5495e1dedd0bd6b61f304bee61613eeb2bd9b92",
+  "structuralEvidence": {
+    "path": "benchmarks/results/poc-lifetime-breadth-v3/spring-framework/qualification-capture.json",
+    "sha256": "48b61f219134d7c9a1ae183b7897a6439ec97a9cf61a4859de4d1db9cb015ca4"
+  },
+  "entrypoints": [
+    "testClasses"
+  ],
+  "nativeDiagnostic": {
+    "exitCode": 0,
+    "gradleStarts": 1,
+    "durationSeconds": 361,
+    "timingEvidence": false
+  },
+  "artifacts": {
+    "operationsTrace": {
+      "path": "operations-log.txt.gz",
+      "sha256": "606d1ffe9a1d2e666fb91377999076d47bd81ff3a823394cdd17497c34c5c781"
+    },
+    "taskGraph": {
+      "path": "task-graph.jsonl",
+      "sha256": "3df4ff2802a6cf6638361f4a213f80da8af135441370be252fa7ddbed501b4a8"
+    },
+    "analysis": {
+      "path": "analysis.json",
+      "sha256": "02b9ca272aa057669bbefe6a273845e1c57a381adc2857ddc76564ced37ce2bd"
+    },
+    "outputs": {
+      "path": "outputs.tsv",
+      "sha256": "7e72e91e7ab4c03c1abec0c65dab08eddf8bde282f50a31759504fde17e620f8",
+      "count": 14401
+    }
+  },
+  "resourceEnvelope": {
+    "freeBytesBefore": 10682871808,
+    "maximumWorkers": 12,
+    "timeoutMinutes": 30
+  },
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "productFailures": 0
+}

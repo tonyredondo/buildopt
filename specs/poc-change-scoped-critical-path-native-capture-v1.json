@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "buildopt.specs/poc-change-scoped-critical-path-native-capture/v1",
+  "workItem": "CSCPN",
+  "status": {
+    "currentBlock": null,
+    "completedBlocks": ["CSCPN-001", "CSCPN-002", "CSCPN-003", "CSCPN-004"],
+    "candidateBuildAuthorized": false,
+    "timingAuthorized": false
+  },
+  "capture": {
+    "freshNativeDiagnosticFamilies": 4,
+    "maximumGradleStarts": 4,
+    "sequential": true,
+    "maximumWorkers": 12,
+    "timeoutMinutesPerFamily": 30,
+    "minimumFreeDiskBytesBeforeFamily": 8589934592,
+    "instrumentedWallTimeIsTimingEvidence": false
+  },
+  "gate": {
+    "familiesRequired": 5,
+    "conclusiveFamiliesRequired": 5,
+    "actionFamiliesRequired": 3,
+    "minimumAvoidableCriticalPathMs": 500,
+    "minimumAvoidableCriticalPathRatio": 0.02,
+    "productFailureBudget": 0
+  },
+  "boundaries": {
+    "publicSourceWritesAllowed": false,
+    "candidateBuildsAllowed": false,
+    "comparativeTimingAllowed": false,
+    "repositoryOrTaskNameRulesAllowed": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  },
+  "decision": "AUTHORIZE_CHANGE_SCOPED_CANDIDATE_CORRECTNESS_CONTRACT"
+}

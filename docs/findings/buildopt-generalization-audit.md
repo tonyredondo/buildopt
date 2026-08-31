@@ -21,10 +21,15 @@ conclusive discovery and at least 3/5 families with 500 ms/2% causally
 avoidable critical-path work.
 
 The selected [existing-evidence discovery](../plans/change-scoped-critical-path-discovery-v1.md)
-then stops at 1/5 conclusive and 0/5 actionable. Only Micronaut has retained
-task-DAG critical-path attribution, and it shows no eliminated critical-path
-work. The other four families remain incomplete rather than being relabelled
-as no-action. No candidate execution or timing follows this failed gate.
+stopped at 1/5 conclusive and 0/5 actionable rather than relabelling four
+missing traces as no-action. Its bounded
+[native-capture successor](../plans/change-scoped-critical-path-native-capture-v1.md)
+now closes that evidence gap with four exact-revision diagnostics. Independent
+reconstruction is 5/5 conclusive and 4/5 actionable: Groovy, Kafka,
+OpenTelemetry and Spring place at least 500 ms and 2% of native critical-path
+work inside the verified materialized-output partition; Micronaut remains
+no-action. This authorizes a candidate-correctness contract only. The
+instrumented builds are not timing samples and prove no speedup.
 
 The terminal [remote-cache locality v3 route](../plans/remote-cache-locality-value-v3-poc-tracker.md)
 corrects the v2 early-stop design. It must complete all five rows, binds one
