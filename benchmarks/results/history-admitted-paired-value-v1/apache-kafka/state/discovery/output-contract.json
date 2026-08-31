@@ -1,0 +1,4270 @@
+{
+  "schemaVersion": "buildopt.poc/output-contract/v1",
+  "decision": "VALIDATED_REQUIRED_OUTPUTS",
+  "reason": "DECLARED_OUTPUTS_MATCH_EXECUTED_WORKFLOW",
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "auto-testclasses-1376268d",
+  "repositoryRevision": "2e961afeff5cb27d60767a783edf20be00cc28e8",
+  "gradleVersion": "9.6.1",
+  "originalEntrypoints": [
+    "testClasses"
+  ],
+  "declaredOutputs": [
+    "clients/build/classes/java/test/**",
+    "clients/build/resources/test/**",
+    "clients/clients-integration-tests/build/classes/java/test/**",
+    "clients/clients-integration-tests/build/resources/test/**",
+    "connect/api/build/classes/java/test/**",
+    "connect/api/build/resources/test/**",
+    "connect/basic-auth-extension/build/classes/java/test/**",
+    "connect/file/build/classes/java/test/**",
+    "connect/file/build/resources/test/**",
+    "connect/json/build/classes/java/test/**",
+    "connect/json/build/resources/test/**",
+    "connect/mirror-client/build/classes/java/test/**",
+    "connect/mirror/build/classes/java/test/**",
+    "connect/mirror/build/resources/test/**",
+    "connect/runtime/build/classes/java/test/**",
+    "connect/runtime/build/resources/test/**",
+    "connect/transforms/build/classes/java/test/**",
+    "coordinator-common/build/classes/java/test/**",
+    "coordinator-common/build/resources/test/**",
+    "core/build/classes/scala/test/**",
+    "core/build/resources/test/**",
+    "generator/build/classes/java/test/**",
+    "group-coordinator/build/classes/java/test/**",
+    "group-coordinator/build/resources/test/**",
+    "metadata/build/classes/java/test/**",
+    "metadata/build/resources/test/**",
+    "raft/build/classes/java/test/**",
+    "raft/build/resources/test/**",
+    "server-common/build/classes/java/test/**",
+    "server-common/build/resources/test/**",
+    "server/build/classes/java/test/**",
+    "server/build/resources/test/**",
+    "share-coordinator/build/classes/java/test/**",
+    "share-coordinator/build/resources/test/**",
+    "shell/build/classes/java/test/**",
+    "shell/build/resources/test/**",
+    "storage/api/build/classes/java/test/**",
+    "storage/api/build/resources/test/**",
+    "storage/build/classes/java/test/**",
+    "storage/build/resources/test/**",
+    "streams/build/classes/java/test/**",
+    "streams/build/resources/test/**",
+    "streams/examples/build/classes/java/test/**",
+    "streams/integration-tests/build/classes/java/test/**",
+    "streams/integration-tests/build/resources/test/**",
+    "streams/streams-scala/build/classes/scala/test/**",
+    "streams/streams-scala/build/resources/test/**",
+    "streams/test-utils/build/classes/java/test/**",
+    "streams/test-utils/build/resources/test/**",
+    "streams/upgrade-system-tests-0110/build/classes/java/test/**",
+    "streams/upgrade-system-tests-10/build/classes/java/test/**",
+    "streams/upgrade-system-tests-11/build/classes/java/test/**",
+    "streams/upgrade-system-tests-20/build/classes/java/test/**",
+    "streams/upgrade-system-tests-21/build/classes/java/test/**",
+    "streams/upgrade-system-tests-22/build/classes/java/test/**",
+    "streams/upgrade-system-tests-23/build/classes/java/test/**",
+    "streams/upgrade-system-tests-24/build/classes/java/test/**",
+    "streams/upgrade-system-tests-25/build/classes/java/test/**",
+    "streams/upgrade-system-tests-26/build/classes/java/test/**",
+    "streams/upgrade-system-tests-27/build/classes/java/test/**",
+    "streams/upgrade-system-tests-28/build/classes/java/test/**",
+    "streams/upgrade-system-tests-30/build/classes/java/test/**",
+    "streams/upgrade-system-tests-31/build/classes/java/test/**",
+    "streams/upgrade-system-tests-32/build/classes/java/test/**",
+    "streams/upgrade-system-tests-33/build/classes/java/test/**",
+    "streams/upgrade-system-tests-34/build/classes/java/test/**",
+    "streams/upgrade-system-tests-35/build/classes/java/test/**",
+    "streams/upgrade-system-tests-36/build/classes/java/test/**",
+    "streams/upgrade-system-tests-37/build/classes/java/test/**",
+    "streams/upgrade-system-tests-38/build/classes/java/test/**",
+    "streams/upgrade-system-tests-39/build/classes/java/test/**",
+    "streams/upgrade-system-tests-40/build/classes/java/test/**",
+    "streams/upgrade-system-tests-41/build/classes/java/test/**",
+    "streams/upgrade-system-tests-42/build/classes/java/test/**",
+    "streams/upgrade-system-tests-43/build/classes/java/test/**",
+    "test-common/test-common-internal-api/build/classes/java/test/**",
+    "test-common/test-common-internal-api/build/resources/test/**",
+    "test-common/test-common-runtime/build/classes/java/test/**",
+    "test-common/test-common-runtime/build/resources/test/**",
+    "test-common/test-common-util/build/classes/java/test/**",
+    "test-common/test-common-util/build/resources/test/**",
+    "tools/build/classes/java/test/**",
+    "tools/build/resources/test/**",
+    "tools/tools-api/build/classes/java/test/**",
+    "tools/tools-api/build/resources/test/**",
+    "transaction-coordinator/build/classes/java/test/**",
+    "transaction-coordinator/build/resources/test/**",
+    "trogdor/build/classes/java/test/**",
+    "trogdor/build/resources/test/**"
+  ],
+  "candidateOutputs": [
+    {
+      "pattern": "clients/build/classes/java/main/**",
+      "path": "clients/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 3085,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:compileJava"
+      ]
+    },
+    {
+      "pattern": "clients/build/classes/java/test/**",
+      "path": "clients/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 845,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "clients/build/classes/java/testFixtures/**",
+      "path": "clients/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 56,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "clients/build/generated/main/java/org/apache/kafka/common/message/**",
+      "path": "clients/build/generated/main/java/org/apache/kafka/common/message",
+      "kind": "DIRECTORY",
+      "fileCount": 391,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:processMessages"
+      ]
+    },
+    {
+      "pattern": "clients/build/generated/test/java/org/apache/kafka/common/message/**",
+      "path": "clients/build/generated/test/java/org/apache/kafka/common/message",
+      "kind": "DIRECTORY",
+      "fileCount": 10,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:processTestMessages"
+      ]
+    },
+    {
+      "pattern": "clients/build/kafka/kafka-version.properties",
+      "path": "clients/build/kafka/kafka-version.properties",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:createVersionFile"
+      ]
+    },
+    {
+      "pattern": "clients/build/libs/kafka-clients-4.4.0-SNAPSHOT.jar",
+      "path": "clients/build/libs/kafka-clients-4.4.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:shadowJar"
+      ]
+    },
+    {
+      "pattern": "clients/build/resources/main/**",
+      "path": "clients/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 205,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:processResources"
+      ]
+    },
+    {
+      "pattern": "clients/build/resources/test/**",
+      "path": "clients/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:processTestResources"
+      ]
+    },
+    {
+      "pattern": "clients/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "clients/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:compileJava"
+      ]
+    },
+    {
+      "pattern": "clients/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "clients/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "clients/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "clients/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "clients/clients-integration-tests/build/classes/java/test/**",
+      "path": "clients/clients-integration-tests/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 98,
+      "ownerProjects": [
+        ":clients:clients-integration-tests"
+      ],
+      "producerTasks": [
+        ":clients:clients-integration-tests:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "clients/clients-integration-tests/build/resources/test/**",
+      "path": "clients/clients-integration-tests/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients:clients-integration-tests"
+      ],
+      "producerTasks": [
+        ":clients:clients-integration-tests:processTestResources"
+      ]
+    },
+    {
+      "pattern": "clients/clients-integration-tests/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "clients/clients-integration-tests/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":clients:clients-integration-tests"
+      ],
+      "producerTasks": [
+        ":clients:clients-integration-tests:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/classes/java/main/**",
+      "path": "connect/api/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 79,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/classes/java/test/**",
+      "path": "connect/api/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 30,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/resources/main/**",
+      "path": "connect/api/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/resources/test/**",
+      "path": "connect/api/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:processTestResources"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "connect/api/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/basic-auth-extension/build/classes/java/main/**",
+      "path": "connect/basic-auth-extension/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 7,
+      "ownerProjects": [
+        ":connect:basic-auth-extension"
+      ],
+      "producerTasks": [
+        ":connect:basic-auth-extension:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/basic-auth-extension/build/classes/java/test/**",
+      "path": "connect/basic-auth-extension/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:basic-auth-extension"
+      ],
+      "producerTasks": [
+        ":connect:basic-auth-extension:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/basic-auth-extension/build/resources/main/**",
+      "path": "connect/basic-auth-extension/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:basic-auth-extension"
+      ],
+      "producerTasks": [
+        ":connect:basic-auth-extension:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/basic-auth-extension/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/basic-auth-extension/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:basic-auth-extension"
+      ],
+      "producerTasks": [
+        ":connect:basic-auth-extension:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/basic-auth-extension/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "connect/basic-auth-extension/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:basic-auth-extension"
+      ],
+      "producerTasks": [
+        ":connect:basic-auth-extension:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/file/build/classes/java/main/**",
+      "path": "connect/file/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":connect:file"
+      ],
+      "producerTasks": [
+        ":connect:file:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/file/build/classes/java/test/**",
+      "path": "connect/file/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":connect:file"
+      ],
+      "producerTasks": [
+        ":connect:file:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/file/build/resources/main/**",
+      "path": "connect/file/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:file"
+      ],
+      "producerTasks": [
+        ":connect:file:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/file/build/resources/test/**",
+      "path": "connect/file/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:file"
+      ],
+      "producerTasks": [
+        ":connect:file:processTestResources"
+      ]
+    },
+    {
+      "pattern": "connect/file/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/file/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:file"
+      ],
+      "producerTasks": [
+        ":connect:file:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/file/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "connect/file/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:file"
+      ],
+      "producerTasks": [
+        ":connect:file:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/classes/java/main/**",
+      "path": "connect/json/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 14,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/classes/java/test/**",
+      "path": "connect/json/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/resources/main/**",
+      "path": "connect/json/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/resources/test/**",
+      "path": "connect/json/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:processTestResources"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/json/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "connect/json/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/mirror-client/build/classes/java/main/**",
+      "path": "connect/mirror-client/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":connect:mirror-client"
+      ],
+      "producerTasks": [
+        ":connect:mirror-client:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/mirror-client/build/classes/java/test/**",
+      "path": "connect/mirror-client/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":connect:mirror-client"
+      ],
+      "producerTasks": [
+        ":connect:mirror-client:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/mirror-client/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/mirror-client/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:mirror-client"
+      ],
+      "producerTasks": [
+        ":connect:mirror-client:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/mirror-client/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "connect/mirror-client/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:mirror-client"
+      ],
+      "producerTasks": [
+        ":connect:mirror-client:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/mirror/build/classes/java/main/**",
+      "path": "connect/mirror/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 48,
+      "ownerProjects": [
+        ":connect:mirror"
+      ],
+      "producerTasks": [
+        ":connect:mirror:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/mirror/build/classes/java/test/**",
+      "path": "connect/mirror/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 50,
+      "ownerProjects": [
+        ":connect:mirror"
+      ],
+      "producerTasks": [
+        ":connect:mirror:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/mirror/build/resources/main/**",
+      "path": "connect/mirror/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:mirror"
+      ],
+      "producerTasks": [
+        ":connect:mirror:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/mirror/build/resources/test/**",
+      "path": "connect/mirror/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:mirror"
+      ],
+      "producerTasks": [
+        ":connect:mirror:processTestResources"
+      ]
+    },
+    {
+      "pattern": "connect/mirror/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/mirror/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:mirror"
+      ],
+      "producerTasks": [
+        ":connect:mirror:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/mirror/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "connect/mirror/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:mirror"
+      ],
+      "producerTasks": [
+        ":connect:mirror:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/runtime/build/classes/java/main/**",
+      "path": "connect/runtime/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 334,
+      "ownerProjects": [
+        ":connect:runtime"
+      ],
+      "producerTasks": [
+        ":connect:runtime:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/runtime/build/classes/java/test/**",
+      "path": "connect/runtime/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 264,
+      "ownerProjects": [
+        ":connect:runtime"
+      ],
+      "producerTasks": [
+        ":connect:runtime:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/runtime/build/classes/java/testFixtures/**",
+      "path": "connect/runtime/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 19,
+      "ownerProjects": [
+        ":connect:runtime"
+      ],
+      "producerTasks": [
+        ":connect:runtime:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "connect/runtime/build/resources/test/**",
+      "path": "connect/runtime/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 8,
+      "ownerProjects": [
+        ":connect:runtime"
+      ],
+      "producerTasks": [
+        ":connect:runtime:processTestResources"
+      ]
+    },
+    {
+      "pattern": "connect/runtime/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/runtime/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:runtime"
+      ],
+      "producerTasks": [
+        ":connect:runtime:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/runtime/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "connect/runtime/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:runtime"
+      ],
+      "producerTasks": [
+        ":connect:runtime:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "connect/runtime/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "connect/runtime/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:runtime"
+      ],
+      "producerTasks": [
+        ":connect:runtime:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/test-plugins/build/classes/java/main/**",
+      "path": "connect/test-plugins/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 11,
+      "ownerProjects": [
+        ":connect:test-plugins"
+      ],
+      "producerTasks": [
+        ":connect:test-plugins:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/test-plugins/build/resources/main/**",
+      "path": "connect/test-plugins/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:test-plugins"
+      ],
+      "producerTasks": [
+        ":connect:test-plugins:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/test-plugins/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/test-plugins/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:test-plugins"
+      ],
+      "producerTasks": [
+        ":connect:test-plugins:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/classes/java/main/**",
+      "path": "connect/transforms/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 64,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/classes/java/test/**",
+      "path": "connect/transforms/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 23,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/resources/main/**",
+      "path": "connect/transforms/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:processResources"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "connect/transforms/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:compileJava"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "connect/transforms/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/classes/java/main/**",
+      "path": "coordinator-common/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 76,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:compileJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/classes/java/test/**",
+      "path": "coordinator-common/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 42,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/classes/java/testFixtures/**",
+      "path": "coordinator-common/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 8,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/resources/test/**",
+      "path": "coordinator-common/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:processTestResources"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "coordinator-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:compileJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "coordinator-common/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "coordinator-common/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "core/build/classes/scala/main/**",
+      "path": "core/build/classes/scala/main",
+      "kind": "DIRECTORY",
+      "fileCount": 235,
+      "ownerProjects": [
+        ":core"
+      ],
+      "producerTasks": [
+        ":core:compileScala"
+      ]
+    },
+    {
+      "pattern": "core/build/classes/scala/test/**",
+      "path": "core/build/classes/scala/test",
+      "kind": "DIRECTORY",
+      "fileCount": 482,
+      "ownerProjects": [
+        ":core"
+      ],
+      "producerTasks": [
+        ":core:compileTestScala"
+      ]
+    },
+    {
+      "pattern": "core/build/resources/test/**",
+      "path": "core/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":core"
+      ],
+      "producerTasks": [
+        ":core:processTestResources"
+      ]
+    },
+    {
+      "pattern": "examples/build/classes/java/main/**",
+      "path": "examples/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":examples"
+      ],
+      "producerTasks": [
+        ":examples:compileJava"
+      ]
+    },
+    {
+      "pattern": "examples/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "examples/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":examples"
+      ],
+      "producerTasks": [
+        ":examples:compileJava"
+      ]
+    },
+    {
+      "pattern": "generator/build/classes/java/main/**",
+      "path": "generator/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 62,
+      "ownerProjects": [
+        ":generator"
+      ],
+      "producerTasks": [
+        ":generator:compileJava"
+      ]
+    },
+    {
+      "pattern": "generator/build/classes/java/test/**",
+      "path": "generator/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 15,
+      "ownerProjects": [
+        ":generator"
+      ],
+      "producerTasks": [
+        ":generator:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "generator/build/libs/generator-4.4.0-SNAPSHOT.jar",
+      "path": "generator/build/libs/generator-4.4.0-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":generator"
+      ],
+      "producerTasks": [
+        ":generator:jar"
+      ]
+    },
+    {
+      "pattern": "generator/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "generator/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":generator"
+      ],
+      "producerTasks": [
+        ":generator:compileJava"
+      ]
+    },
+    {
+      "pattern": "generator/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "generator/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":generator"
+      ],
+      "producerTasks": [
+        ":generator:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/classes/java/main/**",
+      "path": "group-coordinator/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 287,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/classes/java/test/**",
+      "path": "group-coordinator/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 121,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/classes/java/testFixtures/**",
+      "path": "group-coordinator/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/generated/main/java/org/apache/kafka/coordinator/group/generated/**",
+      "path": "group-coordinator/build/generated/main/java/org/apache/kafka/coordinator/group/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 90,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:processMessages"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/resources/test/**",
+      "path": "group-coordinator/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:processTestResources"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "group-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "group-coordinator/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "group-coordinator/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/group-coordinator-api/build/classes/java/main/**",
+      "path": "group-coordinator/group-coordinator-api/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 28,
+      "ownerProjects": [
+        ":group-coordinator:group-coordinator-api"
+      ],
+      "producerTasks": [
+        ":group-coordinator:group-coordinator-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/group-coordinator-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "group-coordinator/group-coordinator-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":group-coordinator:group-coordinator-api"
+      ],
+      "producerTasks": [
+        ":group-coordinator:group-coordinator-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "jmh-benchmarks/build/classes/java/main/**",
+      "path": "jmh-benchmarks/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 474,
+      "ownerProjects": [
+        ":jmh-benchmarks"
+      ],
+      "producerTasks": [
+        ":jmh-benchmarks:compileJava"
+      ]
+    },
+    {
+      "pattern": "jmh-benchmarks/build/generated/sources/annotationProcessor/java/main/**",
+      "path": "jmh-benchmarks/build/generated/sources/annotationProcessor/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 363,
+      "ownerProjects": [
+        ":jmh-benchmarks"
+      ],
+      "producerTasks": [
+        ":jmh-benchmarks:compileJava"
+      ]
+    },
+    {
+      "pattern": "jmh-benchmarks/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "jmh-benchmarks/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":jmh-benchmarks"
+      ],
+      "producerTasks": [
+        ":jmh-benchmarks:compileJava"
+      ]
+    },
+    {
+      "pattern": "metadata/build/classes/java/main/**",
+      "path": "metadata/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 371,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:compileJava"
+      ]
+    },
+    {
+      "pattern": "metadata/build/classes/java/test/**",
+      "path": "metadata/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 170,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "metadata/build/classes/java/testFixtures/**",
+      "path": "metadata/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 21,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "metadata/build/generated/main/java/org/apache/kafka/common/metadata/**",
+      "path": "metadata/build/generated/main/java/org/apache/kafka/common/metadata",
+      "kind": "DIRECTORY",
+      "fileCount": 56,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:processMessages"
+      ]
+    },
+    {
+      "pattern": "metadata/build/resources/test/**",
+      "path": "metadata/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:processTestResources"
+      ]
+    },
+    {
+      "pattern": "metadata/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "metadata/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:compileJava"
+      ]
+    },
+    {
+      "pattern": "metadata/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "metadata/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "metadata/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "metadata/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "raft/build/classes/java/main/**",
+      "path": "raft/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 140,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:compileJava"
+      ]
+    },
+    {
+      "pattern": "raft/build/classes/java/test/**",
+      "path": "raft/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 93,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "raft/build/classes/java/testFixtures/**",
+      "path": "raft/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 22,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "raft/build/generated/main/java/org/apache/kafka/raft/generated/**",
+      "path": "raft/build/generated/main/java/org/apache/kafka/raft/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:processMessages"
+      ]
+    },
+    {
+      "pattern": "raft/build/resources/test/**",
+      "path": "raft/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:processTestResources"
+      ]
+    },
+    {
+      "pattern": "raft/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "raft/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:compileJava"
+      ]
+    },
+    {
+      "pattern": "raft/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "raft/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "raft/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "raft/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "server-common/build/classes/java/main/**",
+      "path": "server-common/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 246,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:compileJava"
+      ]
+    },
+    {
+      "pattern": "server-common/build/classes/java/test/**",
+      "path": "server-common/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 94,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "server-common/build/classes/java/testFixtures/**",
+      "path": "server-common/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 11,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "server-common/build/resources/test/**",
+      "path": "server-common/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:processTestResources"
+      ]
+    },
+    {
+      "pattern": "server-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "server-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:compileJava"
+      ]
+    },
+    {
+      "pattern": "server-common/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "server-common/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "server-common/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "server-common/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "server/build/classes/java/main/**",
+      "path": "server/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 273,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:compileJava"
+      ]
+    },
+    {
+      "pattern": "server/build/classes/java/test/**",
+      "path": "server/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 125,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "server/build/classes/java/testFixtures/**",
+      "path": "server/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 12,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "server/build/resources/test/**",
+      "path": "server/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:processTestResources"
+      ]
+    },
+    {
+      "pattern": "server/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "server/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:compileJava"
+      ]
+    },
+    {
+      "pattern": "server/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "server/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "server/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "server/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/classes/java/main/**",
+      "path": "share-coordinator/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 35,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/classes/java/test/**",
+      "path": "share-coordinator/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 14,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/classes/java/testFixtures/**",
+      "path": "share-coordinator/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/generated/main/java/org/apache/kafka/coordinator/share/generated/**",
+      "path": "share-coordinator/build/generated/main/java/org/apache/kafka/coordinator/share/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 10,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:processMessages"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/resources/test/**",
+      "path": "share-coordinator/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:processTestResources"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "share-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "share-coordinator/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "share-coordinator/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "shell/build/classes/java/main/**",
+      "path": "shell/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 41,
+      "ownerProjects": [
+        ":shell"
+      ],
+      "producerTasks": [
+        ":shell:compileJava"
+      ]
+    },
+    {
+      "pattern": "shell/build/classes/java/test/**",
+      "path": "shell/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":shell"
+      ],
+      "producerTasks": [
+        ":shell:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "shell/build/resources/test/**",
+      "path": "shell/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":shell"
+      ],
+      "producerTasks": [
+        ":shell:processTestResources"
+      ]
+    },
+    {
+      "pattern": "shell/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "shell/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":shell"
+      ],
+      "producerTasks": [
+        ":shell:compileJava"
+      ]
+    },
+    {
+      "pattern": "shell/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "shell/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":shell"
+      ],
+      "producerTasks": [
+        ":shell:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/classes/java/main/**",
+      "path": "storage/api/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 17,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/classes/java/test/**",
+      "path": "storage/api/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/classes/java/testFixtures/**",
+      "path": "storage/api/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/resources/test/**",
+      "path": "storage/api/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:processTestResources"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "storage/api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "storage/api/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "storage/api/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "storage/build/classes/java/main/**",
+      "path": "storage/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 215,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:compileJava"
+      ]
+    },
+    {
+      "pattern": "storage/build/classes/java/test/**",
+      "path": "storage/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 193,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "storage/build/classes/java/testFixtures/**",
+      "path": "storage/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 19,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "storage/build/generated/main/java/org/apache/kafka/server/log/remote/metadata/storage/generated/**",
+      "path": "storage/build/generated/main/java/org/apache/kafka/server/log/remote/metadata/storage/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 12,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:processMessages"
+      ]
+    },
+    {
+      "pattern": "storage/build/resources/test/**",
+      "path": "storage/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:processTestResources"
+      ]
+    },
+    {
+      "pattern": "storage/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "storage/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:compileJava"
+      ]
+    },
+    {
+      "pattern": "storage/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "storage/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "storage/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "storage/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/build/classes/java/main/**",
+      "path": "streams/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1158,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:compileJava"
+      ]
+    },
+    {
+      "pattern": "streams/build/classes/java/test/**",
+      "path": "streams/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 843,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/build/classes/java/testFixtures/**",
+      "path": "streams/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 54,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "streams/build/generated/main/java/org/apache/kafka/streams/internals/generated/**",
+      "path": "streams/build/generated/main/java/org/apache/kafka/streams/internals/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:processMessages"
+      ]
+    },
+    {
+      "pattern": "streams/build/resources/test/**",
+      "path": "streams/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:processTestResources"
+      ]
+    },
+    {
+      "pattern": "streams/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "streams/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:compileJava"
+      ]
+    },
+    {
+      "pattern": "streams/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "streams/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "streams/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/examples/build/classes/java/main/**",
+      "path": "streams/examples/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 26,
+      "ownerProjects": [
+        ":streams:examples"
+      ],
+      "producerTasks": [
+        ":streams:examples:compileJava"
+      ]
+    },
+    {
+      "pattern": "streams/examples/build/classes/java/test/**",
+      "path": "streams/examples/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 7,
+      "ownerProjects": [
+        ":streams:examples"
+      ],
+      "producerTasks": [
+        ":streams:examples:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/examples/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "streams/examples/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:examples"
+      ],
+      "producerTasks": [
+        ":streams:examples:compileJava"
+      ]
+    },
+    {
+      "pattern": "streams/examples/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/examples/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:examples"
+      ],
+      "producerTasks": [
+        ":streams:examples:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/integration-tests/build/classes/java/test/**",
+      "path": "streams/integration-tests/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 294,
+      "ownerProjects": [
+        ":streams:integration-tests"
+      ],
+      "producerTasks": [
+        ":streams:integration-tests:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/integration-tests/build/resources/test/**",
+      "path": "streams/integration-tests/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:integration-tests"
+      ],
+      "producerTasks": [
+        ":streams:integration-tests:processTestResources"
+      ]
+    },
+    {
+      "pattern": "streams/integration-tests/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/integration-tests/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:integration-tests"
+      ],
+      "producerTasks": [
+        ":streams:integration-tests:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/streams-scala/build/classes/scala/main/**",
+      "path": "streams/streams-scala/build/classes/scala/main",
+      "kind": "DIRECTORY",
+      "fileCount": 80,
+      "ownerProjects": [
+        ":streams:streams-scala"
+      ],
+      "producerTasks": [
+        ":streams:streams-scala:compileScala"
+      ]
+    },
+    {
+      "pattern": "streams/streams-scala/build/classes/scala/test/**",
+      "path": "streams/streams-scala/build/classes/scala/test",
+      "kind": "DIRECTORY",
+      "fileCount": 26,
+      "ownerProjects": [
+        ":streams:streams-scala"
+      ],
+      "producerTasks": [
+        ":streams:streams-scala:compileTestScala"
+      ]
+    },
+    {
+      "pattern": "streams/streams-scala/build/resources/test/**",
+      "path": "streams/streams-scala/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:streams-scala"
+      ],
+      "producerTasks": [
+        ":streams:streams-scala:processTestResources"
+      ]
+    },
+    {
+      "pattern": "streams/test-utils/build/classes/java/main/**",
+      "path": "streams/test-utils/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 24,
+      "ownerProjects": [
+        ":streams:test-utils"
+      ],
+      "producerTasks": [
+        ":streams:test-utils:compileJava"
+      ]
+    },
+    {
+      "pattern": "streams/test-utils/build/classes/java/test/**",
+      "path": "streams/test-utils/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 50,
+      "ownerProjects": [
+        ":streams:test-utils"
+      ],
+      "producerTasks": [
+        ":streams:test-utils:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/test-utils/build/resources/test/**",
+      "path": "streams/test-utils/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:test-utils"
+      ],
+      "producerTasks": [
+        ":streams:test-utils:processTestResources"
+      ]
+    },
+    {
+      "pattern": "streams/test-utils/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "streams/test-utils/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:test-utils"
+      ],
+      "producerTasks": [
+        ":streams:test-utils:compileJava"
+      ]
+    },
+    {
+      "pattern": "streams/test-utils/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/test-utils/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:test-utils"
+      ],
+      "producerTasks": [
+        ":streams:test-utils:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-0110/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-0110/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-0110"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-0110:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-0110/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-0110/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-0110"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-0110:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-10/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-10/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-10"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-10:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-10/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-10/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-10"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-10:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-11/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-11/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-11"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-11:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-11/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-11/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-11"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-11:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-20/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-20/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-20"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-20:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-20/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-20/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-20"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-20:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-21/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-21/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-21"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-21:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-21/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-21/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-21"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-21:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-22/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-22/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 16,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-22"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-22:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-22/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-22/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-22"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-22:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-23/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-23/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 16,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-23"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-23:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-23/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-23/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-23"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-23:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-24/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-24/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 14,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-24"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-24:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-24/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-24/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-24"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-24:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-25/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-25/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 14,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-25"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-25:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-25/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-25/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-25"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-25:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-26/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-26/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 14,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-26"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-26:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-26/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-26/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-26"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-26:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-27/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-27/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 14,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-27"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-27:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-27/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-27/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-27"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-27:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-28/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-28/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 14,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-28"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-28:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-28/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-28/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-28"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-28:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-30/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-30/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-30"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-30:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-30/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-30/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-30"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-30:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-31/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-31/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-31"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-31:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-31/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-31/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-31"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-31:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-32/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-32/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-32"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-32:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-32/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-32/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-32"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-32:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-33/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-33/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-33"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-33:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-33/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-33/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-33"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-33:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-34/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-34/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-34"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-34:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-34/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-34/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-34"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-34:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-35/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-35/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-35"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-35:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-35/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-35/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-35"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-35:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-36/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-36/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-36"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-36:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-36/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-36/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-36"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-36:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-37/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-37/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-37"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-37:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-37/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-37/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-37"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-37:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-38/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-38/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-38"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-38:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-38/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-38/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-38"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-38:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-39/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-39/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-39"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-39:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-39/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-39/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-39"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-39:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-40/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-40/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-40"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-40:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-40/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-40/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-40"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-40:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-41/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-41/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-41"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-41:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-41/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-41/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-41"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-41:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-42/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-42/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-42"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-42:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-42/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-42/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-42"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-42:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-43/build/classes/java/test/**",
+      "path": "streams/upgrade-system-tests-43/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-43"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-43:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-43/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "streams/upgrade-system-tests-43/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-43"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-43:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-internal-api/build/classes/java/main/**",
+      "path": "test-common/test-common-internal-api/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 12,
+      "ownerProjects": [
+        ":test-common:test-common-internal-api"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-internal-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-internal-api/build/classes/java/test/**",
+      "path": "test-common/test-common-internal-api/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 3,
+      "ownerProjects": [
+        ":test-common:test-common-internal-api"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-internal-api:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-internal-api/build/resources/test/**",
+      "path": "test-common/test-common-internal-api/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-internal-api"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-internal-api:processTestResources"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-internal-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "test-common/test-common-internal-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-internal-api"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-internal-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-internal-api/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "test-common/test-common-internal-api/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-internal-api"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-internal-api:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-runtime/build/classes/java/main/**",
+      "path": "test-common/test-common-runtime/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 30,
+      "ownerProjects": [
+        ":test-common:test-common-runtime"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-runtime:compileJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-runtime/build/classes/java/test/**",
+      "path": "test-common/test-common-runtime/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 8,
+      "ownerProjects": [
+        ":test-common:test-common-runtime"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-runtime:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-runtime/build/resources/main/**",
+      "path": "test-common/test-common-runtime/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":test-common:test-common-runtime"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-runtime:processResources"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-runtime/build/resources/test/**",
+      "path": "test-common/test-common-runtime/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-runtime"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-runtime:processTestResources"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-runtime/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "test-common/test-common-runtime/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-runtime"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-runtime:compileJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-runtime/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "test-common/test-common-runtime/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-runtime"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-runtime:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-util/build/classes/java/main/**",
+      "path": "test-common/test-common-util/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":test-common:test-common-util"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-util:compileJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-util/build/classes/java/test/**",
+      "path": "test-common/test-common-util/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 3,
+      "ownerProjects": [
+        ":test-common:test-common-util"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-util:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-util/build/resources/main/**",
+      "path": "test-common/test-common-util/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":test-common:test-common-util"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-util:processResources"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-util/build/resources/test/**",
+      "path": "test-common/test-common-util/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-util"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-util:processTestResources"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-util/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "test-common/test-common-util/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-util"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-util:compileJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-util/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "test-common/test-common-util/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":test-common:test-common-util"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-util:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "tools/build/classes/java/main/**",
+      "path": "tools/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 236,
+      "ownerProjects": [
+        ":tools"
+      ],
+      "producerTasks": [
+        ":tools:compileJava"
+      ]
+    },
+    {
+      "pattern": "tools/build/classes/java/test/**",
+      "path": "tools/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 118,
+      "ownerProjects": [
+        ":tools"
+      ],
+      "producerTasks": [
+        ":tools:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "tools/build/resources/test/**",
+      "path": "tools/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools"
+      ],
+      "producerTasks": [
+        ":tools:processTestResources"
+      ]
+    },
+    {
+      "pattern": "tools/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "tools/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools"
+      ],
+      "producerTasks": [
+        ":tools:compileJava"
+      ]
+    },
+    {
+      "pattern": "tools/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "tools/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools"
+      ],
+      "producerTasks": [
+        ":tools:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "tools/tools-api/build/classes/java/main/**",
+      "path": "tools/tools-api/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":tools:tools-api"
+      ],
+      "producerTasks": [
+        ":tools:tools-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "tools/tools-api/build/classes/java/test/**",
+      "path": "tools/tools-api/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools:tools-api"
+      ],
+      "producerTasks": [
+        ":tools:tools-api:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "tools/tools-api/build/resources/test/**",
+      "path": "tools/tools-api/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools:tools-api"
+      ],
+      "producerTasks": [
+        ":tools:tools-api:processTestResources"
+      ]
+    },
+    {
+      "pattern": "tools/tools-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "tools/tools-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools:tools-api"
+      ],
+      "producerTasks": [
+        ":tools:tools-api:compileJava"
+      ]
+    },
+    {
+      "pattern": "tools/tools-api/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "tools/tools-api/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":tools:tools-api"
+      ],
+      "producerTasks": [
+        ":tools:tools-api:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/classes/java/main/**",
+      "path": "transaction-coordinator/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 38,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/classes/java/test/**",
+      "path": "transaction-coordinator/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 8,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/generated/main/java/org/apache/kafka/coordinator/transaction/generated/**",
+      "path": "transaction-coordinator/build/generated/main/java/org/apache/kafka/coordinator/transaction/generated",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:processMessages"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/resources/main/**",
+      "path": "transaction-coordinator/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:processResources"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/resources/test/**",
+      "path": "transaction-coordinator/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:processTestResources"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "transaction-coordinator/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "transaction-coordinator/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "trogdor/build/classes/java/main/**",
+      "path": "trogdor/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 235,
+      "ownerProjects": [
+        ":trogdor"
+      ],
+      "producerTasks": [
+        ":trogdor:compileJava"
+      ]
+    },
+    {
+      "pattern": "trogdor/build/classes/java/test/**",
+      "path": "trogdor/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 37,
+      "ownerProjects": [
+        ":trogdor"
+      ],
+      "producerTasks": [
+        ":trogdor:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "trogdor/build/resources/test/**",
+      "path": "trogdor/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":trogdor"
+      ],
+      "producerTasks": [
+        ":trogdor:processTestResources"
+      ]
+    },
+    {
+      "pattern": "trogdor/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "trogdor/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":trogdor"
+      ],
+      "producerTasks": [
+        ":trogdor:compileJava"
+      ]
+    },
+    {
+      "pattern": "trogdor/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "trogdor/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":trogdor"
+      ],
+      "producerTasks": [
+        ":trogdor:compileTestJava"
+      ]
+    }
+  ],
+  "validations": [
+    {
+      "pattern": "clients/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 845,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "clients/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 9,
+      "ownerProjects": [
+        ":clients"
+      ],
+      "producerTasks": [
+        ":clients:processTestResources"
+      ]
+    },
+    {
+      "pattern": "clients/clients-integration-tests/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 98,
+      "ownerProjects": [
+        ":clients:clients-integration-tests"
+      ],
+      "producerTasks": [
+        ":clients:clients-integration-tests:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "clients/clients-integration-tests/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":clients:clients-integration-tests"
+      ],
+      "producerTasks": [
+        ":clients:clients-integration-tests:processTestResources"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 30,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/api/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 2,
+      "ownerProjects": [
+        ":connect:api"
+      ],
+      "producerTasks": [
+        ":connect:api:processTestResources"
+      ]
+    },
+    {
+      "pattern": "connect/basic-auth-extension/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 2,
+      "ownerProjects": [
+        ":connect:basic-auth-extension"
+      ],
+      "producerTasks": [
+        ":connect:basic-auth-extension:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/file/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 6,
+      "ownerProjects": [
+        ":connect:file"
+      ],
+      "producerTasks": [
+        ":connect:file:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/file/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":connect:file"
+      ],
+      "producerTasks": [
+        ":connect:file:processTestResources"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 2,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/json/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":connect:json"
+      ],
+      "producerTasks": [
+        ":connect:json:processTestResources"
+      ]
+    },
+    {
+      "pattern": "connect/mirror-client/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 6,
+      "ownerProjects": [
+        ":connect:mirror-client"
+      ],
+      "producerTasks": [
+        ":connect:mirror-client:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/mirror/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 50,
+      "ownerProjects": [
+        ":connect:mirror"
+      ],
+      "producerTasks": [
+        ":connect:mirror:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/mirror/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":connect:mirror"
+      ],
+      "producerTasks": [
+        ":connect:mirror:processTestResources"
+      ]
+    },
+    {
+      "pattern": "connect/runtime/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 264,
+      "ownerProjects": [
+        ":connect:runtime"
+      ],
+      "producerTasks": [
+        ":connect:runtime:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "connect/runtime/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 8,
+      "ownerProjects": [
+        ":connect:runtime"
+      ],
+      "producerTasks": [
+        ":connect:runtime:processTestResources"
+      ]
+    },
+    {
+      "pattern": "connect/transforms/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 23,
+      "ownerProjects": [
+        ":connect:transforms"
+      ],
+      "producerTasks": [
+        ":connect:transforms:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 42,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "coordinator-common/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":coordinator-common"
+      ],
+      "producerTasks": [
+        ":coordinator-common:processTestResources"
+      ]
+    },
+    {
+      "pattern": "core/build/classes/scala/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 482,
+      "ownerProjects": [
+        ":core"
+      ],
+      "producerTasks": [
+        ":core:compileTestScala"
+      ]
+    },
+    {
+      "pattern": "core/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":core"
+      ],
+      "producerTasks": [
+        ":core:processTestResources"
+      ]
+    },
+    {
+      "pattern": "generator/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 15,
+      "ownerProjects": [
+        ":generator"
+      ],
+      "producerTasks": [
+        ":generator:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 121,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "group-coordinator/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":group-coordinator"
+      ],
+      "producerTasks": [
+        ":group-coordinator:processTestResources"
+      ]
+    },
+    {
+      "pattern": "metadata/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 170,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "metadata/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":metadata"
+      ],
+      "producerTasks": [
+        ":metadata:processTestResources"
+      ]
+    },
+    {
+      "pattern": "raft/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 93,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "raft/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":raft"
+      ],
+      "producerTasks": [
+        ":raft:processTestResources"
+      ]
+    },
+    {
+      "pattern": "server-common/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 94,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "server-common/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":server-common"
+      ],
+      "producerTasks": [
+        ":server-common:processTestResources"
+      ]
+    },
+    {
+      "pattern": "server/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 125,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "server/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":server"
+      ],
+      "producerTasks": [
+        ":server:processTestResources"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 14,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "share-coordinator/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":share-coordinator"
+      ],
+      "producerTasks": [
+        ":share-coordinator:processTestResources"
+      ]
+    },
+    {
+      "pattern": "shell/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 9,
+      "ownerProjects": [
+        ":shell"
+      ],
+      "producerTasks": [
+        ":shell:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "shell/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":shell"
+      ],
+      "producerTasks": [
+        ":shell:processTestResources"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 2,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "storage/api/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":storage:storage-api"
+      ],
+      "producerTasks": [
+        ":storage:storage-api:processTestResources"
+      ]
+    },
+    {
+      "pattern": "storage/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 193,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "storage/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":storage"
+      ],
+      "producerTasks": [
+        ":storage:processTestResources"
+      ]
+    },
+    {
+      "pattern": "streams/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 843,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 2,
+      "ownerProjects": [
+        ":streams"
+      ],
+      "producerTasks": [
+        ":streams:processTestResources"
+      ]
+    },
+    {
+      "pattern": "streams/examples/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 7,
+      "ownerProjects": [
+        ":streams:examples"
+      ],
+      "producerTasks": [
+        ":streams:examples:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/integration-tests/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 294,
+      "ownerProjects": [
+        ":streams:integration-tests"
+      ],
+      "producerTasks": [
+        ":streams:integration-tests:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/integration-tests/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":streams:integration-tests"
+      ],
+      "producerTasks": [
+        ":streams:integration-tests:processTestResources"
+      ]
+    },
+    {
+      "pattern": "streams/streams-scala/build/classes/scala/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 26,
+      "ownerProjects": [
+        ":streams:streams-scala"
+      ],
+      "producerTasks": [
+        ":streams:streams-scala:compileTestScala"
+      ]
+    },
+    {
+      "pattern": "streams/streams-scala/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":streams:streams-scala"
+      ],
+      "producerTasks": [
+        ":streams:streams-scala:processTestResources"
+      ]
+    },
+    {
+      "pattern": "streams/test-utils/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 50,
+      "ownerProjects": [
+        ":streams:test-utils"
+      ],
+      "producerTasks": [
+        ":streams:test-utils:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/test-utils/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":streams:test-utils"
+      ],
+      "producerTasks": [
+        ":streams:test-utils:processTestResources"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-0110/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 6,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-0110"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-0110:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-10/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 6,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-10"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-10:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-11/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 6,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-11"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-11:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-20/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 4,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-20"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-20:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-21/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 4,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-21"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-21:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-22/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 16,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-22"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-22:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-23/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 16,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-23"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-23:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-24/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 14,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-24"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-24:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-25/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 14,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-25"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-25:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-26/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 14,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-26"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-26:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-27/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 14,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-27"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-27:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-28/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 14,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-28"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-28:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-30/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-30"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-30:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-31/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-31"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-31:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-32/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-32"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-32:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-33/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-33"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-33:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-34/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-34"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-34:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-35/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-35"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-35:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-36/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-36"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-36:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-37/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-37"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-37:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-38/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-38"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-38:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-39/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-39"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-39:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-40/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-40"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-40:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-41/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-41"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-41:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-42/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-42"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-42:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "streams/upgrade-system-tests-43/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 13,
+      "ownerProjects": [
+        ":streams:upgrade-system-tests-43"
+      ],
+      "producerTasks": [
+        ":streams:upgrade-system-tests-43:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-internal-api/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 3,
+      "ownerProjects": [
+        ":test-common:test-common-internal-api"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-internal-api:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-internal-api/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":test-common:test-common-internal-api"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-internal-api:processTestResources"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-runtime/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 8,
+      "ownerProjects": [
+        ":test-common:test-common-runtime"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-runtime:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-runtime/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":test-common:test-common-runtime"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-runtime:processTestResources"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-util/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 3,
+      "ownerProjects": [
+        ":test-common:test-common-util"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-util:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "test-common/test-common-util/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":test-common:test-common-util"
+      ],
+      "producerTasks": [
+        ":test-common:test-common-util:processTestResources"
+      ]
+    },
+    {
+      "pattern": "tools/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 118,
+      "ownerProjects": [
+        ":tools"
+      ],
+      "producerTasks": [
+        ":tools:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "tools/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":tools"
+      ],
+      "producerTasks": [
+        ":tools:processTestResources"
+      ]
+    },
+    {
+      "pattern": "tools/tools-api/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":tools:tools-api"
+      ],
+      "producerTasks": [
+        ":tools:tools-api:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "tools/tools-api/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":tools:tools-api"
+      ],
+      "producerTasks": [
+        ":tools:tools-api:processTestResources"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 8,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "transaction-coordinator/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":transaction-coordinator"
+      ],
+      "producerTasks": [
+        ":transaction-coordinator:processTestResources"
+      ]
+    },
+    {
+      "pattern": "trogdor/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 37,
+      "ownerProjects": [
+        ":trogdor"
+      ],
+      "producerTasks": [
+        ":trogdor:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "trogdor/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":trogdor"
+      ],
+      "producerTasks": [
+        ":trogdor:processTestResources"
+      ]
+    }
+  ],
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false,
+  "testOptimization": "OUT_OF_SCOPE"
+}

@@ -25,11 +25,13 @@ decision.
 
 ## Current experiment status
 
-`HISTORY_ADMITTED_PAIRED_VALUE_V1` is active. It measures the exact Kafka HACC
+`HISTORY_ADMITTED_PAIRED_VALUE_V1` is complete. The exact Kafka HACC
 row through seventeen ordinary installed-path requests: one baseline plus
 eight balanced pairs. All 4,440 outputs must remain exact and the gate requires
 8/8 positive pairs, 500 ms/2%, positive 95% lower bound, non-regressive p95,
-five-match payback and zero product failures. Historical timing is excluded.
+five-match payback and zero product failures. It passes all gates: 8/8
+positive pairs, 6.866-second / 19.09% mean saving, positive interval, improved
+p95 and two-match payback. Generic breadth and production remain unproved.
 
 `HISTORY_ADMITTED_CANDIDATE_CORRECTNESS_V1` is complete. It corrected the
 predecessor's ordering error by selecting only the exact Kafka row whose bound

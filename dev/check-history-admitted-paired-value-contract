@@ -4,7 +4,7 @@ cd "$(dirname "$0")/.."
 contract=specs/poc-history-admitted-paired-value-v1.json
 jq -e '
  .schemaVersion=="buildopt.specs/poc-history-admitted-paired-value/v1" and
- .status.currentBlock=="HAPV-002" and .status.completedBlocks==["HAPV-001"] and
+ .status.currentBlock=="HAPV-004" and .status.decision=="QUALIFY_EXACT_HISTORY_ADMITTED_KAFKA_VALUE" and
  .subject.family=="apache-kafka" and .subject.targetRevision=="2e961afeff5cb27d60767a783edf20be00cc28e8" and
  .execution.protocol=="v3" and .execution.fresh and .execution.ordinaryInvocations==17 and
  .execution.pairs==8 and .execution.balancedAlternating and .execution.maximumGradleStarts==17 and

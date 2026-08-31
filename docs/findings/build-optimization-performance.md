@@ -1246,6 +1246,13 @@ native/native/candidate and reproduced 4,440 outputs exactly. This is a
 correctness result, not a speedup claim; paired timing still requires its own
 frozen contract.
 
+That paired contract is now complete. Across eight balanced exact-output pairs,
+optimized native averaged 35,962.5 ms and the installed candidate averaged
+29,096.375 ms: 6,866.125 ms saved, or 19.09%. All eight pairs are positive,
+the 95% interval is +5,717.25..+8,204.5 ms, candidate p95 improves from 38,695
+to 31,310 ms and the 7,242-ms learning cost repays in two compatible matches.
+This is exact Kafka-class evidence, not a generic portfolio percentage.
+
 The untimed CSCPC route did not reach candidate correctness or performance.
 Its first Groovy optimized-native invocation succeeded, but the production
 decision path returned `NATIVE_RETAINED / ORDINARY_LEARNING_ECONOMICS_REJECTED`:

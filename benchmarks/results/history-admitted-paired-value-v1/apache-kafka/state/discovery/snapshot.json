@@ -1,0 +1,4153 @@
+{
+  "schemaVersion": "buildopt.build-impact/gradle-discovery/v1",
+  "gradleVersion": "9.6.1",
+  "complete": true,
+  "fallbackReasons": [],
+  "includedBuildPaths": [
+    "api-checker/**"
+  ],
+  "projects": [
+    {
+      "path": ":clients",
+      "sourcePaths": [
+        "clients/**"
+      ],
+      "dependsOn": [
+        ":generator",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":clients:clients-integration-tests",
+      "sourcePaths": [
+        "clients/clients-integration-tests/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":group-coordinator",
+        ":group-coordinator:group-coordinator-api",
+        ":metadata",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":storage",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util",
+        ":transaction-coordinator"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect",
+      "sourcePaths": [
+        "connect/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:api",
+      "sourcePaths": [
+        "connect/api/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:basic-auth-extension",
+      "sourcePaths": [
+        "connect/basic-auth-extension/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":connect:api",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:file",
+      "sourcePaths": [
+        "connect/file/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":connect:api",
+        ":connect:runtime",
+        ":core",
+        ":server-common",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:json",
+      "sourcePaths": [
+        "connect/json/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":connect:api",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:mirror",
+      "sourcePaths": [
+        "connect/mirror/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":connect:api",
+        ":connect:mirror-client",
+        ":connect:runtime",
+        ":core",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:mirror-client",
+      "sourcePaths": [
+        "connect/mirror-client/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:runtime",
+      "sourcePaths": [
+        "connect/runtime/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":connect:api",
+        ":connect:json",
+        ":connect:test-plugins",
+        ":connect:transforms",
+        ":core",
+        ":group-coordinator",
+        ":metadata",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":storage",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:test-plugins",
+      "sourcePaths": [
+        "connect/test-plugins/**"
+      ],
+      "dependsOn": [
+        ":connect:api",
+        ":server-common"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":connect:transforms",
+      "sourcePaths": [
+        "connect/transforms/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":connect:api",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":coordinator-common",
+      "sourcePaths": [
+        "coordinator-common/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":metadata",
+        ":server-common",
+        ":storage",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":core",
+      "sourcePaths": [
+        "core/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":coordinator-common",
+        ":group-coordinator",
+        ":group-coordinator:group-coordinator-api",
+        ":metadata",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":share-coordinator",
+        ":storage",
+        ":storage:storage-api",
+        ":streams",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util",
+        ":tools:tools-api",
+        ":transaction-coordinator"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":examples",
+      "sourcePaths": [
+        "examples/**"
+      ],
+      "dependsOn": [
+        ":clients"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":generator",
+      "sourcePaths": [
+        "generator/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":group-coordinator",
+      "sourcePaths": [
+        "group-coordinator/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":coordinator-common",
+        ":generator",
+        ":group-coordinator:group-coordinator-api",
+        ":metadata",
+        ":server-common",
+        ":storage",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":group-coordinator:group-coordinator-api",
+      "sourcePaths": [
+        "group-coordinator/group-coordinator-api/**"
+      ],
+      "dependsOn": [
+        ":clients"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":jmh-benchmarks",
+      "sourcePaths": [
+        "jmh-benchmarks/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":connect:api",
+        ":connect:json",
+        ":connect:transforms",
+        ":coordinator-common",
+        ":core",
+        ":group-coordinator",
+        ":group-coordinator:group-coordinator-api",
+        ":metadata",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":share-coordinator",
+        ":storage",
+        ":streams",
+        ":transaction-coordinator"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":metadata",
+      "sourcePaths": [
+        "metadata/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":generator",
+        ":raft",
+        ":server-common",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":raft",
+      "sourcePaths": [
+        "raft/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":generator",
+        ":server-common",
+        ":storage",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":server",
+      "sourcePaths": [
+        "server/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":group-coordinator",
+        ":group-coordinator:group-coordinator-api",
+        ":metadata",
+        ":raft",
+        ":server-common",
+        ":share-coordinator",
+        ":storage",
+        ":storage:storage-api",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util",
+        ":transaction-coordinator"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":server-common",
+      "sourcePaths": [
+        "server-common/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":share-coordinator",
+      "sourcePaths": [
+        "share-coordinator/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":coordinator-common",
+        ":generator",
+        ":metadata",
+        ":server-common",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":shell",
+      "sourcePaths": [
+        "shell/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":core",
+        ":metadata",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":storage",
+      "sourcePaths": [
+        "storage/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":core",
+        ":generator",
+        ":metadata",
+        ":server",
+        ":server-common",
+        ":storage:storage-api",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util",
+        ":transaction-coordinator"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":storage:storage-api",
+      "sourcePaths": [
+        "storage/api/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":server-common",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams",
+      "sourcePaths": [
+        "streams/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":generator",
+        ":streams:test-utils",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:examples",
+      "sourcePaths": [
+        "streams/examples/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":streams",
+        ":streams:test-utils",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:integration-tests",
+      "sourcePaths": [
+        "streams/integration-tests/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":group-coordinator",
+        ":group-coordinator:group-coordinator-api",
+        ":server",
+        ":server-common",
+        ":storage",
+        ":streams",
+        ":streams:test-utils",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util",
+        ":tools",
+        ":transaction-coordinator"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:streams-scala",
+      "sourcePaths": [
+        "streams/streams-scala/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":streams",
+        ":streams:test-utils",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:test-utils",
+      "sourcePaths": [
+        "streams/test-utils/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":streams",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-0110",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-0110/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-10",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-10/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-11",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-11/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-20",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-20/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-21",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-21/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-22",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-22/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-23",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-23/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-24",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-24/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-25",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-25/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-26",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-26/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-27",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-27/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-28",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-28/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-30",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-30/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-31",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-31/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-32",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-32/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-33",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-33/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-34",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-34/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-35",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-35/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-36",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-36/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-37",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-37/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-38",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-38/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-39",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-39/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-40",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-40/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-41",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-41/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-42",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-42/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":streams:upgrade-system-tests-43",
+      "sourcePaths": [
+        "streams/upgrade-system-tests-43/**"
+      ],
+      "dependsOn": [
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":test-common",
+      "sourcePaths": [
+        "test-common/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":test-common:test-common-internal-api",
+      "sourcePaths": [
+        "test-common/test-common-internal-api/**"
+      ],
+      "dependsOn": [
+        ":server-common",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":test-common:test-common-runtime",
+      "sourcePaths": [
+        "test-common/test-common-runtime/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":core",
+        ":group-coordinator",
+        ":metadata",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":storage",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":test-common:test-common-util",
+      "sourcePaths": [
+        "test-common/test-common-util/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":tools",
+      "sourcePaths": [
+        "tools/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":connect:api",
+        ":connect:runtime",
+        ":coordinator-common",
+        ":core",
+        ":group-coordinator",
+        ":metadata",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":share-coordinator",
+        ":storage",
+        ":storage:storage-api",
+        ":streams",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util",
+        ":tools:tools-api",
+        ":transaction-coordinator"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":tools:tools-api",
+      "sourcePaths": [
+        "tools/tools-api/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":transaction-coordinator",
+      "sourcePaths": [
+        "transaction-coordinator/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":coordinator-common",
+        ":generator",
+        ":server-common",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":trogdor",
+      "sourcePaths": [
+        "trogdor/**"
+      ],
+      "dependsOn": [
+        ":clients",
+        ":group-coordinator",
+        ":group-coordinator:group-coordinator-api",
+        ":test-common:test-common-util"
+      ],
+      "unknownRelationships": false
+    }
+  ],
+  "tasks": [
+    {
+      "path": ":clients:classes",
+      "projectPath": ":clients",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:processResources"
+      ]
+    },
+    {
+      "path": ":clients:clients-integration-tests:classes",
+      "projectPath": ":clients:clients-integration-tests",
+      "dependsOn": [
+        ":clients:clients-integration-tests:compileJava",
+        ":clients:clients-integration-tests:processResources"
+      ]
+    },
+    {
+      "path": ":clients:clients-integration-tests:compileJava",
+      "projectPath": ":clients:clients-integration-tests",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":group-coordinator:compileJava",
+        ":group-coordinator:group-coordinator-api:compileJava",
+        ":server-common:compileJava",
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":clients:clients-integration-tests:compileTestJava",
+      "projectPath": ":clients:clients-integration-tests",
+      "dependsOn": [
+        ":clients:clients-integration-tests:classes",
+        ":clients:clients-integration-tests:compileJava",
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":group-coordinator:compileJava",
+        ":group-coordinator:group-coordinator-api:compileJava",
+        ":metadata:compileJava",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":server:compileJava",
+        ":storage:compileJava",
+        ":storage:compileTestFixturesJava",
+        ":test-common:test-common-internal-api:compileJava",
+        ":test-common:test-common-runtime:compileJava",
+        ":test-common:test-common-util:compileJava",
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":clients:clients-integration-tests:processResources",
+      "projectPath": ":clients:clients-integration-tests",
+      "dependsOn": []
+    },
+    {
+      "path": ":clients:clients-integration-tests:processTestResources",
+      "projectPath": ":clients:clients-integration-tests",
+      "dependsOn": []
+    },
+    {
+      "path": ":clients:clients-integration-tests:testClasses",
+      "projectPath": ":clients:clients-integration-tests",
+      "dependsOn": [
+        ":clients:clients-integration-tests:compileTestJava",
+        ":clients:clients-integration-tests:processTestResources"
+      ]
+    },
+    {
+      "path": ":clients:compileJava",
+      "projectPath": ":clients",
+      "dependsOn": [
+        ":clients:processMessages"
+      ]
+    },
+    {
+      "path": ":clients:compileTestFixturesJava",
+      "projectPath": ":clients",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":test-common:test-common-util:compileJava"
+      ]
+    },
+    {
+      "path": ":clients:compileTestJava",
+      "projectPath": ":clients",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":clients:processTestMessages",
+        ":test-common:test-common-util:compileJava"
+      ]
+    },
+    {
+      "path": ":clients:createVersionFile",
+      "projectPath": ":clients",
+      "dependsOn": []
+    },
+    {
+      "path": ":clients:processMessages",
+      "projectPath": ":clients",
+      "dependsOn": [
+        ":generator:jar"
+      ]
+    },
+    {
+      "path": ":clients:processResources",
+      "projectPath": ":clients",
+      "dependsOn": []
+    },
+    {
+      "path": ":clients:processTestMessages",
+      "projectPath": ":clients",
+      "dependsOn": [
+        ":generator:jar"
+      ]
+    },
+    {
+      "path": ":clients:processTestResources",
+      "projectPath": ":clients",
+      "dependsOn": []
+    },
+    {
+      "path": ":clients:shadowJar",
+      "projectPath": ":clients",
+      "dependsOn": [
+        ":clients:classes",
+        ":clients:compileJava",
+        ":clients:createVersionFile"
+      ]
+    },
+    {
+      "path": ":clients:testClasses",
+      "projectPath": ":clients",
+      "dependsOn": [
+        ":clients:compileTestJava",
+        ":clients:processTestResources"
+      ]
+    },
+    {
+      "path": ":connect:api:classes",
+      "projectPath": ":connect:api",
+      "dependsOn": [
+        ":connect:api:compileJava",
+        ":connect:api:processResources"
+      ]
+    },
+    {
+      "path": ":connect:api:compileJava",
+      "projectPath": ":connect:api",
+      "dependsOn": [
+        ":clients:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:api:compileTestJava",
+      "projectPath": ":connect:api",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":connect:api:classes",
+        ":connect:api:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:api:processResources",
+      "projectPath": ":connect:api",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:api:processTestResources",
+      "projectPath": ":connect:api",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:api:testClasses",
+      "projectPath": ":connect:api",
+      "dependsOn": [
+        ":connect:api:compileTestJava",
+        ":connect:api:processTestResources"
+      ]
+    },
+    {
+      "path": ":connect:basic-auth-extension:classes",
+      "projectPath": ":connect:basic-auth-extension",
+      "dependsOn": [
+        ":connect:basic-auth-extension:compileJava",
+        ":connect:basic-auth-extension:processResources"
+      ]
+    },
+    {
+      "path": ":connect:basic-auth-extension:compileJava",
+      "projectPath": ":connect:basic-auth-extension",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":connect:api:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:basic-auth-extension:compileTestJava",
+      "projectPath": ":connect:basic-auth-extension",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":connect:api:compileJava",
+        ":connect:basic-auth-extension:classes",
+        ":connect:basic-auth-extension:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:basic-auth-extension:processResources",
+      "projectPath": ":connect:basic-auth-extension",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:basic-auth-extension:processTestResources",
+      "projectPath": ":connect:basic-auth-extension",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:basic-auth-extension:testClasses",
+      "projectPath": ":connect:basic-auth-extension",
+      "dependsOn": [
+        ":connect:basic-auth-extension:compileTestJava",
+        ":connect:basic-auth-extension:processTestResources"
+      ]
+    },
+    {
+      "path": ":connect:classes",
+      "projectPath": ":connect",
+      "dependsOn": [
+        ":connect:compileJava",
+        ":connect:processResources"
+      ]
+    },
+    {
+      "path": ":connect:compileJava",
+      "projectPath": ":connect",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:compileTestJava",
+      "projectPath": ":connect",
+      "dependsOn": [
+        ":connect:classes",
+        ":connect:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:file:classes",
+      "projectPath": ":connect:file",
+      "dependsOn": [
+        ":connect:file:compileJava",
+        ":connect:file:processResources"
+      ]
+    },
+    {
+      "path": ":connect:file:compileJava",
+      "projectPath": ":connect:file",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":connect:api:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:file:compileTestJava",
+      "projectPath": ":connect:file",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":connect:api:compileJava",
+        ":connect:file:classes",
+        ":connect:file:compileJava",
+        ":connect:json:compileJava",
+        ":connect:runtime:compileJava",
+        ":connect:runtime:compileTestFixturesJava",
+        ":connect:transforms:compileJava",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":test-common:test-common-runtime:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:file:processResources",
+      "projectPath": ":connect:file",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:file:processTestResources",
+      "projectPath": ":connect:file",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:file:testClasses",
+      "projectPath": ":connect:file",
+      "dependsOn": [
+        ":connect:file:compileTestJava",
+        ":connect:file:processTestResources"
+      ]
+    },
+    {
+      "path": ":connect:json:classes",
+      "projectPath": ":connect:json",
+      "dependsOn": [
+        ":connect:json:compileJava",
+        ":connect:json:processResources"
+      ]
+    },
+    {
+      "path": ":connect:json:compileJava",
+      "projectPath": ":connect:json",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":connect:api:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:json:compileTestJava",
+      "projectPath": ":connect:json",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":connect:api:compileJava",
+        ":connect:json:classes",
+        ":connect:json:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:json:processResources",
+      "projectPath": ":connect:json",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:json:processTestResources",
+      "projectPath": ":connect:json",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:json:testClasses",
+      "projectPath": ":connect:json",
+      "dependsOn": [
+        ":connect:json:compileTestJava",
+        ":connect:json:processTestResources"
+      ]
+    },
+    {
+      "path": ":connect:mirror-client:classes",
+      "projectPath": ":connect:mirror-client",
+      "dependsOn": [
+        ":connect:mirror-client:compileJava",
+        ":connect:mirror-client:processResources"
+      ]
+    },
+    {
+      "path": ":connect:mirror-client:compileJava",
+      "projectPath": ":connect:mirror-client",
+      "dependsOn": [
+        ":clients:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:mirror-client:compileTestJava",
+      "projectPath": ":connect:mirror-client",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":connect:mirror-client:classes",
+        ":connect:mirror-client:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:mirror-client:processResources",
+      "projectPath": ":connect:mirror-client",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:mirror-client:processTestResources",
+      "projectPath": ":connect:mirror-client",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:mirror-client:testClasses",
+      "projectPath": ":connect:mirror-client",
+      "dependsOn": [
+        ":connect:mirror-client:compileTestJava",
+        ":connect:mirror-client:processTestResources"
+      ]
+    },
+    {
+      "path": ":connect:mirror:classes",
+      "projectPath": ":connect:mirror",
+      "dependsOn": [
+        ":connect:mirror:compileJava",
+        ":connect:mirror:processResources"
+      ]
+    },
+    {
+      "path": ":connect:mirror:compileJava",
+      "projectPath": ":connect:mirror",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":connect:api:compileJava",
+        ":connect:json:compileJava",
+        ":connect:mirror-client:compileJava",
+        ":connect:runtime:compileJava",
+        ":connect:transforms:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:mirror:compileTestJava",
+      "projectPath": ":connect:mirror",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":connect:api:compileJava",
+        ":connect:json:compileJava",
+        ":connect:mirror-client:compileJava",
+        ":connect:mirror:classes",
+        ":connect:mirror:compileJava",
+        ":connect:runtime:compileJava",
+        ":connect:runtime:compileTestFixturesJava",
+        ":connect:transforms:compileJava",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":server:compileJava",
+        ":test-common:test-common-runtime:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:mirror:processResources",
+      "projectPath": ":connect:mirror",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:mirror:processTestResources",
+      "projectPath": ":connect:mirror",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:mirror:testClasses",
+      "projectPath": ":connect:mirror",
+      "dependsOn": [
+        ":connect:mirror:compileTestJava",
+        ":connect:mirror:processTestResources"
+      ]
+    },
+    {
+      "path": ":connect:processResources",
+      "projectPath": ":connect",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:processTestResources",
+      "projectPath": ":connect",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:runtime:compileJava",
+      "projectPath": ":connect:runtime",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":connect:api:compileJava",
+        ":connect:json:compileJava",
+        ":connect:transforms:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:runtime:compileTestFixturesJava",
+      "projectPath": ":connect:runtime",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":connect:api:compileJava",
+        ":connect:json:compileJava",
+        ":connect:runtime:compileJava",
+        ":connect:transforms:compileJava",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":group-coordinator:compileJava",
+        ":metadata:compileJava",
+        ":server-common:compileJava",
+        ":server:compileJava",
+        ":test-common:test-common-runtime:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:runtime:compileTestJava",
+      "projectPath": ":connect:runtime",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":connect:api:compileJava",
+        ":connect:json:compileJava",
+        ":connect:runtime:compileJava",
+        ":connect:runtime:compileTestFixturesJava",
+        ":connect:test-plugins:compileJava",
+        ":connect:transforms:compileJava",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":group-coordinator:compileJava",
+        ":metadata:compileJava",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":server:compileJava",
+        ":storage:compileJava",
+        ":test-common:test-common-internal-api:compileJava",
+        ":test-common:test-common-runtime:compileJava",
+        ":test-common:test-common-util:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:runtime:processTestResources",
+      "projectPath": ":connect:runtime",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:runtime:testClasses",
+      "projectPath": ":connect:runtime",
+      "dependsOn": [
+        ":connect:runtime:compileTestJava",
+        ":connect:runtime:processTestResources"
+      ]
+    },
+    {
+      "path": ":connect:test-plugins:classes",
+      "projectPath": ":connect:test-plugins",
+      "dependsOn": [
+        ":connect:test-plugins:compileJava",
+        ":connect:test-plugins:processResources"
+      ]
+    },
+    {
+      "path": ":connect:test-plugins:compileJava",
+      "projectPath": ":connect:test-plugins",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":connect:api:compileJava",
+        ":server-common:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:test-plugins:compileTestJava",
+      "projectPath": ":connect:test-plugins",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":connect:api:compileJava",
+        ":connect:test-plugins:classes",
+        ":connect:test-plugins:compileJava",
+        ":server-common:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:test-plugins:processResources",
+      "projectPath": ":connect:test-plugins",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:test-plugins:processTestResources",
+      "projectPath": ":connect:test-plugins",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:test-plugins:testClasses",
+      "projectPath": ":connect:test-plugins",
+      "dependsOn": [
+        ":connect:test-plugins:compileTestJava",
+        ":connect:test-plugins:processTestResources"
+      ]
+    },
+    {
+      "path": ":connect:testClasses",
+      "projectPath": ":connect",
+      "dependsOn": [
+        ":connect:compileTestJava",
+        ":connect:processTestResources"
+      ]
+    },
+    {
+      "path": ":connect:transforms:classes",
+      "projectPath": ":connect:transforms",
+      "dependsOn": [
+        ":connect:transforms:compileJava",
+        ":connect:transforms:processResources"
+      ]
+    },
+    {
+      "path": ":connect:transforms:compileJava",
+      "projectPath": ":connect:transforms",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":connect:api:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:transforms:compileTestJava",
+      "projectPath": ":connect:transforms",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":connect:api:compileJava",
+        ":connect:transforms:classes",
+        ":connect:transforms:compileJava"
+      ]
+    },
+    {
+      "path": ":connect:transforms:processResources",
+      "projectPath": ":connect:transforms",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:transforms:processTestResources",
+      "projectPath": ":connect:transforms",
+      "dependsOn": []
+    },
+    {
+      "path": ":connect:transforms:testClasses",
+      "projectPath": ":connect:transforms",
+      "dependsOn": [
+        ":connect:transforms:compileTestJava",
+        ":connect:transforms:processTestResources"
+      ]
+    },
+    {
+      "path": ":coordinator-common:compileJava",
+      "projectPath": ":coordinator-common",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":metadata:compileJava",
+        ":server-common:compileJava",
+        ":storage:compileJava"
+      ]
+    },
+    {
+      "path": ":coordinator-common:compileTestFixturesJava",
+      "projectPath": ":coordinator-common",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":coordinator-common:compileJava",
+        ":metadata:compileJava"
+      ]
+    },
+    {
+      "path": ":coordinator-common:compileTestJava",
+      "projectPath": ":coordinator-common",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":coordinator-common:compileJava",
+        ":coordinator-common:compileTestFixturesJava",
+        ":metadata:compileJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":storage:compileJava"
+      ]
+    },
+    {
+      "path": ":coordinator-common:processTestResources",
+      "projectPath": ":coordinator-common",
+      "dependsOn": []
+    },
+    {
+      "path": ":coordinator-common:testClasses",
+      "projectPath": ":coordinator-common",
+      "dependsOn": [
+        ":coordinator-common:compileTestJava",
+        ":coordinator-common:processTestResources"
+      ]
+    },
+    {
+      "path": ":core:classes",
+      "projectPath": ":core",
+      "dependsOn": [
+        ":core:compileJava",
+        ":core:compileScala",
+        ":core:processResources"
+      ]
+    },
+    {
+      "path": ":core:compileJava",
+      "projectPath": ":core",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":coordinator-common:compileJava",
+        ":group-coordinator:compileJava",
+        ":group-coordinator:group-coordinator-api:compileJava",
+        ":metadata:compileJava",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":server:compileJava",
+        ":share-coordinator:compileJava",
+        ":storage:compileJava",
+        ":storage:storage-api:compileJava",
+        ":tools:tools-api:compileJava",
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":core:compileScala",
+      "projectPath": ":core",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":coordinator-common:compileJava",
+        ":core:compileJava",
+        ":group-coordinator:compileJava",
+        ":group-coordinator:group-coordinator-api:compileJava",
+        ":metadata:compileJava",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":server:compileJava",
+        ":share-coordinator:compileJava",
+        ":storage:compileJava",
+        ":storage:storage-api:compileJava",
+        ":tools:tools-api:compileJava",
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":core:compileTestJava",
+      "projectPath": ":core",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":clients:shadowJar",
+        ":coordinator-common:compileJava",
+        ":core:classes",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":group-coordinator:compileJava",
+        ":group-coordinator:compileTestFixturesJava",
+        ":group-coordinator:group-coordinator-api:compileJava",
+        ":metadata:compileJava",
+        ":metadata:compileTestFixturesJava",
+        ":raft:compileJava",
+        ":raft:compileTestFixturesJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":server:compileJava",
+        ":server:compileTestFixturesJava",
+        ":share-coordinator:compileJava",
+        ":share-coordinator:compileTestFixturesJava",
+        ":storage:compileJava",
+        ":storage:compileTestFixturesJava",
+        ":storage:storage-api:compileJava",
+        ":storage:storage-api:compileTestFixturesJava",
+        ":streams:compileJava",
+        ":test-common:test-common-internal-api:compileJava",
+        ":test-common:test-common-runtime:compileJava",
+        ":test-common:test-common-util:compileJava",
+        ":tools:tools-api:compileJava",
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":core:compileTestScala",
+      "projectPath": ":core",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":clients:shadowJar",
+        ":coordinator-common:compileJava",
+        ":core:classes",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":core:compileTestJava",
+        ":group-coordinator:compileJava",
+        ":group-coordinator:compileTestFixturesJava",
+        ":group-coordinator:group-coordinator-api:compileJava",
+        ":metadata:compileJava",
+        ":metadata:compileTestFixturesJava",
+        ":raft:compileJava",
+        ":raft:compileTestFixturesJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":server:compileJava",
+        ":server:compileTestFixturesJava",
+        ":share-coordinator:compileJava",
+        ":share-coordinator:compileTestFixturesJava",
+        ":storage:compileJava",
+        ":storage:compileTestFixturesJava",
+        ":storage:storage-api:compileJava",
+        ":storage:storage-api:compileTestFixturesJava",
+        ":streams:compileJava",
+        ":test-common:test-common-internal-api:compileJava",
+        ":test-common:test-common-runtime:compileJava",
+        ":test-common:test-common-util:compileJava",
+        ":tools:tools-api:compileJava",
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":core:processResources",
+      "projectPath": ":core",
+      "dependsOn": []
+    },
+    {
+      "path": ":core:processTestResources",
+      "projectPath": ":core",
+      "dependsOn": []
+    },
+    {
+      "path": ":core:testClasses",
+      "projectPath": ":core",
+      "dependsOn": [
+        ":core:compileTestJava",
+        ":core:compileTestScala",
+        ":core:processTestResources"
+      ]
+    },
+    {
+      "path": ":examples:classes",
+      "projectPath": ":examples",
+      "dependsOn": [
+        ":examples:compileJava",
+        ":examples:processResources"
+      ]
+    },
+    {
+      "path": ":examples:compileJava",
+      "projectPath": ":examples",
+      "dependsOn": [
+        ":clients:compileJava"
+      ]
+    },
+    {
+      "path": ":examples:compileTestJava",
+      "projectPath": ":examples",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":examples:classes",
+        ":examples:compileJava"
+      ]
+    },
+    {
+      "path": ":examples:processResources",
+      "projectPath": ":examples",
+      "dependsOn": []
+    },
+    {
+      "path": ":examples:processTestResources",
+      "projectPath": ":examples",
+      "dependsOn": []
+    },
+    {
+      "path": ":examples:testClasses",
+      "projectPath": ":examples",
+      "dependsOn": [
+        ":examples:compileTestJava",
+        ":examples:processTestResources"
+      ]
+    },
+    {
+      "path": ":generator:classes",
+      "projectPath": ":generator",
+      "dependsOn": [
+        ":generator:compileJava",
+        ":generator:processResources"
+      ]
+    },
+    {
+      "path": ":generator:compileJava",
+      "projectPath": ":generator",
+      "dependsOn": []
+    },
+    {
+      "path": ":generator:compileTestJava",
+      "projectPath": ":generator",
+      "dependsOn": [
+        ":generator:classes",
+        ":generator:compileJava"
+      ]
+    },
+    {
+      "path": ":generator:jar",
+      "projectPath": ":generator",
+      "dependsOn": [
+        ":generator:classes",
+        ":generator:compileJava"
+      ]
+    },
+    {
+      "path": ":generator:processResources",
+      "projectPath": ":generator",
+      "dependsOn": []
+    },
+    {
+      "path": ":generator:processTestResources",
+      "projectPath": ":generator",
+      "dependsOn": []
+    },
+    {
+      "path": ":generator:testClasses",
+      "projectPath": ":generator",
+      "dependsOn": [
+        ":generator:compileTestJava",
+        ":generator:processTestResources"
+      ]
+    },
+    {
+      "path": ":group-coordinator:compileJava",
+      "projectPath": ":group-coordinator",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":coordinator-common:compileJava",
+        ":group-coordinator:group-coordinator-api:compileJava",
+        ":group-coordinator:processMessages",
+        ":metadata:compileJava",
+        ":server-common:compileJava",
+        ":storage:compileJava"
+      ]
+    },
+    {
+      "path": ":group-coordinator:compileTestFixturesJava",
+      "projectPath": ":group-coordinator",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":coordinator-common:compileJava",
+        ":group-coordinator:compileJava",
+        ":server-common:compileJava"
+      ]
+    },
+    {
+      "path": ":group-coordinator:compileTestJava",
+      "projectPath": ":group-coordinator",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":coordinator-common:compileJava",
+        ":coordinator-common:compileTestFixturesJava",
+        ":group-coordinator:compileJava",
+        ":group-coordinator:compileTestFixturesJava",
+        ":group-coordinator:group-coordinator-api:compileJava",
+        ":metadata:compileJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":storage:compileJava"
+      ]
+    },
+    {
+      "path": ":group-coordinator:group-coordinator-api:classes",
+      "projectPath": ":group-coordinator:group-coordinator-api",
+      "dependsOn": [
+        ":group-coordinator:group-coordinator-api:compileJava",
+        ":group-coordinator:group-coordinator-api:processResources"
+      ]
+    },
+    {
+      "path": ":group-coordinator:group-coordinator-api:compileJava",
+      "projectPath": ":group-coordinator:group-coordinator-api",
+      "dependsOn": [
+        ":clients:compileJava"
+      ]
+    },
+    {
+      "path": ":group-coordinator:group-coordinator-api:compileTestJava",
+      "projectPath": ":group-coordinator:group-coordinator-api",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":group-coordinator:group-coordinator-api:classes",
+        ":group-coordinator:group-coordinator-api:compileJava"
+      ]
+    },
+    {
+      "path": ":group-coordinator:group-coordinator-api:processResources",
+      "projectPath": ":group-coordinator:group-coordinator-api",
+      "dependsOn": []
+    },
+    {
+      "path": ":group-coordinator:group-coordinator-api:processTestResources",
+      "projectPath": ":group-coordinator:group-coordinator-api",
+      "dependsOn": []
+    },
+    {
+      "path": ":group-coordinator:group-coordinator-api:testClasses",
+      "projectPath": ":group-coordinator:group-coordinator-api",
+      "dependsOn": [
+        ":group-coordinator:group-coordinator-api:compileTestJava",
+        ":group-coordinator:group-coordinator-api:processTestResources"
+      ]
+    },
+    {
+      "path": ":group-coordinator:processMessages",
+      "projectPath": ":group-coordinator",
+      "dependsOn": [
+        ":generator:jar"
+      ]
+    },
+    {
+      "path": ":group-coordinator:processTestResources",
+      "projectPath": ":group-coordinator",
+      "dependsOn": []
+    },
+    {
+      "path": ":group-coordinator:testClasses",
+      "projectPath": ":group-coordinator",
+      "dependsOn": [
+        ":group-coordinator:compileTestJava",
+        ":group-coordinator:processTestResources"
+      ]
+    },
+    {
+      "path": ":jmh-benchmarks:classes",
+      "projectPath": ":jmh-benchmarks",
+      "dependsOn": [
+        ":jmh-benchmarks:compileJava",
+        ":jmh-benchmarks:processResources"
+      ]
+    },
+    {
+      "path": ":jmh-benchmarks:compileJava",
+      "projectPath": ":jmh-benchmarks",
+      "dependsOn": [
+        ":clients:compileTestFixturesJava",
+        ":clients:shadowJar",
+        ":connect:api:compileJava",
+        ":connect:json:compileJava",
+        ":connect:transforms:compileJava",
+        ":coordinator-common:compileJava",
+        ":coordinator-common:compileTestFixturesJava",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":group-coordinator:compileJava",
+        ":group-coordinator:group-coordinator-api:compileJava",
+        ":metadata:compileJava",
+        ":metadata:compileTestFixturesJava",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":server:compileJava",
+        ":share-coordinator:compileJava",
+        ":storage:compileJava",
+        ":streams:compileJava",
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":jmh-benchmarks:compileTestJava",
+      "projectPath": ":jmh-benchmarks",
+      "dependsOn": [
+        ":clients:compileTestFixturesJava",
+        ":clients:shadowJar",
+        ":connect:api:compileJava",
+        ":connect:json:compileJava",
+        ":connect:transforms:compileJava",
+        ":coordinator-common:compileJava",
+        ":coordinator-common:compileTestFixturesJava",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":group-coordinator:compileJava",
+        ":group-coordinator:group-coordinator-api:compileJava",
+        ":jmh-benchmarks:classes",
+        ":jmh-benchmarks:compileJava",
+        ":metadata:compileJava",
+        ":metadata:compileTestFixturesJava",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":server:compileJava",
+        ":share-coordinator:compileJava",
+        ":storage:compileJava",
+        ":streams:compileJava",
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":jmh-benchmarks:processResources",
+      "projectPath": ":jmh-benchmarks",
+      "dependsOn": []
+    },
+    {
+      "path": ":jmh-benchmarks:processTestResources",
+      "projectPath": ":jmh-benchmarks",
+      "dependsOn": []
+    },
+    {
+      "path": ":jmh-benchmarks:testClasses",
+      "projectPath": ":jmh-benchmarks",
+      "dependsOn": [
+        ":jmh-benchmarks:compileTestJava",
+        ":jmh-benchmarks:processTestResources"
+      ]
+    },
+    {
+      "path": ":metadata:compileJava",
+      "projectPath": ":metadata",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":metadata:processMessages",
+        ":raft:compileJava",
+        ":server-common:compileJava"
+      ]
+    },
+    {
+      "path": ":metadata:compileTestFixturesJava",
+      "projectPath": ":metadata",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":metadata:compileJava",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava"
+      ]
+    },
+    {
+      "path": ":metadata:compileTestJava",
+      "projectPath": ":metadata",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":metadata:compileJava",
+        ":metadata:compileTestFixturesJava",
+        ":raft:compileJava",
+        ":raft:compileTestFixturesJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":test-common:test-common-util:compileJava"
+      ]
+    },
+    {
+      "path": ":metadata:processMessages",
+      "projectPath": ":metadata",
+      "dependsOn": [
+        ":generator:jar"
+      ]
+    },
+    {
+      "path": ":metadata:processTestResources",
+      "projectPath": ":metadata",
+      "dependsOn": []
+    },
+    {
+      "path": ":metadata:testClasses",
+      "projectPath": ":metadata",
+      "dependsOn": [
+        ":metadata:compileTestJava",
+        ":metadata:processTestResources"
+      ]
+    },
+    {
+      "path": ":raft:compileJava",
+      "projectPath": ":raft",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":raft:processMessages",
+        ":server-common:compileJava",
+        ":storage:compileJava"
+      ]
+    },
+    {
+      "path": ":raft:compileTestFixturesJava",
+      "projectPath": ":raft",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":raft:compileJava",
+        ":server-common:compileJava"
+      ]
+    },
+    {
+      "path": ":raft:compileTestJava",
+      "projectPath": ":raft",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":raft:compileJava",
+        ":raft:compileTestFixturesJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":storage:compileJava"
+      ]
+    },
+    {
+      "path": ":raft:processMessages",
+      "projectPath": ":raft",
+      "dependsOn": [
+        ":generator:jar"
+      ]
+    },
+    {
+      "path": ":raft:processTestResources",
+      "projectPath": ":raft",
+      "dependsOn": []
+    },
+    {
+      "path": ":raft:testClasses",
+      "projectPath": ":raft",
+      "dependsOn": [
+        ":raft:compileTestJava",
+        ":raft:processTestResources"
+      ]
+    },
+    {
+      "path": ":server-common:compileJava",
+      "projectPath": ":server-common",
+      "dependsOn": [
+        ":clients:compileJava"
+      ]
+    },
+    {
+      "path": ":server-common:compileTestFixturesJava",
+      "projectPath": ":server-common",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":server-common:compileJava"
+      ]
+    },
+    {
+      "path": ":server-common:compileTestJava",
+      "projectPath": ":server-common",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava"
+      ]
+    },
+    {
+      "path": ":server-common:processTestResources",
+      "projectPath": ":server-common",
+      "dependsOn": []
+    },
+    {
+      "path": ":server-common:testClasses",
+      "projectPath": ":server-common",
+      "dependsOn": [
+        ":server-common:compileTestJava",
+        ":server-common:processTestResources"
+      ]
+    },
+    {
+      "path": ":server:compileJava",
+      "projectPath": ":server",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":group-coordinator:compileJava",
+        ":group-coordinator:group-coordinator-api:compileJava",
+        ":metadata:compileJava",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":share-coordinator:compileJava",
+        ":storage:compileJava",
+        ":storage:storage-api:compileJava",
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":server:compileTestFixturesJava",
+      "projectPath": ":server",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":metadata:compileJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":server:compileJava"
+      ]
+    },
+    {
+      "path": ":server:compileTestJava",
+      "projectPath": ":server",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":group-coordinator:compileJava",
+        ":group-coordinator:group-coordinator-api:compileJava",
+        ":metadata:compileJava",
+        ":metadata:compileTestFixturesJava",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":server:compileJava",
+        ":server:compileTestFixturesJava",
+        ":share-coordinator:compileJava",
+        ":storage:compileJava",
+        ":storage:storage-api:compileJava",
+        ":storage:storage-api:compileTestFixturesJava",
+        ":test-common:test-common-internal-api:compileJava",
+        ":test-common:test-common-runtime:compileJava",
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":server:processTestResources",
+      "projectPath": ":server",
+      "dependsOn": []
+    },
+    {
+      "path": ":server:testClasses",
+      "projectPath": ":server",
+      "dependsOn": [
+        ":server:compileTestJava",
+        ":server:processTestResources"
+      ]
+    },
+    {
+      "path": ":share-coordinator:compileJava",
+      "projectPath": ":share-coordinator",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":coordinator-common:compileJava",
+        ":metadata:compileJava",
+        ":server-common:compileJava",
+        ":share-coordinator:processMessages"
+      ]
+    },
+    {
+      "path": ":share-coordinator:compileTestFixturesJava",
+      "projectPath": ":share-coordinator",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":share-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":share-coordinator:compileTestJava",
+      "projectPath": ":share-coordinator",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":coordinator-common:compileJava",
+        ":coordinator-common:compileTestFixturesJava",
+        ":metadata:compileJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":share-coordinator:compileJava",
+        ":share-coordinator:compileTestFixturesJava"
+      ]
+    },
+    {
+      "path": ":share-coordinator:processMessages",
+      "projectPath": ":share-coordinator",
+      "dependsOn": [
+        ":generator:jar"
+      ]
+    },
+    {
+      "path": ":share-coordinator:processTestResources",
+      "projectPath": ":share-coordinator",
+      "dependsOn": []
+    },
+    {
+      "path": ":share-coordinator:testClasses",
+      "projectPath": ":share-coordinator",
+      "dependsOn": [
+        ":share-coordinator:compileTestJava",
+        ":share-coordinator:processTestResources"
+      ]
+    },
+    {
+      "path": ":shell:classes",
+      "projectPath": ":shell",
+      "dependsOn": [
+        ":shell:compileJava",
+        ":shell:processResources"
+      ]
+    },
+    {
+      "path": ":shell:compileJava",
+      "projectPath": ":shell",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":metadata:compileJava",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":server:compileJava"
+      ]
+    },
+    {
+      "path": ":shell:compileTestJava",
+      "projectPath": ":shell",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":metadata:compileJava",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":server:compileJava",
+        ":shell:classes",
+        ":shell:compileJava"
+      ]
+    },
+    {
+      "path": ":shell:processResources",
+      "projectPath": ":shell",
+      "dependsOn": []
+    },
+    {
+      "path": ":shell:processTestResources",
+      "projectPath": ":shell",
+      "dependsOn": []
+    },
+    {
+      "path": ":shell:testClasses",
+      "projectPath": ":shell",
+      "dependsOn": [
+        ":shell:compileTestJava",
+        ":shell:processTestResources"
+      ]
+    },
+    {
+      "path": ":storage:compileJava",
+      "projectPath": ":storage",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":server-common:compileJava",
+        ":storage:processMessages",
+        ":storage:storage-api:compileJava"
+      ]
+    },
+    {
+      "path": ":storage:compileTestFixturesJava",
+      "projectPath": ":storage",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":server-common:compileJava",
+        ":storage:compileJava",
+        ":storage:storage-api:compileJava"
+      ]
+    },
+    {
+      "path": ":storage:compileTestJava",
+      "projectPath": ":storage",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":metadata:compileJava",
+        ":metadata:compileTestFixturesJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":server:compileJava",
+        ":server:compileTestFixturesJava",
+        ":storage:compileJava",
+        ":storage:compileTestFixturesJava",
+        ":storage:storage-api:compileJava",
+        ":storage:storage-api:compileTestFixturesJava",
+        ":test-common:test-common-internal-api:compileJava",
+        ":test-common:test-common-runtime:compileJava",
+        ":test-common:test-common-util:compileJava",
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":storage:processMessages",
+      "projectPath": ":storage",
+      "dependsOn": [
+        ":generator:jar"
+      ]
+    },
+    {
+      "path": ":storage:processTestResources",
+      "projectPath": ":storage",
+      "dependsOn": []
+    },
+    {
+      "path": ":storage:storage-api:compileJava",
+      "projectPath": ":storage:storage-api",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":server-common:compileJava"
+      ]
+    },
+    {
+      "path": ":storage:storage-api:compileTestFixturesJava",
+      "projectPath": ":storage:storage-api",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":storage:storage-api:compileJava"
+      ]
+    },
+    {
+      "path": ":storage:storage-api:compileTestJava",
+      "projectPath": ":storage:storage-api",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":server-common:compileJava",
+        ":storage:storage-api:compileJava",
+        ":storage:storage-api:compileTestFixturesJava"
+      ]
+    },
+    {
+      "path": ":storage:storage-api:processTestResources",
+      "projectPath": ":storage:storage-api",
+      "dependsOn": []
+    },
+    {
+      "path": ":storage:storage-api:testClasses",
+      "projectPath": ":storage:storage-api",
+      "dependsOn": [
+        ":storage:storage-api:compileTestJava",
+        ":storage:storage-api:processTestResources"
+      ]
+    },
+    {
+      "path": ":storage:testClasses",
+      "projectPath": ":storage",
+      "dependsOn": [
+        ":storage:compileTestJava",
+        ":storage:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:compileJava",
+      "projectPath": ":streams",
+      "dependsOn": [
+        ":clients:shadowJar",
+        ":streams:processMessages"
+      ]
+    },
+    {
+      "path": ":streams:compileTestFixturesJava",
+      "projectPath": ":streams",
+      "dependsOn": [
+        ":clients:compileTestFixturesJava",
+        ":clients:shadowJar",
+        ":streams:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:compileTestJava",
+      "projectPath": ":streams",
+      "dependsOn": [
+        ":clients:compileTestFixturesJava",
+        ":clients:shadowJar",
+        ":streams:compileJava",
+        ":streams:compileTestFixturesJava",
+        ":streams:test-utils:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:examples:classes",
+      "projectPath": ":streams:examples",
+      "dependsOn": [
+        ":streams:examples:compileJava",
+        ":streams:examples:processResources"
+      ]
+    },
+    {
+      "path": ":streams:examples:compileJava",
+      "projectPath": ":streams:examples",
+      "dependsOn": [
+        ":clients:shadowJar",
+        ":streams:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:examples:compileTestJava",
+      "projectPath": ":streams:examples",
+      "dependsOn": [
+        ":clients:compileTestFixturesJava",
+        ":clients:shadowJar",
+        ":streams:compileJava",
+        ":streams:examples:classes",
+        ":streams:examples:compileJava",
+        ":streams:test-utils:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:examples:processResources",
+      "projectPath": ":streams:examples",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:examples:processTestResources",
+      "projectPath": ":streams:examples",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:examples:testClasses",
+      "projectPath": ":streams:examples",
+      "dependsOn": [
+        ":streams:examples:compileTestJava",
+        ":streams:examples:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:integration-tests:classes",
+      "projectPath": ":streams:integration-tests",
+      "dependsOn": [
+        ":streams:integration-tests:compileJava",
+        ":streams:integration-tests:processResources"
+      ]
+    },
+    {
+      "path": ":streams:integration-tests:compileJava",
+      "projectPath": ":streams:integration-tests",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:integration-tests:compileTestJava",
+      "projectPath": ":streams:integration-tests",
+      "dependsOn": [
+        ":clients:compileTestFixturesJava",
+        ":clients:shadowJar",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":group-coordinator:compileJava",
+        ":group-coordinator:group-coordinator-api:compileJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":server:compileJava",
+        ":storage:compileJava",
+        ":streams:compileJava",
+        ":streams:compileTestFixturesJava",
+        ":streams:integration-tests:classes",
+        ":streams:integration-tests:compileJava",
+        ":streams:test-utils:compileJava",
+        ":test-common:test-common-runtime:compileJava",
+        ":tools:compileJava",
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:integration-tests:processResources",
+      "projectPath": ":streams:integration-tests",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:integration-tests:processTestResources",
+      "projectPath": ":streams:integration-tests",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:integration-tests:testClasses",
+      "projectPath": ":streams:integration-tests",
+      "dependsOn": [
+        ":streams:integration-tests:compileTestJava",
+        ":streams:integration-tests:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:processMessages",
+      "projectPath": ":streams",
+      "dependsOn": [
+        ":generator:jar"
+      ]
+    },
+    {
+      "path": ":streams:processTestResources",
+      "projectPath": ":streams",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:streams-scala:classes",
+      "projectPath": ":streams:streams-scala",
+      "dependsOn": [
+        ":streams:streams-scala:compileJava",
+        ":streams:streams-scala:compileScala",
+        ":streams:streams-scala:processResources"
+      ]
+    },
+    {
+      "path": ":streams:streams-scala:compileJava",
+      "projectPath": ":streams:streams-scala",
+      "dependsOn": [
+        ":clients:shadowJar",
+        ":streams:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:streams-scala:compileScala",
+      "projectPath": ":streams:streams-scala",
+      "dependsOn": [
+        ":clients:shadowJar",
+        ":streams:compileJava",
+        ":streams:streams-scala:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:streams-scala:compileTestJava",
+      "projectPath": ":streams:streams-scala",
+      "dependsOn": [
+        ":clients:compileTestFixturesJava",
+        ":clients:shadowJar",
+        ":streams:compileJava",
+        ":streams:streams-scala:classes",
+        ":streams:streams-scala:compileJava",
+        ":streams:streams-scala:compileScala",
+        ":streams:test-utils:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:streams-scala:compileTestScala",
+      "projectPath": ":streams:streams-scala",
+      "dependsOn": [
+        ":clients:compileTestFixturesJava",
+        ":clients:shadowJar",
+        ":streams:compileJava",
+        ":streams:streams-scala:classes",
+        ":streams:streams-scala:compileJava",
+        ":streams:streams-scala:compileScala",
+        ":streams:streams-scala:compileTestJava",
+        ":streams:test-utils:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:streams-scala:processResources",
+      "projectPath": ":streams:streams-scala",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:streams-scala:processTestResources",
+      "projectPath": ":streams:streams-scala",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:streams-scala:testClasses",
+      "projectPath": ":streams:streams-scala",
+      "dependsOn": [
+        ":streams:streams-scala:compileTestJava",
+        ":streams:streams-scala:compileTestScala",
+        ":streams:streams-scala:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:test-utils:classes",
+      "projectPath": ":streams:test-utils",
+      "dependsOn": [
+        ":streams:test-utils:compileJava",
+        ":streams:test-utils:processResources"
+      ]
+    },
+    {
+      "path": ":streams:test-utils:compileJava",
+      "projectPath": ":streams:test-utils",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:shadowJar",
+        ":streams:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:test-utils:compileTestJava",
+      "projectPath": ":streams:test-utils",
+      "dependsOn": [
+        ":clients:compileTestFixturesJava",
+        ":clients:shadowJar",
+        ":streams:compileJava",
+        ":streams:test-utils:classes",
+        ":streams:test-utils:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:test-utils:processResources",
+      "projectPath": ":streams:test-utils",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:test-utils:processTestResources",
+      "projectPath": ":streams:test-utils",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:test-utils:testClasses",
+      "projectPath": ":streams:test-utils",
+      "dependsOn": [
+        ":streams:test-utils:compileTestJava",
+        ":streams:test-utils:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:testClasses",
+      "projectPath": ":streams",
+      "dependsOn": [
+        ":streams:compileTestJava",
+        ":streams:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-0110:classes",
+      "projectPath": ":streams:upgrade-system-tests-0110",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-0110:compileJava",
+        ":streams:upgrade-system-tests-0110:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-0110:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-0110",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-0110:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-0110",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-0110:classes",
+        ":streams:upgrade-system-tests-0110:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-0110:processResources",
+      "projectPath": ":streams:upgrade-system-tests-0110",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-0110:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-0110",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-0110:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-0110",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-0110:compileTestJava",
+        ":streams:upgrade-system-tests-0110:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-10:classes",
+      "projectPath": ":streams:upgrade-system-tests-10",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-10:compileJava",
+        ":streams:upgrade-system-tests-10:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-10:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-10",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-10:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-10",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-10:classes",
+        ":streams:upgrade-system-tests-10:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-10:processResources",
+      "projectPath": ":streams:upgrade-system-tests-10",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-10:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-10",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-10:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-10",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-10:compileTestJava",
+        ":streams:upgrade-system-tests-10:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-11:classes",
+      "projectPath": ":streams:upgrade-system-tests-11",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-11:compileJava",
+        ":streams:upgrade-system-tests-11:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-11:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-11",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-11:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-11",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-11:classes",
+        ":streams:upgrade-system-tests-11:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-11:processResources",
+      "projectPath": ":streams:upgrade-system-tests-11",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-11:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-11",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-11:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-11",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-11:compileTestJava",
+        ":streams:upgrade-system-tests-11:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-20:classes",
+      "projectPath": ":streams:upgrade-system-tests-20",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-20:compileJava",
+        ":streams:upgrade-system-tests-20:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-20:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-20",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-20:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-20",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-20:classes",
+        ":streams:upgrade-system-tests-20:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-20:processResources",
+      "projectPath": ":streams:upgrade-system-tests-20",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-20:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-20",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-20:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-20",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-20:compileTestJava",
+        ":streams:upgrade-system-tests-20:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-21:classes",
+      "projectPath": ":streams:upgrade-system-tests-21",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-21:compileJava",
+        ":streams:upgrade-system-tests-21:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-21:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-21",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-21:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-21",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-21:classes",
+        ":streams:upgrade-system-tests-21:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-21:processResources",
+      "projectPath": ":streams:upgrade-system-tests-21",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-21:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-21",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-21:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-21",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-21:compileTestJava",
+        ":streams:upgrade-system-tests-21:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-22:classes",
+      "projectPath": ":streams:upgrade-system-tests-22",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-22:compileJava",
+        ":streams:upgrade-system-tests-22:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-22:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-22",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-22:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-22",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-22:classes",
+        ":streams:upgrade-system-tests-22:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-22:processResources",
+      "projectPath": ":streams:upgrade-system-tests-22",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-22:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-22",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-22:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-22",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-22:compileTestJava",
+        ":streams:upgrade-system-tests-22:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-23:classes",
+      "projectPath": ":streams:upgrade-system-tests-23",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-23:compileJava",
+        ":streams:upgrade-system-tests-23:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-23:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-23",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-23:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-23",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-23:classes",
+        ":streams:upgrade-system-tests-23:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-23:processResources",
+      "projectPath": ":streams:upgrade-system-tests-23",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-23:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-23",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-23:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-23",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-23:compileTestJava",
+        ":streams:upgrade-system-tests-23:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-24:classes",
+      "projectPath": ":streams:upgrade-system-tests-24",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-24:compileJava",
+        ":streams:upgrade-system-tests-24:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-24:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-24",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-24:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-24",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-24:classes",
+        ":streams:upgrade-system-tests-24:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-24:processResources",
+      "projectPath": ":streams:upgrade-system-tests-24",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-24:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-24",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-24:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-24",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-24:compileTestJava",
+        ":streams:upgrade-system-tests-24:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-25:classes",
+      "projectPath": ":streams:upgrade-system-tests-25",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-25:compileJava",
+        ":streams:upgrade-system-tests-25:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-25:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-25",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-25:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-25",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-25:classes",
+        ":streams:upgrade-system-tests-25:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-25:processResources",
+      "projectPath": ":streams:upgrade-system-tests-25",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-25:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-25",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-25:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-25",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-25:compileTestJava",
+        ":streams:upgrade-system-tests-25:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-26:classes",
+      "projectPath": ":streams:upgrade-system-tests-26",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-26:compileJava",
+        ":streams:upgrade-system-tests-26:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-26:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-26",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-26:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-26",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-26:classes",
+        ":streams:upgrade-system-tests-26:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-26:processResources",
+      "projectPath": ":streams:upgrade-system-tests-26",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-26:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-26",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-26:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-26",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-26:compileTestJava",
+        ":streams:upgrade-system-tests-26:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-27:classes",
+      "projectPath": ":streams:upgrade-system-tests-27",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-27:compileJava",
+        ":streams:upgrade-system-tests-27:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-27:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-27",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-27:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-27",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-27:classes",
+        ":streams:upgrade-system-tests-27:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-27:processResources",
+      "projectPath": ":streams:upgrade-system-tests-27",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-27:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-27",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-27:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-27",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-27:compileTestJava",
+        ":streams:upgrade-system-tests-27:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-28:classes",
+      "projectPath": ":streams:upgrade-system-tests-28",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-28:compileJava",
+        ":streams:upgrade-system-tests-28:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-28:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-28",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-28:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-28",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-28:classes",
+        ":streams:upgrade-system-tests-28:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-28:processResources",
+      "projectPath": ":streams:upgrade-system-tests-28",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-28:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-28",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-28:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-28",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-28:compileTestJava",
+        ":streams:upgrade-system-tests-28:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-30:classes",
+      "projectPath": ":streams:upgrade-system-tests-30",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-30:compileJava",
+        ":streams:upgrade-system-tests-30:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-30:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-30",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-30:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-30",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-30:classes",
+        ":streams:upgrade-system-tests-30:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-30:processResources",
+      "projectPath": ":streams:upgrade-system-tests-30",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-30:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-30",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-30:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-30",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-30:compileTestJava",
+        ":streams:upgrade-system-tests-30:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-31:classes",
+      "projectPath": ":streams:upgrade-system-tests-31",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-31:compileJava",
+        ":streams:upgrade-system-tests-31:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-31:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-31",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-31:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-31",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-31:classes",
+        ":streams:upgrade-system-tests-31:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-31:processResources",
+      "projectPath": ":streams:upgrade-system-tests-31",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-31:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-31",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-31:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-31",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-31:compileTestJava",
+        ":streams:upgrade-system-tests-31:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-32:classes",
+      "projectPath": ":streams:upgrade-system-tests-32",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-32:compileJava",
+        ":streams:upgrade-system-tests-32:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-32:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-32",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-32:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-32",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-32:classes",
+        ":streams:upgrade-system-tests-32:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-32:processResources",
+      "projectPath": ":streams:upgrade-system-tests-32",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-32:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-32",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-32:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-32",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-32:compileTestJava",
+        ":streams:upgrade-system-tests-32:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-33:classes",
+      "projectPath": ":streams:upgrade-system-tests-33",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-33:compileJava",
+        ":streams:upgrade-system-tests-33:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-33:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-33",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-33:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-33",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-33:classes",
+        ":streams:upgrade-system-tests-33:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-33:processResources",
+      "projectPath": ":streams:upgrade-system-tests-33",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-33:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-33",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-33:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-33",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-33:compileTestJava",
+        ":streams:upgrade-system-tests-33:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-34:classes",
+      "projectPath": ":streams:upgrade-system-tests-34",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-34:compileJava",
+        ":streams:upgrade-system-tests-34:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-34:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-34",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-34:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-34",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-34:classes",
+        ":streams:upgrade-system-tests-34:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-34:processResources",
+      "projectPath": ":streams:upgrade-system-tests-34",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-34:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-34",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-34:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-34",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-34:compileTestJava",
+        ":streams:upgrade-system-tests-34:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-35:classes",
+      "projectPath": ":streams:upgrade-system-tests-35",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-35:compileJava",
+        ":streams:upgrade-system-tests-35:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-35:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-35",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-35:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-35",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-35:classes",
+        ":streams:upgrade-system-tests-35:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-35:processResources",
+      "projectPath": ":streams:upgrade-system-tests-35",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-35:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-35",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-35:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-35",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-35:compileTestJava",
+        ":streams:upgrade-system-tests-35:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-36:classes",
+      "projectPath": ":streams:upgrade-system-tests-36",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-36:compileJava",
+        ":streams:upgrade-system-tests-36:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-36:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-36",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-36:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-36",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-36:classes",
+        ":streams:upgrade-system-tests-36:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-36:processResources",
+      "projectPath": ":streams:upgrade-system-tests-36",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-36:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-36",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-36:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-36",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-36:compileTestJava",
+        ":streams:upgrade-system-tests-36:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-37:classes",
+      "projectPath": ":streams:upgrade-system-tests-37",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-37:compileJava",
+        ":streams:upgrade-system-tests-37:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-37:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-37",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-37:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-37",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-37:classes",
+        ":streams:upgrade-system-tests-37:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-37:processResources",
+      "projectPath": ":streams:upgrade-system-tests-37",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-37:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-37",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-37:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-37",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-37:compileTestJava",
+        ":streams:upgrade-system-tests-37:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-38:classes",
+      "projectPath": ":streams:upgrade-system-tests-38",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-38:compileJava",
+        ":streams:upgrade-system-tests-38:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-38:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-38",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-38:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-38",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-38:classes",
+        ":streams:upgrade-system-tests-38:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-38:processResources",
+      "projectPath": ":streams:upgrade-system-tests-38",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-38:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-38",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-38:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-38",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-38:compileTestJava",
+        ":streams:upgrade-system-tests-38:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-39:classes",
+      "projectPath": ":streams:upgrade-system-tests-39",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-39:compileJava",
+        ":streams:upgrade-system-tests-39:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-39:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-39",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-39:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-39",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-39:classes",
+        ":streams:upgrade-system-tests-39:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-39:processResources",
+      "projectPath": ":streams:upgrade-system-tests-39",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-39:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-39",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-39:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-39",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-39:compileTestJava",
+        ":streams:upgrade-system-tests-39:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-40:classes",
+      "projectPath": ":streams:upgrade-system-tests-40",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-40:compileJava",
+        ":streams:upgrade-system-tests-40:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-40:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-40",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-40:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-40",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-40:classes",
+        ":streams:upgrade-system-tests-40:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-40:processResources",
+      "projectPath": ":streams:upgrade-system-tests-40",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-40:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-40",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-40:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-40",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-40:compileTestJava",
+        ":streams:upgrade-system-tests-40:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-41:classes",
+      "projectPath": ":streams:upgrade-system-tests-41",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-41:compileJava",
+        ":streams:upgrade-system-tests-41:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-41:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-41",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-41:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-41",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-41:classes",
+        ":streams:upgrade-system-tests-41:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-41:processResources",
+      "projectPath": ":streams:upgrade-system-tests-41",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-41:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-41",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-41:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-41",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-41:compileTestJava",
+        ":streams:upgrade-system-tests-41:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-42:classes",
+      "projectPath": ":streams:upgrade-system-tests-42",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-42:compileJava",
+        ":streams:upgrade-system-tests-42:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-42:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-42",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-42:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-42",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-42:classes",
+        ":streams:upgrade-system-tests-42:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-42:processResources",
+      "projectPath": ":streams:upgrade-system-tests-42",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-42:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-42",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-42:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-42",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-42:compileTestJava",
+        ":streams:upgrade-system-tests-42:processTestResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-43:classes",
+      "projectPath": ":streams:upgrade-system-tests-43",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-43:compileJava",
+        ":streams:upgrade-system-tests-43:processResources"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-43:compileJava",
+      "projectPath": ":streams:upgrade-system-tests-43",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-43:compileTestJava",
+      "projectPath": ":streams:upgrade-system-tests-43",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-43:classes",
+        ":streams:upgrade-system-tests-43:compileJava"
+      ]
+    },
+    {
+      "path": ":streams:upgrade-system-tests-43:processResources",
+      "projectPath": ":streams:upgrade-system-tests-43",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-43:processTestResources",
+      "projectPath": ":streams:upgrade-system-tests-43",
+      "dependsOn": []
+    },
+    {
+      "path": ":streams:upgrade-system-tests-43:testClasses",
+      "projectPath": ":streams:upgrade-system-tests-43",
+      "dependsOn": [
+        ":streams:upgrade-system-tests-43:compileTestJava",
+        ":streams:upgrade-system-tests-43:processTestResources"
+      ]
+    },
+    {
+      "path": ":test-common:classes",
+      "projectPath": ":test-common",
+      "dependsOn": [
+        ":test-common:compileJava",
+        ":test-common:processResources"
+      ]
+    },
+    {
+      "path": ":test-common:compileJava",
+      "projectPath": ":test-common",
+      "dependsOn": []
+    },
+    {
+      "path": ":test-common:compileTestJava",
+      "projectPath": ":test-common",
+      "dependsOn": [
+        ":test-common:classes",
+        ":test-common:compileJava"
+      ]
+    },
+    {
+      "path": ":test-common:processResources",
+      "projectPath": ":test-common",
+      "dependsOn": []
+    },
+    {
+      "path": ":test-common:processTestResources",
+      "projectPath": ":test-common",
+      "dependsOn": []
+    },
+    {
+      "path": ":test-common:test-common-internal-api:classes",
+      "projectPath": ":test-common:test-common-internal-api",
+      "dependsOn": [
+        ":test-common:test-common-internal-api:compileJava",
+        ":test-common:test-common-internal-api:processResources"
+      ]
+    },
+    {
+      "path": ":test-common:test-common-internal-api:compileJava",
+      "projectPath": ":test-common:test-common-internal-api",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":server-common:compileJava"
+      ]
+    },
+    {
+      "path": ":test-common:test-common-internal-api:compileTestJava",
+      "projectPath": ":test-common:test-common-internal-api",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":server-common:compileJava",
+        ":test-common:test-common-internal-api:classes",
+        ":test-common:test-common-internal-api:compileJava"
+      ]
+    },
+    {
+      "path": ":test-common:test-common-internal-api:processResources",
+      "projectPath": ":test-common:test-common-internal-api",
+      "dependsOn": []
+    },
+    {
+      "path": ":test-common:test-common-internal-api:processTestResources",
+      "projectPath": ":test-common:test-common-internal-api",
+      "dependsOn": []
+    },
+    {
+      "path": ":test-common:test-common-internal-api:testClasses",
+      "projectPath": ":test-common:test-common-internal-api",
+      "dependsOn": [
+        ":test-common:test-common-internal-api:compileTestJava",
+        ":test-common:test-common-internal-api:processTestResources"
+      ]
+    },
+    {
+      "path": ":test-common:test-common-runtime:classes",
+      "projectPath": ":test-common:test-common-runtime",
+      "dependsOn": [
+        ":test-common:test-common-runtime:compileJava",
+        ":test-common:test-common-runtime:processResources"
+      ]
+    },
+    {
+      "path": ":test-common:test-common-runtime:compileJava",
+      "projectPath": ":test-common:test-common-runtime",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":group-coordinator:compileJava",
+        ":metadata:compileJava",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":server:compileJava",
+        ":storage:compileJava",
+        ":test-common:test-common-internal-api:compileJava"
+      ]
+    },
+    {
+      "path": ":test-common:test-common-runtime:compileTestJava",
+      "projectPath": ":test-common:test-common-runtime",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":group-coordinator:compileJava",
+        ":metadata:compileJava",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":server:compileJava",
+        ":storage:compileJava",
+        ":test-common:test-common-internal-api:compileJava",
+        ":test-common:test-common-runtime:classes",
+        ":test-common:test-common-runtime:compileJava"
+      ]
+    },
+    {
+      "path": ":test-common:test-common-runtime:processResources",
+      "projectPath": ":test-common:test-common-runtime",
+      "dependsOn": []
+    },
+    {
+      "path": ":test-common:test-common-runtime:processTestResources",
+      "projectPath": ":test-common:test-common-runtime",
+      "dependsOn": []
+    },
+    {
+      "path": ":test-common:test-common-runtime:testClasses",
+      "projectPath": ":test-common:test-common-runtime",
+      "dependsOn": [
+        ":test-common:test-common-runtime:compileTestJava",
+        ":test-common:test-common-runtime:processTestResources"
+      ]
+    },
+    {
+      "path": ":test-common:test-common-util:classes",
+      "projectPath": ":test-common:test-common-util",
+      "dependsOn": [
+        ":test-common:test-common-util:compileJava",
+        ":test-common:test-common-util:processResources"
+      ]
+    },
+    {
+      "path": ":test-common:test-common-util:compileJava",
+      "projectPath": ":test-common:test-common-util",
+      "dependsOn": []
+    },
+    {
+      "path": ":test-common:test-common-util:compileTestJava",
+      "projectPath": ":test-common:test-common-util",
+      "dependsOn": [
+        ":test-common:test-common-util:classes",
+        ":test-common:test-common-util:compileJava"
+      ]
+    },
+    {
+      "path": ":test-common:test-common-util:processResources",
+      "projectPath": ":test-common:test-common-util",
+      "dependsOn": []
+    },
+    {
+      "path": ":test-common:test-common-util:processTestResources",
+      "projectPath": ":test-common:test-common-util",
+      "dependsOn": []
+    },
+    {
+      "path": ":test-common:test-common-util:testClasses",
+      "projectPath": ":test-common:test-common-util",
+      "dependsOn": [
+        ":test-common:test-common-util:compileTestJava",
+        ":test-common:test-common-util:processTestResources"
+      ]
+    },
+    {
+      "path": ":test-common:testClasses",
+      "projectPath": ":test-common",
+      "dependsOn": [
+        ":test-common:compileTestJava",
+        ":test-common:processTestResources"
+      ]
+    },
+    {
+      "path": ":tools:classes",
+      "projectPath": ":tools",
+      "dependsOn": [
+        ":tools:compileJava",
+        ":tools:processResources"
+      ]
+    },
+    {
+      "path": ":tools:compileJava",
+      "projectPath": ":tools",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":connect:api:compileJava",
+        ":connect:json:compileJava",
+        ":connect:runtime:compileJava",
+        ":connect:transforms:compileJava",
+        ":coordinator-common:compileJava",
+        ":group-coordinator:compileJava",
+        ":metadata:compileJava",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":server:compileJava",
+        ":share-coordinator:compileJava",
+        ":storage:compileJava",
+        ":storage:storage-api:compileJava",
+        ":tools:tools-api:compileJava",
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":tools:compileTestJava",
+      "projectPath": ":tools",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":clients:shadowJar",
+        ":connect:api:compileJava",
+        ":connect:json:compileJava",
+        ":connect:runtime:compileJava",
+        ":connect:runtime:compileTestFixturesJava",
+        ":connect:transforms:compileJava",
+        ":coordinator-common:compileJava",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":group-coordinator:compileJava",
+        ":metadata:compileJava",
+        ":raft:compileJava",
+        ":server-common:compileJava",
+        ":server-common:compileTestFixturesJava",
+        ":server:compileJava",
+        ":server:compileTestFixturesJava",
+        ":share-coordinator:compileJava",
+        ":storage:compileJava",
+        ":storage:compileTestFixturesJava",
+        ":storage:storage-api:compileJava",
+        ":streams:compileJava",
+        ":streams:compileTestFixturesJava",
+        ":test-common:test-common-internal-api:compileJava",
+        ":test-common:test-common-runtime:compileJava",
+        ":test-common:test-common-util:compileJava",
+        ":tools:classes",
+        ":tools:compileJava",
+        ":tools:tools-api:compileJava",
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":tools:processResources",
+      "projectPath": ":tools",
+      "dependsOn": []
+    },
+    {
+      "path": ":tools:processTestResources",
+      "projectPath": ":tools",
+      "dependsOn": []
+    },
+    {
+      "path": ":tools:testClasses",
+      "projectPath": ":tools",
+      "dependsOn": [
+        ":tools:compileTestJava",
+        ":tools:processTestResources"
+      ]
+    },
+    {
+      "path": ":tools:tools-api:classes",
+      "projectPath": ":tools:tools-api",
+      "dependsOn": [
+        ":tools:tools-api:compileJava",
+        ":tools:tools-api:processResources"
+      ]
+    },
+    {
+      "path": ":tools:tools-api:compileJava",
+      "projectPath": ":tools:tools-api",
+      "dependsOn": [
+        ":clients:compileJava"
+      ]
+    },
+    {
+      "path": ":tools:tools-api:compileTestJava",
+      "projectPath": ":tools:tools-api",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":tools:tools-api:classes",
+        ":tools:tools-api:compileJava"
+      ]
+    },
+    {
+      "path": ":tools:tools-api:processResources",
+      "projectPath": ":tools:tools-api",
+      "dependsOn": []
+    },
+    {
+      "path": ":tools:tools-api:processTestResources",
+      "projectPath": ":tools:tools-api",
+      "dependsOn": []
+    },
+    {
+      "path": ":tools:tools-api:testClasses",
+      "projectPath": ":tools:tools-api",
+      "dependsOn": [
+        ":tools:tools-api:compileTestJava",
+        ":tools:tools-api:processTestResources"
+      ]
+    },
+    {
+      "path": ":transaction-coordinator:classes",
+      "projectPath": ":transaction-coordinator",
+      "dependsOn": [
+        ":transaction-coordinator:compileJava",
+        ":transaction-coordinator:processResources"
+      ]
+    },
+    {
+      "path": ":transaction-coordinator:compileJava",
+      "projectPath": ":transaction-coordinator",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":coordinator-common:compileJava",
+        ":server-common:compileJava",
+        ":transaction-coordinator:processMessages"
+      ]
+    },
+    {
+      "path": ":transaction-coordinator:compileTestJava",
+      "projectPath": ":transaction-coordinator",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":coordinator-common:compileJava",
+        ":core:compileJava",
+        ":core:compileScala",
+        ":server-common:compileJava",
+        ":test-common:test-common-internal-api:compileJava",
+        ":test-common:test-common-runtime:compileJava",
+        ":transaction-coordinator:classes",
+        ":transaction-coordinator:compileJava"
+      ]
+    },
+    {
+      "path": ":transaction-coordinator:processMessages",
+      "projectPath": ":transaction-coordinator",
+      "dependsOn": [
+        ":generator:jar"
+      ]
+    },
+    {
+      "path": ":transaction-coordinator:processResources",
+      "projectPath": ":transaction-coordinator",
+      "dependsOn": []
+    },
+    {
+      "path": ":transaction-coordinator:processTestResources",
+      "projectPath": ":transaction-coordinator",
+      "dependsOn": []
+    },
+    {
+      "path": ":transaction-coordinator:testClasses",
+      "projectPath": ":transaction-coordinator",
+      "dependsOn": [
+        ":transaction-coordinator:compileTestJava",
+        ":transaction-coordinator:processTestResources"
+      ]
+    },
+    {
+      "path": ":trogdor:classes",
+      "projectPath": ":trogdor",
+      "dependsOn": [
+        ":trogdor:compileJava",
+        ":trogdor:processResources"
+      ]
+    },
+    {
+      "path": ":trogdor:compileJava",
+      "projectPath": ":trogdor",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":group-coordinator:compileJava",
+        ":group-coordinator:group-coordinator-api:compileJava"
+      ]
+    },
+    {
+      "path": ":trogdor:compileTestJava",
+      "projectPath": ":trogdor",
+      "dependsOn": [
+        ":clients:compileJava",
+        ":clients:compileTestFixturesJava",
+        ":group-coordinator:compileJava",
+        ":group-coordinator:group-coordinator-api:compileJava",
+        ":trogdor:classes",
+        ":trogdor:compileJava"
+      ]
+    },
+    {
+      "path": ":trogdor:processResources",
+      "projectPath": ":trogdor",
+      "dependsOn": []
+    },
+    {
+      "path": ":trogdor:processTestResources",
+      "projectPath": ":trogdor",
+      "dependsOn": []
+    },
+    {
+      "path": ":trogdor:testClasses",
+      "projectPath": ":trogdor",
+      "dependsOn": [
+        ":trogdor:compileTestJava",
+        ":trogdor:processTestResources"
+      ]
+    }
+  ],
+  "entrypoints": [
+    {
+      "name": "testClasses",
+      "reachesProjects": [
+        ":clients",
+        ":clients:clients-integration-tests",
+        ":connect",
+        ":connect:api",
+        ":connect:basic-auth-extension",
+        ":connect:file",
+        ":connect:json",
+        ":connect:mirror",
+        ":connect:mirror-client",
+        ":connect:runtime",
+        ":connect:test-plugins",
+        ":connect:transforms",
+        ":coordinator-common",
+        ":core",
+        ":examples",
+        ":generator",
+        ":group-coordinator",
+        ":group-coordinator:group-coordinator-api",
+        ":jmh-benchmarks",
+        ":metadata",
+        ":raft",
+        ":server",
+        ":server-common",
+        ":share-coordinator",
+        ":shell",
+        ":storage",
+        ":storage:storage-api",
+        ":streams",
+        ":streams:examples",
+        ":streams:integration-tests",
+        ":streams:streams-scala",
+        ":streams:test-utils",
+        ":streams:upgrade-system-tests-0110",
+        ":streams:upgrade-system-tests-10",
+        ":streams:upgrade-system-tests-11",
+        ":streams:upgrade-system-tests-20",
+        ":streams:upgrade-system-tests-21",
+        ":streams:upgrade-system-tests-22",
+        ":streams:upgrade-system-tests-23",
+        ":streams:upgrade-system-tests-24",
+        ":streams:upgrade-system-tests-25",
+        ":streams:upgrade-system-tests-26",
+        ":streams:upgrade-system-tests-27",
+        ":streams:upgrade-system-tests-28",
+        ":streams:upgrade-system-tests-30",
+        ":streams:upgrade-system-tests-31",
+        ":streams:upgrade-system-tests-32",
+        ":streams:upgrade-system-tests-33",
+        ":streams:upgrade-system-tests-34",
+        ":streams:upgrade-system-tests-35",
+        ":streams:upgrade-system-tests-36",
+        ":streams:upgrade-system-tests-37",
+        ":streams:upgrade-system-tests-38",
+        ":streams:upgrade-system-tests-39",
+        ":streams:upgrade-system-tests-40",
+        ":streams:upgrade-system-tests-41",
+        ":streams:upgrade-system-tests-42",
+        ":streams:upgrade-system-tests-43",
+        ":test-common",
+        ":test-common:test-common-internal-api",
+        ":test-common:test-common-runtime",
+        ":test-common:test-common-util",
+        ":tools",
+        ":tools:tools-api",
+        ":transaction-coordinator",
+        ":trogdor"
+      ],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    }
+  ]
+}

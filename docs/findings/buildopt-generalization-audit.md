@@ -291,6 +291,11 @@ starts and requires the real product to enter its candidate without state
 intervention. It passed: native/native/candidate and 4,440 byte-exact outputs,
 with zero timing samples and zero product failures.
 
+The subsequent full-path Kafka value run also passes: 8/8 positive exact pairs,
+19.09% mean saving, positive paired interval, improved candidate p95 and
+two-match payback after learning cost. This qualifies one exact naturally
+recurrent class; it does not establish cross-repository breadth.
+
 The later change-scoped candidate-correctness route also closes negatively,
 but before candidate execution. On the first exact Groovy revision the native
 build succeeded and discovery found the structural candidate; ordinary

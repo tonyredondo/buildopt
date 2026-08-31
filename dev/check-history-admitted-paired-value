@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+root=benchmarks/results/history-admitted-paired-value-v1/apache-kafka
+evidence=$root/state/calibration/evidence.json
+capture=$root/capture.json
+
+jq -e '
+  .observations as $pairs |
+  ($pairs|length)==8 and
+  [$pairs[].order]==["CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST"] and
+  all($pairs[]; .savedMs==(.controlDurationMs-.candidateDurationMs) and
+    .controlRequiredOutputSha256==.candidateRequiredOutputSha256 and
+    .requiredOutputCount==4440 and (.productAttributableFailure|not)) and
+  ([ $pairs[].controlDurationMs ]|add/8)==.result.controlMeanMs and
+  ([ $pairs[].candidateDurationMs ]|add/8)==.result.candidateMeanMs and
+  ([ $pairs[].savedMs ]|add/8)==.result.meanSavedMs and
+  .result.meanSavedMs==6866.125 and .result.reductionRatio>0.02 and
+  ([ $pairs[]|select(.savedMs>0) ]|length)==8 and
+  .result.interval95SavedMs[0]>0 and
+  ([ $pairs[].candidateDurationMs ]|max)<=([ $pairs[].controlDurationMs ]|max) and
+  .fallback.buildSuccessful and
+  (.boundaries.productionAuthorized|not) and
+  (.boundaries.repositorySpecificRuleAdded|not)
+' "$evidence" >/dev/null
+jq -e '
+  .ordinaryInvocations==17 and (.productFailure|not) and
+  .calibration.pairsMeasured==8 and .calibration.positivePairs==8 and
+  .calibration.meanSavedMs==6866.125 and
+  .calibration.reductionRatio==0.19092457420924575 and
+  .calibration.interval95SavedMs==[5717.25,8204.5] and
+  .calibration.candidateP95Ms<=.calibration.controlP95Ms and
+  .calibration.breakEvenBuilds==2 and .calibration.maximumBreakEvenBuilds==5 and
+  .incrementalLearning.ordinaryEconomics.projectedNetSavedMs==27088.625 and
+  .incrementalLearning.ordinaryEconomics.decision=="QUALIFICATION_READY"
+' "$capture" >/dev/null
+printf 'HAPV result OK: 8/8, 6866.125 ms (19.09%%), exact 4440 outputs, payback 2\n'

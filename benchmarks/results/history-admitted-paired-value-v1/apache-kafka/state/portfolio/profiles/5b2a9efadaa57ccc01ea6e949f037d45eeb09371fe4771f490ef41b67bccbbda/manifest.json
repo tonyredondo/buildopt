@@ -1,0 +1,477 @@
+{
+  "schemaVersion": "buildopt.build-impact/manifest/v1",
+  "manifestVersion": 1,
+  "repositoryId": "apache/kafka",
+  "pipelineClass": "auto-testclasses-1376268d",
+  "ownership": "REPOSITORY_COMMITTED",
+  "originalEntrypoints": [
+    "testClasses"
+  ],
+  "allowedAlternatives": [
+    {
+      "id": "changed-projects",
+      "entrypoints": [
+        ":clients:testClasses"
+      ]
+    }
+  ],
+  "requiredArtifacts": [
+    {
+      "id": "required-output-1",
+      "path": "clients/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-2",
+      "path": "clients/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-3",
+      "path": "clients/clients-integration-tests/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-4",
+      "path": "clients/clients-integration-tests/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-5",
+      "path": "connect/api/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-6",
+      "path": "connect/api/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-7",
+      "path": "connect/basic-auth-extension/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-8",
+      "path": "connect/file/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-9",
+      "path": "connect/file/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-10",
+      "path": "connect/json/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-11",
+      "path": "connect/json/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-12",
+      "path": "connect/mirror-client/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-13",
+      "path": "connect/mirror/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-14",
+      "path": "connect/mirror/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-15",
+      "path": "connect/runtime/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-16",
+      "path": "connect/runtime/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-17",
+      "path": "connect/transforms/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-18",
+      "path": "coordinator-common/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-19",
+      "path": "coordinator-common/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-20",
+      "path": "core/build/classes/scala/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-21",
+      "path": "core/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-22",
+      "path": "generator/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-23",
+      "path": "group-coordinator/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-24",
+      "path": "group-coordinator/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-25",
+      "path": "metadata/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-26",
+      "path": "metadata/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-27",
+      "path": "raft/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-28",
+      "path": "raft/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-29",
+      "path": "server-common/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-30",
+      "path": "server-common/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-31",
+      "path": "server/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-32",
+      "path": "server/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-33",
+      "path": "share-coordinator/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-34",
+      "path": "share-coordinator/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-35",
+      "path": "shell/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-36",
+      "path": "shell/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-37",
+      "path": "storage/api/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-38",
+      "path": "storage/api/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-39",
+      "path": "storage/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-40",
+      "path": "storage/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-41",
+      "path": "streams/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-42",
+      "path": "streams/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-43",
+      "path": "streams/examples/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-44",
+      "path": "streams/integration-tests/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-45",
+      "path": "streams/integration-tests/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-46",
+      "path": "streams/streams-scala/build/classes/scala/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-47",
+      "path": "streams/streams-scala/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-48",
+      "path": "streams/test-utils/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-49",
+      "path": "streams/test-utils/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-50",
+      "path": "streams/upgrade-system-tests-0110/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-51",
+      "path": "streams/upgrade-system-tests-10/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-52",
+      "path": "streams/upgrade-system-tests-11/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-53",
+      "path": "streams/upgrade-system-tests-20/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-54",
+      "path": "streams/upgrade-system-tests-21/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-55",
+      "path": "streams/upgrade-system-tests-22/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-56",
+      "path": "streams/upgrade-system-tests-23/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-57",
+      "path": "streams/upgrade-system-tests-24/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-58",
+      "path": "streams/upgrade-system-tests-25/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-59",
+      "path": "streams/upgrade-system-tests-26/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-60",
+      "path": "streams/upgrade-system-tests-27/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-61",
+      "path": "streams/upgrade-system-tests-28/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-62",
+      "path": "streams/upgrade-system-tests-30/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-63",
+      "path": "streams/upgrade-system-tests-31/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-64",
+      "path": "streams/upgrade-system-tests-32/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-65",
+      "path": "streams/upgrade-system-tests-33/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-66",
+      "path": "streams/upgrade-system-tests-34/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-67",
+      "path": "streams/upgrade-system-tests-35/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-68",
+      "path": "streams/upgrade-system-tests-36/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-69",
+      "path": "streams/upgrade-system-tests-37/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-70",
+      "path": "streams/upgrade-system-tests-38/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-71",
+      "path": "streams/upgrade-system-tests-39/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-72",
+      "path": "streams/upgrade-system-tests-40/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-73",
+      "path": "streams/upgrade-system-tests-41/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-74",
+      "path": "streams/upgrade-system-tests-42/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-75",
+      "path": "streams/upgrade-system-tests-43/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-76",
+      "path": "test-common/test-common-internal-api/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-77",
+      "path": "test-common/test-common-internal-api/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-78",
+      "path": "test-common/test-common-runtime/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-79",
+      "path": "test-common/test-common-runtime/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-80",
+      "path": "test-common/test-common-util/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-81",
+      "path": "test-common/test-common-util/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-82",
+      "path": "tools/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-83",
+      "path": "tools/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-84",
+      "path": "tools/tools-api/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-85",
+      "path": "tools/tools-api/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-86",
+      "path": "transaction-coordinator/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-87",
+      "path": "transaction-coordinator/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-88",
+      "path": "trogdor/build/classes/java/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    },
+    {
+      "id": "required-output-89",
+      "path": "trogdor/build/resources/test/**",
+      "owner": "BUILD_OPTIMIZATION"
+    }
+  ],
+  "requiredChecks": [],
+  "globalChangePaths": [
+    "build-logic/**",
+    "build.gradle",
+    "build.gradle.kts",
+    "buildSrc/**",
+    "gradle.properties",
+    "gradle/**",
+    "settings.gradle",
+    "settings.gradle.kts"
+  ],
+  "unknownChangePolicy": "FULL_GRAPH"
+}
