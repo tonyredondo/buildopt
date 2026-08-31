@@ -31,9 +31,9 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > source-only economic preflight can reject unlikely-to-repay opportunities
 > before discovery, calibration or materialization. The contract requires
 > chronological no-lookahead evidence, counts every incremental cost and keeps
-> the 3/5 net-positive-family product boundary. `EOF-001` is planning only; no
-> candidate build or fresh timing exists yet. A later block may collect one
-> optimized-native observation per source-admitted family before any candidate. See the
+> the 3/5 net-positive-family product boundary. The fresh `EOF-002` ledger is
+> 5/5 conclusive but reaches only 1/5 recurrence families, so native ceiling
+> observations, candidate builds and timing remain unauthorized. See the
 > [active tracker](./docs/plans/economic-opportunity-first-poc-tracker.md).
 
 > **Installed two-machine proof:** the committed `./buildoptw` command now

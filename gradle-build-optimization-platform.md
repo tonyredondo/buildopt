@@ -83,8 +83,9 @@ stop gates are defined in the
 [economic opportunity first specification](./specs/poc-economic-opportunity-first-v1.md)
 and [tracker](./docs/plans/economic-opportunity-first-poc-tracker.md).
 Closed experiments may motivate the model but cannot supply a fresh evidence
-row. `EOF-001` is planning only; candidate builds and timing remain
-unauthorized until the source-ledger gate passes.
+row. The `EOF-002` source ledger is now 5/5 conclusive but only 1/5 families
+reach the frozen recurrence threshold. Native ceiling observations, candidate
+builds and timing are not authorized; terminal `EOF-006` is next.
 
 The successor POC onboarding north star is one repository-committed wrapper
 and one repeated command:

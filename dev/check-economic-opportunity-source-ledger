@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if (($# > 1)); then
+    printf 'usage: %s [HISTORY_ROOT]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_report=benchmarks/results/economic-opportunity-first-v1/source-recurrence-ledger.json
+buildopt_contract=specs/poc-economic-opportunity-first-v1.json
+buildopt_subjects=specs/poc-economic-opportunity-first-v1.subjects.json
+buildopt_config=specs/poc-economic-opportunity-first-v1.ledger.json
+
+for buildopt_file in "${buildopt_report}" "${buildopt_contract}" "${buildopt_subjects}" "${buildopt_config}"; do
+    test -f "${buildopt_file}" || {
+        printf 'missing EOF-002 input: %s\n' "${buildopt_file}" >&2
+        exit 1
+    }
+done
+
+buildopt_contract_sha=$(sha256sum "${buildopt_contract}" | awk '{print $1}')
+buildopt_subjects_sha=$(sha256sum "${buildopt_subjects}" | awk '{print $1}')
+buildopt_config_sha=$(sha256sum "${buildopt_config}" | awk '{print $1}')
+
+jq -e --arg contract_sha "${buildopt_contract_sha}" \
+    --arg subjects_sha "${buildopt_subjects_sha}" \
+    --arg config_sha "${buildopt_config_sha}" '
+  . as $report |
+  .schemaVersion == "buildopt.evidence/economic-opportunity-source-ledger/v1" and
+  .workItem == "EOF-002" and
+  .contractSha256 == $contract_sha and
+  .subjectsSha256 == $subjects_sha and
+  .configSha256 == $config_sha and
+  (.families | length) == 5 and
+  (.rows | length) == 320 and
+  ([.rows[].family] | unique | length) == 5 and
+  all(.rows[];
+    (.sequence >= 1 and .sequence <= 64) and
+    (.revision | test("^[0-9a-f]{40}$")) and
+    (.parentRevision | test("^[0-9a-f]{40}$")) and
+    (.changedPathSha256 | test("^[0-9a-f]{64}$")) and
+    (.sourceFactsSha256 | test("^[0-9a-f]{64}$")) and
+    (.workflowSha256 | test("^[0-9a-f]{64}$")) and
+    (.featureSha256 | test("^[0-9a-f]{64}$")) and
+    (.changeClass | IN("OWNER_ONLY", "GLOBAL_OR_BUILD_LOGIC", "MIXED_OWNER_BOUNDARY", "OUTSIDE_OWNER", "INCOMPLETE")) and
+    (.decision | IN("ADMIT_NATIVE_CEILING_PROBE", "REJECT_INCOMPLETE_OR_AMBIGUOUS", "NO_ACTION"))
+  ) and
+  all(.families[];
+    . as $family |
+    ([$report.rows[] | select(.family == $family.key)] | length) == 64 and
+    ([$report.rows[] | select(.family == $family.key) | .sequence] | sort) == [range(1; 65)] and
+    ([$report.rows[] | select(.family == $family.key and .changeClass == "OWNER_ONLY")] | length) == $family.compatibleMatches and
+    ([$report.rows[] | select(.family == $family.key and .changeClass == "GLOBAL_OR_BUILD_LOGIC")] | length) == $family.globalChanges and
+    ([$report.rows[] | select(.family == $family.key and .changeClass == "MIXED_OWNER_BOUNDARY")] | length) == $family.mixedChanges and
+    ([$report.rows[] | select(.family == $family.key and .changeClass == "OUTSIDE_OWNER")] | length) == $family.outsideOwnerChanges and
+    ($family.conclusive == true) and
+    (if $family.compatibleMatches >= 5
+      then $family.decision == "ADMIT_NATIVE_CEILING_PROBE" and $family.reason == "SOURCE_RECURRENCE_THRESHOLD_MET"
+      else $family.decision == "REJECT_INSUFFICIENT_RECURRENCE" and $family.reason == "SOURCE_RECURRENCE_BELOW_FIVE_MATCHES"
+    end)
+  ) and
+  ([.families[] | select(.conclusive)] | length) == .gate.conclusiveFamilies and
+  ([.families[] | select(.decision == "ADMIT_NATIVE_CEILING_PROBE")] | length) == .gate.nativeCeilingProbeFamilies and
+  .gate == {
+    conclusiveFamilies: 5,
+    requiredConclusiveFamilies: 5,
+    nativeCeilingProbeFamilies: 1,
+    requiredNativeCeilingProbeFamilies: 3,
+    decision: "STOP_INSUFFICIENT_SOURCE_RECURRENCE_BREADTH",
+    eof003Authorized: false,
+    candidateBuildAuthorized: false,
+    timingAuthorized: false
+  } and
+  .sideEffects.gradleStarts == 0 and
+  .sideEffects.candidateBuilds == 0 and
+  .sideEffects.timingSamples == 0 and
+  .sideEffects.publicSourceWrites == 0 and
+  .boundaries == {
+    predecessorEvidenceRowsConsumed: false,
+    repositoryOrTaskNameRules: false,
+    performanceClaimed: false,
+    testOptimization: "OUT_OF_SCOPE"
+  }
+' "${buildopt_report}" >/dev/null
+
+if rg -q 'poc-lifetime-breadth|qualified-lifetime|adaptive-fragment|durable-native|normalization-aware' \
+    "${buildopt_report}"; then
+    printf 'EOF-002 report contains a forbidden predecessor evidence reference\n' >&2
+    exit 1
+fi
+
+if (($# == 1)); then
+    buildopt_tmp=$(mktemp -d)
+    trap 'rm -rf -- "${buildopt_tmp}"' EXIT
+    ./dev/run --toolchain go -- go run ./cmd/economic-opportunity-ledger \
+        --history-root "$1" \
+        --output "${buildopt_tmp}/source-recurrence-ledger.json"
+    cmp -s "${buildopt_report}" "${buildopt_tmp}/source-recurrence-ledger.json" || {
+        printf 'EOF-002 checked ledger differs from fresh Git/source reconstruction\n' >&2
+        exit 1
+    }
+fi
+
+printf 'EOF-002 source ledger OK: 5/5 conclusive, 1/5 recurrence; EOF-003 not authorized\n'

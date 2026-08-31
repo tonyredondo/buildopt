@@ -14,8 +14,8 @@ jq -e '
   .objective == "PROVE_ECONOMIC_FIRST_GENERIC_BUILD_OPTIMIZATION" and
   .baseline == "OPTIMIZED_NATIVE_GRADLE" and
   .status == {
-    currentBlock: "EOF-002",
-    completedBlocks: ["EOF-001"],
+    currentBlock: "EOF-006",
+    completedBlocks: ["EOF-001", "EOF-002"],
     candidateBuildAuthorized: false,
     timingAuthorized: false
   } and
@@ -36,11 +36,12 @@ jq -e '
   .economics.maximumPaybackMatches == 5 and
   .economics.unknownValue == "UNAVAILABLE_NOT_ZERO" and
   .economics.allIncrementalCostsIncluded == true and
-  .gates.sourceLedger == {
-    conclusiveFamilies: 5,
-    minimumNativeCeilingProbeFamilies: 3,
-    candidateBuildAllowedBeforePass: false
-  } and
+  .gates.sourceLedger.conclusiveFamilies == 5 and
+  .gates.sourceLedger.minimumNativeCeilingProbeFamilies == 3 and
+  .gates.sourceLedger.candidateBuildAllowedBeforePass == false and
+  .gates.sourceLedger.observedConclusiveFamilies == 5 and
+  .gates.sourceLedger.observedNativeCeilingProbeFamilies == 1 and
+  .gates.sourceLedger.decision == "STOP_INSUFFICIENT_SOURCE_RECURRENCE_BREADTH" and
   .gates.preflight.maximumDecisionMs == 500 and
   .gates.preflight.maximumP95Ms == 1000 and
   .gates.preflight.noLookahead == true and
@@ -58,6 +59,7 @@ jq -e '
   .gates.installedValue.minimumNetPositiveFamilies == 3 and
   .gates.installedValue.positiveSignedPortfolioMs == true and
   .blocks == ["EOF-001", "EOF-002", "EOF-003", "EOF-004", "EOF-005", "EOF-006"] and
+  .blockedBlocks == ["EOF-003", "EOF-004", "EOF-005"] and
   .measurement.hostedCiOwnsWallTimeGate == false and
   .measurement.predecessorTimingsReusable == false and
   .boundaries.publicSourcePatchAuthorized == false and
@@ -81,13 +83,14 @@ jq -e '
 ' specs/poc-economic-opportunity-first-v1.subjects.json >/dev/null
 
 grep -Fq '**Status:** active' docs/plans/economic-opportunity-first-poc-tracker.md
-grep -Fq "**Current block:** \`EOF-002\`" docs/plans/economic-opportunity-first-poc-tracker.md
+grep -Fq "**Current block:** \`EOF-006\`" docs/plans/economic-opportunity-first-poc-tracker.md
 grep -Eq "\`EOF-001\`.*\`DONE\`" docs/plans/economic-opportunity-first-poc-tracker.md
-grep -Eq "\`EOF-002\`.*\`TODO\`" docs/plans/economic-opportunity-first-poc-tracker.md
-for block in EOF-003 EOF-004 EOF-005 EOF-006; do
-    grep -Eq "\`${block}\`.*\`WAITING\`" docs/plans/economic-opportunity-first-poc-tracker.md
+grep -Eq "\`EOF-002\`.*\`DONE_STOP\`" docs/plans/economic-opportunity-first-poc-tracker.md
+for block in EOF-003 EOF-004 EOF-005; do
+    grep -Eq "\`${block}\`.*\`NOT_AUTHORIZED\`" docs/plans/economic-opportunity-first-poc-tracker.md
 done
-grep -Fq 'No candidate Gradle build, fresh' benchmarks/results/economic-opportunity-first-v1/README.md
+grep -Eq "\`EOF-006\`.*\`TODO\`" docs/plans/economic-opportunity-first-poc-tracker.md
+grep -Fq '320 fresh' benchmarks/results/economic-opportunity-first-v1/README.md
 grep -Fq 'STOP_NORMALIZATION_AWARE_CACHEABILITY_POC' benchmarks/results/normalization-aware-cacheability-v2/terminal-decision.json
 
-printf 'EOF contract OK: planning frozen; source ledger next; builds and timing unauthorized\n'
+printf 'EOF contract OK: source recurrence stopped 1/5; terminal scorecard next\n'

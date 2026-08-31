@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "buildopt.specs/poc-economic-opportunity-first-ledger/v1",
+  "historyWindow": 64,
+  "minimumCompatibleMatches": 5,
+  "globalPathPatterns": [
+    "buildSrc/",
+    "gradle/",
+    "build.gradle",
+    "build.gradle.kts",
+    "settings.gradle",
+    "settings.gradle.kts",
+    "gradlew",
+    "gradlew.bat"
+  ],
+  "families": [
+    {
+      "key": "apache-groovy",
+      "entrypoints": ["classes"],
+      "toolchain": "temurin-jdk-21",
+      "ownerRoots": ["subprojects/groovy-json/"]
+    },
+    {
+      "key": "apache-kafka",
+      "entrypoints": ["testClasses"],
+      "toolchain": "temurin-jdk-25",
+      "ownerRoots": ["clients/"]
+    },
+    {
+      "key": "micronaut-core",
+      "entrypoints": ["assemble"],
+      "toolchain": "temurin-jdk-25",
+      "ownerRoots": ["http-client-jdk/"]
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "entrypointsFile": "specs/poc-otel-spring-family-v2.tasks.txt",
+      "toolchain": "temurin-jdk-21",
+      "ownerRoots": ["instrumentation/spring/spring-boot-autoconfigure/"]
+    },
+    {
+      "key": "spring-framework",
+      "entrypoints": ["testClasses"],
+      "toolchain": "temurin-jdk-25",
+      "ownerRoots": ["spring-jms/"]
+    }
+  ]
+}

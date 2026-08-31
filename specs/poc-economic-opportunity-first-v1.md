@@ -1,6 +1,7 @@
 # Economic Opportunity First POC v1
 
-Status: active at `EOF-002`; `EOF-001` freezes planning authority only.
+Status: active at terminal `EOF-006`. `EOF-002` stopped at 1/5 recurrence
+families versus the frozen 3/5 gate; `EOF-003..005` are not authorized.
 
 ## Hypothesis
 
@@ -130,4 +131,16 @@ Thresholds do not move after evidence is observed.
 
 ```bash
 ./dev/check-economic-opportunity-first
+./dev/check-economic-opportunity-source-ledger
 ```
+
+## Current resolution
+
+The fresh source-only ledger reconstructs 64 first-parent commits per family,
+320 rows total, without Gradle or predecessor evidence rows. All five histories
+are conclusive. Kafka has eleven owner-only recurring changes and passes the
+five-match threshold; Spring has three, while Groovy, Micronaut and
+OpenTelemetry have zero. The 1/5 probe breadth misses the required 3/5, so
+`EOF-003`, `EOF-004` and `EOF-005` are `NOT_AUTHORIZED`. No native ceiling
+observation, candidate build, timing sample or speedup exists. `EOF-006` is
+open only to issue the terminal scorecard and next recommendation.

@@ -1,7 +1,7 @@
 # Economic Opportunity First POC Tracker
 
 **Status:** active<br>
-**Current block:** `EOF-002` — fresh chronological source ledger<br>
+**Current block:** `EOF-006` — terminal scorecard only<br>
 **Terminal outcomes:** `CONTINUE_ECONOMIC_OPPORTUNITY_FIRST_POC` or
 `STOP_ECONOMIC_OPPORTUNITY_FIRST_POC`
 
@@ -28,11 +28,11 @@ already plausible. Optimized native Gradle remains the control and fallback.
 | Block | Deliverable | Entry gate | Exit gate | State |
 | --- | --- | --- | --- | --- |
 | `EOF-001` | Human/machine contract, exact cohort, formulas, budgets, authority, checker and documentation ledger | User-authorized successor analysis after closed NAC v2 | Contract and indexes pass without candidate builds or new timing | `DONE` |
-| `EOF-002` | Fresh chronological source-only recurrence ledger | EOF-001 | 5/5 conclusive families and at least 3/5 `ADMIT_NATIVE_CEILING_PROBE`; predecessor reports supply no row and no Gradle build runs | `TODO` |
-| `EOF-003` | Versioned deterministic economic preflight plus fresh optimized-native ceiling observation | EOF-002 | Replay, no-lookahead, name invariance and source-drift negatives pass within budget; at least 3/5 planning opportunities are positive before a candidate | `WAITING` |
-| `EOF-004` | One minimal exact-output pair per admitted family | EOF-003 | Positive lower bound, exact outputs, native fallback and zero product failures in at least 3/5 families | `WAITING` |
-| `EOF-005` | Installed ordinary-build chronological campaign | EOF-004 | At least twenty later commits per admitted family; 3/5 net positive, signed portfolio positive and finite payback | `WAITING` |
-| `EOF-006` | Installed explanation and terminal scorecard | EOF-005 or first failed prerequisite | Truthful terminal decision with unavailable fields preserved | `WAITING` |
+| `EOF-002` | Fresh chronological source-only recurrence ledger | EOF-001 | 5/5 conclusive families and at least 3/5 `ADMIT_NATIVE_CEILING_PROBE`; predecessor reports supply no row and no Gradle build runs | `DONE_STOP` — 5/5 conclusive, 1/5 probe families |
+| `EOF-003` | Versioned deterministic economic preflight plus fresh optimized-native ceiling observation | EOF-002 | Replay, no-lookahead, name invariance and source-drift negatives pass within budget; at least 3/5 planning opportunities are positive before a candidate | `NOT_AUTHORIZED` |
+| `EOF-004` | One minimal exact-output pair per admitted family | EOF-003 | Positive lower bound, exact outputs, native fallback and zero product failures in at least 3/5 families | `NOT_AUTHORIZED` |
+| `EOF-005` | Installed ordinary-build chronological campaign | EOF-004 | At least twenty later commits per admitted family; 3/5 net positive, signed portfolio positive and finite payback | `NOT_AUTHORIZED` |
+| `EOF-006` | Installed explanation and terminal scorecard | EOF-005 or first failed prerequisite | Truthful terminal decision with unavailable fields preserved | `TODO` — scorecard only |
 
 ## Evidence schema required next
 
@@ -65,6 +65,25 @@ production, automatic merge, soak, design partners or Test Optimization.
 - fewer than three positive minimal proofs; or
 - fewer than three net-positive installed families or non-positive signed
   portfolio value.
+
+## EOF-002 result
+
+The checked ledger contains 320 fresh rows: 64 chronological commits for each
+frozen family. All source bindings, parents, changed-path digests, workflow
+digests and feature digests are present; Gradle starts, candidate builds,
+timing samples, public-source writes and predecessor evidence inputs are zero.
+
+| Family | Owner-only matches | Decision |
+| --- | ---: | --- |
+| Apache Kafka | 11 | `ADMIT_NATIVE_CEILING_PROBE` |
+| Spring Framework | 3 | `REJECT_INSUFFICIENT_RECURRENCE` |
+| Apache Groovy | 0 | `REJECT_INSUFFICIENT_RECURRENCE` |
+| Micronaut Core | 0 | `REJECT_INSUFFICIENT_RECURRENCE` |
+| OpenTelemetry Java Instrumentation | 0 | `REJECT_INSUFFICIENT_RECURRENCE` |
+
+The frozen gate requires three probe families. At 1/5, `EOF-003..005` are
+closed as `NOT_AUTHORIZED`; the sole open work is the truthful terminal
+scorecard in `EOF-006`.
 
 ## Documentation ledger
 

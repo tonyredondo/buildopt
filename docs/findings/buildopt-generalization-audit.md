@@ -17,9 +17,9 @@ The active [economic opportunity first route](../plans/economic-opportunity-firs
 tests the common economic failure directly. It freezes chronological
 no-lookahead source facts, a 500-ms decision budget, complete signed cost
 accounting and a five-compatible-match payback ceiling before any candidate
-build. `EOF-001` creates no performance evidence; `EOF-002` must independently
-reach 5/5 conclusive and 3/5 recurrence candidates or stop before native
-planning observations.
+build. The fresh `EOF-002` ledger reconstructs 320 rows and 5/5 conclusive
+families, but only Kafka reaches five owner-only matches. At 1/5 versus 3/5,
+the route stops before native planning observations or candidate execution.
 
 That decision stopped the whole-profile hypothesis, not the bounded mechanisms
 that worked. The subsequent

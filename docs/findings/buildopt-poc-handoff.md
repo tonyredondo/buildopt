@@ -30,13 +30,11 @@ chronological source-only preflight that must reject opportunities unable to
 repay every incremental selection, qualification, materialization and native-
 retention cost within five compatible matches. Prior experiments may motivate
 features but cannot supply an EOF row; future commits, repository names and
-task names cannot affect classification. `EOF-002` must produce 5/5 conclusive
-families and at least 3/5 native-ceiling probes without running Gradle. `EOF-003`
-may then record one optimized-native observation per admitted family; only
-three positive planning opportunities authorize a candidate. Product viability
-still requires 3/5 net-positive families, positive signed portfolio value,
-exact outputs and zero product failures. No EOF candidate, timing pair or
-speedup exists yet.
+task names cannot affect classification. `EOF-002` now reconstructs 320 fresh
+rows and all five families conclusively, but only Kafka reaches the five-match
+recurrence threshold. The 1/5 result misses the frozen 3/5 gate, so
+`EOF-003..005` are not authorized. No native ceiling observation, candidate,
+timing pair or speedup exists; `EOF-006` is next only for the terminal scorecard.
 
 The latest closed route is `NORMALIZATION_AWARE_CACHEABILITY_V2`. It tested whether
 BuildOpt can turn generic source evidence into an owner-reviewed, exactly

@@ -21,8 +21,15 @@ budgets and no-build authority boundary with:
 ./dev/check-economic-opportunity-first
 ```
 
-`EOF-001` is planning only. The checker does not run Gradle or create timing
-evidence; `EOF-002` is the next source-only block.
+Validate the checked `EOF-002` ledger statically, or reconstruct all 320 rows
+from five local Git histories, with:
+
+```bash
+./dev/check-economic-opportunity-source-ledger [HISTORY_ROOT]
+```
+
+The result is 5/5 conclusive and 1/5 recurrence families versus required 3/5.
+It starts no Gradle build and leaves only terminal `EOF-006` open.
 
 Validate the closed fresh-evidence route, its forbidden historical inputs,
 typed completeness outcomes and exact next block with:

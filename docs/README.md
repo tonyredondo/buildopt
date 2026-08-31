@@ -66,8 +66,8 @@ before running the product.
 ### Plans
 
 - [Economic Opportunity First POC Tracker](./plans/economic-opportunity-first-poc-tracker.md):
-  the active six-block route that rejects economically implausible work from
-  chronological source facts before authorizing a minimal candidate proof.
+  the active terminal route whose source ledger stopped at 1/5 recurrence
+  families; native ceiling observations and candidate timing were not authorized.
 - [Normalization-Aware Cacheability POC Tracker](./plans/normalization-aware-cacheability-poc-tracker.md):
   the closed seven-block route that separates already-normalized marker-only
   actions from reviewed relative-path normalization, then repeats fresh breadth,
