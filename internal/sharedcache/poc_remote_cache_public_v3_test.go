@@ -24,13 +24,14 @@ import (
 )
 
 type rcl3PublicSubject struct {
-	Family        string   `json:"family"`
-	Revision      string   `json:"revision"`
-	Checkout      string   `json:"checkout"`
-	Workflow      []string `json:"workflow"`
-	OutputInclude string   `json:"outputInclude"`
-	OutputExclude []string `json:"outputExclude"`
-	InitScript    string   `json:"initScript"`
+	Family            string   `json:"family"`
+	Revision          string   `json:"revision"`
+	Checkout          string   `json:"checkout"`
+	Workflow          []string `json:"workflow"`
+	OutputInclude     string   `json:"outputInclude"`
+	OutputExclude     []string `json:"outputExclude"`
+	InitScript        string   `json:"initScript"`
+	JavaInstallations string   `json:"javaInstallations"`
 }
 
 type rcl3PublicBuild struct {
@@ -222,13 +223,14 @@ func runRCL3PublicGradle(t *testing.T, subject rcl3PublicSubject, home, remoteUR
 	t.Logf("%s: clean then build (cache=%t push=%t)", subject.Family, buildCache, push)
 	prepareRCL3GradleHome(t, home)
 	gradle := filepath.Join(subject.Checkout, "gradlew")
-	clean := exec.Command(gradle, "--no-daemon", "--no-build-cache", "--no-configuration-cache", "--console=plain", "--max-workers=4", "clean")
+	toolchains := "-Dorg.gradle.java.installations.paths=" + subject.JavaInstallations
+	clean := exec.Command(gradle, toolchains, "--no-daemon", "--no-build-cache", "--no-configuration-cache", "--console=plain", "--max-workers=4", "clean")
 	clean.Dir = subject.Checkout
 	clean.Env = append(os.Environ(), "GRADLE_USER_HOME="+home)
 	if output, err := clean.CombinedOutput(); err != nil {
 		t.Fatalf("%s clean failed: %v\n%s", subject.Family, err, output)
 	}
-	args := []string{"--no-daemon", "--no-configuration-cache", "--console=plain", "--max-workers=4"}
+	args := []string{toolchains, "--no-daemon", "--no-configuration-cache", "--console=plain", "--max-workers=4"}
 	if buildCache {
 		args = append(args, "--build-cache", "--init-script", subject.InitScript)
 	} else {

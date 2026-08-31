@@ -20,8 +20,17 @@ fi
 buildopt_checkout=$(realpath "${buildopt_checkout}")
 buildopt_result=$(realpath -m "${buildopt_result}")
 buildopt_subjects=specs/poc-remote-cache-locality-value-v3.subjects.json
-buildopt_java_sha=$(jq -r '.artifacts[]|select(.id=="temurin-jdk-21")|.sha256' dev/toolchains.lock.yaml)
-buildopt_java_home="$(pwd)/.tools/toolchains/temurin-jdk-21-${buildopt_java_sha:0:16}"
+buildopt_java_home=
+buildopt_java_installations=
+for buildopt_java_id in temurin-jdk-17 temurin-jdk-21 temurin-jdk-25; do
+    buildopt_java_sha=$(jq -r --arg id "${buildopt_java_id}" '.artifacts[]|select(.id==$id)|.sha256' dev/toolchains.lock.yaml)
+    buildopt_java_path="$(pwd)/.tools/toolchains/${buildopt_java_id}-${buildopt_java_sha:0:16}"
+    [[ -x "${buildopt_java_path}/bin/java" ]]
+    buildopt_java_installations+="${buildopt_java_installations:+,}${buildopt_java_path}"
+    if [[ "${buildopt_java_id}" == temurin-jdk-21 ]]; then
+        buildopt_java_home=${buildopt_java_path}
+    fi
+done
 [[ -x "${buildopt_java_home}/bin/java" ]]
 export JAVA_HOME=${buildopt_java_home}
 export PATH="${JAVA_HOME}/bin:${PATH}"
@@ -29,7 +38,8 @@ buildopt_subject=$(jq -ce --arg family "${buildopt_family}" --arg checkout "${bu
   .families[] | select(.key==$family) |
   {family:.key,revision,checkout:$checkout,workflow,
    outputInclude:.primaryOutput.include,outputExclude:.primaryOutput.exclude,
-   initScript:("'"$(pwd)"'/dev/remote-cache-locality.init.gradle")}
+   initScript:("'"$(pwd)"'/dev/remote-cache-locality.init.gradle"),
+   javaInstallations:"'"${buildopt_java_installations}"'"}
 ' "${buildopt_subjects}")
 if [[ -z "${buildopt_subject}" ]]; then
     printf 'unknown RCL3 family: %s\n' "${buildopt_family}" >&2
