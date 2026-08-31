@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "buildopt.evidence/change-scoped-candidate-correctness/v1",
+  "family": "apache-kafka",
+  "targetRevision": "2e961afeff5cb27d60767a783edf20be00cc28e8",
+  "buildoptExecutableSha256": "f15d13dafbd5887a61f89638ef2fd4bd2a2df38417c144806edf5930983b9c84",
+  "discovery": {
+    "path": "benchmarks/results/change-scoped-critical-path-native-classification-v1.json",
+    "sha256": "64ad3a506d4b5c66077235daed574e095044c91f9705687177f40674132679d5"
+  },
+  "candidateEntrypoints": [
+    ":clients:testClasses"
+  ],
+  "invocations": {
+    "count": 3,
+    "modes": [
+      "OPTIMIZED_NATIVE",
+      "OPTIMIZED_NATIVE",
+      "INCREMENTAL_CANDIDATE"
+    ],
+    "gradleStarts": 3,
+    "candidateBuilds": 1,
+    "timingSamples": 0
+  },
+  "outputs": {
+    "nativeManifest": {
+      "path": "benchmarks/results/change-scoped-critical-path-native-capture-v1/apache-kafka/outputs.tsv",
+      "sha256": "38b69fe6430981b464a6475fdba9db92ae658ec926242f9ca9e6114c02a339f6"
+    },
+    "candidateManifest": {
+      "path": "candidate-outputs.tsv",
+      "sha256": "38b69fe6430981b464a6475fdba9db92ae658ec926242f9ca9e6114c02a339f6"
+    },
+    "count": 4440,
+    "identical": true
+  },
+  "resourceEnvelope": {
+    "freeBytesBefore": 25245159424,
+    "maximumWorkers": 12,
+    "timeoutMinutesPerInvocation": 30
+  },
+  "publicSourceModified": false,
+  "productFailures": 0,
+  "timingAuthorized": false
+}

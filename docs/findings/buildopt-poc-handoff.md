@@ -25,12 +25,13 @@ decision.
 
 ## Current experiment status
 
-`HISTORY_ADMITTED_CANDIDATE_CORRECTNESS_V1` is active. It corrects the
+`HISTORY_ADMITTED_CANDIDATE_CORRECTNESS_V1` is complete. It corrected the
 predecessor's ordering error by selecting only the exact Kafka row whose bound
 history reported twelve compatible matches, above the product's five-match
 economic gate. The prior capture selects the row but supplies no result. The
-new route permits three fresh Gradle starts, expects native/native/candidate,
-requires byte-exact outputs and forbids state forgery and timing.
+fresh route ran native/native/candidate and reproduced all 4,440 required
+outputs exactly with zero product failures. No timing sample exists. This
+authorizes only a separately frozen paired-value contract.
 
 The latest route stops as `STOP_CHANGE_SCOPED_CANDIDATE_CORRECTNESS`.
 Its first Groovy optimized-native invocation succeeded, but the current

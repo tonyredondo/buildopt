@@ -1,7 +1,7 @@
 {
   "schemaVersion": "buildopt.specs/poc-history-admitted-candidate-correctness/v1",
   "workItem": "HACC",
-  "status": {"currentBlock":"HACC-002","completedBlocks":["HACC-001"],"timingAuthorized":false},
+  "status": {"currentBlock":"HACC-004","completedBlocks":["HACC-001","HACC-002","HACC-003","HACC-004"],"decision":"AUTHORIZE_HISTORY_ADMITTED_PAIRED_VALUE_CONTRACT","timingAuthorized":false},
   "subject": {
     "family": "apache-kafka",
     "targetRevision": "2e961afeff5cb27d60767a783edf20be00cc28e8",

@@ -270,6 +270,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-change-scoped-candidate-correctness-contract" >/dev/null
         "${buildopt_script_dir}/check-change-scoped-candidate-correctness" >/dev/null
         "${buildopt_script_dir}/check-history-admitted-candidate-correctness-contract" >/dev/null
+        "${buildopt_script_dir}/check-history-admitted-candidate-correctness" >/dev/null
         "${buildopt_script_dir}/check-remote-cache-locality-harness-v3" >/dev/null
         "${buildopt_script_dir}/check-remote-cache-locality-v3-public-correctness" >/dev/null
         "${buildopt_script_dir}/check-remote-cache-locality-v3-paired-value" >/dev/null

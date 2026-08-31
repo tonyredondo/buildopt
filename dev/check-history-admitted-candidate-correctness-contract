@@ -5,7 +5,8 @@ cd "$(dirname "$0")/.."
 contract=specs/poc-history-admitted-candidate-correctness-v1.json
 jq -e '
   .schemaVersion=="buildopt.specs/poc-history-admitted-candidate-correctness/v1" and
-  .status.currentBlock=="HACC-002" and .status.completedBlocks==["HACC-001"] and
+  .status.currentBlock=="HACC-004" and
+  .status.decision=="AUTHORIZE_HISTORY_ADMITTED_PAIRED_VALUE_CONTRACT" and
   .subject.family=="apache-kafka" and
   .subject.targetRevision=="2e961afeff5cb27d60767a783edf20be00cc28e8" and
   .subject.changeFamily=="DEPENDENCY_SOURCE" and .subject.changedProjects==[":clients"] and

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+root=benchmarks/results/history-admitted-candidate-correctness-v1/apache-kafka
+jq -e '
+  .family=="apache-kafka" and
+  .targetRevision=="2e961afeff5cb27d60767a783edf20be00cc28e8" and
+  .candidateEntrypoints==[":clients:testClasses"] and
+  .invocations=={count:3,modes:["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"],gradleStarts:3,candidateBuilds:1,timingSamples:0} and
+  .outputs.count==4440 and .outputs.identical and
+  .outputs.nativeManifest.sha256==.outputs.candidateManifest.sha256 and
+  (.publicSourceModified|not) and .productFailures==0 and (.timingAuthorized|not)
+' "$root/correctness.json" >/dev/null
+for sequence in 01 02 03; do
+  expected=OPTIMIZED_NATIVE
+  [[ $sequence == 03 ]] && expected=INCREMENTAL_CANDIDATE
+  jq -e --arg expected "$expected" '
+    .execution.mode==$expected and .execution.started and .execution.exitCode==0 and
+    .incrementalLearning.ordinaryEconomics.historicalCompatibleMatches==12
+  ' "$root/invocation-$sequence.json" >/dev/null
+done
+[[ $(sha256sum "$root/candidate-outputs.tsv" | awk '{print $1}') == \
+  $(jq -r '.outputs.candidateManifest.sha256' "$root/correctness.json") ]]
+printf 'HACC result OK: Kafka candidate reproduced 4440 outputs exactly; timing unauthorized\n'
