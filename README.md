@@ -33,8 +33,10 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > chronological no-lookahead evidence, counts every incremental cost and keeps
 > the 3/5 net-positive-family product boundary. The fresh `EOF-002` ledger is
 > 5/5 conclusive but reaches only 1/5 recurrence families, so native ceiling
-> observations, candidate builds and timing remain unauthorized. See the
-> [active tracker](./docs/plans/economic-opportunity-first-poc-tracker.md).
+> observations, candidate builds and timing were not authorized. Terminal
+> `EOF-006` closes the route without a speedup or successor claim and recommends
+> a separately preregistered equal-opportunity cache-locality test. See the
+> [closed tracker](./docs/plans/economic-opportunity-first-poc-tracker.md).
 
 > **Installed two-machine proof:** the committed `./buildoptw` command now
 > bootstraps one SHA-verified archive on isolated producer and consumer

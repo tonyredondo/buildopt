@@ -1,7 +1,7 @@
 # Economic Opportunity First POC Tracker
 
-**Status:** active<br>
-**Current block:** `EOF-006` — terminal scorecard only<br>
+**Status:** closed — `STOP_ECONOMIC_OPPORTUNITY_FIRST_POC`<br>
+**Current block:** none; all six blocks are resolved<br>
 **Terminal outcomes:** `CONTINUE_ECONOMIC_OPPORTUNITY_FIRST_POC` or
 `STOP_ECONOMIC_OPPORTUNITY_FIRST_POC`
 
@@ -32,7 +32,7 @@ already plausible. Optimized native Gradle remains the control and fallback.
 | `EOF-003` | Versioned deterministic economic preflight plus fresh optimized-native ceiling observation | EOF-002 | Replay, no-lookahead, name invariance and source-drift negatives pass within budget; at least 3/5 planning opportunities are positive before a candidate | `NOT_AUTHORIZED` |
 | `EOF-004` | One minimal exact-output pair per admitted family | EOF-003 | Positive lower bound, exact outputs, native fallback and zero product failures in at least 3/5 families | `NOT_AUTHORIZED` |
 | `EOF-005` | Installed ordinary-build chronological campaign | EOF-004 | At least twenty later commits per admitted family; 3/5 net positive, signed portfolio positive and finite payback | `NOT_AUTHORIZED` |
-| `EOF-006` | Installed explanation and terminal scorecard | EOF-005 or first failed prerequisite | Truthful terminal decision with unavailable fields preserved | `TODO` — scorecard only |
+| `EOF-006` | Installed explanation and terminal scorecard | EOF-005 or first failed prerequisite | Truthful terminal decision with unavailable fields preserved | `DONE` — terminal scorecard only |
 
 ## Evidence schema required next
 
@@ -82,8 +82,24 @@ timing samples, public-source writes and predecessor evidence inputs are zero.
 | OpenTelemetry Java Instrumentation | 0 | `REJECT_INSUFFICIENT_RECURRENCE` |
 
 The frozen gate requires three probe families. At 1/5, `EOF-003..005` are
-closed as `NOT_AUTHORIZED`; the sole open work is the truthful terminal
-scorecard in `EOF-006`.
+closed as `NOT_AUTHORIZED`; `EOF-006` records the terminal stop.
+
+## Terminal decision and recommendation
+
+The route closes as `STOP_ECONOMIC_OPPORTUNITY_FIRST_POC`. Source completeness
+passes; recurrence breadth fails; every later economic, correctness and value
+field remains `NOT_MEASURED_NOT_AUTHORIZED`. No successor is authorized by the
+scorecard.
+
+The strongest remaining product-level hypothesis is remote-cache locality:
+compare optimized native Gradle reading the same remote cache directly with
+native Gradle reading the same objects through a prewarmed verifying BuildOpt
+Edge/L1. This removes per-change profile recurrence from the value path and
+tests a capability that already has bounded positive mechanism evidence. A
+future `REMOTE_CACHE_LOCALITY_VALUE_V2` must freeze equal cache opportunity,
+network conditions, five-family breadth, exact outputs, outage/corruption
+fallback and signed installed overhead before any timing. This recommendation
+is not successor authority.
 
 ## Documentation ledger
 

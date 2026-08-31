@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`ECONOMIC_OPPORTUNITY_FIRST_POC_STOPPING\`"
-    "**Current phase:** \`EOF-002\` stopped"
+    "**Overall status:** \`ECONOMIC_OPPORTUNITY_FIRST_POC_STOPPED\`"
+    "**Current phase:** \`EOF-006\` complete"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"
@@ -75,7 +75,7 @@ buildopt_required_tracker_text=(
     "| POC-OBSERVED-REQUEST-PORTFOLIO | Learn across the exact portfolio of recurrent commands the customer actually invokes, without command substitution or repository rules | \`STOPPED\` | 6 blocks executed; 2 not authorized |"
     "| POC-DURABLE-NATIVE-OPTIMIZATION | Detect and validate generic reversible Gradle-source corrections whose value persists without BuildOpt on the build path | \`STOPPED\` | 7/7 resolved |"
     "| POC-NORMALIZATION-AWARE-CACHEABILITY | Prove portable owner-reviewed task cacheability corrections with explicit file-input normalization and durable native value | \`STOPPED\` | 7/7 resolved |"
-    "| POC-ECONOMIC-OPPORTUNITY-FIRST | Reject unlikely-to-repay generic opportunities before discovery, calibration or materialization | \`DOING\` | 2/6; 3 not authorized |"
+    "| POC-ECONOMIC-OPPORTUNITY-FIRST | Reject unlikely-to-repay generic opportunities before discovery, calibration or materialization | \`STOPPED\` | 3 resolved; 3 not authorized |"
     "| \`E-403\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-000\` |"
     "| \`E-404\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-001\` |"
     "| \`E-405\` | 2026-08-26 | \`POC-STICKY-WRAPPER-LEARNING\`, \`SWL-002\` |"
@@ -128,6 +128,7 @@ buildopt_required_tracker_text=(
     "| \`E-455\` | 2026-08-31 | \`POC-NORMALIZATION-AWARE-CACHEABILITY\`, \`NAC-004..007\` |"
     "| \`E-456\` | 2026-08-31 | \`POC-ECONOMIC-OPPORTUNITY-FIRST\`, \`EOF-001\` |"
     "| \`E-457\` | 2026-08-31 | \`POC-ECONOMIC-OPPORTUNITY-FIRST\`, \`EOF-002\` |"
+    "| \`E-458\` | 2026-08-31 | \`POC-ECONOMIC-OPPORTUNITY-FIRST\`, \`EOF-006\` |"
     "| 157 | \`POC-OBSERVED-REQUEST-PORTFOLIO-001\` | Reconstruct all terminal request-aligned causes"
     "| 156 | \`POC-REQUEST-ALIGNED-RECURRENT-LEARNING-001\` | Reconstruct every terminal change-aware negative"
     "| 155 | \`POC-CHANGE-AWARE-PRODUCER-CLOSURE-001\` | Starting from the terminal fresh 1/5 breadth result"

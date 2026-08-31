@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "buildopt.evidence/economic-opportunity-terminal/v1",
+  "workItem": "EOF-006",
+  "decision": "STOP_ECONOMIC_OPPORTUNITY_FIRST_POC",
+  "failedPrerequisite": "EOF-002",
+  "evidence": {
+    "contract": {
+      "path": "specs/poc-economic-opportunity-first-v1.json",
+      "sha256": "d3d23c353e6740cd339a6461cb27c6284ed2350c43149566bc9a4af046619623"
+    },
+    "subjects": {
+      "path": "specs/poc-economic-opportunity-first-v1.subjects.json",
+      "sha256": "1be2de605704a16323a791c40159e15c55aaf2522b6e17051fec9f670bbe44b1"
+    },
+    "ledgerConfig": {
+      "path": "specs/poc-economic-opportunity-first-v1.ledger.json",
+      "sha256": "ac9ee191581243167357f813026d0829668c2643810bb9573d0dd12ef26ac71e"
+    },
+    "sourceLedger": {
+      "path": "benchmarks/results/economic-opportunity-first-v1/source-recurrence-ledger.json",
+      "sha256": "71e1e4f9055d86a894835ef63250cbf63fbab38eecc71252ae7bac632cc9531e"
+    }
+  },
+  "scorecard": {
+    "EOF-001": "PASS_CONTRACT_FROZEN",
+    "EOF-002": "FAIL_RECURRENCE_BREADTH_1_OF_5",
+    "EOF-003": "NOT_MEASURED_NOT_AUTHORIZED",
+    "EOF-004": "NOT_MEASURED_NOT_AUTHORIZED",
+    "EOF-005": "NOT_MEASURED_NOT_AUTHORIZED",
+    "EOF-006": "PASS_TERMINAL_TRUTHFULNESS"
+  },
+  "sourceGate": {
+    "rows": 320,
+    "conclusiveFamilies": 5,
+    "requiredConclusiveFamilies": 5,
+    "nativeCeilingProbeFamilies": 1,
+    "requiredNativeCeilingProbeFamilies": 3,
+    "compatibleMatchesByFamily": {
+      "apache-groovy": 0,
+      "apache-kafka": 11,
+      "micronaut-core": 0,
+      "opentelemetry-java-instrumentation": 0,
+      "spring-framework": 3
+    }
+  },
+  "unmeasured": {
+    "nativeCeilingObservations": "NOT_MEASURED_NOT_AUTHORIZED",
+    "candidateCorrectness": "NOT_MEASURED_NOT_AUTHORIZED",
+    "pairedValue": "NOT_MEASURED_NOT_AUTHORIZED",
+    "installedChronologicalValue": "NOT_MEASURED_NOT_AUTHORIZED",
+    "payback": "NOT_MEASURED_NOT_AUTHORIZED",
+    "nativeRetentionOverhead": "NOT_MEASURED_NOT_AUTHORIZED"
+  },
+  "sideEffects": {
+    "gradleStarts": 0,
+    "candidateBuilds": 0,
+    "timingSamples": 0,
+    "publicSourceWrites": 0,
+    "productFailures": 0
+  },
+  "claims": {
+    "performanceClaimed": false,
+    "productViabilityClaimed": false,
+    "productionAuthorized": false,
+    "successorAuthorized": false
+  },
+  "recommendation": {
+    "id": "PREREGISTER_REMOTE_CACHE_LOCALITY_VALUE_V2",
+    "rationale": "Test the cache-access path as the product unit so value does not depend on per-change structural-profile recurrence.",
+    "requiredControl": "OPTIMIZED_NATIVE_GRADLE_DIRECT_TO_THE_SAME_REMOTE_CACHE_OBJECTS",
+    "requiredCandidate": "OPTIMIZED_NATIVE_GRADLE_THROUGH_PREWARMED_VERIFYING_BUILDOPT_EDGE_L1",
+    "freshFiveFamilyEvidenceRequired": true,
+    "authorized": false
+  },
+  "boundaries": {
+    "thresholdsMoved": false,
+    "predecessorEvidenceRowsConsumed": false,
+    "repositoryOrTaskNameRules": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

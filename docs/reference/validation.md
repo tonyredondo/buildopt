@@ -28,6 +28,7 @@ provision tools or create release artifacts document that effect explicitly.
 |---|---|
 | Economic-first contract, frozen cohort, formulas, budgets and authority boundary | `./dev/check-economic-opportunity-first` |
 | Economic-first 320-row source recurrence ledger and independent breadth recount | `./dev/check-economic-opportunity-source-ledger [HISTORY_ROOT]` |
+| Economic-first terminal stop, evidence digests and typed unmeasured value | `./dev/check-economic-opportunity-terminal-decision` |
 | Markdown, navigation, package docs | `./dev/check-documentation` |
 | Required paths and baseline shape | `./dev/check-layout` |
 | Normative package structure | `./dev/check-normative-layout` |
@@ -529,13 +530,14 @@ the POC proves enough net value to justify productization.
 This static `EOF-001` gate freezes chronological source inputs, no-lookahead
 and name invariance, signed economics, the exact anchor cohort and all stop
 conditions. The fresh `EOF-002` ledger is 5/5 conclusive but reaches 1/5 probe
-families versus required 3/5. `EOF-003..005` are not authorized; no Gradle or
-timing ran and only terminal `EOF-006` remains.
+families versus required 3/5. `EOF-003..005` were not authorized; no Gradle or
+timing ran and terminal `EOF-006` records the stop.
 
 Reconstruct its rows and breadth decision with:
 
 ```bash
 ./dev/check-economic-opportunity-source-ledger [HISTORY_ROOT]
+./dev/check-economic-opportunity-terminal-decision
 ```
 
 ### Normalization-aware cacheability contract

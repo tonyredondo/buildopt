@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_terminal=benchmarks/results/economic-opportunity-first-v1/terminal-decision.json
+buildopt_ledger=benchmarks/results/economic-opportunity-first-v1/source-recurrence-ledger.json
+
+./dev/check-economic-opportunity-first >/dev/null
+./dev/check-economic-opportunity-source-ledger >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/economic-opportunity-terminal/v1" and
+  .workItem == "EOF-006" and
+  .decision == "STOP_ECONOMIC_OPPORTUNITY_FIRST_POC" and
+  .failedPrerequisite == "EOF-002" and
+  .scorecard == {
+    "EOF-001": "PASS_CONTRACT_FROZEN",
+    "EOF-002": "FAIL_RECURRENCE_BREADTH_1_OF_5",
+    "EOF-003": "NOT_MEASURED_NOT_AUTHORIZED",
+    "EOF-004": "NOT_MEASURED_NOT_AUTHORIZED",
+    "EOF-005": "NOT_MEASURED_NOT_AUTHORIZED",
+    "EOF-006": "PASS_TERMINAL_TRUTHFULNESS"
+  } and
+  .unmeasured == {
+    nativeCeilingObservations: "NOT_MEASURED_NOT_AUTHORIZED",
+    candidateCorrectness: "NOT_MEASURED_NOT_AUTHORIZED",
+    pairedValue: "NOT_MEASURED_NOT_AUTHORIZED",
+    installedChronologicalValue: "NOT_MEASURED_NOT_AUTHORIZED",
+    payback: "NOT_MEASURED_NOT_AUTHORIZED",
+    nativeRetentionOverhead: "NOT_MEASURED_NOT_AUTHORIZED"
+  } and
+  .sideEffects == {
+    gradleStarts: 0,
+    candidateBuilds: 0,
+    timingSamples: 0,
+    publicSourceWrites: 0,
+    productFailures: 0
+  } and
+  .claims == {
+    performanceClaimed: false,
+    productViabilityClaimed: false,
+    productionAuthorized: false,
+    successorAuthorized: false
+  } and
+  .recommendation.id == "PREREGISTER_REMOTE_CACHE_LOCALITY_VALUE_V2" and
+  .recommendation.requiredControl == "OPTIMIZED_NATIVE_GRADLE_DIRECT_TO_THE_SAME_REMOTE_CACHE_OBJECTS" and
+  .recommendation.requiredCandidate == "OPTIMIZED_NATIVE_GRADLE_THROUGH_PREWARMED_VERIFYING_BUILDOPT_EDGE_L1" and
+  .recommendation.freshFiveFamilyEvidenceRequired == true and
+  .recommendation.authorized == false and
+  .boundaries == {
+    thresholdsMoved: false,
+    predecessorEvidenceRowsConsumed: false,
+    repositoryOrTaskNameRules: false,
+    testOptimization: "OUT_OF_SCOPE"
+  }
+' "${buildopt_terminal}" >/dev/null
+
+while IFS=$'\t' read -r buildopt_path buildopt_expected_sha; do
+    buildopt_actual_sha=$(sha256sum "${buildopt_path}" | awk '{print $1}')
+    if [[ "${buildopt_actual_sha}" != "${buildopt_expected_sha}" ]]; then
+        printf 'EOF-006 evidence digest mismatch: %s\n' "${buildopt_path}" >&2
+        exit 1
+    fi
+done < <(jq -r '.evidence[] | [.path, .sha256] | @tsv' "${buildopt_terminal}")
+
+buildopt_recount=$(jq -c '
+  {
+    rows: (.rows | length),
+    conclusiveFamilies: ([.families[] | select(.conclusive)] | length),
+    requiredConclusiveFamilies: .gate.requiredConclusiveFamilies,
+    nativeCeilingProbeFamilies: ([.families[] | select(.decision == "ADMIT_NATIVE_CEILING_PROBE")] | length),
+    requiredNativeCeilingProbeFamilies: .gate.requiredNativeCeilingProbeFamilies,
+    compatibleMatchesByFamily: (.families | map({key: .key, value: .compatibleMatches}) | from_entries)
+  }
+' "${buildopt_ledger}")
+buildopt_terminal_source_gate=$(jq -c '.sourceGate' "${buildopt_terminal}")
+if [[ "${buildopt_recount}" != "${buildopt_terminal_source_gate}" ]]; then
+    printf 'EOF-006 source gate does not match independent ledger recount\n' >&2
+    exit 1
+fi
+
+printf 'EOF-006 terminal OK: stop at EOF-002; unmeasured value preserved; successor unauthorized\n'

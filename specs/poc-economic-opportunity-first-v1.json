@@ -4,8 +4,8 @@
   "objective": "PROVE_ECONOMIC_FIRST_GENERIC_BUILD_OPTIMIZATION",
   "baseline": "OPTIMIZED_NATIVE_GRADLE",
   "status": {
-    "currentBlock": "EOF-006",
-    "completedBlocks": ["EOF-001", "EOF-002"],
+    "currentBlock": null,
+    "completedBlocks": ["EOF-001", "EOF-002", "EOF-006"],
     "candidateBuildAuthorized": false,
     "timingAuthorized": false
   },
@@ -94,6 +94,15 @@
   },
   "blocks": ["EOF-001", "EOF-002", "EOF-003", "EOF-004", "EOF-005", "EOF-006"],
   "blockedBlocks": ["EOF-003", "EOF-004", "EOF-005"],
+  "resolution": {
+    "decision": "STOP_ECONOMIC_OPPORTUNITY_FIRST_POC",
+    "failedPrerequisite": "EOF-002",
+    "terminalBlock": "EOF-006",
+    "measuredWallTime": false,
+    "speedupClaimed": false,
+    "successorAuthorized": false,
+    "recommendation": "PREREGISTER_REMOTE_CACHE_LOCALITY_VALUE_V2"
+  },
   "measurement": {
     "hostedCiOwnsWallTimeGate": false,
     "predecessorTimingsReusable": false,

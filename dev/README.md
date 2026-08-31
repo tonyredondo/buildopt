@@ -29,7 +29,11 @@ from five local Git histories, with:
 ```
 
 The result is 5/5 conclusive and 1/5 recurrence families versus required 3/5.
-It starts no Gradle build and leaves only terminal `EOF-006` open.
+It starts no Gradle build. Validate the closed terminal scorecard with:
+
+```bash
+./dev/check-economic-opportunity-terminal-decision
+```
 
 Validate the closed fresh-evidence route, its forbidden historical inputs,
 typed completeness outcomes and exact next block with:

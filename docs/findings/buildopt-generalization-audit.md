@@ -20,6 +20,10 @@ accounting and a five-compatible-match payback ceiling before any candidate
 build. The fresh `EOF-002` ledger reconstructs 320 rows and 5/5 conclusive
 families, but only Kafka reaches five owner-only matches. At 1/5 versus 3/5,
 the route stops before native planning observations or candidate execution.
+Terminal `EOF-006` records `STOP_ECONOMIC_OPPORTUNITY_FIRST_POC`. It recommends
+testing remote-cache locality as a separate product unit because that path does
+not require structural-profile recurrence. Any such route must compare the same
+native graph and cache objects and collect fresh five-family evidence.
 
 That decision stopped the whole-profile hypothesis, not the bounded mechanisms
 that worked. The subsequent

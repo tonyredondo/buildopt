@@ -33,8 +33,15 @@ features but cannot supply an EOF row; future commits, repository names and
 task names cannot affect classification. `EOF-002` now reconstructs 320 fresh
 rows and all five families conclusively, but only Kafka reaches the five-match
 recurrence threshold. The 1/5 result misses the frozen 3/5 gate, so
-`EOF-003..005` are not authorized. No native ceiling observation, candidate,
-timing pair or speedup exists; `EOF-006` is next only for the terminal scorecard.
+`EOF-003..005` were not authorized. No native ceiling observation, candidate,
+timing pair or speedup exists; `EOF-006` closes the route as
+`STOP_ECONOMIC_OPPORTUNITY_FIRST_POC`.
+
+The terminal recommendation is a separately preregistered remote-cache-locality
+test: optimized native Gradle direct to a fixed remote cache versus the same
+native graph and exact objects through a prewarmed verifying BuildOpt Edge/L1.
+This removes per-change profile recurrence from the value path. It is a
+recommendation only, not authority or a retained historical speedup claim.
 
 The latest closed route is `NORMALIZATION_AWARE_CACHEABILITY_V2`. It tested whether
 BuildOpt can turn generic source evidence into an owner-reviewed, exactly

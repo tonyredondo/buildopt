@@ -1,7 +1,7 @@
 {
   "schemaVersion": "buildopt.evidence/economic-opportunity-source-ledger/v1",
   "workItem": "EOF-002",
-  "contractSha256": "497fdaa19a71c05f39f5a89d9b9d322cd667c83836b7c4682052f9cfe6e587eb",
+  "contractSha256": "d3d23c353e6740cd339a6461cb27c6284ed2350c43149566bc9a4af046619623",
   "subjectsSha256": "1be2de605704a16323a791c40159e15c55aaf2522b6e17051fec9f670bbe44b1",
   "configSha256": "ac9ee191581243167357f813026d0829668c2643810bb9573d0dd12ef26ac71e",
   "families": [

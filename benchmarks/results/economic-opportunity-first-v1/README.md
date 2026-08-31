@@ -14,5 +14,7 @@ The authoritative contracts are:
 
 The ledger is 5/5 conclusive but only Kafka reaches the five-match recurrence
 threshold: 1/5 probe families versus the required 3/5. `EOF-003..005` are not
-authorized. No native ceiling observation or speedup exists; `EOF-006` is next
-only to record the terminal scorecard.
+authorized. No native ceiling observation or speedup exists. The checked
+[`terminal-decision.json`](./terminal-decision.json) records
+`STOP_ECONOMIC_OPPORTUNITY_FIRST_POC` and recommends, without authorizing, a
+fresh equal-opportunity remote-cache-locality experiment.

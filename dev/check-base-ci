@@ -258,6 +258,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-normalization-aware-cacheability-public-correctness" >/dev/null
         "${buildopt_script_dir}/check-economic-opportunity-first" >/dev/null
         "${buildopt_script_dir}/check-economic-opportunity-source-ledger" >/dev/null
+        "${buildopt_script_dir}/check-economic-opportunity-terminal-decision" >/dev/null
         "${buildopt_script_dir}/check-verified-request-hit-safety-contract" >/dev/null
         "${buildopt_script_dir}/check-verified-request-hit-shadow-replay" --static >/dev/null
         "${buildopt_script_dir}/check-verified-output-materialization" >/dev/null
