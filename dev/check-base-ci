@@ -283,6 +283,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-product-window-graph-recurrence-contract" >/dev/null
         "${buildopt_script_dir}/check-product-window-graph-recurrence" >/dev/null
         "${buildopt_script_dir}/check-spring-messaging-fresh-graph-confirmation-contract" >/dev/null
+        "${buildopt_script_dir}/check-spring-messaging-fresh-graph-confirmation" >/dev/null
         "${buildopt_script_dir}/check-history-admitted-breadth-contract" >/dev/null
         "${buildopt_script_dir}/check-history-admitted-breadth" >/dev/null
         "${buildopt_script_dir}/check-remote-cache-locality-harness-v3" >/dev/null

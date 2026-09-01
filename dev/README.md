@@ -5650,8 +5650,11 @@ Gradle, candidate execution, timing or predecessor-summary inputs.
 
 `./dev/check-spring-messaging-fresh-graph-confirmation-contract` binds the
 newest selected Spring Messaging commit and one native-only request.
-`./dev/capture-spring-messaging-fresh-graph-confirmation` is its single-use
-capture entrypoint; it cannot execute a candidate or collect timing.
+`./dev/check-spring-messaging-fresh-graph-confirmation` independently binds the
+raw graph and manifest, reconstructs 11 source/product matches, 18/27 omitted
+projects and 14,406 exact outputs, and authorizes only a separate correctness
+contract. `./dev/capture-spring-messaging-fresh-graph-confirmation` is the
+now-consumed single-use entrypoint; rerunning it is not result validation.
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher

@@ -1,6 +1,17 @@
 # Spring Messaging Fresh Graph Confirmation v1 evidence
 
-No fresh result exists. The PWGR source report selects exact commit
-`7f29df4d795ed76465f2dcd36ed1879c0887ab0e` but supplies no build row. One
-optimized-native `testClasses` request is permitted after the contract is
-published; candidates and timing are forbidden.
+The single fresh optimized-native request exits zero and confirms the selected
+Spring Messaging group inside the product's exact 64-commit horizon. The
+product independently observes all 11 compatible commits, reconstructs owner
+`:spring-messaging` and family `DEPENDENCY_SOURCE`, and emits a complete partial
+graph with 9/27 projects selected and 18 omitted.
+
+All 57 required output patterns resolve to 14,406 exact files. The ordinary
+baseline has zero product-attributable failures, while 14,057 unaffected files
+(40,455,055 bytes) are captured across 54 materialization patterns. No
+candidate, calibration pair, timing sample or value claim exists.
+
+This result authorizes only a separately frozen candidate-correctness contract.
+Run `./dev/check-spring-messaging-fresh-graph-confirmation` to reconstruct the
+raw hashes, source and product recurrence, graph/manifest bindings, exact
+outputs, failures and authorization boundary.

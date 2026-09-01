@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "buildopt.evidence/spring-messaging-fresh-graph-confirmation/v1",
+  "decision": "AUTHORIZE_SPRING_MESSAGING_CANDIDATE_CORRECTNESS_CONTRACT",
+  "rawBindings": {
+    "captureSha256": "5fa94b001e8c0668638d7fdd999d26d0eddac0f13e4ecd8772c9bbbc9d71e4c0",
+    "invocationSha256": "274e2bba0bf86db57f6713453f2ff546f1dcb9743450e05cc509fec8ab79242e",
+    "graphSha256": "8e159e041894f86915dbfbbac3f01e1150a15c4a0a64173d17e54cc15a7d7a1c",
+    "manifestSha256": "1f8a3dac096c0a78765282461e956345831b3dcb6ae5da8541ab5589e3e6cf84",
+    "stateTreeSha256": "8cd99db8bd7c9f7040cfbf9d39792a663056d7a1ffd50eea3c7614b15e04330b",
+    "executableSha256": "af9f36a258038284853527dacc21f6a14280b5fcafb9a3ddd686e4d98f776854"
+  },
+  "execution": {"mode":"OPTIMIZED_NATIVE","gradleStarts":1,"exitCode":0,"durationMs":411138,"candidateBuilds":0,"timingSamples":0,"productFailures":0},
+  "selection": {"owner":":spring-messaging","family":"DEPENDENCY_SOURCE","sourceCompatibleCommits":11,"productCompatibleCommits":11,"productHistoryWindowCommits":64},
+  "graph": {"selectedProjects":9,"totalProjects":27,"omittedProjects":18,"requiredOutputPatterns":57,"exactOutputFiles":14406},
+  "materialization": {"patterns":54,"files":14057,"bytes":40455055},
+  "economics": {"calibrationPerformed":false,"candidateMeasured":false,"valueClaimed":false},
+  "boundaries": {"candidateCorrectnessContractAuthorized":true,"candidateExecutionAuthorized":false,"pairedValueAuthorized":false,"productionAuthorized":false,"testOptimization":"OUT_OF_SCOPE"}
+}

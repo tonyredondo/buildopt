@@ -25,11 +25,13 @@ decision.
 
 ## Current experiment status
 
-`SPRING_MESSAGING_FRESH_GRAPH_CONFIRMATION_V1` is current. PWGR selected exact
-Spring commit `7f29df4d…`, owner `:spring-messaging`, dependency-source, with 11
-matches inside the product window and 15/27 omitted projects. One fresh
-optimized-native `testClasses` request may confirm the current graph, admission
-and exact outputs. Candidates and timing remain forbidden.
+`SPRING_MESSAGING_FRESH_GRAPH_CONFIRMATION_V1` is complete. Its one fresh
+optimized-native request exits zero and independently confirms all 11 matches
+inside the product's 64-commit horizon, owner `:spring-messaging`, family
+`DEPENDENCY_SOURCE`, a complete 9/27 partial graph, 57 required patterns and
+14,406 exact outputs with zero product failures. It ran no candidate or timing
+sample. The only authorized next step is to freeze a separate Spring Messaging
+candidate-correctness contract; candidate execution is not yet authorized.
 
 `PRODUCT_WINDOW_GRAPH_RECURRENCE_V1` is complete. SJGC proved the apparent
 six-versus-one mismatch came from comparing a 256-commit exploratory inventory

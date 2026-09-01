@@ -1322,9 +1322,12 @@ fifteen omitted projects. It executes zero Gradle or candidate builds and adds
 no timing sample. The result selects one untimed confirmation; it does not
 change the current two-class value claim.
 
-The next Spring Messaging confirmation is also untimed by contract. Its sole
-native request can establish structural admission and exact output coverage,
-but cannot contribute a candidate duration or speedup claim.
+The Spring Messaging confirmation remains untimed by contract and therefore
+adds no performance sample. Its sole native request exits zero, confirms all
+eleven product-window matches, omits 18/27 projects and reproduces 14,406 exact
+outputs with zero failures. This authorizes a separate candidate-correctness
+contract, not candidate execution, paired timing, speedup or a third qualified
+value class.
 
 The untimed CSCPC route did not reach candidate correctness or performance.
 Its first Groovy optimized-native invocation succeeded, but the production

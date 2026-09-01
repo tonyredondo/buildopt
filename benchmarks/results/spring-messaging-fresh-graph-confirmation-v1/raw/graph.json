@@ -1,0 +1,597 @@
+{
+  "schemaVersion": "buildopt.build-impact/declared-graph/v1",
+  "repositoryId": "spring-projects/spring-framework",
+  "pipelineClass": "auto-testclasses-5df60dc1",
+  "manifestDigest": "sha256:4d8afb5ea00be2d9ad3d201764b65d88ccacb217fc03e498e76dbfa8650de7ab",
+  "adapterVersion": "gradle-runtime-v1",
+  "complete": true,
+  "projects": [
+    {
+      "path": ":framework-api",
+      "sourcePaths": [
+        "framework-api/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-instrument",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":framework-bom",
+      "sourcePaths": [
+        "framework-bom/**"
+      ],
+      "dependsOn": [
+        ":framework-platform"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":framework-docs",
+      "sourcePaths": [
+        "framework-docs/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aspects",
+        ":spring-context",
+        ":spring-context-support",
+        ":spring-core-test",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":framework-platform",
+      "sourcePaths": [
+        "framework-platform/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":integration-tests",
+      "sourcePaths": [
+        "integration-tests/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-jdbc",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-aop",
+      "sourcePaths": [
+        "spring-aop/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-beans",
+        ":spring-core",
+        ":spring-core-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-aspects",
+      "sourcePaths": [
+        "spring-aspects/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-tx"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-beans",
+      "sourcePaths": [
+        "spring-beans/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-core",
+        ":spring-core-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-context",
+      "sourcePaths": [
+        "spring-context/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-instrument"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-context-indexer",
+      "sourcePaths": [
+        "spring-context-indexer/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-context"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-context-support",
+      "sourcePaths": [
+        "spring-context-support/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-jdbc",
+        ":spring-tx"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-core",
+      "sourcePaths": [
+        "spring-core/**"
+      ],
+      "dependsOn": [
+        ":framework-platform"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-core-test",
+      "sourcePaths": [
+        "spring-core-test/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-core"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-expression",
+      "sourcePaths": [
+        "spring-expression/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-core"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-instrument",
+      "sourcePaths": [
+        "spring-instrument/**"
+      ],
+      "dependsOn": [
+        ":framework-platform"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-jdbc",
+      "sourcePaths": [
+        "spring-jdbc/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-tx"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-jms",
+      "sourcePaths": [
+        "spring-jms/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-messaging",
+        ":spring-oxm",
+        ":spring-tx"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-messaging",
+      "sourcePaths": [
+        "spring-messaging/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-oxm"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-orm",
+      "sourcePaths": [
+        "spring-orm/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-jdbc",
+        ":spring-tx",
+        ":spring-web"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-oxm",
+      "sourcePaths": [
+        "spring-oxm/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-r2dbc",
+      "sourcePaths": [
+        "spring-r2dbc/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-tx"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-test",
+      "sourcePaths": [
+        "spring-test/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-jdbc",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-tx",
+      "sourcePaths": [
+        "spring-tx/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-core-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-web",
+      "sourcePaths": [
+        "spring-web/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-messaging",
+        ":spring-oxm",
+        ":spring-tx"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-webflux",
+      "sourcePaths": [
+        "spring-webflux/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-web"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-webmvc",
+      "sourcePaths": [
+        "spring-webmvc/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-expression",
+        ":spring-oxm",
+        ":spring-web"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-websocket",
+      "sourcePaths": [
+        "spring-websocket/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-context",
+        ":spring-core",
+        ":spring-messaging",
+        ":spring-web",
+        ":spring-webmvc"
+      ],
+      "unknownRelationships": false
+    }
+  ],
+  "entrypoints": [
+    {
+      "name": ":spring-messaging:testClasses",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-instrument",
+        ":spring-messaging",
+        ":spring-oxm"
+      ],
+      "artifactIds": [
+        "required-output-1",
+        "required-output-10",
+        "required-output-11",
+        "required-output-12",
+        "required-output-13",
+        "required-output-14",
+        "required-output-15",
+        "required-output-16",
+        "required-output-17",
+        "required-output-18",
+        "required-output-19",
+        "required-output-2",
+        "required-output-20",
+        "required-output-21",
+        "required-output-22",
+        "required-output-23",
+        "required-output-24",
+        "required-output-25",
+        "required-output-26",
+        "required-output-27",
+        "required-output-28",
+        "required-output-29",
+        "required-output-3",
+        "required-output-30",
+        "required-output-31",
+        "required-output-32",
+        "required-output-33",
+        "required-output-34",
+        "required-output-35",
+        "required-output-36",
+        "required-output-37",
+        "required-output-38",
+        "required-output-39",
+        "required-output-4",
+        "required-output-40",
+        "required-output-41",
+        "required-output-42",
+        "required-output-43",
+        "required-output-44",
+        "required-output-45",
+        "required-output-46",
+        "required-output-47",
+        "required-output-48",
+        "required-output-49",
+        "required-output-5",
+        "required-output-50",
+        "required-output-51",
+        "required-output-52",
+        "required-output-53",
+        "required-output-54",
+        "required-output-55",
+        "required-output-56",
+        "required-output-57",
+        "required-output-6",
+        "required-output-7",
+        "required-output-8",
+        "required-output-9"
+      ],
+      "checkIds": [],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    },
+    {
+      "name": "testClasses",
+      "owner": "BUILD_OPTIMIZATION",
+      "reachesProjects": [
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-instrument",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "artifactIds": [
+        "required-output-1",
+        "required-output-10",
+        "required-output-11",
+        "required-output-12",
+        "required-output-13",
+        "required-output-14",
+        "required-output-15",
+        "required-output-16",
+        "required-output-17",
+        "required-output-18",
+        "required-output-19",
+        "required-output-2",
+        "required-output-20",
+        "required-output-21",
+        "required-output-22",
+        "required-output-23",
+        "required-output-24",
+        "required-output-25",
+        "required-output-26",
+        "required-output-27",
+        "required-output-28",
+        "required-output-29",
+        "required-output-3",
+        "required-output-30",
+        "required-output-31",
+        "required-output-32",
+        "required-output-33",
+        "required-output-34",
+        "required-output-35",
+        "required-output-36",
+        "required-output-37",
+        "required-output-38",
+        "required-output-39",
+        "required-output-4",
+        "required-output-40",
+        "required-output-41",
+        "required-output-42",
+        "required-output-43",
+        "required-output-44",
+        "required-output-45",
+        "required-output-46",
+        "required-output-47",
+        "required-output-48",
+        "required-output-49",
+        "required-output-5",
+        "required-output-50",
+        "required-output-51",
+        "required-output-52",
+        "required-output-53",
+        "required-output-54",
+        "required-output-55",
+        "required-output-56",
+        "required-output-57",
+        "required-output-6",
+        "required-output-7",
+        "required-output-8",
+        "required-output-9"
+      ],
+      "checkIds": [],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    }
+  ],
+  "globalChangePaths": []
+}

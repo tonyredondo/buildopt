@@ -349,11 +349,13 @@ compatible commits and a 12/27 affected closure. OpenTelemetry and Micronaut
 have no five-match group. This restores product-aligned source breadth but
 still needs a fresh graph/output confirmation before candidate correctness.
 
-The separately frozen Spring Messaging confirmation uses the newest selected
-commit and permits one native request only. Its source count is selection
-evidence, not a build result; candidate correctness remains closed until the
-current product independently reproduces admission, graph reduction and exact
-required outputs.
+The separately frozen Spring Messaging confirmation now passes. One fresh
+optimized-native request independently reproduces all eleven product-window
+matches, owner `:spring-messaging`, dependency-source, a complete 9/27 partial
+graph and 14,406 exact outputs with zero failures. No candidate or timing ran.
+This closes the admission and output-closure uncertainty for a third family and
+authorizes only a separately frozen candidate-correctness contract; it does not
+yet establish correctness, value breadth or a third qualified value class.
 
 The successor isolated the naturally history-admitted Kafka row.
 Its twelve bound compatible matches may select the row but cannot be reused as

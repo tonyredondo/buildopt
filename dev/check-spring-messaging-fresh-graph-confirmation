@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "${buildopt_root}"
+
+buildopt_evidence=benchmarks/results/spring-messaging-fresh-graph-confirmation-v1
+buildopt_capture_sha=$(sha256sum "${buildopt_evidence}/raw/capture.json" | awk '{print $1}')
+buildopt_invocation_sha=$(sha256sum "${buildopt_evidence}/raw/invocation-01.json" | awk '{print $1}')
+buildopt_graph_sha=$(sha256sum "${buildopt_evidence}/raw/graph.json" | awk '{print $1}')
+buildopt_manifest_sha=$(sha256sum "${buildopt_evidence}/raw/manifest.json" | awk '{print $1}')
+
+./dev/check-spring-messaging-fresh-graph-confirmation-contract >/dev/null
+jq -e \
+  --slurpfile capture "${buildopt_evidence}/raw/capture.json" \
+  --slurpfile invocation "${buildopt_evidence}/raw/invocation-01.json" \
+  --slurpfile graph "${buildopt_evidence}/raw/graph.json" \
+  --slurpfile manifest "${buildopt_evidence}/raw/manifest.json" \
+  --slurpfile source benchmarks/results/product-window-graph-recurrence-v1/capture/summary.json \
+  --arg captureSha "${buildopt_capture_sha}" --arg invocationSha "${buildopt_invocation_sha}" \
+  --arg graphSha "${buildopt_graph_sha}" --arg manifestSha "${buildopt_manifest_sha}" '
+  $capture[0] as $capture|$invocation[0] as $invocation|$graph[0] as $graph|$manifest[0] as $manifest|
+  ($source[0].eligibleGroups[] | select(.owners==[":spring-messaging"] and .family=="DEPENDENCY_SOURCE")) as $sourceGroup|
+  $capture.schemaVersion=="buildopt.evidence/automatic-breadth-subject/v3" and
+  $capture.repositoryId=="spring-projects/spring-framework" and
+  $capture.baseRevision=="8fb119df1ecc97d4391276b02189fc32c3e7bf46" and
+  $capture.targetRevision=="7f29df4d795ed76465f2dcd36ed1879c0887ab0e" and
+  $capture.processExitCode==0 and ($capture.productFailure|not) and
+  $capture.ordinaryInvocations==1 and $capture.measurementOnlyWorkflowRuns==0 and
+  $capture.rawResultSha256==$invocationSha and ($capture.invocationResults|length)==1 and
+  $capture.invocationResults[0].sha256==$invocationSha and
+  $invocation.schemaVersion=="buildopt.poc/optimize-result/v1" and
+  $invocation.outcome=="LEARNING" and $invocation.reason=="ORDINARY_OBSERVATIONS_PENDING" and
+  $invocation.execution=={authoritative:true,exitCode:0,mode:"OPTIMIZED_NATIVE",started:true} and
+  $invocation.discovery.status=="COMPLETE" and $invocation.discovery.reason=="STRUCTURAL_CANDIDATE_DISCOVERED" and
+  $invocation.discovery.changeFamily=="DEPENDENCY_SOURCE" and
+  $invocation.discovery.changedProjects==[":spring-messaging"] and
+  $invocation.discovery.graph=={omittedProjects:18,selectedProjects:9,totalProjects:27} and
+  $invocation.discovery.aggregatePartition.status=="COMPLETE" and
+  $invocation.discovery.aggregatePartition.rebuildProjects==[":spring-messaging"] and
+  ($invocation.discovery.requiredOutputs|length)==57 and
+  $invocation.discovery.materialization.status=="CAPTURED" and
+  ($invocation.discovery.materialization.patterns|length)==54 and
+  $invocation.discovery.materialization.fileCount==14057 and
+  $invocation.discovery.materialization.byteCount==40455055 and
+  $invocation.incrementalLearning.baseline.requiredOutputCount==14406 and
+  $invocation.incrementalLearning.baseline.requiredOutputSha256=="7de23e14d9987f0cc8661cb7de81b06f4df15cd3039ac8e947ace6f33904779f" and
+  ($invocation.incrementalLearning.baseline.productAttributableFailure|not) and
+  $invocation.incrementalLearning.ordinaryEconomics.historicalCompatibleMatches==11 and
+  $invocation.incrementalLearning.ordinaryEconomics.maximumPaybackMatches==5 and
+  ($invocation.calibration.performed|not) and ($invocation.selection.performed|not) and
+  ($invocation.portfolio.performed|not) and ($invocation.productionAuthorized|not) and
+  $graph.schemaVersion=="buildopt.build-impact/declared-graph/v1" and $graph.complete and
+  ($graph.projects|length)==27 and
+  ($graph.entrypoints[]|select(.name==":spring-messaging:testClasses")|.reachesProjects|length)==9 and
+  $manifest.schemaVersion=="buildopt.build-impact/manifest/v1" and
+  $manifest.originalEntrypoints==["testClasses"] and ($manifest.requiredArtifacts|length)==57 and
+  $sourceGroup.commitCount==11 and $sourceGroup.commits[0]==$capture.targetRevision and
+  .schemaVersion=="buildopt.evidence/spring-messaging-fresh-graph-confirmation/v1" and
+  .decision=="AUTHORIZE_SPRING_MESSAGING_CANDIDATE_CORRECTNESS_CONTRACT" and
+  .rawBindings=={captureSha256:$captureSha,invocationSha256:$invocationSha,graphSha256:$graphSha,manifestSha256:$manifestSha,stateTreeSha256:$capture.stateTreeSha256,executableSha256:$capture.buildopt.executableSha256} and
+  .execution=={mode:"OPTIMIZED_NATIVE",gradleStarts:1,exitCode:0,durationMs:411138,candidateBuilds:0,timingSamples:0,productFailures:0} and
+  .selection.owner==":spring-messaging" and .selection.family=="DEPENDENCY_SOURCE" and
+  .selection.sourceCompatibleCommits==$sourceGroup.commitCount and
+  .selection.productCompatibleCommits==$invocation.incrementalLearning.ordinaryEconomics.historicalCompatibleMatches and
+  .selection.productHistoryWindowCommits==64 and
+  .graph.selectedProjects==9 and .graph.totalProjects==27 and .graph.omittedProjects==18 and
+  .graph.requiredOutputPatterns==57 and .graph.exactOutputFiles==14406 and
+  .materialization=={patterns:54,files:14057,bytes:40455055} and
+  .economics=={calibrationPerformed:false,candidateMeasured:false,valueClaimed:false} and
+  .boundaries=={candidateCorrectnessContractAuthorized:true,candidateExecutionAuthorized:false,pairedValueAuthorized:false,productionAuthorized:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_evidence}/summary.json" >/dev/null
+
+printf 'spring-messaging fresh graph confirmation: passed; correctness contract only\n'
