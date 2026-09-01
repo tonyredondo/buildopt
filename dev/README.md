@@ -1293,6 +1293,12 @@ its three observations. The terminal experiment charges all costs and requires
 at least two paid-back subjects plus positive aggregate cumulative net value.
 It does not average repository percentages or authorize production.
 
+The checked run stops after Kafka and Groovy. Kafka selects 0/3 descendants and
+closes at -58,055 ms net; Groovy's first pair is negative and ordinary economics
+retains native before calibration, closing at -2,995 ms. Spring is not run once
+2/3 payback becomes impossible. Validate the exact terminal evidence with
+`./dev/check-three-class-chronological-value`.
+
 If the harness stops after the expensive qualification capture, preserve the
 two diagnostic roots printed on stderr and resume that single subject without
 repeating its timing samples:

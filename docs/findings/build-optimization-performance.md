@@ -1423,10 +1423,14 @@ class to specialize.
 
 ## Three-class chronological value
 
-The next performance question is frozen as TCCV before any new request. It
+The next performance question was frozen as TCCV before any new request. It
 uses the immediate three first-parent descendants of the qualified Kafka,
 Groovy and Spring Messaging revisions, requires a fresh 8/8 portable
 requalification for each, and charges learning, publication, selection,
 synchronization, materialization and fallback. Success requires at least two
-subjects to pay back and the signed aggregate net to be positive. There are no
-TCCV measurements yet, so no longitudinal speedup is claimed.
+subjects to pay back and the signed aggregate net to be positive. Kafka passes
+8/8 and portability but selects 0/3 descendants, for -58,055 ms net. Groovy's
+first ordinary pair regresses by 5,831 ms and stops before calibration, for
+-2,995 ms net. Spring is not run because 2/3 payback has become impossible.
+Consumed net is -61,050 ms with exact outputs and zero failures, so the
+experiment stops without a longitudinal speedup claim.

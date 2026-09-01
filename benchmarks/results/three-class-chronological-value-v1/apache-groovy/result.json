@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-lifetime-breadth-subject/v3-early",
+  "key": "apache-groovy",
+  "buildopt": {
+    "revision": "a072e3138210444d2c8da31459345d9a1ceff88a",
+    "executableSha256": "af9f36a258038284853527dacc21f6a14280b5fcafb9a3ddd686e4d98f776854"
+  },
+  "repository": {
+    "id": "apache/groovy",
+    "remote": "https://github.com/apache/groovy.git",
+    "publicRepository": true,
+    "historyBranch": "GROOVY_5_0_X"
+  },
+  "qualification": {
+    "parentRevision": "4bbcdba3cf42239a702c054c84443896e8d8c2f6",
+    "targetRevision": "494c9cb23ae799226c6ab8485301dae2925e6ed4",
+    "sourceOrigin": "PUBLIC_UPSTREAM_COMMIT",
+    "changeFamily": "DEPENDENCY_SOURCE",
+    "graph": {
+      "omittedProjects": 36,
+      "selectedProjects": 1,
+      "totalProjects": 37
+    },
+    "captureFile": "qualification-capture.json",
+    "captureSha256": "ab62576179f788cdd9c4a0c2fa3a755de9c0a7c11b28b2876ac839553c33b0e5",
+    "ordinaryEconomics": {
+      "calibrationAuthorized": false,
+      "candidateMeanMs": 32592,
+      "compatibleBuilds": 3,
+      "controlMeanMs": 26761,
+      "decision": "NATIVE_RETAINED",
+      "evidenceSource": "REQUESTED_ORDINARY_BUILD",
+      "exactOutputBuilds": 3,
+      "historicalCompatibleMatches": 38,
+      "learningCostMs": 2995,
+      "maximumPaybackMatches": 5,
+      "maximumVolatileProducerCount": 0,
+      "meanSavedMs": -5831,
+      "measurementOnlyBuilds": 0,
+      "observedPairs": 1,
+      "productionAuthorized": false,
+      "projectedCompatibleMatches": 5,
+      "projectedGrossSavedMs": 0,
+      "projectedNetSavedMs": 0,
+      "projectedPaybackMatches": 0,
+      "reason": "ORDINARY_SAVING_NOT_POSITIVE",
+      "reductionRatio": -0.2178917080826576,
+      "requestedBuilds": 3,
+      "schemaVersion": "buildopt.poc/ordinary-learning-economics/v1",
+      "structurallyPortableBuilds": 3,
+      "successfulBuilds": 3,
+      "testOptimization": "OUT_OF_SCOPE"
+    }
+  },
+  "observations": [],
+  "economics": {
+    "observedBuilds": 0,
+    "eligibleDescendants": 0,
+    "selectedReplays": 0,
+    "nativeRetainedBuilds": 0,
+    "selectedReplaySavedMs": 0,
+    "nativeRetentionWrapperCostMs": 0,
+    "qualificationAndPublicationCostMs": 2995,
+    "cumulativeNetSavedMs": -2995,
+    "conclusion": "EARLY_ECONOMIC_RETENTION"
+  },
+  "acceptance": {
+    "decision": "COMPLETE",
+    "exactRequiredOutputs": true,
+    "publicAncestry": true,
+    "productFailures": 0
+  },
+  "boundaries": {
+    "designPartnerRequired": false,
+    "mechanismPercentagesAdded": false,
+    "productionAuthorized": false,
+    "proofOfConcept": true,
+    "repositoriesAveraged": false,
+    "soakRequired": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

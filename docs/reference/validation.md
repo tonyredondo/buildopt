@@ -698,6 +698,7 @@ Gradle build is rerun by this static decision gate.
 ./dev/check-spring-messaging-paired-value-contract
 ./dev/check-spring-messaging-paired-value
 ./dev/check-three-class-chronological-value-contract
+./dev/check-three-class-chronological-value
 ```
 
 This source-only check binds the retained discovery snapshots, tests the
@@ -708,6 +709,9 @@ The three-class chronological contract checker binds the three prior robust
 value summaries, exact public revisions, mechanically selected immediate
 first-parent descendants and terminal cumulative-value thresholds. It is
 source-only; the long public execution is never part of Base CI.
+The terminal checker validates the two retained subject bundles, reconstructs
+the signed -61,050-ms net and verifies that Spring is not run after the 2/3
+payback gate becomes impossible.
 
 ## Complete lanes
 

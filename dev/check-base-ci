@@ -291,6 +291,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-spring-messaging-paired-value-contract" >/dev/null
         "${buildopt_script_dir}/check-spring-messaging-paired-value" >/dev/null
         "${buildopt_script_dir}/check-three-class-chronological-value-contract" >/dev/null
+        "${buildopt_script_dir}/check-three-class-chronological-value" >/dev/null
         "${buildopt_script_dir}/check-history-admitted-breadth-contract" >/dev/null
         "${buildopt_script_dir}/check-history-admitted-breadth" >/dev/null
         "${buildopt_script_dir}/check-remote-cache-locality-harness-v3" >/dev/null

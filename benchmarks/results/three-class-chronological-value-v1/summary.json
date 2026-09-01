@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "buildopt.evidence/poc-three-class-chronological-value/v1",
+  "workItem": "POC-THREE-CLASS-CHRONOLOGICAL-VALUE-V1",
+  "buildoptRevision": "a072e3138210444d2c8da31459345d9a1ceff88a",
+  "subjects": [
+    {"key":"apache-kafka","status":"COMPLETE","qualification":"QUALIFIED_8_OF_8_PORTABLE","observedBuilds":3,"selectedReplays":0,"cumulativeNetSavedMs":-58055,"conclusion":"NO_COMPATIBLE_REPLAY_IN_OBSERVED_WINDOW"},
+    {"key":"apache-groovy","status":"DONE_STOP","qualification":"EARLY_ECONOMIC_RETENTION","observedBuilds":0,"selectedReplays":0,"cumulativeNetSavedMs":-2995,"conclusion":"EARLY_ECONOMIC_RETENTION"},
+    {"key":"spring-framework","status":"NOT_AUTHORIZED","qualification":"NOT_RUN_DEPENDENCY","observedBuilds":0,"selectedReplays":0,"cumulativeNetSavedMs":0,"conclusion":"NOT_RUN_DEPENDENCY"}
+  ],
+  "totals": {"attemptedSubjects":2,"qualificationDecisions":2,"qualifiedEightOfEightPortable":1,"observedBuilds":3,"selectedReplays":0,"paidBackSubjects":0,"cumulativeNetSavedMs":-61050,"exactRequiredOutputs":true,"productFailures":0},
+  "gate": {"requiredQualificationDecisions":3,"requiredQualifiedEightOfEightPortable":3,"requiredObservedBuilds":9,"requiredPaidBackSubjects":2,"aggregateCumulativeNetPositive":true,"passed":false},
+  "decision": "STOP_THREE_CLASS_CHRONOLOGICAL_VALUE",
+  "reason": "TERMINAL_GATE_IMPOSSIBLE_AFTER_GROOVY_EARLY_ECONOMIC_RETENTION",
+  "boundaries": {"productionAuthorized":false,"genericBreadthClaimed":false,"testOptimization":"OUT_OF_SCOPE"}
+}

@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+buildopt_evidence=${buildopt_root}/benchmarks/results/three-class-chronological-value-v1
+buildopt_spec=${buildopt_root}/specs/poc-three-class-chronological-value-v1.json
+buildopt_summary=${buildopt_evidence}/summary.json
+
+BUILDOPT_QUALIFIED_LIFETIME_SPEC=${buildopt_spec} \
+  "${buildopt_root}/dev/check-qualified-lifetime-v2" \
+  "${buildopt_evidence}/apache-kafka/result.json" --subject >/dev/null
+buildopt_groovy_capture=${buildopt_evidence}/apache-groovy/qualification-capture.json
+buildopt_groovy_sha=$(sha256sum "${buildopt_groovy_capture}" | awk '{print $1}')
+
+jq -e --slurpfile kafka "${buildopt_evidence}/apache-kafka/result.json" \
+  --slurpfile groovy "${buildopt_evidence}/apache-groovy/result.json" \
+  --slurpfile groovyCapture "${buildopt_groovy_capture}" \
+  --arg groovySha "${buildopt_groovy_sha}" '
+  ($kafka[0]) as $k | ($groovy[0]) as $g |
+  ($groovyCapture[0]) as $gc |
+  .schemaVersion=="buildopt.evidence/poc-three-class-chronological-value/v1" and
+  [.subjects[].key]==["apache-kafka","apache-groovy","spring-framework"] and
+  .subjects[0].observedBuilds==($k.observations|length) and
+  .subjects[0].selectedReplays==([$k.observations[]|select(.selected)]|length) and
+  .subjects[0].cumulativeNetSavedMs==$k.economics.cumulativeNetSavedMs and
+  .subjects[1].observedBuilds==($g.observations|length) and
+  .subjects[1].cumulativeNetSavedMs==$g.economics.cumulativeNetSavedMs and
+  .subjects[2]=={key:"spring-framework",status:"NOT_AUTHORIZED",
+    qualification:"NOT_RUN_DEPENDENCY",observedBuilds:0,selectedReplays:0,
+    cumulativeNetSavedMs:0,conclusion:"NOT_RUN_DEPENDENCY"} and
+  $k.qualification.calibration.positivePairs==8 and
+  $k.qualification.calibration.pairsMeasured==8 and
+  $k.qualification.portability.status=="PORTABLE" and
+  ($k.acceptance.exactRequiredOutputs and $g.acceptance.exactRequiredOutputs) and
+  ($k.acceptance.productFailures+$g.acceptance.productFailures)==0 and
+  $g.qualification.ordinaryEconomics.reason=="ORDINARY_SAVING_NOT_POSITIVE" and
+  $g.qualification.ordinaryEconomics.requestedBuilds==3 and
+  $g.qualification.ordinaryEconomics.calibrationAuthorized==false and
+  $g.qualification.captureSha256==$groovySha and
+  $gc.schemaVersion=="buildopt.evidence/automatic-breadth-subject/v3" and
+  $gc.buildopt==$g.buildopt and $gc.repositoryId==$g.repository.id and
+  $gc.targetRevision==$g.qualification.targetRevision and
+  $gc.ordinaryInvocations==3 and $gc.measurementOnlyWorkflowRuns==0 and
+  $gc.processExitCode==0 and ($gc.productFailure|not) and
+  ($gc.invocationResults|length)==3 and all($gc.invocationResults[];.exitCode==0) and
+  ($gc.incrementalLearning.observations|length)==2 and
+  all($gc.incrementalLearning.observations[];
+    .exitCode==0 and (.productAttributableFailure|not) and
+    .requiredOutputSha256==$gc.incrementalLearning.expectedOutputSha256) and
+  $gc.incrementalLearning.ordinaryEconomics==$g.qualification.ordinaryEconomics and
+  .totals=={attemptedSubjects:2,qualificationDecisions:2,
+    qualifiedEightOfEightPortable:1,observedBuilds:3,selectedReplays:0,
+    paidBackSubjects:0,cumulativeNetSavedMs:($k.economics.cumulativeNetSavedMs+$g.economics.cumulativeNetSavedMs),
+    exactRequiredOutputs:true,productFailures:0} and
+  .gate.passed==false and
+  .decision=="STOP_THREE_CLASS_CHRONOLOGICAL_VALUE" and
+  .reason=="TERMINAL_GATE_IMPOSSIBLE_AFTER_GROOVY_EARLY_ECONOMIC_RETENTION" and
+  .boundaries=={productionAuthorized:false,genericBreadthClaimed:false,
+    testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_summary}" >/dev/null
+
+printf 'three-class chronological value: STOP, 0/2 paid back, -61050 ms net\n'
