@@ -49,6 +49,8 @@ type auditReport struct {
 	SnapshotSHA256     string     `json:"snapshotSha256"`
 	GraphSHA256        string     `json:"graphSha256,omitempty"`
 	ManifestSHA256     string     `json:"manifestSha256,omitempty"`
+	BaseRevision       string     `json:"baseRevision,omitempty"`
+	HeadChangesSHA256  string     `json:"headChangesSha256,omitempty"`
 	Entrypoints        []string   `json:"entrypoints"`
 	ExpectedOwners     []string   `json:"expectedOwners"`
 	ExpectedFamily     string     `json:"expectedFamily"`
@@ -65,6 +67,7 @@ type auditReport struct {
 type auditOptions struct {
 	repository, snapshotPath, snapshotSHA, graphPath, graphSHA, manifestPath, manifestSHA string
 	repositoryID, pipelineClass, target, family                                           string
+	baseRevision, headChangesPath, headChangesSHA                                         string
 	entrypoints, owners                                                                   []string
 	maximum, minimum                                                                      int
 }
@@ -82,6 +85,9 @@ func main() {
 	flag.StringVar(&options.repositoryID, "repository-id", "", "manifest repository identity")
 	flag.StringVar(&options.pipelineClass, "pipeline-class", "", "manifest pipeline identity")
 	flag.StringVar(&options.target, "target", "", "target revision")
+	flag.StringVar(&options.baseRevision, "base", "", "public base revision for a retained synthetic head")
+	flag.StringVar(&options.headChangesPath, "head-changes", "", "newline-delimited paths for a retained synthetic head")
+	flag.StringVar(&options.headChangesSHA, "head-changes-sha256", "", "required raw SHA-256 binding for head changes")
 	flag.StringVar(&options.family, "expected-family", "", "expected change family")
 	flag.Var(&entrypoints, "entrypoint", "observed entrypoint (repeatable)")
 	flag.Var(&owners, "expected-owner", "expected owner (repeatable)")
@@ -106,7 +112,9 @@ func runAudit(options auditOptions) (auditReport, error) {
 	usesSnapshot := options.snapshotPath != "" && options.snapshotSHA != ""
 	usesGraph := options.graphPath != "" && options.graphSHA != "" && options.manifestPath != "" &&
 		options.manifestSHA != "" && options.repositoryID != "" && options.pipelineClass != ""
+	usesSyntheticHead := options.baseRevision != "" && options.headChangesPath != "" && options.headChangesSHA != ""
 	if options.repository == "" || usesSnapshot == usesGraph || options.target == "" ||
+		(options.baseRevision != "" || options.headChangesPath != "" || options.headChangesSHA != "") != usesSyntheticHead ||
 		(usesSnapshot && len(options.entrypoints) == 0) || len(options.owners) == 0 || options.family == "" ||
 		options.maximum < 1 || options.maximum > 1024 || options.minimum < 1 || options.minimum > options.maximum {
 		return auditReport{}, errors.New("complete bounded audit arguments are required")
@@ -121,22 +129,51 @@ func runAudit(options auditOptions) (auditReport, error) {
 		}
 	}
 	sort.Strings(options.owners)
-	commitsRaw, err := gitOutput(options.repository, "rev-list", "--first-parent", "--max-count="+strconv.Itoa(options.maximum), options.target)
+	historyTarget := options.target
+	historyMaximum := options.maximum
+	var headPaths []string
+	var headChangesDigest string
+	if usesSyntheticHead {
+		historyTarget = options.baseRevision
+		historyMaximum--
+		if historyMaximum < 1 {
+			return auditReport{}, errors.New("synthetic-head history window is too small")
+		}
+		raw, digestText, readErr := readBoundFile(options.headChangesPath, options.headChangesSHA, "head changes")
+		if readErr != nil {
+			return auditReport{}, readErr
+		}
+		headPaths = splitLines(raw)
+		headChangesDigest = digestText
+		if len(headPaths) == 0 {
+			return auditReport{}, errors.New("synthetic head changes are empty")
+		}
+	}
+	commitsRaw, err := gitOutput(options.repository, "rev-list", "--first-parent", "--max-count="+strconv.Itoa(historyMaximum), historyTarget)
 	if err != nil {
 		return auditReport{}, err
 	}
 	commits := strings.Fields(string(commitsRaw))
+	if usesSyntheticHead {
+		commits = append([]string{options.target}, commits...)
+	}
 	if len(commits) == 0 || len(commits) > options.maximum {
 		return auditReport{}, errors.New("bounded first-parent history is unavailable")
 	}
 	report := auditReport{SchemaVersion: schemaVersion, TargetRevision: options.target, SnapshotSHA256: snapshotSHA,
 		GraphSHA256: graphSHA, ManifestSHA256: manifestSHA,
+		BaseRevision: options.baseRevision, HeadChangesSHA256: headChangesDigest,
 		Entrypoints: append([]string(nil), options.entrypoints...), ExpectedOwners: append([]string(nil), options.owners...),
 		ExpectedFamily: options.family, HistoryWindow: len(commits), MinimumCompatible: options.minimum,
 		Decision: "REJECT", Reason: "INSUFFICIENT_GRAPH_COMPATIBLE_HISTORY", Rows: make([]auditRow, 0, len(commits))}
 	for _, commit := range commits {
-		pathsRaw, pathErr := gitOutput(options.repository, "diff-tree", "--root", "--no-commit-id", "--name-only", "--no-renames", "-r", "-z", commit, "--")
-		paths := splitNUL(pathsRaw)
+		paths := headPaths
+		var pathErr error
+		if commit != options.target || !usesSyntheticHead {
+			var pathsRaw []byte
+			pathsRaw, pathErr = gitOutput(options.repository, "diff-tree", "--root", "--no-commit-id", "--name-only", "--no-renames", "-r", "-z", commit, "--")
+			paths = splitNUL(pathsRaw)
+		}
 		row := auditRow{Commit: commit, ChangedPaths: paths, Decision: "REJECT", Reason: "INCOMPLETE_AMBIGUOUS"}
 		if pathErr != nil || len(paths) == 0 {
 			report.Rows = append(report.Rows, row)
@@ -230,6 +267,12 @@ func splitNUL(raw []byte) []string {
 			result = append(result, string(part))
 		}
 	}
+	sort.Strings(result)
+	return result
+}
+
+func splitLines(raw []byte) []string {
+	result := strings.Fields(string(raw))
 	sort.Strings(result)
 	return result
 }

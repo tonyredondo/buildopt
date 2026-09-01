@@ -56,6 +56,34 @@ func TestRunAuditRejectsSnapshotDrift(t *testing.T) {
 	}
 }
 
+func TestRunAuditPrependsBoundSyntheticHead(t *testing.T) {
+	repository := t.TempDir()
+	git(t, repository, "init", "-q")
+	git(t, repository, "config", "user.email", "buildopt@example.invalid")
+	git(t, repository, "config", "user.name", "BuildOpt fixture")
+	git(t, repository, "config", "commit.gpgsign", "false")
+	writeFile(t, repository, "library/src/main/java/Example.java", "class Example {}\n")
+	git(t, repository, "add", ".")
+	git(t, repository, "commit", "-qm", "base")
+	base := strings.TrimSpace(git(t, repository, "rev-parse", "HEAD"))
+	snapshotPath, snapshotSHA := writeSnapshot(t, t.TempDir())
+	changesPath := filepath.Join(t.TempDir(), "changes.txt")
+	changesRaw := []byte("library/src/main/java/Synthetic.java\n")
+	if err := os.WriteFile(changesPath, changesRaw, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	digest := sha256.Sum256(changesRaw)
+	report, err := runAudit(auditOptions{repository: repository, snapshotPath: snapshotPath, snapshotSHA: snapshotSHA,
+		target: strings.Repeat("f", 40), baseRevision: base, headChangesPath: changesPath, headChangesSHA: hex.EncodeToString(digest[:]),
+		family: historyadmission.FamilyDependency, entrypoints: []string{"testClasses"}, owners: []string{":library"}, maximum: 2, minimum: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.HistoryWindow != 2 || report.Rows[0].Commit != strings.Repeat("f", 40) || report.Rows[0].Decision != "COMPATIBLE" || report.BaseRevision != base {
+		t.Fatalf("report = %+v", report)
+	}
+}
+
 func writeSnapshot(t *testing.T, directory string) (string, string) {
 	t.Helper()
 	snapshot := buildimpact.DiscoverySnapshot{SchemaVersion: buildimpact.DiscoverySchemaVersion, GradleVersion: "9.0", Complete: true,

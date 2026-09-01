@@ -8,7 +8,9 @@ against the retained, reviewed graphs for Groovy, OpenTelemetry and Micronaut.
 Kafka and Spring are fixed controls from GAH v1.
 
 Every row is bound to its exact public target, manifest, graph, owner and
-change family. The scan reads a maximum of 64 first-parent commits and requires
+change family. Each retained target is a fixture commit, so its SHA-bound
+changed-path row is followed by 63 first-parent commits from the exact public
+base. The scan reads 64 total rows and requires
 five exact owner/family matches. It may clone public Git history without blobs,
 but must not run Gradle, patch public source, execute a candidate, collect
 timing, use repository/task names as rules, or consume predecessor summaries as

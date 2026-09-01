@@ -14,6 +14,9 @@ a4f67662b7a22f26ad91629a4304bc430cf5a41ede1ae73c6a0d705409e49380  benchmarks/res
 0c75c5db9ec9ac0c0655174df5a82fa5a33616bf573786d7efffe5fbdf68c9ae  benchmarks/results/poc-automatic-breadth-transfer-v2/opentelemetry-java-instrumentation/state/discovery/graph.json
 59677bd1a444179e4a8637b547d9ae8feab9666009ed12691cb24c1dac02f4f2  benchmarks/results/poc-automatic-breadth-transfer-v2/micronaut-core/state/discovery/manifest.json
 956f795b8fd30702cc4fe0da62da94eb27178025c943f2debe68c560977cc8f9  benchmarks/results/poc-automatic-breadth-transfer-v2/micronaut-core/state/discovery/graph.json
+567700230e4130b93ec67296f6a281dfbcbbf312156c7887463e20ec110f42fd  benchmarks/results/poc-automatic-breadth-transfer-v2/apache-groovy/state/discovery/changes.txt
+e310608f1b78a717dd5b0baed71dc8f769679ead7688359d6ee3e59d6cd21516  benchmarks/results/poc-automatic-breadth-transfer-v2/opentelemetry-java-instrumentation/state/discovery/changes.txt
+3dc827e52dc05d3aa535e84e1b96f3ee87276d3f998e540acac089bc8e1c81b4  benchmarks/results/poc-automatic-breadth-transfer-v2/micronaut-core/state/discovery/changes.txt
 CHECKSUMS
 
 ./dev/run --toolchain go -- go test -count=1 ./internal/historyadmission ./cmd/history-admission-audit
