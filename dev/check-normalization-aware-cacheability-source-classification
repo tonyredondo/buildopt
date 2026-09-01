@@ -53,7 +53,7 @@ jq -e '
       all(.supplementaryNormalization[]; IN("NORMALIZE_LINE_ENDINGS", "IGNORE_EMPTY_DIRECTORIES"))))
 ' "$report" >/dev/null
 
-if rg -q 'durable-native-optimization-v1/opportunity-report|poc-durable-native-optimization-v1.subjects' \
+if grep -ERq 'durable-native-optimization-v1/opportunity-report|poc-durable-native-optimization-v1.subjects' \
     cmd/normalization-aware-cacheability-audit internal/normalizationaware "$report"; then
     printf 'NAC-002 classifier must not consume DNO evidence inputs\n' >&2
     exit 1

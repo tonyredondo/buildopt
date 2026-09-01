@@ -17,7 +17,7 @@ command -v jq >/dev/null 2>&1 || {
 }
 
 if [[ ${1:-} == --fixture ]]; then
-    for buildopt_command in awk find rg sed; do
+    for buildopt_command in awk find grep sed; do
         command -v "${buildopt_command}" >/dev/null 2>&1 || {
             printf '%s is required\n' "${buildopt_command}" >&2
             exit 1
@@ -159,9 +159,9 @@ buildopt_run_case() {
         PATH="${buildopt_java_home}/bin:${PATH}" \
         "${buildopt_command[@]}" >"${buildopt_case_root}/third.log" 2>&1
 
-    rg -q 'Configuration cache entry stored\.' "${buildopt_case_root}/first.log"
-    rg -q 'Configuration cache entry reused\.' "${buildopt_case_root}/second.log"
-    rg -q "configuration cache cannot be reused because file 'versions.properties' has changed" \
+    grep -Fq 'Configuration cache entry stored.' "${buildopt_case_root}/first.log"
+    grep -Fq 'Configuration cache entry reused.' "${buildopt_case_root}/second.log"
+    grep -Fq "configuration cache cannot be reused because file 'versions.properties' has changed" \
         "${buildopt_case_root}/third.log"
     [[ -s ${buildopt_project}/service-a/build/libs/service-a-1.0.0.jar ]]
     [[ -s ${buildopt_project}/service-a/build/libs/service-a-2.0.0.jar ]]

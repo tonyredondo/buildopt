@@ -85,7 +85,7 @@ jq -e --arg contract_sha "${buildopt_contract_sha}" \
   }
 ' "${buildopt_report}" >/dev/null
 
-if rg -q 'poc-lifetime-breadth|qualified-lifetime|adaptive-fragment|durable-native|normalization-aware' \
+if grep -Eq 'poc-lifetime-breadth|qualified-lifetime|adaptive-fragment|durable-native|normalization-aware' \
     "${buildopt_report}"; then
     printf 'EOF-002 report contains a forbidden predecessor evidence reference\n' >&2
     exit 1
