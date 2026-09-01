@@ -284,6 +284,15 @@ generic customer value.
 
 ## POC conclusion
 
+The graph-aware history successor replaces path-prefix recurrence with a
+versioned classifier shared by the launcher and an independent audit CLI. It
+rejects incomplete or drifted snapshots, unknown relationships, ambiguous
+ownership and build-logic changes, then matches exact owner, family and
+dependency closure. Fresh first-parent audits over the same 64-commit windows
+reproduce Kafka at 12 compatible commits and Spring at one, without
+repository-name rules or Gradle execution. This fixes admission precision; it
+does not add breadth beyond the qualified Kafka class.
+
 The successor isolated the naturally history-admitted Kafka row.
 Its twelve bound compatible matches may select the row but cannot be reused as
 fresh correctness or performance evidence. The route allows three untimed

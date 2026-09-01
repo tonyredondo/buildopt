@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "${buildopt_root}"
+
+./dev/run --toolchain go -- go test -count=1 \
+    ./internal/historyadmission ./cmd/history-admission-audit ./internal/launcher
+
+jq -e '
+  .schemaVersion == "buildopt.history-admission/graph-aware-summary/v1" and
+  .decision == "VALIDATED_GRAPH_AWARE_ADMISSION" and
+  .minimumCompatibleCommits == 5 and
+  (.gradleExecuted | not) and (.candidateExecuted | not) and
+  (.timingCollected | not) and (.repositoryNameRule | not) and
+  (.rows | length) == 2 and
+  ([.rows[].historyWindowCommits] == [64, 64]) and
+  (.rows[0].label == "spring-framework") and
+  (.rows[0].compatibleCommits | length) == 1 and
+  .rows[0].decision == "REJECT" and
+  (.rows[0].reasonCounts | add) == 64 and
+  (.rows[1].label == "apache-kafka") and
+  (.rows[1].compatibleCommits | length) == 12 and
+  .rows[1].decision == "ADMIT" and
+  (.rows[1].reasonCounts | add) == 64 and
+  ([.rows[].compatibleCommits[]] | length) == 13 and
+  ([.rows[].compatibleCommits[]] | unique | length) == 13
+' benchmarks/results/graph-aware-history-admission-v1/summary.json >/dev/null
+
+sha256sum --check --strict <<'CHECKSUMS'
+89ddb94f47e14ef634db121a502f1066be567febb2572eb172c2336c65b79e03  benchmarks/results/history-admitted-breadth-v1/spring-framework/state/discovery/snapshot.json
+7873e23e2b477311d751297f90f8bce175e00587079d21c98a7bfd344682a006  benchmarks/results/history-admitted-paired-value-v1/apache-kafka/state/discovery/snapshot.json
+CHECKSUMS
+
+printf 'graph-aware history admission: ok\n'

@@ -5594,6 +5594,14 @@ breadth and positive lower bounds are 0/5, cumulative value is -368.623
 seconds, payback is absent and native-retention tails fail. It does not rerun
 the 100-pair campaign.
 
+## Graph-aware history admission
+
+`./dev/check-graph-aware-history-admission` validates the snapshot-bound source
+classifier shared by the launcher and `history-admission-audit`, including
+drift, ambiguity, structural-change and forbidden-name negatives. Its checked
+public evidence reproduces Kafka admission at 12/5 and Spring rejection at 1/5
+without invoking Gradle or collecting timing.
+
 ## Ordinary-build learning economics evidence
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic

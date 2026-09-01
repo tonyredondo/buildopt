@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "buildopt.specs/poc-graph-aware-history-admission/v1",
+  "workItem": "GAH",
+  "status": {
+    "completedBlocks": ["GAH-001", "GAH-002", "GAH-003"],
+    "decision": "VALIDATED_GRAPH_AWARE_ADMISSION"
+  },
+  "history": {"firstParent": true, "maximumCommits": 64, "minimumCompatibleCommits": 5},
+  "classification": {"sourceOnly": true, "exactOwners": true, "exactFamily": true, "transitiveClosure": true, "repositoryNameRules": false},
+  "prohibitions": {"gradle": true, "publicSourcePatch": true, "candidate": true, "timing": true, "production": true}
+}

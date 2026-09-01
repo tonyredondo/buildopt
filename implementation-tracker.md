@@ -1,14 +1,14 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `PATH_ONLY_HISTORY_ADMISSION_STOPPED` — exact graph reduced Spring to one match<br>
-**Current phase:** `HAB-004` — graph-aware recurrence discovery required<br>
+**Overall status:** `GRAPH_AWARE_HISTORY_ADMISSION_VALIDATED` — exact graph admits Kafka and rejects Spring before builds<br>
+**Current phase:** `GAH-003` — detector complete; next breadth observation requires a separate contract<br>
 **POC functional target:** produce positive cumulative wall-time value against optimized native Gradle across chronological customer-requested builds, including every wrapper, observation, trial, cache, fallback and action cost<br>
 **POC onboarding north star:** `generate and commit BuildOpt Wrapper -> ./buildoptw build`; no global BuildOpt installation, hand-authored profile or committed credential is required<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
-**Last updated:** 2026-08-31<br>
+**Last updated:** 2026-09-01<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
-**Detailed POC tracker:** [History-Admitted Breadth v1](./docs/plans/history-admitted-breadth-v1.md)<br>
+**Detailed POC tracker:** [Graph-Aware History Admission v1](./docs/plans/graph-aware-history-admission-v1.md)<br>
 **Closed predecessor:** [Remote Cache Locality Value v2 POC Tracker](./docs/plans/remote-cache-locality-value-poc-tracker.md)<br>
 **Superseded diagnostic tracker:** [Sticky Wrapper Learning POC Tracker](./docs/plans/sticky-wrapper-learning-poc-tracker.md)<br>
 **Earlier closed predecessor:** [Adaptive Fragment Generalization POC Tracker](./docs/plans/adaptive-fragment-generalization-tracker.md)<br>
@@ -212,6 +212,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-HISTORY-ADMITTED-CANDIDATE-CORRECTNESS | Prove candidate correctness on an exact row naturally admitted by the five-match economic gate | `DONE` | 4/4 | `E-474..475`; [closed tracker](./docs/plans/history-admitted-candidate-correctness-v1.md). Fresh Kafka candidate reproduced 4,440 outputs exactly; zero timing and product failures |
 | POC-HISTORY-ADMITTED-PAIRED-VALUE | Measure complete installed value for the naturally admitted exact Kafka candidate | `DONE` | 4/4 | `E-476..477`; [closed tracker](./docs/plans/history-admitted-paired-value-v1.md). 8/8 positive, 19.09% mean saving, positive interval, improved p95, two-match payback and exact outputs |
 | POC-HISTORY-ADMITTED-BREADTH | Transfer history admission to a second public repository without name rules | `STOPPED` | 4/4 | `E-478..479`; [closed tracker](./docs/plans/history-admitted-breadth-v1.md). Spring retained native at one exact-graph compatible match; zero candidates, timing and failures |
+| POC-GRAPH-AWARE-HISTORY-ADMISSION | Preclassify recurrence from exact graph ownership and dependency closure before any build | `DONE` | 3/3 | `E-480`; [closed tracker](./docs/plans/graph-aware-history-admission-v1.md). Fresh source-only audits reproduce Kafka `ADMIT` at 12/5 and Spring `REJECT` at 1/5; zero Gradle, candidates or timing |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Not authorized by terminal `STOP_GENERIC_POC` or `STOP_ADAPTIVE_FRAGMENT_POC` |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -2513,6 +2514,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-477` | 2026-09-01 | `POC-HISTORY-ADMITTED-PAIRED-VALUE`, `HAPV-002..004` | [`check-history-admitted-paired-value`](./dev/check-history-admitted-paired-value) reconstructs the eight pairs from the [fresh evidence](./benchmarks/results/history-admitted-paired-value-v1/README.md) | `DONE`: 8/8 positive, 6,866.125 ms / 19.09% mean saving, +5,717.25 ms lower bound, improved p95, two-match payback, 4,440 exact outputs and zero product failures |
 | `E-478` | 2026-09-01 | `POC-HISTORY-ADMITTED-BREADTH`, `HAB-001` | The [contract](./specs/poc-history-admitted-breadth-v1.md), exact subject, [tracker](./docs/plans/history-admitted-breadth-v1.md) and [`check-history-admitted-breadth-contract`](./dev/check-history-admitted-breadth-contract) bind the first source-derived Spring successor | `DONE` planning only. Target changes only `spring-jms` source/test paths after the previous four-match row; three fresh untimed starts permitted |
 | `E-479` | 2026-09-01 | `POC-HISTORY-ADMITTED-BREADTH`, `HAB-002..004` | [`check-history-admitted-breadth`](./dev/check-history-admitted-breadth) reconstructs the [fresh Spring capture](./benchmarks/results/history-admitted-breadth-v1/README.md) | `DONE_STOP`: exact graph resolved the expected owner/family/candidate but only one compatible historical match. One native start, zero candidates, timing samples and product failures; path-only admission rejected |
+| `E-480` | 2026-09-01 | `POC-GRAPH-AWARE-HISTORY-ADMISSION`, `GAH-001..003` | [`check-graph-aware-history-admission`](./dev/check-graph-aware-history-admission) binds the [contract](./specs/poc-graph-aware-history-admission-v1.md), shared classifier, independent CLI and [public source-only audit](./benchmarks/results/graph-aware-history-admission-v1/README.md) | `DONE`: exact 64-commit reconstruction reproduces Kafka `ADMIT` at 12/5 and Spring `REJECT` at 1/5. Snapshot drift, ambiguity, structural changes and name rules fail closed; zero Gradle, candidates, timing and product failures |
 ---
 
 ## 15. Tracker changelog
@@ -2535,6 +2537,7 @@ This table points to the latest valid result. It does not replace reports or all
 | 2026-09-01 | Closed `HAPV-002..004`: the exact naturally admitted Kafka class passes all value gates at 19.09% mean saving with 8/8 positive exact pairs and two-match payback. Generic breadth and production remain unproved | Codex |
 | 2026-09-01 | Opened `HAB-001`: froze the first preregistered Spring first-parent observation whose changes remain under the derived owner prefix, for a three-start untimed breadth check | Codex |
 | 2026-09-01 | Closed `HAB-002..004`: Spring retained native after its exact structural graph counted one compatible match. Prefix-only recurrence is insufficient; no candidate or timing ran and Kafka qualification remains unchanged | Codex |
+| 2026-09-01 | Closed `GAH-001..003`: replaced path-prefix recurrence with a snapshot-bound graph classifier shared by the launcher and audit CLI. Fresh public Git reconstruction reproduces Kafka 12/5 admission and Spring 1/5 rejection without Gradle, candidates or timing | Codex |
 | 2026-08-31 | Closed `RCL-003/006` and the route: Groovy is exact but below 8 MiB; Kafka has ample cache opportunity but its frozen required test-fixtures JAR differs between producer and consumer. The 2/5 conclusive, 0/5 eligible result closes three rows and `RCL-004/005` without timing; terminal decision is `STOP_REMOTE_CACHE_LOCALITY_VALUE_POC` | Codex |
 | 2026-08-31 | Closed `RCL-002`: independently bound and reran native cache-key parity, committed verified Edge reads, offline restart and corruption/unsafe-use negatives. The fixture reports zero public builds and timing samples; `RCL-003` may now collect fresh untimed public correctness | Codex |
 | 2026-08-31 | Opened `REMOTE_CACHE_LOCALITY_VALUE_V2` and closed `RCL-001`: froze equal native graph/key/object/output opportunity, an unshaped terminal remote path, full fill/operation economics and unchanged 3/5 product breadth. Historical locality and mixed-mechanism results supply no row; `RCL-002` is next and no public build, seed or timing is authorized | Codex |

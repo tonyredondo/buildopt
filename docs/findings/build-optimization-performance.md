@@ -1259,6 +1259,13 @@ found only one compatible historical commit and retained native after the
 first successful request. This does not reduce the Kafka result; it limits the
 current claim to graph-proven recurrent classes.
 
+The graph-aware source-history audit adds no performance sample. It
+independently reproduces the same economic decisions before a build: Kafka is
+admitted with 12/5 compatible commits and Spring is rejected with 1/5 across
+their exact 64-commit windows. The result removes path-prefix false positives
+and avoids unnecessary learning cost; the measured 19.09% Kafka result remains
+the only qualified public value class.
+
 The untimed CSCPC route did not reach candidate correctness or performance.
 Its first Groovy optimized-native invocation succeeded, but the production
 decision path returned `NATIVE_RETAINED / ORDINARY_LEARNING_ECONOMICS_REJECTED`:

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "buildopt.history-admission/graph-aware-summary/v1",
+  "decision": "VALIDATED_GRAPH_AWARE_ADMISSION",
+  "minimumCompatibleCommits": 5,
+  "gradleExecuted": false,
+  "candidateExecuted": false,
+  "timingCollected": false,
+  "repositoryNameRule": false,
+  "rows": [
+    {
+      "label": "spring-framework",
+      "targetRevision": "75705bcbb1da866d3ed44bf7526437a7fdf1136b",
+      "snapshotSha256": "89ddb94f47e14ef634db121a502f1066be567febb2572eb172c2336c65b79e03",
+      "expectedOwners": [":spring-jms"],
+      "expectedFamily": "DEPENDENCY_SOURCE",
+      "historyWindowCommits": 64,
+      "compatibleCommits": ["75705bcbb1da866d3ed44bf7526437a7fdf1136b"],
+      "reasonCounts": {"EXACT_GRAPH_OWNER_AND_FAMILY": 1, "INCOMPLETE_AMBIGUOUS": 1, "OWNER_MISMATCH": 58, "UNSAFE_STRUCTURAL_CHANGE": 4},
+      "decision": "REJECT"
+    },
+    {
+      "label": "apache-kafka",
+      "targetRevision": "2e961afeff5cb27d60767a783edf20be00cc28e8",
+      "snapshotSha256": "7873e23e2b477311d751297f90f8bce175e00587079d21c98a7bfd344682a006",
+      "expectedOwners": [":clients"],
+      "expectedFamily": "DEPENDENCY_SOURCE",
+      "historyWindowCommits": 64,
+      "compatibleCommits": ["2e961afeff5cb27d60767a783edf20be00cc28e8", "934a0c17af13d029ae19efbf8249eb362ce2754c", "93ee413aca82031c028695679d14a671b2da14c9", "dacff9c85a29806fcafe617feb2db0c9677e6de7", "930ebc5608bb0ac938085321d09b402b850ca87b", "953f0a08278bbad2fc26fe1c8aae968e15e5cf60", "0720ba11419be941537d73022bbee81c7e568c12", "fe886479351b712c43bbe6c440be7c836f26cb1a", "ab713592394c3c89ff2972f1d9dddbe0c2a5ccf3", "26e8df61e31bd71777f24d28bce6071ac8c70a08", "455cbdfea22b088a101107e85e1ba87080b62d25", "8ba75d04cb48f01ec0c958a7e5675b0c19a98eb5"],
+      "reasonCounts": {"EXACT_GRAPH_OWNER_AND_FAMILY": 12, "INCOMPLETE_AMBIGUOUS": 12, "OWNER_MISMATCH": 34, "UNSAFE_STRUCTURAL_CHANGE": 6},
+      "decision": "ADMIT"
+    }
+  ]
+}

@@ -676,6 +676,16 @@ fail. Activation is 0/71 eligible builds, positive breadth and confidence are
 cost is 0.531 seconds p50 / 8.656 seconds p95. AF-013 is context only and no
 Gradle build is rerun by this static decision gate.
 
+## Graph-aware history admission
+
+```bash
+./dev/check-graph-aware-history-admission
+```
+
+This source-only check binds the retained discovery snapshots, tests the
+classifier and audit CLI, and verifies the compact Kafka/Spring decisions and
+exact compatible commit identities without running Gradle.
+
 ## Complete lanes
 
 - `./dev/check-phase-zero` composes the historical Phase 0 gates.

@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
+	"github.com/tonyredondo/buildopt/internal/historyadmission"
 	"github.com/tonyredondo/buildopt/internal/nativevolatility"
 	"github.com/tonyredondo/buildopt/internal/profilediscovery"
 	"github.com/tonyredondo/buildopt/internal/structuralbinding"
@@ -25,10 +26,10 @@ const (
 	optimizeDiscoveryRetained    = "NATIVE_RETAINED"
 	optimizeDiscoverySkipped     = "SKIPPED"
 	optimizeDiscoveryReasonFound = "STRUCTURAL_CANDIDATE_DISCOVERED"
-	optimizeFamilyDependency     = "DEPENDENCY_SOURCE"
-	optimizeFamilyResource       = "RESOURCE"
-	optimizeFamilyLeaf           = "LEAF_SOURCE"
-	optimizeFamilyMixed          = "MIXED_SOURCE"
+	optimizeFamilyDependency     = historyadmission.FamilyDependency
+	optimizeFamilyResource       = historyadmission.FamilyResource
+	optimizeFamilyLeaf           = historyadmission.FamilyLeaf
+	optimizeFamilyMixed          = historyadmission.FamilyMixed
 )
 
 var optimizeGlobalChangePaths = append([]string(nil), defaultProposalGlobalChanges...)
@@ -820,46 +821,14 @@ func optimizeReplayChangedPaths(changedPaths, ignoredPaths []string) []byte {
 }
 
 func optimizeChangeFamily(snapshot buildimpact.DiscoverySnapshot, changedPaths, owners []string) string {
-	resourceCount := 0
-	for _, path := range changedPaths {
-		normalized := "/" + strings.ToLower(filepath.ToSlash(path)) + "/"
-		if strings.Contains(normalized, "/resources/") {
-			resourceCount++
-		}
-	}
-	if len(changedPaths) > 0 && resourceCount == len(changedPaths) {
-		return optimizeFamilyResource
-	}
-	if resourceCount > 0 || len(owners) != 1 {
-		return optimizeFamilyMixed
-	}
-	affected := optimizeAffectedProjects(snapshot, owners)
-	if len(affected) > 1 {
-		return optimizeFamilyDependency
-	}
-	return optimizeFamilyLeaf
+	return historyadmission.ClassifyOwners(snapshot, changedPaths, owners).Family
 }
 
 func optimizeAffectedProjects(snapshot buildimpact.DiscoverySnapshot, owners []string) map[string]bool {
-	affected := make(map[string]bool, len(owners))
-	for _, owner := range owners {
-		affected[owner] = true
-	}
-	changed := true
-	for changed {
-		changed = false
-		for _, project := range snapshot.Projects {
-			if affected[project.Path] {
-				continue
-			}
-			for _, dependency := range project.DependsOn {
-				if affected[dependency] {
-					affected[project.Path] = true
-					changed = true
-					break
-				}
-			}
-		}
+	projects := historyadmission.AffectedProjects(snapshot, owners)
+	affected := make(map[string]bool, len(projects))
+	for _, project := range projects {
+		affected[project] = true
 	}
 	return affected
 }

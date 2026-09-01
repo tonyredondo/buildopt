@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/tonyredondo/buildopt/internal/buildimpact"
+	"github.com/tonyredondo/buildopt/internal/historyadmission"
 	"github.com/tonyredondo/buildopt/internal/ordinarylearning"
 )
 
@@ -176,9 +177,9 @@ func countOptimizeCompatibleCommits(
 		if pathErr != nil || optimizeUnsafeEconomicChange(paths) {
 			continue
 		}
-		commitOwners, ownerErr := buildimpact.ResolveProjectOwners(snapshot, paths)
-		if ownerErr == nil && equalOptimizeStrings(commitOwners, expectedOwners) &&
-			optimizeChangeFamily(snapshot, paths, commitOwners) == family {
+		classification, classifyErr := historyadmission.Classify(snapshot, paths)
+		if classifyErr == nil && equalOptimizeStrings(classification.Owners, expectedOwners) &&
+			classification.Family == family {
 			compatible++
 		}
 	}
@@ -227,12 +228,7 @@ func optimizeCommitChangedPaths(repositoryRoot, commit string) ([]string, error)
 }
 
 func optimizeUnsafeEconomicChange(paths []string) bool {
-	for _, path := range paths {
-		if matchesAnyProposalGlob(optimizeGlobalChangePaths, path) || centralOptimizeBuildLogicPath(path) {
-			return true
-		}
-	}
-	return false
+	return historyadmission.UnsafeStructuralChange(paths)
 }
 
 var errOptimizeHistoryUnavailable = errors.New("bounded Git history is unavailable")

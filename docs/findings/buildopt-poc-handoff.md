@@ -25,6 +25,14 @@ decision.
 
 ## Current experiment status
 
+`GRAPH_AWARE_HISTORY_ADMISSION_V1` is complete. The launcher and independent
+audit CLI now share exact project-owner, change-family and transitive-closure
+classification against a SHA-256-bound discovery snapshot. Fresh 64-commit
+source-only audits reproduce Kafka admission at 12/5 and Spring rejection at
+1/5. No Gradle, candidate or timing ran. The path-prefix defect is closed, but
+a second positive family is still missing; the next public observation needs a
+separate frozen contract.
+
 `HISTORY_ADMITTED_BREADTH_V1` is closed. It selected a second repository using
 only first-parent source facts derived from the previously observed owner. The
 Spring target `75705bcb` changes only `spring-jms` source/test paths after the

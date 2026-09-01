@@ -121,6 +121,7 @@ func economicPrequalificationRepository(t *testing.T, analogousCommits int) (str
 
 func economicPrequalificationSnapshot() buildimpact.DiscoverySnapshot {
 	return buildimpact.DiscoverySnapshot{
+		Complete: true,
 		Projects: []buildimpact.DiscoveredProject{
 			{Path: ":library", SourcePaths: []string{"library/**"}},
 			{Path: ":consumer", SourcePaths: []string{"consumer/**"}, DependsOn: []string{":library"}},
