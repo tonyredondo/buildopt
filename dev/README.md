@@ -5625,6 +5625,12 @@ eligibility and stable ranking. It verifies fourteen eligible groups and the
 selected 37-commit Spring `:framework-docs` leaf-source group without running
 Gradle or trusting summary counts.
 
+`./dev/check-third-family-fresh-graph-confirmation-contract` freezes one
+optimized-native Spring `testClasses` request at the newest selected public
+group member. `./dev/capture-third-family-fresh-graph-confirmation` may execute
+that single request after the contract is committed; candidates and timing are
+forbidden.
+
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher
 integration tests. It proves that no measurement-only build contributes

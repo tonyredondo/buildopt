@@ -25,12 +25,18 @@ decision.
 
 ## Current experiment status
 
+`THIRD_FAMILY_FRESH_GRAPH_CONFIRMATION_V1` is current. Its frozen subject is
+the newest member of the selected Spring group: public commit `7a85ce95`,
+owner `:framework-docs`, family `LEAF_SOURCE`, workflow `testClasses`. One
+optimized-native request may confirm the fresh graph, outputs and compatible
+history. Candidates and timing remain forbidden; any mismatch stops the route.
+
 `THIRD_FAMILY_GRAPH_RECURRENCE_V1` is complete. Its independent reconstruction
 checks all 768 fresh source rows and finds fourteen eligible groups. The frozen
 ranking selects Spring owner `:framework-docs`, family `LEAF_SOURCE`, with 37
 exact commits and a 1/27 affected closure. Predecessor summaries supplied no
-row; Gradle, candidates, patches and timing remained closed. The next action is
-to freeze a fresh graph-confirmation contract for that exact structural group.
+row; Gradle, candidates, patches and timing remained closed. It authorized only
+the separately frozen fresh graph-confirmation contract above.
 
 `RECURRENT_ROOT_PAIRED_VALUE_V1` is complete. The exact Groovy root-owner
 dependency-source class passed seventeen fresh ordinary installed-path

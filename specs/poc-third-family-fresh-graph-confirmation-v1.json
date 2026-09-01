@@ -1,0 +1,8 @@
+{
+  "schemaVersion":"buildopt.specs/poc-third-family-fresh-graph-confirmation/v1",
+  "workItem":"TFGC",
+  "status":{"currentBlock":"TFGC-002","completedBlocks":["TFGC-001"]},
+  "execution":{"maximumGradleStarts":1,"expectedMode":"OPTIMIZED_NATIVE","candidateBuilds":0,"timingSamples":0,"timeoutMinutes":30,"maximumWorkers":12},
+  "gate":{"expectedOwners":[":framework-docs"],"expectedFamily":"LEAF_SOURCE","minimumCompatibleCommits":5,"minimumOmittedProjects":1,"productFailures":0}
+}
+

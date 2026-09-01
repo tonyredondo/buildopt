@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "${buildopt_root}"
+
+jq -e '
+  .schemaVersion=="buildopt.specs/poc-third-family-fresh-graph-confirmation/v1" and
+  .status.currentBlock=="TFGC-002" and .status.completedBlocks==["TFGC-001"] and
+  .execution=={maximumGradleStarts:1,expectedMode:"OPTIMIZED_NATIVE",candidateBuilds:0,timingSamples:0,timeoutMinutes:30,maximumWorkers:12} and
+  .gate=={expectedOwners:[":framework-docs"],expectedFamily:"LEAF_SOURCE",minimumCompatibleCommits:5,minimumOmittedProjects:1,productFailures:0}
+' specs/poc-third-family-fresh-graph-confirmation-v1.json >/dev/null
+jq -e '
+  .repositories|length==1 and
+  .[0].repositoryId=="spring-projects/spring-framework" and
+  .[0].publicRevision=="e93e55b456bbe320d2330fa37a975fe25feada1a" and
+  .[0].targetRevision=="7a85ce959bf35ddb268658bedc0edde0efa41491" and
+  .[0].changePath=="framework-docs/modules/ROOT/pages/web/webmvc-functional.adoc" and
+  .[0].expectedChangedProjects==[":framework-docs"] and .[0].entrypoints==["testClasses"]
+' specs/poc-third-family-fresh-graph-confirmation-v1.subjects.json >/dev/null
+jq -e '
+  .decision=="AUTHORIZE_FRESH_GRAPH_CONFIRMATION_CONTRACT" and
+  .selectedGroup.label=="spring-framework" and
+  .selectedGroup.owners==[":framework-docs"] and .selectedGroup.family=="LEAF_SOURCE" and
+  .selectedGroup.commitCount==37 and .selectedGroup.omittedProjects==26 and
+  .selectedGroup.commits[0]=="7a85ce959bf35ddb268658bedc0edde0efa41491" and
+  (.boundaries.gradleExecuted|not) and (.boundaries.timingCollected|not)
+' benchmarks/results/third-family-graph-recurrence-v1/capture/summary.json >/dev/null
+./dev/check-third-family-graph-recurrence >/dev/null
+printf 'third-family fresh graph confirmation contract: ok\n'
+

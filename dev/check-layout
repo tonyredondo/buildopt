@@ -630,6 +630,8 @@ buildopt_required_files=(
     "dev/check-third-family-graph-recurrence-contract"
     "dev/check-third-family-graph-recurrence"
     "dev/run-third-family-graph-recurrence"
+    "dev/check-third-family-fresh-graph-confirmation-contract"
+    "dev/capture-third-family-fresh-graph-confirmation"
     "dev/check-remote-cache-locality-harness-v3"
     "dev/check-remote-cache-locality-v3-public-correctness"
     "dev/check-remote-cache-locality-v3-paired-value"

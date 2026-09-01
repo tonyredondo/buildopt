@@ -1,0 +1,11 @@
+{
+  "schemaVersion":"buildopt.evidence/automatic-breadth-subjects/v3",
+  "repositories":[{
+    "key":"spring-framework-docs-recurrent","repositoryId":"spring-projects/spring-framework","repositoryNumericId":1148753,
+    "remoteUrl":"https://github.com/spring-projects/spring-framework.git","historyBranch":"main",
+    "publicRevision":"e93e55b456bbe320d2330fa37a975fe25feada1a","targetRevision":"7a85ce959bf35ddb268658bedc0edde0efa41491",
+    "jdkToolchain":"temurin-jdk-25","changePath":"framework-docs/modules/ROOT/pages/web/webmvc-functional.adoc","mutation":"APPEND_FIXED_COMMENT",
+    "entrypoints":["testClasses"],"entrypointsFile":null,"expectedChangedProjects":[":framework-docs"],"observations":[]
+  }]
+}
+
