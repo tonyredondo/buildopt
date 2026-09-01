@@ -290,6 +290,11 @@ times. A fresh public observation then confirms 38 compatible matches and a
 1/37 selected graph with 3,895 required output files and zero failures. This is
 fresh structural breadth evidence, not candidate correctness or value.
 
+The subsequent empty-state correctness route naturally reaches the candidate
+on request three and reproduces all 3,895 required output files exactly across
+native/native/candidate, with zero failures. This establishes a second public
+candidate class; robust paired value remains unmeasured.
+
 The graph-aware history successor replaces path-prefix recurrence with a
 versioned classifier shared by the launcher and an independent audit CLI. It
 rejects incomplete or drifted snapshots, unknown relationships, ambiguous

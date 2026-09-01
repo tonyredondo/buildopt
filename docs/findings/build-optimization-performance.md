@@ -1245,6 +1245,11 @@ cost, but those are diagnostic facts rather than a comparison. It confirms 38
 compatible matches and a 1/37 selected graph; candidate correctness and paired
 value remain separate gates.
 
+Candidate correctness then records one diagnostic pair: 29,306 ms native
+versus 19,723 ms candidate, a 9,583-ms / 32.70% difference and projected
+one-match payback after 2,406 ms learning. The contract explicitly excludes
+this single pair from value evidence; eight balanced pairs remain required.
+
 The follow-up `HISTORY_ADMITTED_CANDIDATE_CORRECTNESS_V1` selects Kafka because
 the exact prior source/history binding contained twelve compatible matches.
 That was admission evidence only. The fresh sequence then completed

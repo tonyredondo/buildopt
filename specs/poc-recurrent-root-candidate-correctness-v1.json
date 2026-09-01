@@ -1,6 +1,6 @@
 {
   "schemaVersion":"buildopt.specs/poc-recurrent-root-candidate-correctness/v1","workItem":"RRCC",
-  "status":{"currentBlock":"RRCC-002","completedBlocks":["RRCC-001"]},
+  "status":{"currentBlock":"RRCC-003","completedBlocks":["RRCC-001","RRCC-002","RRCC-003"],"decision":"AUTHORIZE_RECURRENT_ROOT_PAIRED_VALUE_CONTRACT"},
   "subject":"poc-fresh-graph-recurrent-group-confirmation-v1.subjects.json",
   "execution":{"maximumGradleStarts":3,"expectedModes":["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"],"candidateBuilds":1,"timingSamples":0},
   "outputs":{"expectedCount":3895,"expectedSha256":"385e7d8406bc505e00ac50506ad8a3bf75e6c53bf036e05796bb3a0e85242506"}

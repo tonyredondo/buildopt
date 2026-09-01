@@ -25,6 +25,11 @@ decision.
 
 ## Current experiment status
 
+`RECURRENT_ROOT_CANDIDATE_CORRECTNESS_V1` is complete. Fresh empty-state
+native/native/candidate execution reproduces the same 3,895-file output digest
+on all three requests with zero failures. Its one observed pair is diagnostic
+only; a separately frozen paired-value route is authorized.
+
 `FRESH_GRAPH_RECURRENT_GROUP_CONFIRMATION_V1` is complete. Its single
 optimized-native Groovy request confirms owner `:`, dependency-source, 38
 compatible matches and a 1/37 selected graph. All 3,895 required output files

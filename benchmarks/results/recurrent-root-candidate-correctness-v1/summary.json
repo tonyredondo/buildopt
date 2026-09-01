@@ -1,0 +1,9 @@
+{
+  "schemaVersion":"buildopt.evidence/recurrent-root-candidate-correctness/v1",
+  "decision":"AUTHORIZE_RECURRENT_ROOT_PAIRED_VALUE_CONTRACT",
+  "targetRevision":"494c9cb23ae799226c6ab8485301dae2925e6ed4",
+  "rawInvocationSha256":["a4148ed82ce03297be33a3ff62a9a799f89361fc30af3913e5aa640d38624887","83c628b42371a2d85bd397a675e92dc4062ef024458ef4de8f018d7fcebb030f","2086233b98fa371e8f5f8355bd363cc7e1c08c8bd090745f20f299012ccc4fec"],
+  "invocations":{"count":3,"modes":["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"],"durationsMs":[153233,29546,19904],"candidateBuilds":1,"timingSamples":0,"productFailures":0},
+  "outputs":{"count":3895,"sha256":"385e7d8406bc505e00ac50506ad8a3bf75e6c53bf036e05796bb3a0e85242506","identicalAcrossAllInvocations":true},
+  "diagnosticOnly":{"observedPairs":1,"controlMeanMs":29306,"candidateMeanMs":19723,"meanSavedMs":9583,"reductionRatio":0.3269978843922746,"projectedPaybackMatches":1,"valueClaim":false}
+}

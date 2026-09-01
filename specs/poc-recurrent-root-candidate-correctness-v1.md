@@ -1,6 +1,6 @@
 # Recurrent Root Candidate Correctness v1
 
-Status: `RRCC-001` complete; `RRCC-002` is current.
+Status: `RRCC-001..003` complete as `AUTHORIZE_RECURRENT_ROOT_PAIRED_VALUE_CONTRACT`.
 
 This route reruns the exact public Groovy subject from FGRG from empty BuildOpt
 state. It permits at most three ordinary requests and expects

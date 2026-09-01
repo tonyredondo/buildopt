@@ -2,6 +2,7 @@
 set -euo pipefail
 buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 cd -- "${buildopt_root}"
-jq -e '.schemaVersion=="buildopt.specs/poc-recurrent-root-candidate-correctness/v1" and .status.currentBlock=="RRCC-002" and .execution.maximumGradleStarts==3 and .execution.expectedModes==["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"] and .execution.candidateBuilds==1 and .execution.timingSamples==0 and .outputs.expectedCount==3895' specs/poc-recurrent-root-candidate-correctness-v1.json >/dev/null
+jq -e '.schemaVersion=="buildopt.specs/poc-recurrent-root-candidate-correctness/v1" and .status.decision=="AUTHORIZE_RECURRENT_ROOT_PAIRED_VALUE_CONTRACT" and .execution.maximumGradleStarts==3 and .execution.expectedModes==["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"] and .execution.candidateBuilds==1 and .execution.timingSamples==0 and .outputs.expectedCount==3895' specs/poc-recurrent-root-candidate-correctness-v1.json >/dev/null
 ./dev/check-fresh-graph-recurrent-group-confirmation-contract
+jq -e '.schemaVersion=="buildopt.evidence/recurrent-root-candidate-correctness/v1" and .decision=="AUTHORIZE_RECURRENT_ROOT_PAIRED_VALUE_CONTRACT" and .invocations.count==3 and .invocations.modes==["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"] and .invocations.candidateBuilds==1 and .invocations.timingSamples==0 and .invocations.productFailures==0 and .outputs.count==3895 and .outputs.identicalAcrossAllInvocations and (.rawInvocationSha256|length)==3 and (.rawInvocationSha256|unique|length)==3 and (.diagnosticOnly.valueClaim|not)' benchmarks/results/recurrent-root-candidate-correctness-v1/summary.json >/dev/null
 printf 'recurrent root candidate correctness contract: ok\n'
