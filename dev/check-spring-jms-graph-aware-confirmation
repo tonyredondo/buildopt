@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "${buildopt_root}"
+
+buildopt_evidence=benchmarks/results/spring-jms-graph-aware-confirmation-v1
+buildopt_capture_sha=$(sha256sum "${buildopt_evidence}/raw/capture.json" | awk '{print $1}')
+buildopt_invocation_sha=$(sha256sum "${buildopt_evidence}/raw/invocation-01.json" | awk '{print $1}')
+
+./dev/check-spring-jms-graph-aware-confirmation-contract >/dev/null
+jq -e \
+  --slurpfile capture "${buildopt_evidence}/raw/capture.json" \
+  --slurpfile invocation "${buildopt_evidence}/raw/invocation-01.json" \
+  --slurpfile source benchmarks/results/third-family-graph-recurrence-v1/capture/summary.json \
+  --arg captureSha "${buildopt_capture_sha}" --arg invocationSha "${buildopt_invocation_sha}" '
+  $capture[0] as $capture|$invocation[0] as $invocation|
+  ($source[0].eligibleGroups[] | select(.owners==[":spring-jms"] and .family=="DEPENDENCY_SOURCE")) as $sourceGroup|
+  $capture.schemaVersion=="buildopt.evidence/automatic-breadth-subject/v3" and
+  $capture.repositoryId=="spring-projects/spring-framework" and
+  $capture.baseRevision=="47a2e7059eb61a3c7ae776b3e64bda052a06aee6" and
+  $capture.targetRevision=="75705bcbb1da866d3ed44bf7526437a7fdf1136b" and
+  $capture.processExitCode==0 and ($capture.productFailure|not) and
+  $capture.ordinaryInvocations==1 and $capture.measurementOnlyWorkflowRuns==0 and
+  $capture.rawResultSha256==$invocationSha and
+  ($capture.invocationResults|length)==1 and $capture.invocationResults[0].sha256==$invocationSha and
+  $invocation.schemaVersion=="buildopt.poc/optimize-result/v1" and
+  $invocation.outcome=="NATIVE_RETAINED" and
+  $invocation.reason=="ORDINARY_LEARNING_ECONOMICS_REJECTED" and
+  $invocation.execution=={authoritative:true,exitCode:0,mode:"OPTIMIZED_NATIVE",started:true} and
+  $invocation.discovery.status=="COMPLETE" and
+  $invocation.discovery.reason=="STRUCTURAL_CANDIDATE_DISCOVERED" and
+  $invocation.discovery.changeFamily=="DEPENDENCY_SOURCE" and
+  $invocation.discovery.changedProjects==[":spring-jms"] and
+  $invocation.discovery.graph=={omittedProjects:17,selectedProjects:10,totalProjects:27} and
+  $invocation.discovery.aggregatePartition.status=="COMPLETE" and
+  $invocation.discovery.aggregatePartition.reason=="REVISION_BOUND_OUTPUT_PARTITION" and
+  ($invocation.discovery.requiredOutputs|length)==57 and
+  $invocation.discovery.materialization.status=="CAPTURED" and
+  ($invocation.discovery.materialization.patterns|length)==55 and
+  $invocation.discovery.materialization.fileCount==14196 and
+  $invocation.discovery.materialization.byteCount==41423821 and
+  $invocation.incrementalLearning.baseline.requiredOutputCount==14423 and
+  $invocation.incrementalLearning.baseline.requiredOutputSha256=="f251668bdd98cecb26221c913704f042f042e25f3043fca7d24097ef082419fe" and
+  ($invocation.incrementalLearning.baseline.productAttributableFailure|not) and
+  $invocation.incrementalLearning.ordinaryEconomics.historicalCompatibleMatches==1 and
+  $invocation.incrementalLearning.ordinaryEconomics.maximumPaybackMatches==5 and
+  ($invocation.calibration.performed|not) and ($invocation.productionAuthorized|not) and
+  $sourceGroup.commitCount==6 and $sourceGroup.affectedProjects==3 and
+  $sourceGroup.totalProjects==27 and $sourceGroup.omittedProjects==24 and
+  .schemaVersion=="buildopt.evidence/spring-jms-graph-aware-confirmation/v1" and
+  .decision=="STOP_SPRING_JMS_GRAPH_AWARE_CONFIRMATION" and
+  .rawBindings.captureSha256==$captureSha and .rawBindings.invocationSha256==$invocationSha and
+  .rawBindings.stateTreeSha256==$capture.stateTreeSha256 and
+  .rawBindings.executableSha256==$capture.buildopt.executableSha256 and
+  .execution=={mode:"OPTIMIZED_NATIVE",gradleStarts:1,exitCode:0,durationMs:314964,candidateBuilds:0,timingSamples:0,productFailures:0} and
+  .sourceSelection.compatibleCommits==$sourceGroup.commitCount and
+  .sourceSelection.affectedProjects==$sourceGroup.affectedProjects and
+  .sourceSelection.totalProjects==$sourceGroup.totalProjects and
+  .sourceSelection.omittedProjects==$sourceGroup.omittedProjects and
+  .productObservation.historicalCompatibleMatches==$invocation.incrementalLearning.ordinaryEconomics.historicalCompatibleMatches and
+  .productObservation.matchGap==(.sourceSelection.compatibleCommits-.productObservation.historicalCompatibleMatches) and
+  .graph.requiredOutputPatterns==($invocation.discovery.requiredOutputs|length) and
+  .graph.exactOutputFiles==$invocation.incrementalLearning.baseline.requiredOutputCount and
+  .materialization.patterns==($invocation.discovery.materialization.patterns|length) and
+  .materialization.files==$invocation.discovery.materialization.fileCount and
+  .materialization.bytes==$invocation.discovery.materialization.byteCount and
+  .economics=={calibrationPerformed:false,candidateMeasured:false,valueClaimed:false} and
+  .boundaries=={candidateCorrectnessAuthorized:false,pairedValueAuthorized:false,productionAuthorized:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_evidence}/summary.json" >/dev/null
+
+printf 'spring-jms graph-aware confirmation: stopped safely (source 6, product 1, 1 native start, 0 candidates)\n'

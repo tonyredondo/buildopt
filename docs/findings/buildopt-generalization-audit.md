@@ -328,6 +328,15 @@ reproduce Kafka at 12 compatible commits and Spring at one, without
 repository-name rules or Gradle execution. This fixes admission precision; it
 does not add breadth beyond the qualified Kafka class.
 
+The Spring JMS confirmation shows that the source classifier is not yet the
+effective product admission owner. One fresh optimized-native request
+reconstructs complete output closure, 17/27 omitted projects, 14,423 exact
+outputs and zero failures, yet ordinary product economics still counts one
+historical compatible match against the independently reconstructed six. The
+route stops before candidate correctness. The next viable seam is integration
+of the graph-aware classifier into ordinary admission, not another repository
+name rule, state injection or timing run.
+
 The successor isolated the naturally history-admitted Kafka row.
 Its twelve bound compatible matches may select the row but cannot be reused as
 fresh correctness or performance evidence. The route allows three untimed

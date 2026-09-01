@@ -5634,10 +5634,12 @@ result and reconstructs the safe stop: aggregate output closure cannot reach
 one producer, so one native start authorizes no successor or timing.
 
 `./dev/check-spring-jms-graph-aware-confirmation-contract` selects the exact
-Spring JMS row where the fresh source audit reports 6/5 compatible matches and
-prior selection-only evidence proves complete output closure. The capture
-allows one current-product optimized-native request; old outputs and the old
-1/5 product count cannot supply its result, and candidates/timing stay closed.
+output-reachable Spring JMS row and freezes one native-only confirmation.
+`./dev/check-spring-jms-graph-aware-confirmation` independently binds the raw
+capture, reconstructs the source 6 versus product 1 history mismatch, verifies
+complete exact outputs and enforces the zero-candidate/timing terminal stop.
+`./dev/capture-spring-jms-graph-aware-confirmation` is the now-consumed
+one-request capture entrypoint; rerunning it is not part of result validation.
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher

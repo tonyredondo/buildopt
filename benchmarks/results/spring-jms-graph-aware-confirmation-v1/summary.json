@@ -1,0 +1,15 @@
+{
+  "schemaVersion":"buildopt.evidence/spring-jms-graph-aware-confirmation/v1",
+  "decision":"STOP_SPRING_JMS_GRAPH_AWARE_CONFIRMATION",
+  "repositoryId":"spring-projects/spring-framework",
+  "baseRevision":"47a2e7059eb61a3c7ae776b3e64bda052a06aee6",
+  "targetRevision":"75705bcbb1da866d3ed44bf7526437a7fdf1136b",
+  "rawBindings":{"captureSha256":"42972a0f32a1fbebca035bed0f7ea3b420a403450ec0a448d5622031baa10372","invocationSha256":"c069bf3d19c9bc4b42a1f061776dc51552a3693d72644fe8f96bf0c306d06923","stateTreeSha256":"50e12c1204b44749afbe8be6ac211b71673895b675e567a79a57c9dab71a2019","executableSha256":"af9f36a258038284853527dacc21f6a14280b5fcafb9a3ddd686e4d98f776854"},
+  "execution":{"mode":"OPTIMIZED_NATIVE","gradleStarts":1,"exitCode":0,"durationMs":314964,"candidateBuilds":0,"timingSamples":0,"productFailures":0},
+  "sourceSelection":{"owners":[":spring-jms"],"family":"DEPENDENCY_SOURCE","compatibleCommits":6,"affectedProjects":3,"totalProjects":27,"omittedProjects":24},
+  "productObservation":{"outcome":"NATIVE_RETAINED","reason":"ORDINARY_LEARNING_ECONOMICS_REJECTED","discoveryStatus":"COMPLETE","discoveryReason":"STRUCTURAL_CANDIDATE_DISCOVERED","historicalCompatibleMatches":1,"requiredMinimum":5,"matchGap":5},
+  "graph":{"selectedProjects":10,"totalProjects":27,"omittedProjects":17,"requiredOutputPatterns":57,"exactOutputFiles":14423,"exactOutputSha256":"f251668bdd98cecb26221c913704f042f042e25f3043fca7d24097ef082419fe"},
+  "materialization":{"status":"CAPTURED","patterns":55,"files":14196,"bytes":41423821},
+  "economics":{"calibrationPerformed":false,"candidateMeasured":false,"valueClaimed":false},
+  "boundaries":{"candidateCorrectnessAuthorized":false,"pairedValueAuthorized":false,"productionAuthorized":false,"testOptimization":"OUT_OF_SCOPE"}
+}
