@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "${buildopt_root}"
+jq -e '.schemaVersion=="buildopt.specs/poc-recurrent-root-candidate-correctness/v1" and .status.currentBlock=="RRCC-002" and .execution.maximumGradleStarts==3 and .execution.expectedModes==["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"] and .execution.candidateBuilds==1 and .execution.timingSamples==0 and .outputs.expectedCount==3895' specs/poc-recurrent-root-candidate-correctness-v1.json >/dev/null
+./dev/check-fresh-graph-recurrent-group-confirmation-contract
+printf 'recurrent root candidate correctness contract: ok\n'
