@@ -21,6 +21,14 @@ selects Spring `:framework-docs` / `LEAF_SOURCE` at 37 commits and 26/27 omitted
 projects. This authorizes only a fresh graph confirmation; it supplies no
 correctness build, candidate timing or third qualified value class yet.
 
+That fresh confirmation now closes negatively. The exact Spring docs commit
+runs successfully under optimized native Gradle, but BuildOpt cannot complete
+the aggregate `testClasses` output contract: one producer is unreachable from
+the captured 281-task graph. Native fallback is correct and failures are zero,
+but no output partition or history gate is available. Source recurrence alone
+therefore does not make this group actionable; candidate correctness and value
+remain closed.
+
 The checked [critical-path successor selection](../plans/critical-path-successor-selection-v1.md)
 reconstructs decisive evidence for six candidate routes and selects only change-scoped critical-path
 discovery. Historical Build Impact results are motivation, not fresh rows.

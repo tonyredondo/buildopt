@@ -1294,6 +1294,12 @@ eligible owner/family groups. The frozen ranking selects Spring
 That result is a reason to run one separately contracted fresh confirmation,
 not a correctness result, speedup percentage or third qualified value class.
 
+The fresh confirmation contributes one successful optimized-native execution
+but still no performance sample. Aggregate output closure reaches 281 tasks
+and then retains native as `AGGREGATE_OUTPUT_CLOSURE_PRODUCER_UNREACHABLE`;
+required and candidate output sets remain empty. No candidate, calibration or
+timing follows, so this Spring docs group does not become a third value class.
+
 The untimed CSCPC route did not reach candidate correctness or performance.
 Its first Groovy optimized-native invocation succeeded, but the production
 decision path returned `NATIVE_RETAINED / ORDINARY_LEARNING_ECONOMICS_REJECTED`:

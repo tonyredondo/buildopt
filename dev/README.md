@@ -5629,7 +5629,9 @@ Gradle or trusting summary counts.
 optimized-native Spring `testClasses` request at the newest selected public
 group member. `./dev/capture-third-family-fresh-graph-confirmation` may execute
 that single request after the contract is committed; candidates and timing are
-forbidden.
+forbidden. `./dev/check-third-family-fresh-graph-confirmation` binds the raw
+result and reconstructs the safe stop: aggregate output closure cannot reach
+one producer, so one native start authorizes no successor or timing.
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher

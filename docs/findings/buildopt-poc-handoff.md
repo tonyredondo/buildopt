@@ -25,11 +25,13 @@ decision.
 
 ## Current experiment status
 
-`THIRD_FAMILY_FRESH_GRAPH_CONFIRMATION_V1` is current. Its frozen subject is
-the newest member of the selected Spring group: public commit `7a85ce95`,
-owner `:framework-docs`, family `LEAF_SOURCE`, workflow `testClasses`. One
-optimized-native request may confirm the fresh graph, outputs and compatible
-history. Candidates and timing remain forbidden; any mismatch stops the route.
+`THIRD_FAMILY_FRESH_GRAPH_CONFIRMATION_V1` is closed. Its one optimized-native
+Spring `testClasses` request exits zero and confirms the source owner/family,
+but the aggregate output closure retains native as
+`AGGREGATE_OUTPUT_CLOSURE_PRODUCER_UNREACHABLE` after reaching 281 tasks. No
+required/candidate output set or compatible-history count is established. The
+route stops with one Gradle start, zero candidates, zero timing samples and
+zero product failures; it authorizes no candidate-correctness successor.
 
 `THIRD_FAMILY_GRAPH_RECURRENCE_V1` is complete. Its independent reconstruction
 checks all 768 fresh source rows and finds fourteen eligible groups. The frozen

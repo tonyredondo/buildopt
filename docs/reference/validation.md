@@ -684,6 +684,7 @@ Gradle build is rerun by this static decision gate.
 ./dev/check-third-family-graph-recurrence-contract
 ./dev/check-third-family-graph-recurrence
 ./dev/check-third-family-fresh-graph-confirmation-contract
+./dev/check-third-family-fresh-graph-confirmation
 ```
 
 This source-only check binds the retained discovery snapshots, tests the

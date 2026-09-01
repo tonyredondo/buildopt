@@ -1,0 +1,12 @@
+{
+  "schemaVersion":"buildopt.evidence/third-family-fresh-graph-confirmation/v1",
+  "decision":"STOP_THIRD_FAMILY_FRESH_GRAPH_CONFIRMATION",
+  "repositoryId":"spring-projects/spring-framework",
+  "baseRevision":"e93e55b456bbe320d2330fa37a975fe25feada1a",
+  "targetRevision":"7a85ce959bf35ddb268658bedc0edde0efa41491",
+  "rawBindings":{"captureSha256":"8a2c6e7947f2f6655720d4ec391682f34044757a7f89b5ce74fb062fec6aac84","invocationSha256":"1b9e485b75140d64cf4765ec15cd38a806c3dd80405da2db6d704dfd2960aa73","stateTreeSha256":"96bc3333303ecc82f9f239f82b01ec8a978811b9e0e3bb74edcde298fdddea4a","executableSha256":"af9f36a258038284853527dacc21f6a14280b5fcafb9a3ddd686e4d98f776854"},
+  "execution":{"mode":"OPTIMIZED_NATIVE","gradleStarts":1,"exitCode":0,"durationMs":378305,"candidateBuilds":0,"timingSamples":0,"productFailures":0},
+  "discovery":{"status":"NATIVE_RETAINED","reason":"AGGREGATE_OUTPUT_CLOSURE_PRODUCER_UNREACHABLE","changedProjects":[":framework-docs"],"family":"LEAF_SOURCE","requestedEntrypoints":["testClasses"],"reachedTaskCount":281,"requiredOutputCount":0,"candidateOutputCount":0,"historicalCompatibleMatches":0},
+  "economics":{"calibrationPerformed":false,"candidateMeasured":false,"valueClaimed":false},
+  "boundaries":{"candidateCorrectnessAuthorized":false,"pairedValueAuthorized":false,"productionAuthorized":false,"testOptimization":"OUT_OF_SCOPE"}
+}
