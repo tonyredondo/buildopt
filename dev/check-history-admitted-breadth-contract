@@ -5,7 +5,7 @@ contract=specs/poc-history-admitted-breadth-v1.json
 subjects=specs/poc-history-admitted-breadth-v1.subjects.json
 jq -e '
  .selection.derivedOwnerPrefix as $prefix |
- .status.currentBlock=="HAB-002" and .selection.previousCompatibleMatches==4 and
+ .status.currentBlock=="HAB-004" and .status.decision=="STOP_PATH_ONLY_HISTORY_ADMISSION" and .selection.previousCompatibleMatches==4 and
  .selection.minimumCompatibleMatches==5 and (.selection.repositoryNameRule|not) and
  all(.selection.changedPaths[]; startswith($prefix)) and
  .execution.requestedInvocations==3 and

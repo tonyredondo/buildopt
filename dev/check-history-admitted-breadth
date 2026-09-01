@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+capture=benchmarks/results/history-admitted-breadth-v1/spring-framework/capture.json
+jq -e '
+ .ordinaryInvocations==1 and (.productFailure|not) and
+ .execution=={authoritative:true,exitCode:0,mode:"OPTIMIZED_NATIVE",started:true} and
+ .outcome=="NATIVE_RETAINED" and .reason=="ORDINARY_LEARNING_ECONOMICS_REJECTED" and
+ .discovery.changeFamily=="DEPENDENCY_SOURCE" and
+ .discovery.changedProjects==[":spring-jms"] and
+ .discovery.candidateEntrypoints==[":spring-jms:testClasses"] and
+ .incrementalLearning.ordinaryEconomics.historicalCompatibleMatches==1 and
+ .incrementalLearning.ordinaryEconomics.reason=="COMPATIBLE_LIFETIME_INSUFFICIENT" and
+ (.incrementalLearning.ordinaryEconomics.calibrationAuthorized|not)
+' "$capture" >/dev/null
+printf 'HAB result OK: Spring retained native at 1 compatible match; 0 candidates, 0 timing\n'

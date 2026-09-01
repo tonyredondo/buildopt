@@ -1,0 +1,4274 @@
+{
+  "schemaVersion": "buildopt.build-impact/gradle-discovery/v1",
+  "gradleVersion": "9.3.1",
+  "complete": true,
+  "fallbackReasons": [],
+  "projects": [
+    {
+      "path": ":framework-api",
+      "sourcePaths": [
+        "framework-api/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-instrument",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":framework-bom",
+      "sourcePaths": [
+        "framework-bom/**"
+      ],
+      "dependsOn": [
+        ":framework-platform"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":framework-docs",
+      "sourcePaths": [
+        "framework-docs/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aspects",
+        ":spring-context",
+        ":spring-context-support",
+        ":spring-core-test",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":framework-platform",
+      "sourcePaths": [
+        "framework-platform/**"
+      ],
+      "dependsOn": [],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":integration-tests",
+      "sourcePaths": [
+        "integration-tests/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-jdbc",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-aop",
+      "sourcePaths": [
+        "spring-aop/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-beans",
+        ":spring-core",
+        ":spring-core-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-aspects",
+      "sourcePaths": [
+        "spring-aspects/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-tx"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-beans",
+      "sourcePaths": [
+        "spring-beans/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-core",
+        ":spring-core-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-context",
+      "sourcePaths": [
+        "spring-context/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-instrument"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-context-indexer",
+      "sourcePaths": [
+        "spring-context-indexer/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-context"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-context-support",
+      "sourcePaths": [
+        "spring-context-support/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-jdbc",
+        ":spring-tx"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-core",
+      "sourcePaths": [
+        "spring-core/**"
+      ],
+      "dependsOn": [
+        ":framework-platform"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-core-test",
+      "sourcePaths": [
+        "spring-core-test/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-core"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-expression",
+      "sourcePaths": [
+        "spring-expression/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-core"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-instrument",
+      "sourcePaths": [
+        "spring-instrument/**"
+      ],
+      "dependsOn": [
+        ":framework-platform"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-jdbc",
+      "sourcePaths": [
+        "spring-jdbc/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-tx"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-jms",
+      "sourcePaths": [
+        "spring-jms/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-messaging",
+        ":spring-oxm",
+        ":spring-tx"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-messaging",
+      "sourcePaths": [
+        "spring-messaging/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-oxm"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-orm",
+      "sourcePaths": [
+        "spring-orm/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-jdbc",
+        ":spring-tx",
+        ":spring-web"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-oxm",
+      "sourcePaths": [
+        "spring-oxm/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-r2dbc",
+      "sourcePaths": [
+        "spring-r2dbc/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-tx"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-test",
+      "sourcePaths": [
+        "spring-test/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-jdbc",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-tx",
+      "sourcePaths": [
+        "spring-tx/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-core-test"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-web",
+      "sourcePaths": [
+        "spring-web/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-messaging",
+        ":spring-oxm",
+        ":spring-tx"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-webflux",
+      "sourcePaths": [
+        "spring-webflux/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-web"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-webmvc",
+      "sourcePaths": [
+        "spring-webmvc/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-aop",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-expression",
+        ":spring-oxm",
+        ":spring-web"
+      ],
+      "unknownRelationships": false
+    },
+    {
+      "path": ":spring-websocket",
+      "sourcePaths": [
+        "spring-websocket/**"
+      ],
+      "dependsOn": [
+        ":framework-platform",
+        ":spring-context",
+        ":spring-core",
+        ":spring-messaging",
+        ":spring-web",
+        ":spring-webmvc"
+      ],
+      "unknownRelationships": false
+    }
+  ],
+  "tasks": [
+    {
+      "path": ":framework-docs:checkKotlinGradlePluginConfigurationErrors",
+      "projectPath": ":framework-docs",
+      "dependsOn": []
+    },
+    {
+      "path": ":framework-docs:classes",
+      "projectPath": ":framework-docs",
+      "dependsOn": [
+        ":framework-docs:compileJava",
+        ":framework-docs:processResources"
+      ]
+    },
+    {
+      "path": ":framework-docs:compileJava",
+      "projectPath": ":framework-docs",
+      "dependsOn": [
+        ":framework-docs:compileKotlin",
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aspects:compileAspectj",
+        ":spring-aspects:compileJava",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-jms:compileJava",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-test:compileJava",
+        ":spring-test:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webflux:compileJava",
+        ":spring-webflux:compileKotlin",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-websocket:compileJava"
+      ]
+    },
+    {
+      "path": ":framework-docs:compileKotlin",
+      "projectPath": ":framework-docs",
+      "dependsOn": [
+        ":framework-docs:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aspects:compileAspectj",
+        ":spring-aspects:compileJava",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-jms:compileJava",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-test:compileJava",
+        ":spring-test:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webflux:compileJava",
+        ":spring-webflux:compileKotlin",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-websocket:compileJava"
+      ]
+    },
+    {
+      "path": ":framework-docs:compileTestJava",
+      "projectPath": ":framework-docs",
+      "dependsOn": [
+        ":framework-docs:classes",
+        ":framework-docs:compileJava",
+        ":framework-docs:compileKotlin",
+        ":framework-docs:compileTestKotlin",
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aspects:compileAspectj",
+        ":spring-aspects:compileJava",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-jms:compileJava",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-test:compileJava",
+        ":spring-test:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webflux:compileJava",
+        ":spring-webflux:compileKotlin",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-websocket:compileJava"
+      ]
+    },
+    {
+      "path": ":framework-docs:compileTestKotlin",
+      "projectPath": ":framework-docs",
+      "dependsOn": [
+        ":framework-docs:checkKotlinGradlePluginConfigurationErrors",
+        ":framework-docs:classes",
+        ":framework-docs:compileJava",
+        ":framework-docs:compileKotlin",
+        ":framework-docs:jar",
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aspects:compileAspectj",
+        ":spring-aspects:compileJava",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-jms:compileJava",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-test:compileJava",
+        ":spring-test:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webflux:compileJava",
+        ":spring-webflux:compileKotlin",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-websocket:compileJava"
+      ]
+    },
+    {
+      "path": ":framework-docs:jar",
+      "projectPath": ":framework-docs",
+      "dependsOn": [
+        ":framework-docs:classes",
+        ":framework-docs:compileJava",
+        ":framework-docs:compileKotlin"
+      ]
+    },
+    {
+      "path": ":framework-docs:processResources",
+      "projectPath": ":framework-docs",
+      "dependsOn": []
+    },
+    {
+      "path": ":framework-docs:processTestResources",
+      "projectPath": ":framework-docs",
+      "dependsOn": []
+    },
+    {
+      "path": ":framework-docs:testClasses",
+      "projectPath": ":framework-docs",
+      "dependsOn": [
+        ":framework-docs:compileTestJava",
+        ":framework-docs:processTestResources"
+      ]
+    },
+    {
+      "path": ":integration-tests:checkKotlinGradlePluginConfigurationErrors",
+      "projectPath": ":integration-tests",
+      "dependsOn": []
+    },
+    {
+      "path": ":integration-tests:classes",
+      "projectPath": ":integration-tests",
+      "dependsOn": [
+        ":integration-tests:compileJava",
+        ":integration-tests:processResources"
+      ]
+    },
+    {
+      "path": ":integration-tests:compileJava",
+      "projectPath": ":integration-tests",
+      "dependsOn": [
+        ":integration-tests:compileKotlin"
+      ]
+    },
+    {
+      "path": ":integration-tests:compileKotlin",
+      "projectPath": ":integration-tests",
+      "dependsOn": [
+        ":integration-tests:checkKotlinGradlePluginConfigurationErrors"
+      ]
+    },
+    {
+      "path": ":integration-tests:compileTestFixturesJava",
+      "projectPath": ":integration-tests",
+      "dependsOn": [
+        ":integration-tests:compileTestFixturesKotlin",
+        ":integration-tests:jar"
+      ]
+    },
+    {
+      "path": ":integration-tests:compileTestFixturesKotlin",
+      "projectPath": ":integration-tests",
+      "dependsOn": [
+        ":integration-tests:checkKotlinGradlePluginConfigurationErrors",
+        ":integration-tests:compileJava",
+        ":integration-tests:compileKotlin",
+        ":integration-tests:jar"
+      ]
+    },
+    {
+      "path": ":integration-tests:compileTestJava",
+      "projectPath": ":integration-tests",
+      "dependsOn": [
+        ":integration-tests:compileTestFixturesJava",
+        ":integration-tests:compileTestFixturesKotlin",
+        ":integration-tests:compileTestKotlin",
+        ":integration-tests:jar",
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aop:compileTestFixturesJava",
+        ":spring-aop:compileTestFixturesKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-test:compileJava",
+        ":spring-test:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-tx:compileTestFixturesJava",
+        ":spring-tx:compileTestFixturesKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin"
+      ]
+    },
+    {
+      "path": ":integration-tests:compileTestKotlin",
+      "projectPath": ":integration-tests",
+      "dependsOn": [
+        ":integration-tests:checkKotlinGradlePluginConfigurationErrors",
+        ":integration-tests:compileJava",
+        ":integration-tests:compileKotlin",
+        ":integration-tests:compileTestFixturesJava",
+        ":integration-tests:compileTestFixturesKotlin",
+        ":integration-tests:jar",
+        ":integration-tests:testFixturesJar",
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aop:compileTestFixturesJava",
+        ":spring-aop:compileTestFixturesKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-test:compileJava",
+        ":spring-test:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-tx:compileTestFixturesJava",
+        ":spring-tx:compileTestFixturesKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin"
+      ]
+    },
+    {
+      "path": ":integration-tests:jar",
+      "projectPath": ":integration-tests",
+      "dependsOn": [
+        ":integration-tests:classes",
+        ":integration-tests:compileJava",
+        ":integration-tests:compileKotlin"
+      ]
+    },
+    {
+      "path": ":integration-tests:processResources",
+      "projectPath": ":integration-tests",
+      "dependsOn": []
+    },
+    {
+      "path": ":integration-tests:processTestFixturesResources",
+      "projectPath": ":integration-tests",
+      "dependsOn": []
+    },
+    {
+      "path": ":integration-tests:processTestResources",
+      "projectPath": ":integration-tests",
+      "dependsOn": []
+    },
+    {
+      "path": ":integration-tests:testClasses",
+      "projectPath": ":integration-tests",
+      "dependsOn": [
+        ":integration-tests:compileTestJava",
+        ":integration-tests:processTestResources"
+      ]
+    },
+    {
+      "path": ":integration-tests:testFixturesClasses",
+      "projectPath": ":integration-tests",
+      "dependsOn": [
+        ":integration-tests:compileTestFixturesJava",
+        ":integration-tests:processTestFixturesResources"
+      ]
+    },
+    {
+      "path": ":integration-tests:testFixturesJar",
+      "projectPath": ":integration-tests",
+      "dependsOn": [
+        ":integration-tests:compileTestFixturesJava",
+        ":integration-tests:compileTestFixturesKotlin",
+        ":integration-tests:testFixturesClasses"
+      ]
+    },
+    {
+      "path": ":spring-aop:checkKotlinGradlePluginConfigurationErrors",
+      "projectPath": ":spring-aop",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-aop:classes",
+      "projectPath": ":spring-aop",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:processResources"
+      ]
+    },
+    {
+      "path": ":spring-aop:compileJava",
+      "projectPath": ":spring-aop",
+      "dependsOn": [
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-aop:compileKotlin",
+      "projectPath": ":spring-aop",
+      "dependsOn": [
+        ":spring-aop:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-aop:compileTestFixturesJava",
+      "projectPath": ":spring-aop",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aop:compileTestFixturesKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-aop:compileTestFixturesKotlin",
+      "projectPath": ":spring-aop",
+      "dependsOn": [
+        ":spring-aop:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aop:jar",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-aop:compileTestJava",
+      "projectPath": ":spring-aop",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aop:compileTestFixturesJava",
+        ":spring-aop:compileTestFixturesKotlin",
+        ":spring-aop:compileTestKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-aop:compileTestKotlin",
+      "projectPath": ":spring-aop",
+      "dependsOn": [
+        ":spring-aop:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aop:compileTestFixturesJava",
+        ":spring-aop:compileTestFixturesKotlin",
+        ":spring-aop:jar",
+        ":spring-aop:testFixturesJar",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-aop:jar",
+      "projectPath": ":spring-aop",
+      "dependsOn": [
+        ":spring-aop:classes",
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-aop:processResources",
+      "projectPath": ":spring-aop",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-aop:processTestFixturesResources",
+      "projectPath": ":spring-aop",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-aop:processTestResources",
+      "projectPath": ":spring-aop",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-aop:testClasses",
+      "projectPath": ":spring-aop",
+      "dependsOn": [
+        ":spring-aop:compileTestJava",
+        ":spring-aop:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-aop:testFixturesClasses",
+      "projectPath": ":spring-aop",
+      "dependsOn": [
+        ":spring-aop:compileTestFixturesJava",
+        ":spring-aop:processTestFixturesResources"
+      ]
+    },
+    {
+      "path": ":spring-aop:testFixturesJar",
+      "projectPath": ":spring-aop",
+      "dependsOn": [
+        ":spring-aop:compileTestFixturesJava",
+        ":spring-aop:compileTestFixturesKotlin",
+        ":spring-aop:testFixturesClasses"
+      ]
+    },
+    {
+      "path": ":spring-aspects:classes",
+      "projectPath": ":spring-aspects",
+      "dependsOn": [
+        ":spring-aspects:compileAspectj",
+        ":spring-aspects:compileJava",
+        ":spring-aspects:processResources"
+      ]
+    },
+    {
+      "path": ":spring-aspects:compileAspectj",
+      "projectPath": ":spring-aspects",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aspects:compileJava",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-aspects:compileJava",
+      "projectPath": ":spring-aspects",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-aspects:compileTestAspectj",
+      "projectPath": ":spring-aspects",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aspects:classes",
+        ":spring-aspects:compileAspectj",
+        ":spring-aspects:compileJava",
+        ":spring-aspects:compileTestFixturesAspectj",
+        ":spring-aspects:compileTestFixturesJava",
+        ":spring-aspects:compileTestJava",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context-support:compileTestFixturesJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-test:compileJava",
+        ":spring-test:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-tx:compileTestFixturesJava",
+        ":spring-tx:compileTestFixturesKotlin"
+      ]
+    },
+    {
+      "path": ":spring-aspects:compileTestFixturesAspectj",
+      "projectPath": ":spring-aspects",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aspects:compileAspectj",
+        ":spring-aspects:compileJava",
+        ":spring-aspects:compileTestFixturesJava",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-aspects:compileTestFixturesJava",
+      "projectPath": ":spring-aspects",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aspects:compileAspectj",
+        ":spring-aspects:compileJava",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-aspects:compileTestJava",
+      "projectPath": ":spring-aspects",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aspects:compileAspectj",
+        ":spring-aspects:compileJava",
+        ":spring-aspects:compileTestFixturesAspectj",
+        ":spring-aspects:compileTestFixturesJava",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context-support:compileTestFixturesJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-test:compileJava",
+        ":spring-test:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-tx:compileTestFixturesJava",
+        ":spring-tx:compileTestFixturesKotlin"
+      ]
+    },
+    {
+      "path": ":spring-aspects:processResources",
+      "projectPath": ":spring-aspects",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-aspects:processTestResources",
+      "projectPath": ":spring-aspects",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-aspects:testClasses",
+      "projectPath": ":spring-aspects",
+      "dependsOn": [
+        ":spring-aspects:compileTestAspectj",
+        ":spring-aspects:compileTestJava",
+        ":spring-aspects:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-beans:checkKotlinGradlePluginConfigurationErrors",
+      "projectPath": ":spring-beans",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-beans:classes",
+      "projectPath": ":spring-beans",
+      "dependsOn": [
+        ":spring-beans:compileJava",
+        ":spring-beans:processResources"
+      ]
+    },
+    {
+      "path": ":spring-beans:compileJava",
+      "projectPath": ":spring-beans",
+      "dependsOn": [
+        ":spring-beans:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-beans:compileKotlin",
+      "projectPath": ":spring-beans",
+      "dependsOn": [
+        ":spring-beans:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-beans:compileTestFixturesJava",
+      "projectPath": ":spring-beans",
+      "dependsOn": [
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-beans:compileTestFixturesKotlin",
+      "projectPath": ":spring-beans",
+      "dependsOn": [
+        ":spring-beans:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:jar",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-beans:compileTestJava",
+      "projectPath": ":spring-beans",
+      "dependsOn": [
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-beans:compileTestKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-beans:compileTestKotlin",
+      "projectPath": ":spring-beans",
+      "dependsOn": [
+        ":spring-beans:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-beans:jar",
+        ":spring-beans:testFixturesJar",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-beans:jar",
+      "projectPath": ":spring-beans",
+      "dependsOn": [
+        ":spring-beans:classes",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-beans:processResources",
+      "projectPath": ":spring-beans",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-beans:processTestFixturesResources",
+      "projectPath": ":spring-beans",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-beans:processTestResources",
+      "projectPath": ":spring-beans",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-beans:testClasses",
+      "projectPath": ":spring-beans",
+      "dependsOn": [
+        ":spring-beans:compileTestJava",
+        ":spring-beans:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-beans:testFixturesClasses",
+      "projectPath": ":spring-beans",
+      "dependsOn": [
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:processTestFixturesResources"
+      ]
+    },
+    {
+      "path": ":spring-beans:testFixturesJar",
+      "projectPath": ":spring-beans",
+      "dependsOn": [
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-beans:testFixturesClasses"
+      ]
+    },
+    {
+      "path": ":spring-context-indexer:compileJava",
+      "projectPath": ":spring-context-indexer",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-context-indexer:compileTestFixturesJava",
+      "projectPath": ":spring-context-indexer",
+      "dependsOn": [
+        ":spring-context-indexer:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-context-indexer:compileTestJava",
+      "projectPath": ":spring-context-indexer",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-indexer:compileJava",
+        ":spring-context-indexer:compileTestFixturesJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-context-indexer:processTestResources",
+      "projectPath": ":spring-context-indexer",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-context-indexer:testClasses",
+      "projectPath": ":spring-context-indexer",
+      "dependsOn": [
+        ":spring-context-indexer:compileTestJava",
+        ":spring-context-indexer:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-context-support:compileJava",
+      "projectPath": ":spring-context-support",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-context-support:compileTestFixturesJava",
+      "projectPath": ":spring-context-support",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-context-support:compileTestJava",
+      "projectPath": ":spring-context-support",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context-support:compileTestFixturesJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-tx:compileTestFixturesJava",
+        ":spring-tx:compileTestFixturesKotlin"
+      ]
+    },
+    {
+      "path": ":spring-context-support:processTestResources",
+      "projectPath": ":spring-context-support",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-context-support:testClasses",
+      "projectPath": ":spring-context-support",
+      "dependsOn": [
+        ":spring-context-support:compileTestJava",
+        ":spring-context-support:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-context:checkKotlinGradlePluginConfigurationErrors",
+      "projectPath": ":spring-context",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-context:classes",
+      "projectPath": ":spring-context",
+      "dependsOn": [
+        ":spring-context:compileJava",
+        ":spring-context:processResources"
+      ]
+    },
+    {
+      "path": ":spring-context:compileJava",
+      "projectPath": ":spring-context",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-instrument:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-context:compileKotlin",
+      "projectPath": ":spring-context",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-instrument:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-context:compileTestFixturesJava",
+      "projectPath": ":spring-context",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-instrument:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-context:compileTestFixturesKotlin",
+      "projectPath": ":spring-context",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:jar",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-instrument:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-context:compileTestJava",
+      "projectPath": ":spring-context",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aop:compileTestFixturesJava",
+        ":spring-aop:compileTestFixturesKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-context:compileTestKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-instrument:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-context:compileTestKotlin",
+      "projectPath": ":spring-context",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-aop:compileTestFixturesJava",
+        ":spring-aop:compileTestFixturesKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-context:jar",
+        ":spring-context:testFixturesJar",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-instrument:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-context:jar",
+      "projectPath": ":spring-context",
+      "dependsOn": [
+        ":spring-context:classes",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-context:processResources",
+      "projectPath": ":spring-context",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-context:processTestFixturesResources",
+      "projectPath": ":spring-context",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-context:processTestResources",
+      "projectPath": ":spring-context",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-context:testClasses",
+      "projectPath": ":spring-context",
+      "dependsOn": [
+        ":spring-context:compileTestJava",
+        ":spring-context:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-context:testFixturesClasses",
+      "projectPath": ":spring-context",
+      "dependsOn": [
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:processTestFixturesResources"
+      ]
+    },
+    {
+      "path": ":spring-context:testFixturesJar",
+      "projectPath": ":spring-context",
+      "dependsOn": [
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-context:testFixturesClasses"
+      ]
+    },
+    {
+      "path": ":spring-core-test:compileJava",
+      "projectPath": ":spring-core-test",
+      "dependsOn": [
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-core-test:compileTestFixturesJava",
+      "projectPath": ":spring-core-test",
+      "dependsOn": [
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-core-test:compileTestJava",
+      "projectPath": ":spring-core-test",
+      "dependsOn": [
+        ":spring-core-test:compileJava",
+        ":spring-core-test:compileTestFixturesJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-core-test:processTestResources",
+      "projectPath": ":spring-core-test",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-core-test:testClasses",
+      "projectPath": ":spring-core-test",
+      "dependsOn": [
+        ":spring-core-test:compileTestJava",
+        ":spring-core-test:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-core:checkKotlinGradlePluginConfigurationErrors",
+      "projectPath": ":spring-core",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-core:classes",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:compileJava",
+        ":spring-core:processResources"
+      ]
+    },
+    {
+      "path": ":spring-core:compileJava",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-core:compileJava21Java",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:compileJava",
+        ":spring-core:compileJava21Kotlin",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-core:compileJava21Kotlin",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-core:compileJava24Java",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:compileJava",
+        ":spring-core:compileJava24Kotlin",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-core:compileJava24Kotlin",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-core:compileKotlin",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-core:compileTestFixturesJava",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-core:compileTestFixturesKotlin",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:jar",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-core:compileTestJava",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:compileTestKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-core:compileTestKotlin",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:jar",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-core:testFixturesJar"
+      ]
+    },
+    {
+      "path": ":spring-core:jar",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:classes",
+        ":spring-core:compileJava",
+        ":spring-core:compileJava21Java",
+        ":spring-core:compileJava21Kotlin",
+        ":spring-core:compileJava24Java",
+        ":spring-core:compileJava24Kotlin",
+        ":spring-core:compileKotlin",
+        ":spring-core:java21Classes",
+        ":spring-core:java24Classes",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "path": ":spring-core:java21Classes",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:compileJava21Java",
+        ":spring-core:processJava21Resources"
+      ]
+    },
+    {
+      "path": ":spring-core:java24Classes",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:compileJava24Java",
+        ":spring-core:processJava24Resources"
+      ]
+    },
+    {
+      "path": ":spring-core:javapoetRepackJar",
+      "projectPath": ":spring-core",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-core:objenesisRepackJar",
+      "projectPath": ":spring-core",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-core:processJava21Resources",
+      "projectPath": ":spring-core",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-core:processJava24Resources",
+      "projectPath": ":spring-core",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-core:processResources",
+      "projectPath": ":spring-core",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-core:processTestFixturesResources",
+      "projectPath": ":spring-core",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-core:processTestResources",
+      "projectPath": ":spring-core",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-core:testClasses",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:compileTestJava",
+        ":spring-core:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-core:testFixturesClasses",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:processTestFixturesResources"
+      ]
+    },
+    {
+      "path": ":spring-core:testFixturesJar",
+      "projectPath": ":spring-core",
+      "dependsOn": [
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:testFixturesClasses"
+      ]
+    },
+    {
+      "path": ":spring-expression:checkKotlinGradlePluginConfigurationErrors",
+      "projectPath": ":spring-expression",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-expression:classes",
+      "projectPath": ":spring-expression",
+      "dependsOn": [
+        ":spring-expression:compileJava",
+        ":spring-expression:processResources"
+      ]
+    },
+    {
+      "path": ":spring-expression:compileJava",
+      "projectPath": ":spring-expression",
+      "dependsOn": [
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-expression:compileKotlin",
+      "projectPath": ":spring-expression",
+      "dependsOn": [
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:checkKotlinGradlePluginConfigurationErrors"
+      ]
+    },
+    {
+      "path": ":spring-expression:compileTestFixturesJava",
+      "projectPath": ":spring-expression",
+      "dependsOn": [
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-expression:compileTestFixturesKotlin"
+      ]
+    },
+    {
+      "path": ":spring-expression:compileTestFixturesKotlin",
+      "projectPath": ":spring-expression",
+      "dependsOn": [
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-expression:jar"
+      ]
+    },
+    {
+      "path": ":spring-expression:compileTestJava",
+      "projectPath": ":spring-expression",
+      "dependsOn": [
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-expression:compileTestFixturesJava",
+        ":spring-expression:compileTestFixturesKotlin",
+        ":spring-expression:compileTestKotlin"
+      ]
+    },
+    {
+      "path": ":spring-expression:compileTestKotlin",
+      "projectPath": ":spring-expression",
+      "dependsOn": [
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-expression:compileTestFixturesJava",
+        ":spring-expression:compileTestFixturesKotlin",
+        ":spring-expression:jar",
+        ":spring-expression:testFixturesJar"
+      ]
+    },
+    {
+      "path": ":spring-expression:jar",
+      "projectPath": ":spring-expression",
+      "dependsOn": [
+        ":spring-expression:classes",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-expression:processResources",
+      "projectPath": ":spring-expression",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-expression:processTestFixturesResources",
+      "projectPath": ":spring-expression",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-expression:processTestResources",
+      "projectPath": ":spring-expression",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-expression:testClasses",
+      "projectPath": ":spring-expression",
+      "dependsOn": [
+        ":spring-expression:compileTestJava",
+        ":spring-expression:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-expression:testFixturesClasses",
+      "projectPath": ":spring-expression",
+      "dependsOn": [
+        ":spring-expression:compileTestFixturesJava",
+        ":spring-expression:processTestFixturesResources"
+      ]
+    },
+    {
+      "path": ":spring-expression:testFixturesJar",
+      "projectPath": ":spring-expression",
+      "dependsOn": [
+        ":spring-expression:compileTestFixturesJava",
+        ":spring-expression:compileTestFixturesKotlin",
+        ":spring-expression:testFixturesClasses"
+      ]
+    },
+    {
+      "path": ":spring-instrument:compileJava",
+      "projectPath": ":spring-instrument",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-instrument:compileTestFixturesJava",
+      "projectPath": ":spring-instrument",
+      "dependsOn": [
+        ":spring-instrument:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-instrument:compileTestJava",
+      "projectPath": ":spring-instrument",
+      "dependsOn": [
+        ":spring-instrument:compileJava",
+        ":spring-instrument:compileTestFixturesJava"
+      ]
+    },
+    {
+      "path": ":spring-instrument:processTestResources",
+      "projectPath": ":spring-instrument",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-instrument:testClasses",
+      "projectPath": ":spring-instrument",
+      "dependsOn": [
+        ":spring-instrument:compileTestJava",
+        ":spring-instrument:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-jdbc:checkKotlinGradlePluginConfigurationErrors",
+      "projectPath": ":spring-jdbc",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-jdbc:classes",
+      "projectPath": ":spring-jdbc",
+      "dependsOn": [
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:processResources"
+      ]
+    },
+    {
+      "path": ":spring-jdbc:compileJava",
+      "projectPath": ":spring-jdbc",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-jdbc:compileKotlin",
+      "projectPath": ":spring-jdbc",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-jdbc:compileTestFixturesJava",
+      "projectPath": ":spring-jdbc",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-jdbc:compileTestFixturesKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-jdbc:compileTestFixturesKotlin",
+      "projectPath": ":spring-jdbc",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-jdbc:jar",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-jdbc:compileTestJava",
+      "projectPath": ":spring-jdbc",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-jdbc:compileTestFixturesJava",
+        ":spring-jdbc:compileTestFixturesKotlin",
+        ":spring-jdbc:compileTestKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-jdbc:compileTestKotlin",
+      "projectPath": ":spring-jdbc",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-jdbc:compileTestFixturesJava",
+        ":spring-jdbc:compileTestFixturesKotlin",
+        ":spring-jdbc:jar",
+        ":spring-jdbc:testFixturesJar",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-jdbc:jar",
+      "projectPath": ":spring-jdbc",
+      "dependsOn": [
+        ":spring-jdbc:classes",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-jdbc:processResources",
+      "projectPath": ":spring-jdbc",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-jdbc:processTestFixturesResources",
+      "projectPath": ":spring-jdbc",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-jdbc:processTestResources",
+      "projectPath": ":spring-jdbc",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-jdbc:testClasses",
+      "projectPath": ":spring-jdbc",
+      "dependsOn": [
+        ":spring-jdbc:compileTestJava",
+        ":spring-jdbc:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-jdbc:testFixturesClasses",
+      "projectPath": ":spring-jdbc",
+      "dependsOn": [
+        ":spring-jdbc:compileTestFixturesJava",
+        ":spring-jdbc:processTestFixturesResources"
+      ]
+    },
+    {
+      "path": ":spring-jdbc:testFixturesJar",
+      "projectPath": ":spring-jdbc",
+      "dependsOn": [
+        ":spring-jdbc:compileTestFixturesJava",
+        ":spring-jdbc:compileTestFixturesKotlin",
+        ":spring-jdbc:testFixturesClasses"
+      ]
+    },
+    {
+      "path": ":spring-jms:compileJava",
+      "projectPath": ":spring-jms",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-jms:compileTestFixturesJava",
+      "projectPath": ":spring-jms",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jms:compileJava",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-jms:compileTestJava",
+      "projectPath": ":spring-jms",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jms:compileJava",
+        ":spring-jms:compileTestFixturesJava",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-tx:compileTestFixturesJava",
+        ":spring-tx:compileTestFixturesKotlin"
+      ]
+    },
+    {
+      "path": ":spring-jms:processTestResources",
+      "projectPath": ":spring-jms",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-jms:testClasses",
+      "projectPath": ":spring-jms",
+      "dependsOn": [
+        ":spring-jms:compileTestJava",
+        ":spring-jms:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-messaging:checkKotlinGradlePluginConfigurationErrors",
+      "projectPath": ":spring-messaging",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-messaging:classes",
+      "projectPath": ":spring-messaging",
+      "dependsOn": [
+        ":spring-messaging:compileJava",
+        ":spring-messaging:processResources"
+      ]
+    },
+    {
+      "path": ":spring-messaging:compileJava",
+      "projectPath": ":spring-messaging",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-messaging:compileKotlin",
+        ":spring-oxm:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-messaging:compileKotlin",
+      "projectPath": ":spring-messaging",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-messaging:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-oxm:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-messaging:compileTestFixturesJava",
+      "projectPath": ":spring-messaging",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-messaging:compileTestFixturesKotlin",
+        ":spring-oxm:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-messaging:compileTestFixturesKotlin",
+      "projectPath": ":spring-messaging",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-messaging:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-messaging:jar",
+        ":spring-oxm:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-messaging:compileTestJava",
+      "projectPath": ":spring-messaging",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-messaging:compileTestFixturesJava",
+        ":spring-messaging:compileTestFixturesKotlin",
+        ":spring-messaging:compileTestKotlin",
+        ":spring-oxm:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-messaging:compileTestKotlin",
+      "projectPath": ":spring-messaging",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-messaging:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-messaging:compileTestFixturesJava",
+        ":spring-messaging:compileTestFixturesKotlin",
+        ":spring-messaging:jar",
+        ":spring-messaging:testFixturesJar",
+        ":spring-oxm:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-messaging:jar",
+      "projectPath": ":spring-messaging",
+      "dependsOn": [
+        ":spring-messaging:classes",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-messaging:processResources",
+      "projectPath": ":spring-messaging",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-messaging:processTestFixturesResources",
+      "projectPath": ":spring-messaging",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-messaging:processTestResources",
+      "projectPath": ":spring-messaging",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-messaging:testClasses",
+      "projectPath": ":spring-messaging",
+      "dependsOn": [
+        ":spring-messaging:compileTestJava",
+        ":spring-messaging:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-messaging:testFixturesClasses",
+      "projectPath": ":spring-messaging",
+      "dependsOn": [
+        ":spring-messaging:compileTestFixturesJava",
+        ":spring-messaging:processTestFixturesResources"
+      ]
+    },
+    {
+      "path": ":spring-messaging:testFixturesJar",
+      "projectPath": ":spring-messaging",
+      "dependsOn": [
+        ":spring-messaging:compileTestFixturesJava",
+        ":spring-messaging:compileTestFixturesKotlin",
+        ":spring-messaging:testFixturesClasses"
+      ]
+    },
+    {
+      "path": ":spring-orm:compileJava",
+      "projectPath": ":spring-orm",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-orm:compileTestFixturesJava",
+      "projectPath": ":spring-orm",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-orm:compileTestJava",
+      "projectPath": ":spring-orm",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-orm:compileTestFixturesJava",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-web:compileTestFixturesJava",
+        ":spring-web:compileTestFixturesKotlin"
+      ]
+    },
+    {
+      "path": ":spring-orm:processTestResources",
+      "projectPath": ":spring-orm",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-orm:testClasses",
+      "projectPath": ":spring-orm",
+      "dependsOn": [
+        ":spring-orm:compileTestJava",
+        ":spring-orm:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-oxm:compileJava",
+      "projectPath": ":spring-oxm",
+      "dependsOn": [
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-oxm:xjc"
+      ]
+    },
+    {
+      "path": ":spring-oxm:compileTestFixturesJava",
+      "projectPath": ":spring-oxm",
+      "dependsOn": [
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-oxm:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-oxm:compileTestJava",
+      "projectPath": ":spring-oxm",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-oxm:compileTestFixturesJava",
+        ":spring-oxm:xjc"
+      ]
+    },
+    {
+      "path": ":spring-oxm:processTestResources",
+      "projectPath": ":spring-oxm",
+      "dependsOn": [
+        ":spring-oxm:xjc"
+      ]
+    },
+    {
+      "path": ":spring-oxm:testClasses",
+      "projectPath": ":spring-oxm",
+      "dependsOn": [
+        ":spring-oxm:compileTestJava",
+        ":spring-oxm:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-oxm:xjc",
+      "projectPath": ":spring-oxm",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-r2dbc:checkKotlinGradlePluginConfigurationErrors",
+      "projectPath": ":spring-r2dbc",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-r2dbc:classes",
+      "projectPath": ":spring-r2dbc",
+      "dependsOn": [
+        ":spring-r2dbc:compileJava",
+        ":spring-r2dbc:processResources"
+      ]
+    },
+    {
+      "path": ":spring-r2dbc:compileJava",
+      "projectPath": ":spring-r2dbc",
+      "dependsOn": [
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-r2dbc:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-r2dbc:compileKotlin",
+      "projectPath": ":spring-r2dbc",
+      "dependsOn": [
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-r2dbc:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-r2dbc:compileTestFixturesJava",
+      "projectPath": ":spring-r2dbc",
+      "dependsOn": [
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-r2dbc:compileJava",
+        ":spring-r2dbc:compileKotlin",
+        ":spring-r2dbc:compileTestFixturesKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-r2dbc:compileTestFixturesKotlin",
+      "projectPath": ":spring-r2dbc",
+      "dependsOn": [
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-r2dbc:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-r2dbc:compileJava",
+        ":spring-r2dbc:compileKotlin",
+        ":spring-r2dbc:jar",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-r2dbc:compileTestJava",
+      "projectPath": ":spring-r2dbc",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-r2dbc:compileJava",
+        ":spring-r2dbc:compileKotlin",
+        ":spring-r2dbc:compileTestFixturesJava",
+        ":spring-r2dbc:compileTestFixturesKotlin",
+        ":spring-r2dbc:compileTestKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-r2dbc:compileTestKotlin",
+      "projectPath": ":spring-r2dbc",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-r2dbc:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-r2dbc:compileJava",
+        ":spring-r2dbc:compileKotlin",
+        ":spring-r2dbc:compileTestFixturesJava",
+        ":spring-r2dbc:compileTestFixturesKotlin",
+        ":spring-r2dbc:jar",
+        ":spring-r2dbc:testFixturesJar",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-r2dbc:jar",
+      "projectPath": ":spring-r2dbc",
+      "dependsOn": [
+        ":spring-r2dbc:classes",
+        ":spring-r2dbc:compileJava",
+        ":spring-r2dbc:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-r2dbc:processResources",
+      "projectPath": ":spring-r2dbc",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-r2dbc:processTestFixturesResources",
+      "projectPath": ":spring-r2dbc",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-r2dbc:processTestResources",
+      "projectPath": ":spring-r2dbc",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-r2dbc:testClasses",
+      "projectPath": ":spring-r2dbc",
+      "dependsOn": [
+        ":spring-r2dbc:compileTestJava",
+        ":spring-r2dbc:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-r2dbc:testFixturesClasses",
+      "projectPath": ":spring-r2dbc",
+      "dependsOn": [
+        ":spring-r2dbc:compileTestFixturesJava",
+        ":spring-r2dbc:processTestFixturesResources"
+      ]
+    },
+    {
+      "path": ":spring-r2dbc:testFixturesJar",
+      "projectPath": ":spring-r2dbc",
+      "dependsOn": [
+        ":spring-r2dbc:compileTestFixturesJava",
+        ":spring-r2dbc:compileTestFixturesKotlin",
+        ":spring-r2dbc:testFixturesClasses"
+      ]
+    },
+    {
+      "path": ":spring-test:checkKotlinGradlePluginConfigurationErrors",
+      "projectPath": ":spring-test",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-test:classes",
+      "projectPath": ":spring-test",
+      "dependsOn": [
+        ":spring-test:compileJava",
+        ":spring-test:processResources"
+      ]
+    },
+    {
+      "path": ":spring-test:compileJava",
+      "projectPath": ":spring-test",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-test:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webflux:compileJava",
+        ":spring-webflux:compileKotlin",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-websocket:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-test:compileKotlin",
+      "projectPath": ":spring-test",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-test:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webflux:compileJava",
+        ":spring-webflux:compileKotlin",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-websocket:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-test:compileTestFixturesJava",
+      "projectPath": ":spring-test",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-test:compileJava",
+        ":spring-test:compileKotlin",
+        ":spring-test:compileTestFixturesKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webflux:compileJava",
+        ":spring-webflux:compileKotlin",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-websocket:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-test:compileTestFixturesKotlin",
+      "projectPath": ":spring-test",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-test:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-test:compileJava",
+        ":spring-test:compileKotlin",
+        ":spring-test:jar",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webflux:compileJava",
+        ":spring-webflux:compileKotlin",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-websocket:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-test:compileTestJava",
+      "projectPath": ":spring-test",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-oxm:compileJava",
+        ":spring-test:compileJava",
+        ":spring-test:compileKotlin",
+        ":spring-test:compileTestFixturesJava",
+        ":spring-test:compileTestFixturesKotlin",
+        ":spring-test:compileTestKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-tx:compileTestFixturesJava",
+        ":spring-tx:compileTestFixturesKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-web:compileTestFixturesJava",
+        ":spring-web:compileTestFixturesKotlin",
+        ":spring-webflux:compileJava",
+        ":spring-webflux:compileKotlin",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-websocket:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-test:compileTestKotlin",
+      "projectPath": ":spring-test",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-jdbc:compileJava",
+        ":spring-jdbc:compileKotlin",
+        ":spring-orm:compileJava",
+        ":spring-oxm:compileJava",
+        ":spring-test:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-test:compileJava",
+        ":spring-test:compileKotlin",
+        ":spring-test:compileTestFixturesJava",
+        ":spring-test:compileTestFixturesKotlin",
+        ":spring-test:jar",
+        ":spring-test:testFixturesJar",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-tx:compileTestFixturesJava",
+        ":spring-tx:compileTestFixturesKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-web:compileTestFixturesJava",
+        ":spring-web:compileTestFixturesKotlin",
+        ":spring-webflux:compileJava",
+        ":spring-webflux:compileKotlin",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-websocket:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-test:jar",
+      "projectPath": ":spring-test",
+      "dependsOn": [
+        ":spring-test:classes",
+        ":spring-test:compileJava",
+        ":spring-test:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-test:processResources",
+      "projectPath": ":spring-test",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-test:processTestFixturesResources",
+      "projectPath": ":spring-test",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-test:processTestResources",
+      "projectPath": ":spring-test",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-test:testClasses",
+      "projectPath": ":spring-test",
+      "dependsOn": [
+        ":spring-test:compileTestJava",
+        ":spring-test:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-test:testFixturesClasses",
+      "projectPath": ":spring-test",
+      "dependsOn": [
+        ":spring-test:compileTestFixturesJava",
+        ":spring-test:processTestFixturesResources"
+      ]
+    },
+    {
+      "path": ":spring-test:testFixturesJar",
+      "projectPath": ":spring-test",
+      "dependsOn": [
+        ":spring-test:compileTestFixturesJava",
+        ":spring-test:compileTestFixturesKotlin",
+        ":spring-test:testFixturesClasses"
+      ]
+    },
+    {
+      "path": ":spring-tx:checkKotlinGradlePluginConfigurationErrors",
+      "projectPath": ":spring-tx",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-tx:classes",
+      "projectPath": ":spring-tx",
+      "dependsOn": [
+        ":spring-tx:compileJava",
+        ":spring-tx:processResources"
+      ]
+    },
+    {
+      "path": ":spring-tx:compileJava",
+      "projectPath": ":spring-tx",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-tx:compileKotlin",
+      "projectPath": ":spring-tx",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-tx:checkKotlinGradlePluginConfigurationErrors"
+      ]
+    },
+    {
+      "path": ":spring-tx:compileTestFixturesJava",
+      "projectPath": ":spring-tx",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-tx:compileTestFixturesKotlin"
+      ]
+    },
+    {
+      "path": ":spring-tx:compileTestFixturesKotlin",
+      "projectPath": ":spring-tx",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-tx:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-tx:jar"
+      ]
+    },
+    {
+      "path": ":spring-tx:compileTestJava",
+      "projectPath": ":spring-tx",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-tx:compileTestFixturesJava",
+        ":spring-tx:compileTestFixturesKotlin",
+        ":spring-tx:compileTestKotlin"
+      ]
+    },
+    {
+      "path": ":spring-tx:compileTestKotlin",
+      "projectPath": ":spring-tx",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-tx:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-tx:compileTestFixturesJava",
+        ":spring-tx:compileTestFixturesKotlin",
+        ":spring-tx:jar",
+        ":spring-tx:testFixturesJar"
+      ]
+    },
+    {
+      "path": ":spring-tx:jar",
+      "projectPath": ":spring-tx",
+      "dependsOn": [
+        ":spring-tx:classes",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-tx:processResources",
+      "projectPath": ":spring-tx",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-tx:processTestFixturesResources",
+      "projectPath": ":spring-tx",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-tx:processTestResources",
+      "projectPath": ":spring-tx",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-tx:testClasses",
+      "projectPath": ":spring-tx",
+      "dependsOn": [
+        ":spring-tx:compileTestJava",
+        ":spring-tx:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-tx:testFixturesClasses",
+      "projectPath": ":spring-tx",
+      "dependsOn": [
+        ":spring-tx:compileTestFixturesJava",
+        ":spring-tx:processTestFixturesResources"
+      ]
+    },
+    {
+      "path": ":spring-tx:testFixturesJar",
+      "projectPath": ":spring-tx",
+      "dependsOn": [
+        ":spring-tx:compileTestFixturesJava",
+        ":spring-tx:compileTestFixturesKotlin",
+        ":spring-tx:testFixturesClasses"
+      ]
+    },
+    {
+      "path": ":spring-web:checkKotlinGradlePluginConfigurationErrors",
+      "projectPath": ":spring-web",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-web:classes",
+      "projectPath": ":spring-web",
+      "dependsOn": [
+        ":spring-web:compileJava",
+        ":spring-web:processResources"
+      ]
+    },
+    {
+      "path": ":spring-web:compileJava",
+      "projectPath": ":spring-web",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-web:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-web:compileKotlin",
+      "projectPath": ":spring-web",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-web:checkKotlinGradlePluginConfigurationErrors"
+      ]
+    },
+    {
+      "path": ":spring-web:compileTestFixturesJava",
+      "projectPath": ":spring-web",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-web:compileTestFixturesKotlin"
+      ]
+    },
+    {
+      "path": ":spring-web:compileTestFixturesKotlin",
+      "projectPath": ":spring-web",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-web:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-web:jar"
+      ]
+    },
+    {
+      "path": ":spring-web:compileTestJava",
+      "projectPath": ":spring-web",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-messaging:compileTestFixturesJava",
+        ":spring-messaging:compileTestFixturesKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-tx:compileTestFixturesJava",
+        ":spring-tx:compileTestFixturesKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-web:compileTestFixturesJava",
+        ":spring-web:compileTestFixturesKotlin",
+        ":spring-web:compileTestKotlin"
+      ]
+    },
+    {
+      "path": ":spring-web:compileTestKotlin",
+      "projectPath": ":spring-web",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-core-test:compileJava",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-messaging:compileTestFixturesJava",
+        ":spring-messaging:compileTestFixturesKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-tx:compileJava",
+        ":spring-tx:compileKotlin",
+        ":spring-tx:compileTestFixturesJava",
+        ":spring-tx:compileTestFixturesKotlin",
+        ":spring-web:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-web:compileTestFixturesJava",
+        ":spring-web:compileTestFixturesKotlin",
+        ":spring-web:jar",
+        ":spring-web:testFixturesJar"
+      ]
+    },
+    {
+      "path": ":spring-web:jar",
+      "projectPath": ":spring-web",
+      "dependsOn": [
+        ":spring-web:classes",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-web:processResources",
+      "projectPath": ":spring-web",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-web:processTestFixturesResources",
+      "projectPath": ":spring-web",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-web:processTestResources",
+      "projectPath": ":spring-web",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-web:testClasses",
+      "projectPath": ":spring-web",
+      "dependsOn": [
+        ":spring-web:compileTestJava",
+        ":spring-web:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-web:testFixturesClasses",
+      "projectPath": ":spring-web",
+      "dependsOn": [
+        ":spring-web:compileTestFixturesJava",
+        ":spring-web:processTestFixturesResources"
+      ]
+    },
+    {
+      "path": ":spring-web:testFixturesJar",
+      "projectPath": ":spring-web",
+      "dependsOn": [
+        ":spring-web:compileTestFixturesJava",
+        ":spring-web:compileTestFixturesKotlin",
+        ":spring-web:testFixturesClasses"
+      ]
+    },
+    {
+      "path": ":spring-webflux:checkKotlinGradlePluginConfigurationErrors",
+      "projectPath": ":spring-webflux",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-webflux:classes",
+      "projectPath": ":spring-webflux",
+      "dependsOn": [
+        ":spring-webflux:compileJava",
+        ":spring-webflux:processResources"
+      ]
+    },
+    {
+      "path": ":spring-webflux:compileJava",
+      "projectPath": ":spring-webflux",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webflux:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-webflux:compileKotlin",
+      "projectPath": ":spring-webflux",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webflux:checkKotlinGradlePluginConfigurationErrors"
+      ]
+    },
+    {
+      "path": ":spring-webflux:compileTestFixturesJava",
+      "projectPath": ":spring-webflux",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webflux:compileJava",
+        ":spring-webflux:compileKotlin",
+        ":spring-webflux:compileTestFixturesKotlin"
+      ]
+    },
+    {
+      "path": ":spring-webflux:compileTestFixturesKotlin",
+      "projectPath": ":spring-webflux",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webflux:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-webflux:compileJava",
+        ":spring-webflux:compileKotlin",
+        ":spring-webflux:jar"
+      ]
+    },
+    {
+      "path": ":spring-webflux:compileTestJava",
+      "projectPath": ":spring-webflux",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-web:compileTestFixturesJava",
+        ":spring-web:compileTestFixturesKotlin",
+        ":spring-webflux:compileJava",
+        ":spring-webflux:compileKotlin",
+        ":spring-webflux:compileTestFixturesJava",
+        ":spring-webflux:compileTestFixturesKotlin",
+        ":spring-webflux:compileTestKotlin"
+      ]
+    },
+    {
+      "path": ":spring-webflux:compileTestKotlin",
+      "projectPath": ":spring-webflux",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-web:compileTestFixturesJava",
+        ":spring-web:compileTestFixturesKotlin",
+        ":spring-webflux:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-webflux:compileJava",
+        ":spring-webflux:compileKotlin",
+        ":spring-webflux:compileTestFixturesJava",
+        ":spring-webflux:compileTestFixturesKotlin",
+        ":spring-webflux:jar",
+        ":spring-webflux:testFixturesJar"
+      ]
+    },
+    {
+      "path": ":spring-webflux:jar",
+      "projectPath": ":spring-webflux",
+      "dependsOn": [
+        ":spring-webflux:classes",
+        ":spring-webflux:compileJava",
+        ":spring-webflux:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-webflux:processResources",
+      "projectPath": ":spring-webflux",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-webflux:processTestFixturesResources",
+      "projectPath": ":spring-webflux",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-webflux:processTestResources",
+      "projectPath": ":spring-webflux",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-webflux:testClasses",
+      "projectPath": ":spring-webflux",
+      "dependsOn": [
+        ":spring-webflux:compileTestJava",
+        ":spring-webflux:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-webflux:testFixturesClasses",
+      "projectPath": ":spring-webflux",
+      "dependsOn": [
+        ":spring-webflux:compileTestFixturesJava",
+        ":spring-webflux:processTestFixturesResources"
+      ]
+    },
+    {
+      "path": ":spring-webflux:testFixturesJar",
+      "projectPath": ":spring-webflux",
+      "dependsOn": [
+        ":spring-webflux:compileTestFixturesJava",
+        ":spring-webflux:compileTestFixturesKotlin",
+        ":spring-webflux:testFixturesClasses"
+      ]
+    },
+    {
+      "path": ":spring-webmvc:checkKotlinGradlePluginConfigurationErrors",
+      "projectPath": ":spring-webmvc",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-webmvc:classes",
+      "projectPath": ":spring-webmvc",
+      "dependsOn": [
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:processResources"
+      ]
+    },
+    {
+      "path": ":spring-webmvc:compileJava",
+      "projectPath": ":spring-webmvc",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webmvc:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-webmvc:compileKotlin",
+      "projectPath": ":spring-webmvc",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webmvc:checkKotlinGradlePluginConfigurationErrors"
+      ]
+    },
+    {
+      "path": ":spring-webmvc:compileTestFixturesJava",
+      "projectPath": ":spring-webmvc",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-webmvc:compileTestFixturesKotlin"
+      ]
+    },
+    {
+      "path": ":spring-webmvc:compileTestFixturesKotlin",
+      "projectPath": ":spring-webmvc",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webmvc:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-webmvc:jar"
+      ]
+    },
+    {
+      "path": ":spring-webmvc:compileTestJava",
+      "projectPath": ":spring-webmvc",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-web:compileTestFixturesJava",
+        ":spring-web:compileTestFixturesKotlin",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-webmvc:compileTestFixturesJava",
+        ":spring-webmvc:compileTestFixturesKotlin",
+        ":spring-webmvc:compileTestKotlin"
+      ]
+    },
+    {
+      "path": ":spring-webmvc:compileTestKotlin",
+      "projectPath": ":spring-webmvc",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-beans:compileTestFixturesJava",
+        ":spring-beans:compileTestFixturesKotlin",
+        ":spring-context-support:compileJava",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-context:compileTestFixturesJava",
+        ":spring-context:compileTestFixturesKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-oxm:compileJava",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-web:compileTestFixturesJava",
+        ":spring-web:compileTestFixturesKotlin",
+        ":spring-webmvc:checkKotlinGradlePluginConfigurationErrors",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-webmvc:compileTestFixturesJava",
+        ":spring-webmvc:compileTestFixturesKotlin",
+        ":spring-webmvc:jar",
+        ":spring-webmvc:testFixturesJar"
+      ]
+    },
+    {
+      "path": ":spring-webmvc:jar",
+      "projectPath": ":spring-webmvc",
+      "dependsOn": [
+        ":spring-webmvc:classes",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-webmvc:processResources",
+      "projectPath": ":spring-webmvc",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-webmvc:processTestFixturesResources",
+      "projectPath": ":spring-webmvc",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-webmvc:processTestResources",
+      "projectPath": ":spring-webmvc",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-webmvc:testClasses",
+      "projectPath": ":spring-webmvc",
+      "dependsOn": [
+        ":spring-webmvc:compileTestJava",
+        ":spring-webmvc:processTestResources"
+      ]
+    },
+    {
+      "path": ":spring-webmvc:testFixturesClasses",
+      "projectPath": ":spring-webmvc",
+      "dependsOn": [
+        ":spring-webmvc:compileTestFixturesJava",
+        ":spring-webmvc:processTestFixturesResources"
+      ]
+    },
+    {
+      "path": ":spring-webmvc:testFixturesJar",
+      "projectPath": ":spring-webmvc",
+      "dependsOn": [
+        ":spring-webmvc:compileTestFixturesJava",
+        ":spring-webmvc:compileTestFixturesKotlin",
+        ":spring-webmvc:testFixturesClasses"
+      ]
+    },
+    {
+      "path": ":spring-websocket:compileJava",
+      "projectPath": ":spring-websocket",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin"
+      ]
+    },
+    {
+      "path": ":spring-websocket:compileTestFixturesJava",
+      "projectPath": ":spring-websocket",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-websocket:compileJava"
+      ]
+    },
+    {
+      "path": ":spring-websocket:compileTestJava",
+      "projectPath": ":spring-websocket",
+      "dependsOn": [
+        ":spring-aop:compileJava",
+        ":spring-aop:compileKotlin",
+        ":spring-beans:compileJava",
+        ":spring-beans:compileKotlin",
+        ":spring-context:compileJava",
+        ":spring-context:compileKotlin",
+        ":spring-core:compileJava",
+        ":spring-core:compileKotlin",
+        ":spring-core:compileTestFixturesJava",
+        ":spring-core:compileTestFixturesKotlin",
+        ":spring-core:javapoetRepackJar",
+        ":spring-core:objenesisRepackJar",
+        ":spring-expression:compileJava",
+        ":spring-expression:compileKotlin",
+        ":spring-messaging:compileJava",
+        ":spring-messaging:compileKotlin",
+        ":spring-web:compileJava",
+        ":spring-web:compileKotlin",
+        ":spring-web:compileTestFixturesJava",
+        ":spring-web:compileTestFixturesKotlin",
+        ":spring-webmvc:compileJava",
+        ":spring-webmvc:compileKotlin",
+        ":spring-websocket:compileJava",
+        ":spring-websocket:compileTestFixturesJava"
+      ]
+    },
+    {
+      "path": ":spring-websocket:processTestResources",
+      "projectPath": ":spring-websocket",
+      "dependsOn": []
+    },
+    {
+      "path": ":spring-websocket:testClasses",
+      "projectPath": ":spring-websocket",
+      "dependsOn": [
+        ":spring-websocket:compileTestJava",
+        ":spring-websocket:processTestResources"
+      ]
+    }
+  ],
+  "entrypoints": [
+    {
+      "name": "testClasses",
+      "reachesProjects": [
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-instrument",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "containsTestTasks": false,
+      "unknownRelationships": false
+    }
+  ]
+}

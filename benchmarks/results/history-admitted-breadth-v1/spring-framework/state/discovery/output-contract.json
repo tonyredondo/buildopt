@@ -1,0 +1,3778 @@
+{
+  "schemaVersion": "buildopt.poc/output-contract/v1",
+  "decision": "VALIDATED_REQUIRED_OUTPUTS",
+  "reason": "DECLARED_OUTPUTS_MATCH_EXECUTED_WORKFLOW",
+  "repositoryId": "spring-projects/spring-framework",
+  "pipelineClass": "auto-testclasses-cef8e50f",
+  "repositoryRevision": "75705bcbb1da866d3ed44bf7526437a7fdf1136b",
+  "gradleVersion": "9.3.1",
+  "originalEntrypoints": [
+    "testClasses"
+  ],
+  "declaredOutputs": [
+    "integration-tests/build/classes/java/test/**",
+    "integration-tests/build/classes/kotlin/test/**",
+    "integration-tests/build/resources/test/**",
+    "spring-aop/build/classes/java/test/**",
+    "spring-aop/build/classes/kotlin/test/**",
+    "spring-aop/build/resources/test/**",
+    "spring-aspects/build/classes/aspectj/test/**",
+    "spring-aspects/build/resources/test/**",
+    "spring-beans/build/classes/java/test/**",
+    "spring-beans/build/classes/kotlin/test/**",
+    "spring-beans/build/resources/test/**",
+    "spring-context-indexer/build/classes/java/test/**",
+    "spring-context-support/build/classes/java/test/**",
+    "spring-context-support/build/resources/test/**",
+    "spring-context/build/classes/java/test/**",
+    "spring-context/build/classes/kotlin/test/**",
+    "spring-context/build/resources/test/**",
+    "spring-core-test/build/classes/java/test/**",
+    "spring-core-test/build/resources/test/**",
+    "spring-core/build/classes/java/test/**",
+    "spring-core/build/classes/kotlin/test/**",
+    "spring-core/build/resources/test/**",
+    "spring-expression/build/classes/java/test/**",
+    "spring-expression/build/classes/kotlin/test/**",
+    "spring-expression/build/resources/test/**",
+    "spring-jdbc/build/classes/java/test/**",
+    "spring-jdbc/build/classes/kotlin/test/**",
+    "spring-jdbc/build/resources/test/**",
+    "spring-jms/build/classes/java/test/**",
+    "spring-jms/build/resources/test/**",
+    "spring-messaging/build/classes/java/test/**",
+    "spring-messaging/build/classes/kotlin/test/**",
+    "spring-messaging/build/resources/test/**",
+    "spring-orm/build/classes/java/test/**",
+    "spring-orm/build/resources/test/**",
+    "spring-oxm/build/classes/java/test/**",
+    "spring-oxm/build/resources/test/**",
+    "spring-r2dbc/build/classes/java/test/**",
+    "spring-r2dbc/build/classes/kotlin/test/**",
+    "spring-r2dbc/build/resources/test/**",
+    "spring-test/build/classes/java/test/**",
+    "spring-test/build/classes/kotlin/test/**",
+    "spring-test/build/resources/test/**",
+    "spring-tx/build/classes/java/test/**",
+    "spring-tx/build/classes/kotlin/test/**",
+    "spring-tx/build/resources/test/**",
+    "spring-web/build/classes/java/test/**",
+    "spring-web/build/classes/kotlin/test/**",
+    "spring-web/build/resources/test/**",
+    "spring-webflux/build/classes/java/test/**",
+    "spring-webflux/build/classes/kotlin/test/**",
+    "spring-webflux/build/resources/test/**",
+    "spring-webmvc/build/classes/java/test/**",
+    "spring-webmvc/build/classes/kotlin/test/**",
+    "spring-webmvc/build/resources/test/**",
+    "spring-websocket/build/classes/java/test/**",
+    "spring-websocket/build/resources/test/**"
+  ],
+  "candidateOutputs": [
+    {
+      "pattern": "build/libs/spring-7.0.5-SNAPSHOT.jar",
+      "path": "build/libs/spring-7.0.5-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":"
+      ],
+      "producerTasks": [
+        ":jar"
+      ]
+    },
+    {
+      "pattern": "framework-docs/build/classes/java/main/**",
+      "path": "framework-docs/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 253,
+      "ownerProjects": [
+        ":framework-docs"
+      ],
+      "producerTasks": [
+        ":framework-docs:compileJava"
+      ]
+    },
+    {
+      "pattern": "framework-docs/build/classes/kotlin/main/**",
+      "path": "framework-docs/build/classes/kotlin/main",
+      "kind": "DIRECTORY",
+      "fileCount": 271,
+      "ownerProjects": [
+        ":framework-docs"
+      ],
+      "producerTasks": [
+        ":framework-docs:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "framework-docs/build/kotlin/compileKotlin/cacheable/**",
+      "path": "framework-docs/build/kotlin/compileKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 96,
+      "ownerProjects": [
+        ":framework-docs"
+      ],
+      "producerTasks": [
+        ":framework-docs:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "framework-docs/build/kotlin/compileKotlin/classpath-snapshot/**",
+      "path": "framework-docs/build/kotlin/compileKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":framework-docs"
+      ],
+      "producerTasks": [
+        ":framework-docs:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "framework-docs/build/resources/main/**",
+      "path": "framework-docs/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 77,
+      "ownerProjects": [
+        ":framework-docs"
+      ],
+      "producerTasks": [
+        ":framework-docs:processResources"
+      ]
+    },
+    {
+      "pattern": "framework-docs/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "framework-docs/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":framework-docs"
+      ],
+      "producerTasks": [
+        ":framework-docs:compileJava"
+      ]
+    },
+    {
+      "pattern": "integration-tests/build/classes/java/test/**",
+      "path": "integration-tests/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 105,
+      "ownerProjects": [
+        ":integration-tests"
+      ],
+      "producerTasks": [
+        ":integration-tests:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "integration-tests/build/classes/kotlin/test/**",
+      "path": "integration-tests/build/classes/kotlin/test",
+      "kind": "DIRECTORY",
+      "fileCount": 14,
+      "ownerProjects": [
+        ":integration-tests"
+      ],
+      "producerTasks": [
+        ":integration-tests:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "integration-tests/build/kotlin/compileTestKotlin/cacheable/**",
+      "path": "integration-tests/build/kotlin/compileTestKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 78,
+      "ownerProjects": [
+        ":integration-tests"
+      ],
+      "producerTasks": [
+        ":integration-tests:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "integration-tests/build/kotlin/compileTestKotlin/classpath-snapshot/**",
+      "path": "integration-tests/build/kotlin/compileTestKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":integration-tests"
+      ],
+      "producerTasks": [
+        ":integration-tests:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "integration-tests/build/libs/integration-tests-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "path": "integration-tests/build/libs/integration-tests-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":integration-tests"
+      ],
+      "producerTasks": [
+        ":integration-tests:testFixturesJar"
+      ]
+    },
+    {
+      "pattern": "integration-tests/build/libs/integration-tests-7.0.5-SNAPSHOT.jar",
+      "path": "integration-tests/build/libs/integration-tests-7.0.5-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":integration-tests"
+      ],
+      "producerTasks": [
+        ":integration-tests:jar"
+      ]
+    },
+    {
+      "pattern": "integration-tests/build/resources/test/**",
+      "path": "integration-tests/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 16,
+      "ownerProjects": [
+        ":integration-tests"
+      ],
+      "producerTasks": [
+        ":integration-tests:processTestResources"
+      ]
+    },
+    {
+      "pattern": "integration-tests/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "integration-tests/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":integration-tests"
+      ],
+      "producerTasks": [
+        ":integration-tests:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/classes/java/main/**",
+      "path": "spring-aop/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 293,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/classes/java/test/**",
+      "path": "spring-aop/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 210,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/classes/java/testFixtures/**",
+      "path": "spring-aop/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 19,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/classes/kotlin/test/**",
+      "path": "spring-aop/build/classes/kotlin/test",
+      "kind": "DIRECTORY",
+      "fileCount": 22,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/kotlin/compileTestKotlin/cacheable/**",
+      "path": "spring-aop/build/kotlin/compileTestKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 79,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/kotlin/compileTestKotlin/classpath-snapshot/**",
+      "path": "spring-aop/build/kotlin/compileTestKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/libs/spring-aop-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "path": "spring-aop/build/libs/spring-aop-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:testFixturesJar"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/libs/spring-aop-7.0.5-SNAPSHOT.jar",
+      "path": "spring-aop/build/libs/spring-aop-7.0.5-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:jar"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/resources/main/**",
+      "path": "spring-aop/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 7,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:processResources"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/resources/test/**",
+      "path": "spring-aop/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 20,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-aop/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "spring-aop/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-aop/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-aspects/build/classes/aspectj/main/**",
+      "path": "spring-aspects/build/classes/aspectj/main",
+      "kind": "DIRECTORY",
+      "fileCount": 33,
+      "ownerProjects": [
+        ":spring-aspects"
+      ],
+      "producerTasks": [
+        ":spring-aspects:compileAspectj"
+      ]
+    },
+    {
+      "pattern": "spring-aspects/build/classes/aspectj/test/**",
+      "path": "spring-aspects/build/classes/aspectj/test",
+      "kind": "DIRECTORY",
+      "fileCount": 153,
+      "ownerProjects": [
+        ":spring-aspects"
+      ],
+      "producerTasks": [
+        ":spring-aspects:compileTestAspectj"
+      ]
+    },
+    {
+      "pattern": "spring-aspects/build/resources/main/**",
+      "path": "spring-aspects/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-aspects"
+      ],
+      "producerTasks": [
+        ":spring-aspects:processResources"
+      ]
+    },
+    {
+      "pattern": "spring-aspects/build/resources/test/**",
+      "path": "spring-aspects/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":spring-aspects"
+      ],
+      "producerTasks": [
+        ":spring-aspects:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/classes/java/main/**",
+      "path": "spring-beans/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 452,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/classes/java/test/**",
+      "path": "spring-beans/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 799,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/classes/java/testFixtures/**",
+      "path": "spring-beans/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 112,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/classes/kotlin/main/**",
+      "path": "spring-beans/build/classes/kotlin/main",
+      "kind": "DIRECTORY",
+      "fileCount": 22,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/classes/kotlin/test/**",
+      "path": "spring-beans/build/classes/kotlin/test",
+      "kind": "DIRECTORY",
+      "fileCount": 42,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/classes/kotlin/testFixtures/**",
+      "path": "spring-beans/build/classes/kotlin/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileTestFixturesKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/kotlin/compileKotlin/cacheable/**",
+      "path": "spring-beans/build/kotlin/compileKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 93,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/kotlin/compileKotlin/classpath-snapshot/**",
+      "path": "spring-beans/build/kotlin/compileKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/kotlin/compileTestFixturesKotlin/cacheable/**",
+      "path": "spring-beans/build/kotlin/compileTestFixturesKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 65,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileTestFixturesKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/kotlin/compileTestFixturesKotlin/classpath-snapshot/**",
+      "path": "spring-beans/build/kotlin/compileTestFixturesKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileTestFixturesKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/kotlin/compileTestKotlin/cacheable/**",
+      "path": "spring-beans/build/kotlin/compileTestKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 79,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/kotlin/compileTestKotlin/classpath-snapshot/**",
+      "path": "spring-beans/build/kotlin/compileTestKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/libs/spring-beans-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "path": "spring-beans/build/libs/spring-beans-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:testFixturesJar"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/libs/spring-beans-7.0.5-SNAPSHOT.jar",
+      "path": "spring-beans/build/libs/spring-beans-7.0.5-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:jar"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/resources/main/**",
+      "path": "spring-beans/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 10,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:processResources"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/resources/test/**",
+      "path": "spring-beans/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 81,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/resources/testFixtures/**",
+      "path": "spring-beans/build/resources/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:processTestFixturesResources"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-beans/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "spring-beans/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-beans/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-context-indexer/build/classes/java/main/**",
+      "path": "spring-context-indexer/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 12,
+      "ownerProjects": [
+        ":spring-context-indexer"
+      ],
+      "producerTasks": [
+        ":spring-context-indexer:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-context-indexer/build/classes/java/test/**",
+      "path": "spring-context-indexer/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 36,
+      "ownerProjects": [
+        ":spring-context-indexer"
+      ],
+      "producerTasks": [
+        ":spring-context-indexer:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-context-indexer/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-context-indexer/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-context-indexer"
+      ],
+      "producerTasks": [
+        ":spring-context-indexer:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-context-indexer/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-context-indexer/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-context-indexer"
+      ],
+      "producerTasks": [
+        ":spring-context-indexer:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-context-support/build/classes/java/main/**",
+      "path": "spring-context-support/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 105,
+      "ownerProjects": [
+        ":spring-context-support"
+      ],
+      "producerTasks": [
+        ":spring-context-support:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-context-support/build/classes/java/test/**",
+      "path": "spring-context-support/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 69,
+      "ownerProjects": [
+        ":spring-context-support"
+      ],
+      "producerTasks": [
+        ":spring-context-support:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-context-support/build/classes/java/testFixtures/**",
+      "path": "spring-context-support/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 6,
+      "ownerProjects": [
+        ":spring-context-support"
+      ],
+      "producerTasks": [
+        ":spring-context-support:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "spring-context-support/build/resources/test/**",
+      "path": "spring-context-support/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 15,
+      "ownerProjects": [
+        ":spring-context-support"
+      ],
+      "producerTasks": [
+        ":spring-context-support:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-context-support/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-context-support/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-context-support"
+      ],
+      "producerTasks": [
+        ":spring-context-support:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-context-support/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "spring-context-support/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-context-support"
+      ],
+      "producerTasks": [
+        ":spring-context-support:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "spring-context-support/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-context-support/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-context-support"
+      ],
+      "producerTasks": [
+        ":spring-context-support:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/classes/java/main/**",
+      "path": "spring-context/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 841,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/classes/java/test/**",
+      "path": "spring-context/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 2414,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/classes/java/testFixtures/**",
+      "path": "spring-context/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 95,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/classes/kotlin/main/**",
+      "path": "spring-context/build/classes/kotlin/main",
+      "kind": "DIRECTORY",
+      "fileCount": 42,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/classes/kotlin/test/**",
+      "path": "spring-context/build/classes/kotlin/test",
+      "kind": "DIRECTORY",
+      "fileCount": 174,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/kotlin/compileKotlin/cacheable/**",
+      "path": "spring-context/build/kotlin/compileKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 93,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/kotlin/compileKotlin/classpath-snapshot/**",
+      "path": "spring-context/build/kotlin/compileKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/kotlin/compileTestKotlin/cacheable/**",
+      "path": "spring-context/build/kotlin/compileTestKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 92,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/kotlin/compileTestKotlin/classpath-snapshot/**",
+      "path": "spring-context/build/kotlin/compileTestKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/libs/spring-context-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "path": "spring-context/build/libs/spring-context-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:testFixturesJar"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/libs/spring-context-7.0.5-SNAPSHOT.jar",
+      "path": "spring-context/build/libs/spring-context-7.0.5-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:jar"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/resources/main/**",
+      "path": "spring-context/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 14,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:processResources"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/resources/test/**",
+      "path": "spring-context/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 334,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-context/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "spring-context/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-context/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-core-test/build/classes/java/main/**",
+      "path": "spring-core-test/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 57,
+      "ownerProjects": [
+        ":spring-core-test"
+      ],
+      "producerTasks": [
+        ":spring-core-test:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-core-test/build/classes/java/test/**",
+      "path": "spring-core-test/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 33,
+      "ownerProjects": [
+        ":spring-core-test"
+      ],
+      "producerTasks": [
+        ":spring-core-test:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-core-test/build/resources/test/**",
+      "path": "spring-core-test/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 2,
+      "ownerProjects": [
+        ":spring-core-test"
+      ],
+      "producerTasks": [
+        ":spring-core-test:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-core-test/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-core-test/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-core-test"
+      ],
+      "producerTasks": [
+        ":spring-core-test:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-core-test/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-core-test/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-core-test"
+      ],
+      "producerTasks": [
+        ":spring-core-test:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/classes/java/java21/**",
+      "path": "spring-core/build/classes/java/java21",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileJava21Java"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/classes/java/java24/**",
+      "path": "spring-core/build/classes/java/java24",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileJava24Java"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/classes/java/main/**",
+      "path": "spring-core/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1119,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/classes/java/test/**",
+      "path": "spring-core/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1795,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/classes/java/testFixtures/**",
+      "path": "spring-core/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 42,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/classes/kotlin/main/**",
+      "path": "spring-core/build/classes/kotlin/main",
+      "kind": "DIRECTORY",
+      "fileCount": 11,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/classes/kotlin/test/**",
+      "path": "spring-core/build/classes/kotlin/test",
+      "kind": "DIRECTORY",
+      "fileCount": 137,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/kotlin/compileKotlin/cacheable/**",
+      "path": "spring-core/build/kotlin/compileKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 65,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/kotlin/compileKotlin/classpath-snapshot/**",
+      "path": "spring-core/build/kotlin/compileKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/kotlin/compileTestKotlin/cacheable/**",
+      "path": "spring-core/build/kotlin/compileTestKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 81,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/kotlin/compileTestKotlin/classpath-snapshot/**",
+      "path": "spring-core/build/kotlin/compileTestKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/libs/spring-core-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "path": "spring-core/build/libs/spring-core-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:testFixturesJar"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/libs/spring-core-7.0.5-SNAPSHOT.jar",
+      "path": "spring-core/build/libs/spring-core-7.0.5-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:jar"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/libs/spring-javapoet-repack-0.10.0.jar",
+      "path": "spring-core/build/libs/spring-javapoet-repack-0.10.0.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:javapoetRepackJar"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/libs/spring-objenesis-repack-3.5.jar",
+      "path": "spring-core/build/libs/spring-objenesis-repack-3.5.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:objenesisRepackJar"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/resources/main/**",
+      "path": "spring-core/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 3,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:processResources"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/resources/test/**",
+      "path": "spring-core/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 34,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-core/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/tmp/compileJava21Java/previous-compilation-data.bin",
+      "path": "spring-core/build/tmp/compileJava21Java/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileJava21Java"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/tmp/compileJava24Java/previous-compilation-data.bin",
+      "path": "spring-core/build/tmp/compileJava24Java/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileJava24Java"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "spring-core/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-core/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-expression/build/classes/java/main/**",
+      "path": "spring-expression/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 158,
+      "ownerProjects": [
+        ":spring-expression"
+      ],
+      "producerTasks": [
+        ":spring-expression:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-expression/build/classes/java/test/**",
+      "path": "spring-expression/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 349,
+      "ownerProjects": [
+        ":spring-expression"
+      ],
+      "producerTasks": [
+        ":spring-expression:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-expression/build/classes/kotlin/test/**",
+      "path": "spring-expression/build/classes/kotlin/test",
+      "kind": "DIRECTORY",
+      "fileCount": 5,
+      "ownerProjects": [
+        ":spring-expression"
+      ],
+      "producerTasks": [
+        ":spring-expression:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-expression/build/kotlin/compileTestKotlin/cacheable/**",
+      "path": "spring-expression/build/kotlin/compileTestKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 64,
+      "ownerProjects": [
+        ":spring-expression"
+      ],
+      "producerTasks": [
+        ":spring-expression:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-expression/build/kotlin/compileTestKotlin/classpath-snapshot/**",
+      "path": "spring-expression/build/kotlin/compileTestKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-expression"
+      ],
+      "producerTasks": [
+        ":spring-expression:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-expression/build/libs/spring-expression-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "path": "spring-expression/build/libs/spring-expression-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-expression"
+      ],
+      "producerTasks": [
+        ":spring-expression:testFixturesJar"
+      ]
+    },
+    {
+      "pattern": "spring-expression/build/libs/spring-expression-7.0.5-SNAPSHOT.jar",
+      "path": "spring-expression/build/libs/spring-expression-7.0.5-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-expression"
+      ],
+      "producerTasks": [
+        ":spring-expression:jar"
+      ]
+    },
+    {
+      "pattern": "spring-expression/build/resources/test/**",
+      "path": "spring-expression/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-expression"
+      ],
+      "producerTasks": [
+        ":spring-expression:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-expression/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-expression/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-expression"
+      ],
+      "producerTasks": [
+        ":spring-expression:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-expression/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-expression/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-expression"
+      ],
+      "producerTasks": [
+        ":spring-expression:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-instrument/build/classes/java/main/**",
+      "path": "spring-instrument/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-instrument"
+      ],
+      "producerTasks": [
+        ":spring-instrument:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-instrument/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-instrument/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-instrument"
+      ],
+      "producerTasks": [
+        ":spring-instrument:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/classes/java/main/**",
+      "path": "spring-jdbc/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 301,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/classes/java/test/**",
+      "path": "spring-jdbc/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 249,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/classes/kotlin/main/**",
+      "path": "spring-jdbc/build/classes/kotlin/main",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/classes/kotlin/test/**",
+      "path": "spring-jdbc/build/classes/kotlin/test",
+      "kind": "DIRECTORY",
+      "fileCount": 7,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/kotlin/compileKotlin/cacheable/**",
+      "path": "spring-jdbc/build/kotlin/compileKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 65,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/kotlin/compileKotlin/classpath-snapshot/**",
+      "path": "spring-jdbc/build/kotlin/compileKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/kotlin/compileTestKotlin/cacheable/**",
+      "path": "spring-jdbc/build/kotlin/compileTestKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 79,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/kotlin/compileTestKotlin/classpath-snapshot/**",
+      "path": "spring-jdbc/build/kotlin/compileTestKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/libs/spring-jdbc-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "path": "spring-jdbc/build/libs/spring-jdbc-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:testFixturesJar"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/libs/spring-jdbc-7.0.5-SNAPSHOT.jar",
+      "path": "spring-jdbc/build/libs/spring-jdbc-7.0.5-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:jar"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/resources/main/**",
+      "path": "spring-jdbc/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 7,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:processResources"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/resources/test/**",
+      "path": "spring-jdbc/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 74,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-jdbc/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-jdbc/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-jms/build/classes/java/main/**",
+      "path": "spring-jms/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 163,
+      "ownerProjects": [
+        ":spring-jms"
+      ],
+      "producerTasks": [
+        ":spring-jms:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-jms/build/classes/java/test/**",
+      "path": "spring-jms/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 215,
+      "ownerProjects": [
+        ":spring-jms"
+      ],
+      "producerTasks": [
+        ":spring-jms:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-jms/build/resources/test/**",
+      "path": "spring-jms/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 12,
+      "ownerProjects": [
+        ":spring-jms"
+      ],
+      "producerTasks": [
+        ":spring-jms:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-jms/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-jms/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-jms"
+      ],
+      "producerTasks": [
+        ":spring-jms:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-jms/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-jms/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-jms"
+      ],
+      "producerTasks": [
+        ":spring-jms:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/classes/java/main/**",
+      "path": "spring-messaging/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 319,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/classes/java/test/**",
+      "path": "spring-messaging/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 294,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/classes/kotlin/main/**",
+      "path": "spring-messaging/build/classes/kotlin/main",
+      "kind": "DIRECTORY",
+      "fileCount": 17,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/classes/kotlin/test/**",
+      "path": "spring-messaging/build/classes/kotlin/test",
+      "kind": "DIRECTORY",
+      "fileCount": 54,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/kotlin/compileKotlin/cacheable/**",
+      "path": "spring-messaging/build/kotlin/compileKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 65,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/kotlin/compileKotlin/classpath-snapshot/**",
+      "path": "spring-messaging/build/kotlin/compileKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/kotlin/compileTestKotlin/cacheable/**",
+      "path": "spring-messaging/build/kotlin/compileTestKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 79,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/kotlin/compileTestKotlin/classpath-snapshot/**",
+      "path": "spring-messaging/build/kotlin/compileTestKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/libs/spring-messaging-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "path": "spring-messaging/build/libs/spring-messaging-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:testFixturesJar"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/libs/spring-messaging-7.0.5-SNAPSHOT.jar",
+      "path": "spring-messaging/build/libs/spring-messaging-7.0.5-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:jar"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/resources/main/**",
+      "path": "spring-messaging/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:processResources"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/resources/test/**",
+      "path": "spring-messaging/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-messaging/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-messaging/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-orm/build/classes/java/main/**",
+      "path": "spring-orm/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 97,
+      "ownerProjects": [
+        ":spring-orm"
+      ],
+      "producerTasks": [
+        ":spring-orm:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-orm/build/classes/java/test/**",
+      "path": "spring-orm/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 100,
+      "ownerProjects": [
+        ":spring-orm"
+      ],
+      "producerTasks": [
+        ":spring-orm:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-orm/build/resources/test/**",
+      "path": "spring-orm/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 34,
+      "ownerProjects": [
+        ":spring-orm"
+      ],
+      "producerTasks": [
+        ":spring-orm:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-orm/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-orm/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-orm"
+      ],
+      "producerTasks": [
+        ":spring-orm:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-orm/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-orm/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-orm"
+      ],
+      "producerTasks": [
+        ":spring-orm:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-oxm/build/classes/java/main/**",
+      "path": "spring-oxm/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 33,
+      "ownerProjects": [
+        ":spring-oxm"
+      ],
+      "producerTasks": [
+        ":spring-oxm:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-oxm/build/classes/java/test/**",
+      "path": "spring-oxm/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 24,
+      "ownerProjects": [
+        ":spring-oxm"
+      ],
+      "producerTasks": [
+        ":spring-oxm:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-oxm/build/generated/sources/xjc/java/**",
+      "path": "spring-oxm/build/generated/sources/xjc/java",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":spring-oxm"
+      ],
+      "producerTasks": [
+        ":spring-oxm:xjc"
+      ]
+    },
+    {
+      "pattern": "spring-oxm/build/resources/test/**",
+      "path": "spring-oxm/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 5,
+      "ownerProjects": [
+        ":spring-oxm"
+      ],
+      "producerTasks": [
+        ":spring-oxm:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-oxm/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-oxm/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-oxm"
+      ],
+      "producerTasks": [
+        ":spring-oxm:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-oxm/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-oxm/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-oxm"
+      ],
+      "producerTasks": [
+        ":spring-oxm:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/classes/java/main/**",
+      "path": "spring-r2dbc/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 90,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/classes/java/test/**",
+      "path": "spring-r2dbc/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 54,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/classes/kotlin/main/**",
+      "path": "spring-r2dbc/build/classes/kotlin/main",
+      "kind": "DIRECTORY",
+      "fileCount": 7,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/classes/kotlin/test/**",
+      "path": "spring-r2dbc/build/classes/kotlin/test",
+      "kind": "DIRECTORY",
+      "fileCount": 15,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/kotlin/compileKotlin/cacheable/**",
+      "path": "spring-r2dbc/build/kotlin/compileKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 65,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/kotlin/compileKotlin/classpath-snapshot/**",
+      "path": "spring-r2dbc/build/kotlin/compileKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/kotlin/compileTestKotlin/cacheable/**",
+      "path": "spring-r2dbc/build/kotlin/compileTestKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 65,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/kotlin/compileTestKotlin/classpath-snapshot/**",
+      "path": "spring-r2dbc/build/kotlin/compileTestKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/libs/spring-r2dbc-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "path": "spring-r2dbc/build/libs/spring-r2dbc-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:testFixturesJar"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/libs/spring-r2dbc-7.0.5-SNAPSHOT.jar",
+      "path": "spring-r2dbc/build/libs/spring-r2dbc-7.0.5-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:jar"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/resources/main/**",
+      "path": "spring-r2dbc/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:processResources"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/resources/test/**",
+      "path": "spring-r2dbc/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 15,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-r2dbc/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-r2dbc/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/classes/java/main/**",
+      "path": "spring-test/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 629,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/classes/java/test/**",
+      "path": "spring-test/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 2624,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/classes/kotlin/main/**",
+      "path": "spring-test/build/classes/kotlin/main",
+      "kind": "DIRECTORY",
+      "fileCount": 29,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/classes/kotlin/test/**",
+      "path": "spring-test/build/classes/kotlin/test",
+      "kind": "DIRECTORY",
+      "fileCount": 38,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/kotlin/compileKotlin/cacheable/**",
+      "path": "spring-test/build/kotlin/compileKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 93,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/kotlin/compileKotlin/classpath-snapshot/**",
+      "path": "spring-test/build/kotlin/compileKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/kotlin/compileTestKotlin/cacheable/**",
+      "path": "spring-test/build/kotlin/compileTestKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 65,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/kotlin/compileTestKotlin/classpath-snapshot/**",
+      "path": "spring-test/build/kotlin/compileTestKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/libs/spring-test-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "path": "spring-test/build/libs/spring-test-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:testFixturesJar"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/libs/spring-test-7.0.5-SNAPSHOT.jar",
+      "path": "spring-test/build/libs/spring-test-7.0.5-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:jar"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/resources/main/**",
+      "path": "spring-test/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 3,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:processResources"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/resources/test/**",
+      "path": "spring-test/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 107,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-test/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-test/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/classes/java/main/**",
+      "path": "spring-tx/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 208,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/classes/java/test/**",
+      "path": "spring-tx/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 231,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/classes/java/testFixtures/**",
+      "path": "spring-tx/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 4,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/classes/kotlin/main/**",
+      "path": "spring-tx/build/classes/kotlin/main",
+      "kind": "DIRECTORY",
+      "fileCount": 3,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/classes/kotlin/test/**",
+      "path": "spring-tx/build/classes/kotlin/test",
+      "kind": "DIRECTORY",
+      "fileCount": 58,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/kotlin/compileKotlin/cacheable/**",
+      "path": "spring-tx/build/kotlin/compileKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 57,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/kotlin/compileKotlin/classpath-snapshot/**",
+      "path": "spring-tx/build/kotlin/compileKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/kotlin/compileTestKotlin/cacheable/**",
+      "path": "spring-tx/build/kotlin/compileTestKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 86,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/kotlin/compileTestKotlin/classpath-snapshot/**",
+      "path": "spring-tx/build/kotlin/compileTestKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/libs/spring-tx-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "path": "spring-tx/build/libs/spring-tx-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:testFixturesJar"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/libs/spring-tx-7.0.5-SNAPSHOT.jar",
+      "path": "spring-tx/build/libs/spring-tx-7.0.5-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:jar"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/resources/main/**",
+      "path": "spring-tx/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 7,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:processResources"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/resources/test/**",
+      "path": "spring-tx/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 7,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-tx/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "spring-tx/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-tx/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/classes/java/main/**",
+      "path": "spring-web/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1291,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/classes/java/test/**",
+      "path": "spring-web/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 885,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/classes/java/testFixtures/**",
+      "path": "spring-web/build/classes/java/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 72,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/classes/kotlin/main/**",
+      "path": "spring-web/build/classes/kotlin/main",
+      "kind": "DIRECTORY",
+      "fileCount": 25,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/classes/kotlin/test/**",
+      "path": "spring-web/build/classes/kotlin/test",
+      "kind": "DIRECTORY",
+      "fileCount": 309,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/kotlin/compileKotlin/cacheable/**",
+      "path": "spring-web/build/kotlin/compileKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 93,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/kotlin/compileKotlin/classpath-snapshot/**",
+      "path": "spring-web/build/kotlin/compileKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/kotlin/compileTestKotlin/cacheable/**",
+      "path": "spring-web/build/kotlin/compileTestKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 94,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/kotlin/compileTestKotlin/classpath-snapshot/**",
+      "path": "spring-web/build/kotlin/compileTestKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/libs/spring-web-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "path": "spring-web/build/libs/spring-web-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:testFixturesJar"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/libs/spring-web-7.0.5-SNAPSHOT.jar",
+      "path": "spring-web/build/libs/spring-web-7.0.5-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:jar"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/resources/main/**",
+      "path": "spring-web/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:processResources"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/resources/test/**",
+      "path": "spring-web/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 31,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/resources/testFixtures/**",
+      "path": "spring-web/build/resources/testFixtures",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:processTestFixturesResources"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-web/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "path": "spring-web/build/tmp/compileTestFixturesJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:compileTestFixturesJava"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-web/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/classes/java/main/**",
+      "path": "spring-webflux/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 458,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/classes/java/test/**",
+      "path": "spring-webflux/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 472,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/classes/kotlin/main/**",
+      "path": "spring-webflux/build/classes/kotlin/main",
+      "kind": "DIRECTORY",
+      "fileCount": 87,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/classes/kotlin/test/**",
+      "path": "spring-webflux/build/classes/kotlin/test",
+      "kind": "DIRECTORY",
+      "fileCount": 333,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/kotlin/compileKotlin/cacheable/**",
+      "path": "spring-webflux/build/kotlin/compileKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 93,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/kotlin/compileKotlin/classpath-snapshot/**",
+      "path": "spring-webflux/build/kotlin/compileKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/kotlin/compileTestKotlin/cacheable/**",
+      "path": "spring-webflux/build/kotlin/compileTestKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 94,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/kotlin/compileTestKotlin/classpath-snapshot/**",
+      "path": "spring-webflux/build/kotlin/compileTestKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/libs/spring-webflux-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "path": "spring-webflux/build/libs/spring-webflux-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:testFixturesJar"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/libs/spring-webflux-7.0.5-SNAPSHOT.jar",
+      "path": "spring-webflux/build/libs/spring-webflux-7.0.5-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:jar"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/resources/main/**",
+      "path": "spring-webflux/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:processResources"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/resources/test/**",
+      "path": "spring-webflux/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 45,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-webflux/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-webflux/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/classes/java/main/**",
+      "path": "spring-webmvc/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 537,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/classes/java/test/**",
+      "path": "spring-webmvc/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 891,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/classes/kotlin/main/**",
+      "path": "spring-webmvc/build/classes/kotlin/main",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/classes/kotlin/test/**",
+      "path": "spring-webmvc/build/classes/kotlin/test",
+      "kind": "DIRECTORY",
+      "fileCount": 49,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/kotlin/compileKotlin/cacheable/**",
+      "path": "spring-webmvc/build/kotlin/compileKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 79,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/kotlin/compileKotlin/classpath-snapshot/**",
+      "path": "spring-webmvc/build/kotlin/compileKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:compileKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/kotlin/compileTestKotlin/cacheable/**",
+      "path": "spring-webmvc/build/kotlin/compileTestKotlin/cacheable",
+      "kind": "DIRECTORY",
+      "fileCount": 86,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/kotlin/compileTestKotlin/classpath-snapshot/**",
+      "path": "spring-webmvc/build/kotlin/compileTestKotlin/classpath-snapshot",
+      "kind": "DIRECTORY",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/libs/spring-webmvc-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "path": "spring-webmvc/build/libs/spring-webmvc-7.0.5-SNAPSHOT-test-fixtures.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:testFixturesJar"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/libs/spring-webmvc-7.0.5-SNAPSHOT.jar",
+      "path": "spring-webmvc/build/libs/spring-webmvc-7.0.5-SNAPSHOT.jar",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:jar"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/resources/main/**",
+      "path": "spring-webmvc/build/resources/main",
+      "kind": "DIRECTORY",
+      "fileCount": 9,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:processResources"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/resources/test/**",
+      "path": "spring-webmvc/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 124,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-webmvc/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-webmvc/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-websocket/build/classes/java/main/**",
+      "path": "spring-websocket/build/classes/java/main",
+      "kind": "DIRECTORY",
+      "fileCount": 217,
+      "ownerProjects": [
+        ":spring-websocket"
+      ],
+      "producerTasks": [
+        ":spring-websocket:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-websocket/build/classes/java/test/**",
+      "path": "spring-websocket/build/classes/java/test",
+      "kind": "DIRECTORY",
+      "fileCount": 185,
+      "ownerProjects": [
+        ":spring-websocket"
+      ],
+      "producerTasks": [
+        ":spring-websocket:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-websocket/build/resources/test/**",
+      "path": "spring-websocket/build/resources/test",
+      "kind": "DIRECTORY",
+      "fileCount": 12,
+      "ownerProjects": [
+        ":spring-websocket"
+      ],
+      "producerTasks": [
+        ":spring-websocket:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-websocket/build/tmp/compileJava/previous-compilation-data.bin",
+      "path": "spring-websocket/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-websocket"
+      ],
+      "producerTasks": [
+        ":spring-websocket:compileJava"
+      ]
+    },
+    {
+      "pattern": "spring-websocket/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "path": "spring-websocket/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "FILE",
+      "fileCount": 1,
+      "ownerProjects": [
+        ":spring-websocket"
+      ],
+      "producerTasks": [
+        ":spring-websocket:compileTestJava"
+      ]
+    }
+  ],
+  "validations": [
+    {
+      "pattern": "integration-tests/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 105,
+      "ownerProjects": [
+        ":integration-tests"
+      ],
+      "producerTasks": [
+        ":integration-tests:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "integration-tests/build/classes/kotlin/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 14,
+      "ownerProjects": [
+        ":integration-tests"
+      ],
+      "producerTasks": [
+        ":integration-tests:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "integration-tests/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 16,
+      "ownerProjects": [
+        ":integration-tests"
+      ],
+      "producerTasks": [
+        ":integration-tests:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 210,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/classes/kotlin/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 22,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-aop/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 20,
+      "ownerProjects": [
+        ":spring-aop"
+      ],
+      "producerTasks": [
+        ":spring-aop:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-aspects/build/classes/aspectj/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 153,
+      "ownerProjects": [
+        ":spring-aspects"
+      ],
+      "producerTasks": [
+        ":spring-aspects:compileTestAspectj"
+      ]
+    },
+    {
+      "pattern": "spring-aspects/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 9,
+      "ownerProjects": [
+        ":spring-aspects"
+      ],
+      "producerTasks": [
+        ":spring-aspects:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 799,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/classes/kotlin/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 42,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-beans/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 81,
+      "ownerProjects": [
+        ":spring-beans"
+      ],
+      "producerTasks": [
+        ":spring-beans:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-context-indexer/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 36,
+      "ownerProjects": [
+        ":spring-context-indexer"
+      ],
+      "producerTasks": [
+        ":spring-context-indexer:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-context-support/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 69,
+      "ownerProjects": [
+        ":spring-context-support"
+      ],
+      "producerTasks": [
+        ":spring-context-support:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-context-support/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 15,
+      "ownerProjects": [
+        ":spring-context-support"
+      ],
+      "producerTasks": [
+        ":spring-context-support:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 2414,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/classes/kotlin/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 174,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-context/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 334,
+      "ownerProjects": [
+        ":spring-context"
+      ],
+      "producerTasks": [
+        ":spring-context:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-core-test/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 33,
+      "ownerProjects": [
+        ":spring-core-test"
+      ],
+      "producerTasks": [
+        ":spring-core-test:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-core-test/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 2,
+      "ownerProjects": [
+        ":spring-core-test"
+      ],
+      "producerTasks": [
+        ":spring-core-test:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1795,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/classes/kotlin/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 137,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-core/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 34,
+      "ownerProjects": [
+        ":spring-core"
+      ],
+      "producerTasks": [
+        ":spring-core:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-expression/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 349,
+      "ownerProjects": [
+        ":spring-expression"
+      ],
+      "producerTasks": [
+        ":spring-expression:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-expression/build/classes/kotlin/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 5,
+      "ownerProjects": [
+        ":spring-expression"
+      ],
+      "producerTasks": [
+        ":spring-expression:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-expression/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":spring-expression"
+      ],
+      "producerTasks": [
+        ":spring-expression:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 249,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/classes/kotlin/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 7,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-jdbc/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 74,
+      "ownerProjects": [
+        ":spring-jdbc"
+      ],
+      "producerTasks": [
+        ":spring-jdbc:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-jms/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 215,
+      "ownerProjects": [
+        ":spring-jms"
+      ],
+      "producerTasks": [
+        ":spring-jms:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-jms/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 12,
+      "ownerProjects": [
+        ":spring-jms"
+      ],
+      "producerTasks": [
+        ":spring-jms:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 294,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/classes/kotlin/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 54,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-messaging/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 1,
+      "ownerProjects": [
+        ":spring-messaging"
+      ],
+      "producerTasks": [
+        ":spring-messaging:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-orm/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 100,
+      "ownerProjects": [
+        ":spring-orm"
+      ],
+      "producerTasks": [
+        ":spring-orm:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-orm/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 34,
+      "ownerProjects": [
+        ":spring-orm"
+      ],
+      "producerTasks": [
+        ":spring-orm:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-oxm/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 24,
+      "ownerProjects": [
+        ":spring-oxm"
+      ],
+      "producerTasks": [
+        ":spring-oxm:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-oxm/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 5,
+      "ownerProjects": [
+        ":spring-oxm"
+      ],
+      "producerTasks": [
+        ":spring-oxm:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 54,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/classes/kotlin/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 15,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-r2dbc/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 15,
+      "ownerProjects": [
+        ":spring-r2dbc"
+      ],
+      "producerTasks": [
+        ":spring-r2dbc:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 2624,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/classes/kotlin/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 38,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-test/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 107,
+      "ownerProjects": [
+        ":spring-test"
+      ],
+      "producerTasks": [
+        ":spring-test:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 231,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/classes/kotlin/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 58,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-tx/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 7,
+      "ownerProjects": [
+        ":spring-tx"
+      ],
+      "producerTasks": [
+        ":spring-tx:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 885,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/classes/kotlin/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 309,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-web/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 31,
+      "ownerProjects": [
+        ":spring-web"
+      ],
+      "producerTasks": [
+        ":spring-web:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 472,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/classes/kotlin/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 333,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-webflux/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 45,
+      "ownerProjects": [
+        ":spring-webflux"
+      ],
+      "producerTasks": [
+        ":spring-webflux:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 891,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/classes/kotlin/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 49,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:compileTestKotlin"
+      ]
+    },
+    {
+      "pattern": "spring-webmvc/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 124,
+      "ownerProjects": [
+        ":spring-webmvc"
+      ],
+      "producerTasks": [
+        ":spring-webmvc:processTestResources"
+      ]
+    },
+    {
+      "pattern": "spring-websocket/build/classes/java/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 185,
+      "ownerProjects": [
+        ":spring-websocket"
+      ],
+      "producerTasks": [
+        ":spring-websocket:compileTestJava"
+      ]
+    },
+    {
+      "pattern": "spring-websocket/build/resources/test/**",
+      "status": "VALIDATED",
+      "matchedFiles": 12,
+      "ownerProjects": [
+        ":spring-websocket"
+      ],
+      "producerTasks": [
+        ":spring-websocket:processTestResources"
+      ]
+    }
+  ],
+  "reviewRequired": true,
+  "activationAutomatic": false,
+  "productionAuthorized": false,
+  "testOptimization": "OUT_OF_SCOPE"
+}

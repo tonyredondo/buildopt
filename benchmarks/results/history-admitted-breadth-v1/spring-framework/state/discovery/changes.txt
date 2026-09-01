@@ -1,0 +1,2 @@
+spring-jms/src/main/java/org/springframework/jms/core/JmsTemplate.java
+spring-jms/src/test/java/org/springframework/jms/core/JmsTemplateTests.java

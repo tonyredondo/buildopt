@@ -296,6 +296,12 @@ The subsequent full-path Kafka value run also passes: 8/8 positive exact pairs,
 two-match payback after learning cost. This qualifies one exact naturally
 recurrent class; it does not establish cross-repository breadth.
 
+The first breadth attempt demonstrates why: a Spring commit confined to the
+same owner prefix still produced only one compatible match under the exact
+structural graph. BuildOpt retained native with zero failures. Source prefixes
+alone cannot predict compatible lifetime; the graph binding must be available
+before authorizing expensive learning.
+
 The later change-scoped candidate-correctness route also closes negatively,
 but before candidate execution. On the first exact Groovy revision the native
 build succeeded and discovery found the structural candidate; ordinary

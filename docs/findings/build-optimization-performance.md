@@ -1253,6 +1253,12 @@ the 95% interval is +5,717.25..+8,204.5 ms, candidate p95 improves from 38,695
 to 31,310 ms and the 7,242-ms learning cost repays in two compatible matches.
 This is exact Kafka-class evidence, not a generic portfolio percentage.
 
+The subsequent Spring breadth row produced no performance sample. Although its
+paths, owner, change family and candidate matched structurally, the exact graph
+found only one compatible historical commit and retained native after the
+first successful request. This does not reduce the Kafka result; it limits the
+current claim to graph-proven recurrent classes.
+
 The untimed CSCPC route did not reach candidate correctness or performance.
 Its first Groovy optimized-native invocation succeeded, but the production
 decision path returned `NATIVE_RETAINED / ORDINARY_LEARNING_ECONOMICS_REJECTED`:
