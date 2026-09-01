@@ -1346,10 +1346,15 @@ one complete 14,406-output digest and product failures are zero. It contributes
 no speedup sample and changes neither the two-class value claim nor production
 authorization; only a separate paired-value contract is next.
 
-SMPV is the first performance campaign for this class. It freezes seventeen
-new ordinary requests and eight balanced pairs before timing, using the same
-mean, confidence, p95, payback, exact-output and zero-failure gates as the two
-qualified classes. No SMFC or SMCC duration enters a pair.
+SMPV is the first performance campaign for this class. Its seventeen new
+ordinary requests produce eight balanced pairs under the same frozen gates as
+the two previously qualified classes. All eight are positive: optimized native
+averages 40,133.5 ms and the candidate 32,331 ms, saving 7,802.5 ms / 19.441%.
+The paired interval is +7,128.5..+8,415.625 ms, candidate p95 improves from
+41,310 to 34,384 ms and the 9,807-ms learning cost pays back in two matches.
+All 14,406 outputs share one exact digest and failures are zero. No SMFC or
+SMCC duration enters a pair. This is a third bounded value class, not a generic
+or production claim.
 
 The untimed CSCPC route did not reach candidate correctness or performance.
 Its first Groovy optimized-native invocation succeeded, but the production

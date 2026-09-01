@@ -1,7 +1,7 @@
 {
   "schemaVersion":"buildopt.specs/poc-spring-messaging-paired-value/v1",
   "workItem":"SMPV",
-  "status":{"currentBlock":"SMPV-002","completedBlocks":["SMPV-001"]},
+  "status":{"currentBlock":"SMPV-003","completedBlocks":["SMPV-001","SMPV-002","SMPV-003"],"decision":"QUALIFY_SPRING_MESSAGING_VALUE"},
   "subject":{"source":"specs/poc-spring-messaging-fresh-graph-confirmation-v1.subjects.json","sourceSha256":"bc75f84485caf27239ba5fbdb0cf0928b8fc5f0e9667a433d9bf5d46ea0afd44","correctnessEvidence":"benchmarks/results/spring-messaging-fresh-control-correctness-v1/summary.json","correctnessEvidenceSha256":"7acab634f18f45ccf0321c5960e1008c6f9a1036385a16453e2f5312c74d123c","expectedOutputs":14406,"compatibleMatches":11},
   "execution":{"ordinaryRequests":17,"pairs":8,"maximumGradleStarts":17,"timeoutMinutesPerRequest":30,"maximumWorkers":12},
   "gates":{"positivePairs":8,"minimumSavedMs":500,"minimumReductionRatio":0.02,"positiveLower95":true,"candidateP95NonRegressive":true,"maximumPaybackMatches":5,"productFailures":0,"exactOutputs":true},

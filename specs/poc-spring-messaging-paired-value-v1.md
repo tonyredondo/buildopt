@@ -16,3 +16,9 @@ The run is the timing experiment; its full wrapper, learning, verification and
 fallback costs remain charged. Public-source writes, state forgery, output
 exclusions/normalization, threshold movement, production and Test Optimization
 are forbidden. Failure of any gate stops the exact class without a value claim.
+
+The one authorized campaign passed every frozen gate: 8/8 positive pairs,
+7,802.5 ms / 19.441% mean saving, positive paired confidence, improved p95,
+two-match payback, 14,406 exact outputs and zero product failures. The terminal
+decision is `QUALIFY_SPRING_MESSAGING_VALUE`; generic breadth and production
+remain unauthorized.

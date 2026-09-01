@@ -25,12 +25,14 @@ decision.
 
 ## Current experiment status
 
-`SPRING_MESSAGING_PAIRED_VALUE_V1` is current. It freezes seventeen new
-ordinary requests from empty state: one baseline and eight balanced
-native/candidate pairs. Qualification requires 8/8 positive pairs, at least
-500 ms and 2% mean saving, a positive paired 95% lower bound, non-regressive
-candidate p95, five-match payback, all 14,406 outputs exact and zero failures.
-No prior duration supplies a row.
+`SPRING_MESSAGING_PAIRED_VALUE_V1` is complete and qualifies the third bounded
+public value class. Its single empty-state campaign completed one baseline and
+eight balanced pairs: 8/8 are positive, optimized native averages 40,133.5 ms
+and the candidate averages 32,331 ms, saving 7,802.5 ms / 19.441%. The paired
+95% interval is +7,128.5..+8,415.625 ms, candidate p95 improves by 6,926 ms and
+the 9,807-ms learning cost pays back in two compatible matches. All 14,406
+outputs are exact and product failures are zero. No prior duration supplies a
+row; production and generic breadth remain unauthorized.
 
 `SPRING_MESSAGING_FRESH_CONTROL_CORRECTNESS_V1` is complete. Its new empty-state
 sequence naturally enters native/native/candidate, observes 11 matches and

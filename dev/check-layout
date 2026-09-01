@@ -646,6 +646,7 @@ buildopt_required_files=(
     "dev/check-spring-messaging-fresh-control-correctness"
     "dev/capture-spring-messaging-fresh-control-correctness"
     "dev/check-spring-messaging-paired-value-contract"
+    "dev/check-spring-messaging-paired-value"
     "dev/capture-spring-messaging-paired-value"
     "dev/run-product-window-graph-recurrence"
     "dev/capture-spring-jms-graph-aware-confirmation"

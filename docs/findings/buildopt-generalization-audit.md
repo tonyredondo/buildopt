@@ -375,10 +375,12 @@ matches and one complete 14,406-output digest with zero failures. It closes
 correctness for the Spring Messaging class without output exceptions. The
 class is still not value-qualified until a separate paired experiment passes.
 
-SMPV freezes that value experiment without moving the gates: one baseline,
-eight balanced pairs, 8/8 positive, mean and confidence thresholds, p95,
-five-match payback, complete exact outputs and zero failures. Correctness
-durations are excluded from the campaign.
+SMPV freezes and completes that value experiment without moving the gates: one
+baseline and eight balanced pairs yield 8/8 positive results, 7,802.5 ms /
+19.441% mean saving, a +7,128.5-ms lower 95% bound, improved p95 and two-match
+payback. All 14,406 outputs remain exact and failures are zero. Correctness
+durations are excluded from the campaign. This qualifies a third exact public
+class, not generic breadth or production activation.
 
 The successor isolated the naturally history-admitted Kafka row.
 Its twelve bound compatible matches may select the row but cannot be reused as

@@ -5675,6 +5675,9 @@ consumed; rerunning it is not result validation.
 requests, eight balanced pairs and the same robust value gates used by the two
 qualified classes. `./dev/capture-spring-messaging-paired-value` is the
 single-use timing entrypoint after hosted CI validates the contract commit.
+`./dev/check-spring-messaging-paired-value` independently reconstructs the
+eight pairs, exact outputs, confidence interval, p95, payback and bounded
+terminal qualification.
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher

@@ -10,7 +10,7 @@ buildopt_correctness_sha=$(sha256sum "${buildopt_correctness}" | awk '{print $1}
 ./dev/check-spring-messaging-fresh-control-correctness >/dev/null
 jq -e --arg subjectSha "${buildopt_subject_sha}" --arg correctnessSha "${buildopt_correctness_sha}" '
   .schemaVersion=="buildopt.specs/poc-spring-messaging-paired-value/v1" and
-  .status=={currentBlock:"SMPV-002",completedBlocks:["SMPV-001"]} and
+  .status=={currentBlock:"SMPV-003",completedBlocks:["SMPV-001","SMPV-002","SMPV-003"],decision:"QUALIFY_SPRING_MESSAGING_VALUE"} and
   .subject.sourceSha256==$subjectSha and .subject.correctnessEvidenceSha256==$correctnessSha and
   .subject.expectedOutputs==14406 and .subject.compatibleMatches==11 and
   .execution=={ordinaryRequests:17,pairs:8,maximumGradleStarts:17,timeoutMinutesPerRequest:30,maximumWorkers:12} and

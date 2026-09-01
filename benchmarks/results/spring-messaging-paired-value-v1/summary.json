@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "buildopt.evidence/spring-messaging-paired-value/v1",
+  "workItem": "SMPV",
+  "capturedAt": "2026-09-01T15:29:44Z",
+  "decision": "QUALIFY_SPRING_MESSAGING_VALUE",
+  "buildopt": {
+    "revision": "f2125fc975ae24b7dee9981995f7fd5c64b9a70e",
+    "executableSha256": "af9f36a258038284853527dacc21f6a14280b5fcafb9a3ddd686e4d98f776854"
+  },
+  "raw": {
+    "captureSha256": "0c87e512079de921e89f0b127d3dc5b964d91f67d03373f4ef2862f445257058",
+    "runnerSummarySha256": "993a0282ba4e7f237c22aed2a89254151c60a043788836649e5306019f86dc5c"
+  },
+  "subject": {
+    "repositoryId": "spring-projects/spring-framework",
+    "baseRevision": "8fb119df1ecc97d4391276b02189fc32c3e7bf46",
+    "targetRevision": "7f29df4d795ed76465f2dcd36ed1879c0887ab0e",
+    "ordinaryInvocations": 17,
+    "requiredOutputCount": 14406,
+    "requiredOutputSha256": "206f92025e00df98f56c09d6af704dc5592f89369a7f020327cdaa90ac08f88f",
+    "stateTreeSha256": "f8311f8aacad35ddca4f4bf3ce666d90deb7e65a9a7919c781f52cc445b1d75d",
+    "rawResultSha256": "0a1b1ac5aa0906f7b3f35a5c650067c8647c9fbf335ceb045dbe1de26b1f47f0"
+  },
+  "invocationSha256": [
+    "7e6e9b815767701831eb2fdb6b38e3e2a7cdad65c1ce9220f0128d1e974abfa8",
+    "2a4acfaeb64a758b4497d7c032df4aa5926be9a0bd5ef912664477991ca31e6b",
+    "dc11dbf319f5c43bf1ac095af9697448a5a7b23f5359b46aa8fabaf63c6f88fa",
+    "384e0d053e794eec4a590db1f63790eda824077ecdde44e8407559245e2ee643",
+    "8efc0fa364d40b1c75a2a13efd770b977a4ca2e1f9106a413b13c367adb9f62c",
+    "a0342c827e552f5ec440f29573933ae97a716100644a8466dab0afbf4fce4559",
+    "8199a467cf83a12d4466062c66e9ee6f36e9bc28698e7964b6f30b49262de6d3",
+    "b2f9e90eeff955c6c559f6d5286eed19ebd8ba2ebe2b8832c60a2b9869bbe3a8",
+    "8d59251ea1079d9c6bf54d9f62476abcb87c89fc4db912b1d2810e7b68b3726a",
+    "117ea3182aa9cd1a1e56fefa5cf4dd4b245e0e65e7c23505890547b0cb3c8c25",
+    "32f7e1ac75cae34db635d1262aa9783d08beff77317b906e3661900dc1b12854",
+    "f8a3301f10751385770ad35b5619be8bc50fbf7190fcdef5a72d736e402a4dff",
+    "ee799ea22885bbad9966ef1b8b1dfcfb0921f3ff4da57d4ccd1f015b5cbbe219",
+    "3be910afc654ea1fda609a2582626043287d2445054bb0464fbf765b6c8439fc",
+    "65860aa0e05cc141ae38267f7d3b530f4697ad379f2bbc1882bb241774b92687",
+    "5b34401ecaacf35ca91415bb9c4d0a09563e82552d9364e5019d39da673ba431",
+    "0a1b1ac5aa0906f7b3f35a5c650067c8647c9fbf335ceb045dbe1de26b1f47f0"
+  ],
+  "pairs": [
+    {"pair":1,"order":"CONTROL_FIRST","controlDurationMs":41310,"candidateDurationMs":32209,"savedMs":9101},
+    {"pair":2,"order":"CANDIDATE_FIRST","controlDurationMs":40467,"candidateDurationMs":32587,"savedMs":7880},
+    {"pair":3,"order":"CONTROL_FIRST","controlDurationMs":40074,"candidateDurationMs":31429,"savedMs":8645},
+    {"pair":4,"order":"CANDIDATE_FIRST","controlDurationMs":41196,"candidateDurationMs":34384,"savedMs":6812},
+    {"pair":5,"order":"CONTROL_FIRST","controlDurationMs":40193,"candidateDurationMs":31897,"savedMs":8296},
+    {"pair":6,"order":"CANDIDATE_FIRST","controlDurationMs":41032,"candidateDurationMs":32924,"savedMs":8108},
+    {"pair":7,"order":"CONTROL_FIRST","controlDurationMs":38796,"candidateDurationMs":31247,"savedMs":7549},
+    {"pair":8,"order":"CANDIDATE_FIRST","controlDurationMs":38000,"candidateDurationMs":31971,"savedMs":6029}
+  ],
+  "result": {
+    "positivePairs": 8,
+    "controlMeanMs": 40133.5,
+    "candidateMeanMs": 32331,
+    "meanSavedMs": 7802.5,
+    "reductionRatio": 0.1944136444616094,
+    "interval95SavedMs": [7128.5, 8415.625],
+    "controlP95Ms": 41310,
+    "candidateP95Ms": 34384,
+    "learningCostMs": 9807,
+    "paybackMatches": 2,
+    "productFailures": 0
+  },
+  "boundaries": {
+    "productionAuthorized": false,
+    "genericBreadthClaimed": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

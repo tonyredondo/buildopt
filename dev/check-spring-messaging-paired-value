@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "$root"
+
+evidence=benchmarks/results/spring-messaging-paired-value-v1/summary.json
+raw=benchmarks/results/spring-messaging-paired-value-v1/raw
+
+./dev/check-spring-messaging-paired-value-contract >/dev/null
+[[ $(sha256sum "${raw}/capture.json" | awk '{print $1}') == $(jq -r '.raw.captureSha256' "${evidence}") ]]
+[[ $(sha256sum "${raw}/runner-summary.json" | awk '{print $1}') == $(jq -r '.raw.runnerSummarySha256' "${evidence}") ]]
+mapfile -t actual_invocation_sha < <(sha256sum "${raw}"/invocation-*.json | awk '{print $1}')
+mapfile -t expected_invocation_sha < <(jq -r '.invocationSha256[]' "${evidence}")
+[[ ${#actual_invocation_sha[@]} == 17 && "${actual_invocation_sha[*]}" == "${expected_invocation_sha[*]}" ]]
+
+jq -e '
+  .subjects[0] as $subject |
+  $subject.processExitCode==0 and ($subject.productFailure|not) and
+  $subject.ordinaryInvocations==17 and ($subject.invocationResults|length)==17 and
+  [$subject.invocationResults[].sequence]==[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17] and
+  [$subject.invocationResults[].executionMode]==["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE","INCREMENTAL_CANDIDATE","OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE","INCREMENTAL_CANDIDATE","OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE","INCREMENTAL_CANDIDATE","OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE","INCREMENTAL_CANDIDATE","OPTIMIZED_NATIVE"] and
+  all($subject.invocationResults[]; .exitCode==0)
+' "${raw}/runner-summary.json" >/dev/null
+
+jq -e --slurpfile final "${raw}/invocation-17.json" '
+  $final[0].incrementalLearning as $learning |
+  [$learning.observations | group_by(.pair)[] |
+    . as $pair |
+    {
+      pair:$pair[0].pair,
+      order:$pair[0].order,
+      controlDurationMs:($pair[]|select(.arm=="CONTROL")|.durationMs),
+      candidateDurationMs:($pair[]|select(.arm=="CANDIDATE")|.durationMs),
+      savedMs:((($pair[]|select(.arm=="CONTROL")|.durationMs))-(($pair[]|select(.arm=="CANDIDATE")|.durationMs)))
+    }
+  ] as $reconstructed |
+  $learning.expectedOutputCount==14406 and
+  $learning.expectedOutputSha256=="206f92025e00df98f56c09d6af704dc5592f89369a7f020327cdaa90ac08f88f" and
+  ($learning.observations|length)==16 and
+  all($learning.observations[]; .exitCode==0 and (.productAttributableFailure|not) and .requiredOutputCount==$learning.expectedOutputCount and .requiredOutputSha256==$learning.expectedOutputSha256) and
+  .pairs==$reconstructed and
+  .pairs as $pairs |
+  ($pairs|length)==8 and
+  [$pairs[].pair]==[1,2,3,4,5,6,7,8] and
+  [$pairs[].order]==["CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST"] and
+  all($pairs[]; .savedMs==(.controlDurationMs-.candidateDurationMs) and .savedMs>0) and
+  ([ $pairs[].controlDurationMs ]|add/8)==.result.controlMeanMs and
+  ([ $pairs[].candidateDurationMs ]|add/8)==.result.candidateMeanMs and
+  ([ $pairs[].savedMs ]|add/8)==.result.meanSavedMs and
+  (.result.meanSavedMs/.result.controlMeanMs)==.result.reductionRatio and
+  ([ $pairs[]|select(.savedMs>0) ]|length)==.result.positivePairs and
+  ([ $pairs[].controlDurationMs ]|max)==.result.controlP95Ms and
+  ([ $pairs[].candidateDurationMs ]|max)==.result.candidateP95Ms and
+  .result.candidateP95Ms<=.result.controlP95Ms and
+  .result.interval95SavedMs==[7128.5,8415.625] and
+  .result.interval95SavedMs[0]>0 and
+  .result.paybackMatches==((.result.learningCostMs/.result.meanSavedMs)|ceil) and
+  .result.meanSavedMs>=500 and .result.reductionRatio>=0.02 and
+  .result.positivePairs==8 and .result.paybackMatches<=5 and
+  .result.productFailures==0 and
+  .subject.ordinaryInvocations==17 and .subject.requiredOutputCount==14406 and
+  .subject.requiredOutputSha256=="206f92025e00df98f56c09d6af704dc5592f89369a7f020327cdaa90ac08f88f" and
+  (.invocationSha256|length)==17 and
+  all(.invocationSha256[]; test("^[0-9a-f]{64}$")) and
+  .decision=="QUALIFY_SPRING_MESSAGING_VALUE" and
+  (.boundaries.productionAuthorized|not) and
+  (.boundaries.genericBreadthClaimed|not)
+' "$evidence" >/dev/null
+
+printf 'SMPV result OK: 8/8, 7802.5 ms (19.441%%), exact 14406 outputs, payback 2\n'
