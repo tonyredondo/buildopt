@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+contract=specs/poc-history-admitted-breadth-v1.json
+subjects=specs/poc-history-admitted-breadth-v1.subjects.json
+jq -e '
+ .selection.derivedOwnerPrefix as $prefix |
+ .status.currentBlock=="HAB-002" and .selection.previousCompatibleMatches==4 and
+ .selection.minimumCompatibleMatches==5 and (.selection.repositoryNameRule|not) and
+ all(.selection.changedPaths[]; startswith($prefix)) and
+ .execution.requestedInvocations==3 and
+ .execution.expectedModes==["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"] and
+ .execution.maximumGradleStarts==3 and .gate.productFailureBudget==0 and
+ (.boundaries.historicalResultReuseAllowed|not) and (.boundaries.comparativeTimingAllowed|not) and
+ (.boundaries.stateForgeryAllowed|not)
+' "$contract" >/dev/null
+jq -e --argjson c "$(jq '.selection' "$contract")" '
+ (.repositories|length)==1 and .repositories[0].key=="spring-framework" and
+ .repositories[0].publicRevision==$c.parentRevision and
+ .repositories[0].targetRevision==$c.targetRevision and
+ .repositories[0].expectedChangedProjects==[":spring-jms"] and
+ .repositories[0].entrypoints==["testClasses"]
+' "$subjects" >/dev/null
+printf 'HAB contract OK: one source-derived Spring row, three untimed starts\n'

@@ -1,0 +1,8 @@
+{
+  "schemaVersion":"buildopt.specs/poc-history-admitted-breadth/v1","workItem":"HAB",
+  "status":{"currentBlock":"HAB-002","completedBlocks":["HAB-001"],"timingAuthorized":false},
+  "selection":{"family":"spring-framework","parentRevision":"47a2e7059eb61a3c7ae776b3e64bda052a06aee6","targetRevision":"75705bcbb1da866d3ed44bf7526437a7fdf1136b","derivedOwnerPrefix":"spring-jms/","changedPaths":["spring-jms/src/main/java/org/springframework/jms/core/JmsTemplate.java","spring-jms/src/test/java/org/springframework/jms/core/JmsTemplateTests.java"],"previousCompatibleMatches":4,"minimumCompatibleMatches":5,"repositoryNameRule":false},
+  "execution":{"fresh":true,"protocol":"v3","requestedInvocations":3,"expectedModes":["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"],"maximumGradleStarts":3,"maximumWorkers":12,"timeoutMinutesPerInvocation":30},
+  "gate":{"newActionFamiliesRequired":1,"exactCandidateRequired":true,"productFailureBudget":0},
+  "boundaries":{"historicalResultReuseAllowed":false,"publicSourceWritesAllowed":false,"comparativeTimingAllowed":false,"stateForgeryAllowed":false,"testOptimization":"OUT_OF_SCOPE"}
+}

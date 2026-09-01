@@ -25,6 +25,12 @@ decision.
 
 ## Current experiment status
 
+`HISTORY_ADMITTED_BREADTH_V1` is active. It selects a second repository using
+only first-parent source facts derived from the previously observed owner. The
+Spring target `75705bcb` changes only `spring-jms` source/test paths after the
+four-match row. Three fresh untimed requests must naturally reach an exact
+candidate before any second-family value run can be considered.
+
 `HISTORY_ADMITTED_PAIRED_VALUE_V1` is complete. The exact Kafka HACC
 row through seventeen ordinary installed-path requests: one baseline plus
 eight balanced pairs. All 4,440 outputs must remain exact and the gate requires

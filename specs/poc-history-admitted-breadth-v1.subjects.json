@@ -1,0 +1,11 @@
+{
+  "schemaVersion":"buildopt.specs/poc-history-admitted-breadth-subjects/v1",
+  "repositories":[{
+    "key":"spring-framework","repositoryId":"spring-projects/spring-framework","repositoryNumericId":1148753,
+    "remoteUrl":"https://github.com/spring-projects/spring-framework.git","historyBranch":"main",
+    "publicRevision":"47a2e7059eb61a3c7ae776b3e64bda052a06aee6","targetRevision":"75705bcbb1da866d3ed44bf7526437a7fdf1136b",
+    "jdkToolchain":"temurin-jdk-25","changePath":"spring-jms/src/main/java/org/springframework/jms/core/JmsTemplate.java",
+    "mutation":"APPEND_FIXED_COMMENT","entrypoints":["testClasses"],"entrypointsFile":null,
+    "expectedChangedProjects":[":spring-jms"],"observations":[]
+  }]
+}
