@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "${buildopt_root}"
+buildopt_subject=specs/poc-spring-messaging-fresh-graph-confirmation-v1.subjects.json
+buildopt_correctness=benchmarks/results/spring-messaging-fresh-control-correctness-v1/summary.json
+buildopt_subject_sha=$(sha256sum "${buildopt_subject}" | awk '{print $1}')
+buildopt_correctness_sha=$(sha256sum "${buildopt_correctness}" | awk '{print $1}')
+
+./dev/check-spring-messaging-fresh-control-correctness >/dev/null
+jq -e --arg subjectSha "${buildopt_subject_sha}" --arg correctnessSha "${buildopt_correctness_sha}" '
+  .schemaVersion=="buildopt.specs/poc-spring-messaging-paired-value/v1" and
+  .status=={currentBlock:"SMPV-002",completedBlocks:["SMPV-001"]} and
+  .subject.sourceSha256==$subjectSha and .subject.correctnessEvidenceSha256==$correctnessSha and
+  .subject.expectedOutputs==14406 and .subject.compatibleMatches==11 and
+  .execution=={ordinaryRequests:17,pairs:8,maximumGradleStarts:17,timeoutMinutesPerRequest:30,maximumWorkers:12} and
+  .gates=={positivePairs:8,minimumSavedMs:500,minimumReductionRatio:0.02,positiveLower95:true,candidateP95NonRegressive:true,maximumPaybackMatches:5,productFailures:0,exactOutputs:true} and
+  .boundaries=={publicSourceWritesAllowed:false,stateForgeryAllowed:false,excludedPaths:[],normalizationAllowed:false,productionAuthorized:false,testOptimization:"OUT_OF_SCOPE"}
+' specs/poc-spring-messaging-paired-value-v1.json >/dev/null
+
+jq -e '
+  .decision=="AUTHORIZE_SPRING_MESSAGING_PAIRED_VALUE_CONTRACT" and
+  .outputs.count==14406 and .outputs.identicalAcrossFreshSequence and
+  .outputs.excludedPaths==[] and .outputs.normalizedPaths==[] and
+  .invocations.timingSamples==0 and .invocations.productFailures==0 and
+  .boundaries.pairedValueContractAuthorized and (.boundaries.pairedValueExecutionAuthorized|not)
+' "${buildopt_correctness}" >/dev/null
+printf 'spring-messaging paired value contract: 8 balanced pairs, exact outputs\n'

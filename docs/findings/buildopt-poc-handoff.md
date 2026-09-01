@@ -25,11 +25,18 @@ decision.
 
 ## Current experiment status
 
+`SPRING_MESSAGING_PAIRED_VALUE_V1` is current. It freezes seventeen new
+ordinary requests from empty state: one baseline and eight balanced
+native/candidate pairs. Qualification requires 8/8 positive pairs, at least
+500 ms and 2% mean saving, a positive paired 95% lower bound, non-regressive
+candidate p95, five-match payback, all 14,406 outputs exact and zero failures.
+No prior duration supplies a row.
+
 `SPRING_MESSAGING_FRESH_CONTROL_CORRECTNESS_V1` is complete. Its new empty-state
 sequence naturally enters native/native/candidate, observes 11 matches and
 reproduces one complete digest across all 14,406 outputs. No output is excluded
 or normalized; product failures and timing samples are zero. This authorizes
-only a separately frozen Spring Messaging paired-value contract.
+only the separately frozen SMPV campaign above.
 
 `SPRING_MESSAGING_CANDIDATE_CORRECTNESS_V1` is closed. The exact empty-state
 sequence naturally enters `OPTIMIZED_NATIVE`, `OPTIMIZED_NATIVE`, then

@@ -375,6 +375,11 @@ matches and one complete 14,406-output digest with zero failures. It closes
 correctness for the Spring Messaging class without output exceptions. The
 class is still not value-qualified until a separate paired experiment passes.
 
+SMPV freezes that value experiment without moving the gates: one baseline,
+eight balanced pairs, 8/8 positive, mean and confidence thresholds, p95,
+five-match payback, complete exact outputs and zero failures. Correctness
+durations are excluded from the campaign.
+
 The successor isolated the naturally history-admitted Kafka row.
 Its twelve bound compatible matches may select the row but cannot be reused as
 fresh correctness or performance evidence. The route allows three untimed

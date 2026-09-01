@@ -5671,6 +5671,11 @@ reconstructs the passing native/native/candidate sequence and all 14,406 exact
 outputs with no exclusions or normalization. The capture entrypoint is now
 consumed; rerunning it is not result validation.
 
+`./dev/check-spring-messaging-paired-value-contract` freezes seventeen ordinary
+requests, eight balanced pairs and the same robust value gates used by the two
+qualified classes. `./dev/capture-spring-messaging-paired-value` is the
+single-use timing entrypoint after hosted CI validates the contract commit.
+
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher
 integration tests. It proves that no measurement-only build contributes

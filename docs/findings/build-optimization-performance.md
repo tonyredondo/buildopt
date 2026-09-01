@@ -1346,6 +1346,11 @@ one complete 14,406-output digest and product failures are zero. It contributes
 no speedup sample and changes neither the two-class value claim nor production
 authorization; only a separate paired-value contract is next.
 
+SMPV is the first performance campaign for this class. It freezes seventeen
+new ordinary requests and eight balanced pairs before timing, using the same
+mean, confidence, p95, payback, exact-output and zero-failure gates as the two
+qualified classes. No SMFC or SMCC duration enters a pair.
+
 The untimed CSCPC route did not reach candidate correctness or performance.
 Its first Groovy optimized-native invocation succeeded, but the production
 decision path returned `NATIVE_RETAINED / ORDINARY_LEARNING_ECONOMICS_REJECTED`:
