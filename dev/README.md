@@ -5633,6 +5633,12 @@ forbidden. `./dev/check-third-family-fresh-graph-confirmation` binds the raw
 result and reconstructs the safe stop: aggregate output closure cannot reach
 one producer, so one native start authorizes no successor or timing.
 
+`./dev/check-spring-jms-graph-aware-confirmation-contract` selects the exact
+Spring JMS row where the fresh source audit reports 6/5 compatible matches and
+prior selection-only evidence proves complete output closure. The capture
+allows one current-product optimized-native request; old outputs and the old
+1/5 product count cannot supply its result, and candidates/timing stay closed.
+
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher
 integration tests. It proves that no measurement-only build contributes

@@ -25,6 +25,14 @@ decision.
 
 ## Current experiment status
 
+`SPRING_JMS_GRAPH_AWARE_CONFIRMATION_V1` is current. The exact public Spring
+JMS commit has two independent selection facts: the fresh source audit now
+finds 6/5 exact graph-aware matches with 24/27 projects omitted, and its prior
+optimized-native request established complete output closure plus 14,423 exact
+outputs. That old request counted only one match and supplies no new result.
+One fresh current-product native request may confirm the combined gate;
+candidates and timing remain forbidden.
+
 `THIRD_FAMILY_FRESH_GRAPH_CONFIRMATION_V1` is closed. Its one optimized-native
 Spring `testClasses` request exits zero and confirms the source owner/family,
 but the aggregate output closure retains native as

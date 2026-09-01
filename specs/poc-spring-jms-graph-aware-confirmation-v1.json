@@ -1,0 +1,9 @@
+{
+  "schemaVersion":"buildopt.specs/poc-spring-jms-graph-aware-confirmation/v1",
+  "workItem":"SJGC",
+  "status":{"currentBlock":"SJGC-002","completedBlocks":["SJGC-001"]},
+  "selection":{"owner":":spring-jms","family":"DEPENDENCY_SOURCE","sourceMatches":6,"minimumMatches":5,"priorOutputClosure":"COMPLETE","priorResultsAreSelectionOnly":true},
+  "execution":{"maximumGradleStarts":1,"expectedMode":"OPTIMIZED_NATIVE","candidateBuilds":0,"timingSamples":0,"timeoutMinutes":30,"maximumWorkers":12},
+  "gate":{"expectedOwners":[":spring-jms"],"expectedFamily":"DEPENDENCY_SOURCE","minimumCompatibleCommits":5,"minimumOmittedProjects":1,"minimumRequiredOutputs":1,"productFailures":0}
+}
+

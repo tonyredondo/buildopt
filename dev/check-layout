@@ -632,6 +632,8 @@ buildopt_required_files=(
     "dev/run-third-family-graph-recurrence"
     "dev/check-third-family-fresh-graph-confirmation-contract"
     "dev/check-third-family-fresh-graph-confirmation"
+    "dev/check-spring-jms-graph-aware-confirmation-contract"
+    "dev/capture-spring-jms-graph-aware-confirmation"
     "dev/capture-third-family-fresh-graph-confirmation"
     "dev/check-remote-cache-locality-harness-v3"
     "dev/check-remote-cache-locality-v3-public-correctness"
