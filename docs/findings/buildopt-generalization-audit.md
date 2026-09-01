@@ -328,14 +328,20 @@ reproduce Kafka at 12 compatible commits and Spring at one, without
 repository-name rules or Gradle execution. This fixes admission precision; it
 does not add breadth beyond the qualified Kafka class.
 
-The Spring JMS confirmation shows that the source classifier is not yet the
-effective product admission owner. One fresh optimized-native request
+The Spring JMS confirmation also exposes a source-selection contract error,
+not a product classifier defect. One fresh optimized-native request
 reconstructs complete output closure, 17/27 omitted projects, 14,423 exact
-outputs and zero failures, yet ordinary product economics still counts one
-historical compatible match against the independently reconstructed six. The
-route stops before candidate correctness. The next viable seam is integration
-of the graph-aware classifier into ordinary admission, not another repository
-name rule, state injection or timing run.
+outputs and zero failures. The earlier inventory's six matches occupy
+first-parent positions 1, 114, 145, 148, 161 and 184; ordinary product
+economics correctly sees only position 1 inside its fixed 64-commit window.
+The route stops before candidate correctness. The next viable search must use
+that same product horizon, without repository-name rules or state injection.
+
+`PRODUCT_WINDOW_GRAPH_RECURRENCE_V1` freezes that corrected search: all graph
+owners across the three remaining public families, exactly 64 first-parent
+rows per family, and fresh source facts only. A five-match group may authorize
+one separate confirmation contract; this source block cannot authorize a
+candidate or value measurement.
 
 The successor isolated the naturally history-admitted Kafka row.
 Its twelve bound compatible matches may select the row but cannot be reused as

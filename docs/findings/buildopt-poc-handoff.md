@@ -25,15 +25,23 @@ decision.
 
 ## Current experiment status
 
+`PRODUCT_WINDOW_GRAPH_RECURRENCE_V1` is current. SJGC proved the apparent
+six-versus-one mismatch came from comparing a 256-commit exploratory inventory
+with the product's fixed 64-commit horizon. PWGR therefore regenerates every
+owner/family row over exactly 64 commits for Spring, OpenTelemetry and
+Micronaut, with the same five-match and omitted-project gates. It is
+source-only: no Gradle, candidate, timing or predecessor report row is allowed.
+
 `SPRING_JMS_GRAPH_AWARE_CONFIRMATION_V1` is closed. Its one fresh
 optimized-native request exits zero, discovers a complete structural candidate,
 omits 17/27 projects, binds 57 output patterns to 14,423 exact files and
 captures 14,196 unaffected files / 41,423,821 bytes with zero product failures.
-The current product path nevertheless reports one historical compatible match,
-while the independently reconstructed source audit reports six, and safely
-retains native as `COMPATIBLE_LIFETIME_INSUFFICIENT`. This isolates a
-source-classifier/product-admission integration gap. No candidate, timing or
-third public value class is authorized.
+The current product path reports one historical compatible match and safely
+retains native as `COMPATIBLE_LIFETIME_INSUFFICIENT`. The apparent source count
+of six used a 256-commit inventory; those matches are at positions 1, 114, 145,
+148, 161 and 184, so only one belongs to the product's fixed 64-commit window.
+No classifier-integration defect, candidate, timing or third public value class
+is established.
 
 `THIRD_FAMILY_FRESH_GRAPH_CONFIRMATION_V1` is closed. Its one optimized-native
 Spring `testClasses` request exits zero and confirms the source owner/family,

@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+buildopt_usage() {
+    printf 'usage: %s <output-dir> <spring-repository> <opentelemetry-repository> <micronaut-repository>\n' "$0" >&2
+}
+if (($# != 4)); then
+    buildopt_usage
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_spring_repository=$2
+buildopt_otel_repository=$3
+buildopt_micronaut_repository=$4
+buildopt_subjects="${buildopt_root}/specs/poc-product-window-graph-recurrence-v1.subjects.json"
+
+if [[ -e ${buildopt_output} ]]; then
+    printf 'output path already exists: %s\n' "${buildopt_output}" >&2
+    exit 73
+fi
+for buildopt_repository in "${buildopt_spring_repository}" "${buildopt_otel_repository}" "${buildopt_micronaut_repository}"; do
+    git -C "${buildopt_repository}" rev-parse --is-inside-work-tree >/dev/null
+done
+mkdir -p -- "${buildopt_output}/raw"
+
+buildopt_run_subject() {
+    local buildopt_index=$1
+    local buildopt_repository=$2
+    local buildopt_label buildopt_repository_id buildopt_pipeline buildopt_target
+    local buildopt_manifest_sha buildopt_graph_sha buildopt_discovery buildopt_synthetic
+    local -a buildopt_arguments
+
+    buildopt_label=$(jq -r ".subjects[${buildopt_index}].label" "${buildopt_subjects}")
+    buildopt_repository_id=$(jq -r ".subjects[${buildopt_index}].repositoryId" "${buildopt_subjects}")
+    buildopt_pipeline=$(jq -r ".subjects[${buildopt_index}].pipelineClass" "${buildopt_subjects}")
+    buildopt_target=$(jq -r ".subjects[${buildopt_index}].targetRevision" "${buildopt_subjects}")
+    buildopt_manifest_sha=$(jq -r ".subjects[${buildopt_index}].manifestSha256" "${buildopt_subjects}")
+    buildopt_graph_sha=$(jq -r ".subjects[${buildopt_index}].graphSha256" "${buildopt_subjects}")
+    buildopt_synthetic=$(jq -r ".subjects[${buildopt_index}].syntheticHead" "${buildopt_subjects}")
+    buildopt_discovery="${buildopt_root}/benchmarks/results/poc-automatic-breadth-transfer-v2/${buildopt_label}/state/discovery"
+
+    buildopt_arguments=(
+        --repository "${buildopt_repository}"
+        --graph "${buildopt_discovery}/graph.json" --graph-sha256 "${buildopt_graph_sha}"
+        --manifest "${buildopt_discovery}/manifest.json" --manifest-sha256 "${buildopt_manifest_sha}"
+        --repository-id "${buildopt_repository_id}" --pipeline-class "${buildopt_pipeline}"
+        --target "${buildopt_target}" --maximum 64 --minimum 5 --inventory
+    )
+    if [[ ${buildopt_synthetic} == true ]]; then
+        buildopt_arguments+=(
+            --base "$(jq -r ".subjects[${buildopt_index}].baseRevision" "${buildopt_subjects}")"
+            --head-changes "${buildopt_discovery}/changes.txt"
+            --head-changes-sha256 "$(jq -r ".subjects[${buildopt_index}].headChangesSha256" "${buildopt_subjects}")"
+        )
+    fi
+    "${buildopt_root}/dev/run" --toolchain go -- go run ./cmd/history-admission-audit \
+        "${buildopt_arguments[@]}" >"${buildopt_output}/raw/${buildopt_label}.json"
+}
+
+cd -- "${buildopt_root}"
+buildopt_run_subject 0 "${buildopt_spring_repository}"
+buildopt_run_subject 1 "${buildopt_otel_repository}"
+buildopt_run_subject 2 "${buildopt_micronaut_repository}"
+
+buildopt_spring_sha=$(sha256sum "${buildopt_output}/raw/spring-framework.json" | awk '{print $1}')
+buildopt_otel_sha=$(sha256sum "${buildopt_output}/raw/opentelemetry-java-instrumentation.json" | awk '{print $1}')
+buildopt_micronaut_sha=$(sha256sum "${buildopt_output}/raw/micronaut-core.json" | awk '{print $1}')
+jq -n \
+    --slurpfile spring "${buildopt_output}/raw/spring-framework.json" \
+    --slurpfile otel "${buildopt_output}/raw/opentelemetry-java-instrumentation.json" \
+    --slurpfile micronaut "${buildopt_output}/raw/micronaut-core.json" \
+    --arg springSha "${buildopt_spring_sha}" --arg otelSha "${buildopt_otel_sha}" --arg micronautSha "${buildopt_micronaut_sha}" '
+  def compact($label; $sha; $report):
+    {
+      label:$label, rawSha256:$sha, historyRows:($report.rows|length),
+      classifiedRows:([$report.rows[]|select(.decision=="CLASSIFIED")]|length),
+      reasonCounts:($report.rows|group_by(.reason)|map({key:.[0].reason,value:length})|from_entries),
+      groups:[$report.groups[]|{
+        owners,family,affectedProjects,totalProjects,
+        omittedProjects:(.totalProjects-.affectedProjects),commitCount:(.commits|length),commits,
+        structuralId:((.owners|join("\u0000"))+"\u0001"+.family)
+      }]
+    };
+  [compact("spring-framework";$springSha;$spring[0]),compact("opentelemetry-java-instrumentation";$otelSha;$otel[0]),compact("micronaut-core";$micronautSha;$micronaut[0])] as $rows |
+  [$rows[] as $row|$row.groups[]|select(.commitCount>=5 and .omittedProjects>=1)|. + {label:$row.label}] |
+  sort_by(-.commitCount,-.omittedProjects,.structuralId,.label) as $eligible |
+  {
+    schemaVersion:"buildopt.history-admission/product-window-graph-recurrence/v1",
+    decision:(if ($eligible|length)>0 then "AUTHORIZE_FRESH_GRAPH_CONFIRMATION_CONTRACT" else "STOP_THIRD_FAMILY_GRAPH_RECURRENCE" end),
+    thresholds:{historyRowsPerFamily:64,minimumGroupCommits:5,minimumOmittedProjects:1},
+    rows:$rows, eligibleGroups:$eligible, selectedGroup:($eligible[0] // null),
+    boundaries:{gradleExecuted:false,candidateExecuted:false,timingCollected:false,publicSourcePatched:false,productionAuthorized:false,predecessorSummaryEvidenceConsumed:false,repositoryOrTaskNameRules:false}
+  }
+' >"${buildopt_output}/summary.json"
+
+printf 'product-window graph recurrence evidence written to %s\n' "${buildopt_output}"

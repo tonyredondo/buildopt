@@ -5636,10 +5636,15 @@ one producer, so one native start authorizes no successor or timing.
 `./dev/check-spring-jms-graph-aware-confirmation-contract` selects the exact
 output-reachable Spring JMS row and freezes one native-only confirmation.
 `./dev/check-spring-jms-graph-aware-confirmation` independently binds the raw
-capture, reconstructs the source 6 versus product 1 history mismatch, verifies
-complete exact outputs and enforces the zero-candidate/timing terminal stop.
+capture, reconciles the source 256-row versus product 64-row history windows,
+verifies complete exact outputs and enforces the zero-candidate/timing stop.
 `./dev/capture-spring-jms-graph-aware-confirmation` is the now-consumed
 one-request capture entrypoint; rerunning it is not part of result validation.
+
+`./dev/check-product-window-graph-recurrence-contract` freezes three fresh
+all-owner source audits over the product's exact 64-commit history horizon.
+`./dev/run-product-window-graph-recurrence` generates those rows without
+Gradle, candidate execution, timing or predecessor-summary inputs.
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher

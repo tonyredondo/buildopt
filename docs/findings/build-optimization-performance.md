@@ -1303,11 +1303,18 @@ timing follows, so this Spring docs group does not become a third value class.
 The subsequent Spring JMS graph-aware confirmation also contributes no
 performance sample. Its native request exits zero with complete partitioning,
 17/27 omitted projects, 57 required patterns, 14,423 exact output files and
-zero product failures. However, ordinary product economics counts one
-historical compatible match where the independent source classifier counts
-six, then retains native as `COMPATIBLE_LIFETIME_INSUFFICIENT`. This isolates
-the remaining blocker to classifier/admission integration; candidate
-correctness and paired value remain unauthorized.
+zero product failures. Ordinary product economics counts one historical match
+and retains native as `COMPATIBLE_LIFETIME_INSUFFICIENT`. The prior source
+inventory counted six over 256 commits, at positions 1, 114, 145, 148, 161 and
+184; only the first lies inside the product's 64-commit horizon. The counts
+were not comparable, so no classifier defect or performance result is
+established. Candidate correctness and paired value remain unauthorized.
+
+The product-window successor is source-only and adds no performance sample. It
+repeats all-owner recurrence for the three remaining families over exactly 64
+commits, matching ordinary product admission. Any eligible group can select
+only a separate untimed confirmation; no candidate or speedup follows from the
+inventory itself.
 
 The untimed CSCPC route did not reach candidate correctness or performance.
 Its first Groovy optimized-native invocation succeeded, but the production

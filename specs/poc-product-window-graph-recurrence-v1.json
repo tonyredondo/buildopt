@@ -1,0 +1,9 @@
+{
+  "schemaVersion":"buildopt.specs/poc-product-window-graph-recurrence/v1",
+  "workItem":"PWGR",
+  "status":{"currentBlock":"PWGR-002","completedBlocks":["PWGR-001"]},
+  "inputs":{"familyCount":3,"historyRowsPerFamily":64,"freshRowsRequired":true,"predecessorSummaryRowsAllowed":false},
+  "gate":{"minimumGroupCommits":5,"minimumOmittedProjects":1,"minimumEligibleGroups":1},
+  "execution":{"maximumGradleStarts":0,"candidateBuilds":0,"timingSamples":0,"publicSourcePatches":0},
+  "boundaries":{"repositoryOrTaskNameRules":false,"productionAuthorized":false,"testOptimization":"OUT_OF_SCOPE"}
+}

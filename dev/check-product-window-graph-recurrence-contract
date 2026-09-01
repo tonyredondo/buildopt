@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "${buildopt_root}"
+
+jq -e '
+  .schemaVersion=="buildopt.specs/poc-product-window-graph-recurrence/v1" and
+  .status.currentBlock=="PWGR-002" and .status.completedBlocks==["PWGR-001"] and
+  .inputs=={familyCount:3,historyRowsPerFamily:64,freshRowsRequired:true,predecessorSummaryRowsAllowed:false} and
+  .gate=={minimumGroupCommits:5,minimumOmittedProjects:1,minimumEligibleGroups:1} and
+  .execution=={maximumGradleStarts:0,candidateBuilds:0,timingSamples:0,publicSourcePatches:0} and
+  .boundaries=={repositoryOrTaskNameRules:false,productionAuthorized:false,testOptimization:"OUT_OF_SCOPE"}
+' specs/poc-product-window-graph-recurrence-v1.json >/dev/null
+
+jq -e '
+  .schemaVersion=="buildopt.specs/poc-product-window-graph-recurrence-subjects/v1" and
+  (.subjects|length)==3 and ([.subjects[].label]|sort)==["micronaut-core","opentelemetry-java-instrumentation","spring-framework"] and
+  all(.subjects[];(.targetRevision|test("^[0-9a-f]{40}$")) and
+    (.manifestSha256|test("^[0-9a-f]{64}$")) and (.graphSha256|test("^[0-9a-f]{64}$"))) and
+  ([.subjects[]|select(.syntheticHead==false)]|length)==1 and
+  all(.subjects[]|select(.syntheticHead);(.baseRevision|test("^[0-9a-f]{40}$")) and
+    (.headChangesSha256|test("^[0-9a-f]{64}$")))
+' specs/poc-product-window-graph-recurrence-v1.subjects.json >/dev/null
+
+for buildopt_index in 0 1 2; do
+  buildopt_label=$(jq -r ".subjects[${buildopt_index}].label" specs/poc-product-window-graph-recurrence-v1.subjects.json)
+  buildopt_manifest=$(jq -r ".subjects[${buildopt_index}].manifestSha256" specs/poc-product-window-graph-recurrence-v1.subjects.json)
+  buildopt_graph=$(jq -r ".subjects[${buildopt_index}].graphSha256" specs/poc-product-window-graph-recurrence-v1.subjects.json)
+  buildopt_discovery="benchmarks/results/poc-automatic-breadth-transfer-v2/${buildopt_label}/state/discovery"
+  [[ $(sha256sum "${buildopt_discovery}/manifest.json" | awk '{print $1}') == "${buildopt_manifest}" ]]
+  [[ $(sha256sum "${buildopt_discovery}/graph.json" | awk '{print $1}') == "${buildopt_graph}" ]]
+  if [[ $(jq -r ".subjects[${buildopt_index}].syntheticHead" specs/poc-product-window-graph-recurrence-v1.subjects.json) == true ]]; then
+    buildopt_changes=$(jq -r ".subjects[${buildopt_index}].headChangesSha256" specs/poc-product-window-graph-recurrence-v1.subjects.json)
+    [[ $(sha256sum "${buildopt_discovery}/changes.txt" | awk '{print $1}') == "${buildopt_changes}" ]]
+  fi
+done
+
+if rg -n 'third-family-graph-recurrence-v1/(capture|raw)|durable-native-optimization-v1/opportunity-report' \
+  dev/run-product-window-graph-recurrence; then
+  printf 'product-window runner consumes forbidden predecessor evidence\n' >&2
+  exit 1
+fi
+
+printf 'product-window graph recurrence contract: 3 families x 64 source rows, zero Gradle starts\n'

@@ -6,13 +6,27 @@ cd -- "${buildopt_root}"
 buildopt_evidence=benchmarks/results/spring-jms-graph-aware-confirmation-v1
 buildopt_capture_sha=$(sha256sum "${buildopt_evidence}/raw/capture.json" | awk '{print $1}')
 buildopt_invocation_sha=$(sha256sum "${buildopt_evidence}/raw/invocation-01.json" | awk '{print $1}')
+buildopt_history_sha=$(sha256sum "${buildopt_evidence}/raw/first-parent-256.txt" | awk '{print $1}')
+[[ $(wc -l <"${buildopt_evidence}/raw/first-parent-256.txt") -eq 256 ]]
+[[ $(head -n 1 "${buildopt_evidence}/raw/first-parent-256.txt") == 75705bcbb1da866d3ed44bf7526437a7fdf1136b ]]
+[[ $(sort -u "${buildopt_evidence}/raw/first-parent-256.txt" | wc -l) -eq 256 ]]
+if rg -v '^[0-9a-f]{40}$' "${buildopt_evidence}/raw/first-parent-256.txt"; then
+  printf 'first-parent history contains an invalid revision\n' >&2
+  exit 1
+fi
+buildopt_positions=$(jq -c --rawfile history "${buildopt_evidence}/raw/first-parent-256.txt" '
+  ($history|split("\n")|map(select(length>0))) as $rows|
+  [.eligibleGroups[]|select(.owners==[":spring-jms"] and .family=="DEPENDENCY_SOURCE")|
+    .commits[] as $commit|(($rows|index($commit))+1)]
+' benchmarks/results/third-family-graph-recurrence-v1/capture/summary.json)
 
 ./dev/check-spring-jms-graph-aware-confirmation-contract >/dev/null
 jq -e \
   --slurpfile capture "${buildopt_evidence}/raw/capture.json" \
   --slurpfile invocation "${buildopt_evidence}/raw/invocation-01.json" \
   --slurpfile source benchmarks/results/third-family-graph-recurrence-v1/capture/summary.json \
-  --arg captureSha "${buildopt_capture_sha}" --arg invocationSha "${buildopt_invocation_sha}" '
+  --arg captureSha "${buildopt_capture_sha}" --arg invocationSha "${buildopt_invocation_sha}" \
+  --arg historySha "${buildopt_history_sha}" --argjson positions "${buildopt_positions}" '
   $capture[0] as $capture|$invocation[0] as $invocation|
   ($source[0].eligibleGroups[] | select(.owners==[":spring-jms"] and .family=="DEPENDENCY_SOURCE")) as $sourceGroup|
   $capture.schemaVersion=="buildopt.evidence/automatic-breadth-subject/v3" and
@@ -50,15 +64,19 @@ jq -e \
   .schemaVersion=="buildopt.evidence/spring-jms-graph-aware-confirmation/v1" and
   .decision=="STOP_SPRING_JMS_GRAPH_AWARE_CONFIRMATION" and
   .rawBindings.captureSha256==$captureSha and .rawBindings.invocationSha256==$invocationSha and
+  .rawBindings.firstParent256Sha256==$historySha and
   .rawBindings.stateTreeSha256==$capture.stateTreeSha256 and
   .rawBindings.executableSha256==$capture.buildopt.executableSha256 and
   .execution=={mode:"OPTIMIZED_NATIVE",gradleStarts:1,exitCode:0,durationMs:314964,candidateBuilds:0,timingSamples:0,productFailures:0} and
+  .sourceSelection.historyWindowCommits==256 and
   .sourceSelection.compatibleCommits==$sourceGroup.commitCount and
+  .sourceSelection.compatibleCommitPositions==$positions and
   .sourceSelection.affectedProjects==$sourceGroup.affectedProjects and
   .sourceSelection.totalProjects==$sourceGroup.totalProjects and
   .sourceSelection.omittedProjects==$sourceGroup.omittedProjects and
+  .productObservation.historyWindowCommits==64 and
   .productObservation.historicalCompatibleMatches==$invocation.incrementalLearning.ordinaryEconomics.historicalCompatibleMatches and
-  .productObservation.matchGap==(.sourceSelection.compatibleCommits-.productObservation.historicalCompatibleMatches) and
+  .reconciliation=={status:"NOT_COMPARABLE",reason:"DIFFERENT_HISTORY_WINDOWS",compatibleMatchesInsideProductWindow:1} and
   .graph.requiredOutputPatterns==($invocation.discovery.requiredOutputs|length) and
   .graph.exactOutputFiles==$invocation.incrementalLearning.baseline.requiredOutputCount and
   .materialization.patterns==($invocation.discovery.materialization.patterns|length) and
@@ -68,4 +86,4 @@ jq -e \
   .boundaries=={candidateCorrectnessAuthorized:false,pairedValueAuthorized:false,productionAuthorized:false,testOptimization:"OUT_OF_SCOPE"}
 ' "${buildopt_evidence}/summary.json" >/dev/null
 
-printf 'spring-jms graph-aware confirmation: stopped safely (source 6, product 1, 1 native start, 0 candidates)\n'
+printf 'spring-jms graph-aware confirmation: stopped safely (256-row source count was not comparable with 64-row product count)\n'

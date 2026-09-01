@@ -687,6 +687,7 @@ Gradle build is rerun by this static decision gate.
 ./dev/check-third-family-fresh-graph-confirmation
 ./dev/check-spring-jms-graph-aware-confirmation-contract
 ./dev/check-spring-jms-graph-aware-confirmation
+./dev/check-product-window-graph-recurrence-contract
 ```
 
 This source-only check binds the retained discovery snapshots, tests the
