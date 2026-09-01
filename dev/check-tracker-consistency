@@ -66,7 +66,7 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`GRAPH_AWARE_HISTORY_ADMISSION_VALIDATED\`"
-    "**Current phase:** \`RRCC-003\`"
+    "**Current phase:** \`RRPV-002\`"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"
@@ -166,6 +166,7 @@ buildopt_required_tracker_text=(
     "| \`E-486\` | 2026-09-01 | \`POC-FRESH-GRAPH-RECURRENT-GROUP-CONFIRMATION\`, \`FGRG-002/003\` |"
     "| \`E-487\` | 2026-09-01 | \`POC-RECURRENT-ROOT-CANDIDATE-CORRECTNESS\`, \`RRCC-001\` |"
     "| \`E-488\` | 2026-09-01 | \`POC-RECURRENT-ROOT-CANDIDATE-CORRECTNESS\`, \`RRCC-002/003\` |"
+    "| \`E-489\` | 2026-09-01 | \`POC-RECURRENT-ROOT-PAIRED-VALUE\`, \`RRPV-001\` |"
     "| 157 | \`POC-OBSERVED-REQUEST-PORTFOLIO-001\` | Reconstruct all terminal request-aligned causes"
     "| 156 | \`POC-REQUEST-ALIGNED-RECURRENT-LEARNING-001\` | Reconstruct every terminal change-aware negative"
     "| 155 | \`POC-CHANGE-AWARE-PRODUCER-CLOSURE-001\` | Starting from the terminal fresh 1/5 breadth result"

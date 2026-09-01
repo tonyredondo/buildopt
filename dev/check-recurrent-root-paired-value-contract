@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd); cd -- "$root"
+jq -e '.schemaVersion=="buildopt.specs/poc-recurrent-root-paired-value/v1" and .status.currentBlock=="RRPV-002" and .execution.ordinaryRequests==17 and .execution.pairs==8 and .gates.positivePairs==8 and .gates.minimumSavedMs==500 and .gates.minimumReductionRatio==0.02 and .gates.maximumPaybackMatches==5 and .gates.productFailures==0' specs/poc-recurrent-root-paired-value-v1.json >/dev/null
+./dev/check-recurrent-root-candidate-correctness-contract
+printf 'recurrent root paired value contract: ok\n'

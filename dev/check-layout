@@ -624,6 +624,8 @@ buildopt_required_files=(
     "dev/capture-fresh-graph-recurrent-group-confirmation"
     "dev/check-recurrent-root-candidate-correctness-contract"
     "dev/capture-recurrent-root-candidate-correctness"
+    "dev/check-recurrent-root-paired-value-contract"
+    "dev/capture-recurrent-root-paired-value"
     "dev/check-remote-cache-locality-harness-v3"
     "dev/check-remote-cache-locality-v3-public-correctness"
     "dev/check-remote-cache-locality-v3-paired-value"

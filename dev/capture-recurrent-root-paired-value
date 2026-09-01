@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if (($#!=1)) || [[ $1 != /* || -e $1 ]]; then printf 'usage: %s NEW_ABSOLUTE_OUTPUT_DIRECTORY\n' "$0" >&2; exit 64; fi
+root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd); subjects="$root/specs/poc-fresh-graph-recurrent-group-confirmation-v1.subjects.json"; sha=$(sha256sum "$subjects"|awk '{print $1}')
+env BUILDOPT_AUTOMATIC_BREADTH_PROTOCOL=v3 BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_FILE="$subjects" BUILDOPT_AUTOMATIC_BREADTH_SUBJECTS_SHA256="$sha" BUILDOPT_AUTOMATIC_BREADTH_PROCESS_MODE=no-daemon "$root/dev/run-automatic-breadth-transfer" "$1" apache-groovy-root-recurrent

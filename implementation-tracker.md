@@ -1,14 +1,14 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `GRAPH_AWARE_HISTORY_ADMISSION_VALIDATED` — exact graph admits Kafka and rejects Spring before builds<br>
-**Current phase:** `RRCC-003` — recurrent Groovy correctness passed; paired-value contract next<br>
+**Current phase:** `RRPV-002` — eight-pair recurrent Groovy value run<br>
 **POC functional target:** produce positive cumulative wall-time value against optimized native Gradle across chronological customer-requested builds, including every wrapper, observation, trial, cache, fallback and action cost<br>
 **POC onboarding north star:** `generate and commit BuildOpt Wrapper -> ./buildoptw build`; no global BuildOpt installation, hand-authored profile or committed credential is required<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
 **Last updated:** 2026-09-01<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
-**Detailed POC tracker:** [Recurrent Root Candidate Correctness v1](./docs/plans/recurrent-root-candidate-correctness-v1.md)<br>
+**Detailed POC tracker:** [Recurrent Root Paired Value v1](./docs/plans/recurrent-root-paired-value-v1.md)<br>
 **Closed predecessor:** [Remote Cache Locality Value v2 POC Tracker](./docs/plans/remote-cache-locality-value-poc-tracker.md)<br>
 **Superseded diagnostic tracker:** [Sticky Wrapper Learning POC Tracker](./docs/plans/sticky-wrapper-learning-poc-tracker.md)<br>
 **Earlier closed predecessor:** [Adaptive Fragment Generalization POC Tracker](./docs/plans/adaptive-fragment-generalization-tracker.md)<br>
@@ -217,6 +217,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-GRAPH-OWNER-RECURRENCE-INVENTORY | Inventory every exact graph-derived owner/family group instead of only the fixture owner | `DONE` | 3/3 | `E-483..484`; [closed tracker](./docs/plans/graph-owner-recurrence-inventory-v1.md). Groovy root dependency-source group has 37 commits and retained 26/37 closure; no Gradle, candidates or timing |
 | POC-FRESH-GRAPH-RECURRENT-GROUP-CONFIRMATION | Confirm the selected recurrent Groovy root group against one fresh exact graph before correctness | `DONE` | 3/3 | `E-485..486`; [closed tracker](./docs/plans/fresh-graph-recurrent-group-confirmation-v1.md). Fresh owner `:`, 38 matches, 1/37 selected, 3,895 outputs and zero failures; no candidate or timing |
 | POC-RECURRENT-ROOT-CANDIDATE-CORRECTNESS | Prove exact outputs for the naturally recurrent Groovy root group before value | `DONE` | 3/3 | `E-487..488`; [closed tracker](./docs/plans/recurrent-root-candidate-correctness-v1.md). Native/native/candidate reproduces 3,895 outputs; zero failures and timing samples |
+| POC-RECURRENT-ROOT-PAIRED-VALUE | Measure robust installed value for the recurrent Groovy root group | `DOING` | 1/3 | `E-489`; [tracker](./docs/plans/recurrent-root-paired-value-v1.md). Seventeen requests, eight exact pairs |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Not authorized by terminal `STOP_GENERIC_POC` or `STOP_ADAPTIVE_FRAGMENT_POC` |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -2527,6 +2528,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-486` | 2026-09-01 | `POC-FRESH-GRAPH-RECURRENT-GROUP-CONFIRMATION`, `FGRG-002/003` | The same checker validates the [fresh observation](./benchmarks/results/fresh-graph-recurrent-group-confirmation-v1/README.md) and all gate fields | `DONE`: one native start resolves owner `:`, dependency-source, 38 matches and 1/37 selected projects with 3,895 exact outputs and zero failures. Candidate correctness may be frozen separately; timing remains closed |
 | `E-487` | 2026-09-01 | `POC-RECURRENT-ROOT-CANDIDATE-CORRECTNESS`, `RRCC-001` | The [contract](./specs/poc-recurrent-root-candidate-correctness-v1.md), [tracker](./docs/plans/recurrent-root-candidate-correctness-v1.md) and [`check-recurrent-root-candidate-correctness-contract`](./dev/check-recurrent-root-candidate-correctness-contract) freeze the exact three-request sequence | `DONE` planning only. Candidate must reproduce 3,895 outputs; timing remains forbidden |
 | `E-488` | 2026-09-01 | `POC-RECURRENT-ROOT-CANDIDATE-CORRECTNESS`, `RRCC-002/003` | The same checker validates the [three-invocation result](./benchmarks/results/recurrent-root-candidate-correctness-v1/README.md) | `DONE`: native/native/candidate reproduces the same 3,895-file digest with zero failures. One pair is diagnostic only; a separate paired-value contract is authorized |
+| `E-489` | 2026-09-01 | `POC-RECURRENT-ROOT-PAIRED-VALUE`, `RRPV-001` | The [contract](./specs/poc-recurrent-root-paired-value-v1.md), [tracker](./docs/plans/recurrent-root-paired-value-v1.md) and [`check-recurrent-root-paired-value-contract`](./dev/check-recurrent-root-paired-value-contract) freeze eight balanced exact-output pairs | `DONE` planning only. Seventeen ordinary requests maximum |
 ---
 
 ## 15. Tracker changelog
