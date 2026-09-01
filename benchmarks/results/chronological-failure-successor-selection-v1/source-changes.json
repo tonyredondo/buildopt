@@ -1,0 +1,16 @@
+{
+  "schemaVersion":"buildopt.evidence/poc-chronological-source-changes/v1",
+  "selection":"IMMEDIATE_FIRST_PARENT_DESCENDANTS_FROM_TCCV",
+  "subjects":[
+    {"key":"apache-kafka","qualifiedRebuildProjects":[":clients"],"materializedProjectsInclude":[":streams",":streams:integration-tests"],"rows":[
+      {"revision":"996fb4585aa1bcc8980b0e1b8d6b168b986cd979","parentRevision":"2e961afeff5cb27d60767a783edf20be00cc28e8","paths":["streams/src/main/java/org/apache/kafka/streams/state/internals/AbstractMeteredIterator.java","streams/src/main/java/org/apache/kafka/streams/state/internals/MeteredSessionStoreWithHeaders.java","streams/src/main/java/org/apache/kafka/streams/state/internals/MeteredTimestampedKeyValueStoreWithHeaders.java","streams/src/main/java/org/apache/kafka/streams/state/internals/MeteredTimestampedWindowStoreWithHeaders.java","streams/src/test/java/org/apache/kafka/streams/state/internals/MeteredSessionStoreWithHeadersTest.java","streams/src/test/java/org/apache/kafka/streams/state/internals/MeteredTimestampedKeyValueStoreWithHeadersTest.java","streams/src/test/java/org/apache/kafka/streams/state/internals/MeteredTimestampedWindowStoreWithHeadersTest.java"]},
+      {"revision":"d4bc6cd5515bb1245ecba0a21e5740eacfe80a10","parentRevision":"996fb4585aa1bcc8980b0e1b8d6b168b986cd979","paths":["streams/integration-tests/src/test/java/org/apache/kafka/streams/integration/PositionRestartIntegrationTest.java"]},
+      {"revision":"e9632ea55e0713af7a6c15ef58789a204a6d46c8","parentRevision":"d4bc6cd5515bb1245ecba0a21e5740eacfe80a10","paths":["streams/src/test/java/org/apache/kafka/streams/state/KeyValueStoreTestDriver.java","streams/src/test/java/org/apache/kafka/streams/state/internals/AbstractKeyValueStoreTest.java","streams/src/test/java/org/apache/kafka/streams/state/internals/InMemorySessionTransactionBufferTest.java","streams/src/test/java/org/apache/kafka/streams/state/internals/InMemoryTransactionalKeyValueStoreTest.java","streams/src/test/java/org/apache/kafka/streams/state/internals/InMemoryWindowTransactionBufferTest.java","streams/src/test/java/org/apache/kafka/streams/state/internals/RocksDBStoreTest.java","streams/src/test/java/org/apache/kafka/streams/state/internals/RocksDBTransactionBufferTest.java","streams/src/test/java/org/apache/kafka/streams/state/internals/RocksDBTransactionalKeyValueStoreTest.java","streams/src/test/java/org/apache/kafka/streams/state/internals/RocksDBTransactionalSessionStoreTest.java","streams/src/test/java/org/apache/kafka/streams/state/internals/RocksDBTransactionalWindowStoreTest.java"]}
+    ]},
+    {"key":"apache-groovy","qualifiedRebuildProjects":[":"],"rows":[
+      {"revision":"4e703cbdde658cf2906a6d77c309b4b9624f1adf","parentRevision":"494c9cb23ae799226c6ab8485301dae2925e6ed4","paths":["gradle.properties"]},
+      {"revision":"f0b4d886134a07a2a35c29220f1e92f0247bdd1f","parentRevision":"4e703cbdde658cf2906a6d77c309b4b9624f1adf","paths":["versions.properties"]},
+      {"revision":"a63cd35f0fd7f5d7dd10c0fbd4236dc4eb659257","parentRevision":"f0b4d886134a07a2a35c29220f1e92f0247bdd1f","paths":["gradle/verification-metadata.xml"]}
+    ]}
+  ]
+}

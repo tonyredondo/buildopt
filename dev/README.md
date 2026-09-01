@@ -1299,6 +1299,20 @@ retains native before calibration, closing at -2,995 ms. Spring is not run once
 2/3 payback becomes impossible. Validate the exact terminal evidence with
 `./dev/check-three-class-chronological-value`.
 
+The source-only successor audit explains why that failure does not open another
+current-architecture benchmark:
+
+```bash
+./dev/check-chronological-failure-successor-selection
+```
+
+It reconstructs all six frozen descendant path sets, the qualified partitions
+and prior change-aware/adaptive terminal results. Kafka changes Streams
+producers while the profile rebuilds clients; Groovy changes global inputs.
+Producer content addressing therefore either invalidates correctly or repeats
+mechanisms that already activated 0 Kafka actions and 0/71 fragments. The
+decision authorizes no Gradle run, timing or production claim.
+
 If the harness stops after the expensive qualification capture, preserve the
 two diagnostic roots printed on stderr and resume that single subject without
 repeating its timing samples:

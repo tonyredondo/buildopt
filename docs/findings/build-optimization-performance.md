@@ -1434,3 +1434,11 @@ first ordinary pair regresses by 5,831 ms and stops before calibration, for
 -2,995 ms net. Spring is not run because 2/3 payback has become impossible.
 Consumed net is -61,050 ms with exact outputs and zero failures, so the
 experiment stops without a longitudinal speedup claim.
+
+CFSS then asks whether a content-addressed producer key would change that
+result. It would not: Kafka's later commits change Streams producers whose
+outputs cannot be restored from the clients-qualified revision, while Groovy's
+later commits alter global build/dependency inputs. Correct invalidation falls
+back to the previously measured change-aware/adaptive mechanisms, which had no
+Kafka actions, no fragment activations and negative portfolio value. No further
+performance experiment is authorized for the current architecture.

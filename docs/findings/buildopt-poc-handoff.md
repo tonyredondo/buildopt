@@ -25,6 +25,17 @@ decision.
 
 ## Current experiment status
 
+`CHRONOLOGICAL_FAILURE_SUCCESSOR_SELECTION_V1` is complete and finds no
+actionable materially different successor inside the current optimizer
+architecture. All three Kafka descendants modify Streams producers whose
+outputs the clients-qualified partition materializes; applying that profile
+would be unsafe. All three Groovy descendants modify global version, dependency
+or verification inputs. Correct content-addressed invalidation reduces to the
+already tested change-aware closure and adaptive-fragment routes, which yielded
+zero Kafka actions and 0/71 activations. The audit consumed zero Gradle starts
+and timing samples. Any next experiment requires an explicitly authorized
+architecture or product pivot.
+
 `THREE_CLASS_CHRONOLOGICAL_VALUE_V1` is closed negatively. Kafka requalifies
 8/8 and is portable, but selects none of its three immediate descendants; the
 three signed deltas plus qualification/publication cost close at -58,055 ms.

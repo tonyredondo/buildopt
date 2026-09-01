@@ -1,0 +1,15 @@
+{
+  "schemaVersion":"buildopt.specs/poc-chronological-failure-successor-selection/v1",
+  "workItem":"POC-CHRONOLOGICAL-FAILURE-SUCCESSOR-SELECTION-V1",
+  "inputs":[
+    {"path":"benchmarks/results/three-class-chronological-value-v1/apache-kafka/result.json","sha256":"8d137a70644bac2dde2f045bdc5b84d57d125b3cb71e1dd50dfa0b3b6e0a41d1"},
+    {"path":"benchmarks/results/three-class-chronological-value-v1/apache-kafka/qualification-capture.json","sha256":"6717dfa9a074d612fec1da84b0cd73849339af183a1f0ce91db630928a1b523d"},
+    {"path":"benchmarks/results/three-class-chronological-value-v1/apache-groovy/result.json","sha256":"07f1369d8c656699cbeb2687e5a6da3f2bcaa75185024ed88240fd6e91959550"},
+    {"path":"benchmarks/results/three-class-chronological-value-v1/apache-groovy/qualification-capture.json","sha256":"ab62576179f788cdd9c4a0c2fa3a755de9c0a7c11b28b2876ac839553c33b0e5"},
+    {"path":"benchmarks/results/adaptive-fragment-terminal-decision-v1.json","sha256":"436ddc8d0ee2f56e4c0be502b5b0134a803a83c4072f8ae617ff19a6a9a70019"},
+    {"path":"benchmarks/results/change-aware-producer-closure-v1/summary.json","sha256":"074ddd6979a8a76b09e46f03b1b7be8ba2b98644bb1d867c0edd6543d26c6937"}
+  ],
+  "rules":{"sourceOnly":true,"gradleStarts":0,"timingSamples":0,"crossRevisionAbiInference":false,"repositoryNameRules":false,"maximumSuccessors":1},
+  "candidateKinds":["REUSE_QUALIFIED_PROFILE","CONTENT_ADDRESSED_PRODUCER_REUSE","GLOBAL_CONFIGURATION_SPECIALIZATION"],
+  "boundaries":{"productionAuthorized":false,"genericValueClaimed":false,"testOptimization":"OUT_OF_SCOPE"}
+}

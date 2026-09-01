@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+cd -- "${buildopt_root}"
+buildopt_spec=specs/poc-chronological-failure-successor-selection-v1.json
+buildopt_changes=benchmarks/results/chronological-failure-successor-selection-v1/source-changes.json
+buildopt_report=benchmarks/results/chronological-failure-successor-selection-v1/report.json
+buildopt_kafka=benchmarks/results/three-class-chronological-value-v1/apache-kafka/result.json
+buildopt_kafka_capture=benchmarks/results/three-class-chronological-value-v1/apache-kafka/qualification-capture.json
+buildopt_groovy=benchmarks/results/three-class-chronological-value-v1/apache-groovy/result.json
+buildopt_adaptive=benchmarks/results/adaptive-fragment-terminal-decision-v1.json
+buildopt_change_aware=benchmarks/results/change-aware-producer-closure-v1/summary.json
+
+while IFS=$'\t' read -r buildopt_path buildopt_sha; do
+  [[ $(sha256sum "${buildopt_path}" | awk '{print $1}') == "${buildopt_sha}" ]] || {
+    printf 'chronological successor input drift: %s\n' "${buildopt_path}" >&2
+    exit 1
+  }
+done < <(jq -r '.inputs[]|[.path,.sha256]|@tsv' "${buildopt_spec}")
+
+jq -e --slurpfile kafka "${buildopt_kafka}" \
+  --slurpfile kafkaCapture "${buildopt_kafka_capture}" \
+  --slurpfile groovy "${buildopt_groovy}" '
+  ($kafka[0]) as $k | ($kafkaCapture[0]) as $kc | ($groovy[0]) as $g |
+  .schemaVersion=="buildopt.evidence/poc-chronological-source-changes/v1" and
+  .selection=="IMMEDIATE_FIRST_PARENT_DESCENDANTS_FROM_TCCV" and
+  (.subjects|length)==2 and
+  (.subjects[]|select(.key=="apache-kafka")) as $ks |
+  (.subjects[]|select(.key=="apache-groovy")) as $gs |
+  $ks.qualifiedRebuildProjects==$kc.discovery.aggregatePartition.rebuildProjects and
+  ($ks.materializedProjectsInclude|all(. as $project|
+    $kc.discovery.aggregatePartition.materializedProjects|index($project)!=null)) and
+  ($ks.rows|length)==3 and
+  all(range(0;3); . as $i |
+    $ks.rows[$i].revision==$k.observations[$i].revision and
+    $ks.rows[$i].parentRevision==$k.observations[$i].parentRevision and
+    ($ks.rows[$i].paths|length)>0 and
+    all($ks.rows[$i].paths[];startswith("streams/"))) and
+  $gs.qualifiedRebuildProjects==[":"] and ($gs.rows|length)==3 and
+  [$gs.rows[].revision]==["4e703cbdde658cf2906a6d77c309b4b9624f1adf",
+    "f0b4d886134a07a2a35c29220f1e92f0247bdd1f",
+    "a63cd35f0fd7f5d7dd10c0fbd4236dc4eb659257"] and
+  [$gs.rows[].paths[]]==["gradle.properties","versions.properties",
+    "gradle/verification-metadata.xml"] and
+  $g.qualification.ordinaryEconomics.reason=="ORDINARY_SAVING_NOT_POSITIVE"
+' "${buildopt_changes}" >/dev/null
+
+jq -e --slurpfile changes "${buildopt_changes}" \
+  --slurpfile kafka "${buildopt_kafka}" --slurpfile groovy "${buildopt_groovy}" \
+  --slurpfile adaptive "${buildopt_adaptive}" \
+  --slurpfile changeAware "${buildopt_change_aware}" '
+  ($changes[0]) as $c | ($kafka[0]) as $k | ($groovy[0]) as $g |
+  ($adaptive[0]) as $a | ($changeAware[0]) as $ca |
+  ($ca.families[]|select(.family=="apache-kafka")) as $cak |
+  .schemaVersion=="buildopt.evidence/poc-chronological-failure-successor-selection/v1" and
+  .facts=={kafkaRows:($c.subjects[]|select(.key=="apache-kafka")|.rows|length),
+    kafkaChangedProducerRows:3,kafkaWrapperMatches:([$k.observations[]|select(.wrapperMatchesQualification)]|length),
+    kafkaSelectedReplays:([$k.observations[]|select(.selected)]|length),
+    groovyGlobalConfigurationRows:3,groovyMeanSavedMs:$g.qualification.ordinaryEconomics.meanSavedMs,
+    gradleStarts:0,timingSamples:0} and
+  [.candidates[].kind]==["REUSE_QUALIFIED_PROFILE","CONTENT_ADDRESSED_PRODUCER_REUSE",
+    "GLOBAL_CONFIGURATION_SPECIALIZATION"] and
+  [.candidates[].decision]==["REJECT_UNSAFE_CHANGED_PRODUCER_OMISSION",
+    "REJECT_NOT_MATERIALLY_DIFFERENT","REJECT_NO_SAFE_HIT"] and
+  .priorMechanisms=={changeAwareKafkaActionTransitions:$cak.actionTransitions,
+    adaptiveEligibleBuilds:$a.summary.eligibleDescendantBuilds,
+    adaptiveActivatedBuilds:$a.summary.activatedEligibleBuilds,
+    adaptivePositiveFamilies:$a.summary.positiveFamilies,
+    adaptiveCumulativeSignedDeltaNs:$a.summary.cumulativeSignedDeltaNs} and
+  .decision=="NO_ACTIONABLE_MATERIALLY_DIFFERENT_SUCCESSOR" and
+  .next=="REQUIRE_SEPARATELY_AUTHORIZED_ARCHITECTURE_OR_PRODUCT_PIVOT" and
+  .boundaries=={productionAuthorized:false,genericValueClaimed:false,
+    testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_report}" >/dev/null
+
+jq -e '.rules=={sourceOnly:true,gradleStarts:0,timingSamples:0,
+  crossRevisionAbiInference:false,repositoryNameRules:false,maximumSuccessors:1} and
+  .boundaries=={productionAuthorized:false,genericValueClaimed:false,
+    testOptimization:"OUT_OF_SCOPE"}' "${buildopt_spec}" >/dev/null
+
+printf 'chronological successor selection: no actionable materially different successor\n'

@@ -699,6 +699,7 @@ Gradle build is rerun by this static decision gate.
 ./dev/check-spring-messaging-paired-value
 ./dev/check-three-class-chronological-value-contract
 ./dev/check-three-class-chronological-value
+./dev/check-chronological-failure-successor-selection
 ```
 
 This source-only check binds the retained discovery snapshots, tests the
@@ -712,6 +713,9 @@ source-only; the long public execution is never part of Base CI.
 The terminal checker validates the two retained subject bundles, reconstructs
 the signed -61,050-ms net and verifies that Spring is not run after the 2/3
 payback gate becomes impossible.
+The successor-selection checker verifies all bound input hashes, reconstructs
+the descendant path/parent sequence and qualified partition, and recomputes the
+three candidate rejections plus prior-mechanism counts. It runs no Gradle build.
 
 ## Complete lanes
 

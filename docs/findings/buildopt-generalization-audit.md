@@ -478,3 +478,12 @@ a -5,831-ms first pair and records -2,995 ms net. Spring is not run because the
 2/3 payback gate is then impossible. Exact outputs and zero failures pass, but
 the -61,050-ms consumed net supports no chronological, generic or production
 value claim.
+
+The subsequent CFSS source audit closes the obvious content-addressed producer
+proposal. Kafka's descendants change Streams outputs that the clients-qualified
+partition would otherwise restore, so the old profile is unsafe. Groovy's
+descendants change global inputs. Safe per-producer invalidation is equivalent
+to the already tested change-aware/adaptive boundaries, not a new mechanism;
+those produced 0 Kafka actions and 0/71 activations. The checked conclusion is
+`NO_ACTIONABLE_MATERIALLY_DIFFERENT_SUCCESSOR`, with zero additional builds or
+timing samples.

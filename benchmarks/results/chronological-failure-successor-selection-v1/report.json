@@ -1,0 +1,14 @@
+{
+  "schemaVersion":"buildopt.evidence/poc-chronological-failure-successor-selection/v1",
+  "workItem":"POC-CHRONOLOGICAL-FAILURE-SUCCESSOR-SELECTION-V1",
+  "facts":{"kafkaRows":3,"kafkaChangedProducerRows":3,"kafkaWrapperMatches":3,"kafkaSelectedReplays":0,"groovyGlobalConfigurationRows":3,"groovyMeanSavedMs":-5831,"gradleStarts":0,"timingSamples":0},
+  "candidates":[
+    {"kind":"REUSE_QUALIFIED_PROFILE","decision":"REJECT_UNSAFE_CHANGED_PRODUCER_OMISSION","reason":"Kafka descendants change Streams producers whose outputs were materialized by the clients-qualified partition."},
+    {"kind":"CONTENT_ADDRESSED_PRODUCER_REUSE","decision":"REJECT_NOT_MATERIALLY_DIFFERENT","reason":"Safe invalidation reduces to previously tested change-aware producer closure and adaptive fragments; cross-revision ABI inference remains forbidden."},
+    {"kind":"GLOBAL_CONFIGURATION_SPECIALIZATION","decision":"REJECT_NO_SAFE_HIT","reason":"All frozen Groovy descendants change root version, dependency or verification inputs and the first candidate pair is negative."}
+  ],
+  "priorMechanisms":{"changeAwareKafkaActionTransitions":0,"adaptiveEligibleBuilds":71,"adaptiveActivatedBuilds":0,"adaptivePositiveFamilies":0,"adaptiveCumulativeSignedDeltaNs":-368622514697},
+  "decision":"NO_ACTIONABLE_MATERIALLY_DIFFERENT_SUCCESSOR",
+  "next":"REQUIRE_SEPARATELY_AUTHORIZED_ARCHITECTURE_OR_PRODUCT_PIVOT",
+  "boundaries":{"productionAuthorized":false,"genericValueClaimed":false,"testOptimization":"OUT_OF_SCOPE"}
+}
