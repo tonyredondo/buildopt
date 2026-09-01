@@ -5611,6 +5611,14 @@ Groovy control/candidate pairs from the compact evidence, verifies their raw
 capture bindings, exact-output identity, mean reduction, positive interval,
 p95 and payback gates, and rejects generic or production authority.
 
+## Third-family graph recurrence
+
+`./dev/check-third-family-graph-recurrence-contract` freezes the source-only
+256-row search over the three remaining public families. Five exact
+owner/family matches and at least one omitted project are required before a
+separate fresh graph confirmation; the contract forbids Gradle, candidates,
+patches, timing, name rules and predecessor-summary evidence.
+
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher
 integration tests. It proves that no measurement-only build contributes

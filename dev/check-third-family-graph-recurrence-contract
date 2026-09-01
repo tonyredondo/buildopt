@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "$root"
+
+jq -e '
+  .schemaVersion=="buildopt.specs/poc-third-family-graph-recurrence/v1" and
+  .status.currentBlock=="TFGR-002" and .status.completedBlocks==["TFGR-001"] and
+  .thresholds=={historyRowsPerFamily:256,minimumGroupCommits:5,minimumOmittedProjects:1,additionalFamiliesRequired:1} and
+  .selectionOrder==["COMMIT_COUNT_DESC","OMITTED_PROJECTS_DESC","STRUCTURAL_ID_ASC"] and
+  (.prohibitions|to_entries|all(.value==true))
+' specs/poc-third-family-graph-recurrence-v1.json >/dev/null
+jq -e '
+  .schemaVersion=="buildopt.specs/poc-third-family-graph-recurrence-subjects/v1" and
+  (.subjects|length)==3 and
+  [.subjects[].repositoryId]==["spring-projects/spring-framework","open-telemetry/opentelemetry-java-instrumentation","micronaut-projects/micronaut-core"] and
+  ([.subjects[].targetRevision]|unique|length)==3 and
+  all(.subjects[]; (.manifestSha256|test("^[0-9a-f]{64}$")) and (.graphSha256|test("^[0-9a-f]{64}$"))) and
+  ([.subjects[]|select(.syntheticHead)]|length)==2
+' specs/poc-third-family-graph-recurrence-v1.subjects.json >/dev/null
+
+./dev/check-graph-owner-recurrence-inventory-contract >/dev/null
+printf 'third-family graph recurrence contract: ok\n'

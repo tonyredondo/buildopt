@@ -25,6 +25,13 @@ decision.
 
 ## Current experiment status
 
+`THIRD_FAMILY_GRAPH_RECURRENCE_V1` is current. It searches 256 first-parent
+source rows against each exact reviewed Spring, OpenTelemetry and Micronaut
+graph, grouping only by owners and change family. Five matches plus at least
+one omitted project are required before a separately frozen fresh confirmation
+could run. Predecessor summaries supply no row; Gradle, candidates, patches and
+timing remain closed.
+
 `RECURRENT_ROOT_PAIRED_VALUE_V1` is complete. The exact Groovy root-owner
 dependency-source class passed seventeen fresh ordinary installed-path
 requests: all 8/8 balanced pairs are positive, save 9.2865 seconds / 28.997%

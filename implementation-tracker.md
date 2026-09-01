@@ -1,14 +1,14 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `TWO_PUBLIC_VALUE_CLASSES_QUALIFIED` — exact Kafka and recurrent-root Groovy classes pass robust installed value<br>
-**Current phase:** `RRPV-003` complete — recurrent-root Groovy value qualified; generic breadth remains open<br>
+**Current phase:** `TFGR-002` — bounded source-only search for a third public value family<br>
 **POC functional target:** produce positive cumulative wall-time value against optimized native Gradle across chronological customer-requested builds, including every wrapper, observation, trial, cache, fallback and action cost<br>
 **POC onboarding north star:** `generate and commit BuildOpt Wrapper -> ./buildoptw build`; no global BuildOpt installation, hand-authored profile or committed credential is required<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
 **Last updated:** 2026-09-01<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
-**Detailed POC tracker:** [Recurrent Root Paired Value v1](./docs/plans/recurrent-root-paired-value-v1.md)<br>
+**Detailed POC tracker:** [Third-Family Graph Recurrence v1](./docs/plans/third-family-graph-recurrence-v1.md)<br>
 **Closed predecessor:** [Remote Cache Locality Value v2 POC Tracker](./docs/plans/remote-cache-locality-value-poc-tracker.md)<br>
 **Superseded diagnostic tracker:** [Sticky Wrapper Learning POC Tracker](./docs/plans/sticky-wrapper-learning-poc-tracker.md)<br>
 **Earlier closed predecessor:** [Adaptive Fragment Generalization POC Tracker](./docs/plans/adaptive-fragment-generalization-tracker.md)<br>
@@ -218,6 +218,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-FRESH-GRAPH-RECURRENT-GROUP-CONFIRMATION | Confirm the selected recurrent Groovy root group against one fresh exact graph before correctness | `DONE` | 3/3 | `E-485..486`; [closed tracker](./docs/plans/fresh-graph-recurrent-group-confirmation-v1.md). Fresh owner `:`, 38 matches, 1/37 selected, 3,895 outputs and zero failures; no candidate or timing |
 | POC-RECURRENT-ROOT-CANDIDATE-CORRECTNESS | Prove exact outputs for the naturally recurrent Groovy root group before value | `DONE` | 3/3 | `E-487..488`; [closed tracker](./docs/plans/recurrent-root-candidate-correctness-v1.md). Native/native/candidate reproduces 3,895 outputs; zero failures and timing samples |
 | POC-RECURRENT-ROOT-PAIRED-VALUE | Measure robust installed value for the recurrent Groovy root group | `DONE` | 3/3 | `E-489..490`; [closed tracker](./docs/plans/recurrent-root-paired-value-v1.md). 8/8 positive, 28.997% mean saving, positive interval, improved p95, one-match payback and exact outputs |
+| POC-THIRD-FAMILY-GRAPH-RECURRENCE | Search the three remaining public families for a five-match exact structural group before builds | `DOING` | 1/3 | `E-491`; [tracker](./docs/plans/third-family-graph-recurrence-v1.md). Three SHA-bound graphs, 256 source rows each; zero Gradle and timing |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Not authorized by terminal `STOP_GENERIC_POC` or `STOP_ADAPTIVE_FRAGMENT_POC` |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -2530,6 +2531,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-488` | 2026-09-01 | `POC-RECURRENT-ROOT-CANDIDATE-CORRECTNESS`, `RRCC-002/003` | The same checker validates the [three-invocation result](./benchmarks/results/recurrent-root-candidate-correctness-v1/README.md) | `DONE`: native/native/candidate reproduces the same 3,895-file digest with zero failures. One pair is diagnostic only; a separate paired-value contract is authorized |
 | `E-489` | 2026-09-01 | `POC-RECURRENT-ROOT-PAIRED-VALUE`, `RRPV-001` | The [contract](./specs/poc-recurrent-root-paired-value-v1.md), [tracker](./docs/plans/recurrent-root-paired-value-v1.md) and [`check-recurrent-root-paired-value-contract`](./dev/check-recurrent-root-paired-value-contract) freeze eight balanced exact-output pairs | `DONE` planning only. Seventeen ordinary requests maximum |
 | `E-490` | 2026-09-01 | `POC-RECURRENT-ROOT-PAIRED-VALUE`, `RRPV-002/003` | The independent [result checker](./dev/check-recurrent-root-paired-value) reconstructs the compact [seventeen-request evidence](./benchmarks/results/recurrent-root-paired-value-v1/README.md) | `DONE`: 8/8 positive exact pairs, 9,286.5 ms / 28.997% mean saving, positive interval, improved p95, one-match payback and zero failures. Exact class only; no generic or production claim |
+| `E-491` | 2026-09-01 | `POC-THIRD-FAMILY-GRAPH-RECURRENCE`, `TFGR-001` | The [contract](./specs/poc-third-family-graph-recurrence-v1.md), [three subjects](./specs/poc-third-family-graph-recurrence-v1.subjects.json), [tracker](./docs/plans/third-family-graph-recurrence-v1.md) and [`check-third-family-graph-recurrence-contract`](./dev/check-third-family-graph-recurrence-contract) freeze a bounded all-owner source search | `DONE` planning only. Spring, OpenTelemetry and Micronaut receive 256 first-parent rows; builds, candidates, timing, patches and name rules remain forbidden |
 ---
 
 ## 15. Tracker changelog
@@ -2559,6 +2561,7 @@ This table points to the latest valid result. It does not replace reports or all
 | 2026-09-01 | Closed `GORI-002/003`: found one 37-commit Groovy root dependency-source group with 11/37 projects potentially omitted. Selected its latest public member for a separate fresh graph confirmation; no Gradle or timing ran | Codex |
 | 2026-09-01 | Opened `FGRG-001`: froze one fresh optimized-native observation at the latest public Groovy root-group commit, with candidate execution and timing explicitly closed | Codex |
 | 2026-09-01 | Closed `FGRG-002/003`: the single native request confirms 38 matches and a 1/37 selected graph with exact required outputs. Zero candidates and timing; a separate correctness contract is now authorized | Codex |
+| 2026-09-01 | Opened `TFGR-001`: froze a 256-row all-owner source search across Spring, OpenTelemetry and Micronaut for the third public value family. Gradle, candidates, patches and timing remain closed | Codex |
 | 2026-08-31 | Closed `RCL-003/006` and the route: Groovy is exact but below 8 MiB; Kafka has ample cache opportunity but its frozen required test-fixtures JAR differs between producer and consumer. The 2/5 conclusive, 0/5 eligible result closes three rows and `RCL-004/005` without timing; terminal decision is `STOP_REMOTE_CACHE_LOCALITY_VALUE_POC` | Codex |
 | 2026-08-31 | Closed `RCL-002`: independently bound and reran native cache-key parity, committed verified Edge reads, offline restart and corruption/unsafe-use negatives. The fixture reports zero public builds and timing samples; `RCL-003` may now collect fresh untimed public correctness | Codex |
 | 2026-08-31 | Opened `REMOTE_CACHE_LOCALITY_VALUE_V2` and closed `RCL-001`: froze equal native graph/key/object/output opportunity, an unshaped terminal remote path, full fill/operation economics and unchanged 3/5 product breadth. Historical locality and mixed-mechanism results supply no row; `RCL-002` is next and no public build, seed or timing is authorized | Codex |

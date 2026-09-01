@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "buildopt.specs/poc-third-family-graph-recurrence/v1",
+  "workItem": "TFGR",
+  "status": {"currentBlock":"TFGR-002","completedBlocks":["TFGR-001"]},
+  "subjects": "poc-third-family-graph-recurrence-v1.subjects.json",
+  "thresholds": {
+    "historyRowsPerFamily": 256,
+    "minimumGroupCommits": 5,
+    "minimumOmittedProjects": 1,
+    "additionalFamiliesRequired": 1
+  },
+  "selectionOrder": ["COMMIT_COUNT_DESC","OMITTED_PROJECTS_DESC","STRUCTURAL_ID_ASC"],
+  "prohibitions": {
+    "gradle": true,
+    "publicSourcePatch": true,
+    "candidate": true,
+    "timing": true,
+    "predecessorSummaryEvidence": true,
+    "repositoryOrTaskNameRules": true,
+    "production": true
+  }
+}

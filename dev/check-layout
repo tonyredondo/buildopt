@@ -627,6 +627,7 @@ buildopt_required_files=(
     "dev/check-recurrent-root-paired-value-contract"
     "dev/capture-recurrent-root-paired-value"
     "dev/check-recurrent-root-paired-value"
+    "dev/check-third-family-graph-recurrence-contract"
     "dev/check-remote-cache-locality-harness-v3"
     "dev/check-remote-cache-locality-v3-public-correctness"
     "dev/check-remote-cache-locality-v3-paired-value"

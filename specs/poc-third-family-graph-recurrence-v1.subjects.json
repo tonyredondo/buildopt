@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "buildopt.specs/poc-third-family-graph-recurrence-subjects/v1",
+  "subjects": [
+    {
+      "label":"spring-framework","repositoryId":"spring-projects/spring-framework","remoteUrl":"https://github.com/spring-projects/spring-framework.git",
+      "targetRevision":"75705bcbb1da866d3ed44bf7526437a7fdf1136b","syntheticHead":false,
+      "pipelineClass":"auto-testclasses-a85b3d0d","manifestSha256":"6795b2d4f39567eb61da4b24e18f9fd2bc240e0777bba8a3c59d88449db0b253","graphSha256":"5059bb9b496a7acf1c4c067852d3ff5f4eafc79bfcaf9398f00ebd30468a10e6"
+    },
+    {
+      "label":"opentelemetry-java-instrumentation","repositoryId":"open-telemetry/opentelemetry-java-instrumentation","remoteUrl":"https://github.com/open-telemetry/opentelemetry-java-instrumentation.git",
+      "baseRevision":"080c1d32ca676ba7b0210c21b60cce8e7ac39058","targetRevision":"1c100c2f9ac5127e7514f16320cc8144f79e5832","syntheticHead":true,
+      "pipelineClass":"auto-instrumentation-spring-spring-batch-3.0--0073aaec","headChangesSha256":"e310608f1b78a717dd5b0baed71dc8f769679ead7688359d6ee3e59d6cd21516","manifestSha256":"a4f67662b7a22f26ad91629a4304bc430cf5a41ede1ae73c6a0d705409e49380","graphSha256":"0c75c5db9ec9ac0c0655174df5a82fa5a33616bf573786d7efffe5fbdf68c9ae"
+    },
+    {
+      "label":"micronaut-core","repositoryId":"micronaut-projects/micronaut-core","remoteUrl":"https://github.com/micronaut-projects/micronaut-core.git",
+      "baseRevision":"8de8f38aceb6239f7df05c92c4eb7a26113e882b","targetRevision":"3c3f7a3a1bd3a98bbb0399792a5f5acb03c662b5","syntheticHead":true,
+      "pipelineClass":"auto-assemble-860b2c20","headChangesSha256":"3dc827e52dc05d3aa535e84e1b96f3ee87276d3f998e540acac089bc8e1c81b4","manifestSha256":"59677bd1a444179e4a8637b547d9ae8feab9666009ed12691cb24c1dac02f4f2","graphSha256":"956f795b8fd30702cc4fe0da62da94eb27178025c943f2debe68c560977cc8f9"
+    }
+  ]
+}

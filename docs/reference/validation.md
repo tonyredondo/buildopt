@@ -681,6 +681,7 @@ Gradle build is rerun by this static decision gate.
 ```bash
 ./dev/check-graph-aware-history-admission
 ./dev/check-recurrent-root-paired-value
+./dev/check-third-family-graph-recurrence-contract
 ```
 
 This source-only check binds the retained discovery snapshots, tests the
