@@ -25,12 +25,16 @@ decision.
 
 ## Current experiment status
 
-`PRODUCT_WINDOW_GRAPH_RECURRENCE_V1` is current. SJGC proved the apparent
+`PRODUCT_WINDOW_GRAPH_RECURRENCE_V1` is complete. SJGC proved the apparent
 six-versus-one mismatch came from comparing a 256-commit exploratory inventory
 with the product's fixed 64-commit horizon. PWGR therefore regenerates every
 owner/family row over exactly 64 commits for Spring, OpenTelemetry and
 Micronaut, with the same five-match and omitted-project gates. It is
 source-only: no Gradle, candidate, timing or predecessor report row is allowed.
+All 192 fresh rows reconstruct and yield six eligible Spring groups.
+`:spring-messaging / DEPENDENCY_SOURCE` ranks first with 11 commits and 15/27
+omitted projects. This authorizes only a separate fresh graph confirmation;
+it is not candidate correctness or a third value class.
 
 `SPRING_JMS_GRAPH_AWARE_CONFIRMATION_V1` is closed. Its one fresh
 optimized-native request exits zero, discovers a complete structural candidate,

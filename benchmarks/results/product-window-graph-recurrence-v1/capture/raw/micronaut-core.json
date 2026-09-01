@@ -1,0 +1,1251 @@
+{
+  "schemaVersion": "buildopt.history-admission/graph-aware-audit/v1",
+  "targetRevision": "3c3f7a3a1bd3a98bbb0399792a5f5acb03c662b5",
+  "snapshotSha256": "",
+  "graphSha256": "956f795b8fd30702cc4fe0da62da94eb27178025c943f2debe68c560977cc8f9",
+  "manifestSha256": "59677bd1a444179e4a8637b547d9ae8feab9666009ed12691cb24c1dac02f4f2",
+  "baseRevision": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+  "headChangesSha256": "3dc827e52dc05d3aa535e84e1b96f3ee87276d3f998e540acac089bc8e1c81b4",
+  "entrypoints": [
+    ":micronaut-http-client-jdk:assemble",
+    "assemble"
+  ],
+  "expectedOwners": null,
+  "expectedFamily": "",
+  "historyWindowCommits": 64,
+  "compatibleCommits": 0,
+  "minimumCompatibleCommits": 5,
+  "decision": "INVENTORY_COMPLETE",
+  "reason": "ALL_EXACT_GRAPH_GROUPS_CLASSIFIED",
+  "gradleExecuted": false,
+  "repositoryNameRule": false,
+  "mode": "INVENTORY",
+  "groups": [
+    {
+      "owners": [
+        ":micronaut-core",
+        ":micronaut-http",
+        ":micronaut-http-client",
+        ":micronaut-http-server-netty",
+        ":micronaut-router"
+      ],
+      "family": "MIXED_SOURCE",
+      "affectedProjects": 28,
+      "totalProjects": 75,
+      "commits": [
+        "dd44d085ea71324d703599bc5737d58437f99389"
+      ]
+    },
+    {
+      "owners": [
+        ":micronaut-core-processor",
+        ":micronaut-inject-java-test"
+      ],
+      "family": "MIXED_SOURCE",
+      "affectedProjects": 15,
+      "totalProjects": 75,
+      "commits": [
+        "2939bae25d4082be87756125c75f7c6b047060e0"
+      ]
+    },
+    {
+      "owners": [
+        ":micronaut-core-processor",
+        ":micronaut-inject-java"
+      ],
+      "family": "MIXED_SOURCE",
+      "affectedProjects": 31,
+      "totalProjects": 75,
+      "commits": [
+        "aeded4f15a9715c5f1f131a92f2209d242bd507e",
+        "00304cbd22d4cdacd4390457a3638ea0ecadac42"
+      ]
+    },
+    {
+      "owners": [
+        ":micronaut-core"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 7,
+      "totalProjects": 75,
+      "commits": [
+        "742c0d782979fa32689db3dea7d8301e808cbee1"
+      ]
+    },
+    {
+      "owners": [
+        ":micronaut-http",
+        ":micronaut-http-client"
+      ],
+      "family": "MIXED_SOURCE",
+      "affectedProjects": 21,
+      "totalProjects": 75,
+      "commits": [
+        "62648c60bae1d7a5bf9b74c97fc60fcef29885da"
+      ]
+    },
+    {
+      "owners": [
+        ":micronaut-http",
+        ":micronaut-http-server-tck"
+      ],
+      "family": "MIXED_SOURCE",
+      "affectedProjects": 11,
+      "totalProjects": 75,
+      "commits": [
+        "79d60871181dee759d361512da25a29643d8562b"
+      ]
+    },
+    {
+      "owners": [
+        ":micronaut-http-client",
+        ":micronaut-http-client-core"
+      ],
+      "family": "MIXED_SOURCE",
+      "affectedProjects": 23,
+      "totalProjects": 75,
+      "commits": [
+        "cced18dc5a4e9091595546714a19398963cf31f9"
+      ]
+    },
+    {
+      "owners": [
+        ":micronaut-http-client-jdk"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 5,
+      "totalProjects": 75,
+      "commits": [
+        "3c3f7a3a1bd3a98bbb0399792a5f5acb03c662b5"
+      ]
+    },
+    {
+      "owners": [
+        ":micronaut-http-server",
+        ":micronaut-http-server-netty"
+      ],
+      "family": "MIXED_SOURCE",
+      "affectedProjects": 25,
+      "totalProjects": 75,
+      "commits": [
+        "5dabb4d2d8173bab5226f80a527106cbb6423de0"
+      ]
+    },
+    {
+      "owners": [
+        ":micronaut-http"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 7,
+      "totalProjects": 75,
+      "commits": [
+        "4e062ed7e5758a7f26b080372b7b833ed4c2893f"
+      ]
+    },
+    {
+      "owners": [
+        ":micronaut-inject",
+        ":test-suite-property-source"
+      ],
+      "family": "MIXED_SOURCE",
+      "affectedProjects": 19,
+      "totalProjects": 75,
+      "commits": [
+        "c801d57c34473c0cee44a3560d2a3354cffc4aab"
+      ]
+    },
+    {
+      "owners": [
+        ":micronaut-inject-kotlin",
+        ":micronaut-inject-kotlin-test"
+      ],
+      "family": "MIXED_SOURCE",
+      "affectedProjects": 5,
+      "totalProjects": 75,
+      "commits": [
+        "257856c9556ac80b708022fea6a55ca95ecc088d"
+      ]
+    },
+    {
+      "owners": [
+        ":micronaut-inject-kotlin"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 4,
+      "totalProjects": 75,
+      "commits": [
+        "b963c8fce122421171de9f3ebf90328c1b935bd6",
+        "f32c88990ed2c7f996b5662d302c661a575c1939",
+        "644305790e14c7b8871333f042ce36e453290542"
+      ]
+    },
+    {
+      "owners": [
+        ":micronaut-inject"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 19,
+      "totalProjects": 75,
+      "commits": [
+        "3083f40df534736e508a5e97c4cd6b7fbd41caad",
+        "f08afd1c6b7822f1921b700edf9de8120ec7d3bc"
+      ]
+    },
+    {
+      "owners": [
+        ":micronaut-management"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 10,
+      "totalProjects": 75,
+      "commits": [
+        "269c81b8ebe96ec8da96d916f3206186adad091d"
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "commit": "3c3f7a3a1bd3a98bbb0399792a5f5acb03c662b5",
+      "changedPaths": [
+        "http-client-jdk/src/main/java/io/micronaut/http/client/jdk/DefaultJdkHttpClient.java"
+      ],
+      "owners": [
+        ":micronaut-http-client-jdk"
+      ],
+      "affectedProjects": [
+        ":micronaut-http-client-jdk",
+        ":test-suite-groovy",
+        ":test-suite-http-client-jdk-ssl",
+        ":test-suite-http-client-tck-jdk",
+        ":test-suite-http-server-tck-jdk"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "8de8f38aceb6239f7df05c92c4eb7a26113e882b",
+      "changedPaths": [
+        "context-propagation/src/test/kotlin/io/micronaut/context/propagation/client/ClientFilterPropagatedContextSpec.kt",
+        "http-client-core/build.gradle.kts",
+        "http-client-core/src/main/java/io/micronaut/http/client/interceptor/HttpClientIntroductionAdvice.java"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "b963c8fce122421171de9f3ebf90328c1b935bd6",
+      "changedPaths": [
+        "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/AbstractKotlinElement.kt",
+        "inject-kotlin/src/test/groovy/io/micronaut/kotlin/processing/beans/BeanDefinitionSpec.groovy"
+      ],
+      "owners": [
+        ":micronaut-inject-kotlin"
+      ],
+      "affectedProjects": [
+        ":micronaut-inject-kotlin",
+        ":test-suite-kotlin",
+        ":test-suite-kotlin-graalvm",
+        ":test-suite-kotlin-ksp-all-open"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "3083f40df534736e508a5e97c4cd6b7fbd41caad",
+      "changedPaths": [
+        "inject/src/main/java/io/micronaut/context/env/PropertySourcePropertyResolver.java",
+        "inject/src/test/groovy/io/micronaut/context/env/PropertySourcePropertyResolverSpec.groovy"
+      ],
+      "owners": [
+        ":micronaut-inject"
+      ],
+      "affectedProjects": [
+        ":benchmarks",
+        ":micronaut-context-python-netty",
+        ":micronaut-http-client-tck",
+        ":micronaut-http-server-tck",
+        ":micronaut-http-tck",
+        ":micronaut-inject",
+        ":micronaut-messaging",
+        ":micronaut-module-info-runtime",
+        ":test-suite-groovy",
+        ":test-suite-http-client-tck-jdk",
+        ":test-suite-http-client-tck-netty",
+        ":test-suite-http-server-tck-jdk",
+        ":test-suite-http-server-tck-netty",
+        ":test-suite-http2-server-tck-netty",
+        ":test-suite-jakarta-inject-bean-import",
+        ":test-suite-javax-inject",
+        ":test-suite-kotlin",
+        ":test-suite-property-source",
+        ":test-suite-python"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "2939bae25d4082be87756125c75f7c6b047060e0",
+      "changedPaths": [
+        "core-processor/src/main/java/io/micronaut/inject/ast/utils/AstBeanPropertiesUtils.java",
+        "inject-java-test/src/test/groovy/io/micronaut/inject/visitor/beans/BeanIntrospectionSpec.groovy"
+      ],
+      "owners": [
+        ":micronaut-core-processor",
+        ":micronaut-inject-java-test"
+      ],
+      "affectedProjects": [
+        ":benchmarks",
+        ":micronaut-context-python",
+        ":micronaut-context-python-netty",
+        ":micronaut-core-processor",
+        ":micronaut-inject-java-test",
+        ":micronaut-inject-kotlin",
+        ":micronaut-inject-kotlin-test",
+        ":micronaut-inject-python",
+        ":micronaut-inject-python-test",
+        ":micronaut-messaging",
+        ":test-suite-jakarta-inject-bean-import",
+        ":test-suite-kotlin",
+        ":test-suite-kotlin-graalvm",
+        ":test-suite-kotlin-ksp-all-open",
+        ":test-suite-python"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "290c23a363e0a6d49a2f0f7dcdfffe5acd98ba4c",
+      "changedPaths": [
+        "core-bom/build.gradle.kts",
+        "gradle/libs.versions.toml",
+        "test-suite-kotlin/src/test/kotlin/io/micronaut/jackson/JacksonNullableFailOnMissingTest.kt"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "cacc60d343a87f3832a6b247c85cb267a099d6da",
+      "changedPaths": [
+        "build.gradle",
+        "context-python/src/main/java/io/micronaut/context/python/GraalPyContextConfiguration.java",
+        "context-python/src/main/java/io/micronaut/context/python/GraalPyContextCustomizer.java",
+        "context-python/src/main/java/io/micronaut/context/python/GraalPyContextCustomizers.java",
+        "context-python/src/main/java/io/micronaut/context/python/GraalPyContextFactory.java",
+        "context-python/src/main/java/io/micronaut/context/python/GraalPyEngineFactory.java",
+        "context-python/src/main/java/io/micronaut/context/python/PythonContextExecutor.java",
+        "context-python/src/main/java/io/micronaut/context/python/PythonContextRuntime.java",
+        "context-python/src/main/java/io/micronaut/context/python/PythonPool.java",
+        "context-python/src/test/java/io/micronaut/context/python/FirstGraalPyContextCustomizer.java",
+        "context-python/src/test/java/io/micronaut/context/python/GraalPyContextCustomizerTest.java",
+        "context-python/src/test/java/io/micronaut/context/python/SecondGraalPyContextCustomizer.java",
+        "context-python/src/test/resources/META-INF/services/io.micronaut.context.python.GraalPyContextCustomizer",
+        "test-suite-python/src/test/python/micronaut/docs/asyncio/PythonAsyncioSpec.py"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "aeded4f15a9715c5f1f131a92f2209d242bd507e",
+      "changedPaths": [
+        "core-processor/src/main/java/io/micronaut/inject/processing/definition/DefaultElementBeanDefinitionBuilderFactory.java",
+        "core-processor/src/main/java/io/micronaut/inject/writer/BeanDefinitionWriter.java",
+        "inject-java/src/test/groovy/io/micronaut/aop/compile/ValidatedValueConstructorSpec.groovy"
+      ],
+      "owners": [
+        ":micronaut-core-processor",
+        ":micronaut-inject-java"
+      ],
+      "affectedProjects": [
+        ":benchmarks",
+        ":micronaut-context-python",
+        ":micronaut-context-python-netty",
+        ":micronaut-core-processor",
+        ":micronaut-http-client-tck",
+        ":micronaut-http-server-tck",
+        ":micronaut-http-tck",
+        ":micronaut-inject-java",
+        ":micronaut-inject-kotlin",
+        ":micronaut-inject-kotlin-test",
+        ":micronaut-inject-python",
+        ":micronaut-inject-python-test",
+        ":micronaut-messaging",
+        ":micronaut-module-info-runtime",
+        ":micronaut-runtime-osx",
+        ":test-suite-annotation-remapper",
+        ":test-suite-annotation-remapper-visitor",
+        ":test-suite-http-client-tck-jdk",
+        ":test-suite-http-client-tck-netty",
+        ":test-suite-http-server-tck-jdk",
+        ":test-suite-http-server-tck-netty",
+        ":test-suite-http2-server-tck-netty",
+        ":test-suite-jakarta-inject-bean-import",
+        ":test-suite-javax-inject",
+        ":test-suite-kotlin",
+        ":test-suite-kotlin-graalvm",
+        ":test-suite-kotlin-ksp-all-open",
+        ":test-suite-logback",
+        ":test-suite-logback-external-configuration",
+        ":test-suite-netty-ssl-graalvm",
+        ":test-suite-python"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "bc863f2ce61e94ddebcbd207b616ca803e1bed6d",
+      "changedPaths": [
+        "build.gradle",
+        "inject-python/src/main/java/io/micronaut/python/compiler/IncrementalCompilation.java",
+        "inject-python/src/main/java/io/micronaut/python/compiler/IncrementalCompilationTrace.java",
+        "inject-python/src/main/java/io/micronaut/python/compiler/IncrementalProcessorTracker.java",
+        "inject-python/src/main/java/io/micronaut/python/compiler/JavaCompilationTracker.java",
+        "inject-python/src/main/java/io/micronaut/python/compiler/PyronautCompiler.java",
+        "inject-python/src/main/java/io/micronaut/python/compiler/PyronautJavaCompiler.java",
+        "inject-python/src/main/java/io/micronaut/python/compiler/PythonBytecodeCompiler.java",
+        "inject-python/src/main/java/io/micronaut/python/compiler/PythonIncrementalMode.java",
+        "inject-python/src/main/java/io/micronaut/python/compiler/TrackingJavaFileManager.java",
+        "inject-python/src/main/java/io/micronaut/python/processing/PythonAnnotationProcessor.java",
+        "inject-python/src/main/java/io/micronaut/python/processing/PythonAstParser.java",
+        "inject-python/src/main/java/io/micronaut/python/processing/PythonProcessingSession.java",
+        "inject-python/src/main/java/io/micronaut/python/processing/TargetTypeMappingGenerator.java",
+        "inject-python/src/main/java/io/micronaut/python/processing/beans/PythonBeanDefinitionProcessor.java",
+        "inject-python/src/main/java/io/micronaut/python/processing/visitor/PythonTypeElementVisitorProcessor.java",
+        "inject-python/src/test/java/io/micronaut/python/compiler/PyronautCompilerIncrementalTest.java",
+        "inject-python/src/test/java/io/micronaut/python/compiler/TestAggregate.java",
+        "inject-python/src/test/java/io/micronaut/python/compiler/TestAggregatingVisitor.java",
+        "inject-python/src/test/java/io/micronaut/python/compiler/TestConditionalIsolate.java",
+        "inject-python/src/test/java/io/micronaut/python/compiler/TestConditionalIsolatingVisitor.java",
+        "inject-python/src/test/java/io/micronaut/python/compiler/TestContractViolatingProcessor.java",
+        "inject-python/src/test/java/io/micronaut/python/compiler/TestIsolate.java",
+        "inject-python/src/test/java/io/micronaut/python/compiler/TestIsolatingSourceGeneratingProcessor.java",
+        "inject-python/src/test/java/io/micronaut/python/compiler/TestIsolatingVisitor.java",
+        "inject-python/src/test/java/io/micronaut/python/processing/PythonAstParserTest.java",
+        "inject-python/src/test/resources/META-INF/services/io.micronaut.inject.visitor.TypeElementVisitor"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "e20b89086582e81d301b91eec92d883e098eb845",
+      "changedPaths": [
+        "gradle/libs.versions.toml"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "7978e6342398a68b35faa736d9cb32141e3d6c7a",
+      "changedPaths": [
+        "gradle/libs.versions.toml"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "c7d277606d0198c1c5d3067f209600a65bdc03a6",
+      "changedPaths": [
+        "buffer-netty/src/main/java/io/micronaut/buffer/netty/package-info.java",
+        "http-client/src/main/java/io/micronaut/http/client/netty/NettyHttpClientConfiguration.java",
+        "http-client/src/main/java/io/micronaut/http/client/netty/RequiresNettyClient.java",
+        "http-client/src/main/java/io/micronaut/http/client/netty/package-info.java",
+        "http-netty/src/main/java/io/micronaut/http/netty/RequiresNetty.java",
+        "http-netty/src/main/java/io/micronaut/http/netty/configuration/NettyGlobalConfiguration.java",
+        "http-netty/src/main/java/io/micronaut/http/netty/package-info.java",
+        "http-server-netty/src/main/java/io/micronaut/http/server/netty/RequiresNettyServer.java",
+        "http-server-netty/src/main/java/io/micronaut/http/server/netty/configuration/NettyHttpServerConfiguration.java",
+        "http-server-netty/src/main/java/io/micronaut/http/server/netty/package-info.java",
+        "http-server-netty/src/test/groovy/io/micronaut/http/server/netty/NettyActivationSpec.groovy",
+        "src/main/docs/guide/httpClient/lowLevelHttpClient/clientConfiguration.adoc",
+        "src/main/docs/guide/httpServer/serverConfiguration.adoc"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "d9772b555570aecb423c9973a687bd08bab65c6b",
+      "changedPaths": [
+        "CONTRIBUTING.md"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "dccb73bd024dc08a2a0ad44e061515d897175d01",
+      "changedPaths": [],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "f08afd1c6b7822f1921b700edf9de8120ec7d3bc",
+      "changedPaths": [
+        "inject/src/main/java/io/micronaut/context/i18n/ResourceBundleMessageSource.java",
+        "inject/src/test/groovy/io/micronaut/context/i18n/ResourceBundleMessageSourceSpec.groovy"
+      ],
+      "owners": [
+        ":micronaut-inject"
+      ],
+      "affectedProjects": [
+        ":benchmarks",
+        ":micronaut-context-python-netty",
+        ":micronaut-http-client-tck",
+        ":micronaut-http-server-tck",
+        ":micronaut-http-tck",
+        ":micronaut-inject",
+        ":micronaut-messaging",
+        ":micronaut-module-info-runtime",
+        ":test-suite-groovy",
+        ":test-suite-http-client-tck-jdk",
+        ":test-suite-http-client-tck-netty",
+        ":test-suite-http-server-tck-jdk",
+        ":test-suite-http-server-tck-netty",
+        ":test-suite-http2-server-tck-netty",
+        ":test-suite-jakarta-inject-bean-import",
+        ":test-suite-javax-inject",
+        ":test-suite-kotlin",
+        ":test-suite-property-source",
+        ":test-suite-python"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "66acc05ddd180bbb9d251f51b70e08244f98c3eb",
+      "changedPaths": [],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "625cbcca508a4fbae817168f6130221fa2296fa2",
+      "changedPaths": [
+        ".github/workflows/corretto.yml"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "5dabb4d2d8173bab5226f80a527106cbb6423de0",
+      "changedPaths": [
+        "http-server-netty/src/test/groovy/io/micronaut/http/server/netty/cors/CorsFilterSpec.groovy",
+        "http-server/src/main/java/io/micronaut/http/server/cors/CorsFilter.java"
+      ],
+      "owners": [
+        ":micronaut-http-server",
+        ":micronaut-http-server-netty"
+      ],
+      "affectedProjects": [
+        ":benchmarks",
+        ":micronaut-context-python-netty",
+        ":micronaut-http-client-tck",
+        ":micronaut-http-server",
+        ":micronaut-http-server-netty",
+        ":micronaut-http-server-tck",
+        ":micronaut-http-tck",
+        ":micronaut-inject-kotlin",
+        ":micronaut-inject-kotlin-test",
+        ":micronaut-inject-python-test",
+        ":test-suite-annotation-remapper",
+        ":test-suite-groovy",
+        ":test-suite-http-client-jdk-ssl",
+        ":test-suite-http-client-tck-jdk",
+        ":test-suite-http-client-tck-netty",
+        ":test-suite-http-server-tck-jdk",
+        ":test-suite-http-server-tck-netty",
+        ":test-suite-http2-server-tck-netty",
+        ":test-suite-kotlin",
+        ":test-suite-kotlin-graalvm",
+        ":test-suite-kotlin-ksp-all-open",
+        ":test-suite-logback",
+        ":test-suite-logback-external-configuration",
+        ":test-suite-netty-ssl-graalvm",
+        ":test-suite-python"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "f32c88990ed2c7f996b5662d302c661a575c1939",
+      "changedPaths": [
+        "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/AbstractKotlinElement.kt",
+        "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/AbstractKotlinPropertyElement.kt",
+        "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/KDocParser.kt",
+        "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/KotlinClassElement.kt",
+        "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/KotlinParameterElement.kt",
+        "inject-kotlin/src/test/groovy/io/micronaut/kotlin/processing/inject/ast/KotlinParameterElementDocumentationSpec.groovy",
+        "inject-kotlin/src/test/groovy/io/micronaut/kotlin/processing/inject/configproperties/ConfigurationMetadataSpec.groovy",
+        "inject-kotlin/src/test/groovy/io/micronaut/kotlin/processing/visitor/KDocParserSpec.groovy"
+      ],
+      "owners": [
+        ":micronaut-inject-kotlin"
+      ],
+      "affectedProjects": [
+        ":micronaut-inject-kotlin",
+        ":test-suite-kotlin",
+        ":test-suite-kotlin-graalvm",
+        ":test-suite-kotlin-ksp-all-open"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "bbfae6eb35121ff5268ee391c0bbedbd4ab9bd97",
+      "changedPaths": [],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "dd9f77fe9e47219f243874a28caf07c09fe517ac",
+      "changedPaths": [
+        "gradle/libs.versions.toml"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "4e062ed7e5758a7f26b080372b7b833ed4c2893f",
+      "changedPaths": [
+        "http/src/main/java/io/micronaut/http/cookie/CookieUtils.java",
+        "http/src/main/java/io/micronaut/http/cookie/DefaultClientCookieEncoder.java",
+        "http/src/main/java/io/micronaut/http/cookie/DefaultServerCookieEncoder.java",
+        "http/src/test/java/io/micronaut/http/cookie/DefaultClientCookieEncoderTest.java",
+        "http/src/test/java/io/micronaut/http/cookie/DefaultServerCookieEncoderTest.java"
+      ],
+      "owners": [
+        ":micronaut-http"
+      ],
+      "affectedProjects": [
+        ":benchmarks",
+        ":micronaut-context-python",
+        ":micronaut-context-python-netty",
+        ":micronaut-http",
+        ":micronaut-inject-python",
+        ":micronaut-inject-python-test",
+        ":test-suite-python"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "87ad6d410972c685c353c058855984ace94e5976",
+      "changedPaths": [
+        ".github/workflows/central-sync.yml",
+        ".github/workflows/graalvm-dev.yml",
+        ".github/workflows/graalvm-latest.yml",
+        ".github/workflows/gradle.yml",
+        ".github/workflows/publish-snapshot.yml",
+        ".github/workflows/release.yml",
+        ".github/workflows/sonatype.yml"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "3e460c08a66c93f4b2c2fa0518262ab6a6d82d7d",
+      "changedPaths": [
+        "gradle/libs.versions.toml",
+        "settings.gradle"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "ea720228961e767495b049109dfe7edbbc1508eb",
+      "changedPaths": [
+        "gradle/libs.versions.toml"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "4c74553af76699906de161a7704d17ee96674d74",
+      "changedPaths": [
+        "gradle/libs.versions.toml"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "cced18dc5a4e9091595546714a19398963cf31f9",
+      "changedPaths": [
+        "http-client-core/src/main/java/io/micronaut/http/client/HttpClientConfiguration.java",
+        "http-client-core/src/main/java/io/micronaut/http/client/ServiceHttpClientConfiguration.java",
+        "http-client/src/test/groovy/io/micronaut/http/client/services/ManualHttpServiceDefinitionSpec.groovy"
+      ],
+      "owners": [
+        ":micronaut-http-client",
+        ":micronaut-http-client-core"
+      ],
+      "affectedProjects": [
+        ":benchmarks",
+        ":micronaut-http-client",
+        ":micronaut-http-client-core",
+        ":micronaut-http-client-tck",
+        ":micronaut-http-server-tck",
+        ":micronaut-http-tck",
+        ":micronaut-inject-kotlin",
+        ":micronaut-inject-kotlin-test",
+        ":micronaut-inject-python-test",
+        ":test-suite-annotation-remapper",
+        ":test-suite-groovy",
+        ":test-suite-http-client-tck-jdk",
+        ":test-suite-http-client-tck-netty",
+        ":test-suite-http-server-tck-jdk",
+        ":test-suite-http-server-tck-netty",
+        ":test-suite-http2-server-tck-netty",
+        ":test-suite-kotlin",
+        ":test-suite-kotlin-graalvm",
+        ":test-suite-kotlin-ksp-all-open",
+        ":test-suite-logback",
+        ":test-suite-logback-external-configuration",
+        ":test-suite-netty-ssl-graalvm",
+        ":test-suite-python"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "dd44d085ea71324d703599bc5737d58437f99389",
+      "changedPaths": [
+        "core/src/main/java/io/micronaut/core/naming/conventions/MethodConvention.java",
+        "http-client/src/main/java/io/micronaut/http/client/netty/NettyHttpClient.java",
+        "http-server-netty/src/test/groovy/io/micronaut/http/server/netty/QueryMethodSpec.groovy",
+        "http/src/main/java/io/micronaut/http/HttpHeaders.java",
+        "http/src/main/java/io/micronaut/http/HttpMethod.java",
+        "http/src/main/java/io/micronaut/http/HttpRequest.java",
+        "http/src/main/java/io/micronaut/http/HttpRequestFactory.java",
+        "http/src/main/java/io/micronaut/http/annotation/Query.java",
+        "http/src/test/groovy/io/micronaut/http/HttpHeadersSpec.groovy",
+        "router/src/main/java/io/micronaut/web/router/AnnotatedMethodRouteBuilder.java",
+        "router/src/main/java/io/micronaut/web/router/DefaultRouteBuilder.java",
+        "router/src/main/java/io/micronaut/web/router/RouteBuilder.java",
+        "router/src/main/java/io/micronaut/web/router/Router.java"
+      ],
+      "owners": [
+        ":micronaut-core",
+        ":micronaut-http",
+        ":micronaut-http-client",
+        ":micronaut-http-server-netty",
+        ":micronaut-router"
+      ],
+      "affectedProjects": [
+        ":benchmarks",
+        ":micronaut-context-python",
+        ":micronaut-context-python-netty",
+        ":micronaut-core",
+        ":micronaut-http",
+        ":micronaut-http-client",
+        ":micronaut-http-client-tck",
+        ":micronaut-http-server-netty",
+        ":micronaut-inject-kotlin",
+        ":micronaut-inject-kotlin-test",
+        ":micronaut-inject-python",
+        ":micronaut-inject-python-test",
+        ":micronaut-router",
+        ":test-suite-annotation-remapper",
+        ":test-suite-groovy",
+        ":test-suite-http-client-jdk-ssl",
+        ":test-suite-http-client-tck-jdk",
+        ":test-suite-http-client-tck-netty",
+        ":test-suite-http-server-tck-jdk",
+        ":test-suite-http-server-tck-netty",
+        ":test-suite-http2-server-tck-netty",
+        ":test-suite-kotlin",
+        ":test-suite-kotlin-graalvm",
+        ":test-suite-kotlin-ksp-all-open",
+        ":test-suite-logback",
+        ":test-suite-logback-external-configuration",
+        ":test-suite-netty-ssl-graalvm",
+        ":test-suite-python"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "269c81b8ebe96ec8da96d916f3206186adad091d",
+      "changedPaths": [
+        "management/src/main/java/io/micronaut/management/endpoint/health/filter/HealthResultFilter.java",
+        "management/src/test/groovy/io/micronaut/management/endpoint/EndpointsBasePathSpec.groovy"
+      ],
+      "owners": [
+        ":micronaut-management"
+      ],
+      "affectedProjects": [
+        ":micronaut-http-server-tck",
+        ":micronaut-management",
+        ":test-suite-groovy",
+        ":test-suite-http-server-tck-jdk",
+        ":test-suite-http-server-tck-netty",
+        ":test-suite-http2-server-tck-netty",
+        ":test-suite-kotlin",
+        ":test-suite-logback",
+        ":test-suite-logback-external-configuration",
+        ":test-suite-python"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "79d60871181dee759d361512da25a29643d8562b",
+      "changedPaths": [
+        "http-server-tck/src/main/java/io/micronaut/http/server/tck/tests/binding/HttpQueryObjectsUnderscoresTest.java",
+        "http/src/main/java/io/micronaut/http/bind/binders/QueryValueArgumentBinder.java"
+      ],
+      "owners": [
+        ":micronaut-http",
+        ":micronaut-http-server-tck"
+      ],
+      "affectedProjects": [
+        ":benchmarks",
+        ":micronaut-context-python",
+        ":micronaut-context-python-netty",
+        ":micronaut-http",
+        ":micronaut-http-server-tck",
+        ":micronaut-inject-python",
+        ":micronaut-inject-python-test",
+        ":test-suite-http-server-tck-jdk",
+        ":test-suite-http-server-tck-netty",
+        ":test-suite-http2-server-tck-netty",
+        ":test-suite-python"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "257856c9556ac80b708022fea6a55ca95ecc088d",
+      "changedPaths": [
+        "inject-kotlin-test/src/main/groovy/io/micronaut/annotation/processing/test/KotlinCompiler.java",
+        "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/KotlinOutputVisitor.kt",
+        "inject-kotlin/src/test/groovy/io/micronaut/kotlin/processing/beans/configproperties/ConfigurationPropertiesSpec.groovy"
+      ],
+      "owners": [
+        ":micronaut-inject-kotlin",
+        ":micronaut-inject-kotlin-test"
+      ],
+      "affectedProjects": [
+        ":micronaut-inject-kotlin",
+        ":micronaut-inject-kotlin-test",
+        ":test-suite-kotlin",
+        ":test-suite-kotlin-graalvm",
+        ":test-suite-kotlin-ksp-all-open"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "c3940a67c22aa5d9754c5d146f64a123e2b3ffc8",
+      "changedPaths": [
+        ".github/workflows/central-sync.yml",
+        ".github/workflows/publish-snapshot.yml",
+        ".github/workflows/release.yml"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "fd3ecd0958afae5dffc711a9f19a76ea5d6aad47",
+      "changedPaths": [],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "dc8464c44c530efbc28c495439e5e190b514fad6",
+      "changedPaths": [
+        ".github/workflows/gradle.yml",
+        ".github/workflows/sonatype.yml"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "644305790e14c7b8871333f042ce36e453290542",
+      "changedPaths": [
+        "inject-kotlin/src/main/kotlin/io/micronaut/kotlin/processing/visitor/KotlinClassElement.kt",
+        "inject-kotlin/src/test/groovy/io/micronaut/kotlin/processing/inject/configproperties/InterfaceConfigurationPropertiesSpec.groovy"
+      ],
+      "owners": [
+        ":micronaut-inject-kotlin"
+      ],
+      "affectedProjects": [
+        ":micronaut-inject-kotlin",
+        ":test-suite-kotlin",
+        ":test-suite-kotlin-graalvm",
+        ":test-suite-kotlin-ksp-all-open"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "b985267b377ac77b8cc6b8b897df1489fffd07d0",
+      "changedPaths": [
+        ".github/workflows/release.yml"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "f9ddf620d8268c98b1a02da935fc23d35a3ef821",
+      "changedPaths": [
+        "gradle/libs.versions.toml"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "c801d57c34473c0cee44a3560d2a3354cffc4aab",
+      "changedPaths": [
+        "inject/src/main/java/io/micronaut/context/ApplicationContextConfigurationDelegate.java",
+        "test-suite-property-source/src/test/groovy/io/micronaut/context/env/ConfigurationLoadStrategySpec.groovy"
+      ],
+      "owners": [
+        ":micronaut-inject",
+        ":test-suite-property-source"
+      ],
+      "affectedProjects": [
+        ":benchmarks",
+        ":micronaut-context-python-netty",
+        ":micronaut-http-client-tck",
+        ":micronaut-http-server-tck",
+        ":micronaut-http-tck",
+        ":micronaut-inject",
+        ":micronaut-messaging",
+        ":micronaut-module-info-runtime",
+        ":test-suite-groovy",
+        ":test-suite-http-client-tck-jdk",
+        ":test-suite-http-client-tck-netty",
+        ":test-suite-http-server-tck-jdk",
+        ":test-suite-http-server-tck-netty",
+        ":test-suite-http2-server-tck-netty",
+        ":test-suite-jakarta-inject-bean-import",
+        ":test-suite-javax-inject",
+        ":test-suite-kotlin",
+        ":test-suite-property-source",
+        ":test-suite-python"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "a241485d33f51fc73e85814ccf45aa64887cca39",
+      "changedPaths": [
+        ".github/workflows/gradle.yml",
+        ".github/workflows/sonatype.yml"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "ad34c8dc80289cab53a1b7c4d327628ad5d7b71f",
+      "changedPaths": [
+        ".github/workflows/central-sync.yml",
+        ".github/workflows/gradle.yml",
+        ".github/workflows/publish-snapshot.yml",
+        ".github/workflows/release.yml",
+        ".github/workflows/sonatype.yml"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "f75d979363f586ae7e95532b31d7528c02acc2af",
+      "changedPaths": [
+        "gradle/libs.versions.toml"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "148c2b8b52d6cc59e91e61d88bc421f404cbb257",
+      "changedPaths": [
+        "gradle.properties"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "00a975a2b57ea3c48045c3da4d9019d1bffe4ad4",
+      "changedPaths": [
+        ".github/workflows/gradle.yml",
+        ".github/workflows/sonatype.yml"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "fe85dcdd1b8dc38258026e70a566bfa1bb4e391a",
+      "changedPaths": [],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "15ae14225151438aeab30e0a8e47054ecf1e0cf2",
+      "changedPaths": [
+        ".github/workflows/gradle.yml",
+        ".github/workflows/sonatype.yml"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "0af51db8d452ba1779510dac8fe892677d564027",
+      "changedPaths": [],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "1e5e2b4e4f45ebf8bdfc19efe229f42125c8c1d8",
+      "changedPaths": [
+        "gradle/libs.versions.toml"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "35be7a2927461aa8bac448fe3716f2af233ba85d",
+      "changedPaths": [
+        ".github/workflows/central-sync.yml",
+        ".github/workflows/publish-snapshot.yml",
+        ".github/workflows/release.yml",
+        ".gitignore",
+        "gradle/wrapper/gradle-wrapper.properties"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "e9e490283fc369953a969326916eefe3676b038e",
+      "changedPaths": [
+        "gradle.properties"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "05c7180610530d8a8fcd8f2424fc7878ef7c5b32",
+      "changedPaths": [
+        "gradle.properties"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "47505fa40ded828ab2c6304fcfabb8cad979d8d5",
+      "changedPaths": [
+        ".gitignore"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "854b0214663ed3c30767edce81e9243043282989",
+      "changedPaths": [],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "c9b8e65dd7fa89adba9ec6fd7b948bb5129f3ccf",
+      "changedPaths": [
+        ".github/workflows/publish-snapshot.yml"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "4d6bad5d9c137412e2ba2cdb0b231b004ad5ee05",
+      "changedPaths": [
+        ".github/workflows/publish-snapshot.yml"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "c4e938a52ee457ae53535a9064bdb18b7ecd8bab",
+      "changedPaths": [
+        "gradle/libs.versions.toml"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "00304cbd22d4cdacd4390457a3638ea0ecadac42",
+      "changedPaths": [
+        "core-processor/src/main/java/io/micronaut/inject/ast/utils/AstBeanPropertiesUtils.java",
+        "core-processor/src/main/java/io/micronaut/inject/beans/visitor/BeanIntrospectionWriter.java",
+        "inject-java/src/test/groovy/io/micronaut/visitors/PropertyElementSpec.groovy"
+      ],
+      "owners": [
+        ":micronaut-core-processor",
+        ":micronaut-inject-java"
+      ],
+      "affectedProjects": [
+        ":benchmarks",
+        ":micronaut-context-python",
+        ":micronaut-context-python-netty",
+        ":micronaut-core-processor",
+        ":micronaut-http-client-tck",
+        ":micronaut-http-server-tck",
+        ":micronaut-http-tck",
+        ":micronaut-inject-java",
+        ":micronaut-inject-kotlin",
+        ":micronaut-inject-kotlin-test",
+        ":micronaut-inject-python",
+        ":micronaut-inject-python-test",
+        ":micronaut-messaging",
+        ":micronaut-module-info-runtime",
+        ":micronaut-runtime-osx",
+        ":test-suite-annotation-remapper",
+        ":test-suite-annotation-remapper-visitor",
+        ":test-suite-http-client-tck-jdk",
+        ":test-suite-http-client-tck-netty",
+        ":test-suite-http-server-tck-jdk",
+        ":test-suite-http-server-tck-netty",
+        ":test-suite-http2-server-tck-netty",
+        ":test-suite-jakarta-inject-bean-import",
+        ":test-suite-javax-inject",
+        ":test-suite-kotlin",
+        ":test-suite-kotlin-graalvm",
+        ":test-suite-kotlin-ksp-all-open",
+        ":test-suite-logback",
+        ":test-suite-logback-external-configuration",
+        ":test-suite-netty-ssl-graalvm",
+        ":test-suite-python"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "f600c4cb2641b78c041a33c8ade140939b4677a8",
+      "changedPaths": [
+        ".github/workflows/publish-snapshot.yml"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "e8d767ed852cdd0e6305aa8815e73a3a3ae56092",
+      "changedPaths": [
+        ".github/workflows/graalvm-dev.yml",
+        ".github/workflows/graalvm-latest.yml",
+        ".github/workflows/release.yml"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "fad0cbef32faf2f7914b35b08b824247430c1c3a",
+      "changedPaths": [
+        "gradle/libs.versions.toml"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "68f582ebb3fe1620cbbdf791ee86ab3af13ece2f",
+      "changedPaths": [
+        ".github/workflows/gradle.yml",
+        ".github/workflows/release.yml"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "742c0d782979fa32689db3dea7d8301e808cbee1",
+      "changedPaths": [
+        "core/src/main/java/io/micronaut/core/convert/DefaultMutableConversionService.java",
+        "core/src/test/groovy/io/micronaut/core/convert/DefaultConversionServiceSpec.groovy"
+      ],
+      "owners": [
+        ":micronaut-core"
+      ],
+      "affectedProjects": [
+        ":benchmarks",
+        ":micronaut-context-python",
+        ":micronaut-context-python-netty",
+        ":micronaut-core",
+        ":micronaut-inject-python",
+        ":micronaut-inject-python-test",
+        ":test-suite-python"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "62648c60bae1d7a5bf9b74c97fc60fcef29885da",
+      "changedPaths": [
+        "http-client/src/test/groovy/io/micronaut/http/client/aop/RequestBeanSpec.groovy",
+        "http/src/main/java/io/micronaut/http/bind/binders/RequestBeanAnnotationBinder.java"
+      ],
+      "owners": [
+        ":micronaut-http",
+        ":micronaut-http-client"
+      ],
+      "affectedProjects": [
+        ":benchmarks",
+        ":micronaut-context-python",
+        ":micronaut-context-python-netty",
+        ":micronaut-http",
+        ":micronaut-http-client",
+        ":micronaut-inject-kotlin",
+        ":micronaut-inject-kotlin-test",
+        ":micronaut-inject-python",
+        ":micronaut-inject-python-test",
+        ":test-suite-annotation-remapper",
+        ":test-suite-groovy",
+        ":test-suite-http-client-tck-netty",
+        ":test-suite-http-server-tck-netty",
+        ":test-suite-http2-server-tck-netty",
+        ":test-suite-kotlin",
+        ":test-suite-kotlin-graalvm",
+        ":test-suite-kotlin-ksp-all-open",
+        ":test-suite-logback",
+        ":test-suite-logback-external-configuration",
+        ":test-suite-netty-ssl-graalvm",
+        ":test-suite-python"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "f9156d44b0e55f924f90663ab565c8edeff8f3b2",
+      "changedPaths": [
+        ".github/workflows/central-sync.yml",
+        ".github/workflows/graalvm-dev.yml",
+        ".github/workflows/graalvm-latest.yml",
+        ".github/workflows/gradle.yml",
+        ".github/workflows/publish-snapshot.yml",
+        ".github/workflows/release.yml",
+        ".github/workflows/sonatype.yml",
+        "gradle/wrapper/gradle-wrapper.properties",
+        "gradlew",
+        "gradlew.bat"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "c4fcf562271ffe9187f4e4f451f380e91741a450",
+      "changedPaths": [
+        "gradle.properties"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    }
+  ]
+}

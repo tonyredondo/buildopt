@@ -635,6 +635,7 @@ buildopt_required_files=(
     "dev/check-spring-jms-graph-aware-confirmation-contract"
     "dev/check-spring-jms-graph-aware-confirmation"
     "dev/check-product-window-graph-recurrence-contract"
+    "dev/check-product-window-graph-recurrence"
     "dev/run-product-window-graph-recurrence"
     "dev/capture-spring-jms-graph-aware-confirmation"
     "dev/capture-third-family-fresh-graph-confirmation"

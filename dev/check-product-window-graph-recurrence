@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "${buildopt_root}"
+
+buildopt_evidence=benchmarks/results/product-window-graph-recurrence-v1/capture
+buildopt_subjects=specs/poc-product-window-graph-recurrence-v1.subjects.json
+buildopt_discovery=benchmarks/results/poc-automatic-breadth-transfer-v2
+
+./dev/check-product-window-graph-recurrence-contract >/dev/null
+
+buildopt_spring_raw_sha=$(sha256sum "${buildopt_evidence}/raw/spring-framework.json" | awk '{print $1}')
+buildopt_otel_raw_sha=$(sha256sum "${buildopt_evidence}/raw/opentelemetry-java-instrumentation.json" | awk '{print $1}')
+buildopt_micronaut_raw_sha=$(sha256sum "${buildopt_evidence}/raw/micronaut-core.json" | awk '{print $1}')
+
+for buildopt_index in 0 1 2; do
+    buildopt_label=$(jq -r ".subjects[${buildopt_index}].label" "${buildopt_subjects}")
+    buildopt_manifest_sha=$(sha256sum "${buildopt_discovery}/${buildopt_label}/state/discovery/manifest.json" | awk '{print $1}')
+    buildopt_graph_sha=$(sha256sum "${buildopt_discovery}/${buildopt_label}/state/discovery/graph.json" | awk '{print $1}')
+    [[ ${buildopt_manifest_sha} == "$(jq -r ".subjects[${buildopt_index}].manifestSha256" "${buildopt_subjects}")" ]]
+    [[ ${buildopt_graph_sha} == "$(jq -r ".subjects[${buildopt_index}].graphSha256" "${buildopt_subjects}")" ]]
+    if [[ $(jq -r ".subjects[${buildopt_index}].syntheticHead" "${buildopt_subjects}") == true ]]; then
+        buildopt_changes_sha=$(sha256sum "${buildopt_discovery}/${buildopt_label}/state/discovery/changes.txt" | awk '{print $1}')
+        [[ ${buildopt_changes_sha} == "$(jq -r ".subjects[${buildopt_index}].headChangesSha256" "${buildopt_subjects}")" ]]
+    fi
+done
+
+jq -e \
+    --slurpfile subjects "${buildopt_subjects}" \
+    --slurpfile spring "${buildopt_evidence}/raw/spring-framework.json" \
+    --slurpfile otel "${buildopt_evidence}/raw/opentelemetry-java-instrumentation.json" \
+    --slurpfile micronaut "${buildopt_evidence}/raw/micronaut-core.json" \
+    --slurpfile springGraph "${buildopt_discovery}/spring-framework/state/discovery/graph.json" \
+    --slurpfile otelGraph "${buildopt_discovery}/opentelemetry-java-instrumentation/state/discovery/graph.json" \
+    --slurpfile micronautGraph "${buildopt_discovery}/micronaut-core/state/discovery/graph.json" \
+    --arg springRawSha "${buildopt_spring_raw_sha}" \
+    --arg otelRawSha "${buildopt_otel_raw_sha}" \
+    --arg micronautRawSha "${buildopt_micronaut_raw_sha}" '
+  def reconstruct_groups($report;$total):
+    [$report.rows|map(select(.decision=="CLASSIFIED"))|group_by([.owners,.family])[]|
+      . as $group|
+      select(([$group[].affectedProjects]|unique|length)==1)|
+      {
+        owners:$group[0].owners,
+        family:$group[0].family,
+        affectedProjects:($group[0].affectedProjects|length),
+        totalProjects:$total,
+        omittedProjects:($total-($group[0].affectedProjects|length)),
+        commitCount:($group|length),
+        commits:[$group[].commit],
+        structuralId:(($group[0].owners|join("\u0000"))+"\u0001"+$group[0].family)
+      }]|sort_by(.structuralId);
+  def reconstruct_row($label;$sha;$report;$total):
+    {
+      label:$label,
+      rawSha256:$sha,
+      historyRows:($report.rows|length),
+      classifiedRows:([$report.rows[]|select(.decision=="CLASSIFIED")]|length),
+      reasonCounts:($report.rows|group_by(.reason)|map({key:.[0].reason,value:length})|from_entries),
+      groups:reconstruct_groups($report;$total)
+    };
+  . as $summary|
+  [$spring[0],$otel[0],$micronaut[0]] as $reports|
+  [($springGraph[0].projects|length),($otelGraph[0].projects|length),($micronautGraph[0].projects|length)] as $totals|
+  all(range(0;3); . as $index|
+    $reports[$index] as $report|$subjects[0].subjects[$index] as $subject|
+    $report.schemaVersion=="buildopt.history-admission/graph-aware-audit/v1" and
+    $report.mode=="INVENTORY" and $report.decision=="INVENTORY_COMPLETE" and
+    $report.reason=="ALL_EXACT_GRAPH_GROUPS_CLASSIFIED" and
+    $report.targetRevision==$subject.targetRevision and
+    $report.graphSha256==$subject.graphSha256 and $report.manifestSha256==$subject.manifestSha256 and
+    $report.historyWindowCommits==64 and $report.minimumCompatibleCommits==5 and
+    ($report.gradleExecuted|not) and ($report.repositoryNameRule|not) and
+    ($report.rows|length)==64 and
+    all($report.rows[];
+      (.commit|test("^[0-9a-f]{40}$")) and
+      (.changedPaths|type)=="array" and
+      ((.decision=="CLASSIFIED" and .reason=="EXACT_GRAPH_OWNER_AND_FAMILY" and
+        (.owners|type)=="array" and (.affectedProjects|type)=="array") or
+       (.decision=="REJECT" and (.reason=="INCOMPLETE_AMBIGUOUS" or .reason=="UNSAFE_STRUCTURAL_CHANGE")))) and
+    ([reconstruct_groups($report;$totals[$index])[]|.commitCount]|add)==
+      ([$report.rows[]|select(.decision=="CLASSIFIED")]|length)
+  ) and
+  [
+    reconstruct_row("spring-framework";$springRawSha;$spring[0];$totals[0]),
+    reconstruct_row("opentelemetry-java-instrumentation";$otelRawSha;$otel[0];$totals[1]),
+    reconstruct_row("micronaut-core";$micronautRawSha;$micronaut[0];$totals[2])
+  ] as $reconstructedRows|
+  [$reconstructedRows[] as $row|$row.groups[]|select(.commitCount>=5 and .omittedProjects>=1)|. + {label:$row.label}]|
+    sort_by(-.commitCount,-.omittedProjects,.structuralId,.label) as $eligible|
+  [
+    {name:"schema",ok:($summary.schemaVersion=="buildopt.history-admission/product-window-graph-recurrence/v1")},
+    {name:"decision",ok:($summary.decision=="AUTHORIZE_FRESH_GRAPH_CONFIRMATION_CONTRACT")},
+    {name:"thresholds",ok:($summary.thresholds=={historyRowsPerFamily:64,minimumGroupCommits:5,minimumOmittedProjects:1})},
+    {name:"row-metadata",ok:(($summary.rows|map(del(.groups)))==($reconstructedRows|map(del(.groups))))},
+    {name:"row-groups",ok:(all(range(0;3);. as $index|
+      ($summary.rows[$index].groups|sort_by(.structuralId))==$reconstructedRows[$index].groups))},
+    {name:"eligible",ok:(($summary.eligibleGroups|sort_by(.label,.structuralId))==($eligible|sort_by(.label,.structuralId)))},
+    {name:"selected",ok:($summary.selectedGroup==$eligible[0])},
+    {name:"eligible-count",ok:(($eligible|length)==6)},
+    {name:"eligible-families",ok:(([$eligible[].label]|group_by(.)|map({label:.[0],count:length}))==
+      [{label:"spring-framework",count:6}])},
+    {name:"selected-facts",ok:($summary.selectedGroup.label=="spring-framework" and
+      $summary.selectedGroup.owners==[":spring-messaging"] and $summary.selectedGroup.family=="DEPENDENCY_SOURCE" and
+      $summary.selectedGroup.commitCount==11 and $summary.selectedGroup.omittedProjects==15)},
+    {name:"boundaries",ok:($summary.boundaries=={
+      gradleExecuted:false,candidateExecuted:false,timingCollected:false,
+      publicSourcePatched:false,productionAuthorized:false,
+      predecessorSummaryEvidenceConsumed:false,repositoryOrTaskNameRules:false
+    })}
+  ] as $checks|
+  if all($checks[];.ok) then true else error($checks|map(select(.ok|not))|tojson) end
+' "${buildopt_evidence}/summary.json" >/dev/null
+
+printf 'product-window graph recurrence: ok (192 rows, 6 eligible groups, selected 11 commits / 15 omitted projects)\n'

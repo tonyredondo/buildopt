@@ -1316,6 +1316,12 @@ commits, matching ordinary product admission. Any eligible group can select
 only a separate untimed confirmation; no candidate or speedup follows from the
 inventory itself.
 
+The completed source inventory finds six eligible Spring groups inside that
+64-commit window and selects Messaging dependency-source at eleven matches and
+fifteen omitted projects. It executes zero Gradle or candidate builds and adds
+no timing sample. The result selects one untimed confirmation; it does not
+change the current two-class value claim.
+
 The untimed CSCPC route did not reach candidate correctness or performance.
 Its first Groovy optimized-native invocation succeeded, but the production
 decision path returned `NATIVE_RETAINED / ORDINARY_LEARNING_ECONOMICS_REJECTED`:

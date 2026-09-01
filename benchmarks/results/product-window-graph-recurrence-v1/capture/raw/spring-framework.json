@@ -1,0 +1,2034 @@
+{
+  "schemaVersion": "buildopt.history-admission/graph-aware-audit/v1",
+  "targetRevision": "75705bcbb1da866d3ed44bf7526437a7fdf1136b",
+  "snapshotSha256": "",
+  "graphSha256": "5059bb9b496a7acf1c4c067852d3ff5f4eafc79bfcaf9398f00ebd30468a10e6",
+  "manifestSha256": "6795b2d4f39567eb61da4b24e18f9fd2bc240e0777bba8a3c59d88449db0b253",
+  "entrypoints": [
+    ":spring-jms:testClasses",
+    "testClasses"
+  ],
+  "expectedOwners": null,
+  "expectedFamily": "",
+  "historyWindowCommits": 64,
+  "compatibleCommits": 0,
+  "minimumCompatibleCommits": 5,
+  "decision": "INVENTORY_COMPLETE",
+  "reason": "ALL_EXACT_GRAPH_GROUPS_CLASSIFIED",
+  "gradleExecuted": false,
+  "repositoryNameRule": false,
+  "mode": "INVENTORY",
+  "groups": [
+    {
+      "owners": [
+        ":framework-docs",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web"
+      ],
+      "family": "MIXED_SOURCE",
+      "affectedProjects": 24,
+      "totalProjects": 27,
+      "commits": [
+        "d84c4a39e24c6bf3ce71577350593db8629d7789"
+      ]
+    },
+    {
+      "owners": [
+        ":framework-docs",
+        ":spring-context",
+        ":spring-core"
+      ],
+      "family": "MIXED_SOURCE",
+      "affectedProjects": 24,
+      "totalProjects": 27,
+      "commits": [
+        "cb8ed43be1ba9ab11f17c7a2f74a79f15bd3fb14"
+      ]
+    },
+    {
+      "owners": [
+        ":framework-docs"
+      ],
+      "family": "LEAF_SOURCE",
+      "affectedProjects": 1,
+      "totalProjects": 27,
+      "commits": [
+        "7a85ce959bf35ddb268658bedc0edde0efa41491",
+        "f1c86b1bbc9d3b15f3edac3c3fbcd5de0836cbe0",
+        "7fde8a6fa3f2a700d1a5da03334df84722495519",
+        "033c309d392df8d86df62a2763fb530d2541a857"
+      ]
+    },
+    {
+      "owners": [
+        ":spring-beans"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 21,
+      "totalProjects": 27,
+      "commits": [
+        "14b6339351e8e197083d76089a1f01333c02b5eb",
+        "4abbddf6010fb1aab8dd943d3948ba598c8260d0",
+        "0d4737aeec48da0f5e870d3b7ce99f3a85be25c0"
+      ]
+    },
+    {
+      "owners": [
+        ":spring-context",
+        ":spring-web",
+        ":spring-webflux"
+      ],
+      "family": "MIXED_SOURCE",
+      "affectedProjects": 19,
+      "totalProjects": 27,
+      "commits": [
+        "1bb0fdda6bc74a318d01cbeb9d612b4486460803"
+      ]
+    },
+    {
+      "owners": [
+        ":spring-context"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 19,
+      "totalProjects": 27,
+      "commits": [
+        "98d4046e4b848e288559a7041c393d12fef83ee6",
+        "282fee5c95dc26522e1073308c8cf38c7ab30607",
+        "2d3a2c5cbdb305812f27d2553131be00e12c58cd",
+        "20970a4a37e962cdec6cfbe58ead8a3ad1c56d54",
+        "29d125e659e687661e4022e626eb392520d38adb"
+      ]
+    },
+    {
+      "owners": [
+        ":spring-core"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 24,
+      "totalProjects": 27,
+      "commits": [
+        "6f03c186b996e446278e1fd06d7a2244aab377a5",
+        "4a13655aa517542cc71b163fd91f016a8b6fb50d",
+        "a9b1d6335ef568f7587f0d3a6479a3db3fdd15f5",
+        "1ef8734881468fcdd5e1927a6516455a2fdf5e5d",
+        "6dfa54b8ea6058835ebf0e618e6ffcdd8570704d",
+        "59a9d0fcb9be6c3d4843bf512802b1fd4a3635b5",
+        "db9045ae28c10df32a8ebb84b4e0b42ba25456e7",
+        "ad19c1ac8229f48843a32f31905037f3a76612ec"
+      ]
+    },
+    {
+      "owners": [
+        ":spring-jdbc"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 11,
+      "totalProjects": 27,
+      "commits": [
+        "8a1a9d2ab2676c7602a0dbf2962062c165e31ed2"
+      ]
+    },
+    {
+      "owners": [
+        ":spring-jms"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 3,
+      "totalProjects": 27,
+      "commits": [
+        "75705bcbb1da866d3ed44bf7526437a7fdf1136b"
+      ]
+    },
+    {
+      "owners": [
+        ":spring-messaging",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "MIXED_SOURCE",
+      "affectedProjects": 12,
+      "totalProjects": 27,
+      "commits": [
+        "926bcbd9a6c7c4803e349b7b4ef6227a52bc833c"
+      ]
+    },
+    {
+      "owners": [
+        ":spring-messaging"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 12,
+      "totalProjects": 27,
+      "commits": [
+        "7f29df4d795ed76465f2dcd36ed1879c0887ab0e",
+        "6507367d10ce03d569227df9141c161365800e31",
+        "fee7e6b7e2f025c6b64ef8820d2704f561096ee8",
+        "77b54c7409454a7b19ac114a92f96845cda6accc",
+        "ff9ba15762e2d6ca1b7b2a1292c3048f414899da",
+        "e93e55b456bbe320d2330fa37a975fe25feada1a",
+        "7998bc9de2d2378523ae011f240721dde455b8c5",
+        "cb4b87cce2c1844554dd50be78157950f9984096",
+        "1d470fc3755c8534b18d5319c599b1257e576d6c",
+        "7fc619acdc152094271c215be0ee67afca0e0d90",
+        "e5f8c5b7ae6e3d32958eef1c040fec7828b213da"
+      ]
+    },
+    {
+      "owners": [
+        ":spring-orm"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 6,
+      "totalProjects": 27,
+      "commits": [
+        "05ffe8249f366b145fc79c561da7a5fc9c4de912",
+        "3666ad9d7fb0e905322b81debda7b2e2e822a4e0",
+        "652d509cfc7a55c47204ba2e45caac417fb790e6",
+        "153c378bb2414f34e0ce068ee0d18f5de33829ef",
+        "cdbaa7f3a7b236d0df567b618564d1d00aa74769",
+        "ac243fae652d59f9bce957b739738388297e7b46"
+      ]
+    },
+    {
+      "owners": [
+        ":spring-orm"
+      ],
+      "family": "MIXED_SOURCE",
+      "affectedProjects": 6,
+      "totalProjects": 27,
+      "commits": [
+        "394a97d7e047a4675f76502ca1689e108a42eced"
+      ]
+    },
+    {
+      "owners": [
+        ":spring-web"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 10,
+      "totalProjects": 27,
+      "commits": [
+        "47a2e7059eb61a3c7ae776b3e64bda052a06aee6",
+        "5ef9972528716afdec0450a0e1befa1250fe88d8",
+        "8fb119df1ecc97d4391276b02189fc32c3e7bf46",
+        "e22b1648bffa7b55350b4fed55dbb79bf3bd29d6",
+        "02dc4b6342441b31cd7c7a1f4ded64ea832362f0",
+        "7c2159fbe95658ecc02c664ab5565b0ada84d5b5",
+        "f2d3da3f328cc52fff2b906d98a8ccdeddbb7d56"
+      ]
+    },
+    {
+      "owners": [
+        ":spring-webflux",
+        ":spring-webmvc"
+      ],
+      "family": "MIXED_SOURCE",
+      "affectedProjects": 8,
+      "totalProjects": 27,
+      "commits": [
+        "78967d4bd6f627f676cbc3ea1626b6a92fb4a497",
+        "1d2351c87b4f278d1de4980e3c2bcbc754146283"
+      ]
+    },
+    {
+      "owners": [
+        ":spring-webflux"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 6,
+      "totalProjects": 27,
+      "commits": [
+        "bc2e89a7861b785137b2ac2614f1260288bae9db"
+      ]
+    },
+    {
+      "owners": [
+        ":spring-webmvc"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 7,
+      "totalProjects": 27,
+      "commits": [
+        "17033880748a04b0d777b5f34ab12d8d5f087e32",
+        "62e590a437f150da130eb6ce0b3cd1ff6c4bb89a",
+        "c33b82f2a11167cba2c6c5be6b2430b601cffd07",
+        "b2277014735d4b7879689a702eaaaf8962d1b006",
+        "d1b0bdb3d558410a735f43741f36febd4d7f9f01"
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "commit": "75705bcbb1da866d3ed44bf7526437a7fdf1136b",
+      "changedPaths": [
+        "spring-jms/src/main/java/org/springframework/jms/core/JmsTemplate.java",
+        "spring-jms/src/test/java/org/springframework/jms/core/JmsTemplateTests.java"
+      ],
+      "owners": [
+        ":spring-jms"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":spring-jms"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "47a2e7059eb61a3c7ae776b3e64bda052a06aee6",
+      "changedPaths": [
+        "spring-web/src/main/java/org/springframework/http/converter/AbstractHttpMessageConverter.java"
+      ],
+      "owners": [
+        ":spring-web"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "14b6339351e8e197083d76089a1f01333c02b5eb",
+      "changedPaths": [
+        "spring-beans/src/main/java/org/springframework/beans/factory/annotation/QualifierAnnotationAutowireCandidateResolver.java",
+        "spring-beans/src/test/java/org/springframework/beans/factory/annotation/QualifierAnnotationAutowireCandidateResolverTests.java"
+      ],
+      "owners": [
+        ":spring-beans"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "bc2e89a7861b785137b2ac2614f1260288bae9db",
+      "changedPaths": [
+        "spring-webflux/src/main/java/org/springframework/web/reactive/result/method/annotation/ResponseBodyResultHandler.java"
+      ],
+      "owners": [
+        ":spring-webflux"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-test",
+        ":spring-webflux"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "4abbddf6010fb1aab8dd943d3948ba598c8260d0",
+      "changedPaths": [
+        "spring-beans/src/main/java/org/springframework/beans/factory/annotation/AutowiredAnnotationBeanPostProcessor.java"
+      ],
+      "owners": [
+        ":spring-beans"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "926bcbd9a6c7c4803e349b7b4ef6227a52bc833c",
+      "changedPaths": [
+        "spring-messaging/src/main/java/org/springframework/messaging/tcp/reactor/ReactorNettyTcpClient.java",
+        "spring-webmvc/src/main/java/org/springframework/web/servlet/mvc/method/annotation/ServletInvocableHandlerMethod.java",
+        "spring-websocket/src/main/java/org/springframework/web/socket/messaging/WebSocketStompClient.java"
+      ],
+      "owners": [
+        ":spring-messaging",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "cb8ed43be1ba9ab11f17c7a2f74a79f15bd3fb14",
+      "changedPaths": [
+        "framework-docs/modules/ROOT/pages/integration/scheduling.adoc",
+        "framework-docs/modules/ROOT/pages/web/webflux-functional.adoc",
+        "framework-docs/modules/ROOT/pages/web/webmvc-functional.adoc",
+        "framework-docs/modules/ROOT/pages/web/webmvc/mvc-controller/ann-methods/arguments.adoc",
+        "spring-context/src/main/java/org/springframework/format/datetime/standard/Jsr310DateTimeFormatAnnotationFormatterFactory.java",
+        "spring-context/src/main/java/org/springframework/format/datetime/standard/package-info.java",
+        "spring-context/src/main/java/org/springframework/scheduling/concurrent/ForkJoinPoolFactoryBean.java",
+        "spring-core/src/main/java/org/springframework/util/NumberUtils.java",
+        "spring-core/src/test/java/org/springframework/core/SortedPropertiesTests.java",
+        "spring-core/src/test/java/org/springframework/core/annotation/AnnotationUtilsTests.java",
+        "spring-core/src/test/java/org/springframework/core/annotation/MergedAnnotationsTests.java"
+      ],
+      "owners": [
+        ":framework-docs",
+        ":spring-context",
+        ":spring-core"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "17033880748a04b0d777b5f34ab12d8d5f087e32",
+      "changedPaths": [
+        "spring-webmvc/src/main/java/org/springframework/web/servlet/mvc/method/annotation/RequestResponseBodyMethodProcessor.java"
+      ],
+      "owners": [
+        ":spring-webmvc"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-test",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "d84c4a39e24c6bf3ce71577350593db8629d7789",
+      "changedPaths": [
+        "framework-docs/modules/ROOT/pages/core/aop/ataspectj/advice.adoc",
+        "framework-docs/modules/ROOT/pages/integration/cache/store-configuration.adoc",
+        "framework-docs/modules/ROOT/pages/integration/jms/annotated.adoc",
+        "framework-docs/modules/ROOT/pages/integration/rest-clients.adoc",
+        "framework-docs/modules/ROOT/pages/languages/kotlin/classes-interfaces.adoc",
+        "framework-docs/modules/ROOT/pages/testing/annotations/integration-spring/annotation-aftertransaction.adoc",
+        "framework-docs/modules/ROOT/pages/testing/annotations/integration-spring/annotation-beforetransaction.adoc",
+        "framework-docs/modules/ROOT/pages/testing/annotations/integration-spring/annotation-sqlgroup.adoc",
+        "framework-docs/modules/ROOT/pages/testing/resources.adoc",
+        "framework-docs/modules/ROOT/pages/web/webflux/new-framework.adoc",
+        "spring-beans/src/main/java/org/springframework/beans/CachedIntrospectionResults.java",
+        "spring-beans/src/main/java/org/springframework/beans/factory/config/DependencyDescriptor.java",
+        "spring-context/src/main/java/org/springframework/context/annotation/ComponentScans.java",
+        "spring-context/src/main/java/org/springframework/context/annotation/ConfigurationClassParser.java",
+        "spring-context/src/main/java/org/springframework/context/annotation/PropertySources.java",
+        "spring-context/src/main/java/org/springframework/scheduling/annotation/Schedules.java",
+        "spring-core/src/main/java/org/springframework/core/DefaultParameterNameDiscoverer.java",
+        "spring-core/src/main/java/org/springframework/core/KotlinReflectionParameterNameDiscoverer.java",
+        "spring-core/src/main/java/org/springframework/core/MethodClassKey.java",
+        "spring-core/src/main/java/org/springframework/core/MethodParameter.java",
+        "spring-core/src/main/java/org/springframework/core/StandardReflectionParameterNameDiscoverer.java",
+        "spring-core/src/main/java/org/springframework/core/annotation/SynthesizingMethodParameter.java",
+        "spring-core/src/main/java/org/springframework/core/convert/support/GenericConversionService.java",
+        "spring-core/src/main/java/org/springframework/core/convert/support/ZoneIdToTimeZoneConverter.java",
+        "spring-core/src/main/java/org/springframework/core/convert/support/ZonedDateTimeToCalendarConverter.java",
+        "spring-core/src/main/java/org/springframework/core/log/LogAccessor.java",
+        "spring-core/src/main/java/org/springframework/util/ReflectionUtils.java",
+        "spring-core/src/test/java/org/springframework/core/annotation/AnnotationUtilsTests.java",
+        "spring-core/src/test/java/org/springframework/core/annotation/MultipleComposedAnnotationsOnSingleAnnotatedElementTests.java",
+        "spring-test/src/main/java/org/springframework/test/context/jdbc/SqlGroup.java",
+        "spring-test/src/main/java/org/springframework/test/context/transaction/TransactionalTestExecutionListener.java",
+        "spring-tx/src/main/java/org/springframework/transaction/support/TransactionOperations.java",
+        "spring-web/src/main/java/org/springframework/http/converter/json/Jackson2ObjectMapperBuilder.java",
+        "spring-web/src/main/java/org/springframework/http/converter/json/Jackson2ObjectMapperFactoryBean.java",
+        "spring-web/src/main/java/org/springframework/web/bind/annotation/PathVariable.java",
+        "spring-web/src/main/java/org/springframework/web/bind/annotation/RequestAttribute.java",
+        "spring-web/src/main/java/org/springframework/web/bind/annotation/SessionAttribute.java"
+      ],
+      "owners": [
+        ":framework-docs",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-core",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "6f03c186b996e446278e1fd06d7a2244aab377a5",
+      "changedPaths": [
+        "spring-core/src/main/java/org/springframework/core/MethodParameter.java",
+        "spring-core/src/main/java/org/springframework/core/annotation/SynthesizingMethodParameter.java",
+        "spring-core/src/test/java/org/springframework/core/BridgeMethodResolverTests.java",
+        "spring-core/src/test/java/org/springframework/core/annotation/MultipleComposedAnnotationsOnSingleAnnotatedElementTests.java"
+      ],
+      "owners": [
+        ":spring-core"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "e10d37ad54616b4ef5b8a735801b42562dc164c8",
+      "changedPaths": [
+        "gradle.properties"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "4734837fe4c37aed214d24a83706e9d6e9dd290d",
+      "changedPaths": [
+        "buildSrc/src/main/java/org/springframework/build/CheckstyleConventions.java",
+        "framework-platform/framework-platform.gradle"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "4a13655aa517542cc71b163fd91f016a8b6fb50d",
+      "changedPaths": [
+        "spring-core/src/main/java/org/springframework/util/ConcurrentReferenceHashMap.java"
+      ],
+      "owners": [
+        ":spring-core"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "5ef9972528716afdec0450a0e1befa1250fe88d8",
+      "changedPaths": [
+        "spring-web/src/main/java/org/springframework/http/converter/DefaultHttpMessageConverters.java",
+        "spring-web/src/main/java/org/springframework/http/converter/HttpMessageConverters.java",
+        "spring-web/src/test/java/org/springframework/http/converter/DefaultHttpMessageConvertersTests.java"
+      ],
+      "owners": [
+        ":spring-web"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "a9b1d6335ef568f7587f0d3a6479a3db3fdd15f5",
+      "changedPaths": [
+        "spring-core/src/main/java/org/springframework/util/ConcurrentReferenceHashMap.java"
+      ],
+      "owners": [
+        ":spring-core"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "98d4046e4b848e288559a7041c393d12fef83ee6",
+      "changedPaths": [
+        "spring-context/src/main/java/org/springframework/context/annotation/Lazy.java",
+        "spring-context/src/main/java/org/springframework/validation/annotation/Validated.java"
+      ],
+      "owners": [
+        ":spring-context"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "282fee5c95dc26522e1073308c8cf38c7ab30607",
+      "changedPaths": [
+        "spring-context/src/main/java/org/springframework/context/annotation/ContextAnnotationAutowireCandidateResolver.java",
+        "spring-context/src/test/java/org/springframework/context/annotation/ContextAnnotationAutowireCandidateResolverTests.java"
+      ],
+      "owners": [
+        ":spring-context"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "0d4737aeec48da0f5e870d3b7ce99f3a85be25c0",
+      "changedPaths": [
+        "spring-beans/src/main/java/org/springframework/beans/factory/annotation/QualifierAnnotationAutowireCandidateResolver.java",
+        "spring-beans/src/main/java/org/springframework/beans/factory/support/GenericTypeAwareAutowireCandidateResolver.java"
+      ],
+      "owners": [
+        ":spring-beans"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "1ef8734881468fcdd5e1927a6516455a2fdf5e5d",
+      "changedPaths": [
+        "spring-core/src/main/java/org/springframework/core/annotation/AnnotatedMethod.java"
+      ],
+      "owners": [
+        ":spring-core"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "6dfa54b8ea6058835ebf0e618e6ffcdd8570704d",
+      "changedPaths": [
+        "spring-core/src/main/java/org/springframework/core/MethodParameter.java"
+      ],
+      "owners": [
+        ":spring-core"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "2d3a2c5cbdb305812f27d2553131be00e12c58cd",
+      "changedPaths": [
+        "spring-context/src/main/java/org/springframework/validation/annotation/ValidationAnnotationUtils.java",
+        "spring-context/src/test/java/org/springframework/validation/annotation/ValidationAnnotationUtilsTests.java"
+      ],
+      "owners": [
+        ":spring-context"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "62e590a437f150da130eb6ce0b3cd1ff6c4bb89a",
+      "changedPaths": [
+        "spring-webmvc/src/main/java/org/springframework/web/servlet/mvc/method/annotation/HttpEntityMethodProcessor.java",
+        "spring-webmvc/src/test/java/org/springframework/web/servlet/mvc/method/annotation/HttpEntityMethodProcessorTests.java"
+      ],
+      "owners": [
+        ":spring-webmvc"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-test",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "7f29df4d795ed76465f2dcd36ed1879c0887ab0e",
+      "changedPaths": [
+        "spring-messaging/src/main/java/org/springframework/messaging/simp/stomp/StompBrokerRelayMessageHandler.java",
+        "spring-messaging/src/test/java/org/springframework/messaging/simp/stomp/AbstractStompBrokerRelayIntegrationTests.java",
+        "spring-messaging/src/test/java/org/springframework/messaging/simp/stomp/ReactorNettyStompBrokerRelayIntegrationTests.java"
+      ],
+      "owners": [
+        ":spring-messaging"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "8fb119df1ecc97d4391276b02189fc32c3e7bf46",
+      "changedPaths": [
+        "spring-web/src/main/java/org/springframework/web/method/HandlerMethod.java",
+        "spring-web/src/main/java/org/springframework/web/method/support/InvocableHandlerMethod.java"
+      ],
+      "owners": [
+        ":spring-web"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "1bb0fdda6bc74a318d01cbeb9d612b4486460803",
+      "changedPaths": [
+        "spring-context/src/main/java/org/springframework/validation/annotation/ValidationAnnotationUtils.java",
+        "spring-context/src/main/java/org/springframework/validation/beanvalidation/MethodValidationAdapter.java",
+        "spring-context/src/main/java/org/springframework/validation/beanvalidation/MethodValidationInterceptor.java",
+        "spring-context/src/main/java/org/springframework/validation/method/MethodValidator.java",
+        "spring-web/src/main/java/org/springframework/web/method/annotation/HandlerMethodValidator.java",
+        "spring-web/src/main/java/org/springframework/web/method/support/InvocableHandlerMethod.java",
+        "spring-webflux/src/main/java/org/springframework/web/reactive/result/method/InvocableHandlerMethod.java"
+      ],
+      "owners": [
+        ":spring-context",
+        ":spring-web",
+        ":spring-webflux"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "6507367d10ce03d569227df9141c161365800e31",
+      "changedPaths": [
+        "spring-messaging/src/main/java/org/springframework/messaging/simp/annotation/support/SendToMethodReturnValueHandler.java",
+        "spring-messaging/src/main/java/org/springframework/messaging/simp/annotation/support/SimpAnnotationMethodMessageHandler.java",
+        "spring-messaging/src/main/java/org/springframework/messaging/simp/annotation/support/SubscriptionMethodReturnValueHandler.java",
+        "spring-messaging/src/test/java/org/springframework/messaging/simp/annotation/support/SendToMethodReturnValueHandlerTests.java",
+        "spring-messaging/src/test/java/org/springframework/messaging/simp/annotation/support/SubscriptionMethodReturnValueHandlerTests.java"
+      ],
+      "owners": [
+        ":spring-messaging"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "fee7e6b7e2f025c6b64ef8820d2704f561096ee8",
+      "changedPaths": [
+        "spring-messaging/src/main/java/org/springframework/messaging/simp/annotation/support/SendToMethodReturnValueHandler.java",
+        "spring-messaging/src/main/java/org/springframework/messaging/simp/annotation/support/SubscriptionMethodReturnValueHandler.java",
+        "spring-messaging/src/test/java/org/springframework/messaging/simp/annotation/support/SendToMethodReturnValueHandlerTests.java",
+        "spring-messaging/src/test/java/org/springframework/messaging/simp/annotation/support/SubscriptionMethodReturnValueHandlerTests.java"
+      ],
+      "owners": [
+        ":spring-messaging"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "35c4973504a0511d49f0737114addc67690cffb4",
+      "changedPaths": [
+        "framework-platform/framework-platform.gradle"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "77b54c7409454a7b19ac114a92f96845cda6accc",
+      "changedPaths": [
+        "spring-messaging/src/test/java/org/springframework/messaging/simp/stomp/AbstractStompBrokerRelayIntegrationTests.java"
+      ],
+      "owners": [
+        ":spring-messaging"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "ff9ba15762e2d6ca1b7b2a1292c3048f414899da",
+      "changedPaths": [
+        "spring-messaging/src/test/java/org/springframework/messaging/simp/stomp/AbstractStompBrokerRelayIntegrationTests.java"
+      ],
+      "owners": [
+        ":spring-messaging"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "c33b82f2a11167cba2c6c5be6b2430b601cffd07",
+      "changedPaths": [
+        "spring-webmvc/src/main/java/org/springframework/web/servlet/HandlerExecutionChain.java"
+      ],
+      "owners": [
+        ":spring-webmvc"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-test",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "ec459aefbff7498bb0b18b2ce9c05be22513172e",
+      "changedPaths": [
+        "framework-platform/framework-platform.gradle"
+      ],
+      "decision": "REJECT",
+      "reason": "UNSAFE_STRUCTURAL_CHANGE"
+    },
+    {
+      "commit": "b2277014735d4b7879689a702eaaaf8962d1b006",
+      "changedPaths": [
+        "spring-webmvc/src/main/java/org/springframework/web/servlet/mvc/method/RequestMappingInfo.java"
+      ],
+      "owners": [
+        ":spring-webmvc"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-test",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "7a85ce959bf35ddb268658bedc0edde0efa41491",
+      "changedPaths": [
+        "framework-docs/modules/ROOT/pages/web/webmvc-functional.adoc"
+      ],
+      "owners": [
+        ":framework-docs"
+      ],
+      "affectedProjects": [
+        ":framework-docs"
+      ],
+      "family": "LEAF_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "e93e55b456bbe320d2330fa37a975fe25feada1a",
+      "changedPaths": [
+        "spring-messaging/src/main/java/org/springframework/messaging/converter/AbstractMessageConverter.java",
+        "spring-messaging/src/test/java/org/springframework/messaging/converter/JacksonJsonMessageConverterTests.java",
+        "spring-messaging/src/test/java/org/springframework/messaging/converter/MappingJackson2MessageConverterTests.java"
+      ],
+      "owners": [
+        ":spring-messaging"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "e22b1648bffa7b55350b4fed55dbb79bf3bd29d6",
+      "changedPaths": [
+        "spring-web/src/main/java/org/springframework/web/method/HandlerMethod.java"
+      ],
+      "owners": [
+        ":spring-web"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "78967d4bd6f627f676cbc3ea1626b6a92fb4a497",
+      "changedPaths": [
+        "spring-webflux/src/main/java/org/springframework/web/reactive/result/condition/VersionRequestCondition.java",
+        "spring-webmvc/src/main/java/org/springframework/web/servlet/mvc/condition/VersionRequestCondition.java"
+      ],
+      "owners": [
+        ":spring-webflux",
+        ":spring-webmvc"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-test",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "1d2351c87b4f278d1de4980e3c2bcbc754146283",
+      "changedPaths": [
+        "spring-webflux/src/main/java/org/springframework/web/reactive/result/condition/PatternsRequestCondition.java",
+        "spring-webmvc/src/main/java/org/springframework/web/servlet/mvc/condition/PathPatternsRequestCondition.java"
+      ],
+      "owners": [
+        ":spring-webflux",
+        ":spring-webmvc"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-test",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "02dc4b6342441b31cd7c7a1f4ded64ea832362f0",
+      "changedPaths": [
+        "spring-web/src/main/java/org/springframework/web/method/support/InvocableHandlerMethod.java"
+      ],
+      "owners": [
+        ":spring-web"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "143828e27cf6add81f164910fa5a49a223280543",
+      "changedPaths": [
+        ".github/actions/create-github-release/changelog-generator.yml"
+      ],
+      "decision": "REJECT",
+      "reason": "INCOMPLETE_AMBIGUOUS"
+    },
+    {
+      "commit": "7998bc9de2d2378523ae011f240721dde455b8c5",
+      "changedPaths": [
+        "spring-messaging/src/main/java/org/springframework/messaging/simp/broker/AbstractBrokerMessageHandler.java"
+      ],
+      "owners": [
+        ":spring-messaging"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "8a1a9d2ab2676c7602a0dbf2962062c165e31ed2",
+      "changedPaths": [
+        "spring-jdbc/src/main/java/org/springframework/jdbc/core/JdbcTemplate.java"
+      ],
+      "owners": [
+        ":spring-jdbc"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-context-support",
+        ":spring-jdbc",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "394a97d7e047a4675f76502ca1689e108a42eced",
+      "changedPaths": [
+        "spring-orm/src/main/java/org/springframework/orm/jpa/LocalContainerEntityManagerFactoryBean.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/LocalEntityManagerFactoryBean.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/domain/Car.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/domain/Employee.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/domain/EmployeeCategory.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/domain/EmployeeCategoryConverter.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/domain/EmployeeKind.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/domain/EmployeeKindConverter.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/domain/EmployeeLocation.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/domain/EmployeeLocationConverter.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/eclipselink/EclipseLinkEntityManagerFactoryScanIntegrationTests.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/eclipselink/EclipseLinkEntityManagerFactorySimpleIntegrationTests.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/hibernate/HibernateEntityManagerFactoryScanIntegrationTests.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/hibernate/HibernateEntityManagerFactorySimpleIntegrationTests.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/persistenceunit/PersistenceManagedTypesBeanRegistrationAotProcessorTests.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/persistenceunit/PersistenceManagedTypesScannerTests.java",
+        "spring-orm/src/test/resources/org/springframework/orm/jpa/eclipselink/eclipselink-manager-scan.xml",
+        "spring-orm/src/test/resources/org/springframework/orm/jpa/eclipselink/eclipselink-manager-simple.xml",
+        "spring-orm/src/test/resources/org/springframework/orm/jpa/eclipselink/eclipselink-manager.xml",
+        "spring-orm/src/test/resources/org/springframework/orm/jpa/hibernate/hibernate-manager-scan.xml",
+        "spring-orm/src/test/resources/org/springframework/orm/jpa/hibernate/hibernate-manager-simple.xml"
+      ],
+      "owners": [
+        ":spring-orm"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-orm",
+        ":spring-test"
+      ],
+      "family": "MIXED_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "05ffe8249f366b145fc79c561da7a5fc9c4de912",
+      "changedPaths": [
+        "spring-orm/src/main/java/org/springframework/orm/jpa/persistenceunit/PersistenceManagedTypesScanner.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/persistenceunit/SpringPersistenceUnitInfo.java"
+      ],
+      "owners": [
+        ":spring-orm"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-orm",
+        ":spring-test"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "20970a4a37e962cdec6cfbe58ead8a3ad1c56d54",
+      "changedPaths": [
+        "spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java"
+      ],
+      "owners": [
+        ":spring-context"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "cb4b87cce2c1844554dd50be78157950f9984096",
+      "changedPaths": [
+        "spring-messaging/src/main/java/org/springframework/messaging/simp/annotation/support/SimpAnnotationMethodMessageHandler.java"
+      ],
+      "owners": [
+        ":spring-messaging"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "1d470fc3755c8534b18d5319c599b1257e576d6c",
+      "changedPaths": [
+        "spring-messaging/src/main/java/org/springframework/messaging/simp/annotation/support/SimpAnnotationMethodMessageHandler.java"
+      ],
+      "owners": [
+        ":spring-messaging"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "7fc619acdc152094271c215be0ee67afca0e0d90",
+      "changedPaths": [
+        "spring-messaging/src/main/java/org/springframework/messaging/simp/annotation/support/SendToMethodReturnValueHandler.java",
+        "spring-messaging/src/main/java/org/springframework/messaging/simp/annotation/support/SubscriptionMethodReturnValueHandler.java",
+        "spring-messaging/src/test/java/org/springframework/messaging/simp/annotation/support/SendToMethodReturnValueHandlerTests.java",
+        "spring-messaging/src/test/java/org/springframework/messaging/simp/annotation/support/SubscriptionMethodReturnValueHandlerTests.java"
+      ],
+      "owners": [
+        ":spring-messaging"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "e5f8c5b7ae6e3d32958eef1c040fec7828b213da",
+      "changedPaths": [
+        "spring-messaging/src/main/java/org/springframework/messaging/simp/annotation/support/SendToMethodReturnValueHandler.java",
+        "spring-messaging/src/main/java/org/springframework/messaging/simp/annotation/support/SubscriptionMethodReturnValueHandler.java",
+        "spring-messaging/src/test/java/org/springframework/messaging/simp/annotation/support/SendToMethodReturnValueHandlerTests.java",
+        "spring-messaging/src/test/java/org/springframework/messaging/simp/annotation/support/SubscriptionMethodReturnValueHandlerTests.java"
+      ],
+      "owners": [
+        ":spring-messaging"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "3666ad9d7fb0e905322b81debda7b2e2e822a4e0",
+      "changedPaths": [
+        "spring-orm/src/main/java/org/springframework/orm/jpa/DefaultJpaDialect.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/EntityManagerFactoryUtils.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/vendor/HibernateJpaDialect.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/vendor/HibernateJpaVendorAdapter.java"
+      ],
+      "owners": [
+        ":spring-orm"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-orm",
+        ":spring-test"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "652d509cfc7a55c47204ba2e45caac417fb790e6",
+      "changedPaths": [
+        "spring-orm/src/main/java/org/springframework/orm/jpa/JpaVendorAdapter.java"
+      ],
+      "owners": [
+        ":spring-orm"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-orm",
+        ":spring-test"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "153c378bb2414f34e0ce068ee0d18f5de33829ef",
+      "changedPaths": [
+        "spring-orm/src/test/java/org/springframework/orm/jpa/AbstractContainerEntityManagerFactoryIntegrationTests.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/EntityManagerFactoryUtilsTests.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/eclipselink/EclipseLinkEntityManagerFactoryIntegrationTests.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/hibernate/HibernateMultiEntityManagerFactoryIntegrationTests.java"
+      ],
+      "owners": [
+        ":spring-orm"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-orm",
+        ":spring-test"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "cdbaa7f3a7b236d0df567b618564d1d00aa74769",
+      "changedPaths": [
+        "spring-orm/src/main/java/org/springframework/orm/jpa/AbstractEntityManagerFactoryBean.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/EntityManagerFactoryUtils.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/EntityManagerHolder.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/JpaVendorAdapter.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/SharedEntityManagerCreator.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/hibernate/SessionHolder.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/vendor/HibernateJpaVendorAdapter.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/SharedEntityManagerCreatorTests.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/support/PersistenceContextTransactionTests.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/support/SharedEntityManagerFactoryTests.java"
+      ],
+      "owners": [
+        ":spring-orm"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-orm",
+        ":spring-test"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "d1b0bdb3d558410a735f43741f36febd4d7f9f01",
+      "changedPaths": [
+        "spring-webmvc/src/main/java/org/springframework/web/servlet/FrameworkServlet.java"
+      ],
+      "owners": [
+        ":spring-webmvc"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-test",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "59a9d0fcb9be6c3d4843bf512802b1fd4a3635b5",
+      "changedPaths": [
+        "spring-core/src/main/java/org/springframework/aot/nativex/substitution/Target_ClassFinder.java",
+        "spring-core/src/main/java/org/springframework/aot/nativex/substitution/Target_Introspector.java",
+        "spring-core/src/main/java/org/springframework/aot/nativex/substitution/package-info.java"
+      ],
+      "owners": [
+        ":spring-core"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "db9045ae28c10df32a8ebb84b4e0b42ba25456e7",
+      "changedPaths": [
+        "spring-core/src/main/java/org/springframework/core/codec/CharBufferDecoder.java"
+      ],
+      "owners": [
+        ":spring-core"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "7c2159fbe95658ecc02c664ab5565b0ada84d5b5",
+      "changedPaths": [
+        "spring-web/src/main/java/org/springframework/web/service/invoker/HttpServiceProxyFactory.java",
+        "spring-web/src/test/java/org/springframework/web/service/invoker/HttpServiceProxyFactoryTests.java"
+      ],
+      "owners": [
+        ":spring-web"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "f2d3da3f328cc52fff2b906d98a8ccdeddbb7d56",
+      "changedPaths": [
+        "spring-web/src/main/java/org/springframework/web/service/invoker/HttpServiceProxyFactory.java",
+        "spring-web/src/test/java/org/springframework/web/service/invoker/HttpServiceProxyFactoryTests.java"
+      ],
+      "owners": [
+        ":spring-web"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-orm",
+        ":spring-test",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "f1c86b1bbc9d3b15f3edac3c3fbcd5de0836cbe0",
+      "changedPaths": [
+        "framework-docs/modules/ROOT/pages/web/webmvc/message-converters.adoc"
+      ],
+      "owners": [
+        ":framework-docs"
+      ],
+      "affectedProjects": [
+        ":framework-docs"
+      ],
+      "family": "LEAF_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "7fde8a6fa3f2a700d1a5da03334df84722495519",
+      "changedPaths": [
+        "framework-docs/modules/ROOT/pages/core/appendix/application-startup-steps.adoc"
+      ],
+      "owners": [
+        ":framework-docs"
+      ],
+      "affectedProjects": [
+        ":framework-docs"
+      ],
+      "family": "LEAF_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "033c309d392df8d86df62a2763fb530d2541a857",
+      "changedPaths": [
+        "framework-docs/modules/ROOT/pages/web/websocket/stomp/overview.adoc"
+      ],
+      "owners": [
+        ":framework-docs"
+      ],
+      "affectedProjects": [
+        ":framework-docs"
+      ],
+      "family": "LEAF_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "ac243fae652d59f9bce957b739738388297e7b46",
+      "changedPaths": [
+        "spring-orm/src/main/java/org/springframework/orm/jpa/LocalContainerEntityManagerFactoryBean.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/persistenceunit/DefaultPersistenceUnitManager.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/persistenceunit/MutablePersistenceUnitInfo.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/persistenceunit/PersistenceUnitReader.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/persistenceunit/SpringPersistenceUnitInfo.java",
+        "spring-orm/src/main/java/org/springframework/orm/jpa/vendor/SpringHibernateJpaPersistenceProvider.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/LocalContainerEntityManagerFactoryBeanTests.java",
+        "spring-orm/src/test/java/org/springframework/orm/jpa/LocalEntityManagerFactoryBeanTests.java"
+      ],
+      "owners": [
+        ":spring-orm"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-orm",
+        ":spring-test"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "ad19c1ac8229f48843a32f31905037f3a76612ec",
+      "changedPaths": [
+        "spring-core/src/main/java/org/springframework/core/retry/RetryListener.java",
+        "spring-core/src/main/java/org/springframework/core/retry/RetryTemplate.java",
+        "spring-core/src/main/java/org/springframework/core/retry/support/CompositeRetryListener.java",
+        "spring-core/src/test/java/org/springframework/core/retry/RetryTemplateTests.java",
+        "spring-core/src/test/java/org/springframework/core/retry/support/CompositeRetryListenerTests.java"
+      ],
+      "owners": [
+        ":spring-core"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aop",
+        ":spring-aspects",
+        ":spring-beans",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-core",
+        ":spring-core-test",
+        ":spring-expression",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    },
+    {
+      "commit": "29d125e659e687661e4022e626eb392520d38adb",
+      "changedPaths": [
+        "spring-context/src/main/java/org/springframework/context/annotation/ConfigurationClassPostProcessor.java",
+        "spring-context/src/test/java/org/springframework/context/annotation/ConfigurationClassPostProcessorAotContributionTests.java"
+      ],
+      "owners": [
+        ":spring-context"
+      ],
+      "affectedProjects": [
+        ":framework-api",
+        ":framework-docs",
+        ":integration-tests",
+        ":spring-aspects",
+        ":spring-context",
+        ":spring-context-indexer",
+        ":spring-context-support",
+        ":spring-jdbc",
+        ":spring-jms",
+        ":spring-messaging",
+        ":spring-orm",
+        ":spring-oxm",
+        ":spring-r2dbc",
+        ":spring-test",
+        ":spring-tx",
+        ":spring-web",
+        ":spring-webflux",
+        ":spring-webmvc",
+        ":spring-websocket"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "decision": "CLASSIFIED",
+      "reason": "EXACT_GRAPH_OWNER_AND_FAMILY"
+    }
+  ]
+}

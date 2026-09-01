@@ -5645,6 +5645,8 @@ one-request capture entrypoint; rerunning it is not part of result validation.
 all-owner source audits over the product's exact 64-commit history horizon.
 `./dev/run-product-window-graph-recurrence` generates those rows without
 Gradle, candidate execution, timing or predecessor-summary inputs.
+`./dev/check-product-window-graph-recurrence` independently reconstructs all
+192 rows, six eligible groups and the selected 11-match Spring Messaging group.
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher

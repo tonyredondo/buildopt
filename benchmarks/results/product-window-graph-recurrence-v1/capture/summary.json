@@ -1,0 +1,1186 @@
+{
+  "schemaVersion": "buildopt.history-admission/product-window-graph-recurrence/v1",
+  "decision": "AUTHORIZE_FRESH_GRAPH_CONFIRMATION_CONTRACT",
+  "thresholds": {
+    "historyRowsPerFamily": 64,
+    "minimumGroupCommits": 5,
+    "minimumOmittedProjects": 1
+  },
+  "rows": [
+    {
+      "label": "spring-framework",
+      "rawSha256": "b1e60c4d407049fe0f60fe885b53ead6cba79f27be4540d436e768dd273537dc",
+      "historyRows": 64,
+      "classifiedRows": 59,
+      "reasonCounts": {
+        "EXACT_GRAPH_OWNER_AND_FAMILY": 59,
+        "INCOMPLETE_AMBIGUOUS": 1,
+        "UNSAFE_STRUCTURAL_CHANGE": 4
+      },
+      "groups": [
+        {
+          "owners": [
+            ":framework-docs",
+            ":spring-beans",
+            ":spring-context",
+            ":spring-core",
+            ":spring-test",
+            ":spring-tx",
+            ":spring-web"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 24,
+          "totalProjects": 27,
+          "omittedProjects": 3,
+          "commitCount": 1,
+          "commits": [
+            "d84c4a39e24c6bf3ce71577350593db8629d7789"
+          ],
+          "structuralId": ":framework-docs\u0000:spring-beans\u0000:spring-context\u0000:spring-core\u0000:spring-test\u0000:spring-tx\u0000:spring-web\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":framework-docs",
+            ":spring-context",
+            ":spring-core"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 24,
+          "totalProjects": 27,
+          "omittedProjects": 3,
+          "commitCount": 1,
+          "commits": [
+            "cb8ed43be1ba9ab11f17c7a2f74a79f15bd3fb14"
+          ],
+          "structuralId": ":framework-docs\u0000:spring-context\u0000:spring-core\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":framework-docs"
+          ],
+          "family": "LEAF_SOURCE",
+          "affectedProjects": 1,
+          "totalProjects": 27,
+          "omittedProjects": 26,
+          "commitCount": 4,
+          "commits": [
+            "7a85ce959bf35ddb268658bedc0edde0efa41491",
+            "f1c86b1bbc9d3b15f3edac3c3fbcd5de0836cbe0",
+            "7fde8a6fa3f2a700d1a5da03334df84722495519",
+            "033c309d392df8d86df62a2763fb530d2541a857"
+          ],
+          "structuralId": ":framework-docs\u0001LEAF_SOURCE"
+        },
+        {
+          "owners": [
+            ":spring-beans"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 21,
+          "totalProjects": 27,
+          "omittedProjects": 6,
+          "commitCount": 3,
+          "commits": [
+            "14b6339351e8e197083d76089a1f01333c02b5eb",
+            "4abbddf6010fb1aab8dd943d3948ba598c8260d0",
+            "0d4737aeec48da0f5e870d3b7ce99f3a85be25c0"
+          ],
+          "structuralId": ":spring-beans\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":spring-context",
+            ":spring-web",
+            ":spring-webflux"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 19,
+          "totalProjects": 27,
+          "omittedProjects": 8,
+          "commitCount": 1,
+          "commits": [
+            "1bb0fdda6bc74a318d01cbeb9d612b4486460803"
+          ],
+          "structuralId": ":spring-context\u0000:spring-web\u0000:spring-webflux\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":spring-context"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 19,
+          "totalProjects": 27,
+          "omittedProjects": 8,
+          "commitCount": 5,
+          "commits": [
+            "98d4046e4b848e288559a7041c393d12fef83ee6",
+            "282fee5c95dc26522e1073308c8cf38c7ab30607",
+            "2d3a2c5cbdb305812f27d2553131be00e12c58cd",
+            "20970a4a37e962cdec6cfbe58ead8a3ad1c56d54",
+            "29d125e659e687661e4022e626eb392520d38adb"
+          ],
+          "structuralId": ":spring-context\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":spring-core"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 24,
+          "totalProjects": 27,
+          "omittedProjects": 3,
+          "commitCount": 8,
+          "commits": [
+            "6f03c186b996e446278e1fd06d7a2244aab377a5",
+            "4a13655aa517542cc71b163fd91f016a8b6fb50d",
+            "a9b1d6335ef568f7587f0d3a6479a3db3fdd15f5",
+            "1ef8734881468fcdd5e1927a6516455a2fdf5e5d",
+            "6dfa54b8ea6058835ebf0e618e6ffcdd8570704d",
+            "59a9d0fcb9be6c3d4843bf512802b1fd4a3635b5",
+            "db9045ae28c10df32a8ebb84b4e0b42ba25456e7",
+            "ad19c1ac8229f48843a32f31905037f3a76612ec"
+          ],
+          "structuralId": ":spring-core\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":spring-jdbc"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 11,
+          "totalProjects": 27,
+          "omittedProjects": 16,
+          "commitCount": 1,
+          "commits": [
+            "8a1a9d2ab2676c7602a0dbf2962062c165e31ed2"
+          ],
+          "structuralId": ":spring-jdbc\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":spring-jms"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 3,
+          "totalProjects": 27,
+          "omittedProjects": 24,
+          "commitCount": 1,
+          "commits": [
+            "75705bcbb1da866d3ed44bf7526437a7fdf1136b"
+          ],
+          "structuralId": ":spring-jms\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":spring-messaging",
+            ":spring-webmvc",
+            ":spring-websocket"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 12,
+          "totalProjects": 27,
+          "omittedProjects": 15,
+          "commitCount": 1,
+          "commits": [
+            "926bcbd9a6c7c4803e349b7b4ef6227a52bc833c"
+          ],
+          "structuralId": ":spring-messaging\u0000:spring-webmvc\u0000:spring-websocket\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":spring-messaging"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 12,
+          "totalProjects": 27,
+          "omittedProjects": 15,
+          "commitCount": 11,
+          "commits": [
+            "7f29df4d795ed76465f2dcd36ed1879c0887ab0e",
+            "6507367d10ce03d569227df9141c161365800e31",
+            "fee7e6b7e2f025c6b64ef8820d2704f561096ee8",
+            "77b54c7409454a7b19ac114a92f96845cda6accc",
+            "ff9ba15762e2d6ca1b7b2a1292c3048f414899da",
+            "e93e55b456bbe320d2330fa37a975fe25feada1a",
+            "7998bc9de2d2378523ae011f240721dde455b8c5",
+            "cb4b87cce2c1844554dd50be78157950f9984096",
+            "1d470fc3755c8534b18d5319c599b1257e576d6c",
+            "7fc619acdc152094271c215be0ee67afca0e0d90",
+            "e5f8c5b7ae6e3d32958eef1c040fec7828b213da"
+          ],
+          "structuralId": ":spring-messaging\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":spring-orm"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 6,
+          "totalProjects": 27,
+          "omittedProjects": 21,
+          "commitCount": 6,
+          "commits": [
+            "05ffe8249f366b145fc79c561da7a5fc9c4de912",
+            "3666ad9d7fb0e905322b81debda7b2e2e822a4e0",
+            "652d509cfc7a55c47204ba2e45caac417fb790e6",
+            "153c378bb2414f34e0ce068ee0d18f5de33829ef",
+            "cdbaa7f3a7b236d0df567b618564d1d00aa74769",
+            "ac243fae652d59f9bce957b739738388297e7b46"
+          ],
+          "structuralId": ":spring-orm\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":spring-orm"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 6,
+          "totalProjects": 27,
+          "omittedProjects": 21,
+          "commitCount": 1,
+          "commits": [
+            "394a97d7e047a4675f76502ca1689e108a42eced"
+          ],
+          "structuralId": ":spring-orm\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":spring-web"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 10,
+          "totalProjects": 27,
+          "omittedProjects": 17,
+          "commitCount": 7,
+          "commits": [
+            "47a2e7059eb61a3c7ae776b3e64bda052a06aee6",
+            "5ef9972528716afdec0450a0e1befa1250fe88d8",
+            "8fb119df1ecc97d4391276b02189fc32c3e7bf46",
+            "e22b1648bffa7b55350b4fed55dbb79bf3bd29d6",
+            "02dc4b6342441b31cd7c7a1f4ded64ea832362f0",
+            "7c2159fbe95658ecc02c664ab5565b0ada84d5b5",
+            "f2d3da3f328cc52fff2b906d98a8ccdeddbb7d56"
+          ],
+          "structuralId": ":spring-web\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":spring-webflux",
+            ":spring-webmvc"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 8,
+          "totalProjects": 27,
+          "omittedProjects": 19,
+          "commitCount": 2,
+          "commits": [
+            "78967d4bd6f627f676cbc3ea1626b6a92fb4a497",
+            "1d2351c87b4f278d1de4980e3c2bcbc754146283"
+          ],
+          "structuralId": ":spring-webflux\u0000:spring-webmvc\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":spring-webflux"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 6,
+          "totalProjects": 27,
+          "omittedProjects": 21,
+          "commitCount": 1,
+          "commits": [
+            "bc2e89a7861b785137b2ac2614f1260288bae9db"
+          ],
+          "structuralId": ":spring-webflux\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":spring-webmvc"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 7,
+          "totalProjects": 27,
+          "omittedProjects": 20,
+          "commitCount": 5,
+          "commits": [
+            "17033880748a04b0d777b5f34ab12d8d5f087e32",
+            "62e590a437f150da130eb6ce0b3cd1ff6c4bb89a",
+            "c33b82f2a11167cba2c6c5be6b2430b601cffd07",
+            "b2277014735d4b7879689a702eaaaf8962d1b006",
+            "d1b0bdb3d558410a735f43741f36febd4d7f9f01"
+          ],
+          "structuralId": ":spring-webmvc\u0001DEPENDENCY_SOURCE"
+        }
+      ]
+    },
+    {
+      "label": "opentelemetry-java-instrumentation",
+      "rawSha256": "518279a69a076877a489d225f75d759c8297514bea7f755aca400a55c5584f48",
+      "historyRows": 64,
+      "classifiedRows": 21,
+      "reasonCounts": {
+        "EXACT_GRAPH_OWNER_AND_FAMILY": 21,
+        "INCOMPLETE_AMBIGUOUS": 24,
+        "UNSAFE_STRUCTURAL_CHANGE": 19
+      },
+      "groups": [
+        {
+          "owners": [
+            ":custom-checks"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 610,
+          "totalProjects": 1024,
+          "omittedProjects": 414,
+          "commitCount": 1,
+          "commits": [
+            "79d8c75670fa0c2448832e20d3b674bb2f01299b"
+          ],
+          "structuralId": ":custom-checks\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":declarative-config-bridge",
+            ":instrumentation-docs"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 66,
+          "totalProjects": 1024,
+          "omittedProjects": 958,
+          "commitCount": 1,
+          "commits": [
+            "d154f0e658ffaf3f68499fa3eaa0e29c6c4f3a25"
+          ],
+          "structuralId": ":declarative-config-bridge\u0000:instrumentation-docs\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation-annotations-support",
+            ":instrumentation-docs",
+            ":instrumentation:jmx-metrics:library",
+            ":instrumentation:kubernetes-client-7.0:javaagent-unit-tests",
+            ":instrumentation:resources:library",
+            ":instrumentation:servlet:servlet-3.0:javaagent-unit-tests"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 259,
+          "totalProjects": 1024,
+          "omittedProjects": 765,
+          "commitCount": 1,
+          "commits": [
+            "18f13c26d593b5bda8779074c317ccfb3b924ad6"
+          ],
+          "structuralId": ":instrumentation-annotations-support\u0000:instrumentation-docs\u0000:instrumentation:jmx-metrics:library\u0000:instrumentation:kubernetes-client-7.0:javaagent-unit-tests\u0000:instrumentation:resources:library\u0000:instrumentation:servlet:servlet-3.0:javaagent-unit-tests\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation-api",
+            ":instrumentation-api-incubator",
+            ":instrumentation:graphql-java:graphql-java-12.0:javaagent",
+            ":instrumentation:graphql-java:graphql-java-20.0:javaagent",
+            ":instrumentation:log4j:log4j-context-data:log4j-context-data-2.17:library-autoconfigure"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 294,
+          "totalProjects": 1024,
+          "omittedProjects": 730,
+          "commitCount": 1,
+          "commits": [
+            "0b9e77c48bf44728080fadb2233440a677e76c67"
+          ],
+          "structuralId": ":instrumentation-api\u0000:instrumentation-api-incubator\u0000:instrumentation:graphql-java:graphql-java-12.0:javaagent\u0000:instrumentation:graphql-java:graphql-java-20.0:javaagent\u0000:instrumentation:log4j:log4j-context-data:log4j-context-data-2.17:library-autoconfigure\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation-api",
+            ":instrumentation:aws-sdk:aws-sdk-1.11:library-autoconfigure",
+            ":instrumentation:aws-sdk:aws-sdk-2.2:library",
+            ":instrumentation:aws-sdk:aws-sdk-2.2:library-autoconfigure",
+            ":instrumentation:jdbc:library",
+            ":instrumentation:log4j:log4j-context-data:log4j-context-data-2.17:library-autoconfigure"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 271,
+          "totalProjects": 1024,
+          "omittedProjects": 753,
+          "commitCount": 1,
+          "commits": [
+            "7246d76da83a1b9dde6708acd43cb9b3e469cb9a"
+          ],
+          "structuralId": ":instrumentation-api\u0000:instrumentation:aws-sdk:aws-sdk-1.11:library-autoconfigure\u0000:instrumentation:aws-sdk:aws-sdk-2.2:library\u0000:instrumentation:aws-sdk:aws-sdk-2.2:library-autoconfigure\u0000:instrumentation:jdbc:library\u0000:instrumentation:log4j:log4j-context-data:log4j-context-data-2.17:library-autoconfigure\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation-api-incubator",
+            ":instrumentation:cassandra:cassandra-3.0:javaagent",
+            ":instrumentation:cassandra:cassandra-common-4.0:testing",
+            ":instrumentation:jdbc:testing",
+            ":instrumentation:r2dbc-1.0:testing"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 246,
+          "totalProjects": 1024,
+          "omittedProjects": 778,
+          "commitCount": 1,
+          "commits": [
+            "9d5678dafd335cfd614002811a728c0c1a6db4c6"
+          ],
+          "structuralId": ":instrumentation-api-incubator\u0000:instrumentation:cassandra:cassandra-3.0:javaagent\u0000:instrumentation:cassandra:cassandra-common-4.0:testing\u0000:instrumentation:jdbc:testing\u0000:instrumentation:r2dbc-1.0:testing\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation-api"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 270,
+          "totalProjects": 1024,
+          "omittedProjects": 754,
+          "commitCount": 1,
+          "commits": [
+            "b4dabac715c2bc3b3b2a8276b34f19947235271c"
+          ],
+          "structuralId": ":instrumentation-api\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation-docs",
+            ":instrumentation:activej-http-6.0",
+            ":instrumentation:akka:akka-http-10.0",
+            ":instrumentation:apache-dubbo-2.7",
+            ":instrumentation:apache-httpasyncclient-4.1",
+            ":instrumentation:apache-httpclient:apache-httpclient-2.0",
+            ":instrumentation:apache-httpclient:apache-httpclient-4.0",
+            ":instrumentation:apache-httpclient:apache-httpclient-5.0",
+            ":instrumentation:armeria:armeria-1.3",
+            ":instrumentation:async-http-client:async-http-client-1.8",
+            ":instrumentation:async-http-client:async-http-client-1.9",
+            ":instrumentation:async-http-client:async-http-client-2.0",
+            ":instrumentation:aws-lambda:aws-lambda-events-2.2",
+            ":instrumentation:aws-sdk:aws-sdk-1.11",
+            ":instrumentation:aws-sdk:aws-sdk-2.2",
+            ":instrumentation:cassandra:cassandra-3.0",
+            ":instrumentation:cassandra:cassandra-4.0",
+            ":instrumentation:cassandra:cassandra-4.4",
+            ":instrumentation:clickhouse:clickhouse-client-v1-0.5",
+            ":instrumentation:clickhouse:clickhouse-client-v2-0.8",
+            ":instrumentation:couchbase:couchbase-2.0",
+            ":instrumentation:couchbase:couchbase-2.6",
+            ":instrumentation:elasticsearch:elasticsearch-rest-5.0",
+            ":instrumentation:elasticsearch:elasticsearch-rest-6.4",
+            ":instrumentation:elasticsearch:elasticsearch-rest-7.0",
+            ":instrumentation:finatra-2.9",
+            ":instrumentation:geode-1.4",
+            ":instrumentation:google-http-client-1.19",
+            ":instrumentation:grails-3.0",
+            ":instrumentation:grizzly-2.3",
+            ":instrumentation:helidon-4.3",
+            ":instrumentation:http-url-connection",
+            ":instrumentation:influxdb-2.4",
+            ":instrumentation:java-http-client",
+            ":instrumentation:java-http-server",
+            ":instrumentation:jaxrs:jaxrs-1.0",
+            ":instrumentation:jaxrs:jaxrs-2.0:jaxrs-2.0-annotations",
+            ":instrumentation:jaxrs:jaxrs-2.0:jaxrs-2.0-cxf-3.2",
+            ":instrumentation:jaxrs:jaxrs-2.0:jaxrs-2.0-jersey-2.0",
+            ":instrumentation:jaxrs:jaxrs-2.0:jaxrs-2.0-resteasy-3.0",
+            ":instrumentation:jaxrs:jaxrs-2.0:jaxrs-2.0-resteasy-3.1",
+            ":instrumentation:jaxrs:jaxrs-3.0:jaxrs-3.0-annotations",
+            ":instrumentation:jaxrs:jaxrs-3.0:jaxrs-3.0-jersey-3.0",
+            ":instrumentation:jaxrs:jaxrs-3.0:jaxrs-3.0-resteasy-6.0",
+            ":instrumentation:jaxws:jaxws-2.0",
+            ":instrumentation:jaxws:jaxws-2.0-axis2-1.6",
+            ":instrumentation:jaxws:jaxws-2.0-cxf-3.0",
+            ":instrumentation:jaxws:jaxws-2.0-metro-2.2",
+            ":instrumentation:jaxws:jaxws-jws-api-1.1",
+            ":instrumentation:jdbc",
+            ":instrumentation:jedis:jedis-1.4",
+            ":instrumentation:jedis:jedis-2.0",
+            ":instrumentation:jedis:jedis-3.0",
+            ":instrumentation:jedis:jedis-4.0",
+            ":instrumentation:jetty-httpclient:jetty-httpclient-12.0",
+            ":instrumentation:jetty-httpclient:jetty-httpclient-9.2",
+            ":instrumentation:jetty:jetty-11.0",
+            ":instrumentation:jetty:jetty-12.0",
+            ":instrumentation:jetty:jetty-8.0",
+            ":instrumentation:jfinal-3.2",
+            ":instrumentation:jms:jms-1.1",
+            ":instrumentation:jms:jms-3.0",
+            ":instrumentation:jodd-http-4.2",
+            ":instrumentation:jsf:jsf-mojarra-1.2",
+            ":instrumentation:jsf:jsf-mojarra-3.0",
+            ":instrumentation:jsf:jsf-myfaces-1.2",
+            ":instrumentation:jsf:jsf-myfaces-3.0",
+            ":instrumentation:kafka:kafka-clients:kafka-clients-0.11",
+            ":instrumentation:kafka:kafka-streams-0.11",
+            ":instrumentation:ktor:ktor-2.0",
+            ":instrumentation:ktor:ktor-3.0",
+            ":instrumentation:kubernetes-client-7.0",
+            ":instrumentation:lettuce:lettuce-4.0",
+            ":instrumentation:lettuce:lettuce-5.0",
+            ":instrumentation:lettuce:lettuce-5.1",
+            ":instrumentation:liberty:liberty-20.0",
+            ":instrumentation:liberty:liberty-dispatcher-20.0",
+            ":instrumentation:mongo:mongo-3.1",
+            ":instrumentation:mongo:mongo-3.7",
+            ":instrumentation:mongo:mongo-4.0",
+            ":instrumentation:mongo:mongo-async-3.3",
+            ":instrumentation:nats:nats-2.17",
+            ":instrumentation:netty:netty-3.8",
+            ":instrumentation:netty:netty-4.0",
+            ":instrumentation:netty:netty-4.1",
+            ":instrumentation:okhttp:okhttp-2.2",
+            ":instrumentation:okhttp:okhttp-3.0",
+            ":instrumentation:pekko:pekko-http-1.0",
+            ":instrumentation:play:play-mvc:play-mvc-2.4",
+            ":instrumentation:play:play-mvc:play-mvc-2.6",
+            ":instrumentation:play:play-ws:play-ws-1.0",
+            ":instrumentation:play:play-ws:play-ws-2.0",
+            ":instrumentation:play:play-ws:play-ws-2.1",
+            ":instrumentation:pulsar:pulsar-2.8",
+            ":instrumentation:r2dbc-1.0",
+            ":instrumentation:rabbitmq-2.7",
+            ":instrumentation:ratpack:ratpack-1.4",
+            ":instrumentation:ratpack:ratpack-1.7",
+            ":instrumentation:reactor:reactor-kafka-1.0",
+            ":instrumentation:reactor:reactor-netty:reactor-netty-1.0",
+            ":instrumentation:restlet:restlet-1.1",
+            ":instrumentation:restlet:restlet-2.0",
+            ":instrumentation:rocketmq:rocketmq-client-4.8",
+            ":instrumentation:rocketmq:rocketmq-client-5.0",
+            ":instrumentation:sofa-rpc-5.4",
+            ":instrumentation:spring:spring-integration-4.1",
+            ":instrumentation:spring:spring-jms:spring-jms-2.0",
+            ":instrumentation:spring:spring-jms:spring-jms-6.0",
+            ":instrumentation:spring:spring-kafka-2.7",
+            ":instrumentation:spring:spring-pulsar-1.0",
+            ":instrumentation:spring:spring-rabbit-1.0",
+            ":instrumentation:spring:spring-webflux:spring-webflux-5.0",
+            ":instrumentation:spring:spring-webmvc:spring-webmvc-3.1",
+            ":instrumentation:spring:spring-webmvc:spring-webmvc-6.0",
+            ":instrumentation:spring:spring-ws-2.0",
+            ":instrumentation:struts:struts-2.3",
+            ":instrumentation:struts:struts-7.0",
+            ":instrumentation:tapestry-5.4",
+            ":instrumentation:tomcat:tomcat-10.0",
+            ":instrumentation:tomcat:tomcat-7.0",
+            ":instrumentation:undertow-1.4",
+            ":instrumentation:vaadin-14.2",
+            ":instrumentation:vertx:vertx-http-client:vertx-http-client-3.0",
+            ":instrumentation:vertx:vertx-http-client:vertx-http-client-4.0",
+            ":instrumentation:vertx:vertx-http-client:vertx-http-client-5.0",
+            ":instrumentation:vertx:vertx-kafka-client-3.6",
+            ":instrumentation:vertx:vertx-redis-client-4.0",
+            ":instrumentation:vertx:vertx-sql-client:vertx-sql-client-4.0",
+            ":instrumentation:vertx:vertx-sql-client:vertx-sql-client-5.0"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 129,
+          "totalProjects": 1024,
+          "omittedProjects": 895,
+          "commitCount": 1,
+          "commits": [
+            "26f51b365ece5e6d7c3d6ef3478e5693be3b3bbb"
+          ],
+          "structuralId": ":instrumentation-docs\u0000:instrumentation:activej-http-6.0\u0000:instrumentation:akka:akka-http-10.0\u0000:instrumentation:apache-dubbo-2.7\u0000:instrumentation:apache-httpasyncclient-4.1\u0000:instrumentation:apache-httpclient:apache-httpclient-2.0\u0000:instrumentation:apache-httpclient:apache-httpclient-4.0\u0000:instrumentation:apache-httpclient:apache-httpclient-5.0\u0000:instrumentation:armeria:armeria-1.3\u0000:instrumentation:async-http-client:async-http-client-1.8\u0000:instrumentation:async-http-client:async-http-client-1.9\u0000:instrumentation:async-http-client:async-http-client-2.0\u0000:instrumentation:aws-lambda:aws-lambda-events-2.2\u0000:instrumentation:aws-sdk:aws-sdk-1.11\u0000:instrumentation:aws-sdk:aws-sdk-2.2\u0000:instrumentation:cassandra:cassandra-3.0\u0000:instrumentation:cassandra:cassandra-4.0\u0000:instrumentation:cassandra:cassandra-4.4\u0000:instrumentation:clickhouse:clickhouse-client-v1-0.5\u0000:instrumentation:clickhouse:clickhouse-client-v2-0.8\u0000:instrumentation:couchbase:couchbase-2.0\u0000:instrumentation:couchbase:couchbase-2.6\u0000:instrumentation:elasticsearch:elasticsearch-rest-5.0\u0000:instrumentation:elasticsearch:elasticsearch-rest-6.4\u0000:instrumentation:elasticsearch:elasticsearch-rest-7.0\u0000:instrumentation:finatra-2.9\u0000:instrumentation:geode-1.4\u0000:instrumentation:google-http-client-1.19\u0000:instrumentation:grails-3.0\u0000:instrumentation:grizzly-2.3\u0000:instrumentation:helidon-4.3\u0000:instrumentation:http-url-connection\u0000:instrumentation:influxdb-2.4\u0000:instrumentation:java-http-client\u0000:instrumentation:java-http-server\u0000:instrumentation:jaxrs:jaxrs-1.0\u0000:instrumentation:jaxrs:jaxrs-2.0:jaxrs-2.0-annotations\u0000:instrumentation:jaxrs:jaxrs-2.0:jaxrs-2.0-cxf-3.2\u0000:instrumentation:jaxrs:jaxrs-2.0:jaxrs-2.0-jersey-2.0\u0000:instrumentation:jaxrs:jaxrs-2.0:jaxrs-2.0-resteasy-3.0\u0000:instrumentation:jaxrs:jaxrs-2.0:jaxrs-2.0-resteasy-3.1\u0000:instrumentation:jaxrs:jaxrs-3.0:jaxrs-3.0-annotations\u0000:instrumentation:jaxrs:jaxrs-3.0:jaxrs-3.0-jersey-3.0\u0000:instrumentation:jaxrs:jaxrs-3.0:jaxrs-3.0-resteasy-6.0\u0000:instrumentation:jaxws:jaxws-2.0\u0000:instrumentation:jaxws:jaxws-2.0-axis2-1.6\u0000:instrumentation:jaxws:jaxws-2.0-cxf-3.0\u0000:instrumentation:jaxws:jaxws-2.0-metro-2.2\u0000:instrumentation:jaxws:jaxws-jws-api-1.1\u0000:instrumentation:jdbc\u0000:instrumentation:jedis:jedis-1.4\u0000:instrumentation:jedis:jedis-2.0\u0000:instrumentation:jedis:jedis-3.0\u0000:instrumentation:jedis:jedis-4.0\u0000:instrumentation:jetty-httpclient:jetty-httpclient-12.0\u0000:instrumentation:jetty-httpclient:jetty-httpclient-9.2\u0000:instrumentation:jetty:jetty-11.0\u0000:instrumentation:jetty:jetty-12.0\u0000:instrumentation:jetty:jetty-8.0\u0000:instrumentation:jfinal-3.2\u0000:instrumentation:jms:jms-1.1\u0000:instrumentation:jms:jms-3.0\u0000:instrumentation:jodd-http-4.2\u0000:instrumentation:jsf:jsf-mojarra-1.2\u0000:instrumentation:jsf:jsf-mojarra-3.0\u0000:instrumentation:jsf:jsf-myfaces-1.2\u0000:instrumentation:jsf:jsf-myfaces-3.0\u0000:instrumentation:kafka:kafka-clients:kafka-clients-0.11\u0000:instrumentation:kafka:kafka-streams-0.11\u0000:instrumentation:ktor:ktor-2.0\u0000:instrumentation:ktor:ktor-3.0\u0000:instrumentation:kubernetes-client-7.0\u0000:instrumentation:lettuce:lettuce-4.0\u0000:instrumentation:lettuce:lettuce-5.0\u0000:instrumentation:lettuce:lettuce-5.1\u0000:instrumentation:liberty:liberty-20.0\u0000:instrumentation:liberty:liberty-dispatcher-20.0\u0000:instrumentation:mongo:mongo-3.1\u0000:instrumentation:mongo:mongo-3.7\u0000:instrumentation:mongo:mongo-4.0\u0000:instrumentation:mongo:mongo-async-3.3\u0000:instrumentation:nats:nats-2.17\u0000:instrumentation:netty:netty-3.8\u0000:instrumentation:netty:netty-4.0\u0000:instrumentation:netty:netty-4.1\u0000:instrumentation:okhttp:okhttp-2.2\u0000:instrumentation:okhttp:okhttp-3.0\u0000:instrumentation:pekko:pekko-http-1.0\u0000:instrumentation:play:play-mvc:play-mvc-2.4\u0000:instrumentation:play:play-mvc:play-mvc-2.6\u0000:instrumentation:play:play-ws:play-ws-1.0\u0000:instrumentation:play:play-ws:play-ws-2.0\u0000:instrumentation:play:play-ws:play-ws-2.1\u0000:instrumentation:pulsar:pulsar-2.8\u0000:instrumentation:r2dbc-1.0\u0000:instrumentation:rabbitmq-2.7\u0000:instrumentation:ratpack:ratpack-1.4\u0000:instrumentation:ratpack:ratpack-1.7\u0000:instrumentation:reactor:reactor-kafka-1.0\u0000:instrumentation:reactor:reactor-netty:reactor-netty-1.0\u0000:instrumentation:restlet:restlet-1.1\u0000:instrumentation:restlet:restlet-2.0\u0000:instrumentation:rocketmq:rocketmq-client-4.8\u0000:instrumentation:rocketmq:rocketmq-client-5.0\u0000:instrumentation:sofa-rpc-5.4\u0000:instrumentation:spring:spring-integration-4.1\u0000:instrumentation:spring:spring-jms:spring-jms-2.0\u0000:instrumentation:spring:spring-jms:spring-jms-6.0\u0000:instrumentation:spring:spring-kafka-2.7\u0000:instrumentation:spring:spring-pulsar-1.0\u0000:instrumentation:spring:spring-rabbit-1.0\u0000:instrumentation:spring:spring-webflux:spring-webflux-5.0\u0000:instrumentation:spring:spring-webmvc:spring-webmvc-3.1\u0000:instrumentation:spring:spring-webmvc:spring-webmvc-6.0\u0000:instrumentation:spring:spring-ws-2.0\u0000:instrumentation:struts:struts-2.3\u0000:instrumentation:struts:struts-7.0\u0000:instrumentation:tapestry-5.4\u0000:instrumentation:tomcat:tomcat-10.0\u0000:instrumentation:tomcat:tomcat-7.0\u0000:instrumentation:undertow-1.4\u0000:instrumentation:vaadin-14.2\u0000:instrumentation:vertx:vertx-http-client:vertx-http-client-3.0\u0000:instrumentation:vertx:vertx-http-client:vertx-http-client-4.0\u0000:instrumentation:vertx:vertx-http-client:vertx-http-client-5.0\u0000:instrumentation:vertx:vertx-kafka-client-3.6\u0000:instrumentation:vertx:vertx-redis-client-4.0\u0000:instrumentation:vertx:vertx-sql-client:vertx-sql-client-4.0\u0000:instrumentation:vertx:vertx-sql-client:vertx-sql-client-5.0\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation:apache-dubbo-2.7:library-autoconfigure",
+            ":instrumentation:apache-dubbo-2.7:testing"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 3,
+          "totalProjects": 1024,
+          "omittedProjects": 1021,
+          "commitCount": 1,
+          "commits": [
+            "2f06b55b9f1e1054553838970cab7cc8f9eff339"
+          ],
+          "structuralId": ":instrumentation:apache-dubbo-2.7:library-autoconfigure\u0000:instrumentation:apache-dubbo-2.7:testing\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation:hbase:hbase-client-common-1.4:javaagent"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 3,
+          "totalProjects": 1024,
+          "omittedProjects": 1021,
+          "commitCount": 1,
+          "commits": [
+            "16ce5a3cc7c5de940bb7b81ddd1d101ecab1a5d8"
+          ],
+          "structuralId": ":instrumentation:hbase:hbase-client-common-1.4:javaagent\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation:internal:internal-application-logger:javaagent"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 3,
+          "totalProjects": 1024,
+          "omittedProjects": 1021,
+          "commitCount": 1,
+          "commits": [
+            "157552496b4f26792b5fa7f6d4f4ee6e829cb159"
+          ],
+          "structuralId": ":instrumentation:internal:internal-application-logger:javaagent\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation:internal:internal-class-loader:javaagent-integration-tests",
+            ":javaagent-extension-api"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 127,
+          "totalProjects": 1024,
+          "omittedProjects": 897,
+          "commitCount": 1,
+          "commits": [
+            "9889118c1c6f194c57d13b94361b2e9646dcbc8f"
+          ],
+          "structuralId": ":instrumentation:internal:internal-class-loader:javaagent-integration-tests\u0000:javaagent-extension-api\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation:jdbc:javaagent",
+            ":instrumentation:jdbc:library",
+            ":instrumentation:jdbc:testing"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 32,
+          "totalProjects": 1024,
+          "omittedProjects": 992,
+          "commitCount": 1,
+          "commits": [
+            "f6b43c36565ae00f0e62e32e8952d751e4a978fb"
+          ],
+          "structuralId": ":instrumentation:jdbc:javaagent\u0000:instrumentation:jdbc:library\u0000:instrumentation:jdbc:testing\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation:jedis:jedis-2.0:javaagent",
+            ":instrumentation:jedis:jedis-3.0:javaagent",
+            ":instrumentation:jedis:jedis-4.0:javaagent",
+            ":instrumentation:lettuce:lettuce-5.0:javaagent",
+            ":instrumentation:redisson:redisson-common-3.0:javaagent",
+            ":instrumentation:redisson:redisson-common-3.0:testing",
+            ":instrumentation:vertx:vertx-redis-client-4.0:javaagent"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 9,
+          "totalProjects": 1024,
+          "omittedProjects": 1015,
+          "commitCount": 1,
+          "commits": [
+            "fb528c9e5630abe1930ce5e0bf1cef766269a8f9"
+          ],
+          "structuralId": ":instrumentation:jedis:jedis-2.0:javaagent\u0000:instrumentation:jedis:jedis-3.0:javaagent\u0000:instrumentation:jedis:jedis-4.0:javaagent\u0000:instrumentation:lettuce:lettuce-5.0:javaagent\u0000:instrumentation:redisson:redisson-common-3.0:javaagent\u0000:instrumentation:redisson:redisson-common-3.0:testing\u0000:instrumentation:vertx:vertx-redis-client-4.0:javaagent\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation:r2dbc-1.0:library",
+            ":instrumentation:r2dbc-1.0:testing"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 17,
+          "totalProjects": 1024,
+          "omittedProjects": 1007,
+          "commitCount": 1,
+          "commits": [
+            "b7efc3e55ca363b89edcc83d9fdf2d668ad6a959"
+          ],
+          "structuralId": ":instrumentation:r2dbc-1.0:library\u0000:instrumentation:r2dbc-1.0:testing\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation:rediscala-1.8:javaagent"
+          ],
+          "family": "LEAF_SOURCE",
+          "affectedProjects": 1,
+          "totalProjects": 1024,
+          "omittedProjects": 1023,
+          "commitCount": 1,
+          "commits": [
+            "a8b133b85de3e8c145a700d1242e0a4837f25032"
+          ],
+          "structuralId": ":instrumentation:rediscala-1.8:javaagent\u0001LEAF_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation:redisson:redisson-common-3.0:javaagent",
+            ":instrumentation:redisson:redisson-common-3.0:testing"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 4,
+          "totalProjects": 1024,
+          "omittedProjects": 1020,
+          "commitCount": 1,
+          "commits": [
+            "e49a4a9cb1261eaa22af9849786f036a63288e81"
+          ],
+          "structuralId": ":instrumentation:redisson:redisson-common-3.0:javaagent\u0000:instrumentation:redisson:redisson-common-3.0:testing\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation:spring:spring-boot-autoconfigure"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 10,
+          "totalProjects": 1024,
+          "omittedProjects": 1014,
+          "commitCount": 1,
+          "commits": [
+            "1c100c2f9ac5127e7514f16320cc8144f79e5832"
+          ],
+          "structuralId": ":instrumentation:spring:spring-boot-autoconfigure\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation:vertx:vertx-redis-client-4.0:javaagent"
+          ],
+          "family": "LEAF_SOURCE",
+          "affectedProjects": 1,
+          "totalProjects": 1024,
+          "omittedProjects": 1023,
+          "commitCount": 1,
+          "commits": [
+            "9330f2a10b33887e6131b499d3fb88b923cf5c76"
+          ],
+          "structuralId": ":instrumentation:vertx:vertx-redis-client-4.0:javaagent\u0001LEAF_SOURCE"
+        },
+        {
+          "owners": [
+            ":instrumentation"
+          ],
+          "family": "LEAF_SOURCE",
+          "affectedProjects": 1,
+          "totalProjects": 1024,
+          "omittedProjects": 1023,
+          "commitCount": 1,
+          "commits": [
+            "6adcdddee824ee1e702a71c307f7b57227f77b08"
+          ],
+          "structuralId": ":instrumentation\u0001LEAF_SOURCE"
+        },
+        {
+          "owners": [
+            ":javaagent-extension-api",
+            ":javaagent-tooling",
+            ":testing:agent-exporter"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 127,
+          "totalProjects": 1024,
+          "omittedProjects": 897,
+          "commitCount": 1,
+          "commits": [
+            "42f8313f8fd213cfc1e68c87e7ffa73e0237bdb9"
+          ],
+          "structuralId": ":javaagent-extension-api\u0000:javaagent-tooling\u0000:testing:agent-exporter\u0001MIXED_SOURCE"
+        }
+      ]
+    },
+    {
+      "label": "micronaut-core",
+      "rawSha256": "57c03216f15babbfdaf4dd9579d7868c9b5f0259c7511f70d48a47f8548a1276",
+      "historyRows": 64,
+      "classifiedRows": 19,
+      "reasonCounts": {
+        "EXACT_GRAPH_OWNER_AND_FAMILY": 19,
+        "INCOMPLETE_AMBIGUOUS": 24,
+        "UNSAFE_STRUCTURAL_CHANGE": 21
+      },
+      "groups": [
+        {
+          "owners": [
+            ":micronaut-core",
+            ":micronaut-http",
+            ":micronaut-http-client",
+            ":micronaut-http-server-netty",
+            ":micronaut-router"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 28,
+          "totalProjects": 75,
+          "omittedProjects": 47,
+          "commitCount": 1,
+          "commits": [
+            "dd44d085ea71324d703599bc5737d58437f99389"
+          ],
+          "structuralId": ":micronaut-core\u0000:micronaut-http\u0000:micronaut-http-client\u0000:micronaut-http-server-netty\u0000:micronaut-router\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":micronaut-core-processor",
+            ":micronaut-inject-java-test"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 15,
+          "totalProjects": 75,
+          "omittedProjects": 60,
+          "commitCount": 1,
+          "commits": [
+            "2939bae25d4082be87756125c75f7c6b047060e0"
+          ],
+          "structuralId": ":micronaut-core-processor\u0000:micronaut-inject-java-test\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":micronaut-core-processor",
+            ":micronaut-inject-java"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 31,
+          "totalProjects": 75,
+          "omittedProjects": 44,
+          "commitCount": 2,
+          "commits": [
+            "aeded4f15a9715c5f1f131a92f2209d242bd507e",
+            "00304cbd22d4cdacd4390457a3638ea0ecadac42"
+          ],
+          "structuralId": ":micronaut-core-processor\u0000:micronaut-inject-java\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":micronaut-core"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 7,
+          "totalProjects": 75,
+          "omittedProjects": 68,
+          "commitCount": 1,
+          "commits": [
+            "742c0d782979fa32689db3dea7d8301e808cbee1"
+          ],
+          "structuralId": ":micronaut-core\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":micronaut-http",
+            ":micronaut-http-client"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 21,
+          "totalProjects": 75,
+          "omittedProjects": 54,
+          "commitCount": 1,
+          "commits": [
+            "62648c60bae1d7a5bf9b74c97fc60fcef29885da"
+          ],
+          "structuralId": ":micronaut-http\u0000:micronaut-http-client\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":micronaut-http",
+            ":micronaut-http-server-tck"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 11,
+          "totalProjects": 75,
+          "omittedProjects": 64,
+          "commitCount": 1,
+          "commits": [
+            "79d60871181dee759d361512da25a29643d8562b"
+          ],
+          "structuralId": ":micronaut-http\u0000:micronaut-http-server-tck\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":micronaut-http-client",
+            ":micronaut-http-client-core"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 23,
+          "totalProjects": 75,
+          "omittedProjects": 52,
+          "commitCount": 1,
+          "commits": [
+            "cced18dc5a4e9091595546714a19398963cf31f9"
+          ],
+          "structuralId": ":micronaut-http-client\u0000:micronaut-http-client-core\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":micronaut-http-client-jdk"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 5,
+          "totalProjects": 75,
+          "omittedProjects": 70,
+          "commitCount": 1,
+          "commits": [
+            "3c3f7a3a1bd3a98bbb0399792a5f5acb03c662b5"
+          ],
+          "structuralId": ":micronaut-http-client-jdk\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":micronaut-http-server",
+            ":micronaut-http-server-netty"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 25,
+          "totalProjects": 75,
+          "omittedProjects": 50,
+          "commitCount": 1,
+          "commits": [
+            "5dabb4d2d8173bab5226f80a527106cbb6423de0"
+          ],
+          "structuralId": ":micronaut-http-server\u0000:micronaut-http-server-netty\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":micronaut-http"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 7,
+          "totalProjects": 75,
+          "omittedProjects": 68,
+          "commitCount": 1,
+          "commits": [
+            "4e062ed7e5758a7f26b080372b7b833ed4c2893f"
+          ],
+          "structuralId": ":micronaut-http\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":micronaut-inject",
+            ":test-suite-property-source"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 19,
+          "totalProjects": 75,
+          "omittedProjects": 56,
+          "commitCount": 1,
+          "commits": [
+            "c801d57c34473c0cee44a3560d2a3354cffc4aab"
+          ],
+          "structuralId": ":micronaut-inject\u0000:test-suite-property-source\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":micronaut-inject-kotlin",
+            ":micronaut-inject-kotlin-test"
+          ],
+          "family": "MIXED_SOURCE",
+          "affectedProjects": 5,
+          "totalProjects": 75,
+          "omittedProjects": 70,
+          "commitCount": 1,
+          "commits": [
+            "257856c9556ac80b708022fea6a55ca95ecc088d"
+          ],
+          "structuralId": ":micronaut-inject-kotlin\u0000:micronaut-inject-kotlin-test\u0001MIXED_SOURCE"
+        },
+        {
+          "owners": [
+            ":micronaut-inject-kotlin"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 4,
+          "totalProjects": 75,
+          "omittedProjects": 71,
+          "commitCount": 3,
+          "commits": [
+            "b963c8fce122421171de9f3ebf90328c1b935bd6",
+            "f32c88990ed2c7f996b5662d302c661a575c1939",
+            "644305790e14c7b8871333f042ce36e453290542"
+          ],
+          "structuralId": ":micronaut-inject-kotlin\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":micronaut-inject"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 19,
+          "totalProjects": 75,
+          "omittedProjects": 56,
+          "commitCount": 2,
+          "commits": [
+            "3083f40df534736e508a5e97c4cd6b7fbd41caad",
+            "f08afd1c6b7822f1921b700edf9de8120ec7d3bc"
+          ],
+          "structuralId": ":micronaut-inject\u0001DEPENDENCY_SOURCE"
+        },
+        {
+          "owners": [
+            ":micronaut-management"
+          ],
+          "family": "DEPENDENCY_SOURCE",
+          "affectedProjects": 10,
+          "totalProjects": 75,
+          "omittedProjects": 65,
+          "commitCount": 1,
+          "commits": [
+            "269c81b8ebe96ec8da96d916f3206186adad091d"
+          ],
+          "structuralId": ":micronaut-management\u0001DEPENDENCY_SOURCE"
+        }
+      ]
+    }
+  ],
+  "eligibleGroups": [
+    {
+      "owners": [
+        ":spring-messaging"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 12,
+      "totalProjects": 27,
+      "omittedProjects": 15,
+      "commitCount": 11,
+      "commits": [
+        "7f29df4d795ed76465f2dcd36ed1879c0887ab0e",
+        "6507367d10ce03d569227df9141c161365800e31",
+        "fee7e6b7e2f025c6b64ef8820d2704f561096ee8",
+        "77b54c7409454a7b19ac114a92f96845cda6accc",
+        "ff9ba15762e2d6ca1b7b2a1292c3048f414899da",
+        "e93e55b456bbe320d2330fa37a975fe25feada1a",
+        "7998bc9de2d2378523ae011f240721dde455b8c5",
+        "cb4b87cce2c1844554dd50be78157950f9984096",
+        "1d470fc3755c8534b18d5319c599b1257e576d6c",
+        "7fc619acdc152094271c215be0ee67afca0e0d90",
+        "e5f8c5b7ae6e3d32958eef1c040fec7828b213da"
+      ],
+      "structuralId": ":spring-messaging\u0001DEPENDENCY_SOURCE",
+      "label": "spring-framework"
+    },
+    {
+      "owners": [
+        ":spring-core"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 24,
+      "totalProjects": 27,
+      "omittedProjects": 3,
+      "commitCount": 8,
+      "commits": [
+        "6f03c186b996e446278e1fd06d7a2244aab377a5",
+        "4a13655aa517542cc71b163fd91f016a8b6fb50d",
+        "a9b1d6335ef568f7587f0d3a6479a3db3fdd15f5",
+        "1ef8734881468fcdd5e1927a6516455a2fdf5e5d",
+        "6dfa54b8ea6058835ebf0e618e6ffcdd8570704d",
+        "59a9d0fcb9be6c3d4843bf512802b1fd4a3635b5",
+        "db9045ae28c10df32a8ebb84b4e0b42ba25456e7",
+        "ad19c1ac8229f48843a32f31905037f3a76612ec"
+      ],
+      "structuralId": ":spring-core\u0001DEPENDENCY_SOURCE",
+      "label": "spring-framework"
+    },
+    {
+      "owners": [
+        ":spring-web"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 10,
+      "totalProjects": 27,
+      "omittedProjects": 17,
+      "commitCount": 7,
+      "commits": [
+        "47a2e7059eb61a3c7ae776b3e64bda052a06aee6",
+        "5ef9972528716afdec0450a0e1befa1250fe88d8",
+        "8fb119df1ecc97d4391276b02189fc32c3e7bf46",
+        "e22b1648bffa7b55350b4fed55dbb79bf3bd29d6",
+        "02dc4b6342441b31cd7c7a1f4ded64ea832362f0",
+        "7c2159fbe95658ecc02c664ab5565b0ada84d5b5",
+        "f2d3da3f328cc52fff2b906d98a8ccdeddbb7d56"
+      ],
+      "structuralId": ":spring-web\u0001DEPENDENCY_SOURCE",
+      "label": "spring-framework"
+    },
+    {
+      "owners": [
+        ":spring-orm"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 6,
+      "totalProjects": 27,
+      "omittedProjects": 21,
+      "commitCount": 6,
+      "commits": [
+        "05ffe8249f366b145fc79c561da7a5fc9c4de912",
+        "3666ad9d7fb0e905322b81debda7b2e2e822a4e0",
+        "652d509cfc7a55c47204ba2e45caac417fb790e6",
+        "153c378bb2414f34e0ce068ee0d18f5de33829ef",
+        "cdbaa7f3a7b236d0df567b618564d1d00aa74769",
+        "ac243fae652d59f9bce957b739738388297e7b46"
+      ],
+      "structuralId": ":spring-orm\u0001DEPENDENCY_SOURCE",
+      "label": "spring-framework"
+    },
+    {
+      "owners": [
+        ":spring-webmvc"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 7,
+      "totalProjects": 27,
+      "omittedProjects": 20,
+      "commitCount": 5,
+      "commits": [
+        "17033880748a04b0d777b5f34ab12d8d5f087e32",
+        "62e590a437f150da130eb6ce0b3cd1ff6c4bb89a",
+        "c33b82f2a11167cba2c6c5be6b2430b601cffd07",
+        "b2277014735d4b7879689a702eaaaf8962d1b006",
+        "d1b0bdb3d558410a735f43741f36febd4d7f9f01"
+      ],
+      "structuralId": ":spring-webmvc\u0001DEPENDENCY_SOURCE",
+      "label": "spring-framework"
+    },
+    {
+      "owners": [
+        ":spring-context"
+      ],
+      "family": "DEPENDENCY_SOURCE",
+      "affectedProjects": 19,
+      "totalProjects": 27,
+      "omittedProjects": 8,
+      "commitCount": 5,
+      "commits": [
+        "98d4046e4b848e288559a7041c393d12fef83ee6",
+        "282fee5c95dc26522e1073308c8cf38c7ab30607",
+        "2d3a2c5cbdb305812f27d2553131be00e12c58cd",
+        "20970a4a37e962cdec6cfbe58ead8a3ad1c56d54",
+        "29d125e659e687661e4022e626eb392520d38adb"
+      ],
+      "structuralId": ":spring-context\u0001DEPENDENCY_SOURCE",
+      "label": "spring-framework"
+    }
+  ],
+  "selectedGroup": {
+    "owners": [
+      ":spring-messaging"
+    ],
+    "family": "DEPENDENCY_SOURCE",
+    "affectedProjects": 12,
+    "totalProjects": 27,
+    "omittedProjects": 15,
+    "commitCount": 11,
+    "commits": [
+      "7f29df4d795ed76465f2dcd36ed1879c0887ab0e",
+      "6507367d10ce03d569227df9141c161365800e31",
+      "fee7e6b7e2f025c6b64ef8820d2704f561096ee8",
+      "77b54c7409454a7b19ac114a92f96845cda6accc",
+      "ff9ba15762e2d6ca1b7b2a1292c3048f414899da",
+      "e93e55b456bbe320d2330fa37a975fe25feada1a",
+      "7998bc9de2d2378523ae011f240721dde455b8c5",
+      "cb4b87cce2c1844554dd50be78157950f9984096",
+      "1d470fc3755c8534b18d5319c599b1257e576d6c",
+      "7fc619acdc152094271c215be0ee67afca0e0d90",
+      "e5f8c5b7ae6e3d32958eef1c040fec7828b213da"
+    ],
+    "structuralId": ":spring-messaging\u0001DEPENDENCY_SOURCE",
+    "label": "spring-framework"
+  },
+  "boundaries": {
+    "gradleExecuted": false,
+    "candidateExecuted": false,
+    "timingCollected": false,
+    "publicSourcePatched": false,
+    "productionAuthorized": false,
+    "predecessorSummaryEvidenceConsumed": false,
+    "repositoryOrTaskNameRules": false
+  }
+}

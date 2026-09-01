@@ -343,6 +343,12 @@ rows per family, and fresh source facts only. A five-match group may authorize
 one separate confirmation contract; this source block cannot authorize a
 candidate or value measurement.
 
+The completed product-window audit reconstructs 192/192 rows and finds six
+eligible groups, all in Spring. Messaging dependency-source leads with eleven
+compatible commits and a 12/27 affected closure. OpenTelemetry and Micronaut
+have no five-match group. This restores product-aligned source breadth but
+still needs a fresh graph/output confirmation before candidate correctness.
+
 The successor isolated the naturally history-admitted Kafka row.
 Its twelve bound compatible matches may select the row but cannot be reused as
 fresh correctness or performance evidence. The route allows three untimed
