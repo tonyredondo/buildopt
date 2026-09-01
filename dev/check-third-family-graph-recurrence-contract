@@ -5,7 +5,8 @@ cd -- "$root"
 
 jq -e '
   .schemaVersion=="buildopt.specs/poc-third-family-graph-recurrence/v1" and
-  .status.currentBlock=="TFGR-002" and .status.completedBlocks==["TFGR-001"] and
+  .status.currentBlock=="TFGR-003" and .status.completedBlocks==["TFGR-001","TFGR-002","TFGR-003"] and
+  .status.decision=="AUTHORIZE_FRESH_GRAPH_CONFIRMATION_CONTRACT" and
   .thresholds=={historyRowsPerFamily:256,minimumGroupCommits:5,minimumOmittedProjects:1,additionalFamiliesRequired:1} and
   .selectionOrder==["COMMIT_COUNT_DESC","OMITTED_PROJECTS_DESC","STRUCTURAL_ID_ASC"] and
   (.prohibitions|to_entries|all(.value==true))

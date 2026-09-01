@@ -1,7 +1,7 @@
 {
   "schemaVersion": "buildopt.specs/poc-third-family-graph-recurrence/v1",
   "workItem": "TFGR",
-  "status": {"currentBlock":"TFGR-002","completedBlocks":["TFGR-001"]},
+  "status": {"currentBlock":"TFGR-003","completedBlocks":["TFGR-001","TFGR-002","TFGR-003"],"decision":"AUTHORIZE_FRESH_GRAPH_CONFIRMATION_CONTRACT"},
   "subjects": "poc-third-family-graph-recurrence-v1.subjects.json",
   "thresholds": {
     "historyRowsPerFamily": 256,

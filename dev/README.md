@@ -5619,6 +5619,12 @@ owner/family matches and at least one omitted project are required before a
 separate fresh graph confirmation; the contract forbids Gradle, candidates,
 patches, timing, name rules and predecessor-summary evidence.
 
+`./dev/check-third-family-graph-recurrence` independently reconstructs the 768
+fresh rows, source reason counts, exact owner/family groups, affected closures,
+eligibility and stable ranking. It verifies fourteen eligible groups and the
+selected 37-commit Spring `:framework-docs` leaf-source group without running
+Gradle or trusting summary counts.
+
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher
 integration tests. It proves that no measurement-only build contributes

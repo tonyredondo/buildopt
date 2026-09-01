@@ -67,9 +67,11 @@ type auditReport struct {
 }
 
 type auditGroup struct {
-	Owners  []string `json:"owners"`
-	Family  string   `json:"family"`
-	Commits []string `json:"commits"`
+	Owners           []string `json:"owners"`
+	Family           string   `json:"family"`
+	AffectedProjects int      `json:"affectedProjects"`
+	TotalProjects    int      `json:"totalProjects"`
+	Commits          []string `json:"commits"`
 }
 
 type auditOptions struct {
@@ -211,8 +213,11 @@ func runAudit(options auditOptions) (auditReport, error) {
 			key := strings.Join(classification.Owners, "\x00") + "\x01" + classification.Family
 			group := groups[key]
 			if group == nil {
-				group = &auditGroup{Owners: append([]string(nil), classification.Owners...), Family: classification.Family}
+				group = &auditGroup{Owners: append([]string(nil), classification.Owners...), Family: classification.Family,
+					AffectedProjects: len(classification.AffectedProjects), TotalProjects: len(snapshot.Projects)}
 				groups[key] = group
+			} else if group.AffectedProjects != len(classification.AffectedProjects) || group.TotalProjects != len(snapshot.Projects) {
+				return auditReport{}, errors.New("one structural group produced inconsistent affected closures")
 			}
 			group.Commits = append(group.Commits, commit)
 		} else if !equalStrings(classification.Owners, options.owners) {

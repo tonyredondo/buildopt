@@ -3,9 +3,11 @@
 | Block | Outcome | State |
 |---|---|---|
 | `TFGR-001` | Freeze three-family, 256-row source contract | `DONE` |
-| `TFGR-002` | Capture fresh source-history rows | `TODO` |
-| `TFGR-003` | Independently reconstruct and select or stop | `WAITING` |
+| `TFGR-002` | Capture fresh source-history rows | `DONE` |
+| `TFGR-003` | Independently reconstruct and select or stop | `DONE` |
 
-No Gradle, candidate, public patch or timing is authorized. A separately
-frozen fresh graph-confirmation contract is possible only if one of the three
-families has five exact structural matches and a non-empty omitted closure.
+The independent checker reconstructs all 768 rows and finds fourteen eligible
+groups. The stable ranking selects Spring `:framework-docs` / `LEAF_SOURCE`:
+37 commits, one affected project and 26 omitted projects. No Gradle, candidate,
+public patch or timing ran. Only a separately frozen fresh graph-confirmation
+contract is authorized.

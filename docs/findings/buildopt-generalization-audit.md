@@ -13,6 +13,14 @@ net value in only one of five families. One of six structurally eligible
 descendants selected a profile, so the frozen terminal decision is
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md).
 
+The latest source-only recurrence search adds a plausible third public class
+without changing that value conclusion. Across 768 fresh Spring,
+OpenTelemetry and Micronaut rows, independent reconstruction finds fourteen
+groups above five commits with a non-empty omitted closure. The fixed ranking
+selects Spring `:framework-docs` / `LEAF_SOURCE` at 37 commits and 26/27 omitted
+projects. This authorizes only a fresh graph confirmation; it supplies no
+correctness build, candidate timing or third qualified value class yet.
+
 The checked [critical-path successor selection](../plans/critical-path-successor-selection-v1.md)
 reconstructs decisive evidence for six candidate routes and selects only change-scoped critical-path
 discovery. Historical Build Impact results are motivation, not fresh rows.

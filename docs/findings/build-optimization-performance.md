@@ -1287,6 +1287,13 @@ their exact 64-commit windows. The result removes path-prefix false positives
 and avoids unnecessary learning cost; the measured 19.09% Kafka result remains
 the only qualified public value class.
 
+The later third-family recurrence search also adds no performance sample. Its
+independent source-only reconstruction covers 768 rows and finds fourteen
+eligible owner/family groups. The frozen ranking selects Spring
+`:framework-docs` / `LEAF_SOURCE` with 37 commits and a 1/27 affected closure.
+That result is a reason to run one separately contracted fresh confirmation,
+not a correctness result, speedup percentage or third qualified value class.
+
 The untimed CSCPC route did not reach candidate correctness or performance.
 Its first Groovy optimized-native invocation succeeded, but the production
 decision path returned `NATIVE_RETAINED / ORDINARY_LEARNING_ECONOMICS_REJECTED`:

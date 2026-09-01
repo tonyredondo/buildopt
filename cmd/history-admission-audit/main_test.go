@@ -48,7 +48,8 @@ func TestRunAuditAdmitsFiveExactGraphMatches(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if inventory.Decision != "INVENTORY_COMPLETE" || len(inventory.Groups) != 1 || len(inventory.Groups[0].Commits) != 5 {
+	if inventory.Decision != "INVENTORY_COMPLETE" || len(inventory.Groups) != 1 || len(inventory.Groups[0].Commits) != 5 ||
+		inventory.Groups[0].AffectedProjects != 2 || inventory.Groups[0].TotalProjects != 2 {
 		t.Fatalf("inventory = %+v", inventory)
 	}
 }

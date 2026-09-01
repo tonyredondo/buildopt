@@ -25,12 +25,12 @@ decision.
 
 ## Current experiment status
 
-`THIRD_FAMILY_GRAPH_RECURRENCE_V1` is current. It searches 256 first-parent
-source rows against each exact reviewed Spring, OpenTelemetry and Micronaut
-graph, grouping only by owners and change family. Five matches plus at least
-one omitted project are required before a separately frozen fresh confirmation
-could run. Predecessor summaries supply no row; Gradle, candidates, patches and
-timing remain closed.
+`THIRD_FAMILY_GRAPH_RECURRENCE_V1` is complete. Its independent reconstruction
+checks all 768 fresh source rows and finds fourteen eligible groups. The frozen
+ranking selects Spring owner `:framework-docs`, family `LEAF_SOURCE`, with 37
+exact commits and a 1/27 affected closure. Predecessor summaries supplied no
+row; Gradle, candidates, patches and timing remained closed. The next action is
+to freeze a fresh graph-confirmation contract for that exact structural group.
 
 `RECURRENT_ROOT_PAIRED_VALUE_V1` is complete. The exact Groovy root-owner
 dependency-source class passed seventeen fresh ordinary installed-path
