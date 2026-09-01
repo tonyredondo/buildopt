@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "buildopt.specs/poc-graph-aware-breadth-discovery-subjects/v1",
+  "subjects": [
+    {"label":"apache-groovy","repositoryId":"apache/groovy","targetRevision":"9dbf367a956011cfedb6e3154e4c7f8e092f4da9","pipelineClass":"auto-classes-8c594532","expectedOwners":[":groovy-json"],"expectedFamily":"DEPENDENCY_SOURCE","manifestSha256":"820d30560f42dcba48ad21df7eb66da8c296e30f26fa4eb644646012d1072d4e","graphSha256":"0b5c6562a7e8b158a6551227fc9bf9e9039deb03577ca2e07f7c7dcbcc69aa9b"},
+    {"label":"opentelemetry-java-instrumentation","repositoryId":"open-telemetry/opentelemetry-java-instrumentation","targetRevision":"1c100c2f9ac5127e7514f16320cc8144f79e5832","pipelineClass":"auto-instrumentation-spring-spring-batch-3.0--0073aaec","expectedOwners":[":instrumentation:spring:spring-boot-autoconfigure"],"expectedFamily":"DEPENDENCY_SOURCE","manifestSha256":"a4f67662b7a22f26ad91629a4304bc430cf5a41ede1ae73c6a0d705409e49380","graphSha256":"0c75c5db9ec9ac0c0655174df5a82fa5a33616bf573786d7efffe5fbdf68c9ae"},
+    {"label":"micronaut-core","repositoryId":"micronaut-projects/micronaut-core","targetRevision":"3c3f7a3a1bd3a98bbb0399792a5f5acb03c662b5","pipelineClass":"auto-assemble-860b2c20","expectedOwners":[":micronaut-http-client-jdk"],"expectedFamily":"DEPENDENCY_SOURCE","manifestSha256":"59677bd1a444179e4a8637b547d9ae8feab9666009ed12691cb24c1dac02f4f2","graphSha256":"956f795b8fd30702cc4fe0da62da94eb27178025c943f2debe68c560977cc8f9"}
+  ]
+}

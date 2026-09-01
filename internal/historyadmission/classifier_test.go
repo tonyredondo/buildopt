@@ -46,3 +46,17 @@ func TestUnsafeStructuralChangeDoesNotUseRepositoryOrTaskNames(t *testing.T) {
 		t.Fatal("source labels affected structural classification")
 	}
 }
+
+func TestSnapshotFromDeclaredGraphPreservesClassificationFacts(t *testing.T) {
+	graph := buildimpact.DeclaredGraph{Complete: true,
+		Projects: []buildimpact.Project{
+			{Path: ":library", SourcePaths: []string{"library/**"}},
+			{Path: ":consumer", SourcePaths: []string{"consumer/**"}, DependsOn: []string{":library"}},
+		},
+		Entrypoints: []buildimpact.DeclaredEntrypoint{{Name: "classes", ReachesProjects: []string{":consumer", ":library"}}},
+	}
+	classification, err := Classify(SnapshotFromDeclaredGraph(graph), []string{"library/src/main/java/A.java"})
+	if err != nil || classification.Family != FamilyDependency || !reflect.DeepEqual(classification.Owners, []string{":library"}) {
+		t.Fatalf("classification = %+v, %v", classification, err)
+	}
+}

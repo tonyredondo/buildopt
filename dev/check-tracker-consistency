@@ -66,7 +66,7 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`GRAPH_AWARE_HISTORY_ADMISSION_VALIDATED\`"
-    "**Current phase:** \`GAH-003\`"
+    "**Current phase:** \`GABD-002\`"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"
@@ -158,6 +158,7 @@ buildopt_required_tracker_text=(
     "| \`E-478\` | 2026-09-01 | \`POC-HISTORY-ADMITTED-BREADTH\`, \`HAB-001\` |"
     "| \`E-479\` | 2026-09-01 | \`POC-HISTORY-ADMITTED-BREADTH\`, \`HAB-002..004\` |"
     "| \`E-480\` | 2026-09-01 | \`POC-GRAPH-AWARE-HISTORY-ADMISSION\`, \`GAH-001..003\` |"
+    "| \`E-481\` | 2026-09-01 | \`POC-GRAPH-AWARE-BREADTH-DISCOVERY\`, \`GABD-001\` |"
     "| 157 | \`POC-OBSERVED-REQUEST-PORTFOLIO-001\` | Reconstruct all terminal request-aligned causes"
     "| 156 | \`POC-REQUEST-ALIGNED-RECURRENT-LEARNING-001\` | Reconstruct every terminal change-aware negative"
     "| 155 | \`POC-CHANGE-AWARE-PRODUCER-CLOSURE-001\` | Starting from the terminal fresh 1/5 breadth result"

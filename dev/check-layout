@@ -618,6 +618,7 @@ buildopt_required_files=(
     "dev/check-history-admitted-breadth-contract"
     "dev/check-history-admitted-breadth"
     "dev/check-graph-aware-history-admission"
+    "dev/check-graph-aware-breadth-discovery-contract"
     "dev/check-remote-cache-locality-harness-v3"
     "dev/check-remote-cache-locality-v3-public-correctness"
     "dev/check-remote-cache-locality-v3-paired-value"

@@ -23,6 +23,27 @@ type Classification struct {
 	AffectedProjects []string `json:"affectedProjects"`
 }
 
+// SnapshotFromDeclaredGraph preserves the source ownership and dependency facts
+// from a strictly validated reviewed graph for source-only history analysis.
+func SnapshotFromDeclaredGraph(graph buildimpact.DeclaredGraph) buildimpact.DiscoverySnapshot {
+	snapshot := buildimpact.DiscoverySnapshot{Complete: graph.Complete}
+	for _, project := range graph.Projects {
+		snapshot.Projects = append(snapshot.Projects, buildimpact.DiscoveredProject{
+			Path: project.Path, SourcePaths: append([]string(nil), project.SourcePaths...),
+			OwnedSourcePaths:     append([]string(nil), project.OwnedSourcePaths...),
+			DependsOn:            append([]string(nil), project.DependsOn...),
+			UnknownRelationships: project.UnknownRelationships,
+		})
+	}
+	for _, entrypoint := range graph.Entrypoints {
+		snapshot.Entrypoints = append(snapshot.Entrypoints, buildimpact.DiscoveredEntrypoint{
+			Name: entrypoint.Name, ReachesProjects: append([]string(nil), entrypoint.ReachesProjects...),
+			ContainsTestTasks: entrypoint.ContainsTestTasks, UnknownRelationships: entrypoint.UnknownRelationships,
+		})
+	}
+	return snapshot
+}
+
 // UnsafeStructuralChange reports changes that can invalidate an observed Gradle graph.
 func UnsafeStructuralChange(changedPaths []string) bool {
 	for _, changedPath := range changedPaths {

@@ -47,6 +47,8 @@ type auditReport struct {
 	SchemaVersion      string     `json:"schemaVersion"`
 	TargetRevision     string     `json:"targetRevision"`
 	SnapshotSHA256     string     `json:"snapshotSha256"`
+	GraphSHA256        string     `json:"graphSha256,omitempty"`
+	ManifestSHA256     string     `json:"manifestSha256,omitempty"`
 	Entrypoints        []string   `json:"entrypoints"`
 	ExpectedOwners     []string   `json:"expectedOwners"`
 	ExpectedFamily     string     `json:"expectedFamily"`
@@ -61,9 +63,10 @@ type auditReport struct {
 }
 
 type auditOptions struct {
-	repository, snapshotPath, snapshotSHA, target, family string
-	entrypoints, owners                                   []string
-	maximum, minimum                                      int
+	repository, snapshotPath, snapshotSHA, graphPath, graphSHA, manifestPath, manifestSHA string
+	repositoryID, pipelineClass, target, family                                           string
+	entrypoints, owners                                                                   []string
+	maximum, minimum                                                                      int
 }
 
 func main() {
@@ -72,6 +75,12 @@ func main() {
 	flag.StringVar(&options.repository, "repository", "", "path to the public Git repository")
 	flag.StringVar(&options.snapshotPath, "snapshot", "", "path to the retained discovery snapshot")
 	flag.StringVar(&options.snapshotSHA, "snapshot-sha256", "", "required SHA-256 binding for the snapshot")
+	flag.StringVar(&options.graphPath, "graph", "", "path to a reviewed declared graph")
+	flag.StringVar(&options.graphSHA, "graph-sha256", "", "required raw SHA-256 binding for the graph")
+	flag.StringVar(&options.manifestPath, "manifest", "", "path to the graph's manifest")
+	flag.StringVar(&options.manifestSHA, "manifest-sha256", "", "required raw SHA-256 binding for the manifest")
+	flag.StringVar(&options.repositoryID, "repository-id", "", "manifest repository identity")
+	flag.StringVar(&options.pipelineClass, "pipeline-class", "", "manifest pipeline identity")
 	flag.StringVar(&options.target, "target", "", "target revision")
 	flag.StringVar(&options.family, "expected-family", "", "expected change family")
 	flag.Var(&entrypoints, "entrypoint", "observed entrypoint (repeatable)")
@@ -94,23 +103,22 @@ func main() {
 }
 
 func runAudit(options auditOptions) (auditReport, error) {
-	if options.repository == "" || options.snapshotPath == "" || options.target == "" ||
-		len(options.entrypoints) == 0 || len(options.owners) == 0 || options.family == "" ||
+	usesSnapshot := options.snapshotPath != "" && options.snapshotSHA != ""
+	usesGraph := options.graphPath != "" && options.graphSHA != "" && options.manifestPath != "" &&
+		options.manifestSHA != "" && options.repositoryID != "" && options.pipelineClass != ""
+	if options.repository == "" || usesSnapshot == usesGraph || options.target == "" ||
+		(usesSnapshot && len(options.entrypoints) == 0) || len(options.owners) == 0 || options.family == "" ||
 		options.maximum < 1 || options.maximum > 1024 || options.minimum < 1 || options.minimum > options.maximum {
 		return auditReport{}, errors.New("complete bounded audit arguments are required")
 	}
-	raw, err := os.ReadFile(options.snapshotPath)
+	snapshot, snapshotSHA, graphSHA, manifestSHA, err := loadGraphFacts(options)
 	if err != nil {
-		return auditReport{}, fmt.Errorf("read snapshot: %w", err)
+		return auditReport{}, err
 	}
-	digest := sha256.Sum256(raw)
-	digestText := hex.EncodeToString(digest[:])
-	if options.snapshotSHA != digestText {
-		return auditReport{}, errors.New("snapshot SHA-256 binding does not match")
-	}
-	snapshot, err := buildimpact.ParseObservedDiscoverySnapshot(raw, options.entrypoints)
-	if err != nil {
-		return auditReport{}, fmt.Errorf("parse snapshot: %w", err)
+	if len(options.entrypoints) == 0 {
+		for _, entrypoint := range snapshot.Entrypoints {
+			options.entrypoints = append(options.entrypoints, entrypoint.Name)
+		}
 	}
 	sort.Strings(options.owners)
 	commitsRaw, err := gitOutput(options.repository, "rev-list", "--first-parent", "--max-count="+strconv.Itoa(options.maximum), options.target)
@@ -121,7 +129,8 @@ func runAudit(options auditOptions) (auditReport, error) {
 	if len(commits) == 0 || len(commits) > options.maximum {
 		return auditReport{}, errors.New("bounded first-parent history is unavailable")
 	}
-	report := auditReport{SchemaVersion: schemaVersion, TargetRevision: options.target, SnapshotSHA256: digestText,
+	report := auditReport{SchemaVersion: schemaVersion, TargetRevision: options.target, SnapshotSHA256: snapshotSHA,
+		GraphSHA256: graphSHA, ManifestSHA256: manifestSHA,
 		Entrypoints: append([]string(nil), options.entrypoints...), ExpectedOwners: append([]string(nil), options.owners...),
 		ExpectedFamily: options.family, HistoryWindow: len(commits), MinimumCompatible: options.minimum,
 		Decision: "REJECT", Reason: "INSUFFICIENT_GRAPH_COMPATIBLE_HISTORY", Rows: make([]auditRow, 0, len(commits))}
@@ -158,6 +167,50 @@ func runAudit(options auditOptions) (auditReport, error) {
 		report.Decision, report.Reason = "ADMIT", "MINIMUM_GRAPH_COMPATIBLE_HISTORY_MET"
 	}
 	return report, nil
+}
+
+func loadGraphFacts(options auditOptions) (buildimpact.DiscoverySnapshot, string, string, string, error) {
+	if options.snapshotPath != "" {
+		raw, digestText, err := readBoundFile(options.snapshotPath, options.snapshotSHA, "snapshot")
+		if err != nil {
+			return buildimpact.DiscoverySnapshot{}, "", "", "", err
+		}
+		snapshot, err := buildimpact.ParseObservedDiscoverySnapshot(raw, options.entrypoints)
+		if err != nil {
+			return buildimpact.DiscoverySnapshot{}, "", "", "", fmt.Errorf("parse snapshot: %w", err)
+		}
+		return snapshot, digestText, "", "", nil
+	}
+	manifestRaw, manifestDigest, err := readBoundFile(options.manifestPath, options.manifestSHA, "manifest")
+	if err != nil {
+		return buildimpact.DiscoverySnapshot{}, "", "", "", err
+	}
+	manifest, err := buildimpact.ParseManifest(manifestRaw, options.repositoryID, options.pipelineClass)
+	if err != nil {
+		return buildimpact.DiscoverySnapshot{}, "", "", "", fmt.Errorf("parse manifest: %w", err)
+	}
+	graphRaw, graphDigest, err := readBoundFile(options.graphPath, options.graphSHA, "graph")
+	if err != nil {
+		return buildimpact.DiscoverySnapshot{}, "", "", "", err
+	}
+	graph, err := buildimpact.ParseDeclaredGraph(graphRaw, manifest)
+	if err != nil {
+		return buildimpact.DiscoverySnapshot{}, "", "", "", fmt.Errorf("parse graph: %w", err)
+	}
+	return historyadmission.SnapshotFromDeclaredGraph(graph.Graph), "", graphDigest, manifestDigest, nil
+}
+
+func readBoundFile(path, expected, label string) ([]byte, string, error) {
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return nil, "", fmt.Errorf("read %s: %w", label, err)
+	}
+	digest := sha256.Sum256(raw)
+	digestText := hex.EncodeToString(digest[:])
+	if expected != digestText {
+		return nil, "", fmt.Errorf("%s SHA-256 binding does not match", label)
+	}
+	return raw, digestText, nil
 }
 
 func gitOutput(repository string, arguments ...string) ([]byte, error) {

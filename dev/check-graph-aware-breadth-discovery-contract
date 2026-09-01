@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "${buildopt_root}"
+
+jq -e '.schemaVersion == "buildopt.specs/poc-graph-aware-breadth-discovery/v1" and .status.currentBlock == "GABD-002" and .thresholds.minimumCompatibleCommits == 5 and .thresholds.minimumAdditionalFamilies == 1 and (.prohibitions | to_entries | all(.value == true))' specs/poc-graph-aware-breadth-discovery-v1.json >/dev/null
+jq -e '.schemaVersion == "buildopt.specs/poc-graph-aware-breadth-discovery-subjects/v1" and (.subjects | length) == 3 and ([.subjects[].targetRevision] | unique | length) == 3 and ([.subjects[].expectedFamily] | unique) == ["DEPENDENCY_SOURCE"]' specs/poc-graph-aware-breadth-discovery-v1.subjects.json >/dev/null
+
+sha256sum --check --strict <<'CHECKSUMS'
+820d30560f42dcba48ad21df7eb66da8c296e30f26fa4eb644646012d1072d4e  benchmarks/results/poc-automatic-breadth-transfer-v2/apache-groovy/state/discovery/manifest.json
+0b5c6562a7e8b158a6551227fc9bf9e9039deb03577ca2e07f7c7dcbcc69aa9b  benchmarks/results/poc-automatic-breadth-transfer-v2/apache-groovy/state/discovery/graph.json
+a4f67662b7a22f26ad91629a4304bc430cf5a41ede1ae73c6a0d705409e49380  benchmarks/results/poc-automatic-breadth-transfer-v2/opentelemetry-java-instrumentation/state/discovery/manifest.json
+0c75c5db9ec9ac0c0655174df5a82fa5a33616bf573786d7efffe5fbdf68c9ae  benchmarks/results/poc-automatic-breadth-transfer-v2/opentelemetry-java-instrumentation/state/discovery/graph.json
+59677bd1a444179e4a8637b547d9ae8feab9666009ed12691cb24c1dac02f4f2  benchmarks/results/poc-automatic-breadth-transfer-v2/micronaut-core/state/discovery/manifest.json
+956f795b8fd30702cc4fe0da62da94eb27178025c943f2debe68c560977cc8f9  benchmarks/results/poc-automatic-breadth-transfer-v2/micronaut-core/state/discovery/graph.json
+CHECKSUMS
+
+./dev/run --toolchain go -- go test -count=1 ./internal/historyadmission ./cmd/history-admission-audit
+printf 'graph-aware breadth discovery contract: ok\n'
