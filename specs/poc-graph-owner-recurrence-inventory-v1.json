@@ -1,7 +1,7 @@
 {
   "schemaVersion":"buildopt.specs/poc-graph-owner-recurrence-inventory/v1",
   "workItem":"GORI",
-  "status":{"currentBlock":"GORI-002","completedBlocks":["GORI-001"]},
+  "status":{"currentBlock":"GORI-003","completedBlocks":["GORI-001","GORI-002","GORI-003"],"decision":"AUTHORIZE_FRESH_GRAPH_CONFIRMATION_CONTRACT"},
   "subjects":"poc-graph-aware-breadth-discovery-v1.subjects.json",
   "thresholds":{"historyRows":64,"minimumGroupCommits":5},
   "prohibitions":{"gradle":true,"publicSourcePatch":true,"candidate":true,"timing":true,"repositoryNameRules":true}

@@ -25,10 +25,11 @@ decision.
 
 ## Current experiment status
 
-`GRAPH_OWNER_RECURRENCE_INVENTORY_V1` is current. It scans every exact
-graph-derived owner/family group in the three retained 64-row histories, rather
-than requiring the fixture owner to recur. Five commits are required before a
-separate correctness route can be considered; no Gradle or timing is allowed.
+`GRAPH_OWNER_RECURRENCE_INVENTORY_V1` is complete. Groovy exposes one recurrent
+root-owner dependency-source group with 37 commits and a retained 26/37
+affected closure, leaving eleven projects potentially omittable. OpenTelemetry
+maxes at one and Micronaut at three. The latest public Groovy member is selected
+only for a fresh graph-confirmation contract; no Gradle or timing ran here.
 
 `GRAPH_AWARE_BREADTH_DISCOVERY_V1` is closed. Across exact 64-row windows,
 Groovy reaches 2/5, OpenTelemetry 1/5 and Micronaut 1/5. No additional exact

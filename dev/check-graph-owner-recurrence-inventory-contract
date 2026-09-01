@@ -2,7 +2,8 @@
 set -euo pipefail
 buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 cd -- "${buildopt_root}"
-jq -e '.schemaVersion == "buildopt.specs/poc-graph-owner-recurrence-inventory/v1" and .status.currentBlock == "GORI-002" and .thresholds.historyRows == 64 and .thresholds.minimumGroupCommits == 5 and (.prohibitions|to_entries|all(.value==true))' specs/poc-graph-owner-recurrence-inventory-v1.json >/dev/null
+jq -e '.schemaVersion == "buildopt.specs/poc-graph-owner-recurrence-inventory/v1" and .status.decision == "AUTHORIZE_FRESH_GRAPH_CONFIRMATION_CONTRACT" and .thresholds.historyRows == 64 and .thresholds.minimumGroupCommits == 5 and (.prohibitions|to_entries|all(.value==true))' specs/poc-graph-owner-recurrence-inventory-v1.json >/dev/null
 ./dev/check-graph-aware-breadth-discovery-contract
 ./dev/run --toolchain go -- go test -count=1 ./cmd/history-admission-audit ./internal/historyadmission
+jq -e '.schemaVersion == "buildopt.history-admission/graph-owner-recurrence-inventory/v1" and .decision == "AUTHORIZE_FRESH_GRAPH_CONFIRMATION_CONTRACT" and (.gradleExecuted|not) and (.candidateExecuted|not) and (.timingCollected|not) and ([.rows[].historyRows] == [64,64,64]) and ([.rows[].reasonCounts|add] == [64,64,64]) and (.rows[0].recurrentGroups[0].commits|length)==37 and .rows[0].recurrentGroups[0].affectedProjects==26 and .rows[0].recurrentGroups[0].totalProjects==37 and .selectedObservation.targetRevision==.rows[0].recurrentGroups[0].commits[0]' benchmarks/results/graph-owner-recurrence-inventory-v1/summary.json >/dev/null
 printf 'graph owner recurrence inventory contract: ok\n'

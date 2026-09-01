@@ -1,6 +1,6 @@
 # Graph Owner Recurrence Inventory v1
 
-Status: `GORI-001` complete; `GORI-002` is current.
+Status: `GORI-001..003` complete as `AUTHORIZE_FRESH_GRAPH_CONFIRMATION_CONTRACT`.
 
 This source-only successor inventories every exact `owners + change family`
 group in the same three SHA-bound GABD histories. It is not anchored to the

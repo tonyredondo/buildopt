@@ -66,7 +66,7 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`GRAPH_AWARE_HISTORY_ADMISSION_VALIDATED\`"
-    "**Current phase:** \`GORI-002\`"
+    "**Current phase:** \`GORI-003\`"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"
@@ -161,6 +161,7 @@ buildopt_required_tracker_text=(
     "| \`E-481\` | 2026-09-01 | \`POC-GRAPH-AWARE-BREADTH-DISCOVERY\`, \`GABD-001\` |"
     "| \`E-482\` | 2026-09-01 | \`POC-GRAPH-AWARE-BREADTH-DISCOVERY\`, \`GABD-002/003\` |"
     "| \`E-483\` | 2026-09-01 | \`POC-GRAPH-OWNER-RECURRENCE-INVENTORY\`, \`GORI-001\` |"
+    "| \`E-484\` | 2026-09-01 | \`POC-GRAPH-OWNER-RECURRENCE-INVENTORY\`, \`GORI-002/003\` |"
     "| 157 | \`POC-OBSERVED-REQUEST-PORTFOLIO-001\` | Reconstruct all terminal request-aligned causes"
     "| 156 | \`POC-REQUEST-ALIGNED-RECURRENT-LEARNING-001\` | Reconstruct every terminal change-aware negative"
     "| 155 | \`POC-CHANGE-AWARE-PRODUCER-CLOSURE-001\` | Starting from the terminal fresh 1/5 breadth result"
