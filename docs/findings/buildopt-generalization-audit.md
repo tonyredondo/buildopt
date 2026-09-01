@@ -293,7 +293,15 @@ fresh structural breadth evidence, not candidate correctness or value.
 The subsequent empty-state correctness route naturally reaches the candidate
 on request three and reproduces all 3,895 required output files exactly across
 native/native/candidate, with zero failures. This establishes a second public
-candidate class; robust paired value remains unmeasured.
+candidate class.
+
+The separately frozen recurrent-root value route now supplies the missing
+robust result. Across eight balanced installed-path pairs, all eight savings
+are positive: optimized native averages 32,025.5 ms and the candidate 22,739
+ms, a 9,286.5-ms / 28.997% reduction. The paired lower 95% bound is +7,239 ms,
+candidate p95 improves by 11,086 ms, learning repays in one compatible match,
+all 3,895 outputs remain exact and failures are zero. This is a second exact
+public value class, not evidence that arbitrary repositories qualify.
 
 The graph-aware history successor replaces path-prefix recurrence with a
 versioned classifier shared by the launcher and an independent audit CLI. It

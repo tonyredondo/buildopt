@@ -25,6 +25,15 @@ decision.
 
 ## Current experiment status
 
+`RECURRENT_ROOT_PAIRED_VALUE_V1` is complete. The exact Groovy root-owner
+dependency-source class passed seventeen fresh ordinary installed-path
+requests: all 8/8 balanced pairs are positive, save 9.2865 seconds / 28.997%
+on average, have a +7.239-second paired 95% lower bound, improve candidate p95
+from 38.196 to 27.110 seconds and repay the 2.519-second learning cost in one
+compatible match. Every arm reproduced the same 3,895 outputs and failures are
+zero. BuildOpt now has two exact qualified public classes (Kafka and Groovy),
+but generic breadth and production activation remain unproved.
+
 `RECURRENT_ROOT_CANDIDATE_CORRECTNESS_V1` is complete. Fresh empty-state
 native/native/candidate execution reproduces the same 3,895-file output digest
 on all three requests with zero failures. Its one observed pair is diagnostic

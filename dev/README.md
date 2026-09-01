@@ -5604,6 +5604,13 @@ without invoking Gradle or collecting timing.
 
 ## Ordinary-build learning economics evidence
 
+## Recurrent-root paired value
+
+`./dev/check-recurrent-root-paired-value` reconstructs all eight balanced
+Groovy control/candidate pairs from the compact evidence, verifies their raw
+capture bindings, exact-output identity, mean reduction, positive interval,
+p95 and payback gates, and rejects generic or production authority.
+
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher
 integration tests. It proves that no measurement-only build contributes

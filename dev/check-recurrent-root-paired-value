@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "$root"
+
+evidence=benchmarks/results/recurrent-root-paired-value-v1/summary.json
+
+./dev/check-recurrent-root-paired-value-contract >/dev/null
+jq -e '
+  .pairs as $pairs |
+  ($pairs|length)==8 and
+  [$pairs[].pair]==[1,2,3,4,5,6,7,8] and
+  [$pairs[].order]==["CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST","CONTROL_FIRST","CANDIDATE_FIRST"] and
+  all($pairs[]; .savedMs==(.controlDurationMs-.candidateDurationMs) and .savedMs>0) and
+  ([ $pairs[].controlDurationMs ]|add/8)==.result.controlMeanMs and
+  ([ $pairs[].candidateDurationMs ]|add/8)==.result.candidateMeanMs and
+  ([ $pairs[].savedMs ]|add/8)==.result.meanSavedMs and
+  (.result.meanSavedMs/.result.controlMeanMs)==.result.reductionRatio and
+  ([ $pairs[]|select(.savedMs>0) ]|length)==.result.positivePairs and
+  ([ $pairs[].controlDurationMs ]|max)==.result.controlP95Ms and
+  ([ $pairs[].candidateDurationMs ]|max)==.result.candidateP95Ms and
+  .result.candidateP95Ms<=.result.controlP95Ms and
+  .result.interval95SavedMs==[7239,11453.875] and
+  ([ $pairs[].savedMs ]|min)>0 and
+  .result.paybackMatches==((.result.learningCostMs/.result.meanSavedMs)|ceil) and
+  .result.meanSavedMs>=500 and .result.reductionRatio>=0.02 and
+  .result.paybackMatches<=5 and .result.productFailures==0 and
+  .subject.ordinaryInvocations==17 and .subject.requiredOutputCount==3895 and
+  .subject.requiredOutputSha256=="385e7d8406bc505e00ac50506ad8a3bf75e6c53bf036e05796bb3a0e85242506" and
+  (.invocationSha256|length)==17 and
+  all(.invocationSha256[]; test("^[0-9a-f]{64}$")) and
+  .decision=="QUALIFY_RECURRENT_ROOT_GROOVY_VALUE" and
+  (.boundaries.productionAuthorized|not) and
+  (.boundaries.genericBreadthClaimed|not)
+' "$evidence" >/dev/null
+
+printf 'RRPV result OK: 8/8, 9286.5 ms (28.997%%), exact 3895 outputs, payback 1\n'

@@ -1248,7 +1248,17 @@ value remain separate gates.
 Candidate correctness then records one diagnostic pair: 29,306 ms native
 versus 19,723 ms candidate, a 9,583-ms / 32.70% difference and projected
 one-match payback after 2,406 ms learning. The contract explicitly excludes
-this single pair from value evidence; eight balanced pairs remain required.
+this single pair from value evidence; the later balanced result below owns the
+value claim.
+
+The recurrent-root paired route completes the required eight balanced pairs.
+Optimized native averages 32,025.5 ms and the installed candidate 22,739 ms:
+9,286.5 ms saved, or 28.997%. All eight pairs are positive, the paired 95%
+interval is +7,239..+11,453.875 ms, candidate p95 improves from 38,196 to
+27,110 ms, and 2,519 ms of learning cost repays in one compatible match. Every
+arm reproduces the same 3,895-output digest and product failures are zero. This
+qualifies the exact recurrent-root Groovy class alongside the earlier exact
+Kafka class; percentages are not averaged and generic breadth is still open.
 
 The follow-up `HISTORY_ADMITTED_CANDIDATE_CORRECTNESS_V1` selects Kafka because
 the exact prior source/history binding contained twelve compatible matches.

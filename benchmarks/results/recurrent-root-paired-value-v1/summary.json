@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "buildopt.evidence/recurrent-root-paired-value/v1",
+  "workItem": "RRPV",
+  "capturedAt": "2026-09-01T07:13:52Z",
+  "decision": "QUALIFY_RECURRENT_ROOT_GROOVY_VALUE",
+  "buildopt": {
+    "revision": "195d2c7956b37eb44c79bd87a4db6906eb0ae978",
+    "executableSha256": "af9f36a258038284853527dacc21f6a14280b5fcafb9a3ddd686e4d98f776854"
+  },
+  "subject": {
+    "repositoryId": "apache/groovy",
+    "baseRevision": "4bbcdba3cf42239a702c054c84443896e8d8c2f6",
+    "targetRevision": "494c9cb23ae799226c6ab8485301dae2925e6ed4",
+    "ordinaryInvocations": 17,
+    "requiredOutputCount": 3895,
+    "requiredOutputSha256": "385e7d8406bc505e00ac50506ad8a3bf75e6c53bf036e05796bb3a0e85242506",
+    "stateTreeSha256": "3e76d88439f8c4eafb3949977eb8eabc8aed81a4a5fbf12c05b37e7f8bdaa1b2",
+    "rawResultSha256": "9e4159d26b20e7c6fca6487705c2d0618099edaba32a1c127abe7c6cc4c8dcb4"
+  },
+  "invocationSha256": [
+    "f541bb396f0e776bb1363191b1697a0e9514499a80a360ce39ec5170ef3193f0",
+    "f920bcc605f5c30c6889f7138b699c4a882585fe0c488424a915110c33ce847f",
+    "56053241f6b81d388251c4401355000d928e79f8662b04aad08a4bfe19ad049a",
+    "5344e52c501274c89ad191425041276ca9ab14bc2adf6a336a18bc5f59c4e5aa",
+    "5884876dbceb3a070ee833f4e0fc98a30a27740bc8c2b46b72980e83f9b13ecd",
+    "cd83b01a206b4ecf7a14742a3ce0cd4dbc6d467c213785df9d89a153630660f1",
+    "32449d3c86232e61129c72e5e35e34c3708b26c12c22bb94a54d771bf32fc5eb",
+    "5d5698a6743ba47cfd5c1f0d65fb302737a58f3dbba8df5c9466f5b66365301d",
+    "dd13edf72824fb04356a313c120a79937d87910b3565dc017b93999c42b437c6",
+    "cb13c53fed91934c84b52476ed155eada599f68e3bcf346e250948f927fd9735",
+    "26f716c7f7db5a54712422fd1653f33792ff49af0df11e397454c954690469da",
+    "f572e48ab1a3a6b1c02511a06760eba3ef34fc32df0eee2c674417679ecc8243",
+    "c466217c7634db688af6184c5a0e3bb5414028f8e50763b4303ca82b1bd1a2fb",
+    "9822bcf41a54d3e7fd5099b216273607765390877c856512c5aa0a5c782e63fe",
+    "32c57936256815a10397830f3291aa0a7a9a4c7e71ffd23e24f0c80c77906f1f",
+    "5611f9f3a8bd95e6016d24c741ba45c56d483eb2081affee3bd5750e8f455a92",
+    "9e4159d26b20e7c6fca6487705c2d0618099edaba32a1c127abe7c6cc4c8dcb4"
+  ],
+  "pairs": [
+    {"pair":1,"order":"CONTROL_FIRST","controlDurationMs":28411,"candidateDurationMs":20363,"savedMs":8048},
+    {"pair":2,"order":"CANDIDATE_FIRST","controlDurationMs":28640,"candidateDurationMs":20244,"savedMs":8396},
+    {"pair":3,"order":"CONTROL_FIRST","controlDurationMs":28677,"candidateDurationMs":20560,"savedMs":8117},
+    {"pair":4,"order":"CANDIDATE_FIRST","controlDurationMs":29246,"candidateDurationMs":19666,"savedMs":9580},
+    {"pair":5,"order":"CONTROL_FIRST","controlDurationMs":30261,"candidateDurationMs":26226,"savedMs":4035},
+    {"pair":6,"order":"CANDIDATE_FIRST","controlDurationMs":35560,"candidateDurationMs":27110,"savedMs":8450},
+    {"pair":7,"order":"CONTROL_FIRST","controlDurationMs":38196,"candidateDurationMs":23110,"savedMs":15086},
+    {"pair":8,"order":"CANDIDATE_FIRST","controlDurationMs":37213,"candidateDurationMs":24633,"savedMs":12580}
+  ],
+  "result": {
+    "positivePairs": 8,
+    "controlMeanMs": 32025.5,
+    "candidateMeanMs": 22739,
+    "meanSavedMs": 9286.5,
+    "reductionRatio": 0.2899720535198514,
+    "interval95SavedMs": [7239, 11453.875],
+    "controlP95Ms": 38196,
+    "candidateP95Ms": 27110,
+    "learningCostMs": 2519,
+    "paybackMatches": 1,
+    "productFailures": 0
+  },
+  "boundaries": {
+    "productionAuthorized": false,
+    "genericBreadthClaimed": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}
