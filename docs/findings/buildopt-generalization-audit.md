@@ -357,6 +357,11 @@ This closes the admission and output-closure uncertainty for a third family and
 authorizes only a separately frozen candidate-correctness contract; it does not
 yet establish correctness, value breadth or a third qualified value class.
 
+The SMCC successor freezes that missing correctness proof without moving the
+value gate: empty state, native/native/candidate, the same 14,406-file digest,
+one candidate maximum and zero timing. Its predecessor selects the subject but
+cannot supply any correctness row.
+
 The successor isolated the naturally history-admitted Kafka row.
 Its twelve bound compatible matches may select the row but cannot be reused as
 fresh correctness or performance evidence. The route allows three untimed

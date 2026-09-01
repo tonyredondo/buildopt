@@ -25,13 +25,19 @@ decision.
 
 ## Current experiment status
 
+`SPRING_MESSAGING_CANDIDATE_CORRECTNESS_V1` is current. It starts from empty
+BuildOpt state and permits at most three ordinary requests, expected to enter
+`OPTIMIZED_NATIVE`, `OPTIMIZED_NATIVE`, then `INCREMENTAL_CANDIDATE` naturally.
+All three must reproduce SMGC's 14,406-file digest byte for byte with zero
+product failures. One candidate is allowed; timing and value claims are not.
+
 `SPRING_MESSAGING_FRESH_GRAPH_CONFIRMATION_V1` is complete. Its one fresh
 optimized-native request exits zero and independently confirms all 11 matches
 inside the product's 64-commit horizon, owner `:spring-messaging`, family
 `DEPENDENCY_SOURCE`, a complete 9/27 partial graph, 57 required patterns and
 14,406 exact outputs with zero product failures. It ran no candidate or timing
 sample. The only authorized next step is to freeze a separate Spring Messaging
-candidate-correctness contract; candidate execution is not yet authorized.
+candidate-correctness contract, now frozen as SMCC.
 
 `PRODUCT_WINDOW_GRAPH_RECURRENCE_V1` is complete. SJGC proved the apparent
 six-versus-one mismatch came from comparing a 256-commit exploratory inventory
