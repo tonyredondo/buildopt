@@ -1,14 +1,14 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `THREE_PUBLIC_VALUE_CLASSES_QUALIFIED` — exact Kafka, recurrent-root Groovy and Spring Messaging classes pass robust installed value<br>
-**Current phase:** `SMPV-003` — terminal Spring Messaging value evidence complete; production remains unauthorized<br>
+**Current phase:** `TCCV-002` — frozen three-class chronological experiment; Kafka execution is next<br>
 **POC functional target:** produce positive cumulative wall-time value against optimized native Gradle across chronological customer-requested builds, including every wrapper, observation, trial, cache, fallback and action cost<br>
 **POC onboarding north star:** `generate and commit BuildOpt Wrapper -> ./buildoptw build`; no global BuildOpt installation, hand-authored profile or committed credential is required<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
 **Last updated:** 2026-09-01<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
-**Detailed POC tracker:** [Spring Messaging Paired Value v1](./docs/plans/spring-messaging-paired-value-v1.md)<br>
+**Detailed POC tracker:** [Three-Class Chronological Value v1](./docs/plans/three-class-chronological-value-v1.md)<br>
 **Closed predecessor:** [Remote Cache Locality Value v2 POC Tracker](./docs/plans/remote-cache-locality-value-poc-tracker.md)<br>
 **Superseded diagnostic tracker:** [Sticky Wrapper Learning POC Tracker](./docs/plans/sticky-wrapper-learning-poc-tracker.md)<br>
 **Earlier closed predecessor:** [Adaptive Fragment Generalization POC Tracker](./docs/plans/adaptive-fragment-generalization-tracker.md)<br>
@@ -226,6 +226,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-SPRING-MESSAGING-CANDIDATE-CORRECTNESS | Prove exact outputs for the naturally admitted Spring Messaging candidate before value | `STOPPED` | 3/3 | `E-501..502`; [closed tracker](./docs/plans/spring-messaging-candidate-correctness-v1.md). Modes/history/current outputs pass, but the 14,406-file digest differs from frozen SMGC; zero timing/failures |
 | POC-SPRING-MESSAGING-FRESH-CONTROL-CORRECTNESS | Reprove complete candidate equality against two current native controls | `DONE` | 3/3 | `E-503..504`; [closed tracker](./docs/plans/spring-messaging-fresh-control-correctness-v1.md). Native/native/candidate reproduces all 14,406 outputs; zero exclusions, timing and failures |
 | POC-SPRING-MESSAGING-PAIRED-VALUE | Measure robust installed value for the exact Spring Messaging class | `DONE` | 3/3 | `E-505..506`; [closed tracker](./docs/plans/spring-messaging-paired-value-v1.md). 8/8 positive, 19.441% mean saving, positive interval, improved p95, two-match payback and exact outputs |
+| POC-THREE-CLASS-CHRONOLOGICAL-VALUE | Test cumulative value across the immediate public descendants of all three qualified classes | `DOING` | 1/5 | `E-507`; [active tracker](./docs/plans/three-class-chronological-value-v1.md). Contract freezes 3 classes, 8/8 requalification, portable outputs and 9 mechanically selected first-parent observations; no new build or timing evidence yet |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Not authorized by terminal `STOP_GENERIC_POC` or `STOP_ADAPTIVE_FRAGMENT_POC` |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -2554,6 +2555,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-504` | 2026-09-01 | `POC-SPRING-MESSAGING-FRESH-CONTROL-CORRECTNESS`, `SMFC-002/003` | [`check-spring-messaging-fresh-control-correctness`](./dev/check-spring-messaging-fresh-control-correctness) reconstructs the [new three-request result](./benchmarks/results/spring-messaging-fresh-control-correctness-v1/README.md) | `DONE`: native/native/candidate, 11 matches and all 14,406 outputs share one complete digest with zero exclusions, normalization, timing or failures. Only a paired-value contract is authorized |
 | `E-505` | 2026-09-01 | `POC-SPRING-MESSAGING-PAIRED-VALUE`, `SMPV-001` | The [contract](./specs/poc-spring-messaging-paired-value-v1.md), [tracker](./docs/plans/spring-messaging-paired-value-v1.md) and [`check-spring-messaging-paired-value-contract`](./dev/check-spring-messaging-paired-value-contract) freeze the exact SMFC class and robust value gates | `DONE` planning only. Seventeen new ordinary requests, eight balanced pairs, exact outputs and immutable 8/8, mean, interval, p95, payback and zero-failure gates |
 | `E-506` | 2026-09-01 | `POC-SPRING-MESSAGING-PAIRED-VALUE`, `SMPV-002/003` | [`check-spring-messaging-paired-value`](./dev/check-spring-messaging-paired-value) independently reconstructs the [single seventeen-request result](./benchmarks/results/spring-messaging-paired-value-v1/README.md) | `DONE`: 8/8 positive pairs, 7,802.5 ms / 19.441% mean saving, +7,128.5..+8,415.625 ms interval, 6,926-ms p95 improvement, two-match payback, 14,406 exact outputs and zero failures. Exact class only; production and generic breadth remain unauthorized |
+| `E-507` | 2026-09-01 | `POC-THREE-CLASS-CHRONOLOGICAL-VALUE`, `TCCV-001` | The [contract](./specs/poc-three-class-chronological-value-v1.md), machine policy, frozen source selection, [tracker](./docs/plans/three-class-chronological-value-v1.md) and independent contract checker bind the three exact qualified classes to their nine immediate first-parent descendants | `DONE` planning only: 8/8 requalification, cross-root portability, exact outputs, zero failures, 2/3 subject payback and positive aggregate net are immutable before execution; no new Gradle or timing row exists |
 ---
 
 ## 15. Tracker changelog

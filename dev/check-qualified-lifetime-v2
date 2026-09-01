@@ -44,7 +44,7 @@ buildopt_common_jq='
       $minimum == 7 and .pairsMeasured == 8 and
       (if .qualified then .positivePairs >= 7 else true end)
     elif .qualificationPolicy == "ROBUST_6_OF_8_ALTERNATING_PAIRS_INTERVAL_P95_V1" then
-      ($minimum == 6 or $minimum == 7) and .pairsMeasured == 8 and
+      ($minimum == 6 or $minimum == 7 or $minimum == 8) and .pairsMeasured == 8 and
       (if .qualified then
          .positivePairs >= $minimum and .interval95SavedMs[0] > 0 and
          .candidateP95Ms <= .controlP95Ms
@@ -170,7 +170,8 @@ buildopt_common_jq='
     (.buildopt.revision | revision) and (.buildopt.executableSha256 | digest) and
     $spec.protocol.noCompatibleReplayPrecedesPayback == true and
     $spec.protocol.calibrationPairs == 8 and
-    ($spec.protocol.minimumPositiveCalibrationPairs == 7 or
+    ($spec.protocol.minimumPositiveCalibrationPairs == 8 or
+      $spec.protocol.minimumPositiveCalibrationPairs == 7 or
       $spec.protocol.minimumPositiveCalibrationPairs == 6) and
     $spec.protocol.positiveCalibrationIntervalRequired == true and
     $spec.protocol.candidateCalibrationP95NonRegressive == true and

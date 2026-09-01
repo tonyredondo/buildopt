@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+export BUILDOPT_QUALIFIED_LIFETIME_SPEC="${buildopt_root}/specs/poc-three-class-chronological-value-v1.json"
+exec "${buildopt_root}/dev/run-qualified-lifetime-v2" "$@"

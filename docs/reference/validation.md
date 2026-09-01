@@ -697,11 +697,17 @@ Gradle build is rerun by this static decision gate.
 ./dev/check-spring-messaging-fresh-control-correctness
 ./dev/check-spring-messaging-paired-value-contract
 ./dev/check-spring-messaging-paired-value
+./dev/check-three-class-chronological-value-contract
 ```
 
 This source-only check binds the retained discovery snapshots, tests the
 classifier and audit CLI, and verifies the compact Kafka/Spring decisions and
 exact compatible commit identities without running Gradle.
+
+The three-class chronological contract checker binds the three prior robust
+value summaries, exact public revisions, mechanically selected immediate
+first-parent descendants and terminal cumulative-value thresholds. It is
+source-only; the long public execution is never part of Base CI.
 
 ## Complete lanes
 

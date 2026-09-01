@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "buildopt.specs/poc-three-class-chronological-value-sources/v1",
+  "selectionRule": "THREE_IMMEDIATE_FIRST_PARENT_DESCENDANTS_OLDEST_TO_NEWEST",
+  "capturedAt": "2026-09-01",
+  "subjects": [
+    {"key":"apache-kafka","historyBranch":"trunk","targetPosition":119,"historySha256":"b5e263c8971897de6f04da77140f592979ebe6c20521a0fff8fb1a234d0b6ea1","pairedValueEvidence":"benchmarks/results/history-admitted-paired-value-v1/summary.json","pairedValueSha256":"c1e59415daba1ecf1a20b74a83b73f85cb4b6af583d2fa2b8f7a5413c6df9b10"},
+    {"key":"apache-groovy","historyBranch":"GROOVY_5_0_X","targetPosition":4,"historySha256":"484f1496d59ca4686f2cd4f016ad6c57a11f0fd9eb081dffad7f0157e98c64ef","pairedValueEvidence":"benchmarks/results/recurrent-root-paired-value-v1/summary.json","pairedValueSha256":"606e8e40fc0f9277d1f01333e203892cc55369e2a67b035079c8dd4bc144e232"},
+    {"key":"spring-framework","historyBranch":"main","targetPosition":23,"historyFile":"benchmarks/results/spring-jms-graph-aware-confirmation-v1/raw/first-parent-256.txt","historySha256":"666a105f0720a7fc39098d3b4fb36957dfb011f510b548c529e058a05c4a6968","pairedValueEvidence":"benchmarks/results/spring-messaging-paired-value-v1/summary.json","pairedValueSha256":"7cfc441541965a8b3aecca8caf0b3c0615f5a84d4dae729431fcb7cd9313e814"}
+  ],
+  "terminalGate": {"qualificationDecisions":3,"positiveCalibrationPairsPerQualifiedSubject":8,"observationsPerSubject":3,"subjectsPaidBack":2,"aggregateCumulativeNetPositive":true,"productFailures":0,"exactRequiredOutputs":true}
+}

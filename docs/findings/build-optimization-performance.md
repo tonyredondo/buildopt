@@ -1420,3 +1420,13 @@ class to specialize.
 ```bash
 ./dev/check-adaptive-fragment-longitudinal
 ```
+
+## Three-class chronological value
+
+The next performance question is frozen as TCCV before any new request. It
+uses the immediate three first-parent descendants of the qualified Kafka,
+Groovy and Spring Messaging revisions, requires a fresh 8/8 portable
+requalification for each, and charges learning, publication, selection,
+synchronization, materialization and fallback. Success requires at least two
+subjects to pay back and the signed aggregate net to be positive. There are no
+TCCV measurements yet, so no longitudinal speedup is claimed.

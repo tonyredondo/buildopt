@@ -464,3 +464,13 @@ source-checkout matrix is therefore historical audit evidence, not permission
 to claim current generic value. The current claim now requires a larger,
 preregistered installed-package campaign rather than exact repetition of
 outdated decisions.
+
+## Three-class chronological successor
+
+TCCV is preregistered without choosing favorable later commits: for each of
+the exact Kafka, Groovy and Spring Messaging value revisions it freezes the
+three immediate first-parent descendants in chronological order. The unchanged
+qualified-lifetime harness must requalify each class at 8/8, establish
+cross-root output portability and charge all lifecycle costs. No TCCV timing
+row exists at contract freeze, so the three-class installed result is not yet a
+chronological, generic or production-value claim.

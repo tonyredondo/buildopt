@@ -1277,6 +1277,22 @@ experiment reports cumulative economics per repository and never averages
 unrelated repository percentages. It is bounded POC evidence, not a soak or a
 production gate.
 
+The bounded successor freezes the three exact installed-value classes and the
+three immediate first-parent descendants of each before any new build:
+
+```bash
+./dev/check-three-class-chronological-value-contract
+./dev/run-three-class-chronological-value /absolute/evidence/directory apache-kafka
+./dev/run-three-class-chronological-value /absolute/evidence/directory apache-groovy
+./dev/run-three-class-chronological-value /absolute/evidence/directory spring-framework
+./dev/run-three-class-chronological-value /absolute/evidence/directory --summary-only
+```
+
+Each subject must requalify at 8/8 and pass exact cross-root portability before
+its three observations. The terminal experiment charges all costs and requires
+at least two paid-back subjects plus positive aggregate cumulative net value.
+It does not average repository percentages or authorize production.
+
 If the harness stops after the expensive qualification capture, preserve the
 two diagnostic roots printed on stderr and resume that single subject without
 repeating its timing samples:

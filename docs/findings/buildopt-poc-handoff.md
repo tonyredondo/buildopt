@@ -25,6 +25,15 @@ decision.
 
 ## Current experiment status
 
+`THREE_CLASS_CHRONOLOGICAL_VALUE_V1` is frozen before execution. It will
+requalify the exact Kafka, recurrent-root Groovy and Spring Messaging classes
+at 8/8, require portable native outputs, and observe each class on its three
+immediate public first-parent descendants. All learning and fallback costs are
+charged. The bounded gate needs nine exact observations, zero product failures,
+at least two paid-back subjects and positive aggregate cumulative net. No new
+build or timing evidence exists yet; generic breadth and production remain
+unauthorized.
+
 `SPRING_MESSAGING_PAIRED_VALUE_V1` is complete and qualifies the third bounded
 public value class. Its single empty-state campaign completed one baseline and
 eight balanced pairs: 8/8 are positive, optimized native averages 40,133.5 ms
