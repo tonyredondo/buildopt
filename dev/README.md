@@ -5664,6 +5664,12 @@ identical but differs from SMGC's frozen digest, so paired timing stays closed.
 `./dev/capture-spring-messaging-candidate-correctness` is the now-consumed
 single-use capture entrypoint; rerunning it is not result validation.
 
+`./dev/check-spring-messaging-fresh-control-correctness-contract` preserves the
+SMCC stop while freezing a new complete-output comparison against two fresh
+native controls. It permits no exclusions or normalization, one candidate and
+zero timing. `./dev/capture-spring-messaging-fresh-control-correctness` is the
+single-use entrypoint after hosted CI validates the contract commit.
+
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher
 integration tests. It proves that no measurement-only build contributes

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "${buildopt_root}"
+buildopt_subject=specs/poc-spring-messaging-fresh-graph-confirmation-v1.subjects.json
+buildopt_predecessor=benchmarks/results/spring-messaging-candidate-correctness-v1/summary.json
+buildopt_subject_sha=$(sha256sum "${buildopt_subject}" | awk '{print $1}')
+buildopt_predecessor_sha=$(sha256sum "${buildopt_predecessor}" | awk '{print $1}')
+
+./dev/check-spring-messaging-candidate-correctness >/dev/null
+jq -e --arg subjectSha "${buildopt_subject_sha}" --arg predecessorSha "${buildopt_predecessor_sha}" '
+  .schemaVersion=="buildopt.specs/poc-spring-messaging-fresh-control-correctness/v1" and
+  .status=={currentBlock:"SMFC-002",completedBlocks:["SMFC-001"]} and
+  .subject.sourceSha256==$subjectSha and .subject.predecessorEvidenceSha256==$predecessorSha and
+  .subject.owner==":spring-messaging" and .subject.family=="DEPENDENCY_SOURCE" and .subject.compatibleMatches==11 and
+  .execution=={maximumGradleStarts:3,expectedModes:["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"],candidateBuilds:1,timingSamples:0,timeoutMinutesPerInvocation:30,maximumWorkers:12} and
+  .outputs=={expectedCount:14406,completeDigestEqualAcrossFreshSequence:true,excludedPaths:[],normalizationAllowed:false} and
+  .boundaries=={priorResultReuseAllowed:false,stateForgeryAllowed:false,publicSourceWritesAllowed:false,pairedValueAuthorized:false,productionAuthorized:false,testOptimization:"OUT_OF_SCOPE"}
+' specs/poc-spring-messaging-fresh-control-correctness-v1.json >/dev/null
+
+jq -e '
+  .decision=="STOP_SPRING_MESSAGING_CANDIDATE_CORRECTNESS_OUTPUT_DRIFT" and
+  .outputs.count==14406 and .outputs.identicalInsideFreshSequence and
+  (.outputs.matchesFrozenContract|not) and (.boundaries.timingAuthorized|not)
+' "${buildopt_predecessor}" >/dev/null
+printf 'spring-messaging fresh-control correctness contract: complete digest, zero exclusions/timing\n'

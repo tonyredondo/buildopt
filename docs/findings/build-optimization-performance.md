@@ -1336,6 +1336,11 @@ all three fresh digests differ from the SMGC digest frozen by the contract, so
 correctness fails and paired value is not authorized. The recorded durations
 are diagnostic only and support no speedup claim.
 
+SMFC remains a correctness-only successor and adds no performance sample. It
+requires a new complete-output native/native/candidate sequence, with no path
+exclusion or normalization. Even a pass can authorize only a later frozen
+paired-value contract.
+
 The untimed CSCPC route did not reach candidate correctness or performance.
 Its first Groovy optimized-native invocation succeeded, but the production
 decision path returned `NATIVE_RETAINED / ORDINARY_LEARNING_ECONOMICS_REJECTED`:

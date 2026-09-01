@@ -1,0 +1,9 @@
+{
+  "schemaVersion":"buildopt.specs/poc-spring-messaging-fresh-control-correctness/v1",
+  "workItem":"SMFC",
+  "status":{"currentBlock":"SMFC-002","completedBlocks":["SMFC-001"]},
+  "subject":{"source":"specs/poc-spring-messaging-fresh-graph-confirmation-v1.subjects.json","sourceSha256":"bc75f84485caf27239ba5fbdb0cf0928b8fc5f0e9667a433d9bf5d46ea0afd44","predecessorEvidence":"benchmarks/results/spring-messaging-candidate-correctness-v1/summary.json","predecessorEvidenceSha256":"a55ec7b90affec4f067da2c6b38ce329baedf8346061a9863800031f7a66cf9e","owner":":spring-messaging","family":"DEPENDENCY_SOURCE","compatibleMatches":11},
+  "execution":{"maximumGradleStarts":3,"expectedModes":["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"],"candidateBuilds":1,"timingSamples":0,"timeoutMinutesPerInvocation":30,"maximumWorkers":12},
+  "outputs":{"expectedCount":14406,"completeDigestEqualAcrossFreshSequence":true,"excludedPaths":[],"normalizationAllowed":false},
+  "boundaries":{"priorResultReuseAllowed":false,"stateForgeryAllowed":false,"publicSourceWritesAllowed":false,"pairedValueAuthorized":false,"productionAuthorized":false,"testOptimization":"OUT_OF_SCOPE"}
+}

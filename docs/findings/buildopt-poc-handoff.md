@@ -25,14 +25,21 @@ decision.
 
 ## Current experiment status
 
+`SPRING_MESSAGING_FRESH_CONTROL_CORRECTNESS_V1` is current. It preserves the
+SMCC stop and reruns a new empty-state native/native/candidate sequence. All
+14,406 outputs remain in scope, with no exclusion or normalization; equality is
+measured against both optimized-native controls from the same current sequence.
+One candidate is allowed and timing remains forbidden.
+
 `SPRING_MESSAGING_CANDIDATE_CORRECTNESS_V1` is closed. The exact empty-state
 sequence naturally enters `OPTIMIZED_NATIVE`, `OPTIMIZED_NATIVE`, then
 `INCREMENTAL_CANDIDATE`; all three requests exit zero, observe 11 matches and
 produce the same 14,406-file fresh digest with zero product failures. That
 digest nevertheless differs from the SMGC digest frozen by the contract. The
 route stops without loosening equality: no timing, speedup or third value class
-is authorized. The next viable seam is source-level isolation of the cross-run
-output drift, not a rerun or post-hoc digest replacement.
+is authorized. A post-result manifest comparison localizes the cross-run drift
+to two same-size AspectJ test classes outside `:spring-messaging`; SMFC therefore
+uses fresh native controls without excluding either file or reusing SMCC rows.
 
 `SPRING_MESSAGING_FRESH_GRAPH_CONFIRMATION_V1` is complete. Its one fresh
 optimized-native request exits zero and independently confirms all 11 matches

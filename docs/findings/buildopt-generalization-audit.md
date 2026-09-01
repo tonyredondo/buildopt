@@ -364,6 +364,12 @@ equal the SMGC digest frozen before execution. The route therefore stops before
 timing. This is evidence of cross-run output drift requiring isolation, not
 permission to replace the expected digest after observation.
 
+SMFC corrects only the comparator: two optimized-native controls and the
+candidate must share one complete 14,406-file digest in a new sequence. No
+output is excluded or normalized, and the SMCC sequence cannot populate the
+result. This keeps exact-output safety while avoiding an older native build as
+the control for known cross-run AspectJ nondeterminism.
+
 The successor isolated the naturally history-admitted Kafka row.
 Its twelve bound compatible matches may select the row but cannot be reused as
 fresh correctness or performance evidence. The route allows three untimed

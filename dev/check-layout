@@ -642,6 +642,8 @@ buildopt_required_files=(
     "dev/check-spring-messaging-candidate-correctness-contract"
     "dev/check-spring-messaging-candidate-correctness"
     "dev/capture-spring-messaging-candidate-correctness"
+    "dev/check-spring-messaging-fresh-control-correctness-contract"
+    "dev/capture-spring-messaging-fresh-control-correctness"
     "dev/run-product-window-graph-recurrence"
     "dev/capture-spring-jms-graph-aware-confirmation"
     "dev/capture-third-family-fresh-graph-confirmation"
