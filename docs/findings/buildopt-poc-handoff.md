@@ -25,10 +25,11 @@ decision.
 
 ## Current experiment status
 
-`GRAPH_AWARE_BREADTH_DISCOVERY_V1` is current. It binds the retained reviewed
-graphs for Groovy, OpenTelemetry and Micronaut and will scan 64 first-parent
-commits per family for at least five exact owner/family matches. This phase is
-source-only: no Gradle, candidate or timing is authorized.
+`GRAPH_AWARE_BREADTH_DISCOVERY_V1` is closed. Across exact 64-row windows,
+Groovy reaches 2/5, OpenTelemetry 1/5 and Micronaut 1/5. No additional exact
+owner family is admitted and no Gradle, candidate or timing ran. The next route
+will inventory every owner/family group in those graphs instead of anchoring to
+the original fixture owner.
 
 `GRAPH_AWARE_HISTORY_ADMISSION_V1` is complete. The launcher and independent
 audit CLI now share exact project-owner, change-family and transitive-closure

@@ -1,6 +1,6 @@
 # Graph-Aware Breadth Discovery v1
 
-Status: `GABD-001` complete; `GABD-002` is current.
+Status: `GABD-001..003` closed as `STOP_EXACT_OWNER_BREADTH`.
 
 This experiment searches for a second naturally recurrent public family before
 spending another Gradle build. It runs the graph-aware source-history auditor

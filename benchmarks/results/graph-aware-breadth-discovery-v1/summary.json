@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "buildopt.history-admission/graph-aware-breadth-summary/v1",
+  "decision": "STOP_EXACT_OWNER_BREADTH",
+  "minimumCompatibleCommits": 5,
+  "additionalAdmittedFamilies": 0,
+  "gradleExecuted": false,
+  "candidateExecuted": false,
+  "timingCollected": false,
+  "rows": [
+    {"label":"apache-groovy","baseRevision":"c16898314460cdfc3e0f0d7d24822585bbd1997e","targetRevision":"9dbf367a956011cfedb6e3154e4c7f8e092f4da9","historyWindowCommits":64,"compatibleCommits":["9dbf367a956011cfedb6e3154e4c7f8e092f4da9","572ddf5f1c4ed554f9bfb949832677042ae06ca0"],"reasonCounts":{"EXACT_GRAPH_OWNER_AND_FAMILY":2,"INCOMPLETE_AMBIGUOUS":9,"OWNER_MISMATCH":44,"UNSAFE_STRUCTURAL_CHANGE":9},"decision":"REJECT"},
+    {"label":"opentelemetry-java-instrumentation","baseRevision":"080c1d32ca676ba7b0210c21b60cce8e7ac39058","targetRevision":"1c100c2f9ac5127e7514f16320cc8144f79e5832","historyWindowCommits":64,"compatibleCommits":["1c100c2f9ac5127e7514f16320cc8144f79e5832"],"reasonCounts":{"EXACT_GRAPH_OWNER_AND_FAMILY":1,"INCOMPLETE_AMBIGUOUS":24,"OWNER_MISMATCH":20,"UNSAFE_STRUCTURAL_CHANGE":19},"decision":"REJECT"},
+    {"label":"micronaut-core","baseRevision":"8de8f38aceb6239f7df05c92c4eb7a26113e882b","targetRevision":"3c3f7a3a1bd3a98bbb0399792a5f5acb03c662b5","historyWindowCommits":64,"compatibleCommits":["3c3f7a3a1bd3a98bbb0399792a5f5acb03c662b5"],"reasonCounts":{"EXACT_GRAPH_OWNER_AND_FAMILY":1,"INCOMPLETE_AMBIGUOUS":24,"OWNER_MISMATCH":18,"UNSAFE_STRUCTURAL_CHANGE":21},"decision":"REJECT"}
+  ]
+}

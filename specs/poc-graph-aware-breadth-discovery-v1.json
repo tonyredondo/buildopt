@@ -1,7 +1,7 @@
 {
   "schemaVersion": "buildopt.specs/poc-graph-aware-breadth-discovery/v1",
   "workItem": "GABD",
-  "status": {"currentBlock": "GABD-002", "completedBlocks": ["GABD-001"]},
+  "status": {"currentBlock": "GABD-003", "completedBlocks": ["GABD-001", "GABD-002", "GABD-003"], "decision": "STOP_EXACT_OWNER_BREADTH"},
   "thresholds": {"maximumFirstParentCommits": 64, "minimumCompatibleCommits": 5, "minimumAdditionalFamilies": 1},
   "controls": {"apache-kafka": "ADMIT_12", "spring-framework": "REJECT_1"},
   "prohibitions": {"gradle": true, "publicSourcePatch": true, "candidate": true, "timing": true, "repositoryNameRules": true}

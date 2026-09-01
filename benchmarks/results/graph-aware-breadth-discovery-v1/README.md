@@ -1,4 +1,5 @@
 # Graph-Aware Breadth Discovery v1 evidence
 
-No result exists yet. `GABD-002` will add only fresh source-history audit
-evidence. Public builds, candidates and timing are forbidden in this route.
+`summary.json` retains the fresh source-history result. Groovy reaches 2/5,
+OpenTelemetry 1/5 and Micronaut 1/5 exact owner/family matches. No additional
+family is admitted. The route stops without Gradle, candidates or timing.

@@ -4,7 +4,7 @@ set -euo pipefail
 buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 cd -- "${buildopt_root}"
 
-jq -e '.schemaVersion == "buildopt.specs/poc-graph-aware-breadth-discovery/v1" and .status.currentBlock == "GABD-002" and .thresholds.minimumCompatibleCommits == 5 and .thresholds.minimumAdditionalFamilies == 1 and (.prohibitions | to_entries | all(.value == true))' specs/poc-graph-aware-breadth-discovery-v1.json >/dev/null
+jq -e '.schemaVersion == "buildopt.specs/poc-graph-aware-breadth-discovery/v1" and .status.decision == "STOP_EXACT_OWNER_BREADTH" and .thresholds.minimumCompatibleCommits == 5 and .thresholds.minimumAdditionalFamilies == 1 and (.prohibitions | to_entries | all(.value == true))' specs/poc-graph-aware-breadth-discovery-v1.json >/dev/null
 jq -e '.schemaVersion == "buildopt.specs/poc-graph-aware-breadth-discovery-subjects/v1" and (.subjects | length) == 3 and ([.subjects[].targetRevision] | unique | length) == 3 and ([.subjects[].expectedFamily] | unique) == ["DEPENDENCY_SOURCE"]' specs/poc-graph-aware-breadth-discovery-v1.subjects.json >/dev/null
 
 sha256sum --check --strict <<'CHECKSUMS'
@@ -20,4 +20,5 @@ e310608f1b78a717dd5b0baed71dc8f769679ead7688359d6ee3e59d6cd21516  benchmarks/res
 CHECKSUMS
 
 ./dev/run --toolchain go -- go test -count=1 ./internal/historyadmission ./cmd/history-admission-audit
+jq -e '.schemaVersion == "buildopt.history-admission/graph-aware-breadth-summary/v1" and .decision == "STOP_EXACT_OWNER_BREADTH" and .additionalAdmittedFamilies == 0 and (.gradleExecuted|not) and (.candidateExecuted|not) and (.timingCollected|not) and ([.rows[].historyWindowCommits] == [64,64,64]) and ([.rows[].compatibleCommits|length] == [2,1,1]) and ([.rows[].reasonCounts|add] == [64,64,64]) and ([.rows[].decision]|unique == ["REJECT"])' benchmarks/results/graph-aware-breadth-discovery-v1/summary.json >/dev/null
 printf 'graph-aware breadth discovery contract: ok\n'
