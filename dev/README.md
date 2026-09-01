@@ -5657,10 +5657,12 @@ contract. `./dev/capture-spring-messaging-fresh-graph-confirmation` is the
 now-consumed single-use entrypoint; rerunning it is not result validation.
 
 `./dev/check-spring-messaging-candidate-correctness-contract` freezes the exact
-empty-state native/native/candidate sequence selected by SMGC. It requires
-14,406 byte-exact outputs across all three requests and permits one candidate
-but no timing. `./dev/capture-spring-messaging-candidate-correctness` is the
-single-use capture entrypoint after the contract commit passes hosted CI.
+empty-state native/native/candidate sequence selected by SMGC.
+`./dev/check-spring-messaging-candidate-correctness` reconstructs the three raw
+requests and terminal output-drift stop: the fresh sequence is internally
+identical but differs from SMGC's frozen digest, so paired timing stays closed.
+`./dev/capture-spring-messaging-candidate-correctness` is the now-consumed
+single-use capture entrypoint; rerunning it is not result validation.
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher

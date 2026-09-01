@@ -3,10 +3,15 @@
 | Block | Outcome | State |
 |---|---|---|
 | `SMCC-001` | Freeze the exact untimed three-request correctness contract | `DONE` |
-| `SMCC-002` | Execute native/native/candidate from empty state | `TODO` |
-| `SMCC-003` | Reconstruct exact outputs and authorize value or stop | `WAITING` |
+| `SMCC-002` | Execute native/native/candidate from empty state | `DONE` |
+| `SMCC-003` | Reconstruct exact outputs and authorize value or stop | `DONE` |
 
-SMGC supplies selection and expected-output bindings only. This route permits
-one natural candidate after two native requests, zero timing samples and zero
-public-source writes. A pass may authorize only a separate paired-value
+The sequence naturally produced native/native/candidate with 11 matches,
+14,406 outputs and zero failures on every request. Its fresh digest is stable
+across all three requests but differs from the SMGC digest frozen by the
 contract.
+
+Terminal decision: `STOP_SPRING_MESSAGING_CANDIDATE_CORRECTNESS_OUTPUT_DRIFT`.
+The candidate is not accepted as correct and paired timing remains
+unauthorized. Any successor must isolate the exact cross-run output drift
+without weakening equality after seeing the result.

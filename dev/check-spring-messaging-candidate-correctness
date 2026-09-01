@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "${buildopt_root}"
+
+buildopt_evidence=benchmarks/results/spring-messaging-candidate-correctness-v1
+buildopt_capture_sha=$(sha256sum "${buildopt_evidence}/raw/capture.json" | awk '{print $1}')
+buildopt_invocation_shas=$(for buildopt_sequence in 01 02 03; do
+    sha256sum "${buildopt_evidence}/raw/invocation-${buildopt_sequence}.json" | awk '{print $1}'
+done | jq -Rsc 'split("\n")|map(select(length>0))')
+
+./dev/check-spring-messaging-candidate-correctness-contract >/dev/null
+jq -e \
+  --slurpfile capture "${buildopt_evidence}/raw/capture.json" \
+  --slurpfile first "${buildopt_evidence}/raw/invocation-01.json" \
+  --slurpfile second "${buildopt_evidence}/raw/invocation-02.json" \
+  --slurpfile third "${buildopt_evidence}/raw/invocation-03.json" \
+  --arg captureSha "${buildopt_capture_sha}" --argjson invocationShas "${buildopt_invocation_shas}" '
+  $capture[0] as $capture|[$first[0],$second[0],$third[0]] as $runs|
+  $capture.schemaVersion=="buildopt.evidence/automatic-breadth-subject/v3" and
+  $capture.repositoryId=="spring-projects/spring-framework" and
+  $capture.processExitCode==0 and ($capture.productFailure|not) and
+  $capture.ordinaryInvocations==3 and $capture.measurementOnlyWorkflowRuns==0 and
+  [$capture.invocationResults[].executionMode]==["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"] and
+  [$capture.invocationResults[].sha256]==$invocationShas and
+  [$runs[].execution.mode]==["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"] and
+  ([$runs[].execution.exitCode]|all(.==0)) and
+  ([$runs[].incrementalLearning.ordinaryEconomics.historicalCompatibleMatches]|all(.==11)) and
+  ([$runs[].incrementalLearning.baseline.requiredOutputCount]|all(.==14406)) and
+  ([$runs[].incrementalLearning.baseline.requiredOutputSha256]|unique)==["b2939eeb30a9c3f35e6c338c02f1ee69a5ce6aca008b88689a5b048c03ad87f9"] and
+  ([$runs[].incrementalLearning.baseline.productAttributableFailure]|all(.==false)) and
+  ($runs[2].incrementalLearning.pairsCompleted==1) and
+  ([$runs[].calibration.performed]|all(.==false)) and
+  .schemaVersion=="buildopt.evidence/spring-messaging-candidate-correctness/v1" and
+  .decision=="STOP_SPRING_MESSAGING_CANDIDATE_CORRECTNESS_OUTPUT_DRIFT" and
+  .rawBindings=={captureSha256:$captureSha,invocationSha256:$invocationShas} and
+  .invocations=={count:3,modes:["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"],durationsMs:[424595,40159,35642],gradleStarts:3,candidateBuilds:1,timingSamples:0,productFailures:0} and
+  .history.compatibleMatches==[11,11,11] and
+  .outputs.count==14406 and
+  .outputs.contractSha256=="7de23e14d9987f0cc8661cb7de81b06f4df15cd3039ac8e947ace6f33904779f" and
+  .outputs.observedSha256=="b2939eeb30a9c3f35e6c338c02f1ee69a5ce6aca008b88689a5b048c03ad87f9" and
+  .outputs.identicalInsideFreshSequence and (.outputs.matchesFrozenContract|not) and
+  .boundaries=={pairedValueAuthorized:false,timingAuthorized:false,productionAuthorized:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_evidence}/summary.json" >/dev/null
+
+printf 'spring-messaging candidate correctness: stopped on frozen-output drift; timing unauthorized\n'

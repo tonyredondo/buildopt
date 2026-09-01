@@ -357,10 +357,12 @@ This closes the admission and output-closure uncertainty for a third family and
 authorizes only a separately frozen candidate-correctness contract; it does not
 yet establish correctness, value breadth or a third qualified value class.
 
-The SMCC successor freezes that missing correctness proof without moving the
-value gate: empty state, native/native/candidate, the same 14,406-file digest,
-one candidate maximum and zero timing. Its predecessor selects the subject but
-cannot supply any correctness row.
+The SMCC successor reaches the candidate but does not close correctness. The
+empty-state native/native/candidate sequence has 11 matches, 14,406 outputs and
+zero failures on every request; all three fresh digests agree. They do not
+equal the SMGC digest frozen before execution. The route therefore stops before
+timing. This is evidence of cross-run output drift requiring isolation, not
+permission to replace the expected digest after observation.
 
 The successor isolated the naturally history-admitted Kafka row.
 Its twelve bound compatible matches may select the row but cannot be reused as

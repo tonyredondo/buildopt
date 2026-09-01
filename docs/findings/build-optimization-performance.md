@@ -1329,10 +1329,12 @@ outputs with zero failures. This authorizes a separate candidate-correctness
 contract, not candidate execution, paired timing, speedup or a third qualified
 value class.
 
-The SMCC successor also remains untimed. It can establish only whether one
-naturally admitted Spring Messaging candidate reproduces both fresh native
-controls byte for byte. Observed durations are diagnostic and cannot become a
-speedup claim; paired value still requires a later frozen contract.
+The SMCC successor remains untimed and contributes no performance sample. It
+naturally reaches one Spring Messaging candidate, and that candidate matches
+both fresh native controls across 14,406 outputs with zero failures. However,
+all three fresh digests differ from the SMGC digest frozen by the contract, so
+correctness fails and paired value is not authorized. The recorded durations
+are diagnostic only and support no speedup claim.
 
 The untimed CSCPC route did not reach candidate correctness or performance.
 Its first Groovy optimized-native invocation succeeded, but the production

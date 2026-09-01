@@ -1,0 +1,9 @@
+{
+  "schemaVersion":"buildopt.evidence/spring-messaging-candidate-correctness/v1",
+  "decision":"STOP_SPRING_MESSAGING_CANDIDATE_CORRECTNESS_OUTPUT_DRIFT",
+  "rawBindings":{"captureSha256":"c0ce655ee3e059cfcd9cf5c4f019d2a0015faf560f499370731ce29d1275776f","invocationSha256":["e507804d140e71b72cc9e48cf94d6543611f1a463d119b03be1f080bbd216981","0d3355d913efb420c4bd395d8fa9a4843440aad779c7caea7addbde845447b5a","6e55ca4679935a92820925a5fd1052b8c4f6736790d9481951f4592ddeb1ac40"]},
+  "invocations":{"count":3,"modes":["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"],"durationsMs":[424595,40159,35642],"gradleStarts":3,"candidateBuilds":1,"timingSamples":0,"productFailures":0},
+  "history":{"compatibleMatches":[11,11,11]},
+  "outputs":{"count":14406,"contractSha256":"7de23e14d9987f0cc8661cb7de81b06f4df15cd3039ac8e947ace6f33904779f","observedSha256":"b2939eeb30a9c3f35e6c338c02f1ee69a5ce6aca008b88689a5b048c03ad87f9","identicalInsideFreshSequence":true,"matchesFrozenContract":false},
+  "boundaries":{"pairedValueAuthorized":false,"timingAuthorized":false,"productionAuthorized":false,"testOptimization":"OUT_OF_SCOPE"}
+}

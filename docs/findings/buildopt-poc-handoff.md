@@ -25,11 +25,14 @@ decision.
 
 ## Current experiment status
 
-`SPRING_MESSAGING_CANDIDATE_CORRECTNESS_V1` is current. It starts from empty
-BuildOpt state and permits at most three ordinary requests, expected to enter
-`OPTIMIZED_NATIVE`, `OPTIMIZED_NATIVE`, then `INCREMENTAL_CANDIDATE` naturally.
-All three must reproduce SMGC's 14,406-file digest byte for byte with zero
-product failures. One candidate is allowed; timing and value claims are not.
+`SPRING_MESSAGING_CANDIDATE_CORRECTNESS_V1` is closed. The exact empty-state
+sequence naturally enters `OPTIMIZED_NATIVE`, `OPTIMIZED_NATIVE`, then
+`INCREMENTAL_CANDIDATE`; all three requests exit zero, observe 11 matches and
+produce the same 14,406-file fresh digest with zero product failures. That
+digest nevertheless differs from the SMGC digest frozen by the contract. The
+route stops without loosening equality: no timing, speedup or third value class
+is authorized. The next viable seam is source-level isolation of the cross-run
+output drift, not a rerun or post-hoc digest replacement.
 
 `SPRING_MESSAGING_FRESH_GRAPH_CONFIRMATION_V1` is complete. Its one fresh
 optimized-native request exits zero and independently confirms all 11 matches
