@@ -1,0 +1,8 @@
+{
+  "schemaVersion":"buildopt.specs/poc-graph-owner-recurrence-inventory/v1",
+  "workItem":"GORI",
+  "status":{"currentBlock":"GORI-002","completedBlocks":["GORI-001"]},
+  "subjects":"poc-graph-aware-breadth-discovery-v1.subjects.json",
+  "thresholds":{"historyRows":64,"minimumGroupCommits":5},
+  "prohibitions":{"gradle":true,"publicSourcePatch":true,"candidate":true,"timing":true,"repositoryNameRules":true}
+}

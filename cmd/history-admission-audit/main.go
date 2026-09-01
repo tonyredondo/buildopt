@@ -44,24 +44,32 @@ type auditRow struct {
 }
 
 type auditReport struct {
-	SchemaVersion      string     `json:"schemaVersion"`
-	TargetRevision     string     `json:"targetRevision"`
-	SnapshotSHA256     string     `json:"snapshotSha256"`
-	GraphSHA256        string     `json:"graphSha256,omitempty"`
-	ManifestSHA256     string     `json:"manifestSha256,omitempty"`
-	BaseRevision       string     `json:"baseRevision,omitempty"`
-	HeadChangesSHA256  string     `json:"headChangesSha256,omitempty"`
-	Entrypoints        []string   `json:"entrypoints"`
-	ExpectedOwners     []string   `json:"expectedOwners"`
-	ExpectedFamily     string     `json:"expectedFamily"`
-	HistoryWindow      int        `json:"historyWindowCommits"`
-	CompatibleCommits  int        `json:"compatibleCommits"`
-	MinimumCompatible  int        `json:"minimumCompatibleCommits"`
-	Decision           string     `json:"decision"`
-	Reason             string     `json:"reason"`
-	GradleExecuted     bool       `json:"gradleExecuted"`
-	RepositoryNameRule bool       `json:"repositoryNameRule"`
-	Rows               []auditRow `json:"rows"`
+	SchemaVersion      string       `json:"schemaVersion"`
+	TargetRevision     string       `json:"targetRevision"`
+	SnapshotSHA256     string       `json:"snapshotSha256"`
+	GraphSHA256        string       `json:"graphSha256,omitempty"`
+	ManifestSHA256     string       `json:"manifestSha256,omitempty"`
+	BaseRevision       string       `json:"baseRevision,omitempty"`
+	HeadChangesSHA256  string       `json:"headChangesSha256,omitempty"`
+	Entrypoints        []string     `json:"entrypoints"`
+	ExpectedOwners     []string     `json:"expectedOwners"`
+	ExpectedFamily     string       `json:"expectedFamily"`
+	HistoryWindow      int          `json:"historyWindowCommits"`
+	CompatibleCommits  int          `json:"compatibleCommits"`
+	MinimumCompatible  int          `json:"minimumCompatibleCommits"`
+	Decision           string       `json:"decision"`
+	Reason             string       `json:"reason"`
+	GradleExecuted     bool         `json:"gradleExecuted"`
+	RepositoryNameRule bool         `json:"repositoryNameRule"`
+	Mode               string       `json:"mode,omitempty"`
+	Groups             []auditGroup `json:"groups,omitempty"`
+	Rows               []auditRow   `json:"rows"`
+}
+
+type auditGroup struct {
+	Owners  []string `json:"owners"`
+	Family  string   `json:"family"`
+	Commits []string `json:"commits"`
 }
 
 type auditOptions struct {
@@ -70,6 +78,7 @@ type auditOptions struct {
 	baseRevision, headChangesPath, headChangesSHA                                         string
 	entrypoints, owners                                                                   []string
 	maximum, minimum                                                                      int
+	inventory                                                                             bool
 }
 
 func main() {
@@ -93,6 +102,7 @@ func main() {
 	flag.Var(&owners, "expected-owner", "expected owner (repeatable)")
 	flag.IntVar(&options.maximum, "maximum", 64, "maximum first-parent commits")
 	flag.IntVar(&options.minimum, "minimum", 5, "minimum compatible commits")
+	flag.BoolVar(&options.inventory, "inventory", false, "inventory every exact owner/family group")
 	flag.Parse()
 	options.entrypoints, options.owners = entrypoints, owners
 	report, err := runAudit(options)
@@ -115,7 +125,9 @@ func runAudit(options auditOptions) (auditReport, error) {
 	usesSyntheticHead := options.baseRevision != "" && options.headChangesPath != "" && options.headChangesSHA != ""
 	if options.repository == "" || usesSnapshot == usesGraph || options.target == "" ||
 		(options.baseRevision != "" || options.headChangesPath != "" || options.headChangesSHA != "") != usesSyntheticHead ||
-		(usesSnapshot && len(options.entrypoints) == 0) || len(options.owners) == 0 || options.family == "" ||
+		(usesSnapshot && len(options.entrypoints) == 0) ||
+		(!options.inventory && (len(options.owners) == 0 || options.family == "")) ||
+		(options.inventory && (len(options.owners) != 0 || options.family != "")) ||
 		options.maximum < 1 || options.maximum > 1024 || options.minimum < 1 || options.minimum > options.maximum {
 		return auditReport{}, errors.New("complete bounded audit arguments are required")
 	}
@@ -166,6 +178,10 @@ func runAudit(options auditOptions) (auditReport, error) {
 		Entrypoints: append([]string(nil), options.entrypoints...), ExpectedOwners: append([]string(nil), options.owners...),
 		ExpectedFamily: options.family, HistoryWindow: len(commits), MinimumCompatible: options.minimum,
 		Decision: "REJECT", Reason: "INSUFFICIENT_GRAPH_COMPATIBLE_HISTORY", Rows: make([]auditRow, 0, len(commits))}
+	groups := map[string]*auditGroup{}
+	if options.inventory {
+		report.Mode, report.Decision, report.Reason = "INVENTORY", "INVENTORY_COMPLETE", "ALL_EXACT_GRAPH_GROUPS_CLASSIFIED"
+	}
 	for _, commit := range commits {
 		paths := headPaths
 		var pathErr error
@@ -190,7 +206,16 @@ func runAudit(options auditOptions) (auditReport, error) {
 			continue
 		}
 		row.Owners, row.AffectedProjects, row.Family = classification.Owners, classification.AffectedProjects, classification.Family
-		if !equalStrings(classification.Owners, options.owners) {
+		if options.inventory {
+			row.Decision, row.Reason = "CLASSIFIED", "EXACT_GRAPH_OWNER_AND_FAMILY"
+			key := strings.Join(classification.Owners, "\x00") + "\x01" + classification.Family
+			group := groups[key]
+			if group == nil {
+				group = &auditGroup{Owners: append([]string(nil), classification.Owners...), Family: classification.Family}
+				groups[key] = group
+			}
+			group.Commits = append(group.Commits, commit)
+		} else if !equalStrings(classification.Owners, options.owners) {
 			row.Reason = "OWNER_MISMATCH"
 		} else if classification.Family != options.family {
 			row.Reason = "FAMILY_MISMATCH"
@@ -200,7 +225,16 @@ func runAudit(options auditOptions) (auditReport, error) {
 		}
 		report.Rows = append(report.Rows, row)
 	}
-	if report.CompatibleCommits >= report.MinimumCompatible {
+	if options.inventory {
+		for _, group := range groups {
+			report.Groups = append(report.Groups, *group)
+		}
+		sort.Slice(report.Groups, func(left, right int) bool {
+			leftKey := strings.Join(report.Groups[left].Owners, "\x00") + report.Groups[left].Family
+			rightKey := strings.Join(report.Groups[right].Owners, "\x00") + report.Groups[right].Family
+			return leftKey < rightKey
+		})
+	} else if report.CompatibleCommits >= report.MinimumCompatible {
 		report.Decision, report.Reason = "ADMIT", "MINIMUM_GRAPH_COMPATIBLE_HISTORY_MET"
 	}
 	return report, nil

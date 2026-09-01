@@ -43,6 +43,14 @@ func TestRunAuditAdmitsFiveExactGraphMatches(t *testing.T) {
 	if report.Rows[len(report.Rows)-1].Reason != "UNSAFE_STRUCTURAL_CHANGE" {
 		t.Fatalf("root row = %+v", report.Rows[len(report.Rows)-1])
 	}
+	inventory, err := runAudit(auditOptions{repository: repository, snapshotPath: snapshotPath, snapshotSHA: snapshotSHA,
+		target: target, entrypoints: []string{"testClasses"}, maximum: 64, minimum: 5, inventory: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if inventory.Decision != "INVENTORY_COMPLETE" || len(inventory.Groups) != 1 || len(inventory.Groups[0].Commits) != 5 {
+		t.Fatalf("inventory = %+v", inventory)
+	}
 }
 
 func TestRunAuditRejectsSnapshotDrift(t *testing.T) {

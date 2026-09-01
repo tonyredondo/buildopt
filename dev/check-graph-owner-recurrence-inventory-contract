@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "${buildopt_root}"
+jq -e '.schemaVersion == "buildopt.specs/poc-graph-owner-recurrence-inventory/v1" and .status.currentBlock == "GORI-002" and .thresholds.historyRows == 64 and .thresholds.minimumGroupCommits == 5 and (.prohibitions|to_entries|all(.value==true))' specs/poc-graph-owner-recurrence-inventory-v1.json >/dev/null
+./dev/check-graph-aware-breadth-discovery-contract
+./dev/run --toolchain go -- go test -count=1 ./cmd/history-admission-audit ./internal/historyadmission
+printf 'graph owner recurrence inventory contract: ok\n'

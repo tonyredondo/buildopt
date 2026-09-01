@@ -1,14 +1,14 @@
 # Gradle Build Optimization — Implementation Tracker
 
 **Overall status:** `GRAPH_AWARE_HISTORY_ADMISSION_VALIDATED` — exact graph admits Kafka and rejects Spring before builds<br>
-**Current phase:** `GABD-003` — exact-owner breadth stopped; all-owner graph inventory is next<br>
+**Current phase:** `GORI-002` — inventory every graph-derived owner/family recurrence group<br>
 **POC functional target:** produce positive cumulative wall-time value against optimized native Gradle across chronological customer-requested builds, including every wrapper, observation, trial, cache, fallback and action cost<br>
 **POC onboarding north star:** `generate and commit BuildOpt Wrapper -> ./buildoptw build`; no global BuildOpt installation, hand-authored profile or committed credential is required<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
 **Last updated:** 2026-09-01<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
-**Detailed POC tracker:** [Graph-Aware Breadth Discovery v1](./docs/plans/graph-aware-breadth-discovery-v1.md)<br>
+**Detailed POC tracker:** [Graph Owner Recurrence Inventory v1](./docs/plans/graph-owner-recurrence-inventory-v1.md)<br>
 **Closed predecessor:** [Remote Cache Locality Value v2 POC Tracker](./docs/plans/remote-cache-locality-value-poc-tracker.md)<br>
 **Superseded diagnostic tracker:** [Sticky Wrapper Learning POC Tracker](./docs/plans/sticky-wrapper-learning-poc-tracker.md)<br>
 **Earlier closed predecessor:** [Adaptive Fragment Generalization POC Tracker](./docs/plans/adaptive-fragment-generalization-tracker.md)<br>
@@ -214,6 +214,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-HISTORY-ADMITTED-BREADTH | Transfer history admission to a second public repository without name rules | `STOPPED` | 4/4 | `E-478..479`; [closed tracker](./docs/plans/history-admitted-breadth-v1.md). Spring retained native at one exact-graph compatible match; zero candidates, timing and failures |
 | POC-GRAPH-AWARE-HISTORY-ADMISSION | Preclassify recurrence from exact graph ownership and dependency closure before any build | `DONE` | 3/3 | `E-480`; [closed tracker](./docs/plans/graph-aware-history-admission-v1.md). Fresh source-only audits reproduce Kafka `ADMIT` at 12/5 and Spring `REJECT` at 1/5; zero Gradle, candidates or timing |
 | POC-GRAPH-AWARE-BREADTH-DISCOVERY | Search three retained reviewed graphs for a second naturally recurrent family before builds | `STOPPED` | 3/3 | `E-481..482`; [closed tracker](./docs/plans/graph-aware-breadth-discovery-v1.md). Groovy 2/5, OpenTelemetry 1/5 and Micronaut 1/5; zero Gradle, candidates or timing |
+| POC-GRAPH-OWNER-RECURRENCE-INVENTORY | Inventory every exact graph-derived owner/family group instead of only the fixture owner | `DOING` | 1/3 | `E-483`; [tracker](./docs/plans/graph-owner-recurrence-inventory-v1.md). Same three 64-row histories; no Gradle, candidates or timing |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Not authorized by terminal `STOP_GENERIC_POC` or `STOP_ADAPTIVE_FRAGMENT_POC` |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -2518,6 +2519,7 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-480` | 2026-09-01 | `POC-GRAPH-AWARE-HISTORY-ADMISSION`, `GAH-001..003` | [`check-graph-aware-history-admission`](./dev/check-graph-aware-history-admission) binds the [contract](./specs/poc-graph-aware-history-admission-v1.md), shared classifier, independent CLI and [public source-only audit](./benchmarks/results/graph-aware-history-admission-v1/README.md) | `DONE`: exact 64-commit reconstruction reproduces Kafka `ADMIT` at 12/5 and Spring `REJECT` at 1/5. Snapshot drift, ambiguity, structural changes and name rules fail closed; zero Gradle, candidates, timing and product failures |
 | `E-481` | 2026-09-01 | `POC-GRAPH-AWARE-BREADTH-DISCOVERY`, `GABD-001` | The [contract](./specs/poc-graph-aware-breadth-discovery-v1.md), [three exact subjects](./specs/poc-graph-aware-breadth-discovery-v1.subjects.json), [tracker](./docs/plans/graph-aware-breadth-discovery-v1.md) and [`check-graph-aware-breadth-discovery-contract`](./dev/check-graph-aware-breadth-discovery-contract) bind reviewed Groovy, OpenTelemetry and Micronaut graphs | `DONE` planning only. Fresh source-history scan is next; Gradle, public patches, candidates, timing and name rules are forbidden |
 | `E-482` | 2026-09-01 | `POC-GRAPH-AWARE-BREADTH-DISCOVERY`, `GABD-002/003` | The same checker reconstructs the [three-row result](./benchmarks/results/graph-aware-breadth-discovery-v1/README.md) from exact commit identities and reason counts | `DONE_STOP`: Groovy 2/5, OpenTelemetry 1/5, Micronaut 1/5; no additional admitted family, Gradle, candidates, timing or failures. All-owner graph inventory is the next source-only route |
+| `E-483` | 2026-09-01 | `POC-GRAPH-OWNER-RECURRENCE-INVENTORY`, `GORI-001` | The [contract](./specs/poc-graph-owner-recurrence-inventory-v1.md), [tracker](./docs/plans/graph-owner-recurrence-inventory-v1.md) and [`check-graph-owner-recurrence-inventory-contract`](./dev/check-graph-owner-recurrence-inventory-contract) freeze all-owner grouping over the exact GABD subjects | `DONE` planning only. Inventory mode groups source facts only; builds, candidates and timing remain forbidden |
 ---
 
 ## 15. Tracker changelog
@@ -2543,6 +2545,7 @@ This table points to the latest valid result. It does not replace reports or all
 | 2026-09-01 | Closed `GAH-001..003`: replaced path-prefix recurrence with a snapshot-bound graph classifier shared by the launcher and audit CLI. Fresh public Git reconstruction reproduces Kafka 12/5 admission and Spring 1/5 rejection without Gradle, candidates or timing | Codex |
 | 2026-09-01 | Opened `GABD-001`: froze reviewed-graph source-history scans for Groovy, OpenTelemetry and Micronaut to find a second five-match family before any further Gradle spend | Codex |
 | 2026-09-01 | Closed `GABD-002/003`: exact-owner recurrence remains below five in all three rows (2/1/1). No Gradle ran; the next source-only route inventories every owner/family group instead of anchoring to the fixture owner | Codex |
+| 2026-09-01 | Opened `GORI-001`: froze source-only inventory of every exact graph owner/family group in the three retained histories, with five commits required before any correctness successor | Codex |
 | 2026-08-31 | Closed `RCL-003/006` and the route: Groovy is exact but below 8 MiB; Kafka has ample cache opportunity but its frozen required test-fixtures JAR differs between producer and consumer. The 2/5 conclusive, 0/5 eligible result closes three rows and `RCL-004/005` without timing; terminal decision is `STOP_REMOTE_CACHE_LOCALITY_VALUE_POC` | Codex |
 | 2026-08-31 | Closed `RCL-002`: independently bound and reran native cache-key parity, committed verified Edge reads, offline restart and corruption/unsafe-use negatives. The fixture reports zero public builds and timing samples; `RCL-003` may now collect fresh untimed public correctness | Codex |
 | 2026-08-31 | Opened `REMOTE_CACHE_LOCALITY_VALUE_V2` and closed `RCL-001`: froze equal native graph/key/object/output opportunity, an unshaped terminal remote path, full fill/operation economics and unchanged 3/5 product breadth. Historical locality and mixed-mechanism results supply no row; `RCL-002` is next and no public build, seed or timing is authorized | Codex |
