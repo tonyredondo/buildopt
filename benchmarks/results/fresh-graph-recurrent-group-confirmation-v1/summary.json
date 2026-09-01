@@ -1,0 +1,12 @@
+{
+  "schemaVersion":"buildopt.evidence/fresh-graph-recurrent-group-confirmation/v1",
+  "decision":"AUTHORIZE_RECURRENT_ROOT_CANDIDATE_CORRECTNESS_CONTRACT",
+  "repositoryId":"apache/groovy",
+  "baseRevision":"4bbcdba3cf42239a702c054c84443896e8d8c2f6",
+  "targetRevision":"494c9cb23ae799226c6ab8485301dae2925e6ed4",
+  "rawBindings":{"captureSha256":"0ca353301912f21b57c8b2fd3a92ab9fb6259d5677c2ca238ce41604b7c3d531","invocationSha256":"ec92874520f2f15477b14521d7a9a43f1f3894c84fb7f340c8e4b84a90982f79","snapshotSha256":"cccef437f1da8cea81101680aeb9c4c50e194a4e6bf5f36540e8b8e682d227b7","graphSha256":"cc1d63b00484de573f813e929511e08093d8e29cf891b18311916b75185f72a1","outputContractSha256":"900b5c11c6804d6957da78905f1ccea9ecc87c27b92cadb2c52153c67dd89fd6","executableSha256":"af9f36a258038284853527dacc21f6a14280b5fcafb9a3ddd686e4d98f776854"},
+  "execution":{"mode":"OPTIMIZED_NATIVE","gradleStarts":1,"exitCode":0,"durationMs":163306,"candidateBuilds":0,"timingSamples":0,"productFailures":0},
+  "discovery":{"status":"COMPLETE","reason":"STRUCTURAL_CANDIDATE_DISCOVERED","owners":[":"],"family":"DEPENDENCY_SOURCE","historicalCompatibleMatches":38,"totalProjects":37,"selectedProjects":1,"omittedProjects":36,"requiredOutputPatterns":69,"requiredOutputFiles":3895,"requiredOutputSha256":"385e7d8406bc505e00ac50506ad8a3bf75e6c53bf036e05796bb3a0e85242506"},
+  "materialization":{"status":"CAPTURED","fileCount":1846,"byteCount":6929111,"manifestSha256":"5519f43d8b0634f1a5d441a80747552bb29b13adee15194e6f367e458a47acd4"},
+  "economics":{"learningCostMs":2457,"decision":"PENDING","reason":"ORDINARY_PAIR_PENDING","calibrationPerformed":false}
+}

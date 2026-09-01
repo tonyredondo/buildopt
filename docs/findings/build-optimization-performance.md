@@ -1239,6 +1239,12 @@ Validate the current scorecard with:
 
 ## Change-scoped candidate entry result
 
+The later Groovy recurrent-root discovery contributes no performance sample.
+One optimized-native request takes 163,306 ms and records 2,457 ms of learning
+cost, but those are diagnostic facts rather than a comparison. It confirms 38
+compatible matches and a 1/37 selected graph; candidate correctness and paired
+value remain separate gates.
+
 The follow-up `HISTORY_ADMITTED_CANDIDATE_CORRECTNESS_V1` selects Kafka because
 the exact prior source/history binding contained twelve compatible matches.
 That was admission evidence only. The fresh sequence then completed

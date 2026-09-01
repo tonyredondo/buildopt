@@ -25,11 +25,11 @@ decision.
 
 ## Current experiment status
 
-`FRESH_GRAPH_RECURRENT_GROUP_CONFIRMATION_V1` is current. It permits one
-optimized-native Groovy `classes` request at public commit `494c9cb2` to verify
-the newly found 37-commit root-owner group against a fresh exact graph. It must
-retain at least one omitted project and five compatible commits. Candidate
-execution and timing are forbidden.
+`FRESH_GRAPH_RECURRENT_GROUP_CONFIRMATION_V1` is complete. Its single
+optimized-native Groovy request confirms owner `:`, dependency-source, 38
+compatible matches and a 1/37 selected graph. All 3,895 required output files
+are observed and failures are zero. No candidate or timing ran; a separate
+candidate-correctness contract is now authorized.
 
 `GRAPH_OWNER_RECURRENCE_INVENTORY_V1` is complete. Groovy exposes one recurrent
 root-owner dependency-source group with 37 commits and a retained 26/37

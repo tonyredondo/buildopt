@@ -1,6 +1,6 @@
 # Fresh Graph Recurrent Group Confirmation v1
 
-Status: `FGRG-001` complete; `FGRG-002` is current.
+Status: `FGRG-001..003` complete as `AUTHORIZE_RECURRENT_ROOT_CANDIDATE_CORRECTNESS_CONTRACT`.
 
 One fresh ordinary BuildOpt request is allowed at public Groovy commit
 `494c9cb23ae799226c6ab8485301dae2925e6ed4`, whose two changed paths were

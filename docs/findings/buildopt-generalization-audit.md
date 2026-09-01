@@ -284,6 +284,12 @@ generic customer value.
 
 ## POC conclusion
 
+The all-owner graph inventory finds a materially different Groovy class missed
+by fixture-owner selection: root-owner dependency-source changes recur 37
+times. A fresh public observation then confirms 38 compatible matches and a
+1/37 selected graph with 3,895 required output files and zero failures. This is
+fresh structural breadth evidence, not candidate correctness or value.
+
 The graph-aware history successor replaces path-prefix recurrence with a
 versioned classifier shared by the launcher and an independent audit CLI. It
 rejects incomplete or drifted snapshots, unknown relationships, ambiguous

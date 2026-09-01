@@ -1,7 +1,7 @@
 {
   "schemaVersion":"buildopt.specs/poc-fresh-graph-recurrent-group-confirmation/v1",
   "workItem":"FGRG",
-  "status":{"currentBlock":"FGRG-002","completedBlocks":["FGRG-001"]},
+  "status":{"currentBlock":"FGRG-003","completedBlocks":["FGRG-001","FGRG-002","FGRG-003"],"decision":"AUTHORIZE_RECURRENT_ROOT_CANDIDATE_CORRECTNESS_CONTRACT"},
   "execution":{"maximumGradleStarts":1,"expectedMode":"OPTIMIZED_NATIVE","candidateBuilds":0,"timingSamples":0,"timeoutMinutes":30,"maximumWorkers":12},
   "gate":{"expectedOwners":[":"],"expectedFamily":"DEPENDENCY_SOURCE","minimumCompatibleCommits":5,"minimumOmittedProjects":1}
 }
