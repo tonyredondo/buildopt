@@ -1322,6 +1322,10 @@ fifteen omitted projects. It executes zero Gradle or candidate builds and adds
 no timing sample. The result selects one untimed confirmation; it does not
 change the current two-class value claim.
 
+The next Spring Messaging confirmation is also untimed by contract. Its sole
+native request can establish structural admission and exact output coverage,
+but cannot contribute a candidate duration or speedup claim.
+
 The untimed CSCPC route did not reach candidate correctness or performance.
 Its first Groovy optimized-native invocation succeeded, but the production
 decision path returned `NATIVE_RETAINED / ORDINARY_LEARNING_ECONOMICS_REJECTED`:

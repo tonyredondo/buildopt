@@ -1,0 +1,8 @@
+{
+  "schemaVersion":"buildopt.specs/poc-spring-messaging-fresh-graph-confirmation/v1",
+  "workItem":"SMGC",
+  "status":{"currentBlock":"SMGC-002","completedBlocks":["SMGC-001"]},
+  "selection":{"owner":":spring-messaging","family":"DEPENDENCY_SOURCE","sourceMatches":11,"minimumMatches":5,"sourceSummarySha256":"0ca956b1c1d8f6304c007bbad9499a9f8486f056fee29e0582c9724c60496476","priorResultsAreSelectionOnly":true},
+  "execution":{"maximumGradleStarts":1,"expectedMode":"OPTIMIZED_NATIVE","candidateBuilds":0,"timingSamples":0,"timeoutMinutes":30,"maximumWorkers":12},
+  "gate":{"expectedOwners":[":spring-messaging"],"expectedFamily":"DEPENDENCY_SOURCE","minimumCompatibleCommits":5,"minimumOmittedProjects":1,"minimumRequiredOutputs":1,"productFailures":0}
+}

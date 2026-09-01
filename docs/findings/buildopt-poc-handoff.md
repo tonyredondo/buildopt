@@ -25,6 +25,12 @@ decision.
 
 ## Current experiment status
 
+`SPRING_MESSAGING_FRESH_GRAPH_CONFIRMATION_V1` is current. PWGR selected exact
+Spring commit `7f29df4d…`, owner `:spring-messaging`, dependency-source, with 11
+matches inside the product window and 15/27 omitted projects. One fresh
+optimized-native `testClasses` request may confirm the current graph, admission
+and exact outputs. Candidates and timing remain forbidden.
+
 `PRODUCT_WINDOW_GRAPH_RECURRENCE_V1` is complete. SJGC proved the apparent
 six-versus-one mismatch came from comparing a 256-commit exploratory inventory
 with the product's fixed 64-commit horizon. PWGR therefore regenerates every

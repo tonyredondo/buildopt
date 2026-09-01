@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "${buildopt_root}"
+
+buildopt_source=benchmarks/results/product-window-graph-recurrence-v1/capture/summary.json
+buildopt_source_sha=$(sha256sum "${buildopt_source}" | awk '{print $1}')
+./dev/check-product-window-graph-recurrence >/dev/null
+
+jq -e --arg sourceSha "${buildopt_source_sha}" '
+  .schemaVersion=="buildopt.specs/poc-spring-messaging-fresh-graph-confirmation/v1" and
+  .status.currentBlock=="SMGC-002" and .status.completedBlocks==["SMGC-001"] and
+  .selection=={owner:":spring-messaging",family:"DEPENDENCY_SOURCE",sourceMatches:11,minimumMatches:5,sourceSummarySha256:$sourceSha,priorResultsAreSelectionOnly:true} and
+  .execution=={maximumGradleStarts:1,expectedMode:"OPTIMIZED_NATIVE",candidateBuilds:0,timingSamples:0,timeoutMinutes:30,maximumWorkers:12} and
+  .gate=={expectedOwners:[":spring-messaging"],expectedFamily:"DEPENDENCY_SOURCE",minimumCompatibleCommits:5,minimumOmittedProjects:1,minimumRequiredOutputs:1,productFailures:0}
+' specs/poc-spring-messaging-fresh-graph-confirmation-v1.json >/dev/null
+
+jq -e '
+  .decision=="AUTHORIZE_FRESH_GRAPH_CONFIRMATION_CONTRACT" and
+  .thresholds.historyRowsPerFamily==64 and
+  .selectedGroup.label=="spring-framework" and
+  .selectedGroup.owners==[":spring-messaging"] and
+  .selectedGroup.family=="DEPENDENCY_SOURCE" and
+  .selectedGroup.commitCount==11 and .selectedGroup.omittedProjects==15 and
+  .selectedGroup.commits[0]=="7f29df4d795ed76465f2dcd36ed1879c0887ab0e"
+' "${buildopt_source}" >/dev/null
+
+jq -e '
+  .schemaVersion=="buildopt.evidence/automatic-breadth-subjects/v3" and
+  (.repositories|length)==1 and .repositories[0] as $row|
+  $row.key=="spring-framework-messaging-product-window" and
+  $row.publicRevision=="8fb119df1ecc97d4391276b02189fc32c3e7bf46" and
+  $row.targetRevision=="7f29df4d795ed76465f2dcd36ed1879c0887ab0e" and
+  $row.entrypoints==["testClasses"] and
+  $row.expectedChangedProjects==[":spring-messaging"] and
+  ($row.observations|length)==0
+' specs/poc-spring-messaging-fresh-graph-confirmation-v1.subjects.json >/dev/null
+
+printf 'spring-messaging fresh graph confirmation contract: one native request, zero candidates/timing\n'

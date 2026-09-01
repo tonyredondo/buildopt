@@ -1,0 +1,19 @@
+{
+  "schemaVersion":"buildopt.evidence/automatic-breadth-subjects/v3",
+  "repositories":[{
+    "key":"spring-framework-messaging-product-window",
+    "repositoryId":"spring-projects/spring-framework",
+    "repositoryNumericId":1148753,
+    "remoteUrl":"https://github.com/spring-projects/spring-framework.git",
+    "historyBranch":"main",
+    "publicRevision":"8fb119df1ecc97d4391276b02189fc32c3e7bf46",
+    "targetRevision":"7f29df4d795ed76465f2dcd36ed1879c0887ab0e",
+    "jdkToolchain":"temurin-jdk-25",
+    "changePath":"spring-messaging/src/main/java/org/springframework/messaging/simp/stomp/StompBrokerRelayMessageHandler.java",
+    "mutation":"APPEND_FIXED_COMMENT",
+    "entrypoints":["testClasses"],
+    "entrypointsFile":null,
+    "expectedChangedProjects":[":spring-messaging"],
+    "observations":[]
+  }]
+}

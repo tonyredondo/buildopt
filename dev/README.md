@@ -5648,6 +5648,11 @@ Gradle, candidate execution, timing or predecessor-summary inputs.
 `./dev/check-product-window-graph-recurrence` independently reconstructs all
 192 rows, six eligible groups and the selected 11-match Spring Messaging group.
 
+`./dev/check-spring-messaging-fresh-graph-confirmation-contract` binds the
+newest selected Spring Messaging commit and one native-only request.
+`./dev/capture-spring-messaging-fresh-graph-confirmation` is its single-use
+capture entrypoint; it cannot execute a candidate or collect timing.
+
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher
 integration tests. It proves that no measurement-only build contributes
