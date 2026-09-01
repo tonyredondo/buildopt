@@ -25,11 +25,11 @@ decision.
 
 ## Current experiment status
 
-`SPRING_MESSAGING_FRESH_CONTROL_CORRECTNESS_V1` is current. It preserves the
-SMCC stop and reruns a new empty-state native/native/candidate sequence. All
-14,406 outputs remain in scope, with no exclusion or normalization; equality is
-measured against both optimized-native controls from the same current sequence.
-One candidate is allowed and timing remains forbidden.
+`SPRING_MESSAGING_FRESH_CONTROL_CORRECTNESS_V1` is complete. Its new empty-state
+sequence naturally enters native/native/candidate, observes 11 matches and
+reproduces one complete digest across all 14,406 outputs. No output is excluded
+or normalized; product failures and timing samples are zero. This authorizes
+only a separately frozen Spring Messaging paired-value contract.
 
 `SPRING_MESSAGING_CANDIDATE_CORRECTNESS_V1` is closed. The exact empty-state
 sequence naturally enters `OPTIMIZED_NATIVE`, `OPTIMIZED_NATIVE`, then

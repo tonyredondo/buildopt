@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "${buildopt_root}"
+buildopt_evidence=benchmarks/results/spring-messaging-fresh-control-correctness-v1
+buildopt_capture_sha=$(sha256sum "${buildopt_evidence}/raw/capture.json" | awk '{print $1}')
+buildopt_invocation_shas=$(for buildopt_sequence in 01 02 03; do
+    sha256sum "${buildopt_evidence}/raw/invocation-${buildopt_sequence}.json" | awk '{print $1}'
+done | jq -Rsc 'split("\n")|map(select(length>0))')
+
+./dev/check-spring-messaging-fresh-control-correctness-contract >/dev/null
+jq -e \
+  --slurpfile capture "${buildopt_evidence}/raw/capture.json" \
+  --slurpfile first "${buildopt_evidence}/raw/invocation-01.json" \
+  --slurpfile second "${buildopt_evidence}/raw/invocation-02.json" \
+  --slurpfile third "${buildopt_evidence}/raw/invocation-03.json" \
+  --arg captureSha "${buildopt_capture_sha}" --argjson invocationShas "${buildopt_invocation_shas}" '
+  $capture[0] as $capture|[$first[0],$second[0],$third[0]] as $runs|
+  $capture.processExitCode==0 and ($capture.productFailure|not) and
+  $capture.ordinaryInvocations==3 and $capture.measurementOnlyWorkflowRuns==0 and
+  [$capture.invocationResults[].executionMode]==["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"] and
+  [$capture.invocationResults[].sha256]==$invocationShas and
+  [$runs[].execution.mode]==["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"] and
+  ([$runs[].execution.exitCode]|all(.==0)) and
+  ([$runs[].incrementalLearning.ordinaryEconomics.historicalCompatibleMatches]|all(.==11)) and
+  ([$runs[].incrementalLearning.baseline.requiredOutputCount]|all(.==14406)) and
+  ([$runs[].incrementalLearning.baseline.requiredOutputSha256]|unique)==["66aabd082ed897956f8ccaed352b31c062d80b02e6cb2b466606e7e1e4337adf"] and
+  ([$runs[].incrementalLearning.baseline.productAttributableFailure]|all(.==false)) and
+  $runs[2].incrementalLearning.pairsCompleted==1 and ([$runs[].calibration.performed]|all(.==false)) and
+  .schemaVersion=="buildopt.evidence/spring-messaging-fresh-control-correctness/v1" and
+  .decision=="AUTHORIZE_SPRING_MESSAGING_PAIRED_VALUE_CONTRACT" and
+  .rawBindings=={captureSha256:$captureSha,invocationSha256:$invocationShas} and
+  .invocations=={count:3,modes:["OPTIMIZED_NATIVE","OPTIMIZED_NATIVE","INCREMENTAL_CANDIDATE"],durationsMs:[450897,40843,35207],gradleStarts:3,candidateBuilds:1,timingSamples:0,productFailures:0} and
+  .history.compatibleMatches==[11,11,11] and
+  .outputs=={count:14406,sha256:"66aabd082ed897956f8ccaed352b31c062d80b02e6cb2b466606e7e1e4337adf",identicalAcrossFreshSequence:true,excludedPaths:[],normalizedPaths:[]} and
+  .boundaries=={pairedValueContractAuthorized:true,pairedValueExecutionAuthorized:false,timingAuthorized:false,productionAuthorized:false,testOptimization:"OUT_OF_SCOPE"}
+' "${buildopt_evidence}/summary.json" >/dev/null
+printf 'spring-messaging fresh-control correctness: exact; paired-value contract only\n'

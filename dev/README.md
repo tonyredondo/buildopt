@@ -5666,9 +5666,10 @@ single-use capture entrypoint; rerunning it is not result validation.
 
 `./dev/check-spring-messaging-fresh-control-correctness-contract` preserves the
 SMCC stop while freezing a new complete-output comparison against two fresh
-native controls. It permits no exclusions or normalization, one candidate and
-zero timing. `./dev/capture-spring-messaging-fresh-control-correctness` is the
-single-use entrypoint after hosted CI validates the contract commit.
+native controls. `./dev/check-spring-messaging-fresh-control-correctness`
+reconstructs the passing native/native/candidate sequence and all 14,406 exact
+outputs with no exclusions or normalization. The capture entrypoint is now
+consumed; rerunning it is not result validation.
 
 `./dev/check-ordinary-learning-economics` regenerates the five-match economic
 decision from the committed summary and runs the focused evaluator and launcher

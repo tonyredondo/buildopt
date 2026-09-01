@@ -370,6 +370,11 @@ output is excluded or normalized, and the SMCC sequence cannot populate the
 result. This keeps exact-output safety while avoiding an older native build as
 the control for known cross-run AspectJ nondeterminism.
 
+That fresh-control proof passes independently: native/native/candidate, 11
+matches and one complete 14,406-output digest with zero failures. It closes
+correctness for the Spring Messaging class without output exceptions. The
+class is still not value-qualified until a separate paired experiment passes.
+
 The successor isolated the naturally history-admitted Kafka row.
 Its twelve bound compatible matches may select the row but cannot be reused as
 fresh correctness or performance evidence. The route allows three untimed
