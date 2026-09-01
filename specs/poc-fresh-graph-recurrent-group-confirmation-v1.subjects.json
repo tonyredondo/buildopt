@@ -1,0 +1,10 @@
+{
+  "schemaVersion":"buildopt.evidence/automatic-breadth-subjects/v3",
+  "repositories":[{
+    "key":"apache-groovy-root-recurrent","repositoryId":"apache/groovy","repositoryNumericId":34039690,
+    "remoteUrl":"https://github.com/apache/groovy.git","historyBranch":"GROOVY_5_0_X",
+    "publicRevision":"4bbcdba3cf42239a702c054c84443896e8d8c2f6","targetRevision":"494c9cb23ae799226c6ab8485301dae2925e6ed4",
+    "jdkToolchain":"temurin-jdk-21","changePath":"src/main/java/org/codehaus/groovy/ast/GenericsType.java","mutation":"APPEND_FIXED_COMMENT",
+    "entrypoints":["classes"],"entrypointsFile":null,"expectedChangedProjects":[":"],"observations":[]
+  }]
+}

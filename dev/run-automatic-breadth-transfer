@@ -74,7 +74,7 @@ fi
 buildopt_requested_invocations=${BUILDOPT_AUTOMATIC_BREADTH_INVOCATIONS:-}
 if [[ -n ${buildopt_requested_invocations} ]]; then
     case ${buildopt_protocol}:${buildopt_requested_invocations} in
-        v3:3) ;;
+        v3:1 | v3:3) ;;
         v4:[1-9] | v4:1[0-8]) ;;
         *)
             printf 'automatic breadth invocation override requires v3:3 or v4:1..18\n' >&2

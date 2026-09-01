@@ -620,6 +620,8 @@ buildopt_required_files=(
     "dev/check-graph-aware-history-admission"
     "dev/check-graph-aware-breadth-discovery-contract"
     "dev/check-graph-owner-recurrence-inventory-contract"
+    "dev/check-fresh-graph-recurrent-group-confirmation-contract"
+    "dev/capture-fresh-graph-recurrent-group-confirmation"
     "dev/check-remote-cache-locality-harness-v3"
     "dev/check-remote-cache-locality-v3-public-correctness"
     "dev/check-remote-cache-locality-v3-paired-value"

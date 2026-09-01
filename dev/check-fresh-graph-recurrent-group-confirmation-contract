@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+buildopt_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd -- "${buildopt_root}"
+jq -e '.schemaVersion=="buildopt.specs/poc-fresh-graph-recurrent-group-confirmation/v1" and .status.currentBlock=="FGRG-002" and .execution.maximumGradleStarts==1 and .execution.expectedMode=="OPTIMIZED_NATIVE" and .execution.candidateBuilds==0 and .execution.timingSamples==0 and .gate.expectedOwners==[":"] and .gate.minimumCompatibleCommits==5 and .gate.minimumOmittedProjects==1' specs/poc-fresh-graph-recurrent-group-confirmation-v1.json >/dev/null
+jq -e '.repositories|length==1 and .[0].publicRevision=="4bbcdba3cf42239a702c054c84443896e8d8c2f6" and .[0].targetRevision=="494c9cb23ae799226c6ab8485301dae2925e6ed4" and .[0].expectedChangedProjects==[":"] and .[0].entrypoints==["classes"]' specs/poc-fresh-graph-recurrent-group-confirmation-v1.subjects.json >/dev/null
+rg -q 'v3:1 \| v3:3' dev/run-automatic-breadth-transfer
+./dev/run --toolchain shellcheck -- shellcheck dev/run-automatic-breadth-transfer
+printf 'fresh graph recurrent group confirmation contract: ok\n'
