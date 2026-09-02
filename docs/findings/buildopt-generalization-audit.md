@@ -22,6 +22,14 @@ machine delivery work repays in four compatible portfolio builds. This supports
 an owner-operated POC, but human review cost and broader recipe/customer
 coverage remain unmeasured, so it is not yet a generic or commercial claim.
 
+The controlled owner-acceptance follow-up removes one usability uncertainty:
+both exact fork-local drafts are understood and accepted by the owner with zero
+proposal-specific clarifications or concerns. That is qualitative evidence for
+the review surface, not a breadth result. Active review time was not measured,
+and two hand-qualified recipe classes still do not establish discovery coverage
+across arbitrary repositories. Commercial and generic claims therefore remain
+open.
+
 The latest source-only recurrence search adds a plausible third public class
 without changing that value conclusion. Across 768 fresh Spring,
 OpenTelemetry and Micronaut rows, independent reconstruction finds fourteen

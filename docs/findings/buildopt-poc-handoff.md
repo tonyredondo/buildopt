@@ -33,7 +33,21 @@ delivery/revert validation costs 24,150 ms, which repays in four compatible
 portfolio builds before human review. This is POC viability for review-only
 native patches, not commercial economics, production or automatic-merge authority.
 
+The following owner-acceptance trial now adds a real qualitative result. Two
+owner-controlled forks contain exact historical base and candidate branches;
+both fork-local drafts are one commit ahead and reproduce the frozen postimage.
+The owner reports that both proposals are understandable, acceptable and
+accepted, with zero proposal-specific clarifications or concerns. Active review
+time was not measured, so this strengthens product usability evidence but does
+not close human-cost or commercial economics.
+
 ## Current experiment status
+
+`REVIEWED_NATIVE_PATCH_OWNER_ACCEPTANCE_V1` is complete with a partial terminal
+qualification. Both draft proposals pass owner comprehension and acceptance at
+2/2. The review-time gate is `INCONCLUSIVE_NOT_MEASURED`; chat timestamps are
+not substituted for active review time. Both drafts remain open inside the
+controlled forks, and no upstream PR, merge or default-branch mutation occurred.
 
 `REVIEWED_NATIVE_PATCH_DELIVERY_V1` is complete. Both accepted recipes reject
 source drift and ambiguous edits, materialize the frozen Micronaut and Spring

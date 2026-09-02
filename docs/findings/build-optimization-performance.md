@@ -2,6 +2,14 @@
 
 ## Current Executive Summary
 
+- **Owner comprehension and acceptance pass 2/2, with time unmeasured.** Two
+  controlled forks expose exact historical/candidate branches as draft-only
+  reviews. Each draft is one commit ahead, changes one expected file and
+  reproduces the qualified postimage. The owner understands and accepts both
+  with zero proposal-specific clarifications or concerns. Active review time
+  was not recorded, so the 15-minute review gate and commercial human-cost
+  economics remain inconclusive; no merge or upstream proposal occurred.
+
 - **The reviewed-native patch delivery POC qualifies.** The two RNPP winners
   now have closed, digest-bound Patch Autopilot recipe versions. Their exact
   public preimages reproduce the frozen postimages, and the existing signed

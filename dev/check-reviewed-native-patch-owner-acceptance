@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+cd "${buildopt_repo_root}"
+
+./dev/check-reviewed-native-patch-owner-acceptance-contract >/dev/null
+jq -e '
+  ([.reviews[] | select(.understood and .decision == "ACCEPT_FOR_CONTROLLED_TRIAL")] | length)
+    == .summary.acceptedProposals and
+  ([.reviews[].concerns[]] | length) == .summary.reportedConcerns and
+  ([.reviews[].clarifications] | add) == .ownerObservation.proposalSpecificClarifications and
+  .summary.reviewedProposals == (.reviews | length) and
+  .summary.understoodProposals == 2 and .summary.acceptedProposals == 2 and
+  .summary.qualitativeAcceptanceGate == "PASS" and
+  .summary.activeReviewTimeGate == "INCONCLUSIVE_NOT_MEASURED" and
+  .summary.commercialEconomics == "INCONCLUSIVE_HUMAN_COST_NOT_MEASURED" and
+  .terminalDecision == "QUALIFY_OWNER_COMPREHENSION_AND_ACCEPTANCE_TIME_UNMEASURED"
+' benchmarks/results/reviewed-native-patch-owner-acceptance-v1/review-ledger.json >/dev/null
+printf 'RNPA-005 owner acceptance OK: 2/2 understood and accepted; human review time remains unmeasured\n'

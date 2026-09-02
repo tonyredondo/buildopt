@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+cd "${buildopt_repo_root}"
+
+jq -e --slurpfile accepted benchmarks/results/reviewed-native-patch-portfolio-v1/accepted-proposals.json '
+  .schemaVersion == "buildopt.specs/poc-reviewed-native-patch-owner-acceptance/v1" and
+  .predecessor == "QUALIFY_REVIEWED_NATIVE_PATCH_DELIVERY_POC" and
+  .targetOwner == "tonyredondo" and (.proposals | length) == 2 and
+  ([.proposals[].id] == [$accepted[0].proposals[].id]) and
+  ([.proposals[].revision] == [$accepted[0].proposals[].revision]) and
+  .reviewGate == {
+    requiredDecisions:2, decision:"ACCEPT_FOR_CONTROLLED_TRIAL",
+    maximumActiveReviewMinutesPerProposal:15,
+    maximumClarificationsPerProposal:1, ownerReportedOnly:true
+  } and
+  .delivery.draftOnly == true and .delivery.historicalBaseBranch == true and
+  .delivery.upstreamPullRequest == false and
+  .delivery.defaultBranchMutation == false and
+  .delivery.mergeAuthorized == false and .delivery.forcePush == false and
+  .boundaries.productionAuthorized == false and
+  .boundaries.automaticApply == false and .boundaries.automaticMerge == false
+' specs/poc-reviewed-native-patch-owner-acceptance-v1.json >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/reviewed-native-patch-owner-acceptance/v1" and
+  .status == "COMPLETE" and (.reviews | length) == 2 and
+  ([.reviews[].understood] | all(. == true)) and
+  ([.reviews[].decision] | all(. == "ACCEPT_FOR_CONTROLLED_TRIAL")) and
+  ([.reviews[].activeReviewSeconds] | all(. == "NOT_MEASURED")) and
+  ([.reviews[].clarifications] | add) == 0 and
+  ([.reviews[].concerns[]] | length) == 0 and
+  (.preparedCandidates | length) == 2 and
+  ([.preparedCandidates[].parentRevision] == [
+    "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+    "91eb42645e26a7ef9382b4a655bcefe5c8682fee"
+  ]) and
+  ([.preparedCandidates[].candidateCommit] | all(test("^[0-9a-f]{40}$"))) and
+  ([.reviews[].draftPullRequest] == [
+    "https://github.com/tonyredondo/micronaut-core/pull/1",
+    "https://github.com/tonyredondo/spring-framework/pull/1"
+  ]) and
+  .remoteMutations == [
+    {type:"FORK_CREATED", target:"tonyredondo/micronaut-core", createdAt:"2026-09-02T09:25:44Z"},
+    {type:"FORK_CREATED", target:"tonyredondo/spring-framework", createdAt:"2026-09-02T09:25:46Z"},
+    {type:"BRANCH_CREATED", target:"tonyredondo/micronaut-core", ref:"buildopt/owner-acceptance/base-428ddeb3", sha:"428ddeb3ad2acdabef2027cc06af3bf46865956a"},
+    {type:"BRANCH_CREATED", target:"tonyredondo/micronaut-core", ref:"buildopt/owner-acceptance/micronaut-python-vfs-v1", sha:"7ccdaafc1d0d129d120d84714512aab6361d68cf"},
+    {type:"BRANCH_CREATED", target:"tonyredondo/spring-framework", ref:"buildopt/owner-acceptance/base-91eb4264", sha:"91eb42645e26a7ef9382b4a655bcefe5c8682fee"},
+    {type:"BRANCH_CREATED", target:"tonyredondo/spring-framework", ref:"buildopt/owner-acceptance/spring-architecture-check-v1", sha:"7dd78c407ae4a1ef03b0fc0e546b8030916eabf1"},
+    {type:"DRAFT_PULL_REQUEST_CREATED", target:"tonyredondo/micronaut-core#1", url:"https://github.com/tonyredondo/micronaut-core/pull/1", createdAt:"2026-09-02T09:38:11Z"},
+    {type:"DRAFT_PULL_REQUEST_CREATED", target:"tonyredondo/spring-framework#1", url:"https://github.com/tonyredondo/spring-framework/pull/1", createdAt:"2026-09-02T09:38:13Z"}
+  ] and
+  .ownerObservation == {
+    source:"USER_CHAT",
+    statement:"Both proposals are understandable, acceptable, and accepted.",
+    processClarifications:1,
+    proposalSpecificClarifications:0,
+    humanReviewTime:"NOT_MEASURED"
+  } and
+  .summary == {
+    reviewedProposals:2,
+    understoodProposals:2,
+    acceptedProposals:2,
+    rejectedProposals:0,
+    reportedConcerns:0,
+    qualitativeAcceptanceGate:"PASS",
+    activeReviewTimeGate:"INCONCLUSIVE_NOT_MEASURED",
+    commercialEconomics:"INCONCLUSIVE_HUMAN_COST_NOT_MEASURED"
+  } and
+  .terminalDecision == "QUALIFY_OWNER_COMPREHENSION_AND_ACCEPTANCE_TIME_UNMEASURED"
+' benchmarks/results/reviewed-native-patch-owner-acceptance-v1/review-ledger.json >/dev/null
+
+for buildopt_packet in micronaut-review.md spring-review.md; do
+    test -s "benchmarks/results/reviewed-native-patch-owner-acceptance-v1/${buildopt_packet}"
+done
+
+buildopt_micronaut_packet=benchmarks/results/reviewed-native-patch-owner-acceptance-v1/micronaut-review.md
+buildopt_spring_packet=benchmarks/results/reviewed-native-patch-owner-acceptance-v1/spring-review.md
+buildopt_micronaut_values=0
+while IFS= read -r buildopt_value; do
+    buildopt_micronaut_values=$((buildopt_micronaut_values + 1))
+    grep -Fq -- "${buildopt_value}" "${buildopt_micronaut_packet}"
+done < <(jq -r '.proposals[] | select(.family == "micronaut-core") |
+  .revision, .patch.expectedSourceSha256, .patch.patchedSourceSha256' \
+  benchmarks/results/reviewed-native-patch-portfolio-v1/accepted-proposals.json)
+test "${buildopt_micronaut_values}" -eq 3
+buildopt_spring_values=0
+while IFS= read -r buildopt_value; do
+    buildopt_spring_values=$((buildopt_spring_values + 1))
+    grep -Fq -- "${buildopt_value}" "${buildopt_spring_packet}"
+done < <(jq -r '.proposals[] | select(.family == "spring-framework") |
+  .revision, .patch.expectedSourceSha256, .patch.patchedSourceSha256' \
+  benchmarks/results/reviewed-native-patch-portfolio-v1/accepted-proposals.json)
+test "${buildopt_spring_values}" -eq 3
+
+grep -Fq '6,921.125 ms' "${buildopt_micronaut_packet}"
+grep -Fq '985.5 ms' "${buildopt_spring_packet}"
+./dev/check-reviewed-native-patch-delivery >/dev/null
+printf 'RNPA contract OK: 2 exact drafts, 2/2 understood and accepted, review time unmeasured\n'

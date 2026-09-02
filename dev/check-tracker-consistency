@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`REVIEWED_NATIVE_PATCH_DELIVERY_POC_QUALIFIED\`"
-    "**Current phase:** \`RNPD-005\`"
+    "**Overall status:** \`REVIEWED_NATIVE_PATCH_OWNER_ACCEPTANCE_QUALIFIED_TIME_UNMEASURED\`"
+    "**Current phase:** \`RNPA-005\`"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"
@@ -457,6 +457,8 @@ buildopt_required_tracker_text=(
     "| \`E-510\` | 2026-09-02 | \`POC-REVIEWED-NATIVE-PATCH-PORTFOLIO\`, \`RNPP-001..005\`, \`C4-G06\`"
     "| POC-REVIEWED-NATIVE-PATCH-DELIVERY | Deliver the two qualified corrections through exact versioned recipes"
     "| \`E-511\` | 2026-09-02 | \`POC-REVIEWED-NATIVE-PATCH-DELIVERY\`, \`RNPD-001..005\`"
+    "| POC-REVIEWED-NATIVE-PATCH-OWNER-ACCEPTANCE | Test whether an owner understands and accepts the two exact review-only corrections"
+    "| \`E-512\` | 2026-09-02 | \`POC-REVIEWED-NATIVE-PATCH-OWNER-ACCEPTANCE\`, \`RNPA-001..005\`"
 )
 for buildopt_required in "${buildopt_required_tracker_text[@]}"; do
     if ! grep -Fq -- "${buildopt_required}" "${buildopt_tracker}"; then

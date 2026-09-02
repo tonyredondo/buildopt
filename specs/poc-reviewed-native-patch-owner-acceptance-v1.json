@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "buildopt.specs/poc-reviewed-native-patch-owner-acceptance/v1",
+  "predecessor": "QUALIFY_REVIEWED_NATIVE_PATCH_DELIVERY_POC",
+  "targetOwner": "tonyredondo",
+  "proposals": [
+    {
+      "id": "micronaut-python-vfs-bytecode-compile-relative-v1",
+      "upstream": "micronaut-projects/micronaut-core",
+      "fork": "tonyredondo/micronaut-core",
+      "revision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+      "recipeId": "REVIEWED_RELATIVE_CACHEABILITY_JAVA_V1"
+    },
+    {
+      "id": "spring-architecture-check-v1",
+      "upstream": "spring-projects/spring-framework",
+      "fork": "tonyredondo/spring-framework",
+      "revision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+      "recipeId": "REVIEWED_MARKER_ONLY_CACHEABILITY_JAVA_V1"
+    }
+  ],
+  "reviewGate": {
+    "requiredDecisions": 2,
+    "decision": "ACCEPT_FOR_CONTROLLED_TRIAL",
+    "maximumActiveReviewMinutesPerProposal": 15,
+    "maximumClarificationsPerProposal": 1,
+    "ownerReportedOnly": true
+  },
+  "delivery": {
+    "draftOnly": true,
+    "historicalBaseBranch": true,
+    "candidateBranchPrefix": "buildopt/owner-acceptance/",
+    "upstreamPullRequest": false,
+    "defaultBranchMutation": false,
+    "mergeAuthorized": false,
+    "forcePush": false
+  },
+  "boundaries": {
+    "productionAuthorized": false,
+    "automaticApply": false,
+    "automaticMerge": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}
