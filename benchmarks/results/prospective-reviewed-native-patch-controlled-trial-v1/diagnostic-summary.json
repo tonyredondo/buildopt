@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "buildopt.evidence/prospective-reviewed-native-patch-diagnostics/v1",
+  "sourceReportSha256": "f0090fd422c3b42cc5af98e2b7d0ee6bdc3dffb928e9226004a380c29087fe62",
+  "bindingSha256": "9fe85ba4b36914db0f6713f02016b5dec6e42540d4d081fc92da60ba3f8d279f",
+  "diagnostics": [
+    {
+      "family": "shadow",
+      "taskPath": ":generateDocTests",
+      "ownerWorkflow": "documentTest",
+      "outcome": "EXECUTED",
+      "taskDurationMs": 80,
+      "completeInvocationWallMs": 471064,
+      "addressablePercent": 0.01698283035850755,
+      "criticalPath": false,
+      "boundedOutputsAndEffects": true,
+      "decision": "REJECT_BELOW_500_MS_BELOW_2_PERCENT_AND_OFF_CRITICAL_PATH"
+    }
+  ],
+  "gradleProcessInvocations": 2,
+  "successfulNativeDiagnostics": 1,
+  "environmentalPreConfigurationFailures": 1,
+  "diagnosticFamilies": 1,
+  "selectedProposals": 0,
+  "selectedFamilies": 0,
+  "candidateBuilds": 0,
+  "timingSamples": 0,
+  "productFailures": 0,
+  "decision": "STOP_NO_ECONOMIC_PROPOSAL"
+}

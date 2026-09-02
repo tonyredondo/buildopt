@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "buildopt.evidence/prospective-reviewed-native-patch-terminal-decision/v1",
+  "evidenceDigests": {
+    "sourceClassificationSha256": "f0090fd422c3b42cc5af98e2b7d0ee6bdc3dffb928e9226004a380c29087fe62",
+    "bindingSha256": "9fe85ba4b36914db0f6713f02016b5dec6e42540d4d081fc92da60ba3f8d279f",
+    "diagnosticSummarySha256": "271fb47a20ff8ebc955826b44b8a5b26f493b4ce0734cd416bc0d56e50ca4392"
+  },
+  "sourceGate": {
+    "conclusiveFamilies": 10,
+    "requiredConclusiveFamilies": 10,
+    "actionFamilies": 3,
+    "requiredActionFamilies": 1,
+    "decision": "PASS"
+  },
+  "diagnosticGate": {
+    "diagnosticFamilies": 1,
+    "successfulNativeDiagnostics": 1,
+    "selectedProposals": 0,
+    "decision": "FAIL_NO_ECONOMIC_PROPOSAL"
+  },
+  "dependentBlocks": {
+    "correctness": "NOT_AUTHORIZED_FAILED_DIAGNOSTIC_PREREQUISITE",
+    "value": "NOT_AUTHORIZED_FAILED_DIAGNOSTIC_PREREQUISITE",
+    "reviewAndDelivery": "NOT_AUTHORIZED_FAILED_DIAGNOSTIC_PREREQUISITE"
+  },
+  "campaignCosts": {
+    "sourceAcquisitionAndFirstClassificationSeconds": 75,
+    "sourceCostMethod": "FILESYSTEM_BIRTH_TO_FIRST_REPORT_ELAPSED_SECONDS",
+    "evidenceRegenerationSecondsCharged": 2,
+    "evidenceRegenerationCostMethod": "OBSERVED_1_3_SECONDS_ROUNDED_UP",
+    "environmentalPreConfigurationFailureMilliseconds": 617,
+    "successfulNativeDiagnosticMilliseconds": 471064,
+    "chargedMachineSecondsRoundedUp": 549,
+    "correctnessGradleStarts": 0,
+    "valueInvocations": 0,
+    "deliveryInvocations": 0,
+    "ownerReviewActiveSeconds": 0,
+    "omittedCampaignCosts": 0
+  },
+  "economics": {
+    "qualifiedMeanSavingMilliseconds": 0,
+    "combinedPaybackBuilds": null,
+    "combinedPaybackReason": "UNAVAILABLE_NO_QUALIFIED_SAVING"
+  },
+  "newQualifiedPublicFamilies": 0,
+  "requiredNewQualifiedPublicFamilies": 1,
+  "terminalDecision": "STOP_PROSPECTIVE_REVIEWED_NATIVE_PATCH_NO_ECONOMIC_PROPOSAL",
+  "publicSourceModified": false,
+  "candidateBuilds": 0,
+  "timingSamples": 0,
+  "productFailures": 0,
+  "upstreamPullRequest": false,
+  "defaultBranchMutation": false,
+  "productionAuthorized": false,
+  "automaticApply": false,
+  "automaticMerge": false,
+  "testOptimization": "OUT_OF_SCOPE"
+}

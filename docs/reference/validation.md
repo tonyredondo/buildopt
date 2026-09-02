@@ -37,6 +37,14 @@ v2 paired statistics from raw rows, checks compressed task outcomes and output
 digests, and verifies the 20-second owner review plus 233-build combined
 payback.
 
+The closed prospective follow-up is checked by
+`./dev/check-prospective-reviewed-native-patch-contract` and
+`./dev/check-prospective-reviewed-native-patch-evidence`. The evidence checker
+recounts all ten families and three action families, reconstructs the native
+critical path from the compressed Shadow trace, and verifies the 80-ms,
+0.01698%, off-critical-path stop. An optional source-root argument additionally
+regenerates the full source report from the frozen repositories.
+
 BuildOpt uses focused checks as executable evidence. Run the smallest gate that
 owns the changed contract, then add broader composition only when the change
 crosses components or platforms.
@@ -49,6 +57,8 @@ provision tools or create release artifacts document that effect explicitly.
 
 | Change | Command |
 |---|---|
+| Prospective ten-family source, binding, native diagnostic and zero-candidate terminal stop | `./dev/check-prospective-reviewed-native-patch-evidence [SOURCE_ROOT]` |
+| Prospective holdout, gates, budgets and authority boundary | `./dev/check-prospective-reviewed-native-patch-contract` |
 | Economics-gated source/diagnostic/correctness evidence and v1 protocol stop | `./dev/check-economics-gated-native-patch-evidence` |
 | Symmetrically stabilized v2 value, owner review and terminal economics | `./dev/check-economics-gated-native-patch-v2-value` |
 | Remote-cache-locality v3 corrected five-family planning contract | `./dev/check-remote-cache-locality-value-v3` |

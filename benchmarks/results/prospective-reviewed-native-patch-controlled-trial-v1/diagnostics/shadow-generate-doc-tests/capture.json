@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "buildopt.evidence/prospective-reviewed-native-patch-native-diagnostic-capture/v1",
+  "family": "shadow",
+  "repository": "https://github.com/GradleUp/shadow.git",
+  "revision": "cab057cf037cc05006f720dadf9563dfb06b8f42",
+  "sourceArchiveSha256": "3f2eb85d3fa5a78ffee6a52b16db4772dcc9651f3dc42fda5dedeb3cf2e2ebf1",
+  "wrapperSha256": "a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59",
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--console=plain",
+    "--parallel",
+    "--max-workers=12",
+    "--build-cache",
+    "--configuration-cache",
+    "--non-interactive",
+    "--init-script",
+    "dev/gradle-critical-path.init.gradle",
+    "documentTest"
+  ],
+  "environment": {
+    "jdk": "temurin-jdk-25",
+    "maximumWorkers": 12,
+    "timeoutMinutes": 30,
+    "freeBytesBefore": 12461621248
+  },
+  "starts": {
+    "gradleProcessInvocations": 2,
+    "successfulDiagnosticCaptures": 1,
+    "environmentalPreConfigurationFailures": 1,
+    "productFailures": 0,
+    "successfulWallTimeMs": 471064,
+    "environmentalFailureWallTimeMs": 617
+  },
+  "environmentalFailure": {
+    "phase": "BEFORE_BUILD_CONFIGURATION",
+    "reason": "SANDBOX_WILDCARD_IP_UNAVAILABLE",
+    "tasksObserved": 0,
+    "acceptedDiagnostic": false
+  },
+  "artifacts": {
+    "operationsTrace": {
+      "path": "operations-log.txt.gz",
+      "sha256": "b2e656cb6d99cf7f120befaefb3757319e337ece60112294291e6f8e5b31ed34"
+    },
+    "taskGraph": {
+      "path": "task-graph.jsonl",
+      "sha256": "62b7c3e1868098b9aebe163e87cf6a9324cd4e75730fcf3de07f766dbfbabf76"
+    },
+    "analysis": {
+      "path": "analysis.json",
+      "sha256": "9ebcfbce652ab85fb1e2c8394652bb75bad80471a960b18d13634e8720501ed2"
+    }
+  },
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSample": false
+}

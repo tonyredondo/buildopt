@@ -1,0 +1,623 @@
+{
+  "schemaVersion": "buildopt.evidence/prospective-reviewed-native-patch-source-classification/v1",
+  "contractSha256": "d43a7f43a5cc2f73021279041dda7f1ed8385ae329ed6b93a89696b4f732e123",
+  "subjectsSha256": "84bfa7c3b377bd77affd13f7ab70db5abdbd20e881e1c75887b416b022c0d127",
+  "analyzerSha256": "629e62125808e912bbe04b0fdffe88eba7071cf1701a550e2ba8b9d07b883e71",
+  "evidenceSource": "FRESH_FROZEN_HOLDOUT_GIT_SOURCE_ONLY",
+  "families": [
+    {
+      "key": "detekt",
+      "repository": "https://github.com/detekt/detekt.git",
+      "revision": "7b872992c7f78b8b4ed61fd15d51724b73129dc8",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "build-logic/src/main/kotlin/UpdateVersionInFileTask.kt",
+          "className": "UpdateVersionInFileTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 8,
+            "startColumn": 1,
+            "endLine": 8,
+            "endColumn": 54
+          },
+          "sourceSha256": "46708a85a6d60c2e429c0c33d37b44ec1c45f62928aeba4e0b95f6313d04343f",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILE",
+              "binding": "fileToUpdate",
+              "declarationSpan": {
+                "startLine": 10,
+                "startColumn": 5,
+                "endLine": 12,
+                "endColumn": 1
+              },
+              "primaryNormalization": [],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        },
+        {
+          "path": "detekt-gradle-plugin/src/main/kotlin/dev/detekt/gradle/report/ReportMergeTask.kt",
+          "className": "ReportMergeTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 16,
+            "startColumn": 1,
+            "endLine": 16,
+            "endColumn": 46
+          },
+          "sourceSha256": "f94196e02afe14004242bd56fb81cbbb70b6b8f731265d44a52c0d2b868f6ea0",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "input",
+              "declarationSpan": {
+                "startLine": 18,
+                "startColumn": 5,
+                "endLine": 21,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        }
+      ]
+    },
+    {
+      "key": "shadow",
+      "repository": "https://github.com/GradleUp/shadow.git",
+      "revision": "cab057cf037cc05006f720dadf9563dfb06b8f42",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "gradle/build-logic/src/main/kotlin/com/github/jengelman/gradle/plugins/shadow/buildlogic/GenerateDocTests.kt",
+          "className": "GenerateDocTests",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 16,
+            "startColumn": 1,
+            "endLine": 16,
+            "endColumn": 47
+          },
+          "sourceSha256": "1dc50bec239b10b31bb19a31ffceec4d00f497a8e0f77b122b248d66c84c7a3d",
+          "fileInputs": [
+            {
+              "kind": "INPUT_DIRECTORY",
+              "binding": "inputDirectory",
+              "declarationSpan": {
+                "startLine": 17,
+                "startColumn": 3,
+                "endLine": 20,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "MARKER_ONLY_ELIGIBLE",
+          "reason": "EVERY_FILE_INPUT_HAS_PORTABLE_PRIMARY_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "key": "gradle-node-plugin",
+      "repository": "https://github.com/node-gradle/gradle-node-plugin.git",
+      "revision": "5366b9448c6f4cae2d12bef460a31760f9f305f2",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "src/main/kotlin/com/github/gradle/node/task/BaseTask.kt",
+          "className": "BaseTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 8,
+            "startColumn": 1,
+            "endLine": 8,
+            "endColumn": 39
+          },
+          "sourceSha256": "e4f2608f6a0069051feeb56f9478110abc2d29c6572e27e4ae35bef158ed995e",
+          "fileInputs": [],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        }
+      ]
+    },
+    {
+      "key": "gradle-versions-plugin",
+      "repository": "https://github.com/ben-manes/gradle-versions-plugin.git",
+      "revision": "17a079dc1cfd7b0b83affb7ccd625a936e6728ce",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "gradle-versions-plugin/src/main/kotlin/com/github/benmanes/gradle/versions/updates/DependencyUpdatesPartialTask.kt",
+          "className": "DependencyUpdatesPartialTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 16,
+            "startColumn": 1,
+            "endLine": 16,
+            "endColumn": 59
+          },
+          "sourceSha256": "8508ebc26b655cf5f2b91b7dee82b15a7e544be41780f6205d26b0ed6f6f586f",
+          "fileInputs": [],
+          "decision": "MARKER_ONLY_ELIGIBLE",
+          "reason": "NO_FILE_INPUT_REQUIRES_NORMALIZATION"
+        },
+        {
+          "path": "gradle-versions-plugin/src/main/kotlin/com/github/benmanes/gradle/versions/updates/DependencyUpdatesTask.kt",
+          "className": "DependencyUpdatesTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 35,
+            "startColumn": 6,
+            "endLine": 35,
+            "endColumn": 48
+          },
+          "sourceSha256": "2409813ccc07f84e30511da26ca714d584c77ddc51a889c2b92b525507a8ade0",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "partialResults",
+              "declarationSpan": {
+                "startLine": 294,
+                "startColumn": 3,
+                "endLine": 297,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_NONE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        }
+      ]
+    },
+    {
+      "key": "protobuf-gradle-plugin",
+      "repository": "https://github.com/google/protobuf-gradle-plugin.git",
+      "revision": "8be67f8d98c525273248f5eea9892ee1c7895984",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "src/main/groovy/com/google/protobuf/gradle/GenerateProtoTask.groovy",
+          "className": "GenerateProtoTask",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 78,
+            "startColumn": 1,
+            "endLine": 78,
+            "endColumn": 60
+          },
+          "sourceSha256": "b5c19c761535f5941d65201af4146b58d592c1bdb6df2e5fd69a9a16d3492624",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getSourceDirs",
+              "declarationSpan": {
+                "startLine": 293,
+                "startColumn": 1,
+                "endLine": 298,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": [
+                "IGNORE_EMPTY_DIRECTORIES"
+              ]
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getIncludeDirs",
+              "declarationSpan": {
+                "startLine": 301,
+                "startColumn": 3,
+                "endLine": 304,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getExecutables",
+              "declarationSpan": {
+                "startLine": 333,
+                "startColumn": 3,
+                "endLine": 336,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_NONE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/groovy/com/google/protobuf/gradle/ProtobufExtract.groovy",
+          "className": "ProtobufExtract",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 57,
+            "startColumn": 1,
+            "endLine": 57,
+            "endColumn": 51
+          },
+          "sourceSha256": "29b09e3e906b0f70e5ff4a41a95be3f30a6c4dbac22bb63eb1df7259b50bba87",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getInputProtoFiles",
+              "declarationSpan": {
+                "startLine": 83,
+                "startColumn": 3,
+                "endLine": 86,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "MARKER_ONLY_ELIGIBLE",
+          "reason": "EVERY_FILE_INPUT_HAS_PORTABLE_PRIMARY_NORMALIZATION"
+        },
+        {
+          "path": "src/main/groovy/com/google/protobuf/gradle/ProtobufPlugin.groovy",
+          "className": "ProtoSyncTask",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 382,
+            "startColumn": 21,
+            "endLine": 382,
+            "endColumn": 60
+          },
+          "sourceSha256": "21c0f13df73d07ca9a0d58bf0271e9a3e090d990ec9c4decfaf957034df1efc2",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getSource",
+              "declarationSpan": {
+                "startLine": 385,
+                "startColumn": 7,
+                "endLine": 387,
+                "endColumn": 1
+              },
+              "primaryNormalization": [],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        }
+      ]
+    },
+    {
+      "key": "openapi-generator",
+      "repository": "https://github.com/OpenAPITools/openapi-generator.git",
+      "revision": "2a4acf52bc31df6a8f7e87e7c5244fb7ca82ab0d",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "modules/openapi-generator-gradle-plugin/src/main/kotlin/org/openapitools/generator/gradle/plugin/tasks/GenerateTask.kt",
+          "className": "GenerateTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 289,
+            "startColumn": 1,
+            "endLine": 289,
+            "endColumn": 43
+          },
+          "sourceSha256": "78d5429b0500f7203155b45587777eab7a8db1ce5b59b93c6b6613e55f712e83",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "generatorClasspath",
+              "declarationSpan": {
+                "startLine": 334,
+                "startColumn": 1,
+                "endLine": 337,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "CLASSPATH"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_DIRECTORY",
+              "binding": "schemaLocation",
+              "declarationSpan": {
+                "startLine": 373,
+                "startColumn": 1,
+                "endLine": 377,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_ABSOLUTE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILE",
+              "binding": "inputSpec",
+              "declarationSpan": {
+                "startLine": 404,
+                "startColumn": 1,
+                "endLine": 408,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_DIRECTORY",
+              "binding": "inputSpecRootDirectory",
+              "declarationSpan": {
+                "startLine": 415,
+                "startColumn": 1,
+                "endLine": 419,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "inputSpecFiles",
+              "declarationSpan": {
+                "startLine": 429,
+                "startColumn": 5,
+                "endLine": 433,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_DIRECTORY",
+              "binding": "templateDir",
+              "declarationSpan": {
+                "startLine": 496,
+                "startColumn": 1,
+                "endLine": 500,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILE",
+              "binding": "configFile",
+              "declarationSpan": {
+                "startLine": 531,
+                "startColumn": 1,
+                "endLine": 535,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILE",
+              "binding": "ignoreFileOverride",
+              "declarationSpan": {
+                "startLine": 800,
+                "startColumn": 1,
+                "endLine": 804,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "modules/openapi-generator-gradle-plugin/src/main/kotlin/org/openapitools/generator/gradle/plugin/tasks/GeneratorsTask.kt",
+          "className": "GeneratorsTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 39,
+            "startColumn": 1,
+            "endLine": 39,
+            "endColumn": 45
+          },
+          "sourceSha256": "b1e4a3a880272972a911608441b80f3a33f09a3f63ddc4bd8d296d9c0de66d0f",
+          "fileInputs": [],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "modules/openapi-generator-gradle-plugin/src/main/kotlin/org/openapitools/generator/gradle/plugin/tasks/MetaTask.kt",
+          "className": "MetaTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 47,
+            "startColumn": 1,
+            "endLine": 47,
+            "endColumn": 39
+          },
+          "sourceSha256": "aae47b753bfc06e7a8522c58a320a83117b7323455577cce6d88a51b6286cf23",
+          "fileInputs": [],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "modules/openapi-generator-gradle-plugin/src/main/kotlin/org/openapitools/generator/gradle/plugin/tasks/ValidateTask.kt",
+          "className": "ValidateTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 51,
+            "startColumn": 1,
+            "endLine": 51,
+            "endColumn": 43
+          },
+          "sourceSha256": "136ce28f559449d44bea30c2cb8d35a333a6e87caef4b507813f13f5c04a2e21",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILE",
+              "binding": "inputSpec",
+              "declarationSpan": {
+                "startLine": 61,
+                "startColumn": 1,
+                "endLine": 65,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "modules/openapi-generator-gradle-plugin/src/test/kotlin/GenerateTaskDslTest.kt",
+          "className": "SpecProducerTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 705,
+            "startColumn": 13,
+            "endLine": 705,
+            "endColumn": 64
+          },
+          "sourceSha256": "6d68e94e3817fd7c62bf6f8df3744538872888b94ff8fc01476b0fc0a8e86329",
+          "fileInputs": [],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        }
+      ]
+    },
+    {
+      "key": "liquibase",
+      "repository": "https://github.com/liquibase/liquibase.git",
+      "revision": "5ce7b80391a7e93e8805fb2b4a9bcbd2f092fdfc",
+      "conclusive": true,
+      "candidates": []
+    },
+    {
+      "key": "flyway",
+      "repository": "https://github.com/flyway/flyway.git",
+      "revision": "bea01e538200bb299127d777a595d2ad7890095d",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "flyway-plugins/flyway-gradle-plugin/src/main/java/org/flywaydb/gradle/task/AbstractFlywayTask.java",
+          "className": "AbstractFlywayTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 53,
+            "startColumn": 1,
+            "endLine": 53,
+            "endColumn": 61
+          },
+          "sourceSha256": "661d7999ebe87435f3958fe38a93119fd68fc16d5984feead62d2b66e6a90d47",
+          "fileInputs": [],
+          "decision": "NO_ACTION",
+          "reason": "NO_DECLARED_TASK_INPUTS_OR_OUTPUTS"
+        }
+      ]
+    },
+    {
+      "key": "paparazzi",
+      "repository": "https://github.com/cashapp/paparazzi.git",
+      "revision": "be8f485d2903a18c5e06b11b233928e98a9c66e1",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "paparazzi-gradle-plugin/src/main/java/app/cash/paparazzi/gradle/PaparazziPlugin.kt",
+          "className": "PaparazziTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 352,
+            "startColumn": 3,
+            "endLine": 352,
+            "endColumn": 53
+          },
+          "sourceSha256": "028ef9ff86f34e6fa0a056bfe4469060b6e8f3a8cf17d846f1c8fd1bcf06df48",
+          "fileInputs": [],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        },
+        {
+          "path": "paparazzi-gradle-plugin/src/main/java/app/cash/paparazzi/gradle/PrepareResourcesTask.kt",
+          "className": "PrepareResourcesTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 34,
+            "startColumn": 1,
+            "endLine": 34,
+            "endColumn": 58
+          },
+          "sourceSha256": "9c07ee0d4252279cb5f5740888dd181ada1a850e5cf07be2c36751bc2875180e",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "artifactFiles",
+              "declarationSpan": {
+                "startLine": 59,
+                "startColumn": 3,
+                "endLine": 62,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_NONE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        }
+      ]
+    },
+    {
+      "key": "graphql-java",
+      "repository": "https://github.com/graphql-java/graphql-java.git",
+      "revision": "f2d8c9126f898c084b176631b7346bc6fbec296a",
+      "conclusive": true,
+      "candidates": []
+    }
+  ],
+  "conclusiveFamilies": 10,
+  "actionFamilies": 3,
+  "minimumActionFamilies": 1,
+  "decision": "PASS_PROSPECTIVE_SOURCE_GATE",
+  "diagnosticsAuthorized": true,
+  "compilationAuthorized": false,
+  "timingAuthorized": false
+}

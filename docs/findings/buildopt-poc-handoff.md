@@ -52,6 +52,18 @@ does not establish commercial viability.
 
 ## Current experiment status
 
+`PROSPECTIVE_REVIEWED_NATIVE_PATCH_CONTROLLED_TRIAL_V1` is closed as
+`STOP_PROSPECTIVE_REVIEWED_NATIVE_PATCH_NO_ECONOMIC_PROPOSAL`. Its ten-family
+holdout is 10/10 conclusive and exposes actions in three families, but binding
+admits only Shadow to a real owner workflow. The single successful native
+diagnostic measures `:generateDocTests` at 80 ms, 0.01698% of `documentTest`,
+and outside the hard-dependency critical path. That fails the frozen 500-ms,
+2%, and critical-path prerequisites, so no patch, candidate build, correctness,
+timing, owner review, or delivery is authorized. The charged campaign cost is
+549 machine seconds and payback is unavailable with zero qualified saving.
+The prior Elasticsearch controlled-trial qualification remains valid; this
+prospective replication adds no fourth value family.
+
 `ECONOMICS_GATED_REVIEWED_NATIVE_PATCH_V2` is complete as
 `QUALIFY_ELASTICSEARCH_FORBIDDEN_PATTERNS_CONTROLLED_TRIAL`. The economics-first
 v1 screen audited ten fresh families, admitted Elasticsearch only after a

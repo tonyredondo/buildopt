@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "buildopt.specs/poc-prospective-reviewed-native-patch-controlled-trial-subjects/v1",
+  "reusePolicy": "PREVIOUSLY_UNUSED_PUBLIC_FAMILIES_NO_PRIOR_RESULT_ROWS",
+  "families": [
+    {"key":"detekt","repository":"https://github.com/detekt/detekt.git","revision":"7b872992c7f78b8b4ed61fd15d51724b73129dc8"},
+    {"key":"shadow","repository":"https://github.com/GradleUp/shadow.git","revision":"cab057cf037cc05006f720dadf9563dfb06b8f42"},
+    {"key":"gradle-node-plugin","repository":"https://github.com/node-gradle/gradle-node-plugin.git","revision":"5366b9448c6f4cae2d12bef460a31760f9f305f2"},
+    {"key":"gradle-versions-plugin","repository":"https://github.com/ben-manes/gradle-versions-plugin.git","revision":"17a079dc1cfd7b0b83affb7ccd625a936e6728ce"},
+    {"key":"protobuf-gradle-plugin","repository":"https://github.com/google/protobuf-gradle-plugin.git","revision":"8be67f8d98c525273248f5eea9892ee1c7895984"},
+    {"key":"openapi-generator","repository":"https://github.com/OpenAPITools/openapi-generator.git","revision":"2a4acf52bc31df6a8f7e87e7c5244fb7ca82ab0d"},
+    {"key":"liquibase","repository":"https://github.com/liquibase/liquibase.git","revision":"5ce7b80391a7e93e8805fb2b4a9bcbd2f092fdfc"},
+    {"key":"flyway","repository":"https://github.com/flyway/flyway.git","revision":"bea01e538200bb299127d777a595d2ad7890095d"},
+    {"key":"paparazzi","repository":"https://github.com/cashapp/paparazzi.git","revision":"be8f485d2903a18c5e06b11b233928e98a9c66e1"},
+    {"key":"graphql-java","repository":"https://github.com/graphql-java/graphql-java.git","revision":"f2d8c9126f898c084b176631b7346bc6fbec296a"}
+  ]
+}

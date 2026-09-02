@@ -14,6 +14,18 @@ package boundaries with:
 ./dev/check-documentation
 ```
 
+Validate the closed prospective ten-family reviewed-native trial, including
+independent source recount, binding decisions, native critical-path trace and
+the zero-candidate terminal stop with:
+
+```bash
+./dev/check-prospective-reviewed-native-patch-contract
+./dev/check-prospective-reviewed-native-patch-evidence
+```
+
+Passing a local holdout root as the optional argument to the evidence checker
+also regenerates every source row from the ten frozen Git revisions.
+
 Validate the economics-gated reviewed-native source audit, native diagnostics,
 correctness stop and protocol-corrected terminal value result with:
 

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "buildopt.evidence/prospective-reviewed-native-patch-binding/v1",
+  "sourceReportSha256": "f0090fd422c3b42cc5af98e2b7d0ee6bdc3dffb928e9226004a380c29087fe62",
+  "actionFamilies": [
+    {
+      "family": "shadow",
+      "decision": "BOUND_OWNER_WORKFLOW_FOR_NATIVE_DIAGNOSTIC",
+      "ownerWorkflow": "documentTest",
+      "taskPath": ":generateDocTests",
+      "registrationPath": "build.gradle.kts",
+      "registrationSha256": "8a681345e4710871129eb8a2755fbbe96a74e48d359b3feb725b56b0247a7438",
+      "nativeDiagnostics": 1
+    },
+    {
+      "family": "gradle-versions-plugin",
+      "decision": "REJECT_NO_ADDRESSABLE_TASK_ACTION_ECONOMICS",
+      "reason": "The task action only creates a parent directory and writes its already-realized String input; dependency resolution occurs while the input is realized and remains required to calculate a cache key.",
+      "registrationPath": "gradle-versions-plugin/src/main/kotlin/com/github/benmanes/gradle/versions/updates/Aggregation.kt",
+      "registrationSha256": "c1c24e16a61df619e305a2ad668fe315f2ef56b9ddef872236332b19e6a401f5",
+      "nativeDiagnostics": 0
+    },
+    {
+      "family": "protobuf-gradle-plugin",
+      "decision": "REJECT_NO_REPOSITORY_OWNER_WORKFLOW",
+      "reason": "The repository build compiles and tests the plugin; ProtobufExtract is registered only when a consumer applies the plugin and is not a task in the repository-owned Gradle workflow.",
+      "registrationPath": "src/main/groovy/com/google/protobuf/gradle/ProtobufPlugin.groovy",
+      "registrationSha256": "21c0f13df73d07ca9a0d58bf0271e9a3e090d990ec9c4decfaf957034df1efc2",
+      "ownerBuildPath": "build.gradle",
+      "ownerBuildSha256": "8a8b4ae39d4ede6206ef34c4c8914d9b4d801c568c3626ce5952ed67b15d1676",
+      "nativeDiagnostics": 0
+    }
+  ],
+  "actionFamilyCount": 3,
+  "boundDiagnosticFamilies": 1,
+  "nativeDiagnostics": 1,
+  "candidateBuilds": 0,
+  "timingSamples": 0
+}

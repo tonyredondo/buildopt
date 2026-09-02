@@ -2,6 +2,12 @@
 
 Reproducible workloads for measuring causal savings, overhead, queues, additional compute, and behavior under failure.
 
+The [prospective reviewed-native trial](./results/prospective-reviewed-native-patch-controlled-trial-v1/README.md)
+audits ten unused public families and reconstructs three source-action families.
+Only Shadow binds to an owner workflow, where `generateDocTests` measures 80 ms,
+0.01698%, and off critical path. The frozen economic gate stops before a patch,
+candidate build, or timing sample; no fourth value family is added.
+
 The corrected [remote cache locality v3 evidence](./results/remote-cache-locality-value-v3/README.md) completes 5/5 correctness rows and 24/24 controlled pairs with zero product failures. Zero of three eligible families passes every frozen value criterion, so the route stops before installed economics and makes no viability claim.
 
 The checked [critical-path successor selection](./results/critical-path-successor-selection-v1.json) reconstructs decisive evidence for six candidate routes and selects only change-scoped critical-path discovery. It authorizes no public build or timing; a later route must first find at least 500 ms/2% causally avoidable work in 3/5 families.

@@ -262,6 +262,8 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-economics-gated-native-patch-evidence" >/dev/null
         "${buildopt_script_dir}/check-economics-gated-native-patch-v2-contract" >/dev/null
         "${buildopt_script_dir}/check-economics-gated-native-patch-v2-value" >/dev/null
+        "${buildopt_script_dir}/check-prospective-reviewed-native-patch-contract" >/dev/null
+        "${buildopt_script_dir}/check-prospective-reviewed-native-patch-evidence" >/dev/null
         "${buildopt_script_dir}/check-economic-opportunity-first" >/dev/null
         "${buildopt_script_dir}/check-economic-opportunity-source-ledger" >/dev/null
         "${buildopt_script_dir}/check-economic-opportunity-terminal-decision" >/dev/null

@@ -2,6 +2,17 @@
 
 ## Current Executive Summary
 
+- **The prospective ten-family replication stops before a patch.** The frozen
+  holdout is 10/10 conclusive with source actions in Shadow, Gradle Versions,
+  and Protobuf. Workflow/effect binding admits only Shadow. Its optimized-native
+  `documentTest` diagnostic executes `:generateDocTests` for **80 ms**, just
+  **0.01698%** of the 471,064-ms invocation, and the task is off the native
+  hard-dependency critical path. It therefore fails the fixed 500-ms, 2%, and
+  critical-path prerequisites. Correctness, paired timing, owner review, and
+  delivery never become authorized; there are zero candidate builds, zero
+  timing samples, zero product failures, and no new speedup claim. The 549
+  charged machine seconds have no payback because qualified saving is zero.
+
 - **Economics-first selection qualifies a third reviewed-native family.** A
   fresh ten-family source audit is 10/10 conclusive, but only native
   critical-path evidence can authorize correctness. Elasticsearch

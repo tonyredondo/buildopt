@@ -65,6 +65,9 @@ before running the product.
 
 ### Plans
 
+- [Prospective Reviewed Native Patch Controlled Trial v1](./plans/prospective-reviewed-native-patch-controlled-trial-v1.md):
+  frozen ten-family replication, source/workflow economics and the terminal
+  80-ms off-critical-path stop before any candidate patch or timing.
 - [Economic Opportunity First POC Tracker](./plans/economic-opportunity-first-poc-tracker.md):
   the closed route whose source ledger stopped at 1/5 recurrence families;
   later value blocks were not authorized and the terminal recommends a separate

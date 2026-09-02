@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+cd "${buildopt_repo_root}"
+
+buildopt_contract=specs/poc-prospective-reviewed-native-patch-controlled-trial-v1.json
+buildopt_subjects=specs/poc-prospective-reviewed-native-patch-controlled-trial-v1.subjects.json
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-prospective-reviewed-native-patch-controlled-trial/v1" and
+  .predecessor == "QUALIFY_ELASTICSEARCH_FORBIDDEN_PATTERNS_CONTROLLED_TRIAL" and
+  .selectionPolicy == "FROZEN_HOLDOUT_BEFORE_SOURCE_INSPECTION" and
+  .sourceGate.requiredConclusiveFamilies == 10 and
+  .sourceGate.minimumActionFamilies == 1 and
+  .sourceGate.maximumNativeDiagnostics == 6 and
+  .sourceGate.maximumDiagnosticFamilies == 3 and
+  .economicPrefilter.hardDependencyCriticalPathRequired and
+  .economicPrefilter.minimumAddressableMilliseconds == 500 and
+  .economicPrefilter.minimumAddressablePercent == 2 and
+  .economicPrefilter.maximumProjectedMachinePaybackBuilds == 300 and
+  .correctnessGate.maximumGradleStartsPerProposal == 6 and
+  .correctnessGate.maximumProductFailures == 0 and
+  .valueGate.excludedStabilizationsPerRoot == 1 and
+  .valueGate.balancedPairs == 8 and .valueGate.requiredPositivePairs == 8 and
+  .valueGate.minimumMeanSavingMilliseconds == 500 and
+  .valueGate.minimumMeanSavingPercent == 2 and
+  .reviewGate.firstExposure and .reviewGate.maximumActiveReviewMinutes == 15 and
+  .deliveryGate.digestBoundRecipe and .deliveryGate.isolatedApply and
+  .deliveryGate.exactPostimage and .deliveryGate.exactRevert and
+  .terminalGate.requiredNewPublicFamilies == 1 and
+  .terminalGate.maximumCombinedPaybackBuilds == 300 and
+  .terminalGate.chargeAllHoldoutCosts and
+  .budget.maximumAdditionalDiskGiB == 8 and
+  .budget.minimumFreeDiskBeforePublicBuildGiB == 8 and
+  .budget.stopBeforeNextStartFreeDiskGiB == 6 and
+  .delivery.upstreamPullRequest == false and
+  .delivery.defaultBranchMutation == false and
+  .delivery.mergeAuthorized == false and
+  .boundaries.productionAuthorized == false and
+  .boundaries.automaticApply == false and
+  .boundaries.automaticMerge == false and
+  .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_contract}" >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-prospective-reviewed-native-patch-controlled-trial-subjects/v1" and
+  .reusePolicy == "PREVIOUSLY_UNUSED_PUBLIC_FAMILIES_NO_PRIOR_RESULT_ROWS" and
+  (.families | length) == 10 and
+  ([.families[].key] | unique | length) == 10 and
+  all(.families[];
+    (.key | length > 0) and
+    (.repository | test("^https://github.com/.+\\.git$")) and
+    (.revision | test("^[0-9a-f]{40}$")))
+' "${buildopt_subjects}" >/dev/null
+
+buildopt_previous_keys=$(mktemp)
+trap 'rm -f "${buildopt_previous_keys}"' EXIT
+for buildopt_manifest in specs/*.subjects.json; do
+    [[ "${buildopt_manifest}" == "${buildopt_subjects}" ]] && continue
+    jq -r '.families[]?.key // empty' "${buildopt_manifest}"
+done | sort -u >"${buildopt_previous_keys}"
+while IFS= read -r buildopt_key; do
+    if grep -Fxq -- "${buildopt_key}" "${buildopt_previous_keys}"; then
+        printf 'prospective holdout reuses prior family: %s\n' "${buildopt_key}" >&2
+        exit 1
+    fi
+done < <(jq -r '.families[].key' "${buildopt_subjects}")
+
+./dev/run --toolchain go -- go test ./cmd/prospective-reviewed-native-patch-audit ./internal/normalizationaware
+
+if grep -ERq 'economics-gated-reviewed-native-patch-v1/source-classification|durable-native-optimization-v1/opportunity-report' \
+    cmd/prospective-reviewed-native-patch-audit; then
+    printf 'prospective classifier must not consume predecessor result rows\n' >&2
+    exit 1
+fi
+
+printf 'PRNP-001 contract OK: ten unused holdout families, frozen gates, zero source inspection\n'

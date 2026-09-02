@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence=${buildopt_repo_root}/benchmarks/results/prospective-reviewed-native-patch-controlled-trial-v1
+buildopt_report=${buildopt_evidence}/source-classification.json
+buildopt_binding=${buildopt_evidence}/binding.json
+buildopt_diagnostics=${buildopt_evidence}/diagnostic-summary.json
+buildopt_terminal=${buildopt_evidence}/terminal-decision.json
+buildopt_capture=${buildopt_evidence}/diagnostics/shadow-generate-doc-tests
+buildopt_temporary=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-prnp-check.XXXXXX")
+trap 'rm -rf -- "${buildopt_temporary}"' EXIT
+
+buildopt_sha256() {
+    sha256sum "$1" | awk '{print $1}'
+}
+
+[[ $(buildopt_sha256 specs/poc-prospective-reviewed-native-patch-controlled-trial-v1.json) == \
+    $(jq -r '.contractSha256' "${buildopt_report}") ]]
+[[ $(buildopt_sha256 specs/poc-prospective-reviewed-native-patch-controlled-trial-v1.subjects.json) == \
+    $(jq -r '.subjectsSha256' "${buildopt_report}") ]]
+
+buildopt_analyzer_sha=$(
+    {
+        printf '%s\0' cmd/prospective-reviewed-native-patch-audit/main.go
+        cat cmd/prospective-reviewed-native-patch-audit/main.go
+        printf '\0%s\0' internal/normalizationaware/scanner.go
+        cat internal/normalizationaware/scanner.go
+        printf '\0'
+    } | sha256sum | awk '{print $1}'
+)
+[[ ${buildopt_analyzer_sha} == $(jq -r '.analyzerSha256' "${buildopt_report}") ]]
+
+jq -e '
+  def action: .decision == "MARKER_ONLY_ELIGIBLE" or
+    .decision == "REVIEWED_RELATIVE_PROOF_REQUIRED";
+  def typed: .decision == "MARKER_ONLY_ELIGIBLE" or
+    .decision == "REVIEWED_RELATIVE_PROOF_REQUIRED" or
+    .decision == "EXPLICIT_NON_PORTABLE" or
+    .decision == "ALREADY_CACHEABLE" or
+    .decision == "DISABLED_CACHING" or
+    .decision == "INCOMPLETE_OR_AMBIGUOUS" or
+    .decision == "NO_ACTION";
+  .schemaVersion == "buildopt.evidence/prospective-reviewed-native-patch-source-classification/v1" and
+  .evidenceSource == "FRESH_FROZEN_HOLDOUT_GIT_SOURCE_ONLY" and
+  (.families | length) == 10 and
+  ([.families[] | select(.conclusive)] | length) == 10 and
+  .conclusiveFamilies == ([.families[] | select(.conclusive)] | length) and
+  .actionFamilies == ([.families[] | select(any(.candidates[]; action))] | length) and
+  .actionFamilies == 3 and
+  all(.families[].candidates[];
+    typed and
+    (.path | length > 0) and
+    (.className | length > 0) and
+    (.sourceSha256 | test("^[0-9a-f]{64}$")) and
+    (.declarationSpan.startLine > 0) and
+    all(.fileInputs[];
+      (.kind | length > 0) and (.binding | length > 0) and
+      (.declarationSpan.startLine > 0) and
+      (.primaryNormalization | type == "array") and
+      (.supplementaryNormalization | type == "array"))) and
+  ([.families[] as $family | $family.candidates[] | select(action) |
+    [$family.key, .path, .className, .sourceSha256, .decision]] | sort) ==
+  ([
+    ["gradle-versions-plugin", "gradle-versions-plugin/src/main/kotlin/com/github/benmanes/gradle/versions/updates/DependencyUpdatesPartialTask.kt", "DependencyUpdatesPartialTask", "8508ebc26b655cf5f2b91b7dee82b15a7e544be41780f6205d26b0ed6f6f586f", "MARKER_ONLY_ELIGIBLE"],
+    ["protobuf-gradle-plugin", "src/main/groovy/com/google/protobuf/gradle/ProtobufExtract.groovy", "ProtobufExtract", "29b09e3e906b0f70e5ff4a41a95be3f30a6c4dbac22bb63eb1df7259b50bba87", "MARKER_ONLY_ELIGIBLE"],
+    ["shadow", "gradle/build-logic/src/main/kotlin/com/github/jengelman/gradle/plugins/shadow/buildlogic/GenerateDocTests.kt", "GenerateDocTests", "1dc50bec239b10b31bb19a31ffceec4d00f497a8e0f77b122b248d66c84c7a3d", "MARKER_ONLY_ELIGIBLE"]
+  ] | sort) and
+  .decision == "PASS_PROSPECTIVE_SOURCE_GATE" and
+  .diagnosticsAuthorized and
+  (.compilationAuthorized | not) and (.timingAuthorized | not)
+' "${buildopt_report}" >/dev/null
+
+[[ $(buildopt_sha256 "${buildopt_report}") == $(jq -r '.sourceReportSha256' "${buildopt_binding}") ]]
+jq -e '
+  .schemaVersion == "buildopt.evidence/prospective-reviewed-native-patch-binding/v1" and
+  .actionFamilyCount == (.actionFamilies | length) and
+  .actionFamilyCount == 3 and .boundDiagnosticFamilies == 1 and
+  ([.actionFamilies[] | select(.nativeDiagnostics > 0)] | length) == 1 and
+  ([.actionFamilies[].decision] | sort) ==
+    (["BOUND_OWNER_WORKFLOW_FOR_NATIVE_DIAGNOSTIC",
+      "REJECT_NO_ADDRESSABLE_TASK_ACTION_ECONOMICS",
+      "REJECT_NO_REPOSITORY_OWNER_WORKFLOW"] | sort) and
+  .nativeDiagnostics == ([.actionFamilies[].nativeDiagnostics] | add) and
+  .nativeDiagnostics == 1 and .candidateBuilds == 0 and .timingSamples == 0
+' "${buildopt_binding}" >/dev/null
+
+jq -e --arg binding "$(buildopt_sha256 "${buildopt_binding}")" '
+  .schemaVersion == "buildopt.evidence/prospective-reviewed-native-patch-diagnostics/v1" and
+  .bindingSha256 == $binding and
+  (.diagnostics | length) == 1 and
+  .diagnostics[0].taskPath == ":generateDocTests" and
+  .diagnostics[0].taskDurationMs == 80 and
+  (.diagnostics[0].addressablePercent < 2) and
+  (.diagnostics[0].criticalPath | not) and
+  .diagnostics[0].decision == "REJECT_BELOW_500_MS_BELOW_2_PERCENT_AND_OFF_CRITICAL_PATH" and
+  .gradleProcessInvocations == 2 and .successfulNativeDiagnostics == 1 and
+  .environmentalPreConfigurationFailures == 1 and
+  .selectedProposals == 0 and .selectedFamilies == 0 and
+  .candidateBuilds == 0 and .timingSamples == 0 and .productFailures == 0 and
+  .decision == "STOP_NO_ECONOMIC_PROPOSAL"
+' "${buildopt_diagnostics}" >/dev/null
+
+for buildopt_kind in operationsTrace taskGraph analysis; do
+    buildopt_path=$(jq -r ".artifacts.${buildopt_kind}.path" "${buildopt_capture}/capture.json")
+    buildopt_expected=$(jq -r ".artifacts.${buildopt_kind}.sha256" "${buildopt_capture}/capture.json")
+    [[ $(buildopt_sha256 "${buildopt_capture}/${buildopt_path}") == "${buildopt_expected}" ]]
+done
+
+gzip -dc "${buildopt_capture}/operations-log.txt.gz" >"${buildopt_temporary}/operations-log.txt"
+./dev/run --toolchain go -- go run ./cmd/gradle-critical-path \
+    --operations "${buildopt_temporary}/operations-log.txt" \
+    --graph "${buildopt_capture}/task-graph.jsonl" --arm control \
+    >"${buildopt_temporary}/analysis.json"
+cmp -s "${buildopt_temporary}/analysis.json" "${buildopt_capture}/analysis.json" || {
+    printf 'prospective native diagnostic analysis drifted\n' >&2
+    exit 1
+}
+jq -e '
+  ([.tasks[] | select(.identity == ":generateDocTests")] | length) == 1 and
+  ([.tasks[] | select(.identity == ":generateDocTests")][0] |
+    .outcome == "EXECUTED" and .durationMs == 80 and (.criticalPath | not)) and
+  .summary.taskCount == 27 and .summary.buildCount == 2 and
+  .summary.outcomes.EXECUTED == 15 and
+  ([.summary.mainBuildCriticalPathTasks[] | select(. == ":generateDocTests")] | length) == 0 and
+  .boundaries.diagnosticOnly and (.boundaries.productionAuthorized | not)
+' "${buildopt_temporary}/analysis.json" >/dev/null
+
+jq -e \
+  --arg source "$(buildopt_sha256 "${buildopt_report}")" \
+  --arg binding "$(buildopt_sha256 "${buildopt_binding}")" \
+  --arg diagnostics "$(buildopt_sha256 "${buildopt_diagnostics}")" '
+  .schemaVersion == "buildopt.evidence/prospective-reviewed-native-patch-terminal-decision/v1" and
+  .evidenceDigests.sourceClassificationSha256 == $source and
+  .evidenceDigests.bindingSha256 == $binding and
+  .evidenceDigests.diagnosticSummarySha256 == $diagnostics and
+  .sourceGate.conclusiveFamilies == .sourceGate.requiredConclusiveFamilies and
+  .sourceGate.actionFamilies >= .sourceGate.requiredActionFamilies and
+  .diagnosticGate.selectedProposals == 0 and
+  .dependentBlocks.correctness == "NOT_AUTHORIZED_FAILED_DIAGNOSTIC_PREREQUISITE" and
+  .dependentBlocks.value == "NOT_AUTHORIZED_FAILED_DIAGNOSTIC_PREREQUISITE" and
+  .dependentBlocks.reviewAndDelivery == "NOT_AUTHORIZED_FAILED_DIAGNOSTIC_PREREQUISITE" and
+  (((.campaignCosts.sourceAcquisitionAndFirstClassificationSeconds +
+      .campaignCosts.evidenceRegenerationSecondsCharged) * 1000 +
+      .campaignCosts.environmentalPreConfigurationFailureMilliseconds +
+      .campaignCosts.successfulNativeDiagnosticMilliseconds + 999) / 1000 | floor) ==
+    .campaignCosts.chargedMachineSecondsRoundedUp and
+  .campaignCosts.omittedCampaignCosts == 0 and
+  .economics.qualifiedMeanSavingMilliseconds == 0 and
+  .economics.combinedPaybackBuilds == null and
+  .newQualifiedPublicFamilies == 0 and
+  .terminalDecision == "STOP_PROSPECTIVE_REVIEWED_NATIVE_PATCH_NO_ECONOMIC_PROPOSAL" and
+  (.publicSourceModified | not) and .candidateBuilds == 0 and .timingSamples == 0 and
+  .productFailures == 0 and (.upstreamPullRequest | not) and
+  (.defaultBranchMutation | not) and (.productionAuthorized | not) and
+  (.automaticApply | not) and (.automaticMerge | not) and
+  .testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_terminal}" >/dev/null
+
+if find "${buildopt_evidence}" -type f -name '*.patch' -print -quit | grep -q .; then
+    printf 'prospective trial must not contain a candidate patch\n' >&2
+    exit 1
+fi
+if grep -ERq 'economics-gated-reviewed-native-patch-v1/source-classification|durable-native-optimization-v1/opportunity-report' \
+    cmd/prospective-reviewed-native-patch-audit; then
+    printf 'prospective evidence must not consume predecessor result rows\n' >&2
+    exit 1
+fi
+
+if (($# == 1)); then
+    ./dev/run --toolchain go -- go run ./cmd/prospective-reviewed-native-patch-audit \
+        --source-root "$1" --output "${buildopt_temporary}/source-classification.json"
+    cmp -s "${buildopt_temporary}/source-classification.json" "${buildopt_report}" || {
+        printf 'prospective source reconstruction drifted\n' >&2
+        exit 1
+    }
+elif (($# != 0)); then
+    printf 'usage: %s [SOURCE_ROOT]\n' "$0" >&2
+    exit 64
+fi
+
+./dev/run --toolchain go -- go test ./cmd/prospective-reviewed-native-patch-audit ./internal/normalizationaware ./internal/gradlecriticalpath ./cmd/gradle-critical-path
+
+printf 'PRNP evidence OK: 10/10 source, 3 action families, 80 ms off-critical-path stop, zero candidates or timing\n'

@@ -56,6 +56,17 @@ controlled reviewed recipe and positive bounded owner economics; it does not
 show arbitrary-repository discovery breadth or authorize automatic product
 behavior.
 
+The prospective replication does not extend that breadth. Ten previously
+unused public families are 10/10 conclusive and three contain source-safe
+actions, but semantic/workflow binding rejects two before Gradle. The sole
+native diagnostic binds Shadow `:generateDocTests` to the documented
+`documentTest` workflow and measures only 80 ms, 0.01698% of the invocation,
+outside the hard-dependency critical path. The unchanged economic gate stops
+before any patch or candidate build. This is useful negative evidence: a high
+source-action count is not a proxy for material value, and the third-family
+Elasticsearch qualification does not yet generalize prospectively to a fourth
+public family.
+
 The latest source-only recurrence search adds a plausible third public class
 without changing that value conclusion. Across 768 fresh Spring,
 OpenTelemetry and Micronaut rows, independent reconstruction finds fourteen

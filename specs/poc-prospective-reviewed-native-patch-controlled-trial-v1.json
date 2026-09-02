@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "buildopt.specs/poc-prospective-reviewed-native-patch-controlled-trial/v1",
+  "predecessor": "QUALIFY_ELASTICSEARCH_FORBIDDEN_PATTERNS_CONTROLLED_TRIAL",
+  "sourceClassifier": "NORMALIZATION_AWARE_CACHEABILITY_V2",
+  "selectionPolicy": "FROZEN_HOLDOUT_BEFORE_SOURCE_INSPECTION",
+  "sourceGate": {
+    "requiredConclusiveFamilies": 10,
+    "minimumActionFamilies": 1,
+    "maximumNativeDiagnostics": 6,
+    "maximumDiagnosticFamilies": 3
+  },
+  "economicPrefilter": {
+    "hardDependencyCriticalPathRequired": true,
+    "minimumAddressableMilliseconds": 500,
+    "minimumAddressablePercent": 2,
+    "maximumProjectedMachinePaybackBuilds": 300,
+    "boundedOutputsAndEffects": true,
+    "maximumSelectedProposals": 2,
+    "maximumSelectedFamilies": 2
+  },
+  "correctnessGate": {
+    "maximumGradleStartsPerProposal": 6,
+    "exactCompleteOutputs": true,
+    "crossRootRestoration": true,
+    "requiredInvalidation": true,
+    "exactRevert": true,
+    "maximumProductFailures": 0
+  },
+  "valueGate": {
+    "excludedStabilizationsPerRoot": 1,
+    "balancedPairs": 8,
+    "requiredPositivePairs": 8,
+    "minimumMeanSavingMilliseconds": 500,
+    "minimumMeanSavingPercent": 2,
+    "positivePaired95Interval": true,
+    "nonRegressiveCandidateP95": true
+  },
+  "reviewGate": {
+    "firstExposure": true,
+    "ownerReportedActiveSeconds": true,
+    "maximumActiveReviewMinutes": 15,
+    "maximumProposalClarifications": 1,
+    "requiredDecision": "ACCEPT_FOR_CONTROLLED_TRIAL"
+  },
+  "deliveryGate": {
+    "digestBoundRecipe": true,
+    "isolatedApply": true,
+    "exactPostimage": true,
+    "exactRevert": true
+  },
+  "terminalGate": {
+    "requiredNewPublicFamilies": 1,
+    "maximumCombinedPaybackBuilds": 300,
+    "chargeAllHoldoutCosts": true,
+    "combinedPaybackInterpretation": "MACHINE_PLUS_OWNER_ACTIVE_ELAPSED_TIME_EQUIVALENT_NOT_LABOR_COST"
+  },
+  "budget": {
+    "maximumAdditionalDiskGiB": 8,
+    "minimumFreeDiskBeforePublicBuildGiB": 8,
+    "stopBeforeNextStartFreeDiskGiB": 6,
+    "maximumValueInvocationsPerQualifiedProposal": 18
+  },
+  "delivery": {
+    "controlledIsolatedStateOnly": true,
+    "upstreamPullRequest": false,
+    "defaultBranchMutation": false,
+    "mergeAuthorized": false,
+    "forcePush": false
+  },
+  "boundaries": {
+    "productionAuthorized": false,
+    "automaticApply": false,
+    "automaticMerge": false,
+    "soak": false,
+    "designPartner": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}
