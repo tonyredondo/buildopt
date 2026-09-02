@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "buildopt.evidence/economics-gated-reviewed-native-patch-binding/v1",
+  "revision": "16bd5bc5355ac7c6ad736f8a6f93281b24a05ab7",
+  "sourceReportSha256": "e359ac88c5699186505c330b54d5fe78f8fb26a1e9d84016a160ed13729589e0",
+  "actionFamilies": [
+    {"family":"gradle","decision":"NO_BOUND_OWNER_WORKFLOW","nativeDiagnostics":0},
+    {"family":"elasticsearch","decision":"BOUND_OWNER_WORKFLOW","nativeDiagnostics":2},
+    {"family":"junit5","decision":"NO_BOUND_OWNER_WORKFLOW","nativeDiagnostics":0},
+    {"family":"native-build-tools","decision":"NO_REPOSITORY_OWNER_WORKFLOW","nativeDiagnostics":0},
+    {"family":"kotlin","decision":"REJECT_AMBIGUOUS_OR_NON_PORTABLE_SEMANTICS","nativeDiagnostics":0}
+  ],
+  "selectedWorkflow": {
+    "family": "elasticsearch",
+    "ownerWorkflow": ":server:precommit",
+    "registrationSources": [
+      {"path":"build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsPrecommitPlugin.java","sha256":"07608729243f1ef44e79463e86a6b6917a2bfec381218169445c1f6b27ee02cb"},
+      {"path":"build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/FilePermissionsPrecommitPlugin.java","sha256":"fc03b21e7378fba52f17c27aa75bb380615f854c84be50cf5a6daa99ab196461"},
+      {"path":"build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/InternalPrecommitTasks.java","sha256":"673c85543b3c248b92b053c9c9564ab9c12fd09570d3a71c7bf80eea5800e4ae"}
+    ],
+    "candidates": [
+      {
+        "className":"ForbiddenPatternsTask",
+        "taskPath":":server:forbiddenPatterns",
+        "sourcePath":"build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+        "sourceSha256":"61fe2eaa06ff463c2a49cea656b147889060855acfa094288ebb8b31567e11b6",
+        "sourceDecision":"MARKER_ONLY_ELIGIBLE",
+        "diagnosticDecision":"ADMIT_ECONOMIC_PROPOSAL"
+      },
+      {
+        "className":"FilePermissionsTask",
+        "taskPath":":server:filepermissions",
+        "sourcePath":"build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/FilePermissionsTask.java",
+        "sourceSha256":"8ef0439582245713cd0d1c98b0034ea4bab1aa0d85e32b25485533532eca3696",
+        "sourceDecision":"MARKER_ONLY_ELIGIBLE",
+        "diagnosticDecision":"REJECT_BELOW_500_MS"
+      }
+    ]
+  },
+  "nativeDiagnosticFamilies": 1,
+  "nativeDiagnostics": 2,
+  "candidateBuilds": 0,
+  "timingSamples": 0
+}

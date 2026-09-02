@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-economics-gated-reviewed-native-patch/v2" and
+  .retainedGatePolicy == "SHA_BOUND_SOURCE_DIAGNOSTIC_AND_CORRECTNESS_ONLY_NO_V1_VALUE_ROWS" and
+  .valueGate.excludedStabilizations == 2 and .valueGate.balancedPairs == 8 and
+  .valueGate.requiredPositivePairs == 8 and .valueGate.minimumMeanSavingMilliseconds == 500 and
+  .valueGate.minimumMeanSavingPercent == 2 and .valueGate.positivePaired95Interval and
+  .valueGate.nonRegressiveCandidateP95 and .valueGate.maximumValueInvocations == 18 and
+  .terminalGate.maximumCombinedPaybackBuilds == 300 and
+  .budget.minimumFreeDiskBeforePublicBuildGiB == 8 and
+  (.boundaries.upstreamPullRequest | not) and (.boundaries.productionAuthorized | not) and
+  .boundaries.testOptimization == "OUT_OF_SCOPE"
+' specs/poc-economics-gated-reviewed-native-patch-v2.json >/dev/null
+
+bash -n dev/run-economics-gated-native-patch-value-v2
+if grep -Eq 'invalid-value-attempt|economics-gated-reviewed-native-patch-v1/.+value' \
+    dev/run-economics-gated-native-patch-value-v2 \
+    benchmarks/results/economics-gated-reviewed-native-patch-v2/raw.json; then
+  printf 'EGNP v2 must not consume v1 value rows\n' >&2
+  exit 1
+fi
+printf 'EGNP v2 contract OK: symmetric stabilization, unchanged value gates\n'

@@ -1,0 +1,18 @@
+diff --git a/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java b/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java
+index 82e7722f..a65d3f94 100644
+--- a/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java
++++ b/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java
+@@ -22,6 +22,7 @@ import org.gradle.api.problems.Problems;
+ import org.gradle.api.provider.ListProperty;
+ import org.gradle.api.provider.Property;
+ import org.gradle.api.provider.Provider;
++import org.gradle.api.tasks.CacheableTask;
+ import org.gradle.api.tasks.IgnoreEmptyDirectories;
+ import org.gradle.api.tasks.Input;
+ import org.gradle.api.tasks.InputFiles;
+@@ -58,4 +59,5 @@ import javax.inject.Inject;
+ /**
+  * Checks for patterns in source files for the project which are forbidden.
+  */
++@CacheableTask
+ public abstract class ForbiddenPatternsTask extends DefaultTask {

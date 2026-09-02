@@ -14,6 +14,26 @@ package boundaries with:
 ./dev/check-documentation
 ```
 
+Validate the economics-gated reviewed-native source audit, native diagnostics,
+correctness stop and protocol-corrected terminal value result with:
+
+```bash
+./dev/check-economics-gated-native-patch-contract
+./dev/check-economics-gated-native-patch-source
+./dev/check-economics-gated-native-patch-evidence
+./dev/check-economics-gated-native-patch-v2-contract
+./dev/check-economics-gated-native-patch-v2-value
+```
+
+The v2 value checker reconstructs all paired statistics from raw rows, checks
+every compressed task outcome and output digest, and verifies the 20-second
+owner review plus 233-build combined payback. The capture runner requires two
+exact Elasticsearch roots and a new absolute evidence directory:
+
+```bash
+./dev/run-economics-gated-native-patch-value-v2 CONTROL_ROOT CANDIDATE_ROOT NEW_OUTPUT_DIRECTORY
+```
+
 Validate the closed equal-opportunity cache-locality contract and its stopped
 public gate with:
 

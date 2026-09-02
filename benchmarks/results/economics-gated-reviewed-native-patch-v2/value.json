@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "buildopt.evidence/economics-gated-reviewed-native-patch-value/v2",
+  "family": "elasticsearch",
+  "revision": "16bd5bc5355ac7c6ad736f8a6f93281b24a05ab7",
+  "taskPath": ":server:forbiddenPatterns",
+  "method": {
+    "control": "OPTIMIZED_NATIVE_GRADLE_UNPATCHED_TASK",
+    "candidate": "OPTIMIZED_NATIVE_GRADLE_MARKER_ONLY_CACHEABLE_TASK",
+    "excludedStabilizations": 2,
+    "balancedPairs": 8,
+    "workers": 12,
+    "order": ["CONTROL_CANDIDATE","CANDIDATE_CONTROL","CONTROL_CANDIDATE","CANDIDATE_CONTROL","CONTROL_CANDIDATE","CANDIDATE_CONTROL","CONTROL_CANDIDATE","CANDIDATE_CONTROL"]
+  },
+  "observations": [
+    {"pair":1,"controlMs":35276,"candidateMs":30575},
+    {"pair":2,"controlMs":37635,"candidateMs":30748},
+    {"pair":3,"controlMs":40703,"candidateMs":34358},
+    {"pair":4,"controlMs":53909,"candidateMs":37905},
+    {"pair":5,"controlMs":48831,"candidateMs":43467},
+    {"pair":6,"controlMs":50459,"candidateMs":44218},
+    {"pair":7,"controlMs":49436,"candidateMs":44162},
+    {"pair":8,"controlMs":52863,"candidateMs":46305}
+  ],
+  "summary": {
+    "positivePairs": 8,
+    "controlMeanMs": 46139,
+    "candidateMeanMs": 38967.25,
+    "meanSavedMs": 7171.75,
+    "meanReductionRatio": 0.1554379158629359,
+    "paired95Ms": [5524.625,9833.125],
+    "controlP95Ms": 53909,
+    "candidateP95Ms": 46305
+  },
+  "economics": {
+    "conservativeObservedMachineWorkMs": 1650000,
+    "machinePaybackBuilds": 231,
+    "ownerActiveReviewMs": 20000,
+    "combinedPaybackBuilds": 233
+  },
+  "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+  "productFailures": 0,
+  "decision": "PASS_VALUE_AND_COMBINED_ECONOMICS_GATES"
+}

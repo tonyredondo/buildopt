@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`REVIEWED_NATIVE_PATCH_CUSTOMER_ECONOMICS_STOPPED_VALUE_GATE\`"
-    "**Current phase:** \`RNCE-006\`"
+    "**Overall status:** \`ECONOMICS_GATED_REVIEWED_NATIVE_PATCH_QUALIFIED_CONTROLLED_TRIAL\`"
+    "**Current phase:** \`EGNP2-005\`"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"
@@ -460,6 +460,9 @@ buildopt_required_tracker_text=(
     "| POC-REVIEWED-NATIVE-PATCH-OWNER-ACCEPTANCE | Test whether an owner understands and accepts the two exact review-only corrections"
     "| \`E-512\` | 2026-09-02 | \`POC-REVIEWED-NATIVE-PATCH-OWNER-ACCEPTANCE\`, \`RNPA-001..005\`"
     "| \`E-513\` | 2026-09-02 | \`POC-REVIEWED-NATIVE-PATCH-CUSTOMER-ECONOMICS\`, \`RNCE-001..006\`"
+    "| POC-ECONOMICS-GATED-REVIEWED-NATIVE-PATCH-V1 | Reject source-safe tasks before correctness unless native diagnostics prove material critical-path economics | \`STOPPED\` | 6/6 |"
+    "| POC-ECONOMICS-GATED-REVIEWED-NATIVE-PATCH-V2 | Repeat only value with symmetric root stabilization and unchanged gates | \`DONE\` | 5/5 |"
+    "| \`E-514\` | 2026-09-02 | \`POC-ECONOMICS-GATED-REVIEWED-NATIVE-PATCH-V1/V2\`, \`EGNP-001..006\`, \`EGNP2-001..005\` |"
 )
 for buildopt_required in "${buildopt_required_tracker_text[@]}"; do
     if ! grep -Fq -- "${buildopt_required}" "${buildopt_tracker}"; then

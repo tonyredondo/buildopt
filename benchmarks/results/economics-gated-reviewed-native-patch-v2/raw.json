@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "buildopt.evidence/economics-gated-reviewed-native-patch-value-raw/v2",
+  "family": "elasticsearch",
+  "revision": "16bd5bc5355ac7c6ad736f8a6f93281b24a05ab7",
+  "taskPath": ":server:forbiddenPatterns",
+  "method": {
+    "excludedStabilizations": 2,
+    "balancedPairs": 8,
+    "workers": 12,
+    "buildCache": true
+  },
+  "observations": [
+    {
+      "pair": 0,
+      "arm": "control-stabilization",
+      "wallMs": 30347,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080888320
+    },
+    {
+      "pair": 0,
+      "arm": "candidate-stabilization",
+      "wallMs": 28559,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080847360
+    },
+    {
+      "pair": 1,
+      "arm": "control",
+      "wallMs": 35276,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080790016
+    },
+    {
+      "pair": 1,
+      "arm": "candidate",
+      "wallMs": 30575,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080732672
+    },
+    {
+      "pair": 2,
+      "arm": "candidate",
+      "wallMs": 30748,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080679424
+    },
+    {
+      "pair": 2,
+      "arm": "control",
+      "wallMs": 37635,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080626176
+    },
+    {
+      "pair": 3,
+      "arm": "control",
+      "wallMs": 40703,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080577024
+    },
+    {
+      "pair": 3,
+      "arm": "candidate",
+      "wallMs": 34358,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080519680
+    },
+    {
+      "pair": 4,
+      "arm": "candidate",
+      "wallMs": 37905,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080466432
+    },
+    {
+      "pair": 4,
+      "arm": "control",
+      "wallMs": 53909,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080409088
+    },
+    {
+      "pair": 5,
+      "arm": "control",
+      "wallMs": 48831,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080355840
+    },
+    {
+      "pair": 5,
+      "arm": "candidate",
+      "wallMs": 43467,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080290304
+    },
+    {
+      "pair": 6,
+      "arm": "candidate",
+      "wallMs": 44218,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080237056
+    },
+    {
+      "pair": 6,
+      "arm": "control",
+      "wallMs": 50459,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080011776
+    },
+    {
+      "pair": 7,
+      "arm": "control",
+      "wallMs": 49436,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080126464
+    },
+    {
+      "pair": 7,
+      "arm": "candidate",
+      "wallMs": 44162,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080077312
+    },
+    {
+      "pair": 8,
+      "arm": "candidate",
+      "wallMs": 46305,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11080011776
+    },
+    {
+      "pair": 8,
+      "arm": "control",
+      "wallMs": 52863,
+      "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+      "freeBytesBefore": 11079958528
+    }
+  ],
+  "productFailures": 0
+}

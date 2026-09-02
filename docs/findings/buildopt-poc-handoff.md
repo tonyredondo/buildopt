@@ -52,6 +52,20 @@ does not establish commercial viability.
 
 ## Current experiment status
 
+`ECONOMICS_GATED_REVIEWED_NATIVE_PATCH_V2` is complete as
+`QUALIFY_ELASTICSEARCH_FORBIDDEN_PATTERNS_CONTROLLED_TRIAL`. The economics-first
+v1 screen audited ten fresh families, admitted Elasticsearch only after a
+7,141-ms critical-path diagnostic and proved exact same/cross-root restoration,
+invalidation and revert. V1 rejected its asymmetrically stabilized value
+attempt with zero accepted samples. V2 retained the same thresholds, excluded
+one stabilization per root and produced 8/8 positive pairs: 46,139 ms optimized
+native versus 38,967.25 ms candidate, saving 7,171.75 ms / 15.54% with a
++5,524.625..+9,833.125-ms interval and lower p95. The owner accepted the exact
+two-line patch on first exposure in 20 active seconds; combined payback is 233
+compatible builds. This qualifies one third public-family controlled-trial
+proposal, not upstream, production, automatic-apply/merge or Test Optimization
+authority.
+
 `REVIEWED_NATIVE_PATCH_CUSTOMER_ECONOMICS_V1` is closed as
 `STOP_THIRD_FAMILY_CUSTOMER_ECONOMICS_VALUE_GATE`. Source classification is
 5/5 conclusive and Hibernate correctness passes with zero failures. Value

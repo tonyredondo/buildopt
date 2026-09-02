@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "buildopt.evidence/economics-gated-reviewed-native-patch-terminal/v2",
+  "sourceDiagnosticCorrectnessGates": "PASS_SHA_BOUND_V1_EVIDENCE",
+  "valueGate": "PASS_8_OF_8_POSITIVE_7171_75_MS_15_54_PERCENT",
+  "ownerReview": "PASS_ACCEPTED_20_ACTIVE_SECONDS",
+  "newQualifiedPublicFamilies": 1,
+  "combinedPaybackBuilds": 233,
+  "terminalDecision": "QUALIFY_ELASTICSEARCH_FORBIDDEN_PATTERNS_CONTROLLED_TRIAL",
+  "boundaries": {
+    "upstreamPullRequest": false,
+    "defaultBranchMutation": false,
+    "production": false,
+    "automaticApply": false,
+    "automaticMerge": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

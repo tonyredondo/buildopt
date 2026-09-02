@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [SOURCE_ROOT]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+cd "${buildopt_repo_root}"
+
+buildopt_report=benchmarks/results/economics-gated-reviewed-native-patch-v1/source-classification.json
+buildopt_contract=specs/poc-economics-gated-reviewed-native-patch-v1.json
+buildopt_subjects=specs/poc-economics-gated-reviewed-native-patch-v1.subjects.json
+buildopt_contract_sha=$(sha256sum "${buildopt_contract}" | cut -d' ' -f1)
+buildopt_subjects_sha=$(sha256sum "${buildopt_subjects}" | cut -d' ' -f1)
+
+jq -e --arg contract_sha "${buildopt_contract_sha}" --arg subjects_sha "${buildopt_subjects_sha}" '
+  .schemaVersion == "buildopt.evidence/economics-gated-reviewed-native-patch-source-classification/v1" and
+  .contractSha256 == $contract_sha and .subjectsSha256 == $subjects_sha and
+  .evidenceSource == "FRESH_FROZEN_GIT_SOURCE_ONLY" and
+  (.families | length) == 10 and ([.families[].key] | unique | length) == 10 and
+  all(.families[]; .conclusive == true) and
+  ([.families[] | select(.conclusive)] | length) as $conclusive |
+  ([.families[] | select(any(.candidates[];
+    .decision == "MARKER_ONLY_ELIGIBLE" or
+    .decision == "REVIEWED_RELATIVE_PROOF_REQUIRED"))] | length) as $actions |
+  .conclusiveFamilies == $conclusive and .actionFamilies == $actions and
+  $conclusive == 10 and .minimumActionFamilies == 1 and
+  ((if $actions >= 1 then
+      .decision == "PASS_SOURCE_DISCOVERY_ACTION_GATE" and .diagnosticsAuthorized == true
+    else
+      .decision == "STOP_SOURCE_DISCOVERY_ACTION_GATE" and .diagnosticsAuthorized == false
+    end)) and
+  .compilationAuthorized == false and .timingAuthorized == false and
+  all(.families[].candidates[];
+    (.path | type == "string" and length > 0) and
+    (.className | type == "string" and length > 0) and
+    (.sourceSha256 | test("^[0-9a-f]{64}$")) and
+    (.declarationSpan.startLine > 0 and .declarationSpan.endLine > 0) and
+    (.decision | IN(
+      "MARKER_ONLY_ELIGIBLE", "REVIEWED_RELATIVE_PROOF_REQUIRED",
+      "EXPLICIT_NON_PORTABLE", "ALREADY_CACHEABLE", "DISABLED_CACHING",
+      "INCOMPLETE_OR_AMBIGUOUS", "NO_ACTION")))
+' "${buildopt_report}" >/dev/null
+
+if grep -ERq 'reviewed-native-patch-(portfolio|customer-economics)|normalization-aware-cacheability-v2/(source-classification|patch-plan|public-correctness)' \
+    cmd/economics-gated-native-patch-audit "${buildopt_report}"; then
+    printf 'EGNP source classifier must not consume predecessor result rows\n' >&2
+    exit 1
+fi
+
+if (($# == 1)); then
+    buildopt_source_root=$1
+    buildopt_temporary_report=$(mktemp)
+    trap 'rm -f "${buildopt_temporary_report}"' EXIT
+    ./dev/run --toolchain go -- go run ./cmd/economics-gated-native-patch-audit \
+        --source-root "${buildopt_source_root}" --output "${buildopt_temporary_report}"
+    cmp --silent "${buildopt_report}" "${buildopt_temporary_report}"
+fi
+
+buildopt_actions=$(jq '.actionFamilies' "${buildopt_report}")
+printf 'EGNP-002 source classification OK: 10/10 conclusive, %s action families, no patch or timing\n' "${buildopt_actions}"

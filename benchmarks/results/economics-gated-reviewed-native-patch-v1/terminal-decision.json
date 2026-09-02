@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "buildopt.evidence/economics-gated-reviewed-native-patch-terminal/v1",
+  "sourceGate": "PASS_10_OF_10_CONCLUSIVE_5_ACTION_FAMILIES",
+  "economicPrefilter": "PASS_ELASTICSEARCH_FORBIDDEN_PATTERNS",
+  "correctnessGate": "PASS_PROPOSAL_CORRECTNESS",
+  "valueGate": "INVALID_PROTOCOL_STOP",
+  "acceptedTimingSamples": 0,
+  "ownerReview": "NOT_RUN_INVALID_VALUE_PROTOCOL",
+  "terminalDecision": "STOP_EGNP_V1_SYMMETRIC_STABILIZATION_REQUIRED",
+  "successor": "ECONOMICS_GATED_REVIEWED_NATIVE_PATCH_V2",
+  "productFailures": 0,
+  "speedupClaim": false
+}

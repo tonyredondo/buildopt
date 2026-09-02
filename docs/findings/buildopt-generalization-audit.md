@@ -40,6 +40,22 @@ pairs produce 4/8 positive results and regress by 190.875 ms / 1.26% on
 average. The value prerequisite stops delivery and first-review timing, so
 third-family breadth and commercial economics remain unproved.
 
+The economics-gated successor does broaden the reviewed-patch evidence by one
+qualified public family without changing the generic-runtime conclusion.
+Ten fresh source families are 10/10 conclusive, but source safety alone never
+authorizes a patch. Native diagnostics bind Elasticsearch
+`:server:forbiddenPatterns` to a real precommit workflow and measure 7,141 ms
+of critical-path work; the 317-ms `filepermissions` task rejects before
+correctness. The selected two-line cacheability marker passes exact
+same/cross-root restoration, content invalidation and revert. An asymmetric v1
+stabilization is rejected with zero accepted timing rows. The corrected v2
+campaign is 8/8 positive and saves 7,171.75 ms / 15.54% with a positive paired
+interval and lower p95. First-exposure review takes 20 active seconds and the
+combined campaign repays in 233 compatible builds. This establishes a third
+controlled reviewed recipe and positive bounded owner economics; it does not
+show arbitrary-repository discovery breadth or authorize automatic product
+behavior.
+
 The latest source-only recurrence search adds a plausible third public class
 without changing that value conclusion. Across 768 fresh Spring,
 OpenTelemetry and Micronaut rows, independent reconstruction finds fourteen
@@ -536,3 +552,10 @@ The follow-up third-family screen does not extend this portfolio. Hibernate
 `SettingsDocGenerationTask` passes correctness but fails paired value at 4/8
 positive pairs and -190.875 ms mean saving. Because the fixed value gate fails,
 no draft or timed first owner review is created.
+
+The later economics-gated route does extend it with Elasticsearch
+`ForbiddenPatternsTask`. Its source facts, real registration, critical-path
+diagnostic, exact outputs, 8/8 value pairs and 20-second owner review are all
+independently checked. The reviewed-native portfolio therefore has three
+qualified public families under controlled recipes. Arbitrary Gradle coverage,
+production readiness and automatic application remain open.

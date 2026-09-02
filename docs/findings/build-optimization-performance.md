@@ -2,6 +2,20 @@
 
 ## Current Executive Summary
 
+- **Economics-first selection qualifies a third reviewed-native family.** A
+  fresh ten-family source audit is 10/10 conclusive, but only native
+  critical-path evidence can authorize correctness. Elasticsearch
+  `:server:forbiddenPatterns` contributes 7,141 ms and passes the 500-ms/2%
+  prefilter; `filepermissions` rejects at 317 ms. The marker-only correction
+  passes exact same/cross-root restoration, invalidation and revert. V1 rejects
+  an asymmetrically stabilized attempt with zero accepted samples. V2 excludes
+  one stabilization per root and passes 8/8 pairs: 46,139 ms control versus
+  38,967.25 ms candidate, saving **7,171.75 ms / 15.54%**, with a
+  +5,524.625..+9,833.125-ms paired interval and lower p95. First-exposure owner
+  review is accepted in 20 active seconds and combined payback is 233 builds.
+  This qualifies a controlled trial, not an upstream, production or automatic
+  application/merge path.
+
 - **Fresh third-family customer economics stops at the value gate.** A new
   five-family source audit is 5/5 conclusive and finds safe actions only in
   Hibernate. `SettingsDocGenerationTask` passes exact same/cross-root cache
@@ -1498,3 +1512,27 @@ source cohort. Its selected correction passes correctness but regresses by
 190.875 ms across eight balanced pairs with only 4/8 positive observations.
 The fixed value prerequisite therefore stops before delivery and review; the
 two-family portfolio remains the complete positive boundary.
+
+## Economics-gated third-family qualification
+
+The later route reverses selection order: source portability first, native
+critical-path economics second, and correctness/value only for work that can
+repay. Among ten fresh public families, five contain source actions but only
+Elasticsearch binds a bounded candidate to a real owner workflow and receives
+diagnostics. `forbiddenPatterns` passes at 7,141 ms on the critical path;
+`filepermissions` rejects at 317 ms.
+
+The selected `@CacheableTask` marker changes one public source file and leaves
+its existing `PathSensitivity.RELATIVE` input contract intact. Five correctness
+starts prove execution, same-root and cross-root restoration, content
+invalidation, restored baseline input and byte-exact output/source reversion.
+The first value protocol is invalidated rather than harvested when its control
+root crosses an unstabilized build-logic classpath transition.
+
+The versioned successor keeps the 500-ms, 2%, 8/8, interval, p95 and 300-build
+gates while excluding one stabilization in each root. All eight fresh pairs are
+positive; mean saving is 7,171.75 ms / 15.54%, paired 95% is
++5,524.625..+9,833.125 ms and candidate p95 improves by 7,604 ms. Conservative
+machine work repays in 231 builds; adding the owner's reported 20 active review
+seconds yields 233 builds. This is the first complete third-family value plus
+timed-review result for the reviewed-native product direction.

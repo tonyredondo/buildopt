@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "buildopt.specs/poc-economics-gated-reviewed-native-patch/v2",
+  "predecessor": "ECONOMICS_GATED_REVIEWED_NATIVE_PATCH_V1_PROTOCOL_STOP",
+  "retainedGatePolicy": "SHA_BOUND_SOURCE_DIAGNOSTIC_AND_CORRECTNESS_ONLY_NO_V1_VALUE_ROWS",
+  "valueGate": {
+    "excludedStabilizations": 2,
+    "balancedPairs": 8,
+    "requiredPositivePairs": 8,
+    "minimumMeanSavingMilliseconds": 500,
+    "minimumMeanSavingPercent": 2,
+    "positivePaired95Interval": true,
+    "nonRegressiveCandidateP95": true,
+    "maximumValueInvocations": 18
+  },
+  "reviewGate": {
+    "firstExposure": true,
+    "ownerReportedActiveSeconds": true,
+    "maximumActiveReviewMinutes": 15,
+    "maximumProposalClarifications": 1,
+    "requiredDecision": "ACCEPT_FOR_CONTROLLED_TRIAL"
+  },
+  "terminalGate": {
+    "requiredNewPublicFamilies": 1,
+    "maximumCombinedPaybackBuilds": 300
+  },
+  "budget": {
+    "minimumFreeDiskBeforePublicBuildGiB": 8,
+    "stopBeforeNextStartFreeDiskGiB": 6
+  },
+  "boundaries": {
+    "upstreamPullRequest": false,
+    "defaultBranchMutation": false,
+    "productionAuthorized": false,
+    "automaticApply": false,
+    "automaticMerge": false,
+    "soak": false,
+    "designPartner": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

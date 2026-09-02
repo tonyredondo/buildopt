@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "buildopt.evidence/economics-gated-reviewed-native-patch-diagnostics/v1",
+  "family": "elasticsearch",
+  "revision": "16bd5bc5355ac7c6ad736f8a6f93281b24a05ab7",
+  "diagnostics": [
+    {
+      "taskPath": ":server:forbiddenPatterns",
+      "outcome": "EXECUTED",
+      "criticalPath": true,
+      "taskDurationMs": 7141,
+      "completeInvocationWallMs": 242000,
+      "addressablePercent": 2.9508264462809916,
+      "boundedOutputsAndEffects": true,
+      "decision": "ADMIT_ECONOMIC_PROPOSAL"
+    },
+    {
+      "taskPath": ":server:filepermissions",
+      "outcome": "EXECUTED",
+      "criticalPath": true,
+      "taskDurationMs": 317,
+      "completeInvocationWallMs": 27000,
+      "addressablePercent": 1.174074074074074,
+      "boundedOutputsAndEffects": true,
+      "decision": "REJECT_BELOW_500_MS_AND_2_PERCENT"
+    }
+  ],
+  "selectedProposals": 1,
+  "selectedFamilies": 1,
+  "productFailures": 0,
+  "decision": "PASS_ECONOMIC_PREFILTER"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "buildopt.evidence/economics-gated-reviewed-native-patch-owner-review/v2",
+  "family": "elasticsearch",
+  "taskPath": ":server:forbiddenPatterns",
+  "firstExposureArtifacts": [
+    "benchmarks/results/economics-gated-reviewed-native-patch-v1/elasticsearch-forbidden-patterns.patch",
+    "benchmarks/results/economics-gated-reviewed-native-patch-v2/value.json"
+  ],
+  "ownerDecision": "ACCEPT_FOR_CONTROLLED_TRIAL",
+  "ownerUnderstoodProposal": true,
+  "proposalClarifications": 0,
+  "administrativePromptsForNumericReviewTime": 2,
+  "ownerReportedActiveReviewSeconds": 20,
+  "maximumActiveReviewMinutes": 15,
+  "combinedPaybackBuilds": 233,
+  "decision": "PASS_FIRST_EXPOSURE_OWNER_REVIEW"
+}

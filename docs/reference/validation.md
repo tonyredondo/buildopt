@@ -28,6 +28,15 @@ selection, every eight-pair statistic and deterministic bootstrap interval,
 the two-family portfolio gate, conservative machine payback, exact-output
 bindings and the two owner-review-only Patch Autopilot descriptors.
 
+The economics-gated third-family route is checked by
+`./dev/check-economics-gated-native-patch-evidence` and
+`./dev/check-economics-gated-native-patch-v2-value`. The first reconstructs
+fresh source counts and both native critical-path diagnostics before checking
+the five-start correctness matrix and v1 protocol stop. The second rebuilds all
+v2 paired statistics from raw rows, checks compressed task outcomes and output
+digests, and verifies the 20-second owner review plus 233-build combined
+payback.
+
 BuildOpt uses focused checks as executable evidence. Run the smallest gate that
 owns the changed contract, then add broader composition only when the change
 crosses components or platforms.
@@ -40,6 +49,8 @@ provision tools or create release artifacts document that effect explicitly.
 
 | Change | Command |
 |---|---|
+| Economics-gated source/diagnostic/correctness evidence and v1 protocol stop | `./dev/check-economics-gated-native-patch-evidence` |
+| Symmetrically stabilized v2 value, owner review and terminal economics | `./dev/check-economics-gated-native-patch-v2-value` |
 | Remote-cache-locality v3 corrected five-family planning contract | `./dev/check-remote-cache-locality-value-v3` |
 | Remote-cache-locality v2 contract, cohort, equal opportunity, costs and authority | `./dev/check-remote-cache-locality-value` |
 | Remote-cache-locality fixture key parity and verified failure behavior | `./dev/check-remote-cache-locality-harness` |

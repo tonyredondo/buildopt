@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence="${buildopt_repo_root}/benchmarks/results/economics-gated-reviewed-native-patch-v2"
+cd "${buildopt_repo_root}"
+
+./dev/check-economics-gated-native-patch-v2-contract >/dev/null
+./dev/check-economics-gated-native-patch-evidence >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/economics-gated-reviewed-native-patch-value-raw/v2" and
+  .method.excludedStabilizations == 2 and .method.balancedPairs == 8 and
+  (.observations | length) == 18 and
+  ([.observations[] | select(.pair == 0)] | length) == 2 and
+  ([.observations[] | select(.pair > 0)] | group_by(.pair) | length) == 8 and
+  all(.observations[]; .outputSha256 == "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211") and
+  all(.observations[]; .freeBytesBefore >= 8589934592) and .productFailures == 0
+' "${buildopt_evidence}/raw.json" >/dev/null
+
+for buildopt_log in "${buildopt_evidence}"/logs/*.log.gz; do
+  case "${buildopt_log}" in
+    *candidate*.log.gz) gzip -cd "${buildopt_log}" | grep -Fxq '> Task :server:forbiddenPatterns FROM-CACHE' ;;
+    *control*.log.gz) gzip -cd "${buildopt_log}" | grep -Fxq '> Task :server:forbiddenPatterns' ;;
+    *) printf 'unexpected value log %s\n' "${buildopt_log}" >&2; exit 1 ;;
+  esac
+done
+
+jq -e --slurpfile contract specs/poc-economics-gated-reviewed-native-patch-v2.json \
+  --slurpfile raw "${buildopt_evidence}/raw.json" '
+  def close($a;$b): (($a-$b)|abs) < 0.000000001;
+  def bootstrap_mean($rows; $sample):
+    reduce range(0;8) as $draw
+      ({state:((2654435761*($sample+1))%4294967296),sum:0};
+       .state=((1664525*.state+1013904223)%4294967296) |
+       .sum += ($rows[((.state/536870912)|floor)].controlMs -
+                $rows[((.state/536870912)|floor)].candidateMs)) |
+    .sum/8;
+  def bootstrap95($rows):
+    ([range(0;4096) as $sample | bootstrap_mean($rows;$sample)]|sort) as $values |
+    [$values[102],$values[3993]];
+  . as $value |
+  [$raw[0].observations[] | select(.pair > 0)] | group_by(.pair) |
+    map({pair:.[0].pair,
+         controlMs:(.[]|select(.arm=="control").wallMs),
+         candidateMs:(.[]|select(.arm=="candidate").wallMs)}) as $rows |
+  ($rows|map(.controlMs)|add/length) as $control_mean |
+  ($rows|map(.candidateMs)|add/length) as $candidate_mean |
+  {
+    positivePairs:($rows|map(select(.controlMs>.candidateMs))|length),
+    controlMeanMs:$control_mean,candidateMeanMs:$candidate_mean,
+    meanSavedMs:($control_mean-$candidate_mean),
+    meanReductionRatio:(($control_mean-$candidate_mean)/$control_mean),
+    paired95Ms:bootstrap95($rows),
+    controlP95Ms:($rows|map(.controlMs)|max),candidateP95Ms:($rows|map(.candidateMs)|max)
+  } as $r |
+  $value.schemaVersion == "buildopt.evidence/economics-gated-reviewed-native-patch-value/v2" and
+  $value.observations == $rows and $value.summary.positivePairs == $r.positivePairs and
+  close($value.summary.controlMeanMs;$r.controlMeanMs) and
+  close($value.summary.candidateMeanMs;$r.candidateMeanMs) and
+  close($value.summary.meanSavedMs;$r.meanSavedMs) and
+  close($value.summary.meanReductionRatio;$r.meanReductionRatio) and
+  $value.summary.paired95Ms == $r.paired95Ms and
+  $value.summary.controlP95Ms == $r.controlP95Ms and $value.summary.candidateP95Ms == $r.candidateP95Ms and
+  $value.summary.positivePairs == $contract[0].valueGate.requiredPositivePairs and
+  $value.summary.meanSavedMs >= $contract[0].valueGate.minimumMeanSavingMilliseconds and
+  ($value.summary.meanReductionRatio * 100) >= $contract[0].valueGate.minimumMeanSavingPercent and
+  $value.summary.paired95Ms[0] > 0 and $value.summary.candidateP95Ms <= $value.summary.controlP95Ms and
+  $value.economics.machinePaybackBuilds == (($value.economics.conservativeObservedMachineWorkMs / $value.summary.meanSavedMs) | ceil) and
+  $value.economics.ownerActiveReviewMs == 20000 and
+  $value.economics.combinedPaybackBuilds == ((($value.economics.conservativeObservedMachineWorkMs + $value.economics.ownerActiveReviewMs) / $value.summary.meanSavedMs) | ceil) and
+  $value.economics.combinedPaybackBuilds <= $contract[0].terminalGate.maximumCombinedPaybackBuilds and
+  $value.decision == "PASS_VALUE_AND_COMBINED_ECONOMICS_GATES" and $value.productFailures == 0
+' "${buildopt_evidence}/value.json" >/dev/null
+
+jq -e --slurpfile contract specs/poc-economics-gated-reviewed-native-patch-v2.json \
+  --slurpfile value "${buildopt_evidence}/value.json" '
+  .ownerDecision == $contract[0].reviewGate.requiredDecision and
+  .ownerUnderstoodProposal and .proposalClarifications <= $contract[0].reviewGate.maximumProposalClarifications and
+  .ownerReportedActiveReviewSeconds == 20 and
+  .ownerReportedActiveReviewSeconds <= ($contract[0].reviewGate.maximumActiveReviewMinutes * 60) and
+  .combinedPaybackBuilds == $value[0].economics.combinedPaybackBuilds and
+  .decision == "PASS_FIRST_EXPOSURE_OWNER_REVIEW"
+' "${buildopt_evidence}/review.json" >/dev/null
+
+jq -e '
+  .valueGate == "PASS_8_OF_8_POSITIVE_7171_75_MS_15_54_PERCENT" and
+  .ownerReview == "PASS_ACCEPTED_20_ACTIVE_SECONDS" and
+  .combinedPaybackBuilds == 233 and .newQualifiedPublicFamilies == 1 and
+  .terminalDecision == "QUALIFY_ELASTICSEARCH_FORBIDDEN_PATTERNS_CONTROLLED_TRIAL"
+' "${buildopt_evidence}/terminal-decision.json" >/dev/null
+
+printf 'EGNP v2 terminal OK: 8/8 positive, 7171.75 ms (15.54%%), 233-build combined payback\n'

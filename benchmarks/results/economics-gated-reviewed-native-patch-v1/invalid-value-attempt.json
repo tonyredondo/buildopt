@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "buildopt.evidence/economics-gated-reviewed-native-patch-invalid-value-attempt/v1",
+  "status": "INVALID_STOPPED_BEFORE_RESULT",
+  "reason": "CONTROL_ROOT_BUILD_LOGIC_CLASSPATH_TRANSITION_NOT_STABILIZED",
+  "completedInvocations": 4,
+  "acceptedTimingSamples": 0,
+  "observedContamination": {
+    "controlPair1WallMs": 102099,
+    "candidatePair1WallMs": 33916,
+    "controlRecompiledTasks": 76,
+    "candidateFromCacheTask": true
+  },
+  "action": "STOP_V1_VALUE_AND_FORBID_ROWS_AS_V2_INPUTS",
+  "thresholdsChanged": false,
+  "valueClaim": false
+}

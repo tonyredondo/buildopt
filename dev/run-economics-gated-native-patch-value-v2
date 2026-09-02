@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 3)); then
+    printf 'usage: %s CONTROL_ROOT CANDIDATE_ROOT NEW_OUTPUT_DIRECTORY\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_control=$1
+buildopt_candidate=$2
+buildopt_output=$3
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_gradle_home="${buildopt_repo_root}/.tools/gradle-user-home/local"
+buildopt_task=:server:forbiddenPatterns
+buildopt_marker=server/build/markers/forbiddenPatterns
+buildopt_source=build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java
+buildopt_revision=16bd5bc5355ac7c6ad736f8a6f93281b24a05ab7
+buildopt_original_sha=61fe2eaa06ff463c2a49cea656b147889060855acfa094288ebb8b31567e11b6
+
+[[ ${buildopt_control} == /* && ${buildopt_candidate} == /* && ${buildopt_output} == /* ]] || {
+    printf 'roots and output must be absolute paths\n' >&2
+    exit 64
+}
+[[ -d ${buildopt_control}/.git && -d ${buildopt_candidate}/.git && ! -e ${buildopt_output} ]] || {
+    printf 'control/candidate roots must exist and output must be new\n' >&2
+    exit 64
+}
+for buildopt_root in "${buildopt_control}" "${buildopt_candidate}"; do
+    [[ $(git -C "${buildopt_root}" rev-parse HEAD) == "${buildopt_revision}" ]] || {
+        printf 'revision drift in %s\n' "${buildopt_root}" >&2
+        exit 1
+    }
+done
+[[ $(sha256sum "${buildopt_control}/${buildopt_source}" | cut -d' ' -f1) == "${buildopt_original_sha}" ]] || {
+    printf 'control source drift\n' >&2
+    exit 1
+}
+git -C "${buildopt_control}" diff --quiet
+git -C "${buildopt_candidate}" diff --quiet --exit-code -- . \
+    ':(exclude)build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java'
+buildopt_patch=$(git -C "${buildopt_candidate}" diff -- "${buildopt_source}")
+[[ ${buildopt_patch} == *'import org.gradle.api.tasks.CacheableTask;'* && ${buildopt_patch} == *'+@CacheableTask'* ]] || {
+    printf 'candidate patch drift\n' >&2
+    exit 1
+}
+
+mkdir -p -- "${buildopt_output}/logs"
+buildopt_rows="${buildopt_output}/observations.tsv"
+: >"${buildopt_rows}"
+
+run_arm() {
+    local buildopt_pair=$1
+    local buildopt_arm=$2
+    local buildopt_root=$3
+    local buildopt_expected=$4
+    local buildopt_log="${buildopt_output}/logs/pair-${buildopt_pair}-${buildopt_arm}.log"
+    local buildopt_free_bytes
+    buildopt_free_bytes=$(df --output=avail -B1 /tmp | tail -n 1 | tr -d ' ')
+    ((buildopt_free_bytes >= 8589934592)) || {
+        printf 'less than 8 GiB free before pair %s %s\n' "${buildopt_pair}" "${buildopt_arm}" >&2
+        exit 1
+    }
+    rm -f -- "${buildopt_root}/${buildopt_marker}"
+    local buildopt_start buildopt_end buildopt_elapsed buildopt_output_sha
+    buildopt_start=$(date +%s%N)
+    (
+        cd -- "${buildopt_root}"
+        env -u CI -u GITHUB_ACTIONS GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            "${buildopt_repo_root}/dev/run" --toolchain temurin-jdk-25 -- \
+            timeout 20m ./gradlew --no-daemon --console=plain --max-workers=12 \
+            --build-cache "${buildopt_task}"
+    ) >"${buildopt_log}" 2>&1
+    buildopt_end=$(date +%s%N)
+    buildopt_elapsed=$(((buildopt_end - buildopt_start) / 1000000))
+    local buildopt_expected_line="> Task ${buildopt_task}"
+    if [[ ${buildopt_expected} != EXECUTED ]]; then
+        buildopt_expected_line+=" ${buildopt_expected}"
+    fi
+    grep -Fxq "${buildopt_expected_line}" "${buildopt_log}" || {
+        tail -n 80 "${buildopt_log}" >&2
+        printf 'unexpected task outcome for pair %s %s\n' "${buildopt_pair}" "${buildopt_arm}" >&2
+        exit 1
+    }
+    [[ -f ${buildopt_root}/${buildopt_marker} ]] || {
+        printf 'missing marker for pair %s %s\n' "${buildopt_pair}" "${buildopt_arm}" >&2
+        exit 1
+    }
+    buildopt_output_sha=$(sha256sum "${buildopt_root}/${buildopt_marker}" | cut -d' ' -f1)
+    printf '%s\t%s\t%s\t%s\t%s\n' "${buildopt_pair}" "${buildopt_arm}" \
+        "${buildopt_elapsed}" "${buildopt_output_sha}" "${buildopt_free_bytes}" >>"${buildopt_rows}"
+    printf 'pair %s %s %s ms\n' "${buildopt_pair}" "${buildopt_arm}" "${buildopt_elapsed}"
+}
+
+# Each absolute root crosses a different build-logic classpath transition.
+# Stabilize both once, then exclude both observations from the eight pairs.
+run_arm 0 control-stabilization "${buildopt_control}" EXECUTED
+run_arm 0 candidate-stabilization "${buildopt_candidate}" FROM-CACHE
+
+for buildopt_pair in 1 2 3 4 5 6 7 8; do
+    if ((buildopt_pair % 2 == 1)); then
+        run_arm "${buildopt_pair}" control "${buildopt_control}" EXECUTED
+        run_arm "${buildopt_pair}" candidate "${buildopt_candidate}" FROM-CACHE
+    else
+        run_arm "${buildopt_pair}" candidate "${buildopt_candidate}" FROM-CACHE
+        run_arm "${buildopt_pair}" control "${buildopt_control}" EXECUTED
+    fi
+done
+
+jq -n \
+    --arg revision "${buildopt_revision}" \
+    --arg taskPath "${buildopt_task}" \
+    --argjson rows "$(jq -Rn '[inputs | split("\t") | {pair:(.[0]|tonumber),arm:.[1],wallMs:(.[2]|tonumber),outputSha256:.[3],freeBytesBefore:(.[4]|tonumber)}]' <"${buildopt_rows}")" '
+    {
+      schemaVersion:"buildopt.evidence/economics-gated-reviewed-native-patch-value-raw/v2",
+      family:"elasticsearch",revision:$revision,taskPath:$taskPath,
+      method:{excludedStabilizations:2,balancedPairs:8,workers:12,buildCache:true},
+      observations:$rows,productFailures:0
+    }
+  ' >"${buildopt_output}/raw.json"
+printf 'EGNP v2 value observations written to %s\n' "${buildopt_output}"

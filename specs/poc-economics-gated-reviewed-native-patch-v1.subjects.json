@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "buildopt.specs/poc-economics-gated-reviewed-native-patch-subjects/v1",
+  "reusePolicy": "PUBLIC_REVISIONS_ONLY_NO_PRIOR_RESULT_ROWS",
+  "families": [
+    {"key":"quarkus","repository":"https://github.com/quarkusio/quarkus.git","revision":"2e51be9fe42654cb24c33480b979426a9d609591"},
+    {"key":"gradle","repository":"https://github.com/gradle/gradle.git","revision":"9e3915f2cf31cb7801771665a1103b1b9d1c04c4"},
+    {"key":"elasticsearch","repository":"https://github.com/elastic/elasticsearch.git","revision":"16bd5bc5355ac7c6ad736f8a6f93281b24a05ab7"},
+    {"key":"junit5","repository":"https://github.com/junit-team/junit5.git","revision":"483a6f028228230d1ba759f91fdd1b7848ff601a"},
+    {"key":"testcontainers-java","repository":"https://github.com/testcontainers/testcontainers-java.git","revision":"a4d3a033d8ccf73240c14f35b90787e87c4d5947"},
+    {"key":"openrewrite","repository":"https://github.com/openrewrite/rewrite.git","revision":"e92b815e4f6525fef1256faeb3fbd068272bf966"},
+    {"key":"native-build-tools","repository":"https://github.com/graalvm/native-build-tools.git","revision":"976c054c38c624696185dfe54b2484f5f31abf47"},
+    {"key":"kotlin","repository":"https://github.com/JetBrains/kotlin.git","revision":"5b0f5e22a4defcb835f20e36d1f3966631ad2b97"},
+    {"key":"okhttp","repository":"https://github.com/square/okhttp.git","revision":"2ea8dc55a234cea410b2e4f26b36cb367cc98f4a"},
+    {"key":"ksp","repository":"https://github.com/google/ksp.git","revision":"a2738285ab7835fb0738ac45645c4d3365f753f9"}
+  ]
+}

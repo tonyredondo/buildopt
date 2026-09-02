@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence="${buildopt_repo_root}/benchmarks/results/economics-gated-reviewed-native-patch-v1"
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-egnp-check.XXXXXX")
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+cd "${buildopt_repo_root}"
+
+./dev/check-economics-gated-native-patch-source >/dev/null
+
+jq -e --slurpfile source "${buildopt_evidence}/source-classification.json" '
+  .schemaVersion == "buildopt.evidence/economics-gated-reviewed-native-patch-binding/v1" and
+  .sourceReportSha256 == "e359ac88c5699186505c330b54d5fe78f8fb26a1e9d84016a160ed13729589e0" and
+  (.actionFamilies | length) == 5 and
+  ([.actionFamilies[] | select(.nativeDiagnostics > 0)] | length) == 1 and
+  .nativeDiagnosticFamilies == 1 and .nativeDiagnostics == 2 and
+  .candidateBuilds == 0 and .timingSamples == 0 and
+  ([.selectedWorkflow.candidates[].sourceSha256] -
+   [$source[0].families[] | select(.key == "elasticsearch") | .candidates[] |
+    select(.className == "ForbiddenPatternsTask" or .className == "FilePermissionsTask") |
+    .sourceSha256] | length) == 0
+' "${buildopt_evidence}/binding.json" >/dev/null
+
+./dev/run --toolchain go -- go build -trimpath -o "${buildopt_temp}/gradle-critical-path" ./cmd/gradle-critical-path
+for buildopt_case in forbidden-patterns file-permissions; do
+  gzip -cd "${buildopt_evidence}/diagnostics/${buildopt_case}/operations-log.txt.gz" >"${buildopt_temp}/${buildopt_case}.operations.txt"
+  "${buildopt_temp}/gradle-critical-path" \
+    --operations "${buildopt_temp}/${buildopt_case}.operations.txt" \
+    --graph "${buildopt_evidence}/diagnostics/${buildopt_case}/task-graph.jsonl" \
+    --arm control >"${buildopt_temp}/${buildopt_case}.analysis.json"
+  cmp --silent "${buildopt_temp}/${buildopt_case}.analysis.json" \
+    "${buildopt_evidence}/diagnostics/${buildopt_case}/analysis.json"
+done
+
+jq -e --slurpfile forbidden "${buildopt_evidence}/diagnostics/forbidden-patterns/analysis.json" \
+  --slurpfile permissions "${buildopt_evidence}/diagnostics/file-permissions/analysis.json" '
+  .schemaVersion == "buildopt.evidence/economics-gated-reviewed-native-patch-diagnostics/v1" and
+  (.diagnostics | length) == 2 and
+  ($forbidden[0].tasks[] | select(.identity == ":server:forbiddenPatterns") |
+    .durationMs == 7141 and .criticalPath == true and .outcome == "EXECUTED") and
+  ($permissions[0].tasks[] | select(.identity == ":server:filepermissions") |
+    .durationMs == 317 and .criticalPath == true and .outcome == "EXECUTED") and
+  .diagnostics[0].taskDurationMs >= 500 and .diagnostics[0].addressablePercent >= 2 and
+  .diagnostics[1].taskDurationMs < 500 and
+  .selectedProposals == 1 and .selectedFamilies == 1 and .productFailures == 0 and
+  .decision == "PASS_ECONOMIC_PREFILTER"
+' "${buildopt_evidence}/diagnostic-summary.json" >/dev/null
+
+jq -e \
+  --slurpfile populate "${buildopt_evidence}/correctness/same-root-populate.analysis.json" \
+  --slurpfile same "${buildopt_evidence}/correctness/same-root-restore.analysis.json" \
+  --slurpfile cross "${buildopt_evidence}/correctness/cross-root-restore.analysis.json" \
+  --slurpfile invalidation "${buildopt_evidence}/correctness/invalidation.analysis.json" \
+  --slurpfile reverted "${buildopt_evidence}/correctness/reverted-input-restore.analysis.json" '
+  def task($report): $report[0].tasks[] | select(.identity == ":server:forbiddenPatterns");
+  .schemaVersion == "buildopt.evidence/economics-gated-reviewed-native-patch-correctness/v1" and
+  .gradleStarts == 5 and .gradleStarts <= 6 and
+  (task($populate).outcome == "EXECUTED") and
+  (task($same).outcome == "FROM-CACHE") and
+  (task($cross).outcome == "FROM-CACHE") and
+  (task($invalidation).outcome == "EXECUTED") and
+  (task($reverted).outcome == "FROM-CACHE") and
+  .sameRootFromCache and .crossRootFromCache and .requiredInvalidation and
+  .exactOutput and .exactSourceRevert and .productFailures == 0 and
+  .decision == "PASS_PROPOSAL_CORRECTNESS"
+' "${buildopt_evidence}/correctness.json" >/dev/null
+
+jq -e '
+  .status == "INVALID_STOPPED_BEFORE_RESULT" and .acceptedTimingSamples == 0 and
+  .thresholdsChanged == false and .valueClaim == false and
+  .action == "STOP_V1_VALUE_AND_FORBID_ROWS_AS_V2_INPUTS"
+' "${buildopt_evidence}/invalid-value-attempt.json" >/dev/null
+
+jq -e '
+  .valueGate == "INVALID_PROTOCOL_STOP" and .acceptedTimingSamples == 0 and
+  .terminalDecision == "STOP_EGNP_V1_SYMMETRIC_STABILIZATION_REQUIRED" and
+  .speedupClaim == false and .productFailures == 0
+' "${buildopt_evidence}/terminal-decision.json" >/dev/null
+
+printf 'EGNP v1 evidence OK: economic candidate and correctness pass; contaminated value attempt stopped\n'

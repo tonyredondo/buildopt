@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "buildopt.specs/poc-economics-gated-reviewed-native-patch/v1",
+  "predecessor": "STOP_THIRD_FAMILY_CUSTOMER_ECONOMICS_VALUE_GATE",
+  "sourceClassifier": "NORMALIZATION_AWARE_CACHEABILITY_V2",
+  "reusePolicy": "IDENTITIES_AND_COMPATIBILITY_ONLY_ALL_RESULT_ROWS_FRESH",
+  "sourceGate": {
+    "requiredConclusiveFamilies": 10,
+    "minimumActionFamilies": 1,
+    "maximumNativeDiagnostics": 6,
+    "maximumDiagnosticFamilies": 3
+  },
+  "economicPrefilter": {
+    "hardDependencyCriticalPathRequired": true,
+    "minimumAddressableMilliseconds": 500,
+    "minimumAddressablePercent": 2,
+    "maximumProjectedMachinePaybackBuilds": 300,
+    "boundedOutputsAndEffects": true,
+    "maximumSelectedProposals": 2,
+    "maximumSelectedFamilies": 2
+  },
+  "correctnessGate": {
+    "maximumGradleStartsPerProposal": 6,
+    "exactCompleteOutputs": true,
+    "crossRootRestoration": true,
+    "requiredInvalidation": true,
+    "exactRevert": true,
+    "maximumProductFailures": 0
+  },
+  "valueGate": {
+    "excludedStabilizations": 1,
+    "balancedPairs": 8,
+    "requiredPositivePairs": 8,
+    "minimumMeanSavingMilliseconds": 500,
+    "minimumMeanSavingPercent": 2,
+    "positivePaired95Interval": true,
+    "nonRegressiveCandidateP95": true
+  },
+  "reviewGate": {
+    "firstExposure": true,
+    "ownerReportedActiveSeconds": true,
+    "maximumActiveReviewMinutes": 15,
+    "maximumProposalClarifications": 1,
+    "requiredDecision": "ACCEPT_FOR_CONTROLLED_TRIAL"
+  },
+  "terminalGate": {
+    "requiredNewPublicFamilies": 1,
+    "maximumCombinedPaybackBuilds": 300,
+    "combinedPaybackInterpretation": "MACHINE_PLUS_OWNER_ACTIVE_ELAPSED_TIME_EQUIVALENT_NOT_LABOR_COST"
+  },
+  "budget": {
+    "maximumAdditionalDiskGiB": 8,
+    "minimumFreeDiskBeforePublicBuildGiB": 8,
+    "stopBeforeNextStartFreeDiskGiB": 6,
+    "maximumValueInvocationsPerQualifiedProposal": 17
+  },
+  "delivery": {
+    "controlledForkOnly": true,
+    "draftOnly": true,
+    "upstreamPullRequest": false,
+    "defaultBranchMutation": false,
+    "mergeAuthorized": false,
+    "forcePush": false
+  },
+  "boundaries": {
+    "productionAuthorized": false,
+    "automaticApply": false,
+    "automaticMerge": false,
+    "soak": false,
+    "designPartner": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

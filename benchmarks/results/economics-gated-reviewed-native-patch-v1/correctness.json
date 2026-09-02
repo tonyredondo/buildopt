@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "buildopt.evidence/economics-gated-reviewed-native-patch-correctness/v1",
+  "family": "elasticsearch",
+  "revision": "16bd5bc5355ac7c6ad736f8a6f93281b24a05ab7",
+  "taskPath": ":server:forbiddenPatterns",
+  "sourcePath": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+  "originalSourceSha256": "61fe2eaa06ff463c2a49cea656b147889060855acfa094288ebb8b31567e11b6",
+  "candidateSourceSha256": "d6858f5ac43ad671496cf1e54e7af309cb98ebda4a9be53e61578df8baefa2d0",
+  "patchSha256": "e2ed46a7c64ead1798b867e0d39c0d91f4d71277d84d3c4064aee6b1925c0628",
+  "outputSha256": "a4c3ed04a95a3da14a9d235c83d868bed7c0f45cf7f3faa751ee8f50598d2211",
+  "gradleStarts": 5,
+  "observations": [
+    {"case":"same-root-populate","outcome":"EXECUTED","durationMs":8548,"criticalPath":true},
+    {"case":"same-root-restore","outcome":"FROM-CACHE","durationMs":237,"criticalPath":true},
+    {"case":"cross-root-restore","outcome":"FROM-CACHE","durationMs":443,"criticalPath":true},
+    {"case":"content-invalidation","outcome":"EXECUTED","durationMs":8515,"criticalPath":true},
+    {"case":"reverted-input-restore","outcome":"FROM-CACHE","durationMs":184,"criticalPath":true}
+  ],
+  "sameRootFromCache": true,
+  "crossRootFromCache": true,
+  "requiredInvalidation": true,
+  "exactOutput": true,
+  "exactSourceRevert": true,
+  "productFailures": 0,
+  "decision": "PASS_PROPOSAL_CORRECTNESS"
+}
