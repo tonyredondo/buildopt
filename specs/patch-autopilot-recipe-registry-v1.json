@@ -38,6 +38,24 @@
       "validationAdapter": "EXACT_BYTES",
       "inverse": "EXACT_MODIFY_ONLY",
       "reviewedAdapterRequired": true
+    },
+    {
+      "id": "REVIEWED_RELATIVE_CACHEABILITY_JAVA_V1",
+      "version": "1.0",
+      "applicability": "DIGEST_BOUND_REVIEWED_JAVA_SOURCE",
+      "risk": "LOW",
+      "validationAdapter": "EXACT_BYTES",
+      "inverse": "EXACT_MODIFY_ONLY",
+      "reviewedAdapterRequired": true
+    },
+    {
+      "id": "REVIEWED_MARKER_ONLY_CACHEABILITY_JAVA_V1",
+      "version": "1.0",
+      "applicability": "DIGEST_BOUND_REVIEWED_JAVA_SOURCE",
+      "risk": "LOW",
+      "validationAdapter": "EXACT_BYTES",
+      "inverse": "EXACT_MODIFY_ONLY",
+      "reviewedAdapterRequired": true
     }
   ],
   "consumers": ["PATCH_BUNDLE_VERIFIER", "PATCH_CANDIDATE_VALIDATOR"],

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 3)) || [[ "$2" != /* || "$3" != /* || ! -f "$2" || -e "$3" ]]; then
+    printf 'usage: %s RECIPE_ID ABSOLUTE_INPUT_JAVA ABSENT_ABSOLUTE_OUTPUT_JAVA\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_recipe=$1
+buildopt_input=$2
+buildopt_output=$3
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+
+"${buildopt_script_dir}/run" -- "${buildopt_repo_root}/gradlew" \
+    --no-daemon --offline --no-configuration-cache --warning-mode=fail \
+    :jvm:patcher:compileSpikeJava >/dev/null
+buildopt_java_home=$("${buildopt_script_dir}/run" -- \
+    java -XshowSettings:properties -version 2>&1 | \
+    awk -F'= ' '/^[[:space:]]*java.home = / {print $2; exit}')
+buildopt_classpath="${buildopt_repo_root}/jvm/patcher/build/classes/java/spike:${buildopt_repo_root}/jvm/patcher/build/classes/java/main"
+"${buildopt_java_home}/bin/java" -cp "${buildopt_classpath}" \
+    dev.buildopt.patcher.ReviewedNativePatchRecipeCli \
+    "${buildopt_recipe}" "${buildopt_input}" "${buildopt_output}"

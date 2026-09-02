@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "buildopt.specs/poc-reviewed-native-patch-delivery/v1",
+  "predecessor": "QUALIFY_REVIEWED_NATIVE_PATCH_PORTFOLIO_POC",
+  "recipes": [
+    "REVIEWED_RELATIVE_CACHEABILITY_JAVA_V1",
+    "REVIEWED_MARKER_ONLY_CACHEABILITY_JAVA_V1"
+  ],
+  "delivery": {
+    "signedPatchBundle": true,
+    "isolatedBranch": true,
+    "draftOnly": true,
+    "exactRevert": true,
+    "remoteAdapter": "IN_MEMORY"
+  },
+  "economics": {
+    "valueBindingMsPerCompatiblePortfolioBuild": 7906.625,
+    "machineCost": "OBSERVED_WALL_TIME",
+    "humanReviewMs": "NOT_MEASURED"
+  },
+  "gate": {
+    "requiredRecipes": 2,
+    "productFailureBudget": 0,
+    "finiteMachinePayback": true
+  },
+  "boundaries": {
+    "productionAuthorized": false,
+    "automaticApply": false,
+    "automaticMerge": false,
+    "remoteMutationPerformed": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

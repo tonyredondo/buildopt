@@ -13,6 +13,15 @@ net value in only one of five families. One of six structurally eligible
 descendants selected a profile, so the frozen terminal decision is
 [`STOP_GENERIC_POC`](../../benchmarks/results/poc-functional-coverage-decision-v1/README.md).
 
+The materially different reviewed-native patch product now has a complete
+controlled delivery proof. Two exact recipe versions bind the qualified
+Micronaut and Spring corrections by path, preimage, edits and postimage. Both
+traverse signed verification, isolated Git delivery, draft-only presentation
+and exact revert with zero failures and no repository-name selection. Observed
+machine delivery work repays in four compatible portfolio builds. This supports
+an owner-operated POC, but human review cost and broader recipe/customer
+coverage remain unmeasured, so it is not yet a generic or commercial claim.
+
 The latest source-only recurrence search adds a plausible third public class
 without changing that value conclusion. Across 768 fresh Spring,
 OpenTelemetry and Micronaut rows, independent reconstruction finds fourteen

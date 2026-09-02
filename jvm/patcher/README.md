@@ -1,5 +1,11 @@
 # BuildOpt Patcher
 
+The closed registry includes the two reviewed native cacheability corrections
+qualified by RNPP. They bind exact Java source paths, preimage/postimage
+SHA-256 values and insertion offsets, require a reviewed adapter, and use the
+existing signed exact-revert path. Run
+`./dev/check-reviewed-native-patch-delivery` for the controlled delivery proof.
+
 Customer-side Java artifact that validates and materializes a `PatchBundle` without executing bundle content.
 
 `SPK-004` established the bounded Java 17 parser/applier, `C4-001` added the

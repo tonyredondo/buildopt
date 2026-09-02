@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "buildopt.evidence/reviewed-native-patch-delivery/v1",
+  "block": "RNPD-002..005",
+  "measurementDate": "2026-09-02",
+  "recipes": [
+    {
+      "id": "REVIEWED_RELATIVE_CACHEABILITY_JAVA_V1",
+      "family": "micronaut-core",
+      "preimageSha256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+      "postimageSha256": "2cfc774746985253205acb2f360df84c70a9f4ba985d2ef1f32e8ecbcfa464ed",
+      "generationNanos": 29698884,
+      "idempotencyValidationNanos": 989755,
+      "decision": "DELIVERED_CONTROLLED_POC"
+    },
+    {
+      "id": "REVIEWED_MARKER_ONLY_CACHEABILITY_JAVA_V1",
+      "family": "spring-framework",
+      "preimageSha256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+      "postimageSha256": "dd75bc28223141ac121f6377f7ba95832fd250739861196f60120264dd4c2d1d",
+      "generationNanos": 30349874,
+      "idempotencyValidationNanos": 210161,
+      "decision": "DELIVERED_CONTROLLED_POC"
+    }
+  ],
+  "deliveryProof": {
+    "patcherCases": 15,
+    "reviewedRecipeExactReverts": 2,
+    "signedBundles": true,
+    "isolatedGitBranches": true,
+    "draftAdapter": "IN_MEMORY",
+    "remoteMutationPerformed": false,
+    "productFailures": 0
+  },
+  "economics": {
+    "materializationWallMs": 10250,
+    "integratedDeliveryValidationWallMs": 13900,
+    "observedMachineCostMs": 24150,
+    "valueBindingMsPerCompatiblePortfolioBuild": 7906.625,
+    "machinePaybackPortfolioBuilds": 4,
+    "humanReviewMs": "NOT_MEASURED",
+    "humanReviewIncludedInPayback": false
+  },
+  "decision": "QUALIFY_REVIEWED_NATIVE_PATCH_DELIVERY_POC",
+  "boundaries": {
+    "productionAuthorized": false,
+    "automaticApply": false,
+    "automaticMerge": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

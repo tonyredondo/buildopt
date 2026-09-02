@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -80,6 +81,7 @@ public final class PatcherSpike {
             spike.assertArchiveRecipeSafety();
             spike.assertExpandedRecipeSafety();
             CustomTaskContractRecipeSpike.assertConformance();
+            ReviewedNativePatchRecipeSpike.assertConformance();
             PatchCandidateValidationSpike.assertConformance();
             FullRelevantValidationSpike.assertConformance();
             PostMergePatchMonitorSpike.assertConformance();
@@ -112,7 +114,7 @@ public final class PatcherSpike {
     private void assertRecipeRegistry() {
         List<PatchAutopilotRecipeRegistry.Definition> definitions =
                 PatchAutopilotRecipeRegistry.definitions();
-        require(definitions.size() == 4, "recipe registry size");
+        require(definitions.size() == 6, "recipe registry size");
         PatchAutopilotRecipeRegistry.Definition archive =
                 PatchAutopilotRecipeRegistry.find(
                         ArchiveReproducibilityRecipe.RECIPE_ID,
@@ -134,6 +136,21 @@ public final class PatcherSpike {
                                 == PatchAutopilotRecipeRegistry.Inverse.EXACT_MODIFY_ONLY
                         && "EXACT_BYTES".equals(custom.validationAdapter()),
                 "custom-task registry metadata");
+        for (String recipeId : List.of(
+                ReviewedNativePatchJavaRecipe.RELATIVE_CACHEABILITY_RECIPE_ID,
+                ReviewedNativePatchJavaRecipe.MARKER_ONLY_CACHEABILITY_RECIPE_ID)) {
+            PatchAutopilotRecipeRegistry.Definition reviewed =
+                    PatchAutopilotRecipeRegistry.find(
+                            recipeId, ReviewedNativePatchJavaRecipe.RECIPE_VERSION)
+                            .orElseThrow();
+            require(reviewed.reviewedAdapterRequired()
+                            && "DIGEST_BOUND_REVIEWED_JAVA_SOURCE".equals(
+                                    reviewed.applicability())
+                            && "EXACT_BYTES".equals(reviewed.validationAdapter())
+                            && reviewed.inverse()
+                                    == PatchAutopilotRecipeRegistry.Inverse.EXACT_MODIFY_ONLY,
+                    "reviewed native registry metadata");
+        }
         PatchAutopilotRecipeRegistry.Definition groovy =
                 PatchAutopilotRecipeRegistry.find(
                         ArchiveReproducibilityGroovyDslRecipe.RECIPE_ID,
@@ -664,6 +681,17 @@ public final class PatcherSpike {
                     "buildSrc/src/main/java/com/example/build/BundleFrontend.java",
                     "custom-task");
         }
+        for (String recipeId : List.of(
+                ReviewedNativePatchJavaRecipe.RELATIVE_CACHEABILITY_RECIPE_ID,
+                ReviewedNativePatchJavaRecipe.MARKER_ONLY_CACHEABILITY_RECIPE_ID)) {
+            try (Fixture fixture = fixture("reviewed-native-post-merge-revert")) {
+                assertExactRecipeRevert(
+                        fixture,
+                        reviewedNativeBundle(fixture, recipeId),
+                        "build.gradle.kts",
+                        recipeId.toLowerCase(Locale.ROOT));
+            }
+        }
     }
 
     private void assertExactRecipeRevert(
@@ -787,6 +815,18 @@ public final class PatcherSpike {
                 sha(Files.readAllBytes(fixture.repository.resolve(path))),
                 "blobs/custom-task.java",
                 content);
+        return builder;
+    }
+
+    private BundleBuilder reviewedNativeBundle(Fixture fixture, String recipeId)
+            throws Exception {
+        BundleBuilder builder = bundle(fixture, "reviewed-native", recipeId);
+        String path = "build.gradle.kts";
+        byte[] preimage = Files.readAllBytes(fixture.repository.resolve(path));
+        byte[] suffix = "// reviewed native patch\n".getBytes(StandardCharsets.UTF_8);
+        byte[] postimage = Arrays.copyOf(preimage, preimage.length + suffix.length);
+        System.arraycopy(suffix, 0, postimage, preimage.length, suffix.length);
+        builder.modify(path, sha(preimage), "blobs/reviewed-native.gradle.kts", postimage);
         return builder;
     }
 
@@ -1174,7 +1214,9 @@ public final class PatcherSpike {
             Map<String, Object> recipeValue = new LinkedHashMap<>();
             recipeValue.put("id", recipe);
             recipeValue.put("version", "1.0");
-            if ("CUSTOM_TASK_CONTRACT_JAVA_V1".equals(recipe)) {
+            PatchAutopilotRecipeRegistry.Definition recipeDefinition =
+                    PatchAutopilotRecipeRegistry.find(recipe, "1.0").orElseThrow();
+            if (recipeDefinition.reviewedAdapterRequired()) {
                 Map<String, Object> adapter = new LinkedHashMap<>();
                 adapter.put("adapterId", "frontend-bundle-v2");
                 adapter.put("adapterDigest", "sha256:" + "5".repeat(64));

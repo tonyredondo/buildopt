@@ -1,5 +1,12 @@
 # Product workflows
 
+The reviewed-native patch workflow accepts only a closed recipe ID/version and
+an exact qualified source digest. BuildOpt materializes and validates the
+postimage, signs the PatchBundle, creates an isolated action branch and presents
+a draft for owner review. Source drift retains the repository unchanged, and an
+accepted modify-only patch has an exact signed inverse. Automatic application,
+merge and production promotion are not part of the current POC.
+
 ## Sticky wrapper lifecycle (POC)
 
 The implemented POC makes one committed `./buildoptw <gradle args...>` command

@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+cd "${buildopt_repo_root}"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-reviewed-native-patch-delivery/v1" and
+  (.recipes | length) == 2 and .gate.requiredRecipes == 2 and
+  .gate.productFailureBudget == 0 and .delivery.remoteAdapter == "IN_MEMORY" and
+  .boundaries.remoteMutationPerformed == false and
+  .boundaries.productionAuthorized == false and
+  .boundaries.automaticApply == false and .boundaries.automaticMerge == false
+' specs/poc-reviewed-native-patch-delivery-v1.json >/dev/null
+
+jq -e --slurpfile proposals benchmarks/results/reviewed-native-patch-portfolio-v1/accepted-proposals.json '
+  .schemaVersion == "buildopt.evidence/reviewed-native-patch-delivery/v1" and
+  (.recipes | length) == 2 and
+  ([.recipes[].postimageSha256] == [$proposals[0].proposals[].patch.patchedSourceSha256]) and
+  ([.recipes[].preimageSha256] == [$proposals[0].proposals[].patch.expectedSourceSha256]) and
+  ([.recipes[].family] | unique | length) == 2 and
+  ([.recipes[].decision] | all(. == "DELIVERED_CONTROLLED_POC")) and
+  .deliveryProof.patcherCases == 15 and
+  .deliveryProof.reviewedRecipeExactReverts == 2 and
+  .deliveryProof.productFailures == 0 and
+  .deliveryProof.remoteMutationPerformed == false and
+  .economics.observedMachineCostMs ==
+    (.economics.materializationWallMs + .economics.integratedDeliveryValidationWallMs) and
+  .economics.machinePaybackPortfolioBuilds ==
+    ((.economics.observedMachineCostMs / .economics.valueBindingMsPerCompatiblePortfolioBuild) | ceil) and
+  .economics.humanReviewMs == "NOT_MEASURED" and
+  .economics.humanReviewIncludedInPayback == false and
+  .decision == "QUALIFY_REVIEWED_NATIVE_PATCH_DELIVERY_POC" and
+  .boundaries.productionAuthorized == false and
+  .boundaries.automaticApply == false and .boundaries.automaticMerge == false
+' benchmarks/results/reviewed-native-patch-delivery-v1/result.json >/dev/null
+
+rg -q 'REVIEWED_RELATIVE_CACHEABILITY_JAVA_V1' \
+    jvm/patcher/src/main/java/dev/buildopt/patcher/ReviewedNativePatchJavaRecipe.java
+rg -q 'REVIEWED_MARKER_ONLY_CACHEABILITY_JAVA_V1' \
+    jvm/patcher/src/main/java/dev/buildopt/patcher/ReviewedNativePatchJavaRecipe.java
+for buildopt_digest in \
+    2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca \
+    2cfc774746985253205acb2f360df84c70a9f4ba985d2ef1f32e8ecbcfa464ed \
+    22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04 \
+    dd75bc28223141ac121f6377f7ba95832fd250739861196f60120264dd4c2d1d; do
+    rg -q "${buildopt_digest}" \
+        jvm/patcher/src/main/java/dev/buildopt/patcher/ReviewedNativePatchJavaRecipe.java
+done
+./dev/check-patch-autopilot-recipe-registry >/dev/null
+printf 'RNPD-005 delivery OK: 2 recipes, exact hashes, signed draft/revert path, 4-build machine payback\n'

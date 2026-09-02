@@ -14,7 +14,7 @@ jq -e '
   .schemaVersion == "buildopt.specs/patch-autopilot-recipe-registry/v1" and
   .trackerId == "PA-F2-001" and
   .selection == "EXACT_ID_AND_VERSION_NO_FALLBACK" and
-  (.recipes | length) == 4 and
+  (.recipes | length) == 6 and
   .recipes[0] == {
     id:"ARCHIVE_REPRODUCIBILITY_KOTLIN_DSL_V1", version:"1.0",
     applicability:"ROOT_BUILD_GRADLE_KTS", risk:"LOW",
@@ -36,6 +36,18 @@ jq -e '
   .recipes[3] == {
     id:"CUSTOM_TASK_CONTRACT_JAVA_V1", version:"1.0",
     applicability:"REVIEWED_BUILD_SRC_JAVA_ADAPTER", risk:"LOW",
+    validationAdapter:"EXACT_BYTES", inverse:"EXACT_MODIFY_ONLY",
+    reviewedAdapterRequired:true
+  } and
+  .recipes[4] == {
+    id:"REVIEWED_RELATIVE_CACHEABILITY_JAVA_V1", version:"1.0",
+    applicability:"DIGEST_BOUND_REVIEWED_JAVA_SOURCE", risk:"LOW",
+    validationAdapter:"EXACT_BYTES", inverse:"EXACT_MODIFY_ONLY",
+    reviewedAdapterRequired:true
+  } and
+  .recipes[5] == {
+    id:"REVIEWED_MARKER_ONLY_CACHEABILITY_JAVA_V1", version:"1.0",
+    applicability:"DIGEST_BOUND_REVIEWED_JAVA_SOURCE", risk:"LOW",
     validationAdapter:"EXACT_BYTES", inverse:"EXACT_MODIFY_ONLY",
     reviewedAdapterRequired:true
   } and

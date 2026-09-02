@@ -2,6 +2,15 @@
 
 ## Current Executive Summary
 
+- **The reviewed-native patch delivery POC qualifies.** The two RNPP winners
+  now have closed, digest-bound Patch Autopilot recipe versions. Their exact
+  public preimages reproduce the frozen postimages, and the existing signed
+  PatchBundle path proves isolated draft delivery, replay, rejection and exact
+  revert with zero product failures. Materialization plus full integrated
+  validation costs 24,150 ms, repaying in four compatible portfolio builds at
+  7,906.625 ms/build. Human review remains unmeasured, so production and
+  commercial viability are not claimed.
+
 - **Fresh native traces pass the change-scoped critical-path discovery gate.**
   Four bounded exact-revision diagnostics close the prior trace gap. The
   independent result is 5/5 conclusive and 4/5 actionable: avoidable critical

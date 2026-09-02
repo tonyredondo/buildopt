@@ -19,17 +19,28 @@ not whether it is ready for production. Soak, design-partner validation,
 production SLOs, autonomous rollout and Test Optimization are outside this
 decision.
 
-The first reviewed-native portfolio qualifies. Micronaut
+The first reviewed-native portfolio and its controlled delivery path qualify. Micronaut
 `PythonVfsBytecodeCompile` saves 6,921.125 ms/63.44%, and Spring
 `ArchitectureCheck` saves 985.5 ms/35.34%; both pass 8/8 pairs, positive
 intervals, p95, exact cross-root outputs and zero product failures.
 OpenTelemetry and Spring `ShadowSource` reject independently. The accepted
 two-family portfolio saves a signed 7,906.625 ms per compatible build and its
 conservative 2,340,000-ms machine campaign charge repays in 296 builds. Human
-review is unmeasured. This is POC viability for review-only native patches, not
-production or automatic-merge authority.
+review is unmeasured. Both accepted corrections now have closed, digest-bound
+recipe versions and reproduce their exact public postimages through the signed,
+isolated, draft-only PatchBundle path. Observed materialization plus integrated
+delivery/revert validation costs 24,150 ms, which repays in four compatible
+portfolio builds before human review. This is POC viability for review-only
+native patches, not commercial economics, production or automatic-merge authority.
 
 ## Current experiment status
+
+`REVIEWED_NATIVE_PATCH_DELIVERY_V1` is complete. Both accepted recipes reject
+source drift and ambiguous edits, materialize the frozen Micronaut and Spring
+postimage hashes, and pass signed bundle verification, isolated branch creation,
+in-memory draft delivery and exact signed revert with zero product failures.
+No public remote or default branch was modified. Human review remains
+unmeasured, so commercial viability is still not established.
 
 `REVIEWED_NATIVE_PATCH_PORTFOLIO_V1` is complete and qualifies the narrower
 reviewed-patch product POC. The following chronological result remains the
