@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "buildopt.patch/normalization-aware-cacheability/v2",
+  "action": "ADD_RELATIVE_PATH_NORMALIZATION_AND_CACHEABLE_MARKER_V1",
+  "path": "local-build-plugins/src/main/java/org/hibernate/orm/properties/SettingsDocGenerationTask.java",
+  "className": "SettingsDocGenerationTask",
+  "expectedSourceSha256": "d19641865a45219c5af954e1fc678d570737fe5e688109e4fd083900770173ad",
+  "patchedSourceSha256": "b6cc3efdaa9490fd3fd2fd69b75c7988b871f1f79e8fcd948e76970ef6e40b44",
+  "edits": [
+    {
+      "offset": 2306,
+      "insertedText": "\t@org.gradle.api.tasks.PathSensitive(org.gradle.api.tasks.PathSensitivity.RELATIVE)\n"
+    },
+    {
+      "offset": 889,
+      "insertedText": "@org.gradle.api.tasks.CacheableTask\n"
+    }
+  ]
+}

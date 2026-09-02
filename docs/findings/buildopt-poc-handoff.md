@@ -41,7 +41,23 @@ accepted, with zero proposal-specific clarifications or concerns. Active review
 time was not measured, so this strengthens product usability evidence but does
 not close human-cost or commercial economics.
 
+The fresh third-family economics trial closes negatively before review. Five
+new public revisions are conclusive; only Hibernate exposes safe actions.
+`SettingsDocGenerationTask` passes exact output, cache restoration, mutation,
+fallback and revert checks, but its eight balanced pairs average 15,143.75 ms
+for optimized native and 15,334.625 ms for the candidate. With 4/8 positive
+pairs and a -190.875-ms signed saving, the value gate stops. No draft or timed
+owner review is authorized, so the experiment adds no third value family and
+does not establish commercial viability.
+
 ## Current experiment status
+
+`REVIEWED_NATIVE_PATCH_CUSTOMER_ECONOMICS_V1` is closed as
+`STOP_THIRD_FAMILY_CUSTOMER_ECONOMICS_VALUE_GATE`. Source classification is
+5/5 conclusive and Hibernate correctness passes with zero failures. Value
+fails at 4/8 positive pairs, -190.875 ms mean saving and a
+-829.625..+380.875-ms paired interval. RNCE-005 was not authorized; no new
+fork, draft, review timing or remote mutation exists.
 
 `REVIEWED_NATIVE_PATCH_OWNER_ACCEPTANCE_V1` is complete with a partial terminal
 qualification. Both draft proposals pass owner comprehension and acceptance at

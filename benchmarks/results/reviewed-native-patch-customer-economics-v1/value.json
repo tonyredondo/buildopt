@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "buildopt.evidence/reviewed-native-patch-customer-value/v1",
+  "family": "hibernate-orm",
+  "revision": "2b448a59d332326f0cd0691c868425124d55cbb5",
+  "taskPath": ":documentation:generateSettingsDoc",
+  "method": {
+    "control": "OPTIMIZED_NATIVE_GRADLE_UNPATCHED_TASK",
+    "candidate": "OPTIMIZED_NATIVE_GRADLE_REVIEWED_RELATIVE_CACHEABLE_TASK",
+    "gradleVersion": "9.6.1",
+    "jdkToolchain": "temurin-jdk-25",
+    "workers": 4,
+    "network": "OFFLINE",
+    "excludedStabilizations": 1,
+    "balancedPairs": 8,
+    "order": [
+      "CONTROL_CANDIDATE",
+      "CANDIDATE_CONTROL",
+      "CONTROL_CANDIDATE",
+      "CANDIDATE_CONTROL",
+      "CONTROL_CANDIDATE",
+      "CANDIDATE_CONTROL",
+      "CONTROL_CANDIDATE",
+      "CANDIDATE_CONTROL"
+    ]
+  },
+  "observations": [
+    {"pair": 1, "controlMs": 12364, "candidateMs": 14433},
+    {"pair": 2, "controlMs": 14601, "candidateMs": 14569},
+    {"pair": 3, "controlMs": 15344, "candidateMs": 15607},
+    {"pair": 4, "controlMs": 15126, "candidateMs": 15656},
+    {"pair": 5, "controlMs": 15906, "candidateMs": 15852},
+    {"pair": 6, "controlMs": 16026, "candidateMs": 15626},
+    {"pair": 7, "controlMs": 15328, "candidateMs": 15664},
+    {"pair": 8, "controlMs": 16455, "candidateMs": 15270}
+  ],
+  "summary": {
+    "positivePairs": 4,
+    "controlMeanMs": 15143.75,
+    "candidateMeanMs": 15334.625,
+    "meanSavedMs": -190.875,
+    "meanReductionRatio": -0.012604209657449442,
+    "paired95Ms": [-829.625, 380.875],
+    "controlP95Ms": 16455,
+    "candidateP95Ms": 15852
+  },
+  "economics": {
+    "observedValueCampaignMs": 255151,
+    "observedGradleAndCampaignMs": 1040131,
+    "machinePaybackBuilds": "UNAVAILABLE_NEGATIVE_SAVING",
+    "ownerActiveReviewMs": "NOT_RUN_VALUE_GATE_FAILED",
+    "combinedPaybackBuilds": "UNAVAILABLE_NEGATIVE_SAVING"
+  },
+  "outputSha256": "cec4b6aa8ec61731b1115c6e024769d37cc76572257e2ff8795d3ce4e48398d9",
+  "productFailures": 0,
+  "decision": "REJECT_REVIEWED_NATIVE_PATCH_VALUE"
+}

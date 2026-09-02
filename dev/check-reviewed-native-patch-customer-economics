@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [SOURCE_ROOT]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+cd "${buildopt_repo_root}"
+
+./dev/check-reviewed-native-patch-customer-economics-contract >/dev/null
+if (($# == 1)); then
+    ./dev/check-reviewed-native-patch-customer-source-classification "$1" >/dev/null
+else
+    ./dev/check-reviewed-native-patch-customer-source-classification >/dev/null
+fi
+
+buildopt_result_root=benchmarks/results/reviewed-native-patch-customer-economics-v1
+buildopt_selection="${buildopt_result_root}/selection.json"
+buildopt_patch="${buildopt_result_root}/hibernate-settings-doc-patch.json"
+buildopt_correctness="${buildopt_result_root}/correctness.json"
+buildopt_value="${buildopt_result_root}/value.json"
+buildopt_terminal="${buildopt_result_root}/terminal-decision.json"
+
+jq -e --slurpfile source "${buildopt_result_root}/source-classification.json" \
+    --slurpfile patch "${buildopt_patch}" '
+  .selected as $selected |
+  .schemaVersion == "buildopt.evidence/reviewed-native-patch-customer-selection/v1" and
+  .sourceDecision == $source[0].decision and .selectedProposals == 1 and
+  .selected.family == "hibernate-orm" and
+  .selected.revision == "2b448a59d332326f0cd0691c868425124d55cbb5" and
+  .selected.className == "SettingsDocGenerationTask" and
+  .selected.decision == "REVIEWED_RELATIVE_PROOF_REQUIRED" and
+  .selected.taskPath == ":documentation:generateSettingsDoc" and
+  .timingAuthorized == false and
+  any($source[0].families[];
+    .key == $selected.family and .revision == $selected.revision and
+    any(.candidates[];
+      .path == $selected.path and .className == $selected.className and
+      .decision == $selected.decision)) and
+  $patch[0].action == "ADD_RELATIVE_PATH_NORMALIZATION_AND_CACHEABLE_MARKER_V1" and
+  $patch[0].className == .selected.className and $patch[0].path == .selected.path
+' "${buildopt_selection}" >/dev/null
+
+jq -e --slurpfile patch "${buildopt_patch}" '
+  .schemaVersion == "buildopt.evidence/reviewed-native-patch-customer-correctness/v1" and
+  .family == "hibernate-orm" and .revision == "2b448a59d332326f0cd0691c868425124d55cbb5" and
+  .patch.action == $patch[0].action and .patch.path == $patch[0].path and
+  .patch.expectedSourceSha256 == $patch[0].expectedSourceSha256 and
+  .patch.patchedSourceSha256 == $patch[0].patchedSourceSha256 and
+  .input.fileCount == 9262 and (.input.portableManifestSha256 | test("^[0-9a-f]{64}$")) and
+  .output.fileCount == 1 and
+  ([.output.controlSha256, .output.candidateSha256, .output.crossRootSha256,
+    .output.contentMutationSha256, .output.relativePathMutationSha256] | unique | length) == 1 and
+  .observations.diagnosticPreflightGradleStarts == 1 and
+  .observations.correctnessGradleStarts == 6 and
+  .observations.controlExecuted and .observations.candidatePopulatedCache and
+  .observations.sameRootFromCache and .observations.crossRootFromCache and
+  .observations.contentMutationExecuted and .observations.relativePathMutationExecuted and
+  .observations.nativeFallback and .observations.exactRevert and
+  .observations.productFailures == 0 and
+  .decision == "PASS_PROPOSAL_CORRECTNESS" and .timingAuthorized == true
+' "${buildopt_correctness}" >/dev/null
+
+jq -e --slurpfile contract specs/poc-reviewed-native-patch-customer-economics-v1.json \
+    --slurpfile correctness "${buildopt_correctness}" '
+  def close($a;$b): (($a-$b)|abs) < 0.000000001;
+  def bootstrap_mean($rows; $sample):
+    reduce range(0;8) as $draw
+      ({state:((2654435761*($sample+1))%4294967296),sum:0};
+       .state=((1664525*.state+1013904223)%4294967296) |
+       .sum += ($rows[((.state/536870912)|floor)].controlMs -
+                $rows[((.state/536870912)|floor)].candidateMs)) |
+    .sum/8;
+  def bootstrap95($rows):
+    ([range(0;4096) as $sample | bootstrap_mean($rows;$sample)]|sort) as $values |
+    [$values[102],$values[3993]];
+  .observations as $rows |
+  ($rows|map(.controlMs)|add/length) as $control_mean |
+  ($rows|map(.candidateMs)|add/length) as $candidate_mean |
+  {
+    positivePairs:($rows|map(select(.controlMs>.candidateMs))|length),
+    controlMeanMs:$control_mean,
+    candidateMeanMs:$candidate_mean,
+    meanSavedMs:($control_mean-$candidate_mean),
+    meanReductionRatio:(($control_mean-$candidate_mean)/$control_mean),
+    paired95Ms:bootstrap95($rows),
+    controlP95Ms:($rows|map(.controlMs)|max),
+    candidateP95Ms:($rows|map(.candidateMs)|max)
+  } as $reconstructed |
+  .schemaVersion == "buildopt.evidence/reviewed-native-patch-customer-value/v1" and
+  (.observations | length) == 8 and ([.observations[].pair] == [1,2,3,4,5,6,7,8]) and
+  .method.balancedPairs == $contract[0].valueGate.balancedPairs and
+  .method.excludedStabilizations == $contract[0].valueGate.excludedStabilizations and
+  .method.network == "OFFLINE" and .method.workers == 4 and
+  .summary.positivePairs == $reconstructed.positivePairs and
+  close(.summary.controlMeanMs;$reconstructed.controlMeanMs) and
+  close(.summary.candidateMeanMs;$reconstructed.candidateMeanMs) and
+  close(.summary.meanSavedMs;$reconstructed.meanSavedMs) and
+  close(.summary.meanReductionRatio;$reconstructed.meanReductionRatio) and
+  .summary.paired95Ms == $reconstructed.paired95Ms and
+  .summary.controlP95Ms == $reconstructed.controlP95Ms and
+  .summary.candidateP95Ms == $reconstructed.candidateP95Ms and
+  .summary.positivePairs == 4 and .summary.meanSavedMs < 0 and
+  .summary.paired95Ms[0] < 0 and
+  .outputSha256 == $correctness[0].output.controlSha256 and
+  .productFailures == 0 and
+  .economics.machinePaybackBuilds == "UNAVAILABLE_NEGATIVE_SAVING" and
+  .economics.ownerActiveReviewMs == "NOT_RUN_VALUE_GATE_FAILED" and
+  .decision == "REJECT_REVIEWED_NATIVE_PATCH_VALUE"
+' "${buildopt_value}" >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/reviewed-native-patch-customer-economics-terminal/v1" and
+  .sourceGate == "PASS_FRESH_SOURCE_ACTION_GATE" and
+  .correctnessGate == "PASS_PROPOSAL_CORRECTNESS" and
+  .valueGate == "FAIL_REVIEWED_NATIVE_PATCH_VALUE" and
+  .ownerReview == "NOT_AUTHORIZED_VALUE_GATE_FAILED" and
+  .newQualifiedPublicFamilies == 0 and
+  .commercialEconomics == "NOT_ESTABLISHED_NEGATIVE_INCREMENTAL_VALUE" and
+  .terminalDecision == "STOP_THIRD_FAMILY_CUSTOMER_ECONOMICS_VALUE_GATE" and
+  all(.boundaries[]; . == false or . == "OUT_OF_SCOPE")
+' "${buildopt_terminal}" >/dev/null
+
+if rg -q 'github.com/.+/pull/[0-9]+' "${buildopt_result_root}"; then
+    printf 'RNCE must not contain a draft after the failed value gate\n' >&2
+    exit 1
+fi
+
+if (($# == 1)); then
+    buildopt_source_root=$1
+    buildopt_generated_plan=$(mktemp)
+    trap 'rm -f "${buildopt_generated_plan}"' EXIT
+    ./dev/run --toolchain go -- go run ./cmd/normalization-aware-cacheability-patch-plan \
+        --source-root "${buildopt_source_root}" \
+        --classification "${buildopt_result_root}/source-classification.json" \
+        --output "${buildopt_generated_plan}" \
+        --reviewed-relative-token USER_AUTHORIZED_RNCE_PROVISIONAL_PROOF_2026-09-02
+    jq -e --slurpfile expected "${buildopt_patch}" '
+      any(.patches[]; .patch == $expected[0])
+    ' "${buildopt_generated_plan}" >/dev/null
+fi
+
+printf 'RNCE terminal OK: Hibernate correctness passes; value rejects at 4/8 and -190.875 ms\n'

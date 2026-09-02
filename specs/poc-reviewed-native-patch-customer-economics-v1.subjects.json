@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "buildopt.specs/poc-reviewed-native-patch-customer-economics-subjects/v1",
+  "reusePolicy": "PUBLIC_REVISIONS_ONLY_NO_PRIOR_RESULT_ROWS",
+  "families": [
+    {
+      "key": "ktor",
+      "repository": "https://github.com/ktorio/ktor.git",
+      "revision": "bc7de799f4eb997a63250f2f70492d85f5c92f50"
+    },
+    {
+      "key": "hibernate-orm",
+      "repository": "https://github.com/hibernate/hibernate-orm.git",
+      "revision": "2b448a59d332326f0cd0691c868425124d55cbb5"
+    },
+    {
+      "key": "spotless",
+      "repository": "https://github.com/diffplug/spotless.git",
+      "revision": "cbd01c4e4b91cea538691d4fe6a8f929d75c27c6"
+    },
+    {
+      "key": "mockito",
+      "repository": "https://github.com/mockito/mockito.git",
+      "revision": "a231205b240e7884a63bf0f63440012867a4da21"
+    },
+    {
+      "key": "spotbugs",
+      "repository": "https://github.com/spotbugs/spotbugs.git",
+      "revision": "8d5cad4536ae263448c09181268bbca70f0c0712"
+    }
+  ]
+}

@@ -30,6 +30,16 @@ and two hand-qualified recipe classes still do not establish discovery coverage
 across arbitrary repositories. Commercial and generic claims therefore remain
 open.
 
+The next fresh customer-economics route does not broaden that claim. Its
+source-only audit is conclusive across Ktor, Hibernate, Spotless, Mockito and
+SpotBugs, but only Hibernate exposes an actionable class. The selected
+`SettingsDocGenerationTask` correction is safe: 9,262 input files, exact
+same/cross-root output restoration, content/path invalidation, exact revert and
+zero failures. It is not valuable on the measured workflow. Eight balanced
+pairs produce 4/8 positive results and regress by 190.875 ms / 1.26% on
+average. The value prerequisite stops delivery and first-review timing, so
+third-family breadth and commercial economics remain unproved.
+
 The latest source-only recurrence search adds a plausible third public class
 without changing that value conclusion. Across 768 fresh Spring,
 OpenTelemetry and Micronaut rows, independent reconstruction finds fourteen
@@ -521,3 +531,8 @@ All four proposals' conservatively rounded machine campaign cost is 2,340,000
 ms, yielding a 296-build projection before unmeasured human review. The result
 therefore supports an owner-operated review-only Patch Autopilot POC while
 leaving production, automatic application/merge and Test Optimization closed.
+
+The follow-up third-family screen does not extend this portfolio. Hibernate
+`SettingsDocGenerationTask` passes correctness but fails paired value at 4/8
+positive pairs and -190.875 ms mean saving. Because the fixed value gate fails,
+no draft or timed first owner review is created.

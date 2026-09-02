@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "buildopt.evidence/reviewed-native-patch-customer-correctness/v1",
+  "family": "hibernate-orm",
+  "revision": "2b448a59d332326f0cd0691c868425124d55cbb5",
+  "taskPath": ":documentation:generateSettingsDoc",
+  "patch": {
+    "action": "ADD_RELATIVE_PATH_NORMALIZATION_AND_CACHEABLE_MARKER_V1",
+    "path": "local-build-plugins/src/main/java/org/hibernate/orm/properties/SettingsDocGenerationTask.java",
+    "expectedSourceSha256": "d19641865a45219c5af954e1fc678d570737fe5e688109e4fd083900770173ad",
+    "patchedSourceSha256": "b6cc3efdaa9490fd3fd2fd69b75c7988b871f1f79e8fcd948e76970ef6e40b44"
+  },
+  "input": {
+    "kind": "INPUT_DIRECTORY",
+    "fileCount": 9262,
+    "portableManifestSha256": "9c17128f1564ccf4610e44990b9330db17cc1ecc27d282b3eccfb0b26a39f705"
+  },
+  "output": {
+    "path": "documentation/target/asciidoc/fragments/config-settings.adoc",
+    "fileCount": 1,
+    "controlSha256": "cec4b6aa8ec61731b1115c6e024769d37cc76572257e2ff8795d3ce4e48398d9",
+    "candidateSha256": "cec4b6aa8ec61731b1115c6e024769d37cc76572257e2ff8795d3ce4e48398d9",
+    "crossRootSha256": "cec4b6aa8ec61731b1115c6e024769d37cc76572257e2ff8795d3ce4e48398d9",
+    "contentMutationSha256": "cec4b6aa8ec61731b1115c6e024769d37cc76572257e2ff8795d3ce4e48398d9",
+    "relativePathMutationSha256": "cec4b6aa8ec61731b1115c6e024769d37cc76572257e2ff8795d3ce4e48398d9"
+  },
+  "observations": {
+    "diagnosticPreflightGradleStarts": 1,
+    "correctnessGradleStarts": 6,
+    "controlExecuted": true,
+    "candidatePopulatedCache": true,
+    "sameRootFromCache": true,
+    "crossRootFromCache": true,
+    "contentMutationExecuted": true,
+    "relativePathMutationExecuted": true,
+    "nativeFallback": true,
+    "exactRevert": true,
+    "productFailures": 0
+  },
+  "durationsMilliseconds": {
+    "diagnosticPreflight": 77000,
+    "controlSeed": 331540,
+    "candidatePopulate": 324260,
+    "sameRootRestore": 15350,
+    "crossRootRestore": 12980,
+    "contentMutation": 11800,
+    "relativePathMutation": 12050
+  },
+  "decision": "PASS_PROPOSAL_CORRECTNESS",
+  "timingAuthorized": true
+}

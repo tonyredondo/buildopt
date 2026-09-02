@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "buildopt.evidence/reviewed-native-patch-customer-selection/v1",
+  "sourceDecision": "PASS_FRESH_SOURCE_ACTION_GATE",
+  "selected": {
+    "family": "hibernate-orm",
+    "revision": "2b448a59d332326f0cd0691c868425124d55cbb5",
+    "path": "local-build-plugins/src/main/java/org/hibernate/orm/properties/SettingsDocGenerationTask.java",
+    "className": "SettingsDocGenerationTask",
+    "taskPath": ":documentation:generateSettingsDoc",
+    "decision": "REVIEWED_RELATIVE_PROOF_REQUIRED",
+    "selectionFacts": [
+      "ONE_MISSING_PRIMARY_INPUT_DIRECTORY_NORMALIZATION",
+      "DECLARED_OUTPUT_FILE",
+      "DIRECTLY_REGISTERED_PUBLIC_GRADLE_TASK",
+      "CONSUMED_BY_OWNER_DOCUMENTATION_WORKFLOW",
+      "RELATIVE_PATHS_ARE_OBSERVED_BY_SETTINGS_COLLECTOR"
+    ]
+  },
+  "notSelected": [
+    {
+      "family": "hibernate-orm",
+      "className": "IndexerTask",
+      "reason": "INPUT_IS_AN_ARTIFACT_CONFIGURATION_AND_RELATIVE_PATH_SEMANTICS_REQUIRE_A_LESS_DIRECT_OWNER_ARGUMENT"
+    }
+  ],
+  "proposalLimit": 2,
+  "selectedProposals": 1,
+  "timingAuthorized": false
+}

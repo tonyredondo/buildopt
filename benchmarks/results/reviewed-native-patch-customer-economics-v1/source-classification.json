@@ -1,0 +1,392 @@
+{
+  "schemaVersion": "buildopt.evidence/reviewed-native-patch-customer-source-classification/v1",
+  "contractSha256": "b6f7d484e67e8b3b6f7588f3eb8e9ec79687b433198905e5d39a7303d6ee2f62",
+  "subjectsSha256": "a0b63b733d40b4c192cd112467b62593b8993e05cc9a96e094f2f453fc830b22",
+  "analyzerSha256": "06245295d71128264b7bb8d1e501fcde569d0da316ef4c3a22a1cfc7a942dea8",
+  "evidenceSource": "FRESH_FROZEN_GIT_SOURCE_ONLY",
+  "families": [
+    {
+      "key": "ktor",
+      "repository": "https://github.com/ktorio/ktor.git",
+      "revision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "build-logic/src/main/kotlin/ktorbuild/internal/publish/ValidatePublishedArtifactsTask.kt",
+          "className": "ValidatePublishedArtifactsTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 52,
+            "startColumn": 10,
+            "endLine": 52,
+            "endColumn": 70
+          },
+          "sourceSha256": "b245d1e1895219693587786bea0f0cbef579051dcccd7c658d83e475593e0e24",
+          "fileInputs": [],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        }
+      ]
+    },
+    {
+      "key": "hibernate-orm",
+      "repository": "https://github.com/hibernate/hibernate-orm.git",
+      "revision": "2b448a59d332326f0cd0691c868425124d55cbb5",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "local-build-plugins/src/main/java/org/hibernate/build/maven/embedder/MavenPluginDescriptorTask.java",
+          "className": "MavenPluginDescriptorTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 20,
+            "startColumn": 1,
+            "endLine": 20,
+            "endColumn": 68
+          },
+          "sourceSha256": "20d4677acc577d086214b3254827868ceaa82d87392dd206f795b524b14e7062",
+          "fileInputs": [],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        },
+        {
+          "path": "local-build-plugins/src/main/java/org/hibernate/build/maven/embedder/RunMavenTask.java",
+          "className": "RunMavenTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 17,
+            "startColumn": 1,
+            "endLine": 17,
+            "endColumn": 55
+          },
+          "sourceSha256": "c4d0aaf390b8c661e7589b77238db15a13cddda446fe9dd91c0bd9cd6f0dff1d",
+          "fileInputs": [],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        },
+        {
+          "path": "local-build-plugins/src/main/java/org/hibernate/build/xjc/XjcTask.java",
+          "className": "XjcTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 35,
+            "startColumn": 1,
+            "endLine": 35,
+            "endColumn": 50
+          },
+          "sourceSha256": "b19348d5a8b66933385b50ff0f59f5e4ece675360c28d6b4bc0e4c5853ddbed2",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILE",
+              "binding": "getXsdFile",
+              "declarationSpan": {
+                "startLine": 62,
+                "startColumn": 2,
+                "endLine": 65,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILE",
+              "binding": "getXjcBindingFile",
+              "declarationSpan": {
+                "startLine": 68,
+                "startColumn": 2,
+                "endLine": 71,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "local-build-plugins/src/main/java/org/hibernate/orm/antlr/SplitGrammarGenerationTask.java",
+          "className": "SplitGrammarGenerationTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 31,
+            "startColumn": 1,
+            "endLine": 31,
+            "endColumn": 69
+          },
+          "sourceSha256": "3af39819fff1b0502d3fadd11b054641c58c3c82ba155ef7d0cf04797354979f",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILE",
+              "binding": "getLexerGrammarFile",
+              "declarationSpan": {
+                "startLine": 78,
+                "startColumn": 2,
+                "endLine": 81,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILE",
+              "binding": "getParserGrammarFile",
+              "declarationSpan": {
+                "startLine": 84,
+                "startColumn": 2,
+                "endLine": 87,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "local-build-plugins/src/main/java/org/hibernate/orm/post/AbstractJandexAwareTask.java",
+          "className": "AbstractJandexAwareTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 36,
+            "startColumn": 1,
+            "endLine": 36,
+            "endColumn": 66
+          },
+          "sourceSha256": "206cf93a12dc5f72b1d21b08c6fd6db08921121f1855bcabcb120fe7f1bfafdd",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILE",
+              "binding": "getIndexFileReference",
+              "declarationSpan": {
+                "startLine": 54,
+                "startColumn": 2,
+                "endLine": 56,
+                "endColumn": 1
+              },
+              "primaryNormalization": [],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        },
+        {
+          "path": "local-build-plugins/src/main/java/org/hibernate/orm/post/IndexerTask.java",
+          "className": "IndexerTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 24,
+            "startColumn": 1,
+            "endLine": 24,
+            "endColumn": 54
+          },
+          "sourceSha256": "f2b44dcda8df8394788662bd7653b5222304c30b9098ea6fc4b98e74c5416799",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getArtifactsToProcess",
+              "declarationSpan": {
+                "startLine": 34,
+                "startColumn": 2,
+                "endLine": 37,
+                "endColumn": 1
+              },
+              "primaryNormalization": [],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "REVIEWED_RELATIVE_PROOF_REQUIRED",
+          "reason": "MISSING_PRIMARY_NORMALIZATION"
+        },
+        {
+          "path": "local-build-plugins/src/main/java/org/hibernate/orm/properties/SettingsDocGenerationTask.java",
+          "className": "SettingsDocGenerationTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 29,
+            "startColumn": 1,
+            "endLine": 29,
+            "endColumn": 59
+          },
+          "sourceSha256": "d19641865a45219c5af954e1fc678d570737fe5e688109e4fd083900770173ad",
+          "fileInputs": [
+            {
+              "kind": "INPUT_DIRECTORY",
+              "binding": "getJavadocDirectory",
+              "declarationSpan": {
+                "startLine": 64,
+                "startColumn": 2,
+                "endLine": 67,
+                "endColumn": 1
+              },
+              "primaryNormalization": [],
+              "supplementaryNormalization": [
+                "IGNORE_EMPTY_DIRECTORIES"
+              ]
+            }
+          ],
+          "decision": "REVIEWED_RELATIVE_PROOF_REQUIRED",
+          "reason": "MISSING_PRIMARY_NORMALIZATION"
+        },
+        {
+          "path": "tooling/hibernate-gradle-plugin/src/main/java/org/hibernate/orm/tooling/gradle/reveng/RevengTask.java",
+          "className": "RevengTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 36,
+            "startColumn": 1,
+            "endLine": 36,
+            "endColumn": 53
+          },
+          "sourceSha256": "0de5da03d3be8433bc1ed2781edea24a91c19eb8fe5c5fbee60af39e75207454",
+          "fileInputs": [],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        }
+      ]
+    },
+    {
+      "key": "spotless",
+      "repository": "https://github.com/diffplug/spotless.git",
+      "revision": "cbd01c4e4b91cea538691d4fe6a8f929d75c27c6",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "plugin-gradle/src/main/java/com/diffplug/gradle/spotless/RegisterDependenciesTask.java",
+          "className": "RegisterDependenciesTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 50,
+            "startColumn": 1,
+            "endLine": 50,
+            "endColumn": 67
+          },
+          "sourceSha256": "b76077daf1c998e120eaac397644f847e986da134da6e2825f49b765c64d4aa8",
+          "fileInputs": [],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "plugin-gradle/src/main/java/com/diffplug/gradle/spotless/SpotlessDiagnoseTask.java",
+          "className": "SpotlessDiagnoseTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 36,
+            "startColumn": 1,
+            "endLine": 36,
+            "endColumn": 54
+          },
+          "sourceSha256": "5081afa350fc932a122957d065b523fb5ee0ea4c73c6b9065a05dbb903025989",
+          "fileInputs": [],
+          "decision": "NO_ACTION",
+          "reason": "NO_DECLARED_TASK_INPUTS_OR_OUTPUTS"
+        },
+        {
+          "path": "plugin-gradle/src/main/java/com/diffplug/gradle/spotless/SpotlessInstallPrePushHookTask.java",
+          "className": "SpotlessInstallPrePushHookTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 37,
+            "startColumn": 1,
+            "endLine": 37,
+            "endColumn": 73
+          },
+          "sourceSha256": "e0814e5ee4cb13597723a4182dbfc663e291de58536fe4740680e1c8e4825486",
+          "fileInputs": [],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "plugin-gradle/src/main/java/com/diffplug/gradle/spotless/SpotlessTask.java",
+          "className": "SpotlessTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 48,
+            "startColumn": 1,
+            "endLine": 48,
+            "endColumn": 55
+          },
+          "sourceSha256": "68eda395de7a0313032fba8bbd193811c298da36ff22b2066fef563fb896ca44",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getTarget",
+              "declarationSpan": {
+                "startLine": 140,
+                "startColumn": 1,
+                "endLine": 144,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "plugin-gradle/src/main/java/com/diffplug/gradle/spotless/SpotlessTaskService.java",
+          "className": "ClientTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 142,
+            "startColumn": 18,
+            "endLine": 142,
+            "endColumn": 54
+          },
+          "sourceSha256": "aed4865732b065d934e619044cdc9ec09f3b4548551713156be80ce155ab3dd5",
+          "fileInputs": [],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        },
+        {
+          "path": "plugin-gradle/src/test/java/com/diffplug/gradle/spotless/ConfigAvoidanceTest.java",
+          "className": "ConfigureCanary",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 38,
+            "startColumn": 6,
+            "endLine": 38,
+            "endColumn": 47
+          },
+          "sourceSha256": "b847f2f543ac017aba4a79d3c66e9b6ecacd40133d80c1890dc11a1888aa41d5",
+          "fileInputs": [],
+          "decision": "NO_ACTION",
+          "reason": "NO_DECLARED_TASK_INPUTS_OR_OUTPUTS"
+        }
+      ]
+    },
+    {
+      "key": "mockito",
+      "repository": "https://github.com/mockito/mockito.git",
+      "revision": "a231205b240e7884a63bf0f63440012867a4da21",
+      "conclusive": true,
+      "candidates": []
+    },
+    {
+      "key": "spotbugs",
+      "repository": "https://github.com/spotbugs/spotbugs.git",
+      "revision": "8d5cad4536ae263448c09181268bbca70f0c0712",
+      "conclusive": true,
+      "candidates": []
+    }
+  ],
+  "conclusiveFamilies": 5,
+  "actionFamilies": 1,
+  "requiredActionFamilies": 1,
+  "decision": "PASS_FRESH_SOURCE_ACTION_GATE",
+  "compilationAuthorized": true,
+  "timingAuthorized": false
+}

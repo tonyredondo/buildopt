@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 3)) || [[ $1 != /* || $2 != /* || $3 != /* ]]; then
+    printf 'usage: %s /absolute/control-root /absolute/candidate-root /absolute/output-dir\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_control_root=$1
+buildopt_candidate_root=$2
+buildopt_output=$3
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_revision=2b448a59d332326f0cd0691c868425124d55cbb5
+buildopt_source=local-build-plugins/src/main/java/org/hibernate/orm/properties/SettingsDocGenerationTask.java
+buildopt_original_sha=d19641865a45219c5af954e1fc678d570737fe5e688109e4fd083900770173ad
+buildopt_candidate_sha=b6cc3efdaa9490fd3fd2fd69b75c7988b871f1f79e8fcd948e76970ef6e40b44
+buildopt_output_relative=documentation/target/asciidoc/fragments/config-settings.adoc
+buildopt_output_sha=cec4b6aa8ec61731b1115c6e024769d37cc76572257e2ff8795d3ce4e48398d9
+buildopt_gradle_home=/tmp/buildopt-rnce-hibernate-state/gradle-home
+buildopt_read_only_cache="${buildopt_repo_root}/.tools/gradle-user-home/caches"
+buildopt_gradle="${buildopt_repo_root}/.tools/gradle-user-home/wrapper/dists/gradle-9.6.1-bin/4ticwg1pgcbps2hj28r8so764/gradle-9.6.1/bin/gradle"
+
+[[ ! -e ${buildopt_output} ]] || {
+    printf 'value output already exists: %s\n' "${buildopt_output}" >&2
+    exit 1
+}
+mkdir -p -- "${buildopt_output}/logs"
+
+for buildopt_root in "${buildopt_control_root}" "${buildopt_candidate_root}"; do
+    [[ $(git -C "${buildopt_root}" rev-parse HEAD) == "${buildopt_revision}" ]] || {
+        printf 'unexpected Hibernate revision: %s\n' "${buildopt_root}" >&2
+        exit 1
+    }
+done
+[[ $(sha256sum "${buildopt_control_root}/${buildopt_source}" | cut -d' ' -f1) == "${buildopt_original_sha}" ]]
+[[ $(sha256sum "${buildopt_candidate_root}/${buildopt_source}" | cut -d' ' -f1) == "${buildopt_candidate_sha}" ]]
+
+buildopt_free_kib=$(df -Pk /tmp | awk 'NR == 2 {print $4}')
+((buildopt_free_kib >= 8 * 1024 * 1024)) || {
+    printf 'RNCE value start requires at least 8 GiB free\n' >&2
+    exit 1
+}
+
+buildopt_rows="${buildopt_output}/rows.jsonl"
+: >"${buildopt_rows}"
+
+run_arm() {
+    local buildopt_arm=$1
+    local buildopt_root=$2
+    local buildopt_pair=$3
+    local buildopt_sequence=$4
+    local buildopt_included=$5
+    local buildopt_log="${buildopt_output}/logs/${buildopt_sequence}-${buildopt_arm}.log"
+    local buildopt_start_ns buildopt_end_ns buildopt_duration_ms buildopt_status
+
+    rm -f -- "${buildopt_root}/${buildopt_output_relative}"
+    buildopt_start_ns=$(date +%s%N)
+    if (
+        cd -- "${buildopt_root}"
+        env -u CI GRADLE_USER_HOME="${buildopt_gradle_home}" \
+            GRADLE_RO_DEP_CACHE="${buildopt_read_only_cache}" \
+            timeout 5m "${buildopt_script_dir}/run" --toolchain temurin-jdk-25 -- \
+            "${buildopt_gradle}" :documentation:generateSettingsDoc \
+            -x :documentation:javadoc --offline --no-daemon --build-cache \
+            --max-workers=4 --no-scan --stacktrace --console=plain
+    ) >"${buildopt_log}" 2>&1; then
+        buildopt_status=PASS
+    else
+        buildopt_status=FAIL
+    fi
+    buildopt_end_ns=$(date +%s%N)
+    buildopt_duration_ms=$(((buildopt_end_ns - buildopt_start_ns) / 1000000))
+
+    [[ ${buildopt_status} == PASS ]] || {
+        tail -n 120 "${buildopt_log}" >&2
+        exit 1
+    }
+    [[ $(sha256sum "${buildopt_root}/${buildopt_output_relative}" | cut -d' ' -f1) == "${buildopt_output_sha}" ]] || {
+        printf '%s output drift\n' "${buildopt_arm}" >&2
+        exit 1
+    }
+    if [[ ${buildopt_arm} == CANDIDATE ]]; then
+        grep -Fq ':documentation:generateSettingsDoc FROM-CACHE' "${buildopt_log}"
+    else
+        if grep -Fq ':documentation:generateSettingsDoc FROM-CACHE' "${buildopt_log}"; then
+            printf 'control unexpectedly restored the selected task from cache\n' >&2
+            exit 1
+        fi
+        grep -Fq '> Task :documentation:generateSettingsDoc' "${buildopt_log}"
+    fi
+
+    jq -cn \
+        --arg arm "${buildopt_arm}" \
+        --argjson pair "${buildopt_pair}" \
+        --argjson sequence "${buildopt_sequence}" \
+        --argjson included "${buildopt_included}" \
+        --argjson durationMilliseconds "${buildopt_duration_ms}" \
+        --arg outputSha256 "${buildopt_output_sha}" \
+        '{arm:$arm,pair:$pair,sequence:$sequence,included:$included,
+          durationMilliseconds:$durationMilliseconds,exitCode:0,
+          outputSha256:$outputSha256,productFailures:0}' >>"${buildopt_rows}"
+    printf 'RNCE value %02d: %s %d ms\n' \
+        "${buildopt_sequence}" "${buildopt_arm}" "${buildopt_duration_ms}"
+}
+
+buildopt_sequence=1
+run_arm CONTROL "${buildopt_control_root}" 0 "${buildopt_sequence}" false
+for buildopt_pair in 1 2 3 4 5 6 7 8; do
+    if ((buildopt_pair % 2 == 1)); then
+        buildopt_order=(CONTROL CANDIDATE)
+    else
+        buildopt_order=(CANDIDATE CONTROL)
+    fi
+    for buildopt_arm in "${buildopt_order[@]}"; do
+        buildopt_sequence=$((buildopt_sequence + 1))
+        if [[ ${buildopt_arm} == CONTROL ]]; then
+            run_arm CONTROL "${buildopt_control_root}" "${buildopt_pair}" "${buildopt_sequence}" true
+        else
+            run_arm CANDIDATE "${buildopt_candidate_root}" "${buildopt_pair}" "${buildopt_sequence}" true
+        fi
+    done
+done
+
+printf 'RNCE value rows written to %s\n' "${buildopt_rows}"

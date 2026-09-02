@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "buildopt.evidence/reviewed-native-patch-customer-economics-terminal/v1",
+  "sourceGate": "PASS_FRESH_SOURCE_ACTION_GATE",
+  "correctnessGate": "PASS_PROPOSAL_CORRECTNESS",
+  "valueGate": "FAIL_REVIEWED_NATIVE_PATCH_VALUE",
+  "ownerReview": "NOT_AUTHORIZED_VALUE_GATE_FAILED",
+  "newQualifiedPublicFamilies": 0,
+  "commercialEconomics": "NOT_ESTABLISHED_NEGATIVE_INCREMENTAL_VALUE",
+  "terminalDecision": "STOP_THIRD_FAMILY_CUSTOMER_ECONOMICS_VALUE_GATE",
+  "boundaries": {
+    "draftCreated": false,
+    "upstreamPullRequest": false,
+    "merge": false,
+    "defaultBranchMutation": false,
+    "productionAuthorized": false,
+    "automaticApply": false,
+    "automaticMerge": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

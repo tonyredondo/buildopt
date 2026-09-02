@@ -2,6 +2,16 @@
 
 ## Current Executive Summary
 
+- **Fresh third-family customer economics stops at the value gate.** A new
+  five-family source audit is 5/5 conclusive and finds safe actions only in
+  Hibernate. `SettingsDocGenerationTask` passes exact same/cross-root cache
+  restoration, content/path invalidation, fallback, revert and zero-failure
+  checks. Its eight balanced offline pairs are only 4/8 positive: optimized
+  native averages 15,143.75 ms and the candidate 15,334.625 ms, a
+  190.875-ms/1.26% regression with a -829.625..+380.875-ms interval. The gate
+  forbids a draft and timed owner review, so no third value family or
+  commercial claim is added.
+
 - **Owner comprehension and acceptance pass 2/2, with time unmeasured.** Two
   controlled forks expose exact historical/candidate branches as draft-only
   reviews. Each draft is one commit ahead, changes one expected file and
@@ -1481,3 +1491,10 @@ validation and delivery gives a finite 296-build payback. Human review was not
 measured and is excluded rather than invented. The result qualifies the
 owner-operated reviewed-patch POC; it does not establish production readiness
 or authorize automatic application or merge.
+
+The fresh successor tests whether this product unit extends to a third family
+while pricing first review. Only Hibernate is actionable in the five-family
+source cohort. Its selected correction passes correctness but regresses by
+190.875 ms across eight balanced pairs with only 4/8 positive observations.
+The fixed value prerequisite therefore stops before delivery and review; the
+two-family portfolio remains the complete positive boundary.
