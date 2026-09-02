@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "buildopt.evidence/reviewed-native-patch-autopilot-proposals/v1",
+  "block": "RNPP-004",
+  "authority": "OWNER_REVIEW_REQUIRED",
+  "transaction": "DIGEST_BOUND_EXACT_APPLY_REVERT",
+  "proposals": [
+    {
+      "id": "micronaut-python-vfs-bytecode-compile-relative-v1",
+      "family": "micronaut-core",
+      "revision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+      "recipe": "ADD_RELATIVE_PATH_NORMALIZATION_AND_CACHEABLE_MARKER_V1",
+      "patch": {
+        "schemaVersion": "buildopt.patch/normalization-aware-cacheability/v2",
+        "path": "buildSrc/src/main/groovy/io/micronaut/build/internal/python/PythonVfsBytecodeCompile.java",
+        "className": "PythonVfsBytecodeCompile",
+        "expectedSourceSha256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+        "patchedSourceSha256": "2cfc774746985253205acb2f360df84c70a9f4ba985d2ef1f32e8ecbcfa464ed",
+        "edits": [{"offset":1460,"insertedText":"    @org.gradle.api.tasks.PathSensitive(org.gradle.api.tasks.PathSensitivity.RELATIVE)\n"},{"offset":1257,"insertedText":"@org.gradle.api.tasks.CacheableTask\n"}]
+      },
+      "resultBinding": "QUALIFY_REVIEWED_NATIVE_PATCH"
+    },
+    {
+      "id": "spring-architecture-check-v1",
+      "family": "spring-framework",
+      "revision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+      "recipe": "ADD_CACHEABLE_TASK_MARKER_V2",
+      "patch": {
+        "schemaVersion": "buildopt.patch/normalization-aware-cacheability/v2",
+        "path": "buildSrc/src/main/java/org/springframework/build/architecture/ArchitectureCheck.java",
+        "className": "ArchitectureCheck",
+        "expectedSourceSha256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+        "patchedSourceSha256": "dd75bc28223141ac121f6377f7ba95832fd250739861196f60120264dd4c2d1d",
+        "edits": [{"offset":2452,"insertedText":"@org.gradle.api.tasks.CacheableTask\n"}]
+      },
+      "resultBinding": "QUALIFY_REVIEWED_NATIVE_PATCH"
+    }
+  ],
+  "proposalCount": 2,
+  "automaticApply": false,
+  "automaticMerge": false,
+  "productionAuthorized": false
+}

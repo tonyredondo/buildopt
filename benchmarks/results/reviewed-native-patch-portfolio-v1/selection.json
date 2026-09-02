@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "buildopt.evidence/reviewed-native-patch-selection/v1",
+  "block": "RNPP-001",
+  "selectionInputs": {
+    "publicCorrectness": "benchmarks/results/normalization-aware-cacheability-v2/public-correctness.json",
+    "patchPlan": "benchmarks/results/normalization-aware-cacheability-v2/patch-plan.json"
+  },
+  "predecessorDecision": "STOP_NORMALIZATION_AWARE_CACHEABILITY_POC",
+  "predecessorRowsAreFreshCorrectness": false,
+  "proposals": [
+    {
+      "id": "micronaut-python-vfs-bytecode-compile-relative-v1",
+      "family": "micronaut-core",
+      "revision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+      "className": "PythonVfsBytecodeCompile",
+      "action": "ADD_RELATIVE_PATH_NORMALIZATION_AND_CACHEABLE_MARKER_V1",
+      "selectionResult": "SELECTED_REQUIRES_FRESH_CORRECTNESS"
+    },
+    {
+      "id": "otel-generate-instrumentation-version-class-v1",
+      "family": "opentelemetry-java-instrumentation",
+      "revision": "3300ac68822ed4dbade73496f2fffd3a2c6e32ed",
+      "className": "GenerateInstrumentationVersionClassTask",
+      "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+      "selectionResult": "SELECTED_REQUIRES_FRESH_CORRECTNESS"
+    },
+    {
+      "id": "spring-architecture-check-v1",
+      "family": "spring-framework",
+      "revision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+      "className": "ArchitectureCheck",
+      "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+      "selectionResult": "SELECTED_REQUIRES_FRESH_CORRECTNESS"
+    },
+    {
+      "id": "spring-shadow-source-v1",
+      "family": "spring-framework",
+      "revision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+      "className": "ShadowSource",
+      "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+      "selectionResult": "SELECTED_REQUIRES_FRESH_CORRECTNESS"
+    }
+  ],
+  "selectedProposals": 4,
+  "selectedFamilies": 3,
+  "decision": "OPEN_FRESH_PER_PROPOSAL_CORRECTNESS"
+}

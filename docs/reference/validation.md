@@ -22,6 +22,12 @@ check is static by default; `NAC_RUN_GRADLE_MATRIX=1` repeats its four real
 fixture builds. Hosted CI verifies contracts only and never supplies a
 wall-time gate.
 
+The completed reviewed-native portfolio pivot is checked independently by
+`./dev/check-reviewed-native-patch-portfolio`. It reconstructs the four-proposal
+selection, every eight-pair statistic and deterministic bootstrap interval,
+the two-family portfolio gate, conservative machine payback, exact-output
+bindings and the two owner-review-only Patch Autopilot descriptors.
+
 BuildOpt uses focused checks as executable evidence. Run the smallest gate that
 owns the changed contract, then add broader composition only when the change
 crosses components or platforms.

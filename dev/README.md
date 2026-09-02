@@ -5736,3 +5736,15 @@ Toolchain updates are atomic repository changes:
 5. Run `./dev/check-toolchains-lock` and every smoke test affected by the tool before updating tracker evidence.
 
 Adding a platform or changing an adopted provider requires explicit compatibility evidence. A checksum-only change for the same immutable URL is treated as a supply-chain conflict and must not be accepted without resolving the upstream discrepancy.
+
+## Reviewed native patch portfolio
+
+```bash
+./dev/check-reviewed-native-patch-portfolio
+```
+
+This static terminal checker reconstructs four fresh public eight-pair results,
+their paired intervals, exact-output/cross-root correctness, conservative
+machine costs and portfolio economics. It also verifies that only the two
+qualifying digest-bound patches enter the existing owner-review-only exact
+apply/revert transaction. It never runs public Gradle builds or applies a patch.

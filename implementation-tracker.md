@@ -1,14 +1,14 @@
 # Gradle Build Optimization — Implementation Tracker
 
-**Overall status:** `NO_ACTIONABLE_CHRONOLOGICAL_SUCCESSOR` — installed value exists in three exact classes, but no current-architecture mechanism safely transfers it across ordinary commits<br>
-**Current phase:** `CFSS-003` — source-only successor selection closed; a separately authorized architecture or product pivot is required<br>
+**Overall status:** `REVIEWED_NATIVE_PATCH_PORTFOLIO_POC_QUALIFIED` — two independently reviewed native Gradle corrections qualify across two public families<br>
+**Current phase:** `RNPP-005` — portfolio decision complete; production and automatic application remain unauthorized<br>
 **POC functional target:** produce positive cumulative wall-time value against optimized native Gradle across chronological customer-requested builds, including every wrapper, observation, trial, cache, fallback and action cost<br>
-**POC onboarding north star:** `generate and commit BuildOpt Wrapper -> ./buildoptw build`; no global BuildOpt installation, hand-authored profile or committed credential is required<br>
+**POC onboarding north star:** `BuildOpt proposal -> owner review -> validated native Gradle patch`; accepted patches need no BuildOpt runtime on the build path<br>
 **POC validation posture:** establish compatibility on exact public revisions, then use bounded paired experiments against optimized native Gradle with identical required outputs and zero additional product failures<br>
 **Product boundary:** Test Optimization remains a separate product; this expansion may consume its existing signed contracts but must not implement test selection, prioritization, sharding, retry, or flake-management behavior<br>
-**Last updated:** 2026-09-01<br>
+**Last updated:** 2026-09-02<br>
 **Master RFC:** [gradle-build-optimization-platform.md](./gradle-build-optimization-platform.md)<br>
-**Detailed POC tracker:** [Chronological Failure Successor Selection v1](./docs/plans/chronological-failure-successor-selection-v1.md)<br>
+**Detailed POC tracker:** [Reviewed Native Patch Portfolio v1](./docs/plans/reviewed-native-patch-portfolio-v1.md)<br>
 **Closed predecessor:** [Remote Cache Locality Value v2 POC Tracker](./docs/plans/remote-cache-locality-value-poc-tracker.md)<br>
 **Superseded diagnostic tracker:** [Sticky Wrapper Learning POC Tracker](./docs/plans/sticky-wrapper-learning-poc-tracker.md)<br>
 **Earlier closed predecessor:** [Adaptive Fragment Generalization POC Tracker](./docs/plans/adaptive-fragment-generalization-tracker.md)<br>
@@ -228,6 +228,7 @@ This file tracks implementation; the RFC retains product decisions, invariants, 
 | POC-SPRING-MESSAGING-PAIRED-VALUE | Measure robust installed value for the exact Spring Messaging class | `DONE` | 3/3 | `E-505..506`; [closed tracker](./docs/plans/spring-messaging-paired-value-v1.md). 8/8 positive, 19.441% mean saving, positive interval, improved p95, two-match payback and exact outputs |
 | POC-THREE-CLASS-CHRONOLOGICAL-VALUE | Test cumulative value across the immediate public descendants of all three qualified classes | `STOPPED` | 4 resolved; 1 not authorized | `E-507..508`; [closed tracker](./docs/plans/three-class-chronological-value-v1.md). Kafka selects 0/3 and closes -58,055 ms net; Groovy retains native after a -5,831-ms first pair; Spring is not run because 2/3 payback is impossible |
 | POC-CHRONOLOGICAL-FAILURE-SUCCESSOR-SELECTION | Determine whether TCCV failures expose one materially different safe mechanism | `DONE` | 3/3 | `E-509`; [closed tracker](./docs/plans/chronological-failure-successor-selection-v1.md). Kafka changes Streams producers while the profile rebuilds clients; Groovy changes global inputs; producer reuse duplicates already failed change-aware/adaptive mechanisms. Decision: no actionable successor |
+| POC-REVIEWED-NATIVE-PATCH-PORTFOLIO | Qualify independently reviewed, reversible native Gradle corrections instead of a dynamic cross-commit runtime | `DONE` | 5/5 | `E-510`; [closed tracker](./docs/plans/reviewed-native-patch-portfolio-v1.md). Micronaut and Spring Architecture qualify; 7,906.625-ms signed saving, 296-build conservative machine payback, exact outputs and zero product failures |
 | GA-D | Production hardening | `DEFERRED` | 0/1 | Not authorized by terminal `STOP_GENERIC_POC` or `STOP_ADAPTIVE_FRAGMENT_POC` |
 
 Design baseline: the RFC contains 53 accepted decisions. `Accepted` records architecture; only evidence linked from this tracker closes implementation or POC value.
@@ -1449,7 +1450,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 
 ## 10. POC-C4 — Patch Autopilot
 
-**State:** `PRELIMINARY`<br>
+**State:** `POC_QUALIFIED`<br>
 **Entry gate:** B + `PATCH-BUNDLE-001`; C1 for custom-task patches; `TESTOPT-API-001` when tests are required.
 
 ### 10.1 Workboard
@@ -1475,7 +1476,7 @@ Allowed spike outcomes: `DONE` with a supported capability, or `UNAVAILABLE` wit
 | `C4-G03` | PR explains the change, evidence, impact, and rollback | `DONE` | `E-110` |
 | `C4-G04` | `PRELIMINARY` is not counted as confirmed impact | `DONE` | `E-110` |
 | `C4-G05` | Post-merge does not fake rollout and creates a revert PR on regression | `DONE` | `E-112` |
-| `C4-G06` | Accepted patches exceed the POC value threshold across supported recipe classes | `PRELIMINARY` | `E-117`, `E-158`: the exact custom-task recipe qualifies in both DSLs; other recipe classes remain unmeasured |
+| `C4-G06` | Accepted patches exceed the POC value threshold across supported recipe classes | `DONE` | `E-117`, `E-158`, `E-510`: marker-only and reviewed-relative native cacheability recipes qualify across Spring and Micronaut with fresh public value evidence |
 | `C4-G07` | Patcher passes golden/negative/idempotency/recovery vectors | `DONE` | `E-106` |
 
 ---
@@ -2559,12 +2560,14 @@ This table points to the latest valid result. It does not replace reports or all
 | `E-507` | 2026-09-01 | `POC-THREE-CLASS-CHRONOLOGICAL-VALUE`, `TCCV-001` | The [contract](./specs/poc-three-class-chronological-value-v1.md), machine policy, frozen source selection, [tracker](./docs/plans/three-class-chronological-value-v1.md) and independent contract checker bind the three exact qualified classes to their nine immediate first-parent descendants | `DONE` planning only: 8/8 requalification, cross-root portability, exact outputs, zero failures, 2/3 subject payback and positive aggregate net are immutable before execution; no new Gradle or timing row exists |
 | `E-508` | 2026-09-01 | `POC-THREE-CLASS-CHRONOLOGICAL-VALUE`, `TCCV-002..005` | [`check-three-class-chronological-value`](./dev/check-three-class-chronological-value) validates both raw subject bundles and independently reconstructs the [terminal summary](./benchmarks/results/three-class-chronological-value-v1/summary.json) | `DONE_STOP`: Kafka requalifies 8/8 and is portable but selects 0/3 descendants, closing -58,055 ms net. Groovy's first pair is -5,831 ms and ordinary economics retains native before calibration, closing -2,995 ms. Aggregate consumed net is -61,050 ms, exact outputs pass and failures are zero. Spring is `NOT_RUN_DEPENDENCY` because the required 2/3 payback is impossible; terminal `STOP_THREE_CLASS_CHRONOLOGICAL_VALUE` |
 | `E-509` | 2026-09-01 | `POC-CHRONOLOGICAL-FAILURE-SUCCESSOR-SELECTION`, `CFSS-001..003` | [`check-chronological-failure-successor-selection`](./dev/check-chronological-failure-successor-selection) binds TCCV and prior terminal inputs, reconstructs six public descendant path sets and derives all candidate decisions from raw captures rather than trusting the report | `DONE_STOP`: 3/3 Kafka descendants change Streams producers whose outputs the clients-qualified profile materializes, while all three Groovy descendants change global version/dependency/verification inputs. Content-addressed producer reuse reduces to change-aware closure (0 Kafka actions) and adaptive fragments (0/71 activations, 0 positive families, -368.623 seconds). Zero Gradle/timing; terminal `NO_ACTIONABLE_MATERIALLY_DIFFERENT_SUCCESSOR`. A new build experiment requires a separately authorized architecture or product pivot |
+| `E-510` | 2026-09-02 | `POC-REVIEWED-NATIVE-PATCH-PORTFOLIO`, `RNPP-001..005`, `C4-G06` | The [portfolio evidence](./benchmarks/results/reviewed-native-patch-portfolio-v1/README.md) and independent [`check-reviewed-native-patch-portfolio`](./dev/check-reviewed-native-patch-portfolio) reconstruct four fresh correctness matrices and 32 balanced public pairs. Micronaut `PythonVfsBytecodeCompile` saves 6,921.125 ms/63.44%; Spring `ArchitectureCheck` saves 985.5 ms/35.34%; both pass 8/8, positive intervals, p95, exact cross-root outputs and zero failures. OpenTelemetry and `ShadowSource` reject independently. The two accepted digest-bound descriptors enter only the owner-reviewed exact apply/revert Patch Autopilot transaction | `DONE`: terminal `QUALIFY_REVIEWED_NATIVE_PATCH_PORTFOLIO_POC`; 2/4 proposals across two families, signed 7,906.625-ms saving and 296-compatible-build conservative machine payback. Human review is explicitly unmeasured; no production, automatic apply/merge, dynamic candidate path or Test Optimization authority is added |
 ---
 
 ## 15. Tracker changelog
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-09-02 | Closed `RNPP-001..005`: four fresh native-patch proposals reproduce exact cross-root outputs and 32 balanced pairs. Micronaut and Spring Architecture qualify across two families with a signed 7,906.625-ms saving and 296-build conservative machine payback; OpenTelemetry and ShadowSource reject independently. Human review, production and automatic application/merge remain outside the result | Codex |
 | 2026-09-01 | Closed `SMPV-002/003`: the single seventeen-request Spring Messaging campaign qualifies at 7,802.5 ms / 19.441% with 8/8 positive pairs, positive interval, improved p95, two-match payback, all 14,406 outputs exact and zero failures. The POC now has three bounded public value classes; production and generic breadth remain unauthorized | Codex |
 | 2026-08-31 | Opened `REMOTE_CACHE_LOCALITY_VALUE_V3` and closed `RCL3-001`: preserved the v2 stop, froze five source-bound primary artifacts, two-producer native reproducibility, non-fail-fast 5/5 correctness and a fixed 30-ms/100-MiB/s controlled envelope. No v3 public build or timing exists; `RCL3-002` is next | Codex |
 | 2026-08-31 | Closed `RCL3-002`: production Edge safety behavior and the fixed shaped-origin profile pass fresh checks. Authorized `RCL3-003` public correctness for all five families; value timing remains closed | Codex |

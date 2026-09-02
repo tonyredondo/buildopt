@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "buildopt.evidence/reviewed-native-patch-portfolio/v1",
+  "block": "RNPP-002..005",
+  "measurementDate": "2026-09-02",
+  "environment": {
+    "host": "linux-amd64-owner-poc",
+    "gradleMode": "optimized-native-build-cache-configuration-cache-when-supported-daemon",
+    "pairsPerProposal": 8,
+    "pairOrder": "CONTROL_FIRST_ODD_CANDIDATE_FIRST_EVEN"
+  },
+  "costPolicy": {
+    "kind": "CONSERVATIVE_CEILING_OF_OBSERVED_CAMPAIGN_WALL_TIME",
+    "description": "Each machine cost rounds all observed proposal generation, diagnostic, correctness, validation and delivery elapsed time upward to a whole minute. Timing pairs are excluded. Human review is reported separately and is not invented.",
+    "humanReviewMs": "NOT_MEASURED",
+    "humanReviewIncludedInPayback": false
+  },
+  "proposals": [
+    {
+      "id": "micronaut-python-vfs-bytecode-compile-relative-v1",
+      "family": "micronaut-core",
+      "revision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+      "taskPaths": [":micronaut-context-python:compileVfsPythonBytecode"],
+      "action": "ADD_RELATIVE_PATH_NORMALIZATION_AND_CACHEABLE_MARKER_V1",
+      "correctness": {"fresh": true, "controlDigest": "57f26ac45ef0738ca90e30f92ac99223eb3dbe796eddcf9b01af78197450dc27", "candidateDigest": "57f26ac45ef0738ca90e30f92ac99223eb3dbe796eddcf9b01af78197450dc27", "crossRootDigest": "57f26ac45ef0738ca90e30f92ac99223eb3dbe796eddcf9b01af78197450dc27", "outputFiles": 3, "crossRootFromCache": true, "exactRevert": true, "nativeFallback": true, "productFailures": 0},
+      "observations": [{"pair":1,"controlMs":10189,"candidateMs":4242},{"pair":2,"controlMs":8105,"candidateMs":3410},{"pair":3,"controlMs":7442,"candidateMs":3582},{"pair":4,"controlMs":7157,"candidateMs":3416},{"pair":5,"controlMs":7394,"candidateMs":3808},{"pair":6,"controlMs":19683,"candidateMs":3644},{"pair":7,"controlMs":15691,"candidateMs":5961},{"pair":8,"controlMs":11613,"candidateMs":3842}],
+      "summary": {"positivePairs":8,"controlMeanMs":10909.25,"candidateMeanMs":3988.125,"meanSavedMs":6921.125,"meanReductionRatio":0.6344272062699086,"paired95Ms":[4492.125,9980.75],"controlP95Ms":19683,"candidateP95Ms":5961},
+      "economics": {"costComponents":[{"phase":"generation-and-diagnostics","chargedMs":180000},{"phase":"correctness-and-validation","chargedMs":360000},{"phase":"delivery-and-revert","chargedMs":60000}],"chargedMachineCostMs":600000,"machinePaybackBuilds":87,"humanReviewMs":"NOT_MEASURED"},
+      "decision": "QUALIFY_REVIEWED_NATIVE_PATCH"
+    },
+    {
+      "id": "otel-generate-instrumentation-version-class-v1",
+      "family": "opentelemetry-java-instrumentation",
+      "revision": "3300ac68822ed4dbade73496f2fffd3a2c6e32ed",
+      "taskPaths": [":instrumentation:okhttp:okhttp-3.0:library:generateInstrumentationVersionClass"],
+      "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+      "correctness": {"fresh": true, "controlDigest": "305fee0dc2e0c09d129626c112488ae476365c846dfa7fcf5dfade3d37a36166", "candidateDigest": "305fee0dc2e0c09d129626c112488ae476365c846dfa7fcf5dfade3d37a36166", "crossRootDigest": "305fee0dc2e0c09d129626c112488ae476365c846dfa7fcf5dfade3d37a36166", "outputFiles": 1, "crossRootFromCache": true, "exactRevert": true, "nativeFallback": true, "productFailures": 0},
+      "observations": [{"pair":1,"controlMs":13754,"candidateMs":13778},{"pair":2,"controlMs":1597,"candidateMs":1147},{"pair":3,"controlMs":1153,"candidateMs":1276},{"pair":4,"controlMs":1021,"candidateMs":931},{"pair":5,"controlMs":934,"candidateMs":930},{"pair":6,"controlMs":951,"candidateMs":922},{"pair":7,"controlMs":935,"candidateMs":930},{"pair":8,"controlMs":944,"candidateMs":921}],
+      "summary": {"positivePairs":6,"controlMeanMs":2661.125,"candidateMeanMs":2604.375,"meanSavedMs":56.75,"meanReductionRatio":0.02132556719432571,"paired95Ms":[-31.5,181.125],"controlP95Ms":13754,"candidateP95Ms":13778},
+      "economics": {"costComponents":[{"phase":"generation-and-diagnostics","chargedMs":60000},{"phase":"correctness-and-validation","chargedMs":1020000},{"phase":"delivery-and-revert","chargedMs":60000}],"chargedMachineCostMs":1140000,"machinePaybackBuilds":20089,"humanReviewMs":"NOT_MEASURED"},
+      "decision": "REJECT_RUNTIME_GATES"
+    },
+    {
+      "id": "spring-architecture-check-v1",
+      "family": "spring-framework",
+      "revision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+      "taskPaths": [":spring-core:checkArchitectureMain"],
+      "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+      "correctness": {"fresh": true, "controlDigest": "06055891d654753ac9e31f765613184cf829f4b27cd358ca5ba97e8c4eb067b2", "candidateDigest": "06055891d654753ac9e31f765613184cf829f4b27cd358ca5ba97e8c4eb067b2", "crossRootDigest": "06055891d654753ac9e31f765613184cf829f4b27cd358ca5ba97e8c4eb067b2", "outputFiles": 1, "crossRootFromCache": true, "exactRevert": true, "nativeFallback": true, "productFailures": 0},
+      "observations": [{"pair":1,"controlMs":3443,"candidateMs":2134},{"pair":2,"controlMs":2978,"candidateMs":1811},{"pair":3,"controlMs":2687,"candidateMs":1899},{"pair":4,"controlMs":3003,"candidateMs":1742},{"pair":5,"controlMs":2707,"candidateMs":1647},{"pair":6,"controlMs":2579,"candidateMs":1828},{"pair":7,"controlMs":2614,"candidateMs":1590},{"pair":8,"controlMs":2297,"candidateMs":1773}],
+      "summary": {"positivePairs":8,"controlMeanMs":2788.5,"candidateMeanMs":1803,"meanSavedMs":985.5,"meanReductionRatio":0.3534158149542765,"paired95Ms":[795.375,1153.375],"controlP95Ms":3443,"candidateP95Ms":2134},
+      "economics": {"costComponents":[{"phase":"generation-and-diagnostics","chargedMs":60000},{"phase":"correctness-and-validation","chargedMs":240000},{"phase":"delivery-and-revert","chargedMs":60000}],"chargedMachineCostMs":360000,"machinePaybackBuilds":366,"humanReviewMs":"NOT_MEASURED"},
+      "decision": "QUALIFY_REVIEWED_NATIVE_PATCH"
+    },
+    {
+      "id": "spring-shadow-source-v1",
+      "family": "spring-framework",
+      "revision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+      "taskPaths": [":spring-core:javapoetSource",":spring-core:objenesisSource"],
+      "action": "ADD_CACHEABLE_TASK_MARKER_V2",
+      "correctness": {"fresh": true, "controlDigest": "0181801a5f69ddf12d26f0dc047ec4c51b48c9ade8f47ee95b086f55b3e887f6", "candidateDigest": "0181801a5f69ddf12d26f0dc047ec4c51b48c9ade8f47ee95b086f55b3e887f6", "crossRootDigest": "0181801a5f69ddf12d26f0dc047ec4c51b48c9ade8f47ee95b086f55b3e887f6", "outputFiles": 58, "crossRootFromCache": true, "exactRevert": true, "nativeFallback": true, "productFailures": 0},
+      "observations": [{"pair":1,"controlMs":2057,"candidateMs":1769},{"pair":2,"controlMs":1933,"candidateMs":1787},{"pair":3,"controlMs":1810,"candidateMs":1658},{"pair":4,"controlMs":1876,"candidateMs":1766},{"pair":5,"controlMs":1695,"candidateMs":1613},{"pair":6,"controlMs":1962,"candidateMs":1742},{"pair":7,"controlMs":1771,"candidateMs":1731},{"pair":8,"controlMs":1753,"candidateMs":1688}],
+      "summary": {"positivePairs":8,"controlMeanMs":1857.125,"candidateMeanMs":1719.25,"meanSavedMs":137.875,"meanReductionRatio":0.0742410984721007,"paired95Ms":[86.875,194.625],"controlP95Ms":2057,"candidateP95Ms":1787},
+      "economics": {"costComponents":[{"phase":"generation-and-diagnostics","chargedMs":60000},{"phase":"correctness-and-validation","chargedMs":120000},{"phase":"delivery-and-revert","chargedMs":60000}],"chargedMachineCostMs":240000,"machinePaybackBuilds":1741,"humanReviewMs":"NOT_MEASURED"},
+      "decision": "REJECT_RUNTIME_GATES"
+    }
+  ],
+  "portfolio": {
+    "qualifiedProposals": 2,
+    "qualifiedFamilies": 2,
+    "meanSavedMsPerCompatiblePortfolioBuild": 7906.625,
+    "allProposalChargedMachineCostMs": 2340000,
+    "machinePaybackPortfolioBuilds": 296,
+    "productFailures": 0,
+    "decision": "QUALIFY_REVIEWED_NATIVE_PATCH_PORTFOLIO_POC"
+  },
+  "boundaries": {"productionAuthorized":false,"automaticMerge":false,"dynamicCandidatePath":false,"testOptimization":"OUT_OF_SCOPE"}
+}

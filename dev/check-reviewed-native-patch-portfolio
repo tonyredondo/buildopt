@@ -1,0 +1,181 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$root_dir"
+
+contract=specs/poc-reviewed-native-patch-portfolio-v1.json
+selection=benchmarks/results/reviewed-native-patch-portfolio-v1/selection.json
+result=benchmarks/results/reviewed-native-patch-portfolio-v1/result.json
+accepted=benchmarks/results/reviewed-native-patch-portfolio-v1/accepted-proposals.json
+correctness=benchmarks/results/normalization-aware-cacheability-v2/public-correctness.json
+patch_plan=benchmarks/results/normalization-aware-cacheability-v2/patch-plan.json
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-reviewed-native-patch-portfolio/v1" and
+  .productUnit == "INDEPENDENT_REVIEWED_NATIVE_GRADLE_SOURCE_CORRECTION" and
+  .selection.maximumProposals == 4 and
+  .selection.predecessorRowsAreFreshCorrectness == false and
+  .correctness.independentPerProposal == true and
+  .correctness.maximumGradleStartsPerProposal == 6 and
+  .correctness.productFailureBudget == 0 and
+  .value.pairsPerQualifiedProposal == 8 and
+  .value.minimumPositivePairs == 8 and
+  .value.minimumMeanSavedMs == 500 and
+  .value.minimumMeanReductionRatio == 0.02 and
+  .portfolioGate.minimumQualifyingProposals == 2 and
+  .portfolioGate.minimumQualifyingFamilies == 2 and
+  .budget.maximumAdditionalDiskGiB == 20 and
+  .boundaries.dynamicCandidatePath == false and
+  .boundaries.repositoryOrTaskNameRules == false and
+  .boundaries.automaticMerge == false and
+  .boundaries.productionAuthorized == false and
+  .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "$contract" >/dev/null
+
+jq -e '.gate.decision == "FAIL_INCOMPLETE_PUBLIC_CORRECTNESS" and .fullyProvedCandidates == 4 and .productFailures == 0' "$correctness" >/dev/null
+jq -e '.applied == 8 and .exactReverts == 8 and .timingAuthorized == false' "$patch_plan" >/dev/null
+
+expected=$(jq -cn --slurpfile correctness "$correctness" --slurpfile patches "$patch_plan" '
+  [
+    $correctness[0].rows[]
+    | select(.result == "PASS")
+    | . as $row
+    | $row.classes[]
+    | . as $class
+    | {
+        family: $row.family,
+        className: $class,
+        action: $row.action,
+        revision: (
+          [$patches[0].patches[]
+            | select(.family == $row.family and .patch.className == $class)
+            | .revision][0]
+          // [$patches[0].reviewedRelative[]
+            | select(.family == $row.family and .className == $class)
+            | .revision][0]
+        )
+      }
+  ] | sort_by(.family, .className)')
+actual=$(jq -c '[.proposals[] | {family, className, action, revision}] | sort_by(.family, .className)' "$selection")
+[[ "$actual" == "$expected" ]]
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/reviewed-native-patch-selection/v1" and
+  .block == "RNPP-001" and
+  .predecessorDecision == "STOP_NORMALIZATION_AWARE_CACHEABILITY_POC" and
+  .predecessorRowsAreFreshCorrectness == false and
+  .selectedProposals == (.proposals | length) and
+  .selectedProposals == 4 and
+  .selectedFamilies == ([.proposals[].family] | unique | length) and
+  .selectedFamilies == 3 and
+  ([.proposals[].selectionResult] | unique) == ["SELECTED_REQUIRES_FRESH_CORRECTNESS"] and
+  .decision == "OPEN_FRESH_PER_PROPOSAL_CORRECTNESS"
+' "$selection" >/dev/null
+
+if jq -e '.. | objects | has("durationMs") or has("savedMs") or has("speedupPercent")' "$selection" >/dev/null; then
+  echo "selection must not contain timing evidence" >&2
+  exit 1
+fi
+
+jq -e --slurpfile selection "$selection" --slurpfile contract "$contract" '
+  def close($a;$b): (($a-$b)|abs) < 0.000000001;
+  def bootstrap_mean($rows; $sample):
+    reduce range(0;8) as $draw
+      ({state:((2654435761*($sample+1))%4294967296),sum:0};
+       .state=((1664525*.state+1013904223)%4294967296) |
+       .sum += ($rows[((.state/536870912)|floor)].controlMs - $rows[((.state/536870912)|floor)].candidateMs)) |
+    .sum/8;
+  def bootstrap95($rows):
+    ([range(0;4096) as $sample | bootstrap_mean($rows;$sample)]|sort) as $values |
+    [$values[102],$values[3993]];
+  def reconstructed:
+    .observations as $rows |
+    ($rows|map(.controlMs)|add/length) as $controlMean |
+    ($rows|map(.candidateMs)|add/length) as $candidateMean |
+    {
+      positivePairs: ($rows|map(select(.controlMs>.candidateMs))|length),
+      controlMeanMs: $controlMean,
+      candidateMeanMs: $candidateMean,
+      meanSavedMs: ($controlMean-$candidateMean),
+      meanReductionRatio: (($controlMean-$candidateMean)/$controlMean),
+      paired95Ms: bootstrap95($rows),
+      controlP95Ms: ($rows|map(.controlMs)|max),
+      candidateP95Ms: ($rows|map(.candidateMs)|max)
+    };
+  def qualifies($p):
+    ($p.correctness.fresh and
+     $p.correctness.controlDigest==$p.correctness.candidateDigest and
+     $p.correctness.controlDigest==$p.correctness.crossRootDigest and
+     $p.correctness.crossRootFromCache and $p.correctness.exactRevert and
+     $p.correctness.nativeFallback and $p.correctness.productFailures==0 and
+     $p.summary.positivePairs==$contract[0].value.minimumPositivePairs and
+     $p.summary.meanSavedMs >= $contract[0].value.minimumMeanSavedMs and
+     $p.summary.meanReductionRatio >= $contract[0].value.minimumMeanReductionRatio and
+     $p.summary.paired95Ms[0] > 0 and
+     $p.summary.candidateP95Ms <= $p.summary.controlP95Ms);
+  .schemaVersion=="buildopt.evidence/reviewed-native-patch-portfolio/v1" and
+  .block=="RNPP-002..005" and
+  .costPolicy.kind=="CONSERVATIVE_CEILING_OF_OBSERVED_CAMPAIGN_WALL_TIME" and
+  .costPolicy.humanReviewMs=="NOT_MEASURED" and
+  .costPolicy.humanReviewIncludedInPayback==false and
+  (.proposals|length)==4 and
+  ([.proposals[].id]|sort)==([$selection[0].proposals[].id]|sort) and
+  ([.proposals[].family]|sort)==([$selection[0].proposals[].family]|sort) and
+  all(.proposals[];
+    (.observations|length)==8 and
+    ([.observations[].pair]|sort)==[1,2,3,4,5,6,7,8] and
+    (.correctness.outputFiles>0) and
+    (.correctness.controlDigest|test("^[0-9a-f]{64}$")) and
+    (reconstructed as $r |
+      .summary.positivePairs==$r.positivePairs and
+      close(.summary.controlMeanMs;$r.controlMeanMs) and
+      close(.summary.candidateMeanMs;$r.candidateMeanMs) and
+      close(.summary.meanSavedMs;$r.meanSavedMs) and
+      close(.summary.meanReductionRatio;$r.meanReductionRatio) and
+      .summary.paired95Ms==$r.paired95Ms and
+      .summary.controlP95Ms==$r.controlP95Ms and
+      .summary.candidateP95Ms==$r.candidateP95Ms) and
+    ([.economics.costComponents[].phase]|sort)==["correctness-and-validation","delivery-and-revert","generation-and-diagnostics"] and
+    all(.economics.costComponents[]; .chargedMs>0 and (.chargedMs%60000)==0) and
+    .economics.chargedMachineCostMs==([.economics.costComponents[].chargedMs]|add) and
+    .economics.machinePaybackBuilds==((.economics.chargedMachineCostMs/.summary.meanSavedMs)|ceil) and
+    .economics.humanReviewMs=="NOT_MEASURED" and
+    ((qualifies(.) and .decision=="QUALIFY_REVIEWED_NATIVE_PATCH") or
+     ((qualifies(.)|not) and .decision=="REJECT_RUNTIME_GATES"))) and
+  ([.proposals[]|select(.decision=="QUALIFY_REVIEWED_NATIVE_PATCH")]|length) as $qualifiedCount |
+  ([.proposals[]|select(.decision=="QUALIFY_REVIEWED_NATIVE_PATCH")|.family]|unique|length) as $qualifiedFamilies |
+  ([.proposals[]|select(.decision=="QUALIFY_REVIEWED_NATIVE_PATCH")|.summary.meanSavedMs]|add) as $portfolioSaving |
+  ([.proposals[].economics.chargedMachineCostMs]|add) as $campaignCost |
+  .portfolio.qualifiedProposals==$qualifiedCount and
+  .portfolio.qualifiedFamilies==$qualifiedFamilies and
+  close(.portfolio.meanSavedMsPerCompatiblePortfolioBuild;$portfolioSaving) and
+  .portfolio.allProposalChargedMachineCostMs==$campaignCost and
+  .portfolio.machinePaybackPortfolioBuilds==(($campaignCost/$portfolioSaving)|ceil) and
+  .portfolio.productFailures==([.proposals[].correctness.productFailures]|add) and
+  $qualifiedCount >= $contract[0].portfolioGate.minimumQualifyingProposals and
+  $qualifiedFamilies >= $contract[0].portfolioGate.minimumQualifyingFamilies and
+  $portfolioSaving>0 and .portfolio.productFailures==0 and
+  .portfolio.decision=="QUALIFY_REVIEWED_NATIVE_PATCH_PORTFOLIO_POC" and
+  .boundaries=={"productionAuthorized":false,"automaticMerge":false,"dynamicCandidatePath":false,"testOptimization":"OUT_OF_SCOPE"}
+' "$result" >/dev/null
+
+jq -e --slurpfile result "$result" '
+  .schemaVersion=="buildopt.evidence/reviewed-native-patch-autopilot-proposals/v1" and
+  .block=="RNPP-004" and .authority=="OWNER_REVIEW_REQUIRED" and
+  .transaction=="DIGEST_BOUND_EXACT_APPLY_REVERT" and
+  .proposalCount==(.proposals|length) and .proposalCount==2 and
+  ([.proposals[].id]|sort)==([$result[0].proposals[]|select(.decision=="QUALIFY_REVIEWED_NATIVE_PATCH")|.id]|sort) and
+  all(.proposals[];
+    .resultBinding=="QUALIFY_REVIEWED_NATIVE_PATCH" and
+    .patch.schemaVersion=="buildopt.patch/normalization-aware-cacheability/v2" and
+    (.patch.path|startswith("/")|not) and
+    (.patch.path|contains("..")|not) and
+    (.patch.expectedSourceSha256|test("^[0-9a-f]{64}$")) and
+    (.patch.patchedSourceSha256|test("^[0-9a-f]{64}$")) and
+    .patch.expectedSourceSha256!=.patch.patchedSourceSha256 and
+    (.patch.edits|length)>0) and
+  .automaticApply==false and .automaticMerge==false and .productionAuthorized==false
+' "$accepted" >/dev/null
+
+echo "reviewed native patch portfolio: 2/4 proposals, 2 families, 7906.625 ms, payback 296"

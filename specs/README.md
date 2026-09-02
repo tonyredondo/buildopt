@@ -7,14 +7,14 @@ path. Start with the [documentation portal](../docs/README.md) or
 [architecture overview](../docs/architecture/overview.md), then return here for
 the exact cross-component contract.
 
-The active POC contract is
-[`poc-remote-cache-locality-value-v2.md`](./poc-remote-cache-locality-value-v2.md)
-with its adjacent machine-readable JSON and frozen subjects. It isolates cache
-read locality with the same native graph and immutable objects in both arms and
-counts every fill and operating cost. Historical results cannot satisfy a row.
+The current completed product pivot is the
+[`Reviewed Native Patch Portfolio v1`](./poc-reviewed-native-patch-portfolio-v1.md).
+It evaluates independently reviewed and reversible native Gradle source
+corrections, leaving Gradle as the only accepted build runtime.
 
 | Specification | Owning item |
 |---|---|
+| [`poc-reviewed-native-patch-portfolio-v1.md`](./poc-reviewed-native-patch-portfolio-v1.md) and [`poc-reviewed-native-patch-portfolio-v1.json`](./poc-reviewed-native-patch-portfolio-v1.json) | `RNPP-001..005`: 2/4 proposals qualify across two families; signed saving 7,906.625 ms per compatible portfolio build, conservative machine payback 296 builds, exact outputs and zero product failures |
 | [`poc-remote-cache-locality-value-v3.md`](./poc-remote-cache-locality-value-v3.md), [`poc-remote-cache-locality-value-v3.json`](./poc-remote-cache-locality-value-v3.json) and [source-bound subjects](./poc-remote-cache-locality-value-v3.subjects.json) | Terminal `STOP_REMOTE_CACHE_LOCALITY_VALUE_V3`: 24/24 pairs complete, 0/3 qualified, zero product failures; installed economics not run after failed prerequisite |
 | [`poc-critical-path-successor-selection-v1.md`](./poc-critical-path-successor-selection-v1.md) and [`poc-critical-path-successor-selection-v1.json`](./poc-critical-path-successor-selection-v1.json) | Evidence-only `CPSS-001`: selects change-scoped critical-path discovery with a 5/5 conclusive, 3/5 action-family, 500-ms/2% pre-build gate; successor execution and timing remain closed |
 | [`poc-change-scoped-critical-path-discovery-v1.md`](./poc-change-scoped-critical-path-discovery-v1.md), [machine contract](./poc-change-scoped-critical-path-discovery-v1.json) and [subjects](./poc-change-scoped-critical-path-discovery-v1.subjects.json) | Terminal existing-evidence discovery: 1/5 conclusive, 0/5 actionable; four families lack retained operation/DAG critical-path traces, so no build or timing runs |

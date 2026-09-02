@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`NO_ACTIONABLE_CHRONOLOGICAL_SUCCESSOR\`"
-    "**Current phase:** \`CFSS-003\`"
+    "**Overall status:** \`REVIEWED_NATIVE_PATCH_PORTFOLIO_POC_QUALIFIED\`"
+    "**Current phase:** \`RNPP-005\`"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"
@@ -453,6 +453,8 @@ buildopt_required_tracker_text=(
     "| \`C1-007\` | Rust helper and task-specific producer | \`UNAVAILABLE\`"
     "| \`C3-006\` | Operational \`BIA-002\` qualification for each workload class | \`INCONCLUSIVE\`"
     "| \`C4-G06\` | Accepted patches exceed the POC value threshold"
+    "| POC-REVIEWED-NATIVE-PATCH-PORTFOLIO | Qualify independently reviewed, reversible native Gradle corrections"
+    "| \`E-510\` | 2026-09-02 | \`POC-REVIEWED-NATIVE-PATCH-PORTFOLIO\`, \`RNPP-001..005\`, \`C4-G06\`"
 )
 for buildopt_required in "${buildopt_required_tracker_text[@]}"; do
     if ! grep -Fq -- "${buildopt_required}" "${buildopt_tracker}"; then

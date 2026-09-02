@@ -1442,3 +1442,25 @@ later commits alter global build/dependency inputs. Correct invalidation falls
 back to the previously measured change-aware/adaptive mechanisms, which had no
 Kafka actions, no fragment activations and negative portfolio value. No further
 performance experiment is authorized for the current architecture.
+
+## Reviewed native patch portfolio
+
+The authorized product pivot does not run BuildOpt on the steady-state build
+path. It proposes an exact, digest-bound Gradle source correction for owner
+review, validates it, and leaves optimized native Gradle as the runtime.
+
+| Proposal | Control mean | Candidate mean | Saving | Pairs / interval | Decision |
+|---|---:|---:|---:|---|---|
+| Micronaut `PythonVfsBytecodeCompile` | 10,909.25 ms | 3,988.125 ms | **6,921.125 ms / 63.44%** | 8/8; +4,492.125..+9,980.75 ms | Qualify |
+| Spring `ArchitectureCheck` | 2,788.5 ms | 1,803 ms | **985.5 ms / 35.34%** | 8/8; +795.375..+1,153.375 ms | Qualify |
+| Spring `ShadowSource` | 1,857.125 ms | 1,719.25 ms | 137.875 ms / 7.42% | 8/8; +86.875..+194.625 ms | Reject below 500 ms |
+| OpenTelemetry version class | 2,661.125 ms | 2,604.375 ms | 56.75 ms / 2.13% | 6/8; -31.5..+181.125 ms | Reject repeatability, interval, p95 and absolute value |
+
+Every proposal reproduced exact control/candidate/cross-root outputs and zero
+product failures. The two accepted proposals span two public families and save
+a signed 7,906.625 ms per compatible portfolio build. Charging a conservative
+2,340,000 ms for all observed machine generation, diagnostics, correctness,
+validation and delivery gives a finite 296-build payback. Human review was not
+measured and is excluded rather than invented. The result qualifies the
+owner-operated reviewed-patch POC; it does not establish production readiness
+or authorize automatic application or merge.

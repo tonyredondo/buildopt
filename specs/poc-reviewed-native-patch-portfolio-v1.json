@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "buildopt.specs/poc-reviewed-native-patch-portfolio/v1",
+  "productUnit": "INDEPENDENT_REVIEWED_NATIVE_GRADLE_SOURCE_CORRECTION",
+  "selection": {
+    "predecessor": "STOP_NORMALIZATION_AWARE_CACHEABILITY_POC",
+    "completedPublicCorrectnessRequired": true,
+    "predecessorRowsAreFreshCorrectness": false,
+    "maximumProposals": 4
+  },
+  "correctness": {
+    "independentPerProposal": true,
+    "maximumGradleStartsPerProposal": 6,
+    "exactCompleteOutputs": true,
+    "requiredInvalidation": true,
+    "crossRootRestore": true,
+    "nativeFallback": true,
+    "exactRevert": true,
+    "productFailureBudget": 0
+  },
+  "value": {
+    "pairsPerQualifiedProposal": 8,
+    "balancedOrder": true,
+    "minimumPositivePairs": 8,
+    "minimumMeanSavedMs": 500,
+    "minimumMeanReductionRatio": 0.02,
+    "positivePaired95PercentInterval": true,
+    "candidateP95NonRegressive": true,
+    "finitePayback": true,
+    "humanReviewCost": "REPORTED_NOT_INVENTED"
+  },
+  "portfolioGate": {
+    "minimumQualifyingProposals": 2,
+    "minimumQualifyingFamilies": 2,
+    "positiveSignedMeasuredPortfolio": true,
+    "exactOutputs": true,
+    "productFailureBudget": 0
+  },
+  "budget": {
+    "maximumAdditionalDiskGiB": 20,
+    "minimumRemainingDiskGiB": 5,
+    "maximumValueInvocationsPerProposal": 17
+  },
+  "boundaries": {
+    "dynamicCandidatePath": false,
+    "repositoryOrTaskNameRules": false,
+    "automaticMerge": false,
+    "productionAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

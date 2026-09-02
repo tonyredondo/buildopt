@@ -2,19 +2,15 @@
 
 ## The idea
 
-BuildOpt tests whether a generic, one-command layer can reduce wall time for
-substantial Gradle workflows beyond an already optimized native Gradle
-baseline. Gradle remains the execution engine and safe fallback. BuildOpt
-learns the relationship between a Git change, the requested workflow, the task
-graph and its outputs; when the evidence is strong enough, it rebuilds only the
-necessary graph and restores verified unaffected outputs.
+BuildOpt now tests a narrower product: find a source-level Gradle task-contract
+defect, produce an independently reviewed and reversible correction, and leave
+native Gradle as the only runtime after acceptance. This pivot follows the
+negative dynamic cross-commit experiments instead of hiding them.
 
-The current onboarding hypothesis uses four generated portable repository
-files, but no hand-authored optimization profile:
+The current onboarding hypothesis is an owner-controlled patch transaction:
 
 ```text
-generate and commit BuildOpt Wrapper once
-./buildoptw <the existing Gradle workflow>
+BuildOpt source proposal -> owner review -> isolated validation -> native patch
 ```
 
 This is an owner-operated proof of concept. The current question is whether
@@ -23,7 +19,21 @@ not whether it is ready for production. Soak, design-partner validation,
 production SLOs, autonomous rollout and Test Optimization are outside this
 decision.
 
+The first reviewed-native portfolio qualifies. Micronaut
+`PythonVfsBytecodeCompile` saves 6,921.125 ms/63.44%, and Spring
+`ArchitectureCheck` saves 985.5 ms/35.34%; both pass 8/8 pairs, positive
+intervals, p95, exact cross-root outputs and zero product failures.
+OpenTelemetry and Spring `ShadowSource` reject independently. The accepted
+two-family portfolio saves a signed 7,906.625 ms per compatible build and its
+conservative 2,340,000-ms machine campaign charge repays in 296 builds. Human
+review is unmeasured. This is POC viability for review-only native patches, not
+production or automatic-merge authority.
+
 ## Current experiment status
+
+`REVIEWED_NATIVE_PATCH_PORTFOLIO_V1` is complete and qualifies the narrower
+reviewed-patch product POC. The following chronological result remains the
+reason the product pivot was necessary; it is not the current terminal state.
 
 `CHRONOLOGICAL_FAILURE_SUCCESSOR_SELECTION_V1` is complete and finds no
 actionable materially different successor inside the current optimizer
@@ -881,6 +891,8 @@ outside this POC.
 
 ## Evidence
 
+- [Reviewed native patch portfolio result](../../benchmarks/results/reviewed-native-patch-portfolio-v1/README.md)
+- [Reviewed native patch portfolio tracker](../plans/reviewed-native-patch-portfolio-v1.md)
 - [Durable native optimization closed tracker](../plans/durable-native-optimization-poc-tracker.md)
 - [Durable native optimization frozen contract](../../specs/poc-durable-native-optimization-v1.md)
 - [Verified request hit terminal shadow result](../../benchmarks/results/verified-request-hit-shadow-replay-v1.json)

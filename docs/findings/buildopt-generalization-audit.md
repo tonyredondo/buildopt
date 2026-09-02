@@ -487,3 +487,20 @@ to the already tested change-aware/adaptive boundaries, not a new mechanism;
 those produced 0 Kafka actions and 0/71 activations. The checked conclusion is
 `NO_ACTIONABLE_MATERIALLY_DIFFERENT_SUCCESSOR`, with zero additional builds or
 timing samples.
+
+## Reviewed-native patch portfolio pivot
+
+The successor changes the product unit rather than relaxing the failed dynamic
+architecture. Four NAC-complete source corrections were revalidated and timed
+independently from fresh state. Micronaut `PythonVfsBytecodeCompile` and Spring
+`ArchitectureCheck` qualify at 8/8 positive pairs with exact cross-root outputs,
+positive intervals, improved p95 and zero failures. OpenTelemetry rejects at
+6/8 with a p95 regression; Spring `ShadowSource` rejects below the fixed
+500-ms floor. This is 2/4 proposals across two families, so it proves breadth
+for the two versioned reviewed recipes, not arbitrary Gradle tasks.
+
+The signed accepted saving is 7,906.625 ms per compatible portfolio build.
+All four proposals' conservatively rounded machine campaign cost is 2,340,000
+ms, yielding a 296-build projection before unmeasured human review. The result
+therefore supports an owner-operated review-only Patch Autopilot POC while
+leaving production, automatic application/merge and Test Optimization closed.

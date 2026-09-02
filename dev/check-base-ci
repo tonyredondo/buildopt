@@ -256,6 +256,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-normalization-aware-cacheability-source-classification" >/dev/null
         "${buildopt_script_dir}/check-normalization-aware-cacheability-compiler" >/dev/null
         "${buildopt_script_dir}/check-normalization-aware-cacheability-public-correctness" >/dev/null
+        "${buildopt_script_dir}/check-reviewed-native-patch-portfolio" >/dev/null
         "${buildopt_script_dir}/check-economic-opportunity-first" >/dev/null
         "${buildopt_script_dir}/check-economic-opportunity-source-ledger" >/dev/null
         "${buildopt_script_dir}/check-economic-opportunity-terminal-decision" >/dev/null
