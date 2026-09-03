@@ -54,13 +54,19 @@ does not establish commercial viability.
 
 ## Current experiment status
 
-`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` has `WCNCP-000` frozen and
-`WCNCP-001` through `WCNCP-007`
-done: functional lanes through multi-runner convergence are proved with one
-restarted service, three isolated runners, single lease ownership, outage
-preservation, and fail-closed negatives. No timing counts as value. All family
-slots remain unselected and no prospective observation, candidate, timing,
-review, product failure, or value claim exists. `WCNCP-008` is next.
+`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` is closed at terminal
+`WCNCP-013` as `INCOMPLETE_PERFORMANCE_ENVIRONMENT` (`WCNCP-000` contract
+frozen; `WCNCP-001` through `WCNCP-007` proved). The wrapper command remains
+authoritative Gradle passthrough; control and data planes stay separate;
+authority is actor-refined; observation is privacy-safe and bounded;
+detection is deterministic; validation uses single-active leases with exact
+outputs and revert; review is digest-bound; and three isolated runners
+converge with outage preservation. The prospective lane never opened: no
+controlled runner existed, the ten-family cohort stayed unselected, and zero
+prospective observations, candidates, pairs, reviews, failures, or value
+claims exist. Thresholds were not moved, historical evidence was never
+consumed as prospective input, and hosted timings never entered value
+arithmetic. No further block is authorized.
 
 `CRITICAL_PATH_BUILD_LOGIC_CORRECTION_V1` is closed as
 `STOP_CRITICAL_PATH_BUILD_LOGIC_CORRECTION_NO_PROPOSAL_BREADTH`. Five exact

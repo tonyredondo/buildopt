@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "buildopt.wcncp/evidence-environment/v1",
+  "block": "WCNCP-008",
+  "recordedAt": "2026-09-04",
+  "declaration": "No CONTROLLED_PERFORMANCE runner was established in this workspace. All rows below are the executing container's own declaration; hosted and local timings are diagnostic-only and never enter materiality or value arithmetic.",
+  "host": {
+    "operatingSystem": "Linux x86_64",
+    "kernel": "7.1.5-1-t2-noble",
+    "cpuCount": 12,
+    "cpuDedicated": false,
+    "memoryMiB": 15888,
+    "diskFreeGiB": 42,
+    "powerModeControlled": false,
+    "backgroundLoadExclusion": "none",
+    "clockSource": "undeclared wall clock"
+  },
+  "toolchain": {
+    "jdk": "17.0.20 Ubuntu",
+    "gradle": "9.6.1",
+    "go": "go1.26.5 linux/amd64"
+  },
+  "environmentClass": "STANDARD_HOSTED_CI",
+  "performanceGateAuthority": false,
+  "timingClassification": "DIAGNOSTIC_ONLY",
+  "noiseStabilityPreflight": "NOT_RUN",
+  "controlledCapacityAvailable": false,
+  "consequence": "Materiality, wrapper overhead, paired value, tails, confidence, and payback gates stay closed. Functional blocks 001-007 were proved on standard CI; candidate timing and any terminal value claim remain closed."
+}

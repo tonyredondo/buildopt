@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "buildopt.wcncp/evidence-package/v1",
+  "block": "WCNCP-008",
+  "recordedAt": "2026-09-04",
+  "declaration": "No prospective package freeze was executed because cohort capture never opened: controlled capacity is unavailable, so no observation may become prospective value input. The digest below identifies the source tree that proved functional blocks 001-007 only.",
+  "sourceCommit": "eaf6009336e8d8307303b6425abf681d8abf028c",
+  "sourceTree": "functional blocks WCNCP-001 through WCNCP-007 plus WCNCP-008 freeze-gate records",
+  "prospectiveFreezeExecuted": false,
+  "gradleVersion": "9.6.1",
+  "wcncpSchemas": [
+    "contracts/jsonschema/wcncp-observation.v1.schema.json",
+    "contracts/jsonschema/wcncp-opportunity.v1.schema.json",
+    "contracts/jsonschema/wcncp-proposal.v1.schema.json",
+    "contracts/jsonschema/wcncp-validation.v1.schema.json",
+    "contracts/jsonschema/wcncp-decision.v1.schema.json"
+  ],
+  "vectors": "contracts/test-vectors/wcncp/wcncp-control-state.v1.json"
+}

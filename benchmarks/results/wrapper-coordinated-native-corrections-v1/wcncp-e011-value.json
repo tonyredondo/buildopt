@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "buildopt.wcncp/evidence-e011/v1",
+  "block": "WCNCP-011",
+  "evidence": "WCNCP-E011",
+  "state": "INCOMPLETE_PERFORMANCE_ENVIRONMENT",
+  "controlledRunner": "unavailable: no dedicated host, no declared resource envelope, no noise/stability preflight",
+  "balancedPairs": 0,
+  "balancedPairsRequired": 8,
+  "positivePairs": 0,
+  "valueQualifiedFamilies": 0,
+  "newValueQualifiedFamilies": 0,
+  "customerOperationalLedger": "empty: wrapper overhead, upload, diagnostics, validation, delivery, review, and fallback costs are all zero because no prospective work ran",
+  "paybackPerProposal": "not computed: no qualified mean saving exists",
+  "portfolioSignedValue": "not computed: no prospective rows exist",
+  "hostedTimingsSubstituted": false,
+  "reason": "Standard-CI durations are diagnostic-only and were never converted into value input. Missing value rows are incomplete, never zero saving and never a negative product result."
+}

@@ -11,7 +11,10 @@ native passthrough with privacy-safe observation, WCNCP-004 proves
 deterministic aggregation/detection over synthetic fixtures, and WCNCP-005
 proves validation coordination with leases and exact revert, WCNCP-006
 proves digest-bound review with fail-closed handling, and WCNCP-007 proves
-multi-runner convergence with outage preservation. Its
+multi-runner convergence with outage preservation, and the terminal
+`WCNCP-013` records `INCOMPLETE_PERFORMANCE_ENVIRONMENT`: the prospective
+cohort stayed unselected without a controlled runner, so breadth, value, and
+generalization remain unmeasured. Its
 ten-family cohort is not selected yet, so this pivot adds no generalization,
 timing or value evidence.
 

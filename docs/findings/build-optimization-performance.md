@@ -2,21 +2,17 @@
 
 ## Current Executive Summary
 
-- **The wrapper-coordinated native-corrections pivot has state, authority, and observation done.**
+- **The wrapper-coordinated native-corrections POC closes as
+  `INCOMPLETE_PERFORMANCE_ENVIRONMENT`.**
   WCNCP-000 freezes five typed records, a separate Gradle-cache data plane and
   control-state plane, neutral ten-family selection and controlled-runner
-  authority, WCNCP-001 proves the five-kind control plane restart-safe with
-  CAS, retention, and namespace isolation, WCNCP-002 proves scoped HTTPS
-  authority with actor-refined writes and audit, WCNCP-003 proves exact
-  native passthrough with privacy-safe bounded observation, WCNCP-004
-  proves deterministic detection over synthetic fixtures, WCNCP-005
-  proves validation coordination with leases and exact revert, WCNCP-006
-  proves digest-bound review, and WCNCP-007 proves multi-runner convergence
-  with outage preservation and no value timing. Controlled
-  overhead stays pending. All cohort slots remain unselected
-  and there are zero builds,
-  observations, proposals, validations, timing samples, failures or new value
-  claims. WCNCP-005 is the next implementation block.
+  authority; WCNCP-001 through WCNCP-007 prove state, authority, observation,
+  detection, validation, review, and convergence on standard CI; and
+  WCNCP-013 records the terminal with full recomputation. The prospective lane
+  never opened without a controlled runner: 0/10 families, 0 builds, 0
+  candidates, 0 pairs, 0 reviews, 0 failures, thresholds unmoved, no
+  historical contamination, and no hosted timing in value arithmetic. No
+  further block is authorized.
 
 - **Explicit material-task build-logic opt-outs do not broaden the patch
   product.** Five exact public source trees are scanned against retained native

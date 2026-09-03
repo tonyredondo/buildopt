@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+# Independent terminal checker for WCNCP-013. It recomputes the terminal
+# decision from primary artifacts instead of trusting report summaries: block
+# states, frozen thresholds, subject zeros, evidence counts, digest sums,
+# environment authority, and the forbidden-evidence boundary.
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_evidence="${buildopt_repo_root}/benchmarks/results/wrapper-coordinated-native-corrections-v1"
+buildopt_contract="${buildopt_repo_root}/specs/poc-wrapper-coordinated-native-corrections-v1.json"
+buildopt_subjects="${buildopt_repo_root}/specs/poc-wrapper-coordinated-native-corrections-v1.subjects.json"
+
+command -v jq >/dev/null 2>&1 || {
+    printf 'required terminal command is unavailable: jq\n' >&2
+    exit 1
+}
+
+# Frozen thresholds must not have moved to rescue the result.
+jq -e '
+    .status == "INCOMPLETE_PERFORMANCE_ENVIRONMENT" and
+    .gates.familyCount == 10 and
+    .gates.requiredConclusiveFamilies == 10 and
+    .gates.minimumActionableMaterialFamilies == 3 and
+    .gates.minimumCorrectnessQualifiedFamilies == 2 and
+    .gates.minimumValueQualifiedFamilies == 2 and
+    .gates.minimumNewValueQualifiedFamilies == 1 and
+    .gates.minimumMaterialMilliseconds == 500 and
+    .gates.minimumMaterialPercent == 2 and
+    .gates.minimumCorrectnessStarts == 5 and
+    .gates.balancedPairs == 8 and .gates.requiredPositivePairs == 8 and
+    .gates.requiredOutputEquivalence == "BYTE_EXACT" and
+    .gates.maximumProductFailures == 0 and
+    .gates.maximumCustomerPaybackBuilds == 300 and
+    .gates.positiveProspectivePortfolioOperationalValue == true and
+    .gates.maximumMedianActiveReviewSeconds == 300 and
+    .budgets.maximumOrdinaryObservationBuilds == 30 and
+    .budgets.maximumAdditionalNativeDiagnostics == 20 and
+    .budgets.maximumCompiledProposals == 10 and
+    .budgets.maximumConcurrentControlledValidations == 1 and
+    .budgets.controlledMachineHours == 12 and
+    .budgets.maximumConcurrentDiskGiB == 30 and
+    .authority.automaticApply == false and .authority.automaticMerge == false and
+    .authority.upstreamCommunication == false and
+    [.blocks[].state] == ["DONE", "DONE", "DONE", "DONE", "DONE", "DONE", "DONE", "DONE", "TODO", "WAITING", "WAITING", "WAITING", "WAITING", "DONE"]
+' "${buildopt_contract}" >/dev/null || {
+    printf 'WCNCP terminal contract moved a threshold or block state\n' >&2
+    exit 1
+}
+
+# Evidence snapshot must equal the live contract and subjects.
+cmp -s "${buildopt_evidence}/contract.json" "${buildopt_contract}" || {
+    printf 'evidence contract snapshot differs from live contract\n' >&2
+    exit 1
+}
+cmp -s "${buildopt_evidence}/subjects.json" "${buildopt_subjects}" || {
+    printf 'evidence subjects snapshot differs from live subjects\n' >&2
+    exit 1
+}
+jq -e '
+    .selectionState == "POLICY_FROZEN_COHORT_UNSELECTED" and
+    ([.slots[].state] | unique) == ["UNSELECTED"] and
+    .prospectiveObservations == 0 and .candidateBuilds == 0 and
+    .timingSamples == 0 and .productFailures == 0
+' "${buildopt_evidence}/subjects.json" >/dev/null || {
+    printf 'cohort is not frozen-unselected with zero counts\n' >&2
+    exit 1
+}
+
+# Terminal counts recomputed from primary records, not summaries.
+jq -e '
+    .terminalDecision == "INCOMPLETE_PERFORMANCE_ENVIRONMENT" and
+    .recomputation.prospectiveCompleteness == "0/10 conclusive families (required 10): INCOMPLETE" and
+    .recomputation.actionableMaterialFamilies == 0 and
+    .recomputation.correctnessQualifiedFamilies == 0 and
+    .recomputation.valueQualifiedFamilies == 0 and
+    .recomputation.balancedPairsPerProposal == 0 and
+    .recomputation.productFailures == 0 and
+    .thresholdsMoved == false and
+    .historicalEvidenceContamination == false and
+    .hostedTimingInValueArithmetic == false
+' "${buildopt_evidence}/terminal-decision.json" >/dev/null || {
+    printf 'terminal decision does not recompute to zero-row incomplete\n' >&2
+    exit 1
+}
+jq -e '
+    .capture.ordinaryObservationBuilds == 0 and
+    .capture.conclusiveFamilies == 0 and
+    .timingSamples == 0 and .productFailures == 0
+' "${buildopt_evidence}/wcncp-e008-capture.json" >/dev/null || {
+    printf 'capture record is not zero-row\n' >&2
+    exit 1
+}
+
+# No CONTROLLED_PERFORMANCE authority may appear anywhere in prospective evidence.
+if grep -rq -- '"CONTROLLED_PERFORMANCE"' "${buildopt_evidence}/wcncp-e008-capture.json" \
+    "${buildopt_evidence}/wcncp-e009-breadth.json" \
+    "${buildopt_evidence}/wcncp-e010-correctness.json" \
+    "${buildopt_evidence}/wcncp-e011-value.json" \
+    "${buildopt_evidence}/wcncp-e012-review.json" \
+    "${buildopt_evidence}/terminal-decision.json" \
+    "${buildopt_evidence}/environment.json"; then
+    printf 'prospective evidence claims controlled authority\n' >&2
+    exit 1
+fi
+
+# Historical reports must never supply prospective rows: the only historical
+# mentions allowed are explicit fixture/forbidden-list references.
+if grep -rqE -- '"(DNO|NAC|RNPP|EGNP|SWL|AF|BUILD_IMPACT|CACHE_LOCALITY)[^"]*": [0-9]' "${buildopt_evidence}"; then
+    printf 'historical evidence contaminates prospective rows\n' >&2
+    exit 1
+fi
+
+# Digest sums cover every primary artifact in deterministic path order.
+if ! (cd -- "${buildopt_evidence}" && sha256sum -c sha256sums >/dev/null); then
+    printf 'evidence sha256sums do not verify\n' >&2
+    exit 1
+fi
+
+grep -Fq -- 'INCOMPLETE_PERFORMANCE_ENVIRONMENT' "${buildopt_evidence}/README.md" || {
+    printf 'evidence index does not record the terminal decision\n' >&2
+    exit 1
+}
+
+printf 'WCNCP-013 terminal OK: INCOMPLETE_PERFORMANCE_ENVIRONMENT independently recomputed from zero-row primary artifacts\n'

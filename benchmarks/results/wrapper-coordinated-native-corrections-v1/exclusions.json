@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.wcncp/evidence-exclusions/v1",
+  "block": "WCNCP-008",
+  "excludedFamilies": [],
+  "excludedRows": 0,
+  "forbiddenInputFamilies": [
+    "DNO", "NAC", "RNPP", "EGNP", "SWL", "AF", "BUILD_IMPACT",
+    "CACHE_LOCALITY", "ANY_OTHER_PRE_FREEZE_BUILDOPT_ARTIFACT"
+  ],
+  "historicalEvidenceConsumed": false,
+  "note": "No family was excluded because no family was selected: the cohort freeze never opened without controlled capacity. Historical reports were used as system fixtures only where labeled and never as prospective rows."
+}

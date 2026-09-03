@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "buildopt.wcncp/evidence-e010/v1",
+  "block": "WCNCP-010",
+  "evidence": "WCNCP-E010",
+  "state": "NOT_RUN",
+  "admittedFamilies": 0,
+  "candidatesCompiled": 0,
+  "correctnessQualifiedFamilies": 0,
+  "correctnessQualifiedFamiliesRequired": 2,
+  "correctnessStarts": 0,
+  "productFailures": 0,
+  "reason": "Blocked by WCNCP-009: no admitted family exists, so zero candidates were compiled and zero correctness starts ran. The zero-failure budget is unspent, not passed."
+}

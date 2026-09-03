@@ -1,11 +1,14 @@
 # Wrapper-coordinated native corrections v1 evidence
 
-`WCNCP-000` freezes the product, evidence, environment, budget, authority, and
-subject-selection contracts. It creates no prospective observation or result.
+Terminal decision: `INCOMPLETE_PERFORMANCE_ENVIRONMENT` (see
+[`terminal-decision.json`](./terminal-decision.json) and
+[`report.json`](./report.json)). Functional lanes `WCNCP-001` through
+`WCNCP-007` are proved on standard CI; the prospective lane never opened
+because no controlled runner was established. No further block is authorized.
 
 Current state:
 
-- exact public cohort: `UNSELECTED_UNTIL_WCNCP_008`;
+- exact public cohort: `UNSELECTED_UNTIL_WCNCP_008` (freeze never opened);
 - prospective observations: 0;
 - public source patches: 0;
 - candidate builds: 0;

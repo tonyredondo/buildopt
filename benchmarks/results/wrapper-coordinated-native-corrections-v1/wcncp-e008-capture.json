@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.wcncp/evidence-e008/v1",
+  "block": "WCNCP-008",
+  "evidence": "WCNCP-E008",
+  "state": "INCOMPLETE",
+  "freezeGate": {
+    "contractsCommitted": true,
+    "packageFrozenForProspective": false,
+    "subjectsPolicyFrozenCohortUnselected": true,
+    "emptyStateVerified": true,
+    "verdict": "GATE_NOT_OPENED"
+  },
+  "environment": "STANDARD_HOSTED_CI, performance authority false; see environment.json",
+  "cohort": {
+    "familiesSelected": 0,
+    "familiesRequired": 10,
+    "slots": "10/10 UNSELECTED",
+    "reservesFrozen": 0
+  },
+  "capture": {
+    "ordinaryObservationBuilds": 0,
+    "ordinaryObservationBuildsRequired": 30,
+    "additionalNativeDiagnostics": 0,
+    "conclusiveFamilies": 0,
+    "conclusiveFamiliesRequired": 10
+  },
+  "budgetSpent": {
+    "controlledMachineHours": 0,
+    "diskGiB": 0
+  },
+  "reason": "Controlled performance capacity was never established (no dedicated host, no resource envelope, no noise/stability preflight), so no observation could become controlled value input and the cohort freeze was not opened. Zero builds ran; nothing was measured, averaged, or carried forward.",
+  "timingSamples": 0,
+  "productFailures": 0
+}

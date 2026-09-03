@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "buildopt.wcncp/evidence-report/v1",
+  "block": "WCNCP-013",
+  "terminalDecision": "INCOMPLETE_PERFORMANCE_ENVIRONMENT",
+  "summary": "Functional lanes WCNCP-001 through WCNCP-007 are proved on standard CI with zero prospective rows. The prospective lane never opened: without a controlled runner no observation could become materiality or value input, the ten-family cohort stayed unselected, and zero builds, candidates, pairs, reviews, or failures exist. Thresholds were not moved, historical evidence was never consumed, and hosted timings never entered value arithmetic.",
+  "functionalBlocks": ["WCNCP-001", "WCNCP-002", "WCNCP-003", "WCNCP-004", "WCNCP-005", "WCNCP-006", "WCNCP-007"],
+  "prospectiveBlocks": {
+    "WCNCP-008": "INCOMPLETE: 0/10 families, 0/30 builds",
+    "WCNCP-009": "INCOMPLETE: 0 actionable families, 0 candidates started",
+    "WCNCP-010": "NOT_RUN: 0 candidates, 0 starts",
+    "WCNCP-011": "INCOMPLETE_PERFORMANCE_ENVIRONMENT: 0 pairs",
+    "WCNCP-012": "NOT_RUN: 0 artifacts, 0 decisions"
+  },
+  "priorHypotheses": "All previously stopped hypotheses remain stopped; this result adds no speedup claim and authorizes no successor. The reviewed-native Micronaut, Spring, and Elasticsearch recipes remain historical diagnostics, not prospective evidence.",
+  "whatWasMeasured": "Deterministic contracts, schemas, vectors, persistence, authority, passthrough, detection, leases, review delivery, and convergence on standard CI with race detection.",
+  "whatWasInferred": "Nothing about product value: with zero prospective rows no inference is licensed.",
+  "whatWasNotRun": "Cohort selection, ordinary wrapper captures, diagnostics, candidates, correctness starts, paired timing, payback accounting, and owner review."
+}
