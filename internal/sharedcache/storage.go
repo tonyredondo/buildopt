@@ -15,8 +15,13 @@ import (
 )
 
 const (
-	// SchemaVersion is the current cache/control metadata schema.
-	SchemaVersion = 8
+	// SchemaVersion is the current cache metadata schema. The cache plane
+	// stays at 7; WCNCP actor grants advance only the control plane.
+	SchemaVersion = 7
+	// ControlSchemaVersion is the current control metadata schema. Version 8
+	// adds WCNCP actor grants and audit events without touching the Gradle
+	// data plane.
+	ControlSchemaVersion = 8
 	// MaximumBlobBytes is the private-beta per-object ceiling.
 	MaximumBlobBytes int64 = 100 << 20
 )

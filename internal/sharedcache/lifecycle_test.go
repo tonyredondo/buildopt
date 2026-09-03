@@ -1528,21 +1528,24 @@ func TestSchemaVersionOneUpgradesTransactionallyToCurrent(t *testing.T) {
 		t.Fatalf("upgrade storage: %v", err)
 	}
 	defer storage.Close()
-	for name, metadata := range map[string]*sqliteMetadata{
-		"cache":   storage.cache,
-		"control": storage.control,
+	for name, testCase := range map[string]struct {
+		metadata *sqliteMetadata
+		version  int
+	}{
+		"cache":   {metadata: storage.cache, version: SchemaVersion},
+		"control": {metadata: storage.control, version: ControlSchemaVersion},
 	} {
 		var version int
-		if err := metadata.database.QueryRow(
+		if err := testCase.metadata.database.QueryRow(
 			"PRAGMA user_version",
-		).Scan(&version); err != nil || version != SchemaVersion {
+		).Scan(&version); err != nil || version != testCase.version {
 			t.Fatalf("%s version = %d/%v", name, version, err)
 		}
 		assertRowCount(
 			t,
-			metadata.database,
+			testCase.metadata.database,
 			"schema_migrations",
-			SchemaVersion,
+			testCase.version,
 		)
 	}
 	assertSchemaObjects(

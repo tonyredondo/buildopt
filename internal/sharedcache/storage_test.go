@@ -215,7 +215,7 @@ func TestOpenCreatesPrivateWALStorageAndOwnsWriter(t *testing.T) {
 		t,
 		storage.control,
 		controlMetadataRole,
-		SchemaVersion,
+		ControlSchemaVersion,
 		"wal",
 	)
 	assertMetadataHealth(

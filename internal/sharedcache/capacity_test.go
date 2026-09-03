@@ -471,6 +471,9 @@ func TestSchemaThreeCommittedEntriesUpgradeIntoProbation(t *testing.T) {
 		"DROP TABLE storage_entries",
 	})
 	downgradeCapacitySchemaForTest(t, layout.ControlDatabase, []string{
+		"DROP INDEX wcncp_audit_events_occurred",
+		"DROP TABLE wcncp_audit_events",
+		"DROP TABLE wcncp_actor_grants",
 		"DROP INDEX central_access_tokens_expires",
 		"DROP INDEX central_access_tokens_scope",
 		"DROP TABLE central_access_tokens",
