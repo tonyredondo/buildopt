@@ -5,8 +5,9 @@ the wrapper as the normal Gradle entrypoint, learn from ordinary invocations
 and deliver only owner-reviewed native corrections. WCNCP-000 freezes the
 control/data-plane boundary, record schemas and controlled-evidence rules, and
 WCNCP-001 proves the five-kind typed control plane with restart-safe CAS,
-retention, and namespace isolation, while WCNCP-002 proves scoped HTTPS
-authority with actor-refined writes and audit. Its
+retention, and namespace isolation, WCNCP-002 proves scoped HTTPS
+authority with actor-refined writes and audit, and WCNCP-003 proves exact
+native passthrough with privacy-safe observation. Its
 ten-family cohort is not selected yet, so this pivot adds no generalization,
 timing or value evidence.
 

@@ -55,17 +55,17 @@ does not establish commercial viability.
 ## Current experiment status
 
 `WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` has `WCNCP-000` frozen and
-`WCNCP-001`/`WCNCP-002` done. The wrapper command remains authoritative Gradle
-passthrough; Gradle cache objects and typed control state are separate logical
-planes with shared physical CAS bytes and independent `wcncp_*` metadata.
-Five record schemas, controlled-versus-hosted-CI evidence authority, a neutral
-ten-family selection policy and bounded experiment budgets are checked, the
-five-kind control plane persists restart-safe with generation CAS, retention,
-and fail-closed negatives, and scoped HTTPS routes refine transport
-capabilities by actor with bulk bounds, verified snapshots, and ID/digest
-audit. All family slots remain unselected and no wrapper
-runtime change, public build, observation, proposal, validation,
-timing sample, product failure or new value claim exists. `WCNCP-003` is next.
+`WCNCP-001` through `WCNCP-003` done. The wrapper command remains authoritative
+Gradle passthrough with exact exit/stdio preservation; Gradle cache objects
+and typed control state are separate logical planes with shared physical CAS
+bytes and independent `wcncp_*` metadata. Five record schemas,
+controlled-versus-hosted-CI evidence authority, a neutral ten-family selection
+policy and bounded experiment budgets are checked, the five-kind control plane
+persists restart-safe, scoped HTTPS routes refine transport by actor, and the
+privacy-safe observation path records bounded facts without changing task
+selection. Controlled overhead stays pending. All family slots remain
+unselected and no public build, observation, proposal, validation,
+timing sample, product failure or new value claim exists. `WCNCP-004` is next.
 
 `CRITICAL_PATH_BUILD_LOGIC_CORRECTION_V1` is closed as
 `STOP_CRITICAL_PATH_BUILD_LOGIC_CORRECTION_NO_PROPOSAL_BREADTH`. Five exact

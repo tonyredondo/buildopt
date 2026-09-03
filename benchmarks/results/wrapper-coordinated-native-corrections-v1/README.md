@@ -25,17 +25,20 @@ Expected future artifacts are listed in the
 immutable record kinds, generation-CAS visibility, retention, reconstruction,
 and corruption/concurrency negatives. `WCNCP-002` is `DONE`: scoped HTTPS
 authority with actor-refined writes, bulk upload bounds, verified snapshots,
-and audit events. Neither authorizes wrapper
-observation, public builds, source mutation, candidate execution, or timing.
-`WCNCP-003` is next.
+and audit events. `WCNCP-003` is `DONE`: exact native passthrough, privacy
+redaction, bounded outbox/upload, and status surfaces with controlled overhead
+explicitly pending. None authorizes public builds, source mutation, candidate
+execution, or timing. `WCNCP-004` is next.
 
 `WCNCP-E001` proof is
-[`wcncp-e001-typed-state.json`](./wcncp-e001-typed-state.json) and
+[`wcncp-e001-typed-state.json`](./wcncp-e001-typed-state.json),
 `WCNCP-E002` proof is
-[`wcncp-e002-authority.json`](./wcncp-e002-authority.json): synthetic-only
+[`wcncp-e002-authority.json`](./wcncp-e002-authority.json), and
+`WCNCP-E003` proof is
+[`wcncp-e003-observation.json`](./wcncp-e003-observation.json): synthetic-only
 restart-safe publication, repository/kind isolation with identical bytes,
-Gradle-plane separation, staged expiry, fail-closed authority, and durable
-decisions. Prospective evidence remains zero.
+Gradle-plane separation, staged expiry, fail-closed authority, exact
+passthrough, and durable decisions. Prospective evidence remains zero.
 
 Run the frozen planning/schema contract with:
 

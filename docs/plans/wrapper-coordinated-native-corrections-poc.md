@@ -3,7 +3,7 @@
 ## Status
 
 **Overall:** `CONTRACT_FROZEN`<br>
-**Current block:** `WCNCP-003` is next (`WCNCP-001`, `WCNCP-002` are `DONE`).<br>
+**Current block:** `WCNCP-004` is next (`WCNCP-001` through `WCNCP-003` are `DONE`).<br>
 **Reference baseline inspected while writing this plan:**
 `b8a195dc9fd55a52c15202b77f0bb979f8c97fa3`.<br>
 **Execution authority:** `WCNCP-000` freezes contracts only. No public
@@ -1233,7 +1233,8 @@ repository build usable without BuildOpt state.
 | `WCNCP-E000` | WCNCP-000 | Frozen plan, machine contract, subjects, schemas, and plan checker | `DONE` — [contract](../../specs/poc-wrapper-coordinated-native-corrections-v1.md), [subject policy](../../specs/poc-wrapper-coordinated-native-corrections-v1.subjects.json), and [evidence index](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/README.md) |
 | `WCNCP-E001` | WCNCP-001 | Typed-state persistence and lifecycle proof | `DONE` — [typed-state proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e001-typed-state.json) with five immutable kinds, CAS persistence, retention, namespace isolation, and corruption/concurrency negatives; zero prospective evidence |
 | `WCNCP-E002` | WCNCP-002 | HTTPS authority/idempotency proof | `DONE` — [authority proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e002-authority.json) with actor-refined routes, bulk upload bounds, verified snapshots, and audit events; zero prospective evidence |
-| `WCNCP-E003` | WCNCP-003 | Wrapper observation, privacy, fallback, and overhead proof | `TODO` |
+| `WCNCP-E003` | WCNCP-003 | Wrapper observation, privacy, fallback, and overhead proof | `DONE` — [observation proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e003-observation.json) with exact passthrough, redaction, bounded outbox/upload, and status surfaces; controlled overhead pending without a controlled runner; zero prospective evidence |
+| `WCNCP-E004` | WCNCP-004 | Aggregator/detector fixtures and independent reconstruction | `TODO` |
 | `WCNCP-E003` | WCNCP-003 | Wrapper observation, privacy, fallback, and overhead proof | `WAITING` |
 | `WCNCP-E004` | WCNCP-004 | Aggregator/detector fixtures and independent reconstruction | `WAITING` |
 | `WCNCP-E005` | WCNCP-005 | Lease and validator lifecycle proof | `WAITING` |
@@ -1248,12 +1249,13 @@ repository build usable without BuildOpt state.
 
 ## Immediate next action
 
-`WCNCP-001` and `WCNCP-002` are `DONE`: typed control state and scoped HTTPS
-authority with actor-refined writes, idempotency, verified snapshots, and
-audit events are proved with zero prospective evidence.
+`WCNCP-001` through `WCNCP-003` are `DONE`: typed control state, scoped HTTPS
+authority, and the privacy-safe wrapper observation path with exact native
+passthrough are proved with zero prospective evidence. Controlled overhead
+remains explicitly pending without a `CONTROLLED_PERFORMANCE` runner.
 
-Implement only `WCNCP-003`: integrate the privacy-safe wrapper observation
-path after the existing native fast path without changing Gradle task
-selection. Do not select the public cohort, run prospective Gradle builds,
-compile a candidate, mutate public source, collect timing, or claim value in
-that block.
+Implement only `WCNCP-004`: compatibility grouping as a pure deterministic
+function, Configuration Cache detector v1, current reviewed-native catalog
+adapters, materiality handling, and name-invariance negatives. Do not compile
+candidates, run prospective builds, mutate public source, collect timing, or
+claim value in that block.

@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "buildopt.wcncp/evidence-e003/v1",
+  "block": "WCNCP-003",
+  "evidence": "WCNCP-E003",
+  "state": "DONE",
+  "baseCommit": "a575a42e695203cad19d69145b5863db426d1a24",
+  "description": "Privacy-safe wrapper observation path: exact native passthrough, bounded outbox, bounded fail-open upload, and status/explain surfaces. Controlled overhead remains explicitly pending without a CONTROLLED_PERFORMANCE runner.",
+  "implementation": {
+    "seam": "new buildoptw entrypoint plus wcncpobserve helpers; launcher task selection untouched",
+    "files": [
+      "cmd/buildoptw/main.go",
+      "internal/wcncpobserve/observe.go",
+      "internal/wcncpobserve/passthrough.go",
+      "internal/wcncpobserve/upload.go",
+      "dev/check-wcncp-observation"
+    ],
+    "command": "./buildoptw <gradle arguments...>",
+    "reservedFlags": ["--wcncp-status", "--wcncp-explain"],
+    "outboxBounds": {"maxBytes": 104857600, "maxItems": 1000, "maxAgeDays": 30},
+    "postChildUploadDeadlineMs": 100,
+    "recorderStart": "only when WCNCP_REPOSITORY_SCOPE and WCNCP_OUTBOX_DIR are configured; no pre-child network"
+  },
+  "validation": {
+    "environmentClass": "STANDARD_HOSTED_CI",
+    "timingClassification": "DIAGNOSTIC_ONLY",
+    "deterministicGates": [
+      "exact exit/stdout/stderr/stdin/cwd/argv passthrough with real binaries",
+      "non-zero exit preserved and never replaced by observation errors",
+      "missing wrapper fails closed with 127",
+      "BUILDOPT_BYPASS=1 skips recording without changing native behavior",
+      "secret-looking inputs become REDACTED_SECRET and never reach the outbox",
+      "absolute paths outside the repo become OMITTED",
+      "atomic outbox enqueue with duplicate retry and 30-day age eviction",
+      "outage/slow/corrupt backends stay queued and preserve the native result",
+      "status distinguishes UNAVAILABLE, QUEUED, OBSERVING, and proposal states",
+      "Windows build compiles; Windows-shaped paths classify statically"
+    ],
+    "pendingOnlyOnControlledRunner": [
+      "50 ms p95 local enqueue overhead",
+      "0.5 percent mean wall-time overhead on workflows of at least 10 seconds"
+    ]
+  },
+  "gates": {
+    "crossPlatformContracts": "PASS",
+    "controlledOverhead": "PENDING_NO_CONTROLLED_RUNNER",
+    "prospectiveObservations": 0,
+    "candidateBuilds": 0,
+    "timingSamples": 0,
+    "productFailures": 0
+  },
+  "authority": {
+    "syntheticOnly": true,
+    "prospectiveEvidence": false,
+    "productionAuthorized": false
+  }
+}

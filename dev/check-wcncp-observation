@@ -21,4 +21,4 @@ exec "${buildopt_script_dir}/run" \
     go test \
         -race \
         -count=1 \
-        ./internal/wcncpobserve
+        ./internal/wcncpobserve ./cmd/buildoptw

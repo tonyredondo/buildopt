@@ -147,8 +147,8 @@
     {"id":"WCNCP-000","state":"DONE","outcome":"CONTRACT_FROZEN_NO_EXPERIMENT_EVIDENCE"},
     {"id":"WCNCP-001","state":"DONE","outcome":"TYPED_CONTROL_STATE"},
     {"id":"WCNCP-002","state":"DONE","outcome":"REMOTE_API_AND_AUTHORITY"},
-    {"id":"WCNCP-003","state":"TODO","outcome":"WRAPPER_OBSERVATION_PATH"},
-    {"id":"WCNCP-004","state":"WAITING","outcome":"AGGREGATION_AND_DETECTOR"},
+    {"id":"WCNCP-003","state":"DONE","outcome":"WRAPPER_OBSERVATION_PATH"},
+    {"id":"WCNCP-004","state":"TODO","outcome":"AGGREGATION_AND_DETECTOR"},
     {"id":"WCNCP-005","state":"WAITING","outcome":"VALIDATION_COORDINATOR"},
     {"id":"WCNCP-006","state":"WAITING","outcome":"REVIEW_DELIVERY"},
     {"id":"WCNCP-007","state":"WAITING","outcome":"MULTI_RUNNER_SYSTEM_PROOF"},
@@ -160,9 +160,9 @@
     {"id":"WCNCP-013","state":"WAITING","outcome":"TERMINAL_DECISION"}
   ],
   "nextBlock": {
-    "id": "WCNCP-003",
+    "id": "WCNCP-004",
     "state": "TODO",
-    "allowedWork": "WRAPPER_OBSERVATION_ONLY",
+    "allowedWork": "AGGREGATION_AND_DETECTOR_ONLY",
     "prospectiveGradleBuildsAllowed": false,
     "publicSourceMutationAllowed": false,
     "timingAllowed": false

@@ -182,7 +182,15 @@ func (facts ObservationFacts) Validate() error {
 		return ErrObservationInvalid
 	}
 	for _, arg := range facts.Arguments {
-		if len(arg) == 0 || len(arg) > 256 || secretHintPattern.MatchString(arg) {
+		if len(arg) == 0 || len(arg) > 256 {
+			return ErrObservationInvalid
+		}
+		// Redaction markers are the only allowed secret-derived outputs: they
+		// prove a secret-looking input was seen without carrying its value.
+		if arg == "REDACTED_SECRET" || arg == "OMITTED" || strings.HasPrefix(arg, "hash:") {
+			continue
+		}
+		if secretHintPattern.MatchString(arg) {
 			return ErrObservationInvalid
 		}
 		// Raw absolute paths must never reach the backend.
