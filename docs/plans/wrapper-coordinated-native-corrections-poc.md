@@ -412,6 +412,12 @@ authority by actor:
 An implementation that gives every state writer implicit acceptance authority
 fails the experiment.
 
+The operational binding is `buildopt-server wcncp-actor grant --state-dir
+<root> --token-id <id> --actor <actor>`. Central token issuance does not imply
+a product actor; an unbound token remains `DEVELOPER`. This command is run
+before the service starts for an experiment package and never exposes the raw
+token.
+
 ## Local outbox and availability
 
 The wrapper writes observations to a private local durable outbox using atomic

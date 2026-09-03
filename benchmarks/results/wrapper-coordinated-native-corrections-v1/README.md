@@ -5,6 +5,14 @@ State: `FUNCTIONAL_FOUNDATION_READY`. Functional lanes `WCNCP-001` through
 block: freeze the neutral cohort and collect fresh ordinary wrapper
 observations. No prospective row exists yet.
 
+The pre-capture operational audit also added the missing administrative
+`wcncp-actor grant` command: transport token issuance alone remains
+untrusted, while an explicit grant enables the frozen actor authority without
+printing the credential. A local real-process readiness reproduction preserved
+the native child result, retained an upload that exceeded the 100-ms deadline,
+and accepted its later exact batch publication; those synthetic facts are not
+prospective cohort or value evidence.
+
 The previous `INCOMPLETE_PERFORMANCE_ENVIRONMENT` conclusion is
 `RETRACTED_PREMATURE_CLOSURE`: it jumped from an
 unexecuted WCNCP-008 to WCNCP-013. It is retracted. The retained

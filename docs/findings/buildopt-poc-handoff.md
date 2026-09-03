@@ -69,6 +69,14 @@ observations, candidates, pairs, reviews, failures, or value claims exist.
 WCNCP-008 may now freeze the cohort and collect ordinary wrapper observations;
 later candidate and performance gates remain closed.
 
+The pre-capture audit found and repaired one operational omission: central
+tokens can now be bound explicitly to a frozen WCNCP actor with
+`buildopt-server wcncp-actor grant`. An unbound token remains `DEVELOPER`, the
+command does not disclose the token, and expiry/revocation still fail closed.
+The readiness reproduction also confirmed that an upload exceeding the fixed
+100-ms post-child deadline stays queued while the native result is preserved;
+later publication is recorded separately and is not wall-time evidence.
+
 `CRITICAL_PATH_BUILD_LOGIC_CORRECTION_V1` is closed as
 `STOP_CRITICAL_PATH_BUILD_LOGIC_CORRECTION_NO_PROPOSAL_BREADTH`. Five exact
 public trees are scanned against retained native analyses that select 61

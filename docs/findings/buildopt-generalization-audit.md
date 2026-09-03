@@ -15,7 +15,9 @@ WCNCP-007 proves real HTTPS multi-runner convergence with outage preservation.
 A subsequent audit repaired the functional integration and retracted the
 premature WCNCP-013 zero-row conclusion. `WCNCP-008` is next; its ten-family
 cohort is not selected yet, so this pivot adds no generalization, timing, or
-value evidence.
+value evidence. A pre-capture operational correction now exposes explicit
+actor binding for issued central tokens; token issuance still grants no WCNCP
+write authority by itself.
 
 ## Audit question
 

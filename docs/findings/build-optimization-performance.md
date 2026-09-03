@@ -11,6 +11,9 @@
   repaired incompatible observation wire data, missing remote lifecycle APIs,
   outbox acknowledgement, signal/status semantics, lease-bound publication,
   source mutation safety, raw reconstruction, and signed review boundaries.
+  The pre-capture audit additionally supplied the missing explicit actor-grant
+  operation for central tokens and confirmed that a post-child upload beyond
+  100 ms stays queued without changing the native result.
   The former zero-row `INCOMPLETE_PERFORMANCE_ENVIRONMENT` conclusion is
   retracted: WCNCP-008 never ran, so it could not authorize WCNCP-013.
   Prospective value remains wholly unmeasured.

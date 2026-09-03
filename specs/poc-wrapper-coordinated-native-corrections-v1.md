@@ -120,6 +120,12 @@ idempotency, generation CAS, exact proposal leases, actor-scoped authority,
 allowlisted observations, local redaction, source preimage/postimage binding,
 exact inverse patches, and independent reconstruction.
 
+Actor authority is assigned explicitly with `buildopt-server wcncp-actor
+grant`; issuing a central transport token alone retains the untrusted
+`DEVELOPER` default. The grant command accepts only the five frozen actors,
+does not print credentials, and remains subordinate to token expiry and
+revocation.
+
 ## Frozen gates and budgets
 
 - Ten primary public families and two frozen reserve revisions per family.

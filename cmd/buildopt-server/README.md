@@ -210,6 +210,20 @@ Revoke with `central-token revoke --state-dir ... --token-id ...`; the next
 request is rejected without restarting the server. See the
 [central HTTPS POC contract](../../specs/poc-central-https-auth-v1.md).
 
+Central transport capabilities do not grant WCNCP product authority. Bind an
+issued token to exactly one actor before using WCNCP routes:
+
+```bash
+buildopt-server wcncp-actor grant \
+    --state-dir /absolute/private/buildopt-state \
+    --token-id <opaque-token-id> \
+    --actor trusted-observer
+```
+
+Accepted actors are `developer`, `trusted-observer`, `validator`, `owner`, and
+`admin`. Re-granting replaces the token's actor; the command never prints the
+raw token. Token expiry and revocation continue to fail closed.
+
 `A1-004` makes SUMMARY the default export profile and HMAC-tokenizes
 repository, trust-domain, and task identities before JSON or JSONL reaches
 disk. TASKS/EVIDENCE require `--authorize-expanded-export`; DIAGNOSTIC also

@@ -79,6 +79,65 @@ func TestCentralTokenCLIEmitsSecretOnceAndRevokesByID(t *testing.T) {
 	}
 }
 
+func TestWCNCPActorCLIGrantsExistingCentralToken(t *testing.T) {
+	stateRoot := filepath.Join(t.TempDir(), "shared")
+	now := time.Now().UTC()
+	registry, err := sharedcache.OpenCentralTokenRegistry(context.Background(), stateRoot)
+	if err != nil {
+		t.Fatal(err)
+	}
+	issued, err := registry.Issue(context.Background(), sharedcache.CentralTokenIssueRequest{
+		Scope: sharedcache.CentralTokenScope{
+			RepositoryScopeSHA256: strings.Repeat("1", 64), Tenant: "tenant-test",
+			Repository: "repository-test", TrustDomain: "trust-test", Namespace: "gradle/project",
+			NamespaceGeneration: 1,
+		},
+		Capabilities: []sharedcache.CentralCapability{sharedcache.CentralStateRead, sharedcache.CentralStateWrite},
+		ExpiresAt:    now.Add(time.Hour),
+	}, now)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := registry.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	var stdout, stderr bytes.Buffer
+	exitCode := run(context.Background(), []string{
+		"wcncp-actor", "grant", "--state-dir", stateRoot,
+		"--token-id", issued.TokenID, "--actor", "trusted-observer",
+	}, func(string) string { return "" }, &stdout, &stderr)
+	if exitCode != 0 || stderr.Len() != 0 {
+		t.Fatalf("grant exit=%d stdout=%q stderr=%q", exitCode, stdout.String(), stderr.String())
+	}
+	var result struct {
+		SchemaVersion string `json:"schemaVersion"`
+		TokenID       string `json:"tokenId"`
+		Actor         string `json:"actor"`
+		Granted       bool   `json:"granted"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if result.SchemaVersion != "buildopt.wcncp/actor-grant-result/v1" ||
+		result.TokenID != issued.TokenID || result.Actor != "TRUSTED_OBSERVER" || !result.Granted {
+		t.Fatalf("grant result = %+v", result)
+	}
+	if strings.Contains(stdout.String(), issued.Token) {
+		t.Fatal("raw token leaked to actor grant output")
+	}
+
+	stdout.Reset()
+	stderr.Reset()
+	exitCode = run(context.Background(), []string{
+		"wcncp-actor", "grant", "--state-dir", stateRoot,
+		"--token-id", issued.TokenID, "--actor", "not-an-actor",
+	}, func(string) string { return "" }, &stdout, &stderr)
+	if exitCode != exitConfiguration || !strings.Contains(stderr.String(), "invalid WCNCP actor") {
+		t.Fatalf("invalid actor exit=%d stdout=%q stderr=%q", exitCode, stdout.String(), stderr.String())
+	}
+}
+
 func TestCentralHTTPSServerUsesTrustedTLSAndLiveRevocation(t *testing.T) {
 	root := t.TempDir()
 	stateRoot := filepath.Join(root, "shared")
