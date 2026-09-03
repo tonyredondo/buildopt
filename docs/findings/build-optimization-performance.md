@@ -9,8 +9,9 @@
   CAS, retention, and namespace isolation, WCNCP-002 proves scoped HTTPS
   authority with actor-refined writes and audit, WCNCP-003 proves exact
   native passthrough with privacy-safe bounded observation, WCNCP-004
-  proves deterministic detection over synthetic fixtures, and WCNCP-005
-  proves validation coordination with leases and exact revert. Controlled
+  proves deterministic detection over synthetic fixtures, WCNCP-005
+  proves validation coordination with leases and exact revert, and WCNCP-006
+  proves digest-bound review. Controlled
   overhead stays pending. All cohort slots remain unselected
   and there are zero builds,
   observations, proposals, validations, timing samples, failures or new value

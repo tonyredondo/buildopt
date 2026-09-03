@@ -55,12 +55,11 @@ does not establish commercial viability.
 ## Current experiment status
 
 `WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` has `WCNCP-000` frozen and
-`WCNCP-001` through `WCNCP-005` done: control state, scoped authority,
-wrapper observation, deterministic detection, and validation coordination
-with single-active leases, budgets, isolated roots, fixture correctness, and
-exact revert. All family slots remain unselected and no public build,
-observation, proposal, validation, timing sample, product failure or new value
-claim exists. `WCNCP-006` is next.
+`WCNCP-001` through `WCNCP-006` done: control state, scoped authority,
+wrapper observation, deterministic detection, validation coordination, and
+digest-bound review with fail-closed stale/tamper handling. All family slots
+remain unselected and no public build, observation, proposal, validation,
+timing sample, product failure or new value claim exists. `WCNCP-007` is next.
 
 `CRITICAL_PATH_BUILD_LOGIC_CORRECTION_V1` is closed as
 `STOP_CRITICAL_PATH_BUILD_LOGIC_CORRECTION_NO_PROPOSAL_BREADTH`. Five exact

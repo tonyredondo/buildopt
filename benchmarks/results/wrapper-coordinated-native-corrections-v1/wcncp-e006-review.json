@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "buildopt.wcncp/evidence-e006/v1",
+  "block": "WCNCP-006",
+  "evidence": "WCNCP-E006",
+  "state": "DONE",
+  "description": "Digest-bound PatchBundle review delivery and lifecycle over fixtures. Historical recipes traverse only as diagnostic-only system fixtures on isolated copies; no public mutation and no historical value reuse.",
+  "implementation": {
+    "seam": "new pure package internal/wcncpreview reusing proposal patch bindings and exact-revert transactions",
+    "files": [
+      "internal/wcncpreview/review.go",
+      "dev/check-wcncp-review"
+    ],
+    "lane": "HISTORICAL_RECIPE_SYSTEM_FIXTURE",
+    "lifecycle": ["REVIEW_READY", "OWNER_ACCEPTED", "OWNER_REJECTED", "OWNER_DEFERRED", "STALE"]
+  },
+  "validation": {
+    "environmentClass": "STANDARD_HOSTED_CI",
+    "timingClassification": "DIAGNOSTIC_ONLY",
+    "coverage": [
+      "draft creation with all protocol sections and authority statement",
+      "deterministic replay yields identical digests",
+      "accept, reject, and defer derive distinct terminal states",
+      "stale drift rejects before review",
+      "tampered patch bytes reject before review",
+      "acceptance never implies source application or merge"
+    ]
+  },
+  "gates": {
+    "historicalSystemLaneOnly": "PASS",
+    "noPublicMutation": "PASS",
+    "noHistoricalValueReuse": "PASS",
+    "prospectiveObservations": 0,
+    "candidateBuilds": 0,
+    "timingSamples": 0,
+    "productFailures": 0
+  },
+  "authority": {
+    "syntheticOnly": true,
+    "prospectiveEvidence": false,
+    "productionAuthorized": false
+  }
+}

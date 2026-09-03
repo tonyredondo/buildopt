@@ -37,11 +37,14 @@ builds, source mutation, candidate execution, or timing. `WCNCP-005` is next.
 `WCNCP-E004` proof is
 [`wcncp-e004-detector.json`](./wcncp-e004-detector.json), and
 `WCNCP-E005` proof is
-[`wcncp-e005-validation.json`](./wcncp-e005-validation.json): synthetic-only
+[`wcncp-e005-validation.json`](./wcncp-e005-validation.json), and
+`WCNCP-E006` proof is
+[`wcncp-e006-review.json`](./wcncp-e006-review.json): synthetic-only
 restart-safe publication, repository/kind isolation with identical bytes,
 Gradle-plane separation, staged expiry, fail-closed authority, exact
 passthrough, deterministic detection, single-active leases, fixture
-correctness, exact revert, and durable decisions. Prospective evidence remains zero.
+correctness, exact revert, digest-bound review, and durable decisions.
+Prospective evidence remains zero.
 
 Run the frozen planning/schema contract with:
 
@@ -77,4 +80,10 @@ Run the WCNCP-005 validator proof with:
 
 ```bash
 ./dev/check-wcncp-validation
+```
+
+Run the WCNCP-006 review proof with:
+
+```bash
+./dev/check-wcncp-review
 ```
