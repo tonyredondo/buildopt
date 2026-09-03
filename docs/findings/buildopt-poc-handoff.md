@@ -54,14 +54,16 @@ does not establish commercial viability.
 
 ## Current experiment status
 
-`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` is contract-frozen at WCNCP-000.
-The wrapper command remains authoritative Gradle passthrough; Gradle cache
-objects and typed control state are separate logical planes. Five record
-schemas, controlled-versus-hosted-CI evidence authority, a neutral ten-family
-selection policy and bounded experiment budgets are checked. All family slots
-remain unselected and no wrapper runtime change, remote route, public build,
-observation, proposal, validation, timing sample, product failure or new value
-claim exists. WCNCP-001 is next.
+`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` has `WCNCP-000` frozen and
+`WCNCP-001` done. The wrapper command remains authoritative Gradle
+passthrough; Gradle cache objects and typed control state are separate logical
+planes with shared physical CAS bytes and independent `wcncp_*` metadata.
+Five record schemas, controlled-versus-hosted-CI evidence authority, a neutral
+ten-family selection policy and bounded experiment budgets are checked, and the
+five-kind control plane persists restart-safe with generation CAS, retention,
+and fail-closed negatives. All family slots remain unselected and no wrapper
+runtime change, remote route, public build, observation, proposal, validation,
+timing sample, product failure or new value claim exists. `WCNCP-002` is next.
 
 `CRITICAL_PATH_BUILD_LOGIC_CORRECTION_V1` is closed as
 `STOP_CRITICAL_PATH_BUILD_LOGIC_CORRECTION_NO_PROPOSAL_BREADTH`. Five exact

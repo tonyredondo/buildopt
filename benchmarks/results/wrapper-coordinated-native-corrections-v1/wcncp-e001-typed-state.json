@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "buildopt.wcncp/evidence-e001/v1",
+  "block": "WCNCP-001",
+  "evidence": "WCNCP-E001",
+  "state": "DONE",
+  "baseCommit": "58024cc8f622c13b224081c17638b954734a2bbc",
+  "description": "Typed restart-safe WCNCP control state: five immutable record kinds with canonical schemas, CAS persistence, retention, migrations, namespace isolation, and corruption/concurrency negatives. No remote route, wrapper integration, public build, candidate, timing, or value claim.",
+  "implementation": {
+    "seam": "internal/sharedcache existing typed-state owner extended in place; no parallel database",
+    "files": [
+      "internal/sharedcache/state_sqlite.go",
+      "internal/sharedcache/wcncp_state.go",
+      "internal/sharedcache/wcncp_state_test.go",
+      "internal/sharedcache/reconcile.go",
+      "internal/sharedcache/storage.go",
+      "dev/check-wcncp-typed-state"
+    ],
+    "schemaVersion": 2,
+    "migration": "wcncp-typed-state-v1",
+    "kinds": [
+      "WCNCP_OBSERVATION",
+      "WCNCP_OPPORTUNITY",
+      "WCNCP_PROPOSAL",
+      "WCNCP_VALIDATION",
+      "WCNCP_DECISION"
+    ],
+    "physicalCAS": "shared filesystem blobs with Gradle cache objects",
+    "logicalMetadata": "independent wcncp_* tables; no Gradle key or existing state kind addresses WCNCP state",
+    "retention": {
+      "WCNCP_OBSERVATION": "RAW_30_DAYS, preserved while referenced",
+      "WCNCP_OPPORTUNITY": "CURRENT_PLUS_30_DAYS_AFTER_SUPERSEDED, preserved while referenced",
+      "WCNCP_PROPOSAL": "WHILE_ACTIVE_PLUS_90_DAYS, preserved while referenced by validation/decision",
+      "WCNCP_VALIDATION": "WHILE_PROPOSAL_RETAINED_PLUS_90_DAYS, preserved while referenced by decision",
+      "WCNCP_DECISION": "DURABLE, never expires by retention",
+      "staged": "24_HOURS_FROM_STAGING unless referenced"
+    }
+  },
+  "validation": {
+    "environmentClass": "STANDARD_HOSTED_CI",
+    "timingClassification": "DIAGNOSTIC_ONLY",
+    "commands": [
+      "./dev/check-wrapper-coordinated-native-corrections-plan",
+      "./dev/run --toolchain go -- go test -race -count=1 -run '^(TestWCNCP|TestWCNCRetention|TestTypedState)' ./internal/sharedcache",
+      "./dev/run --toolchain go -- go test -count=1 ./internal/sharedcache",
+      "./dev/run --toolchain go -- go vet ./internal/sharedcache"
+    ],
+    "results": [
+      "WCNCP-000 contract OK: 5 schemas, 10 unselected slots, zero experiment evidence",
+      "TestWCNCP* and TestTypedState pass with -race",
+      "Full ./internal/sharedcache package passes",
+      "go vet clean",
+      "git diff --check clean"
+    ],
+    "negativeCoverage": [
+      "restart-safe immutable publication and namespace isolation",
+      "repository/kind isolation with identical bytes",
+      "Gradle data plane cannot address control state",
+      "partial publication invisible and staged expiry",
+      "missing/corrupt artifacts fail closed",
+      "stale/skipped generation and head precondition fail closed",
+      "concurrent CAS yields one winner and one precondition",
+      "exact idempotent replay returns original head",
+      "changed-request idempotency conflict",
+      "schema valid vectors pass and invalid vectors fail for all five kinds",
+      "authority escalation rejected for all five kinds",
+      "invalid payload never gains visibility",
+      "retention keeps referenced evidence and expires superseded",
+      "decisions durable",
+      "migration checksums exact with forward-open restart proof"
+    ]
+  },
+  "gates": {
+    "restartSafeImmutablePublication": "PASS",
+    "namespaceIsolation": "PASS",
+    "prospectiveObservations": 0,
+    "candidateBuilds": 0,
+    "timingSamples": 0,
+    "productFailures": 0,
+    "publicSourceMutation": false,
+    "timingAuthorized": false
+  },
+  "authority": {
+    "syntheticOnly": true,
+    "prospectiveEvidence": false,
+    "productionAuthorized": false,
+    "historicalRecipeSystemFixture": false
+  }
+}

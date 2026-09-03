@@ -397,6 +397,12 @@ func openWithConfiguration(
 			err,
 		))
 	}
+	if _, err := storage.maintainWCNCPMetadata(ctx, storage.now()); err != nil {
+		return cleanup(fmt.Errorf(
+			"open single-node Shared storage: maintain WCNCP state: %w",
+			err,
+		))
+	}
 	if _, err := storage.reconcile(ctx, storage.now()); err != nil {
 		return cleanup(fmt.Errorf(
 			"open single-node Shared storage: reconcile: %w",

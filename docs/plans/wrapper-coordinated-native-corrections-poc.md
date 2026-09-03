@@ -3,7 +3,7 @@
 ## Status
 
 **Overall:** `CONTRACT_FROZEN`<br>
-**Current block:** `WCNCP-001` is next.<br>
+**Current block:** `WCNCP-002` is next (`WCNCP-001` is `DONE`).<br>
 **Reference baseline inspected while writing this plan:**
 `b8a195dc9fd55a52c15202b77f0bb979f8c97fa3`.<br>
 **Execution authority:** `WCNCP-000` freezes contracts only. No public
@@ -1231,8 +1231,8 @@ repository build usable without BuildOpt state.
 | Evidence | Block | Required artifact | State |
 |---|---|---|---|
 | `WCNCP-E000` | WCNCP-000 | Frozen plan, machine contract, subjects, schemas, and plan checker | `DONE` — [contract](../../specs/poc-wrapper-coordinated-native-corrections-v1.md), [subject policy](../../specs/poc-wrapper-coordinated-native-corrections-v1.subjects.json), and [evidence index](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/README.md) |
-| `WCNCP-E001` | WCNCP-001 | Typed-state persistence and lifecycle proof | `TODO` |
-| `WCNCP-E002` | WCNCP-002 | HTTPS authority/idempotency proof | `WAITING` |
+| `WCNCP-E001` | WCNCP-001 | Typed-state persistence and lifecycle proof | `DONE` — [typed-state proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e001-typed-state.json) with five immutable kinds, CAS persistence, retention, namespace isolation, and corruption/concurrency negatives; zero prospective evidence |
+| `WCNCP-E002` | WCNCP-002 | HTTPS authority/idempotency proof | `TODO` |
 | `WCNCP-E003` | WCNCP-003 | Wrapper observation, privacy, fallback, and overhead proof | `WAITING` |
 | `WCNCP-E004` | WCNCP-004 | Aggregator/detector fixtures and independent reconstruction | `WAITING` |
 | `WCNCP-E005` | WCNCP-005 | Lease and validator lifecycle proof | `WAITING` |
@@ -1247,9 +1247,13 @@ repository build usable without BuildOpt state.
 
 ## Immediate next action
 
-Implement only `WCNCP-001`: extend the existing central typed-state owner with
-the five immutable record kinds, generation-CAS visibility, retention,
-reconstruction, and corruption/concurrency negatives. Do not expose remote
-routes, integrate wrapper observation, select the public cohort, run Gradle,
-compile a candidate, mutate public source, collect timing, or claim value in
-that block.
+`WCNCP-001` is `DONE`: typed control state with five immutable record kinds,
+generation-CAS visibility, retention, reconstruction, and
+corruption/concurrency negatives is proved by `WCNCP-E001` with zero
+prospective evidence.
+
+Implement only `WCNCP-002`: expose the typed store through existing
+TLS/authentication infrastructure with scoped actor capabilities, idempotency,
+local verified snapshots, and audit events. Do not integrate wrapper
+observation, select the public cohort, run Gradle, compile a candidate, mutate
+public source, collect timing, or claim value in that block.

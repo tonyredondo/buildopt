@@ -565,7 +565,7 @@ SELECT blob_digest FROM committed_objects`,
 	}
 	stateRows, err := storage.state.database.QueryContext(
 		ctx,
-		`SELECT blob_digest FROM state_objects`,
+		`SELECT blob_digest FROM state_objects UNION SELECT blob_digest FROM wcncp_objects`,
 	)
 	if err != nil {
 		return 0, err

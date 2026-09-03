@@ -3,7 +3,9 @@
 The active successor is now `WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1`: keep
 the wrapper as the normal Gradle entrypoint, learn from ordinary invocations
 and deliver only owner-reviewed native corrections. WCNCP-000 freezes the
-control/data-plane boundary, record schemas and controlled-evidence rules. Its
+control/data-plane boundary, record schemas and controlled-evidence rules, and
+WCNCP-001 proves the five-kind typed control plane with restart-safe CAS,
+retention, and namespace isolation. Its
 ten-family cohort is not selected yet, so this pivot adds no generalization,
 timing or value evidence.
 
