@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/wcncp-observation.v1.schema.json",
+  "title": "BuildOpt WCNCP_OBSERVATION v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "recordType", "observationId", "repositoryScope", "runnerId", "idempotencyKey", "invocationOrdinal", "environmentClass", "bindings", "arguments", "duration", "configurationCache", "buildCacheMode", "outputManifest", "child", "completeness", "authority"],
+  "properties": {
+    "schemaVersion": {"const": "buildopt.wcncp/observation/v1"},
+    "recordType": {"const": "WCNCP_OBSERVATION"},
+    "observationId": {"$ref": "#/$defs/sha256"},
+    "repositoryScope": {"type": "string", "minLength": 1, "maxLength": 256},
+    "runnerId": {"$ref": "#/$defs/sha256"},
+    "idempotencyKey": {"type": "string", "pattern": "^[A-Za-z0-9._:-]{16,128}$"},
+    "invocationOrdinal": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+    "environmentClass": {"enum": ["CONTROLLED_PERFORMANCE", "STANDARD_HOSTED_CI", "LOCAL_FUNCTIONAL"]},
+    "bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repositoryRevision", "sourceTreeSha256", "wrapperSha256", "gradleVersion", "jdkSha256", "buildoptPackageSha256", "workflowSha256", "environmentSha256", "outputContractSha256"],
+      "properties": {
+        "repositoryRevision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "sourceTreeSha256": {"$ref": "#/$defs/sha256"},
+        "wrapperSha256": {"$ref": "#/$defs/sha256"},
+        "gradleVersion": {"type": "string", "minLength": 1, "maxLength": 32},
+        "jdkSha256": {"$ref": "#/$defs/sha256"},
+        "buildoptPackageSha256": {"$ref": "#/$defs/sha256"},
+        "workflowSha256": {"$ref": "#/$defs/sha256"},
+        "environmentSha256": {"$ref": "#/$defs/sha256"},
+        "outputContractSha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "arguments": {"type": "array", "maxItems": 128, "items": {"type": "string", "minLength": 1, "maxLength": 256}},
+    "duration": {"$ref": "#/$defs/typedDuration"},
+    "configurationCache": {"enum": ["NOT_REQUESTED", "STORE", "REUSE", "PROBLEM", "UNAVAILABLE"]},
+    "buildCacheMode": {"enum": ["ENABLED", "DISABLED", "UNAVAILABLE"]},
+    "outputManifest": {
+      "type": "object", "additionalProperties": false, "required": ["state"],
+      "properties": {"state": {"enum": ["COMPLETE", "UNAVAILABLE"]}, "sha256": {"$ref": "#/$defs/sha256"}, "reason": {"type": "string", "minLength": 1, "maxLength": 256}},
+      "allOf": [
+        {"if": {"properties": {"state": {"const": "COMPLETE"}}, "required": ["state"]}, "then": {"required": ["sha256"], "not": {"required": ["reason"]}}},
+        {"if": {"properties": {"state": {"const": "UNAVAILABLE"}}, "required": ["state"]}, "then": {"required": ["reason"], "not": {"required": ["sha256"]}}}
+      ]
+    },
+    "child": {
+      "type": "object", "additionalProperties": false, "required": ["outcome"],
+      "properties": {"outcome": {"enum": ["SUCCESS", "FAILED", "SIGNALED", "NOT_STARTED"]}, "exitCode": {"type": "integer", "minimum": 0, "maximum": 255}, "signal": {"type": "integer", "minimum": 1, "maximum": 127}}
+    },
+    "completeness": {"enum": ["COMPLETE", "INCOMPLETE"]},
+    "authority": {"$ref": "#/$defs/authority"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"environmentClass": {"const": "STANDARD_HOSTED_CI"}}, "required": ["environmentClass"]},
+      "then": {"properties": {"duration": {"properties": {"classification": {"const": "DIAGNOSTIC_ONLY"}}, "required": ["classification"]}}}
+    },
+    {
+      "if": {"properties": {"environmentClass": {"const": "LOCAL_FUNCTIONAL"}}, "required": ["environmentClass"]},
+      "then": {"properties": {"duration": {"properties": {"classification": {"const": "NOT_EVALUATED"}}, "required": ["classification"]}}}
+    }
+  ],
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "typedDuration": {
+      "type": "object", "additionalProperties": false, "required": ["state", "classification"],
+      "properties": {"state": {"enum": ["COMPLETE", "UNAVAILABLE"]}, "valueMs": {"type": "integer", "minimum": 0}, "classification": {"enum": ["CONTROLLED_VALUE_INPUT", "DIAGNOSTIC_ONLY", "NOT_EVALUATED"]}, "reason": {"type": "string", "minLength": 1, "maxLength": 256}},
+      "allOf": [
+        {"if": {"properties": {"state": {"const": "COMPLETE"}}, "required": ["state"]}, "then": {"required": ["valueMs"], "not": {"required": ["reason"]}}},
+        {"if": {"properties": {"state": {"const": "UNAVAILABLE"}}, "required": ["state"]}, "then": {"required": ["reason"], "not": {"required": ["valueMs"]}}}
+      ]
+    },
+    "authority": {
+      "type": "object", "additionalProperties": false, "required": ["prospectiveGateInput", "productionAuthorized"],
+      "properties": {"prospectiveGateInput": {"type": "boolean"}, "productionAuthorized": {"const": false}}
+    }
+  }
+}

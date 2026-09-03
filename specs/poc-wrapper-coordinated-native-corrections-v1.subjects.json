@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "buildopt.specs/poc-wrapper-coordinated-native-corrections-subjects/v1",
+  "selectionState": "POLICY_FROZEN_COHORT_UNSELECTED",
+  "exactCohortFreezeBlock": "WCNCP-008",
+  "selectionMustPrecede": "FIRST_PROSPECTIVE_OBSERVATION",
+  "familyCount": 10,
+  "reserveRevisionsPerFamily": 2,
+  "minimumFamiliesWithoutPriorQualifiedReviewedNativeRecipe": 5,
+  "allowedSelectionFacts": [
+    "PUBLIC_GRADLE_REPOSITORY",
+    "ACTIVE_BUILD_OWNING_SOURCE",
+    "CHECKED_GRADLE_WRAPPER",
+    "CONTROLLED_JDK_TOOLCHAIN_COMPATIBILITY",
+    "DOCUMENTED_OWNER_WORKFLOW",
+    "DECLARED_REQUIRED_OUTPUTS",
+    "PREFLIGHT_COMPLETES_WITHIN_FIXED_LIMIT",
+    "DECLARED_DISK_AND_TIME_FIT"
+  ],
+  "forbiddenSelectionFacts": [
+    "BUILDOPT_DETECTOR_OUTCOME",
+    "HISTORICAL_BUILDOPT_OPPORTUNITY",
+    "HISTORICAL_BUILDOPT_TIMING",
+    "KNOWN_PATCH_VALUE",
+    "REPOSITORY_OR_TASK_NAME_CLASSIFICATION_RULE"
+  ],
+  "replacementPolicy": {
+    "allowedReasons": [
+      "REPOSITORY_UNAVAILABLE",
+      "WRAPPER_OR_TOOLCHAIN_INCOMPATIBLE",
+      "OWNER_WORKFLOW_UNAVAILABLE",
+      "OPTIMIZED_NATIVE_PREFLIGHT_FAILED",
+      "FIXED_PREFLIGHT_LIMIT_EXCEEDED",
+      "DECLARED_DISK_LIMIT_EXCEEDED"
+    ],
+    "noOpportunityOrPoorPerformanceMayReplace": false,
+    "replacementMustUseFrozenReserveOrder": true
+  },
+  "slots": [
+    {"ordinal":1,"state":"UNSELECTED"},
+    {"ordinal":2,"state":"UNSELECTED"},
+    {"ordinal":3,"state":"UNSELECTED"},
+    {"ordinal":4,"state":"UNSELECTED"},
+    {"ordinal":5,"state":"UNSELECTED"},
+    {"ordinal":6,"state":"UNSELECTED"},
+    {"ordinal":7,"state":"UNSELECTED"},
+    {"ordinal":8,"state":"UNSELECTED"},
+    {"ordinal":9,"state":"UNSELECTED"},
+    {"ordinal":10,"state":"UNSELECTED"}
+  ],
+  "prospectiveObservations": 0,
+  "candidateBuilds": 0,
+  "timingSamples": 0,
+  "productFailures": 0
+}

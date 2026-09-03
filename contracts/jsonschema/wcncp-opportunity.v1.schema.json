@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/wcncp-opportunity.v1.schema.json",
+  "title": "BuildOpt WCNCP_OPPORTUNITY v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "recordType", "opportunityId", "repositoryScope", "detector", "observationIds", "sourceBinding", "materiality", "decision", "requiredDiagnostics", "authority"],
+  "properties": {
+    "schemaVersion": {"const": "buildopt.wcncp/opportunity/v1"},
+    "recordType": {"const": "WCNCP_OPPORTUNITY"},
+    "opportunityId": {"$ref": "#/$defs/sha256"},
+    "repositoryScope": {"type": "string", "minLength": 1, "maxLength": 256},
+    "detector": {
+      "type": "object", "additionalProperties": false, "required": ["id", "version", "implementationSha256"],
+      "properties": {"id": {"enum": ["CONFIGURATION_CACHE_READINESS_PATCH", "NORMALIZATION_AWARE_CACHEABILITY", "DURABLE_TASK_CONTRACT"]}, "version": {"type": "string", "minLength": 1, "maxLength": 32}, "implementationSha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "observationIds": {"type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
+    "sourceBinding": {
+      "type": "object", "additionalProperties": false, "required": ["state"],
+      "properties": {"state": {"enum": ["COMPLETE", "AMBIGUOUS", "UNAVAILABLE", "DRIFTED"]}, "path": {"type": "string", "minLength": 1, "maxLength": 1024}, "sourceSha256": {"$ref": "#/$defs/sha256"}, "startByte": {"type": "integer", "minimum": 0}, "endByte": {"type": "integer", "minimum": 1}, "reason": {"type": "string", "minLength": 1, "maxLength": 512}},
+      "if": {"properties": {"state": {"const": "COMPLETE"}}, "required": ["state"]},
+      "then": {"required": ["path", "sourceSha256", "startByte", "endByte"]}
+    },
+    "materiality": {
+      "type": "object", "additionalProperties": false, "required": ["state", "environmentClass"],
+      "properties": {"state": {"enum": ["PASSED", "FAILED", "REQUIRES_CONTROLLED_MEASUREMENT"]}, "environmentClass": {"enum": ["CONTROLLED_PERFORMANCE", "STANDARD_HOSTED_CI", "LOCAL_FUNCTIONAL"]}, "criticalPathMs": {"type": "integer", "minimum": 0}, "workflowPercentMilli": {"type": "integer", "minimum": 0, "maximum": 100000}, "reason": {"type": "string", "minLength": 1, "maxLength": 512}}
+    },
+    "decision": {"enum": ["ACTIONABLE_MATERIAL_CORRECTION", "NO_REPRODUCIBLE_BLOCKER", "NON_MATERIAL_BLOCKER", "OWNER_SEMANTICS_REQUIRED", "UNSAFE_OR_NON_REVERSIBLE", "UNSUPPORTED_PROBLEM_CLASS", "INCOMPLETE_OBSERVATION", "SOURCE_OR_BINDING_AMBIGUOUS", "SOURCE_DRIFTED"]},
+    "requiredDiagnostics": {"type": "array", "maxItems": 8, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 128}},
+    "authority": {"$ref": "#/$defs/authority"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"materiality": {"properties": {"environmentClass": {"enum": ["STANDARD_HOSTED_CI", "LOCAL_FUNCTIONAL"]}}, "required": ["environmentClass"]}},
+        "required": ["materiality"]
+      },
+      "then": {"properties": {"materiality": {"properties": {"state": {"const": "REQUIRES_CONTROLLED_MEASUREMENT"}}, "required": ["state"]}}}
+    }
+  ],
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "authority": {"type": "object", "additionalProperties": false, "required": ["candidateBuildAuthorized", "timingAuthorized", "productionAuthorized"], "properties": {"candidateBuildAuthorized": {"const": false}, "timingAuthorized": {"const": false}, "productionAuthorized": {"const": false}}}
+  }
+}

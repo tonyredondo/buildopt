@@ -2,6 +2,12 @@
 
 Reproducible workloads for measuring causal savings, overhead, queues, additional compute, and behavior under failure.
 
+The active [wrapper-coordinated native-corrections evidence index](./results/wrapper-coordinated-native-corrections-v1/README.md)
+contains contract evidence only. `WCNCP-000` freezes two separate storage
+planes, five typed control records, controlled-versus-hosted-CI authority and a
+neutral ten-family selection policy. All ten slots remain unselected; builds,
+observations, proposals, validations, timing samples and value claims are zero.
+
 The [prospective reviewed-native trial](./results/prospective-reviewed-native-patch-controlled-trial-v1/README.md)
 audits ten unused public families and reconstructs three source-action families.
 Only Shadow binds to an owner workflow, where `generateDocTests` measures 80 ms,

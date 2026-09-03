@@ -7,13 +7,15 @@ path. Start with the [documentation portal](../docs/README.md) or
 [architecture overview](../docs/architecture/overview.md), then return here for
 the exact cross-component contract.
 
-The current completed product pivot is the
-[`Reviewed Native Patch Portfolio v1`](./poc-reviewed-native-patch-portfolio-v1.md).
-It evaluates independently reviewed and reversible native Gradle source
-corrections, leaving Gradle as the only accepted build runtime.
+The active product pivot is the
+[`Wrapper-Coordinated Native Corrections v1`](./poc-wrapper-coordinated-native-corrections-v1.md).
+`WCNCP-000` freezes wrapper/backend observation, coordination, validation, and
+owner review while leaving native Gradle as the build runtime. It has not
+started prospective observation or value work.
 
 | Specification | Owning item |
 |---|---|
+| [`poc-wrapper-coordinated-native-corrections-v1.md`](./poc-wrapper-coordinated-native-corrections-v1.md), [machine contract](./poc-wrapper-coordinated-native-corrections-v1.json) and [subject policy](./poc-wrapper-coordinated-native-corrections-v1.subjects.json) | `WCNCP-000`: five-record control-plane contract, ten unselected prospective slots, controlled-only performance authority, and zero experiment evidence; `WCNCP-001` typed state is next |
 | [`poc-critical-path-build-logic-correction-v1.md`](./poc-critical-path-build-logic-correction-v1.md), [machine contract](./poc-critical-path-build-logic-correction-v1.json) and [subjects](./poc-critical-path-build-logic-correction-v1.subjects.json) | `CPBLC-001..006`: 5/5 conclusive exact source trees, 61 material standard tasks and six explicit opt-outs, all bound to non-material tasks; 0/5 proposal families stop correctness and timing |
 | [`poc-critical-path-first-reviewed-native-patch-v1.md`](./poc-critical-path-first-reviewed-native-patch-v1.md), [machine contract](./poc-critical-path-first-reviewed-native-patch-v1.json) and [subjects](./poc-critical-path-first-reviewed-native-patch-v1.subjects.json) | `CPFRNP-001..007`: 10 diagnostic rows, 4/10 conclusive and 0/10 proposal families; 19 material critical-path tasks in complete rows are all standard Gradle/Kotlin tasks, so source/correctness/value remain closed |
 | [`poc-prospective-reviewed-native-patch-controlled-trial-v1.md`](./poc-prospective-reviewed-native-patch-controlled-trial-v1.md), [machine contract](./poc-prospective-reviewed-native-patch-controlled-trial-v1.json) and [prospective subjects](./poc-prospective-reviewed-native-patch-controlled-trial-v1.subjects.json) | `PRNP-001..007`: 10/10 conclusive and three source-action families; the sole bound diagnostic measures Shadow `generateDocTests` at 80 ms, 0.01698%, off critical path, so correctness/value/review/delivery are not authorized and the trial stops with zero candidates or timing |

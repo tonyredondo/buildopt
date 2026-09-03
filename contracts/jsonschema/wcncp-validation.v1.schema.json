@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/wcncp-validation.v1.schema.json",
+  "title": "BuildOpt WCNCP_VALIDATION v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "recordType", "validationId", "repositoryScope", "proposalSha256", "leaseSha256", "environmentClass", "bindingsSha256", "correctness", "timing", "cost", "decision", "authority"],
+  "properties": {
+    "schemaVersion": {"const": "buildopt.wcncp/validation/v1"},
+    "recordType": {"const": "WCNCP_VALIDATION"},
+    "validationId": {"$ref": "#/$defs/sha256"},
+    "repositoryScope": {"type": "string", "minLength": 1, "maxLength": 256},
+    "proposalSha256": {"$ref": "#/$defs/sha256"},
+    "leaseSha256": {"$ref": "#/$defs/sha256"},
+    "environmentClass": {"enum": ["CONTROLLED_PERFORMANCE", "STANDARD_HOSTED_CI", "LOCAL_FUNCTIONAL"]},
+    "bindingsSha256": {"$ref": "#/$defs/sha256"},
+    "correctness": {
+      "type": "object", "additionalProperties": false, "required": ["starts", "exactOutputs", "invalidation", "exactRevert", "productFailures"],
+      "properties": {"starts": {"type": "integer", "minimum": 0}, "exactOutputs": {"type": "boolean"}, "invalidation": {"type": "boolean"}, "exactRevert": {"type": "boolean"}, "productFailures": {"type": "integer", "minimum": 0}}
+    },
+    "timing": {
+      "type": "object", "additionalProperties": false, "required": ["state"],
+      "properties": {"state": {"enum": ["CONTROLLED_COMPLETE", "NOT_EVALUATED_STANDARD_CI", "NOT_RUN"]}, "pairs": {"type": "integer", "minimum": 0, "maximum": 8}, "positivePairs": {"type": "integer", "minimum": 0, "maximum": 8}, "meanSavingMs": {"type": "integer"}, "meanSavingPercentMilli": {"type": "integer"}, "candidateP95DeltaMs": {"type": "integer"}, "paired95LowerMs": {"type": "integer"}, "paired95UpperMs": {"type": "integer"}, "reason": {"type": "string", "minLength": 1, "maxLength": 512}},
+      "allOf": [
+        {"if": {"properties": {"state": {"const": "CONTROLLED_COMPLETE"}}, "required": ["state"]}, "then": {"required": ["pairs", "positivePairs", "meanSavingMs", "meanSavingPercentMilli", "candidateP95DeltaMs", "paired95LowerMs", "paired95UpperMs"]}},
+        {"if": {"properties": {"state": {"enum": ["NOT_EVALUATED_STANDARD_CI", "NOT_RUN"]}}, "required": ["state"]}, "then": {"required": ["reason"]}}
+      ]
+    },
+    "cost": {"type": "object", "additionalProperties": false, "required": ["machineMs", "operationalMs"], "properties": {"machineMs": {"type": "integer", "minimum": 0}, "operationalMs": {"type": "integer", "minimum": 0}, "paybackBuilds": {"type": "integer", "minimum": 1}}},
+    "decision": {"enum": ["QUALIFIED", "REJECTED_CORRECTNESS", "REJECTED_VALUE", "INCOMPLETE", "NOT_EVALUATED_STANDARD_CI"]},
+    "authority": {"type": "object", "additionalProperties": false, "required": ["sourceApplyAuthorized", "ownerDecisionRequired", "productionAuthorized"], "properties": {"sourceApplyAuthorized": {"const": false}, "ownerDecisionRequired": {"const": true}, "productionAuthorized": {"const": false}}}
+  },
+  "allOf": [
+    {"if": {"properties": {"environmentClass": {"const": "STANDARD_HOSTED_CI"}}, "required": ["environmentClass"]}, "then": {"properties": {"timing": {"properties": {"state": {"const": "NOT_EVALUATED_STANDARD_CI"}}, "required": ["state"]}, "decision": {"const": "NOT_EVALUATED_STANDARD_CI"}}}}
+  ],
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

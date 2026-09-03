@@ -27,13 +27,13 @@ evidence around that execution and uses conservative fallbacks: a rejected
 cache entry becomes a normal cache miss, an unqualified optimization is not
 applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
-> **Active POC experiment:** `REMOTE_CACHE_LOCALITY_VALUE_V3` corrects the v2
-> early stop. It completes all five public correctness rows, freezes one primary
-> artifact per build definition and separates native instability from Edge-only
-> failure. Timing, once authorized, uses one fixed 30-ms/100-MiB/s controlled
-> envelope and cannot alone claim real-path product viability. `RCL3-001` is
-> complete; no v3 public build or timing exists yet. The v2 result remains
-> preserved in its [closed tracker](./docs/plans/remote-cache-locality-value-poc-tracker.md).
+> **Active POC pivot:** `WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` keeps the
+> repository wrapper as the ordinary Gradle entrypoint while separating native
+> cache objects from typed observations, proposals, validations and decisions.
+> `WCNCP-000` freezes that contract, its ten-family selection policy and five
+> record schemas. No family is selected and no observation, proposal, public
+> build, timing sample or value claim exists yet. See the
+> [execution plan](./docs/plans/wrapper-coordinated-native-corrections-poc.md).
 >
 > **Closed v2 experiment:** `REMOTE_CACHE_LOCALITY_VALUE_V2` tested BuildOpt as
 > a verifying local Edge/L1 against optimized native Gradle reading the same

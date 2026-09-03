@@ -2,6 +2,13 @@
 
 ## Current Executive Summary
 
+- **The wrapper-coordinated native-corrections pivot is contract-only.**
+  WCNCP-000 freezes five typed records, a separate Gradle-cache data plane and
+  control-state plane, neutral ten-family selection and controlled-runner
+  authority. All cohort slots remain unselected and there are zero builds,
+  observations, proposals, validations, timing samples, failures or new value
+  claims. WCNCP-001 is the next implementation block.
+
 - **Explicit material-task build-logic opt-outs do not broaden the patch
   product.** Five exact public source trees are scanned against retained native
   critical-path analyses. Independent reconstruction selects 61 standard tasks

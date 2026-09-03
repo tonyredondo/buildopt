@@ -2,15 +2,17 @@
 
 ## The idea
 
-BuildOpt now tests a narrower product: find a source-level Gradle task-contract
-defect, produce an independently reviewed and reversible correction, and leave
+BuildOpt now tests a wrapper-coordinated product: keep the wrapper as the normal
+entrypoint for the customer's exact Gradle command, observe bottlenecks, propose
+an independently reviewed and reversible correction, validate it, and leave
 native Gradle as the only runtime after acceptance. This pivot follows the
-negative dynamic cross-commit experiments instead of hiding them.
+negative dynamic cross-commit experiments without discarding the qualified
+reviewed-native corrections.
 
 The current onboarding hypothesis is an owner-controlled patch transaction:
 
 ```text
-BuildOpt source proposal -> owner review -> isolated validation -> native patch
+Gradle through wrapper -> typed observation -> reviewed proposal -> isolated validation -> native patch
 ```
 
 This is an owner-operated proof of concept. The current question is whether
@@ -51,6 +53,15 @@ owner review is authorized, so the experiment adds no third value family and
 does not establish commercial viability.
 
 ## Current experiment status
+
+`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` is contract-frozen at WCNCP-000.
+The wrapper command remains authoritative Gradle passthrough; Gradle cache
+objects and typed control state are separate logical planes. Five record
+schemas, controlled-versus-hosted-CI evidence authority, a neutral ten-family
+selection policy and bounded experiment budgets are checked. All family slots
+remain unselected and no wrapper runtime change, remote route, public build,
+observation, proposal, validation, timing sample, product failure or new value
+claim exists. WCNCP-001 is next.
 
 `CRITICAL_PATH_BUILD_LOGIC_CORRECTION_V1` is closed as
 `STOP_CRITICAL_PATH_BUILD_LOGIC_CORRECTION_NO_PROPOSAL_BREADTH`. Five exact

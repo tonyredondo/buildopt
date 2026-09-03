@@ -6,6 +6,11 @@ Normative source for versioned schemas, interfaces, and cross-language conforman
 
 | Contract path | Owning item |
 |---|---|
+| `jsonschema/wcncp-observation.v1.schema.json` | `WCNCP-000` |
+| `jsonschema/wcncp-opportunity.v1.schema.json` | `WCNCP-000` |
+| `jsonschema/wcncp-proposal.v1.schema.json` | `WCNCP-000` |
+| `jsonschema/wcncp-validation.v1.schema.json` | `WCNCP-000` |
+| `jsonschema/wcncp-decision.v1.schema.json` | `WCNCP-000` |
 | `jsonschema/adaptive-fragment.v1.schema.json` | `AF-002` |
 | `jsonschema/adaptive-fragment-observation.v1.schema.json` | `AF-002` |
 | `jsonschema/adaptive-fragment-portfolio.v1.schema.json` | `AF-002` |
@@ -35,5 +40,6 @@ Normative source for versioned schemas, interfaces, and cross-language conforman
 | `proto/local-events/v1/task_events.proto` | `F0-019` |
 | `metrics/build-impact-v1.json` | `F0-024` |
 | `test-vectors/central-storage/central-storage.v1.json` | `POC-CENTRAL-STORAGE-CONTRACT-001` |
+| `test-vectors/wcncp/wcncp-control-state.v1.json` | `WCNCP-000` |
 
 The subdirectories reserve JSON Schema 2020-12, OpenAPI 3.1, Protobuf v3, metrics, and shared test-vector boundaries. RFC examples are explanatory and must not be copied into implementation types. See the [JSON Schema index](./jsonschema/README.md) for `BUILD_SESSION`, lifecycle, evidence/policy, and finite-resource contracts; the [OpenAPI index](./openapi/README.md) for the control-plane HTTP boundaries; the [metric index](./metrics/README.md) for `build-impact-v1`; the [Protobuf index](./proto/README.md) for the local channel and conformance command; and the [test-vector index](./test-vectors/README.md) for the shared JCS, digest, timestamp, Ed25519, compatibility, and state-machine corpora. The repository [generated-code policy](../GENERATED_CODE.md) covers the reviewable descriptor plus the `F0-022` Go and Java OpenAPI clients and rejects drift from any normative source.

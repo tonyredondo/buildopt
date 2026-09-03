@@ -2,6 +2,27 @@
 
 Versioned JSON Schema 2020-12 contracts for exportable records and signed commands.
 
+## Wrapper-coordinated native corrections v1
+
+[`wcncp-observation.v1.schema.json`](./wcncp-observation.v1.schema.json),
+[`wcncp-opportunity.v1.schema.json`](./wcncp-opportunity.v1.schema.json),
+[`wcncp-proposal.v1.schema.json`](./wcncp-proposal.v1.schema.json),
+[`wcncp-validation.v1.schema.json`](./wcncp-validation.v1.schema.json), and
+[`wcncp-decision.v1.schema.json`](./wcncp-decision.v1.schema.json) freeze the
+immutable records used by the wrapper-coordinated reviewed-native pivot. They
+preserve explicit unavailable values, source/evidence bindings, hosted-CI
+diagnostic-only timing, zero automatic source authority, and a separate owner
+decision.
+
+Run the schemas and language-neutral positive/negative vectors with:
+
+```bash
+./dev/check-wrapper-coordinated-native-corrections-plan
+```
+
+`WCNCP-000` defines contracts only. Persistence, routes, wrapper observation,
+public subjects, candidates, timing, and product value remain later blocks.
+
 ## Verified request hit safety record v1
 
 [`verified-request-hit-safety-record.v1.schema.json`](./verified-request-hit-safety-record.v1.schema.json)

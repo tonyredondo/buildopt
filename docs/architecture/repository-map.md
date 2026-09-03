@@ -32,6 +32,16 @@ versioned microservices.
 
 ## Latest generic POC ownership
 
+The active wrapper-coordinated native-corrections pivot is ordered by
+[`wrapper-coordinated-native-corrections-poc.md`](../plans/wrapper-coordinated-native-corrections-poc.md).
+Its human and machine contracts live under `specs/poc-wrapper-coordinated-native-corrections-v1.*`;
+the five control-plane schemas live under `contracts/jsonschema/wcncp-*.v1.schema.json`,
+and their language-neutral conformance corpus lives under
+`contracts/test-vectors/wcncp/`. The independent
+`dev/check-wrapper-coordinated-native-corrections-plan` gate owns WCNCP-000.
+No runtime package owns this pivot yet; `WCNCP-001` must define that seam before
+implementation can enter the wrapper path.
+
 The latest closed experiment is specified by
 [`poc-request-aligned-learning-v1`](../../specs/poc-request-aligned-learning-v1.md)
 and ordered by the

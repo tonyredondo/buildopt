@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/wcncp-proposal.v1.schema.json",
+  "title": "BuildOpt WCNCP_PROPOSAL v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "recordType", "proposalId", "repositoryScope", "opportunitySha256", "recipeId", "source", "patchBundleSha256", "inversePatchBundleSha256", "rationale", "verificationProtocol", "authority"],
+  "properties": {
+    "schemaVersion": {"const": "buildopt.wcncp/proposal/v1"},
+    "recordType": {"const": "WCNCP_PROPOSAL"},
+    "proposalId": {"$ref": "#/$defs/sha256"},
+    "repositoryScope": {"type": "string", "minLength": 1, "maxLength": 256},
+    "opportunitySha256": {"$ref": "#/$defs/sha256"},
+    "recipeId": {"type": "string", "pattern": "^[A-Z0-9][A-Z0-9._-]{2,127}$"},
+    "source": {
+      "type": "object", "additionalProperties": false, "required": ["path", "startByte", "endByte", "preimageSha256", "postimageSha256"],
+      "properties": {"path": {"type": "string", "minLength": 1, "maxLength": 1024}, "startByte": {"type": "integer", "minimum": 0}, "endByte": {"type": "integer", "minimum": 1}, "preimageSha256": {"$ref": "#/$defs/sha256"}, "postimageSha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "patchBundleSha256": {"$ref": "#/$defs/sha256"},
+    "inversePatchBundleSha256": {"$ref": "#/$defs/sha256"},
+    "rationale": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "verificationProtocol": {"type": "string", "minLength": 1, "maxLength": 128},
+    "authority": {
+      "type": "object", "additionalProperties": false,
+      "required": ["automaticApplyAuthorized", "automaticCommitAuthorized", "automaticPushAuthorized", "automaticPullRequestAuthorized", "automaticMergeAuthorized", "productionAuthorized"],
+      "properties": {"automaticApplyAuthorized": {"const": false}, "automaticCommitAuthorized": {"const": false}, "automaticPushAuthorized": {"const": false}, "automaticPullRequestAuthorized": {"const": false}, "automaticMergeAuthorized": {"const": false}, "productionAuthorized": {"const": false}}
+    }
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

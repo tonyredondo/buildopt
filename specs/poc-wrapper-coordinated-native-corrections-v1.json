@@ -1,0 +1,170 @@
+{
+  "schemaVersion": "buildopt.poc/wrapper-coordinated-native-corrections/v1",
+  "workItem": "WCNCP",
+  "status": "CONTRACT_FROZEN_NO_EXPERIMENT_EVIDENCE",
+  "productUnit": "OWNER_REVIEWED_NATIVE_GRADLE_CORRECTION",
+  "customerCommand": "./buildoptw <gradle arguments...>",
+  "runtime": {
+    "buildEngine": "REPOSITORY_NATIVE_GRADLE_WRAPPER",
+    "buildoptInCorrectedTaskSteadyState": false,
+    "backendRequiredForBuildSuccess": false,
+    "childExitOrSignalAuthoritative": true
+  },
+  "planes": {
+    "gradle": {
+      "kind": "OPAQUE_CACHE_DATA",
+      "optimizationAuthority": false
+    },
+    "buildopt": {
+      "kind": "TYPED_CONTROL_STATE",
+      "sharedPhysicalCASAllowed": true,
+      "sharedMetadataAuthorizationRetentionOrVisibility": false
+    }
+  },
+  "schemas": [
+    "contracts/jsonschema/wcncp-observation.v1.schema.json",
+    "contracts/jsonschema/wcncp-opportunity.v1.schema.json",
+    "contracts/jsonschema/wcncp-proposal.v1.schema.json",
+    "contracts/jsonschema/wcncp-validation.v1.schema.json",
+    "contracts/jsonschema/wcncp-decision.v1.schema.json"
+  ],
+  "vectors": "contracts/test-vectors/wcncp/wcncp-control-state.v1.json",
+  "environmentClasses": {
+    "CONTROLLED_PERFORMANCE": {
+      "deterministicGateAuthority": true,
+      "performanceGateAuthority": true
+    },
+    "STANDARD_HOSTED_CI": {
+      "deterministicGateAuthority": true,
+      "performanceGateAuthority": false,
+      "timingClassification": "DIAGNOSTIC_ONLY"
+    },
+    "LOCAL_FUNCTIONAL": {
+      "deterministicGateAuthority": false,
+      "performanceGateAuthority": false
+    }
+  },
+  "freshEvidence": {
+    "cutoff": {
+      "kind": "COMMITTED_WCNCP_000_SHA",
+      "resolvedWithExactSubjectsAtBlock": "WCNCP-008"
+    },
+    "historicalRecipeSystemFixtureAllowed": true,
+    "historicalRecipeSystemFixtureLabel": "HISTORICAL_RECIPE_SYSTEM_FIXTURE",
+    "historicalEvidenceMayDecideProspectiveGate": false,
+    "exactSubjectsFreezeBlock": "WCNCP-008",
+    "freshStateRequired": true,
+    "forbiddenInputFamilies": [
+      "DNO", "NAC", "RNPP", "EGNP", "SWL", "AF", "BUILD_IMPACT",
+      "CACHE_LOCALITY", "ANY_OTHER_PRE_FREEZE_BUILDOPT_ARTIFACT"
+    ]
+  },
+  "detectors": {
+    "primary": "CONFIGURATION_CACHE_READINESS_PATCH_V1",
+    "freshCurrentCatalogClassificationAllowed": [
+      "NORMALIZATION_AWARE_CACHEABILITY_V2",
+      "DURABLE_TASK_CONTRACT_CURRENT"
+    ],
+    "repositoryNameRulesAllowed": false,
+    "taskNameRulesAllowed": false,
+    "suppressionStylePatchesAllowed": false,
+    "dependencyChangesAllowed": false
+  },
+  "gates": {
+    "familyCount": 10,
+    "minimumFamiliesWithoutPriorQualifiedRecipe": 5,
+    "requiredConclusiveFamilies": 10,
+    "minimumActionableMaterialFamilies": 3,
+    "minimumCorrectnessQualifiedFamilies": 2,
+    "minimumValueQualifiedFamilies": 2,
+    "minimumNewValueQualifiedFamilies": 1,
+    "minimumMaterialMilliseconds": 500,
+    "minimumMaterialPercent": 2,
+    "minimumCorrectnessStarts": 5,
+    "balancedPairs": 8,
+    "requiredPositivePairs": 8,
+    "positiveMeanSaving": true,
+    "positiveConservativePaired95Interval": true,
+    "nonRegressiveCandidateP95": true,
+    "requiredOutputEquivalence": "BYTE_EXACT",
+    "maximumProductFailures": 0,
+    "maximumCustomerPaybackBuilds": 300,
+    "positiveProspectivePortfolioOperationalValue": true,
+    "maximumMedianActiveReviewSeconds": 300
+  },
+  "budgets": {
+    "primaryFamilies": 10,
+    "reserveRevisionsPerFamily": 2,
+    "ordinaryObservationBuildsPerFamily": 3,
+    "maximumOrdinaryObservationBuilds": 30,
+    "maximumAdditionalNativeDiagnosticsPerFamily": 2,
+    "maximumAdditionalNativeDiagnostics": 20,
+    "maximumCompiledProposalsPerFamily": 1,
+    "maximumCompiledProposals": 10,
+    "maximumConcurrentControlledValidations": 1,
+    "maximumInfrastructureRetriesPerProposal": 2,
+    "controlledMachineHours": 12,
+    "maximumConcurrentDiskGiB": 30,
+    "minimumFreeDiskReserveGiB": 10,
+    "wrapperPostChildUploadDeadlineMs": 100,
+    "outboxMaximumMiB": 100,
+    "outboxMaximumItems": 1000,
+    "outboxMaximumAgeDays": 30
+  },
+  "hostedCI": {
+    "timingMayQualifyOrRejectValue": false,
+    "timingFields": "NOT_EVALUATED_STANDARD_CI",
+    "environmentFailure": "CI_ENVIRONMENT_FAILURE",
+    "maximumReplacementAttemptsAfterProvenEnvironmentFailure": 1,
+    "exactOutputsRemainHardGate": true,
+    "securityAndAuthorityRemainHardGates": true,
+    "productFailureRequiresAttribution": true
+  },
+  "authority": {
+    "automaticApply": false,
+    "automaticCommit": false,
+    "automaticPush": false,
+    "automaticPullRequest": false,
+    "automaticMerge": false,
+    "upstreamCommunication": false,
+    "productionAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE",
+    "soakRequired": false,
+    "designPartnerRequired": false
+  },
+  "terminalDecisions": [
+    "QUALIFY_WRAPPER_COORDINATED_NATIVE_CORRECTIONS_POC",
+    "STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH",
+    "STOP_INSUFFICIENT_VALIDATED_VALUE_BREADTH",
+    "STOP_WRAPPER_OR_BACKEND_COST_EXCEEDS_VALUE",
+    "STOP_REVIEW_OR_DELIVERY_NOT_USABLE",
+    "STOP_PRODUCT_CORRECTNESS_FAILURE",
+    "INCOMPLETE_EXPERIMENT_INPUT",
+    "INCOMPLETE_PERFORMANCE_ENVIRONMENT",
+    "INCOMPLETE_EXPERIMENT_BUDGET_EXHAUSTED"
+  ],
+  "blocks": [
+    {"id":"WCNCP-000","state":"DONE","outcome":"CONTRACT_FROZEN_NO_EXPERIMENT_EVIDENCE"},
+    {"id":"WCNCP-001","state":"TODO","outcome":"TYPED_CONTROL_STATE"},
+    {"id":"WCNCP-002","state":"WAITING","outcome":"REMOTE_API_AND_AUTHORITY"},
+    {"id":"WCNCP-003","state":"WAITING","outcome":"WRAPPER_OBSERVATION_PATH"},
+    {"id":"WCNCP-004","state":"WAITING","outcome":"AGGREGATION_AND_DETECTOR"},
+    {"id":"WCNCP-005","state":"WAITING","outcome":"VALIDATION_COORDINATOR"},
+    {"id":"WCNCP-006","state":"WAITING","outcome":"REVIEW_DELIVERY"},
+    {"id":"WCNCP-007","state":"WAITING","outcome":"MULTI_RUNNER_SYSTEM_PROOF"},
+    {"id":"WCNCP-008","state":"WAITING","outcome":"PROSPECTIVE_COHORT_CAPTURE"},
+    {"id":"WCNCP-009","state":"WAITING","outcome":"OPPORTUNITY_BREADTH_GATE"},
+    {"id":"WCNCP-010","state":"WAITING","outcome":"CANDIDATE_CORRECTNESS"},
+    {"id":"WCNCP-011","state":"WAITING","outcome":"PAIRED_VALUE_AND_ECONOMICS"},
+    {"id":"WCNCP-012","state":"WAITING","outcome":"FIRST_EXPOSURE_OWNER_REVIEW"},
+    {"id":"WCNCP-013","state":"WAITING","outcome":"TERMINAL_DECISION"}
+  ],
+  "nextBlock": {
+    "id": "WCNCP-001",
+    "state": "TODO",
+    "allowedWork": "TYPED_CONTROL_STATE_ONLY",
+    "prospectiveGradleBuildsAllowed": false,
+    "publicSourceMutationAllowed": false,
+    "timingAllowed": false
+  }
+}

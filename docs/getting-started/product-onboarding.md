@@ -11,6 +11,14 @@ the self-hosted server, Edge Cache, and the JVM agent. Users do not need to
 clone this repository, build Go or Java sources, copy JARs, or set internal
 plugin paths.
 
+The active WCNCP pivot retains this wrapper-shaped onboarding but narrows its
+authority: the ordinary command remains Gradle-native, while BuildOpt records
+typed observations and can later present a reviewed native correction. The
+existing Gradle-compatible cache remains a cache-object data plane; proposal
+and validation state uses a separate typed control plane. WCNCP-000 defines
+only that contract, so no new runtime behavior or customer action is available
+yet.
+
 The current public path below separates compatibility, proposal, measurement
 and replay explicitly. The target POC experience is the single command
 `buildopt optimize build`. Its stable CLI, private state, exact resume, budget,

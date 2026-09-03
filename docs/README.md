@@ -15,7 +15,7 @@ before running the product.
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
 | Review the POC idea, mechanisms, current value, and next steps | [Current POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
-| Review the active value experiment | [Remote Cache Locality Value v3 POC Tracker](./plans/remote-cache-locality-value-v3-poc-tracker.md) | [Active contract](../specs/poc-remote-cache-locality-value-v3.md), [generalization audit](./findings/buildopt-generalization-audit.md), [closed v2 route](./plans/remote-cache-locality-value-poc-tracker.md) |
+| Review the active product experiment | [Wrapper-Coordinated Native Corrections POC](./plans/wrapper-coordinated-native-corrections-poc.md) | [Frozen contract](../specs/poc-wrapper-coordinated-native-corrections-v1.md), [evidence index](../benchmarks/results/wrapper-coordinated-native-corrections-v1/README.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the stopped adaptive hypothesis | [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md) | [Terminal decision](../specs/poc-adaptive-fragment-terminal-decision-v1.md), [current generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the implemented onboarding foundation | [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md) | [Product onboarding](./getting-started/product-onboarding.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
 | Plan optional shared state across machines | [Centralized cache and state POC roadmap](./plans/centralized-cache-and-state-roadmap.md) | [Storage contract](../specs/poc-central-storage-contract-v1.md), [architecture overview](./architecture/overview.md) |
@@ -64,6 +64,10 @@ before running the product.
   cross.
 
 ### Plans
+
+- [Wrapper-Coordinated Native Corrections POC](./plans/wrapper-coordinated-native-corrections-poc.md):
+  the active wrapper-as-onboarding pivot; `WCNCP-000` freezes the two-plane,
+  typed-state and controlled-measurement contract while `WCNCP-001` is next.
 
 - [Critical-Path Build-Logic Correction v1](./plans/critical-path-build-logic-correction-v1.md):
   five exact source trees and retained native traces, terminal 5/5 conclusive

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.buildopt.dev/wcncp-decision.v1.schema.json",
+  "title": "BuildOpt WCNCP_DECISION v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "recordType", "decisionId", "repositoryScope", "proposalSha256", "validationSha256", "principalSha256", "decision", "activeReviewMs", "clarificationCount", "decidedAt", "authority"],
+  "properties": {
+    "schemaVersion": {"const": "buildopt.wcncp/decision/v1"},
+    "recordType": {"const": "WCNCP_DECISION"},
+    "decisionId": {"$ref": "#/$defs/sha256"},
+    "repositoryScope": {"type": "string", "minLength": 1, "maxLength": 256},
+    "proposalSha256": {"$ref": "#/$defs/sha256"},
+    "validationSha256": {"$ref": "#/$defs/sha256"},
+    "principalSha256": {"$ref": "#/$defs/sha256"},
+    "decision": {"enum": ["ACCEPT", "REJECT", "DEFER"]},
+    "activeReviewMs": {"type": "integer", "minimum": 0, "maximum": 86400000},
+    "clarificationCount": {"type": "integer", "minimum": 0, "maximum": 100},
+    "concerns": {"type": "array", "maxItems": 32, "items": {"type": "string", "minLength": 1, "maxLength": 1024}},
+    "decidedAt": {"type": "string", "format": "date-time"},
+    "authority": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ownerAuthenticated", "sourceApplied", "commitCreated", "pushCreated", "pullRequestCreated", "merged", "productionAuthorized"],
+      "properties": {"ownerAuthenticated": {"const": true}, "sourceApplied": {"const": false}, "commitCreated": {"const": false}, "pushCreated": {"const": false}, "pullRequestCreated": {"const": false}, "merged": {"const": false}, "productionAuthorized": {"const": false}}
+    }
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

@@ -1,5 +1,12 @@
 # BuildOpt Generalization Audit
 
+The active successor is now `WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1`: keep
+the wrapper as the normal Gradle entrypoint, learn from ordinary invocations
+and deliver only owner-reviewed native corrections. WCNCP-000 freezes the
+control/data-plane boundary, record schemas and controlled-evidence rules. Its
+ten-family cohort is not selected yet, so this pivot adds no generalization,
+timing or value evidence.
+
 ## Audit question
 
 Can the retained BuildOpt POC run unchanged on an arbitrary Gradle repository,

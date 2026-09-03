@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "buildopt.test-vectors/wcncp-control-state/v1",
+  "records": {
+    "observation": {
+      "schemaVersion": "buildopt.wcncp/observation/v1",
+      "recordType": "WCNCP_OBSERVATION",
+      "observationId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "repositoryScope": "example/repository",
+      "runnerId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "idempotencyKey": "observation:0001",
+      "invocationOrdinal": 1,
+      "environmentClass": "CONTROLLED_PERFORMANCE",
+      "bindings": {
+        "repositoryRevision": "1111111111111111111111111111111111111111",
+        "sourceTreeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+        "wrapperSha256": "2222222222222222222222222222222222222222222222222222222222222222",
+        "gradleVersion": "9.6.1",
+        "jdkSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+        "buildoptPackageSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "workflowSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+        "environmentSha256": "6666666666666666666666666666666666666666666666666666666666666666",
+        "outputContractSha256": "7777777777777777777777777777777777777777777777777777777777777777"
+      },
+      "arguments": ["build", "--configuration-cache"],
+      "duration": {"state": "COMPLETE", "valueMs": 12000, "classification": "CONTROLLED_VALUE_INPUT"},
+      "configurationCache": "PROBLEM",
+      "buildCacheMode": "ENABLED",
+      "outputManifest": {"state": "COMPLETE", "sha256": "8888888888888888888888888888888888888888888888888888888888888888"},
+      "child": {"outcome": "SUCCESS", "exitCode": 0},
+      "completeness": "COMPLETE",
+      "authority": {"prospectiveGateInput": true, "productionAuthorized": false}
+    },
+    "opportunity": {
+      "schemaVersion": "buildopt.wcncp/opportunity/v1",
+      "recordType": "WCNCP_OPPORTUNITY",
+      "opportunityId": "9999999999999999999999999999999999999999999999999999999999999999",
+      "repositoryScope": "example/repository",
+      "detector": {"id": "CONFIGURATION_CACHE_READINESS_PATCH", "version": "v1", "implementationSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+      "observationIds": ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+      "sourceBinding": {"state": "COMPLETE", "path": "buildSrc/src/main/kotlin/Example.kt", "sourceSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "startByte": 10, "endByte": 20},
+      "materiality": {"state": "PASSED", "environmentClass": "CONTROLLED_PERFORMANCE", "criticalPathMs": 900, "workflowPercentMilli": 3000},
+      "decision": "ACTIONABLE_MATERIAL_CORRECTION",
+      "requiredDiagnostics": [],
+      "authority": {"candidateBuildAuthorized": false, "timingAuthorized": false, "productionAuthorized": false}
+    },
+    "proposal": {
+      "schemaVersion": "buildopt.wcncp/proposal/v1",
+      "recordType": "WCNCP_PROPOSAL",
+      "proposalId": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "repositoryScope": "example/repository",
+      "opportunitySha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "recipeId": "CONFIGURATION_CACHE_READINESS_PATCH_V1",
+      "source": {"path": "buildSrc/src/main/kotlin/Example.kt", "startByte": 10, "endByte": 20, "preimageSha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "postimageSha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"},
+      "patchBundleSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "inversePatchBundleSha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "rationale": "Use a bounded owner-source correction for a reproducible blocker.",
+      "verificationProtocol": "WCNCP_CORRECTNESS_V1",
+      "authority": {"automaticApplyAuthorized": false, "automaticCommitAuthorized": false, "automaticPushAuthorized": false, "automaticPullRequestAuthorized": false, "automaticMergeAuthorized": false, "productionAuthorized": false}
+    },
+    "validation": {
+      "schemaVersion": "buildopt.wcncp/validation/v1",
+      "recordType": "WCNCP_VALIDATION",
+      "validationId": "3333333333333333333333333333333333333333333333333333333333333333",
+      "repositoryScope": "example/repository",
+      "proposalSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "leaseSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "environmentClass": "CONTROLLED_PERFORMANCE",
+      "bindingsSha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "correctness": {"starts": 5, "exactOutputs": true, "invalidation": true, "exactRevert": true, "productFailures": 0},
+      "timing": {"state": "CONTROLLED_COMPLETE", "pairs": 8, "positivePairs": 8, "meanSavingMs": 900, "meanSavingPercentMilli": 3000, "candidateP95DeltaMs": -800, "paired95LowerMs": 700, "paired95UpperMs": 1100},
+      "cost": {"machineMs": 200000, "operationalMs": 150000, "paybackBuilds": 167},
+      "decision": "QUALIFIED",
+      "authority": {"sourceApplyAuthorized": false, "ownerDecisionRequired": true, "productionAuthorized": false}
+    },
+    "decision": {
+      "schemaVersion": "buildopt.wcncp/decision/v1",
+      "recordType": "WCNCP_DECISION",
+      "decisionId": "7777777777777777777777777777777777777777777777777777777777777777",
+      "repositoryScope": "example/repository",
+      "proposalSha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "validationSha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "principalSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decision": "ACCEPT",
+      "activeReviewMs": 20000,
+      "clarificationCount": 0,
+      "concerns": [],
+      "decidedAt": "2026-09-03T12:00:00Z",
+      "authority": {"ownerAuthenticated": true, "sourceApplied": false, "commitCreated": false, "pushCreated": false, "pullRequestCreated": false, "merged": false, "productionAuthorized": false}
+    }
+  },
+  "invalidRecords": {
+    "observation": {
+      "schemaVersion": "buildopt.wcncp/observation/v1",
+      "recordType": "WCNCP_OBSERVATION",
+      "observationId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "repositoryScope": "example/repository",
+      "runnerId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "idempotencyKey": "observation:0001",
+      "invocationOrdinal": 1,
+      "environmentClass": "STANDARD_HOSTED_CI",
+      "bindings": {"repositoryRevision": "1111111111111111111111111111111111111111", "sourceTreeSha256": "1111111111111111111111111111111111111111111111111111111111111111", "wrapperSha256": "2222222222222222222222222222222222222222222222222222222222222222", "gradleVersion": "9.6.1", "jdkSha256": "3333333333333333333333333333333333333333333333333333333333333333", "buildoptPackageSha256": "4444444444444444444444444444444444444444444444444444444444444444", "workflowSha256": "5555555555555555555555555555555555555555555555555555555555555555", "environmentSha256": "6666666666666666666666666666666666666666666666666666666666666666", "outputContractSha256": "7777777777777777777777777777777777777777777777777777777777777777"},
+      "arguments": ["build"], "duration": {"state": "COMPLETE", "valueMs": 12000, "classification": "CONTROLLED_VALUE_INPUT"}, "configurationCache": "PROBLEM", "buildCacheMode": "ENABLED", "outputManifest": {"state": "COMPLETE", "sha256": "8888888888888888888888888888888888888888888888888888888888888888"}, "child": {"outcome": "SUCCESS", "exitCode": 0}, "completeness": "COMPLETE", "authority": {"prospectiveGateInput": true, "productionAuthorized": false}
+    },
+    "opportunity": {
+      "schemaVersion": "buildopt.wcncp/opportunity/v1", "recordType": "WCNCP_OPPORTUNITY", "opportunityId": "9999999999999999999999999999999999999999999999999999999999999999", "repositoryScope": "example/repository", "detector": {"id": "CONFIGURATION_CACHE_READINESS_PATCH", "version": "v1", "implementationSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}, "observationIds": ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"], "sourceBinding": {"state": "COMPLETE", "path": "build.gradle.kts", "sourceSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "startByte": 1, "endByte": 2}, "materiality": {"state": "PASSED", "environmentClass": "STANDARD_HOSTED_CI", "criticalPathMs": 900, "workflowPercentMilli": 3000}, "decision": "ACTIONABLE_MATERIAL_CORRECTION", "requiredDiagnostics": [], "authority": {"candidateBuildAuthorized": false, "timingAuthorized": false, "productionAuthorized": false}
+    },
+    "proposal": {
+      "schemaVersion": "buildopt.wcncp/proposal/v1", "recordType": "WCNCP_PROPOSAL", "proposalId": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "repositoryScope": "example/repository", "opportunitySha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "recipeId": "CONFIGURATION_CACHE_READINESS_PATCH_V1", "source": {"path": "build.gradle.kts", "startByte": 1, "endByte": 2, "preimageSha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "postimageSha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"}, "patchBundleSha256": "1111111111111111111111111111111111111111111111111111111111111111", "inversePatchBundleSha256": "2222222222222222222222222222222222222222222222222222222222222222", "rationale": "unsafe authority", "verificationProtocol": "WCNCP_CORRECTNESS_V1", "authority": {"automaticApplyAuthorized": true, "automaticCommitAuthorized": false, "automaticPushAuthorized": false, "automaticPullRequestAuthorized": false, "automaticMergeAuthorized": false, "productionAuthorized": false}
+    },
+    "validation": {
+      "schemaVersion": "buildopt.wcncp/validation/v1", "recordType": "WCNCP_VALIDATION", "validationId": "3333333333333333333333333333333333333333333333333333333333333333", "repositoryScope": "example/repository", "proposalSha256": "4444444444444444444444444444444444444444444444444444444444444444", "leaseSha256": "5555555555555555555555555555555555555555555555555555555555555555", "environmentClass": "STANDARD_HOSTED_CI", "bindingsSha256": "6666666666666666666666666666666666666666666666666666666666666666", "correctness": {"starts": 1, "exactOutputs": true, "invalidation": true, "exactRevert": true, "productFailures": 0}, "timing": {"state": "CONTROLLED_COMPLETE", "pairs": 8, "positivePairs": 8, "meanSavingMs": 900, "meanSavingPercentMilli": 3000, "candidateP95DeltaMs": -800, "paired95LowerMs": 700, "paired95UpperMs": 1100}, "cost": {"machineMs": 1, "operationalMs": 1}, "decision": "QUALIFIED", "authority": {"sourceApplyAuthorized": false, "ownerDecisionRequired": true, "productionAuthorized": false}
+    },
+    "decision": {
+      "schemaVersion": "buildopt.wcncp/decision/v1", "recordType": "WCNCP_DECISION", "decisionId": "7777777777777777777777777777777777777777777777777777777777777777", "repositoryScope": "example/repository", "proposalSha256": "8888888888888888888888888888888888888888888888888888888888888888", "validationSha256": "9999999999999999999999999999999999999999999999999999999999999999", "principalSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "decision": "ACCEPT", "activeReviewMs": 20000, "clarificationCount": 0, "decidedAt": "2026-09-03T12:00:00Z", "authority": {"ownerAuthenticated": true, "sourceApplied": true, "commitCreated": false, "pushCreated": false, "pullRequestCreated": false, "merged": false, "productionAuthorized": false}
+    }
+  },
+  "authority": {"syntheticOnly": true, "prospectiveEvidence": false, "productionAuthorized": false}
+}

@@ -1,5 +1,11 @@
 # Validation reference
 
+The active WCNCP contract is checked by
+`./dev/check-wrapper-coordinated-native-corrections-plan`. It compiles all five
+JSON Schemas, accepts and rejects the language-neutral vectors, reconstructs
+the ten unselected cohort slots and proves that WCNCP-000 contains no build,
+timing or product-value evidence.
+
 The closed RCL route is checked by `./dev/check-remote-cache-locality-value`,
 `./dev/check-remote-cache-locality-harness`,
 `./dev/check-remote-cache-locality-public-correctness` and
@@ -64,6 +70,7 @@ provision tools or create release artifacts document that effect explicitly.
 
 | Change | Command |
 |---|---|
+| Wrapper-coordinated native-corrections contract, schemas, vectors and zero-evidence boundary | `./dev/check-wrapper-coordinated-native-corrections-plan` |
 | Material standard-task build-logic opt-outs and zero-proposal terminal stop | `./dev/check-critical-path-build-logic-correction [five family=GIT_ROOT bindings]` |
 | Prospective ten-family source, binding, native diagnostic and zero-candidate terminal stop | `./dev/check-prospective-reviewed-native-patch-evidence [SOURCE_ROOT]` |
 | Prospective holdout, gates, budgets and authority boundary | `./dev/check-prospective-reviewed-native-patch-contract` |

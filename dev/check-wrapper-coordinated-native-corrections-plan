@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-wrapper-coordinated-native-corrections-v1.json"
+buildopt_subjects="${buildopt_repo_root}/specs/poc-wrapper-coordinated-native-corrections-v1.subjects.json"
+buildopt_plan="${buildopt_repo_root}/docs/plans/wrapper-coordinated-native-corrections-poc.md"
+buildopt_evidence="${buildopt_repo_root}/benchmarks/results/wrapper-coordinated-native-corrections-v1/README.md"
+buildopt_implementation_tracker="${buildopt_repo_root}/implementation-tracker.md"
+buildopt_handoff="${buildopt_repo_root}/docs/findings/buildopt-poc-handoff.md"
+buildopt_audit="${buildopt_repo_root}/docs/findings/buildopt-generalization-audit.md"
+buildopt_performance="${buildopt_repo_root}/docs/findings/build-optimization-performance.md"
+
+command -v jq >/dev/null 2>&1 || {
+    printf 'required WCNCP plan command is unavailable: jq\n' >&2
+    exit 1
+}
+
+jq -e '
+    .schemaVersion == "buildopt.poc/wrapper-coordinated-native-corrections/v1" and
+    .status == "CONTRACT_FROZEN_NO_EXPERIMENT_EVIDENCE" and
+    .productUnit == "OWNER_REVIEWED_NATIVE_GRADLE_CORRECTION" and
+    .runtime.buildEngine == "REPOSITORY_NATIVE_GRADLE_WRAPPER" and
+    .runtime.buildoptInCorrectedTaskSteadyState == false and
+    .runtime.backendRequiredForBuildSuccess == false and
+    .planes.gradle.optimizationAuthority == false and
+    .planes.buildopt.sharedPhysicalCASAllowed == true and
+    .planes.buildopt.sharedMetadataAuthorizationRetentionOrVisibility == false and
+    (.schemas | length) == 5 and
+    .environmentClasses.CONTROLLED_PERFORMANCE.performanceGateAuthority == true and
+    .environmentClasses.STANDARD_HOSTED_CI.performanceGateAuthority == false and
+    .environmentClasses.STANDARD_HOSTED_CI.timingClassification == "DIAGNOSTIC_ONLY" and
+    .freshEvidence.historicalEvidenceMayDecideProspectiveGate == false and
+    .freshEvidence.cutoff.kind == "COMMITTED_WCNCP_000_SHA" and
+    .freshEvidence.cutoff.resolvedWithExactSubjectsAtBlock == "WCNCP-008" and
+    .freshEvidence.exactSubjectsFreezeBlock == "WCNCP-008" and
+    .detectors.primary == "CONFIGURATION_CACHE_READINESS_PATCH_V1" and
+    .detectors.repositoryNameRulesAllowed == false and
+    .detectors.taskNameRulesAllowed == false and
+    .gates.familyCount == 10 and
+    .gates.requiredConclusiveFamilies == 10 and
+    .gates.minimumActionableMaterialFamilies == 3 and
+    .gates.minimumCorrectnessQualifiedFamilies == 2 and
+    .gates.minimumValueQualifiedFamilies == 2 and
+    .gates.minimumNewValueQualifiedFamilies == 1 and
+    .gates.minimumMaterialMilliseconds == 500 and
+    .gates.minimumMaterialPercent == 2 and
+    .gates.minimumCorrectnessStarts == 5 and
+    .gates.balancedPairs == 8 and .gates.requiredPositivePairs == 8 and
+    .gates.requiredOutputEquivalence == "BYTE_EXACT" and
+    .gates.maximumProductFailures == 0 and
+    .gates.maximumCustomerPaybackBuilds == 300 and
+    .budgets.maximumOrdinaryObservationBuilds == 30 and
+    .budgets.maximumAdditionalNativeDiagnostics == 20 and
+    .budgets.maximumCompiledProposals == 10 and
+    .budgets.maximumConcurrentControlledValidations == 1 and
+    .budgets.controlledMachineHours == 12 and
+    .budgets.maximumConcurrentDiskGiB == 30 and
+    .budgets.minimumFreeDiskReserveGiB == 10 and
+    .hostedCI.timingMayQualifyOrRejectValue == false and
+    .hostedCI.environmentFailure == "CI_ENVIRONMENT_FAILURE" and
+    .authority.automaticApply == false and .authority.automaticCommit == false and
+    .authority.automaticPush == false and .authority.automaticPullRequest == false and
+    .authority.automaticMerge == false and .authority.upstreamCommunication == false and
+    .authority.productionAuthorized == false and .authority.testOptimization == "OUT_OF_SCOPE" and
+    [.blocks[].id] == [range(0;14) | "WCNCP-" + (. | tostring | if length == 1 then "00" + . elif length == 2 then "0" + . else . end)] and
+    [.blocks[].state] == ["DONE", "TODO", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING"] and
+    .nextBlock.id == "WCNCP-001" and .nextBlock.prospectiveGradleBuildsAllowed == false and
+    .nextBlock.publicSourceMutationAllowed == false and .nextBlock.timingAllowed == false
+' "${buildopt_contract}" >/dev/null || {
+    printf 'WCNCP machine contract is inconsistent\n' >&2
+    exit 1
+}
+
+jq -e '
+    .selectionState == "POLICY_FROZEN_COHORT_UNSELECTED" and
+    .exactCohortFreezeBlock == "WCNCP-008" and
+    .familyCount == 10 and .reserveRevisionsPerFamily == 2 and
+    .minimumFamiliesWithoutPriorQualifiedReviewedNativeRecipe == 5 and
+    (.allowedSelectionFacts | length) == 8 and
+    (.forbiddenSelectionFacts | length) == 5 and
+    .replacementPolicy.noOpportunityOrPoorPerformanceMayReplace == false and
+    .replacementPolicy.replacementMustUseFrozenReserveOrder == true and
+    [.slots[].ordinal] == [1,2,3,4,5,6,7,8,9,10] and
+    ([.slots[].state] | unique) == ["UNSELECTED"] and
+    .prospectiveObservations == 0 and .candidateBuilds == 0 and
+    .timingSamples == 0 and .productFailures == 0
+' "${buildopt_subjects}" >/dev/null || {
+    printf 'WCNCP subject policy is inconsistent\n' >&2
+    exit 1
+}
+
+for buildopt_path in $(jq -r '.schemas[], .vectors' "${buildopt_contract}"); do
+    test -f "${buildopt_repo_root}/${buildopt_path}" || {
+        printf 'WCNCP contract artifact is missing: %s\n' "${buildopt_path}" >&2
+        exit 1
+    }
+done
+
+# Backticks below are literal Markdown syntax.
+# shellcheck disable=SC2016
+buildopt_required_text=(
+    '**Overall:** `CONTRACT_FROZEN`'
+    '**Current block:** `WCNCP-001` is next.'
+    '`STANDARD_HOSTED_CI` duration from materiality/value arithmetic'
+    'Implement only `WCNCP-001`'
+)
+for buildopt_text in "${buildopt_required_text[@]}"; do
+    grep -Fq -- "${buildopt_text}" "${buildopt_plan}" || {
+        printf 'WCNCP tracker is missing: %s\n' "${buildopt_text}" >&2
+        exit 1
+    }
+done
+
+grep -Fq -- 'prospective observations: 0' "${buildopt_evidence}" || {
+    printf 'WCNCP evidence index does not preserve the zero-evidence boundary\n' >&2
+    exit 1
+}
+
+buildopt_integrated_documents=(
+    "${buildopt_implementation_tracker}"
+    "${buildopt_handoff}"
+    "${buildopt_audit}"
+    "${buildopt_performance}"
+)
+for buildopt_document in "${buildopt_integrated_documents[@]}"; do
+    grep -Fq -- 'WCNCP-000' "${buildopt_document}" || {
+        printf 'WCNCP state is missing from integrated document: %s\n' \
+            "${buildopt_document#"${buildopt_repo_root}/"}" >&2
+        exit 1
+    }
+done
+# Backticks are literal Markdown syntax.
+# shellcheck disable=SC2016
+grep -Fq -- '| `E-518` |' "${buildopt_implementation_tracker}" || {
+    printf 'WCNCP evidence E-518 is missing from the implementation tracker\n' >&2
+    exit 1
+}
+
+cd -- "${buildopt_script_dir}/schema-validator"
+"${buildopt_script_dir}/run" --toolchain go -- go test -count=1 -run '^TestWCNCPV1SchemasAndVectors$' .
+
+printf 'WCNCP-000 contract OK: 5 schemas, 10 unselected slots, zero experiment evidence\n'
