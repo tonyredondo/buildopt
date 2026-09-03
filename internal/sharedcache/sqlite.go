@@ -561,6 +561,35 @@ ON central_access_tokens (
 ON central_access_tokens (expires_at_unix_ms)`,
 		},
 	}
+	versionEight := schemaMigration{
+		version: 8,
+		name:    "control-v8-wcncp-actors",
+		statements: []string{
+			`CREATE TABLE wcncp_actor_grants (
+    token_id TEXT PRIMARY KEY REFERENCES central_access_tokens(token_id) ON DELETE CASCADE,
+    actor TEXT NOT NULL CHECK (actor IN ('DEVELOPER', 'TRUSTED_OBSERVER', 'VALIDATOR', 'OWNER', 'ADMIN')),
+    observation_write INTEGER NOT NULL CHECK (observation_write IN (0, 1)),
+    proposal_claim INTEGER NOT NULL CHECK (proposal_claim IN (0, 1)),
+    validation_write INTEGER NOT NULL CHECK (validation_write IN (0, 1)),
+    decision_write INTEGER NOT NULL CHECK (decision_write IN (0, 1)),
+    fork_write_allowed INTEGER NOT NULL CHECK (fork_write_allowed = 0),
+    issued_at_unix_ms INTEGER NOT NULL CHECK (issued_at_unix_ms >= 0)
+) WITHOUT ROWID`,
+			`CREATE TABLE wcncp_audit_events (
+    event_id INTEGER PRIMARY KEY,
+    occurred_at_unix_ms INTEGER NOT NULL CHECK (occurred_at_unix_ms >= 0),
+    request_id TEXT NOT NULL CHECK (length(request_id) BETWEEN 8 AND 128),
+    token_id TEXT NOT NULL,
+    repository_scope_sha256 TEXT NOT NULL CHECK (length(repository_scope_sha256) = 64),
+    kind TEXT NOT NULL,
+    operation TEXT NOT NULL CHECK (length(operation) BETWEEN 1 AND 64),
+    manifest_digest TEXT,
+    result TEXT NOT NULL CHECK (length(result) BETWEEN 1 AND 64)
+)`,
+			`CREATE INDEX wcncp_audit_events_occurred
+ON wcncp_audit_events (occurred_at_unix_ms, repository_scope_sha256, kind)`,
+		},
+	}
 	definition := metadataDefinition{
 		role: controlMetadataRole,
 		path: path,
@@ -572,6 +601,7 @@ ON central_access_tokens (expires_at_unix_ms)`,
 			versionFive,
 			versionSix,
 			versionSeven,
+			versionEight,
 		},
 	}
 	definition.objects = []schemaObject{
@@ -631,6 +661,11 @@ ON central_access_tokens (expires_at_unix_ms)`,
 			statement:  versionFour.statements[1],
 		},
 		{
+			objectType: "index",
+			name:       "wcncp_audit_events_occurred",
+			statement:  versionEight.statements[2],
+		},
+		{
 			objectType: "table",
 			name:       "beta_cache_tokens",
 			statement:  versionFive.statements[0],
@@ -679,6 +714,16 @@ ON central_access_tokens (expires_at_unix_ms)`,
 			objectType: "table",
 			name:       "storage_maintenance_runs",
 			statement:  versionFour.statements[0],
+		},
+		{
+			objectType: "table",
+			name:       "wcncp_actor_grants",
+			statement:  versionEight.statements[0],
+		},
+		{
+			objectType: "table",
+			name:       "wcncp_audit_events",
+			statement:  versionEight.statements[1],
 		},
 	}
 	return definition

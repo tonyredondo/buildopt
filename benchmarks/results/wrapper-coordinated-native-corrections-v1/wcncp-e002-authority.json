@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "buildopt.wcncp/evidence-e002/v1",
+  "block": "WCNCP-002",
+  "evidence": "WCNCP-E002",
+  "state": "DONE",
+  "baseCommit": "8353db6cbba44e311bbc8244156122264f0a098f",
+  "description": "Scoped HTTPS authority with actor-refined product writes, idempotency, verified local snapshots, and audit events. Builds remain independent of backend health.",
+  "implementation": {
+    "seam": "existing central TLS/auth infrastructure extended in place; no parallel server",
+    "files": [
+      "internal/sharedcache/sqlite.go",
+      "internal/sharedcache/storage.go",
+      "internal/sharedcache/wcncp_auth.go",
+      "internal/sharedcache/wcncp_http.go",
+      "internal/sharedcache/wcncp_http_test.go",
+      "internal/sharedcache/central_http.go",
+      "dev/check-wcncp-authority"
+    ],
+    "controlSchemaVersion": 8,
+    "controlMigration": "control-v8-wcncp-actors",
+    "actors": [
+      "DEVELOPER",
+      "TRUSTED_OBSERVER",
+      "VALIDATOR",
+      "OWNER",
+      "ADMIN"
+    ],
+    "transportCapabilities": ["CACHE_READ", "CACHE_WRITE", "STATE_READ", "STATE_WRITE"],
+    "routes": [
+      "/api/v1/repositories/{scope}/wcncp/{kind}/objects/{digest}",
+      "/api/v1/repositories/{scope}/wcncp/{kind}/manifests/{digest}",
+      "/api/v1/repositories/{scope}/wcncp/{kind}/head",
+      "/api/v1/repositories/{scope}/wcncp/{kind}/snapshot",
+      "/api/v1/repositories/{scope}/wcncp/{kind}/cas",
+      "/api/v1/repositories/{scope}/wcncp/WCNCP_OBSERVATION/batch"
+    ],
+    "batchBounds": {"maxItems": 32, "maxBytes": 1048576},
+    "forkPolicy": "read-only by default; fork writes rejected",
+    "audit": "request ID and digests only; no credentials, source, or unsafe arguments"
+  },
+  "validation": {
+    "environmentClass": "STANDARD_HOSTED_CI",
+    "timingClassification": "DIAGNOSTIC_ONLY",
+    "commands": [
+      "./dev/check-wrapper-coordinated-native-corrections-plan",
+      "./dev/run --toolchain go -- go test -race -count=1 -run '^(TestWCNCP|TestWCNCRetention|TestTypedState|TestCentralHTTPS)' ./internal/sharedcache"
+    ],
+    "negativeCoverage": [
+      "live token revocation fails closed",
+      "wrong repository scope fails closed",
+      "wrong actor fails closed including validator decision and owner validation",
+      "fork context read-only",
+      "expired token fails closed",
+      "payload digest mismatch fails closed",
+      "exact replay returns original",
+      "changed-request idempotency conflict",
+      "stale head precondition fails closed",
+      "partial batch with one invalid item rejects whole batch",
+      "server restart preserves verified snapshot",
+      "logs carry request IDs and digests without secrets"
+    ]
+  },
+  "gates": {
+    "wrongScopeStaleConflictingFailClosed": "PASS",
+    "buildsIndependentOfBackend": "PASS",
+    "prospectiveObservations": 0,
+    "candidateBuilds": 0,
+    "timingSamples": 0,
+    "productFailures": 0
+  },
+  "authority": {
+    "syntheticOnly": true,
+    "prospectiveEvidence": false,
+    "productionAuthorized": false
+  }
+}

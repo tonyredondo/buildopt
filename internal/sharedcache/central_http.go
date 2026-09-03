@@ -55,6 +55,22 @@ func NewCentralHTTPSHandler(storage *Storage) (http.Handler, error) {
 			return
 		}
 		defer clear(raw)
+		// WCNCP control-plane routes refine transport authority by actor and
+		// fork context. Authenticate once for actor grants; the grant inherits
+		// token expiry and revocation.
+		if strings.Contains(request.URL.Path, "/wcncp/") {
+			authorization, grant, tokenID, authorized, err := storage.authenticateWCNCP(request.Context(), raw, storage.now())
+			if err != nil {
+				writeCacheStatus(response, http.StatusServiceUnavailable)
+				return
+			}
+			if !authorized {
+				writeCentralUnauthorized(response)
+				return
+			}
+			ServeWCNCP(storage, authorization, grant, tokenID, response, request)
+			return
+		}
 		finish, err := storage.beginOperation()
 		if err != nil {
 			writeCacheStatus(response, http.StatusServiceUnavailable)

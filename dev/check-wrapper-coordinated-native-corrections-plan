@@ -70,8 +70,8 @@ jq -e '
     .authority.automaticMerge == false and .authority.upstreamCommunication == false and
     .authority.productionAuthorized == false and .authority.testOptimization == "OUT_OF_SCOPE" and
     [.blocks[].id] == [range(0;14) | "WCNCP-" + (. | tostring | if length == 1 then "00" + . elif length == 2 then "0" + . else . end)] and
-    [.blocks[].state] == ["DONE", "DONE", "TODO", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING"] and
-    .nextBlock.id == "WCNCP-002" and .nextBlock.prospectiveGradleBuildsAllowed == false and
+    [.blocks[].state] == ["DONE", "DONE", "DONE", "TODO", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING"] and
+    .nextBlock.id == "WCNCP-003" and .nextBlock.prospectiveGradleBuildsAllowed == false and
     .nextBlock.publicSourceMutationAllowed == false and .nextBlock.timingAllowed == false
 ' "${buildopt_contract}" >/dev/null || {
     printf 'WCNCP machine contract is inconsistent\n' >&2
@@ -107,9 +107,9 @@ done
 # shellcheck disable=SC2016
 buildopt_required_text=(
     '**Overall:** `CONTRACT_FROZEN`'
-    '**Current block:** `WCNCP-002` is next'
+    '**Current block:** `WCNCP-003` is next'
     '`STANDARD_HOSTED_CI` duration from materiality/value arithmetic'
-    'Implement only `WCNCP-002`'
+    'Implement only `WCNCP-003`'
 )
 for buildopt_text in "${buildopt_required_text[@]}"; do
     grep -Fq -- "${buildopt_text}" "${buildopt_plan}" || {
@@ -146,4 +146,4 @@ grep -Fq -- '| `E-518` |' "${buildopt_implementation_tracker}" || {
 cd -- "${buildopt_script_dir}/schema-validator"
 "${buildopt_script_dir}/run" --toolchain go -- go test -count=1 -run '^TestWCNCPV1SchemasAndVectors$' .
 
-printf 'WCNCP-001 state OK: 5 schemas, 10 unselected slots, zero prospective evidence, typed control state DONE\n'
+printf 'WCNCP-002 state OK: 5 schemas, 10 unselected slots, zero prospective evidence, typed control and scoped authority DONE\n'

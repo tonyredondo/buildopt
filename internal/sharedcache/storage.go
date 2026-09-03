@@ -16,7 +16,7 @@ import (
 
 const (
 	// SchemaVersion is the current cache/control metadata schema.
-	SchemaVersion = 7
+	SchemaVersion = 8
 	// MaximumBlobBytes is the private-beta per-object ceiling.
 	MaximumBlobBytes int64 = 100 << 20
 )
