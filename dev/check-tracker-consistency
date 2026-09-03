@@ -66,7 +66,7 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`ECONOMICS_GATED_REVIEWED_NATIVE_PATCH_QUALIFIED_CONTROLLED_TRIAL\`"
-    "**Current phase:** \`CPFRNP-007\`"
+    "**Current phase:** \`CPBLC-006\`"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"
@@ -467,6 +467,8 @@ buildopt_required_tracker_text=(
     "| \`E-515\` | 2026-09-02 | \`POC-PROSPECTIVE-REVIEWED-NATIVE-PATCH-CONTROLLED-TRIAL\`, \`PRNP-001..007\` |"
     "| POC-CRITICAL-PATH-FIRST-REVIEWED-NATIVE-PATCH | Start prospective discovery from frozen owner workflows and native critical-path economics before any source inspection | \`STOPPED\` | 5 resolved; 2 not authorized |"
     "| \`E-516\` | 2026-09-03 | \`POC-CRITICAL-PATH-FIRST-REVIEWED-NATIVE-PATCH\`, \`CPFRNP-001..007\` |"
+    "| POC-CRITICAL-PATH-BUILD-LOGIC-CORRECTION | Find explicit owner build-logic state/cache/incremental opt-outs on material standard Gradle tasks | \`STOPPED\` | 4 resolved; 2 not authorized |"
+    "| \`E-517\` | 2026-09-03 | \`POC-CRITICAL-PATH-BUILD-LOGIC-CORRECTION\`, \`CPBLC-001..006\` |"
 )
 for buildopt_required in "${buildopt_required_tracker_text[@]}"; do
     if ! grep -Fq -- "${buildopt_required}" "${buildopt_tracker}"; then

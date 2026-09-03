@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-build-logic-correction-terminal/v1",
+  "sourceSummarySha256": "cb9d177964c4c2cb450a264e3e9307d5af4176d498edb5b62d25d129eb67cd95",
+  "sourceGate": {
+    "conclusiveFamilies": 5,
+    "requiredConclusiveFamilies": 5,
+    "proposalFamilies": 0,
+    "requiredProposalFamilies": 3,
+    "decision": "FAIL"
+  },
+  "dependentBlocks": {
+    "candidateCorrectness": "NOT_AUTHORIZED_FAILED_SOURCE_GATE",
+    "value": "NOT_AUTHORIZED_FAILED_SOURCE_GATE",
+    "reviewAndDelivery": "NOT_AUTHORIZED_FAILED_SOURCE_GATE"
+  },
+  "terminalDecision": "STOP_CRITICAL_PATH_BUILD_LOGIC_CORRECTION_NO_PROPOSAL_BREADTH",
+  "gradleStarts": 0,
+  "newTimingSamples": 0,
+  "publicSourceModified": false,
+  "candidateBuilds": 0,
+  "productFailures": 0,
+  "upstreamPullRequest": false,
+  "defaultBranchMutation": false,
+  "productionAuthorized": false,
+  "automaticApply": false,
+  "automaticMerge": false,
+  "testOptimization": "OUT_OF_SCOPE"
+}

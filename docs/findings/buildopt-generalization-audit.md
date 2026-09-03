@@ -79,6 +79,15 @@ This confirms that reversing discovery order avoids source-first waste, but it
 does not expose a new reviewable optimization class. No source, candidate, or
 timing evidence is inferred from the incomplete rows.
 
+The bounded build-logic successor then tests the material standard-task seam
+directly. It reuses five independently checked native analyses only to select
+61 tasks above 500 ms and 2%, and scans 833 files from their exact public source
+trees. Six explicit cache/state opt-outs are found, but every one belongs to a
+non-material helper or benchmark task. The result is 5/5 conclusive and 0/5
+proposal families versus the frozen 3/5 gate. Candidate correctness and timing
+remain closed. This rules out only explicit state/cache/incremental opt-outs;
+it does not imply that all owner build logic is optimal.
+
 The latest source-only recurrence search adds a plausible third public class
 without changing that value conclusion. Across 768 fresh Spring,
 OpenTelemetry and Micronaut rows, independent reconstruction finds fourteen

@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-build-logic-correction-source/v1",
+  "family": "spring-framework",
+  "revision": "1c4b20287f1d8f635867fb58c576849f9313e907",
+  "sourceTree": "bdb609d747077edebba62b15062043b9cc9fa346",
+  "analysisSha256": "02b9ca272aa057669bbefe6a273845e1c57a381adc2857ddc76564ced37ce2bd",
+  "sourceInventorySha256": "f0d10d5f053f0c774f6ee775f457517b3976135c7a78b92778d7e270b63b441f",
+  "sourceFileCount": 34,
+  "materialTasks": [
+    {
+      "identity": ":buildSrc:checkstyleMain",
+      "taskClass": "org.gradle.api.plugins.quality.Checkstyle",
+      "durationMs": 2486,
+      "buildSpanMs": 19156,
+      "durationPercent": "12.977657"
+    },
+    {
+      "identity": ":buildSrc:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 13388,
+      "buildSpanMs": 19156,
+      "durationPercent": "69.889330"
+    },
+    {
+      "identity": ":spring-aop:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 13729,
+      "buildSpanMs": 296201,
+      "durationPercent": "4.635028"
+    },
+    {
+      "identity": ":spring-beans:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 20773,
+      "buildSpanMs": 296201,
+      "durationPercent": "7.013143"
+    },
+    {
+      "identity": ":spring-beans:compileKotlin",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 11659,
+      "buildSpanMs": 296201,
+      "durationPercent": "3.936178"
+    },
+    {
+      "identity": ":spring-context:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 20802,
+      "buildSpanMs": 296201,
+      "durationPercent": "7.022934"
+    },
+    {
+      "identity": ":spring-context:compileKotlin",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 11908,
+      "buildSpanMs": 296201,
+      "durationPercent": "4.020243"
+    },
+    {
+      "identity": ":spring-core:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 22359,
+      "buildSpanMs": 296201,
+      "durationPercent": "7.548590"
+    },
+    {
+      "identity": ":spring-core:compileKotlin",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 23422,
+      "buildSpanMs": 296201,
+      "durationPercent": "7.907468"
+    },
+    {
+      "identity": ":spring-test:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 13463,
+      "buildSpanMs": 296201,
+      "durationPercent": "4.545224"
+    },
+    {
+      "identity": ":spring-test:compileKotlin",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 11150,
+      "buildSpanMs": 296201,
+      "durationPercent": "3.764336"
+    },
+    {
+      "identity": ":spring-test:compileTestJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 13225,
+      "buildSpanMs": 296201,
+      "durationPercent": "4.464874"
+    },
+    {
+      "identity": ":spring-test:compileTestKotlin",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 8449,
+      "buildSpanMs": 296201,
+      "durationPercent": "2.852455"
+    },
+    {
+      "identity": ":spring-web:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 62478,
+      "buildSpanMs": 296201,
+      "durationPercent": "21.093109"
+    },
+    {
+      "identity": ":spring-web:compileKotlin",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 16137,
+      "buildSpanMs": 296201,
+      "durationPercent": "5.447990"
+    },
+    {
+      "identity": ":spring-webmvc:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 27431,
+      "buildSpanMs": 296201,
+      "durationPercent": "9.260941"
+    },
+    {
+      "identity": ":spring-webmvc:compileKotlin",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 9574,
+      "buildSpanMs": 296201,
+      "durationPercent": "3.232265"
+    },
+    {
+      "identity": ":spring-websocket:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 6991,
+      "buildSpanMs": 296201,
+      "durationPercent": "2.360222"
+    }
+  ],
+  "facts": [
+    {
+      "path": "gradle/ide.gradle",
+      "line": 107,
+      "sourceSha256": "8cac8fe8b8e93ba271a0479d143bfecb970c64c851f8a9baae0d8d9f2e8e13cc",
+      "correctionClass": "RESTORE_STATE_TRACKING",
+      "binding": "UNRELATED_TASK",
+      "boundMaterialTasks": null,
+      "sourceExcerpt": "outputs.upToDateWhen { false }"
+    }
+  ],
+  "decision": "CONCLUSIVE_NO_MATERIAL_STATE_OPTOUT",
+  "actionable": false
+}

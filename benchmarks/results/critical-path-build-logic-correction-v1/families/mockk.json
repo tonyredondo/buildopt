@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-build-logic-correction-source/v1",
+  "family": "mockk",
+  "revision": "14fbd83eb43582ce6f80ac58b87b0e143e8cb43e",
+  "sourceTree": "46febd71257524c96893fd1e03f0cad770efa196",
+  "analysisSha256": "b15c480b0eec58ee0201a4062771b4962dafc4d8638d5f37498f5583492be33d",
+  "sourceInventorySha256": "9cf5f4de16a35c6bb03d164aeec711af7ce20cd396cd2bd232000269c0bccb7a",
+  "sourceFileCount": 33,
+  "materialTasks": [
+    {
+      "identity": ":buildSrc:compileKotlin",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 49755,
+      "buildSpanMs": 116816,
+      "durationPercent": "42.592624"
+    },
+    {
+      "identity": ":buildSrc:compilePluginsBlocks",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 18865,
+      "buildSpanMs": 116816,
+      "durationPercent": "16.149329"
+    },
+    {
+      "identity": ":buildSrc:generateExternalPluginSpecBuilders",
+      "taskClass": "org.gradle.kotlin.dsl.provider.plugins.precompiled.tasks.GenerateExternalPluginSpecBuilders",
+      "durationMs": 8256,
+      "buildSpanMs": 116816,
+      "durationPercent": "7.067525"
+    },
+    {
+      "identity": ":buildSrc:generatePrecompiledScriptPluginAccessors",
+      "taskClass": "org.gradle.kotlin.dsl.provider.plugins.precompiled.tasks.GeneratePrecompiledScriptPluginAccessors",
+      "durationMs": 38538,
+      "buildSpanMs": 116816,
+      "durationPercent": "32.990344"
+    },
+    {
+      "identity": ":modules:mockk-agent-api:compileKotlinJvm",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 24218,
+      "buildSpanMs": 296992,
+      "durationPercent": "8.154428"
+    },
+    {
+      "identity": ":modules:mockk-agent:compileJvmMainJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 11305,
+      "buildSpanMs": 296992,
+      "durationPercent": "3.806500"
+    },
+    {
+      "identity": ":modules:mockk-agent:compileKotlinJvm",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 47331,
+      "buildSpanMs": 296992,
+      "durationPercent": "15.936793"
+    },
+    {
+      "identity": ":modules:mockk:compileKotlinJvm",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 47321,
+      "buildSpanMs": 296992,
+      "durationPercent": "15.933426"
+    },
+    {
+      "identity": ":modules:mockk:compileTestKotlinJvm",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 53980,
+      "buildSpanMs": 296992,
+      "durationPercent": "18.175574"
+    },
+    {
+      "identity": ":modules:mockk:jvmTest",
+      "taskClass": "org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest",
+      "durationMs": 110864,
+      "buildSpanMs": 296992,
+      "durationPercent": "37.328952"
+    }
+  ],
+  "facts": [],
+  "decision": "CONCLUSIVE_NO_MATERIAL_STATE_OPTOUT",
+  "actionable": false
+}

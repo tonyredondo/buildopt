@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "buildopt.specs/poc-critical-path-build-logic-correction-subjects/v1",
+  "reusePolicy": "RETAINED_DIAGNOSTICS_SELECT_SOURCE_SCOPE_ONLY_NO_TIMING_REUSE",
+  "families": [
+    {
+      "key": "apache-groovy",
+      "repository": "https://github.com/apache/groovy.git",
+      "revision": "14fa934340c46bc1ee96cba7ae594258bd8d0fd0",
+      "sourceTree": "8c4dc8a81afd620edf08ec69213f45705dd792a2",
+      "analysisPath": "benchmarks/results/change-scoped-critical-path-native-capture-v1/apache-groovy/analysis.json",
+      "analysisSha256": "d138e54b8fad03319828a2d1c14c05fbe88f407537e5e7a6318cc8cc8a065b89"
+    },
+    {
+      "key": "apache-kafka",
+      "repository": "https://github.com/apache/kafka.git",
+      "revision": "2e961afeff5cb27d60767a783edf20be00cc28e8",
+      "sourceTree": "1bc2bbfe0bcc4811dd33229c65908f212f67a0b7",
+      "analysisPath": "benchmarks/results/change-scoped-critical-path-native-capture-v1/apache-kafka/analysis.json",
+      "analysisSha256": "5f047e5ea271e4c18ce65002d5ceffc741947a3f12d628324c219c08da6de3be"
+    },
+    {
+      "key": "opentelemetry-java-instrumentation",
+      "repository": "https://github.com/open-telemetry/opentelemetry-java-instrumentation.git",
+      "revision": "f330e4c0b764d80dcc1f7c6d4c01e305593c49f1",
+      "sourceTree": "337b83102e9ba9a2bb2264919452cc658115cbb6",
+      "analysisPath": "benchmarks/results/change-scoped-critical-path-native-capture-v1/opentelemetry-java-instrumentation/analysis.json",
+      "analysisSha256": "41b93564bcf3edc290aaf543a175c41c8b9488f763971df0fb0e399652b8814e"
+    },
+    {
+      "key": "spring-framework",
+      "repository": "https://github.com/spring-projects/spring-framework.git",
+      "revision": "1c4b20287f1d8f635867fb58c576849f9313e907",
+      "sourceTree": "bdb609d747077edebba62b15062043b9cc9fa346",
+      "analysisPath": "benchmarks/results/change-scoped-critical-path-native-capture-v1/spring-framework/analysis.json",
+      "analysisSha256": "02b9ca272aa057669bbefe6a273845e1c57a381adc2857ddc76564ced37ce2bd"
+    },
+    {
+      "key": "mockk",
+      "repository": "https://github.com/mockk/mockk.git",
+      "revision": "14fbd83eb43582ce6f80ac58b87b0e143e8cb43e",
+      "sourceTree": "46febd71257524c96893fd1e03f0cad770efa196",
+      "analysisPath": "benchmarks/results/critical-path-first-reviewed-native-patch-v1/diagnostics/mockk/analysis.json",
+      "analysisSha256": "b15c480b0eec58ee0201a4062771b4962dafc4d8638d5f37498f5583492be33d"
+    }
+  ]
+}

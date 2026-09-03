@@ -52,6 +52,16 @@ does not establish commercial viability.
 
 ## Current experiment status
 
+`CRITICAL_PATH_BUILD_LOGIC_CORRECTION_V1` is closed as
+`STOP_CRITICAL_PATH_BUILD_LOGIC_CORRECTION_NO_PROPOSAL_BREADTH`. Five exact
+public trees are scanned against retained native analyses that select 61
+standard tasks above 500 ms and 2%. Across 833 Gradle/build-logic files, the
+scanner finds six explicit state/cache opt-outs; all bind to non-material helper
+or benchmark tasks. Completeness passes 5/5, proposal breadth fails 0/5 versus
+3/5, and candidate correctness/value stay closed. No Gradle build, public patch,
+new timing sample, product failure, or speedup claim exists. The result is
+bounded to explicit opt-outs and does not claim that all build logic is optimal.
+
 `CRITICAL_PATH_FIRST_REVIEWED_NATIVE_PATCH_V1` is closed as
 `STOP_CRITICAL_PATH_FIRST_REVIEWED_NATIVE_PATCH_NO_PROPOSAL_BREADTH`. Ten
 previously unused revisions were evaluated from frozen owner workflows before

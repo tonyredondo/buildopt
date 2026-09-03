@@ -7,6 +7,7 @@ cd "${buildopt_repo_root}"
 
 buildopt_contract=specs/poc-critical-path-first-reviewed-native-patch-v1.json
 buildopt_subjects=specs/poc-critical-path-first-reviewed-native-patch-v1.subjects.json
+buildopt_previous_keys=specs/poc-critical-path-first-reviewed-native-patch-v1.prior-family-keys.txt
 
 jq -e '
   .schemaVersion == "buildopt.specs/poc-critical-path-first-reviewed-native-patch/v1" and
@@ -61,12 +62,10 @@ jq -e '
     (.ownerArguments | length > 0))
 ' "${buildopt_subjects}" >/dev/null
 
-buildopt_previous_keys=$(mktemp)
-trap 'rm -f -- "${buildopt_previous_keys}"' EXIT
-for buildopt_manifest in specs/*.subjects.json; do
-    [[ ${buildopt_manifest} == "${buildopt_subjects}" ]] && continue
-    jq -r '.families[]?.key // .subjects[]?.family // empty' "${buildopt_manifest}" 2>/dev/null || true
-done | sort -u >"${buildopt_previous_keys}"
+# Freeze predecessor keys at CPFRNP creation; later successor manifests must not
+# retroactively turn a valid holdout into reuse.
+[[ $(sha256sum "${buildopt_previous_keys}" | awk '{print $1}') == "4ee07dfd7ccbde9f4b41156684edcfbad7ca9de3a65ab526c8fcab427a8d6d5b" ]]
+[[ $(sort -u "${buildopt_previous_keys}") == "$(cat "${buildopt_previous_keys}")" ]]
 while IFS= read -r buildopt_key; do
     if grep -Fxq -- "${buildopt_key}" "${buildopt_previous_keys}"; then
         printf 'critical-path-first cohort reuses prior family: %s\n' "${buildopt_key}" >&2

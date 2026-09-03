@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+cd "${buildopt_repo_root}"
+
+if [[ $# -ne 0 && $# -ne 5 ]]; then
+    printf 'usage: %s [family=GIT_ROOT ... five bindings]\n' "$0" >&2
+    exit 2
+fi
+
+buildopt_contract=specs/poc-critical-path-build-logic-correction-v1.json
+buildopt_subjects=specs/poc-critical-path-build-logic-correction-v1.subjects.json
+buildopt_evidence=benchmarks/results/critical-path-build-logic-correction-v1
+buildopt_summary=${buildopt_evidence}/source-summary.json
+buildopt_terminal=${buildopt_evidence}/terminal-decision.json
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-cpblc-check.XXXXXX")
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+
+buildopt_sha256() {
+    sha256sum "$1" | awk '{print $1}'
+}
+
+[[ $(buildopt_sha256 "${buildopt_contract}") == $(jq -r '.contractSha256' "${buildopt_summary}") ]]
+[[ $(buildopt_sha256 "${buildopt_subjects}") == $(jq -r '.subjectsSha256' "${buildopt_summary}") ]]
+
+mapfile -t buildopt_expected_families < <(jq -r '.families[].key' "${buildopt_subjects}" | sort)
+mapfile -t buildopt_report_families < <(
+    find "${buildopt_evidence}/families" -mindepth 1 -maxdepth 1 -type f -name '*.json' -printf '%f\n' |
+        sed 's/\.json$//' | sort
+)
+[[ ${buildopt_expected_families[*]} == "${buildopt_report_families[*]}" ]]
+
+buildopt_conclusive=0
+buildopt_proposals=0
+buildopt_source_files=0
+buildopt_material_tasks=0
+buildopt_facts=0
+buildopt_material_facts=0
+for buildopt_family in "${buildopt_expected_families[@]}"; do
+    buildopt_report=${buildopt_evidence}/families/${buildopt_family}.json
+    buildopt_subject=$(jq -ce --arg family "${buildopt_family}" '.families[]|select(.key==$family)' "${buildopt_subjects}")
+    buildopt_analysis=$(jq -r '.analysisPath' <<<"${buildopt_subject}")
+    buildopt_analysis_sha=$(jq -r '.analysisSha256' <<<"${buildopt_subject}")
+    [[ $(buildopt_sha256 "${buildopt_analysis}") == "${buildopt_analysis_sha}" ]]
+    jq -e \
+        --arg family "${buildopt_family}" \
+        --arg revision "$(jq -r '.revision' <<<"${buildopt_subject}")" \
+        --arg tree "$(jq -r '.sourceTree' <<<"${buildopt_subject}")" \
+        --arg analysisSha "${buildopt_analysis_sha}" '
+        .schemaVersion=="buildopt.evidence/critical-path-build-logic-correction-source/v1" and
+        .family==$family and .revision==$revision and .sourceTree==$tree and
+        .analysisSha256==$analysisSha and
+        (.sourceInventorySha256|test("^[0-9a-f]{64}$")) and .sourceFileCount>0 and
+        (.materialTasks|length)>0 and
+        ([.materialTasks[]|select(.durationMs<500 or (.durationMs*100)<(.buildSpanMs*2))]|length)==0 and
+        ([.facts[]|select((.sourceSha256|test("^[0-9a-f]{64}$")|not) or .line<1)]|length)==0 and
+        ([.facts[].binding]|all(.=="MATERIAL_TASK" or .=="UNRELATED_TASK" or .=="AMBIGUOUS_DYNAMIC_TASK_CONFIGURATION")) and
+        (if .actionable then .decision=="EXPLICIT_MATERIAL_STATE_OPTOUT_PROPOSAL" and ([.facts[]|select(.binding=="MATERIAL_TASK")]|length)>0
+         else .decision=="CONCLUSIVE_NO_MATERIAL_STATE_OPTOUT" or .decision=="INCOMPLETE_AMBIGUOUS_SOURCE_BINDING" end)
+    ' "${buildopt_report}" >/dev/null
+
+    jq -c '[.tasks[] as $task | (.builds[]|select(.buildPath==$task.buildPath).taskExecutionSpanMs) as $span | select($task.criticalPath and $task.durationMs>=500 and ($task.durationMs*100)>=($span*2)) | {identity:$task.identity,taskClass:$task.taskClass,durationMs:$task.durationMs,buildSpanMs:$span}]|sort_by(.identity)' "${buildopt_analysis}" >"${buildopt_temp}/expected.json"
+    jq -c '[.materialTasks[]|{identity,taskClass,durationMs,buildSpanMs}]|sort_by(.identity)' "${buildopt_report}" >"${buildopt_temp}/actual.json"
+    cmp -s "${buildopt_temp}/expected.json" "${buildopt_temp}/actual.json"
+
+    if [[ $(jq -r '.decision' "${buildopt_report}") != INCOMPLETE_AMBIGUOUS_SOURCE_BINDING ]]; then
+        buildopt_conclusive=$((buildopt_conclusive + 1))
+    fi
+    if [[ $(jq -r '.actionable' "${buildopt_report}") == true ]]; then
+        buildopt_proposals=$((buildopt_proposals + 1))
+    fi
+    buildopt_source_files=$((buildopt_source_files + $(jq -r '.sourceFileCount' "${buildopt_report}")))
+    buildopt_material_tasks=$((buildopt_material_tasks + $(jq '.materialTasks|length' "${buildopt_report}")))
+    buildopt_facts=$((buildopt_facts + $(jq '.facts|length' "${buildopt_report}")))
+    buildopt_material_facts=$((buildopt_material_facts + $(jq '[.facts[]|select(.binding=="MATERIAL_TASK")]|length' "${buildopt_report}")))
+done
+
+jq -e \
+    --argjson conclusive "${buildopt_conclusive}" \
+    --argjson proposals "${buildopt_proposals}" \
+    --argjson sourceFiles "${buildopt_source_files}" \
+    --argjson materialTasks "${buildopt_material_tasks}" \
+    --argjson facts "${buildopt_facts}" \
+    --argjson materialFacts "${buildopt_material_facts}" '
+    .schemaVersion=="buildopt.evidence/critical-path-build-logic-correction-summary/v1" and
+    .familyCount==5 and .conclusiveFamilies==$conclusive and .requiredConclusiveFamilies==5 and
+    .proposalFamilies==$proposals and .requiredProposalFamilies==3 and
+    .sourceFiles==$sourceFiles and .materialTasks==$materialTasks and
+    .explicitOptOutFacts==$facts and .materialOptOutFacts==$materialFacts and
+    .gradleStarts==0 and .newTimingSamples==0 and (.publicSourceModified|not) and
+    .candidateBuilds==0 and .productFailures==0 and .decision=="STOP_SOURCE_GATE_FAILED"
+  ' "${buildopt_summary}" >/dev/null
+
+[[ ${buildopt_conclusive} -eq 5 ]]
+[[ ${buildopt_proposals} -eq 0 ]]
+[[ ${buildopt_material_facts} -eq 0 ]]
+
+jq -e --arg summarySha "$(buildopt_sha256 "${buildopt_summary}")" '
+    .schemaVersion=="buildopt.evidence/critical-path-build-logic-correction-terminal/v1" and
+    .sourceSummarySha256==$summarySha and
+    .sourceGate=={conclusiveFamilies:5,requiredConclusiveFamilies:5,proposalFamilies:0,requiredProposalFamilies:3,decision:"FAIL"} and
+    .dependentBlocks.candidateCorrectness=="NOT_AUTHORIZED_FAILED_SOURCE_GATE" and
+    .dependentBlocks.value=="NOT_AUTHORIZED_FAILED_SOURCE_GATE" and
+    .dependentBlocks.reviewAndDelivery=="NOT_AUTHORIZED_FAILED_SOURCE_GATE" and
+    .terminalDecision=="STOP_CRITICAL_PATH_BUILD_LOGIC_CORRECTION_NO_PROPOSAL_BREADTH" and
+    .gradleStarts==0 and .newTimingSamples==0 and (.publicSourceModified|not) and
+    .candidateBuilds==0 and .productFailures==0 and (.upstreamPullRequest|not) and
+    (.defaultBranchMutation|not) and (.productionAuthorized|not) and
+    (.automaticApply|not) and (.automaticMerge|not) and .testOptimization=="OUT_OF_SCOPE"
+' "${buildopt_terminal}" >/dev/null
+
+if find "${buildopt_evidence}" -type f -name '*.patch' -print -quit | grep -q .; then
+    printf 'build-logic correction evidence must not contain a public-source patch\n' >&2
+    exit 1
+fi
+
+./dev/run --toolchain go -- go test ./internal/buildlogiccorrection ./cmd/build-logic-correction-audit >/dev/null
+
+if [[ $# -eq 5 ]]; then
+    "${buildopt_script_dir}/run-critical-path-build-logic-correction-source" "${buildopt_temp}/regenerated" "$@"
+    for buildopt_file in source-summary.json terminal-decision.json; do
+        cmp -s "${buildopt_evidence}/${buildopt_file}" "${buildopt_temp}/regenerated/${buildopt_file}"
+    done
+    for buildopt_family in "${buildopt_expected_families[@]}"; do
+        cmp -s "${buildopt_evidence}/families/${buildopt_family}.json" "${buildopt_temp}/regenerated/families/${buildopt_family}.json"
+    done
+fi
+
+printf 'CPBLC evidence OK: 5/5 conclusive, 0/5 proposal families, zero Gradle or timing\n'

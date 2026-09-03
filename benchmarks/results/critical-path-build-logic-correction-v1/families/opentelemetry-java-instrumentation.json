@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-build-logic-correction-source/v1",
+  "family": "opentelemetry-java-instrumentation",
+  "revision": "f330e4c0b764d80dcc1f7c6d4c01e305593c49f1",
+  "sourceTree": "337b83102e9ba9a2bb2264919452cc658115cbb6",
+  "analysisSha256": "41b93564bcf3edc290aaf543a175c41c8b9488f763971df0fb0e399652b8814e",
+  "sourceInventorySha256": "906b5d730acb12458f84bd9d4b47b84d91e516da50ef2f76b6b1a4df2568ab0f",
+  "sourceFileCount": 676,
+  "materialTasks": [
+    {
+      "identity": ":conventions:compileKotlin",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 30805,
+      "buildSpanMs": 113845,
+      "durationPercent": "27.058720"
+    },
+    {
+      "identity": ":conventions:compilePluginsBlocks",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 12171,
+      "buildSpanMs": 113845,
+      "durationPercent": "10.690852"
+    },
+    {
+      "identity": ":conventions:generatePrecompiledScriptPluginAccessors",
+      "taskClass": "org.gradle.kotlin.dsl.provider.plugins.precompiled.tasks.GeneratePrecompiledScriptPluginAccessors",
+      "durationMs": 13012,
+      "buildSpanMs": 113845,
+      "durationPercent": "11.429575"
+    },
+    {
+      "identity": ":gradle-plugins:compileKotlin",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 19045,
+      "buildSpanMs": 56383,
+      "durationPercent": "33.777912"
+    },
+    {
+      "identity": ":gradle-plugins:compilePluginsBlocks",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "durationMs": 18150,
+      "buildSpanMs": 56383,
+      "durationPercent": "32.190554"
+    },
+    {
+      "identity": ":gradle-plugins:generatePrecompiledScriptPluginAccessors",
+      "taskClass": "org.gradle.kotlin.dsl.provider.plugins.precompiled.tasks.GeneratePrecompiledScriptPluginAccessors",
+      "durationMs": 17821,
+      "buildSpanMs": 56383,
+      "durationPercent": "31.607045"
+    },
+    {
+      "identity": ":instrumentation:spring:spring-cloud-aws-3.0:javaagent:compileTestJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 119018,
+      "buildSpanMs": 320399,
+      "durationPercent": "37.146808"
+    },
+    {
+      "identity": ":quarkus-3.0-plugin:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 3093,
+      "buildSpanMs": 3107,
+      "durationPercent": "99.549405"
+    },
+    {
+      "identity": ":quarkus-3.9-plugin:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 3992,
+      "buildSpanMs": 4008,
+      "durationPercent": "99.600798"
+    },
+    {
+      "identity": ":quarkus-common-plugin:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 19044,
+      "buildSpanMs": 19058,
+      "durationPercent": "99.926540"
+    },
+    {
+      "identity": ":testing-common:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 24134,
+      "buildSpanMs": 320399,
+      "durationPercent": "7.532483"
+    },
+    {
+      "identity": ":testing:dependencies-shaded-for-testing:shadowJar",
+      "taskClass": "com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar",
+      "durationMs": 159649,
+      "buildSpanMs": 320399,
+      "durationPercent": "49.828183"
+    }
+  ],
+  "facts": [
+    {
+      "path": "benchmark-overhead-jmh/build.gradle.kts",
+      "line": 88,
+      "sourceSha256": "ad7d62ed114d0b940f5b559a27ebfc9e89ffb075f504721a812831c7245303b0",
+      "correctionClass": "RESTORE_STATE_TRACKING",
+      "binding": "UNRELATED_TASK",
+      "boundMaterialTasks": null,
+      "sourceExcerpt": "outputs.upToDateWhen { false }"
+    },
+    {
+      "path": "conventions/src/main/kotlin/otel.jmh-conventions.gradle.kts",
+      "line": 36,
+      "sourceSha256": "6fb09248b420d20c651b81653b138e53cb58364d2c4d08922cb6cee08645e4eb",
+      "correctionClass": "REMOVE_EXPLICIT_CACHE_DISABLE",
+      "binding": "UNRELATED_TASK",
+      "boundMaterialTasks": null,
+      "sourceExcerpt": "outputs.cacheIf { false }"
+    }
+  ],
+  "decision": "CONCLUSIVE_NO_MATERIAL_STATE_OPTOUT",
+  "actionable": false
+}

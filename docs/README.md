@@ -65,6 +65,9 @@ before running the product.
 
 ### Plans
 
+- [Critical-Path Build-Logic Correction v1](./plans/critical-path-build-logic-correction-v1.md):
+  five exact source trees and retained native traces, terminal 5/5 conclusive
+  and 0/5 proposal-family stop before a public patch, Gradle build, or timing.
 - [Critical-Path-First Reviewed Native Patch v1](./plans/critical-path-first-reviewed-native-patch-v1.md):
   ten frozen owner-workflow diagnostics, terminal 4/10 conclusive and 0/10
   proposal-family stop before source inspection, candidates, or timing.

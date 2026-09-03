@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-build-logic-correction-source/v1",
+  "family": "apache-groovy",
+  "revision": "14fa934340c46bc1ee96cba7ae594258bd8d0fd0",
+  "sourceTree": "8c4dc8a81afd620edf08ec69213f45705dd792a2",
+  "analysisSha256": "d138e54b8fad03319828a2d1c14c05fbe88f407537e5e7a6318cc8cc8a065b89",
+  "sourceInventorySha256": "de06eb7e9dab0f5d7f66e0adaa750f3a4c09c8da9c75a06b1796dc71518e3418",
+  "sourceFileCount": 81,
+  "materialTasks": [
+    {
+      "identity": ":build-logic:compileGroovy",
+      "taskClass": "org.gradle.api.tasks.compile.GroovyCompile",
+      "durationMs": 3282,
+      "buildSpanMs": 21947,
+      "durationPercent": "14.954208"
+    },
+    {
+      "identity": ":build-logic:compileGroovyPlugins",
+      "taskClass": "org.gradle.plugin.devel.internal.precompiled.CompileGroovyScriptPluginsTask",
+      "durationMs": 2940,
+      "buildSpanMs": 21947,
+      "durationPercent": "13.395908"
+    },
+    {
+      "identity": ":build-logic:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 14002,
+      "buildSpanMs": 21947,
+      "durationPercent": "63.799153"
+    },
+    {
+      "identity": ":build-logic:extractPluginRequests",
+      "taskClass": "org.gradle.plugin.devel.internal.precompiled.ExtractPluginRequestsTask",
+      "durationMs": 1482,
+      "buildSpanMs": 21947,
+      "durationPercent": "6.752631"
+    },
+    {
+      "identity": ":compileGroovy",
+      "taskClass": "org.gradle.api.tasks.compile.GroovyCompile",
+      "durationMs": 6193,
+      "buildSpanMs": 76930,
+      "durationPercent": "8.050175"
+    },
+    {
+      "identity": ":compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 18010,
+      "buildSpanMs": 76930,
+      "durationPercent": "23.410893"
+    },
+    {
+      "identity": ":generateGrammarSource",
+      "taskClass": "org.gradle.api.plugins.antlr.AntlrTask",
+      "durationMs": 1801,
+      "buildSpanMs": 76930,
+      "durationPercent": "2.341089"
+    },
+    {
+      "identity": ":groovy-console:compileGroovy",
+      "taskClass": "org.gradle.api.tasks.compile.GroovyCompile",
+      "durationMs": 13768,
+      "buildSpanMs": 76930,
+      "durationPercent": "17.896789"
+    },
+    {
+      "identity": ":groovy-groovysh:compileGroovy",
+      "taskClass": "org.gradle.api.tasks.compile.GroovyCompile",
+      "durationMs": 8329,
+      "buildSpanMs": 76930,
+      "durationPercent": "10.826726"
+    },
+    {
+      "identity": ":groovy-swing:compileGroovy",
+      "taskClass": "org.gradle.api.tasks.compile.GroovyCompile",
+      "durationMs": 20438,
+      "buildSpanMs": 76930,
+      "durationPercent": "26.567009"
+    },
+    {
+      "identity": ":groovy-swing:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 2724,
+      "buildSpanMs": 76930,
+      "durationPercent": "3.540881"
+    },
+    {
+      "identity": ":jar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "durationMs": 3497,
+      "buildSpanMs": 76930,
+      "durationPercent": "4.545691"
+    }
+  ],
+  "facts": [
+    {
+      "path": "build-logic/src/main/groovy/org.apache.groovy-tested.gradle",
+      "line": 135,
+      "sourceSha256": "e86cf54b476decc03944b048e3247963fd1db986f09a0345fe25652a37ff6dba",
+      "correctionClass": "RESTORE_STATE_TRACKING",
+      "binding": "UNRELATED_TASK",
+      "boundMaterialTasks": null,
+      "sourceExcerpt": "test.outputs.upToDateWhen { false }"
+    }
+  ],
+  "decision": "CONCLUSIVE_NO_MATERIAL_STATE_OPTOUT",
+  "actionable": false
+}

@@ -2,6 +2,15 @@
 
 ## Current Executive Summary
 
+- **Explicit material-task build-logic opt-outs do not broaden the patch
+  product.** Five exact public source trees are scanned against retained native
+  critical-path analyses. Independent reconstruction selects 61 standard tasks
+  above 500 ms and 2% and scans 833 Gradle/build-logic files. Six explicit
+  state or cache opt-outs exist, but each binds to a non-material helper or
+  benchmark task. The gate passes completeness at 5/5 and fails proposal
+  breadth at 0/5 versus 3/5. No Gradle build, public patch, candidate, new
+  timing sample, product failure, or speedup claim exists.
+
 - **Workflow-first prospective discovery also stops before source inspection.**
   Ten frozen, previously unused owner workflows yield 4/10 complete native
   diagnostics and six typed incomplete rows. Independent replay finds 19 tasks

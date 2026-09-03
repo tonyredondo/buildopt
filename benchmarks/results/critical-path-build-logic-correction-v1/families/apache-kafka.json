@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-build-logic-correction-source/v1",
+  "family": "apache-kafka",
+  "revision": "2e961afeff5cb27d60767a783edf20be00cc28e8",
+  "sourceTree": "1bc2bbfe0bcc4811dd33229c65908f212f67a0b7",
+  "analysisSha256": "5f047e5ea271e4c18ce65002d5ceffc741947a3f12d628324c219c08da6de3be",
+  "sourceInventorySha256": "b148eb6ffe69c4de51b7711e1496020bf8405783bf20af0985145ab5bedd05c9",
+  "sourceFileCount": 9,
+  "materialTasks": [
+    {
+      "identity": ":api-checker:core:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 1126,
+      "buildSpanMs": 1973,
+      "durationPercent": "57.070451"
+    },
+    {
+      "identity": ":api-checker:gradle-plugins:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 833,
+      "buildSpanMs": 1973,
+      "durationPercent": "42.219970"
+    },
+    {
+      "identity": ":clients:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 23705,
+      "buildSpanMs": 243188,
+      "durationPercent": "9.747603"
+    },
+    {
+      "identity": ":core:compileScala",
+      "taskClass": "org.gradle.api.tasks.scala.ScalaCompile",
+      "durationMs": 88924,
+      "buildSpanMs": 243188,
+      "durationPercent": "36.565949"
+    },
+    {
+      "identity": ":core:compileTestScala",
+      "taskClass": "org.gradle.api.tasks.scala.ScalaCompile",
+      "durationMs": 85100,
+      "buildSpanMs": 243188,
+      "durationPercent": "34.993503"
+    },
+    {
+      "identity": ":generator:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 9044,
+      "buildSpanMs": 243188,
+      "durationPercent": "3.718934"
+    },
+    {
+      "identity": ":group-coordinator:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 6264,
+      "buildSpanMs": 243188,
+      "durationPercent": "2.575785"
+    },
+    {
+      "identity": ":metadata:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 6067,
+      "buildSpanMs": 243188,
+      "durationPercent": "2.494778"
+    },
+    {
+      "identity": ":storage:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "durationMs": 8447,
+      "buildSpanMs": 243188,
+      "durationPercent": "3.473444"
+    }
+  ],
+  "facts": [
+    {
+      "path": "build.gradle",
+      "line": 575,
+      "sourceSha256": "30891aa30f709cc591ded9aa8e6cddd66e74ef4b5f00ff370d5063cdcaea8f4c",
+      "correctionClass": "REMOVE_EXPLICIT_CACHE_DISABLE",
+      "binding": "UNRELATED_TASK",
+      "boundMaterialTasks": null,
+      "sourceExcerpt": "outputs.cacheIf { false }"
+    },
+    {
+      "path": "build.gradle",
+      "line": 576,
+      "sourceSha256": "30891aa30f709cc591ded9aa8e6cddd66e74ef4b5f00ff370d5063cdcaea8f4c",
+      "correctionClass": "RESTORE_STATE_TRACKING",
+      "binding": "UNRELATED_TASK",
+      "boundMaterialTasks": null,
+      "sourceExcerpt": "outputs.upToDateWhen { false }"
+    }
+  ],
+  "decision": "CONCLUSIVE_NO_MATERIAL_STATE_OPTOUT",
+  "actionable": false
+}

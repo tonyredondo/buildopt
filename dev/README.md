@@ -14,6 +14,17 @@ package boundaries with:
 ./dev/check-documentation
 ```
 
+Validate the closed critical-path build-logic correction search, including
+independent material-task reconstruction and the zero-proposal source gate:
+
+```bash
+./dev/check-critical-path-build-logic-correction
+```
+
+Passing five `family=GIT_ROOT` bindings additionally regenerates all source
+reports from their exact public Git trees. The source runner starts no Gradle
+build and creates no timing sample.
+
 Validate the closed prospective ten-family reviewed-native trial, including
 independent source recount, binding decisions, native critical-path trace and
 the zero-candidate terminal stop with:

@@ -45,6 +45,13 @@ critical path from the compressed Shadow trace, and verifies the 80-ms,
 0.01698%, off-critical-path stop. An optional source-root argument additionally
 regenerates the full source report from the frozen repositories.
 
+The closed material standard-task build-logic search is checked by
+`./dev/check-critical-path-build-logic-correction`. It independently derives
+the 500-ms/2% task rows from retained analyses, recounts every source decision,
+and enforces the 5/5 conclusive, 0/5 proposal-family terminal stop. Supplying
+five `family=GIT_ROOT` bindings additionally regenerates all reports from the
+exact frozen public trees without starting Gradle.
+
 BuildOpt uses focused checks as executable evidence. Run the smallest gate that
 owns the changed contract, then add broader composition only when the change
 crosses components or platforms.
@@ -57,6 +64,7 @@ provision tools or create release artifacts document that effect explicitly.
 
 | Change | Command |
 |---|---|
+| Material standard-task build-logic opt-outs and zero-proposal terminal stop | `./dev/check-critical-path-build-logic-correction [five family=GIT_ROOT bindings]` |
 | Prospective ten-family source, binding, native diagnostic and zero-candidate terminal stop | `./dev/check-prospective-reviewed-native-patch-evidence [SOURCE_ROOT]` |
 | Prospective holdout, gates, budgets and authority boundary | `./dev/check-prospective-reviewed-native-patch-contract` |
 | Economics-gated source/diagnostic/correctness evidence and v1 protocol stop | `./dev/check-economics-gated-native-patch-evidence` |

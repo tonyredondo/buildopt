@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+cd "${buildopt_repo_root}"
+
+if [[ $# -ne 6 ]]; then
+    printf 'usage: %s OUTPUT_DIR family=GIT_ROOT family=GIT_ROOT family=GIT_ROOT family=GIT_ROOT family=GIT_ROOT\n' "$0" >&2
+    exit 2
+fi
+
+buildopt_output=$1
+shift
+declare -A buildopt_roots=()
+for buildopt_binding in "$@"; do
+    buildopt_family=${buildopt_binding%%=*}
+    buildopt_root=${buildopt_binding#*=}
+    [[ ${buildopt_family} != "${buildopt_binding}" && -d ${buildopt_root}/.git ]] || {
+        printf 'invalid source binding: %s\n' "${buildopt_binding}" >&2
+        exit 2
+    }
+    buildopt_roots["${buildopt_family}"]=${buildopt_root}
+done
+
+buildopt_contract=specs/poc-critical-path-build-logic-correction-v1.json
+buildopt_subjects=specs/poc-critical-path-build-logic-correction-v1.subjects.json
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-cpblc-source.XXXXXX")
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+mkdir -p "${buildopt_output}/families"
+
+while IFS= read -r buildopt_subject; do
+    buildopt_family=$(jq -r '.key' <<<"${buildopt_subject}")
+    buildopt_revision=$(jq -r '.revision' <<<"${buildopt_subject}")
+    buildopt_tree=$(jq -r '.sourceTree' <<<"${buildopt_subject}")
+    buildopt_analysis=$(jq -r '.analysisPath' <<<"${buildopt_subject}")
+    buildopt_analysis_sha=$(jq -r '.analysisSha256' <<<"${buildopt_subject}")
+    buildopt_root=${buildopt_roots[${buildopt_family}]:-}
+    [[ -n ${buildopt_root} ]] || {
+        printf 'missing source binding for %s\n' "${buildopt_family}" >&2
+        exit 2
+    }
+    [[ $(git -C "${buildopt_root}" rev-parse "${buildopt_revision}^{tree}") == "${buildopt_tree}" ]]
+    [[ $(sha256sum "${buildopt_analysis}" | awk '{print $1}') == "${buildopt_analysis_sha}" ]]
+    buildopt_extract=${buildopt_temp}/${buildopt_family}
+    mkdir -p "${buildopt_extract}"
+    git -C "${buildopt_root}" archive --format=tar "${buildopt_revision}" | tar -xf - -C "${buildopt_extract}"
+    ./dev/run --toolchain go -- go run ./cmd/build-logic-correction-audit \
+        --family "${buildopt_family}" \
+        --revision "${buildopt_revision}" \
+        --source-tree "${buildopt_tree}" \
+        --source-root "${buildopt_extract}" \
+        --analysis "${buildopt_analysis}" \
+        >"${buildopt_output}/families/${buildopt_family}.json"
+done < <(jq -c '.families[]' "${buildopt_subjects}")
+
+buildopt_contract_sha=$(sha256sum "${buildopt_contract}" | awk '{print $1}')
+buildopt_subjects_sha=$(sha256sum "${buildopt_subjects}" | awk '{print $1}')
+jq -s \
+    --arg contractSha256 "${buildopt_contract_sha}" \
+    --arg subjectsSha256 "${buildopt_subjects_sha}" '
+    sort_by(.family) as $rows |
+    {
+      schemaVersion:"buildopt.evidence/critical-path-build-logic-correction-summary/v1",
+      contractSha256:$contractSha256,
+      subjectsSha256:$subjectsSha256,
+      rows:$rows,
+      familyCount:($rows|length),
+      conclusiveFamilies:([$rows[]|select(.decision!="INCOMPLETE_AMBIGUOUS_SOURCE_BINDING")]|length),
+      requiredConclusiveFamilies:5,
+      proposalFamilies:([$rows[]|select(.actionable)]|length),
+      requiredProposalFamilies:3,
+      sourceFiles:([$rows[].sourceFileCount]|add),
+      materialTasks:([$rows[].materialTasks|length]|add),
+      explicitOptOutFacts:([$rows[].facts|length]|add),
+      materialOptOutFacts:([$rows[].facts[]|select(.binding=="MATERIAL_TASK")]|length),
+      gradleStarts:0,
+      newTimingSamples:0,
+      publicSourceModified:false,
+      candidateBuilds:0,
+      productFailures:0,
+      decision:(if ([$rows[]|select(.decision!="INCOMPLETE_AMBIGUOUS_SOURCE_BINDING")]|length)==5 and ([$rows[]|select(.actionable)]|length)>=3 then "OPEN_CANDIDATE_CORRECTNESS" else "STOP_SOURCE_GATE_FAILED" end)
+    }
+    ' "${buildopt_output}"/families/*.json >"${buildopt_output}/source-summary.json"
+
+buildopt_summary_sha=$(sha256sum "${buildopt_output}/source-summary.json" | awk '{print $1}')
+jq -n --arg summarySha256 "${buildopt_summary_sha}" \
+    --slurpfile summary "${buildopt_output}/source-summary.json" '
+    $summary[0] as $s |
+    {
+      schemaVersion:"buildopt.evidence/critical-path-build-logic-correction-terminal/v1",
+      sourceSummarySha256:$summarySha256,
+      sourceGate:{
+        conclusiveFamilies:$s.conclusiveFamilies,
+        requiredConclusiveFamilies:$s.requiredConclusiveFamilies,
+        proposalFamilies:$s.proposalFamilies,
+        requiredProposalFamilies:$s.requiredProposalFamilies,
+        decision:(if $s.decision=="OPEN_CANDIDATE_CORRECTNESS" then "PASS" else "FAIL" end)
+      },
+      dependentBlocks:{
+        candidateCorrectness:(if $s.decision=="OPEN_CANDIDATE_CORRECTNESS" then "AUTHORIZED" else "NOT_AUTHORIZED_FAILED_SOURCE_GATE" end),
+        value:(if $s.decision=="OPEN_CANDIDATE_CORRECTNESS" then "WAITING_CORRECTNESS" else "NOT_AUTHORIZED_FAILED_SOURCE_GATE" end),
+        reviewAndDelivery:(if $s.decision=="OPEN_CANDIDATE_CORRECTNESS" then "WAITING_VALUE" else "NOT_AUTHORIZED_FAILED_SOURCE_GATE" end)
+      },
+      terminalDecision:(if $s.decision=="OPEN_CANDIDATE_CORRECTNESS" then "CONTINUE_CRITICAL_PATH_BUILD_LOGIC_CORRECTION" else "STOP_CRITICAL_PATH_BUILD_LOGIC_CORRECTION_NO_PROPOSAL_BREADTH" end),
+      gradleStarts:0,
+      newTimingSamples:0,
+      publicSourceModified:false,
+      candidateBuilds:0,
+      productFailures:0,
+      upstreamPullRequest:false,
+      defaultBranchMutation:false,
+      productionAuthorized:false,
+      automaticApply:false,
+      automaticMerge:false,
+      testOptimization:"OUT_OF_SCOPE"
+    }
+    ' >"${buildopt_output}/terminal-decision.json"
