@@ -39,11 +39,11 @@ const (
 	maximumWCNCPArtifactBytes = 16 << 20
 	maximumWCNCPGeneration    = 9007199254740991
 
-	wcncpStagedTTL       = 24 * time.Hour
-	wcncpObservationTTL  = 30 * 24 * time.Hour
-	wcncpOpportunityTTL  = 30 * 24 * time.Hour
-	wcncpProposalTTL     = 90 * 24 * time.Hour
-	wcncpValidationTTL   = 90 * 24 * time.Hour
+	wcncpStagedTTL      = 24 * time.Hour
+	wcncpObservationTTL = 30 * 24 * time.Hour
+	wcncpOpportunityTTL = 30 * 24 * time.Hour
+	wcncpProposalTTL    = 90 * 24 * time.Hour
+	wcncpValidationTTL  = 90 * 24 * time.Hour
 )
 
 var (
@@ -71,42 +71,42 @@ var (
 
 // WCNCP record schema versions frozen by WCNCP-000.
 const (
-	WCNCPObservationSchemaVersion  = "buildopt.wcncp/observation/v1"
-	WCNCPOpportunitySchemaVersion  = "buildopt.wcncp/opportunity/v1"
-	WCNCPProposalSchemaVersion     = "buildopt.wcncp/proposal/v1"
-	WCNCPValidationSchemaVersion   = "buildopt.wcncp/validation/v1"
-	WCNCPDecisionSchemaVersion     = "buildopt.wcncp/decision/v1"
-	WCNCPManifestSchemaVersion     = "buildopt.wcncp/manifest/v1"
-	WCNCPHeadSchemaVersion         = "buildopt.wcncp/head/v1"
+	WCNCPObservationSchemaVersion = "buildopt.wcncp/observation/v1"
+	WCNCPOpportunitySchemaVersion = "buildopt.wcncp/opportunity/v1"
+	WCNCPProposalSchemaVersion    = "buildopt.wcncp/proposal/v1"
+	WCNCPValidationSchemaVersion  = "buildopt.wcncp/validation/v1"
+	WCNCPDecisionSchemaVersion    = "buildopt.wcncp/decision/v1"
+	WCNCPManifestSchemaVersion    = "buildopt.wcncp/manifest/v1"
+	WCNCPHeadSchemaVersion        = "buildopt.wcncp/head/v1"
 )
 
 // WCNCPObservation is the Go binding for WCNCP_OBSERVATION v1. Field names
 // match the frozen JSON schema so canonical JCS bytes validate unchanged.
 type WCNCPObservation struct {
-	SchemaVersion      string `json:"schemaVersion"`
-	RecordType         string `json:"recordType"`
-	ObservationID      string `json:"observationId"`
-	RepositoryScope    string `json:"repositoryScope"`
-	RunnerID           string `json:"runnerId"`
-	IdempotencyKey     string `json:"idempotencyKey"`
-	InvocationOrdinal  int64  `json:"invocationOrdinal"`
-	EnvironmentClass   string `json:"environmentClass"`
-	Bindings           struct {
-		RepositoryRevision     string `json:"repositoryRevision"`
-		SourceTreeSHA256       string `json:"sourceTreeSha256"`
-		WrapperSHA256          string `json:"wrapperSha256"`
-		GradleVersion          string `json:"gradleVersion"`
-		JDKSHA256              string `json:"jdkSha256"`
-		BuildOptPackageSHA256  string `json:"buildoptPackageSha256"`
-		WorkflowSHA256         string `json:"workflowSha256"`
-		EnvironmentSHA256      string `json:"environmentSha256"`
-		OutputContractSHA256   string `json:"outputContractSha256"`
+	SchemaVersion     string `json:"schemaVersion"`
+	RecordType        string `json:"recordType"`
+	ObservationID     string `json:"observationId"`
+	RepositoryScope   string `json:"repositoryScope"`
+	RunnerID          string `json:"runnerId"`
+	IdempotencyKey    string `json:"idempotencyKey"`
+	InvocationOrdinal int64  `json:"invocationOrdinal"`
+	EnvironmentClass  string `json:"environmentClass"`
+	Bindings          struct {
+		RepositoryRevision    string `json:"repositoryRevision"`
+		SourceTreeSHA256      string `json:"sourceTreeSha256"`
+		WrapperSHA256         string `json:"wrapperSha256"`
+		GradleVersion         string `json:"gradleVersion"`
+		JDKSHA256             string `json:"jdkSha256"`
+		BuildOptPackageSHA256 string `json:"buildoptPackageSha256"`
+		WorkflowSHA256        string `json:"workflowSha256"`
+		EnvironmentSHA256     string `json:"environmentSha256"`
+		OutputContractSHA256  string `json:"outputContractSha256"`
 	} `json:"bindings"`
-	Arguments          []string `json:"arguments"`
-	Duration           struct {
-		State          string `json:"state"`
-		ValueMs        *int64 `json:"valueMs,omitempty"`
-		Classification string `json:"classification"`
+	Arguments []string `json:"arguments"`
+	Duration  struct {
+		State          string  `json:"state"`
+		ValueMs        *int64  `json:"valueMs,omitempty"`
+		Classification string  `json:"classification"`
 		Reason         *string `json:"reason,omitempty"`
 	} `json:"duration"`
 	ConfigurationCache string `json:"configurationCache"`
@@ -130,11 +130,11 @@ type WCNCPObservation struct {
 
 // WCNCPOpportunity is the Go binding for WCNCP_OPPORTUNITY v1.
 type WCNCPOpportunity struct {
-	SchemaVersion  string `json:"schemaVersion"`
-	RecordType     string `json:"recordType"`
-	OpportunityID  string `json:"opportunityId"`
+	SchemaVersion   string `json:"schemaVersion"`
+	RecordType      string `json:"recordType"`
+	OpportunityID   string `json:"opportunityId"`
 	RepositoryScope string `json:"repositoryScope"`
-	Detector       struct {
+	Detector        struct {
 		ID                   string `json:"id"`
 		Version              string `json:"version"`
 		ImplementationSHA256 string `json:"implementationSha256"`
@@ -166,13 +166,13 @@ type WCNCPOpportunity struct {
 
 // WCNCPProposal is the Go binding for WCNCP_PROPOSAL v1.
 type WCNCPProposal struct {
-	SchemaVersion  string `json:"schemaVersion"`
-	RecordType     string `json:"recordType"`
-	ProposalID     string `json:"proposalId"`
-	RepositoryScope string `json:"repositoryScope"`
+	SchemaVersion     string `json:"schemaVersion"`
+	RecordType        string `json:"recordType"`
+	ProposalID        string `json:"proposalId"`
+	RepositoryScope   string `json:"repositoryScope"`
 	OpportunitySHA256 string `json:"opportunitySha256"`
-	RecipeID       string `json:"recipeId"`
-	Source         struct {
+	RecipeID          string `json:"recipeId"`
+	Source            struct {
 		Path            string `json:"path"`
 		StartByte       int64  `json:"startByte"`
 		EndByte         int64  `json:"endByte"`
@@ -184,26 +184,26 @@ type WCNCPProposal struct {
 	Rationale                string `json:"rationale"`
 	VerificationProtocol     string `json:"verificationProtocol"`
 	Authority                struct {
-		AutomaticApplyAuthorized        bool `json:"automaticApplyAuthorized"`
-		AutomaticCommitAuthorized       bool `json:"automaticCommitAuthorized"`
-		AutomaticPushAuthorized         bool `json:"automaticPushAuthorized"`
-		AutomaticPullRequestAuthorized  bool `json:"automaticPullRequestAuthorized"`
-		AutomaticMergeAuthorized        bool `json:"automaticMergeAuthorized"`
-		ProductionAuthorized            bool `json:"productionAuthorized"`
+		AutomaticApplyAuthorized       bool `json:"automaticApplyAuthorized"`
+		AutomaticCommitAuthorized      bool `json:"automaticCommitAuthorized"`
+		AutomaticPushAuthorized        bool `json:"automaticPushAuthorized"`
+		AutomaticPullRequestAuthorized bool `json:"automaticPullRequestAuthorized"`
+		AutomaticMergeAuthorized       bool `json:"automaticMergeAuthorized"`
+		ProductionAuthorized           bool `json:"productionAuthorized"`
 	} `json:"authority"`
 }
 
 // WCNCPValidation is the Go binding for WCNCP_VALIDATION v1.
 type WCNCPValidation struct {
-	SchemaVersion   string `json:"schemaVersion"`
-	RecordType      string `json:"recordType"`
-	ValidationID    string `json:"validationId"`
-	RepositoryScope string `json:"repositoryScope"`
-	ProposalSHA256  string `json:"proposalSha256"`
-	LeaseSHA256     string `json:"leaseSha256"`
+	SchemaVersion    string `json:"schemaVersion"`
+	RecordType       string `json:"recordType"`
+	ValidationID     string `json:"validationId"`
+	RepositoryScope  string `json:"repositoryScope"`
+	ProposalSHA256   string `json:"proposalSha256"`
+	LeaseSHA256      string `json:"leaseSha256"`
 	EnvironmentClass string `json:"environmentClass"`
-	BindingsSHA256  string `json:"bindingsSha256"`
-	Correctness     struct {
+	BindingsSHA256   string `json:"bindingsSha256"`
+	Correctness      struct {
 		Starts          int64 `json:"starts"`
 		ExactOutputs    bool  `json:"exactOutputs"`
 		Invalidation    bool  `json:"invalidation"`
@@ -211,15 +211,15 @@ type WCNCPValidation struct {
 		ProductFailures int64 `json:"productFailures"`
 	} `json:"correctness"`
 	Timing struct {
-		State                string  `json:"state"`
-		Pairs                *int64  `json:"pairs,omitempty"`
-		PositivePairs        *int64  `json:"positivePairs,omitempty"`
-		MeanSavingMs         *int64  `json:"meanSavingMs,omitempty"`
-		MeanSavingPercentMilli *int64 `json:"meanSavingPercentMilli,omitempty"`
-		CandidateP95DeltaMs  *int64  `json:"candidateP95DeltaMs,omitempty"`
-		Paired95LowerMs      *int64  `json:"paired95LowerMs,omitempty"`
-		Paired95UpperMs      *int64  `json:"paired95UpperMs,omitempty"`
-		Reason               *string `json:"reason,omitempty"`
+		State                  string  `json:"state"`
+		Pairs                  *int64  `json:"pairs,omitempty"`
+		PositivePairs          *int64  `json:"positivePairs,omitempty"`
+		MeanSavingMs           *int64  `json:"meanSavingMs,omitempty"`
+		MeanSavingPercentMilli *int64  `json:"meanSavingPercentMilli,omitempty"`
+		CandidateP95DeltaMs    *int64  `json:"candidateP95DeltaMs,omitempty"`
+		Paired95LowerMs        *int64  `json:"paired95LowerMs,omitempty"`
+		Paired95UpperMs        *int64  `json:"paired95UpperMs,omitempty"`
+		Reason                 *string `json:"reason,omitempty"`
 	} `json:"timing"`
 	Cost struct {
 		MachineMs     int64  `json:"machineMs"`
@@ -228,54 +228,54 @@ type WCNCPValidation struct {
 	} `json:"cost"`
 	Decision  string `json:"decision"`
 	Authority struct {
-		SourceApplyAuthorized  bool `json:"sourceApplyAuthorized"`
-		OwnerDecisionRequired  bool `json:"ownerDecisionRequired"`
-		ProductionAuthorized   bool `json:"productionAuthorized"`
+		SourceApplyAuthorized bool `json:"sourceApplyAuthorized"`
+		OwnerDecisionRequired bool `json:"ownerDecisionRequired"`
+		ProductionAuthorized  bool `json:"productionAuthorized"`
 	} `json:"authority"`
 }
 
 // WCNCPDecision is the Go binding for WCNCP_DECISION v1.
 type WCNCPDecision struct {
-	SchemaVersion   string   `json:"schemaVersion"`
-	RecordType      string   `json:"recordType"`
-	DecisionID      string   `json:"decisionId"`
-	RepositoryScope string   `json:"repositoryScope"`
-	ProposalSHA256  string   `json:"proposalSha256"`
-	ValidationSHA256 string  `json:"validationSha256"`
-	PrincipalSHA256 string   `json:"principalSha256"`
-	Decision        string   `json:"decision"`
-	ActiveReviewMs  int64    `json:"activeReviewMs"`
-	ClarificationCount int64 `json:"clarificationCount"`
-	Concerns        []string `json:"concerns,omitempty"`
-	DecidedAt       string   `json:"decidedAt"`
-	Authority       struct {
-		OwnerAuthenticated  bool `json:"ownerAuthenticated"`
-		SourceApplied       bool `json:"sourceApplied"`
-		CommitCreated       bool `json:"commitCreated"`
-		PushCreated         bool `json:"pushCreated"`
-		PullRequestCreated  bool `json:"pullRequestCreated"`
-		Merged              bool `json:"merged"`
+	SchemaVersion      string   `json:"schemaVersion"`
+	RecordType         string   `json:"recordType"`
+	DecisionID         string   `json:"decisionId"`
+	RepositoryScope    string   `json:"repositoryScope"`
+	ProposalSHA256     string   `json:"proposalSha256"`
+	ValidationSHA256   string   `json:"validationSha256"`
+	PrincipalSHA256    string   `json:"principalSha256"`
+	Decision           string   `json:"decision"`
+	ActiveReviewMs     int64    `json:"activeReviewMs"`
+	ClarificationCount int64    `json:"clarificationCount"`
+	Concerns           []string `json:"concerns,omitempty"`
+	DecidedAt          string   `json:"decidedAt"`
+	Authority          struct {
+		OwnerAuthenticated   bool `json:"ownerAuthenticated"`
+		SourceApplied        bool `json:"sourceApplied"`
+		CommitCreated        bool `json:"commitCreated"`
+		PushCreated          bool `json:"pushCreated"`
+		PullRequestCreated   bool `json:"pullRequestCreated"`
+		Merged               bool `json:"merged"`
 		ProductionAuthorized bool `json:"productionAuthorized"`
 	} `json:"authority"`
 }
 
 // WCNCPManifest is the immutable publication envelope for one WCNCP record.
 type WCNCPManifest struct {
-	SchemaVersion         string `json:"schemaVersion"`
-	RecordType            string `json:"recordType"`
-	Kind                  StateKind `json:"kind"`
-	RepositoryScopeSHA256 string `json:"repositoryScopeSha256"`
-	Generation            int64 `json:"generation"`
-	CompatibilitySHA256   string `json:"compatibilitySha256"`
-	BindingsSHA256        string `json:"bindingsSha256"`
-	Origin                StateOrigin `json:"origin"`
-	Artifacts             []StateArtifact `json:"artifacts"`
+	SchemaVersion         string           `json:"schemaVersion"`
+	RecordType            string           `json:"recordType"`
+	Kind                  StateKind        `json:"kind"`
+	RepositoryScopeSHA256 string           `json:"repositoryScopeSha256"`
+	Generation            int64            `json:"generation"`
+	CompatibilitySHA256   string           `json:"compatibilitySha256"`
+	BindingsSHA256        string           `json:"bindingsSha256"`
+	Origin                StateOrigin      `json:"origin"`
+	Artifacts             []StateArtifact  `json:"artifacts"`
 	References            []WCNCPReference `json:"references"`
-	Status                string `json:"status"`
-	RetentionClass        string `json:"retentionClass"`
-	CreatedAt             string `json:"createdAt"`
-	ExpiresAt             string `json:"expiresAt,omitempty"`
-	Authority             StateAuthority `json:"authority"`
+	Status                string           `json:"status"`
+	RetentionClass        string           `json:"retentionClass"`
+	CreatedAt             string           `json:"createdAt"`
+	ExpiresAt             string           `json:"expiresAt,omitempty"`
+	Authority             StateAuthority   `json:"authority"`
 }
 
 // WCNCPReference links one manifest to a parent WCNCP manifest.
@@ -287,15 +287,15 @@ type WCNCPReference struct {
 
 // WCNCPHead is the sole mutable pointer for one repository and WCNCP kind.
 type WCNCPHead struct {
-	SchemaVersion          string `json:"schemaVersion"`
-	RecordType             string `json:"recordType"`
-	Kind                   StateKind `json:"kind"`
-	RepositoryScopeSHA256  string `json:"repositoryScopeSha256"`
-	Generation             int64 `json:"generation"`
-	ManifestSHA256         string `json:"manifestSha256"`
-	PreviousManifestSHA256 string `json:"previousManifestSha256,omitempty"`
-	CompatibilitySHA256    string `json:"compatibilitySha256"`
-	UpdatedAt              string `json:"updatedAt"`
+	SchemaVersion          string         `json:"schemaVersion"`
+	RecordType             string         `json:"recordType"`
+	Kind                   StateKind      `json:"kind"`
+	RepositoryScopeSHA256  string         `json:"repositoryScopeSha256"`
+	Generation             int64          `json:"generation"`
+	ManifestSHA256         string         `json:"manifestSha256"`
+	PreviousManifestSHA256 string         `json:"previousManifestSha256,omitempty"`
+	CompatibilitySHA256    string         `json:"compatibilitySha256"`
+	UpdatedAt              string         `json:"updatedAt"`
 	Authority              StateAuthority `json:"authority"`
 }
 
@@ -305,6 +305,15 @@ type WCNCPObject struct {
 	Kind                  StateKind
 	SHA256                string
 	SizeBytes             int64
+}
+
+// WCNCPObjectInput is one immutable record staged for an atomic metadata
+// publication. Physical CAS bytes may be written before the transaction, but
+// no repository/kind visibility is granted unless every input validates and
+// the complete metadata transaction commits.
+type WCNCPObjectInput struct {
+	ExpectedSHA256 string
+	Raw            []byte
 }
 
 // WCNCP CAS request/response mirror the generic typed-state protocol.
@@ -332,9 +341,9 @@ type WCNCPSnapshot struct {
 }
 
 type WCNCPMaintenanceReport struct {
-	ExpiredStagedManifests int
-	ExpiredStagedObjects   int
-	ExpiredSuperseded      int
+	ExpiredStagedManifests  int
+	ExpiredStagedObjects    int
+	ExpiredSuperseded       int
 	DeletedUnreferencedBlob int
 }
 
@@ -724,52 +733,83 @@ func (storage *Storage) PutWCNCPObject(ctx context.Context, repositoryScopeSHA25
 	if ctx == nil || reader == nil || !validSHA256(repositoryScopeSHA256) || !validWCNCPKind(kind) || !validSHA256(expectedSHA256) {
 		return WCNCPObject{}, false, ErrWCNCPInvalid
 	}
-	finish, err := storage.beginOperation()
+	raw, err := io.ReadAll(io.LimitReader(reader, maximumWCNCPArtifactBytes+1))
+	if err != nil || len(raw) > maximumWCNCPArtifactBytes {
+		return WCNCPObject{}, false, ErrWCNCPInvalid
+	}
+	objects, inserted, err := storage.PutWCNCPObjectBatch(ctx, repositoryScopeSHA256, kind, []WCNCPObjectInput{{ExpectedSHA256: expectedSHA256, Raw: raw}})
 	if err != nil {
 		return WCNCPObject{}, false, err
+	}
+	return objects[0], inserted[0], nil
+}
+
+// PutWCNCPObjectBatch validates every record and publishes all metadata in one
+// transaction. A corrupt or unavailable item leaves no partial logical batch.
+func (storage *Storage) PutWCNCPObjectBatch(ctx context.Context, repositoryScopeSHA256 string, kind StateKind, inputs []WCNCPObjectInput) ([]WCNCPObject, []bool, error) {
+	if ctx == nil || !validSHA256(repositoryScopeSHA256) || !validWCNCPKind(kind) || len(inputs) == 0 || len(inputs) > wcncpBatchMaxItems {
+		return nil, nil, ErrWCNCPInvalid
+	}
+	finish, err := storage.beginOperation()
+	if err != nil {
+		return nil, nil, err
 	}
 	defer finish()
 	storage.reconcileMutex.RLock()
 	defer storage.reconcileMutex.RUnlock()
-	blob, _, err := storage.blobs.putLocked(ctx, reader)
-	if err != nil {
-		return WCNCPObject{}, false, err
-	}
-	if blob.Size < 1 || blob.Size > maximumWCNCPArtifactBytes || strings.TrimPrefix(blob.Digest, digestPrefix) != expectedSHA256 {
-		return WCNCPObject{}, false, ErrWCNCPDigestMismatch
-	}
-	// Fail closed on WCNCP record content: the stored bytes must validate
-	// against the frozen schema for their kind.
-	verified, err := storage.blobs.openVerified(ctx, blob)
-	if err != nil {
-		return WCNCPObject{}, false, fmt.Errorf("%w: %v", ErrWCNPCorrupt, err)
-	}
-	content, err := io.ReadAll(io.LimitReader(verified, maximumWCNCPArtifactBytes+1))
-	closeErr := verified.Close()
-	if err != nil {
-		return WCNCPObject{}, false, fmt.Errorf("%w: %v", ErrWCNPCorrupt, err)
-	}
-	if closeErr != nil {
-		return WCNCPObject{}, false, fmt.Errorf("%w: %v", ErrWCNPCorrupt, closeErr)
-	}
-	if err := ValidateWCNCPRecord(kind, content); err != nil {
-		return WCNCPObject{}, false, err
+	objects := make([]WCNCPObject, 0, len(inputs))
+	for _, input := range inputs {
+		if !validSHA256(input.ExpectedSHA256) || len(input.Raw) == 0 || len(input.Raw) > maximumWCNCPArtifactBytes {
+			return nil, nil, ErrWCNCPInvalid
+		}
+		if err := ValidateWCNCPRecord(kind, input.Raw); err != nil {
+			return nil, nil, err
+		}
+		blob, _, err := storage.blobs.putLocked(ctx, bytes.NewReader(input.Raw))
+		if err != nil {
+			return nil, nil, err
+		}
+		if blob.Size < 1 || blob.Size > maximumWCNCPArtifactBytes || strings.TrimPrefix(blob.Digest, digestPrefix) != input.ExpectedSHA256 {
+			return nil, nil, ErrWCNCPDigestMismatch
+		}
+		verified, err := storage.blobs.openVerified(ctx, blob)
+		if err != nil {
+			return nil, nil, fmt.Errorf("%w: %v", ErrWCNPCorrupt, err)
+		}
+		content, readErr := io.ReadAll(io.LimitReader(verified, maximumWCNCPArtifactBytes+1))
+		closeErr := verified.Close()
+		if readErr != nil || closeErr != nil || !bytes.Equal(content, input.Raw) {
+			return nil, nil, ErrWCNPCorrupt
+		}
+		objects = append(objects, WCNCPObject{RepositoryScopeSHA256: repositoryScopeSHA256, Kind: kind, SHA256: input.ExpectedSHA256, SizeBytes: blob.Size})
 	}
 	storage.stateMutationMutex.Lock()
 	defer storage.stateMutationMutex.Unlock()
-	result, err := storage.state.database.ExecContext(ctx, `INSERT INTO wcncp_objects (
+	transaction, err := storage.state.database.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+	if err != nil {
+		return nil, nil, err
+	}
+	defer transaction.Rollback()
+	inserted := make([]bool, len(objects))
+	for index, object := range objects {
+		result, err := transaction.ExecContext(ctx, `INSERT INTO wcncp_objects (
     repository_scope_sha256, kind, blob_digest, size_bytes, created_at_unix_ms
 ) VALUES (?, ?, ?, ?, ?)
 ON CONFLICT(repository_scope_sha256, kind, blob_digest) DO NOTHING`,
-		repositoryScopeSHA256, kind, blob.Digest, blob.Size, storage.now().UnixMilli())
-	if err != nil {
-		return WCNCPObject{}, false, err
+			repositoryScopeSHA256, kind, digestPrefix+object.SHA256, object.SizeBytes, storage.now().UnixMilli())
+		if err != nil {
+			return nil, nil, err
+		}
+		rows, err := result.RowsAffected()
+		if err != nil {
+			return nil, nil, err
+		}
+		inserted[index] = rows == 1
 	}
-	rows, err := result.RowsAffected()
-	if err != nil {
-		return WCNCPObject{}, false, err
+	if err := transaction.Commit(); err != nil {
+		return nil, nil, err
 	}
-	return WCNCPObject{RepositoryScopeSHA256: repositoryScopeSHA256, Kind: kind, SHA256: expectedSHA256, SizeBytes: blob.Size}, rows == 1, nil
+	return objects, inserted, nil
 }
 
 // OpenWCNCPObject returns verified bytes only when the exact repository and

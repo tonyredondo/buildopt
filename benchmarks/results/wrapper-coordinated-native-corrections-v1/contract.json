@@ -1,7 +1,7 @@
 {
   "schemaVersion": "buildopt.poc/wrapper-coordinated-native-corrections/v1",
   "workItem": "WCNCP",
-  "status": "INCOMPLETE_PERFORMANCE_ENVIRONMENT",
+  "status": "FUNCTIONAL_FOUNDATION_READY",
   "productUnit": "OWNER_REVIEWED_NATIVE_GRADLE_CORRECTION",
   "customerCommand": "./buildoptw <gradle arguments...>",
   "runtime": {
@@ -157,13 +157,13 @@
     {"id":"WCNCP-010","state":"WAITING","outcome":"CANDIDATE_CORRECTNESS"},
     {"id":"WCNCP-011","state":"WAITING","outcome":"PAIRED_VALUE_AND_ECONOMICS"},
     {"id":"WCNCP-012","state":"WAITING","outcome":"FIRST_EXPOSURE_OWNER_REVIEW"},
-    {"id":"WCNCP-013","state":"DONE","outcome":"TERMINAL_DECISION"}
+    {"id":"WCNCP-013","state":"WAITING","outcome":"TERMINAL_DECISION"}
   ],
   "nextBlock": {
-    "id": "WCNCP-013",
-    "state": "DONE",
-    "allowedWork": "TERMINAL_DECISION_ONLY",
-    "prospectiveGradleBuildsAllowed": false,
+    "id": "WCNCP-008",
+    "state": "TODO",
+    "allowedWork": "FREEZE_COHORT_AND_CAPTURE_ORDINARY_WRAPPER_OBSERVATIONS",
+    "prospectiveGradleBuildsAllowed": true,
     "publicSourceMutationAllowed": false,
     "timingAllowed": false
   }

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "buildopt.wcncp/evidence-environment/v1",
   "block": "WCNCP-008",
-  "recordedAt": "2026-09-04",
+  "recordedAt": "2026-09-03",
   "declaration": "No CONTROLLED_PERFORMANCE runner was established in this workspace. All rows below are the executing container's own declaration; hosted and local timings are diagnostic-only and never enter materiality or value arithmetic.",
   "host": {
     "operatingSystem": "Linux x86_64",
@@ -24,5 +24,5 @@
   "timingClassification": "DIAGNOSTIC_ONLY",
   "noiseStabilityPreflight": "NOT_RUN",
   "controlledCapacityAvailable": false,
-  "consequence": "Materiality, wrapper overhead, paired value, tails, confidence, and payback gates stay closed. Functional blocks 001-007 were proved on standard CI; candidate timing and any terminal value claim remain closed."
+  "consequence": "Materiality, wrapper overhead, paired value, tails, confidence, and payback gates stay closed. Ordinary WCNCP-008 observation capture does not require controlled timing authority; candidate timing and any terminal value claim remain closed."
 }

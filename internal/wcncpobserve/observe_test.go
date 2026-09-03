@@ -43,10 +43,20 @@ func TestRedactPathOmitsOutsideRoot(t *testing.T) {
 func TestObservationFactsRejectRawSecretsAndAbsolutePaths(t *testing.T) {
 	t.Parallel()
 	facts := ObservationFacts{
-		RepositoryScope: "example/repository", RunnerID: strings.Repeat("a", 64),
+		SchemaVersion: ObservationSchemaVersion, RecordType: "WCNCP_OBSERVATION",
+		ObservationID: strings.Repeat("b", 64), RepositoryScope: "example/repository", RunnerID: strings.Repeat("a", 64),
 		IdempotencyKey: "observation:0001-secure-test", InvocationOrdinal: 1,
 		EnvironmentClass: "STANDARD_HOSTED_CI", Arguments: []string{"build", "--token=abc"},
-		Child: ChildResult{Outcome: "SUCCESS"}, Completeness: "COMPLETE",
+		Bindings: ObservationBindings{
+			RepositoryRevision: strings.Repeat("1", 40), SourceTreeSHA256: strings.Repeat("1", 64),
+			WrapperSHA256: strings.Repeat("2", 64), GradleVersion: "9.6.1", JDKSHA256: strings.Repeat("3", 64),
+			BuildOptPackageSHA256: strings.Repeat("4", 64), WorkflowSHA256: strings.Repeat("5", 64),
+			EnvironmentSHA256: strings.Repeat("6", 64), OutputContractSHA256: strings.Repeat("7", 64),
+		},
+		Duration:           TypedDuration{State: "COMPLETE", ValueMs: int64Pointer(1), Classification: "DIAGNOSTIC_ONLY"},
+		ConfigurationCache: "NOT_REQUESTED", BuildCacheMode: "ENABLED",
+		OutputManifest: OutputManifest{State: "COMPLETE", SHA256: stringPointer(strings.Repeat("8", 64))},
+		Child:          ChildResult{Outcome: "SUCCESS"}, Completeness: "COMPLETE", Authority: ObservationAuthority{},
 	}
 	if err := facts.Validate(); err == nil {
 		t.Fatal("raw secret accepted")
@@ -56,6 +66,9 @@ func TestObservationFactsRejectRawSecretsAndAbsolutePaths(t *testing.T) {
 		t.Fatal("absolute path accepted")
 	}
 }
+
+func int64Pointer(value int64) *int64    { return &value }
+func stringPointer(value string) *string { return &value }
 
 func TestDeriveStatusDistinguishesQueuedObservingAndProposals(t *testing.T) {
 	t.Parallel()
@@ -103,5 +116,22 @@ func TestOutboxAtomicBoundedOldestFirst(t *testing.T) {
 	}
 	if _, err := os.Stat(oldPath); !os.IsNotExist(err) {
 		t.Fatal("aged item was not evicted")
+	}
+	if err := os.WriteFile(filepath.Join(dir, "runner.id"), []byte(strings.Repeat("a", 64)), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	pending, err := outbox.Pending(32, 1<<20)
+	if err != nil || len(pending) != 2 {
+		t.Fatalf("pending = %d/%v", len(pending), err)
+	}
+	if err := outbox.Acknowledge(pending[:1]); err != nil {
+		t.Fatal(err)
+	}
+	remaining, err := outbox.Pending(32, 1<<20)
+	if err != nil || len(remaining) != 1 {
+		t.Fatalf("remaining = %d/%v", len(remaining), err)
+	}
+	if _, err := os.Stat(filepath.Join(dir, "runner.id")); err != nil {
+		t.Fatalf("runner identity was removed: %v", err)
 	}
 }

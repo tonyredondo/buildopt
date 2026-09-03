@@ -2,7 +2,7 @@
   "schemaVersion": "buildopt.wcncp/evidence-e011/v1",
   "block": "WCNCP-011",
   "evidence": "WCNCP-E011",
-  "state": "INCOMPLETE_PERFORMANCE_ENVIRONMENT",
+  "state": "RETRACTED_PREMATURE_CLOSURE",
   "controlledRunner": "unavailable: no dedicated host, no declared resource envelope, no noise/stability preflight",
   "balancedPairs": 0,
   "balancedPairsRequired": 8,
@@ -13,5 +13,5 @@
   "paybackPerProposal": "not computed: no qualified mean saving exists",
   "portfolioSignedValue": "not computed: no prospective rows exist",
   "hostedTimingsSubstituted": false,
-  "reason": "Standard-CI durations are diagnostic-only and were never converted into value input. Missing value rows are incomplete, never zero saving and never a negative product result."
+  "reason": "Historical zero-row placeholder only. WCNCP-011 remains WAITING; controlled performance capacity is required when this value block is reached, not for WCNCP-008 ordinary capture."
 }

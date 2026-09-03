@@ -32,6 +32,10 @@ var (
 	ErrDecision = errors.New("BuildOpt WCNCP owner decision is invalid")
 )
 
+// PatchBundleVerifier is the mandatory boundary to the canonical signed
+// PatchBundle verifier. Draft never accepts an envelope based on shape alone.
+type PatchBundleVerifier func(signedBundle []byte) error
+
 // Artifact is the first-exposure review bundle. Timing fields stay pending
 // until value qualification; only value-qualified proposals reach real owner
 // review in WCNCP-012.
@@ -54,13 +58,18 @@ type Artifact struct {
 	ApplyCommand        string `json:"applyCommand"`
 	RevertCommand       string `json:"revertCommand"`
 	AuthorityStatement  string `json:"authorityStatement"`
+	PatchBundleContract string `json:"patchBundleContract"`
+	SignatureBoundary   string `json:"signatureBoundary"`
 }
 
 // Draft builds a review artifact bound to exact proposal, validation, patch,
 // and inverse digests. Empty safety, evidence, or command fields fail closed;
 // historical replays must pass the system-fixture lane explicitly.
-func Draft(proposalSHA256, validationSHA256 string, patch, inverse []byte, lane string, fields map[string]string) (Artifact, string, error) {
-	if len(proposalSHA256) != 64 || len(validationSHA256) != 64 || len(patch) == 0 || len(inverse) == 0 {
+func Draft(proposalSHA256, validationSHA256 string, patch, inverse []byte, lane string, fields map[string]string, verify PatchBundleVerifier) (Artifact, string, error) {
+	if !validDigest(proposalSHA256) || !validDigest(validationSHA256) || len(patch) == 0 || len(inverse) == 0 {
+		return Artifact{}, "", ErrTampered
+	}
+	if verify == nil || !signedPatchBundleShape(patch) || !signedPatchBundleShape(inverse) || verify(patch) != nil || verify(inverse) != nil {
 		return Artifact{}, "", ErrTampered
 	}
 	if lane != SystemFixtureLabel && lane != "PROSPECTIVE" {
@@ -84,6 +93,8 @@ func Draft(proposalSHA256, validationSHA256 string, patch, inverse []byte, lane 
 		WallTimeTable: "NOT_RUN_FIXTURE", IntervalP95Payback: "NOT_EVALUATED_STANDARD_CI",
 		Limitations: fields["limitations"], ApplyCommand: fields["applyCommand"],
 		RevertCommand: fields["revertCommand"], AuthorityStatement: NoAutoMutationStatement,
+		PatchBundleContract: "buildopt-patch-bundle/v1",
+		SignatureBoundary:   "verified through the mandatory PatchBundleVerifier boundary before review binding",
 	}
 	raw, err := json.Marshal(artifact)
 	if err != nil {
@@ -91,6 +102,35 @@ func Draft(proposalSHA256, validationSHA256 string, patch, inverse []byte, lane 
 	}
 	digest := sha256.Sum256(canonicalJSON(raw))
 	return artifact, hex.EncodeToString(digest[:]), nil
+}
+
+func validDigest(value string) bool {
+	if len(value) != 64 {
+		return false
+	}
+	_, err := hex.DecodeString(value)
+	return err == nil && strings.ToLower(value) == value
+}
+
+func signedPatchBundleShape(raw []byte) bool {
+	var envelope struct {
+		ContractVersion string `json:"contractVersion"`
+		BundleDigest    string `json:"bundleDigest"`
+		Signature       struct {
+			Algorithm          string `json:"algorithm"`
+			Canonicalization   string `json:"canonicalization"`
+			KeyID              string `json:"keyId"`
+			SignedBundleDigest string `json:"signedBundleDigest"`
+			Value              string `json:"value"`
+		} `json:"signature"`
+	}
+	if err := json.Unmarshal(raw, &envelope); err != nil {
+		return false
+	}
+	return envelope.ContractVersion == "buildopt-patch-bundle/v1" &&
+		strings.HasPrefix(envelope.BundleDigest, "sha256:") && validDigest(strings.TrimPrefix(envelope.BundleDigest, "sha256:")) &&
+		envelope.Signature.Algorithm == "Ed25519" && envelope.Signature.Canonicalization == "JCS" &&
+		envelope.Signature.KeyID != "" && envelope.Signature.SignedBundleDigest == envelope.BundleDigest && len(envelope.Signature.Value) == 86
 }
 
 func canonicalJSON(raw []byte) []byte {
@@ -119,18 +159,33 @@ func VerifyPatchBinding(expectedPatchSHA256 string, patch []byte) error {
 // Lifecycle derives review status from immutable decisions and drift. Owner
 // acceptance never implies SOURCE_APPLIED or merged.
 func Lifecycle(decisions []string, drifted bool) string {
+	state, err := ResolveLifecycle(decisions, drifted)
+	if err != nil {
+		return "INVALID_DECISION"
+	}
+	return state
+}
+
+// ResolveLifecycle rejects contradictory or repeated owner decisions instead
+// of selecting whichever happened to appear first.
+func ResolveLifecycle(decisions []string, drifted bool) (string, error) {
 	if drifted {
-		return "STALE"
+		return "STALE", nil
+	}
+	if len(decisions) > 1 {
+		return "", ErrDecision
 	}
 	for _, decision := range decisions {
 		switch decision {
 		case "ACCEPT":
-			return "OWNER_ACCEPTED"
+			return "OWNER_ACCEPTED", nil
 		case "REJECT":
-			return "OWNER_REJECTED"
+			return "OWNER_REJECTED", nil
 		case "DEFER":
-			return "OWNER_DEFERRED"
+			return "OWNER_DEFERRED", nil
+		default:
+			return "", ErrDecision
 		}
 	}
-	return "REVIEW_READY"
+	return "REVIEW_READY", nil
 }

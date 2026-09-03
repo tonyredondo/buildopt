@@ -97,4 +97,22 @@ func TestUploadFailsOpenAndRejectsCorruptBackend(t *testing.T) {
 	if rejected.Uploaded != 0 || !rejected.Queued {
 		t.Fatalf("corrupt backend = %+v", rejected)
 	}
+	wrongAckServer, wrongAckClient := newServer(func(response http.ResponseWriter, request *http.Request) {
+		response.WriteHeader(http.StatusCreated)
+		_, _ = response.Write([]byte(`{"published":0}`))
+	})
+	wrongAck := UploadBatch(context.Background(), wrongAckClient, wrongAckServer.URL, "token", []json.RawMessage{item}, 100*time.Millisecond)
+	if wrongAck.Uploaded != 0 || !wrongAck.Queued || wrongAck.Reason != "invalid-acknowledgement" {
+		t.Fatalf("wrong acknowledgement = %+v", wrongAck)
+	}
+}
+
+func TestPassthroughReportsPOSIXSignal(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("POSIX signal semantics")
+	}
+	_, _, result := CaptureForTest(context.Background(), "/bin/sh", []string{"-c", "kill -TERM $$"}, t.TempDir(), "")
+	if result.Child.Outcome != "SIGNALED" || result.Child.Signal == nil || *result.Child.Signal != 15 {
+		t.Fatalf("signal result = %+v", result.Child)
+	}
 }

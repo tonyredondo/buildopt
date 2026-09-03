@@ -2,13 +2,16 @@
 
 ## Status
 
-**Overall:** `TERMINAL_INCOMPLETE_PERFORMANCE_ENVIRONMENT`<br>
-**Current block:** terminal `WCNCP-013` is recorded. No further block is authorized.<br>
+**Overall:** `FUNCTIONAL_FOUNDATION_READY`<br>
+**Current block:** `WCNCP-008` is `TODO`; the prospective cohort and ordinary
+wrapper observations have not been captured.<br>
 **Reference baseline inspected while writing this plan:**
 `b8a195dc9fd55a52c15202b77f0bb979f8c97fa3`.<br>
-**Execution authority:** `WCNCP-000` freezes contracts only. No public
-repository patch, prospective build, candidate, new timing, owner contact,
-proposal application, merge, or product-value claim exists.
+**Execution authority:** `WCNCP-001` through `WCNCP-007` establish the repaired
+functional foundation. `WCNCP-008` may freeze the cohort and collect ordinary
+wrapper observations. Public source mutation, candidate execution, value
+timing, owner contact, proposal application, merge, and product-value claims
+remain closed until their ordered gates authorize them.
 
 ## Decision
 
@@ -1238,18 +1241,19 @@ repository build usable without BuildOpt state.
 | `WCNCP-E005` | WCNCP-005 | Lease and validator lifecycle proof | `DONE` — [validator proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e005-validation.json) with admission, single-active leases, budgets, isolated roots, fixture correctness, and exact revert; zero prospective evidence |
 | `WCNCP-E006` | WCNCP-006 | Diagnostic-only reviewed PatchBundle system replay | `DONE` — [review proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e006-review.json) with digest-bound artifacts, lifecycle, and fail-closed stale/tamper handling; no public mutation or historical value reuse |
 | `WCNCP-E007` | WCNCP-007 | Three-runner backend convergence/outage proof | `DONE` — [system proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e007-system.json) with converged observations, single lease ownership, outage preservation, restart retry, isolation, and fail-closed negatives; no value timing |
-| `WCNCP-E008` | WCNCP-008 | Fresh ten-family observation capture | `INCOMPLETE` — [capture record](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e008-capture.json): freeze gate not opened without controlled capacity; 0/10 families, 0/30 builds |
-| `WCNCP-E009` | WCNCP-009 | Prospective opportunity breadth report | `INCOMPLETE` — [breadth record](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e009-breadth.json): 0 conclusive families, 0 actionable, 0 candidates started |
-| `WCNCP-E010` | WCNCP-010 | Candidate correctness results | `NOT_RUN` — [correctness record](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e010-correctness.json): blocked by breadth; 0 candidates, 0 starts |
-| `WCNCP-E011` | WCNCP-011 | Paired value and complete economics ledger | `INCOMPLETE_PERFORMANCE_ENVIRONMENT` — [value record](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e011-value.json): no controlled runner, 0 pairs, hosted timings never substituted |
-| `WCNCP-E012` | WCNCP-012 | First-exposure owner review artifacts/results | `NOT_RUN` — [review record](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e012-review.json): no value-qualified proposals; 0 artifacts, 0 decisions |
-| `WCNCP-E013` | WCNCP-013 | Independently checked terminal decision | `DONE` — [terminal decision](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/terminal-decision.json) and [report](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/report.json): `INCOMPLETE_PERFORMANCE_ENVIRONMENT` with full recomputation, unmoved thresholds, and exact boundary |
+| `WCNCP-E008` | WCNCP-008 | Fresh ten-family observation capture | `TODO` — the former zero-row record was a premature closure and is retained only as a retracted audit artifact; no cohort freeze or capture has run |
+| `WCNCP-E009` | WCNCP-009 | Prospective opportunity breadth report | `WAITING` — blocked on WCNCP-008 |
+| `WCNCP-E010` | WCNCP-010 | Candidate correctness results | `WAITING` — blocked on WCNCP-009 |
+| `WCNCP-E011` | WCNCP-011 | Paired value and complete economics ledger | `WAITING` — blocked on WCNCP-010 and a controlled performance environment |
+| `WCNCP-E012` | WCNCP-012 | First-exposure owner review artifacts/results | `WAITING` — blocked on value-qualified proposals |
+| `WCNCP-E013` | WCNCP-013 | Independently checked terminal decision | `WAITING` — the former `INCOMPLETE_PERFORMANCE_ENVIRONMENT` record is retracted because absence of WCNCP-008 execution did not authorize jumping to the terminal block |
 
 ## Immediate next action
 
-Terminal `WCNCP-013` is recorded as `INCOMPLETE_PERFORMANCE_ENVIRONMENT`.
-No further block is authorized. `WCNCP-001` through `WCNCP-007` are proved on
-standard CI with zero prospective rows; the prospective lane never opened
-because no controlled runner was established, the cohort stayed unselected,
-and zero builds, candidates, pairs, reviews, or failures exist. Thresholds
-were not moved and historical evidence was never consumed.
+Execute `WCNCP-008`: freeze ten neutral public families and their exact
+revisions, then collect three fresh ordinary invocations per family through
+the real wrapper/backend path. These observations classify durations by their
+actual environment; they do not need a controlled performance runner merely
+to exist. Controlled capacity becomes mandatory only when a later gate tries
+to establish materiality, wrapper overhead, or value. The earlier zero-row
+terminal closure is retracted and cannot supply prospective evidence.

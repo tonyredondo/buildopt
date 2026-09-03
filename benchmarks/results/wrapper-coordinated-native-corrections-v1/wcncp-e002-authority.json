@@ -32,7 +32,11 @@
       "/api/v1/repositories/{scope}/wcncp/{kind}/head",
       "/api/v1/repositories/{scope}/wcncp/{kind}/snapshot",
       "/api/v1/repositories/{scope}/wcncp/{kind}/cas",
-      "/api/v1/repositories/{scope}/wcncp/WCNCP_OBSERVATION/batch"
+      "/api/v1/repositories/{scope}/wcncp/WCNCP_OBSERVATION/batch",
+      "/api/v1/repositories/{scope}/wcncp/WCNCP_PROPOSAL/claim",
+      "/api/v1/repositories/{scope}/wcncp/WCNCP_PROPOSAL/heartbeat",
+      "/api/v1/repositories/{scope}/wcncp/WCNCP_PROPOSAL/release",
+      "/api/v1/repositories/{scope}/wcncp/status"
     ],
     "batchBounds": {"maxItems": 32, "maxBytes": 1048576},
     "forkPolicy": "read-only by default; fork writes rejected",
@@ -56,6 +60,9 @@
       "changed-request idempotency conflict",
       "stale head precondition fails closed",
       "partial batch with one invalid item rejects whole batch",
+      "validation publication requires the exact active lease and holder",
+      "proposal lease claim, heartbeat, release, expiry, and late publication fail closed",
+      "owner-only decisions and server-owned proposal generation cannot be bypassed through generic object PUT",
       "server restart preserves verified snapshot",
       "logs carry request IDs and digests without secrets"
     ]

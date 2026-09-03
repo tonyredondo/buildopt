@@ -46,6 +46,10 @@ func RunNativePassthrough(ctx context.Context, wrapperPath string, args []string
 			result.Child = ChildResult{Outcome: "FAILED", ExitCode: &code}
 			return result
 		}
+		if signal, ok := exitErrorSignal(exitError); ok {
+			result.Child = ChildResult{Outcome: "SIGNALED", Signal: &signal}
+			return result
+		}
 	}
 	// Signal or cancellation: classify without inventing an exit code.
 	if ctx.Err() != nil {

@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"errors"
+	"strconv"
 	"time"
 )
 
@@ -19,19 +20,19 @@ var (
 // WCNCPLease is one active validation claim. Identity binds repository,
 // proposal digest, protocol version, and environment class.
 type WCNCPLease struct {
-	LeaseID               string
-	RepositoryScopeSHA256 string
-	ProposalDigest        string
-	ProtocolVersion       string
-	EnvironmentClass      string
-	Holder                string
-	Attempt               int64
-	StartUnixMs           int64
-	ExpiryUnixMs          int64
+	LeaseID               string `json:"leaseId"`
+	RepositoryScopeSHA256 string `json:"repositoryScopeSha256"`
+	ProposalDigest        string `json:"proposalDigest"`
+	ProtocolVersion       string `json:"protocolVersion"`
+	EnvironmentClass      string `json:"environmentClass"`
+	Holder                string `json:"holder"`
+	Attempt               int64  `json:"attempt"`
+	StartUnixMs           int64  `json:"startUnixMs"`
+	ExpiryUnixMs          int64  `json:"expiryUnixMs"`
 }
 
 func wcncpLeaseID(repo, proposal, protocol, env string, attempt int64) string {
-	digest := sha256.Sum256([]byte("wcncp-lease-v1\x00" + repo + "\x00" + proposal + "\x00" + protocol + "\x00" + env + "\x00" + string(rune(attempt))))
+	digest := sha256.Sum256([]byte("wcncp-lease-v1\x00" + repo + "\x00" + proposal + "\x00" + protocol + "\x00" + env + "\x00" + strconv.FormatInt(attempt, 10)))
 	return hex.EncodeToString(digest[:])
 }
 
@@ -107,7 +108,7 @@ func (storage *Storage) HeartbeatWCNCPLease(ctx context.Context, leaseID, holder
 	storage.stateMutationMutex.Lock()
 	defer storage.stateMutationMutex.Unlock()
 	result, err := storage.state.database.ExecContext(ctx, `UPDATE wcncp_leases SET
-    heartbeat_unix_ms = ?, expiry_unix_ms = max(expiry_unix_ms, ?)
+    expiry_unix_ms = ? + (expiry_unix_ms - heartbeat_unix_ms), heartbeat_unix_ms = ?
 WHERE lease_id = ? AND holder = ? AND state = 'ACTIVE' AND expiry_unix_ms > ?`,
 		now.UnixMilli(), now.UnixMilli(), leaseID, holder, now.UnixMilli())
 	if err != nil {

@@ -10,14 +10,16 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/tonyredondo/buildopt/internal/contractcrypto"
 )
 
 const (
-	wcncpRoutePrefix = "/api/v1/repositories/"
-	wcncpForkHeader  = "X-BuildOpt-Fork"
-	wcncpRequestHeader = "X-BuildOpt-Request-ID"
+	wcncpRoutePrefix       = "/api/v1/repositories/"
+	wcncpForkHeader        = "X-BuildOpt-Fork"
+	wcncpRequestHeader     = "X-BuildOpt-Request-ID"
+	wcncpLeaseHolderHeader = "X-BuildOpt-Lease-Holder"
 	// Bulk observation upload bounds keep wrapper post-child work bounded.
 	wcncpBatchMaxItems = 32
 	wcncpBatchMaxBytes = 1 << 20
@@ -37,6 +39,9 @@ func parseWCNCPRoute(path, rawQuery string) (wcncpHTTPRoute, bool) {
 	}
 	rest := strings.TrimPrefix(path, wcncpRoutePrefix)
 	parts := strings.Split(rest, "/")
+	if len(parts) == 3 && parts[1] == "wcncp" && parts[2] == "status" && validSHA256(parts[0]) {
+		return wcncpHTTPRoute{repositoryScopeSHA256: parts[0], resource: "status"}, true
+	}
 	// /api/v1/repositories/{scope}/wcncp/{kind}/{resource}[/{digest}]
 	if len(parts) < 4 || parts[1] != "wcncp" {
 		return route, false
@@ -58,7 +63,7 @@ func parseWCNCPRoute(path, rawQuery string) (wcncpHTTPRoute, bool) {
 			return route, false
 		}
 		route.digest = parts[4]
-	case "head", "cas", "batch", "snapshot":
+	case "head", "cas", "batch", "snapshot", "claim", "heartbeat", "release":
 		if len(parts) != 4 {
 			return route, false
 		}
@@ -81,6 +86,8 @@ func ServeWCNCP(storage *Storage, authorization CentralTokenAuthorization, grant
 	forked := isWCNCPFrok(request)
 	requestID := wcncpRequestID(request)
 	switch route.resource {
+	case "status":
+		serveWCNCPProjection(storage, authorization, route, response, request)
 	case "objects":
 		serveWCNCPObject(storage, authorization, grant, tokenID, route, requestID, forked, response, request)
 	case "manifests":
@@ -91,6 +98,8 @@ func ServeWCNCP(storage *Storage, authorization CentralTokenAuthorization, grant
 		serveWCNCPHeadCAS(storage, authorization, grant, tokenID, route, requestID, forked, response, request)
 	case "batch":
 		serveWCNCPBatch(storage, authorization, grant, tokenID, route, requestID, forked, response, request)
+	case "claim", "heartbeat", "release":
+		serveWCNCPLease(storage, authorization, grant, tokenID, route, requestID, forked, response, request)
 	default:
 		writeCacheStatus(response, http.StatusNotFound)
 	}
@@ -143,7 +152,7 @@ func serveWCNCPObject(storage *Storage, authorization CentralTokenAuthorization,
 		response.WriteHeader(http.StatusOK)
 		_, _ = io.Copy(response, file)
 	case http.MethodPut:
-		if err := AuthorizeWCNCPOperation(authorization, grant, WCNCPOpObservationWrite, route.repositoryScopeSHA256, route.kind, forked); err != nil {
+		if err := authorizeWCNCPRecordWrite(authorization, grant, route, forked); err != nil {
 			writeWCNCPAuthError(response, err)
 			return
 		}
@@ -152,7 +161,27 @@ func serveWCNCPObject(storage *Storage, authorization CentralTokenAuthorization,
 			return
 		}
 		request.Body = http.MaxBytesReader(response, request.Body, maximumWCNCPArtifactBytes+1)
-		object, _, err := storage.PutWCNCPObject(request.Context(), route.repositoryScopeSHA256, route.kind, route.digest, request.Body)
+		var input io.Reader = request.Body
+		if route.kind == WCNCPKindValidation {
+			raw, err := io.ReadAll(request.Body)
+			if err != nil {
+				writeCacheStatus(response, http.StatusBadRequest)
+				return
+			}
+			var validation WCNCPValidation
+			if err := decodeStrictWCNCPJSON(raw, &validation); err != nil {
+				writeCacheStatus(response, http.StatusBadRequest)
+				return
+			}
+			holder := request.Header.Get(wcncpLeaseHolderHeader)
+			if err := storage.RequireWCNCPLease(request.Context(), validation.LeaseSHA256, holder, validation.ProposalSHA256, storage.now()); err != nil {
+				recordWCNCPEvent(request, storage, requestID, tokenID, route, "object-put", route.digest, "lease-rejected")
+				writeWCNCPLeaseError(response, err)
+				return
+			}
+			input = bytes.NewReader(raw)
+		}
+		object, _, err := storage.PutWCNCPObject(request.Context(), route.repositoryScopeSHA256, route.kind, route.digest, input)
 		if errors.Is(err, ErrWCNCPInvalid) || errors.Is(err, ErrWCNCPDigestMismatch) {
 			recordWCNCPEvent(request, storage, requestID, tokenID, route, "object-put", route.digest, "rejected")
 			writeCacheStatus(response, http.StatusBadRequest)
@@ -168,6 +197,21 @@ func serveWCNCPObject(storage *Storage, authorization CentralTokenAuthorization,
 	default:
 		response.Header().Set("Allow", "GET, PUT")
 		writeCacheStatus(response, http.StatusMethodNotAllowed)
+	}
+}
+
+func authorizeWCNCPRecordWrite(authorization CentralTokenAuthorization, grant WCNCPGrant, route wcncpHTTPRoute, forked bool) error {
+	switch route.kind {
+	case WCNCPKindObservation:
+		return AuthorizeWCNCPOperation(authorization, grant, WCNCPOpObservationWrite, route.repositoryScopeSHA256, route.kind, forked)
+	case WCNCPKindValidation:
+		return AuthorizeWCNCPOperation(authorization, grant, WCNCPOpValidationWrite, route.repositoryScopeSHA256, route.kind, forked)
+	case WCNCPKindDecision:
+		return AuthorizeWCNCPOperation(authorization, grant, WCNCPOpDecisionWrite, route.repositoryScopeSHA256, route.kind, forked)
+	case WCNCPKindOpportunity, WCNCPKindProposal:
+		return ErrWCNCPForbidden
+	default:
+		return ErrWCNCPInvalid
 	}
 }
 
@@ -288,10 +332,10 @@ func serveWCNCPHeadCAS(storage *Storage, authorization CentralTokenAuthorization
 	}
 	request.Body = http.MaxBytesReader(response, request.Body, maximumWCNCPManifestBytes+1)
 	var document struct {
-		IdempotencyKey     string    `json:"idempotencyKey"`
-		ExpectedGeneration int64     `json:"expectedGeneration"`
-		ExpectedHeadSHA256 *string   `json:"expectedHeadSha256"`
-		ManifestSHA256     string    `json:"manifestSha256"`
+		IdempotencyKey     string     `json:"idempotencyKey"`
+		ExpectedGeneration int64      `json:"expectedGeneration"`
+		ExpectedHeadSHA256 *string    `json:"expectedHeadSha256"`
+		ManifestSHA256     string     `json:"manifestSha256"`
 		Next               *WCNCPHead `json:"next"`
 	}
 	raw, err := io.ReadAll(request.Body)
@@ -401,16 +445,185 @@ func serveWCNCPBatch(storage *Storage, authorization CentralTokenAuthorization, 
 		}
 		items = append(items, staged{canonical: canonical, digest: digestOf(canonical)})
 	}
+	batchInputs := make([]WCNCPObjectInput, 0, len(items))
 	for _, item := range items {
-		if _, _, err := storage.PutWCNCPObject(request.Context(), route.repositoryScopeSHA256, route.kind, item.digest, bytes.NewReader(item.canonical)); err != nil {
-			writeWCNCPStorageError(response, err)
-			return
-		}
+		batchInputs = append(batchInputs, WCNCPObjectInput{ExpectedSHA256: item.digest, Raw: item.canonical})
+	}
+	if _, _, err := storage.PutWCNCPObjectBatch(request.Context(), route.repositoryScopeSHA256, route.kind, batchInputs); err != nil {
+		writeWCNCPStorageError(response, err)
+		return
 	}
 	recordWCNCPEvent(request, storage, requestID, tokenID, route, "batch-put", strconv.Itoa(len(items)), "ok")
 	response.Header().Set("Content-Type", "application/json")
 	response.WriteHeader(http.StatusCreated)
 	_, _ = response.Write([]byte(`{"published":` + strconv.Itoa(len(items)) + `}`))
+}
+
+func serveWCNCPLease(storage *Storage, authorization CentralTokenAuthorization, grant WCNCPGrant, tokenID string, route wcncpHTTPRoute, requestID string, forked bool, response http.ResponseWriter, request *http.Request) {
+	if request.Method != http.MethodPost || route.kind != WCNCPKindProposal {
+		response.Header().Set("Allow", "POST")
+		writeCacheStatus(response, http.StatusMethodNotAllowed)
+		return
+	}
+	if err := AuthorizeWCNCPOperation(authorization, grant, WCNCPOpProposalClaim, route.repositoryScopeSHA256, route.kind, forked); err != nil {
+		writeWCNCPAuthError(response, err)
+		return
+	}
+	request.Body = http.MaxBytesReader(response, request.Body, 16<<10)
+	var document struct {
+		ProposalDigest   string `json:"proposalDigest"`
+		ProtocolVersion  string `json:"protocolVersion"`
+		EnvironmentClass string `json:"environmentClass"`
+		Holder           string `json:"holder"`
+		TTLMillis        int64  `json:"ttlMillis"`
+		LeaseID          string `json:"leaseId"`
+		State            string `json:"state"`
+	}
+	decoder := json.NewDecoder(request.Body)
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&document); err != nil {
+		writeCacheStatus(response, http.StatusBadRequest)
+		return
+	}
+	if err := decoder.Decode(new(any)); !errors.Is(err, io.EOF) {
+		writeCacheStatus(response, http.StatusBadRequest)
+		return
+	}
+	operation := "lease-" + route.resource
+	switch route.resource {
+	case "claim":
+		lease, err := storage.ClaimWCNCPLease(request.Context(), route.repositoryScopeSHA256, document.ProposalDigest, document.ProtocolVersion, document.EnvironmentClass, document.Holder, time.Duration(document.TTLMillis)*time.Millisecond, storage.now())
+		if errors.Is(err, ErrWCNCPLeaseHeld) {
+			writeCacheStatus(response, http.StatusConflict)
+			return
+		}
+		if err != nil {
+			writeWCNCPLeaseError(response, err)
+			return
+		}
+		recordWCNCPEvent(request, storage, requestID, tokenID, route, operation, lease.LeaseID, "ok")
+		response.Header().Set("Content-Type", "application/json")
+		response.WriteHeader(http.StatusCreated)
+		_ = json.NewEncoder(response).Encode(lease)
+	case "heartbeat":
+		if err := storage.HeartbeatWCNCPLease(request.Context(), document.LeaseID, document.Holder, storage.now()); err != nil {
+			writeWCNCPLeaseError(response, err)
+			return
+		}
+		recordWCNCPEvent(request, storage, requestID, tokenID, route, operation, document.LeaseID, "ok")
+		writeCacheStatus(response, http.StatusOK)
+	case "release":
+		if err := storage.ReleaseWCNCPLease(request.Context(), document.LeaseID, document.Holder, document.State); err != nil {
+			writeWCNCPLeaseError(response, err)
+			return
+		}
+		recordWCNCPEvent(request, storage, requestID, tokenID, route, operation, document.LeaseID, "ok")
+		writeCacheStatus(response, http.StatusOK)
+	}
+}
+
+func writeWCNCPLeaseError(response http.ResponseWriter, err error) {
+	switch {
+	case errors.Is(err, ErrWCNCPInvalid):
+		writeCacheStatus(response, http.StatusBadRequest)
+	case errors.Is(err, ErrWCNCPLeaseHeld):
+		writeCacheStatus(response, http.StatusConflict)
+	case errors.Is(err, ErrWCNCPLeaseLost):
+		writeCacheStatus(response, http.StatusPreconditionFailed)
+	default:
+		writeWCNCPStorageError(response, err)
+	}
+}
+
+func serveWCNCPProjection(storage *Storage, authorization CentralTokenAuthorization, route wcncpHTTPRoute, response http.ResponseWriter, request *http.Request) {
+	if request.Method != http.MethodGet {
+		response.Header().Set("Allow", "GET")
+		writeCacheStatus(response, http.StatusMethodNotAllowed)
+		return
+	}
+	if authorization.Scope.RepositoryScopeSHA256 != route.repositoryScopeSHA256 || (!authorization.Has(CentralStateRead) && !authorization.Has(CentralStateWrite)) {
+		writeCacheStatus(response, http.StatusForbidden)
+		return
+	}
+	state := ""
+	for _, kind := range []StateKind{WCNCPKindDecision, WCNCPKindValidation, WCNCPKindProposal, WCNCPKindOpportunity, WCNCPKindObservation} {
+		snapshot, err := storage.LoadCurrentWCNCP(request.Context(), route.repositoryScopeSHA256, kind)
+		if errors.Is(err, ErrWCNCPNotFound) {
+			continue
+		}
+		if err != nil {
+			writeWCNCPStorageError(response, err)
+			return
+		}
+		state, err = projectionState(storage, request, snapshot)
+		if err != nil {
+			writeWCNCPStorageError(response, err)
+			return
+		}
+		if state != "" {
+			break
+		}
+	}
+	if state == "" {
+		writeCacheStatus(response, http.StatusNotFound)
+		return
+	}
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(response).Encode(map[string]string{"state": state})
+}
+
+func projectionState(storage *Storage, request *http.Request, snapshot WCNCPSnapshot) (string, error) {
+	var raw []byte
+	for _, artifact := range snapshot.Manifest.Artifacts {
+		if artifact.Role != string(snapshot.Manifest.Kind) {
+			continue
+		}
+		file, err := storage.OpenWCNCPObject(request.Context(), snapshot.Manifest.RepositoryScopeSHA256, snapshot.Manifest.Kind, artifact.SHA256)
+		if err != nil {
+			return "", err
+		}
+		raw, err = io.ReadAll(io.LimitReader(file, maximumWCNCPArtifactBytes+1))
+		closeErr := file.Close()
+		if err != nil || closeErr != nil {
+			return "", ErrWCNPCorrupt
+		}
+		break
+	}
+	if len(raw) == 0 {
+		return "", ErrWCNPCorrupt
+	}
+	switch snapshot.Manifest.Kind {
+	case WCNCPKindDecision:
+		var record WCNCPDecision
+		if err := decodeStrictWCNCPJSON(raw, &record); err != nil {
+			return "", ErrWCNPCorrupt
+		}
+		switch record.Decision {
+		case "ACCEPT":
+			return "OWNER_ACCEPTED", nil
+		case "REJECT":
+			return "OWNER_REJECTED", nil
+		case "DEFER":
+			return "OWNER_DEFERRED", nil
+		}
+	case WCNCPKindValidation:
+		var record WCNCPValidation
+		if err := decodeStrictWCNCPJSON(raw, &record); err != nil {
+			return "", ErrWCNPCorrupt
+		}
+		if record.Decision == "QUALIFIED" {
+			return "REVIEW_READY", nil
+		}
+		return "OBSERVING", nil
+	case WCNCPKindProposal:
+		return "VALIDATION_QUEUED", nil
+	case WCNCPKindOpportunity:
+		return "OPPORTUNITY_DETECTED", nil
+	case WCNCPKindObservation:
+		return "OBSERVING", nil
+	}
+	return "", ErrWCNPCorrupt
 }
 
 func writeWCNCPAuthError(response http.ResponseWriter, err error) {

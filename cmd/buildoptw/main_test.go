@@ -1,11 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/tonyredondo/buildopt/internal/sharedcache"
+	"github.com/tonyredondo/buildopt/internal/wcncpobserve"
 )
 
 func writeFakeWrapper(t *testing.T, dir, body string) {
@@ -124,5 +128,64 @@ func TestBuildoptwStatusAndRedaction(t *testing.T) {
 	}
 	if observations != 1 {
 		t.Fatalf("outbox observations = %d", observations)
+	}
+}
+
+func TestBuildObservationMatchesCentralWireContract(t *testing.T) {
+	dir := t.TempDir()
+	writeFakeWrapper(t, dir, "#!/bin/sh\nexit 0\n")
+	digest := strings.Repeat("a", 64)
+	values := map[string]string{
+		"WCNCP_REPOSITORY_REVISION": "1111111111111111111111111111111111111111",
+		"WCNCP_SOURCE_TREE_SHA256":  digest, "WCNCP_WRAPPER_SHA256": digest,
+		"WCNCP_GRADLE_VERSION": "9.6.1", "WCNCP_JDK_SHA256": digest,
+		"WCNCP_PACKAGE_SHA256": digest, "WCNCP_WORKFLOW_SHA256": digest,
+		"WCNCP_ENVIRONMENT_SHA256": digest, "WCNCP_OUTPUT_CONTRACT_SHA256": digest,
+		"WCNCP_OUTPUT_MANIFEST_SHA256": digest, "WCNCP_ENVIRONMENT_CLASS": "CONTROLLED_PERFORMANCE",
+		"WCNCP_PROSPECTIVE_GATE_INPUT": "1",
+	}
+	getenv := func(key string) string { return values[key] }
+	exit := 0
+	record := buildObservation("example/repository", strings.Repeat("b", 64), getenv, dir, []string{"build"}, []string{"build"}, wcncpobserve.PassthroughResult{Child: wcncpobserve.ChildResult{Outcome: "SUCCESS", ExitCode: &exit}})
+	raw, err := json.Marshal(record)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := sharedcache.ValidateWCNCPRecord(sharedcache.WCNCPKindObservation, raw); err != nil {
+		t.Fatalf("wrapper record rejected by central contract: %v\n%s", err, raw)
+	}
+	if !record.Authority.ProspectiveGateInput || record.Completeness != "COMPLETE" {
+		t.Fatalf("complete controlled record = %+v", record)
+	}
+	values["WCNCP_JDK_SHA256"] = ""
+	incomplete := buildObservation("example/repository", strings.Repeat("b", 64), getenv, dir, []string{"build"}, []string{"build"}, wcncpobserve.PassthroughResult{Child: wcncpobserve.ChildResult{Outcome: "SUCCESS", ExitCode: &exit}})
+	if incomplete.Completeness != "INCOMPLETE" || incomplete.Authority.ProspectiveGateInput {
+		t.Fatalf("missing binding gained prospective authority: %+v", incomplete)
+	}
+}
+
+func TestStatusDoesNotCountRunnerIdentityAsQueued(t *testing.T) {
+	outbox := t.TempDir()
+	if err := os.WriteFile(filepath.Join(outbox, "runner.id"), []byte(strings.Repeat("a", 64)), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	outputPath := filepath.Join(t.TempDir(), "status.txt")
+	output, err := os.Create(outputPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	getenv := func(key string) string {
+		if key == "WCNCP_OUTBOX_DIR" {
+			return outbox
+		}
+		return ""
+	}
+	if code := runStatus("--wcncp-status", getenv, output); code != 0 {
+		t.Fatalf("status exit = %d", code)
+	}
+	_ = output.Close()
+	raw, _ := os.ReadFile(outputPath)
+	if string(raw) != "UNAVAILABLE\n" {
+		t.Fatalf("runner identity counted as queued: %q", raw)
 	}
 }

@@ -5,11 +5,16 @@
 package wcncpdetect
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
+	"io"
 	"sort"
 	"strings"
+
+	"github.com/tonyredondo/buildopt/internal/wcncpobserve"
 )
 
 var (
@@ -23,38 +28,38 @@ var (
 // never averages across workflows, revisions with relevant drift, warm/cold
 // states, cache policies, or resource classes.
 type CompatibilityKey struct {
-	RepositoryScope      string
-	SourceTreeSHA256     string
-	WrapperSHA256        string
-	GradleMajor          string
-	JDKMajor             string
+	RepositoryScope       string
+	SourceTreeSHA256      string
+	WrapperSHA256         string
+	GradleMajor           string
+	JDKMajor              string
 	BuildOptPackageSHA256 string
-	WorkflowSHA256       string
-	BuildCacheMode       string
-	ConfigurationCache   string
-	EnvironmentSHA256    string
-	OutputContractSHA256 string
+	WorkflowSHA256        string
+	BuildCacheMode        string
+	ConfigurationCache    string
+	EnvironmentSHA256     string
+	OutputContractSHA256  string
 }
 
 // ObservationSummary is the minimal typed fact set the aggregator consumes.
 // It carries source/runtime facts only, never repository or task names as
 // classification inputs.
 type ObservationSummary struct {
-	ObservationID      string
-	RepositoryScope    string
-	SourceTreeSHA256   string
-	WrapperSHA256      string
-	GradleVersion      string
-	JDKSHA256          string
-	PackageSHA256      string
-	WorkflowSHA256     string
-	BuildCacheMode     string
-	ConfigurationCache string
-	EnvironmentSHA256  string
-	EnvironmentClass   string
+	ObservationID        string
+	RepositoryScope      string
+	SourceTreeSHA256     string
+	WrapperSHA256        string
+	GradleVersion        string
+	JDKSHA256            string
+	PackageSHA256        string
+	WorkflowSHA256       string
+	BuildCacheMode       string
+	ConfigurationCache   string
+	EnvironmentSHA256    string
+	EnvironmentClass     string
 	OutputContractSHA256 string
-	CriticalPathMs     *int64
-	WorkflowMs         *int64
+	CriticalPathMs       *int64
+	WorkflowMs           *int64
 }
 
 // CompatibilityOf derives the grouping key. Gradle and JDK versions reduce to
@@ -62,17 +67,17 @@ type ObservationSummary struct {
 // major drift still splits groups.
 func CompatibilityOf(observation ObservationSummary) CompatibilityKey {
 	return CompatibilityKey{
-		RepositoryScope:      observation.RepositoryScope,
-		SourceTreeSHA256:     observation.SourceTreeSHA256,
-		WrapperSHA256:        observation.WrapperSHA256,
-		GradleMajor:          gradleMajor(observation.GradleVersion),
-		JDKMajor:             jdkMajor(observation.JDKSHA256),
+		RepositoryScope:       observation.RepositoryScope,
+		SourceTreeSHA256:      observation.SourceTreeSHA256,
+		WrapperSHA256:         observation.WrapperSHA256,
+		GradleMajor:           gradleMajor(observation.GradleVersion),
+		JDKMajor:              jdkMajor(observation.JDKSHA256),
 		BuildOptPackageSHA256: observation.PackageSHA256,
-		WorkflowSHA256:       observation.WorkflowSHA256,
-		BuildCacheMode:       observation.BuildCacheMode,
-		ConfigurationCache:   observation.ConfigurationCache,
-		EnvironmentSHA256:    observation.EnvironmentSHA256,
-		OutputContractSHA256: observation.OutputContractSHA256,
+		WorkflowSHA256:        observation.WorkflowSHA256,
+		BuildCacheMode:        observation.BuildCacheMode,
+		ConfigurationCache:    observation.ConfigurationCache,
+		EnvironmentSHA256:     observation.EnvironmentSHA256,
+		OutputContractSHA256:  observation.OutputContractSHA256,
 	}
 }
 
@@ -113,45 +118,76 @@ func GroupCompatible(observations []ObservationSummary) map[CompatibilityKey][]s
 	return groups
 }
 
+// ReconstructGroups decodes the canonical wrapper wire records directly and
+// rebuilds compatibility groups without trusting a report summary or a second
+// set of interpreted booleans.
+func ReconstructGroups(records []json.RawMessage) (map[CompatibilityKey][]string, error) {
+	observations := make([]ObservationSummary, 0, len(records))
+	for _, raw := range records {
+		decoder := json.NewDecoder(bytes.NewReader(raw))
+		decoder.DisallowUnknownFields()
+		var record wcncpobserve.ObservationFacts
+		if err := decoder.Decode(&record); err != nil {
+			return nil, ErrIncomplete
+		}
+		if err := decoder.Decode(new(any)); !errors.Is(err, io.EOF) {
+			return nil, ErrIncomplete
+		}
+		if err := record.Validate(); err != nil {
+			return nil, ErrIncomplete
+		}
+		observations = append(observations, ObservationSummary{
+			ObservationID: record.ObservationID, RepositoryScope: record.RepositoryScope,
+			SourceTreeSHA256: record.Bindings.SourceTreeSHA256, WrapperSHA256: record.Bindings.WrapperSHA256,
+			GradleVersion: record.Bindings.GradleVersion, JDKSHA256: record.Bindings.JDKSHA256,
+			PackageSHA256: record.Bindings.BuildOptPackageSHA256, WorkflowSHA256: record.Bindings.WorkflowSHA256,
+			BuildCacheMode: record.BuildCacheMode, ConfigurationCache: record.ConfigurationCache,
+			EnvironmentSHA256: record.Bindings.EnvironmentSHA256, EnvironmentClass: record.EnvironmentClass,
+			OutputContractSHA256: record.Bindings.OutputContractSHA256,
+		})
+	}
+	return GroupCompatible(observations), nil
+}
+
 // DetectorRow is one repository/detector outcome. Only
 // ACTIONABLE_MATERIAL_CORRECTION opens validation.
 type DetectorRow struct {
-	Decision            string
-	DetectorID          string
-	DetectorVersion     string
-	SourcePath          string
-	RecipeClass         string
-	CriticalPathMs      int64
+	Decision             string
+	DetectorID           string
+	DetectorVersion      string
+	SourcePath           string
+	RecipeClass          string
+	CriticalPathMs       int64
 	WorkflowPercentMilli int64
-	RequiredDiagnostics []string
-	Reason              string
+	RequiredDiagnostics  []string
+	Reason               string
 }
 
 // DetectorInput carries source/runtime facts for one compatible group. Names
 // are labels for reports; classification reads only the typed fields.
 type DetectorInput struct {
-	DetectorID         string
-	DetectorVersion    string
-	ProblemClass       string
-	ProblemReproducible bool
-	SourceOwned        bool
-	SourcePath         string
-	SourceReversible   bool
-	ExternalPluginOwned bool
-	GeneratedOrVendor  bool
-	AbsolutePathDependent bool
+	DetectorID             string
+	DetectorVersion        string
+	ProblemClass           string
+	ProblemReproducible    bool
+	SourceOwned            bool
+	SourcePath             string
+	SourceReversible       bool
+	ExternalPluginOwned    bool
+	GeneratedOrVendor      bool
+	AbsolutePathDependent  bool
 	RequiresOwnerSemantics bool
-	SuppressionStyle   bool
-	DisablesConfigCache bool
-	ConfigCacheEnabled bool
-	SourceDrifted      bool
-	BindingAmbiguous   bool
-	WorkflowReachable  bool
-	Repetition         int
-	CriticalPathMs     int64
-	WorkflowMs         int64
-	EnvironmentClass   string
-	HasGradleProblemData bool
+	SuppressionStyle       bool
+	DisablesConfigCache    bool
+	ConfigCacheEnabled     bool
+	SourceDrifted          bool
+	BindingAmbiguous       bool
+	WorkflowReachable      bool
+	Repetition             int
+	CriticalPathMs         int64
+	WorkflowMs             int64
+	EnvironmentClass       string
+	HasGradleProblemData   bool
 }
 
 // ConfigurationCacheReadinessV1 proposes only a small repository-owned
@@ -172,6 +208,11 @@ func ConfigurationCacheReadinessV1(input DetectorInput) DetectorRow {
 			base.Decision = "NO_REPRODUCIBLE_BLOCKER"
 		}
 		base.Reason = "unambiguous source binding and repetition required"
+		return base
+	}
+	if input.Repetition < 2 {
+		base.Decision = "NO_REPRODUCIBLE_BLOCKER"
+		base.Reason = "at least two compatible observations are required"
 		return base
 	}
 	if input.SourceDrifted {

@@ -5,9 +5,10 @@
   "state": "DONE",
   "description": "Digest-bound PatchBundle review delivery and lifecycle over fixtures. Historical recipes traverse only as diagnostic-only system fixtures on isolated copies; no public mutation and no historical value reuse.",
   "implementation": {
-    "seam": "new pure package internal/wcncpreview reusing proposal patch bindings and exact-revert transactions",
+    "seam": "new pure package internal/wcncpreview reusing the signed PatchBundle envelope and Java verification boundary",
     "files": [
       "internal/wcncpreview/review.go",
+      "dev/check-patch-bundle-signing",
       "dev/check-wcncp-review"
     ],
     "lane": "HISTORICAL_RECIPE_SYSTEM_FIXTURE",
@@ -21,7 +22,9 @@
       "deterministic replay yields identical digests",
       "accept, reject, and defer derive distinct terminal states",
       "stale drift rejects before review",
-      "tampered patch bytes reject before review",
+      "unsigned, malformed, or digest-mismatched PatchBundle envelopes reject before review",
+      "a missing verifier or failed signature verification rejects before review binding",
+      "the canonical JCS and Ed25519 Java verifier is exercised by the review checker",
       "acceptance never implies source application or merge"
     ]
   },

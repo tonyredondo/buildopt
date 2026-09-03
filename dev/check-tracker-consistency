@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`TERMINAL_WRAPPER_COORDINATED_NATIVE_CORRECTIONS_INCOMPLETE_PERFORMANCE_ENVIRONMENT\`"
-    "**Current phase:** closed at terminal \`WCNCP-013\`"
+    "**Overall status:** \`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_FUNCTIONAL_FOUNDATION_READY\`"
+    "**Current phase:** \`WCNCP-008\` is next for cohort freeze and ordinary wrapper capture"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"
@@ -469,16 +469,17 @@ buildopt_required_tracker_text=(
     "| \`E-516\` | 2026-09-03 | \`POC-CRITICAL-PATH-FIRST-REVIEWED-NATIVE-PATCH\`, \`CPFRNP-001..007\` |"
     "| POC-CRITICAL-PATH-BUILD-LOGIC-CORRECTION | Find explicit owner build-logic state/cache/incremental opt-outs on material standard Gradle tasks | \`STOPPED\` | 4 resolved; 2 not authorized |"
     "| \`E-517\` | 2026-09-03 | \`POC-CRITICAL-PATH-BUILD-LOGIC-CORRECTION\`, \`CPBLC-001..006\` |"
-    "| POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS | Use the ordinary wrapper to coordinate typed observation, reviewed proposals and validated native corrections while Gradle remains authoritative | \`INCOMPLETE\` | 9/14 terminal |"
+    "| POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS | Use the ordinary wrapper to coordinate typed observation, reviewed proposals and validated native corrections while Gradle remains authoritative | \`ACTIVE\` | 8/14 blocks done |"
     "| \`E-518\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-000\` |"
-    "| \`E-519\` | 2026-09-04 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-001\` |"
-    "| \`E-520\` | 2026-09-04 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-002\` |"
-    "| \`E-521\` | 2026-09-04 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-003\` |"
-    "| \`E-522\` | 2026-09-04 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-004\` |"
-    "| \`E-523\` | 2026-09-04 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-005\` |"
-    "| \`E-524\` | 2026-09-04 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-006\` |"
-    "| \`E-525\` | 2026-09-04 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-007\` |"
-    "| \`E-526\` | 2026-09-04 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-008..013\` |"
+    "| \`E-519\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-001\` |"
+    "| \`E-520\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-002\` |"
+    "| \`E-521\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-003\` |"
+    "| \`E-522\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-004\` |"
+    "| \`E-523\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-005\` |"
+    "| \`E-524\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-006\` |"
+    "| \`E-525\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-007\` |"
+    "| \`E-526\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-008..013\` |"
+    "| \`E-527\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-001..007\` functional repair |"
 )
 for buildopt_required in "${buildopt_required_tracker_text[@]}"; do
     if ! grep -Fq -- "${buildopt_required}" "${buildopt_tracker}"; then

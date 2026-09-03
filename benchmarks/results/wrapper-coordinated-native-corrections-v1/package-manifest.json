@@ -1,10 +1,10 @@
 {
   "schemaVersion": "buildopt.wcncp/evidence-package/v1",
   "block": "WCNCP-008",
-  "recordedAt": "2026-09-04",
-  "declaration": "No prospective package freeze was executed because cohort capture never opened: controlled capacity is unavailable, so no observation may become prospective value input. The digest below identifies the source tree that proved functional blocks 001-007 only.",
-  "sourceCommit": "eaf6009336e8d8307303b6425abf681d8abf028c",
-  "sourceTree": "functional blocks WCNCP-001 through WCNCP-007 plus WCNCP-008 freeze-gate records",
+  "recordedAt": "2026-09-03",
+  "declaration": "No prospective package freeze has executed. The prior zero-row closure was retracted after a functional audit; WCNCP-008 must freeze its exact package and cohort before observations can become prospective gate inputs.",
+  "sourceCommitBeforeRepair": "71f3007d96affdddf4aa1234ef3ef9b3b4b96c64",
+  "sourceTree": "repaired functional blocks WCNCP-001 through WCNCP-007; prospective freeze still pending",
   "prospectiveFreezeExecuted": false,
   "gradleVersion": "9.6.1",
   "wcncpSchemas": [

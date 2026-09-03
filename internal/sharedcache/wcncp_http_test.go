@@ -270,3 +270,88 @@ func TestWCNCPHTTPSLogsCarryIDsNotSecrets(t *testing.T) {
 		}
 	}
 }
+
+func TestWCNCPHTTPSValidationDecisionLeaseAndProjectionRoutes(t *testing.T) {
+	ctx := context.Background()
+	storage := openStateTestStorage(t, ctx, t.TempDir()+"/shared")
+	defer storage.Close()
+	now := time.Date(2026, 9, 3, 12, 0, 0, 0, time.UTC)
+	storage.clock = func() time.Time { return now }
+	handler, err := NewCentralHTTPSHandler(storage)
+	if err != nil {
+		t.Fatal(err)
+	}
+	observer := issueCentralTestToken(t, storage, now, CentralStateRead, CentralStateWrite)
+	_, _ = storage.GrantWCNCPActor(ctx, observer.TokenID, WCNCPActorTrustedObserver, now)
+	validator := issueCentralTestToken(t, storage, now, CentralStateRead, CentralStateWrite)
+	_, _ = storage.GrantWCNCPActor(ctx, validator.TokenID, WCNCPActorValidator, now)
+	owner := issueCentralTestToken(t, storage, now, CentralStateRead, CentralStateWrite)
+	_, _ = storage.GrantWCNCPActor(ctx, owner.TokenID, WCNCPActorOwner, now)
+
+	putRecord := func(kind StateKind, raw []byte, token string, want int, headers map[string]string) {
+		t.Helper()
+		raw, digest, err := CanonicalWCNCPRecord(kind, raw)
+		if err != nil {
+			t.Fatal(err)
+		}
+		path := "/api/v1/repositories/" + stateTestScope + "/wcncp/" + string(kind) + "/objects/" + digest
+		if headers == nil {
+			headers = map[string]string{}
+		}
+		headers["If-None-Match"] = "*"
+		response := centralTestRequest(handler, http.MethodPut, path, token, bytes.NewReader(raw), true, headers)
+		if response.Code != want {
+			t.Fatalf("%s object PUT = %d, want %d", kind, response.Code, want)
+		}
+	}
+	putRecord(WCNCPKindDecision, wcncpTestValidRecord(t, WCNCPKindDecision), owner.Token, http.StatusCreated, nil)
+	putRecord(WCNCPKindProposal, wcncpTestValidRecord(t, WCNCPKindProposal), validator.Token, http.StatusForbidden, nil)
+
+	var validation WCNCPValidation
+	if err := json.Unmarshal(wcncpTestValidRecord(t, WCNCPKindValidation), &validation); err != nil {
+		t.Fatal(err)
+	}
+	claimBody, _ := json.Marshal(map[string]interface{}{
+		"proposalDigest": validation.ProposalSHA256, "protocolVersion": "WCNCP_CORRECTNESS_V1",
+		"environmentClass": "LOCAL_FUNCTIONAL", "holder": "validator-a", "ttlMillis": 60000,
+	})
+	leasePrefix := "/api/v1/repositories/" + stateTestScope + "/wcncp/WCNCP_PROPOSAL/"
+	claim := centralTestRequest(handler, http.MethodPost, leasePrefix+"claim", validator.Token, bytes.NewReader(claimBody), true, nil)
+	if claim.Code != http.StatusCreated {
+		t.Fatalf("claim = %d: %s", claim.Code, claim.Body.String())
+	}
+	var lease WCNCPLease
+	if err := json.Unmarshal(claim.Body.Bytes(), &lease); err != nil || !validSHA256(lease.LeaseID) {
+		t.Fatalf("lease response = %+v/%v", lease, err)
+	}
+	validation.LeaseSHA256 = lease.LeaseID
+	validationRaw, err := json.Marshal(validation)
+	if err != nil {
+		t.Fatal(err)
+	}
+	putRecord(WCNCPKindValidation, validationRaw, validator.Token, http.StatusBadRequest, nil)
+	putRecord(WCNCPKindValidation, validationRaw, validator.Token, http.StatusCreated, map[string]string{wcncpLeaseHolderHeader: "validator-a"})
+	storage.clock = func() time.Time { return now.Add(30 * time.Second) }
+	heartbeatBody, _ := json.Marshal(map[string]string{"leaseId": lease.LeaseID, "holder": "validator-a"})
+	heartbeat := centralTestRequest(handler, http.MethodPost, leasePrefix+"heartbeat", validator.Token, bytes.NewReader(heartbeatBody), true, nil)
+	if heartbeat.Code != http.StatusOK {
+		t.Fatalf("heartbeat = %d", heartbeat.Code)
+	}
+	storage.clock = func() time.Time { return now.Add(70 * time.Second) }
+	if err := storage.RequireWCNCPLease(ctx, lease.LeaseID, "validator-a", lease.ProposalDigest, now.Add(70*time.Second)); err != nil {
+		t.Fatalf("heartbeat did not extend lease: %v", err)
+	}
+	releaseBody, _ := json.Marshal(map[string]string{"leaseId": lease.LeaseID, "holder": "validator-a", "state": "CONSUMED"})
+	release := centralTestRequest(handler, http.MethodPost, leasePrefix+"release", validator.Token, bytes.NewReader(releaseBody), true, nil)
+	if release.Code != http.StatusOK {
+		t.Fatalf("release = %d", release.Code)
+	}
+
+	observationObject := putWCNCPTestObject(t, storage, stateTestScope, WCNCPKindObservation, wcncpTestValidRecord(t, WCNCPKindObservation))
+	manifest := putWCNCPTestManifest(t, storage, wcncpTestManifest(WCNCPKindObservation, 1, now, observationObject, nil))
+	casWCNCPTestHead(t, storage, WCNCPCASRequest{RepositoryScopeSHA256: stateTestScope, Kind: WCNCPKindObservation, IdempotencyKey: wcncpTestDigest("projection-head"), ManifestSHA256: manifest.ManifestSHA256})
+	projection := centralTestRequest(handler, http.MethodGet, "/api/v1/repositories/"+stateTestScope+"/wcncp/status", observer.Token, nil, true, nil)
+	if projection.Code != http.StatusOK || !bytes.Contains(projection.Body.Bytes(), []byte(`"state":"OBSERVING"`)) {
+		t.Fatalf("projection = %d %s", projection.Code, projection.Body.String())
+	}
+}

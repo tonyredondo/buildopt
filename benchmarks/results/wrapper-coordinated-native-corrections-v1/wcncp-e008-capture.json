@@ -2,7 +2,7 @@
   "schemaVersion": "buildopt.wcncp/evidence-e008/v1",
   "block": "WCNCP-008",
   "evidence": "WCNCP-E008",
-  "state": "INCOMPLETE",
+  "state": "RETRACTED_PREMATURE_CLOSURE",
   "freezeGate": {
     "contractsCommitted": true,
     "packageFrozenForProspective": false,
@@ -28,7 +28,7 @@
     "controlledMachineHours": 0,
     "diskGiB": 0
   },
-  "reason": "Controlled performance capacity was never established (no dedicated host, no resource envelope, no noise/stability preflight), so no observation could become controlled value input and the cohort freeze was not opened. Zero builds ran; nothing was measured, averaged, or carried forward.",
+  "reason": "Historical zero-row placeholder only. WCNCP-008 was not executed and remains TODO; lack of controlled performance capacity did not prevent ordinary observation capture or authorize terminal closure.",
   "timingSamples": 0,
   "productFailures": 0
 }

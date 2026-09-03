@@ -25,11 +25,12 @@
       "concurrent claims yield one winner with held errors for losers",
       "heartbeats extend only the same holder",
       "stale holders, late results, and conflicting digests fail closed",
+      "remote validation publication requires the exact active lease and holder",
       "expiry is visible and requeueable with reclaim by a new holder",
       "budget stops new work without touching unrelated files or processes",
       "isolated roots never resolve outside the experiment root on cleanup",
-      "patch transactions reject drift and round-trip exactly",
-      "five-start fixture correctness compares every output byte-for-byte"
+      "patch transactions reject drift, postimage mismatch, and symlink escape while preserving file mode",
+      "five-start fixture correctness compares every output byte-for-byte and reports actual starts and product failures"
     ]
   },
   "gates": {

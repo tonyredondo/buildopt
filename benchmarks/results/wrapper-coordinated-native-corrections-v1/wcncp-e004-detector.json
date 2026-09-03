@@ -23,7 +23,9 @@
       "Kotlin and Groovy synthetic positives actionable",
       "missing data, ambiguous binding, drift, external plugin, generated source, absolute paths, non-reversible edits, owner semantics, suppression, opt-outs, disabled cache, unreachable workflows, and non-material blockers typed",
       "hosted traces never admit or reject on timing",
+      "raw canonical wrapper records are decoded, validated, and independently reconstructed",
       "grouping deduplicates by canonical identity and never averages across keys",
+      "one occurrence cannot become a reproducible blocker; at least two compatible observations are required",
       "group digests deterministic for independent reconstruction"
     ]
   },

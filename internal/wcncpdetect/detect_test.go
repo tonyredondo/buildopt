@@ -1,8 +1,11 @@
 package wcncpdetect
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
+
+	"github.com/tonyredondo/buildopt/internal/wcncpobserve"
 )
 
 func actionableInput() DetectorInput {
@@ -34,13 +37,14 @@ func TestKotlinAndGroovyPositivesAreActionable(t *testing.T) {
 func TestTypedNegativesReconstructIndependently(t *testing.T) {
 	t.Parallel()
 	testCases := []struct {
-		name string
+		name   string
 		mutate func(*DetectorInput)
-		want string
+		want   string
 	}{
 		{"missing problem data", func(input *DetectorInput) { input.HasGradleProblemData = false }, "INCOMPLETE_OBSERVATION"},
 		{"ambiguous binding", func(input *DetectorInput) { input.BindingAmbiguous = true }, "SOURCE_OR_BINDING_AMBIGUOUS"},
 		{"unreproducible", func(input *DetectorInput) { input.ProblemReproducible = false }, "NO_REPRODUCIBLE_BLOCKER"},
+		{"insufficient repetition", func(input *DetectorInput) { input.Repetition = 1 }, "NO_REPRODUCIBLE_BLOCKER"},
 		{"drifted", func(input *DetectorInput) { input.SourceDrifted = true }, "SOURCE_DRIFTED"},
 		{"external plugin", func(input *DetectorInput) { input.ExternalPluginOwned = true }, "UNSUPPORTED_PROBLEM_CLASS"},
 		{"generated source", func(input *DetectorInput) { input.GeneratedOrVendor = true }, "UNSUPPORTED_PROBLEM_CLASS"},
@@ -60,6 +64,44 @@ func TestTypedNegativesReconstructIndependently(t *testing.T) {
 		if row := ConfigurationCacheReadinessV1(input); row.Decision != testCase.want {
 			t.Fatalf("%s = %s, want %s", testCase.name, row.Decision, testCase.want)
 		}
+	}
+}
+
+func TestReconstructGroupsConsumesWrapperWireRecords(t *testing.T) {
+	t.Parallel()
+	digest := strings.Repeat("a", 64)
+	duration := int64(1)
+	output := strings.Repeat("b", 64)
+	record := wcncpobserve.ObservationFacts{
+		SchemaVersion: wcncpobserve.ObservationSchemaVersion, RecordType: "WCNCP_OBSERVATION",
+		ObservationID: strings.Repeat("c", 64), RepositoryScope: "example/repository",
+		RunnerID: strings.Repeat("d", 64), IdempotencyKey: "observation:reconstruct:0001", InvocationOrdinal: 1,
+		EnvironmentClass: "STANDARD_HOSTED_CI",
+		Bindings: wcncpobserve.ObservationBindings{
+			RepositoryRevision: strings.Repeat("1", 40), SourceTreeSHA256: digest, WrapperSHA256: digest,
+			GradleVersion: "9.6.1", JDKSHA256: digest, BuildOptPackageSHA256: digest,
+			WorkflowSHA256: digest, EnvironmentSHA256: digest, OutputContractSHA256: digest,
+		},
+		Arguments: []string{"build"}, Duration: wcncpobserve.TypedDuration{State: "COMPLETE", ValueMs: &duration, Classification: "DIAGNOSTIC_ONLY"},
+		ConfigurationCache: "PROBLEM", BuildCacheMode: "ENABLED",
+		OutputManifest: wcncpobserve.OutputManifest{State: "COMPLETE", SHA256: &output},
+		Child:          wcncpobserve.ChildResult{Outcome: "SUCCESS"}, Completeness: "COMPLETE",
+	}
+	raw, err := json.Marshal(record)
+	if err != nil {
+		t.Fatal(err)
+	}
+	groups, err := ReconstructGroups([]json.RawMessage{raw, raw})
+	if err != nil || len(groups) != 1 {
+		t.Fatalf("reconstructed groups = %d/%v", len(groups), err)
+	}
+	for _, ids := range groups {
+		if len(ids) != 1 || ids[0] != record.ObservationID {
+			t.Fatalf("deduplicated ids = %v", ids)
+		}
+	}
+	if _, err := ReconstructGroups([]json.RawMessage{json.RawMessage(`{"unexpected":true}`)}); err == nil {
+		t.Fatal("invalid raw observation reconstructed")
 	}
 }
 

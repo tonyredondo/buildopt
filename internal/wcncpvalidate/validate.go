@@ -37,12 +37,12 @@ var (
 // ProposalAdmission is the minimal complete binding a proposal needs before a
 // validator may claim it.
 type ProposalAdmission struct {
-	Decision             string
-	BindingsComplete     bool
-	BudgetRemaining      bool
-	PreimageSHA256       string
-	SourcePath           string
-	EnvironmentClass     string
+	Decision         string
+	BindingsComplete bool
+	BudgetRemaining  bool
+	PreimageSHA256   string
+	SourcePath       string
+	EnvironmentClass string
 }
 
 // Admit allows only ACTIONABLE_MATERIAL_CORRECTION with complete bindings and
@@ -130,15 +130,35 @@ func DiscardRoot(experimentRoot, root string) error {
 // rejects source drift before mutation. The inverse transaction restores the
 // exact preimage; both directions verify digests.
 func ApplyTransaction(root, path string, startByte, endByte int64, preimageSHA256 string, replacement []byte) ([]byte, error) {
+	postimage := sha256.Sum256(replacement)
+	return ApplyTransactionChecked(root, path, startByte, endByte, preimageSHA256, hex.EncodeToString(postimage[:]), replacement)
+}
+
+// ApplyTransactionChecked additionally binds the replacement digest. It
+// resolves symlinks before reading or replacing the file and writes through a
+// same-directory temporary file so a crash cannot leave a partial source.
+func ApplyTransactionChecked(root, path string, startByte, endByte int64, preimageSHA256, postimageSHA256 string, replacement []byte) ([]byte, error) {
 	if root == "" || path == "" || startByte < 0 || endByte < 1 || endByte <= startByte {
 		return nil, ErrDrift
 	}
-	full := filepath.Join(root, filepath.FromSlash(path))
-	relative, err := filepath.Rel(root, full)
-	if err != nil || strings.HasPrefix(relative, "..") {
+	cleanRoot, err := filepath.EvalSymlinks(root)
+	if err != nil {
 		return nil, ErrDrift
 	}
-	content, err := os.ReadFile(full)
+	full := filepath.Join(cleanRoot, filepath.FromSlash(path))
+	resolved, err := filepath.EvalSymlinks(full)
+	if err != nil {
+		return nil, ErrDrift
+	}
+	relative, err := filepath.Rel(cleanRoot, resolved)
+	if err != nil || relative == "." || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
+		return nil, ErrDrift
+	}
+	info, err := os.Stat(resolved)
+	if err != nil || !info.Mode().IsRegular() {
+		return nil, ErrDrift
+	}
+	content, err := os.ReadFile(resolved)
 	if err != nil {
 		return nil, err
 	}
@@ -150,8 +170,38 @@ func ApplyTransaction(root, path string, startByte, endByte int64, preimageSHA25
 	if hex.EncodeToString(digest[:]) != preimageSHA256 {
 		return nil, ErrDrift
 	}
+	replacementDigest := sha256.Sum256(replacement)
+	if hex.EncodeToString(replacementDigest[:]) != postimageSHA256 {
+		return nil, ErrDrift
+	}
 	next := append(append(append([]byte{}, content[:startByte]...), replacement...), content[endByte:]...)
-	if err := os.WriteFile(full, next, 0o600); err != nil {
+	temporary, err := os.CreateTemp(filepath.Dir(resolved), ".wcncp-patch-*")
+	if err != nil {
+		return nil, err
+	}
+	temporaryPath := temporary.Name()
+	cleanup := func() {
+		_ = temporary.Close()
+		_ = os.Remove(temporaryPath)
+	}
+	if err := temporary.Chmod(info.Mode().Perm()); err != nil {
+		cleanup()
+		return nil, err
+	}
+	if _, err := temporary.Write(next); err != nil {
+		cleanup()
+		return nil, err
+	}
+	if err := temporary.Sync(); err != nil {
+		cleanup()
+		return nil, err
+	}
+	if err := temporary.Close(); err != nil {
+		_ = os.Remove(temporaryPath)
+		return nil, err
+	}
+	if err := os.Rename(temporaryPath, resolved); err != nil {
+		_ = os.Remove(temporaryPath)
 		return nil, err
 	}
 	return content, nil
@@ -160,14 +210,14 @@ func ApplyTransaction(root, path string, startByte, endByte int64, preimageSHA25
 // CorrectnessResult is one immutable fixture-level correctness outcome with
 // exact outputs. Timing stays NOT_RUN until the controlled paired protocol.
 type CorrectnessResult struct {
-	Starts           int
-	ExactOutputs     bool
-	Invalidation     bool
-	ExactRevert      bool
-	ProductFailures  int
-	Decision         string
-	FailedPrereqs    []string
-	CheckedAt        time.Time
+	Starts          int
+	ExactOutputs    bool
+	Invalidation    bool
+	ExactRevert     bool
+	ProductFailures int
+	Decision        string
+	FailedPrereqs   []string
+	CheckedAt       time.Time
 }
 
 // RunFixtureCorrectness executes the five-start floor against two isolated
@@ -177,46 +227,56 @@ type CorrectnessResult struct {
 // invalidation, drift, or product failure rejects before timing.
 func RunFixtureCorrectness(build func(root string, input string) (outputs map[string][]byte, err error), baselineInput, changedInput string) CorrectnessResult {
 	checkedAt := time.Now().UTC()
-	fail := func(prereqs ...string) CorrectnessResult {
-		return CorrectnessResult{Starts: 5, FailedPrereqs: prereqs, Decision: "REJECTED_CORRECTNESS", CheckedAt: checkedAt}
+	starts := 0
+	fail := func(productFailure bool, prereqs ...string) CorrectnessResult {
+		failures := 0
+		if productFailure {
+			failures = 1
+		}
+		return CorrectnessResult{Starts: starts, ProductFailures: failures, FailedPrereqs: prereqs, Decision: "REJECTED_CORRECTNESS", CheckedAt: checkedAt}
 	}
 	controlRoot, err := os.MkdirTemp("", "wcncp-control-*")
 	if err != nil {
-		return fail("control-root")
+		return fail(false, "control-root")
 	}
 	defer os.RemoveAll(controlRoot)
 	candidateRoot, err := os.MkdirTemp("", "wcncp-candidate-*")
 	if err != nil {
-		return fail("candidate-root")
+		return fail(false, "candidate-root")
 	}
 	defer os.RemoveAll(candidateRoot)
+	starts++
 	controlOutputs, err := build(controlRoot, baselineInput)
 	if err != nil || len(controlOutputs) == 0 {
-		return fail("control-execution")
+		return fail(false, "control-execution")
 	}
+	starts++
 	candidateOutputs, err := build(candidateRoot, baselineInput)
 	if err != nil {
-		return fail("candidate-execution")
+		return fail(true, "candidate-execution")
 	}
 	if !equalOutputs(controlOutputs, candidateOutputs) {
-		return fail("exact-outputs")
+		return fail(true, "exact-outputs")
 	}
+	starts++
 	reuseOutputs, err := build(candidateRoot, baselineInput)
 	if err != nil || !equalOutputs(candidateOutputs, reuseOutputs) {
-		return fail("reuse")
+		return fail(true, "reuse")
 	}
+	starts++
 	changedOutputs, err := build(candidateRoot, changedInput)
 	if err != nil {
-		return fail("invalidation-execution")
+		return fail(true, "invalidation-execution")
 	}
 	if equalOutputs(candidateOutputs, changedOutputs) {
-		return fail("expected-invalidation")
+		return fail(true, "expected-invalidation")
 	}
+	starts++
 	restoredOutputs, err := build(candidateRoot, baselineInput)
 	if err != nil || !equalOutputs(candidateOutputs, restoredOutputs) {
-		return fail("exact-restoration")
+		return fail(true, "exact-restoration")
 	}
-	return CorrectnessResult{Starts: 5, ExactOutputs: true, Invalidation: true, ExactRevert: true, Decision: "QUALIFIED", CheckedAt: checkedAt}
+	return CorrectnessResult{Starts: starts, ExactOutputs: true, Invalidation: true, ExactRevert: true, Decision: "QUALIFIED", CheckedAt: checkedAt}
 }
 
 func equalOutputs(left, right map[string][]byte) bool {

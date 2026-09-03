@@ -12,6 +12,7 @@ buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
 # WCNCP-006 proves digest-bound review delivery over fixtures. No public
 # mutation occurs and historical value is never reused.
 "${buildopt_script_dir}/check-wrapper-coordinated-native-corrections-plan" >/dev/null
+"${buildopt_script_dir}/check-patch-bundle-signing" >/dev/null
 
 cd -- "${buildopt_repo_root}"
 exec "${buildopt_script_dir}/run" \

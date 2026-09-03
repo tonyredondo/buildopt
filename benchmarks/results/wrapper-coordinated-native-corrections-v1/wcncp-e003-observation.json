@@ -9,8 +9,12 @@
     "seam": "new buildoptw entrypoint plus wcncpobserve helpers; launcher task selection untouched",
     "files": [
       "cmd/buildoptw/main.go",
+      "cmd/buildoptw/exit_unix.go",
+      "cmd/buildoptw/exit_windows.go",
       "internal/wcncpobserve/observe.go",
       "internal/wcncpobserve/passthrough.go",
+      "internal/wcncpobserve/signal_unix.go",
+      "internal/wcncpobserve/signal_windows.go",
       "internal/wcncpobserve/upload.go",
       "dev/check-wcncp-observation"
     ],
@@ -25,14 +29,16 @@
     "timingClassification": "DIAGNOSTIC_ONLY",
     "deterministicGates": [
       "exact exit/stdout/stderr/stdin/cwd/argv passthrough with real binaries",
-      "non-zero exit preserved and never replaced by observation errors",
+      "non-zero exit and POSIX signal preserved and never replaced by observation errors",
+      "wrapper records match the canonical observation schema consumed by typed storage",
       "missing wrapper fails closed with 127",
       "BUILDOPT_BYPASS=1 skips recording without changing native behavior",
       "secret-looking inputs become REDACTED_SECRET and never reach the outbox",
       "absolute paths outside the repo become OMITTED",
-      "atomic outbox enqueue with duplicate retry and 30-day age eviction",
+      "atomic outbox enqueue with oldest-first bounded retry and 30-day age eviction",
+      "only an exact backend acknowledgement deletes uploaded observations",
       "outage/slow/corrupt backends stay queued and preserve the native result",
-      "status distinguishes UNAVAILABLE, QUEUED, OBSERVING, and proposal states",
+      "status distinguishes UNAVAILABLE, QUEUED, OBSERVING, and proposal states using a verified remote projection",
       "Windows build compiles; Windows-shaped paths classify statically"
     ],
     "pendingOnlyOnControlledRunner": [

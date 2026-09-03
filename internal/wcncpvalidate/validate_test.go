@@ -3,9 +3,11 @@ package wcncpvalidate
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sync"
 	"testing"
 	"time"
@@ -102,6 +104,55 @@ func TestApplyTransactionRejectsDriftAndRoundTrips(t *testing.T) {
 	_ = after
 }
 
+func TestApplyTransactionRejectsPostimageMismatchAndPreservesMode(t *testing.T) {
+	t.Parallel()
+	root := t.TempDir()
+	path := filepath.Join(root, "build.gradle.kts")
+	original := []byte("slow")
+	if err := os.WriteFile(path, original, 0o640); err != nil {
+		t.Fatal(err)
+	}
+	preimage := sha256.Sum256(original)
+	wrongPostimage := sha256.Sum256([]byte("other"))
+	if _, err := ApplyTransactionChecked(root, "build.gradle.kts", 0, int64(len(original)), hex.EncodeToString(preimage[:]), hex.EncodeToString(wrongPostimage[:]), []byte("fast")); err == nil {
+		t.Fatal("postimage mismatch accepted")
+	}
+	postimage := sha256.Sum256([]byte("fast"))
+	if _, err := ApplyTransactionChecked(root, "build.gradle.kts", 0, int64(len(original)), hex.EncodeToString(preimage[:]), hex.EncodeToString(postimage[:]), []byte("fast")); err != nil {
+		t.Fatal(err)
+	}
+	info, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if info.Mode().Perm() != 0o640 {
+		t.Fatalf("mode = %o, want 640", info.Mode().Perm())
+	}
+}
+
+func TestApplyTransactionRejectsSymlinkEscape(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("unprivileged Windows symlink creation is not portable")
+	}
+	t.Parallel()
+	root := t.TempDir()
+	outside := filepath.Join(t.TempDir(), "outside.gradle.kts")
+	if err := os.WriteFile(outside, []byte("slow"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(outside, filepath.Join(root, "build.gradle.kts")); err != nil {
+		t.Fatal(err)
+	}
+	preimage := sha256.Sum256([]byte("slow"))
+	if _, err := ApplyTransaction(root, "build.gradle.kts", 0, 4, hex.EncodeToString(preimage[:]), []byte("fast")); err == nil {
+		t.Fatal("symlink escape accepted")
+	}
+	raw, err := os.ReadFile(outside)
+	if err != nil || string(raw) != "slow" {
+		t.Fatalf("outside file changed: %q/%v", raw, err)
+	}
+}
+
 func TestFixtureCorrectnessComparesExactOutputs(t *testing.T) {
 	t.Parallel()
 	build := func(root, input string) (map[string][]byte, error) {
@@ -119,6 +170,28 @@ func TestFixtureCorrectnessComparesExactOutputs(t *testing.T) {
 	}, "baseline", "changed")
 	if regressive.Decision != "REJECTED_CORRECTNESS" {
 		t.Fatalf("missing invalidation accepted = %+v", regressive)
+	}
+}
+
+func TestFixtureCorrectnessReportsActualStartsAndProductFailure(t *testing.T) {
+	t.Parallel()
+	starts := 0
+	result := RunFixtureCorrectness(func(root, input string) (map[string][]byte, error) {
+		starts++
+		if starts == 2 {
+			return nil, errors.New("candidate failed")
+		}
+		return map[string][]byte{"output.txt": []byte(input)}, nil
+	}, "baseline", "changed")
+	if result.Starts != 2 || result.ProductFailures != 1 || result.Decision != "REJECTED_CORRECTNESS" {
+		t.Fatalf("candidate failure = %+v", result)
+	}
+
+	controlFailure := RunFixtureCorrectness(func(root, input string) (map[string][]byte, error) {
+		return nil, errors.New("environment unavailable")
+	}, "baseline", "changed")
+	if controlFailure.Starts != 1 || controlFailure.ProductFailures != 0 {
+		t.Fatalf("control failure = %+v", controlFailure)
 	}
 }
 

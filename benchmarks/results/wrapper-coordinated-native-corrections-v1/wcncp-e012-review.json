@@ -2,10 +2,10 @@
   "schemaVersion": "buildopt.wcncp/evidence-e012/v1",
   "block": "WCNCP-012",
   "evidence": "WCNCP-E012",
-  "state": "NOT_RUN",
+  "state": "RETRACTED_PREMATURE_CLOSURE",
   "valueQualifiedProposals": 0,
   "reviewArtifacts": 0,
   "ownerDecisions": 0,
   "medianActiveReviewSeconds": null,
-  "reason": "Blocked by WCNCP-011: only value-qualified proposals reach first-exposure review and none exists. No source application, commit, push, PR, or upstream contact occurred."
+  "reason": "Historical zero-row placeholder only. WCNCP-012 remains WAITING and this file contributes no review evidence. No source application, commit, push, PR, or upstream contact occurred."
 }

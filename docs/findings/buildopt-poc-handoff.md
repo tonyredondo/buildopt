@@ -54,19 +54,20 @@ does not establish commercial viability.
 
 ## Current experiment status
 
-`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` is closed at terminal
-`WCNCP-013` as `INCOMPLETE_PERFORMANCE_ENVIRONMENT` (`WCNCP-000` contract
-frozen; `WCNCP-001` through `WCNCP-007` proved). The wrapper command remains
+`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` is active at `WCNCP-008`
+(`WCNCP-000` contract frozen; `WCNCP-001` through `WCNCP-007` functionally
+repaired and proved). The wrapper command remains
 authoritative Gradle passthrough; control and data planes stay separate;
 authority is actor-refined; observation is privacy-safe and bounded;
-detection is deterministic; validation uses single-active leases with exact
-outputs and revert; review is digest-bound; and three isolated runners
-converge with outage preservation. The prospective lane never opened: no
-controlled runner existed, the ten-family cohort stayed unselected, and zero
-prospective observations, candidates, pairs, reviews, failures, or value
-claims exist. Thresholds were not moved, historical evidence was never
-consumed as prospective input, and hosted timings never entered value
-arithmetic. No further block is authorized.
+detection reconstructs canonical observations; validation uses single-active
+leases, lease-bound publication, exact outputs, and safe revert; review reuses
+the signed PatchBundle boundary; and three isolated runners converge through
+the real HTTPS batch route with outage preservation. The former zero-row
+`INCOMPLETE_PERFORMANCE_ENVIRONMENT` decision is retracted because WCNCP-008
+never executed. The ten-family cohort remains unselected, and zero prospective
+observations, candidates, pairs, reviews, failures, or value claims exist.
+WCNCP-008 may now freeze the cohort and collect ordinary wrapper observations;
+later candidate and performance gates remain closed.
 
 `CRITICAL_PATH_BUILD_LOGIC_CORRECTION_V1` is closed as
 `STOP_CRITICAL_PATH_BUILD_LOGIC_CORRECTION_NO_PROPOSAL_BREADTH`. Five exact

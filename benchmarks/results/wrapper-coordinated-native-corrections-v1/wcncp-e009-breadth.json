@@ -2,13 +2,13 @@
   "schemaVersion": "buildopt.wcncp/evidence-e009/v1",
   "block": "WCNCP-009",
   "evidence": "WCNCP-E009",
-  "state": "INCOMPLETE",
+  "state": "RETRACTED_PREMATURE_CLOSURE",
   "familiesConclusive": 0,
   "familiesConclusiveRequired": 10,
   "actionableMaterialFamilies": 0,
   "actionableMaterialFamiliesRequired": 3,
   "additionalDiagnosticsUsed": 0,
   "candidateBuildsStarted": 0,
-  "reason": "Blocked by WCNCP-008: with zero conclusive families there is no detector row to reconstruct and no breadth to count. This is missing evidence, never a negative product result; thresholds were not moved.",
+  "reason": "Historical zero-row placeholder only. WCNCP-009 remains WAITING on an executed WCNCP-008 and this file contributes no breadth evidence.",
   "productFailures": 0
 }

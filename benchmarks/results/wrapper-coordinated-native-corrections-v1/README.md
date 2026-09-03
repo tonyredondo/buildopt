@@ -1,14 +1,20 @@
 # Wrapper-coordinated native corrections v1 evidence
 
-Terminal decision: `INCOMPLETE_PERFORMANCE_ENVIRONMENT` (see
-[`terminal-decision.json`](./terminal-decision.json) and
-[`report.json`](./report.json)). Functional lanes `WCNCP-001` through
-`WCNCP-007` are proved on standard CI; the prospective lane never opened
-because no controlled runner was established. No further block is authorized.
+State: `FUNCTIONAL_FOUNDATION_READY`. Functional lanes `WCNCP-001` through
+`WCNCP-007` are repaired and covered on standard CI. `WCNCP-008` is the next
+block: freeze the neutral cohort and collect fresh ordinary wrapper
+observations. No prospective row exists yet.
+
+The previous `INCOMPLETE_PERFORMANCE_ENVIRONMENT` conclusion is
+`RETRACTED_PREMATURE_CLOSURE`: it jumped from an
+unexecuted WCNCP-008 to WCNCP-013. It is retracted. The retained
+[`terminal-decision.json`](./terminal-decision.json),
+[`report.json`](./report.json), and zero-row WCNCP-E008 through WCNCP-E012
+files are audit records only and have no gate or terminal authority.
 
 Current state:
 
-- exact public cohort: `UNSELECTED_UNTIL_WCNCP_008` (freeze never opened);
+- exact public cohort: `UNSELECTED_UNTIL_WCNCP_008`;
 - prospective observations: 0;
 - public source patches: 0;
 - candidate builds: 0;
@@ -24,12 +30,13 @@ terminal authority.
 
 Expected future artifacts are listed in the
 [tracker](../../../docs/plans/wrapper-coordinated-native-corrections-poc.md).
-`WCNCP-003` is `DONE`: exact native passthrough, privacy
-redaction, bounded outbox/upload, and status surfaces with controlled overhead
-explicitly pending. `WCNCP-004` is `DONE`: deterministic compatibility
-grouping, detector v1, catalog adapters, hosted materiality neutrality, and
-name-invariance negatives over synthetic fixtures. None authorizes public
-builds, source mutation, candidate execution, or timing. `WCNCP-005` is next.
+`WCNCP-003` is `DONE`: exact native passthrough including signals, schema-valid
+observations, privacy redaction, bounded retrying outbox with acknowledged
+deletion, real batch upload, and remotely verified status. Controlled overhead
+remains pending. `WCNCP-004` is `DONE`: raw observation reconstruction,
+repetition-aware compatibility grouping, detector v1, catalog adapters,
+hosted materiality neutrality, and name-invariance negatives over synthetic
+fixtures. None authorizes source mutation, candidate execution, or timing.
 
 `WCNCP-E001` proof is
 [`wcncp-e001-typed-state.json`](./wcncp-e001-typed-state.json),
@@ -96,4 +103,11 @@ Run the WCNCP-007 system proof with:
 
 ```bash
 ./dev/check-wcncp-system
+```
+
+Verify that the prospective lane remains open and that no retracted zero-row
+artifact is treated as a terminal decision with:
+
+```bash
+./dev/check-wcncp-terminal
 ```

@@ -17,12 +17,12 @@
     "environmentClass": "STANDARD_HOSTED_CI",
     "timingClassification": "DIAGNOSTIC_ONLY",
     "coverage": [
-      "runner A trusted observation and runner B compatible observation both publish",
+      "runner A trusted observation and runner B compatible canonical wire observation both publish through the real HTTPS batch route",
       "runner C duplicate retry converges without duplication",
       "runner C offline item stays queued locally",
       "two validators race with exactly one lease winner",
       "outage upload stays queued with zero uploaded and native result preserved",
-      "restart accepts the queued exact retry",
+      "restart accepts the queued exact retry and exact acknowledgement permits local deletion",
       "cross-repository bytes remain invisible",
       "wrong scope, fork, and tampered writes fail closed"
     ]

@@ -10,13 +10,12 @@ authority with actor-refined writes and audit, WCNCP-003 proves exact
 native passthrough with privacy-safe observation, WCNCP-004 proves
 deterministic aggregation/detection over synthetic fixtures, and WCNCP-005
 proves validation coordination with leases and exact revert, WCNCP-006
-proves digest-bound review with fail-closed handling, and WCNCP-007 proves
-multi-runner convergence with outage preservation, and the terminal
-`WCNCP-013` records `INCOMPLETE_PERFORMANCE_ENVIRONMENT`: the prospective
-cohort stayed unselected without a controlled runner, so breadth, value, and
-generalization remain unmeasured. Its
-ten-family cohort is not selected yet, so this pivot adds no generalization,
-timing or value evidence.
+proves signed PatchBundle-bound review with fail-closed handling, and
+WCNCP-007 proves real HTTPS multi-runner convergence with outage preservation.
+A subsequent audit repaired the functional integration and retracted the
+premature WCNCP-013 zero-row conclusion. `WCNCP-008` is next; its ten-family
+cohort is not selected yet, so this pivot adds no generalization, timing, or
+value evidence.
 
 ## Audit question
 

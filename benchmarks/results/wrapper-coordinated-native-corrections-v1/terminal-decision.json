@@ -1,9 +1,15 @@
 {
   "schemaVersion": "buildopt.wcncp/terminal-decision/v1",
   "block": "WCNCP-013",
-  "evidence": "WCNCP-E013",
-  "terminalDecision": "INCOMPLETE_PERFORMANCE_ENVIRONMENT",
-  "recordedAt": "2026-09-04",
+  "evidence": "WCNCP-E013-RETRACTED",
+  "terminalDecision": "RETRACTED_PREMATURE_CLOSURE",
+  "authoritative": false,
+  "recordedAt": "2026-09-03",
+  "retraction": {
+    "reason": "WCNCP-008 had not executed, so its absence of rows did not authorize skipping WCNCP-009 through WCNCP-012 and recording WCNCP-013.",
+    "currentBlock": "WCNCP-008",
+    "prospectiveRowsContributed": 0
+  },
   "recomputation": {
     "wrapperCorrectness": "PASS_HOSTED: exact passthrough, redaction, outbox, upload, and status gates pass on standard CI; prior hosted CIs green for WCNCP-001 through WCNCP-006, WCNCP-007 hosted CI in progress at write time and confirmed before closure",
     "wrapperOverhead": "NOT_EVALUATED_STANDARD_CI: no CONTROLLED_PERFORMANCE rows exist",
@@ -36,7 +42,7 @@
   "missingEvidenceVerdict": "INCOMPLETE, never zero and never a negative product result",
   "historicalEvidenceContamination": false,
   "hostedTimingInValueArithmetic": false,
-  "provenBoundary": "BuildOpt is proved as a native-Gradle wrapper that observes with bounded privacy-safe facts, coordinates typed control state across runners with fail-closed authority, detects candidate corrections deterministically, validates with leases and exact outputs, and delivers digest-bound review artifacts. Whether that machinery finds material, valuable corrections in ordinary public builds is UNPROVEN here: no prospective family was captured because no controlled runner existed to decide materiality or value.",
+  "provenBoundary": "This record has no terminal authority. The repaired functional foundation covers canonical wrapper records, durable retry and acknowledgement, remote status, actor-scoped APIs, lease-bound validation publication, deterministic reconstruction, isolated correctness, signed review envelopes, and real multi-runner HTTPS convergence. Product opportunity and value remain unproven because WCNCP-008 has not run.",
   "detectorClasses": "CONFIGURATION_CACHE_READINESS_PATCH_V1 plus NORMALIZATION_AWARE_CACHEABILITY_V2 and DURABLE_TASK_CONTRACT_CURRENT adapters, proved on synthetic fixtures only",
   "repositoryFamilies": "none selected: 10/10 slots UNSELECTED",
   "workflows": "none requested prospectively",

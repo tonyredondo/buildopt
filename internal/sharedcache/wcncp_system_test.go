@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"net/http/httptest"
 	"sync"
 	"testing"
 	"time"
@@ -63,8 +64,27 @@ func TestWCNCPMultiRunnerConvergence(t *testing.T) {
 		t.Fatal(err)
 	}
 	obsBPath := "/api/v1/repositories/" + stateTestScope + "/wcncp/WCNCP_OBSERVATION/objects/" + obsBDigest
-	if code := centralTestRequest(handler, http.MethodPut, obsBPath, observerToken.Token, bytes.NewReader(obsBCanonical), true, map[string]string{"If-None-Match": "*"}).Code; code != http.StatusCreated {
-		t.Fatalf("runner B publish = %d", code)
+	server := httptest.NewTLSServer(handler)
+	client := server.Client()
+	warmup, err := http.NewRequestWithContext(ctx, http.MethodGet, server.URL+"/api/v1/repositories/"+stateTestScope+"/wcncp/status", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	warmup.Header.Set("Authorization", "Bearer "+observerToken.Token)
+	warmupResponse, err := client.Do(warmup)
+	if err != nil {
+		t.Fatalf("runner B TLS/auth warmup: %v", err)
+	}
+	_ = warmupResponse.Body.Close()
+	upload := wcncpobserve.UploadBatch(ctx, client, server.URL+"/api/v1/repositories/"+stateTestScope+"/wcncp/WCNCP_OBSERVATION/batch", observerToken.Token, []json.RawMessage{obsBCanonical}, 5*time.Second)
+	server.Close()
+	if upload.Uploaded != 1 || upload.Queued {
+		t.Fatalf("runner B batch publish = %+v", upload)
+	}
+	if file, err := storage.OpenWCNCPObject(ctx, stateTestScope, WCNCPKindObservation, obsBDigest); err != nil {
+		t.Fatalf("runner B batch object unavailable: %v", err)
+	} else {
+		_ = file.Close()
 	}
 	// Runner C retries one duplicate (exact replay converges once) and holds
 	// one offline outbox item for after the restart.

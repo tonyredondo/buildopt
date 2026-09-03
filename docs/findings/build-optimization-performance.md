@@ -2,17 +2,18 @@
 
 ## Current Executive Summary
 
-- **The wrapper-coordinated native-corrections POC closes as
-  `INCOMPLETE_PERFORMANCE_ENVIRONMENT`.**
+- **The wrapper-coordinated native-corrections POC has a repaired functional
+  foundation and remains open at `WCNCP-008`.**
   WCNCP-000 freezes five typed records, a separate Gradle-cache data plane and
   control-state plane, neutral ten-family selection and controlled-runner
   authority; WCNCP-001 through WCNCP-007 prove state, authority, observation,
-  detection, validation, review, and convergence on standard CI; and
-  WCNCP-013 records the terminal with full recomputation. The prospective lane
-  never opened without a controlled runner: 0/10 families, 0 builds, 0
-  candidates, 0 pairs, 0 reviews, 0 failures, thresholds unmoved, no
-  historical contamination, and no hosted timing in value arithmetic. No
-  further block is authorized.
+  detection, validation, review, and convergence on standard CI. An audit then
+  repaired incompatible observation wire data, missing remote lifecycle APIs,
+  outbox acknowledgement, signal/status semantics, lease-bound publication,
+  source mutation safety, raw reconstruction, and signed review boundaries.
+  The former zero-row `INCOMPLETE_PERFORMANCE_ENVIRONMENT` conclusion is
+  retracted: WCNCP-008 never ran, so it could not authorize WCNCP-013.
+  Prospective value remains wholly unmeasured.
 
 - **Explicit material-task build-logic opt-outs do not broaden the patch
   product.** Five exact public source trees are scanned against retained native
