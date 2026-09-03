@@ -3,7 +3,7 @@
 ## Status
 
 **Overall:** `CONTRACT_FROZEN`<br>
-**Current block:** `WCNCP-007` is next (`WCNCP-001` through `WCNCP-006` are `DONE`).<br>
+**Current block:** `WCNCP-008` is next (`WCNCP-001` through `WCNCP-007` are `DONE`).<br>
 **Reference baseline inspected while writing this plan:**
 `b8a195dc9fd55a52c15202b77f0bb979f8c97fa3`.<br>
 **Execution authority:** `WCNCP-000` freezes contracts only. No public
@@ -1237,7 +1237,8 @@ repository build usable without BuildOpt state.
 | `WCNCP-E004` | WCNCP-004 | Aggregator/detector fixtures and independent reconstruction | `DONE` — [detector proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e004-detector.json) with compatibility grouping, detector v1, catalog adapters, and name-invariance negatives; zero prospective evidence |
 | `WCNCP-E005` | WCNCP-005 | Lease and validator lifecycle proof | `DONE` — [validator proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e005-validation.json) with admission, single-active leases, budgets, isolated roots, fixture correctness, and exact revert; zero prospective evidence |
 | `WCNCP-E006` | WCNCP-006 | Diagnostic-only reviewed PatchBundle system replay | `DONE` — [review proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e006-review.json) with digest-bound artifacts, lifecycle, and fail-closed stale/tamper handling; no public mutation or historical value reuse |
-| `WCNCP-E007` | WCNCP-007 | Three-runner backend convergence/outage proof | `TODO` |
+| `WCNCP-E007` | WCNCP-007 | Three-runner backend convergence/outage proof | `DONE` — [system proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e007-system.json) with converged observations, single lease ownership, outage preservation, restart retry, isolation, and fail-closed negatives; no value timing |
+| `WCNCP-E008` | WCNCP-008 | Fresh ten-family observation capture | `TODO` |
 | `WCNCP-E003` | WCNCP-003 | Wrapper observation, privacy, fallback, and overhead proof | `WAITING` |
 | `WCNCP-E004` | WCNCP-004 | Aggregator/detector fixtures and independent reconstruction | `WAITING` |
 | `WCNCP-E005` | WCNCP-005 | Lease and validator lifecycle proof | `WAITING` |
@@ -1252,11 +1253,15 @@ repository build usable without BuildOpt state.
 
 ## Immediate next action
 
-`WCNCP-001` through `WCNCP-006` are `DONE` with zero prospective evidence.
+`WCNCP-001` through `WCNCP-007` are `DONE` with zero prospective evidence:
+typed state, authority, observation, detection, validation coordination,
+review delivery, and multi-runner convergence are proved.
 
-Implement only `WCNCP-007`: one restarted HTTPS service with at least three
-isolated runner roots proving convergence, exactly-once logical observations,
-single validator lease ownership, offline outage preserving native results,
-queued exact retry, incompatible isolation, and fail-closed wrong-scope, fork,
-stale, late, and tampered publications. No synthetic timing counts as public
-value.
+Implement only `WCNCP-008`: verify the freeze gate immediately before the
+first build, freeze ten exact public subjects with two reserves each, and
+capture exactly three ordinary wrapper requests per primary family from empty
+BuildOpt state. Additional diagnostics stay closed until `WCNCP-009`. Record
+the controlled-environment freeze, package manifest, and per-family raw rows
+with SHA-256 sums. If any family cannot reach conclusive observation
+completeness within budget, record `INCOMPLETE` honestly instead of forcing
+later stages.

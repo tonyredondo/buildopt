@@ -10,8 +10,9 @@
   authority with actor-refined writes and audit, WCNCP-003 proves exact
   native passthrough with privacy-safe bounded observation, WCNCP-004
   proves deterministic detection over synthetic fixtures, WCNCP-005
-  proves validation coordination with leases and exact revert, and WCNCP-006
-  proves digest-bound review. Controlled
+  proves validation coordination with leases and exact revert, WCNCP-006
+  proves digest-bound review, and WCNCP-007 proves multi-runner convergence
+  with outage preservation and no value timing. Controlled
   overhead stays pending. All cohort slots remain unselected
   and there are zero builds,
   observations, proposals, validations, timing samples, failures or new value

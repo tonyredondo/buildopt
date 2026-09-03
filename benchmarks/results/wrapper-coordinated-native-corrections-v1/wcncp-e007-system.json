@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "buildopt.wcncp/evidence-e007/v1",
+  "block": "WCNCP-007",
+  "evidence": "WCNCP-E007",
+  "state": "DONE",
+  "description": "One restarted HTTPS service with three isolated runner roots: compatible observations converge, duplicate retries are idempotent, one validator owns the lease, outage preserves native results, restart accepts queued retry, incompatible observations stay isolated, and wrong-scope, fork, stale, late, and tampered publications fail closed.",
+  "implementation": {
+    "seam": "existing central HTTPS handler, WCNCP routes, lease coordinator, and wrapper outbox/upload exercised together",
+    "files": [
+      "internal/sharedcache/wcncp_system_test.go",
+      "dev/check-wcncp-system"
+    ],
+    "topology": "one server storage with restart plus runner A, B, and C isolated outboxes",
+    "timingNote": "no synthetic timing counts as public value"
+  },
+  "validation": {
+    "environmentClass": "STANDARD_HOSTED_CI",
+    "timingClassification": "DIAGNOSTIC_ONLY",
+    "coverage": [
+      "runner A trusted observation and runner B compatible observation both publish",
+      "runner C duplicate retry converges without duplication",
+      "runner C offline item stays queued locally",
+      "two validators race with exactly one lease winner",
+      "outage upload stays queued with zero uploaded and native result preserved",
+      "restart accepts the queued exact retry",
+      "cross-repository bytes remain invisible",
+      "wrong scope, fork, and tampered writes fail closed"
+    ]
+  },
+  "gates": {
+    "sharedObservationsConvergeOnce": "PASS",
+    "oneValidatorLease": "PASS",
+    "outagePreservesNative": "PASS",
+    "prospectiveObservations": 0,
+    "candidateBuilds": 0,
+    "timingSamples": 0,
+    "productFailures": 0
+  },
+  "authority": {
+    "syntheticOnly": true,
+    "prospectiveEvidence": false,
+    "productionAuthorized": false
+  }
+}

@@ -39,12 +39,13 @@ builds, source mutation, candidate execution, or timing. `WCNCP-005` is next.
 `WCNCP-E005` proof is
 [`wcncp-e005-validation.json`](./wcncp-e005-validation.json), and
 `WCNCP-E006` proof is
-[`wcncp-e006-review.json`](./wcncp-e006-review.json): synthetic-only
-restart-safe publication, repository/kind isolation with identical bytes,
-Gradle-plane separation, staged expiry, fail-closed authority, exact
-passthrough, deterministic detection, single-active leases, fixture
-correctness, exact revert, digest-bound review, and durable decisions.
-Prospective evidence remains zero.
+[`wcncp-e006-review.json`](./wcncp-e006-review.json), and
+`WCNCP-E007` proof is
+[`wcncp-e007-system.json`](./wcncp-e007-system.json): synthetic-only
+converged observations, single lease ownership, outage preservation, restart
+retry, isolation, fail-closed negatives, and durable decisions. Prospective
+evidence remains zero. `WCNCP-008` is next: frozen cohort plus ordinary
+wrapper observations only.
 
 Run the frozen planning/schema contract with:
 
@@ -86,4 +87,10 @@ Run the WCNCP-006 review proof with:
 
 ```bash
 ./dev/check-wcncp-review
+```
+
+Run the WCNCP-007 system proof with:
+
+```bash
+./dev/check-wcncp-system
 ```

@@ -9,8 +9,9 @@ retention, and namespace isolation, WCNCP-002 proves scoped HTTPS
 authority with actor-refined writes and audit, WCNCP-003 proves exact
 native passthrough with privacy-safe observation, WCNCP-004 proves
 deterministic aggregation/detection over synthetic fixtures, and WCNCP-005
-proves validation coordination with leases and exact revert, and WCNCP-006
-proves digest-bound review with fail-closed handling. Its
+proves validation coordination with leases and exact revert, WCNCP-006
+proves digest-bound review with fail-closed handling, and WCNCP-007 proves
+multi-runner convergence with outage preservation. Its
 ten-family cohort is not selected yet, so this pivot adds no generalization,
 timing or value evidence.
 
