@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-first-native-capture/v1",
+  "family": "gradle-baseline",
+  "revision": "c2c5005a81f4844f33144436408fecef128899a7",
+  "workflowFile": ".circleci/config.yml",
+  "ownerArguments": [
+    "build",
+    "--parallel",
+    "--stacktrace",
+    "--continue",
+    "--max-workers=2"
+  ],
+  "nativeDiagnostic": {
+    "exitCode": 1,
+    "elapsedMilliseconds": 270400,
+    "gradleStarts": 1,
+    "timingSample": false,
+    "termination": "GRADLE_FAILURE_CAPTURE_RECOVERED_AFTER_HARNESS_INTERRUPTION"
+  },
+  "resourceEnvelope": {
+    "freeBytesBefore": null,
+    "freeBytesBeforeStatus": "NOT_RETAINED_BUILD_STARTED_ABOVE_8_GIB_GATE",
+    "maximumWorkers": 2,
+    "timeoutMinutes": 20
+  },
+  "decision": "INCOMPLETE_NATIVE_DIAGNOSTIC",
+  "reason": "OWNER_TESTKIT_WORKFLOW_WAS_INTERRUPTED_AFTER_RECORDED_TEST_FAILURES",
+  "contractSha256": "b1ba7a51cf44cb387ca71206247dc29a83f30ccfeabd22c5f75fa8b841424b19",
+  "subjectsSha256": "1c0b66b663bb75d888abe65324ca1eac4864e258d25edd96e78eeac7f01f1524",
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "productFailures": 0
+}

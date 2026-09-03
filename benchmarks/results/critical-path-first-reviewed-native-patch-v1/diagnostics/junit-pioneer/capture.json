@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-first-native-capture/v1",
+  "family": "junit-pioneer",
+  "revision": "0cc29d1ba9ee8c8322bc7a1028cc03e95c05bed8",
+  "workflowFile": ".github/workflows/build.yml",
+  "ownerArguments": [
+    "clean",
+    "build",
+    "-x",
+    "spotlessCheck"
+  ],
+  "nativeDiagnostic": {
+    "exitCode": 0,
+    "elapsedMilliseconds": 87266,
+    "gradleStarts": 1,
+    "timingSample": false
+  },
+  "resourceEnvelope": {
+    "freeBytesBefore": 12341776384,
+    "maximumWorkers": 12,
+    "timeoutMinutes": 20
+  },
+  "decision": "CONCLUSIVE_NATIVE_DIAGNOSTIC",
+  "contractSha256": "b1ba7a51cf44cb387ca71206247dc29a83f30ccfeabd22c5f75fa8b841424b19",
+  "subjectsSha256": "1c0b66b663bb75d888abe65324ca1eac4864e258d25edd96e78eeac7f01f1524",
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "productFailures": 0
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-first-native-capture/v1",
+  "family": "dependency-analysis-gradle-plugin",
+  "revision": "c4915dd91572e8fbc5a2b7a32b6e6b84c9d99c76",
+  "workflowFile": ".github/workflows/test.yml",
+  "ownerArguments": [
+    "check",
+    "-s",
+    "-x",
+    ":functionalTest"
+  ],
+  "nativeDiagnostic": {
+    "exitCode": 1,
+    "elapsedMilliseconds": 202643,
+    "gradleStarts": 1,
+    "timingSample": false
+  },
+  "resourceEnvelope": {
+    "freeBytesBefore": 17380134912,
+    "maximumWorkers": 12,
+    "timeoutMinutes": 20
+  },
+  "decision": "INCOMPLETE_NATIVE_DIAGNOSTIC",
+  "contractSha256": "b1ba7a51cf44cb387ca71206247dc29a83f30ccfeabd22c5f75fa8b841424b19",
+  "subjectsSha256": "1c0b66b663bb75d888abe65324ca1eac4864e258d25edd96e78eeac7f01f1524",
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "productFailures": 0
+}

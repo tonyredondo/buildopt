@@ -2,6 +2,17 @@
 
 ## Current Executive Summary
 
+- **Workflow-first prospective discovery also stops before source inspection.**
+  Ten frozen, previously unused owner workflows yield 4/10 complete native
+  diagnostics and six typed incomplete rows. Independent replay finds 19 tasks
+  above the fixed 500-ms/2% critical-path thresholds in the complete traces;
+  all 19 are standard Gradle/Kotlin tasks and none is repository-owned. The
+  required 10/10 conclusive and 3/10 proposal-family gates therefore fail at
+  4/10 and 0/10. The bounded diagnostic charge is
+  4,804.671..5,524.671 seconds, below the 7,200-second cap. No source file,
+  public patch, candidate build, timing sample, product failure, payback, or new
+  speedup claim exists.
+
 - **The prospective ten-family replication stops before a patch.** The frozen
   holdout is 10/10 conclusive with source actions in Shadow, Gradle Versions,
   and Protobuf. Workflow/effect binding admits only Shadow. Its optimized-native

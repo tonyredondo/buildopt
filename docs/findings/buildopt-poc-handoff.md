@@ -52,6 +52,18 @@ does not establish commercial viability.
 
 ## Current experiment status
 
+`CRITICAL_PATH_FIRST_REVIEWED_NATIVE_PATCH_V1` is closed as
+`STOP_CRITICAL_PATH_FIRST_REVIEWED_NATIVE_PATCH_NO_PROPOSAL_BREADTH`. Ten
+previously unused revisions were evaluated from frozen owner workflows before
+source inspection. Four workflows completed and six stopped with typed signing,
+toolchain/wrapper, owner-test, or timeout outcomes. Independent replay finds 19
+tasks above 500 ms and 2% in the complete traces, but every one is a standard
+Gradle or Kotlin task rather than repository-owned work. The result is 4/10
+conclusive and 0/10 proposal families versus required 10/10 and 3/10. Source
+inspection, patches, candidate builds, timing, review, and delivery never
+opened; product failures and new speedup claims are zero. This workflow-first
+route therefore does not add a fourth value family or broaden product viability.
+
 `PROSPECTIVE_REVIEWED_NATIVE_PATCH_CONTROLLED_TRIAL_V1` is closed as
 `STOP_PROSPECTIVE_REVIEWED_NATIVE_PATCH_NO_ECONOMIC_PROPOSAL`. Its ten-family
 holdout is 10/10 conclusive and exposes actions in three families, but binding

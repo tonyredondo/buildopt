@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 2)); then
+    printf 'usage: %s CHECKOUT_PARENT OUTPUT_ROOT\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_checkout_parent=$1
+buildopt_output_root=$2
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_subjects="${buildopt_repo_root}/specs/poc-critical-path-first-reviewed-native-patch-v1.subjects.json"
+
+[[ ${buildopt_checkout_parent} == /* && -d ${buildopt_checkout_parent} && ${buildopt_output_root} == /* ]] || {
+    printf 'checkout parent and output root must be absolute paths\n' >&2
+    exit 64
+}
+mkdir -p -- "${buildopt_output_root}"
+
+buildopt_charged_ms=0
+while IFS= read -r buildopt_capture; do
+    buildopt_elapsed=$(jq -r '.nativeDiagnostic.elapsedMilliseconds' "${buildopt_capture}")
+    buildopt_charged_ms=$((buildopt_charged_ms + buildopt_elapsed))
+done < <(find "${buildopt_output_root}" -mindepth 2 -maxdepth 2 -name capture.json -type f | sort)
+
+while IFS= read -r buildopt_family; do
+    buildopt_checkout="${buildopt_checkout_parent}/${buildopt_family}"
+    buildopt_output="${buildopt_output_root}/${buildopt_family}"
+    if [[ -e ${buildopt_output}/capture.json ]]; then
+        printf '%s: existing capture retained\n' "${buildopt_family}"
+        continue
+    fi
+    ((buildopt_charged_ms < 7200000)) || {
+        printf 'campaign machine budget exhausted before %s\n' "${buildopt_family}" >&2
+        break
+    }
+    buildopt_free_bytes=$(df --output=avail -B1 /tmp | tail -n 1 | tr -d ' ')
+    ((buildopt_free_bytes >= 6442450944)) || {
+        printf 'campaign disk stop before %s\n' "${buildopt_family}" >&2
+        break
+    }
+    set +e
+    "${buildopt_repo_root}/dev/capture-critical-path-first-native" \
+        "${buildopt_family}" "${buildopt_checkout}" "${buildopt_output}" </dev/null
+    buildopt_exit=$?
+    set -e
+    [[ -e ${buildopt_output}/capture.json ]] || {
+        printf '%s: capture process failed before evidence, exit=%s\n' "${buildopt_family}" "${buildopt_exit}" >&2
+        break
+    }
+    buildopt_elapsed=$(jq -r '.nativeDiagnostic.elapsedMilliseconds' "${buildopt_output}/capture.json")
+    buildopt_charged_ms=$((buildopt_charged_ms + buildopt_elapsed))
+    git -C "${buildopt_checkout}" clean -fdX
+done < <(jq -r '.families[].key' "${buildopt_subjects}")
+
+printf 'campaign captures=%s chargedMs=%s\n' \
+    "$(find "${buildopt_output_root}" -mindepth 2 -maxdepth 2 -name capture.json -type f | wc -l | tr -d ' ')" \
+    "${buildopt_charged_ms}"

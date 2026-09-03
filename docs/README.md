@@ -65,6 +65,9 @@ before running the product.
 
 ### Plans
 
+- [Critical-Path-First Reviewed Native Patch v1](./plans/critical-path-first-reviewed-native-patch-v1.md):
+  ten frozen owner-workflow diagnostics, terminal 4/10 conclusive and 0/10
+  proposal-family stop before source inspection, candidates, or timing.
 - [Prospective Reviewed Native Patch Controlled Trial v1](./plans/prospective-reviewed-native-patch-controlled-trial-v1.md):
   frozen ten-family replication, source/workflow economics and the terminal
   80-ms off-critical-path stop before any candidate patch or timing.

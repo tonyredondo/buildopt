@@ -1,0 +1,143 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 3)); then
+    printf 'usage: %s FAMILY CLEAN_CHECKOUT NEW_OUTPUT_DIRECTORY\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_family=$1
+buildopt_checkout=$2
+buildopt_output=$3
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_subjects="${buildopt_repo_root}/specs/poc-critical-path-first-reviewed-native-patch-v1.subjects.json"
+buildopt_contract="${buildopt_repo_root}/specs/poc-critical-path-first-reviewed-native-patch-v1.json"
+
+[[ ${buildopt_checkout} == /* && ${buildopt_output} == /* && -d ${buildopt_checkout}/.git && ! -e ${buildopt_output} ]] || {
+    printf 'checkout must be an absolute Git root and output must be a new absolute path\n' >&2
+    exit 64
+}
+
+buildopt_subject=$(jq -ce --arg family "${buildopt_family}" '
+  [.families[] | select(.key == $family)] |
+  if length == 1 then .[0] else error("expected one subject") end
+' "${buildopt_subjects}")
+buildopt_revision=$(jq -r '.revision' <<<"${buildopt_subject}")
+buildopt_jdk=$(jq -r '.jdkToolchain' <<<"${buildopt_subject}")
+buildopt_workflow=$(jq -r '.workflowFile' <<<"${buildopt_subject}")
+buildopt_owner_managed_toolchains=$(jq -r '.ownerManagedToolchains // false' <<<"${buildopt_subject}")
+
+[[ $(git -C "${buildopt_checkout}" rev-parse HEAD) == "${buildopt_revision}" ]]
+[[ -z $(git -C "${buildopt_checkout}" status --short) ]]
+[[ $(git -C "${buildopt_checkout}" archive HEAD | sha256sum | awk '{print $1}') == \
+    $(jq -r '.sourceArchiveSha256' <<<"${buildopt_subject}") ]]
+[[ $(sha256sum "${buildopt_checkout}/gradlew" | awk '{print $1}') == \
+    $(jq -r '.wrapperSha256' <<<"${buildopt_subject}") ]]
+[[ $(sha256sum "${buildopt_checkout}/${buildopt_workflow}" | awk '{print $1}') == \
+    $(jq -r '.workflowSha256' <<<"${buildopt_subject}") ]]
+
+buildopt_free_bytes=$(df --output=avail -B1 /tmp | tail -n 1 | tr -d ' ')
+buildopt_minimum_free=$((8 * 1024 * 1024 * 1024))
+((buildopt_free_bytes >= buildopt_minimum_free)) || {
+    printf 'less than 8 GiB free before %s\n' "${buildopt_family}" >&2
+    exit 1
+}
+
+buildopt_temp=$(mktemp -d "/tmp/buildopt-cpfrnp-${buildopt_family}.XXXXXX")
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+buildopt_capture="${buildopt_temp}/capture"
+mkdir -p -- "${buildopt_capture}"
+buildopt_graph="${buildopt_capture}/task-graph.jsonl"
+buildopt_trace_prefix="${buildopt_capture}/operations"
+buildopt_trace="${buildopt_trace_prefix}-log.txt"
+buildopt_log="${buildopt_capture}/gradle.log"
+buildopt_maven_local="${buildopt_temp}/maven-local"
+buildopt_gradle_home="${buildopt_repo_root}/.tools/gradle-user-home/local"
+buildopt_java_paths=$(find "${buildopt_repo_root}/.tools/toolchains" -mindepth 1 -maxdepth 1 \
+    -type d -name 'temurin-jdk-*' -printf '%p\n' | sort | paste -sd, -)
+buildopt_java_arguments=()
+if [[ ${buildopt_owner_managed_toolchains} == false ]]; then
+    buildopt_java_arguments+=(
+        "-Dorg.gradle.java.installations.paths=${buildopt_java_paths}"
+        -Dorg.gradle.java.installations.auto-detect=false
+    )
+fi
+mapfile -t buildopt_arguments < <(jq -r '.ownerArguments[]' <<<"${buildopt_subject}")
+buildopt_workers=12
+buildopt_worker_argument=--max-workers=12
+for buildopt_argument in "${buildopt_arguments[@]}"; do
+    if [[ ${buildopt_argument} =~ ^--max-workers=([0-9]+)$ ]]; then
+        buildopt_workers=${BASH_REMATCH[1]}
+        ((buildopt_workers > 0 && buildopt_workers <= 12)) || {
+            printf 'owner workflow worker limit is outside the frozen envelope\n' >&2
+            exit 1
+        }
+        buildopt_worker_argument=
+    fi
+done
+
+buildopt_start_ns=$(date +%s%N)
+set +e
+(
+    cd -- "${buildopt_checkout}"
+    env -u CI -u GITHUB_ACTIONS \
+        BUILDOPT_TASK_GRAPH_OUTPUT="${buildopt_graph}" \
+        GRADLE_OPTS="-Dorg.gradle.internal.operations.trace=${buildopt_trace_prefix} -Dmaven.repo.local=${buildopt_maven_local}" \
+        GRADLE_USER_HOME="${buildopt_gradle_home}" \
+        "${buildopt_repo_root}/dev/run" --toolchain "${buildopt_jdk}" -- \
+        timeout 20m ./gradlew --no-daemon --console=plain ${buildopt_worker_argument:+"${buildopt_worker_argument}"} \
+        --init-script "${buildopt_repo_root}/dev/gradle-critical-path.init.gradle" \
+        "${buildopt_java_arguments[@]}" \
+        "${buildopt_arguments[@]}"
+) >"${buildopt_log}" 2>&1
+buildopt_exit_code=$?
+set -e
+buildopt_end_ns=$(date +%s%N)
+buildopt_elapsed_ms=$(((buildopt_end_ns - buildopt_start_ns) / 1000000))
+
+git -C "${buildopt_checkout}" diff --quiet
+git -C "${buildopt_checkout}" diff --cached --quiet
+
+buildopt_decision=CONCLUSIVE_NATIVE_DIAGNOSTIC
+if [[ ${buildopt_exit_code} -ne 0 || ! -s ${buildopt_trace} || ! -s ${buildopt_graph} ]]; then
+    buildopt_decision=INCOMPLETE_NATIVE_DIAGNOSTIC
+else
+    "${buildopt_repo_root}/dev/run" --toolchain go -- go run ./cmd/gradle-critical-path \
+        --operations "${buildopt_trace}" --graph "${buildopt_graph}" --arm control \
+        >"${buildopt_capture}/analysis.json"
+fi
+
+find "${buildopt_capture}" -maxdepth 1 -type f \
+    \( -name 'operations-tree.json' -o -name 'operations-tree.txt' \) -delete
+[[ ! -e ${buildopt_trace} ]] || gzip -9 "${buildopt_trace}"
+gzip -9 "${buildopt_log}"
+
+jq -n \
+    --arg family "${buildopt_family}" \
+    --arg revision "${buildopt_revision}" \
+    --arg workflowFile "${buildopt_workflow}" \
+    --arg decision "${buildopt_decision}" \
+    --argjson ownerArguments "$(jq '.ownerArguments' <<<"${buildopt_subject}")" \
+    --argjson exitCode "${buildopt_exit_code}" \
+    --argjson elapsedMs "${buildopt_elapsed_ms}" \
+    --argjson freeBytesBefore "${buildopt_free_bytes}" \
+    --argjson workers "${buildopt_workers}" \
+    --arg contractSha256 "$(sha256sum "${buildopt_contract}" | awk '{print $1}')" \
+    --arg subjectsSha256 "$(sha256sum "${buildopt_subjects}" | awk '{print $1}')" '
+    {
+      schemaVersion:"buildopt.evidence/critical-path-first-native-capture/v1",
+      family:$family,revision:$revision,workflowFile:$workflowFile,
+      ownerArguments:$ownerArguments,
+      nativeDiagnostic:{exitCode:$exitCode,elapsedMilliseconds:$elapsedMs,gradleStarts:1,timingSample:false},
+      resourceEnvelope:{freeBytesBefore:$freeBytesBefore,maximumWorkers:$workers,timeoutMinutes:20},
+      decision:$decision,contractSha256:$contractSha256,subjectsSha256:$subjectsSha256,
+      publicSourceModified:false,candidateBuild:false,timingSamples:0,productFailures:0
+    }
+  ' >"${buildopt_capture}/capture.json"
+
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+mv -- "${buildopt_capture}" "${buildopt_output}"
+printf '%s: %s, exit=%s, elapsed=%s ms\n' \
+    "${buildopt_family}" "${buildopt_decision}" "${buildopt_exit_code}" "${buildopt_elapsed_ms}"
+[[ ${buildopt_decision} == CONCLUSIVE_NATIVE_DIAGNOSTIC ]]

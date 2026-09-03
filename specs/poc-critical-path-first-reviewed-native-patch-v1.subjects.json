@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "buildopt.specs/poc-critical-path-first-reviewed-native-patch-subjects/v1",
+  "reusePolicy": "PREVIOUSLY_UNUSED_PUBLIC_GRADLE_FAMILIES_NO_PRIOR_RESULT_ROWS",
+  "families": [
+    {
+      "key": "dependency-analysis-gradle-plugin",
+      "repository": "https://github.com/autonomousapps/dependency-analysis-gradle-plugin.git",
+      "revision": "c4915dd91572e8fbc5a2b7a32b6e6b84c9d99c76",
+      "sourceArchiveSha256": "89d66a9bd3df938be51ef01aba85044878be7b4913f7646d27df6875baec35d2",
+      "wrapperSha256": "a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59",
+      "jdkToolchain": "temurin-jdk-21",
+      "workflowFile": ".github/workflows/test.yml",
+      "workflowSha256": "9d03c19b0114c8bf3d7f4eda30068e1d2ee33b1b585fe40cc28d39fb8183ee40",
+      "ownerArguments": ["check", "-s", "-x", ":functionalTest"]
+    },
+    {
+      "key": "cyclonedx-gradle-plugin",
+      "repository": "https://github.com/CycloneDX/cyclonedx-gradle-plugin.git",
+      "revision": "d41f61ee46117d91a52bfda87ef85bd9032b93eb",
+      "sourceArchiveSha256": "cc43876efc47117d2540f52cc52296f8b99e91c9db213deee8aebcd8551004d1",
+      "wrapperSha256": "a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59",
+      "jdkToolchain": "temurin-jdk-25",
+      "workflowFile": ".github/workflows/ci-build.yaml",
+      "workflowSha256": "037256c6efaf434874a5d125d9ef9c19ed563acf681184b962e6dedfa8645de3",
+      "ownerArguments": ["build", "-i"]
+    },
+    {
+      "key": "jib",
+      "repository": "https://github.com/GoogleContainerTools/jib.git",
+      "revision": "fb949e2676afbbd7dd7a1ef61e20251931325654",
+      "sourceArchiveSha256": "0913aad927c3809c2b9eb695ff382bbdad046f061fa3ac6e7f80bdef7bff5a97",
+      "wrapperSha256": "ff18e7e3dbfe0f8d9094ce0ebe48e8c0024030c2da4044a6f1d3d76db97ba9ef",
+      "jdkToolchain": "temurin-jdk-17",
+      "workflowFile": ".github/workflows/unit-tests.yml",
+      "workflowSha256": "1e38193704fff95acb825ffc46c5027a7e960dbdb1a22a0f04523ec47950c741",
+      "ownerArguments": ["clean", "build", "jacocoTestReport", "--stacktrace"]
+    },
+    {
+      "key": "gradle-intellij-plugin",
+      "repository": "https://github.com/JetBrains/gradle-intellij-plugin.git",
+      "revision": "511a40abb9f01a90b2bc888b5a407ab63de2b13f",
+      "sourceArchiveSha256": "e5ada8b61d4649502137e4597c4b953f17a125c578473fb8469bda2fc01a9cd9",
+      "wrapperSha256": "a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59",
+      "jdkToolchain": "temurin-jdk-21",
+      "workflowFile": ".github/workflows/build.yml",
+      "workflowSha256": "605a99c4897a13e68aec0a6b793c9f3536822afff55deeb8d25de8211b2a09e9",
+      "ownerArguments": ["build", "-x", "test"]
+    },
+    {
+      "key": "gradle-maven-publish-plugin",
+      "repository": "https://github.com/vanniktech/gradle-maven-publish-plugin.git",
+      "revision": "88676a3f3a83fac4ee8a2f230b9267cfc1367ea0",
+      "sourceArchiveSha256": "ebc19ba68d357e03f3c31f906451d17dd1f6da1f449491314e3cf521106e3e7d",
+      "wrapperSha256": "a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59",
+      "jdkToolchain": "temurin-jdk-25",
+      "workflowFile": ".github/workflows/build.yml",
+      "workflowSha256": "3c64b45256e8c9f6f6cba0d06cad8f0e714ca5249097255dbafc50a3c35c0d48",
+      "ownerArguments": ["build", "--stacktrace", "-PtestJavaVersion=17", "-PtestConfigMethod=BASE"]
+    },
+    {
+      "key": "gradle-baseline",
+      "repository": "https://github.com/palantir/gradle-baseline.git",
+      "revision": "c2c5005a81f4844f33144436408fecef128899a7",
+      "sourceArchiveSha256": "4cb37ebdd138e32c0722c47750dcfb4e2cf97457f70a2cd4cf6772031c02ed64",
+      "wrapperSha256": "73a8c2d46c1cbdf0a32c0363fc22a43f5b24b3c2b60503f4c01f884bac01d9c1",
+      "jdkToolchain": "temurin-jdk-21",
+      "workflowFile": ".circleci/config.yml",
+      "workflowSha256": "222f7186f3bb5e320d7f5b726f71f09691f310c2c6ae557c12f2c50de11fdc14",
+      "ownerManagedToolchains": true,
+      "ownerArguments": ["build", "--parallel", "--stacktrace", "--continue", "--max-workers=2"]
+    },
+    {
+      "key": "gradle-consistent-versions",
+      "repository": "https://github.com/palantir/gradle-consistent-versions.git",
+      "revision": "419993496161e5bace10678efe0b01eb4655c28f",
+      "sourceArchiveSha256": "382f4981e4afa1f35224ee4d587bbf4dc0032db264c85f343e2e3902f4020407",
+      "wrapperSha256": "29afb122ee56e68a5e178232a637ced3190d0f90678d842f5359d736509ca73f",
+      "jdkToolchain": "temurin-jdk-21",
+      "workflowFile": ".circleci/config.yml",
+      "workflowSha256": "fa58196e3ad3d2e4b35efd4c06cb9956edcafde3f6c577f505e17d224025e8f1",
+      "ownerManagedToolchains": true,
+      "ownerArguments": ["build", "--parallel", "--stacktrace", "--continue", "--max-workers=2"]
+    },
+    {
+      "key": "jmh-gradle-plugin",
+      "repository": "https://github.com/melix/jmh-gradle-plugin.git",
+      "revision": "59d9de09823f74c8be1b718a0aee603a54ce0c42",
+      "sourceArchiveSha256": "968b15756f7e191c74573ace45d4cc66aeb0e14972ebaa11051c10cfd044ff81",
+      "wrapperSha256": "a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59",
+      "jdkToolchain": "temurin-jdk-17",
+      "workflowFile": ".github/workflows/main.yml",
+      "workflowSha256": "dee6f637d396224ade2be13610cf9a2056bb8a61260ede712f12871ea9e4849e",
+      "ownerArguments": ["build"]
+    },
+    {
+      "key": "mockk",
+      "repository": "https://github.com/mockk/mockk.git",
+      "revision": "14fbd83eb43582ce6f80ac58b87b0e143e8cb43e",
+      "sourceArchiveSha256": "4db9d0a13174c42e2aaaa4a1ac72ead1991a72e75eeb93f200fbb3ea2f5d4009",
+      "wrapperSha256": "fb68debc1b1acf8ec55dc0d5e5495e1dedd0bd6b61f304bee61613eeb2bd9b92",
+      "jdkToolchain": "temurin-jdk-21",
+      "workflowFile": ".github/workflows/gradle.yml",
+      "workflowSha256": "3ba0f5564ca73c31032166b7728f04d75c3dc1172cbc0f9c76136f0e945f6c18",
+      "ownerArguments": ["check", "--stacktrace", "-Pio_mockk_kotlin_version=2.2.21", "-Pio_mockk_java_toolchain_test_version=21"]
+    },
+    {
+      "key": "junit-pioneer",
+      "repository": "https://github.com/junit-pioneer/junit-pioneer.git",
+      "revision": "0cc29d1ba9ee8c8322bc7a1028cc03e95c05bed8",
+      "sourceArchiveSha256": "76840ff7389f806379a069740192c3581f8d1d677a44a19b74ab4e7f8ecf39f9",
+      "wrapperSha256": "b187b4c52e749f5760afdd6fadc31b2a98ad35fb249bf0dff03b72650f320409",
+      "jdkToolchain": "temurin-jdk-21",
+      "workflowFile": ".github/workflows/build.yml",
+      "workflowSha256": "1bbe461429b6da315d03aca6ec53f64c4624b5517f842a7017fd1806c60a6396",
+      "ownerArguments": ["clean", "build", "-x", "spotlessCheck"],
+      "omittedRemoteTelemetryArguments": ["--scan"]
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+cd "${buildopt_repo_root}"
+
+buildopt_contract=specs/poc-critical-path-first-reviewed-native-patch-v1.json
+buildopt_subjects=specs/poc-critical-path-first-reviewed-native-patch-v1.subjects.json
+buildopt_evidence=benchmarks/results/critical-path-first-reviewed-native-patch-v1
+buildopt_summary=${buildopt_evidence}/diagnostic-summary.json
+buildopt_terminal=${buildopt_evidence}/terminal-decision.json
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-cpfrnp-check.XXXXXX")
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+
+buildopt_sha256() {
+    sha256sum "$1" | awk '{print $1}'
+}
+
+[[ $(buildopt_sha256 "${buildopt_contract}") == $(jq -r '.contractSha256' "${buildopt_summary}") ]]
+[[ $(buildopt_sha256 "${buildopt_subjects}") == $(jq -r '.subjectsSha256' "${buildopt_summary}") ]]
+
+mapfile -t buildopt_expected_families < <(jq -r '.families[].key' "${buildopt_subjects}" | sort)
+mapfile -t buildopt_capture_families < <(
+    find "${buildopt_evidence}/diagnostics" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort
+)
+[[ ${buildopt_expected_families[*]} == "${buildopt_capture_families[*]}" ]]
+
+buildopt_conclusive=0
+buildopt_captured_ms=0
+buildopt_material_tasks=0
+buildopt_repository_owned=0
+for buildopt_family in "${buildopt_expected_families[@]}"; do
+    buildopt_capture=${buildopt_evidence}/diagnostics/${buildopt_family}/capture.json
+    buildopt_subject=$(jq -ce --arg family "${buildopt_family}" '.families[] | select(.key == $family)' "${buildopt_subjects}")
+    jq -e --arg family "${buildopt_family}" \
+        --arg revision "$(jq -r '.revision' <<<"${buildopt_subject}")" \
+        --arg workflow "$(jq -r '.workflowFile' <<<"${buildopt_subject}")" \
+        --argjson arguments "$(jq '.ownerArguments' <<<"${buildopt_subject}")" '
+        .family == $family and .revision == $revision and .workflowFile == $workflow and
+        .ownerArguments == $arguments and .nativeDiagnostic.gradleStarts == 1 and
+        (.nativeDiagnostic.timingSample | not) and (.publicSourceModified | not) and
+        (.candidateBuild | not) and .timingSamples == 0 and .productFailures == 0
+    ' "${buildopt_capture}" >/dev/null
+    buildopt_captured_ms=$((buildopt_captured_ms + $(jq -r '.nativeDiagnostic.elapsedMilliseconds' "${buildopt_capture}")))
+
+    if [[ $(jq -r '.decision' "${buildopt_capture}") != CONCLUSIVE_NATIVE_DIAGNOSTIC ]]; then
+        [[ ! -e ${buildopt_evidence}/diagnostics/${buildopt_family}/analysis.json ]]
+        continue
+    fi
+    buildopt_conclusive=$((buildopt_conclusive + 1))
+    gzip -dc "${buildopt_evidence}/diagnostics/${buildopt_family}/operations-log.txt.gz" \
+        >"${buildopt_temp}/${buildopt_family}-operations.txt"
+    ./dev/run --toolchain go -- go run ./cmd/gradle-critical-path \
+        --operations "${buildopt_temp}/${buildopt_family}-operations.txt" \
+        --graph "${buildopt_evidence}/diagnostics/${buildopt_family}/task-graph.jsonl" \
+        --arm control >"${buildopt_temp}/${buildopt_family}-analysis.json"
+    cmp -s "${buildopt_temp}/${buildopt_family}-analysis.json" \
+        "${buildopt_evidence}/diagnostics/${buildopt_family}/analysis.json" || {
+        printf '%s analysis drifted\n' "${buildopt_family}" >&2
+        exit 1
+    }
+
+    while IFS=$'\t' read -r buildopt_task_class; do
+        [[ -n ${buildopt_task_class} ]] || continue
+        buildopt_material_tasks=$((buildopt_material_tasks + 1))
+        case ${buildopt_task_class} in
+            org.gradle.*|org.jetbrains.kotlin.*)
+                ;;
+            *)
+                buildopt_repository_owned=$((buildopt_repository_owned + 1))
+                ;;
+        esac
+    done < <(jq -r '
+        . as $analysis | .tasks[] |
+        select(.criticalPath and .durationMs >= 500) as $task |
+        ($analysis.builds[] | select(.buildPath == $task.buildPath).taskExecutionSpanMs) as $span |
+        select(($task.durationMs * 100) >= ($span * 2)) |
+        $task.taskClass
+    ' "${buildopt_temp}/${buildopt_family}-analysis.json")
+done
+
+[[ ${buildopt_conclusive} -eq 4 ]]
+[[ ${buildopt_captured_ms} -eq 4004336 ]]
+[[ ${buildopt_material_tasks} -eq 19 ]]
+[[ ${buildopt_repository_owned} -eq 0 ]]
+
+jq -e \
+  --argjson conclusive "${buildopt_conclusive}" \
+  --argjson capturedMs "${buildopt_captured_ms}" \
+  --argjson materialTasks "${buildopt_material_tasks}" \
+  --argjson repositoryOwned "${buildopt_repository_owned}" '
+  .schemaVersion == "buildopt.evidence/critical-path-first-reviewed-native-patch-diagnostics/v1" and
+  (.rows | length) == 10 and ([.rows[].family] | unique | length) == 10 and
+  .captureFamilies == 10 and .conclusiveFamilies == $conclusive and
+  .requiredConclusiveFamilies == 10 and
+  .economicallyMaterialCriticalPathTasks == $materialTasks and
+  .repositoryOwnedMaterialTasks == $repositoryOwned and
+  .proposalFamilies == 0 and .requiredProposalFamilies == 3 and
+  .acceptedCaptureMilliseconds == $capturedMs and
+  .campaignCharge.lowerBoundMilliseconds ==
+    (.acceptedCaptureMilliseconds + .additionalAttemptCharge.lowerBoundMilliseconds) and
+  .campaignCharge.upperBoundMilliseconds ==
+    (.acceptedCaptureMilliseconds + .additionalAttemptCharge.upperBoundMilliseconds) and
+  .campaignCharge.upperBoundMilliseconds < .campaignCharge.maximumMilliseconds and
+  .sourceFilesInspected == 0 and (.publicSourceModified | not) and
+  .candidateBuilds == 0 and .timingSamples == 0 and .productFailures == 0 and
+  .decision == "STOP_DIAGNOSTIC_BREADTH_AND_PROPOSAL_GATES_FAILED"
+' "${buildopt_summary}" >/dev/null
+
+jq -e --arg summary "$(buildopt_sha256 "${buildopt_summary}")" '
+  .schemaVersion == "buildopt.evidence/critical-path-first-reviewed-native-patch-terminal/v1" and
+  .diagnosticSummarySha256 == $summary and
+  .diagnosticGate.conclusiveFamilies == 4 and
+  .diagnosticGate.requiredConclusiveFamilies == 10 and
+  .diagnosticGate.proposalFamilies == 0 and
+  .diagnosticGate.requiredProposalFamilies == 3 and
+  .diagnosticGate.decision == "FAIL" and
+  .dependentBlocks.sourceInspection == "NOT_AUTHORIZED_FAILED_DIAGNOSTIC_GATE" and
+  .dependentBlocks.candidateCorrectness == "NOT_AUTHORIZED_FAILED_DIAGNOSTIC_GATE" and
+  .dependentBlocks.value == "NOT_AUTHORIZED_FAILED_DIAGNOSTIC_GATE" and
+  .dependentBlocks.reviewAndDelivery == "NOT_AUTHORIZED_FAILED_DIAGNOSTIC_GATE" and
+  .terminalDecision == "STOP_CRITICAL_PATH_FIRST_REVIEWED_NATIVE_PATCH_NO_PROPOSAL_BREADTH" and
+  (.publicSourceModified | not) and .candidateBuilds == 0 and .timingSamples == 0 and
+  .productFailures == 0 and (.upstreamPullRequest | not) and
+  (.defaultBranchMutation | not) and (.productionAuthorized | not) and
+  (.automaticApply | not) and (.automaticMerge | not) and
+  .testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_terminal}" >/dev/null
+
+if find "${buildopt_evidence}" -type f -name '*.patch' -print -quit | grep -q .; then
+    printf 'critical-path-first evidence must not contain a public-source patch\n' >&2
+    exit 1
+fi
+
+./dev/run --toolchain go -- go test ./internal/gradlecriticalpath ./cmd/gradle-critical-path
+printf 'CPFRNP evidence OK: 4/10 conclusive, 0/10 proposal families, zero candidates or timing\n'

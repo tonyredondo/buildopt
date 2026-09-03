@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "buildopt.specs/poc-critical-path-first-reviewed-native-patch/v1",
+  "predecessor": "STOP_PROSPECTIVE_REVIEWED_NATIVE_PATCH_NO_ECONOMIC_PROPOSAL",
+  "selectionPolicy": "FROZEN_OWNER_WORKFLOW_THEN_NATIVE_ECONOMICS_THEN_SOURCE",
+  "diagnosticGate": {
+    "requiredConclusiveFamilies": 10,
+    "minimumProposalFamilies": 3,
+    "maximumNativeDiagnostics": 10,
+    "maximumDiagnosticsPerFamily": 1,
+    "hardDependencyCriticalPathRequired": true,
+    "minimumAddressableMilliseconds": 500,
+    "minimumAddressablePercent": 2,
+    "repositoryOwnedTaskRequired": true,
+    "sourceInspectionBeforeEconomicAdmission": false
+  },
+  "proposalGate": {
+    "allowedCorrectionClasses": [
+      "CACHEABILITY_CONTRACT",
+      "INCREMENTAL_INPUT_CONTRACT",
+      "OUTPUT_CONTRACT",
+      "AVOIDABLE_TASK_WORK"
+    ],
+    "boundedOutputsAndEffects": true,
+    "smallReversibleNativeGradleChange": true,
+    "inferredSemantics": false,
+    "maximumSelectedProposals": 2,
+    "maximumSelectedFamilies": 2,
+    "maximumProjectedMachinePaybackBuilds": 300
+  },
+  "correctnessGate": {
+    "maximumGradleStartsPerProposal": 6,
+    "exactCompleteOutputs": true,
+    "crossRootBehavior": true,
+    "requiredInvalidation": true,
+    "exactRevert": true,
+    "maximumProductFailures": 0
+  },
+  "valueGate": {
+    "excludedStabilizationsPerRoot": 1,
+    "balancedPairs": 8,
+    "requiredPositivePairs": 8,
+    "minimumMeanSavingMilliseconds": 500,
+    "minimumMeanSavingPercent": 2,
+    "positivePaired95Interval": true,
+    "nonRegressiveCandidateP95": true,
+    "maximumCombinedPaybackBuilds": 300
+  },
+  "budget": {
+    "maximumAdditionalDiskGiB": 8,
+    "minimumFreeDiskBeforePublicBuildGiB": 8,
+    "stopBeforeNextStartFreeDiskGiB": 6,
+    "maximumDiagnosticMinutesPerFamily": 20,
+    "maximumDiagnosticMachineSeconds": 7200,
+    "maximumWorkers": 12
+  },
+  "boundaries": {
+    "diagnosticsAreTimingSamples": false,
+    "publicSourceModifiedBeforeProposalGate": false,
+    "upstreamPullRequest": false,
+    "defaultBranchMutation": false,
+    "productionAuthorized": false,
+    "automaticApply": false,
+    "automaticMerge": false,
+    "soak": false,
+    "designPartner": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

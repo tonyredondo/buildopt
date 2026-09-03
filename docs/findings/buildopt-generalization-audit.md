@@ -67,6 +67,18 @@ source-action count is not a proxy for material value, and the third-family
 Elasticsearch qualification does not yet generalize prospectively to a fourth
 public family.
 
+The workflow-first successor also closes negatively, for a different reason.
+It freezes ten unused owner workflows and captures native operation/DAG evidence
+before reading candidate source. Only four workflows complete in the bounded
+local environment; six are typed incomplete because of owner signing context,
+required toolchains or wrapper compatibility, owner TestKit failures, or the
+20-minute limit. The four replayable traces expose 19 tasks above 500 ms and 2%
+of their build span, but all are standard Gradle or Kotlin work. With 4/10
+conclusive and 0/10 repository-owned proposal families, both breadth gates fail.
+This confirms that reversing discovery order avoids source-first waste, but it
+does not expose a new reviewable optimization class. No source, candidate, or
+timing evidence is inferred from the incomplete rows.
+
 The latest source-only recurrence search adds a plausible third public class
 without changing that value conclusion. Across 768 fresh Spring,
 OpenTelemetry and Micronaut rows, independent reconstruction finds fourteen

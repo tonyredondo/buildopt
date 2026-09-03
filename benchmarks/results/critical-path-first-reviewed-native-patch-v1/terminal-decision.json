@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-first-reviewed-native-patch-terminal/v1",
+  "diagnosticSummarySha256": "07e65c5a0156caf0a3968008c744cbf3745acac780796745d61feb6bd0a54daa",
+  "diagnosticGate": {
+    "conclusiveFamilies": 4,
+    "requiredConclusiveFamilies": 10,
+    "proposalFamilies": 0,
+    "requiredProposalFamilies": 3,
+    "decision": "FAIL"
+  },
+  "dependentBlocks": {
+    "sourceInspection": "NOT_AUTHORIZED_FAILED_DIAGNOSTIC_GATE",
+    "candidateCorrectness": "NOT_AUTHORIZED_FAILED_DIAGNOSTIC_GATE",
+    "value": "NOT_AUTHORIZED_FAILED_DIAGNOSTIC_GATE",
+    "reviewAndDelivery": "NOT_AUTHORIZED_FAILED_DIAGNOSTIC_GATE"
+  },
+  "economics": {
+    "qualifiedMeanSavingMilliseconds": 0,
+    "combinedPaybackBuilds": null,
+    "combinedPaybackReason": "UNAVAILABLE_NO_QUALIFIED_PROPOSAL"
+  },
+  "newQualifiedPublicFamilies": 0,
+  "terminalDecision": "STOP_CRITICAL_PATH_FIRST_REVIEWED_NATIVE_PATCH_NO_PROPOSAL_BREADTH",
+  "publicSourceModified": false,
+  "candidateBuilds": 0,
+  "timingSamples": 0,
+  "productFailures": 0,
+  "upstreamPullRequest": false,
+  "defaultBranchMutation": false,
+  "productionAuthorized": false,
+  "automaticApply": false,
+  "automaticMerge": false,
+  "testOptimization": "OUT_OF_SCOPE"
+}

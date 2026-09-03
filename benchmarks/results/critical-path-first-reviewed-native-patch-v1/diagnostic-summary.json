@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-first-reviewed-native-patch-diagnostics/v1",
+  "contractSha256": "b1ba7a51cf44cb387ca71206247dc29a83f30ccfeabd22c5f75fa8b841424b19",
+  "subjectsSha256": "1c0b66b663bb75d888abe65324ca1eac4864e258d25edd96e78eeac7f01f1524",
+  "rows": [
+    {
+      "family": "dependency-analysis-gradle-plugin",
+      "decision": "INCOMPLETE_OWNER_SIGNING_CONTEXT",
+      "elapsedMilliseconds": 202643,
+      "reason": "NO_CONFIGURED_SIGNATORY"
+    },
+    {
+      "family": "cyclonedx-gradle-plugin",
+      "decision": "INCOMPLETE_MISSING_JAVA_8_TOOLCHAIN",
+      "elapsedMilliseconds": 51070,
+      "reason": "OWNER_WORKFLOW_REQUIRES_JAVA_8"
+    },
+    {
+      "family": "jib",
+      "decision": "INCOMPLETE_WRAPPER_JDK_INCOMPATIBILITY",
+      "elapsedMilliseconds": 7943,
+      "reason": "GRADLE_6_9_2_CANNOT_COMPILE_THE_DIAGNOSTIC_INIT_SCRIPT_ON_JDK_17"
+    },
+    {
+      "family": "gradle-intellij-plugin",
+      "decision": "CONCLUSIVE_NO_REPOSITORY_OWNED_CRITICAL_PATH_TASK",
+      "elapsedMilliseconds": 145105,
+      "economicallyMaterialCriticalPathTasks": 3,
+      "repositoryOwnedMaterialTasks": 0
+    },
+    {
+      "family": "gradle-maven-publish-plugin",
+      "decision": "INCOMPLETE_DIAGNOSTIC_TIMEOUT",
+      "elapsedMilliseconds": 1355891,
+      "reason": "OWNER_TESTKIT_MATRIX_EXCEEDED_20_MINUTE_LIMIT"
+    },
+    {
+      "family": "gradle-baseline",
+      "decision": "INCOMPLETE_OWNER_TEST_FAILURES",
+      "elapsedMilliseconds": 270400,
+      "reason": "OWNER_TESTKIT_WORKFLOW_FAILED"
+    },
+    {
+      "family": "gradle-consistent-versions",
+      "decision": "CONCLUSIVE_NO_REPOSITORY_OWNED_CRITICAL_PATH_TASK",
+      "elapsedMilliseconds": 424015,
+      "economicallyMaterialCriticalPathTasks": 3,
+      "repositoryOwnedMaterialTasks": 0
+    },
+    {
+      "family": "jmh-gradle-plugin",
+      "decision": "INCOMPLETE_MISSING_TEST_TOOLCHAINS",
+      "elapsedMilliseconds": 908461,
+      "reason": "OWNER_FUNCTIONAL_TESTS_REQUIRE_UNAVAILABLE_JAVA_11_AND_25_TOOLCHAINS",
+      "captureSubjectsSha256": "488f2d5109b61d98e2da08f7f41d52db83dc2a82d9d1db2b4c29b2b0b6f7cf9d"
+    },
+    {
+      "family": "mockk",
+      "decision": "CONCLUSIVE_NO_REPOSITORY_OWNED_CRITICAL_PATH_TASK",
+      "elapsedMilliseconds": 551542,
+      "economicallyMaterialCriticalPathTasks": 10,
+      "repositoryOwnedMaterialTasks": 0
+    },
+    {
+      "family": "junit-pioneer",
+      "decision": "CONCLUSIVE_NO_REPOSITORY_OWNED_CRITICAL_PATH_TASK",
+      "elapsedMilliseconds": 87266,
+      "economicallyMaterialCriticalPathTasks": 3,
+      "repositoryOwnedMaterialTasks": 0
+    }
+  ],
+  "captureFamilies": 10,
+  "conclusiveFamilies": 4,
+  "requiredConclusiveFamilies": 10,
+  "economicallyMaterialCriticalPathTasks": 19,
+  "repositoryOwnedMaterialTasks": 0,
+  "proposalFamilies": 0,
+  "requiredProposalFamilies": 3,
+  "acceptedCaptureMilliseconds": 4004336,
+  "additionalAttemptCharge": {
+    "lowerBoundMilliseconds": 800335,
+    "upperBoundMilliseconds": 1520335,
+    "reason": "TWO_EXACT_PREFLIGHT_DURATIONS_PLUS_ONE_TRACE_LOWER_BOUND_AND_ONE_480_SECOND_SESSION_LOWER_BOUND_BOUNDED_BY_THE_20_MINUTE_PER_FAMILY_LIMIT"
+  },
+  "campaignCharge": {
+    "lowerBoundMilliseconds": 4804671,
+    "upperBoundMilliseconds": 5524671,
+    "maximumMilliseconds": 7200000
+  },
+  "protocolCorrections": [
+    "PRESERVE_OWNER_MAX_WORKERS_ARGUMENT",
+    "DEFER_OWNER_MANAGED_TOOLCHAINS_TO_PALANTIR_BUILDS",
+    "ISOLATE_MAVEN_LOCAL_INSIDE_THE_CAPTURE_TEMPORARY_DIRECTORY",
+    "DISCONNECT_GRADLE_FROM_THE_CAMPAIGN_MANIFEST_STDIN"
+  ],
+  "sourceFilesInspected": 0,
+  "publicSourceModified": false,
+  "candidateBuilds": 0,
+  "timingSamples": 0,
+  "productFailures": 0,
+  "decision": "STOP_DIAGNOSTIC_BREADTH_AND_PROPOSAL_GATES_FAILED"
+}

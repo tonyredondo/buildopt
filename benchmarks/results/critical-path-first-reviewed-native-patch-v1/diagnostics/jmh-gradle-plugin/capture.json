@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-first-native-capture/v1",
+  "family": "jmh-gradle-plugin",
+  "revision": "59d9de09823f74c8be1b718a0aee603a54ce0c42",
+  "workflowFile": ".github/workflows/main.yml",
+  "ownerArguments": [
+    "build"
+  ],
+  "nativeDiagnostic": {
+    "exitCode": 1,
+    "elapsedMilliseconds": 908461,
+    "gradleStarts": 1,
+    "timingSample": false
+  },
+  "resourceEnvelope": {
+    "freeBytesBefore": 11398709248,
+    "maximumWorkers": 12,
+    "timeoutMinutes": 20
+  },
+  "decision": "INCOMPLETE_NATIVE_DIAGNOSTIC",
+  "contractSha256": "b1ba7a51cf44cb387ca71206247dc29a83f30ccfeabd22c5f75fa8b841424b19",
+  "subjectsSha256": "488f2d5109b61d98e2da08f7f41d52db83dc2a82d9d1db2b4c29b2b0b6f7cf9d",
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "productFailures": 0
+}
