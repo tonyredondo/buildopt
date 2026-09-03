@@ -149,8 +149,8 @@
     {"id":"WCNCP-002","state":"DONE","outcome":"REMOTE_API_AND_AUTHORITY"},
     {"id":"WCNCP-003","state":"DONE","outcome":"WRAPPER_OBSERVATION_PATH"},
     {"id":"WCNCP-004","state":"DONE","outcome":"AGGREGATION_AND_DETECTOR"},
-    {"id":"WCNCP-005","state":"TODO","outcome":"VALIDATION_COORDINATOR"},
-    {"id":"WCNCP-006","state":"WAITING","outcome":"REVIEW_DELIVERY"},
+    {"id":"WCNCP-005","state":"DONE","outcome":"VALIDATION_COORDINATOR"},
+    {"id":"WCNCP-006","state":"TODO","outcome":"REVIEW_DELIVERY"},
     {"id":"WCNCP-007","state":"WAITING","outcome":"MULTI_RUNNER_SYSTEM_PROOF"},
     {"id":"WCNCP-008","state":"WAITING","outcome":"PROSPECTIVE_COHORT_CAPTURE"},
     {"id":"WCNCP-009","state":"WAITING","outcome":"OPPORTUNITY_BREADTH_GATE"},
@@ -160,9 +160,9 @@
     {"id":"WCNCP-013","state":"WAITING","outcome":"TERMINAL_DECISION"}
   ],
   "nextBlock": {
-    "id": "WCNCP-005",
+    "id": "WCNCP-006",
     "state": "TODO",
-    "allowedWork": "VALIDATION_COORDINATOR_ONLY",
+    "allowedWork": "REVIEW_DELIVERY_ONLY",
     "prospectiveGradleBuildsAllowed": false,
     "publicSourceMutationAllowed": false,
     "timingAllowed": false

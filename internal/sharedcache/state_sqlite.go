@@ -1,7 +1,7 @@
 package sharedcache
 
 // StateSchemaVersion is the independent typed BuildOpt-state schema version.
-const StateSchemaVersion = 2
+const StateSchemaVersion = 3
 
 func stateMetadataDefinition(path string) metadataDefinition {
 	versionOne := schemaMigration{
@@ -146,7 +146,7 @@ ON state_cas_requests (created_at_unix_ms)`,
 	definition := metadataDefinition{
 		role:       stateMetadataRole,
 		path:       path,
-		migrations: []schemaMigration{versionOne, versionTwoWCNCP},
+		migrations: []schemaMigration{versionOne, versionTwoWCNCP, versionThreeWCNCPLeases},
 	}
 	definition.objects = []schemaObject{
 		{objectType: "index", name: "state_cas_requests_created_at", statement: versionOne.statements[10]},
@@ -154,6 +154,7 @@ ON state_cas_requests (created_at_unix_ms)`,
 		{objectType: "index", name: "state_manifests_retention", statement: versionOne.statements[4]},
 		{objectType: "index", name: "state_objects_created_at", statement: versionOne.statements[2]},
 		{objectType: "index", name: "wcncp_cas_requests_created_at", statement: versionTwoWCNCP.statements[9]},
+		{objectType: "index", name: "wcncp_leases_active", statement: versionThreeWCNCPLeases.statements[1]},
 		{objectType: "index", name: "wcncp_manifest_references_target", statement: versionTwoWCNCP.statements[6]},
 		{objectType: "index", name: "wcncp_manifests_retention", statement: versionTwoWCNCP.statements[3]},
 		{objectType: "index", name: "wcncp_objects_created_at", statement: versionTwoWCNCP.statements[1]},
@@ -166,6 +167,7 @@ ON state_cas_requests (created_at_unix_ms)`,
 		{objectType: "table", name: "state_objects", statement: versionOne.statements[1]},
 		{objectType: "table", name: "wcncp_cas_requests", statement: versionTwoWCNCP.statements[8]},
 		{objectType: "table", name: "wcncp_heads", statement: versionTwoWCNCP.statements[7]},
+		{objectType: "table", name: "wcncp_leases", statement: versionThreeWCNCPLeases.statements[0]},
 		{objectType: "table", name: "wcncp_manifest_artifacts", statement: versionTwoWCNCP.statements[4]},
 		{objectType: "table", name: "wcncp_manifest_references", statement: versionTwoWCNCP.statements[5]},
 		{objectType: "table", name: "wcncp_manifests", statement: versionTwoWCNCP.statements[2]},
@@ -311,5 +313,32 @@ ON wcncp_manifest_references (
 ) WITHOUT ROWID`,
 		`CREATE INDEX wcncp_cas_requests_created_at
 ON wcncp_cas_requests (created_at_unix_ms)`,
+	},
+}
+
+// versionThreeWCNCPLeases adds validation work leases for WCNCP-005. At most
+// one active lease exists per repository, proposal digest, protocol version,
+// and environment class. Heartbeats extend only the same lease and never the
+// experiment budget; loss or expiry makes the attempt visible and requeueable.
+var versionThreeWCNCPLeases = schemaMigration{
+	version: 3,
+	name:    "wcncp-validation-leases-v1",
+	statements: []string{
+		`CREATE TABLE wcncp_leases (
+    lease_id TEXT PRIMARY KEY CHECK (length(lease_id) = 64 AND lease_id NOT GLOB '*[^0-9a-f]*'),
+    repository_scope_sha256 TEXT NOT NULL CHECK (length(repository_scope_sha256) = 64 AND repository_scope_sha256 NOT GLOB '*[^0-9a-f]*'),
+    proposal_digest TEXT NOT NULL CHECK (length(proposal_digest) = 64 AND proposal_digest NOT GLOB '*[^0-9a-f]*'),
+    protocol_version TEXT NOT NULL CHECK (length(protocol_version) BETWEEN 1 AND 64),
+    environment_class TEXT NOT NULL CHECK (environment_class IN ('CONTROLLED_PERFORMANCE', 'STANDARD_HOSTED_CI', 'LOCAL_FUNCTIONAL')),
+    holder TEXT NOT NULL CHECK (length(holder) BETWEEN 1 AND 128),
+    attempt INTEGER NOT NULL CHECK (attempt > 0),
+    start_unix_ms INTEGER NOT NULL CHECK (start_unix_ms >= 0),
+    expiry_unix_ms INTEGER NOT NULL CHECK (expiry_unix_ms > start_unix_ms),
+    heartbeat_unix_ms INTEGER NOT NULL CHECK (heartbeat_unix_ms >= start_unix_ms),
+    state TEXT NOT NULL CHECK (state IN ('ACTIVE', 'RELEASED', 'EXPIRED', 'CONSUMED'))
+) WITHOUT ROWID`,
+		`CREATE UNIQUE INDEX wcncp_leases_active
+ON wcncp_leases (repository_scope_sha256, proposal_digest, protocol_version, environment_class)
+WHERE state = 'ACTIVE'`,
 	},
 }

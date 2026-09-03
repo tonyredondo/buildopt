@@ -8,8 +8,9 @@
   authority, WCNCP-001 proves the five-kind control plane restart-safe with
   CAS, retention, and namespace isolation, WCNCP-002 proves scoped HTTPS
   authority with actor-refined writes and audit, WCNCP-003 proves exact
-  native passthrough with privacy-safe bounded observation, and WCNCP-004
-  proves deterministic detection over synthetic fixtures. Controlled
+  native passthrough with privacy-safe bounded observation, WCNCP-004
+  proves deterministic detection over synthetic fixtures, and WCNCP-005
+  proves validation coordination with leases and exact revert. Controlled
   overhead stays pending. All cohort slots remain unselected
   and there are zero builds,
   observations, proposals, validations, timing samples, failures or new value

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "buildopt.wcncp/evidence-e005/v1",
+  "block": "WCNCP-005",
+  "evidence": "WCNCP-E005",
+  "state": "DONE",
+  "description": "Proposal admission, single-active leases with expiry and reclaim, fixed budgets, isolated roots with exact-path cleanup, fixture correctness runner with exact outputs, and idempotent exact-revert transactions.",
+  "implementation": {
+    "seam": "shared state seam extended with wcncp_leases plus pure coordinator package",
+    "files": [
+      "internal/sharedcache/state_sqlite.go",
+      "internal/sharedcache/wcncp_lease.go",
+      "internal/wcncpvalidate/validate.go",
+      "dev/check-wcncp-validation"
+    ],
+    "stateSchemaVersion": 3,
+    "stateMigration": "wcncp-validation-leases-v1",
+    "protocolVersion": "WCNCP_CORRECTNESS_V1",
+    "budgets": {"minimumCorrectnessStarts": 5, "maximumInfrastructureRetries": 2, "maximumConcurrentControlledValidations": 1}
+  },
+  "validation": {
+    "environmentClass": "STANDARD_HOSTED_CI",
+    "timingClassification": "DIAGNOSTIC_ONLY",
+    "coverage": [
+      "admission allows only actionable material corrections with complete bindings and budget",
+      "concurrent claims yield one winner with held errors for losers",
+      "heartbeats extend only the same holder",
+      "stale holders, late results, and conflicting digests fail closed",
+      "expiry is visible and requeueable with reclaim by a new holder",
+      "budget stops new work without touching unrelated files or processes",
+      "isolated roots never resolve outside the experiment root on cleanup",
+      "patch transactions reject drift and round-trip exactly",
+      "five-start fixture correctness compares every output byte-for-byte"
+    ]
+  },
+  "gates": {
+    "leaseAndValidatorLifecycle": "PASS",
+    "prospectiveObservations": 0,
+    "candidateBuilds": 0,
+    "timingSamples": 0,
+    "productFailures": 0
+  },
+  "authority": {
+    "syntheticOnly": true,
+    "prospectiveEvidence": false,
+    "productionAuthorized": false
+  }
+}

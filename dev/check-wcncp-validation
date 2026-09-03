@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+
+# WCNCP-005 proves validation coordination over fixtures: admission, leases,
+# budgets, isolated roots, correctness runner, and exact revert. No public
+# source mutation, prospective timing, or value claim is authorized.
+"${buildopt_script_dir}/check-wrapper-coordinated-native-corrections-plan" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+exec "${buildopt_script_dir}/run" \
+    --toolchain go \
+    -- \
+    go test \
+        -race \
+        -count=1 \
+        ./internal/wcncpvalidate ./internal/sharedcache

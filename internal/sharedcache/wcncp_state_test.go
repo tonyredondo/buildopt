@@ -528,8 +528,8 @@ func TestWCNCPMigrationChecksumsAndForwardOpen(t *testing.T) {
 	root := filepath.Join(t.TempDir(), "shared")
 	storage := openStateTestStorage(t, ctx, root)
 	version, err := storage.state.SchemaVersion(ctx)
-	if err != nil || version != StateSchemaVersion || StateSchemaVersion != 2 {
-		t.Fatalf("state schema version = %d/%v, want 2", version, err)
+	if err != nil || version != StateSchemaVersion || StateSchemaVersion != 3 {
+		t.Fatalf("state schema version = %d/%v, want 3", version, err)
 	}
 	now := time.Now().UTC().Truncate(time.Second)
 	storage.clock = func() time.Time { return now }

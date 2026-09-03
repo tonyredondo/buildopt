@@ -7,8 +7,9 @@ control/data-plane boundary, record schemas and controlled-evidence rules, and
 WCNCP-001 proves the five-kind typed control plane with restart-safe CAS,
 retention, and namespace isolation, WCNCP-002 proves scoped HTTPS
 authority with actor-refined writes and audit, WCNCP-003 proves exact
-native passthrough with privacy-safe observation, and WCNCP-004 proves
-deterministic aggregation/detection over synthetic fixtures. Its
+native passthrough with privacy-safe observation, WCNCP-004 proves
+deterministic aggregation/detection over synthetic fixtures, and WCNCP-005
+proves validation coordination with leases and exact revert. Its
 ten-family cohort is not selected yet, so this pivot adds no generalization,
 timing or value evidence.
 
