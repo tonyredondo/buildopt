@@ -6,8 +6,9 @@ and deliver only owner-reviewed native corrections. WCNCP-000 freezes the
 control/data-plane boundary, record schemas and controlled-evidence rules, and
 WCNCP-001 proves the five-kind typed control plane with restart-safe CAS,
 retention, and namespace isolation, WCNCP-002 proves scoped HTTPS
-authority with actor-refined writes and audit, and WCNCP-003 proves exact
-native passthrough with privacy-safe observation. Its
+authority with actor-refined writes and audit, WCNCP-003 proves exact
+native passthrough with privacy-safe observation, and WCNCP-004 proves
+deterministic aggregation/detection over synthetic fixtures. Its
 ten-family cohort is not selected yet, so this pivot adds no generalization,
 timing or value evidence.
 

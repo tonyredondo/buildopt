@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+
+# WCNCP-004 proves aggregation and detection as pure deterministic functions.
+# No candidate is compiled, no prospective build runs, no timing is claimed.
+"${buildopt_script_dir}/check-wrapper-coordinated-native-corrections-plan" >/dev/null
+
+cd -- "${buildopt_repo_root}"
+exec "${buildopt_script_dir}/run" \
+    --toolchain go \
+    -- \
+    go test \
+        -race \
+        -count=1 \
+        ./internal/wcncpdetect

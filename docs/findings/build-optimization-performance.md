@@ -7,12 +7,13 @@
   control-state plane, neutral ten-family selection and controlled-runner
   authority, WCNCP-001 proves the five-kind control plane restart-safe with
   CAS, retention, and namespace isolation, WCNCP-002 proves scoped HTTPS
-  authority with actor-refined writes and audit, and WCNCP-003 proves exact
-  native passthrough with privacy-safe bounded observation. Controlled
+  authority with actor-refined writes and audit, WCNCP-003 proves exact
+  native passthrough with privacy-safe bounded observation, and WCNCP-004
+  proves deterministic detection over synthetic fixtures. Controlled
   overhead stays pending. All cohort slots remain unselected
   and there are zero builds,
   observations, proposals, validations, timing samples, failures or new value
-  claims. WCNCP-004 is the next implementation block.
+  claims. WCNCP-005 is the next implementation block.
 
 - **Explicit material-task build-logic opt-outs do not broaden the patch
   product.** Five exact public source trees are scanned against retained native

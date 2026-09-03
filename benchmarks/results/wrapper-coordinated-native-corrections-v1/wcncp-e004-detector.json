@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "buildopt.wcncp/evidence-e004/v1",
+  "block": "WCNCP-004",
+  "evidence": "WCNCP-E004",
+  "state": "DONE",
+  "description": "Compatible aggregation, Configuration Cache detector v1, catalog adapters, materiality handling, and name-invariance negatives. Synthetic Kotlin/Groovy positives and all typed negatives reconstruct independently.",
+  "implementation": {
+    "seam": "new pure package internal/wcncpdetect; no Gradle execution",
+    "files": [
+      "internal/wcncpdetect/detect.go",
+      "internal/wcncpdetect/adapters.go",
+      "dev/check-wcncp-detector"
+    ],
+    "primaryDetector": "CONFIGURATION_CACHE_READINESS_PATCH_V1",
+    "catalogAdapters": ["NORMALIZATION_AWARE_CACHEABILITY_V2", "DURABLE_TASK_CONTRACT_CURRENT"],
+    "materiality": "500 ms and 2 percent on CONTROLLED_PERFORMANCE only; hosted rows yield MATERIALITY_REQUIRES_CONTROLLED_MEASUREMENT",
+    "nameInvariance": "repository, task, project, and checkout-root labels renamed without decision change"
+  },
+  "validation": {
+    "environmentClass": "STANDARD_HOSTED_CI",
+    "timingClassification": "DIAGNOSTIC_ONLY",
+    "coverage": [
+      "Kotlin and Groovy synthetic positives actionable",
+      "missing data, ambiguous binding, drift, external plugin, generated source, absolute paths, non-reversible edits, owner semantics, suppression, opt-outs, disabled cache, unreachable workflows, and non-material blockers typed",
+      "hosted traces never admit or reject on timing",
+      "grouping deduplicates by canonical identity and never averages across keys",
+      "group digests deterministic for independent reconstruction"
+    ]
+  },
+  "gates": {
+    "syntheticPositivesAndTypedNegativesReconstruct": "PASS",
+    "prospectiveObservations": 0,
+    "candidateBuilds": 0,
+    "timingSamples": 0,
+    "productFailures": 0
+  },
+  "authority": {
+    "syntheticOnly": true,
+    "prospectiveEvidence": false,
+    "productionAuthorized": false
+  }
+}

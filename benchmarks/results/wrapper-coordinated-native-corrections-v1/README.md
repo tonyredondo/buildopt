@@ -21,24 +21,24 @@ terminal authority.
 
 Expected future artifacts are listed in the
 [tracker](../../../docs/plans/wrapper-coordinated-native-corrections-poc.md).
-`WCNCP-001` is `DONE`: typed local control-state persistence with five
-immutable record kinds, generation-CAS visibility, retention, reconstruction,
-and corruption/concurrency negatives. `WCNCP-002` is `DONE`: scoped HTTPS
-authority with actor-refined writes, bulk upload bounds, verified snapshots,
-and audit events. `WCNCP-003` is `DONE`: exact native passthrough, privacy
+`WCNCP-003` is `DONE`: exact native passthrough, privacy
 redaction, bounded outbox/upload, and status surfaces with controlled overhead
-explicitly pending. None authorizes public builds, source mutation, candidate
-execution, or timing. `WCNCP-004` is next.
+explicitly pending. `WCNCP-004` is `DONE`: deterministic compatibility
+grouping, detector v1, catalog adapters, hosted materiality neutrality, and
+name-invariance negatives over synthetic fixtures. None authorizes public
+builds, source mutation, candidate execution, or timing. `WCNCP-005` is next.
 
 `WCNCP-E001` proof is
 [`wcncp-e001-typed-state.json`](./wcncp-e001-typed-state.json),
 `WCNCP-E002` proof is
-[`wcncp-e002-authority.json`](./wcncp-e002-authority.json), and
+[`wcncp-e002-authority.json`](./wcncp-e002-authority.json),
 `WCNCP-E003` proof is
-[`wcncp-e003-observation.json`](./wcncp-e003-observation.json): synthetic-only
+[`wcncp-e003-observation.json`](./wcncp-e003-observation.json), and
+`WCNCP-E004` proof is
+[`wcncp-e004-detector.json`](./wcncp-e004-detector.json): synthetic-only
 restart-safe publication, repository/kind isolation with identical bytes,
 Gradle-plane separation, staged expiry, fail-closed authority, exact
-passthrough, and durable decisions. Prospective evidence remains zero.
+passthrough, deterministic detection, and durable decisions. Prospective evidence remains zero.
 
 Run the frozen planning/schema contract with:
 
@@ -56,4 +56,16 @@ Run the WCNCP-002 authority proof with:
 
 ```bash
 ./dev/check-wcncp-authority
+```
+
+Run the WCNCP-003 observation proof with:
+
+```bash
+./dev/check-wcncp-observation
+```
+
+Run the WCNCP-004 detector proof with:
+
+```bash
+./dev/check-wcncp-detector
 ```
