@@ -64,7 +64,7 @@ jq -e '
     exit 1
 }
 
-for buildopt_block in 009 010 011 012; do
+for buildopt_block in 010 011 012; do
     buildopt_file=$(find "${buildopt_evidence}" -maxdepth 1 -type f -name "wcncp-e${buildopt_block}-*.json" -print)
     if test -z "${buildopt_file}" || ! jq -e '.state == "RETRACTED_PREMATURE_CLOSURE"' "${buildopt_file}" >/dev/null; then
         printf 'WCNCP-E%s zero-row placeholder is not retracted\n' "${buildopt_block}" >&2
@@ -78,5 +78,6 @@ if ! (cd -- "${buildopt_evidence}" && sha256sum -c sha256sums >/dev/null); then
 fi
 
 "${buildopt_script_dir}/check-wcncp-prospective-capture"
+"${buildopt_script_dir}/check-wcncp-opportunity-breadth"
 
-printf 'WCNCP prospective lane OK: WCNCP-008 is complete, WCNCP-009 is open, and no terminal decision is authoritative\n'
+printf 'WCNCP prospective lane OK: WCNCP-009 is incomplete pending controlled materiality and no terminal decision is authoritative\n'

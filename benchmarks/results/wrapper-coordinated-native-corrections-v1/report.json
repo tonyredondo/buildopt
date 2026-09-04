@@ -1,19 +1,19 @@
 {
   "schemaVersion": "buildopt.wcncp/evidence-report/v1",
-  "block": "WCNCP-008",
-  "state": "PROSPECTIVE_CAPTURE_COMPLETE",
+  "block": "WCNCP-009",
+  "state": "INCOMPLETE_EXPERIMENT_INPUT",
   "authoritativeTerminalDecision": false,
-  "terminalDecision": "NONE_WCNCP_009_IS_NEXT",
-  "summary": "The frozen ten-family cohort produced 30 fresh complete wrapper observations. Each native child succeeded, each required-output manifest resolved, and all ten three-row batches were acknowledged through TLS and verified snapshots.",
+  "terminalDecision": "NONE_WCNCP_009_REQUIRES_CONTROLLED_MATERIALITY",
+  "summary": "WCNCP-009 reconstructed 30 observations and 16 selected diagnostics across all ten families. Seven families are conclusive; three source-bound correction families require controlled critical-path materiality, so the breadth decision remains incomplete.",
   "prospectiveBlocks": {
     "WCNCP-008": "DONE: 10/10 families and 30/30 ordinary observations are conclusive",
-    "WCNCP-009": "TODO: reconstruct opportunity breadth from current source and bounded native diagnostics",
-    "WCNCP-010": "WAITING on WCNCP-009",
+    "WCNCP-009": "TODO: resolve controlled critical-path materiality for three incomplete families",
+    "WCNCP-010": "WAITING on complete WCNCP-009 breadth",
     "WCNCP-011": "WAITING on WCNCP-010 and controlled performance capacity",
     "WCNCP-012": "WAITING on value-qualified proposals",
     "WCNCP-013": "WAITING on all prior gates"
   },
-  "whatWasMeasured": "Functional wrapper capture, exact source/workflow/environment/output bindings, native child outcome, durable acknowledgement, and central manifest/head/snapshot convergence.",
-  "whatWasInferred": "Observation completeness only; the result authorizes WCNCP-009 and does not establish opportunity, correctness, performance, economics, or owner acceptance.",
+  "whatWasMeasured": "Functional wrapper capture, exact source and workflow bindings, source-only detector rows, requested-workflow reachability, Configuration Cache problem reports, and recurrent blocker signatures.",
+  "whatWasInferred": "Seven families are conclusive and three corrections remain plausible. LOCAL_FUNCTIONAL durations cannot qualify or reject materiality, so no breadth pass or stop is inferred.",
   "whatWasNotRun": "Public source mutation, candidate builds, performance timing, paired value, payback accounting, and owner review."
 }

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-first-native-capture/v1",
+  "family": "mockk",
+  "revision": "14fbd83eb43582ce6f80ac58b87b0e143e8cb43e",
+  "workflowFile": ".github/workflows/gradle.yml",
+  "diagnosticKind": "CONFIGURATION_CACHE_STRICT_V1",
+  "analysisState": "COMPLETE",
+  "ownerArguments": [
+    "check"
+  ],
+  "diagnosticArguments": [
+    "--configuration-cache",
+    "--configuration-cache-problems=fail"
+  ],
+  "nativeDiagnostic": {
+    "exitCode": 0,
+    "elapsedMilliseconds": 62043,
+    "gradleStarts": 1,
+    "timingSample": false
+  },
+  "resourceEnvelope": {
+    "freeBytesBefore": 16426901504,
+    "minimumFreeGiB": 10,
+    "maximumWorkers": 12,
+    "timeoutMinutes": 20
+  },
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "performanceGateAuthority": false,
+  "configurationCacheReportCount": 1,
+  "decision": "CONCLUSIVE_NATIVE_DIAGNOSTIC",
+  "contractSha256": "148b58c1fb36f66e721385747eb33d09d91068e04f5fbb234d4525679423477f",
+  "subjectsSha256": "cea4a3c63e9cd1be6f5a825ff425fcf2338a3f5ce77a28afbc32ff6f332d83de",
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "productFailures": 0
+}

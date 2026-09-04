@@ -1,0 +1,3104 @@
+{
+  "schemaVersion": "buildopt.diagnostics/gradle-task-critical-path/v1",
+  "arm": "control",
+  "operationTraceSha256": "cb57e9dcebba73414a3b4c8dac07bebd378f2091008a97ca1fd8ed75edfb3405",
+  "taskGraphSha256": "4e0e8d532b428fa6a1e73fd7f9555a9528f0c4b0367506137db8d38c6f43207a",
+  "builds": [
+    {
+      "buildPath": ":",
+      "taskCount": 195,
+      "taskExecutionSpanMs": 10341,
+      "cumulativeDurationMs": 41739,
+      "criticalPathDurationMs": 8934,
+      "criticalPathTasks": [
+        ":lib:compileJava",
+        ":lib-extra:compileJava",
+        ":lib-extra:classes",
+        ":lib-extra:compileGroovyJava",
+        ":lib-extra:groovyClasses",
+        ":lib-extra:spotbugsGroovy",
+        ":lib-extra:check",
+        ":lib-extra:build"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "identity": ":assemble",
+      "buildPath": ":",
+      "path": ":assemble",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520963069,
+      "endTimeMs": 1788520963086,
+      "durationMs": 17,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":build",
+      "buildPath": ":",
+      "path": ":build",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520963282,
+      "endTimeMs": 1788520963282,
+      "durationMs": 0,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":assemble",
+        ":check"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":changelogCheck",
+      "buildPath": ":",
+      "path": ":changelogCheck",
+      "taskClass": "com.diffplug.spotless.changelog.gradle.ChangelogPlugin$CheckTask",
+      "startTimeMs": 1788520963069,
+      "endTimeMs": 1788520963279,
+      "durationMs": 210,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":check",
+      "buildPath": ":",
+      "path": ":check",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520963280,
+      "endTimeMs": 1788520963281,
+      "durationMs": 1,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":changelogCheck"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:assemble",
+      "buildPath": ":",
+      "path": ":lib-extra:assemble",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520970255,
+      "endTimeMs": 1788520970256,
+      "durationMs": 1,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":lib-extra:jar",
+        ":lib-extra:javadocJar",
+        ":lib-extra:sourcesJar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:build",
+      "buildPath": ":",
+      "path": ":lib-extra:build",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520973410,
+      "endTimeMs": 1788520973410,
+      "durationMs": 0,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":lib-extra:assemble",
+        ":lib-extra:check"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":lib-extra:cdtClasses",
+      "buildPath": ":",
+      "path": ":lib-extra:cdtClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966966,
+      "endTimeMs": 1788520966966,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib-extra:compileCdtJava",
+        ":lib-extra:processCdtResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:check",
+      "buildPath": ":",
+      "path": ":lib-extra:check",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520973409,
+      "endTimeMs": 1788520973409,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib-extra:javadoc",
+        ":lib-extra:spotbugsCdt",
+        ":lib-extra:spotbugsGroovy",
+        ":lib-extra:spotbugsJdt",
+        ":lib-extra:spotbugsMain",
+        ":lib-extra:spotbugsTest",
+        ":lib-extra:test"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":lib-extra:classes",
+      "buildPath": ":",
+      "path": ":lib-extra:classes",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966055,
+      "endTimeMs": 1788520966056,
+      "durationMs": 1,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":lib-extra:compileJava",
+        ":lib-extra:processResources"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":lib-extra:compileCdtJava",
+      "buildPath": ":",
+      "path": ":lib-extra:compileCdtJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520966064,
+      "endTimeMs": 1788520966965,
+      "durationMs": 901,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:classes",
+        ":lib-extra:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:compileGroovyJava",
+      "buildPath": ":",
+      "path": ":lib-extra:compileGroovyJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520966063,
+      "endTimeMs": 1788520970089,
+      "durationMs": 4026,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:classes",
+        ":lib-extra:compileJava"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":lib-extra:compileJava",
+      "buildPath": ":",
+      "path": ":lib-extra:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520965795,
+      "endTimeMs": 1788520966052,
+      "durationMs": 257,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compileJava"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":lib-extra:compileJdtJava",
+      "buildPath": ":",
+      "path": ":lib-extra:compileJdtJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520966065,
+      "endTimeMs": 1788520966367,
+      "durationMs": 302,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:classes",
+        ":lib-extra:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:compileTestJava",
+      "buildPath": ":",
+      "path": ":lib-extra:compileTestJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520966329,
+      "endTimeMs": 1788520966385,
+      "durationMs": 56,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:classes",
+        ":lib-extra:compileJava",
+        ":lib:compileJava",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:groovyClasses",
+      "buildPath": ":",
+      "path": ":lib-extra:groovyClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520970092,
+      "endTimeMs": 1788520970092,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib-extra:compileGroovyJava",
+        ":lib-extra:processGroovyResources"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":lib-extra:jar",
+      "buildPath": ":",
+      "path": ":lib-extra:jar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520970093,
+      "endTimeMs": 1788520970184,
+      "durationMs": 91,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":lib-extra:classes",
+        ":lib-extra:compileCdtJava",
+        ":lib-extra:compileGroovyJava",
+        ":lib-extra:compileJava",
+        ":lib-extra:compileJdtJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:javadoc",
+      "buildPath": ":",
+      "path": ":lib-extra:javadoc",
+      "taskClass": "org.gradle.api.tasks.javadoc.Javadoc",
+      "startTimeMs": 1788520966076,
+      "endTimeMs": 1788520966284,
+      "durationMs": 208,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:classes",
+        ":lib-extra:compileJava",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:javadocJar",
+      "buildPath": ":",
+      "path": ":lib-extra:javadocJar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520966287,
+      "endTimeMs": 1788520966375,
+      "durationMs": 88,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":lib-extra:javadoc"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:jdtClasses",
+      "buildPath": ":",
+      "path": ":lib-extra:jdtClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966368,
+      "endTimeMs": 1788520966368,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib-extra:compileJdtJava",
+        ":lib-extra:processJdtResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:processCdtResources",
+      "buildPath": ":",
+      "path": ":lib-extra:processCdtResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963234,
+      "endTimeMs": 1788520963242,
+      "durationMs": 8,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:processGroovyResources",
+      "buildPath": ":",
+      "path": ":lib-extra:processGroovyResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963235,
+      "endTimeMs": 1788520963240,
+      "durationMs": 5,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:processJdtResources",
+      "buildPath": ":",
+      "path": ":lib-extra:processJdtResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963234,
+      "endTimeMs": 1788520963240,
+      "durationMs": 6,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:processResources",
+      "buildPath": ":",
+      "path": ":lib-extra:processResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963237,
+      "endTimeMs": 1788520963637,
+      "durationMs": 400,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:processTestResources",
+      "buildPath": ":",
+      "path": ":lib-extra:processTestResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963242,
+      "endTimeMs": 1788520963385,
+      "durationMs": 143,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:sourcesJar",
+      "buildPath": ":",
+      "path": ":lib-extra:sourcesJar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520970187,
+      "endTimeMs": 1788520970254,
+      "durationMs": 67,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":lib-extra:jar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:spotbugsCdt",
+      "buildPath": ":",
+      "path": ":lib-extra:spotbugsCdt",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520966967,
+      "endTimeMs": 1788520967162,
+      "durationMs": 195,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:cdtClasses",
+        ":lib-extra:classes",
+        ":lib-extra:compileCdtJava",
+        ":lib-extra:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:spotbugsGroovy",
+      "buildPath": ":",
+      "path": ":lib-extra:spotbugsGroovy",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520970097,
+      "endTimeMs": 1788520973409,
+      "durationMs": 3312,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:classes",
+        ":lib-extra:compileGroovyJava",
+        ":lib-extra:compileJava",
+        ":lib-extra:groovyClasses"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":lib-extra:spotbugsJdt",
+      "buildPath": ":",
+      "path": ":lib-extra:spotbugsJdt",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520966369,
+      "endTimeMs": 1788520966381,
+      "durationMs": 12,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:classes",
+        ":lib-extra:compileJava",
+        ":lib-extra:compileJdtJava",
+        ":lib-extra:jdtClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:spotbugsMain",
+      "buildPath": ":",
+      "path": ":lib-extra:spotbugsMain",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520966293,
+      "endTimeMs": 1788520966345,
+      "durationMs": 52,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:classes",
+        ":lib-extra:compileJava",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:spotbugsTest",
+      "buildPath": ":",
+      "path": ":lib-extra:spotbugsTest",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520966387,
+      "endTimeMs": 1788520966387,
+      "durationMs": 0,
+      "outcome": "SKIPPED",
+      "dependencies": [
+        ":lib-extra:classes",
+        ":lib-extra:compileJava",
+        ":lib-extra:compileTestJava",
+        ":lib-extra:testClasses",
+        ":lib:compileJava",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:test",
+      "buildPath": ":",
+      "path": ":lib-extra:test",
+      "taskClass": "org.gradle.api.tasks.testing.Test",
+      "startTimeMs": 1788520970188,
+      "endTimeMs": 1788520970310,
+      "durationMs": 122,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:classes",
+        ":lib-extra:compileJava",
+        ":lib-extra:compileTestJava",
+        ":lib-extra:jar",
+        ":lib-extra:testClasses",
+        ":lib:jar",
+        ":testlib:jar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib-extra:testClasses",
+      "buildPath": ":",
+      "path": ":lib-extra:testClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966385,
+      "endTimeMs": 1788520966386,
+      "durationMs": 1,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":lib-extra:compileTestJava",
+        ":lib-extra:processTestResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:assemble",
+      "buildPath": ":",
+      "path": ":lib:assemble",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966556,
+      "endTimeMs": 1788520966557,
+      "durationMs": 1,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":lib:jar",
+        ":lib:javadocJar",
+        ":lib:sourcesJar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:build",
+      "buildPath": ":",
+      "path": ":lib:build",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966658,
+      "endTimeMs": 1788520966658,
+      "durationMs": 0,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":lib:assemble",
+        ":lib:check"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:check",
+      "buildPath": ":",
+      "path": ":lib:check",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966657,
+      "endTimeMs": 1788520966657,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:javadoc",
+        ":lib:spotbugsCleanthat",
+        ":lib:spotbugsCompatCleanthat2Dot1",
+        ":lib:spotbugsCompatCleanthatApi",
+        ":lib:spotbugsCompatDiktat1Dot2Dot5",
+        ":lib:spotbugsCompatDiktat2Dot0Dot0",
+        ":lib:spotbugsCompatDiktatApi",
+        ":lib:spotbugsCompatKtLint1Dot0Dot0",
+        ":lib:spotbugsCompatKtLintApi",
+        ":lib:spotbugsDiktat",
+        ":lib:spotbugsFlexmark",
+        ":lib:spotbugsGherkin",
+        ":lib:spotbugsGoogleJavaFormat",
+        ":lib:spotbugsGson",
+        ":lib:spotbugsJackson",
+        ":lib:spotbugsJavaParser",
+        ":lib:spotbugsKtfmt",
+        ":lib:spotbugsKtlint",
+        ":lib:spotbugsMain",
+        ":lib:spotbugsPalantirJavaFormat",
+        ":lib:spotbugsPrinceOfSpace",
+        ":lib:spotbugsScalafmt",
+        ":lib:spotbugsSortPom",
+        ":lib:spotbugsTableTestFormatter",
+        ":lib:spotbugsTest",
+        ":lib:spotbugsTestCompatCleanthat2Dot1",
+        ":lib:spotbugsTestCompatDiktat1Dot2Dot5",
+        ":lib:spotbugsTestCompatDiktat2Dot0Dot0",
+        ":lib:spotbugsTestCompatKtLint1Dot0Dot0",
+        ":lib:spotbugsZjsonPatch",
+        ":lib:test",
+        ":lib:testCompatibility",
+        ":lib:testCompatibilityAdapters"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:classes",
+      "buildPath": ":",
+      "path": ":lib:classes",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520964409,
+      "endTimeMs": 1788520964410,
+      "durationMs": 1,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":lib:compileJava",
+        ":lib:processResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:cleanthatClasses",
+      "buildPath": ":",
+      "path": ":lib:cleanthatClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965571,
+      "endTimeMs": 1788520965571,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileCleanthatJava",
+        ":lib:processCleanthatResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compatCleanthat2Dot1Classes",
+      "buildPath": ":",
+      "path": ":lib:compatCleanthat2Dot1Classes",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520963204,
+      "endTimeMs": 1788520963204,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileCompatCleanthat2Dot1Java",
+        ":lib:processCompatCleanthat2Dot1Resources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compatCleanthatApiClasses",
+      "buildPath": ":",
+      "path": ":lib:compatCleanthatApiClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520963181,
+      "endTimeMs": 1788520963182,
+      "durationMs": 1,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileCompatCleanthatApiJava",
+        ":lib:processCompatCleanthatApiResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compatDiktat1Dot2Dot5Classes",
+      "buildPath": ":",
+      "path": ":lib:compatDiktat1Dot2Dot5Classes",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520964061,
+      "endTimeMs": 1788520964061,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileCompatDiktat1Dot2Dot5Java",
+        ":lib:processCompatDiktat1Dot2Dot5Resources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compatDiktat2Dot0Dot0Classes",
+      "buildPath": ":",
+      "path": ":lib:compatDiktat2Dot0Dot0Classes",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520963589,
+      "endTimeMs": 1788520963590,
+      "durationMs": 1,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileCompatDiktat2Dot0Dot0Java",
+        ":lib:processCompatDiktat2Dot0Dot0Resources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compatDiktatApiClasses",
+      "buildPath": ":",
+      "path": ":lib:compatDiktatApiClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520963441,
+      "endTimeMs": 1788520963441,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileCompatDiktatApiJava",
+        ":lib:processCompatDiktatApiResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compatKtLint1Dot0Dot0Classes",
+      "buildPath": ":",
+      "path": ":lib:compatKtLint1Dot0Dot0Classes",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520963576,
+      "endTimeMs": 1788520963577,
+      "durationMs": 1,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileCompatKtLint1Dot0Dot0Java",
+        ":lib:processCompatKtLint1Dot0Dot0Resources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compatKtLintApiClasses",
+      "buildPath": ":",
+      "path": ":lib:compatKtLintApiClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520963440,
+      "endTimeMs": 1788520963441,
+      "durationMs": 1,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileCompatKtLintApiJava",
+        ":lib:processCompatKtLintApiResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileCleanthatJava",
+      "buildPath": ":",
+      "path": ":lib:compileCleanthatJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520964422,
+      "endTimeMs": 1788520965565,
+      "durationMs": 1143,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compatCleanthat2Dot1Classes",
+        ":lib:compatCleanthatApiClasses",
+        ":lib:compileCompatCleanthat2Dot1Java",
+        ":lib:compileCompatCleanthatApiJava",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileCompatCleanthat2Dot1Java",
+      "buildPath": ":",
+      "path": ":lib:compileCompatCleanthat2Dot1Java",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520963187,
+      "endTimeMs": 1788520963199,
+      "durationMs": 12,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":lib:compatCleanthatApiClasses",
+        ":lib:compileCompatCleanthatApiJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileCompatCleanthatApiJava",
+      "buildPath": ":",
+      "path": ":lib:compileCompatCleanthatApiJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520963069,
+      "endTimeMs": 1788520963174,
+      "durationMs": 105,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileCompatDiktat1Dot2Dot5Java",
+      "buildPath": ":",
+      "path": ":lib:compileCompatDiktat1Dot2Dot5Java",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520963446,
+      "endTimeMs": 1788520964059,
+      "durationMs": 613,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compatDiktatApiClasses",
+        ":lib:compileCompatDiktatApiJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileCompatDiktat2Dot0Dot0Java",
+      "buildPath": ":",
+      "path": ":lib:compileCompatDiktat2Dot0Dot0Java",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520963445,
+      "endTimeMs": 1788520963587,
+      "durationMs": 142,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compatDiktatApiClasses",
+        ":lib:compileCompatDiktatApiJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileCompatDiktatApiJava",
+      "buildPath": ":",
+      "path": ":lib:compileCompatDiktatApiJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520963069,
+      "endTimeMs": 1788520963437,
+      "durationMs": 368,
+      "outcome": "FROM-CACHE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileCompatKtLint1Dot0Dot0Java",
+      "buildPath": ":",
+      "path": ":lib:compileCompatKtLint1Dot0Dot0Java",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520963444,
+      "endTimeMs": 1788520963575,
+      "durationMs": 131,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compatKtLintApiClasses",
+        ":lib:compileCompatKtLintApiJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileCompatKtLintApiJava",
+      "buildPath": ":",
+      "path": ":lib:compileCompatKtLintApiJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520963069,
+      "endTimeMs": 1788520963437,
+      "durationMs": 368,
+      "outcome": "FROM-CACHE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileDiktatJava",
+      "buildPath": ":",
+      "path": ":lib:compileDiktatJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520964420,
+      "endTimeMs": 1788520965559,
+      "durationMs": 1139,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compatDiktat1Dot2Dot5Classes",
+        ":lib:compatDiktat2Dot0Dot0Classes",
+        ":lib:compatDiktatApiClasses",
+        ":lib:compileCompatDiktat1Dot2Dot5Java",
+        ":lib:compileCompatDiktat2Dot0Dot0Java",
+        ":lib:compileCompatDiktatApiJava",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileFlexmarkJava",
+      "buildPath": ":",
+      "path": ":lib:compileFlexmarkJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520964416,
+      "endTimeMs": 1788520965509,
+      "durationMs": 1093,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileGherkinJava",
+      "buildPath": ":",
+      "path": ":lib:compileGherkinJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520964421,
+      "endTimeMs": 1788520965515,
+      "durationMs": 1094,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileGoogleJavaFormatJava",
+      "buildPath": ":",
+      "path": ":lib:compileGoogleJavaFormatJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520964428,
+      "endTimeMs": 1788520965526,
+      "durationMs": 1098,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileGsonJava",
+      "buildPath": ":",
+      "path": ":lib:compileGsonJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520964420,
+      "endTimeMs": 1788520965553,
+      "durationMs": 1133,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileJacksonJava",
+      "buildPath": ":",
+      "path": ":lib:compileJacksonJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520964419,
+      "endTimeMs": 1788520965509,
+      "durationMs": 1090,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileJava",
+      "buildPath": ":",
+      "path": ":lib:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520963069,
+      "endTimeMs": 1788520964407,
+      "durationMs": 1338,
+      "outcome": "FROM-CACHE",
+      "dependencies": [],
+      "criticalPath": true
+    },
+    {
+      "identity": ":lib:compileJavaParserJava",
+      "buildPath": ":",
+      "path": ":lib:compileJavaParserJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520964423,
+      "endTimeMs": 1788520965562,
+      "durationMs": 1139,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileKtfmtJava",
+      "buildPath": ":",
+      "path": ":lib:compileKtfmtJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520964426,
+      "endTimeMs": 1788520965564,
+      "durationMs": 1138,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileKtlintJava",
+      "buildPath": ":",
+      "path": ":lib:compileKtlintJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520964427,
+      "endTimeMs": 1788520965583,
+      "durationMs": 1156,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compatKtLint1Dot0Dot0Classes",
+        ":lib:compatKtLintApiClasses",
+        ":lib:compileCompatKtLint1Dot0Dot0Java",
+        ":lib:compileCompatKtLintApiJava",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compilePalantirJavaFormatJava",
+      "buildPath": ":",
+      "path": ":lib:compilePalantirJavaFormatJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520964426,
+      "endTimeMs": 1788520965531,
+      "durationMs": 1105,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compilePrinceOfSpaceJava",
+      "buildPath": ":",
+      "path": ":lib:compilePrinceOfSpaceJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520965489,
+      "endTimeMs": 1788520965610,
+      "durationMs": 121,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileScalafmtJava",
+      "buildPath": ":",
+      "path": ":lib:compileScalafmtJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520965515,
+      "endTimeMs": 1788520965762,
+      "durationMs": 247,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileSortPomJava",
+      "buildPath": ":",
+      "path": ":lib:compileSortPomJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520965517,
+      "endTimeMs": 1788520965627,
+      "durationMs": 110,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileTableTestFormatterJava",
+      "buildPath": ":",
+      "path": ":lib:compileTableTestFormatterJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520965521,
+      "endTimeMs": 1788520965671,
+      "durationMs": 150,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileTestCompatCleanthat2Dot1Java",
+      "buildPath": ":",
+      "path": ":lib:compileTestCompatCleanthat2Dot1Java",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520966016,
+      "endTimeMs": 1788520966282,
+      "durationMs": 266,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compatCleanthat2Dot1Classes",
+        ":lib:compatCleanthatApiClasses",
+        ":lib:compileCompatCleanthat2Dot1Java",
+        ":lib:compileCompatCleanthatApiJava",
+        ":lib:compileJava",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileTestCompatDiktat1Dot2Dot5Java",
+      "buildPath": ":",
+      "path": ":lib:compileTestCompatDiktat1Dot2Dot5Java",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520966026,
+      "endTimeMs": 1788520966043,
+      "durationMs": 17,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":lib:compatDiktat1Dot2Dot5Classes",
+        ":lib:compatDiktatApiClasses",
+        ":lib:compileCompatDiktat1Dot2Dot5Java",
+        ":lib:compileCompatDiktatApiJava",
+        ":lib:compileJava",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileTestCompatDiktat2Dot0Dot0Java",
+      "buildPath": ":",
+      "path": ":lib:compileTestCompatDiktat2Dot0Dot0Java",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520966014,
+      "endTimeMs": 1788520966028,
+      "durationMs": 14,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":lib:compatDiktat2Dot0Dot0Classes",
+        ":lib:compatDiktatApiClasses",
+        ":lib:compileCompatDiktat2Dot0Dot0Java",
+        ":lib:compileCompatDiktatApiJava",
+        ":lib:compileJava",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileTestCompatKtLint1Dot0Dot0Java",
+      "buildPath": ":",
+      "path": ":lib:compileTestCompatKtLint1Dot0Dot0Java",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520966013,
+      "endTimeMs": 1788520966281,
+      "durationMs": 268,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compatKtLint1Dot0Dot0Classes",
+        ":lib:compatKtLintApiClasses",
+        ":lib:compileCompatKtLint1Dot0Dot0Java",
+        ":lib:compileCompatKtLintApiJava",
+        ":lib:compileJava",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileTestJava",
+      "buildPath": ":",
+      "path": ":lib:compileTestJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520966024,
+      "endTimeMs": 1788520966311,
+      "durationMs": 287,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:compileZjsonPatchJava",
+      "buildPath": ":",
+      "path": ":lib:compileZjsonPatchJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520965530,
+      "endTimeMs": 1788520965664,
+      "durationMs": 134,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:diktatClasses",
+      "buildPath": ":",
+      "path": ":lib:diktatClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965561,
+      "endTimeMs": 1788520965561,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileDiktatJava",
+        ":lib:processDiktatResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:flexmarkClasses",
+      "buildPath": ":",
+      "path": ":lib:flexmarkClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965555,
+      "endTimeMs": 1788520965555,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileFlexmarkJava",
+        ":lib:processFlexmarkResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:gherkinClasses",
+      "buildPath": ":",
+      "path": ":lib:gherkinClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965567,
+      "endTimeMs": 1788520965568,
+      "durationMs": 1,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileGherkinJava",
+        ":lib:processGherkinResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:googleJavaFormatClasses",
+      "buildPath": ":",
+      "path": ":lib:googleJavaFormatClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965565,
+      "endTimeMs": 1788520965566,
+      "durationMs": 1,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileGoogleJavaFormatJava",
+        ":lib:processGoogleJavaFormatResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:gsonClasses",
+      "buildPath": ":",
+      "path": ":lib:gsonClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965584,
+      "endTimeMs": 1788520965585,
+      "durationMs": 1,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileGsonJava",
+        ":lib:processGsonResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:jacksonClasses",
+      "buildPath": ":",
+      "path": ":lib:jacksonClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965611,
+      "endTimeMs": 1788520965615,
+      "durationMs": 4,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileJacksonJava",
+        ":lib:processJacksonResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:jar",
+      "buildPath": ":",
+      "path": ":lib:jar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520965763,
+      "endTimeMs": 1788520966442,
+      "durationMs": 679,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compatCleanthat2Dot1Classes",
+        ":lib:compatCleanthatApiClasses",
+        ":lib:compatDiktat1Dot2Dot5Classes",
+        ":lib:compatDiktat2Dot0Dot0Classes",
+        ":lib:compatDiktatApiClasses",
+        ":lib:compatKtLint1Dot0Dot0Classes",
+        ":lib:compatKtLintApiClasses",
+        ":lib:compileCleanthatJava",
+        ":lib:compileCompatCleanthat2Dot1Java",
+        ":lib:compileCompatCleanthatApiJava",
+        ":lib:compileCompatDiktat1Dot2Dot5Java",
+        ":lib:compileCompatDiktat2Dot0Dot0Java",
+        ":lib:compileCompatDiktatApiJava",
+        ":lib:compileCompatKtLint1Dot0Dot0Java",
+        ":lib:compileCompatKtLintApiJava",
+        ":lib:compileDiktatJava",
+        ":lib:compileFlexmarkJava",
+        ":lib:compileGherkinJava",
+        ":lib:compileGoogleJavaFormatJava",
+        ":lib:compileGsonJava",
+        ":lib:compileJacksonJava",
+        ":lib:compileJava",
+        ":lib:compileJavaParserJava",
+        ":lib:compileKtfmtJava",
+        ":lib:compileKtlintJava",
+        ":lib:compilePalantirJavaFormatJava",
+        ":lib:compilePrinceOfSpaceJava",
+        ":lib:compileScalafmtJava",
+        ":lib:compileSortPomJava",
+        ":lib:compileTableTestFormatterJava",
+        ":lib:compileZjsonPatchJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:javaParserClasses",
+      "buildPath": ":",
+      "path": ":lib:javaParserClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965632,
+      "endTimeMs": 1788520965632,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileJavaParserJava",
+        ":lib:processJavaParserResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:javadoc",
+      "buildPath": ":",
+      "path": ":lib:javadoc",
+      "taskClass": "org.gradle.api.tasks.javadoc.Javadoc",
+      "startTimeMs": 1788520965552,
+      "endTimeMs": 1788520966128,
+      "durationMs": 576,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:javadocJar",
+      "buildPath": ":",
+      "path": ":lib:javadocJar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520966136,
+      "endTimeMs": 1788520966456,
+      "durationMs": 320,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":lib:javadoc"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:ktfmtClasses",
+      "buildPath": ":",
+      "path": ":lib:ktfmtClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965665,
+      "endTimeMs": 1788520965669,
+      "durationMs": 4,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileKtfmtJava",
+        ":lib:processKtfmtResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:ktlintClasses",
+      "buildPath": ":",
+      "path": ":lib:ktlintClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965672,
+      "endTimeMs": 1788520965672,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileKtlintJava",
+        ":lib:processKtlintResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:palantirJavaFormatClasses",
+      "buildPath": ":",
+      "path": ":lib:palantirJavaFormatClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965721,
+      "endTimeMs": 1788520965721,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compilePalantirJavaFormatJava",
+        ":lib:processPalantirJavaFormatResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:princeOfSpaceClasses",
+      "buildPath": ":",
+      "path": ":lib:princeOfSpaceClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965729,
+      "endTimeMs": 1788520965729,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compilePrinceOfSpaceJava",
+        ":lib:processPrinceOfSpaceResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processCleanthatResources",
+      "buildPath": ":",
+      "path": ":lib:processCleanthatResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963175,
+      "endTimeMs": 1788520963199,
+      "durationMs": 24,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processCompatCleanthat2Dot1Resources",
+      "buildPath": ":",
+      "path": ":lib:processCompatCleanthat2Dot1Resources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963069,
+      "endTimeMs": 1788520963173,
+      "durationMs": 104,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processCompatCleanthatApiResources",
+      "buildPath": ":",
+      "path": ":lib:processCompatCleanthatApiResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963069,
+      "endTimeMs": 1788520963174,
+      "durationMs": 105,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processCompatDiktat1Dot2Dot5Resources",
+      "buildPath": ":",
+      "path": ":lib:processCompatDiktat1Dot2Dot5Resources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963069,
+      "endTimeMs": 1788520963174,
+      "durationMs": 105,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processCompatDiktat2Dot0Dot0Resources",
+      "buildPath": ":",
+      "path": ":lib:processCompatDiktat2Dot0Dot0Resources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963069,
+      "endTimeMs": 1788520963173,
+      "durationMs": 104,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processCompatDiktatApiResources",
+      "buildPath": ":",
+      "path": ":lib:processCompatDiktatApiResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963069,
+      "endTimeMs": 1788520963175,
+      "durationMs": 106,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processCompatKtLint1Dot0Dot0Resources",
+      "buildPath": ":",
+      "path": ":lib:processCompatKtLint1Dot0Dot0Resources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963180,
+      "endTimeMs": 1788520963195,
+      "durationMs": 15,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processCompatKtLintApiResources",
+      "buildPath": ":",
+      "path": ":lib:processCompatKtLintApiResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963089,
+      "endTimeMs": 1788520963173,
+      "durationMs": 84,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processDiktatResources",
+      "buildPath": ":",
+      "path": ":lib:processDiktatResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963176,
+      "endTimeMs": 1788520963193,
+      "durationMs": 17,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processFlexmarkResources",
+      "buildPath": ":",
+      "path": ":lib:processFlexmarkResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963177,
+      "endTimeMs": 1788520963197,
+      "durationMs": 20,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processGherkinResources",
+      "buildPath": ":",
+      "path": ":lib:processGherkinResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963180,
+      "endTimeMs": 1788520963198,
+      "durationMs": 18,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processGoogleJavaFormatResources",
+      "buildPath": ":",
+      "path": ":lib:processGoogleJavaFormatResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963181,
+      "endTimeMs": 1788520963188,
+      "durationMs": 7,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processGsonResources",
+      "buildPath": ":",
+      "path": ":lib:processGsonResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963198,
+      "endTimeMs": 1788520963205,
+      "durationMs": 7,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processJacksonResources",
+      "buildPath": ":",
+      "path": ":lib:processJacksonResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963203,
+      "endTimeMs": 1788520963210,
+      "durationMs": 7,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processJavaParserResources",
+      "buildPath": ":",
+      "path": ":lib:processJavaParserResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963200,
+      "endTimeMs": 1788520963205,
+      "durationMs": 5,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processKtfmtResources",
+      "buildPath": ":",
+      "path": ":lib:processKtfmtResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963201,
+      "endTimeMs": 1788520963205,
+      "durationMs": 4,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processKtlintResources",
+      "buildPath": ":",
+      "path": ":lib:processKtlintResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963201,
+      "endTimeMs": 1788520963207,
+      "durationMs": 6,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processPalantirJavaFormatResources",
+      "buildPath": ":",
+      "path": ":lib:processPalantirJavaFormatResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963207,
+      "endTimeMs": 1788520963214,
+      "durationMs": 7,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processPrinceOfSpaceResources",
+      "buildPath": ":",
+      "path": ":lib:processPrinceOfSpaceResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963210,
+      "endTimeMs": 1788520963216,
+      "durationMs": 6,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processResources",
+      "buildPath": ":",
+      "path": ":lib:processResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963069,
+      "endTimeMs": 1788520963389,
+      "durationMs": 320,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processScalafmtResources",
+      "buildPath": ":",
+      "path": ":lib:processScalafmtResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963218,
+      "endTimeMs": 1788520963228,
+      "durationMs": 10,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processSortPomResources",
+      "buildPath": ":",
+      "path": ":lib:processSortPomResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963213,
+      "endTimeMs": 1788520963223,
+      "durationMs": 10,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processTableTestFormatterResources",
+      "buildPath": ":",
+      "path": ":lib:processTableTestFormatterResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963217,
+      "endTimeMs": 1788520963224,
+      "durationMs": 7,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processTestCompatCleanthat2Dot1Resources",
+      "buildPath": ":",
+      "path": ":lib:processTestCompatCleanthat2Dot1Resources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963218,
+      "endTimeMs": 1788520963228,
+      "durationMs": 10,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processTestCompatDiktat1Dot2Dot5Resources",
+      "buildPath": ":",
+      "path": ":lib:processTestCompatDiktat1Dot2Dot5Resources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963219,
+      "endTimeMs": 1788520963228,
+      "durationMs": 9,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processTestCompatDiktat2Dot0Dot0Resources",
+      "buildPath": ":",
+      "path": ":lib:processTestCompatDiktat2Dot0Dot0Resources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963221,
+      "endTimeMs": 1788520963542,
+      "durationMs": 321,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processTestCompatKtLint1Dot0Dot0Resources",
+      "buildPath": ":",
+      "path": ":lib:processTestCompatKtLint1Dot0Dot0Resources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963224,
+      "endTimeMs": 1788520963388,
+      "durationMs": 164,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processTestResources",
+      "buildPath": ":",
+      "path": ":lib:processTestResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963216,
+      "endTimeMs": 1788520963221,
+      "durationMs": 5,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:processZjsonPatchResources",
+      "buildPath": ":",
+      "path": ":lib:processZjsonPatchResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963225,
+      "endTimeMs": 1788520963231,
+      "durationMs": 6,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:scalafmtClasses",
+      "buildPath": ":",
+      "path": ":lib:scalafmtClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965767,
+      "endTimeMs": 1788520965768,
+      "durationMs": 1,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileScalafmtJava",
+        ":lib:processScalafmtResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:sortPomClasses",
+      "buildPath": ":",
+      "path": ":lib:sortPomClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965732,
+      "endTimeMs": 1788520965732,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileSortPomJava",
+        ":lib:processSortPomResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:sourcesJar",
+      "buildPath": ":",
+      "path": ":lib:sourcesJar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520966443,
+      "endTimeMs": 1788520966556,
+      "durationMs": 113,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":lib:jar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsCleanthat",
+      "buildPath": ":",
+      "path": ":lib:spotbugsCleanthat",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965574,
+      "endTimeMs": 1788520965730,
+      "durationMs": 156,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:cleanthatClasses",
+        ":lib:compatCleanthat2Dot1Classes",
+        ":lib:compatCleanthatApiClasses",
+        ":lib:compileCleanthatJava",
+        ":lib:compileCompatCleanthat2Dot1Java",
+        ":lib:compileCompatCleanthatApiJava",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsCompatCleanthat2Dot1",
+      "buildPath": ":",
+      "path": ":lib:spotbugsCompatCleanthat2Dot1",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520963208,
+      "endTimeMs": 1788520963216,
+      "durationMs": 8,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":lib:compatCleanthat2Dot1Classes",
+        ":lib:compatCleanthatApiClasses",
+        ":lib:compileCompatCleanthat2Dot1Java",
+        ":lib:compileCompatCleanthatApiJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsCompatCleanthatApi",
+      "buildPath": ":",
+      "path": ":lib:spotbugsCompatCleanthatApi",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520963194,
+      "endTimeMs": 1788520963210,
+      "durationMs": 16,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":lib:compatCleanthatApiClasses",
+        ":lib:compileCompatCleanthatApiJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsCompatDiktat1Dot2Dot5",
+      "buildPath": ":",
+      "path": ":lib:spotbugsCompatDiktat1Dot2Dot5",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520964065,
+      "endTimeMs": 1788520964114,
+      "durationMs": 49,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compatDiktat1Dot2Dot5Classes",
+        ":lib:compatDiktatApiClasses",
+        ":lib:compileCompatDiktat1Dot2Dot5Java",
+        ":lib:compileCompatDiktatApiJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsCompatDiktat2Dot0Dot0",
+      "buildPath": ":",
+      "path": ":lib:spotbugsCompatDiktat2Dot0Dot0",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520963593,
+      "endTimeMs": 1788520964017,
+      "durationMs": 424,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compatDiktat2Dot0Dot0Classes",
+        ":lib:compatDiktatApiClasses",
+        ":lib:compileCompatDiktat2Dot0Dot0Java",
+        ":lib:compileCompatDiktatApiJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsCompatDiktatApi",
+      "buildPath": ":",
+      "path": ":lib:spotbugsCompatDiktatApi",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520963448,
+      "endTimeMs": 1788520964016,
+      "durationMs": 568,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compatDiktatApiClasses",
+        ":lib:compileCompatDiktatApiJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsCompatKtLint1Dot0Dot0",
+      "buildPath": ":",
+      "path": ":lib:spotbugsCompatKtLint1Dot0Dot0",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520963580,
+      "endTimeMs": 1788520964012,
+      "durationMs": 432,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compatKtLint1Dot0Dot0Classes",
+        ":lib:compatKtLintApiClasses",
+        ":lib:compileCompatKtLint1Dot0Dot0Java",
+        ":lib:compileCompatKtLintApiJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsCompatKtLintApi",
+      "buildPath": ":",
+      "path": ":lib:spotbugsCompatKtLintApi",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520963448,
+      "endTimeMs": 1788520964024,
+      "durationMs": 576,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compatKtLintApiClasses",
+        ":lib:compileCompatKtLintApiJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsDiktat",
+      "buildPath": ":",
+      "path": ":lib:spotbugsDiktat",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965564,
+      "endTimeMs": 1788520965720,
+      "durationMs": 156,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compatDiktat1Dot2Dot5Classes",
+        ":lib:compatDiktat2Dot0Dot0Classes",
+        ":lib:compatDiktatApiClasses",
+        ":lib:compileCompatDiktat1Dot2Dot5Java",
+        ":lib:compileCompatDiktat2Dot0Dot0Java",
+        ":lib:compileCompatDiktatApiJava",
+        ":lib:compileDiktatJava",
+        ":lib:compileJava",
+        ":lib:diktatClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsFlexmark",
+      "buildPath": ":",
+      "path": ":lib:spotbugsFlexmark",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965559,
+      "endTimeMs": 1788520965752,
+      "durationMs": 193,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileFlexmarkJava",
+        ":lib:compileJava",
+        ":lib:flexmarkClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsGherkin",
+      "buildPath": ":",
+      "path": ":lib:spotbugsGherkin",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965571,
+      "endTimeMs": 1788520965741,
+      "durationMs": 170,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileGherkinJava",
+        ":lib:compileJava",
+        ":lib:gherkinClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsGoogleJavaFormat",
+      "buildPath": ":",
+      "path": ":lib:spotbugsGoogleJavaFormat",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965569,
+      "endTimeMs": 1788520965727,
+      "durationMs": 158,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileGoogleJavaFormatJava",
+        ":lib:compileJava",
+        ":lib:googleJavaFormatClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsGson",
+      "buildPath": ":",
+      "path": ":lib:spotbugsGson",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965589,
+      "endTimeMs": 1788520965710,
+      "durationMs": 121,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileGsonJava",
+        ":lib:compileJava",
+        ":lib:gsonClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsJackson",
+      "buildPath": ":",
+      "path": ":lib:spotbugsJackson",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965618,
+      "endTimeMs": 1788520965746,
+      "durationMs": 128,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJacksonJava",
+        ":lib:compileJava",
+        ":lib:jacksonClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsJavaParser",
+      "buildPath": ":",
+      "path": ":lib:spotbugsJavaParser",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965635,
+      "endTimeMs": 1788520965758,
+      "durationMs": 123,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava",
+        ":lib:compileJavaParserJava",
+        ":lib:javaParserClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsKtfmt",
+      "buildPath": ":",
+      "path": ":lib:spotbugsKtfmt",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965675,
+      "endTimeMs": 1788520965799,
+      "durationMs": 124,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava",
+        ":lib:compileKtfmtJava",
+        ":lib:ktfmtClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsKtlint",
+      "buildPath": ":",
+      "path": ":lib:spotbugsKtlint",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965678,
+      "endTimeMs": 1788520965794,
+      "durationMs": 116,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compatKtLint1Dot0Dot0Classes",
+        ":lib:compatKtLintApiClasses",
+        ":lib:compileCompatKtLint1Dot0Dot0Java",
+        ":lib:compileCompatKtLintApiJava",
+        ":lib:compileJava",
+        ":lib:compileKtlintJava",
+        ":lib:ktlintClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsMain",
+      "buildPath": ":",
+      "path": ":lib:spotbugsMain",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965715,
+      "endTimeMs": 1788520965928,
+      "durationMs": 213,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsPalantirJavaFormat",
+      "buildPath": ":",
+      "path": ":lib:spotbugsPalantirJavaFormat",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965724,
+      "endTimeMs": 1788520965911,
+      "durationMs": 187,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava",
+        ":lib:compilePalantirJavaFormatJava",
+        ":lib:palantirJavaFormatClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsPrinceOfSpace",
+      "buildPath": ":",
+      "path": ":lib:spotbugsPrinceOfSpace",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965735,
+      "endTimeMs": 1788520965879,
+      "durationMs": 144,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava",
+        ":lib:compilePrinceOfSpaceJava",
+        ":lib:princeOfSpaceClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsScalafmt",
+      "buildPath": ":",
+      "path": ":lib:spotbugsScalafmt",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965778,
+      "endTimeMs": 1788520965924,
+      "durationMs": 146,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava",
+        ":lib:compileScalafmtJava",
+        ":lib:scalafmtClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsSortPom",
+      "buildPath": ":",
+      "path": ":lib:spotbugsSortPom",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965739,
+      "endTimeMs": 1788520965906,
+      "durationMs": 167,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava",
+        ":lib:compileSortPomJava",
+        ":lib:sortPomClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsTableTestFormatter",
+      "buildPath": ":",
+      "path": ":lib:spotbugsTableTestFormatter",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965750,
+      "endTimeMs": 1788520965911,
+      "durationMs": 161,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava",
+        ":lib:compileTableTestFormatterJava",
+        ":lib:tableTestFormatterClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsTest",
+      "buildPath": ":",
+      "path": ":lib:spotbugsTest",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520966324,
+      "endTimeMs": 1788520966325,
+      "durationMs": 1,
+      "outcome": "SKIPPED",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava",
+        ":lib:compileTestJava",
+        ":lib:testClasses",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsTestCompatCleanthat2Dot1",
+      "buildPath": ":",
+      "path": ":lib:spotbugsTestCompatCleanthat2Dot1",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520966296,
+      "endTimeMs": 1788520966342,
+      "durationMs": 46,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compatCleanthat2Dot1Classes",
+        ":lib:compatCleanthatApiClasses",
+        ":lib:compileCompatCleanthat2Dot1Java",
+        ":lib:compileCompatCleanthatApiJava",
+        ":lib:compileJava",
+        ":lib:compileTestCompatCleanthat2Dot1Java",
+        ":lib:testCompatCleanthat2Dot1Classes",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsTestCompatDiktat1Dot2Dot5",
+      "buildPath": ":",
+      "path": ":lib:spotbugsTestCompatDiktat1Dot2Dot5",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520966056,
+      "endTimeMs": 1788520966073,
+      "durationMs": 17,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":lib:compatDiktat1Dot2Dot5Classes",
+        ":lib:compatDiktatApiClasses",
+        ":lib:compileCompatDiktat1Dot2Dot5Java",
+        ":lib:compileCompatDiktatApiJava",
+        ":lib:compileJava",
+        ":lib:compileTestCompatDiktat1Dot2Dot5Java",
+        ":lib:testCompatDiktat1Dot2Dot5Classes",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsTestCompatDiktat2Dot0Dot0",
+      "buildPath": ":",
+      "path": ":lib:spotbugsTestCompatDiktat2Dot0Dot0",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520966034,
+      "endTimeMs": 1788520966048,
+      "durationMs": 14,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":lib:compatDiktat2Dot0Dot0Classes",
+        ":lib:compatDiktatApiClasses",
+        ":lib:compileCompatDiktat2Dot0Dot0Java",
+        ":lib:compileCompatDiktatApiJava",
+        ":lib:compileJava",
+        ":lib:compileTestCompatDiktat2Dot0Dot0Java",
+        ":lib:testCompatDiktat2Dot0Dot0Classes",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsTestCompatKtLint1Dot0Dot0",
+      "buildPath": ":",
+      "path": ":lib:spotbugsTestCompatKtLint1Dot0Dot0",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520966295,
+      "endTimeMs": 1788520966349,
+      "durationMs": 54,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compatKtLint1Dot0Dot0Classes",
+        ":lib:compatKtLintApiClasses",
+        ":lib:compileCompatKtLint1Dot0Dot0Java",
+        ":lib:compileCompatKtLintApiJava",
+        ":lib:compileJava",
+        ":lib:compileTestCompatKtLint1Dot0Dot0Java",
+        ":lib:testCompatKtLint1Dot0Dot0Classes",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:spotbugsZjsonPatch",
+      "buildPath": ":",
+      "path": ":lib:spotbugsZjsonPatch",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520965765,
+      "endTimeMs": 1788520965911,
+      "durationMs": 146,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava",
+        ":lib:compileZjsonPatchJava",
+        ":lib:zjsonPatchClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:tableTestFormatterClasses",
+      "buildPath": ":",
+      "path": ":lib:tableTestFormatterClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965743,
+      "endTimeMs": 1788520965744,
+      "durationMs": 1,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileTableTestFormatterJava",
+        ":lib:processTableTestFormatterResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:test",
+      "buildPath": ":",
+      "path": ":lib:test",
+      "taskClass": "org.gradle.api.tasks.testing.Test",
+      "startTimeMs": 1788520966456,
+      "endTimeMs": 1788520966656,
+      "durationMs": 200,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:classes",
+        ":lib:compileJava",
+        ":lib:compileTestJava",
+        ":lib:jar",
+        ":lib:testClasses",
+        ":testlib:jar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:testClasses",
+      "buildPath": ":",
+      "path": ":lib:testClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966318,
+      "endTimeMs": 1788520966319,
+      "durationMs": 1,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileTestJava",
+        ":lib:processTestResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:testCompatCleanthat2Dot1",
+      "buildPath": ":",
+      "path": ":lib:testCompatCleanthat2Dot1",
+      "taskClass": "org.gradle.api.tasks.testing.Test",
+      "startTimeMs": 1788520966458,
+      "endTimeMs": 1788520966639,
+      "durationMs": 181,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compatCleanthat2Dot1Classes",
+        ":lib:compatCleanthatApiClasses",
+        ":lib:compileCompatCleanthat2Dot1Java",
+        ":lib:compileCompatCleanthatApiJava",
+        ":lib:compileTestCompatCleanthat2Dot1Java",
+        ":lib:jar",
+        ":lib:testCompatCleanthat2Dot1Classes",
+        ":testlib:jar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:testCompatCleanthat2Dot1Classes",
+      "buildPath": ":",
+      "path": ":lib:testCompatCleanthat2Dot1Classes",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966288,
+      "endTimeMs": 1788520966288,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileTestCompatCleanthat2Dot1Java",
+        ":lib:processTestCompatCleanthat2Dot1Resources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:testCompatDiktat1Dot2Dot5",
+      "buildPath": ":",
+      "path": ":lib:testCompatDiktat1Dot2Dot5",
+      "taskClass": "org.gradle.api.tasks.testing.Test",
+      "startTimeMs": 1788520966457,
+      "endTimeMs": 1788520966461,
+      "durationMs": 4,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":lib:compatDiktat1Dot2Dot5Classes",
+        ":lib:compatDiktatApiClasses",
+        ":lib:compileCompatDiktat1Dot2Dot5Java",
+        ":lib:compileCompatDiktatApiJava",
+        ":lib:compileTestCompatDiktat1Dot2Dot5Java",
+        ":lib:jar",
+        ":lib:testCompatDiktat1Dot2Dot5Classes",
+        ":testlib:jar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:testCompatDiktat1Dot2Dot5Classes",
+      "buildPath": ":",
+      "path": ":lib:testCompatDiktat1Dot2Dot5Classes",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966044,
+      "endTimeMs": 1788520966045,
+      "durationMs": 1,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileTestCompatDiktat1Dot2Dot5Java",
+        ":lib:processTestCompatDiktat1Dot2Dot5Resources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:testCompatDiktat2Dot0Dot0",
+      "buildPath": ":",
+      "path": ":lib:testCompatDiktat2Dot0Dot0",
+      "taskClass": "org.gradle.api.tasks.testing.Test",
+      "startTimeMs": 1788520966458,
+      "endTimeMs": 1788520966467,
+      "durationMs": 9,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":lib:compatDiktat2Dot0Dot0Classes",
+        ":lib:compatDiktatApiClasses",
+        ":lib:compileCompatDiktat2Dot0Dot0Java",
+        ":lib:compileCompatDiktatApiJava",
+        ":lib:compileTestCompatDiktat2Dot0Dot0Java",
+        ":lib:jar",
+        ":lib:testCompatDiktat2Dot0Dot0Classes",
+        ":testlib:jar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:testCompatDiktat2Dot0Dot0Classes",
+      "buildPath": ":",
+      "path": ":lib:testCompatDiktat2Dot0Dot0Classes",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966030,
+      "endTimeMs": 1788520966030,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileTestCompatDiktat2Dot0Dot0Java",
+        ":lib:processTestCompatDiktat2Dot0Dot0Resources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:testCompatKtLint1Dot0Dot0",
+      "buildPath": ":",
+      "path": ":lib:testCompatKtLint1Dot0Dot0",
+      "taskClass": "org.gradle.api.tasks.testing.Test",
+      "startTimeMs": 1788520966460,
+      "endTimeMs": 1788520966628,
+      "durationMs": 168,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compatKtLint1Dot0Dot0Classes",
+        ":lib:compatKtLintApiClasses",
+        ":lib:compileCompatKtLint1Dot0Dot0Java",
+        ":lib:compileCompatKtLintApiJava",
+        ":lib:compileTestCompatKtLint1Dot0Dot0Java",
+        ":lib:jar",
+        ":lib:testCompatKtLint1Dot0Dot0Classes",
+        ":testlib:jar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:testCompatKtLint1Dot0Dot0Classes",
+      "buildPath": ":",
+      "path": ":lib:testCompatKtLint1Dot0Dot0Classes",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966286,
+      "endTimeMs": 1788520966286,
+      "durationMs": 0,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":lib:compileTestCompatKtLint1Dot0Dot0Java",
+        ":lib:processTestCompatKtLint1Dot0Dot0Resources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:testCompatibility",
+      "buildPath": ":",
+      "path": ":lib:testCompatibility",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520963230,
+      "endTimeMs": 1788520963231,
+      "durationMs": 1,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:testCompatibilityAdapters",
+      "buildPath": ":",
+      "path": ":lib:testCompatibilityAdapters",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966639,
+      "endTimeMs": 1788520966639,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:testCompatCleanthat2Dot1",
+        ":lib:testCompatDiktat1Dot2Dot5",
+        ":lib:testCompatDiktat2Dot0Dot0",
+        ":lib:testCompatKtLint1Dot0Dot0"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":lib:zjsonPatchClasses",
+      "buildPath": ":",
+      "path": ":lib:zjsonPatchClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520965758,
+      "endTimeMs": 1788520965758,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":lib:compileZjsonPatchJava",
+        ":lib:processZjsonPatchResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:assemble",
+      "buildPath": ":",
+      "path": ":plugin-gradle:assemble",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966716,
+      "endTimeMs": 1788520966717,
+      "durationMs": 1,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":plugin-gradle:jar",
+        ":plugin-gradle:javadocJar",
+        ":plugin-gradle:sourcesJar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:build",
+      "buildPath": ":",
+      "path": ":plugin-gradle:build",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520970738,
+      "endTimeMs": 1788520970739,
+      "durationMs": 1,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":plugin-gradle:assemble",
+        ":plugin-gradle:check"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:changelogCheck",
+      "buildPath": ":",
+      "path": ":plugin-gradle:changelogCheck",
+      "taskClass": "com.diffplug.spotless.changelog.gradle.ChangelogPlugin$CheckTask",
+      "startTimeMs": 1788520963247,
+      "endTimeMs": 1788520963278,
+      "durationMs": 31,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:check",
+      "buildPath": ":",
+      "path": ":plugin-gradle:check",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520970737,
+      "endTimeMs": 1788520970737,
+      "durationMs": 0,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":plugin-gradle:changelogCheck",
+        ":plugin-gradle:javadoc",
+        ":plugin-gradle:spotbugsMain",
+        ":plugin-gradle:spotbugsTest",
+        ":plugin-gradle:test",
+        ":plugin-gradle:validatePlugins"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:classes",
+      "buildPath": ":",
+      "path": ":plugin-gradle:classes",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966457,
+      "endTimeMs": 1788520966457,
+      "durationMs": 0,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":plugin-gradle:compileJava",
+        ":plugin-gradle:processResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:compileJava",
+      "buildPath": ":",
+      "path": ":plugin-gradle:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520966343,
+      "endTimeMs": 1788520966456,
+      "durationMs": 113,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:compileJava",
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:compileTestJava",
+      "buildPath": ":",
+      "path": ":plugin-gradle:compileTestJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520966463,
+      "endTimeMs": 1788520966685,
+      "durationMs": 222,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:compileJava",
+        ":lib:compileJava",
+        ":plugin-gradle:classes",
+        ":plugin-gradle:compileJava",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:jar",
+      "buildPath": ":",
+      "path": ":plugin-gradle:jar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520966459,
+      "endTimeMs": 1788520966508,
+      "durationMs": 49,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":plugin-gradle:classes",
+        ":plugin-gradle:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:javadoc",
+      "buildPath": ":",
+      "path": ":plugin-gradle:javadoc",
+      "taskClass": "org.gradle.api.tasks.javadoc.Javadoc",
+      "startTimeMs": 1788520966459,
+      "endTimeMs": 1788520966562,
+      "durationMs": 103,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:compileJava",
+        ":lib:compileJava",
+        ":plugin-gradle:classes",
+        ":plugin-gradle:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:javadocJar",
+      "buildPath": ":",
+      "path": ":plugin-gradle:javadocJar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520966563,
+      "endTimeMs": 1788520966716,
+      "durationMs": 153,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":plugin-gradle:javadoc"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:pluginDescriptors",
+      "buildPath": ":",
+      "path": ":plugin-gradle:pluginDescriptors",
+      "taskClass": "org.gradle.plugin.devel.tasks.GeneratePluginDescriptors",
+      "startTimeMs": 1788520963247,
+      "endTimeMs": 1788520963337,
+      "durationMs": 90,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:pluginUnderTestMetadata",
+      "buildPath": ":",
+      "path": ":plugin-gradle:pluginUnderTestMetadata",
+      "taskClass": "org.gradle.plugin.devel.tasks.PluginUnderTestMetadata",
+      "startTimeMs": 1788520970186,
+      "endTimeMs": 1788520970329,
+      "durationMs": 143,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":lib-extra:jar",
+        ":lib:jar",
+        ":plugin-gradle:classes",
+        ":plugin-gradle:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:processResources",
+      "buildPath": ":",
+      "path": ":plugin-gradle:processResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963339,
+      "endTimeMs": 1788520963389,
+      "durationMs": 50,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":plugin-gradle:pluginDescriptors"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:processTestResources",
+      "buildPath": ":",
+      "path": ":plugin-gradle:processTestResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963281,
+      "endTimeMs": 1788520963385,
+      "durationMs": 104,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:sourcesJar",
+      "buildPath": ":",
+      "path": ":plugin-gradle:sourcesJar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520966520,
+      "endTimeMs": 1788520966555,
+      "durationMs": 35,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":plugin-gradle:jar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:spotbugsMain",
+      "buildPath": ":",
+      "path": ":plugin-gradle:spotbugsMain",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520966459,
+      "endTimeMs": 1788520966492,
+      "durationMs": 33,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:compileJava",
+        ":lib:compileJava",
+        ":plugin-gradle:classes",
+        ":plugin-gradle:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:spotbugsTest",
+      "buildPath": ":",
+      "path": ":plugin-gradle:spotbugsTest",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520966688,
+      "endTimeMs": 1788520966688,
+      "durationMs": 0,
+      "outcome": "SKIPPED",
+      "dependencies": [
+        ":lib-extra:compileJava",
+        ":lib:compileJava",
+        ":plugin-gradle:classes",
+        ":plugin-gradle:compileJava",
+        ":plugin-gradle:compileTestJava",
+        ":plugin-gradle:testClasses",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:test",
+      "buildPath": ":",
+      "path": ":plugin-gradle:test",
+      "taskClass": "org.gradle.api.tasks.testing.Test",
+      "startTimeMs": 1788520970332,
+      "endTimeMs": 1788520970735,
+      "durationMs": 403,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:jar",
+        ":lib:jar",
+        ":plugin-gradle:classes",
+        ":plugin-gradle:compileJava",
+        ":plugin-gradle:compileTestJava",
+        ":plugin-gradle:pluginUnderTestMetadata",
+        ":plugin-gradle:testClasses",
+        ":testlib:jar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:testClasses",
+      "buildPath": ":",
+      "path": ":plugin-gradle:testClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966686,
+      "endTimeMs": 1788520966687,
+      "durationMs": 1,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":plugin-gradle:compileTestJava",
+        ":plugin-gradle:processTestResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":plugin-gradle:validatePlugins",
+      "buildPath": ":",
+      "path": ":plugin-gradle:validatePlugins",
+      "taskClass": "org.gradle.plugin.devel.tasks.ValidatePlugins",
+      "startTimeMs": 1788520970187,
+      "endTimeMs": 1788520970344,
+      "durationMs": 157,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib-extra:compileJava",
+        ":lib-extra:jar",
+        ":lib:compileJava",
+        ":lib:jar",
+        ":plugin-gradle:classes",
+        ":plugin-gradle:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":testlib:assemble",
+      "buildPath": ":",
+      "path": ":testlib:assemble",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966453,
+      "endTimeMs": 1788520966454,
+      "durationMs": 1,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":testlib:jar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":testlib:build",
+      "buildPath": ":",
+      "path": ":testlib:build",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966671,
+      "endTimeMs": 1788520966671,
+      "durationMs": 0,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":testlib:assemble",
+        ":testlib:check"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":testlib:check",
+      "buildPath": ":",
+      "path": ":testlib:check",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966670,
+      "endTimeMs": 1788520966670,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":testlib:spotbugsMain",
+        ":testlib:spotbugsTest",
+        ":testlib:test"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":testlib:classes",
+      "buildPath": ":",
+      "path": ":testlib:classes",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966011,
+      "endTimeMs": 1788520966012,
+      "durationMs": 1,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":testlib:compileJava",
+        ":testlib:processResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":testlib:compileJava",
+      "buildPath": ":",
+      "path": ":testlib:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520965753,
+      "endTimeMs": 1788520966006,
+      "durationMs": 253,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":testlib:compileTestJava",
+      "buildPath": ":",
+      "path": ":testlib:compileTestJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520966023,
+      "endTimeMs": 1788520966504,
+      "durationMs": 481,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compileJava",
+        ":testlib:classes",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":testlib:jar",
+      "buildPath": ":",
+      "path": ":testlib:jar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520966022,
+      "endTimeMs": 1788520966453,
+      "durationMs": 431,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":testlib:classes",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":testlib:processResources",
+      "buildPath": ":",
+      "path": ":testlib:processResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963233,
+      "endTimeMs": 1788520965484,
+      "durationMs": 2251,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":testlib:processTestResources",
+      "buildPath": ":",
+      "path": ":testlib:processTestResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520963284,
+      "endTimeMs": 1788520963299,
+      "durationMs": 15,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":testlib:spotbugsMain",
+      "buildPath": ":",
+      "path": ":testlib:spotbugsMain",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520966014,
+      "endTimeMs": 1788520966283,
+      "durationMs": 269,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:compileJava",
+        ":testlib:classes",
+        ":testlib:compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":testlib:spotbugsTest",
+      "buildPath": ":",
+      "path": ":testlib:spotbugsTest",
+      "taskClass": "com.github.spotbugs.snom.SpotBugsTask",
+      "startTimeMs": 1788520966520,
+      "endTimeMs": 1788520966521,
+      "durationMs": 1,
+      "outcome": "SKIPPED",
+      "dependencies": [
+        ":lib:compileJava",
+        ":testlib:classes",
+        ":testlib:compileJava",
+        ":testlib:compileTestJava",
+        ":testlib:testClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":testlib:test",
+      "buildPath": ":",
+      "path": ":testlib:test",
+      "taskClass": "org.gradle.api.tasks.testing.Test",
+      "startTimeMs": 1788520966523,
+      "endTimeMs": 1788520966670,
+      "durationMs": 147,
+      "outcome": "FROM-CACHE",
+      "dependencies": [
+        ":lib:jar",
+        ":testlib:classes",
+        ":testlib:compileJava",
+        ":testlib:compileTestJava",
+        ":testlib:testClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":testlib:testClasses",
+      "buildPath": ":",
+      "path": ":testlib:testClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520966508,
+      "endTimeMs": 1788520966508,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":testlib:compileTestJava",
+        ":testlib:processTestResources"
+      ],
+      "criticalPath": false
+    }
+  ],
+  "summary": {
+    "taskCount": 195,
+    "buildCount": 1,
+    "cumulativeTaskDurationMs": 41739,
+    "mainBuildTaskSpanMs": 10341,
+    "mainBuildCriticalPathMs": 8934,
+    "mainBuildCriticalPathTasks": [
+      ":lib:compileJava",
+      ":lib-extra:compileJava",
+      ":lib-extra:classes",
+      ":lib-extra:compileGroovyJava",
+      ":lib-extra:groovyClasses",
+      ":lib-extra:spotbugsGroovy",
+      ":lib-extra:check",
+      ":lib-extra:build"
+    ],
+    "outcomes": {
+      "EXECUTED": 21,
+      "FROM-CACHE": 74,
+      "NO-ACTIONS": 18,
+      "NO-SOURCE": 41,
+      "SKIPPED": 4,
+      "UP-TO-DATE": 37
+    }
+  },
+  "boundaries": {
+    "diagnosticOnly": true,
+    "productionAuthorized": false,
+    "criticalPathMethod": "LONGEST_HARD_DEPENDENCY_CHAIN_BY_TASK_DURATION",
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

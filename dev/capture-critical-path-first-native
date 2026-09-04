@@ -11,8 +11,25 @@ buildopt_checkout=$2
 buildopt_output=$3
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
-buildopt_subjects="${buildopt_repo_root}/specs/poc-critical-path-first-reviewed-native-patch-v1.subjects.json"
-buildopt_contract="${buildopt_repo_root}/specs/poc-critical-path-first-reviewed-native-patch-v1.json"
+buildopt_subjects="${BUILDOPT_NATIVE_DIAGNOSTIC_SUBJECTS:-${buildopt_repo_root}/specs/poc-critical-path-first-reviewed-native-patch-v1.subjects.json}"
+buildopt_contract="${BUILDOPT_NATIVE_DIAGNOSTIC_CONTRACT:-${buildopt_repo_root}/specs/poc-critical-path-first-reviewed-native-patch-v1.json}"
+buildopt_diagnostic_kind="${BUILDOPT_NATIVE_DIAGNOSTIC_KIND:-CRITICAL_PATH_V1}"
+
+case ${buildopt_diagnostic_kind} in
+    CRITICAL_PATH_V1)
+        buildopt_diagnostic_arguments=()
+        ;;
+    CONFIGURATION_CACHE_STRICT_V1)
+        buildopt_diagnostic_arguments=(
+            --configuration-cache
+            --configuration-cache-problems=fail
+        )
+        ;;
+    *)
+        printf 'unsupported native diagnostic kind: %s\n' "${buildopt_diagnostic_kind}" >&2
+        exit 64
+        ;;
+esac
 
 [[ ${buildopt_checkout} == /* && ${buildopt_output} == /* && -d ${buildopt_checkout}/.git && ! -e ${buildopt_output} ]] || {
     printf 'checkout must be an absolute Git root and output must be a new absolute path\n' >&2
@@ -37,10 +54,16 @@ buildopt_owner_managed_toolchains=$(jq -r '.ownerManagedToolchains // false' <<<
 [[ $(sha256sum "${buildopt_checkout}/${buildopt_workflow}" | awk '{print $1}') == \
     $(jq -r '.workflowSha256' <<<"${buildopt_subject}") ]]
 
+buildopt_minimum_free_gib="${BUILDOPT_NATIVE_DIAGNOSTIC_MINIMUM_FREE_GIB:-8}"
+if [[ ! ${buildopt_minimum_free_gib} =~ ^[0-9]+$ ]] || \
+    ((buildopt_minimum_free_gib == 0 || buildopt_minimum_free_gib > 64)); then
+    printf 'native diagnostic minimum free GiB is invalid\n' >&2
+    exit 64
+fi
 buildopt_free_bytes=$(df --output=avail -B1 /tmp | tail -n 1 | tr -d ' ')
-buildopt_minimum_free=$((8 * 1024 * 1024 * 1024))
+buildopt_minimum_free=$((buildopt_minimum_free_gib * 1024 * 1024 * 1024))
 ((buildopt_free_bytes >= buildopt_minimum_free)) || {
-    printf 'less than 8 GiB free before %s\n' "${buildopt_family}" >&2
+    printf 'less than %s GiB free before %s\n' "${buildopt_minimum_free_gib}" "${buildopt_family}" >&2
     exit 1
 }
 
@@ -52,10 +75,16 @@ buildopt_graph="${buildopt_capture}/task-graph.jsonl"
 buildopt_trace_prefix="${buildopt_capture}/operations"
 buildopt_trace="${buildopt_trace_prefix}-log.txt"
 buildopt_log="${buildopt_capture}/gradle.log"
+buildopt_started_marker="${buildopt_temp}/started"
 buildopt_maven_local="${buildopt_temp}/maven-local"
-buildopt_gradle_home="${buildopt_repo_root}/.tools/gradle-user-home/local"
-buildopt_java_paths=$(find "${buildopt_repo_root}/.tools/toolchains" -mindepth 1 -maxdepth 1 \
-    -type d -name 'temurin-jdk-*' -printf '%p\n' | sort | paste -sd, -)
+buildopt_gradle_home="${BUILDOPT_NATIVE_DIAGNOSTIC_GRADLE_HOME:-${buildopt_repo_root}/.tools/gradle-user-home/local}"
+buildopt_jdk17=$(find "${buildopt_repo_root}/.tools/toolchains" -mindepth 1 -maxdepth 1 \
+    -type d -name 'temurin-jdk-17-*' -print -quit)
+buildopt_jdk21=$(find "${buildopt_repo_root}/.tools/toolchains" -mindepth 1 -maxdepth 1 \
+    -type d -name 'temurin-jdk-21-*' -print -quit)
+buildopt_jdk25=$(find "${buildopt_repo_root}/.tools/toolchains" -mindepth 1 -maxdepth 1 \
+    -type d -name 'temurin-jdk-25-*' -print -quit)
+buildopt_java_paths=$(printf '%s,%s,%s' "${buildopt_jdk17}" "${buildopt_jdk21}" "${buildopt_jdk25}")
 buildopt_java_arguments=()
 if [[ ${buildopt_owner_managed_toolchains} == false ]]; then
     buildopt_java_arguments+=(
@@ -77,19 +106,23 @@ for buildopt_argument in "${buildopt_arguments[@]}"; do
     fi
 done
 
+touch -- "${buildopt_started_marker}"
 buildopt_start_ns=$(date +%s%N)
 set +e
 (
     cd -- "${buildopt_checkout}"
     env -u CI -u GITHUB_ACTIONS \
+        JDK17="${buildopt_jdk17}" JDK21="${buildopt_jdk21}" JDK25="${buildopt_jdk25}" \
+        JAVA_17_HOME="${buildopt_jdk17}" JAVA_21_HOME="${buildopt_jdk21}" JAVA_25_HOME="${buildopt_jdk25}" \
         BUILDOPT_TASK_GRAPH_OUTPUT="${buildopt_graph}" \
         GRADLE_OPTS="-Dorg.gradle.internal.operations.trace=${buildopt_trace_prefix} -Dmaven.repo.local=${buildopt_maven_local}" \
         GRADLE_USER_HOME="${buildopt_gradle_home}" \
         "${buildopt_repo_root}/dev/run" --toolchain "${buildopt_jdk}" -- \
-        timeout 20m ./gradlew --no-daemon --console=plain ${buildopt_worker_argument:+"${buildopt_worker_argument}"} \
+        timeout --foreground 20m ./gradlew --no-daemon --console=plain ${buildopt_worker_argument:+"${buildopt_worker_argument}"} \
         --init-script "${buildopt_repo_root}/dev/gradle-critical-path.init.gradle" \
         "${buildopt_java_arguments[@]}" \
-        "${buildopt_arguments[@]}"
+        "${buildopt_arguments[@]}" \
+        "${buildopt_diagnostic_arguments[@]}" </dev/null
 ) >"${buildopt_log}" 2>&1
 buildopt_exit_code=$?
 set -e
@@ -99,13 +132,42 @@ buildopt_elapsed_ms=$(((buildopt_end_ns - buildopt_start_ns) / 1000000))
 git -C "${buildopt_checkout}" diff --quiet
 git -C "${buildopt_checkout}" diff --cached --quiet
 
+buildopt_configuration_cache_reports="${buildopt_capture}/configuration-cache-reports"
+mkdir -p -- "${buildopt_configuration_cache_reports}"
+buildopt_report_ordinal=0
+while IFS= read -r -d '' buildopt_report; do
+    buildopt_report_ordinal=$((buildopt_report_ordinal + 1))
+    buildopt_report_name=$(printf 'report-%03d.html' "${buildopt_report_ordinal}")
+    cp -- "${buildopt_report}" "${buildopt_configuration_cache_reports}/${buildopt_report_name}"
+done < <(
+    find "${buildopt_checkout}" -type f -name configuration-cache-report.html \
+        -newer "${buildopt_started_marker}" -print0 | sort -z
+)
+
 buildopt_decision=CONCLUSIVE_NATIVE_DIAGNOSTIC
 if [[ ${buildopt_exit_code} -ne 0 || ! -s ${buildopt_trace} || ! -s ${buildopt_graph} ]]; then
     buildopt_decision=INCOMPLETE_NATIVE_DIAGNOSTIC
-else
+fi
+buildopt_analysis_state=NOT_AVAILABLE
+if [[ -s ${buildopt_trace} && -s ${buildopt_graph} ]]; then
+    set +e
     "${buildopt_repo_root}/dev/run" --toolchain go -- go run ./cmd/gradle-critical-path \
         --operations "${buildopt_trace}" --graph "${buildopt_graph}" --arm control \
-        >"${buildopt_capture}/analysis.json"
+        >"${buildopt_capture}/analysis.partial.json" 2>"${buildopt_capture}/analysis.log"
+    buildopt_analysis_exit_code=$?
+    set -e
+    if ((buildopt_analysis_exit_code == 0)); then
+        buildopt_analysis_state=COMPLETE
+        mv -- "${buildopt_capture}/analysis.partial.json" "${buildopt_capture}/analysis.json"
+    else
+        buildopt_analysis_state=INCOMPLETE_TASK_OPERATIONS
+    fi
+fi
+if [[ ${buildopt_diagnostic_kind} == CRITICAL_PATH_V1 && ${buildopt_analysis_state} != COMPLETE ]]; then
+    buildopt_decision=INCOMPLETE_NATIVE_DIAGNOSTIC
+fi
+if ((buildopt_report_ordinal == 0)); then
+    rmdir -- "${buildopt_configuration_cache_reports}"
 fi
 
 find "${buildopt_capture}" -maxdepth 1 -type f \
@@ -117,20 +179,28 @@ jq -n \
     --arg family "${buildopt_family}" \
     --arg revision "${buildopt_revision}" \
     --arg workflowFile "${buildopt_workflow}" \
+    --arg diagnosticKind "${buildopt_diagnostic_kind}" \
+    --arg analysisState "${buildopt_analysis_state}" \
     --arg decision "${buildopt_decision}" \
     --argjson ownerArguments "$(jq '.ownerArguments' <<<"${buildopt_subject}")" \
+    --argjson diagnosticArguments "$(jq -cn --args '$ARGS.positional' -- "${buildopt_diagnostic_arguments[@]}")" \
     --argjson exitCode "${buildopt_exit_code}" \
     --argjson elapsedMs "${buildopt_elapsed_ms}" \
     --argjson freeBytesBefore "${buildopt_free_bytes}" \
+    --argjson minimumFreeGiB "${buildopt_minimum_free_gib}" \
     --argjson workers "${buildopt_workers}" \
+    --argjson configurationCacheReportCount "${buildopt_report_ordinal}" \
     --arg contractSha256 "$(sha256sum "${buildopt_contract}" | awk '{print $1}')" \
     --arg subjectsSha256 "$(sha256sum "${buildopt_subjects}" | awk '{print $1}')" '
     {
       schemaVersion:"buildopt.evidence/critical-path-first-native-capture/v1",
       family:$family,revision:$revision,workflowFile:$workflowFile,
-      ownerArguments:$ownerArguments,
+      diagnosticKind:$diagnosticKind,analysisState:$analysisState,ownerArguments:$ownerArguments,
+      diagnosticArguments:$diagnosticArguments,
       nativeDiagnostic:{exitCode:$exitCode,elapsedMilliseconds:$elapsedMs,gradleStarts:1,timingSample:false},
-      resourceEnvelope:{freeBytesBefore:$freeBytesBefore,maximumWorkers:$workers,timeoutMinutes:20},
+      resourceEnvelope:{freeBytesBefore:$freeBytesBefore,minimumFreeGiB:$minimumFreeGiB,maximumWorkers:$workers,timeoutMinutes:20},
+      environmentClass:"LOCAL_FUNCTIONAL",performanceGateAuthority:false,
+      configurationCacheReportCount:$configurationCacheReportCount,
       decision:$decision,contractSha256:$contractSha256,subjectsSha256:$subjectsSha256,
       publicSourceModified:false,candidateBuild:false,timingSamples:0,productFailures:0
     }

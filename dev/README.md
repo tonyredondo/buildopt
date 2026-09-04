@@ -5768,6 +5768,30 @@ does not bypass the existing eight-pair robust qualification:
 ./dev/check-ordinary-learning-economics
 ```
 
+## Opportunity-breadth diagnostics
+
+`run-wcncp-opportunity-breadth` imports a preselected, bounded set of fresh
+source classification and native diagnostic captures into immutable checked
+evidence. It never patches a public checkout, starts a candidate build, or
+records a timing sample. Its inputs must be absolute and its output must be new.
+
+`check-wcncp-opportunity-breadth` independently reconstructs the ten source
+rows, 16 selected starts, exact subject/workflow bindings, Configuration Cache
+problem counts, recurrent blocker signatures, requested-workflow reachability,
+source hashes and family counts. An optional source-root argument additionally
+recomputes candidate file hashes from the exact frozen Git revisions.
+`check-wcncp-opportunity-breadth-negatives` proves that forged conclusive and
+actionable summary counts fail closed.
+
+The checked result is `INCOMPLETE_EXPERIMENT_INPUT`: seven families are
+conclusive and three source-bound possibilities require controlled critical-path
+materiality. Standard or local CI cannot qualify or reject them.
+
+```bash
+./dev/check-wcncp-opportunity-breadth [/absolute/source-root]
+./dev/check-wcncp-opportunity-breadth-negatives
+```
+
 ## Update policy
 
 Toolchain updates are atomic repository changes:

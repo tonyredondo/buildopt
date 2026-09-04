@@ -1,0 +1,302 @@
+{
+  "schemaVersion": "buildopt.diagnostics/gradle-task-critical-path/v1",
+  "arm": "control",
+  "operationTraceSha256": "328b4e9d05319939dab7c986ab72a5af9ff4685eb0a871b10d6e13b050dc6728",
+  "taskGraphSha256": "119d9768107928c9abe195101963314156673995ca28a7ee3e4b1c5e163de5c4",
+  "builds": [
+    {
+      "buildPath": ":",
+      "taskCount": 17,
+      "taskExecutionSpanMs": 13296,
+      "cumulativeDurationMs": 13343,
+      "criticalPathDurationMs": 12100,
+      "criticalPathTasks": [
+        ":compileGroovy",
+        ":compileKotlin",
+        ":compileJava",
+        ":classes",
+        ":groovydoc",
+        ":publishPluginGroovyDocsJar",
+        ":assemble"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "identity": ":assemble",
+      "buildPath": ":",
+      "path": ":assemble",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520562597,
+      "endTimeMs": 1788520562598,
+      "durationMs": 1,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":jar",
+        ":javadocJar",
+        ":publishPluginGroovyDocsJar",
+        ":publishPluginJar",
+        ":publishPluginJavaDocsJar",
+        ":sourcesJar"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":classes",
+      "buildPath": ":",
+      "path": ":classes",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788520557446,
+      "endTimeMs": 1788520557447,
+      "durationMs": 1,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":compileGroovy",
+        ":compileJava",
+        ":processResources"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":clean",
+      "buildPath": ":",
+      "path": ":clean",
+      "taskClass": "org.gradle.api.tasks.Delete",
+      "startTimeMs": 1788520549302,
+      "endTimeMs": 1788520549330,
+      "durationMs": 28,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":compileGroovy",
+      "buildPath": ":",
+      "path": ":compileGroovy",
+      "taskClass": "org.gradle.api.tasks.compile.GroovyCompile",
+      "startTimeMs": 1788520549338,
+      "endTimeMs": 1788520553126,
+      "durationMs": 3788,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": true
+    },
+    {
+      "identity": ":compileJava",
+      "buildPath": ":",
+      "path": ":compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788520557443,
+      "endTimeMs": 1788520557445,
+      "durationMs": 2,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":compileKotlin"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":compileKotlin",
+      "buildPath": ":",
+      "path": ":compileKotlin",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "startTimeMs": 1788520553127,
+      "endTimeMs": 1788520557442,
+      "durationMs": 4315,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":compileGroovy"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":groovydoc",
+      "buildPath": ":",
+      "path": ":groovydoc",
+      "taskClass": "org.gradle.api.tasks.javadoc.Groovydoc",
+      "startTimeMs": 1788520558578,
+      "endTimeMs": 1788520562549,
+      "durationMs": 3971,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":classes",
+        ":compileGroovy",
+        ":compileJava",
+        ":compileKotlin"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":inspectClassesForKotlinIC",
+      "buildPath": ":",
+      "path": ":inspectClassesForKotlinIC",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.InspectClassesForMultiModuleIC",
+      "startTimeMs": 1788520557447,
+      "endTimeMs": 1788520557456,
+      "durationMs": 9,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":classes",
+        ":compileGroovy",
+        ":compileJava",
+        ":compileKotlin"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":jar",
+      "buildPath": ":",
+      "path": ":jar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520557457,
+      "endTimeMs": 1788520557492,
+      "durationMs": 35,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":classes",
+        ":compileGroovy",
+        ":compileJava",
+        ":compileKotlin",
+        ":inspectClassesForKotlinIC"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":javadoc",
+      "buildPath": ":",
+      "path": ":javadoc",
+      "taskClass": "org.gradle.api.tasks.javadoc.Javadoc",
+      "startTimeMs": 1788520557493,
+      "endTimeMs": 1788520558559,
+      "durationMs": 1066,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":classes",
+        ":compileGroovy",
+        ":compileJava",
+        ":compileKotlin"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":javadocJar",
+      "buildPath": ":",
+      "path": ":javadocJar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520558560,
+      "endTimeMs": 1788520558577,
+      "durationMs": 17,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":javadoc"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":pluginDescriptors",
+      "buildPath": ":",
+      "path": ":pluginDescriptors",
+      "taskClass": "org.gradle.plugin.devel.tasks.GeneratePluginDescriptors",
+      "startTimeMs": 1788520553590,
+      "endTimeMs": 1788520553601,
+      "durationMs": 11,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":processResources",
+      "buildPath": ":",
+      "path": ":processResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788520553602,
+      "endTimeMs": 1788520553615,
+      "durationMs": 13,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":pluginDescriptors"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":publishPluginGroovyDocsJar",
+      "buildPath": ":",
+      "path": ":publishPluginGroovyDocsJar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520562550,
+      "endTimeMs": 1788520562572,
+      "durationMs": 22,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":groovydoc"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":publishPluginJar",
+      "buildPath": ":",
+      "path": ":publishPluginJar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520553616,
+      "endTimeMs": 1788520553640,
+      "durationMs": 24,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":publishPluginJavaDocsJar",
+      "buildPath": ":",
+      "path": ":publishPluginJavaDocsJar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520562573,
+      "endTimeMs": 1788520562595,
+      "durationMs": 22,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":javadoc"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":sourcesJar",
+      "buildPath": ":",
+      "path": ":sourcesJar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788520553641,
+      "endTimeMs": 1788520553659,
+      "durationMs": 18,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    }
+  ],
+  "summary": {
+    "taskCount": 17,
+    "buildCount": 1,
+    "cumulativeTaskDurationMs": 13343,
+    "mainBuildTaskSpanMs": 13296,
+    "mainBuildCriticalPathMs": 12100,
+    "mainBuildCriticalPathTasks": [
+      ":compileGroovy",
+      ":compileKotlin",
+      ":compileJava",
+      ":classes",
+      ":groovydoc",
+      ":publishPluginGroovyDocsJar",
+      ":assemble"
+    ],
+    "outcomes": {
+      "EXECUTED": 13,
+      "NO-ACTIONS": 2,
+      "NO-SOURCE": 1,
+      "UP-TO-DATE": 1
+    }
+  },
+  "boundaries": {
+    "diagnosticOnly": true,
+    "productionAuthorized": false,
+    "criticalPathMethod": "LONGEST_HARD_DEPENDENCY_CHAIN_BY_TASK_DURATION",
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

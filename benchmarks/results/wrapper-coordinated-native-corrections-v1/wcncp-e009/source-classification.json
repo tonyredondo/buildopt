@@ -1,0 +1,1160 @@
+{
+  "schemaVersion": "buildopt.evidence/prospective-reviewed-native-patch-source-classification/v1",
+  "contractSha256": "148b58c1fb36f66e721385747eb33d09d91068e04f5fbb234d4525679423477f",
+  "subjectsSha256": "ed1f5a7d378923813aaeb8bc6e960001906ce2f6a328397491e5cadee9cf40c4",
+  "analyzerSha256": "629e62125808e912bbe04b0fdffe88eba7071cf1701a550e2ba8b9d07b883e71",
+  "evidenceSource": "FRESH_FROZEN_HOLDOUT_GIT_SOURCE_ONLY",
+  "families": [
+    {
+      "key": "gradle-intellij-plugin",
+      "repository": "https://github.com/JetBrains/gradle-intellij-plugin.git",
+      "revision": "511a40abb9f01a90b2bc888b5a407ab63de2b13f",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/BuildPluginVariantsTask.kt",
+          "className": "BuildPluginVariantsTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 22,
+            "startColumn": 1,
+            "endLine": 22,
+            "endColumn": 54
+          },
+          "sourceSha256": "cd69ad6bae8fb04f24309b76e23fb5953b9cc77cd1f45f8a91ca1ad8d4fe03b4",
+          "fileInputs": [],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/DumpProductsReleasesTask.kt",
+          "className": "DumpProductsReleasesTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 26,
+            "startColumn": 1,
+            "endLine": 26,
+            "endColumn": 55
+          },
+          "sourceSha256": "69add8f71c1f0e5c951ba73bda52a07a662921762e66494ca67676594d418bc6",
+          "fileInputs": [],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        },
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/GenerateManifestTask.kt",
+          "className": "GenerateManifestTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 34,
+            "startColumn": 1,
+            "endLine": 34,
+            "endColumn": 51
+          },
+          "sourceSha256": "fc6f4b5ff6034d6ac7605f655700d807ee290604fc8f58105b275322d5e2c68d",
+          "fileInputs": [],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/GenerateSplitModeRunConfigurationsTask.kt",
+          "className": "GenerateSplitModeRunConfigurationsTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 24,
+            "startColumn": 1,
+            "endLine": 24,
+            "endColumn": 69
+          },
+          "sourceSha256": "2ff098d26d85639ed9798e43fe2c6801e31cd53d92f46130bb39ae109afc8c08",
+          "fileInputs": [],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/InitializeIntelliJPlatformPluginTask.kt",
+          "className": "InitializeIntelliJPlatformPluginTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 40,
+            "startColumn": 1,
+            "endLine": 40,
+            "endColumn": 67
+          },
+          "sourceSha256": "483cd6bb5eaaf336f67b17830b9ef8b617aea84a94e761576f25d554cb6ea6aa",
+          "fileInputs": [],
+          "decision": "NO_ACTION",
+          "reason": "NO_DECLARED_TASK_INPUTS_OR_OUTPUTS"
+        },
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/InstrumentCodeTask.kt",
+          "className": "InstrumentCodeTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 53,
+            "startColumn": 1,
+            "endLine": 53,
+            "endColumn": 49
+          },
+          "sourceSha256": "be1e0c8175ed7a213f5c0ee5336f0a9f6b93110d2b505f7c1536721b3d252dba",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "classesDirs",
+              "declarationSpan": {
+                "startLine": 66,
+                "startColumn": 1,
+                "endLine": 70,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "formsDirs",
+              "declarationSpan": {
+                "startLine": 76,
+                "startColumn": 1,
+                "endLine": 80,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/PatchPluginXmlTask.kt",
+          "className": "PatchPluginXmlTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 34,
+            "startColumn": 1,
+            "endLine": 34,
+            "endColumn": 49
+          },
+          "sourceSha256": "43eca81aace8b391031f29988f90f2c32f202f4341d3113cdd2b62a4b7aca45a",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILE",
+              "binding": "inputFile",
+              "declarationSpan": {
+                "startLine": 41,
+                "startColumn": 5,
+                "endLine": 45,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/PreparePluginVariantTask.kt",
+          "className": "PreparePluginVariantTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 50,
+            "startColumn": 1,
+            "endLine": 50,
+            "endColumn": 55
+          },
+          "sourceSha256": "46c4f269f224b5a16b6b5ae79318ef94a080db728051e85ecd82135987ae385e",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILE",
+              "binding": "inputJar",
+              "declarationSpan": {
+                "startLine": 57,
+                "startColumn": 5,
+                "endLine": 60,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/PrepareTestTask.kt",
+          "className": "PrepareTestTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 18,
+            "startColumn": 1,
+            "endLine": 18,
+            "endColumn": 46
+          },
+          "sourceSha256": "2d0fb41b4b9f650da7e977e2fccdb7f88fa34d8157a2101a9594b5a7e1f438a5",
+          "fileInputs": [],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/PrintBundledModulesTask.kt",
+          "className": "PrintBundledModulesTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 25,
+            "startColumn": 1,
+            "endLine": 25,
+            "endColumn": 54
+          },
+          "sourceSha256": "7588fb83028e6cad556ffad5268cbfa14da8a7ebd066a6d6b46853dab0aac34b",
+          "fileInputs": [],
+          "decision": "NO_ACTION",
+          "reason": "NO_DECLARED_TASK_INPUTS_OR_OUTPUTS"
+        },
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/PrintBundledPluginsTask.kt",
+          "className": "PrintBundledPluginsTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 25,
+            "startColumn": 1,
+            "endLine": 25,
+            "endColumn": 54
+          },
+          "sourceSha256": "fbbf693c18241a6963059ad9146176cb0b5e7a9583f8e29216989a8d99832105",
+          "fileInputs": [],
+          "decision": "NO_ACTION",
+          "reason": "NO_DECLARED_TASK_INPUTS_OR_OUTPUTS"
+        },
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/PrintProductsReleasesTask.kt",
+          "className": "PrintProductsReleasesTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 30,
+            "startColumn": 1,
+            "endLine": 30,
+            "endColumn": 56
+          },
+          "sourceSha256": "e0fc28689b6917472441022ed38772b06098466f127a27c41512d9d77547cc0b",
+          "fileInputs": [],
+          "decision": "NO_ACTION",
+          "reason": "NO_DECLARED_TASK_INPUTS_OR_OUTPUTS"
+        },
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/PublishPluginTask.kt",
+          "className": "PublishPluginTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 29,
+            "startColumn": 1,
+            "endLine": 29,
+            "endColumn": 48
+          },
+          "sourceSha256": "1d1860e49d478085d79fca9956a12e26b9fb0606795c92cf84dd58c6d8666a80",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "archiveFiles",
+              "declarationSpan": {
+                "startLine": 41,
+                "startColumn": 5,
+                "endLine": 45,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        },
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/SetupDependenciesTask.kt",
+          "className": "SetupDependenciesTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 22,
+            "startColumn": 1,
+            "endLine": 22,
+            "endColumn": 52
+          },
+          "sourceSha256": "9c23b52f41e0d50c84f17b03d12a25b964e36155bb17d66d88aad4b0966a7ed1",
+          "fileInputs": [],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/VerifyPluginProjectConfigurationTask.kt",
+          "className": "VerifyPluginProjectConfigurationTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 46,
+            "startColumn": 1,
+            "endLine": 46,
+            "endColumn": 67
+          },
+          "sourceSha256": "9298d4a4ee0d1e5ee5b10c76345f484badc29c9300e46c5b395315db49d9586b",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILE",
+              "binding": "gitignoreFile",
+              "declarationSpan": {
+                "startLine": 66,
+                "startColumn": 5,
+                "endLine": 70,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/kotlin/org/jetbrains/intellij/platform/gradle/tasks/VerifyPluginStructureTask.kt",
+          "className": "VerifyPluginStructureTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 30,
+            "startColumn": 1,
+            "endLine": 30,
+            "endColumn": 56
+          },
+          "sourceSha256": "95485d5091508ebcdec6d7de7fdc2239e659b278d208040bb72a096f8f4863de",
+          "fileInputs": [
+            {
+              "kind": "INPUT_DIRECTORY",
+              "binding": "pluginDirectory",
+              "declarationSpan": {
+                "startLine": 61,
+                "startColumn": 5,
+                "endLine": 64,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "src/test/kotlin/org/jetbrains/intellij/platform/gradle/extensions/IntelliJPlatformIdesCacheEnabledTest.kt",
+          "className": "CheckCacheEnabledTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 19,
+            "startColumn": 17,
+            "endLine": 19,
+            "endColumn": 68
+          },
+          "sourceSha256": "d639f39a20554b76f5f1642905d79ba21217adda0a37f422ccb838d2c270f179",
+          "fileInputs": [],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        }
+      ]
+    },
+    {
+      "key": "gradle-consistent-versions",
+      "repository": "https://github.com/palantir/gradle-consistent-versions.git",
+      "revision": "419993496161e5bace10678efe0b01eb4655c28f",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "src/main/java/com/palantir/gradle/versions/CheckOverbroadConstraints.java",
+          "className": "CheckOverbroadConstraints",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 55,
+            "startColumn": 1,
+            "endLine": 55,
+            "endColumn": 68
+          },
+          "sourceSha256": "4931711ac7dd7ee46a480709d071d849759af07b645cce430dc1995522288a87",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getPropsFile",
+              "declarationSpan": {
+                "startLine": 61,
+                "startColumn": 5,
+                "endLine": 64,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getLockFile",
+              "declarationSpan": {
+                "startLine": 65,
+                "startColumn": 5,
+                "endLine": 68,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/java/com/palantir/gradle/versions/CheckUnusedConstraintsTask.java",
+          "className": "CheckUnusedConstraintsTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 52,
+            "startColumn": 1,
+            "endLine": 52,
+            "endColumn": 69
+          },
+          "sourceSha256": "789727281f20b2e9105695ae42dd6a7328c54b6bb7fab2e73d63a2bfa358fb91",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getResolvedCoordinatesFiles",
+              "declarationSpan": {
+                "startLine": 63,
+                "startColumn": 5,
+                "endLine": 66,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_NONE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getPropsFile",
+              "declarationSpan": {
+                "startLine": 70,
+                "startColumn": 5,
+                "endLine": 73,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/java/com/palantir/gradle/versions/GenerateMavenRepositoriesTask.java",
+          "className": "GenerateMavenRepositoriesTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 44,
+            "startColumn": 1,
+            "endLine": 44,
+            "endColumn": 72
+          },
+          "sourceSha256": "df684a60300c400a61d4a382a1b04887febf0b50e4d1a5439184d86d5ca17556",
+          "fileInputs": [],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/java/com/palantir/gradle/versions/VerifyLocksTask.java",
+          "className": "VerifyLocksTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 42,
+            "startColumn": 1,
+            "endLine": 42,
+            "endColumn": 58
+          },
+          "sourceSha256": "18e9b2d0994d99462f0c9300df490ca32065c00fa0a2ea7e971f4bc6a3162b3e",
+          "fileInputs": [],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/java/com/palantir/gradle/versions/WhyDependencyTask.java",
+          "className": "WhyDependencyTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 41,
+            "startColumn": 1,
+            "endLine": 41,
+            "endColumn": 60
+          },
+          "sourceSha256": "08b25b6433cb59191acd58dc944b89669e52f8f098a2634ab77b995f020121fd",
+          "fileInputs": [],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/java/com/palantir/gradle/versions/WriteResolvedCoordinatesTask.java",
+          "className": "WriteResolvedCoordinatesTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 33,
+            "startColumn": 1,
+            "endLine": 33,
+            "endColumn": 71
+          },
+          "sourceSha256": "802bbdf0a0a73d4c09ac43f4db777a49b64f14b84881be8c09e1c19e5314af9c",
+          "fileInputs": [],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/java/com/palantir/gradle/versions/WriteVersionsLocksMarkerTask.java",
+          "className": "WriteVersionsLocksMarkerTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 27,
+            "startColumn": 1,
+            "endLine": 27,
+            "endColumn": 71
+          },
+          "sourceSha256": "3cce56f94650f49b35b32ae47bf670584205cb835dbb8e3eda85ed3381752f34",
+          "fileInputs": [],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        }
+      ]
+    },
+    {
+      "key": "mockk",
+      "repository": "https://github.com/mockk/mockk.git",
+      "revision": "14fbd83eb43582ce6f80ac58b87b0e143e8cb43e",
+      "conclusive": true,
+      "candidates": []
+    },
+    {
+      "key": "junit-pioneer",
+      "repository": "https://github.com/junit-pioneer/junit-pioneer.git",
+      "revision": "0cc29d1ba9ee8c8322bc7a1028cc03e95c05bed8",
+      "conclusive": true,
+      "candidates": []
+    },
+    {
+      "key": "gradle-versions-plugin",
+      "repository": "https://github.com/ben-manes/gradle-versions-plugin.git",
+      "revision": "17a079dc1cfd7b0b83affb7ccd625a936e6728ce",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "gradle-versions-plugin/src/main/kotlin/com/github/benmanes/gradle/versions/updates/DependencyUpdatesPartialTask.kt",
+          "className": "DependencyUpdatesPartialTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 16,
+            "startColumn": 1,
+            "endLine": 16,
+            "endColumn": 59
+          },
+          "sourceSha256": "8508ebc26b655cf5f2b91b7dee82b15a7e544be41780f6205d26b0ed6f6f586f",
+          "fileInputs": [],
+          "decision": "MARKER_ONLY_ELIGIBLE",
+          "reason": "NO_FILE_INPUT_REQUIRES_NORMALIZATION"
+        },
+        {
+          "path": "gradle-versions-plugin/src/main/kotlin/com/github/benmanes/gradle/versions/updates/DependencyUpdatesTask.kt",
+          "className": "DependencyUpdatesTask",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 35,
+            "startColumn": 6,
+            "endLine": 35,
+            "endColumn": 48
+          },
+          "sourceSha256": "2409813ccc07f84e30511da26ca714d584c77ddc51a889c2b92b525507a8ade0",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "partialResults",
+              "declarationSpan": {
+                "startLine": 294,
+                "startColumn": 3,
+                "endLine": 297,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_NONE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        }
+      ]
+    },
+    {
+      "key": "protobuf-gradle-plugin",
+      "repository": "https://github.com/google/protobuf-gradle-plugin.git",
+      "revision": "8be67f8d98c525273248f5eea9892ee1c7895984",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "src/main/groovy/com/google/protobuf/gradle/GenerateProtoTask.groovy",
+          "className": "GenerateProtoTask",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 78,
+            "startColumn": 1,
+            "endLine": 78,
+            "endColumn": 60
+          },
+          "sourceSha256": "b5c19c761535f5941d65201af4146b58d592c1bdb6df2e5fd69a9a16d3492624",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getSourceDirs",
+              "declarationSpan": {
+                "startLine": 293,
+                "startColumn": 1,
+                "endLine": 298,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": [
+                "IGNORE_EMPTY_DIRECTORIES"
+              ]
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getIncludeDirs",
+              "declarationSpan": {
+                "startLine": 301,
+                "startColumn": 3,
+                "endLine": 304,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getExecutables",
+              "declarationSpan": {
+                "startLine": 333,
+                "startColumn": 3,
+                "endLine": 336,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_NONE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "src/main/groovy/com/google/protobuf/gradle/ProtobufExtract.groovy",
+          "className": "ProtobufExtract",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 57,
+            "startColumn": 1,
+            "endLine": 57,
+            "endColumn": 51
+          },
+          "sourceSha256": "29b09e3e906b0f70e5ff4a41a95be3f30a6c4dbac22bb63eb1df7259b50bba87",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getInputProtoFiles",
+              "declarationSpan": {
+                "startLine": 83,
+                "startColumn": 3,
+                "endLine": 86,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "MARKER_ONLY_ELIGIBLE",
+          "reason": "EVERY_FILE_INPUT_HAS_PORTABLE_PRIMARY_NORMALIZATION"
+        },
+        {
+          "path": "src/main/groovy/com/google/protobuf/gradle/ProtobufPlugin.groovy",
+          "className": "ProtoSyncTask",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 382,
+            "startColumn": 21,
+            "endLine": 382,
+            "endColumn": 60
+          },
+          "sourceSha256": "21c0f13df73d07ca9a0d58bf0271e9a3e090d990ec9c4decfaf957034df1efc2",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getSource",
+              "declarationSpan": {
+                "startLine": 385,
+                "startColumn": 7,
+                "endLine": 387,
+                "endColumn": 1
+              },
+              "primaryNormalization": [],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        }
+      ]
+    },
+    {
+      "key": "graphql-java",
+      "repository": "https://github.com/graphql-java/graphql-java.git",
+      "revision": "f2d8c9126f898c084b176631b7346bc6fbec296a",
+      "conclusive": true,
+      "candidates": []
+    },
+    {
+      "key": "apache-groovy",
+      "repository": "https://github.com/apache/groovy.git",
+      "revision": "14fa934340c46bc1ee96cba7ae594258bd8d0fd0",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/CheckstyleHtmlReport.groovy",
+          "className": "CheckstyleHtmlReport",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 41,
+            "startColumn": 1,
+            "endLine": 41,
+            "endColumn": 47
+          },
+          "sourceSha256": "7b0200d6eb02ea9909b9c31fc4cac79813f4c77d6e781bb190235e865a3085cb",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "source",
+              "declarationSpan": {
+                "startLine": 42,
+                "startColumn": 5,
+                "endLine": 46,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILE",
+              "binding": "configFile",
+              "declarationSpan": {
+                "startLine": 47,
+                "startColumn": 5,
+                "endLine": 50,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "checkstyleReportFile",
+              "declarationSpan": {
+                "startLine": 51,
+                "startColumn": 5,
+                "endLine": 55,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/DgmConverter.groovy",
+          "className": "DgmConverter",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 43,
+            "startColumn": 1,
+            "endLine": 43,
+            "endColumn": 39
+          },
+          "sourceSha256": "e30bb4e4d6fd0d5727e122e2a72564fa29925c556751c209a6cb55acf1aecda0",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "sources",
+              "declarationSpan": {
+                "startLine": 52,
+                "startColumn": 5,
+                "endLine": 55,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "classpath",
+              "declarationSpan": {
+                "startLine": 56,
+                "startColumn": 5,
+                "endLine": 59,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "CLASSPATH"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/DocGDK.groovy",
+          "className": "DocGDK",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 42,
+            "startColumn": 1,
+            "endLine": 42,
+            "endColumn": 33
+          },
+          "sourceSha256": "a79dec0dfdbf4b37d3f44a94e018077630366e6d9dbb4f240a1c7973efbe9430",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "classpath",
+              "declarationSpan": {
+                "startLine": 47,
+                "startColumn": 5,
+                "endLine": 50,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "CLASSPATH"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "resources",
+              "declarationSpan": {
+                "startLine": 59,
+                "startColumn": 5,
+                "endLine": 62,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/JarJarTask.groovy",
+          "className": "JarJarTask",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 42,
+            "startColumn": 1,
+            "endLine": 42,
+            "endColumn": 37
+          },
+          "sourceSha256": "b78c546fdb28bb4f59d0fd99cd31a8d7fc9dae50e8eabe3a99d567756a0e4e9b",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILE",
+              "binding": "from",
+              "declarationSpan": {
+                "startLine": 47,
+                "startColumn": 5,
+                "endLine": 50,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "CLASSPATH"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "repackagedLibraries",
+              "declarationSpan": {
+                "startLine": 51,
+                "startColumn": 5,
+                "endLine": 54,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "CLASSPATH"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "jarjarToolClasspath",
+              "declarationSpan": {
+                "startLine": 55,
+                "startColumn": 5,
+                "endLine": 58,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "CLASSPATH"
+              ],
+              "supplementaryNormalization": []
+            },
+            {
+              "kind": "INPUT_FILES",
+              "binding": "untouchedFiles",
+              "declarationSpan": {
+                "startLine": 63,
+                "startColumn": 5,
+                "endLine": 67,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "CLASSPATH"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "ALREADY_CACHEABLE",
+          "reason": "CACHEABLE_TASK_MARKER_PRESENT"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/PerformanceTestSummary.groovy",
+          "className": "PerformanceTestSummary",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 30,
+            "startColumn": 1,
+            "endLine": 30,
+            "endColumn": 49
+          },
+          "sourceSha256": "e2dafafe57fac1b2b642f94399bb78fa4c4f2cbd8d665534fac037fa5d0920a2",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "csvFiles",
+              "declarationSpan": {
+                "startLine": 31,
+                "startColumn": 5,
+                "endLine": 34,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/ReleaseInfoGenerator.groovy",
+          "className": "ReleaseInfoGenerator",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 33,
+            "startColumn": 1,
+            "endLine": 33,
+            "endColumn": 47
+          },
+          "sourceSha256": "f8a19e811b900e3f2f59c47a15af421f1533cae21da726bc2b351e2aa6791082",
+          "fileInputs": [],
+          "decision": "MARKER_ONLY_ELIGIBLE",
+          "reason": "NO_FILE_INPUT_REQUIRES_NORMALIZATION"
+        },
+        {
+          "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/WriteExtensionDescriptorTask.groovy",
+          "className": "WriteExtensionDescriptorTask",
+          "language": "GROOVY",
+          "declarationSpan": {
+            "startLine": 30,
+            "startColumn": 1,
+            "endLine": 30,
+            "endColumn": 55
+          },
+          "sourceSha256": "269236e1fc349457f1d2c0d0c4403562ca30588ff99ecedc939325a0ba1e5f3e",
+          "fileInputs": [],
+          "decision": "MARKER_ONLY_ELIGIBLE",
+          "reason": "NO_FILE_INPUT_REQUIRES_NORMALIZATION"
+        }
+      ]
+    },
+    {
+      "key": "test-retry-gradle-plugin",
+      "repository": "https://github.com/gradle/test-retry-gradle-plugin.git",
+      "revision": "ee9a521bdc1add0d1ff9fcfbed47882fb95bfdff",
+      "conclusive": true,
+      "candidates": []
+    },
+    {
+      "key": "spotless",
+      "repository": "https://github.com/diffplug/spotless.git",
+      "revision": "4ea1c6cbf46f4e60eb9e621406bf2621e28f2d68",
+      "conclusive": true,
+      "candidates": [
+        {
+          "path": "plugin-gradle/src/main/java/com/diffplug/gradle/spotless/RegisterDependenciesTask.java",
+          "className": "RegisterDependenciesTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 51,
+            "startColumn": 1,
+            "endLine": 51,
+            "endColumn": 67
+          },
+          "sourceSha256": "99ba1b570f8ac42b0f119698b69921ace0bafbbcd791b7f2ebef058cf2ab0391",
+          "fileInputs": [],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "plugin-gradle/src/main/java/com/diffplug/gradle/spotless/SpotlessDiagnoseTask.java",
+          "className": "SpotlessDiagnoseTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 36,
+            "startColumn": 1,
+            "endLine": 36,
+            "endColumn": 54
+          },
+          "sourceSha256": "5081afa350fc932a122957d065b523fb5ee0ea4c73c6b9065a05dbb903025989",
+          "fileInputs": [],
+          "decision": "NO_ACTION",
+          "reason": "NO_DECLARED_TASK_INPUTS_OR_OUTPUTS"
+        },
+        {
+          "path": "plugin-gradle/src/main/java/com/diffplug/gradle/spotless/SpotlessInstallPrePushHookTask.java",
+          "className": "SpotlessInstallPrePushHookTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 37,
+            "startColumn": 1,
+            "endLine": 37,
+            "endColumn": 73
+          },
+          "sourceSha256": "e0814e5ee4cb13597723a4182dbfc663e291de58536fe4740680e1c8e4825486",
+          "fileInputs": [],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "plugin-gradle/src/main/java/com/diffplug/gradle/spotless/SpotlessTask.java",
+          "className": "SpotlessTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 48,
+            "startColumn": 1,
+            "endLine": 48,
+            "endColumn": 55
+          },
+          "sourceSha256": "68eda395de7a0313032fba8bbd193811c298da36ff22b2066fef563fb896ca44",
+          "fileInputs": [
+            {
+              "kind": "INPUT_FILES",
+              "binding": "getTarget",
+              "declarationSpan": {
+                "startLine": 140,
+                "startColumn": 1,
+                "endLine": 144,
+                "endColumn": 1
+              },
+              "primaryNormalization": [
+                "PATH_SENSITIVE_RELATIVE"
+              ],
+              "supplementaryNormalization": []
+            }
+          ],
+          "decision": "DISABLED_CACHING",
+          "reason": "DISABLE_CACHING_MARKER_PRESENT"
+        },
+        {
+          "path": "plugin-gradle/src/main/java/com/diffplug/gradle/spotless/SpotlessTaskService.java",
+          "className": "ClientTask",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 162,
+            "startColumn": 18,
+            "endLine": 162,
+            "endColumn": 54
+          },
+          "sourceSha256": "eb608f86df09de67839b7f12a25d5417e1e0064a01203975323d9bf8ee1fee5d",
+          "fileInputs": [],
+          "decision": "INCOMPLETE_OR_AMBIGUOUS",
+          "reason": "INCOMPLETE_CUSTOM_TASK_CONTRACT"
+        },
+        {
+          "path": "plugin-gradle/src/test/java/com/diffplug/gradle/spotless/ConfigAvoidanceTest.java",
+          "className": "ConfigureCanary",
+          "language": "JAVA",
+          "declarationSpan": {
+            "startLine": 38,
+            "startColumn": 6,
+            "endLine": 38,
+            "endColumn": 47
+          },
+          "sourceSha256": "b847f2f543ac017aba4a79d3c66e9b6ecacd40133d80c1890dc11a1888aa41d5",
+          "fileInputs": [],
+          "decision": "NO_ACTION",
+          "reason": "NO_DECLARED_TASK_INPUTS_OR_OUTPUTS"
+        }
+      ]
+    }
+  ],
+  "conclusiveFamilies": 10,
+  "actionFamilies": 3,
+  "minimumActionFamilies": 1,
+  "decision": "PASS_PROSPECTIVE_SOURCE_GATE",
+  "diagnosticsAuthorized": true,
+  "compilationAuthorized": false,
+  "timingAuthorized": false
+}

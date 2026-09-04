@@ -2,15 +2,16 @@
 
 ## Status
 
-**Overall:** `PROSPECTIVE_CAPTURE_COMPLETE`<br>
-**Current block:** `WCNCP-009` is `TODO`; `WCNCP-008` completed 30/30 fresh
-ordinary wrapper observations across the frozen ten-family cohort.<br>
+**Overall:** `OPPORTUNITY_BREADTH_INCOMPLETE`<br>
+**Current block:** `WCNCP-009` is `TODO`; 7/10 families are conclusive and
+three source-bound families require controlled critical-path materiality.<br>
 **Reference baseline inspected while writing this plan:**
 `b8a195dc9fd55a52c15202b77f0bb979f8c97fa3`.<br>
 **Execution authority:** `WCNCP-001` through `WCNCP-007` establish the repaired
 functional foundation and `WCNCP-008` proves complete prospective observation
-capture. `WCNCP-009` may reconstruct opportunity breadth and run at most two
-additional native diagnostics per family. Public source mutation, candidate execution, value
+capture. `WCNCP-009` has consumed 16 selected diagnostics within its 20-start
+cap and may continue only with controlled critical-path materiality for the
+three incomplete families. Public source mutation, candidate execution, value
 timing, owner contact, proposal application, merge, and product-value claims
 remain closed until their ordered gates authorize them.
 
@@ -1249,7 +1250,7 @@ repository build usable without BuildOpt state.
 | `WCNCP-E006` | WCNCP-006 | Diagnostic-only reviewed PatchBundle system replay | `DONE` — [review proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e006-review.json) with digest-bound artifacts, lifecycle, and fail-closed stale/tamper handling; no public mutation or historical value reuse |
 | `WCNCP-E007` | WCNCP-007 | Three-runner backend convergence/outage proof | `DONE` — [system proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e007-system.json) with converged observations, single lease ownership, outage preservation, restart retry, isolation, and fail-closed negatives; no value timing |
 | `WCNCP-E008` | WCNCP-008 | Fresh ten-family observation capture | `DONE` — [capture report](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e008-capture.json), [immutable observations](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/observations), and independent checker reconstruct 10/10 conclusive families, 30/30 successful native children and output manifests, and ten acknowledged TLS snapshots; three excluded runner/infrastructure attempts are retained separately and are not product failures |
-| `WCNCP-E009` | WCNCP-009 | Prospective opportunity breadth report | `TODO` — authorized by complete WCNCP-008 capture; no public mutation, candidate, timing, or value claim is authorized |
+| `WCNCP-E009` | WCNCP-009 | Prospective opportunity breadth report | `INCOMPLETE_EXPERIMENT_INPUT` — [breadth report](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e009-breadth.json), [fresh source and selected diagnostics](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e009), and independent checker reconstruct 30 observations, 16 starts, 7/10 conclusive families and three source-bound possibilities. Only controlled critical-path materiality may complete the gate; no public mutation, candidate, timing sample, or value claim exists |
 | `WCNCP-E010` | WCNCP-010 | Candidate correctness results | `WAITING` — blocked on WCNCP-009 |
 | `WCNCP-E011` | WCNCP-011 | Paired value and complete economics ledger | `WAITING` — blocked on WCNCP-010 and a controlled performance environment |
 | `WCNCP-E012` | WCNCP-012 | First-exposure owner review artifacts/results | `WAITING` — blocked on value-qualified proposals |
@@ -1257,8 +1258,9 @@ repository build usable without BuildOpt state.
 
 ## Immediate next action
 
-Execute `WCNCP-009` against the 30 checked prospective observations. Reconstruct
-detector rows and family counts from current source facts, using at most two
-additional native diagnostics per family. Require 10/10 conclusive families
-and at least 3/10 actionable material families before WCNCP-010. Public source
-mutation, candidate builds, timing, and value claims remain closed.
+Resume `WCNCP-009` on a `CONTROLLED_PERFORMANCE` runner only for critical-path
+materiality of GraphQL Java, Apache Groovy and Test Retry. The current checked
+evidence is 7/10 conclusive with three plausible source-bound corrections; this
+host cannot qualify or reject them. Require 10/10 conclusive families and at
+least 3/10 actionable material families before WCNCP-010. Public source
+mutation, candidate builds, timing samples, and value claims remain closed.

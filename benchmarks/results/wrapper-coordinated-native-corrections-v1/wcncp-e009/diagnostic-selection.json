@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "buildopt.wcncp/e009-diagnostic-selection/v1",
+  "block": "WCNCP-009",
+  "selected": [
+    {"family":"gradle-intellij-plugin","runs":["configuration-cache-strict-1"]},
+    {"family":"gradle-consistent-versions","runs":["configuration-cache-strict-1-retry","configuration-cache-strict-2"]},
+    {"family":"mockk","runs":["configuration-cache-strict-1"]},
+    {"family":"junit-pioneer","runs":["configuration-cache-strict-1","configuration-cache-strict-2"]},
+    {"family":"gradle-versions-plugin","runs":["critical-path-foreground-retry","configuration-cache-strict-3"]},
+    {"family":"protobuf-gradle-plugin","runs":["configuration-cache-strict-1"]},
+    {"family":"graphql-java","runs":["configuration-cache-strict-1","configuration-cache-strict-2"]},
+    {"family":"apache-groovy","runs":["configuration-cache-strict-1","configuration-cache-strict-2"]},
+    {"family":"test-retry-gradle-plugin","runs":["configuration-cache-strict-1","configuration-cache-strict-2"]},
+    {"family":"spotless","runs":["configuration-cache-strict-1"]}
+  ],
+  "excludedCapturedAttempts": [
+    {"family":"gradle-versions-plugin","run":"critical-path","decision":"EXCLUDED_RUNNER_NETWORK_SANDBOX"},
+    {"family":"gradle-versions-plugin","run":"critical-path-valid","decision":"EXCLUDED_RUNNER_TTY_PROCESS_GROUP"},
+    {"family":"gradle-consistent-versions","run":"configuration-cache-strict-1","decision":"EXCLUDED_RUNNER_TOOLCHAIN_BINDING"},
+    {"family":"gradle-versions-plugin","run":"configuration-cache-strict-1","decision":"EXCLUDED_CAPTURE_SCHEMA_PRE_RESOURCE_MINIMUM"},
+    {"family":"gradle-versions-plugin","run":"configuration-cache-strict-2","decision":"EXCLUDED_RUNNER_NETWORK_SANDBOX"}
+  ],
+  "excludedBeforeCapture": [
+    "WRONG_WORKFLOW_FIELD_BINDING",
+    "WRONG_TOOLCHAIN_IDENTIFIER",
+    "SANDBOX_NETWORK_DEBUG_REPRODUCTION",
+    "APACHE_GROOVY_ANALYSIS_ABORT_BEFORE_CAPTURE"
+  ],
+  "candidateBuilds": 0,
+  "timingSamples": 0,
+  "productFailures": 0
+}

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-first-native-capture/v1",
+  "family": "apache-groovy",
+  "revision": "14fa934340c46bc1ee96cba7ae594258bd8d0fd0",
+  "workflowFile": "README.adoc",
+  "diagnosticKind": "CONFIGURATION_CACHE_STRICT_V1",
+  "analysisState": "INCOMPLETE_TASK_OPERATIONS",
+  "ownerArguments": [
+    "jar",
+    "idea"
+  ],
+  "diagnosticArguments": [
+    "--configuration-cache",
+    "--configuration-cache-problems=fail"
+  ],
+  "nativeDiagnostic": {
+    "exitCode": 1,
+    "elapsedMilliseconds": 15703,
+    "gradleStarts": 1,
+    "timingSample": false
+  },
+  "resourceEnvelope": {
+    "freeBytesBefore": 16409559040,
+    "minimumFreeGiB": 10,
+    "maximumWorkers": 12,
+    "timeoutMinutes": 20
+  },
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "performanceGateAuthority": false,
+  "configurationCacheReportCount": 1,
+  "decision": "INCOMPLETE_NATIVE_DIAGNOSTIC",
+  "contractSha256": "148b58c1fb36f66e721385747eb33d09d91068e04f5fbb234d4525679423477f",
+  "subjectsSha256": "f981800328e001f6bcfb864ed04fc5bacd3febfdc46a090ca1d42ba825029f73",
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "productFailures": 0
+}

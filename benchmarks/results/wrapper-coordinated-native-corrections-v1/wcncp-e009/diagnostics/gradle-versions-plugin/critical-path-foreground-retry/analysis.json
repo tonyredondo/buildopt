@@ -1,0 +1,948 @@
+{
+  "schemaVersion": "buildopt.diagnostics/gradle-task-critical-path/v1",
+  "arm": "control",
+  "operationTraceSha256": "06442c339d469620f6e09b7e68526b4913b0c36d93a72085721d1aab8e5bd1f3",
+  "taskGraphSha256": "cacf9f8c409799cc1276843cc385eb404bc09b2b3a0fcefa3a32aacacd65848d",
+  "builds": [
+    {
+      "buildPath": ":",
+      "taskCount": 58,
+      "taskExecutionSpanMs": 664359,
+      "cumulativeDurationMs": 678238,
+      "criticalPathDurationMs": 661139,
+      "criticalPathTasks": [
+        ":gradle-versions-plugin:checkKotlinGradlePluginConfigurationErrors",
+        ":gradle-versions-plugin:compileKotlin",
+        ":gradle-versions-plugin:compileJava",
+        ":gradle-versions-plugin:compileGroovy",
+        ":gradle-versions-plugin:classes",
+        ":gradle-versions-plugin:jar",
+        ":gradle-versions-plugin:compileTestKotlin",
+        ":gradle-versions-plugin:compileTestJava",
+        ":gradle-versions-plugin:compileTestGroovy",
+        ":gradle-versions-plugin:testClasses",
+        ":gradle-versions-plugin:test",
+        ":gradle-versions-plugin:check",
+        ":gradle-versions-plugin:build"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "identity": ":assemble",
+      "buildPath": ":",
+      "path": ":assemble",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788518952669,
+      "endTimeMs": 1788518952669,
+      "durationMs": 0,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":jar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":build",
+      "buildPath": ":",
+      "path": ":build",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788518956587,
+      "endTimeMs": 1788518956592,
+      "durationMs": 5,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":assemble",
+        ":check"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":check",
+      "buildPath": ":",
+      "path": ":check",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788518956585,
+      "endTimeMs": 1788518956586,
+      "durationMs": 1,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":ktlintKotlinScriptCheck",
+        ":ktlintMainSourceSetCheck",
+        ":ktlintTestSourceSetCheck",
+        ":test",
+        ":validatePlugins"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":checkKotlinGradlePluginConfigurationErrors",
+      "buildPath": ":",
+      "path": ":checkKotlinGradlePluginConfigurationErrors",
+      "taskClass": "org.jetbrains.kotlin.gradle.plugin.diagnostics.CheckKotlinGradlePluginConfigurationErrors",
+      "startTimeMs": 1788518952581,
+      "endTimeMs": 1788518952582,
+      "durationMs": 1,
+      "outcome": "SKIPPED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":classes",
+      "buildPath": ":",
+      "path": ":classes",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788518952629,
+      "endTimeMs": 1788518952629,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":compileGroovy",
+        ":compileJava",
+        ":processResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":clean",
+      "buildPath": ":",
+      "path": ":clean",
+      "taskClass": "org.gradle.api.tasks.Delete",
+      "startTimeMs": 1788518952522,
+      "endTimeMs": 1788518952569,
+      "durationMs": 47,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":compileGroovy",
+      "buildPath": ":",
+      "path": ":compileGroovy",
+      "taskClass": "org.gradle.api.tasks.compile.GroovyCompile",
+      "startTimeMs": 1788518952609,
+      "endTimeMs": 1788518952611,
+      "durationMs": 2,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":compileJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":compileJava",
+      "buildPath": ":",
+      "path": ":compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788518952604,
+      "endTimeMs": 1788518952607,
+      "durationMs": 3,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":compileKotlin"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":compileKotlin",
+      "buildPath": ":",
+      "path": ":compileKotlin",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "startTimeMs": 1788518952588,
+      "endTimeMs": 1788518952602,
+      "durationMs": 14,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":checkKotlinGradlePluginConfigurationErrors"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":compileTestGroovy",
+      "buildPath": ":",
+      "path": ":compileTestGroovy",
+      "taskClass": "org.gradle.api.tasks.compile.GroovyCompile",
+      "startTimeMs": 1788518952749,
+      "endTimeMs": 1788518952751,
+      "durationMs": 2,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":classes",
+        ":compileGroovy",
+        ":compileJava",
+        ":compileKotlin",
+        ":compileTestJava"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":compileTestJava",
+      "buildPath": ":",
+      "path": ":compileTestJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788518952745,
+      "endTimeMs": 1788518952747,
+      "durationMs": 2,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":classes",
+        ":compileGroovy",
+        ":compileJava",
+        ":compileKotlin",
+        ":compileTestKotlin"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":compileTestKotlin",
+      "buildPath": ":",
+      "path": ":compileTestKotlin",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "startTimeMs": 1788518952740,
+      "endTimeMs": 1788518952744,
+      "durationMs": 4,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":checkKotlinGradlePluginConfigurationErrors",
+        ":classes",
+        ":compileGroovy",
+        ":compileJava",
+        ":compileKotlin",
+        ":jar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:assemble",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:assemble",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788518961149,
+      "endTimeMs": 1788518961150,
+      "durationMs": 1,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":gradle-versions-plugin:jar",
+        ":gradle-versions-plugin:javadocJar",
+        ":gradle-versions-plugin:sourcesJar"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:build",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:build",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788519616881,
+      "endTimeMs": 1788519616881,
+      "durationMs": 0,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":gradle-versions-plugin:assemble",
+        ":gradle-versions-plugin:check"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":gradle-versions-plugin:check",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:check",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788519616881,
+      "endTimeMs": 1788519616881,
+      "durationMs": 0,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":gradle-versions-plugin:ktlintKotlinScriptCheck",
+        ":gradle-versions-plugin:ktlintMainSourceSetCheck",
+        ":gradle-versions-plugin:ktlintTestSourceSetCheck",
+        ":gradle-versions-plugin:test",
+        ":gradle-versions-plugin:validatePlugins"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":gradle-versions-plugin:checkKotlinGradlePluginConfigurationErrors",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:checkKotlinGradlePluginConfigurationErrors",
+      "taskClass": "org.jetbrains.kotlin.gradle.plugin.diagnostics.CheckKotlinGradlePluginConfigurationErrors",
+      "startTimeMs": 1788518952789,
+      "endTimeMs": 1788518952790,
+      "durationMs": 1,
+      "outcome": "SKIPPED",
+      "dependencies": [],
+      "criticalPath": true
+    },
+    {
+      "identity": ":gradle-versions-plugin:classes",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:classes",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788518961078,
+      "endTimeMs": 1788518961078,
+      "durationMs": 0,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":gradle-versions-plugin:compileGroovy",
+        ":gradle-versions-plugin:compileJava",
+        ":gradle-versions-plugin:processResources"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":gradle-versions-plugin:clean",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:clean",
+      "taskClass": "org.gradle.api.tasks.Delete",
+      "startTimeMs": 1788518952577,
+      "endTimeMs": 1788518952579,
+      "durationMs": 2,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:compileGroovy",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:compileGroovy",
+      "taskClass": "org.gradle.api.tasks.compile.GroovyCompile",
+      "startTimeMs": 1788518961076,
+      "endTimeMs": 1788518961077,
+      "durationMs": 1,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":gradle-versions-plugin:compileJava"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":gradle-versions-plugin:compileJava",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:compileJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788518961072,
+      "endTimeMs": 1788518961074,
+      "durationMs": 2,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":gradle-versions-plugin:compileKotlin"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":gradle-versions-plugin:compileKotlin",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:compileKotlin",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "startTimeMs": 1788518952791,
+      "endTimeMs": 1788518961070,
+      "durationMs": 8279,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":gradle-versions-plugin:checkKotlinGradlePluginConfigurationErrors"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":gradle-versions-plugin:compileTestGroovy",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:compileTestGroovy",
+      "taskClass": "org.gradle.api.tasks.compile.GroovyCompile",
+      "startTimeMs": 1788518962823,
+      "endTimeMs": 1788518967586,
+      "durationMs": 4763,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":gradle-versions-plugin:classes",
+        ":gradle-versions-plugin:compileGroovy",
+        ":gradle-versions-plugin:compileJava",
+        ":gradle-versions-plugin:compileKotlin",
+        ":gradle-versions-plugin:compileTestJava"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":gradle-versions-plugin:compileTestJava",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:compileTestJava",
+      "taskClass": "org.gradle.api.tasks.compile.JavaCompile",
+      "startTimeMs": 1788518961155,
+      "endTimeMs": 1788518962821,
+      "durationMs": 1666,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":gradle-versions-plugin:classes",
+        ":gradle-versions-plugin:compileGroovy",
+        ":gradle-versions-plugin:compileJava",
+        ":gradle-versions-plugin:compileKotlin",
+        ":gradle-versions-plugin:compileTestKotlin"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":gradle-versions-plugin:compileTestKotlin",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:compileTestKotlin",
+      "taskClass": "org.jetbrains.kotlin.gradle.tasks.KotlinCompile",
+      "startTimeMs": 1788518961151,
+      "endTimeMs": 1788518961154,
+      "durationMs": 3,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":gradle-versions-plugin:checkKotlinGradlePluginConfigurationErrors",
+        ":gradle-versions-plugin:classes",
+        ":gradle-versions-plugin:compileGroovy",
+        ":gradle-versions-plugin:compileJava",
+        ":gradle-versions-plugin:compileKotlin",
+        ":gradle-versions-plugin:jar"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":gradle-versions-plugin:createClasspathManifest",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:createClasspathManifest",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788518967586,
+      "endTimeMs": 1788518967608,
+      "durationMs": 22,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":gradle-versions-plugin:classes",
+        ":gradle-versions-plugin:compileGroovy",
+        ":gradle-versions-plugin:compileJava",
+        ":gradle-versions-plugin:compileKotlin"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:jar",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:jar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788518961079,
+      "endTimeMs": 1788518961138,
+      "durationMs": 59,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":gradle-versions-plugin:classes",
+        ":gradle-versions-plugin:compileGroovy",
+        ":gradle-versions-plugin:compileJava",
+        ":gradle-versions-plugin:compileKotlin"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":gradle-versions-plugin:javadoc",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:javadoc",
+      "taskClass": "org.gradle.api.tasks.javadoc.Javadoc",
+      "startTimeMs": 1788518961139,
+      "endTimeMs": 1788518961141,
+      "durationMs": 2,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":gradle-versions-plugin:classes",
+        ":gradle-versions-plugin:compileGroovy",
+        ":gradle-versions-plugin:compileJava",
+        ":gradle-versions-plugin:compileKotlin"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:javadocJar",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:javadocJar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788518961142,
+      "endTimeMs": 1788518961149,
+      "durationMs": 7,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":gradle-versions-plugin:javadoc"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:ktlintKotlinScriptCheck",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:ktlintKotlinScriptCheck",
+      "taskClass": "org.jlleitschuh.gradle.ktlint.tasks.GenerateReportsTask",
+      "startTimeMs": 1788518956622,
+      "endTimeMs": 1788518956709,
+      "durationMs": 87,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":gradle-versions-plugin:loadKtlintReporters",
+        ":gradle-versions-plugin:runKtlintCheckOverKotlinScripts"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:ktlintMainSourceSetCheck",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:ktlintMainSourceSetCheck",
+      "taskClass": "org.jlleitschuh.gradle.ktlint.tasks.GenerateReportsTask",
+      "startTimeMs": 1788518960491,
+      "endTimeMs": 1788518960548,
+      "durationMs": 57,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":gradle-versions-plugin:loadKtlintReporters",
+        ":gradle-versions-plugin:runKtlintCheckOverMainSourceSet"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:ktlintTestSourceSetCheck",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:ktlintTestSourceSetCheck",
+      "taskClass": "org.jlleitschuh.gradle.ktlint.tasks.GenerateReportsTask",
+      "startTimeMs": 1788518953607,
+      "endTimeMs": 1788518953607,
+      "durationMs": 0,
+      "outcome": "SKIPPED",
+      "dependencies": [
+        ":gradle-versions-plugin:loadKtlintReporters",
+        ":gradle-versions-plugin:runKtlintCheckOverTestSourceSet"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:loadKtlintReporters",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:loadKtlintReporters",
+      "taskClass": "org.jlleitschuh.gradle.ktlint.tasks.LoadReportersTask",
+      "startTimeMs": 1788518953316,
+      "endTimeMs": 1788518953412,
+      "durationMs": 96,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:pluginDescriptors",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:pluginDescriptors",
+      "taskClass": "org.gradle.plugin.devel.tasks.GeneratePluginDescriptors",
+      "startTimeMs": 1788518953250,
+      "endTimeMs": 1788518953259,
+      "durationMs": 9,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:pluginUnderTestMetadata",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:pluginUnderTestMetadata",
+      "taskClass": "org.gradle.plugin.devel.tasks.PluginUnderTestMetadata",
+      "startTimeMs": 1788518967609,
+      "endTimeMs": 1788518967618,
+      "durationMs": 9,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":gradle-versions-plugin:classes",
+        ":gradle-versions-plugin:compileGroovy",
+        ":gradle-versions-plugin:compileJava",
+        ":gradle-versions-plugin:compileKotlin"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:processResources",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:processResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788518953260,
+      "endTimeMs": 1788518953273,
+      "durationMs": 13,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":gradle-versions-plugin:pluginDescriptors"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:processTestResources",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:processTestResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788518953352,
+      "endTimeMs": 1788518953538,
+      "durationMs": 186,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:runKtlintCheckOverKotlinScripts",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:runKtlintCheckOverKotlinScripts",
+      "taskClass": "org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask",
+      "startTimeMs": 1788518953539,
+      "endTimeMs": 1788518956619,
+      "durationMs": 3080,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":gradle-versions-plugin:loadKtlintReporters"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:runKtlintCheckOverMainSourceSet",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:runKtlintCheckOverMainSourceSet",
+      "taskClass": "org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask",
+      "startTimeMs": 1788518953568,
+      "endTimeMs": 1788518960490,
+      "durationMs": 6922,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":gradle-versions-plugin:loadKtlintReporters"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:runKtlintCheckOverTestSourceSet",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:runKtlintCheckOverTestSourceSet",
+      "taskClass": "org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask",
+      "startTimeMs": 1788518953602,
+      "endTimeMs": 1788518953605,
+      "durationMs": 3,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":gradle-versions-plugin:loadKtlintReporters"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:sourcesJar",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:sourcesJar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788518953274,
+      "endTimeMs": 1788518953314,
+      "durationMs": 40,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":gradle-versions-plugin:test",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:test",
+      "taskClass": "org.gradle.api.tasks.testing.Test",
+      "startTimeMs": 1788518967621,
+      "endTimeMs": 1788519613986,
+      "durationMs": 646365,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":gradle-versions-plugin:classes",
+        ":gradle-versions-plugin:compileGroovy",
+        ":gradle-versions-plugin:compileJava",
+        ":gradle-versions-plugin:compileKotlin",
+        ":gradle-versions-plugin:compileTestGroovy",
+        ":gradle-versions-plugin:compileTestJava",
+        ":gradle-versions-plugin:compileTestKotlin",
+        ":gradle-versions-plugin:createClasspathManifest",
+        ":gradle-versions-plugin:pluginUnderTestMetadata",
+        ":gradle-versions-plugin:testClasses"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":gradle-versions-plugin:testClasses",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:testClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788518967619,
+      "endTimeMs": 1788518967619,
+      "durationMs": 0,
+      "outcome": "NO-ACTIONS",
+      "dependencies": [
+        ":gradle-versions-plugin:compileTestGroovy",
+        ":gradle-versions-plugin:compileTestJava",
+        ":gradle-versions-plugin:processTestResources"
+      ],
+      "criticalPath": true
+    },
+    {
+      "identity": ":gradle-versions-plugin:validatePlugins",
+      "buildPath": ":",
+      "path": ":gradle-versions-plugin:validatePlugins",
+      "taskClass": "org.gradle.plugin.devel.tasks.ValidatePlugins",
+      "startTimeMs": 1788519613991,
+      "endTimeMs": 1788519616880,
+      "durationMs": 2889,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":gradle-versions-plugin:compileGroovy",
+        ":gradle-versions-plugin:compileJava",
+        ":gradle-versions-plugin:compileKotlin"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":jar",
+      "buildPath": ":",
+      "path": ":jar",
+      "taskClass": "org.gradle.api.tasks.bundling.Jar",
+      "startTimeMs": 1788518952630,
+      "endTimeMs": 1788518952668,
+      "durationMs": 38,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":classes",
+        ":compileGroovy",
+        ":compileJava",
+        ":compileKotlin"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":ktlintKotlinScriptCheck",
+      "buildPath": ":",
+      "path": ":ktlintKotlinScriptCheck",
+      "taskClass": "org.jlleitschuh.gradle.ktlint.tasks.GenerateReportsTask",
+      "startTimeMs": 1788518956470,
+      "endTimeMs": 1788518956584,
+      "durationMs": 114,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":loadKtlintReporters",
+        ":runKtlintCheckOverKotlinScripts"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":ktlintMainSourceSetCheck",
+      "buildPath": ":",
+      "path": ":ktlintMainSourceSetCheck",
+      "taskClass": "org.jlleitschuh.gradle.ktlint.tasks.GenerateReportsTask",
+      "startTimeMs": 1788518953246,
+      "endTimeMs": 1788518953247,
+      "durationMs": 1,
+      "outcome": "SKIPPED",
+      "dependencies": [
+        ":loadKtlintReporters",
+        ":runKtlintCheckOverMainSourceSet"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":ktlintTestSourceSetCheck",
+      "buildPath": ":",
+      "path": ":ktlintTestSourceSetCheck",
+      "taskClass": "org.jlleitschuh.gradle.ktlint.tasks.GenerateReportsTask",
+      "startTimeMs": 1788518953249,
+      "endTimeMs": 1788518953250,
+      "durationMs": 1,
+      "outcome": "SKIPPED",
+      "dependencies": [
+        ":loadKtlintReporters",
+        ":runKtlintCheckOverTestSourceSet"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":loadKtlintReporters",
+      "buildPath": ":",
+      "path": ":loadKtlintReporters",
+      "taskClass": "org.jlleitschuh.gradle.ktlint.tasks.LoadReportersTask",
+      "startTimeMs": 1788518952669,
+      "endTimeMs": 1788518952804,
+      "durationMs": 135,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":pluginDescriptors",
+      "buildPath": ":",
+      "path": ":pluginDescriptors",
+      "taskClass": "org.gradle.plugin.devel.tasks.GeneratePluginDescriptors",
+      "startTimeMs": 1788518952612,
+      "endTimeMs": 1788518952623,
+      "durationMs": 11,
+      "outcome": "EXECUTED",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":pluginUnderTestMetadata",
+      "buildPath": ":",
+      "path": ":pluginUnderTestMetadata",
+      "taskClass": "org.gradle.plugin.devel.tasks.PluginUnderTestMetadata",
+      "startTimeMs": 1788518952752,
+      "endTimeMs": 1788518952770,
+      "durationMs": 18,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":classes",
+        ":compileGroovy",
+        ":compileJava",
+        ":compileKotlin"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":processResources",
+      "buildPath": ":",
+      "path": ":processResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788518952624,
+      "endTimeMs": 1788518952628,
+      "durationMs": 4,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":pluginDescriptors"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":processTestResources",
+      "buildPath": ":",
+      "path": ":processTestResources",
+      "taskClass": "org.gradle.language.jvm.tasks.ProcessResources",
+      "startTimeMs": 1788518952771,
+      "endTimeMs": 1788518952773,
+      "durationMs": 2,
+      "outcome": "NO-SOURCE",
+      "dependencies": [],
+      "criticalPath": false
+    },
+    {
+      "identity": ":runKtlintCheckOverKotlinScripts",
+      "buildPath": ":",
+      "path": ":runKtlintCheckOverKotlinScripts",
+      "taskClass": "org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask",
+      "startTimeMs": 1788518953208,
+      "endTimeMs": 1788518956465,
+      "durationMs": 3257,
+      "outcome": "EXECUTED",
+      "dependencies": [
+        ":loadKtlintReporters"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":runKtlintCheckOverMainSourceSet",
+      "buildPath": ":",
+      "path": ":runKtlintCheckOverMainSourceSet",
+      "taskClass": "org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask",
+      "startTimeMs": 1788518953243,
+      "endTimeMs": 1788518953245,
+      "durationMs": 2,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":loadKtlintReporters"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":runKtlintCheckOverTestSourceSet",
+      "buildPath": ":",
+      "path": ":runKtlintCheckOverTestSourceSet",
+      "taskClass": "org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask",
+      "startTimeMs": 1788518953247,
+      "endTimeMs": 1788518953249,
+      "durationMs": 2,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":loadKtlintReporters"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":test",
+      "buildPath": ":",
+      "path": ":test",
+      "taskClass": "org.gradle.api.tasks.testing.Test",
+      "startTimeMs": 1788518952779,
+      "endTimeMs": 1788518952786,
+      "durationMs": 7,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":classes",
+        ":compileGroovy",
+        ":compileJava",
+        ":compileKotlin",
+        ":compileTestGroovy",
+        ":compileTestJava",
+        ":compileTestKotlin",
+        ":pluginUnderTestMetadata",
+        ":testClasses"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":testClasses",
+      "buildPath": ":",
+      "path": ":testClasses",
+      "taskClass": "org.gradle.api.DefaultTask",
+      "startTimeMs": 1788518952776,
+      "endTimeMs": 1788518952776,
+      "durationMs": 0,
+      "outcome": "UP-TO-DATE",
+      "dependencies": [
+        ":compileTestGroovy",
+        ":compileTestJava",
+        ":processTestResources"
+      ],
+      "criticalPath": false
+    },
+    {
+      "identity": ":validatePlugins",
+      "buildPath": ":",
+      "path": ":validatePlugins",
+      "taskClass": "org.gradle.plugin.devel.tasks.ValidatePlugins",
+      "startTimeMs": 1788518952787,
+      "endTimeMs": 1788518952788,
+      "durationMs": 1,
+      "outcome": "NO-SOURCE",
+      "dependencies": [
+        ":compileGroovy",
+        ":compileJava",
+        ":compileKotlin"
+      ],
+      "criticalPath": false
+    }
+  ],
+  "summary": {
+    "taskCount": 58,
+    "buildCount": 1,
+    "cumulativeTaskDurationMs": 678238,
+    "mainBuildTaskSpanMs": 664359,
+    "mainBuildCriticalPathMs": 661139,
+    "mainBuildCriticalPathTasks": [
+      ":gradle-versions-plugin:checkKotlinGradlePluginConfigurationErrors",
+      ":gradle-versions-plugin:compileKotlin",
+      ":gradle-versions-plugin:compileJava",
+      ":gradle-versions-plugin:compileGroovy",
+      ":gradle-versions-plugin:classes",
+      ":gradle-versions-plugin:jar",
+      ":gradle-versions-plugin:compileTestKotlin",
+      ":gradle-versions-plugin:compileTestJava",
+      ":gradle-versions-plugin:compileTestGroovy",
+      ":gradle-versions-plugin:testClasses",
+      ":gradle-versions-plugin:test",
+      ":gradle-versions-plugin:check",
+      ":gradle-versions-plugin:build"
+    ],
+    "outcomes": {
+      "EXECUTED": 24,
+      "NO-ACTIONS": 8,
+      "NO-SOURCE": 17,
+      "SKIPPED": 5,
+      "UP-TO-DATE": 4
+    }
+  },
+  "boundaries": {
+    "diagnosticOnly": true,
+    "productionAuthorized": false,
+    "criticalPathMethod": "LONGEST_HARD_DEPENDENCY_CHAIN_BY_TASK_DURATION",
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

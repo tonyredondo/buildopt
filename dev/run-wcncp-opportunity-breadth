@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 3)); then
+    printf 'usage: %s SOURCE_CLASSIFICATION DIAGNOSTICS_ROOT NEW_EVIDENCE_DIRECTORY\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_source=$1
+buildopt_diagnostics=$2
+buildopt_output=$3
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_selection=${buildopt_repo_root}/benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e009-diagnostic-selection.json
+
+[[ ${buildopt_source} == /* && -s ${buildopt_source} && \
+   ${buildopt_diagnostics} == /* && -d ${buildopt_diagnostics} && \
+   ${buildopt_output} == /* && ! -e ${buildopt_output} ]] || {
+    printf 'inputs must be absolute, existing files and output must be new\n' >&2
+    exit 64
+}
+
+mkdir -p -- "${buildopt_output}/diagnostics"
+cp -- "${buildopt_source}" "${buildopt_output}/source-classification.json"
+cp -- "${buildopt_selection}" "${buildopt_output}/diagnostic-selection.json"
+
+while IFS=$'\t' read -r buildopt_family buildopt_run; do
+    buildopt_input=${buildopt_diagnostics}/${buildopt_family}/${buildopt_run}
+    buildopt_run_output=${buildopt_output}/diagnostics/${buildopt_family}/${buildopt_run}
+    [[ -s ${buildopt_input}/capture.json && -s ${buildopt_input}/gradle.log.gz ]] || {
+        printf 'selected diagnostic is incomplete: %s/%s\n' "${buildopt_family}" "${buildopt_run}" >&2
+        exit 1
+    }
+    mkdir -p -- "${buildopt_run_output}"
+    cp -- "${buildopt_input}/capture.json" "${buildopt_input}/gradle.log.gz" "${buildopt_run_output}/"
+    for buildopt_optional in analysis.json analysis.log analysis.partial.json; do
+        if [[ -s ${buildopt_input}/${buildopt_optional} ]]; then
+            cp -- "${buildopt_input}/${buildopt_optional}" "${buildopt_run_output}/"
+        fi
+    done
+    if [[ -e ${buildopt_input}/task-graph.jsonl ]]; then
+        gzip -9c -- "${buildopt_input}/task-graph.jsonl" >"${buildopt_run_output}/task-graph.jsonl.gz"
+    fi
+    while IFS= read -r -d '' buildopt_file; do
+        buildopt_relative=${buildopt_file#"${buildopt_input}/"}
+        mkdir -p -- "${buildopt_run_output}/$(dirname -- "${buildopt_relative}")"
+        gzip -9c -- "${buildopt_file}" >"${buildopt_run_output}/${buildopt_relative}.gz"
+    done < <(find "${buildopt_input}/configuration-cache-reports" -type f -name '*.html' -print0 2>/dev/null | sort -z)
+done < <(jq -r '.selected[] | .family as $family | .runs[] | [$family,.] | @tsv' "${buildopt_selection}")
+
+printf 'WCNCP-009 selected diagnostic evidence imported at %s\n' "${buildopt_output}"

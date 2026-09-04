@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_PROSPECTIVE_CAPTURE_COMPLETE\`"
-    "**Current phase:** \`WCNCP-008\` completed 30/30 fresh observations across 10/10 frozen families; \`WCNCP-009\` opportunity breadth is next"
+    "**Overall status:** \`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_OPPORTUNITY_BREADTH_INCOMPLETE\`"
+    "**Current phase:** \`WCNCP-009\` reconstructed 30 observations and 16 bounded diagnostics; three source-bound families require controlled materiality"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"
@@ -481,6 +481,7 @@ buildopt_required_tracker_text=(
     "| \`E-526\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-008..013\` |"
     "| \`E-527\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-001..007\` functional repair |"
     "| \`E-530\` | 2026-09-04 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-008\` prospective capture |"
+    "| \`E-531\` | 2026-09-04 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-009\` opportunity breadth |"
 )
 for buildopt_required in "${buildopt_required_tracker_text[@]}"; do
     if ! grep -Fq -- "${buildopt_required}" "${buildopt_tracker}"; then

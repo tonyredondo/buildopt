@@ -68,8 +68,12 @@ ten-family cohort produced 30/30 fresh complete ordinary wrapper observations:
 every native child succeeded, every required-output manifest resolved, and ten
 TLS-published batches reached verified central snapshots. Three excluded
 executor/capture-runner attempts are retained and are not product failures.
-WCNCP-009 may reconstruct opportunity breadth; candidate builds, performance
-timing, owner review, and value claims remain closed.
+WCNCP-009 then reconstructed fresh source and 16 selected native diagnostics.
+Seven families are conclusive. GraphQL Java, Apache Groovy and Test Retry expose
+plausible source-bound corrections, but this `LOCAL_FUNCTIONAL` host cannot
+qualify or reject their critical-path materiality. The block therefore remains
+`INCOMPLETE_EXPERIMENT_INPUT`; candidate builds, timing samples, owner review,
+and value claims remain closed.
 
 The pre-capture audit found and repaired one operational omission: central
 tokens can now be bound explicitly to a frozen WCNCP actor with

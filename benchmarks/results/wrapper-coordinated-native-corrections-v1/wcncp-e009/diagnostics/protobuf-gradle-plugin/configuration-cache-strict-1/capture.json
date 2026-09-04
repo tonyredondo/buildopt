@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "buildopt.evidence/critical-path-first-native-capture/v1",
+  "family": "protobuf-gradle-plugin",
+  "revision": "8be67f8d98c525273248f5eea9892ee1c7895984",
+  "workflowFile": ".github/workflows/testing.yml",
+  "diagnosticKind": "CONFIGURATION_CACHE_STRICT_V1",
+  "ownerArguments": [
+    "clean",
+    "assemble",
+    "--stacktrace"
+  ],
+  "diagnosticArguments": [
+    "--configuration-cache",
+    "--configuration-cache-problems=fail"
+  ],
+  "nativeDiagnostic": {
+    "exitCode": 0,
+    "elapsedMilliseconds": 20459,
+    "gradleStarts": 1,
+    "timingSample": false
+  },
+  "resourceEnvelope": {
+    "freeBytesBefore": 16431005696,
+    "minimumFreeGiB": 10,
+    "maximumWorkers": 12,
+    "timeoutMinutes": 20
+  },
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "performanceGateAuthority": false,
+  "configurationCacheReportCount": 1,
+  "decision": "CONCLUSIVE_NATIVE_DIAGNOSTIC",
+  "contractSha256": "148b58c1fb36f66e721385747eb33d09d91068e04f5fbb234d4525679423477f",
+  "subjectsSha256": "cea4a3c63e9cd1be6f5a825ff425fcf2338a3f5ce77a28afbc32ff6f332d83de",
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "productFailures": 0
+}

@@ -16,8 +16,11 @@ A subsequent audit repaired the functional integration and retracted the
 premature WCNCP-013 zero-row conclusion. `WCNCP-008` is complete: ten primary
 revisions produced 30/30 fresh complete observations, successful native
 children, resolved output manifests, acknowledged batches, and verified central
-snapshots. This proves capture completeness, not opportunity, timing, or value;
-`WCNCP-009` is now the open breadth gate. A pre-capture
+snapshots. WCNCP-009 reconstructed current source and 16 bounded native
+diagnostics: seven families are conclusive, while GraphQL Java, Apache Groovy
+and Test Retry require controlled critical-path materiality. The current result
+is `INCOMPLETE_EXPERIMENT_INPUT`, not a breadth failure; candidates and value
+remain closed. A pre-capture
 operational correction now exposes explicit
 actor binding for issued central tokens; token issuance still grants no WCNCP
 write authority by itself.

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence=${buildopt_repo_root}/benchmarks/results/wrapper-coordinated-native-corrections-v1
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-wcncp-e009-negative.XXXXXX")
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+
+cp -a -- "${buildopt_evidence}/wcncp-e009" "${buildopt_temp}/wcncp-e009"
+cp -- "${buildopt_evidence}/wcncp-e009-breadth.json" "${buildopt_temp}/report.json"
+
+buildopt_tampered=${buildopt_temp}/tampered.json
+jq '.familiesConclusive = 10 | .actionableMaterialFamilies = 3 | .decision = "PASS_OPPORTUNITY_BREADTH"' \
+    "${buildopt_temp}/report.json" >"${buildopt_tampered}"
+mv -- "${buildopt_tampered}" "${buildopt_temp}/report.json"
+
+if BUILDOPT_WCNCP_E009_EVIDENCE_ROOT="${buildopt_temp}" \
+    BUILDOPT_WCNCP_E009_REPORT="${buildopt_temp}/report.json" \
+    "${buildopt_script_dir}/check-wcncp-opportunity-breadth" >/dev/null 2>&1; then
+    printf 'tampered WCNCP-009 summary unexpectedly passed reconstruction\n' >&2
+    exit 1
+fi
+
+printf 'WCNCP-009 opportunity-breadth summary falsification fails closed\n'

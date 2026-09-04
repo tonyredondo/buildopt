@@ -1,8 +1,9 @@
 # Wrapper-coordinated native corrections v1 evidence
 
-State: `PROSPECTIVE_CAPTURE_COMPLETE`. Functional lanes `WCNCP-001` through
+State: `OPPORTUNITY_BREADTH_INCOMPLETE`. Functional lanes `WCNCP-001` through
 `WCNCP-007` are covered and `WCNCP-008` completed the frozen ten-family capture.
-`WCNCP-009` is the current opportunity-breadth block.
+`WCNCP-009` reconstructed every source and diagnostic row, but remains open for
+controlled critical-path materiality on three families.
 
 The pre-capture operational audit also added the missing administrative
 `wcncp-actor grant` command: transport token issuance alone remains
@@ -23,6 +24,9 @@ Current state:
 
 - exact public cohort: `FROZEN_10_PRIMARY_PLUS_20_RESERVES`;
 - prospective observations: 30 (3 per family);
+- selected additional native diagnostics: 16 (maximum 20);
+- conclusive opportunity families: 7/10;
+- potential correction families awaiting controlled materiality: 3;
 - public source patches: 0;
 - candidate builds: 0;
 - timing samples: 0;
@@ -70,8 +74,13 @@ successful native admissibility preflights. The completed
 [`observations`](./observations/) reconstruct 10/10 conclusive families, 30/30
 successful native children and required-output manifests, ten acknowledged TLS
 batches and verified snapshots, plus three separately excluded runner or
-infrastructure attempts. No duration is performance evidence. `WCNCP-009` is
-next; source mutation, candidates, timing, and value remain closed.
+infrastructure attempts. No duration is performance evidence. The checked
+[`WCNCP-E009 breadth report`](./wcncp-e009-breadth.json), [fresh evidence](./wcncp-e009/),
+and [diagnostic selection](./wcncp-e009-diagnostic-selection.json) reconstruct
+16 selected starts. Four families store Configuration Cache state, six expose
+blockers, and three source-bound families remain incomplete solely because this
+`LOCAL_FUNCTIONAL` host has no materiality authority. Source mutation,
+candidates, timing samples, and value remain closed.
 
 Reconstruct the checked freeze from the manifest and, when the ten public
 checkouts are available, their Git archives with:
@@ -91,6 +100,14 @@ Reconstruct the prospective capture and its fail-closed negatives with:
 ```bash
 ./dev/check-wcncp-prospective-capture
 ./dev/check-wcncp-prospective-capture-negatives
+```
+
+Reconstruct the WCNCP-009 source, diagnostic, reachability and family counts
+and exercise summary-falsification rejection with:
+
+```bash
+./dev/check-wcncp-opportunity-breadth [/absolute/source-root]
+./dev/check-wcncp-opportunity-breadth-negatives
 ```
 
 Run the WCNCP-001 typed-state proof with:

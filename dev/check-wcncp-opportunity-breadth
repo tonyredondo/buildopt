@@ -1,0 +1,171 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [SOURCE_ROOT]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence=${BUILDOPT_WCNCP_E009_EVIDENCE_ROOT:-${buildopt_repo_root}/benchmarks/results/wrapper-coordinated-native-corrections-v1}
+buildopt_report=${BUILDOPT_WCNCP_E009_REPORT:-${buildopt_evidence}/wcncp-e009-breadth.json}
+buildopt_source=${buildopt_evidence}/wcncp-e009/source-classification.json
+buildopt_selection=${buildopt_evidence}/wcncp-e009/diagnostic-selection.json
+buildopt_diagnostics=${buildopt_evidence}/wcncp-e009/diagnostics
+buildopt_subjects=${buildopt_repo_root}/specs/poc-wrapper-coordinated-native-corrections-v1.subjects.json
+buildopt_temp=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-wcncp-e009-check.XXXXXX")
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+
+"${buildopt_script_dir}/check-wcncp-prospective-capture" >/dev/null
+
+mapfile -t buildopt_expected_families < <(jq -r '.slots[].key' "${buildopt_subjects}" | sort)
+mapfile -t buildopt_source_families < <(jq -r '.families[].key' "${buildopt_source}" | sort)
+mapfile -t buildopt_selected_families < <(jq -r '.selected[].family' "${buildopt_selection}" | sort)
+[[ ${buildopt_expected_families[*]} == "${buildopt_source_families[*]}" ]]
+[[ ${buildopt_expected_families[*]} == "${buildopt_selected_families[*]}" ]]
+
+buildopt_source_actions=$(jq '[.families[] | select(any(.candidates[];
+    .decision == "MARKER_ONLY_ELIGIBLE" or .decision == "REVIEWED_RELATIVE_PROOF_REQUIRED"))] | length' "${buildopt_source}")
+jq -e --argjson actions "${buildopt_source_actions}" '
+  .evidenceSource == "FRESH_FROZEN_HOLDOUT_GIT_SOURCE_ONLY" and
+  (.families | length) == 10 and all(.families[]; .conclusive == true) and
+  .conclusiveFamilies == 10 and .actionFamilies == $actions and $actions == 3 and
+  .decision == "PASS_PROSPECTIVE_SOURCE_GATE" and
+  all(.families[].candidates[];
+    (.sourceSha256 | test("^[0-9a-f]{64}$")) and
+    (.declarationSpan.startLine > 0) and
+    (.decision | IN("MARKER_ONLY_ELIGIBLE","REVIEWED_RELATIVE_PROOF_REQUIRED","EXPLICIT_NON_PORTABLE","ALREADY_CACHEABLE","DISABLED_CACHING","INCOMPLETE_OR_AMBIGUOUS","NO_ACTION")))
+' "${buildopt_source}" >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.wcncp/e009-diagnostic-selection/v1" and
+  ([.selected[].runs[]] | length) == 16 and
+  all(.selected[]; (.runs | length) >= 1 and (.runs | length) <= 2) and
+  (.excludedCapturedAttempts | length) == 5 and
+  (.excludedBeforeCapture | length) == 4 and
+  .candidateBuilds == 0 and .timingSamples == 0 and .productFailures == 0
+' "${buildopt_selection}" >/dev/null
+
+buildopt_starts=0
+buildopt_config_success=0
+buildopt_config_failure=0
+while IFS=$'\t' read -r buildopt_family buildopt_run; do
+    buildopt_capture=${buildopt_diagnostics}/${buildopt_family}/${buildopt_run}/capture.json
+    buildopt_slot=$(jq -ce --arg family "${buildopt_family}" '.slots[] | select(.key == $family)' "${buildopt_subjects}")
+    jq -e \
+        --arg family "${buildopt_family}" \
+        --arg revision "$(jq -r '.primary.revision' <<<"${buildopt_slot}")" \
+        --arg workflow "$(jq -r '.ownerWorkflow.sourcePath' <<<"${buildopt_slot}")" \
+        --argjson arguments "$(jq '.ownerWorkflow.arguments' <<<"${buildopt_slot}")" '
+      .family == $family and .revision == $revision and .workflowFile == $workflow and
+      .ownerArguments == $arguments and .nativeDiagnostic.gradleStarts == 1 and
+      (.nativeDiagnostic.timingSample | not) and (.publicSourceModified | not) and
+      (.candidateBuild | not) and .timingSamples == 0 and .productFailures == 0
+    ' "${buildopt_capture}" >/dev/null
+    buildopt_starts=$((buildopt_starts + 1))
+    if [[ $(jq -r '.diagnosticKind // "CRITICAL_PATH_V1"' "${buildopt_capture}") != CONFIGURATION_CACHE_STRICT_V1 ]]; then
+        continue
+    fi
+    jq -e '
+      .environmentClass == "LOCAL_FUNCTIONAL" and (.performanceGateAuthority | not) and
+      .diagnosticArguments == ["--configuration-cache","--configuration-cache-problems=fail"] and
+      .resourceEnvelope.minimumFreeGiB == 10 and .configurationCacheReportCount >= 1
+    ' "${buildopt_capture}" >/dev/null
+    buildopt_reports=${buildopt_diagnostics}/${buildopt_family}/${buildopt_run}/configuration-cache-reports
+    [[ -n $(find "${buildopt_reports}" -type f -name '*.html.gz' -print -quit) ]]
+    if [[ $(jq -r '.nativeDiagnostic.exitCode' "${buildopt_capture}") == 0 ]]; then
+        buildopt_config_success=$((buildopt_config_success + 1))
+        if ! gzip -cd "${buildopt_reports}"/*.html.gz | grep '"totalProblemCount":0' >/dev/null; then
+            printf '%s/%s did not prove a zero-problem stored entry\n' "${buildopt_family}" "${buildopt_run}" >&2
+            exit 1
+        fi
+    else
+        buildopt_config_failure=$((buildopt_config_failure + 1))
+        if ! gzip -cd "${buildopt_reports}"/*.html.gz | grep -E '"totalProblemCount":[1-9][0-9]*' >/dev/null; then
+            printf '%s/%s failed without a configuration-cache problem report\n' "${buildopt_family}" "${buildopt_run}" >&2
+            exit 1
+        fi
+    fi
+done < <(jq -r '.selected[] | .family as $family | .runs[] | [$family,.] | @tsv' "${buildopt_selection}")
+
+[[ ${buildopt_starts} -eq 16 && ${buildopt_config_success} -eq 4 && ${buildopt_config_failure} -eq 11 ]]
+
+buildopt_assert_recurrent() {
+    local family=$1 first=$2 second=$3 signature=$4
+    for run in "${first}" "${second}"; do
+        gzip -cd "${buildopt_diagnostics}/${family}/${run}/gradle.log.gz" | grep -F -- "${signature}" >/dev/null || {
+            printf '%s/%s lacks recurrent signature %s\n' "${family}" "${run}" "${signature}" >&2
+            exit 1
+        }
+    done
+}
+buildopt_assert_recurrent apache-groovy configuration-cache-strict-1 configuration-cache-strict-2 ':ideaModule'
+buildopt_assert_recurrent gradle-consistent-versions configuration-cache-strict-1-retry configuration-cache-strict-2 ':javadoc'
+buildopt_assert_recurrent junit-pioneer configuration-cache-strict-1 configuration-cache-strict-2 ':validateYaml'
+buildopt_assert_recurrent graphql-java configuration-cache-strict-1 configuration-cache-strict-2 "Build file 'build.gradle': line 144: external process started"
+buildopt_assert_recurrent test-retry-gradle-plugin configuration-cache-strict-1 configuration-cache-strict-2 ':sample-tests:replaceTokensInSnippets'
+
+buildopt_graph_has() {
+    local family=$1 run=$2 class_name=$3
+    gzip -cd "${buildopt_diagnostics}/${family}/${run}/task-graph.jsonl.gz" |
+        jq -e --arg class "${class_name}" 'any(.tasks[]; .taskClass | contains($class))' >/dev/null
+}
+if buildopt_graph_has gradle-versions-plugin critical-path-foreground-retry DependencyUpdatesPartialTask; then
+    printf 'unreachable gradle-versions candidate appeared in requested workflow\n' >&2
+    exit 1
+fi
+if buildopt_graph_has protobuf-gradle-plugin configuration-cache-strict-1 ProtobufExtract; then
+    printf 'unreachable protobuf candidate appeared in requested workflow\n' >&2
+    exit 1
+fi
+buildopt_graph_has apache-groovy configuration-cache-strict-1 ReleaseInfoGenerator
+buildopt_graph_has apache-groovy configuration-cache-strict-1 WriteExtensionDescriptorTask
+
+buildopt_potential=$(jq '[.rows[] | select(.decision == "INCOMPLETE_OBSERVATION")] | length' "${buildopt_report}")
+buildopt_conclusive=$(jq '[.rows[] | select(.decision != "INCOMPLETE_OBSERVATION")] | length' "${buildopt_report}")
+jq -e \
+    --argjson starts "${buildopt_starts}" \
+    --argjson sourceActions "${buildopt_source_actions}" \
+    --argjson potential "${buildopt_potential}" \
+    --argjson conclusive "${buildopt_conclusive}" '
+  .schemaVersion == "buildopt.wcncp/evidence-e009/v1" and
+  .state == "INCOMPLETE_EXPERIMENT_INPUT" and
+  .environmentClass == "LOCAL_FUNCTIONAL" and (.performanceGateAuthority | not) and
+  .observationsReconstructed == 30 and .familiesObserved == 10 and
+  .diagnosticStarts == $starts and .admissibleDiagnosticStarts == $starts and
+  .maximumDiagnosticStarts == 20 and .capturedAttemptsExcluded == 5 and
+  .attemptsExcludedBeforeCapture == 4 and
+  .configurationCacheStoredFamilies == 4 and .configurationCacheBlockerFamilies == 6 and
+  .recurrentBlockerFamilies == 5 and .sourceActionFamilies == $sourceActions and
+  .reachableSourceActionFamilies == 1 and .potentialCorrectionFamilies == $potential and
+  .familiesConclusive == $conclusive and .familiesConclusiveRequired == 10 and
+  .actionableMaterialFamilies == 0 and .actionableMaterialFamiliesRequired == 3 and
+  (.potentialCorrections | length) == $potential and
+  all(.potentialCorrections[]; .materiality == "REQUIRES_CONTROLLED_MEASUREMENT") and
+  .decision == "INCOMPLETE_EXPERIMENT_INPUT" and
+  .dependentBlocks["WCNCP-010"] == "WAITING_CONTROLLED_PERFORMANCE_MATERIALITY" and
+  (.publicSourceModified | not) and .candidateBuildsStarted == 0 and
+  .timingSamples == 0 and (.speedupClaim | not) and .productFailures == 0
+' "${buildopt_report}" >/dev/null
+
+if find "${buildopt_evidence}/wcncp-e009" -type f -name '*.patch' -print -quit | grep -q .; then
+    printf 'WCNCP-009 evidence contains a forbidden public-source patch\n' >&2
+    exit 1
+fi
+if grep -ERq 'durable-native-optimization-v1/opportunity-report|normalization-aware-cacheability-v2/source-classification' \
+    "${buildopt_source}" "${buildopt_report}"; then
+    printf 'WCNCP-009 consumed historical detector output\n' >&2
+    exit 1
+fi
+
+if (($# == 1)); then
+    buildopt_source_root=$1
+    while IFS=$'\t' read -r family revision path expected; do
+        actual=$(git -C "${buildopt_source_root}/${family}" show "${revision}:${path}" | sha256sum | cut -d' ' -f1)
+        [[ ${actual} == "${expected}" ]]
+    done < <(jq -r '.families[] | .key as $key | .revision as $revision | .candidates[] | [$key,$revision,.path,.sourceSha256] | @tsv' "${buildopt_source}")
+fi
+
+"${buildopt_script_dir}/run" --toolchain go -- go test ./internal/wcncpdetect ./internal/normalizationaware
+printf 'WCNCP-009 opportunity breadth INCOMPLETE: 7/10 conclusive, 3 potential families require controlled materiality, zero candidates or timing\n'
