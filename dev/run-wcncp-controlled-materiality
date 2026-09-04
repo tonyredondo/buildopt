@@ -21,7 +21,7 @@ buildopt_subjects=${buildopt_repo_root}/specs/poc-wrapper-coordinated-native-cor
 }
 [[ ${buildopt_output} != "${buildopt_work}" ]]
 
-for buildopt_command in awk date df git gzip head jq nproc sha256sum taskset timeout; do
+for buildopt_command in awk date df git gzip head jq nproc pgrep sha256sum taskset timeout; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
         printf 'required controlled-materiality command is unavailable: %s\n' "${buildopt_command}" >&2
         exit 1
@@ -143,7 +143,7 @@ done < <(jq -c '.families[]' "${buildopt_contract}")
 
 # No Gradle daemon or other agent-launched build may overlap the stability
 # preflight or the measured diagnostics.
-if ps -eo args= | grep -q '[o]rg.gradle.launcher.daemon.bootstrap.GradleDaemon'; then
+if pgrep -f '[o]rg.gradle.launcher.daemon.bootstrap.GradleDaemon' >/dev/null; then
     printf 'a Gradle daemon remains active before controlled preflight\n' >&2
     exit 1
 fi
