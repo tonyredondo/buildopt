@@ -1,0 +1,22 @@
+{
+  "family": "gradle-intellij-plugin",
+  "invocation": 3,
+  "outputs": [
+    {
+      "path": "build/libs/IntelliJPlatformGradlePlugin-2.18.1-javadoc.jar",
+      "sha256": "dcc5386faf7f462996ea5457d44845269701ea2e1c978be6c1bdfe49df82bbe5",
+      "sizeBytes": 5554250
+    },
+    {
+      "path": "build/libs/IntelliJPlatformGradlePlugin-2.18.1-sources.jar",
+      "sha256": "8f7c08a60de97f4ed39774fce20556146eada2cd8b9e815433e50ffa31e2d9d1",
+      "sizeBytes": 284957
+    },
+    {
+      "path": "build/libs/IntelliJPlatformGradlePlugin-2.18.1.jar",
+      "sha256": "92cb716f1085f133b33284caf6f63ef612123d10948987e4712f5ab4e451d39b",
+      "sizeBytes": 2421342
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/resolved-output-manifest/v1"
+}

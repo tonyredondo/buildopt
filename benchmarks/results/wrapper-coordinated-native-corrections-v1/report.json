@@ -1,21 +1,19 @@
 {
   "schemaVersion": "buildopt.wcncp/evidence-report/v1",
-  "block": "WCNCP-FUNCTIONAL-REPAIR",
-  "state": "FUNCTIONAL_FOUNDATION_READY",
+  "block": "WCNCP-008",
+  "state": "PROSPECTIVE_CAPTURE_COMPLETE",
   "authoritativeTerminalDecision": false,
-  "terminalDecision": "NONE_WCNCP_008_IS_NEXT",
-  "summary": "The functional WCNCP-001 through WCNCP-007 path was repaired after audit. The earlier zero-row terminal conclusion is retracted: WCNCP-008 is TODO, WCNCP-009 through WCNCP-013 are WAITING, and no prospective or value conclusion exists.",
-  "functionalBlocks": ["WCNCP-001", "WCNCP-002", "WCNCP-003", "WCNCP-004", "WCNCP-005", "WCNCP-006", "WCNCP-007"],
+  "terminalDecision": "NONE_WCNCP_009_IS_NEXT",
+  "summary": "The frozen ten-family cohort produced 30 fresh complete wrapper observations. Each native child succeeded, each required-output manifest resolved, and all ten three-row batches were acknowledged through TLS and verified snapshots.",
   "prospectiveBlocks": {
-    "WCNCP-008": "TODO: no cohort freeze or ordinary wrapper capture has run",
-    "WCNCP-009": "WAITING on WCNCP-008",
+    "WCNCP-008": "DONE: 10/10 families and 30/30 ordinary observations are conclusive",
+    "WCNCP-009": "TODO: reconstruct opportunity breadth from current source and bounded native diagnostics",
     "WCNCP-010": "WAITING on WCNCP-009",
     "WCNCP-011": "WAITING on WCNCP-010 and controlled performance capacity",
     "WCNCP-012": "WAITING on value-qualified proposals",
     "WCNCP-013": "WAITING on all prior gates"
   },
-  "priorHypotheses": "All previously stopped hypotheses remain stopped; this result adds no speedup claim and authorizes no successor. The reviewed-native Micronaut, Spring, and Elasticsearch recipes remain historical diagnostics, not prospective evidence.",
-  "whatWasMeasured": "Deterministic contracts, schemas, vectors, persistence, authority, passthrough, detection, leases, review delivery, and convergence on standard CI with race detection.",
-  "whatWasInferred": "Nothing about product value: with zero prospective rows no inference is licensed.",
-  "whatWasNotRun": "Cohort selection, ordinary prospective wrapper captures, public diagnostics, candidates, public correctness starts, paired timing, payback accounting, and owner review."
+  "whatWasMeasured": "Functional wrapper capture, exact source/workflow/environment/output bindings, native child outcome, durable acknowledgement, and central manifest/head/snapshot convergence.",
+  "whatWasInferred": "Observation completeness only; the result authorizes WCNCP-009 and does not establish opportunity, correctness, performance, economics, or owner acceptance.",
+  "whatWasNotRun": "Public source mutation, candidate builds, performance timing, paired value, payback accounting, and owner review."
 }

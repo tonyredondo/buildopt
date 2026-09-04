@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Prove the independent capture checker fails closed on missing rows, source
+# drift, payload tampering, and forbidden predecessor-evidence contamination.
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_source="${buildopt_repo_root}/benchmarks/results/wrapper-coordinated-native-corrections-v1"
+buildopt_tmp=$(mktemp -d)
+trap 'rm -rf -- "${buildopt_tmp}"' EXIT
+
+run_negative() {
+    local buildopt_name=$1
+    shift
+    rm -rf -- "${buildopt_tmp}/evidence"
+    cp -a -- "${buildopt_source}" "${buildopt_tmp}/evidence"
+    "$@" "${buildopt_tmp}/evidence"
+    if BUILDOPT_WCNCP_CAPTURE_EVIDENCE="${buildopt_tmp}/evidence" \
+        "${buildopt_script_dir}/check-wcncp-prospective-capture" >/dev/null 2>&1; then
+        printf 'WCNCP capture negative unexpectedly passed: %s\n' "${buildopt_name}" >&2
+        exit 1
+    fi
+}
+
+remove_row() {
+    rm -- "$1/observations/apache-groovy/canonical-observations/observation-3.json"
+}
+
+drift_source() {
+    sed -i 's/"repositoryRevision": "/"repositoryRevision": "drift-/' \
+        "$1/observations/apache-groovy/binding.json"
+}
+
+tamper_payload() {
+    sed -i 's/"completeness":"COMPLETE"/"completeness":"INCOMPLETE"/' \
+        "$1/observations/apache-groovy/canonical-observations/observation-1.json"
+}
+
+contaminate_history() {
+    printf '%s\n' 'DNO predecessor evidence is forbidden' >"$1/observations/forbidden-input.txt"
+}
+
+run_negative missing-row remove_row
+run_negative source-drift drift_source
+run_negative payload-tamper tamper_payload
+run_negative historical-contamination contaminate_history
+
+printf 'WCNCP prospective capture negatives OK: missing row, source drift, payload tamper, and historical contamination fail closed\n'

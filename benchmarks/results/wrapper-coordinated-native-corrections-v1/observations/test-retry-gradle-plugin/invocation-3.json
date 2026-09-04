@@ -1,0 +1,13 @@
+{
+  "exitCode": 0,
+  "family": "test-retry-gradle-plugin",
+  "finishedAt": "2026-09-04T09:17:18Z",
+  "invocation": 3,
+  "observationFile": "obs-1788513438598647957-9aaa46a0.json",
+  "outputCount": 3,
+  "performanceAuthority": false,
+  "resolvedOutputManifestSha256": "c6e77ae201a057c441e71472771774d499ba25a46082c30e38d95e3325c6822c",
+  "schemaVersion": "buildopt.wcncp/invocation-result/v1",
+  "startedAt": "2026-09-04T09:17:15Z",
+  "timingClassification": "NOT_EVALUATED"
+}

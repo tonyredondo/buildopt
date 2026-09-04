@@ -2,14 +2,15 @@
 
 ## Status
 
-**Overall:** `FUNCTIONAL_FOUNDATION_READY`<br>
-**Current block:** `WCNCP-008` is `TODO`; its exact ten-family cohort is frozen
-and ordinary wrapper observations remain at zero.<br>
+**Overall:** `PROSPECTIVE_CAPTURE_COMPLETE`<br>
+**Current block:** `WCNCP-009` is `TODO`; `WCNCP-008` completed 30/30 fresh
+ordinary wrapper observations across the frozen ten-family cohort.<br>
 **Reference baseline inspected while writing this plan:**
 `b8a195dc9fd55a52c15202b77f0bb979f8c97fa3`.<br>
 **Execution authority:** `WCNCP-001` through `WCNCP-007` establish the repaired
-functional foundation. `WCNCP-008` may collect the frozen cohort's ordinary
-wrapper observations. Public source mutation, candidate execution, value
+functional foundation and `WCNCP-008` proves complete prospective observation
+capture. `WCNCP-009` may reconstruct opportunity breadth and run at most two
+additional native diagnostics per family. Public source mutation, candidate execution, value
 timing, owner contact, proposal application, merge, and product-value claims
 remain closed until their ordered gates authorize them.
 
@@ -1247,8 +1248,8 @@ repository build usable without BuildOpt state.
 | `WCNCP-E005` | WCNCP-005 | Lease and validator lifecycle proof | `DONE` — [validator proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e005-validation.json) with admission, single-active leases, budgets, isolated roots, fixture correctness, and exact revert; zero prospective evidence |
 | `WCNCP-E006` | WCNCP-006 | Diagnostic-only reviewed PatchBundle system replay | `DONE` — [review proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e006-review.json) with digest-bound artifacts, lifecycle, and fail-closed stale/tamper handling; no public mutation or historical value reuse |
 | `WCNCP-E007` | WCNCP-007 | Three-runner backend convergence/outage proof | `DONE` — [system proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e007-system.json) with converged observations, single lease ownership, outage preservation, restart retry, isolation, and fail-closed negatives; no value timing |
-| `WCNCP-E008` | WCNCP-008 | Fresh ten-family observation capture | `IN_PROGRESS` — [cohort freeze](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/cohort-freeze.json) selects 10 exact primary revisions plus 20 chronological reserves from source-neutral facts after 10 admissible native preflights; the former zero-row record remains retracted and prospective observations remain 0/30 |
-| `WCNCP-E009` | WCNCP-009 | Prospective opportunity breadth report | `WAITING` — blocked on WCNCP-008 |
+| `WCNCP-E008` | WCNCP-008 | Fresh ten-family observation capture | `DONE` — [capture report](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e008-capture.json), [immutable observations](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/observations), and independent checker reconstruct 10/10 conclusive families, 30/30 successful native children and output manifests, and ten acknowledged TLS snapshots; three excluded runner/infrastructure attempts are retained separately and are not product failures |
+| `WCNCP-E009` | WCNCP-009 | Prospective opportunity breadth report | `TODO` — authorized by complete WCNCP-008 capture; no public mutation, candidate, timing, or value claim is authorized |
 | `WCNCP-E010` | WCNCP-010 | Candidate correctness results | `WAITING` — blocked on WCNCP-009 |
 | `WCNCP-E011` | WCNCP-011 | Paired value and complete economics ledger | `WAITING` — blocked on WCNCP-010 and a controlled performance environment |
 | `WCNCP-E012` | WCNCP-012 | First-exposure owner review artifacts/results | `WAITING` — blocked on value-qualified proposals |
@@ -1256,10 +1257,8 @@ repository build usable without BuildOpt state.
 
 ## Immediate next action
 
-Continue `WCNCP-008` from the committed cohort cutoff: collect three fresh
-ordinary invocations per primary family through the real wrapper/backend path.
-These observations classify durations by their
-actual environment; they do not need a controlled performance runner merely
-to exist. Controlled capacity becomes mandatory only when a later gate tries
-to establish materiality, wrapper overhead, or value. The earlier zero-row
-terminal closure is retracted and cannot supply prospective evidence.
+Execute `WCNCP-009` against the 30 checked prospective observations. Reconstruct
+detector rows and family counts from current source facts, using at most two
+additional native diagnostics per family. Require 10/10 conclusive families
+and at least 3/10 actionable material families before WCNCP-010. Public source
+mutation, candidate builds, timing, and value claims remain closed.

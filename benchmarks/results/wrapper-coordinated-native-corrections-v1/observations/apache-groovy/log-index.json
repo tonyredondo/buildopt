@@ -1,0 +1,24 @@
+{
+  "family": "apache-groovy",
+  "logs": [
+    {
+      "invocation": 1,
+      "sha256": "ecd276a12429c4ae0624b70895ffc54428ba45a82664059ede0ae553dcc44ab1",
+      "sizeBytes": 211576,
+      "terminalEvidence": "BUILD SUCCESSFUL in 44s"
+    },
+    {
+      "invocation": 2,
+      "sha256": "9a21d607910806cad7972189193ec4de5ff9901d181241073377f74d05911db7",
+      "sizeBytes": 255248,
+      "terminalEvidence": "BUILD SUCCESSFUL in 10s"
+    },
+    {
+      "invocation": 3,
+      "sha256": "f34a2eebd553785e7d23970093659c622d8cc4508a5fff3a1a6a8ed1646d40ae",
+      "sizeBytes": 319008,
+      "terminalEvidence": "BUILD SUCCESSFUL in 6s"
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/invocation-log-index/v1"
+}

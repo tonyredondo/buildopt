@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "buildopt.wcncp/excluded-capture-attempt/v1",
+  "family": "gradle-versions-plugin",
+  "invocation": 2,
+  "decision": "EXCLUDED_CAPTURE_RUNNER_ARGUMENT_BINDING_FAILURE",
+  "reason": "The first resume implementation failed to reload the frozen owner arguments and invoked Gradle help. The output gate rejected the row, all raw artifacts are retained, and the row is not one of the 30 admissible observations.",
+  "requestedOwnerWorkflowExecuted": false,
+  "observationProduced": true,
+  "buildoptProductFailure": false,
+  "performanceAuthority": false
+}

@@ -2,33 +2,50 @@
   "schemaVersion": "buildopt.wcncp/evidence-e008/v1",
   "block": "WCNCP-008",
   "evidence": "WCNCP-E008",
-  "state": "RETRACTED_PREMATURE_CLOSURE",
+  "state": "DONE",
   "freezeGate": {
     "contractsCommitted": true,
-    "packageFrozenForProspective": false,
-    "subjectsPolicyFrozenCohortUnselected": true,
-    "emptyStateVerified": true,
-    "verdict": "GATE_NOT_OPENED"
+    "cohortFrozen": true,
+    "freezeCommit": "b938d4d07c751d35015b286a16f46869445c855c",
+    "baseCI": "33847635610 SUCCESS",
+    "nativePlatformCI": "33847635550 SUCCESS",
+    "verdict": "OPENED_BEFORE_FIRST_ADMISSIBLE_OBSERVATION"
   },
-  "environment": "STANDARD_HOSTED_CI, performance authority false; see environment.json",
-  "cohort": {
-    "familiesSelected": 0,
-    "familiesRequired": 10,
-    "slots": "10/10 UNSELECTED",
-    "reservesFrozen": 0
+  "package": {
+    "sourceCommit": "b938d4d07c751d35015b286a16f46869445c855c",
+    "buildoptwSha256": "b9873616659d7d71dd8849d15e4fa56130db1305a90960a77cf1868048beb7a3",
+    "buildoptServerSha256": "d510c9e4a038aa869052c54bb9842d73bb85feb064fac6e3d7674b99be59d7d0"
   },
+  "environment": "LOCAL_FUNCTIONAL",
+  "performanceAuthority": false,
   "capture": {
-    "ordinaryObservationBuilds": 0,
-    "ordinaryObservationBuildsRequired": 30,
-    "additionalNativeDiagnostics": 0,
-    "conclusiveFamilies": 0,
-    "conclusiveFamiliesRequired": 10
+    "families": 10,
+    "ordinaryObservationBuilds": 30,
+    "successfulNativeChildren": 30,
+    "resolvedOutputManifests": 30,
+    "conclusiveFamilies": 10,
+    "excludedInfrastructureOrRunnerAttempts": 3,
+    "activeOutboxItemsAfterAcknowledgement": 0
   },
-  "budgetSpent": {
-    "controlledMachineHours": 0,
-    "diskGiB": 0
+  "publication": {
+    "tls": true,
+    "scopedTrustedObserverTokens": 10,
+    "batches": 10,
+    "observationsAcknowledged": 30,
+    "manifests": 10,
+    "heads": 10,
+    "verifiedSnapshots": 10,
+    "states": ["OBSERVING"]
   },
-  "reason": "Historical zero-row placeholder only. WCNCP-008 was not executed and remains TODO; lack of controlled performance capacity did not prevent ordinary observation capture or authorize terminal closure.",
+  "exclusions": [
+    "EXCLUDED_EXECUTOR_NETWORK_NAMESPACE",
+    "EXCLUDED_EXECUTOR_SESSION_INTERRUPTION",
+    "EXCLUDED_CAPTURE_RUNNER_ARGUMENT_BINDING_FAILURE"
+  ],
+  "historicalBuildoptEvidenceConsumed": false,
+  "publicSourceMutations": 0,
+  "candidateBuilds": 0,
   "timingSamples": 0,
-  "productFailures": 0
+  "productFailures": 0,
+  "conclusion": "WCNCP-009 is authorized to reconstruct prospective opportunity breadth. Public source mutation, candidate execution, performance timing, and value claims remain closed."
 }

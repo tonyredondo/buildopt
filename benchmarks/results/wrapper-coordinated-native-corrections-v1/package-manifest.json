@@ -1,12 +1,12 @@
 {
   "schemaVersion": "buildopt.wcncp/evidence-package/v1",
   "block": "WCNCP-008",
-  "recordedAt": "2026-09-03",
-  "declaration": "No prospective package freeze has executed. The prior zero-row closure was retracted after a functional audit; WCNCP-008 must freeze its exact package and cohort before observations can become prospective gate inputs.",
-  "sourceCommitBeforeRepair": "71f3007d96affdddf4aa1234ef3ef9b3b4b96c64",
-  "sourceTree": "repaired functional blocks WCNCP-001 through WCNCP-007; prospective freeze still pending",
-  "prospectiveFreezeExecuted": false,
-  "gradleVersion": "9.6.1",
+  "recordedAt": "2026-09-04",
+  "declaration": "The exact BuildOpt package was built from the committed, green cohort-freeze revision before the first admissible observation.",
+  "sourceCommit": "b938d4d07c751d35015b286a16f46869445c855c",
+  "prospectiveFreezeExecuted": true,
+  "buildoptwSha256": "b9873616659d7d71dd8849d15e4fa56130db1305a90960a77cf1868048beb7a3",
+  "buildoptServerSha256": "d510c9e4a038aa869052c54bb9842d73bb85feb064fac6e3d7674b99be59d7d0",
   "wcncpSchemas": [
     "contracts/jsonschema/wcncp-observation.v1.schema.json",
     "contracts/jsonschema/wcncp-opportunity.v1.schema.json",

@@ -1,0 +1,13 @@
+{
+  "exitCode": 0,
+  "family": "graphql-java",
+  "finishedAt": "2026-09-04T09:15:21Z",
+  "invocation": 1,
+  "observationFile": "obs-1788513321249668955-4fb2b4e2.json",
+  "outputCount": 2,
+  "performanceAuthority": false,
+  "resolvedOutputManifestSha256": "deb4bc69719c2bcb5b34e4d3188979d5989ea3d40318620236d40f198757dd22",
+  "schemaVersion": "buildopt.wcncp/invocation-result/v1",
+  "startedAt": "2026-09-04T09:14:36Z",
+  "timingClassification": "NOT_EVALUATED"
+}

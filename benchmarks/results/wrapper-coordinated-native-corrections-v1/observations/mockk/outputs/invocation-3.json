@@ -1,0 +1,42 @@
+{
+  "family": "mockk",
+  "invocation": 3,
+  "outputs": [
+    {
+      "path": "modules/mockk-agent-api/build/libs/mockk-agent-api-jvm-1.14.11-SNAPSHOT.jar",
+      "sha256": "9459d7eb7694b6e0039e19f7d1a89dfc7ae1fa782ff8d38f2952bda1ffa39242",
+      "sizeBytes": 49903
+    },
+    {
+      "path": "modules/mockk-agent/build/libs/mockk-agent-jvm-1.14.11-SNAPSHOT.jar",
+      "sha256": "bb3af4f281c8d5d50141cad9d1a1f8dde9d2bd695b68054777830957708ea0b4",
+      "sizeBytes": 92818
+    },
+    {
+      "path": "modules/mockk-bdd/build/libs/mockk-bdd-jvm-1.14.11-SNAPSHOT.jar",
+      "sha256": "5d6c32f86a9f30f91afb5eb2a6311b44f25a187b46186e8284168a817ae65037",
+      "sizeBytes": 2285
+    },
+    {
+      "path": "modules/mockk-context-parameters/build/libs/mockk-context-parameters-jvm-1.14.11-SNAPSHOT.jar",
+      "sha256": "ca4c35054fb3655299e5d465efca7c25ff51387e865b6ee8541a3461679b78b9",
+      "sizeBytes": 2727
+    },
+    {
+      "path": "modules/mockk-core/build/libs/mockk-core-jvm-1.14.11-SNAPSHOT.jar",
+      "sha256": "2037241144601d04ef2356edb6370324a80910d2d866a029b1ef2209bfa0d0e7",
+      "sizeBytes": 8680
+    },
+    {
+      "path": "modules/mockk-dsl/build/libs/mockk-dsl-jvm-1.14.11-SNAPSHOT.jar",
+      "sha256": "d0618d62f04f27b7809e3251db176b1133d27822814ac7b91298cff8621f5d4a",
+      "sizeBytes": 489097
+    },
+    {
+      "path": "modules/mockk/build/libs/mockk-jvm-1.14.11-SNAPSHOT.jar",
+      "sha256": "50aff0428150dc0dc23af841101afbbfb0cfd3def6636569fc45aacc0fd4ad4b",
+      "sizeBytes": 587918
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/resolved-output-manifest/v1"
+}

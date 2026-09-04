@@ -1,0 +1,21 @@
+{
+  "arguments": [
+    "assemble"
+  ],
+  "buildoptPackageSha256": "b9873616659d7d71dd8849d15e4fa56130db1305a90960a77cf1868048beb7a3",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "environmentSha256": "61aa2ef03e6167bf76f8283e74b0e633856e0289267d2b3463476670b4a11e96",
+  "family": "graphql-java",
+  "gradleVersion": "9.6.1",
+  "jdkSha256": "f9e355e452f4756524edf1c452c34d34bfe2d27bf4c2917cb6ab033d3d711d37",
+  "outputContractSha256": "dab16c2c57b8b4dcf0a08dc82f5903779bc3f03360fc4aea71ececab97a61506",
+  "performanceAuthority": false,
+  "repository": "https://github.com/graphql-java/graphql-java.git",
+  "repositoryRevision": "f2d8c9126f898c084b176631b7346bc6fbec296a",
+  "repositoryScopeSha256": "0494722c908735721441ffe6136bd4f8d3b5041e9d3f61ca1ce587db9eaee50d",
+  "requestedOutputManifestSha256": "5cd61378fa4eddcfa780bfeb45a6e76a2121a2f731c45f6c4892ac9bbb4456bd",
+  "schemaVersion": "buildopt.wcncp/family-capture-binding/v1",
+  "sourceTreeSha256": "83e80bbaa2b3e3308dd35e0b7120399f02149507674d958b0e2e4cc81718d051",
+  "workflowSha256": "05478c6b84875e6be640c96fc4fda2c4a4383f7a11d777b03710be3430e5ee97",
+  "wrapperSha256": "a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59"
+}

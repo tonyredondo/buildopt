@@ -1,6 +1,6 @@
 {
   "schemaVersion": "buildopt.specs/poc-wrapper-coordinated-native-corrections-subjects/v1",
-  "selectionState": "EXACT_COHORT_FROZEN_CAPTURE_PENDING",
+  "selectionState": "EXACT_COHORT_CAPTURED",
   "exactCohortFreezeBlock": "WCNCP-008",
   "selectionMustPrecede": "FIRST_PROSPECTIVE_OBSERVATION",
   "freezeCutoff": "COMMIT_CONTAINING_THIS_MANIFEST",
@@ -120,7 +120,7 @@
       "requiredOutputs": ["lib/build/libs/*.jar","lib-extra/build/libs/*.jar","plugin-gradle/build/libs/*.jar","testlib/build/libs/*.jar"], "priorQualifiedReviewedNativeRecipe": false
     }
   ],
-  "prospectiveObservations": 0,
+  "prospectiveObservations": 30,
   "candidateBuilds": 0,
   "timingSamples": 0,
   "productFailures": 0

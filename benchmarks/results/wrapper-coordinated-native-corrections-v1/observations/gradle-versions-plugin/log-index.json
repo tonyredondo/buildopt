@@ -1,0 +1,24 @@
+{
+  "family": "gradle-versions-plugin",
+  "logs": [
+    {
+      "invocation": 1,
+      "sha256": "51cd1b80073c6a1b6dce30575ba13fd9f79700d971fc307d0f21098f0f0dd104",
+      "sizeBytes": 53081,
+      "terminalEvidence": "BUILD SUCCESSFUL in 11m 24s"
+    },
+    {
+      "invocation": 2,
+      "sha256": "f24a1c771ba38817e5494d64598bd3a6433a0337fbe4da0a2bd4c31abeb3a8c2",
+      "sizeBytes": 53021,
+      "terminalEvidence": "BUILD SUCCESSFUL in 12m 11s"
+    },
+    {
+      "invocation": 3,
+      "sha256": "affcb25e22583fb11b9c87a4f26d3e4f375e744bc9ab4e5b08a8ab1fcbe4266e",
+      "sizeBytes": 52985,
+      "terminalEvidence": "BUILD SUCCESSFUL in 12m 20s"
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/invocation-log-index/v1"
+}

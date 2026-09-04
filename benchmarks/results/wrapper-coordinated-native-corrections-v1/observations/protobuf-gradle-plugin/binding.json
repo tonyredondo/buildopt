@@ -1,0 +1,23 @@
+{
+  "arguments": [
+    "clean",
+    "assemble",
+    "--stacktrace"
+  ],
+  "buildoptPackageSha256": "b9873616659d7d71dd8849d15e4fa56130db1305a90960a77cf1868048beb7a3",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "environmentSha256": "c44494a75c56738c72fbe8a907ea0b6e1a6907c15cd77bc0b1c0e6bec688d647",
+  "family": "protobuf-gradle-plugin",
+  "gradleVersion": "7.6",
+  "jdkSha256": "e2f5b9319dc7133754d896141fb39a58bab31d11a1727ac8448c2872189dcfa5",
+  "outputContractSha256": "d28d92cd6e1222891bb569365a33bb074d71ae9efbb2ff74aba99499080c73d0",
+  "performanceAuthority": false,
+  "repository": "https://github.com/google/protobuf-gradle-plugin.git",
+  "repositoryRevision": "8be67f8d98c525273248f5eea9892ee1c7895984",
+  "repositoryScopeSha256": "ac8e862d648ddbf514847516cede5b039d78313d30bedb2fb5af1254b73288cf",
+  "requestedOutputManifestSha256": "1ad21588873d4a662840faba688c08ebdfbd0a17d3354bd7f755fa9321b544a2",
+  "schemaVersion": "buildopt.wcncp/family-capture-binding/v1",
+  "sourceTreeSha256": "8c6f362ea899fad2da867dc5c782c12fb8de4c698ddc07346dce3cef2b040c4d",
+  "workflowSha256": "2508afa4a69030563216a56051a77aeccdf6e9b055a58f701293aabef025f558",
+  "wrapperSha256": "63135287117a1e6d12c84580f1f49c61d1ba02218ecd28660605e97f976e7d65"
+}

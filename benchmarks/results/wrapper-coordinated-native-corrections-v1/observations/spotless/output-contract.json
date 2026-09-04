@@ -1,0 +1,10 @@
+{
+  "repositoryRevision": "4ea1c6cbf46f4e60eb9e621406bf2621e28f2d68",
+  "requiredOutputs": [
+    "lib/build/libs/*.jar",
+    "lib-extra/build/libs/*.jar",
+    "plugin-gradle/build/libs/*.jar",
+    "testlib/build/libs/*.jar"
+  ],
+  "schemaVersion": "buildopt.wcncp/output-contract/v1"
+}

@@ -1,0 +1,12 @@
+{
+  "family": "gradle-versions-plugin",
+  "invocation": 3,
+  "outputs": [
+    {
+      "path": "build/libs/gradle-versions-plugin.jar",
+      "sha256": "39a0f849f32091d7201dedc88708cb422aff65a62fb0f9e48b4b1e29fada43cb",
+      "sizeBytes": 261
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/resolved-output-manifest/v1"
+}

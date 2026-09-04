@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "buildopt.wcncp/excluded-capture-attempt/v1",
+  "family": "gradle-intellij-plugin",
+  "invocation": 1,
+  "startedAt": "2026-09-04T07:42:45Z",
+  "finishedAt": "2026-09-04T07:42:46Z",
+  "decision": "EXCLUDED_EXECUTOR_NETWORK_NAMESPACE",
+  "reason": "The restricted executor exposed no usable wildcard IP, so Gradle could not start. The host preflight had already passed this exact revision and workflow. This row is retained but is not one of the 30 admissible prospective observations.",
+  "childExitCode": 1,
+  "buildoptProductFailure": false,
+  "performanceAuthority": false
+}

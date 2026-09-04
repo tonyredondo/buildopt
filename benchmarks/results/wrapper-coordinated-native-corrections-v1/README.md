@@ -1,9 +1,8 @@
 # Wrapper-coordinated native corrections v1 evidence
 
-State: `FUNCTIONAL_FOUNDATION_READY`. Functional lanes `WCNCP-001` through
-`WCNCP-007` are repaired and covered on standard CI. `WCNCP-008` is in
-progress: the neutral cohort is frozen and fresh ordinary wrapper observations
-remain at zero.
+State: `PROSPECTIVE_CAPTURE_COMPLETE`. Functional lanes `WCNCP-001` through
+`WCNCP-007` are covered and `WCNCP-008` completed the frozen ten-family capture.
+`WCNCP-009` is the current opportunity-breadth block.
 
 The pre-capture operational audit also added the missing administrative
 `wcncp-actor grant` command: transport token issuance alone remains
@@ -16,14 +15,14 @@ prospective cohort or value evidence.
 The previous `INCOMPLETE_PERFORMANCE_ENVIRONMENT` conclusion is
 `RETRACTED_PREMATURE_CLOSURE`: it jumped from an
 unexecuted WCNCP-008 to WCNCP-013. It is retracted. The retained
-[`terminal-decision.json`](./terminal-decision.json),
-[`report.json`](./report.json), and zero-row WCNCP-E008 through WCNCP-E012
-files are audit records only and have no gate or terminal authority.
+[`terminal-decision.json`](./terminal-decision.json) and zero-row WCNCP-E009
+through WCNCP-E012 files are audit records only and have no gate or terminal
+authority. WCNCP-E008 has been replaced by the completed prospective record.
 
 Current state:
 
 - exact public cohort: `FROZEN_10_PRIMARY_PLUS_20_RESERVES`;
-- prospective observations: 0;
+- prospective observations: 30 (3 per family);
 - public source patches: 0;
 - candidate builds: 0;
 - timing samples: 0;
@@ -62,12 +61,17 @@ fixtures. None authorizes source mutation, candidate execution, or timing.
 [`wcncp-e007-system.json`](./wcncp-e007-system.json): synthetic-only
 converged observations, single lease ownership, outage preservation, restart
 retry, isolation, fail-closed negatives, and durable decisions. Prospective
-evidence remains zero. The [`cohort-freeze.json`](./cohort-freeze.json) record
+evidence for WCNCP-001 through WCNCP-007 remains synthetic. The
+[`cohort-freeze.json`](./cohort-freeze.json) record
 binds ten primary revisions, twenty chronological reserves, owner workflows,
 required outputs, wrapper/workflow/source hashes, typed exclusions, and ten
-successful native admissibility preflights. Preflight durations are never
-performance evidence. `WCNCP-008` next collects ordinary wrapper observations
-only.
+successful native admissibility preflights. The completed
+[`WCNCP-E008 capture`](./wcncp-e008-capture.json) and
+[`observations`](./observations/) reconstruct 10/10 conclusive families, 30/30
+successful native children and required-output manifests, ten acknowledged TLS
+batches and verified snapshots, plus three separately excluded runner or
+infrastructure attempts. No duration is performance evidence. `WCNCP-009` is
+next; source mutation, candidates, timing, and value remain closed.
 
 Reconstruct the checked freeze from the manifest and, when the ten public
 checkouts are available, their Git archives with:
@@ -80,6 +84,13 @@ Run the frozen planning/schema contract with:
 
 ```bash
 ./dev/check-wrapper-coordinated-native-corrections-plan
+```
+
+Reconstruct the prospective capture and its fail-closed negatives with:
+
+```bash
+./dev/check-wcncp-prospective-capture
+./dev/check-wcncp-prospective-capture-negatives
 ```
 
 Run the WCNCP-001 typed-state proof with:

@@ -1,0 +1,22 @@
+{
+  "family": "gradle-consistent-versions",
+  "invocation": 2,
+  "outputs": [
+    {
+      "path": "build/libs/gradle-consistent-versions-4199934-javadoc.jar",
+      "sha256": "0a677eabc023c8805944d41be2fd0c3ea58e8c6400ac74cbe73eb2967f768277",
+      "sizeBytes": 4287470
+    },
+    {
+      "path": "build/libs/gradle-consistent-versions-4199934-sources.jar",
+      "sha256": "fbf9f9265e55510124f705e81e085bd66f2a8372c350d248d550b2d80e74257b",
+      "sizeBytes": 71718
+    },
+    {
+      "path": "build/libs/gradle-consistent-versions-4199934.jar",
+      "sha256": "fabeb4dd51b2d8ddbb676b5f900a2c01565e4250d0561a295ad093191088b749",
+      "sizeBytes": 184943
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/resolved-output-manifest/v1"
+}

@@ -1,0 +1,8 @@
+{
+  "arch": "amd64",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "jdkSha256": "95831ab52b5291e8df70cb96cd3693171d462f2740949f05f5c03a51eb3a92fa",
+  "os": "linux",
+  "performanceAuthority": false,
+  "schemaVersion": "buildopt.wcncp/environment-binding/v1"
+}

@@ -1,0 +1,22 @@
+{
+  "family": "junit-pioneer",
+  "invocation": 3,
+  "outputs": [
+    {
+      "path": "build/libs/junit-pioneer-javadoc.jar",
+      "sha256": "4d62262f43f8e418ad5a328cf22a106e34561420dd9d7f376220cf71eca82778",
+      "sizeBytes": 363969
+    },
+    {
+      "path": "build/libs/junit-pioneer-sources.jar",
+      "sha256": "c6960d3d3f36e70a87fa6407760d58551972712b0217ee3c3fe42768390862e2",
+      "sizeBytes": 150706
+    },
+    {
+      "path": "build/libs/junit-pioneer.jar",
+      "sha256": "dcf1e5f417a4b26475293518f84c2f845492604cda27adb4efbc72528bce8e84",
+      "sizeBytes": 186086
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/resolved-output-manifest/v1"
+}

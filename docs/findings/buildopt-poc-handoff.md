@@ -54,7 +54,7 @@ does not establish commercial viability.
 
 ## Current experiment status
 
-`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` is active at `WCNCP-008`
+`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` is active at `WCNCP-009`
 (`WCNCP-000` contract frozen; `WCNCP-001` through `WCNCP-007` functionally
 repaired and proved). The wrapper command remains
 authoritative Gradle passthrough; control and data planes stay separate;
@@ -63,13 +63,13 @@ detection reconstructs canonical observations; validation uses single-active
 leases, lease-bound publication, exact outputs, and safe revert; review reuses
 the signed PatchBundle boundary; and three isolated runners converge through
 the real HTTPS batch route with outage preservation. The former zero-row
-`INCOMPLETE_PERFORMANCE_ENVIRONMENT` decision is retracted because WCNCP-008
-never executed. The exact ten-family cohort and twenty chronological reserves
-are now frozen after ten source-neutral optimized-native admissibility passes;
-their durations are not performance evidence. Zero prospective observations,
-candidates, pairs, reviews, failures, or value claims exist. WCNCP-008 may now
-collect exactly three ordinary wrapper observations per primary family;
-later candidate and performance gates remain closed.
+`INCOMPLETE_PERFORMANCE_ENVIRONMENT` decision remains retracted. The exact
+ten-family cohort produced 30/30 fresh complete ordinary wrapper observations:
+every native child succeeded, every required-output manifest resolved, and ten
+TLS-published batches reached verified central snapshots. Three excluded
+executor/capture-runner attempts are retained and are not product failures.
+WCNCP-009 may reconstruct opportunity breadth; candidate builds, performance
+timing, owner review, and value claims remain closed.
 
 The pre-capture audit found and repaired one operational omission: central
 tokens can now be bound explicitly to a frozen WCNCP actor with

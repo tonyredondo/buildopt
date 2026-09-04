@@ -86,6 +86,8 @@ provision tools or create release artifacts document that effect explicitly.
 | Economic-first terminal stop, evidence digests and typed unmeasured value | `./dev/check-economic-opportunity-terminal-decision` |
 | Markdown, navigation, package docs | `./dev/check-documentation` |
 | Required paths and baseline shape | `./dev/check-layout` |
+| WCNCP prospective capture row, binding, output, publication and summary reconstruction | `./dev/check-wcncp-prospective-capture` |
+| WCNCP missing-row, source-drift, payload-tamper and predecessor-contamination negatives | `./dev/check-wcncp-prospective-capture-negatives` |
 | Normative package structure | `./dev/check-normative-layout` |
 | Closed fresh generic predecessor and evidence boundary | `./dev/check-fresh-generic-optimization-plan` |
 | Change-aware producer/analyzer fixtures across Gradle and DSL variants | `./dev/check-change-aware-producer-fixtures` |

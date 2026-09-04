@@ -13,10 +13,11 @@ proves validation coordination with leases and exact revert, WCNCP-006
 proves signed PatchBundle-bound review with fail-closed handling, and
 WCNCP-007 proves real HTTPS multi-runner convergence with outage preservation.
 A subsequent audit repaired the functional integration and retracted the
-premature WCNCP-013 zero-row conclusion. `WCNCP-008` is in progress: ten
-primary revisions and twenty chronological reserves are frozen after native
-admissibility preflights, but zero wrapper observations exist, so this pivot
-still adds no generalization, timing, or value evidence. A pre-capture
+premature WCNCP-013 zero-row conclusion. `WCNCP-008` is complete: ten primary
+revisions produced 30/30 fresh complete observations, successful native
+children, resolved output manifests, acknowledged batches, and verified central
+snapshots. This proves capture completeness, not opportunity, timing, or value;
+`WCNCP-009` is now the open breadth gate. A pre-capture
 operational correction now exposes explicit
 actor binding for issued central tokens; token issuance still grants no WCNCP
 write authority by itself.

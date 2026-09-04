@@ -2,11 +2,14 @@
   "schemaVersion": "buildopt.wcncp/evidence-exclusions/v1",
   "block": "WCNCP-008",
   "excludedFamilies": [],
-  "excludedRows": 0,
-  "forbiddenInputFamilies": [
-    "DNO", "NAC", "RNPP", "EGNP", "SWL", "AF", "BUILD_IMPACT",
-    "CACHE_LOCALITY", "ANY_OTHER_PRE_FREEZE_BUILDOPT_ARTIFACT"
+  "excludedRows": 3,
+  "decisions": [
+    "EXCLUDED_EXECUTOR_NETWORK_NAMESPACE",
+    "EXCLUDED_EXECUTOR_SESSION_INTERRUPTION",
+    "EXCLUDED_CAPTURE_RUNNER_ARGUMENT_BINDING_FAILURE"
   ],
+  "productFailures": 0,
+  "performanceAuthority": false,
   "historicalEvidenceConsumed": false,
-  "note": "No family was excluded because no family was selected: the cohort freeze never opened without controlled capacity. Historical reports were used as system fixtures only where labeled and never as prospective rows."
+  "note": "All ten frozen families completed three admissible observations. Three infrastructure or capture-runner attempts are retained separately and do not count as prospective rows or product failures."
 }

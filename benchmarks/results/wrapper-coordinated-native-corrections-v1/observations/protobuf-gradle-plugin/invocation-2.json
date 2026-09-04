@@ -1,0 +1,13 @@
+{
+  "exitCode": 0,
+  "family": "protobuf-gradle-plugin",
+  "finishedAt": "2026-09-04T09:14:15Z",
+  "invocation": 2,
+  "observationFile": "obs-1788513255465470280-73d455d4.json",
+  "outputCount": 4,
+  "performanceAuthority": false,
+  "resolvedOutputManifestSha256": "93dcc9973db5a800162fa0523d8ea57ba38554704cbe4c9faded5591c44a7401",
+  "schemaVersion": "buildopt.wcncp/invocation-result/v1",
+  "startedAt": "2026-09-04T09:13:54Z",
+  "timingClassification": "NOT_EVALUATED"
+}

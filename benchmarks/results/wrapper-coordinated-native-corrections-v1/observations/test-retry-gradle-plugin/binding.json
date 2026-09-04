@@ -1,0 +1,22 @@
+{
+  "arguments": [
+    "build",
+    "-s"
+  ],
+  "buildoptPackageSha256": "b9873616659d7d71dd8849d15e4fa56130db1305a90960a77cf1868048beb7a3",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "environmentSha256": "c44494a75c56738c72fbe8a907ea0b6e1a6907c15cd77bc0b1c0e6bec688d647",
+  "family": "test-retry-gradle-plugin",
+  "gradleVersion": "8.14.5",
+  "jdkSha256": "e2f5b9319dc7133754d896141fb39a58bab31d11a1727ac8448c2872189dcfa5",
+  "outputContractSha256": "0c7918d953d117306f62ca7638525a7bc98d975244bb3332b984c2ad82fe002d",
+  "performanceAuthority": false,
+  "repository": "https://github.com/gradle/test-retry-gradle-plugin.git",
+  "repositoryRevision": "ee9a521bdc1add0d1ff9fcfbed47882fb95bfdff",
+  "repositoryScopeSha256": "8d3c6a7a38ea8974b3c762d8b24412254810edabff4562891ceabdb964e398f5",
+  "requestedOutputManifestSha256": "0066eaec608f1b34feb06d7e37904dccd1260af25a92ab9f644038b021873b54",
+  "schemaVersion": "buildopt.wcncp/family-capture-binding/v1",
+  "sourceTreeSha256": "a4e6e3673b79336f3bbe47beb6ac47c89208ce936c0af5b7c6b757a23b23d8cd",
+  "workflowSha256": "a9430ab0ac41606711323f27da54c3960b85cd757cd2e07dbda981c5c3d187f8",
+  "wrapperSha256": "b187b4c52e749f5760afdd6fadc31b2a98ad35fb249bf0dff03b72650f320409"
+}

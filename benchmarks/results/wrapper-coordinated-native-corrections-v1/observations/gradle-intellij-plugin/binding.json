@@ -1,0 +1,23 @@
+{
+  "arguments": [
+    "build",
+    "-x",
+    "test"
+  ],
+  "buildoptPackageSha256": "b9873616659d7d71dd8849d15e4fa56130db1305a90960a77cf1868048beb7a3",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "environmentSha256": "34155853352918680b3147c0af3b60565a105fb6f4fb891054c3b801805115aa",
+  "family": "gradle-intellij-plugin",
+  "gradleVersion": "9.7.1",
+  "jdkSha256": "95831ab52b5291e8df70cb96cd3693171d462f2740949f05f5c03a51eb3a92fa",
+  "outputContractSha256": "5b4aecd1773df65a07784717f3eecaf44ec9171bd3833a9ae372a98643ad0787",
+  "performanceAuthority": false,
+  "repository": "https://github.com/JetBrains/gradle-intellij-plugin.git",
+  "repositoryRevision": "511a40abb9f01a90b2bc888b5a407ab63de2b13f",
+  "repositoryScopeSha256": "1cc74858283e511cd853988cba0ca2bbf5143393928dc8f606151fe6fd5740c1",
+  "requestedOutputManifestSha256": "b967556301b814fe6b86cd8ff29b3f229d1c5d8640e646d2da4dd4761aeef47e",
+  "schemaVersion": "buildopt.wcncp/family-capture-binding/v1",
+  "sourceTreeSha256": "e5ada8b61d4649502137e4597c4b953f17a125c578473fb8469bda2fc01a9cd9",
+  "workflowSha256": "605a99c4897a13e68aec0a6b793c9f3536822afff55deeb8d25de8211b2a09e9",
+  "wrapperSha256": "a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59"
+}

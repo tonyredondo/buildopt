@@ -1,0 +1,57 @@
+{
+  "family": "spotless",
+  "invocation": 1,
+  "outputs": [
+    {
+      "path": "lib-extra/build/libs/lib-extra-4.10.1-SNAPSHOT-javadoc.jar",
+      "sha256": "6b536d084c675a16271d8dd193b9a99153bd9d9833339da6a1671fd10c41c932",
+      "sizeBytes": 172661
+    },
+    {
+      "path": "lib-extra/build/libs/lib-extra-4.10.1-SNAPSHOT-sources.jar",
+      "sha256": "e488f5355c25f26696582b74587b209aa1ad015ff88bd74d4c8fe79fe9323e10",
+      "sizeBytes": 58890
+    },
+    {
+      "path": "lib-extra/build/libs/lib-extra-4.10.1-SNAPSHOT.jar",
+      "sha256": "a80d67a10f9cab563ff423965c2e9d10def07028871f1cc19fe1f98eb63facc4",
+      "sizeBytes": 121025
+    },
+    {
+      "path": "lib/build/libs/lib-4.10.1-SNAPSHOT-javadoc.jar",
+      "sha256": "8b5e9f56ca474d8761a1d53f9b5b8ebe5e81745218f441765c59fc526b59c824",
+      "sizeBytes": 681619
+    },
+    {
+      "path": "lib/build/libs/lib-4.10.1-SNAPSHOT-sources.jar",
+      "sha256": "49c108a431b1a94c6bb0a1dd9915fea10695a5ac0894968fd6caf57099af01a9",
+      "sizeBytes": 290682
+    },
+    {
+      "path": "lib/build/libs/lib-4.10.1-SNAPSHOT.jar",
+      "sha256": "8339d27f071fd3575d1e99d880e815ac9eaa397c955ef9424e62a64a1cd79ab2",
+      "sizeBytes": 648357
+    },
+    {
+      "path": "plugin-gradle/build/libs/plugin-gradle-8.10.1-SNAPSHOT-javadoc.jar",
+      "sha256": "b4d9790b14ee7e1add5de7681a3e44c253058b3d454da322eb528b76a4d2350f",
+      "sizeBytes": 469316
+    },
+    {
+      "path": "plugin-gradle/build/libs/plugin-gradle-8.10.1-SNAPSHOT-sources.jar",
+      "sha256": "d854d8be1e2617fb94de7b7e4767306bdfec5020e92ce3734f3f4f0fb90d4783",
+      "sizeBytes": 92288
+    },
+    {
+      "path": "plugin-gradle/build/libs/plugin-gradle-8.10.1-SNAPSHOT.jar",
+      "sha256": "bd1d47e81838ff94251b382133141a062343790164a6589d1f1b90d6c420c2c9",
+      "sizeBytes": 189559
+    },
+    {
+      "path": "testlib/build/libs/testlib-4.10.1-SNAPSHOT.jar",
+      "sha256": "62a53a71a46cc541cffb281612c7cd4c502ed371555df25f60a33d18e65fccce",
+      "sizeBytes": 283705
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/resolved-output-manifest/v1"
+}

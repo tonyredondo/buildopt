@@ -1,0 +1,24 @@
+{
+  "family": "test-retry-gradle-plugin",
+  "logs": [
+    {
+      "invocation": 1,
+      "sha256": "6253680796f53fa5c8b57939207d714664cbac3a71070faaea876dbcc36b0369",
+      "sizeBytes": 2734,
+      "terminalEvidence": "BUILD SUCCESSFUL in 23s"
+    },
+    {
+      "invocation": 2,
+      "sha256": "1b4433943f434966825aed0688c277e7150125b3838f07990357b72285f9de60",
+      "sizeBytes": 2197,
+      "terminalEvidence": "BUILD SUCCESSFUL in 2s"
+    },
+    {
+      "invocation": 3,
+      "sha256": "c355087c490a54ceb75b5b9d01b42af52827c9d6c3df3753be0582decdb51b46",
+      "sizeBytes": 2197,
+      "terminalEvidence": "BUILD SUCCESSFUL in 3s"
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/invocation-log-index/v1"
+}

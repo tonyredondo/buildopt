@@ -1,0 +1,13 @@
+{
+  "exitCode": 0,
+  "family": "gradle-intellij-plugin",
+  "finishedAt": "2026-09-04T07:44:07Z",
+  "invocation": 2,
+  "observationFile": "obs-1788507847020505063-e9f71d02.json",
+  "outputCount": 3,
+  "performanceAuthority": false,
+  "resolvedOutputManifestSha256": "9f37a31be8b6a57de2feee92d5d2724552dd7186ceeef5e4b05f3eb4926810ed",
+  "schemaVersion": "buildopt.wcncp/invocation-result/v1",
+  "startedAt": "2026-09-04T07:44:05Z",
+  "timingClassification": "NOT_EVALUATED"
+}

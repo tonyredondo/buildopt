@@ -1,0 +1,13 @@
+{
+  "exitCode": 0,
+  "family": "apache-groovy",
+  "finishedAt": "2026-09-04T09:16:45Z",
+  "invocation": 3,
+  "observationFile": "obs-1788513405655227646-ece21b4a.json",
+  "outputCount": 33,
+  "performanceAuthority": false,
+  "resolvedOutputManifestSha256": "93056ac4722e673f05333c9769d40c0410b4252dc857cecbecb449c0f2c36add",
+  "schemaVersion": "buildopt.wcncp/invocation-result/v1",
+  "startedAt": "2026-09-04T09:16:38Z",
+  "timingClassification": "NOT_EVALUATED"
+}

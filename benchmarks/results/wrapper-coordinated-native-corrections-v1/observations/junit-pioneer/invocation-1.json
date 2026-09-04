@@ -1,0 +1,13 @@
+{
+  "exitCode": 0,
+  "family": "junit-pioneer",
+  "finishedAt": "2026-09-04T07:56:55Z",
+  "invocation": 1,
+  "observationFile": "obs-1788508615644280715-c4109720.json",
+  "outputCount": 3,
+  "performanceAuthority": false,
+  "resolvedOutputManifestSha256": "6057c74dd2e7ab0de24bdee3114a7e8761a691a7cfc66d46dd682e281db5a427",
+  "schemaVersion": "buildopt.wcncp/invocation-result/v1",
+  "startedAt": "2026-09-04T07:55:34Z",
+  "timingClassification": "NOT_EVALUATED"
+}

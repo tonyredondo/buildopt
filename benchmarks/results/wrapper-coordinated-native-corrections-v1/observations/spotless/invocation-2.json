@@ -1,0 +1,13 @@
+{
+  "exitCode": 0,
+  "family": "spotless",
+  "finishedAt": "2026-09-04T09:17:52Z",
+  "invocation": 2,
+  "observationFile": "obs-1788513472821966136-a11e99d3.json",
+  "outputCount": 10,
+  "performanceAuthority": false,
+  "resolvedOutputManifestSha256": "3b4cd6f6777d633fd77aef42692a4ae8122bf6efa9475432a2626295c9a0e7e1",
+  "schemaVersion": "buildopt.wcncp/invocation-result/v1",
+  "startedAt": "2026-09-04T09:17:51Z",
+  "timingClassification": "NOT_EVALUATED"
+}

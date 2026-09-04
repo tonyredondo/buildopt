@@ -1,0 +1,7 @@
+{
+  "repositoryRevision": "419993496161e5bace10678efe0b01eb4655c28f",
+  "requiredOutputs": [
+    "build/libs/*.jar"
+  ],
+  "schemaVersion": "buildopt.wcncp/output-contract/v1"
+}

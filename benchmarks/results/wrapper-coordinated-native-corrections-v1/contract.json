@@ -1,7 +1,7 @@
 {
   "schemaVersion": "buildopt.poc/wrapper-coordinated-native-corrections/v1",
   "workItem": "WCNCP",
-  "status": "FUNCTIONAL_FOUNDATION_READY",
+  "status": "PROSPECTIVE_CAPTURE_COMPLETE",
   "productUnit": "OWNER_REVIEWED_NATIVE_GRADLE_CORRECTION",
   "customerCommand": "./buildoptw <gradle arguments...>",
   "runtime": {
@@ -152,17 +152,17 @@
     {"id":"WCNCP-005","state":"DONE","outcome":"VALIDATION_COORDINATOR"},
     {"id":"WCNCP-006","state":"DONE","outcome":"REVIEW_DELIVERY"},
     {"id":"WCNCP-007","state":"DONE","outcome":"MULTI_RUNNER_SYSTEM_PROOF"},
-    {"id":"WCNCP-008","state":"TODO","outcome":"PROSPECTIVE_COHORT_CAPTURE"},
-    {"id":"WCNCP-009","state":"WAITING","outcome":"OPPORTUNITY_BREADTH_GATE"},
+    {"id":"WCNCP-008","state":"DONE","outcome":"PROSPECTIVE_COHORT_CAPTURE"},
+    {"id":"WCNCP-009","state":"TODO","outcome":"OPPORTUNITY_BREADTH_GATE"},
     {"id":"WCNCP-010","state":"WAITING","outcome":"CANDIDATE_CORRECTNESS"},
     {"id":"WCNCP-011","state":"WAITING","outcome":"PAIRED_VALUE_AND_ECONOMICS"},
     {"id":"WCNCP-012","state":"WAITING","outcome":"FIRST_EXPOSURE_OWNER_REVIEW"},
     {"id":"WCNCP-013","state":"WAITING","outcome":"TERMINAL_DECISION"}
   ],
   "nextBlock": {
-    "id": "WCNCP-008",
+    "id": "WCNCP-009",
     "state": "TODO",
-    "allowedWork": "FREEZE_COHORT_AND_CAPTURE_ORDINARY_WRAPPER_OBSERVATIONS",
+    "allowedWork": "RECONSTRUCT_OPPORTUNITY_BREADTH_WITH_AT_MOST_TWO_ADDITIONAL_NATIVE_DIAGNOSTICS_PER_FAMILY",
     "prospectiveGradleBuildsAllowed": true,
     "publicSourceMutationAllowed": false,
     "timingAllowed": false

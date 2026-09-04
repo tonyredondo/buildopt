@@ -1,0 +1,17 @@
+{
+  "family": "graphql-java",
+  "invocation": 2,
+  "outputs": [
+    {
+      "path": "build/libs/graphql-java-0.0.0-HEAD-SNAPSHOT-jcstress.jar",
+      "sha256": "7e1e163b4c4b05a87398658be2d67d7b29fe6ebba3eb3727b36bce6234ee6aee",
+      "sizeBytes": 2260119
+    },
+    {
+      "path": "build/libs/graphql-java-0.0.0-HEAD-SNAPSHOT.jar",
+      "sha256": "d29966280f5c9eaf5b8012a33ea6c18021deddfdf4898b805ac0efcfd290c68a",
+      "sizeBytes": 3874244
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/resolved-output-manifest/v1"
+}

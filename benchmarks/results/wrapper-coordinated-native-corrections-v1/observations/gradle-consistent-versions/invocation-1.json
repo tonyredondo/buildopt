@@ -1,0 +1,13 @@
+{
+  "exitCode": 0,
+  "family": "gradle-consistent-versions",
+  "finishedAt": "2026-09-04T07:51:23Z",
+  "invocation": 1,
+  "observationFile": "obs-1788508283017656784-8c4f0eea.json",
+  "outputCount": 3,
+  "performanceAuthority": false,
+  "resolvedOutputManifestSha256": "4bc55056a8e28a5d3f1b859878492fa7c9a8dd454b96c0a1363fc66d997d7651",
+  "schemaVersion": "buildopt.wcncp/invocation-result/v1",
+  "startedAt": "2026-09-04T07:44:14Z",
+  "timingClassification": "NOT_EVALUATED"
+}

@@ -1,0 +1,24 @@
+{
+  "family": "mockk",
+  "logs": [
+    {
+      "invocation": 1,
+      "sha256": "8f5af64dfc020beabd6ecaccae9def94ea183d7a1a4f553ec7c7b623e45256c8",
+      "sizeBytes": 58625,
+      "terminalEvidence": "BUILD SUCCESSFUL in 2m 52s"
+    },
+    {
+      "invocation": 2,
+      "sha256": "1b85129a5cb5867edd2a41e56dabb9c57d340ee75fe673c9379490a85b655c31",
+      "sizeBytes": 43989,
+      "terminalEvidence": "BUILD SUCCESSFUL in 1s"
+    },
+    {
+      "invocation": 3,
+      "sha256": "118f7bbe8cf1b24986069cd2eafd8147fa0156a1a01b6b2849819cc20ee1b7a4",
+      "sizeBytes": 43989,
+      "terminalEvidence": "BUILD SUCCESSFUL in 4s"
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/invocation-log-index/v1"
+}

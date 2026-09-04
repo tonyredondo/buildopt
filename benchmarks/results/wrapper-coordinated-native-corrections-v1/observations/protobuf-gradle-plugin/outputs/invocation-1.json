@@ -1,0 +1,27 @@
+{
+  "family": "protobuf-gradle-plugin",
+  "invocation": 1,
+  "outputs": [
+    {
+      "path": "build/libs/protobuf-gradle-plugin-0.10.1-SNAPSHOT-groovydoc.jar",
+      "sha256": "79727e5e0f1f165df8debc6bd39820c83f0d0a864a055503badaa075185dacd8",
+      "sizeBytes": 100744
+    },
+    {
+      "path": "build/libs/protobuf-gradle-plugin-0.10.1-SNAPSHOT-javadoc.jar",
+      "sha256": "a25eb207e45b753b287f846e71b62980ea598fb918e30f0016a0bc0412d8c24b",
+      "sizeBytes": 89591
+    },
+    {
+      "path": "build/libs/protobuf-gradle-plugin-0.10.1-SNAPSHOT-sources.jar",
+      "sha256": "ae65d4d17d5c075e4b5c4e1beefe42ea484c7e1e78442e71fa70c986dfa091cc",
+      "sizeBytes": 37207
+    },
+    {
+      "path": "build/libs/protobuf-gradle-plugin-0.10.1-SNAPSHOT.jar",
+      "sha256": "5d0c18f02855a8864f2a1795b0c3a6e1a73496ade30d521ac31ed593e5b110b9",
+      "sizeBytes": 180971
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/resolved-output-manifest/v1"
+}

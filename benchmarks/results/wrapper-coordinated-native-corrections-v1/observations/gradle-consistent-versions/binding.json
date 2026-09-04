@@ -1,0 +1,26 @@
+{
+  "arguments": [
+    "--parallel",
+    "--stacktrace",
+    "--continue",
+    "--max-workers=2",
+    "build",
+    "-Porg.gradle.java.installations.fromEnv=JAVA_17_HOME,JAVA_21_HOME,JAVA_25_HOME,JAVA_HOME"
+  ],
+  "buildoptPackageSha256": "b9873616659d7d71dd8849d15e4fa56130db1305a90960a77cf1868048beb7a3",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "environmentSha256": "34155853352918680b3147c0af3b60565a105fb6f4fb891054c3b801805115aa",
+  "family": "gradle-consistent-versions",
+  "gradleVersion": "9.7.1",
+  "jdkSha256": "95831ab52b5291e8df70cb96cd3693171d462f2740949f05f5c03a51eb3a92fa",
+  "outputContractSha256": "dd68feac8e6ee4e97ae5f7b91b547ea83ea22ca29798a7764ff7acb7041291ea",
+  "performanceAuthority": false,
+  "repository": "https://github.com/palantir/gradle-consistent-versions.git",
+  "repositoryRevision": "419993496161e5bace10678efe0b01eb4655c28f",
+  "repositoryScopeSha256": "ae6a8d66d5c1bd50fe8fd9e4ebd21b729b273012d8ca47ef57e041e2198c855a",
+  "requestedOutputManifestSha256": "d9c2525a8fb1704dac1332e8c49f58f1335a5758292db58122f45cc819dedaff",
+  "schemaVersion": "buildopt.wcncp/family-capture-binding/v1",
+  "sourceTreeSha256": "382f4981e4afa1f35224ee4d587bbf4dc0032db264c85f343e2e3902f4020407",
+  "workflowSha256": "fa58196e3ad3d2e4b35efd4c06cb9956edcafde3f6c577f505e17d224025e8f1",
+  "wrapperSha256": "29afb122ee56e68a5e178232a637ced3190d0f90678d842f5359d736509ca73f"
+}

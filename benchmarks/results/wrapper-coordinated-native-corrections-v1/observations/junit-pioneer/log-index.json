@@ -1,0 +1,24 @@
+{
+  "family": "junit-pioneer",
+  "logs": [
+    {
+      "invocation": 1,
+      "sha256": "92f444b934ac8af7677212b0de05c8ed9072843260888b3db5e65d8d5f0d955b",
+      "sizeBytes": 108441,
+      "terminalEvidence": "BUILD SUCCESSFUL in 1m 20s"
+    },
+    {
+      "invocation": 2,
+      "sha256": "f1a7ceaf53007838fab64935ad3a419e1e8bbb4a34a0c1ed58ec581463018de6",
+      "sizeBytes": 109156,
+      "terminalEvidence": "BUILD SUCCESSFUL in 49s"
+    },
+    {
+      "invocation": 3,
+      "sha256": "9f74ce5d7952d9a64adecf8e9d6665091c48f2d80bc8129658c5411edb475302",
+      "sizeBytes": 108263,
+      "terminalEvidence": "BUILD SUCCESSFUL in 48s"
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/invocation-log-index/v1"
+}

@@ -1,0 +1,24 @@
+{
+  "arguments": [
+    "build",
+    "-x",
+    "spotlessCheck",
+    "-PSPOTLESS_EXCLUDE_MAVEN=true"
+  ],
+  "buildoptPackageSha256": "b9873616659d7d71dd8849d15e4fa56130db1305a90960a77cf1868048beb7a3",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "environmentSha256": "34155853352918680b3147c0af3b60565a105fb6f4fb891054c3b801805115aa",
+  "family": "spotless",
+  "gradleVersion": "9.7.1",
+  "jdkSha256": "95831ab52b5291e8df70cb96cd3693171d462f2740949f05f5c03a51eb3a92fa",
+  "outputContractSha256": "b741f2bdaffffc81829ebe4db63711ad1708c6d1c456986e29d7a01f44956252",
+  "performanceAuthority": false,
+  "repository": "https://github.com/diffplug/spotless.git",
+  "repositoryRevision": "4ea1c6cbf46f4e60eb9e621406bf2621e28f2d68",
+  "repositoryScopeSha256": "65aecb03fe91c78afd2c73f03979aef250020263b24a38b003728d0a768f5d91",
+  "requestedOutputManifestSha256": "ae0653e23e6f33a3e0961af20f4e45e8018e3cc1e12dc67cf4bf3a259ab63037",
+  "schemaVersion": "buildopt.wcncp/family-capture-binding/v1",
+  "sourceTreeSha256": "12c828796c03d50903bd03eda1fac8fb70a9f85f5127216941e1488382cff775",
+  "workflowSha256": "b471d950d35126f1817ad4940bea5b7289b59827706964d91dcfdad8106f7564",
+  "wrapperSha256": "a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59"
+}

@@ -1,0 +1,22 @@
+{
+  "family": "test-retry-gradle-plugin",
+  "invocation": 3,
+  "outputs": [
+    {
+      "path": "plugin/build/libs/plugin-0.1.0-dev.5+ee9a521-javadoc.jar",
+      "sha256": "00fec3d91a2167a9a285096b3dca57b5aac4aea05182134aa8bfed76c5dad7fe",
+      "sizeBytes": 156099
+    },
+    {
+      "path": "plugin/build/libs/plugin-0.1.0-dev.5+ee9a521-sources.jar",
+      "sha256": "5d741d8494729fe1af83958e078e0408d9296929bb0b58da47a7b524847445b7",
+      "sizeBytes": 47354
+    },
+    {
+      "path": "plugin/build/libs/plugin-0.1.0-dev.5+ee9a521.jar",
+      "sha256": "1399cb0aa7408965e25621a530ecfd50059397889b0e1aac49f821be3a385306",
+      "sizeBytes": 231495
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/resolved-output-manifest/v1"
+}

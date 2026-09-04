@@ -1,0 +1,24 @@
+{
+  "family": "protobuf-gradle-plugin",
+  "logs": [
+    {
+      "invocation": 1,
+      "sha256": "4cb0e8cb5f42679404fe247fd6c3931edb795d93c429ee3e8ccf40491a9cf587",
+      "sizeBytes": 2360,
+      "terminalEvidence": "BUILD SUCCESSFUL in 34s"
+    },
+    {
+      "invocation": 2,
+      "sha256": "842a4a432c00fe1dbe7f2db871359444fd0117fd1241ae3cefd8cc1facd00969",
+      "sizeBytes": 2275,
+      "terminalEvidence": "BUILD SUCCESSFUL in 21s"
+    },
+    {
+      "invocation": 3,
+      "sha256": "36c29d94a501a196ff8591a2c2849b5a1b4900f50701cc49f8cd9b34a4c79ead",
+      "sizeBytes": 2275,
+      "terminalEvidence": "BUILD SUCCESSFUL in 18s"
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/invocation-log-index/v1"
+}

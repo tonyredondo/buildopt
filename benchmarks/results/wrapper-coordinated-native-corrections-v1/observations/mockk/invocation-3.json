@@ -1,0 +1,13 @@
+{
+  "exitCode": 0,
+  "family": "mockk",
+  "finishedAt": "2026-09-04T07:55:33Z",
+  "invocation": 3,
+  "observationFile": "obs-1788508533335057116-9c034bd9.json",
+  "outputCount": 7,
+  "performanceAuthority": false,
+  "resolvedOutputManifestSha256": "76b7956e8010c61926cd7f388111ff4dddd8e679b7c0db143833c80875bd8fad",
+  "schemaVersion": "buildopt.wcncp/invocation-result/v1",
+  "startedAt": "2026-09-04T07:55:28Z",
+  "timingClassification": "NOT_EVALUATED"
+}

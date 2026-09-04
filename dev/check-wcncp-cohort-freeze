@@ -13,7 +13,7 @@ command -v jq >/dev/null 2>&1 || {
 
 jq -e '
     .schemaVersion == "buildopt.specs/poc-wrapper-coordinated-native-corrections-subjects/v1" and
-    .selectionState == "EXACT_COHORT_FROZEN_CAPTURE_PENDING" and
+    .selectionState == "EXACT_COHORT_CAPTURED" and
     .exactCohortFreezeBlock == "WCNCP-008" and
     .selectionMustPrecede == "FIRST_PROSPECTIVE_OBSERVATION" and
     .freezeCutoff == "COMMIT_CONTAINING_THIS_MANIFEST" and
@@ -36,7 +36,7 @@ jq -e '
         (.ownerWorkflow.arguments | length) > 0 and
         (.requiredOutputs | length) > 0) and
     ([.slots[] | select(.priorQualifiedReviewedNativeRecipe == false)] | length) >= .minimumFamiliesWithoutPriorQualifiedReviewedNativeRecipe and
-    .prospectiveObservations == 0 and .candidateBuilds == 0 and
+    .prospectiveObservations == 30 and .candidateBuilds == 0 and
     .timingSamples == 0 and .productFailures == 0
 ' "${buildopt_subjects}" >/dev/null || {
     printf 'WCNCP exact cohort manifest is inconsistent\n' >&2
@@ -62,7 +62,7 @@ jq -e --slurpfile subjects "${buildopt_subjects}" '
     .counts.selectedWithoutPriorQualifiedReviewedNativeRecipe == ([$subjects[0].slots[] | select(.priorQualifiedReviewedNativeRecipe == false)] | length) and
     .counts.reserveRevisions == ([$subjects[0].slots[].reserves[]] | length) and
     .counts.excludedCandidates == (.excluded | length) and
-    .counts.prospectiveObservations == $subjects[0].prospectiveObservations
+    .counts.prospectiveObservations == 0
 ' "${buildopt_freeze}" >/dev/null || {
     printf 'WCNCP cohort-freeze evidence does not reconstruct\n' >&2
     exit 1

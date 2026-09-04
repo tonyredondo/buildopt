@@ -1,0 +1,24 @@
+{
+  "family": "graphql-java",
+  "logs": [
+    {
+      "invocation": 1,
+      "sha256": "db4ed36643310496760596102f42e3ca4b923d401f5aa3323ac588a6f6d97f37",
+      "sizeBytes": 2569,
+      "terminalEvidence": "BUILD SUCCESSFUL in 43s"
+    },
+    {
+      "invocation": 2,
+      "sha256": "df11366ea82d71470682620f98fd08dbecef556731871cc2cdb4885c1fe8b138",
+      "sizeBytes": 2630,
+      "terminalEvidence": "BUILD SUCCESSFUL in 16s"
+    },
+    {
+      "invocation": 3,
+      "sha256": "1c8123ae72493c9f17f35f4aaef6b56b040dd51185ad1a7a603986599972392e",
+      "sizeBytes": 2605,
+      "terminalEvidence": "BUILD SUCCESSFUL in 962ms"
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/invocation-log-index/v1"
+}

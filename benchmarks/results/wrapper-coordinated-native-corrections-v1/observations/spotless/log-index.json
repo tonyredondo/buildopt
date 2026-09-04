@@ -1,0 +1,24 @@
+{
+  "family": "spotless",
+  "logs": [
+    {
+      "invocation": 1,
+      "sha256": "af9d4649d5ea09c1747d11773ffb8eb82018d1bcabbb4fc02de7bfc189c260e7",
+      "sizeBytes": 9148,
+      "terminalEvidence": "BUILD SUCCESSFUL in 30s"
+    },
+    {
+      "invocation": 2,
+      "sha256": "d82c7a027689ee4ee9fbf081f03bc951024aa07c969a745c7f77a03c5cd3a272",
+      "sizeBytes": 8777,
+      "terminalEvidence": "BUILD SUCCESSFUL in 872ms"
+    },
+    {
+      "invocation": 3,
+      "sha256": "ef7e745a20bec8eba08301675fd5cc03ec3df4d5d9968ba4e20b5c09c910021f",
+      "sizeBytes": 8774,
+      "terminalEvidence": "BUILD SUCCESSFUL in 3s"
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/invocation-log-index/v1"
+}

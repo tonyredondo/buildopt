@@ -2,8 +2,8 @@
 
 ## Current Executive Summary
 
-- **The wrapper-coordinated native-corrections POC has a repaired functional
-  foundation and remains open at `WCNCP-008`.**
+- **The wrapper-coordinated native-corrections POC completed prospective
+  capture and is open at `WCNCP-009`.**
   WCNCP-000 freezes five typed records, a separate Gradle-cache data plane and
   control-state plane, neutral ten-family selection and controlled-runner
   authority; WCNCP-001 through WCNCP-007 prove state, authority, observation,
@@ -14,13 +14,12 @@
   The pre-capture audit additionally supplied the missing explicit actor-grant
   operation for central tokens and confirmed that a post-child upload beyond
   100 ms stays queued without changing the native result.
-  WCNCP-008 has now frozen ten primary public revisions, twenty chronological
-  reserves, their owner workflows and required outputs after ten successful
-  optimized-native admissibility preflights. Those preflight durations do not
-  enter performance arithmetic, and prospective observations remain 0/30.
-  The former zero-row `INCOMPLETE_PERFORMANCE_ENVIRONMENT` conclusion is
-  retracted: WCNCP-008 never ran, so it could not authorize WCNCP-013.
-  Prospective value remains wholly unmeasured.
+  WCNCP-008 then captured 30/30 fresh ordinary wrapper observations across ten
+  frozen public revisions. All native children succeeded, all required-output
+  manifests resolved, and all ten TLS batches reached verified snapshots. Three
+  excluded infrastructure/capture-runner attempts are not product failures.
+  Durations were unavailable and have no performance authority. WCNCP-009 may
+  now test opportunity breadth; prospective value remains wholly unmeasured.
 
 - **Explicit material-task build-logic opt-outs do not broaden the patch
   product.** Five exact public source trees are scanned against retained native

@@ -1,0 +1,21 @@
+{
+  "arguments": [
+    "check"
+  ],
+  "buildoptPackageSha256": "b9873616659d7d71dd8849d15e4fa56130db1305a90960a77cf1868048beb7a3",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "environmentSha256": "34155853352918680b3147c0af3b60565a105fb6f4fb891054c3b801805115aa",
+  "family": "mockk",
+  "gradleVersion": "9.3.0",
+  "jdkSha256": "95831ab52b5291e8df70cb96cd3693171d462f2740949f05f5c03a51eb3a92fa",
+  "outputContractSha256": "a98baf7ed3fe2de34c630c8403556a7dfd7dfd01f50e233268f4092244661977",
+  "performanceAuthority": false,
+  "repository": "https://github.com/mockk/mockk.git",
+  "repositoryRevision": "14fbd83eb43582ce6f80ac58b87b0e143e8cb43e",
+  "repositoryScopeSha256": "6663062cbcb31ed25f78e20d24f2d09c99b3b05d87c7fd05556b9bcca6c153f8",
+  "requestedOutputManifestSha256": "9520fb733bf8e03b725feaf18115572684c811da72517ee5ce014cd5b4d2a283",
+  "schemaVersion": "buildopt.wcncp/family-capture-binding/v1",
+  "sourceTreeSha256": "4db9d0a13174c42e2aaaa4a1ac72ead1991a72e75eeb93f200fbb3ea2f5d4009",
+  "workflowSha256": "3ba0f5564ca73c31032166b7728f04d75c3dc1172cbc0f9c76136f0e945f6c18",
+  "wrapperSha256": "fb68debc1b1acf8ec55dc0d5e5495e1dedd0bd6b61f304bee61613eeb2bd9b92"
+}

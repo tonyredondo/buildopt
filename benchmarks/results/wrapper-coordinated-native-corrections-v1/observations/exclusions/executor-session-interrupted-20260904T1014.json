@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "buildopt.wcncp/excluded-capture-attempt/v1",
+  "family": "gradle-versions-plugin",
+  "invocation": 2,
+  "decision": "EXCLUDED_EXECUTOR_SESSION_INTERRUPTION",
+  "reason": "The tool-owned PTY was interrupted before the native child completed and before buildoptw emitted an observation. The partial log is retained, the source checkout is cleaned before resumption, and this attempt is not one of the 30 admissible observations.",
+  "observationProduced": false,
+  "buildoptProductFailure": false,
+  "performanceAuthority": false
+}

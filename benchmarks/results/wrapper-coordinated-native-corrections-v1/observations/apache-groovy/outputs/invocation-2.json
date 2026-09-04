@@ -1,0 +1,172 @@
+{
+  "family": "apache-groovy",
+  "invocation": 2,
+  "outputs": [
+    {
+      "path": "build/libs/groovy-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "8346847904229a876411738e59230f6ef0cf8cebc6cc72f4f7d6c54c20246bbb",
+      "sizeBytes": 5338244
+    },
+    {
+      "path": "subprojects/groovy-ant/build/libs/groovy-ant-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "aaa2a2f00575c5a448423e4da014e863b131d5059e0958be3f4a8e953afa4360",
+      "sizeBytes": 76159
+    },
+    {
+      "path": "subprojects/groovy-astbuilder/build/libs/groovy-astbuilder-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "fa905fdcfee6782effa36626bbf432ef158d86dbc8c2e6ac50a431b2b2716d3a",
+      "sizeBytes": 10088
+    },
+    {
+      "path": "subprojects/groovy-cli-commons/build/libs/groovy-cli-commons-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "475ed10f24fdd41a141621d9263ff7dbefb0e10acdf31a8bdbb6706e15f022ad",
+      "sizeBytes": 59287
+    },
+    {
+      "path": "subprojects/groovy-cli-picocli/build/libs/groovy-cli-picocli-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "c01fa264c93a1748cb81ca5bf6df5aa9f3b9c20e101949fc8d084954a039a201",
+      "sizeBytes": 57043
+    },
+    {
+      "path": "subprojects/groovy-console/build/libs/groovy-console-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "328ea06f8ccf5d11e3ea55da9aa762e59b3c755a139c987d64ae3d97ae39d5ca",
+      "sizeBytes": 815066
+    },
+    {
+      "path": "subprojects/groovy-contracts/build/libs/groovy-contracts-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "2b3a76f79ffcd57f66fc892ed8b43bdc4c5fbf8508bacbd345d24d7a6c3fe80a",
+      "sizeBytes": 117128
+    },
+    {
+      "path": "subprojects/groovy-datetime/build/libs/groovy-datetime-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "e2243e6e44a81a5e38da2b2ab4e30cc5f6ced350a08b2e69e34472a37b715002",
+      "sizeBytes": 19638
+    },
+    {
+      "path": "subprojects/groovy-dateutil/build/libs/groovy-dateutil-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "e5ab431b2c01a17add90c6564b472f647c6308f8acf10fc16fed6af03817cc16",
+      "sizeBytes": 11802
+    },
+    {
+      "path": "subprojects/groovy-docgenerator/build/libs/groovy-docgenerator-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "98040c0e72ddec474706936edf19746d70fd85410acafa16dfab956e1863d5cf",
+      "sizeBytes": 120825
+    },
+    {
+      "path": "subprojects/groovy-ginq/build/libs/groovy-ginq-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "417f5ec00eee1c5403815febf667f22eab1453d1157019881af56316f2072a0c",
+      "sizeBytes": 246165
+    },
+    {
+      "path": "subprojects/groovy-groovydoc/build/libs/groovy-groovydoc-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "4553925f59442940707ff08df3b332c329e9c2c0f03e2cdf3621ced19ecb7837",
+      "sizeBytes": 151419
+    },
+    {
+      "path": "subprojects/groovy-groovysh/build/libs/groovy-groovysh-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "a4532a5d312d2aadafc1bbbbf9415fd67bd7be2aaee8aaaf375ade01c5d3aff2",
+      "sizeBytes": 340279
+    },
+    {
+      "path": "subprojects/groovy-jmx/build/libs/groovy-jmx-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "e6de79b36fa90da4fe898270bcf82d32c2b3c7d97cc490b5e4d0a279602a6d4c",
+      "sizeBytes": 115050
+    },
+    {
+      "path": "subprojects/groovy-json/build/libs/groovy-json-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "49663d537fc93e7bc4f2f44107d62855e87bed458db43ade180dc45de84d96b0",
+      "sizeBytes": 137374
+    },
+    {
+      "path": "subprojects/groovy-jsr223/build/libs/groovy-jsr223-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "b7a8a576f34934de4a8260df93582e9c29d7d851b797bbb87095da06ffbba97c",
+      "sizeBytes": 21111
+    },
+    {
+      "path": "subprojects/groovy-macro-library/build/libs/groovy-macro-library-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "4980229e2d513b71577099c5b03dce8b6485f9e997c452e5e1181bf84eaa0f8e",
+      "sizeBytes": 8718
+    },
+    {
+      "path": "subprojects/groovy-macro/build/libs/groovy-macro-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "4ae8611da3a834478560114e0fd94379ee6557d967a4912331285cd54b4f550f",
+      "sizeBytes": 259432
+    },
+    {
+      "path": "subprojects/groovy-nio/build/libs/groovy-nio-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "7dfb37b8b39b13ada2b077696d3e3ca57f8db8fcf735cccc1e7ec652113e3e31",
+      "sizeBytes": 20418
+    },
+    {
+      "path": "subprojects/groovy-servlet/build/libs/groovy-servlet-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "3929e1ef6805c6d345a0b77afa0f7f1cdd2b8fadbbcf21a9d64fe1a5e7aa7765",
+      "sizeBytes": 27246
+    },
+    {
+      "path": "subprojects/groovy-sql/build/libs/groovy-sql-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "84f4d5106b38ff9f4a02186cd8752379388336b4050139790e0216699bdcdd59",
+      "sizeBytes": 84932
+    },
+    {
+      "path": "subprojects/groovy-swing/build/libs/groovy-swing-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "2bf32074d01460506d860446ab2f36136449b4c98a6fa153ed70d724c5827481",
+      "sizeBytes": 327326
+    },
+    {
+      "path": "subprojects/groovy-templates/build/libs/groovy-templates-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "849f29b7db0c1ac193cfefda1d13f9de048cf12f7cc35b307a1250546d3b5ebf",
+      "sizeBytes": 96783
+    },
+    {
+      "path": "subprojects/groovy-test-junit5/build/libs/groovy-test-junit5-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "2f23fd0de76a6289eaf62abae6262f5e0519c7b3fc5e01d63b303756e6cfb71c",
+      "sizeBytes": 12346
+    },
+    {
+      "path": "subprojects/groovy-test/build/libs/groovy-test-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "08b4481a29dfec733797a262df7596acdf2221af84d69979999e97a12e8a1cdc",
+      "sizeBytes": 73327
+    },
+    {
+      "path": "subprojects/groovy-testng/build/libs/groovy-testng-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "656448c820780ac82e5936e343c893d31037a21c58ddda5bb776ec000d41f900",
+      "sizeBytes": 8394
+    },
+    {
+      "path": "subprojects/groovy-toml/build/libs/groovy-toml-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "ca652932e590dfd64d93ecf3b6579a6deb06560b3c9dff6d6c546cfa817cfd28",
+      "sizeBytes": 9925
+    },
+    {
+      "path": "subprojects/groovy-typecheckers/build/libs/groovy-typecheckers-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "5212c650152efaa82c911e79f6db6cc459c2d330246b12902239493520c0b2a2",
+      "sizeBytes": 61304
+    },
+    {
+      "path": "subprojects/groovy-xml/build/libs/groovy-xml-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "2e3c0cd0bbb9cdcaeb0efc539abb47be1814fff0326701dc3510aded6ab07612",
+      "sizeBytes": 221369
+    },
+    {
+      "path": "subprojects/groovy-yaml/build/libs/groovy-yaml-raw-5.0.3-SNAPSHOT-raw.jar",
+      "sha256": "d77dece733b2edb8a9e229c87d71ccbd24139dd973b4296862fa7a85722a825b",
+      "sizeBytes": 9945
+    },
+    {
+      "path": "subprojects/performance/build/libs/performance-5.0.3-SNAPSHOT.jar",
+      "sha256": "be996d9c5fefd127c26e1a4b50f085a63fec142a8ce41a7a1b095102d2996412",
+      "sizeBytes": 261
+    },
+    {
+      "path": "subprojects/stress/build/libs/stress-5.0.3-SNAPSHOT.jar",
+      "sha256": "be996d9c5fefd127c26e1a4b50f085a63fec142a8ce41a7a1b095102d2996412",
+      "sizeBytes": 261
+    },
+    {
+      "path": "subprojects/tests-preview/build/libs/tests-preview-5.0.3-SNAPSHOT.jar",
+      "sha256": "be996d9c5fefd127c26e1a4b50f085a63fec142a8ce41a7a1b095102d2996412",
+      "sizeBytes": 261
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/resolved-output-manifest/v1"
+}

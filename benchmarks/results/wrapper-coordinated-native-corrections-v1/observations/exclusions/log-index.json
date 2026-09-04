@@ -1,0 +1,17 @@
+{
+  "logs": [
+    {
+      "decision": "EXCLUDED_EXECUTOR_NETWORK_NAMESPACE",
+      "sha256": "227ae24043ca27c9dada9dd80c2d60d994f620b1923105d43d05158073c18e29"
+    },
+    {
+      "decision": "EXCLUDED_EXECUTOR_SESSION_INTERRUPTION",
+      "sha256": "56d0ca2fc02a33fefe62086d4a8870c7633ac8686295a9074ba957b6c8e83ea3"
+    },
+    {
+      "decision": "EXCLUDED_CAPTURE_RUNNER_ARGUMENT_BINDING_FAILURE",
+      "sha256": "833348d36d8bc9ce906d9be3e8b75c3337c5cab4ad787d591d80d8946ebbf074"
+    }
+  ],
+  "schemaVersion": "buildopt.wcncp/excluded-attempt-log-index/v1"
+}

@@ -21,7 +21,7 @@ command -v jq >/dev/null 2>&1 || {
 }
 
 jq -e '
-    .status == "FUNCTIONAL_FOUNDATION_READY" and
+    .status == "PROSPECTIVE_CAPTURE_COMPLETE" and
     .gates.familyCount == 10 and
     .gates.requiredConclusiveFamilies == 10 and
     .gates.minimumActionableMaterialFamilies == 3 and
@@ -35,8 +35,8 @@ jq -e '
     .gates.requiredOutputEquivalence == "BYTE_EXACT" and
     .gates.maximumProductFailures == 0 and
     .gates.maximumCustomerPaybackBuilds == 300 and
-    [.blocks[].state] == ["DONE", "DONE", "DONE", "DONE", "DONE", "DONE", "DONE", "DONE", "TODO", "WAITING", "WAITING", "WAITING", "WAITING", "WAITING"] and
-    .nextBlock.id == "WCNCP-008" and .nextBlock.state == "TODO"
+    [.blocks[].state] == ["DONE", "DONE", "DONE", "DONE", "DONE", "DONE", "DONE", "DONE", "DONE", "TODO", "WAITING", "WAITING", "WAITING", "WAITING"] and
+    .nextBlock.id == "WCNCP-009" and .nextBlock.state == "TODO"
 ' "${buildopt_contract}" >/dev/null || {
     printf 'WCNCP prospective block ordering or frozen gates changed\n' >&2
     exit 1
@@ -64,7 +64,7 @@ jq -e '
     exit 1
 }
 
-for buildopt_block in 008 009 010 011 012; do
+for buildopt_block in 009 010 011 012; do
     buildopt_file=$(find "${buildopt_evidence}" -maxdepth 1 -type f -name "wcncp-e${buildopt_block}-*.json" -print)
     if test -z "${buildopt_file}" || ! jq -e '.state == "RETRACTED_PREMATURE_CLOSURE"' "${buildopt_file}" >/dev/null; then
         printf 'WCNCP-E%s zero-row placeholder is not retracted\n' "${buildopt_block}" >&2
@@ -77,4 +77,6 @@ if ! (cd -- "${buildopt_evidence}" && sha256sum -c sha256sums >/dev/null); then
     exit 1
 fi
 
-printf 'WCNCP prospective lane OK: WCNCP-008 is open and no terminal decision is authoritative\n'
+"${buildopt_script_dir}/check-wcncp-prospective-capture"
+
+printf 'WCNCP prospective lane OK: WCNCP-008 is complete, WCNCP-009 is open, and no terminal decision is authoritative\n'

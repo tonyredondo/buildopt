@@ -1,0 +1,288 @@
+#!/usr/bin/env bash
+# Independently reconstruct the WCNCP-008 prospective cohort capture from
+# immutable observation, output, publication, and subject artifacts. Summary
+# counters are checked only after every primary row has been rebuilt.
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_evidence="${BUILDOPT_WCNCP_CAPTURE_EVIDENCE:-${buildopt_repo_root}/benchmarks/results/wrapper-coordinated-native-corrections-v1}"
+buildopt_observations="${buildopt_evidence}/observations"
+buildopt_subjects="${BUILDOPT_WCNCP_CAPTURE_SUBJECTS:-${buildopt_repo_root}/specs/poc-wrapper-coordinated-native-corrections-v1.subjects.json}"
+buildopt_freeze="${buildopt_evidence}/cohort-freeze.json"
+buildopt_report="${buildopt_evidence}/wcncp-e008-capture.json"
+
+command -v jq >/dev/null 2>&1 || {
+    printf 'required WCNCP capture command is unavailable: jq\n' >&2
+    exit 1
+}
+
+buildopt_cutoff=$(jq -r '.frozenAt | fromdateiso8601 * 1000' "${buildopt_freeze}")
+buildopt_family_count=0
+buildopt_observation_count=0
+buildopt_success_count=0
+buildopt_output_manifest_count=0
+buildopt_manifest_count=0
+buildopt_head_count=0
+buildopt_snapshot_count=0
+buildopt_package_sha=""
+
+while IFS= read -r buildopt_slot; do
+    buildopt_key=$(jq -r '.key' <<<"${buildopt_slot}")
+    buildopt_family="${buildopt_observations}/${buildopt_key}"
+    buildopt_binding="${buildopt_family}/binding.json"
+    if [[ ! -d "${buildopt_family}" || ! -f "${buildopt_binding}" ]]; then
+        printf 'WCNCP capture family is missing: %s\n' "${buildopt_key}" >&2
+        exit 1
+    fi
+    buildopt_family_count=$((buildopt_family_count + 1))
+
+    jq -e --argjson slot "${buildopt_slot}" '
+        .schemaVersion == "buildopt.wcncp/family-capture-binding/v1" and
+        .family == $slot.key and .repository == $slot.repository and
+        .repositoryRevision == $slot.primary.revision and
+        .sourceTreeSha256 == $slot.primary.archiveSha256 and
+        .wrapperSha256 == $slot.wrapper.sha256 and
+        .workflowSha256 == $slot.ownerWorkflow.sourceSha256 and
+        .arguments == $slot.ownerWorkflow.arguments and
+        .environmentClass == "LOCAL_FUNCTIONAL" and
+        .performanceAuthority == false and
+        (.repositoryScopeSha256 | test("^[0-9a-f]{64}$")) and
+        (.jdkSha256 | test("^[0-9a-f]{64}$")) and
+        (.buildoptPackageSha256 | test("^[0-9a-f]{64}$")) and
+        (.environmentSha256 | test("^[0-9a-f]{64}$")) and
+        (.outputContractSha256 | test("^[0-9a-f]{64}$")) and
+        (.requestedOutputManifestSha256 | test("^[0-9a-f]{64}$"))
+    ' "${buildopt_binding}" >/dev/null || {
+        printf 'WCNCP capture binding drift for %s\n' "${buildopt_key}" >&2
+        exit 1
+    }
+
+    buildopt_current_package=$(jq -r '.buildoptPackageSha256' "${buildopt_binding}")
+    if [[ -z "${buildopt_package_sha}" ]]; then
+        buildopt_package_sha=${buildopt_current_package}
+    elif [[ "${buildopt_current_package}" != "${buildopt_package_sha}" ]]; then
+        printf 'WCNCP capture package drift for %s\n' "${buildopt_key}" >&2
+        exit 1
+    fi
+    for buildopt_pair in \
+        "output-contract.json:outputContractSha256" \
+        "requested-output-manifest.json:requestedOutputManifestSha256" \
+        "environment-binding.json:environmentSha256"; do
+        buildopt_file=${buildopt_pair%%:*}
+        buildopt_field=${buildopt_pair#*:}
+        buildopt_expected=$(jq -r ".${buildopt_field}" "${buildopt_binding}")
+        buildopt_actual=$(sha256sum "${buildopt_family}/${buildopt_file}" | awk '{print $1}')
+        [[ "${buildopt_actual}" == "${buildopt_expected}" ]] || {
+            printf 'WCNCP %s digest drift for %s\n' "${buildopt_file}" "${buildopt_key}" >&2
+            exit 1
+        }
+    done
+    jq -e --argjson slot "${buildopt_slot}" '
+        .schemaVersion == "buildopt.wcncp/output-contract/v1" and
+        .repositoryRevision == $slot.primary.revision and
+        .requiredOutputs == $slot.requiredOutputs
+    ' "${buildopt_family}/output-contract.json" >/dev/null
+    jq -e --arg output "$(jq -r '.outputContractSha256' "${buildopt_binding}")" --arg workflow "$(jq -r '.workflowSha256' "${buildopt_binding}")" '
+        .schemaVersion == "buildopt.wcncp/requested-output-manifest/v1" and
+        .outputContractSha256 == $output and .workflowSha256 == $workflow
+    ' "${buildopt_family}/requested-output-manifest.json" >/dev/null
+    jq -e '
+        .schemaVersion == "buildopt.wcncp/environment-binding/v1" and
+        .os == "linux" and .arch == "amd64" and
+        .environmentClass == "LOCAL_FUNCTIONAL" and
+        .performanceAuthority == false
+    ' "${buildopt_family}/environment-binding.json" >/dev/null
+    jq -e '.schemaVersion == "buildopt.wcncp/actor-grant-result/v1" and .actor == "TRUSTED_OBSERVER" and .granted == true' "${buildopt_family}/actor-grant.json" >/dev/null
+
+    mapfile -t buildopt_rows < <(find "${buildopt_family}/canonical-observations" -maxdepth 1 -type f -name 'observation-*.json' -print | sort)
+    if ((${#buildopt_rows[@]} != 3)); then
+        printf 'WCNCP observation row count for %s is %d, want 3\n' "${buildopt_key}" "${#buildopt_rows[@]}" >&2
+        exit 1
+    fi
+    jq -se 'map(.invocationOrdinal) == (map(.invocationOrdinal) | sort) and (map(.invocationOrdinal) | unique | length) == 3' "${buildopt_rows[@]}" >/dev/null || {
+        printf 'WCNCP invocation ordering drift for %s\n' "${buildopt_key}" >&2
+        exit 1
+    }
+    for buildopt_index in 0 1 2; do
+        buildopt_invocation=$((buildopt_index + 1))
+        buildopt_row=${buildopt_rows[buildopt_index]}
+        buildopt_canonical=$(jq -cS . "${buildopt_row}")
+        [[ "${buildopt_canonical}" == "$(<"${buildopt_row}")" ]] || {
+            printf 'WCNCP observation is not canonical for %s invocation %d\n' "${buildopt_key}" "${buildopt_invocation}" >&2
+            exit 1
+        }
+        jq -e \
+            --arg family "${buildopt_key}" \
+            --arg revision "$(jq -r '.repositoryRevision' "${buildopt_binding}")" \
+            --arg source "$(jq -r '.sourceTreeSha256' "${buildopt_binding}")" \
+            --arg wrapper "$(jq -r '.wrapperSha256' "${buildopt_binding}")" \
+            --arg gradle "$(jq -r '.gradleVersion' "${buildopt_binding}")" \
+            --arg jdk "$(jq -r '.jdkSha256' "${buildopt_binding}")" \
+            --arg package "${buildopt_package_sha}" \
+            --arg workflow "$(jq -r '.workflowSha256' "${buildopt_binding}")" \
+            --arg environment "$(jq -r '.environmentSha256' "${buildopt_binding}")" \
+            --arg output "$(jq -r '.outputContractSha256' "${buildopt_binding}")" \
+            --arg requested "$(jq -r '.requestedOutputManifestSha256' "${buildopt_binding}")" \
+            --argjson cutoff "${buildopt_cutoff}" '
+                .schemaVersion == "buildopt.wcncp/observation/v1" and
+                .recordType == "WCNCP_OBSERVATION" and
+                (.observationId | test("^[0-9a-f]{64}$")) and
+                .repositoryScope == ("wcncp-v1/" + $family) and
+                .invocationOrdinal > $cutoff and
+                .environmentClass == "LOCAL_FUNCTIONAL" and
+                .bindings.repositoryRevision == $revision and
+                .bindings.sourceTreeSha256 == $source and
+                .bindings.wrapperSha256 == $wrapper and
+                .bindings.gradleVersion == $gradle and
+                .bindings.jdkSha256 == $jdk and
+                .bindings.buildoptPackageSha256 == $package and
+                .bindings.workflowSha256 == $workflow and
+                .bindings.environmentSha256 == $environment and
+                .bindings.outputContractSha256 == $output and
+                .duration == {state:"UNAVAILABLE",classification:"NOT_EVALUATED",reason:"local functional duration is not evidence"} and
+                .outputManifest == {state:"COMPLETE",sha256:$requested} and
+                .child == {outcome:"SUCCESS",exitCode:0} and
+                .completeness == "COMPLETE" and
+                .authority == {prospectiveGateInput:false,productionAuthorized:false}
+            ' "${buildopt_row}" >/dev/null || {
+                printf 'WCNCP observation reconstruction failed for %s invocation %d\n' "${buildopt_key}" "${buildopt_invocation}" >&2
+                exit 1
+            }
+        buildopt_result="${buildopt_family}/invocation-${buildopt_invocation}.json"
+        buildopt_output="${buildopt_family}/outputs/invocation-${buildopt_invocation}.json"
+        buildopt_output_sha=$(sha256sum "${buildopt_output}" | awk '{print $1}')
+        jq -e --arg family "${buildopt_key}" --argjson invocation "${buildopt_invocation}" --arg output "${buildopt_output_sha}" --arg freeze "$(jq -r '.frozenAt' "${buildopt_freeze}")" '
+            .schemaVersion == "buildopt.wcncp/invocation-result/v1" and
+            .family == $family and .invocation == $invocation and
+            .startedAt > $freeze and .finishedAt >= .startedAt and
+            .exitCode == 0 and .outputCount > 0 and
+            .resolvedOutputManifestSha256 == $output and
+            .timingClassification == "NOT_EVALUATED" and
+            .performanceAuthority == false
+        ' "${buildopt_result}" >/dev/null
+        jq -e --arg family "${buildopt_key}" --argjson invocation "${buildopt_invocation}" '
+            .schemaVersion == "buildopt.wcncp/resolved-output-manifest/v1" and
+            .family == $family and .invocation == $invocation and
+            (.outputs | length) > 0 and
+            all(.outputs[];
+                (.path | length) > 0 and
+                (.path | startswith("/") | not) and
+                (.path | contains("..") | not) and
+                .sizeBytes > 0 and (.sha256 | test("^[0-9a-f]{64}$")))
+        ' "${buildopt_output}" >/dev/null
+        buildopt_observation_count=$((buildopt_observation_count + 1))
+        buildopt_success_count=$((buildopt_success_count + 1))
+        buildopt_output_manifest_count=$((buildopt_output_manifest_count + 1))
+    done
+
+    buildopt_publication="${buildopt_family}/publication"
+    for buildopt_status in batch manifest cas snapshot status; do
+        buildopt_expected=200
+        [[ "${buildopt_status}" == batch || "${buildopt_status}" == manifest ]] && buildopt_expected=201
+        [[ $(<"${buildopt_publication}/${buildopt_status}-http-status.txt") == "${buildopt_expected}" ]] || {
+            printf 'WCNCP %s HTTP status drift for %s\n' "${buildopt_status}" "${buildopt_key}" >&2
+            exit 1
+        }
+    done
+    jq -e '.published == 3' "${buildopt_publication}/batch-response.json" >/dev/null
+    jq -e '.state == "OBSERVING"' "${buildopt_publication}/status.json" >/dev/null
+    buildopt_manifest="${buildopt_publication}/manifest.json"
+    [[ "$(jq -cS . "${buildopt_manifest}")" == "$(<"${buildopt_manifest}")" ]] || {
+        printf 'WCNCP manifest is not canonical for %s\n' "${buildopt_key}" >&2
+        exit 1
+    }
+    buildopt_manifest_sha=$(sha256sum "${buildopt_manifest}" | awk '{print $1}')
+    jq -e --arg scope "$(jq -r '.repositoryScopeSha256' "${buildopt_binding}")" --arg revision "$(jq -r '.repositoryRevision' "${buildopt_binding}")" --arg package "${buildopt_package_sha}" --arg wrapper "$(jq -r '.wrapperSha256' "${buildopt_binding}")" --arg gradle "$(jq -r '.gradleVersion' "${buildopt_binding}")" '
+        .schemaVersion == "buildopt.wcncp/manifest/v1" and
+        .recordType == "WCNCP_MANIFEST" and .kind == "WCNCP_OBSERVATION" and
+        .repositoryScopeSha256 == $scope and .generation == 1 and
+        .origin == {baseRevision:$revision,targetRevision:$revision,buildoptExecutableSha256:$package,wrapperSha256:$wrapper,gradleVersion:$gradle} and
+        (.artifacts | length) == 3 and
+        all(.artifacts[]; .role == "WCNCP_OBSERVATION" and .payloadSchemaVersion == "buildopt.wcncp/observation/v1" and .sizeBytes > 0 and (.sha256 | test("^[0-9a-f]{64}$"))) and
+        .references == [] and .status == "COMPLETE" and .retentionClass == "RAW_30_DAYS" and
+        .authority == {productionAuthorized:false,selectionRequiresLocalRevalidation:true,testOptimization:"OUT_OF_SCOPE"}
+    ' "${buildopt_manifest}" >/dev/null
+    for buildopt_row in "${buildopt_rows[@]}"; do
+        buildopt_digest=$(sha256sum "${buildopt_row}" | awk '{print $1}')
+        buildopt_size=$(stat -c %s "${buildopt_row}")
+        jq -e --arg digest "${buildopt_digest}" --argjson size "${buildopt_size}" 'any(.artifacts[]; .sha256 == $digest and .sizeBytes == $size)' "${buildopt_manifest}" >/dev/null || {
+            printf 'WCNCP manifest artifact drift for %s\n' "${buildopt_key}" >&2
+            exit 1
+        }
+    done
+    jq -e --arg manifest "${buildopt_manifest_sha}" --arg scope "$(jq -r '.repositoryScopeSha256' "${buildopt_binding}")" '
+        .schemaVersion == "buildopt.wcncp/head/v1" and
+        .recordType == "WCNCP_HEAD" and .kind == "WCNCP_OBSERVATION" and
+        .repositoryScopeSha256 == $scope and .generation == 1 and
+        .manifestSha256 == $manifest and
+        .authority == {productionAuthorized:false,selectionRequiresLocalRevalidation:true,testOptimization:"OUT_OF_SCOPE"}
+    ' "${buildopt_publication}/head.json" >/dev/null
+    jq -e --slurpfile head "${buildopt_publication}/head.json" --slurpfile manifest "${buildopt_manifest}" '.head == $head[0] and .manifest == $manifest[0]' "${buildopt_publication}/snapshot.json" >/dev/null
+    jq -e '.schemaVersion == "buildopt.wcncp/invocation-log-index/v1" and (.logs | length) == 3 and all(.logs[]; (.sha256 | test("^[0-9a-f]{64}$")) and .sizeBytes > 0 and (.terminalEvidence | startswith("BUILD SUCCESSFUL")))' "${buildopt_family}/log-index.json" >/dev/null
+    buildopt_manifest_count=$((buildopt_manifest_count + 1))
+    buildopt_head_count=$((buildopt_head_count + 1))
+    buildopt_snapshot_count=$((buildopt_snapshot_count + 1))
+done < <(jq -c '.slots[]' "${buildopt_subjects}")
+
+buildopt_actual_family_directories=$(find "${buildopt_observations}" -mindepth 1 -maxdepth 1 -type d ! -name exclusions | wc -l)
+if ((buildopt_actual_family_directories != buildopt_family_count)); then
+    printf 'WCNCP capture contains an unbound family directory\n' >&2
+    exit 1
+fi
+
+if ((buildopt_family_count != 10 || buildopt_observation_count != 30 || buildopt_success_count != 30 || buildopt_output_manifest_count != 30 || buildopt_manifest_count != 10 || buildopt_head_count != 10 || buildopt_snapshot_count != 10)); then
+    printf 'WCNCP capture reconstructed counts are incomplete\n' >&2
+    exit 1
+fi
+
+if [[ $(find "${buildopt_observations}/exclusions" -maxdepth 1 -type f -name '*20260904*.json' | wc -l) != 3 ]]; then
+    printf 'WCNCP excluded-attempt ledger is incomplete\n' >&2
+    exit 1
+fi
+jq -s -e '
+    (map(.decision) | sort) == (["EXCLUDED_CAPTURE_RUNNER_ARGUMENT_BINDING_FAILURE","EXCLUDED_EXECUTOR_NETWORK_NAMESPACE","EXCLUDED_EXECUTOR_SESSION_INTERRUPTION"] | sort) and
+    all(.[]; .buildoptProductFailure == false and .performanceAuthority == false)
+' "${buildopt_observations}/exclusions/"*20260904*.json >/dev/null
+jq -e '.schemaVersion == "buildopt.wcncp/excluded-attempt-log-index/v1" and (.logs | length) == 3 and all(.logs[]; (.sha256 | test("^[0-9a-f]{64}$")))' "${buildopt_observations}/exclusions/log-index.json" >/dev/null
+if rg -l 'durable-native-optimization-v1|NORMALIZATION_AWARE_CACHEABILITY|DNO' "${buildopt_observations}" >/dev/null; then
+    printf 'historical BuildOpt evidence contaminated WCNCP capture inputs\n' >&2
+    exit 1
+fi
+
+jq -e \
+    --arg package "${buildopt_package_sha}" \
+    --argjson families "${buildopt_family_count}" \
+    --argjson observations "${buildopt_observation_count}" \
+    --argjson successes "${buildopt_success_count}" \
+    --argjson outputs "${buildopt_output_manifest_count}" \
+    --argjson manifests "${buildopt_manifest_count}" \
+    --argjson heads "${buildopt_head_count}" \
+    --argjson snapshots "${buildopt_snapshot_count}" '
+        .schemaVersion == "buildopt.wcncp/evidence-e008/v1" and
+        .block == "WCNCP-008" and .evidence == "WCNCP-E008" and
+        .state == "DONE" and .package.buildoptwSha256 == $package and
+        .capture.families == $families and
+        .capture.ordinaryObservationBuilds == $observations and
+        .capture.successfulNativeChildren == $successes and
+        .capture.resolvedOutputManifests == $outputs and
+        .publication.manifests == $manifests and
+        .publication.heads == $heads and
+        .publication.verifiedSnapshots == $snapshots and
+        .capture.conclusiveFamilies == 10 and
+        .capture.excludedInfrastructureOrRunnerAttempts == 3 and
+        .timingSamples == 0 and .candidateBuilds == 0 and
+        .publicSourceMutations == 0 and .productFailures == 0 and
+        .performanceAuthority == false and
+        .historicalBuildoptEvidenceConsumed == false
+    ' "${buildopt_report}" >/dev/null || {
+        printf 'WCNCP capture summary differs from reconstructed primary rows\n' >&2
+        exit 1
+    }
+
+printf 'WCNCP prospective capture OK: 10 families, 30 successful observations, 30 output manifests, 10 verified TLS snapshots, 0 timing samples\n'
