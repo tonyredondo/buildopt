@@ -5783,9 +5783,11 @@ recomputes candidate file hashes from the exact frozen Git revisions.
 `check-wcncp-opportunity-breadth-negatives` proves that forged conclusive and
 actionable summary counts fail closed.
 
-The checked result is `INCOMPLETE_EXPERIMENT_INPUT`: seven families are
-conclusive and three source-bound possibilities require controlled critical-path
-materiality. Standard or local CI cannot qualify or reject them.
+The immutable initial result is `INCOMPLETE_EXPERIMENT_INPUT`: seven families
+are conclusive and three source-bound possibilities require controlled
+critical-path materiality. The separately checked WCNCP-009B evidence completes
+those rows and the final checker derives the 10/10 conclusive, 1/3 actionable
+terminal breadth stop.
 
 `run-wcncp-controlled-materiality` is the WCNCP-009A controlled runner
 for those exact three families. Its committed contract requires mains power,
@@ -5811,6 +5813,8 @@ other partial shape fail closed; family and task names never select recovery.
 ./dev/check-wcncp-controlled-materiality /absolute/evidence
 ./dev/check-wcncp-controlled-materiality-plan-v2
 ./dev/check-wcncp-controlled-materiality-v2 /absolute/evidence
+./dev/check-wcncp-opportunity-breadth-final
+./dev/check-wcncp-terminal
 ```
 
 ## Update policy

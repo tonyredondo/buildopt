@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "buildopt.wcncp/opportunity-breadth-final/v1",
+  "workItem": "WCNCP-009",
+  "state": "COMPLETE",
+  "decision": "STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH",
+  "inputs": {
+    "initialBreadthReport": "wcncp-e009-breadth.json",
+    "initialBreadthReportSha256": "183d4521b3c2de66636cb96ba1d73dfcf1ed87c5a1d3b664a9f252be03d280fd",
+    "controlledMaterialityResult": "wcncp-e009b/result.json",
+    "controlledMaterialityResultSha256": "3c6883bf68b000509f271cdcd505200310d7baafefb719c4f53fbb5a0aa0ce0e"
+  },
+  "families": [
+    {"family": "gradle-intellij-plugin", "decision": "NO_REPRODUCIBLE_BLOCKER"},
+    {"family": "gradle-consistent-versions", "decision": "SOURCE_OR_BINDING_AMBIGUOUS"},
+    {"family": "mockk", "decision": "NO_REPRODUCIBLE_BLOCKER"},
+    {"family": "junit-pioneer", "decision": "UNSUPPORTED_PROBLEM_CLASS"},
+    {"family": "gradle-versions-plugin", "decision": "NO_REPRODUCIBLE_BLOCKER"},
+    {"family": "protobuf-gradle-plugin", "decision": "NO_REPRODUCIBLE_BLOCKER"},
+    {"family": "spotless", "decision": "NO_REPRODUCIBLE_BLOCKER"},
+    {"family": "graphql-java", "decision": "ACTIONABLE_MATERIAL_CORRECTION"},
+    {"family": "apache-groovy", "decision": "NON_MATERIAL_BLOCKER"},
+    {"family": "test-retry-gradle-plugin", "decision": "UNSUPPORTED_PROBLEM_CLASS"}
+  ],
+  "observationsReconstructed": 30,
+  "originalDiagnosticStarts": 16,
+  "controlledDiagnosticStarts": 6,
+  "familiesConclusive": 10,
+  "familiesConclusiveRequired": 10,
+  "actionableMaterialFamilies": 1,
+  "actionableMaterialFamiliesRequired": 3,
+  "publicSourceModified": false,
+  "candidateBuilds": 0,
+  "pairedValueTimingSamples": 0,
+  "speedupClaim": false,
+  "productFailures": 0,
+  "dependentBlocks": {
+    "WCNCP-010": "NOT_AUTHORIZED",
+    "WCNCP-011": "NOT_AUTHORIZED",
+    "WCNCP-012": "NOT_AUTHORIZED",
+    "WCNCP-013": "READY_FOR_TERMINAL_DOCUMENTATION_ONLY"
+  }
+}

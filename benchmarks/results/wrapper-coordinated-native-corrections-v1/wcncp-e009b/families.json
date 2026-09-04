@@ -1,0 +1,479 @@
+[
+  {
+    "family": "graphql-java",
+    "sourceClosure": "REPOSITORY_OWNED_BLOCKERS_REQUIRE_ONE_REVIEWED_PROPOSAL",
+    "rows": [
+      {
+        "schemaVersion": "buildopt.wcncp/controlled-materiality-run/v1",
+        "family": "graphql-java",
+        "method": "CONFIGURATION_CACHE_UNLOCK",
+        "operationTraceSha256": "e5f654ebc24dcf44c3c5ebd2d6035fa6bb7ba67f39689b45a86de12daa3c72e2",
+        "taskGraphSha256": "c97774f9f203c769f7485e9c420c6d8ee3a12863c6c8a85579eebc3a3bc49623",
+        "workflowMs": 14617,
+        "criticalPathContributionMs": 5949,
+        "materialPercent": 40.69918587945543,
+        "minimumMillisecondsPassed": true,
+        "minimumPercentPassed": true,
+        "environmentClass": "CONTROLLED_PERFORMANCE",
+        "performanceGateAuthority": true
+      },
+      {
+        "schemaVersion": "buildopt.wcncp/controlled-materiality-run/v1",
+        "family": "graphql-java",
+        "method": "CONFIGURATION_CACHE_UNLOCK",
+        "operationTraceSha256": "6547833a5eef353c1f547af30e4aa51a0b040b2deba1129c36cdfce02ac6d5a8",
+        "taskGraphSha256": "c97774f9f203c769f7485e9c420c6d8ee3a12863c6c8a85579eebc3a3bc49623",
+        "workflowMs": 16352,
+        "criticalPathContributionMs": 6356,
+        "materialPercent": 38.86986301369863,
+        "minimumMillisecondsPassed": true,
+        "minimumPercentPassed": true,
+        "environmentClass": "CONTROLLED_PERFORMANCE",
+        "performanceGateAuthority": true
+      }
+    ],
+    "conservativeCriticalPathMilliseconds": 5949,
+    "conservativeMaterialPercent": 38.86986301369863,
+    "decision": "ACTIONABLE_MATERIAL_CORRECTION"
+  },
+  {
+    "family": "apache-groovy",
+    "sourceClosure": "MARKER_ONLY_ELIGIBLE_TASK_CLASS",
+    "rows": [
+      {
+        "schemaVersion": "buildopt.wcncp/controlled-materiality-run/v1",
+        "family": "apache-groovy",
+        "method": "CRITICAL_TASK_CLASS",
+        "taskClass": "org.apache.groovy.gradle.ReleaseInfoGenerator",
+        "operationTraceSha256": "9e7d2fd8de77cd6ee4d253adef87c349fc01bcc173c7aee4d268c4b83a75407a",
+        "taskGraphSha256": "d6cc0dec62201b8a1cbadc020792e864ecd23771848cb71bbeb459d40023f053",
+        "workflowMs": 22138,
+        "criticalPathContributionMs": 0,
+        "materialPercent": 0,
+        "matchedTasks": [
+          {
+            "identity": ":generateReleaseInfo",
+            "durationMs": 9,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-ant:generateReleaseInfo",
+            "durationMs": 10,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-astbuilder:generateReleaseInfo",
+            "durationMs": 9,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-cli-commons:generateReleaseInfo",
+            "durationMs": 24,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-cli-picocli:generateReleaseInfo",
+            "durationMs": 16,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-console:generateReleaseInfo",
+            "durationMs": 10,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-contracts:generateReleaseInfo",
+            "durationMs": 13,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-datetime:generateReleaseInfo",
+            "durationMs": 7,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-dateutil:generateReleaseInfo",
+            "durationMs": 13,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-docgenerator:generateReleaseInfo",
+            "durationMs": 13,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-ginq:generateReleaseInfo",
+            "durationMs": 8,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-groovydoc:generateReleaseInfo",
+            "durationMs": 9,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-groovysh:generateReleaseInfo",
+            "durationMs": 9,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-jmx:generateReleaseInfo",
+            "durationMs": 12,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-json:generateReleaseInfo",
+            "durationMs": 14,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-jsr223:generateReleaseInfo",
+            "durationMs": 19,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-macro-library:generateReleaseInfo",
+            "durationMs": 8,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-macro:generateReleaseInfo",
+            "durationMs": 9,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-nio:generateReleaseInfo",
+            "durationMs": 16,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-servlet:generateReleaseInfo",
+            "durationMs": 9,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-sql:generateReleaseInfo",
+            "durationMs": 11,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-swing:generateReleaseInfo",
+            "durationMs": 11,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-templates:generateReleaseInfo",
+            "durationMs": 31,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-test-junit5:generateReleaseInfo",
+            "durationMs": 10,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-test:generateReleaseInfo",
+            "durationMs": 12,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-testng:generateReleaseInfo",
+            "durationMs": 12,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-toml:generateReleaseInfo",
+            "durationMs": 6,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-typecheckers:generateReleaseInfo",
+            "durationMs": 8,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-xml:generateReleaseInfo",
+            "durationMs": 14,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-yaml:generateReleaseInfo",
+            "durationMs": 13,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          }
+        ],
+        "minimumMillisecondsPassed": false,
+        "minimumPercentPassed": false,
+        "environmentClass": "CONTROLLED_PERFORMANCE",
+        "performanceGateAuthority": true
+      },
+      {
+        "schemaVersion": "buildopt.wcncp/controlled-materiality-run/v1",
+        "family": "apache-groovy",
+        "method": "CRITICAL_TASK_CLASS",
+        "taskClass": "org.apache.groovy.gradle.ReleaseInfoGenerator",
+        "operationTraceSha256": "55c8a3dfef493c420e248a238190535c3f7bb416ae028988ab008db130c156f2",
+        "taskGraphSha256": "d6cc0dec62201b8a1cbadc020792e864ecd23771848cb71bbeb459d40023f053",
+        "workflowMs": 23855,
+        "criticalPathContributionMs": 0,
+        "materialPercent": 0,
+        "matchedTasks": [
+          {
+            "identity": ":generateReleaseInfo",
+            "durationMs": 16,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-ant:generateReleaseInfo",
+            "durationMs": 8,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-astbuilder:generateReleaseInfo",
+            "durationMs": 7,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-cli-commons:generateReleaseInfo",
+            "durationMs": 7,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-cli-picocli:generateReleaseInfo",
+            "durationMs": 10,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-console:generateReleaseInfo",
+            "durationMs": 10,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-contracts:generateReleaseInfo",
+            "durationMs": 14,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-datetime:generateReleaseInfo",
+            "durationMs": 3,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-dateutil:generateReleaseInfo",
+            "durationMs": 10,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-docgenerator:generateReleaseInfo",
+            "durationMs": 11,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-ginq:generateReleaseInfo",
+            "durationMs": 4,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-groovydoc:generateReleaseInfo",
+            "durationMs": 9,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-groovysh:generateReleaseInfo",
+            "durationMs": 8,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-jmx:generateReleaseInfo",
+            "durationMs": 9,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-json:generateReleaseInfo",
+            "durationMs": 6,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-jsr223:generateReleaseInfo",
+            "durationMs": 6,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-macro-library:generateReleaseInfo",
+            "durationMs": 5,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-macro:generateReleaseInfo",
+            "durationMs": 16,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-nio:generateReleaseInfo",
+            "durationMs": 4,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-servlet:generateReleaseInfo",
+            "durationMs": 138,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-sql:generateReleaseInfo",
+            "durationMs": 9,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-swing:generateReleaseInfo",
+            "durationMs": 13,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-templates:generateReleaseInfo",
+            "durationMs": 27,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-test-junit5:generateReleaseInfo",
+            "durationMs": 7,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-test:generateReleaseInfo",
+            "durationMs": 5,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-testng:generateReleaseInfo",
+            "durationMs": 9,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-toml:generateReleaseInfo",
+            "durationMs": 11,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-typecheckers:generateReleaseInfo",
+            "durationMs": 9,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-xml:generateReleaseInfo",
+            "durationMs": 8,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          },
+          {
+            "identity": ":groovy-yaml:generateReleaseInfo",
+            "durationMs": 11,
+            "criticalPath": false,
+            "outcome": "EXECUTED"
+          }
+        ],
+        "minimumMillisecondsPassed": false,
+        "minimumPercentPassed": false,
+        "environmentClass": "CONTROLLED_PERFORMANCE",
+        "performanceGateAuthority": true
+      }
+    ],
+    "conservativeCriticalPathMilliseconds": 0,
+    "conservativeMaterialPercent": 0,
+    "decision": "NON_MATERIAL_BLOCKER"
+  },
+  {
+    "family": "test-retry-gradle-plugin",
+    "sourceClosure": "REPOSITORY_CORRECTION_INSUFFICIENT_EXTERNAL_BLOCKERS_REMAIN",
+    "rows": [
+      {
+        "schemaVersion": "buildopt.wcncp/controlled-materiality-run/v1",
+        "family": "test-retry-gradle-plugin",
+        "method": "CONFIGURATION_CACHE_UNLOCK",
+        "operationTraceSha256": "41d4774e6335acc7b76cbe686560554010f990b82ca5b65ddb73532280d82dce",
+        "taskGraphSha256": "29b53a14db05edb6e221d423f56af5ff48c79e25044fea10a424abcaace4f6eb",
+        "workflowMs": 10719,
+        "criticalPathContributionMs": 8843,
+        "materialPercent": 82.49836738501726,
+        "minimumMillisecondsPassed": true,
+        "minimumPercentPassed": true,
+        "environmentClass": "CONTROLLED_PERFORMANCE",
+        "performanceGateAuthority": true
+      },
+      {
+        "schemaVersion": "buildopt.wcncp/controlled-materiality-run/v1",
+        "family": "test-retry-gradle-plugin",
+        "method": "CONFIGURATION_CACHE_UNLOCK",
+        "operationTraceSha256": "1bc42d8b7e5eb2e3fe906f0f2944819e53d277161561a872c033ec9a6f584f39",
+        "taskGraphSha256": "29b53a14db05edb6e221d423f56af5ff48c79e25044fea10a424abcaace4f6eb",
+        "workflowMs": 9778,
+        "criticalPathContributionMs": 8005,
+        "materialPercent": 81.86745755778277,
+        "minimumMillisecondsPassed": true,
+        "minimumPercentPassed": true,
+        "environmentClass": "CONTROLLED_PERFORMANCE",
+        "performanceGateAuthority": true
+      }
+    ],
+    "conservativeCriticalPathMilliseconds": 8005,
+    "conservativeMaterialPercent": 81.86745755778277,
+    "decision": "UNSUPPORTED_PROBLEM_CLASS"
+  }
+]

@@ -26,8 +26,9 @@ The active wrapper-coordinated native-corrections POC reuses this physical
 backend without merging its logical planes. Gradle cache objects remain opaque
 and evictable; observations, opportunities, proposals, validations and
 decisions are typed control documents with independent authority and
-retention. WCNCP-000 freezes that separation but does not add remote routes or
-publish experiment records.
+retention. WCNCP implements and proves that separation, remote coordination,
+and multi-runner publication. Its prospective product experiment nevertheless
+stops at 1/3 actionable material families before candidates or value.
 
 The storage contract, local persistence and remote trust boundary are complete. The three versioned
 state schemas and lifecycle vectors are defined in the

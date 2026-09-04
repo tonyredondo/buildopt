@@ -2,11 +2,12 @@
 
 Reproducible workloads for measuring causal savings, overhead, queues, additional compute, and behavior under failure.
 
-The active [wrapper-coordinated native-corrections evidence index](./results/wrapper-coordinated-native-corrections-v1/README.md)
-contains contract evidence only. `WCNCP-000` freezes two separate storage
-planes, five typed control records, controlled-versus-hosted-CI authority and a
-neutral ten-family selection policy. All ten slots remain unselected; builds,
-observations, proposals, validations, timing samples and value claims are zero.
+The completed [wrapper-coordinated native-corrections evidence index](./results/wrapper-coordinated-native-corrections-v1/README.md)
+contains functional proof plus a fresh ten-family experiment. Thirty wrapper
+observations, 16 initial diagnostics, and six controlled rows produce 10/10
+conclusive but only 1/3 required actionable material families. The route stops
+before candidates, paired value, or review, with zero product failures and no
+speedup claim.
 
 The [prospective reviewed-native trial](./results/prospective-reviewed-native-patch-controlled-trial-v1/README.md)
 audits ten unused public families and reconstructs three source-action families.

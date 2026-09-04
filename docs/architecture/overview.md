@@ -1,6 +1,6 @@
 # Architecture overview
 
-## Active wrapper-coordinated native-corrections pivot
+## Wrapper-coordinated native-corrections pivot
 
 The active POC keeps the repository wrapper above the customer's unchanged
 Gradle command. The wrapper observes and reports; reviewed corrections are
@@ -8,8 +8,9 @@ validated separately and, after owner acceptance, native Gradle remains the
 runtime. Gradle cache objects stay in the existing opaque data plane. Typed
 observations, opportunities, proposals, validations and decisions use the
 separate control plane, so neither cache hits nor hosted-CI durations grant
-activation authority. `WCNCP-000` freezes these boundaries only; runtime
-routing, public subjects, builds and timing have not started.
+activation authority. The functional system and prospective observation path
+are proven, but the frozen public cohort stops at 10/10 conclusive and 1/3
+actionable material families. Candidate and value paths therefore never open.
 
 ## Normalization-aware cacheability evidence tooling
 

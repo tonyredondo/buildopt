@@ -30,9 +30,10 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > **Active POC pivot:** `WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` keeps the
 > repository wrapper as the ordinary Gradle entrypoint while separating native
 > cache objects from typed observations, proposals, validations and decisions.
-> `WCNCP-000` freezes that contract, its ten-family selection policy and five
-> record schemas. No family is selected and no observation, proposal, public
-> build, timing sample or value claim exists yet. See the
+> The prospective experiment is complete: 30 wrapper observations, 16 initial
+> diagnostics, and six controlled rows yield 10/10 conclusive but only 1/3
+> required actionable material families. It stops before candidates or value
+> as `STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH`. See the
 > [execution plan](./docs/plans/wrapper-coordinated-native-corrections-poc.md).
 >
 > **Closed v2 experiment:** `REMOTE_CACHE_LOCALITY_VALUE_V2` tested BuildOpt as

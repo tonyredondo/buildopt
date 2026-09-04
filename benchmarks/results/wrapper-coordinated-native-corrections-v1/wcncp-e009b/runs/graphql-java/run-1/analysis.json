@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "buildopt.wcncp/controlled-materiality-run/v1",
+  "family": "graphql-java",
+  "method": "CONFIGURATION_CACHE_UNLOCK",
+  "operationTraceSha256": "e5f654ebc24dcf44c3c5ebd2d6035fa6bb7ba67f39689b45a86de12daa3c72e2",
+  "taskGraphSha256": "c97774f9f203c769f7485e9c420c6d8ee3a12863c6c8a85579eebc3a3bc49623",
+  "workflowMs": 14617,
+  "criticalPathContributionMs": 5949,
+  "materialPercent": 40.69918587945543,
+  "minimumMillisecondsPassed": true,
+  "minimumPercentPassed": true,
+  "environmentClass": "CONTROLLED_PERFORMANCE",
+  "performanceGateAuthority": true
+}

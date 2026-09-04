@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence=${buildopt_repo_root}/benchmarks/results/wrapper-coordinated-native-corrections-v1
+buildopt_initial=${buildopt_evidence}/wcncp-e009-breadth.json
+buildopt_controlled=${buildopt_evidence}/wcncp-e009b/result.json
+buildopt_final=${buildopt_evidence}/wcncp-e009-final.json
+
+"${buildopt_script_dir}/check-wcncp-opportunity-breadth"
+"${buildopt_script_dir}/check-wcncp-controlled-materiality-v2" "${buildopt_evidence}/wcncp-e009b"
+
+buildopt_initial_sha=$(sha256sum "${buildopt_initial}" | awk '{print $1}')
+buildopt_controlled_sha=$(sha256sum "${buildopt_controlled}" | awk '{print $1}')
+buildopt_temp=$(mktemp -d /tmp/buildopt-wcncp-final-check.XXXXXX)
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+
+jq -s '[
+  (.[0].rows[] | select(.decision != "INCOMPLETE_OBSERVATION") | {family,decision}),
+  (.[1].families[] | {family,decision})
+]' "${buildopt_initial}" "${buildopt_controlled}" >"${buildopt_temp}/families.json"
+
+diff -u \
+    <(jq -S .families "${buildopt_final}") \
+    <(jq -S . "${buildopt_temp}/families.json")
+
+buildopt_conclusive=$(jq 'length' "${buildopt_temp}/families.json")
+buildopt_actionable=$(jq '[.[] | select(.decision == "ACTIONABLE_MATERIAL_CORRECTION")] | length' "${buildopt_temp}/families.json")
+jq -e \
+    --arg initialSha "${buildopt_initial_sha}" \
+    --arg controlledSha "${buildopt_controlled_sha}" \
+    --argjson conclusive "${buildopt_conclusive}" \
+    --argjson actionable "${buildopt_actionable}" '
+    .schemaVersion == "buildopt.wcncp/opportunity-breadth-final/v1" and
+    .workItem == "WCNCP-009" and .state == "COMPLETE" and
+    .decision == "STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH" and
+    .inputs.initialBreadthReportSha256 == $initialSha and
+    .inputs.controlledMaterialityResultSha256 == $controlledSha and
+    .observationsReconstructed == 30 and .originalDiagnosticStarts == 16 and
+    .controlledDiagnosticStarts == 6 and .familiesConclusive == $conclusive and
+    .familiesConclusiveRequired == 10 and $conclusive == 10 and
+    .actionableMaterialFamilies == $actionable and
+    .actionableMaterialFamiliesRequired == 3 and $actionable == 1 and
+    .publicSourceModified == false and .candidateBuilds == 0 and
+    .pairedValueTimingSamples == 0 and .speedupClaim == false and
+    .productFailures == 0 and
+    .dependentBlocks == {
+      "WCNCP-010":"NOT_AUTHORIZED","WCNCP-011":"NOT_AUTHORIZED",
+      "WCNCP-012":"NOT_AUTHORIZED","WCNCP-013":"READY_FOR_TERMINAL_DOCUMENTATION_ONLY"
+    }
+' "${buildopt_final}" >/dev/null
+
+printf 'WCNCP-009 final breadth reconstructed: %s/10 conclusive, %s/3 actionable, terminal breadth stop\n' \
+    "${buildopt_conclusive}" "${buildopt_actionable}"

@@ -15,9 +15,10 @@ The active WCNCP pivot retains this wrapper-shaped onboarding but narrows its
 authority: the ordinary command remains Gradle-native, while BuildOpt records
 typed observations and can later present a reviewed native correction. The
 existing Gradle-compatible cache remains a cache-object data plane; proposal
-and validation state uses a separate typed control plane. WCNCP-000 defines
-only that contract, so no new runtime behavior or customer action is available
-yet.
+and validation state uses a separate typed control plane. The completed WCNCP
+experiment proves that functional coordination, but finds only one actionable
+material family against three required. It therefore does not authorize
+candidate execution or establish prospective product value.
 
 The current public path below separates compatibility, proposal, measurement
 and replay explicitly. The target POC experience is the single command

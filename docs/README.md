@@ -66,8 +66,9 @@ before running the product.
 ### Plans
 
 - [Wrapper-Coordinated Native Corrections POC](./plans/wrapper-coordinated-native-corrections-poc.md):
-  the active wrapper-as-onboarding pivot; `WCNCP-000` freezes the two-plane,
-  typed-state and controlled-measurement contract while `WCNCP-001` is next.
+  the completed wrapper-as-onboarding experiment; functional coordination
+  passes, but prospective breadth stops at 10/10 conclusive and 1/3 actionable
+  material families before candidates or paired value.
 
 - [Critical-Path Build-Logic Correction v1](./plans/critical-path-build-logic-correction-v1.md):
   five exact source trees and retained native traces, terminal 5/5 conclusive

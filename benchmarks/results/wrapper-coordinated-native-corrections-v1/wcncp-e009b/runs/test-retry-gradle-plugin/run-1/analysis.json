@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "buildopt.wcncp/controlled-materiality-run/v1",
+  "family": "test-retry-gradle-plugin",
+  "method": "CONFIGURATION_CACHE_UNLOCK",
+  "operationTraceSha256": "41d4774e6335acc7b76cbe686560554010f990b82ca5b65ddb73532280d82dce",
+  "taskGraphSha256": "29b53a14db05edb6e221d423f56af5ff48c79e25044fea10a424abcaace4f6eb",
+  "workflowMs": 10719,
+  "criticalPathContributionMs": 8843,
+  "materialPercent": 82.49836738501726,
+  "minimumMillisecondsPassed": true,
+  "minimumPercentPassed": true,
+  "environmentClass": "CONTROLLED_PERFORMANCE",
+  "performanceGateAuthority": true
+}

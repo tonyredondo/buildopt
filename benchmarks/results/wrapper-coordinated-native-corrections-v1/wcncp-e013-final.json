@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "buildopt.wcncp/terminal-decision/v2",
+  "block": "WCNCP-013",
+  "evidence": "WCNCP-E013",
+  "authoritative": true,
+  "recordedAt": "2026-09-04",
+  "terminalDecision": "STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH",
+  "basis": "wcncp-e009-final.json",
+  "basisSha256": "ffe6cc0376dd56ab623ef1711419e817afe8dfe0daa51d13d966861e2081b2dc",
+  "recomputation": {
+    "wrapperFunctionalFoundation": "PASS",
+    "prospectiveObservations": 30,
+    "originalDiagnosticStarts": 16,
+    "controlledDiagnosticStarts": 6,
+    "familiesConclusive": 10,
+    "familiesConclusiveRequired": 10,
+    "actionableMaterialFamilies": 1,
+    "actionableMaterialFamiliesRequired": 3,
+    "correctnessQualifiedFamilies": 0,
+    "valueQualifiedFamilies": 0,
+    "ownerReviews": 0,
+    "productFailures": 0
+  },
+  "controlledMateriality": {
+    "preflightMaximumToMinimumRatio": 1.0286029306882316,
+    "preflightMaximumAllowed": 1.15,
+    "graphqlJava": "ACTIONABLE_MATERIAL_CORRECTION",
+    "apacheGroovy": "NON_MATERIAL_BLOCKER",
+    "testRetryGradlePlugin": "UNSUPPORTED_PROBLEM_CLASS"
+  },
+  "gatedWork": {
+    "publicSourceMutations": 0,
+    "candidateBuilds": 0,
+    "pairedValueTimingSamples": 0,
+    "reviewArtifacts": 0,
+    "reason": "WCNCP-009 requires at least three actionable material families before WCNCP-010. Only GraphQL Java qualifies, so WCNCP-010 through WCNCP-012 were never authorized."
+  },
+  "thresholdsMoved": false,
+  "historicalEvidenceContamination": false,
+  "hostedTimingInValueArithmetic": false,
+  "speedupClaim": false,
+  "provenBoundary": "The ordinary Gradle-wrapper coordination, observation, shared state, validation orchestration, and reviewed-artifact system is functionally proven, but the frozen ten-family prospective cohort yields only one actionable material native correction. This experiment therefore does not establish sufficient opportunity breadth or product value.",
+  "nextResearchBoundary": "A future experiment must introduce a prospectively frozen, source-neutral detector or cohort hypothesis that can plausibly yield at least three actionable material families. It may not rerun these rows, lower the 500 ms or 2 percent materiality gates, treat unsupported external blockers as actionable, or start candidate/value work from this stopped cohort."
+}

@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_CONTROLLED_MATERIALITY_FROZEN\`"
-    "**Current phase:** \`WCNCP-009B\` preserves the exhausted local diagnostics and WCNCP-009A failure"
+    "**Overall status:** \`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_STOPPED_BREADTH\`"
+    "**Current phase:** \`WCNCP-013\` is complete with \`STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH\`"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"
@@ -469,7 +469,7 @@ buildopt_required_tracker_text=(
     "| \`E-516\` | 2026-09-03 | \`POC-CRITICAL-PATH-FIRST-REVIEWED-NATIVE-PATCH\`, \`CPFRNP-001..007\` |"
     "| POC-CRITICAL-PATH-BUILD-LOGIC-CORRECTION | Find explicit owner build-logic state/cache/incremental opt-outs on material standard Gradle tasks | \`STOPPED\` | 4 resolved; 2 not authorized |"
     "| \`E-517\` | 2026-09-03 | \`POC-CRITICAL-PATH-BUILD-LOGIC-CORRECTION\`, \`CPBLC-001..006\` |"
-    "| POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS | Use the ordinary wrapper to coordinate typed observation, reviewed proposals and validated native corrections while Gradle remains authoritative | \`ACTIVE\` | 9/14 blocks done |"
+    "| POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS | Use the ordinary wrapper to coordinate typed observation, reviewed proposals and validated native corrections while Gradle remains authoritative | \`STOPPED\` | 11 resolved; 3 not authorized |"
     "| \`E-518\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-000\` |"
     "| \`E-519\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-001\` |"
     "| \`E-520\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-002\` |"
@@ -482,6 +482,7 @@ buildopt_required_tracker_text=(
     "| \`E-527\` | 2026-09-03 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-001..007\` functional repair |"
     "| \`E-530\` | 2026-09-04 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-008\` prospective capture |"
     "| \`E-531\` | 2026-09-04 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-009\` opportunity breadth |"
+    "| \`E-534\` | 2026-09-04 | \`POC-WRAPPER-COORDINATED-NATIVE-CORRECTIONS\`, \`WCNCP-009B\`, \`WCNCP-013\` |"
 )
 for buildopt_required in "${buildopt_required_tracker_text[@]}"; do
     if ! grep -Fq -- "${buildopt_required}" "${buildopt_tracker}"; then

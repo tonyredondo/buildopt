@@ -1,16 +1,16 @@
 # Wrapper-coordinated native corrections v1 evidence
 
-State: `OPPORTUNITY_BREADTH_INCOMPLETE`. Functional lanes `WCNCP-001` through
+State: `STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH`. Functional lanes `WCNCP-001` through
 `WCNCP-007` are covered and `WCNCP-008` completed the frozen ten-family capture.
-`WCNCP-009` reconstructed every source and diagnostic row, but remains open for
-controlled critical-path materiality on three families. The prospective
+`WCNCP-009` is complete at 10/10 conclusive and 1/3 actionable material
+families, so candidate, value, and review blocks never open. The prospective
 [`WCNCP-009A` successor](../../../specs/poc-wcncp-controlled-materiality-v1.md)
 preserved the exhausted local rows but its first attempt failed the stability
 gate at 5.1795 after setup and before every controlled diagnostic. The checked
 failure is retained under [`wcncp-e009a/attempt-1`](./wcncp-e009a/attempt-1/).
 The separately frozen [`WCNCP-009B`](../../../specs/poc-wcncp-controlled-materiality-v2.md)
-adds only a fixed 120-second post-prefetch quiescence interval before the
-unchanged gate and a fresh six-start budget.
+added only a fixed 120-second post-prefetch quiescence interval before the
+unchanged gate. It passed at 1.028603 and completed all six controlled rows.
 
 The pre-capture operational audit also added the missing administrative
 `wcncp-actor grant` command: transport token issuance alone remains
@@ -32,9 +32,10 @@ Current state:
 - exact public cohort: `FROZEN_10_PRIMARY_PLUS_20_RESERVES`;
 - prospective observations: 30 (3 per family);
 - selected additional native diagnostics: 16 (maximum 20);
-- conclusive opportunity families: 7/10;
-- potential correction families awaiting controlled materiality: 3;
+- conclusive opportunity families: 10/10;
+- actionable material families: 1/3 required (GraphQL Java);
 - WCNCP-009A controlled diagnostic starts: 0 (environment gate failed);
+- WCNCP-009B controlled diagnostic starts: 6/6;
 - public source patches: 0;
 - candidate builds: 0;
 - timing samples: 0;
@@ -85,10 +86,11 @@ batches and verified snapshots, plus three separately excluded runner or
 infrastructure attempts. No duration is performance evidence. The checked
 [`WCNCP-E009 breadth report`](./wcncp-e009-breadth.json), [fresh evidence](./wcncp-e009/),
 and [diagnostic selection](./wcncp-e009-diagnostic-selection.json) reconstruct
-16 selected starts. Four families store Configuration Cache state, six expose
-blockers, and three source-bound families remain incomplete solely because this
-`LOCAL_FUNCTIONAL` host has no materiality authority. Source mutation,
-candidates, timing samples, and value remain closed.
+16 selected starts. The [controlled successor](./wcncp-e009b/README.md) adds six
+rows and the [final report](./wcncp-e009-final.json) reconstructs 10/10
+conclusive but only 1/3 actionable material families. The authoritative
+[terminal decision](./wcncp-e013-final.json) therefore closes source mutation,
+candidates, paired timing, and review for this cohort.
 
 Reconstruct the checked freeze from the manifest and, when the ten public
 checkouts are available, their Git archives with:
@@ -118,6 +120,9 @@ and exercise summary-falsification rejection with:
 ./dev/check-wcncp-opportunity-breadth-negatives
 ./dev/check-wcncp-controlled-materiality-plan
 ./dev/check-wcncp-controlled-materiality /absolute/evidence
+./dev/check-wcncp-controlled-materiality-v2 "$PWD/benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e009b"
+./dev/check-wcncp-opportunity-breadth-final
+./dev/check-wcncp-terminal
 ```
 
 Run the WCNCP-001 typed-state proof with:

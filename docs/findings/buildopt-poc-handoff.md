@@ -54,7 +54,7 @@ does not establish commercial viability.
 
 ## Current experiment status
 
-`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` is active at `WCNCP-009`
+`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` is terminally stopped at `WCNCP-013`
 (`WCNCP-000` contract frozen; `WCNCP-001` through `WCNCP-007` functionally
 repaired and proved). The wrapper command remains
 authoritative Gradle passthrough; control and data planes stay separate;
@@ -68,12 +68,16 @@ ten-family cohort produced 30/30 fresh complete ordinary wrapper observations:
 every native child succeeded, every required-output manifest resolved, and ten
 TLS-published batches reached verified central snapshots. Three excluded
 executor/capture-runner attempts are retained and are not product failures.
-WCNCP-009 then reconstructed fresh source and 16 selected native diagnostics.
-Seven families are conclusive. GraphQL Java, Apache Groovy and Test Retry expose
-plausible source-bound corrections, but this `LOCAL_FUNCTIONAL` host cannot
-qualify or reject their critical-path materiality. The block therefore remains
-`INCOMPLETE_EXPERIMENT_INPUT`; candidate builds, timing samples, owner review,
-and value claims remain closed.
+WCNCP-009 first reconstructed fresh source and 16 selected native diagnostics.
+WCNCP-009A then failed its environment gate before every row. The prospectively
+fixed WCNCP-009B passed at 1.028603 after 120 seconds of fixed quiescence and
+completed six controlled rows. GraphQL Java is actionable at a conservative
+5,949 ms/38.87%; Apache Groovy contributes zero critical-path milliseconds; Test
+Retry is material at 8,005 ms/81.87% but remains unsupported because external
+License plugin blockers survive any repository correction. The final 10/10
+conclusive, 1/3 actionable result is
+`STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH`; candidates, paired value,
+owner review, and speedup claims remain zero.
 
 The pre-capture audit found and repaired one operational omission: central
 tokens can now be bound explicitly to a frozen WCNCP actor with
@@ -1011,6 +1015,10 @@ outside this POC.
 
 ## Evidence
 
+- [Wrapper-coordinated terminal decision](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e013-final.json)
+- [Final ten-family breadth report](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e009-final.json)
+- [Controlled three-family materiality evidence](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e009b/README.md)
+- [Wrapper-coordinated POC tracker](../plans/wrapper-coordinated-native-corrections-poc.md)
 - [Reviewed native patch portfolio result](../../benchmarks/results/reviewed-native-patch-portfolio-v1/README.md)
 - [Reviewed native patch portfolio tracker](../plans/reviewed-native-patch-portfolio-v1.md)
 - [Durable native optimization closed tracker](../plans/durable-native-optimization-poc-tracker.md)

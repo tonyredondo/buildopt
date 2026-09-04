@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "buildopt.wcncp/controlled-materiality-capture/v1",
+  "ordinal": 2,
+  "revision": "f2d8c9126f898c084b176631b7346bc6fbec296a",
+  "sourceArchiveSha256": "83e80bbaa2b3e3308dd35e0b7120399f02149507674d958b0e2e4cc81718d051",
+  "child": {
+    "exitCode": 0,
+    "elapsedMilliseconds": 18514,
+    "outcome": "SUCCESS",
+    "recoveredAfterAnalyzerFailure": false
+  },
+  "operationTraceSha256": "6547833a5eef353c1f547af30e4aa51a0b040b2deba1129c36cdfce02ac6d5a8",
+  "taskGraphSha256": "c97774f9f203c769f7485e9c420c6d8ee3a12863c6c8a85579eebc3a3bc49623",
+  "environmentClass": "CONTROLLED_PERFORMANCE",
+  "performanceGateAuthority": true,
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "pairedValueTimingSample": false,
+  "productFailures": 0
+}

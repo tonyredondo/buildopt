@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "buildopt.wcncp/controlled-materiality-environment/v2",
+  "recordedAt": "2026-09-04T15:43:01Z",
+  "environmentClass": "CONTROLLED_PERFORMANCE",
+  "performanceGateAuthority": true,
+  "host": {
+    "operatingSystem": "linux",
+    "architecture": "amd64",
+    "kernel": "7.1.5-1-t2-noble",
+    "cpuModel": "Intel(R) Core(TM) i7-8850H CPU @ 2.60GHz",
+    "cpuCount": 12,
+    "memoryBytes": 16659865600,
+    "dedicated": false,
+    "mainsPower": true,
+    "powerProfile": "performance",
+    "scalingDriver": "intel_pstate",
+    "scalingGovernor": "powersave",
+    "energyPerformancePreference": "performance",
+    "cpuAffinity": "0-3",
+    "maximumWorkers": 4,
+    "backgroundPolicy": "NO_CONCURRENT_AGENT_LAUNCHED_BUILD_OR_BENCHMARK",
+    "postPrefetchQuiescenceSeconds": 120
+  },
+  "disk": {
+    "freeBytesBefore": 39502761984,
+    "maximumConcurrentGiB": 20,
+    "minimumReserveGiB": 10
+  },
+  "preflight": {
+    "algorithm": "SHA256_128_MIB_ZERO_BUFFER_AFTER_FIXED_QUIESCENCE_V2",
+    "rows": [
+      {
+        "ordinal": 1,
+        "durationNanoseconds": 280377851
+      },
+      {
+        "ordinal": 2,
+        "durationNanoseconds": 275149127
+      },
+      {
+        "ordinal": 3,
+        "durationNanoseconds": 272581229
+      },
+      {
+        "ordinal": 4,
+        "durationNanoseconds": 274566441
+      },
+      {
+        "ordinal": 5,
+        "durationNanoseconds": 273684578
+      },
+      {
+        "ordinal": 6,
+        "durationNanoseconds": 274693503
+      },
+      {
+        "ordinal": 7,
+        "durationNanoseconds": 273756028
+      }
+    ],
+    "maximumToMinimumRatio": 1.0286029306882316,
+    "maximumAllowed": 1.15,
+    "passed": true
+  },
+  "bindings": {
+    "contractCommit": "48a9c427a0a2d0d8f2677776e24c619c4bdc5751",
+    "contractSha256": "62df94f06daa1f6df635e388ad0e28f011b4a99485453fb82c1487a638ad4014",
+    "subjectsSha256": "e9346bb22633dd9231272b04dc7db4b61e566462c914eeb22fa7fd019c92e6c5"
+  }
+}

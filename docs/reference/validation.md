@@ -1,10 +1,10 @@
 # Validation reference
 
-The active WCNCP contract is checked by
-`./dev/check-wrapper-coordinated-native-corrections-plan`. It compiles all five
-JSON Schemas, accepts and rejects the language-neutral vectors, reconstructs
-the ten unselected cohort slots and proves that WCNCP-000 contains no build,
-timing or product-value evidence.
+The WCNCP contract and terminal evidence are checked by
+`./dev/check-wrapper-coordinated-native-corrections-plan` and
+`./dev/check-wcncp-terminal`. The terminal checker composes the 30-observation
+capture, initial source/diagnostic report, six controlled materiality rows, and
+final 10/10 conclusive, 1/3 actionable stop without trusting summary counts.
 
 The closed RCL route is checked by `./dev/check-remote-cache-locality-value`,
 `./dev/check-remote-cache-locality-harness`,
@@ -88,6 +88,8 @@ provision tools or create release artifacts document that effect explicitly.
 | Required paths and baseline shape | `./dev/check-layout` |
 | WCNCP prospective capture row, binding, output, publication and summary reconstruction | `./dev/check-wcncp-prospective-capture` |
 | WCNCP missing-row, source-drift, payload-tamper and predecessor-contamination negatives | `./dev/check-wcncp-prospective-capture-negatives` |
+| WCNCP fixed-quiescence controlled materiality traces and family decisions | `./dev/check-wcncp-controlled-materiality-v2 "$PWD/benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e009b"` |
+| WCNCP final opportunity breadth and terminal decision | `./dev/check-wcncp-opportunity-breadth-final && ./dev/check-wcncp-terminal` |
 | Normative package structure | `./dev/check-normative-layout` |
 | Closed fresh generic predecessor and evidence boundary | `./dev/check-fresh-generic-optimization-plan` |
 | Change-aware producer/analyzer fixtures across Gradle and DSL variants | `./dev/check-change-aware-producer-fixtures` |

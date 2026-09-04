@@ -102,8 +102,9 @@ jq -e '
 "${buildopt_script_dir}/check-wcncp-prospective-capture"
 "${buildopt_script_dir}/check-wcncp-prospective-capture-negatives"
 "${buildopt_script_dir}/check-wcncp-opportunity-breadth"
-"${buildopt_script_dir}/check-wcncp-opportunity-breadth-negatives"
+    "${buildopt_script_dir}/check-wcncp-opportunity-breadth-negatives"
 "${buildopt_script_dir}/check-wcncp-controlled-materiality-plan"
+"${buildopt_script_dir}/check-wcncp-terminal"
 
 for buildopt_path in $(jq -r '.schemas[], .vectors' "${buildopt_contract}"); do
     test -f "${buildopt_repo_root}/${buildopt_path}" || {
@@ -115,10 +116,10 @@ done
 # Backticks below are literal Markdown syntax.
 # shellcheck disable=SC2016
 buildopt_required_text=(
-    '**Overall:** `OPPORTUNITY_BREADTH_INCOMPLETE`'
-    '**Current block:** `WCNCP-009A` is frozen before execution'
+    '**Overall:** `STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH`'
+    '**Current block:** `WCNCP-013` is complete'
     '`STANDARD_HOSTED_CI` duration from materiality/value arithmetic'
-    'The separately versioned `WCNCP-009A`'
+    'versioned `WCNCP-009B` preserved that failure'
 )
 for buildopt_text in "${buildopt_required_text[@]}"; do
     grep -Fq -- "${buildopt_text}" "${buildopt_plan}" || {
@@ -168,8 +169,14 @@ grep -Fq -- '| `E-531` |' "${buildopt_implementation_tracker}" || {
     printf 'WCNCP opportunity evidence E-531 is missing from the implementation tracker\n' >&2
     exit 1
 }
+# Backticks are literal Markdown syntax.
+# shellcheck disable=SC2016
+grep -Fq -- '| `E-534` |' "${buildopt_implementation_tracker}" || {
+    printf 'WCNCP terminal evidence E-534 is missing from the implementation tracker\n' >&2
+    exit 1
+}
 
 cd -- "${buildopt_script_dir}/schema-validator"
 "${buildopt_script_dir}/run" --toolchain go -- go test -count=1 -run '^TestWCNCPV1SchemasAndVectors$' .
 
-printf 'WCNCP plan OK: WCNCP-009A is frozen before controlled materiality and later gates remain closed\n'
+printf 'WCNCP plan OK: terminal 10/10 conclusive, 1/3 actionable breadth stop reconstructed\n'

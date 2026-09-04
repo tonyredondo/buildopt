@@ -2,8 +2,8 @@
 
 ## Current Executive Summary
 
-- **The wrapper-coordinated native-corrections POC reached an incomplete
-  WCNCP-009 breadth result.**
+- **The wrapper-coordinated native-corrections POC stops at the WCNCP-009
+  opportunity-breadth gate.**
   WCNCP-000 freezes five typed records, a separate Gradle-cache data plane and
   control-state plane, neutral ten-family selection and controlled-runner
   authority; WCNCP-001 through WCNCP-007 prove state, authority, observation,
@@ -19,12 +19,14 @@
   manifests resolved, and all ten TLS batches reached verified snapshots. Three
   excluded infrastructure/capture-runner attempts are not product failures.
   WCNCP-009 reconstructs those observations plus fresh source facts and 16
-  selected native diagnostics. Four families store Configuration Cache state,
-  six expose blockers, and seven total families are conclusive. GraphQL Java,
-  Apache Groovy and Test Retry remain plausible source-bound corrections but
-  need controlled critical-path materiality. Local durations have no authority,
-  so this is `INCOMPLETE_EXPERIMENT_INPUT`, not a breadth rejection or pass;
-  prospective value remains wholly unmeasured.
+  selected native diagnostics. WCNCP-009A stops at a 5.1795 environment ratio
+  before every row; its fixed-quiescence successor passes at 1.028603 and adds
+  six controlled rows. GraphQL Java passes at a conservative 5,949 ms/38.87%,
+  Apache Groovy contributes zero critical-path milliseconds, and Test Retry is
+  material at 8,005 ms/81.87% but unsupported due to remaining external plugin
+  blockers. The final result is 10/10 conclusive and 1/3 actionable, so
+  `STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH` closes correctness, paired
+  value, and review. Product failures and speedup claims remain zero.
 
 - **Explicit material-task build-logic opt-outs do not broaden the patch
   product.** Five exact public source trees are scanned against retained native

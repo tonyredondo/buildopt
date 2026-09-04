@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# Guard the prospective lane against the retracted zero-row terminal closure.
-# This checker verifies live block ordering and audit-artifact status; it does
-# not manufacture a terminal decision from missing prospective evidence.
+# Reconstruct the final prospective decision while retaining the retracted
+# zero-row terminal record as immutable audit history.
 set -euo pipefail
 
 if (($# != 0)); then
@@ -72,12 +71,53 @@ for buildopt_block in 010 011 012; do
     fi
 done
 
+"${buildopt_script_dir}/check-wcncp-controlled-materiality" \
+    "${buildopt_evidence}/wcncp-e009a/attempt-1"
+"${buildopt_script_dir}/check-wcncp-opportunity-breadth-final"
+
+buildopt_final_breadth="${buildopt_evidence}/wcncp-e009-final.json"
+buildopt_final_terminal="${buildopt_evidence}/wcncp-e013-final.json"
+buildopt_final_decision=$(jq -r '.decision' "${buildopt_final_breadth}")
+buildopt_final_conclusive=$(jq -r '.familiesConclusive' "${buildopt_final_breadth}")
+buildopt_final_actionable=$(jq -r '.actionableMaterialFamilies' "${buildopt_final_breadth}")
+buildopt_final_breadth_sha=$(sha256sum "${buildopt_final_breadth}" | awk '{print $1}')
+jq -e \
+    --arg decision "${buildopt_final_decision}" \
+    --arg breadthSha "${buildopt_final_breadth_sha}" \
+    --argjson conclusive "${buildopt_final_conclusive}" \
+    --argjson actionable "${buildopt_final_actionable}" '
+    .schemaVersion == "buildopt.wcncp/terminal-decision/v2" and
+    .block == "WCNCP-013" and .evidence == "WCNCP-E013" and
+    .authoritative == true and .terminalDecision == $decision and
+    .basis == "wcncp-e009-final.json" and .basisSha256 == $breadthSha and
+    .recomputation.wrapperFunctionalFoundation == "PASS" and
+    .recomputation.prospectiveObservations == 30 and
+    .recomputation.originalDiagnosticStarts == 16 and
+    .recomputation.controlledDiagnosticStarts == 6 and
+    .recomputation.familiesConclusive == $conclusive and $conclusive == 10 and
+    .recomputation.familiesConclusiveRequired == 10 and
+    .recomputation.actionableMaterialFamilies == $actionable and $actionable == 1 and
+    .recomputation.actionableMaterialFamiliesRequired == 3 and
+    .recomputation.correctnessQualifiedFamilies == 0 and
+    .recomputation.valueQualifiedFamilies == 0 and .recomputation.ownerReviews == 0 and
+    .recomputation.productFailures == 0 and
+    .controlledMateriality.preflightMaximumToMinimumRatio <=
+      .controlledMateriality.preflightMaximumAllowed and
+    .controlledMateriality.graphqlJava == "ACTIONABLE_MATERIAL_CORRECTION" and
+    .controlledMateriality.apacheGroovy == "NON_MATERIAL_BLOCKER" and
+    .controlledMateriality.testRetryGradlePlugin == "UNSUPPORTED_PROBLEM_CLASS" and
+    .gatedWork.publicSourceMutations == 0 and .gatedWork.candidateBuilds == 0 and
+    .gatedWork.pairedValueTimingSamples == 0 and .gatedWork.reviewArtifacts == 0 and
+    .thresholdsMoved == false and .historicalEvidenceContamination == false and
+    .hostedTimingInValueArithmetic == false and .speedupClaim == false
+' "${buildopt_final_terminal}" >/dev/null
+
 if ! (cd -- "${buildopt_evidence}" && sha256sum -c sha256sums >/dev/null); then
     printf 'evidence sha256sums do not verify\n' >&2
     exit 1
 fi
 
 "${buildopt_script_dir}/check-wcncp-prospective-capture"
-"${buildopt_script_dir}/check-wcncp-opportunity-breadth"
 
-printf 'WCNCP prospective lane OK: WCNCP-009 is incomplete pending controlled materiality and no terminal decision is authoritative\n'
+printf 'WCNCP terminal decision reconstructed: 10/10 conclusive, 1/3 actionable, %s\n' \
+    "${buildopt_final_decision}"

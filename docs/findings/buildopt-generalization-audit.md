@@ -17,10 +17,12 @@ premature WCNCP-013 zero-row conclusion. `WCNCP-008` is complete: ten primary
 revisions produced 30/30 fresh complete observations, successful native
 children, resolved output manifests, acknowledged batches, and verified central
 snapshots. WCNCP-009 reconstructed current source and 16 bounded native
-diagnostics: seven families are conclusive, while GraphQL Java, Apache Groovy
-and Test Retry require controlled critical-path materiality. The current result
-is `INCOMPLETE_EXPERIMENT_INPUT`, not a breadth failure; candidates and value
-remain closed. A pre-capture
+diagnostics, then WCNCP-009B completed the three missing controlled materiality
+decisions after passing its fixed-quiescence preflight at 1.028603. GraphQL Java
+is actionable, Apache Groovy is non-material, and Test Retry retains unsupported
+external blockers. The terminal result is 10/10 conclusive but only 1/3
+actionable: `STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH`. Candidates and
+value never opened. A pre-capture
 operational correction now exposes explicit
 actor binding for issued central tokens; token issuance still grants no WCNCP
 write authority by itself.
@@ -329,17 +331,19 @@ bounded mechanism has already satisfied its own evidence contract.
 
 ## Next generalization steps
 
-The active order and stop conditions now live in the
-[Normalization-Aware Cacheability POC Tracker](../plans/normalization-aware-cacheability-poc-tracker.md).
-The route no longer tries to carry a dynamic decision on every build. It
-first repeats a fresh audit over five exact public revisions, classifies every
-file input by portable normalization and compiles only digest-bound reversible
-patches. Marker-only patches require an already complete portable input
-contract. The only missing-normalization action v2 may propose is reviewed
-relative path sensitivity after two-root, content-mutation and path-mutation
-proof. No timing is authorized until at least three families expose actions
-and zero-failure correctness passes. Accepted patches run as optimized native
-Gradle with no BuildOpt runtime on the candidate path.
+The current order and stop conditions live in the completed
+[Wrapper-Coordinated Native Corrections POC](../plans/wrapper-coordinated-native-corrections-poc.md).
+Its wrapper and shared control plane are functionally viable, but the frozen
+cohort produces only one actionable material family. The next search must be a
+separately frozen source-neutral detector or cohort hypothesis with a plausible
+path to three families; it cannot rerun these rows, lower materiality gates, or
+start GraphQL candidate/value work in isolation.
+
+The earlier normalization-aware route no longer tried to carry a dynamic
+decision on every build. It repeated a fresh audit over five exact public
+revisions, classified every file input by portable normalization and compiled
+only digest-bound reversible patches. Marker-only patches required an already
+complete portable input contract.
 
 The verified-request-hit route is now a closed predecessor. Its 8/8 synthetic
 shadow result and 2/4 public output-state breadth explain why a durable source
