@@ -54,7 +54,7 @@ for buildopt_phrase in \
     'maximum/minimum duration ratio no greater than' \
     'Cumulative parallel task time never counts' \
     'changes no public source'; do
-    rg -Fq "${buildopt_phrase}" "${buildopt_spec}"
+    grep -Fq -- "${buildopt_phrase}" "${buildopt_spec}"
 done
 
 printf 'WCNCP controlled-materiality prospective plan checks passed\n'
