@@ -34,7 +34,9 @@ jq -e \
     .host.operatingSystem == "linux" and .host.architecture == "amd64" and
     .host.cpuCount >= 4 and .host.memoryBytes >= 16106127360 and
     .host.dedicated == false and .host.mainsPower == true and
-    .host.cpuGovernor == "performance" and .host.cpuAffinity == "0-3" and
+    .host.powerProfile == "performance" and .host.scalingDriver == "intel_pstate" and
+    .host.scalingGovernor == "powersave" and .host.energyPerformancePreference == "performance" and
+    .host.cpuAffinity == "0-3" and
     .host.maximumWorkers == 4 and
     .host.backgroundPolicy == "NO_CONCURRENT_AGENT_LAUNCHED_BUILD_OR_BENCHMARK" and
     .disk.maximumConcurrentGiB == 20 and .disk.minimumReserveGiB == 10 and

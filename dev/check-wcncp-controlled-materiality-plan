@@ -14,7 +14,8 @@ jq -e '
   .freeze.historicalTimingAllowed == false and
   .environment == {
     class:"CONTROLLED_PERFORMANCE", operatingSystem:"linux", architecture:"amd64",
-    mainsPowerRequired:true, cpuGovernor:"performance", cpuAffinity:"0-3",
+    mainsPowerRequired:true, powerProfile:"performance", scalingDriver:"intel_pstate",
+    scalingGovernor:"powersave", energyPerformancePreference:"performance", cpuAffinity:"0-3",
     maximumWorkers:4, minimumHostMemoryBytes:16106127360,
     dedicatedHostRequired:false,
     backgroundPolicy:"NO_CONCURRENT_AGENT_LAUNCHED_BUILD_OR_BENCHMARK",

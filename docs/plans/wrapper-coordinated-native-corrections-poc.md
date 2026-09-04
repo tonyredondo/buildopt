@@ -1262,7 +1262,7 @@ repository build usable without BuildOpt state.
 ## Immediate next action
 
 Commit and validate `WCNCP-009A` before its first dependency prefetch. Then set
-this owner-operated host temporarily to the `performance` CPU governor, run the
+this owner-operated host temporarily to its `performance` power/EPP profile, run the
 frozen stability preflight, and collect exactly two controlled critical-path
 rows for GraphQL Java, Apache Groovy, and Test Retry. A failed preflight is
 `INCOMPLETE_PERFORMANCE_ENVIRONMENT`; it never weakens the gate. Require 10/10

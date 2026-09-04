@@ -15,8 +15,9 @@ roots and a shared warm dependency/cache root.
 
 The runner is this owner-operated Linux AMD64 machine. It need not be a
 physically dedicated host, but it must be connected to mains power, expose at
-least 15 GiB of memory, run all online CPUs under the `performance` governor,
-pin Gradle to CPUs 0-3 and four workers, and run no concurrent agent-launched
+least 15 GiB of memory, run the system `performance` power profile and
+`performance` energy preference under `intel_pstate`, pin Gradle to CPUs 0-3
+and four workers, and run no concurrent agent-launched
 build or benchmark. Seven pre-outcome SHA-256 samples over the same 128 MiB
 memory-backed buffer must have a maximum/minimum duration ratio no greater than
 1.15. A failed preflight produces `INCOMPLETE_PERFORMANCE_ENVIRONMENT`; it is

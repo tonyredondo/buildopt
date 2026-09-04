@@ -21,7 +21,7 @@ buildopt_subjects=${buildopt_repo_root}/specs/poc-wrapper-coordinated-native-cor
 }
 [[ ${buildopt_output} != "${buildopt_work}" ]]
 
-for buildopt_command in awk date df git gzip head jq nproc pgrep sha256sum taskset timeout; do
+for buildopt_command in awk date df git gzip head jq nproc pgrep powerprofilesctl sha256sum taskset timeout; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
         printf 'required controlled-materiality command is unavailable: %s\n' "${buildopt_command}" >&2
         exit 1
@@ -68,9 +68,18 @@ done
     printf 'controlled capture requires mains power\n' >&2
     exit 1
 }
-for buildopt_governor_file in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
-    [[ -r ${buildopt_governor_file} && $(<"${buildopt_governor_file}") == performance ]] || {
-        printf 'every online CPU must use the performance governor\n' >&2
+[[ $(powerprofilesctl get) == performance ]] || {
+    printf 'the system power profile must be performance\n' >&2
+    exit 1
+}
+for buildopt_cpu_directory in /sys/devices/system/cpu/cpu*/cpufreq; do
+    [[ -r ${buildopt_cpu_directory}/scaling_driver && \
+       -r ${buildopt_cpu_directory}/scaling_governor && \
+       -r ${buildopt_cpu_directory}/energy_performance_preference && \
+       $(<"${buildopt_cpu_directory}/scaling_driver") == intel_pstate && \
+       $(<"${buildopt_cpu_directory}/scaling_governor") == powersave && \
+       $(<"${buildopt_cpu_directory}/energy_performance_preference") == performance ]] || {
+        printf 'every online CPU must use the frozen intel_pstate performance policy\n' >&2
         exit 1
     }
 done
@@ -183,7 +192,8 @@ jq -n \
       performanceGateAuthority:$preflightPassed,
       host:{operatingSystem:"linux",architecture:"amd64",kernel:$kernel,cpuModel:$cpuModel,
         cpuCount:$hostCpuCount,memoryBytes:$hostMemoryBytes,dedicated:false,mainsPower:true,
-        cpuGovernor:"performance",cpuAffinity:"0-3",maximumWorkers:4,
+        powerProfile:"performance",scalingDriver:"intel_pstate",scalingGovernor:"powersave",
+        energyPerformancePreference:"performance",cpuAffinity:"0-3",maximumWorkers:4,
         backgroundPolicy:"NO_CONCURRENT_AGENT_LAUNCHED_BUILD_OR_BENCHMARK"},
       disk:{freeBytesBefore:$freeBytesBefore,maximumConcurrentGiB:20,minimumReserveGiB:10},
       preflight:{algorithm:"SHA256_128_MIB_ZERO_BUFFER_V1",rows:$preflightRows,

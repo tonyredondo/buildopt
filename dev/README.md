@@ -5789,7 +5789,8 @@ materiality. Standard or local CI cannot qualify or reject them.
 
 `run-wcncp-controlled-materiality` is the single-use WCNCP-009A continuation
 for those exact three families. Its committed contract requires mains power,
-the `performance` governor, CPU affinity 0-3, four Gradle workers, a seven-row
+the `performance` power profile and EPP under `intel_pstate`, CPU affinity 0-3,
+four Gradle workers, a seven-row
 stability preflight, separate clean source roots, and exactly six controlled
 diagnostic starts. `check-wcncp-controlled-materiality` decompresses and
 reanalyzes every Gradle operation trace and task graph instead of trusting the
