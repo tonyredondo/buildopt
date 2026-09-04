@@ -68,12 +68,12 @@ done
     printf 'controlled capture requires mains power\n' >&2
     exit 1
 }
-while IFS= read -r buildopt_governor; do
-    [[ ${buildopt_governor} == performance ]] || {
+for buildopt_governor_file in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
+    [[ -r ${buildopt_governor_file} && $(<"${buildopt_governor_file}") == performance ]] || {
         printf 'every online CPU must use the performance governor\n' >&2
         exit 1
     }
-done < <(cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor)
+done
 
 mkdir -p -- "${buildopt_output}/runs" "${buildopt_work}/repositories" \
     "${buildopt_work}/runs" "${buildopt_work}/gradle-home" "${buildopt_work}/maven-local"
