@@ -17,10 +17,12 @@ buildopt_subjects="${BUILDOPT_WCNCP_CAPTURE_SUBJECTS:-${buildopt_repo_root}/spec
 buildopt_freeze="${buildopt_evidence}/cohort-freeze.json"
 buildopt_report="${buildopt_evidence}/wcncp-e008-capture.json"
 
-command -v jq >/dev/null 2>&1 || {
-    printf 'required WCNCP capture command is unavailable: jq\n' >&2
-    exit 1
-}
+for buildopt_command in grep jq; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required WCNCP capture command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
 
 buildopt_cutoff=$(jq -r '.frozenAt | fromdateiso8601 * 1000' "${buildopt_freeze}")
 buildopt_family_count=0
@@ -250,7 +252,7 @@ jq -s -e '
     all(.[]; .buildoptProductFailure == false and .performanceAuthority == false)
 ' "${buildopt_observations}/exclusions/"*20260904*.json >/dev/null
 jq -e '.schemaVersion == "buildopt.wcncp/excluded-attempt-log-index/v1" and (.logs | length) == 3 and all(.logs[]; (.sha256 | test("^[0-9a-f]{64}$")))' "${buildopt_observations}/exclusions/log-index.json" >/dev/null
-if rg -l 'durable-native-optimization-v1|NORMALIZATION_AWARE_CACHEABILITY|DNO' "${buildopt_observations}" >/dev/null; then
+if grep -RIlE 'durable-native-optimization-v1|NORMALIZATION_AWARE_CACHEABILITY|DNO' "${buildopt_observations}" >/dev/null; then
     printf 'historical BuildOpt evidence contaminated WCNCP capture inputs\n' >&2
     exit 1
 fi
