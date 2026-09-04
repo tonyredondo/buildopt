@@ -68,7 +68,7 @@ jq -e '
   .boundaries.testOptimization == "OUT_OF_SCOPE"
 ' "${buildopt_contract}" >/dev/null
 
-grep -Fq "The immediate next item is \`CINC-001\`." "${buildopt_plan}"
+grep -Fq "The immediate next item is \`CINC-002\`." "${buildopt_plan}"
 grep -Fq 'WCNCP and every predecessor result are diagnostic context only' "${buildopt_human}"
 grep -Fq 'CINC does not reconsider those opt-outs' "${buildopt_plan}"
 grep -Fq "\`SIMPLE_PROVIDER_EXEC_ELIGIBLE\`" "${buildopt_plan}"

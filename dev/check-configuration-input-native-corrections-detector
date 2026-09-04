@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_evidence="${buildopt_repo_root}/benchmarks/results/configuration-input-native-corrections-v1/cinc-e001-detector.json"
+buildopt_temp=$(mktemp -d)
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+
+declare -A buildopt_paths=(
+    [classifierGoSha256]="internal/configurationinput/classifier.go"
+    [reportParserGoSha256]="internal/configurationinput/report.go"
+    [classifierTestGoSha256]="internal/configurationinput/classifier_test.go"
+    [auditCliGoSha256]="cmd/configuration-input-native-corrections-audit/main.go"
+    [rawReportSha256]="internal/configurationinput/testdata/report.html"
+    [sourceFactsSha256]="internal/configurationinput/testdata/facts.json"
+)
+for buildopt_key in "${!buildopt_paths[@]}"; do
+    buildopt_expected=$(jq -r ".inputs.${buildopt_key}" "${buildopt_evidence}")
+    buildopt_actual=$(sha256sum "${buildopt_repo_root}/${buildopt_paths[${buildopt_key}]}" | awk '{print $1}')
+    if [[ "${buildopt_actual}" != "${buildopt_expected}" ]]; then
+        printf 'CINC detector input drift: %s\n' "${buildopt_paths[${buildopt_key}]}" >&2
+        exit 1
+    fi
+done
+
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go test ./internal/configurationinput ./cmd/configuration-input-native-corrections-audit >/dev/null
+"${buildopt_script_dir}/run" --toolchain go -- \
+    go run ./cmd/configuration-input-native-corrections-audit \
+        --report internal/configurationinput/testdata/report.html \
+        --facts internal/configurationinput/testdata/facts.json >"${buildopt_temp}/rows.json"
+
+jq -e '
+  length == 11 and
+  ([.[].problemIndex] == [0,1,2,3,4,5,6,7,8,9,10]) and
+  (all(.[]; (.problemMessageSha256 | test("^[0-9a-f]{64}$")) and
+      (.sourceSha256 | test("^[0-9a-f]{64}$")) and
+      .sourcePath != "" and .language != "" and
+      .declarationSpan.startLine > 0 and .operationSpan.startLine > 0)) and
+  [.[].decision] == [
+    "SIMPLE_PROVIDER_EXEC_ELIGIBLE",
+    "VALUE_SOURCE_REVIEW_REQUIRED",
+    "TYPED_PROVIDER_ELIGIBLE",
+    "TYPED_PROVIDER_ELIGIBLE",
+    "EXTERNAL_OR_GENERATED_OWNER",
+    "SIDE_EFFECTING_OR_SECRET_BEARING",
+    "AMBIGUOUS_CONTROL_FLOW",
+    "ALREADY_SUPPORTED",
+    "SOURCE_DRIFTED",
+    "NO_ACTION",
+    "SIDE_EFFECTING_OR_SECRET_BEARING"
+  ]
+' "${buildopt_temp}/rows.json" >/dev/null
+
+buildopt_counts=$(jq -c 'group_by(.decision) | map({key: .[0].decision, value: length}) | from_entries' "${buildopt_temp}/rows.json")
+jq -e --argjson counts "${buildopt_counts}" '
+  .schemaVersion == "buildopt.evidence/configuration-input-native-corrections-detector/v1" and
+  .workItem == "CINC-001" and .state == "DONE_FIXTURE_ONLY" and
+  .rowsReconstructed == 11 and .decisionCounts == $counts and
+  .nameInvariance == true and .unknownFieldsRejected == true and
+  .malformedReportsRejected == true and
+  .publicCohortFamilies == 0 and .publicDiagnostics == 0 and
+  .publicSourceModified == false and .candidateBuilds == 0 and
+  .timingSamples == 0 and .speedupClaim == false and
+  .productFailures == 0 and .next == "CINC-002"
+' "${buildopt_evidence}" >/dev/null
+
+printf 'CINC-001 configuration-input detector fixture reconstruction OK\n'

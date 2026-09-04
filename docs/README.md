@@ -67,7 +67,7 @@ before running the product.
 
 - [Configuration-Input Native Corrections POC](./plans/configuration-input-native-corrections-poc.md):
   the active fresh search for repository-owned Configuration Cache input
-  corrections; CINC-000 is contract-only and CINC-001 fixture proof is next.
+  corrections; CINC-001 fixture proof passes and CINC-002 cohort freeze is next.
 - [Wrapper-Coordinated Native Corrections POC](./plans/wrapper-coordinated-native-corrections-poc.md):
   the completed wrapper-as-onboarding experiment; functional coordination
   passes, but prospective breadth stops at 10/10 conclusive and 1/3 actionable

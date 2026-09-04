@@ -272,6 +272,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-wcncp-opportunity-breadth-negatives" >/dev/null
         "${buildopt_script_dir}/check-wcncp-terminal" >/dev/null
         "${buildopt_script_dir}/check-configuration-input-native-corrections" >/dev/null
+        "${buildopt_script_dir}/check-configuration-input-native-corrections-detector" >/dev/null
         "${buildopt_script_dir}/check-economic-opportunity-first" >/dev/null
         "${buildopt_script_dir}/check-economic-opportunity-source-ledger" >/dev/null
         "${buildopt_script_dir}/check-economic-opportunity-terminal-decision" >/dev/null

@@ -38,9 +38,10 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 >
 > **Active successor search:** `CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1`
 > tests a fresh, source-neutral native correction for unsupported
-> configuration-time external state reads. `CINC-000` freezes the contract;
-> fixture-only detector proof is next, and no public row, candidate, or timing
-> exists. See the [CINC plan](./docs/plans/configuration-input-native-corrections-poc.md).
+> configuration-time external state reads. `CINC-001` now proves the detector
+> over eleven fixture-only rows; exact fresh cohort freeze is next, and no
+> public row, candidate, or timing exists. See the
+> [CINC plan](./docs/plans/configuration-input-native-corrections-poc.md).
 >
 > **Closed v2 experiment:** `REMOTE_CACHE_LOCALITY_VALUE_V2` tested BuildOpt as
 > a verifying local Edge/L1 against optimized native Gradle reading the same

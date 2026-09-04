@@ -696,8 +696,9 @@ The active CINC successor follows this rule: it does not reconsider explicit
 task caching opt-outs. It tests configuration-model reuse by replacing only a
 strictly reported, repository-owned unsupported external-state read with a
 Gradle-supported provider or typed `ValueSource`. The fresh cohort, three-family
-materiality gate, exact correctness, and paired value remain unexecuted at
-CINC-000.
+materiality gate, exact correctness, and paired value remain unexecuted. The
+eleven-row CINC-001 parser/classifier proof is fixture-only; CINC-002 cohort
+freeze is next.
 
 The completed test-build experiment strengthens this priority. Reusing three
 small exact `testFixturesJar` producers did not shorten the critical path:

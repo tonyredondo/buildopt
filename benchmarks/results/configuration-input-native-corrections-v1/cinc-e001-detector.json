@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "buildopt.evidence/configuration-input-native-corrections-detector/v1",
+  "workItem": "CINC-001",
+  "state": "DONE_FIXTURE_ONLY",
+  "detector": "CONFIGURATION_INPUT_NATIVE_CORRECTION_V1",
+  "inputs": {
+    "classifierGoSha256": "a81a7199ea40c7f06827623162e9113fae5787edb998e59cb7af3e515d6889bf",
+    "reportParserGoSha256": "405e07f5a41fece735327c2c61335716858f94f99aed3fb2b27f1461ea5c66c0",
+    "classifierTestGoSha256": "e2d5de83b549639bd4d6f62f7debd981b67ec19626c7edfc7647f453a4b279e2",
+    "auditCliGoSha256": "6a347d3901ce7c64b4a999d35aa5eb5a60b5eb3d85df4d72f326524970516519",
+    "rawReportSha256": "e4a3f08a67a05f416f3e3de498e615de317f3a042bb7d33b5a0340c96aa6f78d",
+    "sourceFactsSha256": "209866d0c54fcd451d68c29fecffd2a4c96b35d72e4fdd14ebb0e6d2b5701f76"
+  },
+  "rowsReconstructed": 11,
+  "decisionCounts": {
+    "SIMPLE_PROVIDER_EXEC_ELIGIBLE": 1,
+    "VALUE_SOURCE_REVIEW_REQUIRED": 1,
+    "TYPED_PROVIDER_ELIGIBLE": 2,
+    "EXTERNAL_OR_GENERATED_OWNER": 1,
+    "SIDE_EFFECTING_OR_SECRET_BEARING": 2,
+    "AMBIGUOUS_CONTROL_FLOW": 1,
+    "SOURCE_DRIFTED": 1,
+    "ALREADY_SUPPORTED": 1,
+    "NO_ACTION": 1
+  },
+  "nameInvariance": true,
+  "unknownFieldsRejected": true,
+  "malformedReportsRejected": true,
+  "publicCohortFamilies": 0,
+  "publicDiagnostics": 0,
+  "publicSourceModified": false,
+  "candidateBuilds": 0,
+  "timingSamples": 0,
+  "speedupClaim": false,
+  "productFailures": 0,
+  "next": "CINC-002"
+}

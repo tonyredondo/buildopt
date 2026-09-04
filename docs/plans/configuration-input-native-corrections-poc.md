@@ -126,7 +126,7 @@ study would require a different contract and could not make a breadth claim.
 | Block | Work | Gate / stop |
 |---|---|---|
 | `CINC-000` | Freeze human/machine contract, tracker, independent contract checker, boundaries and budgets | Planning only; no public diagnostic or candidate |
-| `CINC-001` | Implement parser/classifier v1 and independent fixture reconstruction | Kotlin/Groovy/Java positives; ambiguity, external owner, side effect, secret, drift and name-invariance negatives |
+| `CINC-001` | Implement parser/classifier v1 and independent fixture reconstruction | `DONE` — eleven raw-report rows cover direct providers, reviewed ValueSource, external owner, side effect, secret, ambiguity, drift, already-supported, no-action, and name invariance |
 | `CINC-002` | Freeze exact ten-family cohort and reserves after native-only admissibility preflight | 10 selected or `INCOMPLETE_COHORT` |
 | `CINC-003` | Capture two fresh strict diagnostics per family and classify source | 10/10 conclusive and at least 3/10 eligible families; otherwise terminal stop |
 | `CINC-004` | Run controlled materiality diagnostics for eligible families | At least three families each pass 500 ms and 2%; otherwise terminal stop |
@@ -179,5 +179,6 @@ arbitrary-repository discovery, production readiness, autonomous source
 mutation, automatic merge, Test Optimization, or universal Configuration Cache
 compatibility.
 
-The immediate next item is `CINC-001`. No CINC cohort, diagnostic, candidate,
-timing sample, speedup claim, or product failure exists at CINC-000.
+The immediate next item is `CINC-002`. The fixture-only detector is complete,
+but no CINC cohort, public diagnostic, candidate, timing sample, speedup claim,
+or product failure exists.
