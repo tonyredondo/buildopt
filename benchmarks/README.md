@@ -2,6 +2,10 @@
 
 Reproducible workloads for measuring causal savings, overhead, queues, additional compute, and behavior under failure.
 
+The active [configuration-input native-corrections evidence index](./results/configuration-input-native-corrections-v1/README.md)
+is currently contract-only. It freezes a distinct source-neutral successor and
+contains zero public rows, candidates, timing samples, or value claims.
+
 The completed [wrapper-coordinated native-corrections evidence index](./results/wrapper-coordinated-native-corrections-v1/README.md)
 contains functional proof plus a fresh ten-family experiment. Thirty wrapper
 observations, 16 initial diagnostics, and six controlled rows produce 10/10

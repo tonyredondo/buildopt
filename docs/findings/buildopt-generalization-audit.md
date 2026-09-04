@@ -331,6 +331,15 @@ bounded mechanism has already satisfied its own evidence contract.
 
 ## Next generalization steps
 
+The distinct successor is now frozen as
+`CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1`. It does not reopen explicit task
+cache opt-outs. It targets strict Configuration Cache problems caused by
+repository-owned configuration-time external state reads and permits only
+Gradle-supported `ProviderFactory` or typed `ValueSource` corrections. Its first
+ten-family cohort must exclude WCNCP and historical recipe families, and every
+row starts at zero after a separate freeze. CINC-000 is planning evidence only;
+the fixture detector is next.
+
 The current order and stop conditions live in the completed
 [Wrapper-Coordinated Native Corrections POC](../plans/wrapper-coordinated-native-corrections-poc.md).
 Its wrapper and shared control plane are functionally viable, but the frozen

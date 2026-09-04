@@ -692,6 +692,13 @@ reopen one only when a materially different trace identifies a causal
 bottleneck large enough to clear the 500-ms/2% gate and the RFC is amended
 before implementation.
 
+The active CINC successor follows this rule: it does not reconsider explicit
+task caching opt-outs. It tests configuration-model reuse by replacing only a
+strictly reported, repository-owned unsupported external-state read with a
+Gradle-supported provider or typed `ValueSource`. The fresh cohort, three-family
+materiality gate, exact correctness, and paired value remain unexecuted at
+CINC-000.
+
 The completed test-build experiment strengthens this priority. Reusing three
 small exact `testFixturesJar` producers did not shorten the critical path:
 native Gradle averaged 6,503.5 ms and BuildOpt 7,238.75 ms, with 0/4 positive

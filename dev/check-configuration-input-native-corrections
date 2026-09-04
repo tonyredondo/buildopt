@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_contract="${buildopt_repo_root}/specs/poc-configuration-input-native-corrections-v1.json"
+buildopt_human="${buildopt_repo_root}/specs/poc-configuration-input-native-corrections-v1.md"
+buildopt_plan="${buildopt_repo_root}/docs/plans/configuration-input-native-corrections-poc.md"
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-configuration-input-native-corrections/v1" and
+  .predecessorDecision == "STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH" and
+  .detector == {
+    id: "CONFIGURATION_INPUT_NATIVE_CORRECTION",
+    version: "v1",
+    sourceFactsOnly: true,
+    repositoryOrTaskNameRules: false,
+    allowedRecipeClasses: [
+      "PROVIDER_FACTORY_EXEC_V1",
+      "PROVIDER_FACTORY_FILE_CONTENTS_V1",
+      "TYPED_GRADLE_PROVIDER_V1",
+      "TYPED_VALUE_SOURCE_V1"
+    ],
+    forbiddenCorrections: [
+      "SUPPRESS_CONFIGURATION_CACHE_PROBLEM",
+      "INCREASE_ALLOWED_PROBLEM_COUNT",
+      "DISABLE_CONFIGURATION_CACHE",
+      "CHANGE_PLUGIN_OR_DEPENDENCY_VERSION",
+      "EXTERNAL_OR_GENERATED_SOURCE_EDIT",
+      "REPOSITORY_OR_TASK_NAME_SPECIALIZATION"
+    ]
+  } and
+  .cohort.families == 10 and
+  .cohort.reservesPerFamily == 2 and
+  .cohort.excludeWcncpPrimaryFamilies == true and
+  .cohort.selectionBeforeStrictDiagnostic == true and
+  .cohort.detectorOutcomeMaySelect == false and
+  .cohort.historicalBuildOptEvidenceMaySelect == false and
+  .sourceGate == {
+    strictDiagnosticsPerFamily: 2,
+    requiredConclusiveFamilies: 10,
+    minimumEligibleFamilies: 3,
+    summaryFieldsTrusted: false
+  } and
+  .materialityGate.minimumFamilies == 3 and
+  .materialityGate.minimumMilliseconds == 500 and
+  .materialityGate.minimumPercent == 2 and
+  .materialityGate.maximumStarts == 6 and
+  .materialityGate.hostedCiTimingAuthority == false and
+  .correctnessGate.minimumQualifiedFamilies == 2 and
+  .correctnessGate.maximumProductFailures == 0 and
+  .valueGate.balancedPairs == 8 and
+  .valueGate.requiredPositivePairs == 8 and
+  .valueGate.minimumMeanSavingMilliseconds == 500 and
+  .valueGate.minimumMeanSavingPercent == 2 and
+  .controlledEnvironment == {
+    workers: 4,
+    stabilitySamples: 7,
+    maximumStabilityRatio: 1.15,
+    postPrefetchQuiescenceSeconds: 120
+  } and
+  .budget.maximumAdditionalDiskGiB == 20 and
+  .budget.minimumFreeDiskBeforePublicBuildGiB == 10 and
+  .budget.stopBeforeNextStartFreeDiskGiB == 8 and
+  .evidence.predecessorReportsConsumed == false and
+  .evidence.independentRawReconstruction == true and
+  (.boundaries | to_entries | map(select(.key != "testOptimization") | .value == false) | all) and
+  .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_contract}" >/dev/null
+
+grep -Fq "The immediate next item is \`CINC-001\`." "${buildopt_plan}"
+grep -Fq 'WCNCP and every predecessor result are diagnostic context only' "${buildopt_human}"
+grep -Fq 'CINC does not reconsider those opt-outs' "${buildopt_plan}"
+grep -Fq "\`SIMPLE_PROVIDER_EXEC_ELIGIBLE\`" "${buildopt_plan}"
+grep -Fq "\`SIDE_EFFECTING_OR_SECRET_BEARING\`" "${buildopt_plan}"
+grep -Fq 'Standard hosted CI owns deterministic contracts and' "${buildopt_plan}"
+
+printf 'CINC-000 configuration-input native-corrections contract OK\n'

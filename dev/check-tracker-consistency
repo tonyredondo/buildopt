@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_STOPPED_BREADTH\`"
-    "**Current phase:** \`WCNCP-013\` is complete with \`STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH\`"
+    "**Overall status:** \`CONFIGURATION_INPUT_NATIVE_CORRECTIONS_ACTIVE\`"
+    "**Current phase:** \`CINC-000\` is complete; \`CINC-001\` is next"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"

@@ -16,6 +16,12 @@ complete at 10/10 conclusive but only 1/3 required actionable material families.
 WCNCP-009A stopped at its environment gate; WCNCP-009B passed the unchanged
 gate after fixed quiescence and completed 6/6 rows. Value remains at zero.
 
+The active successor search is
+[`Configuration-Input Native Corrections v1`](./poc-configuration-input-native-corrections-v1.md)
+with its [machine contract](./poc-configuration-input-native-corrections-v1.json).
+`CINC-000` freezes a fresh source-neutral Configuration Cache correction
+hypothesis; no cohort row, public diagnostic, candidate, or timing exists yet.
+
 | Specification | Owning item |
 |---|---|
 | [`poc-wcncp-controlled-materiality-v2.md`](./poc-wcncp-controlled-materiality-v2.md) and [machine contract](./poc-wcncp-controlled-materiality-v2.json) | `WCNCP-009B` preserves the zero-row WCNCP-009A failure, passes its fixed-quiescence stability gate at 1.028603, and completes 6/6 controlled rows; only GraphQL Java is actionable and material |

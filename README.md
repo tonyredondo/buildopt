@@ -36,6 +36,12 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > as `STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH`. See the
 > [execution plan](./docs/plans/wrapper-coordinated-native-corrections-poc.md).
 >
+> **Active successor search:** `CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1`
+> tests a fresh, source-neutral native correction for unsupported
+> configuration-time external state reads. `CINC-000` freezes the contract;
+> fixture-only detector proof is next, and no public row, candidate, or timing
+> exists. See the [CINC plan](./docs/plans/configuration-input-native-corrections-poc.md).
+>
 > **Closed v2 experiment:** `REMOTE_CACHE_LOCALITY_VALUE_V2` tested BuildOpt as
 > a verifying local Edge/L1 against optimized native Gradle reading the same
 > immutable remote-cache objects directly. `RCL-001` freezes the exact graph,

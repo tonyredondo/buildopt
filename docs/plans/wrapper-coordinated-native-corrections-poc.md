@@ -1271,3 +1271,8 @@ This experiment is complete. Do not rerun its rows, weaken its 500-ms, 2%, or
 WCNCP-012. Any continuation must first freeze a distinct source-neutral detector
 or cohort hypothesis that can plausibly broaden actionable material corrections;
 it starts with zero borrowed rows and separate authority.
+
+That separate authority is now frozen as
+[`CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1`](./configuration-input-native-corrections-poc.md).
+It changes neither this terminal result nor the closed authority of WCNCP-010
+through WCNCP-012.

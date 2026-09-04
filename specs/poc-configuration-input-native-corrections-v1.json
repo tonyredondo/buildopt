@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "buildopt.specs/poc-configuration-input-native-corrections/v1",
+  "predecessorDecision": "STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH",
+  "detector": {
+    "id": "CONFIGURATION_INPUT_NATIVE_CORRECTION",
+    "version": "v1",
+    "sourceFactsOnly": true,
+    "repositoryOrTaskNameRules": false,
+    "allowedRecipeClasses": [
+      "PROVIDER_FACTORY_EXEC_V1",
+      "PROVIDER_FACTORY_FILE_CONTENTS_V1",
+      "TYPED_GRADLE_PROVIDER_V1",
+      "TYPED_VALUE_SOURCE_V1"
+    ],
+    "forbiddenCorrections": [
+      "SUPPRESS_CONFIGURATION_CACHE_PROBLEM",
+      "INCREASE_ALLOWED_PROBLEM_COUNT",
+      "DISABLE_CONFIGURATION_CACHE",
+      "CHANGE_PLUGIN_OR_DEPENDENCY_VERSION",
+      "EXTERNAL_OR_GENERATED_SOURCE_EDIT",
+      "REPOSITORY_OR_TASK_NAME_SPECIALIZATION"
+    ]
+  },
+  "cohort": {
+    "families": 10,
+    "reservesPerFamily": 2,
+    "excludeWcncpPrimaryFamilies": true,
+    "excludeHistoricalRecipeFamilies": [
+      "graphql-java",
+      "micronaut-core",
+      "spring-framework",
+      "elasticsearch"
+    ],
+    "selectionBeforeStrictDiagnostic": true,
+    "detectorOutcomeMaySelect": false,
+    "historicalBuildOptEvidenceMaySelect": false
+  },
+  "sourceGate": {
+    "strictDiagnosticsPerFamily": 2,
+    "requiredConclusiveFamilies": 10,
+    "minimumEligibleFamilies": 3,
+    "summaryFieldsTrusted": false
+  },
+  "materialityGate": {
+    "environmentClass": "CONTROLLED_PERFORMANCE",
+    "minimumFamilies": 3,
+    "minimumMilliseconds": 500,
+    "minimumPercent": 2,
+    "maximumStartsPerFamily": 2,
+    "maximumStarts": 6,
+    "hostedCiTimingAuthority": false
+  },
+  "correctnessGate": {
+    "maximumCandidatesPerFamily": 1,
+    "minimumQualifiedFamilies": 2,
+    "maximumStartsPerCandidate": 6,
+    "exactRequiredOutputs": true,
+    "configurationCacheStoreAndReuse": true,
+    "inputInvalidation": true,
+    "equivalentErrorBehavior": true,
+    "exactSourceRevert": true,
+    "maximumProductFailures": 0
+  },
+  "valueGate": {
+    "balancedPairs": 8,
+    "requiredPositivePairs": 8,
+    "minimumMeanSavingMilliseconds": 500,
+    "minimumMeanSavingPercent": 2,
+    "positivePaired95Interval": true,
+    "nonRegressiveCandidateP95": true,
+    "minimumQualifiedFamilies": 2,
+    "maximumCombinedPaybackBuilds": 300
+  },
+  "controlledEnvironment": {
+    "workers": 4,
+    "stabilitySamples": 7,
+    "maximumStabilityRatio": 1.15,
+    "postPrefetchQuiescenceSeconds": 120
+  },
+  "budget": {
+    "maximumAdditionalDiskGiB": 20,
+    "minimumFreeDiskBeforePublicBuildGiB": 10,
+    "stopBeforeNextStartFreeDiskGiB": 8,
+    "maximumWorkflowMinutes": 20
+  },
+  "evidence": {
+    "allRowsFreshAfterContractAndSubjectFreeze": true,
+    "predecessorReportsConsumed": false,
+    "independentRawReconstruction": true
+  },
+  "boundaries": {
+    "publicSourceMutation": false,
+    "automaticApply": false,
+    "automaticMerge": false,
+    "upstreamPullRequest": false,
+    "productionAuthorized": false,
+    "soak": false,
+    "designPartner": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}
