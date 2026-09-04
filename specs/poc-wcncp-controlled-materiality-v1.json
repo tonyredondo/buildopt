@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "buildopt.poc/wcncp-controlled-materiality/v1",
+  "workItem": "WCNCP-009A",
+  "status": "FROZEN_NO_MEASUREMENT",
+  "successorOf": {
+    "workItem": "WCNCP-009",
+    "evidence": "benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e009-breadth.json",
+    "reason": "The three unresolved families consumed the v1 two-diagnostic-per-family allowance on LOCAL_FUNCTIONAL rows. This successor creates a new prospective budget and never reclassifies, replaces, or discards those rows."
+  },
+  "freeze": {
+    "mustBeCommittedBeforeFirstPrefetch": true,
+    "executionMustRecordContractCommit": true,
+    "historicalTimingAllowed": false,
+    "existingWcncpRowsAreContextOnly": true
+  },
+  "environment": {
+    "class": "CONTROLLED_PERFORMANCE",
+    "operatingSystem": "linux",
+    "architecture": "amd64",
+    "mainsPowerRequired": true,
+    "cpuGovernor": "performance",
+    "cpuAffinity": "0-3",
+    "maximumWorkers": 4,
+    "minimumHostMemoryBytes": 16106127360,
+    "dedicatedHostRequired": false,
+    "backgroundPolicy": "NO_CONCURRENT_AGENT_LAUNCHED_BUILD_OR_BENCHMARK",
+    "preflight": {
+      "algorithm": "SHA256_128_MIB_ZERO_BUFFER_V1",
+      "samples": 7,
+      "maximumToMinimumRatioMaximum": 1.15
+    }
+  },
+  "gates": {
+    "minimumMaterialMilliseconds": 500,
+    "minimumMaterialPercent": 2,
+    "requiredControlledRowsPerFamily": 2,
+    "requiredConclusiveFamilies": 3,
+    "minimumActionableMaterialFamiliesForWcncp009": 3
+  },
+  "budgets": {
+    "families": 3,
+    "maximumControlledDiagnosticStartsPerFamily": 2,
+    "maximumControlledDiagnosticStarts": 6,
+    "maximumUnmeasuredDependencyPrefetchStartsPerFamily": 1,
+    "controlledMachineHours": 12,
+    "maximumConcurrentDiskGiB": 20,
+    "minimumFreeDiskReserveGiB": 10,
+    "timeoutMinutesPerStart": 20
+  },
+  "families": [
+    {
+      "key": "graphql-java",
+      "revision": "f2d8c9126f898c084b176631b7346bc6fbec296a",
+      "sourceArchiveSha256": "83e80bbaa2b3e3308dd35e0b7120399f02149507674d958b0e2e4cc81718d051",
+      "repository": "https://github.com/graphql-java/graphql-java.git",
+      "jdkToolchain": "temurin-jdk-25",
+      "ownerArguments": ["assemble"],
+      "method": "CONFIGURATION_CACHE_UNLOCK",
+      "sourceBinding": {
+        "path": "build.gradle",
+        "startLine": 141,
+        "endLine": 180,
+        "sha256": "27cfbb5dc699619d3398eb651b9e6cb4dda1d6fd47f87591849d01284841bbbc"
+      },
+      "sourceClosure": "REPOSITORY_OWNED_BLOCKERS_REQUIRE_ONE_REVIEWED_PROPOSAL"
+    },
+    {
+      "key": "apache-groovy",
+      "revision": "14fa934340c46bc1ee96cba7ae594258bd8d0fd0",
+      "sourceArchiveSha256": "64728bd64eaa171c6f58e4296ef22d8bd50956e63e1906aee503e60feece560d",
+      "repository": "https://github.com/apache/groovy.git",
+      "jdkToolchain": "temurin-jdk-21",
+      "ownerArguments": ["jar", "idea"],
+      "method": "CRITICAL_TASK_CLASS",
+      "taskClass": "org.apache.groovy.gradle.ReleaseInfoGenerator",
+      "sourceBinding": {
+        "path": "build-logic/src/main/groovy/org/apache/groovy/gradle/ReleaseInfoGenerator.groovy",
+        "startLine": 33,
+        "endLine": 33,
+        "sha256": "f8a19e811b900e3f2f59c47a15af421f1533cae21da726bc2b351e2aa6791082"
+      },
+      "sourceClosure": "MARKER_ONLY_ELIGIBLE_TASK_CLASS"
+    },
+    {
+      "key": "test-retry-gradle-plugin",
+      "revision": "ee9a521bdc1add0d1ff9fcfbed47882fb95bfdff",
+      "sourceArchiveSha256": "a4e6e3673b79336f3bbe47beb6ac47c89208ce936c0af5b7c6b757a23b23d8cd",
+      "repository": "https://github.com/gradle/test-retry-gradle-plugin.git",
+      "jdkToolchain": "temurin-jdk-17",
+      "ownerArguments": ["build", "-s"],
+      "method": "CONFIGURATION_CACHE_UNLOCK",
+      "sourceBinding": {
+        "path": "sample-tests/build.gradle.kts",
+        "startLine": 26,
+        "endLine": 38,
+        "sha256": "bb6bdb184a879282d0ca583ef92a18eb4172d31a7cd4b285b3542b67f4821a1e"
+      },
+      "sourceClosure": "REPOSITORY_CORRECTION_INSUFFICIENT_EXTERNAL_BLOCKERS_REMAIN"
+    }
+  ],
+  "decisions": [
+    "ACTIONABLE_MATERIAL_CORRECTION",
+    "NON_MATERIAL_BLOCKER",
+    "UNSUPPORTED_PROBLEM_CLASS",
+    "INCOMPLETE_PERFORMANCE_ENVIRONMENT",
+    "INCOMPLETE_EXPERIMENT_INPUT",
+    "INCOMPLETE_EXPERIMENT_BUDGET_EXHAUSTED"
+  ],
+  "authority": {
+    "publicSourceMutation": false,
+    "candidateBuild": false,
+    "pairedValueTiming": false,
+    "speedupClaim": false,
+    "automaticApply": false,
+    "automaticCommit": false,
+    "automaticPush": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

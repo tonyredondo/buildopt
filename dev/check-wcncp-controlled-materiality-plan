@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract=${BUILDOPT_WCNCP_MATERIALITY_CONTRACT:-${buildopt_repo_root}/specs/poc-wcncp-controlled-materiality-v1.json}
+buildopt_spec=${buildopt_repo_root}/specs/poc-wcncp-controlled-materiality-v1.md
+
+jq -e '
+  .schemaVersion == "buildopt.poc/wcncp-controlled-materiality/v1" and
+  .workItem == "WCNCP-009A" and .status == "FROZEN_NO_MEASUREMENT" and
+  .successorOf.workItem == "WCNCP-009" and
+  .freeze.mustBeCommittedBeforeFirstPrefetch == true and
+  .freeze.historicalTimingAllowed == false and
+  .environment == {
+    class:"CONTROLLED_PERFORMANCE", operatingSystem:"linux", architecture:"amd64",
+    mainsPowerRequired:true, cpuGovernor:"performance", cpuAffinity:"0-3",
+    maximumWorkers:4, minimumHostMemoryBytes:16106127360,
+    dedicatedHostRequired:false,
+    backgroundPolicy:"NO_CONCURRENT_AGENT_LAUNCHED_BUILD_OR_BENCHMARK",
+    preflight:{algorithm:"SHA256_128_MIB_ZERO_BUFFER_V1",samples:7,maximumToMinimumRatioMaximum:1.15}
+  } and
+  .gates == {
+    minimumMaterialMilliseconds:500, minimumMaterialPercent:2,
+    requiredControlledRowsPerFamily:2, requiredConclusiveFamilies:3,
+    minimumActionableMaterialFamiliesForWcncp009:3
+  } and
+  .budgets.families == 3 and
+  .budgets.maximumControlledDiagnosticStartsPerFamily == 2 and
+  .budgets.maximumControlledDiagnosticStarts == 6 and
+  .budgets.maximumUnmeasuredDependencyPrefetchStartsPerFamily == 1 and
+  .budgets.controlledMachineHours == 12 and
+  .budgets.maximumConcurrentDiskGiB == 20 and
+  .budgets.minimumFreeDiskReserveGiB == 10 and
+  .budgets.timeoutMinutesPerStart == 20 and
+  ([.families[].key] == ["graphql-java","apache-groovy","test-retry-gradle-plugin"]) and
+  ([.families[].revision] | all(test("^[0-9a-f]{40}$"))) and
+  ([.families[].sourceArchiveSha256] | all(test("^[0-9a-f]{64}$"))) and
+  ([.families[].sourceBinding.sha256] | all(test("^[0-9a-f]{64}$"))) and
+  (.families[0].method == "CONFIGURATION_CACHE_UNLOCK") and
+  (.families[1].method == "CRITICAL_TASK_CLASS") and
+  (.families[1].taskClass == "org.apache.groovy.gradle.ReleaseInfoGenerator") and
+  (.families[2].method == "CONFIGURATION_CACHE_UNLOCK") and
+  (.families[2].sourceClosure == "REPOSITORY_CORRECTION_INSUFFICIENT_EXTERNAL_BLOCKERS_REMAIN") and
+  .authority == {
+    publicSourceMutation:false, candidateBuild:false, pairedValueTiming:false,
+    speedupClaim:false, automaticApply:false, automaticCommit:false,
+    automaticPush:false, testOptimization:"OUT_OF_SCOPE"
+  }
+' "${buildopt_contract}" >/dev/null
+
+for buildopt_phrase in \
+    'does not relabel' \
+    'maximum/minimum duration ratio no greater than' \
+    'Cumulative parallel task time never counts' \
+    'changes no public source'; do
+    rg -Fq "${buildopt_phrase}" "${buildopt_spec}"
+done
+
+printf 'WCNCP controlled-materiality prospective plan checks passed\n'

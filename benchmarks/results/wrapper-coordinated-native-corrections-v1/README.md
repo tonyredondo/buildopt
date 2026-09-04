@@ -3,7 +3,10 @@
 State: `OPPORTUNITY_BREADTH_INCOMPLETE`. Functional lanes `WCNCP-001` through
 `WCNCP-007` are covered and `WCNCP-008` completed the frozen ten-family capture.
 `WCNCP-009` reconstructed every source and diagnostic row, but remains open for
-controlled critical-path materiality on three families.
+controlled critical-path materiality on three families. The prospective
+[`WCNCP-009A` successor](../../../specs/poc-wcncp-controlled-materiality-v1.md)
+preserves the exhausted local rows and freezes six new controlled starts before
+the first dependency prefetch.
 
 The pre-capture operational audit also added the missing administrative
 `wcncp-actor grant` command: transport token issuance alone remains
@@ -108,6 +111,8 @@ and exercise summary-falsification rejection with:
 ```bash
 ./dev/check-wcncp-opportunity-breadth [/absolute/source-root]
 ./dev/check-wcncp-opportunity-breadth-negatives
+./dev/check-wcncp-controlled-materiality-plan
+./dev/check-wcncp-controlled-materiality /absolute/evidence
 ```
 
 Run the WCNCP-001 typed-state proof with:

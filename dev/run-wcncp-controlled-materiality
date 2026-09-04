@@ -1,0 +1,303 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 2)); then
+    printf 'usage: %s NEW_EVIDENCE_DIRECTORY NEW_WORK_DIRECTORY\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_output=$1
+buildopt_work=$2
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract=${buildopt_repo_root}/specs/poc-wcncp-controlled-materiality-v1.json
+buildopt_subjects=${buildopt_repo_root}/specs/poc-wrapper-coordinated-native-corrections-v1.subjects.json
+
+[[ ${buildopt_output} == /* && ${buildopt_work} == /* && \
+   ! -e ${buildopt_output} && ! -e ${buildopt_work} && \
+   ${buildopt_output} != / && ${buildopt_work} != / ]] || {
+    printf 'output and work directories must be distinct new absolute paths\n' >&2
+    exit 64
+}
+[[ ${buildopt_output} != "${buildopt_work}" ]]
+
+for buildopt_command in awk date df git gzip head jq nproc sha256sum taskset timeout; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required controlled-materiality command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+"${buildopt_script_dir}/check-wcncp-controlled-materiality-plan"
+[[ -z $(git -C "${buildopt_repo_root}" status --short) ]] || {
+    printf 'BuildOpt tree must be clean before controlled capture\n' >&2
+    exit 1
+}
+buildopt_contract_commit=$(git -C "${buildopt_repo_root}" log -n 1 --format=%H -- "${buildopt_contract}")
+[[ -n ${buildopt_contract_commit} ]]
+git -C "${buildopt_repo_root}" merge-base --is-ancestor "${buildopt_contract_commit}" HEAD
+
+buildopt_max_disk_gib=$(jq -r '.budgets.maximumConcurrentDiskGiB' "${buildopt_contract}")
+buildopt_reserve_gib=$(jq -r '.budgets.minimumFreeDiskReserveGiB' "${buildopt_contract}")
+buildopt_free_bytes=$(df --output=avail -B1 /tmp | tail -n 1 | tr -d ' ')
+buildopt_required_free=$(((buildopt_max_disk_gib + buildopt_reserve_gib) * 1024 * 1024 * 1024))
+((buildopt_free_bytes >= buildopt_required_free)) || {
+    printf 'controlled capture requires %s GiB free before setup\n' "$((buildopt_max_disk_gib + buildopt_reserve_gib))" >&2
+    exit 1
+}
+
+buildopt_memory_bytes=$(awk '/MemTotal:/ {printf "%.0f", $2 * 1024}' /proc/meminfo)
+buildopt_minimum_memory=$(jq -r '.environment.minimumHostMemoryBytes' "${buildopt_contract}")
+((buildopt_memory_bytes >= buildopt_minimum_memory)) || {
+    printf 'controlled host memory is below the frozen minimum\n' >&2
+    exit 1
+}
+(( $(nproc) >= 4 )) || {
+    printf 'controlled host exposes fewer than four CPUs\n' >&2
+    exit 1
+}
+buildopt_mains_online=$(awk 'FNR==1 {type=$0} FNR==2 && type=="Mains" {print $0}' /sys/class/power_supply/*/{type,online} 2>/dev/null | head -n 1)
+[[ ${buildopt_mains_online} == 1 ]] || {
+    printf 'controlled capture requires mains power\n' >&2
+    exit 1
+}
+while IFS= read -r buildopt_governor; do
+    [[ ${buildopt_governor} == performance ]] || {
+        printf 'every online CPU must use the performance governor\n' >&2
+        exit 1
+    }
+done < <(cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor)
+
+mkdir -p -- "${buildopt_output}/runs" "${buildopt_work}/repositories" \
+    "${buildopt_work}/runs" "${buildopt_work}/gradle-home" "${buildopt_work}/maven-local"
+
+buildopt_java17=$(find "${buildopt_repo_root}/.tools/toolchains" -mindepth 1 -maxdepth 1 -type d -name 'temurin-jdk-17-*' -print -quit)
+buildopt_java21=$(find "${buildopt_repo_root}/.tools/toolchains" -mindepth 1 -maxdepth 1 -type d -name 'temurin-jdk-21-*' -print -quit)
+buildopt_java25=$(find "${buildopt_repo_root}/.tools/toolchains" -mindepth 1 -maxdepth 1 -type d -name 'temurin-jdk-25-*' -print -quit)
+[[ -x ${buildopt_java17}/bin/java && -x ${buildopt_java21}/bin/java && -x ${buildopt_java25}/bin/java ]]
+buildopt_java_paths=${buildopt_java17},${buildopt_java21},${buildopt_java25}
+
+buildopt_run_gradle() {
+    local buildopt_family=$1
+    local buildopt_checkout=$2
+    local buildopt_toolchain=$3
+    local buildopt_log=$4
+    local buildopt_operations=${5:-}
+    local buildopt_graph=${6:-}
+    shift 6 || true
+    local -a buildopt_trace_environment=()
+    local -a buildopt_trace_arguments=()
+    if [[ -n ${buildopt_operations} ]]; then
+        buildopt_trace_environment+=(BUILDOPT_TASK_GRAPH_OUTPUT="${buildopt_graph}")
+        buildopt_trace_arguments+=(--init-script "${buildopt_repo_root}/dev/gradle-critical-path.init.gradle")
+    fi
+    local buildopt_gradle_opts="-Dmaven.repo.local=${buildopt_work}/maven-local -Dorg.gradle.java.installations.paths=${buildopt_java_paths} -Dorg.gradle.java.installations.auto-detect=false"
+    if [[ -n ${buildopt_operations} ]]; then
+        buildopt_gradle_opts="-Dorg.gradle.internal.operations.trace=${buildopt_operations%-log.txt} ${buildopt_gradle_opts}"
+    fi
+    (
+        cd -- "${buildopt_checkout}"
+        env -u CI -u GITHUB_ACTIONS \
+            JDK17="${buildopt_java17}" JDK21="${buildopt_java21}" JDK25="${buildopt_java25}" \
+            JAVA_17_HOME="${buildopt_java17}" JAVA_21_HOME="${buildopt_java21}" JAVA_25_HOME="${buildopt_java25}" \
+            "${buildopt_trace_environment[@]}" \
+            GRADLE_OPTS="${buildopt_gradle_opts}" \
+            GRADLE_USER_HOME="${buildopt_work}/gradle-home" \
+            taskset -c 0-3 "${buildopt_repo_root}/dev/run" --toolchain "${buildopt_toolchain}" -- \
+            timeout --foreground 20m ./gradlew --no-daemon --console=plain --max-workers=4 \
+            --build-cache "${buildopt_trace_arguments[@]}" "$@" </dev/null
+    ) >"${buildopt_log}" 2>&1
+    printf '%s completed: %s\n' "${buildopt_family}" "${buildopt_log}"
+}
+
+# Dependency and wrapper preparation is deliberately completed before the
+# stability preflight and is never a controlled materiality row.
+while IFS= read -r buildopt_subject; do
+    buildopt_family=$(jq -r '.key' <<<"${buildopt_subject}")
+    buildopt_repository=$(jq -r '.repository' <<<"${buildopt_subject}")
+    buildopt_revision=$(jq -r '.revision' <<<"${buildopt_subject}")
+    buildopt_archive=$(jq -r '.sourceArchiveSha256' <<<"${buildopt_subject}")
+    buildopt_toolchain=$(jq -r '.jdkToolchain' <<<"${buildopt_subject}")
+    buildopt_source_path=$(jq -r '.sourceBinding.path' <<<"${buildopt_subject}")
+    buildopt_source_sha=$(jq -r '.sourceBinding.sha256' <<<"${buildopt_subject}")
+    buildopt_checkout=${buildopt_work}/repositories/${buildopt_family}
+    mkdir -p -- "${buildopt_checkout}"
+    git -C "${buildopt_checkout}" init --quiet
+    git -C "${buildopt_checkout}" remote add origin "${buildopt_repository}"
+    git -C "${buildopt_checkout}" fetch --quiet --depth=1 origin "${buildopt_revision}"
+    git -C "${buildopt_checkout}" checkout --quiet --detach FETCH_HEAD
+    [[ $(git -C "${buildopt_checkout}" rev-parse HEAD) == "${buildopt_revision}" ]]
+    [[ $(git -C "${buildopt_checkout}" archive HEAD | sha256sum | awk '{print $1}') == "${buildopt_archive}" ]]
+    [[ $(sha256sum "${buildopt_checkout}/${buildopt_source_path}" | awk '{print $1}') == "${buildopt_source_sha}" ]]
+    mapfile -t buildopt_arguments < <(jq -r '.ownerArguments[]' <<<"${buildopt_subject}")
+    buildopt_run_gradle "${buildopt_family} prefetch" "${buildopt_checkout}" "${buildopt_toolchain}" \
+        "${buildopt_output}/${buildopt_family}-prefetch.log" "" "" "${buildopt_arguments[@]}"
+done < <(jq -c '.families[]' "${buildopt_contract}")
+
+# No Gradle daemon or other agent-launched build may overlap the stability
+# preflight or the measured diagnostics.
+if ps -eo args= | rg -q '[o]rg.gradle.launcher.daemon.bootstrap.GradleDaemon'; then
+    printf 'a Gradle daemon remains active before controlled preflight\n' >&2
+    exit 1
+fi
+
+buildopt_preflight_file=${buildopt_work}/preflight-128m.bin
+head -c $((128 * 1024 * 1024)) /dev/zero >"${buildopt_preflight_file}"
+buildopt_preflight_rows=${buildopt_output}/preflight-rows.jsonl
+for buildopt_ordinal in 1 2 3 4 5 6 7; do
+    buildopt_started=$(date +%s%N)
+    taskset -c 0-3 sha256sum "${buildopt_preflight_file}" >/dev/null
+    buildopt_finished=$(date +%s%N)
+    jq -cn --argjson ordinal "${buildopt_ordinal}" \
+        --argjson durationNs "$((buildopt_finished - buildopt_started))" \
+        '{ordinal:$ordinal,durationNanoseconds:$durationNs}' >>"${buildopt_preflight_rows}"
+done
+rm -f -- "${buildopt_preflight_file}"
+buildopt_preflight_ratio=$(jq -s '[.[].durationNanoseconds] | (max / min)' "${buildopt_preflight_rows}")
+buildopt_preflight_maximum=$(jq -r '.environment.preflight.maximumToMinimumRatioMaximum' "${buildopt_contract}")
+buildopt_preflight_passed=$(jq -n --argjson actual "${buildopt_preflight_ratio}" --argjson maximum "${buildopt_preflight_maximum}" '$actual <= $maximum')
+
+jq -n \
+    --arg recordedAt "$(date --utc +%Y-%m-%dT%H:%M:%SZ)" \
+    --arg kernel "$(uname -r)" \
+    --arg cpuModel "$(awk -F: '/model name/ {sub(/^ /,"",$2); print $2; exit}' /proc/cpuinfo)" \
+    --arg contractCommit "${buildopt_contract_commit}" \
+    --arg contractSha256 "$(sha256sum "${buildopt_contract}" | awk '{print $1}')" \
+    --arg subjectsSha256 "$(sha256sum "${buildopt_subjects}" | awk '{print $1}')" \
+    --argjson hostCpuCount "$(nproc)" \
+    --argjson hostMemoryBytes "${buildopt_memory_bytes}" \
+    --argjson freeBytesBefore "${buildopt_free_bytes}" \
+    --argjson preflightRatio "${buildopt_preflight_ratio}" \
+    --argjson preflightPassed "${buildopt_preflight_passed}" \
+    --slurpfile preflightRows "${buildopt_preflight_rows}" '
+    {
+      schemaVersion:"buildopt.wcncp/controlled-materiality-environment/v1",
+      recordedAt:$recordedAt,environmentClass:"CONTROLLED_PERFORMANCE",
+      performanceGateAuthority:$preflightPassed,
+      host:{operatingSystem:"linux",architecture:"amd64",kernel:$kernel,cpuModel:$cpuModel,
+        cpuCount:$hostCpuCount,memoryBytes:$hostMemoryBytes,dedicated:false,mainsPower:true,
+        cpuGovernor:"performance",cpuAffinity:"0-3",maximumWorkers:4,
+        backgroundPolicy:"NO_CONCURRENT_AGENT_LAUNCHED_BUILD_OR_BENCHMARK"},
+      disk:{freeBytesBefore:$freeBytesBefore,maximumConcurrentGiB:20,minimumReserveGiB:10},
+      preflight:{algorithm:"SHA256_128_MIB_ZERO_BUFFER_V1",rows:$preflightRows,
+        maximumToMinimumRatio:$preflightRatio,maximumAllowed:1.15,passed:$preflightPassed},
+      bindings:{contractCommit:$contractCommit,contractSha256:$contractSha256,subjectsSha256:$subjectsSha256}
+    }
+  ' >"${buildopt_output}/environment.json"
+
+if [[ ${buildopt_preflight_passed} != true ]]; then
+    jq -n --slurpfile environment "${buildopt_output}/environment.json" '{
+      schemaVersion:"buildopt.wcncp/controlled-materiality-result/v1",workItem:"WCNCP-009A",
+      decision:"INCOMPLETE_PERFORMANCE_ENVIRONMENT",environment:$environment[0],
+      controlledDiagnosticStarts:0,publicSourceModified:false,candidateBuilds:0,
+      pairedValueTimingSamples:0,speedupClaim:false,productFailures:0
+    }' >"${buildopt_output}/result.json"
+    printf 'controlled stability preflight failed: ratio=%s maximum=%s\n' "${buildopt_preflight_ratio}" "${buildopt_preflight_maximum}" >&2
+    exit 2
+fi
+
+for buildopt_ordinal in 1 2; do
+    while IFS= read -r buildopt_subject; do
+        buildopt_family=$(jq -r '.key' <<<"${buildopt_subject}")
+        buildopt_revision=$(jq -r '.revision' <<<"${buildopt_subject}")
+        buildopt_toolchain=$(jq -r '.jdkToolchain' <<<"${buildopt_subject}")
+        buildopt_method=$(jq -r '.method' <<<"${buildopt_subject}")
+        buildopt_task_class=$(jq -r '.taskClass // ""' <<<"${buildopt_subject}")
+        buildopt_repository_root=${buildopt_work}/repositories/${buildopt_family}
+        buildopt_checkout=${buildopt_work}/runs/${buildopt_family}-${buildopt_ordinal}
+        buildopt_run_output=${buildopt_output}/runs/${buildopt_family}/run-${buildopt_ordinal}
+        mkdir -p -- "${buildopt_run_output}"
+        git -C "${buildopt_repository_root}" worktree add --quiet --detach "${buildopt_checkout}" "${buildopt_revision}"
+        mapfile -t buildopt_arguments < <(jq -r '.ownerArguments[]' <<<"${buildopt_subject}")
+        buildopt_operations=${buildopt_run_output}/operations-log.txt
+        buildopt_graph=${buildopt_run_output}/task-graph.jsonl
+        buildopt_log=${buildopt_run_output}/gradle.log
+        buildopt_started=$(date +%s%N)
+        set +e
+        buildopt_run_gradle "${buildopt_family} run ${buildopt_ordinal}" "${buildopt_checkout}" "${buildopt_toolchain}" \
+            "${buildopt_log}" "${buildopt_operations}" "${buildopt_graph}" --offline "${buildopt_arguments[@]}"
+        buildopt_exit_code=$?
+        set -e
+        buildopt_finished=$(date +%s%N)
+        git -C "${buildopt_checkout}" diff --quiet
+        git -C "${buildopt_checkout}" diff --cached --quiet
+        ((buildopt_exit_code == 0))
+        [[ -s ${buildopt_operations} && -s ${buildopt_graph} ]]
+        buildopt_analysis_arguments=(
+            --operations "${buildopt_operations}"
+            --graph "${buildopt_graph}"
+            --family "${buildopt_family}"
+            --method "${buildopt_method}"
+        )
+        if [[ -n ${buildopt_task_class} ]]; then
+            buildopt_analysis_arguments+=(--task-class "${buildopt_task_class}")
+        fi
+        "${buildopt_repo_root}/dev/run" --toolchain go -- go run ./cmd/wcncp-controlled-materiality \
+            "${buildopt_analysis_arguments[@]}" >"${buildopt_run_output}/analysis.json"
+        jq -n \
+            --argjson ordinal "${buildopt_ordinal}" --argjson exitCode "${buildopt_exit_code}" \
+            --argjson elapsedMs "$(((buildopt_finished - buildopt_started) / 1000000))" \
+            --arg revision "${buildopt_revision}" \
+            --arg sourceArchiveSha256 "$(git -C "${buildopt_checkout}" archive HEAD | sha256sum | awk '{print $1}')" \
+            --arg operationTraceSha256 "$(sha256sum "${buildopt_operations}" | awk '{print $1}')" \
+            --arg taskGraphSha256 "$(sha256sum "${buildopt_graph}" | awk '{print $1}')" '{
+              schemaVersion:"buildopt.wcncp/controlled-materiality-capture/v1",
+              ordinal:$ordinal,revision:$revision,sourceArchiveSha256:$sourceArchiveSha256,
+              child:{exitCode:$exitCode,elapsedMilliseconds:$elapsedMs,outcome:"SUCCESS"},
+              operationTraceSha256:$operationTraceSha256,taskGraphSha256:$taskGraphSha256,
+              environmentClass:"CONTROLLED_PERFORMANCE",performanceGateAuthority:true,
+              publicSourceModified:false,candidateBuild:false,pairedValueTimingSample:false,productFailures:0
+            }' >"${buildopt_run_output}/capture.json"
+        gzip -9 -- "${buildopt_operations}" "${buildopt_graph}" "${buildopt_log}"
+    done < <(jq -c '.families[]' "${buildopt_contract}")
+done
+
+jq -n \
+    --slurpfile environment "${buildopt_output}/environment.json" \
+    --arg contractSha256 "$(sha256sum "${buildopt_contract}" | awk '{print $1}')" \
+    --argjson families "$(jq -c '[.families[] | {key,method,sourceClosure}]' "${buildopt_contract}")" \
+    --arg output "${buildopt_output}" '
+    def rows($key): [1,2] | map(. as $ordinal | input_filename);
+    {
+      schemaVersion:"buildopt.wcncp/controlled-materiality-result/v1",workItem:"WCNCP-009A",
+      environment:$environment[0],contractSha256:$contractSha256,
+      familyDefinitions:$families,controlledDiagnosticStarts:6,
+      publicSourceModified:false,candidateBuilds:0,pairedValueTimingSamples:0,
+      speedupClaim:false,productFailures:0
+    }
+  ' >"${buildopt_output}/result.base.json"
+
+# Aggregate only after all six immutable primary rows exist.
+buildopt_family_rows=${buildopt_output}/family-results.jsonl
+while IFS= read -r buildopt_definition; do
+    buildopt_family=$(jq -r '.key' <<<"${buildopt_definition}")
+    buildopt_source_closure=$(jq -r '.sourceClosure' <<<"${buildopt_definition}")
+    buildopt_first=${buildopt_output}/runs/${buildopt_family}/run-1/analysis.json
+    buildopt_second=${buildopt_output}/runs/${buildopt_family}/run-2/analysis.json
+    jq -n --arg family "${buildopt_family}" --arg sourceClosure "${buildopt_source_closure}" \
+        --slurpfile first "${buildopt_first}" --slurpfile second "${buildopt_second}" '
+      [$first[0],$second[0]] as $rows |
+      ($rows | all(.minimumMillisecondsPassed and .minimumPercentPassed)) as $material |
+      {
+        family:$family,sourceClosure:$sourceClosure,rows:$rows,
+        conservativeCriticalPathMilliseconds:($rows | map(.criticalPathContributionMs) | min),
+        conservativeMaterialPercent:($rows | map(.materialPercent) | min),
+        decision:(if $sourceClosure == "REPOSITORY_CORRECTION_INSUFFICIENT_EXTERNAL_BLOCKERS_REMAIN" then
+                    "UNSUPPORTED_PROBLEM_CLASS"
+                  elif $material then "ACTIONABLE_MATERIAL_CORRECTION"
+                  else "NON_MATERIAL_BLOCKER" end)
+      }
+    ' >>"${buildopt_family_rows}"
+done < <(jq -c '.families[] | {key,sourceClosure}' "${buildopt_contract}")
+
+jq -s '.' "${buildopt_family_rows}" >"${buildopt_output}/families.json"
+jq --slurpfile families "${buildopt_output}/families.json" '
+  . + {families:$families[0]} |
+  . + {familiesConclusive:(.families|length),
+       actionableMaterialFamilies:([.families[]|select(.decision=="ACTIONABLE_MATERIAL_CORRECTION")]|length)} |
+  . + {decision:(if .familiesConclusive != 3 then "INCOMPLETE_EXPERIMENT_INPUT"
+                 elif .actionableMaterialFamilies >= 3 then "WCNCP_009_BREADTH_PASSED"
+                 else "STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH" end)}
+' "${buildopt_output}/result.base.json" >"${buildopt_output}/result.json"
+rm -f -- "${buildopt_output}/result.base.json" "${buildopt_family_rows}"
+
+printf 'WCNCP-009A controlled materiality captured at %s\n' "${buildopt_output}"

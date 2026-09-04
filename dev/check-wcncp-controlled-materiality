@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 1)); then
+    printf 'usage: %s EVIDENCE_DIRECTORY\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_evidence=$1
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract=${BUILDOPT_WCNCP_MATERIALITY_CONTRACT:-${buildopt_repo_root}/specs/poc-wcncp-controlled-materiality-v1.json}
+buildopt_subjects=${buildopt_repo_root}/specs/poc-wrapper-coordinated-native-corrections-v1.subjects.json
+
+[[ ${buildopt_evidence} == /* && -d ${buildopt_evidence} ]] || {
+    printf 'evidence directory must be an existing absolute path\n' >&2
+    exit 64
+}
+"${buildopt_script_dir}/check-wcncp-controlled-materiality-plan"
+buildopt_environment=${buildopt_evidence}/environment.json
+buildopt_result=${buildopt_evidence}/result.json
+[[ -s ${buildopt_environment} && -s ${buildopt_result} ]]
+
+buildopt_contract_sha=$(sha256sum "${buildopt_contract}" | awk '{print $1}')
+buildopt_subjects_sha=$(sha256sum "${buildopt_subjects}" | awk '{print $1}')
+buildopt_preflight_ratio=$(jq '[.preflight.rows[].durationNanoseconds] | (max / min)' "${buildopt_environment}")
+jq -e \
+    --arg contractSha "${buildopt_contract_sha}" \
+    --arg subjectsSha "${buildopt_subjects_sha}" \
+    --argjson ratio "${buildopt_preflight_ratio}" '
+    .schemaVersion == "buildopt.wcncp/controlled-materiality-environment/v1" and
+    .environmentClass == "CONTROLLED_PERFORMANCE" and
+    .performanceGateAuthority == true and
+    .host.operatingSystem == "linux" and .host.architecture == "amd64" and
+    .host.cpuCount >= 4 and .host.memoryBytes >= 16106127360 and
+    .host.dedicated == false and .host.mainsPower == true and
+    .host.cpuGovernor == "performance" and .host.cpuAffinity == "0-3" and
+    .host.maximumWorkers == 4 and
+    .host.backgroundPolicy == "NO_CONCURRENT_AGENT_LAUNCHED_BUILD_OR_BENCHMARK" and
+    .disk.maximumConcurrentGiB == 20 and .disk.minimumReserveGiB == 10 and
+    .preflight.algorithm == "SHA256_128_MIB_ZERO_BUFFER_V1" and
+    (.preflight.rows | length) == 7 and
+    ([.preflight.rows[].ordinal] == [1,2,3,4,5,6,7]) and
+    ([.preflight.rows[].durationNanoseconds] | all(. > 0)) and
+    .preflight.maximumToMinimumRatio == $ratio and
+    .preflight.maximumAllowed == 1.15 and $ratio <= 1.15 and .preflight.passed == true and
+    .bindings.contractSha256 == $contractSha and .bindings.subjectsSha256 == $subjectsSha and
+    (.bindings.contractCommit | test("^[0-9a-f]{40}$"))
+' "${buildopt_environment}" >/dev/null
+buildopt_contract_commit=$(jq -r '.bindings.contractCommit' "${buildopt_environment}")
+git -C "${buildopt_repo_root}" cat-file -e "${buildopt_contract_commit}^{commit}"
+git -C "${buildopt_repo_root}" merge-base --is-ancestor "${buildopt_contract_commit}" HEAD
+
+buildopt_temp=$(mktemp -d /tmp/buildopt-wcncp-materiality-check.XXXXXX)
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+buildopt_rebuilt_families=${buildopt_temp}/families.jsonl
+buildopt_starts=0
+
+while IFS= read -r buildopt_definition; do
+    buildopt_family=$(jq -r '.key' <<<"${buildopt_definition}")
+    buildopt_revision=$(jq -r '.revision' <<<"${buildopt_definition}")
+    buildopt_archive=$(jq -r '.sourceArchiveSha256' <<<"${buildopt_definition}")
+    buildopt_method=$(jq -r '.method' <<<"${buildopt_definition}")
+    buildopt_task_class=$(jq -r '.taskClass // ""' <<<"${buildopt_definition}")
+    buildopt_source_closure=$(jq -r '.sourceClosure' <<<"${buildopt_definition}")
+    [[ -s ${buildopt_evidence}/${buildopt_family}-prefetch.log ]]
+    buildopt_family_analyses=${buildopt_temp}/${buildopt_family}-analyses.jsonl
+    for buildopt_ordinal in 1 2; do
+        buildopt_starts=$((buildopt_starts + 1))
+        buildopt_run=${buildopt_evidence}/runs/${buildopt_family}/run-${buildopt_ordinal}
+        buildopt_capture=${buildopt_run}/capture.json
+        buildopt_analysis=${buildopt_run}/analysis.json
+        buildopt_operations=${buildopt_temp}/${buildopt_family}-${buildopt_ordinal}-operations.jsonl
+        buildopt_graph=${buildopt_temp}/${buildopt_family}-${buildopt_ordinal}-graph.jsonl
+        gzip -dc -- "${buildopt_run}/operations-log.txt.gz" >"${buildopt_operations}"
+        gzip -dc -- "${buildopt_run}/task-graph.jsonl.gz" >"${buildopt_graph}"
+        [[ -s ${buildopt_run}/gradle.log.gz && -s ${buildopt_capture} && -s ${buildopt_analysis} ]]
+        buildopt_operations_sha=$(sha256sum "${buildopt_operations}" | awk '{print $1}')
+        buildopt_graph_sha=$(sha256sum "${buildopt_graph}" | awk '{print $1}')
+        jq -e \
+            --argjson ordinal "${buildopt_ordinal}" \
+            --arg revision "${buildopt_revision}" \
+            --arg archive "${buildopt_archive}" \
+            --arg operationsSha "${buildopt_operations_sha}" \
+            --arg graphSha "${buildopt_graph_sha}" '
+            .schemaVersion == "buildopt.wcncp/controlled-materiality-capture/v1" and
+            .ordinal == $ordinal and .revision == $revision and .sourceArchiveSha256 == $archive and
+            .child.exitCode == 0 and .child.elapsedMilliseconds > 0 and .child.outcome == "SUCCESS" and
+            .operationTraceSha256 == $operationsSha and .taskGraphSha256 == $graphSha and
+            .environmentClass == "CONTROLLED_PERFORMANCE" and .performanceGateAuthority == true and
+            .publicSourceModified == false and .candidateBuild == false and
+            .pairedValueTimingSample == false and .productFailures == 0
+        ' "${buildopt_capture}" >/dev/null
+        buildopt_rebuilt=${buildopt_temp}/${buildopt_family}-${buildopt_ordinal}-analysis.json
+        buildopt_analysis_arguments=(
+            --operations "${buildopt_operations}"
+            --graph "${buildopt_graph}"
+            --family "${buildopt_family}"
+            --method "${buildopt_method}"
+        )
+        if [[ -n ${buildopt_task_class} ]]; then
+            buildopt_analysis_arguments+=(--task-class "${buildopt_task_class}")
+        fi
+        "${buildopt_repo_root}/dev/run" --toolchain go -- go run ./cmd/wcncp-controlled-materiality \
+            "${buildopt_analysis_arguments[@]}" >"${buildopt_rebuilt}"
+        diff -u <(jq -S . "${buildopt_analysis}") <(jq -S . "${buildopt_rebuilt}")
+        jq -c . "${buildopt_rebuilt}" >>"${buildopt_family_analyses}"
+    done
+    jq -s --arg family "${buildopt_family}" --arg sourceClosure "${buildopt_source_closure}" '
+      . as $rows |
+      ($rows | all(.minimumMillisecondsPassed and .minimumPercentPassed)) as $material |
+      {
+        family:$family,sourceClosure:$sourceClosure,rows:$rows,
+        conservativeCriticalPathMilliseconds:($rows | map(.criticalPathContributionMs) | min),
+        conservativeMaterialPercent:($rows | map(.materialPercent) | min),
+        decision:(if $sourceClosure == "REPOSITORY_CORRECTION_INSUFFICIENT_EXTERNAL_BLOCKERS_REMAIN" then
+                    "UNSUPPORTED_PROBLEM_CLASS"
+                  elif $material then "ACTIONABLE_MATERIAL_CORRECTION"
+                  else "NON_MATERIAL_BLOCKER" end)
+      }
+    ' "${buildopt_family_analyses}" >>"${buildopt_rebuilt_families}"
+done < <(jq -c '.families[]' "${buildopt_contract}")
+
+((buildopt_starts == 6))
+jq -s '.' "${buildopt_rebuilt_families}" >"${buildopt_temp}/families.json"
+diff -u \
+    <(jq -S '.families' "${buildopt_result}") \
+    <(jq -S . "${buildopt_temp}/families.json")
+
+buildopt_actionable=$(jq '[.[] | select(.decision == "ACTIONABLE_MATERIAL_CORRECTION")] | length' "${buildopt_temp}/families.json")
+buildopt_decision=STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH
+if ((buildopt_actionable >= 3)); then
+    buildopt_decision=WCNCP_009_BREADTH_PASSED
+fi
+jq -e \
+    --arg contractSha "${buildopt_contract_sha}" \
+    --arg decision "${buildopt_decision}" \
+    --argjson actionable "${buildopt_actionable}" '
+    .schemaVersion == "buildopt.wcncp/controlled-materiality-result/v1" and
+    .workItem == "WCNCP-009A" and .contractSha256 == $contractSha and
+    .controlledDiagnosticStarts == 6 and .familiesConclusive == 3 and
+    .actionableMaterialFamilies == $actionable and .decision == $decision and
+    .publicSourceModified == false and .candidateBuilds == 0 and
+    .pairedValueTimingSamples == 0 and .speedupClaim == false and .productFailures == 0
+' "${buildopt_result}" >/dev/null
+
+printf 'WCNCP-009A controlled materiality reconstructed: 3/3 families, %s actionable, %s\n' \
+    "${buildopt_actionable}" "${buildopt_decision}"
