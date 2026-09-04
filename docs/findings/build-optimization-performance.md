@@ -14,6 +14,10 @@
   The pre-capture audit additionally supplied the missing explicit actor-grant
   operation for central tokens and confirmed that a post-child upload beyond
   100 ms stays queued without changing the native result.
+  WCNCP-008 has now frozen ten primary public revisions, twenty chronological
+  reserves, their owner workflows and required outputs after ten successful
+  optimized-native admissibility preflights. Those preflight durations do not
+  enter performance arithmetic, and prospective observations remain 0/30.
   The former zero-row `INCOMPLETE_PERFORMANCE_ENVIRONMENT` conclusion is
   retracted: WCNCP-008 never ran, so it could not authorize WCNCP-013.
   Prospective value remains wholly unmeasured.

@@ -647,6 +647,7 @@ buildopt_required_files=(
     "dev/run-critical-path-build-logic-correction-source"
     "dev/check-critical-path-build-logic-correction"
     "dev/check-wrapper-coordinated-native-corrections-plan"
+    "dev/check-wcncp-cohort-freeze"
     "dev/check-remote-cache-locality-value"
     "dev/check-remote-cache-locality-value-v3"
     "dev/check-critical-path-successor-selection"

@@ -1,8 +1,11 @@
 {
   "schemaVersion": "buildopt.specs/poc-wrapper-coordinated-native-corrections-subjects/v1",
-  "selectionState": "POLICY_FROZEN_COHORT_UNSELECTED",
+  "selectionState": "EXACT_COHORT_FROZEN_CAPTURE_PENDING",
   "exactCohortFreezeBlock": "WCNCP-008",
   "selectionMustPrecede": "FIRST_PROSPECTIVE_OBSERVATION",
+  "freezeCutoff": "COMMIT_CONTAINING_THIS_MANIFEST",
+  "freezeEvidence": "benchmarks/results/wrapper-coordinated-native-corrections-v1/cohort-freeze.json",
+  "sourceArchiveSha256Algorithm": "git archive --format=tar REVISION | sha256sum",
   "familyCount": 10,
   "reserveRevisionsPerFamily": 2,
   "minimumFamiliesWithoutPriorQualifiedReviewedNativeRecipe": 5,
@@ -36,16 +39,86 @@
     "replacementMustUseFrozenReserveOrder": true
   },
   "slots": [
-    {"ordinal":1,"state":"UNSELECTED"},
-    {"ordinal":2,"state":"UNSELECTED"},
-    {"ordinal":3,"state":"UNSELECTED"},
-    {"ordinal":4,"state":"UNSELECTED"},
-    {"ordinal":5,"state":"UNSELECTED"},
-    {"ordinal":6,"state":"UNSELECTED"},
-    {"ordinal":7,"state":"UNSELECTED"},
-    {"ordinal":8,"state":"UNSELECTED"},
-    {"ordinal":9,"state":"UNSELECTED"},
-    {"ordinal":10,"state":"UNSELECTED"}
+    {
+      "ordinal": 1, "state": "SELECTED", "key": "gradle-intellij-plugin", "repository": "https://github.com/JetBrains/gradle-intellij-plugin.git",
+      "primary": {"revision":"511a40abb9f01a90b2bc888b5a407ab63de2b13f","committedAt":"2026-09-01T10:14:00Z","archiveSha256":"e5ada8b61d4649502137e4597c4b953f17a125c578473fb8469bda2fc01a9cd9"},
+      "reserves": [{"revision":"7a6297518661ab8e2c068b330bcbaadab5ba0d68","committedAt":"2026-09-01T10:10:44Z","archiveSha256":"9783701d70453ae63b4b9d0a83a5fb8827110d879c0b47eeba6d014acc3a24fd"},{"revision":"84b1b6733e028516fb60512fe5229695436358cc","committedAt":"2026-09-01T08:51:12+02:00","archiveSha256":"7600b7f11c242188f0ae066f596058524b3b70e2fd5c1d021335b959bb47394f"}],
+      "wrapper": {"path":"gradlew","sha256":"a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59","propertiesPath":"gradle/wrapper/gradle-wrapper.properties","propertiesSha256":"47f2041fad8f2a69eb045e9421c2804860f5112a295ef9bd7730383d20463d85"},
+      "ownerWorkflow": {"sourcePath":".github/workflows/build.yml","sourceSha256":"605a99c4897a13e68aec0a6b793c9f3536822afff55deeb8d25de8211b2a09e9","jdk":"zulu-21","arguments":["build","-x","test"]},
+      "requiredOutputs": ["build/libs/*.jar"], "priorQualifiedReviewedNativeRecipe": false
+    },
+    {
+      "ordinal": 2, "state": "SELECTED", "key": "gradle-consistent-versions", "repository": "https://github.com/palantir/gradle-consistent-versions.git",
+      "primary": {"revision":"419993496161e5bace10678efe0b01eb4655c28f","committedAt":"2026-09-01T18:00:49Z","archiveSha256":"382f4981e4afa1f35224ee4d587bbf4dc0032db264c85f343e2e3902f4020407"},
+      "reserves": [{"revision":"19ccad99298a3bb3b03506d4b96de9d1ec0f8e57","committedAt":"2026-08-31T09:37:36Z","archiveSha256":"addb88c9c12df61140bcc40768ab479927ef9d6510ae5ba153197d2884ebbfda"},{"revision":"1d20c5142a2dcad2c2702fe8af822c78023278e9","committedAt":"2026-08-30T21:46:23Z","archiveSha256":"80debf2d5a8e6a42d463a9ce61e74e101f703e37a2de75555525af64a2fc3718"}],
+      "wrapper": {"path":"gradlew","sha256":"29afb122ee56e68a5e178232a637ced3190d0f90678d842f5359d736509ca73f","propertiesPath":"gradle/wrapper/gradle-wrapper.properties","propertiesSha256":"d01b41913834fb3cb14e71f69a08898e6a47e663b08f5c9b8c7e0772c38889d2"},
+      "ownerWorkflow": {"sourcePath":".circleci/config.yml","sourceSha256":"fa58196e3ad3d2e4b35efd4c06cb9956edcafde3f6c577f505e17d224025e8f1","jdk":"temurin-21","arguments":["--parallel","--stacktrace","--continue","--max-workers=2","build","-Porg.gradle.java.installations.fromEnv=JAVA_17_HOME,JAVA_21_HOME,JAVA_25_HOME,JAVA_HOME"]},
+      "requiredOutputs": ["build/libs/*.jar"], "priorQualifiedReviewedNativeRecipe": false
+    },
+    {
+      "ordinal": 3, "state": "SELECTED", "key": "mockk", "repository": "https://github.com/mockk/mockk.git",
+      "primary": {"revision":"14fbd83eb43582ce6f80ac58b87b0e143e8cb43e","committedAt":"2026-08-08T23:25:07+02:00","archiveSha256":"4db9d0a13174c42e2aaaa4a1ac72ead1991a72e75eeb93f200fbb3ea2f5d4009"},
+      "reserves": [{"revision":"0c2932be9adb347e35a1b96ca3115435b353d595","committedAt":"2026-08-08T11:08:32+02:00","archiveSha256":"74bf6951af13a5f5a51690ca64683a465e6cfc07344f4030ee987f3fd0ea6e1f"},{"revision":"30d476aa4ce05d01c3f28877a83f0a75926aac04","committedAt":"2026-08-06T11:20:45+02:00","archiveSha256":"7c95752d16a76a12fb5cb656199d9ef7e4bd392b4bcd62ef87f1b20ecad88787"}],
+      "wrapper": {"path":"gradlew","sha256":"fb68debc1b1acf8ec55dc0d5e5495e1dedd0bd6b61f304bee61613eeb2bd9b92","propertiesPath":"gradle/wrapper/gradle-wrapper.properties","propertiesSha256":"f855a38f15e05a8375ddb6ea469f2be1c1daec015ce8cc2ad23800e5dc7259e5"},
+      "ownerWorkflow": {"sourcePath":".github/workflows/gradle.yml","sourceSha256":"3ba0f5564ca73c31032166b7728f04d75c3dc1172cbc0f9c76136f0e945f6c18","jdk":"temurin-21","arguments":["check"]},
+      "requiredOutputs": ["modules/*/build/libs/*.jar"], "priorQualifiedReviewedNativeRecipe": false
+    },
+    {
+      "ordinal": 4, "state": "SELECTED", "key": "junit-pioneer", "repository": "https://github.com/junit-pioneer/junit-pioneer.git",
+      "primary": {"revision":"0cc29d1ba9ee8c8322bc7a1028cc03e95c05bed8","committedAt":"2026-05-27T23:11:53+02:00","archiveSha256":"76840ff7389f806379a069740192c3581f8d1d677a44a19b74ab4e7f8ecf39f9"},
+      "reserves": [{"revision":"73c16a054299340a083434d6d3bd05fc5d31633d","committedAt":"2026-03-17T09:30:15+01:00","archiveSha256":"e807c28e4795f8506bec93264eb6871c81b9c0278149ed87b71ffb14d96b8ca9"},{"revision":"062ce51296dab909119fd6c9f090b9d6a2982530","committedAt":"2025-12-11T08:55:39+01:00","archiveSha256":"c60edb9d3a511b70a70c481ce6ae6f334c50000327626b3b71f86c9a1b9888dd"}],
+      "wrapper": {"path":"gradlew","sha256":"b187b4c52e749f5760afdd6fadc31b2a98ad35fb249bf0dff03b72650f320409","propertiesPath":"gradle/wrapper/gradle-wrapper.properties","propertiesSha256":"97e38c4092036e177d1d31ebb454332a61a1d1313fc76aefe34b35e88211715d"},
+      "ownerWorkflow": {"sourcePath":".github/workflows/build.yml","sourceSha256":"1bbe461429b6da315d03aca6ec53f64c4624b5517f842a7017fd1806c60a6396","jdk":"temurin-17","arguments":["--stacktrace","clean","build","-x","spotlessCheck"]},
+      "requiredOutputs": ["build/libs/*.jar"], "priorQualifiedReviewedNativeRecipe": false
+    },
+    {
+      "ordinal": 5, "state": "SELECTED", "key": "gradle-versions-plugin", "repository": "https://github.com/ben-manes/gradle-versions-plugin.git",
+      "primary": {"revision":"17a079dc1cfd7b0b83affb7ccd625a936e6728ce","committedAt":"2026-08-29T22:13:06-07:00","archiveSha256":"c5151aa5b7aef9656883e361fe7ba12f1a2affcc182cc5ab2222354d822e9f48"},
+      "reserves": [{"revision":"7350a22aa603d63b544eae1e2a2496069e4a5ca3","committedAt":"2026-08-29T21:25:10-07:00","archiveSha256":"b988e91c37ea5b482a0628a8b6e81e27067a1387dfebe2870639cac6a4dbc0ed"},{"revision":"57c9d3c0c72466082c92187a3a58b19a3325656f","committedAt":"2026-08-29T16:58:48-07:00","archiveSha256":"cddb6b45fe4eb96381a2675822aee111d48b60e1e8fda8e8a150d95951ab4450"}],
+      "wrapper": {"path":"gradlew","sha256":"fc977a94723af68aaffa4e5d60496fb4aeed1884b6b19e5e2f2fd7612673313d","propertiesPath":"gradle/wrapper/gradle-wrapper.properties","propertiesSha256":"27d72993a6890cbc1583f332ebbd13cb8412f0a7dbeb24943e2f7ee14601201d"},
+      "ownerWorkflow": {"sourcePath":".github/workflows/build.yml","sourceSha256":"67e955fa8f976e49597c3e2c6bc7a9c74b0059c72b53c7237c0d46ddbebe60c9","jdk":"temurin-17","arguments":["clean","build","-s"]},
+      "requiredOutputs": ["build/libs/*.jar"], "priorQualifiedReviewedNativeRecipe": false
+    },
+    {
+      "ordinal": 6, "state": "SELECTED", "key": "protobuf-gradle-plugin", "repository": "https://github.com/google/protobuf-gradle-plugin.git",
+      "primary": {"revision":"8be67f8d98c525273248f5eea9892ee1c7895984","committedAt":"2026-04-20T06:47:39-07:00","archiveSha256":"8c6f362ea899fad2da867dc5c782c12fb8de4c698ddc07346dce3cef2b040c4d"},
+      "reserves": [{"revision":"c784abf5e0fb353666bf87869635e51afaee5bcf","committedAt":"2026-04-20T06:47:14-07:00","archiveSha256":"8b1203d92995a361c607e16d6d17bb6642b41e3b66788216e61b57694bb2600d"},{"revision":"53a5d650e782d05b319522c79d2faf8cf844b3a8","committedAt":"2026-04-17T16:10:16-07:00","archiveSha256":"3011deee42fa2491f53c466850c90352426bf7b04a8dffe6a990dc26f39e3ed7"}],
+      "wrapper": {"path":"gradlew","sha256":"63135287117a1e6d12c84580f1f49c61d1ba02218ecd28660605e97f976e7d65","propertiesPath":"gradle/wrapper/gradle-wrapper.properties","propertiesSha256":"a4f97de8219bd9fe733c4fec18c80e3be252aac5e65148843f54d87d2dabbdda"},
+      "ownerWorkflow": {"sourcePath":".github/workflows/testing.yml","sourceSha256":"2508afa4a69030563216a56051a77aeccdf6e9b055a58f701293aabef025f558","jdk":"temurin-17","arguments":["clean","assemble","--stacktrace"]},
+      "requiredOutputs": ["build/libs/*.jar"], "priorQualifiedReviewedNativeRecipe": false
+    },
+    {
+      "ordinal": 7, "state": "SELECTED", "key": "graphql-java", "repository": "https://github.com/graphql-java/graphql-java.git",
+      "primary": {"revision":"f2d8c9126f898c084b176631b7346bc6fbec296a","committedAt":"2026-09-01T16:21:09Z","archiveSha256":"83e80bbaa2b3e3308dd35e0b7120399f02149507674d958b0e2e4cc81718d051"},
+      "reserves": [{"revision":"b5dc9792faac88b9a5f609acf3b1b9f40de6885e","committedAt":"2026-09-01T16:13:29Z","archiveSha256":"aa6a2b51de85b1c8f2fa7e6a64efb127109f04a85e479cf9d010cf5f42b7e8d4"},{"revision":"938c85fddc9a5c2ea6eddb85e6f53732afe04be1","committedAt":"2026-09-01T16:11:49Z","archiveSha256":"4e3670fcc760a865d69693f1a0b375a85cb40417275199295c1d2278f512e49d"}],
+      "wrapper": {"path":"gradlew","sha256":"a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59","propertiesPath":"gradle/wrapper/gradle-wrapper.properties","propertiesSha256":"1d126b2f29d1a87825e57ae7a7a1b1cc06f8dcbc89dd614dc6a5b493244ba2cc"},
+      "ownerWorkflow": {"sourcePath":".github/workflows/pull_request.yml","sourceSha256":"05478c6b84875e6be640c96fc4fda2c4a4383f7a11d777b03710be3430e5ee97","jdk":"corretto-25","arguments":["assemble"]},
+      "requiredOutputs": ["build/libs/*.jar"], "priorQualifiedReviewedNativeRecipe": false
+    },
+    {
+      "ordinal": 8, "state": "SELECTED", "key": "apache-groovy", "repository": "https://github.com/apache/groovy.git",
+      "primary": {"revision":"14fa934340c46bc1ee96cba7ae594258bd8d0fd0","committedAt":"2025-12-16T16:42:30-06:00","archiveSha256":"64728bd64eaa171c6f58e4296ef22d8bd50956e63e1906aee503e60feece560d"},
+      "reserves": [{"revision":"a509a232d6b11f5c60a2667607ce0886911353c4","committedAt":"2025-12-17T08:16:15+10:00","archiveSha256":"198f91adfb20654d179ae9cb958bd6956200e73f4feff93dfb39c1a5d2e93599"},{"revision":"3c87eb0ca13d2bb308b5435120fee3dbbbab95ff","committedAt":"2025-12-14T17:52:41-06:00","archiveSha256":"4958720763eea5042d732d4e3e4d2ff69651afe62ec4f8205a8abaf4bc054523"}],
+      "wrapper": {"path":"gradlew","sha256":"a3648413b47ef77af21d5ebc36c687c7d103aaef3e17f33de7d4f080a6f300a3","propertiesPath":"gradle/wrapper/gradle-wrapper.properties","propertiesSha256":"7e0821d895908883350587c74476b717016ab416320c44dc82a10def916c6fb5"},
+      "ownerWorkflow": {"sourcePath":"README.adoc","sourceSha256":"7030b4377d919509a2a6d7660111faddca8882b30f00bca6b6189b37c4a95007","jdk":"zulu-21","arguments":["jar","idea"]},
+      "requiredOutputs": ["build/libs/*.jar","subprojects/*/build/libs/*.jar"], "priorQualifiedReviewedNativeRecipe": true
+    },
+    {
+      "ordinal": 9, "state": "SELECTED", "key": "test-retry-gradle-plugin", "repository": "https://github.com/gradle/test-retry-gradle-plugin.git",
+      "primary": {"revision":"ee9a521bdc1add0d1ff9fcfbed47882fb95bfdff","committedAt":"2026-08-25T16:33:43+10:00","archiveSha256":"a4e6e3673b79336f3bbe47beb6ac47c89208ce936c0af5b7c6b757a23b23d8cd"},
+      "reserves": [{"revision":"843334b0634e7db9345c11b3bae0bd991b755413","committedAt":"2026-08-21T22:24:34+10:00","archiveSha256":"32c6901a896b4cfd2346a4d24a15dda99b757ce46cca56e9e569c87a948e001b"},{"revision":"3343a895aae20bc4bf23ae59bb655aa2b0b69705","committedAt":"2026-06-26T13:51:27+02:00","archiveSha256":"6ba130ae6e061e9325fa14a6bc7f5aa6715e7effe1f0f9a18f0dd0d7b9041715"}],
+      "wrapper": {"path":"gradlew","sha256":"b187b4c52e749f5760afdd6fadc31b2a98ad35fb249bf0dff03b72650f320409","propertiesPath":"gradle/wrapper/gradle-wrapper.properties","propertiesSha256":"0d8f5425a63f59516412696fae5787bf2e5a6aa52bb004e65cf121cc34efaa86"},
+      "ownerWorkflow": {"sourcePath":".github/workflows/verify.yml","sourceSha256":"a9430ab0ac41606711323f27da54c3960b85cd757cd2e07dbda981c5c3d187f8","jdk":"temurin-17","arguments":["build","-s"]},
+      "requiredOutputs": ["plugin/build/libs/*.jar"], "priorQualifiedReviewedNativeRecipe": false
+    },
+    {
+      "ordinal": 10, "state": "SELECTED", "key": "spotless", "repository": "https://github.com/diffplug/spotless.git",
+      "primary": {"revision":"4ea1c6cbf46f4e60eb9e621406bf2621e28f2d68","committedAt":"2026-08-27T16:49:28Z","archiveSha256":"12c828796c03d50903bd03eda1fac8fb70a9f85f5127216941e1488382cff775"},
+      "reserves": [{"revision":"f2f2348ba1f28f84e7fa0d41373190478718d55e","committedAt":"2026-08-27T16:47:36Z","archiveSha256":"bf004cd30888dd2ce01c38e971b56eb631ee9a6985c5db8c048b2c35e61bec59"},{"revision":"4bc8980fd8fd5da2bae1ad29e72123bc14d1f2b2","committedAt":"2026-08-27T16:46:51Z","archiveSha256":"918cdd302bf3f71f5701ce2de58d194e706b80c531efe3e9740c768bef17244a"}],
+      "wrapper": {"path":"gradlew","sha256":"a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59","propertiesPath":"gradle/wrapper/gradle-wrapper.properties","propertiesSha256":"d0bebe8133babb74ab29a31ee6616c56ef8985fc801e1fd16c61b5ed2189e907"},
+      "ownerWorkflow": {"sourcePath":".github/workflows/ci.yml","sourceSha256":"b471d950d35126f1817ad4940bea5b7289b59827706964d91dcfdad8106f7564","jdk":"temurin-21","arguments":["build","-x","spotlessCheck","-PSPOTLESS_EXCLUDE_MAVEN=true"]},
+      "requiredOutputs": ["lib/build/libs/*.jar","lib-extra/build/libs/*.jar","plugin-gradle/build/libs/*.jar","testlib/build/libs/*.jar"], "priorQualifiedReviewedNativeRecipe": false
+    }
   ],
   "prospectiveObservations": 0,
   "candidateBuilds": 0,

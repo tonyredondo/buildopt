@@ -3,12 +3,12 @@
 ## Status
 
 **Overall:** `FUNCTIONAL_FOUNDATION_READY`<br>
-**Current block:** `WCNCP-008` is `TODO`; the prospective cohort and ordinary
-wrapper observations have not been captured.<br>
+**Current block:** `WCNCP-008` is `TODO`; its exact ten-family cohort is frozen
+and ordinary wrapper observations remain at zero.<br>
 **Reference baseline inspected while writing this plan:**
 `b8a195dc9fd55a52c15202b77f0bb979f8c97fa3`.<br>
 **Execution authority:** `WCNCP-001` through `WCNCP-007` establish the repaired
-functional foundation. `WCNCP-008` may freeze the cohort and collect ordinary
+functional foundation. `WCNCP-008` may collect the frozen cohort's ordinary
 wrapper observations. Public source mutation, candidate execution, value
 timing, owner contact, proposal application, merge, and product-value claims
 remain closed until their ordered gates authorize them.
@@ -1247,7 +1247,7 @@ repository build usable without BuildOpt state.
 | `WCNCP-E005` | WCNCP-005 | Lease and validator lifecycle proof | `DONE` — [validator proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e005-validation.json) with admission, single-active leases, budgets, isolated roots, fixture correctness, and exact revert; zero prospective evidence |
 | `WCNCP-E006` | WCNCP-006 | Diagnostic-only reviewed PatchBundle system replay | `DONE` — [review proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e006-review.json) with digest-bound artifacts, lifecycle, and fail-closed stale/tamper handling; no public mutation or historical value reuse |
 | `WCNCP-E007` | WCNCP-007 | Three-runner backend convergence/outage proof | `DONE` — [system proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e007-system.json) with converged observations, single lease ownership, outage preservation, restart retry, isolation, and fail-closed negatives; no value timing |
-| `WCNCP-E008` | WCNCP-008 | Fresh ten-family observation capture | `TODO` — the former zero-row record was a premature closure and is retained only as a retracted audit artifact; no cohort freeze or capture has run |
+| `WCNCP-E008` | WCNCP-008 | Fresh ten-family observation capture | `IN_PROGRESS` — [cohort freeze](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/cohort-freeze.json) selects 10 exact primary revisions plus 20 chronological reserves from source-neutral facts after 10 admissible native preflights; the former zero-row record remains retracted and prospective observations remain 0/30 |
 | `WCNCP-E009` | WCNCP-009 | Prospective opportunity breadth report | `WAITING` — blocked on WCNCP-008 |
 | `WCNCP-E010` | WCNCP-010 | Candidate correctness results | `WAITING` — blocked on WCNCP-009 |
 | `WCNCP-E011` | WCNCP-011 | Paired value and complete economics ledger | `WAITING` — blocked on WCNCP-010 and a controlled performance environment |
@@ -1256,9 +1256,9 @@ repository build usable without BuildOpt state.
 
 ## Immediate next action
 
-Execute `WCNCP-008`: freeze ten neutral public families and their exact
-revisions, then collect three fresh ordinary invocations per family through
-the real wrapper/backend path. These observations classify durations by their
+Continue `WCNCP-008` from the committed cohort cutoff: collect three fresh
+ordinary invocations per primary family through the real wrapper/backend path.
+These observations classify durations by their
 actual environment; they do not need a controlled performance runner merely
 to exist. Controlled capacity becomes mandatory only when a later gate tries
 to establish materiality, wrapper overhead, or value. The earlier zero-row

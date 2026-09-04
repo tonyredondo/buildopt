@@ -64,9 +64,11 @@ leases, lease-bound publication, exact outputs, and safe revert; review reuses
 the signed PatchBundle boundary; and three isolated runners converge through
 the real HTTPS batch route with outage preservation. The former zero-row
 `INCOMPLETE_PERFORMANCE_ENVIRONMENT` decision is retracted because WCNCP-008
-never executed. The ten-family cohort remains unselected, and zero prospective
-observations, candidates, pairs, reviews, failures, or value claims exist.
-WCNCP-008 may now freeze the cohort and collect ordinary wrapper observations;
+never executed. The exact ten-family cohort and twenty chronological reserves
+are now frozen after ten source-neutral optimized-native admissibility passes;
+their durations are not performance evidence. Zero prospective observations,
+candidates, pairs, reviews, failures, or value claims exist. WCNCP-008 may now
+collect exactly three ordinary wrapper observations per primary family;
 later candidate and performance gates remain closed.
 
 The pre-capture audit found and repaired one operational omission: central

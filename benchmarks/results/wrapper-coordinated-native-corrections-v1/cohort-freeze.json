@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "buildopt.evidence/wcncp-cohort-freeze/v1",
+  "workItem": "WCNCP-008",
+  "state": "FROZEN_CAPTURE_PENDING",
+  "frozenAt": "2026-09-04T07:07:37Z",
+  "freezeCutoff": "COMMIT_CONTAINING_SUBJECT_MANIFEST",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "purpose": "OPTIMIZED_NATIVE_ADMISSIBILITY_ONLY",
+  "performanceEvidence": false,
+  "detectorInspectedBeforeFreeze": false,
+  "historicalBuildoptEvidenceConsumed": false,
+  "publicSourceMutations": 0,
+  "candidateBuilds": 0,
+  "timingSamples": 0,
+  "limits": {"secondsPerPreflight":1200,"concurrentPreflights":1,"declaredFamilyFootprintGiB":3,"minimumFreeDiskReserveGiB":10,"minimumFreeDiskBeforeStartGiB":13},
+  "selected": [
+    {"ordinal":1,"key":"gradle-intellij-plugin","outcome":"PASS","elapsedSeconds":117,"logSha256":"cbbedffc3c42394fa2987e6a25e6f89247ad49610d73275cd340e339110f6048","terminalEvidence":"BUILD SUCCESSFUL in 1m 55s","harnessOutcome":"COMPLETE"},
+    {"ordinal":2,"key":"gradle-consistent-versions","outcome":"PASS","elapsedSeconds":576,"logSha256":"37b663f44bee934a5a3c4e382d5de1393386e638b37d2e233a5d3c25d6f66b89","terminalEvidence":"BUILD SUCCESSFUL in 9m 34s","harnessOutcome":"COMPLETE"},
+    {"ordinal":3,"key":"mockk","outcome":"PASS","elapsedSeconds":553,"logSha256":"07e82f25e2ff0df1616f41858b3199e00ad7d318f3e932b29b7a26d9a50f2581","terminalEvidence":"BUILD SUCCESSFUL in 9m 12s","harnessOutcome":"COMPLETE"},
+    {"ordinal":4,"key":"junit-pioneer","outcome":"PASS","elapsedSeconds":127,"logSha256":"0ee791088c51dad8d39a0e2e6178cdc5b54e3b25ef75516ea83e3afdb4c020b6","terminalEvidence":"BUILD SUCCESSFUL in 2m 5s","harnessOutcome":"COMPLETE"},
+    {"ordinal":5,"key":"gradle-versions-plugin","outcome":"PASS","elapsedSeconds":1086,"logSha256":"9c93554706a06a0f9dd3c8dac1763234d18bc84d734a1a6720bb7929bd7afb50","terminalEvidence":"BUILD SUCCESSFUL in 18m 6s","harnessOutcome":"INCOMPLETE_TTY_JOB_CONTROL_STOP_AFTER_NATIVE_SUCCESS","recovery":"NATIVE_DAEMON_LOG_CONFIRMED_SUCCESS_BEFORE_EXACT_RESIDUAL_PROCESS_GROUP_TERMINATION"},
+    {"ordinal":6,"key":"protobuf-gradle-plugin","outcome":"PASS","elapsedSeconds":59,"logSha256":"0bbb5aacc46332998410913f8d084ba3389239740c2ddca6faeb68294ff09617","terminalEvidence":"BUILD SUCCESSFUL in 58s","harnessOutcome":"COMPLETE"},
+    {"ordinal":7,"key":"graphql-java","outcome":"PASS","elapsedSeconds":105,"logSha256":"195a1bb786184b1c1b774e6df53e214a28814cd881a3d98f03f509ff48b98c63","terminalEvidence":"BUILD SUCCESSFUL in 1m 44s","harnessOutcome":"COMPLETE"},
+    {"ordinal":8,"key":"apache-groovy","outcome":"PASS","elapsedSeconds":54,"logFile":"apache-groovy-owner.log","logSha256":"cd5992d7ed8b09edfeffd004fb7af0b774fd9e952e014b7a1cd5e96915efc5d1","terminalEvidence":"BUILD SUCCESSFUL in 53s","harnessOutcome":"COMPLETE"},
+    {"ordinal":9,"key":"test-retry-gradle-plugin","outcome":"PASS","elapsedSeconds":77,"logSha256":"6333f2e2e3da5ffc6375e04bd7487b0a76906939290f9753a2970a52e78726dc","terminalEvidence":"BUILD SUCCESSFUL in 1m 16s","harnessOutcome":"COMPLETE"},
+    {"ordinal":10,"key":"spotless","outcome":"PASS","elapsedSeconds":1011,"logSha256":"eb7d2ef9d4cfcf1cf36d2bbaefd651fd49dc9453c7a3d488f0da0937024ed80f","terminalEvidence":"BUILD SUCCESSFUL in 16m 50s","harnessOutcome":"COMPLETE"}
+  ],
+  "nonAuthoritativePreflightRows": [
+    {"key":"apache-groovy","arguments":["classes"],"outcome":"PASS","reason":"REPLACED_BEFORE_FREEZE_BY_EXPLICITLY_DOCUMENTED_OWNER_WORKFLOW","performanceEvidence":false}
+  ],
+  "excluded": [
+    {"key":"dependency-analysis-gradle-plugin","decision":"OPTIMIZED_NATIVE_PREFLIGHT_FAILED","detail":"OWNER_SIGNATORY_UNAVAILABLE"},
+    {"key":"cyclonedx-gradle-plugin","decision":"WRAPPER_OR_TOOLCHAIN_INCOMPATIBLE","detail":"REQUIRES_JDK_8_OUTSIDE_FROZEN_SET"},
+    {"key":"jib","decision":"FIXED_PREFLIGHT_LIMIT_EXCEEDED","detail":"1200_SECOND_TIMEOUT"},
+    {"key":"gradle-maven-publish-plugin","decision":"FIXED_PREFLIGHT_LIMIT_EXCEEDED","detail":"1200_SECOND_TIMEOUT_AFTER_ONE_INFRASTRUCTURE_RETRY"},
+    {"key":"gradle-baseline","decision":"OPTIMIZED_NATIVE_PREFLIGHT_FAILED","detail":"OWNER_WORKFLOW_TESTKIT_FAILURE"},
+    {"key":"jmh-gradle-plugin","decision":"OPTIMIZED_NATIVE_PREFLIGHT_FAILED","detail":"OWNER_WORKFLOW_TEST_FAILURE"},
+    {"key":"detekt","decision":"PREFLIGHT_INCONCLUSIVE_INFRASTRUCTURE_INTERRUPTION","detail":"TWO_INTERRUPTION_ROWS_RETAINED_NO_THIRD_ATTEMPT"},
+    {"key":"shadow","decision":"WRAPPER_OR_TOOLCHAIN_INCOMPATIBLE","detail":"REQUIRES_JDK_26_OUTSIDE_FROZEN_SET"},
+    {"key":"gradle-node-plugin","decision":"FIXED_PREFLIGHT_LIMIT_EXCEEDED","detail":"1200_SECOND_TIMEOUT"},
+    {"key":"kotlin-logging","decision":"OWNER_WORKFLOW_UNAVAILABLE","detail":"ANDROID_SDK_REQUIREMENT_NOT_DECLARED_FOR_CONTROLLED_OWNER_ENVIRONMENT"},
+    {"key":"foojay-toolchains","decision":"OPTIMIZED_NATIVE_PREFLIGHT_FAILED","detail":"OWNER_WORKFLOW_TEST_FAILURE"},
+    {"key":"ktlint-gradle","decision":"OPTIMIZED_NATIVE_PREFLIGHT_FAILED","detail":"OWNER_WORKFLOW_TEST_FAILURE_9_OF_192_TESTS"},
+    {"key":"gradle-download-task","decision":"WRAPPER_OR_TOOLCHAIN_INCOMPATIBLE","detail":"REQUIRES_JDK_8_OUTSIDE_FROZEN_SET"},
+    {"key":"version-catalog-update-plugin","decision":"WRAPPER_OR_TOOLCHAIN_INCOMPATIBLE","detail":"REQUIRES_JDK_11_OUTSIDE_FROZEN_SET"},
+    {"key":"plugin-publish-plugin","decision":"REPOSITORY_UNAVAILABLE","detail":"PUBLIC_REPOSITORY_URL_NOT_FOUND"}
+  ],
+  "counts": {"selectedFamilies":10,"selectedWithoutPriorQualifiedReviewedNativeRecipe":9,"reserveRevisions":20,"excludedCandidates":15,"prospectiveObservations":0}
+}
