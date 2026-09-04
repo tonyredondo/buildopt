@@ -55,8 +55,16 @@ buildopt_minimum_memory=$(jq -r '.environment.minimumHostMemoryBytes' "${buildop
     printf 'controlled host exposes fewer than four CPUs\n' >&2
     exit 1
 }
-buildopt_mains_online=$(awk 'FNR==1 {type=$0} FNR==2 && type=="Mains" {print $0}' /sys/class/power_supply/*/{type,online} 2>/dev/null | head -n 1)
-[[ ${buildopt_mains_online} == 1 ]] || {
+buildopt_mains_online=0
+for buildopt_power_supply in /sys/class/power_supply/*; do
+    if [[ -r ${buildopt_power_supply}/type && -r ${buildopt_power_supply}/online && \
+          $(<"${buildopt_power_supply}/type") == Mains && \
+          $(<"${buildopt_power_supply}/online") == 1 ]]; then
+        buildopt_mains_online=1
+        break
+    fi
+done
+((buildopt_mains_online == 1)) || {
     printf 'controlled capture requires mains power\n' >&2
     exit 1
 }
