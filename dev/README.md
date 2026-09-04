@@ -5798,6 +5798,11 @@ result summary. `run-wcncp-controlled-materiality-v2` binds the versioned
 WCNCP-009B contract and adds its fixed 120-second post-prefetch quiescence
 interval before the same unchanged stability threshold. The matching `-v2`
 plan and evidence checkers keep the failed WCNCP-009A attempt immutable.
+If the post-build analyzer fails before capture materialization, the explicit
+`--resume-after-analyzer-failure` mode accepts exactly one raw successful
+partial row, preserves its trace with a null external elapsed value, and
+continues without repeating that build. Zero or multiple partial rows and every
+other partial shape fail closed; family and task names never select recovery.
 
 ```bash
 ./dev/check-wcncp-opportunity-breadth [/absolute/source-root]

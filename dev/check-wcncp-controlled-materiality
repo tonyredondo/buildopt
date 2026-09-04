@@ -94,6 +94,7 @@ buildopt_temp=$(mktemp -d /tmp/buildopt-wcncp-materiality-check.XXXXXX)
 trap 'rm -rf -- "${buildopt_temp}"' EXIT
 buildopt_rebuilt_families=${buildopt_temp}/families.jsonl
 buildopt_starts=0
+buildopt_recovered_rows=0
 
 while IFS= read -r buildopt_definition; do
     buildopt_family=$(jq -r '.key' <<<"${buildopt_definition}")
@@ -124,12 +125,17 @@ while IFS= read -r buildopt_definition; do
             --arg graphSha "${buildopt_graph_sha}" '
             .schemaVersion == "buildopt.wcncp/controlled-materiality-capture/v1" and
             .ordinal == $ordinal and .revision == $revision and .sourceArchiveSha256 == $archive and
-            .child.exitCode == 0 and .child.elapsedMilliseconds > 0 and .child.outcome == "SUCCESS" and
+            .child.exitCode == 0 and .child.outcome == "SUCCESS" and
+            ((.child.recoveredAfterAnalyzerFailure == false and .child.elapsedMilliseconds > 0) or
+             (.child.recoveredAfterAnalyzerFailure == true and .child.elapsedMilliseconds == null)) and
             .operationTraceSha256 == $operationsSha and .taskGraphSha256 == $graphSha and
             .environmentClass == "CONTROLLED_PERFORMANCE" and .performanceGateAuthority == true and
             .publicSourceModified == false and .candidateBuild == false and
             .pairedValueTimingSample == false and .productFailures == 0
         ' "${buildopt_capture}" >/dev/null
+        if [[ $(jq -r '.child.recoveredAfterAnalyzerFailure' "${buildopt_capture}") == true ]]; then
+            buildopt_recovered_rows=$((buildopt_recovered_rows + 1))
+        fi
         buildopt_rebuilt=${buildopt_temp}/${buildopt_family}-${buildopt_ordinal}-analysis.json
         buildopt_analysis_arguments=(
             --operations "${buildopt_operations}"
@@ -161,6 +167,7 @@ while IFS= read -r buildopt_definition; do
 done < <(jq -c '.families[]' "${buildopt_contract}")
 
 ((buildopt_starts == 6))
+((buildopt_recovered_rows <= 1))
 jq -s '.' "${buildopt_rebuilt_families}" >"${buildopt_temp}/families.json"
 diff -u \
     <(jq -S '.families' "${buildopt_result}") \

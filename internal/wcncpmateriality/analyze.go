@@ -12,7 +12,6 @@ import (
 	"io"
 	"os"
 	"sort"
-	"strings"
 
 	"github.com/tonyredondo/buildopt/internal/gradlecriticalpath"
 )
@@ -112,8 +111,8 @@ func Analyze(operationPath, graphPath, family, method, taskClass string) (Report
 		WorkflowMs: workflowMs, CriticalPathContributionMs: contribution,
 		MaterialPercent: percent, MatchedTasks: matched,
 		MinimumMillisecondsPassed: contribution >= 500,
-		MinimumPercentPassed: percent >= 2,
-		EnvironmentClass: "CONTROLLED_PERFORMANCE", PerformanceGateAuthority: true,
+		MinimumPercentPassed:      percent >= 2,
+		EnvironmentClass:          "CONTROLLED_PERFORMANCE", PerformanceGateAuthority: true,
 	}, nil
 }
 
@@ -150,7 +149,7 @@ func operationDurations(path string) (int64, int64, error) {
 	}
 	var root operation
 	for _, row := range starts {
-		if row.ParentID == nil && row.DisplayName == "Run build" && strings.Contains(row.DetailsClassName, "RunAsBuildOperationBuildActionExecutor") {
+		if row.ParentID == nil && row.DisplayName == "Run build" {
 			if root.StartTime != nil {
 				return 0, 0, errors.New("multiple root build operations")
 			}

@@ -66,6 +66,40 @@ func TestRejectsIncompleteTrace(t *testing.T) {
 	}
 }
 
+func TestAcceptsCurrentGradleRootOperationOwner(t *testing.T) {
+	directory := t.TempDir()
+	operations := filepath.Join(directory, "operations.jsonl")
+	graph := filepath.Join(directory, "graph.jsonl")
+	write(t, operations, `{"displayName":"Run build","detailsClassName":"org.gradle.launcher.exec.DefaultBuildTreeActionExecutor$1","id":1,"startTime":0}
+{"displayName":"Load build","id":2,"parentId":1,"startTime":100}
+{"id":2,"endTime":200}
+{"displayName":"Configure build","id":3,"parentId":1,"startTime":250}
+{"id":3,"endTime":350}
+{"displayName":"Calculate build tree task graph","id":4,"parentId":1,"startTime":400}
+{"id":4,"endTime":500}
+{"id":1,"endTime":1000}
+`)
+	write(t, graph, "unused\n")
+	if _, err := Analyze(operations, graph, "example", "CONFIGURATION_CACHE_UNLOCK", ""); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestRejectsAmbiguousRootOperations(t *testing.T) {
+	directory := t.TempDir()
+	operations := filepath.Join(directory, "operations.jsonl")
+	graph := filepath.Join(directory, "graph.jsonl")
+	write(t, operations, `{"displayName":"Run build","id":1,"startTime":0}
+{"displayName":"Run build","id":2,"startTime":0}
+{"id":1,"endTime":1000}
+{"id":2,"endTime":1000}
+`)
+	write(t, graph, "unused\n")
+	if _, err := Analyze(operations, graph, "example", "CONFIGURATION_CACHE_UNLOCK", ""); err == nil {
+		t.Fatal("ambiguous roots were accepted")
+	}
+}
+
 func TestCriticalTaskClassMateriality(t *testing.T) {
 	directory := t.TempDir()
 	operations := filepath.Join(directory, "operations.jsonl")
