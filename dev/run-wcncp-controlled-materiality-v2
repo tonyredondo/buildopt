@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+
+BUILDOPT_WCNCP_MATERIALITY_CONTRACT=${buildopt_repo_root}/specs/poc-wcncp-controlled-materiality-v2.json \
+BUILDOPT_WCNCP_MATERIALITY_PLAN_CHECKER=${buildopt_script_dir}/check-wcncp-controlled-materiality-plan-v2 \
+    exec "${buildopt_script_dir}/run-wcncp-controlled-materiality" "$@"

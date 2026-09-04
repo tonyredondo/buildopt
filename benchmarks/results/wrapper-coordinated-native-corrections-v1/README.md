@@ -5,8 +5,12 @@ State: `OPPORTUNITY_BREADTH_INCOMPLETE`. Functional lanes `WCNCP-001` through
 `WCNCP-009` reconstructed every source and diagnostic row, but remains open for
 controlled critical-path materiality on three families. The prospective
 [`WCNCP-009A` successor](../../../specs/poc-wcncp-controlled-materiality-v1.md)
-preserves the exhausted local rows and freezes six new controlled starts before
-the first dependency prefetch.
+preserved the exhausted local rows but its first attempt failed the stability
+gate at 5.1795 after setup and before every controlled diagnostic. The checked
+failure is retained under [`wcncp-e009a/attempt-1`](./wcncp-e009a/attempt-1/).
+The separately frozen [`WCNCP-009B`](../../../specs/poc-wcncp-controlled-materiality-v2.md)
+adds only a fixed 120-second post-prefetch quiescence interval before the
+unchanged gate and a fresh six-start budget.
 
 The pre-capture operational audit also added the missing administrative
 `wcncp-actor grant` command: transport token issuance alone remains
@@ -30,6 +34,7 @@ Current state:
 - selected additional native diagnostics: 16 (maximum 20);
 - conclusive opportunity families: 7/10;
 - potential correction families awaiting controlled materiality: 3;
+- WCNCP-009A controlled diagnostic starts: 0 (environment gate failed);
 - public source patches: 0;
 - candidate builds: 0;
 - timing samples: 0;

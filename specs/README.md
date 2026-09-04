@@ -12,12 +12,14 @@ The active product pivot is the
 `WCNCP-000` freezes wrapper/backend observation, coordination, validation, and
 owner review while leaving native Gradle as the build runtime. Its exact
 ten-family cohort and 30 observations are frozen. WCNCP-009 is incomplete at
-7/10 conclusive families pending the separately frozen WCNCP-009A controlled
-materiality successor; value remains at zero.
+7/10 conclusive families. WCNCP-009A stopped at its environment gate with zero
+diagnostic rows; the separately frozen WCNCP-009B successor adds fixed
+post-prefetch quiescence before the unchanged gate. Value remains at zero.
 
 | Specification | Owning item |
 |---|---|
-| [`poc-wcncp-controlled-materiality-v1.md`](./poc-wcncp-controlled-materiality-v1.md) and [machine contract](./poc-wcncp-controlled-materiality-v1.json) | `WCNCP-009A` preserves the exhausted local rows and freezes two controlled critical-path diagnostics for each of GraphQL Java, Apache Groovy, and Test Retry. No measurement, candidate, public mutation, or value claim exists yet |
+| [`poc-wcncp-controlled-materiality-v2.md`](./poc-wcncp-controlled-materiality-v2.md) and [machine contract](./poc-wcncp-controlled-materiality-v2.json) | `WCNCP-009B` preserves the zero-row WCNCP-009A failure and freezes the same controlled design with a fixed 120-second quiescence interval before the unchanged stability gate |
+| [`poc-wcncp-controlled-materiality-v1.md`](./poc-wcncp-controlled-materiality-v1.md) and [machine contract](./poc-wcncp-controlled-materiality-v1.json) | `WCNCP-009A` preserved the exhausted local rows; its first attempt failed the frozen stability gate at 5.1795 before every controlled diagnostic. No candidate, public mutation, paired value sample, or value claim exists |
 | [`poc-wrapper-coordinated-native-corrections-v1.md`](./poc-wrapper-coordinated-native-corrections-v1.md), [machine contract](./poc-wrapper-coordinated-native-corrections-v1.json) and [frozen subjects](./poc-wrapper-coordinated-native-corrections-v1.subjects.json) | `WCNCP-000..008` complete; `WCNCP-009` reconstructs 30 observations and 16 bounded diagnostics but remains `INCOMPLETE_EXPERIMENT_INPUT` at 7/10 conclusive families until controlled materiality resolves three source-bound possibilities. Public mutation, candidates, timing samples and value remain closed |
 | [`poc-critical-path-build-logic-correction-v1.md`](./poc-critical-path-build-logic-correction-v1.md), [machine contract](./poc-critical-path-build-logic-correction-v1.json) and [subjects](./poc-critical-path-build-logic-correction-v1.subjects.json) | `CPBLC-001..006`: 5/5 conclusive exact source trees, 61 material standard tasks and six explicit opt-outs, all bound to non-material tasks; 0/5 proposal families stop correctness and timing |
 | [`poc-critical-path-first-reviewed-native-patch-v1.md`](./poc-critical-path-first-reviewed-native-patch-v1.md), [machine contract](./poc-critical-path-first-reviewed-native-patch-v1.json) and [subjects](./poc-critical-path-first-reviewed-native-patch-v1.subjects.json) | `CPFRNP-001..007`: 10 diagnostic rows, 4/10 conclusive and 0/10 proposal families; 19 material critical-path tasks in complete rows are all standard Gradle/Kotlin tasks, so source/correctness/value remain closed |

@@ -10,8 +10,15 @@ buildopt_output=$1
 buildopt_work=$2
 buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
-buildopt_contract=${buildopt_repo_root}/specs/poc-wcncp-controlled-materiality-v1.json
+buildopt_contract=${BUILDOPT_WCNCP_MATERIALITY_CONTRACT:-${buildopt_repo_root}/specs/poc-wcncp-controlled-materiality-v1.json}
+buildopt_plan_checker=${BUILDOPT_WCNCP_MATERIALITY_PLAN_CHECKER:-${buildopt_script_dir}/check-wcncp-controlled-materiality-plan}
 buildopt_subjects=${buildopt_repo_root}/specs/poc-wrapper-coordinated-native-corrections-v1.subjects.json
+buildopt_contract_version=$(jq -r '.schemaVersion | split("/")[-1]' "${buildopt_contract}")
+buildopt_work_item=$(jq -r '.workItem' "${buildopt_contract}")
+buildopt_environment_schema=buildopt.wcncp/controlled-materiality-environment/${buildopt_contract_version}
+buildopt_result_schema=buildopt.wcncp/controlled-materiality-result/${buildopt_contract_version}
+buildopt_preflight_algorithm=$(jq -r '.environment.preflight.algorithm' "${buildopt_contract}")
+buildopt_quiescence_seconds=$(jq -r '.environment.minimumPostPrefetchQuiescenceSeconds // 0' "${buildopt_contract}")
 
 [[ ${buildopt_output} == /* && ${buildopt_work} == /* && \
    ! -e ${buildopt_output} && ! -e ${buildopt_work} && \
@@ -21,13 +28,13 @@ buildopt_subjects=${buildopt_repo_root}/specs/poc-wrapper-coordinated-native-cor
 }
 [[ ${buildopt_output} != "${buildopt_work}" ]]
 
-for buildopt_command in awk date df git gzip head jq nproc pgrep powerprofilesctl sha256sum taskset timeout; do
+for buildopt_command in awk date df git gzip head jq nproc pgrep powerprofilesctl sha256sum sleep taskset timeout; do
     command -v "${buildopt_command}" >/dev/null 2>&1 || {
         printf 'required controlled-materiality command is unavailable: %s\n' "${buildopt_command}" >&2
         exit 1
     }
 done
-"${buildopt_script_dir}/check-wcncp-controlled-materiality-plan"
+"${buildopt_plan_checker}"
 [[ -z $(git -C "${buildopt_repo_root}" status --short) ]] || {
     printf 'BuildOpt tree must be clean before controlled capture\n' >&2
     exit 1
@@ -157,6 +164,11 @@ if pgrep -f '[o]rg.gradle.launcher.daemon.bootstrap.GradleDaemon' >/dev/null; th
     exit 1
 fi
 
+if ((buildopt_quiescence_seconds > 0)); then
+    printf '%s fixed post-prefetch quiescence: %s seconds\n' "${buildopt_work_item}" "${buildopt_quiescence_seconds}"
+    sleep "${buildopt_quiescence_seconds}"
+fi
+
 buildopt_preflight_file=${buildopt_work}/preflight-128m.bin
 head -c $((128 * 1024 * 1024)) /dev/zero >"${buildopt_preflight_file}"
 buildopt_preflight_rows=${buildopt_output}/preflight-rows.jsonl
@@ -174,6 +186,7 @@ buildopt_preflight_maximum=$(jq -r '.environment.preflight.maximumToMinimumRatio
 buildopt_preflight_passed=$(jq -n --argjson actual "${buildopt_preflight_ratio}" --argjson maximum "${buildopt_preflight_maximum}" '$actual <= $maximum')
 
 jq -n \
+    --arg schemaVersion "${buildopt_environment_schema}" \
     --arg recordedAt "$(date --utc +%Y-%m-%dT%H:%M:%SZ)" \
     --arg kernel "$(uname -r)" \
     --arg cpuModel "$(awk -F: '/model name/ {sub(/^ /,"",$2); print $2; exit}' /proc/cpuinfo)" \
@@ -185,26 +198,30 @@ jq -n \
     --argjson freeBytesBefore "${buildopt_free_bytes}" \
     --argjson preflightRatio "${buildopt_preflight_ratio}" \
     --argjson preflightPassed "${buildopt_preflight_passed}" \
+    --arg preflightAlgorithm "${buildopt_preflight_algorithm}" \
+    --argjson quiescenceSeconds "${buildopt_quiescence_seconds}" \
     --slurpfile preflightRows "${buildopt_preflight_rows}" '
     {
-      schemaVersion:"buildopt.wcncp/controlled-materiality-environment/v1",
+      schemaVersion:$schemaVersion,
       recordedAt:$recordedAt,environmentClass:"CONTROLLED_PERFORMANCE",
       performanceGateAuthority:$preflightPassed,
       host:{operatingSystem:"linux",architecture:"amd64",kernel:$kernel,cpuModel:$cpuModel,
         cpuCount:$hostCpuCount,memoryBytes:$hostMemoryBytes,dedicated:false,mainsPower:true,
         powerProfile:"performance",scalingDriver:"intel_pstate",scalingGovernor:"powersave",
         energyPerformancePreference:"performance",cpuAffinity:"0-3",maximumWorkers:4,
-        backgroundPolicy:"NO_CONCURRENT_AGENT_LAUNCHED_BUILD_OR_BENCHMARK"},
+        backgroundPolicy:"NO_CONCURRENT_AGENT_LAUNCHED_BUILD_OR_BENCHMARK",
+        postPrefetchQuiescenceSeconds:$quiescenceSeconds},
       disk:{freeBytesBefore:$freeBytesBefore,maximumConcurrentGiB:20,minimumReserveGiB:10},
-      preflight:{algorithm:"SHA256_128_MIB_ZERO_BUFFER_V1",rows:$preflightRows,
+      preflight:{algorithm:$preflightAlgorithm,rows:$preflightRows,
         maximumToMinimumRatio:$preflightRatio,maximumAllowed:1.15,passed:$preflightPassed},
       bindings:{contractCommit:$contractCommit,contractSha256:$contractSha256,subjectsSha256:$subjectsSha256}
     }
   ' >"${buildopt_output}/environment.json"
 
 if [[ ${buildopt_preflight_passed} != true ]]; then
-    jq -n --slurpfile environment "${buildopt_output}/environment.json" '{
-      schemaVersion:"buildopt.wcncp/controlled-materiality-result/v1",workItem:"WCNCP-009A",
+    jq -n --arg schemaVersion "${buildopt_result_schema}" --arg workItem "${buildopt_work_item}" \
+      --slurpfile environment "${buildopt_output}/environment.json" '{
+      schemaVersion:$schemaVersion,workItem:$workItem,
       decision:"INCOMPLETE_PERFORMANCE_ENVIRONMENT",environment:$environment[0],
       controlledDiagnosticStarts:0,publicSourceModified:false,candidateBuilds:0,
       pairedValueTimingSamples:0,speedupClaim:false,productFailures:0
@@ -271,12 +288,14 @@ done
 
 jq -n \
     --slurpfile environment "${buildopt_output}/environment.json" \
+    --arg schemaVersion "${buildopt_result_schema}" \
+    --arg workItem "${buildopt_work_item}" \
     --arg contractSha256 "$(sha256sum "${buildopt_contract}" | awk '{print $1}')" \
     --argjson families "$(jq -c '[.families[] | {key,method,sourceClosure}]' "${buildopt_contract}")" \
     --arg output "${buildopt_output}" '
     def rows($key): [1,2] | map(. as $ordinal | input_filename);
     {
-      schemaVersion:"buildopt.wcncp/controlled-materiality-result/v1",workItem:"WCNCP-009A",
+      schemaVersion:$schemaVersion,workItem:$workItem,
       environment:$environment[0],contractSha256:$contractSha256,
       familyDefinitions:$families,controlledDiagnosticStarts:6,
       publicSourceModified:false,candidateBuilds:0,pairedValueTimingSamples:0,
@@ -318,4 +337,4 @@ jq --slurpfile families "${buildopt_output}/families.json" '
 ' "${buildopt_output}/result.base.json" >"${buildopt_output}/result.json"
 rm -f -- "${buildopt_output}/result.base.json" "${buildopt_family_rows}"
 
-printf 'WCNCP-009A controlled materiality captured at %s\n' "${buildopt_output}"
+printf '%s controlled materiality captured at %s\n' "${buildopt_work_item}" "${buildopt_output}"

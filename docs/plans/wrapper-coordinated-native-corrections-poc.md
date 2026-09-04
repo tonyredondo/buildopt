@@ -3,15 +3,18 @@
 ## Status
 
 **Overall:** `OPPORTUNITY_BREADTH_INCOMPLETE`<br>
-**Current block:** `WCNCP-009A` is frozen before execution; it may collect only
-controlled critical-path materiality for the three incomplete families.<br>
+**Current block:** `WCNCP-009B` is frozen before execution; it may collect only
+controlled critical-path materiality for the three incomplete families after
+the fixed post-prefetch quiescence gate.<br>
 **Reference baseline inspected while writing this plan:**
 `b8a195dc9fd55a52c15202b77f0bb979f8c97fa3`.<br>
 **Execution authority:** `WCNCP-001` through `WCNCP-007` establish the repaired
 functional foundation and `WCNCP-008` proves complete prospective observation
 capture. `WCNCP-009` consumed both original diagnostic slots for each incomplete
-family on `LOCAL_FUNCTIONAL` rows. The separately versioned `WCNCP-009A`
-contract preserves those rows and supplies six fresh controlled starts. Public
+family on `LOCAL_FUNCTIONAL` rows. `WCNCP-009A` preserved those rows but stopped
+at a 5.1795 stability ratio before every controlled diagnostic. The separately
+versioned `WCNCP-009B` preserves that failure, adds a fixed 120-second
+post-prefetch quiescence interval, and supplies six fresh controlled starts. Public
 source mutation, candidate execution, value
 timing, owner contact, proposal application, merge, and product-value claims
 remain closed until their ordered gates authorize them.
@@ -806,6 +809,7 @@ incorrect or misleading artifact.
 | 8 | `WCNCP-008` Prospective cohort capture | Frozen ten-family manifest and 30 fresh ordinary wrapper observations from empty state | 10/10 families have conclusive observation completeness or experiment is `INCOMPLETE` |
 | 9 | `WCNCP-009` Opportunity breadth gate | Independent reconstruction of observations, detector rows, critical-path materiality, and family counts | At least 3/10 families have actionable material corrections; otherwise stop before candidates |
 | 9A | `WCNCP-009A` Controlled materiality successor | Two fresh controlled critical-path rows for GraphQL Java, Apache Groovy, and Test Retry without replacing the exhausted local diagnostics | Fold 3/3 conclusive decisions into WCNCP-009; require at least 3/10 actionable material families before candidates |
+| 9B | `WCNCP-009B` Fixed-quiescence controlled materiality successor | Preserve the zero-row WCNCP-009A environment failure and run the same six-row design only after a fixed 120-second post-prefetch quiescence interval | Fold 3/3 conclusive decisions into WCNCP-009; require at least 3/10 actionable material families before candidates |
 | 10 | `WCNCP-010` Candidate correctness | At most one candidate per admitted family; source, behavior, invalidation, outputs, owner tests, and exact revert | At least two families pass correctness; any product correctness failure forces terminal stop |
 | 11 | `WCNCP-011` Paired value and economics | Eight-pair controlled results, wrapper/backend costs, rejected-candidate costs, operational payback, and cumulative ledger | At least two families qualify value and portfolio signed value is positive; standard CI cannot decide this gate |
 | 12 | `WCNCP-012` First-exposure owner review | Review artifacts and measured owner decisions only for value-qualified proposals | All artifacts understood; median active review <=5 minutes; no critical unresolved safety issue |
@@ -1253,7 +1257,8 @@ repository build usable without BuildOpt state.
 | `WCNCP-E007` | WCNCP-007 | Three-runner backend convergence/outage proof | `DONE` — [system proof](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e007-system.json) with converged observations, single lease ownership, outage preservation, restart retry, isolation, and fail-closed negatives; no value timing |
 | `WCNCP-E008` | WCNCP-008 | Fresh ten-family observation capture | `DONE` — [capture report](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e008-capture.json), [immutable observations](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/observations), and independent checker reconstruct 10/10 conclusive families, 30/30 successful native children and output manifests, and ten acknowledged TLS snapshots; three excluded runner/infrastructure attempts are retained separately and are not product failures |
 | `WCNCP-E009` | WCNCP-009 | Prospective opportunity breadth report | `INCOMPLETE_EXPERIMENT_INPUT` — [breadth report](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e009-breadth.json), [fresh source and selected diagnostics](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e009), and independent checker reconstruct 30 observations, 16 starts, 7/10 conclusive families and three source-bound possibilities. Only controlled critical-path materiality may complete the gate; no public mutation, candidate, timing sample, or value claim exists |
-| `WCNCP-E009A` | WCNCP-009A | Prospective controlled-materiality contract, runner, analyzer, and reconstruction | `FROZEN_NO_MEASUREMENT` — [successor contract](../../specs/poc-wcncp-controlled-materiality-v1.md) preserves every original row and freezes six controlled starts across the exact three incomplete families. No dependency prefetch or result exists yet |
+| `WCNCP-E009A` | WCNCP-009A | Prospective controlled-materiality contract, runner, analyzer, and reconstruction | `INCOMPLETE_PERFORMANCE_ENVIRONMENT` — [attempt 1](../../benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e009a/attempt-1/result.json) failed the unchanged 1.15 stability gate at 5.1795 after all three unmeasured prefetches and before every controlled diagnostic row. Starts, candidates, source mutations, paired timing, and product failures remain zero |
+| `WCNCP-E009B` | WCNCP-009B | Fixed-quiescence controlled-materiality successor | `FROZEN_NO_MEASUREMENT` — [v2 contract](../../specs/poc-wcncp-controlled-materiality-v2.md) adds only a fixed 120-second post-prefetch quiescence interval before the unchanged single preflight and fresh six-start budget |
 | `WCNCP-E010` | WCNCP-010 | Candidate correctness results | `WAITING` — blocked on WCNCP-009 |
 | `WCNCP-E011` | WCNCP-011 | Paired value and complete economics ledger | `WAITING` — blocked on WCNCP-010 and a controlled performance environment |
 | `WCNCP-E012` | WCNCP-012 | First-exposure owner review artifacts/results | `WAITING` — blocked on value-qualified proposals |
@@ -1261,9 +1266,9 @@ repository build usable without BuildOpt state.
 
 ## Immediate next action
 
-Commit and validate `WCNCP-009A` before its first dependency prefetch. Then set
-this owner-operated host temporarily to its `performance` power/EPP profile, run the
-frozen stability preflight, and collect exactly two controlled critical-path
+Commit and validate `WCNCP-009B` before its first dependency prefetch. Then keep
+this owner-operated host temporarily on its `performance` power/EPP profile, run
+the fixed quiescence interval and frozen stability preflight, and collect exactly two controlled critical-path
 rows for GraphQL Java, Apache Groovy, and Test Retry. A failed preflight is
 `INCOMPLETE_PERFORMANCE_ENVIRONMENT`; it never weakens the gate. Require 10/10
 conclusive families and at least 3/10 actionable material families before

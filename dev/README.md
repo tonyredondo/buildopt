@@ -5787,20 +5787,25 @@ The checked result is `INCOMPLETE_EXPERIMENT_INPUT`: seven families are
 conclusive and three source-bound possibilities require controlled critical-path
 materiality. Standard or local CI cannot qualify or reject them.
 
-`run-wcncp-controlled-materiality` is the single-use WCNCP-009A continuation
+`run-wcncp-controlled-materiality` is the WCNCP-009A controlled runner
 for those exact three families. Its committed contract requires mains power,
 the `performance` power profile and EPP under `intel_pstate`, CPU affinity 0-3,
 four Gradle workers, a seven-row
 stability preflight, separate clean source roots, and exactly six controlled
 diagnostic starts. `check-wcncp-controlled-materiality` decompresses and
 reanalyzes every Gradle operation trace and task graph instead of trusting the
-result summary.
+result summary. `run-wcncp-controlled-materiality-v2` binds the versioned
+WCNCP-009B contract and adds its fixed 120-second post-prefetch quiescence
+interval before the same unchanged stability threshold. The matching `-v2`
+plan and evidence checkers keep the failed WCNCP-009A attempt immutable.
 
 ```bash
 ./dev/check-wcncp-opportunity-breadth [/absolute/source-root]
 ./dev/check-wcncp-opportunity-breadth-negatives
 ./dev/check-wcncp-controlled-materiality-plan
 ./dev/check-wcncp-controlled-materiality /absolute/evidence
+./dev/check-wcncp-controlled-materiality-plan-v2
+./dev/check-wcncp-controlled-materiality-v2 /absolute/evidence
 ```
 
 ## Update policy
