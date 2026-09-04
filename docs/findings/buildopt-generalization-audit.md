@@ -337,9 +337,12 @@ cache opt-outs. It targets strict Configuration Cache problems caused by
 repository-owned configuration-time external state reads and permits only
 Gradle-supported `ProviderFactory` or typed `ValueSource` corrections. Its first
 ten-family cohort must exclude WCNCP and historical recipe families, and every
-row starts at zero after a separate freeze. CINC-001 now reconstructs eleven
-fixture-only rows, including every unsafe and ambiguous negative; exact fresh
-cohort freeze is next and public evidence remains zero.
+row starts at zero after a separate freeze. CINC-001 reconstructs eleven
+fixture-only rows, including every unsafe and ambiguous negative. CINC-002 now
+binds ten fresh public primaries, twenty reserves and ten Configuration-Cache-
+disabled native preflight passes. The next block captures two fresh strict
+diagnostics per family; public mutations, candidates, timings and value remain
+zero.
 
 The current order and stop conditions live in the completed
 [Wrapper-Coordinated Native Corrections POC](../plans/wrapper-coordinated-native-corrections-poc.md).

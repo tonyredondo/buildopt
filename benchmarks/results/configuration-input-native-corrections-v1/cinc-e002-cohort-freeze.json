@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "buildopt.evidence/cinc-cohort-freeze/v1",
+  "workItem": "CINC-002",
+  "state": "EXACT_COHORT_FROZEN",
+  "frozenAt": "2026-09-04T22:17:53Z",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "purpose": "OPTIMIZED_NATIVE_ADMISSIBILITY_ONLY",
+  "performanceEvidence": false,
+  "selectionInputs": {
+    "detectorSyntaxInspected": false,
+    "configurationCacheOutcomeInspected": false,
+    "historicalBuildOptEvidenceConsumed": false,
+    "nativePreflightConfigurationCache": "DISABLED",
+    "nativePreflightBuildScan": "DISABLED_AFTER_MOCKITO_DEFAULT_DISCOVERY"
+  },
+  "publicSourceMutations": 0,
+  "strictDiagnostics": 0,
+  "candidateBuilds": 0,
+  "timingSamples": 0,
+  "productFailures": 0,
+  "limits": {"secondsPerPreflight":1200,"concurrentPreflights":1,"maximumWorkers":4,"maximumAdditionalDiskGiB":20,"minimumFreeDiskBeforeStartGiB":10,"stopBeforeNextStartFreeDiskGiB":8},
+  "selected": [
+    {"ordinal":1,"key":"dependency-analysis-gradle-plugin","outcome":"PASS","elapsedSeconds":2,"logFile":"dependency-analysis-buildHealth.log","logSha256":"a12d8bc18d968cc8ef07821a4e929cf22267d22c57e47db4034f7fd20407b445","terminalEvidence":"BUILD SUCCESSFUL in 2s"},
+    {"ordinal":2,"key":"detekt","outcome":"PASS","elapsedSeconds":218,"logFile":"detekt-buildHealth.log","logSha256":"2cc4901049853f6c0f9f7c789fcb0c4fac6b283334d4023360cb52e526c31dea","terminalEvidence":"BUILD SUCCESSFUL in 3m 38s"},
+    {"ordinal":3,"key":"gradle-node-plugin","outcome":"PASS","elapsedSeconds":99,"logFile":"gradle-node-helloWorld.log","logSha256":"bcb970ad7d3f523ddef9691d8193aff3768b5fb81d1da0a59990b24c72997106","terminalEvidence":"BUILD SUCCESSFUL in 1m 39s"},
+    {"ordinal":4,"key":"ksp","outcome":"PASS","elapsedSeconds":186,"logFile":"ksp-checkApi.log","logSha256":"81a72f10fb2c5a895f4788bf57367419fee7a915667edd520fb119b20a8279d3","terminalEvidence":"BUILD SUCCESSFUL in 3m 6s"},
+    {"ordinal":5,"key":"native-build-tools","outcome":"PASS","elapsedSeconds":223,"logFile":"native-build-tools-utils.log","logSha256":"bf47fdb834d038fe87fce644612f2d2a649b5c880b948c86f0da7bf707f1867d","terminalEvidence":"BUILD SUCCESSFUL in 3m 43s"},
+    {"ordinal":6,"key":"testcontainers-java","outcome":"PASS","elapsedSeconds":680,"logFile":"testcontainers-build-no-test.log","logSha256":"d0295e9fa6ebd98f00c050447f8482879d1e7b0dd97b4de9b0a049f12eaaa81f","terminalEvidence":"BUILD SUCCESSFUL in 11m 20s"},
+    {"ordinal":7,"key":"mockito","outcome":"PASS","elapsedSeconds":627,"logFile":"mockito-build-jdk17.log","logSha256":"9f503fc000e5129d287b93cf2fe27e67d8e7e0f9f5309bc57ef7a1e80621be50","terminalEvidence":"BUILD SUCCESSFUL in 10m 27s","unexpectedTelemetry":"PROJECT_DEFAULT_BUILD_SCAN_PUBLISHED","mitigationForSubsequentStarts":"--no-scan"},
+    {"ordinal":8,"key":"openapi-generator","outcome":"PASS","elapsedSeconds":125,"logFile":"openapi-oneof-discriminator.log","logSha256":"3903f52e50eedbce5b022c0391ec8a7f11d77635c4561e6aaf78d17c02544aa7","terminalEvidence":"BUILD SUCCESSFUL in 2m 5s","diagnostic":"KOTLIN_DAEMON_FAILED_THEN_DOCUMENTED_FALLBACK_SUCCEEDED"},
+    {"ordinal":9,"key":"licensee","outcome":"PASS","elapsedSeconds":712,"logFile":"licensee-build.log","logSha256":"adc60b3b7dbcff47c53122efa50d9face6208399b4f65015ab6233db864ce357","terminalEvidence":"BUILD SUCCESSFUL in 11m 52s"},
+    {"ordinal":10,"key":"gradle-profiler","outcome":"PASS","elapsedSeconds":66,"logFile":"gradle-profiler-sanityCheck.log","logSha256":"4f560aa319c9a75c7d66558c320d85df20f367c2c22da8b7ba6c8876c5a832f6","terminalEvidence":"BUILD SUCCESSFUL in 1m 6s"}
+  ],
+  "nonAuthoritativeAttempts": [
+    {"key":"dependency-analysis-gradle-plugin","outcome":"FAIL","reason":"OWNER_SIGNATORY_UNAVAILABLE_FOR_AGGREGATE_CHECK","replacement":"OWNER_DOCUMENTED_BUILD_HEALTH_STEP"},
+    {"key":"openapi-generator","outcome":"ABORTED","reason":"WRONG_LOCAL_JDK_17","replacement":"RESTARTED_WITH_OWNER_JDK_21"}
+  ],
+  "excluded": [
+    {"key":"cyclonedx-gradle-plugin","decision":"WRAPPER_OR_TOOLCHAIN_INCOMPATIBLE","detail":"OWNER_BUILD_REQUIRES_UNAVAILABLE_JDK_8; EARLY_NON_NEUTRAL_CONFIGURATION_CACHE_ATTEMPT_NOT_CONSUMED"},
+    {"key":"gradle-maven-publish-plugin","decision":"WRAPPER_OR_TOOLCHAIN_INCOMPATIBLE","detail":"OWNER_WORKFLOW_REQUIRES_UNAVAILABLE_JDK_26"},
+    {"key":"shadow","decision":"OWNER_WORKFLOW_UNAVAILABLE","detail":"ISOLATED_PROJECTS_PREVENT_CONFIGURATION_CACHE_NEUTRAL_PREFLIGHT"},
+    {"key":"jib","decision":"WRAPPER_OR_TOOLCHAIN_INCOMPATIBLE","detail":"GRADLE_6_9_2_CANNOT_RUN_ON_AVAILABLE_JDK_17"},
+    {"key":"okhttp","decision":"OPTIMIZED_NATIVE_PREFLIGHT_FAILED","detail":"8_FAST_FALLBACK_TEST_FAILURES_ON_OWNER_JVM_21_WORKFLOW"},
+    {"key":"junit-framework","decision":"OWNER_WORKFLOW_UNAVAILABLE","detail":"ISOLATED_PROJECTS_PREVENT_CONFIGURATION_CACHE_NEUTRAL_PREFLIGHT"},
+    {"key":"spotbugs","decision":"OPTIMIZED_NATIVE_PREFLIGHT_FAILED","detail":"EXPORT_CLASSPATH_OUTPUT_MISSING"},
+    {"key":"gradle-baseline","decision":"OPTIMIZED_NATIVE_PREFLIGHT_FAILED","detail":"TEN_BASELINE_CONFIG_INTEGRATION_TEST_FAILURES"},
+    {"key":"rewrite","decision":"OWNER_WORKFLOW_UNAVAILABLE","detail":"OWNER_CI_IS_EXTERNAL_REUSABLE_WORKFLOW_WITH_UNAVAILABLE_BINDINGS"},
+    {"key":"paparazzi","decision":"FIXED_PREFLIGHT_LIMIT_EXCEEDED","detail":"1200_SECOND_TIMEOUT_WITH_VISIBLE_TESTS_PASSING_BUT_NO_TERMINAL_RESULT"},
+    {"key":"flyway","decision":"OWNER_WORKFLOW_UNAVAILABLE","detail":"CURRENT_OWNER_BUILD_IS_MAVEN_NOT_GRADLE"},
+    {"key":"liquibase","decision":"OWNER_WORKFLOW_UNAVAILABLE","detail":"CURRENT_OWNER_BUILD_IS_MAVEN_NOT_GRADLE"}
+  ],
+  "counts": {"selectedFamilies":10,"reserveRevisions":20,"excludedCandidates":12,"strictDiagnostics":0,"eligibleFamilies":0}
+}

@@ -54,6 +54,17 @@ does not establish commercial viability.
 
 ## Current experiment status
 
+`CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1` is the active successor. CINC-001
+proved the versioned parser/classifier on eleven fixtures. CINC-002 now freezes
+ten fresh public Gradle families and twenty ordered reserve revisions after
+ten source-neutral optimized-native preflight passes with Configuration Cache
+disabled. One Mockito project default unexpectedly published a Build Scan;
+the incident is disclosed, supplies no evidence input, and every later start
+uses `--no-scan`. No strict public diagnostic, public source mutation,
+candidate, timing sample, speedup claim, or product failure exists. CINC-003
+must produce two fresh strict diagnostics per family and pass 10/10 conclusive
+plus at least 3/10 eligible families before any materiality work can open.
+
 `WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` is terminally stopped at `WCNCP-013`
 (`WCNCP-000` contract frozen; `WCNCP-001` through `WCNCP-007` functionally
 repaired and proved). The wrapper command remains

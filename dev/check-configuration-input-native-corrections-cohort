@@ -1,0 +1,201 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+buildopt_subjects="${buildopt_repo_root}/specs/poc-configuration-input-native-corrections-v1.subjects.json"
+buildopt_evidence="${buildopt_repo_root}/benchmarks/results/configuration-input-native-corrections-v1/cinc-e002-cohort-freeze.json"
+
+for buildopt_command in git jq sha256sum; do
+    command -v "${buildopt_command}" >/dev/null 2>&1 || {
+        printf 'required CINC cohort command is unavailable: %s\n' "${buildopt_command}" >&2
+        exit 1
+    }
+done
+
+jq -e '
+    .schemaVersion == "buildopt.specs/poc-configuration-input-native-corrections-subjects/v1" and
+    .selectionState == "EXACT_COHORT_CAPTURED" and
+    .exactCohortFreezeBlock == "CINC-002" and
+    .selectionMustPrecede == "FIRST_STRICT_CONFIGURATION_CACHE_DIAGNOSTIC" and
+    .freezeCutoff == "COMMIT_CONTAINING_THIS_MANIFEST" and
+    .sourceArchiveSha256Algorithm == "git archive --format=tar REVISION | sha256sum" and
+    .familyCount == 10 and .reserveRevisionsPerFamily == 2 and
+    .nativePreflight == {
+        configurationCache: "DISABLED_FOR_SELECTION_NEUTRALITY",
+        buildScan: "DISABLED_AFTER_DISCOVERED_PROJECT_DEFAULT",
+        maximumSeconds: 1200,
+        maximumWorkers: 4,
+        performanceEvidence: false
+    } and
+    (.slots | length) == 10 and
+    [.slots[].ordinal] == [1,2,3,4,5,6,7,8,9,10] and
+    ([.slots[].key] | unique | length) == 10 and
+    ([.slots[].key] - .forbiddenPrimaryFamilies | length) == 10 and
+    all(.slots[];
+        .state == "SELECTED" and
+        (.repository | test("^https://github.com/.+\\.git$")) and
+        (.primary.revision | test("^[0-9a-f]{40}$")) and
+        (.primary.archiveSha256 | test("^[0-9a-f]{64}$")) and
+        (.reserves | length) == 2 and
+        all(.reserves[]; (.revision | test("^[0-9a-f]{40}$")) and (.archiveSha256 | test("^[0-9a-f]{64}$"))) and
+        (.wrapper.sha256 | test("^[0-9a-f]{64}$")) and
+        (.wrapper.propertiesSha256 | test("^[0-9a-f]{64}$")) and
+        (.ownerWorkflow.sourceSha256 | test("^[0-9a-f]{64}$")) and
+        (.ownerWorkflow.jdk | length) > 0 and
+        (.ownerWorkflow.preflightJdk | test("^temurin-(17|21|25)$")) and
+        (.ownerWorkflow.arguments | length) > 0 and
+        (.requiredOutputs | length) > 0) and
+    .strictDiagnostics == 0 and .publicSourceMutations == 0 and
+    .candidateBuilds == 0 and .timingSamples == 0 and .productFailures == 0
+' "${buildopt_subjects}" >/dev/null || {
+    printf 'CINC exact cohort manifest is inconsistent\n' >&2
+    exit 1
+}
+
+jq -e --slurpfile subjects "${buildopt_subjects}" '
+    .schemaVersion == "buildopt.evidence/cinc-cohort-freeze/v1" and
+    .workItem == "CINC-002" and .state == "EXACT_COHORT_FROZEN" and
+    .environmentClass == "LOCAL_FUNCTIONAL" and
+    .purpose == "OPTIMIZED_NATIVE_ADMISSIBILITY_ONLY" and
+    .performanceEvidence == false and
+    .selectionInputs == {
+        detectorSyntaxInspected: false,
+        configurationCacheOutcomeInspected: false,
+        historicalBuildOptEvidenceConsumed: false,
+        nativePreflightConfigurationCache: "DISABLED",
+        nativePreflightBuildScan: "DISABLED_AFTER_MOCKITO_DEFAULT_DISCOVERY"
+    } and
+    .publicSourceMutations == 0 and .strictDiagnostics == 0 and
+    .candidateBuilds == 0 and .timingSamples == 0 and .productFailures == 0 and
+    .limits == {secondsPerPreflight:1200,concurrentPreflights:1,maximumWorkers:4,maximumAdditionalDiskGiB:20,minimumFreeDiskBeforeStartGiB:10,stopBeforeNextStartFreeDiskGiB:8} and
+    (.selected | length) == 10 and
+    [.selected[].ordinal] == [1,2,3,4,5,6,7,8,9,10] and
+    [.selected[].key] == [$subjects[0].slots[].key] and
+    all(.selected[];
+        .outcome == "PASS" and .elapsedSeconds > 0 and .elapsedSeconds <= 1200 and
+        (.logFile | endswith(".log")) and (.logSha256 | test("^[0-9a-f]{64}$")) and
+        (.terminalEvidence | startswith("BUILD SUCCESSFUL"))) and
+    all(.excluded[];
+        .decision == "REPOSITORY_UNAVAILABLE" or
+        .decision == "WRAPPER_OR_TOOLCHAIN_INCOMPATIBLE" or
+        .decision == "OWNER_WORKFLOW_UNAVAILABLE" or
+        .decision == "OPTIMIZED_NATIVE_PREFLIGHT_FAILED" or
+        .decision == "FIXED_PREFLIGHT_LIMIT_EXCEEDED" or
+        .decision == "DECLARED_DISK_LIMIT_EXCEEDED") and
+    .counts.selectedFamilies == (.selected | length) and
+    .counts.reserveRevisions == ([$subjects[0].slots[].reserves[]] | length) and
+    .counts.excludedCandidates == (.excluded | length) and
+    .counts.strictDiagnostics == 0 and .counts.eligibleFamilies == 0
+' "${buildopt_evidence}" >/dev/null || {
+    printf 'CINC cohort-freeze evidence does not reconstruct\n' >&2
+    exit 1
+}
+
+if grep -Eq 'durable-native-optimization-v1|wrapper-coordinated-native-corrections-v1/.+json' \
+    "${buildopt_subjects}" "${buildopt_evidence}"; then
+    printf 'CINC cohort improperly consumes predecessor evidence\n' >&2
+    exit 1
+fi
+
+declare -A buildopt_checkouts=()
+for buildopt_binding in "$@"; do
+    if [[ "${buildopt_binding}" != *=* ]]; then
+        printf 'usage: %s [family=/absolute/checkout ...]\n' "$0" >&2
+        exit 64
+    fi
+    buildopt_key=${buildopt_binding%%=*}
+    buildopt_checkout=${buildopt_binding#*=}
+    if [[ -n "${buildopt_checkouts[${buildopt_key}]:-}" ]]; then
+        printf 'duplicate CINC checkout binding: %s\n' "${buildopt_key}" >&2
+        exit 1
+    fi
+    buildopt_checkouts[${buildopt_key}]="${buildopt_checkout}"
+done
+
+if (($# > 0)); then
+    if (($# != 10)); then
+        printf 'source reconstruction requires exactly ten CINC checkout bindings\n' >&2
+        exit 1
+    fi
+    while IFS= read -r buildopt_slot; do
+        buildopt_key=$(jq -r '.key' <<<"${buildopt_slot}")
+        buildopt_checkout=${buildopt_checkouts[${buildopt_key}]:-}
+        if [[ -z "${buildopt_checkout}" || ! -d "${buildopt_checkout}/.git" ]]; then
+            printf 'missing CINC checkout for %s\n' "${buildopt_key}" >&2
+            exit 1
+        fi
+        if [[ -n $(git -C "${buildopt_checkout}" status --porcelain) ]]; then
+            printf 'CINC source checkout is dirty: %s\n' "${buildopt_key}" >&2
+            exit 1
+        fi
+        buildopt_repository=$(git -C "${buildopt_checkout}" remote get-url origin)
+        if [[ "${buildopt_repository}" == git@github.com:* ]]; then
+            buildopt_repository="https://github.com/${buildopt_repository#git@github.com:}"
+        fi
+        [[ "${buildopt_repository}" == "$(jq -r '.repository' <<<"${buildopt_slot}")" ]] || {
+            printf 'CINC repository binding drift for %s\n' "${buildopt_key}" >&2
+            exit 1
+        }
+        buildopt_primary=$(jq -r '.primary.revision' <<<"${buildopt_slot}")
+        [[ $(git -C "${buildopt_checkout}" rev-parse HEAD) == "${buildopt_primary}" ]] || {
+            printf 'CINC primary revision drift for %s\n' "${buildopt_key}" >&2
+            exit 1
+        }
+        mapfile -t buildopt_ordered_revisions < <(git -C "${buildopt_checkout}" log -3 --format=%H)
+        [[ "${buildopt_ordered_revisions[1]:-}" == "$(jq -r '.reserves[0].revision' <<<"${buildopt_slot}")" ]] || {
+            printf 'CINC first reserve order drift for %s\n' "${buildopt_key}" >&2
+            exit 1
+        }
+        [[ "${buildopt_ordered_revisions[2]:-}" == "$(jq -r '.reserves[1].revision' <<<"${buildopt_slot}")" ]] || {
+            printf 'CINC second reserve order drift for %s\n' "${buildopt_key}" >&2
+            exit 1
+        }
+        for buildopt_index in primary 'reserves[0]' 'reserves[1]'; do
+            buildopt_revision=$(jq -r ".${buildopt_index}.revision" <<<"${buildopt_slot}")
+            buildopt_expected=$(jq -r ".${buildopt_index}.archiveSha256" <<<"${buildopt_slot}")
+            buildopt_actual=$(git -C "${buildopt_checkout}" archive --format=tar "${buildopt_revision}" | sha256sum | awk '{print $1}')
+            [[ "${buildopt_actual}" == "${buildopt_expected}" ]] || {
+                printf 'CINC source archive drift for %s at %s\n' "${buildopt_key}" "${buildopt_revision}" >&2
+                exit 1
+            }
+            buildopt_expected=$(jq -r ".${buildopt_index}.committedAt" <<<"${buildopt_slot}")
+            [[ $(git -C "${buildopt_checkout}" show -s --format=%cI "${buildopt_revision}") == "${buildopt_expected}" ]] || {
+                printf 'CINC commit timestamp drift for %s at %s\n' "${buildopt_key}" "${buildopt_revision}" >&2
+                exit 1
+            }
+        done
+        for buildopt_kind in wrapper workflow properties; do
+            case "${buildopt_kind}" in
+                wrapper) buildopt_path=$(jq -r '.wrapper.path' <<<"${buildopt_slot}"); buildopt_expected=$(jq -r '.wrapper.sha256' <<<"${buildopt_slot}") ;;
+                workflow) buildopt_path=$(jq -r '.ownerWorkflow.sourcePath' <<<"${buildopt_slot}"); buildopt_expected=$(jq -r '.ownerWorkflow.sourceSha256' <<<"${buildopt_slot}") ;;
+                properties) buildopt_path=$(jq -r '.wrapper.propertiesPath' <<<"${buildopt_slot}"); buildopt_expected=$(jq -r '.wrapper.propertiesSha256' <<<"${buildopt_slot}") ;;
+            esac
+            buildopt_actual=$(git -C "${buildopt_checkout}" show "${buildopt_primary}:${buildopt_path}" | sha256sum | awk '{print $1}')
+            [[ "${buildopt_actual}" == "${buildopt_expected}" ]] || {
+                printf 'CINC %s drift for %s\n' "${buildopt_kind}" "${buildopt_key}" >&2
+                exit 1
+            }
+        done
+    done < <(jq -c '.slots[]' "${buildopt_subjects}")
+fi
+
+if [[ -n "${BUILDOPT_CINC_PREFLIGHT_DIR:-}" ]]; then
+    while IFS=$'\t' read -r buildopt_key buildopt_log_file buildopt_log_sha buildopt_terminal; do
+        buildopt_log="${BUILDOPT_CINC_PREFLIGHT_DIR}/${buildopt_log_file}"
+        [[ -f "${buildopt_log}" ]] || {
+            printf 'missing CINC preflight log for %s\n' "${buildopt_key}" >&2
+            exit 1
+        }
+        [[ $(sha256sum "${buildopt_log}" | awk '{print $1}') == "${buildopt_log_sha}" ]] || {
+            printf 'CINC preflight log drift for %s\n' "${buildopt_key}" >&2
+            exit 1
+        }
+        grep -Fq -- "${buildopt_terminal}" "${buildopt_log}" || {
+            printf 'CINC terminal evidence missing for %s\n' "${buildopt_key}" >&2
+            exit 1
+        }
+    done < <(jq -r '.selected[] | [.key,.logFile,.logSha256,.terminalEvidence] | @tsv' "${buildopt_evidence}")
+fi
+
+printf 'CINC-002 cohort freeze OK: 10 selected families, 20 reserves, 10 native preflight passes, 0 strict diagnostics\n'

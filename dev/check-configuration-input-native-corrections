@@ -36,6 +36,14 @@ jq -e '
   .cohort.selectionBeforeStrictDiagnostic == true and
   .cohort.detectorOutcomeMaySelect == false and
   .cohort.historicalBuildOptEvidenceMaySelect == false and
+  .cohort.nativePreflight == {
+    configurationCache: "DISABLED",
+    buildScan: "DISABLED_AFTER_UNEXPECTED_PROJECT_DEFAULT_DISCOVERY",
+    maximumMinutes: 20,
+    maximumWorkers: 4,
+    performanceEvidence: false
+  } and
+  .cohort.subjects == "poc-configuration-input-native-corrections-v1.subjects.json" and
   .sourceGate == {
     strictDiagnosticsPerFamily: 2,
     requiredConclusiveFamilies: 10,
@@ -68,11 +76,13 @@ jq -e '
   .boundaries.testOptimization == "OUT_OF_SCOPE"
 ' "${buildopt_contract}" >/dev/null
 
-grep -Fq "The immediate next item is \`CINC-002\`." "${buildopt_plan}"
+grep -Fq "The immediate next item is \`CINC-003\`." "${buildopt_plan}"
 grep -Fq 'WCNCP and every predecessor result are diagnostic context only' "${buildopt_human}"
 grep -Fq 'CINC does not reconsider those opt-outs' "${buildopt_plan}"
 grep -Fq "\`SIMPLE_PROVIDER_EXEC_ELIGIBLE\`" "${buildopt_plan}"
 grep -Fq "\`SIDE_EFFECTING_OR_SECRET_BEARING\`" "${buildopt_plan}"
 grep -Fq 'Standard hosted CI owns deterministic contracts and' "${buildopt_plan}"
 
-printf 'CINC-000 configuration-input native-corrections contract OK\n'
+"${buildopt_script_dir}/check-configuration-input-native-corrections-cohort" >/dev/null
+
+printf 'CINC configuration-input native-corrections contract and cohort OK\n'

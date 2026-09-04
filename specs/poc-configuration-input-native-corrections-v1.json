@@ -33,7 +33,15 @@
     ],
     "selectionBeforeStrictDiagnostic": true,
     "detectorOutcomeMaySelect": false,
-    "historicalBuildOptEvidenceMaySelect": false
+    "historicalBuildOptEvidenceMaySelect": false,
+    "nativePreflight": {
+      "configurationCache": "DISABLED",
+      "buildScan": "DISABLED_AFTER_UNEXPECTED_PROJECT_DEFAULT_DISCOVERY",
+      "maximumMinutes": 20,
+      "maximumWorkers": 4,
+      "performanceEvidence": false
+    },
+    "subjects": "poc-configuration-input-native-corrections-v1.subjects.json"
   },
   "sourceGate": {
     "strictDiagnosticsPerFamily": 2,

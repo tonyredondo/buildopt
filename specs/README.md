@@ -20,8 +20,10 @@ The active successor search is
 [`Configuration-Input Native Corrections v1`](./poc-configuration-input-native-corrections-v1.md)
 with its [machine contract](./poc-configuration-input-native-corrections-v1.json).
 `CINC-000` freezes a fresh source-neutral Configuration Cache correction
-hypothesis. CINC-001 reconstructs eleven fixture-only detector rows; no cohort
-row, public diagnostic, candidate, or timing exists yet.
+hypothesis. CINC-001 reconstructs eleven fixture-only detector rows; CINC-002
+freezes [ten exact public families and twenty reserves](./poc-configuration-input-native-corrections-v1.subjects.json)
+after neutral native preflight. No strict public diagnostic, candidate, or
+timing exists yet.
 
 | Specification | Owning item |
 |---|---|
