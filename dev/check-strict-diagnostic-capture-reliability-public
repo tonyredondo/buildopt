@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# > 1)); then
+    printf 'usage: %s [CHECKOUT_ROOT]\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_checkout_root=${1:-}
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_subjects=${buildopt_root}/specs/poc-strict-diagnostic-capture-reliability-v1.subjects.json
+buildopt_evidence=${buildopt_root}/benchmarks/results/strict-diagnostic-capture-reliability-v1/sdcr-e002-public-probes
+buildopt_result=${buildopt_evidence}/result.json
+buildopt_temp=$(mktemp -d /tmp/buildopt-sdcr-public-check.XXXXXX)
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+mkdir -p -- "${buildopt_temp}/expected-report-root"
+cd -- "${buildopt_root}"
+(cd -- "${buildopt_evidence}" && sha256sum -c sha256sums >/dev/null)
+
+buildopt_hash_at_commit() {
+    local buildopt_commit=$1
+    local buildopt_path=$2
+    git -C "${buildopt_root}" show "${buildopt_commit}:${buildopt_path}" | sha256sum | awk '{print $1}'
+}
+
+buildopt_contract_commit=$(jq -r '.inputs.contractCommit' "${buildopt_result}")
+git -C "${buildopt_root}" cat-file -e "${buildopt_contract_commit}^{commit}"
+git -C "${buildopt_root}" merge-base --is-ancestor "${buildopt_contract_commit}" HEAD
+for buildopt_binding in \
+    'contractSha256:specs/poc-strict-diagnostic-capture-reliability-v1.json' \
+    'subjectsSha256:specs/poc-strict-diagnostic-capture-reliability-v1.subjects.json' \
+    'runnerSha256:dev/capture-strict-diagnostic-reliability' \
+    'selectorSha256:internal/strictdiagnostic/report.go' \
+    'selectorCliSha256:cmd/strict-diagnostic-report/main.go'; do
+    buildopt_key=${buildopt_binding%%:*}
+    buildopt_path=${buildopt_binding#*:}
+    buildopt_expected=$(jq -r --arg key "${buildopt_key}" '.inputs[$key]' "${buildopt_result}")
+    buildopt_actual=$(buildopt_hash_at_commit "${buildopt_contract_commit}" "${buildopt_path}")
+    [[ ${buildopt_actual} == "${buildopt_expected}" ]] || {
+        printf 'SDCR frozen input drift: %s\n' "${buildopt_key}" >&2
+        exit 1
+    }
+done
+
+buildopt_rebuilt=${buildopt_temp}/subjects.jsonl
+buildopt_starts=0
+buildopt_conclusive=0
+buildopt_inventory_total=0
+buildopt_selected_total=0
+while IFS= read -r buildopt_subject; do
+    buildopt_ordinal=$(jq -r '.ordinal' <<<"${buildopt_subject}")
+    buildopt_key=$(jq -r '.key' <<<"${buildopt_subject}")
+    buildopt_capture=${buildopt_evidence}/${buildopt_key}/capture.json
+    buildopt_log_gz=${buildopt_evidence}/${buildopt_key}/gradle.log.gz
+    buildopt_selection=${buildopt_evidence}/${buildopt_key}/report-selection.json
+    buildopt_inventory=${buildopt_evidence}/${buildopt_key}/report-inventory.json
+    gzip -t "${buildopt_log_gz}"
+    gzip -dc "${buildopt_log_gz}" >"${buildopt_temp}/${buildopt_key}.log"
+    buildopt_log_sha=$(sha256sum "${buildopt_temp}/${buildopt_key}.log" | awk '{print $1}')
+    [[ ${buildopt_log_sha} == $(jq -r '.logSha256' "${buildopt_capture}") ]]
+    diff -u <(jq -S . "${buildopt_selection}") <(jq -S '.reportSelection' "${buildopt_capture}")
+    diff -u <(jq -S . "${buildopt_inventory}") <(jq -S '.reportInventory' "${buildopt_capture}")
+
+    "${buildopt_root}/dev/run" --toolchain go -- go run ./cmd/strict-diagnostic-report \
+        --log "${buildopt_temp}/${buildopt_key}.log" \
+        --expected-root "${buildopt_temp}/expected-report-root" \
+        >"${buildopt_temp}/${buildopt_key}-selection.json"
+    jq 'del(.selectedAbsolutePath)' "${buildopt_temp}/${buildopt_key}-selection.json" >"${buildopt_temp}/${buildopt_key}-selection-portable.json"
+    diff -u <(jq -S . "${buildopt_selection}") <(jq -S . "${buildopt_temp}/${buildopt_key}-selection-portable.json")
+
+    buildopt_exit_code=$(jq -r '.exitCode' "${buildopt_capture}")
+    buildopt_selection_outcome=$(jq -r '.outcome' "${buildopt_selection}")
+    buildopt_outcome=${buildopt_selection_outcome}
+    if ((buildopt_exit_code == 124)); then
+        buildopt_outcome=TIME_LIMIT
+    elif [[ ${buildopt_selection_outcome} == ROOT_REPORT_REFERENCE_MISSING ]]; then
+        if ((buildopt_exit_code == 0)); then
+            buildopt_outcome=NO_CONFIGURATION_CACHE_REPORT
+        else
+            buildopt_outcome=OWNER_WORKFLOW_COLD_INCOMPATIBLE
+        fi
+    fi
+    buildopt_inventory_count=$(jq 'length' "${buildopt_inventory}")
+    buildopt_selected_count=0
+    if [[ ${buildopt_selection_outcome} == ROOT_REPORT_CAPTURED ]]; then
+        buildopt_selected_count=1
+        gzip -t "${buildopt_evidence}/${buildopt_key}/configuration-cache-report.html.gz"
+        buildopt_report_sha=$(gzip -dc "${buildopt_evidence}/${buildopt_key}/configuration-cache-report.html.gz" | sha256sum | awk '{print $1}')
+        [[ ${buildopt_report_sha} == $(jq -r '.reportSha256' "${buildopt_capture}") ]]
+    else
+        [[ ! -e ${buildopt_evidence}/${buildopt_key}/configuration-cache-report.html.gz ]]
+        [[ $(jq -r '.reportSha256' "${buildopt_capture}") == null ]]
+    fi
+
+    jq -e \
+        --arg key "${buildopt_key}" \
+        --arg revision "$(jq -r '.revision' <<<"${buildopt_subject}")" \
+        --arg archive "$(jq -r '.archiveSha256' <<<"${buildopt_subject}")" \
+        --arg wrapper "$(jq -r '.wrapper' <<<"${buildopt_subject}")" \
+        --arg workingDirectory "$(jq -r '.workingDirectory' <<<"${buildopt_subject}")" \
+        --arg toolchain "$(jq -r '.toolchain' <<<"${buildopt_subject}")" \
+        --arg outcome "${buildopt_outcome}" \
+        --argjson ownerArguments "$(jq -c '.ownerArguments' <<<"${buildopt_subject}")" \
+        --argjson exitCode "${buildopt_exit_code}" '
+          .schemaVersion == "buildopt.sdcr/capture/v1" and
+          .subject == $key and .revision == $revision and
+          .sourceArchiveSha256 == $archive and
+          .source == {materialization:"FRESH_LOCAL_GIT_CLONE",gitMetadata:true,clean:true,head:$revision} and
+          .wrapper.path == $wrapper and .workingDirectory == $workingDirectory and
+          .toolchain == $toolchain and .ownerArguments == $ownerArguments and
+          .coldState == {gradleHome:"EMPTY_AT_CHILD_START",sharedPriorState:false} and
+          .gradleStarted == true and .exitCode == $exitCode and .outcome == $outcome and
+          .environmentClass == "LOCAL_FUNCTIONAL" and .performanceEvidence == false and
+          .publicSourceModified == false and .candidateBuild == false and
+          .timingSamples == 0 and .speedupClaim == false and .productFailures == 0
+        ' "${buildopt_capture}" >/dev/null
+
+    if [[ -n ${buildopt_checkout_root} ]]; then
+        buildopt_checkout=${buildopt_checkout_root}/${buildopt_key}
+        [[ -d ${buildopt_checkout}/.git && -z $(git -C "${buildopt_checkout}" status --porcelain) ]]
+        [[ $(git -C "${buildopt_checkout}" rev-parse HEAD) == $(jq -r '.revision' <<<"${buildopt_subject}") ]]
+        buildopt_archive=$(git -C "${buildopt_checkout}" archive --format=tar HEAD | sha256sum | awk '{print $1}')
+        [[ ${buildopt_archive} == $(jq -r '.archiveSha256' <<<"${buildopt_subject}") ]]
+        [[ $(sha256sum "${buildopt_checkout}/$(jq -r '.wrapper' <<<"${buildopt_subject}")" | awk '{print $1}') == $(jq -r '.wrapper.sha256' "${buildopt_capture}") ]]
+    fi
+
+    buildopt_starts=$((buildopt_starts + 1))
+    buildopt_conclusive=$((buildopt_conclusive + 1))
+    buildopt_inventory_total=$((buildopt_inventory_total + buildopt_inventory_count))
+    buildopt_selected_total=$((buildopt_selected_total + buildopt_selected_count))
+    jq -cn \
+        --argjson ordinal "${buildopt_ordinal}" --arg key "${buildopt_key}" \
+        --arg outcome "${buildopt_outcome}" --argjson exitCode "${buildopt_exit_code}" \
+        --argjson references "$(jq '.referenceCount' "${buildopt_selection}")" \
+        --argjson inventory "${buildopt_inventory_count}" --argjson selected "${buildopt_selected_count}" \
+        '{ordinal:$ordinal,key:$key,outcome:$outcome,exitCode:$exitCode,rootReportReferences:$references,inventoryReports:$inventory,selectedReports:$selected}' \
+        >>"${buildopt_rebuilt}"
+done < <(jq -c '.subjects[]' "${buildopt_subjects}")
+
+diff -u <(jq -S '.subjects' "${buildopt_result}") <(jq -sS . "${buildopt_rebuilt}")
+jq -e \
+    --argjson starts "${buildopt_starts}" \
+    --argjson conclusive "${buildopt_conclusive}" \
+    --argjson inventory "${buildopt_inventory_total}" \
+    --argjson selected "${buildopt_selected_total}" '
+      .schemaVersion == "buildopt.evidence/strict-diagnostic-capture-reliability-public-probes/v1" and
+      .workItem == "SDCR-002" and .state == "PUBLIC_PROBES_COMPLETE" and
+      .decision == "CAPTURE_RELIABILITY_PROVEN" and
+      .reconstructed.publicGradleStarts == $starts and
+      .reconstructed.conclusiveSubjects == $conclusive and
+      .reconstructed.requiredConclusiveSubjects == 3 and
+      .reconstructed.silentlyLostStarts == 0 and
+      .reconstructed.maximumSilentlyLostStarts == 0 and
+      .reconstructed.inventoryReports == $inventory and
+      .reconstructed.selectedReports == $selected and
+      .boundaries.predecessorReportsConsumed == false and
+      .boundaries.performanceEvidence == false and
+      .boundaries.publicSourceModified == false and
+      .boundaries.candidateBuilds == 0 and .boundaries.timingSamples == 0 and
+      .boundaries.speedupClaim == false and .boundaries.productFailures == 0
+    ' "${buildopt_result}" >/dev/null
+
+if [[ -n ${buildopt_checkout_root} ]]; then
+    printf 'SDCR-002 public probes reconstructed with source: %s/3 conclusive, %s inventory reports, %s selected\n' \
+        "${buildopt_conclusive}" "${buildopt_inventory_total}" "${buildopt_selected_total}"
+else
+    printf 'SDCR-002 retained public probes reconstructed: %s/3 conclusive, %s inventory reports, %s selected\n' \
+        "${buildopt_conclusive}" "${buildopt_inventory_total}" "${buildopt_selected_total}"
+fi

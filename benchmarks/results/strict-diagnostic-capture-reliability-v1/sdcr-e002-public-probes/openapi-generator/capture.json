@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "buildopt.sdcr/capture/v1",
+  "subject": "openapi-generator",
+  "revision": "b391b2b98c5926ee9842ef3bc863b57c4d824bbe",
+  "sourceArchiveSha256": "655f2e6b875a12c1cfedd868c0874d63a25ad556a0b53f3c44c6694efcd7c68b",
+  "source": {
+    "materialization": "FRESH_LOCAL_GIT_CLONE",
+    "gitMetadata": true,
+    "clean": true,
+    "head": "b391b2b98c5926ee9842ef3bc863b57c4d824bbe"
+  },
+  "wrapper": {
+    "path": "samples/server/others/kotlin-springboot/oneOf-discriminator/gradlew",
+    "sha256": "211b176cd033866b3d40159e58d7f0120c5a620056ae85f83567880f6de15b1d"
+  },
+  "workingDirectory": "samples/server/others/kotlin-springboot/oneOf-discriminator",
+  "toolchain": "temurin-jdk-21",
+  "ownerArguments": [
+    "build",
+    "-x",
+    "test"
+  ],
+  "requiredOutputs": [
+    "build/libs/*.jar",
+    "terminal:BUILD_SUCCESSFUL"
+  ],
+  "diagnosticArguments": [
+    "--configuration-cache",
+    "--configuration-cache-problems=fail",
+    "--no-scan",
+    "--build-cache",
+    "--parallel",
+    "--max-workers=4"
+  ],
+  "coldState": {
+    "gradleHome": "EMPTY_AT_CHILD_START",
+    "sharedPriorState": false
+  },
+  "gradleStarted": true,
+  "exitCode": 1,
+  "outcome": "OWNER_WORKFLOW_COLD_INCOMPATIBLE",
+  "logSha256": "10238b702b480143275f95df08dff476163f0170ab7f152bb1e240424d29d2e8",
+  "reportSha256": null,
+  "reportSelection": {
+    "outcome": "ROOT_REPORT_REFERENCE_MISSING",
+    "referenceCount": 0,
+    "referenceSha256": []
+  },
+  "reportInventory": [],
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "performanceEvidence": false,
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "speedupClaim": false,
+  "productFailures": 0
+}

@@ -710,6 +710,12 @@ selection from the unique child-log URI. Its three functional probes and their
 durations cannot qualify materiality or value; success only permits planning a
 fresh opportunity cohort.
 
+The completed probes pass that functional gate: 3/3 starts are conclusive and
+none is lost. OpenAPI fails cold before a report; Licensee and Gradle Profiler
+complete while inventorying 238 unreferenced reports in total. The runner
+selects none of them heuristically. These outcomes carry no timing authority;
+they only remove a measurement-infrastructure blocker for a later fresh cohort.
+
 The completed test-build experiment strengthens this priority. Reusing three
 small exact `testFixturesJar` producers did not shorten the critical path:
 native Gradle averaged 6,503.5 ms and BuildOpt 7,238.75 ms, with 0/4 positive

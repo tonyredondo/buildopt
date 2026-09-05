@@ -34,12 +34,15 @@ conclusive and 0/3 eligible families; retained artifacts prove that the fixed
 20-start budget cannot complete the cohort. No candidate or timing phase
 opened, so neither terminal result establishes a viable general product yet.
 
-The active `STRICT_DIAGNOSTIC_CAPTURE_RELIABILITY_V1` route does not reinterpret
+The completed `STRICT_DIAGNOSTIC_CAPTURE_RELIABILITY_V1` route does not reinterpret
 that negative breadth. It first isolates the capture infrastructure: exact Git
 metadata, equivalent empty cold state, authoritative owner project-directory
 arguments, and a unique root report selected from the Gradle child's own log.
 Three frozen public probes must produce reconstructable typed outcomes before a
-new opportunity cohort can be planned. No predecessor report supplies a row.
+new opportunity cohort can be planned. All three fresh starts are conclusive
+with zero lost starts. The 238 unreferenced inventory reports from Licensee and
+Gradle Profiler are not guessed into root evidence. No predecessor report
+supplies a row, and SDCR makes no performance claim.
 
 ## Audit question
 
@@ -358,10 +361,10 @@ Git-metadata preservation, and unique root-report ownership under a new
 contract; it cannot reinterpret these incomplete rows as negative product
 value or relax the source gate.
 
-That new contract is SDCR. It begins with fixture-only runner proof, then spends
-at most one fresh functional start on each of OpenAPI Generator, Licensee, and
-Gradle Profiler. Its 3/3 gate concerns evidence reliability only; even a pass
-does not authorize a source correction or timing.
+That new contract is SDCR. Sixteen fixtures and one fresh functional start on
+each of OpenAPI Generator, Licensee, and Gradle Profiler pass its 3/3 evidence-
+reliability gate with zero silently lost starts. The pass authorizes a distinct
+fresh successor plan, not a source correction or timing.
 
 The current order and stop conditions live in the completed
 [Wrapper-Coordinated Native Corrections POC](../plans/wrapper-coordinated-native-corrections-poc.md).

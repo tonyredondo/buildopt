@@ -1,9 +1,9 @@
 # Strict Diagnostic Capture Reliability POC
 
-**Overall:** `ACTIVE`<br>
-**Current block:** `SDCR-002`<br>
-**Stop point:** a checked terminal `SDCR-003` reliability decision; `SDCR-004`
-may authorize only the planning of a distinct opportunity experiment.
+**Overall:** `CAPTURE_RELIABILITY_PROVEN`<br>
+**Current block:** `SDCR-004` is complete<br>
+**Stop point:** reached; a distinct opportunity experiment may now be planned,
+but CINC rows, candidates, and budgets remain closed.
 
 ## Objective
 
@@ -44,7 +44,7 @@ Proof: the versioned runner, pure Go selector, CLI, and independent checker
 reconstruct sixteen positive/negative cases, including atomic evidence after a
 forced post-start selector failure. No public Gradle start occurred.
 
-### SDCR-002 — fresh public probes (`TODO`)
+### SDCR-002 — fresh public probes (`DONE`)
 
 - Clone each frozen repository at its exact revision. Do not unpack source-only
   archives for execution.
@@ -59,7 +59,13 @@ Expected outcomes are deliberately not frozen: the evidence may show success,
 an owner incompatibility, no report, or a typed harness failure. Conclusiveness,
 not a favorable Gradle result, is the gate.
 
-### SDCR-003 — independent reconstruction (`WAITING`)
+Observed: all three starts were retained. OpenAPI Generator produced the cold
+Gradle 8.1.1/JDK 21 incompatibility with no report; Licensee completed while
+inventorying 237 unreferenced reports; Gradle Profiler completed while
+inventorying one unreferenced report. The latter two are
+`NO_CONFIGURATION_CACHE_REPORT`; the runner selected no arbitrary file.
+
+### SDCR-003 — independent reconstruction (`DONE`)
 
 - Rehash the contract, subjects, runner, each raw log, and selected report.
 - Recompute the source archive from a supplied exact checkout or a retained Git
@@ -72,13 +78,23 @@ not a favorable Gradle result, is the gate.
 Pass requires 3/3 conclusive subjects and zero silently lost starts. A terminal
 failure remains useful evidence and must name the exact failed invariant.
 
-### SDCR-004 — successor decision (`WAITING`)
+Observed: the checker reconstructs 3/3 conclusive starts, 238 inventory files,
+zero child-log report references, zero selected reports, and zero lost starts.
+With the supplied exact checkouts it also recomputes all three archive and
+wrapper hashes.
+
+### SDCR-004 — successor decision (`DONE`)
 
 If SDCR passes, freeze a new cohort and a new start budget for a distinct
 configuration-input opportunity experiment. It may reuse the versioned runner,
 but none of the CINC or SDCR diagnostic rows may count as opportunity evidence.
 If SDCR fails, repair only the failed harness invariant under a versioned
 contract; do not loosen the gate or begin candidates/timing.
+
+Decision: `AUTHORIZE_FRESH_CONFIGURATION_INPUT_SUCCESSOR_PLANNING`. The next
+contract must use this runner, count cold incompatibility as an admissibility
+decision rather than a lost source-gate start, and keep opportunity evidence at
+zero until its own cohort is frozen.
 
 ## Resource controls
 

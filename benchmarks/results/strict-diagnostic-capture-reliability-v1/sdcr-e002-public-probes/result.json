@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "buildopt.evidence/strict-diagnostic-capture-reliability-public-probes/v1",
+  "workItem": "SDCR-002",
+  "state": "PUBLIC_PROBES_COMPLETE",
+  "decision": "CAPTURE_RELIABILITY_PROVEN",
+  "inputs": {
+    "contractCommit": "1e8f589c99c2670b8269ba94b6c4d1861a702431",
+    "contractSha256": "704fa89691ecbf2b79c53bb2fe1f0a4b9a03aa22c98477c9d2cfebed87ec8b6e",
+    "subjectsSha256": "a102a4a50b8bc5ec4585fbaec2ed0018d7ef2952cf95f239fa88de145abcbcdc",
+    "runnerSha256": "fe12f88f8290b544d5d74198922ca311d204fad7e4eccb5132d6750bf0fed901",
+    "selectorSha256": "4acf945ba31345125680f0b6f59c8c573d7c5afa37de525b0b280fa9e0d67c5e",
+    "selectorCliSha256": "9396d0daa1fdd817f67625d421d9908d95bbc079332e1ffdad90a6ed6c8215e3"
+  },
+  "subjects": [
+    {
+      "ordinal": 1,
+      "key": "openapi-generator",
+      "outcome": "OWNER_WORKFLOW_COLD_INCOMPATIBLE",
+      "exitCode": 1,
+      "rootReportReferences": 0,
+      "inventoryReports": 0,
+      "selectedReports": 0
+    },
+    {
+      "ordinal": 2,
+      "key": "licensee",
+      "outcome": "NO_CONFIGURATION_CACHE_REPORT",
+      "exitCode": 0,
+      "rootReportReferences": 0,
+      "inventoryReports": 237,
+      "selectedReports": 0
+    },
+    {
+      "ordinal": 3,
+      "key": "gradle-profiler",
+      "outcome": "NO_CONFIGURATION_CACHE_REPORT",
+      "exitCode": 0,
+      "rootReportReferences": 0,
+      "inventoryReports": 1,
+      "selectedReports": 0
+    }
+  ],
+  "reconstructed": {
+    "publicGradleStarts": 3,
+    "conclusiveSubjects": 3,
+    "requiredConclusiveSubjects": 3,
+    "silentlyLostStarts": 0,
+    "maximumSilentlyLostStarts": 0,
+    "inventoryReports": 238,
+    "selectedReports": 0,
+    "sourceArchivesReconstructedWithSuppliedCheckouts": true
+  },
+  "boundaries": {
+    "predecessorReportsConsumed": false,
+    "environmentClass": "LOCAL_FUNCTIONAL",
+    "performanceEvidence": false,
+    "publicSourceModified": false,
+    "candidateBuilds": 0,
+    "timingSamples": 0,
+    "speedupClaim": false,
+    "productFailures": 0
+  }
+}

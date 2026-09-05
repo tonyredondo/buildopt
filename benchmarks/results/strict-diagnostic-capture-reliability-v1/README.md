@@ -1,6 +1,6 @@
 # Strict diagnostic capture reliability v1 evidence
 
-State: `SDCR-001_DONE_SDCR-002_NEXT`.
+State: `CAPTURE_RELIABILITY_PROVEN`.
 
 The [human contract](../../../specs/poc-strict-diagnostic-capture-reliability-v1.md),
 [machine contract](../../../specs/poc-strict-diagnostic-capture-reliability-v1.json),
@@ -19,9 +19,18 @@ all owner project-directory forms, Git/revision/archive rejection, nested
 inventory isolation, atomic success, and forced post-start failure publication.
 Public Gradle starts remain zero.
 
+The terminal [public-probe result](./sdcr-e002-public-probes/result.json) and
+independent checker reconstruct three fresh starts. OpenAPI Generator is a
+typed cold incompatibility; Licensee completes with 237 inventory reports and
+Gradle Profiler completes with one, but neither root child log references a
+Configuration Cache report. The runner therefore selects zero files instead of
+guessing. The gate passes at 3/3 conclusive and zero silently lost starts.
+Durations are functional only and no opportunity/value claim is made.
+
 Validate the freeze with:
 
 ```bash
 ./dev/check-strict-diagnostic-capture-reliability
 ./dev/check-strict-diagnostic-capture-reliability-runner
+./dev/check-strict-diagnostic-capture-reliability-public
 ```

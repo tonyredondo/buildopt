@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "buildopt.sdcr/capture/v1",
+  "subject": "gradle-profiler",
+  "revision": "469d2d8efd0bba9a0a956f2d40d21b7d4c9e3bd4",
+  "sourceArchiveSha256": "a294f1752b2a3943ea78d268d28828a6ad687b389e1f6ca1b99ba29777762a3b",
+  "source": {
+    "materialization": "FRESH_LOCAL_GIT_CLONE",
+    "gitMetadata": true,
+    "clean": true,
+    "head": "469d2d8efd0bba9a0a956f2d40d21b7d4c9e3bd4"
+  },
+  "wrapper": {
+    "path": "gradlew",
+    "sha256": "aed171fb114f82e6eaea4970a245a200e0582a7dcc8ec0891ca41b6e4a62b754"
+  },
+  "workingDirectory": ".",
+  "toolchain": "temurin-jdk-17",
+  "ownerArguments": [
+    "clean",
+    "sanityCheck",
+    "-s",
+    "--build-cache",
+    "-Dorg.gradle.java.installations.auto-detect=false",
+    "-Dorg.gradle.java.installations.auto-download=false",
+    "-Dorg.gradle.java.installations.fromEnv=JDK17"
+  ],
+  "requiredOutputs": [
+    "task:sanityCheck",
+    "task:*:sanityCheck",
+    "terminal:BUILD_SUCCESSFUL"
+  ],
+  "diagnosticArguments": [
+    "--configuration-cache",
+    "--configuration-cache-problems=fail",
+    "--no-scan",
+    "--build-cache",
+    "--parallel",
+    "--max-workers=4"
+  ],
+  "coldState": {
+    "gradleHome": "EMPTY_AT_CHILD_START",
+    "sharedPriorState": false
+  },
+  "gradleStarted": true,
+  "exitCode": 0,
+  "outcome": "NO_CONFIGURATION_CACHE_REPORT",
+  "logSha256": "fb4424ba43dd0e212ea5a55a6b99d367d6dddd3166556599da5ca32c3c38b890",
+  "reportSha256": null,
+  "reportSelection": {
+    "outcome": "ROOT_REPORT_REFERENCE_MISSING",
+    "referenceCount": 0,
+    "referenceSha256": []
+  },
+  "reportInventory": [
+    "build/reports/configuration-cache/1fmgg9opwfmmlrzdpgtd82h6q/ci9cfhxc5ihnki53fazrnaaua/configuration-cache-report.html"
+  ],
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "performanceEvidence": false,
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "speedupClaim": false,
+  "productFailures": 0
+}

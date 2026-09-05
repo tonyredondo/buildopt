@@ -65,11 +65,12 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`STRICT_DIAGNOSTIC_CAPTURE_RELIABILITY_ACTIVE\`"
-    "**Current phase:** \`SDCR-001\` is complete; \`SDCR-002\` fresh three-probe capture is next"
-    "| POC-STRICT-DIAGNOSTIC-CAPTURE-RELIABILITY | Prove cold-state identity, Git-preserving source materialization, and unique root-report ownership before another correction-opportunity cohort | \`IN_PROGRESS\` | 2/5 |"
+    "**Overall status:** \`STRICT_DIAGNOSTIC_CAPTURE_RELIABILITY_PROVEN\`"
+    "**Current phase:** \`SDCR-004\` is complete with \`AUTHORIZE_FRESH_CONFIGURATION_INPUT_SUCCESSOR_PLANNING\`; CINC remains terminal"
+    "| POC-STRICT-DIAGNOSTIC-CAPTURE-RELIABILITY | Prove cold-state identity, Git-preserving source materialization, and unique root-report ownership before another correction-opportunity cohort | \`DONE\` | 5/5 |"
     "| \`E-539\` | 2026-09-05 | \`POC-STRICT-DIAGNOSTIC-CAPTURE-RELIABILITY\`, \`SDCR-000\` |"
     "| \`E-540\` | 2026-09-05 | \`POC-STRICT-DIAGNOSTIC-CAPTURE-RELIABILITY\`, \`SDCR-001\` |"
+    "| \`E-541\` | 2026-09-05 | \`POC-STRICT-DIAGNOSTIC-CAPTURE-RELIABILITY\`, \`SDCR-002..004\` |"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"
