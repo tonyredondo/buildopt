@@ -360,6 +360,14 @@ Pass `--sources-root DIRECTORY` to recompute each exact Git archive plus wrapper
 workflow, source, and call-site digests from local frozen checkouts. The default
 Base CI mode is static and runs no public Gradle build or timing.
 
+`./dev/check-source-bound-configuration-input-detector` rehashes and reruns the
+SBIC-001 scanner and CLI over retained byte-exact public source snapshots. It
+reconstructs five pure rows across three selected families, the BlueMap
+side-effect rejection, source/call-site bindings and all summary counts. Its Go
+tests cover supported providers, task-only execution, secrets/interaction,
+ambiguity, drift, Groovy, multiple operations, redirect false positives and
+label invariance; the checker also rejects unknown facts.
+
 `./dev/check-aggregate-output-closure` validates the following generic output
 coverage step. Its immutable four-case result requires exact custom aggregate
 outputs, one changed producer entrypoint, verified stable-output

@@ -1,0 +1,270 @@
+{
+  "schemaVersion": "buildopt.evidence/source-bound-configuration-input-detector/v1",
+  "contractCommit": "9ab88cbea3fbbb0638f007ed5f2a14dc18633141",
+  "rows": [
+    {
+      "key": "suwayomi-server",
+      "state": "SELECTED",
+      "rows": [
+        {
+          "sourcePath": "buildSrc/src/main/kotlin/Constants.kt",
+          "sourceSha256": "d6d4c394afcb3f0d8bf06f6d8c79ca09809474d3fa81c2abf3c6885366a39548",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 19,
+            "startColumn": 1,
+            "endLine": 33,
+            "endColumn": 1
+          },
+          "operationSpan": {
+            "startLine": 21,
+            "startColumn": 9,
+            "endLine": 21,
+            "endColumn": 24
+          },
+          "callSites": [
+            {
+              "path": "server/build.gradle.kts",
+              "line": 153
+            },
+            {
+              "path": "server/build.gradle.kts",
+              "line": 154
+            },
+            {
+              "path": "server/build.gradle.kts",
+              "line": 174
+            },
+            {
+              "path": "server/build.gradle.kts",
+              "line": 175
+            },
+            {
+              "path": "server/build.gradle.kts",
+              "line": 181
+            }
+          ],
+          "operationKind": "PROCESS_BUILDER",
+          "recipe": "PROVIDER_FACTORY_EXEC_V1",
+          "decision": "PURE_CONFIGURATION_PROCESS_READ",
+          "reason": "bounded repository-owned configuration-time process read"
+        }
+      ]
+    },
+    {
+      "key": "quickcarpet",
+      "state": "SELECTED",
+      "rows": [
+        {
+          "sourcePath": "buildSrc/src/main/kotlin/quickcarpet/build/GitHelper.kt",
+          "sourceSha256": "4c6f370e4af13694d4110b534ca6871a64a14d4732ddf56bc0c5524185863ebf",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 6,
+            "startColumn": 1,
+            "endLine": 62,
+            "endColumn": 1
+          },
+          "operationSpan": {
+            "startLine": 10,
+            "startColumn": 24,
+            "endLine": 10,
+            "endColumn": 75
+          },
+          "callSites": [
+            {
+              "path": "build.gradle.kts",
+              "line": 32
+            },
+            {
+              "path": "build.gradle.kts",
+              "line": 33
+            },
+            {
+              "path": "build.gradle.kts",
+              "line": 69
+            },
+            {
+              "path": "build.gradle.kts",
+              "line": 70
+            },
+            {
+              "path": "build.gradle.kts",
+              "line": 71
+            }
+          ],
+          "operationKind": "RUNTIME_EXEC",
+          "recipe": "TYPED_VALUE_SOURCE_V1",
+          "decision": "PURE_CONFIGURATION_PROCESS_READ",
+          "reason": "bounded repository-owned configuration-time process read"
+        },
+        {
+          "sourcePath": "buildSrc/src/main/kotlin/quickcarpet/build/GitHelper.kt",
+          "sourceSha256": "4c6f370e4af13694d4110b534ca6871a64a14d4732ddf56bc0c5524185863ebf",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 6,
+            "startColumn": 1,
+            "endLine": 62,
+            "endColumn": 1
+          },
+          "operationSpan": {
+            "startLine": 40,
+            "startColumn": 28,
+            "endLine": 40,
+            "endColumn": 83
+          },
+          "callSites": [
+            {
+              "path": "build.gradle.kts",
+              "line": 32
+            },
+            {
+              "path": "build.gradle.kts",
+              "line": 33
+            },
+            {
+              "path": "build.gradle.kts",
+              "line": 69
+            },
+            {
+              "path": "build.gradle.kts",
+              "line": 70
+            },
+            {
+              "path": "build.gradle.kts",
+              "line": 71
+            }
+          ],
+          "operationKind": "RUNTIME_EXEC",
+          "recipe": "TYPED_VALUE_SOURCE_V1",
+          "decision": "PURE_CONFIGURATION_PROCESS_READ",
+          "reason": "bounded repository-owned configuration-time process read"
+        },
+        {
+          "sourcePath": "buildSrc/src/main/kotlin/quickcarpet/build/GitHelper.kt",
+          "sourceSha256": "4c6f370e4af13694d4110b534ca6871a64a14d4732ddf56bc0c5524185863ebf",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 6,
+            "startColumn": 1,
+            "endLine": 62,
+            "endColumn": 1
+          },
+          "operationSpan": {
+            "startLine": 43,
+            "startColumn": 28,
+            "endLine": 43,
+            "endColumn": 92
+          },
+          "callSites": [
+            {
+              "path": "build.gradle.kts",
+              "line": 32
+            },
+            {
+              "path": "build.gradle.kts",
+              "line": 33
+            },
+            {
+              "path": "build.gradle.kts",
+              "line": 69
+            },
+            {
+              "path": "build.gradle.kts",
+              "line": 70
+            },
+            {
+              "path": "build.gradle.kts",
+              "line": 71
+            }
+          ],
+          "operationKind": "RUNTIME_EXEC",
+          "recipe": "TYPED_VALUE_SOURCE_V1",
+          "decision": "PURE_CONFIGURATION_PROCESS_READ",
+          "reason": "bounded repository-owned configuration-time process read"
+        }
+      ]
+    },
+    {
+      "key": "lsss",
+      "state": "SELECTED",
+      "rows": [
+        {
+          "sourcePath": "buildSrc/src/main/kotlin/no/marec/gradle/BuildProperties.kt",
+          "sourceSha256": "9a45c0177f034ec865934ceae67e71193870a4e52c9cfcacad12b7c38b41c2e0",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 7,
+            "startColumn": 1,
+            "endLine": 13,
+            "endColumn": 1
+          },
+          "operationSpan": {
+            "startLine": 12,
+            "startColumn": 28,
+            "endLine": 12,
+            "endColumn": 69
+          },
+          "callSites": [
+            {
+              "path": "buildSrc/src/main/kotlin/no/marec/gradle/MarecBuildExtension.kt",
+              "line": 11
+            }
+          ],
+          "operationKind": "PROCESS_BUILDER",
+          "recipe": "PROVIDER_FACTORY_EXEC_V1",
+          "decision": "PURE_CONFIGURATION_PROCESS_READ",
+          "reason": "bounded repository-owned configuration-time process read"
+        }
+      ]
+    },
+    {
+      "key": "bluemap",
+      "state": "EXCLUDED",
+      "rows": [
+        {
+          "sourcePath": "buildSrc/src/main/kotlin/versioning.kt",
+          "sourceSha256": "7ac5ecbdb80a20c188ce46bc9be0c4de22dda10c57f7ba6515216b459963618b",
+          "language": "KOTLIN",
+          "declarationSpan": {
+            "startLine": 6,
+            "startColumn": 1,
+            "endLine": 64,
+            "endColumn": 1
+          },
+          "operationSpan": {
+            "startLine": 46,
+            "startColumn": 5,
+            "endLine": 46,
+            "endColumn": 91
+          },
+          "callSites": [
+            {
+              "path": "buildSrc/src/main/kotlin/bluemap.base.gradle.kts",
+              "line": 6
+            }
+          ],
+          "operationKind": "PROCESS_BUILDER",
+          "decision": "SIDE_EFFECTING_PROCESS",
+          "reason": "explicit command semantics may mutate persistent state"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "selectedFamilies": 3,
+    "selectedRows": 5,
+    "pureRows": 5,
+    "excludedFamilies": 1,
+    "sideEffectRows": 1,
+    "publicGradleStarts": 0,
+    "publicSourceMutations": 0,
+    "candidateBuilds": 0,
+    "timingSamples": 0,
+    "speedupClaims": 0,
+    "productFailures": 0
+  },
+  "scannerSha256": "e8d05524cccfc0a50e10f7a81462986a06b44f7147ce868d1777f85ca661baa8",
+  "cliSha256": "72b66fc77c9164e474eb1c92385747b158e80c21dd6a6d8fef2887a2953bae2d"
+}

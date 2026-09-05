@@ -1,0 +1,17 @@
+{
+  "sourcePath": "buildSrc/src/main/kotlin/versioning.kt",
+  "expectedSha256": "7ac5ecbdb80a20c188ce46bc9be0c4de22dda10c57f7ba6515216b459963618b",
+  "language": "KOTLIN",
+  "declarationSpan": {"startLine": 6, "startColumn": 1, "endLine": 64, "endColumn": 1},
+  "callSites": [{"path": "buildSrc/src/main/kotlin/bluemap.base.gradle.kts", "line": 6}],
+  "sourceOwned": true,
+  "generatedOrVendor": false,
+  "configurationBound": true,
+  "taskActionBound": false,
+  "bindingAmbiguous": false,
+  "secretBearing": false,
+  "interactive": false,
+  "semanticSideEffect": false,
+  "directProviderAvailable": true,
+  "repositoryLabel": "bluemap"
+}

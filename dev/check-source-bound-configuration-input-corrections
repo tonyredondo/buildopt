@@ -39,7 +39,7 @@ jq -e '
   .budget.maximumAdditionalDiskGiB == 20 and
   .budget.maximumSecondsPerStart == 1200 and
   .budget.concurrentStarts == 1 and
-  .current == {completed:["SBIC-000"],next:"SBIC-001"} and
+  .current == {completed:["SBIC-000","SBIC-001"],next:"SBIC-002"} and
   (.zeroState | to_entries | all(.value == 0)) and
   .boundaries.prevalenceClaim == false and
   .boundaries.testOptimization == "OUT_OF_SCOPE"

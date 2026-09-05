@@ -1,8 +1,8 @@
 # Source-Bound Configuration-Input Corrections POC
 
 **Overall:** `ACTIVE`<br>
-**Current block:** `SBIC-000` is complete<br>
-**Next block:** `SBIC-001` source detector and independent reconstruction
+**Current block:** `SBIC-001` is complete<br>
+**Next block:** `SBIC-002` fresh strict diagnostics
 
 ## Objective and decision boundary
 
@@ -37,7 +37,7 @@ Proof: the independent contract checker reconstructs all structural invariants;
 an exact checkout mode additionally recomputes archives and every frozen file
 digest.
 
-### SBIC-001 — source detector (`NEXT`)
+### SBIC-001 — source detector (`DONE`)
 
 - Implement a versioned, name-invariant source scanner for ProcessBuilder,
   Runtime.exec, Groovy execute, supported Gradle providers, task-action
@@ -51,6 +51,12 @@ digest.
 
 Gate: 3/3 selected families must reconstruct as pure configuration reads and
 the exclusion must remain side-effecting. Otherwise stop before a public build.
+
+Observed: the versioned scanner and independent CLI reconstruct five pure rows
+across all three selected families and one side-effect row for BlueMap. Fixture
+tests cover tracked providers, task-only execution, secrets/interaction,
+ambiguity, source drift, multiple operations, Groovy syntax, false-positive
+redirect syntax, and label invariance. No public Gradle start occurred.
 
 ### SBIC-002 — fresh strict diagnostics
 

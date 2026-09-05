@@ -90,7 +90,7 @@
     "concurrentStarts": 1
   },
   "blocks": ["SBIC-000", "SBIC-001", "SBIC-002", "SBIC-003", "SBIC-004", "SBIC-005", "SBIC-006"],
-  "current": {"completed": ["SBIC-000"], "next": "SBIC-001"},
+  "current": {"completed": ["SBIC-000", "SBIC-001"], "next": "SBIC-002"},
   "zeroState": {
     "publicGradleStarts": 0,
     "strictDiagnostics": 0,

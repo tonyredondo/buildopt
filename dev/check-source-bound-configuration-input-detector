@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_evidence=${buildopt_root}/benchmarks/results/source-bound-configuration-input-corrections-v1/sbic-e001-source-detector
+buildopt_result=${buildopt_evidence}/result.json
+buildopt_subjects=${buildopt_root}/specs/poc-source-bound-configuration-input-corrections-v1.subjects.json
+buildopt_tmp=$(mktemp -d /tmp/buildopt-sbic-detector.XXXXXX)
+trap 'rm -rf -- "${buildopt_tmp}"' EXIT
+
+buildopt_scanner_sha=$(sha256sum "${buildopt_root}/internal/configurationinputsource/scanner.go" | cut -d' ' -f1)
+buildopt_cli_sha=$(sha256sum "${buildopt_root}/cmd/source-bound-configuration-input-audit/main.go" | cut -d' ' -f1)
+[[ $(jq -r .scannerSha256 "${buildopt_result}") == "${buildopt_scanner_sha}" ]]
+[[ $(jq -r .cliSha256 "${buildopt_result}") == "${buildopt_cli_sha}" ]]
+[[ $(jq -r .contractCommit "${buildopt_result}") == 9ab88cbea3fbbb0638f007ed5f2a14dc18633141 ]]
+
+"${buildopt_root}/dev/run" --toolchain go -- go test -race ./internal/configurationinputsource
+"${buildopt_root}/dev/run" --toolchain go -- go vet ./internal/configurationinputsource ./cmd/source-bound-configuration-input-audit
+"${buildopt_root}/dev/run" --toolchain go -- go build -o "${buildopt_tmp}/audit" ./cmd/source-bound-configuration-input-audit
+
+buildopt_suwayomi_source=${buildopt_tmp}/Constants.kt
+buildopt_suwayomi_call=${buildopt_evidence}/sources/suwayomi-server/server.build.gradle.kts
+buildopt_quick_source=${buildopt_tmp}/GitHelper.kt
+buildopt_quick_call=${buildopt_tmp}/build.gradle.kts
+base64 -d "${buildopt_evidence}/sources/suwayomi-server/Constants.kt.b64" >"${buildopt_suwayomi_source}"
+base64 -d "${buildopt_evidence}/sources/quickcarpet/GitHelper.kt.b64" >"${buildopt_quick_source}"
+base64 -d "${buildopt_evidence}/sources/quickcarpet/build.gradle.kts.b64" >"${buildopt_quick_call}"
+buildopt_lsss_source=${buildopt_evidence}/sources/lsss/BuildProperties.kt
+buildopt_lsss_call=${buildopt_evidence}/sources/lsss/MarecBuildExtension.kt
+buildopt_bluemap_source=${buildopt_evidence}/exclusions/bluemap/versioning.kt
+
+buildopt_check_digest() {
+    local buildopt_path=$1
+    local buildopt_expected=$2
+    [[ $(sha256sum "${buildopt_path}" | cut -d' ' -f1) == "${buildopt_expected}" ]]
+}
+
+buildopt_check_digest "${buildopt_suwayomi_source}" "$(jq -r '.subjects[] | select(.key=="suwayomi-server") | .binding.sourceSha256' "${buildopt_subjects}")"
+buildopt_check_digest "${buildopt_suwayomi_call}" "$(jq -r '.subjects[] | select(.key=="suwayomi-server") | .binding.callSiteSha256' "${buildopt_subjects}")"
+buildopt_check_digest "${buildopt_quick_source}" "$(jq -r '.subjects[] | select(.key=="quickcarpet") | .binding.sourceSha256' "${buildopt_subjects}")"
+buildopt_check_digest "${buildopt_quick_call}" "$(jq -r '.subjects[] | select(.key=="quickcarpet") | .binding.callSiteSha256' "${buildopt_subjects}")"
+buildopt_check_digest "${buildopt_lsss_source}" "$(jq -r '.subjects[] | select(.key=="lsss") | .binding.sourceSha256' "${buildopt_subjects}")"
+buildopt_check_digest "${buildopt_lsss_call}" "$(jq -r '.subjects[] | select(.key=="lsss") | .binding.callSiteSha256' "${buildopt_subjects}")"
+buildopt_check_digest "${buildopt_bluemap_source}" "$(jq -r '.prospectiveExclusions[] | select(.key=="bluemap") | .sourceSha256' "${buildopt_subjects}")"
+
+buildopt_run_case() {
+    local buildopt_key=$1
+    local buildopt_source=$2
+    local buildopt_facts=$3
+    local buildopt_actual=${buildopt_tmp}/${buildopt_key}.json
+    "${buildopt_tmp}/audit" --source "${buildopt_source}" --facts "${buildopt_facts}" >"${buildopt_actual}"
+    diff -u \
+        <(jq -S --arg key "${buildopt_key}" '.rows[] | select(.key==$key) | .rows' "${buildopt_result}") \
+        <(jq -S . "${buildopt_actual}")
+}
+
+buildopt_run_case suwayomi-server "${buildopt_suwayomi_source}" "${buildopt_evidence}/facts/suwayomi-server.json"
+buildopt_run_case quickcarpet "${buildopt_quick_source}" "${buildopt_evidence}/facts/quickcarpet.json"
+buildopt_run_case lsss "${buildopt_lsss_source}" "${buildopt_evidence}/facts/lsss.json"
+buildopt_run_case bluemap "${buildopt_bluemap_source}" "${buildopt_evidence}/facts/bluemap.json"
+
+jq '.unknownFact = true' "${buildopt_evidence}/facts/lsss.json" >"${buildopt_tmp}/unknown.json"
+if "${buildopt_tmp}/audit" --source "${buildopt_lsss_source}" --facts "${buildopt_tmp}/unknown.json" >/dev/null 2>&1; then
+    printf 'unknown source facts were accepted\n' >&2
+    exit 1
+fi
+cp -- "${buildopt_lsss_source}" "${buildopt_tmp}/drift.kt"
+printf '\n' >>"${buildopt_tmp}/drift.kt"
+"${buildopt_tmp}/audit" --source "${buildopt_tmp}/drift.kt" --facts "${buildopt_evidence}/facts/lsss.json" >"${buildopt_tmp}/drift.json"
+jq -e 'length == 1 and .[0].decision == "SOURCE_DRIFTED"' "${buildopt_tmp}/drift.json" >/dev/null
+
+buildopt_selected_families=$(jq '[.rows[] | select(.state=="SELECTED")] | length' "${buildopt_result}")
+buildopt_selected_rows=$(jq '[.rows[] | select(.state=="SELECTED") | .rows[]] | length' "${buildopt_result}")
+buildopt_pure_rows=$(jq '[.rows[] | select(.state=="SELECTED") | .rows[] | select(.decision=="PURE_CONFIGURATION_PROCESS_READ")] | length' "${buildopt_result}")
+buildopt_excluded_families=$(jq '[.rows[] | select(.state=="EXCLUDED")] | length' "${buildopt_result}")
+buildopt_side_effect_rows=$(jq '[.rows[] | select(.state=="EXCLUDED") | .rows[] | select(.decision=="SIDE_EFFECTING_PROCESS")] | length' "${buildopt_result}")
+jq -e \
+    --argjson families "${buildopt_selected_families}" \
+    --argjson rows "${buildopt_selected_rows}" \
+    --argjson pure "${buildopt_pure_rows}" \
+    --argjson excluded "${buildopt_excluded_families}" \
+    --argjson side "${buildopt_side_effect_rows}" '
+    .summary.selectedFamilies == $families and
+    .summary.selectedRows == $rows and
+    .summary.pureRows == $pure and
+    .summary.excludedFamilies == $excluded and
+    .summary.sideEffectRows == $side and
+    ([.summary.publicGradleStarts,.summary.publicSourceMutations,.summary.candidateBuilds,
+      .summary.timingSamples,.summary.speedupClaims,.summary.productFailures] | all(. == 0)) and
+    $families == 3 and $rows == 5 and $pure == 5 and $excluded == 1 and $side == 1
+' "${buildopt_result}" >/dev/null
+
+printf 'SBIC-001 detector reconstructed: 3/3 pure families, 5 source rows, 1 side-effect exclusion\n'

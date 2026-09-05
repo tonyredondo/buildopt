@@ -1,0 +1,17 @@
+{
+  "sourcePath": "buildSrc/src/main/kotlin/no/marec/gradle/BuildProperties.kt",
+  "expectedSha256": "9a45c0177f034ec865934ceae67e71193870a4e52c9cfcacad12b7c38b41c2e0",
+  "language": "KOTLIN",
+  "declarationSpan": {"startLine": 7, "startColumn": 1, "endLine": 13, "endColumn": 1},
+  "callSites": [{"path": "buildSrc/src/main/kotlin/no/marec/gradle/MarecBuildExtension.kt", "line": 11}],
+  "sourceOwned": true,
+  "generatedOrVendor": false,
+  "configurationBound": true,
+  "taskActionBound": false,
+  "bindingAmbiguous": false,
+  "secretBearing": false,
+  "interactive": false,
+  "semanticSideEffect": false,
+  "directProviderAvailable": true,
+  "repositoryLabel": "lsss"
+}

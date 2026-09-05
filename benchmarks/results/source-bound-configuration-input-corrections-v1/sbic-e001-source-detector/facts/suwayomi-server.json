@@ -1,0 +1,23 @@
+{
+  "sourcePath": "buildSrc/src/main/kotlin/Constants.kt",
+  "expectedSha256": "d6d4c394afcb3f0d8bf06f6d8c79ca09809474d3fa81c2abf3c6885366a39548",
+  "language": "KOTLIN",
+  "declarationSpan": {"startLine": 19, "startColumn": 1, "endLine": 33, "endColumn": 1},
+  "callSites": [
+    {"path": "server/build.gradle.kts", "line": 153},
+    {"path": "server/build.gradle.kts", "line": 154},
+    {"path": "server/build.gradle.kts", "line": 174},
+    {"path": "server/build.gradle.kts", "line": 175},
+    {"path": "server/build.gradle.kts", "line": 181}
+  ],
+  "sourceOwned": true,
+  "generatedOrVendor": false,
+  "configurationBound": true,
+  "taskActionBound": false,
+  "bindingAmbiguous": false,
+  "secretBearing": false,
+  "interactive": false,
+  "semanticSideEffect": false,
+  "directProviderAvailable": true,
+  "repositoryLabel": "suwayomi-server"
+}

@@ -1,6 +1,6 @@
 # Source-bound configuration-input corrections v1 evidence
 
-State: `SBIC-000_COMPLETE`.
+State: `SBIC-001_COMPLETE`.
 
 The [human contract](../../../specs/poc-source-bound-configuration-input-corrections-v1.md),
 [machine contract](../../../specs/poc-source-bound-configuration-input-corrections-v1.json),
@@ -18,8 +18,16 @@ source mutations, candidate builds, paired timing samples, speedup claims, and
 product failures. This experiment can establish a correction mechanism across
 at least two families, but it cannot claim arbitrary-repository prevalence.
 
+The [SBIC-001 result](./sbic-e001-source-detector/result.json) is independently
+rebuilt from retained byte-exact sources and semantic facts. It contains five
+pure configuration-process rows across 3/3 selected families and one
+side-effect rejection for BlueMap. The versioned detector, CLI, negative tests,
+source/call-site hashes, summary counts, unknown-field rejection, and source
+drift are all reconstructed. Public Gradle starts remain zero.
+
 Validate the freeze with:
 
 ```bash
 ./dev/check-source-bound-configuration-input-corrections
+./dev/check-source-bound-configuration-input-detector
 ```

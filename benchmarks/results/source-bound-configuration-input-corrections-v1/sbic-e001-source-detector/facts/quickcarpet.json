@@ -1,0 +1,23 @@
+{
+  "sourcePath": "buildSrc/src/main/kotlin/quickcarpet/build/GitHelper.kt",
+  "expectedSha256": "4c6f370e4af13694d4110b534ca6871a64a14d4732ddf56bc0c5524185863ebf",
+  "language": "KOTLIN",
+  "declarationSpan": {"startLine": 6, "startColumn": 1, "endLine": 62, "endColumn": 1},
+  "callSites": [
+    {"path": "build.gradle.kts", "line": 32},
+    {"path": "build.gradle.kts", "line": 33},
+    {"path": "build.gradle.kts", "line": 69},
+    {"path": "build.gradle.kts", "line": 70},
+    {"path": "build.gradle.kts", "line": 71}
+  ],
+  "sourceOwned": true,
+  "generatedOrVendor": false,
+  "configurationBound": true,
+  "taskActionBound": false,
+  "bindingAmbiguous": false,
+  "secretBearing": false,
+  "interactive": false,
+  "semanticSideEffect": false,
+  "directProviderAvailable": false,
+  "repositoryLabel": "quickcarpet"
+}

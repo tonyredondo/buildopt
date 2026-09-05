@@ -659,6 +659,7 @@ buildopt_required_files=(
     "dev/check-strict-diagnostic-capture-reliability-runner"
     "dev/check-strict-diagnostic-capture-reliability-public"
     "dev/check-source-bound-configuration-input-corrections"
+    "dev/check-source-bound-configuration-input-detector"
     "dev/check-wcncp-prospective-capture"
     "dev/check-wcncp-prospective-capture-negatives"
     "dev/run-wcncp-opportunity-breadth"
