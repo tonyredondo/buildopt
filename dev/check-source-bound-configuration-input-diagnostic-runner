@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_tmp=$(mktemp -d /tmp/buildopt-sbic-adapter-check.XXXXXX)
+trap 'rm -rf -- "${buildopt_tmp}"' EXIT
+
+buildopt_fixture=${buildopt_tmp}/subjects.json
+buildopt_fake=${buildopt_root}/fixtures/source-bound-configuration-input/record-runner
+buildopt_record=${buildopt_tmp}/record
+mkdir -p -- "${buildopt_tmp}/source"
+jq -n '{
+  subjects:[{
+    key:"fixture",repository:"https://invalid.example/fixture.git",
+    revision:"1111111111111111111111111111111111111111",
+    archiveSha256:"2222222222222222222222222222222222222222222222222222222222222222",
+    wrapper:{path:"gradlew",sha256:"3333333333333333333333333333333333333333333333333333333333333333",propertiesPath:"gradle/wrapper/gradle-wrapper.properties",propertiesSha256:"4444444444444444444444444444444444444444444444444444444444444444"},
+    toolchain:"temurin-jdk-17",
+    ownerWorkflow:{sourcePath:"workflow.yml",sourceSha256:"5555555555555555555555555555555555555555555555555555555555555555",arguments:["build","--stacktrace"],environment:{MODE:"fixture"}},
+    requiredOutputs:["build/libs/*.jar","terminal:BUILD_SUCCESSFUL"],
+    binding:{sourcePath:"build.kt",sourceSha256:"6666666666666666666666666666666666666666666666666666666666666666",callSitePath:"build.gradle.kts",callSiteSha256:"7777777777777777777777777777777777777777777777777777777777777777"}
+  }]
+}' >"${buildopt_fixture}"
+
+BUILDOPT_SBIC_FIXTURE_RECORD=${buildopt_record} BUILDOPT_SBIC_SUBJECTS=${buildopt_fixture} BUILDOPT_SBIC_SDCR_RUNNER=${buildopt_fake} \
+    "${buildopt_script_dir}/capture-source-bound-configuration-input-diagnostic" \
+    fixture "${buildopt_tmp}/source" "${buildopt_tmp}/output"
+
+jq -e '.schemaVersion == "buildopt.specs/sbic-sdcr-adapter/v1" and .subjects == [{
+  key:"fixture",repository:"https://invalid.example/fixture.git",
+  revision:"1111111111111111111111111111111111111111",
+  archiveSha256:"2222222222222222222222222222222222222222222222222222222222222222",
+  wrapper:"gradlew",workingDirectory:".",toolchain:"temurin-jdk-17",
+  ownerArguments:["build","--stacktrace"],ownerEnvironment:{MODE:"fixture"},
+  requiredOutputs:["build/libs/*.jar","terminal:BUILD_SUCCESSFUL"]
+}]' "${buildopt_record}.json" >/dev/null
+mapfile -t buildopt_arguments <"${buildopt_record}.args"
+[[ ${buildopt_arguments[0]} == fixture ]]
+[[ ${buildopt_arguments[1]} == "${buildopt_tmp}/source" ]]
+[[ ${buildopt_arguments[2]} == "${buildopt_tmp}/output" ]]
+
+if BUILDOPT_SBIC_FIXTURE_RECORD=${buildopt_record} BUILDOPT_SBIC_SDCR_RUNNER=${buildopt_fake} \
+    "${buildopt_script_dir}/capture-source-bound-configuration-input-diagnostic" \
+    suwayomi-server "${buildopt_tmp}/source" "${buildopt_tmp}/forbidden" >/dev/null 2>&1; then
+    printf 'canonical manifest accepted a runner override\n' >&2
+    exit 1
+fi
+if BUILDOPT_SBIC_FIXTURE_RECORD=${buildopt_record} BUILDOPT_SBIC_SUBJECTS=${buildopt_fixture} BUILDOPT_SBIC_SDCR_RUNNER=${buildopt_fake} \
+    "${buildopt_script_dir}/capture-source-bound-configuration-input-diagnostic" \
+    missing "${buildopt_tmp}/source" "${buildopt_tmp}/missing" >/dev/null 2>&1; then
+    printf 'unknown subject was accepted\n' >&2
+    exit 1
+fi
+
+printf 'SBIC diagnostic adapter reconstructed: exact field mapping and canonical override rejection\n'

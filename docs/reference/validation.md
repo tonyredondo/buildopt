@@ -368,6 +368,12 @@ tests cover supported providers, task-only execution, secrets/interaction,
 ambiguity, drift, Groovy, multiple operations, redirect false positives and
 label invariance; the checker also rejects unknown facts.
 
+`./dev/check-source-bound-configuration-input-diagnostic-runner` proves the
+SBIC-to-SDCR subject adapter without starting Gradle. It reconstructs the exact
+wrapper, project directory, JDK, owner arguments/environment and required
+outputs passed to the proven runner, and rejects unknown subjects plus any
+canonical-manifest runner override.
+
 `./dev/check-aggregate-output-closure` validates the following generic output
 coverage step. Its immutable four-case result requires exact custom aggregate
 outputs, one changed producer entrypoint, verified stable-output

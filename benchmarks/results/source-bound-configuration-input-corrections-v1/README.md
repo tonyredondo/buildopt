@@ -25,9 +25,15 @@ side-effect rejection for BlueMap. The versioned detector, CLI, negative tests,
 source/call-site hashes, summary counts, unknown-field rejection, and source
 drift are all reconstructed. Public Gradle starts remain zero.
 
+The SBIC-002 capture adapter is fixture-proven before public execution. It maps
+the frozen wrapper, working directory, JDK, owner arguments/environment and
+required outputs into the immutable SDCR runner, and rejects a runner override
+for the canonical manifest. Public Gradle starts remain zero at this boundary.
+
 Validate the freeze with:
 
 ```bash
 ./dev/check-source-bound-configuration-input-corrections
 ./dev/check-source-bound-configuration-input-detector
+./dev/check-source-bound-configuration-input-diagnostic-runner
 ```

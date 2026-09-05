@@ -1,8 +1,8 @@
 # Source-Bound Configuration-Input Corrections POC
 
 **Overall:** `ACTIVE`<br>
-**Current block:** `SBIC-001` is complete<br>
-**Next block:** `SBIC-002` fresh strict diagnostics
+**Current block:** `SBIC-002` is in progress<br>
+**Next action:** three fresh strict diagnostics, sequentially
 
 ## Objective and decision boundary
 
@@ -69,6 +69,11 @@ redirect syntax, and label invariance. No public Gradle start occurred.
 
 Gate: 3/3 conclusive, zero lost starts, and at least 2/3 diagnostic-bound
 families. Cold incompatibility is conclusive but not eligible.
+
+Preparation: the versioned SBIC adapter maps only the frozen nested subject
+fields into the already-proven SDCR runner contract. A fixture reconstructs the
+exact mapping and proves that the canonical manifest cannot override the SDCR
+runner. No public Gradle start was used for this preparation.
 
 ### SBIC-003 — controlled materiality
 

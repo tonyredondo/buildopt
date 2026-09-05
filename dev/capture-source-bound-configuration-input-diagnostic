@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 3)); then
+    printf 'usage: %s SUBJECT SOURCE_CHECKOUT NEW_OUTPUT_DIRECTORY\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_subject=$1
+buildopt_checkout=$2
+buildopt_output=$3
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_canonical_subjects=${buildopt_root}/specs/poc-source-bound-configuration-input-corrections-v1.subjects.json
+buildopt_subjects=${BUILDOPT_SBIC_SUBJECTS:-${buildopt_canonical_subjects}}
+buildopt_sdcr_runner=${BUILDOPT_SBIC_SDCR_RUNNER:-${buildopt_script_dir}/capture-strict-diagnostic-reliability}
+
+if [[ ${buildopt_sdcr_runner} != "${buildopt_script_dir}/capture-strict-diagnostic-reliability" && ${buildopt_subjects} == "${buildopt_canonical_subjects}" ]]; then
+    printf 'runner override is forbidden for the canonical SBIC manifest\n' >&2
+    exit 64
+fi
+
+buildopt_tmp=$(mktemp -d /tmp/buildopt-sbic-adapter.XXXXXX)
+trap 'rm -rf -- "${buildopt_tmp}"' EXIT
+buildopt_adapter=${buildopt_tmp}/subjects.json
+
+jq -e --arg subject "${buildopt_subject}" '.subjects | any(.key == $subject)' "${buildopt_subjects}" >/dev/null || {
+    printf 'unknown SBIC subject: %s\n' "${buildopt_subject}" >&2
+    exit 64
+}
+jq '{
+  schemaVersion:"buildopt.specs/sbic-sdcr-adapter/v1",
+  subjects:[.subjects[] | {
+    key,repository,revision,archiveSha256,
+    wrapper:.wrapper.path,workingDirectory:".",toolchain,
+    ownerArguments:.ownerWorkflow.arguments,
+    ownerEnvironment:.ownerWorkflow.environment,
+    requiredOutputs
+  }]
+}' "${buildopt_subjects}" >"${buildopt_adapter}"
+
+BUILDOPT_SDCR_SUBJECTS=${buildopt_adapter} \
+    "${buildopt_sdcr_runner}" "${buildopt_subject}" "${buildopt_checkout}" "${buildopt_output}"
