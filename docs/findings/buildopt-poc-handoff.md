@@ -80,13 +80,15 @@ Licensee and Gradle Profiler complete with 238 total inventory reports but no
 root-log report reference, so the runner selects zero arbitrary files. This
 authorizes only a fresh configuration-input successor plan.
 
-That active successor is SBIC, a source-enriched mechanism study rather than a
-breadth estimate. Before its first Gradle start it freezes pure
+That successor, SBIC, is now closed. Before its first Gradle start it froze pure
 configuration-time process reads in Suwayomi Server, QuickCarpet, and LSSS;
 BlueMap is excluded because its version path can refresh Git index metadata.
-SBIC must still qualify at least two families at 500 ms and 2%, preserve exact
-outputs with zero product failures, and pass eight balanced pairs. It has no
-arbitrary-repository prevalence authority.
+The three starts are conclusive with zero loss, but only LSSS binds the expected
+strict diagnostic. QuickCarpet's Gradle 7.4 report contains 26 unrelated Fabric
+Loom problems and no reported Git read; Suwayomi's v1 selector did not retain
+its report. The 1/3 result misses the fixed 2/3 gate, so materiality, candidates,
+timing, and value never opened. It has no arbitrary-repository prevalence or
+speedup authority.
 
 `WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` is terminally stopped at `WCNCP-013`
 (`WCNCP-000` contract frozen; `WCNCP-001` through `WCNCP-007` functionally

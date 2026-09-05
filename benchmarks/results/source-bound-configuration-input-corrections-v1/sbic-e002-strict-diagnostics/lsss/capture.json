@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "buildopt.sdcr/capture/v1",
+  "subject": "lsss",
+  "revision": "bdfa7f2eac538ed368b59ef83e02435548e61140",
+  "sourceArchiveSha256": "da095d83fa26c11abc1d18097f9da7a1c3a42c0813e86337fc0ea1ef94d71740",
+  "source": {
+    "materialization": "FRESH_LOCAL_GIT_CLONE",
+    "gitMetadata": true,
+    "clean": true,
+    "head": "bdfa7f2eac538ed368b59ef83e02435548e61140"
+  },
+  "wrapper": {
+    "path": "gradlew",
+    "sha256": "a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59"
+  },
+  "workingDirectory": ".",
+  "toolchain": "temurin-jdk-25",
+  "ownerArguments": [
+    "distZip"
+  ],
+  "requiredOutputs": [
+    "lsss/release/build/distributions/*.zip",
+    "terminal:BUILD_SUCCESSFUL"
+  ],
+  "diagnosticArguments": [
+    "--configuration-cache",
+    "--configuration-cache-problems=fail",
+    "--no-scan",
+    "--build-cache",
+    "--parallel",
+    "--max-workers=4"
+  ],
+  "coldState": {
+    "gradleHome": "EMPTY_AT_CHILD_START",
+    "sharedPriorState": false
+  },
+  "gradleStarted": true,
+  "exitCode": 1,
+  "outcome": "ROOT_REPORT_CAPTURED",
+  "logSha256": "1cf32fda34d0287098c9a107d18e5e4cb3b8fb655e73bc5def612c70590a972c",
+  "reportSha256": "f0148e1c0ce797f898e01f06836b2bb25e206bfab43a4d91cec492d86ef234e1",
+  "reportSelection": {
+    "outcome": "ROOT_REPORT_CAPTURED",
+    "referenceCount": 1,
+    "referenceSha256": [
+      "91270703bbbd46885dfff384b33fbaa1991b11e6402c2ac7fbc8aac4749f92b9"
+    ],
+    "selectedRelativePath": "5pam0tmkel31vsyj9pah98aoo/adfi62h6xvdke8yvgjqe05zd8/configuration-cache-report.html"
+  },
+  "reportInventory": [
+    "build/reports/configuration-cache/5pam0tmkel31vsyj9pah98aoo/adfi62h6xvdke8yvgjqe05zd8/configuration-cache-report.html"
+  ],
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "performanceEvidence": false,
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "speedupClaim": false,
+  "productFailures": 0
+}

@@ -1620,9 +1620,11 @@ timed-review result for the reviewed-native product direction.
 
 ## Source-bound configuration-input mechanism
 
-The active SBIC experiment spends diagnostics only on three exact source-bound
-configuration-time process reads. It retains the local controlled threshold of
-500 ms and 2%, exact outputs, zero additional product failures, and eight
-balanced pairs across at least two families. This is a mechanism test: at its
-SBIC-000 freeze it supplies no timing or speedup claim, and even a later pass
-will not establish arbitrary-repository prevalence.
+The closed SBIC experiment spent diagnostics only on three exact source-bound
+configuration-time process reads. All three starts are conclusive with zero
+loss. QuickCarpet's retained Gradle 7.4 report has 26 Fabric Loom problems but
+no external-process problem; LSSS has two problems and exactly binds
+`git rev-parse HEAD`; Suwayomi remains unbound because the v1 selector did not
+retain its duplicated-reference report. The 1/3 result misses the fixed 2/3
+diagnostic-binding gate. No controlled timing, candidate, speedup claim, or
+product failure exists, and arbitrary-repository prevalence remains unproved.

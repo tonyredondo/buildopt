@@ -5337,6 +5337,23 @@ verifies invalidation and checks the affected and unaffected JARs. The report
 contains the input and build-logic read origin but no complete semantic project
 owner, so the safe POC result remains full-workflow native retention.
 
+## Source-bound configuration-input diagnostics
+
+`./dev/check-source-bound-configuration-input-strict-diagnostics` validates the
+terminal SBIC source-first mechanism study without starting Gradle. It
+decompresses and rehashes three public logs and two reports, reconstructs
+selector reference identity, reparses 28 problems, reruns the source scanner,
+and exact-matches reported commands to frozen source operations. The checked
+result is 3/3 conclusive, zero lost, and 1/3 diagnostic-bound families, so the
+fixed 2/3 gate stops candidates and timing.
+
+```bash
+./dev/check-source-bound-configuration-input-corrections
+./dev/check-source-bound-configuration-input-detector
+./dev/check-source-bound-configuration-input-diagnostic-runner
+./dev/check-source-bound-configuration-input-strict-diagnostics
+```
+
 ## Aggregate output closure evidence
 
 `./dev/check-aggregate-output-closure` validates the immutable Gradle 8/9 and

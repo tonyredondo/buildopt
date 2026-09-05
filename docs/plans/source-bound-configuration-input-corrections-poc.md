@@ -1,8 +1,8 @@
 # Source-Bound Configuration-Input Corrections POC
 
-**Overall:** `ACTIVE`<br>
-**Current block:** `SBIC-002` is in progress<br>
-**Next action:** three fresh strict diagnostics, sequentially
+**Overall:** `STOP_INSUFFICIENT_DIAGNOSTIC_BINDING`<br>
+**Current block:** `SBIC-006` terminal documentation is complete<br>
+**Next action:** none; a materially different successor needs a new contract
 
 ## Objective and decision boundary
 
@@ -58,7 +58,7 @@ tests cover tracked providers, task-only execution, secrets/interaction,
 ambiguity, source drift, multiple operations, Groovy syntax, false-positive
 redirect syntax, and label invariance. No public Gradle start occurred.
 
-### SBIC-002 — fresh strict diagnostics
+### SBIC-002 — fresh strict diagnostics (`DONE_STOP`)
 
 - Materialize clean Git-preserving checkouts and empty Gradle homes.
 - Run one exact owner workflow per family with `--configuration-cache`, strict
@@ -84,7 +84,16 @@ source-bound. The versioned v2 selector deduplicates only identical URI text;
 two distinct paths remain ambiguous, and inventory is still never authority.
 The frozen one-start budget is not silently extended or replayed.
 
-### SBIC-003 — controlled materiality
+Terminal result: QuickCarpet completed 29 tasks and retained one report with 26
+problems, all unrelated Fabric Loom incompatibilities; Gradle 7.4 did not report
+its three frozen `Runtime.exec` source rows. LSSS completed 67 tasks and retained
+one report with two problems; its `git rev-parse HEAD` problem binds exactly to
+the single frozen source row. Independent reconstruction therefore records 3/3
+conclusive starts, zero lost starts, two retained reports, 28 total report
+problems, one external-process problem, and only 1/3 diagnostic-bound families.
+The required 2/3 gate fails.
+
+### SBIC-003 — controlled materiality (`NOT_AUTHORIZED`)
 
 - Prefetch dependencies outside measurement and preserve raw logs.
 - Apply the existing owner-host controls, wait 120 seconds, and pass seven
@@ -96,7 +105,7 @@ Gate: at least two families independently exceed 500 ms and 2%. Hosted CI has
 no wall-time authority. If the host fails stability, stop as
 `INCOMPLETE_PERFORMANCE_ENVIRONMENT`; do not relax the threshold.
 
-### SBIC-004 — isolated candidate correctness
+### SBIC-004 — isolated candidate correctness (`NOT_AUTHORIZED`)
 
 - Produce at most one digest-bound PatchBundle per material family.
 - Apply it only in an isolated copy and preserve command, working directory,
@@ -108,7 +117,7 @@ no wall-time authority. If the host fails stability, stop as
 Gate: at least two qualified families. A public checkout or upstream repository
 is never mutated.
 
-### SBIC-005 — paired value
+### SBIC-005 — paired value (`NOT_AUTHORIZED`)
 
 - Use one excluded stabilization and eight balanced native/candidate pairs per
   qualified family after prefetch and quiescence.
@@ -117,7 +126,7 @@ is never mutated.
   95% interval, non-regressive candidate p95, and combined payback <= 300
   builds.
 
-### SBIC-006 — terminal product decision
+### SBIC-006 — terminal product decision (`DONE`)
 
 - Independently reconstruct every gate and update the evidence index, detailed
   tracker, validation reference, implementation tracker/ledger, audit,
@@ -126,6 +135,13 @@ is never mutated.
   bounded mechanism conclusion. Otherwise stop with the exact failed gate.
 - Never authorize automatic application, merge, upstream PRs, production, Test
   Optimization, or arbitrary-repository prevalence.
+
+Decision: stop this exact route at the diagnostic-binding gate. No controlled
+materiality run, public-source mutation, candidate, timing sample, PatchBundle,
+speedup claim, or product failure was created. Source selection improved spend
+targeting, but source evidence alone cannot guarantee that the Gradle version
+will observe the operation or that unrelated plugin incompatibilities will not
+dominate the strict report.
 
 ## Budgets and stop rules
 
@@ -137,3 +153,9 @@ is never mutated.
 - Any evidence-publication failure stops before another start.
 - Temporary checkouts and homes remain until retained evidence is independently
   reconstructed, then are removed by exact path.
+
+## Changelog
+
+- 2026-09-05: closed SBIC at 1/3 diagnostic-bound families after three
+  conclusive starts; dependent materiality, candidate, and value blocks remain
+  unexecuted and unauthorized.

@@ -366,12 +366,13 @@ each of OpenAPI Generator, Licensee, and Gradle Profiler pass its 3/3 evidence-
 reliability gate with zero silently lost starts. The pass authorizes a distinct
 fresh successor plan, not a source correction or timing.
 
-That successor is SBIC. It selects three repositories from source evidence of
-pure configuration-time process reads before diagnostics. The enrichment is
-appropriate for testing whether BuildOpt can deliver the native correction
-mechanism, but cannot estimate how often the opportunity occurs. Its frozen
-two-family correctness and value gates prevent one tailored success from being
-presented as a product mechanism.
+That successor was SBIC. It selected three repositories from source evidence of
+pure configuration-time process reads before diagnostics. All three strict
+starts are conclusive, but the expected problem binds only for LSSS. Gradle 7.4
+does not expose QuickCarpet's three `Runtime.exec` reads in its 26-problem Fabric
+Loom report, and Suwayomi's v1 selector did not retain its duplicated-reference
+report. The fixed gate therefore stops at 1/3 rather than allowing one tailored
+success to become a product claim. No materiality, candidate, or value work ran.
 
 The current order and stop conditions live in the completed
 [Wrapper-Coordinated Native Corrections POC](../plans/wrapper-coordinated-native-corrections-poc.md).

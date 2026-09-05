@@ -1,0 +1,161 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_subjects=${buildopt_root}/specs/poc-source-bound-configuration-input-corrections-v1.subjects.json
+buildopt_source_evidence=${buildopt_root}/benchmarks/results/source-bound-configuration-input-corrections-v1/sbic-e001-source-detector
+buildopt_evidence=${buildopt_root}/benchmarks/results/source-bound-configuration-input-corrections-v1/sbic-e002-strict-diagnostics
+buildopt_result=${buildopt_evidence}/result.json
+buildopt_tmp=$(mktemp -d /tmp/buildopt-sbic-diagnostics-check.XXXXXX)
+trap 'rm -rf -- "${buildopt_tmp}"' EXIT
+cd -- "${buildopt_root}"
+
+buildopt_contract_commit=$(jq -r '.inputs.contractCommit' "${buildopt_result}")
+git cat-file -e "${buildopt_contract_commit}^{commit}"
+git merge-base --is-ancestor "${buildopt_contract_commit}" HEAD
+for buildopt_binding in \
+    'contractSha256:specs/poc-source-bound-configuration-input-corrections-v1.json' \
+    'subjectsSha256:specs/poc-source-bound-configuration-input-corrections-v1.subjects.json'; do
+    buildopt_key=${buildopt_binding%%:*}
+    buildopt_path=${buildopt_binding#*:}
+    buildopt_actual=$(git show "${buildopt_contract_commit}:${buildopt_path}" | sha256sum | cut -d' ' -f1)
+    [[ ${buildopt_actual} == "$(jq -r --arg key "${buildopt_key}" '.inputs[$key]' "${buildopt_result}")" ]]
+done
+for buildopt_binding in \
+    'sourceResultSha256:benchmarks/results/source-bound-configuration-input-corrections-v1/sbic-e001-source-detector/result.json' \
+    'reportParserSha256:internal/configurationinput/report.go' \
+    'sourceScannerSha256:internal/configurationinputsource/scanner.go' \
+    'diagnosticBinderSha256:internal/configurationinputbinding/binding.go' \
+    'diagnosticAuditSha256:cmd/source-bound-configuration-input-diagnostic-audit/main.go'; do
+    buildopt_key=${buildopt_binding%%:*}
+    buildopt_path=${buildopt_binding#*:}
+    [[ $(sha256sum "${buildopt_path}" | cut -d' ' -f1) == "$(jq -r --arg key "${buildopt_key}" '.inputs[$key]' "${buildopt_result}")" ]]
+done
+
+"${buildopt_root}/dev/run" --toolchain go -- go build -o "${buildopt_tmp}/audit" ./cmd/source-bound-configuration-input-diagnostic-audit
+base64 -d "${buildopt_source_evidence}/sources/suwayomi-server/Constants.kt.b64" >"${buildopt_tmp}/suwayomi-server.kt"
+base64 -d "${buildopt_source_evidence}/sources/quickcarpet/GitHelper.kt.b64" >"${buildopt_tmp}/quickcarpet.kt"
+cp -- "${buildopt_source_evidence}/sources/lsss/BuildProperties.kt" "${buildopt_tmp}/lsss.kt"
+
+buildopt_rows=${buildopt_tmp}/rows.jsonl
+buildopt_starts=0
+buildopt_conclusive=0
+buildopt_lost=0
+buildopt_reports=0
+buildopt_problems=0
+buildopt_external=0
+buildopt_bound=0
+while IFS= read -r buildopt_subject; do
+    buildopt_ordinal=$(jq -r '.ordinal' <<<"${buildopt_subject}")
+    buildopt_key=$(jq -r '.key' <<<"${buildopt_subject}")
+    buildopt_capture=${buildopt_evidence}/${buildopt_key}/capture.json
+    buildopt_selection=${buildopt_evidence}/${buildopt_key}/report-selection.json
+    buildopt_inventory=${buildopt_evidence}/${buildopt_key}/report-inventory.json
+    buildopt_log_gz=${buildopt_evidence}/${buildopt_key}/gradle.log.gz
+    buildopt_log=${buildopt_tmp}/${buildopt_key}.log
+    [[ $(sha256sum "${buildopt_capture}" | cut -d' ' -f1) == $(jq -r --arg key "${buildopt_key}" '.inputs.captureSha256[$key]' "${buildopt_result}") ]]
+    [[ $(sha256sum "${buildopt_log_gz}" | cut -d' ' -f1) == $(jq -r --arg key "${buildopt_key}" '.inputs.compressedLogSha256[$key]' "${buildopt_result}") ]]
+    gzip -t "${buildopt_log_gz}"
+    gzip -dc "${buildopt_log_gz}" >"${buildopt_log}"
+    [[ $(sha256sum "${buildopt_log}" | cut -d' ' -f1) == $(jq -r '.logSha256' "${buildopt_capture}") ]]
+    diff -u <(jq -S . "${buildopt_selection}") <(jq -S '.reportSelection' "${buildopt_capture}")
+    diff -u <(jq -S . "${buildopt_inventory}") <(jq -S '.reportInventory' "${buildopt_capture}")
+    jq -e --arg key "${buildopt_key}" --arg revision "$(jq -r '.revision' <<<"${buildopt_subject}")" \
+        --arg archive "$(jq -r '.archiveSha256' <<<"${buildopt_subject}")" \
+        --argjson arguments "$(jq -c '.ownerWorkflow.arguments' <<<"${buildopt_subject}")" '
+        .subject == $key and .revision == $revision and .sourceArchiveSha256 == $archive and
+        .source == {materialization:"FRESH_LOCAL_GIT_CLONE",gitMetadata:true,clean:true,head:$revision} and
+        .ownerArguments == $arguments and .gradleStarted == true and .exitCode != 124 and
+        .performanceEvidence == false and .publicSourceModified == false and
+        .candidateBuild == false and .timingSamples == 0 and .speedupClaim == false and .productFailures == 0
+    ' "${buildopt_capture}" >/dev/null
+
+    buildopt_refs=${buildopt_tmp}/${buildopt_key}.refs
+    rg -o 'file://[^[:space:]]*configuration-cache-report\.html' "${buildopt_log}" >"${buildopt_refs}"
+    buildopt_total_refs=$(wc -l <"${buildopt_refs}")
+    buildopt_unique_refs=$(sort -u "${buildopt_refs}" | wc -l)
+    buildopt_selector=v2
+    buildopt_expected_refs=${buildopt_unique_refs}
+    if [[ ${buildopt_key} == suwayomi-server ]]; then
+        buildopt_selector=v1
+        buildopt_expected_refs=${buildopt_total_refs}
+    fi
+    [[ $(jq -r '.referenceCount' "${buildopt_selection}") == "${buildopt_expected_refs}" ]]
+
+    buildopt_outcome=$(jq -r '.outcome' "${buildopt_capture}")
+    buildopt_report_retained=false
+    buildopt_problem_count=null
+    buildopt_external_count=null
+    buildopt_source_rows=$(jq --arg key "${buildopt_key}" '[.rows[] | select(.key==$key) | .rows[]] | length' "${buildopt_source_evidence}/result.json")
+    buildopt_binding_decision=DIAGNOSTIC_NOT_RETAINED
+    buildopt_diagnostic_bound=false
+    buildopt_binding=null
+    if [[ ${buildopt_outcome} == ROOT_REPORT_CAPTURED ]]; then
+        [[ ${buildopt_unique_refs} == 1 && $(jq 'length' "${buildopt_inventory}") == 1 ]]
+        buildopt_report_retained=true
+        buildopt_report_gz=${buildopt_evidence}/${buildopt_key}/configuration-cache-report.html.gz
+        buildopt_report=${buildopt_tmp}/${buildopt_key}.html
+        [[ $(sha256sum "${buildopt_report_gz}" | cut -d' ' -f1) == $(jq -r --arg key "${buildopt_key}" '.inputs.compressedReportSha256[$key]' "${buildopt_result}") ]]
+        gzip -t "${buildopt_report_gz}"
+        gzip -dc "${buildopt_report_gz}" >"${buildopt_report}"
+        [[ $(sha256sum "${buildopt_report}" | cut -d' ' -f1) == $(jq -r '.reportSha256' "${buildopt_capture}") ]]
+        "${buildopt_tmp}/audit" --report "${buildopt_report}" \
+            --source "${buildopt_tmp}/${buildopt_key}.kt" \
+            --facts "${buildopt_source_evidence}/facts/${buildopt_key}.json" \
+            >"${buildopt_tmp}/${buildopt_key}-audit.json"
+        buildopt_problem_count=$(jq '.binding.problems' "${buildopt_tmp}/${buildopt_key}-audit.json")
+        buildopt_external_count=$(jq '.binding.externalProcessProblems' "${buildopt_tmp}/${buildopt_key}-audit.json")
+        buildopt_binding_decision=$(jq -r '.binding.decision' "${buildopt_tmp}/${buildopt_key}-audit.json")
+        buildopt_source_rows=$(jq '.binding.sourceRows' "${buildopt_tmp}/${buildopt_key}-audit.json")
+        if [[ ${buildopt_binding_decision} == DIAGNOSTIC_BOUND ]]; then
+            buildopt_diagnostic_bound=true
+            buildopt_binding=$(jq '.binding.bindings[0]' "${buildopt_tmp}/${buildopt_key}-audit.json")
+            buildopt_bound=$((buildopt_bound + 1))
+        fi
+        buildopt_reports=$((buildopt_reports + 1))
+        buildopt_problems=$((buildopt_problems + buildopt_problem_count))
+        buildopt_external=$((buildopt_external + buildopt_external_count))
+    else
+        [[ ${buildopt_key} == suwayomi-server && ${buildopt_outcome} == ROOT_REPORT_REFERENCE_AMBIGUOUS ]]
+        [[ ! -e ${buildopt_evidence}/${buildopt_key}/configuration-cache-report.html.gz ]]
+        [[ $(jq -r '.reportSha256' "${buildopt_capture}") == null ]]
+    fi
+    jq -cn --argjson ordinal "${buildopt_ordinal}" --arg key "${buildopt_key}" --arg outcome "${buildopt_outcome}" \
+        --arg selector "${buildopt_selector}" --argjson retained "${buildopt_report_retained}" \
+        --argjson problems "${buildopt_problem_count}" --argjson external "${buildopt_external_count}" \
+        --argjson sourceRows "${buildopt_source_rows}" --arg decision "${buildopt_binding_decision}" \
+        --argjson bound "${buildopt_diagnostic_bound}" --argjson binding "${buildopt_binding}" '
+        {ordinal:$ordinal,key:$key,outcome:$outcome,conclusive:true,selectorVersion:$selector,
+         reportRetained:$retained,reportProblems:$problems,externalProcessProblems:$external,
+         sourceRows:$sourceRows,bindingDecision:$decision,diagnosticBound:$bound}
+        + if $binding == null then {} else {binding:$binding} end
+    ' >>"${buildopt_rows}"
+    buildopt_starts=$((buildopt_starts + 1))
+    buildopt_conclusive=$((buildopt_conclusive + 1))
+done < <(jq -c '.subjects[]' "${buildopt_subjects}")
+
+diff -u <(jq -S '.subjects' "${buildopt_result}") <(jq -sS . "${buildopt_rows}")
+jq -e --argjson starts "${buildopt_starts}" --argjson conclusive "${buildopt_conclusive}" \
+    --argjson lost "${buildopt_lost}" --argjson reports "${buildopt_reports}" \
+    --argjson problems "${buildopt_problems}" --argjson external "${buildopt_external}" \
+    --argjson bound "${buildopt_bound}" '
+    .state == "STOP_INSUFFICIENT_DIAGNOSTIC_BINDING" and
+    .reconstructed == {publicGradleStarts:$starts,conclusiveFamilies:$conclusive,requiredConclusiveFamilies:3,
+      silentlyLostStarts:$lost,maximumSilentlyLostStarts:0,retainedReports:$reports,
+      reportProblems:$problems,externalProcessProblems:$external,diagnosticBoundFamilies:$bound,
+      minimumDiagnosticBoundFamilies:2,gatePassed:false} and
+    .dependentBlocks == {"SBIC-003":"NOT_AUTHORIZED","SBIC-004":"NOT_AUTHORIZED",
+      "SBIC-005":"NOT_AUTHORIZED","SBIC-006":"TERMINAL_DOCUMENTATION_ONLY"} and
+    .boundaries == {predecessorReportsConsumed:false,publicSourceMutations:0,candidateBuilds:0,
+      timingSamples:0,speedupClaims:0,productFailures:0,prevalenceAuthority:false} and
+    $starts == 3 and $conclusive == 3 and $lost == 0 and $reports == 2 and
+    $problems == 28 and $external == 1 and $bound == 1
+' "${buildopt_result}" >/dev/null
+
+printf 'SBIC-002 diagnostics reconstructed: 3/3 conclusive, 1/3 bound; materiality and candidate blocks stopped\n'

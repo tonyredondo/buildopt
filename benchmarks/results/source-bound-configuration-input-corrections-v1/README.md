@@ -1,6 +1,6 @@
 # Source-bound configuration-input corrections v1 evidence
 
-State: `SBIC-001_COMPLETE`.
+State: `STOP_INSUFFICIENT_DIAGNOSTIC_BINDING`.
 
 The [human contract](../../../specs/poc-source-bound-configuration-input-corrections-v1.md),
 [machine contract](../../../specs/poc-source-bound-configuration-input-corrections-v1.json),
@@ -25,7 +25,7 @@ side-effect rejection for BlueMap. The versioned detector, CLI, negative tests,
 source/call-site hashes, summary counts, unknown-field rejection, and source
 drift are all reconstructed. Public Gradle starts remain zero.
 
-The SBIC-002 capture adapter is fixture-proven before public execution. It maps
+The SBIC-002 capture adapter was fixture-proven before public execution. It maps
 the frozen wrapper, working directory, JDK, owner arguments/environment and
 required outputs into the immutable SDCR runner, and rejects a runner override
 for the canonical manifest. Public Gradle starts remain zero at this boundary.
@@ -36,8 +36,23 @@ reported one unique external process plus one report file, but `--stacktrace`
 printed the identical report URI twice. The original selector therefore
 recorded `ROOT_REPORT_REFERENCE_AMBIGUOUS` and did not retain the report. A
 versioned v2 selector now deduplicates identical URI text while leaving two
-distinct paths ambiguous. Suwayomi is conclusive but supplies no bound row; it
-is not replayed and QuickCarpet is the next frozen start.
+distinct paths ambiguous. Suwayomi is conclusive but supplies no bound row and
+was not replayed.
+
+The terminal [SBIC-002 result](./sbic-e002-strict-diagnostics/result.json)
+reconstructs all three fresh starts. QuickCarpet retained a 26-problem report,
+but every problem belongs to unsupported Fabric Loom behavior and none reports
+the three source-bound Git reads. LSSS retained two problems and binds its one
+external-process problem exactly to `git rev-parse HEAD`. Together with the
+unretained Suwayomi report, this yields 3/3 conclusive families, zero lost
+starts, two retained reports, 28 parsed problems, and only 1/3
+diagnostic-bound families versus the required 2/3.
+
+SBIC therefore stops before controlled materiality. `SBIC-003..005` are not
+authorized; `SBIC-006` records the terminal decision only. Public source
+mutations, candidate builds, timing samples, speedup claims, and product
+failures remain zero. This source-enriched study proves neither prevalence nor
+value.
 
 Validate the freeze with:
 
@@ -45,4 +60,5 @@ Validate the freeze with:
 ./dev/check-source-bound-configuration-input-corrections
 ./dev/check-source-bound-configuration-input-detector
 ./dev/check-source-bound-configuration-input-diagnostic-runner
+./dev/check-source-bound-configuration-input-strict-diagnostics
 ```

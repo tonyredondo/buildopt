@@ -2,6 +2,12 @@
 
 Reproducible workloads for measuring causal savings, overhead, queues, additional compute, and behavior under failure.
 
+The closed [source-bound configuration-input evidence index](./results/source-bound-configuration-input-corrections-v1/README.md)
+contains three conclusive strict starts with zero loss. Two retained reports
+reconstruct 28 problems, but only LSSS binds its expected source operation;
+1/3 misses the fixed 2/3 gate. No mutation, candidate, timing, or speedup claim
+exists.
+
 The closed [configuration-input native-corrections evidence index](./results/configuration-input-native-corrections-v1/README.md)
 contains fourteen valid strict captures and one retained invalid capture. Its
 independent source gate reconstructs 7/10 conclusive and 0/3 eligible families

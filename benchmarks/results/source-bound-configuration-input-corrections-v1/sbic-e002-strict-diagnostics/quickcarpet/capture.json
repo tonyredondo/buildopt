@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "buildopt.sdcr/capture/v1",
+  "subject": "quickcarpet",
+  "revision": "9593c692cbd151666e447f68f22113028c4122c3",
+  "sourceArchiveSha256": "80e0b8d46c2b1eede0ee316ac8034893dd48b21d8a2365ada6651d07b61b864a",
+  "source": {
+    "materialization": "FRESH_LOCAL_GIT_CLONE",
+    "gitMetadata": true,
+    "clean": true,
+    "head": "9593c692cbd151666e447f68f22113028c4122c3"
+  },
+  "wrapper": {
+    "path": "gradlew",
+    "sha256": "f9594eb5c08a148f23b9d7a5fd99551224db96dadb1b7cecd3985c4758c4f867"
+  },
+  "workingDirectory": ".",
+  "toolchain": "temurin-jdk-17",
+  "ownerArguments": [
+    "clean",
+    "build",
+    "-x",
+    "check",
+    "--stacktrace",
+    "--no-daemon"
+  ],
+  "requiredOutputs": [
+    "build/libs/*.jar",
+    "terminal:BUILD_SUCCESSFUL"
+  ],
+  "diagnosticArguments": [
+    "--configuration-cache",
+    "--configuration-cache-problems=fail",
+    "--no-scan",
+    "--build-cache",
+    "--parallel",
+    "--max-workers=4"
+  ],
+  "coldState": {
+    "gradleHome": "EMPTY_AT_CHILD_START",
+    "sharedPriorState": false
+  },
+  "gradleStarted": true,
+  "exitCode": 1,
+  "outcome": "ROOT_REPORT_CAPTURED",
+  "logSha256": "420892dc9eff8dda11946a0100cdc53fccf608f928883f72c6c6e67032787a42",
+  "reportSha256": "1e1d0ae17f0db013f6dd33711652ae2028c371184d1dc5307a91cf546e967fa3",
+  "reportSelection": {
+    "outcome": "ROOT_REPORT_CAPTURED",
+    "referenceCount": 1,
+    "referenceSha256": [
+      "4d1e20f8002e8ff8d70cb4e506711eb98d9a9133fbca6db5e612e5b9d776fe85"
+    ],
+    "selectedRelativePath": "j5a2sop5x5jrj86weia3m3uc/dr8z68suzrqtumx6ifr0o2rth/configuration-cache-report.html"
+  },
+  "reportInventory": [
+    "build/reports/configuration-cache/j5a2sop5x5jrj86weia3m3uc/dr8z68suzrqtumx6ifr0o2rth/configuration-cache-report.html"
+  ],
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "performanceEvidence": false,
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "speedupClaim": false,
+  "productFailures": 0
+}

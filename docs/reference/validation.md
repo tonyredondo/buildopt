@@ -353,9 +353,10 @@ snapshots, reruns the versioned classifier, reconstructs family and decision
 counts, and proves the fixed start-budget stop without trusting result summary
 fields. It runs no public Gradle build and collects no timing.
 
-`./dev/check-source-bound-configuration-input-corrections` validates the active
+`./dev/check-source-bound-configuration-input-corrections` validates the closed
 SBIC contract, three exact source-bound families, prospective side-effect
-exclusion, two-family 500-ms/2% value gate, budgets, boundaries, and zero-state.
+exclusion, two-family 500-ms/2% value gate, budgets, boundaries, and terminal
+zero-candidate state.
 Pass `--sources-root DIRECTORY` to recompute each exact Git archive plus wrapper,
 workflow, source, and call-site digests from local frozen checkouts. The default
 Base CI mode is static and runs no public Gradle build or timing.
@@ -379,6 +380,13 @@ regular-file, no-symlink and log-ownership checks while treating repeated
 identical URI text as one logical reference. Focused tests prove the duplicate
 case and retain ambiguity for two distinct paths. The immutable v1 entrypoint
 and all retained SDCR reconstruction remain unchanged in behavior.
+
+`./dev/check-source-bound-configuration-input-strict-diagnostics` independently
+decompresses and rehashes all three SBIC logs and both retained reports,
+reconstructs v1/v2 reference counts, reparses 28 raw problems, reruns the source
+scanner, and exact-matches diagnostic commands to source operations. It proves
+3/3 conclusive, zero lost, and only 1/3 diagnostic-bound families without
+trusting result summaries or starting Gradle.
 
 `./dev/check-aggregate-output-closure` validates the following generic output
 coverage step. Its immutable four-case result requires exact custom aggregate

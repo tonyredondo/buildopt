@@ -42,8 +42,12 @@ jq -e '
   .budget.maximumAdditionalDiskGiB == 20 and
   .budget.maximumSecondsPerStart == 1200 and
   .budget.concurrentStarts == 1 and
-  .current == {completed:["SBIC-000","SBIC-001"],next:"SBIC-002"} and
-  (.zeroState | to_entries | all(.value == 0)) and
+  .current == {completed:["SBIC-000","SBIC-001","SBIC-002","SBIC-006"],
+    notAuthorized:["SBIC-003","SBIC-004","SBIC-005"],next:null,
+    state:"STOP_INSUFFICIENT_DIAGNOSTIC_BINDING"} and
+  .zeroState.publicGradleStarts == 3 and .zeroState.strictDiagnostics == 3 and
+  ([.zeroState.publicSourceMutations,.zeroState.candidateBuilds,.zeroState.pairedTimingSamples,
+    .zeroState.speedupClaims,.zeroState.productFailures] | all(. == 0)) and
   .boundaries.prevalenceClaim == false and
   .boundaries.testOptimization == "OUT_OF_SCOPE"
 ' "${buildopt_contract}" >/dev/null
@@ -83,7 +87,7 @@ jq -e '
 for buildopt_block in SBIC-000 SBIC-001 SBIC-002 SBIC-003 SBIC-004 SBIC-005 SBIC-006; do
     grep -Fq -- "${buildopt_block}" "${buildopt_plan}"
 done
-grep -Fq -- 'zero public Gradle starts' "${buildopt_evidence}"
+grep -Fq -- 'only 1/3' "${buildopt_evidence}"
 
 if (($# == 2)); then
     [[ $1 == --sources-root ]]
@@ -101,4 +105,4 @@ if (($# == 2)); then
     done < <(jq -r '.subjects[] | [.key,.revision,.archiveSha256,.wrapper.path,.wrapper.sha256,.wrapper.propertiesPath,.wrapper.propertiesSha256,.ownerWorkflow.sourcePath,.ownerWorkflow.sourceSha256,.binding.sourcePath,.binding.sourceSha256,.binding.callSitePath,.binding.callSiteSha256] | @tsv' "${buildopt_subjects}")
 fi
 
-printf 'SBIC contract reconstructed: 3 source-bound families, 2-family value gate, zero public starts\n'
+printf 'SBIC contract reconstructed: stopped at 1/3 diagnostic-bound families, zero candidates or timing\n'

@@ -93,10 +93,15 @@
     "concurrentStarts": 1
   },
   "blocks": ["SBIC-000", "SBIC-001", "SBIC-002", "SBIC-003", "SBIC-004", "SBIC-005", "SBIC-006"],
-  "current": {"completed": ["SBIC-000", "SBIC-001"], "next": "SBIC-002"},
+  "current": {
+    "completed": ["SBIC-000", "SBIC-001", "SBIC-002", "SBIC-006"],
+    "notAuthorized": ["SBIC-003", "SBIC-004", "SBIC-005"],
+    "next": null,
+    "state": "STOP_INSUFFICIENT_DIAGNOSTIC_BINDING"
+  },
   "zeroState": {
-    "publicGradleStarts": 0,
-    "strictDiagnostics": 0,
+    "publicGradleStarts": 3,
+    "strictDiagnostics": 3,
     "publicSourceMutations": 0,
     "candidateBuilds": 0,
     "pairedTimingSamples": 0,

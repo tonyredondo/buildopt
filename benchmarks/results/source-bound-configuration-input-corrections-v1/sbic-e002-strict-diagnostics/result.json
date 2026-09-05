@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "buildopt.evidence/source-bound-configuration-input-strict-diagnostics/v1",
+  "workItem": "SBIC-002",
+  "state": "STOP_INSUFFICIENT_DIAGNOSTIC_BINDING",
+  "inputs": {
+    "contractCommit": "3086ff25ce15cb066e9587685a6345b0a08dba55",
+    "contractSha256": "9e1d10dde9bf81d59fa091a0d87a3dd64e1079d4ba0b79603921281d8a9d3723",
+    "subjectsSha256": "d3092d4c514ba02742ad7b3c6136ebf7ec8beedd8a2ee4f5f94634594084b88c",
+    "sourceResultSha256": "77b155f9029b5e5e3829213f10401088044dd528cd58526abfb67a3abccbab05",
+    "reportParserSha256": "5775b880c546dd28acd792900bc58e1ba227329bdc03ad518d385779a9be91d9",
+    "sourceScannerSha256": "e8d05524cccfc0a50e10f7a81462986a06b44f7147ce868d1777f85ca661baa8",
+    "diagnosticBinderSha256": "11d0e1c082ebd79d04b029af070c952b94901f1afe6892b765f964b5914553b1",
+    "diagnosticAuditSha256": "186d3e49ced9e368f880dd76fc1c85a70a07a9ab1881920533bfaf862b4b3cb2",
+    "captureSha256": {
+      "suwayomi-server": "b47564d2fb3255fe844f70ee85b45f8cafa9633118e1ebc949b3ca74228e5fa4",
+      "quickcarpet": "d24a159bca4430851be56dd0eb360304bbb3dbf83cb20b78ac40959729bced30",
+      "lsss": "34aaaa0b27e394ab629b77566460625d82f35e2cb21cb85bf2a388f17630eefc"
+    },
+    "compressedLogSha256": {
+      "suwayomi-server": "ccb53ae60f9f5572195815ba0085f9cbf60f8327c1f738f940d7ddc548eb06ec",
+      "quickcarpet": "d5468fd0929afb6d490aa19fac0c77fabab404514373ce55a6db7d6d00db51fc",
+      "lsss": "5e32b1d49c71145174156244e141873afd60d40c4985e9d50dc14b47b7088278"
+    },
+    "compressedReportSha256": {
+      "quickcarpet": "0c66352c8592d1c71ee3a5d499fed469b26052d7ce63357ca39a37804b0be411",
+      "lsss": "027c2140e7496bb68b3288b52959ef8c7cbafd681eccabda611c71d74c901819"
+    }
+  },
+  "subjects": [
+    {
+      "ordinal": 1,
+      "key": "suwayomi-server",
+      "outcome": "ROOT_REPORT_REFERENCE_AMBIGUOUS",
+      "conclusive": true,
+      "selectorVersion": "v1",
+      "reportRetained": false,
+      "reportProblems": null,
+      "externalProcessProblems": null,
+      "sourceRows": 1,
+      "bindingDecision": "DIAGNOSTIC_NOT_RETAINED",
+      "diagnosticBound": false
+    },
+    {
+      "ordinal": 2,
+      "key": "quickcarpet",
+      "outcome": "ROOT_REPORT_CAPTURED",
+      "conclusive": true,
+      "selectorVersion": "v2",
+      "reportRetained": true,
+      "reportProblems": 26,
+      "externalProcessProblems": 0,
+      "sourceRows": 3,
+      "bindingDecision": "DIAGNOSTIC_NOT_OBSERVED",
+      "diagnosticBound": false
+    },
+    {
+      "ordinal": 3,
+      "key": "lsss",
+      "outcome": "ROOT_REPORT_CAPTURED",
+      "conclusive": true,
+      "selectorVersion": "v2",
+      "reportRetained": true,
+      "reportProblems": 2,
+      "externalProcessProblems": 1,
+      "sourceRows": 1,
+      "bindingDecision": "DIAGNOSTIC_BOUND",
+      "diagnosticBound": true,
+      "binding": {
+        "sourceRowIndex": 0,
+        "problemIndex": 0,
+        "command": "git rev-parse HEAD"
+      }
+    }
+  ],
+  "reconstructed": {
+    "publicGradleStarts": 3,
+    "conclusiveFamilies": 3,
+    "requiredConclusiveFamilies": 3,
+    "silentlyLostStarts": 0,
+    "maximumSilentlyLostStarts": 0,
+    "retainedReports": 2,
+    "reportProblems": 28,
+    "externalProcessProblems": 1,
+    "diagnosticBoundFamilies": 1,
+    "minimumDiagnosticBoundFamilies": 2,
+    "gatePassed": false
+  },
+  "dependentBlocks": {
+    "SBIC-003": "NOT_AUTHORIZED",
+    "SBIC-004": "NOT_AUTHORIZED",
+    "SBIC-005": "NOT_AUTHORIZED",
+    "SBIC-006": "TERMINAL_DOCUMENTATION_ONLY"
+  },
+  "boundaries": {
+    "predecessorReportsConsumed": false,
+    "publicSourceMutations": 0,
+    "candidateBuilds": 0,
+    "timingSamples": 0,
+    "speedupClaims": 0,
+    "productFailures": 0,
+    "prevalenceAuthority": false
+  }
+}

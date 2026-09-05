@@ -89,6 +89,21 @@ any two distinct references. Inventory remains non-authoritative. The first
 Suwayomi start exposed this distinction and remains retained under the v1
 selector outcome; it is not silently replaced or counted as source-bound.
 
+## Terminal result
+
+All three strict starts are retained and conclusive with zero silent loss.
+QuickCarpet's captured Gradle 7.4 report contains 26 Fabric Loom problems but
+does not report any of its three frozen `Runtime.exec` reads. LSSS's captured
+Gradle 9.6.1 report contains two problems and binds its external-process problem
+exactly to the frozen `git rev-parse HEAD` source operation. Suwayomi remains
+conclusive and unbound because its v1 selector did not retain the report.
+
+The reconstructed gate is therefore 1/3 diagnostic-bound families against the
+required 2/3. The terminal state is
+`STOP_INSUFFICIENT_DIAGNOSTIC_BINDING`; `SBIC-003..005` are not authorized and
+`SBIC-006` supplies documentation only. There are zero public-source mutations,
+candidate builds, timing samples, speedup claims, and product failures.
+
 ## Resource and product boundary
 
 Starts are sequential, use at most four workers, run for at most 1,200 seconds,

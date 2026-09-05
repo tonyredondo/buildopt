@@ -16,13 +16,13 @@ complete at 10/10 conclusive but only 1/3 required actionable material families.
 WCNCP-009A stopped at its environment gate; WCNCP-009B passed the unchanged
 gate after fixed quiescence and completed 6/6 rows. Value remains at zero.
 
-The active source-enriched mechanism experiment is
+The latest closed source-enriched mechanism experiment is
 [`Source-Bound Configuration-Input Corrections v1`](./poc-source-bound-configuration-input-corrections-v1.md)
 with its [machine contract](./poc-source-bound-configuration-input-corrections-v1.json)
 and [three exact source-bound subjects](./poc-source-bound-configuration-input-corrections-v1.subjects.json).
-`SBIC-000` freezes Suwayomi Server, QuickCarpet, and LSSS before any public
-Gradle start. It can validate a correction mechanism but has no prevalence
-authority.
+`SBIC-002` retains 3/3 conclusive strict starts but only 1/3
+diagnostic-bound families, below its fixed 2/3 gate. It stops before candidates
+or timing and has no prevalence authority.
 
 The latest closed predecessor search is
 [`Configuration-Input Native Corrections v1`](./poc-configuration-input-native-corrections-v1.md)
