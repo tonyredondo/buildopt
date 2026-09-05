@@ -654,6 +654,7 @@ buildopt_required_files=(
     "dev/check-configuration-input-native-corrections-cohort"
     "dev/capture-configuration-input-native-corrections-diagnostic"
     "dev/check-configuration-input-native-corrections-source-gate"
+    "dev/check-strict-diagnostic-capture-reliability"
     "dev/check-wcncp-prospective-capture"
     "dev/check-wcncp-prospective-capture-negatives"
     "dev/run-wcncp-opportunity-breadth"

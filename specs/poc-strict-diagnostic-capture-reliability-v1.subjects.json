@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "buildopt.specs/poc-strict-diagnostic-capture-reliability-subjects/v1",
+  "freezeBlock": "SDCR-000",
+  "evidenceMustBeFreshAfterFreeze": true,
+  "predecessorReportsConsumed": false,
+  "subjects": [
+    {
+      "ordinal": 1,
+      "key": "openapi-generator",
+      "repository": "https://github.com/OpenAPITools/openapi-generator.git",
+      "revision": "b391b2b98c5926ee9842ef3bc863b57c4d824bbe",
+      "archiveSha256": "655f2e6b875a12c1cfedd868c0874d63a25ad556a0b53f3c44c6694efcd7c68b",
+      "wrapper": "samples/server/others/kotlin-springboot/oneOf-discriminator/gradlew",
+      "workingDirectory": "samples/server/others/kotlin-springboot/oneOf-discriminator",
+      "toolchain": "temurin-jdk-21",
+      "ownerArguments": ["build", "-x", "test"],
+      "ownerEnvironment": {},
+      "requiredOutputs": ["build/libs/*.jar", "terminal:BUILD_SUCCESSFUL"],
+      "probeClass": "COLD_STATE_EQUIVALENCE"
+    },
+    {
+      "ordinal": 2,
+      "key": "licensee",
+      "repository": "https://github.com/cashapp/licensee.git",
+      "revision": "a5d307da91143f6da78bedf4ff956e7a0bdd23ee",
+      "archiveSha256": "f46a7fe94ce4a75d8ad0060dc2c2f132bfd43afc3a4b21335f0f8a7a676dfe54",
+      "wrapper": "gradlew",
+      "workingDirectory": ".",
+      "toolchain": "temurin-jdk-25",
+      "ownerArguments": ["build", "dokkaGenerate"],
+      "ownerEnvironment": {},
+      "requiredOutputs": ["build/libs/*.jar", "build/dokka/html/**", "build/test-results/test/*.xml", "terminal:BUILD_SUCCESSFUL"],
+      "probeClass": "UNIQUE_ROOT_REPORT_OWNERSHIP"
+    },
+    {
+      "ordinal": 3,
+      "key": "gradle-profiler",
+      "repository": "https://github.com/gradle/gradle-profiler.git",
+      "revision": "469d2d8efd0bba9a0a956f2d40d21b7d4c9e3bd4",
+      "archiveSha256": "a294f1752b2a3943ea78d268d28828a6ad687b389e1f6ca1b99ba29777762a3b",
+      "wrapper": "gradlew",
+      "workingDirectory": ".",
+      "toolchain": "temurin-jdk-17",
+      "ownerArguments": ["clean", "sanityCheck", "-s", "--build-cache", "-Dorg.gradle.java.installations.auto-detect=false", "-Dorg.gradle.java.installations.auto-download=false", "-Dorg.gradle.java.installations.fromEnv=JDK17"],
+      "ownerEnvironment": {"JDK17": "TOOLCHAIN_JAVA_HOME"},
+      "requiredOutputs": ["task:sanityCheck", "task:*:sanityCheck", "terminal:BUILD_SUCCESSFUL"],
+      "probeClass": "PREVIOUSLY_UNSTARTED_WORKFLOW"
+    }
+  ]
+}

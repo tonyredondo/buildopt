@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "buildopt.specs/poc-strict-diagnostic-capture-reliability/v1",
+  "experiment": "STRICT_DIAGNOSTIC_CAPTURE_RELIABILITY_V1",
+  "predecessor": {
+    "experiment": "CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1",
+    "decision": "STOP_STRICT_DIAGNOSTIC_BUDGET_CANNOT_COMPLETE_COHORT",
+    "reportsConsumedAsEvidence": false
+  },
+  "invariants": {
+    "gitCheckoutRequired": true,
+    "cleanExactRevisionRequired": true,
+    "archiveSha256Required": true,
+    "emptyGradleHomePerProbe": true,
+    "coldCompatibilityEquivalentToDiagnostic": true,
+    "ownerProjectDirectoryAuthoritative": true,
+    "rootReportSelectedFromUniqueChildLogReference": true,
+    "selectedReportMustBeBelowExpectedRoot": true,
+    "selectedReportSymlinkAllowed": false,
+    "everyStartedChildPublishesAtomicEvidence": true,
+    "repositoryOrTaskNameRules": false
+  },
+  "outcomes": [
+    "ROOT_REPORT_CAPTURED",
+    "NO_CONFIGURATION_CACHE_REPORT",
+    "ROOT_REPORT_REFERENCE_MISSING",
+    "ROOT_REPORT_REFERENCE_AMBIGUOUS",
+    "ROOT_REPORT_OUTSIDE_EXPECTED_ROOT",
+    "SOURCE_GIT_METADATA_INVALID",
+    "SOURCE_REVISION_DRIFT",
+    "SOURCE_ARCHIVE_DRIFT",
+    "OWNER_WORKFLOW_COLD_INCOMPATIBLE",
+    "TIME_LIMIT",
+    "HARNESS_FAILURE"
+  ],
+  "blocks": ["SDCR-000", "SDCR-001", "SDCR-002", "SDCR-003", "SDCR-004"],
+  "current": {"completed": ["SDCR-000"], "next": "SDCR-001"},
+  "publicProbeGate": {
+    "subjects": "poc-strict-diagnostic-capture-reliability-v1.subjects.json",
+    "starts": 3,
+    "startsPerSubject": 1,
+    "requiredConclusiveSubjects": 3,
+    "maximumSilentlyLostStarts": 0
+  },
+  "budget": {
+    "maximumAdditionalDiskGiB": 12,
+    "minimumFreeDiskBeforeStartGiB": 10,
+    "stopBeforeNextStartFreeDiskGiB": 8,
+    "maximumSecondsPerStart": 1200,
+    "maximumWorkers": 4,
+    "concurrentStarts": 1
+  },
+  "boundaries": {
+    "environmentClass": "LOCAL_FUNCTIONAL",
+    "performanceEvidence": false,
+    "publicSourceMutation": false,
+    "candidateBuilds": 0,
+    "pairedTimingSamples": 0,
+    "speedupClaim": false,
+    "automaticApply": false,
+    "upstreamPullRequest": false,
+    "productionAuthorized": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

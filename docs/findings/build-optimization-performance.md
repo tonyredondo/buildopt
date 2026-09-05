@@ -703,6 +703,13 @@ durations have no performance authority and establish neither speedup nor
 negative product value; they show that cold admissibility and report ownership
 must be proven before spending another source-gate budget.
 
+SDCR now freezes that prerequisite as a separate functional experiment. It
+requires a Git checkout, an empty per-probe Gradle home, exact cold execution
+bindings, owner-authoritative project-directory arguments, and root-report
+selection from the unique child-log URI. Its three functional probes and their
+durations cannot qualify materiality or value; success only permits planning a
+fresh opportunity cohort.
+
 The completed test-build experiment strengthens this priority. Reusing three
 small exact `testFixturesJar` producers did not shorten the critical path:
 native Gradle averaged 6,503.5 ms and BuildOpt 7,238.75 ms, with 0/4 positive

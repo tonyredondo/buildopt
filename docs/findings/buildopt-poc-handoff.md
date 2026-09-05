@@ -65,6 +65,14 @@ preflight; Licensee exposed ambiguous root/nested report capture; Gradle
 Profiler was not started. `CINC-004..007` are `NOT_AUTHORIZED`. No public source
 mutation, candidate, timing sample, speedup claim, or product failure exists.
 
+`STRICT_DIAGNOSTIC_CAPTURE_RELIABILITY_V1` is now active at SDCR-001. Its
+planning block freezes three fresh public probes to prove empty cold state,
+Git-preserving exact-revision materialization, owner project-directory
+authority, and selection of the root Configuration Cache report from the
+child's unique log reference. CINC reports cannot count as SDCR evidence.
+SDCR-000 has zero public starts, mutations, candidates, timings, claims, and
+product failures.
+
 `WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` is terminally stopped at `WCNCP-013`
 (`WCNCP-000` contract frozen; `WCNCP-001` through `WCNCP-007` functionally
 repaired and proved). The wrapper command remains

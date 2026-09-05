@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract=${buildopt_root}/specs/poc-strict-diagnostic-capture-reliability-v1.json
+buildopt_subjects=${buildopt_root}/specs/poc-strict-diagnostic-capture-reliability-v1.subjects.json
+buildopt_plan=${buildopt_root}/docs/plans/strict-diagnostic-capture-reliability-poc.md
+buildopt_evidence=${buildopt_root}/benchmarks/results/strict-diagnostic-capture-reliability-v1/README.md
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-strict-diagnostic-capture-reliability/v1" and
+  .experiment == "STRICT_DIAGNOSTIC_CAPTURE_RELIABILITY_V1" and
+  .predecessor.reportsConsumedAsEvidence == false and
+  .invariants.gitCheckoutRequired == true and
+  .invariants.emptyGradleHomePerProbe == true and
+  .invariants.coldCompatibilityEquivalentToDiagnostic == true and
+  .invariants.rootReportSelectedFromUniqueChildLogReference == true and
+  .invariants.repositoryOrTaskNameRules == false and
+  .current == {completed:["SDCR-000"],next:"SDCR-001"} and
+  .publicProbeGate == {
+    subjects:"poc-strict-diagnostic-capture-reliability-v1.subjects.json",
+    starts:3,startsPerSubject:1,requiredConclusiveSubjects:3,
+    maximumSilentlyLostStarts:0
+  } and
+  .budget.maximumAdditionalDiskGiB == 12 and
+  .budget.maximumSecondsPerStart == 1200 and
+  .budget.maximumWorkers == 4 and
+  .budget.concurrentStarts == 1 and
+  .boundaries.environmentClass == "LOCAL_FUNCTIONAL" and
+  .boundaries.performanceEvidence == false and
+  .boundaries.publicSourceMutation == false and
+  .boundaries.candidateBuilds == 0 and
+  .boundaries.pairedTimingSamples == 0 and
+  .boundaries.speedupClaim == false and
+  .boundaries.testOptimization == "OUT_OF_SCOPE"
+' "${buildopt_contract}" >/dev/null
+
+jq -e '
+  .schemaVersion == "buildopt.specs/poc-strict-diagnostic-capture-reliability-subjects/v1" and
+  .freezeBlock == "SDCR-000" and
+  .evidenceMustBeFreshAfterFreeze == true and
+  .predecessorReportsConsumed == false and
+  (.subjects | length) == 3 and
+  ([.subjects[].ordinal] == [1,2,3]) and
+  ([.subjects[].key] | unique | length) == 3 and
+  ([.subjects[].probeClass] | sort) ==
+    (["COLD_STATE_EQUIVALENCE","PREVIOUSLY_UNSTARTED_WORKFLOW","UNIQUE_ROOT_REPORT_OWNERSHIP"] | sort) and
+  (.subjects | all(
+    (.revision | test("^[0-9a-f]{40}$")) and
+    (.archiveSha256 | test("^[0-9a-f]{64}$")) and
+    (.repository | startswith("https://github.com/")) and
+    (.ownerArguments | length) > 0 and
+    (.requiredOutputs | length) > 0
+  ))
+' "${buildopt_subjects}" >/dev/null
+
+for buildopt_block in SDCR-000 SDCR-001 SDCR-002 SDCR-003 SDCR-004; do
+    grep -Fq -- "${buildopt_block}" "${buildopt_plan}"
+done
+grep -Fq -- 'zero public starts, reports, opportunity rows' "${buildopt_evidence}"
+
+printf 'SDCR-000 contract reconstructed: 3 frozen probes, zero public starts, SDCR-001 next\n'
