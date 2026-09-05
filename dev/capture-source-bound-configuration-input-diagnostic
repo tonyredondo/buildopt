@@ -23,6 +23,7 @@ fi
 buildopt_tmp=$(mktemp -d /tmp/buildopt-sbic-adapter.XXXXXX)
 trap 'rm -rf -- "${buildopt_tmp}"' EXIT
 buildopt_adapter=${buildopt_tmp}/subjects.json
+buildopt_selector=${buildopt_tmp}/strict-diagnostic-report-v2
 
 jq -e --arg subject "${buildopt_subject}" '.subjects | any(.key == $subject)' "${buildopt_subjects}" >/dev/null || {
     printf 'unknown SBIC subject: %s\n' "${buildopt_subject}" >&2
@@ -39,5 +40,10 @@ jq '{
   }]
 }' "${buildopt_subjects}" >"${buildopt_adapter}"
 
-BUILDOPT_SDCR_SUBJECTS=${buildopt_adapter} \
+(
+    cd -- "${buildopt_root}"
+    "${buildopt_script_dir}/run" --toolchain go -- go build -o "${buildopt_selector}" ./cmd/strict-diagnostic-report-v2
+)
+
+BUILDOPT_SDCR_SUBJECTS=${buildopt_adapter} BUILDOPT_SDCR_REPORT_SELECTOR=${buildopt_selector} \
     "${buildopt_sdcr_runner}" "${buildopt_subject}" "${buildopt_checkout}" "${buildopt_output}"

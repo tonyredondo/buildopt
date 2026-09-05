@@ -374,6 +374,12 @@ wrapper, project directory, JDK, owner arguments/environment and required
 outputs passed to the proven runner, and rejects unknown subjects plus any
 canonical-manifest runner override.
 
+`./cmd/strict-diagnostic-report-v2` preserves all SDCR containment,
+regular-file, no-symlink and log-ownership checks while treating repeated
+identical URI text as one logical reference. Focused tests prove the duplicate
+case and retain ambiguity for two distinct paths. The immutable v1 entrypoint
+and all retained SDCR reconstruction remain unchanged in behavior.
+
 `./dev/check-aggregate-output-closure` validates the following generic output
 coverage step. Its immutable four-case result requires exact custom aggregate
 outputs, one changed producer entrypoint, verified stable-output

@@ -82,6 +82,13 @@ Every started child publishes atomic evidence. Standard hosted CI validates
 contracts, fixtures, source reconstruction against retained snapshots, and
 candidate correctness only; local controlled runs own wall-time conclusions.
 
+The SBIC adapter uses `strict-diagnostic-report-v2`. Gradle can print the same
+report URI in both its failure summary and stack trace; v2 treats textually
+identical repetitions as one logical reference while preserving ambiguity for
+any two distinct references. Inventory remains non-authoritative. The first
+Suwayomi start exposed this distinction and remains retained under the v1
+selector outcome; it is not silently replaced or counted as source-bound.
+
 ## Resource and product boundary
 
 Starts are sequential, use at most four workers, run for at most 1,200 seconds,

@@ -66,7 +66,7 @@ done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
     "**Overall status:** \`SOURCE_BOUND_CONFIGURATION_INPUT_CORRECTIONS_ACTIVE\`"
-    "**Current phase:** \`SBIC-002\` is in progress; its versioned SDCR adapter is fixture-proven and three sequential public diagnostics are next"
+    "**Current phase:** \`SBIC-002\` is in progress; Suwayomi is retained as conclusive/unbound after exposing duplicate identical report references, and QuickCarpet is next"
     "| POC-STRICT-DIAGNOSTIC-CAPTURE-RELIABILITY | Prove cold-state identity, Git-preserving source materialization, and unique root-report ownership before another correction-opportunity cohort | \`DONE\` | 5/5 |"
     "| \`E-539\` | 2026-09-05 | \`POC-STRICT-DIAGNOSTIC-CAPTURE-RELIABILITY\`, \`SDCR-000\` |"
     "| \`E-540\` | 2026-09-05 | \`POC-STRICT-DIAGNOSTIC-CAPTURE-RELIABILITY\`, \`SDCR-001\` |"
@@ -76,6 +76,7 @@ buildopt_required_tracker_text=(
     "| \`E-543\` | 2026-09-05 | \`POC-SOURCE-BOUND-CONFIGURATION-INPUT-CORRECTIONS\`, \`SBIC-000\` |"
     "| \`E-544\` | 2026-09-05 | \`POC-SOURCE-BOUND-CONFIGURATION-INPUT-CORRECTIONS\`, \`SBIC-001\` |"
     "| \`E-545\` | 2026-09-05 | \`POC-SOURCE-BOUND-CONFIGURATION-INPUT-CORRECTIONS\`, \`SBIC-002\` preparation |"
+    "| \`E-546\` | 2026-09-05 | \`POC-SOURCE-BOUND-CONFIGURATION-INPUT-CORRECTIONS\`, \`SBIC-002\` first start and selector repair |"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"

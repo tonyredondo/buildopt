@@ -1,0 +1,9 @@
+{
+  "outcome": "ROOT_REPORT_REFERENCE_AMBIGUOUS",
+  "referenceCount": 2,
+  "referenceSha256": [
+    "b3a19e7d9888c0125cfd539b0408b7635c95a1acab0da8a50c1d90d4353231aa",
+    "b3a19e7d9888c0125cfd539b0408b7635c95a1acab0da8a50c1d90d4353231aa"
+  ],
+  "failureDescription": "child log must contain exactly one root report reference"
+}

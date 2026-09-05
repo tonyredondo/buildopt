@@ -41,6 +41,9 @@
   },
   "strictDiagnosticGate": {
     "runner": "dev/capture-strict-diagnostic-reliability",
+    "selector": "cmd/strict-diagnostic-report-v2",
+    "identicalLogReferences": "ONE_LOGICAL_IDENTITY",
+    "distinctLogReferences": "AMBIGUOUS",
     "startsPerFamily": 1,
     "requiredConclusiveFamilies": 3,
     "minimumDiagnosticBoundFamilies": 2,

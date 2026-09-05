@@ -30,6 +30,15 @@ the frozen wrapper, working directory, JDK, owner arguments/environment and
 required outputs into the immutable SDCR runner, and rejects a runner override
 for the canonical manifest. Public Gradle starts remain zero at this boundary.
 
+The first [SBIC-002 capture](./sbic-e002-strict-diagnostics/suwayomi-server/capture.json)
+is retained as a harness-bound result. Gradle failed strictly after 3m19s and
+reported one unique external process plus one report file, but `--stacktrace`
+printed the identical report URI twice. The original selector therefore
+recorded `ROOT_REPORT_REFERENCE_AMBIGUOUS` and did not retain the report. A
+versioned v2 selector now deduplicates identical URI text while leaving two
+distinct paths ambiguous. Suwayomi is conclusive but supplies no bound row; it
+is not replayed and QuickCarpet is the next frozen start.
+
 Validate the freeze with:
 
 ```bash

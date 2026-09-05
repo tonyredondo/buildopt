@@ -75,6 +75,15 @@ fields into the already-proven SDCR runner contract. A fixture reconstructs the
 exact mapping and proves that the canonical manifest cannot override the SDCR
 runner. No public Gradle start was used for this preparation.
 
+First observation: Suwayomi completed 24 tasks before strict Configuration
+Cache failure in 3m19s. Its log reports five occurrences of one unique external
+process problem and one report file, but `--stacktrace` repeats the identical
+report URI. The original v1 selector outcome is retained as
+`ROOT_REPORT_REFERENCE_AMBIGUOUS`, so this start is conclusive but not
+source-bound. The versioned v2 selector deduplicates only identical URI text;
+two distinct paths remain ambiguous, and inventory is still never authority.
+The frozen one-start budget is not silently extended or replayed.
+
 ### SBIC-003 — controlled materiality
 
 - Prefetch dependencies outside measurement and preserve raw logs.

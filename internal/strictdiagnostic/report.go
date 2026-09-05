@@ -41,9 +41,16 @@ type Selection struct {
 // SelectRootReport parses the child log and validates its one report reference.
 // Inventory discovered elsewhere is deliberately not an input to selection.
 func SelectRootReport(log []byte, expectedRoot string) Selection {
+	return selectRootReport(log, expectedRoot, false)
+}
+
+func selectRootReport(log []byte, expectedRoot string, deduplicate bool) Selection {
 	references, err := reportReferences(log)
 	if err != nil {
 		return failure(OutcomeHarnessFailure, 0, nil, err)
+	}
+	if deduplicate {
+		references = uniqueReferences(references)
 	}
 	if len(references) == 0 {
 		return Selection{Outcome: OutcomeReferenceMissing, ReferenceDigests: []string{}, References: []string{}}
@@ -74,6 +81,19 @@ func SelectRootReport(log []byte, expectedRoot string) Selection {
 		SelectedRelative: filepath.ToSlash(relative),
 		SelectedAbsolute: canonical,
 	}
+}
+
+func uniqueReferences(references []string) []string {
+	unique := make([]string, 0, len(references))
+	seen := make(map[string]struct{}, len(references))
+	for _, reference := range references {
+		if _, exists := seen[reference]; exists {
+			continue
+		}
+		seen[reference] = struct{}{}
+		unique = append(unique, reference)
+	}
+	return unique
 }
 
 // AddProjectDirectory reports whether the runner must add its own -p argument.

@@ -25,6 +25,9 @@ jq -e '
     selectionBeforeFirstGradleStart:true,requiredPureSourceFamilies:3
   } and
   .strictDiagnosticGate.requiredConclusiveFamilies == 3 and
+  .strictDiagnosticGate.selector == "cmd/strict-diagnostic-report-v2" and
+  .strictDiagnosticGate.identicalLogReferences == "ONE_LOGICAL_IDENTITY" and
+  .strictDiagnosticGate.distinctLogReferences == "AMBIGUOUS" and
   .strictDiagnosticGate.minimumDiagnosticBoundFamilies == 2 and
   .strictDiagnosticGate.maximumSilentlyLostStarts == 0 and
   .materialityGate.minimumFamilies == 2 and

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "buildopt.sdcr/capture/v1",
+  "subject": "suwayomi-server",
+  "revision": "4134aa8a926f117544aabf05e2ba53c36b0eeccc",
+  "sourceArchiveSha256": "211239798ad3a4f5740a87857c6664c954868b171e0690814e80941901e5714f",
+  "source": {
+    "materialization": "FRESH_LOCAL_GIT_CLONE",
+    "gitMetadata": true,
+    "clean": true,
+    "head": "4134aa8a926f117544aabf05e2ba53c36b0eeccc"
+  },
+  "wrapper": {
+    "path": "gradlew",
+    "sha256": "a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59"
+  },
+  "workingDirectory": ".",
+  "toolchain": "temurin-jdk-25",
+  "ownerArguments": [
+    ":server:shadowJar",
+    "--stacktrace"
+  ],
+  "requiredOutputs": [
+    "server/build/*.jar",
+    "terminal:BUILD_SUCCESSFUL"
+  ],
+  "diagnosticArguments": [
+    "--configuration-cache",
+    "--configuration-cache-problems=fail",
+    "--no-scan",
+    "--build-cache",
+    "--parallel",
+    "--max-workers=4"
+  ],
+  "coldState": {
+    "gradleHome": "EMPTY_AT_CHILD_START",
+    "sharedPriorState": false
+  },
+  "gradleStarted": true,
+  "exitCode": 1,
+  "outcome": "ROOT_REPORT_REFERENCE_AMBIGUOUS",
+  "logSha256": "434f7dee8db172448021421d9870f79571aaa15666aad82b4769ada0621c3832",
+  "reportSha256": null,
+  "reportSelection": {
+    "outcome": "ROOT_REPORT_REFERENCE_AMBIGUOUS",
+    "referenceCount": 2,
+    "referenceSha256": [
+      "b3a19e7d9888c0125cfd539b0408b7635c95a1acab0da8a50c1d90d4353231aa",
+      "b3a19e7d9888c0125cfd539b0408b7635c95a1acab0da8a50c1d90d4353231aa"
+    ],
+    "failureDescription": "child log must contain exactly one root report reference"
+  },
+  "reportInventory": [
+    "build/reports/configuration-cache/9jvk205oy9qqrrldnjruumkzd/9v14ce21wpru1o04r9ex33tm2/configuration-cache-report.html"
+  ],
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "performanceEvidence": false,
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "speedupClaim": false,
+  "productFailures": 0
+}

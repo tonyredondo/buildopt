@@ -2,5 +2,8 @@
 set -euo pipefail
 
 : "${BUILDOPT_SBIC_FIXTURE_RECORD:?fixture record path is required}"
+: "${BUILDOPT_SDCR_REPORT_SELECTOR:?v2 selector path is required}"
+[[ -x ${BUILDOPT_SDCR_REPORT_SELECTOR} ]]
+printf 'V2_SELECTOR_EXECUTABLE\n' >"${BUILDOPT_SBIC_FIXTURE_RECORD}.selector"
 jq -S . "${BUILDOPT_SDCR_SUBJECTS}" >"${BUILDOPT_SBIC_FIXTURE_RECORD}.json"
 printf '%s\n' "$@" >"${BUILDOPT_SBIC_FIXTURE_RECORD}.args"

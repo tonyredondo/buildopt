@@ -41,6 +41,7 @@ jq -e '.schemaVersion == "buildopt.specs/sbic-sdcr-adapter/v1" and .subjects == 
   requiredOutputs:["build/libs/*.jar","terminal:BUILD_SUCCESSFUL"]
 }]' "${buildopt_record}.json" >/dev/null
 mapfile -t buildopt_arguments <"${buildopt_record}.args"
+[[ $(<"${buildopt_record}.selector") == V2_SELECTOR_EXECUTABLE ]]
 [[ ${buildopt_arguments[0]} == fixture ]]
 [[ ${buildopt_arguments[1]} == "${buildopt_tmp}/source" ]]
 [[ ${buildopt_arguments[2]} == "${buildopt_tmp}/output" ]]
