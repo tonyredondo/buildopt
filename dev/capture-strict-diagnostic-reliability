@@ -119,10 +119,20 @@ fi
 
 mapfile -t buildopt_owner_arguments < <(jq -r '.ownerArguments[]' <<<"${buildopt_definition}")
 mapfile -t buildopt_environment_entries < <(jq -r '.ownerEnvironment | to_entries[] | "\(.key)=\(.value)"' <<<"${buildopt_definition}")
-# The toolchain-owned shell, not this runner, expands JAVA_HOME.
-# shellcheck disable=SC2016
-if ! buildopt_java_home=$("${buildopt_script_dir}/run" --toolchain "${buildopt_toolchain}" -- sh -c 'printf "%s" "$JAVA_HOME"'); then
-    buildopt_publish_prestart_failure HARNESS_FAILURE 'frozen toolchain is unavailable'
+buildopt_toolchain_command=("${buildopt_script_dir}/run" --toolchain "${buildopt_toolchain}" --)
+buildopt_child_environment=()
+if [[ -n ${BUILDOPT_SDCR_FIXTURE_JAVA_HOME:-} ]]; then
+    [[ ${buildopt_subjects} != "${buildopt_repo_root}/specs/poc-strict-diagnostic-capture-reliability-v1.subjects.json" ]] ||
+        buildopt_publish_prestart_failure HARNESS_FAILURE 'fixture JDK override is forbidden for the public manifest'
+    buildopt_java_home=${BUILDOPT_SDCR_FIXTURE_JAVA_HOME}
+    buildopt_toolchain_command=()
+    buildopt_child_environment+=("JAVA_HOME=${buildopt_java_home}" "PATH=${buildopt_java_home}/bin:${PATH}")
+else
+    # The toolchain-owned shell, not this runner, expands JAVA_HOME.
+    # shellcheck disable=SC2016
+    if ! buildopt_java_home=$("${buildopt_script_dir}/run" --toolchain "${buildopt_toolchain}" -- sh -c 'printf "%s" "$JAVA_HOME"'); then
+        buildopt_publish_prestart_failure HARNESS_FAILURE 'frozen toolchain is unavailable'
+    fi
 fi
 buildopt_owner_environment=()
 for buildopt_entry in "${buildopt_environment_entries[@]}"; do
@@ -158,8 +168,9 @@ set +e
 env \
     GRADLE_USER_HOME="${buildopt_work}/gradle-home" \
     GRADLE_OPTS='-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false' \
+    "${buildopt_child_environment[@]}" \
     "${buildopt_owner_environment[@]}" \
-    timeout 1200s "${buildopt_script_dir}/run" --toolchain "${buildopt_toolchain}" -- \
+    timeout 1200s "${buildopt_toolchain_command[@]}" \
     "${buildopt_wrapper_command[@]}" "${buildopt_project_arguments[@]}" \
     "${buildopt_diagnostic_arguments[@]}" "${buildopt_owner_arguments[@]}" \
     2>&1 | tee "${buildopt_work}/gradle.log"

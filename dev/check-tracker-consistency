@@ -71,6 +71,7 @@ buildopt_required_tracker_text=(
     "| \`E-539\` | 2026-09-05 | \`POC-STRICT-DIAGNOSTIC-CAPTURE-RELIABILITY\`, \`SDCR-000\` |"
     "| \`E-540\` | 2026-09-05 | \`POC-STRICT-DIAGNOSTIC-CAPTURE-RELIABILITY\`, \`SDCR-001\` |"
     "| \`E-541\` | 2026-09-05 | \`POC-STRICT-DIAGNOSTIC-CAPTURE-RELIABILITY\`, \`SDCR-002..004\` |"
+    "| \`E-542\` | 2026-09-05 | \`POC-STRICT-DIAGNOSTIC-CAPTURE-RELIABILITY\`, Base CI integration repair |"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"

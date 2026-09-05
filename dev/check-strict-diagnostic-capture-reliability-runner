@@ -47,9 +47,16 @@ jq -n --arg revision "${buildopt_revision}" --arg archive "${buildopt_archive}" 
     requiredOutputs:["terminal:BUILD_SUCCESSFUL"]
   }]}
 ' >"${buildopt_subjects}"
+buildopt_fixture_java_home=${BUILDOPT_JAVA17_HOME:-}
+if [[ -z ${buildopt_fixture_java_home} ]]; then
+    # The toolchain-owned shell expands JAVA_HOME when the local fixture check
+    # is not running under Base CI's already-provisioned Java 17 environment.
+    # shellcheck disable=SC2016
+    buildopt_fixture_java_home=$("${buildopt_script_dir}/run" --toolchain temurin-jdk-17 -- sh -c 'printf "%s" "$JAVA_HOME"')
+fi
 
 buildopt_output=${buildopt_temp}/success
-BUILDOPT_SDCR_SUBJECTS=${buildopt_subjects} \
+BUILDOPT_SDCR_SUBJECTS=${buildopt_subjects} BUILDOPT_SDCR_FIXTURE_JAVA_HOME=${buildopt_fixture_java_home} \
     "${buildopt_script_dir}/capture-strict-diagnostic-reliability" \
     renamed-neutral-fixture "${buildopt_fixture}" "${buildopt_output}" >/dev/null
 jq -e --arg revision "${buildopt_revision}" --arg archive "${buildopt_archive}" '
@@ -74,7 +81,7 @@ gzip -t "${buildopt_output}/gradle.log.gz" "${buildopt_output}/configuration-cac
 
 buildopt_no_git=${buildopt_temp}/no-git
 mkdir -p -- "${buildopt_no_git}"
-if BUILDOPT_SDCR_SUBJECTS=${buildopt_subjects} \
+if BUILDOPT_SDCR_SUBJECTS=${buildopt_subjects} BUILDOPT_SDCR_FIXTURE_JAVA_HOME=${buildopt_fixture_java_home} \
     "${buildopt_script_dir}/capture-strict-diagnostic-reliability" \
     renamed-neutral-fixture "${buildopt_no_git}" "${buildopt_temp}/no-git-result" >/dev/null 2>&1; then
     printf 'runner accepted source without Git metadata\n' >&2
@@ -87,7 +94,7 @@ jq -e '
 
 jq --arg revision '0000000000000000000000000000000000000000' '.subjects[0].revision = $revision' \
     "${buildopt_subjects}" >"${buildopt_temp}/revision-drift-subjects.json"
-if BUILDOPT_SDCR_SUBJECTS=${buildopt_temp}/revision-drift-subjects.json \
+if BUILDOPT_SDCR_SUBJECTS=${buildopt_temp}/revision-drift-subjects.json BUILDOPT_SDCR_FIXTURE_JAVA_HOME=${buildopt_fixture_java_home} \
     "${buildopt_script_dir}/capture-strict-diagnostic-reliability" \
     renamed-neutral-fixture "${buildopt_fixture}" "${buildopt_temp}/revision-drift" >/dev/null 2>&1; then
     printf 'runner accepted source revision drift\n' >&2
@@ -98,7 +105,7 @@ jq -e '.gradleStarted == false and .outcome == "SOURCE_REVISION_DRIFT"' \
 
 jq --arg archive '0000000000000000000000000000000000000000000000000000000000000000' \
     '.subjects[0].archiveSha256 = $archive' "${buildopt_subjects}" >"${buildopt_temp}/archive-drift-subjects.json"
-if BUILDOPT_SDCR_SUBJECTS=${buildopt_temp}/archive-drift-subjects.json \
+if BUILDOPT_SDCR_SUBJECTS=${buildopt_temp}/archive-drift-subjects.json BUILDOPT_SDCR_FIXTURE_JAVA_HOME=${buildopt_fixture_java_home} \
     "${buildopt_script_dir}/capture-strict-diagnostic-reliability" \
     renamed-neutral-fixture "${buildopt_fixture}" "${buildopt_temp}/archive-drift" >/dev/null 2>&1; then
     printf 'runner accepted source archive drift\n' >&2
@@ -107,7 +114,7 @@ fi
 jq -e '.gradleStarted == false and .outcome == "SOURCE_ARCHIVE_DRIFT"' \
     "${buildopt_temp}/archive-drift/capture.json" >/dev/null
 
-if BUILDOPT_SDCR_SUBJECTS=${buildopt_subjects} BUILDOPT_SDCR_REPORT_SELECTOR=/bin/false \
+if BUILDOPT_SDCR_SUBJECTS=${buildopt_subjects} BUILDOPT_SDCR_FIXTURE_JAVA_HOME=${buildopt_fixture_java_home} BUILDOPT_SDCR_REPORT_SELECTOR=/bin/false \
     "${buildopt_script_dir}/capture-strict-diagnostic-reliability" \
     renamed-neutral-fixture "${buildopt_fixture}" "${buildopt_temp}/post-start-failure" >/dev/null 2>&1; then
     printf 'runner accepted a post-start evidence publication failure\n' >&2
