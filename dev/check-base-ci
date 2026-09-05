@@ -278,6 +278,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-strict-diagnostic-capture-reliability" >/dev/null
         "${buildopt_script_dir}/check-strict-diagnostic-capture-reliability-runner" >/dev/null
         "${buildopt_script_dir}/check-strict-diagnostic-capture-reliability-public" >/dev/null
+        "${buildopt_script_dir}/check-source-bound-configuration-input-corrections" >/dev/null
         "${buildopt_script_dir}/check-economic-opportunity-first" >/dev/null
         "${buildopt_script_dir}/check-economic-opportunity-source-ledger" >/dev/null
         "${buildopt_script_dir}/check-economic-opportunity-terminal-decision" >/dev/null

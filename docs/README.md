@@ -15,7 +15,7 @@ before running the product.
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
 | Review the POC idea, mechanisms, current value, and next steps | [Current POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
-| Review the latest closed product experiment | [Configuration-Input Native Corrections POC](./plans/configuration-input-native-corrections-poc.md) | [Terminal contract](../specs/poc-configuration-input-native-corrections-v1.md), [evidence index](../benchmarks/results/configuration-input-native-corrections-v1/README.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
+| Follow the active correction mechanism experiment | [Source-Bound Configuration-Input Corrections POC](./plans/source-bound-configuration-input-corrections-poc.md) | [Contract](../specs/poc-source-bound-configuration-input-corrections-v1.md), [evidence index](../benchmarks/results/source-bound-configuration-input-corrections-v1/README.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the stopped adaptive hypothesis | [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md) | [Terminal decision](../specs/poc-adaptive-fragment-terminal-decision-v1.md), [current generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the implemented onboarding foundation | [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md) | [Product onboarding](./getting-started/product-onboarding.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
 | Plan optional shared state across machines | [Centralized cache and state POC roadmap](./plans/centralized-cache-and-state-roadmap.md) | [Storage contract](../specs/poc-central-storage-contract-v1.md), [architecture overview](./architecture/overview.md) |
@@ -65,6 +65,10 @@ before running the product.
 
 ### Plans
 
+- [Source-Bound Configuration-Input Corrections POC](./plans/source-bound-configuration-input-corrections-poc.md):
+  the active source-enriched three-family mechanism study; SBIC-000 freezes
+  exact source bindings and the unchanged materiality/value gates before any
+  public Gradle start.
 - [Configuration-Input Native Corrections POC](./plans/configuration-input-native-corrections-poc.md):
   the closed fresh search for repository-owned Configuration Cache input
   corrections; CINC-003 stops at 7/10 conclusive and 0/3 eligible families

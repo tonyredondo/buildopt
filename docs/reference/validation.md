@@ -353,6 +353,13 @@ snapshots, reruns the versioned classifier, reconstructs family and decision
 counts, and proves the fixed start-budget stop without trusting result summary
 fields. It runs no public Gradle build and collects no timing.
 
+`./dev/check-source-bound-configuration-input-corrections` validates the active
+SBIC contract, three exact source-bound families, prospective side-effect
+exclusion, two-family 500-ms/2% value gate, budgets, boundaries, and zero-state.
+Pass `--sources-root DIRECTORY` to recompute each exact Git archive plus wrapper,
+workflow, source, and call-site digests from local frozen checkouts. The default
+Base CI mode is static and runs no public Gradle build or timing.
+
 `./dev/check-aggregate-output-closure` validates the following generic output
 coverage step. Its immutable four-case result requires exact custom aggregate
 outputs, one changed producer entrypoint, verified stable-output

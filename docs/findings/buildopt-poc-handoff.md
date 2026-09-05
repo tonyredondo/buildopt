@@ -72,12 +72,21 @@ authority, and selection of the root Configuration Cache report from the
 child's unique log reference. CINC reports cannot count as SDCR evidence.
 SDCR-001 passes sixteen fixture cases, including nested inventory isolation,
 revision/archive drift rejection, and atomic evidence after a forced post-start
-failure. It has zero public starts, mutations, candidates, timings, claims, and
-product failures. Three fresh cold public starts then reconstruct 3/3
+failure. At that fixture-only boundary it had zero public starts, mutations,
+candidates, timings, claims, and product failures. Three fresh cold public
+starts then reconstruct 3/3
 conclusive with zero lost starts. OpenAPI is a typed cold incompatibility;
 Licensee and Gradle Profiler complete with 238 total inventory reports but no
 root-log report reference, so the runner selects zero arbitrary files. This
 authorizes only a fresh configuration-input successor plan.
+
+That active successor is SBIC, a source-enriched mechanism study rather than a
+breadth estimate. Before its first Gradle start it freezes pure
+configuration-time process reads in Suwayomi Server, QuickCarpet, and LSSS;
+BlueMap is excluded because its version path can refresh Git index metadata.
+SBIC must still qualify at least two families at 500 ms and 2%, preserve exact
+outputs with zero product failures, and pass eight balanced pairs. It has no
+arbitrary-repository prevalence authority.
 
 `WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` is terminally stopped at `WCNCP-013`
 (`WCNCP-000` contract frozen; `WCNCP-001` through `WCNCP-007` functionally

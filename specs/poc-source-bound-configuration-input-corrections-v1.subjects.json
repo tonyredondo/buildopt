@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "buildopt.specs/poc-source-bound-configuration-input-corrections-subjects/v1",
+  "freezeBlock": "SBIC-000",
+  "selectionClass": "SOURCE_ENRICHED_MECHANISM_STUDY",
+  "selectionPrecedesFirstGradleStart": true,
+  "predecessorReportsConsumed": false,
+  "sourceArchiveSha256Algorithm": "git archive --format=tar REVISION | sha256sum",
+  "subjects": [
+    {
+      "ordinal": 1,
+      "key": "suwayomi-server",
+      "repository": "https://github.com/Suwayomi/Suwayomi-Server.git",
+      "revision": "4134aa8a926f117544aabf05e2ba53c36b0eeccc",
+      "archiveSha256": "211239798ad3a4f5740a87857c6664c954868b171e0690814e80941901e5714f",
+      "wrapper": {"path": "gradlew", "sha256": "a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59", "propertiesPath": "gradle/wrapper/gradle-wrapper.properties", "propertiesSha256": "d01b41913834fb3cb14e71f69a08898e6a47e663b08f5c9b8c7e0772c38889d2"},
+      "toolchain": "temurin-jdk-25",
+      "ownerWorkflow": {"sourcePath": ".github/workflows/build_push.yml", "sourceSha256": "352fe2c95233eefdb9d3ac62b99bd0fc2ac3ad6638afc6750bb52c7730968475", "arguments": [":server:shadowJar", "--stacktrace"], "environment": {"ProductBuildType": "Preview"}},
+      "requiredOutputs": ["server/build/*.jar", "terminal:BUILD_SUCCESSFUL"],
+      "binding": {
+        "sourcePath": "buildSrc/src/main/kotlin/Constants.kt",
+        "sourceSha256": "d6d4c394afcb3f0d8bf06f6d8c79ca09809474d3fa81c2abf3c6885366a39548",
+        "language": "KOTLIN",
+        "declarationSpan": {"startLine": 19, "endLine": 33},
+        "operationSpan": {"startLine": 21, "endLine": 31},
+        "callSitePath": "server/build.gradle.kts",
+        "callSiteSha256": "0eceabcff0a8d617cd7d5667f6fdf3bd92046d27ae16a9d0dc2568f4cba389a4",
+        "callSiteLines": [153, 154, 174, 175, 181],
+        "operationKind": "PROCESS_BUILDER",
+        "decision": "PURE_CONFIGURATION_PROCESS_READ",
+        "recipe": "PROVIDER_FACTORY_EXEC_V1"
+      }
+    },
+    {
+      "ordinal": 2,
+      "key": "quickcarpet",
+      "repository": "https://github.com/QuickCarpet/QuickCarpet.git",
+      "revision": "9593c692cbd151666e447f68f22113028c4122c3",
+      "archiveSha256": "80e0b8d46c2b1eede0ee316ac8034893dd48b21d8a2365ada6651d07b61b864a",
+      "wrapper": {"path": "gradlew", "sha256": "f9594eb5c08a148f23b9d7a5fd99551224db96dadb1b7cecd3985c4758c4f867", "propertiesPath": "gradle/wrapper/gradle-wrapper.properties", "propertiesSha256": "0a1603bb2c5851d1ae3c3202459acc9e1f0ee06a77300ee2b15b82e77f2b1b82"},
+      "toolchain": "temurin-jdk-17",
+      "ownerWorkflow": {"sourcePath": ".github/workflows/build-on-push.yml", "sourceSha256": "8e6481c1d50d3db7e76d47cd40a6067d749e3995d7f41d336b94ad14a842db6c", "arguments": ["clean", "build", "-x", "check", "--stacktrace", "--no-daemon"], "environment": {}},
+      "requiredOutputs": ["build/libs/*.jar", "terminal:BUILD_SUCCESSFUL"],
+      "binding": {
+        "sourcePath": "buildSrc/src/main/kotlin/quickcarpet/build/GitHelper.kt",
+        "sourceSha256": "4c6f370e4af13694d4110b534ca6871a64a14d4732ddf56bc0c5524185863ebf",
+        "language": "KOTLIN",
+        "declarationSpan": {"startLine": 6, "endLine": 62},
+        "operationSpans": [{"startLine": 10, "endLine": 16}, {"startLine": 40, "endLine": 44}],
+        "callSitePath": "build.gradle.kts",
+        "callSiteSha256": "c2c887bb55c9be326ae8a79b5a2149c9a3ffe8538f89a6969bc37ffe41458402",
+        "callSiteLines": [32, 33, 69, 70, 71],
+        "operationKind": "RUNTIME_EXEC",
+        "decision": "PURE_CONFIGURATION_PROCESS_READ",
+        "recipe": "TYPED_VALUE_SOURCE_V1"
+      }
+    },
+    {
+      "ordinal": 3,
+      "key": "lsss",
+      "repository": "https://github.com/marec-open-source/lsss.git",
+      "revision": "bdfa7f2eac538ed368b59ef83e02435548e61140",
+      "archiveSha256": "da095d83fa26c11abc1d18097f9da7a1c3a42c0813e86337fc0ea1ef94d71740",
+      "wrapper": {"path": "gradlew", "sha256": "a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59", "propertiesPath": "gradle/wrapper/gradle-wrapper.properties", "propertiesSha256": "322eb310a75e0e4f479769b7c732cb941bb3a6920d26ba1148e4e024bafc4f9e"},
+      "toolchain": "temurin-jdk-25",
+      "ownerWorkflow": {"sourcePath": "README.md", "sourceSha256": "2350a94262acbde0bd1cc5a4a4300937610b3fe3ce63785db3abc89bd96e82e8", "arguments": ["distZip"], "environment": {}},
+      "requiredOutputs": ["lsss/release/build/distributions/*.zip", "terminal:BUILD_SUCCESSFUL"],
+      "binding": {
+        "sourcePath": "buildSrc/src/main/kotlin/no/marec/gradle/BuildProperties.kt",
+        "sourceSha256": "9a45c0177f034ec865934ceae67e71193870a4e52c9cfcacad12b7c38b41c2e0",
+        "language": "KOTLIN",
+        "declarationSpan": {"startLine": 7, "endLine": 13},
+        "operationSpan": {"startLine": 12, "endLine": 12},
+        "callSitePath": "buildSrc/src/main/kotlin/no/marec/gradle/MarecBuildExtension.kt",
+        "callSiteSha256": "d7c0eb2e9eeea47d97528d6005705dc7b7e83ca023734ae7bd83b0af5c62591a",
+        "callSiteLines": [11],
+        "operationKind": "PROCESS_BUILDER",
+        "decision": "PURE_CONFIGURATION_PROCESS_READ",
+        "recipe": "PROVIDER_FACTORY_EXEC_V1"
+      }
+    }
+  ],
+  "prospectiveExclusions": [
+    {
+      "key": "bluemap",
+      "revision": "9c4efeb9696eaae979ec70ea11de8be30e7d2a53",
+      "sourcePath": "buildSrc/src/main/kotlin/versioning.kt",
+      "sourceSha256": "7ac5ecbdb80a20c188ce46bc9be0c4de22dda10c57f7ba6515216b459963618b",
+      "decision": "SIDE_EFFECTING_PROCESS",
+      "reason": "git update-index --refresh can update index metadata"
+    }
+  ]
+}

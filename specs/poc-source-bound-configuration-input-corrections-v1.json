@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "buildopt.specs/poc-source-bound-configuration-input-corrections/v1",
+  "experiment": "SOURCE_BOUND_CONFIGURATION_INPUT_CORRECTIONS_V1",
+  "predecessors": {
+    "configurationInputNativeCorrections": "STOP_STRICT_DIAGNOSTIC_BUDGET_CANNOT_COMPLETE_COHORT",
+    "strictDiagnosticCaptureReliability": "CAPTURE_RELIABILITY_PROVEN",
+    "reportsConsumedAsEvidence": false
+  },
+  "detector": {
+    "id": "SOURCE_BOUND_CONFIGURATION_INPUT",
+    "version": "v1",
+    "sourceFactsBeforeDiagnostic": true,
+    "repositoryOrTaskNameRules": false,
+    "decisions": [
+      "PURE_CONFIGURATION_PROCESS_READ",
+      "SIDE_EFFECTING_PROCESS",
+      "SECRET_OR_INTERACTIVE_PROCESS",
+      "TASK_ACTION_ONLY",
+      "ALREADY_TRACKED",
+      "AMBIGUOUS_BINDING",
+      "SOURCE_DRIFTED",
+      "NO_ACTION"
+    ],
+    "allowedRecipes": ["PROVIDER_FACTORY_EXEC_V1", "TYPED_VALUE_SOURCE_V1"],
+    "forbiddenCorrections": [
+      "SUPPRESS_CONFIGURATION_CACHE_PROBLEM",
+      "INCREASE_ALLOWED_PROBLEM_COUNT",
+      "DISABLE_CONFIGURATION_CACHE",
+      "CHANGE_WRAPPER_PLUGIN_OR_DEPENDENCY",
+      "CHANGE_OWNER_WORKFLOW_OR_REQUIRED_OUTPUT",
+      "REPOSITORY_OR_TASK_NAME_SPECIALIZATION"
+    ]
+  },
+  "cohort": {
+    "selection": "SOURCE_ENRICHED_MECHANISM_STUDY",
+    "prevalenceAuthority": false,
+    "families": 3,
+    "subjects": "poc-source-bound-configuration-input-corrections-v1.subjects.json",
+    "selectionBeforeFirstGradleStart": true,
+    "requiredPureSourceFamilies": 3
+  },
+  "strictDiagnosticGate": {
+    "runner": "dev/capture-strict-diagnostic-reliability",
+    "startsPerFamily": 1,
+    "requiredConclusiveFamilies": 3,
+    "minimumDiagnosticBoundFamilies": 2,
+    "maximumSilentlyLostStarts": 0
+  },
+  "materialityGate": {
+    "environmentClass": "CONTROLLED_PERFORMANCE",
+    "minimumFamilies": 2,
+    "minimumMilliseconds": 500,
+    "minimumPercent": 2,
+    "maximumStartsPerFamily": 2,
+    "maximumStarts": 6,
+    "hostedCiTimingAuthority": false
+  },
+  "correctnessGate": {
+    "maximumCandidatesPerFamily": 1,
+    "minimumQualifiedFamilies": 2,
+    "maximumStartsPerCandidate": 6,
+    "exactRequiredOutputs": true,
+    "configurationCacheStoreAndReuse": true,
+    "inputInvalidation": true,
+    "equivalentErrorBehavior": true,
+    "exactSourceRevert": true,
+    "maximumProductFailures": 0
+  },
+  "valueGate": {
+    "balancedPairs": 8,
+    "requiredPositivePairs": 8,
+    "minimumMeanSavingMilliseconds": 500,
+    "minimumMeanSavingPercent": 2,
+    "positivePaired95Interval": true,
+    "nonRegressiveCandidateP95": true,
+    "minimumQualifiedFamilies": 2,
+    "maximumCombinedPaybackBuilds": 300
+  },
+  "controlledEnvironment": {
+    "workers": 4,
+    "stabilitySamples": 7,
+    "maximumStabilityRatio": 1.15,
+    "postPrefetchQuiescenceSeconds": 120
+  },
+  "budget": {
+    "maximumAdditionalDiskGiB": 20,
+    "minimumFreeDiskBeforePublicStartGiB": 10,
+    "stopBeforeNextStartFreeDiskGiB": 8,
+    "maximumSecondsPerStart": 1200,
+    "concurrentStarts": 1
+  },
+  "blocks": ["SBIC-000", "SBIC-001", "SBIC-002", "SBIC-003", "SBIC-004", "SBIC-005", "SBIC-006"],
+  "current": {"completed": ["SBIC-000"], "next": "SBIC-001"},
+  "zeroState": {
+    "publicGradleStarts": 0,
+    "strictDiagnostics": 0,
+    "publicSourceMutations": 0,
+    "candidateBuilds": 0,
+    "pairedTimingSamples": 0,
+    "speedupClaims": 0,
+    "productFailures": 0
+  },
+  "boundaries": {
+    "automaticApply": false,
+    "automaticMerge": false,
+    "upstreamPullRequest": false,
+    "productionAuthorized": false,
+    "prevalenceClaim": false,
+    "testOptimization": "OUT_OF_SCOPE"
+  }
+}

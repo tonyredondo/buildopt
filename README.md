@@ -44,6 +44,14 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > phase opened. See the
 > [CINC plan](./docs/plans/configuration-input-native-corrections-poc.md).
 >
+> **Active mechanism experiment:** `SOURCE_BOUND_CONFIGURATION_INPUT_CORRECTIONS_V1`
+> prospectively binds three public configuration-time process reads before any
+> strict diagnostic. It tests reviewed native Gradle corrections on Suwayomi,
+> QuickCarpet, and LSSS with unchanged 500-ms/2%, exact-output, eight-pair, and
+> zero-failure gates. This source-enriched route can prove the mechanism, not
+> arbitrary-repository prevalence. See the
+> [SBIC plan](./docs/plans/source-bound-configuration-input-corrections-poc.md).
+>
 > **Closed v2 experiment:** `REMOTE_CACHE_LOCALITY_VALUE_V2` tested BuildOpt as
 > a verifying local Edge/L1 against optimized native Gradle reading the same
 > immutable remote-cache objects directly. `RCL-001` freezes the exact graph,

@@ -366,6 +366,13 @@ each of OpenAPI Generator, Licensee, and Gradle Profiler pass its 3/3 evidence-
 reliability gate with zero silently lost starts. The pass authorizes a distinct
 fresh successor plan, not a source correction or timing.
 
+That successor is SBIC. It selects three repositories from source evidence of
+pure configuration-time process reads before diagnostics. The enrichment is
+appropriate for testing whether BuildOpt can deliver the native correction
+mechanism, but cannot estimate how often the opportunity occurs. Its frozen
+two-family correctness and value gates prevent one tailored success from being
+presented as a product mechanism.
+
 The current order and stop conditions live in the completed
 [Wrapper-Coordinated Native Corrections POC](../plans/wrapper-coordinated-native-corrections-poc.md).
 Its wrapper and shared control plane are functionally viable, but the frozen

@@ -1617,3 +1617,12 @@ positive; mean saving is 7,171.75 ms / 15.54%, paired 95% is
 machine work repays in 231 builds; adding the owner's reported 20 active review
 seconds yields 233 builds. This is the first complete third-family value plus
 timed-review result for the reviewed-native product direction.
+
+## Source-bound configuration-input mechanism
+
+The active SBIC experiment spends diagnostics only on three exact source-bound
+configuration-time process reads. It retains the local controlled threshold of
+500 ms and 2%, exact outputs, zero additional product failures, and eight
+balanced pairs across at least two families. This is a mechanism test: at its
+SBIC-000 freeze it supplies no timing or speedup claim, and even a later pass
+will not establish arbitrary-repository prevalence.
