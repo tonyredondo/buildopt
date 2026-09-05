@@ -1,5 +1,9 @@
 # Configuration-Input Native Corrections POC
 
+**Overall:** `STOP_STRICT_DIAGNOSTIC_BUDGET_CANNOT_COMPLETE_COHORT`<br>
+**Current block:** `CINC-003` is complete and terminal<br>
+**Dependent blocks:** `CINC-004..007` are `NOT_AUTHORIZED`
+
 ## Decision and objective
 
 `CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1` (`CINC`) is the next bounded
@@ -135,11 +139,11 @@ study would require a different contract and could not make a breadth claim.
 | `CINC-000` | Freeze human/machine contract, tracker, independent contract checker, boundaries and budgets | Planning only; no public diagnostic or candidate |
 | `CINC-001` | Implement parser/classifier v1 and independent fixture reconstruction | `DONE` — eleven raw-report rows cover direct providers, reviewed ValueSource, external owner, side effect, secret, ambiguity, drift, already-supported, no-action, and name invariance |
 | `CINC-002` | Freeze exact ten-family cohort and reserves after native-only admissibility preflight | `DONE` — ten selected, twenty reserves, ten neutral native passes, zero strict diagnostics |
-| `CINC-003` | Capture two fresh strict diagnostics per family and classify source | 10/10 conclusive and at least 3/10 eligible families; otherwise terminal stop |
-| `CINC-004` | Run controlled materiality diagnostics for eligible families | At least three families each pass 500 ms and 2%; otherwise terminal stop |
-| `CINC-005` | Compile at most one reviewed proposal per family and run correctness | At least two families; exact outputs, store/reuse, input invalidation, source revert, zero product failures |
-| `CINC-006` | Run eight balanced optimized-native/candidate pairs per qualified family | At least two value-qualified families; 8/8 positive, >=500 ms, >=2%, positive paired 95% interval, non-regressive p95 |
-| `CINC-007` | Present value-qualified drafts for first-exposure review and reconstruct terminal economics | No automatic apply/merge; finite <=300-build machine-plus-active-review payback |
+| `CINC-003` | Capture two fresh strict diagnostics per family and classify source | `DONE` terminal — 7/10 conclusive, 0/3 eligible; retained evidence alone proves 15 artifact-backed starts plus at least 6 required starts exceeds the fixed maximum of 20 |
+| `CINC-004` | Run controlled materiality diagnostics for eligible families | `NOT_AUTHORIZED` — CINC-003 source gate failed |
+| `CINC-005` | Compile at most one reviewed proposal per family and run correctness | `NOT_AUTHORIZED` — CINC-004 did not open |
+| `CINC-006` | Run eight balanced optimized-native/candidate pairs per qualified family | `NOT_AUTHORIZED` — CINC-005 did not open |
+| `CINC-007` | Present value-qualified drafts for first-exposure review and reconstruct terminal economics | `NOT_AUTHORIZED` — CINC-006 did not open |
 
 Failure of a prerequisite marks dependent blocks `NOT_AUTHORIZED`. Missing or
 unstable controlled capacity is `INCOMPLETE_PERFORMANCE_ENVIRONMENT`, never a
@@ -186,7 +190,27 @@ arbitrary-repository discovery, production readiness, autonomous source
 mutation, automatic merge, Test Optimization, or universal Configuration Cache
 compatibility.
 
-The immediate next item is `CINC-003`. The fixture-only detector and exact
-ten-family cohort freeze are complete, but no strict public diagnostic, public
-source mutation, candidate, timing sample, speedup claim, or product failure
-exists.
+The CINC route is terminal at `CINC-003`. Four families produced two clean
+zero-problem reports. Native Build Tools recurrently exposed an external
+`org.ajoberstar.git-publish` listener. Testcontainers recurrently failed on an
+out-of-scope task `onlyIf` closure after storing a zero-problem cache entry.
+Mockito recurrently exposed one external already-ValueSource-backed Shipkit
+read and three non-serializable task/script references. These seven families
+are conclusive and supply zero eligible CINC recipe families.
+
+OpenAPI Generator exposed a cold JDK 21/Gradle 8.1.1 script incompatibility
+that the warm selection preflight had missed. Licensee completed its workflow
+but produced 237 root-and-nested reports, exposing an over-broad capture rule.
+Gradle Profiler was not started. Three earlier harness failures did not retain
+raw logs; they remain disclosed in the attempt ledger and are not required for
+the stop arithmetic. Fourteen valid captures plus the retained invalid Mockito
+archive-root capture independently prove 15 primary starts. Completing the
+three remaining families requires at least six more strict primary starts, so
+the fixed maximum of 20 cannot yield a complete cohort even under the most
+favorable interpretation.
+
+The independent [source-gate checker](../../dev/check-configuration-input-native-corrections-source-gate)
+reparses every retained report, rehashes its raw log and source snapshot,
+reconstructs all ten rows and family counts, and proves `15 + 6 > 20` without
+trusting the evidence summary. No public source mutation, candidate build,
+timing sample, speedup claim, or additional product failure exists.

@@ -16,14 +16,15 @@ complete at 10/10 conclusive but only 1/3 required actionable material families.
 WCNCP-009A stopped at its environment gate; WCNCP-009B passed the unchanged
 gate after fixed quiescence and completed 6/6 rows. Value remains at zero.
 
-The active successor search is
+The latest closed successor search is
 [`Configuration-Input Native Corrections v1`](./poc-configuration-input-native-corrections-v1.md)
 with its [machine contract](./poc-configuration-input-native-corrections-v1.json).
 `CINC-000` freezes a fresh source-neutral Configuration Cache correction
 hypothesis. CINC-001 reconstructs eleven fixture-only detector rows; CINC-002
 freezes [ten exact public families and twenty reserves](./poc-configuration-input-native-corrections-v1.subjects.json)
-after neutral native preflight. No strict public diagnostic, candidate, or
-timing exists yet.
+after neutral native preflight. CINC-003 closes at 7/10 conclusive and 0/3
+eligible families because retained artifacts prove the fixed 20-start budget
+cannot complete the cohort. No candidate or timing phase opened.
 
 | Specification | Owning item |
 |---|---|

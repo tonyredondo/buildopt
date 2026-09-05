@@ -89,12 +89,30 @@
     "maximumAdditionalDiskGiB": 20,
     "minimumFreeDiskBeforePublicBuildGiB": 10,
     "stopBeforeNextStartFreeDiskGiB": 8,
-    "maximumWorkflowMinutes": 20
+    "maximumWorkflowMinutes": 20,
+    "maximumStrictPrimaryStarts": 20
   },
   "evidence": {
     "allRowsFreshAfterContractAndSubjectFreeze": true,
     "predecessorReportsConsumed": false,
     "independentRawReconstruction": true
+  },
+  "terminalDecision": {
+    "completedBlock": "CINC-003",
+    "state": "STOP_STRICT_DIAGNOSTIC_BUDGET_CANNOT_COMPLETE_COHORT",
+    "conclusiveFamilies": 7,
+    "requiredConclusiveFamilies": 10,
+    "eligibleFamilies": 0,
+    "requiredEligibleFamilies": 3,
+    "artifactBackedPrimaryStarts": 15,
+    "minimumAdditionalPrimaryStartsForCompleteCohort": 6,
+    "maximumStrictPrimaryStarts": 20,
+    "dependentBlocks": {
+      "CINC-004": "NOT_AUTHORIZED",
+      "CINC-005": "NOT_AUTHORIZED",
+      "CINC-006": "NOT_AUTHORIZED",
+      "CINC-007": "NOT_AUTHORIZED"
+    }
   },
   "boundaries": {
     "publicSourceMutation": false,

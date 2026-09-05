@@ -75,6 +75,27 @@ func TestReportAndFactsFailClosed(t *testing.T) {
 	if _, err := DecodeFacts([]byte(`[{"unknown":true}]`)); err == nil {
 		t.Fatal("unknown source fact accepted")
 	}
+	if _, err := DecodeFacts([]byte(`null`)); err == nil {
+		t.Fatal("null source facts accepted")
+	}
+}
+
+func TestZeroProblemReportIsConclusive(t *testing.T) {
+	report := []byte(reportMarker + "\n" + reportDataMarker + "\n" + `{"diagnostics":[{"trace":[{"kind":"BuildLogic","location":"settings file"}],"input":[{"text":"Gradle property "},{"name":"version"}]}],"totalProblemCount":0});}`)
+	problems, err := ParseReport(report)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(problems) != 0 {
+		t.Fatalf("problems = %d, want 0", len(problems))
+	}
+	facts, err := DecodeFacts([]byte(`[]`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(facts) != 0 {
+		t.Fatalf("facts = %d, want 0", len(facts))
+	}
 }
 
 func readFixture(t *testing.T, path string) []byte {

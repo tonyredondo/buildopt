@@ -1,0 +1,98 @@
+[
+  {
+    "problemIndex": 0,
+    "problemKind": "OTHER",
+    "problemMessageSha256": "8f1cbf19ae418716b2301c8a258f94ef92011ce2c16c22440277589ee1fda80f",
+    "traceOwner": "BuildLogic||plugin 'org.shipkit.shipkit-auto-version'|",
+    "sourcePath": "buildSrc/src/main/kotlin/mockito.root.releasing-conventions.gradle.kts",
+    "sourceSha256": "e1cdcfa8213a9a0dd4f6bfde330fa66de50d306da1f96bb671b4d51ba1fe8c80",
+    "language": "KOTLIN_DSL",
+    "declarationSpan": {
+      "startLine": 1,
+      "startColumn": 1,
+      "endLine": 7,
+      "endColumn": 1
+    },
+    "operationSpan": {
+      "startLine": 2,
+      "startColumn": 5,
+      "endLine": 2,
+      "endColumn": 47
+    },
+    "operationKind": "OTHER",
+    "decision": "EXTERNAL_OR_GENERATED_OWNER",
+    "reason": "correction must bind to repository-owned non-generated source"
+  },
+  {
+    "problemIndex": 1,
+    "problemKind": "OTHER",
+    "problemMessageSha256": "63d983340ddd97ab80efb82ee388d90d94eeb11d7ebddfc96a9bc80ae3fb91a4",
+    "traceOwner": "Task|:mockito-core:removeInjectionPackageFromModuleInfo||org.gradle.api.DefaultTask",
+    "sourcePath": "mockito-core/build.gradle.kts",
+    "sourceSha256": "c7b4fbfbbbbedc79fe2e6204992b82e0434f3f82ffba428138e7422d139a6042",
+    "language": "KOTLIN_DSL",
+    "declarationSpan": {
+      "startLine": 85,
+      "startColumn": 5,
+      "endLine": 110,
+      "endColumn": 5
+    },
+    "operationSpan": {
+      "startLine": 88,
+      "startColumn": 9,
+      "endLine": 109,
+      "endColumn": 9
+    },
+    "operationKind": "OTHER",
+    "decision": "NO_ACTION",
+    "reason": "problem is outside the supported configuration-input class"
+  },
+  {
+    "problemIndex": 2,
+    "problemKind": "OTHER",
+    "problemMessageSha256": "a377ddeaa47275b9f6ba25b050eb46d99c6299892597db0afaf1cce74e751f41",
+    "traceOwner": "Task|:mockito-core:javadoc||org.gradle.api.tasks.javadoc.Javadoc",
+    "sourcePath": "buildSrc/src/main/kotlin/mockito.javadoc-conventions.gradle.kts",
+    "sourceSha256": "882ec04cb1f2c8233c66af7a829a3e796a3a1e9e65a84a1f57e1f6e87bb00d10",
+    "language": "KOTLIN_DSL",
+    "declarationSpan": {
+      "startLine": 14,
+      "startColumn": 1,
+      "endLine": 69,
+      "endColumn": 1
+    },
+    "operationSpan": {
+      "startLine": 63,
+      "startColumn": 5,
+      "endLine": 68,
+      "endColumn": 5
+    },
+    "operationKind": "OTHER",
+    "decision": "NO_ACTION",
+    "reason": "problem is outside the supported configuration-input class"
+  },
+  {
+    "problemIndex": 3,
+    "problemKind": "OTHER",
+    "problemMessageSha256": "a377ddeaa47275b9f6ba25b050eb46d99c6299892597db0afaf1cce74e751f41",
+    "traceOwner": "Task|:mockito-core:createTestResources||org.gradle.api.DefaultTask",
+    "sourcePath": "mockito-core/build.gradle.kts",
+    "sourceSha256": "c7b4fbfbbbbedc79fe2e6204992b82e0434f3f82ffba428138e7422d139a6042",
+    "language": "KOTLIN_DSL",
+    "declarationSpan": {
+      "startLine": 200,
+      "startColumn": 1,
+      "endLine": 209,
+      "endColumn": 1
+    },
+    "operationSpan": {
+      "startLine": 202,
+      "startColumn": 5,
+      "endLine": 208,
+      "endColumn": 5
+    },
+    "operationKind": "OTHER",
+    "decision": "NO_ACTION",
+    "reason": "problem is outside the supported configuration-input class"
+  }
+]

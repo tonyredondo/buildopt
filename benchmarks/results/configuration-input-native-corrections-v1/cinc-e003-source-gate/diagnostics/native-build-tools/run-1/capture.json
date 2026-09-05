@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "buildopt.cinc/strict-diagnostic-capture/v1",
+  "family": "native-build-tools",
+  "run": "run-1",
+  "revision": "ac24d572a7c314883feb1db2db67882d10a2d2a4",
+  "sourceArchiveSha256": "602914ce103b9bad5f584dbb024a5e98cdc03d71dc92e81037d2c3645cb56bad",
+  "workflowFile": ".github/workflows/test-common-utils.yml",
+  "toolchain": "temurin-jdk-17",
+  "ownerArguments": [
+    ":utils:checkstyleMain",
+    ":utils:checkstyleTest",
+    ":utils:test"
+  ],
+  "requiredOutputs": [
+    "common/utils/build/reports/checkstyle/*",
+    "common/utils/build/test-results/test/*.xml",
+    "terminal:BUILD_SUCCESSFUL"
+  ],
+  "diagnosticArguments": [
+    "--configuration-cache",
+    "--configuration-cache-problems=fail",
+    "--no-scan"
+  ],
+  "nativeDiagnostic": {
+    "gradleStarts": 1,
+    "exitCode": 1,
+    "configurationCacheOutcome": "STRICT_FAILURE"
+  },
+  "configurationCacheReportCount": 1,
+  "totalProblemCount": 1,
+  "logSha256": "e570181d3c26c6bf90be9175b1c8df13bb25c67aad861fb283f6d2a2e246fd19",
+  "reportSha256": "9e74da10ed8f65ca980deb682d6b4e64d468487c987fbb91fd2c9f8f0e22f151",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "performanceEvidence": false,
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "productFailures": 0
+}

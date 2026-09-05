@@ -1,0 +1,27 @@
+[
+  {
+    "problemIndex": 0,
+    "sourcePath": "build-logic/documentation-plugins/src/main/kotlin/org.graalvm.build.documentation.gradle.kts",
+    "sourceSha256": "4da779e575002580a438e6fe2bef620bd24c5eeb919d5d92e01d40f10059f84b",
+    "currentSourceSha256": "4da779e575002580a438e6fe2bef620bd24c5eeb919d5d92e01d40f10059f84b",
+    "language": "KOTLIN_DSL",
+    "declarationSpan": {"startLine": 57, "startColumn": 1, "endLine": 61, "endColumn": 1},
+    "operationSpan": {"startLine": 59, "startColumn": 5, "endLine": 59, "endColumn": 39},
+    "operationKind": "OTHER",
+    "phase": "CONFIGURATION",
+    "sourceOwned": true,
+    "externalPluginOwned": true,
+    "generatedOrVendor": false,
+    "bindingAmbiguous": false,
+    "alreadySupported": false,
+    "sideEffecting": false,
+    "secretBearing": false,
+    "commandComplete": false,
+    "consumesOnlyResult": false,
+    "streamsConfigured": false,
+    "exitHandlingComplete": false,
+    "directProvider": false,
+    "boundedValueSource": false,
+    "proposedApi": ""
+  }
+]

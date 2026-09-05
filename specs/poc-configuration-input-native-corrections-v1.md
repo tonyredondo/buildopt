@@ -30,3 +30,11 @@ CINC never suppresses Configuration Cache problems, edits public source,
 applies or merges a proposal automatically, or uses repository/task names as
 classification inputs. Hosted CI owns contracts and correctness, never wall
 time.
+
+`CINC-003` is terminal with
+`STOP_STRICT_DIAGNOSTIC_BUDGET_CANNOT_COMPLETE_COHORT`. Independent raw
+reconstruction proves 7/10 conclusive families, 0/3 eligible families, and a
+budget impossibility from retained artifacts alone: 15 artifact-backed primary
+starts plus at least 6 additional starts needed is greater than the fixed
+maximum of 20. `CINC-004..007` are `NOT_AUTHORIZED`; no public source was
+modified and no candidate or timing work opened.

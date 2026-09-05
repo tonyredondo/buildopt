@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "buildopt.cinc/strict-diagnostic-capture/v1",
+  "family": "gradle-node-plugin",
+  "run": "run-2",
+  "revision": "5366b9448c6f4cae2d12bef460a31760f9f305f2",
+  "sourceArchiveSha256": "11f8412351b3e19c3f51ae5effa505869e2da5edc1becabd2acb7cce6d93070f",
+  "workflowFile": ".github/workflows/build-examples.yml",
+  "toolchain": "temurin-jdk-17",
+  "ownerArguments": [
+    "-p",
+    "examples/simple-node",
+    "helloWorld"
+  ],
+  "requiredOutputs": [
+    "stdout:Hello World",
+    "terminal:BUILD_SUCCESSFUL"
+  ],
+  "diagnosticArguments": [
+    "--configuration-cache",
+    "--configuration-cache-problems=fail",
+    "--no-scan"
+  ],
+  "nativeDiagnostic": {
+    "gradleStarts": 1,
+    "exitCode": 0,
+    "configurationCacheOutcome": "STORED"
+  },
+  "configurationCacheReportCount": 1,
+  "totalProblemCount": 0,
+  "logSha256": "9181d93c229519de8f4a57f614cf9e5eeeae5fec87f9f64f07d49950a119cdf0",
+  "reportSha256": "c7174d25228fa017a3e769a2e99345bf11a04fb42b94cdbc14db90c5af995af7",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "performanceEvidence": false,
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "productFailures": 0
+}

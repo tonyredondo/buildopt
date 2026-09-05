@@ -5,8 +5,8 @@
   "detector": "CONFIGURATION_INPUT_NATIVE_CORRECTION_V1",
   "inputs": {
     "classifierGoSha256": "a81a7199ea40c7f06827623162e9113fae5787edb998e59cb7af3e515d6889bf",
-    "reportParserGoSha256": "405e07f5a41fece735327c2c61335716858f94f99aed3fb2b27f1461ea5c66c0",
-    "classifierTestGoSha256": "e2d5de83b549639bd4d6f62f7debd981b67ec19626c7edfc7647f453a4b279e2",
+    "reportParserGoSha256": "5775b880c546dd28acd792900bc58e1ba227329bdc03ad518d385779a9be91d9",
+    "classifierTestGoSha256": "5e1a283169500eb5119b82c8660049a7ebd7d78aade95224ef1a00bd865b96c8",
     "auditCliGoSha256": "6a347d3901ce7c64b4a999d35aa5eb5a60b5eb3d85df4d72f326524970516519",
     "rawReportSha256": "e4a3f08a67a05f416f3e3de498e615de317f3a042bb7d33b5a0340c96aa6f78d",
     "sourceFactsSha256": "209866d0c54fcd451d68c29fecffd2a4c96b35d72e4fdd14ebb0e6d2b5701f76"

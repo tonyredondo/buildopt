@@ -1,0 +1,26 @@
+[
+  {
+    "problemIndex": 0,
+    "problemKind": "OTHER",
+    "problemMessageSha256": "e2453d8a81a6da07f535c40cb6d8a23943326a6713d8c24257c4f255fe46d343",
+    "traceOwner": "BuildLogic||plugin 'org.ajoberstar.git-publish'|",
+    "sourcePath": "build-logic/documentation-plugins/src/main/kotlin/org.graalvm.build.documentation.gradle.kts",
+    "sourceSha256": "4da779e575002580a438e6fe2bef620bd24c5eeb919d5d92e01d40f10059f84b",
+    "language": "KOTLIN_DSL",
+    "declarationSpan": {
+      "startLine": 57,
+      "startColumn": 1,
+      "endLine": 61,
+      "endColumn": 1
+    },
+    "operationSpan": {
+      "startLine": 59,
+      "startColumn": 5,
+      "endLine": 59,
+      "endColumn": 39
+    },
+    "operationKind": "OTHER",
+    "decision": "EXTERNAL_OR_GENERATED_OWNER",
+    "reason": "correction must bind to repository-owned non-generated source"
+  }
+]

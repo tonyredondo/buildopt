@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "buildopt.cinc/strict-diagnostic-capture/v1",
+  "family": "mockito",
+  "run": "run-1",
+  "revision": "5a676bcd9ef9a10db46e1dc34e190eb46faa2687",
+  "sourceArchiveSha256": "36d3b8e7dcc32ff32170ec1aff7e9dbfc22ee8e7717b20f57dc14c055f9fa321",
+  "workflowFile": ".github/workflows/ci.yml",
+  "toolchain": "temurin-jdk-17",
+  "ownerArguments": [
+    "-Pmockito.test.java=17",
+    "build",
+    "--stacktrace"
+  ],
+  "requiredOutputs": [
+    "**/build/libs/*.jar",
+    "**/build/test-results/**/*.xml",
+    "terminal:BUILD_SUCCESSFUL"
+  ],
+  "diagnosticArguments": [
+    "--configuration-cache",
+    "--configuration-cache-problems=fail",
+    "--no-scan"
+  ],
+  "nativeDiagnostic": {
+    "gradleStarts": 1,
+    "exitCode": 1,
+    "configurationCacheOutcome": "STRICT_FAILURE"
+  },
+  "configurationCacheReportCount": 1,
+  "totalProblemCount": 4,
+  "logSha256": "2ff0a9cc359ba1adee80e0d2402f9b6c7cb9fafc612eed580e4988fc5bb3f7d9",
+  "reportSha256": "bd3c0720be597ab968600fd1fc98cd31106cc75528622237bb93214cd8e13d6b",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "performanceEvidence": false,
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "productFailures": 0
+}

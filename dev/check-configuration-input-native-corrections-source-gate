@@ -1,0 +1,205 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_contract=${buildopt_repo_root}/specs/poc-configuration-input-native-corrections-v1.json
+buildopt_subjects=${buildopt_repo_root}/specs/poc-configuration-input-native-corrections-v1.subjects.json
+buildopt_root=${buildopt_repo_root}/benchmarks/results/configuration-input-native-corrections-v1/cinc-e003-source-gate
+buildopt_result=${buildopt_root}/result.json
+buildopt_temp=$(mktemp -d)
+trap 'rm -rf -- "${buildopt_temp}"' EXIT
+
+declare -A buildopt_bound_inputs=(
+    [reportParserSha256]="internal/configurationinput/report.go"
+    [classifierSha256]="internal/configurationinput/classifier.go"
+    [auditCliSha256]="cmd/configuration-input-native-corrections-audit/main.go"
+    [captureScriptSha256]="dev/capture-configuration-input-native-corrections-diagnostic"
+    [subjectsSha256]="specs/poc-configuration-input-native-corrections-v1.subjects.json"
+)
+for buildopt_key in "${!buildopt_bound_inputs[@]}"; do
+    buildopt_expected=$(jq -r ".inputs.${buildopt_key}" "${buildopt_result}")
+    buildopt_actual=$(sha256sum "${buildopt_repo_root}/${buildopt_bound_inputs[${buildopt_key}]}" | awk '{print $1}')
+    [[ ${buildopt_actual} == "${buildopt_expected}" ]] || {
+        printf 'CINC-003 bound input drift: %s\n' "${buildopt_bound_inputs[${buildopt_key}]}" >&2
+        exit 1
+    }
+done
+
+mapfile -t buildopt_families < <(jq -r '.slots[].key' "${buildopt_subjects}")
+[[ ${#buildopt_families[@]} == 10 ]] || {
+    printf 'CINC-003 expected ten frozen families\n' >&2
+    exit 1
+}
+
+declare -A buildopt_valid_by_family=()
+declare -A buildopt_eligible_by_family=()
+buildopt_valid_diagnostics=0
+buildopt_rows=0
+buildopt_external_rows=0
+buildopt_no_action_rows=0
+
+while IFS= read -r -d '' buildopt_capture; do
+    buildopt_run_dir=${buildopt_capture%/capture.json}
+    buildopt_family=$(jq -r '.family' "${buildopt_capture}")
+    buildopt_run=$(jq -r '.run' "${buildopt_capture}")
+    buildopt_slot=$(jq -ce --arg family "${buildopt_family}" '.slots[] | select(.key == $family)' "${buildopt_subjects}")
+    [[ -n ${buildopt_slot} && ${buildopt_run} =~ ^run-[12]$ ]] || {
+        printf 'invalid CINC-003 capture binding: %s\n' "${buildopt_capture}" >&2
+        exit 1
+    }
+
+    jq -e --argjson slot "${buildopt_slot}" --arg run "${buildopt_run}" '
+      .schemaVersion == "buildopt.cinc/strict-diagnostic-capture/v1" and
+      .run == $run and .revision == $slot.primary.revision and
+      .sourceArchiveSha256 == $slot.primary.archiveSha256 and
+      .workflowFile == $slot.ownerWorkflow.sourcePath and
+      .ownerArguments == $slot.ownerWorkflow.arguments and
+      .requiredOutputs == $slot.requiredOutputs and
+      .diagnosticArguments == ["--configuration-cache","--configuration-cache-problems=fail","--no-scan"] and
+      .nativeDiagnostic.gradleStarts == 1 and
+      .configurationCacheReportCount == 1 and
+      (.logSha256 | test("^[0-9a-f]{64}$")) and
+      (.reportSha256 | test("^[0-9a-f]{64}$")) and
+      .environmentClass == "LOCAL_FUNCTIONAL" and
+      .performanceEvidence == false and .publicSourceModified == false and
+      .candidateBuild == false and .timingSamples == 0 and .productFailures == 0
+    ' "${buildopt_capture}" >/dev/null
+
+    gzip -t "${buildopt_run_dir}/gradle.log.gz" "${buildopt_run_dir}/configuration-cache-report.html.gz"
+    buildopt_log_sha=$(gzip -dc "${buildopt_run_dir}/gradle.log.gz" | sha256sum | awk '{print $1}')
+    buildopt_report_sha=$(gzip -dc "${buildopt_run_dir}/configuration-cache-report.html.gz" | sha256sum | awk '{print $1}')
+    [[ ${buildopt_log_sha} == $(jq -r '.logSha256' "${buildopt_capture}") &&
+       ${buildopt_report_sha} == $(jq -r '.reportSha256' "${buildopt_capture}") ]] || {
+        printf 'CINC-003 raw diagnostic hash mismatch: %s/%s\n' "${buildopt_family}" "${buildopt_run}" >&2
+        exit 1
+    }
+
+    buildopt_facts=${buildopt_root}/empty-source-facts.json
+    if [[ -f ${buildopt_root}/${buildopt_family}-source-facts.json ]]; then
+        buildopt_facts=${buildopt_root}/${buildopt_family}-source-facts.json
+    fi
+    gzip -dc "${buildopt_run_dir}/configuration-cache-report.html.gz" >"${buildopt_temp}/report.html"
+    "${buildopt_script_dir}/run" --toolchain go -- \
+        go run ./cmd/configuration-input-native-corrections-audit \
+        --report "${buildopt_temp}/report.html" --facts "${buildopt_facts}" \
+        >"${buildopt_temp}/rows.json"
+    cmp -s "${buildopt_temp}/rows.json" "${buildopt_run_dir}/rows.json" || {
+        printf 'CINC-003 reconstructed rows drift: %s/%s\n' "${buildopt_family}" "${buildopt_run}" >&2
+        exit 1
+    }
+
+    buildopt_run_rows=$(jq 'length' "${buildopt_temp}/rows.json")
+    buildopt_rows=$((buildopt_rows + buildopt_run_rows))
+    buildopt_external_rows=$((buildopt_external_rows + $(jq '[.[] | select(.decision == "EXTERNAL_OR_GENERATED_OWNER")] | length' "${buildopt_temp}/rows.json")))
+    buildopt_no_action_rows=$((buildopt_no_action_rows + $(jq '[.[] | select(.decision == "NO_ACTION")] | length' "${buildopt_temp}/rows.json")))
+    if jq -e 'any(.[]; .decision == "SIMPLE_PROVIDER_EXEC_ELIGIBLE" or .decision == "VALUE_SOURCE_REVIEW_REQUIRED" or .decision == "TYPED_PROVIDER_ELIGIBLE")' "${buildopt_temp}/rows.json" >/dev/null; then
+        buildopt_eligible_by_family[${buildopt_family}]=1
+    fi
+    buildopt_valid_by_family[${buildopt_family}]=$(( ${buildopt_valid_by_family[${buildopt_family}]:-0} + 1 ))
+    buildopt_valid_diagnostics=$((buildopt_valid_diagnostics + 1))
+done < <(find "${buildopt_root}/diagnostics" -mindepth 3 -maxdepth 3 -type f -name capture.json -print0 | sort -z)
+
+while IFS= read -r buildopt_fact; do
+    buildopt_family=${buildopt_fact%%$'\t'*}
+    buildopt_binding=${buildopt_fact#*$'\t'}
+    buildopt_source_path=${buildopt_binding%%$'\t'*}
+    buildopt_expected_sha=${buildopt_binding##*$'\t'}
+    buildopt_source=${buildopt_root}/sources/${buildopt_family}/${buildopt_source_path}.gz
+    [[ -f ${buildopt_source} && $(gzip -dc "${buildopt_source}" | sha256sum | awk '{print $1}') == "${buildopt_expected_sha}" ]] || {
+        printf 'CINC-003 source snapshot drift: %s/%s\n' "${buildopt_family}" "${buildopt_source_path}" >&2
+        exit 1
+    }
+done < <(
+    for buildopt_family in native-build-tools mockito; do
+        jq -r --arg family "${buildopt_family}" '.[] | [$family,.sourcePath,.sourceSha256] | @tsv' \
+            "${buildopt_root}/${buildopt_family}-source-facts.json"
+    done | sort -u
+)
+
+buildopt_runtime_source=${buildopt_root}/sources/testcontainers-java/build.gradle.gz
+buildopt_runtime_sha=$(jq -r '.familyResults[] | select(.family == "testcontainers-java") | .runtimeBinding.sourceSha256' "${buildopt_result}")
+[[ $(gzip -dc "${buildopt_runtime_source}" | sha256sum | awk '{print $1}') == "${buildopt_runtime_sha}" ]] || {
+    printf 'CINC-003 Testcontainers runtime binding drift\n' >&2
+    exit 1
+}
+for buildopt_run in run-1 run-2; do
+    buildopt_capture=${buildopt_root}/diagnostics/testcontainers-java/${buildopt_run}/capture.json
+    jq -e '.nativeDiagnostic.exitCode == 1 and .nativeDiagnostic.configurationCacheOutcome == "STORED" and .totalProblemCount == 0' "${buildopt_capture}" >/dev/null
+    gzip -dc "${buildopt_root}/diagnostics/testcontainers-java/${buildopt_run}/gradle.log.gz" |
+        grep -Fq "Could not evaluate onlyIf predicate for task ':bom:delombok'."
+done
+
+buildopt_conclusive_families=0
+buildopt_minimum_additional_starts=0
+for buildopt_family in "${buildopt_families[@]}"; do
+    buildopt_family_valid=${buildopt_valid_by_family[${buildopt_family}]:-0}
+    if ((buildopt_family_valid == 2)); then
+        buildopt_conclusive_families=$((buildopt_conclusive_families + 1))
+    else
+        buildopt_minimum_additional_starts=$((buildopt_minimum_additional_starts + 2 - buildopt_family_valid))
+    fi
+done
+buildopt_eligible_families=${#buildopt_eligible_by_family[@]}
+
+buildopt_invalid=${buildopt_root}/invalid-attempts/mockito-archive-root/capture.json
+jq -e '.family == "mockito" and .run == "run-1" and .nativeDiagnostic.gradleStarts == 1' "${buildopt_invalid}" >/dev/null
+gzip -t "${buildopt_root}/invalid-attempts/mockito-archive-root/gradle.log.gz" \
+    "${buildopt_root}/invalid-attempts/mockito-archive-root/configuration-cache-report.html.gz"
+buildopt_artifact_backed_starts=$((buildopt_valid_diagnostics + 1))
+buildopt_maximum_starts=$(jq -r '.budget.maximumStrictPrimaryStarts' "${buildopt_contract}")
+((buildopt_artifact_backed_starts + buildopt_minimum_additional_starts > buildopt_maximum_starts)) || {
+    printf 'CINC-003 budget stop is not proven from retained artifacts\n' >&2
+    exit 1
+}
+
+jq -e \
+    --argjson valid "${buildopt_valid_diagnostics}" \
+    --argjson backed "${buildopt_artifact_backed_starts}" \
+    --argjson minimumAdditional "${buildopt_minimum_additional_starts}" \
+    --argjson conclusive "${buildopt_conclusive_families}" \
+    --argjson eligible "${buildopt_eligible_families}" \
+    --argjson rows "${buildopt_rows}" \
+    --argjson external "${buildopt_external_rows}" \
+    --argjson noAction "${buildopt_no_action_rows}" '
+      .schemaVersion == "buildopt.evidence/configuration-input-native-corrections-source-gate/v1" and
+      .workItem == "CINC-003" and
+      .state == "STOP_STRICT_DIAGNOSTIC_BUDGET_CANNOT_COMPLETE_COHORT" and
+      [.attemptLedger[].ordinal] == [range(1;19)] and
+      ([.attemptLedger[] | select(.artifactBacked)] | length) == $backed and
+      (.attemptLedger | length) == 18 and
+      (.familyResults | length) == 10 and
+      .reconstructed.validDiagnostics == $valid and
+      .reconstructed.artifactBackedPrimaryStarts == $backed and
+      .reconstructed.minimumAdditionalPrimaryStartsForCompleteCohort == $minimumAdditional and
+      .reconstructed.maximumPrimaryStarts == 20 and
+      .reconstructed.conclusiveFamilies == $conclusive and
+      .reconstructed.requiredConclusiveFamilies == 10 and
+      .reconstructed.eligibleFamilies == $eligible and
+      .reconstructed.requiredEligibleFamilies == 3 and
+      .reconstructed.rows == $rows and
+      .reconstructed.decisionCounts == {EXTERNAL_OR_GENERATED_OWNER:$external,NO_ACTION:$noAction} and
+      .boundaries == {
+        predecessorReportsConsumed:false,
+        publicSourceModified:false,
+        candidateBuilds:0,
+        timingSamples:0,
+        speedupClaim:false,
+        productFailures:0
+      } and
+      .dependentBlocks == {
+        "CINC-004":"NOT_AUTHORIZED",
+        "CINC-005":"NOT_AUTHORIZED",
+        "CINC-006":"NOT_AUTHORIZED",
+        "CINC-007":"NOT_AUTHORIZED"
+      }
+    ' "${buildopt_result}" >/dev/null
+
+printf 'CINC-003 terminal source gate: STOP (%s/10 conclusive, %s/3 eligible, %s+%s>%s starts)\n' \
+    "${buildopt_conclusive_families}" "${buildopt_eligible_families}" \
+    "${buildopt_artifact_backed_starts}" "${buildopt_minimum_additional_starts}" "${buildopt_maximum_starts}"

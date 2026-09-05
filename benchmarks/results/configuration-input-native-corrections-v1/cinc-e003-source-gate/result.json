@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "buildopt.evidence/configuration-input-native-corrections-source-gate/v1",
+  "workItem": "CINC-003",
+  "state": "STOP_STRICT_DIAGNOSTIC_BUDGET_CANNOT_COMPLETE_COHORT",
+  "inputs": {
+    "reportParserSha256": "5775b880c546dd28acd792900bc58e1ba227329bdc03ad518d385779a9be91d9",
+    "classifierSha256": "a81a7199ea40c7f06827623162e9113fae5787edb998e59cb7af3e515d6889bf",
+    "auditCliSha256": "6a347d3901ce7c64b4a999d35aa5eb5a60b5eb3d85df4d72f326524970516519",
+    "captureScriptSha256": "2d0667d1a479c50c312d7b00e333bed83f66f7eb4b296f67128384dcc2947c5f",
+    "subjectsSha256": "59563ed4b4af5bf90b84157cc9d1478ac5d0c0474979866da6310f4bb456bef1"
+  },
+  "attemptLedger": [
+    {"ordinal": 1, "family": "dependency-analysis-gradle-plugin", "attempt": "run-1", "result": "VALID_CAPTURE", "sourceRoot": "ARCHIVE", "artifactBacked": true},
+    {"ordinal": 2, "family": "dependency-analysis-gradle-plugin", "attempt": "run-2", "result": "VALID_CAPTURE", "sourceRoot": "ARCHIVE", "artifactBacked": true},
+    {"ordinal": 3, "family": "detekt", "attempt": "run-1", "result": "VALID_CAPTURE", "sourceRoot": "ARCHIVE", "artifactBacked": true},
+    {"ordinal": 4, "family": "detekt", "attempt": "run-2", "result": "VALID_CAPTURE", "sourceRoot": "ARCHIVE", "artifactBacked": true},
+    {"ordinal": 5, "family": "gradle-node-plugin", "attempt": "harness-1", "result": "HARNESS_DUPLICATE_PROJECT_DIRECTORY", "sourceRoot": "ARCHIVE", "artifactBacked": false},
+    {"ordinal": 6, "family": "gradle-node-plugin", "attempt": "run-1", "result": "VALID_CAPTURE", "sourceRoot": "ARCHIVE", "artifactBacked": true},
+    {"ordinal": 7, "family": "gradle-node-plugin", "attempt": "run-2", "result": "VALID_CAPTURE", "sourceRoot": "ARCHIVE", "artifactBacked": true},
+    {"ordinal": 8, "family": "ksp", "attempt": "run-1", "result": "VALID_CAPTURE", "sourceRoot": "ARCHIVE", "artifactBacked": true},
+    {"ordinal": 9, "family": "ksp", "attempt": "run-2", "result": "VALID_CAPTURE", "sourceRoot": "ARCHIVE", "artifactBacked": true},
+    {"ordinal": 10, "family": "native-build-tools", "attempt": "run-1", "result": "VALID_CAPTURE", "sourceRoot": "ARCHIVE", "artifactBacked": true},
+    {"ordinal": 11, "family": "native-build-tools", "attempt": "run-2", "result": "VALID_CAPTURE", "sourceRoot": "ARCHIVE", "artifactBacked": true},
+    {"ordinal": 12, "family": "testcontainers-java", "attempt": "run-1", "result": "VALID_CAPTURE", "sourceRoot": "ARCHIVE", "artifactBacked": true},
+    {"ordinal": 13, "family": "testcontainers-java", "attempt": "run-2", "result": "VALID_CAPTURE", "sourceRoot": "ARCHIVE", "artifactBacked": true},
+    {"ordinal": 14, "family": "mockito", "attempt": "harness-archive-root", "result": "INVALID_SOURCE_ROOT_WITHOUT_GIT_METADATA", "sourceRoot": "ARCHIVE", "artifactBacked": true},
+    {"ordinal": 15, "family": "mockito", "attempt": "run-1", "result": "VALID_CAPTURE", "sourceRoot": "FRESH_LOCAL_CLONE", "artifactBacked": true},
+    {"ordinal": 16, "family": "mockito", "attempt": "run-2", "result": "VALID_CAPTURE", "sourceRoot": "FRESH_LOCAL_CLONE", "artifactBacked": true},
+    {"ordinal": 17, "family": "openapi-generator", "attempt": "harness-1", "result": "COLD_JDK21_GRADLE_8_1_1_SCRIPT_INCOMPATIBILITY", "sourceRoot": "FRESH_LOCAL_CLONE", "artifactBacked": false},
+    {"ordinal": 18, "family": "licensee", "attempt": "harness-1", "result": "AMBIGUOUS_ROOT_REPORT_SELECTION_237_REPORTS", "sourceRoot": "FRESH_LOCAL_CLONE", "artifactBacked": false}
+  ],
+  "familyResults": [
+    {"family": "dependency-analysis-gradle-plugin", "state": "CONCLUSIVE_NO_ACTION", "validDiagnostics": 2, "reconstructedRows": 0, "eligibleRows": 0},
+    {"family": "detekt", "state": "CONCLUSIVE_NO_ACTION", "validDiagnostics": 2, "reconstructedRows": 0, "eligibleRows": 0},
+    {"family": "gradle-node-plugin", "state": "CONCLUSIVE_NO_ACTION", "validDiagnostics": 2, "reconstructedRows": 0, "eligibleRows": 0},
+    {"family": "ksp", "state": "CONCLUSIVE_NO_ACTION", "validDiagnostics": 2, "reconstructedRows": 0, "eligibleRows": 0},
+    {"family": "native-build-tools", "state": "CONCLUSIVE_EXTERNAL_PLUGIN_OWNER", "validDiagnostics": 2, "reconstructedRows": 2, "eligibleRows": 0},
+    {"family": "testcontainers-java", "state": "CONCLUSIVE_OUT_OF_SCOPE_RUNTIME_BLOCKER", "validDiagnostics": 2, "reconstructedRows": 0, "eligibleRows": 0, "runtimeBinding": {"sourcePath": "build.gradle", "sourceSha256": "ccf930baff7f9bd5a9acc151c0ae9b317203e22c6eaa30af6f85a3b1093ee140", "declarationSpan": {"startLine": 68, "startColumn": 5, "endLine": 78, "endColumn": 5}, "operationSpan": {"startLine": 76, "startColumn": 5, "endLine": 78, "endColumn": 5}}},
+    {"family": "mockito", "state": "CONCLUSIVE_NO_CINC_RECIPE", "validDiagnostics": 2, "reconstructedRows": 8, "eligibleRows": 0},
+    {"family": "openapi-generator", "state": "INCOMPLETE_TOOLCHAIN_INCOMPATIBLE", "validDiagnostics": 0, "reconstructedRows": 0, "eligibleRows": 0},
+    {"family": "licensee", "state": "INCOMPLETE_CAPTURE_AMBIGUITY", "validDiagnostics": 0, "reconstructedRows": 0, "eligibleRows": 0},
+    {"family": "gradle-profiler", "state": "INCOMPLETE_BUDGET_STOP", "validDiagnostics": 0, "reconstructedRows": 0, "eligibleRows": 0}
+  ],
+  "reconstructed": {
+    "validDiagnostics": 14,
+    "artifactBackedPrimaryStarts": 15,
+    "observedPrimaryStarts": 18,
+    "maximumPrimaryStarts": 20,
+    "minimumAdditionalPrimaryStartsForCompleteCohort": 6,
+    "conclusiveFamilies": 7,
+    "requiredConclusiveFamilies": 10,
+    "eligibleFamilies": 0,
+    "requiredEligibleFamilies": 3,
+    "rows": 10,
+    "decisionCounts": {"EXTERNAL_OR_GENERATED_OWNER": 4, "NO_ACTION": 6}
+  },
+  "toolingFailures": [
+    "DUPLICATE_PROJECT_DIRECTORY_ARGUMENT",
+    "ARCHIVE_ROOT_REMOVED_REQUIRED_GIT_METADATA",
+    "COLD_JDK21_TOOLCHAIN_INCOMPATIBILITY_MISSED_BY_WARM_PREFLIGHT",
+    "ROOT_REPORT_DISCOVERY_INCLUDED_NESTED_TEST_BUILDS"
+  ],
+  "boundaries": {
+    "predecessorReportsConsumed": false,
+    "publicSourceModified": false,
+    "candidateBuilds": 0,
+    "timingSamples": 0,
+    "speedupClaim": false,
+    "productFailures": 0
+  },
+  "dependentBlocks": {
+    "CINC-004": "NOT_AUTHORIZED",
+    "CINC-005": "NOT_AUTHORIZED",
+    "CINC-006": "NOT_AUTHORIZED",
+    "CINC-007": "NOT_AUTHORIZED"
+  }
+}

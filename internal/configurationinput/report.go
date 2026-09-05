@@ -9,6 +9,7 @@ import (
 )
 
 const reportMarker = "function configurationCacheProblems() { return ("
+const reportDataMarker = "// begin-report-data"
 
 const (
 	ProblemExternalProcess = "EXTERNAL_PROCESS"
@@ -43,6 +44,7 @@ type traceEntry struct {
 
 type diagnostic struct {
 	Trace   []traceEntry `json:"trace"`
+	Input   []fragment   `json:"input"`
 	Problem []fragment   `json:"problem"`
 }
 
@@ -58,21 +60,41 @@ func ParseReport(content []byte) ([]Problem, error) {
 	if markerIndex < 0 || bytes.Index(content[markerIndex+len(reportMarker):], []byte(reportMarker)) >= 0 {
 		return nil, ErrInvalidReport
 	}
-	decoder := json.NewDecoder(bytes.NewReader(content[markerIndex+len(reportMarker):]))
+	payloadContent := bytes.TrimSpace(content[markerIndex+len(reportMarker):])
+	if bytes.HasPrefix(payloadContent, []byte(reportDataMarker)) {
+		newline := bytes.IndexByte(payloadContent, '\n')
+		if newline < 0 {
+			return nil, ErrInvalidReport
+		}
+		payloadContent = bytes.TrimSpace(payloadContent[newline+1:])
+	}
+	decoder := json.NewDecoder(bytes.NewReader(payloadContent))
 	var payload envelope
 	if err := decoder.Decode(&payload); err != nil {
 		return nil, ErrInvalidReport
 	}
-	if payload.TotalProblemCount != len(payload.Diagnostics) || payload.TotalProblemCount == 0 {
+	if payload.Diagnostics == nil || payload.TotalProblemCount < 0 {
 		return nil, ErrInvalidReport
 	}
-	problems := make([]Problem, 0, len(payload.Diagnostics))
-	for index, raw := range payload.Diagnostics {
+	problems := make([]Problem, 0, payload.TotalProblemCount)
+	for _, raw := range payload.Diagnostics {
+		if len(raw.Problem) == 0 {
+			if len(raw.Input) == 0 || len(raw.Trace) == 0 {
+				return nil, ErrInvalidReport
+			}
+			continue
+		}
+		if len(raw.Input) != 0 {
+			return nil, ErrInvalidReport
+		}
 		message := fragments(raw.Problem)
 		if message == "" || len(raw.Trace) == 0 {
 			return nil, ErrInvalidReport
 		}
-		problems = append(problems, Problem{Index: index, Kind: problemKind(message), Message: message, TraceOwner: owner(raw.Trace)})
+		problems = append(problems, Problem{Index: len(problems), Kind: problemKind(message), Message: message, TraceOwner: owner(raw.Trace)})
+	}
+	if payload.TotalProblemCount != len(problems) {
+		return nil, ErrInvalidReport
 	}
 	return problems, nil
 }
@@ -82,7 +104,7 @@ func DecodeFacts(content []byte) ([]SourceFacts, error) {
 	decoder := json.NewDecoder(bytes.NewReader(content))
 	decoder.DisallowUnknownFields()
 	var facts []SourceFacts
-	if err := decoder.Decode(&facts); err != nil || len(facts) == 0 {
+	if err := decoder.Decode(&facts); err != nil || facts == nil {
 		return nil, ErrInvalidFacts
 	}
 	if err := decoder.Decode(new(any)); !errors.Is(err, io.EOF) {

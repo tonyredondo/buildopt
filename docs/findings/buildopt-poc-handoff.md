@@ -54,16 +54,16 @@ does not establish commercial viability.
 
 ## Current experiment status
 
-`CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1` is the active successor. CINC-001
-proved the versioned parser/classifier on eleven fixtures. CINC-002 now freezes
-ten fresh public Gradle families and twenty ordered reserve revisions after
-ten source-neutral optimized-native preflight passes with Configuration Cache
-disabled. One Mockito project default unexpectedly published a Build Scan;
-the incident is disclosed, supplies no evidence input, and every later start
-uses `--no-scan`. No strict public diagnostic, public source mutation,
-candidate, timing sample, speedup claim, or product failure exists. CINC-003
-must produce two fresh strict diagnostics per family and pass 10/10 conclusive
-plus at least 3/10 eligible families before any materiality work can open.
+`CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1` is terminal at CINC-003 with
+`STOP_STRICT_DIAGNOSTIC_BUDGET_CANNOT_COMPLETE_COHORT`. Fourteen valid raw
+captures reconstruct 7/10 conclusive families and 0/3 eligible families. The
+ten rows are four external-owner decisions and six no-action decisions.
+Retained evidence alone proves the budget stop: 15 artifact-backed primary
+starts plus at least 6 more required exceeds the fixed maximum of 20. OpenAPI
+Generator exposed a cold JDK 21/Gradle 8.1.1 incompatibility missed by the warm
+preflight; Licensee exposed ambiguous root/nested report capture; Gradle
+Profiler was not started. `CINC-004..007` are `NOT_AUTHORIZED`. No public source
+mutation, candidate, timing sample, speedup claim, or product failure exists.
 
 `WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` is terminally stopped at `WCNCP-013`
 (`WCNCP-000` contract frozen; `WCNCP-001` through `WCNCP-007` functionally

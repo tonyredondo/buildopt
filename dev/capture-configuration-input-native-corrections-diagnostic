@@ -1,0 +1,181 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 4)); then
+    printf 'usage: %s FAMILY RUN_ID SOURCE_CHECKOUT NEW_OUTPUT_DIRECTORY\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_family=$1
+buildopt_run_id=$2
+buildopt_checkout=$3
+buildopt_output=$4
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_subjects=${buildopt_repo_root}/specs/poc-configuration-input-native-corrections-v1.subjects.json
+
+[[ ${buildopt_checkout} == /* && -d ${buildopt_checkout}/.git && \
+   ${buildopt_output} == /* && ! -e ${buildopt_output} && \
+   ${buildopt_run_id} =~ ^run-[12]$ ]] || {
+    printf 'checkout/output must be absolute, output new, and run ID run-1 or run-2\n' >&2
+    exit 64
+}
+
+buildopt_slot=$(jq -ce --arg family "${buildopt_family}" '.slots[] | select(.key == $family)' "${buildopt_subjects}") || {
+    printf 'unknown CINC family: %s\n' "${buildopt_family}" >&2
+    exit 64
+}
+[[ -z $(git -C "${buildopt_checkout}" status --porcelain) ]] || {
+    printf 'CINC source checkout is dirty: %s\n' "${buildopt_family}" >&2
+    exit 1
+}
+
+buildopt_revision=$(jq -r '.primary.revision' <<<"${buildopt_slot}")
+buildopt_archive_sha=$(jq -r '.primary.archiveSha256' <<<"${buildopt_slot}")
+[[ $(git -C "${buildopt_checkout}" rev-parse HEAD) == "${buildopt_revision}" ]] || {
+    printf 'CINC source revision drift: %s\n' "${buildopt_family}" >&2
+    exit 1
+}
+buildopt_actual_archive_sha=$(git -C "${buildopt_checkout}" archive --format=tar "${buildopt_revision}" | sha256sum | awk '{print $1}')
+[[ ${buildopt_actual_archive_sha} == "${buildopt_archive_sha}" ]] || {
+    printf 'CINC source archive drift: %s\n' "${buildopt_family}" >&2
+    exit 1
+}
+
+buildopt_free_kib=$(df -Pk "${TMPDIR:-/tmp}" | awk 'NR == 2 {print $4}')
+if ((buildopt_free_kib < 10 * 1024 * 1024)); then
+    printf 'CINC diagnostic requires at least 10 GiB free; available KiB=%s\n' "${buildopt_free_kib}" >&2
+    exit 1
+fi
+
+buildopt_work=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-cinc-diagnostic.XXXXXX")
+trap 'rm -rf -- "${buildopt_work}"' EXIT
+buildopt_pending=${buildopt_work}/output
+mkdir -p -- "${buildopt_work}/gradle-home" "${buildopt_pending}"
+git clone --quiet --local --no-checkout -- "${buildopt_checkout}" "${buildopt_work}/source"
+git -C "${buildopt_work}/source" checkout --quiet --detach "${buildopt_revision}"
+[[ -z $(git -C "${buildopt_work}/source" status --porcelain) ]] || {
+    printf 'fresh CINC source clone is dirty: %s\n' "${buildopt_family}" >&2
+    exit 1
+}
+
+buildopt_wrapper=$(jq -r '.wrapper.path' <<<"${buildopt_slot}")
+buildopt_working_directory=$(jq -r '.ownerWorkflow.workingDirectory // "."' <<<"${buildopt_slot}")
+buildopt_jdk=$(jq -r '.ownerWorkflow.preflightJdk' <<<"${buildopt_slot}")
+case "${buildopt_jdk}" in
+    temurin-17 | temurin-21 | temurin-25) buildopt_toolchain=temurin-jdk-${buildopt_jdk#temurin-} ;;
+    *) printf 'unsupported CINC preflight JDK: %s\n' "${buildopt_jdk}" >&2; exit 1 ;;
+esac
+buildopt_working_root=${buildopt_work}/source
+if [[ ${buildopt_working_directory} != . ]]; then
+    buildopt_working_root=${buildopt_working_root}/${buildopt_working_directory}
+fi
+
+mapfile -t buildopt_owner_arguments < <(jq -r '.ownerWorkflow.arguments[]' <<<"${buildopt_slot}")
+mapfile -t buildopt_owner_environment < <(jq -r '(.ownerWorkflow.environment // {}) | to_entries[] | "\(.key)=\(.value)"' <<<"${buildopt_slot}")
+# The variable is intentionally expanded by the toolchain-owned child shell.
+# shellcheck disable=SC2016
+buildopt_java_home=$("${buildopt_script_dir}/run" --toolchain "${buildopt_toolchain}" -- sh -c 'printf "%s" "$JAVA_HOME"')
+if [[ ${buildopt_toolchain} == temurin-jdk-17 ]]; then
+    buildopt_owner_environment+=("JDK17=${buildopt_java_home}")
+fi
+
+buildopt_wrapper_command=("${buildopt_work}/source/${buildopt_wrapper}")
+if [[ ! -x ${buildopt_wrapper_command[0]} ]]; then
+    buildopt_wrapper_command=(/bin/sh "${buildopt_wrapper_command[0]}")
+fi
+buildopt_diagnostic_arguments=(--configuration-cache --configuration-cache-problems=fail --no-scan --build-cache --parallel --max-workers=4)
+buildopt_project_arguments=(-p "${buildopt_working_root}")
+for buildopt_argument in "${buildopt_owner_arguments[@]}"; do
+    case "${buildopt_argument}" in
+        -p | --project-dir | --project-dir=*) buildopt_project_arguments=(); break ;;
+    esac
+done
+
+cd -- "${buildopt_work}/source"
+set +e
+env \
+    GRADLE_USER_HOME="${buildopt_work}/gradle-home" \
+    GRADLE_OPTS='-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false' \
+    "${buildopt_owner_environment[@]}" \
+    timeout 1200s "${buildopt_script_dir}/run" --toolchain "${buildopt_toolchain}" -- \
+    "${buildopt_wrapper_command[@]}" "${buildopt_project_arguments[@]}" \
+    "${buildopt_diagnostic_arguments[@]}" "${buildopt_owner_arguments[@]}" \
+    2>&1 | tee "${buildopt_work}/gradle.log"
+buildopt_exit_code=${PIPESTATUS[0]}
+set -e
+
+buildopt_report_root=${buildopt_working_root}/build/reports/configuration-cache
+mapfile -d '' -t buildopt_reports < <(
+    find "${buildopt_report_root}" -mindepth 3 -maxdepth 3 \
+        -type f -name configuration-cache-report.html -print0 2>/dev/null | sort -z
+)
+if ((${#buildopt_reports[@]} != 1)); then
+    printf 'CINC diagnostic expected one Configuration Cache report, found %s for %s/%s\n' \
+        "${#buildopt_reports[@]}" "${buildopt_family}" "${buildopt_run_id}" >&2
+    exit 1
+fi
+
+buildopt_report=${buildopt_reports[0]}
+buildopt_total_problems=$(awk '/\/\/ begin-report-data/{getline; print; exit}' "${buildopt_report}" | jq -er '.totalProblemCount')
+buildopt_cache_outcome=UNKNOWN
+if grep -Fq 'Configuration cache entry stored.' "${buildopt_work}/gradle.log"; then
+    buildopt_cache_outcome=STORED
+elif grep -Fq 'Configuration cache entry reused.' "${buildopt_work}/gradle.log"; then
+    buildopt_cache_outcome=REUSED
+elif ((buildopt_exit_code != 0)); then
+    buildopt_cache_outcome=STRICT_FAILURE
+fi
+
+buildopt_log_sha=$(sha256sum "${buildopt_work}/gradle.log" | awk '{print $1}')
+buildopt_report_sha=$(sha256sum "${buildopt_report}" | awk '{print $1}')
+gzip -9c -- "${buildopt_work}/gradle.log" >"${buildopt_pending}/gradle.log.gz"
+gzip -9c -- "${buildopt_report}" >"${buildopt_pending}/configuration-cache-report.html.gz"
+
+buildopt_owner_arguments_json=$(jq -c '.ownerWorkflow.arguments' <<<"${buildopt_slot}")
+buildopt_required_outputs_json=$(jq -c '.requiredOutputs' <<<"${buildopt_slot}")
+jq -n \
+    --arg family "${buildopt_family}" \
+    --arg run "${buildopt_run_id}" \
+    --arg revision "${buildopt_revision}" \
+    --arg sourceArchiveSha256 "${buildopt_archive_sha}" \
+    --arg workflowFile "$(jq -r '.ownerWorkflow.sourcePath' <<<"${buildopt_slot}")" \
+    --arg toolchain "${buildopt_toolchain}" \
+    --arg cacheOutcome "${buildopt_cache_outcome}" \
+    --arg logSha256 "${buildopt_log_sha}" \
+    --arg reportSha256 "${buildopt_report_sha}" \
+    --argjson ownerArguments "${buildopt_owner_arguments_json}" \
+    --argjson requiredOutputs "${buildopt_required_outputs_json}" \
+    --argjson exitCode "${buildopt_exit_code}" \
+    --argjson totalProblemCount "${buildopt_total_problems}" '
+      {
+        schemaVersion: "buildopt.cinc/strict-diagnostic-capture/v1",
+        family: $family,
+        run: $run,
+        revision: $revision,
+        sourceArchiveSha256: $sourceArchiveSha256,
+        workflowFile: $workflowFile,
+        toolchain: $toolchain,
+        ownerArguments: $ownerArguments,
+        requiredOutputs: $requiredOutputs,
+        diagnosticArguments: ["--configuration-cache","--configuration-cache-problems=fail","--no-scan"],
+        nativeDiagnostic: {gradleStarts:1,exitCode:$exitCode,configurationCacheOutcome:$cacheOutcome},
+        configurationCacheReportCount: 1,
+        totalProblemCount: $totalProblemCount,
+        logSha256: $logSha256,
+        reportSha256: $reportSha256,
+        environmentClass: "LOCAL_FUNCTIONAL",
+        performanceEvidence: false,
+        publicSourceModified: false,
+        candidateBuild: false,
+        timingSamples: 0,
+        productFailures: 0
+      }
+    ' >"${buildopt_pending}/capture.json"
+
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+mv -- "${buildopt_pending}" "${buildopt_output}"
+
+printf 'CINC strict diagnostic captured: %s/%s exit=%s problems=%s outcome=%s\n' \
+    "${buildopt_family}" "${buildopt_run_id}" "${buildopt_exit_code}" \
+    "${buildopt_total_problems}" "${buildopt_cache_outcome}"

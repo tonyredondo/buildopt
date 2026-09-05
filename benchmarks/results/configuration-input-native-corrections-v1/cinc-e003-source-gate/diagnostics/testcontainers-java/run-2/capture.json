@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "buildopt.cinc/strict-diagnostic-capture/v1",
+  "family": "testcontainers-java",
+  "run": "run-2",
+  "revision": "a4d3a033d8ccf73240c14f35b90787e87c4d5947",
+  "sourceArchiveSha256": "04bf8d699cabda0dae492c411c2e78cf9b7d2cdc23c65865c73b0f999645d455",
+  "workflowFile": ".github/workflows/release.yml",
+  "toolchain": "temurin-jdk-17",
+  "ownerArguments": [
+    "build",
+    "--no-daemon",
+    "-i",
+    "-x",
+    "test"
+  ],
+  "requiredOutputs": [
+    "**/build/libs/*.jar",
+    "terminal:BUILD_SUCCESSFUL"
+  ],
+  "diagnosticArguments": [
+    "--configuration-cache",
+    "--configuration-cache-problems=fail",
+    "--no-scan"
+  ],
+  "nativeDiagnostic": {
+    "gradleStarts": 1,
+    "exitCode": 1,
+    "configurationCacheOutcome": "STORED"
+  },
+  "configurationCacheReportCount": 1,
+  "totalProblemCount": 0,
+  "logSha256": "55bbc7de00d0954f756267cf51b54d531a220367a8d6dd2091c14d5fd3d70a92",
+  "reportSha256": "0e83a760c5c0030a13adb932d928ee457751d29faa24678f71e1b896ced5055b",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "performanceEvidence": false,
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "productFailures": 0
+}

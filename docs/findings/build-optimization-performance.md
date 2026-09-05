@@ -692,15 +692,16 @@ reopen one only when a materially different trace identifies a causal
 bottleneck large enough to clear the 500-ms/2% gate and the RFC is amended
 before implementation.
 
-The active CINC successor follows this rule: it does not reconsider explicit
-task caching opt-outs. It tests configuration-model reuse by replacing only a
-strictly reported, repository-owned unsupported external-state read with a
-Gradle-supported provider or typed `ValueSource`. The eleven-row CINC-001
-parser/classifier proof is fixture-only. CINC-002 freezes ten exact families,
-twenty reserves and ten neutral native preflight passes; those durations carry
-no performance authority. The three-family source gate, materiality, exact
-correctness, and paired value remain unexecuted; CINC-003 strict diagnostics
-are next.
+The CINC successor followed this rule and is now terminal. Its eleven-row
+fixture proof did not translate into public breadth: fourteen valid strict
+captures reconstruct 7/10 conclusive families but 0/3 eligible families. Four
+rows belong to external plugins and six are outside the supported recipe
+class. The fixed primary-start budget cannot complete the other three families
+because retained evidence alone proves `15 + 6 > 20`. Therefore materiality,
+candidate correctness, and paired value were not authorized. These functional
+durations have no performance authority and establish neither speedup nor
+negative product value; they show that cold admissibility and report ownership
+must be proven before spending another source-gate budget.
 
 The completed test-build experiment strengthens this priority. Reusing three
 small exact `testFixturesJar` producers did not shorten the critical path:

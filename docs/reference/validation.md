@@ -346,6 +346,13 @@ negative evidence and is not rerun until favourable.
 Configuration Cache cases; the default Base CI check validates the immutable
 contract and result without recompiling Kotlin DSL from a cold home.
 
+`./dev/check-configuration-input-native-corrections-source-gate` validates the
+terminal CINC-003 source gate. It decompresses and rehashes every retained raw
+Gradle report and log, reparses the embedded diagnostics, rehashes frozen source
+snapshots, reruns the versioned classifier, reconstructs family and decision
+counts, and proves the fixed start-budget stop without trusting result summary
+fields. It runs no public Gradle build and collects no timing.
+
 `./dev/check-aggregate-output-closure` validates the following generic output
 coverage step. Its immutable four-case result requires exact custom aggregate
 outputs, one changed producer entrypoint, verified stable-output

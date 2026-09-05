@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "buildopt.cinc/strict-diagnostic-capture/v1",
+  "family": "detekt",
+  "run": "run-2",
+  "revision": "7b872992c7f78b8b4ed61fd15d51724b73129dc8",
+  "sourceArchiveSha256": "6e10b69c06a3010a87581786b3007b71680c4bf0fee484d677a6fbbfa010c554",
+  "workflowFile": ".github/workflows/pre-merge.yaml",
+  "toolchain": "temurin-jdk-25",
+  "ownerArguments": [
+    "buildHealth",
+    ":detekt-gradle-plugin:buildHealth"
+  ],
+  "requiredOutputs": [
+    "build/reports/dependency-analysis/build-health-report.txt",
+    "detekt-gradle-plugin/build/reports/dependency-analysis/build-health-report.txt",
+    "terminal:BUILD_SUCCESSFUL"
+  ],
+  "diagnosticArguments": [
+    "--configuration-cache",
+    "--configuration-cache-problems=fail",
+    "--no-scan"
+  ],
+  "nativeDiagnostic": {
+    "gradleStarts": 1,
+    "exitCode": 0,
+    "configurationCacheOutcome": "STORED"
+  },
+  "configurationCacheReportCount": 1,
+  "totalProblemCount": 0,
+  "logSha256": "1ae9d29fb580b36ffef2863af0006b1b5fdb06aed32ec91e0d29508a815b9937",
+  "reportSha256": "3b2f245adf5cc1249ecbfbdd8d42c6474ff8e12fe4061e5300bb16fb8aa53122",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "performanceEvidence": false,
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "productFailures": 0
+}

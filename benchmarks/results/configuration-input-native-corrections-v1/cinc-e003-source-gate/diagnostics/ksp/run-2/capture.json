@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "buildopt.cinc/strict-diagnostic-capture/v1",
+  "family": "ksp",
+  "run": "run-2",
+  "revision": "ef65c3de3e03e29350717fd4860c782201805e98",
+  "sourceArchiveSha256": "ca4e44444f6a4f6b7bb9759067af865770c19af02477a9d9aaef8eea5f4930f0",
+  "workflowFile": ".github/workflows/main.yml",
+  "toolchain": "temurin-jdk-17",
+  "ownerArguments": [
+    ":api:checkApi"
+  ],
+  "requiredOutputs": [
+    "terminal:BUILD_SUCCESSFUL",
+    "task::api:checkApi"
+  ],
+  "diagnosticArguments": [
+    "--configuration-cache",
+    "--configuration-cache-problems=fail",
+    "--no-scan"
+  ],
+  "nativeDiagnostic": {
+    "gradleStarts": 1,
+    "exitCode": 0,
+    "configurationCacheOutcome": "STORED"
+  },
+  "configurationCacheReportCount": 1,
+  "totalProblemCount": 0,
+  "logSha256": "8d055a8c9b0f5ab6409a4abf6883d22d9d06025c608af4774c00d2e3cf5f7866",
+  "reportSha256": "ecacb5c525a969f442ee3386f300d653acb70a37af3e7549879c846557eb3120",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "performanceEvidence": false,
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "productFailures": 0
+}

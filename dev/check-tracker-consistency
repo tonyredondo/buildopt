@@ -65,8 +65,8 @@ while IFS= read -r buildopt_decision; do
 done <<<"${buildopt_decisions}"
 
 buildopt_required_tracker_text=(
-    "**Overall status:** \`CONFIGURATION_INPUT_NATIVE_CORRECTIONS_ACTIVE\`"
-    "**Current phase:** \`CINC-002\` exact fresh cohort freeze is complete; \`CINC-003\` strict diagnostics and source classification are next"
+    "**Overall status:** \`CONFIGURATION_INPUT_NATIVE_CORRECTIONS_STOPPED\`"
+    "**Current phase:** \`CINC-003\` is terminal with \`STOP_STRICT_DIAGNOSTIC_BUDGET_CANNOT_COMPLETE_COHORT\`; \`CINC-004..007\` are \`NOT_AUTHORIZED\`"
     "| POC-ADAPTIVE-FRAGMENT-GENERALIZATION | Test independently invalidated fragment learning, composition and cumulative cross-commit value without repository-specific rules | \`DONE\` | 19/19 |"
     "| POC-STICKY-WRAPPER-LEARNING | Preserve the committed wrapper, cache/state and lifecycle implementation while auditing the first evidence route | \`SUPERSEDED\` | 21/22 historical blocks resolved |"
     "| POC-FRESH-GENERIC-OPTIMIZATION | Generate current complete generic actions, then measure installed and chronological value from zero BuildOpt evidence | \`STOPPED\` | 5 executed; 2 not authorized |"

@@ -1,8 +1,9 @@
 # BuildOpt Generalization Audit
 
-The active successor is now `WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1`: keep
-the wrapper as the normal Gradle entrypoint, learn from ordinary invocations
-and deliver only owner-reviewed native corrections. WCNCP-000 freezes the
+The latest two wrapper-native successor searches are now terminal. The product
+direction remains: keep the wrapper as the normal Gradle entrypoint, learn from
+ordinary invocations, and deliver only owner-reviewed native corrections.
+`WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` froze `WCNCP-000` and the
 control/data-plane boundary, record schemas and controlled-evidence rules, and
 WCNCP-001 proves the five-kind typed control plane with restart-safe CAS,
 retention, and namespace isolation, WCNCP-002 proves scoped HTTPS
@@ -26,6 +27,12 @@ value never opened. A pre-capture
 operational correction now exposes explicit
 actor binding for issued central tokens; token issuance still grants no WCNCP
 write authority by itself.
+
+`CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1` then tested a distinct fresh
+Configuration Cache input-correction class. It stops at CINC-003 with 7/10
+conclusive and 0/3 eligible families; retained artifacts prove that the fixed
+20-start budget cannot complete the cohort. No candidate or timing phase
+opened, so neither terminal result establishes a viable general product yet.
 
 ## Audit question
 
@@ -331,18 +338,18 @@ bounded mechanism has already satisfied its own evidence contract.
 
 ## Next generalization steps
 
-The distinct successor is now frozen as
-`CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1`. It does not reopen explicit task
-cache opt-outs. It targets strict Configuration Cache problems caused by
-repository-owned configuration-time external state reads and permits only
-Gradle-supported `ProviderFactory` or typed `ValueSource` corrections. Its first
-ten-family cohort must exclude WCNCP and historical recipe families, and every
-row starts at zero after a separate freeze. CINC-001 reconstructs eleven
-fixture-only rows, including every unsafe and ambiguous negative. CINC-002 now
-binds ten fresh public primaries, twenty reserves and ten Configuration-Cache-
-disabled native preflight passes. The next block captures two fresh strict
-diagnostics per family; public mutations, candidates, timings and value remain
-zero.
+The distinct `CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1` successor is now
+closed at its source gate. It did not reopen explicit task cache opt-outs or
+borrow predecessor rows. Fourteen valid strict captures make seven families
+conclusive, but reconstruct only four external-owner and six no-action rows:
+0/3 families are eligible. The independent stop does not need three disclosed
+unretained harness failures; 15 artifact-backed starts plus at least 6 needed
+to complete the cohort is already greater than the fixed maximum of 20.
+`CINC-004..007` never opened, so public mutations, candidates, timings, and
+value remain zero. A future route must first prove cold preflight equivalence,
+Git-metadata preservation, and unique root-report ownership under a new
+contract; it cannot reinterpret these incomplete rows as negative product
+value or relax the source gate.
 
 The current order and stop conditions live in the completed
 [Wrapper-Coordinated Native Corrections POC](../plans/wrapper-coordinated-native-corrections-poc.md).

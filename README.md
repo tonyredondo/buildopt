@@ -36,11 +36,12 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > as `STOP_INSUFFICIENT_PROSPECTIVE_OPPORTUNITY_BREADTH`. See the
 > [execution plan](./docs/plans/wrapper-coordinated-native-corrections-poc.md).
 >
-> **Active successor search:** `CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1`
-> tests a fresh, source-neutral native correction for unsupported
-> configuration-time external state reads. `CINC-001` now proves the detector
-> over eleven fixture-only rows; exact fresh cohort freeze is next, and no
-> public row, candidate, or timing exists. See the
+> **Closed successor search:** `CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1`
+> tested fresh, source-neutral native corrections for unsupported
+> configuration-time external state reads. CINC stops at its source gate with
+> 7/10 conclusive and 0/3 eligible families; retained artifacts prove that the
+> fixed 20-start budget cannot complete the cohort. No candidate or timing
+> phase opened. See the
 > [CINC plan](./docs/plans/configuration-input-native-corrections-poc.md).
 >
 > **Closed v2 experiment:** `REMOTE_CACHE_LOCALITY_VALUE_V2` tested BuildOpt as

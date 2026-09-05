@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "buildopt.cinc/strict-diagnostic-capture/v1",
+  "family": "dependency-analysis-gradle-plugin",
+  "run": "run-2",
+  "revision": "93b52302ef0f48ad7aa0776ae2a1e479a9055f32",
+  "sourceArchiveSha256": "fb197ccdd30a86ab2772c5be36bae27765c41a394172684188700ebadd103677",
+  "workflowFile": ".github/workflows/test.yml",
+  "toolchain": "temurin-jdk-21",
+  "ownerArguments": [
+    "buildHealth"
+  ],
+  "requiredOutputs": [
+    "build/reports/dependency-analysis/build-health-report.txt",
+    "terminal:BUILD_SUCCESSFUL"
+  ],
+  "diagnosticArguments": [
+    "--configuration-cache",
+    "--configuration-cache-problems=fail",
+    "--no-scan"
+  ],
+  "nativeDiagnostic": {
+    "gradleStarts": 1,
+    "exitCode": 0,
+    "configurationCacheOutcome": "STORED"
+  },
+  "configurationCacheReportCount": 1,
+  "totalProblemCount": 0,
+  "logSha256": "df3324a7ced5f94e1ca5fb526cd3342d4773d3209f21b33da5a284da8a08ee9c",
+  "reportSha256": "5263acfa15bdffc63845bcc2338d43dc6cdfdd1adee599978764c735e227a410",
+  "environmentClass": "LOCAL_FUNCTIONAL",
+  "performanceEvidence": false,
+  "publicSourceModified": false,
+  "candidateBuild": false,
+  "timingSamples": 0,
+  "productFailures": 0
+}
