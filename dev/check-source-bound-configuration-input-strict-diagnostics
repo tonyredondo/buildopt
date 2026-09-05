@@ -77,7 +77,7 @@ while IFS= read -r buildopt_subject; do
     ' "${buildopt_capture}" >/dev/null
 
     buildopt_refs=${buildopt_tmp}/${buildopt_key}.refs
-    rg -o 'file://[^[:space:]]*configuration-cache-report\.html' "${buildopt_log}" >"${buildopt_refs}"
+    grep -Eo 'file://[^[:space:]]*configuration-cache-report\.html' "${buildopt_log}" >"${buildopt_refs}"
     buildopt_total_refs=$(wc -l <"${buildopt_refs}")
     buildopt_unique_refs=$(sort -u "${buildopt_refs}" | wc -l)
     buildopt_selector=v2
