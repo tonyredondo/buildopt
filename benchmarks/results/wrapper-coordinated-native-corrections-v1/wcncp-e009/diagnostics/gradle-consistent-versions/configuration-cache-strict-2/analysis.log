@@ -1,0 +1,2 @@
+gradle-critical-path: task graph contains tasks without completed operations
+exit status 1

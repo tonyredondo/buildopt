@@ -20,6 +20,7 @@
 # Local databases, logs and temporary files
 *.db
 *.log
+!benchmarks/results/wrapper-coordinated-native-corrections-v1/wcncp-e009/diagnostics/**/analysis.log
 *.sqlite
 *.sqlite-*
 *.tmp
