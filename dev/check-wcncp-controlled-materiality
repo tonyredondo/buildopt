@@ -103,7 +103,15 @@ while IFS= read -r buildopt_definition; do
     buildopt_method=$(jq -r '.method' <<<"${buildopt_definition}")
     buildopt_task_class=$(jq -r '.taskClass // ""' <<<"${buildopt_definition}")
     buildopt_source_closure=$(jq -r '.sourceClosure' <<<"${buildopt_definition}")
-    [[ -s ${buildopt_evidence}/${buildopt_family}-prefetch.log ]]
+    buildopt_prefetch_log=${buildopt_evidence}/${buildopt_family}-prefetch.log
+    if [[ -s ${buildopt_prefetch_log} ]]; then
+        :
+    elif [[ -s ${buildopt_prefetch_log}.gz ]]; then
+        gzip -t -- "${buildopt_prefetch_log}.gz"
+    else
+        printf 'missing WCNCP prefetch log for %s\n' "${buildopt_family}" >&2
+        exit 1
+    fi
     buildopt_family_analyses=${buildopt_temp}/${buildopt_family}-analyses.jsonl
     for buildopt_ordinal in 1 2; do
         buildopt_starts=$((buildopt_starts + 1))
