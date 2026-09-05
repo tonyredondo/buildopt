@@ -1,7 +1,7 @@
 # Strict Diagnostic Capture Reliability POC
 
 **Overall:** `ACTIVE`<br>
-**Current block:** `SDCR-001`<br>
+**Current block:** `SDCR-002`<br>
 **Stop point:** a checked terminal `SDCR-003` reliability decision; `SDCR-004`
 may authorize only the planning of a distinct opportunity experiment.
 
@@ -28,7 +28,7 @@ and its [machine form](../../specs/poc-strict-diagnostic-capture-reliability-v1.
 Proof: the independent contract checker reconstructs the machine contract and
 subject bindings from the checked files.
 
-### SDCR-001 — runner and fixture proof (`TODO`)
+### SDCR-001 — runner and fixture proof (`DONE`)
 
 - Add a versioned capture runner rather than modifying CINC's immutable v1
   runner.
@@ -40,10 +40,11 @@ subject bindings from the checked files.
   renames it atomically; incomplete temporary data never becomes evidence.
 - Record cold-state identity in the capture rather than trusting a summary.
 
-Proof: focused unit/fixture checker, ShellCheck, `git diff --check`, and Base CI
-static integration. No public Gradle start is allowed in this block.
+Proof: the versioned runner, pure Go selector, CLI, and independent checker
+reconstruct sixteen positive/negative cases, including atomic evidence after a
+forced post-start selector failure. No public Gradle start occurred.
 
-### SDCR-002 — fresh public probes (`WAITING`)
+### SDCR-002 — fresh public probes (`TODO`)
 
 - Clone each frozen repository at its exact revision. Do not unpack source-only
   archives for execution.

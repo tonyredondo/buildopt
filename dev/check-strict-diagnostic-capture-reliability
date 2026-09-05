@@ -22,7 +22,7 @@ jq -e '
   .invariants.coldCompatibilityEquivalentToDiagnostic == true and
   .invariants.rootReportSelectedFromUniqueChildLogReference == true and
   .invariants.repositoryOrTaskNameRules == false and
-  .current == {completed:["SDCR-000"],next:"SDCR-001"} and
+  .current == {completed:["SDCR-000","SDCR-001"],next:"SDCR-002"} and
   .publicProbeGate == {
     subjects:"poc-strict-diagnostic-capture-reliability-v1.subjects.json",
     starts:3,startsPerSubject:1,requiredConclusiveSubjects:3,
@@ -65,4 +65,4 @@ for buildopt_block in SDCR-000 SDCR-001 SDCR-002 SDCR-003 SDCR-004; do
 done
 grep -Fq -- 'zero public starts, reports, opportunity rows' "${buildopt_evidence}"
 
-printf 'SDCR-000 contract reconstructed: 3 frozen probes, zero public starts, SDCR-001 next\n'
+printf 'SDCR contract reconstructed: 3 frozen probes, SDCR-001 fixture proof complete, SDCR-002 next\n'

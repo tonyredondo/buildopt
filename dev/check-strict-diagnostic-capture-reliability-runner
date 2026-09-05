@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_proof=${buildopt_root}/benchmarks/results/strict-diagnostic-capture-reliability-v1/sdcr-e001-runner.json
+buildopt_temp=$(mktemp -d /tmp/buildopt-sdcr-runner-check.XXXXXX)
+trap 'chmod -R u+w -- "${buildopt_temp}" 2>/dev/null || true; rm -rf -- "${buildopt_temp}"' EXIT
+
+"${buildopt_script_dir}/run" --toolchain go -- go test ./internal/strictdiagnostic
+"${buildopt_script_dir}/run" --toolchain go -- go test ./cmd/strict-diagnostic-report
+
+buildopt_fixture=${buildopt_temp}/fixture
+git init -q "${buildopt_fixture}"
+git -C "${buildopt_fixture}" config user.name 'BuildOpt fixture'
+git -C "${buildopt_fixture}" config user.email 'fixture@buildopt.invalid'
+cat >"${buildopt_fixture}/gradlew" <<'FIXTURE'
+#!/bin/sh
+set -eu
+for argument in "$@"; do
+    printf 'ARG=%s\n' "${argument}"
+done
+report_root=${PWD}/build/reports/configuration-cache/root-key/root-entry
+mkdir -p -- "${report_root}"
+printf '<html>fixture report</html>\n' >"${report_root}/configuration-cache-report.html"
+mkdir -p -- "${PWD}/build/reports/configuration-cache/nested-key/nested-entry"
+printf '<html>nested inventory only</html>\n' >"${PWD}/build/reports/configuration-cache/nested-key/nested-entry/configuration-cache-report.html"
+printf 'See the complete report at file://%s/configuration-cache-report.html\n' "${report_root}"
+printf 'BUILD SUCCESSFUL\n'
+FIXTURE
+chmod +x "${buildopt_fixture}/gradlew"
+git -C "${buildopt_fixture}" add gradlew
+git -C "${buildopt_fixture}" -c commit.gpgsign=false commit -q -m fixture
+buildopt_revision=$(git -C "${buildopt_fixture}" rev-parse HEAD)
+buildopt_archive=$(git -C "${buildopt_fixture}" archive --format=tar HEAD | sha256sum | awk '{print $1}')
+buildopt_subjects=${buildopt_temp}/subjects.json
+jq -n --arg revision "${buildopt_revision}" --arg archive "${buildopt_archive}" '
+  {subjects:[{
+    key:"renamed-neutral-fixture",revision:$revision,archiveSha256:$archive,
+    wrapper:"gradlew",workingDirectory:".",toolchain:"temurin-jdk-17",
+    ownerArguments:["--project-dir=.","fixtureTask"],ownerEnvironment:{},
+    requiredOutputs:["terminal:BUILD_SUCCESSFUL"]
+  }]}
+' >"${buildopt_subjects}"
+
+buildopt_output=${buildopt_temp}/success
+BUILDOPT_SDCR_SUBJECTS=${buildopt_subjects} \
+    "${buildopt_script_dir}/capture-strict-diagnostic-reliability" \
+    renamed-neutral-fixture "${buildopt_fixture}" "${buildopt_output}" >/dev/null
+jq -e --arg revision "${buildopt_revision}" --arg archive "${buildopt_archive}" '
+  .schemaVersion == "buildopt.sdcr/capture/v1" and
+  .subject == "renamed-neutral-fixture" and
+  .revision == $revision and .sourceArchiveSha256 == $archive and
+  .source.materialization == "FRESH_LOCAL_GIT_CLONE" and
+  .source.gitMetadata == true and .source.clean == true and
+  .coldState == {gradleHome:"EMPTY_AT_CHILD_START",sharedPriorState:false} and
+  .gradleStarted == true and .exitCode == 0 and
+  .outcome == "ROOT_REPORT_CAPTURED" and
+  .reportSelection.referenceCount == 1 and
+  .reportSelection.selectedRelativePath == "root-key/root-entry/configuration-cache-report.html" and
+  (.reportInventory | length) == 2 and
+  .performanceEvidence == false and .publicSourceModified == false and
+  .candidateBuild == false and .timingSamples == 0 and
+  .speedupClaim == false and .productFailures == 0
+' "${buildopt_output}/capture.json" >/dev/null
+gzip -t "${buildopt_output}/gradle.log.gz" "${buildopt_output}/configuration-cache-report.html.gz"
+[[ $(gzip -dc "${buildopt_output}/gradle.log.gz" | grep -Fc 'ARG=--project-dir=.') == 1 ]]
+[[ $(gzip -dc "${buildopt_output}/gradle.log.gz" | grep -Fc 'ARG=-p' || true) == 0 ]]
+
+buildopt_no_git=${buildopt_temp}/no-git
+mkdir -p -- "${buildopt_no_git}"
+if BUILDOPT_SDCR_SUBJECTS=${buildopt_subjects} \
+    "${buildopt_script_dir}/capture-strict-diagnostic-reliability" \
+    renamed-neutral-fixture "${buildopt_no_git}" "${buildopt_temp}/no-git-result" >/dev/null 2>&1; then
+    printf 'runner accepted source without Git metadata\n' >&2
+    exit 1
+fi
+jq -e '
+  .gradleStarted == false and .outcome == "SOURCE_GIT_METADATA_INVALID" and
+  .publicSourceModified == false and .timingSamples == 0
+' "${buildopt_temp}/no-git-result/capture.json" >/dev/null
+
+jq --arg revision '0000000000000000000000000000000000000000' '.subjects[0].revision = $revision' \
+    "${buildopt_subjects}" >"${buildopt_temp}/revision-drift-subjects.json"
+if BUILDOPT_SDCR_SUBJECTS=${buildopt_temp}/revision-drift-subjects.json \
+    "${buildopt_script_dir}/capture-strict-diagnostic-reliability" \
+    renamed-neutral-fixture "${buildopt_fixture}" "${buildopt_temp}/revision-drift" >/dev/null 2>&1; then
+    printf 'runner accepted source revision drift\n' >&2
+    exit 1
+fi
+jq -e '.gradleStarted == false and .outcome == "SOURCE_REVISION_DRIFT"' \
+    "${buildopt_temp}/revision-drift/capture.json" >/dev/null
+
+jq --arg archive '0000000000000000000000000000000000000000000000000000000000000000' \
+    '.subjects[0].archiveSha256 = $archive' "${buildopt_subjects}" >"${buildopt_temp}/archive-drift-subjects.json"
+if BUILDOPT_SDCR_SUBJECTS=${buildopt_temp}/archive-drift-subjects.json \
+    "${buildopt_script_dir}/capture-strict-diagnostic-reliability" \
+    renamed-neutral-fixture "${buildopt_fixture}" "${buildopt_temp}/archive-drift" >/dev/null 2>&1; then
+    printf 'runner accepted source archive drift\n' >&2
+    exit 1
+fi
+jq -e '.gradleStarted == false and .outcome == "SOURCE_ARCHIVE_DRIFT"' \
+    "${buildopt_temp}/archive-drift/capture.json" >/dev/null
+
+if BUILDOPT_SDCR_SUBJECTS=${buildopt_subjects} BUILDOPT_SDCR_REPORT_SELECTOR=/bin/false \
+    "${buildopt_script_dir}/capture-strict-diagnostic-reliability" \
+    renamed-neutral-fixture "${buildopt_fixture}" "${buildopt_temp}/post-start-failure" >/dev/null 2>&1; then
+    printf 'runner accepted a post-start evidence publication failure\n' >&2
+    exit 1
+fi
+jq -e '
+  .gradleStarted == true and .outcome == "HARNESS_FAILURE" and
+  .failureDescription == "post-start evidence publication failed" and
+  .publicSourceModified == false and .timingSamples == 0
+' "${buildopt_temp}/post-start-failure/capture.json" >/dev/null
+gzip -t "${buildopt_temp}/post-start-failure/gradle.log.gz"
+
+jq -e '
+  .schemaVersion == "buildopt.evidence/strict-diagnostic-capture-reliability-runner/v1" and
+  .workItem == "SDCR-001" and .state == "FIXTURE_PROOF_COMPLETE" and
+  .fixtureCases == 16 and .publicGradleStarts == 0 and
+  .publicSourceMutations == 0 and .candidateBuilds == 0 and
+  .timingSamples == 0 and .speedupClaim == false and .productFailures == 0
+' "${buildopt_proof}" >/dev/null
+
+printf 'SDCR-001 runner proof reconstructed: 16 fixture cases, zero public starts\n'

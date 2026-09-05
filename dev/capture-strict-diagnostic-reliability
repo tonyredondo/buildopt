@@ -1,0 +1,240 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 3)); then
+    printf 'usage: %s SUBJECT SOURCE_CHECKOUT NEW_OUTPUT_DIRECTORY\n' "$0" >&2
+    exit 64
+fi
+
+buildopt_subject=$1
+buildopt_checkout=$2
+buildopt_output=$3
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+buildopt_subjects=${BUILDOPT_SDCR_SUBJECTS:-${buildopt_repo_root}/specs/poc-strict-diagnostic-capture-reliability-v1.subjects.json}
+
+[[ ${buildopt_checkout} == /* && -d ${buildopt_checkout} && ${buildopt_output} == /* && ! -e ${buildopt_output} ]] || {
+    printf 'source checkout and new output must be absolute; output must not exist\n' >&2
+    exit 64
+}
+buildopt_definition=$(jq -ce --arg subject "${buildopt_subject}" '.subjects[] | select(.key == $subject)' "${buildopt_subjects}") || {
+    printf 'unknown SDCR subject: %s\n' "${buildopt_subject}" >&2
+    exit 64
+}
+
+buildopt_work=$(mktemp -d "${TMPDIR:-/tmp}/buildopt-sdcr-capture.XXXXXX")
+buildopt_pending=${buildopt_work}/evidence
+mkdir -p -- "${buildopt_pending}"
+buildopt_gradle_started=false
+
+buildopt_cleanup() {
+    local buildopt_status=$?
+    if ((buildopt_status != 0)) && [[ ${buildopt_gradle_started} == true && ! -e ${buildopt_output} ]]; then
+        if [[ -f ${buildopt_work}/gradle.log && ! -f ${buildopt_pending}/gradle.log.gz ]]; then
+            gzip -9nc -- "${buildopt_work}/gradle.log" >"${buildopt_pending}/gradle.log.gz" || true
+        fi
+        jq -n --arg subject "${buildopt_subject}" '
+          {
+            schemaVersion:"buildopt.sdcr/capture/v1",subject:$subject,
+            gradleStarted:true,outcome:"HARNESS_FAILURE",
+            failureDescription:"post-start evidence publication failed",
+            environmentClass:"LOCAL_FUNCTIONAL",performanceEvidence:false,
+            publicSourceModified:false,candidateBuild:false,timingSamples:0,
+            speedupClaim:false,productFailures:0
+          }
+        ' >"${buildopt_pending}/capture.json" 2>/dev/null || true
+        mkdir -p -- "$(dirname -- "${buildopt_output}")" 2>/dev/null || true
+        mv -- "${buildopt_pending}" "${buildopt_output}" 2>/dev/null || true
+    fi
+    chmod -R u+w -- "${buildopt_work}" 2>/dev/null || true
+    rm -rf -- "${buildopt_work}"
+    return "${buildopt_status}"
+}
+trap buildopt_cleanup EXIT
+
+buildopt_publish_prestart_failure() {
+    local buildopt_outcome=$1
+    local buildopt_reason=$2
+    jq -n \
+        --arg subject "${buildopt_subject}" \
+        --arg outcome "${buildopt_outcome}" \
+        --arg reason "${buildopt_reason}" '
+        {
+          schemaVersion:"buildopt.sdcr/capture/v1",subject:$subject,
+          gradleStarted:false,outcome:$outcome,failureDescription:$reason,
+          environmentClass:"LOCAL_FUNCTIONAL",performanceEvidence:false,
+          publicSourceModified:false,candidateBuild:false,timingSamples:0,
+          speedupClaim:false,productFailures:0
+        }
+    ' >"${buildopt_pending}/capture.json"
+    mkdir -p -- "$(dirname -- "${buildopt_output}")"
+    mv -- "${buildopt_pending}" "${buildopt_output}"
+    printf 'SDCR pre-start result: %s %s\n' "${buildopt_subject}" "${buildopt_outcome}" >&2
+    exit 1
+}
+
+[[ -d ${buildopt_checkout}/.git ]] ||
+    buildopt_publish_prestart_failure SOURCE_GIT_METADATA_INVALID 'source checkout has no .git directory'
+if ! buildopt_status=$(git -C "${buildopt_checkout}" status --porcelain 2>&1); then
+    buildopt_publish_prestart_failure SOURCE_GIT_METADATA_INVALID 'source checkout is not a readable Git worktree'
+fi
+[[ -z ${buildopt_status} ]] ||
+    buildopt_publish_prestart_failure SOURCE_GIT_METADATA_INVALID 'source checkout is dirty'
+
+buildopt_revision=$(jq -r '.revision' <<<"${buildopt_definition}")
+buildopt_expected_archive=$(jq -r '.archiveSha256' <<<"${buildopt_definition}")
+buildopt_head=$(git -C "${buildopt_checkout}" rev-parse HEAD 2>/dev/null) ||
+    buildopt_publish_prestart_failure SOURCE_GIT_METADATA_INVALID 'source HEAD cannot be resolved'
+[[ ${buildopt_head} == "${buildopt_revision}" ]] ||
+    buildopt_publish_prestart_failure SOURCE_REVISION_DRIFT 'source HEAD differs from the frozen revision'
+if ! buildopt_archive=$(git -C "${buildopt_checkout}" archive --format=tar "${buildopt_revision}" | sha256sum | awk '{print $1}'); then
+    buildopt_publish_prestart_failure SOURCE_ARCHIVE_DRIFT 'source archive could not be reconstructed'
+fi
+[[ ${buildopt_archive} == "${buildopt_expected_archive}" ]] ||
+    buildopt_publish_prestart_failure SOURCE_ARCHIVE_DRIFT 'source archive differs from the frozen SHA-256'
+
+buildopt_free_kib=$(df -Pk "${TMPDIR:-/tmp}" | awk 'NR == 2 {print $4}')
+((buildopt_free_kib >= 10 * 1024 * 1024)) ||
+    buildopt_publish_prestart_failure HARNESS_FAILURE 'less than 10 GiB is free before the public start'
+
+mkdir -p -- "${buildopt_work}/gradle-home"
+git clone --quiet --local --no-checkout -- "${buildopt_checkout}" "${buildopt_work}/source" ||
+    buildopt_publish_prestart_failure SOURCE_GIT_METADATA_INVALID 'fresh local Git clone failed'
+git -C "${buildopt_work}/source" checkout --quiet --detach "${buildopt_revision}" ||
+    buildopt_publish_prestart_failure SOURCE_REVISION_DRIFT 'fresh local Git checkout failed'
+[[ -d ${buildopt_work}/source/.git && -z $(git -C "${buildopt_work}/source" status --porcelain) ]] ||
+    buildopt_publish_prestart_failure SOURCE_GIT_METADATA_INVALID 'fresh source clone lost Git metadata or is dirty'
+[[ $(find "${buildopt_work}/gradle-home" -mindepth 1 -print -quit) == "" ]] ||
+    buildopt_publish_prestart_failure HARNESS_FAILURE 'per-probe Gradle home was not empty before the child start'
+
+buildopt_wrapper=$(jq -r '.wrapper' <<<"${buildopt_definition}")
+buildopt_working_directory=$(jq -r '.workingDirectory' <<<"${buildopt_definition}")
+buildopt_toolchain=$(jq -r '.toolchain' <<<"${buildopt_definition}")
+buildopt_working_root=${buildopt_work}/source
+if [[ ${buildopt_working_directory} != . ]]; then
+    buildopt_working_root=${buildopt_working_root}/${buildopt_working_directory}
+fi
+[[ -d ${buildopt_working_root} && -f ${buildopt_work}/source/${buildopt_wrapper} ]] ||
+    buildopt_publish_prestart_failure HARNESS_FAILURE 'frozen working directory or wrapper is missing'
+
+mapfile -t buildopt_owner_arguments < <(jq -r '.ownerArguments[]' <<<"${buildopt_definition}")
+mapfile -t buildopt_environment_entries < <(jq -r '.ownerEnvironment | to_entries[] | "\(.key)=\(.value)"' <<<"${buildopt_definition}")
+# The toolchain-owned shell, not this runner, expands JAVA_HOME.
+# shellcheck disable=SC2016
+if ! buildopt_java_home=$("${buildopt_script_dir}/run" --toolchain "${buildopt_toolchain}" -- sh -c 'printf "%s" "$JAVA_HOME"'); then
+    buildopt_publish_prestart_failure HARNESS_FAILURE 'frozen toolchain is unavailable'
+fi
+buildopt_owner_environment=()
+for buildopt_entry in "${buildopt_environment_entries[@]}"; do
+    if [[ ${buildopt_entry#*=} == TOOLCHAIN_JAVA_HOME ]]; then
+        buildopt_entry=${buildopt_entry%%=*}=${buildopt_java_home}
+    fi
+    buildopt_owner_environment+=("${buildopt_entry}")
+done
+
+buildopt_wrapper_command=("${buildopt_work}/source/${buildopt_wrapper}")
+if [[ ! -x ${buildopt_wrapper_command[0]} ]]; then
+    buildopt_wrapper_command=(/bin/sh "${buildopt_wrapper_command[0]}")
+fi
+buildopt_project_arguments=(-p "${buildopt_working_root}")
+for buildopt_argument in "${buildopt_owner_arguments[@]}"; do
+    case "${buildopt_argument}" in
+        -p | --project-dir | --project-dir=*) buildopt_project_arguments=(); break ;;
+    esac
+done
+buildopt_diagnostic_arguments=(--configuration-cache --configuration-cache-problems=fail --no-scan --build-cache --parallel --max-workers=4)
+
+if ! (
+    cd -- "${buildopt_repo_root}"
+    "${buildopt_script_dir}/run" --toolchain go -- go build -o "${buildopt_work}/strict-diagnostic-report" ./cmd/strict-diagnostic-report
+); then
+    buildopt_publish_prestart_failure HARNESS_FAILURE 'root-report selector could not be built'
+fi
+buildopt_report_selector=${BUILDOPT_SDCR_REPORT_SELECTOR:-${buildopt_work}/strict-diagnostic-report}
+
+cd -- "${buildopt_work}/source"
+buildopt_gradle_started=true
+set +e
+env \
+    GRADLE_USER_HOME="${buildopt_work}/gradle-home" \
+    GRADLE_OPTS='-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false' \
+    "${buildopt_owner_environment[@]}" \
+    timeout 1200s "${buildopt_script_dir}/run" --toolchain "${buildopt_toolchain}" -- \
+    "${buildopt_wrapper_command[@]}" "${buildopt_project_arguments[@]}" \
+    "${buildopt_diagnostic_arguments[@]}" "${buildopt_owner_arguments[@]}" \
+    2>&1 | tee "${buildopt_work}/gradle.log"
+buildopt_exit_code=${PIPESTATUS[0]}
+set -e
+
+buildopt_report_root=${buildopt_working_root}/build/reports/configuration-cache
+"${buildopt_report_selector}" \
+    --log "${buildopt_work}/gradle.log" --expected-root "${buildopt_report_root}" \
+    >"${buildopt_work}/selection-raw.json"
+buildopt_selection_outcome=$(jq -r '.outcome' "${buildopt_work}/selection-raw.json")
+buildopt_outcome=${buildopt_selection_outcome}
+if ((buildopt_exit_code == 124)); then
+    buildopt_outcome=TIME_LIMIT
+elif [[ ${buildopt_selection_outcome} == ROOT_REPORT_REFERENCE_MISSING ]]; then
+    if ((buildopt_exit_code == 0)); then
+        buildopt_outcome=NO_CONFIGURATION_CACHE_REPORT
+    else
+        buildopt_outcome=OWNER_WORKFLOW_COLD_INCOMPATIBLE
+    fi
+fi
+
+jq 'del(.selectedAbsolutePath)' "${buildopt_work}/selection-raw.json" >"${buildopt_pending}/report-selection.json"
+find "${buildopt_work}/source" -type f -name configuration-cache-report.html -printf '%P\n' 2>/dev/null |
+    sort | jq -Rsc 'split("\n") | map(select(length > 0))' >"${buildopt_pending}/report-inventory.json"
+if [[ ${buildopt_selection_outcome} == ROOT_REPORT_CAPTURED ]]; then
+    buildopt_selected_report=$(jq -r '.selectedAbsolutePath' "${buildopt_work}/selection-raw.json")
+    gzip -9nc -- "${buildopt_selected_report}" >"${buildopt_pending}/configuration-cache-report.html.gz"
+    buildopt_report_sha=$(sha256sum "${buildopt_selected_report}" | awk '{print $1}')
+else
+    buildopt_report_sha=''
+fi
+gzip -9nc -- "${buildopt_work}/gradle.log" >"${buildopt_pending}/gradle.log.gz"
+
+buildopt_log_sha=$(sha256sum "${buildopt_work}/gradle.log" | awk '{print $1}')
+buildopt_wrapper_sha=$(sha256sum "${buildopt_work}/source/${buildopt_wrapper}" | awk '{print $1}')
+buildopt_owner_arguments_json=$(jq -c '.ownerArguments' <<<"${buildopt_definition}")
+buildopt_required_outputs_json=$(jq -c '.requiredOutputs' <<<"${buildopt_definition}")
+buildopt_selection_json=$(jq -c . "${buildopt_pending}/report-selection.json")
+buildopt_inventory_json=$(jq -c . "${buildopt_pending}/report-inventory.json")
+buildopt_inventory_count=$(jq 'length' "${buildopt_pending}/report-inventory.json")
+jq -n \
+    --arg subject "${buildopt_subject}" \
+    --arg revision "${buildopt_revision}" \
+    --arg archiveSha256 "${buildopt_archive}" \
+    --arg wrapper "${buildopt_wrapper}" \
+    --arg wrapperSha256 "${buildopt_wrapper_sha}" \
+    --arg workingDirectory "${buildopt_working_directory}" \
+    --arg toolchain "${buildopt_toolchain}" \
+    --arg outcome "${buildopt_outcome}" \
+    --arg logSha256 "${buildopt_log_sha}" \
+    --arg reportSha256 "${buildopt_report_sha}" \
+    --argjson exitCode "${buildopt_exit_code}" \
+    --argjson ownerArguments "${buildopt_owner_arguments_json}" \
+    --argjson requiredOutputs "${buildopt_required_outputs_json}" \
+    --argjson reportSelection "${buildopt_selection_json}" \
+    --argjson reportInventory "${buildopt_inventory_json}" '
+      {
+        schemaVersion:"buildopt.sdcr/capture/v1",subject:$subject,
+        revision:$revision,sourceArchiveSha256:$archiveSha256,
+        source:{materialization:"FRESH_LOCAL_GIT_CLONE",gitMetadata:true,clean:true,head:$revision},
+        wrapper:{path:$wrapper,sha256:$wrapperSha256},workingDirectory:$workingDirectory,
+        toolchain:$toolchain,ownerArguments:$ownerArguments,requiredOutputs:$requiredOutputs,
+        diagnosticArguments:["--configuration-cache","--configuration-cache-problems=fail","--no-scan","--build-cache","--parallel","--max-workers=4"],
+        coldState:{gradleHome:"EMPTY_AT_CHILD_START",sharedPriorState:false},
+        gradleStarted:true,exitCode:$exitCode,outcome:$outcome,
+        logSha256:$logSha256,reportSha256:(if $reportSha256 == "" then null else $reportSha256 end),
+        reportSelection:$reportSelection,reportInventory:$reportInventory,
+        environmentClass:"LOCAL_FUNCTIONAL",performanceEvidence:false,
+        publicSourceModified:false,candidateBuild:false,timingSamples:0,
+        speedupClaim:false,productFailures:0
+      }
+    ' >"${buildopt_pending}/capture.json"
+
+mkdir -p -- "$(dirname -- "${buildopt_output}")"
+mv -- "${buildopt_pending}" "${buildopt_output}"
+printf 'SDCR capture retained: %s exit=%s outcome=%s reports=%s\n' \
+    "${buildopt_subject}" "${buildopt_exit_code}" "${buildopt_outcome}" "${buildopt_inventory_count}"

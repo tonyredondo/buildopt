@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "buildopt.evidence/strict-diagnostic-capture-reliability-runner/v1",
+  "workItem": "SDCR-001",
+  "state": "FIXTURE_PROOF_COMPLETE",
+  "fixtureCases": 16,
+  "cases": [
+    "UNIQUE_ROOT_REPORT_REFERENCE",
+    "MISSING_ROOT_REPORT_REFERENCE",
+    "AMBIGUOUS_ROOT_REPORT_REFERENCE",
+    "OUTSIDE_EXPECTED_ROOT",
+    "NON_LOCAL_FILE_URI",
+    "WRONG_REPORT_FILENAME",
+    "SYMLINKED_REPORT_PATH",
+    "OWNER_SHORT_PROJECT_DIRECTORY",
+    "OWNER_LONG_PROJECT_DIRECTORY",
+    "OWNER_INLINE_PROJECT_DIRECTORY",
+    "RUNNER_ATOMIC_SUCCESS_BUNDLE",
+    "RUNNER_GIT_METADATA_REJECTION_BUNDLE",
+    "RUNNER_POST_START_FAILURE_BUNDLE",
+    "RUNNER_REVISION_DRIFT_REJECTION_BUNDLE",
+    "RUNNER_ARCHIVE_DRIFT_REJECTION_BUNDLE",
+    "NESTED_REPORT_INVENTORY_IGNORED"
+  ],
+  "repositoryOrTaskNameRules": false,
+  "publicGradleStarts": 0,
+  "publicSourceMutations": 0,
+  "candidateBuilds": 0,
+  "timingSamples": 0,
+  "speedupClaim": false,
+  "productFailures": 0
+}

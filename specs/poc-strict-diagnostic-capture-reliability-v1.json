@@ -33,7 +33,7 @@
     "HARNESS_FAILURE"
   ],
   "blocks": ["SDCR-000", "SDCR-001", "SDCR-002", "SDCR-003", "SDCR-004"],
-  "current": {"completed": ["SDCR-000"], "next": "SDCR-001"},
+  "current": {"completed": ["SDCR-000", "SDCR-001"], "next": "SDCR-002"},
   "publicProbeGate": {
     "subjects": "poc-strict-diagnostic-capture-reliability-v1.subjects.json",
     "starts": 3,
