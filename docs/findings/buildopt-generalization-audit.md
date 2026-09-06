@@ -13,7 +13,11 @@ This closes static planning, not correction behavior. CNC-003's
 now pass generic/race and explicit host fake-child checks for detached ownership,
 private input isolation and complete native command/output reconstruction.
 The local harness qualification (`E-552`) does not establish real runtime
-compatibility or broaden opportunity evidence; CNC-004 owns fresh native proof.
+compatibility or broaden opportunity evidence. CNC-004's first window recovered
+the exact Git/runtime inputs but [refused at preflight](../../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
+on a verifier defect: an implicit Corretto `man` directory. Its bounded repair
+passes both real archive/install trees (`E-553`), without starting Gradle or
+replacing the frozen campaign. Fresh native proof still requires continuation.
 No fresh CNC diagnostic, candidate, timing, or
 independent-family success exists.
 

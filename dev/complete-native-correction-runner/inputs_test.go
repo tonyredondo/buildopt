@@ -82,6 +82,10 @@ func TestRegisteredSharedWorktreeAndSourceDrift(t *testing.T) {
 }
 
 func runtimeFixture(t *testing.T) (string, string, runtimeBinding) {
+	return runtimeFixtureDirectories(t, true)
+}
+
+func runtimeFixtureDirectories(t *testing.T, explicitParents bool) (string, string, runtimeBinding) {
 	t.Helper()
 	root := t.TempDir()
 	installed := filepath.Join(root, "jdk")
@@ -91,7 +95,11 @@ func runtimeFixture(t *testing.T) (string, string, runtimeBinding) {
 	var compressed bytes.Buffer
 	zipped := gzip.NewWriter(&compressed)
 	writer := tar.NewWriter(zipped)
-	for _, dir := range []string{"fixture/", "fixture/bin/"} {
+	directories := []string{"fixture/"}
+	if explicitParents {
+		directories = append(directories, "fixture/bin/")
+	}
+	for _, dir := range directories {
 		if err := writer.WriteHeader(&tar.Header{Name: dir, Mode: 0755, Typeflag: tar.TypeDir}); err != nil {
 			t.Fatal(err)
 		}
@@ -122,6 +130,62 @@ func runtimeFixture(t *testing.T) (string, string, runtimeBinding) {
 		t.Fatal(err)
 	}
 	return archive, installed, runtimeBinding{Version: "fixture", SHA256: fmt.Sprintf("%x", sha256.Sum256(compressed.Bytes()))}
+}
+
+func TestRuntimeArchiveImplicitDirectories(t *testing.T) {
+	for _, change := range []string{"none", "extra-directory", "extra-file", "ancestor-symlink"} {
+		t.Run(change, func(t *testing.T) {
+			archive, root, binding := runtimeFixtureDirectories(t, false)
+			switch change {
+			case "extra-directory":
+				if err := os.Mkdir(filepath.Join(root, "unlisted"), 0700); err != nil {
+					t.Fatal(err)
+				}
+			case "extra-file":
+				if err := os.WriteFile(filepath.Join(root, "bin/unlisted"), []byte("extra"), 0600); err != nil {
+					t.Fatal(err)
+				}
+			case "ancestor-symlink":
+				moved := filepath.Join(t.TempDir(), "bin")
+				if err := os.Rename(filepath.Join(root, "bin"), moved); err != nil {
+					t.Fatal(err)
+				}
+				if err := os.Symlink(moved, filepath.Join(root, "bin")); err != nil {
+					t.Fatal(err)
+				}
+			}
+			err := verifyRuntime(archive, root, binding)
+			if (err == nil) != (change == "none") {
+				t.Fatalf("implicit parent verification: %v", err)
+			}
+		})
+	}
+}
+
+// Explicit read-only parity check against already downloaded pinned archives.
+// A normal fixture run skips it; that skip is not real-runtime evidence.
+func TestPinnedRuntimeArchives(t *testing.T) {
+	root := os.Getenv("CNC_PINNED_RUNTIME_ROOT")
+	if root == "" {
+		t.Skip("requires explicit existing CNC runtime input root")
+	}
+	repo, err := filepath.Abs("../..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	subjects, _, err := loadInputs(repo)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for index, name := range []string{"corretto25", "corretto21"} {
+		binding := subjects.Runtimes[index]
+		archive := filepath.Join(root, "archives", name+".tar.gz")
+		installed := filepath.Join(root, "runtimes", "amazon-corretto-"+binding.Version+"-linux-x64")
+		if err := verifyRuntime(archive, installed, binding); err != nil {
+			t.Fatalf("%s: %v", binding.Role, err)
+		}
+		t.Logf("verified %s %s archive %s and complete installed tree", binding.Role, binding.Version, binding.SHA256)
+	}
 }
 
 func TestRuntimeArchiveAndBinaryDrift(t *testing.T) {

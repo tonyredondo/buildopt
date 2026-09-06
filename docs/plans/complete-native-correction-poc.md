@@ -1,7 +1,7 @@
 # Complete Native Correction POC
 
 **Experiment:** `COMPLETE_NATIVE_CORRECTION_V1` (`CNC`)<br>
-**State:** `NATIVE_CAPTURE_HARNESS_VERIFIED`; CNC-003 verified locally, CNC-004 next, no Gradle execution<br>
+**State:** `INCOMPLETE_EXPERIMENT_INPUT`; first CNC-004 window refused before Gradle, verifier repaired, continuation pending<br>
 **Planning baseline:** BuildOpt `ca5fb5d8c10ac581de7478cc1dec52269da67e24`<br>
 **Execution and evidence status:** [step tracker](./complete-native-correction-poc-tracker.md)<br>
 **First subject:** GraphQL Java, explicitly local non-CI `assemble`; no owner-CI qualification
@@ -385,7 +385,10 @@ The human/machine contract, subject manifest and `contract` checker mode exist.
 CNC-003 now has a versioned native runner, generic and explicit host fixtures,
 independent attempt/output checking and a [literal runbook](../reference/complete-native-correction-capture.md).
 Detached ownership and private input/output consuming paths are proved with
-fake children, not public Gradle. Real input/package preparation precedes CNC-004.
+fake children, not public Gradle. CNC-004 recovered the exact real inputs, then
+refused before Gradle on a runtime-directory verifier defect. Its repair is
+proved against both actual archives; the [preflight record](../../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
+preserves the first package/clock and the explicit continuation boundary.
 
 | Planned owner | Purpose |
 | --- | --- |

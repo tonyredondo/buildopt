@@ -1,6 +1,6 @@
 # Complete Native Correction capture runbook
 
-Status: **CNC-003 native harness verified locally; no public Gradle execution.**
+Status: **CNC-004 first window refused at runtime preflight; zero Gradle starts.**
 This document describes the implemented interface and its evidence boundary. It
 is not authority to start the two-hour experiment. The [tracker](../plans/complete-native-correction-poc-tracker.md)
 owns advancement; the [contract](../../specs/poc-complete-native-correction-v1.md)
@@ -41,17 +41,18 @@ CI runs generic fixtures and explicitly skips this host-only gate; that skip
 is not ownership proof. Neither suite executes the Gradle instrumentation or
 proves real Corretto/Gradle/plugin compatibility. CNC-004 supplies that evidence.
 
-The local [package snapshot](../../benchmarks/results/complete-native-correction-v1/contract/capture-package.json)
+The historical CNC-003 [package snapshot](../../benchmarks/results/complete-native-correction-v1/contract/capture-package.json)
 binds launcher, state/capture/preparation code, tests, static checker, selector,
 instrumentation, toolchain lock, contracts and the actual Go executable hash.
-It is a checked local implementation snapshot, not an executed campaign or a
-committed/publication identity.
-Verify it without initializing a campaign:
+It identifies that earlier local implementation, not the executable rebuilt
+after later commits. The first committed execution package and its zero-start
+refusal are retained in the [CNC-004 preflight record](../../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md).
+Do not overwrite either historical identity. For a future package, first
+resolve a new absolute file path in an existing parent as `cnc_new_package`:
 
 ```bash
-cnc_repo=$(pwd -P)
-./dev/run-complete-native-correction package-check \
-  --package "${cnc_repo}/benchmarks/results/complete-native-correction-v1/contract/capture-package.json"
+./dev/run-complete-native-correction freeze --package "$cnc_new_package"
+./dev/run-complete-native-correction package-check --package "$cnc_new_package"
 ```
 
 `freeze --package ABSOLUTE_NEW_FILE` creates a new snapshot without overwrite.
@@ -82,7 +83,9 @@ campaign/
 Recover the known subject repository/shared Git directory before materializing
 anything. Missing or ambiguous identity stops setup; do not substitute a clone
 or scan for another checkout. Worktree creation and runtime preparation remain
-unexecuted. Neither `preflight` nor `capture` creates subject worktrees or
+operator-owned. The owner explicitly authorized one exact-commit reacquisition
+after all recorded GraphQL copies were found absent; it and three shared
+detached worktrees now exist. Neither `preflight` nor `capture` creates subject worktrees or
 downloads/installs runtimes. Exact revision, archive and runtime hashes come
 from the [subject manifest](../../specs/poc-complete-native-correction-v1.subjects.json).
 
@@ -247,11 +250,21 @@ stops instead of being retried. No reserve or later F/C/V slot can start here.
 
 ## Next boundary and limits of proof
 
-CNC-003 qualifies this native capture harness, not the experiment. CNC-004 must
-recover exact source identity, prepare and verify the real Corretto archives and
-installed trees, finalize the committed execution package, then collect fresh
-P/D/M evidence within the approved two-hour/60-start allocation. No public
-worktree, archive installation, Gradle invocation or timing exists in CNC-003.
+CNC-003 qualifies this native capture harness, not the experiment. The first
+CNC-004 window recovered exact source/worktree identity and both real Corretto
+archives, but preflight exposed an implicit-directory verifier defect before
+Gradle. Corretto lists files under `man` without a `man/` header. The corrected
+verifier accepts only required directory ancestors, still rejecting extra
+files/directories and symlinks. Generic negatives and an explicit read-only
+check against both real installed trees passed; neither JVM nor Gradle runtime
+compatibility follows from archive parity alone.
+
+The original package/state remain immutable and its exact guardian is stopped.
+No replacement window or package binding is silently substituted. A separately
+frozen corrected execution package and explicit continuation decision are needed
+before P01; the first failure and all elapsed cost remain evidence. No Gradle
+invocation, diagnostic, materiality, candidate or timing exists. See the linked
+preflight record for the opt-in real-archive validation command and recovery.
 
 The separate recipe/real fixture package is frozen in CNC-005 before F01 after
 native admission. Its absence is not replaced by hashing a nonexistent recipe.

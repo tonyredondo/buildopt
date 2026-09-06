@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "buildopt.cnc/capture-state/v1",
+  "packageSha256": "30ce6416d93b473cee5518c01f9095a036abbbc866b67b1225a311b260ebe1ba",
+  "bootId": "1a796fa3-8065-4783-bb5c-5c94d9dd0b29",
+  "startedBootSeconds": 3467826.29,
+  "deadlineBootSeconds": 3475026.29,
+  "reviewBootSeconds": 3469626.29,
+  "maximumStarts": 60
+}

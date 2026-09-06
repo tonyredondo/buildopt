@@ -166,6 +166,7 @@ func verifyRuntime(archive, root string, binding runtimeBinding) error {
 	defer zipped.Close()
 	reader := tar.NewReader(zipped)
 	seen := map[string]bool{}
+	implicitDirectories := map[string]bool{}
 	prefix := ""
 	for {
 		header, err := reader.Next()
@@ -190,6 +191,12 @@ func verifyRuntime(archive, root string, binding runtimeBinding) error {
 			return errors.New("unsafe or duplicate runtime archive member")
 		}
 		seen[relative] = true
+		// Archives may omit directory headers for required parents (Corretto's
+		// man directory does this). Admit only ancestors of verified members,
+		// never arbitrary extra directories, files or symlinks in the install.
+		for parent := filepath.Dir(relative); parent != "."; parent = filepath.Dir(parent) {
+			implicitDirectories[parent] = true
+		}
 		path := filepath.Join(root, relative)
 		// Ancestor symlinks are forbidden; an archived leaf symlink is checked below.
 		if err = contained(root, filepath.Dir(path)); err != nil && filepath.Dir(path) != root {
@@ -242,8 +249,8 @@ func verifyRuntime(archive, root string, binding runtimeBinding) error {
 		if err != nil {
 			return err
 		}
-		if !seen[filepath.ToSlash(relative)] {
-			return errors.New("unexpected installed runtime member")
+		if !seen[filepath.ToSlash(relative)] && !(entry.IsDir() && implicitDirectories[relative]) {
+			return fmt.Errorf("unexpected installed runtime member: %s", filepath.ToSlash(relative))
 		}
 		return nil
 	})

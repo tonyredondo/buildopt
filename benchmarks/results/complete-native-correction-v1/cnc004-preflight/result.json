@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "buildopt.cnc/preflight-refusal/v1",
+  "experiment": "COMPLETE_NATIVE_CORRECTION_V1",
+  "block": "CNC-004",
+  "decision": "INCOMPLETE_EXPERIMENT_INPUT",
+  "cause": "HARNESS_RUNTIME_IMPLICIT_DIRECTORY_REJECTION",
+  "executionCommit": "e9fc62a406aef373bad3d5cdef2a107e6a607aaf",
+  "packageSha256": "30ce6416d93b473cee5518c01f9095a036abbbc866b67b1225a311b260ebe1ba",
+  "executableSha256": "0d2347052b96f9079e1253493a8d620af45f9dd27d8772d9d15b456d9a36a636",
+  "stateSha256": "5fba484d9fd117220b9cf24b27bdf844292578fa7b287039caadadb6e41cd5cd",
+  "source": {
+    "repository": "https://github.com/graphql-java/graphql-java.git",
+    "revision": "f2d8c9126f898c084b176631b7346bc6fbec296a",
+    "archiveSha256": "83e80bbaa2b3e3308dd35e0b7120399f02149507674d958b0e2e4cc81718d051",
+    "freshArchiveVerified": true,
+    "registeredDetachedWorktrees": ["native-a", "native-b", "candidate"],
+    "singleSharedGitDirectory": true,
+    "allWorktreesCleanAfterStop": true
+  },
+  "runtimes": [
+    {
+      "role": "daemon-and-root",
+      "version": "25.0.4.8.1",
+      "archiveSha256": "b838e42c8e915019ed34e4cc54c7cda2e7e00d2a2a49be44578814735fc9accc",
+      "archiveMembers": 562,
+      "implicitInstalledDirectories": ["man"]
+    },
+    {
+      "role": "subproject",
+      "version": "21.0.12.9.1",
+      "archiveSha256": "f79824540cef882da0cdf1369f9d1d69afc14b5a9bc3a771fd5bb795793ce2f2",
+      "archiveMembers": 548,
+      "implicitInstalledDirectories": ["man"]
+    }
+  ],
+  "preflight": {
+    "exitCode": 1,
+    "error": "unexpected installed runtime member",
+    "independentAttemptCheckBeforeRepair": [],
+    "gradleStarts": 0,
+    "reservations": 0,
+    "guardianStoppedBootSeconds": 3468244.62,
+    "secondsThroughGuardianStop": 418.33,
+    "guardianInactiveVerified": true,
+    "deadlineReset": false,
+    "replacementCampaignStarted": false
+  },
+  "repair": {
+    "policy": "ONLY_NECESSARY_DIRECTORY_ANCESTORS_OF_VERIFIED_ARCHIVE_MEMBERS",
+    "originalRegressionFailed": true,
+    "correctedRegressionPassed": true,
+    "realPinnedArchiveAndInstalledTreeParity": "PASSED_BOTH_RUNTIMES",
+    "retainedParityLogSha256": "0f49cefc4d2247f8409022c3f0453105ac674b773d42f9019e19c5909cf2772c",
+    "compressedParityLogSha256": "b1141ec58161a3a1346448b336063ff183464969f4346f4129ba92da15ec202f",
+    "jvmOrGradleStartedByParityTest": false,
+    "failedCorrections": 0
+  },
+  "experimentalEvidence": {
+    "diagnostics": 0,
+    "materialityRows": 0,
+    "publicPatches": 0,
+    "candidateBuilds": 0,
+    "valueSamples": 0,
+    "speedupClaims": 0,
+    "additionalProductFailures": 0,
+    "cnc004Qualified": false
+  }
+}

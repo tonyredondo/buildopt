@@ -13,9 +13,12 @@
   for the approved 60-start/two-hour ceiling, with review at 30 minutes.
   CNC-003's [native capture harness](../reference/complete-native-correction-capture.md)
   now has generic/race and explicit host fake-child proof for detached ownership,
-  private input isolation and exact output reconstruction. CNC-004 fresh native
-  evidence is next; local harness qualification is not public runtime or value
-  proof. No new Gradle run or timing sample exists;
+  private input isolation and exact output reconstruction. CNC-004's
+  [first window refused before Gradle](../../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
+  on Corretto's implicit directory layout. The verifier repair passes actual
+  archive/install parity, but no native/materiality row exists. Original
+  preparation cost and package/clock identity are retained; a separately frozen
+  corrected package needs an explicit continuation decision. No timing sample exists;
   historical configuration work is not evidence of attainable saving.
 
 - **The wrapper-coordinated native-corrections POC stops at the WCNCP-009

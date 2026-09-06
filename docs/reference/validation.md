@@ -26,6 +26,16 @@ The host gate is explicit and not implied by the ordinary suite's skip. Fake
 children are not real Gradle fixture or Corretto compatibility proof. Base CI
 includes generic fixtures, never public CNC execution or numerical value gates.
 
+CNC-004's [first-window refusal](../../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
+exposed Corretto's omitted `man/` directory header before Gradle. The corrected
+verifier derives only necessary directory parents, with extra-file/directory
+and ancestor-symlink negatives. An explicit `TestPinnedRuntimeArchives` run
+against the already downloaded exact Corretto 25/21 inputs passed complete
+archive/install parity without starting JVMs or Gradle. Its opt-in environment
+binding and repeat command are in that record; an ordinary-suite skip is not
+real-runtime evidence. The original package/state and zero starts are retained;
+this repair does not establish native diagnostics, materiality or value.
+
 The WCNCP contract and terminal evidence are checked by
 `./dev/check-wrapper-coordinated-native-corrections-plan` and
 `./dev/check-wcncp-terminal`. The terminal checker composes the 30-observation

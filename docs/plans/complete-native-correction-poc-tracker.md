@@ -1,14 +1,14 @@
 # Complete Native Correction POC — Execution Tracker
 
-**Overall:** `NATIVE_CAPTURE_HARNESS_VERIFIED`<br>
+**Overall:** `INCOMPLETE_EXPERIMENT_INPUT` — first CNC-004 window refused before Gradle<br>
 **Plan:** [Complete Native Correction POC](./complete-native-correction-poc.md)<br>
-**Current task:** CNC-003 verified locally; CNC-004 fresh native evidence is next<br>
-**Next execution step:** recover exact public inputs and committed execution-package identity, then run the frozen native P/D/M protocol in CNC-004<br>
+**Current task:** CNC-004 blocked after real Corretto input exposed a verifier defect; correction verified, original campaign retained<br>
+**Next execution step:** explicit continuation decision and separately frozen corrected execution package; do not replace the first campaign or reset its deadline silently<br>
 **Public candidate builds / value samples:** 0 / 0<br>
-**Phase A real Gradle starts:** 0 / 60; budget approved, no real campaign initialized<br>
-**Phase A time limit:** owner-approved two hours including preparation/downloads/validation; review at 30 minutes; execution clock not started<br>
+**Phase A real Gradle starts:** 0 / 60; first campaign initialized and stopped at preflight<br>
+**Phase A time limit:** original 7,200-second boot-bound window retained; guardian stopped after 418.33 seconds, later repair/validation costs additional; no deadline reset<br>
 **Research spend:** source analysis, local implementation and fake-child tests; initial setup not continuously timed, no exact total cost claim<br>
-**Execution authority:** local non-CI scope and 60-start/two-hour limits accepted; latest request covers CNC-003 implementation, not public Gradle in this block<br>
+**Execution authority:** CNC-004 and one exact-commit source reacquisition accepted; first frozen package refused before Gradle; its repair does not authorize a substituted package/window<br>
 **Phase B/C budgets:** not authorized
 
 ## How to use this tracker
@@ -36,7 +36,7 @@ CNC-003. Existing WCNCP/SBIC evidence remains unchanged.
 | CNC-001 | Exact GraphQL source and complete blocker feasibility | Source-analysis authorization | verified | Five owners/consumers mapped; retained `INCOMPLETE_EXPERIMENT_INPUT` refusal to advance, not a correction qualification. |
 | CNC-002 | Phase A contract, output/proof matrix, and complete start allocation | CNC-001 and accepted local scope/budget | verified | Human/machine contract, exact subject manifest and negative-tested static checker; 60 slots, two-hour limit and 30-minute review. No runtime/package proof or publication claimed. |
 | CNC-003 | Worktree-safe capture, independent checker, generic fixtures, and runbook | CNC-002 | verified | Generic/race and explicit host integration prove detached subtree ownership, private Maven/home bindings, complete fake P/D/M consumers, exact output/producer reconstruction, and evidence refusals. Checked local package/runbook; no public Gradle or publication. |
-| CNC-004 | Fresh native diagnostics and controlled materiality | CNC-003 | pending | Successful native control, complete blocker set, fresh materiality gate. |
+| CNC-004 | Fresh native diagnostics and controlled materiality | CNC-003 | blocked | First runtime preflight refused with zero Gradle starts. Real source/archive identities recovered; implicit-directory verifier repaired and proved against both actual JDK trees. No native diagnostic/materiality proof; corrected package/continuation decision required. |
 | CNC-005 | Complete digest-bound recipe and behavioral fixture proof | CNC-004 | pending | Every change has a behavioral obligation and tested inverse. |
 | CNC-006 | Public candidate correctness | CNC-005 | pending | All output, invalidation, owner-test, error, and revert obligations pass. |
 | CNC-007 | Eight-pair native value and cost reconstruction | CNC-006 | pending | Native value and machine-payback gates pass independently. |
@@ -480,14 +480,12 @@ remain unverified for fresh execution. CLI unknown-mode rejection also passes.
 
 ### Immediate next action
 
-Proceed to CNC-004 using the [runbook](../reference/complete-native-correction-capture.md):
-recover the known subject repository/shared Git identity, resolve any missing
-checkout without silently substituting another source, and establish the
-committed package prerequisite before capture. Initialize the clock before
-execution setup/downloads, verify real archives/install trees, then execute only
-P01/P02, seed, D01/D02, stability and M01/M02. Keep all failures and stop at the
-unchanged limits. CNC-003 itself started no Gradle or execution clock and does
-not authorize candidate/fixture/value rows early.
+Retain the [first CNC-004 preflight refusal](../../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
+and all local Git/runtime inputs. The corrected runtime verifier now passes
+both actual archive/install trees, but the original execution package cannot
+be changed in place. Resolve the explicit continuation/package decision before
+another initialization or P01. The original budget and failure stay recorded;
+do not silently reset its clock, spend reserve rows, or claim CNC-004 complete.
 
 ### Historical CNC-003 partial implementation record — 2026-09-06
 
@@ -596,3 +594,31 @@ stop. This continuation completes CNC-003 with bounded individual checks and
 at most 1 GiB extra temporary output; it does not spend or reset the still-unused
 two-hour execution budget. See `E-552` for the current milestone; retain `E-551`
 as the honest earlier partial checkpoint.
+
+### CNC-004 first-window preflight refusal and repair — 2026-09-06
+
+The owner approved CNC-004 and explicit recovery of the missing public source.
+The CNC-000..003 harness/contract commit `e9fc62a4` was signed and pushed to
+`main`. A stable compiled executable and a new execution package were frozen,
+then the two-hour state was initialized before source/runtime downloads.
+The [retained package/state/result](../../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
+bind that first window. Its Git archive and both runtime archive hashes match
+the exact contract; all three shared detached source worktrees remain clean.
+
+The actual preflight returned `unexpected installed runtime member`: the
+Corretto archives omit a directory header for `man` while including its children.
+The original checker returned an empty attempt list before repair. The exact
+guardian was stopped after 418.33 seconds, with zero Gradle starts, reservations,
+public patches, diagnostics, materiality/value rows or product failures.
+
+The focused regression reproduced the defect; the correction admits only
+necessary directory ancestors. Unlisted files/directories and ancestor symlinks
+still fail. Explicit read-only parity against both downloaded archives/installed
+trees and the full runner/selector/canonical-JSON race suite passed. No JVM was
+started by that proof. Additional validation/publication costs do not disappear
+from the ledger, and neither the first package binding nor deadline is reset.
+
+`E-553` records `INCOMPLETE_EXPERIMENT_INPUT`, not a positive CNC-004 result.
+Its repaired prerequisite is verified, but corrected execution needs a separate
+frozen package and explicit continuation decision. CNC-005..007 remain pending
+their original gates. No worktrees, runtimes or unrelated files were deleted.

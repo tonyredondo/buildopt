@@ -16,7 +16,10 @@ bindings and proof slots with negative tests. Qualified public execution remains
 later work in the [CNC tracker](../docs/plans/complete-native-correction-poc-tracker.md).
 The [CNC-003 runbook](../docs/reference/complete-native-correction-capture.md)
 documents qualified generic/host fixture proof and the guarded native interface.
-Real runtime/source preparation and public P/D/M evidence remain CNC-004 work.
+The first CNC-004 window recovered exact source/runtime inputs but refused
+before Gradle on an implicit-directory verifier defect. Its
+[refusal and verified repair](../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
+preserve the original package/clock; public P/D/M evidence remains absent.
 
 The active product pivot is the
 [`Wrapper-Coordinated Native Corrections v1`](./poc-wrapper-coordinated-native-corrections-v1.md).

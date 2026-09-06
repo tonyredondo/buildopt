@@ -65,14 +65,18 @@ inputs. The owner accepted the local scope; the
 led to the [static contract](../../specs/poc-complete-native-correction-v1.md),
 machine manifest and negative-tested checker. The owner approved 60 starts
 maximum within two hours, including preparation, downloads and validation,
-with review at 30 minutes. The clock has not started. CNC-003 now has a
+with review at 30 minutes. CNC-003 now has a
 [checked native runner/package and runbook](../reference/complete-native-correction-capture.md)
 with generic/race and explicit host fake-child proof. Detached subtree lifetime,
 private Maven/home inputs and exact native output/producer reconstruction close
-the earlier harness gaps. CNC-003 is verified locally (`E-552`); CNC-004 must
-recover/verify real source and runtimes and the committed package before the
-first P/D/M captures. No publication is part of CNC-003. Fake-child checks are
-not real Gradle or candidate behavior proof.
+the earlier harness gaps. CNC-003 is verified locally (`E-552`). CNC-004's
+first window then recovered exact source/archive inputs and froze a committed
+package, but [refused before Gradle](../../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
+because the verifier rejected Corretto's implicit `man` directory. The repair
+passes both actual installed trees and regression/race checks (`E-553`). The
+original clock/package are retained and the guardian stopped, without a reset
+or substitute run. A corrected package and explicit continuation decision are
+next. This is not real Gradle or candidate behavior proof.
 No CNC Gradle start, patch, candidate, timing or speedup exists. Prior terminal
 results stay closed.
 
