@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
@@ -103,6 +105,40 @@ func TestDeadlineBeforeSpawnAndResourceFailure(t *testing.T) {
 	got, err = capture(context.Background(), root, state, r, clock, nil, func() error { return errors.New("fixture disk budget exhausted") })
 	if err != nil || got.Outcome != "HARNESS_FAILURE" || !got.Started {
 		t.Fatalf("resource guard: %+v %v", got, err)
+	}
+}
+
+func TestFractionalBootStateRoundTrip(t *testing.T) {
+	for _, started := range []float64{248.01, 12345.67, 3467826.29} {
+		t.Run(fmt.Sprint(started), func(t *testing.T) {
+			root := filepath.Join(t.TempDir(), "state")
+			now := clockReading{"fractional-boot", started}
+			if err := initialize(root, strings.Repeat("a", 64), now); err != nil {
+				t.Fatal(err)
+			}
+			var state campaign
+			if err := readJSON(filepath.Join(root, "state.json"), &state); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := remaining(state, now); err != nil {
+				t.Fatalf("freshly initialized state refused: %+v: %v", state, err)
+			}
+			for _, direction := range []float64{math.Inf(-1), math.Inf(1)} {
+				changed := state
+				changed.Deadline = math.Nextafter(state.Deadline, direction)
+				if err := validateState(changed); err == nil {
+					t.Fatal("one-ULP deadline drift accepted")
+				}
+				changed = state
+				changed.ReviewAt = math.Nextafter(state.ReviewAt, direction)
+				if err := validateState(changed); err == nil {
+					t.Fatal("one-ULP review drift accepted")
+				}
+			}
+			if _, err := remaining(state, clockReading{state.Boot, state.Deadline}); err == nil {
+				t.Fatal("expired state accepted")
+			}
+		})
 	}
 }
 

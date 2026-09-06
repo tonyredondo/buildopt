@@ -77,6 +77,20 @@ CNC integration commands now preserve their output without skipping or
 weakening assertions; hosted follow-up must establish the corrected revision's
 actual result. The first Native Platform CI passed independently.
 
+The [second Base CI run](https://github.com/tonyredondo/buildopt/actions/runs/34030348339)
+now exposes `TestActualCLIInitializationAndReadOnlyCheck` refusing its freshly
+initialized state with `state limit or identity drift`. This is a separate
+harness bug: subtracting fractional boot timestamps can produce
+`7199.999999999998` rather than exactly `7200`. A deterministic initialization,
+JSON round-trip and read-only validation at boot time `12345.67` reproduces the
+original failure. Boot time `248.01` covers the same issue for the review limit.
+The corrected reader compares against the exact sums written by initialization,
+without an epsilon or changed duration. Regressions also reject the next
+representable float in either direction for both limits and refuse expiry.
+Native Platform CI passed on that second revision; Base CI must be followed
+again after this independently reproduced correction. Neither repair mutates
+the first campaign state or starts a replacement campaign.
+
 The first package/state/binary identities remain frozen. The repair does not
 overwrite that campaign or authorize replacement execution. A separately
 frozen corrected package and an explicit execution continuation decision are

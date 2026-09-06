@@ -35,6 +35,11 @@ archive/install parity without starting JVMs or Gradle. Its opt-in environment
 binding and repeat command are in that record; an ordinary-suite skip is not
 real-runtime evidence. The original package/state and zero starts are retained;
 this repair does not establish native diagnostics, materiality or value.
+Its hosted CI follow-up also exposed fractional boot-time subtraction rejecting
+a freshly initialized state. `TestFractionalBootStateRoundTrip` reconstructs
+both limits after JSON serialization, rejects one-representable-step drift in
+either direction, and checks expiry. The reader now compares the initializer's
+exact sums, with no tolerance, duration change or campaign reset.
 
 The WCNCP contract and terminal evidence are checked by
 `./dev/check-wrapper-coordinated-native-corrections-plan` and

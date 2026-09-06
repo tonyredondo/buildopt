@@ -2626,6 +2626,7 @@ This table points to the latest valid result. It does not replace reports or all
 
 | Date | Change | Author |
 |---|---|---|
+| 2026-09-06 | Diagnosed the exposed CNC Base CI failure as fractional boot-time subtraction rejecting initialized state; added deterministic serialization/drift/expiry regressions and exact-sum validation without changing campaign limits or identity | Codex |
 | 2026-09-06 | Recovered exact CNC source/JDK inputs under owner approval; retained the first-window zero-start Corretto preflight refusal and repaired implicit archive-directory verification. Preserved original package/clock, added real-archive parity and negatives, and kept CNC-004 blocked pending corrected execution continuation | Codex |
 | 2026-09-06 | Closed CNC-003's native harness with explicit host cgroup/client-loss proof, isolated inputs, complete fake P/D/M consumers and independent output/process reconstruction. Updated the checked local package/runbook; CNC-004 fresh native evidence is next, with zero Gradle starts and no publication | Codex |
 | 2026-09-06 | Implemented CNC-003's partial versioned capture owner, immutable attempt checks, generic fixtures and runbook. Kept public capture refused after finding detached lifetime and native input/output isolation gaps; no Gradle execution or publication | Codex |

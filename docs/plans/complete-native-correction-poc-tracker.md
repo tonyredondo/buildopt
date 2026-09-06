@@ -622,3 +622,11 @@ from the ledger, and neither the first package binding nor deadline is reset.
 Its repaired prerequisite is verified, but corrected execution needs a separate
 frozen package and explicit continuation decision. CNC-005..007 remain pending
 their original gates. No worktrees, runtimes or unrelated files were deleted.
+
+Hosted follow-up on `5fbbdf94` exposed a separate state-reader defect once CNC
+fixture stdout was preserved: fractional boot-time subtraction could reject
+the limits just written by initialization. A deterministic JSON round-trip
+reproduced the failure; the correction reconstructs the initializer's exact
+deadline/review sums, with no tolerance. Tests cover both rounding cases,
+one-representable-step drift in either direction and expiry. This repairs a
+harness prerequisite only; it does not replace or reset the first campaign.

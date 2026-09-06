@@ -106,7 +106,10 @@ func remaining(state campaign, now clockReading) (float64, error) {
 }
 
 func validateState(state campaign) error {
-	if state.Schema != stateSchema || state.MaximumStarts != 60 || state.Deadline-state.Started != 7200 || state.ReviewAt-state.Started != 1800 || state.Boot == "" || state.Started < 0 || len(state.PackageSHA256) != 64 {
+	// Reconstruct the exact values written by initialize. Subtracting fractional
+	// boot times can round differently and reject an unchanged valid state.
+	// No tolerance is used: even the next representable changed limit refuses.
+	if state.Schema != stateSchema || state.MaximumStarts != 60 || state.Deadline != state.Started+7200 || state.ReviewAt != state.Started+1800 || state.ReviewAt <= state.Started || state.Boot == "" || state.Started < 0 || len(state.PackageSHA256) != 64 {
 		return errors.New("state limit or identity drift")
 	}
 	return nil
