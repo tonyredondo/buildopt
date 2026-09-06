@@ -54,6 +54,28 @@ does not establish commercial viability.
 
 ## Current experiment status
 
+`COMPLETE_NATIVE_CORRECTION_V1` has a
+[source-only CNC-001 report](../../benchmarks/results/complete-native-correction-v1/selection/feasibility.md)
+and [execution tracker](../plans/complete-native-correction-poc-tracker.md).
+Five historical GraphQL blockers are mapped; Bnd 7.1.0 offers a supported
+explicit-properties correction, but lifecycle behavior still needs proof.
+Local branch-based versions and owner-CI timestamped versions are different
+inputs. The owner accepted the local scope; the
+[CNC-002 preparation](../../benchmarks/results/complete-native-correction-v1/contract/local-scope-and-budget-review.md)
+led to the [static contract](../../specs/poc-complete-native-correction-v1.md),
+machine manifest and negative-tested checker. The owner approved 60 starts
+maximum within two hours, including preparation, downloads and validation,
+with review at 30 minutes. The clock has not started. CNC-003 now has a
+[checked native runner/package and runbook](../reference/complete-native-correction-capture.md)
+with generic/race and explicit host fake-child proof. Detached subtree lifetime,
+private Maven/home inputs and exact native output/producer reconstruction close
+the earlier harness gaps. CNC-003 is verified locally (`E-552`); CNC-004 must
+recover/verify real source and runtimes and the committed package before the
+first P/D/M captures. No publication is part of CNC-003. Fake-child checks are
+not real Gradle or candidate behavior proof.
+No CNC Gradle start, patch, candidate, timing or speedup exists. Prior terminal
+results stay closed.
+
 `CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1` is terminal at CINC-003 with
 `STOP_STRICT_DIAGNOSTIC_BUDGET_CANNOT_COMPLETE_COHORT`. Fourteen valid raw
 captures reconstruct 7/10 conclusive families and 0/3 eligible families. The

@@ -1,5 +1,22 @@
 # BuildOpt Generalization Audit
 
+The newer [CNC-001 source analysis](../../benchmarks/results/complete-native-correction-v1/selection/feasibility.md)
+is a directed GraphQL investigation, not a new breadth or value result. It maps
+all five historical blockers, including Bnd's configurable project-property
+default, and distinguishes local branch-based versions from CI's timestamped
+versions. The owner has accepted the local scope. The
+[CNC-002 preparation](../../benchmarks/results/complete-native-correction-v1/contract/local-scope-and-budget-review.md)
+now leads to the [static CNC-002 contract](../../specs/poc-complete-native-correction-v1.md)
+and checker, with an approved 60-start/two-hour ceiling and 30-minute review.
+This closes static planning, not correction behavior. CNC-003's
+[native capture runner and runbook](../reference/complete-native-correction-capture.md)
+now pass generic/race and explicit host fake-child checks for detached ownership,
+private input isolation and complete native command/output reconstruction.
+The local harness qualification (`E-552`) does not establish real runtime
+compatibility or broaden opportunity evidence; CNC-004 owns fresh native proof.
+No fresh CNC diagnostic, candidate, timing, or
+independent-family success exists.
+
 The latest two wrapper-native successor searches are now terminal. The product
 direction remains: keep the wrapper as the normal Gradle entrypoint, learn from
 ordinary invocations, and deliver only owner-reviewed native corrections.

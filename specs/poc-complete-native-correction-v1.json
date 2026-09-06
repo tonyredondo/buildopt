@@ -1,0 +1,873 @@
+{
+  "schemaVersion": "buildopt.specs/poc-complete-native-correction/v1",
+  "experiment": "COMPLETE_NATIVE_CORRECTION_V1",
+  "status": "STATIC_CONTRACT_ONLY",
+  "authority": {
+    "localScope": true,
+    "budgetApproved": true,
+    "realGradleExecution": false,
+    "publicSourceMutation": false,
+    "publication": false,
+    "phaseB": false,
+    "phaseC": false,
+    "repositoryOrTaskNameRules": false,
+    "predecessorRowsAsEvidence": false
+  },
+  "budget": {
+    "maximumStarts": 60,
+    "maximumElapsedSeconds": 7200,
+    "progressReviewSeconds": 1800,
+    "maximumSecondsPerStart": 1200,
+    "maximumAdditionalDiskGiB": 20,
+    "minimumFreeDiskGiB": 10,
+    "maximumWorkers": 4,
+    "concurrentStarts": 1,
+    "maximumCandidates": 1,
+    "maximumInfrastructureReplacements": 2,
+    "clock": "MONOTONIC_FROM_EXECUTION_PREPARATION_INCLUDING_DOWNLOADS_WAITS_AND_VALIDATION",
+    "resetOnResume": false
+  },
+  "allocation": {
+    "fixtures": 24,
+    "preparation": 2,
+    "diagnostics": 2,
+    "materiality": 2,
+    "correctness": 10,
+    "value": 18,
+    "reserve": 2
+  },
+  "environment": {
+    "scope": "LOCAL_NON_CI",
+    "absent": [
+      "CI",
+      "RELEASE_VERSION"
+    ],
+    "os": "linux",
+    "architecture": "amd64",
+    "mainsPower": true,
+    "cpuAffinity": "0-3",
+    "powerProfile": "performance",
+    "scalingDriver": "intel_pstate",
+    "energyPerformancePreference": "performance",
+    "autoToolchainDownload": false,
+    "autoToolchainDiscovery": false,
+    "quiescenceSeconds": 120,
+    "stabilitySamples": 7,
+    "maximumStabilityRatio": 1.15
+  },
+  "gates": {
+    "completeBlockerClosure": true,
+    "exactOutputBytes": true,
+    "maximumProductFailures": 0,
+    "minimumMaterialMilliseconds": 500,
+    "minimumMaterialPercent": 2,
+    "balancedPairs": 8,
+    "requiredPositivePairs": 8,
+    "minimumMeanSavingMilliseconds": 500,
+    "minimumMeanSavingPercent": 2,
+    "bootstrapResamples": 4096,
+    "bootstrapSeedMultiplier": 2654435761,
+    "bootstrapMultiplier": 1664525,
+    "bootstrapIncrement": 1013904223,
+    "bootstrapModulus": 4294967296,
+    "bootstrapIndexDivisor": 536870912,
+    "intervalIndices": [
+      102,
+      3993
+    ],
+    "positiveIntervalLower": true,
+    "p95": "NEAREST_RANK_MAX_OF_EIGHT",
+    "nonRegressiveP95": true,
+    "maximumMachinePaybackBuilds": 300,
+    "humanCost": "SEPARATE_LEDGER",
+    "ciWallTimeGate": false,
+    "relocationClaim": false
+  },
+  "executionPrerequisites": [
+    "COMMITTED_CONTRACT_IDENTITY",
+    "REGISTERED_SHARED_GIT_WORKTREES",
+    "VERIFIED_SOURCE_ARCHIVE_AND_FILES",
+    "VERIFIED_RUNTIME_ARCHIVES_AND_IDENTITIES",
+    "CNC_003_PACKAGE_AND_FAKE_CHILD_PROOF",
+    "FRESH_NATIVE_MATERIALITY_BEFORE_RECIPE",
+    "COMPLETE_FIXTURE_PROOF_BEFORE_PUBLIC_CANDIDATE",
+    "EXACT_NATIVE_NATIVE_AND_CANDIDATE_OUTPUTS_BEFORE_VALUE"
+  ],
+  "commands": {
+    "fixtureNative": [
+      "fixtureProof",
+      "--no-configuration-cache",
+      "--rerun-tasks",
+      "--console=plain",
+      "--stacktrace",
+      "--max-workers=4",
+      "--parallel",
+      "--build-cache"
+    ],
+    "fixtureCandidate": [
+      "fixtureProof",
+      "--configuration-cache",
+      "--configuration-cache-problems=fail",
+      "--rerun-tasks",
+      "--console=plain",
+      "--stacktrace",
+      "--max-workers=4",
+      "--parallel",
+      "--build-cache"
+    ],
+    "native": [
+      "assemble",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--stacktrace",
+      "--max-workers=4",
+      "--parallel",
+      "--build-cache"
+    ],
+    "strict": [
+      "assemble",
+      "--configuration-cache",
+      "--configuration-cache-problems=fail",
+      "--console=plain",
+      "--stacktrace",
+      "--max-workers=4",
+      "--parallel",
+      "--build-cache"
+    ],
+    "nativeCorrectness": [
+      "assemble",
+      "verifyShadedClassAnnotations",
+      "compileShadedJarConsumer",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--stacktrace",
+      "--max-workers=4",
+      "--parallel",
+      "--no-build-cache"
+    ],
+    "candidateCorrectness": [
+      "assemble",
+      "verifyShadedClassAnnotations",
+      "compileShadedJarConsumer",
+      "--configuration-cache",
+      "--configuration-cache-problems=fail",
+      "--console=plain",
+      "--stacktrace",
+      "--max-workers=4",
+      "--parallel",
+      "--no-build-cache"
+    ],
+    "prefetch": [
+      "assemble",
+      "testClasses",
+      "--no-configuration-cache",
+      "--console=plain",
+      "--stacktrace",
+      "--max-workers=4",
+      "--parallel",
+      "--build-cache"
+    ]
+  },
+  "rows": [
+    {
+      "id": "F01",
+      "category": "fixtures",
+      "scenario": "success",
+      "arm": "native",
+      "command": "fixtureNative",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "F02",
+      "category": "fixtures",
+      "scenario": "success",
+      "arm": "candidate",
+      "command": "fixtureCandidate",
+      "cache": "store",
+      "expect": "success"
+    },
+    {
+      "id": "F03",
+      "category": "fixtures",
+      "scenario": "success",
+      "arm": "candidate",
+      "command": "fixtureCandidate",
+      "cache": "reuse",
+      "expect": "success"
+    },
+    {
+      "id": "F04",
+      "category": "fixtures",
+      "scenario": "branch",
+      "arm": "native",
+      "command": "fixtureNative",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "F05",
+      "category": "fixtures",
+      "scenario": "branch",
+      "arm": "candidate",
+      "command": "fixtureCandidate",
+      "cache": "invalidate",
+      "expect": "success"
+    },
+    {
+      "id": "F06",
+      "category": "fixtures",
+      "scenario": "commit",
+      "arm": "native",
+      "command": "fixtureNative",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "F07",
+      "category": "fixtures",
+      "scenario": "commit",
+      "arm": "candidate",
+      "command": "fixtureCandidate",
+      "cache": "reuse",
+      "expect": "success"
+    },
+    {
+      "id": "F08",
+      "category": "fixtures",
+      "scenario": "release",
+      "arm": "native",
+      "command": "fixtureNative",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "F09",
+      "category": "fixtures",
+      "scenario": "release",
+      "arm": "candidate",
+      "command": "fixtureCandidate",
+      "cache": "invalidate",
+      "expect": "success"
+    },
+    {
+      "id": "F10",
+      "category": "fixtures",
+      "scenario": "ci",
+      "arm": "native",
+      "command": "fixtureNative",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "F11",
+      "category": "fixtures",
+      "scenario": "ci",
+      "arm": "candidate",
+      "command": "fixtureCandidate",
+      "cache": "fresh",
+      "expect": "success"
+    },
+    {
+      "id": "F12",
+      "category": "fixtures",
+      "scenario": "no-git",
+      "arm": "native",
+      "command": "fixtureNative",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "F13",
+      "category": "fixtures",
+      "scenario": "no-git",
+      "arm": "candidate",
+      "command": "fixtureCandidate",
+      "cache": "fresh",
+      "expect": "success"
+    },
+    {
+      "id": "F14",
+      "category": "fixtures",
+      "scenario": "missing-executable",
+      "arm": "native",
+      "command": "fixtureNative",
+      "cache": "none",
+      "expect": "configuration-failure"
+    },
+    {
+      "id": "F15",
+      "category": "fixtures",
+      "scenario": "missing-executable",
+      "arm": "candidate",
+      "command": "fixtureCandidate",
+      "cache": "fresh",
+      "expect": "configuration-failure"
+    },
+    {
+      "id": "F16",
+      "category": "fixtures",
+      "scenario": "process-matrix",
+      "arm": "native",
+      "command": "fixtureNative",
+      "cache": "none",
+      "expect": "captured-path-results"
+    },
+    {
+      "id": "F17",
+      "category": "fixtures",
+      "scenario": "process-matrix",
+      "arm": "candidate",
+      "command": "fixtureCandidate",
+      "cache": "fresh",
+      "expect": "captured-path-results"
+    },
+    {
+      "id": "F18",
+      "category": "fixtures",
+      "scenario": "task-failure",
+      "arm": "native",
+      "command": "fixtureNative",
+      "cache": "none",
+      "expect": "task-failure"
+    },
+    {
+      "id": "F19",
+      "category": "fixtures",
+      "scenario": "task-failure",
+      "arm": "candidate",
+      "command": "fixtureCandidate",
+      "cache": "fresh",
+      "expect": "task-failure"
+    },
+    {
+      "id": "F20",
+      "category": "fixtures",
+      "scenario": "configuration-failure",
+      "arm": "native",
+      "command": "fixtureNative",
+      "cache": "none",
+      "expect": "configuration-failure"
+    },
+    {
+      "id": "F21",
+      "category": "fixtures",
+      "scenario": "configuration-failure",
+      "arm": "candidate",
+      "command": "fixtureCandidate",
+      "cache": "fresh",
+      "expect": "configuration-failure"
+    },
+    {
+      "id": "F22",
+      "category": "fixtures",
+      "scenario": "cancellation",
+      "arm": "native",
+      "command": "fixtureNative",
+      "cache": "none",
+      "expect": "cancelled"
+    },
+    {
+      "id": "F23",
+      "category": "fixtures",
+      "scenario": "cancellation",
+      "arm": "candidate",
+      "command": "fixtureCandidate",
+      "cache": "fresh",
+      "expect": "cancelled"
+    },
+    {
+      "id": "F24",
+      "category": "fixtures",
+      "scenario": "after-cancellation",
+      "arm": "candidate",
+      "command": "fixtureCandidate",
+      "cache": "fresh",
+      "expect": "success"
+    },
+    {
+      "id": "P01",
+      "category": "preparation",
+      "scenario": "preparation",
+      "arm": "native",
+      "command": "prefetch",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "P02",
+      "category": "preparation",
+      "scenario": "preparation",
+      "arm": "native",
+      "command": "prefetch",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "D01",
+      "category": "diagnostics",
+      "scenario": "diagnostics",
+      "arm": "native",
+      "command": "strict",
+      "cache": "fresh",
+      "expect": "strict-blockers"
+    },
+    {
+      "id": "D02",
+      "category": "diagnostics",
+      "scenario": "diagnostics",
+      "arm": "native",
+      "command": "strict",
+      "cache": "fresh",
+      "expect": "strict-blockers"
+    },
+    {
+      "id": "M01",
+      "category": "materiality",
+      "scenario": "materiality",
+      "arm": "native",
+      "command": "native",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "M02",
+      "category": "materiality",
+      "scenario": "materiality",
+      "arm": "native",
+      "command": "native",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "C01",
+      "category": "correctness",
+      "scenario": "baseline",
+      "arm": "native",
+      "command": "nativeCorrectness",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "C02",
+      "category": "correctness",
+      "scenario": "baseline",
+      "arm": "native",
+      "command": "nativeCorrectness",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "C03",
+      "category": "correctness",
+      "scenario": "baseline",
+      "arm": "candidate",
+      "command": "candidateCorrectness",
+      "cache": "store",
+      "expect": "success"
+    },
+    {
+      "id": "C04",
+      "category": "correctness",
+      "scenario": "baseline",
+      "arm": "candidate",
+      "command": "candidateCorrectness",
+      "cache": "reuse",
+      "expect": "success"
+    },
+    {
+      "id": "C05",
+      "category": "correctness",
+      "scenario": "unrelated",
+      "arm": "candidate",
+      "command": "candidateCorrectness",
+      "cache": "reuse",
+      "expect": "success"
+    },
+    {
+      "id": "C06",
+      "category": "correctness",
+      "scenario": "source",
+      "arm": "native",
+      "command": "nativeCorrectness",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "C07",
+      "category": "correctness",
+      "scenario": "source",
+      "arm": "candidate",
+      "command": "candidateCorrectness",
+      "cache": "observe-source-tracking",
+      "expect": "success"
+    },
+    {
+      "id": "C08",
+      "category": "correctness",
+      "scenario": "compile-failure",
+      "arm": "native",
+      "command": "nativeCorrectness",
+      "cache": "none",
+      "expect": "task-failure"
+    },
+    {
+      "id": "C09",
+      "category": "correctness",
+      "scenario": "compile-failure",
+      "arm": "candidate",
+      "command": "candidateCorrectness",
+      "cache": "observe-source-tracking",
+      "expect": "task-failure"
+    },
+    {
+      "id": "C10",
+      "category": "correctness",
+      "scenario": "revert",
+      "arm": "native",
+      "command": "nativeCorrectness",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "V01",
+      "category": "value",
+      "scenario": "stabilization",
+      "arm": "native",
+      "command": "native",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "V02",
+      "category": "value",
+      "scenario": "stabilization",
+      "arm": "candidate",
+      "command": "strict",
+      "cache": "store",
+      "expect": "success"
+    },
+    {
+      "id": "V03",
+      "category": "value",
+      "scenario": "pair-1",
+      "arm": "native",
+      "command": "native",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "V04",
+      "category": "value",
+      "scenario": "pair-1",
+      "arm": "candidate",
+      "command": "strict",
+      "cache": "reuse",
+      "expect": "success"
+    },
+    {
+      "id": "V05",
+      "category": "value",
+      "scenario": "pair-2",
+      "arm": "candidate",
+      "command": "strict",
+      "cache": "reuse",
+      "expect": "success"
+    },
+    {
+      "id": "V06",
+      "category": "value",
+      "scenario": "pair-2",
+      "arm": "native",
+      "command": "native",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "V07",
+      "category": "value",
+      "scenario": "pair-3",
+      "arm": "native",
+      "command": "native",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "V08",
+      "category": "value",
+      "scenario": "pair-3",
+      "arm": "candidate",
+      "command": "strict",
+      "cache": "reuse",
+      "expect": "success"
+    },
+    {
+      "id": "V09",
+      "category": "value",
+      "scenario": "pair-4",
+      "arm": "candidate",
+      "command": "strict",
+      "cache": "reuse",
+      "expect": "success"
+    },
+    {
+      "id": "V10",
+      "category": "value",
+      "scenario": "pair-4",
+      "arm": "native",
+      "command": "native",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "V11",
+      "category": "value",
+      "scenario": "pair-5",
+      "arm": "native",
+      "command": "native",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "V12",
+      "category": "value",
+      "scenario": "pair-5",
+      "arm": "candidate",
+      "command": "strict",
+      "cache": "reuse",
+      "expect": "success"
+    },
+    {
+      "id": "V13",
+      "category": "value",
+      "scenario": "pair-6",
+      "arm": "candidate",
+      "command": "strict",
+      "cache": "reuse",
+      "expect": "success"
+    },
+    {
+      "id": "V14",
+      "category": "value",
+      "scenario": "pair-6",
+      "arm": "native",
+      "command": "native",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "V15",
+      "category": "value",
+      "scenario": "pair-7",
+      "arm": "native",
+      "command": "native",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "V16",
+      "category": "value",
+      "scenario": "pair-7",
+      "arm": "candidate",
+      "command": "strict",
+      "cache": "reuse",
+      "expect": "success"
+    },
+    {
+      "id": "V17",
+      "category": "value",
+      "scenario": "pair-8",
+      "arm": "candidate",
+      "command": "strict",
+      "cache": "reuse",
+      "expect": "success"
+    },
+    {
+      "id": "V18",
+      "category": "value",
+      "scenario": "pair-8",
+      "arm": "native",
+      "command": "native",
+      "cache": "none",
+      "expect": "success"
+    },
+    {
+      "id": "R01",
+      "category": "reserve",
+      "scenario": "classified-infrastructure-replacement",
+      "arm": "original",
+      "command": "original",
+      "cache": "original",
+      "expect": "original"
+    },
+    {
+      "id": "R02",
+      "category": "reserve",
+      "scenario": "classified-infrastructure-replacement",
+      "arm": "original",
+      "command": "original",
+      "cache": "original",
+      "expect": "original"
+    }
+  ],
+  "executionOrder": [
+    "P01",
+    "P02",
+    "D01",
+    "D02",
+    "M01",
+    "M02",
+    "F01",
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "F07",
+    "F08",
+    "F09",
+    "F10",
+    "F11",
+    "F12",
+    "F13",
+    "F14",
+    "F15",
+    "F16",
+    "F17",
+    "F18",
+    "F19",
+    "F20",
+    "F21",
+    "F22",
+    "F23",
+    "F24",
+    "C01",
+    "C02",
+    "C03",
+    "C04",
+    "C05",
+    "C06",
+    "C07",
+    "C08",
+    "C09",
+    "C10",
+    "V01",
+    "V02",
+    "V03",
+    "V04",
+    "V05",
+    "V06",
+    "V07",
+    "V08",
+    "V09",
+    "V10",
+    "V11",
+    "V12",
+    "V13",
+    "V14",
+    "V15",
+    "V16",
+    "V17",
+    "V18"
+  ],
+  "stateProtocol": {
+    "worktrees": "REGISTERED_SHARED_GIT_DETACHED_NO_CLONES_OR_SOURCE_COPIES",
+    "publicRoots": [
+      "native-a",
+      "native-b",
+      "candidate"
+    ],
+    "initialState": "EMPTY_PRIVATE_GRADLE_HOMES_AND_BUILD_DIRECTORIES",
+    "preparation": "P01_NATIVE_A_AND_P02_NATIVE_B_THEN_IMMUTABLE_DEPENDENCY_ONLY_SEED_TO_ALL_ARMS",
+    "seedExclusions": [
+      "configuration-cache",
+      "build-cache",
+      "task-history",
+      "outputs",
+      "daemon-state"
+    ],
+    "networkAfterPreparation": "OFFLINE_BOTH_ARMS",
+    "correctness": "C01_NATIVE_A_C02_NATIVE_B_C03_TO_C09_CANDIDATE_EVOLVING_C10_REVERT_CANDIDATE_ROOT",
+    "value": "RESTORE_DECLARED_SOURCE_REMOVE_CORRECTNESS_OUTPUT_AND_EXECUTION_STATE_KEEP_DEPENDENCIES_BOTH_ARMS",
+    "valueOutputs": "REMOVE_ONLY_DECLARED_PRODUCER_OUTPUTS_SYMMETRICALLY_BEFORE_EACH_ROW_KEEP_NATIVE_CACHES",
+    "reserve": "REPEAT_EXACT_FAILED_INFRASTRUCTURE_ROW_AT_MOST_ONCE_PER_FAILURE_RETAIN_BOTH",
+    "deadlines": "CHECK_BEFORE_EVERY_CHILD_AND_ENFORCE_REMAINING_WINDOW_ON_CHILD_GROUP",
+    "zeroStartRefusal": "RETAIN_REASON_WITHOUT_COUNTING_AS_STARTED",
+    "startedAttempt": "ATOMIC_RESERVATION_BEFORE_SPAWN_AND_IMMUTABLE_TERMINAL_CAPTURE",
+    "bootstrap": "PAIRED_DELTA_MEANS_USING_FIXED_LCG_AND_FROZEN_ORDER_NOT_HISTORICAL_ROWS",
+    "fixtureDependencies": "REUSE_OWNER_RESOLVED_TEST_CLASSPATH_NO_NEW_DEPENDENCIES",
+    "commandExpansion": "EXACT_PROFILE_PLUS_PRIVATE_GRADLE_HOME_PINNED_JDK_PATHS_AND_OFFLINE_AFTER_PREPARATION",
+    "correctnessBuildCache": "DISABLED_SYMMETRICALLY_NO_RERUN_TASKS",
+    "correctnessOutputReset": "REMOVE_CAPTURED_PRODUCER_OUTPUTS_BEFORE_C01_TO_C04_PRESERVE_CANDIDATE_STATE_FOR_C05_TO_C09"
+  },
+  "fixtureInputProofs": [
+    {
+      "row": "F03",
+      "previous": "F02",
+      "change": "NONE",
+      "expected": "REUSE",
+      "maskingChangeAllowed": false
+    },
+    {
+      "row": "F05",
+      "previous": "F03",
+      "change": "GIT_BRANCH_OUTPUT_ONLY",
+      "expected": "INVALIDATE",
+      "maskingChangeAllowed": false
+    },
+    {
+      "row": "F07",
+      "previous": "F05",
+      "change": "HEAD_COMMIT_ONLY_BRANCH_OUTPUT_UNCHANGED",
+      "expected": "REUSE",
+      "maskingChangeAllowed": false
+    },
+    {
+      "row": "F09",
+      "previous": "F07",
+      "change": "RELEASE_VERSION_ONLY",
+      "expected": "INVALIDATE",
+      "maskingChangeAllowed": false
+    }
+  ],
+  "publicMutations": [
+    {
+      "id": "unrelated",
+      "path": "cnc-unrelated-note.txt",
+      "operation": "ADD_UTF8_CNC_UNRELATED_NEWLINE",
+      "correctnessRows": [
+        "C05"
+      ],
+      "expected": "NO_REQUIRED_OUTPUT_OR_CONFIGURATION_CHANGE"
+    },
+    {
+      "id": "source",
+      "path": "src/main/java/graphql/Assert.java",
+      "operation": "INSERT_PRIVATE_STATIC_FINAL_INT_CNC_PROOF_SENTINEL_EQUALS_1729_IN_TOP_LEVEL_CLASS",
+      "correctnessRows": [
+        "C06",
+        "C07"
+      ],
+      "expected": "RECOMPILE_AND_CHANGED_CLASS_BYTES_IDENTICAL_BETWEEN_ARMS"
+    },
+    {
+      "id": "compile-failure",
+      "path": "src/main/java/graphql/Assert.java",
+      "operation": "REPLACE_CNC_PROOF_SENTINEL_INT_INITIALIZER_WITH_STRING_CNC_INTENTIONAL_TYPE_ERROR",
+      "correctnessRows": [
+        "C08",
+        "C09"
+      ],
+      "expected": "SAME_DECLARED_COMPILE_FAILURE"
+    },
+    {
+      "id": "revert",
+      "path": "ALL_TRANSACTION_AND_PROBE_FILES",
+      "operation": "EXACT_INVERSE_NO_GIT_RESET_OR_FORCED_CLEANUP",
+      "correctnessRows": [
+        "C10"
+      ],
+      "expected": "ORIGINAL_SOURCE_AND_REQUIRED_OUTPUTS"
+    }
+  ]
+}

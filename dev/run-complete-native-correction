@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+if (($# == 0)); then
+    printf 'usage: %s <freeze|package-check|init|guard|preflight|seed|stabilize|review|capture|check> [flags]\n' "$0" >&2
+    exit 64
+fi
+cd -- "${buildopt_repo_root}"
+"${buildopt_script_dir}/check-complete-native-correction" contract >&2
+buildopt_mode=$1
+shift
+for buildopt_argument in "$@"; do
+    if [[ ${buildopt_argument} == --repo || ${buildopt_argument} == --repo=* || ${buildopt_argument} == -repo || ${buildopt_argument} == -repo=* ]]; then
+        printf 'the wrapper owns --repo; overrides are not accepted\n' >&2
+        exit 64
+    fi
+done
+exec "${buildopt_script_dir}/run" --toolchain go -- \
+    go run -mod=readonly ./dev/complete-native-correction-runner \
+    "${buildopt_mode}" --repo "${buildopt_repo_root}" "$@"

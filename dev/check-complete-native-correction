@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ ${1:-} != contract && ${1:-} != fixtures && ${1:-} != host-fixtures && ${1:-} != capture ]]; then
+    printf 'usage: %s <contract|fixtures|host-fixtures|capture> [flags]\n' "$0" >&2
+    exit 64
+fi
+buildopt_mode=$1
+shift
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd -P)
+cd -- "${buildopt_repo_root}"
+if [[ ${buildopt_mode} == host-fixtures ]]; then
+    if (($# != 0)); then
+        printf 'host-fixtures takes no arguments\n' >&2
+        exit 64
+    fi
+    export CNC_SYSTEMD_TESTS=1
+    exec "${buildopt_script_dir}/run" --toolchain go -- go test -mod=readonly -count=1 \
+        -run '^TestSystemdOwnership$' -v ./dev/complete-native-correction-runner
+fi
+if [[ ${buildopt_mode} == fixtures ]]; then
+    if (($# != 0)); then
+        printf 'fixtures takes no arguments\n' >&2
+        exit 64
+    fi
+    exec "${buildopt_script_dir}/run" --toolchain go -- go test -mod=readonly \
+        ./dev/complete-native-correction-runner ./internal/strictdiagnostic
+fi
+if [[ ${buildopt_mode} == capture ]]; then
+    exec "${buildopt_script_dir}/run-complete-native-correction" check "$@"
+fi
+"${buildopt_script_dir}/run" --toolchain go -- go test -mod=readonly ./dev/complete-native-correction-validator
+"${buildopt_script_dir}/run" --toolchain go -- go run -mod=readonly ./dev/complete-native-correction-validator "$@"

@@ -1,5 +1,31 @@
 # Validation reference
 
+The [CNC-001 source investigation](../../benchmarks/results/complete-native-correction-v1/selection/feasibility.md)
+records exact upstream file/span hashes and independently reparsed historical
+problem owners. Its current proof is source inspection plus documentation,
+layout, tracker-consistency, and Base CI static checks.
+`./dev/check-complete-native-correction contract` now validates CNC-002's
+human/machine scope through frozen policies, exact source/runtime bindings,
+independently reconstructed 60-slot allocation and negative tests. It rejects
+duplicate/unknown JSON, missing cases, drift, name rules and weakened gates;
+subject relabeling still passes. Optional `--sources-root ROOT` rehashes files
+and inclusive spans, not the full Git archive or runtime binaries. No fresh
+CNC diagnostic, candidate correctness or timing validation exists.
+The [CNC tracker](../plans/complete-native-correction-poc-tracker.md) records
+the approved two-hour limit and 30-minute review, with CNC-003's native harness
+verified locally. The [capture runbook](./complete-native-correction-capture.md)
+documents `./dev/check-complete-native-correction fixtures` and the versioned
+runner's read-only attempt reconstruction. Fake-child tests cover worktrees,
+runtime drift, immutable attempts, report ambiguity, cancellation and failed
+publication. `./dev/check-complete-native-correction host-fixtures` separately
+proves detached subtree ownership, client-loss/deadline cleanup and the complete
+fake native P/D/M consuming path on a user-systemd/cgroup-v2 host. Private
+Maven/home bindings, exact output/producer inventories, separate logs, signals,
+verified-input reconstruction and strict JSON/symlink negatives are checked.
+The host gate is explicit and not implied by the ordinary suite's skip. Fake
+children are not real Gradle fixture or Corretto compatibility proof. Base CI
+includes generic fixtures, never public CNC execution or numerical value gates.
+
 The WCNCP contract and terminal evidence are checked by
 `./dev/check-wrapper-coordinated-native-corrections-plan` and
 `./dev/check-wcncp-terminal`. The terminal checker composes the 30-observation

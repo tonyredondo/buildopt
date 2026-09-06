@@ -2,6 +2,22 @@
 
 ## Current Executive Summary
 
+- **CNC-001 is source feasibility, not a speedup result.** The
+  [five-blocker analysis](../../benchmarks/results/complete-native-correction-v1/selection/feasibility.md)
+  finds a plausible local correction, including Bnd's supported properties API,
+  but does not establish correctness or saved time. The actual owner-CI path
+  generates timestamped artifact versions, unlike the earlier local command.
+  The owner accepted the local scope. The
+  [CNC-002 preparation](../../benchmarks/results/complete-native-correction-v1/contract/local-scope-and-budget-review.md)
+  now has a [static contract/checker](../../specs/poc-complete-native-correction-v1.md)
+  for the approved 60-start/two-hour ceiling, with review at 30 minutes.
+  CNC-003's [native capture harness](../reference/complete-native-correction-capture.md)
+  now has generic/race and explicit host fake-child proof for detached ownership,
+  private input isolation and exact output reconstruction. CNC-004 fresh native
+  evidence is next; local harness qualification is not public runtime or value
+  proof. No new Gradle run or timing sample exists;
+  historical configuration work is not evidence of attainable saving.
+
 - **The wrapper-coordinated native-corrections POC stops at the WCNCP-009
   opportunity-breadth gate.**
   WCNCP-000 freezes five typed records, a separate Gradle-cache data plane and

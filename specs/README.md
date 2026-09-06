@@ -7,6 +7,17 @@ path. Start with the [documentation portal](../docs/README.md) or
 [architecture overview](../docs/architecture/overview.md), then return here for
 the exact cross-component contract.
 
+The [Complete Native Correction contract](./poc-complete-native-correction-v1.md),
+[machine contract](./poc-complete-native-correction-v1.json) and
+[subject manifest](./poc-complete-native-correction-v1.subjects.json) freeze the
+accepted local non-CI scope, 60 starts maximum within two hours and review at
+30 minutes. `./dev/check-complete-native-correction contract` verifies static
+bindings and proof slots with negative tests. Qualified public execution remains
+later work in the [CNC tracker](../docs/plans/complete-native-correction-poc-tracker.md).
+The [CNC-003 runbook](../docs/reference/complete-native-correction-capture.md)
+documents qualified generic/host fixture proof and the guarded native interface.
+Real runtime/source preparation and public P/D/M evidence remain CNC-004 work.
+
 The active product pivot is the
 [`Wrapper-Coordinated Native Corrections v1`](./poc-wrapper-coordinated-native-corrections-v1.md).
 `WCNCP-000` freezes wrapper/backend observation, coordination, validation, and

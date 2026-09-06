@@ -15,6 +15,7 @@ before running the product.
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
 | Review the POC idea, mechanisms, current value, and next steps | [Current POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
+| Review the next complete native-correction study | [Complete Native Correction POC](./plans/complete-native-correction-poc.md) | [Execution tracker](./plans/complete-native-correction-poc-tracker.md), [scope and budget review](../benchmarks/results/complete-native-correction-v1/contract/local-scope-and-budget-review.md); local scope accepted, no Gradle execution |
 | Review the closed source-bound correction experiment | [Source-Bound Configuration-Input Corrections POC](./plans/source-bound-configuration-input-corrections-poc.md) | [Contract](../specs/poc-source-bound-configuration-input-corrections-v1.md), [evidence index](../benchmarks/results/source-bound-configuration-input-corrections-v1/README.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the stopped adaptive hypothesis | [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md) | [Terminal decision](../specs/poc-adaptive-fragment-terminal-decision-v1.md), [current generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the implemented onboarding foundation | [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md) | [Product onboarding](./getting-started/product-onboarding.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
@@ -65,6 +66,16 @@ before running the product.
 
 ### Plans
 
+- [Complete Native Correction POC](./plans/complete-native-correction-poc.md)
+  and [execution tracker](./plans/complete-native-correction-poc-tracker.md):
+  directed GraphQL Java blocker closure, followed by separately gated installed
+  value, chronological persistence, and unseen replication. CNC-001 maps the
+  five blockers. CNC-002's [static contract](../specs/poc-complete-native-correction-v1.md)
+  and checker freeze the accepted local scope and 60-start/two-hour ceiling,
+  with review at 30 minutes. CNC-003's [capture runbook](./reference/complete-native-correction-capture.md)
+  and generic/host fixtures qualify the native harness, including detached
+  ownership and private input/output reconstruction. CNC-004 fresh native
+  evidence is next; no Gradle execution has occurred.
 - [Source-Bound Configuration-Input Corrections POC](./plans/source-bound-configuration-input-corrections-poc.md):
   the closed source-enriched three-family mechanism study; SBIC-002 reconstructs
   3/3 conclusive but only 1/3 diagnostic-bound families and stops before
