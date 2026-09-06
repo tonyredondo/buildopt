@@ -1,14 +1,14 @@
 # Complete Native Correction POC — Execution Tracker
 
-**Overall:** `INCOMPLETE_EXPERIMENT_INPUT` — first CNC-004 window refused before Gradle<br>
+**Overall:** `INCOMPLETE_EXPERIMENT_INPUT` — second CNC-004 window stopped after P01 post-check<br>
 **Plan:** [Complete Native Correction POC](./complete-native-correction-poc.md)<br>
-**Current task:** CNC-004 blocked after real Corretto input exposed a verifier defect; correction verified, original campaign retained<br>
-**Next execution step:** explicit continuation decision and separately frozen corrected execution package; do not replace the first campaign or reset its deadline silently<br>
+**Current task:** CNC-004 blocked: P01 native build succeeded, but generated Java/Kotlin private-home state failed the frozen post-check; bounded repair verified locally<br>
+**Next execution step:** preserve both failed campaigns; complete repair publication and resolve separately frozen execution continuation without silently resetting budgets<br>
 **Public candidate builds / value samples:** 0 / 0<br>
-**Phase A real Gradle starts:** 0 / 60; first campaign initialized and stopped at preflight<br>
-**Phase A time limit:** original 7,200-second boot-bound window retained; guardian stopped after 418.33 seconds, later repair/validation costs additional; no deadline reset<br>
+**Phase A real Gradle starts:** 1 / 60 in the explicitly authorized second window; first window retained with 0 starts<br>
+**Phase A time limit:** both 7,200-second windows retained; first guardian stopped after 418.33 seconds, second after 348.51 seconds; later repair/validation/publication costs remain additional<br>
 **Research spend:** source analysis, local implementation and fake-child tests; initial setup not continuously timed, no exact total cost claim<br>
-**Execution authority:** CNC-004 and one exact-commit source reacquisition accepted; first frozen package refused before Gradle; its repair does not authorize a substituted package/window<br>
+**Execution authority:** owner explicitly approved the second corrected-package/two-hour attempt and temporary performance profile; original evidence/cost retained, profile restored to balanced after the P01 refusal<br>
 **Phase B/C budgets:** not authorized
 
 ## How to use this tracker
@@ -36,7 +36,7 @@ CNC-003. Existing WCNCP/SBIC evidence remains unchanged.
 | CNC-001 | Exact GraphQL source and complete blocker feasibility | Source-analysis authorization | verified | Five owners/consumers mapped; retained `INCOMPLETE_EXPERIMENT_INPUT` refusal to advance, not a correction qualification. |
 | CNC-002 | Phase A contract, output/proof matrix, and complete start allocation | CNC-001 and accepted local scope/budget | verified | Human/machine contract, exact subject manifest and negative-tested static checker; 60 slots, two-hour limit and 30-minute review. No runtime/package proof or publication claimed. |
 | CNC-003 | Worktree-safe capture, independent checker, generic fixtures, and runbook | CNC-002 | verified | Generic/race and explicit host integration prove detached subtree ownership, private Maven/home bindings, complete fake P/D/M consumers, exact output/producer reconstruction, and evidence refusals. Checked local package/runbook; no public Gradle or publication. |
-| CNC-004 | Fresh native diagnostics and controlled materiality | CNC-003 | blocked | First runtime preflight refused with zero Gradle starts. Real source/archive identities recovered; implicit-directory verifier repaired and proved against both actual JDK trees. No native diagnostic/materiality proof; corrected package/continuation decision required. |
+| CNC-004 | Fresh native diagnostics and controlled materiality | CNC-003 | blocked | Second window: P01 Gradle exit zero, then private Java/Kotlin runtime state rejected by the post-check. Original typed harness failure retained; generated-state repair passes actual-home and six-slot fixture checks. No D/M rows; corrected package/continuation decision remains required. |
 | CNC-005 | Complete digest-bound recipe and behavioral fixture proof | CNC-004 | pending | Every change has a behavioral obligation and tested inverse. |
 | CNC-006 | Public candidate correctness | CNC-005 | pending | All output, invalidation, owner-test, error, and revert obligations pass. |
 | CNC-007 | Eight-pair native value and cost reconstruction | CNC-006 | pending | Native value and machine-payback gates pass independently. |
@@ -480,12 +480,13 @@ remain unverified for fresh execution. CLI unknown-mode rejection also passes.
 
 ### Immediate next action
 
-Retain the [first CNC-004 preflight refusal](../../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
-and all local Git/runtime inputs. The corrected runtime verifier now passes
-both actual archive/install trees, but the original execution package cannot
-be changed in place. Resolve the explicit continuation/package decision before
-another initialization or P01. The original budget and failure stay recorded;
-do not silently reset its clock, spend reserve rows, or claim CNC-004 complete.
+Retain the [first preflight refusal](../../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
+and the [second-window P01 post-check refusal](../../benchmarks/results/complete-native-correction-v1/cnc004-private-home/README.md),
+with all local Git/runtime inputs. The private-home repair passes the actual
+generated state and consuming fixtures, but neither immutable campaign can be
+rewritten or promoted to success. Resolve corrected-package execution and budget
+authority before another initialization. Do not spend reserve rows or claim
+CNC-004 complete from the successful native child alone.
 
 ### Historical CNC-003 partial implementation record — 2026-09-06
 
@@ -630,3 +631,28 @@ reproduced the failure; the correction reconstructs the initializer's exact
 deadline/review sums, with no tolerance. Tests cover both rounding cases,
 one-representable-step drift in either direction and expiry. This repairs a
 harness prerequisite only; it does not replace or reset the first campaign.
+
+### CNC-004 second-window private-home refusal — 2026-09-06
+
+The owner explicitly approved a new corrected-package attempt of at most two
+hours, preserving previous cost/evidence, and temporary `performance` with
+restoration to `balanced`. Both CIs had passed on execution revision `b613fe46`.
+The [E-554 evidence package](../../benchmarks/results/complete-native-correction-v1/cnc004-private-home/README.md)
+binds the new binary/package/state and complete P01 raw records. Exact source,
+both runtimes and the host envelope passed preflight. No clone or public source
+patch was made; new detached worktrees share the recovered bare repository.
+
+P01 `assemble testClasses` exited zero in 118.993481920 seconds. Its post-check
+rejected generated `.java/.userPrefs` and `.kotlin/daemon` state in the fresh
+private home. The immutable result remains `HARNESS_FAILURE`; no successful
+input-after record exists, and P02/D/M did not run. The guardian and bound profile
+hold stopped after 348.51 seconds; `balanced` restoration was verified. Further
+repair/validation/publication time is not erased or represented as native value.
+
+The bounded policy correction admits only those generated runtime trees while
+retaining Maven/settings, unexpected-path, file-kind and symlink refusals. The
+dependency seed excludes private runtime state. The fixture and retained real
+home reproduced the old failure; regression/negative/race and explicit host
+six-slot checks pass after repair. Independent replay still reconstructs the
+original failure, never upgraded to success. One real Gradle start, zero fresh
+diagnostics, materiality, candidate or value rows; CNC-005..007 remain pending.

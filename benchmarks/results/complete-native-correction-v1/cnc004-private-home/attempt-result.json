@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "buildopt.cnc/attempt/v1",
+  "slot": "P01",
+  "started": true,
+  "exitCode": 0,
+  "signal": 0,
+  "stdoutSha256": "e108a1778e71708bd59cddae4f9010e8aea20c2576c3d5ed8cf75e9eccde9b0c",
+  "stderrSha256": "ff36994b6d512ef65432669b429c73467bf6a94d0cf584e44f96f14a97c1b126",
+  "outcome": "HARNESS_FAILURE",
+  "detail": "post-child input verification: unexpected private user-home directory",
+  "startBootSeconds": 3473055.4,
+  "endBootSeconds": 3473204.97,
+  "logSha256": "cfebde6e1abd74d85ab307589d78c85d2c403049e6911b13c9fbd3801977a8b8",
+  "reportSelection": {
+    "outcome": "ROOT_REPORT_REFERENCE_MISSING",
+    "referenceCount": 0,
+    "referenceSha256": []
+  },
+  "artifacts": [
+    {
+      "path": "inputs-before.json",
+      "sha256": "37bd7c135d1f652a3c084dfc1fd31211d4e2c0b3a72b8f660f2ea29bfceb4eff"
+    }
+  ]
+}

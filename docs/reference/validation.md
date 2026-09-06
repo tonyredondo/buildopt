@@ -41,6 +41,17 @@ both limits after JSON serialization, rejects one-representable-step drift in
 either direction, and checks expiry. The reader now compares the initializer's
 exact sums, with no tolerance, duration change or campaign reset.
 
+The [second-window P01 refusal](../../benchmarks/results/complete-native-correction-v1/cnc004-private-home/README.md)
+adds `TestPrivateHomeRuntimeState` and `TestRetainedPrivateRuntimeHome`. The
+former checks generated JVM/Kotlin trees and Maven/settings, unexpected-path,
+root-kind and symlink negatives; dependency-seed tests exclude private runtime
+state. The six-slot native fixture now generates that state through its actual
+child path. The opt-in retained-home test proves the real post-build tree is
+accepted after repair while independent row reconstruction still returns the
+original `HARNESS_FAILURE`. No test retroactively qualifies P01 or substitutes
+for fresh public diagnostics/materiality. Ordinary-suite skips are not real-home
+proof. The owner-approved temporary profile was restored to balanced after stop.
+
 The WCNCP contract and terminal evidence are checked by
 `./dev/check-wrapper-coordinated-native-corrections-plan` and
 `./dev/check-wcncp-terminal`. The terminal checker composes the 30-observation

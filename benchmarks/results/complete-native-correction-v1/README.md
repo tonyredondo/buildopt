@@ -1,14 +1,16 @@
 # Complete native correction v1 evidence
 
-Current boundary: first `CNC-004` window refused at runtime preflight, with zero
-Gradle starts. The verifier repair is validated; experimental continuation is
-pending an explicit package/window decision.
+Current boundary: the explicitly authorized second `CNC-004` window stopped
+after one successful native preparation failed its private-home post-check.
+The [P01 raw evidence and bounded repair](./cnc004-private-home/README.md) are
+`E-554`. The immutable failure remains; no diagnostic/materiality/value row exists.
+Both campaigns and all earlier cost remain retained, without another restart.
 
 The [first-window preflight record](./cnc004-preflight/README.md) retains the
 committed execution package, original boot-bound state, exact source/runtime
 recovery and zero-start refusal. Corretto's implicit `man` directory exposed a
 harness defect; the corrected verifier passes both real archive/install trees.
-This is `E-553`, not fresh native diagnostics, materiality or product value.
+This historical `E-553` is not fresh native diagnostics, materiality or product value.
 
 The [plan](../../../docs/plans/complete-native-correction-poc.md) and
 [tracker](../../../docs/plans/complete-native-correction-poc-tracker.md) define
@@ -54,7 +56,8 @@ the separate host gate, ShellCheck, layout, tracker consistency, documentation a
 integration. Retained exact-commit bytes rehash to seven subject files and eight
 spans; the Wrapper script, full archive and runtime binaries were not newly
 verified at CNC-003. CNC-004 now freshly verifies the full source archive and
-both exact runtime archive/install trees, without launching a JVM or Gradle.
-Independent native attempt/output checking exists, but no public CNC build evidence has been
-captured or checked. Nothing in this
+both exact runtime archive/install trees; the subsequent explicitly approved
+second window launched P01 as recorded above.
+Independent native attempt checking reconstructs the retained failed P01 row;
+there is no qualified public output comparison or materiality evidence. Nothing in this
 evidence index authorizes a Gradle start or a substitute subject.

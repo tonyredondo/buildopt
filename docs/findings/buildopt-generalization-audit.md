@@ -17,7 +17,11 @@ compatibility or broaden opportunity evidence. CNC-004's first window recovered
 the exact Git/runtime inputs but [refused at preflight](../../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
 on a verifier defect: an implicit Corretto `man` directory. Its bounded repair
 passes both real archive/install trees (`E-553`), without starting Gradle or
-replacing the frozen campaign. Fresh native proof still requires continuation.
+replacing the frozen campaign. An explicitly approved second window reached
+[successful native preparation followed by private-home rejection](../../benchmarks/results/complete-native-correction-v1/cnc004-private-home/README.md)
+(`E-554`). The generated Java/Kotlin state repair passes retained-home and
+six-slot fixture checks, while independent replay preserves the original
+`HARNESS_FAILURE`. One preparation start does not broaden opportunity evidence.
 No fresh CNC diagnostic, candidate, timing, or
 independent-family success exists.
 

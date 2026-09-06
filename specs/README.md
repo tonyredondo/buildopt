@@ -19,7 +19,10 @@ documents qualified generic/host fixture proof and the guarded native interface.
 The first CNC-004 window recovered exact source/runtime inputs but refused
 before Gradle on an implicit-directory verifier defect. Its
 [refusal and verified repair](../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
-preserve the original package/clock; public P/D/M evidence remains absent.
+preserve the original package/clock. A separately approved second window reached
+[P01 native exit zero and a private-home harness refusal](../benchmarks/results/complete-native-correction-v1/cnc004-private-home/README.md).
+The bounded generated Java/Kotlin state policy is now explicit; the original
+failure is retained and no D/M/value row exists.
 
 The active product pivot is the
 [`Wrapper-Coordinated Native Corrections v1`](./poc-wrapper-coordinated-native-corrections-v1.md).

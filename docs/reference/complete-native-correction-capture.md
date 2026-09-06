@@ -1,6 +1,6 @@
 # Complete Native Correction capture runbook
 
-Status: **CNC-004 first window refused at runtime preflight; zero Gradle starts.**
+Status: **CNC-004 second window stopped after P01 private-home post-check; one Gradle start.**
 This document describes the implemented interface and its evidence boundary. It
 is not authority to start the two-hour experiment. The [tracker](../plans/complete-native-correction-poc-tracker.md)
 owns advancement; the [contract](../../specs/poc-complete-native-correction-v1.md)
@@ -128,7 +128,13 @@ Every child gets an explicit environment rather than the operator environment.
 `user-home`; JVM `maven.repo.local` points at its empty `.m2/repository`.
 The owned `JAVA_TOOL_OPTIONS` sets these properties and UTF-8 symmetrically;
 ambient JVM/Gradle options are rejected, not appended. Private Maven settings,
-unexpected files or directories refuse continuation. No `mavenLocal()` source
+artifacts and unexpected entries refuse continuation. JVM preferences under
+`.java/.userPrefs` and Kotlin metadata under `.kotlin/daemon` are declared
+runtime-generated state in an initially empty private home. Only regular files
+and directories in those trees and their required ancestors are admitted;
+links and special members refuse. They are never copied into the dependency
+seed or another home/arm. M02 retains only its own M01 runtime state.
+No `mavenLocal()` source
 change is made. This implements the contract's no-owner-home-reuse rule.
 Gradle's [Maven-local resolution API](https://docs.gradle.org/current/kotlin-dsl/gradle/org.gradle.api.artifacts.dsl/-repository-handler/maven-local.html)
 documents the relevant property/settings precedence; real pinned-runtime
@@ -259,12 +265,15 @@ files/directories and symlinks. Generic negatives and an explicit read-only
 check against both real installed trees passed; neither JVM nor Gradle runtime
 compatibility follows from archive parity alone.
 
-The original package/state remain immutable and its exact guardian is stopped.
-No replacement window or package binding is silently substituted. A separately
-frozen corrected execution package and explicit continuation decision are needed
-before P01; the first failure and all elapsed cost remain evidence. No Gradle
-invocation, diagnostic, materiality, candidate or timing exists. See the linked
-preflight record for the opt-in real-archive validation command and recovery.
+The owner subsequently approved a second corrected-package/two-hour attempt,
+retaining the first failure and cost, with temporary performance and balanced
+restoration. That attempt's [P01 record](../../benchmarks/results/complete-native-correction-v1/cnc004-private-home/README.md)
+shows successful native Gradle followed by a private-home post-check failure.
+The generated-runtime-state correction passes the actual retained home and
+six-slot consuming fixtures. The original failed row remains unchanged, both
+guardians are stopped, and balanced restoration was verified. No P02/D/M,
+candidate or value row exists. A further package/attempt needs an explicit
+continuation decision; neither campaign is overwritten or silently reset.
 
 The separate recipe/real fixture package is frozen in CNC-005 before F01 after
 native admission. Its absence is not replaced by hashing a nonexistent recipe.

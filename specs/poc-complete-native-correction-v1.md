@@ -89,6 +89,12 @@ Implement no-owner-home reuse with a private `HOME`, JVM `user.home` and empty
 JVM `maven.repo.local` under each assigned Gradle home. Only the runner-owned
 `JAVA_TOOL_OPTIONS` supplies these bindings and UTF-8; do not inherit ambient
 options, Maven settings or local artifacts. Reject changed private inputs.
+The initially empty private home may acquire runtime-owned preferences under
+`.java/.userPrefs` and daemon metadata under `.kotlin/daemon`. Admit only regular
+files/directories in those trees and their directory ancestors; reject links,
+special files and all other private-home entries, including Maven artifacts
+and settings. Never include these generated trees in the dependency seed or
+copy them between arms. A reused home retains only its own prior runtime state.
 This is symmetric input isolation, not a change to `mavenLocal()` declarations
 or the subject's version semantics. Campaign cgroup ownership may preserve
 native daemons between successful requests; it must terminate them at expiry,

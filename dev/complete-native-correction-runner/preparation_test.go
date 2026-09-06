@@ -15,7 +15,7 @@ import (
 func TestDependencySeedAndFreshHomes(t *testing.T) {
 	root, _, _ := setup(t)
 	source := filepath.Join(root, "homes/prefetch-b")
-	for name, body := range map[string]string{"caches/modules-2/files-2.1/dependency.jar": "jar", "caches/modules-2/metadata.bin": "metadata", "caches/modules-2/metadata.lock": "lock", "wrapper/dists/gradle/bin/gradle": "wrapper", "caches/build-cache-1/value": "forbidden", "caches/configuration-cache/value": "forbidden"} {
+	for name, body := range map[string]string{"caches/modules-2/files-2.1/dependency.jar": "jar", "caches/modules-2/metadata.bin": "metadata", "caches/modules-2/metadata.lock": "lock", "wrapper/dists/gradle/bin/gradle": "wrapper", "caches/build-cache-1/value": "forbidden", "caches/configuration-cache/value": "forbidden", "user-home/.java/.userPrefs/prefs.xml": "private runtime state", "user-home/.kotlin/daemon/fixture.run": "private runtime state"} {
 		path := filepath.Join(source, name)
 		if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
 			t.Fatal(err)

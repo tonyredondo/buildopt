@@ -16,9 +16,11 @@
   private input isolation and exact output reconstruction. CNC-004's
   [first window refused before Gradle](../../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
   on Corretto's implicit directory layout. The verifier repair passes actual
-  archive/install parity, but no native/materiality row exists. Original
-  preparation cost and package/clock identity are retained; a separately frozen
-  corrected package needs an explicit continuation decision. No timing sample exists;
+  archive/install parity. The explicitly approved second window then reached
+  [P01 native exit zero and a private-home post-check refusal](../../benchmarks/results/complete-native-correction-v1/cnc004-private-home/README.md).
+  The 118.993481920-second process envelope is preparation cost, not a saving.
+  The generated Java/Kotlin state verifier is repaired, but the failed row and
+  both window identities/costs remain retained. No D/M or value sample exists;
   historical configuration work is not evidence of attainable saving.
 
 - **The wrapper-coordinated native-corrections POC stops at the WCNCP-009

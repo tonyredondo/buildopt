@@ -74,11 +74,15 @@ first window then recovered exact source/archive inputs and froze a committed
 package, but [refused before Gradle](../../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
 because the verifier rejected Corretto's implicit `man` directory. The repair
 passes both actual installed trees and regression/race checks (`E-553`). The
-original clock/package are retained and the guardian stopped, without a reset
-or substitute run. A corrected package and explicit continuation decision are
-next. This is not real Gradle or candidate behavior proof.
-No CNC Gradle start, patch, candidate, timing or speedup exists. Prior terminal
-results stay closed.
+original clock/package are retained. The owner explicitly approved a second
+two-hour attempt and temporary performance profile. Its
+[P01 native build succeeded but the private-home post-check failed](../../benchmarks/results/complete-native-correction-v1/cnc004-private-home/README.md)
+on generated Java/Kotlin metadata (`E-554`). The bounded repair passes the real
+retained home and consuming fixtures without changing the historical failure.
+The guardian/profile hold stopped and balanced restoration was verified.
+One real preparation start, no P02/D/M, public patch, candidate, value sample or
+speedup. Corrected-package execution still requires continuation; both attempts
+and all costs remain retained. Prior terminal results stay closed.
 
 `CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1` is terminal at CINC-003 with
 `STOP_STRICT_DIAGNOSTIC_BUDGET_CANNOT_COMPLETE_COHORT`. Fourteen valid raw

@@ -1,7 +1,7 @@
 # Complete Native Correction POC
 
 **Experiment:** `COMPLETE_NATIVE_CORRECTION_V1` (`CNC`)<br>
-**State:** `INCOMPLETE_EXPERIMENT_INPUT`; first CNC-004 window refused before Gradle, verifier repaired, continuation pending<br>
+**State:** `INCOMPLETE_EXPERIMENT_INPUT`; second CNC-004 window stopped at P01 post-check after native exit zero, private-home repair verified locally<br>
 **Planning baseline:** BuildOpt `ca5fb5d8c10ac581de7478cc1dec52269da67e24`<br>
 **Execution and evidence status:** [step tracker](./complete-native-correction-poc-tracker.md)<br>
 **First subject:** GraphQL Java, explicitly local non-CI `assemble`; no owner-CI qualification
@@ -388,7 +388,10 @@ Detached ownership and private input/output consuming paths are proved with
 fake children, not public Gradle. CNC-004 recovered the exact real inputs, then
 refused before Gradle on a runtime-directory verifier defect. Its repair is
 proved against both actual archives; the [preflight record](../../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
-preserves the first package/clock and the explicit continuation boundary.
+preserves the first package/clock. The separately approved second window reached
+[successful native preparation followed by a private-home refusal](../../benchmarks/results/complete-native-correction-v1/cnc004-private-home/README.md).
+The generated Java/Kotlin state repair is proved against the retained real home
+and consuming fixtures; the failed row stays unchanged. No D/M/value proof exists.
 
 | Planned owner | Purpose |
 | --- | --- |

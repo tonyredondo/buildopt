@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"syscall"
 	"testing"
 )
 
@@ -29,6 +30,20 @@ func TestNativeConsumer(t *testing.T) {
 	}
 	if !strings.Contains(os.Getenv("JAVA_TOOL_OPTIONS"), "-Dmaven.repo.local="+filepath.Join(os.Getenv("HOME"), ".m2/repository")) {
 		t.Fatal("private Maven input lost in child")
+	}
+	// Real Groovy/JVM preferences and Kotlin daemon discovery create state under
+	// the fresh private home. Exercise its post-child validation in every slot.
+	for relative, body := range map[string]string{
+		".java/.userPrefs/org/codehaus/groovy/prefs.xml": "<preferences><root type=\"user\"><map/></root></preferences>\n",
+		".kotlin/daemon/kotlin-daemon.fixture.run":       "",
+	} {
+		path := filepath.Join(os.Getenv("HOME"), relative)
+		if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(body), 0600); err != nil {
+			t.Fatal(err)
+		}
 	}
 	data, err := json.Marshal(args)
 	if err != nil {
@@ -198,6 +213,110 @@ func TestNativeCommandProfilesAndPrivateInputs(t *testing.T) {
 	}
 	if err := prepareUserHome(home, true); err == nil {
 		t.Fatal("Maven settings drift accepted")
+	}
+}
+
+func TestPrivateHomeRuntimeState(t *testing.T) {
+	for _, change := range []string{"generated", "maven-settings", "maven-artifact", "gradle-settings", "extra-java", "extra-kotlin", "prefix-lookalike", "root-file", "generated-root-file", "ancestor-link", "leaf-link", "special-member"} {
+		t.Run(change, func(t *testing.T) {
+			home := t.TempDir()
+			if err := prepareUserHome(home, false); err != nil {
+				t.Fatal(err)
+			}
+			user := filepath.Join(home, "user-home")
+			write := func(relative string) {
+				t.Helper()
+				path := filepath.Join(user, relative)
+				if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
+					t.Fatal(err)
+				}
+				if err := os.WriteFile(path, []byte("fixture state"), 0600); err != nil {
+					t.Fatal(err)
+				}
+			}
+			switch change {
+			case "generated":
+				write(".java/.userPrefs/org/codehaus/groovy/prefs.xml")
+				write(".java/.userPrefs/.user.lock.fixture")
+				write(".kotlin/daemon/kotlin-daemon.fixture.run")
+			case "maven-settings":
+				write(".m2/settings.xml")
+			case "maven-artifact":
+				write(".m2/repository/injected.jar")
+			case "gradle-settings":
+				write(".gradle/gradle.properties")
+			case "extra-java":
+				write(".java/other/settings")
+			case "extra-kotlin":
+				write(".kotlin/other/settings")
+			case "prefix-lookalike":
+				write(".java/.userPrefs-other/settings")
+			case "root-file":
+				write(".kotlin")
+			case "generated-root-file":
+				write(".java/.userPrefs")
+			case "special-member":
+				path := filepath.Join(user, ".kotlin/daemon/pipe")
+				if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
+					t.Fatal(err)
+				}
+				if err := syscall.Mkfifo(path, 0600); err != nil {
+					t.Fatal(err)
+				}
+			case "ancestor-link", "leaf-link":
+				path := filepath.Join(user, ".java")
+				if change == "leaf-link" {
+					path = filepath.Join(user, ".java/.userPrefs/link")
+					if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
+						t.Fatal(err)
+					}
+				}
+				if err := os.Symlink(t.TempDir(), path); err != nil {
+					t.Fatal(err)
+				}
+			}
+			if err := prepareUserHome(home, true); (err == nil) != (change == "generated") {
+				t.Fatalf("private runtime state: %v", err)
+			}
+			if err := prepareUserHome(home, false); err == nil {
+				t.Fatal("existing private home silently reused as fresh")
+			}
+		})
+	}
+}
+
+func TestRetainedPrivateRuntimeHome(t *testing.T) {
+	home := os.Getenv("CNC_PRIVATE_RUNTIME_HOME")
+	if home == "" {
+		t.Skip("requires explicit retained native Gradle home; ordinary fixtures are not real-home proof")
+	}
+	if err := prepareUserHome(home, true); err != nil {
+		t.Fatal(err)
+	}
+	root := os.Getenv("CNC_RETAINED_CAMPAIGN_ROOT")
+	if root == "" {
+		return
+	}
+	if _, expectedHome := expectedPaths(root, "P01"); home != expectedHome {
+		t.Fatal("retained private home does not belong to the original P01")
+	}
+	var state campaign
+	if err := readJSON(filepath.Join(root, "state.json"), &state); err != nil {
+		t.Fatal(err)
+	}
+	rows, err := inspect(root, state)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(rows) != 1 || rows[0].Slot != "P01" || !rows[0].Started || rows[0].ExitCode != 0 || rows[0].Outcome != "HARNESS_FAILURE" {
+		t.Fatal("the correction must not upgrade the retained failed attempt")
+	}
+	repo, err := filepath.Abs("../..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := inspectNativeRequests(repo, root, rows); err != nil {
+		t.Fatal(err)
 	}
 }
 

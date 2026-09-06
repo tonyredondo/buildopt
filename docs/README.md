@@ -74,10 +74,10 @@ before running the product.
   and checker freeze the accepted local scope and 60-start/two-hour ceiling,
   with review at 30 minutes. CNC-003's [capture runbook](./reference/complete-native-correction-capture.md)
   and generic/host fixtures qualify the native harness, including detached
-  ownership and private input/output reconstruction. CNC-004's first window
-  [refused at JDK preflight](../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
-  before Gradle; the verifier is repaired, with an explicit corrected-package
-  continuation decision pending. No native/value row exists.
+  ownership and private input/output reconstruction. CNC-004's explicitly
+  approved second window reached [native preparation and a private-home post-check refusal](../benchmarks/results/complete-native-correction-v1/cnc004-private-home/README.md).
+  The generated Java/Kotlin state verifier is repaired; both immutable campaigns
+  and costs remain retained. One Gradle start, no diagnostic/materiality/value row.
 - [Source-Bound Configuration-Input Corrections POC](./plans/source-bound-configuration-input-corrections-poc.md):
   the closed source-enriched three-family mechanism study; SBIC-002 reconstructs
   3/3 conclusive but only 1/3 diagnostic-bound families and stops before

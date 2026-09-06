@@ -134,20 +134,30 @@ func prepareUserHome(home string, reuse bool) error {
 		}
 	}
 	// Native assemble must not publish to the private Maven repository or import
-	// user settings. Extra files are a changed execution input, not a cache seed.
+	// user settings. JVM preferences and Kotlin daemon discovery do create local
+	// state in the initially empty private home. Keep only those owned trees;
+	// dependency seeding never copies them to a different home or arm.
 	return filepath.WalkDir(user, func(path string, entry os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
-		if !entry.IsDir() {
-			return errors.New("undeclared private user-home input")
+		if !entry.IsDir() && !entry.Type().IsRegular() {
+			return errors.New("unsafe private user-home member")
 		}
 		rel, err := filepath.Rel(user, path)
 		if err != nil {
 			return err
 		}
-		if rel != "." && rel != ".m2" && rel != filepath.Join(".m2", "repository") {
-			return errors.New("unexpected private user-home directory")
+		rel = filepath.ToSlash(rel)
+		switch rel {
+		case ".", ".m2", ".m2/repository", ".java", ".java/.userPrefs", ".kotlin", ".kotlin/daemon":
+			if !entry.IsDir() {
+				return fmt.Errorf("private user-home root is not a directory: %s", rel)
+			}
+		default:
+			if !strings.HasPrefix(rel, ".java/.userPrefs/") && !strings.HasPrefix(rel, ".kotlin/daemon/") {
+				return fmt.Errorf("undeclared private user-home input: %s", rel)
+			}
 		}
 		return nil
 	})
