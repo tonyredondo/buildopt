@@ -15,7 +15,7 @@ before running the product.
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
 | Review the POC idea, mechanisms, current value, and next steps | [Current POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
-| Review the next complete native-correction study | [Complete Native Correction POC](./plans/complete-native-correction-poc.md) | [Execution tracker](./plans/complete-native-correction-poc-tracker.md), [scope and budget review](../benchmarks/results/complete-native-correction-v1/contract/local-scope-and-budget-review.md); local scope accepted, no Gradle execution |
+| Review the next complete native-correction study | [Complete Native Correction POC](./plans/complete-native-correction-poc.md) | [Execution tracker](./plans/complete-native-correction-poc-tracker.md), [latest evidence](../benchmarks/results/complete-native-correction-v1/cnc004-empty-source-state/README.md); two preparations passed, strict diagnostics still incomplete |
 | Review the closed source-bound correction experiment | [Source-Bound Configuration-Input Corrections POC](./plans/source-bound-configuration-input-corrections-poc.md) | [Contract](../specs/poc-source-bound-configuration-input-corrections-v1.md), [evidence index](../benchmarks/results/source-bound-configuration-input-corrections-v1/README.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the stopped adaptive hypothesis | [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md) | [Terminal decision](../specs/poc-adaptive-fragment-terminal-decision-v1.md), [current generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the implemented onboarding foundation | [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md) | [Product onboarding](./getting-started/product-onboarding.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
@@ -75,9 +75,10 @@ before running the product.
   with review at 30 minutes. CNC-003's [capture runbook](./reference/complete-native-correction-capture.md)
   and generic/host fixtures qualify the native harness, including detached
   ownership and private input/output reconstruction. CNC-004's explicitly
-  approved second window reached [native preparation and a private-home post-check refusal](../benchmarks/results/complete-native-correction-v1/cnc004-private-home/README.md).
-  The generated Java/Kotlin state verifier is repaired; both immutable campaigns
-  and costs remain retained. One Gradle start, no diagnostic/materiality/value row.
+  approved third window reached [two checked preparations and an unstarted D01 refusal](../benchmarks/results/complete-native-correction-v1/cnc004-empty-source-state/README.md).
+  The empty generated-directory verifier is repaired; all three immutable
+  campaigns and costs remain retained. Two starts this window, three overall,
+  no fresh strict report or materiality/value sample.
 - [Source-Bound Configuration-Input Corrections POC](./plans/source-bound-configuration-input-corrections-poc.md):
   the closed source-enriched three-family mechanism study; SBIC-002 reconstructs
   3/3 conclusive but only 1/3 diagnostic-bound families and stops before

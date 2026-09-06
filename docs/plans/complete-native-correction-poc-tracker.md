@@ -1,14 +1,14 @@
 # Complete Native Correction POC — Execution Tracker
 
-**Overall:** `INCOMPLETE_EXPERIMENT_INPUT` — second CNC-004 window stopped after P01 post-check<br>
+**Overall:** `INCOMPLETE_EXPERIMENT_INPUT` — third CNC-004 window stopped at D01 before spawn<br>
 **Plan:** [Complete Native Correction POC](./complete-native-correction-poc.md)<br>
-**Current task:** CNC-004 blocked: P01 native build succeeded, but generated Java/Kotlin private-home state failed the frozen post-check; bounded repair verified locally<br>
-**Next execution step:** preserve both failed campaigns; complete repair publication and resolve separately frozen execution continuation without silently resetting budgets<br>
+**Current task:** CNC-004 blocked: P01/P02 passed; D01 refused an empty, unignored generated directory tree before Gradle; bounded repair verified locally<br>
+**Next execution step:** preserve all three campaigns; complete repair publication and resolve separately frozen execution continuation/budget without silent resets<br>
 **Public candidate builds / value samples:** 0 / 0<br>
-**Phase A real Gradle starts:** 1 / 60 in the explicitly authorized second window; first window retained with 0 starts<br>
-**Phase A time limit:** both 7,200-second windows retained; first guardian stopped after 418.33 seconds, second after 348.51 seconds; later repair/validation/publication costs remain additional<br>
+**Phase A real Gradle starts:** 2 / 60 in the explicitly authorized third window; 3 across all windows (0 + 1 + 2); D01 reserved but not started<br>
+**Phase A time limit:** all three 7,200-second windows retained; third shutdown/balanced observation at 746.29 seconds; later repair/validation/publication costs remain additional<br>
 **Research spend:** source analysis, local implementation and fake-child tests; initial setup not continuously timed, no exact total cost claim<br>
-**Execution authority:** owner explicitly approved the second corrected-package/two-hour attempt and temporary performance profile; original evidence/cost retained, profile restored to balanced after the P01 refusal<br>
+**Execution authority:** owner explicitly approved the third corrected-package/two-hour attempt; original evidence/cost retained, temporary performance restored to balanced after D01's pre-start refusal<br>
 **Phase B/C budgets:** not authorized
 
 ## How to use this tracker
@@ -36,7 +36,7 @@ CNC-003. Existing WCNCP/SBIC evidence remains unchanged.
 | CNC-001 | Exact GraphQL source and complete blocker feasibility | Source-analysis authorization | verified | Five owners/consumers mapped; retained `INCOMPLETE_EXPERIMENT_INPUT` refusal to advance, not a correction qualification. |
 | CNC-002 | Phase A contract, output/proof matrix, and complete start allocation | CNC-001 and accepted local scope/budget | verified | Human/machine contract, exact subject manifest and negative-tested static checker; 60 slots, two-hour limit and 30-minute review. No runtime/package proof or publication claimed. |
 | CNC-003 | Worktree-safe capture, independent checker, generic fixtures, and runbook | CNC-002 | verified | Generic/race and explicit host integration prove detached subtree ownership, private Maven/home bindings, complete fake P/D/M consumers, exact output/producer reconstruction, and evidence refusals. Checked local package/runbook; no public Gradle or publication. |
-| CNC-004 | Fresh native diagnostics and controlled materiality | CNC-003 | blocked | Second window: P01 Gradle exit zero, then private Java/Kotlin runtime state rejected by the post-check. Original typed harness failure retained; generated-state repair passes actual-home and six-slot fixture checks. No D/M rows; corrected package/continuation decision remains required. |
+| CNC-004 | Fresh native diagnostics and controlled materiality | CNC-003 | blocked | Third window: P01/P02 pass execution and post-checks; D01 retains a zero-start refusal on empty `.kotlin/sessions`. Bounded directory-only repair passes actual-state and six-slot fixture checks. No strict report or M row; corrected package/continuation budget remains required. |
 | CNC-005 | Complete digest-bound recipe and behavioral fixture proof | CNC-004 | pending | Every change has a behavioral obligation and tested inverse. |
 | CNC-006 | Public candidate correctness | CNC-005 | pending | All output, invalidation, owner-test, error, and revert obligations pass. |
 | CNC-007 | Eight-pair native value and cost reconstruction | CNC-006 | pending | Native value and machine-payback gates pass independently. |
@@ -656,3 +656,31 @@ home reproduced the old failure; regression/negative/race and explicit host
 six-slot checks pass after repair. Independent replay still reconstructs the
 original failure, never upgraded to success. One real Gradle start, zero fresh
 diagnostics, materiality, candidate or value rows; CNC-005..007 remain pending.
+
+### CNC-004 third-window empty generated-directory refusal — 2026-09-06
+
+The owner explicitly approved a third corrected-package attempt with a new
+two-hour maximum and prior evidence/cost retained. Execution package/source
+`3daa2718` had passed both hosted CIs. New registered shared-Git worktrees,
+the exact source archive/spans, both pinned runtimes and the host envelope passed.
+The [E-555 package](../../benchmarks/results/complete-native-correction-v1/cnc004-empty-source-state/README.md)
+retains the new immutable state and P01/P02/D01 raw records.
+
+Both preparations and their post-checks passed. Their native process envelopes
+were 120.130429109 and 200.013986002 seconds, with 21 executed tasks each.
+These are preparation costs, not test execution or value. The dependency-only
+seed completed with 1,521 files. A premature D01 client was rejected by the seed
+lock with no reservation/start; the subsequent D01 reservation failed before
+spawn on an empty, unignored `.kotlin/sessions` tree. Its `.gradle` prior-state
+archive is preserved. The original checker reconstructed two `CHILD_SUCCESS`
+rows and one unstarted `PRE_START_FAILURE`, with no strict report.
+
+The guardian/profile hold stopped; both were absent and balanced was observed
+at 746.29 seconds. No original source, package, clock, failed row or earlier
+campaign was reset. Repair/publication effort remains additional cost.
+The correction admits only directory-only generated trees without an ignore
+match; any file still requires ignored/untracked proof. Fresh state, tracked
+content, file-kind and symlink guards remain. Regression, eleven boundaries,
+retained read-only source/row reconstruction, race and six-slot host checks pass.
+There are two starts in this window, three across all windows, and no D02/M,
+candidate, value or speedup. CNC-005..007 remain behind native admission.

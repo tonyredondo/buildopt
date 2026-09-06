@@ -80,9 +80,16 @@ two-hour attempt and temporary performance profile. Its
 on generated Java/Kotlin metadata (`E-554`). The bounded repair passes the real
 retained home and consuming fixtures without changing the historical failure.
 The guardian/profile hold stopped and balanced restoration was verified.
-One real preparation start, no P02/D/M, public patch, candidate, value sample or
-speedup. Corrected-package execution still requires continuation; both attempts
-and all costs remain retained. Prior terminal results stay closed.
+The owner then approved a third corrected-package/two-hour attempt. Its
+[P01/P02 preparations passed, but D01 refused before spawn](../../benchmarks/results/complete-native-correction-v1/cnc004-empty-source-state/README.md)
+on empty, unignored `.kotlin/sessions` directories (`E-555`). A bounded repair
+now admits directory-only generated trees, never unignored files, and passes
+real-state reconstruction plus generic/host fixtures. The two preparations cost
+320.144415111 native process seconds, not saving or materiality. Two starts in
+the third window, three overall; no fresh strict report, M row, public patch,
+candidate, value sample or speedup. Balanced was restored again. All three
+campaigns/costs remain retained; another frozen execution requires continuation
+and a budget decision. Prior terminal results stay closed.
 
 `CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1` is terminal at CINC-003 with
 `STOP_STRICT_DIAGNOSTIC_BUDGET_CANNOT_COMPLETE_COHORT`. Fourteen valid raw

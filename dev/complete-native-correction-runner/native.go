@@ -165,6 +165,7 @@ func prepareUserHome(home string, reuse bool) error {
 
 // Move only generated state of these exact frozen native worktrees. Never
 // reset Git, remove the worktree, or discard files not proved ignored/untracked.
+// Directory-only trees have no Git content but are still preserved in archives.
 // Archived reports/outputs remain available for independent earlier-row checks.
 func prepareNativeSource(ctx context.Context, root, source, slot string, outputs outputPolicy) error {
 	if slot == "M02" {
@@ -196,23 +197,7 @@ func prepareNativeSource(ctx context.Context, root, source, slot string, outputs
 		if slot[0] == 'P' {
 			return errors.New("prefetch source has preexisting build/project-cache state")
 		}
-		tracked, err := gitOutput(ctx, source, "ls-files", "--", relative)
-		if err != nil || tracked != "" {
-			return errors.New("refusing to move tracked source state")
-		}
-		if _, err = gitOutput(ctx, source, "check-ignore", "--", relative); err != nil {
-			return errors.New("generated state is not declared ignored")
-		}
-		err = filepath.WalkDir(path, func(current string, entry os.DirEntry, err error) error {
-			if err != nil {
-				return err
-			}
-			if entry.Type()&os.ModeSymlink != 0 || (!entry.IsDir() && !entry.Type().IsRegular()) {
-				return errors.New("unsafe generated member")
-			}
-			return nil
-		})
-		if err != nil {
+		if err = verifyGeneratedSourceDirectory(ctx, source, relative); err != nil {
 			return err
 		}
 		destination := filepath.Join(root, "attempts", slot, "prior-state", relative)
@@ -240,6 +225,46 @@ func prepareNativeSource(ctx context.Context, root, source, slot string, outputs
 			} else if !os.IsNotExist(err) {
 				return err
 			}
+		}
+	}
+	return nil
+}
+
+// Verify without moving source state, so retained real inputs can be checked
+// without rewriting a failed attempt. Even a zero-byte file requires the
+// existing ignore proof; only a tree consisting entirely of directories is exempt.
+func verifyGeneratedSourceDirectory(ctx context.Context, source, relative string) error {
+	path := filepath.Join(source, relative)
+	if err := contained(source, path); err != nil {
+		return err
+	}
+	info, err := os.Lstat(path)
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() {
+		return fmt.Errorf("generated root is not a directory: %s", relative)
+	}
+	tracked, err := gitOutput(ctx, source, "ls-files", "--", relative)
+	if err != nil || tracked != "" {
+		return fmt.Errorf("refusing to move tracked source state: %s", relative)
+	}
+	hasFiles := false
+	if err := filepath.WalkDir(path, func(current string, entry os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if entry.Type()&os.ModeSymlink != 0 || (!entry.IsDir() && !entry.Type().IsRegular()) {
+			return fmt.Errorf("unsafe generated member: %s", relative)
+		}
+		hasFiles = hasFiles || !entry.IsDir()
+		return nil
+	}); err != nil {
+		return err
+	}
+	if hasFiles {
+		if _, err := gitOutput(ctx, source, "check-ignore", "--", relative); err != nil {
+			return fmt.Errorf("generated state is not declared ignored: %s", relative)
 		}
 	}
 	return nil

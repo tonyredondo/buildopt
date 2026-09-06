@@ -45,6 +45,11 @@ func TestNativeConsumer(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+	// Kotlin also leaves an empty project-local sessions directory, which Git
+	// cannot track and which need not be covered by the owner's ignore rules.
+	if err := os.MkdirAll(".kotlin/sessions", 0700); err != nil {
+		t.Fatal(err)
+	}
 	data, err := json.Marshal(args)
 	if err != nil {
 		t.Fatal(err)
@@ -360,6 +365,124 @@ func TestNativeVerifiedInputReconstruction(t *testing.T) {
 				t.Fatalf("unexpected reconstruction result: %v", err)
 			}
 		})
+	}
+}
+
+func TestNativeEmptyUnignoredGeneratedState(t *testing.T) {
+	root := t.TempDir()
+	source := filepath.Join(root, "source")
+	if err := os.MkdirAll(filepath.Join(source, ".kotlin/sessions"), 0700); err != nil {
+		t.Fatal(err)
+	}
+	fixtureGit(t, source, "init", "--quiet")
+	policy := outputPolicy{Selectors: []string{"build/libs/*.jar"}}
+	if err := prepareNativeSource(context.Background(), root, source, "P01", policy); err == nil {
+		t.Fatal("fresh preparation admitted preexisting generated directories")
+	}
+	if err := prepareNativeSource(context.Background(), root, source, "D01", policy); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(filepath.Join(source, ".kotlin")); !os.IsNotExist(err) {
+		t.Fatal("empty generated state was not archived")
+	}
+	if info, err := os.Stat(filepath.Join(root, "attempts/D01/prior-state/.kotlin/sessions")); err != nil || !info.IsDir() {
+		t.Fatal("empty directory structure was not preserved")
+	}
+}
+
+func TestGeneratedSourceDirectoryBoundaries(t *testing.T) {
+	for _, mode := range []string{"empty", "nested-empty", "ignored-file", "unignored-file", "zero-byte-file", "nested-file", "tracked-file", "symlink", "root-symlink", "fifo", "root-file"} {
+		t.Run(mode, func(t *testing.T) {
+			source := t.TempDir()
+			fixtureGit(t, source, "init", "--quiet")
+			directory := filepath.Join(source, ".kotlin")
+			if mode == "root-file" {
+				if err := os.WriteFile(directory, nil, 0600); err != nil {
+					t.Fatal(err)
+				}
+			} else if mode == "root-symlink" {
+				if err := os.Symlink(t.TempDir(), directory); err != nil {
+					t.Fatal(err)
+				}
+			} else if err := os.MkdirAll(filepath.Join(directory, "sessions"), 0700); err != nil {
+				t.Fatal(err)
+			}
+			file := filepath.Join(directory, "owner.txt")
+			switch mode {
+			case "nested-empty":
+				if err := os.MkdirAll(filepath.Join(directory, "sessions/empty/deeper"), 0700); err != nil {
+					t.Fatal(err)
+				}
+			case "ignored-file", "unignored-file", "zero-byte-file", "nested-file", "tracked-file":
+				body := []byte("preserve these bytes")
+				if mode == "zero-byte-file" {
+					body = nil
+				}
+				if mode == "nested-file" {
+					file = filepath.Join(directory, "sessions/.hidden")
+				}
+				if err := os.WriteFile(file, body, 0600); err != nil {
+					t.Fatal(err)
+				}
+				if mode == "ignored-file" {
+					if err := os.WriteFile(filepath.Join(source, ".gitignore"), []byte("/.kotlin/\n"), 0600); err != nil {
+						t.Fatal(err)
+					}
+				}
+				if mode == "tracked-file" {
+					fixtureGit(t, source, "add", ".kotlin/owner.txt")
+				}
+			case "symlink":
+				if err := os.Symlink(t.TempDir(), filepath.Join(directory, "sessions/link")); err != nil {
+					t.Fatal(err)
+				}
+			case "fifo":
+				if err := syscall.Mkfifo(filepath.Join(directory, "sessions/pipe"), 0600); err != nil {
+					t.Fatal(err)
+				}
+			}
+			before := fixtureGit(t, source, "status", "--porcelain=v1", "--ignored")
+			err := verifyGeneratedSourceDirectory(context.Background(), source, ".kotlin")
+			wantSuccess := mode == "empty" || mode == "nested-empty" || mode == "ignored-file"
+			if (err == nil) != wantSuccess {
+				t.Fatalf("validation: %v", err)
+			}
+			if after := fixtureGit(t, source, "status", "--porcelain=v1", "--ignored"); after != before {
+				t.Fatal("read-only validation changed source state")
+			}
+			if _, err := os.Lstat(directory); err != nil {
+				t.Fatal("validation removed the generated root")
+			}
+		})
+	}
+}
+
+func TestRetainedEmptyGeneratedSourceState(t *testing.T) {
+	root := os.Getenv("CNC_EMPTY_GENERATED_CAMPAIGN_ROOT")
+	if root == "" {
+		t.Skip("requires the retained real D01 pre-start refusal; fixtures are not real-source proof")
+	}
+	source, _ := expectedPaths(root, "P01")
+	if err := verifyGeneratedSourceDirectory(context.Background(), source, ".kotlin"); err != nil {
+		t.Fatal(err)
+	}
+	var state campaign
+	if err := readJSON(filepath.Join(root, "state.json"), &state); err != nil {
+		t.Fatal(err)
+	}
+	rows, err := inspect(root, state)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(rows) != 3 || rows[0].Slot != "P01" || rows[0].Outcome != "CHILD_SUCCESS" || rows[1].Slot != "P02" || rows[1].Outcome != "CHILD_SUCCESS" || rows[2].Slot != "D01" || rows[2].Started || rows[2].Outcome != "PRE_START_FAILURE" {
+		t.Fatal("the repair must not upgrade or replace the retained three-row history")
+	}
+	repo, err := filepath.Abs("../..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := inspectNativeRequests(repo, root, rows); err != nil {
+		t.Fatal(err)
 	}
 }
 

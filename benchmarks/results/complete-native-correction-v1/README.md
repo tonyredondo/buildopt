@@ -1,10 +1,14 @@
 # Complete native correction v1 evidence
 
-Current boundary: the explicitly authorized second `CNC-004` window stopped
-after one successful native preparation failed its private-home post-check.
-The [P01 raw evidence and bounded repair](./cnc004-private-home/README.md) are
-`E-554`. The immutable failure remains; no diagnostic/materiality/value row exists.
-Both campaigns and all earlier cost remain retained, without another restart.
+Current boundary: the explicitly authorized third `CNC-004` window passed
+P01/P02, then refused D01 before spawn on an empty generated directory tree.
+The [raw evidence and bounded repair](./cnc004-empty-source-state/README.md) are
+`E-555`: two real starts, one zero-start D01 reservation, no strict report or
+materiality/value sample. All three campaigns and costs remain retained.
+
+The [second-window P01 raw evidence and repair](./cnc004-private-home/README.md)
+remain `E-554`. Its original private-home `HARNESS_FAILURE` is unchanged;
+third-window success does not retroactively qualify that earlier preparation.
 
 The [first-window preflight record](./cnc004-preflight/README.md) retains the
 committed execution package, original boot-bound state, exact source/runtime
@@ -46,7 +50,7 @@ or publication. Native capture requires committed package bytes, verified real
 inputs, active ownership and all frozen order/budget gates. CNC-004 owns the
 first fresh native execution; later recipe/candidate/value gates stay closed.
 
-This directory contains no CNC diagnostic capture, patch,
+This directory contains no fresh CNC strict diagnostic report, patch,
 candidate build, timing row, speedup, or product-qualification result. Historical
 WCNCP reports are explicitly historical diagnostic inputs to source analysis;
 they do not count as fresh CNC correctness, materiality, or value evidence.
@@ -57,7 +61,8 @@ integration. Retained exact-commit bytes rehash to seven subject files and eight
 spans; the Wrapper script, full archive and runtime binaries were not newly
 verified at CNC-003. CNC-004 now freshly verifies the full source archive and
 both exact runtime archive/install trees; the subsequent explicitly approved
-second window launched P01 as recorded above.
-Independent native attempt checking reconstructs the retained failed P01 row;
+third window passed P01/P02 as recorded above.
+Independent native attempt checking reconstructs all original outcomes, including
+the second-window failed P01 and the third-window unstarted D01;
 there is no qualified public output comparison or materiality evidence. Nothing in this
 evidence index authorizes a Gradle start or a substitute subject.

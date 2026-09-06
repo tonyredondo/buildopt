@@ -21,9 +21,13 @@ replacing the frozen campaign. An explicitly approved second window reached
 [successful native preparation followed by private-home rejection](../../benchmarks/results/complete-native-correction-v1/cnc004-private-home/README.md)
 (`E-554`). The generated Java/Kotlin state repair passes retained-home and
 six-slot fixture checks, while independent replay preserves the original
-`HARNESS_FAILURE`. One preparation start does not broaden opportunity evidence.
-No fresh CNC diagnostic, candidate, timing, or
-independent-family success exists.
+`HARNESS_FAILURE`. The owner-approved third attempt then passed
+[P01/P02 and refused D01 before spawn](../../benchmarks/results/complete-native-correction-v1/cnc004-empty-source-state/README.md)
+on empty, unignored generated directories (`E-555`). Its bounded directory-only
+repair passes real-state and consuming fixtures; the unstarted failed row is
+not upgraded. Two preparations in the third window, three starts across all
+retained windows, do not broaden opportunity evidence. No fresh CNC strict
+report, materiality, candidate, value timing or independent-family success exists.
 
 The latest two wrapper-native successor searches are now terminal. The product
 direction remains: keep the wrapper as the normal Gradle entrypoint, learn from

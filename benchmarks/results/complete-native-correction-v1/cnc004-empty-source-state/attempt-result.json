@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "buildopt.cnc/attempt/v1",
+  "slot": "D01",
+  "started": false,
+  "exitCode": -1,
+  "signal": 0,
+  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "outcome": "PRE_START_FAILURE",
+  "detail": "generated state is not declared ignored",
+  "startBootSeconds": 3478147.73,
+  "endBootSeconds": 3478191.33,
+  "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "reportSelection": {
+    "outcome": "ROOT_REPORT_REFERENCE_MISSING",
+    "referenceCount": 0,
+    "referenceSha256": []
+  },
+  "artifacts": []
+}

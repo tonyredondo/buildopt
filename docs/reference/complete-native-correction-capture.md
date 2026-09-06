@@ -1,6 +1,6 @@
 # Complete Native Correction capture runbook
 
-Status: **CNC-004 second window stopped after P01 private-home post-check; one Gradle start.**
+Status: **CNC-004 third window passed P01/P02 and refused D01 before spawn; two Gradle starts in this window.**
 This document describes the implemented interface and its evidence boundary. It
 is not authority to start the two-hour experiment. The [tracker](../plans/complete-native-correction-poc-tracker.md)
 owns advancement; the [contract](../../specs/poc-complete-native-correction-v1.md)
@@ -118,8 +118,11 @@ also use `dev/complete-native-correction.init.gradle` and operation capture. P01
 map to separate native worktrees/prefetch homes; D01/D02 use those worktrees
 with fresh diagnostic homes; M01/M02 share the native-a materiality home.
 The fake-child consuming-path matrix proves this mapping without claiming a
-real public output. D/M01 archive only proved ignored, untracked generated
-build/project-cache directories under their own attempt; they never reset Git
+real public output. D/M01 archive only declared generated build/project-cache
+roots under their own attempt. Nonempty trees require ignored, untracked content;
+directory-only trees may lack an ignore match because they have no Git content.
+Any file, even zero-byte, still requires ignore proof; links/special members
+always refuse. Empty structure is preserved too. These modes never reset Git
 or delete a worktree. Earlier strict reports remain at their original recorded
 paths for independent replay. M02 intentionally retains M01 execution state.
 
@@ -272,8 +275,15 @@ shows successful native Gradle followed by a private-home post-check failure.
 The generated-runtime-state correction passes the actual retained home and
 six-slot consuming fixtures. The original failed row remains unchanged, both
 guardians are stopped, and balanced restoration was verified. No P02/D/M,
-candidate or value row exists. A further package/attempt needs an explicit
-continuation decision; neither campaign is overwritten or silently reset.
+candidate or value row existed at that checkpoint. The owner then approved a
+third two-hour window. Its [two preparations passed](../../benchmarks/results/complete-native-correction-v1/cnc004-empty-source-state/README.md),
+but D01 refused before spawn because Kotlin left an empty, unignored
+`.kotlin/sessions` tree. The bounded directory-only repair passes synthetic and
+retained real-state checks without upgrading that failed reservation. The third
+guardian/profile hold stopped and balanced restoration was verified. Two starts
+in this window, three across all windows, no fresh strict report or M/value row.
+A further package/attempt needs an explicit continuation/budget decision; none
+of the three campaigns is overwritten or silently reset.
 
 The separate recipe/real fixture package is frozen in CNC-005 before F01 after
 native admission. Its absence is not replaced by hashing a nonexistent recipe.

@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "buildopt.cnc/capture-package/v1",
+  "files": [
+    {
+      "path": "go.mod",
+      "sha256": "43eef140c7e4fcbb4dbaff37f3793cd818455c360a7df2e6c3dc20c0f91ff64e"
+    },
+    {
+      "path": "go.sum",
+      "sha256": "ef13e7d750b9f267d2111488210aec57e63c15541c56bd46277af8fadd52d21d"
+    },
+    {
+      "path": "dev/run",
+      "sha256": "2f08665d4c61bf93723b5881a74704c7c9a4e939989e140d9a34ed43ecee787d"
+    },
+    {
+      "path": "dev/toolchains.lock.yaml",
+      "sha256": "f5b21d2f92001eecd01aafd69e009e246e98f236c2da8e56f0fbb6af7d61e195"
+    },
+    {
+      "path": "dev/run-complete-native-correction",
+      "sha256": "d484b3c5718816ee28287ab7f8e75478ca7ea45fb1f92ffa19090723e80f1c92"
+    },
+    {
+      "path": "dev/check-complete-native-correction",
+      "sha256": "94ded028891821ce72ba9fb51991d9a69962fecdd2a857cb8fa262a1a33c1897"
+    },
+    {
+      "path": "dev/complete-native-correction-runner/main.go",
+      "sha256": "451e323ec05c73bd2826611f156572da50319dca46b0736d1cefc76c64bf71c6"
+    },
+    {
+      "path": "dev/complete-native-correction-runner/state.go",
+      "sha256": "3215606a151d110e1f43714ca971e76779b7b1866842bf562fb71fab4c19613d"
+    },
+    {
+      "path": "dev/complete-native-correction-runner/inputs.go",
+      "sha256": "d0ac5b876e0712b2733b6b5327b431820da5f54d154fed30b5ff5a4b61bc3b52"
+    },
+    {
+      "path": "dev/complete-native-correction-runner/capture.go",
+      "sha256": "e223c66cbbdb84837774a611d48015e50ce6db333fd4840da46bb75662b847c8"
+    },
+    {
+      "path": "dev/complete-native-correction-runner/preparation.go",
+      "sha256": "b0b0df90763602495ecb63815bde39686ac9d95804a651883211546d5a4aedf5"
+    },
+    {
+      "path": "dev/complete-native-correction-runner/ownership.go",
+      "sha256": "d88a1a9aae5f36d3f1734ec301d25fe7a1d47cf823d1d1b5d38fffac7ff9db0d"
+    },
+    {
+      "path": "dev/complete-native-correction-runner/ownership_test.go",
+      "sha256": "c526f3589365a3289b2b7912f5b11d25fa7c3380838d6a9d7e85cb5905311aff"
+    },
+    {
+      "path": "dev/complete-native-correction-runner/native.go",
+      "sha256": "c82ae8c4cf63fdbe067f6b8619e8a306d67a232c14718fb260a86fdd17dadf14"
+    },
+    {
+      "path": "dev/complete-native-correction-runner/native_test.go",
+      "sha256": "c00c37a481cbf70b02512fb83798905ff1dd85527e15e4115b2f224b10a1e6ba"
+    },
+    {
+      "path": "dev/complete-native-correction-runner/outputs.go",
+      "sha256": "b2e1f7dced757f5d7ef8e930634e118029bc5a18dea39b8e8d501a891d703b49"
+    },
+    {
+      "path": "dev/complete-native-correction-runner/outputs_test.go",
+      "sha256": "27e49537dd486215b6872363d36d220462b8608c9257d44d44fff49cad3b7da5"
+    },
+    {
+      "path": "internal/contractcrypto/jcs.go",
+      "sha256": "2090ccda6ba36e1fb2d9744183ba8697708aef67110c45bdd6c249c4a8519028"
+    },
+    {
+      "path": "dev/complete-native-correction.init.gradle",
+      "sha256": "632fabf0998967484046e5b10f10ab6825ecc02005a1916fd9a8529f71a65a88"
+    },
+    {
+      "path": "dev/complete-native-correction-runner/capture_test.go",
+      "sha256": "8e97b6e64f7b7ad0cb989774d99debf3dcd4509d0031e34842aa6019940c6091"
+    },
+    {
+      "path": "dev/complete-native-correction-runner/inputs_test.go",
+      "sha256": "79fa7579876249af118ce9a96a82880b3b6ab8687b31f2796c3be3ff4f417bea"
+    },
+    {
+      "path": "dev/complete-native-correction-runner/preparation_test.go",
+      "sha256": "c6a934ee38ff7f235fa297a6ad4ae2c00a5a62763d06a9d3fa1a04de26991e32"
+    },
+    {
+      "path": "dev/complete-native-correction-validator/main.go",
+      "sha256": "e5208cab49a4455da0273fd39bc56c0262a972556ed35171ec39605911614c78"
+    },
+    {
+      "path": "dev/complete-native-correction-validator/main_test.go",
+      "sha256": "80306a329a14741efd38c1025ba0cb94b0d574bb3c2ee3f1c48e9cbb6e942bd3"
+    },
+    {
+      "path": "internal/strictdiagnostic/report.go",
+      "sha256": "546590ecc9a102c6ea52d1db9acb005dad842589c90a44998ec06eabab49d412"
+    },
+    {
+      "path": "internal/strictdiagnostic/report_v2.go",
+      "sha256": "33ab7698e78a6d48c85c8b91e02e0abaf023c6bf2c7b5e1cd722d67da414bcb4"
+    },
+    {
+      "path": "dev/gradle-critical-path.init.gradle",
+      "sha256": "45c089af17d06521b6a688230f43b98775bd871b958de458a386b20fddc33445"
+    },
+    {
+      "path": "docs/reference/complete-native-correction-capture.md",
+      "sha256": "a0e42ebaa7b2a2539428260d949841089f55b9e6572c44273e074fe00222d6fa"
+    },
+    {
+      "path": "specs/poc-complete-native-correction-v1.md",
+      "sha256": "3d7538f1e6922859a8e4021eb25866c141afc08301a5788c3ec86d30d429c243"
+    },
+    {
+      "path": "specs/poc-complete-native-correction-v1.json",
+      "sha256": "9ba47da1b590ad7f74ecc29a6004fca275d2e431a24bcb82296e21bc8931afda"
+    },
+    {
+      "path": "specs/poc-complete-native-correction-v1.subjects.json",
+      "sha256": "5f89f106caedfa9d126e20896b19c9a5d46673a8ddd7b42baa698df0f4cceab1"
+    }
+  ],
+  "executableSha256": "ba6ad59c865c7dfc8025a4a3c8632c4d4ea5c91a0711ecf48926fb7450b1bafc"
+}

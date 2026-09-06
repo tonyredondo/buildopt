@@ -111,6 +111,13 @@ history, output and daemon state. No source copy, clone, owner-home reuse, or
 unverified cache snapshot is allowed. A missing offline dependency stops rather
 than enabling asymmetric network access or adding an uncounted warmup.
 
+When archiving declared generated source roots between native slots, reject
+tracked files, links and special members. A directory-only tree has no Git
+content and may be archived without an ignore match; preserve its full empty
+directory structure. Any regular file, even zero-byte or hidden, still requires
+the original ignore proof. This never permits a public ignore-rule change or
+preexisting generated state in fresh preparation slots.
+
 Execution order is P01/P02, D01/D02, M01/M02, F01-F24, C01-C10, V01-V18.
 R01/R02 are conditional replacements, not extra successful rows. D01/D02 use
 separate empty Configuration Cache namespaces. Their expected strict failure

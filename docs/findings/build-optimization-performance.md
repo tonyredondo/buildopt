@@ -20,7 +20,13 @@
   [P01 native exit zero and a private-home post-check refusal](../../benchmarks/results/complete-native-correction-v1/cnc004-private-home/README.md).
   The 118.993481920-second process envelope is preparation cost, not a saving.
   The generated Java/Kotlin state verifier is repaired, but the failed row and
-  both window identities/costs remain retained. No D/M or value sample exists;
+  both window identities/costs remain retained. The owner-approved third window
+  then [passed P01/P02 but refused D01 before spawn](../../benchmarks/results/complete-native-correction-v1/cnc004-empty-source-state/README.md)
+  on empty generated directories. Its preparations cost 120.130429109 and
+  200.013986002 native process seconds; their difference is not a value comparison.
+  The directory-only repair passes real-state and fixture checks, without
+  upgrading the failed reservation. All three windows/costs are retained and
+  balanced was restored. No fresh strict report, M or value sample exists;
   historical configuration work is not evidence of attainable saving.
 
 - **The wrapper-coordinated native-corrections POC stops at the WCNCP-009

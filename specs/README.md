@@ -21,8 +21,12 @@ before Gradle on an implicit-directory verifier defect. Its
 [refusal and verified repair](../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
 preserve the original package/clock. A separately approved second window reached
 [P01 native exit zero and a private-home harness refusal](../benchmarks/results/complete-native-correction-v1/cnc004-private-home/README.md).
-The bounded generated Java/Kotlin state policy is now explicit; the original
-failure is retained and no D/M/value row exists.
+The bounded generated Java/Kotlin state policy is explicit and that original
+failure is retained. A separately approved third window then passed
+[P01/P02 and refused D01 before spawn](../benchmarks/results/complete-native-correction-v1/cnc004-empty-source-state/README.md)
+on empty, unignored generated directories. The directory-only exception is
+explicit; any file still needs ignore proof. No fresh strict report or M/value
+sample exists, and all three windows/costs remain retained.
 
 The active product pivot is the
 [`Wrapper-Coordinated Native Corrections v1`](./poc-wrapper-coordinated-native-corrections-v1.md).

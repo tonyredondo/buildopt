@@ -52,6 +52,19 @@ original `HARNESS_FAILURE`. No test retroactively qualifies P01 or substitutes
 for fresh public diagnostics/materiality. Ordinary-suite skips are not real-home
 proof. The owner-approved temporary profile was restored to balanced after stop.
 
+The [third-window D01 refusal](../../benchmarks/results/complete-native-correction-v1/cnc004-empty-source-state/README.md)
+adds `TestNativeEmptyUnignoredGeneratedState` and eleven
+`TestGeneratedSourceDirectoryBoundaries` cases. The directory-only reproduction
+fails before repair and passes afterward; regular files, including empty/hidden
+files, retain ignore requirements, while tracked content, symlinks, FIFOs and
+non-directory roots refuse. The existing archive/report preservation proof and
+six-slot fake native consumer cover the consuming path. The opt-in
+`TestRetainedEmptyGeneratedSourceState` validates the actual empty source tree
+without moving it and reconstructs two successful preparations plus the same
+unstarted D01 failure. Its skip is not real-source evidence. All three clocks
+and historical outcomes remain unchanged; no strict diagnostic or materiality
+is inferred from these harness tests.
+
 The WCNCP contract and terminal evidence are checked by
 `./dev/check-wrapper-coordinated-native-corrections-plan` and
 `./dev/check-wcncp-terminal`. The terminal checker composes the 30-observation

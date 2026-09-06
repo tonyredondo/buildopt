@@ -1,7 +1,7 @@
 # Complete Native Correction POC
 
 **Experiment:** `COMPLETE_NATIVE_CORRECTION_V1` (`CNC`)<br>
-**State:** `INCOMPLETE_EXPERIMENT_INPUT`; second CNC-004 window stopped at P01 post-check after native exit zero, private-home repair verified locally<br>
+**State:** `INCOMPLETE_EXPERIMENT_INPUT`; third CNC-004 window passed P01/P02, then refused D01 before spawn on empty generated directories; bounded repair verified locally<br>
 **Planning baseline:** BuildOpt `ca5fb5d8c10ac581de7478cc1dec52269da67e24`<br>
 **Execution and evidence status:** [step tracker](./complete-native-correction-poc-tracker.md)<br>
 **First subject:** GraphQL Java, explicitly local non-CI `assemble`; no owner-CI qualification
