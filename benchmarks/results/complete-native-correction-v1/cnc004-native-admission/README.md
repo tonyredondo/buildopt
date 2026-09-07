@@ -169,3 +169,23 @@ start of this README heading; the descriptive heading above fixes that issue.
 No experiment threshold or runtime behavior changed. Publication/hosted-CI
 completion is tracked separately against its actual final commit, not inferred
 from these local results or the execution baseline's older green checks.
+
+## Published evidence verification
+
+The evidence/checker commit is `55bf411f2ec6ac7eaa6d3eb7158f2b16fb0c0876`.
+[Base CI](https://github.com/tonyredondo/buildopt/actions/runs/34088192861) and
+[Native Platform CI](https://github.com/tonyredondo/buildopt/actions/runs/34088193200)
+passed all five expected jobs on that actual checkout. Base CI's raw log includes
+the six-row reconstruction, five forged-summary refusals and successful synthetic
+owner POC lab. A confirming refresh 80.94 seconds after the all-green observation
+found the same clean local/remote SHA, all checks successful and no associated
+open main-head PR, commit comments, status contexts or branch rules.
+
+The confirmation at boot time `3537321.55` accounts for 4,683.57 elapsed seconds
+since this attempt began, including execution, analysis, local validation and
+the first publication/CI cycle. Final documentation closure and its checks add
+cost on the same clock; earlier campaign and research costs are not reset.
+This commit-bound proof is not a claim about any later checkout. The
+[tracker](../../../../docs/plans/complete-native-correction-poc-tracker.md)
+records CNC-014 as verified terminal synthesis, with later experimental phases
+blocked/unexecuted and no installed or product-value qualification.

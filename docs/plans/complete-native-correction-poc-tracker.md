@@ -46,7 +46,7 @@ CNC-003. Existing WCNCP/SBIC evidence remains unchanged.
 | CNC-011 | Installed value, chronological persistence, and owner review | CNC-010 | blocked | Unexecuted; no CNC economics or owner-review result. |
 | CNC-012 | Three-family unseen replication freeze | CNC-011 qualification and Phase C authority | blocked | Unexecuted: installed qualification and Phase C authority absent. |
 | CNC-013 | Unseen replication through the same installed path | CNC-012 | blocked | Unexecuted; directed evidence does not establish independent-family success. |
-| CNC-014 | Final POC synthesis and requested remote verification | Executed phase decisions | in progress | Terminal artifacts and local replay complete; final validation and exact commit/remote/hosted-CI follow-up close publication. |
+| CNC-014 | Final POC synthesis and requested remote verification | Executed phase decisions | verified | E-556 artifacts/checker published as 55bf411f; all five hosted checks passed on that actual checkout, with clean local/remote equality and a later confirming refresh. See publication proof below; no optimization qualification. |
 
 ## CNC-000 — Planning artifacts
 
@@ -709,3 +709,25 @@ The elapsed-30-minute review records stop. Six starts cost 481.675340957 native
 process seconds; all nine historical/current starts and every window remain
 charged, with no invented exact earlier research cost. CNC-005..007 and later
 installed/replication steps are blocked/unexecuted, not waived or passed.
+
+### Terminal publication proof — 2026-09-07
+
+Commit `55bf411f2ec6ac7eaa6d3eb7158f2b16fb0c0876` publishes the E-556
+artifacts, portable checker, CI integration and English documentation.
+[Base CI](https://github.com/tonyredondo/buildopt/actions/runs/34088192861) and
+[Native Platform CI](https://github.com/tonyredondo/buildopt/actions/runs/34088193200)
+passed all five jobs: Go/Java 17, optional Rust, macOS ARM64, Windows AMD64 and
+the Test Optimization boundary. Each completed job's checkout log binds that
+exact commit. Base CI logs additionally confirm terminal evidence reconstruction,
+all five forged-summary refusals and the synthetic owner POC lab.
+
+Clean `HEAD == origin/main == live remote main` and complete check coverage
+were confirmed again 80.94 seconds after the all-green observation, with no
+status contexts, open main-head PR, commit comments or branch rules outstanding.
+That confirmation occurred at boot time `3537321.55`, 4,683.57 elapsed seconds
+after fourth-window initialization. Documentation-only closure and its own
+validation/CI remain additional cost on the same immutable two-hour clock;
+this historical proof does not predeclare a later commit's checks successful.
+No candidate, value pair, new public start or subsequent phase is authorized by
+this publication record. CNC-014 closes the rejected experiment, not the product
+viability question.
