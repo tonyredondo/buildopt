@@ -15,7 +15,8 @@ before running the product.
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
 | Review the POC idea, mechanisms, current value, and next steps | [Current POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
-| Review the next complete native-correction study | [Complete Native Correction POC](./plans/complete-native-correction-poc.md) | [Execution tracker](./plans/complete-native-correction-poc-tracker.md), [latest evidence](../benchmarks/results/complete-native-correction-v1/cnc004-empty-source-state/README.md); two preparations passed, strict diagnostics still incomplete |
+| Review the closed complete native-correction study | [Complete Native Correction POC](./plans/complete-native-correction-poc.md) | [Execution tracker](./plans/complete-native-correction-poc-tracker.md), [terminal evidence](../benchmarks/results/complete-native-correction-v1/cnc004-native-admission/README.md); six native captures complete, admission rejected |
+| Continue the POC on another computer | [Cross-machine handoff, 2026-09-07](./findings/buildopt-cross-machine-handoff-2026-09-07.md) | Published baseline, retained evidence, destination checks and the proposed Elasticsearch successor |
 | Review the closed source-bound correction experiment | [Source-Bound Configuration-Input Corrections POC](./plans/source-bound-configuration-input-corrections-poc.md) | [Contract](../specs/poc-source-bound-configuration-input-corrections-v1.md), [evidence index](../benchmarks/results/source-bound-configuration-input-corrections-v1/README.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the stopped adaptive hypothesis | [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md) | [Terminal decision](../specs/poc-adaptive-fragment-terminal-decision-v1.md), [current generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the implemented onboarding foundation | [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md) | [Product onboarding](./getting-started/product-onboarding.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
@@ -53,6 +54,9 @@ before running the product.
 
 ### Findings and recommendations
 
+- [Cross-machine handoff, 2026-09-07](./findings/buildopt-cross-machine-handoff-2026-09-07.md):
+  complete transfer briefing, closed CNC evidence, platform/state boundaries
+  and preparation of the proposed installed Elasticsearch trial.
 - [BuildOpt POC one-pager](./findings/buildopt-poc-handoff.md): concise project
   idea, mechanism portfolio, historical wall-time evidence, the latest
   five-family cause analysis, and the latest closed customer-general POC route.

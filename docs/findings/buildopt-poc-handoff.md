@@ -1,5 +1,11 @@
 # BuildOpt POC: One-Page Handoff
 
+For transfer to another computer, use the dated
+[complete cross-machine handoff](./buildopt-cross-machine-handoff-2026-09-07.md).
+It binds the published CNC closure, portable evidence, destination checks and
+the separately proposed Elasticsearch installed-value successor. It does not
+authorize reopening blocked CNC phases.
+
 ## The idea
 
 BuildOpt now tests a wrapper-coordinated product: keep the wrapper as the normal
