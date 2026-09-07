@@ -1,10 +1,15 @@
 # Complete native correction v1 evidence
 
-Current boundary: the explicitly authorized third `CNC-004` window passed
-P01/P02, then refused D01 before spawn on an empty generated directory tree.
-The [raw evidence and bounded repair](./cnc004-empty-source-state/README.md) are
-`E-555`: two real starts, one zero-start D01 reservation, no strict report or
-materiality/value sample. All three campaigns and costs remain retained.
+Current boundary: `STOP_NATIVE_ADMISSION`. The explicitly authorized fourth
+`CNC-004` window completed all six native P/D/M captures. The
+[terminal evidence](./cnc004-native-admission/README.md), `E-556`, reconstructs
+both five-problem strict reports, 12,869/362 ms configuration work, and two
+changed native JAR manifests. The warmed row fails the existing 500-ms floor;
+no recipe/candidate/value row follows. All four campaigns and costs are retained.
+
+The [third-window raw evidence and bounded repair](./cnc004-empty-source-state/README.md)
+remain `E-555`: two preparations and an unstarted D01 refusal. The fourth
+window exercises the repair without upgrading that earlier failed row.
 
 The [second-window P01 raw evidence and repair](./cnc004-private-home/README.md)
 remain `E-554`. Its original private-home `HARNESS_FAILURE` is unchanged;
@@ -50,8 +55,8 @@ or publication. Native capture requires committed package bytes, verified real
 inputs, active ownership and all frozen order/budget gates. CNC-004 owns the
 first fresh native execution; later recipe/candidate/value gates stay closed.
 
-This directory contains no fresh CNC strict diagnostic report, patch,
-candidate build, timing row, speedup, or product-qualification result. Historical
+This directory now contains fresh CNC strict reports and native materiality,
+but no patch, candidate build, value pair, speedup or product qualification. Historical
 WCNCP reports are explicitly historical diagnostic inputs to source analysis;
 they do not count as fresh CNC correctness, materiality, or value evidence.
 
@@ -60,9 +65,10 @@ the separate host gate, ShellCheck, layout, tracker consistency, documentation a
 integration. Retained exact-commit bytes rehash to seven subject files and eight
 spans; the Wrapper script, full archive and runtime binaries were not newly
 verified at CNC-003. CNC-004 now freshly verifies the full source archive and
-both exact runtime archive/install trees; the subsequent explicitly approved
-third window passed P01/P02 as recorded above.
+both exact runtime archive/install trees; the fourth window completed P01-M02.
 Independent native attempt checking reconstructs all original outcomes, including
 the second-window failed P01 and the third-window unstarted D01;
-there is no qualified public output comparison or materiality evidence. Nothing in this
-evidence index authorizes a Gradle start or a substitute subject.
+the current terminal checker also reconstructs all six fresh rows, the failed
+materiality gate and changed native output bytes. There is no qualified exact-output
+candidate comparison. Nothing in this evidence index authorizes another start,
+substitute subject, manifest correction or changed threshold.

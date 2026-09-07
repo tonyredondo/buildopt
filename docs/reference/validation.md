@@ -10,7 +10,8 @@ independently reconstructed 60-slot allocation and negative tests. It rejects
 duplicate/unknown JSON, missing cases, drift, name rules and weakened gates;
 subject relabeling still passes. Optional `--sources-root ROOT` rehashes files
 and inclusive spans, not the full Git archive or runtime binaries. No fresh
-CNC diagnostic, candidate correctness or timing validation exists.
+CNC candidate correctness or value-pair validation exists; the later native
+diagnostics/materiality and admission stop are recorded below.
 The [CNC tracker](../plans/complete-native-correction-poc-tracker.md) records
 the approved two-hour limit and 30-minute review, with CNC-003's native harness
 verified locally. The [capture runbook](./complete-native-correction-capture.md)
@@ -64,6 +65,19 @@ without moving it and reconstructs two successful preparations plus the same
 unstarted D01 failure. Its skip is not real-source evidence. All three clocks
 and historical outcomes remain unchanged; no strict diagnostic or materiality
 is inferred from these harness tests.
+
+The [fourth-window terminal evidence](../../benchmarks/results/complete-native-correction-v1/cnc004-native-admission/README.md)
+adds real, independently checked P01-M02 captures. Both strict reports bind all
+five problems without overflow. The frozen runner verifies raw streams, source
+bindings, operation/graph artifacts and all retained output bytes. The portable
+`./dev/check-complete-native-correction-terminal --self-test` verifies the archive
+and committed package identity, reconstructs all six starts and 481.675340957
+native process seconds, reparses complete report sites, reruns interval-union
+materiality and compares JAR inventories. Five negatives reject forged admission,
+start count, cost, cold-only materiality and output equality. Base CI executes
+this replay, not public Gradle or a hosted wall-time gate. The observed 362-ms
+warmed result and two changed native JARs produce `STOP_NATIVE_ADMISSION`, not
+a candidate correctness/value result. Original failed campaigns remain unchanged.
 
 The WCNCP contract and terminal evidence are checked by
 `./dev/check-wrapper-coordinated-native-corrections-plan` and

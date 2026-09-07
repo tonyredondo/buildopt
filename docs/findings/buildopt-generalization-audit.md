@@ -1,5 +1,15 @@
 # BuildOpt Generalization Audit
 
+The fourth CNC attempt now supplies complete fresh native evidence and a
+[terminal admission rejection](../../benchmarks/results/complete-native-correction-v1/cnc004-native-admission/README.md)
+(`E-556`). Six starts reconstruct two complete five-problem reports and native
+configuration of 12,869/362 ms. The warmed result misses the unchanged 500-ms
+floor. Two native JAR manifests also lose Bnd/OSGi headers between builds.
+No recipe, candidate, value pair, installed proof or unseen replication follows.
+All four campaign identities/costs remain retained. This is directed evidence
+against admission of this workflow, not prevalence evidence or a universal
+rejection of reviewed-native delivery.
+
 The newer [CNC-001 source analysis](../../benchmarks/results/complete-native-correction-v1/selection/feasibility.md)
 is a directed GraphQL investigation, not a new breadth or value result. It maps
 all five historical blockers, including Bnd's configurable project-property
@@ -26,8 +36,9 @@ six-slot fixture checks, while independent replay preserves the original
 on empty, unignored generated directories (`E-555`). Its bounded directory-only
 repair passes real-state and consuming fixtures; the unstarted failed row is
 not upgraded. Two preparations in the third window, three starts across all
-retained windows, do not broaden opportunity evidence. No fresh CNC strict
-report, materiality, candidate, value timing or independent-family success exists.
+retained windows, do not broaden opportunity evidence. That third-window
+checkpoint had no fresh strict report or materiality. The fourth window above
+adds both, but no candidate, value timing or independent-family success.
 
 The latest two wrapper-native successor searches are now terminal. The product
 direction remains: keep the wrapper as the normal Gradle entrypoint, learn from

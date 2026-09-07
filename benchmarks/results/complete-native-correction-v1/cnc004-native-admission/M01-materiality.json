@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "buildopt.wcncp/controlled-materiality-run/v1",
+  "family": "directed-subject",
+  "method": "CONFIGURATION_CACHE_UNLOCK",
+  "operationTraceSha256": "b9caee10426c4ef67706573cf3d7a5c69fe75a8458cabfd858524a607b6fbd4f",
+  "taskGraphSha256": "ae9aa50d663251b6ae5d573319e9a05403c4374cd070c8f7ef1a56e3e88e26e9",
+  "workflowMs": 105425,
+  "criticalPathContributionMs": 12869,
+  "materialPercent": 12.206782072563433,
+  "minimumMillisecondsPassed": true,
+  "minimumPercentPassed": true,
+  "environmentClass": "CONTROLLED_PERFORMANCE",
+  "performanceGateAuthority": true
+}

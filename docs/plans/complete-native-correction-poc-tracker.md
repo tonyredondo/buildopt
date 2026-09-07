@@ -1,14 +1,14 @@
 # Complete Native Correction POC — Execution Tracker
 
-**Overall:** `INCOMPLETE_EXPERIMENT_INPUT` — third CNC-004 window stopped at D01 before spawn<br>
+**Overall:** `STOP_NATIVE_ADMISSION` — six fourth-window captures complete; native materiality/output admission rejected<br>
 **Plan:** [Complete Native Correction POC](./complete-native-correction-poc.md)<br>
-**Current task:** CNC-004 blocked: P01/P02 passed; D01 refused an empty, unignored generated directory tree before Gradle; bounded repair verified locally<br>
-**Next execution step:** preserve all three campaigns; complete repair publication and resolve separately frozen execution continuation/budget without silent resets<br>
+**Current task:** CNC-004 verified as rejected admission; CNC-008/CNC-014 record the bounded terminal synthesis (`E-556`)<br>
+**Next execution step:** none in this stopped route; retain the manifest-lifecycle observation for a separately scoped investigation, not an automatic recipe expansion<br>
 **Public candidate builds / value samples:** 0 / 0<br>
-**Phase A real Gradle starts:** 2 / 60 in the explicitly authorized third window; 3 across all windows (0 + 1 + 2); D01 reserved but not started<br>
-**Phase A time limit:** all three 7,200-second windows retained; third shutdown/balanced observation at 746.29 seconds; later repair/validation/publication costs remain additional<br>
+**Phase A real Gradle starts:** 6 / 60 in the fourth window; 9 across all windows (0 + 1 + 2 + 6); no recipe, candidate or value starts<br>
+**Phase A time limit:** all four 7,200-second windows retained; fourth shutdown/balanced observation at 1,288.20 seconds; 30-minute review recorded stop, later validation/publication costs remain additional<br>
 **Research spend:** source analysis, local implementation and fake-child tests; initial setup not continuously timed, no exact total cost claim<br>
-**Execution authority:** owner explicitly approved the third corrected-package/two-hour attempt; original evidence/cost retained, temporary performance restored to balanced after D01's pre-start refusal<br>
+**Execution authority:** owner explicitly approved the fourth corrected-package/two-hour attempt, retaining earlier results/costs; all six rows finished and temporary performance was restored to balanced<br>
 **Phase B/C budgets:** not authorized
 
 ## How to use this tracker
@@ -36,17 +36,17 @@ CNC-003. Existing WCNCP/SBIC evidence remains unchanged.
 | CNC-001 | Exact GraphQL source and complete blocker feasibility | Source-analysis authorization | verified | Five owners/consumers mapped; retained `INCOMPLETE_EXPERIMENT_INPUT` refusal to advance, not a correction qualification. |
 | CNC-002 | Phase A contract, output/proof matrix, and complete start allocation | CNC-001 and accepted local scope/budget | verified | Human/machine contract, exact subject manifest and negative-tested static checker; 60 slots, two-hour limit and 30-minute review. No runtime/package proof or publication claimed. |
 | CNC-003 | Worktree-safe capture, independent checker, generic fixtures, and runbook | CNC-002 | verified | Generic/race and explicit host integration prove detached subtree ownership, private Maven/home bindings, complete fake P/D/M consumers, exact output/producer reconstruction, and evidence refusals. Checked local package/runbook; no public Gradle or publication. |
-| CNC-004 | Fresh native diagnostics and controlled materiality | CNC-003 | blocked | Third window: P01/P02 pass execution and post-checks; D01 retains a zero-start refusal on empty `.kotlin/sessions`. Bounded directory-only repair passes actual-state and six-slot fixture checks. No strict report or M row; corrected package/continuation budget remains required. |
-| CNC-005 | Complete digest-bound recipe and behavioral fixture proof | CNC-004 | pending | Every change has a behavioral obligation and tested inverse. |
-| CNC-006 | Public candidate correctness | CNC-005 | pending | All output, invalidation, owner-test, error, and revert obligations pass. |
-| CNC-007 | Eight-pair native value and cost reconstruction | CNC-006 | pending | Native value and machine-payback gates pass independently. |
-| CNC-008 | Directed-mechanism decision and Phase A closure | CNC-001..007, or first terminal stop | pending | Accurate phase decision, all spend retained, dependent steps classified. |
-| CNC-009 | Installed/chronological protocol and Phase B budget | Phase A qualification and new phase authority | pending | Full row schedule and installed proof obligations frozen before capture. |
-| CNC-010 | Ordinary onboarding, integrated delivery, and wrapper overhead | CNC-009 | pending | Real entrypoint/backend path and all overhead modes proved. |
-| CNC-011 | Installed value, chronological persistence, and owner review | CNC-010 | pending | Net value, persistence, economics, and exact first review independently checked. |
-| CNC-012 | Three-family unseen replication freeze | CNC-011 qualification and Phase C authority | pending | Pre-outcome selection, exact budgets/horizon, and independent success gate. |
-| CNC-013 | Unseen replication through the same installed path | CNC-012 | pending | Each family completed or explicitly rejected; all costs and rows accounted for. |
-| CNC-014 | Final POC synthesis and requested remote verification | Executed phase decisions | pending | Bounded conclusion; no missing prerequisites concealed by a green summary. |
+| CNC-004 | Fresh native diagnostics and controlled materiality | CNC-003 | verified | Rejected admission: both complete reports bind all five blockers; M01/M02 reconstruct 12,869/362 ms configuration; two native JAR manifests differ. Six raw captures retained in E-556. |
+| CNC-005 | Complete digest-bound recipe and behavioral fixture proof | CNC-004 admission | blocked | Not executed: native admission failed; no recipe or real fixture proof. |
+| CNC-006 | Public candidate correctness | CNC-005 | blocked | Not executed after the native gate; no candidate or correctness comparison. |
+| CNC-007 | Eight-pair native value and cost reconstruction | CNC-006 | blocked | Not executed; no saving, value pair or payback claim. |
+| CNC-008 | Directed-mechanism decision and Phase A closure | First terminal stop | verified | STOP_NATIVE_ADMISSION; original failures, all four windows and costs retained; terminal replay and negative checks. |
+| CNC-009 | Installed/chronological protocol and Phase B budget | Phase A qualification and new phase authority | blocked | Unexecuted: Phase A did not qualify and Phase B has no execution authority. |
+| CNC-010 | Ordinary onboarding, integrated delivery, and wrapper overhead | CNC-009 | blocked | Unexecuted; existing wrapper implementation is not fresh CNC installed proof. |
+| CNC-011 | Installed value, chronological persistence, and owner review | CNC-010 | blocked | Unexecuted; no CNC economics or owner-review result. |
+| CNC-012 | Three-family unseen replication freeze | CNC-011 qualification and Phase C authority | blocked | Unexecuted: installed qualification and Phase C authority absent. |
+| CNC-013 | Unseen replication through the same installed path | CNC-012 | blocked | Unexecuted; directed evidence does not establish independent-family success. |
+| CNC-014 | Final POC synthesis and requested remote verification | Executed phase decisions | in progress | Terminal artifacts and local replay complete; final validation and exact commit/remote/hosted-CI follow-up close publication. |
 
 ## CNC-000 — Planning artifacts
 
@@ -480,13 +480,11 @@ remain unverified for fresh execution. CLI unknown-mode rejection also passes.
 
 ### Immediate next action
 
-Retain the [first preflight refusal](../../benchmarks/results/complete-native-correction-v1/cnc004-preflight/README.md)
-and the [second-window P01 post-check refusal](../../benchmarks/results/complete-native-correction-v1/cnc004-private-home/README.md),
-with all local Git/runtime inputs. The private-home repair passes the actual
-generated state and consuming fixtures, but neither immutable campaign can be
-rewritten or promoted to success. Resolve corrected-package execution and budget
-authority before another initialization. Do not spend reserve rows or claim
-CNC-004 complete from the successful native child alone.
+The [fourth-window terminal evidence](../../benchmarks/results/complete-native-correction-v1/cnc004-native-admission/README.md)
+supersedes the earlier missing-diagnostic boundary without changing any older
+failure. Preserve all four campaigns. Native admission failed; do not start
+F/C/V rows, replace M02 with M01, normalize output bytes or silently expand the
+recipe to repair the newly observed native manifest behavior.
 
 ### Historical CNC-003 partial implementation record — 2026-09-06
 
@@ -684,3 +682,30 @@ content, file-kind and symlink guards remain. Regression, eleven boundaries,
 retained read-only source/row reconstruction, race and six-slot host checks pass.
 There are two starts in this window, three across all windows, and no D02/M,
 candidate, value or speedup. CNC-005..007 remain behind native admission.
+
+### CNC-004 fourth-window terminal admission — 2026-09-07
+
+The explicitly approved corrected-package attempt used committed `cd164da4`
+after both hosted CIs passed. All six P/D/M rows and independent capture checks
+completed. Both strict reports contain five unique problems without overflow,
+bound to the same four build-script sites and Bnd line 407. The prior empty
+source-state repair is exercised by real D01, not merely a fake-child fixture.
+
+After 120 seconds of quiescence, the seven-sample ratio passed at 1.081637.
+Fresh interval-union analysis reports M01 at 12,869 ms/12.206782% and M02 at
+362 ms/5.943195%. The conservative warmed result fails the unchanged 500-ms
+floor. Both native builds succeed, but two of five JARs differ: the shadow and
+final manifests lose Bnd/OSGi headers on the repeated build. No source was
+patched and no candidate-value conclusion follows.
+
+The [E-556 record](../../benchmarks/results/complete-native-correction-v1/cnc004-native-admission/README.md)
+retains all six raw captures, both HTML reports, operations/DAGs and all ten
+JAR byte streams. The frozen live capture checker passed before documentation
+updates. `./dev/check-complete-native-correction-terminal --self-test` supplies
+portable archive/package/hash/report/materiality/output/cost replay and five
+forged-summary negatives; Base CI invokes it without public Gradle or timing.
+The guardian/profile hold stopped and balanced was observed at 1,288.20 seconds.
+The elapsed-30-minute review records stop. Six starts cost 481.675340957 native
+process seconds; all nine historical/current starts and every window remain
+charged, with no invented exact earlier research cost. CNC-005..007 and later
+installed/replication steps are blocked/unexecuted, not waived or passed.

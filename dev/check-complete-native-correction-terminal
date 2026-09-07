@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Portable terminal replay of retained CNC evidence; never starts Gradle.
+if (($# > 1)); then
+    printf 'usage: %s [EVIDENCE_DIRECTORY|--self-test]\n' "$0" >&2
+    exit 64
+fi
+cnc_repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+if [[ ${1:-} == --self-test ]]; then
+    "${BASH_SOURCE[0]}"
+    cnc_cases=$(mktemp -d /tmp/buildopt-cnc-terminal-tests.XXXXXX)
+    trap 'rm -rf -- "${cnc_cases}"' EXIT
+    cp -a "${cnc_repo}/benchmarks/results/complete-native-correction-v1/cnc004-native-admission/." "${cnc_cases}/"
+    for cnc_mutation in \
+        '.decision = "QUALIFY_DIRECTED_NATIVE_MECHANISM"' \
+        '.publicGradleStarts = 5' \
+        '.nativeProcessNanoseconds = 1' \
+        '.conservativeConfigurationMs = 12869' \
+        '.changedNativeOutputs = []'; do
+        jq "${cnc_mutation}" "${cnc_repo}/benchmarks/results/complete-native-correction-v1/cnc004-native-admission/result.json" >"${cnc_cases}/result.json"
+        if "${BASH_SOURCE[0]}" "${cnc_cases}" >"${cnc_cases}/rejection.log" 2>&1; then
+            printf 'terminal checker accepted forged evidence: %s\n' "${cnc_mutation}" >&2
+            exit 1
+        fi
+    done
+    printf 'CNC terminal negatives passed: forged decision, start count, cost, materiality and output equality refused\n'
+    exit 0
+fi
+cnc_evidence=${1:-${cnc_repo}/benchmarks/results/complete-native-correction-v1/cnc004-native-admission}
+cnc_result=${cnc_evidence}/result.json
+cnc_archive=${cnc_evidence}/native-evidence.tar.gz
+cnc_sha() { sha256sum "$1" | cut -d' ' -f1; }
+[[ $(cnc_sha "${cnc_archive}") == "$(jq -r .rawArchiveSha256 "${cnc_result}")" ]]
+[[ $(cnc_sha "${cnc_evidence}/package.json") == "$(jq -r .packageSha256 "${cnc_result}")" ]]
+cnc_commit=$(jq -r .executionCommit "${cnc_result}")
+[[ ${cnc_commit} =~ ^[0-9a-f]{40}$ ]]
+git -C "${cnc_repo}" merge-base --is-ancestor "${cnc_commit}" HEAD
+while IFS=$'\t' read -r cnc_path cnc_digest; do
+    [[ ${cnc_path} != /* && ${cnc_path} != *..* ]]
+    [[ $(git -C "${cnc_repo}" show "${cnc_commit}:${cnc_path}" | sha256sum | cut -d' ' -f1) == "${cnc_digest}" ]]
+done < <(jq -r '.files[] | [.path,.sha256] | @tsv' "${cnc_evidence}/package.json")
+
+# Reject unsafe members before extracting into a newly created checker-owned root.
+tar -tzf "${cnc_archive}" | awk '/^\// || /(^|\/)\.\.(\/|$)/ {exit 1}'
+tar -tvzf "${cnc_archive}" | awk 'substr($0,1,1) != "-" && substr($0,1,1) != "d" {exit 1}'
+[[ -z $(tar -tzf "${cnc_archive}" | sort | uniq -d) ]]
+cnc_tmp=$(mktemp -d /tmp/buildopt-cnc-terminal.XXXXXX)
+trap 'rm -rf -- "${cnc_tmp}"' EXIT
+tar -xzf "${cnc_archive}" -C "${cnc_tmp}"
+[[ $(cnc_sha "${cnc_tmp}/state.json") == "$(jq -r .stateSha256 "${cnc_result}")" ]]
+jq -e --arg package "$(cnc_sha "${cnc_evidence}/package.json")" '
+    .packageSha256 == $package and .maximumStarts == 60 and
+    .deadlineBootSeconds == .startedBootSeconds + 7200 and
+    .reviewBootSeconds == .startedBootSeconds + 1800
+' "${cnc_tmp}/state.json" >/dev/null
+jq -e --slurpfile state "${cnc_tmp}/state.json" '
+    .decision == "stop" and .bootSeconds >= $state[0].reviewBootSeconds and
+    .bootSeconds < $state[0].deadlineBootSeconds and (.note | length) > 0
+' "${cnc_evidence}/review.json" >/dev/null
+cnc_ratio=$(jq '[.samplesMilliseconds[]] | max / min' "${cnc_tmp}/environment.json")
+jq -e --argjson ratio "${cnc_ratio}" --slurpfile state "${cnc_tmp}/state.json" '
+    .bootId == $state[0].bootId and .quiescenceSeconds == 120 and
+    .completedBootSeconds >= .startedBootSeconds + 120 and
+    .startedBootSeconds >= $state[0].startedBootSeconds and
+    .completedBootSeconds < $state[0].deadlineBootSeconds and
+    (.samplesMilliseconds | length) == 7 and
+    (.samplesMilliseconds | all(. > 0)) and $ratio <= 1.15
+' "${cnc_tmp}/environment.json" >/dev/null
+
+cnc_slots=(P01 P02 D01 D02 M01 M02)
+[[ $(find "${cnc_tmp}/attempts" -mindepth 1 -maxdepth 1 -type d | wc -l) == 6 ]]
+for cnc_slot in "${cnc_slots[@]}"; do
+    cnc_attempt=${cnc_tmp}/attempts/${cnc_slot}
+    jq -e --arg slot "${cnc_slot}" --slurpfile process "${cnc_attempt}/process.json" \
+        --slurpfile state "${cnc_tmp}/state.json" '
+        .slot == $slot and .started and .signal == 0 and
+        .exitCode == (if ($slot|startswith("D")) then 1 else 0 end) and
+        .outcome == (if ($slot|startswith("D")) then "ROOT_REPORT_CAPTURED" else "CHILD_SUCCESS" end) and
+        $process[0].started and $process[0].exitCode == .exitCode and $process[0].signal == 0 and
+        $process[0].elapsedNanoseconds > 0 and
+        $process[0].startBootSeconds >= $state[0].startedBootSeconds and
+        $process[0].endBootSeconds <= $state[0].deadlineBootSeconds
+    ' "${cnc_attempt}/result.json" >/dev/null
+    jq -e --arg slot "${cnc_slot}" '.slot == $slot and .pid > 0' "${cnc_attempt}/started.json" >/dev/null
+    for cnc_stream in stdout stderr; do
+        [[ $(cnc_sha "${cnc_attempt}/${cnc_stream}.log") == "$(jq -r --arg key "${cnc_stream}Sha256" '.[$key]' "${cnc_attempt}/result.json")" ]]
+    done
+    [[ $(cnc_sha "${cnc_attempt}/child.log") == "$(jq -r .logSha256 "${cnc_attempt}/result.json")" ]]
+    cmp "${cnc_attempt}/inputs-before.json" "${cnc_attempt}/inputs-after.json"
+    while IFS=$'\t' read -r cnc_path cnc_digest; do
+        [[ ${cnc_path} != /* && ${cnc_path} != *..* ]]
+        [[ $(cnc_sha "${cnc_attempt}/${cnc_path}") == "${cnc_digest}" ]]
+    done < <(jq -r '.artifacts[] | [.path,.sha256] | @tsv' "${cnc_attempt}/result.json")
+    diff -u <(jq -S . "${cnc_attempt}/result.json") \
+        <(jq -S --arg slot "${cnc_slot}" '.[] | select(.slot == $slot)' "${cnc_evidence}/capture-check.json")
+done
+
+for cnc_slot in D01 D02; do
+    cnc_attempt=${cnc_tmp}/attempts/${cnc_slot}
+    cnc_reference="file://$(jq -r .reportRoot "${cnc_attempt}/request.json")/$(jq -r .reportSelection.selectedRelativePath "${cnc_attempt}/result.json")"
+    [[ $(grep -Eo 'file://[^[:space:]]*/configuration-cache-report\.html' "${cnc_attempt}/child.log" | sort -u) == "${cnc_reference}" ]]
+    [[ $(grep -c '^// begin-report-data$' "${cnc_attempt}/configuration-cache-report.html") == 1 ]]
+    awk '/^\/\/ begin-report-data$/{getline;print}' "${cnc_attempt}/configuration-cache-report.html" | \
+        jq -e --arg source "$(jq -r .nativePaths.Source "${cnc_attempt}/request.json")" '
+        .totalProblemCount == 5 and .uniqueProblemCount == 5 and .overflownProblemCount == 0 and
+        .requestedTasks == "assemble" and .cacheAction == "storing" and
+        ([.diagnostics[] | select(.problem)] | length) == 5 and
+        ([.diagnostics[] | select(.problem) | [.problem[] | (.text // .name)] | join("")] == [
+            "external process started git -C " + $source + " rev-parse --is-inside-work-tree",
+            "external process started git -C " + $source + " rev-parse --abbrev-ref HEAD",
+            "registration of listener on Gradle.buildFinished is unsupported",
+            "registration of listener on Gradle.buildFinished is unsupported",
+            "invocation of Task.project at execution time is unsupported with the configuration cache."
+        ]) and
+        ([.diagnostics[] | select(.problem) | [.error.summary[] | (.text // .name)] | join("") |
+            capture("\\((?<site>[^()]*)\\)$").site] == [
+            $source + "/build.gradle:144", $source + "/build.gradle:169",
+            $source + "/build.gradle:186", $source + "/build.gradle:938", "BundleTaskExtension.java:407"
+        ])
+    ' >/dev/null
+done
+
+"${cnc_repo}/dev/run" --toolchain go -- go build -trimpath -o "${cnc_tmp}/materiality" "${cnc_repo}/cmd/wcncp-controlled-materiality"
+for cnc_slot in M01 M02; do
+    cnc_attempt=${cnc_tmp}/attempts/${cnc_slot}
+    "${cnc_tmp}/materiality" --operations "${cnc_attempt}/operations-log.txt" \
+        --graph "${cnc_attempt}/task-graph.jsonl" --family directed-subject --method CONFIGURATION_CACHE_UNLOCK |
+        diff -u <(jq -S . "${cnc_evidence}/${cnc_slot}-materiality.json") <(jq -S .)
+    [[ $(jq length "${cnc_attempt}/output-inventory.json") == 5 ]]
+    while IFS=$'\t' read -r cnc_path cnc_size cnc_digest; do
+        [[ ${cnc_path} != /* && ${cnc_path} != *..* ]]
+        [[ $(wc -c <"${cnc_attempt}/outputs/${cnc_path}") == "${cnc_size}" ]]
+        [[ $(cnc_sha "${cnc_attempt}/outputs/${cnc_path}") == "${cnc_digest}" ]]
+    done < <(jq -r '.[] | [.path,.size,.sha256] | @tsv' "${cnc_attempt}/output-inventory.json")
+done
+cnc_changed=$(jq -s '.[0] as $before | [.[1][] | . as $after |
+    $before[] | select(.path == $after.path and (.sha256 != $after.sha256 or .size != $after.size)) | .path]' \
+    "${cnc_tmp}/attempts/M01/output-inventory.json" "${cnc_tmp}/attempts/M02/output-inventory.json")
+cnc_process_ns=$(jq -s 'map(.elapsedNanoseconds) | add' "${cnc_tmp}"/attempts/*/process.json)
+jq -e --argjson ratio "${cnc_ratio}" --argjson changed "${cnc_changed}" --argjson processNs "${cnc_process_ns}" \
+    --slurpfile first "${cnc_evidence}/M01-materiality.json" --slurpfile warm "${cnc_evidence}/M02-materiality.json" '
+    .schemaVersion == "buildopt.cnc/native-admission/v1" and .decision == "STOP_NATIVE_ADMISSION" and
+    .publicGradleStarts == 6 and .diagnosticReports == 2 and .problemsPerReport == 5 and
+    .nativeProcessNanoseconds == $processNs and .stabilityRatio == $ratio and
+    .conservativeConfigurationMs == ([$first[0].criticalPathContributionMs,$warm[0].criticalPathContributionMs] | min) and
+    .conservativeConfigurationMs < 500 and .minimumConfigurationMs == 500 and
+    .changedNativeOutputs == $changed and ($changed | length) == 2 and
+    .nativeAdmission == false and .publicSourceModified == false and .candidateBuilds == 0 and
+    .recipeFixtures == 0 and .valuePairs == 0 and .speedupClaim == false and .additionalProductFailures == 0
+' "${cnc_result}" >/dev/null
+printf 'CNC terminal evidence reconstructed: six starts, five blockers per report, 362-ms warm floor failure, two native output changes; no candidate or value claim\n'

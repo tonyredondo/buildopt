@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "buildopt.cnc/native-admission/v1",
+  "decision": "STOP_NATIVE_ADMISSION",
+  "executionCommit": "cd164da42266d7b9de5f923d770fb5d5d74f0c95",
+  "packageSha256": "07618fd835064dfa97eeea4f96d8ee3deafb32fd00b31e196fdcc20af0d1f628",
+  "stateSha256": "6e1039c4d94d6ef668eaf2ad99f8eba3a5fada4dbf4145581350a30ff96a4ccb",
+  "rawArchiveSha256": "652bde5148757e2b495986fbe813349ae9fa50ff4815e669e2acd8cca3e7ca78",
+  "attemptNumber": 4,
+  "maximumElapsedSeconds": 7200,
+  "publicGradleStarts": 6,
+  "historicalPublicGradleStarts": 3,
+  "diagnosticReports": 2,
+  "problemsPerReport": 5,
+  "nativeProcessNanoseconds": 481675340957,
+  "stabilityRatio": 1.0816372922167297,
+  "conservativeConfigurationMs": 362,
+  "minimumConfigurationMs": 500,
+  "nativeAdmission": false,
+  "changedNativeOutputs": [
+    "build/intermediates/shadow-jar/graphql-java-0.0.0-HEAD-SNAPSHOT-shadow.jar",
+    "build/libs/graphql-java-0.0.0-HEAD-SNAPSHOT.jar"
+  ],
+  "publicSourceModified": false,
+  "candidateBuilds": 0,
+  "recipeFixtures": 0,
+  "valuePairs": 0,
+  "speedupClaim": false,
+  "additionalProductFailures": 0
+}

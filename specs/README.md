@@ -25,8 +25,11 @@ The bounded generated Java/Kotlin state policy is explicit and that original
 failure is retained. A separately approved third window then passed
 [P01/P02 and refused D01 before spawn](../benchmarks/results/complete-native-correction-v1/cnc004-empty-source-state/README.md)
 on empty, unignored generated directories. The directory-only exception is
-explicit; any file still needs ignore proof. No fresh strict report or M/value
-sample exists, and all three windows/costs remain retained.
+explicit; any file still needs ignore proof. The fourth authorized window then
+[completed all six native captures](../benchmarks/results/complete-native-correction-v1/cnc004-native-admission/README.md)
+and stopped at admission: warmed configuration is 362 ms, below 500 ms, and two
+native JAR manifests differ. All four windows/costs remain retained. No recipe,
+candidate or value comparison exists; the frozen thresholds are unchanged.
 
 The active product pivot is the
 [`Wrapper-Coordinated Native Corrections v1`](./poc-wrapper-coordinated-native-corrections-v1.md).

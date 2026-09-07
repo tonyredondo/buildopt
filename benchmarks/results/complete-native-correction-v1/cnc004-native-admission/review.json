@@ -1,0 +1,5 @@
+{
+  "bootSeconds": 3534483.7,
+  "decision": "stop",
+  "note": "Six native rows complete and independently reconstructed. D01/D02 each have the five source-bound blockers without overflow. Warm materiality is 362 ms, below 500 ms; two native JAR manifests also change without a candidate. Supervisor stopped and balanced restored. No F/C/V starts; remaining work is terminal evidence, documentation, validation and authorized publication within this unchanged window."
+}

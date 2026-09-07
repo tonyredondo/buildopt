@@ -1,7 +1,7 @@
 # Complete Native Correction POC
 
 **Experiment:** `COMPLETE_NATIVE_CORRECTION_V1` (`CNC`)<br>
-**State:** `INCOMPLETE_EXPERIMENT_INPUT`; third CNC-004 window passed P01/P02, then refused D01 before spawn on empty generated directories; bounded repair verified locally<br>
+**State:** `STOP_NATIVE_ADMISSION`; fourth CNC-004 window completed six native captures; warmed configuration is 362 ms and two native JAR manifests change without a candidate<br>
 **Planning baseline:** BuildOpt `ca5fb5d8c10ac581de7478cc1dec52269da67e24`<br>
 **Execution and evidence status:** [step tracker](./complete-native-correction-poc-tracker.md)<br>
 **First subject:** GraphQL Java, explicitly local non-CI `assemble`; no owner-CI qualification
@@ -430,6 +430,7 @@ records authority, package/recipe identity, actual spend, and the next step.
 | `QUALIFY_INSTALLED_NATIVE_CORRECTION` | Installed correctness, overhead, value, chronology, and review passed for the selected case; no unseen-family claim. |
 | `QUALIFY_BOUNDED_NATIVE_CORRECTION_POC` | The frozen independent replication gate and total operational ledger pass; no commercial or universal claim. |
 | `STOP_INCOMPLETE_SAFE_CORRECTION` | Complete behavior-preserving blocker closure is unavailable in scope. |
+| `STOP_NATIVE_ADMISSION` | Fresh native inputs fail the existing materiality screen or expose unstable required outputs before a recipe/candidate exists; no candidate-value conclusion. |
 | `STOP_PRODUCT_CORRECTNESS_FAILURE` | The candidate or installed path breaks a required behavior/output. |
 | `STOP_NO_MATERIAL_NATIVE_VALUE` | A correct patch fails controlled native value. |
 | `STOP_INSTALLED_COST_OR_PERSISTENCE` | Wrapper cost or ordinary changes eliminate qualified value. |

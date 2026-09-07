@@ -1,10 +1,18 @@
 # Complete Native Correction capture runbook
 
-Status: **CNC-004 third window passed P01/P02 and refused D01 before spawn; two Gradle starts in this window.**
+Status: **CNC-004 completed six fourth-window native captures and stopped at native admission; warmed configuration is 362 ms and two native JARs differ.**
 This document describes the implemented interface and its evidence boundary. It
 is not authority to start the two-hour experiment. The [tracker](../plans/complete-native-correction-poc-tracker.md)
 owns advancement; the [contract](../../specs/poc-complete-native-correction-v1.md)
 owns the unchanged 60-start, 7,200-second and 1,800-second-review limits.
+
+The [terminal record](../../benchmarks/results/complete-native-correction-v1/cnc004-native-admission/README.md)
+contains both strict reports, operations/DAGs and exact native output bytes.
+`./dev/check-complete-native-correction-terminal --self-test` replays those
+retained artifacts and the admission refusal without Gradle or original host paths.
+The historical execution package binds the earlier runbook bytes: documentation
+updates do not authorize replacing that package or rerunning its occupied slots.
+Portable terminal replay checks package sources against the execution commit.
 
 ## What can be checked now
 
@@ -284,6 +292,15 @@ guardian/profile hold stopped and balanced restoration was verified. Two starts
 in this window, three across all windows, no fresh strict report or M/value row.
 A further package/attempt needs an explicit continuation/budget decision; none
 of the three campaigns is overwritten or silently reset.
+
+The owner then explicitly approved a fourth corrected-package/two-hour attempt.
+P01-M02 completed, with both strict reports containing the same five source-bound
+problems and no overflow. Stability passed at 1.081637; fresh M01/M02 configuration
+work was 12,869/362 ms. The warmed result fails the 500-ms admission floor.
+The shadow and final JAR manifests also lose Bnd/OSGi headers between native
+runs. `STOP_NATIVE_ADMISSION` closes this route before a recipe or candidate.
+All six captures and all four campaign costs remain retained; the guardian and
+profile hold stopped, balanced was restored, and the 30-minute review recorded stop.
 
 The separate recipe/real fixture package is frozen in CNC-005 before F01 after
 native admission. Its absence is not replaced by hashing a nonexistent recipe.

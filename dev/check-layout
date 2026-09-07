@@ -660,6 +660,7 @@ buildopt_required_files=(
     "dev/check-strict-diagnostic-capture-reliability-public"
     "dev/check-source-bound-configuration-input-corrections"
     "dev/check-complete-native-correction"
+    "dev/check-complete-native-correction-terminal"
     "dev/complete-native-correction-validator/main.go"
     "dev/complete-native-correction-validator/main_test.go"
     "dev/run-complete-native-correction"

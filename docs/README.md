@@ -75,10 +75,10 @@ before running the product.
   with review at 30 minutes. CNC-003's [capture runbook](./reference/complete-native-correction-capture.md)
   and generic/host fixtures qualify the native harness, including detached
   ownership and private input/output reconstruction. CNC-004's explicitly
-  approved third window reached [two checked preparations and an unstarted D01 refusal](../benchmarks/results/complete-native-correction-v1/cnc004-empty-source-state/README.md).
-  The empty generated-directory verifier is repaired; all three immutable
-  campaigns and costs remain retained. Two starts this window, three overall,
-  no fresh strict report or materiality/value sample.
+  approved fourth window completed [six native captures and rejected admission](../benchmarks/results/complete-native-correction-v1/cnc004-native-admission/README.md).
+  Both reports bind five blockers; warmed configuration is 362 ms and two
+  native JAR manifests change. All four campaigns/costs remain retained.
+  No recipe, candidate or value pair followed the failed gate.
 - [Source-Bound Configuration-Input Corrections POC](./plans/source-bound-configuration-input-corrections-poc.md):
   the closed source-enriched three-family mechanism study; SBIC-002 reconstructs
   3/3 conclusive but only 1/3 diagnostic-bound families and stops before

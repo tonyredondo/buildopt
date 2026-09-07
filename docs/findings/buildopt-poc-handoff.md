@@ -54,6 +54,15 @@ does not establish commercial viability.
 
 ## Current experiment status
 
+`COMPLETE_NATIVE_CORRECTION_V1` now stops at **native admission** (`E-556`).
+The [fourth attempt completed all six native captures](../../benchmarks/results/complete-native-correction-v1/cnc004-native-admission/README.md).
+Both strict reports bind five blockers, but configuration falls from 12,869 ms
+in the fresh home to 362 ms warmed, below the fixed 500-ms floor. Two native
+JARs also change without any candidate: Bnd/OSGi manifest headers disappear on
+the repeated build. No recipe, candidate or value pair follows. This rejects
+the current directed route, not all reviewed-native corrections. Native manifest
+consistency is a separate possible investigation, not an authorized expansion.
+
 `COMPLETE_NATIVE_CORRECTION_V1` has a
 [source-only CNC-001 report](../../benchmarks/results/complete-native-correction-v1/selection/feasibility.md)
 and [execution tracker](../plans/complete-native-correction-poc-tracker.md).
@@ -88,8 +97,13 @@ real-state reconstruction plus generic/host fixtures. The two preparations cost
 320.144415111 native process seconds, not saving or materiality. Two starts in
 the third window, three overall; no fresh strict report, M row, public patch,
 candidate, value sample or speedup. Balanced was restored again. All three
-campaigns/costs remain retained; another frozen execution requires continuation
-and a budget decision. Prior terminal results stay closed.
+campaigns/costs remained retained at that checkpoint. The subsequently approved
+fourth window adds six starts (nine overall) and 481.675340957 native process
+seconds. Its original clock, complete reports/traces and all ten native JARs
+are retained. Balanced was restored and the 30-minute review recorded stop.
+Portable terminal replay and five forged-summary negatives reconstruct the
+refusal; Phase A closure and final publication are tracked in CNC-008/CNC-014.
+Prior terminal results stay closed; no installed value or breadth is claimed.
 
 `CONFIGURATION_INPUT_NATIVE_CORRECTIONS_V1` is terminal at CINC-003 with
 `STOP_STRICT_DIAGNOSTIC_BUDGET_CANNOT_COMPLETE_COHORT`. Fourteen valid raw

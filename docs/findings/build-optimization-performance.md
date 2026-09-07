@@ -2,6 +2,17 @@
 
 ## Current Executive Summary
 
+- **CNC native admission now closes negatively with complete evidence.**
+  The [fourth-window result](../../benchmarks/results/complete-native-correction-v1/cnc004-native-admission/README.md)
+  (`E-556`) completes P01-M02 without a harness failure. Both strict reports bind
+  five blockers. Native configuration contributes 12,869 ms/12.206782% in M01
+  but only 362 ms/5.943195% in the reused M02 state, below the 500-ms floor.
+  The first observation cannot stand in for warmed optimized Gradle. The
+  shadow and final JARs also change natively: their manifests lose Bnd/OSGi
+  headers. No recipe, candidate, exact-output qualification, value pair or
+  speedup follows. Six current starts cost 481.675340957 process seconds;
+  setup/analysis/validation and all earlier costs remain additional.
+
 - **CNC-001 is source feasibility, not a speedup result.** The
   [five-blocker analysis](../../benchmarks/results/complete-native-correction-v1/selection/feasibility.md)
   finds a plausible local correction, including Bnd's supported properties API,
@@ -26,8 +37,9 @@
   200.013986002 native process seconds; their difference is not a value comparison.
   The directory-only repair passes real-state and fixture checks, without
   upgrading the failed reservation. All three windows/costs are retained and
-  balanced was restored. No fresh strict report, M or value sample exists;
-  historical configuration work is not evidence of attainable saving.
+  balanced was restored. That third-window checkpoint had no fresh strict
+  report or M row; the fourth window above supplies both and rejects admission.
+  Historical or fresh configuration work is not evidence of attainable saving.
 
 - **The wrapper-coordinated native-corrections POC stops at the WCNCP-009
   opportunity-breadth gate.**
