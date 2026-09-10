@@ -1,4 +1,4 @@
-# BV-006: observation consumed by the chronological replay CLI
+# Observation consumed by the chronological replay CLI
 
 **Decision: R4_NON_GRADLE_CONSUMER_VERIFIED.** R4.1–R4.3 are verified within
 the non-Gradle scope. The bounded observer is now used by the real `run`, `check`

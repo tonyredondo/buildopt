@@ -1,0 +1,59 @@
+{
+  "status": "verified",
+  "binarySHA256": "3686b937f352adc3d3f977c2979bfc0bf9d68981a5ea414d869961396b6be318",
+  "run": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedReplayCLI-4133752857/run",
+  "cases": [
+    {
+      "name": "valid-before",
+      "exitCode": 0,
+      "expected": null,
+      "output": "raw evidence and claimed result agree\n"
+    },
+    {
+      "name": "missing-phase",
+      "exitCode": 1,
+      "expected": "observer artifact coverage differs",
+      "output": "observer artifact coverage differs\n"
+    },
+    {
+      "name": "reordered-acknowledgements",
+      "exitCode": 1,
+      "expected": "observer order/hash/count differs",
+      "output": "observer order/hash/count differs\n"
+    },
+    {
+      "name": "hidden-pending",
+      "exitCode": 1,
+      "expected": "unacknowledged or over-limit observation payload",
+      "output": "unacknowledged or over-limit observation payload\n"
+    },
+    {
+      "name": "altered-payload",
+      "exitCode": 1,
+      "expected": "corrupt/partial observer payload",
+      "output": "corrupt/partial observer payload\n"
+    },
+    {
+      "name": "cpu-cost-omitted",
+      "exitCode": 1,
+      "expected": "observer CPU cost omitted or altered",
+      "output": "observer CPU cost omitted or altered\n"
+    },
+    {
+      "name": "missing-native-coverage",
+      "exitCode": 1,
+      "expected": "observation gap exceeds 500 ms",
+      "output": "observation gap exceeds 500 ms including native endpoints: 603436815 ns\n"
+    },
+    {
+      "name": "valid-after",
+      "exitCode": 0,
+      "expected": null,
+      "output": "raw evidence and claimed result agree\n"
+    }
+  ],
+  "workflowStarts": 0,
+  "gradleStarts": 0,
+  "helperJVMStarts": 0,
+  "restored": true
+}

@@ -22,8 +22,11 @@ instead of pointing to files that are absent from Git:
 | `bv006-daemon-diagnostic/raw/owner/profile-I.jfr` | 3,349,500 | `fe9505e6768325cbada31df7637d75d23224fbec2d05c3af52ae2b2ab10637b0` |
 | `bv006-daemon-diagnostic/raw/owner/profile-N.jfr` | 3,629,896 | `96eccdec83f40f16ba7697a43efede54290ef47f783cc815df89bf63437df4c4` |
 
-Historical seals refer to the original captured files. The two README edits
-only describe publication availability. Their original SHA-256 values were:
+Historical seals refer to the original captured files. The README edits
+describe publication availability and remove leading tracker IDs from three
+titles, as required by the documentation check. Their original SHA-256 values were:
 
 - `bv005/README.md`: `796ddf2c387c938421914a405353d08d12b9fd5a8b8452265686ceac294ef777`.
 - `bv006-daemon-diagnostic/README.md`: `817ae7fd1025f93071f0231bfaf644005ac436e6bab2de95f82453f23a8cef04`.
+- `bv006-disk-observer/README.md`: `4bc633548db5331208f68f988daf2bc20e1953f56178ed9828c9e3e5cca6aa83`.
+- `bv006-observer-integration/README.md`: `066061aa9ae33c9cf8369f593ce38f9dc167c601e9e3d77ab5f58edf70c08eeb`.

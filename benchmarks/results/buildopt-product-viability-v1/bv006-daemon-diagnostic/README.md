@@ -1,4 +1,4 @@
-# BV-006 owned-daemon and supervisor diagnostic
+# Owned-daemon and supervisor diagnostic
 
 Date: 2026-09-09. Status: **verified diagnostic; BV-006 remains partial**.
 Decision: `SUPERVISOR_SCAN_COST_CONFIRMED_VARIABILITY_CAUSE_UNRESOLVED`.

@@ -1,4 +1,4 @@
-# BV-006 disk-observer correction and fixed control
+# Disk-observer correction and fixed control
 
 Date: 2026-09-09. Status: **verified correction and control; BV-006 remains partial**.
 Decision: `SUPERVISOR_CPU_REDUCTION_NOT_ESTABLISHED`.
