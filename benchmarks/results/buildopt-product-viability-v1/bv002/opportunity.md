@@ -155,3 +155,7 @@ retain source versions and file fingerprints. Per-build records are under
 [current tracker](https://github.com/tonyredondo/buildopt/blob/main/docs/plans/buildopt-product-viability-v1-tracker.md)
 records later work. The diagnostic-tool copies in this result directory describe
 this experiment's inputs; they are not a replacement for the current runner.
+
+The evidence list includes a fingerprint of this report before the wording
+review. That [original report](https://github.com/tonyredondo/buildopt/blob/0e89140e98554cb94a84963badbcf1bb747d6e67/benchmarks/results/buildopt-product-viability-v1/bv002/opportunity.md)
+remains available for checking the fingerprint. The measurements are unchanged.
